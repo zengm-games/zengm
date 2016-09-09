@@ -8,12 +8,6 @@ const helpers = require('../util/helpers');
 const CustomizePlayer = require('./views/CustomizePlayer');
 
 function get(req) {
-    if (!g.godMode) {
-        return {
-            errorMessage: `You can't customize players unless you enable <a href="${helpers.leagueUrl(["god_mode"])}">God Mode</a>.`,
-        };
-    }
-
     if (req.params.hasOwnProperty("pid")) {
         return {
             pid: parseInt(req.params.pid, 10),
@@ -26,6 +20,12 @@ function get(req) {
 }
 
 async function updateCustomizePlayer(inputs, updateEvents) {
+    if (!g.godMode) {
+        return {
+            godMode: g.godMode,
+        };
+    }
+
     if (updateEvents.indexOf("firstRun") >= 0) {
         const teams = await team.filter({
             attrs: ["tid", "region", "name"],
@@ -59,6 +59,7 @@ async function updateCustomizePlayer(inputs, updateEvents) {
         });
 
         const vars = {
+            godMode: g.godMode,
             season: g.season,
             teams,
         };

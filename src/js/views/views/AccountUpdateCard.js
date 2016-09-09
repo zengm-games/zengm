@@ -87,9 +87,23 @@ class AccountUpdateCard extends React.Component {
     }
 
     render() {
-        const {expMonth, expYear, last4} = this.props;
+        const {goldCancelled, expMonth, expYear, last4, username} = this.props;
 
         bbgmViewReact.title('Update Card');
+
+        let errorMessage;
+        if (username === null || username === '') {
+            errorMessage = 'Log in to view this page.';
+        }
+        if (goldCancelled) {
+            errorMessage = 'Cannot update card because your Basketball GM Gold account is cancelled.';
+        }
+        if (errorMessage) {
+            return <div>
+                <h1>Error</h1>
+                <p>{errorMessage}</p>
+            </div>;
+        }
 
         return <div>
             <h1>Update Card</h1>

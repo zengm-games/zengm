@@ -52,9 +52,16 @@ class NewTeam extends React.Component {
     }
 
     render() {
-        const {godMode, teams} = this.props;
+        const {gameOver, godMode, teams} = this.props;
 
         bbgmViewReact.title('New Team');
+
+        if (!gameOver && !godMode) {
+            return <div>
+                <h1>Error</h1>
+                <p>You may only switch to another team after you're fired or when you're in <a href={helpers.leagueUrl(["god_mode"])}>God Mode</a></p>
+            </div>;
+        }
 
         return <div>
             <h1>Pick a New Team <NewWindowLink /></h1>

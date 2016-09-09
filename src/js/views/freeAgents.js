@@ -8,15 +8,9 @@ const helpers = require('../util/helpers');
 const FreeAgents = require('./views/FreeAgents');
 
 function get() {
-    if (g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.RESIGN_PLAYERS) {
-        if (g.phase === g.PHASE.RESIGN_PLAYERS) {
-            return {
-                redirectUrl: helpers.leagueUrl(["negotiation"]),
-            };
-        }
-
+    if (g.phase === g.PHASE.RESIGN_PLAYERS) {
         return {
-            errorMessage: "You're not allowed to sign free agents now.",
+            redirectUrl: helpers.leagueUrl(["negotiation"]),
         };
     }
 }
@@ -58,6 +52,7 @@ async function updateFreeAgents() {
         gamesInProgress: g.gamesInProgress,
         minContract: g.minContract,
         numRosterSpots: 15 - userPlayers.length,
+        phase: g.phase,
         players,
     };
 }

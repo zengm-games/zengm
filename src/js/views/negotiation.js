@@ -63,7 +63,7 @@ async function updateNegotiation(inputs) {
 
     if (negotiations.length === 0) {
         return {
-            errorMessage: `No negotiation with player ${inputs.pid} in progress.`,
+            errorMessage: 'No negotiation with player in progress.',
         };
     }
 

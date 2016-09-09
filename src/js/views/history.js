@@ -17,12 +17,6 @@ function get(req) {
         }
     }
 
-    if (season < g.startingSeason) {
-        return {
-            errorMessage: "There is no league history yet. Check back after the playoffs.",
-        };
-    }
-
     return {
         season,
     };
@@ -30,6 +24,13 @@ function get(req) {
 
 async function updateHistory(inputs, updateEvents, state) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || state.season !== inputs.season) {
+        if (inputs.season < g.startingSeason) {
+            return {
+                invalidSeason: true,
+                season: inputs.season,
+            };
+        }
+
         let [awards, retiredPlayers, teams] = await Promise.all([
             g.dbl.awards.get(inputs.season),
             g.dbl.players.index('retiredYear').getAll(inputs.season).then(players => {
@@ -90,6 +91,7 @@ async function updateHistory(inputs, updateEvents, state) {
             awards,
             champ,
             confs: g.confs,
+            invalidSeason: false,
             retiredPlayers,
             season: inputs.season,
             userTid: g.userTid,

@@ -48,12 +48,6 @@ async function validateSavedPids() {
 }
 
 function get(req) {
-    if ((g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.PLAYOFFS) || g.phase === g.PHASE.FANTASY_DRAFT || g.gameOver) {
-        return {
-            errorMessage: "You're not allowed to make trades now.",
-        };
-    }
-
     return {
         message: req.raw.message !== undefined ? req.raw.message : null,
     };
@@ -151,8 +145,10 @@ async function updateTrade(inputs) {
         strategy: t.strategy,
         won: t.won,
         lost: t.lost,
+        gameOver: g.gameOver,
         godMode: g.godMode,
         forceTrade: false,
+        phase: g.phase,
     };
     vars = await updateSummary(vars);
 

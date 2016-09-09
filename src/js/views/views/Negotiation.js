@@ -32,9 +32,15 @@ const sign = async (pid, amount, exp) => {
     redirectNegotiationOrRoster(false);
 };
 
-const Negotiation = ({contractOptions, payroll, player, resigning, salaryCap, userTid}) => {
+const Negotiation = ({contractOptions, errorMessage, payroll, player = {}, resigning, salaryCap, userTid}) => {
     bbgmViewReact.title(`Contract Negotiation - ${player.name}`);
 
+    if (errorMessage) {
+        return <div>
+            <h1>Error</h1>
+            <p>{errorMessage}</p>
+        </div>;
+    }
 
     // See views.freeAgents for moods as well
     let mood;

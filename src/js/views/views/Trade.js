@@ -151,9 +151,16 @@ class Trade extends React.Component {
     }
 
     render() {
-        const {godMode, lost, otherDpids, otherPicks, otherRoster, otherTid, salaryCap, summary, showResigningMsg, strategy, teams, userDpids, userPicks, userRoster, userTeamName, won} = this.props;
+        const {gameOver, godMode, lost, otherDpids, otherPicks, otherRoster, otherTid, phase, salaryCap, summary, showResigningMsg, strategy, teams, userDpids, userPicks, userRoster, userTeamName, won} = this.props;
 
         bbgmViewReact.title('Trade');
+
+        if ((phase >= g.PHASE.AFTER_TRADE_DEADLINE && phase <= g.PHASE.PLAYOFFS) || phase === g.PHASE.FANTASY_DRAFT || gameOver) {
+            return <div>
+                <h1>Error</h1>
+                <p>You're not allowed to make trades now.</p>
+            </div>;
+        }
 
         const cols = getCols('', 'Name', 'Pos', 'Age', 'Ovr', 'Pot', 'Contract', 'Min', 'Pts', 'Reb', 'Ast', 'PER');
         cols[0].sortSequence = [];

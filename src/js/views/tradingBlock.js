@@ -6,14 +6,6 @@ const bbgmViewReact = require('../util/bbgmViewReact');
 const helpers = require('../util/helpers');
 const TradingBlock = require('./views/TradingBlock');
 
-function get() {
-    if (g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.PLAYOFFS) {
-        return {
-            errorMessage: "You're not allowed to make trades now.",
-        };
-    }
-}
-
 async function updateUserRoster(inputs, updateEvents) {
     if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("gameSim") >= 0) {
         let [userRoster, userPicks] = await Promise.all([
@@ -43,6 +35,8 @@ async function updateUserRoster(inputs, updateEvents) {
         }
 
         return {
+            gameOver: g.gameOver,
+            phase: g.phase,
             userPicks,
             userRoster,
         };
@@ -51,7 +45,6 @@ async function updateUserRoster(inputs, updateEvents) {
 
 module.exports = bbgmViewReact.init({
     id: "tradingBlock",
-    get,
     runBefore: [updateUserRoster],
     Component: TradingBlock,
 });

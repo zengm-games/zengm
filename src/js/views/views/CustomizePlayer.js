@@ -240,16 +240,23 @@ class CustomizePlayer extends React.Component {
     }
 
     render() {
-        const {originalTid, season, teams} = this.props;
+        const {godMode, originalTid, season, teams} = this.props;
         const {appearanceOption, p, saving} = this.state;
-
-        const age = season - p.born.year;
-
-        const r = p.ratings.length - 1;
 
         const title = originalTid === null ? 'Create Player' : 'Edit Player';
 
         bbgmViewReact.title(title);
+
+        if (!godMode) {
+            return <div>
+                <h1>Error</h1>
+                <p>You can't customize players unless you enable <a href={helpers.leagueUrl(["god_mode"])}>God Mode</a></p>
+            </div>;
+        }
+
+        const age = season - p.born.year;
+
+        const r = p.ratings.length - 1;
 
         let pictureDiv = null;
         if (appearanceOption === 'Cartoon Face') {

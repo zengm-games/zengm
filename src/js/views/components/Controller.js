@@ -2,7 +2,6 @@ const Promise = require('bluebird');
 const React = require('react');
 const g = require('../../globals');
 const ui = require('../../ui');
-const helpers = require('../../util/helpers');
 const Footer = require('./Footer');
 const Header = require('./Header');
 const LeagueWrapper = require('./LeagueWrapper');
@@ -91,10 +90,6 @@ class Controller extends React.Component {
             inputs = {};
         }
 
-        // Check for errors/redirects
-        if (inputs.errorMessage !== undefined) {
-            return helpers.error(inputs.errorMessage, cb);
-        }
         if (inputs.redirectUrl !== undefined) {
             return ui.realtimeUpdate([], inputs.redirectUrl, cb);
         }
@@ -155,10 +150,6 @@ class Controller extends React.Component {
         };
 
         if (vars !== undefined) {
-            // Check for errors/redirects
-            if (vars.errorMessage !== undefined) {
-                throw new Error('Handle errorMessage!');
-            }
             if (vars.redirectUrl !== undefined) {
                 return ui.realtimeUpdate([], vars.redirectUrl, cb);
             }

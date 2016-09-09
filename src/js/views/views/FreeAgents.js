@@ -7,8 +7,15 @@ const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, HelpPopover, NewWindowLink, PlayerNameLabels} = require('../components');
 
-const FreeAgents = ({capSpace, gamesInProgress, minContract, numRosterSpots, players}) => {
+const FreeAgents = ({capSpace, gamesInProgress, minContract, numRosterSpots, phase, players}) => {
     bbgmViewReact.title('Free Agents');
+
+    if (phase >= g.PHASE.AFTER_TRADE_DEADLINE && phase <= g.PHASE.RESIGN_PLAYERS) {
+        return <div>
+            <h1>Error</h1>
+            <p>You're not allowed to sign free agents now.</p>
+        </div>;
+    }
 
     const cols = getCols('Name', 'Pos', 'Age', 'Ovr', 'Pot', 'Min', 'Pts', 'Reb', 'Ast', 'PER', 'Asking For', 'Mood', 'Negotiate');
 

@@ -160,6 +160,13 @@ class EditTeamInfo extends React.Component {
     render() {
         bbgmViewReact.title('Edit Team Info');
 
+        if (!this.props.godMode) {
+            return <div>
+                <h1>Error</h1>
+                <p>You can't edit teams unless you enable <a href={helpers.leagueUrl(["god_mode"])}>God Mode</a></p>
+            </div>;
+        }
+
         const {saving, teams} = this.state;
 
         return <div>

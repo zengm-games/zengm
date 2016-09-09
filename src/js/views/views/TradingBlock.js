@@ -270,9 +270,16 @@ class TradingBlock extends React.Component {
     }
 
     render() {
-        const {userPicks = [], userRoster = []} = this.props;
+        const {gameOver, phase, userPicks, userRoster} = this.props;
 
         bbgmViewReact.title('Trading Block');
+
+        if ((phase >= g.PHASE.AFTER_TRADE_DEADLINE && phase <= g.PHASE.PLAYOFFS) || phase === g.PHASE.FANTASY_DRAFT || gameOver) {
+            return <div>
+                <h1>Error</h1>
+                <p>You're not allowed to make trades now.</p>
+            </div>;
+        }
 
         const cols = getCols('', 'Name', 'Pos', 'Age', 'Ovr', 'Pot', 'Contract', 'Min', 'Pts', 'Reb', 'Ast', 'PER');
         cols[0].sortSequence = [];

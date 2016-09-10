@@ -70,4 +70,9 @@ const TeamShotLocations = ({season, teams}) => {
     </div>;
 };
 
+TeamShotLocations.propTypes = {
+    season: React.PropTypes.number.isRequired,
+    teams: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+};
+
 module.exports = TeamShotLocations;

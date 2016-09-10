@@ -50,7 +50,7 @@ const UpcomingFreeAgents = ({players, season}) => {
 };
 
 UpcomingFreeAgents.propTypes = {
-    players: React.PropTypes.array.isRequired,
+    players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
     season: React.PropTypes.number.isRequired,
 };
 

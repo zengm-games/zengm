@@ -103,7 +103,7 @@ const TeamStats = ({season, stats, teams}) => {
             width: '15px',
         };
 
-        return <span className={`bg-${className}`} style={styles}></span>;
+        return <span className={`bg-${className}`} style={styles} />;
     }
 
     return <div>
@@ -133,6 +133,12 @@ const TeamStats = ({season, stats, teams}) => {
             superCols={superCols}
         />
     </div>;
+};
+
+TeamStats.propTypes = {
+    season: React.PropTypes.number.isRequired,
+    stats: React.PropTypes.object.isRequired,
+    teams: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
 };
 
 module.exports = TeamStats;

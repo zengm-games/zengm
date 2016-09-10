@@ -94,21 +94,21 @@ const Offer = props => {
 };
 
 Offer.propTypes = {
-    abbrev: React.PropTypes.string,
-    dpids: React.PropTypes.arrayOf(React.PropTypes.number),
-    handleClickNegotiate: React.PropTypes.func,
-    i: React.PropTypes.number,
-    lost: React.PropTypes.number,
-    name: React.PropTypes.string,
-    payroll: React.PropTypes.number,
-    picks: React.PropTypes.array,
-    pids: React.PropTypes.arrayOf(React.PropTypes.number),
-    players: React.PropTypes.array,
-    region: React.PropTypes.string,
-    strategy: React.PropTypes.string,
-    tid: React.PropTypes.number,
-    warning: React.PropTypes.string,
-    won: React.PropTypes.number,
+    abbrev: React.PropTypes.string.isRequired,
+    dpids: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
+    handleClickNegotiate: React.PropTypes.func.isRequired,
+    i: React.PropTypes.number.isRequired,
+    lost: React.PropTypes.number.isRequired,
+    name: React.PropTypes.string.isRequired,
+    payroll: React.PropTypes.number.isRequired,
+    picks: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    pids: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
+    players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    region: React.PropTypes.string.isRequired,
+    strategy: React.PropTypes.string.isRequired,
+    tid: React.PropTypes.number.isRequired,
+    warning: React.PropTypes.string.isRequired,
+    won: React.PropTypes.number.isRequired,
 };
 
 const getOffers = async (userPids, userDpids, onProgress) => {
@@ -405,8 +405,8 @@ class TradingBlock extends React.Component {
 TradingBlock.propTypes = {
     gameOver: React.PropTypes.bool.isRequired,
     phase: React.PropTypes.number.isRequired,
-    userPicks: React.PropTypes.array.isRequired,
-    userRoster: React.PropTypes.array.isRequired,
+    userPicks: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    userRoster: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
 };
 
 module.exports = TradingBlock;

@@ -52,7 +52,7 @@ const scale = {
     oppPts: [80, 130],
 };
 
-const TeamStatDists = ({season, statsAll = {}}) => {
+const TeamStatDists = ({season, statsAll}) => {
     bbgmViewReact.title(`Team Stat Distributions - ${season}`);
 
     return <div>
@@ -70,7 +70,7 @@ const TeamStatDists = ({season, statsAll = {}}) => {
                     </td></tr>;
                     let nbaPlot = null;
                     if (nbaStatsAll.hasOwnProperty(stat)) {
-                        nbaPlot = <tr><td></td><td width="100%"><div style={{marginTop: '-26px'}}>
+                        nbaPlot = <tr><td /><td width="100%"><div style={{marginTop: '-26px'}}>
                             <BoxPlot color="#0088cc" data={nbaStatsAll[stat]} labels={false} scale={scale[stat]} />
                         </div></td></tr>;
                     }
@@ -79,6 +79,11 @@ const TeamStatDists = ({season, statsAll = {}}) => {
             </tbody>
         </table>
     </div>;
+};
+
+TeamStatDists.propTypes = {
+    season: React.PropTypes.number.isRequired,
+    statsAll: React.PropTypes.object.isRequired,
 };
 
 module.exports = TeamStatDists;

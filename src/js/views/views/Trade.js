@@ -164,8 +164,8 @@ class Trade extends React.Component {
 
         const cols = getCols('', 'Name', 'Pos', 'Age', 'Ovr', 'Pot', 'Contract', 'Min', 'Pts', 'Reb', 'Ast', 'PER');
         cols[0].sortSequence = [];
-        const otherRows = genRows(otherRoster, this.handleChangeAsset.bind(this, 'other-pids'));
-        const userRows = genRows(userRoster, this.handleChangeAsset.bind(this, 'user-pids'));
+        const otherRows = genRows(otherRoster, pid => this.handleChangeAsset('other-pids', pid));
+        const userRows = genRows(userRoster, pid => this.handleChangeAsset('user-pids', pid));
 
         return <div>
             <h1>Trade <NewWindowLink /></h1>
@@ -191,7 +191,7 @@ class Trade extends React.Component {
                         <div className="table-responsive">
                             <table className="table table-striped table-bordered table-condensed">
                                 <thead>
-                                    <tr><th></th><th width="100%">Draft Picks</th></tr>
+                                    <tr><th /><th width="100%">Draft Picks</th></tr>
                                 </thead>
                                 <tbody>
                                     {otherPicks.map(pick => <tr key={pick.dpid}>
@@ -213,7 +213,7 @@ class Trade extends React.Component {
                         <div className="table-responsive">
                             <table className="table table-striped table-bordered table-condensed">
                                 <thead>
-                                    <tr><th></th><th width="100%">Draft Picks</th></tr>
+                                    <tr><th /><th width="100%">Draft Picks</th></tr>
                                 </thead>
                                 <tbody>
                                     {userPicks.map(pick => <tr key={pick.dpid}>
@@ -271,5 +271,28 @@ class Trade extends React.Component {
         </div>;
     }
 }
+
+Trade.propTypes = {
+    gameOver: React.PropTypes.bool.isRequired,
+    godMode: React.PropTypes.bool.isRequired,
+    lost: React.PropTypes.number.isRequired,
+    otherDpids: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
+    otherPicks: React.PropTypes.array.isRequired,
+    otherPids: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
+    otherRoster: React.PropTypes.array.isRequired,
+    otherTid: React.PropTypes.number.isRequired,
+    phase: React.PropTypes.number.isRequired,
+    salaryCap: React.PropTypes.number.isRequired,
+    summary: React.PropTypes.object.isRequired,
+    showResigningMsg: React.PropTypes.bool.isRequired,
+    strategy: React.PropTypes.string.isRequired,
+    teams: React.PropTypes.array.isRequired,
+    userDpids: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
+    userPicks: React.PropTypes.array.isRequired,
+    userPids: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
+    userRoster: React.PropTypes.array.isRequired,
+    userTeamName: React.PropTypes.string.isRequired,
+    won: React.PropTypes.number.isRequired,
+};
 
 module.exports = Trade;

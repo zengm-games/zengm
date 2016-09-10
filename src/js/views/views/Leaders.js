@@ -35,8 +35,8 @@ const Leaders = ({categories, season}) => {
                         </table>
                     </div>
                 </div>
-                {i % 3 === 2 ? <div className="clearfix visible-md visible-lg"></div> : null}
-                {i % 2 === 1 ? <div className="clearfix visible-sm"></div> : null}
+                {i % 3 === 2 ? <div className="clearfix visible-md visible-lg" /> : null}
+                {i % 2 === 1 ? <div className="clearfix visible-sm" /> : null}
             </div>)}
         </div>
     </div>;

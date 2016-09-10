@@ -117,12 +117,12 @@ class ResetPassword extends React.Component {
                 <div className="form-group">
                     <label className="control-label" htmlFor="resetpw-password">Password</label>
                     <input type="password" className="form-control" id="resetpw-password" name="password" required="required" />
-                    <span className="help-block" id="resetpw-password-error"></span>
+                    <span className="help-block" id="resetpw-password-error" />
                 </div>
                 <div className="form-group">
                     <label className="control-label" htmlFor="resetpw-password2">Verify Password</label>
                     <input type="password" className="form-control" id="resetpw-password2" name="password2" required="required" />
-                    <span className="help-block" id="resetpw-password2-error"></span>
+                    <span className="help-block" id="resetpw-password2-error" />
                 </div>
                 <button type="submit" className="btn btn-default btn-primary">Reset Password</button>
                 <p className="text-danger" style={{marginTop: '1em'}}>{this.state.resetpwError}</p>
@@ -131,7 +131,7 @@ class ResetPassword extends React.Component {
 
         return <div>
             <div className="row">
-                <div className="col-lg-4 col-md-4 col-sm-3 hidden-xs"></div>
+                <div className="col-lg-4 col-md-4 col-sm-3 hidden-xs" />
                 <div className="col-lg-4 col-md-4 col-sm-6">
                     <h1>Reset Password</h1>
                     {this.state.showForm ? form : null}

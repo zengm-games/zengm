@@ -18,7 +18,7 @@ const History = ({awards, champ, confs, invalidSeason, retiredPlayers, season, u
         <JumpTo season={season} />
         <h1>Season Summary <NewWindowLink /></h1>
 
-        <p></p>
+        <p />
         <div className="row">
             <div className="col-md-3 col-sm-4 col-xs-12">
                 <div className="row">
@@ -75,7 +75,7 @@ const History = ({awards, champ, confs, invalidSeason, retiredPlayers, season, u
                 </div>)}
                 <br />
             </div>
-            <div className="clearfix visible-sm visible-xs"></div>
+            <div className="clearfix visible-sm visible-xs" />
             <div className="col-md-3 col-sm-12">
                 <h4>Retired Players</h4>
                 <p style={{MozColumnWidth: '12em', MozColumns: '12em', WebkitColumns: '12em', columns: '12em'}}>

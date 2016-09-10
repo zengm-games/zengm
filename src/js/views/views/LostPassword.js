@@ -52,13 +52,13 @@ class LostPassword extends React.Component {
 
         return <div>
             <div className="row">
-                <div className="col-lg-4 col-md-4 col-sm-3 hidden-xs"></div>
+                <div className="col-lg-4 col-md-4 col-sm-3 hidden-xs" />
                 <div className="col-lg-4 col-md-4 col-sm-6">
                     <h1>Lost Password</h1>
                     <p>Enter your username or email address below to recover your login information.</p>
                     <form onSubmit={this.handleSubmit} id="lostpw" data-no-davis="true">
                         <div className="form-group">
-                            <label className="control-label" for="lostpw-entry">Username or Email Address</label>
+                            <label className="control-label" htmlFor="lostpw-entry">Username or Email Address</label>
                             <input type="text" className="form-control" id="lostpw-entry" name="entry" required="required" />
                         </div>
                         <button type="submit" className="btn btn-default btn-primary">Recover Login Info</button>

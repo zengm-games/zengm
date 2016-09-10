@@ -73,7 +73,7 @@ const PlayerStatDists = ({season, statsAll = {}}) => {
                     </td></tr>;
                     let nbaPlot = null;
                     if (nbaQuartiles.hasOwnProperty(stat)) {
-                        nbaPlot = <tr><td></td><td width="100%"><div style={{marginTop: '-26px'}}>
+                        nbaPlot = <tr><td /><td width="100%"><div style={{marginTop: '-26px'}}>
                             <BoxPlot color="#0088cc" labels={false} scale={scale[stat]} quartiles={nbaQuartiles[stat]} />
                         </div></td></tr>;
                     }

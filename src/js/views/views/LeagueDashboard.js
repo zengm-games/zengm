@@ -25,7 +25,7 @@ const LeagueDashboard = ({abbrev, ast, astRank, att, cash, completed, confTeams,
             <div className="col-md-8">
                 <div className="row">
                     <div className="col-sm-4 hidden-xs">
-                        <h3></h3>
+                        <h3 />
                         <table className="table table-striped table-bordered table-condensed">
                             <thead>
                                 <tr><th width="100%">Team</th><th style={{textAlign: 'right'}}>GB</th></tr>
@@ -110,7 +110,7 @@ const LeagueDashboard = ({abbrev, ast, astRank, att, cash, completed, confTeams,
                     </div>
                 </div>
             </div>
-            <div className="clearfix visible-sm"></div>
+            <div className="clearfix visible-sm" />
             <div className="col-md-4">
                 <div className="row">
                     <div className="col-md-12 col-xs-6">

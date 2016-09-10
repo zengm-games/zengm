@@ -7,7 +7,7 @@ class Footer extends React.Component {
 
     render() {
         return <div>
-            <p className="clearfix"></p>
+            <p className="clearfix" />
 
             <div id="banner-ad-bottom-wrapper" />
 

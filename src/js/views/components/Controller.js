@@ -44,6 +44,7 @@ class Controller extends React.Component {
                 username: null,
             },
         };
+        this.closeNagModal = this.closeNagModal.bind(this);
         this.get = this.get.bind(this);
         this.updatePage = this.updatePage.bind(this);
         this.updateMultiTeam = this.updateMultiTeam.bind(this);
@@ -75,6 +76,12 @@ class Controller extends React.Component {
         g.emitter.removeListener('updateMultiTeam', this.updateMultiTeam);
         g.emitter.removeListener('updateState', this.updateState);
         g.emitter.removeListener('updateTopMenu', this.updateTopMenu);
+    }
+
+    closeNagModal() {
+        this.setState({
+            showNagModal: false,
+        });
     }
 
     async get(fnUpdate, args, req) {
@@ -224,11 +231,10 @@ class Controller extends React.Component {
                 {contents}
             </div>
             <Footer />
-            <NagModal close={() => {
-                this.setState({
-                    showNagModal: false,
-                });
-            }} show={this.state.showNagModal} />
+            <NagModal
+                close={this.closeNagModal}
+                show={this.state.showNagModal}
+            />
         </div>;
     }
 }

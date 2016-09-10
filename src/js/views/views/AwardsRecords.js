@@ -19,10 +19,10 @@ const AwardsRecords = ({awardType, awardTypeVal, awardsRecords, playerCount}) =>
 
     function checkmarkOrCross(condition) {
         if (condition) {
-            return <span className="glyphicon glyphicon-ok text-success"></span>;
+            return <span className="glyphicon glyphicon-ok text-success" />;
         }
 
-        return <span className="glyphicon glyphicon-remove text-danger"></span>;
+        return <span className="glyphicon glyphicon-remove text-danger" />;
     }
 
     const rows = awardsRecords.map(a => {

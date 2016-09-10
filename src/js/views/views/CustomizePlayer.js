@@ -410,7 +410,7 @@ class CustomizePlayer extends React.Component {
                         {pictureDiv}
                     </div>
 
-                    <div className="clearfix visible-sm visible-xs"></div>
+                    <div className="clearfix visible-sm visible-xs" />
 
                     <div className="col-md-5">
                         <h2>Ratings</h2>
@@ -424,8 +424,7 @@ class CustomizePlayer extends React.Component {
                                     <input type="text" className="form-control" onChange={this.handleChange.bind(this, 'rating', 'pot')}value={p.ratings[r].pot} />
                                 </div>
                             </div>
-                            <div className="col-xs-8">
-                            </div>
+                            <div className="col-xs-8" />
                         </div>
                         <div className="row">
                             <div className="col-xs-4">

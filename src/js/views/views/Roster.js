@@ -145,7 +145,7 @@ const ReorderHandle = ({i, onClick, pid, selectedPid}) => {
         backgroundColor = 'rgb(66, 139, 202)';
     }
 
-    return <td className="roster-handle" style={{backgroundColor}} onClick={onClick}></td>;
+    return <td className="roster-handle" style={{backgroundColor}} onClick={onClick} />;
 };
 
 // This needs to look at all players, because rosterOrder is not guaranteed to be unique after free agent signings and trades
@@ -326,7 +326,7 @@ class Roster extends React.Component {
 
             <h1>{team.region} {team.name} Roster <NewWindowLink /></h1>
             <p>More: <a href={helpers.leagueUrl(['team_finances', abbrev])}>Finances</a> | <a href={helpers.leagueUrl(['game_log', abbrev, season])}>Game Log</a> | <a href={helpers.leagueUrl(['team_history', abbrev])}>History</a> | <a href={helpers.leagueUrl(['transactions', abbrev])}>Transactions</a></p>
-            <div className="team-picture" style={logoStyle}></div>
+            <div className="team-picture" style={logoStyle} />
             <div>
                 <h3>
                     Record: <RecordAndPlayoffs
@@ -335,7 +335,7 @@ class Roster extends React.Component {
                         won={team.won}
                         lost={team.lost}
                         playoffRoundsWon={team.playoffRoundsWon}
-                        option='noSeason'
+                        option="noSeason"
                     />
                 </h3>
 
@@ -355,7 +355,7 @@ class Roster extends React.Component {
                 <table className="table table-striped table-bordered table-condensed table-hover">
                     <thead>
                         <tr>
-                            {editable ? <th></th> : null}
+                            {editable ? <th /> : null}
                             <th>Name</th>
                             <th title="Position">Pos</th>
                             <th>Age</th>

@@ -103,7 +103,7 @@ class FinancesForm extends React.Component {
                 </div>
                 <div className="pull-left finances-settings-text">Leaguewide rank: #{team.budget.ticketPrice.rank}</div>
             </div>
-            <p></p>
+            <p />
             <h4>Expense Settings <HelpPopover placement="bottom" title="Expense Settings">
                 <p>Scouting: Controls the accuracy of displayed player ratings.</p>
                 <p>Coaching: Better coaches mean better player development.</p>
@@ -322,7 +322,7 @@ const TeamFinances = ({abbrev, barData, barSeasons, contractTotals, contracts, g
                 />
             </div>
         </div>
-        <p className="clearfix"></p>
+        <p className="clearfix" />
 
         <h2>Player Salaries</h2>
 

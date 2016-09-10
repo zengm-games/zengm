@@ -266,14 +266,14 @@ const Player = ({events, feats, freeAgent, godMode, injured, player, retired, sh
                 </div>
             </div>
 
-            <div className="visible-xs clearfix"></div>
+            <div className="visible-xs clearfix" />
 
             <div className="col-sm-6" style={{whiteSpace: 'nowrap'}}>
                 {!retired ? <RatingsOverview ratings={player.ratings} /> : null}
             </div>
         </div>
 
-        <p></p>
+        <p />
 
         {
             showTradeFor

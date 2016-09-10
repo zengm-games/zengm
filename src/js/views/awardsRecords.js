@@ -147,5 +147,3 @@ module.exports = bbgmViewReact.init({
     Component: AwardsRecords,
 });
 
-
-

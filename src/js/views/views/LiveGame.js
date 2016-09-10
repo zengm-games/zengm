@@ -81,7 +81,7 @@ const BoxScore = ({boxScore}) => <div>
                 <tfoot>
                     <tr>
                         <td>Total</td>
-                        <td></td>
+                        <td />
                         <td>{helpers.round(t.min, 1)}</td>
                         <td>{t.fg}-{t.fga}</td>
                         <td>{t.tp}-{t.tpa}</td>
@@ -95,8 +95,8 @@ const BoxScore = ({boxScore}) => <div>
                         <td>{t.ba}</td>
                         <td>{t.pf}</td>
                         <td>{t.pts}</td>
-                        <td></td>
-                        <td></td>
+                        <td />
+                        <td />
                     </tr>
                 </tfoot>
             </table>
@@ -294,9 +294,12 @@ class LiveGame extends React.Component {
                                 <input type="range" id="playByPlaySpeed" min="1" max="33" step="1" style={{width: '100%'}} value={this.state.speed} onChange={this.handleSpeedChange} />
                             </form>
 
-                            <div ref={c => {
-                                this.playByPlayDiv = c;
-                            }} style={{height: '100%', overflow: 'auto'}} />
+                            <div
+                                ref={c => {
+                                    this.playByPlayDiv = c;
+                                }}
+                                style={{height: '100%', overflow: 'auto'}}
+                            />
                         </div>
                     </AutoAffix>
                 </div>

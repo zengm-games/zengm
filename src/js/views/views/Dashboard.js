@@ -7,7 +7,7 @@ const Dashboard = ({leagues, otherUrl}) => {
     let otherUrlLink = null;
     if (otherUrl) {
         otherUrlLink = <div>
-            <div className="clearfix"></div>
+            <div className="clearfix" />
             <br /><br />
             <span className="alert alert-info"><a href={otherUrl}>Missing some leagues? Click here to find them.</a></span>
             <br /><br />

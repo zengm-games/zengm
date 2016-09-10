@@ -184,7 +184,7 @@ class NewLeague extends React.Component {
                         <input className="form-control" type="text" value={name} onChange={this.handleChange.bind(this, 'name')} />
                     </div>
 
-                    <div className="clearfix visible-xs"></div>
+                    <div className="clearfix visible-xs" />
 
                     <div className="form-group col-md-4 col-sm-5">
                         <label>Which team do you want to manage?</label>
@@ -198,7 +198,7 @@ class NewLeague extends React.Component {
                         <PopText tid={tid} teams={teams} />
                     </div>
 
-                    <div className="clearfix visible-sm"></div>
+                    <div className="clearfix visible-sm" />
 
                     <div className="col-md-4 col-sm-5">
                         <div className="form-group">
@@ -234,7 +234,7 @@ class NewLeague extends React.Component {
 
                     </div>
 
-                    <div className="clearfix visible-xs"></div>
+                    <div className="clearfix visible-xs" />
 
                     <div className="col-md-12 col-sm-5 text-center">
                         <div className="visible-sm invisible-xs"><br /><br /></div>

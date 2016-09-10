@@ -81,7 +81,7 @@ class BoxScore extends React.Component {
                             <table className="table table-bordered table-condensed" style={{margin: '0 auto'}}>
                                 <thead>
                                     <tr>
-                                        <th></th>
+                                        <th />
                                         {boxScore.qtrs.map(qtr => <th key={qtr}>{qtr}</th>)}
                                     </tr>
                                 </thead>
@@ -96,7 +96,7 @@ class BoxScore extends React.Component {
                         </div>
                         <div className="game-log-four-factors">
                             <table className="table table-bordered table-condensed" style={{margin: '0 auto'}}>
-                                <thead><tr></tr><tr><th title="Four Factors: Effective Field Goal Percentage">eFG%</th><th title="Four Factors: Turnover Percentage">TOV%</th><th title="Four Factors: Offensive Rebound Percentage">ORB%</th><th title="Four Factors: Free Throws Made Over Field Goal Attempts">FT/FGA</th></tr></thead>
+                                <thead><tr /><tr><th title="Four Factors: Effective Field Goal Percentage">eFG%</th><th title="Four Factors: Turnover Percentage">TOV%</th><th title="Four Factors: Offensive Rebound Percentage">ORB%</th><th title="Four Factors: Free Throws Made Over Field Goal Attempts">FT/FGA</th></tr></thead>
                                 <tbody>
                                     {boxScore.teams.map((t, i) => <tr key={t.abbrev}>
                                         <td className={t.efg >= boxScore.teams[1 - i].efg ? 'success' : null}>
@@ -140,7 +140,7 @@ class BoxScore extends React.Component {
                         <tfoot>
                             <tr>
                                 <td>Total</td>
-                                <td></td>
+                                <td />
                                 <td>{t.min}</td>
                                 <td>{t.fg}-{t.fga}</td>
                                 <td>{t.tp}-{t.tpa}</td>
@@ -154,8 +154,8 @@ class BoxScore extends React.Component {
                                 <td>{t.ba}</td>
                                 <td>{t.pf}</td>
                                 <td>{t.pts}</td>
-                                <td></td>
-                                <td></td>
+                                <td />
+                                <td />
                             </tr>
                         </tfoot>
                     </table>
@@ -197,7 +197,7 @@ const GameLog = ({abbrev, boxScore, gamesList = {games: []}, season}) => {
 
         <p>More: <a href={helpers.leagueUrl(['roster', abbrev, season])}>Roster</a> | <a href={helpers.leagueUrl(['team_finances', abbrev])}>Finances</a> | <a href={helpers.leagueUrl(['team_history', abbrev])}>History</a> | <a href={helpers.leagueUrl(['transactions', abbrev])}>Transactions</a></p>
 
-        <p></p>
+        <p />
         <div className="row">
             <div className="col-md-10">
                 {

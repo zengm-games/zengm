@@ -9,8 +9,8 @@ const HelpPopover = ({children, placement, title}) => {
       </Popover>
     );
 
-    return <OverlayTrigger trigger="click" rootClose={true} placement={placement} overlay={popoverLeft}>
-        <span className="glyphicon glyphicon-question-sign help-icon"></span>
+    return <OverlayTrigger trigger="click" rootClose placement={placement} overlay={popoverLeft}>
+        <span className="glyphicon glyphicon-question-sign help-icon" />
     </OverlayTrigger>;
 };
 HelpPopover.propTypes = {

@@ -27,7 +27,7 @@ module.exports = function (config) {
         singleRun: true,
 
         browserify: {
-            transform: ['babelify', 'browserify-shim', 'brfs'],
+            transform: ['babelify'],
         },
     });
 };

@@ -9,8 +9,6 @@ better eslint
 when all react
   reevaluate views folder structure... maybe views -> ui, and views/*.js -> ui/data-loaders/*.js
   reevaluate bbgmView API
-  get rid of bootstrap js
-    get rid of browserify-shim
   go through ui.js, reevaluate
   confirm ads work
     need to make them react components, to get topMenu

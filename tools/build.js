@@ -1,4 +1,4 @@
-const build = require('./buildFuncs.js');
+const build = require('./buildFuncs');
 
 console.log("Starting build.js...");
 

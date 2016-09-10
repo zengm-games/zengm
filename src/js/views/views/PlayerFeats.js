@@ -89,7 +89,7 @@ const PlayerFeats = ({abbrev, feats, playoffs, season}) => {
             cols={cols}
             defaultSort={[23, 'desc']}
             rows={rows}
-            pagination={true}
+            pagination
             superCols={superCols}
         />
     </div>;

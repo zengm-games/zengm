@@ -51,7 +51,7 @@ const AwardsRecords = ({awardType, awardTypeVal, awardsRecords, playerCount}) =>
             cols={cols}
             defaultSort={[1, 'desc']}
             rows={rows}
-            pagination={true}
+            pagination
         />
     </div>;
 };

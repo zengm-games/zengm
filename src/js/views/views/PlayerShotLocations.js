@@ -72,7 +72,7 @@ const PlayerShotLocations = ({season, players}) => {
             cols={cols}
             defaultSort={[5, 'desc']}
             rows={rows}
-            pagination={true}
+            pagination
             superCols={superCols}
         />
     </div>;

@@ -44,9 +44,14 @@ const UpcomingFreeAgents = ({players, season}) => {
             cols={cols}
             defaultSort={[3, 'desc']}
             rows={rows}
-            pagination={true}
+            pagination
         />
     </div>;
+};
+
+UpcomingFreeAgents.propTypes = {
+    players: React.PropTypes.array.isRequired,
+    season: React.PropTypes.number.isRequired,
 };
 
 module.exports = UpcomingFreeAgents;

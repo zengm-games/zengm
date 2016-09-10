@@ -148,10 +148,6 @@ css build process?
 
 CI, dep version checking, etc
 
-eslint
-  "arrow-parens": ["error", "as-needed"],
-    doesn't seem to actually work as the documentation says... try again later
-
 CURRENT
 -------
 

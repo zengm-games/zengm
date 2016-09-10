@@ -90,7 +90,7 @@ const HistoryAll = ({seasons}) => {
         <DataTable
             cols={cols}
             defaultSort={[0, 'desc']}
-            pagination={true}
+            pagination
             rows={rows}
         />
     </div>;

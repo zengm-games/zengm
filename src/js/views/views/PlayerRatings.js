@@ -61,7 +61,7 @@ const PlayerRatings = ({abbrev, players, season}) => {
         <DataTable
             cols={cols}
             defaultSort={[5, 'desc']}
-            pagination={true}
+            pagination
             rows={rows}
         />
     </div>;

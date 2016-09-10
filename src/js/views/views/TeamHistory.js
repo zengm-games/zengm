@@ -92,7 +92,7 @@ const TeamHistory = ({abbrev, bestRecord, championships, history, players, playo
                     cols={cols}
                     defaultSort={[2, 'desc']}
                     rows={rows}
-                    pagination={true}
+                    pagination
                 />
             </div>
         </div>

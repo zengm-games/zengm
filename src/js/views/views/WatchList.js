@@ -108,20 +108,26 @@ class WatchList extends React.Component {
             </div>
             <h1>Watch List <NewWindowLink /></h1>
 
-            <p>Click the watch icon <span className="glyphicon glyphicon-flag"></span> next to a player's name to add or remove him from this list.</p>
+            <p>Click the watch icon <span className="glyphicon glyphicon-flag" /> next to a player's name to add or remove him from this list.</p>
 
             <button className="btn btn-danger" disabled={this.state.clearing} onClick={this.clearWatchList}>Clear Watch List</button>
 
-            <p className="clearfix"></p>
+            <p className="clearfix" />
 
             <DataTable
                 cols={cols}
                 defaultSort={[0, 'asc']}
-                pagination={true}
+                pagination
                 rows={rows}
             />
         </div>;
     }
 }
+
+WatchList.propTypes = {
+    players: React.PropTypes.array.isRequired,
+    playoffs: React.PropTypes.oneOf(['playoffs', 'regular_season']).isRequired,
+    statType: React.PropTypes.oneOf(['per_36', 'per_game', 'totals']).isRequired,
+};
 
 module.exports = WatchList;

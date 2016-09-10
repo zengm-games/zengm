@@ -36,6 +36,12 @@ const OfferPlayerRow = clickable(({clicked, p, toggleClicked}) => {
     </tr>;
 });
 
+OfferPlayerRow.propTypes = {
+    clicked: React.PropTypes.bool,
+    p: React.PropTypes.object,
+    toggleClicked: React.PropTypes.func,
+};
+
 const Offer = props => {
     const {abbrev, dpids, handleClickNegotiate, i, lost, name, payroll, picks, pids, players, region, strategy, tid, warning, won} = props;
 
@@ -87,6 +93,23 @@ const Offer = props => {
     </div>;
 };
 
+Offer.propTypes = {
+    abbrev: React.PropTypes.string,
+    dpids: React.PropTypes.arrayOf(React.PropTypes.number),
+    handleClickNegotiate: React.PropTypes.func,
+    i: React.PropTypes.number,
+    lost: React.PropTypes.number,
+    name: React.PropTypes.string,
+    payroll: React.PropTypes.number,
+    picks: React.PropTypes.array,
+    pids: React.PropTypes.arrayOf(React.PropTypes.number),
+    players: React.PropTypes.array,
+    region: React.PropTypes.string,
+    strategy: React.PropTypes.string,
+    tid: React.PropTypes.number,
+    warning: React.PropTypes.string,
+    won: React.PropTypes.number,
+};
 
 const getOffers = async (userPids, userDpids, onProgress) => {
     // Pick 10 random teams to try (or all teams, if g.numTeams < 10)
@@ -197,8 +220,12 @@ const augmentOffers = offers => {
 
 const ProgressBar = ({progress}) => {
     return <div className="progress progress-striped active" style={{width: '300px'}}>
-        <div className="progress-bar" style={{width: `${progress}%`}}></div>
+        <div className="progress-bar" style={{width: `${progress}%`}} />
     </div>;
+};
+
+ProgressBar.propTypes = {
+    progress: React.PropTypes.number.isRequired,
 };
 
 class TradingBlock extends React.Component {
@@ -218,8 +245,8 @@ class TradingBlock extends React.Component {
 
     async handleChangeAsset(type, id) {
         const ids = {
-            'pids': helpers.deepCopy(this.state.pids),
-            'dpids': helpers.deepCopy(this.state.dpids),
+            pids: helpers.deepCopy(this.state.pids),
+            dpids: helpers.deepCopy(this.state.dpids),
         };
 
         if (ids[type].includes(id)) {
@@ -315,6 +342,15 @@ class TradingBlock extends React.Component {
             };
         });
 
+        let askButtonOrProgress;
+        if (!this.state.asking) {
+            askButtonOrProgress = <button className="btn btn-lg btn-primary" onClick={this.handleClickAsk}>
+                Ask For Trade Proposals
+            </button>;
+        } else {
+            askButtonOrProgress = <ProgressBar progress={this.state.progress} />;
+        }
+
         return <div>
             <h1>Trading Block <NewWindowLink /></h1>
 
@@ -331,7 +367,7 @@ class TradingBlock extends React.Component {
                 <div className="col-md-3">
                     <table className="table table-striped table-bordered table-condensed" id="picks-user">
                         <thead>
-                            <tr><th></th><th width="100%">Draft Picks</th></tr>
+                            <tr><th /><th width="100%">Draft Picks</th></tr>
                         </thead>
                         <tbody>
                             {userPicks.map(pick => <tr key={pick.dpid}>
@@ -351,15 +387,7 @@ class TradingBlock extends React.Component {
 
             <p />
             <center>
-                {
-                    !this.state.asking
-                ?
-                    <button className="btn btn-lg btn-primary" onClick={this.handleClickAsk}>
-                        Ask For Trade Proposals
-                    </button>
-                :
-                    <ProgressBar progress={this.state.progress} />
-                }
+                {askButtonOrProgress}
             </center>
 
             {this.state.offers.map((offer, i) => {
@@ -373,5 +401,12 @@ class TradingBlock extends React.Component {
         </div>;
     }
 }
+
+TradingBlock.propTypes = {
+    gameOver: React.PropTypes.bool.isRequired,
+    phase: React.PropTypes.number.isRequired,
+    userPicks: React.PropTypes.array.isRequired,
+    userRoster: React.PropTypes.array.isRequired,
+};
 
 module.exports = TradingBlock;

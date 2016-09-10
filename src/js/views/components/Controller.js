@@ -29,7 +29,7 @@ class Controller extends React.Component {
                 userTid: g.userTid,
                 userTids: g.userTids,
             },
-            showNagModal: true,
+            showNagModal: false,
             topMenu: {
                 email: null,
                 godMode: g.godMode,
@@ -47,6 +47,7 @@ class Controller extends React.Component {
         this.get = this.get.bind(this);
         this.updatePage = this.updatePage.bind(this);
         this.updateMultiTeam = this.updateMultiTeam.bind(this);
+        this.updateState = this.updateState.bind(this);
         this.updateTopMenu = this.updateTopMenu.bind(this);
         this.setStateData = this.setStateData.bind(this);
     }
@@ -55,6 +56,7 @@ class Controller extends React.Component {
         g.emitter.on('get', this.get);
         g.emitter.on('updatePage', this.updatePage);
         g.emitter.on('updateMultiTeam', this.updateMultiTeam);
+        g.emitter.on('updateState', this.updateState);
         g.emitter.on('updateTopMenu', this.updateTopMenu);
 
         if (this.state.topMenu.popup) {
@@ -71,6 +73,7 @@ class Controller extends React.Component {
         g.emitter.removeListener('get', this.get);
         g.emitter.removeListener('updatePage', this.updatePage);
         g.emitter.removeListener('updateMultiTeam', this.updateMultiTeam);
+        g.emitter.removeListener('updateState', this.updateState);
         g.emitter.removeListener('updateTopMenu', this.updateTopMenu);
     }
 
@@ -178,6 +181,10 @@ class Controller extends React.Component {
                 userTids: g.userTids,
             },
         });
+    }
+
+    updateState(obj) {
+        this.setState(obj);
     }
 
     updateTopMenu(obj) {

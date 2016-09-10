@@ -13,9 +13,6 @@ when all react
   confirm ads work
     need to make them react components, to get topMenu
     control overlays and banners from react
-    NagModal
-      don't show if gold
-      control from react somehow
   escape HTML saved to IDB very carefully (event log, feat text, play by play text displayed in LiveGame, edit team info)
   confirm gold stuff works
     cancel

@@ -1,6 +1,5 @@
 /*eslint new-cap: 0*/
 const g = require('../globals');
-const $ = require('jquery');
 const postscribe = require('postscribe');
 
 function showGCS() {
@@ -33,7 +32,7 @@ function showSurvata() {
 }
 
 function showModal() {
-    $("#modal-ads").modal("show");
+    g.emitter.emit('updateState', {showNagModal: true});
 }
 
 function show() {

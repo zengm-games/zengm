@@ -38,10 +38,24 @@ const StatsRow = clickable(({clicked, i, numPlayers, p, toggleClicked}) => {
     </tr>;
 });
 
+StatsRow.propTypes = {
+    i: React.PropTypes.number.isRequired,
+    numPlayers: React.PropTypes.number.isRequired,
+    p: React.PropTypes.object.isRequired,
+};
+
 class BoxScore extends React.Component {
     constructor(props) {
         super(props);
         this.handleKeydown = this.handleKeydown.bind(this);
+    }
+
+    componentDidMount() {
+        document.addEventListener('keydown', this.handleKeydown);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('keydown', this.handleKeydown);
     }
 
     handleKeydown(e) {
@@ -52,14 +66,6 @@ class BoxScore extends React.Component {
             // next
             ui.realtimeUpdate([], helpers.leagueUrl(['game_log', this.props.abbrev, this.props.season, this.props.nextGid]));
         }
-    }
-
-    componentDidMount() {
-        document.addEventListener('keydown', this.handleKeydown);
-    }
-
-    componentWillUnmount() {
-        document.removeEventListener('keydown', this.handleKeydown);
     }
 
     render() {
@@ -167,6 +173,14 @@ class BoxScore extends React.Component {
     }
 }
 
+BoxScore.propTypes = {
+    abbrev: React.PropTypes.string.isRequired,
+    boxScore: React.PropTypes.object.isRequired,
+    nextGid: React.PropTypes.number,
+    prevGid: React.PropTypes.number,
+    season: React.PropTypes.number.isRequired,
+};
+
 function findPrevNextGids(games = [], currentGid) {
     let prevGid = null;
     let nextGid = null;
@@ -200,33 +214,24 @@ const GameLog = ({abbrev, boxScore, gamesList = {games: []}, season}) => {
         <p />
         <div className="row">
             <div className="col-md-10">
-                {
-                    boxScore.gid >= 0
-                ?
-                    <BoxScore
-                        abbrev={abbrev}
-                        boxScore={boxScore}
-                        nextGid={nextGid}
-                        prevGid={prevGid}
-                        season={season}
-                    />
-                :
-                    <p>Select a game from the menu to view a box score.</p>
-                }
+                {boxScore.gid >= 0 ? <BoxScore
+                    abbrev={abbrev}
+                    boxScore={boxScore}
+                    nextGid={nextGid}
+                    prevGid={prevGid}
+                    season={season}
+                /> : <p>Select a game from the menu to view a box score.</p>}
             </div>
 
             <div className="col-md-2">
                 <table className="table table-striped table-bordered table-condensed game-log-list">
-                <thead>
-                    <tr><th>Opp</th><th>W/L</th><th>Score</th></tr>
-                </thead>
-                <tbody>
-                    {
-                        gamesList.abbrev !== abbrev
-                    ?
-                        <tr><td colSpan="3">Loading...</td></tr>
-                    :
-                        gamesList.games.map(gm => {
+                    <thead>
+                        <tr><th>Opp</th><th>W/L</th><th>Score</th></tr>
+                    </thead>
+                    <tbody>
+                        {gamesList.abbrev !== abbrev ? <tr>
+                            <td colSpan="3">Loading...</td>
+                        </tr> : gamesList.games.map(gm => {
                             return <tr key={gm.gid} className={gm.gid === boxScore.gid ? 'info' : null}>
                                 <td className="game-log-cell">
                                     <a href={helpers.leagueUrl(['game_log', abbrev, season, gm.gid])}>
@@ -244,13 +249,19 @@ const GameLog = ({abbrev, boxScore, gamesList = {games: []}, season}) => {
                                     </a>
                                 </td>
                             </tr>;
-                        })
-                    }
-                </tbody>
+                        })}
+                    </tbody>
                 </table>
             </div>
         </div>
     </div>;
+};
+
+GameLog.propTypes = {
+    abbrev: React.PropTypes.string.isRequired,
+    boxScore: React.PropTypes.object.isRequired,
+    gamesList: React.PropTypes.object,
+    season: React.PropTypes.number.isRequired,
 };
 
 module.exports = GameLog;

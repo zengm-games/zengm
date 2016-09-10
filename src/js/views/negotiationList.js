@@ -17,8 +17,8 @@ async function updateNegotiationList() {
     // Get all free agents, filter array based on negotiations data, pass to player.filter, augment with contract data from negotiations
     let [negotiations, players] = await Promise.all([
         g.dbl.negotiations.getAll(),
-        g.dbl.players.index('tid').getAll(g.PLAYER.FREE_AGENT).then(players => {
-            return player.withStats(null, players, {
+        g.dbl.players.index('tid').getAll(g.PLAYER.FREE_AGENT).then(players2 => {
+            return player.withStats(null, players2, {
                 statsSeasons: [g.season],
                 statsTid: g.userTid,
             });

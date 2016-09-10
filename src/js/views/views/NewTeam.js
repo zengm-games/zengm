@@ -63,16 +63,17 @@ class NewTeam extends React.Component {
             </div>;
         }
 
+        let message;
+        if (godMode) {
+            message = <p>Because you're in <a href={helpers.leagueUrl(['god_mode'])}>God Mode</a>, you can become the GM of any team.</p>;
+        } else {
+            message = <p>After you were fired, your agent tried to get you job offers from other teams. Unfortunately, he was only able to secure offers from some of the worst teams in the league. Are you interested in running any of these teams?</p>;
+        }
+
         return <div>
             <h1>Pick a New Team <NewWindowLink /></h1>
 
-            {
-                godMode
-            ?
-                <p>Because you're in <a href={helpers.leagueUrl(['god_mode'])}>God Mode</a>, you can become the GM of any team.</p>
-            :
-                <p>After you were fired, your agent tried to get you job offers from other teams. Unfortunately, he was only able to secure offers from some of the worst teams in the league. Are you interested in running any of these teams?</p>
-            }
+            {message}
 
             <div className="form-group">
                 <select className="form-control select-team" onChange={this.handleTidChange} value={this.state.tid}>
@@ -88,5 +89,15 @@ class NewTeam extends React.Component {
         </div>;
     }
 }
+
+NewTeam.propTypes = {
+    gameOver: React.PropTypes.bool.isRequired,
+    godMode: React.PropTypes.bool.isRequired,
+    teams: React.PropTypes.arrayOf(React.PropTypes.shape({
+        name: React.PropTypes.string.isRequired,
+        region: React.PropTypes.string.isRequired,
+        tid: React.PropTypes.number.isRequired,
+    })).isRequired,
+};
 
 module.exports = NewTeam;

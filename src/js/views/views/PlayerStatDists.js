@@ -27,7 +27,7 @@ const nbaQuartiles = {
     pts: [0, 3.3333333333, 7.0507246377, 11.2698735321, 30.1463414634],
 };
 
-const PlayerStatDists = ({season, statsAll = {}}) => {
+const PlayerStatDists = ({season, statsAll}) => {
     bbgmViewReact.title(`Player Stat Distributions - ${season}`);
 
     // Scales for the box plots. This is not done dynamically so that the plots will be comparable across seasons.
@@ -82,6 +82,11 @@ const PlayerStatDists = ({season, statsAll = {}}) => {
             </tbody>
         </table>
     </div>;
+};
+
+PlayerStatDists.propTypes = {
+    season: React.PropTypes.number.isRequired,
+    statsAll: React.PropTypes.object.isRequired,
 };
 
 module.exports = PlayerStatDists;

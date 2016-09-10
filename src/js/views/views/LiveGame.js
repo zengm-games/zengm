@@ -48,6 +48,11 @@ class PlayerRow extends React.Component {
     }
 }
 
+PlayerRow.propTypes = {
+    i: React.PropTypes.number.isRequired,
+    p: React.PropTypes.object.isRequired,
+};
+
 const BoxScore = ({boxScore}) => <div>
     <center>
         <h2><a href={helpers.leagueUrl(['roster', boxScore.teams[0].abbrev, boxScore.season])}>{boxScore.teams[0].region} {boxScore.teams[0].name}</a> {boxScore.teams[0].pts}, <a href={helpers.leagueUrl(['roster', boxScore.teams[1].abbrev, boxScore.season])}>{boxScore.teams[1].region} {boxScore.teams[1].name}</a> {boxScore.teams[1].pts}{boxScore.overtime}</h2>
@@ -60,13 +65,7 @@ const BoxScore = ({boxScore}) => <div>
                 </tr>)}
             </tbody>
         </table>
-        {
-            boxScore.gameOver
-        ?
-            'Final Score'
-        :
-            <span>{boxScore.quarter}, {boxScore.time} left</span>
-        }
+        {boxScore.gameOver ? 'Final Score' : <span>{boxScore.quarter}, {boxScore.time} left</span>}
     </center>
     {boxScore.teams.map(t => <div key={t.abbrev}>
         <h3><a href={helpers.leagueUrl(['roster', t.abbrev, boxScore.season])}>{t.region} {t.name}</a></h3>
@@ -106,6 +105,10 @@ const BoxScore = ({boxScore}) => <div>
     <p>Attendance: {helpers.numberWithCommas(boxScore.att)}</p>
 </div>;
 
+BoxScore.propTypes = {
+    boxScore: React.PropTypes.object.isRequired,
+};
+
 class LiveGame extends React.Component {
     constructor(props) {
         super(props);
@@ -122,6 +125,14 @@ class LiveGame extends React.Component {
         this.setPlayByPlayDivHeight = this.setPlayByPlayDivHeight.bind(this);
     }
 
+    componentDidMount() {
+        this.componentIsMounted = true;
+
+        // Keep height of plays list equal to window
+        this.setPlayByPlayDivHeight();
+        window.addEventListener("resize", this.setPlayByPlayDivHeight);
+    }
+
     componentWillReceiveProps(nextProps) {
         if (nextProps.events && !this.state.started) {
             this.setState({
@@ -131,14 +142,6 @@ class LiveGame extends React.Component {
                 this.startLiveGame(nextProps.events.slice());
             });
         }
-    }
-
-    componentDidMount() {
-        this.componentIsMounted = true;
-
-        // Keep height of plays list equal to window
-        this.setPlayByPlayDivHeight();
-        window.addEventListener("resize", this.setPlayByPlayDivHeight);
     }
 
     componentWillUnmount() {
@@ -278,13 +281,7 @@ class LiveGame extends React.Component {
 
             <div className="row">
                 <div className="col-md-9">
-                    {
-                        this.state.boxScore.gid >= 0
-                    ?
-                        <BoxScore boxScore={this.state.boxScore} />
-                    :
-                        <h1>Loading...</h1>
-                    }
+                    {this.state.boxScore.gid >= 0 ? <BoxScore boxScore={this.state.boxScore} /> : <h1>Loading...</h1>}
                 </div>
                 <div className="col-md-3">
                     <AutoAffix viewportOffsetTop={60} container={this}>
@@ -307,5 +304,12 @@ class LiveGame extends React.Component {
         </div>;
     }
 }
+
+LiveGame.propTypes = {
+    events: React.PropTypes.arrayOf(React.PropTypes.shape({
+        type: React.PropTypes.string.isRequried,
+    })),
+    initialBoxScore: React.PropTypes.object,
+};
 
 module.exports = LiveGame;

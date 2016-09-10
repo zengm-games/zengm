@@ -67,5 +67,11 @@ const PlayerRatings = ({abbrev, players, season}) => {
     </div>;
 };
 
+PlayerRatings.propTypes = {
+    abbrev: React.PropTypes.string.isRequired,
+    players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    season: React.PropTypes.number.isRequired,
+};
+
 module.exports = PlayerRatings;
 

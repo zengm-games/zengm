@@ -36,7 +36,7 @@ async function regressRatingsPer() {
     // returns a new matrix
     Matrix.prototype.mult = function (other) {
         if (this.width !== other.height) {
-            throw "error: incompatible sizes";
+            throw new Error('incompatible sizes');
         }
 
         const result = [];
@@ -60,21 +60,24 @@ async function regressRatingsPer() {
             if (this.width <= lead) {
                 return;
             }
-            let i = r;
-            while (this.mtx[i][lead] === 0) {
-                i++;
-                if (this.height === i) {
-                    i = r;
-                    lead++;
-                    if (this.width === lead) {
-                        return;
+
+            {
+                let i = r;
+                while (this.mtx[i][lead] === 0) {
+                    i++;
+                    if (this.height === i) {
+                        i = r;
+                        lead++;
+                        if (this.width === lead) {
+                            return;
+                        }
                     }
                 }
-            }
 
-            const tmp = this.mtx[i];
-            this.mtx[i] = this.mtx[r];
-            this.mtx[r] = tmp;
+                const tmp = this.mtx[i];
+                this.mtx[i] = this.mtx[r];
+                this.mtx[r] = tmp;
+            }
 
             let val = this.mtx[r][lead];
             for (let j = 0; j < this.width; j++) {
@@ -109,7 +112,7 @@ async function regressRatingsPer() {
     // modifies the matrix "in place"
     Matrix.prototype.inverse = function () {
         if (this.height !== this.width) {
-            throw "can't invert a non-square matrix";
+            throw new Error("can't invert a non-square matrix");
         }
 
         const I = new IdentityMatrix(this.height);

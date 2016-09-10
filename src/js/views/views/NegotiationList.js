@@ -63,4 +63,8 @@ const NegotiationList = ({players}) => {
     </div>;
 };
 
+NegotiationList.propTypes = {
+    players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+};
+
 module.exports = NegotiationList;

@@ -5,7 +5,7 @@ const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, Dropdown, NewWindowLink, PlayerNameLabels} = require('../components');
 
-const PlayerShotLocations = ({season, players}) => {
+const PlayerShotLocations = ({players, season}) => {
     bbgmViewReact.title(`Player Shot Locations - ${season}`);
 
     const superCols = [{
@@ -76,6 +76,11 @@ const PlayerShotLocations = ({season, players}) => {
             superCols={superCols}
         />
     </div>;
+};
+
+PlayerShotLocations.propTypes = {
+    players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    season: React.PropTypes.number.isRequired,
 };
 
 module.exports = PlayerShotLocations;

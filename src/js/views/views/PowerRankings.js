@@ -45,4 +45,19 @@ const PowerRankings = ({teams}) => {
     </div>;
 };
 
+PowerRankings.propTypes = {
+    teams: React.PropTypes.arrayOf(React.PropTypes.shape({
+        abbrev: React.PropTypes.string.isRequired,
+        diff: React.PropTypes.number.isRequired,
+        lastTen: React.PropTypes.string.isRequired,
+        lost: React.PropTypes.number.isRequired,
+        name: React.PropTypes.string.isRequired,
+        overallRank: React.PropTypes.number.isRequired,
+        performanceRank: React.PropTypes.number.isRequired,
+        region: React.PropTypes.string.isRequired,
+        tid: React.PropTypes.number.isRequired,
+        won: React.PropTypes.number.isRequired,
+    })).isRequired,
+};
+
 module.exports = PowerRankings;

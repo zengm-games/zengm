@@ -99,4 +99,29 @@ const TeamHistory = ({abbrev, bestRecord, championships, history, players, playo
     </div>;
 };
 
+TeamHistory.propTypes = {
+    abbrev: React.PropTypes.string.isRequired,
+    bestRecord: React.PropTypes.shape({
+        lost: React.PropTypes.number.isRequired,
+        season: React.PropTypes.number.isRequired,
+        won: React.PropTypes.number.isRequired,
+    }).isRequired,
+    championships: React.PropTypes.number.isRequired,
+    history: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    playoffAppearances: React.PropTypes.number.isRequired,
+    team: React.PropTypes.shape({
+        name: React.PropTypes.string.isRequired,
+        region: React.PropTypes.string.isRequired,
+        tid: React.PropTypes.number.isRequired,
+    }).isRequired,
+    totalLost: React.PropTypes.number.isRequired,
+    totalWon: React.PropTypes.number.isRequired,
+    worstRecord: React.PropTypes.shape({
+        lost: React.PropTypes.number.isRequired,
+        season: React.PropTypes.number.isRequired,
+        won: React.PropTypes.number.isRequired,
+    }).isRequired,
+};
+
 module.exports = TeamHistory;

@@ -42,4 +42,9 @@ const Leaders = ({categories, season}) => {
     </div>;
 };
 
+Leaders.propTypes = {
+    categories: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    season: React.PropTypes.number.isRequired,
+};
+
 module.exports = Leaders;

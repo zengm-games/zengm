@@ -6,7 +6,7 @@ const SkillsBlock = ({className = null, skills}) => {
     }
 
     const tooltips = {
-        "3": "Three Point Shooter",
+        3: "Three Point Shooter",
         A: "Athlete",
         B: "Ball Handler",
         Di: "Interior Defender",

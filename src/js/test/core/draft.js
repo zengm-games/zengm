@@ -4,7 +4,7 @@ const g = require('../../globals');
 const draft = require('../../core/draft');
 const league = require('../../core/league');
 const team = require('../../core/team');
-const sampleTiebreakers = require('../fixtures/sampleTiebreakers.js');
+const sampleTiebreakers = require('../fixtures/sampleTiebreakers');
 
 describe("core/draft", () => {
     before(async () => {
@@ -20,7 +20,8 @@ describe("core/draft", () => {
         assert.equal(players.length, 140 - numTotal);
     };
 
-    let userPick1, userPick2;
+    let userPick1;
+    let userPick2;
     const testDraftUser = async round => {
         const draftOrder = await draft.getOrder();
         const pick = draftOrder.shift();

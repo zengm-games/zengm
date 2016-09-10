@@ -43,7 +43,8 @@ const HistoryAll = ({seasons}) => {
     const cols = getCols('', 'League Champion', 'Runner Up', 'Finals MVP', 'MVP', 'DPOY', 'ROY');
 
     const rows = seasons.map(s => {
-        let countText, seasonLink;
+        let countText;
+        let seasonLink;
         if (s.champ) {
             seasonLink = <a href={helpers.leagueUrl(["history", s.season])}>{s.season}</a>;
             countText = ` - ${helpers.ordinal(s.champ.count)} title`;
@@ -94,6 +95,10 @@ const HistoryAll = ({seasons}) => {
             rows={rows}
         />
     </div>;
+};
+
+HistoryAll.propTypes = {
+    seasons: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
 };
 
 module.exports = HistoryAll;

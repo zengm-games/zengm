@@ -1,3 +1,5 @@
+/* eslint quote-props: "off" */
+
 const helpers = require('./helpers');
 
 const cols = {
@@ -394,10 +396,8 @@ const cols = {
     },
 };
 
-for (const key in cols) {
-    if (cols.hasOwnProperty(key)) {
-        cols[key].title = key.replace('rating:', '');
-    }
+for (const key of Object.keys(cols)) {
+    cols[key].title = key.replace('rating:', '');
 }
 
 module.exports = (...titles) => {

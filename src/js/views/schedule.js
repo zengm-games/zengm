@@ -26,8 +26,8 @@ async function updateUpcoming(inputs, updateEvents, state) {
 
         // Create an object with team IDs as its keys.
         const teamInfo = {};
-        for (const team of teamsFiltered) {
-            teamInfo[team.tid] = team;
+        for (const t of teamsFiltered) {
+            teamInfo[t.tid] = t;
         }
 
         // Loop through each game in the schedule.

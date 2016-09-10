@@ -20,10 +20,16 @@ class AccountUpdateCard extends React.Component {
             exp_month: '',
             exp_year: '',
         };
+        this.handleChanges = {
+            cvc: this.handleChange.bind(this, 'cvc'),
+            exp_month: this.handleChange.bind(this, 'exp_month'),
+            exp_year: this.handleChange.bind(this, 'exp_year'),
+            number: this.handleChange.bind(this, 'number'),
+        };
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    async componentDidMount() {
+    async componentWillMount() {
         if (!window.Stripe) {
             await Promise.resolve($.getScript('https://js.stripe.com/v2/'));
             window.Stripe.setPublishableKey(g.stripePublishableKey);
@@ -124,22 +130,22 @@ class AccountUpdateCard extends React.Component {
                 <div style={{maxWidth: '300px'}}>
                     <div className="form-group">
                         <label htmlFor="card-number">Card Number</label>
-                        <input type="text" onChange={this.handleChange.bind(this, 'number')} value={this.state.number} id="card-number" className="form-control" />
+                        <input type="text" onChange={this.handleChanges.number} value={this.state.number} id="card-number" className="form-control" />
                     </div>
 
                     <div className="form-group" style={{maxWidth: '100px'}}>
                         <label htmlFor="cvc">CVC</label>
-                        <input type="text" onChange={this.handleChange.bind(this, 'cvc')} value={this.state.cvc} id="cvc" className="form-control" />
+                        <input type="text" onChange={this.handleChanges.cvc} value={this.state.cvc} id="cvc" className="form-control" />
                     </div>
 
                     <div className="form-group">
                         <label htmlFor="exp-month">Expiration (MM/YYYY)</label>
                         <div className="row">
                             <div className="col-xs-5">
-                                <input type="text" onChange={this.handleChange.bind(this, 'exp_month')} value={this.state.exp_month} placeholder="MM" id="exp-month" className="form-control" />
+                                <input type="text" onChange={this.handleChanges.exp_month} value={this.state.exp_month} placeholder="MM" id="exp-month" className="form-control" />
                             </div>
                             <div className="col-xs-7">
-                                <input type="text" onChange={this.handleChange.bind(this, 'exp_year')} value={this.state.exp_year} placeholder="YYYY" className="form-control" />
+                                <input type="text" onChange={this.handleChanges.exp_year} value={this.state.exp_year} placeholder="YYYY" className="form-control" />
                             </div>
                         </div>
                     </div>
@@ -152,5 +158,13 @@ class AccountUpdateCard extends React.Component {
         </div>;
     }
 }
+
+AccountUpdateCard.propTypes = {
+    goldCancelled: React.PropTypes.bool.isRequired,
+    expMonth: React.PropTypes.string.isRequired,
+    expYear: React.PropTypes.string.isRequired,
+    last4: React.PropTypes.string.isRequired,
+    username: React.PropTypes.string.isRequired,
+};
 
 module.exports = AccountUpdateCard;

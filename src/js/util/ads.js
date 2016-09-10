@@ -27,7 +27,7 @@ function showSurvata() {
     });
 
     // If Survata is down, try other ad
-    /*eslint no-use-before-define: 0*/
+    // eslint-disable-next-line no-use-before-define
     window.Survata.fail(show);
 }
 

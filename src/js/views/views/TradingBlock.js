@@ -37,9 +37,7 @@ const OfferPlayerRow = clickable(({clicked, p, toggleClicked}) => {
 });
 
 OfferPlayerRow.propTypes = {
-    clicked: React.PropTypes.bool,
-    p: React.PropTypes.object,
-    toggleClicked: React.PropTypes.func,
+    p: React.PropTypes.object.isRequired,
 };
 
 const Offer = props => {

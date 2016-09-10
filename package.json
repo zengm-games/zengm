@@ -1,6 +1,6 @@
 {
   "name": "basketball-gm",
-  "version": "3.4.0",
+  "version": "3.6.0",
   "description": "A single-player basketball simulation game. Make trades, set rosters, draft players, and try to build the next dynasty, all from within your web browser. The game is implemented entirely in client-side JavaScript, backed by IndexedDB.",
   "homepage": "https://basketball-gm.com/",
   "bugs": {
@@ -44,7 +44,7 @@
     "react-addons-text-content": "0.0.4",
     "react-bootstrap": "0.30.3",
     "react-dom": "15.3.1",
-    "react-overlays": "^0.6.6",
+    "react-overlays": "0.6.6",
     "source-map-support": "0.4.2",
     "underscore": "1.8.3"
   },
@@ -120,7 +120,6 @@
       "transform-async-to-generator"
     ],
     "ignore": [
-      "js/lib/bootstrap*",
       "js/lib/davis*",
       "js/lib/html2canvas.js"
     ]

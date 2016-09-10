@@ -33,10 +33,10 @@ async function updateDeleteLeague(inputs) {
     } catch (err) {
         return {
             lid: inputs.lid,
-            name: null,
-            numGames: null,
-            numPlayers: null,
-            numSeasons: null,
+            name: undefined,
+            numGames: undefined,
+            numPlayers: undefined,
+            numSeasons: undefined,
         };
     }
 }

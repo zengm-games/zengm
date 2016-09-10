@@ -29,4 +29,16 @@ const Live = ({games, gamesInProgress}) => {
     </div>;
 };
 
+Live.propTypes = {
+    games: React.PropTypes.arrayOf(React.PropTypes.shape({
+        awayName: React.PropTypes.string.isRequried,
+        awayRegion: React.PropTypes.string.isRequried,
+        gid: React.PropTypes.number.isRequried,
+        highlight: React.PropTypes.bool.isRequried,
+        homeName: React.PropTypes.string.isRequried,
+        homeRegion: React.PropTypes.string.isRequried,
+    })),
+    gamesInProgress: React.PropTypes.bool,
+};
+
 module.exports = Live;

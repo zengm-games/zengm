@@ -4,7 +4,8 @@ const helpers = require('../util/helpers');
 const Transactions = require('./views/Transactions');
 
 function get(req) {
-    let abbrev, tid;
+    let abbrev;
+    let tid;
     if (req.params.abbrev && req.params.abbrev !== "all") {
         [tid, abbrev] = helpers.validateAbbrev(req.params.abbrev);
     } else if (req.params.abbrev && req.params.abbrev === "all") {

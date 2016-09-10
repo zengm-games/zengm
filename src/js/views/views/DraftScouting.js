@@ -161,16 +161,13 @@ class DraftScouting extends React.Component {
                     return <div key={s.season} className="col-md-4 col-sm-6">
                         <h2>{s.season}</h2>
 
-                        {
-                            this.state.customize === i
-                        ?
-                            <div>
-                                <p>To replace this draft class with players from a <a href="https://basketball-gm.com/manual/customization/draft-class/" target="_blank">custom draft class file</a>, select the file below.</p>
-                                <p><input type="file" className="custom-draft-class" onChange={e => this.handleDraftClass(i, e)} /></p>
-                            </div>
-                        :
-                            <p><button className="btn btn-default btn-xs" onClick={() => this.handleCustomize(i)}>Customize</button></p>
-                        }
+                        {this.state.customize === i ? <div>
+                            <p>To replace this draft class with players from a <a href="https://basketball-gm.com/manual/customization/draft-class/" rel="noopener noreferrer" target="_blank">custom draft class file</a>, select the file below.</p>
+                            <p><input type="file" className="custom-draft-class" onChange={e => this.handleDraftClass(i, e)} /></p>
+                        </div> : <p>
+                            <button className="btn btn-default btn-xs" onClick={() => this.handleCustomize(i)}>
+                            Customize</button>
+                        </p>}
 
                         <DataTable
                             cols={cols}
@@ -183,5 +180,12 @@ class DraftScouting extends React.Component {
         </div>;
     }
 }
+
+DraftScouting.propTypes = {
+    seasons: React.PropTypes.arrayOf(React.PropTypes.shape({
+        players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+        season: React.PropTypes.number.isRequired,
+    })).isRequired,
+};
 
 module.exports = DraftScouting;

@@ -1,4 +1,4 @@
-/*eslint comma-spacing: 0, key-spacing: 0, no-unused-expressions: 0*/
+/* eslint comma-spacing: "off", key-spacing: "off", no-unused-expressions: "off", quote-props: "off" */
 const assert = require('assert');
 const backboard = require('backboard');
 const db = require('../../db');

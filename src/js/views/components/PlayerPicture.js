@@ -18,20 +18,24 @@ class PlayerPicture extends React.Component {
         if (this.props.imgURL) {
             this.wrapper = null;
             return <img
+                alt="Player"
                 src={this.props.imgURL}
                 style={{maxHeigth: '100%', maxWidth: '100%'}}
             />;
         }
 
         if (this.props.face) {
-            return <div ref={wrapper => {
-                this.wrapper = wrapper;
-            }} />;
+            return <div
+                ref={wrapper => {
+                    this.wrapper = wrapper;
+                }}
+            />;
         }
 
-        return null;
+        return <div />;
     }
 }
+
 PlayerPicture.propTypes = {
     face: React.PropTypes.object,
     imgURL: React.PropTypes.string,

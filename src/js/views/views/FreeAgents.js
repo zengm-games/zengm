@@ -75,4 +75,13 @@ const FreeAgents = ({capSpace, gamesInProgress, minContract, numRosterSpots, pha
     </div>;
 };
 
+FreeAgents.propTypes = {
+    capSpace: React.PropTypes.number.isRequired,
+    gamesInProgress: React.PropTypes.bool.isRequired,
+    minContract: React.PropTypes.number.isRequired,
+    numRosterSpots: React.PropTypes.number.isRequired,
+    phase: React.PropTypes.number.isRequired,
+    players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+};
+
 module.exports = FreeAgents;

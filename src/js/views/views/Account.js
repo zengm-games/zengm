@@ -17,7 +17,7 @@ class StripeButton extends React.Component {
         this.handleClick = this.handleClick.bind(this);
     }
 
-    async componentDidMount() {
+    async componentWillMount() {
         if (!window.StripeCheckout) {
             await Promise.resolve($.getScript('https://checkout.stripe.com/checkout.js'));
         }
@@ -74,43 +74,46 @@ class StripeButton extends React.Component {
     }
 }
 
+StripeButton.propTypes = {
+    email: React.PropTypes.string.isRequired,
+};
+
+const handleCancel = async e => {
+    e.preventDefault();
+
+    const result = window.confirm("Are you sure you want to cancel your Basketball GM Gold subscription?");
+
+    if (result) {
+        try {
+            const data = await Promise.resolve($.ajax({
+                type: "POST",
+                url: `//account.basketball-gm.${g.tld}/gold_cancel.php`,
+                data: {
+                    sport: "basketball",
+                },
+                dataType: "json",
+                xhrFields: {
+                    withCredentials: true,
+                },
+            }));
+            ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: data});
+        } catch (err) {
+            console.log(err);
+            ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: {
+                success: false,
+                message: ajaxErrorMsg,
+            }});
+        }
+    }
+};
+
 class UserInfo extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             logoutError: null,
         };
-        this.handleCancel = this.handleCancel.bind(this);
         this.handleLogout = this.handleLogout.bind(this);
-    }
-
-    async handleCancel(e) {
-        e.preventDefault();
-
-        const result = window.confirm("Are you sure you want to cancel your Basketball GM Gold subscription?");
-
-        if (result) {
-            try {
-                const data = await Promise.resolve($.ajax({
-                    type: "POST",
-                    url: `//account.basketball-gm.${g.tld}/gold_cancel.php`,
-                    data: {
-                        sport: "basketball",
-                    },
-                    dataType: "json",
-                    xhrFields: {
-                        withCredentials: true,
-                    },
-                }));
-                ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: data});
-            } catch (err) {
-                console.log(err);
-                ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: {
-                    success: false,
-                    message: ajaxErrorMsg,
-                }});
-            }
-        }
     }
 
     handleLogout(e) {
@@ -143,21 +146,26 @@ class UserInfo extends React.Component {
         const {goldUntilDateString, showGoldActive, showGoldCancelled, username} = this.props;
 
         return <div>
-            {
-                username === null || username === ''
-            ?
-                <p>You are not logged in! <a href="/account/login_or_register">Click here to log in or create an account.</a> If you have an account, your achievements will be stored in the cloud, combining achievements from leagues in different browsers and different computers.</p>
-            :
-                <p>Logged in as: <b>{username}</b> (<a href="" id="logout" onClick={this.handleLogout} data-no-davis="true">Logout</a>)</p>
-            }
+            {username === undefined || username === null || username === '' ? <p>
+                You are not logged in! <a href="/account/login_or_register">Click here to log in or create an account.</a> If you have an account, your achievements will be stored in the cloud, combining achievements from leagues in different browsers and different computers.
+            </p> : <p>
+                Logged in as: <b>{username}</b> (<a href="" id="logout" onClick={this.handleLogout} data-no-davis="true">Logout</a>)
+            </p>}
             <p className="text-danger">{this.state.logoutError}</p>
-            {showGoldActive ? <p>Basketball GM Gold: Active, renews for $5 on {goldUntilDateString} (<a href="/account/update_card">Update card</a> or <a href="" id="gold-cancel" onClick={this.handleCancel} data-no-davis="true">cancel</a>)</p> : null}
+            {showGoldActive ? <p>Basketball GM Gold: Active, renews for $5 on {goldUntilDateString} (<a href="/account/update_card">Update card</a> or <a href="" id="gold-cancel" onClick={handleCancel} data-no-davis="true">cancel</a>)</p> : null}
             {showGoldCancelled ? <p>Basketball GM Gold: Cancelled, expires {goldUntilDateString}</p> : null}
         </div>;
     }
 }
 
-const Account = ({achievements, goldMessage, goldSuccess, goldUntilDateString, showGoldActive, showGoldCancelled, showGoldPitch, username}) => {
+UserInfo.propTypes = {
+    goldUntilDateString: React.PropTypes.string.isRequired,
+    showGoldActive: React.PropTypes.bool.isRequired,
+    showGoldCancelled: React.PropTypes.bool.isRequired,
+    username: React.PropTypes.string,
+};
+
+const Account = ({achievements, email, goldMessage, goldSuccess, goldUntilDateString, showGoldActive, showGoldCancelled, showGoldPitch, username}) => {
     bbgmViewReact.title('Account');
 
     let goldPitchDiv = null;
@@ -167,17 +175,13 @@ const Account = ({achievements, goldMessage, goldSuccess, goldUntilDateString, s
 
             <div className="row">
                 <div className="col-lg-8 col-md-10">
-                    <p>Basketball GM is completely free. There will never be any <a href="http://en.wikipedia.org/wiki/Freemium" target="_blank">"freemium"</a> or <a href="http://en.wikipedia.org/wiki/Free-to-play" target="_blank">"pay-to-win"</a> bullshit here. Why? Because if a game charges you money for power-ups, the developer makes more money if they make their game frustratingly annoying to play without power-ups. Because of this, <b>freemium games always suck</b>.</p>
+                    <p>Basketball GM is completely free. There will never be any <a href="http://en.wikipedia.org/wiki/Freemium" rel="noopener noreferrer" target="_blank">"freemium"</a> or <a href="http://en.wikipedia.org/wiki/Free-to-play" rel="noopener noreferrer" target="_blank">"pay-to-win"</a> bullshit here. Why? Because if a game charges you money for power-ups, the developer makes more money if they make their game frustratingly annoying to play without power-ups. Because of this, <b>freemium games always suck</b>.</p>
 
                     <p>If you want to support Basketball GM continuing to be a non-sucky game, sign up for Basketball GM Gold! It's only <b>$5/month</b>. What do you get? More like, what don't you get? You get no new features, no new improvements, no new anything. Just <b>no more ads</b>. That's it. Why? For basically the same reason I won't make Basketball GM freemium. I don't want the free version to become a crippled advertisement for the pay version. If you agree that the world is a better place when anyone anywhere can play Basketball GM, sign up for Basketball GM Gold today!</p>
 
-                    {
-                        username === null || username === ''
-                    ?
-                        <p><a href="/account/login_or_register">Log in or create an account</a> to sign up for Basketball GM Gold.</p>
-                    :
-                        <p><StripeButton /></p>
-                    }
+                    {username === undefined || username === null || username === '' ? <p>
+                        <a href="/account/login_or_register">Log in or create an account</a> to sign up for Basketball GM Gold.
+                    </p> : <p><StripeButton email={email} /></p>}
                 </div>
             </div>
         </div>;
@@ -230,6 +234,22 @@ const Account = ({achievements, goldMessage, goldSuccess, goldUntilDateString, s
             })}
         </ul>
     </div>;
+};
+
+Account.propTypes = {
+    achievements: React.PropTypes.arrayOf(React.PropTypes.shape({
+        count: React.PropTypes.number.isRequired,
+        desc: React.PropTypes.string.isRequired,
+        name: React.PropTypes.string.isRequired,
+    })).isRequired,
+    email: React.PropTypes.string,
+    goldMessage: React.PropTypes.string,
+    goldSuccess: React.PropTypes.string,
+    goldUntilDateString: React.PropTypes.string.isRequired,
+    showGoldActive: React.PropTypes.bool.isRequired,
+    showGoldCancelled: React.PropTypes.bool.isRequired,
+    showGoldPitch: React.PropTypes.bool.isRequired,
+    username: React.PropTypes.string,
 };
 
 module.exports = Account;

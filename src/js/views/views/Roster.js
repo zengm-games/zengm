@@ -16,23 +16,23 @@ const {Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels, RatingWithChange,
 const clickable = require('../wrappers/clickable');
 
 const ptStyles = {
-    '0': {
+    0: {
         backgroundColor: '#a00',
         color: '#fff',
     },
-    '0.75': {
+    0.75: {
         backgroundColor: '#ff0',
         color: '#000',
     },
-    '1': {
+    1: {
         backgroundColor: '#ccc',
         color: '#000',
     },
-    '1.25': {
+    1.25: {
         backgroundColor: '#0f0',
         color: '#000',
     },
-    '1.75': {
+    1.75: {
         backgroundColor: '#070',
         color: '#fff',
     },
@@ -131,11 +131,15 @@ const PlayingTime = ({p}) => {
     </select>;
 };
 
+PlayingTime.propTypes = {
+    p: React.PropTypes.object.isRequired,
+};
+
 const ReorderHandle = ({i, onClick, pid, selectedPid}) => {
     let backgroundColor = 'rgb(91, 192, 222)';
     if (selectedPid === pid) {
         backgroundColor = '#d9534f';
-    } else if (selectedPid) {
+    } else if (selectedPid !== undefined) {
         if (i <= 4) {
             backgroundColor = 'rgba(66, 139, 202, 0.6)';
         } else {
@@ -146,6 +150,13 @@ const ReorderHandle = ({i, onClick, pid, selectedPid}) => {
     }
 
     return <td className="roster-handle" style={{backgroundColor}} onClick={onClick} />;
+};
+
+ReorderHandle.propTypes = {
+    i: React.PropTypes.number.isRequired,
+    onClick: React.PropTypes.func.isRequired,
+    pid: React.PropTypes.number.isRequired,
+    selectedPid: React.PropTypes.number,
 };
 
 // This needs to look at all players, because rosterOrder is not guaranteed to be unique after free agent signings and trades
@@ -195,8 +206,12 @@ const handleReorderDrag = async sortedPids => {
 
 const RosterRow = clickable(props => {
     const {clicked, editable, handleReorderClick, i, p, season, selectedPid, showTradeFor, toggleClicked} = props;
-    return <tr key={p.pid} className={classNames({separator: i === 4, warning: clicked})} data-pid={p.pid}>
-        {editable ? <ReorderHandle i={i} pid={p.pid} onClick={handleReorderClick} selectedPid={selectedPid} /> : null}
+    return <tr
+        key={p.pid}
+        className={classNames({separator: i === 4, warning: clicked})}
+        data-pid={p.pid}
+    >
+        {editable ? <ReorderHandle i={i} pid={p.pid} onClick={() => handleReorderClick(p.pid)} selectedPid={selectedPid} /> : null}
         <td onClick={toggleClicked}>
             <PlayerNameLabels
                 pid={p.pid}
@@ -243,12 +258,31 @@ const RosterRow = clickable(props => {
     </tr>;
 });
 
+RosterRow.propTypes = {
+    editable: React.PropTypes.bool.isRequired,
+    handleReorderClick: React.PropTypes.func.isRequired,
+    i: React.PropTypes.number.isRequired,
+    p: React.PropTypes.object.isRequired,
+    season: React.PropTypes.number.isRequired,
+    selectedPid: React.PropTypes.number,
+    showTradeFor: React.PropTypes.bool.isRequired,
+};
+
 class Roster extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             selectedPid: undefined,
         };
+        this.handleReorderClick = this.handleReorderClick.bind(this);
+    }
+
+    componentDidMount() {
+        this.initSortable();
+    }
+
+    componentDidUpdate() {
+        this.initSortable();
     }
 
     async handleReorderClick(pid) {
@@ -268,12 +302,12 @@ class Roster extends React.Component {
         // The first this is called, set up sorting, but disable it by default
         if (!rosterTbody.is(":ui-sortable")) {
             rosterTbody.sortable({
-                helper(e, ui) {
+                helper(e, el) {
                     // Return helper which preserves the width of table cells being reordered
-                    ui.children().each(function () {
+                    el.children().each(() => {
                         $(this).width($(this).width());
                     });
-                    return ui;
+                    return el;
                 },
                 cursor: "move",
                 async update() {
@@ -296,23 +330,15 @@ class Roster extends React.Component {
         }
     }
 
-    componentDidMount() {
-        this.initSortable();
-    }
-
-    componentDidUpdate() {
-        this.initSortable();
-    }
-
     render() {
-        const {abbrev, editable, payroll, players, salaryCap, season, showTradeFor, team} = this.props;
+        const {abbrev, editable, payroll, players, salaryCap, season, showTradeFor, t} = this.props;
 
-        bbgmViewReact.title(`${team.region} ${team.name} Roster - ${season}`);
+        bbgmViewReact.title(`${t.region} ${t.name} Roster - ${season}`);
 
         const logoStyle = {};
-        if (team.imgURL) {
+        if (t.imgURL) {
             logoStyle.display = "inline";
-            logoStyle.backgroundImage = `url('${team.imgURL}')`;
+            logoStyle.backgroundImage = `url('${t.imgURL}')`;
         }
 
         return <div>
@@ -324,7 +350,7 @@ class Roster extends React.Component {
                 </DropdownButton>
             </div>
 
-            <h1>{team.region} {team.name} Roster <NewWindowLink /></h1>
+            <h1>{t.region} {t.name} Roster <NewWindowLink /></h1>
             <p>More: <a href={helpers.leagueUrl(['team_finances', abbrev])}>Finances</a> | <a href={helpers.leagueUrl(['game_log', abbrev, season])}>Game Log</a> | <a href={helpers.leagueUrl(['team_history', abbrev])}>History</a> | <a href={helpers.leagueUrl(['transactions', abbrev])}>Transactions</a></p>
             <div className="team-picture" style={logoStyle} />
             <div>
@@ -332,9 +358,9 @@ class Roster extends React.Component {
                     Record: <RecordAndPlayoffs
                         abbrev={abbrev}
                         season={season}
-                        won={team.won}
-                        lost={team.lost}
-                        playoffRoundsWon={team.playoffRoundsWon}
+                        won={t.won}
+                        lost={t.lost}
+                        playoffRoundsWon={t.playoffRoundsWon}
                         option="noSeason"
                     />
                 </h3>
@@ -343,8 +369,8 @@ class Roster extends React.Component {
                     {15 - players.length} open roster spots<br />
                     Payroll: {helpers.formatCurrency(payroll, 'M')}<br />
                     Salary cap: {helpers.formatCurrency(salaryCap, 'M')}<br />
-                    Profit: {helpers.formatCurrency(team.profit, 'M')}<br />
-                    {showTradeFor ? `Strategy: ${team.strategy}` : null}
+                    Profit: {helpers.formatCurrency(t.profit, 'M')}<br />
+                    {showTradeFor ? `Strategy: ${t.strategy}` : null}
                 </p> : null}
             </div>
             {editable ? <p>Click or drag row handles to move players between the starting lineup (<span className="roster-starter">&#9632;</span>) and the bench (<span className="roster-bench">&#9632;</span>).</p> : null}
@@ -388,11 +414,10 @@ class Roster extends React.Component {
                     </thead>
                     <tbody id="roster-tbody">
                         {players.map((p, i) => {
-                            const handleReorderClick = this.handleReorderClick.bind(this, p.pid);
                             return <RosterRow
                                 key={p.pid}
                                 editable={editable}
-                                handleReorderClick={handleReorderClick}
+                                handleReorderClick={this.handleReorderClick}
                                 i={i}
                                 p={p}
                                 season={season}
@@ -406,6 +431,16 @@ class Roster extends React.Component {
         </div>;
     }
 }
-Roster.defaultProps = {players: [], team: {}};
+
+Roster.propTypes = {
+    abbrev: React.PropTypes.string.isRequired,
+    editable: React.PropTypes.bool.isRequired,
+    payroll: React.PropTypes.number.isRequired,
+    players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    salaryCap: React.PropTypes.number.isRequired,
+    season: React.PropTypes.number.isRequired,
+    showTradeFor: React.PropTypes.bool.isRequired,
+    t: React.PropTypes.object.isRequired,
+};
 
 module.exports = Roster;

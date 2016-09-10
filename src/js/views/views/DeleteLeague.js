@@ -22,16 +22,17 @@ class DeleteLeague extends React.Component {
 
         bbgmViewReact.title(`Delete League ${lid}?`);
 
+        let message;
+        if (name !== undefined) {
+            message = <p>Are you <i>absolutely</i> sure you want to delete {name} (League {lid})? You will <i>permanently</i> lose any record of all {helpers.numberWithCommas(numSeasons)} seasons, {helpers.numberWithCommas(numPlayers)} players, and {helpers.numberWithCommas(numGames)} games from this league (well... unless you have a backup somewhere).</p>;
+        } else {
+            message = <p>Are you <i>absolutely</i> sure you want to delete League {lid}? You will <i>permanently</i> lose any record of all seasons, players, and games from this league (well... unless you have a backup somewhere).</p>;
+        }
+
         return <div>
             <h1>Delete League {lid}?</h1>
 
-            {
-                name
-            ?
-                <p>Are you <i>absolutely</i> sure you want to delete {name} (League {lid})? You will <i>permanently</i> lose any record of all {helpers.numberWithCommas(numSeasons)} seasons, {helpers.numberWithCommas(numPlayers)} players, and {helpers.numberWithCommas(numGames)} games from this league (well... unless you have a backup somewhere).</p>
-            :
-                <p>Are you <i>absolutely</i> sure you want to delete League {lid}? You will <i>permanently</i> lose any record of all seasons, players, and games from this league (well... unless you have a backup somewhere).</p>
-            }
+            {message}
 
             <button
                 className="btn btn-danger"
@@ -47,5 +48,13 @@ class DeleteLeague extends React.Component {
         </div>;
     }
 }
+
+DeleteLeague.propTypes = {
+    lid: React.PropTypes.number.isRequired,
+    name: React.PropTypes.string,
+    numGames: React.PropTypes.number,
+    numPlayers: React.PropTypes.number,
+    numSeasons: React.PropTypes.number,
+};
 
 module.exports = DeleteLeague;

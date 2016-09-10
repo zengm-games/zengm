@@ -27,12 +27,12 @@ async function calculatePER() {
 
     // Total league stats (not per game averages) - gp, ft, pf, ast, fg, pts, fga, orb, tov, fta, trb
     const leagueStats = ["gp", "ft", "pf", "ast", "fg", "pts", "fga", "orb", "tov", "fta", "trb"];
-    const league = teams.reduce((memo, team) => {
+    const league = teams.reduce((memo, t) => {
         for (let i = 0; i < leagueStats.length; i++) {
             if (memo.hasOwnProperty(leagueStats[i])) {
-                memo[leagueStats[i]] = memo[leagueStats[i]] + team[leagueStats[i]];
+                memo[leagueStats[i]] += t[leagueStats[i]];
             } else {
-                memo[leagueStats[i]] = team[leagueStats[i]];
+                memo[leagueStats[i]] = t[leagueStats[i]];
             }
         }
         return memo;
@@ -112,14 +112,14 @@ async function calculatePER() {
             }
 
             aPER[i] = teams[tid].pace * uPER;
-            league.aPER = league.aPER + aPER[i] * players[i].stats.min;
+            league.aPER += aPER[i] * players[i].stats.min;
 
             mins[i] = players[i].stats.min; // Save for EWA calculation
         }
     }
 
     const minFactor = g.quarterLength / 12;
-    league.aPER = league.aPER / (league.gp * 5 * 48 * minFactor);
+    league.aPER /= (league.gp * 5 * 48 * minFactor);
 
     const PER = aPER.map(num => num * (15 / league.aPER));
 

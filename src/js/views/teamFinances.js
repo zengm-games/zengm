@@ -79,6 +79,7 @@ async function updateTeamFinances(inputs, updateEvents, state) {
         let keys = ["won", "hype", "pop", "att", "cash", "revenues", "expenses"];
         const barData = {};
         for (let i = 0; i < keys.length; i++) {
+            /* eslint-disable no-loop-func */
             if (typeof teamSeasons[0][keys[i]] !== "object") {
                 barData[keys[i]] = helpers.nullPad(teamSeasons.map(ts => ts[keys[i]]), showInt);
             } else {
@@ -89,6 +90,7 @@ async function updateTeamFinances(inputs, updateEvents, state) {
                     barData[keys[i]][key] = helpers.nullPad(tempData.map(x => x[key]).map(x => x.amount), showInt);
                 });
             }
+            /* eslint-enable no-loop-func */
         }
 
         // Process some values
@@ -128,7 +130,7 @@ async function updateTeamFinances(inputs, updateEvents, state) {
     }
 }
 
-async function updateGamesInProgress(inputs, updateEvents, state) {
+function updateGamesInProgress(inputs, updateEvents, state) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("g.gamesInProgress") >= 0 || inputs.tid !== state.tid || inputs.show !== state.show) {
         return {
             gamesInProgress: g.gamesInProgress,

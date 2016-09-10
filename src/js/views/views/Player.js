@@ -46,7 +46,29 @@ const RatingsOverview = ({ratings}) => {
     </div>;
 };
 
-const StatsTable = ({careerStats = [], stats = []}) => {
+RatingsOverview.propTypes = {
+    ratings: React.PropTypes.arrayOf(React.PropTypes.shape({
+        blk: React.PropTypes.number.isRequired,
+        dnk: React.PropTypes.number.isRequired,
+        drb: React.PropTypes.number.isRequired,
+        endu: React.PropTypes.number.isRequired,
+        fg: React.PropTypes.number.isRequired,
+        ft: React.PropTypes.number.isRequired,
+        hgt: React.PropTypes.number.isRequired,
+        ins: React.PropTypes.number.isRequired,
+        jmp: React.PropTypes.number.isRequired,
+        ovr: React.PropTypes.number.isRequired,
+        pot: React.PropTypes.number.isRequired,
+        pss: React.PropTypes.number.isRequired,
+        reb: React.PropTypes.number.isRequired,
+        spd: React.PropTypes.number.isRequired,
+        stl: React.PropTypes.number.isRequired,
+        stre: React.PropTypes.number.isRequired,
+        tp: React.PropTypes.number.isRequired,
+    })).isRequired,
+};
+
+const StatsTable = ({careerStats = {}, stats = []}) => {
     return <DataTable
         cols={getCols('Year', 'Team', 'Age', 'GP', 'GS', 'Min', 'M', 'A', '%', 'M', 'A', '%', 'M', 'A', '%', 'Off', 'Def', 'Tot', 'Ast', 'TO', 'Stl', 'Blk', 'BA', 'PF', 'Pts', '+/-', 'PER', 'EWA')}
         defaultSort={[0, 'asc']}
@@ -141,7 +163,12 @@ const StatsTable = ({careerStats = [], stats = []}) => {
     />;
 };
 
-const ShotLocationsTable = ({careerStats = [], stats = []}) => {
+StatsTable.propTypes = {
+    careerStats: React.PropTypes.object,
+    stats: React.PropTypes.arrayOf(React.PropTypes.object),
+};
+
+const ShotLocationsTable = ({careerStats = {}, stats = []}) => {
     return <DataTable
         cols={getCols('Year', 'Team', 'Age', 'GP', 'GS', 'Min', 'M', 'A', '%', 'M', 'A', '%', 'M', 'A', '%', 'M', 'A', '%')}
         defaultSort={[0, 'asc']}
@@ -210,6 +237,11 @@ const ShotLocationsTable = ({careerStats = [], stats = []}) => {
     />;
 };
 
+ShotLocationsTable.propTypes = {
+    careerStats: React.PropTypes.object,
+    stats: React.PropTypes.arrayOf(React.PropTypes.object),
+};
+
 const Player = ({events, feats, freeAgent, godMode, injured, player, retired, showContract, showTradeFor}) => {
     bbgmViewReact.title(player.name);
 
@@ -275,29 +307,17 @@ const Player = ({events, feats, freeAgent, godMode, injured, player, retired, sh
 
         <p />
 
-        {
-            showTradeFor
-        ?
-            <span title={player.untradableMsg}>
-                <button
-                    className="btn btn-default"
-                    disabled={player.untradable}
-                    onClick={() => tradeFor({pid: player.pid})}
-                >Trade For</button>
-            </span>
-        :
-            null
-        }
-        {
-            freeAgent
-        ?
-                <button
-                    className="btn btn-default"
-                    onClick={() => negotiate(player.pid)}
-                >Sign Free Agent</button>
-        :
-            null
-        }
+        {showTradeFor ? <span title={player.untradableMsg}>
+            <button
+                className="btn btn-default"
+                disabled={player.untradable}
+                onClick={() => tradeFor({pid: player.pid})}
+            >Trade For</button>
+        </span> : null}
+        {freeAgent ? <button
+            className="btn btn-default"
+            onClick={() => negotiate(player.pid)}
+        >Sign Free Agent</button> : null}
 
         <h2>Regular Season</h2>
         <h3>Stats</h3>
@@ -408,6 +428,26 @@ const Player = ({events, feats, freeAgent, godMode, injured, player, retired, sh
             </div>
         </div>
     </div>;
+};
+
+Player.propTypes = {
+    events: React.PropTypes.arrayOf(React.PropTypes.shape({
+        eid: React.PropTypes.number.isRequired,
+        season: React.PropTypes.number.isRequired,
+        text: React.PropTypes.string.isRequired,
+    })).isRequired,
+    feats: React.PropTypes.arrayOf(React.PropTypes.shape({
+        eid: React.PropTypes.number.isRequired,
+        season: React.PropTypes.number.isRequired,
+        text: React.PropTypes.string.isRequired,
+    })).isRequired,
+    freeAgent: React.PropTypes.bool.isRequired,
+    godMode: React.PropTypes.bool.isRequired,
+    injured: React.PropTypes.bool.isRequired,
+    player: React.PropTypes.object.isRequired,
+    retired: React.PropTypes.bool.isRequired,
+    showContract: React.PropTypes.bool.isRequired,
+    showTradeFor: React.PropTypes.bool.isRequired,
 };
 
 module.exports = Player;

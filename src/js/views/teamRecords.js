@@ -166,7 +166,8 @@ async function updateTeamRecords(inputs, updateEvents, state) {
         }
         const seasonCount = teamRecords.map(tr => tr.championships).reduce((a, b) => Number(a) + Number(b));
 
-        let display, displayName;
+        let display;
+        let displayName;
         if (inputs.byType === "team") {
             display = teamRecords;
             displayName = "Team";

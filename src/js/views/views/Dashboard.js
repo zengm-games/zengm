@@ -31,4 +31,15 @@ const Dashboard = ({leagues, otherUrl}) => {
     </div>;
 };
 
+Dashboard.propTypes = {
+    leagues: React.PropTypes.arrayOf(React.PropTypes.shape({
+        lid: React.PropTypes.number.isRequired,
+        name: React.PropTypes.string.isRequired,
+        phaseText: React.PropTypes.string.isRequired,
+        teamName: React.PropTypes.string.isRequired,
+        teamRegion: React.PropTypes.string.isRequired,
+    })).isRequired,
+    otherUrl: React.PropTypes.string,
+};
+
 module.exports = Dashboard;

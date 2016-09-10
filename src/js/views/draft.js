@@ -23,22 +23,22 @@ async function updateDraft() {
         if (season !== g.season && g.phase === g.PHASE.DRAFT) {
             console.log("FIXING FUCKED UP DRAFT CLASS");
             console.log(season);
-            await tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED, p => {
-                p.ratings[0].season = g.season;
-                p.draft.year = g.season;
-                return p;
+            await tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED, p2 => {
+                p2.ratings[0].season = g.season;
+                p2.draft.year = g.season;
+                return p2;
             });
         }
     });
 
     let [undrafted, players] = await Promise.all([
-        g.dbl.players.index('tid').getAll(g.PLAYER.UNDRAFTED).then(players => {
-            return player.withStats(null, players, {
+        g.dbl.players.index('tid').getAll(g.PLAYER.UNDRAFTED).then(players2 => {
+            return player.withStats(null, players2, {
                 statsSeasons: [g.season],
             });
         }),
-        g.dbl.players.index('draft.year').getAll(g.season).then(players => {
-            return player.withStats(null, players, {
+        g.dbl.players.index('draft.year').getAll(g.season).then(players2 => {
+            return player.withStats(null, players2, {
                 statsSeasons: [g.season],
             });
         }),

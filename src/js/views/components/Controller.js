@@ -5,6 +5,7 @@ const ui = require('../../ui');
 const {Footer, Header, LeagueWrapper, MultiTeamMenu, NagModal, NavBar} = require('./index');
 
 class LeagueContent extends React.Component {
+    // eslint-disable-next-line class-methods-use-this
     shouldComponentUpdate(nextProps) {
         return !nextProps.updating;
     }
@@ -15,6 +16,12 @@ class LeagueContent extends React.Component {
         return <Component {...data} topMenu={topMenu} />;
     }
 }
+
+LeagueContent.propTypes = {
+    Component: React.PropTypes.func,
+    data: React.PropTypes.object,
+    topMenu: React.PropTypes.object,
+};
 
 class Controller extends React.Component {
     constructor(props) {
@@ -31,16 +38,16 @@ class Controller extends React.Component {
             },
             showNagModal: false,
             topMenu: {
-                email: null,
-                godMode: g.godMode,
+                email: undefined,
+                godMode: !!g.godMode,
                 goldUntil: 0,
                 goldCancelled: 0,
                 hasViewedALeague: !!localStorage.hasViewedALeague,
                 lid: undefined,
                 options: [],
-                phaseText: undefined,
+                phaseText: '',
                 popup: window.location.search === '?w=popup',
-                statusText: undefined,
+                statusText: '',
                 username: null,
             },
         };
@@ -78,6 +85,12 @@ class Controller extends React.Component {
         g.emitter.removeListener('updateTopMenu', this.updateTopMenu);
     }
 
+    setStateData(data) {
+        this.setState({
+            data: Object.assign(this.state.data, data),
+        });
+    }
+
     closeNagModal() {
         this.setState({
             showNagModal: false,
@@ -102,12 +115,6 @@ class Controller extends React.Component {
         }
 
         this.updatePage(args, inputs, updateEvents, cb);
-    }
-
-    setStateData(data) {
-        this.setState({
-            data: Object.assign(this.state.data, data),
-        });
     }
 
     async updatePage(args, inputs, updateEvents, cb) {

@@ -74,4 +74,9 @@ const DraftSummary = ({players, season}) => {
     </div>;
 };
 
+DraftSummary.propTypes = {
+    players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    season: React.PropTypes.number.isRequired,
+};
+
 module.exports = DraftSummary;

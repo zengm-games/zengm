@@ -251,10 +251,8 @@ function deepCopy(obj) {
     if (obj.constructor === RegExp) { return obj; }
 
     const retVal = new obj.constructor();
-    for (const key in obj) {
-        if (obj.hasOwnProperty(key)) {
-            retVal[key] = deepCopy(obj[key]);
-        }
+    for (const key of Object.keys(obj)) {
+        retVal[key] = deepCopy(obj[key]);
     }
     return retVal;
 }
@@ -284,7 +282,7 @@ function globalError(req) {
  * @memberOf util.helpers
  * @param {Object} req Object with parameter "params" containing another object with a string representing the error message in the parameter "error" and an integer league ID in "lid".
  */
-async function leagueError(req) {
+function leagueError(req) {
     const views = require('../views');
 
     const view = views.staticPage('error', 'Error', true, <div>
@@ -343,8 +341,8 @@ function errorNotify(errorText) {
  * @memberOf util.helpers
  */
 function resetG() {
-    for (const key in g) {
-        if (g.hasOwnProperty(key) && g.notInDb.indexOf(key) < 0) {
+    for (const key of Object.keys(g)) {
+        if (g.notInDb.indexOf(key) < 0) {
             delete g[key];
         }
     }
@@ -617,16 +615,14 @@ function checkNaNs() {
         foundNaN = foundNaN !== undefined ? foundNaN : false;
         replace = replace !== undefined ? replace : false;
 
-        for (const prop in obj) {
-            if (obj.hasOwnProperty(prop)) {
-                if (typeof obj[prop] === "object" && obj[prop] !== null) {
-                    foundNaN = checkObject(obj[prop], foundNaN, replace);
-                } else if (obj[prop] !== obj[prop]) {
-                    // NaN check from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/isNaN
-                    foundNaN = true;
-                    if (replace) {
-                        obj[prop] = 0;
-                    }
+        for (const prop of Object.keys(obj)) {
+            if (typeof obj[prop] === "object" && obj[prop] !== null) {
+                foundNaN = checkObject(obj[prop], foundNaN, replace);
+            } else if (obj[prop] !== obj[prop]) {
+                // NaN check from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/isNaN
+                foundNaN = true;
+                if (replace) {
+                    obj[prop] = 0;
                 }
             }
         }
@@ -640,7 +636,7 @@ function checkNaNs() {
     };
 
     const wrapperNaNChecker = _super => {
-        return function (obj) {
+        return function (obj, ...args) {
             if (checkObject(obj)) {
                 const err = new Error("NaN found before writing to IndexedDB");
 
@@ -648,7 +644,7 @@ function checkNaNs() {
                     window.Bugsnag.notifyException(err, "NaNFound", {
                         details: {
                             objectWithNaN: JSON.stringify(obj, (key, value) => {
-                                if (value !== value) {
+                                if (Number.isNaN) {
                                     return "FUCKING NaN RIGHT HERE";
                                 }
 
@@ -695,10 +691,10 @@ function checkNaNs() {
 
                 // Try to recover gracefully
                 checkObject(obj, false, true); // This will update obj
-                return _super.call(this, obj);
+                return _super.call(this, obj, ...args);
             }
 
-            return _super.apply(this, arguments);
+            return _super.call(this, obj, ...args);
         };
     };
 
@@ -712,7 +708,7 @@ function gameScore(arg) {
 }
 
 function plusMinus(arg, d) {
-    if (arg !== arg) { return ""; }
+    if (isNaN(arg)) { return ""; }
     return (arg > 0 ? "+" : "") + round(arg, d);
 }
 

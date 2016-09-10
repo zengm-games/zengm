@@ -12,7 +12,8 @@ function get(req) {
 
 async function updateMessage(inputs, updateEvents, state) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || state.message.mid !== inputs.mid) {
-        let message, readThisPageview;
+        let message;
+        let readThisPageview;
         await g.dbl.tx("messages", "readwrite", async tx => {
             readThisPageview = false;
 

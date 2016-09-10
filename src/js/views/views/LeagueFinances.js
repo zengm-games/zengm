@@ -35,9 +35,9 @@ const LeagueFinances = ({minPayroll, luxuryPayroll, luxuryTax, salaryCap, season
         <h1>League Finances <NewWindowLink /></h1>
 
         <p>
-          Salary cap: <b>{helpers.formatCurrency(salaryCap, 'M')}</b> (teams over this amount cannot sign free agents for more than the minimum contract)<br />
-          Minimum payroll limit: <b>{helpers.formatCurrency(minPayroll, 'M')}</b> (teams with payrolls below this limit will be assessed a fine equal to the difference at the end of the season)<br />
-          Luxury tax limit: <b>{helpers.formatCurrency(luxuryPayroll, 'M')}</b> (teams with payrolls above this limit will be assessed a fine equal to {luxuryTax} times the difference at the end of the season)
+            Salary cap: <b>{helpers.formatCurrency(salaryCap, 'M')}</b> (teams over this amount cannot sign free agents for more than the minimum contract)<br />
+            Minimum payroll limit: <b>{helpers.formatCurrency(minPayroll, 'M')}</b> (teams with payrolls below this limit will be assessed a fine equal to the difference at the end of the season)<br />
+            Luxury tax limit: <b>{helpers.formatCurrency(luxuryPayroll, 'M')}</b> (teams with payrolls above this limit will be assessed a fine equal to {luxuryTax} times the difference at the end of the season)
         </p>
 
         <DataTable
@@ -46,6 +46,26 @@ const LeagueFinances = ({minPayroll, luxuryPayroll, luxuryTax, salaryCap, season
             rows={rows}
         />
     </div>;
+};
+
+LeagueFinances.propTypes = {
+    minPayroll: React.PropTypes.number.isRequired,
+    luxuryPayroll: React.PropTypes.number.isRequired,
+    luxuryTax: React.PropTypes.number.isRequired,
+    salaryCap: React.PropTypes.number.isRequired,
+    season: React.PropTypes.number.isRequired,
+    teams: React.PropTypes.arrayOf(React.PropTypes.shape({
+        abbrev: React.PropTypes.string.isRequired,
+        att: React.PropTypes.number.isRequired,
+        cash: React.PropTypes.number.isRequired,
+        name: React.PropTypes.string.isRequired,
+        payroll: React.PropTypes.number,
+        profit: React.PropTypes.number.isRequired,
+        region: React.PropTypes.string.isRequired,
+        revenue: React.PropTypes.number.isRequired,
+        salaryPaid: React.PropTypes.number,
+        tid: React.PropTypes.number.isRequired,
+    })).isRequired,
 };
 
 module.exports = LeagueFinances;

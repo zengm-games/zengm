@@ -3,8 +3,8 @@ const DropdownButton = require('react-bootstrap/lib/DropdownButton');
 const MenuItem = require('react-bootstrap/lib/MenuItem');
 const helpers = require('../../util/helpers');
 
-module.exports = ({season}) => <div className="pull-right">
-    <DropdownButton id="dropdown-jump-to" title="Jump To">
+const JumpTo = ({season}) => <div className="pull-right">
+    <DropdownButton id="jump-to-dropdown" title="Jump To">
         <MenuItem href={helpers.leagueUrl(['standings', season])}>Standings</MenuItem>
         <MenuItem href={helpers.leagueUrl(['playoffs', season])}>Playoffs</MenuItem>
         <MenuItem href={helpers.leagueUrl(['history', season])}>Season Summary</MenuItem>
@@ -17,3 +17,9 @@ module.exports = ({season}) => <div className="pull-right">
         <MenuItem href={helpers.leagueUrl(['player_ratings', 'all', season])}>Player Ratings</MenuItem>
     </DropdownButton>
 </div>;
+
+JumpTo.propTypes = {
+    season: React.PropTypes.number.isRequired,
+};
+
+module.exports = JumpTo;

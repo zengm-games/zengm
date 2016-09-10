@@ -27,13 +27,13 @@ async function updateTeams(inputs, updateEvents, state) {
         const lowerIsBetter = ['lost', 'tov', 'ba', 'pf', 'oppPts'];
 
         // Loop teams and stat types.
-        for (const team of teams) {
+        for (const t of teams) {
             for (const statType of statTypes) {
                 if (!stats[statType]) {
                     stats[statType] = [];
                 }
 
-                stats[statType].push(team[statType]);
+                stats[statType].push(t[statType]);
             }
         }
 

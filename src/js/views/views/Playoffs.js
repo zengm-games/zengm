@@ -20,7 +20,10 @@ const Playoffs = ({confNames, finalMatchups, matchups, numPlayoffRounds, season,
                     {matchups.map((row, i) => <tr key={i}>
                         {row.map((m, j) => {
                             return <td key={j} rowSpan={m.rowspan} width={`${100 / (numPlayoffRounds * 2 - 1)}%`}>
-                                <PlayoffMatchup season={season} series={series[m.matchup[0]][m.matchup[1]]} />
+                                <PlayoffMatchup
+                                    season={season}
+                                    series={series[m.matchup[0]][m.matchup[1]]}
+                                />
                             </td>;
                         })}
                     </tr>)}
@@ -28,6 +31,15 @@ const Playoffs = ({confNames, finalMatchups, matchups, numPlayoffRounds, season,
             </table>
         </div>
     </div>;
+};
+
+Playoffs.propTypes = {
+    confNames: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+    finalMatchups: React.PropTypes.bool.isRequired,
+    matchups: React.PropTypes.arrayOf(React.PropTypes.arrayOf(React.PropTypes.object)).isRequired,
+    numPlayoffRounds: React.PropTypes.number.isRequired,
+    season: React.PropTypes.number.isRequired,
+    series: React.PropTypes.arrayOf(React.PropTypes.arrayOf(React.PropTypes.object)).isRequired,
 };
 
 module.exports = Playoffs;

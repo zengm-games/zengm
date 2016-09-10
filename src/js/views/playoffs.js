@@ -13,7 +13,8 @@ function get(req) {
 
 async function updatePlayoffs(inputs, updateEvents, state) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.season !== state.season || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0)) {
-        let finalMatchups, series;
+        let finalMatchups;
+        let series;
 
         // If in the current season and before playoffs started, display projected matchups
         if (inputs.season === g.season && g.phase < g.PHASE.PLAYOFFS) {

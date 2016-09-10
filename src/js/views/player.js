@@ -16,8 +16,8 @@ function get(req) {
 async function updatePlayer(inputs, updateEvents, state) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || !state.retired) {
         let [p, events] = await Promise.all([
-            g.dbl.players.get(inputs.pid).then(p => {
-                return player.withStats(null, [p], {
+            g.dbl.players.get(inputs.pid).then(p2 => {
+                return player.withStats(null, [p2], {
                     statsSeasons: "all",
                     statsPlayoffs: true,
                 }).then(players => players[0]);

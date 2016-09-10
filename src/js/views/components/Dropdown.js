@@ -180,11 +180,22 @@ const Select = ({field, handleChange, value}) => {
             val: "By Division",
             key: "div",
         }];
+    } else {
+        throw new Error(`Unknown Dropdown field: ${field}`);
     }
 
     return <select value={value} className="form-control" onChange={handleChange}>
         {options.map(opt => <option key={opt.key} value={opt.key}>{opt.val}</option>)}
     </select>;
+};
+
+Select.propTypes = {
+    field: React.PropTypes.string.isRequired,
+    handleChange: React.PropTypes.func.isRequired,
+    value: React.PropTypes.oneOfType([
+        React.PropTypes.number,
+        React.PropTypes.string,
+    ]).isRequired,
 };
 
 class Dropdown extends React.Component {
@@ -234,6 +245,7 @@ class Dropdown extends React.Component {
         </form>;
     }
 }
+
 Dropdown.propTypes = {
     extraParam: React.PropTypes.oneOfType([
         React.PropTypes.number,

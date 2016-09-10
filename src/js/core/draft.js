@@ -112,7 +112,7 @@ async function genPlayers(tx, tid, scoutingRank = null, numPlayers, newLeague = 
         p = player.develop(p, agingYears, true);
 
         // Update player values after ratings changes
-        promises.push(player.updateValues(tx, p, []).then(p => tx.players.put(p)));
+        promises.push(player.updateValues(tx, p, []).then(p2 => tx.players.put(p2)));
     }
 
     await Promise.all(promises);
@@ -154,7 +154,8 @@ function logLotteryChances(chances, teams, draftOrder) {
 }
 
 function logLotteryWinners(chances, teams, tm, origTm, pick) {
-    let idx, txt;
+    let idx;
+    let txt;
     for (let i = 0; i < teams.length; i++) {
         if (teams[i].tid === origTm) {
             idx = i;
@@ -196,7 +197,8 @@ function updateChances(chances, teams, isFinal) {
             let remainder = (isFinal) ? total % val : 0;
             const newVal = (total - remainder) / val;
 
-            let i, j;
+            let i;
+            let j;
             for (i = tc, j = tc + val; i < j; i++) {
                 chances[i] = newVal;
                 if (remainder > 0) {
@@ -272,7 +274,7 @@ async function genOrder(tx) {
 
     // cumsum
     for (let i = 1; i < chances.length; i++) {
-        chances[i] = chances[i] + chances[i - 1];
+        chances[i] += chances[i - 1];
     }
     // Pick first three picks based on chances
     const firstThree = [];
@@ -526,7 +528,7 @@ async function untilUserOrEnd() {
     playersAll.sort((a, b) => b.value - a.value);
 
     // Called after either the draft is over or it's the user's pick
-    const afterDoneAuto = async (draftOrder, pids) => {
+    const afterDoneAuto = async () => {
         await setOrder(null, draftOrder);
 
         // Is draft over?;
@@ -574,7 +576,7 @@ async function untilUserOrEnd() {
 
             if (g.userTids.indexOf(pick.tid) >= 0 && g.autoPlaySeasons === 0) {
                 draftOrder.unshift(pick);
-                return afterDoneAuto(draftOrder, pids);
+                return afterDoneAuto();
             }
 
             const selection = Math.floor(Math.abs(random.gauss(0, 2))); // 0=best prospect, 1=next best prospect, etc.
@@ -586,7 +588,7 @@ async function untilUserOrEnd() {
             return autoSelectPlayer();
         }
 
-        return afterDoneAuto(draftOrder, pids);
+        return afterDoneAuto();
     };
 
     return autoSelectPlayer();

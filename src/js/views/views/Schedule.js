@@ -4,7 +4,7 @@ const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
 const {Dropdown, NewWindowLink} = require('../components');
 
-module.exports = ({abbrev, completed, season, teamInfo, upcoming}) => {
+const Schedule = ({abbrev, completed, season, teamInfo, upcoming}) => {
     bbgmViewReact.title('Schedule');
 
     return <div>
@@ -47,3 +47,16 @@ module.exports = ({abbrev, completed, season, teamInfo, upcoming}) => {
         </div>
     </div>;
 };
+
+Schedule.propTypes = {
+    abbrev: React.PropTypes.string.isRequired,
+    completed: React.PropTypes.arrayOf(React.PropTypes.object),
+    season: React.PropTypes.number.isRequired,
+    teamInfo: React.PropTypes.objectOf(React.PropTypes.shape({
+        lost: React.PropTypes.number.isRequired,
+        won: React.PropTypes.number.isRequired,
+    })).isRequired,
+    upcoming: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+};
+
+module.exports = Schedule;

@@ -63,8 +63,7 @@ async function beforeLeague(req, loadedLid) {
     return [updateEvents, reqCb];
 }
 
-// Async just because it needs to resolve to a promise
-async function beforeNonLeague(req) {
+function beforeNonLeague(req) {
     g.lid = null;
     g.emitter.emit('updateTopMenu', {lid: undefined});
 

@@ -23,7 +23,7 @@ async function updateGamesList() {
     };
 }
 
-async function updateGamesInProgress(inputs, updateEvents) {
+function updateGamesInProgress(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("g.gamesInProgress") >= 0) {
         return {
             gamesInProgress: g.gamesInProgress,

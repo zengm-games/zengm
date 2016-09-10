@@ -68,4 +68,8 @@ const HallOfFame = ({players}) => {
     </div>;
 };
 
+HallOfFame.propTypes = {
+    players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+};
+
 module.exports = HallOfFame;

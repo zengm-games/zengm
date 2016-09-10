@@ -17,8 +17,8 @@ async function updateLeaders(inputs, updateEvents, state) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("watchList") >= 0 || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0) || inputs.season !== state.season) {
         let [teamSeasons, players] = await Promise.all([
             g.dbl.teamSeasons.index("season, tid").getAll(backboard.bound([inputs.season], [inputs.season, ''])),
-            g.dbl.players.getAll().then(players => {
-                return player.withStats(null, players, {statsSeasons: [inputs.season]});
+            g.dbl.players.getAll().then(players2 => {
+                return player.withStats(null, players2, {statsSeasons: [inputs.season]});
             }),
         ]);
 

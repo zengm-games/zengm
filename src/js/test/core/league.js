@@ -55,14 +55,7 @@ describe("core/league", () => {
             assert.equal(gTest.daysLeft, 0);
             assert.equal(gTest.showFirstOwnerMessage, true);
 
-            let count = 0;
-            for (const key in gTest) {
-                if (gTest.hasOwnProperty(key)) {
-                    count += 1;
-                }
-            }
-
-            assert.equal(count, 31);
+            assert.equal(Object.keys(gTest).length, 31);
         });
         it("should initialize draftOrder object store", async () => {
             const draftOrder = await g.dbl.draftOrder.getAll();

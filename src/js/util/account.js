@@ -90,9 +90,9 @@ async function addAchievements(achievements, silent = false) {
         }
     };
 
-    const addToIndexedDB = achievements => {
+    const addToIndexedDB = achievements2 => {
         return g.dbm.tx("achievements", "readwrite", async tx => {
-            for (const achievement of achievements) {
+            for (const achievement of achievements2) {
                 await tx.achievements.add({slug: achievement});
                 notify(achievement);
             }
@@ -201,10 +201,14 @@ async function getAchievements() {
 
         // Merge local and remote achievements
         for (let i = 0; i < achievements.length; i++) {
-            achievements[i].count += achievementsRemote[achievements[i].slug] !== undefined ? achievementsRemote[achievements[i].slug] : 0;
+            if (achievementsRemote[achievements[i].slug] !== undefined) {
+                achievements[i].count += achievementsRemote[achievements[i].slug];
+            }
         }
-    } finally {
-        // If remote fails, this will be just local. Otherwise it will merge.
+
+        return achievements;
+    } catch (err) {
+        // If remote fails, still return local achievements
         return achievements;
     }
 }

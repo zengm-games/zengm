@@ -82,16 +82,14 @@ class ResetPassword extends React.Component {
                         resetpwPassword2Error: null,
                     };
 
-                    for (const error in data.errors) {
-                        if (data.errors.hasOwnProperty(error)) {
-                            if (error === "password") {
-                                updatedState.resetpwPasswordError = data.errors[error];
-                            } else if (error === "password2") {
-                                updatedState.resetpwPassword2Error = data.errors[error];
-                            } else if (error === "passwords") {
-                                updatedState.resetpwPasswordError = updatedState.resetpwPasswordError === null ? '' : updatedState.resetpwPasswordError; // So it gets highlighted too
-                                updatedState.resetpwPassword2Error = data.errors[error];
-                            }
+                    for (const error of Object.keys(data.errors)) {
+                        if (error === "password") {
+                            updatedState.resetpwPasswordError = data.errors[error];
+                        } else if (error === "password2") {
+                            updatedState.resetpwPassword2Error = data.errors[error];
+                        } else if (error === "passwords") {
+                            updatedState.resetpwPasswordError = updatedState.resetpwPasswordError === null ? '' : updatedState.resetpwPasswordError; // So it gets highlighted too
+                            updatedState.resetpwPassword2Error = data.errors[error];
                         }
                     }
                 }
@@ -142,5 +140,9 @@ class ResetPassword extends React.Component {
         </div>;
     }
 }
+
+ResetPassword.propTypes = {
+    token: React.PropTypes.string.isRequired,
+};
 
 module.exports = ResetPassword;

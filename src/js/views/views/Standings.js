@@ -24,6 +24,11 @@ const DivStandingsRow = clickable(({clicked, season, t, toggleClicked}) => {
     </tr>;
 });
 
+DivStandingsRow.propTypes = {
+    season: React.PropTypes.number.isRequired,
+    t: React.PropTypes.object.isRequired,
+};
+
 const DivStandings = ({div, season}) => {
     return <div className="table-responsive">
         <table className="table table-striped table-bordered table-condensed table-hover">
@@ -49,6 +54,14 @@ const DivStandings = ({div, season}) => {
     </div>;
 };
 
+DivStandings.propTypes = {
+    div: React.PropTypes.shape({
+        name: React.PropTypes.string.isRequired,
+        teams: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    }).isRequired,
+    season: React.PropTypes.number.isRequired,
+};
+
 const ConfStandings = ({playoffsByConference, season, teams}) => {
     return <table className="table table-striped table-bordered table-condensed">
         <thead>
@@ -65,7 +78,13 @@ const ConfStandings = ({playoffsByConference, season, teams}) => {
     </table>;
 };
 
-module.exports = ({confs, playoffsByConference, season}) => {
+ConfStandings.propTypes = {
+    teams: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    playoffsByConference: React.PropTypes.bool.isRequired,
+    season: React.PropTypes.number.isRequired,
+};
+
+const Standings = ({confs, playoffsByConference, season}) => {
     if (season === undefined) {
         bbgmViewReact.title('Standings');
     } else {
@@ -90,3 +109,15 @@ module.exports = ({confs, playoffsByConference, season}) => {
         </div>)}
     </div>;
 };
+
+Standings.propTypes = {
+    confs: React.PropTypes.arrayOf(React.PropTypes.shape({
+        cid: React.PropTypes.number.isRequired,
+        name: React.PropTypes.string.isRequired,
+        divs: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    })).isRequired,
+    playoffsByConference: React.PropTypes.bool.isRequired,
+    season: React.PropTypes.number.isRequired,
+};
+
+module.exports = Standings;

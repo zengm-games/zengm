@@ -54,16 +54,17 @@ const Negotiation = ({contractOptions, errorMessage, payroll, player = {}, resig
         mood = <span className="text-danger"><b>Insulted by your presence.</b></span>;
     }
 
+    let message;
+    if (resigning) {
+        message = <p>You are allowed to go over the salary cap to make this deal because you are re-signing <a href={helpers.leagueUrl(['player', player.pid])}>{player.name}</a> to a contract extension. <b>If you do not come to an agreement here, <a href={helpers.leagueUrl(['player', player.pid])}>{player.name}</a> will become a free agent.</b> He will then be able to sign with any team, and you won't be able to go over the salary cap to sign him.</p>;
+    } else {
+        message = <p>You are not allowed to go over the salary cap to make this deal because <a href={helpers.leagueUrl(['player', player.pid])}>{player.name}</a> is a free agent.</p>;
+    }
+
     return <div>
         <h1>Contract Negotiation <NewWindowLink /></h1>
 
-        {
-            resigning
-        ?
-            <p>You are allowed to go over the salary cap to make this deal because you are re-signing <a href={helpers.leagueUrl(['player', player.pid])}>{player.name}</a> to a contract extension. <b>If you do not come to an agreement here, <a href={helpers.leagueUrl(['player', player.pid])}>{player.name}</a> will become a free agent.</b> He will then be able to sign with any team, and you won't be able to go over the salary cap to sign him.</p>
-        :
-            <p>You are not allowed to go over the salary cap to make this deal because <a href={helpers.leagueUrl(['player', player.pid])}>{player.name}</a> is a free agent.</p>
-        }
+        {message}
 
         <p>
             Current Payroll: {helpers.formatCurrency(payroll, 'M')}<br />
@@ -82,7 +83,7 @@ const Negotiation = ({contractOptions, errorMessage, payroll, player = {}, resig
             <div className="col-sm-8 col-md-6">
                 <div className="list-group">
                     {contractOptions.map((contract, i) => {
-                        return <div key={i} className="list-group-item" className={classNames('list-group-item', {'list-group-item-success': contract.smallestAmount})} style={{height: '54px'}}>
+                        return <div key={i} className={classNames('list-group-item', {'list-group-item-success': contract.smallestAmount})} style={{height: '54px'}}>
                             <div className="pull-left" style={{paddingTop: '8px'}}>
                                 ${helpers.round(contract.amount, 2)}M per year<span className="hidden-xs">, through {contract.exp}</span> ({contract.years} {contract.years === 1 ? 'season' : 'seasons'})
                             </div>
@@ -103,6 +104,21 @@ const Negotiation = ({contractOptions, errorMessage, payroll, player = {}, resig
             Can't reach a deal? End negotiation
         </button>
     </div>;
+};
+
+Negotiation.propTypes = {
+    contractOptions: React.PropTypes.arrayOf(React.PropTypes.shape({
+        smallestAmount: React.PropTypes.bool.isRequired,
+        amount: React.PropTypes.number.isRequired,
+        years: React.PropTypes.number.isRequired,
+        exp: React.PropTypes.number.isRequired,
+    })),
+    errorMessage: React.PropTypes.string,
+    payroll: React.PropTypes.number,
+    player: React.PropTypes.object,
+    resigning: React.PropTypes.bool,
+    salaryCap: React.PropTypes.number,
+    userTid: React.PropTypes.number,
 };
 
 module.exports = Negotiation;

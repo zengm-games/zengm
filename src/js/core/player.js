@@ -53,6 +53,29 @@ function fuzzRating(rating, fuzz) {
     return Math.round(helpers.bound(rating + fuzz, 0, 100));
 }
 
+function hasSkill(ratings, components, weights) {
+    if (weights === undefined) {
+        // Default: array of ones with same size as components
+        weights = [];
+        for (let i = 0; i < components.length; i++) {
+            weights.push(1);
+        }
+    }
+
+    let numerator = 0;
+    let denominator = 0;
+    for (let i = 0; i < components.length; i++) {
+        const rating = components[i] === 'hgt' ? ratings[components[i]] : fuzzRating(ratings[components[i]], ratings.fuzz); // don't fuzz height
+        numerator += rating * weights[i];
+        denominator += 100 * weights[i];
+    }
+
+    if (numerator / denominator > 0.75) {
+        return true;
+    }
+    return false;
+}
+
 /**
  * Assign "skills" based on ratings.
  *
@@ -73,29 +96,6 @@ function fuzzRating(rating, fuzz) {
  */
 function skills(ratings) {
     const sk = [];
-
-    const hasSkill = (ratings, components, weights) => {
-        if (weights === undefined) {
-            // Default: array of ones with same size as components
-            weights = [];
-            for (let i = 0; i < components.length; i++) {
-                weights.push(1);
-            }
-        }
-
-        let numerator = 0;
-        let denominator = 0;
-        for (let i = 0; i < components.length; i++) {
-            const rating = components[i] === 'hgt' ? ratings[components[i]] : fuzzRating(ratings[components[i]], ratings.fuzz); // don't fuzz height
-            numerator += rating * weights[i];
-            denominator += 100 * weights[i];
-        }
-
-        if (numerator / denominator > 0.75) {
-            return true;
-        }
-        return false;
-    };
 
     // These use the same formulas as the composite rating definitions in core.game!
     if (hasSkill(ratings, g.compositeWeights.shootingThreePointer.ratings, g.compositeWeights.shootingThreePointer.weights)) {
@@ -179,11 +179,9 @@ function genContract(p, randomizeExp = false, randomizeAmount = true, noLimit = 
         } else if (amount > g.maxContract) {
             amount = g.maxContract;
         }
-    } else {
+    } else if (amount < 0) {
         // Well, at least keep it positive
-        if (amount < 0) {
-            amount = 0;
-        }
+        amount = 0;
     }
 
     amount = 50 * Math.round(amount / 50);  // Make it a multiple of 50k
@@ -304,6 +302,50 @@ function pos(ratings) {
     return position;
 }
 
+function calcBaseChange(age, potentialDifference) {
+    let val;
+
+    // Average rating change if there is no potential difference
+    if (age <= 21) {
+        val = 0;
+    } else if (age <= 25) {
+        val = 0;
+    } else if (age <= 29) {
+        val = -1;
+    } else if (age <= 31) {
+        val = -2;
+    } else {
+        val = -3;
+    }
+
+    // Factor in potential difference
+    // This only matters for young players who have potentialDifference != 0
+    if (age <= 21) {
+        if (Math.random() < 0.75) {
+            val += potentialDifference * random.uniform(0.2, 0.9);
+        } else {
+            val += potentialDifference * random.uniform(0.1, 0.3);
+        }
+    } else if (age <= 25) {
+        if (Math.random() < 0.25) {
+            val += potentialDifference * random.uniform(0.2, 0.9);
+        } else {
+            val += potentialDifference * random.uniform(0.1, 0.3);
+        }
+    } else {
+        val += potentialDifference * random.uniform(0, 0.1);
+    }
+
+    // Noise
+    if (age <= 25) {
+        val += helpers.bound(random.realGauss(0, 5), -4, 10);
+    } else {
+        val += helpers.bound(random.realGauss(0, 3), -2, 10);
+    }
+
+    return val;
+}
+
 /**
  * Develop (increase/decrease) player's ratings. This operates on whatever the last row of p.ratings is.
  *
@@ -312,58 +354,14 @@ function pos(ratings) {
  * @memberOf core.player
  * @param {Object} p Player object.
  * @param {number=} years Number of years to develop (default 1).
- * @param {boolean=} generate Generating a new player? (default false). If true, then the player's age is also updated based on years.
+ * @param {boolean=} newPlayer Generating a new player? (default false). If true, then the player's age is also updated based on years.
  * @param {number=} coachingRank From 1 to g.numTeams (default 30), where 1 is best coaching staff and g.numTeams is worst. Default is 15.5
  * @return {Object} Updated player object.
  */
-function develop(p, years = 1, generate = false, coachingRank = 15.5) {
+function develop(p, years = 1, newPlayer = false, coachingRank = 15.5) {
     const r = p.ratings.length - 1;
 
     let age = g.season - p.born.year;
-
-    const calcBaseChange = (age, potentialDifference) => {
-        let val;
-
-        // Average rating change if there is no potential difference
-        if (age <= 21) {
-            val = 0;
-        } else if (age <= 25) {
-            val = 0;
-        } else if (age <= 29) {
-            val = -1;
-        } else if (age <= 31) {
-            val = -2;
-        } else {
-            val = -3;
-        }
-
-        // Factor in potential difference
-        // This only matters for young players who have potentialDifference != 0
-        if (age <= 21) {
-            if (Math.random() < 0.75) {
-                val += potentialDifference * random.uniform(0.2, 0.9);
-            } else {
-                val += potentialDifference * random.uniform(0.1, 0.3);
-            }
-        } else if (age <= 25) {
-            if (Math.random() < 0.25) {
-                val += potentialDifference * random.uniform(0.2, 0.9);
-            } else {
-                val += potentialDifference * random.uniform(0.1, 0.3);
-            }
-        } else {
-            val += potentialDifference * random.uniform(0, 0.1);
-        }
-
-        // Noise
-        if (age <= 25) {
-            val += helpers.bound(random.realGauss(0, 5), -4, 10);
-        } else {
-            val += helpers.bound(random.realGauss(0, 3), -2, 10);
-        }
-
-        return val;
-    };
 
     for (let i = 0; i < years; i++) {
         age += 1;
@@ -427,7 +425,6 @@ function develop(p, years = 1, generate = false, coachingRank = 15.5) {
             p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + baseChangeLocal * random.uniform(0.5, 1.5));
         }
 
-//console.log([age, p.ratings[r].pot - p.ratings[r].ovr, ovr(p.ratings[r]) - p.ratings[r].ovr])
         // Update overall and potential
         p.ratings[r].ovr = ovr(p.ratings[r]);
         p.ratings[r].pot += -2 + Math.round(random.realGauss(0, 2));
@@ -444,7 +441,7 @@ function develop(p, years = 1, generate = false, coachingRank = 15.5) {
     // Likewise, If this isn't outside the loop, then 19 year old players don't get skills
     p.ratings[r].skills = skills(p.ratings[r]);
 
-    if (generate) {
+    if (newPlayer) {
         age = g.season - p.born.year + years;
         p.born.year = g.season - age;
     }
@@ -754,10 +751,8 @@ function name() {
 function addRatingsRow(p, scoutingRank) {
     const newRatings = {};
     const r = p.ratings.length - 1; // Most recent ratings
-    for (const key in p.ratings[r]) {
-        if (p.ratings[r].hasOwnProperty(key)) {
-            newRatings[key] = p.ratings[r][key];
-        }
+    for (const key of Object.keys(p.ratings[r])) {
+        newRatings[key] = p.ratings[r][key];
     }
     newRatings.season = g.season;
     newRatings.fuzz = (newRatings.fuzz + genFuzz(scoutingRank)) / 2;
@@ -1053,6 +1048,7 @@ function filter(p, options) {
     }
 
     // Copys/filters the attributes listed in options.attrs from p to fp.
+    // eslint-disable-next-line no-shadow
     const filterAttrs = (fp, p, options) => {
         for (let i = 0; i < options.attrs.length; i++) {
             if (options.attrs[i] === "age") {
@@ -1076,7 +1072,7 @@ function filter(p, options) {
                 fp.hgtIn = p.hgt - 12 * Math.floor(p.hgt / 12);
             } else if (options.attrs[i] === "contract") {
                 fp.contract = helpers.deepCopy(p.contract);  // [millions of dollars]
-                fp.contract.amount = fp.contract.amount / 1000;  // [millions of dollars]
+                fp.contract.amount /= 1000;  // [millions of dollars]
             } else if (options.attrs[i] === "cashOwed") {
                 fp.cashOwed = contractSeasonsRemaining(p.contract.exp, options.numGamesRemaining) * p.contract.amount / 1000;  // [millions of dollars]
             } else if (options.attrs[i] === "abbrev") {
@@ -1106,14 +1102,12 @@ function filter(p, options) {
             } else if (options.attrs[i] === "awardsGrouped") {
                 fp.awardsGrouped = [];
                 const awardsGroupedTemp = _.groupBy(p.awards, award => award.type);
-                for (const award in awardsGroupedTemp) {
-                    if (awardsGroupedTemp.hasOwnProperty(award)) {
-                        fp.awardsGrouped.push({
-                            type: award,
-                            count: awardsGroupedTemp[award].length,
-                            seasons: helpers.yearRanges(_.pluck(awardsGroupedTemp[award], "season")),
-                        });
-                    }
+                for (const award of Object.keys(awardsGroupedTemp)) {
+                    fp.awardsGrouped.push({
+                        type: award,
+                        count: awardsGroupedTemp[award].length,
+                        seasons: helpers.yearRanges(_.pluck(awardsGroupedTemp[award], "season")),
+                    });
                 }
             } else if (options.attrs[i] === "name") {
                 fp.name = `${p.firstName} ${p.lastName}`;
@@ -1124,6 +1118,7 @@ function filter(p, options) {
     };
 
     // Copys/filters the ratings listed in options.ratings from p to fp.
+    // eslint-disable-next-line no-shadow
     const filterRatings = (fp, p, options) => {
         if (options.season !== null) {
             // One season
@@ -1223,6 +1218,7 @@ function filter(p, options) {
     };
 
     // Returns stats object, containing properties "r" for regular season, "p" for playoffs, and "cr"/"cp" for career. "r" and "p" can be either objects (single season) or arrays of objects (multiple seasons). All these outputs are raw season totals, not per-game averages.
+    // eslint-disable-next-line no-shadow
     const gatherStats = (p, options) => {
         const ps = {};
 
@@ -1301,6 +1297,7 @@ function filter(p, options) {
     };
 
     // Filters s by stats (which should be options.stats) and returns a filtered object. This is to do one season of stats filtering.
+    // eslint-disable-next-line no-shadow
     const filterStatsPartial = (p, s, stats) => {
         const row = {};
 
@@ -1362,14 +1359,12 @@ function filter(p, options) {
                     row.yearsWithTeam = s.yearsWithTeam;
                 } else if (stats[j] === "psid") {
                     row.psid = s.psid;
+                } else if (options.totals) {
+                    row[stats[j]] = s[stats[j]];
+                } else if (options.per36 && stats[j] !== "min") { // Don't scale min by 36 minutes
+                    row[stats[j]] = s[stats[j]] * 36 / s.min;
                 } else {
-                    if (options.totals) {
-                        row[stats[j]] = s[stats[j]];
-                    } else if (options.per36 && stats[j] !== "min") { // Don't scale min by 36 minutes
-                        row[stats[j]] = s[stats[j]] * 36 / s.min;
-                    } else {
-                        row[stats[j]] = s[stats[j]] / s.gp;
-                    }
+                    row[stats[j]] = s[stats[j]] / s.gp;
                 }
             }
         } else {
@@ -1405,6 +1400,7 @@ function filter(p, options) {
     };
 
     // Copys/filters the stats listed in options.stats from p to fp. If no stats are found for the supplied settings, then fp.stats remains undefined.
+    // eslint-disable-next-line no-shadow
     const filterStats = (fp, p, options) => {
         const ps = gatherStats(p, options);
 
@@ -1506,9 +1502,9 @@ function madeHof(p, playerStats) {
 
     // Estimated wins added for each season http://insider.espn.go.com/nba/hollinger/statistics
     const ewas = [];
-    const pos = p.ratings[p.ratings.length - 1].pos;
+    const position = p.ratings[p.ratings.length - 1].pos;
     for (let i = 0; i < mins.length; i++) {
-        const va = mins[i] * (pers[i] - prls[pos]) / 67;
+        const va = mins[i] * (pers[i] - prls[position]) / 67;
         ewas.push(va / 30 * 0.8); // 0.8 is a fudge factor to approximate the difference between (in-game) EWA and (real) win shares
     }
 
@@ -1945,17 +1941,8 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
     }
 
     if (saveFeat) {
-        let i, j;
-        if (results.team[0].id === tid) {
-            i = 0;
-            j = 1;
-        } else {
-            i = 1;
-            j = 0;
-        }
-
+        const [i, j] = results.team[0].id === tid ? [0, 1] : [1, 0];
         const won = results.team[i].stat.pts > results.team[j].stat.pts;
-
         const featTextArr = Object.keys(statArr).map(stat => `${statArr[stat]} ${stat}`);
 
         let featText = `<a href="${helpers.leagueUrl(["player", pid])}">${p.name}</a> had <a href="${helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid])}">`;
@@ -2084,8 +2071,8 @@ async function withStats(tx, players, options) {
     }
     const range = backboard.bound([Math.min(...pids)], [Math.max(...pids), '']);
 
-    return helpers.maybeReuseTx("playerStats", "readonly", tx, async tx => {
-        const index = tx.playerStats.index('pid, season, tid')._rawIndex; // eslint-disable-line no-underscore-dangle
+    return helpers.maybeReuseTx("playerStats", "readonly", tx, async tx2 => {
+        const index = tx2.playerStats.index('pid, season, tid')._rawIndex; // eslint-disable-line no-underscore-dangle
 
         await new Promise((resolve, reject) => {
             const request = index.openCursor(range);

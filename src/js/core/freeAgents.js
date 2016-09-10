@@ -19,14 +19,14 @@ const random = require('../util/random');
  */
 async function autoSign(tx) {
     const objectStores = ["players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"];
-    await helpers.maybeReuseTx(objectStores, "readwrite", tx, async tx => {
+    await helpers.maybeReuseTx(objectStores, "readwrite", tx, async tx2 => {
         const [teams, players] = await Promise.all([
             team.filter({
-                ot: tx,
+                ot: tx2,
                 attrs: ["strategy"],
                 season: g.season,
             }),
-            tx.players.index('tid').getAll(g.PLAYER.FREE_AGENT),
+            tx2.players.index('tid').getAll(g.PLAYER.FREE_AGENT),
         ]);
 
         const strategies = teams.map(t => t.strategy);
@@ -64,8 +64,8 @@ async function autoSign(tx) {
             }*/
 
             const [numPlayersOnRoster, payroll] = await Promise.all([
-                tx.players.index('tid').count(tid),
-                team.getPayroll(tx, tid).get(0),
+                tx2.players.index('tid').count(tid),
+                team.getPayroll(tx2, tid).get(0),
             ]);
 
             if (numPlayersOnRoster < 15) {
@@ -75,7 +75,7 @@ async function autoSign(tx) {
                         let p = players[i];
                         p.tid = tid;
                         if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
-                            p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
+                            p = player.addStatsRow(tx2, p, g.phase === g.PHASE.PLAYOFFS);
                         }
                         p = player.setContract(p, p.contract, true);
                         p.gamesUntilTradable = 15;
@@ -90,8 +90,8 @@ async function autoSign(tx) {
 
                         players.splice(i, 1); // Remove from list of free agents
 
-                        await tx.players.put(p);
-                        await team.rosterAutoSort(tx, tid);
+                        await tx2.players.put(p);
+                        await team.rosterAutoSort(tx2, tid);
 
                         // We found one, so stop looking for this team
                         break;

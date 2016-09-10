@@ -14,12 +14,13 @@ const Message = ({message = {}}) => {
         <p><a href={helpers.leagueUrl(['inbox'])}>Return To Inbox</a></p>
     </div>;
 };
+
 Message.propTypes = {
     message: React.PropTypes.shape({
         from: React.PropTypes.string.isRequired,
         text: React.PropTypes.string.isRequired,
         year: React.PropTypes.number.isRequired,
-    }),
+    }).isRequired,
 };
 
 module.exports = Message;

@@ -51,15 +51,15 @@ async function playerGamesCSV(season) {
 
     let output = "pid,Name,Pos,Team,Opp,Score,WL,Season,Playoffs,Min,FGM,FGA,FG%,3PM,3PA,3P%,FTM,FTA,FT%,OReb,DReb,Reb,Ast,TO,Stl,Blk,BA,PF,Pts,+/-\n";
 
-    const teams = games.map(g => g.teams);
-    const seasons = games.map(g => g.season);
+    const teams = games.map(gm => gm.teams);
+    const seasons = games.map(gm => gm.season);
     for (let i = 0; i < teams.length; i++) {
         for (let j = 0; j < 2; j++) {
             const t = teams[i][j];
             const t2 = teams[i][j === 0 ? 1 : 0];
-            t.players.forEach(p => {
+            for (const p of t.players) {
                 output += `${[p.pid, p.name, p.pos, g.teamAbbrevsCache[t.tid], g.teamAbbrevsCache[t2.tid], `${t.pts}-${t2.pts}`, t.pts > t2.pts ? "W" : "L", seasons[i], games[i].playoffs, p.min, p.fg, p.fga, p.fgp, p.tp, p.tpa, p.tpp, p.ft, p.fta, p.ftp, p.orb, p.drb, p.trb, p.ast, p.tov, p.stl, p.blk, p.ba, p.pf, p.pts, p.pm].join(",")}\n`;
-            });
+            }
         }
     }
 
@@ -169,5 +169,12 @@ class ExportStats extends React.Component {
         </div>;
     }
 }
+
+ExportStats.propTypes = {
+    seasons: React.PropTypes.arrayOf(React.PropTypes.shape({
+        key: React.PropTypes.string.isRequired,
+        val: React.PropTypes.string.isRequired,
+    })).isRequired,
+};
 
 module.exports = ExportStats;

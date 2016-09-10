@@ -95,11 +95,11 @@ function filterUntradable(players) {
  * Just calls filterUntradable and discards everything but the boolean.
  *
  * @memberOf core.trade
- * @param {<Object>} players Player object or partial player objects
+ * @param {Object} p Player object or partial player object
  * @return {boolean} Processed input
  */
-function isUntradable(player) {
-    return filterUntradable([player])[0].untradable;
+function isUntradable(p) {
+    return filterUntradable([p])[0].untradable;
 }
 
 /**
@@ -212,8 +212,8 @@ function summary(teams) {
                     tid: tids[i],
                     showRookies: true,
                 });
-                s.teams[i].trade = players[i].filter(player => pids[i].indexOf(player.pid) >= 0);
-                s.teams[i].total = s.teams[i].trade.reduce((memo, player) => memo + player.contract.amount, 0);
+                s.teams[i].trade = players[i].filter(p => pids[i].indexOf(p.pid) >= 0);
+                s.teams[i].total = s.teams[i].trade.reduce((memo, p) => memo + p.contract.amount, 0);
             }));
 
             promises.push(tx.draftPicks.index('tid').getAll(tids[i]).then(picks => {
@@ -497,12 +497,10 @@ async function makeItWork(teams, holdUserConstant, estValuesCached) {
                 } else {
                     otherPids.push(asset.pid);
                 }
+            } else if (asset.tid === g.userTid) {
+                userDpids.push(asset.dpid);
             } else {
-                if (asset.tid === g.userTid) {
-                    userDpids.push(asset.dpid);
-                } else {
-                    otherDpids.push(asset.dpid);
-                }
+                otherDpids.push(asset.dpid);
             }
 
             asset.dv = await team.valueChange(teams[1].tid, userPids, otherPids, userDpids, otherDpids, estValuesCached);
@@ -527,16 +525,15 @@ async function makeItWork(teams, holdUserConstant, estValuesCached) {
             } else {
                 teams[1].pids.push(asset.pid);
             }
+        } else if (asset.tid === g.userTid) {
+            teams[0].dpids.push(asset.dpid);
         } else {
-            if (asset.tid === g.userTid) {
-                teams[0].dpids.push(asset.dpid);
-            } else {
-                teams[1].dpids.push(asset.dpid);
-            }
+            teams[1].dpids.push(asset.dpid);
         }
 
         added += 1;
 
+        // eslint-disable-next-line no-use-before-define
         return testTrade();
     };
 
@@ -592,8 +589,8 @@ async function getPickValues(ot) {
     for (let i = g.season; i < g.season + 4; i++) {
         promises.push(dbOrTx.players.index('draft.year').getAll(i).then(players => {
             if (players.length > 0) {
-                for (let i = 0; i < players.length; i++) {
-                    players[i].value += 4; // +4 is to generally make picks more valued
+                for (const p of players) {
+                    p.value += 4; // +4 is to generally make picks more valued
                 }
                 players.sort((a, b) => b.value - a.value);
                 estValues[players[0].draft.year] = players.map(p => p.value);

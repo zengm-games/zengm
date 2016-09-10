@@ -23,14 +23,12 @@ async function updatePlayers(inputs, updateEvents, state) {
             fuzz: true,
         });
 
-        const ratingsAll = players.reduce((memo, player) => {
-            for (const rating in player.ratings) {
-                if (player.ratings.hasOwnProperty(rating)) {
-                    if (memo.hasOwnProperty(rating)) {
-                        memo[rating].push(player.ratings[rating]);
-                    } else {
-                        memo[rating] = [player.ratings[rating]];
-                    }
+        const ratingsAll = players.reduce((memo, p) => {
+            for (const rating of Object.keys(p.ratings)) {
+                if (memo.hasOwnProperty(rating)) {
+                    memo[rating].push(p.ratings[rating]);
+                } else {
+                    memo[rating] = [p.ratings[rating]];
                 }
             }
             return memo;

@@ -22,7 +22,7 @@ async function updateEventLog(inputs, updateEvents, state) {
 
         if (events.length === 0) {
             // Show all events, newest at top
-            let events = await g.dbl.events.index('season').getAll(inputs.season);
+            events = await g.dbl.events.index('season').getAll(inputs.season);
             events.reverse(); // Newest first
 
             // Filter by team

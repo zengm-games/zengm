@@ -11,7 +11,7 @@ function updateExportStats(inputs, updateEvents) {
         }];
         for (let j = 0; j < seasons.length; j++) {
             options.push({
-                key: seasons[j].season,
+                key: String(seasons[j].season),
                 val: `${seasons[j].season} season`,
             });
         }

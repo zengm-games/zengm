@@ -4,14 +4,8 @@ class DownloadDataLink extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            url: null,
+            url: undefined,
         };
-    }
-
-    componentWillUnmount() {
-        if (this.state.url) {
-            window.URL.revokeObjectURL(this.state.url);
-        }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -31,9 +25,15 @@ class DownloadDataLink extends React.Component {
                 });
             } else {
                 this.setState({
-                    url: null,
+                    url: undefined,
                 });
             }
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.state.url) {
+            window.URL.revokeObjectURL(this.state.url);
         }
     }
 
@@ -43,7 +43,7 @@ class DownloadDataLink extends React.Component {
         if (status) {
             return <span>{status}</span>;
         }
-        if (this.state.url) {
+        if (this.state.url !== undefined) {
             // Would be better to auto-download, like some of the answers at http://stackoverflow.com/q/3665115/786644
             return <a href={this.state.url} download={filename} data-no-davis="true">
                 {downloadText}
@@ -53,6 +53,7 @@ class DownloadDataLink extends React.Component {
         return null;
     }
 }
+
 DownloadDataLink.propTypes = {
     data: React.PropTypes.string,
     downloadText: React.PropTypes.string.isRequired,

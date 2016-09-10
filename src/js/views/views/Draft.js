@@ -27,6 +27,21 @@ class Draft extends React.Component {
         };
     }
 
+    componentWillReceiveProps() {
+        if (this.props.fantasyDraft) {
+            const newDrafted = this.state.fantasyDraftedNewPids.map((pid, i) => {
+                const p = this.props.undrafted.find(p2 => p2.pid === pid);
+                p.draft = this.props.drafted[i].draft;
+                return p;
+            });
+
+            this.setState({
+                fantasyDrafted: this.state.fantasyDrafted.concat(newDrafted),
+                fantasyDraftedNewPids: [],
+            });
+        }
+    }
+
     savePids(pids) {
         if (this.props.fantasyDraft) {
             this.setState({
@@ -52,28 +67,13 @@ class Draft extends React.Component {
     async draftUser(pid) {
         const draftOrder = await draft.getOrder();
         const pick = draftOrder.shift();
-        if (g.userTids.indexOf(pick.tid) >= 0) {
+        if (pick && g.userTids.indexOf(pick.tid) >= 0) {
             this.savePids([pid]);
             await draft.selectPlayer(pick, pid);
             await g.dbl.tx("draftOrder", "readwrite", tx => draft.setOrder(tx, draftOrder));
             await this.draftUntilUserOrEnd();
         } else {
             console.log("ERROR: User trying to draft out of turn.");
-        }
-    }
-
-    componentWillReceiveProps() {
-        if (this.props.fantasyDraft) {
-            const newDrafted = this.state.fantasyDraftedNewPids.map((pid, i) => {
-                const p = this.props.undrafted.find(p => p.pid === pid);
-                p.draft = this.props.drafted[i].draft;
-                return p;
-            });
-
-            this.setState({
-                fantasyDrafted: this.state.fantasyDrafted.concat(newDrafted),
-                fantasyDraftedNewPids: [],
-            });
         }
     }
 
@@ -192,5 +192,13 @@ class Draft extends React.Component {
         </div>;
     }
 }
+
+Draft.propTypes = {
+    drafted: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    fantasyDraft: React.PropTypes.bool.isRequired,
+    started: React.PropTypes.bool.isRequired,
+    undrafted: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    userTids: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
+};
 
 module.exports = Draft;

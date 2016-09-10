@@ -59,8 +59,8 @@ const defaultGameAttributes = {
 function merge(x, y) {
     for (let i = 0; i < x.length; i++) {
         // Fill in default values as needed
-        for (const prop in y[i]) {
-            if (y[i].hasOwnProperty(prop) && !x[i].hasOwnProperty(prop)) {
+        for (const prop of Object.keys(y[i])) {
+            if (!x[i].hasOwnProperty(prop)) {
                 x[i][prop] = y[i][prop];
             }
         }
@@ -79,11 +79,9 @@ function merge(x, y) {
  */
 async function setGameAttributes(tx, gameAttributes) {
     const toUpdate = [];
-    for (const key in gameAttributes) {
-        if (gameAttributes.hasOwnProperty(key)) {
-            if (g[key] !== gameAttributes[key]) {
-                toUpdate.push(key);
-            }
+    for (const key of Object.keys(gameAttributes)) {
+        if (g[key] !== gameAttributes[key]) {
+            toUpdate.push(key);
         }
     }
 
@@ -195,7 +193,8 @@ async function create(name, tid, leagueFile = {}, startingSeason, randomizeRoste
 
     await setGameAttributesComplete(gameAttributes);
 
-    let players, scoutingRank;
+    let players;
+    let scoutingRank;
     const objectStores = ["draftPicks", "draftOrder", "players", "playerStats", "teams", "teamSeasons", "teamStats", "trade", "releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games", "events", "playerFeats"];
     await g.dbl.tx(objectStores, "readwrite", async tx => {
         // Draft picks for the first 4 years, as those are the ones can be traded initially
@@ -401,9 +400,9 @@ async function create(name, tid, leagueFile = {}, startingSeason, randomizeRoste
             const baseRatings = [37, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 26, 26, 26];
             const pots = [75, 65, 55, 55, 60, 50, 70, 40, 55, 50, 60, 60, 45, 45];
 
-            for (let tid = -3; tid < teams.length; tid++) {
+            for (let tidTemp = -3; tidTemp < teams.length; tidTemp++) {
                 // Create multiple "teams" worth of players for the free agent pool
-                const tid2 = tid < 0 ? g.PLAYER.FREE_AGENT : tid;
+                const tid2 = tidTemp < 0 ? g.PLAYER.FREE_AGENT : tidTemp;
 
                 const goodNeutralBad = random.randInt(-1, 1);  // determines if this will be a good team or not
                 random.shuffle(pots);

@@ -106,10 +106,10 @@ function writeTeamStats(tx, results) {
             }
 
             // It should never happen, but winp and winpOld sometimes turn up as NaN due to a duplicate season entry or the user skipping seasons
-            if (winp !== winp) {
+            if (isNaN(winp)) {
                 winp = 0;
             }
-            if (winpOld !== winpOld) {
+            if (isNaN(winpOld)) {
                 winpOld = 0;
             }
 
@@ -341,14 +341,7 @@ async function writeGameStats(tx, results, att) {
     }
 
     // Store some extra junk to make box scores easy
-    let tl, tw;
-    if (results.team[0].stat.pts > results.team[1].stat.pts) {
-        tw = 0;
-        tl = 1;
-    } else {
-        tw = 1;
-        tl = 0;
-    }
+    const [tw, tl] = results.team[0].stat.pts > results.team[1].stat.pts ? [0, 1] : [1, 0];
 
     gameStats.won.tid = results.team[tw].id;
     gameStats.lost.tid = results.team[tl].id;
@@ -395,17 +388,12 @@ async function updatePlayoffSeries(tx, results) {
 
     const playoffRound = playoffSeries.series[playoffSeries.currentRound];
 
-    results.forEach(result => {
-        let currentRoundText, i, loserTid, loserWon, series, showNotification, winnerTid, won0;
-
+    for (const result of results) {
         // Did the home (true) or away (false) team win this game? Here, "home" refers to this game, not the team which has homecourt advnatage in the playoffs, which is what series.home refers to below.
-        if (result.team[0].stat.pts > result.team[1].stat.pts) {
-            won0 = true;
-        } else {
-            won0 = false;
-        }
+        const won0 = result.team[0].stat.pts > result.team[1].stat.pts;
 
-        for (i = 0; i < playoffRound.length; i++) {
+        let series;
+        for (let i = 0; i < playoffRound.length; i++) {
             series = playoffRound[i];
 
             if (series.home.tid === result.team[0].id) {
@@ -427,6 +415,9 @@ async function updatePlayoffSeries(tx, results) {
 
         // Log result of playoff series
         if (series.away.won >= 4 || series.home.won >= 4) {
+            let winnerTid;
+            let loserTid;
+            let loserWon;
             if (series.away.won >= 4) {
                 winnerTid = series.away.tid;
                 loserTid = series.home.tid;
@@ -437,6 +428,7 @@ async function updatePlayoffSeries(tx, results) {
                 loserWon = series.away.won;
             }
 
+            let currentRoundText;
             if (playoffSeries.currentRound === 0) {
                 currentRoundText = "first round of the playoffs";
             } else if (playoffSeries.currentRound === 1) {
@@ -447,11 +439,7 @@ async function updatePlayoffSeries(tx, results) {
                 currentRoundText = "league championship";
             }
 
-            if (series.away.tid === g.userTid || series.home.tid === g.userTid || playoffSeries.currentRound === 3) {
-                showNotification = true;
-            } else {
-                showNotification = false;
-            }
+            const showNotification = series.away.tid === g.userTid || series.home.tid === g.userTid || playoffSeries.currentRound === 3;
             eventLog.add(tx, {
                 type: "playoffs",
                 text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[winnerTid], g.season])}">${g.teamNamesCache[winnerTid]}</a> defeated the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[loserTid], g.season])}">${g.teamNamesCache[loserTid]}</a> in the ${currentRoundText}, 4-${loserWon}.`,
@@ -459,7 +447,7 @@ async function updatePlayoffSeries(tx, results) {
                 tids: [winnerTid, loserTid],
             });
         }
-    });
+    }
 
     await tx.playoffSeries.put(playoffSeries);
 }
@@ -476,34 +464,31 @@ async function updatePlayoffSeries(tx, results) {
  * @return {number} Composite rating, a number between 0 and 1.
  */
 function makeComposite(rating, components, weights) {
-    let component, divideBy, i, r, rcomp;
-
     if (weights === undefined) {
         // Default: array of ones with same size as components
         weights = [];
-        for (i = 0; i < components.length; i++) {
+        for (let i = 0; i < components.length; i++) {
             weights.push(1);
         }
     }
 
     rating.constant = 50;
 
-    r = 0;
-    divideBy = 0;
-    for (i = 0; i < components.length; i++) {
-        component = components[i];
+    let r = 0;
+    let divideBy = 0;
+    for (let i = 0; i < components.length; i++) {
         // Sigmoidal transformation
         //y = (rating[component] - 70) / 10;
         //rcomp = y / Math.sqrt(1 + Math.pow(y, 2));
         //rcomp = (rcomp + 1) * 50;
-        rcomp = weights[i] * rating[component];
+        const rcomp = weights[i] * rating[components[i]];
 
-        r = r + rcomp;
+        r += rcomp;
 
-        divideBy = divideBy + 100 * weights[i];
+        divideBy += 100 * weights[i];
     }
 
-    r = r / divideBy;  // Scale from 0 to 1
+    r /= divideBy;  // Scale from 0 to 1
     if (r > 1) {
         r = 1;
     } else if (r < 0) {
@@ -524,7 +509,7 @@ function makeComposite(rating, components, weights) {
  */
 async function loadTeams(tx) {
     return Promise.map(_.range(g.numTeams), async tid => {
-        const [players, team, teamSeason] = await Promise.all([
+        const [players, {cid, did}, teamSeason] = await Promise.all([
             tx.players.index('tid').getAll(tid),
             tx.teams.get(tid),
             tx.teamSeasons.index("season, tid").get([g.season, tid]),
@@ -536,8 +521,8 @@ async function loadTeams(tx) {
 
         t.won = teamSeason.won;
         t.lost = teamSeason.lost;
-        t.cid = team.cid;
-        t.did = team.did;
+        t.cid = cid;
+        t.did = did;
         t.healthRank = teamSeason.expenses.health.rank;
 
         let p;
@@ -560,10 +545,8 @@ async function loadTeams(tx) {
             p.ovr = rating.ovr;
 
             // These use the same formulas as the skill definitions in player.skills!
-            for (const k in g.compositeWeights) {
-                if (g.compositeWeights.hasOwnProperty(k)) {
-                    p.compositeRating[k] = makeComposite(rating, g.compositeWeights[k].ratings, g.compositeWeights[k].weights);
-                }
+            for (const k of Object.keys(g.compositeWeights)) {
+                p.compositeRating[k] = makeComposite(rating, g.compositeWeights[k].ratings, g.compositeWeights[k].weights);
             }
             p.compositeRating.usage = Math.pow(p.compositeRating.usage, 1.9);
 
@@ -588,10 +571,8 @@ async function loadTeams(tx) {
 
         // Initialize team composite rating object
         t.compositeRating = {};
-        for (const rating in p.compositeRating) {
-            if (p.compositeRating.hasOwnProperty(rating)) {
-                t.compositeRating[rating] = 0;
-            }
+        for (const rating of Object.keys(p.compositeRating)) {
+            t.compositeRating[rating] = 0;
         }
 
         t.stat = {min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, ba: 0, pf: 0, pts: 0, ptsQtrs: [0]};
@@ -696,7 +677,8 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
         });
 
         // If there was a play by play done for one of these games, get it
-        let raw, url;
+        let raw;
+        let url;
         if (gidPlayByPlay !== null) {
             for (let i = 0; i < results.length; i++) {
                 if (results[i].playByPlay !== undefined) {
@@ -722,13 +704,11 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
                 if (playoffsOver) {
                     await phase.newPhase(g.PHASE.BEFORE_DRAFT);
                 }
-            } else {
+            } else if (Math.random() < 1 / (100 * 50)) {
                 // Should a rare tragic event occur? ONLY IN REGULAR SEASON, playoffs would be tricky with roster limits and no free agents
                 // 100 days in a season (roughly), and we want a death every 50 years on average
-                if (Math.random() < 1 / (100 * 50)) {
-                    await player.killOne();
-                    ui.realtimeUpdate(["playerMovement"]);
-                }
+                await player.killOne();
+                ui.realtimeUpdate(["playerMovement"]);
             }
             play(numDays - 1, false);
         }, raw);

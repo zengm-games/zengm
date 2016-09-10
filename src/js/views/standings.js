@@ -50,29 +50,29 @@ async function updateStandings(inputs, updateEvents, state) {
             for (const div of g.divs) {
                 if (div.cid === g.confs[i].cid) {
                     const divTeams = [];
-                    let j = 0;
+                    let k = 0;
                     for (const t of teams) {
                         if (div.did === t.did) {
                             divTeams.push(helpers.deepCopy(t));
-                            if (j === 0) {
-                                divTeams[j].gb = 0;
+                            if (k === 0) {
+                                divTeams[k].gb = 0;
                             } else {
-                                divTeams[j].gb = helpers.gb(divTeams[0], divTeams[j]);
+                                divTeams[k].gb = helpers.gb(divTeams[0], divTeams[k]);
                             }
 
-                            if (playoffsRank[divTeams[j].tid] <= numPlayoffTeams / 2) {
-                                divTeams[j].playoffsRank = playoffsRank[divTeams[j].tid];
+                            if (playoffsRank[divTeams[k].tid] <= numPlayoffTeams / 2) {
+                                divTeams[k].playoffsRank = playoffsRank[divTeams[k].tid];
                             } else {
-                                divTeams[j].playoffsRank = null;
+                                divTeams[k].playoffsRank = null;
                             }
 
-                            if (divTeams[j].tid === g.userTid) {
-                                divTeams[j].highlight = true;
+                            if (divTeams[k].tid === g.userTid) {
+                                divTeams[k].highlight = true;
                             } else {
-                                divTeams[j].highlight = false;
+                                divTeams[k].highlight = false;
                             }
 
-                            j += 1;
+                            k += 1;
                         }
                     }
 
@@ -87,9 +87,9 @@ async function updateStandings(inputs, updateEvents, state) {
         if (!playoffsByConference) {
             for (let i = 0; i < teams.length; i++) {
                 const t = teams[i];
-                const div = confs[t.cid].divs.find(div => t.did === div.did);
+                const div = confs[t.cid].divs.find(div2 => t.did === div2.did);
                 if (div) {
-                    const t2 = div.teams.find(t2 => t.tid === t2.tid);
+                    const t2 = div.teams.find(t3 => t.tid === t3.tid);
                     if (t2) {
                         t2.playoffsRank = i < numPlayoffTeams ? i + 1 : null;
                     }

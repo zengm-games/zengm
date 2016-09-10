@@ -3,7 +3,7 @@ const g = require('../../globals');
 const helpers = require('../../util/helpers');
 
 const PlayoffMatchup = ({season, series}) => {
-    if (!series || !series.home || !series.home.tid) {
+    if (series === undefined || series.home === undefined || series.home.tid === undefined) {
         return null;
     }
 
@@ -22,6 +22,22 @@ const PlayoffMatchup = ({season, series}) => {
             {series.away.hasOwnProperty("won") ? <span> {series.away.won}</span> : null }
         </span>
     </div>;
+};
+
+PlayoffMatchup.propTypes = {
+    season: React.PropTypes.number.isRequired,
+    series: React.PropTypes.shape({
+        away: React.PropTypes.shape({
+            seed: React.PropTypes.number.isRequired,
+            tid: React.PropTypes.number.isRequired,
+            won: React.PropTypes.number,
+        }),
+        home: React.PropTypes.shape({
+            seed: React.PropTypes.number.isRequired,
+            tid: React.PropTypes.number.isRequired,
+            won: React.PropTypes.number,
+        }),
+    }),
 };
 
 module.exports = PlayoffMatchup;

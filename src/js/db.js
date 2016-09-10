@@ -35,7 +35,7 @@ function createMeta(upgradeDB) {
  *
  * @param {Object} event Event from onupgradeneeded, with oldVersion > 0.
  */
-async function migrateMeta(upgradeDB) {
+function migrateMeta(upgradeDB) {
     document.getElementById("content").innerHTML = migrateMessage;
 
     console.log(`Upgrading meta database from version ${upgradeDB.oldVersion} to version ${upgradeDB.version}`);
@@ -217,10 +217,8 @@ async function connectLeague(lid) {
 async function reset() {
     // localStorage, which is just use for table sorting currently
     const debug = localStorage.debug; // Save debug setting and restore later
-    for (const key in localStorage) {
-        if (localStorage.hasOwnProperty(key)) {
-            localStorage.removeItem(key);
-        }
+    for (const key of Object.keys(localStorage)) {
+        localStorage.removeItem(key);
     }
     localStorage.debug = debug;
 

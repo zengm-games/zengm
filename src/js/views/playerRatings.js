@@ -28,7 +28,7 @@ async function updatePlayers(inputs, updateEvents, state) {
         });
 
         let tid = g.teamAbbrevsCache.indexOf(inputs.abbrev);
-        if (tid < 0) { tid = null; } // Show all teams
+        if (tid < 0) { tid = undefined; } // Show all teams
 
         if (!tid && inputs.abbrev === "watch") {
             players = players.filter(p => p.watch && typeof p.watch !== "function");
@@ -48,17 +48,15 @@ async function updatePlayers(inputs, updateEvents, state) {
         // For the current season, use the current abbrev (including FA), not the last stats abbrev
         // For other seasons, use the stats abbrev for filtering
         if (g.season === inputs.season) {
-            if (tid !== null) {
+            if (tid !== undefined) {
                 players = players.filter(p => p.abbrev === inputs.abbrev);
             }
 
             for (let i = 0; i < players.length; i++) {
                 players[i].stats.abbrev = players[i].abbrev;
             }
-        } else {
-            if (tid !== null) {
-                players = players.filter(p => p.stats.abbrev === inputs.abbrev);
-            }
+        } else if (tid !== undefined) {
+            players = players.filter(p => p.stats.abbrev === inputs.abbrev);
         }
 
         return {

@@ -48,7 +48,7 @@ module.exports = {
     lostPassword: require('./views/lostPassword'),
     manual: staticPage('manual', 'Manual', false, <div>
         <h1>Manual</h1>
-        <p><a href="https://basketball-gm.com/manual/" target="_blank">Click here for an overview of Basketball GM.</a></p>
+        <p><a href="https://basketball-gm.com/manual/" rel="noopener noreferrer" target="_blank">Click here for an overview of Basketball GM.</a></p>
     </div>),
     message: require('./views/message'),
     multiTeamMode: require('./views/multiTeamMode'),

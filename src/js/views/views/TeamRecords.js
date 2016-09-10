@@ -51,4 +51,11 @@ const TeamRecords = ({byType, displayName, seasonCount, teamRecords}) => {
     </div>;
 };
 
+TeamRecords.propTypes = {
+    byType: React.PropTypes.oneOf(['conf', 'div', 'team']).isRequired,
+    displayName: React.PropTypes.string.isRequired,
+    seasonCount: React.PropTypes.number.isRequired,
+    teamRecords: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+};
+
 module.exports = TeamRecords;

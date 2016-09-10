@@ -7,7 +7,7 @@ const helpers = require('../../util/helpers');
 const PopText = ({teams, tid}) => {
     let msg = <span>Region population: ?<br />Difficulty: ?</span>;
     if (tid >= 0) {
-        const t = teams.find(t => t.tid === tid);
+        const t = teams.find(t2 => t2.tid === tid);
         if (t) {
             let difficulty;
             if (t.popRank <= 3) {
@@ -27,6 +27,16 @@ const PopText = ({teams, tid}) => {
     }
 
     return <span className="help-block">{msg}</span>;
+};
+
+PopText.propTypes = {
+    teams: React.PropTypes.arrayOf(React.PropTypes.shape({
+        // pop and popRank not required for Random Team
+        pop: React.PropTypes.number,
+        popRank: React.PropTypes.number,
+        tid: React.PropTypes.number.isRequired,
+    })).isRequired,
+    tid: React.PropTypes.number.isRequired,
 };
 
 const defaultTeams = helpers.getTeamsDefault();
@@ -52,6 +62,11 @@ class NewLeague extends React.Component {
             tid: props.lastSelectedTid,
         };
 
+        this.handleChanges = {
+            name: this.handleChange.bind(this, 'name'),
+            randomizeRosters: this.handleChange.bind(this, 'randomizeRosters'),
+            tid: this.handleChange.bind(this, 'tid'),
+        };
         this.handleCustomizeChange = this.handleCustomizeChange.bind(this);
         this.handleFile = this.handleFile.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -181,14 +196,14 @@ class NewLeague extends React.Component {
                 <div className="row">
                     <div className="form-group col-md-4 col-sm-5">
                         <label>League name</label>
-                        <input className="form-control" type="text" value={name} onChange={this.handleChange.bind(this, 'name')} />
+                        <input className="form-control" type="text" value={name} onChange={this.handleChanges.name} />
                     </div>
 
                     <div className="clearfix visible-xs" />
 
                     <div className="form-group col-md-4 col-sm-5">
                         <label>Which team do you want to manage?</label>
-                        <select className="form-control" value={tid} onChange={this.handleChange.bind(this, 'tid')}>
+                        <select className="form-control" value={tid} onChange={this.handleChanges.tid}>
                             {teams.map(t => {
                                 return <option key={t.tid} value={t.tid}>
                                     {t.region} {t.name}
@@ -213,24 +228,18 @@ class NewLeague extends React.Component {
                             </select>
                             <span className="help-block">Teams in your new league can either be filled by randomly-generated players or by players from a <a href="https://basketball-gm.com/manual/customization/">custom League File</a> you upload.</span>
                         </div>
-                        {
-                            customize === 'custom-rosters'
-                        ?
+                        {customize === 'custom-rosters' ? <div>
                             <div>
-                                <div>
-                                    <input type="file" onChange={this.handleFile} />
-                                    {invalidLeagueFile ? <p className="text-danger" style={{marginTop: '1em'}}>Error: Invalid League File</p> : null}
-                                    {parsing ? <p className="text-info" style={{marginTop: '1em'}}>Parsing league file...</p> : null}
-                                </div>
-                                <div className="checkbox">
-                                    <label>
-                                        <input onChange={this.handleChange.bind(this, 'randomizeRosters')} type="checkbox" value={randomizeRosters} /> Shuffle Rosters
-                                    </label>
-                                </div>
+                                <input type="file" onChange={this.handleFile} />
+                                {invalidLeagueFile ? <p className="text-danger" style={{marginTop: '1em'}}>Error: Invalid League File</p> : null}
+                                {parsing ? <p className="text-info" style={{marginTop: '1em'}}>Parsing league file...</p> : null}
                             </div>
-                        :
-                            null
-                        }
+                            <div className="checkbox">
+                                <label>
+                                    <input onChange={this.handleChanges.randomizeRosters} type="checkbox" value={randomizeRosters} /> Shuffle Rosters
+                                </label>
+                            </div>
+                        </div> : null}
 
                     </div>
 
@@ -247,5 +256,10 @@ class NewLeague extends React.Component {
         </div>;
     }
 }
+
+NewLeague.propTypes = {
+    name: React.PropTypes.string.isRequired,
+    lastSelectedTid: React.PropTypes.number.isRequired,
+};
 
 module.exports = NewLeague;

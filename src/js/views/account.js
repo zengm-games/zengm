@@ -4,8 +4,8 @@ const Account = require('./views/Account');
 
 function get(req) {
     return {
-        goldSuccess: req.raw.goldResult !== undefined && req.raw.goldResult.success !== undefined ? req.raw.goldResult.success : null,
-        goldMessage: req.raw.goldResult !== undefined && req.raw.goldResult.message !== undefined ? req.raw.goldResult.message : null,
+        goldMessage: req.raw.goldResult !== undefined ? req.raw.goldResult.message : undefined,
+        goldSuccess: req.raw.goldResult !== undefined ? req.raw.goldResult.success : undefined,
     };
 }
 
@@ -18,18 +18,18 @@ async function updateAccount(inputs, updateEvents, state, setState, topMenu) {
 
         const currentTimestamp = Math.floor(Date.now() / 1000);
         const showGoldActive = !topMenu.goldCancelled && currentTimestamp <= topMenu.goldUntil;
-        const showGoldCancelled = topMenu.goldCancelled && currentTimestamp <= topMenu.goldUntil;
+        const showGoldCancelled = !!topMenu.goldCancelled && currentTimestamp <= topMenu.goldUntil;
         const showGoldPitch = !showGoldActive;
 
         return {
-            email: topMenu.username,
-            username: topMenu.username,
+            email: topMenu.email,
+            goldMessage: inputs.goldMessage,
+            goldSuccess: inputs.goldSuccess,
             goldUntilDateString,
             showGoldActive,
             showGoldCancelled,
             showGoldPitch,
-            goldSuccess: inputs.goldSuccess,
-            goldMessage: inputs.goldMessage,
+            username: topMenu.username,
         };
     }
 }

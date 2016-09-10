@@ -60,7 +60,8 @@ async function newPhasePreseason(tx) {
 
     const tids = _.range(g.numTeams);
 
-    let prevSeason, scoutingRank;
+    let prevSeason;
+    let scoutingRank;
     await Promise.map(tids, async tid => {
         // Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
         // This is done BEFORE a new season row is added.
@@ -246,7 +247,7 @@ async function newPhaseBeforeDraft(tx) {
     account.checkAchievement.moneyball_2();
     account.checkAchievement.small_market();
 
-    await season.awards(tx);
+    await season.doAwards(tx);
 
     const teams = await team.filter({
         ot: tx,

@@ -63,7 +63,9 @@ function gauss(mu = 0, sigma = 1) {
  * @return {number} Random number from Gaussian distribution.
  */
 function realGauss(mu = 0, sigma = 1) {
-    let radius, z1, z2;
+    let radius;
+    let z1;
+    let z2;
     do {
         z1 = 2 * Math.random() - 1;
         z2 = 2 * Math.random() - 1;

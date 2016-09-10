@@ -34,7 +34,7 @@ function updateRoster(inputs, updateEvents, state) {
         };
 
         return g.dbl.tx(["players", "playerStats", "releasedPlayers", "schedule", "teams", "teamSeasons", "teamStats"], async tx => {
-            vars.team = await team.filter({
+            vars.t = await team.filter({
                 season: inputs.season,
                 tid: inputs.tid,
                 attrs: ["tid", "region", "name", "strategy", "imgURL"],
@@ -50,8 +50,8 @@ function updateRoster(inputs, updateEvents, state) {
                 // Show players currently on the roster
                 let [schedule, players, payroll] = await Promise.all([
                     season.getSchedule({ot: tx}),
-                    tx.players.index('tid').getAll(inputs.tid).then(players => {
-                        return player.withStats(tx, players, {
+                    tx.players.index('tid').getAll(inputs.tid).then(players2 => {
+                        return player.withStats(tx, players2, {
                             statsSeasons: [inputs.season],
                             statsTid: inputs.tid,
                         });
@@ -120,7 +120,7 @@ function updateRoster(inputs, updateEvents, state) {
                 players = trade.filterUntradable(players);
 
                 for (let i = 0; i < players.length; i++) {
-                    players[i].age = players[i].age - (g.season - inputs.season);
+                    players[i].age -= g.season - inputs.season;
                     players[i].canRelease = false;
                 }
 

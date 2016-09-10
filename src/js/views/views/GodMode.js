@@ -23,8 +23,37 @@ class GodMode extends React.Component {
             quarterLength: props.quarterLength,
             salaryCap: props.salaryCap,
         };
+        this.handleChanges = {
+            disableInjuries: this.handleChange.bind(this, 'disableInjuries'),
+            luxuryPayroll: this.handleChange.bind(this, 'luxuryPayroll'),
+            luxuryTax: this.handleChange.bind(this, 'luxuryTax'),
+            maxContract: this.handleChange.bind(this, 'maxContract'),
+            minContract: this.handleChange.bind(this, 'minContract'),
+            minPayroll: this.handleChange.bind(this, 'minPayroll'),
+            minRosterSize: this.handleChange.bind(this, 'minRosterSize'),
+            numGames: this.handleChange.bind(this, 'numGames'),
+            quarterLength: this.handleChange.bind(this, 'quarterLength'),
+            salaryCap: this.handleChange.bind(this, 'salaryCap'),
+        };
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
         this.handleGodModeToggle = this.handleGodModeToggle.bind(this);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (!this.state.dirty) {
+            this.setState({
+                disableInjuries: String(nextProps.disableInjuries),
+                luxuryPayroll: nextProps.luxuryPayroll,
+                luxuryTax: nextProps.luxuryTax,
+                maxContract: nextProps.maxContract,
+                minContract: nextProps.minContract,
+                minPayroll: nextProps.minPayroll,
+                minRosterSize: nextProps.minRosterSize,
+                numGames: nextProps.numGames,
+                quarterLength: nextProps.quarterLength,
+                salaryCap: nextProps.salaryCap,
+            });
+        }
     }
 
     handleChange(name, e) {
@@ -71,23 +100,6 @@ class GodMode extends React.Component {
         ui.realtimeUpdate(["toggleGodMode"]);
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (!this.state.dirty) {
-            this.setState({
-                disableInjuries: String(nextProps.disableInjuries),
-                luxuryPayroll: nextProps.luxuryPayroll,
-                luxuryTax: nextProps.luxuryTax,
-                maxContract: nextProps.maxContract,
-                minContract: nextProps.minContract,
-                minPayroll: nextProps.minPayroll,
-                minRosterSize: nextProps.minRosterSize,
-                numGames: nextProps.numGames,
-                quarterLength: nextProps.quarterLength,
-                salaryCap: nextProps.salaryCap,
-            });
-        }
-    }
-
     render() {
         const {godMode} = this.props;
 
@@ -122,65 +134,65 @@ class GodMode extends React.Component {
 
             <form onSubmit={this.handleFormSubmit} data-no-davis="true">
                 <div className="row">
-                  <div className="col-sm-3 col-xs-6 form-group">
-                    <label>Injuries <HelpPopover placement="right" title="Injuries">
+                    <div className="col-sm-3 col-xs-6 form-group">
+                        <label>Injuries <HelpPopover placement="right" title="Injuries">
                         This won't heal current injuries, but it will prevent any new ones from occurring.
-                    </HelpPopover></label>
-                    <select className="form-control" disabled={!godMode} onChange={this.handleChange.bind(this, 'disableInjuries')} value={this.state.disableInjuries}>
-                        <option value="false">Enabled</option>
-                        <option value="true">Disabled</option>
-                    </select>
-                  </div>
-                  <div className="col-sm-3 col-xs-6 form-group">
-                    <label># Games Per Season <HelpPopover placement="left" title="# Games Per Season">
+                        </HelpPopover></label>
+                        <select className="form-control" disabled={!godMode} onChange={this.handleChanges.disableInjuries} value={this.state.disableInjuries}>
+                            <option value="false">Enabled</option>
+                            <option value="true">Disabled</option>
+                        </select>
+                    </div>
+                    <div className="col-sm-3 col-xs-6 form-group">
+                        <label># Games Per Season <HelpPopover placement="left" title="# Games Per Season">
                         This will only apply to seasons that have not started yet.
-                    </HelpPopover></label>
-                    <input type="text" className="form-control" disabled={!godMode} onChange={this.handleChange.bind(this, 'numGames')} value={this.state.numGames} />
-                  </div>
-                  <div className="col-sm-3 col-xs-6 form-group">
-                    <label>Quarter Length (minutes)</label>
-                    <input type="text" className="form-control" disabled={!godMode} onChange={this.handleChange.bind(this, 'quarterLength')} value={this.state.quarterLength} />
-                  </div>
-                  <div className="col-sm-3 col-xs-6 form-group">
-                    <label>Min Roster Size</label>
-                    <input type="text" className="form-control" disabled={!godMode} onChange={this.handleChange.bind(this, 'minRosterSize')} value={this.state.minRosterSize} />
-                  </div>
-                  <div className="col-sm-3 col-xs-6 form-group">
-                    <label>Salary Cap</label>
-                    <div className="input-group">
-                      <span className="input-group-addon">$</span><input type="text" className="form-control" disabled={!godMode} onChange={this.handleChange.bind(this, 'salaryCap')} value={this.state.salaryCap} /><span className="input-group-addon">M</span>
+                        </HelpPopover></label>
+                        <input type="text" className="form-control" disabled={!godMode} onChange={this.handleChanges.numGames} value={this.state.numGames} />
                     </div>
-                  </div>
-                  <div className="col-sm-3 col-xs-6 form-group">
-                    <label>Min Payroll</label>
-                    <div className="input-group">
-                      <span className="input-group-addon">$</span><input type="text" className="form-control" disabled={!godMode} onChange={this.handleChange.bind(this, 'minPayroll')} value={this.state.minPayroll} /><span className="input-group-addon">M</span>
+                    <div className="col-sm-3 col-xs-6 form-group">
+                        <label>Quarter Length (minutes)</label>
+                        <input type="text" className="form-control" disabled={!godMode} onChange={this.handleChanges.quarterLength} value={this.state.quarterLength} />
                     </div>
-                  </div>
-                  <div className="col-sm-3 col-xs-6 form-group">
-                    <label>Luxury Tax Threshold</label>
-                    <div className="input-group">
-                      <span className="input-group-addon">$</span><input type="text" className="form-control" disabled={!godMode} onChange={this.handleChange.bind(this, 'luxuryPayroll')} value={this.state.luxuryPayroll} /><span className="input-group-addon">M</span>
+                    <div className="col-sm-3 col-xs-6 form-group">
+                        <label>Min Roster Size</label>
+                        <input type="text" className="form-control" disabled={!godMode} onChange={this.handleChanges.minRosterSize} value={this.state.minRosterSize} />
                     </div>
-                  </div>
-                  <div className="col-sm-3 col-xs-6 form-group">
-                    <label>Luxury Tax <HelpPopover placement="left" title="Luxury Tax">
+                    <div className="col-sm-3 col-xs-6 form-group">
+                        <label>Salary Cap</label>
+                        <div className="input-group">
+                            <span className="input-group-addon">$</span><input type="text" className="form-control" disabled={!godMode} onChange={this.handleChanges.salaryCap} value={this.state.salaryCap} /><span className="input-group-addon">M</span>
+                        </div>
+                    </div>
+                    <div className="col-sm-3 col-xs-6 form-group">
+                        <label>Min Payroll</label>
+                        <div className="input-group">
+                            <span className="input-group-addon">$</span><input type="text" className="form-control" disabled={!godMode} onChange={this.handleChanges.minPayroll} value={this.state.minPayroll} /><span className="input-group-addon">M</span>
+                        </div>
+                    </div>
+                    <div className="col-sm-3 col-xs-6 form-group">
+                        <label>Luxury Tax Threshold</label>
+                        <div className="input-group">
+                            <span className="input-group-addon">$</span><input type="text" className="form-control" disabled={!godMode} onChange={this.handleChanges.luxuryPayroll} value={this.state.luxuryPayroll} /><span className="input-group-addon">M</span>
+                        </div>
+                    </div>
+                    <div className="col-sm-3 col-xs-6 form-group">
+                        <label>Luxury Tax <HelpPopover placement="left" title="Luxury Tax">
                         Take the difference between a team's payroll and the luxury tax threshold. Multiply that by this number. The result is the penalty they have to pay.
-                    </HelpPopover></label>
-                    <input type="text" className="form-control" disabled={!godMode} onChange={this.handleChange.bind(this, 'luxuryTax')} value={this.state.luxuryTax} />
-                  </div>
-                  <div className="col-sm-3 col-xs-6 form-group">
-                    <label>Min Contract</label>
-                    <div className="input-group">
-                      <span className="input-group-addon">$</span><input type="text" className="form-control" disabled={!godMode} onChange={this.handleChange.bind(this, 'minContract')} value={this.state.minContract} /><span className="input-group-addon">M</span>
+                        </HelpPopover></label>
+                        <input type="text" className="form-control" disabled={!godMode} onChange={this.handleChanges.luxuryTax} value={this.state.luxuryTax} />
                     </div>
-                  </div>
-                  <div className="col-sm-3 col-xs-6 form-group">
-                    <label>Max Contract</label>
-                    <div className="input-group">
-                      <span className="input-group-addon">$</span><input type="text" className="form-control" disabled={!godMode} onChange={this.handleChange.bind(this, 'maxContract')} value={this.state.maxContract} /><span className="input-group-addon">M</span>
+                    <div className="col-sm-3 col-xs-6 form-group">
+                        <label>Min Contract</label>
+                        <div className="input-group">
+                            <span className="input-group-addon">$</span><input type="text" className="form-control" disabled={!godMode} onChange={this.handleChanges.minContract} value={this.state.minContract} /><span className="input-group-addon">M</span>
+                        </div>
                     </div>
-                  </div>
+                    <div className="col-sm-3 col-xs-6 form-group">
+                        <label>Max Contract</label>
+                        <div className="input-group">
+                            <span className="input-group-addon">$</span><input type="text" className="form-control" disabled={!godMode} onChange={this.handleChanges.maxContract} value={this.state.maxContract} /><span className="input-group-addon">M</span>
+                        </div>
+                    </div>
                 </div>
 
                 <button className="btn btn-primary" id="save-god-mode-options" disabled={!godMode}>Save God Mode Options</button>
@@ -188,5 +200,19 @@ class GodMode extends React.Component {
         </div>;
     }
 }
+
+GodMode.propTypes = {
+    disableInjuries: React.PropTypes.bool.isRequired,
+    godMode: React.PropTypes.bool.isRequired,
+    luxuryPayroll: React.PropTypes.number.isRequired,
+    luxuryTax: React.PropTypes.number.isRequired,
+    maxContract: React.PropTypes.number.isRequired,
+    minContract: React.PropTypes.number.isRequired,
+    minPayroll: React.PropTypes.number.isRequired,
+    minRosterSize: React.PropTypes.number.isRequired,
+    numGames: React.PropTypes.number.isRequired,
+    quarterLength: React.PropTypes.number.isRequired,
+    salaryCap: React.PropTypes.number.isRequired,
+};
 
 module.exports = GodMode;

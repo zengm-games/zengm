@@ -47,4 +47,9 @@ class MultiTeamMenu extends React.Component {
     }
 }
 
+MultiTeamMenu.propTypes = {
+    userTid: React.PropTypes.number.isRequired,
+    userTids: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
+};
+
 module.exports = MultiTeamMenu;

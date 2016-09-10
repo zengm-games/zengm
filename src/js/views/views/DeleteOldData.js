@@ -18,6 +18,15 @@ class DeleteOldData extends React.Component {
             playerStatsUnnotable: true,
             playerStats: true,
         };
+        this.handleChanges = {
+            boxScores: this.handleChange.bind(this, 'boxScores'),
+            playerStats: this.handleChange.bind(this, 'playerStats'),
+            playerStatsUnnotable: this.handleChange.bind(this, 'playerStatsUnnotable'),
+            retiredPlayers: this.handleChange.bind(this, 'retiredPlayers'),
+            retiredPlayersUnnotable: this.handleChange.bind(this, 'retiredPlayersUnnotable'),
+            teamHistory: this.handleChange.bind(this, 'teamHistory'),
+            teamStats: this.handleChange.bind(this, 'teamStats'),
+        };
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
@@ -133,37 +142,37 @@ class DeleteOldData extends React.Component {
             <form onSubmit={this.handleSubmit} data-no-davis="true">
                 <div className="checkbox">
                     <label>
-                        <input onChange={this.handleChange.bind(this, 'boxScores')} type="checkbox" checked={this.state.boxScores} /> Delete Old Box Scores
+                        <input onChange={this.handleChanges.boxScores} type="checkbox" checked={this.state.boxScores} /> Delete Old Box Scores
                     </label>
                 </div>
                 <div className="checkbox">
                     <label>
-                        <input onChange={this.handleChange.bind(this, 'teamStats')} type="checkbox" checked={this.state.teamStats} /> Delete Old Team Stats
+                        <input onChange={this.handleChanges.teamStats} type="checkbox" checked={this.state.teamStats} /> Delete Old Team Stats
                     </label>
                 </div>
                 <div className="checkbox">
                     <label>
-                        <input onChange={this.handleChange.bind(this, 'teamHistory')} type="checkbox" checked={this.state.teamHistory} /> Delete Old Team History (stuff like W/L, finances, etc)
+                        <input onChange={this.handleChanges.teamHistory} type="checkbox" checked={this.state.teamHistory} /> Delete Old Team History (stuff like W/L, finances, etc)
                     </label>
                 </div>
                 <div className="checkbox">
                     <label>
-                        <input onChange={this.handleChange.bind(this, 'retiredPlayersUnnotable')} type="checkbox" checked={this.state.retiredPlayersUnnotable} /> Delete Unnotable Retired Players<br /><i>Won't delete your past players or players who have won awards</i>
+                        <input onChange={this.handleChanges.retiredPlayersUnnotable} type="checkbox" checked={this.state.retiredPlayersUnnotable} /> Delete Unnotable Retired Players<br /><i>Won't delete your past players or players who have won awards</i>
                     </label>
                 </div>
                 <div className="checkbox">
                     <label>
-                        <input onChange={this.handleChange.bind(this, 'retiredPlayers')} type="checkbox" checked={this.state.retiredPlayers} /> Delete <b>All</b> Retired Players
+                        <input onChange={this.handleChanges.retiredPlayers} type="checkbox" checked={this.state.retiredPlayers} /> Delete <b>All</b> Retired Players
                     </label>
                 </div>
                 <div className="checkbox">
                     <label>
-                        <input onChange={this.handleChange.bind(this, 'playerStatsUnnotable')} type="checkbox" checked={this.state.playerStatsUnnotable} /> Delete Unnotable Player Stats and Ratings <b>(This is the second biggest factor!)</b><br /><i>Won't delete your past players or players who have won awards</i>
+                        <input onChange={this.handleChanges.playerStatsUnnotable} type="checkbox" checked={this.state.playerStatsUnnotable} /> Delete Unnotable Player Stats and Ratings <b>(This is the second biggest factor!)</b><br /><i>Won't delete your past players or players who have won awards</i>
                     </label>
                 </div>
                 <div className="checkbox">
                     <label>
-                        <input onChange={this.handleChange.bind(this, 'playerStats')} type="checkbox" checked={this.state.playerStats} /> Delete <b>All</b> Player Stats and Ratings <b>(This is the biggest factor!)</b>
+                        <input onChange={this.handleChanges.playerStats} type="checkbox" checked={this.state.playerStats} /> Delete <b>All</b> Player Stats and Ratings <b>(This is the biggest factor!)</b>
                     </label>
                 </div>
 

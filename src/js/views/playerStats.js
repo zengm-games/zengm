@@ -75,12 +75,10 @@ async function updatePlayers(inputs, updateEvents, state) {
                         } else {
                             min = p.careerStats.min;
                         }
+                    } else if (inputs.season) {
+                        min = p.stats.gp * p.stats.min;
                     } else {
-                        if (inputs.season) {
-                            min = p.stats.gp * p.stats.min;
-                        } else {
-                            min = p.careerStats.gp * p.careerStats.min;
-                        }
+                        min = p.careerStats.gp * p.careerStats.min;
                     }
 
                     if (inputs.playoffs !== 'playoffs') {
@@ -95,10 +93,8 @@ async function updatePlayers(inputs, updateEvents, state) {
                             if (p.statsPlayoffs.gp > 0) {
                                 return true;
                             }
-                        } else {
-                            if (p.careerStatsPlayoffs.gp > 0) {
-                                return true;
-                            }
+                        } else if (p.careerStatsPlayoffs.gp > 0) {
+                            return true;
                         }
                     }
                 });

@@ -45,13 +45,7 @@ const LeagueDashboard = ({abbrev, ast, astRank, att, cash, completed, confTeams,
                         <div style={{textAlign: 'center'}}>
                             <span style={{fontSize: '48px'}}>{won}-{lost}</span><br />
                             <span style={{fontSize: '24px'}}>
-                                {
-                                    playoffRoundsWon < 0
-                                ?
-                                    <span>{helpers.ordinal(rank)} in conference</span>
-                                :
-                                    helpers.roundsWonText(playoffRoundsWon)
-                                }
+                                {playoffRoundsWon < 0 ? <span>{helpers.ordinal(rank)} in conference</span> : helpers.roundsWonText(playoffRoundsWon)}
                             </span>
                         </div>
 
@@ -114,30 +108,24 @@ const LeagueDashboard = ({abbrev, ast, astRank, att, cash, completed, confTeams,
             <div className="col-md-4">
                 <div className="row">
                     <div className="col-md-12 col-xs-6">
-                        {
-                            showPlayoffSeries
-                        ?
-                            <div>
-                                <h3>Playoffs</h3>
-                                <b>{seriesTitle}</b><br />
-                                <PlayoffMatchup season={season} series={series} />
-                                <a href={helpers.leagueUrl(['playoffs'])}>» Playoffs</a>
-                            </div>
-                        :
-                            <div>
-                                <h3>Upcoming Games</h3>
-                                {gamesRemainingTag}
-                                <ul className="list-group" style={{marginBottom: '6px'}}>
-                                    {upcoming.map(game => <li key={game.gid} className="list-group-item schedule-row">
-                                        <a href={helpers.leagueUrl(['roster', game.teams[0].abbrev])}>{game.teams[0].region}</a>
-                                        <span className="schedule-at"> @ </span>
-                                        <a href={helpers.leagueUrl(['roster', game.teams[1].abbrev])}>{game.teams[1].region}</a>
-                                    </li>)}
-                                </ul>
-                                {upcoming.length === 0 ? <p>None</p> : null}
-                                <a href={helpers.leagueUrl(['schedule'])}>» Schedule</a>
-                            </div>
-                        }
+                        {showPlayoffSeries ? <div>
+                            <h3>Playoffs</h3>
+                            <b>{seriesTitle}</b><br />
+                            <PlayoffMatchup season={season} series={series} />
+                            <a href={helpers.leagueUrl(['playoffs'])}>» Playoffs</a>
+                        </div> : <div>
+                            <h3>Upcoming Games</h3>
+                            {gamesRemainingTag}
+                            <ul className="list-group" style={{marginBottom: '6px'}}>
+                                {upcoming.map(game => <li key={game.gid} className="list-group-item schedule-row">
+                                    <a href={helpers.leagueUrl(['roster', game.teams[0].abbrev])}>{game.teams[0].region}</a>
+                                    <span className="schedule-at"> @ </span>
+                                    <a href={helpers.leagueUrl(['roster', game.teams[1].abbrev])}>{game.teams[1].region}</a>
+                                </li>)}
+                            </ul>
+                            {upcoming.length === 0 ? <p>None</p> : null}
+                            <a href={helpers.leagueUrl(['schedule'])}>» Schedule</a>
+                        </div>}
                     </div>
                     <div className="col-md-12 col-xs-6">
                         <h3>Completed Games</h3>
@@ -195,6 +183,42 @@ const LeagueDashboard = ({abbrev, ast, astRank, att, cash, completed, confTeams,
         </div>
         <a href={helpers.leagueUrl(['roster'])}>» Full Roster</a>
     </div>;
+};
+
+LeagueDashboard.propTypes = {
+    abbrev: React.PropTypes.string.isRequired,
+    ast: React.PropTypes.number.isRequired,
+    astRank: React.PropTypes.number.isRequired,
+    att: React.PropTypes.number.isRequired,
+    cash: React.PropTypes.number.isRequired,
+    completed: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    confTeams: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    leagueLeaders: React.PropTypes.object.isRequired,
+    lost: React.PropTypes.number.isRequired,
+    messages: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    name: React.PropTypes.string.isRequired,
+    oppPts: React.PropTypes.number.isRequired,
+    oppPtsRank: React.PropTypes.number.isRequired,
+    payroll: React.PropTypes.number.isRequired,
+    playoffRoundsWon: React.PropTypes.number.isRequired,
+    playoffsByConference: React.PropTypes.bool.isRequired,
+    profit: React.PropTypes.number.isRequired,
+    pts: React.PropTypes.number.isRequired,
+    ptsRank: React.PropTypes.number.isRequired,
+    rank: React.PropTypes.number.isRequired,
+    region: React.PropTypes.string.isRequired,
+    revenue: React.PropTypes.number.isRequired,
+    salaryCap: React.PropTypes.number.isRequired,
+    season: React.PropTypes.number.isRequired,
+    series: React.PropTypes.object,
+    seriesTitle: React.PropTypes.string,
+    showPlayoffSeries: React.PropTypes.bool.isRequired,
+    starters: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    teamLeaders: React.PropTypes.object.isRequired,
+    trb: React.PropTypes.number.isRequired,
+    trbRank: React.PropTypes.number.isRequired,
+    upcoming: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    won: React.PropTypes.number.isRequired,
 };
 
 module.exports = LeagueDashboard;

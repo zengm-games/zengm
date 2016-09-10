@@ -1,19 +1,21 @@
 REACT
 
-abstract games list in schedule and dashboard
-
 spacing between top menu and user icon - too much on xs
 
 better eslint
 
+new league
+  should allow uploading same file twice in a row (current doens't either)
+  "Invalid League File" msg should not persist after Customize select changes
+
 when all react
   reevaluate views folder structure... maybe views -> ui, and views/*.js -> ui/data-loaders/*.js
   reevaluate bbgmView API
-  go through ui.js, reevaluate
   confirm ads work
     need to make them react components, to get topMenu
     control overlays and banners from react
   escape HTML saved to IDB very carefully (event log, feat text, play by play text displayed in LiveGame, edit team info)
+    dangerous lint warnings - would be nice to abstract into one or two functions
   confirm gold stuff works
     cancel
     goldMessage stuff
@@ -25,6 +27,12 @@ when all react
   test auto play
 
 ptModifier working right? https://www.reddit.com/r/BasketballGM/comments/4wg3dh/help_me_with_a_little_beta_testing/d6tmkyf?context=3
+
+---
+
+REACT later
+
+abstract games list in schedule and dashboard
 
 DataTable
   USE FOR OTHER TABLES TOO, not just sortable ones. will be nice for colnames, especially

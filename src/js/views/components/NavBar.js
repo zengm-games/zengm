@@ -1,3 +1,5 @@
+/* eslint react/no-find-dom-node: "off" */
+
 const Promise = require('bluebird');
 const $ = require('jquery');
 const React = require('react');
@@ -55,6 +57,13 @@ class TopMenuToggle extends React.Component {
     }
 }
 
+TopMenuToggle.propTypes = {
+    long: React.PropTypes.string.isRequired,
+    onClick: React.PropTypes.func, // From react-bootstrap Dropdown
+    openId: React.PropTypes.string,
+    short: React.PropTypes.string.isRequired,
+};
+
 const TopMenuDropdown = ({children, long, short, openId, onToggle}) => {
     return <Dropdown
         componentClass="li"
@@ -70,87 +79,94 @@ const TopMenuDropdown = ({children, long, short, openId, onToggle}) => {
     </Dropdown>;
 };
 
+TopMenuDropdown.propTypes = {
+    children: React.PropTypes.any,
+    long: React.PropTypes.string.isRequired,
+    onToggle: React.PropTypes.func.isRequired,
+    openId: React.PropTypes.string,
+    short: React.PropTypes.string.isRequired,
+};
+
+const handleScreenshotClick = e => {
+    e.preventDefault();
+
+    let contentEl = document.getElementById("screenshot-league");
+    if (!contentEl) { contentEl = document.getElementById("screenshot-nonleague"); }
+
+    // Add watermark
+    const watermark = document.createElement("div");
+    watermark.innerHTML = `<nav class="navbar navbar-default"><div class="container-fluid"><div class="navbar-header">${document.getElementsByClassName("navbar-brand")[0].parentNode.innerHTML}</div><p class="navbar-text navbar-right" style="color: #000; font-weight: bold">Play your own league free at basketball-gm.com</p></div></nav>`;
+    contentEl.insertBefore(watermark, contentEl.firstChild);
+    contentEl.style.padding = "8px";
+
+    // Add notifications
+    const notifications = document.getElementsByClassName('notification-container')[0].cloneNode(true);
+    notifications.classList.remove('notification-container');
+    for (let i = 0; i < notifications.childNodes.length; i++) {
+        // Otherwise screeenshot is taken before fade in is complete
+        notifications.childNodes[0].classList.remove('notification-fadein');
+    }
+    contentEl.appendChild(notifications);
+
+    html2canvas(contentEl, {
+        background: "#fff",
+        async onrendered(canvas) {
+            // Remove watermark
+            contentEl.removeChild(watermark);
+            contentEl.style.padding = "";
+
+            // Remove notifications
+            contentEl.removeChild(notifications);
+
+            try {
+                const data = await Promise.resolve($.ajax({
+                    url: "https://imgur-apiv3.p.mashape.com/3/image",
+                    type: "post",
+                    headers: {
+                        Authorization: "Client-ID c2593243d3ea679",
+                        "X-Mashape-Key": "H6XlGK0RRnmshCkkElumAWvWjiBLp1ItTOBjsncst1BaYKMS8H",
+                    },
+                    data: {
+                        image: canvas.toDataURL().split(',')[1],
+                    },
+                    dataType: "json",
+                }));
+                eventLog.add(null, {
+                    type: 'screenshot',
+                    text: `<a href="http://imgur.com/${data.data.id}" target="_blank">Click here to view your screenshot.</a>`,
+                    saveToDb: false,
+                    showNotification: true,
+                    persistent: true,
+                    extraClass: 'notification-primary',
+                });
+            } catch (err) {
+                console.log(err);
+                if (err && err.responseJSON && err.responseJSON.error && err.responseJSON.error.message) {
+                    helpers.errorNotify(`Error saving screenshot. Error message from Imgur: "${err.responseJSON.error.message}"`);
+                } else {
+                    helpers.errorNotify("Error saving screenshot.");
+                }
+            }
+        },
+    });
+};
+
+const handleToolsClick = (id, e) => {
+    e.preventDefault();
+    actions.toolsMenu[id]();
+};
+
 class DropdownLinks extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             openId: undefined,
         };
-        this.handleScreenshotClick = this.handleScreenshotClick.bind(this);
         this.handleTopMenuToggle = this.handleTopMenuToggle.bind(this);
     }
 
     shouldComponentUpdate(nextProps, nextState) {
         return this.state.openId !== nextState.openId || this.props.lid !== nextProps.lid || this.props.godMode !== nextProps.godMode;
-    }
-
-    handleScreenshotClick(e) {
-        e.preventDefault();
-
-        let contentEl = document.getElementById("screenshot-league");
-        if (!contentEl) { contentEl = document.getElementById("screenshot-nonleague"); }
-
-        // Add watermark
-        const watermark = document.createElement("div");
-        watermark.innerHTML = `<nav class="navbar navbar-default"><div class="container-fluid"><div class="navbar-header">${document.getElementsByClassName("navbar-brand")[0].parentNode.innerHTML}</div><p class="navbar-text navbar-right" style="color: #000; font-weight: bold">Play your own league free at basketball-gm.com</p></div></nav>`;
-        contentEl.insertBefore(watermark, contentEl.firstChild);
-        contentEl.style.padding = "8px";
-
-        // Add notifications
-        const notifications = document.getElementsByClassName('notification-container')[0].cloneNode(true);
-        notifications.classList.remove('notification-container');
-        for (let i = 0; i < notifications.childNodes.length; i++) {
-            // Otherwise screeenshot is taken before fade in is complete
-            notifications.childNodes[0].classList.remove('notification-fadein');
-        }
-        contentEl.appendChild(notifications);
-
-        html2canvas(contentEl, {
-            background: "#fff",
-            async onrendered(canvas) {
-                // Remove watermark
-                contentEl.removeChild(watermark);
-                contentEl.style.padding = "";
-
-                // Remove notifications
-                contentEl.removeChild(notifications);
-
-                try {
-                    const data = await Promise.resolve($.ajax({
-                        url: "https://imgur-apiv3.p.mashape.com/3/image",
-                        type: "post",
-                        headers: {
-                            Authorization: "Client-ID c2593243d3ea679",
-                            "X-Mashape-Key": "H6XlGK0RRnmshCkkElumAWvWjiBLp1ItTOBjsncst1BaYKMS8H",
-                        },
-                        data: {
-                            image: canvas.toDataURL().split(',')[1],
-                        },
-                        dataType: "json",
-                    }));
-                    eventLog.add(null, {
-                        type: 'screenshot',
-                        text: `<a href="http://imgur.com/${data.data.id}" target="_blank">Click here to view your screenshot.</a>`,
-                        saveToDb: false,
-                        showNotification: true,
-                        persistent: true,
-                        extraClass: 'notification-primary',
-                    });
-                } catch (err) {
-                    console.log(err);
-                    if (err && err.responseJSON && err.responseJSON.error && err.responseJSON.error.message) {
-                        helpers.errorNotify(`Error saving screenshot. Error message from Imgur: "${err.responseJSON.error.message}"`);
-                    } else {
-                        helpers.errorNotify("Error saving screenshot.");
-                    }
-                }
-            },
-        });
-    }
-
-    handleToolsClick(id, e) {
-        e.preventDefault();
-        actions.toolsMenu[id]();
     }
 
     handleTopMenuToggle(id) {
@@ -200,7 +216,7 @@ class DropdownLinks extends React.Component {
             </TopMenuDropdown> : null}
             <TopMenuDropdown long="Tools" short="X" openId={this.state.openId} onToggle={this.handleTopMenuToggle}>
                 <MenuItem href="/account">Achievements</MenuItem>
-                {lid !== undefined ? <MenuItem onClick={e => this.handleToolsClick('autoPlaySeasons', e)} data-no-davis="true">Auto Play Seasons</MenuItem> : null}
+                {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('autoPlaySeasons', e)} data-no-davis="true">Auto Play Seasons</MenuItem> : null}
                 {lid !== undefined && godMode ? <MenuItem href={helpers.leagueUrl(['customize_player'])} className="god-mode-menu">Create A Player</MenuItem> : null}
                 {lid !== undefined && godMode ? <MenuItem href={helpers.leagueUrl(['edit_team_info'])} className="god-mode-menu">Edit Team Info</MenuItem> : null}
                 {lid !== undefined ? <MenuItem href={helpers.leagueUrl(['event_log'])}>Event Log</MenuItem> : null}
@@ -211,28 +227,33 @@ class DropdownLinks extends React.Component {
                 {lid !== undefined ? <MenuItem href={helpers.leagueUrl(['delete_old_data'])}>Improve Performance</MenuItem> : null}
                 {lid !== undefined && godMode ? <MenuItem href={helpers.leagueUrl(['multi_team_mode'])} className="god-mode-menu">Multi Team Mode</MenuItem> : null}
                 {lid !== undefined && godMode ? <MenuItem href={helpers.leagueUrl(['new_team'])} className="god-mode-menu">Switch Team</MenuItem> : null}
-                <MenuItem onClick={this.handleScreenshotClick} data-no-davis="true"><span className="glyphicon glyphicon-camera" /> Screenshot</MenuItem>
+                <MenuItem onClick={handleScreenshotClick} data-no-davis="true"><span className="glyphicon glyphicon-camera" /> Screenshot</MenuItem>
                 {lid !== undefined ? <li className="divider" /> : null}
                 <li role="presentation" className="dropdown-header">Use at your own risk!</li>
-                {lid !== undefined ? <MenuItem onClick={e => this.handleToolsClick('skipToPlayoffs', e)} data-no-davis="true">Skip To Playoffs</MenuItem> : null}
-                {lid !== undefined ? <MenuItem onClick={e => this.handleToolsClick('skipToBeforeDraft', e)} data-no-davis="true">Skip To Before Draft</MenuItem> : null}
-                {lid !== undefined ? <MenuItem onClick={e => this.handleToolsClick('skipToAfterDraft', e)} data-no-davis="true">Skip To After Draft</MenuItem> : null}
-                {lid !== undefined ? <MenuItem onClick={e => this.handleToolsClick('skipToPreseason', e)} data-no-davis="true">Skip To Preseason</MenuItem> : null}
-                {lid !== undefined ? <MenuItem onClick={e => this.handleToolsClick('forceResumeDraft', e)} data-no-davis="true">Force Resume Draft</MenuItem> : null}
+                {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('skipToPlayoffs', e)} data-no-davis="true">Skip To Playoffs</MenuItem> : null}
+                {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('skipToBeforeDraft', e)} data-no-davis="true">Skip To Before Draft</MenuItem> : null}
+                {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('skipToAfterDraft', e)} data-no-davis="true">Skip To After Draft</MenuItem> : null}
+                {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('skipToPreseason', e)} data-no-davis="true">Skip To Preseason</MenuItem> : null}
+                {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('forceResumeDraft', e)} data-no-davis="true">Force Resume Draft</MenuItem> : null}
                 <MenuItem href="" onClick={toggleDebugMode} id="toggle-debug-mode">
                     {localStorage.debug === "debug" ? 'Disable Debug Mode' : 'Enable Debug Mode'}
                 </MenuItem>
-                <MenuItem onClick={e => this.handleToolsClick('resetDb', e)} data-no-davis="true">Reset DB</MenuItem>
+                <MenuItem onClick={e => handleToolsClick('resetDb', e)} data-no-davis="true">Reset DB</MenuItem>
             </TopMenuDropdown>
             <TopMenuDropdown long="Help" short="?" openId={this.state.openId} onToggle={this.handleTopMenuToggle}>
-                <MenuItem href="https://basketball-gm.com/manual/" target="_blank">Overview</MenuItem>
+                <MenuItem href="https://basketball-gm.com/manual/" rel="noopener noreferrer" target="_blank">Overview</MenuItem>
                 <MenuItem href="/changes">Changes</MenuItem>
-                <MenuItem href="https://basketball-gm.com/manual/customization/" target="_blank">Custom Rosters</MenuItem>
-                <MenuItem href="https://basketball-gm.com/manual/debugging/" target="_blank">Debugging</MenuItem>
+                <MenuItem href="https://basketball-gm.com/manual/customization/" rel="noopener noreferrer" target="_blank">Custom Rosters</MenuItem>
+                <MenuItem href="https://basketball-gm.com/manual/debugging/" rel="noopener noreferrer" target="_blank">Debugging</MenuItem>
             </TopMenuDropdown>
         </Nav>;
     }
 }
+
+DropdownLinks.propTypes = {
+    godMode: React.PropTypes.bool.isRequired,
+    lid: React.PropTypes.number,
+};
 
 class LogoAndText extends React.Component {
     shouldComponentUpdate(nextProps) {
@@ -243,15 +264,34 @@ class LogoAndText extends React.Component {
         const {lid, updating} = this.props;
 
         return <a className="navbar-brand" href="/">
-            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAAN1wAADdcBQiibeAAAAAd0SU1FB9wIFRUXBgiS2qAAAAN8SURBVDjLbZRdTFtlGMd/b885PaXfYOk2vqHODWFsZIqySGLMdJsx2SQGdZk3uzIaL4war0282LUX3ng7WLLdSEzcZqJxKmXOSLbBBoJaoBDWQktLP0/POT1etHSV7E3e5D0neX75///P+7yCJ6zeVuW9Vwc9r4eCSo9TtgVspo1Mzty+fi+bWUro1/6Na1/vrRH1H8+F3P2vHHdcOjPkfi2eNBSbBacH3LhtNtAADcandvTx31Nzq1vWxQebubu7tdLuYeSo69SH53zjn5x/aqirTZH6QirPtNm5OZMDAQGPDMBAiyp1+pQDflWMysKa/yepL9VAve32/o/fbJq4cNrfjR2wAzLYJMHhNpX1LYNbD/L0taoIoMOvsJY0XIMHHCPRtPnLelrfkAAuvOy//NlY4DgyoFRBSlWqBft9MgGXxNXwDh1NCk7FxtaOwYl2py+a0HvCq4XL0vBB5xtfng9+GvBLMjao7SqEMmCCW7Ux2O5geqHAXFQjUyzz7f0MA/scndGUMS8/36W+3aRKju/CGewNAkkVIINVbUPQK9HZpOBXJIQNTh5xVYIvglwWnDvokW4vF0bl7Ux5aGapwMkBNw0e8dhWtQ3xpMFfyyVSaRMMKGvQ5lE40qzW+t7hV7rlYy0O6dQhd8VGsWrFqIIEBJ0ywZBc+acDJVjd0Pl+Nks4kqfTreCyi2bZJYmK1Lo8aopEXVZmFWRUuqa0CholCQm4s1Zwytm8FUcjVIOYdYr2hB7bNphayIMBkbjOR8NN2E1BX8ARlZc3SxGKDNcgZhVSBW3nTW7MZdF1aPHJnDnsoUEIvvopyfWHWc4+7WE1U1qUp9e0a5GYPtYdUORdNUXL4lYkx6OMQaNLYrTPiyqJivUybCQMjgYdbGdNFh5p2p1V7aoAeKffGx7t9Q5bgIGFqgpe6nGyzys/tgc10MSfad7t97EYK/HFz5vTV+bSJ2SASMp830JMjj3r6aJ+CovVwOtCv71SYLDZgTDgj/XCym8ruc9rs7a+o8eSudKsJWwjx/Y7Gvfe6t29ENNI5E2GWhqYmE0tfzOT+uB+XPvxf9MfSRuR+U3th8Wt0qGeRntrwCnJ9U/Mjb+zZEoWoUa7fmkqcfPKvdzF6fVc+Inv0e56ocV59sX2hrfavErXwpbWrpmW6PAp0UTBXPw1mp18GCtN7q35D5RXZnIkhyKSAAAAAElFTkSuQmCC" width="18" height="18" className="spin" style={{
-                animationPlayState: updating ? 'running' : 'paused',
-                WebkitAnimationPlayState: updating ? 'running' : 'paused',
-            }} />
+            <img
+                className="spin"
+                width="18"
+                height="18"
+                role="presentation"
+                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAAN1wAADdcBQiibeAAAAAd0SU1FB9wIFRUXBgiS2qAAAAN8SURBVDjLbZRdTFtlGMd/b885PaXfYOk2vqHODWFsZIqySGLMdJsx2SQGdZk3uzIaL4war0282LUX3ng7WLLdSEzcZqJxKmXOSLbBBoJaoBDWQktLP0/POT1etHSV7E3e5D0neX75///P+7yCJ6zeVuW9Vwc9r4eCSo9TtgVspo1Mzty+fi+bWUro1/6Na1/vrRH1H8+F3P2vHHdcOjPkfi2eNBSbBacH3LhtNtAADcandvTx31Nzq1vWxQebubu7tdLuYeSo69SH53zjn5x/aqirTZH6QirPtNm5OZMDAQGPDMBAiyp1+pQDflWMysKa/yepL9VAve32/o/fbJq4cNrfjR2wAzLYJMHhNpX1LYNbD/L0taoIoMOvsJY0XIMHHCPRtPnLelrfkAAuvOy//NlY4DgyoFRBSlWqBft9MgGXxNXwDh1NCk7FxtaOwYl2py+a0HvCq4XL0vBB5xtfng9+GvBLMjao7SqEMmCCW7Ux2O5geqHAXFQjUyzz7f0MA/scndGUMS8/36W+3aRKju/CGewNAkkVIINVbUPQK9HZpOBXJIQNTh5xVYIvglwWnDvokW4vF0bl7Ux5aGapwMkBNw0e8dhWtQ3xpMFfyyVSaRMMKGvQ5lE40qzW+t7hV7rlYy0O6dQhd8VGsWrFqIIEBJ0ywZBc+acDJVjd0Pl+Nks4kqfTreCyi2bZJYmK1Lo8aopEXVZmFWRUuqa0CholCQm4s1Zwytm8FUcjVIOYdYr2hB7bNphayIMBkbjOR8NN2E1BX8ARlZc3SxGKDNcgZhVSBW3nTW7MZdF1aPHJnDnsoUEIvvopyfWHWc4+7WE1U1qUp9e0a5GYPtYdUORdNUXL4lYkx6OMQaNLYrTPiyqJivUybCQMjgYdbGdNFh5p2p1V7aoAeKffGx7t9Q5bgIGFqgpe6nGyzys/tgc10MSfad7t97EYK/HFz5vTV+bSJ2SASMp830JMjj3r6aJ+CovVwOtCv71SYLDZgTDgj/XCym8ruc9rs7a+o8eSudKsJWwjx/Y7Gvfe6t29ENNI5E2GWhqYmE0tfzOT+uB+XPvxf9MfSRuR+U3th8Wt0qGeRntrwCnJ9U/Mjb+zZEoWoUa7fmkqcfPKvdzF6fVc+Inv0e56ocV59sX2hrfavErXwpbWrpmW6PAp0UTBXPw1mp18GCtN7q35D5RXZnIkhyKSAAAAAElFTkSuQmCC"
+                style={{
+                    animationPlayState: updating ? 'running' : 'paused',
+                    WebkitAnimationPlayState: updating ? 'running' : 'paused',
+                }}
+            />
             <span className="hidden-md hidden-sm hidden-xs">Basketball GM</span>
             {lid === undefined ? <span className="visible-md visible-sm visible-xs">Basketball GM</span> : null}
         </a>;
     }
 }
+
+LogoAndText.propTypes = {
+    lid: React.PropTypes.number,
+    updating: React.PropTypes.bool.isRequired,
+};
+
+const handleOptionClick = (option, e) => {
+    if (!option.url) {
+        e.preventDefault();
+        actions.playMenu[option.id]();
+    }
+};
 
 class PlayMenu extends React.Component {
     constructor(props) {
@@ -284,13 +324,6 @@ class PlayMenu extends React.Component {
         }
     }
 
-    handleClick(option, e) {
-        if (!option.url) {
-            e.preventDefault();
-            actions.playMenu[option.id]();
-        }
-    }
-
     render() {
         const {lid, options} = this.props;
 
@@ -308,7 +341,7 @@ class PlayMenu extends React.Component {
                         return <MenuItem
                             key={i}
                             href={option.url}
-                            onClick={e => this.handleClick(option, e)}
+                            onClick={e => handleOptionClick(option, e)}
                             data-no-davis={option.url ? null : 'true'}
                         >
                             {option.label}
@@ -320,6 +353,15 @@ class PlayMenu extends React.Component {
         </ul>;
     }
 }
+
+PlayMenu.propTypes = {
+    lid: React.PropTypes.number,
+    options: React.PropTypes.arrayOf(React.PropTypes.shape({
+        id: React.PropTypes.string.isRequired,
+        label: React.PropTypes.string.isRequired,
+        url: React.PropTypes.string,
+    })).isRequired,
+};
 
 class NavBar extends React.Component {
     constructor(props) {
@@ -356,25 +398,23 @@ class NavBar extends React.Component {
 
         return <Navbar fixedTop>
             <div className="pull-right" style={{marginLeft: '15px'}}>
-                    {
-                        username
-                    ?
-                        <a className="navbar-link user-menu" href="/account">
-                            <span className="glyphicon glyphicon-user" />{' '}
-                            <span className="visible-lg">{username}</span>
-                        </a>
-                    :
-                        <a className="navbar-link user-menu" href="/account/login_or_register">
-                            <span className="glyphicon glyphicon-user" />{' '}
-                            <span className="visible-lg">Login/Register</span>
-                        </a>
-                    }
+                    {username ? <a className="navbar-link user-menu" href="/account">
+                        <span className="glyphicon glyphicon-user" />{' '}
+                        <span className="visible-lg">{username}</span>
+                    </a> : <a className="navbar-link user-menu" href="/account/login_or_register">
+                        <span className="glyphicon glyphicon-user" />{' '}
+                        <span className="visible-lg">Login/Register</span>
+                    </a>}
             </div>
             <Navbar.Header>
                 <LogoAndText lid={lid} updating={updating} />
-                <PlayMenu lid={lid} options={options} ref={c => {
-                    this.playMenu = c;
-                }} />
+                <PlayMenu
+                    lid={lid}
+                    options={options}
+                    ref={c => {
+                        this.playMenu = c;
+                    }}
+                />
                 <Overlay
                     onHide={() => {
                         this.setState({hasViewedALeague: true});
@@ -401,5 +441,17 @@ class NavBar extends React.Component {
         </Navbar>;
     }
 }
+
+NavBar.propTypes = {
+    hasViewedALeague: React.PropTypes.bool.isRequired,
+    lid: React.PropTypes.number,
+    godMode: React.PropTypes.bool.isRequired,
+    options: React.PropTypes.array.isRequired,
+    phaseText: React.PropTypes.string.isRequired,
+    popup: React.PropTypes.bool.isRequired,
+    statusText: React.PropTypes.string.isRequired,
+    updating: React.PropTypes.bool.isRequired,
+    username: React.PropTypes.string,
+};
 
 module.exports = NavBar;

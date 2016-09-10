@@ -35,7 +35,7 @@ const PlayerFeats = ({abbrev, feats, playoffs, season}) => {
     const cols = getCols('Name', 'Pos', 'Team', 'GS', 'Min', 'M', 'A', '%', 'M', 'A', '%', 'M', 'A', '%', 'Off', 'Def', 'Tot', 'Ast', 'TO', 'Stl', 'Blk', 'PF', 'Pts', 'GmSc', 'Opp', 'Result', 'Season');
 
     const rows = feats.map(p => {
-        const abbrev = g.teamAbbrevsCache[p.tid];
+        const rowAbbrev = g.teamAbbrevsCache[p.tid];
         const oppAbbrev = g.teamAbbrevsCache[p.oppTid];
 
         return {
@@ -47,7 +47,7 @@ const PlayerFeats = ({abbrev, feats, playoffs, season}) => {
                     watch={p.watch}
                 >{p.name}</PlayerNameLabels>,
                 p.pos,
-                <a href={helpers.leagueUrl(["roster", abbrev, p.season])}>{abbrev}</a>,
+                <a href={helpers.leagueUrl(["roster", rowAbbrev, p.season])}>{rowAbbrev}</a>,
                 p.stats.gs,
                 helpers.round(p.stats.min, 1),
                 p.stats.fg,
@@ -70,7 +70,7 @@ const PlayerFeats = ({abbrev, feats, playoffs, season}) => {
                 p.stats.pts,
                 helpers.gameScore(p.stats),
                 <a href={helpers.leagueUrl(["roster", oppAbbrev, p.season])}>{oppAbbrev}</a>,
-                <a href={helpers.leagueUrl(["game_log", abbrev, p.season, p.gid])}>{p.won ? 'W' : 'L'} {p.score}</a>,
+                <a href={helpers.leagueUrl(["game_log", rowAbbrev, p.season, p.gid])}>{p.won ? 'W' : 'L'} {p.score}</a>,
                 p.season,
             ],
             classNames: {
@@ -93,6 +93,16 @@ const PlayerFeats = ({abbrev, feats, playoffs, season}) => {
             superCols={superCols}
         />
     </div>;
+};
+
+PlayerFeats.propTypes = {
+    abbrev: React.PropTypes.string.isRequired,
+    feats: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    playoffs: React.PropTypes.oneOf(['playoffs', 'regular_season']).isRequired,
+    season: React.PropTypes.oneOfType([
+        React.PropTypes.number,
+        React.PropTypes.string,
+    ]).isRequired,
 };
 
 module.exports = PlayerFeats;

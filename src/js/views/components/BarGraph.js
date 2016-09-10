@@ -87,8 +87,8 @@ const defaultYlim = (data, stacked) => {
     }
 
     // Add on some padding
-    min = min - 0.1 * (max - min);
-    max = max + 0.1 * (max - min);
+    min -= 0.1 * (max - min);
+    max += 0.1 * (max - min);
 
     // Make sure 0 is in range
     if (min > 0) {
@@ -159,7 +159,9 @@ const BarGraph = ({data = [], labels, tooltipCb = val => val, ylim: ylimArg}) =>
             }
 
             // Fix for negative values
-            let bottom, cssClass, height;
+            let bottom;
+            let cssClass;
+            let height;
             if (val >= 0) {
                 bottom = scale(0, ylim);
                 height = scaled[i] - scale(0, ylim);
@@ -173,14 +175,17 @@ const BarGraph = ({data = [], labels, tooltipCb = val => val, ylim: ylimArg}) =>
             const tooltip = <Tooltip id="tooltip">{titleStart}{tooltipCb(val)}</Tooltip>;
 
             return <OverlayTrigger key={i} overlay={tooltip} placement="top">
-                <div className={cssClass} style={{
-                    marginLeft: `${gap}px`,
-                    position: 'absolute',
-                    bottom: `${bottom}%`,
-                    height: `${height}%`,
-                    left: `${i * widthPct}%`,
-                    width: `calc(${widthPct}% - ${gap}px)`,
-                }} />
+                <div
+                    className={cssClass}
+                    style={{
+                        marginLeft: `${gap}px`,
+                        position: 'absolute',
+                        bottom: `${bottom}%`,
+                        height: `${height}%`,
+                        left: `${i * widthPct}%`,
+                        width: `calc(${widthPct}% - ${gap}px)`,
+                    }}
+                />
             </OverlayTrigger>;
         });
     } else {
@@ -203,14 +208,17 @@ const BarGraph = ({data = [], labels, tooltipCb = val => val, ylim: ylimArg}) =>
                     const tooltip = <Tooltip id="tooltip">{titleStart}{tooltipCb(data[j][i])}</Tooltip>;
 
                     bars.push(<OverlayTrigger key={`${i}.${j}`} overlay={tooltip} placement="top">
-                        <div className={`bar-graph-${j + 1}`} style={{
-                            marginLeft: `${gap}px`,
-                            position: 'absolute',
-                            bottom: `${offsets[i]}%`,
-                            height: `${scaled[j][i]}%`,
-                            left: `${i * widthPct}%`,
-                            width: `calc(${widthPct}% - ${gap}px)`,
-                        }} />
+                        <div
+                            className={`bar-graph-${j + 1}`}
+                            style={{
+                                marginLeft: `${gap}px`,
+                                position: 'absolute',
+                                bottom: `${offsets[i]}%`,
+                                height: `${scaled[j][i]}%`,
+                                left: `${i * widthPct}%`,
+                                width: `calc(${widthPct}% - ${gap}px)`,
+                            }}
+                        />
                     </OverlayTrigger>);
                 }
             }

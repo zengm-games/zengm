@@ -25,15 +25,16 @@ const Inbox = ({anyUnread, messages}) => {
         </table>
     </div>;
 };
+
 Inbox.propTypes = {
-    anyUnread: React.PropTypes.bool,
+    anyUnread: React.PropTypes.bool.isRequired,
     messages: React.PropTypes.arrayOf(React.PropTypes.shape({
         from: React.PropTypes.string.isRequired,
         mid: React.PropTypes.number.isRequired,
         read: React.PropTypes.bool.isRequired,
         text: React.PropTypes.string.isRequired,
         year: React.PropTypes.number.isRequired,
-    })),
+    })).isRequired,
 };
 
 module.exports = Inbox;

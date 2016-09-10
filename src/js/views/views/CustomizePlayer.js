@@ -1,3 +1,5 @@
+/* eslint react/jsx-no-bind: "off" */
+
 const faces = require('facesjs');
 const React = require('react');
 const g = require('../../globals');
@@ -243,7 +245,7 @@ class CustomizePlayer extends React.Component {
         const {godMode, originalTid, season, teams} = this.props;
         const {appearanceOption, p, saving} = this.state;
 
-        const title = originalTid === null ? 'Create Player' : 'Edit Player';
+        const title = originalTid === undefined ? 'Create Player' : 'Edit Player';
 
         bbgmViewReact.title(title);
 
@@ -510,5 +512,20 @@ class CustomizePlayer extends React.Component {
         </div>;
     }
 }
+
+CustomizePlayer.propTypes = {
+    appearanceOption: React.PropTypes.oneOf([
+        'Cartoon Face',
+        'Image URL',
+    ]).isRequired,
+    godMode: React.PropTypes.bool.isRequired,
+    originalTid: React.PropTypes.number,
+    p: React.PropTypes.object.isRequired,
+    season: React.PropTypes.number.isRequired,
+    teams: React.PropTypes.arrayOf(React.PropTypes.shape({
+        text: React.PropTypes.string.isRequired,
+        tid: React.PropTypes.number.isRequired,
+    })).isRequired,
+};
 
 module.exports = CustomizePlayer;

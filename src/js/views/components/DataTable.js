@@ -48,6 +48,25 @@ const Header = ({cols, handleColClick, sortBys, superCols}) => {
     </thead>;
 };
 
+Header.propTypes = {
+    cols: React.PropTypes.arrayOf(React.PropTypes.shape({
+        desc: React.PropTypes.string,
+        sortSequence: React.PropTypes.arrayOf(React.PropTypes.string),
+        title: React.PropTypes.string.isRequired,
+        width: React.PropTypes.string,
+    })).isRequired,
+    handleColClick: React.PropTypes.func.isRequired,
+    sortBys: React.PropTypes.arrayOf(React.PropTypes.arrayOf(React.PropTypes.oneOfType([
+        React.PropTypes.number,
+        React.PropTypes.string,
+    ]))).isRequired,
+    superCols: React.PropTypes.arrayOf(React.PropTypes.shape({
+        colspan: React.PropTypes.number.isRequired,
+        desc: React.PropTypes.string,
+        title: React.PropTypes.string.isRequired,
+    })),
+};
+
 const Row = clickable(({clicked, row, toggleClicked}) => {
     return <tr className={classNames(row.classNames, {warning: clicked})} onClick={toggleClicked}>
         {row.data.map((value = null, i) => {
@@ -59,6 +78,13 @@ const Row = clickable(({clicked, row, toggleClicked}) => {
         })}
     </tr>;
 });
+
+Row.propTypes = {
+    row: React.PropTypes.shape({
+        classNames: React.PropTypes.object,
+        data: React.PropTypes.array.isRequired,
+    }).isRequired,
+};
 
 const getSearchVal = val => {
     let sortVal;
@@ -135,6 +161,13 @@ const Info = ({end, numRows, numRowsUnfiltered, start}) => {
     return <div className="dataTables_info hidden-xs">{start} to {end} of {numRows}{filteredText}</div>;
 };
 
+Info.propTypes = {
+    end: React.PropTypes.number.isRequired,
+    numRows: React.PropTypes.number.isRequired,
+    numRowsUnfiltered: React.PropTypes.number.isRequired,
+    start: React.PropTypes.number.isRequired,
+};
+
 const Paging = ({currentPage, numRows, onClick, perPage}) => {
     const showPrev = currentPage > 1;
     const showNext = numRows > (currentPage * perPage);
@@ -167,6 +200,13 @@ const Paging = ({currentPage, numRows, onClick, perPage}) => {
             </li>
         </ul>
     </div>;
+};
+
+Paging.propTypes = {
+    currentPage: React.PropTypes.number.isRequired,
+    numRows: React.PropTypes.number.isRequired,
+    onClick: React.PropTypes.func.isRequired,
+    perPage: React.PropTypes.number.isRequired,
 };
 
 class DataTable extends React.Component {
@@ -202,14 +242,14 @@ class DataTable extends React.Component {
         let found = false;
         let sortBys = helpers.deepCopy(this.state.sortBys);
 
-        const nextOrder = (col, sortBy) => {
-            if (col.sortSequence) {
+        const nextOrder = (col2, sortBy) => {
+            if (col2.sortSequence) {
                 // Move up to next entry in sortSequence
-                let j = col.sortSequence.indexOf(sortBy[1]) + 1;
-                if (j >= col.sortSequence.length) {
+                let j = col2.sortSequence.indexOf(sortBy[1]) + 1;
+                if (j >= col2.sortSequence.length) {
                     j = 0;
                 }
-                return col.sortSequence[j];
+                return col2.sortSequence[j];
             }
 
             // Default asc/desc toggle
@@ -391,5 +431,17 @@ class DataTable extends React.Component {
         </div>;
     }
 }
+
+DataTable.propTypes = {
+    cols: React.PropTypes.array.isRequired,
+    defaultSort: React.PropTypes.arrayOf(React.PropTypes.oneOfType([
+        React.PropTypes.number,
+        React.PropTypes.string,
+    ])).isRequired,
+    footer: React.PropTypes.array,
+    pagination: React.PropTypes.bool,
+    rows: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    superCols: React.PropTypes.array,
+};
 
 module.exports = DataTable;

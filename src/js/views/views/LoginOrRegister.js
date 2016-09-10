@@ -99,20 +99,18 @@ class LoginOrRegister extends React.Component {
                         registerUsernameError: null,
                     };
 
-                    for (const error in data.errors) {
-                        if (data.errors.hasOwnProperty(error)) {
-                            if (error === "username") {
-                                updatedState.registerUsernameError = data.errors[error];
-                            } else if (error === "email") {
-                                updatedState.registerEmailError = data.errors[error];
-                            } else if (error === "password") {
-                                updatedState.registerPasswordError = data.errors[error];
-                            } else if (error === "password2") {
-                                updatedState.registerPassword2Error = data.errors[error];
-                            } else if (error === "passwords") {
-                                updatedState.registerPasswordError = updatedState.registerPasswordError === null ? '' : updatedState.registerPasswordError; // So it gets highlighted too
-                                updatedState.registerPassword2Error = data.errors[error];
-                            }
+                    for (const error of Object.keys(data.errors)) {
+                        if (error === "username") {
+                            updatedState.registerUsernameError = data.errors[error];
+                        } else if (error === "email") {
+                            updatedState.registerEmailError = data.errors[error];
+                        } else if (error === "password") {
+                            updatedState.registerPasswordError = data.errors[error];
+                        } else if (error === "password2") {
+                            updatedState.registerPassword2Error = data.errors[error];
+                        } else if (error === "passwords") {
+                            updatedState.registerPasswordError = updatedState.registerPasswordError === null ? '' : updatedState.registerPasswordError; // So it gets highlighted too
+                            updatedState.registerPassword2Error = data.errors[error];
                         }
                     }
 

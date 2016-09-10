@@ -56,5 +56,31 @@ const AwardsRecords = ({awardType, awardTypeVal, awardsRecords, playerCount}) =>
     </div>;
 };
 
+AwardsRecords.propTypes = {
+    awardType: React.PropTypes.oneOf([
+        'champion',
+        'mvp',
+        'finals_mvp',
+        'dpoy',
+        'smoy',
+        'roy',
+        'first_team',
+        'second_team',
+        'third_team',
+        'all_league',
+        'first_def',
+        'second_def',
+        'third_def',
+        'all_def',
+        'ppg_leader',
+        'rpg_leader',
+        'apg_leader',
+        'spg_leader',
+        'bpg_leader',
+    ]).isRequired,
+    awardTypeVal: React.PropTypes.string.isRequired,
+    awardsRecords: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    playerCount: React.PropTypes.number.isRequired,
+};
 
 module.exports = AwardsRecords;

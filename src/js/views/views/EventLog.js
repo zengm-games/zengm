@@ -15,4 +15,13 @@ const EventLog = ({abbrev, events, season}) => {
     </div>;
 };
 
+EventLog.propTypes = {
+    abbrev: React.PropTypes.string.isRequired,
+    events: React.PropTypes.arrayOf(React.PropTypes.shape({
+        eid: React.PropTypes.number.isRequired,
+        text: React.PropTypes.string.isRequired,
+    })).isRequired,
+    season: React.PropTypes.number.isRequired,
+};
+
 module.exports = EventLog;

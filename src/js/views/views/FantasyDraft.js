@@ -90,4 +90,8 @@ class FantasyDraft extends React.Component {
     }
 }
 
+FantasyDraft.propTypes = {
+    phase: React.PropTypes.number.isRequired,
+};
+
 module.exports = FantasyDraft;

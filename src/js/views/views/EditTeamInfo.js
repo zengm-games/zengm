@@ -1,8 +1,8 @@
 const React = require('react');
 const g = require('../../globals');
-const ui = require('../../ui');
 const league = require('../../core/league');
 const bbgmViewReact = require('../../util/bbgmViewReact');
+const eventLog = require('../../util/eventLog');
 const helpers = require('../../util/helpers');
 
 class EditTeamInfo extends React.Component {
@@ -67,7 +67,8 @@ class EditTeamInfo extends React.Component {
                 }
             }
 
-            let userName, userRegion;
+            let userName;
+            let userRegion;
             await g.dbl.tx(['teams', 'teamSeasons'], 'readwrite', tx => {
                 return tx.teams.iterate(async t => {
                     t.cid = newTeams[t.tid].cid;
@@ -100,8 +101,17 @@ class EditTeamInfo extends React.Component {
                 teamNamesCache: newTeams.map(t => t.name),
             });
 
+            this.setState({
+                teams: newTeams,
+            });
+
+            eventLog.add(null, {
+                type: 'success',
+                text: 'New team info successfully loaded.',
+                saveToDb: false,
+            });
+
             league.updateLastDbChange();
-            ui.realtimeUpdate(["dbChange"]);
         };
     }
 
@@ -120,7 +130,8 @@ class EditTeamInfo extends React.Component {
             saving: true,
         });
 
-        let userName, userRegion;
+        let userName;
+        let userRegion;
         await g.dbl.tx(['teams', 'teamSeasons'], 'readwrite', tx => {
             return tx.teams.iterate(async t => {
                 t.abbrev = this.state.teams[t.tid].abbrev;
@@ -149,8 +160,13 @@ class EditTeamInfo extends React.Component {
             teamNamesCache: this.state.teams.map(t => t.name),
         });
 
+        eventLog.add(null, {
+            type: 'success',
+            text: 'Saved team info.',
+            saveToDb: false,
+        });
+
         league.updateLastDbChange();
-        ui.realtimeUpdate([], helpers.leagueUrl(["edit_team_info"]));
 
         this.setState({
             saving: false,
@@ -207,23 +223,23 @@ class EditTeamInfo extends React.Component {
                     {teams.map((t, i) => <div key={t.tid}>
                         <div className="col-xs-6 col-sm-2 form-group">
                             <label className="visible-xs">Region</label>
-                            <input type="text" className="form-control" onChange={this.handleInputChange.bind(this, i, 'region')} value={t.region} />
+                            <input type="text" className="form-control" onChange={() => this.handleInputChange(i, 'region')} value={t.region} />
                         </div>
                         <div className="col-xs-6 col-sm-2 form-group">
                             <label className="visible-xs">Name</label>
-                            <input type="text" className="form-control" onChange={this.handleInputChange.bind(this, i, 'name')} value={t.name} />
+                            <input type="text" className="form-control" onChange={() => this.handleInputChange(i, 'name')} value={t.name} />
                         </div>
                         <div className="col-xs-6 col-sm-2 col-md-1 form-group">
                             <label className="visible-xs">Abbrev</label>
-                            <input type="text" className="form-control" onChange={this.handleInputChange.bind(this, i, 'abbrev')} value={t.abbrev} />
+                            <input type="text" className="form-control" onChange={() => this.handleInputChange(i, 'abbrev')} value={t.abbrev} />
                         </div>
                         <div className="col-xs-6 col-sm-2 form-group">
                             <label className="visible-xs">Population (millions)</label>
-                            <input type="text" className="form-control" onChange={this.handleInputChange.bind(this, i, 'pop')} value={t.pop} />
+                            <input type="text" className="form-control" onChange={() => this.handleInputChange(i, 'pop')} value={t.pop} />
                         </div>
                         <div className="col-sm-4 col-md-5 form-group">
                             <label className="visible-xs">Logo URL</label>
-                            <input type="text" className="form-control" onChange={this.handleInputChange.bind(this, i, 'imgURL')} value={t.imgURL} />
+                            <input type="text" className="form-control" onChange={() => this.handleInputChange(i, 'imgURL')} value={t.imgURL} />
                         </div>
                         <hr className="visible-xs" />
                     </div>)}
@@ -237,5 +253,10 @@ class EditTeamInfo extends React.Component {
         </div>;
     }
 }
+
+EditTeamInfo.propTypes = {
+    godMode: React.PropTypes.bool.isRequired,
+    teams: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+};
 
 module.exports = EditTeamInfo;

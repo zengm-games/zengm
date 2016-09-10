@@ -25,7 +25,8 @@ const notify = (message, title, {extraClass, persistent = false, timeOut}) => {
     notificationElement.appendChild(textElement);
 
     if (!persistent) {
-        let timeoutId, timeoutStart;
+        let timeoutId;
+        let timeoutStart;
 
         // Hide notification after timeout
         const notificationTimeout = () => {

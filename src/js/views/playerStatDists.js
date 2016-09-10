@@ -21,14 +21,12 @@ async function updatePlayers(inputs, updateEvents, state) {
             season: inputs.season,
         });
 
-        const statsAll = players.reduce((memo, player) => {
-            for (const stat in player.stats) {
-                if (player.stats.hasOwnProperty(stat)) {
-                    if (memo.hasOwnProperty(stat)) {
-                        memo[stat].push(player.stats[stat]);
-                    } else {
-                        memo[stat] = [player.stats[stat]];
-                    }
+        const statsAll = players.reduce((memo, p) => {
+            for (const stat of Object.keys(p.stats)) {
+                if (memo.hasOwnProperty(stat)) {
+                    memo[stat].push(p.stats[stat]);
+                } else {
+                    memo[stat] = [p.stats[stat]];
                 }
             }
             return memo;

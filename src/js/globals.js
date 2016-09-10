@@ -30,24 +30,16 @@ g.PLAYER = {
 
 g.PHASE_TEXT = {
     "-1": "fantasy draft",
-    "0": "preseason",
-    "1": "regular season",
-    "2": "regular season",
-    "3": "playoffs",
-    "4": "before draft",
-    "5": "draft",
-    "6": "after draft",
-    "7": "re-sign players",
-    "8": "free agency",
+    0: "preseason",
+    1: "regular season",
+    2: "regular season",
+    3: "playoffs",
+    4: "before draft",
+    5: "draft",
+    6: "after draft",
+    7: "re-sign players",
+    8: "free agency",
 };
-
-/*    // Web workers - create only if we're not already inside a web worker!
-g.gameSimWorkers = [];
-if (typeof document !== "undefined") {
-    for (i = 0; i < 1; i++) {
-        g.gameSimWorkers[i] = new Worker("/js/core/gameSimWorker.js");
-    }
-}*/
 
 g.emitter = new EventEmitter();
 

@@ -54,6 +54,23 @@ async function updateOwnerMood(tx) {
     return deltas;
 }
 
+
+async function saveAwardsByPlayer(tx, awardsByPlayer) {
+    const pids = _.uniq(awardsByPlayer.map(award => award.pid));
+
+    await Promise.map(pids, async pid => {
+        const p = await tx.players.get(pid);
+
+        for (let i = 0; i < awardsByPlayer.length; i++) {
+            if (p.pid === awardsByPlayer[i].pid) {
+                p.awards.push({season: g.season, type: awardsByPlayer[i].type});
+            }
+        }
+
+        await tx.players.put(p);
+    });
+}
+
 /**
  * Compute the awards (MVP, etc) after a season finishes.
  *
@@ -63,27 +80,11 @@ async function updateOwnerMood(tx) {
  * @param {(IDBTransaction)} tx An IndexedDB transaction on awards, players, playerStats, releasedPlayers, and teams, readwrite.
  * @return {Promise}
  */
-async function awards(tx) {
+async function doAwards(tx) {
     const awards = {season: g.season};
 
     // [{pid, type}]
     const awardsByPlayer = [];
-
-    const saveAwardsByPlayer = async awardsByPlayer => {
-        const pids = _.uniq(awardsByPlayer.map(award => award.pid));
-
-        await Promise.map(pids, async pid => {
-            const p = await tx.players.get(pid);
-
-            for (let i = 0; i < awardsByPlayer.length; i++) {
-                if (p.pid === awardsByPlayer[i].pid) {
-                    p.awards.push({season: g.season, type: awardsByPlayer[i].type});
-                }
-            }
-
-            await tx.players.put(p);
-        });
-    };
 
     // Get teams for won/loss record for awards, as well as finding the teams with the best records
     const teams = await team.filter({
@@ -96,7 +97,7 @@ async function awards(tx) {
 
     awards.bestRecord = {tid: teams[0].tid, abbrev: teams[0].abbrev, region: teams[0].region, name: teams[0].name, won: teams[0].won, lost: teams[0].lost};
     awards.bestRecordConfs = g.confs.map(c => {
-        const t = teams.find(t => t.cid === c.cid);
+        const t = teams.find(t2 => t2.cid === c.cid);
         return {tid: t.tid, abbrev: t.abbrev, region: t.region, name: t.name, won: t.won, lost: t.lost};
     });
 
@@ -125,8 +126,7 @@ async function awards(tx) {
     ];
     for (const cat of categories) {
         players.sort((a, b) => b.stats[cat.stat] - a.stats[cat.stat]);
-        for (let j = 0; j < players.length; j++) {
-            p = players[j];
+        for (const p of players) {
             if (p.stats[cat.stat] * p.stats.gp >= cat.minValue * factor || p.stats.gp >= 70 * factor) {
                 awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: cat.name});
                 break;
@@ -149,10 +149,12 @@ async function awards(tx) {
         // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
         return p.draft.year === g.season - 1;
     }).sort((a, b) => b.stats.ewa - a.stats.ewa); // Same formula as MVP, but no wins because some years with bad rookie classes can have the wins term dominate EWA
-    let p = rookies[0];
-    if (p !== undefined) { // I suppose there could be no rookies at all.. which actually does happen when skip the draft from the debug menu
-        awards.roy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
-        awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Rookie of the Year"});
+    {
+        const p = rookies[0];
+        if (p !== undefined) { // I suppose there could be no rookies at all.. which actually does happen when skip the draft from the debug menu
+            awards.roy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
+            awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Rookie of the Year"});
+        }
     }
 
     // All Rookie Team - same sort as ROY
@@ -167,14 +169,18 @@ async function awards(tx) {
 
     // Most Valuable Player
     players.sort((a, b) => (b.stats.ewa + 0.1 * b.won) - (a.stats.ewa + 0.1 * a.won));
-    p = players[0];
-    awards.mvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
-    awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Most Valuable Player"});
+    {
+        const p = players[0];
+        awards.mvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
+        awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Most Valuable Player"});
+    }
 
     // Sixth Man of the Year - same sort as MVP, must have come off the bench in most games
-    p = players.find(p => p.stats.gs === 0 || p.stats.gp / p.stats.gs > 2);
-    awards.smoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
-    awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Sixth Man of the Year"});
+    {
+        const p = players.find(p2 => p2.stats.gs === 0 || p2.stats.gp / p2.stats.gs > 2);
+        awards.smoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
+        awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Sixth Man of the Year"});
+    }
 
     // All League Team - same sort as MVP
     awards.allLeague = [{title: "First Team", players: []}];
@@ -194,15 +200,17 @@ async function awards(tx) {
 
     // Defensive Player of the Year
     players.sort((a, b) => b.stats.gp * (b.stats.trb + 5 * b.stats.blk + 5 * b.stats.stl) - a.stats.gp * (a.stats.trb + 5 * a.stats.blk + 5 * a.stats.stl));
-    p = players[0];
-    awards.dpoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.stats.trb, blk: p.stats.blk, stl: p.stats.stl};
-    awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Defensive Player of the Year"});
+    {
+        const p = players[0];
+        awards.dpoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.stats.trb, blk: p.stats.blk, stl: p.stats.stl};
+        awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Defensive Player of the Year"});
+    }
 
     // All Defensive Team - same sort as DPOY
     awards.allDefensive = [{title: "First Team", players: []}];
     type = "First Team All-Defensive";
     for (let i = 0; i < 15; i++) {
-        p = players[i];
+        const p = players[i];
         if (i === 5) {
             awards.allDefensive.push({title: "Second Team", players: []});
             type = "Second Team All-Defensive";
@@ -232,12 +240,14 @@ async function awards(tx) {
         tid: champTid,
     });
     champPlayers.sort((a, b) => b.statsPlayoffs.ewa - a.statsPlayoffs.ewa);
-    p = champPlayers[0];
-    awards.finalsMvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.statsPlayoffs.pts, trb: p.statsPlayoffs.trb, ast: p.statsPlayoffs.ast};
-    awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Finals MVP"});
+    {
+        const p = champPlayers[0];
+        awards.finalsMvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.statsPlayoffs.pts, trb: p.statsPlayoffs.trb, ast: p.statsPlayoffs.ast};
+        awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Finals MVP"});
+    }
 
     await tx.awards.put(awards);
-    await saveAwardsByPlayer(awardsByPlayer);
+    await saveAwardsByPlayer(tx, awardsByPlayer);
 
     // None of this stuff needs to block, it's just notifications of crap
     // Notifications for awards for user's players
@@ -305,18 +315,13 @@ function getSchedule(options) {
  * @return {Promise}
  */
 async function setSchedule(tx, tids) {
-    const newSchedule = [];
-    for (let i = 0; i < tids.length; i++) {
-        newSchedule.push({
-            homeTid: tids[i][0],
-            awayTid: tids[i][1],
-        });
-    }
-
     await tx.schedule.clear();
 
-    for (const matchup of newSchedule) {
-        await tx.schedule.add(matchup);
+    for (const matchup of tids) {
+        await tx.schedule.add({
+            homeTid: matchup[0],
+            awayTid: matchup[1],
+        });
     }
 }
 
@@ -385,6 +390,7 @@ function newScheduleDefault(teams) {
             let n = 0;
             while (n <= 14) {  // 14 = num teams in conference - 1
                 let iters = 0;
+                // eslint-disable-next-line no-constant-condition
                 while (true) {
                     const tryNum = random.randInt(0, 14);
                     // Pick tryNum such that it is in a different division than n and has not been picked before
@@ -604,7 +610,8 @@ async function newSchedulePlayoffsDay(tx) {
     const tidsWon = [];
     for (let i = 0; i < series[rnd].length; i += 2) {
         // Find the two winning teams
-        let team1, team2;
+        let team1;
+        let team2;
         if (series[rnd][i].home.won >= 4) {
             team1 = helpers.deepCopy(series[rnd][i].home);
             tidsWon.push(series[rnd][i].home.tid);
@@ -733,7 +740,7 @@ function genPlayoffSeries(teams) {
 }
 
 module.exports = {
-    awards,
+    doAwards,
     updateOwnerMood,
     getSchedule,
     setSchedule,

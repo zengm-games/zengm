@@ -5,7 +5,7 @@ const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
 const {DataTable, Dropdown, JumpTo, NewWindowLink, PlayerNameLabels} = require('../components');
 
-const PlayerStats = ({abbrev, season, statType, players, playoffs}) => {
+const PlayerStats = ({abbrev, players, playoffs, season, statType}) => {
     const label = season !== undefined && season !== null ? season : 'Career Totals';
     bbgmViewReact.title(`Player Stats - ${label}`);
 
@@ -49,17 +49,18 @@ const PlayerStats = ({abbrev, season, statType, players, playoffs}) => {
         }
 
         // HACKS to show right stats, info
-        let abbrev, tid;
+        let actualAbbrev;
+        let actualTid;
         if (season === null) {
             p.stats = p.careerStats;
-            abbrev = helpers.getAbbrev(p.tid);
-            tid = p.tid;
+            actualAbbrev = helpers.getAbbrev(p.tid);
+            actualTid = p.tid;
             if (playoffs === "playoffs") {
                 p.stats = p.careerStatsPlayoffs;
             }
         } else {
-            abbrev = p.stats.abbrev;
-            tid = p.stats.tid;
+            actualAbbrev = p.stats.abbrev;
+            actualTid = p.stats.tid;
             if (playoffs === "playoffs") {
                 p.stats = p.statsPlayoffs;
             }
@@ -75,7 +76,7 @@ const PlayerStats = ({abbrev, season, statType, players, playoffs}) => {
                     watch={p.watch}
                 >{p.name}</PlayerNameLabels>,
                 pos,
-                <a href={helpers.leagueUrl(["roster", abbrev, season])}>{abbrev}</a>,
+                <a href={helpers.leagueUrl(["roster", actualAbbrev, season])}>{actualAbbrev}</a>,
                 p.stats.gp,
                 p.stats.gs,
                 helpers.round(p.stats.min, d),
@@ -104,7 +105,7 @@ const PlayerStats = ({abbrev, season, statType, players, playoffs}) => {
             ],
             classNames: {
                 danger: p.hof,
-                info: tid === g.userTid,
+                info: actualTid === g.userTid,
             },
         };
     });
@@ -125,6 +126,17 @@ const PlayerStats = ({abbrev, season, statType, players, playoffs}) => {
             superCols={superCols}
         />
     </div>;
+};
+
+PlayerStats.propTypes = {
+    abbrev: React.PropTypes.string.isRequired,
+    players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    playoffs: React.PropTypes.oneOf(['playoffs', 'regular_season']).isRequired,
+    season: React.PropTypes.oneOfType([
+        React.PropTypes.number,
+        React.PropTypes.string,
+    ]).isRequired,
+    statType: React.PropTypes.oneOf(['per_36', 'per_game', 'totals']).isRequired,
 };
 
 module.exports = PlayerStats;

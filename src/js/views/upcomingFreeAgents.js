@@ -12,10 +12,8 @@ function get(req) {
         if (season < g.season) {
             season = g.season;
         }
-    } else {
-        if (season < g.season + 1) {
-            season = g.season + 1;
-        }
+    } else if (season < g.season + 1) {
+        season = g.season + 1;
     }
 
     return {

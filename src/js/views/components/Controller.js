@@ -149,13 +149,11 @@ class Controller extends React.Component {
             data: Object.assign(prevData, ...results),
         };
 
-        if (vars !== undefined) {
-            if (vars.redirectUrl !== undefined) {
-                return ui.realtimeUpdate([], vars.redirectUrl, cb);
-            }
-
-            this.setState(vars);
+        if (vars.data && vars.data.redirectUrl !== undefined) {
+            return ui.realtimeUpdate([], vars.data.redirectUrl, cb);
         }
+
+        this.setState(vars);
 
         await Promise.all(promisesWhenever);
 

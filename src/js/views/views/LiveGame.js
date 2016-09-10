@@ -1,6 +1,6 @@
 const classNames = require('classnames');
-const $ = require('jquery');
 const React = require('react');
+const AutoAffix = require('react-overlays/lib/AutoAffix');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
 const {PlayerNameLabels} = require('../components');
@@ -112,6 +112,7 @@ class LiveGame extends React.Component {
         this.state = {
             boxScore: props.initialBoxScore ? props.initialBoxScore : {},
             speed: 5,
+            started: !!props.events,
         };
         if (props.events) {
             this.startLiveGame(props.events.slice());
@@ -122,9 +123,10 @@ class LiveGame extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.events) {
+        if (nextProps.events && !this.state.started) {
             this.setState({
                 boxScore: nextProps.initialBoxScore,
+                started: true,
             }, () => {
                 this.startLiveGame(nextProps.events.slice());
             });
@@ -133,13 +135,6 @@ class LiveGame extends React.Component {
 
     componentDidMount() {
         this.componentIsMounted = true;
-
-        // Keep plays list always visible
-        $(this.affixDiv).affix({
-            offset: {
-                top: 80,
-            },
-        });
 
         // Keep height of plays list equal to window
         this.setPlayByPlayDivHeight();
@@ -153,7 +148,7 @@ class LiveGame extends React.Component {
     }
 
     setPlayByPlayDivHeight() {
-        this.playByPlayDiv.style.height = `${window.innerHeight - 114}px`;
+        this.playByPlayDiv.style.height = `${window.innerHeight - 104}px`;
     }
 
     startLiveGame(events) {
@@ -292,18 +287,18 @@ class LiveGame extends React.Component {
                     }
                 </div>
                 <div className="col-md-3">
-                    <div ref={c => {
-                        this.affixDiv = c;
-                    }}>
-                        <form>
-                            <label htmlFor="playByPlaySpeed">Play-By-Play Speed:</label>
-                            <input type="range" id="playByPlaySpeed" min="1" max="33" step="1" style={{width: '100%'}} value={this.state.speed} onChange={this.handleSpeedChange} />
-                        </form>
+                    <AutoAffix viewportOffsetTop={60} container={this}>
+                        <div>
+                            <form>
+                                <label htmlFor="playByPlaySpeed">Play-By-Play Speed:</label>
+                                <input type="range" id="playByPlaySpeed" min="1" max="33" step="1" style={{width: '100%'}} value={this.state.speed} onChange={this.handleSpeedChange} />
+                            </form>
 
-                        <div ref={c => {
-                            this.playByPlayDiv = c;
-                        }} style={{overflow: 'auto'}} />
-                    </div>
+                            <div ref={c => {
+                                this.playByPlayDiv = c;
+                            }} style={{height: '100%', overflow: 'auto'}} />
+                        </div>
+                    </AutoAffix>
                 </div>
             </div>
         </div>;

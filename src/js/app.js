@@ -18,7 +18,6 @@ const Controller = require('./views/components/Controller');
 window.Promise = require('bluebird');
 window.Promise.config({warnings: false});
 
-require('lib/bootstrap-affix');
 require('./lib/davis.google_analytics');
 require('indexeddb-getall-shim');
 require('jquery-ui/sortable');

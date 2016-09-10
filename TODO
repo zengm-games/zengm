@@ -2,6 +2,8 @@ REACT
 
 abstract games list in schedule and dashboard
 
+spacing between top menu and user icon - too much on xs
+
 better eslint
 
 when all react

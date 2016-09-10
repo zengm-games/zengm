@@ -44,6 +44,7 @@
     "react-addons-text-content": "0.0.4",
     "react-bootstrap": "0.30.3",
     "react-dom": "15.3.1",
+    "react-overlays": "^0.6.6",
     "source-map-support": "0.4.2",
     "underscore": "1.8.3"
   },
@@ -67,7 +68,6 @@
     "babel-preset-react": "6.11.1",
     "babelify": "7.3.0",
     "browserify": "13.1.0",
-    "browserify-shim": "3.8.12",
     "cheerio": "0.20.0",
     "chokidar": "1.6.0",
     "clean-css": "3.4.19",
@@ -90,20 +90,9 @@
     "stylelint-config-standard": "12.0.0",
     "watchify": "3.7.0"
   },
-  "browser": {
-    "lib/bootstrap-affix": "./src/js/lib/bootstrap-affix.js"
-  },
-  "browserify-shim": {
-    "lib/bootstrap-affix": {
-      "depends": [
-        "jquery:jQuery"
-      ]
-    }
-  },
   "browserify": {
     "transform": [
-      "babelify",
-      "browserify-shim"
+      "babelify"
     ]
   },
   "babel": {

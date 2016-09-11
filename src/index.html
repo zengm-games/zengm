@@ -116,29 +116,39 @@
     </script>
 
     <div id="content">
-      <div style="max-width: 360px; margin: 0 auto;">
-        <div id="loading-msg">
-          <h1>Loading...</h1>
+      <div id="loading-msg">
+        <div style="max-width: 360px; margin: 0 auto;">
+          <div style="margin: 0 15px; text-align: center">
+            <h1>Loading...</h1>
 
-          <p style="clear: both; margin-bottom: 8em"></p>
-          <div class="team-picture-splash" id="team-picture-0"></div>
-          <div class="team-picture-splash" id="team-picture-1"></div>
-          <div class="team-picture-splash" id="team-picture-2"></div>
-          <div class="team-picture-splash" id="team-picture-3"></div>
-          <div class="team-picture-splash" id="team-picture-4"></div>
-          <div class="team-picture-splash" id="team-picture-5"></div>
-          <div class="team-picture-splash" id="team-picture-6"></div>
-          <div class="team-picture-splash" id="team-picture-7"></div>
-          <div class="team-picture-splash" id="team-picture-8"></div>
-          <div class="team-picture-splash" id="team-picture-9"></div>
-          <div class="team-picture-splash" id="team-picture-10"></div>
-          <div class="team-picture-splash" id="team-picture-11"></div>
+            <p style="clear: both; margin-bottom: 6em"></p>
 
-          <p style="clear: both; margin-bottom: 8em"></p>
-          <p>This should only take a few seconds on a fast connection.</p>
-          <p>If this gets stuck for a while, try <a href="https://basketball-gm.com/manual/debugging/">the debugging instructions</a> and try to find an error message and report a bug.</p>
+            <div style="margin: 0 -15px">
+              <div class="team-picture-splash" id="team-picture-0"></div>
+              <div class="team-picture-splash" id="team-picture-1"></div>
+              <div class="team-picture-splash" id="team-picture-2"></div>
+              <div class="team-picture-splash" id="team-picture-3"></div>
+              <div class="team-picture-splash" id="team-picture-4"></div>
+              <div class="team-picture-splash" id="team-picture-5"></div>
+              <div class="team-picture-splash" id="team-picture-6"></div>
+              <div class="team-picture-splash" id="team-picture-7"></div>
+              <div class="team-picture-splash" id="team-picture-8"></div>
+              <div class="team-picture-splash" id="team-picture-9"></div>
+              <div class="team-picture-splash" id="team-picture-10"></div>
+              <div class="team-picture-splash" id="team-picture-11"></div>
+            </div>
+
+          </div>
         </div>
 
+        <p style="clear: both; margin-bottom: 6em"></p>
+
+        <div class="container">
+          <p>This should only take a few seconds on a fast connection.</p>
+          <p style="margin-bottom: 0">If this gets stuck for a while, read the <a href="https://basketball-gm.com/manual/debugging/">the debugging instructions</a> and try to find an error message and <a href="https://basketball-gm.com/contact/">report a bug</a>.</p>
+        </div>
+      </div>
+      <div class="container">
         <hr style="margin-bottom: 1.5em">
 
         <footer>
@@ -230,8 +240,8 @@
           }
 
           var loadingMsg = document.getElementById('loading-msg');
-          loadingMsg.className = 'alert alert-danger';
-          loadingMsg.innerHTML = errorMsg;
+          loadingMsg.className = 'container';
+          loadingMsg.innerHTML = '<div class="alert alert-danger" style="margin-bottom: 0">' + errorMsg + '</div>';
         } else {
           var body = document.getElementsByTagName('body').item(0);
           var script = document.createElement('script');

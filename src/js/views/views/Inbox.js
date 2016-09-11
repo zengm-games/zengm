@@ -12,7 +12,7 @@ const Inbox = ({anyUnread, messages}) => {
 
         {anyUnread ? <p className="text-danger">You have a new message. Read it before continuing.</p> : null}
 
-        <table className="table table-striped table-bordered table-condensed" id="messages">
+        <table className="table table-striped table-bordered table-condensed messages-table">
             <tbody>
                 {messages.map(({from, mid, read, text, year}) => {
                     return <tr key={mid} className={classNames({unread: !read})}>

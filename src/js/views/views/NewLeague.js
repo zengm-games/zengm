@@ -87,6 +87,7 @@ class NewLeague extends React.Component {
     handleCustomizeChange(e) {
         const updatedState = {
             customize: e.target.value,
+            invalidLeagueFile: false,
         };
         if (updatedState.customize === 'random') {
             updatedState.teams = defaultTeams;

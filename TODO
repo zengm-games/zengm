@@ -2,15 +2,7 @@ REACT
 
 spacing between top menu and user icon - too much on xs
 
-better eslint
-
-new league
-  should allow uploading same file twice in a row (current doens't either)
-  "Invalid League File" msg should not persist after Customize select changes
-
 when all react
-  reevaluate views folder structure... maybe views -> ui, and views/*.js -> ui/data-loaders/*.js
-  reevaluate bbgmView API
   confirm ads work
     need to make them react components, to get topMenu
     control overlays and banners from react
@@ -24,13 +16,15 @@ when all react
       only after passing props correctly on first render
     everything relying on topMenu
   make sure account emails work in prod (reset pw, new account)
-  test auto play
 
 ptModifier working right? https://www.reddit.com/r/BasketballGM/comments/4wg3dh/help_me_with_a_little_beta_testing/d6tmkyf?context=3
 
 ---
 
 REACT later
+
+reevaluate views folder structure... maybe views -> ui, and views/*.js -> ui/data-loaders/*.js
+reevaluate bbgmView API
 
 abstract games list in schedule and dashboard
 

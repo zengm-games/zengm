@@ -25,6 +25,7 @@ require('jquery-ui/sortable');
 ((async () => {
     window.bbgm = {
         account: require('./util/account'),
+        ads: require('./util/ads'),
         debug: require('./core/debug'),
         g: require('./globals'),
         contractNegotiation: require('./core/contractNegotiation'),

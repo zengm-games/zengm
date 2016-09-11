@@ -1,7 +1,5 @@
 REACT
 
-spacing between top menu and user icon - too much on xs
-
 when all react
   confirm no ads on mobile
   make sure account emails work in prod

@@ -178,7 +178,7 @@ class DropdownLinks extends React.Component {
     render() {
         const {godMode, lid} = this.props;
 
-        return <Nav pullRight>
+        return <Nav pullRight style={{marginRight: '0px'}}>
             {lid !== undefined ? <NavItem href={helpers.leagueUrl([])}>
                 <span className="hidden-xs"><span className="glyphicon glyphicon-home" /></span>
                 <span className="visible-xs"><span className="glyphicon glyphicon-home" style={{marginRight: '5px'}} />League Dashboard</span>
@@ -397,7 +397,7 @@ class NavBar extends React.Component {
         }
 
         return <Navbar fixedTop>
-            <div className="pull-right" style={{marginLeft: '15px'}}>
+            <div className="pull-right">
                     {username ? <a className="navbar-link user-menu" href="/account">
                         <span className="glyphicon glyphicon-user" />{' '}
                         <span className="visible-lg">{username}</span>

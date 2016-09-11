@@ -3,8 +3,6 @@ REACT
 spacing between top menu and user icon - too much on xs
 
 when all react
-  escape HTML saved to IDB very carefully (event log, feat text, play by play text displayed in LiveGame, edit team info)
-    dangerous lint warnings - would be nice to abstract into one or two functions
   confirm gold stuff works
     cancel
     goldMessage stuff
@@ -21,6 +19,10 @@ ptModifier working right? https://www.reddit.com/r/BasketballGM/comments/4wg3dh/
 ---
 
 REACT later
+
+escape HTML saved to IDB very carefully (event log, feat text, play by play text displayed in LiveGame, edit team info)
+  would be better to somehow only have a safe subset of HTML processed, because then i don't have to worry about malicious entries already there or in external files
+  dangerous lint warnings - would be nice to abstract into one or two functions
 
 reevaluate views folder structure... maybe views -> ui, and views/*.js -> ui/data-loaders/*.js
 reevaluate bbgmView API

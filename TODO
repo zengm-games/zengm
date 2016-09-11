@@ -3,8 +3,6 @@ REACT
 spacing between top menu and user icon - too much on xs
 
 when all react
-  new banner ad code, somehow
-    need to get info from react to know if we're showing banners or not
   escape HTML saved to IDB very carefully (event log, feat text, play by play text displayed in LiveGame, edit team info)
     dangerous lint warnings - would be nice to abstract into one or two functions
   confirm gold stuff works
@@ -14,6 +12,7 @@ when all react
     reset password
       only after passing props correctly on first render
     everything relying on topMenu
+  confirm no ads on mobile
   make sure account emails work in prod (reset pw, new account)
 
 ptModifier working right? https://www.reddit.com/r/BasketballGM/comments/4wg3dh/help_me_with_a_little_beta_testing/d6tmkyf?context=3

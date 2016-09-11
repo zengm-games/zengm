@@ -11,7 +11,6 @@ const backboard = require('backboard');
 const Promise = require('bluebird');
 const _ = require('underscore');
 const account = require('../util/account');
-const ads = require('../util/ads');
 const eventLog = require('../util/eventLog');
 const helpers = require('../util/helpers');
 const lock = require('../util/lock');

@@ -1,8 +1,9 @@
 // Needed because of https://github.com/petkaantonov/bluebird/issues/363
 // Sadly only enabled in debug mode, due to weird interactions with Bugsnag
-if (localStorage.debug === 'debug') {
+// And now disabled due to weird interactions with ads
+/*if (localStorage.debug === 'debug') {
     require('source-map-support').install();
-}
+}*/
 
 const React = require('react');
 const ReactDOM = require('react-dom');

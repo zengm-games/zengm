@@ -67,10 +67,23 @@
         }
       }
     </script>
+
+    <script async="async" src="https://www.googletagservices.com/tag/js/gpt.js"></script>
   </head>
 
   <body>
     <script type="text/javascript">
+      // Banner ads
+      var googletag = googletag || {};
+      googletag.cmd = googletag.cmd || [];
+
+      googletag.cmd.push(function() {
+        googletag.defineSlot('/42283434/BBGM_Bottom', [[970, 90], [728, 90], [970, 250]], 'div-gpt-ad-1473268147477-0').addService(googletag.pubads());
+        googletag.defineSlot('/42283434/BBGM_Top', [[970, 90], [728, 90], [970, 250]], 'div-gpt-ad-1473268147477-1').addService(googletag.pubads());
+        googletag.pubads().enableSingleRequest();
+        googletag.enableServices();
+      });
+
       if (window.enableLogging) {
         // Google Consumer Surveys
         var TriggerPrompt = function(articleUrl, contentId) {

@@ -42,7 +42,7 @@ class Controller extends React.Component {
                 email: undefined,
                 godMode: !!g.godMode,
                 goldUntil: 0,
-                goldCancelled: 0,
+                goldCancelled: false,
                 hasViewedALeague: !!localStorage.hasViewedALeague,
                 lid: undefined,
                 options: [],
@@ -134,7 +134,7 @@ class Controller extends React.Component {
 
             // No ads for Gold members
             const currentTimestamp = Math.floor(Date.now() / 1000);
-            if (!this.state.topMenu.goldCancelled && currentTimestamp <= this.state.topMenu.goldUntil) {
+            if (currentTimestamp <= this.state.topMenu.goldUntil) {
                 return;
             }
 

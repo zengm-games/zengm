@@ -242,7 +242,7 @@ Account.propTypes = {
     })).isRequired,
     email: React.PropTypes.string,
     goldMessage: React.PropTypes.string,
-    goldSuccess: React.PropTypes.string,
+    goldSuccess: React.PropTypes.bool,
     goldUntilDateString: React.PropTypes.string.isRequired,
     showGoldActive: React.PropTypes.bool.isRequired,
     showGoldCancelled: React.PropTypes.bool.isRequired,

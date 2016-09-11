@@ -26,7 +26,7 @@ async function updateAccountUpdateCard(inputs, updateEvents, state, setState, to
                 last4: data.last4,
                 expMonth: data.expMonth,
                 expYear: data.expYear,
-                username: topMenu.userName,
+                username: topMenu.username,
             };
         } catch (err) {
             return {

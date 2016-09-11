@@ -42,7 +42,7 @@ class LoginOrRegister extends React.Component {
                 if (data.success) {
                     g.emitter.emit('updateTopMenu', {
                         email: data.email,
-                        goldCancelled: data.gold_cancelled,
+                        goldCancelled: !!data.gold_cancelled,
                         goldUntil: data.gold_until,
                         username: data.username,
                     });

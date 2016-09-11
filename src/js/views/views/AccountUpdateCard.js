@@ -98,7 +98,7 @@ class AccountUpdateCard extends React.Component {
         bbgmViewReact.title('Update Card');
 
         let errorMessage;
-        if (username === null || username === '') {
+        if (username === undefined || username === null || username === '') {
             errorMessage = 'Log in to view this page.';
         }
         if (goldCancelled) {
@@ -161,10 +161,10 @@ class AccountUpdateCard extends React.Component {
 
 AccountUpdateCard.propTypes = {
     goldCancelled: React.PropTypes.bool.isRequired,
-    expMonth: React.PropTypes.string.isRequired,
-    expYear: React.PropTypes.string.isRequired,
+    expMonth: React.PropTypes.number.isRequired,
+    expYear: React.PropTypes.number.isRequired,
     last4: React.PropTypes.string.isRequired,
-    username: React.PropTypes.string.isRequired,
+    username: React.PropTypes.string,
 };
 
 module.exports = AccountUpdateCard;

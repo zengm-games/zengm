@@ -18,7 +18,7 @@ async function updateAccount(inputs, updateEvents, state, setState, topMenu) {
 
         const currentTimestamp = Math.floor(Date.now() / 1000);
         const showGoldActive = !topMenu.goldCancelled && currentTimestamp <= topMenu.goldUntil;
-        const showGoldCancelled = !!topMenu.goldCancelled && currentTimestamp <= topMenu.goldUntil;
+        const showGoldCancelled = topMenu.goldCancelled && currentTimestamp <= topMenu.goldUntil;
         const showGoldPitch = !showGoldActive;
 
         return {

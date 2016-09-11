@@ -1,3 +1,4 @@
+const React = require('react');
 const db = require('../db');
 const g = require('../globals');
 const ui = require('../ui');
@@ -44,7 +45,7 @@ async function beforeLeague(req, loadedLid) {
         // Make sure this league exists before proceeding
         const l = await g.dbm.leagues.get(g.lid);
         if (l === undefined) {
-            helpers.error('League not found. <a href="/new_league">Create a new league</a> or <a href="/">load an existing league</a> to play!', reqCb, true);
+            helpers.error(<span>League not found. <a href="/new_league">Create a new league</a> or <a href="/">load an existing league</a> to play!</span>, reqCb, true);
             return [[], () => {}, 'abort'];
         }
 

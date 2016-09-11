@@ -258,44 +258,6 @@ function deepCopy(obj) {
 }
 
 /**
- * Display a whole-page error message to the user.
- *
- * @memberOf util.helpers
- * @param {Object} req Object with parameter "params" containing another object with a string representing the error message in the parameter "error".
- */
-function globalError(req) {
-    const views = require('../views');
-
-    const view = views.staticPage('error', 'Error', false, <div>
-        <h1>Error</h1>
-
-        <div dangerouslySetInnerHTML={{__html: req.params.error}} />
-    </div>);
-
-    view.get(req);
-    req.raw.cb();
-}
-
-/**
- * Display a whole-page error message to the user, while retaining the league menu.
- *
- * @memberOf util.helpers
- * @param {Object} req Object with parameter "params" containing another object with a string representing the error message in the parameter "error" and an integer league ID in "lid".
- */
-function leagueError(req) {
-    const views = require('../views');
-
-    const view = views.staticPage('error', 'Error', true, <div>
-        <h1>Error</h1>
-
-        <div dangerouslySetInnerHTML={{__html: req.params.error}} />
-    </div>);
-
-    view.get(req);
-    req.raw.cb();
-}
-
-/**
  * Display a whole-page error message to the user by calling either leagueError or globalError as appropriate.
  *
  * Use errorNotify for minor errors.
@@ -303,17 +265,19 @@ function leagueError(req) {
  * @memberOf util.helpers
  * @param {string} error Text of the error message to be displayed.
  * @param {function()} cb Optional callback function.
- * @param {boolean} forceGlobal If true, always call globalError (needed if league/global distinction can't be inferred from URL).
  */
-function error(errorText, cb, forceGlobal = false) {
-    const req = {params: {error: errorText}, raw: {cb: cb !== undefined ? cb : () => {}}};
+function error(errorText, cb) {
+    const views = require('../views');
 
-    const lid = location.pathname.split("/")[2]; // lid derived from URL
-    if (/^\d+$/.test(lid) && typeof indexedDB !== "undefined" && !forceGlobal) { // Show global error of no IndexedDB
-        req.params.lid = parseInt(lid, 10);
-        leagueError(req);
-    } else {
-        globalError(req);
+    const view = views.staticPage('error', 'Error', false, <div>
+        <h1>Error</h1>
+
+        {errorText}
+    </div>);
+
+    view.get({raw: {}});
+    if (cb) {
+        cb();
     }
 }
 

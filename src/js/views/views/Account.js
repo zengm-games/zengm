@@ -215,9 +215,7 @@ const Account = ({achievements, email, goldMessage, goldSuccess, goldUntilDateSt
                         <div className={classNames({'list-group-item-success': achievement.count > 0, 'text-muted': achievement.count === 0})}>
                             {achievement.count > 1 ? <span className="badge pull-right">{achievement.count}</span> : null}
                             <h4 className="list-group-item-heading">{achievement.name}</h4>
-                            <p className="list-group-item-text">
-                                <span dangerouslySetInnerHTML={{__html: achievement.desc}} />
-                            </p>
+                            <p className="list-group-item-text">{achievement.desc}</p>
                         </div>
                     </li>,
                 ];

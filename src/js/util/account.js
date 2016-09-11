@@ -59,7 +59,7 @@ const allAchievements = [{
 }, {
     slug: "hacker",
     name: "Hacker",
-    desc: 'Privately <a href="https://basketball-gm.com/contact/">report</a> a security issue in <a href="https://bitbucket.org/dumbmatter/bbgm-account">the account system</a> or some other part of the site.',
+    desc: 'Privately report a security issue in the account system or some other part of the site.',
 }];
 
 /**

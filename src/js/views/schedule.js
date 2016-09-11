@@ -92,7 +92,6 @@ async function updateCompleted(inputs, updateEvents, state, setState) {
 module.exports = bbgmViewReact.init({
     id: "schedule",
     get,
-    runBefore: [updateUpcoming],
-    runWhenever: [updateCompleted],
+    runBefore: [updateUpcoming, updateCompleted],
     Component: Schedule,
 });

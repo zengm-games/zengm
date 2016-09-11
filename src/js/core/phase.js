@@ -103,7 +103,7 @@ async function newPhasePreseason(tx) {
     }
 
     if (g.enableLogging && !window.inCordova) {
-        ads.show();
+        g.emitter.emit('showAd', 'modal');
     }
 
     return [undefined, ["playerMovement"]];

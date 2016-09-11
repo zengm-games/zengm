@@ -2,6 +2,7 @@ const Promise = require('bluebird');
 const React = require('react');
 const g = require('../../globals');
 const ui = require('../../ui');
+const ads = require('../../util/ads');
 const {Footer, Header, LeagueWrapper, MultiTeamMenu, NagModal, NavBar} = require('./index');
 
 class LeagueContent extends React.Component {
@@ -53,15 +54,17 @@ class Controller extends React.Component {
         };
         this.closeNagModal = this.closeNagModal.bind(this);
         this.get = this.get.bind(this);
+        this.setStateData = this.setStateData.bind(this);
+        this.showAd = this.showAd.bind(this);
         this.updatePage = this.updatePage.bind(this);
         this.updateMultiTeam = this.updateMultiTeam.bind(this);
         this.updateState = this.updateState.bind(this);
         this.updateTopMenu = this.updateTopMenu.bind(this);
-        this.setStateData = this.setStateData.bind(this);
     }
 
     componentDidMount() {
         g.emitter.on('get', this.get);
+        g.emitter.on('showAd', this.showAd);
         g.emitter.on('updatePage', this.updatePage);
         g.emitter.on('updateMultiTeam', this.updateMultiTeam);
         g.emitter.on('updateState', this.updateState);
@@ -79,6 +82,7 @@ class Controller extends React.Component {
 
     componentWillUnmount() {
         g.emitter.removeListener('get', this.get);
+        g.emitter.removeListener('showAd', this.showAd);
         g.emitter.removeListener('updatePage', this.updatePage);
         g.emitter.removeListener('updateMultiTeam', this.updateMultiTeam);
         g.emitter.removeListener('updateState', this.updateState);
@@ -115,6 +119,42 @@ class Controller extends React.Component {
         }
 
         this.updatePage(args, inputs, updateEvents, cb);
+    }
+
+    showAd(type) {
+        if (type === 'modal') {
+            if (!window.enableLogging) {
+                return;
+            }
+
+            // No ads during multi season auto sim
+            if (g.autoPlaySeasons > 0) {
+                return;
+            }
+
+            // No ads for Gold members
+            const currentTimestamp = Math.floor(Date.now() / 1000);
+            if (!this.state.topMenu.goldCancelled && currentTimestamp <= this.state.topMenu.goldUntil) {
+                return;
+            }
+
+            const r = Math.random();
+            if (r < 0.68) {
+                ads.showGcs();
+            } else if (r < 0.75) {
+                ads.showModal();
+            } else {
+                // This is all in milliseconds!
+                const adTimer = localStorage.adTimer !== undefined ? parseInt(localStorage.adTimer, 10) : 0;
+                const now = Date.now();
+
+                // Only show ad once per 60 minutes, at most
+                if (now - adTimer > 1000 * 60 * 60) {
+                    ads.showSurvata();
+                    localStorage.adTimer = now;
+                }
+            }
+        }
     }
 
     async updatePage(args, inputs, updateEvents, cb) {

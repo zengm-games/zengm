@@ -3,9 +3,8 @@ REACT
 spacing between top menu and user icon - too much on xs
 
 when all react
-  confirm ads work
-    need to make them react components, to get topMenu
-    control overlays and banners from react
+  new banner ad code, somehow
+    need to get info from react to know if we're showing banners or not
   escape HTML saved to IDB very carefully (event log, feat text, play by play text displayed in LiveGame, edit team info)
     dangerous lint warnings - would be nice to abstract into one or two functions
   confirm gold stuff works

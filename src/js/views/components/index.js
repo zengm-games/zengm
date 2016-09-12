@@ -19,6 +19,7 @@ module.exports = {
     PlayoffMatchup: require('./PlayoffMatchup'),
     RatingWithChange: require('./RatingWithChange'),
     RecordAndPlayoffs: require('./RecordAndPlayoffs'),
+    SafeHtml: require('./SafeHtml'),
     SkillsBlock: require('./SkillsBlock'),
     WatchBlock: require('./WatchBlock'),
 };

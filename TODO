@@ -1,4 +1,12 @@
+hack to fix 0 population bug https://www.reddit.com/r/BasketballGM/comments/4uu0cx/nobody_in_my_league_is_making_a_profit/d5u4qkq?context=3
+
+---
+
 REACT
+
+open two messages in tabs (same URL), somehow triggering refreshes
+
+Jump To menu when season can be a string, such as Transactions
 
 when live
   confirm no ads on mobile
@@ -11,10 +19,6 @@ ptModifier working right? https://www.reddit.com/r/BasketballGM/comments/4wg3dh/
 ---
 
 REACT later
-
-escape HTML saved to IDB very carefully (event log, feat text, play by play text displayed in LiveGame, edit team info)
-  would be better to somehow only have a safe subset of HTML processed, because then i don't have to worry about malicious entries already there or in external files
-  dangerous lint warnings - would be nice to abstract into one or two functions
 
 reevaluate views folder structure... maybe views -> ui, and views/*.js -> ui/data-loaders/*.js
 reevaluate bbgmView API
@@ -38,10 +42,6 @@ Draft
   make it cooler
 
 ---
-
-hack to fix 0 population bug https://www.reddit.com/r/BasketballGM/comments/4uu0cx/nobody_in_my_league_is_making_a_profit/d5u4qkq?context=3
-
-get rid of buyOuts from expenses
 
 pressing alt+p rapidly can result in extra games being played
 
@@ -81,16 +81,11 @@ international names
   in player ratings table, show country abbrevs not full names
 
 babel
-  how can i gracefully show an error message in browsers without generators?
   required babel transforms
     transform-es2015-block-scoping
       needed for firefox https://bugzilla.mozilla.org/show_bug.cgi?id=449811
     transform-async-to-generator
       needed until there is better native support for promises and indexeddb interaction
-    transform-object-rest-spread
-      only stage 2, no browser support
-    transform-es2015-destructuring
-      needed for transform-object-rest-spread
     all others
       http://stackoverflow.com/a/36824024/786644
 

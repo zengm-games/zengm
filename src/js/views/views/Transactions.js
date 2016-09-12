@@ -1,7 +1,7 @@
 const React = require('react');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
-const {Dropdown, JumpTo, NewWindowLink} = require('../components');
+const {Dropdown, JumpTo, NewWindowLink, SafeHtml} = require('../components');
 
 const Transactions = ({abbrev, eventType, events, season}) => {
     bbgmViewReact.title(`Transactions - ${season}`);
@@ -23,7 +23,7 @@ const Transactions = ({abbrev, eventType, events, season}) => {
 
         <ul className="list-group">
             {events.map(e => <li key={e.eid} className="list-group-item">
-                <span dangerouslySetInnerHTML={{__html: e.text}} />
+                <SafeHtml dirty={e.text} />
             </li>)}
         </ul>
     </div>;

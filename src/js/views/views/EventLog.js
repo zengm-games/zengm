@@ -1,6 +1,6 @@
 const React = require('react');
 const bbgmViewReact = require('../../util/bbgmViewReact');
-const {Dropdown, NewWindowLink} = require('../components');
+const {Dropdown, NewWindowLink, SafeHtml} = require('../components');
 
 const EventLog = ({abbrev, events, season}) => {
     bbgmViewReact.title(`Event Log - ${season}`);
@@ -10,7 +10,9 @@ const EventLog = ({abbrev, events, season}) => {
         <h1>Event Log <NewWindowLink /></h1>
 
         <ul>
-            {events.map(e => <li key={e.eid} dangerouslySetInnerHTML={{__html: e.text}} />)}
+            {events.map(e => <li key={e.eid}>
+                <SafeHtml dirty={e.text} />
+            </li>)}
         </ul>
     </div>;
 };

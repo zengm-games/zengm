@@ -1,9 +1,7 @@
-/* eslint-disable react/no-danger */
-
 const React = require('react');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const helpers = require('../../util/helpers');
-const {NewWindowLink} = require('../components');
+const {NewWindowLink, SafeHtml} = require('../components');
 
 const Message = ({message = {}}) => {
     bbgmViewReact.title(`Message From ${message.from}`);
@@ -11,7 +9,7 @@ const Message = ({message = {}}) => {
     return <div>
         <h4 style={{marginTop: '23px'}}>From: {message.from}, {message.year} <NewWindowLink /></h4>
 
-        <div dangerouslySetInnerHTML={{__html: message.text}} />
+        <SafeHtml dirty={message.text} />
 
         <p><a href={helpers.leagueUrl(['inbox'])}>Return To Inbox</a></p>
     </div>;

@@ -1328,6 +1328,11 @@
       "from": "domhandler@>=2.3.0 <2.4.0",
       "resolved": "https://registry.npmjs.org/domhandler/-/domhandler-2.3.0.tgz"
     },
+    "dompurify": {
+      "version": "0.8.3",
+      "from": "dompurify@latest",
+      "resolved": "https://registry.npmjs.org/dompurify/-/dompurify-0.8.3.tgz"
+    },
     "domutils": {
       "version": "1.5.1",
       "from": "domutils@1.5.1",

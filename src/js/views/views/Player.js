@@ -3,7 +3,7 @@ const {negotiate, tradeFor} = require('../../util/actions');
 const bbgmViewReact = require('../../util/bbgmViewReact');
 const getCols = require('../../util/getCols');
 const helpers = require('../../util/helpers');
-const {DataTable, NewWindowLink, PlayerPicture, SkillsBlock, WatchBlock} = require('../components');
+const {DataTable, NewWindowLink, PlayerPicture, SafeHtml, SkillsBlock, WatchBlock} = require('../components');
 
 const RatingsOverview = ({ratings}) => {
     const r = ratings.length - 1;
@@ -398,7 +398,7 @@ const Player = ({events, feats, freeAgent, godMode, injured, player, retired, sh
             <div className="col-sm-6">
                 <h2>Statistical Feats</h2>
                 {feats.map(e => {
-                    return <p key={e.eid}><b>{e.season}</b>: <span dangerouslySetInnerHTML={{__html: e.text}} /></p>;
+                    return <p key={e.eid}><b>{e.season}</b>: <SafeHtml dirty={e.text} /></p>;
                 })}
                 {feats.length === 0 ? <p>None</p> : null}
             </div>
@@ -408,7 +408,7 @@ const Player = ({events, feats, freeAgent, godMode, injured, player, retired, sh
             <div className="col-md-10 col-md-push-2 col-sm-9 col-sm-push-3">
                 <h2>Transactions</h2>
                 {events.map(e => {
-                    return <p key={e.eid}><b>{e.season}</b>: <span dangerouslySetInnerHTML={{__html: e.text}} /></p>;
+                    return <p key={e.eid}><b>{e.season}</b>: <SafeHtml dirty={e.text} /></p>;
                 })}
                 {events.length === 0 ? <p>None</p> : null}
             </div>

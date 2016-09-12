@@ -1,8 +1,6 @@
-/* eslint-disable react/no-danger */
-
 const React = require('react');
 const bbgmViewReact = require('../../util/bbgmViewReact');
-const {NewWindowLink} = require('../components');
+const {NewWindowLink, SafeHtml} = require('../components');
 
 const Changes = ({changes}) => {
     bbgmViewReact.title('Changes');
@@ -13,7 +11,7 @@ const Changes = ({changes}) => {
         <ul>
             {changes.map((c, i) => {
                 return <li key={i}>
-                    <b>{c.date}</b>: <span dangerouslySetInnerHTML={{__html: c.msg}} />
+                    <b>{c.date}</b>: <SafeHtml dirty={c.msg} />
                 </li>;
             })}
         </ul>

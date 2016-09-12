@@ -60,6 +60,7 @@
     "babel-plugin-transform-es2015-destructuring": "6.9.0",
     "babel-plugin-transform-es2015-for-of": "6.8.0",
     "babel-plugin-transform-es2015-literals": "6.8.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "6.14.0",
     "babel-plugin-transform-es2015-object-super": "6.8.0",
     "babel-plugin-transform-es2015-parameters": "6.11.4",
     "babel-plugin-transform-es2015-shorthand-properties": "6.8.0",
@@ -118,6 +119,7 @@
       "transform-es2015-parameters",
       "transform-es2015-destructuring",
       "transform-es2015-block-scoping",
+      "transform-es2015-modules-commonjs",
       "transform-async-to-generator"
     ],
     "ignore": [

@@ -1,5 +1,5 @@
 // Needed because of https://github.com/petkaantonov/bluebird/issues/363
-// Sadly only enabled in debug mode, due to weird interactions with Bugsnag
+// Sadly only enabled in debug mode, due to weird interactions with Bugsnag: https://github.com/bugsnag/bugsnag-js/issues/181
 if (localStorage.debug === 'debug') {
     require('source-map-support').install();
 }

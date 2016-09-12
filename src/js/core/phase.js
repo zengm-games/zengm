@@ -59,18 +59,18 @@ async function newPhasePreseason(tx) {
 
     const tids = _.range(g.numTeams);
 
-    let prevSeason;
     let scoutingRank;
     await Promise.map(tids, async tid => {
+        // Only actually need 3 seasons for userTid, but get it for all just in case there is a
+        // skipped season (alternatively could use cursor to just find most recent season, but this
+        // is not performance critical code)
+        const teamSeasons = await tx.teamSeasons.index("tid, season").getAll(backboard.bound([tid, g.season - 3], [tid, g.season - 1]));
+        const prevSeason = teamSeasons[teamSeasons.length - 1];
+
         // Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
         // This is done BEFORE a new season row is added.
         if (tid === g.userTid) {
-            const teamSeasons = await tx.teamSeasons.index("tid, season").getAll(backboard.bound([tid, g.season - 3], [tid, g.season - 1]));
             scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
-
-            prevSeason = teamSeasons[teamSeasons.length - 1];
-        } else {
-            prevSeason = await tx.teamSeasons.index("tid, season").get([tid, g.season - 1]);
         }
 
         await tx.teamSeasons.add(team.genSeasonRow(tid, prevSeason));

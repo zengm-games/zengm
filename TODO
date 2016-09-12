@@ -79,11 +79,6 @@ backboard
   investigate backboard tx canceling error propagation, see tx in newPhase. maybe interaction between promise manually being 
   player.withStats native support
 
-minify es2015, even just generators
-  https://github.com/mishoo/UglifyJS2/issues/448
-  https://www.reddit.com/r/javascript/comments/4h9htg/is_anyone_deploying_es2015_code_not_transpiled/d462rsn?context=3
-  npm install git+https://github.com/mishoo/UglifyJS2.git\#harmony
-
 bluebird has to stay on 3.3.4 because of https://github.com/petkaantonov/bluebird/issues/1022
 
 can i get rid of http/https links?

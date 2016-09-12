@@ -9,6 +9,7 @@
     rules: {
         "array-callback-return": "off", // False positives w/ async functions
         "arrow-body-style": "off",
+        "arrow-parens": "off", // False positives w/ async functions
         "consistent-return": "off",
         "func-names": "off",
         "generator-star-spacing": "off", // https://github.com/eslint/eslint/issues/6274

@@ -25,7 +25,7 @@ const cancel = async pid => {
 };
 
 const sign = async (pid, amount, exp) => {
-    const error = await contractNegotiation.accept(pid, helpers.round(amount * 1000), exp);
+    const error = await contractNegotiation.accept(pid, Math.round(amount * 1000), exp);
     if (error !== undefined && error) {
         helpers.errorNotify(error);
     }

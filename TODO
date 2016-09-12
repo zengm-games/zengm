@@ -1,4 +1,6 @@
 switch to es6 imports
+  ctrl+f for module.export and require(
+  global-require eslint rule
 
 underscore -> lodash-es?
 

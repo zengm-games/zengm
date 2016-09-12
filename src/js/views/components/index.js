@@ -1,25 +1,49 @@
-module.exports = {
-    BarGraph: require('./BarGraph'),
-    BoxPlot: require('./BoxPlot'),
-    DataTable: require('./DataTable'),
-    DownloadDataLink: require('./DownloadDataLink'),
-    DraftAbbrev: require('./DraftAbbrev'),
-    Dropdown: require('./Dropdown'),
-    Footer: require('./Footer'),
-    Header: require('./Header'),
-    HelpPopover: require('./HelpPopover'),
-    JumpTo: require('./JumpTo'),
-    LeagueWrapper: require('./LeagueWrapper'),
-    MultiTeamMenu: require('./MultiTeamMenu'),
-    NagModal: require('./NagModal'),
-    NavBar: require('./NavBar'),
-    NewWindowLink: require('./NewWindowLink'),
-    PlayerNameLabels: require('./PlayerNameLabels'),
-    PlayerPicture: require('./PlayerPicture'),
-    PlayoffMatchup: require('./PlayoffMatchup'),
-    RatingWithChange: require('./RatingWithChange'),
-    RecordAndPlayoffs: require('./RecordAndPlayoffs'),
-    SafeHtml: require('./SafeHtml'),
-    SkillsBlock: require('./SkillsBlock'),
-    WatchBlock: require('./WatchBlock'),
+import BarGraph from './BarGraph';
+import BoxPlot from './BoxPlot';
+import DataTable from './DataTable';
+import DownloadDataLink from './DownloadDataLink';
+import DraftAbbrev from './DraftAbbrev';
+import Dropdown from './Dropdown';
+import Footer from './Footer';
+import Header from './Header';
+import HelpPopover from './HelpPopover';
+import JumpTo from './JumpTo';
+import LeagueWrapper from './LeagueWrapper';
+import MultiTeamMenu from './MultiTeamMenu';
+import NagModal from './NagModal';
+import NavBar from './NavBar';
+import NewWindowLink from './NewWindowLink';
+import PlayerNameLabels from './PlayerNameLabels';
+import PlayerPicture from './PlayerPicture';
+import PlayoffMatchup from './PlayoffMatchup';
+import RatingWithChange from './RatingWithChange';
+import RecordAndPlayoffs from './RecordAndPlayoffs';
+import SafeHtml from './SafeHtml';
+import SkillsBlock from './SkillsBlock';
+import WatchBlock from './WatchBlock';
+
+export {
+    BarGraph,
+    BoxPlot,
+    DataTable,
+    DownloadDataLink,
+    DraftAbbrev,
+    Dropdown,
+    Footer,
+    Header,
+    HelpPopover,
+    JumpTo,
+    LeagueWrapper,
+    MultiTeamMenu,
+    NagModal,
+    NavBar,
+    NewWindowLink,
+    PlayerNameLabels,
+    PlayerPicture,
+    PlayoffMatchup,
+    RatingWithChange,
+    RecordAndPlayoffs,
+    SafeHtml,
+    SkillsBlock,
+    WatchBlock,
 };

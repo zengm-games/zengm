@@ -1,9 +1,9 @@
-const Promise = require('bluebird');
-const React = require('react');
-const g = require('../../globals');
-const ui = require('../../ui');
-const ads = require('../../util/ads');
-const {Footer, Header, LeagueWrapper, MultiTeamMenu, NagModal, NavBar} = require('./index');
+import Promise from 'bluebird';
+import React from 'react';
+import g from '../../globals';
+import ui from '../../ui';
+import ads from '../../util/ads';
+import {Footer, Header, LeagueWrapper, MultiTeamMenu, NagModal, NavBar} from './index';
 
 class LeagueContent extends React.Component {
     // eslint-disable-next-line class-methods-use-this

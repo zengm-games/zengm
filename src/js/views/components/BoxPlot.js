@@ -1,4 +1,4 @@
-const React = require('react');
+import React from 'react';
 
 const quartile = (data, quart) => {
     if (quart === 1 || quart === 2 || quart === 3) {
@@ -231,4 +231,4 @@ BoxPlot.propTypes = {
     scale: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
 };
 
-module.exports = BoxPlot;
+export default BoxPlot;

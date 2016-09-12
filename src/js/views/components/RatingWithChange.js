@@ -1,5 +1,5 @@
-const classNames = require('classnames');
-const React = require('react');
+import classNames from 'classnames';
+import React from 'react';
 
 const RatingWithChange = ({change, children}) => {
     return <span>
@@ -17,4 +17,4 @@ RatingWithChange.propTypes = {
     children: React.PropTypes.number.isRequired,
 };
 
-module.exports = RatingWithChange;
+export default RatingWithChange;

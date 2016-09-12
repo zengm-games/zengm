@@ -1,5 +1,5 @@
-const React = require('react');
-const helpers = require('../../util/helpers');
+import React from 'react';
+import helpers from '../../util/helpers';
 
 class SideMenu extends React.Component {
     shouldComponentUpdate(nextProps) {
@@ -109,4 +109,4 @@ LeagueWrapper.propTypes = {
     pageId: React.PropTypes.string.isRequired,
 };
 
-module.exports = LeagueWrapper;
+export default LeagueWrapper;

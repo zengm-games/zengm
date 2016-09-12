@@ -1,4 +1,4 @@
-const React = require('react');
+import React from 'react';
 
 const SkillsBlock = ({className = null, skills}) => {
     if (skills === undefined) {
@@ -25,4 +25,4 @@ SkillsBlock.propTypes = {
     skills: React.PropTypes.arrayOf(React.PropTypes.string),
 };
 
-module.exports = SkillsBlock;
+export default SkillsBlock;

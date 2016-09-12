@@ -1,8 +1,8 @@
-const React = require('react');
-const DropdownButton = require('react-bootstrap/lib/DropdownButton');
-const MenuItem = require('react-bootstrap/lib/MenuItem');
-const g = require('../../globals');
-const helpers = require('../../util/helpers');
+import React from 'react';
+import DropdownButton from 'react-bootstrap/lib/DropdownButton';
+import MenuItem from 'react-bootstrap/lib/MenuItem';
+import g from '../../globals';
+import helpers from '../../util/helpers';
 
 const genUrl = (parts, season) => {
     if (season !== undefined) {
@@ -42,4 +42,4 @@ JumpTo.propTypes = {
     ]),
 };
 
-module.exports = JumpTo;
+export default JumpTo;

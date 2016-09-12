@@ -1,5 +1,5 @@
-const React = require('react');
-const helpers = require('../../util/helpers');
+import React from 'react';
+import helpers from '../../util/helpers';
 
 class NewWindowLink extends React.Component {
     constructor(props) {
@@ -36,4 +36,4 @@ NewWindowLink.propTypes = {
     ])),
 };
 
-module.exports = NewWindowLink;
+export default NewWindowLink;

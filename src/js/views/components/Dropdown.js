@@ -1,7 +1,7 @@
-const React = require('react');
-const g = require('../../globals');
-const ui = require('../../ui');
-const helpers = require('../../util/helpers');
+import React from 'react';
+import g from '../../globals';
+import ui from '../../ui';
+import helpers from '../../util/helpers';
 
 const Select = ({field, handleChange, value}) => {
     let options;
@@ -256,4 +256,4 @@ Dropdown.propTypes = {
     view: React.PropTypes.string.isRequired,
 };
 
-module.exports = Dropdown;
+export default Dropdown;

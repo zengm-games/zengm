@@ -1,6 +1,6 @@
-const React = require('react');
-const g = require('../../globals');
-const helpers = require('../../util/helpers');
+import React from 'react';
+import g from '../../globals';
+import helpers from '../../util/helpers';
 
 // Link to an abbrev either as "ATL" or "ATL (from BOS)" if a pick was traded.
 const DraftAbbrev = ({originalTid, tid, season}) => {
@@ -21,4 +21,4 @@ DraftAbbrev.propTypes = {
     tid: React.PropTypes.number.isRequired,
 };
 
-module.exports = DraftAbbrev;
+export default DraftAbbrev;

@@ -1,5 +1,5 @@
-const React = require('react');
-const helpers = require('../../util/helpers');
+import React from 'react';
+import helpers from '../../util/helpers';
 
 const RecordAndPlayoffs = ({abbrev, lost, option, playoffRoundsWon, season, style, won}) => {
     const seasonText = option !== 'noSeason' ? <span><a href={helpers.leagueUrl(["roster", abbrev, season])}>{season}</a>: </span> : null;
@@ -23,4 +23,4 @@ RecordAndPlayoffs.propTypes = {
     won: React.PropTypes.number.isRequired,
 };
 
-module.exports = RecordAndPlayoffs;
+export default RecordAndPlayoffs;

@@ -1,6 +1,6 @@
-const React = require('react');
-const g = require('../../globals');
-const helpers = require('../../util/helpers');
+import React from 'react';
+import g from '../../globals';
+import helpers from '../../util/helpers';
 
 const PlayoffMatchup = ({season, series}) => {
     if (series === undefined || series.home === undefined || series.home.tid === undefined) {
@@ -40,4 +40,4 @@ PlayoffMatchup.propTypes = {
     }),
 };
 
-module.exports = PlayoffMatchup;
+export default PlayoffMatchup;

@@ -1,5 +1,5 @@
-const React = require('react');
-const Modal = require('react-bootstrap/lib/Modal');
+import React from 'react';
+import Modal from 'react-bootstrap/lib/Modal';
 
 class NagModal extends React.Component {
     shouldComponentUpdate(nextProps) {
@@ -29,4 +29,4 @@ NagModal.propTypes = {
     show: React.PropTypes.bool.isRequired,
 };
 
-module.exports = NagModal;
+export default NagModal;

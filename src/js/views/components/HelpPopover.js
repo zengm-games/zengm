@@ -1,6 +1,6 @@
-const React = require('react');
-const OverlayTrigger = require('react-bootstrap/lib/OverlayTrigger');
-const Popover = require('react-bootstrap/lib/Popover');
+import React from 'react';
+import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
+import Popover from 'react-bootstrap/lib/Popover';
 
 const HelpPopover = ({children, placement, title}) => {
     const popover = (
@@ -20,4 +20,4 @@ HelpPopover.propTypes = {
     title: React.PropTypes.string.isRequired,
 };
 
-module.exports = HelpPopover;
+export default HelpPopover;

@@ -1,7 +1,7 @@
-const React = require('react');
-const g = require('../../globals');
-const ui = require('../../ui');
-const league = require('../../core/league');
+import React from 'react';
+import g from '../../globals';
+import ui from '../../ui';
+import league from '../../core/league';
 
 class WatchBlock extends React.Component {
     constructor(props) {
@@ -68,4 +68,4 @@ WatchBlock.propTypes = {
     ]).isRequired,
 };
 
-module.exports = WatchBlock;
+export default WatchBlock;

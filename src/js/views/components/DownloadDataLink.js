@@ -1,4 +1,4 @@
-const React = require('react');
+import React from 'react';
 
 class DownloadDataLink extends React.Component {
     constructor(props) {
@@ -65,4 +65,4 @@ DownloadDataLink.propTypes = {
     ]),
 };
 
-module.exports = DownloadDataLink;
+export default DownloadDataLink;

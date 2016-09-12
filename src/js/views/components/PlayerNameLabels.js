@@ -1,7 +1,7 @@
-const React = require('react');
-const helpers = require('../../util/helpers');
-const SkillsBlock = require('./SkillsBlock');
-const WatchBlock = require('./WatchBlock');
+import React from 'react';
+import helpers from '../../util/helpers';
+import SkillsBlock from './SkillsBlock';
+import WatchBlock from './WatchBlock';
 
 const PlayerNameLabels = ({children, injury, pid, skills, style, watch}) => {
     let injuryIcon = null;
@@ -39,4 +39,4 @@ PlayerNameLabels.propTypes = {
     ]),
 };
 
-module.exports = PlayerNameLabels;
+export default PlayerNameLabels;

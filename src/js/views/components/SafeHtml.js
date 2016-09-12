@@ -1,5 +1,5 @@
-const createDOMPurify = require('dompurify');
-const React = require('react');
+import createDOMPurify from 'dompurify';
+import React from 'react';
 
 const DOMPurify = createDOMPurify(window);
 
@@ -14,4 +14,4 @@ SafeHtml.propTypes = {
     dirty: React.PropTypes.string.isRequired,
 };
 
-module.exports = SafeHtml;
+export default SafeHtml;

@@ -1,21 +1,23 @@
 /* eslint react/no-find-dom-node: "off" */
 
-const Promise = require('bluebird');
-const $ = require('jquery');
-const React = require('react');
-const Dropdown = require('react-bootstrap/lib/Dropdown');
-const MenuItem = require('react-bootstrap/lib/MenuItem');
-const Nav = require('react-bootstrap/lib/Nav');
-const NavItem = require('react-bootstrap/lib/NavItem');
-const Navbar = require('react-bootstrap/lib/Navbar');
-const Overlay = require('react-bootstrap/lib/Overlay');
-const Popover = require('react-bootstrap/lib/Popover');
-const ReactDOM = require('react-dom');
-const ui = require('../../ui');
-const html2canvas = require('../../lib/html2canvas');
-const actions = require('../../util/actions');
-const eventLog = require('../../util/eventLog');
-const helpers = require('../../util/helpers');
+/* eslint react/no-find-dom-node: "off" */
+
+import Promise from 'bluebird';
+import $ from 'jquery';
+import React from 'react';
+import Dropdown from 'react-bootstrap/lib/Dropdown';
+import MenuItem from 'react-bootstrap/lib/MenuItem';
+import Nav from 'react-bootstrap/lib/Nav';
+import NavItem from 'react-bootstrap/lib/NavItem';
+import Navbar from 'react-bootstrap/lib/Navbar';
+import Overlay from 'react-bootstrap/lib/Overlay';
+import Popover from 'react-bootstrap/lib/Popover';
+import ReactDOM from 'react-dom';
+import ui from '../../ui';
+import html2canvas from '../../lib/html2canvas';
+import actions from '../../util/actions';
+import eventLog from '../../util/eventLog';
+import helpers from '../../util/helpers';
 
 const toggleDebugMode = () => {
     if (localStorage.debug === "debug") {
@@ -454,4 +456,4 @@ NavBar.propTypes = {
     username: React.PropTypes.string,
 };
 
-module.exports = NavBar;
+export default NavBar;

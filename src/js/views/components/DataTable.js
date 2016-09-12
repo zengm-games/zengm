@@ -1,10 +1,10 @@
-const classNames = require('classnames');
-const orderBy = require('lodash.orderby');
-const React = require('react');
-const textContent = require('react-addons-text-content');
-const g = require('../../globals');
-const helpers = require('../../util/helpers');
-const clickable = require('../wrappers/clickable');
+import classNames from 'classnames';
+import orderBy from 'lodash.orderby';
+import React from 'react';
+import textContent from 'react-addons-text-content';
+import g from '../../globals';
+import helpers from '../../util/helpers';
+import clickable from '../wrappers/clickable';
 
 const Header = ({cols, handleColClick, sortBys, superCols}) => {
     return <thead>
@@ -444,4 +444,4 @@ DataTable.propTypes = {
     superCols: React.PropTypes.array,
 };
 
-module.exports = DataTable;
+export default DataTable;

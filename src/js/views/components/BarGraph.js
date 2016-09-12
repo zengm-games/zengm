@@ -1,6 +1,6 @@
-const React = require('react');
-const OverlayTrigger = require('react-bootstrap/lib/OverlayTrigger');
-const Tooltip = require('react-bootstrap/lib/Tooltip');
+import React from 'react';
+import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
+import Tooltip from 'react-bootstrap/lib/Tooltip';
 
 /**
  * Bar plots, both stacked and normal.
@@ -236,4 +236,4 @@ BarGraph.propTypes = {
     ylim: React.PropTypes.arrayOf(React.PropTypes.number),
 };
 
-module.exports = BarGraph;
+export default BarGraph;

@@ -1,5 +1,5 @@
-const faces = require('facesjs');
-const React = require('react');
+import faces from 'facesjs';
+import React from 'react';
 
 class PlayerPicture extends React.Component {
     componentDidMount() {
@@ -41,4 +41,4 @@ PlayerPicture.propTypes = {
     imgURL: React.PropTypes.string,
 };
 
-module.exports = PlayerPicture;
+export default PlayerPicture;

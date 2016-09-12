@@ -1,4 +1,4 @@
-const React = require('react');
+import React from 'react';
 
 class Footer extends React.Component {
     // eslint-disable-next-line class-methods-use-this
@@ -29,4 +29,4 @@ class Footer extends React.Component {
     }
 }
 
-module.exports = Footer;
+export default Footer;

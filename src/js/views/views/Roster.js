@@ -435,7 +435,7 @@ class Roster extends React.Component {
 Roster.propTypes = {
     abbrev: React.PropTypes.string.isRequired,
     editable: React.PropTypes.bool.isRequired,
-    payroll: React.PropTypes.number.isRequired,
+    payroll: React.PropTypes.number,
     players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
     salaryCap: React.PropTypes.number.isRequired,
     season: React.PropTypes.number.isRequired,

@@ -32,14 +32,14 @@ async function updateMessage(inputs, updateEvents, state) {
             });
         });
 
-        league.updateLastDbChange();
-
         if (readThisPageview) {
             if (g.gameOver) {
                 ui.updateStatus("You're fired!");
             }
 
             await ui.updatePlayMenu(null);
+
+            league.updateLastDbChange();
         }
 
         return {

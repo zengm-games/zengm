@@ -189,7 +189,7 @@ const TeamFinances = ({abbrev, barData, barSeasons, contractTotals, contracts, g
 
     const cols = getCols('Name').concat(salariesSeasons.map(season => {
         return {
-            title: season,
+            title: String(season),
             sortSequence: ['desc', 'asc'],
             sortType: 'currency',
         };

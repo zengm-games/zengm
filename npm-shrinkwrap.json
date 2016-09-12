@@ -1141,9 +1141,9 @@
       "resolved": "https://registry.npmjs.org/d/-/d-0.1.1.tgz"
     },
     "damerau-levenshtein": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "from": "damerau-levenshtein@>=1.0.0 <2.0.0",
-      "resolved": "https://registry.npmjs.org/damerau-levenshtein/-/damerau-levenshtein-1.0.0.tgz"
+      "resolved": "https://registry.npmjs.org/damerau-levenshtein/-/damerau-levenshtein-1.0.1.tgz"
     },
     "dashdash": {
       "version": "1.14.0",
@@ -1330,7 +1330,7 @@
     },
     "dompurify": {
       "version": "0.8.3",
-      "from": "dompurify@latest",
+      "from": "dompurify@0.8.3",
       "resolved": "https://registry.npmjs.org/dompurify/-/dompurify-0.8.3.tgz"
     },
     "domutils": {
@@ -1512,14 +1512,14 @@
       }
     },
     "eslint-config-airbnb": {
-      "version": "11.0.0",
-      "from": "eslint-config-airbnb@11.0.0",
-      "resolved": "https://registry.npmjs.org/eslint-config-airbnb/-/eslint-config-airbnb-11.0.0.tgz"
+      "version": "11.1.0",
+      "from": "eslint-config-airbnb@11.1.0",
+      "resolved": "https://registry.npmjs.org/eslint-config-airbnb/-/eslint-config-airbnb-11.1.0.tgz"
     },
     "eslint-config-airbnb-base": {
-      "version": "7.0.1",
-      "from": "eslint-config-airbnb-base@>=7.0.0 <8.0.0",
-      "resolved": "https://registry.npmjs.org/eslint-config-airbnb-base/-/eslint-config-airbnb-base-7.0.1.tgz"
+      "version": "7.1.0",
+      "from": "eslint-config-airbnb-base@>=7.1.0 <8.0.0",
+      "resolved": "https://registry.npmjs.org/eslint-config-airbnb-base/-/eslint-config-airbnb-base-7.1.0.tgz"
     },
     "eslint-import-resolver-node": {
       "version": "0.2.3",

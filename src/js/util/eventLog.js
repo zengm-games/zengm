@@ -7,7 +7,7 @@ function add(ot, {
     pids,
     text,
     tids,
-    saveToDb = false,
+    saveToDb = true,
     showNotification = true,
     type,
 }) {

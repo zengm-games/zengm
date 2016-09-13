@@ -1,11 +1,11 @@
 /*eslint camelcase: 0*/
-const g = require('../globals');
-const team = require('../core/team');
-const backboard = require('backboard');
-const Promise = require('bluebird');
-const $ = require('jquery');
-const eventLog = require('./eventLog');
-const ads = require('../util/ads');
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import $ from 'jquery';
+import g from '../globals';
+import team from '../core/team';
+import eventLog from './eventLog';
+import ads from './ads';
 
 // IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php
 const allAchievements = [{
@@ -415,7 +415,7 @@ checkAchievement.sleeper_pick = async (saveAchievement = true) => {
     return false;
 };
 
-module.exports = {
+export default {
     check,
     getAchievements,
     addAchievements,

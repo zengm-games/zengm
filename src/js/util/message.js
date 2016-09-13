@@ -1,6 +1,6 @@
-const g = require('../globals');
-const helpers = require('./helpers');
-const random = require('./random');
+import g from '../globals';
+import helpers from './helpers';
+import random from './random';
 
 // First message after new game
 const first = [
@@ -151,7 +151,7 @@ async function generate(tx, deltas) {
     let m;
     if (g.showFirstOwnerMessage) {
         m = random.choice(first);
-        require('../core/league').setGameAttributes(tx, {showFirstOwnerMessage: false}); // Okay that this is async, since it won't be called again until much later
+        require('../core/league').default.setGameAttributes(tx, {showFirstOwnerMessage: false}); // Okay that this is async, since it won't be called again until much later
     } else {
         const activity1 = random.choice(activities);
         let activity2 = random.choice(activities);
@@ -249,12 +249,12 @@ async function generate(tx, deltas) {
     }
 
     // Fired!
-    await require('../core/league').setGameAttributes(tx, {
+    await require('../core/league').default.setGameAttributes(tx, {
         gameOver: true,
         showFirstOwnerMessage: true,
     });
 }
 
-module.exports = {
+export default {
     generate,
 };

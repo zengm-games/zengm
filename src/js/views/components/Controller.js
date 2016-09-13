@@ -102,7 +102,7 @@ class Controller extends React.Component {
     }
 
     async get(fnUpdate, args, req) {
-        const viewHelpers = require('../../util/viewHelpers');
+        const viewHelpers = require('../../util/viewHelpers').default;
         const [updateEvents, cb, abort] = await (args.inLeague ? viewHelpers.beforeLeague(req, this.state.topMenu.lid) : viewHelpers.beforeNonLeague(req));
 
         if (abort === 'abort') {

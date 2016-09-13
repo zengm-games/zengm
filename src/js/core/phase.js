@@ -1,21 +1,21 @@
-const g = require('../globals');
-const ui = require('../ui');
-const contractNegotiation = require('./contractNegotiation');
-const draft = require('./draft');
-const finances = require('./finances');
-const freeAgents = require('./freeAgents');
-const player = require('./player');
-const season = require('./season');
-const team = require('./team');
-const backboard = require('backboard');
-const Promise = require('bluebird');
-const _ = require('underscore');
-const account = require('../util/account');
-const eventLog = require('../util/eventLog');
-const helpers = require('../util/helpers');
-const lock = require('../util/lock');
-const message = require('../util/message');
-const random = require('../util/random');
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import _ from 'underscore';
+import g from '../globals';
+import ui from '../ui';
+import contractNegotiation from './contractNegotiation';
+import draft from './draft';
+import finances from './finances';
+import freeAgents from './freeAgents';
+import player from './player';
+import season from './season';
+import team from './team';
+import account from '../util/account';
+import eventLog from '../util/eventLog';
+import helpers from '../util/helpers';
+import lock from '../util/lock';
+import message from '../util/message';
+import random from '../util/random';
 
 let phaseChangeTx;
 
@@ -31,8 +31,10 @@ let phaseChangeTx;
  * @return {Promise}
  */
 async function finalize(phase, url, updateEvents) {
+    const league = require('../core/league').default;
+
     // Set phase before updating play menu
-    await require('../core/league').setGameAttributesComplete({
+    await league.setGameAttributesComplete({
         phase,
         phaseChangeInProgress: false,
     });
@@ -40,7 +42,7 @@ async function finalize(phase, url, updateEvents) {
     await ui.updatePlayMenu(null);
 
     // Set lastDbChange last so there is no race condition (WHAT DOES THIS MEAN??)
-    require('../core/league').updateLastDbChange();
+    league.updateLastDbChange();
     updateEvents.push("newPhase");
     ui.realtimeUpdate(updateEvents, url);
 
@@ -48,14 +50,16 @@ async function finalize(phase, url, updateEvents) {
     if (g.autoPlaySeasons > 0) {
         // Not totally sure why setTimeout is needed, but why not?
         setTimeout(() => {
-            require('../core/league').autoPlay();
+            league.autoPlay();
         }, 100);
     }
 }
 
 async function newPhasePreseason(tx) {
+    const league = require('../core/league').default;
+
     await freeAgents.autoSign(tx);
-    await require('../core/league').setGameAttributes(tx, {season: g.season + 1});
+    await league.setGameAttributes(tx, {season: g.season + 1});
 
     const tids = _.range(g.numTeams);
 
@@ -98,7 +102,7 @@ async function newPhasePreseason(tx) {
     });
 
     if (g.autoPlaySeasons > 0) {
-        await require('../core/league').setGameAttributes(tx, {autoPlaySeasons: g.autoPlaySeasons - 1});
+        await league.setGameAttributes(tx, {autoPlaySeasons: g.autoPlaySeasons - 1});
     }
 
     if (g.enableLogging && !window.inCordova) {
@@ -404,7 +408,7 @@ async function newPhaseResignPlayers(tx) {
     });
 
     // Set daysLeft here because this is "basically" free agency, so some functions based on daysLeft need to treat it that way (such as the trade AI being more reluctant)
-    await require('../core/league').setGameAttributes(tx, {daysLeft: 30});
+    await require('../core/league').default.setGameAttributes(tx, {daysLeft: 30});
 
     return [helpers.leagueUrl(["negotiation"]), ["playerMovement"]];
 }
@@ -474,7 +478,7 @@ async function newPhaseFreeAgency(tx) {
 async function newPhaseFantasyDraft(tx, position) {
     await contractNegotiation.cancelAll(tx);
     await draft.genOrderFantasy(tx, position);
-    await require('../core/league').setGameAttributes(tx, {nextPhase: g.phase});
+    await require('../core/league').default.setGameAttributes(tx, {nextPhase: g.phase});
     await tx.releasedPlayers.clear();
 
     // Protect draft prospects from being included in this
@@ -553,11 +557,13 @@ async function newPhase(phase, extra) {
     if (phaseChangeInProgress) {
         helpers.errorNotify("Phase change already in progress, maybe in another tab.");
     } else {
-        await require('../core/league').setGameAttributesComplete({phaseChangeInProgress: true});
+        const league = require('../core/league').default;
+
+        await league.setGameAttributesComplete({phaseChangeInProgress: true});
         ui.updatePlayMenu(null);
 
         // In Chrome, this will update play menu in other windows. In Firefox, it won't because ui.updatePlayMenu gets blocked until phaseChangeTx finishes for some reason.
-        require('../core/league').updateLastDbChange();
+        league.updateLastDbChange();
 
         if (phaseChangeInfo.hasOwnProperty(phase)) {
             // Careful rewriting this async/await style... for some reason that "throw err" does not stop execution of things after the tx promise because that still resolves
@@ -571,7 +577,7 @@ async function newPhase(phase, extra) {
                         phaseChangeTx.abort();
                     }
 
-                    await require('../core/league').setGameAttributesComplete({phaseChangeInProgress: false});
+                    await league.setGameAttributesComplete({phaseChangeInProgress: false});
                     await ui.updatePlayMenu(null);
                     await eventLog.add(null, {
                         type: "error",
@@ -605,12 +611,12 @@ async function abort() {
         helpers.errorNotify("If \"Abort\" doesn't work, check if you have another tab open.");
     } finally {
         // If another window has a phase change in progress, this won't do anything until that finishes
-        await require('../core/league').setGameAttributesComplete({phaseChangeInProgress: false});
+        await require('../core/league').default.setGameAttributesComplete({phaseChangeInProgress: false});
         ui.updatePlayMenu(null);
     }
 }
 
-module.exports = {
+export default {
     newPhase,
     abort,
 };

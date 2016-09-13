@@ -1,6 +1,6 @@
-const g = require('../globals');
-const backboard = require('backboard');
-const Promise = require('bluebird');
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import g from '../globals';
 
 /**
  * Assess the payroll and apply minimum and luxury taxes.
@@ -12,7 +12,7 @@ const Promise = require('bluebird');
 async function assessPayrollMinLuxury(tx) {
     let collectedTax = 0;
 
-    const payrolls = await require('./team').getPayrolls(tx);
+    const payrolls = await require('./team').default.getPayrolls(tx);
 
     await tx.teamSeasons.index("season, tid").iterate(backboard.bound([g.season], [g.season, '']), teamSeason => {
         // Store payroll
@@ -163,7 +163,7 @@ function getRankLastThree(teamSeasons, category, item) {
     return 15.5;
 }
 
-module.exports = {
+export default {
     assessPayrollMinLuxury,
     updateRanks,
     getRankLastThree,

@@ -1,12 +1,12 @@
-const g = require('../globals');
-const player = require('./player');
-const team = require('./team');
-const backboard = require('backboard');
-const Promise = require('bluebird');
-const _ = require('underscore');
-const eventLog = require('../util/eventLog');
-const helpers = require('../util/helpers');
-const random = require('../util/random');
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import _ from 'underscore';
+import g from '../globals';
+import player from './player';
+import team from './team';
+import eventLog from '../util/eventLog';
+import helpers from '../util/helpers';
+import random from '../util/random';
 
 /**
  * Update g.ownerMood based on performance this season.
@@ -48,7 +48,7 @@ async function updateOwnerMood(tx) {
         if (ownerMood.playoffs > 1) { ownerMood.playoffs = 1; }
         if (ownerMood.money > 1) { ownerMood.money = 1; }
 
-        await require('../core/league').setGameAttributes(tx, {ownerMood});
+        await require('../core/league').default.setGameAttributes(tx, {ownerMood});
     }
 
     return deltas;
@@ -739,7 +739,7 @@ function genPlayoffSeries(teams) {
     return {series, tidPlayoffs};
 }
 
-module.exports = {
+export default {
     doAwards,
     updateOwnerMood,
     getSchedule,

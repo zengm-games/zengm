@@ -1,13 +1,13 @@
-const g = require('../globals');
-const ui = require('../ui');
-const player = require('./player');
-const team = require('./team');
-const Promise = require('bluebird');
-const _ = require('underscore');
-const eventLog = require('../util/eventLog');
-const helpers = require('../util/helpers');
-const lock = require('../util/lock');
-const random = require('../util/random');
+import Promise from 'bluebird';
+import _ from 'underscore';
+import g from '../globals';
+import ui from '../ui';
+import player from './player';
+import team from './team';
+import eventLog from '../util/eventLog';
+import helpers from '../util/helpers';
+import lock from '../util/lock';
+import random from '../util/random';
 
 /**
  * AI teams sign free agents.
@@ -195,11 +195,12 @@ function refuseToNegotiate(amount, mood) {
  * @param {boolean} start Is this a new request from the user to simulate days (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed. Default true.
  */
 async function play(numDays, start = true) {
-    const phase = require('./phase');
+    const league = require('./league').default;
+    const phase = require('./phase').default;
 
     // This is called when there are no more days to play, either due to the user's request (e.g. 1 week) elapsing or at the end of free agency.
     const cbNoDays = async () => {
-        await require('../core/league').setGameAttributesComplete({gamesInProgress: false});
+        await league.setGameAttributesComplete({gamesInProgress: false});
         await ui.updatePlayMenu(null);
 
         // Check to see if free agency is over
@@ -215,7 +216,7 @@ async function play(numDays, start = true) {
         const cbYetAnother = async () => {
             await decreaseDemands();
             await autoSign();
-            await require('../core/league').setGameAttributesComplete({daysLeft: g.daysLeft - 1, lastDbChange: Date.now()});
+            await league.setGameAttributesComplete({daysLeft: g.daysLeft - 1, lastDbChange: Date.now()});
             if (g.daysLeft > 0 && numDays > 0) {
                 ui.realtimeUpdate(["playerMovement"], undefined, () => {
                     ui.updateStatus(`${g.daysLeft} days left`);
@@ -231,7 +232,7 @@ async function play(numDays, start = true) {
             // Or, if we are starting games (and already passed the lock), continue even if stopGames was just seen
             if (start || !g.stopGames) {
                 if (g.stopGames) {
-                    await require('../core/league').setGameAttributesComplete({stopGames: false});
+                    await league.setGameAttributesComplete({stopGames: false});
                 }
                 cbYetAnother();
             }
@@ -246,7 +247,7 @@ async function play(numDays, start = true) {
     if (start) {
         const canStartGames = await lock.canStartGames(null);
         if (canStartGames) {
-            await require('../core/league').setGameAttributesComplete({gamesInProgress: true});
+            await league.setGameAttributesComplete({gamesInProgress: true});
             await ui.updatePlayMenu(null);
             cbRunDay();
         }
@@ -255,7 +256,7 @@ async function play(numDays, start = true) {
     }
 }
 
-module.exports = {
+export default {
     autoSign,
     decreaseDemands,
     amountWithMood,

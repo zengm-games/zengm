@@ -1,9 +1,9 @@
-const React = require('react');
-const db = require('../db');
-const g = require('../globals');
-const ui = require('../ui');
-const league = require('../core/league');
-const helpers = require('./helpers');
+import React from 'react';
+import db from '../db';
+import g from '../globals';
+import ui from '../ui';
+import league from '../core/league';
+import helpers from './helpers';
 
 async function beforeLeague(req, loadedLid) {
     g.lid = parseInt(req.params.lid, 10);
@@ -73,7 +73,7 @@ function beforeNonLeague(req) {
     return [updateEvents, reqCb];
 }
 
-module.exports = {
+export default {
     beforeLeague,
     beforeNonLeague,
 };

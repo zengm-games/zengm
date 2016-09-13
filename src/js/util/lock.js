@@ -1,5 +1,5 @@
-const g = require('../globals');
-const helpers = require('../util/helpers');
+import g from '../globals';
+import helpers from './helpers';
 
 /**
  * Is game simulation in progress?
@@ -11,7 +11,7 @@ const helpers = require('../util/helpers');
  * @return {Promise.boolean}
  */
 async function gamesInProgress(ot) {
-    await require('../core/league').loadGameAttribute(ot, "gamesInProgress");
+    await require('../core/league').default.loadGameAttribute(ot, "gamesInProgress");
     return g.gamesInProgress;
 }
 
@@ -38,7 +38,7 @@ async function negotiationInProgress(ot) {
  * @return {Promise.boolean}
  */
 async function phaseChangeInProgress(ot) {
-    await require('../core/league').loadGameAttribute(ot, "phaseChangeInProgress");
+    await require('../core/league').default.loadGameAttribute(ot, "phaseChangeInProgress");
     return g.phaseChangeInProgress;
 }
 
@@ -123,7 +123,7 @@ async function unreadMessage(ot) {
     return false;
 }
 
-module.exports = {
+export default {
     gamesInProgress,
     negotiationInProgress,
     phaseChangeInProgress,

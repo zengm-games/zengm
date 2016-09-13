@@ -1,15 +1,15 @@
-const db = require('../db');
-const g = require('../globals');
-const ui = require('../ui');
-const contractNegotiation = require('../core/contractNegotiation');
-const draft = require('../core/draft');
-const freeAgents = require('../core/freeAgents');
-const game = require('../core/game');
-const league = require('../core/league');
-const phase = require('../core/phase');
-const season = require('../core/season');
-const trade = require('../core/trade');
-const helpers = require('./helpers');
+import db from '../db';
+import g from '../globals';
+import ui from '../ui';
+import contractNegotiation from '../core/contractNegotiation';
+import draft from '../core/draft';
+import freeAgents from '../core/freeAgents';
+import game from '../core/game';
+import league from '../core/league';
+import phase from '../core/phase';
+import season from '../core/season';
+import trade from '../core/trade';
+import helpers from './helpers';
 
 const liveGame = async gid => {
     ui.realtimeUpdate([], helpers.leagueUrl(["live_game"]), () => {
@@ -223,7 +223,7 @@ const toolsMenu = {
     },
 };
 
-module.exports = {
+export {
     liveGame,
     negotiate,
     playMenu,

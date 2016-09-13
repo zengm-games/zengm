@@ -1,6 +1,6 @@
-const React = require('react');
-const g = require('../globals');
-const eventLog = require('./eventLog');
+import React from 'react';
+import g from '../globals';
+import eventLog from './eventLog';
 
 /**
  * Validate that a given abbreviation corresponds to a team.
@@ -268,7 +268,6 @@ function deepCopy(obj) {
  */
 function error(errorText, cb) {
     const views = require('../views');
-
     const view = views.staticPage('error', 'Error', false, <div>
         <h1>Error</h1>
 
@@ -769,7 +768,7 @@ function roundWinp(arg) {
     return output;
 }
 
-module.exports = {
+export default {
     validateAbbrev,
     getAbbrev,
     validateTid,

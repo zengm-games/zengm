@@ -1,9 +1,9 @@
-const g = require('../globals');
-const player = require('../core/player');
-const team = require('../core/team');
-const backboard = require('backboard');
-const Promise = require('bluebird');
-const _ = require('underscore');
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import _ from 'underscore';
+import g from '../globals';
+import player from '../core/player';
+import team from '../core/team';
 
 /**
  * Calcualte the current season's Player Efficiency Rating (PER) for each active player and write it to the database.
@@ -188,6 +188,6 @@ function calculateAll() {
     return calculatePER();
 }
 
-module.exports = {
+export default {
     calculateAll,
 };

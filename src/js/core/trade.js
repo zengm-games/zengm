@@ -1,10 +1,10 @@
-const g = require('../globals');
-const league = require('./league');
-const player = require('./player');
-const team = require('./team');
-const Promise = require('bluebird');
-const eventLog = require('../util/eventLog');
-const helpers = require('../util/helpers');
+import Promise from 'bluebird';
+import g from '../globals';
+import league from './league';
+import player from './player';
+import team from './team';
+import eventLog from '../util/eventLog';
+import helpers from '../util/helpers';
 
 /**
  * Get the contents of the current trade from the database.
@@ -657,7 +657,7 @@ async function makeItWorkTrade() {
     return `${g.teamRegionsCache[teams[1].tid]} GM: "How does this sound?"`;
 }
 
-module.exports = {
+export default {
     get,
     create,
     updatePlayers,

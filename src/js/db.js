@@ -1,9 +1,9 @@
-const Backboard = require('backboard/dist');
-const g = require('./globals');
-const Promise = require('bluebird');
-const Davis = require('./lib/davis');
-const eventLog = require('./util/eventLog');
-const helpers = require('./util/helpers');
+import Promise from 'bluebird';
+import Backboard from 'backboard';
+import g from './globals';
+import Davis from './lib/davis';
+import eventLog from './util/eventLog';
+import helpers from './util/helpers';
 
 const migrateMessage = '<h1>Upgrading...</h1><p>This might take a few minutes, depending on the size of your league.</p><p>If something goes wrong, <a href="http://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers" target="_blank">open the console</a> and see if there is an error message there. Then <a href="https://basketball-gm.com/contact/" target="_blank">let us know about your problem</a>. Please include as much info as possible.</p>';
 
@@ -241,7 +241,7 @@ async function reset() {
     location.reload();
 }
 
-module.exports = {
+export default {
     connectMeta,
     connectLeague,
     reset,

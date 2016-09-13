@@ -1,8 +1,8 @@
-const g = require('./globals');
-const Promise = require('bluebird');
-const Davis = require('./lib/davis');
-const helpers = require('./util/helpers');
-const lock = require('./util/lock');
+import Promise from 'bluebird';
+import g from './globals';
+import Davis from './lib/davis';
+import helpers from './util/helpers';
+import lock from './util/lock';
 
 /**
  * Smartly update the currently loaded view or redirect to a new one.
@@ -151,7 +151,7 @@ async function updateStatus(statusText) {
     if (statusText === undefined) {
         g.emitter.emit('updateTopMenu', {statusText: oldStatus});
     } else if (statusText !== oldStatus) {
-        await require('./core/league').setGameAttributesComplete({statusText});
+        await require('./core/league').default.setGameAttributesComplete({statusText});
         g.emitter.emit('updateTopMenu', {statusText});
     }
 }
@@ -170,7 +170,7 @@ async function updatePhase(phaseText) {
     if (phaseText === undefined) {
         g.emitter.emit('updateTopMenu', {phaseText: oldPhaseText});
     } else if (phaseText !== oldPhaseText) {
-        await require('./core/league').setGameAttributesComplete({phaseText});
+        await require('./core/league').default.setGameAttributesComplete({phaseText});
         g.emitter.emit('updateTopMenu', {phaseText});
 
         // Update phase in meta database. No need to have this block updating the UI or anything.
@@ -180,7 +180,7 @@ async function updatePhase(phaseText) {
     }
 }
 
-module.exports = {
+export default {
     realtimeUpdate,
     updatePhase,
     updatePlayMenu,

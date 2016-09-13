@@ -1,12 +1,12 @@
-const g = require('../globals');
-const player = require('./player');
-const backboard = require('backboard');
-const Promise = require('bluebird');
-const _ = require('underscore');
-const eventLog = require('../util/eventLog');
-const helpers = require('../util/helpers');
-const random = require('../util/random');
-const orderBy = require('lodash.orderby');
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import orderBy from 'lodash.orderby';
+import _ from 'underscore';
+import g from '../globals';
+import player from './player';
+import eventLog from '../util/eventLog';
+import helpers from '../util/helpers';
+import random from '../util/random';
 
 function genSeasonRow(tid, prevSeason) {
     const newSeason = {
@@ -1317,7 +1317,7 @@ function checkRosterSizes() {
     });
 }
 
-module.exports = {
+export default {
     genSeasonRow,
     genStatsRow,
     generate,

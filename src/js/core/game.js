@@ -1,21 +1,21 @@
-const g = require('../globals');
-const ui = require('../ui');
-const freeAgents = require('./freeAgents');
-const finances = require('./finances');
-const gameSim = require('./gameSim');
-const league = require('./league');
-const phase = require('./phase');
-const player = require('./player');
-const season = require('./season');
-const team = require('./team');
-const _ = require('underscore');
-const backboard = require('backboard');
-const Promise = require('bluebird');
-const advStats = require('../util/advStats');
-const eventLog = require('../util/eventLog');
-const lock = require('../util/lock');
-const helpers = require('../util/helpers');
-const random = require('../util/random');
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import _ from 'underscore';
+import g from '../globals';
+import ui from '../ui';
+import finances from './finances';
+import freeAgents from './freeAgents';
+import gameSim from './gameSim';
+import league from './league';
+import phase from './phase';
+import player from './player';
+import season from './season';
+import team from './team';
+import advStats from '../util/advStats';
+import eventLog from '../util/eventLog';
+import helpers from '../util/helpers';
+import lock from '../util/lock';
+import random from '../util/random';
 
 function writeTeamStats(tx, results) {
     return Promise.reduce([0, 1], async (cache, t1) => {
@@ -811,6 +811,6 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
     }
 }
 
-module.exports = {
+export default {
     play,
 };

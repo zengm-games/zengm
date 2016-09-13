@@ -1,9 +1,9 @@
 // Functions only used for debugging the game, particularly balance issues. This should not be included or loaded in the compiled version.
 
-const g = require('../globals');
-const player = require('./player');
-const backboard = require('backboard');
-const _ = require('underscore');
+import backboard from 'backboard';
+import _ from 'underscore';
+import g from '../globals';
+import player from './player';
 
 async function regressRatingsPer() {
     // http://rosettacode.org/wiki/Multiple_regression#JavaScript
@@ -258,7 +258,7 @@ function averageCareerArc(baseOvr, basePot, ratingToSave) {
     if (ratingToSave) { console.log(`${ratingToSave}:`); console.log(averageRat); }
 }
 
-module.exports = {
+export default {
     regressRatingsPer,
     leagueAverageContract,
     exportPlayerInfo,

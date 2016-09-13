@@ -1,12 +1,12 @@
-const g = require('../globals');
-const ui = require('../ui');
-const freeAgents = require('./freeAgents');
-const player = require('./player');
-const team = require('./team');
-const Promise = require('bluebird');
-const eventLog = require('../util/eventLog');
-const helpers = require('../util/helpers');
-const lock = require('../util/lock');
+import Promise from 'bluebird';
+import g from '../globals';
+import ui from '../ui';
+import freeAgents from './freeAgents';
+import player from './player';
+import team from './team';
+import eventLog from '../util/eventLog';
+import helpers from '../util/helpers';
+import lock from '../util/lock';
 
 /**
  * Start a new contract negotiation with a player.
@@ -60,7 +60,7 @@ async function create(tx, pid, resigning, tid = g.userTid) {
     };
 
     await tx.negotiations.add(negotiation);
-    require('../core/league').updateLastDbChange();
+    require('../core/league').default.updateLastDbChange();
     ui.updateStatus("Contract negotiation");
     return await ui.updatePlayMenu(tx);
 }
@@ -86,7 +86,7 @@ async function cancel(pid) {
         }
     });
 
-    require('../core/league').updateLastDbChange();
+    require('../core/league').default.updateLastDbChange();
 }
 
 /**
@@ -100,7 +100,7 @@ async function cancel(pid) {
  */
 async function cancelAll(tx) {
     await tx.negotiations.clear();
-    require('../core/league').updateLastDbChange();
+    require('../core/league').default.updateLastDbChange();
     ui.updateStatus("Idle");
     return await ui.updatePlayMenu(tx);
 }
@@ -175,10 +175,10 @@ async function accept(pid, amount, exp) {
 
     await cancel(pid);
 
-    require('../core/league').updateLastDbChange();
+    require('../core/league').default.updateLastDbChange();
 }
 
-module.exports = {
+export default {
     accept,
     cancel,
     cancelAll,

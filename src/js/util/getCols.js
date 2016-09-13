@@ -1,6 +1,6 @@
 /* eslint quote-props: "off" */
 
-const helpers = require('./helpers');
+import helpers from './helpers';
 
 const cols = {
     '': {
@@ -400,7 +400,7 @@ for (const key of Object.keys(cols)) {
     cols[key].title = key.replace('rating:', '');
 }
 
-module.exports = (...titles) => {
+export default (...titles) => {
     return titles.map(title => {
         if (!cols.hasOwnProperty(title)) {
             throw new Error(`Unknown column: "${title}"`);

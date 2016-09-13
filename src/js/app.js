@@ -1,46 +1,65 @@
+import Promise from 'bluebird';
+import sourceMapSupport from 'source-map-support';
+import 'indexeddb-getall-shim';
+import 'jquery-ui/sortable';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import db from './db';
+import * as views from './views';
+import changes from './data/changes';
+import Davis from './lib/davis';
+import account from './util/account';
+import helpers from './util/helpers';
+import Controller from './views/components/Controller';
+import './lib/davis.google_analytics';
+
+// Only for window.bbgm
+import ads from './util/ads';
+import debug from './core/debug';
+import g from './globals';
+import contractNegotiation from './core/contractNegotiation';
+import draft from './core/draft';
+import eventLog from './util/eventLog';
+import finances from './core/finances';
+import freeAgents from './core/freeAgents';
+import game from './core/game';
+import gameSim from './core/gameSim';
+import league from './core/league';
+import phase from './core/phase';
+import player from './core/player';
+import season from './core/season';
+import team from './core/team';
+import trade from './core/trade';
+
 // Needed because of https://github.com/petkaantonov/bluebird/issues/363
 // Sadly only enabled in debug mode, due to weird interactions with Bugsnag: https://github.com/bugsnag/bugsnag-js/issues/181
 if (localStorage.debug === 'debug') {
-    require('source-map-support').install();
+    sourceMapSupport.install();
 }
 
-const React = require('react');
-const ReactDOM = require('react-dom');
-const db = require('./db');
-const views = require('./views');
-const changes = require('./data/changes');
-const Davis = require('./lib/davis');
-const account = require('./util/account');
-const helpers = require('./util/helpers');
-const Controller = require('./views/components/Controller');
-
 // Overwrite Promise object globally so Babel uses it when transpiling async/await (not totally sure if necessary)
-window.Promise = require('bluebird');
+window.Promise = Promise;
 window.Promise.config({warnings: false});
-
-require('./lib/davis.google_analytics');
-require('indexeddb-getall-shim');
-require('jquery-ui/sortable');
 
 ((async () => {
     window.bbgm = {
-        account: require('./util/account'),
-        ads: require('./util/ads'),
-        debug: require('./core/debug'),
-        g: require('./globals'),
-        contractNegotiation: require('./core/contractNegotiation'),
-        draft: require('./core/draft'),
-        eventLog: require('./util/eventLog'),
-        finances: require('./core/finances'),
-        freeAgents: require('./core/freeAgents'),
-        game: require('./core/game'),
-        gameSim: require('./core/gameSim'),
-        league: require('./core/league'),
-        phase: require('./core/phase'),
-        player: require('./core/player'),
-        season: require('./core/season'),
-        team: require('./core/team'),
-        trade: require('./core/trade'),
+        account,
+        ads,
+        debug,
+        g,
+        contractNegotiation,
+        draft,
+        eventLog,
+        finances,
+        freeAgents,
+        game,
+        gameSim,
+        league,
+        phase,
+        player,
+        season,
+        team,
+        trade,
     };
 
     ReactDOM.render(<Controller />, document.getElementById('content'));

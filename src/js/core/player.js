@@ -1,14 +1,14 @@
-const g = require('../globals');
-const finances = require('./finances');
-const injuries = require('../data/injuries');
-const names = require('../data/names');
-const backboard = require('backboard');
-const Promise = require('bluebird');
-const faces = require('facesjs');
-const _ = require('underscore');
-const eventLog = require('../util/eventLog');
-const helpers = require('../util/helpers');
-const random = require('../util/random');
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import faces from 'facesjs';
+import _ from 'underscore';
+import g from '../globals';
+import finances from './finances';
+import injuries from '../data/injuries';
+import names from '../data/names';
+import eventLog from '../util/eventLog';
+import helpers from '../util/helpers';
+import random from '../util/random';
 
 let playerNames;
 
@@ -2138,7 +2138,7 @@ async function withStats(tx, players, options) {
     });
 }
 
-module.exports = {
+export default {
     addRatingsRow,
     addStatsRow,
     genBaseMoods,

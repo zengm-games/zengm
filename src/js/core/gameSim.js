@@ -1,6 +1,6 @@
-const helpers = require('../util/helpers');
-const random = require('../util/random');
-const g = require('../globals');
+import g from '../globals';
+import helpers from '../util/helpers';
+import random from '../util/random';
 
 // x is value, a controls sharpness, b controls center
 const sigmoid = (x, a, b) => {
@@ -1213,6 +1213,6 @@ class GameSim {
     }
 }
 
-module.exports = {
+export default {
     GameSim,
 };

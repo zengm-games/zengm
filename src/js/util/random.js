@@ -6,6 +6,30 @@
  * @param {number} b Maximum integer that can be returned.
  * @return {number} Random integer between a and b.
  */
+/**
+ * Choose a random integer from [a, b]
+ *
+ * @memberOf util.random
+ * @param {number} a Minimum integer that can be returned.
+ * @param {number} b Maximum integer that can be returned.
+ * @return {number} Random integer between a and b.
+ */
+/**
+ * Choose a random integer from [a, b]
+ *
+ * @memberOf util.random
+ * @param {number} a Minimum integer that can be returned.
+ * @param {number} b Maximum integer that can be returned.
+ * @return {number} Random integer between a and b.
+ */
+/**
+ * Choose a random integer from [a, b]
+ *
+ * @memberOf util.random
+ * @param {number} a Minimum integer that can be returned.
+ * @param {number} b Maximum integer that can be returned.
+ * @return {number} Random integer between a and b.
+ */
 function randInt(a, b) {
     return Math.floor(Math.random() * (1 + b - a)) + a;
 }
@@ -99,7 +123,7 @@ function choice(x) {
     return x[Math.floor(Math.random() * x.length)];
 }
 
-module.exports = {
+export default {
     randInt,
     shuffle,
     gauss,
@@ -107,4 +131,3 @@ module.exports = {
     uniform,
     choice,
 };
-

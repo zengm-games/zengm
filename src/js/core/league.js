@@ -1,16 +1,16 @@
-const db = require('../db');
-const g = require('../globals');
-const ui = require('../ui');
-const draft = require('./draft');
-const finances = require('./finances');
-const phase = require('./phase');
-const player = require('./player');
-const team = require('./team');
-const backboard = require('backboard');
-const Promise = require('bluebird');
-const _ = require('underscore');
-const helpers = require('../util/helpers');
-const random = require('../util/random');
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import _ from 'underscore';
+import db from '../db';
+import g from '../globals';
+import ui from '../ui';
+import draft from './draft';
+import finances from './finances';
+import phase from './phase';
+import player from './player';
+import team from './team';
+import helpers from '../util/helpers';
+import random from '../util/random';
 
 const defaultGameAttributes = {
     phase: 0,
@@ -661,9 +661,9 @@ async function loadGameAttributes(ot) {
 
 // Depending on phase, initiate action that will lead to the next phase
 async function autoPlay() {
-    const freeAgents = require('./freeAgents');
-    const game = require('./game');
-    const season = require('./season');
+    const freeAgents = require('./freeAgents').default;
+    const game = require('./game').default;
+    const season = require('./season').default;
 
     if (g.phase === g.PHASE.PRESEASON) {
         await phase.newPhase(g.PHASE.REGULAR_SEASON);
@@ -697,7 +697,7 @@ async function initAutoPlay() {
     }
 }
 
-module.exports = {
+export default {
     create,
     exportLeague,
     remove,

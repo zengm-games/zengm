@@ -1,4 +1,4 @@
-const g = require('../globals');
+import g from '../globals';
 
 function init(args) {
     args.inLeague = args.inLeague !== undefined ? args.inLeague : true;
@@ -34,7 +34,7 @@ function title(newTitle) {
     }
 }
 
-module.exports = {
+export default {
     init,
     title,
 };

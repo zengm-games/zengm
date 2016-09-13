@@ -1,5 +1,5 @@
-const g = require('../globals');
-const bbgmNotifications = require('../lib/bbgm-notifications');
+import g from '../globals';
+import bbgmNotifications from '../lib/bbgm-notifications';
 
 function add(ot, {
     extraClass,
@@ -43,7 +43,7 @@ function add(ot, {
 
             // Persistent notifications are very rare and should stop game sim when displayed
             if (persistent && g.autoPlaySeasons <= 0) {
-                require('../core/league').setGameAttributesComplete({stopGames: true});
+                require('../core/league').default.setGameAttributesComplete({stopGames: true});
             }
         }
     }
@@ -57,6 +57,6 @@ function add(ot, {
     }
 }
 
-module.exports = {
+export default {
     add,
 };

@@ -1,14 +1,14 @@
-const g = require('../globals');
-const ui = require('../ui');
-const finances = require('./finances');
-const player = require('./player');
-const team = require('./team');
-const backboard = require('backboard');
-const Promise = require('bluebird');
-const _ = require('underscore');
-const eventLog = require('../util/eventLog');
-const helpers = require('../util/helpers');
-const random = require('../util/random');
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import _ from 'underscore';
+import g from '../globals';
+import ui from '../ui';
+import finances from './finances';
+import player from './player';
+import team from './team';
+import eventLog from '../util/eventLog';
+import helpers from '../util/helpers';
+import random from '../util/random';
 
 async function genPicks(tx, season) {
     const promises = [];
@@ -529,11 +529,13 @@ async function untilUserOrEnd() {
 
     // Called after either the draft is over or it's the user's pick
     const afterDoneAuto = async () => {
+        const league = require('./league').default;
+
         await setOrder(null, draftOrder);
 
         // Is draft over?;
         if (draftOrder.length === 0) {
-            const phase = require('./phase'); // Circular reference
+            const phase = require('./phase').default;
 
             // Fantasy draft special case!
             if (g.phase === g.PHASE.FANTASY_DRAFT) {
@@ -549,21 +551,21 @@ async function untilUserOrEnd() {
                     });
                 });
 
-                await require('../core/league').setGameAttributesComplete({
+                await league.setGameAttributesComplete({
                     phase: g.nextPhase,
                     nextPhase: null,
                 });
 
                 ui.updatePhase(`${g.season} ${g.PHASE_TEXT[g.phase]}`);
                 await ui.updatePlayMenu(null);
-                require('../core/league').updateLastDbChange();
+                league.updateLastDbChange();
             } else {
                 // Non-fantasy draft
                 await phase.newPhase(g.PHASE.AFTER_DRAFT);
             }
         } else {
             // Draft is not over, so continue
-            require('../core/league').updateLastDbChange();
+            league.updateLastDbChange();
         }
 
         return pids;
@@ -594,7 +596,7 @@ async function untilUserOrEnd() {
     return autoSelectPlayer();
 }
 
-module.exports = {
+export default {
     genPicks,
     getOrder,
     setOrder,

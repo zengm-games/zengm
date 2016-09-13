@@ -1,6 +1,6 @@
 /*eslint new-cap: 0*/
-const Promise = require('bluebird');
-const g = require('../globals');
+import Promise from 'bluebird';
+import g from '../globals';
 
 function showGcs() {
     window.TriggerPrompt("http://www.basketball-gm.com/", (new Date()).getTime());
@@ -106,7 +106,7 @@ async function showBanner() {
     }
 }
 
-module.exports = {
+export default {
     showBanner,
     showModal,
     showSurvata,

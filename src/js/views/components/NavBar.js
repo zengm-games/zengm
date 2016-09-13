@@ -13,7 +13,7 @@ import Popover from 'react-bootstrap/lib/Popover';
 import ReactDOM from 'react-dom';
 import ui from '../../ui';
 import html2canvas from '../../lib/html2canvas';
-import actions from '../../util/actions';
+import * as actions from '../../util/actions';
 import eventLog from '../../util/eventLog';
 import helpers from '../../util/helpers';
 

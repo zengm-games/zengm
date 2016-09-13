@@ -18,7 +18,7 @@
  */
 
 var Davis = require('./davis');
-var ads = require('../util/ads');
+var ads = require('../util/ads').default;
 
 Davis.googleAnalytics = function () {
 

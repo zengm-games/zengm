@@ -2,6 +2,8 @@ import Promise from 'bluebird';
 import _ from 'underscore';
 import g from '../globals';
 import ui from '../ui';
+import league from './league';
+import phase from './phase';
 import player from './player';
 import team from './team';
 import eventLog from '../util/eventLog';
@@ -195,9 +197,6 @@ function refuseToNegotiate(amount, mood) {
  * @param {boolean} start Is this a new request from the user to simulate days (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed. Default true.
  */
 async function play(numDays, start = true) {
-    const league = require('./league').default;
-    const phase = require('./phase').default;
-
     // This is called when there are no more days to play, either due to the user's request (e.g. 1 week) elapsing or at the end of free agency.
     const cbNoDays = async () => {
         await league.setGameAttributesComplete({gamesInProgress: false});

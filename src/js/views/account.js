@@ -1,6 +1,6 @@
-const account = require('../util/account');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const Account = require('./views/Account');
+import account from '../util/account';
+import bbgmViewReact from '../util/bbgmViewReact';
+import Account from './views/Account';
 
 function get(req) {
     return {
@@ -44,7 +44,7 @@ async function updateAchievements(inputs, updateEvents) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "account",
     get,
     inLeague: false,

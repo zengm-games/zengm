@@ -1,13 +1,13 @@
-const React = require('react');
-const DropdownButton = require('react-bootstrap/lib/DropdownButton');
-const MenuItem = require('react-bootstrap/lib/MenuItem');
-const g = require('../../globals');
-const ui = require('../../ui');
-const league = require('../../core/league');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const getCols = require('../../util/getCols');
-const helpers = require('../../util/helpers');
-const {DataTable, Dropdown, NewWindowLink, PlayerNameLabels} = require('../components');
+import React from 'react';
+import DropdownButton from 'react-bootstrap/lib/DropdownButton';
+import MenuItem from 'react-bootstrap/lib/MenuItem';
+import g from '../../globals';
+import ui from '../../ui';
+import league from '../../core/league';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import getCols from '../../util/getCols';
+import helpers from '../../util/helpers';
+import {DataTable, Dropdown, NewWindowLink, PlayerNameLabels} from '../components';
 
 class WatchList extends React.Component {
     constructor(props) {
@@ -130,4 +130,4 @@ WatchList.propTypes = {
     statType: React.PropTypes.oneOf(['per_36', 'per_game', 'totals']).isRequired,
 };
 
-module.exports = WatchList;
+export default WatchList;

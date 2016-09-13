@@ -1,9 +1,9 @@
-const React = require('react');
-const g = require('../../globals');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const getCols = require('../../util/getCols');
-const helpers = require('../../util/helpers');
-const {DataTable, Dropdown, NewWindowLink, PlayerNameLabels} = require('../components');
+import React from 'react';
+import g from '../../globals';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import getCols from '../../util/getCols';
+import helpers from '../../util/helpers';
+import {DataTable, Dropdown, NewWindowLink, PlayerNameLabels} from '../components';
 
 const PlayerFeats = ({abbrev, feats, playoffs, season}) => {
     bbgmViewReact.title('Statistical Feats');
@@ -105,4 +105,4 @@ PlayerFeats.propTypes = {
     ]).isRequired,
 };
 
-module.exports = PlayerFeats;
+export default PlayerFeats;

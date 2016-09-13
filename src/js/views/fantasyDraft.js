@@ -1,7 +1,7 @@
-const g = require('../globals');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const helpers = require('../util/helpers');
-const FantasyDraft = require('./views/FantasyDraft');
+import g from '../globals';
+import bbgmViewReact from '../util/bbgmViewReact';
+import helpers from '../util/helpers';
+import FantasyDraft from './views/FantasyDraft';
 
 function get() {
     if (g.phase === g.PHASE.FANTASY_DRAFT) {
@@ -17,7 +17,7 @@ function updateFantasyDraft() {
     };
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "fantasyDraft",
     get,
     runBefore: [updateFantasyDraft],

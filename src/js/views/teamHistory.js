@@ -1,10 +1,10 @@
-const g = require('../globals');
-const player = require('../core/player');
-const backboard = require('backboard');
-const Promise = require('bluebird');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const helpers = require('../util/helpers');
-const TeamHistory = require('./views/TeamHistory');
+import g from '../globals';
+import player from '../core/player';
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import bbgmViewReact from '../util/bbgmViewReact';
+import helpers from '../util/helpers';
+import TeamHistory from './views/TeamHistory';
 
 function get(req) {
     const inputs = {};
@@ -100,7 +100,7 @@ async function updateTeamHistory(inputs, updateEvents, state) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "teamHistory",
     get,
     runBefore: [updateTeamHistory],

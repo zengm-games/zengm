@@ -1,10 +1,10 @@
-const g = require('../globals');
-const draft = require('../core/draft');
-const player = require('../core/player');
-const Promise = require('bluebird');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const helpers = require('../util/helpers');
-const Draft = require('./views/Draft');
+import g from '../globals';
+import draft from '../core/draft';
+import player from '../core/player';
+import Promise from 'bluebird';
+import bbgmViewReact from '../util/bbgmViewReact';
+import helpers from '../util/helpers';
+import Draft from './views/Draft';
 
 function get() {
     if (g.phase !== g.PHASE.DRAFT && g.phase !== g.PHASE.FANTASY_DRAFT) {
@@ -101,7 +101,7 @@ async function updateDraft() {
     };
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "draft",
     get,
     runBefore: [updateDraft],

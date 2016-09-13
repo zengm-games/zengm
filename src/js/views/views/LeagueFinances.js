@@ -1,9 +1,9 @@
-const React = require('react');
-const g = require('../../globals');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const getCols = require('../../util/getCols');
-const helpers = require('../../util/helpers');
-const {DataTable, Dropdown, JumpTo, NewWindowLink} = require('../components');
+import React from 'react';
+import g from '../../globals';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import getCols from '../../util/getCols';
+import helpers from '../../util/helpers';
+import {DataTable, Dropdown, JumpTo, NewWindowLink} from '../components';
 
 const LeagueFinances = ({minPayroll, luxuryPayroll, luxuryTax, salaryCap, season, teams}) => {
     bbgmViewReact.title(`League Finances - ${season}`);
@@ -68,4 +68,4 @@ LeagueFinances.propTypes = {
     })).isRequired,
 };
 
-module.exports = LeagueFinances;
+export default LeagueFinances;

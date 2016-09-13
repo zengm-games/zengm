@@ -1,7 +1,7 @@
-const g = require('../globals');
-const league = require('../core/league');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const GodMode = require('./views/GodMode');
+import g from '../globals';
+import league from '../core/league';
+import bbgmViewReact from '../util/bbgmViewReact';
+import GodMode from './views/GodMode';
 
 async function updateGodMode(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("toggleGodMode") >= 0) {
@@ -24,7 +24,7 @@ async function updateGodMode(inputs, updateEvents) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "godMode",
     runBefore: [updateGodMode],
     Component: GodMode,

@@ -1,12 +1,12 @@
-const g = require('../globals');
-const player = require('../core/player');
-const season = require('../core/season');
-const team = require('../core/team');
-const trade = require('../core/trade');
-const Promise = require('bluebird');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const helpers = require('../util/helpers');
-const Roster = require('./views/Roster');
+import g from '../globals';
+import player from '../core/player';
+import season from '../core/season';
+import team from '../core/team';
+import trade from '../core/trade';
+import Promise from 'bluebird';
+import bbgmViewReact from '../util/bbgmViewReact';
+import helpers from '../util/helpers';
+import Roster from './views/Roster';
 
 function get(req) {
     // Fix broken links
@@ -133,7 +133,7 @@ function updateRoster(inputs, updateEvents, state) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "roster",
     get,
     runBefore: [updateRoster],

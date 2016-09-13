@@ -1,11 +1,11 @@
-const g = require('../globals');
-const finances = require('../core/finances');
-const player = require('../core/player');
-const team = require('../core/team');
-const backboard = require('backboard');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const helpers = require('../util/helpers');
-const CustomizePlayer = require('./views/CustomizePlayer');
+import g from '../globals';
+import finances from '../core/finances';
+import player from '../core/player';
+import team from '../core/team';
+import backboard from 'backboard';
+import bbgmViewReact from '../util/bbgmViewReact';
+import helpers from '../util/helpers';
+import CustomizePlayer from './views/CustomizePlayer';
 
 function get(req) {
     if (req.params.hasOwnProperty("pid")) {
@@ -104,7 +104,7 @@ async function updateCustomizePlayer(inputs, updateEvents) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "customizePlayer",
     get,
     runBefore: [updateCustomizePlayer],

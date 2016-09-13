@@ -1,7 +1,7 @@
-const g = require('../globals');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const helpers = require('../util/helpers');
-const PlayerFeats = require('./views/PlayerFeats');
+import g from '../globals';
+import bbgmViewReact from '../util/bbgmViewReact';
+import helpers from '../util/helpers';
+import PlayerFeats from './views/PlayerFeats';
 
 function get(req) {
     let abbrev;
@@ -67,7 +67,7 @@ async function updatePlayers(inputs, updateEvents, state) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "playerFeats",
     get,
     runBefore: [updatePlayers],

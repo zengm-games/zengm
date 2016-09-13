@@ -1,19 +1,19 @@
-const Promise = require('bluebird');
-const classNames = require('classnames');
-const $ = require('jquery');
-const React = require('react');
-const DropdownButton = require('react-bootstrap/lib/DropdownButton');
-const MenuItem = require('react-bootstrap/lib/MenuItem');
-const g = require('../../globals');
-const ui = require('../../ui');
-const league = require('../../core/league');
-const player = require('../../core/player');
-const team = require('../../core/team');
-const {tradeFor} = require('../../util/actions');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const helpers = require('../../util/helpers');
-const {Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels, RatingWithChange, RecordAndPlayoffs} = require('../components');
-const clickable = require('../wrappers/clickable');
+import Promise from 'bluebird';
+import classNames from 'classnames';
+import $ from 'jquery';
+import React from 'react';
+import DropdownButton from 'react-bootstrap/lib/DropdownButton';
+import MenuItem from 'react-bootstrap/lib/MenuItem';
+import g from '../../globals';
+import ui from '../../ui';
+import league from '../../core/league';
+import player from '../../core/player';
+import team from '../../core/team';
+import {tradeFor} from '../../util/actions';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import helpers from '../../util/helpers';
+import {Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels, RatingWithChange, RecordAndPlayoffs} from '../components';
+import clickable from '../wrappers/clickable';
 
 const ptStyles = {
     0: {
@@ -443,4 +443,4 @@ Roster.propTypes = {
     t: React.PropTypes.object.isRequired,
 };
 
-module.exports = Roster;
+export default Roster;

@@ -1,8 +1,8 @@
-const g = require('../globals');
-const team = require('../core/team');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const helpers = require('../util/helpers');
-const LeagueFinances = require('./views/LeagueFinances');
+import g from '../globals';
+import team from '../core/team';
+import bbgmViewReact from '../util/bbgmViewReact';
+import helpers from '../util/helpers';
+import LeagueFinances from './views/LeagueFinances';
 
 function get(req) {
     return {
@@ -29,7 +29,7 @@ async function updateLeagueFinances(inputs, updateEvents, state) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "leagueFinances",
     get,
     runBefore: [updateLeagueFinances],

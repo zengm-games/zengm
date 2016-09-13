@@ -1,10 +1,10 @@
-const g = require('../globals');
-const player = require('../core/player');
-const backboard = require('backboard');
-const Promise = require('bluebird');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const helpers = require('../util/helpers');
-const Leaders = require('./views/Leaders');
+import g from '../globals';
+import player from '../core/player';
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import bbgmViewReact from '../util/bbgmViewReact';
+import helpers from '../util/helpers';
+import Leaders from './views/Leaders';
 
 function get(req) {
     return {
@@ -107,7 +107,7 @@ async function updateLeaders(inputs, updateEvents, state) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "leaders",
     get,
     runBefore: [updateLeaders],

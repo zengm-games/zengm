@@ -1,7 +1,7 @@
-const g = require('../globals');
-const league = require('../core/league');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const MultiTeamMode = require('./views/MultiTeamMode');
+import g from '../globals';
+import league from '../core/league';
+import bbgmViewReact from '../util/bbgmViewReact';
+import MultiTeamMode from './views/MultiTeamMode';
 
 async function updateMultiTeamMode(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("g.userTids") >= 0) {
@@ -23,7 +23,7 @@ async function updateMultiTeamMode(inputs, updateEvents) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "multiTeamMode",
     runBefore: [updateMultiTeamMode],
     Component: MultiTeamMode,

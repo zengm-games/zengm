@@ -1,17 +1,17 @@
-const Promise = require('bluebird');
-const React = require('react');
-const _ = require('underscore');
-const g = require('../../globals');
-const player = require('../../core/player');
-const team = require('../../core/team');
-const trade = require('../../core/trade');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const {tradeFor} = require('../../util/actions');
-const getCols = require('../../util/getCols');
-const helpers = require('../../util/helpers');
-const random = require('../../util/random');
-const clickable = require('../wrappers/clickable');
-const {DataTable, NewWindowLink, PlayerNameLabels} = require('../components');
+import Promise from 'bluebird';
+import React from 'react';
+import _ from 'underscore';
+import g from '../../globals';
+import player from '../../core/player';
+import team from '../../core/team';
+import trade from '../../core/trade';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import {tradeFor} from '../../util/actions';
+import getCols from '../../util/getCols';
+import helpers from '../../util/helpers';
+import random from '../../util/random';
+import clickable from '../wrappers/clickable';
+import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
 
 const OfferPlayerRow = clickable(({clicked, p, toggleClicked}) => {
     return <tr className={clicked ? 'warning' : null} onClick={toggleClicked}>
@@ -407,4 +407,4 @@ TradingBlock.propTypes = {
     userRoster: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
 };
 
-module.exports = TradingBlock;
+export default TradingBlock;

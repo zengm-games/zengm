@@ -1,11 +1,11 @@
-const classNames = require('classnames');
-const React = require('react');
-const g = require('../../globals');
-const ui = require('../../ui');
-const contractNegotiation = require('../../core/contractNegotiation');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const helpers = require('../../util/helpers');
-const {NewWindowLink} = require('../components');
+import classNames from 'classnames';
+import React from 'react';
+import g from '../../globals';
+import ui from '../../ui';
+import contractNegotiation from '../../core/contractNegotiation';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import helpers from '../../util/helpers';
+import {NewWindowLink} from '../components';
 
 // Show the negotiations list if there are more ongoing negotiations
 async function redirectNegotiationOrRoster(cancelled) {
@@ -121,4 +121,4 @@ Negotiation.propTypes = {
     userTid: React.PropTypes.number,
 };
 
-module.exports = Negotiation;
+export default Negotiation;

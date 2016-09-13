@@ -1,9 +1,9 @@
-const React = require('react');
-const g = require('../../globals');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const getCols = require('../../util/getCols');
-const helpers = require('../../util/helpers');
-const {DataTable, DraftAbbrev, Dropdown, JumpTo, NewWindowLink, SkillsBlock} = require('../components');
+import React from 'react';
+import g from '../../globals';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import getCols from '../../util/getCols';
+import helpers from '../../util/helpers';
+import {DataTable, DraftAbbrev, Dropdown, JumpTo, NewWindowLink, SkillsBlock} from '../components';
 
 const DraftSummary = ({players, season}) => {
     bbgmViewReact.title(`${season} Draft Summary`);
@@ -79,4 +79,4 @@ DraftSummary.propTypes = {
     season: React.PropTypes.number.isRequired,
 };
 
-module.exports = DraftSummary;
+export default DraftSummary;

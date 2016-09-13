@@ -1,9 +1,9 @@
-const g = require('../globals');
-const Promise = require('bluebird');
-const $ = require('jquery');
-const account = require('../util/account');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const AccountUpdateCard = require('./views/AccountUpdateCard');
+import g from '../globals';
+import Promise from 'bluebird';
+import $ from 'jquery';
+import account from '../util/account';
+import bbgmViewReact from '../util/bbgmViewReact';
+import AccountUpdateCard from './views/AccountUpdateCard';
 
 async function updateAccountUpdateCard(inputs, updateEvents, state, setState, topMenu) {
     if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("account") >= 0) {
@@ -40,7 +40,7 @@ async function updateAccountUpdateCard(inputs, updateEvents, state, setState, to
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "accountUpdateCard",
     inLeague: false,
     runBefore: [updateAccountUpdateCard],

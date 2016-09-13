@@ -1,8 +1,8 @@
-const React = require('react');
-const ui = require('../../ui');
-const league = require('../../core/league');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const helpers = require('../../util/helpers');
+import React from 'react';
+import ui from '../../ui';
+import league from '../../core/league';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import helpers from '../../util/helpers';
 
 const PopText = ({teams, tid}) => {
     let msg = <span>Region population: ?<br />Difficulty: ?</span>;
@@ -263,4 +263,4 @@ NewLeague.propTypes = {
     lastSelectedTid: React.PropTypes.number.isRequired,
 };
 
-module.exports = NewLeague;
+export default NewLeague;

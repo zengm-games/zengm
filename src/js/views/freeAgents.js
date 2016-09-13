@@ -1,11 +1,11 @@
-const g = require('../globals');
-const freeAgents = require('../core/freeAgents');
-const player = require('../core/player');
-const team = require('../core/team');
-const Promise = require('bluebird');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const helpers = require('../util/helpers');
-const FreeAgents = require('./views/FreeAgents');
+import g from '../globals';
+import freeAgents from '../core/freeAgents';
+import player from '../core/player';
+import team from '../core/team';
+import Promise from 'bluebird';
+import bbgmViewReact from '../util/bbgmViewReact';
+import helpers from '../util/helpers';
+import FreeAgents from './views/FreeAgents';
 
 function get() {
     if (g.phase === g.PHASE.RESIGN_PLAYERS) {
@@ -57,7 +57,7 @@ async function updateFreeAgents() {
     };
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "freeAgents",
     get,
     runBefore: [updateFreeAgents],

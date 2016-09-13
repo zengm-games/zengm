@@ -1,14 +1,14 @@
-const classNames = require('classnames');
-const $ = require('jquery');
-const React = require('react');
-const g = require('../../globals');
-const ui = require('../../ui');
-const draft = require('../../core/draft');
-const league = require('../../core/league');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const getCols = require('../../util/getCols');
-const helpers = require('../../util/helpers');
-const {DataTable, DraftAbbrev, NewWindowLink, PlayerNameLabels} = require('../components');
+import classNames from 'classnames';
+import $ from 'jquery';
+import React from 'react';
+import g from '../../globals';
+import ui from '../../ui';
+import draft from '../../core/draft';
+import league from '../../core/league';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import getCols from '../../util/getCols';
+import helpers from '../../util/helpers';
+import {DataTable, DraftAbbrev, NewWindowLink, PlayerNameLabels} from '../components';
 
 const viewDrafted = () => {
     $("body, html").animate({scrollLeft: $(document).outerWidth() - $(window).width()}, 250);
@@ -201,4 +201,4 @@ Draft.propTypes = {
     userTids: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
 };
 
-module.exports = Draft;
+export default Draft;

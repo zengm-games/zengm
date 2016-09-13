@@ -1,10 +1,10 @@
-const Promise = require('bluebird');
-const React = require('react');
-const _ = require('underscore');
-const g = require('../../globals');
-const player = require('../../core/player');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const {DownloadDataLink} = require('../components');
+import Promise from 'bluebird';
+import React from 'react';
+import _ from 'underscore';
+import g from '../../globals';
+import player from '../../core/player';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import {DownloadDataLink} from '../components';
 
 function genFilename(leagueName, season, grouping) {
     const filename = `BBGM_${leagueName.replace(/[^a-z0-9]/gi, '_')}_${season}_${season === "all" ? "seasons" : "season"}_${grouping === "averages" ? "Average_Stats" : "Game_Stats"}`;
@@ -177,4 +177,4 @@ ExportStats.propTypes = {
     })).isRequired,
 };
 
-module.exports = ExportStats;
+export default ExportStats;

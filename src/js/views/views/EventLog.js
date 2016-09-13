@@ -1,6 +1,6 @@
-const React = require('react');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const {Dropdown, NewWindowLink, SafeHtml} = require('../components');
+import React from 'react';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import {Dropdown, NewWindowLink, SafeHtml} from '../components';
 
 const EventLog = ({abbrev, events, season}) => {
     bbgmViewReact.title(`Event Log - ${season}`);
@@ -26,4 +26,4 @@ EventLog.propTypes = {
     season: React.PropTypes.number.isRequired,
 };
 
-module.exports = EventLog;
+export default EventLog;

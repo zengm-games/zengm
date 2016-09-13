@@ -1,7 +1,7 @@
-const React = require('react');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const helpers = require('../../util/helpers');
-const {BoxPlot, Dropdown, NewWindowLink} = require('../components');
+import React from 'react';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import helpers from '../../util/helpers';
+import {BoxPlot, Dropdown, NewWindowLink} from '../components';
 
 const PlayerRatingDists = ({ratingsAll, season}) => {
     bbgmViewReact.title(`Player Rating Distributions - ${season}`);
@@ -31,4 +31,4 @@ PlayerRatingDists.propTypes = {
     season: React.PropTypes.number.isRequired,
 };
 
-module.exports = PlayerRatingDists;
+export default PlayerRatingDists;

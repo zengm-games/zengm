@@ -1,8 +1,8 @@
-const React = require('react');
-const g = require('../../globals');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const helpers = require('../../util/helpers');
-const {BoxPlot, Dropdown, NewWindowLink} = require('../components');
+import React from 'react';
+import g from '../../globals';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import helpers from '../../util/helpers';
+import {BoxPlot, Dropdown, NewWindowLink} from '../components';
 
 const nbaQuartiles = {
     gp: [1, 25, 52, 74, 82],
@@ -89,4 +89,4 @@ PlayerStatDists.propTypes = {
     statsAll: React.PropTypes.object.isRequired,
 };
 
-module.exports = PlayerStatDists;
+export default PlayerStatDists;

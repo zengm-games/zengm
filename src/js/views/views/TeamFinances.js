@@ -1,13 +1,13 @@
-const React = require('react');
-const g = require('../../globals');
-const ui = require('../../ui');
-const finances = require('../../core/finances');
-const league = require('../../core/league');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const eventLog = require('../../util/eventLog');
-const getCols = require('../../util/getCols');
-const helpers = require('../../util/helpers');
-const {BarGraph, DataTable, Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels} = require('../components');
+import React from 'react';
+import g from '../../globals';
+import ui from '../../ui';
+import finances from '../../core/finances';
+import league from '../../core/league';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import eventLog from '../../util/eventLog';
+import getCols from '../../util/getCols';
+import helpers from '../../util/helpers';
+import {BarGraph, DataTable, Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels} from '../components';
 
 class FinancesForm extends React.Component {
     constructor(props) {
@@ -371,4 +371,4 @@ TeamFinances.propTypes = {
     tid: React.PropTypes.number.isRequired,
 };
 
-module.exports = TeamFinances;
+export default TeamFinances;

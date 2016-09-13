@@ -1,9 +1,9 @@
-const classNames = require('classnames');
-const React = require('react');
-const AutoAffix = require('react-overlays/lib/AutoAffix');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const helpers = require('../../util/helpers');
-const {PlayerNameLabels} = require('../components');
+import classNames from 'classnames';
+import React from 'react';
+import AutoAffix from 'react-overlays/lib/AutoAffix';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import helpers from '../../util/helpers';
+import {PlayerNameLabels} from '../components';
 
 class PlayerRow extends React.Component {
     shouldComponentUpdate(nextProps) {
@@ -312,4 +312,4 @@ LiveGame.propTypes = {
     initialBoxScore: React.PropTypes.object,
 };
 
-module.exports = LiveGame;
+export default LiveGame;

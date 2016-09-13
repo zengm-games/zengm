@@ -1,7 +1,7 @@
-const bbgmViewReact = require('../util/bbgmViewReact');
-const LoginOrRegister = require('./views/LoginOrRegister');
+import bbgmViewReact from '../util/bbgmViewReact';
+import LoginOrRegister from './views/LoginOrRegister';
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "loginOrRegister",
     inLeague: false,
     Component: LoginOrRegister,

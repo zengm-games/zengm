@@ -1,8 +1,8 @@
-const g = require('../globals');
-const player = require('../core/player');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const helpers = require('../util/helpers');
-const DraftSummary = require('./views/DraftSummary');
+import g from '../globals';
+import player from '../core/player';
+import bbgmViewReact from '../util/bbgmViewReact';
+import helpers from '../util/helpers';
+import DraftSummary from './views/DraftSummary';
 
 function get(req) {
     let season = helpers.validateSeason(req.params.season);
@@ -75,7 +75,7 @@ async function updateDraftSummary(inputs) {
     };
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "draftSummary",
     get,
     runBefore: [updateDraftSummary],

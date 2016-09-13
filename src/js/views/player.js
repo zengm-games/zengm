@@ -1,11 +1,11 @@
-const g = require('../globals');
-const freeAgents = require('../core/freeAgents');
-const player = require('../core/player');
-const trade = require('../core/trade');
-const Promise = require('bluebird');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const helpers = require('../util/helpers');
-const Player = require('./views/Player');
+import g from '../globals';
+import freeAgents from '../core/freeAgents';
+import player from '../core/player';
+import trade from '../core/trade';
+import Promise from 'bluebird';
+import bbgmViewReact from '../util/bbgmViewReact';
+import helpers from '../util/helpers';
+import Player from './views/Player';
 
 function get(req) {
     return {
@@ -77,7 +77,7 @@ async function updatePlayer(inputs, updateEvents, state) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "player",
     get,
     runBefore: [updatePlayer],

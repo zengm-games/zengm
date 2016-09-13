@@ -1,8 +1,8 @@
-const g = require('../globals');
-const team = require('../core/team');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const helpers = require('../util/helpers');
-const TeamShotLocations = require('./views/TeamShotLocations');
+import g from '../globals';
+import team from '../core/team';
+import bbgmViewReact from '../util/bbgmViewReact';
+import helpers from '../util/helpers';
+import TeamShotLocations from './views/TeamShotLocations';
 
 function get(req) {
     return {
@@ -26,7 +26,7 @@ async function updateTeams(inputs, updateEvents, state) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "teamShotLocations",
     get,
     runBefore: [updateTeams],

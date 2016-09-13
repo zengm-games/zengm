@@ -1,8 +1,8 @@
-const React = require('react');
-const g = require('../../globals');
-const phase = require('../../core/phase');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const {NewWindowLink} = require('../components');
+import React from 'react';
+import g from '../../globals';
+import phase from '../../core/phase';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import {NewWindowLink} from '../components';
 
 class FantasyDraft extends React.Component {
     constructor(props) {
@@ -94,4 +94,4 @@ FantasyDraft.propTypes = {
     phase: React.PropTypes.number.isRequired,
 };
 
-module.exports = FantasyDraft;
+export default FantasyDraft;

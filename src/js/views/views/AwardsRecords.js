@@ -1,9 +1,9 @@
-const React = require('react');
-const _ = require('underscore');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const getCols = require('../../util/getCols');
-const helpers = require('../../util/helpers');
-const {DataTable, Dropdown, NewWindowLink} = require('../components');
+import React from 'react';
+import _ from 'underscore';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import getCols from '../../util/getCols';
+import helpers from '../../util/helpers';
+import {DataTable, Dropdown, NewWindowLink} from '../components';
 
 const AwardsRecords = ({awardType, awardTypeVal, awardsRecords, playerCount}) => {
     bbgmViewReact.title('Awards Records');
@@ -82,4 +82,4 @@ AwardsRecords.propTypes = {
     playerCount: React.PropTypes.number.isRequired,
 };
 
-module.exports = AwardsRecords;
+export default AwardsRecords;

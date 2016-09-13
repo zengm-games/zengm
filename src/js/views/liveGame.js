@@ -1,7 +1,7 @@
-const g = require('../globals');
-const helpers = require('../util/helpers');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const LiveGame = require('./views/LiveGame');
+import g from '../globals';
+import helpers from '../util/helpers';
+import bbgmViewReact from '../util/bbgmViewReact';
+import LiveGame from './views/LiveGame';
 
 function get(req) {
     const obj = {
@@ -66,7 +66,7 @@ async function updatePlayByPlay(inputs, updateEvents) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "liveGame",
     get,
     runBefore: [updatePlayByPlay],

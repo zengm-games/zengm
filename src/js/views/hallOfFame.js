@@ -1,7 +1,7 @@
-const g = require('../globals');
-const player = require('../core/player');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const HallOfFame = require('./views/HallOfFame');
+import g from '../globals';
+import player from '../core/player';
+import bbgmViewReact from '../util/bbgmViewReact';
+import HallOfFame from './views/HallOfFame';
 
 async function updatePlayers(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.BEFORE_DRAFT)) {
@@ -41,7 +41,7 @@ async function updatePlayers(inputs, updateEvents) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "hallOfFame",
     runBefore: [updatePlayers],
     Component: HallOfFame,

@@ -1,15 +1,15 @@
-const backboard = require('backboard');
-const Promise = require('bluebird');
-const React = require('react');
-const g = require('../../globals');
-const ui = require('../../ui');
-const draft = require('../../core/draft');
-const finances = require('../../core/finances');
-const player = require('../../core/player');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const getCols = require('../../util/getCols');
-const helpers = require('../../util/helpers');
-const {DataTable, NewWindowLink, PlayerNameLabels} = require('../components');
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import React from 'react';
+import g from '../../globals';
+import ui from '../../ui';
+import draft from '../../core/draft';
+import finances from '../../core/finances';
+import player from '../../core/player';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import getCols from '../../util/getCols';
+import helpers from '../../util/helpers';
+import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
 
 class DraftScouting extends React.Component {
     constructor(props) {
@@ -188,4 +188,4 @@ DraftScouting.propTypes = {
     })).isRequired,
 };
 
-module.exports = DraftScouting;
+export default DraftScouting;

@@ -1,9 +1,9 @@
-const g = require('../globals');
-const player = require('../core/player');
-const backboard = require('backboard');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const helpers = require('../util/helpers');
-const UpcomingFreeAgents = require('./views/UpcomingFreeAgents');
+import g from '../globals';
+import player from '../core/player';
+import backboard from 'backboard';
+import bbgmViewReact from '../util/bbgmViewReact';
+import helpers from '../util/helpers';
+import UpcomingFreeAgents from './views/UpcomingFreeAgents';
 
 function get(req) {
     let season = helpers.validateSeason(req.params.season);
@@ -49,7 +49,7 @@ async function updateUpcomingFreeAgents(inputs) {
     };
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "upcomingFreeAgents",
     get,
     runBefore: [updateUpcomingFreeAgents],

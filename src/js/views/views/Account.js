@@ -1,10 +1,10 @@
-const Promise = require('bluebird');
-const classNames = require('classnames');
-const $ = require('jquery');
-const React = require('react');
-const g = require('../../globals');
-const ui = require('../../ui');
-const bbgmViewReact = require('../../util/bbgmViewReact');
+import Promise from 'bluebird';
+import classNames from 'classnames';
+import $ from 'jquery';
+import React from 'react';
+import g from '../../globals';
+import ui from '../../ui';
+import bbgmViewReact from '../../util/bbgmViewReact';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
 
@@ -250,4 +250,4 @@ Account.propTypes = {
     username: React.PropTypes.string,
 };
 
-module.exports = Account;
+export default Account;

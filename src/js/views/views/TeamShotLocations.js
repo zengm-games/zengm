@@ -1,9 +1,9 @@
-const React = require('react');
-const g = require('../../globals');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const getCols = require('../../util/getCols');
-const helpers = require('../../util/helpers');
-const {DataTable, Dropdown, NewWindowLink} = require('../components');
+import React from 'react';
+import g from '../../globals';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import getCols from '../../util/getCols';
+import helpers from '../../util/helpers';
+import {DataTable, Dropdown, NewWindowLink} from '../components';
 
 const TeamShotLocations = ({season, teams}) => {
     bbgmViewReact.title(`Team Shot Locations - ${season}`);
@@ -75,4 +75,4 @@ TeamShotLocations.propTypes = {
     teams: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
 };
 
-module.exports = TeamShotLocations;
+export default TeamShotLocations;

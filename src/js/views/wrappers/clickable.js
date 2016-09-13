@@ -1,6 +1,6 @@
-const React = require('react');
+import React from 'react';
 
-module.exports = Component => {
+export default Component => {
     return class Clickable extends React.Component {
         constructor(props) {
             super(props);

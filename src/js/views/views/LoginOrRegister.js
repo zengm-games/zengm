@@ -1,10 +1,10 @@
-const classNames = require('classnames');
-const $ = require('jquery');
-const React = require('react');
-const g = require('../../globals');
-const ui = require('../../ui');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const account = require('../../util/account');
+import classNames from 'classnames';
+import $ from 'jquery';
+import React from 'react';
+import g from '../../globals';
+import ui from '../../ui';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import account from '../../util/account';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
 
@@ -198,4 +198,4 @@ class LoginOrRegister extends React.Component {
     }
 }
 
-module.exports = LoginOrRegister;
+export default LoginOrRegister;

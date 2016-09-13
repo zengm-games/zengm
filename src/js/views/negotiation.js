@@ -1,10 +1,10 @@
-const g = require('../globals');
-const contractNegotiation = require('../core/contractNegotiation');
-const freeAgents = require('../core/freeAgents');
-const player = require('../core/player');
-const team = require('../core/team');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const Negotiation = require('./views/Negotiation');
+import g from '../globals';
+import contractNegotiation from '../core/contractNegotiation';
+import freeAgents from '../core/freeAgents';
+import player from '../core/player';
+import team from '../core/team';
+import bbgmViewReact from '../util/bbgmViewReact';
+import Negotiation from './views/Negotiation';
 
 function generateContractOptions(contract, ovr) {
     let growthFactor = 0.15;
@@ -108,7 +108,7 @@ async function updateNegotiation(inputs) {
     };
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "negotiation",
     get,
     runBefore: [updateNegotiation],

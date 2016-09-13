@@ -1,9 +1,9 @@
-const React = require('react');
-const g = require('../../globals');
-const league = require('../../core/league');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const eventLog = require('../../util/eventLog');
-const helpers = require('../../util/helpers');
+import React from 'react';
+import g from '../../globals';
+import league from '../../core/league';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import eventLog from '../../util/eventLog';
+import helpers from '../../util/helpers';
 
 class EditTeamInfo extends React.Component {
     constructor(props) {
@@ -259,4 +259,4 @@ EditTeamInfo.propTypes = {
     teams: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
 };
 
-module.exports = EditTeamInfo;
+export default EditTeamInfo;

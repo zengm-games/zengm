@@ -1,6 +1,6 @@
-const React = require('react');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const {NewWindowLink, SafeHtml} = require('../components');
+import React from 'react';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import {NewWindowLink, SafeHtml} from '../components';
 
 const Changes = ({changes}) => {
     bbgmViewReact.title('Changes');
@@ -26,4 +26,4 @@ Changes.propTypes = {
     })),
 };
 
-module.exports = Changes;
+export default Changes;

@@ -1,6 +1,6 @@
-const g = require('../globals');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const NewLeague = require('./views/NewLeague');
+import g from '../globals';
+import bbgmViewReact from '../util/bbgmViewReact';
+import NewLeague from './views/NewLeague';
 
 async function updateNewLeague() {
     let newLid = null;
@@ -26,7 +26,7 @@ async function updateNewLeague() {
     };
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "newLeague",
     inLeague: false,
     runBefore: [updateNewLeague],

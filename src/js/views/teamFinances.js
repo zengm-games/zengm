@@ -1,9 +1,9 @@
-const g = require('../globals');
-const team = require('../core/team');
-const backboard = require('backboard');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const helpers = require('../util/helpers');
-const TeamFinances = require('./views/TeamFinances');
+import g from '../globals';
+import team from '../core/team';
+import backboard from 'backboard';
+import bbgmViewReact from '../util/bbgmViewReact';
+import helpers from '../util/helpers';
+import TeamFinances from './views/TeamFinances';
 
 function get(req) {
     const inputs = {};
@@ -138,7 +138,7 @@ function updateGamesInProgress(inputs, updateEvents, state) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "teamFinances",
     get,
     runBefore: [updateTeamFinances, updateGamesInProgress],

@@ -1,11 +1,11 @@
-const Promise = require('bluebird');
-const React = require('react');
-const _ = require('underscore');
-const g = require('../globals');
-const team = require('../core/team');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const helpers = require('../util/helpers');
-const TeamRecords = require('./views/TeamRecords');
+import Promise from 'bluebird';
+import React from 'react';
+import _ from 'underscore';
+import g from '../globals';
+import team from '../core/team';
+import bbgmViewReact from '../util/bbgmViewReact';
+import helpers from '../util/helpers';
+import TeamRecords from './views/TeamRecords';
 
 function get(req) {
     return {
@@ -188,7 +188,7 @@ async function updateTeamRecords(inputs, updateEvents, state) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "teamRecords",
     get,
     runBefore: [updateTeamRecords],

@@ -1,9 +1,9 @@
-const classNames = require('classnames');
-const React = require('react');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const helpers = require('../../util/helpers');
-const {Dropdown, JumpTo, NewWindowLink} = require('../components');
-const clickable = require('../wrappers/clickable');
+import classNames from 'classnames';
+import React from 'react';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import helpers from '../../util/helpers';
+import {Dropdown, JumpTo, NewWindowLink} from '../components';
+import clickable from '../wrappers/clickable';
 
 const DivStandingsRow = clickable(({clicked, season, t, toggleClicked}) => {
     return <tr key={t.tid} className={classNames({info: t.highlight, warning: clicked})} onClick={toggleClicked}>
@@ -120,4 +120,4 @@ Standings.propTypes = {
     season: React.PropTypes.number.isRequired,
 };
 
-module.exports = Standings;
+export default Standings;

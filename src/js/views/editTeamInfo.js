@@ -1,8 +1,8 @@
-const g = require('../globals');
-const team = require('../core/team');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const helpers = require('../util/helpers');
-const EditTeamInfo = require('./views/EditTeamInfo');
+import g from '../globals';
+import team from '../core/team';
+import bbgmViewReact from '../util/bbgmViewReact';
+import helpers from '../util/helpers';
+import EditTeamInfo from './views/EditTeamInfo';
 
 async function updateTeamInfo() {
     const teams = await team.filter({
@@ -21,7 +21,7 @@ async function updateTeamInfo() {
     };
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "editTeamInfo",
     runBefore: [updateTeamInfo],
     Component: EditTeamInfo,

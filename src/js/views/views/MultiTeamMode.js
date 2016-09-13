@@ -1,9 +1,9 @@
-const React = require('react');
-const g = require('../../globals');
-const ui = require('../../ui');
-const league = require('../../core/league');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const {NewWindowLink} = require('../components');
+import React from 'react';
+import g from '../../globals';
+import ui from '../../ui';
+import league from '../../core/league';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import {NewWindowLink} from '../components';
 
 class MultiTeamMode extends React.Component {
     constructor(props) {
@@ -93,4 +93,4 @@ MultiTeamMode.propTypes = {
     userTids: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
 };
 
-module.exports = MultiTeamMode;
+export default MultiTeamMode;

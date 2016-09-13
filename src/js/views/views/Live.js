@@ -1,8 +1,8 @@
-const classNames = require('classnames');
-const React = require('react');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const {liveGame} = require('../../util/actions');
-const {NewWindowLink} = require('../components');
+import classNames from 'classnames';
+import React from 'react';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import {liveGame} from '../../util/actions';
+import {NewWindowLink} from '../components';
 
 const Live = ({games, gamesInProgress}) => {
     bbgmViewReact.title('Live Game Simulation');
@@ -41,4 +41,4 @@ Live.propTypes = {
     gamesInProgress: React.PropTypes.bool,
 };
 
-module.exports = Live;
+export default Live;

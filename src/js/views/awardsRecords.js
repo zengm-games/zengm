@@ -1,8 +1,8 @@
-const g = require('../globals');
-const _ = require('underscore');
-const player = require('../core/player');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const AwardsRecords = require('./views/AwardsRecords');
+import g from '../globals';
+import _ from 'underscore';
+import player from '../core/player';
+import bbgmViewReact from '../util/bbgmViewReact';
+import AwardsRecords from './views/AwardsRecords';
 
 function get(req) {
     return {
@@ -140,7 +140,7 @@ async function updateAwardsRecords(inputs, updateEvents, state) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "awardsRecords",
     get,
     runBefore: [updateAwardsRecords],

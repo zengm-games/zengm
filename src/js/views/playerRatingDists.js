@@ -1,8 +1,8 @@
-const g = require('../globals');
-const player = require('../core/player');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const helpers = require('../util/helpers');
-const PlayerRatingDists = require('./views/PlayerRatingDists');
+import g from '../globals';
+import player from '../core/player';
+import bbgmViewReact from '../util/bbgmViewReact';
+import helpers from '../util/helpers';
+import PlayerRatingDists from './views/PlayerRatingDists';
 
 function get(req) {
     return {
@@ -41,7 +41,7 @@ async function updatePlayers(inputs, updateEvents, state) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "playerRatingDists",
     get,
     runBefore: [updatePlayers],

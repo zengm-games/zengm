@@ -1,9 +1,9 @@
-const g = require('../globals');
-const player = require('../core/player');
-const Promise = require('bluebird');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const helpers = require('../util/helpers');
-const NegotiationList = require('./views/NegotiationList');
+import g from '../globals';
+import player from '../core/player';
+import Promise from 'bluebird';
+import bbgmViewReact from '../util/bbgmViewReact';
+import helpers from '../util/helpers';
+import NegotiationList from './views/NegotiationList';
 
 function get() {
     if (g.phase !== g.PHASE.RESIGN_PLAYERS) {
@@ -58,7 +58,7 @@ async function updateNegotiationList() {
     };
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "negotiationList",
     get,
     runBefore: [updateNegotiationList],

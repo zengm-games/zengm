@@ -1,6 +1,6 @@
-const g = require('../globals');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const Inbox = require('./views/Inbox');
+import g from '../globals';
+import bbgmViewReact from '../util/bbgmViewReact';
+import Inbox from './views/Inbox';
 
 async function updateInbox() {
     const messages = await g.dbl.messages.getAll();
@@ -21,7 +21,7 @@ async function updateInbox() {
     };
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "inbox",
     runBefore: [updateInbox],
     Component: Inbox,

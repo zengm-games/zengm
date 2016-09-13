@@ -1,10 +1,10 @@
-const classNames = require('classnames');
-const React = require('react');
-const ui = require('../../ui');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const helpers = require('../../util/helpers');
-const {Dropdown, NewWindowLink, PlayerNameLabels} = require('../components');
-const clickable = require('../wrappers/clickable');
+import classNames from 'classnames';
+import React from 'react';
+import ui from '../../ui';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import helpers from '../../util/helpers';
+import {Dropdown, NewWindowLink, PlayerNameLabels} from '../components';
+import clickable from '../wrappers/clickable';
 
 const StatsRow = clickable(({clicked, i, numPlayers, p, toggleClicked}) => {
     const classes = classNames({
@@ -264,4 +264,4 @@ GameLog.propTypes = {
     season: React.PropTypes.number.isRequired,
 };
 
-module.exports = GameLog;
+export default GameLog;

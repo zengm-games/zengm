@@ -1,10 +1,10 @@
-const g = require('../globals');
-const player = require('../core/player');
-const team = require('../core/team');
-const Promise = require('bluebird');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const helpers = require('../util/helpers');
-const History = require('./views/History');
+import g from '../globals';
+import player from '../core/player';
+import team from '../core/team';
+import Promise from 'bluebird';
+import bbgmViewReact from '../util/bbgmViewReact';
+import helpers from '../util/helpers';
+import History from './views/History';
 
 function get(req) {
     let season = helpers.validateSeason(req.params.season);
@@ -99,7 +99,7 @@ async function updateHistory(inputs, updateEvents, state) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "history",
     get,
     runBefore: [updateHistory],

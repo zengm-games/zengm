@@ -1,10 +1,10 @@
-const React = require('react');
-const g = require('../../globals');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const getCols = require('../../util/getCols');
-const helpers = require('../../util/helpers');
-const {DataTable, Dropdown, JumpTo, NewWindowLink} = require('../components');
-const _ = require('underscore');
+import React from 'react';
+import g from '../../globals';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import getCols from '../../util/getCols';
+import helpers from '../../util/helpers';
+import {DataTable, Dropdown, JumpTo, NewWindowLink} from '../components';
+import _ from 'underscore';
 
 const TeamStats = ({season, stats, teams}) => {
     bbgmViewReact.title(`Team Stats - ${season}`);
@@ -141,4 +141,4 @@ TeamStats.propTypes = {
     teams: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
 };
 
-module.exports = TeamStats;
+export default TeamStats;

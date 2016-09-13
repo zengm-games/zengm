@@ -1,11 +1,11 @@
-const g = require('../globals');
-const player = require('../core/player');
-const team = require('../core/team');
-const trade = require('../core/trade');
-const Promise = require('bluebird');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const helpers = require('../util/helpers');
-const Trade = require('./views/Trade');
+import g from '../globals';
+import player from '../core/player';
+import team from '../core/team';
+import trade from '../core/trade';
+import Promise from 'bluebird';
+import bbgmViewReact from '../util/bbgmViewReact';
+import helpers from '../util/helpers';
+import Trade from './views/Trade';
 
 // This relies on vars being populated, so it can't be called in parallel with updateTrade
 async function updateSummary(vars) {
@@ -167,7 +167,7 @@ async function updateTrade(inputs) {
     return vars;
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "trade",
     get,
     runBefore: [updateTrade],

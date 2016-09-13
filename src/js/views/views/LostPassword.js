@@ -1,7 +1,7 @@
-const $ = require('jquery');
-const React = require('react');
-const g = require('../../globals');
-const bbgmViewReact = require('../../util/bbgmViewReact');
+import $ from 'jquery';
+import React from 'react';
+import g from '../../globals';
+import bbgmViewReact from '../../util/bbgmViewReact';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
 
@@ -71,4 +71,4 @@ class LostPassword extends React.Component {
     }
 }
 
-module.exports = LostPassword;
+export default LostPassword;

@@ -1,7 +1,7 @@
-const g = require('../globals');
-const team = require('../core/team');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const NewTeam = require('./views/NewTeam');
+import g from '../globals';
+import team from '../core/team';
+import bbgmViewReact from '../util/bbgmViewReact';
+import NewTeam from './views/NewTeam';
 
 async function updateTeamSelect() {
     let teams = await team.filter({
@@ -29,7 +29,7 @@ async function updateTeamSelect() {
     };
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "newTeam",
     runBefore: [updateTeamSelect],
     Component: NewTeam,

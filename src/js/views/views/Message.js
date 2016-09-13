@@ -1,7 +1,7 @@
-const React = require('react');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const helpers = require('../../util/helpers');
-const {NewWindowLink, SafeHtml} = require('../components');
+import React from 'react';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import helpers from '../../util/helpers';
+import {NewWindowLink, SafeHtml} from '../components';
 
 const Message = ({message = {}}) => {
     bbgmViewReact.title(`Message From ${message.from}`);
@@ -23,4 +23,4 @@ Message.propTypes = {
     }).isRequired,
 };
 
-module.exports = Message;
+export default Message;

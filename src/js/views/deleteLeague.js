@@ -1,9 +1,9 @@
-const db = require('../db');
-const g = require('../globals');
-const backboard = require('backboard');
-const Promise = require('bluebird');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const DeleteLeague = require('./views/DeleteLeague');
+import db from '../db';
+import g from '../globals';
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import bbgmViewReact from '../util/bbgmViewReact';
+import DeleteLeague from './views/DeleteLeague';
 
 function get(req) {
     return {
@@ -41,7 +41,7 @@ async function updateDeleteLeague(inputs) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "deleteLeague",
     inLeague: false,
     get,

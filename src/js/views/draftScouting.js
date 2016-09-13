@@ -1,8 +1,8 @@
-const g = require('../globals');
-const player = require('../core/player');
-const Promise = require('bluebird');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const DraftScouting = require('./views/DraftScouting');
+import g from '../globals';
+import player from '../core/player';
+import Promise from 'bluebird';
+import bbgmViewReact from '../util/bbgmViewReact';
+import DraftScouting from './views/DraftScouting';
 
 async function addSeason(season, tid) {
     let playersAll = await g.dbl.players.index('tid').getAll(tid);
@@ -66,7 +66,7 @@ async function updateDraftScouting(inputs, updateEvents) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "draftScouting",
     runBefore: [updateDraftScouting],
     Component: DraftScouting,

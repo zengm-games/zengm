@@ -1,9 +1,9 @@
-const React = require('react');
-const g = require('../../globals');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const getCols = require('../../util/getCols');
-const helpers = require('../../util/helpers');
-const {DataTable, NewWindowLink} = require('../components');
+import React from 'react';
+import g from '../../globals';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import getCols from '../../util/getCols';
+import helpers from '../../util/helpers';
+import {DataTable, NewWindowLink} from '../components';
 
 const PowerRankings = ({teams}) => {
     bbgmViewReact.title('Power Rankings');
@@ -60,4 +60,4 @@ PowerRankings.propTypes = {
     })).isRequired,
 };
 
-module.exports = PowerRankings;
+export default PowerRankings;

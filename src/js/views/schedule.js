@@ -1,10 +1,10 @@
-const g = require('../globals');
-const season = require('../core/season');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const helpers = require('../util/helpers');
-const Promise = require('bluebird');
-const Schedule = require('./views/Schedule');
-const team = require('../core/team');
+import g from '../globals';
+import season from '../core/season';
+import bbgmViewReact from '../util/bbgmViewReact';
+import helpers from '../util/helpers';
+import Promise from 'bluebird';
+import Schedule from './views/Schedule';
+import team from '../core/team';
 
 function get(req) {
     const inputs = {};
@@ -89,7 +89,7 @@ async function updateCompleted(inputs, updateEvents, state, setState) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "schedule",
     get,
     runBefore: [updateUpcoming, updateCompleted],

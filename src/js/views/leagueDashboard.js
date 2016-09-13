@@ -1,12 +1,12 @@
-const g = require('../globals');
-const player = require('../core/player');
-const season = require('../core/season');
-const team = require('../core/team');
-const backboard = require('backboard');
-const Promise = require('bluebird');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const helpers = require('../util/helpers');
-const LeagueDashboard = require('./views/LeagueDashboard');
+import g from '../globals';
+import player from '../core/player';
+import season from '../core/season';
+import team from '../core/team';
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import bbgmViewReact from '../util/bbgmViewReact';
+import helpers from '../util/helpers';
+import LeagueDashboard from './views/LeagueDashboard';
 
 async function updateInbox(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0) {
@@ -321,7 +321,7 @@ async function updateStandings(inputs, updateEvents) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "leagueDashboard",
     runBefore: [
         updateInbox,

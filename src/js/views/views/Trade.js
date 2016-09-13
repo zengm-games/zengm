@@ -1,13 +1,13 @@
-const React = require('react');
-const g = require('../../globals');
-const ui = require('../../ui');
-const league = require('../../core/league');
-const trade = require('../../core/trade');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const getCols = require('../../util/getCols');
-const helpers = require('../../util/helpers');
-const {DataTable, NewWindowLink, PlayerNameLabels} = require('../components');
-const classNames = require('classnames');
+import React from 'react';
+import g from '../../globals';
+import ui from '../../ui';
+import league from '../../core/league';
+import trade from '../../core/trade';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import getCols from '../../util/getCols';
+import helpers from '../../util/helpers';
+import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
+import classNames from 'classnames';
 
 const genRows = (players, handleChangeAsset) => {
     return players.map(p => {
@@ -295,4 +295,4 @@ Trade.propTypes = {
     won: React.PropTypes.number.isRequired,
 };
 
-module.exports = Trade;
+export default Trade;

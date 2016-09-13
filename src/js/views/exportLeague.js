@@ -1,7 +1,7 @@
-const bbgmViewReact = require('../util/bbgmViewReact');
-const ExportLeague = require('./views/ExportLeague');
+import bbgmViewReact from '../util/bbgmViewReact';
+import ExportLeague from './views/ExportLeague';
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "exportLeague",
     Component: ExportLeague,
 });

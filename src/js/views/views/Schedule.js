@@ -1,8 +1,8 @@
-const classNames = require('classnames');
-const React = require('react');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const helpers = require('../../util/helpers');
-const {Dropdown, NewWindowLink} = require('../components');
+import classNames from 'classnames';
+import React from 'react';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import helpers from '../../util/helpers';
+import {Dropdown, NewWindowLink} from '../components';
 
 const Schedule = ({abbrev, completed, season, teamInfo, upcoming}) => {
     bbgmViewReact.title('Schedule');
@@ -59,4 +59,4 @@ Schedule.propTypes = {
     upcoming: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
 };
 
-module.exports = Schedule;
+export default Schedule;

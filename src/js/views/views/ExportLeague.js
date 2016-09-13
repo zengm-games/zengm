@@ -1,8 +1,8 @@
-const React = require('react');
-const g = require('../../globals');
-const league = require('../../core/league');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const {DownloadDataLink} = require('../components');
+import React from 'react';
+import g from '../../globals';
+import league from '../../core/league';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import {DownloadDataLink} from '../components';
 
 const categories = [{
     objectStores: "players,releasedPlayers,awards",
@@ -151,4 +151,4 @@ class ExportLeague extends React.Component {
     }
 }
 
-module.exports = ExportLeague;
+export default ExportLeague;

@@ -1,9 +1,9 @@
-const classNames = require('classnames');
-const React = require('react');
-const g = require('../../globals');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const helpers = require('../../util/helpers');
-const {NewWindowLink, PlayerNameLabels, PlayoffMatchup, RatingWithChange} = require('../components');
+import classNames from 'classnames';
+import React from 'react';
+import g from '../../globals';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import helpers from '../../util/helpers';
+import {NewWindowLink, PlayerNameLabels, PlayoffMatchup, RatingWithChange} from '../components';
 
 const LeagueDashboard = ({abbrev, ast, astRank, att, cash, completed, confTeams, leagueLeaders, lost, messages, name, oppPts, oppPtsRank, payroll, playoffRoundsWon, playoffsByConference, profit, pts, ptsRank, rank, region, revenue, salaryCap, season, series, seriesTitle, showPlayoffSeries, starters, teamLeaders, trb, trbRank, upcoming, won}) => {
     bbgmViewReact.title('Dashboard');
@@ -221,4 +221,4 @@ LeagueDashboard.propTypes = {
     won: React.PropTypes.number.isRequired,
 };
 
-module.exports = LeagueDashboard;
+export default LeagueDashboard;

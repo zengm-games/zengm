@@ -1,7 +1,7 @@
-const bbgmViewReact = require('../util/bbgmViewReact');
-const LostPassword = require('./views/LostPassword');
+import bbgmViewReact from '../util/bbgmViewReact';
+import LostPassword from './views/LostPassword';
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "lostPassword",
     inLeague: false,
     Component: LostPassword,

@@ -1,6 +1,6 @@
-const bbgmViewReact = require('../util/bbgmViewReact');
-const helpers = require('../util/helpers');
-const ExportStats = require('./views/ExportStats');
+import bbgmViewReact from '../util/bbgmViewReact';
+import helpers from '../util/helpers';
+import ExportStats from './views/ExportStats';
 
 function updateExportStats(inputs, updateEvents) {
     if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("newPhase") >= 0 || updateEvents.indexOf("dbChange") >= 0) {
@@ -21,7 +21,7 @@ function updateExportStats(inputs, updateEvents) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "exportStats",
     runBefore: [updateExportStats],
     Component: ExportStats,

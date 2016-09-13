@@ -1,7 +1,7 @@
-const g = require('../globals');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const helpers = require('../util/helpers');
-const GameLog = require('./views/GameLog');
+import g from '../globals';
+import bbgmViewReact from '../util/bbgmViewReact';
+import helpers from '../util/helpers';
+import GameLog from './views/GameLog';
 
 /**
  * Generate a box score.
@@ -158,7 +158,7 @@ async function updateGamesList(inputs, updateEvents, state) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "gameLog",
     get,
     runBefore: [updateBoxScore, updateTeamSeason],

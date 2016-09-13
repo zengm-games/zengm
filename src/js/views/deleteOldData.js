@@ -1,7 +1,7 @@
-const bbgmViewReact = require('../util/bbgmViewReact');
-const DeleteOldData = require('./views/DeleteOldData');
+import bbgmViewReact from '../util/bbgmViewReact';
+import DeleteOldData from './views/DeleteOldData';
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "deleteOldData",
     Component: DeleteOldData,
 });

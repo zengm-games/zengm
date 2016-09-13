@@ -1,9 +1,9 @@
-const g = require('../globals');
-const team = require('../core/team');
-const backboard = require('backboard');
-const Promise = require('bluebird');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const PowerRankings = require('./views/PowerRankings');
+import g from '../globals';
+import team from '../core/team';
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import bbgmViewReact from '../util/bbgmViewReact';
+import PowerRankings from './views/PowerRankings';
 
 async function updatePowerRankings(inputs, updateEvents) {
     if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0) {
@@ -79,7 +79,7 @@ async function updatePowerRankings(inputs, updateEvents) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "powerRankings",
     runBefore: [updatePowerRankings],
     Component: PowerRankings,

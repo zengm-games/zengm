@@ -1,6 +1,6 @@
-const React = require('react');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const {Dropdown, JumpTo, NewWindowLink, PlayoffMatchup} = require('../components');
+import React from 'react';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import {Dropdown, JumpTo, NewWindowLink, PlayoffMatchup} from '../components';
 
 const Playoffs = ({confNames, finalMatchups, matchups, numPlayoffRounds, season, series}) => {
     bbgmViewReact.title(`Playoffs - ${season}`);
@@ -42,4 +42,4 @@ Playoffs.propTypes = {
     series: React.PropTypes.arrayOf(React.PropTypes.arrayOf(React.PropTypes.object)).isRequired,
 };
 
-module.exports = Playoffs;
+export default Playoffs;

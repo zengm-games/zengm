@@ -1,9 +1,9 @@
-const React = require('react');
-const g = require('../../globals');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const getCols = require('../../util/getCols');
-const helpers = require('../../util/helpers');
-const {DataTable, NewWindowLink} = require('../components');
+import React from 'react';
+import g from '../../globals';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import getCols from '../../util/getCols';
+import helpers from '../../util/helpers';
+import {DataTable, NewWindowLink} from '../components';
 
 const HallOfFame = ({players}) => {
     bbgmViewReact.title('Hall of Fame');
@@ -72,4 +72,4 @@ HallOfFame.propTypes = {
     players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
 };
 
-module.exports = HallOfFame;
+export default HallOfFame;

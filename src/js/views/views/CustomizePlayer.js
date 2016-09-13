@@ -1,14 +1,28 @@
 /* eslint react/jsx-no-bind: "off" */
 
-const faces = require('facesjs');
-const React = require('react');
-const g = require('../../globals');
-const ui = require('../../ui');
-const league = require('../../core/league');
-const player = require('../../core/player');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const helpers = require('../../util/helpers');
-const {NewWindowLink, PlayerPicture} = require('../components');
+/* eslint react/jsx-no-bind: "off" */
+
+/* eslint react/jsx-no-bind: "off" */
+
+/* eslint react/jsx-no-bind: "off" */
+
+/* eslint react/jsx-no-bind: "off" */
+
+/* eslint react/jsx-no-bind: "off" */
+
+/* eslint react/jsx-no-bind: "off" */
+
+/* eslint react/jsx-no-bind: "off" */
+
+import faces from 'facesjs';
+import React from 'react';
+import g from '../../globals';
+import ui from '../../ui';
+import league from '../../core/league';
+import player from '../../core/player';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import helpers from '../../util/helpers';
+import {NewWindowLink, PlayerPicture} from '../components';
 
 const positions = ["PG", "SG", "SF", "PF", "C", "G", "GF", "F", "FC"];
 const faceOptions = {
@@ -528,4 +542,4 @@ CustomizePlayer.propTypes = {
     })).isRequired,
 };
 
-module.exports = CustomizePlayer;
+export default CustomizePlayer;

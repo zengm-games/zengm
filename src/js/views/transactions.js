@@ -1,7 +1,7 @@
-const g = require('../globals');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const helpers = require('../util/helpers');
-const Transactions = require('./views/Transactions');
+import g from '../globals';
+import bbgmViewReact from '../util/bbgmViewReact';
+import helpers from '../util/helpers';
+import Transactions from './views/Transactions';
 
 function get(req) {
     let abbrev;
@@ -86,7 +86,7 @@ async function updateEventLog(inputs, updateEvents, state) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "transactions",
     get,
     runBefore: [updateEventLog],

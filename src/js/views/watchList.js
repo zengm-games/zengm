@@ -1,8 +1,8 @@
-const g = require('../globals');
-const freeAgents = require('../core/freeAgents');
-const player = require('../core/player');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const WatchList = require('./views/WatchList');
+import g from '../globals';
+import freeAgents from '../core/freeAgents';
+import player from '../core/player';
+import bbgmViewReact from '../util/bbgmViewReact';
+import WatchList from './views/WatchList';
 
 function get(req) {
     return {
@@ -49,7 +49,7 @@ async function updatePlayers(inputs, updateEvents, state) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "watchList",
     get,
     runBefore: [updatePlayers],

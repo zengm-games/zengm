@@ -1,9 +1,9 @@
-const React = require('react');
-const g = require('../../globals');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const getCols = require('../../util/getCols');
-const helpers = require('../../util/helpers');
-const {DataTable, NewWindowLink, PlayerNameLabels} = require('../components');
+import React from 'react';
+import g from '../../globals';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import getCols from '../../util/getCols';
+import helpers from '../../util/helpers';
+import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
 
 const awardName = (award, season) => {
     if (!award) {
@@ -101,4 +101,4 @@ HistoryAll.propTypes = {
     seasons: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
 };
 
-module.exports = HistoryAll;
+export default HistoryAll;

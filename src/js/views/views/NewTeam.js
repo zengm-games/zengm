@@ -1,10 +1,10 @@
-const React = require('react');
-const g = require('../../globals');
-const ui = require('../../ui');
-const league = require('../../core/league');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const helpers = require('../../util/helpers');
-const {NewWindowLink} = require('../components');
+import React from 'react';
+import g from '../../globals';
+import ui from '../../ui';
+import league from '../../core/league';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import helpers from '../../util/helpers';
+import {NewWindowLink} from '../components';
 
 class NewTeam extends React.Component {
     constructor(props) {
@@ -100,4 +100,4 @@ NewTeam.propTypes = {
     })).isRequired,
 };
 
-module.exports = NewTeam;
+export default NewTeam;

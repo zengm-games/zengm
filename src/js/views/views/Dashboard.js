@@ -1,5 +1,5 @@
-const React = require('react');
-const bbgmViewReact = require('../../util/bbgmViewReact');
+import React from 'react';
+import bbgmViewReact from '../../util/bbgmViewReact';
 
 const Dashboard = ({leagues, otherUrl}) => {
     bbgmViewReact.title('Dashboard');
@@ -42,4 +42,4 @@ Dashboard.propTypes = {
     otherUrl: React.PropTypes.string,
 };
 
-module.exports = Dashboard;
+export default Dashboard;

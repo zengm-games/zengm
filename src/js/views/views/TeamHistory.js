@@ -1,9 +1,9 @@
-const React = require('react');
-const g = require('../../globals');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const getCols = require('../../util/getCols');
-const helpers = require('../../util/helpers');
-const {DataTable, Dropdown, NewWindowLink, PlayerNameLabels, RecordAndPlayoffs} = require('../components');
+import React from 'react';
+import g from '../../globals';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import getCols from '../../util/getCols';
+import helpers from '../../util/helpers';
+import {DataTable, Dropdown, NewWindowLink, PlayerNameLabels, RecordAndPlayoffs} from '../components';
 
 const TeamHistory = ({abbrev, bestRecord, championships, history, players, playoffAppearances, team, totalLost, totalWon, worstRecord}) => {
     bbgmViewReact.title('Team History');
@@ -124,4 +124,4 @@ TeamHistory.propTypes = {
     }).isRequired,
 };
 
-module.exports = TeamHistory;
+export default TeamHistory;

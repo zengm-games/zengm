@@ -1,9 +1,9 @@
-const React = require('react');
-const g = require('../../globals');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const getCols = require('../../util/getCols');
-const helpers = require('../../util/helpers');
-const {DataTable, Dropdown, JumpTo, NewWindowLink, PlayerNameLabels} = require('../components');
+import React from 'react';
+import g from '../../globals';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import getCols from '../../util/getCols';
+import helpers from '../../util/helpers';
+import {DataTable, Dropdown, JumpTo, NewWindowLink, PlayerNameLabels} from '../components';
 
 const PlayerRatings = ({abbrev, players, season}) => {
     bbgmViewReact.title(`Player Ratings - ${season}`);
@@ -73,5 +73,5 @@ PlayerRatings.propTypes = {
     season: React.PropTypes.number.isRequired,
 };
 
-module.exports = PlayerRatings;
+export default PlayerRatings;
 

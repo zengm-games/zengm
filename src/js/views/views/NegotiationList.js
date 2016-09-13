@@ -1,11 +1,11 @@
-const React = require('react');
-const g = require('../../globals');
-const freeAgents = require('../../core/freeAgents');
-const {negotiate} = require('../../util/actions');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const getCols = require('../../util/getCols');
-const helpers = require('../../util/helpers');
-const {DataTable, NewWindowLink, PlayerNameLabels} = require('../components');
+import React from 'react';
+import g from '../../globals';
+import freeAgents from '../../core/freeAgents';
+import {negotiate} from '../../util/actions';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import getCols from '../../util/getCols';
+import helpers from '../../util/helpers';
+import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
 
 const NegotiationList = ({players}) => {
     bbgmViewReact.title('Re-sign Players');
@@ -67,4 +67,4 @@ NegotiationList.propTypes = {
     players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
 };
 
-module.exports = NegotiationList;
+export default NegotiationList;

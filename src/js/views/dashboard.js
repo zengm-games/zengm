@@ -1,6 +1,6 @@
-const g = require('../globals');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const Dashboard = require('./views/Dashboard');
+import g from '../globals';
+import bbgmViewReact from '../util/bbgmViewReact';
+import Dashboard from './views/Dashboard';
 
 async function updateDashboard() {
     const leagues = await g.dbm.leagues.getAll();
@@ -32,7 +32,7 @@ async function updateDashboard() {
     };
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "dashboard",
     inLeague: false,
     runBefore: [updateDashboard],

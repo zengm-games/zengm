@@ -1,5 +1,5 @@
-const bbgmViewReact = require('../util/bbgmViewReact');
-const ResetPassword = require('./views/ResetPassword');
+import bbgmViewReact from '../util/bbgmViewReact';
+import ResetPassword from './views/ResetPassword';
 
 function get(req) {
     return {
@@ -13,7 +13,7 @@ function updateToken(inputs) {
     };
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "resetPassword",
     get,
     inLeague: false,

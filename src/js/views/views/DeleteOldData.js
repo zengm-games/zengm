@@ -1,9 +1,9 @@
-const React = require('react');
-const g = require('../../globals');
-const league = require('../../core/league');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const eventLog = require('../../util/eventLog');
-const {NewWindowLink} = require('../components');
+import React from 'react';
+import g from '../../globals';
+import league from '../../core/league';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import eventLog from '../../util/eventLog';
+import {NewWindowLink} from '../components';
 
 class DeleteOldData extends React.Component {
     constructor(props) {
@@ -184,4 +184,4 @@ class DeleteOldData extends React.Component {
     }
 }
 
-module.exports = DeleteOldData;
+export default DeleteOldData;

@@ -1,7 +1,7 @@
-const g = require('../globals');
-const season = require('../core/season');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const Live = require('./views/Live');
+import g from '../globals';
+import season from '../core/season';
+import bbgmViewReact from '../util/bbgmViewReact';
+import Live from './views/Live';
 
 async function updateGamesList() {
     const games = await season.getSchedule({oneDay: true});
@@ -31,7 +31,7 @@ function updateGamesInProgress(inputs, updateEvents) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "live",
     runBefore: [updateGamesList, updateGamesInProgress],
     Component: Live,

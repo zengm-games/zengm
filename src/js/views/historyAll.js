@@ -1,8 +1,8 @@
-const g = require('../globals');
-const Promise = require('bluebird');
-const team = require('../core/team');
-const bbgmViewReact = require('../util/bbgmViewReact');
-const HistoryAll = require('./views/HistoryAll');
+import g from '../globals';
+import Promise from 'bluebird';
+import team from '../core/team';
+import bbgmViewReact from '../util/bbgmViewReact';
+import HistoryAll from './views/HistoryAll';
 
 async function updateHistory(inputs, updateEvents) {
     if (updateEvents.indexOf("firstRun") >= 0) {
@@ -80,7 +80,7 @@ async function updateHistory(inputs, updateEvents) {
     }
 }
 
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "historyAll",
     runBefore: [updateHistory],
     Component: HistoryAll,

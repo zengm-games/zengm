@@ -1,11 +1,11 @@
-const classNames = require('classnames');
-const React = require('react');
-const ui = require('../../ui');
-const league = require('../../core/league');
-const bbgmViewReact = require('../../util/bbgmViewReact');
-const eventLog = require('../../util/eventLog');
-const helpers = require('../../util/helpers');
-const {HelpPopover, NewWindowLink} = require('../components');
+import classNames from 'classnames';
+import React from 'react';
+import ui from '../../ui';
+import league from '../../core/league';
+import bbgmViewReact from '../../util/bbgmViewReact';
+import eventLog from '../../util/eventLog';
+import helpers from '../../util/helpers';
+import {HelpPopover, NewWindowLink} from '../components';
 
 class GodMode extends React.Component {
     constructor(props) {
@@ -215,4 +215,4 @@ GodMode.propTypes = {
     salaryCap: React.PropTypes.number.isRequired,
 };
 
-module.exports = GodMode;
+export default GodMode;

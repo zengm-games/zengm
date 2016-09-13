@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     meta: {
         phaseText: "2015 playoffs",
         name: "League 12",

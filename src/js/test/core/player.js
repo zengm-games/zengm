@@ -1,9 +1,10 @@
 /*eslint no-unused-expressions: 0*/
-const assert = require('assert');
-const g = require('../../globals');
-const player = require('../../core/player');
-const _ = require('underscore');
-const helpers = require('../../util/helpers');
+/*eslint no-unused-expressions: 0*/
+import assert from 'assert';
+import g from '../../globals';
+import player from '../../core/player';
+import _ from 'underscore';
+import helpers from '../../util/helpers';
 
 // Synchronous version of player.addStatsRow which does not require IndexedDB
 const addStatsRow = (p, playoffs = false) => {

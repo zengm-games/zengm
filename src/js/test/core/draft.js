@@ -1,10 +1,10 @@
-const assert = require('assert');
-const db = require('../../db');
-const g = require('../../globals');
-const draft = require('../../core/draft');
-const league = require('../../core/league');
-const team = require('../../core/team');
-const sampleTiebreakers = require('../fixtures/sampleTiebreakers');
+import assert from 'assert';
+import db from '../../db';
+import g from '../../globals';
+import draft from '../../core/draft';
+import league from '../../core/league';
+import team from '../../core/team';
+import sampleTiebreakers from '../fixtures/sampleTiebreakers';
 
 describe("core/draft", () => {
     before(async () => {

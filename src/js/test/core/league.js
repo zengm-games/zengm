@@ -1,8 +1,8 @@
-const assert = require('assert');
-const db = require('../../db');
-const g = require('../../globals');
-const league = require('../../core/league');
-const testHelpers = require('../helpers');
+import assert from 'assert';
+import db from '../../db';
+import g from '../../globals';
+import league from '../../core/league';
+import testHelpers from '../helpers';
 
 describe("core/league", () => {
     before(async () => {
@@ -55,7 +55,7 @@ describe("core/league", () => {
             assert.equal(gTest.daysLeft, 0);
             assert.equal(gTest.showFirstOwnerMessage, true);
 
-            assert.equal(Object.keys(gTest).length, 31);
+            assert.equal(Object.keys(gTest).length, 38);
         });
         it("should initialize draftOrder object store", async () => {
             const draftOrder = await g.dbl.draftOrder.getAll();

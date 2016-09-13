@@ -4,6 +4,8 @@ import _ from 'underscore';
 import g from '../globals';
 import ui from '../ui';
 import finances from './finances';
+import league from './league';
+import phase from './phase';
 import player from './player';
 import team from './team';
 import eventLog from '../util/eventLog';
@@ -529,14 +531,10 @@ async function untilUserOrEnd() {
 
     // Called after either the draft is over or it's the user's pick
     const afterDoneAuto = async () => {
-        const league = require('./league').default;
-
         await setOrder(null, draftOrder);
 
         // Is draft over?;
         if (draftOrder.length === 0) {
-            const phase = require('./phase').default;
-
             // Fantasy draft special case!
             if (g.phase === g.PHASE.FANTASY_DRAFT) {
                 await g.dbl.tx(["players", "teamSeasons"], "readwrite", async tx => {

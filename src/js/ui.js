@@ -1,5 +1,6 @@
 import Promise from 'bluebird';
 import g from './globals';
+import league from './core/league';
 import Davis from './lib/davis';
 import helpers from './util/helpers';
 import lock from './util/lock';
@@ -151,7 +152,7 @@ async function updateStatus(statusText) {
     if (statusText === undefined) {
         g.emitter.emit('updateTopMenu', {statusText: oldStatus});
     } else if (statusText !== oldStatus) {
-        await require('./core/league').default.setGameAttributesComplete({statusText});
+        await league.setGameAttributesComplete({statusText});
         g.emitter.emit('updateTopMenu', {statusText});
     }
 }
@@ -170,7 +171,7 @@ async function updatePhase(phaseText) {
     if (phaseText === undefined) {
         g.emitter.emit('updateTopMenu', {phaseText: oldPhaseText});
     } else if (phaseText !== oldPhaseText) {
-        await require('./core/league').default.setGameAttributesComplete({phaseText});
+        await league.setGameAttributesComplete({phaseText});
         g.emitter.emit('updateTopMenu', {phaseText});
 
         // Update phase in meta database. No need to have this block updating the UI or anything.

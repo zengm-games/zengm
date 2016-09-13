@@ -1,6 +1,7 @@
 import Promise from 'bluebird';
 import Backboard from 'backboard';
 import g from './globals';
+import league from './core/league';
 import Davis from './lib/davis';
 import eventLog from './util/eventLog';
 import helpers from './util/helpers';
@@ -230,7 +231,6 @@ async function reset() {
         Davis.location.assign(new Davis.Request("/"));
     }
 
-    const league = require('./core/league');
     await Promise.all(leagues.map(l => league.remove(l.lid)));
 
     // Delete any current meta database

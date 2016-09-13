@@ -286,4 +286,4 @@ class Controller extends React.Component {
     }
 }
 
-module.exports = Controller;
+export default Controller;

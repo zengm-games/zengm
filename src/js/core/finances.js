@@ -1,6 +1,7 @@
 import backboard from 'backboard';
 import Promise from 'bluebird';
 import g from '../globals';
+import team from './team';
 
 /**
  * Assess the payroll and apply minimum and luxury taxes.
@@ -12,7 +13,7 @@ import g from '../globals';
 async function assessPayrollMinLuxury(tx) {
     let collectedTax = 0;
 
-    const payrolls = await require('./team').default.getPayrolls(tx);
+    const payrolls = await team.getPayrolls(tx);
 
     await tx.teamSeasons.index("season, tid").iterate(backboard.bound([g.season], [g.season, '']), teamSeason => {
         // Store payroll

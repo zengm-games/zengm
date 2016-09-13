@@ -13,6 +13,8 @@ rollup
 
 REACT
 
+when navigating to another page, cancel any pending update (or at least don't apply it)
+
 when live
   confirm no ads on mobile
   make sure account emails work in prod

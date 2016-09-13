@@ -2,6 +2,7 @@ import Promise from 'bluebird';
 import g from '../globals';
 import ui from '../ui';
 import freeAgents from './freeAgents';
+import league from './league';
 import player from './player';
 import team from './team';
 import eventLog from '../util/eventLog';
@@ -60,7 +61,7 @@ async function create(tx, pid, resigning, tid = g.userTid) {
     };
 
     await tx.negotiations.add(negotiation);
-    require('../core/league').default.updateLastDbChange();
+    league.updateLastDbChange();
     ui.updateStatus("Contract negotiation");
     return await ui.updatePlayMenu(tx);
 }
@@ -86,7 +87,7 @@ async function cancel(pid) {
         }
     });
 
-    require('../core/league').default.updateLastDbChange();
+    league.updateLastDbChange();
 }
 
 /**
@@ -100,7 +101,7 @@ async function cancel(pid) {
  */
 async function cancelAll(tx) {
     await tx.negotiations.clear();
-    require('../core/league').default.updateLastDbChange();
+    league.updateLastDbChange();
     ui.updateStatus("Idle");
     return await ui.updatePlayMenu(tx);
 }
@@ -175,7 +176,7 @@ async function accept(pid, amount, exp) {
 
     await cancel(pid);
 
-    require('../core/league').default.updateLastDbChange();
+    league.updateLastDbChange();
 }
 
 export default {

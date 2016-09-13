@@ -6,7 +6,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import db from './db';
 import * as views from './views';
-import changes from './data/changes';
+import * as changes from './data/changes';
 import Davis from './lib/davis';
 import account from './util/account';
 import helpers from './util/helpers';

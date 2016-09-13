@@ -1,4 +1,4 @@
-const eventLog = require('../util/eventLog');
+import eventLog from '../util/eventLog';
 
 const all = [{
     date: "2013-09-21",
@@ -151,7 +151,7 @@ function check() {
     }
 }
 
-module.exports = {
+export {
     all,
     check,
 };

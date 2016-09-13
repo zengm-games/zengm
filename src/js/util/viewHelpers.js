@@ -73,7 +73,7 @@ function beforeNonLeague(req) {
     return [updateEvents, reqCb];
 }
 
-export default {
+export {
     beforeLeague,
     beforeNonLeague,
 };

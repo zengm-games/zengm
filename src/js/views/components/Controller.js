@@ -3,7 +3,7 @@ import React from 'react';
 import g from '../../globals';
 import ui from '../../ui';
 import ads from '../../util/ads';
-import viewHelpers from '../../util/viewHelpers';
+import {beforeLeague, beforeNonLeague} from '../../util/viewHelpers';
 import {Footer, Header, LeagueWrapper, MultiTeamMenu, NagModal, NavBar} from './index';
 
 class LeagueContent extends React.Component {
@@ -103,7 +103,7 @@ class Controller extends React.Component {
     }
 
     async get(fnUpdate, args, req) {
-        const [updateEvents, cb, abort] = await (args.inLeague ? viewHelpers.beforeLeague(req, this.state.topMenu.lid) : viewHelpers.beforeNonLeague(req));
+        const [updateEvents, cb, abort] = await (args.inLeague ? beforeLeague(req, this.state.topMenu.lid) : beforeNonLeague(req));
 
         if (abort === 'abort') {
             return;

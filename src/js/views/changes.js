@@ -1,4 +1,4 @@
-import changes from '../data/changes';
+import * as changes from '../data/changes';
 import bbgmViewReact from '../util/bbgmViewReact';
 import Changes from './views/Changes';
 

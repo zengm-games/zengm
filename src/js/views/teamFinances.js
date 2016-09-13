@@ -1,6 +1,6 @@
+import backboard from 'backboard';
 import g from '../globals';
 import team from '../core/team';
-import backboard from 'backboard';
 import bbgmViewReact from '../util/bbgmViewReact';
 import helpers from '../util/helpers';
 import TeamFinances from './views/TeamFinances';

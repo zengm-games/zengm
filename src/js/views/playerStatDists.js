@@ -1,6 +1,6 @@
+import backboard from 'backboard';
 import g from '../globals';
 import player from '../core/player';
-import backboard from 'backboard';
 import bbgmViewReact from '../util/bbgmViewReact';
 import helpers from '../util/helpers';
 import PlayerStatDists from './views/PlayerStatDists';

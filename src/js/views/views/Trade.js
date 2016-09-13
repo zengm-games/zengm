@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import React from 'react';
 import g from '../../globals';
 import ui from '../../ui';
@@ -7,7 +8,6 @@ import bbgmViewReact from '../../util/bbgmViewReact';
 import getCols from '../../util/getCols';
 import helpers from '../../util/helpers';
 import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
-import classNames from 'classnames';
 
 const genRows = (players, handleChangeAsset) => {
     return players.map(p => {

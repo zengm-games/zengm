@@ -1,8 +1,8 @@
+import Promise from 'bluebird';
 import g from '../globals';
 import season from '../core/season';
 import bbgmViewReact from '../util/bbgmViewReact';
 import helpers from '../util/helpers';
-import Promise from 'bluebird';
 import Schedule from './views/Schedule';
 import team from '../core/team';
 

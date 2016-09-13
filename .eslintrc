@@ -13,7 +13,6 @@
         "consistent-return": "off",
         "func-names": "off",
         "generator-star-spacing": "off", // https://github.com/eslint/eslint/issues/6274
-        "global-require": "off",
         "import/newline-after-import": "off",
         "import/no-extraneous-dependencies": ["error", {"devDependencies": true, "optionalDependencies": false, "peerDependencies": false}],
         "indent": ["error", 4, {"SwitchCase": 1}],

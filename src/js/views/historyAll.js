@@ -1,5 +1,5 @@
-import g from '../globals';
 import Promise from 'bluebird';
+import g from '../globals';
 import team from '../core/team';
 import bbgmViewReact from '../util/bbgmViewReact';
 import HistoryAll from './views/HistoryAll';

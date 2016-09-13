@@ -1,7 +1,7 @@
-import db from '../db';
-import g from '../globals';
 import backboard from 'backboard';
 import Promise from 'bluebird';
+import db from '../db';
+import g from '../globals';
 import bbgmViewReact from '../util/bbgmViewReact';
 import DeleteLeague from './views/DeleteLeague';
 

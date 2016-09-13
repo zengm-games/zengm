@@ -1,10 +1,10 @@
 import React from 'react';
+import _ from 'underscore';
 import g from '../../globals';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import getCols from '../../util/getCols';
 import helpers from '../../util/helpers';
 import {DataTable, Dropdown, JumpTo, NewWindowLink} from '../components';
-import _ from 'underscore';
 
 const TeamStats = ({season, stats, teams}) => {
     bbgmViewReact.title(`Team Stats - ${season}`);

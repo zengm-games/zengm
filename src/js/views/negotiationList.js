@@ -1,6 +1,6 @@
+import Promise from 'bluebird';
 import g from '../globals';
 import player from '../core/player';
-import Promise from 'bluebird';
 import bbgmViewReact from '../util/bbgmViewReact';
 import helpers from '../util/helpers';
 import NegotiationList from './views/NegotiationList';

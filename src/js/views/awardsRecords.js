@@ -1,5 +1,5 @@
-import g from '../globals';
 import _ from 'underscore';
+import g from '../globals';
 import player from '../core/player';
 import bbgmViewReact from '../util/bbgmViewReact';
 import AwardsRecords from './views/AwardsRecords';

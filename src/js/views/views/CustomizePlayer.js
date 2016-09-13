@@ -1,19 +1,5 @@
 /* eslint react/jsx-no-bind: "off" */
 
-/* eslint react/jsx-no-bind: "off" */
-
-/* eslint react/jsx-no-bind: "off" */
-
-/* eslint react/jsx-no-bind: "off" */
-
-/* eslint react/jsx-no-bind: "off" */
-
-/* eslint react/jsx-no-bind: "off" */
-
-/* eslint react/jsx-no-bind: "off" */
-
-/* eslint react/jsx-no-bind: "off" */
-
 import faces from 'facesjs';
 import React from 'react';
 import g from '../../globals';

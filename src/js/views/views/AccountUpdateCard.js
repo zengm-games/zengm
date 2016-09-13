@@ -1,19 +1,5 @@
 /* eslint camelcase: "off" */
 
-/* eslint camelcase: "off" */
-
-/* eslint camelcase: "off" */
-
-/* eslint camelcase: "off" */
-
-/* eslint camelcase: "off" */
-
-/* eslint camelcase: "off" */
-
-/* eslint camelcase: "off" */
-
-/* eslint camelcase: "off" */
-
 import Promise from 'bluebird';
 import $ from 'jquery';
 import React from 'react';

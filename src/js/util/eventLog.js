@@ -1,4 +1,5 @@
 import g from '../globals';
+import league from '../core/league';
 import bbgmNotifications from '../lib/bbgm-notifications';
 
 function add(ot, {
@@ -43,7 +44,7 @@ function add(ot, {
 
             // Persistent notifications are very rare and should stop game sim when displayed
             if (persistent && g.autoPlaySeasons <= 0) {
-                require('../core/league').default.setGameAttributesComplete({stopGames: true});
+                league.setGameAttributesComplete({stopGames: true});
             }
         }
     }

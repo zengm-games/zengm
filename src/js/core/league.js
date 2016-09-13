@@ -6,8 +6,11 @@ import g from '../globals';
 import ui from '../ui';
 import draft from './draft';
 import finances from './finances';
+import freeAgents from './freeAgents';
+import game from './game';
 import phase from './phase';
 import player from './player';
+import season from './season';
 import team from './team';
 import helpers from '../util/helpers';
 import random from '../util/random';
@@ -661,10 +664,6 @@ async function loadGameAttributes(ot) {
 
 // Depending on phase, initiate action that will lead to the next phase
 async function autoPlay() {
-    const freeAgents = require('./freeAgents').default;
-    const game = require('./game').default;
-    const season = require('./season').default;
-
     if (g.phase === g.PHASE.PRESEASON) {
         await phase.newPhase(g.PHASE.REGULAR_SEASON);
     } else if (g.phase === g.PHASE.REGULAR_SEASON) {

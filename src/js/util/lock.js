@@ -1,4 +1,5 @@
 import g from '../globals';
+import league from '../core/league';
 import helpers from './helpers';
 
 /**
@@ -11,7 +12,7 @@ import helpers from './helpers';
  * @return {Promise.boolean}
  */
 async function gamesInProgress(ot) {
-    await require('../core/league').default.loadGameAttribute(ot, "gamesInProgress");
+    await league.loadGameAttribute(ot, "gamesInProgress");
     return g.gamesInProgress;
 }
 
@@ -38,7 +39,7 @@ async function negotiationInProgress(ot) {
  * @return {Promise.boolean}
  */
 async function phaseChangeInProgress(ot) {
-    await require('../core/league').default.loadGameAttribute(ot, "phaseChangeInProgress");
+    await league.loadGameAttribute(ot, "phaseChangeInProgress");
     return g.phaseChangeInProgress;
 }
 

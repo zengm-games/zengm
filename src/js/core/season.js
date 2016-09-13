@@ -2,6 +2,7 @@ import backboard from 'backboard';
 import Promise from 'bluebird';
 import _ from 'underscore';
 import g from '../globals';
+import league from './league';
 import player from './player';
 import team from './team';
 import eventLog from '../util/eventLog';
@@ -48,7 +49,7 @@ async function updateOwnerMood(tx) {
         if (ownerMood.playoffs > 1) { ownerMood.playoffs = 1; }
         if (ownerMood.money > 1) { ownerMood.money = 1; }
 
-        await require('../core/league').default.setGameAttributes(tx, {ownerMood});
+        await league.setGameAttributes(tx, {ownerMood});
     }
 
     return deltas;

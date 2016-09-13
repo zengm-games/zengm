@@ -7,6 +7,7 @@ import contractNegotiation from './contractNegotiation';
 import draft from './draft';
 import finances from './finances';
 import freeAgents from './freeAgents';
+import league from './league';
 import player from './player';
 import season from './season';
 import team from './team';
@@ -31,8 +32,6 @@ let phaseChangeTx;
  * @return {Promise}
  */
 async function finalize(phase, url, updateEvents) {
-    const league = require('../core/league').default;
-
     // Set phase before updating play menu
     await league.setGameAttributesComplete({
         phase,
@@ -56,8 +55,6 @@ async function finalize(phase, url, updateEvents) {
 }
 
 async function newPhasePreseason(tx) {
-    const league = require('../core/league').default;
-
     await freeAgents.autoSign(tx);
     await league.setGameAttributes(tx, {season: g.season + 1});
 
@@ -408,7 +405,7 @@ async function newPhaseResignPlayers(tx) {
     });
 
     // Set daysLeft here because this is "basically" free agency, so some functions based on daysLeft need to treat it that way (such as the trade AI being more reluctant)
-    await require('../core/league').default.setGameAttributes(tx, {daysLeft: 30});
+    await league.setGameAttributes(tx, {daysLeft: 30});
 
     return [helpers.leagueUrl(["negotiation"]), ["playerMovement"]];
 }
@@ -478,7 +475,7 @@ async function newPhaseFreeAgency(tx) {
 async function newPhaseFantasyDraft(tx, position) {
     await contractNegotiation.cancelAll(tx);
     await draft.genOrderFantasy(tx, position);
-    await require('../core/league').default.setGameAttributes(tx, {nextPhase: g.phase});
+    await league.setGameAttributes(tx, {nextPhase: g.phase});
     await tx.releasedPlayers.clear();
 
     // Protect draft prospects from being included in this
@@ -557,8 +554,6 @@ async function newPhase(phase, extra) {
     if (phaseChangeInProgress) {
         helpers.errorNotify("Phase change already in progress, maybe in another tab.");
     } else {
-        const league = require('../core/league').default;
-
         await league.setGameAttributesComplete({phaseChangeInProgress: true});
         ui.updatePlayMenu(null);
 
@@ -611,7 +606,7 @@ async function abort() {
         helpers.errorNotify("If \"Abort\" doesn't work, check if you have another tab open.");
     } finally {
         // If another window has a phase change in progress, this won't do anything until that finishes
-        await require('../core/league').default.setGameAttributesComplete({phaseChangeInProgress: false});
+        await league.setGameAttributesComplete({phaseChangeInProgress: false});
         ui.updatePlayMenu(null);
     }
 }

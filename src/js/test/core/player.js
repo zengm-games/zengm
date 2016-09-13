@@ -1,9 +1,8 @@
 /*eslint no-unused-expressions: 0*/
-/*eslint no-unused-expressions: 0*/
 import assert from 'assert';
+import _ from 'underscore';
 import g from '../../globals';
 import player from '../../core/player';
-import _ from 'underscore';
 import helpers from '../../util/helpers';
 
 // Synchronous version of player.addStatsRow which does not require IndexedDB

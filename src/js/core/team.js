@@ -3,7 +3,9 @@ import Promise from 'bluebird';
 import orderBy from 'lodash.orderby';
 import _ from 'underscore';
 import g from '../globals';
+import draft from './draft';
 import player from './player';
+import trade from './trade';
 import eventLog from '../util/eventLog';
 import helpers from '../util/helpers';
 import random from '../util/random';
@@ -811,7 +813,7 @@ async function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estV
                 const sorted = wps.slice().sort((a, b) => a - b);
                 const estPicks = wps.slice().map(v => sorted.indexOf(v) + 1); // For each team, what is their estimated draft position?
 
-                const rookieSalaries = require('./draft').getRookieSalaries();
+                const rookieSalaries = draft.getRookieSalaries();
 
                 // Actually add picks after some stuff below is done
                 let estValues;
@@ -897,7 +899,7 @@ async function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estV
                 if (estValuesCached) {
                     estValues = estValuesCached;
                 } else {
-                    estValues = await require('./trade').getPickValues(tx);
+                    estValues = await trade.getPickValues(tx);
                 }
                 withEstValues();
             }

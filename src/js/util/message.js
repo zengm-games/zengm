@@ -1,4 +1,5 @@
 import g from '../globals';
+import league from '../core/league';
 import helpers from './helpers';
 import random from './random';
 
@@ -151,7 +152,7 @@ async function generate(tx, deltas) {
     let m;
     if (g.showFirstOwnerMessage) {
         m = random.choice(first);
-        require('../core/league').default.setGameAttributes(tx, {showFirstOwnerMessage: false}); // Okay that this is async, since it won't be called again until much later
+        league.setGameAttributes(tx, {showFirstOwnerMessage: false}); // Okay that this is async, since it won't be called again until much later
     } else {
         const activity1 = random.choice(activities);
         let activity2 = random.choice(activities);
@@ -249,7 +250,7 @@ async function generate(tx, deltas) {
     }
 
     // Fired!
-    await require('../core/league').default.setGameAttributes(tx, {
+    await league.setGameAttributes(tx, {
         gameOver: true,
         showFirstOwnerMessage: true,
     });

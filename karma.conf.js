@@ -4,7 +4,7 @@ module.exports = function (config) {
 
         frameworks: ['mocha', 'browserify'],
 
-        files: ['src/js/test/app.js'],
+        files: ['src/js/test/app.js', 'src/js/test/**/*.js'],
 
         exclude: [],
 

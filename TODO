@@ -1,13 +1,11 @@
 switch to es6 imports
-  tests
-  ctrl+f for require(
-  global-require eslint rule
   get rid of "export default" in most util files, ui.js, core, etc, should instead import by name
     "export default {"
 
 underscore -> lodash-es?
 
 rollup
+  what about watch?
 
 ---
 

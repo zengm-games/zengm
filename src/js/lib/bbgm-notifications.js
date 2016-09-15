@@ -105,6 +105,4 @@ const notify = (message, title, {extraClass, persistent = false, timeOut}) => {
     container.appendChild(notificationElement);
 };
 
-module.exports = {
-    notify,
-};
+export default notify;

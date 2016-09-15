@@ -1,6 +1,6 @@
 import g from '../globals';
 import league from '../core/league';
-import bbgmNotifications from '../lib/bbgm-notifications';
+import notify from '../lib/bbgm-notifications';
 
 function add(ot, {
     extraClass,
@@ -37,7 +37,7 @@ function add(ot, {
 
         // Don't show non-critical notification if we're viewing a live game now
         if (location.pathname.indexOf("/live") === -1 || persistent) {
-            bbgmNotifications.notify(text, title, {
+            notify(text, title, {
                 extraClass,
                 persistent,
             });

@@ -4,7 +4,7 @@ const gamesRemainings = [3.46, 6.95, 3.94, 4.42, 3.59, 11.15, 5.64, 1.41, 2.15, 
 
 const types = ["Sprained Ankle", "Patellar Tendinitis", "Back Spasms", "Strained Hamstring", "Strained Groin", "Sprained Knee", "Plantar Fasciitis", "Bruised Quadriceps", "Bruised Knee", "Sprained Finger", "Sprained Calf", "Bruised Leg", "Bruised Hip", "Sprained Foot", "Achilles Tendinitis", "Sprained Thumb", "Sprained Wrist", "Lacerated Eyelid", "Sprained Shoulder", "Strained Neck", "Herniated Disc", "Bruised Back", "Bruised Foot", "Fractured Foot", "Strained Foot", "Torn Meniscus", "Strained Quadriceps", "Fractured Hand", "Fractured Tooth", "Rotator Cuff Tendinitis", "Strained Hip Flexor", "Elbow Tendinitis", "Bruised Shoulder", "Concussion", "Fractured Nose", "Bruised Elbow", "Strained Rotator Cuff", "Bruised Hand", "Sprained Elbow", "Bruised Eye", "Strained Abdomen", "Strained Shoulder", "Fractured Finger", "Strained Patellar Tendon", "Peroneal Tendinitis", "Fractured Thumb", "Fractured Ankle", "Torn ACL"];
 
-module.exports = {
+export {
     cumSum,
     gamesRemainings,
     types,

@@ -201,6 +201,7 @@ async function play(numDays, start = true) {
     const cbNoDays = async () => {
         await require('../core/league').setGameAttributesComplete({gamesInProgress: false});
         await ui.updatePlayMenu(null);
+        ui.realtimeUpdate(["g.gamesInProgress"]);
 
         // Check to see if free agency is over
         if (g.daysLeft === 0) {
@@ -221,21 +222,19 @@ async function play(numDays, start = true) {
                     ui.updateStatus(`${g.daysLeft} days left`);
                     play(numDays - 1, false);
                 });
-            } else if (g.daysLeft === 0) {
+            } else {
                 cbNoDays();
             }
         };
 
-        if (numDays > 0) {
-            // If we didn't just stop games, let's play
-            // Or, if we are starting games (and already passed the lock), continue even if stopGames was just seen
-            if (start || !g.stopGames) {
-                if (g.stopGames) {
-                    await require('../core/league').setGameAttributesComplete({stopGames: false});
-                }
-                cbYetAnother();
+        // If we didn't just stop games, let's play
+        // Or, if we are starting games (and already passed the lock), continue even if stopGames was just seen
+        if (numDays > 0 && (start || !g.stopGames)) {
+            if (g.stopGames) {
+                await require('../core/league').setGameAttributesComplete({stopGames: false});
             }
-        } else if (numDays === 0) {
+            cbYetAnother();
+        } else {
             // If this is the last day, update play menu
             cbNoDays();
         }
@@ -248,6 +247,7 @@ async function play(numDays, start = true) {
         if (canStartGames) {
             await require('../core/league').setGameAttributesComplete({gamesInProgress: true});
             await ui.updatePlayMenu(null);
+            ui.realtimeUpdate(["g.gamesInProgress"]);
             cbRunDay();
         }
     } else {

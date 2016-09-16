@@ -7,11 +7,12 @@ import ReactDOM from 'react-dom';
 import * as db from './db';
 import * as views from './views';
 import * as changes from './data/changes';
+import './lib/babel-external-helpers';
 import Davis from './lib/davis';
+import './lib/davis.google_analytics';
 import * as account from './util/account';
 import * as helpers from './util/helpers';
 import Controller from './views/components/Controller';
-import './lib/davis.google_analytics';
 
 // Only for window.bbgm
 import * as ads from './util/ads';

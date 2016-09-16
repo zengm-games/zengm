@@ -1,13 +1,13 @@
 import Promise from 'bluebird';
 import g from '../globals';
-import ui from '../ui';
-import freeAgents from './freeAgents';
-import league from './league';
-import player from './player';
-import team from './team';
-import eventLog from '../util/eventLog';
-import helpers from '../util/helpers';
-import lock from '../util/lock';
+import * as ui from '../ui';
+import * as freeAgents from './freeAgents';
+import * as league from './league';
+import * as player from './player';
+import * as team from './team';
+import logEvent from '../util/logEvent';
+import * as helpers from '../util/helpers';
+import * as lock from '../util/lock';
 
 /**
  * Start a new contract negotiation with a player.
@@ -153,7 +153,7 @@ async function accept(pid, amount, exp) {
             }, true);
 
             if (negotiation.resigning) {
-                eventLog.add(null, {
+                logEvent(null, {
                     type: "reSigned",
                     text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[g.userTid], g.season])}">${g.teamNamesCache[g.userTid]}</a> re-signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
                     showNotification: false,
@@ -161,7 +161,7 @@ async function accept(pid, amount, exp) {
                     tids: [g.userTid],
                 });
             } else {
-                eventLog.add(null, {
+                logEvent(null, {
                     type: "freeAgent",
                     text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[g.userTid], g.season])}">${g.teamNamesCache[g.userTid]}</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
                     showNotification: false,
@@ -179,7 +179,7 @@ async function accept(pid, amount, exp) {
     league.updateLastDbChange();
 }
 
-export default {
+export {
     accept,
     cancel,
     cancelAll,

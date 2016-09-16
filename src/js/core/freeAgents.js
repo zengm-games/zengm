@@ -1,15 +1,15 @@
 import Promise from 'bluebird';
 import _ from 'underscore';
 import g from '../globals';
-import ui from '../ui';
-import league from './league';
-import phase from './phase';
-import player from './player';
-import team from './team';
-import eventLog from '../util/eventLog';
-import helpers from '../util/helpers';
-import lock from '../util/lock';
-import random from '../util/random';
+import * as ui from '../ui';
+import * as league from './league';
+import * as phase from './phase';
+import * as player from './player';
+import * as team from './team';
+import * as helpers from '../util/helpers';
+import * as lock from '../util/lock';
+import logEvent from '../util/logEvent';
+import * as random from '../util/random';
 
 /**
  * AI teams sign free agents.
@@ -82,7 +82,7 @@ async function autoSign(tx) {
                         p = player.setContract(p, p.contract, true);
                         p.gamesUntilTradable = 15;
 
-                        eventLog.add(null, {
+                        logEvent(null, {
                             type: "freeAgent",
                             text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
                             showNotification: false,
@@ -255,7 +255,7 @@ async function play(numDays, start = true) {
     }
 }
 
-export default {
+export {
     autoSign,
     decreaseDemands,
     amountWithMood,

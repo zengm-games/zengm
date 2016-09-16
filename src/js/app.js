@@ -4,32 +4,31 @@ import 'indexeddb-getall-shim';
 import 'jquery-ui/sortable';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import db from './db';
+import * as db from './db';
 import * as views from './views';
 import * as changes from './data/changes';
 import Davis from './lib/davis';
-import account from './util/account';
-import helpers from './util/helpers';
+import * as account from './util/account';
+import * as helpers from './util/helpers';
 import Controller from './views/components/Controller';
 import './lib/davis.google_analytics';
 
 // Only for window.bbgm
-import ads from './util/ads';
-import debug from './core/debug';
+import * as ads from './util/ads';
+import * as debug from './core/debug';
 import g from './globals';
-import contractNegotiation from './core/contractNegotiation';
-import draft from './core/draft';
-import eventLog from './util/eventLog';
-import finances from './core/finances';
-import freeAgents from './core/freeAgents';
-import game from './core/game';
-import gameSim from './core/gameSim';
-import league from './core/league';
-import phase from './core/phase';
-import player from './core/player';
-import season from './core/season';
-import team from './core/team';
-import trade from './core/trade';
+import * as contractNegotiation from './core/contractNegotiation';
+import * as draft from './core/draft';
+import logEvent from './util/logEvent';
+import * as finances from './core/finances';
+import * as freeAgents from './core/freeAgents';
+import * as game from './core/game';
+import * as league from './core/league';
+import * as phase from './core/phase';
+import * as player from './core/player';
+import * as season from './core/season';
+import * as team from './core/team';
+import * as trade from './core/trade';
 
 // Needed because of https://github.com/petkaantonov/bluebird/issues/363
 // Sadly only enabled in debug mode, due to weird interactions with Bugsnag: https://github.com/bugsnag/bugsnag-js/issues/181
@@ -49,12 +48,11 @@ window.Promise.config({warnings: false});
         g,
         contractNegotiation,
         draft,
-        eventLog,
         finances,
         freeAgents,
         game,
-        gameSim,
         league,
+        logEvent,
         phase,
         player,
         season,

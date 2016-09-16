@@ -1,15 +1,15 @@
-import db from '../db';
+import * as db from '../db';
 import g from '../globals';
-import ui from '../ui';
-import contractNegotiation from '../core/contractNegotiation';
-import draft from '../core/draft';
-import freeAgents from '../core/freeAgents';
-import game from '../core/game';
-import league from '../core/league';
-import phase from '../core/phase';
-import season from '../core/season';
-import trade from '../core/trade';
-import helpers from './helpers';
+import * as ui from '../ui';
+import * as contractNegotiation from '../core/contractNegotiation';
+import * as draft from '../core/draft';
+import * as freeAgents from '../core/freeAgents';
+import * as game from '../core/game';
+import * as league from '../core/league';
+import * as phase from '../core/phase';
+import * as season from '../core/season';
+import * as trade from '../core/trade';
+import * as helpers from './helpers';
 
 const liveGame = async gid => {
     ui.realtimeUpdate([], helpers.leagueUrl(["live_game"]), () => {

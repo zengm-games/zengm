@@ -1,10 +1,10 @@
 import Promise from 'bluebird';
 import g from '../globals';
-import freeAgents from '../core/freeAgents';
-import player from '../core/player';
-import trade from '../core/trade';
+import * as freeAgents from '../core/freeAgents';
+import * as player from '../core/player';
+import * as trade from '../core/trade';
 import bbgmViewReact from '../util/bbgmViewReact';
-import helpers from '../util/helpers';
+import * as helpers from '../util/helpers';
 import Player from './views/Player';
 
 function get(req) {

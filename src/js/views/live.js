@@ -1,5 +1,5 @@
 import g from '../globals';
-import season from '../core/season';
+import * as season from '../core/season';
 import bbgmViewReact from '../util/bbgmViewReact';
 import Live from './views/Live';
 

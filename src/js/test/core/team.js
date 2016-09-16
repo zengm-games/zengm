@@ -1,9 +1,9 @@
 import assert from 'assert';
-import db from '../../db';
+import * as db from '../../db';
 import g from '../../globals';
-import league from '../../core/league';
-import player from '../../core/player';
-import team from '../../core/team';
+import * as league from '../../core/league';
+import * as player from '../../core/player';
+import * as team from '../../core/team';
 
 describe("core/team", () => {
     describe("#findStarters()", () => {

@@ -1,9 +1,9 @@
 import React from 'react';
 import g from '../../globals';
-import ui from '../../ui';
-import league from '../../core/league';
+import * as ui from '../../ui';
+import * as league from '../../core/league';
 import bbgmViewReact from '../../util/bbgmViewReact';
-import helpers from '../../util/helpers';
+import * as helpers from '../../util/helpers';
 import {NewWindowLink} from '../components';
 
 class NewTeam extends React.Component {

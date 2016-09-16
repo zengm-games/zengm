@@ -1,12 +1,12 @@
 import React from 'react';
 import g from '../../globals';
-import ui from '../../ui';
-import finances from '../../core/finances';
-import league from '../../core/league';
+import * as ui from '../../ui';
+import * as finances from '../../core/finances';
+import * as league from '../../core/league';
 import bbgmViewReact from '../../util/bbgmViewReact';
-import eventLog from '../../util/eventLog';
 import getCols from '../../util/getCols';
-import helpers from '../../util/helpers';
+import * as helpers from '../../util/helpers';
+import logEvent from '../../util/logEvent';
 import {BarGraph, DataTable, Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels} from '../components';
 
 class FinancesForm extends React.Component {
@@ -80,7 +80,7 @@ class FinancesForm extends React.Component {
             await finances.updateRanks(tx, ["budget"]);
         });
 
-        eventLog.add(null, {
+        logEvent(null, {
             type: 'success',
             text: 'Team finances updated.',
             saveToDb: false,

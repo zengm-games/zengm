@@ -1,8 +1,8 @@
 import Promise from 'bluebird';
 import React from 'react';
 import g from '../../globals';
-import ui from '../../ui';
-import ads from '../../util/ads';
+import * as ui from '../../ui';
+import * as ads from '../../util/ads';
 import {beforeLeague, beforeNonLeague} from '../../util/viewHelpers';
 import {Footer, Header, LeagueWrapper, MultiTeamMenu, NagModal, NavBar} from './index';
 

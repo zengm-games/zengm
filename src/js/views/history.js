@@ -1,9 +1,9 @@
 import Promise from 'bluebird';
 import g from '../globals';
-import player from '../core/player';
-import team from '../core/team';
+import * as player from '../core/player';
+import * as team from '../core/team';
 import bbgmViewReact from '../util/bbgmViewReact';
-import helpers from '../util/helpers';
+import * as helpers from '../util/helpers';
 import History from './views/History';
 
 function get(req) {

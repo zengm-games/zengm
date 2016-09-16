@@ -1,19 +1,19 @@
 import backboard from 'backboard';
 import Promise from 'bluebird';
 import _ from 'underscore';
-import db from '../db';
+import * as db from '../db';
 import g from '../globals';
-import ui from '../ui';
-import draft from './draft';
-import finances from './finances';
-import freeAgents from './freeAgents';
-import game from './game';
-import phase from './phase';
-import player from './player';
-import season from './season';
-import team from './team';
-import helpers from '../util/helpers';
-import random from '../util/random';
+import * as ui from '../ui';
+import * as draft from './draft';
+import * as finances from './finances';
+import * as freeAgents from './freeAgents';
+import * as game from './game';
+import * as phase from './phase';
+import * as player from './player';
+import * as season from './season';
+import * as team from './team';
+import * as helpers from '../util/helpers';
+import * as random from '../util/random';
 
 const defaultGameAttributes = {
     phase: 0,
@@ -696,7 +696,7 @@ async function initAutoPlay() {
     }
 }
 
-export default {
+export {
     create,
     exportLeague,
     remove,

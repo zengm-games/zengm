@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import $ from 'jquery';
 import React from 'react';
 import g from '../../globals';
-import ui from '../../ui';
+import * as ui from '../../ui';
 import bbgmViewReact from '../../util/bbgmViewReact';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";

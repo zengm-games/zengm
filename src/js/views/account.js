@@ -1,4 +1,4 @@
-import account from '../util/account';
+import * as account from '../util/account';
 import bbgmViewReact from '../util/bbgmViewReact';
 import Account from './views/Account';
 

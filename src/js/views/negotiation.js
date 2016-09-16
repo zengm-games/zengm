@@ -1,8 +1,8 @@
 import g from '../globals';
-import contractNegotiation from '../core/contractNegotiation';
-import freeAgents from '../core/freeAgents';
-import player from '../core/player';
-import team from '../core/team';
+import * as contractNegotiation from '../core/contractNegotiation';
+import * as freeAgents from '../core/freeAgents';
+import * as player from '../core/player';
+import * as team from '../core/team';
 import bbgmViewReact from '../util/bbgmViewReact';
 import Negotiation from './views/Negotiation';
 

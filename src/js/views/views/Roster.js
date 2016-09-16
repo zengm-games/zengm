@@ -5,13 +5,13 @@ import React from 'react';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import g from '../../globals';
-import ui from '../../ui';
-import league from '../../core/league';
-import player from '../../core/player';
-import team from '../../core/team';
+import * as ui from '../../ui';
+import * as league from '../../core/league';
+import * as player from '../../core/player';
+import * as team from '../../core/team';
 import {tradeFor} from '../../util/actions';
 import bbgmViewReact from '../../util/bbgmViewReact';
-import helpers from '../../util/helpers';
+import * as helpers from '../../util/helpers';
 import {Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels, RatingWithChange, RecordAndPlayoffs} from '../components';
 import clickable from '../wrappers/clickable';
 

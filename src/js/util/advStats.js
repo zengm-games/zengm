@@ -2,8 +2,8 @@ import backboard from 'backboard';
 import Promise from 'bluebird';
 import _ from 'underscore';
 import g from '../globals';
-import player from '../core/player';
-import team from '../core/team';
+import * as player from '../core/player';
+import * as team from '../core/team';
 
 /**
  * Calcualte the current season's Player Efficiency Rating (PER) for each active player and write it to the database.
@@ -188,6 +188,7 @@ function calculateAll() {
     return calculatePER();
 }
 
-export default {
+export {
+    // eslint-disable-next-line import/prefer-default-export
     calculateAll,
 };

@@ -2,13 +2,13 @@ import backboard from 'backboard';
 import Promise from 'bluebird';
 import React from 'react';
 import g from '../../globals';
-import ui from '../../ui';
-import draft from '../../core/draft';
-import finances from '../../core/finances';
-import player from '../../core/player';
+import * as ui from '../../ui';
+import * as draft from '../../core/draft';
+import * as finances from '../../core/finances';
+import * as player from '../../core/player';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import getCols from '../../util/getCols';
-import helpers from '../../util/helpers';
+import * as helpers from '../../util/helpers';
 import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
 
 class DraftScouting extends React.Component {

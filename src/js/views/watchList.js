@@ -1,6 +1,6 @@
 import g from '../globals';
-import freeAgents from '../core/freeAgents';
-import player from '../core/player';
+import * as freeAgents from '../core/freeAgents';
+import * as player from '../core/player';
 import bbgmViewReact from '../util/bbgmViewReact';
 import WatchList from './views/WatchList';
 

@@ -1,7 +1,7 @@
 import g from '../globals';
-import team from '../core/team';
+import * as team from '../core/team';
 import bbgmViewReact from '../util/bbgmViewReact';
-import helpers from '../util/helpers';
+import * as helpers from '../util/helpers';
 import TeamShotLocations from './views/TeamShotLocations';
 
 function get(req) {

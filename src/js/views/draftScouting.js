@@ -1,6 +1,6 @@
 import Promise from 'bluebird';
 import g from '../globals';
-import player from '../core/player';
+import * as player from '../core/player';
 import bbgmViewReact from '../util/bbgmViewReact';
 import DraftScouting from './views/DraftScouting';
 

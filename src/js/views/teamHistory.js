@@ -1,9 +1,9 @@
 import backboard from 'backboard';
 import Promise from 'bluebird';
 import g from '../globals';
-import player from '../core/player';
+import * as player from '../core/player';
 import bbgmViewReact from '../util/bbgmViewReact';
-import helpers from '../util/helpers';
+import * as helpers from '../util/helpers';
 import TeamHistory from './views/TeamHistory';
 
 function get(req) {

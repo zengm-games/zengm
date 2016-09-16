@@ -1,16 +1,16 @@
 import Promise from 'bluebird';
 import Backboard from 'backboard';
 import g from './globals';
-import league from './core/league';
+import * as league from './core/league';
 import Davis from './lib/davis';
-import eventLog from './util/eventLog';
-import helpers from './util/helpers';
+import * as helpers from './util/helpers';
+import logEvent from './util/logEvent';
 
 const migrateMessage = '<h1>Upgrading...</h1><p>This might take a few minutes, depending on the size of your league.</p><p>If something goes wrong, <a href="http://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers" target="_blank">open the console</a> and see if there is an error message there. Then <a href="https://basketball-gm.com/contact/" target="_blank">let us know about your problem</a>. Please include as much info as possible.</p>';
 
 Backboard.setPromiseConstructor(Promise);
 Backboard.on('quotaexceeded', () => {
-    eventLog.add(null, {
+    logEvent(null, {
         type: "error",
         text: 'Your browser isn\'t letting Basketball GM store any more data!<br><br>Try <a href="/">deleting some old leagues</a> or deleting old data (Tools > Improve Performance within a league). Clearing space elsewhere on your hard drive might help too. <a href="https://basketball-gm.com/manual/debugging/quota-errors/"><b>Read this for more info.</b></a>',
         saveToDb: false,
@@ -241,7 +241,7 @@ async function reset() {
     location.reload();
 }
 
-export default {
+export {
     connectMeta,
     connectLeague,
     reset,

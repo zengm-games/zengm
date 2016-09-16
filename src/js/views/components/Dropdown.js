@@ -1,7 +1,7 @@
 import React from 'react';
 import g from '../../globals';
-import ui from '../../ui';
-import helpers from '../../util/helpers';
+import * as ui from '../../ui';
+import * as helpers from '../../util/helpers';
 
 const Select = ({field, handleChange, value}) => {
     let options;

@@ -2,11 +2,11 @@ import React from 'react';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import g from '../../globals';
-import ui from '../../ui';
-import league from '../../core/league';
+import * as ui from '../../ui';
+import * as league from '../../core/league';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import getCols from '../../util/getCols';
-import helpers from '../../util/helpers';
+import * as helpers from '../../util/helpers';
 import {DataTable, Dropdown, NewWindowLink, PlayerNameLabels} from '../components';
 
 class WatchList extends React.Component {

@@ -2,15 +2,15 @@ import backboard from 'backboard';
 import Promise from 'bluebird';
 import _ from 'underscore';
 import g from '../globals';
-import ui from '../ui';
-import finances from './finances';
-import league from './league';
-import phase from './phase';
-import player from './player';
-import team from './team';
-import eventLog from '../util/eventLog';
-import helpers from '../util/helpers';
-import random from '../util/random';
+import * as ui from '../ui';
+import * as finances from './finances';
+import * as league from './league';
+import * as phase from './phase';
+import * as player from './player';
+import * as team from './team';
+import * as helpers from '../util/helpers';
+import logEvent from '../util/logEvent';
+import * as random from '../util/random';
 
 async function genPicks(tx, season) {
     const promises = [];
@@ -135,7 +135,7 @@ function lotteryLogTxt(tid, type, number) {
 }
 
 function logAction(tid, txt) {
-    eventLog.add(null, {
+    logEvent(null, {
         type: "draft",
         text: txt,
         showNotification: tid === g.userTid,
@@ -499,7 +499,7 @@ async function selectPlayer(pick, pid) {
 
 
         const draftName = g.phase === g.PHASE.FANTASY_DRAFT ? `${g.season} fantasy draft` : `${g.season} draft`;
-        eventLog.add(null, {
+        logEvent(null, {
             type: "draft",
             text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[pick.tid], g.season])}">${g.teamNamesCache[pick.tid]}</a> selected <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> with the ${helpers.ordinal(pick.pick + (pick.round - 1) * 30)} pick in the <a href="${helpers.leagueUrl(["draft_summary", g.season])}">${draftName}</a>.`,
             showNotification: false,
@@ -594,7 +594,7 @@ async function untilUserOrEnd() {
     return autoSelectPlayer();
 }
 
-export default {
+export {
     genPicks,
     getOrder,
     setOrder,

@@ -2,12 +2,12 @@ import classNames from 'classnames';
 import $ from 'jquery';
 import React from 'react';
 import g from '../../globals';
-import ui from '../../ui';
-import draft from '../../core/draft';
-import league from '../../core/league';
+import * as ui from '../../ui';
+import * as draft from '../../core/draft';
+import * as league from '../../core/league';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import getCols from '../../util/getCols';
-import helpers from '../../util/helpers';
+import * as helpers from '../../util/helpers';
 import {DataTable, DraftAbbrev, NewWindowLink, PlayerNameLabels} from '../components';
 
 const viewDrafted = () => {

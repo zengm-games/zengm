@@ -8,7 +8,7 @@ import customizePlayer from './views/customizePlayer';
 import dashboard from './views/dashboard';
 import deleteLeague from './views/deleteLeague';
 import deleteOldData from './views/deleteOldData';
-import draft from './views/draft';
+import * as draft from './views/draft';
 import draftScouting from './views/draftScouting';
 import draftSummary from './views/draftSummary';
 import editTeamInfo from './views/editTeamInfo';

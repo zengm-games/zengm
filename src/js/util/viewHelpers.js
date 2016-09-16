@@ -1,9 +1,9 @@
 import React from 'react';
-import db from '../db';
+import * as db from '../db';
 import g from '../globals';
-import ui from '../ui';
-import league from '../core/league';
-import helpers from './helpers';
+import * as ui from '../ui';
+import * as league from '../core/league';
+import * as helpers from './helpers';
 
 async function beforeLeague(req, loadedLid) {
     g.lid = parseInt(req.params.lid, 10);

@@ -1,9 +1,9 @@
 import React from 'react';
 import g from '../../globals';
-import league from '../../core/league';
+import * as league from '../../core/league';
 import bbgmViewReact from '../../util/bbgmViewReact';
-import eventLog from '../../util/eventLog';
-import helpers from '../../util/helpers';
+import * as helpers from '../../util/helpers';
+import logEvent from '../../util/logEvent';
 
 class EditTeamInfo extends React.Component {
     constructor(props) {
@@ -105,7 +105,7 @@ class EditTeamInfo extends React.Component {
                 teams: newTeams,
             });
 
-            eventLog.add(null, {
+            logEvent(null, {
                 type: 'success',
                 text: 'New team info successfully loaded.',
                 saveToDb: false,
@@ -160,7 +160,7 @@ class EditTeamInfo extends React.Component {
             teamNamesCache: this.state.teams.map(t => t.name),
         });
 
-        eventLog.add(null, {
+        logEvent(null, {
             type: 'success',
             text: 'Saved team info.',
             saveToDb: false,

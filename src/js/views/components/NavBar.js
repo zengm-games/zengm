@@ -11,11 +11,11 @@ import Navbar from 'react-bootstrap/lib/Navbar';
 import Overlay from 'react-bootstrap/lib/Overlay';
 import Popover from 'react-bootstrap/lib/Popover';
 import ReactDOM from 'react-dom';
-import ui from '../../ui';
+import * as ui from '../../ui';
 import html2canvas from '../../lib/html2canvas';
 import * as actions from '../../util/actions';
-import eventLog from '../../util/eventLog';
-import helpers from '../../util/helpers';
+import * as helpers from '../../util/helpers';
+import logEvent from '../../util/logEvent';
 
 const toggleDebugMode = () => {
     if (localStorage.debug === "debug") {
@@ -131,7 +131,7 @@ const handleScreenshotClick = e => {
                     },
                     dataType: "json",
                 }));
-                eventLog.add(null, {
+                logEvent(null, {
                     type: 'screenshot',
                     text: `<a href="http://imgur.com/${data.data.id}" target="_blank">Click here to view your screenshot.</a>`,
                     saveToDb: false,

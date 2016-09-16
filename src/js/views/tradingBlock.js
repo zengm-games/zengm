@@ -1,9 +1,9 @@
 import Promise from 'bluebird';
 import g from '../globals';
-import player from '../core/player';
-import trade from '../core/trade';
+import * as player from '../core/player';
+import * as trade from '../core/trade';
 import bbgmViewReact from '../util/bbgmViewReact';
-import helpers from '../util/helpers';
+import * as helpers from '../util/helpers';
 import TradingBlock from './views/TradingBlock';
 
 async function updateUserRoster(inputs, updateEvents) {

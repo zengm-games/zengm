@@ -1,8 +1,8 @@
 import g from '../globals';
-import league from '../core/league';
+import * as league from '../core/league';
 import notify from '../lib/bbgm-notifications';
 
-function add(ot, {
+const logEvent = (ot, {
     extraClass,
     persistent = false,
     pids,
@@ -11,7 +11,7 @@ function add(ot, {
     saveToDb = true,
     showNotification = true,
     type,
-}) {
+}) => {
     if (saveToDb && g.lid) { // Only save to league event log if within a league
         const dbOrTx = ot !== null ? ot : g.dbl;
         dbOrTx.events.add({
@@ -56,8 +56,6 @@ function add(ot, {
     } else if (g.userTids !== undefined && g.userTids.length === 1 && notificationContainer.classList.contains("notification-container-extra-margin-bottom")) {
         notificationContainer.classList.remove("notification-container-extra-margin-bottom");
     }
-}
-
-export default {
-    add,
 };
+
+export default logEvent;

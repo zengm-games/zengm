@@ -1,7 +1,7 @@
 import React from 'react';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import getCols from '../../util/getCols';
-import helpers from '../../util/helpers';
+import * as helpers from '../../util/helpers';
 import {DataTable, Dropdown, NewWindowLink} from '../components';
 
 const TeamRecords = ({byType, displayName, seasonCount, teamRecords}) => {

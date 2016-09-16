@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import React from 'react';
-import ui from '../../ui';
+import * as ui from '../../ui';
 import bbgmViewReact from '../../util/bbgmViewReact';
-import helpers from '../../util/helpers';
+import * as helpers from '../../util/helpers';
 import {Dropdown, NewWindowLink, PlayerNameLabels} from '../components';
 import clickable from '../wrappers/clickable';
 

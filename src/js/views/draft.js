@@ -1,9 +1,9 @@
 import Promise from 'bluebird';
 import g from '../globals';
-import draft from '../core/draft';
-import player from '../core/player';
+import * as draft from '../core/draft';
+import * as player from '../core/player';
 import bbgmViewReact from '../util/bbgmViewReact';
-import helpers from '../util/helpers';
+import * as helpers from '../util/helpers';
 import Draft from './views/Draft';
 
 function get() {

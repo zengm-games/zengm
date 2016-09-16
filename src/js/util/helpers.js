@@ -1,6 +1,6 @@
 import React from 'react';
 import g from '../globals';
-import eventLog from './eventLog';
+import logEvent from './logEvent';
 
 /**
  * Validate that a given abbreviation corresponds to a team.
@@ -289,7 +289,7 @@ function error(errorText, cb) {
  * @param {string} error Text of the error message to be displayed.
  */
 function errorNotify(errorText) {
-    eventLog.add(null, {
+    logEvent(null, {
         type: "error",
         text: errorText,
         saveToDb: false,
@@ -768,7 +768,7 @@ function roundWinp(arg) {
     return output;
 }
 
-export default {
+export {
     validateAbbrev,
     getAbbrev,
     validateTid,

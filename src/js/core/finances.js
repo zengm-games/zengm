@@ -1,7 +1,7 @@
 import backboard from 'backboard';
 import Promise from 'bluebird';
 import g from '../globals';
-import team from './team';
+import * as team from './team';
 
 /**
  * Assess the payroll and apply minimum and luxury taxes.
@@ -164,7 +164,7 @@ function getRankLastThree(teamSeasons, category, item) {
     return 15.5;
 }
 
-export default {
+export {
     assessPayrollMinLuxury,
     updateRanks,
     getRankLastThree,

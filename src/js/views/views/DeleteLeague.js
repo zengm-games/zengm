@@ -1,8 +1,8 @@
 import React from 'react';
-import ui from '../../ui';
-import league from '../../core/league';
+import * as ui from '../../ui';
+import * as league from '../../core/league';
 import bbgmViewReact from '../../util/bbgmViewReact';
-import helpers from '../../util/helpers';
+import * as helpers from '../../util/helpers';
 
 class DeleteLeague extends React.Component {
     constructor(props) {

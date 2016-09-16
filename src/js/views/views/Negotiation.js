@@ -1,10 +1,10 @@
 import classNames from 'classnames';
 import React from 'react';
 import g from '../../globals';
-import ui from '../../ui';
-import contractNegotiation from '../../core/contractNegotiation';
+import * as ui from '../../ui';
+import * as contractNegotiation from '../../core/contractNegotiation';
 import bbgmViewReact from '../../util/bbgmViewReact';
-import helpers from '../../util/helpers';
+import * as helpers from '../../util/helpers';
 import {NewWindowLink} from '../components';
 
 // Show the negotiations list if there are more ongoing negotiations

@@ -1,7 +1,7 @@
 import backboard from 'backboard';
 import Promise from 'bluebird';
 import g from '../globals';
-import team from '../core/team';
+import * as team from '../core/team';
 import bbgmViewReact from '../util/bbgmViewReact';
 import PowerRankings from './views/PowerRankings';
 

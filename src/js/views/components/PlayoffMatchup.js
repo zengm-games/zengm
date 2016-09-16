@@ -1,6 +1,6 @@
 import React from 'react';
 import g from '../../globals';
-import helpers from '../../util/helpers';
+import * as helpers from '../../util/helpers';
 
 const PlayoffMatchup = ({season, series}) => {
     if (series === undefined || series.home === undefined || series.home.tid === undefined) {

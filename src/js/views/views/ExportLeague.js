@@ -1,6 +1,6 @@
 import React from 'react';
 import g from '../../globals';
-import league from '../../core/league';
+import * as league from '../../core/league';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import {DownloadDataLink} from '../components';
 

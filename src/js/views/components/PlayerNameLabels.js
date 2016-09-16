@@ -1,5 +1,5 @@
 import React from 'react';
-import helpers from '../../util/helpers';
+import * as helpers from '../../util/helpers';
 import SkillsBlock from './SkillsBlock';
 import WatchBlock from './WatchBlock';
 

@@ -1,9 +1,9 @@
 import Promise from 'bluebird';
 import g from './globals';
-import league from './core/league';
+import * as league from './core/league';
 import Davis from './lib/davis';
-import helpers from './util/helpers';
-import lock from './util/lock';
+import * as helpers from './util/helpers';
+import * as lock from './util/lock';
 
 /**
  * Smartly update the currently loaded view or redirect to a new one.
@@ -181,7 +181,7 @@ async function updatePhase(phaseText) {
     }
 }
 
-export default {
+export {
     realtimeUpdate,
     updatePhase,
     updatePlayMenu,

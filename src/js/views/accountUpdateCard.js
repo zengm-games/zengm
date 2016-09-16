@@ -1,7 +1,7 @@
 import Promise from 'bluebird';
 import $ from 'jquery';
 import g from '../globals';
-import account from '../util/account';
+import * as account from '../util/account';
 import bbgmViewReact from '../util/bbgmViewReact';
 import AccountUpdateCard from './views/AccountUpdateCard';
 

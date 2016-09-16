@@ -3,12 +3,12 @@ import Promise from 'bluebird';
 import orderBy from 'lodash.orderby';
 import _ from 'underscore';
 import g from '../globals';
-import draft from './draft';
-import player from './player';
-import trade from './trade';
-import eventLog from '../util/eventLog';
-import helpers from '../util/helpers';
-import random from '../util/random';
+import * as draft from './draft';
+import * as player from './player';
+import * as trade from './trade';
+import logEvent from '../util/logEvent';
+import * as helpers from '../util/helpers';
+import * as random from '../util/random';
 
 function genSeasonRow(tid, prevSeason) {
     const newSeason = {
@@ -1275,7 +1275,7 @@ function checkRosterSizes() {
                         p = player.setContract(p, p.contract, true);
                         p.gamesUntilTradable = 15;
 
-                        eventLog.add(null, {
+                        logEvent(null, {
                             type: "freeAgent",
                             text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
                             showNotification: false,
@@ -1319,7 +1319,7 @@ function checkRosterSizes() {
     });
 }
 
-export default {
+export {
     genSeasonRow,
     genStatsRow,
     generate,

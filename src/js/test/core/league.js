@@ -1,8 +1,8 @@
 import assert from 'assert';
-import db from '../../db';
+import * as db from '../../db';
 import g from '../../globals';
-import league from '../../core/league';
-import testHelpers from '../helpers';
+import * as league from '../../core/league';
+import * as testHelpers from '../helpers';
 
 describe("core/league", () => {
     before(async () => {

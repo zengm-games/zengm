@@ -1,6 +1,6 @@
 import React from 'react';
 import bbgmViewReact from '../../util/bbgmViewReact';
-import helpers from '../../util/helpers';
+import * as helpers from '../../util/helpers';
 import {NewWindowLink, SafeHtml} from '../components';
 
 const Message = ({message = {}}) => {

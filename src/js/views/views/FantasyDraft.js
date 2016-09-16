@@ -1,6 +1,6 @@
 import React from 'react';
 import g from '../../globals';
-import phase from '../../core/phase';
+import * as phase from '../../core/phase';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import {NewWindowLink} from '../components';
 

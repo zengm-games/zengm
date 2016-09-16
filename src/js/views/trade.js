@@ -1,10 +1,10 @@
 import Promise from 'bluebird';
 import g from '../globals';
-import player from '../core/player';
-import team from '../core/team';
-import trade from '../core/trade';
+import * as player from '../core/player';
+import * as team from '../core/team';
+import * as trade from '../core/trade';
 import bbgmViewReact from '../util/bbgmViewReact';
-import helpers from '../util/helpers';
+import * as helpers from '../util/helpers';
 import Trade from './views/Trade';
 
 // This relies on vars being populated, so it can't be called in parallel with updateTrade

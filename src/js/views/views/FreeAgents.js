@@ -1,10 +1,10 @@
 import React from 'react';
 import g from '../../globals';
-import freeAgents from '../../core/freeAgents';
+import * as freeAgents from '../../core/freeAgents';
 import {negotiate} from '../../util/actions';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import getCols from '../../util/getCols';
-import helpers from '../../util/helpers';
+import * as helpers from '../../util/helpers';
 import {DataTable, HelpPopover, NewWindowLink, PlayerNameLabels} from '../components';
 
 const FreeAgents = ({capSpace, gamesInProgress, minContract, numRosterSpots, phase, players}) => {

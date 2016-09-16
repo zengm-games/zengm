@@ -1,11 +1,11 @@
 import Promise from 'bluebird';
 import g from '../globals';
-import player from '../core/player';
-import season from '../core/season';
-import team from '../core/team';
-import trade from '../core/trade';
+import * as player from '../core/player';
+import * as season from '../core/season';
+import * as team from '../core/team';
+import * as trade from '../core/trade';
 import bbgmViewReact from '../util/bbgmViewReact';
-import helpers from '../util/helpers';
+import * as helpers from '../util/helpers';
 import Roster from './views/Roster';
 
 function get(req) {

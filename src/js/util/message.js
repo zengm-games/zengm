@@ -1,7 +1,7 @@
 import g from '../globals';
-import league from '../core/league';
-import helpers from './helpers';
-import random from './random';
+import * as league from '../core/league';
+import * as helpers from './helpers';
+import * as random from './random';
 
 // First message after new game
 const first = [
@@ -256,6 +256,7 @@ async function generate(tx, deltas) {
     });
 }
 
-export default {
+export {
+    // eslint-disable-next-line import/prefer-default-export
     generate,
 };

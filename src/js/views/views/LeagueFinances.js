@@ -2,7 +2,7 @@ import React from 'react';
 import g from '../../globals';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import getCols from '../../util/getCols';
-import helpers from '../../util/helpers';
+import * as helpers from '../../util/helpers';
 import {DataTable, Dropdown, JumpTo, NewWindowLink} from '../components';
 
 const LeagueFinances = ({minPayroll, luxuryPayroll, luxuryTax, salaryCap, season, teams}) => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import g from '../../globals';
-import ui from '../../ui';
-import league from '../../core/league';
+import * as ui from '../../ui';
+import * as league from '../../core/league';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import {NewWindowLink} from '../components';
 

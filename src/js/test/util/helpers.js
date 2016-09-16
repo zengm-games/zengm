@@ -1,6 +1,6 @@
 import assert from 'assert';
 import g from '../../globals';
-import helpers from '../../util/helpers';
+import * as helpers from '../../util/helpers';
 
 describe("util/helpers", () => {
     before(() => {

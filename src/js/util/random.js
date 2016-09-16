@@ -123,7 +123,7 @@ function choice(x) {
     return x[Math.floor(Math.random() * x.length)];
 }
 
-export default {
+export {
     randInt,
     shuffle,
     gauss,

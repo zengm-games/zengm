@@ -2,20 +2,20 @@ import backboard from 'backboard';
 import Promise from 'bluebird';
 import _ from 'underscore';
 import g from '../globals';
-import ui from '../ui';
-import finances from './finances';
-import freeAgents from './freeAgents';
-import gameSim from './gameSim';
-import league from './league';
-import phase from './phase';
-import player from './player';
-import season from './season';
-import team from './team';
-import advStats from '../util/advStats';
-import eventLog from '../util/eventLog';
-import helpers from '../util/helpers';
-import lock from '../util/lock';
-import random from '../util/random';
+import * as ui from '../ui';
+import GameSim from './GameSim';
+import * as finances from './finances';
+import * as freeAgents from './freeAgents';
+import * as league from './league';
+import * as phase from './phase';
+import * as player from './player';
+import * as season from './season';
+import * as team from './team';
+import * as advStats from '../util/advStats';
+import logEvent from '../util/logEvent';
+import * as helpers from '../util/helpers';
+import * as lock from '../util/lock';
+import * as random from '../util/random';
 
 function writeTeamStats(tx, results) {
     return Promise.reduce([0, 1], async (cache, t1) => {
@@ -257,7 +257,7 @@ function writePlayerStats(tx, results) {
                     if (injuredThisGame) {
                         p2.injury = player.injury(t.healthRank);
                         p.injury = p2.injury; // So it gets written to box score
-                        eventLog.add(tx, {
+                        logEvent(tx, {
                             type: "injured",
                             text: `<a href="${helpers.leagueUrl(["player", p2.pid])}">${p2.firstName} ${p2.lastName}</a> was injured! (${p2.injury.type}, out for ${p2.injury.gamesRemaining} games)`,
                             showNotification: p2.tid === g.userTid,
@@ -357,7 +357,7 @@ async function writeGameStats(tx, results, att) {
             text = `Your team lost to the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[results.team[tw].id], g.season])}">${g.teamNamesCache[results.team[tw].id]}`;
         }
         text += `</a> <a href="${helpers.leagueUrl(["game_log", g.teamAbbrevsCache[g.userTid], g.season, results.gid])}">${results.team[tw].stat.pts}-${results.team[tl].stat.pts}</a>.`;
-        eventLog.add(tx, {
+        logEvent(tx, {
             type: results.team[tw].id === g.userTid ? "gameWon" : "gameLost",
             text,
             saveToDb: false,
@@ -376,7 +376,7 @@ async function writeGameStats(tx, results, att) {
                 }
                 delete results.clutchPlays[i].tempText;
             }
-            eventLog.add(tx, results.clutchPlays[i]);
+            logEvent(tx, results.clutchPlays[i]);
         }
     }
 
@@ -440,7 +440,7 @@ async function updatePlayoffSeries(tx, results) {
             }
 
             const showNotification = series.away.tid === g.userTid || series.home.tid === g.userTid || playoffSeries.currentRound === 3;
-            eventLog.add(tx, {
+            logEvent(tx, {
                 type: "playoffs",
                 text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[winnerTid], g.season])}">${g.teamNamesCache[winnerTid]}</a> defeated the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[loserTid], g.season])}">${g.teamNamesCache[loserTid]}</a> in the ${currentRoundText}, 4-${loserWon}.`,
                 showNotification,
@@ -650,7 +650,7 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
                     p.injury = {type: "Healthy", gamesRemaining: 0};
                     changed = true;
 
-                    eventLog.add(tx, {
+                    logEvent(tx, {
                         type: "healed",
                         text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> has recovered from his injury.`,
                         showNotification: p.tid === g.userTid,
@@ -719,7 +719,7 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
         const results = [];
         for (let i = 0; i < schedule.length; i++) {
             const doPlayByPlay = gidPlayByPlay === schedule[i].gid;
-            const gs = new gameSim.GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid], doPlayByPlay);
+            const gs = new GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid], doPlayByPlay);
             results.push(gs.run());
         }
         await cbSaveResults(results);
@@ -811,6 +811,7 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
     }
 }
 
-export default {
+export {
+    // eslint-disable-next-line import/prefer-default-export
     play,
 };

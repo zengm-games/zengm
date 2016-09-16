@@ -1,5 +1,5 @@
 import bbgmViewReact from '../util/bbgmViewReact';
-import helpers from '../util/helpers';
+import * as helpers from '../util/helpers';
 import ExportStats from './views/ExportStats';
 
 function updateExportStats(inputs, updateEvents) {

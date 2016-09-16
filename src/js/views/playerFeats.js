@@ -1,6 +1,6 @@
 import g from '../globals';
 import bbgmViewReact from '../util/bbgmViewReact';
-import helpers from '../util/helpers';
+import * as helpers from '../util/helpers';
 import PlayerFeats from './views/PlayerFeats';
 
 function get(req) {

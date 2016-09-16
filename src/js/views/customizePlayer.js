@@ -1,10 +1,10 @@
 import backboard from 'backboard';
 import g from '../globals';
-import finances from '../core/finances';
-import player from '../core/player';
-import team from '../core/team';
+import * as finances from '../core/finances';
+import * as player from '../core/player';
+import * as team from '../core/team';
 import bbgmViewReact from '../util/bbgmViewReact';
-import helpers from '../util/helpers';
+import * as helpers from '../util/helpers';
 import CustomizePlayer from './views/CustomizePlayer';
 
 function get(req) {

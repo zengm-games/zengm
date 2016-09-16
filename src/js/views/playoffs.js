@@ -1,8 +1,8 @@
 import g from '../globals';
-import season from '../core/season';
-import team from '../core/team';
+import * as season from '../core/season';
+import * as team from '../core/team';
 import bbgmViewReact from '../util/bbgmViewReact';
-import helpers from '../util/helpers';
+import * as helpers from '../util/helpers';
 import Playoffs from './views/Playoffs';
 
 function get(req) {

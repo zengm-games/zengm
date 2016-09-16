@@ -1,6 +1,6 @@
 import g from '../globals';
 import bbgmViewReact from '../util/bbgmViewReact';
-import helpers from '../util/helpers';
+import * as helpers from '../util/helpers';
 import FantasyDraft from './views/FantasyDraft';
 
 function get() {

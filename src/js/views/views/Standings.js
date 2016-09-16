@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
 import bbgmViewReact from '../../util/bbgmViewReact';
-import helpers from '../../util/helpers';
+import * as helpers from '../../util/helpers';
 import {Dropdown, JumpTo, NewWindowLink} from '../components';
 import clickable from '../wrappers/clickable';
 

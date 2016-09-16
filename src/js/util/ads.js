@@ -106,7 +106,7 @@ async function showBanner() {
     }
 }
 
-export default {
+export {
     showBanner,
     showModal,
     showSurvata,

@@ -1,6 +1,6 @@
 import React from 'react';
 import bbgmViewReact from '../../util/bbgmViewReact';
-import helpers from '../../util/helpers';
+import * as helpers from '../../util/helpers';
 import {Dropdown, JumpTo, NewWindowLink} from '../components';
 
 const History = ({awards, champ, confs, invalidSeason, retiredPlayers, season, userTid}) => {

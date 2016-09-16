@@ -6,30 +6,6 @@
  * @param {*} x Element to search for
  * @return {number} The number of times x was found in array.
  */
-/**
- * Finds the number of times an element appears in an array.
- *
- * @memberOf test.core
- * @param {Array} array The array to search over.
- * @param {*} x Element to search for
- * @return {number} The number of times x was found in array.
- */
-/**
- * Finds the number of times an element appears in an array.
- *
- * @memberOf test.core
- * @param {Array} array The array to search over.
- * @param {*} x Element to search for
- * @return {number} The number of times x was found in array.
- */
-/**
- * Finds the number of times an element appears in an array.
- *
- * @memberOf test.core
- * @param {Array} array The array to search over.
- * @param {*} x Element to search for
- * @return {number} The number of times x was found in array.
- */
 function numInArrayEqualTo(array, x) {
     let n = 0;
     let idx = array.indexOf(x);
@@ -40,6 +16,7 @@ function numInArrayEqualTo(array, x) {
     return n;
 }
 
-export default {
+export {
+    // eslint-disable-next-line import/prefer-default-export
     numInArrayEqualTo,
 };

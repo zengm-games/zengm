@@ -1,12 +1,12 @@
 import classNames from 'classnames';
 import React from 'react';
 import g from '../../globals';
-import ui from '../../ui';
-import league from '../../core/league';
-import trade from '../../core/trade';
+import * as ui from '../../ui';
+import * as league from '../../core/league';
+import * as trade from '../../core/trade';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import getCols from '../../util/getCols';
-import helpers from '../../util/helpers';
+import * as helpers from '../../util/helpers';
 import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
 
 const genRows = (players, handleChangeAsset) => {

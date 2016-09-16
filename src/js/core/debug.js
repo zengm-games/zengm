@@ -3,7 +3,7 @@
 import backboard from 'backboard';
 import _ from 'underscore';
 import g from '../globals';
-import player from './player';
+import * as player from './player';
 
 async function regressRatingsPer() {
     // http://rosettacode.org/wiki/Multiple_regression#JavaScript
@@ -258,7 +258,7 @@ function averageCareerArc(baseOvr, basePot, ratingToSave) {
     if (ratingToSave) { console.log(`${ratingToSave}:`); console.log(averageRat); }
 }
 
-export default {
+export {
     regressRatingsPer,
     leagueAverageContract,
     exportPlayerInfo,

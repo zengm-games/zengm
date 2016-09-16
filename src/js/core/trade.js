@@ -1,10 +1,10 @@
 import Promise from 'bluebird';
 import g from '../globals';
-import league from './league';
-import player from './player';
-import team from './team';
-import eventLog from '../util/eventLog';
-import helpers from '../util/helpers';
+import * as league from './league';
+import * as player from './player';
+import * as team from './team';
+import * as helpers from '../util/helpers';
+import logEvent from '../util/logEvent';
 
 /**
  * Get the contents of the current trade from the database.
@@ -376,7 +376,7 @@ async function propose(forceTrade) {
                 return text;
             };
 
-            eventLog.add(null, {
+            logEvent(null, {
                 type: "trade",
                 text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[0]], g.season])}">${g.teamNamesCache[tids[0]]}</a> traded ${formatAssetsEventLog(s.teams[0])} to the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[1]], g.season])}">${g.teamNamesCache[tids[1]]}</a> for ${formatAssetsEventLog(s.teams[1])}.`,
                 showNotification: false,
@@ -657,7 +657,7 @@ async function makeItWorkTrade() {
     return `${g.teamRegionsCache[teams[1].tid]} GM: "How does this sound?"`;
 }
 
-export default {
+export {
     get,
     create,
     updatePlayers,

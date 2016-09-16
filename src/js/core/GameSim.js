@@ -1,6 +1,6 @@
 import g from '../globals';
-import helpers from '../util/helpers';
-import random from '../util/random';
+import * as helpers from '../util/helpers';
+import * as random from '../util/random';
 
 // x is value, a controls sharpness, b controls center
 const sigmoid = (x, a, b) => {
@@ -1213,6 +1213,4 @@ class GameSim {
     }
 }
 
-export default {
-    GameSim,
-};
+export default GameSim;

@@ -3,12 +3,12 @@ import Promise from 'bluebird';
 import faces from 'facesjs';
 import _ from 'underscore';
 import g from '../globals';
-import finances from './finances';
+import * as finances from './finances';
 import * as injuries from '../data/injuries';
 import * as names from '../data/names';
-import eventLog from '../util/eventLog';
-import helpers from '../util/helpers';
-import random from '../util/random';
+import * as helpers from '../util/helpers';
+import logEvent from '../util/logEvent';
+import * as random from '../util/random';
 
 let playerNames;
 
@@ -598,7 +598,7 @@ async function release(tx, p, justDrafted) {
         p.salaries = [];
     }
 
-    eventLog.add(null, {
+    logEvent(null, {
         type: "release",
         text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> released <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a>.`,
         showNotification: false,
@@ -1717,7 +1717,7 @@ function retire(tx, p, playerStats, retiredNotification) {
     retiredNotification = retiredNotification !== undefined ? retiredNotification : true;
 
     if (retiredNotification) {
-        eventLog.add(tx, {
+        logEvent(tx, {
             type: "retired",
             text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> retired.`,
             showNotification: p.tid === g.userTid,
@@ -1733,7 +1733,7 @@ function retire(tx, p, playerStats, retiredNotification) {
     if (madeHof(p, playerStats)) {
         p.hof = true;
         p.awards.push({season: g.season, type: "Inducted into the Hall of Fame"});
-        eventLog.add(tx, {
+        logEvent(tx, {
             type: "hallOfFame",
             text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> was inducted into the <a href="${helpers.leagueUrl(["hall_of_fame"])}">Hall of Fame</a>.`,
             showNotification: p.statsTids.indexOf(g.userTid) >= 0,
@@ -1878,7 +1878,7 @@ function checkStatisticalFeat(tx, pid, tid, p, results) {
     let saveFeat = false;
 
     const logFeat = text => {
-        eventLog.add(tx, {
+        logEvent(tx, {
             type: "playerFeat",
             text,
             showNotification: tid === g.userTid,
@@ -2025,7 +2025,7 @@ async function killOne() {
 
         await tx.players.put(p);
 
-        await eventLog.add(tx, {
+        await logEvent(tx, {
             type: "tragedy",
             text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> ${reason}.`,
             showNotification: tid === g.userTid,
@@ -2137,7 +2137,7 @@ async function withStats(tx, players, options) {
     });
 }
 
-export default {
+export {
     addRatingsRow,
     addStatsRow,
     genBaseMoods,
@@ -2153,7 +2153,6 @@ export default {
     skills,
     filter,
     madeHof,
-    //value,
     updateValues,
     retire,
     name,

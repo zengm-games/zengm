@@ -2,9 +2,9 @@ import Promise from 'bluebird';
 import React from 'react';
 import _ from 'underscore';
 import g from '../globals';
-import team from '../core/team';
+import * as team from '../core/team';
 import bbgmViewReact from '../util/bbgmViewReact';
-import helpers from '../util/helpers';
+import * as helpers from '../util/helpers';
 import TeamRecords from './views/TeamRecords';
 
 function get(req) {

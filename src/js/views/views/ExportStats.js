@@ -2,7 +2,7 @@ import Promise from 'bluebird';
 import React from 'react';
 import _ from 'underscore';
 import g from '../../globals';
-import player from '../../core/player';
+import * as player from '../../core/player';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import {DownloadDataLink} from '../components';
 

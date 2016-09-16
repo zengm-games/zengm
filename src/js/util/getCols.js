@@ -1,6 +1,6 @@
 /* eslint quote-props: "off" */
 
-import helpers from './helpers';
+import * as helpers from './helpers';
 
 const cols = {
     '': {

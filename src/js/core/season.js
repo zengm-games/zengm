@@ -2,12 +2,12 @@ import backboard from 'backboard';
 import Promise from 'bluebird';
 import _ from 'underscore';
 import g from '../globals';
-import league from './league';
-import player from './player';
-import team from './team';
-import eventLog from '../util/eventLog';
-import helpers from '../util/helpers';
-import random from '../util/random';
+import * as league from './league';
+import * as player from './player';
+import * as team from './team';
+import * as helpers from '../util/helpers';
+import logEvent from '../util/logEvent';
+import * as random from '../util/random';
 
 /**
  * Update g.ownerMood based on performance this season.
@@ -262,7 +262,7 @@ async function doAwards(tx) {
         } else {
             text += `won the ${p.type} award.`;
         }
-        eventLog.add(null, {
+        logEvent(null, {
             type: "award",
             text,
             showNotification: p.tid === g.userTid || p.type === "Most Valuable Player",
@@ -740,7 +740,7 @@ function genPlayoffSeries(teams) {
     return {series, tidPlayoffs};
 }
 
-export default {
+export {
     doAwards,
     updateOwnerMood,
     getSchedule,

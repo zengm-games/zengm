@@ -1,8 +1,8 @@
 import backboard from 'backboard';
 import g from '../globals';
-import player from '../core/player';
+import * as player from '../core/player';
 import bbgmViewReact from '../util/bbgmViewReact';
-import helpers from '../util/helpers';
+import * as helpers from '../util/helpers';
 import UpcomingFreeAgents from './views/UpcomingFreeAgents';
 
 function get(req) {

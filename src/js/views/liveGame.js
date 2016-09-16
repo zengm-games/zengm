@@ -1,5 +1,5 @@
 import g from '../globals';
-import helpers from '../util/helpers';
+import * as helpers from '../util/helpers';
 import bbgmViewReact from '../util/bbgmViewReact';
 import LiveGame from './views/LiveGame';
 

@@ -3,9 +3,9 @@ import backboard from 'backboard';
 import Promise from 'bluebird';
 import $ from 'jquery';
 import g from '../globals';
-import team from '../core/team';
-import eventLog from './eventLog';
-import ads from './ads';
+import * as team from '../core/team';
+import * as ads from './ads';
+import logEvent from './logEvent';
 
 // IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php
 const allAchievements = [{
@@ -81,7 +81,7 @@ async function addAchievements(achievements, silent = false) {
         // Find name of achievement
         for (let i = 0; i < allAchievements.length; i++) {
             if (allAchievements[i].slug === slug) {
-                eventLog.add(null, {
+                logEvent(null, {
                     type: "achievement",
                     text: `"${allAchievements[i].name}" achievement awarded! <a href="/account">View all achievements.</a>`,
                 });
@@ -415,7 +415,7 @@ checkAchievement.sleeper_pick = async (saveAchievement = true) => {
     return false;
 };
 
-export default {
+export {
     check,
     getAchievements,
     addAchievements,

@@ -2,7 +2,7 @@ import React from 'react';
 import g from '../../globals';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import getCols from '../../util/getCols';
-import helpers from '../../util/helpers';
+import * as helpers from '../../util/helpers';
 import {DataTable, Dropdown, NewWindowLink, PlayerNameLabels, RecordAndPlayoffs} from '../components';
 
 const TeamHistory = ({abbrev, bestRecord, championships, history, players, playoffAppearances, team, totalLost, totalWon, worstRecord}) => {

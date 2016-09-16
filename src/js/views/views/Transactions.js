@@ -1,6 +1,6 @@
 import React from 'react';
 import bbgmViewReact from '../../util/bbgmViewReact';
-import helpers from '../../util/helpers';
+import * as helpers from '../../util/helpers';
 import {Dropdown, JumpTo, NewWindowLink, SafeHtml} from '../components';
 
 const Transactions = ({abbrev, eventType, events, season}) => {

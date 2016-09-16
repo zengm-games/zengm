@@ -1,10 +1,10 @@
 /* eslint comma-spacing: "off", key-spacing: "off", no-unused-expressions: "off", quote-props: "off" */
 import assert from 'assert';
 import backboard from 'backboard';
-import db from '../../db';
+import * as db from '../../db';
 import g from '../../globals';
-import league from '../../core/league';
-import account from '../../util/account';
+import * as league from '../../core/league';
+import * as account from '../../util/account';
 
 describe("util/account", () => {
     before(async () => {

@@ -1,6 +1,6 @@
 import g from '../globals';
-import league from '../core/league';
-import helpers from './helpers';
+import * as league from '../core/league';
+import * as helpers from './helpers';
 
 /**
  * Is game simulation in progress?
@@ -124,7 +124,7 @@ async function unreadMessage(ot) {
     return false;
 }
 
-export default {
+export {
     gamesInProgress,
     negotiationInProgress,
     phaseChangeInProgress,

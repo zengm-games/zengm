@@ -1,5 +1,5 @@
 import g from '../globals';
-import league from '../core/league';
+import * as league from '../core/league';
 import bbgmViewReact from '../util/bbgmViewReact';
 import GodMode from './views/GodMode';
 

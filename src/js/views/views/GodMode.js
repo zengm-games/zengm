@@ -1,10 +1,10 @@
 import classNames from 'classnames';
 import React from 'react';
-import ui from '../../ui';
-import league from '../../core/league';
+import * as ui from '../../ui';
+import * as league from '../../core/league';
 import bbgmViewReact from '../../util/bbgmViewReact';
-import eventLog from '../../util/eventLog';
-import helpers from '../../util/helpers';
+import * as helpers from '../../util/helpers';
+import logEvent from '../../util/logEvent';
 import {HelpPopover, NewWindowLink} from '../components';
 
 class GodMode extends React.Component {
@@ -83,7 +83,7 @@ class GodMode extends React.Component {
             dirty: false,
         });
 
-        eventLog.add(null, {
+        logEvent(null, {
             type: "success",
             text: 'God Mode options successfully updated.',
             saveToDb: false,

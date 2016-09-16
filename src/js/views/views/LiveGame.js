@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React from 'react';
 import AutoAffix from 'react-overlays/lib/AutoAffix';
 import bbgmViewReact from '../../util/bbgmViewReact';
-import helpers from '../../util/helpers';
+import * as helpers from '../../util/helpers';
 import {PlayerNameLabels} from '../components';
 
 class PlayerRow extends React.Component {

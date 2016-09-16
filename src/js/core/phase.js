@@ -2,21 +2,21 @@ import backboard from 'backboard';
 import Promise from 'bluebird';
 import _ from 'underscore';
 import g from '../globals';
-import ui from '../ui';
-import contractNegotiation from './contractNegotiation';
-import draft from './draft';
-import finances from './finances';
-import freeAgents from './freeAgents';
-import league from './league';
-import player from './player';
-import season from './season';
-import team from './team';
-import account from '../util/account';
-import eventLog from '../util/eventLog';
-import helpers from '../util/helpers';
-import lock from '../util/lock';
-import message from '../util/message';
-import random from '../util/random';
+import * as ui from '../ui';
+import * as contractNegotiation from './contractNegotiation';
+import * as draft from './draft';
+import * as finances from './finances';
+import * as freeAgents from './freeAgents';
+import * as league from './league';
+import * as player from './player';
+import * as season from './season';
+import * as team from './team';
+import * as account from '../util/account';
+import * as helpers from '../util/helpers';
+import * as lock from '../util/lock';
+import logEvent from '../util/logEvent';
+import * as message from '../util/message';
+import * as random from '../util/random';
 
 let phaseChangeTx;
 
@@ -179,7 +179,7 @@ async function newPhasePlayoffs(tx) {
     const {series, tidPlayoffs} = season.genPlayoffSeries(teams);
 
     for (const tid of tidPlayoffs) {
-        eventLog.add(null, {
+        logEvent(null, {
             type: "playoffs",
             text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tid], g.season])}">${g.teamNamesCache[tid]}</a> made the <a href="${helpers.leagueUrl(["playoffs", g.season])}">playoffs</a>.`,
             showNotification: tid === g.userTid,
@@ -394,7 +394,7 @@ async function newPhaseResignPlayers(tx) {
             await player.addToFreeAgents(tx, p, g.PHASE.RESIGN_PLAYERS, baseMoods);
             const error = await contractNegotiation.create(tx, p.pid, true, tid);
             if (error !== undefined && error) {
-                eventLog.add(null, {
+                logEvent(null, {
                     type: "refuseToSign",
                     text: error,
                     pids: [p.pid],
@@ -441,7 +441,7 @@ async function newPhaseFreeAgency(tx) {
                 p = player.setContract(p, contract, true);
                 p.gamesUntilTradable = 15;
 
-                eventLog.add(null, {
+                logEvent(null, {
                     type: "reSigned",
                     text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> re-signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
                     showNotification: false,
@@ -574,7 +574,7 @@ async function newPhase(phase, extra) {
 
                     await league.setGameAttributesComplete({phaseChangeInProgress: false});
                     await ui.updatePlayMenu(null);
-                    await eventLog.add(null, {
+                    await logEvent(null, {
                         type: "error",
                         text: 'Critical error during phase change. <a href="https://basketball-gm.com/manual/debugging/"><b>Read this to learn about debugging.</b></a>',
                         saveToDb: false,
@@ -611,7 +611,7 @@ async function abort() {
     }
 }
 
-export default {
+export {
     newPhase,
     abort,
 };

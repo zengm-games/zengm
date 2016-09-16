@@ -1,10 +1,10 @@
 import Promise from 'bluebird';
 import g from '../globals';
-import season from '../core/season';
+import * as season from '../core/season';
 import bbgmViewReact from '../util/bbgmViewReact';
-import helpers from '../util/helpers';
+import * as helpers from '../util/helpers';
 import Schedule from './views/Schedule';
-import team from '../core/team';
+import * as team from '../core/team';
 
 function get(req) {
     const inputs = {};

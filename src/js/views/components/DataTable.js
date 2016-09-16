@@ -3,7 +3,7 @@ import orderBy from 'lodash.orderby';
 import React from 'react';
 import textContent from 'react-addons-text-content';
 import g from '../../globals';
-import helpers from '../../util/helpers';
+import * as helpers from '../../util/helpers';
 import clickable from '../wrappers/clickable';
 
 const Header = ({cols, handleColClick, sortBys, superCols}) => {

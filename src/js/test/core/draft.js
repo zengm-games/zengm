@@ -1,9 +1,9 @@
 import assert from 'assert';
-import db from '../../db';
+import * as db from '../../db';
 import g from '../../globals';
-import draft from '../../core/draft';
-import league from '../../core/league';
-import team from '../../core/team';
+import * as draft from '../../core/draft';
+import * as league from '../../core/league';
+import * as team from '../../core/team';
 import sampleTiebreakers from '../fixtures/sampleTiebreakers';
 
 describe("core/draft", () => {

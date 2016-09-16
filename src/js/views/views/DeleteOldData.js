@@ -1,8 +1,8 @@
 import React from 'react';
 import g from '../../globals';
-import league from '../../core/league';
+import * as league from '../../core/league';
 import bbgmViewReact from '../../util/bbgmViewReact';
-import eventLog from '../../util/eventLog';
+import logEvent from '../../util/logEvent';
 import {NewWindowLink} from '../components';
 
 class DeleteOldData extends React.Component {
@@ -121,7 +121,7 @@ class DeleteOldData extends React.Component {
 
         league.updateLastDbChange();
 
-        eventLog.add(null, {
+        logEvent(null, {
             type: 'success',
             text: 'Data successfully deleted.',
             saveToDb: false,

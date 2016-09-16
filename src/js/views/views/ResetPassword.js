@@ -29,12 +29,12 @@ class ResetPassword extends React.Component {
             xhrFields: {
                 withCredentials: true,
             },
-            success: data => {
+            success: (data) => {
                 if (data.success) {
-                    this.state = {
+                    this.setState({
                         globalErrorMsg: null,
                         showForm: true,
-                    };
+                    });
                 } else {
                     this.setState({
                         globalErrorMsg: <span>Invalid password reset token. <a href="/account/lost_password">Request another and try again.</a></span>,

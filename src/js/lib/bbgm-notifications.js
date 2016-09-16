@@ -1,5 +1,3 @@
-// Originally based on https://github.com/Srirangan/notifer.js/
-
 const container = document.createElement("div");
 container.id = "notification-container";
 container.classList.add("notification-container");
@@ -60,19 +58,6 @@ const notify = (message, title, {extraClass, persistent = false, timeOut}) => {
     if (extraClass !== undefined) {
         notificationElement.classList.add(extraClass);
     }
-
-    /*// Hide notification on click, except if it's a link
-    notificationElement.addEventListener("click", function (event) {
-        container.removeChild(notificationElement);
-        notificationElement = null;
-    });
-    // PROBLEM: Stopping hiding on link click doesn't work because it also stops Davis.js from working
-    links = notificationElement.getElementsByTagName("a");
-    for (i = 0; i < links.length; i++) {
-        links[0].addEventListener("click", function (event) {
-            event.stopPropagation();
-        });
-    }*/
 
     // Limit displayed notifications to 5 - all the persistent ones, plus the newest ones
     let numToDelete = container.childNodes.length - 4; // 4 instead of 5 because the check happens before the new notification is shown

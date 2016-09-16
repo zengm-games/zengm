@@ -1,13 +1,17 @@
-rollup
-  what about watch?
+Figure out better way for dirty state in edit player form
+  https://www.reddit.com/r/BasketballGM/comments/531snv/draft_will_not_load/d7pmkus
+
+replace davis?
+  needs:
+    intercepted and non-intercepted links
+    manually trigger route
+    include data with manual trigger
+    manually trigger refresh
+    trigger arbitrary code on real new page, not refresh
+  try page.js first
+
 
 underscore -> lodash-es?
-
----
-
-REACT
-
-ptModifier working right? https://www.reddit.com/r/BasketballGM/comments/4wg3dh/help_me_with_a_little_beta_testing/d6tmkyf?context=3
 
 ---
 
@@ -37,6 +41,9 @@ Draft
 ---
 
 pressing alt+p rapidly can result in extra games being played
+
+filters on event log
+  tragic deaths https://www.reddit.com/r/BasketballGM/comments/52ljuy/would_it_be_possible_to_add_a_memorial_page/d7ou7ov?context=3
 
 make positions edited in god mode sticky, like custom roster
 

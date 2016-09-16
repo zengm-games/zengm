@@ -267,6 +267,7 @@ function deepCopy(obj) {
  * @param {function()} cb Optional callback function.
  */
 function error(errorText, cb) {
+    // eslint-disable-next-line global-require
     const views = require('../views');
     const view = views.staticPage('error', 'Error', false, <div>
         <h1>Error</h1>

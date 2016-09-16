@@ -1,3 +1,5 @@
+/* eslint-disable import/imports-first */
+import './lib/babel-external-helpers';
 import Promise from 'bluebird';
 import sourceMapSupport from 'source-map-support';
 import 'indexeddb-getall-shim';
@@ -7,7 +9,6 @@ import ReactDOM from 'react-dom';
 import * as db from './db';
 import * as views from './views';
 import * as changes from './data/changes';
-import './lib/babel-external-helpers';
 import Davis from './lib/davis';
 import './lib/davis.google_analytics';
 import * as account from './util/account';

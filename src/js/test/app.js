@@ -1,3 +1,5 @@
+/* eslint-disable import/imports-first */
+import '../lib/babel-external-helpers';
 import Promise from 'bluebird';
 import 'indexeddb-getall-shim';
 

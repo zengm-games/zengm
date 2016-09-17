@@ -17,7 +17,19 @@ function init(args) {
 
     const output = {};
     output.update = (inputs, updateEvents, cb) => g.emitter.emit('updatePage', args, inputs, updateEvents, cb);
-    output.get = req => g.emitter.emit('get', output.update, args, req);
+    output.get = (req, next) => {
+        if (req.cb === undefined) {
+            req.cb = next;
+        } else {
+            const prevCb = req.cb;
+            req.cb = () => {
+                prevCb();
+                next();
+            };
+        }
+        req.bbgmHandled = true;
+        g.emitter.emit('get', output.update, args, req);
+    };
 
     return output;
 }

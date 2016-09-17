@@ -40,6 +40,7 @@
     "jquery": "2.*",
     "jquery-ui": "1.10.x",
     "lodash.orderby": "4.6.0",
+    "page": "1.7.1",
     "react": "15.3.1",
     "react-addons-text-content": "0.0.4",
     "react-bootstrap": "0.30.3",
@@ -125,7 +126,6 @@
       "transform-async-to-generator"
     ],
     "ignore": [
-      "js/lib/davis*",
       "js/lib/html2canvas.js"
     ]
   },

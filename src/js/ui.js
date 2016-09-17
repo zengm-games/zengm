@@ -1,7 +1,7 @@
 import Promise from 'bluebird';
+import page from 'page';
 import g from './globals';
 import * as league from './core/league';
-import Davis from './lib/davis';
 import * as helpers from './util/helpers';
 import * as lock from './util/lock';
 
@@ -14,7 +14,7 @@ import * as lock from './util/lock';
  * @param {Array.<string>=} updateEvents Optional array of strings containing information about what caused this update, e.g. "gameSim" or "playerMovement".
  * @param {string=} url Optional URL to redirect to. The current URL is used if this is not defined. If this URL is either undefined or the same as location.pathname, it is considered to be an "refresh" and no entry in the history or stat tracker is made. Otherwise, it's considered to be a new pageview.
  * @param {function()=} cb Optional callback that will run after the page updates.
- * @param {Object=} raw Optional object passed through to Davis's req.raw.
+ * @param {Object=} raw Optional object passed through to the page.js request context's bbgm property.
  */
 function realtimeUpdate(updateEvents = [], url, cb, raw = {}) {
     url = url !== undefined ? url : location.pathname + location.search;
@@ -22,19 +22,25 @@ function realtimeUpdate(updateEvents = [], url, cb, raw = {}) {
     const inLeague = url.substr(0, 3) === "/l/"; // Check the URL to be redirected to, not the current league (g.lid)
     const refresh = url === location.pathname && inLeague;
 
-    // If tracking is enabled, don't track realtime updates for refreshes
-    if (Davis.Request.prototype.noTrack !== undefined && refresh) {
-        Davis.Request.prototype.noTrack();
+    const ctx = new page.Context(url);
+    for (const key of Object.keys(raw)) {
+        ctx[key] = raw[key];
     }
-
-    raw.updateEvents = updateEvents;
-    raw.cb = cb;
+    ctx.updateEvents = updateEvents;
+    ctx.cb = cb;
+    if (refresh) {
+        ctx.noTrack = true;
+    }
+    page.current = ctx.path;
 
     // This prevents the Create New League form from inappropriately refreshing after it is submitted
     if (refresh) {
-        Davis.location.replace(new Davis.Request(url, raw));
+        page.dispatch(ctx);
     } else if (inLeague || url === "/" || url.indexOf("/account") === 0) {
-        Davis.location.assign(new Davis.Request(url, raw));
+        page.dispatch(ctx);
+        if (ctx.handled) {
+            ctx.pushState();
+        }
     } else if (cb !== undefined) {
         cb();
     }

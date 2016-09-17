@@ -1,8 +1,8 @@
 import Promise from 'bluebird';
 import Backboard from 'backboard';
+import page from 'page';
 import g from './globals';
 import * as league from './core/league';
-import Davis from './lib/davis';
 import * as helpers from './util/helpers';
 import logEvent from './util/logEvent';
 
@@ -228,7 +228,7 @@ async function reset() {
     const leagues = await g.dbm.leagues.getAll();
     if (leagues.length === 0) {
         console.log('No leagues found.');
-        Davis.location.assign(new Davis.Request("/"));
+        page('/');
     }
 
     await Promise.all(leagues.map(l => league.remove(l.lid)));

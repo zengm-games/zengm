@@ -6,7 +6,12 @@ replace davis?
     manually trigger refresh
     trigger arbitrary code on real new page, not refresh
   try page.js first
+    data-no-davis
+    other uses of raw
+    namespace all my properties on ctx in bbgm.*
+    confirm GA and ads actually working
 
+upgrade GA https://developers.google.com/analytics/devguides/collection/upgrade/
 
 underscore -> lodash-es?
 

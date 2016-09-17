@@ -34,8 +34,8 @@ async function beforeLeague(req, loadedLid) {
     // Make sure league exists
 
     // Handle some common internal parameters
-    const updateEvents = req.raw.updateEvents !== undefined ? req.raw.updateEvents : [];
-    const reqCb = req.raw.cb !== undefined ? req.raw.cb : () => {};
+    const updateEvents = req.updateEvents !== undefined ? req.updateEvents : [];
+    const reqCb = req.cb !== undefined ? req.cb : () => {};
 
     // Make sure league template FOR THE CURRENT LEAGUE is showing
     if (loadedLid !== g.lid) {
@@ -68,8 +68,8 @@ function beforeNonLeague(req) {
     g.lid = null;
     g.emitter.emit('updateTopMenu', {lid: undefined});
 
-    const updateEvents = (req !== undefined && req.raw.updateEvents !== undefined) ? req.raw.updateEvents : [];
-    const reqCb = (req !== undefined && req.raw.cb !== undefined) ? req.raw.cb : () => {};
+    const updateEvents = (req !== undefined && req.updateEvents !== undefined) ? req.updateEvents : [];
+    const reqCb = (req !== undefined && req.cb !== undefined) ? req.cb : () => {};
     return [updateEvents, reqCb];
 }
 

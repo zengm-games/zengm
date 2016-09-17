@@ -47,12 +47,6 @@ async function validateSavedPids() {
     return trade.updatePlayers(teams);
 }
 
-function get(req) {
-    return {
-        message: req.raw.message !== undefined ? req.raw.message : null,
-    };
-}
-
 async function updateTrade(inputs) {
     let [teams, userRoster, userPicks] = await Promise.all([
         validateSavedPids(),
@@ -141,7 +135,6 @@ async function updateTrade(inputs) {
         otherPids: teams[1].pids,
         otherRoster,
         otherTid,
-        message: inputs.message,
         strategy: t.strategy,
         won: t.won,
         lost: t.lost,
@@ -169,7 +162,6 @@ async function updateTrade(inputs) {
 
 export default bbgmViewReact.init({
     id: "trade",
-    get,
     runBefore: [updateTrade],
     Component: Trade,
 });

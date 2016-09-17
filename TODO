@@ -6,9 +6,10 @@ replace davis?
     manually trigger refresh
     trigger arbitrary code on real new page, not refresh
   try page.js first
+    other uses of raw test6:test6
+      liveGame
+      account
     make sure "cancel" link in account works
-    other uses of raw
-    confirm GA and ads actually working
     req -> ctx
     tryForceHttps works?
 
@@ -21,6 +22,8 @@ underscore -> lodash-es?
 ---
 
 REACT later
+
+keep showing splash screen until first view hydrated
 
 reevaluate views folder structure... maybe views -> ui, and views/*.js -> ui/data-loaders/*.js
 reevaluate bbgmView API

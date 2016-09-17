@@ -17,18 +17,21 @@ function init(args) {
 
     const output = {};
     output.update = (inputs, updateEvents, cb) => g.emitter.emit('updatePage', args, inputs, updateEvents, cb);
-    output.get = (req, next) => {
-        if (req.cb === undefined) {
-            req.cb = next;
+    output.get = (ctx, next) => {
+        if (ctx.bbgm === undefined) {
+            ctx.bbgm = {};
+        }
+        if (ctx.bbgm.cb === undefined) {
+            ctx.bbgm.cb = next;
         } else {
-            const prevCb = req.cb;
-            req.cb = () => {
+            const prevCb = ctx.bbgm.cb;
+            ctx.bbgm.cb = () => {
                 prevCb();
                 next();
             };
         }
-        req.bbgmHandled = true;
-        g.emitter.emit('get', output.update, args, req);
+        ctx.bbgm.handled = true;
+        g.emitter.emit('get', output.update, args, ctx);
     };
 
     return output;

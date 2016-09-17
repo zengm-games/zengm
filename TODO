@@ -8,8 +8,9 @@ replace davis?
   try page.js first
     make sure "cancel" link in account works
     other uses of raw
-    namespace all my properties on ctx in bbgm.*
     confirm GA and ads actually working
+    req -> ctx
+    tryForceHttps works?
 
 clicking League Dashboard in mobile view does not close menu
 

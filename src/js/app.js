@@ -204,15 +204,16 @@ window.Promise.config({warnings: false});
     page('/l/:lid/transactions/:abbrev/:season/:eventType', views.transactions.get);
 
     page('*', (ctx, next) => {
-        if (!ctx.bbgmHandled) {
-            helpers.error('Page not found.', ctx.cb);
-            ctx.bbgmHandled = true;
+        if (!ctx.bbgm.handled) {
+            helpers.error('Page not found.', ctx.bbgm.cb);
+            ctx.bbgm.handled = true;
         }
         next();
     });
 
+    // This will run after all the routes defined above, because they all call next()
     page('*', (ctx) => {
-        if (!ctx.noTrack) {
+        if (!ctx.bbgm.noTrack) {
             /* eslint-disable no-underscore-dangle */
             if (window._gaq) {
                 window._gaq.push(['_trackPageview', ctx.path]);

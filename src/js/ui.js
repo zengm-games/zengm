@@ -23,13 +23,14 @@ function realtimeUpdate(updateEvents = [], url, cb, raw = {}) {
     const refresh = url === location.pathname && inLeague;
 
     const ctx = new page.Context(url);
+    ctx.bbgm = {};
     for (const key of Object.keys(raw)) {
-        ctx[key] = raw[key];
+        ctx.bbgm[key] = raw[key];
     }
-    ctx.updateEvents = updateEvents;
-    ctx.cb = cb;
+    ctx.bbgm.updateEvents = updateEvents;
+    ctx.bbgm.cb = cb;
     if (refresh) {
-        ctx.noTrack = true;
+        ctx.bbgm.noTrack = true;
     }
     page.current = ctx.path;
 

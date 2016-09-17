@@ -5,8 +5,8 @@ import * as ui from '../ui';
 import * as league from '../core/league';
 import * as helpers from './helpers';
 
-async function beforeLeague(req, loadedLid) {
-    g.lid = parseInt(req.params.lid, 10);
+const beforeLeague = async (ctx, loadedLid) => {
+    g.lid = parseInt(ctx.params.lid, 10);
 
     // Check for some other window making changes to the database
     const checkDbChange = async lid => {
@@ -34,8 +34,8 @@ async function beforeLeague(req, loadedLid) {
     // Make sure league exists
 
     // Handle some common internal parameters
-    const updateEvents = req.updateEvents !== undefined ? req.updateEvents : [];
-    const reqCb = req.cb !== undefined ? req.cb : () => {};
+    const updateEvents = ctx.bbgm.updateEvents !== undefined ? ctx.bbgm.updateEvents : [];
+    const ctxCb = ctx.bbgm.cb !== undefined ? ctx.bbgm.cb : () => {};
 
     // Make sure league template FOR THE CURRENT LEAGUE is showing
     if (loadedLid !== g.lid) {
@@ -45,7 +45,7 @@ async function beforeLeague(req, loadedLid) {
         // Make sure this league exists before proceeding
         const l = await g.dbm.leagues.get(g.lid);
         if (l === undefined) {
-            helpers.error(<span>League not found. <a href="/new_league">Create a new league</a> or <a href="/">load an existing league</a> to play!</span>, reqCb, true);
+            helpers.error(<span>League not found. <a href="/new_league">Create a new league</a> or <a href="/">load an existing league</a> to play!</span>, ctxCb, true);
             return [[], () => {}, 'abort'];
         }
 
@@ -58,20 +58,20 @@ async function beforeLeague(req, loadedLid) {
         await ui.updatePlayMenu(null);
         g.emitter.emit('updateTopMenu', {lid: g.lid});
         checkDbChange(g.lid);
-        return [updateEvents, reqCb];
+        return [updateEvents, ctxCb];
     }
 
-    return [updateEvents, reqCb];
-}
+    return [updateEvents, ctxCb];
+};
 
-function beforeNonLeague(req) {
+const beforeNonLeague = (ctx) => {
     g.lid = null;
     g.emitter.emit('updateTopMenu', {lid: undefined});
 
-    const updateEvents = (req !== undefined && req.updateEvents !== undefined) ? req.updateEvents : [];
-    const reqCb = (req !== undefined && req.cb !== undefined) ? req.cb : () => {};
-    return [updateEvents, reqCb];
-}
+    const updateEvents = (ctx !== undefined && ctx.bbgm.updateEvents !== undefined) ? ctx.bbgm.updateEvents : [];
+    const ctxCb = (ctx !== undefined && ctx.bbgm.cb !== undefined) ? ctx.bbgm.cb : () => {};
+    return [updateEvents, ctxCb];
+};
 
 export {
     beforeLeague,

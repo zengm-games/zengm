@@ -3,13 +3,13 @@ import * as helpers from '../util/helpers';
 import bbgmViewReact from '../util/bbgmViewReact';
 import LiveGame from './views/LiveGame';
 
-function get(req) {
+function get(ctx) {
     const obj = {
-        fromAction: !!req.raw.fromAction,
+        fromAction: !!ctx.bbgm.fromAction,
     };
-    if (req.raw.playByPlay !== undefined) {
-        obj.gidPlayByPlay = req.raw.gidPlayByPlay;
-        obj.playByPlay = req.raw.playByPlay;
+    if (ctx.bbgm.playByPlay !== undefined) {
+        obj.gidPlayByPlay = ctx.bbgm.gidPlayByPlay;
+        obj.playByPlay = ctx.bbgm.playByPlay;
     }
     return obj;
 }

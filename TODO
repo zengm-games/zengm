@@ -7,7 +7,6 @@ replace davis?
     trigger arbitrary code on real new page, not refresh
   try page.js first
     other uses of raw test6:test6
-      liveGame
       account
     make sure "cancel" link in account works
     req -> ctx

@@ -39,9 +39,7 @@ function realtimeUpdate(updateEvents = [], url, cb, raw = {}) {
         page.dispatch(ctx);
     } else if (inLeague || url === "/" || url.indexOf("/account") === 0) {
         page.dispatch(ctx);
-        if (ctx.handled) {
-            ctx.pushState();
-        }
+        ctx.pushState();
     } else if (cb !== undefined) {
         cb();
     }

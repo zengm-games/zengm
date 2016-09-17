@@ -1,5 +1,5 @@
-Figure out better way for dirty state in edit player form
-  https://www.reddit.com/r/BasketballGM/comments/531snv/draft_will_not_load/d7pmkus
+edit player: pressing enter triggers random face, not submit
+  http://stackoverflow.com/q/39548467/786644
 
 replace davis?
   needs:
@@ -44,6 +44,8 @@ pressing alt+p rapidly can result in extra games being played
 
 filters on event log
   tragic deaths https://www.reddit.com/r/BasketballGM/comments/52ljuy/would_it_be_possible_to_add_a_memorial_page/d7ou7ov?context=3
+
+more keyboard shortcuts https://www.reddit.com/r/BasketballGM/comments/531utg/incredible_game_a_few_suggestions/
 
 make positions edited in god mode sticky, like custom roster
 

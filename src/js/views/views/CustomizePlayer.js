@@ -18,13 +18,107 @@ const faceOptions = {
     hair: [0, 1, 2, 3, 4],
 };
 
+const copyValidValues = (source, target, season) => {
+    for (const attr of ['hgt', 'tid', 'weight']) {
+        const val = parseInt(source[attr], 10);
+        if (!isNaN(val)) {
+            target[attr] = val;
+        }
+    }
+
+    {
+        const age = parseInt(source.age, 10);
+        if (!isNaN(age)) {
+            target.born.year = g.season - age;
+        }
+    }
+
+    target.born.loc = source.born.loc;
+
+    {
+        // Allow any value, even above or below normal limits, but round to $10k and convert from M to k
+        let amount = helpers.round(100 * parseFloat(source.contract.amount)) * 10;
+        if (isNaN(amount)) {
+            amount = g.minContract;
+        }
+        target.contract.amount = amount;
+    }
+
+    {
+        let exp = parseInt(source.contract.exp, 10);
+        if (!isNaN(exp)) {
+            // No contracts expiring in the past
+            if (exp < season) {
+                exp = season;
+            }
+
+            // If current season contracts already expired, then current season can't be allowed for new contract
+            if (exp === season && g.phase >= g.PHASE.RESIGN_PLAYERS) {
+                exp += 1;
+            }
+
+            target.contract.exp = exp;
+        }
+    }
+
+    {
+        let gamesRemaining = parseInt(source.injury.gamesRemaining, 10);
+        if (isNaN(gamesRemaining) || gamesRemaining < 0) {
+            gamesRemaining = 0;
+        }
+        target.injury.gamesRemaining = gamesRemaining;
+    }
+
+    target.injury.type = source.injury.type;
+
+    {
+        const r = source.ratings.length - 1;
+        for (const rating of Object.keys(source.ratings[r])) {
+            if (rating === 'pos') {
+                target.ratings[r].pos = source.ratings[r].pos;
+            } else {
+                const val = helpers.bound(parseInt(source.ratings[r][rating], 10), 0, 100);
+                if (!isNaN(val)) {
+                    target.ratings[r][rating] = val;
+                }
+            }
+        }
+    }
+
+    // These are already normalized, cause they are selects
+    for (const attr of ['eyes', 'hair', 'mouth', 'nose']) {
+        target.face[attr] = source.face[attr];
+    }
+
+    for (const attr of ['eye-angle', 'fatness']) {
+        const val = parseFloat(source.face[attr]);
+        if (!isNaN(val)) {
+            if (attr === 'eye-angle') {
+                target.face.eyes[0].angle = val;
+                target.face.eyes[1].angle = val;
+            } else {
+                target.face[attr] = val;
+            }
+        }
+    }
+
+    target.face.color = source.face.color;
+//        } else if (field === 'nose-flip') {
+//            p[type].nose.flip = e.target.checked;
+//        }
+};
+
 class CustomizePlayer extends React.Component {
     constructor(props) {
         super(props);
+
+        const p = helpers.deepCopy(props.p);
+        p.age = this.props.season - p.born.year;
+        p.contract.amount /= 1000;
         this.state = {
             appearanceOption: props.appearanceOption,
             saving: false,
-            p: props.p,
+            p,
         };
         this.handleChangeAppearanceOption = this.handleChangeAppearanceOption.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -37,7 +131,10 @@ class CustomizePlayer extends React.Component {
             saving: true,
         });
 
-        let p = this.state.p;
+        let p = this.props.p;
+
+        // Copy over values from state, if they're valid
+        copyValidValues(this.state.p, p, this.props.season);
 
         // Fix draft season
         if (p.tid === g.PLAYER.UNDRAFTED || p.tid === g.PLAYER.UNDRAFTED_2 || p.tid === g.PLAYER.UNDRAFTED_3) {
@@ -116,69 +213,10 @@ class CustomizePlayer extends React.Component {
         const p = this.state.p;
 
         if (type === 'root') {
-            if (['hgt', 'tid', 'weight'].includes(field)) {
-                val = parseInt(val, 10);
-                if (isNaN(val)) {
-                    return;
-                }
-            }
-
             p[field] = val;
-        } else if (type === 'born') {
-            if (field === 'year') {
-                val = parseInt(val, 10);
-                if (isNaN(val)) {
-                    return;
-                }
-            }
-
-            if (field === 'year') {
-                p[type].year = g.season - val;
-            } else {
-                p[type][field] = val;
-            }
-        } else if (type === 'contract') {
-            if (field === 'amount') {
-                // Allow any value, even above or below normal limits, but round to $10k
-                val = helpers.round(100 * parseFloat(val)) * 10;
-                if (isNaN(val)) {
-                    val = g.minContract;
-                }
-            } else if (field === 'exp') {
-                val = parseInt(val, 10);
-                if (isNaN(val)) {
-                    return;
-                }
-
-                // No contracts expiring in the past
-                if (val < this.props.season) {
-                    val = this.props.season;
-                }
-
-                // If current season contracts already expired, then current season can't be allowed for new contract
-                if (val === this.props.season && g.phase >= g.PHASE.RESIGN_PLAYERS) {
-                    val += 1;
-                }
-            }
-
-            p[type][field] = val;
-        } else if (type === 'injury') {
-            if (field === 'gamesRemaining') {
-                val = parseInt(val, 10);
-                if (isNaN(val) || val < 0) {
-                    val = 0;
-                }
-            }
-
+        } else if (['born', 'contract', 'injury'].includes(type)) {
             p[type][field] = val;
         } else if (type === 'rating') {
-            if (field !== 'pos') {
-                val = helpers.bound(parseInt(val, 10), 0, 100);
-                if (isNaN(val)) {
-                    val = 0;
-                }
-            }
-
             p.ratings[p.ratings.length - 1][field] = val;
         } else if (type === 'face') {
             if (['eyes', 'hair', 'mouth', 'nose'].includes(field)) {
@@ -187,7 +225,6 @@ class CustomizePlayer extends React.Component {
                     return;
                 }
 
-
                 if (field === 'eyes') {
                     p[type][field][0].id = val;
                     p[type][field][1].id = val;
@@ -195,11 +232,6 @@ class CustomizePlayer extends React.Component {
                     p[type][field].id = val;
                 }
             } else if (['eye-angle', 'fatness'].includes(field)) {
-                val = parseFloat(val);
-                if (isNaN(val)) {
-                    return;
-                }
-
                 if (field === 'eye-angle') {
                     p[type].eyes[0].angle = val;
                     p[type].eyes[1].angle = val;
@@ -242,7 +274,7 @@ class CustomizePlayer extends React.Component {
     }
 
     render() {
-        const {godMode, originalTid, season, teams} = this.props;
+        const {godMode, originalTid, teams} = this.props;
         const {appearanceOption, p, saving} = this.state;
 
         const title = originalTid === undefined ? 'Create Player' : 'Edit Player';
@@ -255,8 +287,6 @@ class CustomizePlayer extends React.Component {
                 <p>You can't customize players unless you enable <a href={helpers.leagueUrl(["god_mode"])}>God Mode</a></p>
             </div>;
         }
-
-        const age = season - p.born.year;
 
         const r = p.ratings.length - 1;
 
@@ -347,7 +377,7 @@ class CustomizePlayer extends React.Component {
                             </div>
                             <div className="col-sm-3 form-group">
                                 <label>Age</label>
-                                <input type="text" className="form-control" onChange={this.handleChange.bind(this, 'born', 'year')} value={age} />
+                                <input type="text" className="form-control" onChange={this.handleChange.bind(this, 'root', 'age')} value={p.age} />
                             </div>
                             <div className="col-sm-3 form-group">
                                 <label>Team</label>
@@ -381,7 +411,7 @@ class CustomizePlayer extends React.Component {
                                 <label>Contract Amount</label>
                                 <div className="input-group">
                                     <span className="input-group-addon">$</span>
-                                    <input type="text" className="form-control" onChange={this.handleChange.bind(this, 'contract', 'amount')} value={p.contract.amount / 1000} />
+                                    <input type="text" className="form-control" onChange={this.handleChange.bind(this, 'contract', 'amount')} value={p.contract.amount} />
                                     <span className="input-group-addon">M per year</span>
                                 </div>
                             </div>

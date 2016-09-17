@@ -298,7 +298,7 @@ class CustomizePlayer extends React.Component {
                         <PlayerPicture face={p.face} />
                     </div>
                     <center>
-                        <button className="btn btn-default" onClick={this.randomizeFace}>
+                        <button type="button" className="btn btn-default" onClick={this.randomizeFace}>
                             Randomize
                         </button>
                     </center>

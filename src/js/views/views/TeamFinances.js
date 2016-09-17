@@ -104,7 +104,7 @@ class FinancesForm extends React.Component {
 
         const formDisabled = gamesInProgress || tid !== g.userTid;
 
-        return <form onSubmit={this.handleSubmit} data-no-davis="true">
+        return <form onSubmit={this.handleSubmit}>
             <h4>Revenue Settings <HelpPopover placement="bottom" title="Revenue Settings">
                 Set your ticket price too high, and attendance will decrease and some fans will resent you for it. Set it too low, and you're not maximizing your profit.
             </HelpPopover></h4>

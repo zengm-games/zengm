@@ -45,7 +45,7 @@ class DownloadDataLink extends React.Component {
         }
         if (this.state.url !== undefined) {
             // Would be better to auto-download, like some of the answers at http://stackoverflow.com/q/3665115/786644
-            return <a href={this.state.url} download={filename} data-no-davis="true">
+            return <a href={this.state.url} download={filename}>
                 {downloadText}
             </a>;
         }

@@ -149,10 +149,10 @@ class UserInfo extends React.Component {
             {username === undefined || username === null || username === '' ? <p>
                 You are not logged in! <a href="/account/login_or_register">Click here to log in or create an account.</a> If you have an account, your achievements will be stored in the cloud, combining achievements from leagues in different browsers and different computers.
             </p> : <p>
-                Logged in as: <b>{username}</b> (<a href="" id="logout" onClick={this.handleLogout} data-no-davis="true">Logout</a>)
+                Logged in as: <b>{username}</b> (<a href="" id="logout" onClick={this.handleLogout}>Logout</a>)
             </p>}
             <p className="text-danger">{this.state.logoutError}</p>
-            {showGoldActive ? <p>Basketball GM Gold: Active, renews for $5 on {goldUntilDateString} (<a href="/account/update_card">Update card</a> or <a href="" id="gold-cancel" onClick={handleCancel} data-no-davis="true">cancel</a>)</p> : null}
+            {showGoldActive ? <p>Basketball GM Gold: Active, renews for $5 on {goldUntilDateString} (<a href="/account/update_card">Update card</a> or <a href="" id="gold-cancel" onClick={handleCancel}>cancel</a>)</p> : null}
             {showGoldCancelled ? <p>Basketball GM Gold: Cancelled, expires {goldUntilDateString}</p> : null}
         </div>;
     }

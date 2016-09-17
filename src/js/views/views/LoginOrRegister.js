@@ -150,7 +150,7 @@ class LoginOrRegister extends React.Component {
                 <div className="col-lg-2 col-md-1 hidden-sm hidden-xs" />
                 <div className="col-lg-3 col-md-4 col-sm-5">
                     <h1>Login</h1>
-                    <form onSubmit={this.handleLogin} id="login" data-no-davis="true">
+                    <form onSubmit={this.handleLogin} id="login">
                         <div className="form-group">
                             <label className="control-label" htmlFor="login-username">Username</label>
                             <input type="text" className="form-control" id="login-username" name="username" required="required" />
@@ -167,7 +167,7 @@ class LoginOrRegister extends React.Component {
                 <div className="col-sm-2 hidden-xs" />
                 <div className="col-lg-3 col-md-4 col-sm-5">
                     <h1>Register</h1>
-                    <form onSubmit={this.handleRegister} id="register" data-no-davis="true">
+                    <form onSubmit={this.handleRegister} id="register">
                         <div className={classNames('form-group', {'has-error': this.state.registerUsernameError !== null})}>
                             <label className="control-label" htmlFor="register-username">Username</label>
                             <input type="text" className="form-control" id="register-username" name="username" required="required" maxLength="15" pattern="[A-Za-z-0-9-_]+" title="Letters, numbers, dashes (-), and underscores (_) only" />

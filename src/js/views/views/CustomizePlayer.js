@@ -361,7 +361,7 @@ class CustomizePlayer extends React.Component {
 
             <p>Here, you can {originalTid === null ? 'create a custom player with' : 'edit a player to have'} whatever attributes and ratings you want. If you want to make a whole league of custom players, you should probably create a <a href="https://basketball-gm.com/manual/customization/">custom League File</a>.</p>
 
-            <form onSubmit={this.handleSubmit} data-no-davis="true">
+            <form onSubmit={this.handleSubmit}>
                 <div className="row">
                     <div className="col-md-7">
                         <h2>Attributes</h2>

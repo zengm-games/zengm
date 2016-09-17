@@ -140,7 +140,7 @@ class ExportStats extends React.Component {
 
             <h2>Player Stats</h2>
 
-            <form className="form-inline" onSubmit={this.handleSubmit} data-no-davis="true">
+            <form className="form-inline" onSubmit={this.handleSubmit}>
                 <div className="form-group">
                     <select className="form-control" onChange={this.resetState}>
                         <option value="averages">Season Averages</option>

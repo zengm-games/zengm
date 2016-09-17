@@ -185,18 +185,18 @@ const Paging = ({currentPage, numRows, onClick, perPage}) => {
     const numberedPages = [];
     for (let i = firstShownPage; i <= lastShownPage; i++) {
         numberedPages.push(<li key={i} className={i === currentPage ? 'active' : ''}>
-            <a data-no-davis="true" onClick={() => onClick(i)}>{i}</a>
+            <a onClick={() => onClick(i)}>{i}</a>
         </li>);
     }
 
     return <div className="dataTables_paginate paging_bootstrap">
         <ul className="pagination">
             <li className={classNames('prev', {disabled: !showPrev})}>
-                <a data-no-davis="true" onClick={() => showPrev && onClick(currentPage - 1)}>← Prev</a>
+                <a onClick={() => showPrev && onClick(currentPage - 1)}>← Prev</a>
             </li>
             {numberedPages}
             <li className={classNames('next', {disabled: !showNext})}>
-                <a data-no-davis="true" onClick={() => showNext && onClick(currentPage + 1)}>Next →</a>
+                <a onClick={() => showNext && onClick(currentPage + 1)}>Next →</a>
             </li>
         </ul>
     </div>;

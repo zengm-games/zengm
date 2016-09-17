@@ -218,7 +218,7 @@ class EditTeamInfo extends React.Component {
                 </div>
             </div>
 
-            <form onSubmit={this.handleSubmit} data-no-davis="true">
+            <form onSubmit={this.handleSubmit}>
                 <div className="row">
                     {teams.map((t, i) => <div key={t.tid}>
                         <div className="col-xs-6 col-sm-2 form-group">

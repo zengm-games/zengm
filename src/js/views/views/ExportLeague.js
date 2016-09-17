@@ -128,7 +128,7 @@ class ExportLeague extends React.Component {
 
             <p>Here you can export your entire league data to a single League File. A League File can serve many purposes. You can use it as a <b>backup</b>, to <b>copy a league from one computer to another</b>, or to use as the base for a <b>custom roster file</b> to share with others. Select as much or as little information as you want to export, since any missing information will be filled in with default values when it is used. <a href="http://basketball-gm.com/manual/customization/">Read the manual for more info.</a></p>
 
-            <form onSubmit={this.handleSubmit} data-no-davis="true">
+            <form onSubmit={this.handleSubmit}>
                 {categories.map(cat => <div key={cat.name} className="checkbox">
                     <label>
                         <input type="checkbox" value={cat.objectStores} defaultChecked={cat.checked} /> {cat.name}

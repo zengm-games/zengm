@@ -132,7 +132,7 @@ class GodMode extends React.Component {
 
             <p className="text-danger">These options are not well tested and might make the AI do weird things.</p>
 
-            <form onSubmit={this.handleFormSubmit} data-no-davis="true">
+            <form onSubmit={this.handleFormSubmit}>
                 <div className="row">
                     <div className="col-sm-3 col-xs-6 form-group">
                         <label>Injuries <HelpPopover placement="right" title="Injuries">

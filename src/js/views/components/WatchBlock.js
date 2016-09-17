@@ -53,10 +53,10 @@ class WatchBlock extends React.Component {
         }
 
         if (this.state.watch) {
-            return <a className="glyphicon glyphicon-flag watch watch-active" onClick={this.handleClick} title="Remove from Watch List" data-no-davis="true" />;
+            return <a className="glyphicon glyphicon-flag watch watch-active" onClick={this.handleClick} title="Remove from Watch List" />;
         }
 
-        return <a className="glyphicon glyphicon-flag watch" onClick={this.handleClick} title="Add to Watch List" data-no-davis="true" />;
+        return <a className="glyphicon glyphicon-flag watch" onClick={this.handleClick} title="Add to Watch List" />;
     }
 }
 

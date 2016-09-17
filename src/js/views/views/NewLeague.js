@@ -193,7 +193,7 @@ class NewLeague extends React.Component {
         return <div>
             <h1>Create New League</h1>
 
-            <form onSubmit={this.handleSubmit} data-no-davis="true">
+            <form onSubmit={this.handleSubmit}>
                 <div className="row">
                     <div className="form-group col-md-4 col-sm-5">
                         <label>League name</label>

@@ -139,7 +139,7 @@ class DeleteOldData extends React.Component {
 
             <p>As you play multiple seasons in a league, the game tends to slow down as data is accumulated in the database. For instance, if you play 20 seasons, game simulation will be approximately twice as slow as in a new league. If you delete old data using the form below, it will restore performance to roughly that of a new league.</p>
 
-            <form onSubmit={this.handleSubmit} data-no-davis="true">
+            <form onSubmit={this.handleSubmit}>
                 <div className="checkbox">
                     <label>
                         <input onChange={this.handleChanges.boxScores} type="checkbox" checked={this.state.boxScores} /> Delete Old Box Scores

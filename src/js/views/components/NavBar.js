@@ -49,7 +49,6 @@ class TopMenuToggle extends React.Component {
             className="dropdown-toggle"
             onClick={this.handleClick}
             onMouseEnter={this.handleMouseEnter}
-            data-no-davis="true"
         >
             <span className="hidden-sm">{this.props.long} <b className="caret" /></span>
             <span className="visible-sm">{this.props.short} <b className="caret" /></span>
@@ -216,7 +215,7 @@ class DropdownLinks extends React.Component {
             </TopMenuDropdown> : null}
             <TopMenuDropdown long="Tools" short="X" openId={this.state.openId} onToggle={this.handleTopMenuToggle}>
                 <MenuItem href="/account">Achievements</MenuItem>
-                {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('autoPlaySeasons', e)} data-no-davis="true">Auto Play Seasons</MenuItem> : null}
+                {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('autoPlaySeasons', e)}>Auto Play Seasons</MenuItem> : null}
                 {lid !== undefined && godMode ? <MenuItem href={helpers.leagueUrl(['customize_player'])} className="god-mode-menu">Create A Player</MenuItem> : null}
                 {lid !== undefined && godMode ? <MenuItem href={helpers.leagueUrl(['edit_team_info'])} className="god-mode-menu">Edit Team Info</MenuItem> : null}
                 {lid !== undefined ? <MenuItem href={helpers.leagueUrl(['event_log'])}>Event Log</MenuItem> : null}
@@ -227,18 +226,18 @@ class DropdownLinks extends React.Component {
                 {lid !== undefined ? <MenuItem href={helpers.leagueUrl(['delete_old_data'])}>Improve Performance</MenuItem> : null}
                 {lid !== undefined && godMode ? <MenuItem href={helpers.leagueUrl(['multi_team_mode'])} className="god-mode-menu">Multi Team Mode</MenuItem> : null}
                 {lid !== undefined && godMode ? <MenuItem href={helpers.leagueUrl(['new_team'])} className="god-mode-menu">Switch Team</MenuItem> : null}
-                <MenuItem onClick={handleScreenshotClick} data-no-davis="true"><span className="glyphicon glyphicon-camera" /> Screenshot</MenuItem>
+                <MenuItem onClick={handleScreenshotClick}><span className="glyphicon glyphicon-camera" /> Screenshot</MenuItem>
                 {lid !== undefined ? <li className="divider" /> : null}
                 <li role="presentation" className="dropdown-header">Use at your own risk!</li>
-                {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('skipToPlayoffs', e)} data-no-davis="true">Skip To Playoffs</MenuItem> : null}
-                {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('skipToBeforeDraft', e)} data-no-davis="true">Skip To Before Draft</MenuItem> : null}
-                {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('skipToAfterDraft', e)} data-no-davis="true">Skip To After Draft</MenuItem> : null}
-                {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('skipToPreseason', e)} data-no-davis="true">Skip To Preseason</MenuItem> : null}
-                {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('forceResumeDraft', e)} data-no-davis="true">Force Resume Draft</MenuItem> : null}
+                {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('skipToPlayoffs', e)}>Skip To Playoffs</MenuItem> : null}
+                {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('skipToBeforeDraft', e)}>Skip To Before Draft</MenuItem> : null}
+                {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('skipToAfterDraft', e)}>Skip To After Draft</MenuItem> : null}
+                {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('skipToPreseason', e)}>Skip To Preseason</MenuItem> : null}
+                {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('forceResumeDraft', e)}>Force Resume Draft</MenuItem> : null}
                 <MenuItem href="" onClick={toggleDebugMode} id="toggle-debug-mode">
                     {localStorage.debug === "debug" ? 'Disable Debug Mode' : 'Enable Debug Mode'}
                 </MenuItem>
-                <MenuItem onClick={e => handleToolsClick('resetDb', e)} data-no-davis="true">Reset DB</MenuItem>
+                <MenuItem onClick={e => handleToolsClick('resetDb', e)}>Reset DB</MenuItem>
             </TopMenuDropdown>
             <TopMenuDropdown long="Help" short="?" openId={this.state.openId} onToggle={this.handleTopMenuToggle}>
                 <MenuItem href="https://basketball-gm.com/manual/" rel="noopener noreferrer" target="_blank">Overview</MenuItem>
@@ -333,7 +332,7 @@ class PlayMenu extends React.Component {
 
         return <ul className="nav navbar-nav-no-collapse">
             <Dropdown componentClass="li" id="play-menu">
-                <Dropdown.Toggle className="play-button" useAnchor data-no-davis="true">
+                <Dropdown.Toggle className="play-button" useAnchor>
                     <span className="hidden-xs">Play</span>
                 </Dropdown.Toggle>
                 <Dropdown.Menu>

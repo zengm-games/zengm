@@ -109,7 +109,7 @@ class ResetPassword extends React.Component {
 
         const form = <div>
             <p>Enter a new password for your account below.</p>
-            <form id="resetpw" onSubmit={this.handleSubmit} data-no-davis="true">
+            <form id="resetpw" onSubmit={this.handleSubmit}>
                 <input type="hidden" name="action" value="reset_password" />
                 <input type="hidden" name="token" value={this.props.token} />
                 <div className="form-group">

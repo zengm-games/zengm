@@ -124,7 +124,7 @@ class AccountUpdateCard extends React.Component {
 
             <p>To replace your saved card with a new one, fill out this form:</p>
 
-            <form onSubmit={this.handleSubmit} data-no-davis="true">
+            <form onSubmit={this.handleSubmit}>
                 {this.state.formError ? <div className="alert alert-danger">{this.state.formError}</div> : null}
 
                 <div style={{maxWidth: '300px'}}>

@@ -19,7 +19,7 @@ describe("core/contractNegotiation", () => {
         it("should start a negotiation with a free agent", () => {
             return g.dbl.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite", async tx => {
                 const error = await contractNegotiation.create(tx, 7, false);
-                assert.equal((typeof error), "undefined");
+                assert.equal((typeof error), "undefined", `Unexpected error message from contractNegotiation.create: "${error}"`);
 
                 const negotiations = await tx.negotiations.getAll();
                 assert.equal(negotiations.length, 1);
@@ -29,7 +29,7 @@ describe("core/contractNegotiation", () => {
         it("should fail to start a negotiation with anyone but a free agent", () => {
             return g.dbl.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite", async tx => {
                 const error = await contractNegotiation.create(tx, 70, false);
-                assert(error.indexOf("is not a free agent.") >= 0);
+                assert(error.includes("is not a free agent."));
 
                 const negotiations = await tx.negotiations.getAll();
                 assert.equal(negotiations.length, 0);

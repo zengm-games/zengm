@@ -180,7 +180,7 @@ class DropdownLinks extends React.Component {
         return <Nav pullRight style={{marginRight: '0px'}}>
             {lid !== undefined ? <NavItem href={helpers.leagueUrl([])}>
                 <span className="hidden-xs"><span className="glyphicon glyphicon-home" /></span>
-                <span className="visible-xs"><span className="glyphicon glyphicon-home" style={{marginRight: '5px'}} />League Dashboard</span>
+                <span className="visible-xs toggle-responsive-menu"><span className="glyphicon glyphicon-home" style={{marginRight: '5px'}} />League Dashboard</span>
             </NavItem> : null}
             {lid !== undefined ? <TopMenuDropdown long="League" short="L" openId={this.state.openId} onToggle={this.handleTopMenuToggle}>
                 <MenuItem href={helpers.leagueUrl(['standings'])}>Standings</MenuItem>
@@ -379,14 +379,15 @@ class NavBar extends React.Component {
         if (!btnToggle) { return; }
 
         navBar.addEventListener('click', (evt) => {
-            if (evt.target.tagName !== 'A' || evt.target.classList.contains('dropdown-toggle') || !collapsibleNav.classList.contains('in')) {
+            if (evt.target.classList.contains('dropdown-toggle') || !collapsibleNav.classList.contains('in')) {
                 return;
             }
 
-            btnToggle.click();
+            if (evt.target.tagName === 'A' || evt.target.classList.contains('toggle-responsive-menu')) {
+                btnToggle.click();
+            }
         }, false);
     }
-
 
     render() {
         const {lid, godMode, options, phaseText, popup, statusText, updating, username} = this.props;

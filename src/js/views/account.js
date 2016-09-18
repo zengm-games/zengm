@@ -2,10 +2,10 @@ import * as account from '../util/account';
 import bbgmViewReact from '../util/bbgmViewReact';
 import Account from './views/Account';
 
-function get(req) {
+function get(ctx) {
     return {
-        goldMessage: req.raw.goldResult !== undefined ? req.raw.goldResult.message : undefined,
-        goldSuccess: req.raw.goldResult !== undefined ? req.raw.goldResult.success : undefined,
+        goldMessage: ctx.bbgm.goldResult !== undefined ? ctx.bbgm.goldResult.message : undefined,
+        goldSuccess: ctx.bbgm.goldResult !== undefined ? ctx.bbgm.goldResult.success : undefined,
     };
 }
 

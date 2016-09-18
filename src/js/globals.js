@@ -132,7 +132,8 @@ g.compositeWeights = {
     },
 };
 
-g.stripePublishableKey = "pk_live_Dmo7Vs6uSaoYHrFngr4lM0sa";
+// Test: pk_test_gFqvUZCI8RgSl5KMIYTmZ5yI
+g.stripePublishableKey = "pk_test_gFqvUZCI8RgSl5KMIYTmZ5yI";
 
 // THIS MUST BE ACCURATE OR BAD STUFF WILL HAPPEN
 g.notInDb = ["dbm", "dbl", "lid", "PHASE", "PLAYER", "PHASE_TEXT", "enableLogging", "tld", "sport", "compositeWeights", "stripePublishableKey", "notInDb", "emitter"];

@@ -481,7 +481,7 @@ cordova
   hide export link
 blog about cordova/web hybrid
   base URL prefix - do in JS
-  davisjs: preprocess
+  router: preprocess
   images: data URLs
   upload roster files problem
 upcoming free agents
@@ -899,9 +899,6 @@ draftOrder should just be in globals, not a real table
 shot charts showing hot spots (red/yellow/green) based on shot location data
 If you are simulating through the whole season and execute a trade while simulating, it will continue simulating even if you are over the roster limit. http://www.reddit.com/r/BasketballGM/comments/1xch01/trades_after_season/cfamo73
 IE/Edge support
-  davisjs
-    elem.host comes up blank in originChecks
-    hacky solution used now (see js/lib/README.md) but maybe this will lead to a real answer: http://stackoverflow.com/q/17641380/786644
   compound indexes
 hire/fire different coaches with different strategies
 Web workers

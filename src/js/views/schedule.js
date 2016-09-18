@@ -6,9 +6,9 @@ import * as helpers from '../util/helpers';
 import Schedule from './views/Schedule';
 import * as team from '../core/team';
 
-function get(req) {
+function get(ctx) {
     const inputs = {};
-    [inputs.tid, inputs.abbrev] = helpers.validateAbbrev(req.params.abbrev);
+    [inputs.tid, inputs.abbrev] = helpers.validateAbbrev(ctx.params.abbrev);
     return inputs;
 }
 

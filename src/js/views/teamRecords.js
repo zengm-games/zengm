@@ -7,9 +7,9 @@ import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import TeamRecords from './views/TeamRecords';
 
-function get(req) {
+function get(ctx) {
     return {
-        byType: req.params.byType || "team",
+        byType: ctx.params.byType || "team",
     };
 }
 

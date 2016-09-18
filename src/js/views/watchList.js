@@ -4,10 +4,10 @@ import * as player from '../core/player';
 import bbgmViewReact from '../util/bbgmViewReact';
 import WatchList from './views/WatchList';
 
-function get(req) {
+function get(ctx) {
     return {
-        statType: req.params.statType !== undefined ? req.params.statType : "per_game",
-        playoffs: req.params.playoffs !== undefined ? req.params.playoffs : "regular_season",
+        statType: ctx.params.statType !== undefined ? ctx.params.statType : "per_game",
+        playoffs: ctx.params.playoffs !== undefined ? ctx.params.playoffs : "regular_season",
     };
 }
 

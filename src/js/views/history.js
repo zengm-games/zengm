@@ -6,8 +6,8 @@ import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import History from './views/History';
 
-function get(req) {
-    let season = helpers.validateSeason(req.params.season);
+function get(ctx) {
+    let season = helpers.validateSeason(ctx.params.season);
 
     // If playoffs aren't over, season awards haven't been set
     if (g.phase <= g.PHASE.PLAYOFFS) {

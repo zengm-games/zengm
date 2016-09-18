@@ -3,13 +3,13 @@ import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import EventLog from './views/EventLog';
 
-function get(req) {
-    const [tid, abbrev] = helpers.validateAbbrev(req.params.abbrev);
+function get(ctx) {
+    const [tid, abbrev] = helpers.validateAbbrev(ctx.params.abbrev);
 
     return {
         tid,
         abbrev,
-        season: helpers.validateSeason(req.params.season),
+        season: helpers.validateSeason(ctx.params.season),
     };
 }
 

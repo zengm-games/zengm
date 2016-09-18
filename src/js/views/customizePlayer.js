@@ -7,10 +7,10 @@ import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import CustomizePlayer from './views/CustomizePlayer';
 
-function get(req) {
-    if (req.params.hasOwnProperty("pid")) {
+function get(ctx) {
+    if (ctx.params.hasOwnProperty("pid")) {
         return {
-            pid: parseInt(req.params.pid, 10),
+            pid: parseInt(ctx.params.pid, 10),
         };
     }
 

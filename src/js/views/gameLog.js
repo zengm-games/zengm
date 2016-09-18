@@ -72,11 +72,11 @@ async function boxScore(gid) {
     return game;
 }
 
-function get(req) {
+function get(ctx) {
     return {
-        abbrev: helpers.validateAbbrev(req.params.abbrev)[1],
-        gid: req.params.gid !== undefined ? parseInt(req.params.gid, 10) : -1,
-        season: helpers.validateSeason(req.params.season),
+        abbrev: helpers.validateAbbrev(ctx.params.abbrev)[1],
+        gid: ctx.params.gid !== undefined ? parseInt(ctx.params.gid, 10) : -1,
+        season: helpers.validateSeason(ctx.params.season),
     };
 }
 

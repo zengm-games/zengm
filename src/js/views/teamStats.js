@@ -4,9 +4,9 @@ import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import TeamStats from './views/TeamStats';
 
-function get(req) {
+function get(ctx) {
     return {
-        season: helpers.validateSeason(req.params.season),
+        season: helpers.validateSeason(ctx.params.season),
     };
 }
 

@@ -71,25 +71,25 @@ window.Promise.config({warnings: false});
 
     await db.connectMeta();
 
-    /*this.before(req => {
+    /*this.before((ctx) => {
             // Normal Cordova pages
-            if (req.path.substr(0, 7) === 'file://') {
-                req.path = req.path.substr(7);
+            if (ctx.path.substr(0, 7) === 'file://') {
+                ctx.path = ctx.path.substr(7);
             }
 
             // First load Cordova page
-            if (req.path.indexOf('/index.html') >= 0) {
-                req.path = '/';
+            if (ctx.path.indexOf('/index.html') >= 0) {
+                ctx.path = '/';
             }
         }
     });*/
 
     // Redirect a route to https URL always, unless the URL doesn't include basketball-gm (e.g. localhost)
-    const tryForceHttps = view => req => {
+    const tryForceHttps = view => (ctx) => {
         if (window.location.protocol === 'http:' && window.location.hostname.indexOf('basketball-gm.com') >= 0) {
-            window.location.replace(`https://${window.location.hostname}${req.fullPath}`);
+            window.location.replace(`https://${window.location.hostname}${ctx.fullPath}`);
         } else {
-            view(req);
+            view(ctx);
         }
     };
 

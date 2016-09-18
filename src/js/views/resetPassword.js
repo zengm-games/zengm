@@ -1,9 +1,9 @@
 import bbgmViewReact from '../util/bbgmViewReact';
 import ResetPassword from './views/ResetPassword';
 
-function get(req) {
+function get(ctx) {
     return {
-        token: req.params.token,
+        token: ctx.params.token,
     };
 }
 

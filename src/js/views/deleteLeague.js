@@ -5,9 +5,9 @@ import g from '../globals';
 import bbgmViewReact from '../util/bbgmViewReact';
 import DeleteLeague from './views/DeleteLeague';
 
-function get(req) {
+function get(ctx) {
     return {
-        lid: parseInt(req.params.lid, 10),
+        lid: parseInt(ctx.params.lid, 10),
     };
 }
 

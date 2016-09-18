@@ -4,9 +4,9 @@ import * as league from '../core/league';
 import bbgmViewReact from '../util/bbgmViewReact';
 import Message from './views/Message';
 
-function get(req) {
+function get(ctx) {
     return {
-        mid: req.params.mid ? parseInt(req.params.mid, 10) : null,
+        mid: ctx.params.mid ? parseInt(ctx.params.mid, 10) : null,
     };
 }
 

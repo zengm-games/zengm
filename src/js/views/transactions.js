@@ -3,12 +3,12 @@ import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import Transactions from './views/Transactions';
 
-function get(req) {
+function get(ctx) {
     let abbrev;
     let tid;
-    if (req.params.abbrev && req.params.abbrev !== "all") {
-        [tid, abbrev] = helpers.validateAbbrev(req.params.abbrev);
-    } else if (req.params.abbrev && req.params.abbrev === "all") {
+    if (ctx.params.abbrev && ctx.params.abbrev !== "all") {
+        [tid, abbrev] = helpers.validateAbbrev(ctx.params.abbrev);
+    } else if (ctx.params.abbrev && ctx.params.abbrev === "all") {
         tid = -1;
         abbrev = "all";
     } else {
@@ -17,9 +17,9 @@ function get(req) {
     }
 
     let season;
-    if (req.params.season && req.params.season !== "all") {
-        season = helpers.validateSeason(req.params.season);
-    } else if (req.params.season && req.params.season === "all") {
+    if (ctx.params.season && ctx.params.season !== "all") {
+        season = helpers.validateSeason(ctx.params.season);
+    } else if (ctx.params.season && ctx.params.season === "all") {
         season = "all";
     } else {
         season = g.season;
@@ -29,7 +29,7 @@ function get(req) {
         tid,
         abbrev,
         season,
-        eventType: req.params.eventType || 'all',
+        eventType: ctx.params.eventType || 'all',
     };
 }
 

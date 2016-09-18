@@ -4,9 +4,9 @@ import * as player from '../core/player';
 import bbgmViewReact from '../util/bbgmViewReact';
 import AwardsRecords from './views/AwardsRecords';
 
-function get(req) {
+function get(ctx) {
     return {
-        awardType: req.params.awardType || 'champion',
+        awardType: ctx.params.awardType || 'champion',
     };
 }
 

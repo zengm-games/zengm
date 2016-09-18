@@ -7,9 +7,9 @@ import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import Player from './views/Player';
 
-function get(req) {
+function get(ctx) {
     return {
-        pid: req.params.pid !== undefined ? parseInt(req.params.pid, 10) : undefined,
+        pid: ctx.params.pid !== undefined ? parseInt(ctx.params.pid, 10) : undefined,
     };
 }
 

@@ -8,17 +8,17 @@ import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import Roster from './views/Roster';
 
-function get(req) {
+function get(ctx) {
     // Fix broken links
-    if (req.params.abbrev === "FA") {
+    if (ctx.params.abbrev === "FA") {
         return {
             redirectUrl: helpers.leagueUrl(["free_agents"]),
         };
     }
 
     const inputs = {};
-    [inputs.tid, inputs.abbrev] = helpers.validateAbbrev(req.params.abbrev);
-    inputs.season = helpers.validateSeason(req.params.season);
+    [inputs.tid, inputs.abbrev] = helpers.validateAbbrev(ctx.params.abbrev);
+    inputs.season = helpers.validateSeason(ctx.params.season);
 
     return inputs;
 }

@@ -102,14 +102,14 @@ class Controller extends React.Component {
         });
     }
 
-    async get(fnUpdate, args, req) {
-        const [updateEvents, cb, abort] = await (args.inLeague ? beforeLeague(req, this.state.topMenu.lid) : beforeNonLeague(req));
+    async get(fnUpdate, args, ctx) {
+        const [updateEvents, cb, abort] = await (args.inLeague ? beforeLeague(ctx, this.state.topMenu.lid) : beforeNonLeague(ctx));
 
         if (abort === 'abort') {
             return;
         }
 
-        let inputs = args.get(req);
+        let inputs = args.get(ctx);
         if (inputs === undefined) {
             inputs = {};
         }

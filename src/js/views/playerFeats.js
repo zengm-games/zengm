@@ -3,17 +3,17 @@ import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import PlayerFeats from './views/PlayerFeats';
 
-function get(req) {
+function get(ctx) {
     let abbrev;
-    if (g.teamAbbrevsCache.indexOf(req.params.abbrev) >= 0) {
-        abbrev = req.params.abbrev;
+    if (g.teamAbbrevsCache.indexOf(ctx.params.abbrev) >= 0) {
+        abbrev = ctx.params.abbrev;
     } else {
         abbrev = "all";
     }
 
     let season;
-    if (req.params.season && req.params.season !== "all") {
-        season = helpers.validateSeason(req.params.season);
+    if (ctx.params.season && ctx.params.season !== "all") {
+        season = helpers.validateSeason(ctx.params.season);
     } else {
         season = "all";
     }
@@ -21,7 +21,7 @@ function get(req) {
     return {
         abbrev,
         season,
-        playoffs: req.params.playoffs !== undefined ? req.params.playoffs : "regular_season",
+        playoffs: ctx.params.playoffs !== undefined ? ctx.params.playoffs : "regular_season",
     };
 }
 

@@ -49,8 +49,8 @@ function generateContractOptions(contract, ovr) {
     return contractOptions.filter(contractOption => contractOption.amount * 1000 <= g.maxContract);
 }
 
-function get(req) {
-    const pid = parseInt(req.params.pid, 10);
+function get(ctx) {
+    const pid = parseInt(ctx.params.pid, 10);
 
     return {
         pid: pid >= 0 ? pid : null, // Null will load whatever the active one is

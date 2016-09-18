@@ -4,8 +4,8 @@ import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import DraftSummary from './views/DraftSummary';
 
-function get(req) {
-    let season = helpers.validateSeason(req.params.season);
+function get(ctx) {
+    let season = helpers.validateSeason(ctx.params.season);
 
     // Draft hasn't happened yet this year
     if (g.phase < g.PHASE.DRAFT) {

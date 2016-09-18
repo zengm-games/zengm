@@ -4,11 +4,11 @@ import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import PlayerRatings from './views/PlayerRatings';
 
-function get(req) {
+function get(ctx) {
     let abbrev;
-    if (g.teamAbbrevsCache.indexOf(req.params.abbrev) >= 0) {
-        abbrev = req.params.abbrev;
-    } else if (req.params.abbrev && req.params.abbrev === 'watch') {
+    if (g.teamAbbrevsCache.indexOf(ctx.params.abbrev) >= 0) {
+        abbrev = ctx.params.abbrev;
+    } else if (ctx.params.abbrev && ctx.params.abbrev === 'watch') {
         abbrev = "watch";
     } else {
         abbrev = "all";
@@ -16,7 +16,7 @@ function get(req) {
 
     return {
         abbrev,
-        season: helpers.validateSeason(req.params.season),
+        season: helpers.validateSeason(ctx.params.season),
     };
 }
 

@@ -6,7 +6,6 @@ replace davis?
     manually trigger refresh
     trigger arbitrary code on real new page, not refresh
   try page.js first
-    req -> ctx
     tryForceHttps works?
 
 clicking League Dashboard in mobile view does not close menu

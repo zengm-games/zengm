@@ -5,11 +5,11 @@ import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import PlayerStats from './views/PlayerStats';
 
-function get(req) {
+function get(ctx) {
     let abbrev;
-    if (g.teamAbbrevsCache.indexOf(req.params.abbrev) >= 0) {
-        abbrev = req.params.abbrev;
-    } else if (req.params.abbrev && req.params.abbrev === 'watch') {
+    if (g.teamAbbrevsCache.indexOf(ctx.params.abbrev) >= 0) {
+        abbrev = ctx.params.abbrev;
+    } else if (ctx.params.abbrev && ctx.params.abbrev === 'watch') {
         abbrev = "watch";
     } else {
         abbrev = "all";
@@ -17,9 +17,9 @@ function get(req) {
 
     return {
         abbrev,
-        season: req.params.season === "career" ? null : helpers.validateSeason(req.params.season),
-        statType: req.params.statType !== undefined ? req.params.statType : "per_game",
-        playoffs: req.params.playoffs !== undefined ? req.params.playoffs : "regular_season",
+        season: ctx.params.season === "career" ? null : helpers.validateSeason(ctx.params.season),
+        statType: ctx.params.statType !== undefined ? ctx.params.statType : "per_game",
+        playoffs: ctx.params.playoffs !== undefined ? ctx.params.playoffs : "regular_season",
     };
 }
 

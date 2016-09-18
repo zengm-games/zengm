@@ -5,10 +5,10 @@ import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import TeamFinances from './views/TeamFinances';
 
-function get(req) {
+function get(ctx) {
     const inputs = {};
-    inputs.show = req.params.show !== undefined ? req.params.show : "10";
-    [inputs.tid, inputs.abbrev] = helpers.validateAbbrev(req.params.abbrev);
+    inputs.show = ctx.params.show !== undefined ? ctx.params.show : "10";
+    [inputs.tid, inputs.abbrev] = helpers.validateAbbrev(ctx.params.abbrev);
     return inputs;
 }
 

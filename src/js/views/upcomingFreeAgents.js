@@ -5,8 +5,8 @@ import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import UpcomingFreeAgents from './views/UpcomingFreeAgents';
 
-function get(req) {
-    let season = helpers.validateSeason(req.params.season);
+function get(ctx) {
+    let season = helpers.validateSeason(ctx.params.season);
 
     if (g.phase <= g.PHASE.RESIGN_PLAYERS) {
         if (season < g.season) {

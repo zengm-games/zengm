@@ -334,21 +334,16 @@ function bbgmPing(type) {
 /**
  * Create a URL for a page within a league.
  *
- * This will also maintain any query string on the end of the URL, for instance for popup windows, unless options.noQueryString is set. Ignoring the query string can be important for forms in Davis.js until this is fixed: https://github.com/olivernn/davis.js/issues/75
- *
  * @param {Array.<string|number>} components Array of components for the URL after the league ID, which will be combined with / in between.
  * @param {number?} lid League ID number. If not passed, then g.lid is used.
  * @return {string} URL
  */
-function leagueUrl(components, options = {}, lid = g.lid) {
+function leagueUrl(components, options, lid = g.lid) {
     let url = `/l/${lid}`;
     for (let i = 0; i < components.length; i++) {
         if (components[i] !== undefined) {
             url += `/${components[i]}`;
         }
-    }
-    if (!options.noQueryString) {
-        url += location.search;
     }
 
     return url;

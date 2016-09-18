@@ -341,7 +341,6 @@ class PlayMenu extends React.Component {
                             key={i}
                             href={option.url}
                             onClick={e => handleOptionClick(option, e)}
-                            data-no-davis={option.url ? null : 'true'}
                         >
                             {option.label}
                             {i === 0 ? <span className="text-muted kbd">Alt+P</span> : null}

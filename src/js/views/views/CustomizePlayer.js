@@ -26,6 +26,9 @@ const copyValidValues = (source, target, season) => {
         }
     }
 
+    target.firstName = source.firstName;
+    target.lastName = source.lastName;
+
     {
         const age = parseInt(source.age, 10);
         if (!isNaN(age)) {

@@ -76,7 +76,7 @@ const copyValidValues = (source, target, season) => {
         for (const rating of Object.keys(source.ratings[r])) {
             if (rating === 'pos') {
                 target.ratings[r].pos = source.ratings[r].pos;
-            } else {
+            } else if (['blk', 'dnk', 'drb', 'endu', 'fg', 'ft', 'hgt', 'ins', 'jmp', 'pot', 'pss', 'reb', 'spd', 'stl', 'stre', 'tp'].includes(rating)) {
                 const val = helpers.bound(parseInt(source.ratings[r][rating], 10), 0, 100);
                 if (!isNaN(val)) {
                     target.ratings[r][rating] = val;
@@ -103,9 +103,6 @@ const copyValidValues = (source, target, season) => {
     }
 
     target.face.color = source.face.color;
-//        } else if (field === 'nose-flip') {
-//            p[type].nose.flip = e.target.checked;
-//        }
 };
 
 class CustomizePlayer extends React.Component {

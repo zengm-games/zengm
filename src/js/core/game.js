@@ -534,9 +534,10 @@ async function loadTeams(tx) {
                 p.ptModifier = 1;
             }
 
-            const rating = players[i].ratings.find(r => r.season === g.season);
+            let rating = players[i].ratings.find(r => r.season === g.season);
             if (rating === undefined) {
-                throw new Error(`Player with no ratings for this season: ${players[i].firstName} ${players[i].lastName} (ID: ${players[i].pid})`);
+                // Sometimes this happens for unknown reasons, so gracefully handle it
+                rating = players[i].ratings[players[i].ratings.length - 1];
             }
 
             p.skills = rating.skills;

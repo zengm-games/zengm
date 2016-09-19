@@ -1,5 +1,7 @@
 league upgrade causes errors
 
+router scroll to top should happen only after new page is loaded (click from feat to box score)
+
 upgrade GA https://developers.google.com/analytics/devguides/collection/upgrade/
   confirm it works
   bbgm web too

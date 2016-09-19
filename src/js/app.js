@@ -219,12 +219,14 @@ window.Promise.config({warnings: false});
                 if (!initialLoad) {
                     window.ga('set', 'page', ctx.path);
                     window.ga('send', 'pageview');
-                } else {
-                    initialLoad = false;
                 }
             }
 
-            ads.showBanner();
+            if (!initialLoad) {
+                ads.showBanner();
+            } else {
+                initialLoad = false;
+            }
         }
     });
 

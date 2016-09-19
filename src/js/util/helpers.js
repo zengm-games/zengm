@@ -321,12 +321,12 @@ function resetG() {
  * @param {string} type Either "league" for a new league, or "season" for a completed season
  */
 function bbgmPing(type) {
-    if (g.enableLogging) {
+    if (g.enableLogging && window.ga) {
         if (type === "league") {
-            window._gaq.push(["_trackEvent", "BBGM", "New league", g.lid.toString()]); //eslint-disable-line no-underscore-dangle
+            window.ga('send', 'event', 'BBGM', 'New league', String(g.lid));
         } else if (type === "season" && g.autoPlaySeasons === 0) {
-            window._gaq.push(["_trackEvent", "BBGM", "Completed season", g.season.toString()]); //eslint-disable-line no-underscore-dangle
-            window._gaq.push(["_trackEvent", "BBGM", "Season protocol", window.location.origin]); //eslint-disable-line no-underscore-dangle
+            window.ga('send', 'event', 'BBGM', 'Completed season', String(g.season));
+            window.ga('send', 'event', 'BBGM', 'Season protocol', window.location.origin);
         }
     }
 }

@@ -212,13 +212,16 @@ window.Promise.config({warnings: false});
     });
 
     // This will run after all the routes defined above, because they all call next()
+    let initialLoad = true;
     page('*', (ctx) => {
         if (!ctx.bbgm.noTrack) {
-            /* eslint-disable no-underscore-dangle */
-            if (window._gaq) {
-                window._gaq.push(['_trackPageview', ctx.path]);
+            if (g.enableLogging && window.ga) {
+                if (!initialLoad) {
+                    window.ga('send', 'pageview', ctx.path);
+                } else {
+                    initialLoad = false;
+                }
             }
-            /* eslint-enable no-underscore-dangle */
 
             ads.showBanner();
         }

@@ -217,7 +217,8 @@ window.Promise.config({warnings: false});
         if (!ctx.bbgm.noTrack) {
             if (g.enableLogging && window.ga) {
                 if (!initialLoad) {
-                    window.ga('send', 'pageview', ctx.path);
+                    window.ga('set', 'page', ctx.path);
+                    window.ga('send', 'pageview');
                 } else {
                     initialLoad = false;
                 }

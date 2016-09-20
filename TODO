@@ -12,6 +12,9 @@ underscore -> lodash-es?
 
 REACT later
 
+redux or similar for state
+  https://www.reddit.com/r/javascript/comments/53ja6l/redux_patterns_and_antipatterns/
+
 keep showing splash screen until first view hydrated
 
 reevaluate views folder structure... maybe views -> ui, and views/*.js -> ui/data-loaders/*.js

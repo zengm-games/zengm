@@ -28,6 +28,7 @@ const copyValidValues = (source, target, season) => {
 
     target.firstName = source.firstName;
     target.lastName = source.lastName;
+    target.imgURL = source.imgURL;
 
     {
         const age = parseInt(source.age, 10);

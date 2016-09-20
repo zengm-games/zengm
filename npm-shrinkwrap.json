@@ -3342,20 +3342,10 @@
       "from": "postcss-value-parser@>=3.1.1 <4.0.0",
       "resolved": "https://registry.npmjs.org/postcss-value-parser/-/postcss-value-parser-3.3.0.tgz"
     },
-    "postscribe": {
-      "version": "2.0.6",
-      "from": "postscribe@latest",
-      "resolved": "https://registry.npmjs.org/postscribe/-/postscribe-2.0.6.tgz"
-    },
     "prelude-ls": {
       "version": "1.1.2",
       "from": "prelude-ls@>=1.1.2 <1.2.0",
       "resolved": "https://registry.npmjs.org/prelude-ls/-/prelude-ls-1.1.2.tgz"
-    },
-    "prescribe": {
-      "version": "1.1.1",
-      "from": "prescribe@>=1.1.1",
-      "resolved": "https://registry.npmjs.org/prescribe/-/prescribe-1.1.1.tgz"
     },
     "preserve": {
       "version": "0.2.0",

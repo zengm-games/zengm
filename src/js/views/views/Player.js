@@ -68,7 +68,7 @@ RatingsOverview.propTypes = {
     })).isRequired,
 };
 
-const StatsTable = ({careerStats = {}, stats = []}) => {
+const StatsTable = ({careerStats = {}, name, stats = []}) => {
     return <DataTable
         cols={getCols('Year', 'Team', 'Age', 'GP', 'GS', 'Min', 'M', 'A', '%', 'M', 'A', '%', 'M', 'A', '%', 'Off', 'Def', 'Tot', 'Ast', 'TO', 'Stl', 'Blk', 'BA', 'PF', 'Pts', '+/-', 'PER', 'EWA')}
         defaultSort={[0, 'asc']}
@@ -102,6 +102,7 @@ const StatsTable = ({careerStats = {}, stats = []}) => {
             helpers.round(careerStats.per, 1),
             helpers.round(careerStats.ewa, 1),
         ]}
+        name={name}
         rows={stats.map(ps => {
             return {
                 key: ps.psid,
@@ -165,10 +166,11 @@ const StatsTable = ({careerStats = {}, stats = []}) => {
 
 StatsTable.propTypes = {
     careerStats: React.PropTypes.object,
+    name: React.PropTypes.string.isRequired,
     stats: React.PropTypes.arrayOf(React.PropTypes.object),
 };
 
-const ShotLocationsTable = ({careerStats = {}, stats = []}) => {
+const ShotLocationsTable = ({careerStats = {}, name, stats = []}) => {
     return <DataTable
         cols={getCols('Year', 'Team', 'Age', 'GP', 'GS', 'Min', 'M', 'A', '%', 'M', 'A', '%', 'M', 'A', '%', 'M', 'A', '%')}
         defaultSort={[0, 'asc']}
@@ -192,6 +194,7 @@ const ShotLocationsTable = ({careerStats = {}, stats = []}) => {
             helpers.round(careerStats.tpa, 1),
             helpers.round(careerStats.tpp, 1),
         ]}
+        name={name}
         rows={stats.map(ps => {
             return {
                 key: ps.psid,
@@ -239,6 +242,7 @@ const ShotLocationsTable = ({careerStats = {}, stats = []}) => {
 
 ShotLocationsTable.propTypes = {
     careerStats: React.PropTypes.object,
+    name: React.PropTypes.string.isRequired,
     stats: React.PropTypes.arrayOf(React.PropTypes.object),
 };
 
@@ -323,12 +327,14 @@ const Player = ({events, feats, freeAgent, godMode, injured, player, retired, sh
         <h3>Stats</h3>
         <StatsTable
             careerStats={player.careerStats}
+            name="Player:Stats"
             stats={player.stats}
         />
 
         <h3>Shot Locations</h3>
         <ShotLocationsTable
             careerStats={player.careerStats}
+            name="Player:ShotLocations"
             stats={player.stats}
         />
 
@@ -336,12 +342,14 @@ const Player = ({events, feats, freeAgent, godMode, injured, player, retired, sh
         <h3>Stats</h3>
         <StatsTable
             careerStats={player.careerStatsPlayoffs}
+            name="Player:PlayoffStats"
             stats={player.statsPlayoffs}
         />
 
         <h3>Shot Locations</h3>
         <ShotLocationsTable
             careerStats={player.careerStatsPlayoffs}
+            name="Player:PlayoffShotLocations"
             stats={player.statsPlayoffs}
         />
 
@@ -349,6 +357,7 @@ const Player = ({events, feats, freeAgent, godMode, injured, player, retired, sh
         <DataTable
             cols={getCols('Year', 'Team', 'Age', 'Pos', 'Ovr', 'Pot', 'rating:Hgt', 'rating:Str', 'rating:Spd', 'rating:Jmp', 'rating:End', 'rating:Ins', 'rating:Dnk', 'rating:FT', 'rating:2Pt', 'rating:3Pt', 'rating:Blk', 'rating:Stl', 'rating:Drb', 'rating:Pss', 'rating:Reb', 'Skills')}
             defaultSort={[0, 'asc']}
+            name="Player:Ratings"
             rows={player.ratings.map(r => {
                 return {
                     key: r.season,
@@ -418,6 +427,7 @@ const Player = ({events, feats, freeAgent, godMode, injured, player, retired, sh
                     cols={getCols('Year', 'Amount')}
                     defaultSort={[0, 'asc']}
                     footer={['Total', helpers.formatCurrency(player.salariesTotal, 'M')]}
+                    name="Player:Salaries"
                     rows={player.salaries.map(s => {
                         return {
                             key: s.season,

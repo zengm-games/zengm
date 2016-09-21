@@ -70,6 +70,7 @@ const FreeAgents = ({capSpace, gamesInProgress, minContract, numRosterSpots, pha
         <DataTable
             cols={cols}
             defaultSort={[10, 'desc']}
+            name="FreeAgents"
             pagination
             rows={rows}
         />

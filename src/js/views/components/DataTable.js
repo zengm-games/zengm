@@ -218,11 +218,19 @@ class DataTable extends React.Component {
             perPage = 10;
         }
 
+        this.sortCacheKey = `DataTableSort:${this.props.name}`;
+        let sortBys = localStorage.getItem(this.sortCacheKey);
+        if (sortBys === null) {
+            sortBys = [this.props.defaultSort];
+        } else {
+            sortBys = JSON.parse(sortBys);
+        }
+
         this.state = {
-            sortBys: [this.props.defaultSort],
-            perPage,
             currentPage: 1,
+            perPage,
             searchText: '',
+            sortBys,
         };
 
         this.handleColClick = this.handleColClick.bind(this);
@@ -283,6 +291,9 @@ class DataTable extends React.Component {
         if (!found) {
             sortBys = [[i, col.sortSequence ? col.sortSequence[0] : 'asc']];
         }
+
+        // Save this sort for this table, so it can be used as default next time
+        localStorage[this.sortCacheKey] = JSON.stringify(sortBys);
 
         this.setState({
             currentPage: 1,
@@ -439,6 +450,7 @@ DataTable.propTypes = {
         React.PropTypes.string,
     ])).isRequired,
     footer: React.PropTypes.array,
+    name: React.PropTypes.string.isRequired,
     pagination: React.PropTypes.bool,
     rows: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
     superCols: React.PropTypes.array,

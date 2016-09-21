@@ -345,6 +345,7 @@ const TeamFinances = ({abbrev, barData, barSeasons, contractTotals, contracts, g
         <DataTable
             cols={cols}
             defaultSort={[1, 'desc']}
+            name="TeamFinances"
             footer={footer}
             rows={rows}
         />

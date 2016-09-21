@@ -68,6 +68,7 @@ const DraftSummary = ({players, season}) => {
         <DataTable
             cols={cols}
             defaultSort={[0, 'asc']}
+            name="DraftSummary"
             rows={rows}
             superCols={superCols}
         />

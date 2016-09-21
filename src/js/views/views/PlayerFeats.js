@@ -88,6 +88,7 @@ const PlayerFeats = ({abbrev, feats, playoffs, season}) => {
         <DataTable
             cols={cols}
             defaultSort={[23, 'desc']}
+            name="PlayerFeats"
             rows={rows}
             pagination
             superCols={superCols}

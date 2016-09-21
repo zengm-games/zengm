@@ -172,6 +172,7 @@ class DraftScouting extends React.Component {
                         <DataTable
                             cols={cols}
                             defaultSort={[0, 'asc']}
+                            name={`DraftScouting:${i}`}
                             rows={rows}
                         />
                     </div>;

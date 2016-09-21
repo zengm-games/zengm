@@ -30,7 +30,6 @@ DataTable
     CSV export
     show/hide columns
     filtering
-    persist sort
 
 Trade
   could be cleaned up a lot

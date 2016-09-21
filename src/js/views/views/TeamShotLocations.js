@@ -64,6 +64,7 @@ const TeamShotLocations = ({season, teams}) => {
         <DataTable
             cols={cols}
             defaultSort={[2, 'desc']}
+            name="TeamShotLocations"
             rows={rows}
             superCols={superCols}
         />

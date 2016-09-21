@@ -91,6 +91,7 @@ const TeamHistory = ({abbrev, bestRecord, championships, history, players, playo
                 <DataTable
                     cols={cols}
                     defaultSort={[2, 'desc']}
+                    name="TeamHistory"
                     rows={rows}
                     pagination
                 />

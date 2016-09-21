@@ -46,6 +46,7 @@ const TeamRecords = ({byType, displayName, seasonCount, teamRecords}) => {
         <DataTable
             cols={cols}
             defaultSort={[0, 'asc']}
+            name="TeamRecords"
             rows={rows}
         />
     </div>;

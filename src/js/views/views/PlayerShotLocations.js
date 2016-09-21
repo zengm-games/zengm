@@ -71,6 +71,7 @@ const PlayerShotLocations = ({players, season}) => {
         <DataTable
             cols={cols}
             defaultSort={[5, 'desc']}
+            name="PlayerShotLocations"
             rows={rows}
             pagination
             superCols={superCols}

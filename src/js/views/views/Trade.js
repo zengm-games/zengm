@@ -186,6 +186,7 @@ class Trade extends React.Component {
                         <DataTable
                             cols={cols}
                             defaultSort={[5, 'desc']}
+                            name="Trade:Other"
                             rows={otherRows}
                         />
                         <div className="table-responsive">
@@ -208,6 +209,7 @@ class Trade extends React.Component {
                         <DataTable
                             cols={cols}
                             defaultSort={[5, 'desc']}
+                            name="Trade:User"
                             rows={userRows}
                         />
                         <div className="table-responsive">

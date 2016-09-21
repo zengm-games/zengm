@@ -173,6 +173,7 @@ class Draft extends React.Component {
                     <DataTable
                         cols={colsUndrafted}
                         defaultSort={[4, 'desc']}
+                        name="Draft:Undrafted"
                         rows={rowsUndrafted}
                     />
                 </div>
@@ -185,6 +186,7 @@ class Draft extends React.Component {
                     <DataTable
                         cols={colsDrafted}
                         defaultSort={[0, 'asc']}
+                        name="Draft:Drafted"
                         rows={rowsDrafted}
                     />
                 </div>

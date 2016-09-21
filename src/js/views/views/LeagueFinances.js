@@ -43,6 +43,7 @@ const LeagueFinances = ({minPayroll, luxuryPayroll, luxuryTax, salaryCap, season
         <DataTable
             cols={cols}
             defaultSort={[5, 'desc']}
+            name="LeagueFinances"
             rows={rows}
         />
     </div>;

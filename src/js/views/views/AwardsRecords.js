@@ -49,6 +49,7 @@ const AwardsRecords = ({awardType, awardTypeVal, awardsRecords, playerCount}) =>
         <DataTable
             cols={cols}
             defaultSort={[1, 'desc']}
+            name="AwardsRecords"
             rows={rows}
             pagination
         />

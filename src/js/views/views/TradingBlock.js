@@ -359,6 +359,7 @@ class TradingBlock extends React.Component {
                     <DataTable
                         cols={cols}
                         defaultSort={[6, 'desc']}
+                        name="TradingBlock"
                         rows={rows}
                     />
                 </div>

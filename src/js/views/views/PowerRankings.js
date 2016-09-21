@@ -40,6 +40,7 @@ const PowerRankings = ({teams}) => {
         <DataTable
             cols={cols}
             defaultSort={[0, 'asc']}
+            name="PowerRankings"
             rows={rows}
         />
     </div>;

@@ -58,6 +58,7 @@ const NegotiationList = ({players}) => {
         <DataTable
             cols={cols}
             defaultSort={[10, 'desc']}
+            name="NegotiationList"
             rows={rows}
         />
     </div>;

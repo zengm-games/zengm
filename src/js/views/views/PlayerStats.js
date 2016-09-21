@@ -121,6 +121,7 @@ const PlayerStats = ({abbrev, players, playoffs, season, statType}) => {
         <DataTable
             cols={cols}
             defaultSort={[27, 'desc']}
+            name="PlayerStats"
             rows={rows}
             pagination
             superCols={superCols}

@@ -129,6 +129,7 @@ const TeamStats = ({season, stats, teams}) => {
         <DataTable
             cols={cols}
             defaultSort={[2, 'desc']}
+            name="TeamStats"
             rows={rows}
             superCols={superCols}
         />

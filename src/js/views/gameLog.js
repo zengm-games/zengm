@@ -109,9 +109,6 @@ async function updateBoxScore(inputs, updateEvents, state) {
             vars.boxScore.gid = -1;
         } else {
             vars.boxScore.gid = inputs.gid;
-
-            // Force scroll to top, which otherwise wouldn't happen because this is an internal link
-            window.scrollTo(window.pageXOffset, 0);
         }
 
         return vars;

@@ -217,12 +217,12 @@ class Controller extends React.Component {
             this.setState({
                 idLoaded: args.id,
                 idLoading: undefined,
+            }, () => {
+                // Scroll to top
+                if (updateEvents.length === 1 && updateEvents[0] === "firstRun") {
+                    window.scrollTo(window.pageXOffset, 0);
+                }
             });
-
-            // Scroll to top
-            if (updateEvents.length === 1 && updateEvents[0] === "firstRun") {
-                window.scrollTo(window.pageXOffset, 0);
-            }
         }
 
         cb();

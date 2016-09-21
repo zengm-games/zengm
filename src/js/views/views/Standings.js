@@ -15,10 +15,10 @@ const DivStandingsRow = clickable(({clicked, season, t, toggleClicked}) => {
         <td>{t.lost}</td>
         <td>{helpers.roundWinp(t.winp)}</td>
         <td>{t.gb}</td>
-        <td>{t.wonHome} {t.lostHome}</td>
-        <td>{t.wonAway} {t.lostAway}</td>
-        <td>{t.wonDiv} {t.lostDiv}</td>
-        <td>{t.wonConf} {t.lostConf}</td>
+        <td>{t.wonHome}-{t.lostHome}</td>
+        <td>{t.wonAway}-{t.lostAway}</td>
+        <td>{t.wonDiv}-{t.lostDiv}</td>
+        <td>{t.wonConf}-{t.lostConf}</td>
         <td>{t.streak}</td>
         <td>{t.lastTen}</td>
     </tr>;

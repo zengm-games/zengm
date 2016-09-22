@@ -1,10 +1,8 @@
-league upgrade causes errors
+replace owner message text with numbers/chart
 
 upgrade GA https://developers.google.com/analytics/devguides/collection/upgrade/
   confirm it works
   bbgm web too
-
-underscore -> lodash-es?
 
 ---
 

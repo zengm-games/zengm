@@ -6,8 +6,6 @@ import * as league from './core/league';
 import * as helpers from './util/helpers';
 import logEvent from './util/logEvent';
 
-const migrateMessage = '<h1>Upgrading...</h1><p>This might take a few minutes, depending on the size of your league.</p><p>If something goes wrong, <a href="http://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers" target="_blank">open the console</a> and see if there is an error message there. Then <a href="https://basketball-gm.com/contact/" target="_blank">let us know about your problem</a>. Please include as much info as possible.</p>';
-
 Backboard.setPromiseConstructor(Promise);
 Backboard.on('quotaexceeded', () => {
     logEvent(null, {
@@ -17,7 +15,9 @@ Backboard.on('quotaexceeded', () => {
         persistent: true,
     });
 });
-Backboard.on('blocked', () => window.alert("Please close any other tabs with this league open!"));
+Backboard.on('blocked', () => {
+    window.alert("Please close any other tabs with this league open!");
+});
 
 /**
  * Create new meta database with the latest structure.
@@ -37,8 +37,6 @@ function createMeta(upgradeDB) {
  * @param {Object} event Event from onupgradeneeded, with oldVersion > 0.
  */
 function migrateMeta(upgradeDB) {
-    document.getElementById("content").innerHTML = migrateMessage;
-
     console.log(`Upgrading meta database from version ${upgradeDB.oldVersion} to version ${upgradeDB.version}`);
 
     if (upgradeDB.oldVersion <= 6) {
@@ -47,7 +45,7 @@ function migrateMeta(upgradeDB) {
 }
 
 async function connectMeta() {
-    const db = await Backboard.open('meta', 7, async upgradeDB => {
+    const db = await Backboard.open('meta', 7, async (upgradeDB) => {
         if (upgradeDB.oldVersion === 0) {
             createMeta(upgradeDB);
         } else {
@@ -117,8 +115,6 @@ function createLeague(upgradeDB, lid) {
  * @param {number} lid Integer league ID number.
  */
 async function migrateLeague(upgradeDB, lid) {
-    document.getElementById("content").innerHTML = migrateMessage;
-
     console.log(`Upgrading league${lid} database from version ${upgradeDB.oldVersion} to version ${upgradeDB.version}`);
 
     if (upgradeDB.oldVersion <= 15) {
@@ -190,7 +186,7 @@ async function migrateLeague(upgradeDB, lid) {
     }
     if (upgradeDB.oldVersion <= 19) {
         // New best records format in awards
-        await upgradeDB.awards.iterate(async a => {
+        await upgradeDB.awards.iterate(async (a) => {
             if (a.bre && a.brw) {
                 a.bestRecordConfs = [a.bre, a.brw];
                 a.bestRecord = a.bre.won >= a.brw.won ? a.bre : a.brw;
@@ -203,7 +199,7 @@ async function migrateLeague(upgradeDB, lid) {
 }
 
 async function connectLeague(lid) {
-    const db = await Backboard.open(`league${lid}`, 20, async upgradeDB => {
+    const db = await Backboard.open(`league${lid}`, 20, async (upgradeDB) => {
         if (upgradeDB.oldVersion === 0) {
             createLeague(upgradeDB, lid);
         } else {

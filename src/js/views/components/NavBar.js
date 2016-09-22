@@ -397,13 +397,13 @@ class NavBar extends React.Component {
 
         return <Navbar fixedTop>
             <div className="pull-right">
-                    {username ? <a className="navbar-link user-menu" href="/account">
-                        <span className="glyphicon glyphicon-user" />{' '}
-                        <span className="visible-lg">{username}</span>
-                    </a> : <a className="navbar-link user-menu" href="/account/login_or_register">
-                        <span className="glyphicon glyphicon-user" />{' '}
-                        <span className="visible-lg">Login/Register</span>
-                    </a>}
+                {username ? <a className="navbar-link user-menu" href="/account">
+                    <span className="glyphicon glyphicon-user" />{' '}
+                    <span className="visible-lg">{username}</span>
+                </a> : <a className="navbar-link user-menu" href="/account/login_or_register">
+                    <span className="glyphicon glyphicon-user" />{' '}
+                    <span className="visible-lg">Login/Register</span>
+                </a>}
             </div>
             <Navbar.Header>
                 <LogoAndText lid={lid} updating={updating} />

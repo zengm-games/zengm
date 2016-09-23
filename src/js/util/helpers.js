@@ -2,6 +2,7 @@
 import React from 'react';
 import g from '../globals';
 import logEvent from './logEvent';
+import type {GameProcessed, GameProcessedCompleted, Pick, TeamBasic} from './types';
 
 /**
  * Validate that a given abbreviation corresponds to a team.
@@ -97,7 +98,7 @@ function validateSeason(season?: number | string): number {
  * @param {Array.<Object>} teams Teams without popRank properties.
  * @return {Array.<Object>} Teams with added popRank properties.
  */
-function addPopRank(teams) {
+function addPopRank(teams: TeamBasic[]): TeamBasic[] {
     // Add popRank
     const teamsSorted = teams.slice(); // Deep copy
     teamsSorted.sort((a, b) => b.pop - a.pop);
@@ -113,17 +114,7 @@ function addPopRank(teams) {
     return teams;
 }
 
-function getTeamsDefault(): {
-    tid: number,
-    cid: number,
-    did: number,
-    region: string,
-    name: string,
-    abbrev: string,
-    pop: number,
-    popRank?: number,
-    imgURL?: string,
-}[] {
+function getTeamsDefault(): TeamBasic[] {
     let teams = [
         {tid: 0, cid: 0, did: 2, region: "Atlanta", name: "Gold Club", abbrev: "ATL", pop: 4.3},
         {tid: 1, cid: 0, did: 2, region: "Baltimore", name: "Crabs", abbrev: "BAL", pop: 2.2},
@@ -182,7 +173,7 @@ function deepCopy(obj: Object): Object {
     return retVal;
 }
 
-function error(errorText, cb: Function) {
+function error(errorText: string, cb: Function) {
     // eslint-disable-next-line global-require
     const views = require('../views');
     const view = views.staticPage('error', 'Error', false, <div>
@@ -297,7 +288,7 @@ function nullPad<T>(array: (?T)[], length: number): (?T)[] {
  * @param {number|string|undefined} precision Number of decimal places. Default is 2 (like $17.62).
  * @return {string} Formatted currency string.
  */
-function formatCurrency(amount: number | string, append: string = '', precision: number = 2): string {
+function formatCurrency(amount: number, append: string = '', precision: number = 2): string {
     if (amount < 0) {
         return `-$${round(Math.abs(amount), precision)}${append}`;
     }
@@ -330,7 +321,7 @@ function bound(x: number, min: number, max: number): number {
     return x;
 }
 
-function pickDesc(pick) {
+function pickDesc(pick: Pick): string {
     let desc = `${pick.season} ${pick.round === 1 ? "1st" : "2nd"} round pick`;
     if (pick.tid !== pick.originalTid) {
         desc += ` (from ${g.teamAbbrevsCache[pick.originalTid]})`;
@@ -370,7 +361,7 @@ function ordinal(x?: ?number): string {
  * @param {Array.<Object>} gid Array of already-loaded games. If this is not empty, then only new games that are not already in this array will be passed to the callback.
  * @return {Promise.<Array.<Object>>} Resolves to a list of game objects.
  */
-async function gameLogList(abbrev: string, season: number, gid: number, loadedGames = []) {
+async function gameLogList(abbrev: string, season: number, gid: number, loadedGames: GameProcessed[] = []): Promise<GameProcessed[]> {
     const out = validateAbbrev(abbrev);
     const tid = out[0];
     abbrev = out[1];
@@ -401,28 +392,30 @@ async function gameLogList(abbrev: string, season: number, gid: number, loadedGa
 
         // Check tid
         if (game.teams[0].tid === tid || game.teams[1].tid === tid) {
-            games.push({
-                gid: game.gid,
-                tid,
-                selected: game.gid === gid,
-                overtime,
-            });
-
-            const i = games.length - 1;
             if (game.teams[0].tid === tid) {
-                games[i].home = true;
-                games[i].pts = game.teams[0].pts;
-                games[i].oppPts = game.teams[1].pts;
-                games[i].oppTid = game.teams[1].tid;
-                games[i].oppAbbrev = g.teamAbbrevsCache[game.teams[1].tid];
-                games[i].won = game.teams[0].pts > game.teams[1].pts;
+                games.push({
+                    gid: game.gid,
+                    overtime,
+                    tid,
+                    home: true,
+                    oppAbbrev: g.teamAbbrevsCache[game.teams[1].tid],
+                    oppPts: game.teams[1].pts,
+                    oppTid: game.teams[1].tid,
+                    pts: game.teams[0].pts,
+                    won: game.teams[0].pts > game.teams[1].pts,
+                });
             } else if (game.teams[1].tid === tid) {
-                games[i].home = false;
-                games[i].pts = game.teams[1].pts;
-                games[i].oppPts = game.teams[0].pts;
-                games[i].oppTid = game.teams[0].tid;
-                games[i].oppAbbrev = g.teamAbbrevsCache[game.teams[0].tid];
-                games[i].won = game.teams[1].pts > game.teams[0].pts;
+                games.push({
+                    gid: game.gid,
+                    overtime,
+                    tid,
+                    home: false,
+                    oppAbbrev: g.teamAbbrevsCache[game.teams[0].tid],
+                    oppPts: game.teams[0].pts,
+                    oppTid: game.teams[0].tid,
+                    pts: game.teams[1].pts,
+                    won: game.teams[1].pts > game.teams[0].pts,
+                });
             }
         }
     });
@@ -430,7 +423,7 @@ async function gameLogList(abbrev: string, season: number, gid: number, loadedGa
     return games;
 }
 
-function formatCompletedGame(game) {
+function formatCompletedGame(game: GameProcessed): GameProcessedCompleted {
     // If not specified, assume user's team is playing
     game.tid = game.tid !== undefined ? game.tid : g.userTid;
 
@@ -438,23 +431,13 @@ function formatCompletedGame(game) {
     const team0 = {tid: game.tid, abbrev: g.teamAbbrevsCache[game.tid], region: g.teamRegionsCache[game.tid], name: g.teamNamesCache[game.tid], pts: game.pts};
     const team1 = {tid: game.oppTid, abbrev: g.teamAbbrevsCache[game.oppTid], region: g.teamRegionsCache[game.oppTid], name: g.teamNamesCache[game.oppTid], pts: game.oppPts};
 
-    const output = {
+    return {
         gid: game.gid,
         overtime: game.overtime,
+        score: game.won ? `${team0.pts}-${team1.pts}` : `${team1.pts}-${team0.pts}`,
+        teams: game.home ? [team1, team0] : [team0, team1],
         won: game.won,
     };
-    if (game.home) {
-        output.teams = [team1, team0];
-    } else {
-        output.teams = [team0, team1];
-    }
-    if (game.won) {
-        output.score = `${team0.pts}-${team1.pts}`;
-    } else {
-        output.score = `${team1.pts}-${team0.pts}`;
-    }
-
-    return output;
 }
 
 

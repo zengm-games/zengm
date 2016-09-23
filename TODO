@@ -1,3 +1,20 @@
+safari compat
+  backboard
+    made commit to fix transactions, need to do new release (hopefully with safari testing)
+  index not working, returns stuff from other indexes:
+    var count = 0;
+    window.bbgm.g.dbl._rawDb.transaction("players").objectStore("players").index("tid").openCursor(IDBKeyRange.lowerBound(29)).onsuccess = function (event) {
+        var cursor = event.target.result;
+        if (cursor) {
+            console.log('key', cursor.key);
+            count++;
+            cursor.continue();
+        } else {
+            console.log('count', count);
+        }
+    };
+    or: https://bl.ocks.org/dfahlander/a7a0608513d527742c5a09e3c95dd343
+
 replace owner message text with numbers/chart
 
 upgrade GA https://developers.google.com/analytics/devguides/collection/upgrade/

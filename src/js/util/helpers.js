@@ -173,7 +173,7 @@ function deepCopy(obj: Object): Object {
     return retVal;
 }
 
-function error(errorText: string, cb: Function) {
+function error(errorText: React.Element<*> | string, cb: Function) {
     // eslint-disable-next-line global-require
     const views = require('../views');
     const view = views.staticPage('error', 'Error', false, <div>

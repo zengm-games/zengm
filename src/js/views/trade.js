@@ -146,7 +146,14 @@ async function updateTrade() {
     vars = await updateSummary(vars);
 
     // Always run this, for multi team mode
-    vars.teams = helpers.getTeams();
+    vars.teams = [];
+    for (let i = 0; i < g.numTeams; i++) {
+        vars.teams[i] = {
+            abbrev: g.teamAbbrevsCache[i],
+            region: g.teamRegionsCache[i],
+            name: g.teamNamesCache[i],
+        };
+    }
     vars.teams.splice(g.userTid, 1); // Can't trade with yourself
     vars.userTeamName = `${g.teamRegionsCache[g.userTid]} ${g.teamNamesCache[g.userTid]}`;
 

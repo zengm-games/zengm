@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import g from '../globals';
 import logEvent from './logEvent';
@@ -11,7 +12,7 @@ import logEvent from './logEvent';
  * @param  {string} abbrev Three-letter team abbreviation, like "ATL".
  * @return {Array} Array with two elements, the team ID and the validated abbreviation.
  */
-function validateAbbrev(abbrev) {
+function validateAbbrev(abbrev: string): [number, string] {
     let tid = g.teamAbbrevsCache.indexOf(abbrev);
 
     if (tid < 0) {
@@ -31,7 +32,7 @@ function validateAbbrev(abbrev) {
  * @param {number|string} tid Integer team ID.
  * @return {Array} Array with two elements, the validated team ID and the corresponding abbreviation.
  */
-function validateTid(tid) {
+function validateTid(tid: number | string): [number, string] {
     tid = parseInt(tid, 10);
 
     if (tid < 0 || tid >= g.teamAbbrevsCache.length || isNaN(tid)) {
@@ -51,11 +52,13 @@ function validateTid(tid) {
  * @param {number|string} tid Integer team ID.
  * @return {string} Abbreviation
  */
-function getAbbrev(tid) {
+function getAbbrev(tid: number | string): string {
+    tid = parseInt(tid, 10);
+
     if (tid === g.PLAYER.FREE_AGENT) {
         return "FA";
     }
-    if (tid < 0) {
+    if (tid < 0 || isNaN(tid)) {
         // Draft prospect or retired
         return "";
     }
@@ -74,83 +77,18 @@ function getAbbrev(tid) {
  * @param {number|string|undefined} season The year of the season to validate. If undefined, then g.season is used.
  * @return {number} Validated season (same as input unless input is undefined, currently).
  */
-function validateSeason(season) {
-    if (!season) {
+function validateSeason(season?: number | string): number {
+    if (season === undefined) {
         return g.season;
     }
 
-    season = Math.floor(season);
+    season = parseInt(season, 10);
 
     if (isNaN(season)) {
         return g.season;
     }
 
     return season;
-}
-
-/**
- * Get a list of all seasons that have been played so far, including the current one.
- *
- * @memberOf util.helpers
- * @param {number=} selectedSeason If defined, then a season matching this year will have its "selected" property set to true.
- * @param {number=} ignoredSeason If defined, then a season matching this year will not be present in the output. This is useful if you need a list of seasons that doesn't include the current season, for instance.
- * @return {Array.<Object>} List of seasons. Each element in the list is an object with with two properties: "season" which contains the year, and "selectedSeason" which is a boolean for whether the year matched selectedSeason.
- */
-function getSeasons(selectedSeason, ignoredSeason) {
-    selectedSeason = parseInt(selectedSeason, 10);
-    ignoredSeason = ignoredSeason !== undefined ? parseInt(ignoredSeason, 10) : null;
-
-    const seasons = [];
-    for (let season = g.startingSeason; season <= g.season; season++) {
-        if (season !== ignoredSeason) {
-            seasons.push({season, selected: selectedSeason === season});
-        }
-    }
-    return seasons;
-}
-
-/**
- * Get list of teams, along with some metadata
- *
- * Returns an array of all teams, sorted by tid. Each element contains an object with the following properties:
- *     tid: Integer team ID (from 0 to the number of teams - 1, default 0 to 29).
- *     region: String region name.
- *     name: String team name.
- *     abbrev: String 3-letter team abbreviation.
- *     selected: If selectedTid is defined, this is a boolean representing whether this team is "selected" or not (see below).
- *
- * @memberOf util.helpers
- * @param {number|string} selectedTid A team ID or abbrev for a team that should be "selected" (as in, from a drop down menu). This will add the "selected" key to each team object, as described above.
- * @return {Array.Object} All teams.
- */
-function getTeams(selectedTid = -1) {
-    selectedTid = selectedTid !== undefined ? selectedTid : -1;
-
-    if (typeof selectedTid === "string") {
-        if (isNaN(parseInt(selectedTid, 10))) {
-            // It's an abbrev, not a tid!
-            const result = validateAbbrev(selectedTid);
-            selectedTid = result[0];
-        }
-    }
-
-    const teams = [];
-    for (let i = 0; i < g.numTeams; i++) {
-        teams[i] = {
-            abbrev: g.teamAbbrevsCache[i],
-            region: g.teamRegionsCache[i],
-            name: g.teamNamesCache[i],
-        };
-    }
-
-    if (selectedTid >= 0) {
-        for (let i = 0; i < teams.length; i++) {
-            teams[i].selected = false;
-        }
-        teams[selectedTid].selected = true;
-    }
-
-    return teams;
 }
 
 /**
@@ -175,27 +113,17 @@ function addPopRank(teams) {
     return teams;
 }
 
-/**
- * Get list of default teams, along with some more metadata
- *
- * Returns an array of default 30 teams. Each array is an object with the following properties:
- *     tid: Integer team ID (0 to 29).
- *     cid: Integer conference ID (0=East, 1=West).
- *     did: Integer division ID.
- *     region: String region name.
- *     name: String team name.
- *     abbrev: String 3-letter team abbreviation.
- *     pop: From http://www.forbes.com/nba-valuations/ number of people in the region, in millions of people.
- *     popRank: Rank of population, 1=largest, 30=smallest.
- *     selected: If selectedTid is defined, this is a boolean representing whether this team is "selected" or not (see below).
- *
- * This should only be used to initialize things, since many of these values can change from their defaults.
- *
- * @memberOf util.helpers
- * @param {number|string} selectedTid A team ID or abbrev for a team that should be "selected" (as in, from a drop down menu). This will add the "selected" key to each team object, as described above.
- * @return {Array.<Object>} All teams.
- */
-function getTeamsDefault() {
+function getTeamsDefault(): {
+    tid: number,
+    cid: number,
+    did: number,
+    region: string,
+    name: string,
+    abbrev: string,
+    pop: number,
+    popRank?: number,
+    imgURL?: string,
+}[] {
     let teams = [
         {tid: 0, cid: 0, did: 2, region: "Atlanta", name: "Gold Club", abbrev: "ATL", pop: 4.3},
         {tid: 1, cid: 0, did: 2, region: "Baltimore", name: "Crabs", abbrev: "BAL", pop: 2.2},
@@ -242,11 +170,8 @@ function getTeamsDefault() {
  * Clones an object.
  *
  * Taken from http://stackoverflow.com/a/3284324/786644
- *
- * @memberOf util.helpers
- * @param {Object} obj Object to be cloned.
  */
-function deepCopy(obj) {
+function deepCopy(obj: Object): Object {
     if (typeof obj !== "object" || obj === null) { return obj; }
     if (obj.constructor === RegExp) { return obj; }
 
@@ -257,16 +182,7 @@ function deepCopy(obj) {
     return retVal;
 }
 
-/**
- * Display a whole-page error message to the user by calling either leagueError or globalError as appropriate.
- *
- * Use errorNotify for minor errors.
- *
- * @memberOf util.helpers
- * @param {string} error Text of the error message to be displayed.
- * @param {function()} cb Optional callback function.
- */
-function error(errorText, cb) {
+function error(errorText, cb: Function) {
     // eslint-disable-next-line global-require
     const views = require('../views');
     const view = views.staticPage('error', 'Error', false, <div>
@@ -289,7 +205,7 @@ function error(errorText, cb) {
  * @memberOf util.helpers
  * @param {string} error Text of the error message to be displayed.
  */
-function errorNotify(errorText) {
+function errorNotify(errorText: string) {
     logEvent(null, {
         type: "error",
         text: errorText,
@@ -320,7 +236,7 @@ function resetG() {
  * @memberOf util.helpers
  * @param {string} type Either "league" for a new league, or "season" for a completed season
  */
-function bbgmPing(type) {
+function bbgmPing(type: 'league' | 'season') {
     if (g.enableLogging && window.ga) {
         if (type === "league") {
             window.ga('send', 'event', 'BBGM', 'New league', String(g.lid));
@@ -335,11 +251,10 @@ function bbgmPing(type) {
  * Create a URL for a page within a league.
  *
  * @param {Array.<string|number>} components Array of components for the URL after the league ID, which will be combined with / in between.
- * @param {number?} lid League ID number. If not passed, then g.lid is used.
  * @return {string} URL
  */
-function leagueUrl(components, options, lid = g.lid) {
-    let url = `/l/${lid}`;
+function leagueUrl(components: (number | string)[]): string {
+    let url = `/l/${g.lid}`;
     for (let i = 0; i < components.length; i++) {
         if (components[i] !== undefined) {
             url += `/${components[i]}`;
@@ -349,18 +264,8 @@ function leagueUrl(components, options, lid = g.lid) {
     return url;
 }
 
-/**
- * Round a number to a certain number of decimal places.
- *
- * @memberOf util.helpers
- * @param {number|string} value Number to round.
- * @param {number=} precision Number of decimal places. Default is 0 (round to integer).
- * @return {string} Rounded number.
- */
-function round(value, precision) {
-    precision = precision !== undefined ? parseInt(precision, 10) : 0;
-
-    return parseFloat(value).toFixed(precision);
+function round(value: number | string, precision: number | string = 0): string {
+    return parseFloat(value).toFixed(parseInt(precision, 10));
 }
 
 /**
@@ -371,7 +276,7 @@ function round(value, precision) {
  * @param {number} length Desired length.
  * @return {Array} Original array padded with null or truncated so that it has the required length.
  */
-function nullPad(array, length) {
+function nullPad<T>(array: (?T)[], length: number): (?T)[] {
     if (array.length > length) {
         return array.slice(0, length);
     }
@@ -392,10 +297,7 @@ function nullPad(array, length) {
  * @param {number|string|undefined} precision Number of decimal places. Default is 2 (like $17.62).
  * @return {string} Formatted currency string.
  */
-function formatCurrency(amount, append, precision) {
-    append = typeof append === "string" ? append : "";
-    precision = typeof precision === "number" || typeof precision === "string" ? precision : 2;
-
+function formatCurrency(amount: number | string, append: string = '', precision: number = 2): string {
     if (amount < 0) {
         return `-$${round(Math.abs(amount), precision)}${append}`;
     }
@@ -403,17 +305,10 @@ function formatCurrency(amount, append, precision) {
 }
 
 /**
- * Format a number with commas in the thousands places.
- *
- * Also, rounds the number first.
- *
- * @memberOf util.helpers
- * @param {number|string} x Input number.
- * @return {string} Formatted number.
+ * Format a number as an integer with commas in the thousands places.
  */
-function numberWithCommas(x) {
-    x = round(x);
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+function numberWithCommas(x: number | string): string {
+    return round(x).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
 /**
@@ -425,7 +320,7 @@ function numberWithCommas(x) {
  * @param {number} max Maximum bounding variable.
  * @return {number} Bounded number.
  */
-function bound(x, min, max) {
+function bound(x: number, min: number, max: number): number {
     if (x < min) {
         return min;
     }
@@ -444,9 +339,9 @@ function pickDesc(pick) {
     return desc;
 }
 
-function ordinal(x) {
+function ordinal(x?: ?number): string {
     if (x === undefined || x === null) {
-        return null;
+        return '';
     }
 
     let suffix;
@@ -475,7 +370,7 @@ function ordinal(x) {
  * @param {Array.<Object>} gid Array of already-loaded games. If this is not empty, then only new games that are not already in this array will be passed to the callback.
  * @return {Promise.<Array.<Object>>} Resolves to a list of game objects.
  */
-async function gameLogList(abbrev, season, gid, loadedGames = []) {
+async function gameLogList(abbrev: string, season: number, gid: number, loadedGames = []) {
     const out = validateAbbrev(abbrev);
     const tid = out[0];
     abbrev = out[1];
@@ -564,7 +459,8 @@ function formatCompletedGame(game) {
 
 
 // Calculate the number of games that team is behind team0
-function gb(team0, team) {
+type teamWonLost = {lost: number, won: number};
+function gb(team0: teamWonLost, team: teamWonLost) {
     return ((team0.won - team0.lost) - (team.won - team.lost)) / 2;
 }
 
@@ -589,7 +485,7 @@ function checkNaNs() {
         return foundNaN;
     };
 
-    const wrap = (parent, name, wrapper) => {
+    const wrap = (parent: any, name, wrapper) => {
         const original = parent[name];
         parent[name] = wrapper(original);
     };
@@ -662,21 +558,21 @@ function checkNaNs() {
     wrap(IDBCursor.prototype, "update", wrapperNaNChecker);
 }
 
-function gameScore(arg) {
+function gameScore(arg: {[key: string]: number}): string {
     return round(arg.pts + 0.4 * arg.fg - 0.7 * arg.fga - 0.4 * (arg.fta - arg.ft) + 0.7 * arg.orb + 0.3 * (arg.trb - arg.orb) + arg.stl + 0.7 * arg.ast + 0.7 * arg.blk - 0.4 * arg.pf - arg.tov, 1);
 }
 
-function plusMinus(arg, d) {
+function plusMinus(arg: number, d: number): string {
     if (isNaN(arg)) { return ""; }
     return (arg > 0 ? "+" : "") + round(arg, d);
 }
 
 // Used to fix links in the event log, which will be wrong if a league is exported and then imported
-function correctLinkLid(event) {
+function correctLinkLid(event: {text: string}) {
     event.text = event.text.replace(/\/l\/\d+\//g, `/l/${g.lid}/`);
 }
 
-function overtimeCounter(n) {
+function overtimeCounter(n: number): string {
     switch (n) {
         case 1: return "";
         case 2: return "double";
@@ -690,9 +586,9 @@ function overtimeCounter(n) {
     }
 }
 
-function yearRanges(arr) {
+function yearRanges(arr: number[]): string[] {
     if (arr.length <= 1) {
-        return arr;
+        return arr.map(String);
     }
 
     const runArr = [];
@@ -708,9 +604,9 @@ function yearRanges(arr) {
     for (let i = 0; i < tempArr.length; i++) {
         // runs of up to 2 consecutive years are displayed individually
         if (tempArr[i].length <= 2) {
-            runArr.push(tempArr[i][0]);
+            runArr.push(String(tempArr[i][0]));
             if (tempArr[i].length === 2) {
-                runArr.push(tempArr[i][1]);
+                runArr.push(String(tempArr[i][1]));
             }
         } else {
             // runs of 3 or more are displayed as a range
@@ -721,7 +617,7 @@ function yearRanges(arr) {
     return runArr;
 }
 
-function maybeReuseTx(storeNames, mode, tx, cb) {
+function maybeReuseTx(storeNames: string[], mode: string, tx: any, cb: Function) {
     if (tx !== undefined && tx !== null) {
         return cb(tx);
     }
@@ -729,8 +625,8 @@ function maybeReuseTx(storeNames, mode, tx, cb) {
     return g.dbl.tx(storeNames, mode, cb);
 }
 
-function roundsWonText(playoffRoundsWon) {
-    const playoffsByConference = g.confs.length === 2 && !localStorage.top16playoffs;
+function roundsWonText(playoffRoundsWon: number): string {
+    const playoffsByConference = g.confs.length === 2 && !localStorage.getItem('top16playoffs');
 
     if (playoffRoundsWon === g.numPlayoffRounds) {
         return "League champs";
@@ -750,8 +646,8 @@ function roundsWonText(playoffRoundsWon) {
     return "";
 }
 
-function roundWinp(arg) {
-    let output = parseFloat(arg).toFixed(3);
+function roundWinp(winp: number): string {
+    let output = winp.toFixed(3);
 
     if (output[0] === "0") {
         // Delete leading 0
@@ -769,8 +665,6 @@ export {
     getAbbrev,
     validateTid,
     validateSeason,
-    getSeasons,
-    getTeams,
     addPopRank,
     getTeamsDefault,
     deepCopy,

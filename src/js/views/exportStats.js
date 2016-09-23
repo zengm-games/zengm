@@ -1,18 +1,17 @@
+import g from '../globals';
 import bbgmViewReact from '../util/bbgmViewReact';
-import * as helpers from '../util/helpers';
 import ExportStats from './views/ExportStats';
 
 function updateExportStats(inputs, updateEvents) {
     if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("newPhase") >= 0 || updateEvents.indexOf("dbChange") >= 0) {
-        const seasons = helpers.getSeasons();
         const options = [{
             key: "all",
             val: "All Seasons",
         }];
-        for (let j = 0; j < seasons.length; j++) {
+        for (let season = g.startingSeason; season <= g.season; season++) {
             options.push({
-                key: String(seasons[j].season),
-                val: `${seasons[j].season} season`,
+                key: String(season),
+                val: `${season} season`,
             });
         }
         return {

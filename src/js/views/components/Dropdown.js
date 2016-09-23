@@ -36,10 +36,12 @@ const Select = ({field, handleChange, value}) => {
             options[j + 2].val = `${g.teamRegionsCache[j]} ${g.teamNamesCache[j]}`;
         }
     } else if (field === "seasons" || field === "seasonsAndCareer" || field === "seasonsAndAll") {
-        options = helpers.getSeasons();
-        for (let j = 0; j < options.length; j++) {
-            options[j].key = options[j].season;
-            options[j].val = `${options[j].season} Season`;
+        options = [];
+        for (let season = g.startingSeason; season <= g.season; season++) {
+            options.push({
+                key: season,
+                val: `${season} Season`,
+            });
         }
         if (field === "seasonsAndCareer") {
             options.unshift({

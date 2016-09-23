@@ -64,9 +64,9 @@
       "resolved": "https://registry.npmjs.org/after/-/after-0.8.1.tgz"
     },
     "ajv": {
-      "version": "4.7.2",
+      "version": "4.7.3",
       "from": "ajv@>=4.7.0 <5.0.0",
-      "resolved": "https://registry.npmjs.org/ajv/-/ajv-4.7.2.tgz",
+      "resolved": "https://registry.npmjs.org/ajv/-/ajv-4.7.3.tgz",
       "dependencies": {
         "json-stable-stringify": {
           "version": "1.0.1",
@@ -546,14 +546,14 @@
       "resolved": "https://registry.npmjs.org/babelify/-/babelify-7.3.0.tgz"
     },
     "babylon": {
-      "version": "6.10.0",
+      "version": "6.11.2",
       "from": "babylon@>=6.0.18 <7.0.0",
-      "resolved": "https://registry.npmjs.org/babylon/-/babylon-6.10.0.tgz"
+      "resolved": "https://registry.npmjs.org/babylon/-/babylon-6.11.2.tgz"
     },
     "backboard": {
-      "version": "1.0.5",
-      "from": "backboard@1.0.5",
-      "resolved": "https://registry.npmjs.org/backboard/-/backboard-1.0.5.tgz"
+      "version": "1.0.6",
+      "from": "backboard@1.0.6",
+      "resolved": "https://registry.npmjs.org/backboard/-/backboard-1.0.6.tgz"
     },
     "backo2": {
       "version": "1.0.2",
@@ -576,9 +576,9 @@
       "resolved": "https://registry.npmjs.org/base64-arraybuffer/-/base64-arraybuffer-0.1.2.tgz"
     },
     "base64-js": {
-      "version": "1.1.2",
+      "version": "1.2.0",
       "from": "base64-js@>=1.0.2 <2.0.0",
-      "resolved": "https://registry.npmjs.org/base64-js/-/base64-js-1.1.2.tgz"
+      "resolved": "https://registry.npmjs.org/base64-js/-/base64-js-1.2.0.tgz"
     },
     "base64id": {
       "version": "0.1.0",
@@ -804,9 +804,9 @@
       "resolved": "https://registry.npmjs.org/camelcase-keys/-/camelcase-keys-2.1.0.tgz"
     },
     "caniuse-db": {
-      "version": "1.0.30000538",
+      "version": "1.0.30000539",
       "from": "caniuse-db@>=1.0.30000527 <2.0.0",
-      "resolved": "https://registry.npmjs.org/caniuse-db/-/caniuse-db-1.0.30000538.tgz"
+      "resolved": "https://registry.npmjs.org/caniuse-db/-/caniuse-db-1.0.30000539.tgz"
     },
     "caseless": {
       "version": "0.11.0",
@@ -1309,9 +1309,9 @@
       }
     },
     "doiuse": {
-      "version": "2.4.1",
+      "version": "2.5.0",
       "from": "doiuse@>=2.4.1 <3.0.0",
-      "resolved": "https://registry.npmjs.org/doiuse/-/doiuse-2.4.1.tgz",
+      "resolved": "https://registry.npmjs.org/doiuse/-/doiuse-2.5.0.tgz",
       "dependencies": {
         "duplexer2": {
           "version": "0.0.2",
@@ -1583,9 +1583,9 @@
       "resolved": "https://registry.npmjs.org/eslint-import-resolver-node/-/eslint-import-resolver-node-0.2.3.tgz"
     },
     "eslint-plugin-import": {
-      "version": "1.15.0",
-      "from": "eslint-plugin-import@1.15.0",
-      "resolved": "https://registry.npmjs.org/eslint-plugin-import/-/eslint-plugin-import-1.15.0.tgz",
+      "version": "1.16.0",
+      "from": "eslint-plugin-import@1.16.0",
+      "resolved": "https://registry.npmjs.org/eslint-plugin-import/-/eslint-plugin-import-1.16.0.tgz",
       "dependencies": {
         "doctrine": {
           "version": "1.3.0",
@@ -2576,9 +2576,9 @@
       "resolved": "https://registry.npmjs.org/karma-mocha-reporter/-/karma-mocha-reporter-2.2.0.tgz"
     },
     "keycode": {
-      "version": "2.1.6",
+      "version": "2.1.7",
       "from": "keycode@>=2.1.2 <3.0.0",
-      "resolved": "https://registry.npmjs.org/keycode/-/keycode-2.1.6.tgz"
+      "resolved": "https://registry.npmjs.org/keycode/-/keycode-2.1.7.tgz"
     },
     "kind-of": {
       "version": "3.0.4",

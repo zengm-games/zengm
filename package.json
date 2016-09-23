@@ -31,7 +31,7 @@
     "watch-test": "npm run copy-mocha && watchify -d src/js/test/app.js -o build/gen/app-test.js"
   },
   "dependencies": {
-    "backboard": "1.0.5",
+    "backboard": "1.0.6",
     "bluebird": "3.3.4",
     "classnames": "2.2.5",
     "dompurify": "0.8.3",
@@ -78,7 +78,7 @@
     "envify": "3.4.1",
     "eslint": "3.5.0",
     "eslint-config-airbnb": "11.1.0",
-    "eslint-plugin-import": "1.15.0",
+    "eslint-plugin-import": "1.16.0",
     "eslint-plugin-jsx-a11y": "2.2.2",
     "eslint-plugin-react": "6.3.0",
     "exorcist": "0.4.0",

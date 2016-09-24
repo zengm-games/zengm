@@ -51,3 +51,5 @@ export type TeamBasic = {
     popRank?: number,
     imgURL?: string,
 };
+
+export type TeamSeason = any;

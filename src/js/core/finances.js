@@ -1,7 +1,10 @@
+// @flow
+
 import backboard from 'backboard';
 import Promise from 'bluebird';
 import g from '../globals';
 import * as team from './team';
+import type {BackboardTx, TeamSeason} from '../util/types';
 
 /**
  * Assess the payroll and apply minimum and luxury taxes.
@@ -10,7 +13,7 @@ import * as team from './team';
  * @memberOf core.finances
  * @return {Promise}
  */
-async function assessPayrollMinLuxury(tx) {
+async function assessPayrollMinLuxury(tx: BackboardTx) {
     let collectedTax = 0;
 
     const payrolls = await team.getPayrolls(tx);
@@ -54,6 +57,8 @@ async function assessPayrollMinLuxury(tx) {
     }
 }
 
+type BudgetTypes = 'budget' | 'expenses' | 'revenues';
+
 /**
  * Update the rankings of team budgets, expenses, and revenue sources.
  *
@@ -66,7 +71,7 @@ async function assessPayrollMinLuxury(tx) {
  * @param {Array.<string>} type The types of ranks to update - some combination of "budget", "expenses", and "revenues"
  * @param {Promise}
  */
-async function updateRanks(tx, types) {
+async function updateRanks(tx: BackboardTx, types: BudgetTypes[]) {
     const sortFn = (a, b) => b.amount - a.amount;
 
     const getByItem = byTeam => {
@@ -147,7 +152,7 @@ async function updateRanks(tx, types) {
  * @param {string} item Item inside the category
  * @return {number} Rank, from 1 to g.numTeams (default 30)
  */
-function getRankLastThree(teamSeasons, category, item) {
+function getRankLastThree(teamSeasons: TeamSeason[], category: 'expenses' | 'revenues', item: string): number {
     const s = teamSeasons.length - 1; // Most recent season index
     if (s > 1) {
         // Use three seasons if possible

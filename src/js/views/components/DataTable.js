@@ -94,10 +94,10 @@ const getSearchVal = val => {
         sortVal = val;
     }
 
-    if (sortVal.toString) {
+    if (sortVal !== undefined && sortVal !== null && sortVal.toString) {
         return sortVal.toString().toLowerCase();
     }
-    return null;
+    return '';
 };
 
 const getSortVal = (value = null, sortType) => {

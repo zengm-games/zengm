@@ -46,6 +46,13 @@ export type Pick = {
     tid: number,
 };
 
+export type PickRealized = {
+    originalTid: number,
+    pick: number,
+    round: number,
+    tid: number,
+};
+
 export type ScheduleGame = {
     awayName: string,
     awayRegion: string,
@@ -80,6 +87,8 @@ export type TeamBasic = {
     popRank?: number,
     imgURL?: string,
 };
+
+export type TeamFiltered = any;
 
 export type TeamSeason = any;
 

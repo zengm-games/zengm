@@ -88,6 +88,8 @@ const playAmount = async (amount: 'day' | 'week' | 'month' | 'untilPreseason') =
         numDays = 30;
     } else if (amount === "untilPreseason") {
         numDays = g.daysLeft;
+    } else {
+        throw new Error(`Invalid amount: ${amount}`);
     }
 
     if (g.phase <= g.PHASE.PLAYOFFS) {

@@ -1,3 +1,5 @@
+// @flow
+
 import Promise from 'bluebird';
 import _ from 'underscore';
 import g from '../globals';
@@ -10,6 +12,7 @@ import * as helpers from '../util/helpers';
 import * as lock from '../util/lock';
 import logEvent from '../util/logEvent';
 import * as random from '../util/random';
+import type {BackboardTx, TeamSeason} from '../util/types';
 
 /**
  * AI teams sign free agents.
@@ -19,7 +22,7 @@ import * as random from '../util/random';
  * @memberOf core.freeAgents
  * @return {Promise}
  */
-async function autoSign(tx) {
+async function autoSign(tx: BackboardTx) {
     const objectStores = ["players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"];
     await helpers.maybeReuseTx(objectStores, "readwrite", tx, async tx2 => {
         const [teams, players] = await Promise.all([
@@ -158,20 +161,20 @@ async function decreaseDemands() {
  * @param {number} mood Player mood towards a team, from 0 (happy) to 1 (angry).
  * @return {number} Contract amoung adjusted for mood.
  */
-function amountWithMood(amount, mood) {
+function amountWithMood(amount: number, mood: number): number {
     amount *= 1 + 0.2 * mood;
 
     if (amount >= g.minContract) {
         if (amount > g.maxContract) {
             amount = g.maxContract;
         }
-        return helpers.round(amount / 10) * 10;  // Round to nearest 10k, assuming units are thousands
+        return Number(helpers.round(amount / 10)) * 10;  // Round to nearest 10k, assuming units are thousands
     }
 
     if (amount > g.maxContract / 1000) {
         amount = g.maxContract / 1000;
     }
-    return helpers.round(amount * 100) / 100;  // Round to nearest 10k, assuming units are millions
+    return Number(helpers.round(amount * 100)) / 100;  // Round to nearest 10k, assuming units are millions
 }
 
 /**
@@ -181,7 +184,7 @@ function amountWithMood(amount, mood) {
  * @param {number} mood Player's mood towards the team in question.
  * @return {boolean} Answer to the question.
  */
-function refuseToNegotiate(amount, mood) {
+function refuseToNegotiate(amount: number, mood: number): boolean {
     if (amount * mood > 10000) {
         return true;
     }
@@ -196,7 +199,7 @@ function refuseToNegotiate(amount, mood) {
  * @param {number} numDays An integer representing the number of days to be simulated. If numDays is larger than the number of days remaining, then all of free agency will be simulated up until the preseason starts.
  * @param {boolean} start Is this a new request from the user to simulate days (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed. Default true.
  */
-async function play(numDays, start = true) {
+async function play(numDays: number, start?: boolean = true) {
     // This is called when there are no more days to play, either due to the user's request (e.g. 1 week) elapsing or at the end of free agency.
     const cbNoDays = async () => {
         await league.setGameAttributesComplete({gamesInProgress: false});

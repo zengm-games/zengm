@@ -1,3 +1,5 @@
+// @flow
+
 const fs = require("fs");
 const CleanCSS = require('clean-css');
 const replace = require("replace");

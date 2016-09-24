@@ -1,3 +1,5 @@
+// @flow
+
 const build = require('./buildFuncs');
 
 console.log("Starting build.js...");

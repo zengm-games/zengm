@@ -12,7 +12,7 @@ import * as helpers from '../util/helpers';
 import * as lock from '../util/lock';
 import logEvent from '../util/logEvent';
 import * as random from '../util/random';
-import type {BackboardTx, TeamSeason} from '../util/types';
+import type {BackboardTx} from '../util/types';
 
 /**
  * AI teams sign free agents.

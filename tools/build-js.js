@@ -1,3 +1,5 @@
+// @flow
+
 // Used to be:
 // browserify -d -p [minifyify --map app.js.map --output gen/app.js.map] js/app.js -o gen/app.js
 // ...but then it got too complicated, and this seemed easier
@@ -15,4 +17,4 @@ bundler
     .transform({global: true}, envify({NODE_ENV: 'production'}))
     .bundle()
     .pipe(exorcist('build/gen/app.js.map'))
-    .pipe(fs.createWriteStream('build/gen/app.js', 'utf8'));
+    .pipe(fs.createWriteStream('build/gen/app.js'));

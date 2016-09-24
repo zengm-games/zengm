@@ -1,9 +1,12 @@
+// @flow
+
 import Promise from 'bluebird';
 import page from 'page';
 import g from './globals';
 import * as league from './core/league';
 import * as helpers from './util/helpers';
 import * as lock from './util/lock';
+import type {BackboardTx} from './util/types';
 
 /**
  * Smartly update the currently loaded view or redirect to a new one.
@@ -16,7 +19,7 @@ import * as lock from './util/lock';
  * @param {function()=} cb Optional callback that will run after the page updates.
  * @param {Object=} raw Optional object passed through to the page.js request context's bbgm property.
  */
-function realtimeUpdate(updateEvents = [], url, cb, raw = {}) {
+function realtimeUpdate(updateEvents: string[] = [], url?: string, cb?: Function, raw?: Object = {}) {
     url = url !== undefined ? url : location.pathname + location.search;
 
     const inLeague = url.substr(0, 3) === "/l/"; // Check the URL to be redirected to, not the current league (g.lid)
@@ -52,8 +55,14 @@ function realtimeUpdate(updateEvents = [], url, cb, raw = {}) {
 * @param {IDBTransaction|null} ot An IndexedDB transaction on gameAttributes, messages, and negotiations; if null is passed, then a new transaction will be used.
 * @return {Promise}
 */
-async function updatePlayMenu(ot) {
-    const allOptions = {
+async function updatePlayMenu(tx?: BackboardTx) {
+    const allOptions: {
+        [key: string]: {
+            id?: string,
+            label: string,
+            url?: string,
+        }
+    } = {
         stop: {label: "Stop"},
         day: {label: "One day"},
         week: {label: "One week"},
@@ -76,7 +85,7 @@ async function updatePlayMenu(ot) {
         stopAuto: {label: `Stop auto play (${g.autoPlaySeasons} seasons left)`},
     };
 
-    let keys;
+    let keys = [];
     if (g.phase === g.PHASE.PRESEASON) {
         // Preseason
         keys = ["untilRegularSeason"];
@@ -107,10 +116,10 @@ async function updatePlayMenu(ot) {
     }
 
     const [unreadMessage, gamesInProgress, negotiationInProgress, phaseChangeInProgress] = await Promise.all([
-        lock.unreadMessage(ot),
-        lock.gamesInProgress(ot),
-        lock.negotiationInProgress(ot),
-        lock.phaseChangeInProgress(ot),
+        lock.unreadMessage(tx),
+        lock.gamesInProgress(tx),
+        lock.negotiationInProgress(tx),
+        lock.phaseChangeInProgress(tx),
     ]);
 
     if (unreadMessage) {
@@ -152,7 +161,7 @@ Args:
     status: A string containing the current status message to be pushed to
         the client.
 */
-async function updateStatus(statusText) {
+async function updateStatus(statusText: string) {
     const oldStatus = g.statusText;
     if (statusText === undefined) {
         g.emitter.emit('updateTopMenu', {statusText: oldStatus});
@@ -171,7 +180,7 @@ Args:
     phaseText: A string containing the current phase text to be pushed to
         the client.
 */
-async function updatePhase(phaseText) {
+async function updatePhase(phaseText: string) {
     const oldPhaseText = g.phaseText;
     if (phaseText === undefined) {
         g.emitter.emit('updateTopMenu', {phaseText: oldPhaseText});

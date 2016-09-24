@@ -21,15 +21,15 @@
     "build-js": "node tools/build-js.js",
     "minify-js": "node tools/minify-js.js",
     "watch-js": "watchify -d src/js/app.js -o build/gen/app.js -v",
-    "lint": "concurrently --raw 'npm run lint-css' 'npm run lint-js'",
+    "lint": "concurrently --raw 'npm run flow' 'npm run lint-css' 'npm run lint-js'",
+    "flow": "flow",
     "lint-css": "stylelint 'src/css/*.*css'",
     "lint-js": "eslint '*.js' 'src/js/**/*.js' 'tools/**/*.js'",
     "lint-js-fix": "npm run lint-js -- --fix",
     "test": "karma start",
     "copy-mocha": "cp node_modules/mocha/mocha.css build/gen/mocha.css && cp node_modules/mocha/mocha.js build/gen/mocha.js",
     "build-test": "npm run copy-mocha && browserify -d src/js/test/app.js -o build/gen/app-test.js",
-    "watch-test": "npm run copy-mocha && watchify -d src/js/test/app.js -o build/gen/app-test.js",
-    "flow": "flow"
+    "watch-test": "npm run copy-mocha && watchify -d src/js/test/app.js -o build/gen/app-test.js"
   },
   "dependencies": {
     "backboard": "1.0.6",

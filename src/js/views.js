@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 import bbgmViewReact from './util/bbgmViewReact';
 import account from './views/account';
@@ -61,7 +63,7 @@ import transactions from './views/transactions';
 import upcomingFreeAgents from './views/upcomingFreeAgents';
 import watchList from './views/watchList';
 
-const staticPage = (name, title, inLeague, content) => {
+const staticPage = (name: string, title: string, inLeague: boolean, content: React.Element<*>) => {
     return bbgmViewReact.init({
         id: name,
         inLeague,

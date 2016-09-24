@@ -1,3 +1,5 @@
+// @flow
+
 const chokidar = require('chokidar');
 const build = require('./buildFuncs');
 

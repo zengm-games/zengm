@@ -1,4 +1,5 @@
 // @flow
+
 import React from 'react';
 import g from '../globals';
 import logEvent from './logEvent';

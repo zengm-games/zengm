@@ -203,16 +203,22 @@
           return;
         }
 
-        var openRequest = idb.open('__detectIDB_test', 1);
+        var openRequest = idb.open('__detectIDB_test2', 1);
 
         openRequest.onupgradeneeded = function (evt) {
           var db = evt.target.result;
-          db.createObjectStore('one', {
+          var one = db.createObjectStore('one', {
+            autoIncrement: true,
             keyPath: 'key'
           });
-          db.createObjectStore('two', {
+          one.createIndex('one', 'one');
+          one.add({one: 1});
+          var two = db.createObjectStore('two', {
+            autoIncrement: true,
             keyPath: 'key'
           });
+          two.createIndex ('two', 'two');
+          two.add({two: 2});
         };
 
         openRequest.onsuccess = function (evt) {
@@ -225,9 +231,18 @@
             return;
           }
 
+          var count = 0;
+          transaction.objectStore('one').index('one').openCursor().onsuccess = function (evt) {
+            cursor = evt.target.result;
+            if (cursor) {
+              count += 1;
+              cursor.continue();
+            }
+          };
+
           transaction.oncomplete = function () {
             db.close();
-            cb(true);
+            cb(count === 1); // Will be 2 in Safari 10 https://bugs.webkit.org/show_bug.cgi?id=158833
           };
         };
       };

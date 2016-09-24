@@ -1,9 +1,17 @@
+// @flow
+
 import g from '../globals';
 import * as helpers from '../util/helpers';
 import * as random from '../util/random';
 
+type PlayType = 'ast' | 'blkAtRim' | 'blkLowPost' | 'blkMidRange' | 'blkTp' | 'drb' | 'fgAtRim' | 'fgAtRimAndOne' | 'fgLowPost' | 'fgLowPostAndOne' | 'fgMidRange' | 'fgMidRangeAndOne' | 'foulOut' | 'ft' | 'injury' | 'missAtRim' | 'missFt' | 'missLowPost' | 'missMidRange' | 'missTp' | 'orb' | 'overtime' | 'pf' | 'quarter' | 'stl' | 'sub' | 'tov' | 'tp' | 'tpAndOne';
+type ShotType = 'atRim' | 'ft' | 'lowPost' | 'midRange' | 'threePointer';
+type PlayerNumOnCourt = 0 | 1 | 2 | 3 | 4;
+type TeamNum = 0 | 1;
+type CompositeRating = 'blocking' | 'fouling' | 'passing' | 'rebounding' | 'stealing' | 'turnovers' | 'usage';
+
 // x is value, a controls sharpness, b controls center
-const sigmoid = (x, a, b) => {
+const sigmoid = (x: number, a: number, b: number): number => {
     return 1 / (1 + Math.exp(-(a * (x - b))));
 };
 
@@ -13,10 +21,8 @@ const sigmoid = (x, a, b) => {
  * @param {Array.<number>} ratios output of this.ratingArray.
  * @param {number} exempt An integer representing a player that can't be picked (i.e. you can't assist your own shot, which is the only current use of exempt). The value of exempt ranges from 0 to 4, corresponding to the index of the player in this.playersOnCourt. This is *NOT* the same value as the player ID *or* the index of the this.team[t].player list. Yes, that's confusing.
  */
-const pickPlayer = (ratios, exempt) => {
-    exempt = exempt !== undefined ? exempt : false;
-
-    if (exempt !== false) {
+const pickPlayer = (ratios: [number, number, number, number, number], exempt?: PlayerNumOnCourt): PlayerNumOnCourt => {
+    if (exempt !== undefined) {
         ratios[exempt] = 0;
     }
 
@@ -44,7 +50,7 @@ const pickPlayer = (ratios, exempt) => {
  * @param {number} energy A player's energy level, from 0 to 1 (0 = lots of energy, 1 = none).
  * @return {number} Fatigue, from 0 to 1 (0 = lots of fatigue, 1 = none).
  */
-const fatigue = energy => {
+const fatigue = (energy: number): number => {
     energy += 0.05;
     if (energy > 1) {
         energy = 1;
@@ -54,6 +60,32 @@ const fatigue = energy => {
 };
 
 class GameSim {
+    id: number;
+    team: any;
+    dt: number;
+    playersOnCourt: [[number, number, number, number, number], [number, number, number, number, number]];
+    startersRecorded: boolean;
+    subsEveryN: number;
+    overtimes: number;
+    t: number;
+    synergyFactor: number;
+    lastScoringPlay: {
+        team: number,
+        player: number,
+        type: ShotType,
+        time: number,
+    }[];
+    clutchPlays: {
+        type: 'playerFeat',
+        tempText: string,
+        showNotification: boolean,
+        pids: [number],
+        tids: [number],
+    }[];
+    o: TeamNum;
+    d: TeamNum;
+    playByPlay: Object[];
+
     /**
      * Initialize the two teams that are playing this game.
      *
@@ -480,7 +512,7 @@ class GameSim {
      *
      * This should be called once every possession, at the end, to record playing time and bench time for players.
      */
-    updatePlayingTime(possessionTime) {
+    updatePlayingTime(possessionTime: number) {
         for (let t = 0; t < 2; t++) {
             // Update minutes (overall, court, and bench)
             for (let p = 0; p < this.team[t].player.length; p++) {
@@ -595,7 +627,7 @@ class GameSim {
      *
      * @return {string} Currently always returns "stl".
      */
-    doStl(pStoleFrom) {
+    doStl(pStoleFrom: PlayerNumOnCourt) {
         const ratios = this.ratingArray("stealing", this.d);
         const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
         this.recordStat(this.d, p, "stl");
@@ -610,7 +642,7 @@ class GameSim {
      * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
      * @return {string} Either "fg" or output of this.doReb, depending on make or miss and free throws.
      */
-    doShot(shooter) {
+    doShot(shooter: PlayerNumOnCourt) {
         const p = this.playersOnCourt[this.o][shooter];
 
         const currentFatigue = fatigue(this.team[this.o].player[p].stat.energy);
@@ -719,7 +751,7 @@ class GameSim {
      * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
      * @return {string} Output of this.doReb.
      */
-    doBlk(shooter, type) {
+    doBlk(shooter: PlayerNumOnCourt, type: ShotType) {
         const p = this.playersOnCourt[this.o][shooter];
         this.recordStat(this.o, p, "ba");
         this.recordStat(this.o, p, "fga");
@@ -761,7 +793,7 @@ class GameSim {
      * @param {number} type 2 for a two pointer, 3 for a three pointer.
      * @return {string} fg, orb, or drb (latter two are for and ones)
      */
-    doFg(shooter, passer, type, andOne) {
+    doFg(shooter: PlayerNumOnCourt, passer: PlayerNumOnCourt, type: ShotType, andOne?: boolean = false) {
         const p = this.playersOnCourt[this.o][shooter];
         this.recordStat(this.o, p, "fga");
         this.recordStat(this.o, p, "fg");
@@ -769,20 +801,20 @@ class GameSim {
         if (type === "atRim") {
             this.recordStat(this.o, p, "fgaAtRim");
             this.recordStat(this.o, p, "fgAtRim");
-            this.recordPlay(`fgAtRim${andOne ? "AndOne" : ""}`, this.o, [this.team[this.o].player[p].name]);
+            this.recordPlay(andOne ? 'fgAtRimAndOne' : 'fgAtRim', this.o, [this.team[this.o].player[p].name]);
         } else if (type === "lowPost") {
             this.recordStat(this.o, p, "fgaLowPost");
             this.recordStat(this.o, p, "fgLowPost");
-            this.recordPlay(`fgLowPost${andOne ? "AndOne" : ""}`, this.o, [this.team[this.o].player[p].name]);
+            this.recordPlay(andOne ? 'fgLowPostAndOne' : 'fgLowPost', this.o, [this.team[this.o].player[p].name]);
         } else if (type === "midRange") {
             this.recordStat(this.o, p, "fgaMidRange");
             this.recordStat(this.o, p, "fgMidRange");
-            this.recordPlay(`fgMidRange${andOne ? "AndOne" : ""}`, this.o, [this.team[this.o].player[p].name]);
+            this.recordPlay(andOne ? 'fgMidRangeAndOne' : 'fgMidRange', this.o, [this.team[this.o].player[p].name]);
         } else if (type === "threePointer") {
             this.recordStat(this.o, p, "pts"); // Extra point for 3's
             this.recordStat(this.o, p, "tpa");
             this.recordStat(this.o, p, "tp");
-            this.recordPlay(`tp${andOne ? "AndOne" : ""}`, this.o, [this.team[this.o].player[p].name]);
+            this.recordPlay(andOne ? 'tpAndOne' : 'tp', this.o, [this.team[this.o].player[p].name]);
         }
         this.recordLastScore(this.o, p, type, this.t);
 
@@ -950,7 +982,7 @@ class GameSim {
         }
     }
 
-    recordLastScore(teamnum, playernum, type, time) {
+    recordLastScore(teamnum: TeamNum, playernum: number, type, time: number) {
         // only record plays in the fourth quarter or overtime...
         if (this.team[0].stat.ptsQtrs.length < 4) { return; }
         // ...in the last 24 seconds...
@@ -981,7 +1013,7 @@ class GameSim {
      * @param {number} amount Integer representing the number of free throws to shoot
      * @return {string} "fg" if the last free throw is made; otherwise, this.doReb is called and its output is returned.
      */
-    doFt(shooter, amount) {
+    doFt(shooter: PlayerNumOnCourt, amount: number) {
         this.doPf(this.d);
         const p = this.playersOnCourt[this.o][shooter];
 
@@ -1066,9 +1098,7 @@ class GameSim {
      * @param {number=} power Power that the composite rating is raised to after the components are linearly combined by  the weights and scaled from 0 to 1. This can be used to introduce nonlinearities, like making a certain stat more uniform (power < 1) or more unevenly distributed (power > 1) or making a composite rating an inverse (power = -1). Default value is 1.
      * @return {Array.<number>} Array of composite ratings of the players on the court for the given rating and team.
      */
-    ratingArray(rating, t, power) {
-        power = power !== undefined ? power : 1;
-
+    ratingArray(rating: CompositeRating, t: TeamNum, power?: number = 1) {
         const array = [0, 0, 0, 0, 0];
         for (let i = 0; i < 5; i++) {
             const p = this.playersOnCourt[t][i];
@@ -1086,8 +1116,7 @@ class GameSim {
      * @param {string} s Key for the property of this.team[t].player[p].stat to increment.
      * @param {number} amt Amount to increment (default is 1).
      */
-    recordStat(t, p, s, amt) {
-        amt = amt !== undefined ? amt : 1;
+    recordStat(t, p, s, amt?: number = 1) {
         this.team[t].player[p].stat[s] += amt;
         if (s !== "gs" && s !== "courtTime" && s !== "benchTime" && s !== "energy") {
             this.team[t].stat[s] += amt;
@@ -1114,7 +1143,7 @@ class GameSim {
         }
     }
 
-    recordPlay(type, t, names) {
+    recordPlay(type: PlayType, t, names?: string[]) {
         let texts;
         if (this.playByPlay !== undefined) {
             if (type === "injury") {

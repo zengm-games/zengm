@@ -82,3 +82,5 @@ export type TeamBasic = {
 };
 
 export type TeamSeason = any;
+
+export type UpdateEvents = ('firstRun' | 'g.gamesInProgress' | 'playerMovement')[];

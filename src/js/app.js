@@ -1,3 +1,5 @@
+// @flow
+
 /* eslint-disable import/imports-first */
 import './lib/babel-external-helpers';
 import Promise from 'bluebird';
@@ -33,7 +35,7 @@ import * as trade from './core/trade';
 
 // Needed because of https://github.com/petkaantonov/bluebird/issues/363
 // Sadly only enabled in debug mode, due to weird interactions with Bugsnag: https://github.com/bugsnag/bugsnag-js/issues/181
-if (localStorage.debug === 'debug') {
+if (localStorage.getItem('debug') === 'debug') {
     sourceMapSupport.install();
 }
 

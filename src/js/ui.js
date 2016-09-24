@@ -6,7 +6,7 @@ import g from './globals';
 import * as league from './core/league';
 import * as helpers from './util/helpers';
 import * as lock from './util/lock';
-import type {BackboardTx} from './util/types';
+import type {BackboardTx, UpdateEvents} from './util/types';
 
 /**
  * Smartly update the currently loaded view or redirect to a new one.
@@ -19,7 +19,7 @@ import type {BackboardTx} from './util/types';
  * @param {function()=} cb Optional callback that will run after the page updates.
  * @param {Object=} raw Optional object passed through to the page.js request context's bbgm property.
  */
-function realtimeUpdate(updateEvents: string[] = [], url?: string, cb?: Function, raw?: Object = {}) {
+function realtimeUpdate(updateEvents: UpdateEvents = [], url?: string, cb?: Function, raw?: Object = {}) {
     url = url !== undefined ? url : location.pathname + location.search;
 
     const inLeague = url.substr(0, 3) === "/l/"; // Check the URL to be redirected to, not the current league (g.lid)

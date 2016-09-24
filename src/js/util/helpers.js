@@ -2,7 +2,7 @@
 import React from 'react';
 import g from '../globals';
 import logEvent from './logEvent';
-import type {GameProcessed, GameProcessedCompleted, Pick, TeamBasic} from './types';
+import type {BackboardTx, GameProcessed, GameProcessedCompleted, Pick, TeamBasic} from './types';
 
 /**
  * Validate that a given abbreviation corresponds to a team.
@@ -600,7 +600,7 @@ function yearRanges(arr: number[]): string[] {
     return runArr;
 }
 
-function maybeReuseTx(storeNames: string[], mode: string, tx: any, cb: Function) {
+function maybeReuseTx(storeNames: string[], mode: string, tx: BackboardTx, cb: Function) {
     if (tx !== undefined && tx !== null) {
         return cb(tx);
     }

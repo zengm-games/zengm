@@ -1,3 +1,6 @@
+flow
+ BackboardTx should specify object stores
+
 replace owner message text with numbers/chart
 
 upgrade GA https://developers.google.com/analytics/devguides/collection/upgrade/

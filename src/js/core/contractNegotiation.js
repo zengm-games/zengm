@@ -1,3 +1,5 @@
+// @flow
+
 import Promise from 'bluebird';
 import g from '../globals';
 import * as ui from '../ui';
@@ -8,6 +10,7 @@ import * as team from './team';
 import logEvent from '../util/logEvent';
 import * as helpers from '../util/helpers';
 import * as lock from '../util/lock';
+import type {BackboardTx} from '../util/types';
 
 /**
  * Start a new contract negotiation with a player.
@@ -19,7 +22,7 @@ import * as lock from '../util/lock';
  * @param {number=} tid Team ID the contract negotiation is with. This only matters for Multi Team Mode. If undefined, defaults to g.userTid.
  * @return {Promise.<string=>)} If an error occurs, resolve to a string error message.
  */
-async function create(tx, pid, resigning, tid = g.userTid) {
+async function create(tx: BackboardTx, pid: number, resigning: boolean, tid: number = g.userTid): Promise<string> {
     if ((g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.RESIGN_PLAYERS) && !resigning) {
         return "You're not allowed to sign free agents now.";
     }
@@ -68,12 +71,8 @@ async function create(tx, pid, resigning, tid = g.userTid) {
 
 /**
  * Cancel contract negotiations with a player.
- *
- * @memberOf core.contractNegotiation
- * @param {number} pid An integer that must correspond with the player ID of a player in an ongoing negotiation.
- * @return {Promise}
  */
-async function cancel(pid) {
+async function cancel(pid: number) {
     await g.dbl.tx(["gameAttributes", "messages", "negotiations"], "readwrite", async tx => {
         await tx.negotiations.delete(pid);
         const negotiationInProgress = await lock.negotiationInProgress(tx);
@@ -99,7 +98,7 @@ async function cancel(pid) {
  * @param {IDBTransaction} tx An IndexedDB transaction on gameAttributes, messages, and negotiations, readwrite.
  * @return {Promise}
  */
-async function cancelAll(tx) {
+async function cancelAll(tx: BackboardTx) {
     await tx.negotiations.clear();
     league.updateLastDbChange();
     ui.updateStatus("Idle");
@@ -115,7 +114,7 @@ async function cancelAll(tx) {
  * @param {number} pid An integer that must correspond with the player ID of a player in an ongoing negotiation.
  * @return {Promise.<string=>} If an error occurs, resolves to a string error message.
  */
-async function accept(pid, amount, exp) {
+async function accept(pid: number, amount: number, exp: number): Promise<string> {
     const [negotiation, payroll] = await Promise.all([
         g.dbl.negotiations.get(pid),
         team.getPayroll(null, g.userTid).get(0),

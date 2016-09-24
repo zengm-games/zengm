@@ -1,5 +1,7 @@
 // @flow
 
+export type BackboardTx = any;
+
 export type Game = {
     att: number,
     gid: number,

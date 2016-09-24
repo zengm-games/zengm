@@ -1,3 +1,5 @@
+// @flow
+
 import * as db from '../db';
 import g from '../globals';
 import * as ui from '../ui';
@@ -11,13 +13,13 @@ import * as season from '../core/season';
 import * as trade from '../core/trade';
 import * as helpers from './helpers';
 
-const liveGame = async gid => {
+const liveGame = async (gid: number) => {
     ui.realtimeUpdate([], helpers.leagueUrl(["live_game"]), () => {
         game.play(1, true, gid);
     }, {fromAction: true});
 };
 
-const negotiate = async pid => {
+const negotiate = async (pid: number) => {
     // If there is no active negotiation with this pid, create it
     const negotiation = await g.dbl.negotiations.get(pid);
     if (!negotiation) {
@@ -34,7 +36,16 @@ const negotiate = async pid => {
     }
 };
 
-const tradeFor = async ({otherDpids, otherPids, pid, tid, userDpids, userPids}) => {
+type TradeForOptions = {
+    otherDpids: number[],
+    otherPids: number[],
+    pid: number,
+    tid: number,
+    userDpids: number[],
+    userPids: number[],
+};
+
+const tradeFor = async ({otherDpids, otherPids, pid, tid, userDpids, userPids}: TradeForOptions) => {
     let teams;
 
     if (pid !== undefined) {
@@ -67,31 +78,27 @@ const tradeFor = async ({otherDpids, otherPids, pid, tid, userDpids, userPids}) 
     league.updateLastDbChange();
 };
 
-const playAmount = async amount => {
-    if (['day', 'week', 'month', 'untilPreseason'].includes(amount)) {
-        let numDays;
-        if (amount === "day") {
-            numDays = 1;
-        } else if (amount === "week") {
-            numDays = 7;
-        } else if (amount === "month") {
-            numDays = 30;
-        } else if (amount === "untilPreseason") {
+const playAmount = async (amount: 'day' | 'week' | 'month' | 'untilPreseason') => {
+    let numDays;
+    if (amount === "day") {
+        numDays = 1;
+    } else if (amount === "week") {
+        numDays = 7;
+    } else if (amount === "month") {
+        numDays = 30;
+    } else if (amount === "untilPreseason") {
+        numDays = g.daysLeft;
+    }
+
+    if (g.phase <= g.PHASE.PLAYOFFS) {
+        ui.updateStatus("Playing..."); // For quick UI updating, before game.play
+        // Start playing games
+        game.play(numDays);
+    } else if (g.phase === g.PHASE.FREE_AGENCY) {
+        if (numDays > g.daysLeft) {
             numDays = g.daysLeft;
         }
-
-        if (g.phase <= g.PHASE.PLAYOFFS) {
-            ui.updateStatus("Playing..."); // For quick UI updating, before game.play
-            // Start playing games
-            game.play(numDays);
-        } else if (g.phase === g.PHASE.FREE_AGENCY) {
-            if (numDays > g.daysLeft) {
-                numDays = g.daysLeft;
-            }
-            freeAgents.play(numDays);
-        }
-    } else {
-        throw new Error(`Invalid amount: ${amount}`);
+        freeAgents.play(numDays);
     }
 };
 

@@ -1,3 +1,5 @@
+// @flow
+
 /*eslint new-cap: 0*/
 import Promise from 'bluebird';
 import g from '../globals';

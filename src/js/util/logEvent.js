@@ -1,19 +1,34 @@
+// @flow
+
 import g from '../globals';
 import * as league from '../core/league';
 import notify from '../lib/bbgm-notifications';
+import type {BackboardTx} from './types';
 
-const logEvent = (ot, {
+// Really, pids, tids, and type should not be optional if saveToDb is true
+type LogEventOptions = {
+    extraClass?: string,
+    persistent?: boolean,
+    pids?: number[],
+    saveToDb?: boolean,
+    showNotification?: boolean,
+    text: string,
+    tids?: number[],
+    type: ?('changes' | 'error' | 'freeAgent' | 'reSigned'),
+}
+
+const logEvent = (tx: ?BackboardTx, {
     extraClass,
     persistent = false,
     pids,
-    text,
-    tids,
     saveToDb = true,
     showNotification = true,
+    text,
+    tids,
     type,
-}) => {
+}: LogEventOptions) => {
     if (saveToDb && g.lid) { // Only save to league event log if within a league
-        const dbOrTx = ot !== null ? ot : g.dbl;
+        const dbOrTx = tx !== undefined && tx !== null ? tx : g.dbl;
         dbOrTx.events.add({
             season: g.season,
             type,

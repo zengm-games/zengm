@@ -1,3 +1,5 @@
+// @flow
+
 import backboard from 'backboard';
 import Promise from 'bluebird';
 import _ from 'underscore';

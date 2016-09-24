@@ -14,7 +14,7 @@ type LogEventOptions = {
     showNotification?: boolean,
     text: string,
     tids?: number[],
-    type: ?('changes' | 'error' | 'freeAgent' | 'reSigned'),
+    type: ?('award' | 'changes' | 'error' | 'freeAgent' | 'reSigned'),
 }
 
 const logEvent = (tx: ?BackboardTx, {

@@ -735,7 +735,7 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
         }
 
         await g.dbl.tx(["players", "schedule", "teams", "teamSeasons"], async tx => {
-            let schedule = await season.getSchedule({ot: tx, oneDay: true});
+            let schedule = await season.getSchedule(tx, true);
 
             // Stop if no games
             // This should also call cbNoGames after the playoffs end, because g.phase will have been incremented by season.newSchedulePlayoffsDay after the previous day's games
@@ -754,7 +754,7 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
 
                 // tx2 to make sure newSchedulePlayoffsDay finishes before continuing
                 await g.dbl.tx(["playoffSeries", "schedule", "teamSeasons"], "readwrite", tx2 => season.newSchedulePlayoffsDay(tx2));
-                schedule = await season.getSchedule({oneDay: true});
+                schedule = await season.getSchedule(null, true);
             }
             await cbSimGames(schedule, teams);
         });

@@ -46,6 +46,29 @@ export type Pick = {
     tid: number,
 };
 
+export type ScheduleGame = {
+    awayName: string,
+    awayRegion: string,
+    awayTid: number,
+    gid: number,
+    highlight: boolean,
+    homeName: string,
+    homeRegion: string,
+    homeTid: number,
+};
+
+export type Team = {
+    tid: number,
+    cid: number,
+    did: number,
+    region: string,
+    name: string,
+    abbrev: string,
+    imgURL?: string,
+    budget: any,
+    strategy: any,
+};
+
 export type TeamBasic = {
     tid: number,
     cid: number,

@@ -49,7 +49,7 @@ function updateRoster(inputs, updateEvents, state) {
             if (inputs.season === g.season) {
                 // Show players currently on the roster
                 let [schedule, players, payroll] = await Promise.all([
-                    season.getSchedule({ot: tx}),
+                    season.getSchedule(tx),
                     tx.players.index('tid').getAll(inputs.tid).then(players2 => {
                         return player.withStats(tx, players2, {
                             statsSeasons: [inputs.season],

@@ -1,5 +1,7 @@
 flow
- BackboardTx should specify object stores
+  BackboardTx should specify object stores
+  get rid of helpers.round
+  get rid of ScheduleGame.highlight
 
 replace owner message text with numbers/chart
 

@@ -4,7 +4,7 @@ import bbgmViewReact from '../util/bbgmViewReact';
 import Live from './views/Live';
 
 async function updateGamesList() {
-    const games = await season.getSchedule({oneDay: true});
+    const games = await season.getSchedule(null, true);
 
     for (const game of games) {
         if (game.awayTid === g.userTid || game.homeTid === g.userTid) {

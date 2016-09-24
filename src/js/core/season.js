@@ -1,3 +1,5 @@
+// @flow
+
 import backboard from 'backboard';
 import Promise from 'bluebird';
 import _ from 'underscore';
@@ -8,6 +10,7 @@ import * as team from './team';
 import * as helpers from '../util/helpers';
 import logEvent from '../util/logEvent';
 import * as random from '../util/random';
+import type {BackboardTx, OwnerMoodDeltas, ScheduleGame, Team} from '../util/types';
 
 /**
  * Update g.ownerMood based on performance this season.
@@ -18,7 +21,7 @@ import * as random from '../util/random';
  * @param {(IDBTransaction|null)} tx An IndexedDB transaction on gameAttributes and and teams, readwrite.
  * @return {Promise.Object} Resolves to an object containing the changes in g.ownerMood this season.
  */
-async function updateOwnerMood(tx) {
+async function updateOwnerMood(tx?: BackboardTx): Promise<OwnerMoodDeltas> {
     const t = await team.filter({
         ot: tx,
         seasonAttrs: ["won", "playoffRoundsWon", "profit"],
@@ -56,7 +59,7 @@ async function updateOwnerMood(tx) {
 }
 
 
-async function saveAwardsByPlayer(tx, awardsByPlayer) {
+async function saveAwardsByPlayer(tx: BackboardTx, awardsByPlayer: any) {
     const pids = _.uniq(awardsByPlayer.map(award => award.pid));
 
     await Promise.map(pids, async pid => {
@@ -81,8 +84,8 @@ async function saveAwardsByPlayer(tx, awardsByPlayer) {
  * @param {(IDBTransaction)} tx An IndexedDB transaction on awards, players, playerStats, releasedPlayers, and teams, readwrite.
  * @return {Promise}
  */
-async function doAwards(tx) {
-    const awards = {season: g.season};
+async function doAwards(tx: BackboardTx) {
+    const awards: any = {season: g.season};
 
     // [{pid, type}]
     const awardsByPlayer = [];
@@ -276,17 +279,13 @@ async function doAwards(tx) {
  * Get an array of games from the schedule.
  *
  * @param {(IDBObjectStore|IDBTransaction|null)} options.ot An IndexedDB object store or transaction on schedule; if null is passed, then a new transaction will be used.
- * @param {boolean} options.oneDay Number of days of games requested. Default false.
+ * @param {boolean} options.oneDay Return just one day (true) or all days (false). Default false.
  * @return {Promise} Resolves to the requested schedule array.
  */
-function getSchedule(options) {
-    options = options !== undefined ? options : {};
-    options.ot = options.ot !== undefined ? options.ot : null;
-    options.oneDay = options.oneDay !== undefined ? options.oneDay : false;
-
-    return helpers.maybeReuseTx(["schedule"], "readonly", options.ot, async tx => {
-        let schedule = await tx.schedule.getAll();
-        if (options.oneDay) {
+function getSchedule(tx?: BackboardTx, oneDay?: boolean = false): Promise<ScheduleGame[]> {
+    return helpers.maybeReuseTx(["schedule"], "readonly", tx, async tx2 => {
+        let schedule = await tx2.schedule.getAll();
+        if (oneDay) {
             schedule = schedule.slice(0, g.numTeams / 2);  // This is the maximum number of games possible in a day
 
             // Only take the games up until right before a team plays for the second time that day
@@ -315,7 +314,7 @@ function getSchedule(options) {
         away teams, respectively, for every game in the season, respectively.
  * @return {Promise}
  */
-async function setSchedule(tx, tids) {
+async function setSchedule(tx: BackboardTx, tids: [number, number][]) {
     await tx.schedule.clear();
 
     for (const matchup of tids) {
@@ -334,13 +333,15 @@ async function setSchedule(tx, tids) {
  * @memberOf core.season
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
-function newScheduleDefault(teams) {
+function newScheduleDefault(teams): [number, number][] {
     const tids = []; // tid_home, tid_away
 
     // Collect info needed for scheduling
+    const homeGames = [];
+    const awayGames = [];
     for (let i = 0; i < teams.length; i++) {
-        teams[i].homeGames = 0;
-        teams[i].awayGames = 0;
+        homeGames[i] = 0;
+        awayGames[i] = 0;
     }
     for (let i = 0; i < teams.length; i++) {
         for (let j = 0; j < teams.length; j++) {
@@ -350,24 +351,24 @@ function newScheduleDefault(teams) {
                 // Constraint: 1 home game vs. each team in other conference
                 if (teams[i].cid !== teams[j].cid) {
                     tids.push(game);
-                    teams[i].homeGames += 1;
-                    teams[j].awayGames += 1;
+                    homeGames[i] += 1;
+                    awayGames[j] += 1;
                 }
 
                 // Constraint: 2 home games vs. each team in same division
                 if (teams[i].did === teams[j].did) {
                     tids.push(game);
                     tids.push(game);
-                    teams[i].homeGames += 2;
-                    teams[j].awayGames += 2;
+                    homeGames[i] += 2;
+                    awayGames[j] += 2;
                 }
 
                 // Constraint: 1-2 home games vs. each team in same conference and different division
                 // Only do 1 now
                 if (teams[i].cid === teams[j].cid && teams[i].did !== teams[j].did) {
                     tids.push(game);
-                    teams[i].homeGames += 1;
-                    teams[j].awayGames += 1;
+                    homeGames[i] += 1;
+                    awayGames[j] += 1;
                 }
             }
         }
@@ -433,8 +434,8 @@ function newScheduleDefault(teams) {
                 const jj = tidsByConf[cid][matchup[t]];
                 const game = [teams[ii].tid, teams[jj].tid];
                 tids.push(game);
-                teams[ii].homeGames += 1;
-                teams[jj].awayGames += 1;
+                homeGames[ii] += 1;
+                awayGames[jj] += 1;
             }
         }
     }
@@ -450,7 +451,7 @@ function newScheduleDefault(teams) {
  * @memberOf core.season
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
-function newScheduleCrappy() {
+function newScheduleCrappy(): [number, number][] {
     // Number of games left to reschedule for each team
     const numRemaining = [];
     for (let i = 0; i < g.numTeams; i++) {
@@ -505,7 +506,7 @@ function newScheduleCrappy() {
  * @memberOf core.season
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
-function newSchedule(teams) {
+function newSchedule(teams: Team[]): [number, number][] {
     let tids;
     let threeDivsPerConf = true;
     for (const conf of g.confs) {
@@ -556,7 +557,7 @@ function newSchedule(teams) {
  * @param {(IDBTransaction)} tx An IndexedDB transaction on playoffSeries, schedule, and teamSeasons, readwrite.
  * @return {Promise.boolean} Resolves to true if the playoffs are over. Otherwise, false.
  */
-async function newSchedulePlayoffsDay(tx) {
+async function newSchedulePlayoffsDay(tx: BackboardTx): Promise<boolean> {
     const playoffSeries = await tx.playoffSeries.get(g.season);
 
     const series = playoffSeries.series;
@@ -691,9 +692,9 @@ async function getDaysLeftSchedule() {
     return numDays;
 }
 
-function genPlayoffSeries(teams) {
+function genPlayoffSeries(teams: Team[]) {
     // Playoffs are split into two branches by conference only if there are exactly 2 conferences and the special secret option top16playoffs is not set
-    const playoffsByConference = g.confs.length === 2 && !localStorage.top16playoffs;
+    const playoffsByConference = g.confs.length === 2 && !localStorage.getItem('top16playoffs');
 
     const tidPlayoffs = [];
     const numPlayoffTeams = Math.pow(2, g.numPlayoffRounds);

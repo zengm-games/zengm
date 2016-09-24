@@ -1,7 +1,10 @@
+// @flow
+
 import g from '../globals';
 import * as league from '../core/league';
 import * as helpers from './helpers';
 import * as random from './random';
+import type {BackboardTx, OwnerMoodDeltas} from './types';
 
 // First message after new game
 const first = [
@@ -141,7 +144,7 @@ ovr[2] = [
 /**
  * @param {IDBTransaction} tx An IndexedDB transaction on gameAttributes and messages, readwrite.
  */
-async function generate(tx, deltas) {
+async function generate(tx: BackboardTx, deltas: OwnerMoodDeltas) {
     // If auto play seasons or multi team mode, no messages
     if (g.autoPlaySeasons > 0 || g.userTids.length > 1) {
         return;
@@ -171,7 +174,7 @@ async function generate(tx, deltas) {
             indWins = 4;
         }
 
-        let indPlayoffs;
+        let indPlayoffs = 2;
         if (g.ownerMood.playoffs <= 0 && deltas.playoffs < 0) {
             indPlayoffs = 0;
         } else if (g.ownerMood.playoffs <= 0 && deltas.playoffs === 0) {

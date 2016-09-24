@@ -32,6 +32,12 @@ export type GameProcessedCompleted = {
     won: boolean,
 };
 
+export type OwnerMoodDeltas = {
+    money: number,
+    playoffs: number,
+    wins: number,
+};
+
 export type Pick = {
     dpid: number,
     originalTid: number,

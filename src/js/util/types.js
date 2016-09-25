@@ -53,6 +53,8 @@ export type PickRealized = {
     tid: number,
 };
 
+export type PlayerFiltered = any;
+
 export type ScheduleGame = {
     awayName: string,
     awayRegion: string,
@@ -91,5 +93,33 @@ export type TeamBasic = {
 export type TeamFiltered = any;
 
 export type TeamSeason = any;
+
+export type TradePickValues = {
+    [key: string]: number[],
+};
+
+type TradeSummaryTeam = {
+    name: string,
+    payrollAfterTrade: number,
+    picks: {
+        dpid: number,
+        desc: string,
+    }[],
+    total: number,
+    trade: PlayerFiltered[],
+};
+
+export type TradeSummary = {
+    teams: [TradeSummaryTeam, TradeSummaryTeam],
+    warning: null | string,
+};
+
+type TradeTeam = {
+    dpids: number[],
+    pids: number[],
+    tid?: number,
+};
+
+export type TradeTeams = [TradeTeam, TradeTeam];
 
 export type UpdateEvents = ('firstRun' | 'g.gamesInProgress' | 'newPhase' | 'playerMovement')[];

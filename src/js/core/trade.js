@@ -1,3 +1,5 @@
+// @flow
+
 import Promise from 'bluebird';
 import g from '../globals';
 import * as league from './league';
@@ -5,6 +7,7 @@ import * as player from './player';
 import * as team from './team';
 import * as helpers from '../util/helpers';
 import logEvent from '../util/logEvent';
+import type {BackboardTx, TradePickValues, TradeSummary, TradeTeams} from '../util/types';
 
 /**
  * Get the contents of the current trade from the database.
@@ -12,8 +15,8 @@ import logEvent from '../util/logEvent';
  * @memberOf core.trade
  * @param {Promise.<Array.<Object>>} Resolves to an array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs).
  */
-async function get(ot) {
-    const dbOrTx = ot || g.dbl;
+async function get(tx: ?BackboardTx): Promise<TradeTeams> {
+    const dbOrTx = tx !== undefined && tx !== null ? tx : g.dbl;
     const tr = await dbOrTx.trade.get(0);
     return tr.teams;
 }
@@ -25,7 +28,7 @@ async function get(ot) {
  * @param {Array.<Object>} teams Array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs). If the other team's tid is null, it will automatically be determined from the pids.
  * @return {Promise}
  */
-async function create(teams) {
+async function create(teams: TradeTeams) {
     const oldTeams = await get();
 
     // If nothing is in this trade, it's just a team switch, so keep the old stuff from the user's team
@@ -56,7 +59,7 @@ async function create(teams) {
  * @memberOf core.trade
  * @return {er} Resolves to the other team's team ID.
  */
-async function getOtherTid() {
+async function getOtherTid(): Promise<number> {
     const teams = await get();
     return teams[1].tid;
 }
@@ -70,23 +73,41 @@ async function getOtherTid() {
  * @param {Array.<Object>} players Array of player objects or partial player objects
  * @return {Array.<Object>} Processed input
  */
-function filterUntradable(players) {
-    for (let i = 0; i < players.length; i++) {
-        if (players[i].contract.exp <= g.season && g.phase > g.PHASE.PLAYOFFS && g.phase < g.PHASE.FREE_AGENCY) {
+function filterUntradable(players: {
+    contract: {
+        exp: number,
+    },
+    gamesUntilTradable: number,
+}[]): {
+    contract: {
+        exp: number,
+    },
+    gamesUntilTradable: number,
+    untradable: boolean,
+    untradableMsg: string,
+}[] {
+    return players.map((p) => {
+        if (p.contract.exp <= g.season && g.phase > g.PHASE.PLAYOFFS && g.phase < g.PHASE.FREE_AGENCY) {
             // If the season is over, can't trade players whose contracts are expired
-            players[i].untradable = true;
-            players[i].untradableMsg = "Cannot trade expired contracts";
-        } else if (players[i].gamesUntilTradable > 0) {
-            // Can't trade players who recently were signed or traded
-            players[i].untradable = true;
-            players[i].untradableMsg = `Cannot trade recently-acquired player for ${players[i].gamesUntilTradable} more games`;
-        } else {
-            players[i].untradable = false;
-            players[i].untradableMsg = "";
+            return Object.assign({}, p, {
+                untradable: true,
+                untradableMsg: 'Cannot trade expired contracts',
+            });
         }
-    }
 
-    return players;
+        if (p.gamesUntilTradable > 0) {
+            // Can't trade players who recently were signed or traded
+            return Object.assign({}, p, {
+                untradable: true,
+                untradableMsg: `Cannot trade recently-acquired player for ${p.gamesUntilTradable} more games`,
+            });
+        }
+
+        return Object.assign({}, p, {
+            untradable: false,
+            untradableMsg: '',
+        });
+    });
 }
 
 /**
@@ -98,7 +119,7 @@ function filterUntradable(players) {
  * @param {Object} p Player object or partial player object
  * @return {boolean} Processed input
  */
-function isUntradable(p) {
+function isUntradable(p): boolean {
     return filterUntradable([p])[0].untradable;
 }
 
@@ -111,7 +132,7 @@ function isUntradable(p) {
  * @param {Array.<Object>} teams Array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs).
  * @return {Promise.<Array.<Object>>} Resolves to an array taht's the same as the input, but with invalid entries removed.
  */
-async function updatePlayers(teams) {
+async function updatePlayers(teams: TradeTeams): Promise<TradeTeams> {
     // This is just for debugging
     team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, null).then(dv => {
         console.log(dv);
@@ -190,15 +211,23 @@ async function updatePlayers(teams) {
  * @param {Array.<Object>} teams Array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs).
  * @return {Promise.Object} Resolves to an object contianing the trade summary.
  */
-function summary(teams) {
+function summary(teams: TradeTeams): TradeSummary {
     const tids = [teams[0].tid, teams[1].tid];
     const pids = [teams[0].pids, teams[1].pids];
     const dpids = [teams[0].dpids, teams[1].dpids];
 
-    const s = {teams: [], warning: null};
-    for (let i = 0; i < 2; i++) {
-        s.teams.push({trade: [], total: 0, payrollAfterTrade: 0, name: ""});
-    }
+    const s: TradeSummary = {
+        teams: [0, 1].map(() => {
+            return {
+                name: "",
+                payrollAfterTrade: 0,
+                picks: [],
+                total: 0,
+                trade: [],
+            };
+        }),
+        warning: null,
+    };
 
     return g.dbl.tx(["draftPicks", "players", "releasedPlayers"], async tx => {
         // Calculate properties of the trade
@@ -217,7 +246,6 @@ function summary(teams) {
             }));
 
             promises.push(tx.draftPicks.index('tid').getAll(tids[i]).then(picks => {
-                s.teams[i].picks = [];
                 for (let j = 0; j < picks.length; j++) {
                     if (dpids[i].indexOf(picks[j].dpid) >= 0) {
                         s.teams[i].picks.push({
@@ -295,9 +323,7 @@ async function clear() {
  * @param {boolean} forceTrade When true (like in God Mode), this trade is accepted regardless of the AI
  * @return {Promise.<boolean, string>} Resolves to an array. The first argument is a boolean for whether the trade was accepted or not. The second argument is a string containing a message to be dispalyed to the user.
  */
-async function propose(forceTrade) {
-    forceTrade = forceTrade !== undefined ? forceTrade : false;
-
+async function propose(forceTrade?: boolean = false): Promise<[boolean, ?string]> {
     if (g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.PLAYOFFS) {
         return [false, "Error! You're not allowed to make trades now."];
     }
@@ -421,7 +447,11 @@ async function propose(forceTrade) {
  * @param {?Object} estValuesCached Estimated draft pick values from trade.getPickValues, or null. Only pass if you're going to call this repeatedly, then it'll be faster if you cache the values up front.
  * @return {Promise.[boolean, Object]} Resolves to an array with one or two elements. First is a boolean indicating whether "make it work" was successful. If true, then the second argument is set to a teams object (similar to first input) with the "made it work" trade info.
  */
-async function makeItWork(teams, holdUserConstant, estValuesCached) {
+async function makeItWork(
+    teams: TradeTeams,
+    holdUserConstant: boolean,
+    estValuesCached?: TradePickValues,
+): Promise<[boolean, TradeTeams]> {
     let initialSign;
     let added = 0;
 
@@ -436,6 +466,7 @@ async function makeItWork(teams, holdUserConstant, estValuesCached) {
                     if (teams[0].pids.indexOf(p.pid) < 0 && !isUntradable(p)) {
                         assets.push({
                             type: "player",
+                            dv: 0,
                             pid: p.pid,
                             tid: teams[0].tid,
                         });
@@ -448,6 +479,7 @@ async function makeItWork(teams, holdUserConstant, estValuesCached) {
                 if (teams[1].pids.indexOf(p.pid) < 0 && !isUntradable(p)) {
                     assets.push({
                         type: "player",
+                        dv: 0,
                         pid: p.pid,
                         tid: teams[1].tid,
                     });
@@ -460,6 +492,7 @@ async function makeItWork(teams, holdUserConstant, estValuesCached) {
                     if (teams[0].dpids.indexOf(dp.dpid) < 0) {
                         assets.push({
                             type: "draftPick",
+                            dv: 0,
                             dpid: dp.dpid,
                             tid: teams[0].tid,
                         });
@@ -472,6 +505,7 @@ async function makeItWork(teams, holdUserConstant, estValuesCached) {
                 if (teams[1].dpids.indexOf(dp.dpid) < 0) {
                     assets.push({
                         type: "draftPick",
+                        dv: 0,
                         dpid: dp.dpid,
                         tid: teams[1].tid,
                     });
@@ -577,8 +611,8 @@ async function makeItWork(teams, holdUserConstant, estValuesCached) {
  * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on players; if null is passed, then a new transaction will be used.
  * @return {Promise.Object} Resolves to estimated draft pick values.
  */
-async function getPickValues(ot) {
-    const dbOrTx = ot || g.dbl;
+async function getPickValues(tx: ?BackboardTx): Promise<TradePickValues> {
+    const dbOrTx = tx !== undefined && tx !== null ? tx : g.dbl;
 
     const estValues = {
         default: [75, 73, 71, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 50, 50, 49, 49, 49, 48, 48, 48, 47, 47, 47, 46, 46, 46, 45, 45, 45, 44, 44, 44, 43, 43, 43, 42, 42, 42, 41, 41, 41, 40, 40, 39, 39, 38, 38, 37, 37], // This is basically arbitrary

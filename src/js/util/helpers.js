@@ -163,7 +163,7 @@ function getTeamsDefault(): TeamBasic[] {
  *
  * Taken from http://stackoverflow.com/a/3284324/786644
  */
-function deepCopy(obj: Object): Object {
+function deepCopy<T>(obj: T): T {
     if (typeof obj !== "object" || obj === null) { return obj; }
     if (obj.constructor === RegExp) { return obj; }
 

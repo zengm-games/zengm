@@ -1,3 +1,5 @@
+// @flow
+
 import backboard from 'backboard';
 import Promise from 'bluebird';
 import _ from 'underscore';
@@ -14,6 +16,7 @@ import * as season from './season';
 import * as team from './team';
 import * as helpers from '../util/helpers';
 import * as random from '../util/random';
+import type {BackboardTx, GameAttributeKeyDynamic} from '../util/types';
 
 const defaultGameAttributes = {
     phase: 0,
@@ -59,7 +62,7 @@ const defaultGameAttributes = {
 };
 
 // x and y are both arrays of objects with the same length. For each object, any properties in y but not x will be copied over to x.
-function merge(x, y) {
+function merge(x: Object[], y: Object[]): Object[] {
     for (let i = 0; i < x.length; i++) {
         // Fill in default values as needed
         for (const prop of Object.keys(y[i])) {
@@ -72,6 +75,9 @@ function merge(x, y) {
     return x;
 }
 
+// Could be improved by GameAttributeKeyDynamic http://stackoverflow.com/q/39683076/786644
+type GameAttributes = {[key: string]: Object | boolean | null | number | string};
+
 /**
  * Set values in the gameAttributes objectStore and update the global variable g.
  *
@@ -80,7 +86,7 @@ function merge(x, y) {
  * @param {Object} gameAttributes Each property in the object will be inserted/updated in the database with the key of the object representing the key in the database.
  * @returns {Promise} Promise for when it finishes.
  */
-async function setGameAttributes(tx, gameAttributes) {
+async function setGameAttributes(tx: BackboardTx, gameAttributes: GameAttributes) {
     const toUpdate = [];
     for (const key of Object.keys(gameAttributes)) {
         if (g[key] !== gameAttributes[key]) {
@@ -88,7 +94,6 @@ async function setGameAttributes(tx, gameAttributes) {
         }
     }
 
-    let updateMultiTeam = false;
     await Promise.map(toUpdate, async key => {
         await tx.gameAttributes.put({
             key,
@@ -96,19 +101,15 @@ async function setGameAttributes(tx, gameAttributes) {
         });
 
         g[key] = gameAttributes[key];
-
-        if (key === "userTid" || key === "userTids") {
-            updateMultiTeam = true;
-        }
     });
 
-    if (updateMultiTeam) {
+    if (toUpdate.includes('userTid') || toUpdate.includes('userTids')) {
         g.emitter.emit('updateMultiTeam');
     }
 }
 
 // Calls setGameAttributes and ensures transaction is complete. Otherwise, manual transaction managment would always need to be there like this
-async function setGameAttributesComplete(gameAttributes) {
+async function setGameAttributesComplete(gameAttributes: GameAttributes) {
     await g.dbl.tx("gameAttributes", "readwrite", tx => setGameAttributes(tx, gameAttributes));
 }
 
@@ -125,11 +126,17 @@ function updateLastDbChange() {
  * @param {string} name The name of the league.
  * @param {number} tid The team ID for the team the user wants to manage (or -1 for random).
  */
-async function create(name, tid, leagueFile = {}, startingSeason, randomizeRosters) {
+async function create(
+    name: string,
+    tid: number,
+    leagueFile: Object = {},
+    startingSeason: number,
+    randomizeRosters: boolean,
+) {
     const teamsDefault = helpers.getTeamsDefault();
 
     // Any custom teams?
-    let teams;
+    let teams: any;
     if (leagueFile.hasOwnProperty("teams")) {
         teams = merge(leagueFile.teams, teamsDefault);
         teams = helpers.addPopRank(teams);
@@ -348,7 +355,7 @@ async function create(name, tid, leagueFile = {}, startingSeason, randomizeRoste
                 p = player.augmentPartialPlayer(p, scoutingRank);
 
                 // Don't let imported contracts be created for below the league minimum, and round to nearest $10,000.
-                p.contract.amount = Math.max(10 * helpers.round(p.contract.amount / 10), g.minContract);
+                p.contract.amount = Math.max(10 * Number(helpers.round(p.contract.amount / 10)), g.minContract);
 
                 // Separate out stats
                 const playerStats = p.stats;
@@ -515,7 +522,7 @@ async function create(name, tid, leagueFile = {}, startingSeason, randomizeRoste
  * @param {number} lid League ID.
  * @param {function()=} cb Optional callback.
  */
-function remove(lid) {
+function remove(lid: number) {
     if (g.dbl !== undefined) {
         g.dbl.close();
     }
@@ -530,7 +537,7 @@ function remove(lid) {
  * @param {string[]} stores Array of names of objectStores to include in export
  * @return {Promise} Resolve to all the exported league data.
  */
-async function exportLeague(stores) {
+async function exportLeague(stores: string[]) {
     const exportedLeague = {};
 
     // Row from leagueStore in meta db.
@@ -594,7 +601,7 @@ async function exportLeague(stores) {
     return exportedLeague;
 }
 
-async function updateMetaNameRegion(name, region) {
+async function updateMetaNameRegion(name: string, region: string) {
     const l = await g.dbm.leagues.get(g.lid);
     l.teamName = name;
     l.teamRegion = region;
@@ -608,8 +615,8 @@ async function updateMetaNameRegion(name, region) {
  * @param {string} key Key in gameAttributes to load the value for.
  * @return {Promise}
  */
-async function loadGameAttribute(ot, key) {
-    const dbOrTx = ot !== null ? ot : g.dbl;
+async function loadGameAttribute(tx: ?BackboardTx, key: GameAttributeKeyDynamic) {
+    const dbOrTx = tx !== undefined && tx !== null ? tx : g.dbl;
     const gameAttribute = await dbOrTx.gameAttributes.get(key);
 
     if (gameAttribute === undefined) {
@@ -638,8 +645,8 @@ async function loadGameAttribute(ot, key) {
  * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on gameAttributes; if null is passed, then a new transaction will be used.
  * @return {Promise}
  */
-async function loadGameAttributes(ot) {
-    const dbOrTx = ot !== null ? ot : g.dbl;
+async function loadGameAttributes(tx: ?BackboardTx) {
+    const dbOrTx = tx !== undefined && tx !== null ? tx : g.dbl;
 
     const gameAttributes = await dbOrTx.gameAttributes.getAll();
 

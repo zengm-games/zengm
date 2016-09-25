@@ -12,6 +12,43 @@ export type Game = {
     won: {tid: number, pts: number},
 };
 
+// Missing tons, but doesn't matter because setGameAttributes doesn't use it yet
+export type GameAttributeKeyDynamic = (
+    'gamesInProgress' |
+    'godMode' |
+    'phaseChangeInProgress' |
+    'stopGames'
+);
+
+/*export type GameAttributeKeyStatic = (
+    'autoPlaySeasons' |
+    'confs' |
+    'daysLeft' |
+    'disableInjuries' |
+    'divs' |
+    'gameOver' |
+    'gamesInProgress' |
+    'godMode' |
+    'godModeInPast' |
+    'lastDbChange' |
+    'luxuryPayroll' |
+    'luxuryTax' |
+    'maxContract' |
+    'minContract' |
+    'minPayroll' |
+    'minRosterSize' |
+    'nextPhase' |
+    'numGames' |
+    'numPlayoffRounds' |
+    'ownerMood' |
+    'phase' |
+    'phaseChangeInProgress' |
+    'quarterLength' |
+    'salaryCap' |
+    'showFirstOwnerMessage' |
+    'stopGames'
+);*/
+
 export type GameProcessed = {
     gid: number,
     home: boolean,
@@ -122,4 +159,9 @@ type TradeTeam = {
 
 export type TradeTeams = [TradeTeam, TradeTeam];
 
-export type UpdateEvents = ('firstRun' | 'g.gamesInProgress' | 'newPhase' | 'playerMovement')[];
+export type UpdateEvents = (
+    'firstRun' |
+    'g.gamesInProgress' |
+    'newPhase' |
+    'playerMovement'
+)[];

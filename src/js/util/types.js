@@ -92,4 +92,4 @@ export type TeamFiltered = any;
 
 export type TeamSeason = any;
 
-export type UpdateEvents = ('firstRun' | 'g.gamesInProgress' | 'playerMovement')[];
+export type UpdateEvents = ('firstRun' | 'g.gamesInProgress' | 'newPhase' | 'playerMovement')[];

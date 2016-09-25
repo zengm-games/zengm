@@ -1,3 +1,5 @@
+// @flow
+
 import backboard from 'backboard';
 import Promise from 'bluebird';
 import _ from 'underscore';
@@ -17,6 +19,7 @@ import * as lock from '../util/lock';
 import logEvent from '../util/logEvent';
 import * as message from '../util/message';
 import * as random from '../util/random';
+import type {BackboardTx, UpdateEvents} from '../util/types';
 
 let phaseChangeTx;
 
@@ -31,7 +34,7 @@ let phaseChangeTx;
  * @param {Array.<string>=} updateEvents Array of strings.
  * @return {Promise}
  */
-async function finalize(phase, url, updateEvents) {
+async function finalize(phase: number, url: string, updateEvents: UpdateEvents = []) {
     // Set phase before updating play menu
     await league.setGameAttributesComplete({
         phase,
@@ -54,14 +57,14 @@ async function finalize(phase, url, updateEvents) {
     }
 }
 
-async function newPhasePreseason(tx) {
+async function newPhasePreseason(tx: BackboardTx) {
     await freeAgents.autoSign(tx);
     await league.setGameAttributes(tx, {season: g.season + 1});
 
-    const tids = _.range(g.numTeams);
+    const tids: number[] = _.range(g.numTeams);
 
     let scoutingRank;
-    await Promise.map(tids, async tid => {
+    await Promise.map(tids, async (tid) => {
         // Only actually need 3 seasons for userTid, but get it for all just in case there is a
         // skipped season (alternatively could use cursor to just find most recent season, but this
         // is not performance critical code)
@@ -109,7 +112,7 @@ async function newPhasePreseason(tx) {
     return [undefined, ["playerMovement"]];
 }
 
-async function newPhaseRegularSeason(tx) {
+async function newPhaseRegularSeason(tx: BackboardTx) {
     const teams = await tx.teams.getAll();
     await season.setSchedule(tx, season.newSchedule(teams));
 
@@ -118,34 +121,34 @@ async function newPhaseRegularSeason(tx) {
         await message.generate(tx, {wins: 0, playoffs: 0, money: 0});
     } else {
         // Spam user with another message?
-        if (localStorage.nagged === "true") {
+        if (localStorage.getItem('nagged') === 'true') {
             // This used to store a boolean, switch to number
-            localStorage.nagged = "1";
+            localStorage.setItem('nagged', '1');
         } else if (localStorage.nagged === undefined) {
-            localStorage.nagged = "0";
+            localStorage.setItem('nagged', '0');
         }
 
-        const nagged = parseInt(localStorage.nagged, 10);
+        const nagged = parseInt(localStorage.getItem('nagged'), 10);
 
         if (g.season === g.startingSeason + 3 && g.lid > 3 && nagged === 0) {
-            localStorage.nagged = "1";
+            localStorage.setItem('nagged', '1');
             await tx.messages.add({
                 read: false,
                 from: "The Commissioner",
                 year: g.season,
                 text: '<p>Hi. Sorry to bother you, but I noticed that you\'ve been playing this game a bit. Hopefully that means you like it. Either way, we would really appreciate some feedback so we can make this game better. <a href="mailto:commissioner@basketball-gm.com">Send an email</a> (commissioner@basketball-gm.com) or <a href="http://www.reddit.com/r/BasketballGM/">join the discussion on Reddit</a>.</p>',
             });
-        } else if ((nagged === 1 && Math.random() < 0.25) || (nagged >= 2 && Math.random < 0.025)) {
-            localStorage.nagged = "2";
+        } else if ((nagged === 1 && Math.random() < 0.25) || (nagged >= 2 && Math.random() < 0.025)) {
+            localStorage.setItem('nagged', '2');
             await tx.messages.add({
                 read: false,
                 from: "The Commissioner",
                 year: g.season,
                 text: '<p>Hi. Sorry to bother you again, but if you like the game, please share it with your friends! Also:</p><p><a href="https://twitter.com/basketball_gm">Follow Basketball GM on Twitter</a></p><p><a href="https://www.facebook.com/basketball.general.manager">Like Basketball GM on Facebook</a></p><p><a href="http://www.reddit.com/r/BasketballGM/">Discuss Basketball GM on Reddit</a></p><p>The more people that play Basketball GM, the more motivation I have to continue improving it. So it is in your best interest to help me promote the game! If you have any other ideas, please <a href="mailto:commissioner@basketball-gm.com">email me</a>.</p>',
             });
-        } else if ((nagged >= 2 && nagged <= 3 && Math.random() < 0.5) || (nagged >= 4 && Math.random < 0.05)) {
+        } else if ((nagged >= 2 && nagged <= 3 && Math.random() < 0.5) || (nagged >= 4 && Math.random() < 0.05)) {
             // Skipping 3, obsolete
-            localStorage.nagged = "4";
+            localStorage.setItem('nagged', '4');
             await tx.messages.add({
                 read: false,
                 from: "The Commissioner",
@@ -158,7 +161,7 @@ async function newPhaseRegularSeason(tx) {
     return [undefined, ["playerMovement"]];
 }
 
-async function newPhasePlayoffs(tx) {
+async function newPhasePlayoffs(tx: BackboardTx) {
     // Achievements after regular season
     account.checkAchievement.septuawinarian();
 
@@ -236,7 +239,7 @@ async function newPhasePlayoffs(tx) {
     return [url, ["teamFinances"]];
 }
 
-async function newPhaseBeforeDraft(tx) {
+async function newPhaseBeforeDraft(tx: BackboardTx) {
     // Achievements after playoffs
     account.checkAchievement.fo_fo_fo();
     account.checkAchievement["98_degrees"]();
@@ -343,7 +346,7 @@ async function newPhaseBeforeDraft(tx) {
     return [url, ["playerMovement"]];
 }
 
-async function newPhaseDraft(tx) {
+async function newPhaseDraft(tx: BackboardTx) {
     // Achievements after awards
     account.checkAchievement.hardware_store();
     account.checkAchievement.sleeper_pick();
@@ -376,13 +379,13 @@ async function newPhaseDraft(tx) {
     return [helpers.leagueUrl(["draft"]), []];
 }
 
-async function newPhaseAfterDraft(tx) {
+async function newPhaseAfterDraft(tx: BackboardTx) {
     await draft.genPicks(tx, g.season + 4);
 
     return [undefined, ["playerMovement"]];
 }
 
-async function newPhaseResignPlayers(tx) {
+async function newPhaseResignPlayers(tx: BackboardTx) {
     const baseMoods = await player.genBaseMoods(tx);
 
     // Re-sign players on user's team, and some AI players
@@ -410,7 +413,7 @@ async function newPhaseResignPlayers(tx) {
     return [helpers.leagueUrl(["negotiation"]), ["playerMovement"]];
 }
 
-async function newPhaseFreeAgency(tx) {
+async function newPhaseFreeAgency(tx: BackboardTx) {
     const teams = await team.filter({
         ot: tx,
         attrs: ["strategy"],
@@ -472,7 +475,7 @@ async function newPhaseFreeAgency(tx) {
     return [helpers.leagueUrl(["free_agents"]), ["playerMovement"]];
 }
 
-async function newPhaseFantasyDraft(tx, position) {
+async function newPhaseFantasyDraft(tx: BackboardTx, position: number) {
     await contractNegotiation.cancelAll(tx);
     await draft.genOrderFantasy(tx, position);
     await league.setGameAttributes(tx, {nextPhase: g.phase});
@@ -505,7 +508,7 @@ async function newPhaseFantasyDraft(tx, position) {
  * @param {} extra Parameter containing extra info to be passed to phase changing function. Currently only used for newPhaseFantasyDraft.
  * @return {Promise}
  */
-async function newPhase(phase, extra) {
+async function newPhase(phase: number, extra: any) {
     // Prevent at least some cases of code running twice
     if (phase === g.phase) {
         return;

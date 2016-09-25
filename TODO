@@ -1,5 +1,7 @@
 flow
-  BackboardTx should specify object stores
+  backboard
+    BackboardTx should specify object stores
+    should somehow specify contents of object stores
   get rid of helpers.round
   get rid of ScheduleGame.highlight
 

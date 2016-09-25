@@ -1,8 +1,17 @@
+// @flow
+
 /* eslint quote-props: "off" */
 
 import * as helpers from './helpers';
 
-const cols = {
+const cols: {
+    [key: string]: {
+        desc?: string,
+        sortSequence?: string[],
+        sortType?: 'currency' | 'draftPick' | 'lastTen' | 'name' | 'number',
+        title?: string, // Should actually be required, but is only added later
+    }
+} = {
     '': {
         sortSequence: ['desc', 'asc'],
     },
@@ -400,8 +409,8 @@ for (const key of Object.keys(cols)) {
     cols[key].title = key.replace('rating:', '');
 }
 
-export default (...titles) => {
-    return titles.map(title => {
+export default (...titles: string[]) => {
+    return titles.map((title) => {
         if (!cols.hasOwnProperty(title)) {
             throw new Error(`Unknown column: "${title}"`);
         }

@@ -39,7 +39,7 @@ const logEvent = (tx: ?BackboardTx, {
     }
 
     if (showNotification) {
-        let title = null;
+        let title;
         if (type === "error") {
             title = "Error!";
         } else if (type === "changes") {

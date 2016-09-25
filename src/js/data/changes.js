@@ -1,3 +1,5 @@
+// @flow
+
 import logEvent from '../util/logEvent';
 
 const all = [{
@@ -115,12 +117,13 @@ const all = [{
 
 function check() {
     // Don't show anything on first visit
-    if (localStorage.changesRead === undefined) {
-        localStorage.changesRead = all.length;
+    if (localStorage.getItem('changesRead') === null) {
+        localStorage.setItem('changesRead', String(all.length));
     }
 
-    if (localStorage.changesRead < all.length) {
-        const unread = all.slice(localStorage.changesRead);
+    const changesRead = parseInt(localStorage.getItem('changesRead'), 10);
+    if (changesRead < all.length) {
+        const unread = all.slice(changesRead);
 
         let text = "";
         let linked = false;
@@ -147,7 +150,7 @@ function check() {
             saveToDb: false,
         });
 
-        localStorage.changesRead = all.length;
+        localStorage.setItem('changesRead', String(all.length));
     }
 }
 

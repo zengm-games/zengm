@@ -31,6 +31,7 @@
         "object-curly-spacing": ["error", "never"],
         "prefer-const": ["error", {"destructuring": "all"}],
         "quotes": "off",
+        "quote-props": "off", // Flow doesn't like unquoted numbers
         "react/forbid-prop-types": "off",
         "react/jsx-filename-extension": ["error", {"extensions": [".js"]}],
         "react/jsx-indent": ["error", 4],

@@ -6,9 +6,36 @@ import * as random from '../util/random';
 
 type PlayType = 'ast' | 'blkAtRim' | 'blkLowPost' | 'blkMidRange' | 'blkTp' | 'drb' | 'fgAtRim' | 'fgAtRimAndOne' | 'fgLowPost' | 'fgLowPostAndOne' | 'fgMidRange' | 'fgMidRangeAndOne' | 'foulOut' | 'ft' | 'injury' | 'missAtRim' | 'missFt' | 'missLowPost' | 'missMidRange' | 'missTp' | 'orb' | 'overtime' | 'pf' | 'quarter' | 'stl' | 'sub' | 'tov' | 'tp' | 'tpAndOne';
 type ShotType = 'atRim' | 'ft' | 'lowPost' | 'midRange' | 'threePointer';
+type Stat = 'ast' | 'ba' | 'benchTime' | 'blk' | 'courtTime' | 'drb' | 'energy' | 'fg' | 'fgAtRim' | 'fgLowPost' | 'fgMidRange' | 'fga' | 'fgaAtRim' | 'fgaLowPost' | 'fgaMidRange' | 'ft' | 'fta' | 'gs' | 'min' | 'orb' | 'pf' | 'pts' | 'stl' | 'tov' | 'tp' | 'tpa';
 type PlayerNumOnCourt = 0 | 1 | 2 | 3 | 4;
 type TeamNum = 0 | 1;
 type CompositeRating = 'blocking' | 'fouling' | 'passing' | 'rebounding' | 'stealing' | 'turnovers' | 'usage';
+
+type PlayerGameSim = {
+    id: number,
+    name: string,
+    pos: string,
+    valueNoPot: number,
+    stat: Object,
+    compositeRating: Object,
+    skills: string[],
+    injured: boolean,
+    ptModifier: number,
+};
+type TeamGameSim = {
+    id: number,
+    defense: number, // overall team defensive rating
+    pace: number, // mean number of possessions the team likes to have in a game
+    stat: Object,
+    compositeRating: Object,
+    player: PlayerGameSim[],
+    compositeRating: Object,
+    synergy: {
+        def: number,
+        off: number,
+        reb: number,
+    },
+};
 
 // x is value, a controls sharpness, b controls center
 const sigmoid = (x: number, a: number, b: number): number => {
@@ -61,7 +88,7 @@ const fatigue = (energy: number): number => {
 
 class GameSim {
     id: number;
-    team: any;
+    team: [TeamGameSim, TeamGameSim];
     dt: number;
     playersOnCourt: [[number, number, number, number, number], [number, number, number, number, number]];
     startersRecorded: boolean;
@@ -75,13 +102,19 @@ class GameSim {
         type: ShotType,
         time: number,
     }[];
-    clutchPlays: {
+    clutchPlays: ({
+        type: 'playerFeat',
+        text: string,
+        showNotification: boolean,
+        pids: [number],
+        tids: [number],
+    } | {
         type: 'playerFeat',
         tempText: string,
         showNotification: boolean,
         pids: [number],
         tids: [number],
-    }[];
+    })[];
     o: TeamNum;
     d: TeamNum;
     playByPlay: Object[];
@@ -90,30 +123,8 @@ class GameSim {
      * Initialize the two teams that are playing this game.
      *
      * When an instance of this class is created, information about the two teams is passed to GameSim. Then GameSim.run will actually simulate a game and return the results (i.e. stats) of the simulation. Also see core.game where the inputs to this function are generated.
-     *
-     * @param {number} gid Integer game ID, which must be unique as it will serve as the primary key in the database when the game is saved.
-     * @param {Object} team1 Information about the home team. Top-level properties are: id (team ID number), defense (a number representing the overall team defensive rating), pace (the mean number of possessions the team likes to have in a game), stat (an for storing team stats), and player (a list of objects, one for each player on the team, ordered by rosterOrder). Each player's object contains: id (player's unique ID number), valueNoPot (current player value, from core.player.value), stat (an object for storing player stats, similar to the one for team stats), and compositeRatings (an object containing various ratings used in the game simulation), and skills (a list of discrete skills a player has, as defined in core.player.skills, which influence game simulation). In other words...
-     *     {
-     *         "id": 0,
-     *         "defense": 0,
-     *         "pace": 0,
-     *         "stat": {},
-     *         "player": [
-     *             {
-     *                 "id": 0,
-     *                 "valueNoPot": 0,
-     *                 "stat": {},
-     *                 "compositeRating": {},
-     *                 "skills": [],
-     *                 "injured": false,
-     *                 "ptMultiplier": 1
-     *             },
-     *             ...
-     *         ]
-     *     }
-     * @param {Object} team2 Same as team1, but for the away team.
      */
-    constructor(gid, team1, team2, doPlayByPlay) {
+    constructor(gid: number, team1: TeamGameSim, team2: TeamGameSim, doPlayByPlay: boolean) {
         if (doPlayByPlay) {
             this.playByPlay = [];
         }
@@ -221,6 +232,7 @@ class GameSim {
             overtimes: this.overtimes,
             team: this.team,
             clutchPlays: this.clutchPlays,
+            playByPlay: undefined,
         };
 
         if (this.playByPlay !== undefined) {
@@ -264,8 +276,8 @@ class GameSim {
         this.team[0].stat.ptsQtrs.push(0);
         this.team[1].stat.ptsQtrs.push(0);
         this.recordPlay("overtime");
-        this.o = random.randInt(0, 1);
-        this.d = this.o - 1;
+        this.o = Math.random() < 0.5 ? 0 : 1;
+        this.d = this.o === 0 ? 1 : 0;
         while (this.t > 0) {
             this.simPossession();
         }
@@ -425,7 +437,7 @@ class GameSim {
         for (let t = 0; t < 2; t++) {
             // Count all the *fractional* skills of the active players on a team (including duplicates)
             const skillsCount = {
-                3: 0,
+                '3': 0,
                 A: 0,
                 B: 0,
                 Di: 0,
@@ -627,7 +639,7 @@ class GameSim {
      *
      * @return {string} Currently always returns "stl".
      */
-    doStl(pStoleFrom: PlayerNumOnCourt) {
+    doStl(pStoleFrom: number) {
         const ratios = this.ratingArray("stealing", this.d);
         const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
         this.recordStat(this.d, p, "stl");
@@ -648,7 +660,7 @@ class GameSim {
         const currentFatigue = fatigue(this.team[this.o].player[p].stat.energy);
 
         // Is this an "assisted" attempt (i.e. an assist will be recorded if it's made)
-        let passer = -1;
+        let passer;
         if (this.probAst() > Math.random()) {
             const ratios = this.ratingArray("passing", this.o, 2);
             passer = pickPlayer(ratios, shooter);
@@ -693,7 +705,7 @@ class GameSim {
         probMake = (probMake - 0.25 * this.team[this.d].compositeRating.defense + this.synergyFactor * (this.team[this.o].synergy.off - this.team[this.d].synergy.def)) * currentFatigue;
 
         // Assisted shots are easier
-        if (passer >= 0) {
+        if (passer !== undefined) {
             probMake += 0.025;
         }
 
@@ -793,7 +805,7 @@ class GameSim {
      * @param {number} type 2 for a two pointer, 3 for a three pointer.
      * @return {string} fg, orb, or drb (latter two are for and ones)
      */
-    doFg(shooter: PlayerNumOnCourt, passer: PlayerNumOnCourt, type: ShotType, andOne?: boolean = false) {
+    doFg(shooter: PlayerNumOnCourt, passer?: PlayerNumOnCourt, type: ShotType, andOne?: boolean = false) {
         const p = this.playersOnCourt[this.o][shooter];
         this.recordStat(this.o, p, "fga");
         this.recordStat(this.o, p, "fg");
@@ -818,7 +830,7 @@ class GameSim {
         }
         this.recordLastScore(this.o, p, type, this.t);
 
-        if (passer >= 0) {
+        if (passer !== undefined) {
             const p2 = this.playersOnCourt[this.o][passer];
             this.recordStat(this.o, p2, "ast");
             this.recordPlay("ast", this.o, [this.team[this.o].player[p2].name]);
@@ -846,12 +858,11 @@ class GameSim {
         const i = this.lastScoringPlay.length - 1;
         const play = this.lastScoringPlay[i];
 
-        let shotType;
+        let shotType = 'a basket';
         switch (play.type) {
             case "atRim":
             case "lowPost":
             case "midRange":
-                shotType = "a basket";
                 break;
             case "threePointer":
                 shotType = "a three-pointer";
@@ -908,20 +919,19 @@ class GameSim {
     checkGameWinner() {
         if (this.lastScoringPlay.length === 0) { return; }
 
-        const winner = (this.team[0].stat.pts > this.team[1].stat.pts ? 0 : 1);
-        const loser = (winner === 0 ? 1 : 0);
+        const winner = this.team[0].stat.pts > this.team[1].stat.pts ? 0 : 1;
+        const loser = winner === 0 ? 1 : 0;
         let margin = this.team[winner].stat.pts - this.team[loser].stat.pts;
 
         // work backwards from last scoring plays, check if any resulted in a tie-break or lead change
-        let pts;
-        let shotType;
+        let pts = 0;
+        let shotType = 'basket';
         for (let i = this.lastScoringPlay.length - 1; i >= 0; i--) {
             const play = this.lastScoringPlay[i];
             switch (play.type) {
                 case "atRim":
                 case "lowPost":
                 case "midRange":
-                    shotType = "basket";
                     pts = 2;
                     break;
                 case "threePointer":
@@ -982,7 +992,7 @@ class GameSim {
         }
     }
 
-    recordLastScore(teamnum: TeamNum, playernum: number, type, time: number) {
+    recordLastScore(teamnum: TeamNum, playernum: number, type: ShotType, time: number) {
         // only record plays in the fourth quarter or overtime...
         if (this.team[0].stat.ptsQtrs.length < 4) { return; }
         // ...in the last 24 seconds...
@@ -1042,9 +1052,9 @@ class GameSim {
     /**
      * Personal foul.
      *
-     * @param {number} t Team (0 or 1, this.or or this.d).
+     * @param {number} t Team (0 or 1, this.o or this.d).
      */
-    doPf(t) {
+    doPf(t: TeamNum) {
         const ratios = this.ratingArray("fouling", t);
         const p = this.playersOnCourt[t][pickPlayer(ratios)];
         this.recordStat(this.d, p, "pf");
@@ -1116,7 +1126,7 @@ class GameSim {
      * @param {string} s Key for the property of this.team[t].player[p].stat to increment.
      * @param {number} amt Amount to increment (default is 1).
      */
-    recordStat(t, p, s, amt?: number = 1) {
+    recordStat(t: TeamNum, p: number, s: Stat, amt?: number = 1) {
         this.team[t].player[p].stat[s] += amt;
         if (s !== "gs" && s !== "courtTime" && s !== "benchTime" && s !== "energy") {
             this.team[t].stat[s] += amt;
@@ -1143,7 +1153,7 @@ class GameSim {
         }
     }
 
-    recordPlay(type: PlayType, t, names?: string[]) {
+    recordPlay(type: PlayType, t?: TeamNum, names?: string[]) {
         let texts;
         if (this.playByPlay !== undefined) {
             if (type === "injury") {

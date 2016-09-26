@@ -108,6 +108,24 @@ export type ContractInfo = {
     released: boolean,
 };
 
+export type RatingKey = (
+    'blk' |
+    'dnk' |
+    'drb' |
+    'endu' |
+    'fg' |
+    'ft' |
+    'hgt' |
+    'ins' |
+    'jmp' |
+    'pss' |
+    'reb' |
+    'spd' |
+    'stl' |
+    'stre' |
+    'tp'
+);
+
 export type ScheduleGame = {
     awayName: string,
     awayRegion: string,

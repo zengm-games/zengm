@@ -1,9 +1,12 @@
+// @flow
+
 // Functions only used for debugging the game, particularly balance issues. This should not be included or loaded in the compiled version.
 
 import backboard from 'backboard';
 import _ from 'underscore';
 import g from '../globals';
 import * as player from './player';
+import type {RatingKey} from '../util/types';
 
 async function regressRatingsPer() {
     // http://rosettacode.org/wiki/Multiple_regression#JavaScript
@@ -219,7 +222,7 @@ function exportPlayerStats() {
     console.log("Go to Tools > Export Stats, it's better!");
 }
 
-function averageCareerArc(baseOvr, basePot, ratingToSave) {
+function averageCareerArc(baseOvr: number, basePot: number, ratingToSave: RatingKey) {
     const numPlayers = 1000; // Number of players per profile
     const numSeasons = 20;
 

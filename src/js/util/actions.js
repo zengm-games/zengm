@@ -49,13 +49,20 @@ const tradeFor = async ({otherDpids, otherPids, pid, tid, userDpids, userPids}: 
     let teams;
 
     if (pid !== undefined) {
+        const p = await g.dbl.players.get(pid);
+        const otherTid = p.tid;
+        if (otherTid < 0) {
+            console.log("Can't trade for a player not on a team");
+            return;
+        }
+
         // Start new trade for a single player, like a Trade For button
         teams = [{
             tid: g.userTid,
             pids: [],
             dpids: [],
         }, {
-            tid: undefined,
+            tid: otherTid,
             pids: [pid],
             dpids: [],
         }];

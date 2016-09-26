@@ -37,12 +37,6 @@ async function create(teams: TradeTeams) {
         teams[0].dpids = oldTeams[0].dpids;
     }
 
-    // Make sure tid is set
-    if (teams[1].tid === undefined || teams[1].tid === null) {
-        const p = await g.dbl.players.get(teams[1].pids[0]);
-        teams[1].tid = p.tid;
-    }
-
     await g.dbl.tx("trade", "readwrite", tx => {
         return tx.trade.put({
             rid: 0,

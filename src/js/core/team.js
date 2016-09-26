@@ -995,19 +995,19 @@ async function valueChange(
         test.sort((a, b) => b.value - a.value);
 
         for (let i = 0; i < test.length; i++) {
-            if (test.value >= 45) {
+            if (test[i].value >= 45) {
                 for (let j = 0; j < test[i].skills.length; j++) {
                     const s = test[i].skills[j];
 
                     if (rosterSkillsCount[s] <= skillsNeeded[s] - 2) {
                         // Big bonus
-                        test.value *= 1.1;
+                        test[i].value *= 1.1;
                     } else if (rosterSkillsCount[s] <= skillsNeeded[s] - 1) {
                         // Medium bonus
-                        test.value *= 1.05;
+                        test[i].value *= 1.05;
                     } else if (rosterSkillsCount[s] <= skillsNeeded[s]) {
                         // Little bonus
-                        test.value *= 1.025;
+                        test[i].value *= 1.025;
                     }
 
                     // Account for redundancy in test

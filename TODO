@@ -2,7 +2,7 @@ flow
   backboard
     BackboardTx should specify object stores
     should somehow specify contents of object stores
-  get rid of helpers.round
+  get rid of helpers.round, should be .toFixed (string output) or Math.round (number output)
   get rid of ScheduleGame.highlight
   http://stackoverflow.com/q/39683076/786644
     ctrl+F for place to use

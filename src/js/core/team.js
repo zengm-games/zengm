@@ -1,3 +1,5 @@
+// @flow
+
 import backboard from 'backboard';
 import Promise from 'bluebird';
 import orderBy from 'lodash.orderby';
@@ -9,8 +11,9 @@ import * as trade from './trade';
 import logEvent from '../util/logEvent';
 import * as helpers from '../util/helpers';
 import * as random from '../util/random';
+import type {BackboardTx, ContractInfo, TeamFiltered, TeamSeason, TeamStats, TradePickValues} from '../util/types';
 
-function genSeasonRow(tid, prevSeason) {
+function genSeasonRow(tid: number, prevSeason?: TeamSeason): TeamSeason {
     const newSeason = {
         tid,
         season: g.season,
@@ -112,7 +115,7 @@ function genSeasonRow(tid, prevSeason) {
  * @param {=boolean} playoffs Is this stats row for the playoffs or not? Default false.
  * @return {Object} Team stats object.
  */
-function genStatsRow(tid, playoffs = false) {
+function genStatsRow(tid: number, playoffs?: boolean = false): TeamStats {
     return {
         tid,
         season: g.season,
@@ -152,7 +155,7 @@ function genStatsRow(tid, playoffs = false) {
  * @param {Object} tm Team metadata object, likely from core.league.create.
  * @return {Object} Team object to insert in the database.
  */
-function generate(tm) {
+function generate(tm: any) {
     let strategy;
     if (tm.hasOwnProperty("strategy")) {
         strategy = tm.strategy;
@@ -170,23 +173,23 @@ function generate(tm) {
         imgURL: tm.imgURL !== undefined ? tm.imgURL : "",
         budget: {
             ticketPrice: {
-                amount: tm.hasOwnProperty("budget") ? tm.budget.ticketPrice.amount : helpers.round((g.salaryCap / 90000) * 37 + 25 * (g.numTeams - tm.popRank) / (g.numTeams - 1), 2),
+                amount: tm.hasOwnProperty("budget") ? tm.budget.ticketPrice.amount : Number(helpers.round((g.salaryCap / 90000) * 37 + 25 * (g.numTeams - tm.popRank) / (g.numTeams - 1)), 2),
                 rank: tm.hasOwnProperty("budget") ? tm.budget.ticketPrice.rank : tm.popRank,
             },
             scouting: {
-                amount: tm.hasOwnProperty("budget") ? tm.budget.scouting.amount : helpers.round((g.salaryCap / 90000) * 1350 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
+                amount: tm.hasOwnProperty("budget") ? tm.budget.scouting.amount : Number(helpers.round((g.salaryCap / 90000) * 1350 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1))) * 10,
                 rank: tm.hasOwnProperty("budget") ? tm.budget.scouting.rank : tm.popRank,
             },
             coaching: {
-                amount: tm.hasOwnProperty("budget") ? tm.budget.coaching.amount : helpers.round((g.salaryCap / 90000) * 1350 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
+                amount: tm.hasOwnProperty("budget") ? tm.budget.coaching.amount : Number(helpers.round((g.salaryCap / 90000) * 1350 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1))) * 10,
                 rank: tm.hasOwnProperty("budget") ? tm.budget.coaching.rank : tm.popRank,
             },
             health: {
-                amount: tm.hasOwnProperty("budget") ? tm.budget.health.amount : helpers.round((g.salaryCap / 90000) * 1350 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
+                amount: tm.hasOwnProperty("budget") ? tm.budget.health.amount : Number(helpers.round((g.salaryCap / 90000) * 1350 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1))) * 10,
                 rank: tm.hasOwnProperty("budget") ? tm.budget.health.rank : tm.popRank,
             },
             facilities: {
-                amount: tm.hasOwnProperty("budget") ? tm.budget.facilities.amount : helpers.round((g.salaryCap / 90000) * 1350 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1)) * 10,
+                amount: tm.hasOwnProperty("budget") ? tm.budget.facilities.amount : Number(helpers.round((g.salaryCap / 90000) * 1350 + 900 * (g.numTeams - tm.popRank) / (g.numTeams - 1))) * 10,
                 rank: tm.hasOwnProperty("budget") ? tm.budget.facilities.rank : tm.popRank,
             },
         },
@@ -202,7 +205,7 @@ function generate(tm) {
  * @param {Array.<string>} p Array positions of players on roster, sorted by value already.
  * @return {Array.<number>} Indexes of the starters from the input array. If this is of length < 5, then satisfactory starters couldn't be found and any players should be used to fill in the starting lineup.
  */
-function findStarters(positions) {
+function findStarters(positions: string[]): number[] {
     const starters = []; // Will be less than 5 in length if that's all it takes to meet requirements
     let numG = 0;
     let numFC = 0;
@@ -242,7 +245,7 @@ function findStarters(positions) {
  * @param {number} tid Team ID.
  * @return {Promise}
  */
-async function rosterAutoSort(tx, tid) {
+async function rosterAutoSort(tx: BackboardTx, tid: number) {
     // Get roster and sort by value (no potential included)
     let players = await tx.players.index('tid').getAll(tid);
     players = player.filter(players, {
@@ -299,7 +302,7 @@ async function rosterAutoSort(tx, tid) {
 * @param {number} tid Team ID.
 * @returns {Promise.Array} Array of objects containing contract information.
 */
-async function getContracts(tx, tid) {
+async function getContracts(tx: BackboardTx, tid: number): Promise<ContractInfo[]> {
     // First, get players currently on the roster
     const players = await tx.players.index('tid').getAll(tid);
 
@@ -357,9 +360,9 @@ async function getContracts(tx, tid) {
  * @memberOf core.team
  * @param {IDBTransaction|null} tx An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
  * @param {number} tid Team ID.
- * @return {Promise.<number, Array=>} Resolves to an array; first argument is the payroll in thousands of dollars, second argument is the array of contract objects from tx.contracts.getAll.
+ * @return {Promise.<number, Array=>} Resolves to an array; first argument is the payroll in thousands of dollars, second argument is the array of contract objects from getContracts.
  */
-function getPayroll(tx, tid) {
+function getPayroll(tx: BackboardTx, tid: number): Promise<[number, ContractInfo[]]> {
     return helpers.maybeReuseTx(["players", "releasedPlayers"], "readonly", tx, async tx2 => {
         const contracts = await getContracts(tx2, tid);
 
@@ -379,7 +382,7 @@ function getPayroll(tx, tid) {
  * @param {IDBTransaction|null} ot An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
  * @return {Promise} Resolves to an array of payrolls, ordered by team id.
  */
-function getPayrolls(tx) {
+function getPayrolls(tx: BackboardTx): Promise<number[]> {
     return helpers.maybeReuseTx(["players", "releasedPlayers"], "readonly", tx, tx2 => {
         const promises = [];
         for (let tid = 0; tid < g.numTeams; tid++) {
@@ -410,7 +413,7 @@ function getPayrolls(tx) {
  * @param {IDBTransaction|null=} options.ot An IndexedDB transaction on players, releasedPlayers, and teams; if null/undefined, then a new transaction will be used.
  * @return {Promise.(Object|Array.<Object>)} Filtered team object or array of filtered team objects, depending on the inputs.
  */
-function filter(options) {
+function filter(options: Object): Promise<TeamFiltered | TeamFiltered[]> {
     options = options !== undefined ? options : {};
     options.season = options.season !== undefined ? options.season : null;
     options.tid = options.tid !== undefined ? options.tid : null;
@@ -438,10 +441,10 @@ function filter(options) {
     };
 
     // Filters s by seasonAttrs (which should be options.seasonAttrs) into ft. This is to do one season of seasonAttrs filtering.
-    const filterSeasonAttrsPartial = (ft, tsa, seasonAttrs) => {
+    const filterSeasonAttrsPartial = (ft: Object, tsa: TeamSeason, seasonAttrs) => {
         // For cases when the deleteOldData feature is used
         if (tsa === undefined) {
-            return;
+            return ft;
         }
 
         // Revenue and expenses calculation
@@ -492,7 +495,7 @@ function filter(options) {
     };
 
     // Copys/filters the seasonal attributes listed in options.seasonAttrs from p to fp.
-    const filterSeasonAttrs = (ft, t, {season, seasonAttrs}) => {
+    const filterSeasonAttrs = (ft: Object, t, {season, seasonAttrs}) => {
         let ts;
         if (seasonAttrs.length > 0) {
             if (season !== null) {
@@ -522,7 +525,7 @@ function filter(options) {
     };
 
     // Filters s by stats (which should be options.stats) into ft. This is to do one season of stats filtering.
-    const filterStatsPartial = (ft, s, stats) => {
+    const filterStatsPartial = (ft: Object, s: TeamStats, stats) => {
         if (s !== undefined && s.gp > 0) {
             for (let j = 0; j < stats.length; j++) {
                 if (stats[j] === "gp") {
@@ -699,7 +702,14 @@ function filter(options) {
 }
 
 // estValuesCached is either a copy of estValues (defined below) or null. When it's cached, it's much faster for repeated calls (like trading block).
-async function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estValuesCached) {
+async function valueChange(
+    tid: number,
+    pidsAdd: number[],
+    pidsRemove: number[],
+    dpidsAdd: number[],
+    dpidsRemove: number[],
+    estValuesCached?: TradePickValues,
+): Promise<number> {
     // UGLY HACK: Don't include more than 2 draft picks in a trade for AI team
     if (dpidsRemove.length > 2) {
         return -1;
@@ -872,10 +882,10 @@ async function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estV
                         // Use fudge factor: AI teams like their own picks
                         let value;
                         if (estValues[dp.season]) {
-                            value = estValues[dp.season][estPick - 1 + g.numTeams * (dp.round - 1)] + (tid !== g.userTid) * fudgeFactor;
+                            value = estValues[dp.season][estPick - 1 + g.numTeams * (dp.round - 1)] + (tid !== g.userTid ? 1 : 0) * fudgeFactor;
                         }
                         if (!value) {
-                            value = estValues.default[estPick - 1 + g.numTeams * (dp.round - 1)] + (tid !== g.userTid) * fudgeFactor;
+                            value = estValues.default[estPick - 1 + g.numTeams * (dp.round - 1)] + (tid !== g.userTid ? 1 : 0) * fudgeFactor;
                         }
 
                         remove.push({
@@ -960,7 +970,7 @@ async function valueChange(tid, pidsAdd, pidsRemove, dpidsAdd, dpidsRemove, estV
 
     // This roughly corresponds with core.gameSim.updateSynergy
     const skillsNeeded = {
-        3: 5,
+        '3': 5,
         A: 5,
         B: 3,
         Di: 2,
@@ -1159,7 +1169,7 @@ console.log(dv);*/
  * @param {IDBTransaction} tx An IndexedDB transaction on players, playerStats, and teams, readwrite.
  * @return {Promise}
  */
-function updateStrategies(tx) {
+function updateStrategies(tx: BackboardTx) {
     return tx.teams.iterate(async t => {
         // Skip user's team
         if (t.tid === g.userTid) {
@@ -1231,7 +1241,7 @@ function updateStrategies(tx) {
  * @memberOf core.team
  * @return {Promise.?string} Resolves to null if there is no error, or a string with the error message otherwise.
  */
-function checkRosterSizes() {
+function checkRosterSizes(): Promise<string | null> {
     return g.dbl.tx(["players", "playerStats", "releasedPlayers", "teams", "teamSeasons"], "readwrite", async tx => {
         const minFreeAgents = [];
         let userTeamSizeError = null;

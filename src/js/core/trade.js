@@ -134,7 +134,7 @@ function isUntradable(p): boolean {
  */
 async function updatePlayers(teams: TradeTeams): Promise<TradeTeams> {
     // This is just for debugging
-    team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, null).then(dv => {
+    team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids).then(dv => {
         console.log(dv);
     });
 
@@ -345,7 +345,7 @@ async function propose(forceTrade?: boolean = false): Promise<[boolean, ?string]
 
     let outcome = "rejected"; // Default
 
-    const dv = await team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, null);
+    const dv = await team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids);
 
     await g.dbl.tx(["draftPicks", "players", "playerStats"], "readwrite", tx => {
         if (dv > 0 || forceTrade) {

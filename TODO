@@ -6,6 +6,7 @@ flow
   get rid of ScheduleGame.highlight
   http://stackoverflow.com/q/39683076/786644
     ctrl+F for place to use
+  distinction between TradeTeams with and without undefined tid
 
 replace owner message text with numbers/chart
 

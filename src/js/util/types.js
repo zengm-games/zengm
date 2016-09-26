@@ -92,6 +92,22 @@ export type PickRealized = {
 
 export type PlayerFiltered = any;
 
+export type PlayerInjury = {
+    gamesRemaining: number,
+    type: string,
+};
+
+export type ContractInfo = {
+    pid: number,
+    firstName: string,
+    lastName: string,
+    skills: string[],
+    injury: PlayerInjury,
+    amount: number,
+    exp: number,
+    released: boolean,
+};
+
 export type ScheduleGame = {
     awayName: string,
     awayRegion: string,
@@ -130,6 +146,8 @@ export type TeamBasic = {
 export type TeamFiltered = any;
 
 export type TeamSeason = any;
+
+export type TeamStats = any;
 
 export type TradePickValues = {
     [key: string]: number[],

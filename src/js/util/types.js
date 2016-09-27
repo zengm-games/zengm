@@ -75,12 +75,44 @@ export type OwnerMoodDeltas = {
     wins: number,
 };
 
+export type Phase = -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+
 export type Pick = {
     dpid: number,
     originalTid: number,
     round: number,
     season: number,
     tid: number,
+};
+
+export type PlayerContract = {
+    amount: number,
+    exp: number,
+};
+
+export type PlayerSkill = '3' | 'A' | 'B' | 'Di' | 'Dp' | 'Po' | 'Ps' | 'R';
+
+export type PlayerRatings = {
+    blk: number,
+    dnk: number,
+    drb: number,
+    endu: number,
+    fg: number,
+    ft: number,
+    fuzz: number,
+    hgt: number,
+    ins: number,
+    jmp: number,
+    ovr: number,
+    pot: number,
+    pss: number,
+    reb: number,
+    season: number,
+    spd: number,
+    skills: PlayerSkill[],
+    stl: number,
+    stre: number,
+    tp: number,
 };
 
 export type PickRealized = {

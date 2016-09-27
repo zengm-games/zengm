@@ -1,3 +1,5 @@
+// @flow
+
 import backboard from 'backboard';
 import Promise from 'bluebird';
 import faces from 'facesjs';
@@ -9,6 +11,9 @@ import * as names from '../data/names';
 import * as helpers from '../util/helpers';
 import logEvent from '../util/logEvent';
 import * as random from '../util/random';
+import type {BackboardTx, Phase, PlayerContract, PlayerInjury, PlayerRatings, PlayerSkill, RatingKeys} from '../util/types';
+
+type Profile = 'Big' | 'Point' | 'Wing';
 
 let playerNames;
 
@@ -19,7 +24,7 @@ let playerNames;
  * @param {number} rating Input rating.
  * @return {number} If rating is below 0, 0. If rating is above 100, 100. Otherwise, rating.
  */
-function limitRating(rating) {
+function limitRating(rating: number): number {
     if (rating > 100) {
         return 100;
     }
@@ -36,14 +41,14 @@ function limitRating(rating) {
  * @param {Object.<string, number>} ratings Player's ratings object.
  * @return {number} Overall rating.
  */
-function ovr(ratings) {
+function ovr(ratings: PlayerRatings): number {
     ///return Math.round((ratings.hgt + ratings.stre + ratings.spd + ratings.jmp + ratings.endu + ratings.ins + ratings.dnk + ratings.ft + ratings.fg + ratings.tp + ratings.blk + ratings.stl + ratings.drb + ratings.pss + ratings.reb) / 15);
 
     // This formula is loosely based on linear regression:
     return Math.round((4 * ratings.hgt + ratings.stre + 4 * ratings.spd + 2 * ratings.jmp + 3 * ratings.endu + 3 * ratings.ins + 4 * ratings.dnk + ratings.ft + ratings.fg + 2 * ratings.tp + ratings.blk + ratings.stl + ratings.drb + 3 * ratings.pss + ratings.reb) / 32);
 }
 
-function fuzzRating(rating, fuzz) {
+function fuzzRating(rating: number, fuzz: number): number {
     // Turn off fuzz in multi team mode, because it doesn't have any meaning there in its current form
     if (g.userTids.length > 1 || g.godMode) {
         fuzz = 0;
@@ -52,7 +57,7 @@ function fuzzRating(rating, fuzz) {
     return Math.round(helpers.bound(rating + fuzz, 0, 100));
 }
 
-function hasSkill(ratings, components, weights) {
+function hasSkill(ratings: PlayerRatings, components: RatingKeys[], weights?: number[]): boolean {
     if (weights === undefined) {
         // Default: array of ones with same size as components
         weights = [];
@@ -93,7 +98,7 @@ function hasSkill(ratings, components, weights) {
  * @param {Object.<string, number>} ratings Ratings object.
  * @return {Array.<string>} Array of skill IDs.
  */
-function skills(ratings) {
+function skills(ratings: PlayerRatings): PlayerSkill[] {
     const sk = [];
 
     // These use the same formulas as the composite rating definitions in core.game!
@@ -133,7 +138,12 @@ function skills(ratings) {
  * @param {boolean} randomizeExp If true, then it is assumed that some random amount of years has elapsed since the contract was signed, thus decreasing the expiration date. This is used when generating players in a new league.
  * @return {Object.<string, number>} Object containing two properties with integer values, "amount" with the contract amount in thousands of dollars and "exp" with the contract expiration year.
  */
-function genContract(p, randomizeExp = false, randomizeAmount = true, noLimit = false) {
+function genContract(
+    p,
+    randomizeExp: boolean = false,
+    randomizeAmount: boolean = true,
+    noLimit: boolean = false,
+): PlayerContract {
     const ratings = p.ratings[p.ratings.length - 1];
 
     // Scale proportional to (ovr*2 + pot)*0.5 120-210
@@ -197,7 +207,7 @@ function genContract(p, randomizeExp = false, randomizeAmount = true, noLimit = 
  * @param {boolean} signed Is this an official signed contract (true), or just part of a negotiation (false)?
  * @return {Object} Updated player object.
  */
-function setContract(p, contract, signed) {
+function setContract(p, contract: PlayerContract, signed: boolean) {
     p.contract = contract;
 
     // Only write to salary log if the player is actually signed. Otherwise, we're just generating a value for a negotiation.
@@ -223,7 +233,7 @@ function setContract(p, contract, signed) {
  * @param {Object.<string, number>} ratings Ratings object.
  * @return {string} Position.
  */
-function pos(ratings) {
+function pos(ratings: PlayerRatings): string {
     let pg = false;
     let sg = false;
     let sf = false;
@@ -301,7 +311,7 @@ function pos(ratings) {
     return position;
 }
 
-function calcBaseChange(age, potentialDifference) {
+function calcBaseChange(age: number, potentialDifference: number): number {
     let val;
 
     // Average rating change if there is no potential difference
@@ -357,7 +367,7 @@ function calcBaseChange(age, potentialDifference) {
  * @param {number=} coachingRank From 1 to g.numTeams (default 30), where 1 is best coaching staff and g.numTeams is worst. Default is 15.5
  * @return {Object} Updated player object.
  */
-function develop(p, years = 1, newPlayer = false, coachingRank = 15.5) {
+function develop(p, years?: number = 1, newPlayer?: boolean = false, coachingRank?: number = 15.5) {
     const r = p.ratings.length - 1;
 
     let age = g.season - p.born.year;
@@ -465,7 +475,7 @@ function develop(p, years = 1, newPlayer = false, coachingRank = 15.5) {
  * @param {number} amount Number to be added to each rating (can be negative).
  * @return {Object} Updated player object.
  */
-function bonus(p, amount) {
+function bonus(p, amount: number) {
     // Make sure age is always defined
     const age = g.season - p.born.year;
 
@@ -496,8 +506,8 @@ function bonus(p, amount) {
  * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on teamSeasons; if null is passed, then a new transaction will be used.
  * @return {Promise} Array of base moods, one for each team.
  */
-async function genBaseMoods(ot) {
-    const dbOrTx = ot !== null ? ot : g.dbl;
+async function genBaseMoods(tx: ?BackboardTx): Promise<number[]> {
+    const dbOrTx = tx !== undefined && tx !== null ? tx : g.dbl;
     const teamSeasons = await dbOrTx.teamSeasons.index("season, tid").getAll(backboard.bound([g.season], [g.season, '']));
 
     return teamSeasons.map(teamSeason => {
@@ -539,8 +549,8 @@ async function genBaseMoods(ot) {
  * @param {Array.<number>} baseMoods Vector of base moods for each team from 0 to 1, as generated by genBaseMoods.
  * @return {Promise}
  */
-async function addToFreeAgents(ot, p, phase, baseMoods) {
-    const dbOrTx = ot !== null ? ot : g.dbl;
+async function addToFreeAgents(tx: ?BackboardTx, p, phase: Phase, baseMoods: number[]) {
+    const dbOrTx = tx !== undefined && tx !== null ? tx : g.dbl;
     phase = phase !== null ? phase : g.phase;
 
     const pr = p.ratings[p.ratings.length - 1];
@@ -584,7 +594,7 @@ async function addToFreeAgents(ot, p, phase, baseMoods) {
  * @param {boolean} justDrafted True if the player was just drafted by his current team and the regular season hasn't started yet. False otherwise. If True, then the player can be released without paying his salary.
  * @return {Promise}
  */
-async function release(tx, p, justDrafted) {
+async function release(tx: BackboardTx, p, justDrafted: boolean) {
     // Keep track of player salary even when he's off the team, but make an exception for players who were just drafted
     // Was the player just drafted?
     if (!justDrafted) {
@@ -619,7 +629,7 @@ async function release(tx, p, justDrafted) {
  * @param {number} scoutingRank Between 1 and 30, the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
  * @return {number} Fuzz, between -5 and 5.
  */
-function genFuzz(scoutingRank) {
+function genFuzz(scoutingRank: number): number {
     const cutoff = 2 + 8 * (scoutingRank - 1) / (g.numTeams - 1);  // Max error is from 2 to 10, based on scouting rank
     const sigma = 1 + 2 * (scoutingRank - 1) / (g.numTeams - 1);  // Stddev is from 1 to 3, based on scouting rank
 
@@ -644,7 +654,14 @@ function genFuzz(scoutingRank) {
  * @param {number} tid [description]
  * @return {Object} Ratings object
  */
-function genRatings(profile, baseRating, pot, season, scoutingRank, tid) {
+function genRatings(
+    profile: Profile,
+    baseRating: number,
+    pot: number,
+    season: number,
+    scoutingRank: number,
+    tid: number,
+): PlayerRatings {
     let profileId;
     if (profile === "Point") {
         profileId = 1;
@@ -712,7 +729,7 @@ function genRatings(profile, baseRating, pot, season, scoutingRank, tid) {
     return ratings;
 }
 
-function name() {
+function name(): {country: string, firstName: string, lastName: string} {
     if (!playerNames) {
         // This makes it wait until g is loaded before calling names.load, so user-defined names will be used if provided
         playerNames = names.load();
@@ -747,7 +764,7 @@ function name() {
  * @param {number} scoutingRank Between 1 and g.numTeams (default 30), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
  * @return {Object} Updated player object.
  */
-function addRatingsRow(p, scoutingRank) {
+function addRatingsRow(p, scoutingRank: number) {
     const newRatings = {};
     const r = p.ratings.length - 1; // Most recent ratings
     for (const key of Object.keys(p.ratings[r])) {
@@ -773,8 +790,8 @@ function addRatingsRow(p, scoutingRank) {
  * @param {=boolean} playoffs Is this stats row for the playoffs or not? Default false.
  * @return {Object} Updated player object.
  */
-function addStatsRow(ot, p, playoffs = false) {
-    const dbOrTx = ot !== null ? ot : g.dbl;
+function addStatsRow(tx: ?BackboardTx, p, playoffs?: boolean = false) {
+    const dbOrTx = tx !== undefined && tx !== null ? tx : g.dbl;
 
     const statsRow = {
         pid: p.pid,
@@ -872,7 +889,16 @@ function addStatsRow(ot, p, playoffs = false) {
     return p;
 }
 
-function generate(tid, age, profile, baseRating, pot, draftYear, newLeague, scoutingRank) {
+function generate(
+    tid: number,
+    age: number,
+    profile: Profile,
+    baseRating: number,
+    pot: number,
+    draftYear: number,
+    newLeague: boolean,
+    scoutingRank: number,
+) {
     let p = {};
     p.tid = tid;
     p.statsTids = [];
@@ -966,7 +992,7 @@ function generate(tid, age, profile, baseRating, pot, draftYear, newLeague, scou
  * @param {number} healthRank Between 1 and g.numTeams (default 30), 1 if the player's team has the highest health spending this season and g.numTeams if the player's team has the lowest.
  * @return {Object} Injury object (type and gamesRemaining)
  */
-function injury(healthRank) {
+function injury(healthRank: number): PlayerInjury {
     const rand = random.uniform(0, 10882);
     const i = injuries.cumSum.findIndex(cs => cs >= rand);
 
@@ -983,7 +1009,7 @@ function injury(healthRank) {
  * @param {Object} exp Contract expiration year.
  * @return {number} numGamesRemaining Number of games remaining in the current season (0 to g.numGames).
  */
-function contractSeasonsRemaining(exp, numGamesRemaining) {
+function contractSeasonsRemaining(exp: number, numGamesRemaining: number): number {
     let frac = numGamesRemaining / g.numGames;
     if (frac > 1) { frac = 1; } // This only happens if the user changed g.numGames mid season
     return (exp - g.season) + frac;
@@ -1198,7 +1224,7 @@ function filter(p, options) {
                                 tidTemp = p.stats[i].tid;
                             }
                         }
-                        if (tidTemp >= 0) {
+                        if (tidTemp !== undefined) {
                             fp.ratings[kk].abbrev = helpers.getAbbrev(tidTemp);
                         } else {
                             fp.ratings[kk].abbrev = null;
@@ -1659,8 +1685,8 @@ function value(p, ps, options) {
 
 // ps: player stats objects, regular season only, most recent first
 // Currently it is assumed that ps, if passed, will be the latest season. This assumption could be easily relaxed if necessary, just might make it a bit slower
-async function updateValues(ot, p, ps) {
-    const dbOrTx = ot !== null ? ot : g.dbl;
+async function updateValues(tx: ?BackboardTx, p, ps) {
+    const dbOrTx = tx !== undefined && tx !== null ? tx : g.dbl;
 
     // Require up to the two most recent regular season stats entries, unless the current season has 2000+ minutes
     if (ps.length === 0 || (ps.length === 1 && ps[0].min < 2000)) {
@@ -1783,7 +1809,7 @@ function moodColorText(p) {
  * @param {Object} p Partial player object.
  * @return {Object} p Full player object.
  */
-function augmentPartialPlayer(p, scoutingRank) {
+function augmentPartialPlayer(p, scoutingRank: number) {
     let age;
     if (!p.hasOwnProperty("born")) {
         age = random.randInt(19, 35);
@@ -1867,7 +1893,7 @@ function augmentPartialPlayer(p, scoutingRank) {
     return p;
 }
 
-function checkStatisticalFeat(tx, pid, tid, p, results) {
+function checkStatisticalFeat(tx: BackboardTx, pid: number, tid: number, p, results) {
     const minFactor = Math.sqrt(g.quarterLength / 12); // sqrt is to account for fatigue in short/long games. Also https://news.ycombinator.com/item?id=11032596
     const TEN = minFactor * 10;
     const FIVE = minFactor * 5;

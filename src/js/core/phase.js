@@ -19,7 +19,7 @@ import * as lock from '../util/lock';
 import logEvent from '../util/logEvent';
 import * as message from '../util/message';
 import * as random from '../util/random';
-import type {BackboardTx, UpdateEvents} from '../util/types';
+import type {BackboardTx, Phase, UpdateEvents} from '../util/types';
 
 let phaseChangeTx;
 
@@ -34,7 +34,7 @@ let phaseChangeTx;
  * @param {Array.<string>=} updateEvents Array of strings.
  * @return {Promise}
  */
-async function finalize(phase: number, url: string, updateEvents: UpdateEvents = []) {
+async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = []) {
     // Set phase before updating play menu
     await league.setGameAttributesComplete({
         phase,
@@ -508,7 +508,7 @@ async function newPhaseFantasyDraft(tx: BackboardTx, position: number) {
  * @param {} extra Parameter containing extra info to be passed to phase changing function. Currently only used for newPhaseFantasyDraft.
  * @return {Promise}
  */
-async function newPhase(phase: number, extra: any) {
+async function newPhase(phase: Phase, extra: any) {
     // Prevent at least some cases of code running twice
     if (phase === g.phase) {
         return;

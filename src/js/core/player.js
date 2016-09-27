@@ -11,7 +11,7 @@ import * as names from '../data/names';
 import * as helpers from '../util/helpers';
 import logEvent from '../util/logEvent';
 import * as random from '../util/random';
-import type {BackboardTx, Phase, PlayerContract, PlayerInjury, PlayerRatings, PlayerSkill, RatingKeys} from '../util/types';
+import type {BackboardTx, Phase, Player, PlayerContract, PlayerInjury, PlayerRatings, PlayerSkill, RatingKey} from '../util/types';
 
 type Profile = 'Big' | 'Point' | 'Wing';
 
@@ -57,7 +57,7 @@ function fuzzRating(rating: number, fuzz: number): number {
     return Math.round(helpers.bound(rating + fuzz, 0, 100));
 }
 
-function hasSkill(ratings: PlayerRatings, components: RatingKeys[], weights?: number[]): boolean {
+function hasSkill(ratings: PlayerRatings, components: RatingKey[], weights?: number[]): boolean {
     if (weights === undefined) {
         // Default: array of ones with same size as components
         weights = [];
@@ -139,7 +139,7 @@ function skills(ratings: PlayerRatings): PlayerSkill[] {
  * @return {Object.<string, number>} Object containing two properties with integer values, "amount" with the contract amount in thousands of dollars and "exp" with the contract expiration year.
  */
 function genContract(
-    p,
+    p: Player,
     randomizeExp: boolean = false,
     randomizeAmount: boolean = true,
     noLimit: boolean = false,
@@ -207,7 +207,7 @@ function genContract(
  * @param {boolean} signed Is this an official signed contract (true), or just part of a negotiation (false)?
  * @return {Object} Updated player object.
  */
-function setContract(p, contract: PlayerContract, signed: boolean) {
+function setContract(p: Player, contract: PlayerContract, signed: boolean): Player {
     p.contract = contract;
 
     // Only write to salary log if the player is actually signed. Otherwise, we're just generating a value for a negotiation.
@@ -367,7 +367,7 @@ function calcBaseChange(age: number, potentialDifference: number): number {
  * @param {number=} coachingRank From 1 to g.numTeams (default 30), where 1 is best coaching staff and g.numTeams is worst. Default is 15.5
  * @return {Object} Updated player object.
  */
-function develop(p, years?: number = 1, newPlayer?: boolean = false, coachingRank?: number = 15.5) {
+function develop(p: Player, years?: number = 1, newPlayer?: boolean = false, coachingRank?: number = 15.5): Player {
     const r = p.ratings.length - 1;
 
     let age = g.season - p.born.year;
@@ -475,7 +475,7 @@ function develop(p, years?: number = 1, newPlayer?: boolean = false, coachingRan
  * @param {number} amount Number to be added to each rating (can be negative).
  * @return {Object} Updated player object.
  */
-function bonus(p, amount: number) {
+function bonus(p: Player, amount: number): Player {
     // Make sure age is always defined
     const age = g.season - p.born.year;
 
@@ -726,6 +726,8 @@ function genRatings(
 
     ratings.skills = skills(ratings);
 
+    ratings.pos = pos(ratings);
+
     return ratings;
 }
 
@@ -898,19 +900,14 @@ function generate(
     draftYear: number,
     newLeague: boolean,
     scoutingRank: number,
-) {
-    let p = {};
-    p.tid = tid;
-    p.statsTids = [];
-    p.rosterOrder = 666; // Will be set later
-    p.ratings = [];
-
+): Player {
+    let ratings;
     if (newLeague) {
         // Create player for new league
-        p.ratings.push(genRatings(profile, baseRating, pot, g.startingSeason, scoutingRank, tid));
+        ratings = genRatings(profile, baseRating, pot, g.startingSeason, scoutingRank, tid);
     } else {
         // Create player to be drafted
-        p.ratings.push(genRatings(profile, baseRating, pot, draftYear, scoutingRank, tid));
+        ratings = genRatings(profile, baseRating, pot, draftYear, scoutingRank, tid);
     }
 
     const minHgt = 71;  // 5'11"
@@ -918,10 +915,60 @@ function generate(
     const minWeight = 170;
     const maxWeight = 290;
 
-    p.ratings[0].pos = pos(p.ratings[0]);  // Position (PG, SG, SF, PF, C, G, GF, FC)
-    p.weight = Math.round(random.randInt(-20, 20) + (p.ratings[0].hgt + 0.5 * p.ratings[0].stre) * (maxWeight - minWeight) / 150 + minWeight);  // Weight in pounds (from minWeight to maxWeight)
+    const nameInfo = name();
 
-    p.hgt = Math.round(random.randInt(-1, 1) + p.ratings[0].hgt * (maxHgt - minHgt) / 100 + minHgt);  // Height in inches (from minHgt to maxHgt)
+    const p = {
+        awards: [],
+        born: {
+            year: g.season - age,
+            loc: nameInfo.country,
+        },
+        college: "",
+        contract: {
+            // Will be set by setContract below
+            amount: 0,
+            exp: 0,
+        },
+        draft: {
+            round: 0,
+            pick: 0,
+            tid: -1,
+            originalTid: -1,
+            year: draftYear,
+            teamName: null,
+            teamRegion: null,
+            pot,
+            ovr: ratings.ovr,
+            skills: ratings.skills,
+        },
+        face: faces.generate(),
+        firstName: nameInfo.firstName,
+        freeAgentMood: Array(g.numTeams).fill(0),
+        gamesUntilTradable: 0,
+        hgt: Math.round(random.randInt(-1, 1) + ratings.hgt * (maxHgt - minHgt) / 100 + minHgt), // Height in inches (from minHgt to maxHgt)
+        hof: false,
+        imgURL: "", // Custom rosters can define player image URLs to be used rather than vector faces
+        injury: {type: "Healthy", gamesRemaining: 0},
+        lastName: nameInfo.lastName,
+        ptModifier: 1,
+        ratings: [ratings],
+        retiredYear: null,
+        rosterOrder: 666, // Will be set later
+        salaries: [],
+        statsTids: [],
+        tid,
+        watch: false,
+        weight: Math.round(random.randInt(-20, 20) + (ratings.hgt + 0.5 * ratings.stre) * (maxWeight - minWeight) / 150 + minWeight), // Weight in pounds (from minWeight to maxWeight)
+        yearsFreeAgent: 0,
+
+        // These should be set by player.updateValues after player is completely done (automatic in player.develop)
+        value: 0,
+        valueNoPot: 0,
+        valueFuzz: 0,
+        valueNoPotFuzz: 0,
+        valueWithContract: 0,
+    };
+
     const rand = Math.random();
     if (rand < 0.5) {
         p.hgt += 1;
@@ -931,57 +978,7 @@ function generate(
         p.hgt += 3;
     }
 
-    const nameInfo = name();
-    p.born = {
-        year: g.season - age,
-        loc: nameInfo.country,
-    };
-
-    p.firstName = nameInfo.firstName;
-    p.lastName = nameInfo.lastName;
-    p.college = "";
-    p.imgURL = ""; // Custom rosters can define player image URLs to be used rather than vector faces
-
-    p.awards = [];
-
-    p.freeAgentMood = Array(g.numTeams).fill(0);
-    p.yearsFreeAgent = 0;
-    p.retiredYear = null;
-
-    p.draft = {
-        round: 0,
-        pick: 0,
-        tid: -1,
-        originalTid: -1,
-        year: draftYear,
-        teamName: null,
-        teamRegion: null,
-        pot,
-        ovr: p.ratings[0].ovr,
-        skills: p.ratings[0].skills,
-    };
-
-    p.face = faces.generate();
-    p.injury = {type: "Healthy", gamesRemaining: 0};
-
-    p.ptModifier = 1;
-
-    p.hof = false;
-    p.watch = false;
-    p.gamesUntilTradable = 0;
-
-    // These should be set by player.updateValues after player is completely done (automatic in player.develop)
-    p.value = 0;
-    p.valueNoPot = 0;
-    p.valueFuzz = 0;
-    p.valueNoPotFuzz = 0;
-    p.valueWithContract = 0;
-
-    // Must be after value*s are set, because genContract depends on them
-    p.salaries = [];
-    p = setContract(p, genContract(p), false);
-
-    return p;
+    return setContract(p, genContract(p), false);
 }
 
 /**
@@ -2062,7 +2059,7 @@ async function killOne() {
     });
 }
 
-async function withStats(tx, players, options) {
+async function withStats(tx: BackboardTx, players, options) {
     options.statsPlayoffs = options.statsPlayoffs !== undefined ? options.statsPlayoffs : false;
     options.statsTid = options.statsTid !== undefined ? options.statsTid : null;
     options.filter = options.filter !== undefined ? options.filter : null;

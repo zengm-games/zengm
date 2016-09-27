@@ -7,8 +7,8 @@ flow
   http://stackoverflow.com/q/39683076/786644
     ctrl+F for place to use
   PlayerSkill
-    include actual values
     defined as string[] some places in line
+  how to handle cases where an object doesn't have a property yet (like p.pid, ratings.pos) without copy/pasting type?
 
 replace owner message text with numbers/chart
 

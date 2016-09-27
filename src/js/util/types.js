@@ -85,9 +85,23 @@ export type Pick = {
     tid: number,
 };
 
+export type PickRealized = {
+    originalTid: number,
+    pick: number,
+    round: number,
+    tid: number,
+};
+
 export type PlayerContract = {
     amount: number,
     exp: number,
+};
+
+export type PlayerFiltered = any;
+
+export type PlayerInjury = {
+    gamesRemaining: number,
+    type: string,
 };
 
 export type PlayerSkill = '3' | 'A' | 'B' | 'Di' | 'Dp' | 'Po' | 'Ps' | 'R';
@@ -104,6 +118,7 @@ export type PlayerRatings = {
     ins: number,
     jmp: number,
     ovr: number,
+    pos: string,
     pot: number,
     pss: number,
     reb: number,
@@ -115,18 +130,56 @@ export type PlayerRatings = {
     tp: number,
 };
 
-export type PickRealized = {
-    originalTid: number,
-    pick: number,
-    round: number,
+export type Player = {
+    awards: {
+        season: number,
+        type: string,
+    }[],
+    born: {
+        year: number,
+        loc: string,
+    },
+    college: string,
+    contract: PlayerContract,
+    draft: {
+        round: number,
+        pick: number,
+        tid: number,
+        originalTid: number,
+        year: number,
+        teamName: null | string,
+        teamRegion: null | string,
+        pot: number,
+        ovr: number,
+        skills: PlayerSkill[],
+    },
+    face: Object,
+    firstName: string,
+    freeAgentMood: number[],
+    gamesUntilTradable: number,
+    hgt: number,
+    hof: boolean,
+    imgURL: string,
+    injury: PlayerInjury,
+    lastName: string,
+    ptModifier: number,
+    ratings: PlayerRatings[],
+    retiredYear: null | number,
+    rosterOrder: number,
+    salaries: {
+        amount: number,
+        season: number,
+    }[],
+    statsTids: number[],
     tid: number,
-};
-
-export type PlayerFiltered = any;
-
-export type PlayerInjury = {
-    gamesRemaining: number,
-    type: string,
+    value: number,
+    valueNoPot: number,
+    valueFuzz: number,
+    valueNoPotFuzz: number,
+    valueWithContract: number,
+    watch: boolean,
+    weight: number,
+    yearsFreeAgent: number,
 };
 
 export type ContractInfo = {

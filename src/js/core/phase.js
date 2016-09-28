@@ -19,7 +19,7 @@ import * as lock from '../util/lock';
 import logEvent from '../util/logEvent';
 import * as message from '../util/message';
 import * as random from '../util/random';
-import type {BackboardTx, Phase, UpdateEvents} from '../util/types';
+import type {BackboardTx, Phase, Player, UpdateEvents} from '../util/types';
 
 let phaseChangeTx;
 
@@ -85,7 +85,7 @@ async function newPhasePreseason(tx: BackboardTx) {
     const coachingRanks = teamSeasons.map(teamSeason => teamSeason.expenses.coaching.rank);
 
     // Loop through all non-retired players
-    await tx.players.index('tid').iterate(backboard.lowerBound(g.PLAYER.FREE_AGENT), async p => {
+    await tx.players.index('tid').iterate(backboard.lowerBound(g.PLAYER.FREE_AGENT), async (p: Player) => {
         // Update ratings
         p = player.addRatingsRow(p, scoutingRank);
         p = player.develop(p, 1, false, coachingRanks[p.tid]);

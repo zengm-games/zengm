@@ -385,12 +385,12 @@ function calcBaseChange(age: number, potentialDifference: number): number {
  * @param {number=} coachingRank From 1 to g.numTeams (default 30), where 1 is best coaching staff and g.numTeams is worst. Default is 15.5
  * @return {Object} Updated player object.
  */
-function develop(
-    p: Player | PlayerWithoutPid,
+function develop<T: {born: {year: number}, pos?: string, ratings: PlayerRatings[]}>(
+    p: T,
     years?: number = 1,
     newPlayer?: boolean = false,
     coachingRank?: number = 15.5,
-): Player | PlayerWithoutPid {
+): T {
     const r = p.ratings.length - 1;
 
     let age = g.season - p.born.year;
@@ -803,7 +803,10 @@ function name(): {country: string, firstName: string, lastName: string} {
  * @param {number} scoutingRank Between 1 and g.numTeams (default 30), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
  * @return {Object} Updated player object.
  */
-function addRatingsRow(p: Player, scoutingRank: number): Player {
+function addRatingsRow<T: {ratings: PlayerRatings[]}>(
+    p: T,
+    scoutingRank: number,
+): T {
     const newRatings = Object.assign({}, p.ratings[p.ratings.length - 1]);
     newRatings.season = g.season;
     newRatings.fuzz = (newRatings.fuzz + genFuzz(scoutingRank)) / 2;
@@ -825,7 +828,7 @@ function addRatingsRow(p: Player, scoutingRank: number): Player {
  * @param {=boolean} playoffs Is this stats row for the playoffs or not? Default false.
  * @return {Object} Updated player object.
  */
-function addStatsRow(tx: ?BackboardTx, p: Player, playoffs?: boolean = false) {
+function addStatsRow(tx: ?BackboardTx, p: Player, playoffs?: boolean = false): Player {
     const dbOrTx = tx !== undefined && tx !== null ? tx : g.dbl;
 
     const statsRow = {
@@ -1456,7 +1459,7 @@ function filter(p: PlayerWithStats | PlayerWithStats[], options: any): PlayerFil
 
     // Copys/filters the stats listed in options.stats from p to fp. If no stats are found for the supplied settings, then fp.stats remains undefined.
     // eslint-disable-next-line no-shadow
-    const filterStats = (fp, p, options) => {
+    const filterStats = (fp, p: Player, options) => {
         const ps = gatherStats(p, options);
 
         // Always proceed for options.showRookies; proceed if we found some stats (checking for empty objects or lists); proceed if options.showNoStats
@@ -1713,9 +1716,7 @@ function value(p: Player | PlayerWithoutPid, ps: PlayerStats[], options: ValueOp
     if (age === 33) {
         return 0.8 * current;
     }
-    if (age > 33) {
-        return 0.7 * current;
-    }
+    return 0.7 * current;
 }
 
 // ps: player stats objects, regular season only, most recent first
@@ -1738,7 +1739,7 @@ async function updateValues(tx: ?BackboardTx, p: Player | PlayerWithoutPid, ps: 
         if (p.hasOwnProperty("pid")) {
             // Start at season and look backwards until we hit
             // This will not work totally right if a player played for multiple teams in a season. It should be ordered by psid, instead it's ordered by tid because of the index used
-            await dbOrTx.playerStats.index('pid, season, tid').iterate(backboard.bound([p.pid, 0], [p.pid, season + 1]), 'prev', (psTemp, shortCircuit) => {
+            await dbOrTx.playerStats.index('pid, season, tid').iterate(backboard.bound([p.pid, 0], [p.pid, season + 1]), 'prev', (psTemp: PlayerStats, shortCircuit) => {
                 // Skip playoff stats
                 if (psTemp.playoffs) {
                     return;
@@ -2102,7 +2103,7 @@ type WithStatsOptions = {
 };
 async function withStats(
     tx: BackboardTx,
-    players: Player[],
+    players: (Player & {stats?: PlayerStats[]})[], // This mutates the input, so input must have optional stats property
     {
         statsPlayoffs = false,
         statsSeasons,
@@ -2112,18 +2113,21 @@ async function withStats(
     players = await Promise.all(players);
     players = players.sort((a, b) => a.pid - b.pid);
 
-    const pidsToIdx = {};
-    const pids = players.map((p, i) => {
+    for (const p of players) {
         p.stats = [];
-        pidsToIdx[p.pid] = i;
-
-        return p.pid;
-    });
+    }
 
     if ((statsSeasons !== "all" && statsSeasons.length === 0) || players.length === 0) {
         // No stats needed! Yay!
         return players;
     }
+
+    const pidsToIdx = {};
+    const pids = players.map((p, i) => {
+        pidsToIdx[p.pid] = i;
+
+        return p.pid;
+    });
 
     let seasonsRange;
     if (statsSeasons === "all") {

@@ -448,7 +448,7 @@ async function create(
 
                     // Save to database
                     if (p.tid === g.PLAYER.FREE_AGENT) {
-                        player.addToFreeAgents(tx, p, null, baseMoods);
+                        player.addToFreeAgents(tx, p, g.phase, baseMoods);
                     } else {
                         p.pid = await tx.players.put(p);
 

@@ -385,7 +385,7 @@ function calcBaseChange(age: number, potentialDifference: number): number {
  * @param {number=} coachingRank From 1 to g.numTeams (default 30), where 1 is best coaching staff and g.numTeams is worst. Default is 15.5
  * @return {Object} Updated player object.
  */
-function develop<T: {born: {year: number}, pos?: string, ratings: PlayerRatings[]}>(
+function develop<T: {born: {loc: string, year: number}, pos?: string, ratings: PlayerRatings[]}>(
     p: T,
     years?: number = 1,
     newPlayer?: boolean = false,
@@ -1721,7 +1721,14 @@ function value(p: Player | PlayerWithoutPid, ps: PlayerStats[], options: ValueOp
 
 // ps: player stats objects, regular season only, most recent first
 // Currently it is assumed that ps, if passed, will be the latest season. This assumption could be easily relaxed if necessary, just might make it a bit slower
-async function updateValues(tx: ?BackboardTx, p: Player | PlayerWithoutPid, ps: PlayerStats[]) {
+async function updateValues<T: {
+        pid?: number,
+        value: number,
+        valueNoPot: number,
+        valueFuzz: number,
+        valueNoPotFuzz: number,
+        valueWithContract: number,
+}>(tx: ?BackboardTx, p: T, ps: PlayerStats[]): Promise<T> {
     const dbOrTx = tx !== undefined && tx !== null ? tx : g.dbl;
 
     // Require up to the two most recent regular season stats entries, unless the current season has 2000+ minutes

@@ -80,7 +80,7 @@ async function genPlayers(tx: BackboardTx, tid: number, scoutingRank?: ?number =
     }
 
     // If scoutingRank is not supplied, have to hit the DB to get it
-    if (scoutingRank === null) {
+    if (scoutingRank === undefined || scoutingRank === null) {
         const teamSeasons = await tx.teamSeasons.index("tid, season").getAll(backboard.bound([g.userTid, g.season - 2], [g.userTid, g.season]));
         scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
     }

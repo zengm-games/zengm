@@ -1352,7 +1352,7 @@ function filter(p: PlayerWithStats | PlayerWithStats[], options: any): PlayerFil
 
     // Filters s by stats (which should be options.stats) and returns a filtered object. This is to do one season of stats filtering.
     // eslint-disable-next-line no-shadow
-    const filterStatsPartial = (p: PlayerWithStats, s, stats) => {
+    const filterStatsPartial = (p: PlayerWithStats, s: any, stats) => {
         const row = {};
 
         if (!_.isEmpty(s) && s.gp > 0) {
@@ -1583,7 +1583,7 @@ function madeHof(p: Player, playerStats: PlayerStats[]): boolean {
     return ewa + df > 100;
 }
 
-type valueOptions = {
+type ValueOptions = {
     fuzz?: boolean,
     noPot?: boolean,
     withContract?: boolean,
@@ -1610,7 +1610,7 @@ type valueOptions = {
  * @return {number} Value of the player, usually between 50 and 100 like overall and potential
  *     ratings.
  */
-function value(p: Player | PlayerWithoutPid, ps: PlayerStats[], options: valueOptions): number {
+function value(p: Player | PlayerWithoutPid, ps: PlayerStats[], options: ValueOptions = {}): number {
     options.noPot = !!options.noPot;
     options.fuzz = !!options.fuzz;
     options.withContract = !!options.withContract;
@@ -1719,7 +1719,7 @@ function value(p: Player | PlayerWithoutPid, ps: PlayerStats[], options: valueOp
 
 // ps: player stats objects, regular season only, most recent first
 // Currently it is assumed that ps, if passed, will be the latest season. This assumption could be easily relaxed if necessary, just might make it a bit slower
-async function updateValues(tx: ?BackboardTx, p: Player | PlayerWithoutPid, ps) {
+async function updateValues(tx: ?BackboardTx, p: Player | PlayerWithoutPid, ps: PlayerStats[]) {
     const dbOrTx = tx !== undefined && tx !== null ? tx : g.dbl;
 
     // Require up to the two most recent regular season stats entries, unless the current season has 2000+ minutes
@@ -2094,7 +2094,7 @@ async function killOne() {
     });
 }
 
-type withStatsOptions = {
+type WithStatsOptions = {
     statsPlayoffs?: boolean,
     statsSeasons: 'all' | number[],
     statsTid?: number,
@@ -2106,7 +2106,7 @@ async function withStats(
         statsPlayoffs = false,
         statsSeasons,
         statsTid,
-    }: withStatsOptions
+    }: WithStatsOptions,
 ): Promise<PlayerWithStats[]> {
     players = await Promise.all(players);
     players = players.sort((a, b) => a.pid - b.pid);

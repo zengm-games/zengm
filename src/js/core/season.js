@@ -165,7 +165,7 @@ async function doAwards(tx: BackboardTx) {
     awards.allRookie = [];
     for (let i = 0; i < 5; i++) {
         const p = rookies[i];
-        if (p !== undefined) {
+        if (p) {
             awards.allRookie.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast});
             awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "All Rookie Team"});
         }
@@ -175,15 +175,19 @@ async function doAwards(tx: BackboardTx) {
     players.sort((a, b) => (b.stats.ewa + 0.1 * b.won) - (a.stats.ewa + 0.1 * a.won));
     {
         const p = players[0];
-        awards.mvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
-        awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Most Valuable Player"});
+        if (p) {
+            awards.mvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
+            awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Most Valuable Player"});
+        }
     }
 
     // Sixth Man of the Year - same sort as MVP, must have come off the bench in most games
     {
         const p = players.find(p2 => p2.stats.gs === 0 || p2.stats.gp / p2.stats.gs > 2);
-        awards.smoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
-        awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Sixth Man of the Year"});
+        if (p) {
+            awards.smoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
+            awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Sixth Man of the Year"});
+        }
     }
 
     // All League Team - same sort as MVP

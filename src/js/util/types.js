@@ -134,6 +134,11 @@ export type PlayerRatings = {
     tp: number,
 };
 
+export type PlayerSalary = {
+    amount: number,
+    season: number,
+};
+
 export type PlayerStats = any;
 
 export type PlayerWithoutPid = {
@@ -174,10 +179,7 @@ export type PlayerWithoutPid = {
     ratings: PlayerRatings[],
     retiredYear: null | number,
     rosterOrder: number,
-    salaries: {
-        amount: number,
-        season: number,
-    }[],
+    salaries: PlayerSalary[],
     statsTids: number[],
     tid: number,
     value: number,

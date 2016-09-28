@@ -21,6 +21,7 @@ import type {
     PlayerFiltered,
     PlayerInjury,
     PlayerRatings,
+    PlayerSalary,
     PlayerSkill,
     PlayerStats,
     PlayerWithoutPid,
@@ -220,11 +221,11 @@ function genContract(
  * @param {boolean} signed Is this an official signed contract (true), or just part of a negotiation (false)?
  * @return {Object} Updated player object.
  */
-function setContract(
-    p: Player | PlayerWithoutPid,
+function setContract<T: {contract: PlayerContract, salaries: PlayerSalary[]}>(
+    p: T,
     contract: PlayerContract,
     signed: boolean,
-): Player | PlayerWithoutPid {
+): T {
     p.contract = contract;
 
     // Only write to salary log if the player is actually signed. Otherwise, we're just generating a value for a negotiation.

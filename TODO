@@ -51,6 +51,8 @@ Draft
 
 ---
 
+convert Dexie.Promise to a minimal A+ version (or use es6-promise), then use that plus some promise utils (eithier exiting or write my own) to replace Bluebird
+
 pressing alt+p rapidly can result in extra games being played
 
 filters on event log

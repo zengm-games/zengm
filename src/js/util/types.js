@@ -104,8 +104,6 @@ export type PlayerInjury = {
     type: string,
 };
 
-export type PlayerSkill = '3' | 'A' | 'B' | 'Di' | 'Dp' | 'Po' | 'Ps' | 'R';
-
 export type PlayerRatings = {
     blk: number,
     dnk: number,
@@ -130,6 +128,10 @@ export type PlayerRatings = {
     tp: number,
 };
 
+export type PlayerSkill = '3' | 'A' | 'B' | 'Di' | 'Dp' | 'Po' | 'Ps' | 'R';
+
+export type PlayerStats = any;
+
 export type PlayerWithoutPid = {
     awards: {
         season: number,
@@ -141,6 +143,7 @@ export type PlayerWithoutPid = {
     },
     college: string,
     contract: PlayerContract,
+    diedYear?: number,
     draft: {
         round: number,
         pick: number,
@@ -184,6 +187,8 @@ export type PlayerWithoutPid = {
 };
 
 export type Player = PlayerWithoutPid & {pid: number};
+
+export type PlayerWithStats = Player & {stats: PlayerStats[]};
 
 export type ContractInfo = {
     pid: number,

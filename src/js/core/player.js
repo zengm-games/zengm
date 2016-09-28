@@ -11,7 +11,20 @@ import * as names from '../data/names';
 import * as helpers from '../util/helpers';
 import logEvent from '../util/logEvent';
 import * as random from '../util/random';
-import type {BackboardTx, Phase, Player, PlayerContract, PlayerInjury, PlayerRatings, PlayerSkill, PlayerWithoutPid, RatingKey} from '../util/types';
+import type {
+    BackboardTx,
+    Phase,
+    Player,
+    PlayerContract,
+    PlayerFiltered,
+    PlayerInjury,
+    PlayerRatings,
+    PlayerSkill,
+    PlayerStats,
+    PlayerWithoutPid,
+    PlayerWithStats,
+    RatingKey,
+} from '../util/types';
 
 type Profile = 'Big' | 'Point' | 'Wing';
 
@@ -787,12 +800,8 @@ function name(): {country: string, firstName: string, lastName: string} {
  * @param {number} scoutingRank Between 1 and g.numTeams (default 30), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
  * @return {Object} Updated player object.
  */
-function addRatingsRow(p, scoutingRank: number) {
-    const newRatings = {};
-    const r = p.ratings.length - 1; // Most recent ratings
-    for (const key of Object.keys(p.ratings[r])) {
-        newRatings[key] = p.ratings[r][key];
-    }
+function addRatingsRow(p: Player, scoutingRank: number): Player {
+    const newRatings = Object.assign({}, p.ratings[p.ratings.length - 1]);
     newRatings.season = g.season;
     newRatings.fuzz = (newRatings.fuzz + genFuzz(scoutingRank)) / 2;
     p.ratings.push(newRatings);
@@ -1062,7 +1071,7 @@ function contractSeasonsRemaining(exp: number, numGamesRemaining: number): numbe
  * @param {number=} options.numGamesRemaining If the "cashOwed" attr is requested, options.numGamesRemaining is used to calculate how much of the current season's contract remains to be paid. This is used for buying out players.
  * @return {Object|Array.<Object>} Filtered player object or array of filtered player objects, depending on the first argument.
  */
-function filter(p, options) {
+function filter(p: PlayerWithStats | PlayerWithStats[], options: any): PlayerFiltered | PlayerFiltered[] {
     let returnOnePlayer = false;
     if (!Array.isArray(p)) {
         p = [p];
@@ -1092,7 +1101,7 @@ function filter(p, options) {
 
     // Copys/filters the attributes listed in options.attrs from p to fp.
     // eslint-disable-next-line no-shadow
-    const filterAttrs = (fp, p, options) => {
+    const filterAttrs = (fp: any, p: PlayerWithStats, options) => {
         for (let i = 0; i < options.attrs.length; i++) {
             if (options.attrs[i] === "age") {
                 fp.age = g.season - p.born.year;
@@ -1162,7 +1171,7 @@ function filter(p, options) {
 
     // Copys/filters the ratings listed in options.ratings from p to fp.
     // eslint-disable-next-line no-shadow
-    const filterRatings = (fp, p, options) => {
+    const filterRatings = (fp: any, p: PlayerWithStats, options) => {
         if (options.season !== null) {
             // One season
             let pr = null;
@@ -1262,7 +1271,7 @@ function filter(p, options) {
 
     // Returns stats object, containing properties "r" for regular season, "p" for playoffs, and "cr"/"cp" for career. "r" and "p" can be either objects (single season) or arrays of objects (multiple seasons). All these outputs are raw season totals, not per-game averages.
     // eslint-disable-next-line no-shadow
-    const gatherStats = (p, options) => {
+    const gatherStats = (p: PlayerWithStats, options) => {
         const ps = {};
 
         if (options.stats.length > 0) {
@@ -1526,7 +1535,7 @@ function filter(p, options) {
  * @param {Object} p Player object.
  * @return {boolean} Hall of Fame worthy?
  */
-function madeHof(p: Player, playerStats) {
+function madeHof(p: Player, playerStats: PlayerStats[]) {
     const mins = playerStats.map(ps => ps.min);
     const pers = playerStats.map(ps => ps.per);
 
@@ -1593,7 +1602,7 @@ function madeHof(p: Player, playerStats) {
  * @return {boolean} Value of the player, usually between 50 and 100 like overall and potential
  *     ratings.
  */
-function value(p: Player | PlayerWithoutPid, ps, options) {
+function value(p: Player | PlayerWithoutPid, ps: PlayerStats[], options) {
     options = options !== undefined ? options : {};
     options.noPot = options.noPot !== undefined ? options.noPot : false;
     options.fuzz = options.fuzz !== undefined ? options.fuzz : false;
@@ -1825,7 +1834,7 @@ function moodColorText(p: Player) {
  * @param {Object} p Partial player object.
  * @return {Object} p Full player object.
  */
-function augmentPartialPlayer(p: any, scoutingRank: number): Player | PlayerWithoutPid {
+function augmentPartialPlayer(p: any, scoutingRank: number): PlayerWithoutPid {
     let age;
     if (!p.hasOwnProperty("born")) {
         age = random.randInt(19, 35);
@@ -2078,10 +2087,18 @@ async function killOne() {
     });
 }
 
-async function withStats(tx: BackboardTx, players, options) {
+type withStatsOptions = {
+    statsPlayoffs?: boolean,
+    statsSeasons: 'all' | number[],
+    statsTid?: number,
+};
+async function withStats(
+    tx: BackboardTx,
+    players,
+    options: withStatsOptions
+) {
     options.statsPlayoffs = options.statsPlayoffs !== undefined ? options.statsPlayoffs : false;
     options.statsTid = options.statsTid !== undefined ? options.statsTid : null;
-    options.filter = options.filter !== undefined ? options.filter : null;
 
     if ((options.statsSeasons !== "all" && options.statsSeasons.length === 0) || players.length === 0) {
         // No stats needed! Yay!

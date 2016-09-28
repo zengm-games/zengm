@@ -413,7 +413,7 @@ function getPayrolls(tx: BackboardTx): Promise<number[]> {
  * @param {IDBTransaction|null=} options.ot An IndexedDB transaction on players, releasedPlayers, and teams; if null/undefined, then a new transaction will be used.
  * @return {Promise.(Object|Array.<Object>)} Filtered team object or array of filtered team objects, depending on the inputs.
  */
-function filter(options: Object): Promise<TeamFiltered | TeamFiltered[]> {
+function filter(options: any): Promise<TeamFiltered | TeamFiltered[]> {
     options = options !== undefined ? options : {};
     options.season = options.season !== undefined ? options.season : null;
     options.tid = options.tid !== undefined ? options.tid : null;
@@ -441,7 +441,7 @@ function filter(options: Object): Promise<TeamFiltered | TeamFiltered[]> {
     };
 
     // Filters s by seasonAttrs (which should be options.seasonAttrs) into ft. This is to do one season of seasonAttrs filtering.
-    const filterSeasonAttrsPartial = (ft: Object, tsa: TeamSeason, seasonAttrs) => {
+    const filterSeasonAttrsPartial = (ft: any, tsa: TeamSeason, seasonAttrs) => {
         // For cases when the deleteOldData feature is used
         if (tsa === undefined) {
             return ft;
@@ -495,7 +495,7 @@ function filter(options: Object): Promise<TeamFiltered | TeamFiltered[]> {
     };
 
     // Copys/filters the seasonal attributes listed in options.seasonAttrs from p to fp.
-    const filterSeasonAttrs = (ft: Object, t, {season, seasonAttrs}) => {
+    const filterSeasonAttrs = (ft: any, t, {season, seasonAttrs}) => {
         let ts;
         if (seasonAttrs.length > 0) {
             if (season !== null) {
@@ -525,7 +525,7 @@ function filter(options: Object): Promise<TeamFiltered | TeamFiltered[]> {
     };
 
     // Filters s by stats (which should be options.stats) into ft. This is to do one season of stats filtering.
-    const filterStatsPartial = (ft: Object, s: TeamStats, stats) => {
+    const filterStatsPartial = (ft: any, s: TeamStats, stats) => {
         if (s !== undefined && s.gp > 0) {
             for (let j = 0; j < stats.length; j++) {
                 if (stats[j] === "gp") {

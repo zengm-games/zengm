@@ -1583,6 +1583,12 @@ function madeHof(p: Player, playerStats: PlayerStats[]): boolean {
     return ewa + df > 100;
 }
 
+type valueOptions = {
+    fuzz?: boolean,
+    noPot?: boolean,
+    withContract?: boolean,
+};
+
 /**
  * Returns a numeric value for a given player, representing is general worth to a typical team
  * (i.e. ignoring how well he fits in with his teammates and the team's strategy/finances). It
@@ -1604,11 +1610,10 @@ function madeHof(p: Player, playerStats: PlayerStats[]): boolean {
  * @return {number} Value of the player, usually between 50 and 100 like overall and potential
  *     ratings.
  */
-function value(p: Player | PlayerWithoutPid, ps: PlayerStats[], options): number {
-    options = options !== undefined ? options : {};
-    options.noPot = options.noPot !== undefined ? options.noPot : false;
-    options.fuzz = options.fuzz !== undefined ? options.fuzz : false;
-    options.withContract = options.withContract !== undefined ? options.withContract : false;
+function value(p: Player | PlayerWithoutPid, ps: PlayerStats[], options: valueOptions): number {
+    options.noPot = !!options.noPot;
+    options.fuzz = !!options.fuzz;
+    options.withContract = !!options.withContract;
 
     // Current ratings
     const pr = {}; // Start blank, add what we need (efficiency, wow!)
@@ -2097,10 +2102,12 @@ type withStatsOptions = {
 async function withStats(
     tx: BackboardTx,
     players: Player[],
-    options: withStatsOptions
+    {
+        statsPlayoffs = false,
+        statsSeasons,
+        statsTid,
+    }: withStatsOptions
 ): Promise<PlayerWithStats[]> {
-    options.statsPlayoffs = options.statsPlayoffs !== undefined ? options.statsPlayoffs : false;
-
     players = await Promise.all(players);
     players = players.sort((a, b) => a.pid - b.pid);
 
@@ -2112,21 +2119,21 @@ async function withStats(
         return p.pid;
     });
 
-    if ((options.statsSeasons !== "all" && options.statsSeasons.length === 0) || players.length === 0) {
+    if ((statsSeasons !== "all" && statsSeasons.length === 0) || players.length === 0) {
         // No stats needed! Yay!
         return players;
     }
 
     let seasonsRange;
-    if (options.statsSeasons === "all") {
+    if (statsSeasons === "all") {
         // All seasons
         seasonsRange = [0, Infinity];
-    } else if (options.statsSeasons.length === 1) {
+    } else if (statsSeasons.length === 1) {
         // Restrict to one season
-        seasonsRange = [options.statsSeasons[0], options.statsSeasons[0]];
-    } else if (options.statsSeasons.length > 1) {
+        seasonsRange = [statsSeasons[0], statsSeasons[0]];
+    } else if (statsSeasons.length > 1) {
         // Restrict to range between seasons
-        seasonsRange = [Math.min(...options.statsSeasons), Math.max(...options.statsSeasons)];
+        seasonsRange = [Math.min(...statsSeasons), Math.max(...statsSeasons)];
     }
     const range = backboard.bound([Math.min(...pids)], [Math.max(...pids), '']);
 
@@ -2160,13 +2167,13 @@ async function withStats(
                     const ps = cursor.value;
 
                     let save = true;
-                    if (options.statsSeasons !== "all" && !options.statsSeasons.includes(ps.season)) {
+                    if (statsSeasons !== "all" && !statsSeasons.includes(ps.season)) {
                         // statsSeasons is defined, but this season isn't in it
                         save = false;
-                    } else if (!options.statsPlayoffs && options.statsPlayoffs !== ps.playoffs) {
+                    } else if (!statsPlayoffs && statsPlayoffs !== ps.playoffs) {
                         // If options.statsPlayoffs is false, don't include playoffs. Otherwise, include both
                         save = false;
-                    } else if (options.statsTid !== undefined && options.statsTid !== ps.tid) {
+                    } else if (statsTid !== undefined && statsTid !== ps.tid) {
                         save = false;
                     }
 

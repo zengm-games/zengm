@@ -601,7 +601,7 @@ function yearRanges(arr: number[]): string[] {
     return runArr;
 }
 
-function maybeReuseTx(storeNames: string[], mode: string, tx: BackboardTx, cb: Function) {
+function maybeReuseTx(storeNames: string | string[], mode: string, tx: BackboardTx, cb: Function) {
     if (tx !== undefined && tx !== null) {
         return cb(tx);
     }

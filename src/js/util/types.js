@@ -12,6 +12,10 @@ export type Game = {
     won: {tid: number, pts: number},
 };
 
+export type GamePlayer = any;
+
+export type GameResults = any;
+
 // Missing tons, but doesn't matter because setGameAttributes doesn't use it yet
 export type GameAttributeKeyDynamic = (
     'gamesInProgress' |
@@ -104,6 +108,8 @@ export type PlayerInjury = {
     type: string,
 };
 
+export type PlayerSkill = '3' | 'A' | 'B' | 'Di' | 'Dp' | 'Po' | 'Ps' | 'R';
+
 export type PlayerRatings = {
     blk: number,
     dnk: number,
@@ -127,8 +133,6 @@ export type PlayerRatings = {
     stre: number,
     tp: number,
 };
-
-export type PlayerSkill = '3' | 'A' | 'B' | 'Di' | 'Dp' | 'Po' | 'Ps' | 'R';
 
 export type PlayerStats = any;
 

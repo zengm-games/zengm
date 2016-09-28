@@ -13,6 +13,8 @@ import logEvent from '../util/logEvent';
 import * as random from '../util/random';
 import type {
     BackboardTx,
+    GamePlayer,
+    GameResults,
     Phase,
     Player,
     PlayerContract,
@@ -26,7 +28,7 @@ import type {
     RatingKey,
 } from '../util/types';
 
-type Profile = 'Big' | 'Point' | 'Wing';
+type Profile = '' | 'Big' | 'Point' | 'Wing';
 
 let playerNames;
 
@@ -1350,7 +1352,7 @@ function filter(p: PlayerWithStats | PlayerWithStats[], options: any): PlayerFil
 
     // Filters s by stats (which should be options.stats) and returns a filtered object. This is to do one season of stats filtering.
     // eslint-disable-next-line no-shadow
-    const filterStatsPartial = (p, s, stats) => {
+    const filterStatsPartial = (p: PlayerWithStats, s, stats) => {
         const row = {};
 
         if (!_.isEmpty(s) && s.gp > 0) {
@@ -1535,7 +1537,7 @@ function filter(p: PlayerWithStats | PlayerWithStats[], options: any): PlayerFil
  * @param {Object} p Player object.
  * @return {boolean} Hall of Fame worthy?
  */
-function madeHof(p: Player, playerStats: PlayerStats[]) {
+function madeHof(p: Player, playerStats: PlayerStats[]): boolean {
     const mins = playerStats.map(ps => ps.min);
     const pers = playerStats.map(ps => ps.per);
 
@@ -1599,10 +1601,10 @@ function madeHof(p: Player, playerStats: PlayerStats[]) {
  *         ordering and game simulation). Default false.
  *     fuzz: When true, used fuzzed ratings (useful for roster ordering, draft prospect
  *         ordering). Default false.
- * @return {boolean} Value of the player, usually between 50 and 100 like overall and potential
+ * @return {number} Value of the player, usually between 50 and 100 like overall and potential
  *     ratings.
  */
-function value(p: Player | PlayerWithoutPid, ps: PlayerStats[], options) {
+function value(p: Player | PlayerWithoutPid, ps: PlayerStats[], options): number {
     options = options !== undefined ? options : {};
     options.noPot = options.noPot !== undefined ? options.noPot : false;
     options.fuzz = options.fuzz !== undefined ? options.fuzz : false;
@@ -1766,7 +1768,7 @@ async function updateValues(tx: ?BackboardTx, p: Player | PlayerWithoutPid, ps) 
  * @param {Object} p Player object.
  * @return {Object} p Updated (retired) player object.
  */
-function retire(tx: BackboardTx, p: Player, playerStats, retiredNotification?: boolean = true) {
+function retire(tx: BackboardTx, p: Player, playerStats: PlayerStats[], retiredNotification?: boolean = true) {
     if (retiredNotification) {
         logEvent(tx, {
             type: "retired",
@@ -1918,7 +1920,7 @@ function augmentPartialPlayer(p: any, scoutingRank: number): PlayerWithoutPid {
     return p;
 }
 
-function checkStatisticalFeat(tx: BackboardTx, pid: number, tid: number, p, results) {
+function checkStatisticalFeat(tx: BackboardTx, pid: number, tid: number, p: GamePlayer, results: GameResults) {
     const minFactor = Math.sqrt(g.quarterLength / 12); // sqrt is to account for fatigue in short/long games. Also https://news.ycombinator.com/item?id=11032596
     const TEN = minFactor * 10;
     const FIVE = minFactor * 5;
@@ -2094,16 +2096,10 @@ type withStatsOptions = {
 };
 async function withStats(
     tx: BackboardTx,
-    players,
+    players: Player[],
     options: withStatsOptions
-) {
+): Promise<PlayerWithStats[]> {
     options.statsPlayoffs = options.statsPlayoffs !== undefined ? options.statsPlayoffs : false;
-    options.statsTid = options.statsTid !== undefined ? options.statsTid : null;
-
-    if ((options.statsSeasons !== "all" && options.statsSeasons.length === 0) || players.length === 0) {
-        // No stats needed! Yay!
-        return players;
-    }
 
     players = await Promise.all(players);
     players = players.sort((a, b) => a.pid - b.pid);
@@ -2115,6 +2111,11 @@ async function withStats(
 
         return p.pid;
     });
+
+    if ((options.statsSeasons !== "all" && options.statsSeasons.length === 0) || players.length === 0) {
+        // No stats needed! Yay!
+        return players;
+    }
 
     let seasonsRange;
     if (options.statsSeasons === "all") {
@@ -2165,7 +2166,7 @@ async function withStats(
                     } else if (!options.statsPlayoffs && options.statsPlayoffs !== ps.playoffs) {
                         // If options.statsPlayoffs is false, don't include playoffs. Otherwise, include both
                         save = false;
-                    } else if (options.statsTid !== null && options.statsTid !== ps.tid) {
+                    } else if (options.statsTid !== undefined && options.statsTid !== ps.tid) {
                         save = false;
                     }
 

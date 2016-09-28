@@ -14,7 +14,22 @@ type LogEventOptions = {
     showNotification?: boolean,
     text: string,
     tids?: number[],
-    type: ?('award' | 'changes' | 'draft' | 'error' | 'freeAgent' | 'playoffs' | 'refuseToSign' | 'release' | 'reSigned' | 'trade'),
+    type: ?(
+        'award' |
+        'changes' |
+        'draft' |
+        'error' |
+        'freeAgent' |
+        'hallOfFame' |
+        'playerFeat' |
+        'playoffs' |
+        'reSigned' |
+        'refuseToSign' |
+        'release' |
+        'retired' |
+        'trade' |
+        'tragedy'
+    ),
 }
 
 const logEvent = (tx: ?BackboardTx, {

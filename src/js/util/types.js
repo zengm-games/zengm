@@ -141,7 +141,7 @@ export type PlayerSalary = {
 
 export type PlayerStats = any;
 
-export type PlayerWithoutPid = {
+export type Player = {
     awards: {
         season: number,
         type: string,
@@ -174,6 +174,7 @@ export type PlayerWithoutPid = {
     imgURL: string,
     injury: PlayerInjury,
     lastName: string,
+    pid: number,
     pos?: string, // Only in players from custom league files
     ptModifier: number,
     ratings: PlayerRatings[],
@@ -192,11 +193,7 @@ export type PlayerWithoutPid = {
     yearsFreeAgent: number,
 };
 
-export type Player = PlayerWithoutPid & {pid: number};
-
 export type PlayerWithStats = Player & {stats: PlayerStats[]};
-
-export type PlayerWithoutPidWithStats = PlayerWithoutPid & {stats: PlayerStats[]};
 
 export type ContractInfo = {
     pid: number,

@@ -10,6 +10,7 @@ flow
     defined as string[] some places in line
   how to handle cases where an object doesn't have a property yet (like p.pid, ratings.pos) without copy/pasting type?
   in withStats, how to convert input obj of type Player to output obj of type PlayerWithStats
+  get rid of any, Object, etc
 
 replace owner message text with numbers/chart
 

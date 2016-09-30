@@ -24,8 +24,6 @@ import type {
     PlayerSalary,
     PlayerSkill,
     PlayerStats,
-    PlayerWithoutPid,
-    PlayerWithoutPidWithStats,
     PlayerWithStats,
     RatingKey,
 } from '../util/types';
@@ -154,7 +152,7 @@ function skills(ratings: PlayerRatings): PlayerSkill[] {
  * @return {Object.<string, number>} Object containing two properties with integer values, "amount" with the contract amount in thousands of dollars and "exp" with the contract expiration year.
  */
 function genContract(
-    p: Player | PlayerWithoutPid,
+    p: Player,
     randomizeExp: boolean = false,
     randomizeAmount: boolean = true,
     noLimit: boolean = false,
@@ -499,7 +497,7 @@ function develop<T: {born: {loc: string, year: number}, pos?: string, ratings: P
  * @param {number} amount Number to be added to each rating (can be negative).
  * @return {Object} Updated player object.
  */
-function bonus(p: PlayerWithoutPid, amount: number): PlayerWithoutPid {
+function bonus(p: Player, amount: number): Player {
     // Make sure age is always defined
     const age = g.season - p.born.year;
 
@@ -937,7 +935,7 @@ function generate(
     draftYear: number,
     newLeague: boolean,
     scoutingRank: number,
-): PlayerWithoutPid {
+): Player {
     let ratings;
     if (newLeague) {
         // Create player for new league
@@ -987,6 +985,7 @@ function generate(
         imgURL: "", // Custom rosters can define player image URLs to be used rather than vector faces
         injury: {type: "Healthy", gamesRemaining: 0},
         lastName: nameInfo.lastName,
+        pid: -1, // Was too hard to leave undefined in flow
         ptModifier: 1,
         ratings: [ratings],
         retiredYear: null,
@@ -1116,8 +1115,7 @@ function filter(p: PlayerWithStats | PlayerWithStats[], options: any): PlayerFil
                 // Non-dead players wil not have any diedYear property
                 fp.diedYear = p.hasOwnProperty("diedYear") ? p.diedYear : null;
             } else if (options.attrs[i] === "draft") {
-                fp.draft = p.draft;
-                fp.draft.age = p.draft.year - p.born.year;
+                fp.draft = Object.assign({}, p.draft, {age: p.draft.year - p.born.year});
                 if (options.fuzz) {
                     fp.draft.ovr = fuzzRating(fp.draft.ovr, p.ratings[0].fuzz);
                     fp.draft.pot = fuzzRating(fp.draft.pot, p.ratings[0].fuzz);
@@ -1460,11 +1458,11 @@ function filter(p: PlayerWithStats | PlayerWithStats[], options: any): PlayerFil
 
     // Copys/filters the stats listed in options.stats from p to fp. If no stats are found for the supplied settings, then fp.stats remains undefined.
     // eslint-disable-next-line no-shadow
-    const filterStats = (fp, p: Player, options) => {
+    const filterStats = (fp, p: PlayerWithStats, options) => {
         const ps = gatherStats(p, options);
 
         // Always proceed for options.showRookies; proceed if we found some stats (checking for empty objects or lists); proceed if options.showNoStats
-        if ((options.showRookies && p.draft.year >= g.season && (options.season === g.season || options.season === null)) || (!_.isEmpty(ps) && !_.isEmpty(ps.r)) || (options.showNoStats && (options.season > p.draft.year || options.season === null))) {
+        if ((options.showRookies && p.draft.year >= g.season && (options.season === g.season || options.season === null)) || (!_.isEmpty(ps) && !_.isEmpty(ps.r)) || (options.showNoStats && (options.season === null || options.season > p.draft.year))) {
             if (options.season === null && options.stats.length > 0) {
                 if (!_.isEmpty(ps) && !_.isEmpty(ps.r)) {
                     // Multiple seasons, only show if there is data
@@ -1615,7 +1613,7 @@ type ValueOptions = {
  * @return {number} Value of the player, usually between 50 and 100 like overall and potential
  *     ratings.
  */
-function value(p: Player | PlayerWithoutPid, ps: PlayerStats[], options: ValueOptions = {}): number {
+function value(p: any, ps: PlayerStats[], options: ValueOptions = {}): number {
     options.noPot = !!options.noPot;
     options.fuzz = !!options.fuzz;
     options.withContract = !!options.withContract;
@@ -1723,7 +1721,7 @@ function value(p: Player | PlayerWithoutPid, ps: PlayerStats[], options: ValueOp
 // ps: player stats objects, regular season only, most recent first
 // Currently it is assumed that ps, if passed, will be the latest season. This assumption could be easily relaxed if necessary, just might make it a bit slower
 async function updateValues<T: {
-    //pid?: number, // Doens't work for whatever reason, not sure how to specify this type
+    pid: number,
     value: number,
     valueNoPot: number,
     valueFuzz: number,
@@ -1851,7 +1849,7 @@ function moodColorText(p: Player) {
  * @param {Object} p Partial player object.
  * @return {Object} p Full player object.
  */
-function augmentPartialPlayer(p: any, scoutingRank: number): PlayerWithoutPidWithStats {
+function augmentPartialPlayer(p: any, scoutingRank: number): PlayerWithStats {
     let age;
     if (!p.hasOwnProperty("born")) {
         age = random.randInt(19, 35);

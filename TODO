@@ -54,6 +54,8 @@ Draft
 
 convert Dexie.Promise to a minimal A+ version (or use es6-promise), then use that plus some promise utils (eithier exiting or write my own) to replace Bluebird
 
+change max roster size https://www.reddit.com/r/BasketballGM/comments/554dly/maximum_of_roster_spots/
+
 pressing alt+p rapidly can result in extra games being played
 
 filters on event log

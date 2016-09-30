@@ -94,7 +94,13 @@ class GodMode extends React.Component {
     }
 
     async handleGodModeToggle() {
-        await league.setGameAttributesComplete({godMode: !this.props.godMode});
+        const attrs = {godMode: !this.props.godMode};
+
+        if (!this.props.godMode) {
+            attrs.godModeInPast = true;
+        }
+
+        await league.setGameAttributesComplete(attrs);
 
         league.updateLastDbChange();
         ui.realtimeUpdate(["toggleGodMode"]);

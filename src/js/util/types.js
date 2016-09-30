@@ -196,6 +196,8 @@ export type Player = PlayerWithoutPid & {pid: number};
 
 export type PlayerWithStats = Player & {stats: PlayerStats[]};
 
+export type PlayerWithoutPidWithStats = PlayerWithoutPid & {stats: PlayerStats[]};
+
 export type ContractInfo = {
     pid: number,
     firstName: string,

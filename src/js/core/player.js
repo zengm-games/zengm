@@ -25,6 +25,7 @@ import type {
     PlayerSkill,
     PlayerStats,
     PlayerWithoutPid,
+    PlayerWithoutPidWithStats,
     PlayerWithStats,
     RatingKey,
 } from '../util/types';
@@ -1722,12 +1723,12 @@ function value(p: Player | PlayerWithoutPid, ps: PlayerStats[], options: ValueOp
 // ps: player stats objects, regular season only, most recent first
 // Currently it is assumed that ps, if passed, will be the latest season. This assumption could be easily relaxed if necessary, just might make it a bit slower
 async function updateValues<T: {
-        pid?: number,
-        value: number,
-        valueNoPot: number,
-        valueFuzz: number,
-        valueNoPotFuzz: number,
-        valueWithContract: number,
+    //pid?: number, // Doens't work for whatever reason, not sure how to specify this type
+    value: number,
+    valueNoPot: number,
+    valueFuzz: number,
+    valueNoPotFuzz: number,
+    valueWithContract: number,
 }>(tx: ?BackboardTx, p: T, ps: PlayerStats[]): Promise<T> {
     const dbOrTx = tx !== undefined && tx !== null ? tx : g.dbl;
 
@@ -1850,7 +1851,7 @@ function moodColorText(p: Player) {
  * @param {Object} p Partial player object.
  * @return {Object} p Full player object.
  */
-function augmentPartialPlayer(p: any, scoutingRank: number): PlayerWithoutPid {
+function augmentPartialPlayer(p: any, scoutingRank: number): PlayerWithoutPidWithStats {
     let age;
     if (!p.hasOwnProperty("born")) {
         age = random.randInt(19, 35);

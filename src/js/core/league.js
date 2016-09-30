@@ -351,8 +351,9 @@ async function create(
                 }
             }
 
-            players.forEach(async p => {
-                p = player.augmentPartialPlayer(p, scoutingRank);
+            players.forEach(async p0 => {
+                // Has to be any because I cna't figure out how to change PlayerWithoutPidWithStats to Player
+                let p: any = player.augmentPartialPlayer(p0, scoutingRank);
 
                 // Don't let imported contracts be created for below the league minimum, and round to nearest $10,000.
                 p.contract.amount = Math.max(10 * Number(helpers.round(p.contract.amount / 10)), g.minContract);

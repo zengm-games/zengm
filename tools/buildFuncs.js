@@ -49,7 +49,7 @@ const minifyCss = () => {
 
     // Read each CSS file into a string.
     for (const filename of cssFilenames) {
-        source += fs.readFileSync(`src/css/${filename}`);
+        source += fs.readFileSync(`src/css/${filename}`).toString();
     }
 
     /*

@@ -296,6 +296,7 @@ export type TradeTeams = [TradeTeam, TradeTeam];
 export type UpdateEvents = (
     'firstRun' |
     'g.gamesInProgress' |
+    'gameSim' |
     'newPhase' |
     'playerMovement'
 )[];

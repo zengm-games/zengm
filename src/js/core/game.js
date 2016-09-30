@@ -1,3 +1,5 @@
+// @flow
+
 import backboard from 'backboard';
 import Promise from 'bluebird';
 import _ from 'underscore';
@@ -16,8 +18,9 @@ import logEvent from '../util/logEvent';
 import * as helpers from '../util/helpers';
 import * as lock from '../util/lock';
 import * as random from '../util/random';
+import type {BackboardTx, GameResults} from '../util/types';
 
-function writeTeamStats(tx, results) {
+function writeTeamStats(tx: BackboardTx, results: GameResults) {
     return Promise.reduce([0, 1], async (cache, t1) => {
         const t2 = t1 === 1 ? 0 : 1;
 
@@ -216,7 +219,7 @@ function writeTeamStats(tx, results) {
     }, 0);
 }
 
-function writePlayerStats(tx, results) {
+function writePlayerStats(tx: BackboardTx, results: GameResults) {
     return Promise.map(results.team, t => Promise.map(t.player, p => {
         // Only need to write stats if player got minutes
         if (p.stat.min === 0) {
@@ -304,7 +307,7 @@ function writePlayerStats(tx, results) {
     }));
 }
 
-async function writeGameStats(tx, results, att) {
+async function writeGameStats(tx: BackboardTx, results: GameResults, att: number) {
     const gameStats = {
         gid: results.gid,
         att,
@@ -314,10 +317,14 @@ async function writeGameStats(tx, results, att) {
         won: {},
         lost: {},
         teams: [
-            {tid: results.team[0].id, players: []},
-            {tid: results.team[1].id, players: []},
+            {},
+            {},
         ],
     };
+    gameStats.teams[0].tid = results.team[0].id;
+    gameStats.teams[0].players = [];
+    gameStats.teams[1].tid = results.team[1].id;
+    gameStats.teams[1].players = [];
 
     for (let t = 0; t < 2; t++) {
         const keys = ['min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'ba', 'pf', 'pts', 'ptsQtrs'];
@@ -383,7 +390,7 @@ async function writeGameStats(tx, results, att) {
     await tx.games.put(gameStats);
 }
 
-async function updatePlayoffSeries(tx, results) {
+async function updatePlayoffSeries(tx: BackboardTx, results: GameResults) {
     const playoffSeries = await tx.playoffSeries.get(g.season);
 
     const playoffRound = playoffSeries.series[playoffSeries.currentRound];
@@ -517,32 +524,52 @@ async function loadTeams(tx) {
 
         players.sort((a, b) => a.rosterOrder - b.rosterOrder);
 
-        const t = {id: tid, defense: 0, pace: 0, won: 0, lost: 0, cid: 0, did: 0, stat: {}, player: [], synergy: {off: 0, def: 0, reb: 0}};
 
-        t.won = teamSeason.won;
-        t.lost = teamSeason.lost;
-        t.cid = cid;
-        t.did = did;
-        t.healthRank = teamSeason.expenses.health.rank;
+        // Initialize team composite rating object
+        const compositeRating = {};
+        for (const rating of Object.keys(g.compositeWeights)) {
+            compositeRating[rating] = 0;
+        }
+
+        const t = {
+            id: tid,
+            defense: 0,
+            pace: 0,
+            won: teamSeason.won,
+            lost: teamSeason.lost,
+            cid,
+            did,
+            stat: {},
+            player: [],
+            synergy: {off: 0, def: 0, reb: 0},
+            healthRank: teamSeason.expenses.health.rank,
+            compositeRating,
+        };
 
         for (let i = 0; i < players.length; i++) {
-            const pos = players[i].ratings[players[i].ratings.length - 1].pos;
-            const p = {id: players[i].pid, name: `${players[i].firstName} ${players[i].lastName}`, pos, valueNoPot: players[i].valueNoPot, stat: {}, compositeRating: {}, skills: [], injury: players[i].injury, injured: players[i].injury.type !== "Healthy", ptModifier: players[i].ptModifier};
-
-            // Reset ptModifier for AI teams. This should not be necessary since it should always be 1, but let's be safe.
-            if (!g.userTids.includes(t.id)) {
-                p.ptModifier = 1;
-            }
-
             let rating = players[i].ratings.find(r => r.season === g.season);
             if (rating === undefined) {
                 // Sometimes this happens for unknown reasons, so gracefully handle it
                 rating = players[i].ratings[players[i].ratings.length - 1];
             }
 
-            p.skills = rating.skills;
+            const p = {
+                id: players[i].pid,
+                name: `${players[i].firstName} ${players[i].lastName}`,
+                pos: rating.pos,
+                valueNoPot: players[i].valueNoPot,
+                stat: {},
+                compositeRating: {},
+                skills: rating.skills,
+                injury: players[i].injury,
+                injured: players[i].injury.type !== "Healthy",
+                ptModifier: players[i].ptModifier,
+            };
 
-            p.ovr = rating.ovr;
+            // Reset ptModifier for AI teams. This should not be necessary since it should always be 1, but let's be safe.
+            if (!g.userTids.includes(t.id)) {
+                p.ptModifier = 1;
+            }
 
             // These use the same formulas as the skill definitions in player.skills!
             for (const k of Object.keys(g.compositeWeights)) {
@@ -569,12 +596,6 @@ async function loadTeams(tx) {
         t.pace /= numPlayers;
         t.pace = t.pace * 15 + 100;  // Scale between 100 and 115
 
-        // Initialize team composite rating object
-        t.compositeRating = {};
-        for (const rating of Object.keys(g.compositeWeights)) {
-            t.compositeRating[rating] = 0;
-        }
-
         t.stat = {min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, ba: 0, pf: 0, pts: 0, ptsQtrs: [0]};
 
         return t;
@@ -591,7 +612,7 @@ async function loadTeams(tx) {
  * @param {boolean} start Is this a new request from the user to play games (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed. Default true.
  * @param {number?} gidPlayByPlay If this number matches a game ID number, then an array of strings representing the play-by-play game simulation are included in the ui.realtimeUpdate raw call.
  */
-async function play(numDays, start = true, gidPlayByPlay = null) {
+async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: number) {
     // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season
     const cbNoGames = async () => {
         ui.updateStatus("Idle");
@@ -679,7 +700,7 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
         // If there was a play by play done for one of these games, get it
         let raw;
         let url;
-        if (gidPlayByPlay !== null) {
+        if (gidPlayByPlay !== undefined) {
             for (let i = 0; i < results.length; i++) {
                 if (results[i].playByPlay !== undefined) {
                     raw = {

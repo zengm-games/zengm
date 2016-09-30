@@ -20,7 +20,11 @@ type LogEventOptions = {
         'draft' |
         'error' |
         'freeAgent' |
+        'gameLost' |
+        'gameWon' |
         'hallOfFame' |
+        'healed' |
+        'injured' |
         'playerFeat' |
         'playoffs' |
         'reSigned' |

@@ -336,10 +336,12 @@ async function writeGameStats(tx: BackboardTx, results: GameResults, att: number
         keys.unshift("gs"); // Also record starters, in addition to other stats
         keys.push("pm");
         for (let p = 0; p < results.team[t].player.length; p++) {
-            gameStats.teams[t].players[p] = {name: results.team[t].player[p].name, pos: results.team[t].player[p].pos};
+            gameStats.teams[t].players[p] = {};
             for (let i = 0; i < keys.length; i++) {
                 gameStats.teams[t].players[p][keys[i]] = results.team[t].player[p].stat[keys[i]];
             }
+            gameStats.teams[t].players[p].name = results.team[t].player[p].name;
+            gameStats.teams[t].players[p].pos = results.team[t].player[p].pos;
             gameStats.teams[t].players[p].trb = results.team[t].player[p].stat.orb + results.team[t].player[p].stat.drb;
             gameStats.teams[t].players[p].pid = results.team[t].player[p].id;
             gameStats.teams[t].players[p].skills = results.team[t].player[p].skills;
@@ -420,6 +422,11 @@ async function updatePlayoffSeries(tx: BackboardTx, results: GameResults) {
             }
         }
 
+        // For flow, not really necessary
+        if (series === undefined) {
+            continue;
+        }
+
         // Log result of playoff series
         if (series.away.won >= 4 || series.home.won >= 4) {
             let winnerTid;
@@ -435,7 +442,7 @@ async function updatePlayoffSeries(tx: BackboardTx, results: GameResults) {
                 loserWon = series.away.won;
             }
 
-            let currentRoundText;
+            let currentRoundText = '';
             if (playoffSeries.currentRound === 0) {
                 currentRoundText = "first round of the playoffs";
             } else if (playoffSeries.currentRound === 1) {

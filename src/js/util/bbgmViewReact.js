@@ -1,23 +1,40 @@
-import g from '../globals';
+// @flow
 
-function init(args) {
+import g from '../globals';
+import type {PageCtx, UpdateEvents} from './types';
+
+type GetOutput = {[key: string]: ?(number | string)};
+
+type RunFunction = (
+    inputs?: GetOutput,
+    updateEvents?: UpdateEvents,
+    state?: any,
+    setState?: (state: any) => void,
+    topMenu?: any,
+) => Promise<{[key: string]: any}>;
+
+type InitArgs = {
+    Component: any,
+    inLeague?: boolean,
+    get?: (ctx?: PageCtx) => GetOutput,
+    runBefore?: RunFunction[],
+    runWhenever?: RunFunction[],
+};
+
+function init(args: InitArgs) {
     args.inLeague = args.inLeague !== undefined ? args.inLeague : true;
     args.get = args.get !== undefined ? args.get : () => { return {}; };
     args.runBefore = args.runBefore !== undefined ? args.runBefore : [];
     args.runWhenever = args.runWhenever !== undefined ? args.runWhenever : [];
 
-    if (args.InitViewModel) { throw new Error('Invalid arg InitViewModel'); }
-    if (args.beforeReq) { throw new Error('Invalid arg beforeReq'); }
-    if (args.uiFirst) { throw new Error('Invalid arg uiFirst'); }
-    if (args.uiEvery) { throw new Error('Invalid arg uiEvery'); }
-    if (args.runAfter) { throw new Error('Invalid arg runAfter'); }
-    if (args.mapping) { throw new Error('Invalid arg mapping'); }
 
     if (!args.Component) { throw new Error('Missing arg Component'); }
 
     const output = {};
-    output.update = (inputs, updateEvents, cb) => g.emitter.emit('updatePage', args, inputs, updateEvents, cb);
-    output.get = (ctx, next) => {
+    output.update = (inputs: GetOutput, updateEvents: UpdateEvents, cb: () => void) => {
+        g.emitter.emit('updatePage', args, inputs, updateEvents, cb);
+    };
+    output.get = (ctx: PageCtx, next: () => void) => {
         if (ctx.bbgm === undefined) {
             ctx.bbgm = {};
         }
@@ -38,7 +55,7 @@ function init(args) {
 }
 
 let currentTitle = 'Basketball GM';
-function title(newTitle) {
+function title(newTitle: string) {
     if (g.lid !== null) {
         newTitle += ` - ${g.leagueName}`;
     }

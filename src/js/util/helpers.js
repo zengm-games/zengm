@@ -183,7 +183,9 @@ function error(errorText: React.Element<*> | string, cb: Function) {
         {errorText}
     </div>);
 
-    view.get({raw: {}});
+    view.get({raw: {}}, () => {
+        throw new Error('Fake "next" function - this should never be called!');
+    });
     if (cb) {
         cb();
     }

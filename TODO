@@ -10,6 +10,7 @@ flow
     defined as string[] some places in line
   in withStats, how to convert input obj of type Player to output obj of type PlayerWithStats
   get rid of any, Object, etc
+  ESLint
 
 replace owner message text with numbers/chart
 

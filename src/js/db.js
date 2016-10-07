@@ -1,3 +1,5 @@
+// @flow
+
 import Promise from 'bluebird';
 import Backboard from 'backboard';
 import page from 'page';
@@ -63,7 +65,7 @@ async function connectMeta() {
  * @param {Object} event Event from onupgradeneeded, with oldVersion 0.
  * @param {number} lid Integer league ID number for new league.
  */
-function createLeague(upgradeDB, lid) {
+function createLeague(upgradeDB, lid: number) {
     console.log(`Creating league${lid} database`);
 
     // rid ("row id") is used as the keyPath for objects without an innate unique identifier
@@ -198,7 +200,7 @@ async function migrateLeague(upgradeDB, lid) {
     }
 }
 
-async function connectLeague(lid) {
+async function connectLeague(lid: number) {
     const db = await Backboard.open(`league${lid}`, 20, async (upgradeDB) => {
         if (upgradeDB.oldVersion === 0) {
             createLeague(upgradeDB, lid);
@@ -213,11 +215,13 @@ async function connectLeague(lid) {
 
 async function reset() {
     // localStorage, which is just use for table sorting currently
-    const debug = localStorage.debug; // Save debug setting and restore later
+    const debug = localStorage.getItem('debug'); // Save debug setting and restore later
     for (const key of Object.keys(localStorage)) {
         localStorage.removeItem(key);
     }
-    localStorage.debug = debug;
+    if (typeof debug === 'string') {
+        localStorage.setItem('debug', debug);
+    }
 
     // Delete any current league databases
     console.log("Deleting any current league databases...");

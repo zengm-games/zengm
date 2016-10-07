@@ -161,7 +161,7 @@ Args:
     status: A string containing the current status message to be pushed to
         the client.
 */
-async function updateStatus(statusText: string) {
+async function updateStatus(statusText?: string) {
     const oldStatus = g.statusText;
     if (statusText === undefined) {
         g.emitter.emit('updateTopMenu', {statusText: oldStatus});
@@ -180,7 +180,7 @@ Args:
     phaseText: A string containing the current phase text to be pushed to
         the client.
 */
-async function updatePhase(phaseText: string) {
+async function updatePhase(phaseText?: string) {
     const oldPhaseText = g.phaseText;
     if (phaseText === undefined) {
         g.emitter.emit('updateTopMenu', {phaseText: oldPhaseText});

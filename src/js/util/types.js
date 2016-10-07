@@ -313,6 +313,7 @@ type TradeTeam = {
 export type TradeTeams = [TradeTeam, TradeTeam];
 
 export type UpdateEvents = (
+    'dbChange' |
     'firstRun' |
     'g.gamesInProgress' |
     'gameSim' |

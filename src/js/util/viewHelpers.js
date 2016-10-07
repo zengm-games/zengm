@@ -1,11 +1,14 @@
+// @flow
+
 import React from 'react';
 import * as db from '../db';
 import g from '../globals';
 import * as ui from '../ui';
 import * as league from '../core/league';
 import * as helpers from './helpers';
+import type {PageCtx, UpdateEvents} from './types';
 
-const beforeLeague = async (ctx, loadedLid) => {
+const beforeLeague = async (ctx: PageCtx, loadedLid: number): Promise<[UpdateEvents, () => void]> => {
     g.lid = parseInt(ctx.params.lid, 10);
 
     // Check for some other window making changes to the database
@@ -64,7 +67,7 @@ const beforeLeague = async (ctx, loadedLid) => {
     return [updateEvents, ctxCb];
 };
 
-const beforeNonLeague = (ctx) => {
+const beforeNonLeague = (ctx: PageCtx): [UpdateEvents, () => void] => {
     g.lid = null;
     g.emitter.emit('updateTopMenu', {lid: undefined});
 

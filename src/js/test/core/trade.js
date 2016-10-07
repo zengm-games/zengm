@@ -29,7 +29,7 @@ describe("core/trade", () => {
             await testCreateTrade(22, [], []);
         });
         it("should create trade with player ID", async () => {
-            await trade.create([{tid: g.userTid, pids: [], dpids: []}, {tid: null, pids: [81], dpids: []}]);
+            await trade.create([{tid: g.userTid, pids: [], dpids: []}, {tid: 2, pids: [81], dpids: []}]);
             await testCreateTrade(2, [], [81]);
         });
     });

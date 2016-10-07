@@ -58,10 +58,6 @@ describe("util/helpers", () => {
             assert.equal(helpers.getAbbrev(6), "DAL");
             assert.equal(helpers.getAbbrev("6"), "DAL");
         });
-        it("should return user team abbrev on invalid input", () => {
-            assert.equal(helpers.getAbbrev("fuck"), "CIN");
-            assert.equal(helpers.getAbbrev(), "CIN");
-        });
         it("should return \"FA\" for free agents", () => {
             assert.equal(helpers.getAbbrev(g.PLAYER.FREE_AGENT), "FA");
         });
@@ -75,29 +71,6 @@ describe("util/helpers", () => {
         it("should return current season on invalid input", () => {
             assert.equal(helpers.validateSeason("fuck"), 2009);
             assert.equal(helpers.validateSeason(), 2009);
-        });
-    });
-
-    describe("#getSeasons()", () => {
-        it("should return array with values for each season since g.startingSeason", () => {
-            const seasons = helpers.getSeasons();
-            assert.equal(seasons.length, g.season - g.startingSeason + 1);
-            for (let i = 0; i < seasons.length; i++) {
-                assert.equal(seasons[i].selected, false);
-            }
-        });
-        it("should select season", () => {
-            const seasons = helpers.getSeasons(g.startingSeason);
-            for (let i = 0; i < seasons.length; i++) {
-                if (seasons[i].season === g.startingSeason) {
-                    assert.equal(seasons[i].selected, true);
-                } else {
-                    assert.equal(seasons[i].selected, false);
-                }
-            }
-        });
-        it("should ignore season", () => {
-            assert.equal(helpers.getSeasons(undefined, g.season).length, g.season - g.startingSeason);
         });
     });
 

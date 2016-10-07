@@ -15,6 +15,7 @@ type LogEventOptions = {
     text: string,
     tids?: number[],
     type: ?(
+        'achievement' |
         'award' |
         'changes' |
         'draft' |

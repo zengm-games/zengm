@@ -25,6 +25,7 @@ import type {
     PlayerSkill,
     PlayerStats,
     PlayerWithStats,
+    PlayerWithoutPid,
     RatingKey,
 } from '../util/types';
 
@@ -152,7 +153,7 @@ function skills(ratings: PlayerRatings): PlayerSkill[] {
  * @return {Object.<string, number>} Object containing two properties with integer values, "amount" with the contract amount in thousands of dollars and "exp" with the contract expiration year.
  */
 function genContract(
-    p: Player,
+    p: Player | PlayerWithoutPid,
     randomizeExp: boolean = false,
     randomizeAmount: boolean = true,
     noLimit: boolean = false,
@@ -497,7 +498,13 @@ function develop<T: {born: {loc: string, year: number}, pos?: string, ratings: P
  * @param {number} amount Number to be added to each rating (can be negative).
  * @return {Object} Updated player object.
  */
-function bonus(p: Player, amount: number): Player {
+function bonus<T: {
+    born: {
+        loc: string,
+        year: number,
+    },
+    ratings: PlayerRatings[],
+}>(p: T, amount: number): T {
     // Make sure age is always defined
     const age = g.season - p.born.year;
 
@@ -935,7 +942,7 @@ function generate(
     draftYear: number,
     newLeague: boolean,
     scoutingRank: number,
-): Player {
+): PlayerWithoutPid {
     let ratings;
     if (newLeague) {
         // Create player for new league
@@ -985,7 +992,6 @@ function generate(
         imgURL: "", // Custom rosters can define player image URLs to be used rather than vector faces
         injury: {type: "Healthy", gamesRemaining: 0},
         lastName: nameInfo.lastName,
-        pid: -1, // Was too hard to leave undefined in flow
         ptModifier: 1,
         ratings: [ratings],
         retiredYear: null,
@@ -1720,14 +1726,7 @@ function value(p: any, ps: PlayerStats[], options: ValueOptions = {}): number {
 
 // ps: player stats objects, regular season only, most recent first
 // Currently it is assumed that ps, if passed, will be the latest season. This assumption could be easily relaxed if necessary, just might make it a bit slower
-async function updateValues<T: {
-    pid: number,
-    value: number,
-    valueNoPot: number,
-    valueFuzz: number,
-    valueNoPotFuzz: number,
-    valueWithContract: number,
-}>(tx: ?BackboardTx, p: T, ps: PlayerStats[]): Promise<T> {
+async function updateValues<T: Player | PlayerWithoutPid>(tx: ?BackboardTx, p: T, ps: PlayerStats[]): Promise<T> {
     const dbOrTx = tx !== undefined && tx !== null ? tx : g.dbl;
 
     // Require up to the two most recent regular season stats entries, unless the current season has 2000+ minutes

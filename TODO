@@ -9,6 +9,7 @@ flow
   PlayerSkill
     defined as string[] some places in line
   how to handle cases where an object doesn't have a property yet (like p.pid, ratings.pos) without copy/pasting type?
+    http://stackoverflow.com/questions/39908535/annotating-functions-in-flow-that-operate-on-union-types-containing-optional-par/39909259#39909259
   in withStats, how to convert input obj of type Player to output obj of type PlayerWithStats
   get rid of any, Object, etc
 

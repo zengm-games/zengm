@@ -21,7 +21,7 @@ import type {
     PlayerFiltered,
     PlayerInjury,
     PlayerRatings,
-    PlayerSalary,
+    PlayerSalary, // eslint-disable-line no-unused-vars
     PlayerSkill,
     PlayerStats,
     PlayerWithStats,
@@ -1726,7 +1726,11 @@ function value(p: any, ps: PlayerStats[], options: ValueOptions = {}): number {
 
 // ps: player stats objects, regular season only, most recent first
 // Currently it is assumed that ps, if passed, will be the latest season. This assumption could be easily relaxed if necessary, just might make it a bit slower
-async function updateValues<T: Player | PlayerWithoutPid>(tx: ?BackboardTx, p: T, ps: PlayerStats[]): Promise<T> {
+async function updateValues<T: Player | PlayerWithoutPid>(
+    tx: ?BackboardTx,
+    p: T,
+    ps: PlayerStats[],
+): Promise<T> {
     const dbOrTx = tx !== undefined && tx !== null ? tx : g.dbl;
 
     // Require up to the two most recent regular season stats entries, unless the current season has 2000+ minutes
@@ -1741,10 +1745,12 @@ async function updateValues<T: Player | PlayerWithoutPid>(tx: ?BackboardTx, p: T
         }
 
         // New player objects don't have pids let alone stats, so just skip
-        if (p.hasOwnProperty("pid")) {
+        if (typeof p.pid === 'number') {
+            const pid = p.pid; // Otherwise, flow worries it could be mutated in the call to `index` I think
+
             // Start at season and look backwards until we hit
             // This will not work totally right if a player played for multiple teams in a season. It should be ordered by psid, instead it's ordered by tid because of the index used
-            await dbOrTx.playerStats.index('pid, season, tid').iterate(backboard.bound([p.pid, 0], [p.pid, season + 1]), 'prev', (psTemp: PlayerStats, shortCircuit) => {
+            await dbOrTx.playerStats.index('pid, season, tid').iterate(backboard.bound([pid, 0], [pid, season + 1]), 'prev', (psTemp: PlayerStats, shortCircuit) => {
                 // Skip playoff stats
                 if (psTemp.playoffs) {
                     return;

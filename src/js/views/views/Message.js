@@ -1,9 +1,25 @@
+// @flow
+
 import React from 'react';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import * as helpers from '../../util/helpers';
 import {NewWindowLink, SafeHtml} from '../components';
+import type {Message as Message_} from '../../util/types';
 
-const Message = ({message = {}}) => {
+type MessageProps = {
+    message: void | Message_,
+};
+
+const Message = ({message}: MessageProps) => {
+    if (!message) {
+        bbgmViewReact.title('Message');
+
+        return <div>
+            <h1>Error</h1>
+            <p>Message not found.</p>
+        </div>;
+    }
+
     bbgmViewReact.title(`Message From ${message.from}`);
 
     return <div>
@@ -20,7 +36,7 @@ Message.propTypes = {
         from: React.PropTypes.string.isRequired,
         text: React.PropTypes.string.isRequired,
         year: React.PropTypes.number.isRequired,
-    }).isRequired,
+    }),
 };
 
 export default Message;

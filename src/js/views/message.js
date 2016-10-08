@@ -21,7 +21,7 @@ async function updateMessage(inputs, updateEvents, state): Promise<void | {messa
             readThisPageview = false;
 
             // If mid is null, this will open the *unread* message with the highest mid
-            await tx.messages.iterate(inputs.mid, 'prev', (messageLocal: Message, shortCircuit) => {
+            await tx.messages.iterate(inputs.mid, 'prev', (messageLocal: Message_, shortCircuit) => {
                 message = messageLocal;
 
                 if (!message.read) {

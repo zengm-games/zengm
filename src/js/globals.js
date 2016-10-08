@@ -1,8 +1,11 @@
+// @flow
+
 import EventEmitter from 'events';
+import type {GameAttributes} from './util/types';
 
 // The way this works is... any "global" variables that need to be widely available are stored in g. Some of these are constants, like the ones defined below. Some others are dynamic, like the year of the current season, and are stored in the gameAttributes object store. The dynamic components of g are retrieved/updated/synced elsewhere. Yes, it's kind of confusing and arbitrary.
 
-const g = {};
+const g: GameAttributes = {};
 
 // If any of these things are supposed to change at any point, they should be stored in gameAttributes rather than here.
 
@@ -29,16 +32,16 @@ g.PLAYER = {
 };
 
 g.PHASE_TEXT = {
-    "-1": "fantasy draft",
-    0: "preseason",
-    1: "regular season",
-    2: "regular season",
-    3: "playoffs",
-    4: "before draft",
-    5: "draft",
-    6: "after draft",
-    7: "re-sign players",
-    8: "free agency",
+    '-1': 'fantasy draft',
+    '0': 'preseason',
+    '1': 'regular season',
+    '2': 'regular season',
+    '3': 'playoffs',
+    '4': 'before draft',
+    '5': 'draft',
+    '6': 'after draft',
+    '7': 're-sign players',
+    '8': 'free agency',
 };
 
 g.emitter = new EventEmitter();

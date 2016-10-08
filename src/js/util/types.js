@@ -32,15 +32,7 @@ export type GamePlayer = any;
 
 export type GameResults = any;
 
-// Missing tons, but doesn't matter because setGameAttributes doesn't use it yet
 export type GameAttributeKeyDynamic = (
-    'gamesInProgress' |
-    'godMode' |
-    'phaseChangeInProgress' |
-    'stopGames'
-);
-
-/*export type GameAttributeKeyStatic = (
     'autoPlaySeasons' |
     'confs' |
     'daysLeft' |
@@ -50,24 +42,55 @@ export type GameAttributeKeyDynamic = (
     'gamesInProgress' |
     'godMode' |
     'godModeInPast' |
+    'gracePeriodEnd' |
     'lastDbChange' |
+    'leagueName' |
+    'lid' |
     'luxuryPayroll' |
     'luxuryTax' |
     'maxContract' |
     'minContract' |
     'minPayroll' |
     'minRosterSize' |
+    'names' |
     'nextPhase' |
     'numGames' |
     'numPlayoffRounds' |
+    'numTeams' |
     'ownerMood' |
     'phase' |
     'phaseChangeInProgress' |
+    'phaseText' |
     'quarterLength' |
     'salaryCap' |
+    'season' |
     'showFirstOwnerMessage' |
-    'stopGames'
-);*/
+    'startingSeason' |
+    'statusText' |
+    'stopGames' |
+    'teamAbbrevsCache' |
+    'teamNamesCache' |
+    'teamRegionsCache' |
+    'userTid' |
+    'userTids'
+);
+
+type GameAttributeKeyStatic = (
+    'PHASE' |
+    'PHASE_TEXT' |
+    'PLAYER' |
+    'compositeWeights' |
+    'dbl' |
+    'dbm' |
+    'emitter' |
+    'enableLogging' |
+    'notInDb' |
+    'sport' |
+    'stripePublishableKey' |
+    'tld'
+);
+
+export type GameAttributes = {[key: GameAttributeKeyDynamic | GameAttributeKeyStatic]: any}
 
 export type GameProcessed = {
     gid: number,

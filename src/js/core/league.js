@@ -16,9 +16,9 @@ import * as season from './season';
 import * as team from './team';
 import * as helpers from '../util/helpers';
 import * as random from '../util/random';
-import type {BackboardTx, GameAttributeKeyDynamic} from '../util/types';
+import type {BackboardTx, GameAttributeKeyDynamic, GameAttributes} from '../util/types';
 
-const defaultGameAttributes = {
+const defaultGameAttributes: GameAttributes = {
     phase: 0,
     nextPhase: null, // Used only for fantasy draft
     daysLeft: 0, // Used only for free agency
@@ -75,9 +75,6 @@ function merge(x: Object[], y: Object[]): Object[] {
     return x;
 }
 
-// Could be improved by GameAttributeKeyDynamic http://stackoverflow.com/q/39683076/786644
-type GameAttributes = {[key: string]: Object | boolean | null | number | string};
-
 /**
  * Set values in the gameAttributes objectStore and update the global variable g.
  *
@@ -88,7 +85,7 @@ type GameAttributes = {[key: string]: Object | boolean | null | number | string}
  */
 async function setGameAttributes(tx: BackboardTx, gameAttributes: GameAttributes) {
     const toUpdate = [];
-    for (const key of Object.keys(gameAttributes)) {
+    for (const key of helpers.keys(gameAttributes)) {
         if (g[key] !== gameAttributes[key]) {
             toUpdate.push(key);
         }
@@ -659,7 +656,7 @@ async function loadGameAttributes(tx: ?BackboardTx) {
     if (g.userTids === undefined) { g.userTids = [g.userTid]; }
 
     // Set defaults to avoid IndexedDB upgrade
-    Object.keys(defaultGameAttributes).forEach(key => {
+    helpers.keys(defaultGameAttributes).forEach(key => {
         if (g[key] === undefined) {
             g[key] = defaultGameAttributes[key];
         }

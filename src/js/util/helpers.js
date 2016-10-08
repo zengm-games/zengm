@@ -207,6 +207,12 @@ function errorNotify(errorText: string) {
     });
 }
 
+
+// Hacky solution to http://stackoverflow.com/q/39683076/786644
+function keys<T: string>(obj: any): Array<T> {
+    return Object.keys(obj);
+}
+
 /**
  * Delete all the things from the global variable g that are not stored in league databases.
  *
@@ -215,8 +221,8 @@ function errorNotify(errorText: string) {
  * @memberOf util.helpers
  */
 function resetG() {
-    for (const key of Object.keys(g)) {
-        if (g.notInDb.indexOf(key) < 0) {
+    for (const key of keys(g)) {
+        if (!g.notInDb.includes(key)) {
             delete g[key];
         }
     }
@@ -656,6 +662,7 @@ export {
     deepCopy,
     error,
     errorNotify,
+    keys,
     resetG,
     bbgmPing,
     round,

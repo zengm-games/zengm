@@ -27,7 +27,6 @@ function init(args: InitArgs) {
     args.runBefore = args.runBefore !== undefined ? args.runBefore : [];
     args.runWhenever = args.runWhenever !== undefined ? args.runWhenever : [];
 
-
     if (!args.Component) { throw new Error('Missing arg Component'); }
 
     const output = {};

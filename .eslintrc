@@ -38,6 +38,7 @@
         "react/jsx-indent-props": ["error", 4],
         "react/jsx-wrap-multilines": "off",
         "react/no-multi-comp": "off",
+        "react/no-unescaped-entities": "off",
         "react/no-unused-prop-types": "off", // Would be nice, but tons of false positives
         "react/require-extension": ["error", {"extensions": [".js"]}],
         "spaced-comment": "off",

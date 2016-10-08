@@ -7,12 +7,11 @@ flow
   in withStats, how to convert input obj of type Player to output obj of type PlayerWithStats
   get rid of any, Object, etc
   ESLint
-  https://github.com/gcanti/babel-plugin-tcomb and get rid of proptypes
+  React components: proptype validation only works for class-based ones. for functions, need proptypes and flow. even for class-based components, flow can give more flexibility, but does not do runtime checking. https://github.com/gcanti/babel-plugin-tcomb could help with that, but seems to create too many false positives.
 
 replace owner message text with numbers/chart
 
 upgrade GA https://developers.google.com/analytics/devguides/collection/upgrade/
-  confirm it works
   bbgm web too
 
 ---

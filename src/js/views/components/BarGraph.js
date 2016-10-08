@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
 import Tooltip from 'react-bootstrap/lib/Tooltip';
@@ -116,7 +118,14 @@ const scale = (val, ylim) => {
     return (val - ylim[0]) / (ylim[1] - ylim[0]) * 100;
 };
 
-const BarGraph = ({data = [], labels, tooltipCb = val => val, ylim: ylimArg}) => {
+type BarGraphOptions = {
+    data: any, // To get rid of this (and other below), would probably have to break up into two separate code paths, one for stacked and one for non-stacked
+    labels: string[],
+    tooltipCb: (val: string) => string,
+    ylim: [number, number],
+}
+
+const BarGraph = ({data = [], labels, tooltipCb = val => val, ylim: ylimArg}: BarGraphOptions) => {
     const gap = 2;  // Gap between bars, in pixels
 
     if (data.length === 0) {
@@ -136,7 +145,7 @@ const BarGraph = ({data = [], labels, tooltipCb = val => val, ylim: ylimArg}) =>
     const ylim = ylimArg === undefined ? defaultYlim(data, stacked) : ylimArg;
 
     // Convert heights to percentages
-    const scaled = [];
+    const scaled: any = [];
     for (let i = 0; i < data.length; i++) {
         if (!stacked) {
             scaled[i] = scale(data[i], ylim);

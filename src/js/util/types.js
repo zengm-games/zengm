@@ -248,7 +248,7 @@ export type ContractInfo = {
     pid: number,
     firstName: string,
     lastName: string,
-    skills: string[],
+    skills: PlayerSkill[],
     injury: PlayerInjury,
     amount: number,
     exp: number,

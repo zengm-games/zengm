@@ -137,7 +137,7 @@ class NewLeague extends React.Component {
                         t.pop = t.seasons[t.seasons.length - 1].pop;
                     }
 
-                    t.pop = helpers.round(t.pop, 2);
+                    t.pop = Number(helpers.round(t.pop, 2));
                 }
 
                 newTeams = helpers.addPopRank(newTeams);

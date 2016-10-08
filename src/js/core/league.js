@@ -135,7 +135,12 @@ async function create(
     // Any custom teams?
     let teams: any;
     if (leagueFile.hasOwnProperty("teams")) {
-        teams = merge(leagueFile.teams, teamsDefault);
+        if (leagueFile.teams.length <= teamsDefault.length) {
+            // This probably shouldn't be here, but oh well, backwards compatibility...
+            teams = merge(leagueFile.teams, teamsDefault);
+        } else {
+            teams = leagueFile.teams;
+        }
         teams = helpers.addPopRank(teams);
     } else {
         teams = teamsDefault;

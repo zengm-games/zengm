@@ -1,8 +1,11 @@
+// @flow
+
 import g from '../globals';
 import * as ui from '../ui';
 import * as league from '../core/league';
 import bbgmViewReact from '../util/bbgmViewReact';
 import Message from './views/Message';
+import type {Message as Message_} from '../util/types';
 
 function get(ctx) {
     return {
@@ -10,7 +13,7 @@ function get(ctx) {
     };
 }
 
-async function updateMessage(inputs, updateEvents, state) {
+async function updateMessage(inputs, updateEvents, state): Promise<void | {message?: Message_}> {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || state.message.mid !== inputs.mid) {
         let message;
         let readThisPageview;
@@ -18,7 +21,7 @@ async function updateMessage(inputs, updateEvents, state) {
             readThisPageview = false;
 
             // If mid is null, this will open the *unread* message with the highest mid
-            await tx.messages.iterate(inputs.mid, 'prev', (messageLocal, shortCircuit) => {
+            await tx.messages.iterate(inputs.mid, 'prev', (messageLocal: Message, shortCircuit) => {
                 message = messageLocal;
 
                 if (!message.read) {

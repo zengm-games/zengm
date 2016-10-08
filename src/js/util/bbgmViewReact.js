@@ -6,17 +6,17 @@ import type {PageCtx, UpdateEvents} from './types';
 type GetOutput = {[key: string]: ?(number | string)};
 
 type RunFunction = (
-    inputs?: GetOutput,
-    updateEvents?: UpdateEvents,
-    state?: any,
-    setState?: (state: any) => void,
-    topMenu?: any,
-) => Promise<{[key: string]: any}>;
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+    state: any,
+    setState: (state: any) => void,
+    topMenu: any,
+) => Promise<void | {[key: string]: any}>;
 
 type InitArgs = {
     Component: any,
     inLeague?: boolean,
-    get?: (ctx?: PageCtx) => GetOutput,
+    get?: (ctx: PageCtx) => GetOutput,
     runBefore?: RunFunction[],
     runWhenever?: RunFunction[],
 };

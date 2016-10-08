@@ -112,13 +112,20 @@ export type GameProcessedCompleted = {
     won: boolean,
 };
 
+export type Message = {
+    from: string,
+    read: boolean,
+    text: string,
+    year: number,
+};
+
 export type OwnerMoodDeltas = {
     money: number,
     playoffs: number,
     wins: number,
 };
 
-export type PageCtx = any;
+export type PageCtx = {[key: string]: any};
 
 export type Phase = -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 

@@ -280,11 +280,6 @@ class TradingBlock extends React.Component {
     }
 
     async handleClickNegotiate(tid, otherPids, otherDpids) {
-        console.log('handleClickNegotiate');
-        console.log('userPids', this.state.pids);
-        console.log('userDpids', this.state.dpids);
-        console.log('otherPids', otherPids);
-        console.log('otherDpids', otherDpids);
         await tradeFor({
             otherDpids,
             otherPids,

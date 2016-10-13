@@ -1,6 +1,57 @@
-const helpers = require('../util/helpers');
-const random = require('../util/random');
-const g = require('../globals');
+import g from '../globals';
+import * as helpers from '../util/helpers';
+import * as random from '../util/random';
+
+// x is value, a controls sharpness, b controls center
+const sigmoid = (x, a, b) => {
+    return 1 / (1 + Math.exp(-(a * (x - b))));
+};
+
+/**
+ * Pick a player to do something.
+ *
+ * @param {Array.<number>} ratios output of this.ratingArray.
+ * @param {number} exempt An integer representing a player that can't be picked (i.e. you can't assist your own shot, which is the only current use of exempt). The value of exempt ranges from 0 to 4, corresponding to the index of the player in this.playersOnCourt. This is *NOT* the same value as the player ID *or* the index of the this.team[t].player list. Yes, that's confusing.
+ */
+const pickPlayer = (ratios, exempt) => {
+    exempt = exempt !== undefined ? exempt : false;
+
+    if (exempt !== false) {
+        ratios[exempt] = 0;
+    }
+
+    const rand = Math.random() * (ratios[0] + ratios[1] + ratios[2] + ratios[3] + ratios[4]);
+
+    let pick;
+    if (rand < ratios[0]) {
+        pick = 0;
+    } else if (rand < (ratios[0] + ratios[1])) {
+        pick = 1;
+    } else if (rand < (ratios[0] + ratios[1] + ratios[2])) {
+        pick = 2;
+    } else if (rand < (ratios[0] + ratios[1] + ratios[2] + ratios[3])) {
+        pick = 3;
+    } else {
+        pick = 4;
+    }
+
+    return pick;
+};
+
+/**
+ * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
+ *
+ * @param {number} energy A player's energy level, from 0 to 1 (0 = lots of energy, 1 = none).
+ * @return {number} Fatigue, from 0 to 1 (0 = lots of fatigue, 1 = none).
+ */
+const fatigue = energy => {
+    energy += 0.05;
+    if (energy > 1) {
+        energy = 1;
+    }
+
+    return energy;
+};
 
 class GameSim {
     /**
@@ -76,10 +127,8 @@ class GameSim {
             }
 
             for (let p = 0; p < this.team[t].player.length; p++) {
-                for (const r in this.team[t].player[p].compositeRating) {
-                    if (this.team[t].player[p].compositeRating.hasOwnProperty(r)) {
-                        this.team[t].player[p].compositeRating[r] *= factor;
-                    }
+                for (const r of Object.keys(this.team[t].player[p].compositeRating)) {
+                    this.team[t].player[p].compositeRating[r] *= factor;
                 }
             }
         }
@@ -158,6 +207,7 @@ class GameSim {
         this.d = 1;
         let quarter = 1;
 
+        // eslint-disable-next-line no-constant-condition
         while (true) {
             while (this.t > 0) {
                 this.simPossession();
@@ -242,7 +292,7 @@ class GameSim {
                 if (this.team[t].player[p].injured || this.team[t].player[p].stat.pf >= 6) {
                     ovrs[p] = -Infinity;
                 } else {
-                    ovrs[p] = this.team[t].player[p].valueNoPot * this.fatigue(this.team[t].player[p].stat.energy) * this.team[t].player[p].ptModifier * random.uniform(0.9, 1.1);
+                    ovrs[p] = this.team[t].player[p].valueNoPot * fatigue(this.team[t].player[p].stat.energy) * this.team[t].player[p].ptModifier * random.uniform(0.9, 1.1);
                 }
             }
 
@@ -282,7 +332,7 @@ class GameSim {
                             }
                         }
                         if ((numG < 2 && numPG === 0) || (numF < 2 && numC === 0)) {
-                            if (this.fatigue(this.team[t].player[p].stat.energy) > 0.7) {
+                            if (fatigue(this.team[t].player[p].stat.energy) > 0.7) {
                                 // Exception for ridiculously tired players, so really unbalanced teams won't play starters whole game
                                 continue;
                             }
@@ -334,11 +384,6 @@ class GameSim {
         return substitutions;
     }
 
-    // x is value, a controls sharpness, b controls center
-    sigmoid(x, a, b) {
-        return 1 / (1 + Math.exp(-(a * (x - b))));
-    }
-
     /**
      * Update synergy.
      *
@@ -348,7 +393,7 @@ class GameSim {
         for (let t = 0; t < 2; t++) {
             // Count all the *fractional* skills of the active players on a team (including duplicates)
             const skillsCount = {
-                "3": 0,
+                3: 0,
                 A: 0,
                 B: 0,
                 Di: 0,
@@ -362,23 +407,23 @@ class GameSim {
                 const p = this.playersOnCourt[t][i];
 
                 // 1 / (1 + e^-(15 * (x - 0.7))) from 0 to 1
-                skillsCount["3"] += this.sigmoid(this.team[t].player[p].compositeRating.shootingThreePointer, 15, 0.7);
-                skillsCount.A += this.sigmoid(this.team[t].player[p].compositeRating.athleticism, 15, 0.7);
-                skillsCount.B += this.sigmoid(this.team[t].player[p].compositeRating.dribbling, 15, 0.7);
-                skillsCount.Di += this.sigmoid(this.team[t].player[p].compositeRating.defenseInterior, 15, 0.7);
-                skillsCount.Dp += this.sigmoid(this.team[t].player[p].compositeRating.defensePerimeter, 15, 0.7);
-                skillsCount.Po += this.sigmoid(this.team[t].player[p].compositeRating.shootingLowPost, 15, 0.7);
-                skillsCount.Ps += this.sigmoid(this.team[t].player[p].compositeRating.passing, 15, 0.7);
-                skillsCount.R += this.sigmoid(this.team[t].player[p].compositeRating.rebounding, 15, 0.7);
+                skillsCount["3"] += sigmoid(this.team[t].player[p].compositeRating.shootingThreePointer, 15, 0.7);
+                skillsCount.A += sigmoid(this.team[t].player[p].compositeRating.athleticism, 15, 0.7);
+                skillsCount.B += sigmoid(this.team[t].player[p].compositeRating.dribbling, 15, 0.7);
+                skillsCount.Di += sigmoid(this.team[t].player[p].compositeRating.defenseInterior, 15, 0.7);
+                skillsCount.Dp += sigmoid(this.team[t].player[p].compositeRating.defensePerimeter, 15, 0.7);
+                skillsCount.Po += sigmoid(this.team[t].player[p].compositeRating.shootingLowPost, 15, 0.7);
+                skillsCount.Ps += sigmoid(this.team[t].player[p].compositeRating.passing, 15, 0.7);
+                skillsCount.R += sigmoid(this.team[t].player[p].compositeRating.rebounding, 15, 0.7);
             }
 
             // Base offensive synergy
             this.team[t].synergy.off = 0;
-            this.team[t].synergy.off += 5 * this.sigmoid(skillsCount["3"], 3, 2); // 5 / (1 + e^-(3 * (x - 2))) from 0 to 5
-            this.team[t].synergy.off += 3 * this.sigmoid(skillsCount.B, 15, 0.75) + this.sigmoid(skillsCount.B, 5, 1.75); // 3 / (1 + e^-(15 * (x - 0.75))) + 1 / (1 + e^-(5 * (x - 1.75))) from 0 to 5
-            this.team[t].synergy.off += 3 * this.sigmoid(skillsCount.Ps, 15, 0.75) + this.sigmoid(skillsCount.Ps, 5, 1.75) + this.sigmoid(skillsCount.Ps, 5, 2.75); // 3 / (1 + e^-(15 * (x - 0.75))) + 1 / (1 + e^-(5 * (x - 1.75))) + 1 / (1 + e^-(5 * (x - 2.75))) from 0 to 5
-            this.team[t].synergy.off += this.sigmoid(skillsCount.Po, 15, 0.75); // 1 / (1 + e^-(15 * (x - 0.75))) from 0 to 5
-            this.team[t].synergy.off += this.sigmoid(skillsCount.A, 15, 1.75) + this.sigmoid(skillsCount.A, 5, 2.75); // 1 / (1 + e^-(15 * (x - 1.75))) + 1 / (1 + e^-(5 * (x - 2.75))) from 0 to 5
+            this.team[t].synergy.off += 5 * sigmoid(skillsCount["3"], 3, 2); // 5 / (1 + e^-(3 * (x - 2))) from 0 to 5
+            this.team[t].synergy.off += 3 * sigmoid(skillsCount.B, 15, 0.75) + sigmoid(skillsCount.B, 5, 1.75); // 3 / (1 + e^-(15 * (x - 0.75))) + 1 / (1 + e^-(5 * (x - 1.75))) from 0 to 5
+            this.team[t].synergy.off += 3 * sigmoid(skillsCount.Ps, 15, 0.75) + sigmoid(skillsCount.Ps, 5, 1.75) + sigmoid(skillsCount.Ps, 5, 2.75); // 3 / (1 + e^-(15 * (x - 0.75))) + 1 / (1 + e^-(5 * (x - 1.75))) + 1 / (1 + e^-(5 * (x - 2.75))) from 0 to 5
+            this.team[t].synergy.off += sigmoid(skillsCount.Po, 15, 0.75); // 1 / (1 + e^-(15 * (x - 0.75))) from 0 to 5
+            this.team[t].synergy.off += sigmoid(skillsCount.A, 15, 1.75) + sigmoid(skillsCount.A, 5, 2.75); // 1 / (1 + e^-(15 * (x - 1.75))) + 1 / (1 + e^-(5 * (x - 2.75))) from 0 to 5
             this.team[t].synergy.off /= 17;
 
             // Punish teams for not having multiple perimeter skills
@@ -387,14 +432,14 @@ class GameSim {
 
             // Defensive synergy
             this.team[t].synergy.def = 0;
-            this.team[t].synergy.def += this.sigmoid(skillsCount.Dp, 15, 0.75); // 1 / (1 + e^-(15 * (x - 0.75))) from 0 to 5
-            this.team[t].synergy.def += 2 * this.sigmoid(skillsCount.Di, 15, 0.75); // 2 / (1 + e^-(15 * (x - 0.75))) from 0 to 5
-            this.team[t].synergy.def += this.sigmoid(skillsCount.A, 5, 2) + this.sigmoid(skillsCount.A, 5, 3.25); // 1 / (1 + e^-(5 * (x - 2))) + 1 / (1 + e^-(5 * (x - 3.25))) from 0 to 5
+            this.team[t].synergy.def += sigmoid(skillsCount.Dp, 15, 0.75); // 1 / (1 + e^-(15 * (x - 0.75))) from 0 to 5
+            this.team[t].synergy.def += 2 * sigmoid(skillsCount.Di, 15, 0.75); // 2 / (1 + e^-(15 * (x - 0.75))) from 0 to 5
+            this.team[t].synergy.def += sigmoid(skillsCount.A, 5, 2) + sigmoid(skillsCount.A, 5, 3.25); // 1 / (1 + e^-(5 * (x - 2))) + 1 / (1 + e^-(5 * (x - 3.25))) from 0 to 5
             this.team[t].synergy.def /= 6;
 
             // Rebounding synergy
             this.team[t].synergy.reb = 0;
-            this.team[t].synergy.reb += this.sigmoid(skillsCount.R, 15, 0.75) + this.sigmoid(skillsCount.R, 5, 1.75); // 1 / (1 + e^-(15 * (x - 0.75))) + 1 / (1 + e^-(5 * (x - 1.75))) from 0 to 5
+            this.team[t].synergy.reb += sigmoid(skillsCount.R, 15, 0.75) + sigmoid(skillsCount.R, 5, 1.75); // 1 / (1 + e^-(15 * (x - 0.75))) + 1 / (1 + e^-(5 * (x - 1.75))) from 0 to 5
             this.team[t].synergy.reb /= 4;
         }
     }
@@ -415,7 +460,7 @@ class GameSim {
 
                 for (let i = 0; i < 5; i++) {
                     const p = this.playersOnCourt[t][i];
-                    this.team[t].compositeRating[rating] += this.team[t].player[p].compositeRating[rating] * this.fatigue(this.team[t].player[p].stat.energy);
+                    this.team[t].compositeRating[rating] += this.team[t].player[p].compositeRating[rating] * fatigue(this.team[t].player[p].stat.energy);
                 }
 
                 this.team[t].compositeRating[rating] = this.team[t].compositeRating[rating] / 5;
@@ -503,7 +548,7 @@ class GameSim {
 
         // Shot if there is no turnover
         const ratios = this.ratingArray("usage", this.o);
-        const shooter = this.pickPlayer(ratios);
+        const shooter = pickPlayer(ratios);
 
         return this.doShot(shooter); // fg, orb, or drb
     }
@@ -524,7 +569,7 @@ class GameSim {
      */
     doTov() {
         const ratios = this.ratingArray("turnovers", this.o, 0.5);
-        const p = this.playersOnCourt[this.o][this.pickPlayer(ratios)];
+        const p = this.playersOnCourt[this.o][pickPlayer(ratios)];
         this.recordStat(this.o, p, "tov");
         if (this.probStl() > Math.random()) {
             return this.doStl(p); // "stl"
@@ -552,7 +597,7 @@ class GameSim {
      */
     doStl(pStoleFrom) {
         const ratios = this.ratingArray("stealing", this.d);
-        const p = this.playersOnCourt[this.d][this.pickPlayer(ratios)];
+        const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
         this.recordStat(this.d, p, "stl");
         this.recordPlay("stl", this.d, [this.team[this.d].player[p].name, this.team[this.o].player[pStoleFrom].name]);
 
@@ -568,17 +613,20 @@ class GameSim {
     doShot(shooter) {
         const p = this.playersOnCourt[this.o][shooter];
 
-        const fatigue = this.fatigue(this.team[this.o].player[p].stat.energy);
+        const currentFatigue = fatigue(this.team[this.o].player[p].stat.energy);
 
         // Is this an "assisted" attempt (i.e. an assist will be recorded if it's made)
         let passer = -1;
         if (this.probAst() > Math.random()) {
             const ratios = this.ratingArray("passing", this.o, 2);
-            passer = this.pickPlayer(ratios, shooter);
+            passer = pickPlayer(ratios, shooter);
         }
 
         // Pick the type of shot and store the success rate (with no defense) in probMake and the probability of an and one in probAndOne
-        let probAndOne, probMake, probMissAndFoul, type;
+        let probAndOne;
+        let probMake;
+        let probMissAndFoul;
+        let type;
         if (this.team[this.o].player[p].compositeRating.shootingThreePointer > 0.5 && Math.random() < (0.35 * this.team[this.o].player[p].compositeRating.shootingThreePointer)) {
             // Three pointer
             type = "threePointer";
@@ -610,7 +658,7 @@ class GameSim {
             }
         }
 
-        probMake = (probMake - 0.25 * this.team[this.d].compositeRating.defense + this.synergyFactor * (this.team[this.o].synergy.off - this.team[this.d].synergy.def)) * fatigue;
+        probMake = (probMake - 0.25 * this.team[this.d].compositeRating.defense + this.synergyFactor * (this.team[this.o].synergy.off - this.team[this.d].synergy.def)) * currentFatigue;
 
         // Assisted shots are easier
         if (passer >= 0) {
@@ -686,7 +734,7 @@ class GameSim {
         }
 
         const ratios = this.ratingArray("blocking", this.d, 4);
-        const p2 = this.playersOnCourt[this.d][this.pickPlayer(ratios)];
+        const p2 = this.playersOnCourt[this.d][pickPlayer(ratios)];
         this.recordStat(this.d, p2, "blk");
 
 
@@ -797,10 +845,12 @@ class GameSim {
                                     shotType = "two free throws";
                                 }
                                 break;
+                            default:
                         }
                     }
                 }
                 break;
+            default:
         }
 
         const team = this.team[play.team];
@@ -831,7 +881,8 @@ class GameSim {
         let margin = this.team[winner].stat.pts - this.team[loser].stat.pts;
 
         // work backwards from last scoring plays, check if any resulted in a tie-break or lead change
-        let pts, shotType;
+        let pts;
+        let shotType;
         for (let i = this.lastScoringPlay.length - 1; i >= 0; i--) {
             const play = this.lastScoringPlay[i];
             switch (play.type) {
@@ -865,11 +916,13 @@ class GameSim {
                                 case "ft":
                                     shotType += "s";
                                     break;
+                                default:
                             }
                         }
                     }
                     pts = 1;
                     break;
+                default:
             }
 
             margin -= (play.team === winner ? pts : -pts);
@@ -961,7 +1014,7 @@ class GameSim {
      */
     doPf(t) {
         const ratios = this.ratingArray("fouling", t);
-        const p = this.playersOnCourt[t][this.pickPlayer(ratios)];
+        const p = this.playersOnCourt[t][pickPlayer(ratios)];
         this.recordStat(this.d, p, "pf");
         this.recordPlay("pf", this.d, [this.team[this.d].player[p].name]);
         // Foul out
@@ -981,15 +1034,16 @@ class GameSim {
      * @return {string} "drb" for a defensive rebound, "orb" for an offensive rebound, null for no rebound (like if the ball goes out of bounds).
      */
     doReb() {
-        let p, ratios;
+        let p;
+        let ratios;
 
-        if (0.15 > Math.random()) {
+        if (Math.random() < 0.15) {
             return null;
         }
 
         if (0.75 * (2 + this.team[this.d].compositeRating.rebounding) / (2 + this.team[this.o].compositeRating.rebounding) > Math.random()) {
             ratios = this.ratingArray("rebounding", this.d);
-            p = this.playersOnCourt[this.d][this.pickPlayer(ratios)];
+            p = this.playersOnCourt[this.d][pickPlayer(ratios)];
             this.recordStat(this.d, p, "drb");
             this.recordPlay("drb", this.d, [this.team[this.d].player[p].name]);
 
@@ -997,7 +1051,7 @@ class GameSim {
         }
 
         ratios = this.ratingArray("rebounding", this.o);
-        p = this.playersOnCourt[this.o][this.pickPlayer(ratios)];
+        p = this.playersOnCourt[this.o][pickPlayer(ratios)];
         this.recordStat(this.o, p, "orb");
         this.recordPlay("orb", this.o, [this.team[this.o].player[p].name]);
 
@@ -1018,41 +1072,10 @@ class GameSim {
         const array = [0, 0, 0, 0, 0];
         for (let i = 0; i < 5; i++) {
             const p = this.playersOnCourt[t][i];
-            array[i] = Math.pow(this.team[t].player[p].compositeRating[rating] * this.fatigue(this.team[t].player[p].stat.energy), power);
+            array[i] = Math.pow(this.team[t].player[p].compositeRating[rating] * fatigue(this.team[t].player[p].stat.energy), power);
         }
 
         return array;
-    }
-
-    /**
-     * Pick a player to do something.
-     *
-     * @param {Array.<number>} ratios output of this.ratingArray.
-     * @param {number} exempt An integer representing a player that can't be picked (i.e. you can't assist your own shot, which is the only current use of exempt). The value of exempt ranges from 0 to 4, corresponding to the index of the player in this.playersOnCourt. This is *NOT* the same value as the player ID *or* the index of the this.team[t].player list. Yes, that's confusing.
-     */
-    pickPlayer(ratios, exempt) {
-        exempt = exempt !== undefined ? exempt : false;
-
-        if (exempt !== false) {
-            ratios[exempt] = 0;
-        }
-
-        const rand = Math.random() * (ratios[0] + ratios[1] + ratios[2] + ratios[3] + ratios[4]);
-
-        let pick;
-        if (rand < ratios[0]) {
-            pick = 0;
-        } else if (rand < (ratios[0] + ratios[1])) {
-            pick = 1;
-        } else if (rand < (ratios[0] + ratios[1] + ratios[2])) {
-            pick = 2;
-        } else if (rand < (ratios[0] + ratios[1] + ratios[2] + ratios[3])) {
-            pick = 3;
-        } else {
-            pick = 4;
-        }
-
-        return pick;
     }
 
     /**
@@ -1188,23 +1211,6 @@ class GameSim {
             }
         }
     }
-
-    /**
-     * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
-     *
-     * @param {number} energy A player's energy level, from 0 to 1 (0 = lots of energy, 1 = none).
-     * @return {number} Fatigue, from 0 to 1 (0 = lots of fatigue, 1 = none).
-     */
-    fatigue(energy) {
-        energy += 0.05;
-        if (energy > 1) {
-            energy = 1;
-        }
-
-        return energy;
-    }
 }
 
-module.exports = {
-    GameSim,
-};
+export default GameSim;

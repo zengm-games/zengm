@@ -424,7 +424,7 @@ async function getPlayoffFeat(tx: BackboardTx, clutchPlay: string) {
     return clutchPlay;
 }
 
-async function updatePlayoffSeries(tx, results) {
+async function updatePlayoffSeries(tx: BackboardTx, results: GameResults) {
     const playoffSeries = await tx.playoffSeries.get(g.season);
 
     const playoffRound = playoffSeries.series[playoffSeries.currentRound];

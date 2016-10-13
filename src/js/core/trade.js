@@ -1,10 +1,10 @@
-const g = require('../globals');
-const league = require('./league');
-const player = require('./player');
-const team = require('./team');
-const Promise = require('bluebird');
-const eventLog = require('../util/eventLog');
-const helpers = require('../util/helpers');
+import Promise from 'bluebird';
+import g from '../globals';
+import * as league from './league';
+import * as player from './player';
+import * as team from './team';
+import * as helpers from '../util/helpers';
+import logEvent from '../util/logEvent';
 
 /**
  * Get the contents of the current trade from the database.
@@ -95,11 +95,11 @@ function filterUntradable(players) {
  * Just calls filterUntradable and discards everything but the boolean.
  *
  * @memberOf core.trade
- * @param {<Object>} players Player object or partial player objects
+ * @param {Object} p Player object or partial player object
  * @return {boolean} Processed input
  */
-function isUntradable(player) {
-    return filterUntradable([player])[0].untradable;
+function isUntradable(p) {
+    return filterUntradable([p])[0].untradable;
 }
 
 /**
@@ -212,8 +212,8 @@ function summary(teams) {
                     tid: tids[i],
                     showRookies: true,
                 });
-                s.teams[i].trade = players[i].filter(player => pids[i].indexOf(player.pid) >= 0);
-                s.teams[i].total = s.teams[i].trade.reduce((memo, player) => memo + player.contract.amount, 0);
+                s.teams[i].trade = players[i].filter(p => pids[i].indexOf(p.pid) >= 0);
+                s.teams[i].total = s.teams[i].trade.reduce((memo, p) => memo + p.contract.amount, 0);
             }));
 
             promises.push(tx.draftPicks.index('tid').getAll(tids[i]).then(picks => {
@@ -221,6 +221,7 @@ function summary(teams) {
                 for (let j = 0; j < picks.length; j++) {
                     if (dpids[i].indexOf(picks[j].dpid) >= 0) {
                         s.teams[i].picks.push({
+                            dpid: picks[j].dpid,
                             desc: `${picks[j].season} ${picks[j].round === 1 ? "1st" : "2nd"} round pick (${g.teamAbbrevsCache[picks[j].originalTid]})`,
                         });
                     }
@@ -375,7 +376,7 @@ async function propose(forceTrade) {
                 return text;
             };
 
-            eventLog.add(null, {
+            logEvent(null, {
                 type: "trade",
                 text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[0]], g.season])}">${g.teamNamesCache[tids[0]]}</a> traded ${formatAssetsEventLog(s.teams[0])} to the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[1]], g.season])}">${g.teamNamesCache[tids[1]]}</a> for ${formatAssetsEventLog(s.teams[1])}.`,
                 showNotification: false,
@@ -396,7 +397,17 @@ async function propose(forceTrade) {
         return [true, 'Trade accepted! "Nice doing business with you!"'];
     }
 
-    return [false, 'Trade rejected! "What, are you crazy?"'];
+    // Return a different rejection message based on how close we are to a deal. When dv < 0, the closer to 0, the better the trade for the AI.
+    let message;
+    if (dv > -5) {
+        message = "Close, but not quite good enough.";
+    } else if (dv > -10) {
+        message = "That's not a good deal for me.";
+    } else {
+        message = 'What, are you crazy?!';
+    }
+
+    return [false, `Trade rejected! "${message}"`];
 }
 
 /**
@@ -486,12 +497,10 @@ async function makeItWork(teams, holdUserConstant, estValuesCached) {
                 } else {
                     otherPids.push(asset.pid);
                 }
+            } else if (asset.tid === g.userTid) {
+                userDpids.push(asset.dpid);
             } else {
-                if (asset.tid === g.userTid) {
-                    userDpids.push(asset.dpid);
-                } else {
-                    otherDpids.push(asset.dpid);
-                }
+                otherDpids.push(asset.dpid);
             }
 
             asset.dv = await team.valueChange(teams[1].tid, userPids, otherPids, userDpids, otherDpids, estValuesCached);
@@ -516,16 +525,15 @@ async function makeItWork(teams, holdUserConstant, estValuesCached) {
             } else {
                 teams[1].pids.push(asset.pid);
             }
+        } else if (asset.tid === g.userTid) {
+            teams[0].dpids.push(asset.dpid);
         } else {
-            if (asset.tid === g.userTid) {
-                teams[0].dpids.push(asset.dpid);
-            } else {
-                teams[1].dpids.push(asset.dpid);
-            }
+            teams[1].dpids.push(asset.dpid);
         }
 
         added += 1;
 
+        // eslint-disable-next-line no-use-before-define
         return testTrade();
     };
 
@@ -581,8 +589,8 @@ async function getPickValues(ot) {
     for (let i = g.season; i < g.season + 4; i++) {
         promises.push(dbOrTx.players.index('draft.year').getAll(i).then(players => {
             if (players.length > 0) {
-                for (let i = 0; i < players.length; i++) {
-                    players[i].value += 4; // +4 is to generally make picks more valued
+                for (const p of players) {
+                    p.value += 4; // +4 is to generally make picks more valued
                 }
                 players.sort((a, b) => b.value - a.value);
                 estValues[players[0].draft.year] = players.map(p => p.value);
@@ -649,7 +657,7 @@ async function makeItWorkTrade() {
     return `${g.teamRegionsCache[teams[1].tid]} GM: "How does this sound?"`;
 }
 
-module.exports = {
+export {
     get,
     create,
     updatePlayers,

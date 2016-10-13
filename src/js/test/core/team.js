@@ -1,9 +1,9 @@
-const assert = require('assert');
-const db = require('../../db');
-const g = require('../../globals');
-const league = require('../../core/league');
-const player = require('../../core/player');
-const team = require('../../core/team');
+import assert from 'assert';
+import * as db from '../../db';
+import g from '../../globals';
+import * as league from '../../core/league';
+import * as player from '../../core/player';
+import * as team from '../../core/team';
 
 describe("core/team", () => {
     describe("#findStarters()", () => {

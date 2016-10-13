@@ -1,11 +1,9 @@
-// Originally based on https://github.com/Srirangan/notifer.js/
-
 const container = document.createElement("div");
 container.id = "notification-container";
 container.classList.add("notification-container");
 document.body.appendChild(container);
 
-const notify = (message, title, persistent = false, timeOut) => {
+const notify = (message, title, {extraClass, persistent = false, timeOut}) => {
     let timeoutRemaining = timeOut || 5000;
 
     let notificationElement = document.createElement("div");
@@ -25,7 +23,8 @@ const notify = (message, title, persistent = false, timeOut) => {
     notificationElement.appendChild(textElement);
 
     if (!persistent) {
-        let timeoutId, timeoutStart;
+        let timeoutId;
+        let timeoutStart;
 
         // Hide notification after timeout
         const notificationTimeout = () => {
@@ -49,7 +48,6 @@ const notify = (message, title, persistent = false, timeOut) => {
         const closeLink = document.createElement("button");
         closeLink.classList.add("notification-close");
         closeLink.innerHTML = "&times;";
-        notificationElement.classList.add("notification-persistent");
         closeLink.addEventListener("click", () => {
             notificationElement.classList.add("notification-delete");
         });
@@ -57,18 +55,9 @@ const notify = (message, title, persistent = false, timeOut) => {
         notificationElement.appendChild(closeLink);
     }
 
-    /*// Hide notification on click, except if it's a link
-    notificationElement.addEventListener("click", function (event) {
-        container.removeChild(notificationElement);
-        notificationElement = null;
-    });
-    // PROBLEM: Stopping hiding on link click doesn't work because it also stops Davis.js from working
-    links = notificationElement.getElementsByTagName("a");
-    for (i = 0; i < links.length; i++) {
-        links[0].addEventListener("click", function (event) {
-            event.stopPropagation();
-        });
-    }*/
+    if (extraClass !== undefined) {
+        notificationElement.classList.add(extraClass);
+    }
 
     // Limit displayed notifications to 5 - all the persistent ones, plus the newest ones
     let numToDelete = container.childNodes.length - 4; // 4 instead of 5 because the check happens before the new notification is shown
@@ -101,6 +90,4 @@ const notify = (message, title, persistent = false, timeOut) => {
     container.appendChild(notificationElement);
 };
 
-module.exports = {
-    notify,
-};
+export default notify;

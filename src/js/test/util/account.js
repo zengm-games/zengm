@@ -1,10 +1,10 @@
-/*eslint comma-spacing: 0, key-spacing: 0, no-unused-expressions: 0*/
-const assert = require('assert');
-const backboard = require('backboard');
-const db = require('../../db');
-const g = require('../../globals');
-const league = require('../../core/league');
-const account = require('../../util/account');
+/* eslint comma-spacing: "off", key-spacing: "off", no-unused-expressions: "off", quote-props: "off" */
+import assert from 'assert';
+import backboard from 'backboard';
+import * as db from '../../db';
+import g from '../../globals';
+import * as league from '../../core/league';
+import * as account from '../../util/account';
 
 describe("util/account", () => {
     before(async () => {

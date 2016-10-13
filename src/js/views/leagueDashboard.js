@@ -1,19 +1,12 @@
-const g = require('../globals');
-const ui = require('../ui');
-const player = require('../core/player');
-const season = require('../core/season');
-const team = require('../core/team');
-const backboard = require('backboard');
-const Promise = require('bluebird');
-const ko = require('knockout');
-const komapping = require('knockout.mapping');
-const bbgmView = require('../util/bbgmView');
-const helpers = require('../util/helpers');
-
-function InitViewModel() {
-    this.completed = ko.observableArray([]);
-    this.upcoming = ko.observableArray([]);
-}
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import g from '../globals';
+import * as player from '../core/player';
+import * as season from '../core/season';
+import * as team from '../core/team';
+import bbgmViewReact from '../util/bbgmViewReact';
+import * as helpers from '../util/helpers';
+import LeagueDashboard from './views/LeagueDashboard';
 
 async function updateInbox(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0) {
@@ -112,7 +105,7 @@ async function updateTeams(inputs, updateEvents) {
     }
 }
 
-async function updateGames(inputs, updateEvents, vm) {
+async function updateGames(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
         const numShowCompleted = 4;
         const completed = [];
@@ -160,11 +153,11 @@ async function updateGames(inputs, updateEvents, vm) {
             }
         });
 
-        vm.completed(completed);
+        return {completed};
     }
 }
 
-async function updateSchedule(inputs, updateEvents, vm) {
+async function updateSchedule(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
         const schedule = await season.getSchedule();
         const games = [];
@@ -175,20 +168,14 @@ async function updateSchedule(inputs, updateEvents, vm) {
                 const team0 = {tid: game.homeTid, abbrev: g.teamAbbrevsCache[game.homeTid], region: g.teamRegionsCache[game.homeTid], name: g.teamNamesCache[game.homeTid]};
                 const team1 = {tid: game.awayTid, abbrev: g.teamAbbrevsCache[game.awayTid], region: g.teamRegionsCache[game.awayTid], name: g.teamNamesCache[game.awayTid]};
 
-                let row;
-                if (g.userTid === game.homeTid) {
-                    row = {teams: [team1, team0], vsat: "at"};
-                } else {
-                    row = {teams: [team1, team0], vsat: "at"};
-                }
-                games.push(row);
+                games.push({gid: game.gid, teams: [team1, team0]});
             }
 
             if (games.length >= numShowUpcoming) {
                 break;
             }
         }
-        vm.upcoming(games);
+        return {upcoming: games};
     }
 }
 
@@ -251,7 +238,7 @@ function updatePlayers(inputs, updateEvents) {
     }
 }
 
-async function updatePlayoffs(inputs, updateEvents, vm) {
+async function updatePlayoffs(inputs, updateEvents) {
     if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || (g.phase >= g.PHASE.PLAYOFFS && updateEvents.indexOf("gameSim") >= 0) || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PLAYOFFS)) {
         const playoffSeries = await g.dbl.playoffSeries.get(g.season);
 
@@ -267,7 +254,7 @@ async function updatePlayoffs(inputs, updateEvents, vm) {
             for (let rnd = playoffSeries.currentRound; rnd >= 0; rnd--) {
                 for (let i = 0; i < series[rnd].length; i++) {
                     if (series[rnd][i].home.tid === g.userTid || series[rnd][i].away.tid === g.userTid) {
-                        vars.series = [[series[rnd][i]]];
+                        vars.series = series[rnd][i];
                         found = true;
                         vars.showPlayoffSeries = true;
                         if (rnd === 0) {
@@ -278,11 +265,6 @@ async function updatePlayoffs(inputs, updateEvents, vm) {
                             vars.seriesTitle = "Conference Finals";
                         } else if (rnd === 3) {
                             vars.seriesTitle = "League Finals";
-                        }
-
-                        // Update here rather than by returning vars because returning vars doesn't guarantee order of updates, so it can cause an error when showPlayoffSeries is true before the other stuff is set (try it with the same league in two tabs). But otherwise (for normal page loads), this isn't sufficient and we need to return vars. I don't understand, but it works.
-                        if (updateEvents.indexOf("dbChange") >= 0) {
-                            komapping.fromJS({series: vars.series, seriesTitle: vars.seriesTitle}, vm);
                         }
                         break;
                     }
@@ -326,11 +308,6 @@ async function updateStandings(inputs, updateEvents) {
                 } else {
                     confTeams[l].gb = helpers.gb(confTeams[0], confTeams[l]);
                 }
-                if (confTeams[l].tid === g.userTid) {
-                    confTeams[l].highlight = true;
-                } else {
-                    confTeams[l].highlight = false;
-                }
                 l += 1;
             }
         }
@@ -344,13 +321,18 @@ async function updateStandings(inputs, updateEvents) {
     }
 }
 
-function uiFirst() {
-    ui.title("Dashboard");
-}
-
-module.exports = bbgmView.init({
+export default bbgmViewReact.init({
     id: "leagueDashboard",
-    InitViewModel,
-    runBefore: [updateInbox, updateTeam, updatePayroll, updateTeams, updateGames, updateSchedule, updatePlayers, updatePlayoffs, updateStandings],
-    uiFirst,
+    runBefore: [
+        updateInbox,
+        updateTeam,
+        updatePayroll,
+        updateTeams,
+        updateGames,
+        updateSchedule,
+        updatePlayers,
+        updatePlayoffs,
+        updateStandings,
+    ],
+    Component: LeagueDashboard,
 });

@@ -1,15 +1,12 @@
-const db = require('../db');
-const g = require('../globals');
-const ui = require('../ui');
-const league = require('../core/league');
-const $ = require('jquery');
-const ko = require('knockout');
-const helpers = require('./helpers');
+import React from 'react';
+import * as db from '../db';
+import g from '../globals';
+import * as ui from '../ui';
+import * as league from '../core/league';
+import * as helpers from './helpers';
 
-async function beforeLeague(req) {
-    g.lid = parseInt(req.params.lid, 10);
-
-    const popup = req.params.w === "popup";
+const beforeLeague = async (ctx, loadedLid) => {
+    g.lid = parseInt(ctx.params.lid, 10);
 
     // Check for some other window making changes to the database
     const checkDbChange = async lid => {
@@ -37,63 +34,46 @@ async function beforeLeague(req) {
     // Make sure league exists
 
     // Handle some common internal parameters
-    const updateEvents = req.raw.updateEvents !== undefined ? req.raw.updateEvents : [];
-    const reqCb = req.raw.cb !== undefined ? req.raw.cb : () => {};
+    const updateEvents = ctx.bbgm.updateEvents !== undefined ? ctx.bbgm.updateEvents : [];
+    const ctxCb = ctx.bbgm.cb !== undefined ? ctx.bbgm.cb : () => {};
 
     // Make sure league template FOR THE CURRENT LEAGUE is showing
-    if (g.vm.topMenu.lid() !== g.lid) {
+    if (loadedLid !== g.lid) {
         // Clear old game attributes from g, to make sure the new ones are saved to the db in league.setGameAttributes
         helpers.resetG();
 
         // Make sure this league exists before proceeding
         const l = await g.dbm.leagues.get(g.lid);
         if (l === undefined) {
-            helpers.error('League not found. <a href="/new_league">Create a new league</a> or <a href="/">load an existing league</a> to play!', reqCb, true);
-        } else {
-            await db.connectLeague(g.lid);
-            await league.loadGameAttributes(null);
-
-            ui.update({
-                container: "content",
-                template: "leagueLayout",
-            });
-            ko.applyBindings(g.vm.topMenu, document.getElementById("left-menu"));
-
-            // Set up the display for a popup: menus hidden, margins decreased, and new window links removed
-            if (popup) {
-                $("#top-menu").hide();
-                $("body").css("padding-top", "0");
-
-                const css = document.createElement("style");
-                css.type = "text/css";
-                css.innerHTML = ".new_window { display: none }";
-                document.body.appendChild(css);
-            }
-
-            // Update play menu
-            ui.updateStatus();
-            ui.updatePhase();
-            await ui.updatePlayMenu(null);
-            g.vm.topMenu.lid(g.lid);
-            checkDbChange(g.lid);
-            return [updateEvents, reqCb];
+            helpers.error(<span>League not found. <a href="/new_league">Create a new league</a> or <a href="/">load an existing league</a> to play!</span>, ctxCb, true);
+            return [[], () => {}, 'abort'];
         }
+
+        await db.connectLeague(g.lid);
+        await league.loadGameAttributes(null);
+
+        // Update play menu
+        ui.updateStatus();
+        ui.updatePhase();
+        await ui.updatePlayMenu(null);
+        g.emitter.emit('updateTopMenu', {lid: g.lid});
+        checkDbChange(g.lid);
+        return [updateEvents, ctxCb];
     }
 
-    return [updateEvents, reqCb];
-}
+    return [updateEvents, ctxCb];
+};
 
-// Async just because it needs to resolve to a promise
-async function beforeNonLeague(req) {
+const beforeNonLeague = (ctx) => {
     g.lid = null;
-    g.vm.topMenu.lid(undefined);
+    g.emitter.emit('updateTopMenu', {lid: undefined});
 
-    const updateEvents = (req !== undefined && req.raw.updateEvents !== undefined) ? req.raw.updateEvents : [];
-    const reqCb = (req !== undefined && req.raw.cb !== undefined) ? req.raw.cb : () => {};
-    return [updateEvents, reqCb];
-}
+    const updateEvents = (ctx !== undefined && ctx.bbgm.updateEvents !== undefined) ? ctx.bbgm.updateEvents : [];
+    const ctxCb = (ctx !== undefined && ctx.bbgm.cb !== undefined) ? ctx.bbgm.cb : () => {};
+    return [updateEvents, ctxCb];
+};
 
-module.exports = {
+export {
     beforeLeague,
     beforeNonLeague,
 };

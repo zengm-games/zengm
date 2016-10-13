@@ -1,6 +1,7 @@
-const g = require('../globals');
-const backboard = require('backboard');
-const Promise = require('bluebird');
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import g from '../globals';
+import * as team from './team';
 
 /**
  * Assess the payroll and apply minimum and luxury taxes.
@@ -12,7 +13,7 @@ const Promise = require('bluebird');
 async function assessPayrollMinLuxury(tx) {
     let collectedTax = 0;
 
-    const payrolls = await require('./team').getPayrolls(tx);
+    const payrolls = await team.getPayrolls(tx);
 
     await tx.teamSeasons.index("season, tid").iterate(backboard.bound([g.season], [g.season, '']), teamSeason => {
         // Store payroll
@@ -70,24 +71,19 @@ async function updateRanks(tx, types) {
 
     const getByItem = byTeam => {
         const byItem = {};
-        for (const item in byTeam[0]) {
-            if (byTeam[0].hasOwnProperty(item)) {
-                byItem[item] = byTeam.map(x => x[item]);
-                byItem[item].sort(sortFn);
-            }
+        for (const item of Object.keys(byTeam[0])) {
+            byItem[item] = byTeam.map(x => x[item]);
+            byItem[item].sort(sortFn);
         }
         return byItem;
     };
 
     const updateObj = (obj, byItem) => {
-        let i, item;
-        for (item in obj) {
-            if (obj.hasOwnProperty(item)) {
-                for (i = 0; i < byItem[item].length; i++) {
-                    if (byItem[item][i].amount === obj[item].amount) {
-                        obj[item].rank = i + 1;
-                        break;
-                    }
+        for (const item of Object.keys(obj)) {
+            for (let i = 0; i < byItem[item].length; i++) {
+                if (byItem[item][i].amount === obj[item].amount) {
+                    obj[item].rank = i + 1;
+                    break;
                 }
             }
         }
@@ -102,15 +98,20 @@ async function updateRanks(tx, types) {
 
     const [teams, teamSeasons] = await Promise.all([tx.teams.getAll(), teamSeasonsPromise]);
 
-    let budgetsByItem, budgetsByTeam, expensesByItem, expensesByTeam, revenuesByItem, revenuesByTeam;
+    let budgetsByItem;
+    let budgetsByTeam;
     if (types.indexOf("budget") >= 0) {
         budgetsByTeam = teams.map(t => t.budget);
         budgetsByItem = getByItem(budgetsByTeam);
     }
+    let expensesByItem;
+    let expensesByTeam;
     if (types.indexOf("expenses") >= 0) {
         expensesByTeam = teamSeasons.map(ts => ts.expenses);
         expensesByItem = getByItem(expensesByTeam);
     }
+    let revenuesByItem;
+    let revenuesByTeam;
     if (types.indexOf("revenues") >= 0) {
         revenuesByTeam = teamSeasons.map(ts => ts.revenues);
         revenuesByItem = getByItem(revenuesByTeam);
@@ -163,7 +164,7 @@ function getRankLastThree(teamSeasons, category, item) {
     return 15.5;
 }
 
-module.exports = {
+export {
     assessPayrollMinLuxury,
     updateRanks,
     getRankLastThree,

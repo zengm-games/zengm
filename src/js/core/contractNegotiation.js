@@ -1,12 +1,13 @@
-const g = require('../globals');
-const ui = require('../ui');
-const freeAgents = require('./freeAgents');
-const player = require('./player');
-const team = require('./team');
-const Promise = require('bluebird');
-const eventLog = require('../util/eventLog');
-const helpers = require('../util/helpers');
-const lock = require('../util/lock');
+import Promise from 'bluebird';
+import g from '../globals';
+import * as ui from '../ui';
+import * as freeAgents from './freeAgents';
+import * as league from './league';
+import * as player from './player';
+import * as team from './team';
+import logEvent from '../util/logEvent';
+import * as helpers from '../util/helpers';
+import * as lock from '../util/lock';
 
 /**
  * Start a new contract negotiation with a player.
@@ -60,7 +61,7 @@ async function create(tx, pid, resigning, tid = g.userTid) {
     };
 
     await tx.negotiations.add(negotiation);
-    require('../core/league').updateLastDbChange();
+    league.updateLastDbChange();
     ui.updateStatus("Contract negotiation");
     return await ui.updatePlayMenu(tx);
 }
@@ -86,7 +87,7 @@ async function cancel(pid) {
         }
     });
 
-    require('../core/league').updateLastDbChange();
+    league.updateLastDbChange();
 }
 
 /**
@@ -100,7 +101,7 @@ async function cancel(pid) {
  */
 async function cancelAll(tx) {
     await tx.negotiations.clear();
-    require('../core/league').updateLastDbChange();
+    league.updateLastDbChange();
     ui.updateStatus("Idle");
     return await ui.updatePlayMenu(tx);
 }
@@ -152,7 +153,7 @@ async function accept(pid, amount, exp) {
             }, true);
 
             if (negotiation.resigning) {
-                eventLog.add(null, {
+                logEvent(null, {
                     type: "reSigned",
                     text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[g.userTid], g.season])}">${g.teamNamesCache[g.userTid]}</a> re-signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
                     showNotification: false,
@@ -160,7 +161,7 @@ async function accept(pid, amount, exp) {
                     tids: [g.userTid],
                 });
             } else {
-                eventLog.add(null, {
+                logEvent(null, {
                     type: "freeAgent",
                     text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[g.userTid], g.season])}">${g.teamNamesCache[g.userTid]}</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
                     showNotification: false,
@@ -175,10 +176,10 @@ async function accept(pid, amount, exp) {
 
     await cancel(pid);
 
-    require('../core/league').updateLastDbChange();
+    league.updateLastDbChange();
 }
 
-module.exports = {
+export {
     accept,
     cancel,
     cancelAll,

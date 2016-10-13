@@ -13,6 +13,7 @@ number or not.
 ## Techincal details
 
 - Incorporated Babel into build pipeline, most notably enabling async/await
+- UI ported from Knockout to React
 
 # 3.5.0 (2016-05-27)
 

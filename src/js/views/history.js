@@ -1,15 +1,13 @@
-const g = require('../globals');
-const ui = require('../ui');
-const player = require('../core/player');
-const team = require('../core/team');
-const Promise = require('bluebird');
-const ko = require('knockout');
-const bbgmView = require('../util/bbgmView');
-const helpers = require('../util/helpers');
-const components = require('./components');
+import Promise from 'bluebird';
+import g from '../globals';
+import * as player from '../core/player';
+import * as team from '../core/team';
+import bbgmViewReact from '../util/bbgmViewReact';
+import * as helpers from '../util/helpers';
+import History from './views/History';
 
-function get(req) {
-    let season = helpers.validateSeason(req.params.season);
+function get(ctx) {
+    let season = helpers.validateSeason(ctx.params.season);
 
     // If playoffs aren't over, season awards haven't been set
     if (g.phase <= g.PHASE.PLAYOFFS) {
@@ -19,19 +17,20 @@ function get(req) {
         }
     }
 
-    if (season < g.startingSeason) {
-        return {
-            errorMessage: "There is no league history yet. Check back after the playoffs.",
-        };
-    }
-
     return {
         season,
     };
 }
 
-async function updateHistory(inputs, updateEvents, vm) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || vm.season() !== inputs.season) {
+async function updateHistory(inputs, updateEvents, state) {
+    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || state.season !== inputs.season) {
+        if (inputs.season < g.startingSeason) {
+            return {
+                invalidSeason: true,
+                season: inputs.season,
+            };
+        }
+
         let [awards, retiredPlayers, teams] = await Promise.all([
             g.dbl.awards.get(inputs.season),
             g.dbl.players.index('retiredYear').getAll(inputs.season).then(players => {
@@ -92,6 +91,7 @@ async function updateHistory(inputs, updateEvents, vm) {
             awards,
             champ,
             confs: g.confs,
+            invalidSeason: false,
             retiredPlayers,
             season: inputs.season,
             userTid: g.userTid,
@@ -99,20 +99,9 @@ async function updateHistory(inputs, updateEvents, vm) {
     }
 }
 
-function uiFirst(vm) {
-    ko.computed(() => {
-        ui.title(`Season Summary - ${vm.season()}`);
-    }).extend({throttle: 1});
-}
-
-function uiEvery(updateEvents, vm) {
-    components.dropdown("history-dropdown", ["seasons"], [vm.season()], updateEvents);
-}
-
-module.exports = bbgmView.init({
+export default bbgmViewReact.init({
     id: "history",
     get,
     runBefore: [updateHistory],
-    uiFirst,
-    uiEvery,
+    Component: History,
 });

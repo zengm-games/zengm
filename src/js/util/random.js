@@ -6,6 +6,30 @@
  * @param {number} b Maximum integer that can be returned.
  * @return {number} Random integer between a and b.
  */
+/**
+ * Choose a random integer from [a, b]
+ *
+ * @memberOf util.random
+ * @param {number} a Minimum integer that can be returned.
+ * @param {number} b Maximum integer that can be returned.
+ * @return {number} Random integer between a and b.
+ */
+/**
+ * Choose a random integer from [a, b]
+ *
+ * @memberOf util.random
+ * @param {number} a Minimum integer that can be returned.
+ * @param {number} b Maximum integer that can be returned.
+ * @return {number} Random integer between a and b.
+ */
+/**
+ * Choose a random integer from [a, b]
+ *
+ * @memberOf util.random
+ * @param {number} a Minimum integer that can be returned.
+ * @param {number} b Maximum integer that can be returned.
+ * @return {number} Random integer between a and b.
+ */
 function randInt(a, b) {
     return Math.floor(Math.random() * (1 + b - a)) + a;
 }
@@ -63,7 +87,9 @@ function gauss(mu = 0, sigma = 1) {
  * @return {number} Random number from Gaussian distribution.
  */
 function realGauss(mu = 0, sigma = 1) {
-    let radius, z1, z2;
+    let radius;
+    let z1;
+    let z2;
     do {
         z1 = 2 * Math.random() - 1;
         z2 = 2 * Math.random() - 1;
@@ -97,7 +123,7 @@ function choice(x) {
     return x[Math.floor(Math.random() * x.length)];
 }
 
-module.exports = {
+export {
     randInt,
     shuffle,
     gauss,
@@ -105,4 +131,3 @@ module.exports = {
     uniform,
     choice,
 };
-

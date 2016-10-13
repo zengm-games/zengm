@@ -1,15 +1,9 @@
-const g = require('../globals');
-const ui = require('../ui');
-const phase = require('../core/phase');
-const bbgmView = require('../util/bbgmView');
-const helpers = require('../util/helpers');
+import g from '../globals';
+import bbgmViewReact from '../util/bbgmViewReact';
+import * as helpers from '../util/helpers';
+import FantasyDraft from './views/FantasyDraft';
 
 function get() {
-    if (g.phase === g.PHASE.DRAFT) {
-        return {
-            errorMessage: "You can't start a fantasy draft while a regular draft is already in progress.",
-        };
-    }
     if (g.phase === g.PHASE.FANTASY_DRAFT) {
         return {
             redirectUrl: helpers.leagueUrl(["draft"]),
@@ -17,21 +11,15 @@ function get() {
     }
 }
 
-function post(req) {
-    const position = req.params.position === "Random" ? "random" : parseInt(req.params.position, 10);
-
-    document.getElementById("start-fantasy-draft").disabled = true;
-
-    phase.newPhase(g.PHASE.FANTASY_DRAFT, position);
+function updateFantasyDraft() {
+    return {
+        phase: g.phase,
+    };
 }
 
-function uiFirst() {
-    ui.title("Fantasy Draft");
-}
-
-module.exports = bbgmView.init({
+export default bbgmViewReact.init({
     id: "fantasyDraft",
     get,
-    post,
-    uiFirst,
+    runBefore: [updateFantasyDraft],
+    Component: FantasyDraft,
 });

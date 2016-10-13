@@ -1,17 +1,19 @@
-const db = require('../db');
-const g = require('../globals');
-const ui = require('../ui');
-const draft = require('./draft');
-const finances = require('./finances');
-const phase = require('./phase');
-const player = require('./player');
-const team = require('./team');
-const backboard = require('backboard');
-const Promise = require('bluebird');
-const $ = require('jquery');
-const _ = require('underscore');
-const helpers = require('../util/helpers');
-const random = require('../util/random');
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import _ from 'underscore';
+import * as db from '../db';
+import g from '../globals';
+import * as ui from '../ui';
+import * as draft from './draft';
+import * as finances from './finances';
+import * as freeAgents from './freeAgents';
+import * as game from './game';
+import * as phase from './phase';
+import * as player from './player';
+import * as season from './season';
+import * as team from './team';
+import * as helpers from '../util/helpers';
+import * as random from '../util/random';
 
 const defaultGameAttributes = {
     phase: 0,
@@ -60,8 +62,8 @@ const defaultGameAttributes = {
 function merge(x, y) {
     for (let i = 0; i < x.length; i++) {
         // Fill in default values as needed
-        for (const prop in y[i]) {
-            if (y[i].hasOwnProperty(prop) && !x[i].hasOwnProperty(prop)) {
+        for (const prop of Object.keys(y[i])) {
+            if (!x[i].hasOwnProperty(prop)) {
                 x[i][prop] = y[i][prop];
             }
         }
@@ -80,14 +82,13 @@ function merge(x, y) {
  */
 async function setGameAttributes(tx, gameAttributes) {
     const toUpdate = [];
-    for (const key in gameAttributes) {
-        if (gameAttributes.hasOwnProperty(key)) {
-            if (g[key] !== gameAttributes[key]) {
-                toUpdate.push(key);
-            }
+    for (const key of Object.keys(gameAttributes)) {
+        if (g[key] !== gameAttributes[key]) {
+            toUpdate.push(key);
         }
     }
 
+    let updateMultiTeam = false;
     await Promise.map(toUpdate, async key => {
         await tx.gameAttributes.put({
             key,
@@ -97,18 +98,13 @@ async function setGameAttributes(tx, gameAttributes) {
         g[key] = gameAttributes[key];
 
         if (key === "userTid" || key === "userTids") {
-            g.vm.multiTeam[key](gameAttributes[key]);
-        }
-
-        // Trigger a signal for the team finances view. This is stupid.
-        if (key === "gamesInProgress") {
-            if (gameAttributes[key]) {
-                $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStart");
-            } else {
-                $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
-            }
+            updateMultiTeam = true;
         }
     });
+
+    if (updateMultiTeam) {
+        g.emitter.emit('updateMultiTeam');
+    }
 }
 
 // Calls setGameAttributes and ensures transaction is complete. Otherwise, manual transaction managment would always need to be there like this
@@ -200,7 +196,8 @@ async function create(name, tid, leagueFile = {}, startingSeason, randomizeRoste
 
     await setGameAttributesComplete(gameAttributes);
 
-    let players, scoutingRank;
+    let players;
+    let scoutingRank;
     const objectStores = ["draftPicks", "draftOrder", "players", "playerStats", "teams", "teamSeasons", "teamStats", "trade", "releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games", "events", "playerFeats"];
     await g.dbl.tx(objectStores, "readwrite", async tx => {
         // Draft picks for the first 4 years, as those are the ones can be traded initially
@@ -406,9 +403,9 @@ async function create(name, tid, leagueFile = {}, startingSeason, randomizeRoste
             const baseRatings = [37, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 26, 26, 26];
             const pots = [75, 65, 55, 55, 60, 50, 70, 40, 55, 50, 60, 60, 45, 45];
 
-            for (let tid = -3; tid < teams.length; tid++) {
+            for (let tidTemp = -3; tidTemp < teams.length; tidTemp++) {
                 // Create multiple "teams" worth of players for the free agent pool
-                const tid2 = tid < 0 ? g.PLAYER.FREE_AGENT : tid;
+                const tid2 = tidTemp < 0 ? g.PLAYER.FREE_AGENT : tidTemp;
 
                 const goodNeutralBad = random.randInt(-1, 1);  // determines if this will be a good team or not
                 random.shuffle(pots);
@@ -621,17 +618,17 @@ async function loadGameAttribute(ot, key) {
 
     g[key] = gameAttribute.value;
 
-    // UI stuff - see also loadGameAttributes
-    if (key === "godMode") {
-        g.vm.topMenu.godMode(g.godMode);
-    }
-    if (key === "userTid" || key === "userTids") {
-        g.vm.multiTeam[key](gameAttribute.value);
-    }
-
     // Set defaults to avoid IndexedDB upgrade
     if (g[key] === undefined && defaultGameAttributes.hasOwnProperty(key)) {
         g[key] = defaultGameAttributes[key];
+    }
+
+    // UI stuff - see also loadGameAttributes
+    if (key === "godMode") {
+        g.emitter.emit('updateTopMenu', {godMode: g.godMode});
+    }
+    if (key === "userTid" || key === "userTids") {
+        g.emitter.emit('updateMultiTeam');
     }
 }
 
@@ -661,17 +658,12 @@ async function loadGameAttributes(ot) {
     });
 
     // UI stuff - see also loadGameAttribute
-    g.vm.topMenu.godMode(g.godMode);
-    g.vm.multiTeam.userTid(g.userTid);
-    g.vm.multiTeam.userTids(g.userTids);
+    g.emitter.emit('updateTopMenu', {godMode: g.godMode});
+    g.emitter.emit('updateMultiTeam');
 }
 
 // Depending on phase, initiate action that will lead to the next phase
 async function autoPlay() {
-    const freeAgents = require('./freeAgents');
-    const game = require('./game');
-    const season = require('./season');
-
     if (g.phase === g.PHASE.PRESEASON) {
         await phase.newPhase(g.PHASE.REGULAR_SEASON);
     } else if (g.phase === g.PHASE.REGULAR_SEASON) {
@@ -704,7 +696,7 @@ async function initAutoPlay() {
     }
 }
 
-module.exports = {
+export {
     create,
     exportLeague,
     remove,

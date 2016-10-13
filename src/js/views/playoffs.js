@@ -1,21 +1,20 @@
-const g = require('../globals');
-const ui = require('../ui');
-const season = require('../core/season');
-const team = require('../core/team');
-const ko = require('knockout');
-const bbgmView = require('../util/bbgmView');
-const helpers = require('../util/helpers');
-const components = require('./components');
+import g from '../globals';
+import * as season from '../core/season';
+import * as team from '../core/team';
+import bbgmViewReact from '../util/bbgmViewReact';
+import * as helpers from '../util/helpers';
+import Playoffs from './views/Playoffs';
 
-function get(req) {
+function get(ctx) {
     return {
-        season: helpers.validateSeason(req.params.season),
+        season: helpers.validateSeason(ctx.params.season),
     };
 }
 
-async function updatePlayoffs(inputs, updateEvents, vm) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.season !== vm.season() || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0)) {
-        let finalMatchups, series;
+async function updatePlayoffs(inputs, updateEvents, state) {
+    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.season !== state.season || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0)) {
+        let finalMatchups;
+        let series;
 
         // If in the current season and before playoffs started, display projected matchups
         if (inputs.season === g.season && g.phase < g.PHASE.PLAYOFFS) {
@@ -78,20 +77,9 @@ async function updatePlayoffs(inputs, updateEvents, vm) {
     }
 }
 
-function uiFirst(vm) {
-    ko.computed(() => {
-        ui.title(`Playoffs - ${vm.season()}`);
-    }).extend({throttle: 1});
-}
-
-function uiEvery(updateEvents, vm) {
-    components.dropdown("playoffs-dropdown", ["seasons"], [vm.season()], updateEvents);
-}
-
-module.exports = bbgmView.init({
+export default bbgmViewReact.init({
     id: "playoffs",
     get,
     runBefore: [updatePlayoffs],
-    uiFirst,
-    uiEvery,
+    Component: Playoffs,
 });

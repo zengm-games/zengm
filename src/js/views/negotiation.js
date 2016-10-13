@@ -1,24 +1,10 @@
-const g = require('../globals');
-const ui = require('../ui');
-const contractNegotiation = require('../core/contractNegotiation');
-const freeAgents = require('../core/freeAgents');
-const player = require('../core/player');
-const team = require('../core/team');
-const ko = require('knockout');
-const bbgmView = require('../util/bbgmView');
-const helpers = require('../util/helpers');
-
-// Show the negotiations list if there are more ongoing negotiations
-async function redirectNegotiationOrRoster(cancelled) {
-    const negotiations = await g.dbl.negotiations.getAll();
-    if (negotiations.length > 0) {
-        ui.realtimeUpdate([], helpers.leagueUrl(["negotiation"]));
-    } else if (cancelled) {
-        ui.realtimeUpdate([], helpers.leagueUrl(["free_agents"]));
-    } else {
-        ui.realtimeUpdate([], helpers.leagueUrl(["roster"]));
-    }
-}
+import g from '../globals';
+import * as contractNegotiation from '../core/contractNegotiation';
+import * as freeAgents from '../core/freeAgents';
+import * as player from '../core/player';
+import * as team from '../core/team';
+import bbgmViewReact from '../util/bbgmViewReact';
+import Negotiation from './views/Negotiation';
 
 function generateContractOptions(contract, ovr) {
     let growthFactor = 0.15;
@@ -63,41 +49,12 @@ function generateContractOptions(contract, ovr) {
     return contractOptions.filter(contractOption => contractOption.amount * 1000 <= g.maxContract);
 }
 
-function get(req) {
-    const pid = parseInt(req.params.pid, 10);
+function get(ctx) {
+    const pid = parseInt(ctx.params.pid, 10);
 
     return {
         pid: pid >= 0 ? pid : null, // Null will load whatever the active one is
     };
-}
-
-async function post(req) {
-    const pid = parseInt(req.params.pid, 10);
-
-    if (req.params.hasOwnProperty("cancel")) {
-        await contractNegotiation.cancel(pid);
-        redirectNegotiationOrRoster(true);
-    } else if (req.params.hasOwnProperty("accept") && req.params.hasOwnProperty("amount") && req.params.hasOwnProperty("exp")) {
-        const error = await contractNegotiation.accept(pid, parseInt(req.params.amount * 1000, 10), parseInt(req.params.exp, 10));
-        if (error !== undefined && error) {
-            helpers.errorNotify(error);
-        }
-        redirectNegotiationOrRoster(false);
-    } else if (req.params.hasOwnProperty("new")) {
-        // If there is no active negotiation with this pid, create it
-        const negotiation = await g.dbl.negotiations.get(pid);
-        if (!negotiation) {
-            const error = await g.dbl.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite", tx => contractNegotiation.create(tx, pid, false));
-            if (error !== undefined && error) {
-                helpers.errorNotify(error);
-                ui.realtimeUpdate([], helpers.leagueUrl(["free_agents"]));
-            } else {
-                ui.realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));
-            }
-        } else {
-            ui.realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));
-        }
-    }
 }
 
 async function updateNegotiation(inputs) {
@@ -106,7 +63,7 @@ async function updateNegotiation(inputs) {
 
     if (negotiations.length === 0) {
         return {
-            errorMessage: `No negotiation with player ${inputs.pid} in progress.`,
+            errorMessage: 'No negotiation with player in progress.',
         };
     }
 
@@ -137,40 +94,23 @@ async function updateNegotiation(inputs) {
 
     p.contract.amount = freeAgents.amountWithMood(p.contract.amount, p.freeAgentMood[g.userTid]);
 
-    // See views.freeAgents for moods as well
-    if (p.freeAgentMood[g.userTid] < 0.25) {
-        p.mood = '<span class="text-success"><b>Eager to reach an agreement.</b></span>';
-    } else if (p.freeAgentMood[g.userTid] < 0.5) {
-        p.mood = '<b>Willing to sign for the right price.</b>';
-    } else if (p.freeAgentMood[g.userTid] < 0.75) {
-        p.mood = '<span class="text-warning"><b>Annoyed at you.</b></span>';
-    } else {
-        p.mood = '<span class="text-danger"><b>Insulted by your presence.</b></span>';
-    }
-    delete p.freeAgentMood;
-
     // Generate contract options
-    p.contractOptions = generateContractOptions(p.contract, p.ratings.ovr);
+    const contractOptions = generateContractOptions(p.contract, p.ratings.ovr);
 
     const payroll = await team.getPayroll(null, g.userTid).get(0);
     return {
-        salaryCap: g.salaryCap / 1000,
+        contractOptions,
         payroll: payroll / 1000,
         player: p,
         resigning: negotiation.resigning,
+        salaryCap: g.salaryCap / 1000,
+        userTid: g.userTid,
     };
 }
 
-function uiFirst(vm) {
-    ko.computed(() => {
-        ui.title(`Contract Negotiation - ${vm.player.name()}`);
-    }).extend({throttle: 1});
-}
-
-module.exports = bbgmView.init({
+export default bbgmViewReact.init({
     id: "negotiation",
     get,
-    post,
     runBefore: [updateNegotiation],
-    uiFirst,
+    Component: Negotiation,
 });

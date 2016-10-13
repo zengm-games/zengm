@@ -16,7 +16,7 @@ function numInArrayEqualTo(array, x) {
     return n;
 }
 
-module.exports = {
+export {
+    // eslint-disable-next-line import/prefer-default-export
     numInArrayEqualTo,
 };
-

@@ -1,27 +1,23 @@
-const g = require('../globals');
-const ui = require('../ui');
-const freeAgents = require('../core/freeAgents');
-const player = require('../core/player');
-const trade = require('../core/trade');
-const faces = require('facesjs');
-const $ = require('jquery');
-const ko = require('knockout');
-const komapping = require('knockout.mapping');
-const Promise = require('bluebird');
-const bbgmView = require('../util/bbgmView');
-const helpers = require('../util/helpers');
+import Promise from 'bluebird';
+import g from '../globals';
+import * as freeAgents from '../core/freeAgents';
+import * as player from '../core/player';
+import * as trade from '../core/trade';
+import bbgmViewReact from '../util/bbgmViewReact';
+import * as helpers from '../util/helpers';
+import Player from './views/Player';
 
-function get(req) {
+function get(ctx) {
     return {
-        pid: req.params.pid !== undefined ? parseInt(req.params.pid, 10) : undefined,
+        pid: ctx.params.pid !== undefined ? parseInt(ctx.params.pid, 10) : undefined,
     };
 }
 
-async function updatePlayer(inputs, updateEvents, vm) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || !vm.retired()) {
+async function updatePlayer(inputs, updateEvents, state) {
+    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || !state.retired) {
         let [p, events] = await Promise.all([
-            g.dbl.players.get(inputs.pid).then(p => {
-                return player.withStats(null, [p], {
+            g.dbl.players.get(inputs.pid).then(p2 => {
+                return player.withStats(null, [p2], {
                     statsSeasons: "all",
                     statsPlayoffs: true,
                 }).then(players => players[0]);
@@ -32,7 +28,7 @@ async function updatePlayer(inputs, updateEvents, vm) {
         p = player.filter(p, {
             attrs: ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "age", "hgtFt", "hgtIn", "weight", "born", "diedYear", "contract", "draft", "face", "mood", "injury", "salaries", "salariesTotal", "awardsGrouped", "freeAgentMood", "imgURL", "watch", "gamesUntilTradable", "college"],
             ratings: ["season", "abbrev", "age", "ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills", "pos"],
-            stats: ["season", "abbrev", "age", "gp", "gs", "min", "fg", "fga", "fgp", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp", "ft", "fta", "ftp", "pm", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "ba", "pf", "pts", "per", "ewa"],
+            stats: ["psid", "season", "abbrev", "age", "gp", "gs", "min", "fg", "fga", "fgp", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp", "ft", "fta", "ftp", "pm", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "ba", "pf", "pts", "per", "ewa"],
             playoffs: true,
             showNoStats: true,
             showRookies: true,
@@ -46,6 +42,7 @@ async function updatePlayer(inputs, updateEvents, vm) {
 
         const feats = events.filter(event => event.type === "playerFeat").map(event => {
             return {
+                eid: event.eid,
                 season: event.season,
                 text: event.text,
             };
@@ -55,6 +52,7 @@ async function updatePlayer(inputs, updateEvents, vm) {
             return !(event.type === "award" || event.type === "injured" || event.type === "healed" || event.type === "hallOfFame" || event.type === "playerFeat" || event.type === "tragedy");
         }).map(event => {
             return {
+                eid: event.eid,
                 season: event.season,
                 text: event.text,
             };
@@ -79,40 +77,9 @@ async function updatePlayer(inputs, updateEvents, vm) {
     }
 }
 
-function uiFirst(vm) {
-    ko.computed(() => {
-        ui.title(vm.player.name());
-    }).extend({throttle: 1});
-
-    ko.computed(() => {
-        // Manually clear picture, since we're not using Knockout for this
-        const pic = document.getElementById("picture");
-        if (pic) {
-            while (pic.firstChild) {
-                pic.removeChild(pic.firstChild);
-            }
-        }
-
-        // If playerImgURL is not an empty string, use it instead of the generated face
-        if (vm.player.imgURL()) {
-            const img = document.createElement("img");
-            img.src = vm.player.imgURL();
-            img.style.maxHeight = "100%";
-            img.style.maxWidth = "100%";
-            if (pic) {
-                pic.appendChild(img);
-            }
-        } else {
-            faces.display("picture", komapping.toJS(vm.player.face));
-        }
-    }).extend({throttle: 1});
-
-    ui.tableClickableRows($(".table-clickable-rows"));
-}
-
-module.exports = bbgmView.init({
+export default bbgmViewReact.init({
     id: "player",
     get,
     runBefore: [updatePlayer],
-    uiFirst,
+    Component: Player,
 });

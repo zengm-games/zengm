@@ -1,22 +1,23 @@
-const Backboard = require('backboard/dist');
-const g = require('./globals');
-const Promise = require('bluebird');
-const Davis = require('./lib/davis');
-const eventLog = require('./util/eventLog');
-const helpers = require('./util/helpers');
-
-const migrateMessage = '<h1>Upgrading...</h1><p>This might take a few minutes, depending on the size of your league.</p><p>If something goes wrong, <a href="http://webmasters.stackexchange.com/questions/8525/how-to-open-the-javascript-console-in-different-browsers" target="_blank">open the console</a> and see if there is an error message there. Then <a href="https://basketball-gm.com/contact/" target="_blank">let us know about your problem</a>. Please include as much info as possible.</p>';
+import Promise from 'bluebird';
+import Backboard from 'backboard';
+import page from 'page';
+import g from './globals';
+import * as league from './core/league';
+import * as helpers from './util/helpers';
+import logEvent from './util/logEvent';
 
 Backboard.setPromiseConstructor(Promise);
 Backboard.on('quotaexceeded', () => {
-    eventLog.add(null, {
+    logEvent(null, {
         type: "error",
         text: 'Your browser isn\'t letting Basketball GM store any more data!<br><br>Try <a href="/">deleting some old leagues</a> or deleting old data (Tools > Improve Performance within a league). Clearing space elsewhere on your hard drive might help too. <a href="https://basketball-gm.com/manual/debugging/quota-errors/"><b>Read this for more info.</b></a>',
         saveToDb: false,
         persistent: true,
     });
 });
-Backboard.on('blocked', () => window.alert("Please close any other tabs with this league open!"));
+Backboard.on('blocked', () => {
+    window.alert("Please close any other tabs with this league open!");
+});
 
 /**
  * Create new meta database with the latest structure.
@@ -35,9 +36,7 @@ function createMeta(upgradeDB) {
  *
  * @param {Object} event Event from onupgradeneeded, with oldVersion > 0.
  */
-async function migrateMeta(upgradeDB) {
-    document.getElementById("content").innerHTML = migrateMessage;
-
+function migrateMeta(upgradeDB) {
     console.log(`Upgrading meta database from version ${upgradeDB.oldVersion} to version ${upgradeDB.version}`);
 
     if (upgradeDB.oldVersion <= 6) {
@@ -46,7 +45,7 @@ async function migrateMeta(upgradeDB) {
 }
 
 async function connectMeta() {
-    const db = await Backboard.open('meta', 7, async upgradeDB => {
+    const db = await Backboard.open('meta', 7, async (upgradeDB) => {
         if (upgradeDB.oldVersion === 0) {
             createMeta(upgradeDB);
         } else {
@@ -116,8 +115,6 @@ function createLeague(upgradeDB, lid) {
  * @param {number} lid Integer league ID number.
  */
 async function migrateLeague(upgradeDB, lid) {
-    document.getElementById("content").innerHTML = migrateMessage;
-
     console.log(`Upgrading league${lid} database from version ${upgradeDB.oldVersion} to version ${upgradeDB.version}`);
 
     if (upgradeDB.oldVersion <= 15) {
@@ -189,7 +186,7 @@ async function migrateLeague(upgradeDB, lid) {
     }
     if (upgradeDB.oldVersion <= 19) {
         // New best records format in awards
-        await upgradeDB.awards.iterate(async a => {
+        await upgradeDB.awards.iterate(async (a) => {
             if (a.bre && a.brw) {
                 a.bestRecordConfs = [a.bre, a.brw];
                 a.bestRecord = a.bre.won >= a.brw.won ? a.bre : a.brw;
@@ -202,7 +199,7 @@ async function migrateLeague(upgradeDB, lid) {
 }
 
 async function connectLeague(lid) {
-    const db = await Backboard.open(`league${lid}`, 20, async upgradeDB => {
+    const db = await Backboard.open(`league${lid}`, 20, async (upgradeDB) => {
         if (upgradeDB.oldVersion === 0) {
             createLeague(upgradeDB, lid);
         } else {
@@ -217,10 +214,8 @@ async function connectLeague(lid) {
 async function reset() {
     // localStorage, which is just use for table sorting currently
     const debug = localStorage.debug; // Save debug setting and restore later
-    for (const key in localStorage) {
-        if (localStorage.hasOwnProperty(key)) {
-            localStorage.removeItem(key);
-        }
+    for (const key of Object.keys(localStorage)) {
+        localStorage.removeItem(key);
     }
     localStorage.debug = debug;
 
@@ -229,10 +224,9 @@ async function reset() {
     const leagues = await g.dbm.leagues.getAll();
     if (leagues.length === 0) {
         console.log('No leagues found.');
-        Davis.location.assign(new Davis.Request("/"));
+        page('/');
     }
 
-    const league = require('./core/league');
     await Promise.all(leagues.map(l => league.remove(l.lid)));
 
     // Delete any current meta database
@@ -243,7 +237,7 @@ async function reset() {
     location.reload();
 }
 
-module.exports = {
+export {
     connectMeta,
     connectLeague,
     reset,

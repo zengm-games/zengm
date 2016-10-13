@@ -1,14 +1,16 @@
-const g = require('../globals');
-const ui = require('../ui');
-const finances = require('./finances');
-const player = require('./player');
-const team = require('./team');
-const backboard = require('backboard');
-const Promise = require('bluebird');
-const _ = require('underscore');
-const eventLog = require('../util/eventLog');
-const helpers = require('../util/helpers');
-const random = require('../util/random');
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import _ from 'underscore';
+import g from '../globals';
+import * as ui from '../ui';
+import * as finances from './finances';
+import * as league from './league';
+import * as phase from './phase';
+import * as player from './player';
+import * as team from './team';
+import * as helpers from '../util/helpers';
+import logEvent from '../util/logEvent';
+import * as random from '../util/random';
 
 async function genPicks(tx, season) {
     const promises = [];
@@ -112,7 +114,7 @@ async function genPlayers(tx, tid, scoutingRank = null, numPlayers, newLeague = 
         p = player.develop(p, agingYears, true);
 
         // Update player values after ratings changes
-        promises.push(player.updateValues(tx, p, []).then(p => tx.players.put(p)));
+        promises.push(player.updateValues(tx, p, []).then(p2 => tx.players.put(p2)));
     }
 
     await Promise.all(promises);
@@ -133,7 +135,7 @@ function lotteryLogTxt(tid, type, number) {
 }
 
 function logAction(tid, txt) {
-    eventLog.add(null, {
+    logEvent(null, {
         type: "draft",
         text: txt,
         showNotification: tid === g.userTid,
@@ -154,7 +156,8 @@ function logLotteryChances(chances, teams, draftOrder) {
 }
 
 function logLotteryWinners(chances, teams, tm, origTm, pick) {
-    let idx, txt;
+    let idx;
+    let txt;
     for (let i = 0; i < teams.length; i++) {
         if (teams[i].tid === origTm) {
             idx = i;
@@ -196,7 +199,8 @@ function updateChances(chances, teams, isFinal) {
             let remainder = (isFinal) ? total % val : 0;
             const newVal = (total - remainder) / val;
 
-            let i, j;
+            let i;
+            let j;
             for (i = tc, j = tc + val; i < j; i++) {
                 chances[i] = newVal;
                 if (remainder > 0) {
@@ -272,7 +276,7 @@ async function genOrder(tx) {
 
     // cumsum
     for (let i = 1; i < chances.length; i++) {
-        chances[i] = chances[i] + chances[i - 1];
+        chances[i] += chances[i - 1];
     }
     // Pick first three picks based on chances
     const firstThree = [];
@@ -495,7 +499,7 @@ async function selectPlayer(pick, pid) {
 
 
         const draftName = g.phase === g.PHASE.FANTASY_DRAFT ? `${g.season} fantasy draft` : `${g.season} draft`;
-        eventLog.add(null, {
+        logEvent(null, {
             type: "draft",
             text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[pick.tid], g.season])}">${g.teamNamesCache[pick.tid]}</a> selected <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> with the ${helpers.ordinal(pick.pick + (pick.round - 1) * 30)} pick in the <a href="${helpers.leagueUrl(["draft_summary", g.season])}">${draftName}</a>.`,
             showNotification: false,
@@ -526,13 +530,11 @@ async function untilUserOrEnd() {
     playersAll.sort((a, b) => b.value - a.value);
 
     // Called after either the draft is over or it's the user's pick
-    const afterDoneAuto = async (draftOrder, pids) => {
+    const afterDoneAuto = async () => {
         await setOrder(null, draftOrder);
 
         // Is draft over?;
         if (draftOrder.length === 0) {
-            const phase = require('./phase'); // Circular reference
-
             // Fantasy draft special case!
             if (g.phase === g.PHASE.FANTASY_DRAFT) {
                 await g.dbl.tx(["players", "teamSeasons"], "readwrite", async tx => {
@@ -547,21 +549,21 @@ async function untilUserOrEnd() {
                     });
                 });
 
-                await require('../core/league').setGameAttributesComplete({
+                await league.setGameAttributesComplete({
                     phase: g.nextPhase,
                     nextPhase: null,
                 });
 
                 ui.updatePhase(`${g.season} ${g.PHASE_TEXT[g.phase]}`);
                 await ui.updatePlayMenu(null);
-                require('../core/league').updateLastDbChange();
+                league.updateLastDbChange();
             } else {
                 // Non-fantasy draft
                 await phase.newPhase(g.PHASE.AFTER_DRAFT);
             }
         } else {
             // Draft is not over, so continue
-            require('../core/league').updateLastDbChange();
+            league.updateLastDbChange();
         }
 
         return pids;
@@ -574,7 +576,7 @@ async function untilUserOrEnd() {
 
             if (g.userTids.indexOf(pick.tid) >= 0 && g.autoPlaySeasons === 0) {
                 draftOrder.unshift(pick);
-                return afterDoneAuto(draftOrder, pids);
+                return afterDoneAuto();
             }
 
             const selection = Math.floor(Math.abs(random.gauss(0, 2))); // 0=best prospect, 1=next best prospect, etc.
@@ -586,13 +588,13 @@ async function untilUserOrEnd() {
             return autoSelectPlayer();
         }
 
-        return afterDoneAuto(draftOrder, pids);
+        return afterDoneAuto();
     };
 
     return autoSelectPlayer();
 }
 
-module.exports = {
+export {
     genPicks,
     getOrder,
     setOrder,

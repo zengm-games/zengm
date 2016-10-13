@@ -1,4 +1,4 @@
-const eventLog = require('../util/eventLog');
+import logEvent from '../util/logEvent';
 
 const all = [{
     date: "2013-09-21",
@@ -141,7 +141,7 @@ function check() {
             text += '<br><a href="/changes">View All Changes</a>';
         }
 
-        eventLog.add(null, {
+        logEvent(null, {
             type: "changes",
             text,
             saveToDb: false,
@@ -151,7 +151,7 @@ function check() {
     }
 }
 
-module.exports = {
+export {
     all,
     check,
 };

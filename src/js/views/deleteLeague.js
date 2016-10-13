@@ -1,21 +1,14 @@
-const db = require('../db');
-const g = require('../globals');
-const ui = require('../ui');
-const league = require('../core/league');
-const backboard = require('backboard');
-const Promise = require('bluebird');
-const bbgmView = require('../util/bbgmView');
-const viewHelpers = require('../util/viewHelpers');
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import * as db from '../db';
+import g from '../globals';
+import bbgmViewReact from '../util/bbgmViewReact';
+import DeleteLeague from './views/DeleteLeague';
 
-function get(req) {
+function get(ctx) {
     return {
-        lid: parseInt(req.params.lid, 10),
+        lid: parseInt(ctx.params.lid, 10),
     };
-}
-
-async function post(req) {
-    await league.remove(parseInt(req.params.lid, 10));
-    ui.realtimeUpdate([], "/");
 }
 
 async function updateDeleteLeague(inputs) {
@@ -40,23 +33,18 @@ async function updateDeleteLeague(inputs) {
     } catch (err) {
         return {
             lid: inputs.lid,
-            name: null,
-            numGames: null,
-            numPlayers: null,
-            numSeasons: null,
+            name: undefined,
+            numGames: undefined,
+            numPlayers: undefined,
+            numSeasons: undefined,
         };
     }
 }
 
-function uiFirst() {
-    ui.title("Delete League");
-}
-
-module.exports = bbgmView.init({
+export default bbgmViewReact.init({
     id: "deleteLeague",
-    beforeReq: viewHelpers.beforeNonLeague,
+    inLeague: false,
     get,
-    post,
     runBefore: [updateDeleteLeague],
-    uiFirst,
+    Component: DeleteLeague,
 });

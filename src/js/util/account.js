@@ -1,11 +1,11 @@
 /*eslint camelcase: 0*/
-const g = require('../globals');
-const team = require('../core/team');
-const backboard = require('backboard');
-const Promise = require('bluebird');
-const $ = require('jquery');
-const eventLog = require('./eventLog');
-const ads = require('../util/ads');
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import $ from 'jquery';
+import g from '../globals';
+import * as team from '../core/team';
+import * as ads from './ads';
+import logEvent from './logEvent';
 
 // IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php
 const allAchievements = [{
@@ -59,7 +59,7 @@ const allAchievements = [{
 }, {
     slug: "hacker",
     name: "Hacker",
-    desc: 'Privately <a href="https://basketball-gm.com/contact/">report</a> a security issue in <a href="https://bitbucket.org/dumbmatter/bbgm-account">the account system</a> or some other part of the site.',
+    desc: 'Privately report a security issue in the account system or some other part of the site.',
 }];
 
 /**
@@ -81,7 +81,7 @@ async function addAchievements(achievements, silent = false) {
         // Find name of achievement
         for (let i = 0; i < allAchievements.length; i++) {
             if (allAchievements[i].slug === slug) {
-                eventLog.add(null, {
+                logEvent(null, {
                     type: "achievement",
                     text: `"${allAchievements[i].name}" achievement awarded! <a href="/account">View all achievements.</a>`,
                 });
@@ -90,9 +90,9 @@ async function addAchievements(achievements, silent = false) {
         }
     };
 
-    const addToIndexedDB = achievements => {
+    const addToIndexedDB = achievements2 => {
         return g.dbm.tx("achievements", "readwrite", async tx => {
-            for (const achievement of achievements) {
+            for (const achievement of achievements2) {
                 await tx.achievements.add({slug: achievement});
                 notify(achievement);
             }
@@ -133,17 +133,23 @@ async function check() {
         }));
 
         // Save username for display
-        g.vm.topMenu.username(data.username);
-        g.vm.topMenu.email(data.email);
-        g.vm.topMenu.goldUntil(data.gold_until);
-        g.vm.topMenu.goldCancelled(data.gold_cancelled);
+
+        g.emitter.emit('updateTopMenu', {
+            email: data.email,
+            goldCancelled: !!data.gold_cancelled,
+            goldUntil: data.gold_until,
+            username: data.username,
+        });
 
         // No ads for Gold members
         const currentTimestamp = Math.floor(Date.now() / 1000);
-        if (g.vm.topMenu.goldCancelled() || currentTimestamp > g.vm.topMenu.goldUntil()) {
-            document.getElementById('banner-ad-top-wrapper').innerHTML = '<div id="banner-ad-top" style="text-align: center; min-height: 95px; margin-top: 1em"></div>';
-            document.getElementById('banner-ad-bottom-wrapper').innerHTML = '<div id="banner-ad-bottom" style="text-align: center; min-height: 95px"></div>';
+        if (currentTimestamp > data.gold_until) {
+            document.getElementById('banner-ad-top-wrapper').innerHTML = '<div id="div-gpt-ad-1473268147477-1" style="text-align: center; min-height: 95px; margin-top: 1em"></div>';
+            document.getElementById('banner-ad-bottom-wrapper').innerHTML = '<div id="div-gpt-ad-1473268147477-0" style="text-align: center; min-height: 95px"></div>';
             ads.showBanner();
+        } else {
+            document.getElementById('banner-ad-top-wrapper').innerHTML = "";
+            document.getElementById('banner-ad-bottom-wrapper').innerHTML = "";
         }
 
         // If user is logged in, upload any locally saved achievements
@@ -198,10 +204,14 @@ async function getAchievements() {
 
         // Merge local and remote achievements
         for (let i = 0; i < achievements.length; i++) {
-            achievements[i].count += achievementsRemote[achievements[i].slug] !== undefined ? achievementsRemote[achievements[i].slug] : 0;
+            if (achievementsRemote[achievements[i].slug] !== undefined) {
+                achievements[i].count += achievementsRemote[achievements[i].slug];
+            }
         }
-    } finally {
-        // If remote fails, this will be just local. Otherwise it will merge.
+
+        return achievements;
+    } catch (err) {
+        // If remote fails, still return local achievements
         return achievements;
     }
 }
@@ -405,7 +415,7 @@ checkAchievement.sleeper_pick = async (saveAchievement = true) => {
     return false;
 };
 
-module.exports = {
+export {
     check,
     getAchievements,
     addAchievements,

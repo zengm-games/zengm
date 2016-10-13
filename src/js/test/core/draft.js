@@ -1,10 +1,10 @@
-const assert = require('assert');
-const db = require('../../db');
-const g = require('../../globals');
-const draft = require('../../core/draft');
-const league = require('../../core/league');
-const team = require('../../core/team');
-const sampleTiebreakers = require('../fixtures/sampleTiebreakers.js');
+import assert from 'assert';
+import * as db from '../../db';
+import g from '../../globals';
+import * as draft from '../../core/draft';
+import * as league from '../../core/league';
+import * as team from '../../core/team';
+import sampleTiebreakers from '../fixtures/sampleTiebreakers';
 
 describe("core/draft", () => {
     before(async () => {
@@ -20,7 +20,8 @@ describe("core/draft", () => {
         assert.equal(players.length, 140 - numTotal);
     };
 
-    let userPick1, userPick2;
+    let userPick1;
+    let userPick2;
     const testDraftUser = async round => {
         const draftOrder = await draft.getOrder();
         const pick = draftOrder.shift();

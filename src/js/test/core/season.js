@@ -1,8 +1,8 @@
-const assert = require('assert');
-const g = require('../../globals');
-const season = require('../../core/season');
-const helpers = require('../../util/helpers');
-const testHelpers = require('../helpers');
+import assert from 'assert';
+import g from '../../globals';
+import * as season from '../../core/season';
+import * as helpers from '../../util/helpers';
+import * as testHelpers from '../helpers';
 
 const defaultTeams = helpers.getTeamsDefault();
 

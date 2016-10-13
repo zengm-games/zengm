@@ -4,12 +4,12 @@ module.exports = function (config) {
 
         frameworks: ['mocha', 'browserify'],
 
-        files: ['src/js/test/app.js'],
+        files: ['src/js/test/app.js', 'src/js/test/**/*.js'],
 
         exclude: [],
 
         preprocessors: {
-            'src/js/**/*.js': ['browserify']
+            'src/js/**/*.js': ['browserify'],
         },
 
         reporters: ['mocha'],
@@ -27,7 +27,7 @@ module.exports = function (config) {
         singleRun: true,
 
         browserify: {
-            transform: ['babelify', 'browserify-shim', 'brfs']
-        }
+            transform: ['babelify'],
+        },
     });
 };

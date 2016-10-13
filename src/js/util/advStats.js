@@ -1,9 +1,9 @@
-const g = require('../globals');
-const player = require('../core/player');
-const team = require('../core/team');
-const backboard = require('backboard');
-const Promise = require('bluebird');
-const _ = require('underscore');
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import _ from 'underscore';
+import g from '../globals';
+import * as player from '../core/player';
+import * as team from '../core/team';
 
 /**
  * Calcualte the current season's Player Efficiency Rating (PER) for each active player and write it to the database.
@@ -27,12 +27,12 @@ async function calculatePER() {
 
     // Total league stats (not per game averages) - gp, ft, pf, ast, fg, pts, fga, orb, tov, fta, trb
     const leagueStats = ["gp", "ft", "pf", "ast", "fg", "pts", "fga", "orb", "tov", "fta", "trb"];
-    const league = teams.reduce((memo, team) => {
+    const league = teams.reduce((memo, t) => {
         for (let i = 0; i < leagueStats.length; i++) {
             if (memo.hasOwnProperty(leagueStats[i])) {
-                memo[leagueStats[i]] = memo[leagueStats[i]] + team[leagueStats[i]];
+                memo[leagueStats[i]] += t[leagueStats[i]];
             } else {
-                memo[leagueStats[i]] = team[leagueStats[i]];
+                memo[leagueStats[i]] = t[leagueStats[i]];
             }
         }
         return memo;
@@ -112,14 +112,14 @@ async function calculatePER() {
             }
 
             aPER[i] = teams[tid].pace * uPER;
-            league.aPER = league.aPER + aPER[i] * players[i].stats.min;
+            league.aPER += aPER[i] * players[i].stats.min;
 
             mins[i] = players[i].stats.min; // Save for EWA calculation
         }
     }
 
     const minFactor = g.quarterLength / 12;
-    league.aPER = league.aPER / (league.gp * 5 * 48 * minFactor);
+    league.aPER /= (league.gp * 5 * 48 * minFactor);
 
     const PER = aPER.map(num => num * (15 / league.aPER));
 
@@ -188,6 +188,7 @@ function calculateAll() {
     return calculatePER();
 }
 
-module.exports = {
+export {
+    // eslint-disable-next-line import/prefer-default-export
     calculateAll,
 };

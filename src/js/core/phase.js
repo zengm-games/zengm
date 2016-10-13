@@ -1,22 +1,22 @@
-const g = require('../globals');
-const ui = require('../ui');
-const contractNegotiation = require('./contractNegotiation');
-const draft = require('./draft');
-const finances = require('./finances');
-const freeAgents = require('./freeAgents');
-const player = require('./player');
-const season = require('./season');
-const team = require('./team');
-const backboard = require('backboard');
-const Promise = require('bluebird');
-const _ = require('underscore');
-const account = require('../util/account');
-const ads = require('../util/ads');
-const eventLog = require('../util/eventLog');
-const helpers = require('../util/helpers');
-const lock = require('../util/lock');
-const message = require('../util/message');
-const random = require('../util/random');
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import _ from 'underscore';
+import g from '../globals';
+import * as ui from '../ui';
+import * as contractNegotiation from './contractNegotiation';
+import * as draft from './draft';
+import * as finances from './finances';
+import * as freeAgents from './freeAgents';
+import * as league from './league';
+import * as player from './player';
+import * as season from './season';
+import * as team from './team';
+import * as account from '../util/account';
+import * as helpers from '../util/helpers';
+import * as lock from '../util/lock';
+import logEvent from '../util/logEvent';
+import * as message from '../util/message';
+import * as random from '../util/random';
 
 let phaseChangeTx;
 
@@ -33,7 +33,7 @@ let phaseChangeTx;
  */
 async function finalize(phase, url, updateEvents) {
     // Set phase before updating play menu
-    await require('../core/league').setGameAttributesComplete({
+    await league.setGameAttributesComplete({
         phase,
         phaseChangeInProgress: false,
     });
@@ -41,7 +41,7 @@ async function finalize(phase, url, updateEvents) {
     await ui.updatePlayMenu(null);
 
     // Set lastDbChange last so there is no race condition (WHAT DOES THIS MEAN??)
-    require('../core/league').updateLastDbChange();
+    league.updateLastDbChange();
     updateEvents.push("newPhase");
     ui.realtimeUpdate(updateEvents, url);
 
@@ -49,28 +49,29 @@ async function finalize(phase, url, updateEvents) {
     if (g.autoPlaySeasons > 0) {
         // Not totally sure why setTimeout is needed, but why not?
         setTimeout(() => {
-            require('../core/league').autoPlay();
+            league.autoPlay();
         }, 100);
     }
 }
 
 async function newPhasePreseason(tx) {
     await freeAgents.autoSign(tx);
-    await require('../core/league').setGameAttributes(tx, {season: g.season + 1});
+    await league.setGameAttributes(tx, {season: g.season + 1});
 
     const tids = _.range(g.numTeams);
 
-    let prevSeason, scoutingRank;
+    let scoutingRank;
     await Promise.map(tids, async tid => {
+        // Only actually need 3 seasons for userTid, but get it for all just in case there is a
+        // skipped season (alternatively could use cursor to just find most recent season, but this
+        // is not performance critical code)
+        const teamSeasons = await tx.teamSeasons.index("tid, season").getAll(backboard.bound([tid, g.season - 3], [tid, g.season - 1]));
+        const prevSeason = teamSeasons[teamSeasons.length - 1];
+
         // Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
         // This is done BEFORE a new season row is added.
         if (tid === g.userTid) {
-            const teamSeasons = await tx.teamSeasons.index("tid, season").getAll(backboard.bound([tid, g.season - 3], [tid, g.season - 1]));
             scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
-
-            prevSeason = teamSeasons[teamSeasons.length - 1];
-        } else {
-            prevSeason = await tx.teamSeasons.index("tid, season").get([tid, g.season - 1]);
         }
 
         await tx.teamSeasons.add(team.genSeasonRow(tid, prevSeason));
@@ -98,11 +99,11 @@ async function newPhasePreseason(tx) {
     });
 
     if (g.autoPlaySeasons > 0) {
-        await require('../core/league').setGameAttributes(tx, {autoPlaySeasons: g.autoPlaySeasons - 1});
+        await league.setGameAttributes(tx, {autoPlaySeasons: g.autoPlaySeasons - 1});
     }
 
     if (g.enableLogging && !window.inCordova) {
-        ads.show();
+        g.emitter.emit('showAd', 'modal');
     }
 
     return [undefined, ["playerMovement"]];
@@ -178,7 +179,7 @@ async function newPhasePlayoffs(tx) {
     const {series, tidPlayoffs} = season.genPlayoffSeries(teams);
 
     for (const tid of tidPlayoffs) {
-        eventLog.add(null, {
+        logEvent(null, {
             type: "playoffs",
             text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tid], g.season])}">${g.teamNamesCache[tid]}</a> made the <a href="${helpers.leagueUrl(["playoffs", g.season])}">playoffs</a>.`,
             showNotification: tid === g.userTid,
@@ -246,7 +247,7 @@ async function newPhaseBeforeDraft(tx) {
     account.checkAchievement.moneyball_2();
     account.checkAchievement.small_market();
 
-    await season.awards(tx);
+    await season.doAwards(tx);
 
     const teams = await team.filter({
         ot: tx,
@@ -393,7 +394,7 @@ async function newPhaseResignPlayers(tx) {
             await player.addToFreeAgents(tx, p, g.PHASE.RESIGN_PLAYERS, baseMoods);
             const error = await contractNegotiation.create(tx, p.pid, true, tid);
             if (error !== undefined && error) {
-                eventLog.add(null, {
+                logEvent(null, {
                     type: "refuseToSign",
                     text: error,
                     pids: [p.pid],
@@ -404,7 +405,7 @@ async function newPhaseResignPlayers(tx) {
     });
 
     // Set daysLeft here because this is "basically" free agency, so some functions based on daysLeft need to treat it that way (such as the trade AI being more reluctant)
-    await require('../core/league').setGameAttributes(tx, {daysLeft: 30});
+    await league.setGameAttributes(tx, {daysLeft: 30});
 
     return [helpers.leagueUrl(["negotiation"]), ["playerMovement"]];
 }
@@ -440,7 +441,7 @@ async function newPhaseFreeAgency(tx) {
                 p = player.setContract(p, contract, true);
                 p.gamesUntilTradable = 15;
 
-                eventLog.add(null, {
+                logEvent(null, {
                     type: "reSigned",
                     text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> re-signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
                     showNotification: false,
@@ -474,7 +475,7 @@ async function newPhaseFreeAgency(tx) {
 async function newPhaseFantasyDraft(tx, position) {
     await contractNegotiation.cancelAll(tx);
     await draft.genOrderFantasy(tx, position);
-    await require('../core/league').setGameAttributes(tx, {nextPhase: g.phase});
+    await league.setGameAttributes(tx, {nextPhase: g.phase});
     await tx.releasedPlayers.clear();
 
     // Protect draft prospects from being included in this
@@ -553,11 +554,11 @@ async function newPhase(phase, extra) {
     if (phaseChangeInProgress) {
         helpers.errorNotify("Phase change already in progress, maybe in another tab.");
     } else {
-        await require('../core/league').setGameAttributesComplete({phaseChangeInProgress: true});
+        await league.setGameAttributesComplete({phaseChangeInProgress: true});
         ui.updatePlayMenu(null);
 
         // In Chrome, this will update play menu in other windows. In Firefox, it won't because ui.updatePlayMenu gets blocked until phaseChangeTx finishes for some reason.
-        require('../core/league').updateLastDbChange();
+        league.updateLastDbChange();
 
         if (phaseChangeInfo.hasOwnProperty(phase)) {
             // Careful rewriting this async/await style... for some reason that "throw err" does not stop execution of things after the tx promise because that still resolves
@@ -571,9 +572,9 @@ async function newPhase(phase, extra) {
                         phaseChangeTx.abort();
                     }
 
-                    await require('../core/league').setGameAttributesComplete({phaseChangeInProgress: false});
+                    await league.setGameAttributesComplete({phaseChangeInProgress: false});
                     await ui.updatePlayMenu(null);
-                    await eventLog.add(null, {
+                    await logEvent(null, {
                         type: "error",
                         text: 'Critical error during phase change. <a href="https://basketball-gm.com/manual/debugging/"><b>Read this to learn about debugging.</b></a>',
                         saveToDb: false,
@@ -605,12 +606,12 @@ async function abort() {
         helpers.errorNotify("If \"Abort\" doesn't work, check if you have another tab open.");
     } finally {
         // If another window has a phase change in progress, this won't do anything until that finishes
-        await require('../core/league').setGameAttributesComplete({phaseChangeInProgress: false});
+        await league.setGameAttributesComplete({phaseChangeInProgress: false});
         ui.updatePlayMenu(null);
     }
 }
 
-module.exports = {
+export {
     newPhase,
     abort,
 };

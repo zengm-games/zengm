@@ -1,4 +1,4 @@
-const ko = require('knockout');
+import EventEmitter from 'events';
 
 // The way this works is... any "global" variables that need to be widely available are stored in g. Some of these are constants, like the ones defined below. Some others are dynamic, like the year of the current season, and are stored in the gameAttributes object store. The dynamic components of g are retrieved/updated/synced elsewhere. Yes, it's kind of confusing and arbitrary.
 
@@ -30,43 +30,18 @@ g.PLAYER = {
 
 g.PHASE_TEXT = {
     "-1": "fantasy draft",
-    "0": "preseason",
-    "1": "regular season",
-    "2": "regular season",
-    "3": "playoffs",
-    "4": "before draft",
-    "5": "draft",
-    "6": "after draft",
-    "7": "re-sign players",
-    "8": "free agency",
+    0: "preseason",
+    1: "regular season",
+    2: "regular season",
+    3: "playoffs",
+    4: "before draft",
+    5: "draft",
+    6: "after draft",
+    7: "re-sign players",
+    8: "free agency",
 };
 
-/*    // Web workers - create only if we're not already inside a web worker!
-g.gameSimWorkers = [];
-if (typeof document !== "undefined") {
-    for (i = 0; i < 1; i++) {
-        g.gameSimWorkers[i] = new Worker("/js/core/gameSimWorker.js");
-    }
-}*/
-
-g.vm = {
-    topMenu: {
-        lid: ko.observable(),
-        godMode: ko.observable(),
-        options: ko.observable([]),
-        phaseText: ko.observable(),
-        statusText: ko.observable(),
-        template: ko.observable(), // Used for left menu on large screens for highlighting active page, so g.vm.topMenu should really be g.vm.menu, since it's used by both
-        username: ko.observable(null),
-        email: ko.observable(null),
-        goldUntil: ko.observable(0),
-        goldCancelled: ko.observable(0),
-    },
-    multiTeam: {
-        userTid: ko.observable(null),
-        userTids: ko.observable([]),
-    },
-};
+g.emitter = new EventEmitter();
 
 g.enableLogging = window.enableLogging;
 
@@ -157,9 +132,10 @@ g.compositeWeights = {
     },
 };
 
+// Test: pk_test_gFqvUZCI8RgSl5KMIYTmZ5yI
 g.stripePublishableKey = "pk_live_Dmo7Vs6uSaoYHrFngr4lM0sa";
 
 // THIS MUST BE ACCURATE OR BAD STUFF WILL HAPPEN
-g.notInDb = ["dbm", "dbl", "lid", "salaryCap", "minPayroll", "luxuryPayroll", "luxuryTax", "minContract", "maxContract", "minRosterSize", "PHASE", "PLAYER", "PHASE_TEXT", "vm", "enableLogging", "tld", "sport", "compositeWeights", "stripePublishableKey", "notInDb"];
+g.notInDb = ["dbm", "dbl", "lid", "PHASE", "PLAYER", "PHASE_TEXT", "enableLogging", "tld", "sport", "compositeWeights", "stripePublishableKey", "notInDb", "emitter"];
 
-module.exports = g;
+export default g;

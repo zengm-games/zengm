@@ -1950,7 +1950,7 @@ function augmentPartialPlayer(p: any, scoutingRank: number): PlayerWithStats {
     return p;
 }
 
-function checkStatisticalFeat(tx: BackboardTx, pid: number, tid: number, p: GamePlayer, results: GameResults) {
+async function checkStatisticalFeat(tx: BackboardTx, pid: number, tid: number, p: GamePlayer, results: GameResults) {
     const minFactor = Math.sqrt(g.quarterLength / 12); // sqrt is to account for fatigue in short/long games. Also https://news.ycombinator.com/item?id=11032596
     const TEN = minFactor * 10;
     const FIVE = minFactor * 5;
@@ -2039,7 +2039,32 @@ function checkStatisticalFeat(tx: BackboardTx, pid: number, tid: number, p: Game
                 featText += ", ";
             }
         }
-        featText += `</a> in ${results.team[i].stat.pts.toString().charAt(0) === '8' ? 'an' : 'a'} ${results.team[i].stat.pts}-${results.team[j].stat.pts} ${won ? 'win over the' : 'loss to the'} ${g.teamNamesCache[results.team[j].id]}.`;
+        featText += `</a> in ${results.team[i].stat.pts.toString().charAt(0) === '8' ? 'an' : 'a'} ${results.team[i].stat.pts}-${results.team[j].stat.pts} ${won ? 'win over the' : 'loss to the'} ${g.teamNamesCache[results.team[j].id]}`;
+
+        if (g.phase === g.PHASE.PLAYOFFS) {
+            const playoffs = await tx.playoffSeries.get(g.season);
+            for (let k = 0; k < playoffs.series[playoffs.currentRound].length; k++) {
+                const series = playoffs.series[playoffs.currentRound][k];
+                if (series.home.tid === tid || series.away.tid === tid) {
+                    featText += ` in game ${series.home.won + series.away.won + 1} of the `;
+                    switch (playoffs.currentRound) {
+                        case 0:
+                            featText += " first round of the playoffs";
+                            break;
+                        case 1:
+                            featText += " second round of the playoffs";
+                            break;
+                        case 2:
+                            featText += " conference finals";
+                            break;
+                        case 3:
+                            featText += " finals";
+                            break;
+                    }
+                }
+            }
+        }
+        featText += ".";
 
         logFeat(featText);
 

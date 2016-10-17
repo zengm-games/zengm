@@ -87,72 +87,82 @@ Row.propTypes = {
 };
 
 const getSearchVal = val => {
-    let sortVal;
-    if (React.isValidElement(val)) {
-        sortVal = textContent(val);
-    } else {
-        sortVal = val;
-    }
+    try {
+        let sortVal;
+        if (React.isValidElement(val)) {
+            sortVal = textContent(val);
+        } else {
+            sortVal = val;
+        }
 
-    if (sortVal !== undefined && sortVal !== null && sortVal.toString) {
-        return sortVal.toString().toLowerCase();
+        if (sortVal !== undefined && sortVal !== null && sortVal.toString) {
+            return sortVal.toString().toLowerCase();
+        }
+        return '';
+    } catch (err) {
+        console.error(`getSearchVal error on val "${val}"`, err);
+        return '';
     }
-    return '';
 };
 
 const getSortVal = (value = null, sortType) => {
-    let val;
-    let sortVal;
+    try {
+        let val;
+        let sortVal;
 
-    // Get the right 'value'.
-    if (value !== null && value.hasOwnProperty('value')) {
-        val = value.value;
-    } else {
-        val = value;
-    }
+        // Get the right 'value'.
+        if (value !== null && value.hasOwnProperty('value')) {
+            val = value.value;
+        } else {
+            val = value;
+        }
 
-    if (React.isValidElement(val)) {
-        sortVal = textContent(val);
-    } else {
-        sortVal = val;
-    }
+        if (React.isValidElement(val)) {
+            sortVal = textContent(val);
+        } else {
+            sortVal = val;
+        }
 
-    if (sortType === 'number') {
-        if (sortVal === null) {
-            return -Infinity;
-        } else if (typeof sortVal !== 'number') {
-            return parseFloat(sortVal);
+        if (sortType === 'number') {
+            if (sortVal === null) {
+                return -Infinity;
+            } else if (typeof sortVal !== 'number') {
+                return parseFloat(sortVal);
+            }
+            return val;
         }
-        return val;
-    }
-    if (sortType === 'lastTen') {
-        if (sortVal === null) {
-            return null;
+        if (sortType === 'lastTen') {
+            if (sortVal === null) {
+                return null;
+            }
+            return parseInt(sortVal.split('-')[0], 10);
         }
-        return parseInt(sortVal.split('-')[0], 10);
-    }
-    if (sortType === 'draftPick') {
-        if (sortVal === null) {
-            return null;
+        if (sortType === 'draftPick') {
+            if (sortVal === null) {
+                return null;
+            }
+            const [round, pick] = sortVal.split('-');
+            return parseInt(round, 10) * g.numTeams + parseInt(pick, 10);
         }
-        const [round, pick] = sortVal.split('-');
-        return parseInt(round, 10) * g.numTeams + parseInt(pick, 10);
-    }
-    if (sortType === 'name') {
-        if (sortVal === null) {
-            return null;
+        if (sortType === 'name') {
+            if (sortVal === null) {
+                return null;
+            }
+            const parts = sortVal.split(' (')[0].split(' ');
+            return parts[parts.length - 1];
         }
-        const parts = sortVal.split(' (')[0].split(' ');
-        return parts[parts.length - 1];
-    }
-    if (sortType === 'currency') {
-        if (sortVal === null) {
-            return -Infinity;
+        if (sortType === 'currency') {
+            if (sortVal === null) {
+                return -Infinity;
+            }
+            // Drop $ and parseFloat will just keep the numeric part at the beginning of the string
+            return parseFloat(sortVal.replace('$', ''));
         }
-        // Drop $ and parseFloat will just keep the numeric part at the beginning of the string
-        return parseFloat(sortVal.replace('$', ''));
+        return sortVal;
+    } catch (err) {
+        console.error(`getSortVal error on val "${value}" and sortType "${sortType}"`, err);
+        return null;
     }
-    return sortVal;
 };
 
 const Info = ({end, numRows, numRowsUnfiltered, start}) => {

@@ -1,3 +1,5 @@
+https://www.reddit.com/r/BasketballGM/comments/57cux2/small_issue/
+
 flow
   backboard
     BackboardTx should specify object stores
@@ -13,11 +15,20 @@ replace owner message text with numbers/chart
 
 upgrade GA https://developers.google.com/analytics/devguides/collection/upgrade/
   bbgm web too
-    hexo
+    jekyll - too complicated
+    hexo - too opinionated/idiosyncratic
+    metalsmith - ??
+    phenomic - kind of nice, but maybe unstable and tricky deployment
 
 ---
 
 REACT later
+
+sorting
+  react dnd
+  rubaxa
+    maybe https://github.com/cheton/react-sortable
+  dragula
 
 Draft button on player pages https://www.reddit.com/r/BasketballGM/comments/53op85/feature_request/
 
@@ -49,6 +60,8 @@ Draft
     https://www.reddit.com/message/messages/6ip35c
 
 ---
+
+home court advantage should be based on seed, not record https://www.reddit.com/r/BasketballGM/comments/4xf5ik/minor_bug/
 
 convert Dexie.Promise to a minimal A+ version (or use es6-promise), then use that plus some promise utils (eithier exiting or write my own) to replace Bluebird
 

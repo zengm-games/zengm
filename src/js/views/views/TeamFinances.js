@@ -60,13 +60,13 @@ class FinancesForm extends React.Component {
 
             const vals = {
                 // Convert from [millions of dollars] to [thousands of dollars] rounded to the nearest $10k
-                coaching: helpers.round(this.state.coaching * 100) * 10,
-                facilities: helpers.round(this.state.facilities * 100) * 10,
-                health: helpers.round(this.state.health * 100) * 10,
-                scouting: helpers.round(this.state.scouting * 100) * 10,
+                coaching: helpers.bound(helpers.round(this.state.coaching * 100) * 10, 0, Infinity),
+                facilities: helpers.bound(helpers.round(this.state.facilities * 100) * 10, 0, Infinity),
+                health: helpers.bound(helpers.round(this.state.health * 100) * 10, 0, Infinity),
+                scouting: helpers.bound(helpers.round(this.state.scouting * 100) * 10, 0, Infinity),
 
                 // Already in [dollars]
-                ticketPrice: parseFloat(helpers.round(this.state.ticketPrice, 2)),
+                ticketPrice: helpers.bound(parseFloat(helpers.round(this.state.ticketPrice, 2)), 0, Infinity),
             };
 
             for (const key of Object.keys(vals)) {

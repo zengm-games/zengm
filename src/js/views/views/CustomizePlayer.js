@@ -39,6 +39,17 @@ const copyValidValues = (source, target, season) => {
 
     target.born.loc = source.born.loc;
 
+    target.college = source.college;
+
+    {
+        const diedYear = parseInt(source.diedYear, 10);
+        if (!isNaN(diedYear)) {
+            target.diedYear = diedYear;
+        } else {
+            target.diedYear = null;
+        }
+    }
+
     {
         // Allow any value, even above or below normal limits, but round to $10k and convert from M to k
         let amount = helpers.round(100 * parseFloat(source.contract.amount)) * 10;
@@ -407,6 +418,14 @@ class CustomizePlayer extends React.Component {
                             <div className="col-sm-3 form-group">
                                 <label>Hometown</label>
                                 <input type="text" className="form-control" onChange={this.handleChange.bind(this, 'born', 'loc')} value={p.born.loc} />
+                            </div>
+                            <div className="col-sm-6 form-group">
+                                <label>Year of Death (blank for alive)</label>
+                                <input type="text" className="form-control" onChange={this.handleChange.bind(this, 'root', 'diedYear')} value={p.diedYear} />
+                            </div>
+                            <div className="col-sm-3 form-group">
+                                <label>College</label>
+                                <input type="text" className="form-control" onChange={this.handleChange.bind(this, 'root', 'college')} value={p.college} />
                             </div>
                             <div className="col-sm-6 form-group">
                                 <label>Contract Amount</label>

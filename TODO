@@ -836,9 +836,6 @@ god mode
   options
     disable ratings display
     playoff round length
-  edit player
-    edit diedYear (or null if blank)
-    edit college
 profits too large, too easy
   add corporate tax?
   luxury tax increases for repeat offenders?

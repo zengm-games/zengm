@@ -1,4 +1,8 @@
+HTML in play by play https://www.reddit.com/r/BasketballGM/comments/5963ym/playbyplay_bug/
+
 https://www.reddit.com/r/BasketballGM/comments/57cux2/small_issue/
+
+redo contracts after free agency ends
 
 flow
   backboard
@@ -23,6 +27,8 @@ upgrade GA https://developers.google.com/analytics/devguides/collection/upgrade/
 ---
 
 REACT later
+
+close menu on responsive navbar https://github.com/react-bootstrap/react-bootstrap/issues/1301 resolved by https://github.com/react-bootstrap/react-bootstrap/pull/2280
 
 sorting
   react dnd

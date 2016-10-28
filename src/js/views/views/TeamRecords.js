@@ -8,6 +8,11 @@ const TeamRecords = ({byType, displayName, seasonCount, teamRecords}) => {
     bbgmViewReact.title('Team Records');
 
     const cols = getCols(displayName, 'W', 'L', '%', 'Playoffs', 'Last Playoffs', 'Finals', 'Championships', 'Last Title', 'MVP', 'DPOY', 'SMOY', 'ROY', 'BR', 'BRC', 'ART', 'ALT', 'ADT');
+    // MVP, DPOY, SMOY, ROY
+    for (let i = 9; i <= 12; i++) {
+        cols[i].sortSequence = ['desc', 'asc'];
+        cols[i].sortType = 'number';
+    }
 
     const rows = teamRecords.map(tr => {
         return {

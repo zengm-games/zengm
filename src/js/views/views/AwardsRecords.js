@@ -5,24 +5,27 @@ import getCols from '../../util/getCols';
 import * as helpers from '../../util/helpers';
 import {DataTable, Dropdown, NewWindowLink} from '../components';
 
+const formatYear = (year) => {
+    return Object.keys(year).map((k, i) => {
+        const years = helpers.yearRanges(year[k].map(y => y.season)).join(', ');
+        return <span key={i}>{i > 0 ? ', ' : null}{k} <small>({years})</small></span>;
+    });
+};
+
+const CheckmarkOrCross = ({children}) => {
+    if (children === 1) {
+        return <span className="glyphicon glyphicon-ok text-success" />;
+    }
+
+    return <span className="glyphicon glyphicon-remove text-danger" />;
+};
+CheckmarkOrCross.propTypes = {
+    children: React.PropTypes.number.isRequired,
+};
+
 const AwardsRecords = ({awardType, awardTypeVal, awardsRecords, playerCount}) => {
     bbgmViewReact.title('Awards Records');
     const cols = getCols('Name', 'Count', 'Year', 'Last', 'Retired', 'HOF');
-
-    const formatYear = year => {
-        return Object.keys(year).map((k, i) => {
-            const years = helpers.yearRanges(year[k].map(y => y.season)).join(', ');
-            return <span key={i}>{i > 0 ? ', ' : null}{k} <small>({years})</small></span>;
-        });
-    };
-
-    function checkmarkOrCross(condition) {
-        if (condition) {
-            return <span className="glyphicon glyphicon-ok text-success" />;
-        }
-
-        return <span className="glyphicon glyphicon-remove text-danger" />;
-    }
 
     const rows = awardsRecords.map(a => {
         return {
@@ -32,8 +35,8 @@ const AwardsRecords = ({awardType, awardTypeVal, awardsRecords, playerCount}) =>
                 a.count,
                 formatYear(_.groupBy(a.years, 'team')),
                 a.lastYear,
-                checkmarkOrCross(a.retired),
-                checkmarkOrCross(a.hof),
+                <CheckmarkOrCross>{a.retired ? 1 : 0}</CheckmarkOrCross>,
+                <CheckmarkOrCross>{a.hof ? 1 : 0}</CheckmarkOrCross>,
             ],
         };
     });

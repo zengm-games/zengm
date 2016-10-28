@@ -170,7 +170,9 @@ const cols: {
         sortSequence: ['desc', 'asc'],
         sortType: 'number',
     },
-    'HOF': {},
+    'HOF': {
+        sortSequence: ['desc', 'asc'],
+    },
     'L': {
         desc: 'Games Lost',
         sortSequence: ['desc', 'asc'],
@@ -298,7 +300,9 @@ const cols: {
         sortType: 'number',
     },
     'Result': {},
-    'Retired': {},
+    'Retired': {
+        sortSequence: ['desc', 'asc'],
+    },
     'Revenue (YTD)': {
         sortSequence: ['desc', 'asc'],
         sortType: 'currency',

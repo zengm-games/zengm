@@ -16,13 +16,14 @@ async function regressRatingsPer() {
         this.width = ary[0].length;
     }
 
+    /* Flow doesn't like this
     Matrix.prototype.toString = function () {
         const s = [];
         for (let i = 0; i < this.mtx.length; i++) {
             s.push(this.mtx[i].join(","));
         }
         return s.join("\n");
-    };
+    };*/
 
     // returns a new matrix
     Matrix.prototype.transpose = function () {

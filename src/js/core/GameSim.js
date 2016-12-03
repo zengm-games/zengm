@@ -1113,7 +1113,7 @@ class GameSim {
         const array = [0, 0, 0, 0, 0];
         for (let i = 0; i < 5; i++) {
             const p = this.playersOnCourt[t][i];
-            array[i] = Math.pow(this.team[t].player[p].compositeRating[rating] * fatigue(this.team[t].player[p].stat.energy), power);
+            array[i] = (this.team[t].player[p].compositeRating[rating] * fatigue(this.team[t].player[p].stat.energy)) ** power;
         }
 
         return array;

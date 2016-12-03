@@ -701,7 +701,7 @@ function genPlayoffSeries(teams: Team[]) {
     const playoffsByConference = g.confs.length === 2 && !localStorage.getItem('top16playoffs');
 
     const tidPlayoffs = [];
-    const numPlayoffTeams = Math.pow(2, g.numPlayoffRounds);
+    const numPlayoffTeams = 2 ** g.numPlayoffRounds;
     const series = _.range(g.numPlayoffRounds).map(() => []);
     if (playoffsByConference) {
         // Default: top 50% of teams in each of the two conferences

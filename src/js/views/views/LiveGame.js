@@ -253,7 +253,7 @@ class LiveGame extends React.Component {
             }
 
             if (events.length > 0) {
-                setTimeout(processToNextPause, 4000 / Math.pow(1.2, this.state.speed));
+                setTimeout(processToNextPause, 4000 / (1.2 ** this.state.speed));
             } else {
                 boxScore.time = '0:00';
                 boxScore.gameOver = true;

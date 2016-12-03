@@ -1,6 +1,6 @@
 // @flow
 
-/* eslint-disable import/imports-first */
+/* eslint-disable import/first */
 import './lib/babel-external-helpers';
 import Promise from 'bluebird';
 import sourceMapSupport from 'source-map-support';

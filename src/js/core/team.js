@@ -1079,7 +1079,7 @@ async function valueChange(
             const contractSeasonsRemaining = player.contractSeasonsRemaining(p.contract.exp, g.numGames - gpAvg);
             if (contractSeasonsRemaining > 1) {
                 // Don't make it too extreme
-                contractValue *= Math.pow(contractSeasonsRemaining, 0.25);
+                contractValue *= contractSeasonsRemaining ** 0.25;
             } else {
                 // Raising < 1 to < 1 power would make this too large
                 contractValue *= contractSeasonsRemaining;
@@ -1096,13 +1096,13 @@ async function valueChange(
             if (value === 0) {
                 return memo;
             }
-            return memo + Math.pow(Math.abs(value), base) * Math.abs(value) / value;
+            return memo + (Math.abs(value) ** base) * Math.abs(value) / value;
         }, 0);
 
         if (exponential === 0) {
             return exponential;
         }
-        return Math.pow(Math.abs(exponential), 1 / base) * Math.abs(exponential) / exponential;
+        return (Math.abs(exponential) ** (1 / base)) * Math.abs(exponential) / exponential;
     };
 
     // Sum of contracts
@@ -1119,7 +1119,7 @@ async function valueChange(
                 return memo;
             }
 
-            return memo + p.contract.amount / 1000 * Math.pow(player.contractSeasonsRemaining(p.contract.exp, g.numGames - gpAvg), 0.25 - (onlyThisSeason ? 0.25 : 0));
+            return memo + p.contract.amount / 1000 * (player.contractSeasonsRemaining(p.contract.exp, g.numGames - gpAvg) ** (0.25 - (onlyThisSeason ? 0.25 : 0)));
         }, 0);
     };
 

@@ -39,7 +39,7 @@ function writeTeamStats(tx: BackboardTx, results: GameResults) {
         let att = cache.att;
         let ticketPrice = cache.ticketPrice;
         if (t1 === 0) { // Base on home team
-            att = 10000 + (0.1 + 0.9 * Math.pow(teamSeason.hype, 2)) * teamSeason.pop * 1000000 * 0.01;  // Base attendance - between 2% and 0.2% of the region
+            att = 10000 + (0.1 + 0.9 * (teamSeason.hype ** 2)) * teamSeason.pop * 1000000 * 0.01;  // Base attendance - between 2% and 0.2% of the region
             if (g.phase === g.PHASE.PLAYOFFS) {
                 att *= 1.5;  // Playoff bonus
             }
@@ -493,7 +493,7 @@ function makeComposite(rating, components, weights) {
     for (let i = 0; i < components.length; i++) {
         // Sigmoidal transformation
         //y = (rating[component] - 70) / 10;
-        //rcomp = y / Math.sqrt(1 + Math.pow(y, 2));
+        //rcomp = y / Math.sqrt(1 + y ** 2);
         //rcomp = (rcomp + 1) * 50;
         const rcomp = weights[i] * rating[components[i]];
 
@@ -582,7 +582,7 @@ async function loadTeams(tx) {
             for (const k of Object.keys(g.compositeWeights)) {
                 p.compositeRating[k] = makeComposite(rating, g.compositeWeights[k].ratings, g.compositeWeights[k].weights);
             }
-            p.compositeRating.usage = Math.pow(p.compositeRating.usage, 1.9);
+            p.compositeRating.usage = p.compositeRating.usage ** 1.9;
 
             p.stat = {gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, pm: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, ba: 0, pf: 0, pts: 0, courtTime: 0, benchTime: 0, energy: 1};
 

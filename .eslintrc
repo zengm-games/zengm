@@ -28,6 +28,7 @@
         "no-param-reassign": "off",
         "no-plusplus": "off",
         "no-prototype-builtins": "off",
+        "no-restricted-syntax": "off",
         "object-curly-spacing": ["error", "never"],
         "prefer-const": ["error", {"destructuring": "all"}],
         "quotes": "off",

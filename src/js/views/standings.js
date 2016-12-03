@@ -19,7 +19,7 @@ async function updateStandings(inputs, updateEvents, state) {
             sortBy: ["winp", "-lost", "won"],
         });
 
-        const numPlayoffTeams = Math.pow(2, g.numPlayoffRounds);
+        const numPlayoffTeams = 2 ** g.numPlayoffRounds;
 
         const confs = [];
         for (let i = 0; i < g.confs.length; i++) {

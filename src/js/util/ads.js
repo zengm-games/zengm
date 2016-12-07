@@ -51,7 +51,10 @@ async function showBanner() {
                     .defineSlot('/42283434/BBGM_Top', [[970, 90], [728, 90], [970, 250]], 'div-gpt-ad-1473268147477-1')
                     .addService(window.googletag.pubads());
                 gptAdSlots[1] = window.googletag
-                    .defineSlot('/42283434/BBGM_Bottom', [[970, 90], [728, 90], [970, 250]], 'div-gpt-ad-1473268147477-0')
+                    .defineSlot('/42283434/BBGM_Square_Left', [[300, 250], [336, 280]], 'div-gpt-ad-1479941549483-2')
+                    .addService(window.googletag.pubads());
+                gptAdSlots[2] = window.googletag
+                    .defineSlot('/42283434/BBGM_Square_Right', [[300, 250], [336, 280]], 'div-gpt-ad-1479941549483-1')
                     .addService(window.googletag.pubads());
 
                 window.googletag.pubads().enableSingleRequest();
@@ -62,14 +65,21 @@ async function showBanner() {
                 window.googletag.cmd.push(() => {
                     window.googletag.display('div-gpt-ad-1473268147477-1');
                     count += 1;
-                    if (count >= 2) {
+                    if (count >= 3) {
                         resolve();
                     }
                 });
                 window.googletag.cmd.push(() => {
-                    window.googletag.display('div-gpt-ad-1473268147477-0');
+                    window.googletag.display('div-gpt-ad-1479941549483-2');
                     count += 1;
-                    if (count >= 2) {
+                    if (count >= 3) {
+                        resolve();
+                    }
+                });
+                window.googletag.cmd.push(() => {
+                    window.googletag.display('div-gpt-ad-1479941549483-1');
+                    count += 1;
+                    if (count >= 3) {
                         resolve();
                     }
                 });
@@ -90,12 +100,15 @@ async function showBanner() {
     if (window.screen && window.screen.width < 768) {
         // Hide ads on mobile, mobile is shitty enough already
         document.getElementById('banner-ad-top-wrapper').innerHTML = "";
-        document.getElementById('banner-ad-bottom-wrapper').innerHTML = "";
+        document.getElementById('banner-ad-bottom-wrapper-1').innerHTML = "";
+        document.getElementById('banner-ad-bottom-wrapper-logo').innerHTML = "";
+        document.getElementById('banner-ad-bottom-wrapper-2').innerHTML = "";
     } else {
         const bannerAdTop = document.getElementById('div-gpt-ad-1473268147477-1');
-        const bannerAdBottom = document.getElementById('div-gpt-ad-1473268147477-0');
+        const bannerAdBottom1 = document.getElementById('div-gpt-ad-1479941549483-2');
+        const bannerAdBottom2 = document.getElementById('div-gpt-ad-1479941549483-1');
 
-        if (bannerAdTop && bannerAdBottom) {
+        if (bannerAdTop && bannerAdBottom1 && bannerAdBottom2) {
             if (!gptLoading && !gptLoaded) {
                 gptLoading = true;
                 await initBanners();

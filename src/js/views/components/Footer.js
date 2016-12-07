@@ -11,8 +11,13 @@ class Footer extends React.Component {
         return <div>
             <p className="clearfix" />
 
-            <div id="banner-ad-bottom-wrapper" />
+            <div style={{position: 'relative'}}>
+                <div id="banner-ad-bottom-wrapper-1" />
+                <div id="banner-ad-bottom-wrapper-logo" />
+                <div id="banner-ad-bottom-wrapper-2" />
+            </div>
 
+            <div className="clearfix" />
             <hr />
 
             <footer>

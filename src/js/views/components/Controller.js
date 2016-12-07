@@ -276,7 +276,7 @@ class Controller extends React.Component {
         return <div className="container">
             <NavBar {...topMenu} updating={updating} />
             <Header />
-            <div id="screenshot-nonleague">
+            <div id="screenshot-nonleague" style={{minHeight: '300px'}}>
                 {contents}
             </div>
             <Footer />

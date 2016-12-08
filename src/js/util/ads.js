@@ -95,6 +95,9 @@ async function showBanner() {
         window.googletag.cmd.push(() => {
             window.googletag.pubads().refresh([gptAdSlots[1]]);
         });
+        window.googletag.cmd.push(() => {
+            window.googletag.pubads().refresh([gptAdSlots[2]]);
+        });
     };
 
     if (window.screen && window.screen.width < 768) {

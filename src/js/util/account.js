@@ -153,9 +153,9 @@ async function check() {
         const currentTimestamp = Math.floor(Date.now() / 1000);
         if (currentTimestamp > data.gold_until) {
             document.getElementById('banner-ad-top-wrapper').innerHTML = '<div id="div-gpt-ad-1473268147477-1" style="text-align: center; min-height: 95px; margin-top: 1em"></div>';
-            document.getElementById('banner-ad-bottom-wrapper-1').innerHTML = '<div id="div-gpt-ad-1479941549483-2" style="background-color: blue; text-align: center; height: 255px; position: absolute; top: 0; left: 0"></div>';
-            document.getElementById('banner-ad-bottom-wrapper-2').innerHTML = '<div id="div-gpt-ad-1479941549483-1" style="background-color: red; text-align: center; height: 255px; position: absolute; top: 0; right: 0"></div>';
-            document.getElementById('banner-ad-bottom-wrapper-logo').innerHTML = '<div style="height: 255px; margin: 0 310px; display:flex; align-items: center; justify-content: center;"><img src="https://basketball-gm.com/files/logo.png" style="max-height: 100%; max-width: 100%"></div>';
+            document.getElementById('banner-ad-bottom-wrapper-1').innerHTML = '<div id="div-gpt-ad-1479941549483-2" style="text-align: center; height: 250px; position: absolute; top: 5px; left: 0"></div>';
+            document.getElementById('banner-ad-bottom-wrapper-2').innerHTML = '<div id="div-gpt-ad-1479941549483-1" style="text-align: center; height: 250px; position: absolute; top: 5px; right: 0"></div>';
+            document.getElementById('banner-ad-bottom-wrapper-logo').innerHTML = '<div style="height: 250px; margin: 5px 310px 0 310px; display:flex; align-items: center; justify-content: center;"><img src="https://basketball-gm.com/files/logo.png" style="max-height: 100%; max-width: 100%"></div>';
             ads.showBanner();
         } else {
             document.getElementById('banner-ad-top-wrapper').innerHTML = "";

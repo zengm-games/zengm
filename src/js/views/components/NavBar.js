@@ -117,6 +117,15 @@ const handleScreenshotClick = e => {
             // Remove notifications
             contentEl.removeChild(notifications);
 
+            logEvent(null, {
+                type: 'screenshot',
+                text: `Uploading your screenshot to Imgur...`,
+                saveToDb: false,
+                showNotification: true,
+                persistent: false,
+                extraClass: 'notification-primary',
+            });
+
             try {
                 const data = await Promise.resolve($.ajax({
                     url: "https://imgur-apiv3.p.mashape.com/3/image",

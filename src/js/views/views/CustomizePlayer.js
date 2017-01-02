@@ -144,6 +144,7 @@ class CustomizePlayer extends React.Component {
         });
 
         let p = this.props.p;
+        const r = p.ratings.length - 1;
 
         // Copy over values from state, if they're valid
         copyValidValues(this.state.p, p, this.props.season);
@@ -162,10 +163,11 @@ class CustomizePlayer extends React.Component {
             if (g.phase >= g.PHASE.FREE_AGENCY) {
                 p.draft.year += 1;
             }
+
+            p.ratings[r].season = p.draft.year;
         }
 
         // Set ovr, skills, and bound pot by ovr
-        const r = p.ratings.length - 1;
         p.ratings[r].ovr = player.ovr(p.ratings[r]);
         p.ratings[r].skills = player.skills(p.ratings[r]);
         if (p.ratings[r].ovr > p.ratings[r].pot) {

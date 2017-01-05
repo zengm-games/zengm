@@ -333,28 +333,18 @@ function calcBaseChange(age: number, potentialDifference: number): number {
     let val;
 
     // Average rating change if there is no potential difference
-    if (age <= 21) {
+    if (age <= 26) {
         val = 0;
-    } else if (age <= 25) {
-        val = 0;
-    } else if (age <= 29) {
+    } else if (age <= 33) {
         val = -1;
-    } else if (age <= 31) {
-        val = -2;
     } else {
         val = -3;
     }
 
     // Factor in potential difference
     // This only matters for young players who have potentialDifference != 0
-    if (age <= 21) {
+    if (age <= 26) {
         if (Math.random() < 0.75) {
-            val += potentialDifference * random.uniform(0.2, 0.9);
-        } else {
-            val += potentialDifference * random.uniform(0.1, 0.3);
-        }
-    } else if (age <= 25) {
-        if (Math.random() < 0.25) {
             val += potentialDifference * random.uniform(0.2, 0.9);
         } else {
             val += potentialDifference * random.uniform(0.1, 0.3);
@@ -364,10 +354,10 @@ function calcBaseChange(age: number, potentialDifference: number): number {
     }
 
     // Noise
-    if (age <= 25) {
-        val += helpers.bound(random.realGauss(0, 5), -4, 10);
+    if (age <= 26) {
+        val += helpers.bound(random.realGauss(0, 5), -2, 10);
     } else {
-        val += helpers.bound(random.realGauss(0, 3), -2, 10);
+        val += helpers.bound(random.realGauss(0, 3), -5, 5);
     }
 
     return val;
@@ -399,7 +389,7 @@ function develop<T: {born: {loc: string, year: number}, pos?: string, ratings: P
         age += 1;
 
         // Randomly make a big jump
-        if (Math.random() > 0.985 && age <= 23) {
+        if (Math.random() > 0.9 && age <= 26) {
             p.ratings[r].pot += random.uniform(5, 25);
         }
 
@@ -421,20 +411,18 @@ function develop<T: {born: {loc: string, year: number}, pos?: string, ratings: P
         let ratingKeys = ["spd", "jmp", "endu"];
         for (let j = 0; j < ratingKeys.length; j++) {
             let baseChangeLocal;
-            if (age <= 24) {
+            if (age <= 30) {
                 baseChangeLocal = baseChange;
-            } else if (age <= 30) {
-                baseChangeLocal = baseChange - 1;
             } else {
                 baseChangeLocal = baseChange - 2.5;
             }
-            p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(baseChangeLocal * random.uniform(0.5, 1.5), -20, 10));
+            p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + baseChangeLocal * random.uniform(0.5, 1.5));
         }
 
         // Ratings that can only increase a little, and only when young. Decrease slowly when old.
         ratingKeys = ["drb", "pss", "reb"];
         for (let j = 0; j < ratingKeys.length; j++) {
-            p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(baseChange * random.uniform(0.5, 1.5), -1, 10));
+            p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(baseChange * random.uniform(0.5, 1.5), -1, 30));
         }
 
         // Ratings that can increase a lot, but only when young. Decrease when old.
@@ -726,7 +714,7 @@ function genRatings(
     }
 
     const ratings = {
-        hgt: rawRatings[0],
+        hgt: random.randInt(0, 80) + random.randInt(0, 20),
         stre: rawRatings[1],
         spd: rawRatings[2],
         jmp: rawRatings[3],

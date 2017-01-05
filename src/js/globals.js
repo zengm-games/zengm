@@ -88,18 +88,18 @@ g.compositeWeights = {
     },
     shootingMidRange: {
         ratings: ['hgt', 'fg'],
-        weights: [0.2, 1],
+        weights: [0.05, 1],
     },
     shootingThreePointer: {
         ratings: ['hgt', 'tp'],
-        weights: [0.2, 1],
+        weights: [0.05, 1],
     },
     shootingFT: {
         ratings: ['ft'],
     },
     rebounding: {
         ratings: ['hgt', 'stre', 'jmp', 'reb'],
-        weights: [1.5, 0.1, 0.1, 0.7],
+        weights: [1.5, 1, 0.1, 0.7],
     },
     stealing: {
         ratings: ['constant', 'spd', 'stl'],
@@ -130,8 +130,8 @@ g.compositeWeights = {
         weights: [1, 1, -0.1],
     },
     athleticism: {
-        ratings: ['stre', 'spd', 'jmp', 'hgt'],
-        weights: [1, 1, 1, 0.5],
+        ratings: ['spd', 'jmp'],
+        weights: [1, 1],
     },
 };
 

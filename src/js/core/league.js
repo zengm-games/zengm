@@ -410,27 +410,21 @@ async function create(
         } else {
             // No players in league file, so generate new players
             const profiles = ["Point", "Wing", "Big", ""];
-            const baseRatings = [37, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 26, 26, 26];
-            const pots = [75, 65, 55, 55, 60, 50, 70, 40, 55, 50, 60, 60, 45, 45];
 
             for (let tidTemp = -3; tidTemp < teams.length; tidTemp++) {
                 // Create multiple "teams" worth of players for the free agent pool
                 const tid2 = tidTemp < 0 ? g.PLAYER.FREE_AGENT : tidTemp;
 
                 const goodNeutralBad = random.randInt(-1, 1);  // determines if this will be a good team or not
-                random.shuffle(pots);
                 for (let n = 0; n < 14; n++) {
                     const profile = profiles[random.randInt(0, profiles.length - 1)];
                     const agingYears = random.randInt(0, 13);
                     const draftYear = g.startingSeason - 1 - agingYears;
+                    const baseRating = random.randInt(8, 13);
+                    const pot = Math.round(helpers.bound(random.realGauss(0, 32), baseRating + 30, 100));
 
-                    let p = player.generate(tid2, 19, profile, baseRatings[n], pots[n], draftYear, true, scoutingRank);
+                    let p = player.generate(tid2, 19, profile, baseRating, pot, draftYear, true, scoutingRank);
                     p = player.develop(p, agingYears, true);
-                    if (n < 5) {
-                        p = player.bonus(p, goodNeutralBad * random.randInt(0, 20));
-                    } else {
-                        p = player.bonus(p, 0);
-                    }
                     if (tid2 === g.PLAYER.FREE_AGENT) {  // Free agents
                         p = player.bonus(p, -15);
                     }

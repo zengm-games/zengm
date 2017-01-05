@@ -90,8 +90,8 @@ async function genPlayers(tx: BackboardTx, tid: number, scoutingRank?: ?number =
     const promises = [];
 
     for (let i = 0; i < numPlayers; i++) {
-        const baseRating = random.randInt(8, 31);
-        const pot = Math.round(helpers.bound(random.realGauss(48, 17), baseRating, 90));
+        const baseRating = random.randInt(8, 13);
+        const pot = Math.round(helpers.bound(random.realGauss(0, 32), baseRating + 30, 100));
 
         const profile = profiles[random.randInt(0, profiles.length - 1)];
         const agingYears = random.randInt(0, 3);

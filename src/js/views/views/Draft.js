@@ -122,7 +122,7 @@ class Draft extends React.Component {
         const rowsDrafted = draftedMerged.map((p, i) => {
             const data = [
                 `${p.draft.round}-${p.draft.pick}`,
-                <DraftAbbrev originalTid={p.draft.originalTid} tid={p.draft.tid}>{p.draft.tid} {p.draft.originalTid}</DraftAbbrev>,
+                <DraftAbbrev originalTid={p.draft.originalTid} season={g.season} tid={p.draft.tid}>{p.draft.tid} {p.draft.originalTid}</DraftAbbrev>,
                 p.pid >= 0 ? <PlayerNameLabels pid={p.pid} injury={p.injury} skills={p.ratings.skills} watch={p.watch}>{p.name}</PlayerNameLabels> : null,
                 p.pid >= 0 ? p.ratings.pos : null,
                 p.pid >= 0 ? p.age : null,

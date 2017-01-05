@@ -1,9 +1,11 @@
+// @flow
+
 import React from 'react';
 import g from '../../globals';
 import * as helpers from '../../util/helpers';
 
 // Link to an abbrev either as "ATL" or "ATL (from BOS)" if a pick was traded.
-const DraftAbbrev = ({originalTid, tid, season}) => {
+const DraftAbbrev = ({originalTid, tid, season}: {originalTid: number, tid: number, season: number}) => {
     const abbrev = g.teamAbbrevsCache[tid];
     const originalAbbrev = g.teamAbbrevsCache[originalTid];
 

@@ -1,12 +1,15 @@
-import React from 'react';
+// @flow
 
-const SkillsBlock = ({className = null, skills}) => {
+import React from 'react';
+import type {PlayerSkill} from '../../util/types';
+
+const SkillsBlock = ({className, skills}: {className?: string, skills?: PlayerSkill[]}) => {
     if (skills === undefined) {
         return null;
     }
 
     const tooltips = {
-        3: "Three Point Shooter",
+        '3': "Three Point Shooter",
         A: "Athlete",
         B: "Ball Handler",
         Di: "Interior Defender",

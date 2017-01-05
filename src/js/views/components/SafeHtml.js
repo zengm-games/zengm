@@ -1,9 +1,11 @@
+// @flow
+
 import createDOMPurify from 'dompurify';
 import React from 'react';
 
 const DOMPurify = createDOMPurify(window);
 
-const SafeHtml = ({dirty}) => {
+const SafeHtml = ({dirty}: {dirty: string}) => {
     const clean = DOMPurify.sanitize(dirty);
 
     // eslint-disable-next-line react/no-danger

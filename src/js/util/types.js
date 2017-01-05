@@ -119,6 +119,8 @@ export type Message = {
     year: number,
 };
 
+export type MessageWithMid = Message & {mid: number};
+
 export type OwnerMoodDeltas = {
     money: number,
     playoffs: number,

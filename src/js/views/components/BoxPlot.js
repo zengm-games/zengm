@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 
 const quartile = (data, quart) => {
@@ -8,7 +10,7 @@ const quartile = (data, quart) => {
     return NaN;
 };
 
-const calculateValues = data => {
+const calculateValues = (data) => {
     // Sort in ascending order
     data.sort((a, b) => a - b);
 
@@ -33,14 +35,17 @@ const round = (value, precision) => {
 };
 
 
-const boxPlotElementStyle = (color, style) => Object.assign({
-    background: '#fff',
-    position: 'absolute',
-    top: '22px',
-    border: `thin solid ${color}`,
-    width: '0px',
-    height: '20px',
-}, style);
+const boxPlotElementStyle = (color, style) => {
+    const baseStyle: {[key: string]: 0 | string} = {
+        background: '#fff',
+        position: 'absolute',
+        top: '22px',
+        border: `thin solid ${color}`,
+        width: '0px',
+        height: '20px',
+    };
+    return Object.assign(baseStyle, style);
+};
 
 /**
  * Create a new box plot
@@ -55,12 +60,18 @@ const boxPlotElementStyle = (color, style) => Object.assign({
  *     color: color of the lines in the boxplot (default black)
  *     labels: boolean for whether to show numeric labels (default true)
  */
-const BoxPlot = ({color = '#000000', data, labels = true, quartiles, scale}) => {
+const BoxPlot = ({color = '#000000', data, labels = true, quartiles, scale}: {
+    color?: string,
+    data?: number[],
+    labels?: boolean,
+    quartiles?: [number, number, number, number, number],
+    scale: number[],
+}) => {
     // Either calculate quartiles or use the ones passed directly
     let val;
     if (data) {
         val = calculateValues(data);
-    } else {
+    } else if (quartiles) {
         val = {
             min: quartiles[0],
             q1: quartiles[1],
@@ -68,6 +79,8 @@ const BoxPlot = ({color = '#000000', data, labels = true, quartiles, scale}) => 
             q3: quartiles[3],
             max: quartiles[4],
         };
+    } else {
+        throw new Error('Must specify either data or quartiles');
     }
 
     // Scale the markers on the plot to be relative to the size of the canvas. All these values are percentages.

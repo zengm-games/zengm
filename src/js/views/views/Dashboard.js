@@ -1,18 +1,8 @@
 import React from 'react';
 import bbgmViewReact from '../../util/bbgmViewReact';
 
-const Dashboard = ({leagues, otherUrl}) => {
+const Dashboard = ({leagues}) => {
     bbgmViewReact.title('Dashboard');
-
-    let otherUrlLink = null;
-    if (otherUrl) {
-        otherUrlLink = <div>
-            <div className="clearfix" />
-            <br /><br />
-            <span className="alert alert-info"><a href={otherUrl}>Missing some leagues? Click here to find them.</a></span>
-            <br /><br />
-        </div>;
-    }
 
     return <div>
         <ul className="dashboard-boxes">
@@ -26,8 +16,6 @@ const Dashboard = ({leagues, otherUrl}) => {
             </li>)}
             <li className="dashboard-box-new"><a href="/new_league" className="btn btn-primary league"><h2>Create new<br />league</h2></a></li>
         </ul>
-
-        {otherUrlLink}
     </div>;
 };
 
@@ -39,7 +27,6 @@ Dashboard.propTypes = {
         teamName: React.PropTypes.string.isRequired,
         teamRegion: React.PropTypes.string.isRequired,
     })).isRequired,
-    otherUrl: React.PropTypes.string,
 };
 
 export default Dashboard;

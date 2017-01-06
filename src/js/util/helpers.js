@@ -242,7 +242,6 @@ function bbgmPing(type: 'league' | 'season') {
             window.ga('send', 'event', 'BBGM', 'New league', String(g.lid));
         } else if (type === "season" && g.autoPlaySeasons === 0) {
             window.ga('send', 'event', 'BBGM', 'Completed season', String(g.season));
-            window.ga('send', 'event', 'BBGM', 'Season protocol', window.location.origin);
         }
     }
 }

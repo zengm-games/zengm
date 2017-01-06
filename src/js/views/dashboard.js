@@ -17,20 +17,8 @@ async function updateDashboard() {
         delete leagues[i].tid;
     }
 
-    // http/https crap
-    let otherUrl;
-    if (window.location.protocol === "http:") {
-        if (leagues.length === 0 && window.location.hostname.includes('basketball-gm.com')) {
-            window.location.replace(`https://${window.location.hostname}/`);
-        }
-        otherUrl = `https://${window.location.hostname}/`;
-    } else {
-        otherUrl = null;
-    }
-
     return {
         leagues,
-        otherUrl,
     };
 }
 

@@ -129,11 +129,6 @@ backboard
 
 bluebird has to stay on 3.3.4 because of https://github.com/petkaantonov/bluebird/issues/1022
 
-can i get rid of http/https links?
-  tracking prevalence in GA with "Season protocol" - don't proceed further until that goes to 0!
-  put bbgm_insecure htaccess in normal htaccess for account, play, beta, and web. then get rid of all insecure websites in webfaction and add http domains to normal websites
-  tryForceHttps
-
 new achievement for winning as 8 seed https://www.reddit.com/r/BasketballGM/comments/4l2arh/new_achievement_suggestion/
 
 on new league, when play to regular season, message appears in inbox but does not show up on dashboard

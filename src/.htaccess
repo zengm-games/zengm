@@ -1,10 +1,3 @@
-# This should be kept in sync with mongoose.conf and runserver.py
-
-#Action php54-cgi /php54.cgi
-#<FilesMatch \.php$>
-#  SetHandler php54-cgi
-#</FilesMatch>
-
 <FilesMatch "\.(ttf|otf|eot|woff)$">
   <IfModule mod_headers.c>
     Header set Access-Control-Allow-Origin "*"
@@ -14,6 +7,10 @@
 Options +FollowSymLinks
 RewriteEngine On
 RewriteBase /
+
+RewriteCond %{HTTP:X-Forwarded-SSL} !on
+RewriteCond %{HTTP_HOST} !=localhost
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
 RewriteRule ^manifest_hack$ manifest_hack.html
 RewriteRule ^test$ test.html

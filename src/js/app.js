@@ -86,27 +86,18 @@ window.Promise.config({warnings: false});
         }
     });*/
 
-    // Redirect a route to https URL always, unless the URL doesn't include basketball-gm (e.g. localhost)
-    const tryForceHttps = view => (ctx, next) => {
-        if (window.location.protocol === 'http:' && window.location.hostname.includes('basketball-gm.com')) {
-            window.location.replace(`https://${window.location.hostname}${ctx.fullPath}`);
-        } else {
-            view(ctx, next);
-        }
-    };
-
     // Non-league views
     page('/', views.dashboard.get);
-    page('/new_league', tryForceHttps(views.newLeague.get));
+    page('/new_league', views.newLeague.get);
     page('/delete_league/:lid', views.deleteLeague.get);
     page('/manual', views.manual.get);
     page('/manual/:page', views.manual.get);
     page('/changes', views.changes.get);
-    page('/account', tryForceHttps(views.account.get));
-    page('/account/login_or_register', tryForceHttps(views.loginOrRegister.get));
-    page('/account/lost_password', tryForceHttps(views.lostPassword.get));
-    page('/account/reset_password/:token', tryForceHttps(views.resetPassword.get));
-    page('/account/update_card', tryForceHttps(views.accountUpdateCard.get));
+    page('/account', views.account.get);
+    page('/account/login_or_register', views.loginOrRegister.get);
+    page('/account/lost_password', views.lostPassword.get);
+    page('/account/reset_password/:token', views.resetPassword.get);
+    page('/account/update_card', views.accountUpdateCard.get);
 
     // League views
     page('/l/:lid', views.leagueDashboard.get);

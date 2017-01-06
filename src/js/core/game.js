@@ -20,8 +20,11 @@ import * as lock from '../util/lock';
 import * as random from '../util/random';
 import type {BackboardTx, GameResults} from '../util/types';
 
-function writeTeamStats(tx: BackboardTx, results: GameResults) {
-    return Promise.reduce([0, 1], async (cache, t1) => {
+async function writeTeamStats(tx: BackboardTx, results: GameResults) {
+    let att;
+    let ticketPrice;
+
+    for (const t1 of [0, 1]) {
         const t2 = t1 === 1 ? 0 : 1;
 
         const [payroll, t, teamSeasons, teamStatsArray] = await Promise.all([
@@ -36,8 +39,6 @@ function writeTeamStats(tx: BackboardTx, results: GameResults) {
         const won = results.team[t1].stat.pts > results.team[t2].stat.pts;
 
         // Attendance - base calculation now, which is used for other revenue estimates
-        let att = cache.att;
-        let ticketPrice = cache.ticketPrice;
         if (t1 === 0) { // Base on home team
             att = 10000 + (0.1 + 0.9 * (teamSeason.hype ** 2)) * teamSeason.pop * 1000000 * 0.01;  // Base attendance - between 2% and 0.2% of the region
             if (g.phase === g.PHASE.PLAYOFFS) {
@@ -211,12 +212,9 @@ function writeTeamStats(tx: BackboardTx, results: GameResults) {
             tx.teamSeasons.put(teamSeason),
             tx.teamStats.put(teamStats),
         ]);
+    }
 
-        return {
-            att,
-            ticketPrice,
-        };
-    }, 0);
+    return att;
 }
 
 async function writePlayerStats(tx: BackboardTx, results: GameResults) {
@@ -643,8 +641,8 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
         const objectStores = ["events", "games", "players", "playerFeats", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams", "teamSeasons", "teamStats"];
         await g.dbl.tx(objectStores, "readwrite", async tx => {
             const gidsFinished = await Promise.all(results.map(async (result) => {
-                const cache = await writeTeamStats(tx, result);
-                await writeGameStats(tx, result, cache.att);
+                const att = await writeTeamStats(tx, result);
+                await writeGameStats(tx, result, att);
                 await writePlayerStats(tx, result);
                 return result.gid;
             }));

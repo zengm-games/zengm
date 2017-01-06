@@ -1,8 +1,18 @@
+// @flow
+
 import React from 'react';
 import * as helpers from '../../util/helpers';
 
+type Props = {
+    parts: (number | string)[],
+};
+
 class NewWindowLink extends React.Component {
-    constructor(props) {
+    props: Props;
+
+    handleClick: () => void;
+
+    constructor(props: Props) {
         super(props);
         this.handleClick = this.handleClick.bind(this);
     }

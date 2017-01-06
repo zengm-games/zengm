@@ -1,7 +1,16 @@
+// @flow
+
 import faces from 'facesjs';
 import React from 'react';
 
 class PlayerPicture extends React.Component {
+    props: {
+        face: any,
+        imgURL: ?string,
+    };
+
+    wrapper: ?HTMLDivElement;
+
     componentDidMount() {
         if (this.wrapper) {
             faces.display(this.wrapper, this.props.face);

@@ -16,7 +16,7 @@ type RunFunction = (
 type InitArgs = {
     Component: any,
     inLeague?: boolean,
-    get?: (ctx: PageCtx) => GetOutput,
+    get?: (ctx: PageCtx) => ?GetOutput,
     runBefore?: RunFunction[],
     runWhenever?: RunFunction[],
 };

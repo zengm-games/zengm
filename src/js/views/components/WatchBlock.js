@@ -1,10 +1,25 @@
+// @flow
+
 import React from 'react';
 import g from '../../globals';
 import * as ui from '../../ui';
 import * as league from '../../core/league';
 
+type Props = {
+    pid: number,
+    watch: boolean | Function, // For Firefox's Object.watch
+};
+
+type State = {
+    watch: boolean | Function, // For Firefox's Object.watch
+};
+
 class WatchBlock extends React.Component {
-    constructor(props) {
+    props: Props;
+    state: State;
+    handleClick: (Event) => void;
+
+    constructor(props: Props) {
         super(props);
 
         // Keep in state so it can update instantly on click, rather than waiting for round trip
@@ -15,7 +30,7 @@ class WatchBlock extends React.Component {
         this.handleClick = this.handleClick.bind(this);
     }
 
-    componentWillReceiveProps(nextProps) {
+    componentWillReceiveProps(nextProps: Props) {
         // This assumes that the view is listening for playerMovement or watchList, otherwise it'll send the same old (wrong) prop
         if (nextProps.watch !== this.state.watch) {
             this.setState({
@@ -24,11 +39,11 @@ class WatchBlock extends React.Component {
         }
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
+    shouldComponentUpdate(nextProps: Props, nextState: State) {
         return this.props.pid !== nextProps.pid || this.state.watch !== nextState.watch;
     }
 
-    async handleClick(e) {
+    async handleClick(e: Event) {
         e.preventDefault();
 
         const watch = !this.state.watch;

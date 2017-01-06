@@ -1,3 +1,5 @@
+// @flow
+
 import g from '../globals';
 import * as freeAgents from '../core/freeAgents';
 import * as player from '../core/player';

@@ -1,8 +1,17 @@
+// @flow
+
 import React from 'react';
 import Modal from 'react-bootstrap/lib/Modal';
 
+type Props = {
+    close: () => void,
+    show: boolean,
+};
+
 class NagModal extends React.Component {
-    shouldComponentUpdate(nextProps) {
+    props: Props;
+
+    shouldComponentUpdate(nextProps: Props) {
         return this.props.show !== nextProps.show;
     }
 

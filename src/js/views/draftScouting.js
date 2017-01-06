@@ -1,3 +1,5 @@
+// @flow
+
 import Promise from 'bluebird';
 import g from '../globals';
 import * as player from '../core/player';
@@ -14,6 +16,7 @@ async function addSeason(season, tid) {
         showRookies: true,
         fuzz: true,
     });
+    playersAll.sort((a, b) => b.valueFuzz - a.valueFuzz);
 
     const players = [];
     for (let i = 0; i < playersAll.length; i++) {
@@ -22,22 +25,22 @@ async function addSeason(season, tid) {
         // Abbreviate first name to prevent overflows
         pa.name = `${pa.firstName.split(" ").map(s => s[0]).join(".")}. ${pa.lastName}`;
 
-        // Attributes
-        const p = {pid: pa.pid, name: pa.name, age: pa.age, watch: pa.watch, valueFuzz: pa.valueFuzz};
+        players.push({
+            // Attributes
+            pid: pa.pid,
+            name: pa.name,
+            age: pa.age,
+            watch: pa.watch,
+            valueFuzz: pa.valueFuzz,
 
-        // Ratings - just take the only entry
-        p.ovr = pa.ratings[0].ovr;
-        p.pot = pa.ratings[0].pot;
-        p.skills = pa.ratings[0].skills;
-        p.pos = pa.ratings[0].pos;
+            // Ratings - just take the only entry
+            ovr: pa.ratings[0].ovr,
+            pot: pa.ratings[0].pot,
+            skills: pa.ratings[0].skills,
+            pos: pa.ratings[0].pos,
 
-        players.push(p);
-    }
-
-    // Rank prospects
-    players.sort((a, b) => b.valueFuzz - a.valueFuzz);
-    for (let i = 0; i < players.length; i++) {
-        players[i].rank = i + 1;
+            rank: i + 1,
+        });
     }
 
     return {

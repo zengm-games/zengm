@@ -1,7 +1,9 @@
+// @flow
+
 import classNames from 'classnames';
 import React from 'react';
 
-const RatingWithChange = ({change, children}) => {
+const RatingWithChange = ({change, children}: {change: number, children: number}) => {
     return <span>
         {children}
         {change !== 0 ? <span

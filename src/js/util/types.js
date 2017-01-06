@@ -345,10 +345,12 @@ type TradeTeam = {
 export type TradeTeams = [TradeTeam, TradeTeam];
 
 export type UpdateEvents = (
+    'clearWatchList' |
     'dbChange' |
     'firstRun' |
     'g.gamesInProgress' |
     'gameSim' |
     'newPhase' |
-    'playerMovement'
+    'playerMovement' |
+    'watchList'
 )[];

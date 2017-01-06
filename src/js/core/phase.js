@@ -64,7 +64,7 @@ async function newPhasePreseason(tx: BackboardTx) {
     const tids: number[] = _.range(g.numTeams);
 
     let scoutingRank;
-    await Promise.map(tids, async (tid) => {
+    await Promise.all(tids.map(async (tid) => {
         // Only actually need 3 seasons for userTid, but get it for all just in case there is a
         // skipped season (alternatively could use cursor to just find most recent season, but this
         // is not performance critical code)
@@ -79,7 +79,7 @@ async function newPhasePreseason(tx: BackboardTx) {
 
         await tx.teamSeasons.add(team.genSeasonRow(tid, prevSeason));
         await tx.teamStats.add(team.genStatsRow(tid));
-    });
+    }));
 
     const teamSeasons = await tx.teamSeasons.index("season, tid").getAll(backboard.bound([g.season - 1], [g.season - 1, '']));
     const coachingRanks = teamSeasons.map(teamSeason => teamSeason.expenses.coaching.rank);
@@ -221,7 +221,11 @@ async function newPhasePlayoffs(tx: BackboardTx) {
         }),
 
         // Add row to player stats
-        Promise.map(tidPlayoffs, tid => tx.players.index('tid').iterate(tid, p => player.addStatsRow(tx, p, true))),
+        Promise.all(tidPlayoffs.map((tid) => {
+            return tx.players.index('tid').iterate(tid, (p) => {
+                return player.addStatsRow(tx, p, true);
+            });
+        })),
     ]);
 
 

@@ -256,7 +256,7 @@ function summary(teams: TradeTeams): TradeSummary {
         // Test if any warnings need to be displayed
         const overCap = [false, false];
         const ratios = [0, 0];
-        await Promise.map([0, 1], async j => {
+        await Promise.all([0, 1].map(async (j) => {
             const k = j === 0 ? 1 : 0;
 
             s.teams[j].name = `${g.teamRegionsCache[tids[j]]} ${g.teamNamesCache[tids[j]]}`;
@@ -274,7 +274,7 @@ function summary(teams: TradeTeams): TradeSummary {
             if (s.teams[j].payrollAfterTrade > g.salaryCap / 1000) {
                 overCap[j] = true;
             }
-        });
+        }));
 
         if ((ratios[0] > 125 && overCap[0] === true) || (ratios[1] > 125 && overCap[1] === true)) {
             // Which team is at fault?;
@@ -348,7 +348,7 @@ async function propose(forceTrade?: boolean = false): Promise<[boolean, ?string]
             [0, 1].forEach(j => {
                 const k = j === 0 ? 1 : 0;
 
-                Promise.map(pids[j], async pid => {
+                pids[j].forEach(async (pid) => {
                     let p = await tx.players.get(pid);
                     p.tid = tids[k];
                     // Don't make traded players untradable
@@ -360,7 +360,7 @@ async function propose(forceTrade?: boolean = false): Promise<[boolean, ?string]
                     await tx.players.put(p);
                 });
 
-                Promise.map(dpids[j], async dpid => {
+                dpids[j].forEach(async (dpid) => {
                     const dp = await tx.draftPicks.get(dpid);
                     dp.tid = tids[k];
                     dp.abbrev = g.teamAbbrevsCache[tids[k]];
@@ -513,7 +513,7 @@ async function makeItWork(
         }
 
         // Calculate the value for each asset added to the trade, for use in forward selection
-        await Promise.map(assets, async asset => {
+        await Promise.all(assets.map(async (asset) => {
             const userPids = teams[0].pids.slice();
             const otherPids = teams[1].pids.slice();
             const userDpids = teams[0].dpids.slice();
@@ -532,7 +532,7 @@ async function makeItWork(
             }
 
             asset.dv = await team.valueChange(teams[1].tid, userPids, otherPids, userDpids, otherDpids, estValuesCached);
-        });
+        }));
 
         assets.sort((a, b) => b.dv - a.dv);
 

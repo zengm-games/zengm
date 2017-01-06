@@ -169,7 +169,7 @@ const augmentOffers = offers => {
         });
 
         // Take the pids and dpids in each offer and get the info needed to display the offer
-        return Promise.map(offers, async (offer, i) => {
+        return Promise.all(offers.map(async (offer, i) => {
             const tid = offers[i].tid;
 
             let players = await tx.players.index('tid').getAll(tid);
@@ -212,7 +212,7 @@ const augmentOffers = offers => {
                 picks,
                 players,
             };
-        });
+        }));
     });
 };
 

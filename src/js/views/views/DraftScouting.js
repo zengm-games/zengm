@@ -82,7 +82,7 @@ class DraftScouting extends React.Component {
                 const draftYear = g.season + seasonOffset2;
 
                 // Add new players to database
-                await Promise.map(players, async p => {
+                await Promise.all(players.map(async (p) => {
                     // Make sure player object is fully defined
                     p = player.augmentPartialPlayer(p, scoutingRank);
 
@@ -108,7 +108,7 @@ class DraftScouting extends React.Component {
 
                     p = await player.updateValues(tx, p, []);
                     await tx.players.put(p);
-                });
+                }));
 
                 // "Top off" the draft class if <70 players imported
                 if (players.length < 70) {

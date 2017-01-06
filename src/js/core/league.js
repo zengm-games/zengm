@@ -91,14 +91,14 @@ async function setGameAttributes(tx: BackboardTx, gameAttributes: GameAttributes
         }
     }
 
-    await Promise.map(toUpdate, async key => {
+    await Promise.all(toUpdate.map(async (key) => {
         await tx.gameAttributes.put({
             key,
             value: gameAttributes[key],
         });
 
         g[key] = gameAttributes[key];
-    });
+    }));
 
     if (toUpdate.includes('userTid') || toUpdate.includes('userTids')) {
         g.emitter.emit('updateMultiTeam');
@@ -513,7 +513,7 @@ async function create(
 
     // Auto sort rosters
     return g.dbl.tx("players", "readwrite", async tx => {
-        await Promise.map(teams, t => team.rosterAutoSort(tx, t.tid));
+        await Promise.all(teams.map(t => team.rosterAutoSort(tx, t.tid)));
         return lid;
     });
 }
@@ -548,9 +548,9 @@ async function exportLeague(stores: string[]) {
     // name is only used for the file name of the exported roster file.
     exportedLeague.meta = {phaseText: g.phaseText, name: g.leagueName};
 
-    await Promise.map(stores, async store => {
+    await Promise.all(stores.map(async store => {
         exportedLeague[store] = await g.dbl[store].getAll();
-    });
+    }));
 
     // Move playerStats to players object, similar to old DB structure. Makes editing JSON output nicer.
     if (stores.indexOf("playerStats") >= 0) {

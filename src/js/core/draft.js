@@ -363,7 +363,7 @@ async function genOrder(tx: BackboardTx) {
     }
 
     // Delete from draftPicks object store so that they are completely untradeable
-    await Promise.map(draftPicks, draftPick => tx.draftPicks.delete(draftPick.dpid));
+    await Promise.all(draftPicks.map(draftPick => tx.draftPicks.delete(draftPick.dpid)));
 
     await setOrder(tx, draftOrder);
 }

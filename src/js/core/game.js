@@ -219,8 +219,8 @@ function writeTeamStats(tx: BackboardTx, results: GameResults) {
     }, 0);
 }
 
-function writePlayerStats(tx: BackboardTx, results: GameResults) {
-    return Promise.map(results.team, t => Promise.map(t.player, p => {
+async function writePlayerStats(tx: BackboardTx, results: GameResults) {
+    await Promise.all(results.team.map(t => Promise.all(t.player.map((p) => {
         // Only need to write stats if player got minutes
         if (p.stat.min === 0) {
             return;
@@ -304,7 +304,7 @@ function writePlayerStats(tx: BackboardTx, results: GameResults) {
             }));
 
         return Promise.all(promises);
-    }));
+    }))));
 }
 
 async function writeGameStats(tx: BackboardTx, results: GameResults, att: number) {
@@ -522,7 +522,7 @@ function makeComposite(rating, components, weights) {
  * @param {Promise} Resolves to an array of team objects, ordered by tid.
  */
 async function loadTeams(tx) {
-    return Promise.map(_.range(g.numTeams), async tid => {
+    return Promise.all(_.range(g.numTeams).map(async (tid) => {
         const [players, {cid, did}, teamSeason] = await Promise.all([
             tx.players.index('tid').getAll(tid),
             tx.teams.get(tid),
@@ -606,7 +606,7 @@ async function loadTeams(tx) {
         t.stat = {min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, ba: 0, pf: 0, pts: 0, ptsQtrs: [0]};
 
         return t;
-    });
+    }));
 }
 
 /**
@@ -642,12 +642,12 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
     const cbSaveResults = async results => {
         const objectStores = ["events", "games", "players", "playerFeats", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams", "teamSeasons", "teamStats"];
         await g.dbl.tx(objectStores, "readwrite", async tx => {
-            const gidsFinished = await Promise.map(results, async result => {
+            const gidsFinished = await Promise.all(results.map(async (result) => {
                 const cache = await writeTeamStats(tx, result);
                 await writeGameStats(tx, result, cache.att);
                 await writePlayerStats(tx, result);
                 return result.gid;
-            });
+            }));
 
             const promises = [];
 

@@ -62,7 +62,7 @@ async function updateOwnerMood(tx?: BackboardTx): Promise<OwnerMoodDeltas> {
 async function saveAwardsByPlayer(tx: BackboardTx, awardsByPlayer: any) {
     const pids = _.uniq(awardsByPlayer.map(award => award.pid));
 
-    await Promise.map(pids, async pid => {
+    await Promise.all(pids.map(async (pid) => {
         const p = await tx.players.get(pid);
 
         for (let i = 0; i < awardsByPlayer.length; i++) {
@@ -72,7 +72,7 @@ async function saveAwardsByPlayer(tx: BackboardTx, awardsByPlayer: any) {
         }
 
         await tx.players.put(p);
-    });
+    }));
 }
 
 /**
@@ -650,7 +650,7 @@ async function newSchedulePlayoffsDay(tx: BackboardTx): Promise<boolean> {
     await tx.playoffSeries.put(playoffSeries);
 
     // Update hype for winning a series
-    await Promise.map(tidsWon, async tid => {
+    await Promise.all(tidsWon.map(async (tid) => {
         const teamSeason = await tx.teamSeasons.index("season, tid").get([g.season, tid]);
 
         teamSeason.playoffRoundsWon = playoffSeries.currentRound;
@@ -660,7 +660,7 @@ async function newSchedulePlayoffsDay(tx: BackboardTx): Promise<boolean> {
         }
 
         await tx.teamSeasons.put(teamSeason);
-    });
+    }));
 
     // Next time, the schedule for the first day of the next round will be set
     return newSchedulePlayoffsDay(tx);

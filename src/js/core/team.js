@@ -828,7 +828,7 @@ async function valueChange(
                 // Actually add picks after some stuff below is done
                 let estValues;
                 const withEstValues = () => {
-                    Promise.map(dpidsAdd, async dpid => {
+                    Promise.all(dpidsAdd.map(async (dpid) => {
                         const dp = await tx.draftPicks.get(dpid);
 
                         let estPick = estPicks[dp.originalTid];
@@ -861,9 +861,9 @@ async function valueChange(
                             age: 19,
                             draftPick: true,
                         });
-                    });
+                    }));
 
-                    Promise.map(dpidsRemove, async dpid => {
+                    Promise.all(dpidsRemove.map(async (dpid) => {
                         const dp = await tx.draftPicks.get(dpid);
                         let estPick = estPicks[dp.originalTid];
 
@@ -903,7 +903,7 @@ async function valueChange(
                             age: 19,
                             draftPick: true,
                         });
-                    });
+                    }));
                 };
 
                 if (estValuesCached) {

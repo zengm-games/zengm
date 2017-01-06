@@ -521,11 +521,6 @@ trade UI
 cordova
   in portrait, games in dashboard looks like shit
   hide export link
-blog about cordova/web hybrid
-  base URL prefix - do in JS
-  router: preprocess
-  images: data URLs
-  upload roster files problem
 upcoming free agents
   off by one contract year?
   should be visible all the time, not blocked by FA limit page
@@ -736,7 +731,6 @@ track longest W/L streaks
 option to stop sim when player is injured http://www.reddit.com/r/BasketballGM/comments/2s265y/suggestion_option_to_automatically_stop/
 tooling
   istanbul https://github.com/karma-runner/karma-coverage
-  flow - doesn't seem to like requirejs or promises
 simple advanced stats
   TS%, etc
   pace-weighted stats

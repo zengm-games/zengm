@@ -137,7 +137,7 @@ async function updateRanks(tx: BackboardTx, types: BudgetTypes[]) {
     });
 
     if (types.indexOf("revenues") >= 0 || types.indexOf("expenses") >= 0) {
-        await Promise.map(teamSeasons, teamSeason => tx.teamSeasons.put(teamSeason));
+        await Promise.all(teamSeasons.map(teamSeason => tx.teamSeasons.put(teamSeason)));
     }
 }
 

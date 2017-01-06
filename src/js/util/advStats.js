@@ -159,7 +159,7 @@ async function calculatePER() {
 
     // Save to database
     await g.dbl.tx("playerStats", "readwrite", async tx => {
-        await Promise.map(players, async (p, i) => {
+        await Promise.all(players.map(async (p, i) => {
             if (!p.active) {
                 return;
             }
@@ -173,7 +173,7 @@ async function calculatePER() {
                     return ps;
                 }
             });
-        });
+        }));
     });
 }
 

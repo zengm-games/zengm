@@ -21,8 +21,8 @@ import * as random from '../util/random';
 import type {BackboardTx, GameResults} from '../util/types';
 
 async function writeTeamStats(tx: BackboardTx, results: GameResults) {
-    let att;
-    let ticketPrice;
+    let att = 0;
+    let ticketPrice = 0;
 
     for (const t1 of [0, 1]) {
         const t2 = t1 === 1 ? 0 : 1;

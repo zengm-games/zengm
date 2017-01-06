@@ -99,7 +99,7 @@ export type GameProcessed = {
     oppTid: number,
     oppAbbrev: number,
     overtime: string,
-    tid: number,
+    tid?: number,
     pts: number,
     won: boolean,
 };

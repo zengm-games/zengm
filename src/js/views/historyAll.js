@@ -1,3 +1,5 @@
+// @flow
+
 import Promise from 'bluebird';
 import g from '../globals';
 import * as team from '../core/team';

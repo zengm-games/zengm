@@ -1,3 +1,5 @@
+// @flow
+
 import backboard from 'backboard';
 import Promise from 'bluebird';
 import g from '../globals';
@@ -13,12 +15,17 @@ function get(ctx) {
 }
 
 async function updateLeaders(inputs, updateEvents, state) {
+    const {season} = inputs;
+    if (typeof season !== 'number') {
+        return;
+    }
+
     // Respond to watchList in case players are listed twice in different categories
-    if (updateEvents.includes('dbChange') || updateEvents.includes('watchList') || (inputs.season === g.season && updateEvents.includes('gameSim')) || inputs.season !== state.season) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('watchList') || (season === g.season && updateEvents.includes('gameSim')) || season !== state.season) {
         let [teamSeasons, players] = await Promise.all([
-            g.dbl.teamSeasons.index("season, tid").getAll(backboard.bound([inputs.season], [inputs.season, ''])),
+            g.dbl.teamSeasons.index("season, tid").getAll(backboard.bound([season], [season, ''])),
             g.dbl.players.getAll().then(players2 => {
-                return player.withStats(null, players2, {statsSeasons: [inputs.season]});
+                return player.withStats(null, players2, {statsSeasons: [season]});
             }),
         ]);
 
@@ -35,7 +42,7 @@ async function updateLeaders(inputs, updateEvents, state) {
             attrs: ["pid", "name", "injury", "watch"],
             ratings: ["skills"],
             stats: ["pts", "trb", "ast", "fgp", "tpp", "ftp", "blk", "stl", "min", "per", "ewa", "gp", "fg", "tp", "ft", "abbrev", "tid"],
-            season: inputs.season,
+            season,
         });
 
         const userAbbrev = helpers.getAbbrev(g.userTid);
@@ -102,7 +109,7 @@ async function updateLeaders(inputs, updateEvents, state) {
 
         return {
             categories,
-            season: inputs.season,
+            season,
         };
     }
 }

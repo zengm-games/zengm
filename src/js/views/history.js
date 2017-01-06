@@ -1,3 +1,5 @@
+// @flow
+
 import Promise from 'bluebird';
 import g from '../globals';
 import * as player from '../core/player';
@@ -23,25 +25,30 @@ function get(ctx) {
 }
 
 async function updateHistory(inputs, updateEvents, state) {
-    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || state.season !== inputs.season) {
-        if (inputs.season < g.startingSeason) {
+    const {season} = inputs;
+    if (typeof season !== 'number') {
+        return;
+    }
+
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || state.season !== season) {
+        if (season < g.startingSeason) {
             return {
                 invalidSeason: true,
-                season: inputs.season,
+                season,
             };
         }
 
         let [awards, retiredPlayers, teams] = await Promise.all([
-            g.dbl.awards.get(inputs.season),
-            g.dbl.players.index('retiredYear').getAll(inputs.season).then(players => {
+            g.dbl.awards.get(season),
+            g.dbl.players.index('retiredYear').getAll(season).then(players => {
                 return player.withStats(null, players, {
-                    statsSeasons: [inputs.season],
+                    statsSeasons: [season],
                 });
             }),
             team.filter({
                 attrs: ["tid", "abbrev", "region", "name"],
                 seasonAttrs: ["playoffRoundsWon"],
-                season: inputs.season,
+                season,
             }),
         ]);
 
@@ -68,13 +75,13 @@ async function updateHistory(inputs, updateEvents, state) {
 
         retiredPlayers = player.filter(retiredPlayers, {
             attrs: ["pid", "name", "age", "hof"],
-            season: inputs.season,
+            season,
             stats: ["tid", "abbrev"],
             showNoStats: true,
         });
         for (let i = 0; i < retiredPlayers.length; i++) {
             // Show age at retirement, not current age
-            retiredPlayers[i].age -= g.season - inputs.season;
+            retiredPlayers[i].age -= g.season - season;
         }
         retiredPlayers.sort((a, b) => b.age - a.age);
 
@@ -93,7 +100,7 @@ async function updateHistory(inputs, updateEvents, state) {
             confs: g.confs,
             invalidSeason: false,
             retiredPlayers,
-            season: inputs.season,
+            season,
             userTid: g.userTid,
         };
     }

@@ -1,16 +1,22 @@
+// @flow
+
 import React from 'react';
 import g from '../../globals';
 import * as ui from '../../ui';
 import * as helpers from '../../util/helpers';
 
 const Select = ({field, handleChange, value}) => {
-    let options;
+    let options: {
+        key: number | string,
+        val: number | string,
+    }[];
     if (field === "teams") {
         options = [];
         for (let j = 0; j < g.numTeams; j++) {
-            options[j] = {};
-            options[j].key = g.teamAbbrevsCache[j];
-            options[j].val = `${g.teamRegionsCache[j]} ${g.teamNamesCache[j]}`;
+            options[j] = {
+                key: g.teamAbbrevsCache[j],
+                val: `${g.teamRegionsCache[j]} ${g.teamNamesCache[j]}`,
+            };
         }
     } else if (field === "teamsAndAll") {
         options = [{
@@ -18,9 +24,10 @@ const Select = ({field, handleChange, value}) => {
             val: "All Teams",
         }];
         for (let j = 0; j < g.numTeams; j++) {
-            options[j + 1] = {};
-            options[j + 1].key = g.teamAbbrevsCache[j];
-            options[j + 1].val = `${g.teamRegionsCache[j]} ${g.teamNamesCache[j]}`;
+            options[j + 1] = {
+                key: g.teamAbbrevsCache[j],
+                val: `${g.teamRegionsCache[j]} ${g.teamNamesCache[j]}`,
+            };
         }
     } else if (field === "teamsAndAllWatch") {
         options = [{
@@ -31,9 +38,10 @@ const Select = ({field, handleChange, value}) => {
             val: "Watch List",
         }];
         for (let j = 0; j < g.numTeams; j++) {
-            options[j + 2] = {};
-            options[j + 2].key = g.teamAbbrevsCache[j];
-            options[j + 2].val = `${g.teamRegionsCache[j]} ${g.teamNamesCache[j]}`;
+            options[j + 2] = {
+                key: g.teamAbbrevsCache[j],
+                val: `${g.teamRegionsCache[j]} ${g.teamNamesCache[j]}`,
+            };
         }
     } else if (field === "seasons" || field === "seasonsAndCareer" || field === "seasonsAndAll") {
         options = [];
@@ -200,8 +208,20 @@ Select.propTypes = {
     ]).isRequired,
 };
 
+type Props = {
+    extraParam?: number | string,
+    fields: string[],
+    values: (number | string)[],
+    view: string,
+};
+
 class Dropdown extends React.Component {
-    constructor(props) {
+    props: Props;
+    state: {
+        values: (number | string)[],
+    };
+
+    constructor(props: Props) {
         super(props);
 
         // Keep in state so it can update instantly on click, rather than waiting for round trip
@@ -210,7 +230,7 @@ class Dropdown extends React.Component {
         };
     }
 
-    componentWillReceiveProps(nextProps) {
+    componentWillReceiveProps(nextProps: Props) {
         if (nextProps.values !== this.state.values) {
             this.setState({
                 values: nextProps.values,
@@ -218,7 +238,7 @@ class Dropdown extends React.Component {
         }
     }
 
-    handleChange(i, event) {
+    handleChange(i: number, event: SyntheticInputEvent) {
         const values = this.props.values.slice();
         values[i] = event.target.value;
         this.setState({

@@ -373,7 +373,7 @@ class CustomizePlayer extends React.Component {
         return <div>
             <h1>{title} <NewWindowLink /></h1>
 
-            <p>Here, you can {originalTid === null ? 'create a custom player with' : 'edit a player to have'} whatever attributes and ratings you want. If you want to make a whole league of custom players, you should probably create a <a href="https://basketball-gm.com/manual/customization/">custom League File</a>.</p>
+            <p>Here, you can {originalTid === undefined ? 'create a custom player with' : 'edit a player to have'} whatever attributes and ratings you want. If you want to make a whole league of custom players, you should probably create a <a href="https://basketball-gm.com/manual/customization/">custom League File</a>.</p>
 
             <form onSubmit={this.handleSubmit}>
                 <div className="row">

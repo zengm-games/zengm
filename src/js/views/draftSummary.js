@@ -1,3 +1,5 @@
+// @flow
+
 import g from '../globals';
 import * as player from '../core/player';
 import bbgmViewReact from '../util/bbgmViewReact';
@@ -46,26 +48,26 @@ async function updateDraftSummary(inputs) {
         const pa = playersAll[i];
 
         if (pa.draft.round === 1 || pa.draft.round === 2) {
-            // Attributes
-            const p = {pid: pa.pid, name: pa.name, draft: pa.draft, currentAge: pa.age, currentAbbrev: pa.abbrev, hof: pa.hof};
-
-            // Ratings
             const currentPr = pa.ratings[pa.ratings.length - 1];
-            if (pa.tid !== g.PLAYER.RETIRED) {
-                p.currentOvr = currentPr.ovr;
-                p.currentPot = currentPr.pot;
-                p.currentSkills = currentPr.skills;
-            } else {
-                p.currentOvr = null;
-                p.currentPot = null;
-                p.currentSkills = [];
-            }
-            p.pos = currentPr.pos;
 
-            // Stats
-            p.careerStats = pa.careerStats;
+            players.push({
+                // Attributes
+                pid: pa.pid,
+                name: pa.name,
+                draft: pa.draft,
+                currentAge: pa.age,
+                currentAbbrev: pa.abbrev,
+                hof: pa.hof,
 
-            players.push(p);
+                // Ratings
+                currentOvr: pa.tid !== g.PLAYER.RETIRED ? currentPr.ovr : null,
+                currentPot: pa.tid !== g.PLAYER.RETIRED ? currentPr.pot : null,
+                currentSkills: pa.tid !== g.PLAYER.RETIRED ? currentPr.skills : [],
+                pos: currentPr.pos,
+
+                // Stats
+                careerStats: pa.careerStats,
+            });
         }
     }
 

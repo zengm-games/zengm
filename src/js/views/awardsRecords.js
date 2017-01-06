@@ -1,3 +1,5 @@
+// @flow
+
 import _ from 'underscore';
 import g from '../globals';
 import * as player from '../core/player';
@@ -127,15 +129,20 @@ async function updateAwardsRecords(inputs, updateEvents, state) {
         });
         players = players.filter(p => p.awards.length > 0);
 
+        const awardType = inputs.awardType;
+        if (typeof awardType !== 'string') {
+            throw new Error('Invalid input for awardType');
+        }
+
         const awardsRecords = players
-            .map(p => getPlayerAwards(p, inputs.awardType))
+            .map(p => getPlayerAwards(p, awardType))
             .filter(o => o.count > 0);
 
         return {
             awardsRecords,
             playerCount: awardsRecords.length,
-            awardTypeVal: awardOptions[inputs.awardType],
-            awardType: inputs.awardType,
+            awardTypeVal: awardOptions[awardType],
+            awardType,
         };
     }
 }

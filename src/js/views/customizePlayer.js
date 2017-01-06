@@ -1,3 +1,5 @@
+// @flow
+
 import backboard from 'backboard';
 import g from '../globals';
 import * as finances from '../core/finances';
@@ -58,49 +60,53 @@ async function updateCustomizePlayer(inputs, updateEvents) {
             text: "Free Agent",
         });
 
-        const vars = {
-            godMode: g.godMode,
-            season: g.season,
-            teams,
-        };
+        let appearanceOption;
+        let originalTid;
+        let p;
 
         if (inputs.pid === null) {
             // Generate new player as basis
             const teamSeasons = await g.dbl.teamSeasons.index("tid, season").getAll(backboard.bound([g.userTid, g.season - 2], [g.userTid, g.season]));
             const scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
 
-            const p = player.generate(g.PLAYER.FREE_AGENT,
+            p = player.generate(
+                g.PLAYER.FREE_AGENT,
                 20,
-                null,
+                '',
                 50,
                 50,
                 g.season,
                 false,
-                scoutingRank);
+                scoutingRank,
+            );
 
             p.face.fatness = helpers.round(p.face.fatness, 2);
             p.face.eyes[0].angle = helpers.round(p.face.eyes[0].angle, 1);
             p.face.eyes[1].angle = helpers.round(p.face.eyes[1].angle, 1);
 
-            vars.appearanceOption = "Cartoon Face";
+            appearanceOption = 'Cartoon Face';
             p.imgURL = "http://";
-
-            vars.p = p;
         } else {
             // Load a player to edit
-            const p = await g.dbl.players.get(inputs.pid);
+            p = await g.dbl.players.get(inputs.pid);
             if (p.imgURL.length > 0) {
-                vars.appearanceOption = "Image URL";
+                appearanceOption = 'Image URL';
             } else {
-                vars.appearanceOption = "Cartoon Face";
+                appearanceOption = 'Cartoon Face';
                 p.imgURL = "http://";
             }
 
-            vars.originalTid = p.tid;
-            vars.p = p;
+            originalTid = p.tid;
         }
 
-        return vars;
+        return {
+            appearanceOption,
+            godMode: g.godMode,
+            originalTid,
+            p,
+            season: g.season,
+            teams,
+        };
     }
 }
 

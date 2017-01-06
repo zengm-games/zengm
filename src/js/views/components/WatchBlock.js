@@ -43,7 +43,7 @@ class WatchBlock extends React.Component {
         return this.props.pid !== nextProps.pid || this.state.watch !== nextState.watch;
     }
 
-    async handleClick(e: Event) {
+    async handleClick(e: SyntheticEvent) {
         e.preventDefault();
 
         const watch = !this.state.watch;

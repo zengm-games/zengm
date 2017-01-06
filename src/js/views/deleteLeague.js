@@ -1,3 +1,5 @@
+// @flow
+
 import backboard from 'backboard';
 import Promise from 'bluebird';
 import * as db from '../db';
@@ -11,19 +13,23 @@ function get(ctx) {
     };
 }
 
-async function updateDeleteLeague(inputs) {
-    await db.connectLeague(inputs.lid);
+async function updateDeleteLeague({lid}) {
+    if (typeof lid !== 'number') {
+        throw new Error('Invalid input for lid');
+    }
+
+    await db.connectLeague(lid);
     try {
         return g.dbl.tx(["games", "players", "teamSeasons"], async tx => {
             const [numGames, numPlayers, teamSeasons, l] = await Promise.all([
                 tx.games.count(),
                 tx.players.count(),
                 tx.teamSeasons.index("tid, season").getAll(backboard.bound([0], [0, ''])),
-                g.dbm.leagues.get(inputs.lid),
+                g.dbm.leagues.get(lid),
             ]);
 
             return {
-                lid: inputs.lid,
+                lid,
                 name: l.name,
                 numGames,
                 numPlayers,
@@ -32,7 +38,7 @@ async function updateDeleteLeague(inputs) {
         });
     } catch (err) {
         return {
-            lid: inputs.lid,
+            lid,
             name: undefined,
             numGames: undefined,
             numPlayers: undefined,

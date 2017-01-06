@@ -1,3 +1,5 @@
+// @flow
+
 import g from '../globals';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
@@ -10,7 +12,7 @@ import GameLog from './views/GameLog';
  * @param {number} gid Integer game ID for the box score (a negative number means no box score).
  * @return {Promise.Object} Resolves to an object containing the box score data (or a blank object).
  */
-async function boxScore(gid) {
+async function boxScore(gid: number) {
     if (gid < 0) {
         return {};
     }
@@ -97,8 +99,13 @@ async function updateTeamSeason(inputs) {
  * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score).
  */
 async function updateBoxScore(inputs, updateEvents, state) {
-    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || inputs.gid !== state.boxScore.gid) {
-        const game = await boxScore(inputs.gid);
+    const {gid} = inputs;
+    if (typeof gid !== 'number') {
+        return;
+    }
+
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || gid !== state.boxScore.gid) {
+        const game = await boxScore(gid);
 
         const vars = {
             boxScore: game,
@@ -108,7 +115,7 @@ async function updateBoxScore(inputs, updateEvents, state) {
         if (!game.hasOwnProperty("teams")) {
             vars.boxScore.gid = -1;
         } else {
-            vars.boxScore.gid = inputs.gid;
+            vars.boxScore.gid = gid;
         }
 
         return vars;
@@ -126,16 +133,21 @@ async function updateBoxScore(inputs, updateEvents, state) {
  * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
  */
 async function updateGamesList(inputs, updateEvents, state) {
-    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || inputs.abbrev !== state.gamesList.abbrev || inputs.season !== state.gamesList.season || (updateEvents.includes('gameSim') && inputs.season === g.season)) {
+    const {abbrev, gid, season} = inputs;
+    if (typeof abbrev !== 'string' || typeof gid !== 'number' || typeof season !== 'number') {
+        return;
+    }
+
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || abbrev !== state.gamesList.abbrev || season !== state.gamesList.season || (updateEvents.includes('gameSim') && season === g.season)) {
         let games;
-        if (state.gamesList && (inputs.abbrev !== state.gamesList.abbrev || inputs.season !== state.gamesList.season)) {
+        if (state.gamesList && (abbrev !== state.gamesList.abbrev || season !== state.gamesList.season)) {
             // Switching to a new list
             games = [];
         } else {
             games = state.gamesList ? state.gamesList.games : [];
         }
 
-        const newGames = await helpers.gameLogList(inputs.abbrev, inputs.season, inputs.gid, games);
+        const newGames = await helpers.gameLogList(abbrev, season, gid, games);
 
         if (games.length === 0) {
             games = newGames;
@@ -148,8 +160,8 @@ async function updateGamesList(inputs, updateEvents, state) {
         return {
             gamesList: {
                 games,
-                abbrev: inputs.abbrev,
-                season: inputs.season,
+                abbrev,
+                season,
             },
         };
     }

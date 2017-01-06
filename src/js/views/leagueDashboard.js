@@ -1,3 +1,5 @@
+// @flow
+
 import backboard from 'backboard';
 import Promise from 'bluebird';
 import g from '../globals';
@@ -127,29 +129,19 @@ async function updateGames(inputs, updateEvents) {
 
             // Check tid
             if (game.teams[0].tid === g.userTid || game.teams[1].tid === g.userTid) {
-                completed.push({
+                const i = game.teams[0].tid === g.userTid ? 0 : 1;
+                const j = 1 - i;
+
+                completed.push(helpers.formatCompletedGame({
                     gid: game.gid,
                     overtime,
-                });
-
-                const i = completed.length - 1;
-                if (game.teams[0].tid === g.userTid) {
-                    completed[i].home = true;
-                    completed[i].pts = game.teams[0].pts;
-                    completed[i].oppPts = game.teams[1].pts;
-                    completed[i].oppTid = game.teams[1].tid;
-                    completed[i].oppAbbrev = g.teamAbbrevsCache[game.teams[1].tid];
-                    completed[i].won = game.teams[0].pts > game.teams[1].pts;
-                } else if (game.teams[1].tid === g.userTid) {
-                    completed[i].home = false;
-                    completed[i].pts = game.teams[1].pts;
-                    completed[i].oppPts = game.teams[0].pts;
-                    completed[i].oppTid = game.teams[0].tid;
-                    completed[i].oppAbbrev = g.teamAbbrevsCache[game.teams[0].tid];
-                    completed[i].won = game.teams[1].pts > game.teams[0].pts;
-                }
-
-                completed[i] = helpers.formatCompletedGame(completed[i]);
+                    home: i === 0,
+                    pts: game.teams[i].pts,
+                    oppPts: game.teams[j].pts,
+                    oppTid: game.teams[j].tid,
+                    oppAbbrev: g.teamAbbrevsCache[game.teams[j].tid],
+                    won: game.teams[i].pts > game.teams[j].pts,
+                }));
             }
         });
 
@@ -179,7 +171,7 @@ async function updateSchedule(inputs, updateEvents) {
     }
 }
 
-function updatePlayers(inputs, updateEvents) {
+async function updatePlayers(inputs, updateEvents) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || updateEvents.includes('newPhase')) {
         return g.dbl.tx(["players", "playerStats"], async tx => {
             const vars = {};
@@ -242,9 +234,9 @@ async function updatePlayoffs(inputs, updateEvents) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || (g.phase >= g.PHASE.PLAYOFFS && updateEvents.includes('gameSim')) || (updateEvents.includes('newPhase') && g.phase === g.PHASE.PLAYOFFS)) {
         const playoffSeries = await g.dbl.playoffSeries.get(g.season);
 
-        const vars = {
-            showPlayoffSeries: false,
-        };
+        let foundSeries;
+        let seriesTitle = '';
+        let showPlayoffSeries = false;
 
         if (playoffSeries !== undefined) {
             const series = playoffSeries.series;
@@ -254,17 +246,17 @@ async function updatePlayoffs(inputs, updateEvents) {
             for (let rnd = playoffSeries.currentRound; rnd >= 0; rnd--) {
                 for (let i = 0; i < series[rnd].length; i++) {
                     if (series[rnd][i].home.tid === g.userTid || series[rnd][i].away.tid === g.userTid) {
-                        vars.series = series[rnd][i];
+                        foundSeries = series[rnd][i];
                         found = true;
-                        vars.showPlayoffSeries = true;
+                        showPlayoffSeries = true;
                         if (rnd === 0) {
-                            vars.seriesTitle = "First Round";
+                            seriesTitle = "First Round";
                         } else if (rnd === 1) {
-                            vars.seriesTitle = "Second Round";
+                            seriesTitle = "Second Round";
                         } else if (rnd === 2) {
-                            vars.seriesTitle = "Conference Finals";
+                            seriesTitle = "Conference Finals";
                         } else if (rnd === 3) {
-                            vars.seriesTitle = "League Finals";
+                            seriesTitle = "League Finals";
                         }
                         break;
                     }
@@ -275,7 +267,11 @@ async function updatePlayoffs(inputs, updateEvents) {
             }
         }
 
-        return vars;
+        return {
+            series: foundSeries,
+            seriesTitle,
+            showPlayoffSeries,
+        };
     }
 }
 
@@ -312,7 +308,7 @@ async function updateStandings(inputs, updateEvents) {
             }
         }
 
-        const playoffsByConference = g.confs.length === 2 && !localStorage.top16playoffs;
+        const playoffsByConference = g.confs.length === 2 && !localStorage.getItem('top16playoffs');
 
         return {
             confTeams,

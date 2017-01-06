@@ -1,3 +1,5 @@
+// @flow
+
 import g from '../globals';
 import * as player from '../core/player';
 import bbgmViewReact from '../util/bbgmViewReact';

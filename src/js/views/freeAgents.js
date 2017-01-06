@@ -1,3 +1,5 @@
+// @flow
+
 import Promise from 'bluebird';
 import g from '../globals';
 import * as freeAgents from '../core/freeAgents';
@@ -26,10 +28,7 @@ async function updateFreeAgents() {
         }),
     ]);
 
-    let capSpace = (g.salaryCap - payroll) / 1000;
-    if (capSpace < 0) {
-        capSpace = 0;
-    }
+    const capSpace = g.salaryCap > payroll ? (g.salaryCap - payroll) / 1000 : 0;
 
     players = player.filter(players, {
         attrs: ["pid", "name", "age", "contract", "freeAgentMood", "injury", "watch"],

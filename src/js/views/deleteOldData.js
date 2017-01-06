@@ -1,3 +1,5 @@
+// @flow
+
 import bbgmViewReact from '../util/bbgmViewReact';
 import DeleteOldData from './views/DeleteOldData';
 

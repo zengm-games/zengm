@@ -80,7 +80,7 @@ function get(ctx) {
     };
 }
 
-function updateTeamSeason(inputs) {
+async function updateTeamSeason(inputs) {
     return {
         // Needed for dropdown
         abbrev: inputs.abbrev,

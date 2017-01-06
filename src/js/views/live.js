@@ -1,3 +1,5 @@
+// @flow
+
 import g from '../globals';
 import * as season from '../core/season';
 import bbgmViewReact from '../util/bbgmViewReact';
@@ -23,7 +25,7 @@ async function updateGamesList() {
     };
 }
 
-function updateGamesInProgress(inputs, updateEvents) {
+async function updateGamesInProgress(inputs, updateEvents) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('g.gamesInProgress')) {
         return {
             gamesInProgress: g.gamesInProgress,

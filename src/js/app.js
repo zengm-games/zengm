@@ -87,11 +87,11 @@ window.Promise.config({warnings: false});
     });*/
 
     // Redirect a route to https URL always, unless the URL doesn't include basketball-gm (e.g. localhost)
-    const tryForceHttps = view => (ctx) => {
+    const tryForceHttps = view => (ctx, next) => {
         if (window.location.protocol === 'http:' && window.location.hostname.includes('basketball-gm.com')) {
             window.location.replace(`https://${window.location.hostname}${ctx.fullPath}`);
         } else {
-            view(ctx);
+            view(ctx, next);
         }
     };
 

@@ -1,3 +1,5 @@
+// @flow
+
 import Promise from 'bluebird';
 import $ from 'jquery';
 import g from '../globals';

@@ -7,7 +7,7 @@ function get(ctx) {
     };
 }
 
-function updateToken(inputs) {
+async function updateToken(inputs) {
     return {
         token: inputs.token,
     };

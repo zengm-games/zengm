@@ -1,3 +1,5 @@
+// @flow
+
 import g from '../globals';
 import * as league from '../core/league';
 import bbgmViewReact from '../util/bbgmViewReact';

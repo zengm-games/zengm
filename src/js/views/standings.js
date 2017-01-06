@@ -1,3 +1,5 @@
+// @flow
+
 import g from '../globals';
 import * as team from '../core/team';
 import bbgmViewReact from '../util/bbgmViewReact';
@@ -81,7 +83,7 @@ async function updateStandings(inputs, updateEvents, state) {
             }
         }
 
-        const playoffsByConference = g.confs.length === 2 && !localStorage.top16playoffs;
+        const playoffsByConference = g.confs.length === 2 && !localStorage.getItem('top16playoffs');
 
         // Fix playoffsRank if conferences don't matter
         if (!playoffsByConference) {

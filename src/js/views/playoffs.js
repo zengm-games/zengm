@@ -1,3 +1,5 @@
+// @flow
+
 import g from '../globals';
 import * as season from '../core/season';
 import * as team from '../core/team';

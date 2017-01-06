@@ -1,3 +1,5 @@
+// @flow
+
 import g from '../globals';
 import bbgmViewReact from '../util/bbgmViewReact';
 import Dashboard from './views/Dashboard';

@@ -1,3 +1,5 @@
+// @flow
+
 import g from '../globals';
 import * as team from '../core/team';
 import bbgmViewReact from '../util/bbgmViewReact';

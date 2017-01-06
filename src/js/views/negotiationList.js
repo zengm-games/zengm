@@ -29,7 +29,7 @@ async function updateNegotiationList() {
     negotiations = negotiations.filter(negotiation => negotiation.tid === g.userTid);
     const negotiationPids = negotiations.map(negotiation => negotiation.pid);
 
-    players = players.filter(p => negotiationPids.indexOf(p.pid) >= 0);
+    players = players.filter(p => negotiationPids.includes(p.pid));
     players = player.filter(players, {
         attrs: ["pid", "name", "age", "freeAgentMood", "injury", "watch"],
         ratings: ["ovr", "pot", "skills", "pos"],

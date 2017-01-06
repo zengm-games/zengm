@@ -14,7 +14,7 @@ function get(ctx) {
 
 async function updateLeaders(inputs, updateEvents, state) {
     // Respond to watchList in case players are listed twice in different categories
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("watchList") >= 0 || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0) || inputs.season !== state.season) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('watchList') || (inputs.season === g.season && updateEvents.includes('gameSim')) || inputs.season !== state.season) {
         let [teamSeasons, players] = await Promise.all([
             g.dbl.teamSeasons.index("season, tid").getAll(backboard.bound([inputs.season], [inputs.season, ''])),
             g.dbl.players.getAll().then(players2 => {

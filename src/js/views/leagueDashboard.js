@@ -9,7 +9,7 @@ import * as helpers from '../util/helpers';
 import LeagueDashboard from './views/LeagueDashboard';
 
 async function updateInbox(inputs, updateEvents) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun')) {
         let messages = await g.dbl.messages.getAll();
 
         messages.reverse();
@@ -26,7 +26,7 @@ async function updateInbox(inputs, updateEvents) {
 }
 
 async function updateTeam(inputs, updateEvents) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || updateEvents.includes('newPhase')) {
         const [t, latestSeason] = await Promise.all([
             g.dbl.teams.get(g.userTid),
             g.dbl.teamSeasons.index("season, tid").get([g.season, g.userTid]),
@@ -47,7 +47,7 @@ async function updateTeam(inputs, updateEvents) {
 }
 
 async function updatePayroll(inputs, updateEvents) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("playerMovement") >= 0) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('playerMovement')) {
         const payroll = await team.getPayroll(null, g.userTid).get(0);
         return {
             payroll: payroll / 1000, // [millions of dollars]
@@ -57,7 +57,7 @@ async function updatePayroll(inputs, updateEvents) {
 
 
 async function updateTeams(inputs, updateEvents) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || updateEvents.includes('newPhase')) {
         const vars = {};
         const stats = ["pts", "oppPts", "trb", "ast"];  // This is also used later to find ranks for these team stats
 
@@ -106,7 +106,7 @@ async function updateTeams(inputs, updateEvents) {
 }
 
 async function updateGames(inputs, updateEvents) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('newPhase')) {
         const numShowCompleted = 4;
         const completed = [];
 
@@ -158,7 +158,7 @@ async function updateGames(inputs, updateEvents) {
 }
 
 async function updateSchedule(inputs, updateEvents) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('newPhase')) {
         const schedule = await season.getSchedule();
         const games = [];
         const numShowUpcoming = 3;
@@ -180,7 +180,7 @@ async function updateSchedule(inputs, updateEvents) {
 }
 
 function updatePlayers(inputs, updateEvents) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("newPhase") >= 0) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || updateEvents.includes('newPhase')) {
         return g.dbl.tx(["players", "playerStats"], async tx => {
             const vars = {};
 
@@ -239,7 +239,7 @@ function updatePlayers(inputs, updateEvents) {
 }
 
 async function updatePlayoffs(inputs, updateEvents) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || (g.phase >= g.PHASE.PLAYOFFS && updateEvents.indexOf("gameSim") >= 0) || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PLAYOFFS)) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || (g.phase >= g.PHASE.PLAYOFFS && updateEvents.includes('gameSim')) || (updateEvents.includes('newPhase') && g.phase === g.PHASE.PLAYOFFS)) {
         const playoffSeries = await g.dbl.playoffSeries.get(g.season);
 
         const vars = {
@@ -280,7 +280,7 @@ async function updatePlayoffs(inputs, updateEvents) {
 }
 
 async function updateStandings(inputs, updateEvents) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('gameSim')) {
         const teams = await team.filter({
             attrs: ["tid", "cid", "abbrev", "region"],
             seasonAttrs: ["won", "lost", "winp"],

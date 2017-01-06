@@ -177,7 +177,7 @@ class LiveGame extends React.Component {
                     }
 
                     // Show score after scoring plays
-                    if (text.indexOf("made") >= 0) {
+                    if (text.includes('made')) {
                         text += ` (${boxScore.teams[0].pts}-${boxScore.teams[1].pts})`;
                     }
 

@@ -6,7 +6,7 @@ import PlayerRatings from './views/PlayerRatings';
 
 function get(ctx) {
     let abbrev;
-    if (g.teamAbbrevsCache.indexOf(ctx.params.abbrev) >= 0) {
+    if (g.teamAbbrevsCache.includes(ctx.params.abbrev)) {
         abbrev = ctx.params.abbrev;
     } else if (ctx.params.abbrev && ctx.params.abbrev === 'watch') {
         abbrev = "watch";
@@ -21,7 +21,7 @@ function get(ctx) {
 }
 
 async function updatePlayers(inputs, updateEvents, state) {
-    if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && updateEvents.indexOf("playerMovement") >= 0) || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON) || inputs.season !== state.season || inputs.abbrev !== state.abbrev) {
+    if (updateEvents.includes('dbChange') || (inputs.season === g.season && updateEvents.includes('playerMovement')) || (updateEvents.includes('newPhase') && g.phase === g.PHASE.PRESEASON) || inputs.season !== state.season || inputs.abbrev !== state.abbrev) {
         let players = await g.dbl.players.getAll();
         players = await player.withStats(null, players, {
             statsSeasons: [inputs.season],

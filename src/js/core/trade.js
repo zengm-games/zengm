@@ -141,7 +141,7 @@ async function updatePlayers(teams: TradeTeams): Promise<TradeTeams> {
                 const pidsGood = [];
                 for (let j = 0; j < players.length; j++) {
                     // Also, make sure player is not untradable
-                    if (t.pids.indexOf(players[j].pid) >= 0 && !isUntradable(players[j])) {
+                    if (t.pids.includes(players[j].pid) && !isUntradable(players[j])) {
                         pidsGood.push(players[j].pid);
                     }
                 }
@@ -152,7 +152,7 @@ async function updatePlayers(teams: TradeTeams): Promise<TradeTeams> {
             promises.push(tx.draftPicks.index('tid').getAll(t.tid).then(dps => {
                 const dpidsGood = [];
                 for (let j = 0; j < dps.length; j++) {
-                    if (t.dpids.indexOf(dps[j].dpid) >= 0) {
+                    if (t.dpids.includes(dps[j].dpid)) {
                         dpidsGood.push(dps[j].dpid);
                     }
                 }
@@ -235,13 +235,13 @@ function summary(teams: TradeTeams): TradeSummary {
                     tid: tids[i],
                     showRookies: true,
                 });
-                s.teams[i].trade = players[i].filter(p => pids[i].indexOf(p.pid) >= 0);
+                s.teams[i].trade = players[i].filter(p => pids[i].includes(p.pid));
                 s.teams[i].total = s.teams[i].trade.reduce((memo, p) => memo + p.contract.amount, 0);
             }));
 
             promises.push(tx.draftPicks.index('tid').getAll(tids[i]).then(picks => {
                 for (let j = 0; j < picks.length; j++) {
-                    if (dpids[i].indexOf(picks[j].dpid) >= 0) {
+                    if (dpids[i].includes(picks[j].dpid)) {
                         s.teams[i].picks.push({
                             dpid: picks[j].dpid,
                             desc: `${picks[j].season} ${picks[j].round === 1 ? "1st" : "2nd"} round pick (${g.teamAbbrevsCache[picks[j].originalTid]})`,
@@ -410,7 +410,7 @@ async function propose(forceTrade?: boolean = false): Promise<[boolean, ?string]
         await clear(); // This includes dbChange
 
         // Auto-sort CPU team roster
-        if (g.userTids.indexOf(tids[1]) < 0) {
+        if (!g.userTids.includes(tids[1])) {
             await g.dbl.tx("players", "readwrite", tx => team.rosterAutoSort(tx, tids[1]));
         }
 
@@ -457,7 +457,7 @@ async function makeItWork(
             if (!holdUserConstant) {
                 // Get all players not in userPids
                 tx.players.index('tid').iterate(teams[0].tid, p => {
-                    if (teams[0].pids.indexOf(p.pid) < 0 && !isUntradable(p)) {
+                    if (!teams[0].pids.includes(p.pid) && !isUntradable(p)) {
                         assets.push({
                             type: "player",
                             dv: 0,
@@ -470,7 +470,7 @@ async function makeItWork(
 
             // Get all players not in otherPids
             tx.players.index('tid').iterate(teams[1].tid, p => {
-                if (teams[1].pids.indexOf(p.pid) < 0 && !isUntradable(p)) {
+                if (!teams[1].pids.includes(p.pid) && !isUntradable(p)) {
                     assets.push({
                         type: "player",
                         dv: 0,
@@ -483,7 +483,7 @@ async function makeItWork(
             if (!holdUserConstant) {
                 // Get all draft picks not in userDpids
                 tx.draftPicks.index('tid').iterate(teams[0].tid, dp => {
-                    if (teams[0].dpids.indexOf(dp.dpid) < 0) {
+                    if (!teams[0].dpids.includes(dp.dpid)) {
                         assets.push({
                             type: "draftPick",
                             dv: 0,
@@ -496,7 +496,7 @@ async function makeItWork(
 
             // Get all draft picks not in otherDpids
             tx.draftPicks.index('tid').iterate(teams[1].tid, dp => {
-                if (teams[1].dpids.indexOf(dp.dpid) < 0) {
+                if (!teams[1].dpids.includes(dp.dpid)) {
                     assets.push({
                         type: "draftPick",
                         dv: 0,

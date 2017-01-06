@@ -3,7 +3,7 @@ import bbgmViewReact from '../util/bbgmViewReact';
 import ExportStats from './views/ExportStats';
 
 function updateExportStats(inputs, updateEvents) {
-    if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("newPhase") >= 0 || updateEvents.indexOf("dbChange") >= 0) {
+    if (updateEvents.includes('firstRun') || updateEvents.includes('newPhase') || updateEvents.includes('dbChange')) {
         const options = [{
             key: "all",
             val: "All Seasons",

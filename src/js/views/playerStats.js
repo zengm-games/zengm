@@ -7,7 +7,7 @@ import PlayerStats from './views/PlayerStats';
 
 function get(ctx) {
     let abbrev;
-    if (g.teamAbbrevsCache.indexOf(ctx.params.abbrev) >= 0) {
+    if (g.teamAbbrevsCache.includes(ctx.params.abbrev)) {
         abbrev = ctx.params.abbrev;
     } else if (ctx.params.abbrev && ctx.params.abbrev === 'watch') {
         abbrev = "watch";
@@ -24,7 +24,7 @@ function get(ctx) {
 }
 
 async function updatePlayers(inputs, updateEvents, state) {
-    if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.abbrev !== state.abbrev || inputs.season !== state.season || inputs.statType !== state.statType || inputs.playoffs !== state.playoffs) {
+    if (updateEvents.includes('dbChange') || (inputs.season === g.season && (updateEvents.includes('gameSim') || updateEvents.includes('playerMovement'))) || inputs.abbrev !== state.abbrev || inputs.season !== state.season || inputs.statType !== state.statType || inputs.playoffs !== state.playoffs) {
         return g.dbl.tx(["players", "playerStats"], async tx => {
             let players = await tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.RETIRED));
             players = await player.withStats(tx, players, {

@@ -4,7 +4,7 @@ import bbgmViewReact from '../util/bbgmViewReact';
 import GodMode from './views/GodMode';
 
 async function updateGodMode(inputs, updateEvents) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("toggleGodMode") >= 0) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('toggleGodMode')) {
         // Make sure it's current
         await league.loadGameAttributes(null);
 

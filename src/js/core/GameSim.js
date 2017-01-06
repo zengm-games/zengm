@@ -348,7 +348,7 @@ class GameSim {
                 this.playersOnCourt[t][i] = p;
                 // Loop through bench players (in order of current roster position) to see if any should be subbed in)
                 for (let b = 0; b < this.team[t].player.length; b++) {
-                    if (this.playersOnCourt[t].indexOf(b) === -1 && ((this.team[t].player[p].stat.courtTime > 3 && this.team[t].player[b].stat.benchTime > 3 && ovrs[b] > ovrs[p]) || ((this.team[t].player[p].injured || this.team[t].player[p].stat.pf >= 6) && (!this.team[t].player[b].injured && this.team[t].player[b].stat.pf < 6)))) {
+                    if (!this.playersOnCourt[t].includes(b) && ((this.team[t].player[p].stat.courtTime > 3 && this.team[t].player[b].stat.benchTime > 3 && ovrs[b] > ovrs[p]) || ((this.team[t].player[p].injured || this.team[t].player[p].stat.pf >= 6) && (!this.team[t].player[b].injured && this.team[t].player[b].stat.pf < 6)))) {
                         // Check if position of substitute makes for a valid lineup
                         const pos = [];
                         for (let j = 0; j < this.playersOnCourt[t].length; j++) {
@@ -363,13 +363,13 @@ class GameSim {
                         let numF = 0;
                         let numC = 0;
                         for (let j = 0; j < pos.length; j++) {
-                            if (pos[j].indexOf('G') >= 0) {
+                            if (pos[j].includes('G')) {
                                 numG += 1;
                             }
                             if (pos[j] === 'PG') {
                                 numPG += 1;
                             }
-                            if (pos[j].indexOf('F') >= 0) {
+                            if (pos[j].includes('F')) {
                                 numF += 1;
                             }
                             if (pos[j] === 'C') {
@@ -418,7 +418,7 @@ class GameSim {
         if (!this.startersRecorded) {
             for (let t = 0; t < 2; t++) {
                 for (let p = 0; p < this.team[t].player.length; p++) {
-                    if (this.playersOnCourt[t].indexOf(p) >= 0) {
+                    if (this.playersOnCourt[t].includes(p)) {
                         this.recordStat(t, p, "gs");
                     }
                 }
@@ -529,7 +529,7 @@ class GameSim {
         for (let t = 0; t < 2; t++) {
             // Update minutes (overall, court, and bench)
             for (let p = 0; p < this.team[t].player.length; p++) {
-                if (this.playersOnCourt[t].indexOf(p) >= 0) {
+                if (this.playersOnCourt[t].includes(p)) {
                     this.recordStat(t, p, "min", possessionTime);
                     this.recordStat(t, p, "courtTime", possessionTime);
                     // This used to be 0.04. Increase more to lower PT
@@ -563,7 +563,7 @@ class GameSim {
         for (let t = 0; t < 2; t++) {
             for (let p = 0; p < this.team[t].player.length; p++) {
                 // Only players on the court can be injured
-                if (this.playersOnCourt[t].indexOf(p) >= 0) {
+                if (this.playersOnCourt[t].includes(p)) {
                     // According to data/injuries.ods, 0.25 injuries occur every game. Divided over 10 players and ~200 possessions, that means each player on the court has P = 0.25 / 10 / 200 = 0.000125 probability of being injured this play.
                     if (Math.random() < 0.000125) {
                         this.team[t].player[p].injured = true;

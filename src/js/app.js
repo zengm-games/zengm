@@ -80,7 +80,7 @@ window.Promise.config({warnings: false});
             }
 
             // First load Cordova page
-            if (ctx.path.indexOf('/index.html') >= 0) {
+            if (ctx.path.includes('/index.html')) {
                 ctx.path = '/';
             }
         }
@@ -88,7 +88,7 @@ window.Promise.config({warnings: false});
 
     // Redirect a route to https URL always, unless the URL doesn't include basketball-gm (e.g. localhost)
     const tryForceHttps = view => (ctx) => {
-        if (window.location.protocol === 'http:' && window.location.hostname.indexOf('basketball-gm.com') >= 0) {
+        if (window.location.protocol === 'http:' && window.location.hostname.includes('basketball-gm.com')) {
             window.location.replace(`https://${window.location.hostname}${ctx.fullPath}`);
         } else {
             view(ctx);

@@ -10,7 +10,7 @@ function get(ctx) {
 }
 
 async function updateAccount(inputs, updateEvents, state, setState, topMenu) {
-    if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("account") >= 0) {
+    if (updateEvents.includes('firstRun') || updateEvents.includes('account')) {
         await account.check();
 
         const goldUntilDate = new Date(topMenu.goldUntil * 1000);
@@ -35,7 +35,7 @@ async function updateAccount(inputs, updateEvents, state, setState, topMenu) {
 }
 
 async function updateAchievements(inputs, updateEvents) {
-    if (updateEvents.indexOf("firstRun") >= 0) {
+    if (updateEvents.includes('firstRun')) {
         const achievements = await account.getAchievements();
 
         return {

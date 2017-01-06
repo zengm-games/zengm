@@ -118,12 +118,12 @@ describe("core/draft", () => {
                 const r1picks = [];
                 const r2picks = [];
                 for (let j = 0; j < 30; j++) {
-                    if (tids.indexOf(draftResults[j]) > -1) {
+                    if (tids.includes(draftResults[j])) {
                         r1picks.push(draftResults[j]);
                     }
                 }
                 for (let j = 59; j > 29; j--) {
-                    if (tids.indexOf(draftResults[j]) > -1) {
+                    if (tids.includes(draftResults[j])) {
                         r2picks.push(draftResults[j]);
                     }
                 }

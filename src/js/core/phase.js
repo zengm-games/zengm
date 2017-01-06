@@ -199,7 +199,7 @@ async function newPhasePlayoffs(tx: BackboardTx) {
 
         // Add row to team stats and team season attributes
         tx.teamSeasons.index("season, tid").iterate(backboard.bound([g.season], [g.season, '']), async teamSeason => {
-            if (tidPlayoffs.indexOf(teamSeason.tid) >= 0) {
+            if (tidPlayoffs.includes(teamSeason.tid)) {
                 await tx.teamStats.add(team.genStatsRow(teamSeason.tid, true));
 
                 teamSeason.playoffRoundsWon = 0;
@@ -236,7 +236,7 @@ async function newPhasePlayoffs(tx: BackboardTx) {
 
     // Don't redirect if we're viewing a live game now
     let url;
-    if (location.pathname.indexOf("/live_game") === -1) {
+    if (!location.pathname.includes("/live_game")) {
         url = helpers.leagueUrl(["playoffs"]);
     }
 
@@ -341,7 +341,7 @@ async function newPhaseBeforeDraft(tx: BackboardTx) {
 
     // Don't redirect if we're viewing a live game now
     let url;
-    if (location.pathname.indexOf("/live_game") === -1) {
+    if (!location.pathname.includes("/live_game")) {
         url = helpers.leagueUrl(["history"]);
     }
 
@@ -394,7 +394,7 @@ async function newPhaseResignPlayers(tx: BackboardTx) {
 
     // Re-sign players on user's team, and some AI players
     await tx.players.index('tid').iterate(backboard.lowerBound(0), async p => {
-        if (p.contract.exp <= g.season && g.userTids.indexOf(p.tid) >= 0 && g.autoPlaySeasons === 0) {
+        if (p.contract.exp <= g.season && g.userTids.includes(p.tid) && g.autoPlaySeasons === 0) {
             const tid = p.tid;
 
             // Add to free agents first, to generate a contract demand, then open negotiations with player
@@ -437,7 +437,7 @@ async function newPhaseFreeAgency(tx: BackboardTx) {
     // AI teams re-sign players or they become free agents
     // Run this after upding contracts for current free agents, or addToFreeAgents will be called twice for these guys
     await tx.players.index('tid').iterate(backboard.lowerBound(0), p => {
-        if (p.contract.exp <= g.season && (g.userTids.indexOf(p.tid) < 0 || g.autoPlaySeasons > 0)) {
+        if (p.contract.exp <= g.season && (!g.userTids.includes(p.tid) || g.autoPlaySeasons > 0)) {
             // Automatically negotiate with teams
             const factor = strategies[p.tid] === "rebuilding" ? 0.4 : 0;
 

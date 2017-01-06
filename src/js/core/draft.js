@@ -280,7 +280,7 @@ async function genOrder(tx: BackboardTx) {
     while (firstThree.length < 3) {
         const draw = random.randInt(1, 1000);
         const i = chances.findIndex(chance => chance > draw);
-        if (firstThree.indexOf(i) < 0) {
+        if (!firstThree.includes(i)) {
             // If one lottery winner, select after other tied teams;
             teams[i].randVal -= 30;
             firstThree.push(i);
@@ -328,7 +328,7 @@ async function genOrder(tx: BackboardTx) {
     // First round - everyone else
     let pick = 4;
     for (let i = 0; i < teams.length; i++) {
-        if (firstThree.indexOf(i) < 0) {
+        if (!firstThree.includes(i)) {
             const tid = draftPicksIndexed[teams[i].tid][1].tid;
             draftOrder.push({
                 round: 1,
@@ -571,7 +571,7 @@ async function untilUserOrEnd() {
         if (draftOrder.length > 0) {
             const pick = draftOrder.shift();
 
-            if (g.userTids.indexOf(pick.tid) >= 0 && g.autoPlaySeasons === 0) {
+            if (g.userTids.includes(pick.tid) && g.autoPlaySeasons === 0) {
                 draftOrder.unshift(pick);
                 return afterDoneAuto();
             }

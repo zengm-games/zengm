@@ -13,7 +13,7 @@ function get(ctx) {
 }
 
 async function updateUpcoming(inputs, updateEvents, state) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("newPhase") >= 0 || inputs.abbrev !== state.abbrev) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('newPhase') || inputs.abbrev !== state.abbrev) {
         // Get schedule and all teams.
         const [schedule, teamsFiltered] = await Promise.all([
             season.getSchedule(),
@@ -62,7 +62,7 @@ async function updateUpcoming(inputs, updateEvents, state) {
 
 // Based on views.gameLog.updateGamesList
 async function updateCompleted(inputs, updateEvents, state, setState) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.abbrev !== state.abbrev) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || inputs.abbrev !== state.abbrev) {
         // Reset list, so old completed games don't temporarily show when switching team
         if (state.completed) {
             setState({completed: undefined});
@@ -76,7 +76,7 @@ async function updateCompleted(inputs, updateEvents, state, setState) {
 
         return {completed: games};
     }
-    if (updateEvents.indexOf("gameSim") >= 0) {
+    if (updateEvents.includes('gameSim')) {
         const completed = state.completed;
         // Partial update of only new games
         const games = await helpers.gameLogList(inputs.abbrev, g.season, -1, state.completed);

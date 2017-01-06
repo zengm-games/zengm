@@ -71,7 +71,7 @@ class DeleteOldData extends React.Component {
                     return tx.players.delete(p.pid);
                 });
                 await tx.playerStats.iterate(ps => {
-                    if (toDelete.indexOf(ps.pid) >= 0) {
+                    if (toDelete.includes(ps.pid)) {
                         return tx.playerStats.delete(ps.psid);
                     }
                 });
@@ -79,13 +79,13 @@ class DeleteOldData extends React.Component {
                 const toDelete = [];
 
                 await tx.players.index('tid').iterate(g.PLAYER.RETIRED, p => {
-                    if (p.awards.length === 0 && p.statsTids.indexOf(g.userTid) < 0) {
+                    if (p.awards.length === 0 && !p.statsTids.includes(g.userTid)) {
                         toDelete.push(p.pid);
                         return tx.players.delete(p.pid);
                     }
                 });
                 await tx.playerStats.iterate(ps => {
-                    if (toDelete.indexOf(ps.pid) >= 0) {
+                    if (toDelete.includes(ps.pid)) {
                         return tx.playerStats.delete(ps.psid);
                     }
                 });
@@ -105,14 +105,14 @@ class DeleteOldData extends React.Component {
                 const toDelete = [];
 
                 tx.players.iterate(p => {
-                    if (p.awards.length === 0 && p.statsTids.indexOf(g.userTid) < 0) {
+                    if (p.awards.length === 0 && !p.statsTids.includes(g.userTid)) {
                         p.ratings = [p.ratings[p.ratings.length - 1]];
                         toDelete.push(p.pid);
                     }
                     return p;
                 });
                 await tx.playerStats.iterate(ps => {
-                    if (ps.season < g.season && toDelete.indexOf(ps.pid) >= 0) {
+                    if (ps.season < g.season && toDelete.includes(ps.pid)) {
                         return tx.playerStats.delete(ps.psid);
                     }
                 });

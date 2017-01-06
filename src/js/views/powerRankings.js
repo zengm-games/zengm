@@ -6,7 +6,7 @@ import bbgmViewReact from '../util/bbgmViewReact';
 import PowerRankings from './views/PowerRankings';
 
 async function updatePowerRankings(inputs, updateEvents) {
-    if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0) {
+    if (updateEvents.includes('firstRun') || updateEvents.includes('dbChange') || updateEvents.includes('gameSim')) {
         const [teams, players] = await Promise.all([
             team.filter({
                 attrs: ["tid", "abbrev", "region", "name"],

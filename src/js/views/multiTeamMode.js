@@ -4,7 +4,7 @@ import bbgmViewReact from '../util/bbgmViewReact';
 import MultiTeamMode from './views/MultiTeamMode';
 
 async function updateMultiTeamMode(inputs, updateEvents) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("g.userTids") >= 0) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('g.userTids')) {
         // Make sure it's current
         await league.loadGameAttribute(null, "godMode");
 

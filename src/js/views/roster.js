@@ -24,7 +24,7 @@ function get(ctx) {
 }
 
 function updateRoster(inputs, updateEvents, state) {
-    if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.abbrev !== state.abbrev || inputs.season !== state.season) {
+    if (updateEvents.includes('dbChange') || (inputs.season === g.season && (updateEvents.includes('gameSim') || updateEvents.includes('playerMovement'))) || inputs.abbrev !== state.abbrev || inputs.season !== state.season) {
         const vars = {
             abbrev: inputs.abbrev,
             season: inputs.season,

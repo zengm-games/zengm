@@ -71,7 +71,7 @@ const logEvent = (tx: ?BackboardTx, {
         }
 
         // Don't show non-critical notification if we're viewing a live game now
-        if (location.pathname.indexOf("/live") === -1 || persistent) {
+        if (!location.pathname.includes('/live') || persistent) {
             notify(text, title, {
                 extraClass,
                 persistent,

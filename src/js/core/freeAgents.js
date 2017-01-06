@@ -49,7 +49,7 @@ async function autoSign(tx: BackboardTx) {
 
         for (const tid of tids) {
             // Skip the user's team
-            if (g.userTids.indexOf(tid) >= 0 && g.autoPlaySeasons === 0) {
+            if (g.userTids.includes(tid) && g.autoPlaySeasons === 0) {
                 continue;
             }
 

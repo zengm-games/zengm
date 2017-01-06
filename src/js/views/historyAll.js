@@ -5,7 +5,7 @@ import bbgmViewReact from '../util/bbgmViewReact';
 import HistoryAll from './views/HistoryAll';
 
 async function updateHistory(inputs, updateEvents) {
-    if (updateEvents.indexOf("firstRun") >= 0) {
+    if (updateEvents.includes('firstRun')) {
         const [awards, teams] = await Promise.all([
             g.dbl.awards.getAll(),
             team.filter({

@@ -48,7 +48,7 @@ const HallOfFame = ({players}) => {
                 helpers.round(p.careerStats.ewa, 1),
             ],
             classNames: {
-                info: p.statsTids.indexOf(g.userTid) >= 0,
+                info: p.statsTids.includes(g.userTid),
             },
         };
     });

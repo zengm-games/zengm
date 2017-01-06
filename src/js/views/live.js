@@ -24,7 +24,7 @@ async function updateGamesList() {
 }
 
 function updateGamesInProgress(inputs, updateEvents) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("g.gamesInProgress") >= 0) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('g.gamesInProgress')) {
         return {
             gamesInProgress: g.gamesInProgress,
         };

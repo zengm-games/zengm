@@ -215,11 +215,11 @@ function findStarters(positions: string[]): number[] {
 
         // Make sure we can get 2 G and 2 F/C
         if ((5 - starters.length > ((2 - numG) > 0 ? (2 - numG) : 0) + ((2 - numFC) > 0 ? (2 - numFC) : 0)) ||
-                (numG < 2 && positions[i].indexOf('G') >= 0) ||
-                (numFC < 2 && (positions[i].indexOf('F') >= 0 || (positions[i] === 'C' && numC === 0)))) {
+                (numG < 2 && positions[i].includes('G')) ||
+                (numFC < 2 && (positions[i].includes('F') || (positions[i] === 'C' && numC === 0)))) {
             starters.push(i);
-            numG += positions[i].indexOf('G') >= 0 ? 1 : 0;
-            numFC += (positions[i].indexOf('F') >= 0 || positions[i] === 'C') ? 1 : 0;
+            numG += positions[i].includes('G') ? 1 : 0;
+            numFC += (positions[i].includes('F') || positions[i] === 'C') ? 1 : 0;
             numC += positions[i] === 'C' ? 1 : 0;
         }
     }
@@ -227,7 +227,7 @@ function findStarters(positions: string[]): number[] {
     // Fill in after meeting requirements, but still not too many Cs!
     for (let i = 0; i < positions.length; i++) {
         if (starters.length === 5) { break; }
-        if (starters.indexOf(i) >= 0) { continue; }
+        if (starters.includes(i)) { continue; }
         if (numC >= 1 && positions[i] === 'c') { continue; }
 
         starters.push(i);
@@ -267,7 +267,7 @@ async function rosterAutoSort(tx: BackboardTx, tid: number) {
     const starters = findStarters(positions);
     const newPlayers = starters.map(i => players[i]);
     for (let i = 0; i < players.length; i++) {
-        if (starters.indexOf(i) < 0) {
+        if (!starters.includes(i)) {
             newPlayers.push(players[i]);
         }
     }
@@ -683,7 +683,7 @@ function filter(options: any): Promise<TeamFiltered | TeamFiltered[]> {
         }
 
         // If payroll for the current season was requested, find the current payroll for each team. Otherwise, don't.
-        if (options.seasonAttrs.indexOf("payroll") < 0 || options.season !== g.season) {
+        if (!options.seasonAttrs.includes('payroll') || options.season !== g.season) {
             return returnOneTeam ? fts[0] : fts;
         }
 
@@ -734,7 +734,7 @@ async function valueChange(
             const players = await tx.players.index('tid').getAll(tid);
             for (let i = 0; i < players.length; i++) {
                 const p = players[i];
-                if (pidsRemove.indexOf(p.pid) < 0) {
+                if (!pidsRemove.includes(p.pid)) {
                     roster.push({
                         value: p.value,
                         skills: _.last(p.ratings).skills,
@@ -1250,7 +1250,7 @@ function checkRosterSizes(): Promise<string | null> {
             const players = await tx.players.index('tid').getAll(tid);
             let numPlayersOnRoster = players.length;
             if (numPlayersOnRoster > 15) {
-                if (g.userTids.indexOf(tid) >= 0 && g.autoPlaySeasons === 0) {
+                if (g.userTids.includes(tid) && g.autoPlaySeasons === 0) {
                     if (g.userTids.length <= 1) {
                         userTeamSizeError = 'Your team has ';
                     } else {
@@ -1267,7 +1267,7 @@ function checkRosterSizes(): Promise<string | null> {
                     await Promise.all(promises);
                 }
             } else if (numPlayersOnRoster < g.minRosterSize) {
-                if (g.userTids.indexOf(tid) >= 0 && g.autoPlaySeasons === 0) {
+                if (g.userTids.includes(tid) && g.autoPlaySeasons === 0) {
                     if (g.userTids.length <= 1) {
                         userTeamSizeError = 'Your team has ';
                     } else {
@@ -1303,7 +1303,7 @@ function checkRosterSizes(): Promise<string | null> {
 
             // Auto sort rosters (except player's team)
             // This will sort all AI rosters before every game. Excessive? It could change some times, but usually it won't
-            if (g.userTids.indexOf(tid) < 0 || g.autoPlaySeasons > 0) {
+            if (!g.userTids.includes(tid) || g.autoPlaySeasons > 0) {
                 return rosterAutoSort(tx, tid);
             }
         };

@@ -67,7 +67,7 @@ class Draft extends React.Component {
     async draftUser(pid) {
         const draftOrder = await draft.getOrder();
         const pick = draftOrder.shift();
-        if (pick && g.userTids.indexOf(pick.tid) >= 0) {
+        if (pick && g.userTids.includes(pick.tid)) {
             this.savePids([pid]);
             await draft.selectPlayer(pick, pid);
             await g.dbl.tx("draftOrder", "readwrite", tx => draft.setOrder(tx, draftOrder));
@@ -83,7 +83,7 @@ class Draft extends React.Component {
         bbgmViewReact.title('Draft');
 
         const nextPick = drafted.find(p => p.pid < 0);
-        const usersTurn = nextPick && userTids.indexOf(nextPick.draft.tid) >= 0;
+        const usersTurn = nextPick && userTids.includes(nextPick.draft.tid);
 
         const colsUndrafted = getCols('Name', 'Pos', 'Age', 'Ovr', 'Pot', 'Draft');
         colsUndrafted[0].width = '100%';
@@ -141,7 +141,7 @@ class Draft extends React.Component {
             return {
                 key: i,
                 data,
-                classNames: {info: userTids.indexOf(p.draft.tid) >= 0},
+                classNames: {info: userTids.includes(p.draft.tid)},
             };
         });
 

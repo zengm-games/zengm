@@ -5,7 +5,7 @@ import PlayerFeats from './views/PlayerFeats';
 
 function get(ctx) {
     let abbrev;
-    if (g.teamAbbrevsCache.indexOf(ctx.params.abbrev) >= 0) {
+    if (g.teamAbbrevsCache.includes(ctx.params.abbrev)) {
         abbrev = ctx.params.abbrev;
     } else {
         abbrev = "all";
@@ -26,7 +26,7 @@ function get(ctx) {
 }
 
 async function updatePlayers(inputs, updateEvents, state) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0 || inputs.abbrev !== state.abbrev || inputs.season !== state.season || inputs.playoffs !== state.playoffs) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('gameSim') || inputs.abbrev !== state.abbrev || inputs.season !== state.season || inputs.playoffs !== state.playoffs) {
         let feats = await g.dbl.playerFeats.getAll();
 
         if (inputs.abbrev !== "all") {

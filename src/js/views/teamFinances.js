@@ -13,7 +13,7 @@ function get(ctx) {
 }
 
 async function updateTeamFinances(inputs, updateEvents, state) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("teamFinances") >= 0 || inputs.tid !== state.tid || inputs.show !== state.show) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || updateEvents.includes('teamFinances') || inputs.tid !== state.tid || inputs.show !== state.show) {
         const vars = {
             abbrev: inputs.abbrev,
             gamesInProgress: g.gamesInProgress,
@@ -131,7 +131,7 @@ async function updateTeamFinances(inputs, updateEvents, state) {
 }
 
 function updateGamesInProgress(inputs, updateEvents, state) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("g.gamesInProgress") >= 0 || inputs.tid !== state.tid || inputs.show !== state.show) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('g.gamesInProgress') || inputs.tid !== state.tid || inputs.show !== state.show) {
         return {
             gamesInProgress: g.gamesInProgress,
         };

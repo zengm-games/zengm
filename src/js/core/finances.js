@@ -95,7 +95,7 @@ async function updateRanks(tx: BackboardTx, types: BudgetTypes[]) {
     };
 
     let teamSeasonsPromise;
-    if (types.indexOf("expenses") >= 0 || types.indexOf("revenues") >= 0) {
+    if (types.includes('expenses') || types.includes('revenues')) {
         teamSeasonsPromise = tx.teamSeasons.index("season, tid").getAll(backboard.bound([g.season], [g.season, '']));
     } else {
         teamSeasonsPromise = Promise.resolve();
@@ -105,38 +105,38 @@ async function updateRanks(tx: BackboardTx, types: BudgetTypes[]) {
 
     let budgetsByItem;
     let budgetsByTeam;
-    if (types.indexOf("budget") >= 0) {
+    if (types.includes('budget')) {
         budgetsByTeam = teams.map(t => t.budget);
         budgetsByItem = getByItem(budgetsByTeam);
     }
     let expensesByItem;
     let expensesByTeam;
-    if (types.indexOf("expenses") >= 0) {
+    if (types.includes('expenses')) {
         expensesByTeam = teamSeasons.map(ts => ts.expenses);
         expensesByItem = getByItem(expensesByTeam);
     }
     let revenuesByItem;
     let revenuesByTeam;
-    if (types.indexOf("revenues") >= 0) {
+    if (types.includes('revenues')) {
         revenuesByTeam = teamSeasons.map(ts => ts.revenues);
         revenuesByItem = getByItem(revenuesByTeam);
     }
 
     await tx.teams.iterate(t => {
-        if (types.indexOf("budget") >= 0) {
+        if (types.includes('budget')) {
             updateObj(t.budget, budgetsByItem);
         }
-        if (types.indexOf("revenues") >= 0) {
+        if (types.includes('revenues')) {
             updateObj(teamSeasons[t.tid].expenses, expensesByItem);
         }
-        if (types.indexOf("expenses") >= 0) {
+        if (types.includes('expenses')) {
             updateObj(teamSeasons[t.tid].revenues, revenuesByItem);
         }
 
         return t;
     });
 
-    if (types.indexOf("revenues") >= 0 || types.indexOf("expenses") >= 0) {
+    if (types.includes('revenues') || types.includes('expenses')) {
         await Promise.all(teamSeasons.map(teamSeason => tx.teamSeasons.put(teamSeason)));
     }
 }

@@ -195,7 +195,7 @@ async function create(
         }
 
         // Special case for userTids - don't use saved value if userTid is not in it
-        if (gameAttributes.userTids.indexOf(gameAttributes.userTid) < 0) {
+        if (!gameAttributes.userTids.includes(gameAttributes.userTid)) {
             gameAttributes.userTids = [gameAttributes.userTid];
         }
     }
@@ -553,7 +553,7 @@ async function exportLeague(stores: string[]) {
     }));
 
     // Move playerStats to players object, similar to old DB structure. Makes editing JSON output nicer.
-    if (stores.indexOf("playerStats") >= 0) {
+    if (stores.includes('playerStats')) {
         for (let i = 0; i < exportedLeague.playerStats.length; i++) {
             const pid = exportedLeague.playerStats[i].pid;
             for (let j = 0; j < exportedLeague.players.length; j++) {
@@ -570,7 +570,7 @@ async function exportLeague(stores: string[]) {
         delete exportedLeague.playerStats;
     }
 
-    if (stores.indexOf("teams") >= 0) {
+    if (stores.includes('teams')) {
         for (let i = 0; i < exportedLeague.teamSeasons.length; i++) {
             const tid = exportedLeague.teamSeasons[i].tid;
             for (let j = 0; j < exportedLeague.teams.length; j++) {

@@ -23,7 +23,7 @@ function get(ctx) {
 }
 
 async function updateHistory(inputs, updateEvents, state) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || state.season !== inputs.season) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || state.season !== inputs.season) {
         if (inputs.season < g.startingSeason) {
             return {
                 invalidSeason: true,

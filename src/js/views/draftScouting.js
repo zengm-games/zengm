@@ -50,7 +50,7 @@ async function addSeason(season, tid) {
 }
 
 async function updateDraftScouting(inputs, updateEvents) {
-    if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("dbChange") >= 0) {
+    if (updateEvents.includes('firstRun') || updateEvents.includes('dbChange')) {
         // Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
         const seasonOffset = g.phase < g.PHASE.FREE_AGENCY ? 0 : 1;
 

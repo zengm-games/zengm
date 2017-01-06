@@ -59,7 +59,7 @@ const TeamStats = ({season, stats, teams}) => {
         if (g.userTid === t.tid) {
             // Color stat values accordingly.
             for (const [key, value] of _.pairs(data)) {
-                if (statTypeColumns.indexOf(key) === -1 && otherStatColumns.indexOf(key) === -1) {
+                if (!statTypeColumns.includes(key) && !otherStatColumns.includes(key)) {
                     continue;
                 }
 

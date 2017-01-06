@@ -7,7 +7,7 @@ import * as helpers from '../util/helpers';
 import TradingBlock from './views/TradingBlock';
 
 async function updateUserRoster(inputs, updateEvents) {
-    if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || updateEvents.indexOf("gameSim") >= 0) {
+    if (updateEvents.includes('firstRun') || updateEvents.includes('playerMovement') || updateEvents.includes('gameSim')) {
         let [userRoster, userPicks] = await Promise.all([
             g.dbl.players.index('tid').getAll(g.userTid).then(players => {
                 return player.withStats(null, players, {

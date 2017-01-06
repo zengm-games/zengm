@@ -14,7 +14,7 @@ function get(ctx) {
 }
 
 async function updatePlayer(inputs, updateEvents, state) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || !state.retired) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || !state.retired) {
         let [p, events] = await Promise.all([
             g.dbl.players.get(inputs.pid).then(p2 => {
                 return player.withStats(null, [p2], {

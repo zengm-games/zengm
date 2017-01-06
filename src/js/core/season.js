@@ -262,9 +262,9 @@ async function doAwards(tx: BackboardTx) {
     for (let i = 0; i < awardsByPlayer.length; i++) {
         const p = awardsByPlayer[i];
         let text = `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> (<a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamAbbrevsCache[p.tid]}</a>) `;
-        if (p.type.indexOf("Team") >= 0) {
+        if (p.type.includes('Team')) {
             text += `made the ${p.type}.`;
-        } else if (p.type.indexOf("Leader") >= 0) {
+        } else if (p.type.includes('Leader')) {
             text += `led the league in ${p.type.replace("League ", "").replace(" Leader", "").toLowerCase()}.`;
         } else {
             text += `won the ${p.type} award.`;
@@ -296,7 +296,7 @@ function getSchedule(tx?: BackboardTx, oneDay?: boolean = false): Promise<Schedu
             const tids = [];
             let i;
             for (i = 0; i < schedule.length; i++) {
-                if (tids.indexOf(schedule[i].homeTid) < 0 && tids.indexOf(schedule[i].awayTid) < 0) {
+                if (!tids.includes(schedule[i].homeTid) && !tids.includes(schedule[i].awayTid)) {
                     tids.push(schedule[i].homeTid);
                     tids.push(schedule[i].awayTid);
                 } else {
@@ -400,7 +400,7 @@ function newScheduleDefault(teams): [number, number][] {
                 while (true) {
                     const tryNum = random.randInt(0, 14);
                     // Pick tryNum such that it is in a different division than n and has not been picked before
-                    if (dids[cid][tryNum] !== dids[cid][n] && newMatchup.indexOf(tryNum) < 0) {
+                    if (dids[cid][tryNum] !== dids[cid][n] && !newMatchup.includes(tryNum)) {
                         let good = true;
                         // Check for duplicate games
                         for (let j = 0; j < matchups.length; j++) {
@@ -533,7 +533,7 @@ function newSchedule(teams: Team[]): [number, number][] {
     for (let i = 0; i < tids.length; i++) {
         let used = false;
         for (let j = 0; j <= jMax; j++) {
-            if (tidsInDays[j].indexOf(tids[i][0]) < 0 && tidsInDays[j].indexOf(tids[i][1]) < 0) {
+            if (!tidsInDays[j].includes(tids[i][0]) && !tidsInDays[j].includes(tids[i][1])) {
                 tidsInDays[j].push(tids[i][0]);
                 tidsInDays[j].push(tids[i][1]);
                 days[j].push(tids[i]);
@@ -682,7 +682,7 @@ async function getDaysLeftSchedule() {
         const tids = [];
         let i;
         for (i = 0; i < schedule.length; i++) {
-            if (tids.indexOf(schedule[i].homeTid) < 0 && tids.indexOf(schedule[i].awayTid) < 0) {
+            if (!tids.includes(schedule[i].homeTid) && !tids.includes(schedule[i].awayTid)) {
                 tids.push(schedule[i].homeTid);
                 tids.push(schedule[i].awayTid);
             } else {

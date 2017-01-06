@@ -11,7 +11,7 @@ function get(ctx) {
 }
 
 async function updateLeagueFinances(inputs, updateEvents, state) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.season !== state.season || inputs.season === g.season) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || inputs.season !== state.season || inputs.season === g.season) {
         const teams = await team.filter({
             attrs: ["tid", "abbrev", "region", "name"],
             seasonAttrs: ["att", "revenue", "profit", "cash", "payroll", "salaryPaid"],

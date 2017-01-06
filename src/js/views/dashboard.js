@@ -18,7 +18,7 @@ async function updateDashboard() {
     // http/https crap
     let otherUrl;
     if (window.location.protocol === "http:") {
-        if (leagues.length === 0 && window.location.hostname.indexOf("basketball-gm.com") >= 0) {
+        if (leagues.length === 0 && window.location.hostname.includes('basketball-gm.com')) {
             window.location.replace(`https://${window.location.hostname}/`);
         }
         otherUrl = `https://${window.location.hostname}/`;

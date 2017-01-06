@@ -150,7 +150,7 @@ function sumRecordsFor(group, id, name, records) {
 }
 
 async function updateTeamRecords(inputs, updateEvents, state) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.byType !== state.byType) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || inputs.byType !== state.byType) {
         const [teams, awards] = await Promise.all([
             team.filter({
                 attrs: ["tid", "cid", "did", "abbrev", "region", "name"],

@@ -23,7 +23,7 @@ class MultiTeamMode extends React.Component {
 
         if (JSON.stringify(newUserTids) !== JSON.stringify(this.props.userTids)) {
             const gameAttributes = {userTids: newUserTids};
-            if (newUserTids.indexOf(g.userTid) < 0) {
+            if (!newUserTids.includes(g.userTid)) {
                 gameAttributes.userTid = newUserTids[0];
             }
             await league.setGameAttributesComplete(gameAttributes);

@@ -6,7 +6,7 @@ import bbgmViewReact from '../util/bbgmViewReact';
 import AccountUpdateCard from './views/AccountUpdateCard';
 
 async function updateAccountUpdateCard(inputs, updateEvents, state, setState, topMenu) {
-    if (updateEvents.indexOf("firstRun") >= 0 || updateEvents.indexOf("account") >= 0) {
+    if (updateEvents.includes('firstRun') || updateEvents.includes('account')) {
         await account.check();
 
         try {

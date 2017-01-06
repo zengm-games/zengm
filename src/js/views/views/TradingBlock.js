@@ -119,7 +119,7 @@ const getOffers = async (userPids, userDpids, onProgress) => {
 
     // For width of progress bar
     let numTeams = tids.length;
-    if (tids.indexOf(g.userTid) >= 0) {
+    if (tids.includes(g.userTid)) {
         numTeams -= 1;
     }
     let done = 0;
@@ -173,7 +173,7 @@ const augmentOffers = offers => {
             const tid = offers[i].tid;
 
             let players = await tx.players.index('tid').getAll(tid);
-            players = players.filter(p => offers[i].pids.indexOf(p.pid) >= 0);
+            players = players.filter(p => offers[i].pids.includes(p.pid));
             players = await player.withStats(tx, players, {
                 statsSeasons: [g.season],
                 statsTid: tid,
@@ -190,7 +190,7 @@ const augmentOffers = offers => {
             });
 
             let picks = await tx.draftPicks.index('tid').getAll(tid);
-            picks = picks.filter(dp => offers[i].dpids.indexOf(dp.dpid) >= 0);
+            picks = picks.filter(dp => offers[i].dpids.includes(dp.dpid));
             for (const pick of picks) {
                 pick.desc = helpers.pickDesc(pick);
             }

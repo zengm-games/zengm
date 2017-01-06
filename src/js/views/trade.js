@@ -73,7 +73,7 @@ async function updateTrade() {
     userRoster = trade.filterUntradable(userRoster);
 
     for (let i = 0; i < userRoster.length; i++) {
-        if (teams[0].pids.indexOf(userRoster[i].pid) >= 0) {
+        if (teams[0].pids.includes(userRoster[i].pid)) {
             userRoster[i].selected = true;
         } else {
             userRoster[i].selected = false;
@@ -113,7 +113,7 @@ async function updateTrade() {
     otherRoster = trade.filterUntradable(otherRoster);
 
     for (let i = 0; i < otherRoster.length; i++) {
-        if (teams[1].pids.indexOf(otherRoster[i].pid) >= 0) {
+        if (teams[1].pids.includes(otherRoster[i].pid)) {
             otherRoster[i].selected = true;
         } else {
             otherRoster[i].selected = false;

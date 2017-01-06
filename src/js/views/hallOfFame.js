@@ -4,7 +4,7 @@ import bbgmViewReact from '../util/bbgmViewReact';
 import HallOfFame from './views/HallOfFame';
 
 async function updatePlayers(inputs, updateEvents) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.BEFORE_DRAFT)) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || (updateEvents.includes('newPhase') && g.phase === g.PHASE.BEFORE_DRAFT)) {
         let players = await g.dbl.players.index('tid').getAll(g.PLAYER.RETIRED);
         players = players.filter(p => p.hof);
         players = await player.withStats(null, players, {statsSeasons: "all"});

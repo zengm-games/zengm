@@ -97,7 +97,7 @@ function updateTeamSeason(inputs) {
  * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score).
  */
 async function updateBoxScore(inputs, updateEvents, state) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.gid !== state.boxScore.gid) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || inputs.gid !== state.boxScore.gid) {
         const game = await boxScore(inputs.gid);
 
         const vars = {
@@ -126,7 +126,7 @@ async function updateBoxScore(inputs, updateEvents, state) {
  * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
  */
 async function updateGamesList(inputs, updateEvents, state) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.abbrev !== state.gamesList.abbrev || inputs.season !== state.gamesList.season || (updateEvents.indexOf("gameSim") >= 0 && inputs.season === g.season)) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || inputs.abbrev !== state.gamesList.abbrev || inputs.season !== state.gamesList.season || (updateEvents.includes('gameSim') && inputs.season === g.season)) {
         let games;
         if (state.gamesList && (inputs.abbrev !== state.gamesList.abbrev || inputs.season !== state.gamesList.season)) {
             // Switching to a new list

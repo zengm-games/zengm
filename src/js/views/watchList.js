@@ -14,7 +14,7 @@ function get(ctx) {
 }
 
 async function updatePlayers(inputs, updateEvents, state) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("clearWatchList") >= 0 || updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0 || inputs.statType !== state.statType || inputs.playoffs !== state.playoffs) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('clearWatchList') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || inputs.statType !== state.statType || inputs.playoffs !== state.playoffs) {
         let players = await g.dbl.players.getAll();
         players = players.filter(p => p.watch && typeof p.watch !== "function"); // In Firefox, objects have a "watch" function
         players = await player.withStats(null, players, {

@@ -12,7 +12,7 @@ function get(ctx) {
 }
 
 async function updatePlayers(inputs, updateEvents, state) {
-    if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.season !== state.season) {
+    if (updateEvents.includes('dbChange') || (inputs.season === g.season && (updateEvents.includes('gameSim') || updateEvents.includes('playerMovement'))) || inputs.season !== state.season) {
         let players = await g.dbl.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.RETIRED));
         players = await player.withStats(null, players, {statsSeasons: [inputs.season]});
         players = player.filter(players, {

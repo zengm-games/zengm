@@ -14,7 +14,7 @@ function get(ctx) {
 }
 
 async function updateMessage(inputs, updateEvents, state): Promise<void | {message?: Message_}> {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || state.message.mid !== inputs.mid) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || state.message.mid !== inputs.mid) {
         let message;
         let readThisPageview;
         await g.dbl.tx("messages", "readwrite", async tx => {

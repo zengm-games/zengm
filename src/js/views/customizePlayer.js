@@ -26,7 +26,7 @@ async function updateCustomizePlayer(inputs, updateEvents) {
         };
     }
 
-    if (updateEvents.indexOf("firstRun") >= 0) {
+    if (updateEvents.includes('firstRun')) {
         const teams = await team.filter({
             attrs: ["tid", "region", "name"],
         });

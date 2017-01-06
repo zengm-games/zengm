@@ -26,7 +26,7 @@ async function updateEventLog(inputs, updateEvents, state) {
             events.reverse(); // Newest first
 
             // Filter by team
-            events = events.filter(event => event.tids !== undefined && event.tids.indexOf(inputs.tid) >= 0);
+            events = events.filter(event => event.tids !== undefined && event.tids.includes(inputs.tid));
 
             events.forEach(helpers.correctLinkLid);
 
@@ -43,7 +43,7 @@ async function updateEventLog(inputs, updateEvents, state) {
             const newEvents = [];
             await g.dbl.events.index('season').iterate(inputs.season, "prev", (event, shortCircuit) => {
                 if (event.eid > maxEid) {
-                    if (event.tids !== undefined && event.tids.indexOf(inputs.tid) >= 0) {
+                    if (event.tids !== undefined && event.tids.includes(inputs.tid)) {
                         newEvents.push(event);
                     }
                 } else {

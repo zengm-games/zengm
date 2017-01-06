@@ -12,7 +12,7 @@ function get(ctx) {
 }
 
 async function updatePlayoffs(inputs, updateEvents, state) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.season !== state.season || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0)) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || inputs.season !== state.season || (inputs.season === g.season && updateEvents.includes('gameSim'))) {
         let finalMatchups;
         let series;
 

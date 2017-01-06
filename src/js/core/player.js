@@ -1357,7 +1357,7 @@ function filter(p: PlayerWithStats | PlayerWithStats[], options: any): PlayerFil
                     // Aggregate annual stats and ignore other things
                     const ignoredKeys = ["age", "playoffs", "season", "tid"];
                     for (const key of Object.keys(ps.r[0])) {
-                        if (ignoredKeys.indexOf(key) < 0) {
+                        if (!ignoredKeys.includes(key)) {
                             ps.cr[key] = _.reduce(_.pluck(ps.r, key), (memo, num) => memo + num, 0);
                             if (options.playoffs) {
                                 ps.cp[key] = _.reduce(_.pluck(ps.p, key), (memo, num) => memo + num, 0);
@@ -1819,7 +1819,7 @@ function retire(tx: BackboardTx, p: Player, playerStats: PlayerStats[], retiredN
         logEvent(tx, {
             type: "hallOfFame",
             text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> was inducted into the <a href="${helpers.leagueUrl(["hall_of_fame"])}">Hall of Fame</a>.`,
-            showNotification: p.statsTids.indexOf(g.userTid) >= 0,
+            showNotification: p.statsTids.includes(g.userTid),
             pids: [p.pid],
             tids: p.statsTids,
         });

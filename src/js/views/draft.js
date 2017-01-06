@@ -92,7 +92,7 @@ async function updateDraft() {
     }
 
     // ...or start draft if the user has the first pick (in which case starting it has no effect, might as well do it automatically)
-    started = started || g.userTids.indexOf(drafted[0].draft.tid) >= 0;
+    started = started || g.userTids.includes(drafted[0].draft.tid);
 
     return {
         undrafted,

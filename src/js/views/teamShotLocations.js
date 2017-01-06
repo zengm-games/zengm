@@ -11,7 +11,7 @@ function get(ctx) {
 }
 
 async function updateTeams(inputs, updateEvents, state) {
-    if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.season !== state.season) {
+    if (updateEvents.includes('dbChange') || (inputs.season === g.season && (updateEvents.includes('gameSim') || updateEvents.includes('playerMovement'))) || inputs.season !== state.season) {
         const teams = await team.filter({
             attrs: ["abbrev", "tid"],
             seasonAttrs: ["won", "lost"],

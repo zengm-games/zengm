@@ -112,6 +112,8 @@ export type GameProcessedCompleted = {
     won: boolean,
 };
 
+export type GetOutput = {[key: string]: ?(number | string)};
+
 export type Message = {
     from: string,
     read: boolean,
@@ -286,6 +288,10 @@ export type ScheduleGame = {
     homeTid: number,
 };
 
+export type SortOrder = 'asc' | 'desc';
+
+export type SortType = 'currency' | 'draftPick' | 'lastTen' | 'name' | 'number';
+
 export type Team = {
     tid: number,
     cid: number,
@@ -357,3 +363,11 @@ export type UpdateEvents = (
     'toggleGodMode' |
     'watchList'
 )[];
+
+export type RunFunction = (
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+    state: any,
+    setState: (state: any) => void,
+    topMenu: any,
+) => Promise<void | {[key: string]: any}>;

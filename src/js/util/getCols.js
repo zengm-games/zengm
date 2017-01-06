@@ -3,12 +3,13 @@
 /* eslint quote-props: "off" */
 
 import * as helpers from './helpers';
+import type {SortOrder, SortType} from './types';
 
 const cols: {
     [key: string]: {
         desc?: string,
-        sortSequence?: string[],
-        sortType?: 'currency' | 'draftPick' | 'lastTen' | 'name' | 'number',
+        sortSequence?: SortOrder[],
+        sortType?: SortType,
         title?: string, // Should actually be required, but is only added later
     }
 } = {

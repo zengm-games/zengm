@@ -1,14 +1,31 @@
+// @flow
+
 import React from 'react';
 
+type Props = {
+    data?: string,
+    downloadText: string,
+    filename?: string,
+    mimeType: string,
+    status: React.Element<*> | string,
+};
+
+type State = {
+    url?: string,
+};
+
 class DownloadDataLink extends React.Component {
-    constructor(props) {
+    props: Props;
+    state: State;
+
+    constructor(props: Props) {
         super(props);
         this.state = {
             url: undefined,
         };
     }
 
-    componentWillReceiveProps(nextProps) {
+    componentWillReceiveProps(nextProps: Props) {
         if (this.props.data !== nextProps.data) {
             // Expire any current URL from the old data
             if (this.state.url) {

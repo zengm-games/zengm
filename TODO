@@ -16,7 +16,7 @@ flow
   React components: proptype validation only works for class-based ones. for functions, need proptypes and flow. even for class-based components, flow can give more flexibility, but does not do runtime checking. https://github.com/gcanti/babel-plugin-tcomb could help with that, but seems to create too many false positives. until there is a better solution, it's not urgent to port React components to flow.
     https://codemix.github.io/flow-runtime/
   views: thru live
-  views/components
+  views/components: thru NagModal
   views/views
   views/wrappers
 

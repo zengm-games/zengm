@@ -1,3 +1,5 @@
+// @flow
+
 import React from 'react';
 import * as helpers from '../../util/helpers';
 
@@ -93,7 +95,7 @@ SideMenu.propTypes = {
     pageId: React.PropTypes.string.isRequired,
 };
 
-const LeagueWrapper = ({children, pageId}) => {
+const LeagueWrapper = ({children, pageId}: {children: React.Element<*>, pageId: string}) => {
     return <div className="row">
         <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
             <SideMenu pageId={pageId} />

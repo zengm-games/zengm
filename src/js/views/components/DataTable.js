@@ -1,3 +1,5 @@
+// @flow
+
 import classNames from 'classnames';
 import orderBy from 'lodash.orderby';
 import React from 'react';
@@ -5,6 +7,7 @@ import textContent from 'react-addons-text-content';
 import g from '../../globals';
 import * as helpers from '../../util/helpers';
 import clickable from '../wrappers/clickable';
+import type {SortOrder, SortType} from '../../util/types';
 
 const Header = ({cols, handleColClick, sortBys, superCols}) => {
     return <thead>
@@ -160,7 +163,7 @@ const getSortVal = (value = null, sortType) => {
         }
         return sortVal;
     } catch (err) {
-        console.error(`getSortVal error on val "${value}" and sortType "${sortType}"`, err);
+        console.error(`getSortVal error on val "${String(value)}" and sortType "${String(sortType)}"`, err);
         return null;
     }
 };
@@ -219,18 +222,55 @@ Paging.propTypes = {
     perPage: React.PropTypes.number.isRequired,
 };
 
+type SortBy = [number, SortOrder];
+
+type Props = {
+    cols: {
+        desc?: string,
+        sortSequence?: SortOrder[],
+        sortType?: SortType,
+        title: string,
+        width?: string,
+    }[],
+    defaultSort: SortBy,
+    footer?: any[],
+    name: string,
+    pagination?: boolean,
+    rows: any[],
+    superCols?: {
+        colspan: number,
+        desc?: string,
+        title: string,
+    }[],
+};
+
+type State = {
+    currentPage: number,
+    perPage: number,
+    searchText: string,
+    sortBys: SortBy[],
+};
+
 class DataTable extends React.Component {
-    constructor(props) {
+    props: Props;
+    state: State;
+    handleColClick: Function;
+    handlePaging: Function;
+    handlePerPage: Function;
+    handleSearch: Function;
+    sortCacheKey: string;
+
+    constructor(props: Props) {
         super(props);
 
-        let perPage = parseInt(localStorage.perPage, 10);
+        let perPage = parseInt(localStorage.getItem('perPage'), 10);
         if (isNaN(perPage)) {
             perPage = 10;
         }
 
         this.sortCacheKey = `DataTableSort:${this.props.name}`;
         let sortBys = localStorage.getItem(this.sortCacheKey);
-        if (sortBys === null) {
+        if (sortBys === null || sortBys === undefined) {
             sortBys = [this.props.defaultSort];
         } else {
             sortBys = JSON.parse(sortBys);
@@ -249,7 +289,7 @@ class DataTable extends React.Component {
         this.handleSearch = this.handleSearch.bind(this);
     }
 
-    handleColClick(event, i) {
+    handleColClick(event: SyntheticKeyboardEvent, i: number) {
         const col = this.props.cols[i];
 
         // Ignore click on unsortable column
@@ -261,13 +301,14 @@ class DataTable extends React.Component {
         let sortBys = helpers.deepCopy(this.state.sortBys);
 
         const nextOrder = (col2, sortBy) => {
-            if (col2.sortSequence) {
+            const sortSequence = col2.sortSequence;
+            if (sortSequence) {
                 // Move up to next entry in sortSequence
-                let j = col2.sortSequence.indexOf(sortBy[1]) + 1;
-                if (j >= col2.sortSequence.length) {
+                let j = sortSequence.indexOf(sortBy[1]) + 1;
+                if (j >= sortSequence.length) {
                     j = 0;
                 }
-                return col2.sortSequence[j];
+                return sortSequence[j];
             }
 
             // Default asc/desc toggle
@@ -303,7 +344,7 @@ class DataTable extends React.Component {
         }
 
         // Save this sort for this table, so it can be used as default next time
-        localStorage[this.sortCacheKey] = JSON.stringify(sortBys);
+        localStorage.setItem(this.sortCacheKey, JSON.stringify(sortBys));
 
         this.setState({
             currentPage: 1,
@@ -311,16 +352,16 @@ class DataTable extends React.Component {
         });
     }
 
-    handlePaging(newPage) {
+    handlePaging(newPage: number) {
         if (newPage !== this.state.currentPage) {
             this.setState({currentPage: newPage});
         }
     }
 
-    handlePerPage(event) {
+    handlePerPage(event: SyntheticInputEvent) {
         const perPage = parseInt(event.target.value, 10);
         if (!isNaN(perPage) && perPage !== this.state.perPage) {
-            localStorage.perPage = perPage;
+            localStorage.setItem('perPage', String(perPage));
             this.setState({
                 currentPage: 1,
                 perPage,
@@ -328,7 +369,7 @@ class DataTable extends React.Component {
         }
     }
 
-    handleSearch(event) {
+    handleSearch(event: SyntheticInputEvent) {
         this.setState({
             currentPage: 1,
             searchText: event.target.value.toLowerCase(),

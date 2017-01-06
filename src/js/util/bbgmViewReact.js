@@ -1,20 +1,11 @@
 // @flow
 
 import g from '../globals';
-import type {PageCtx, UpdateEvents} from './types';
-
-type GetOutput = {[key: string]: ?(number | string)};
-
-type RunFunction = (
-    inputs: GetOutput,
-    updateEvents: UpdateEvents,
-    state: any,
-    setState: (state: any) => void,
-    topMenu: any,
-) => Promise<void | {[key: string]: any}>;
+import type {GetOutput, PageCtx, RunFunction} from './types';
 
 type InitArgs = {
     Component: any,
+    id: string,
     inLeague?: boolean,
     get?: (ctx: PageCtx) => ?GetOutput,
     runBefore?: RunFunction[],
@@ -30,9 +21,6 @@ function init(args: InitArgs) {
     if (!args.Component) { throw new Error('Missing arg Component'); }
 
     const output = {};
-    output.update = (inputs: GetOutput, updateEvents: UpdateEvents, cb: () => void) => {
-        g.emitter.emit('updatePage', args, inputs, updateEvents, cb);
-    };
     output.get = (ctx: PageCtx, next: () => void) => {
         if (ctx.bbgm === undefined) {
             ctx.bbgm = {};
@@ -47,7 +35,7 @@ function init(args: InitArgs) {
             };
         }
         ctx.bbgm.handled = true;
-        g.emitter.emit('get', output.update, args, ctx);
+        g.emitter.emit('get', args, ctx);
     };
 
     return output;

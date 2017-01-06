@@ -46,7 +46,8 @@
         "spaced-comment": "off",
    },
    "globals": {
-       "SyntheticEvent": true,
+       "SyntheticEvent": false,
+       "SyntheticKeyboardEvent": false,
        "SyntheticInputEvent": false
    }
 }

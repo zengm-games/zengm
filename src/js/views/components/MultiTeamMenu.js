@@ -1,31 +1,33 @@
+// @flow
+
 import React from 'react';
 import g from '../../globals';
 import * as ui from '../../ui';
 import * as league from '../../core/league';
 
+const handleChange = async (e: SyntheticInputEvent) => {
+    const userTid = parseInt(e.target.value, 10);
+
+    await league.setGameAttributesComplete({
+        userTid,
+    });
+    g.emitter.emit('updateMultiTeam');
+
+    // dbChange is kind of a hack because it was designed for multi-window update only, but it should update everything
+    ui.realtimeUpdate(["dbChange"]);
+    league.updateLastDbChange();
+};
+
+type Props = {
+    userTid: number,
+    userTids: number[],
+};
+
 class MultiTeamMenu extends React.Component {
-    constructor(props) {
-        super(props);
-        this.handleChange = this.handleChange.bind(this);
-    }
+    props: Props;
 
-    shouldComponentUpdate(nextProps) {
+    shouldComponentUpdate(nextProps: Props) {
         return this.props.userTid !== nextProps.userTid || JSON.stringify(this.props.userTids) !== JSON.stringify(nextProps.userTids);
-    }
-
-    async handleChange(e) {
-        const userTid = parseInt(e.target.value, 10);
-
-        this.setState({userTid});
-
-        await league.setGameAttributesComplete({
-            userTid,
-        });
-        g.emitter.emit('updateMultiTeam');
-
-        // dbChange is kind of a hack because it was designed for multi-window update only, but it should update everything
-        ui.realtimeUpdate(["dbChange"]);
-        league.updateLastDbChange();
     }
 
     render() {
@@ -38,7 +40,7 @@ class MultiTeamMenu extends React.Component {
 
         return <div className="multi-team-menu">
             <label htmlFor="multi-team-select">Currently controlling:</label><br />
-            <select className="form-control" id="multi-team-select" onChange={this.handleChange} value={userTid}>
+            <select className="form-control" id="multi-team-select" onChange={handleChange} value={userTid}>
                 {userTids.map((tid, i) => <option key={tid} value={tid}>
                     {g.teamRegionsCache[userTids[i]]} {g.teamNamesCache[userTids[i]]}
                 </option>)}

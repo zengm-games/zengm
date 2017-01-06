@@ -1,3 +1,5 @@
+// @flow
+
 import Promise from 'bluebird';
 import React from 'react';
 import g from '../../globals';
@@ -5,6 +7,7 @@ import * as ui from '../../ui';
 import * as ads from '../../util/ads';
 import {beforeLeague, beforeNonLeague} from '../../util/viewHelpers';
 import {Footer, Header, LeagueWrapper, MultiTeamMenu, NagModal, NavBar} from './index';
+import type {GetOutput, PageCtx, RunFunction, UpdateEvents} from '../../util/types';
 
 class LeagueContent extends React.Component {
     // eslint-disable-next-line class-methods-use-this
@@ -25,8 +28,61 @@ LeagueContent.propTypes = {
     topMenu: React.PropTypes.object,
 };
 
+type Args = {
+    Component: any,
+    id: string,
+    inLeague: boolean,
+    get: (ctx: PageCtx) => ?GetOutput,
+    runBefore: RunFunction[],
+    runWhenever: RunFunction[],
+};
+
+type Option = {
+    [key: string]: {
+        id: string,
+        label: string,
+        url?: string,
+    }
+};
+
+type State = {
+    Component: any,
+    idLoaded?: string,
+    idLoading?: string,
+    inLeague: boolean,
+    data: {[key: string]: any},
+    multiTeam: {
+        userTid: number,
+        userTids: number[],
+    },
+    showNagModal: boolean,
+    topMenu: {
+        email?: string,
+        godMode: boolean,
+        goldUntil: number,
+        goldCancelled: boolean,
+        hasViewedALeague: boolean,
+        lid?: number,
+        options: Option[],
+        phaseText: string,
+        popup: boolean,
+        statusText: string,
+        username?: string,
+    },
+};
+
 class Controller extends React.Component {
-    constructor(props) {
+    state: State;
+    closeNagModal: Function;
+    get: Function;
+    setStateData: Function;
+    showAd: Function;
+    updatePage: Function;
+    updateMultiTeam: Function;
+    updateState: Function;
+    updateTopMenu: Function;
+
+    constructor(props: {}) {
         super(props);
         this.state = {
             Component: undefined,
@@ -44,13 +100,13 @@ class Controller extends React.Component {
                 godMode: !!g.godMode,
                 goldUntil: 0,
                 goldCancelled: false,
-                hasViewedALeague: !!localStorage.hasViewedALeague,
+                hasViewedALeague: !!localStorage.getItem('hasViewedALeague'),
                 lid: undefined,
                 options: [],
                 phaseText: '',
                 popup: window.location.search === '?w=popup',
                 statusText: '',
-                username: null,
+                username: undefined,
             },
         };
         this.closeNagModal = this.closeNagModal.bind(this);
@@ -66,13 +122,12 @@ class Controller extends React.Component {
     componentDidMount() {
         g.emitter.on('get', this.get);
         g.emitter.on('showAd', this.showAd);
-        g.emitter.on('updatePage', this.updatePage);
         g.emitter.on('updateMultiTeam', this.updateMultiTeam);
         g.emitter.on('updateState', this.updateState);
         g.emitter.on('updateTopMenu', this.updateTopMenu);
 
         if (this.state.topMenu.popup) {
-            document.body.style.paddingTop = 0;
+            document.body.style.paddingTop = '0';
 
             const css = document.createElement("style");
             css.type = "text/css";
@@ -84,13 +139,12 @@ class Controller extends React.Component {
     componentWillUnmount() {
         g.emitter.removeListener('get', this.get);
         g.emitter.removeListener('showAd', this.showAd);
-        g.emitter.removeListener('updatePage', this.updatePage);
         g.emitter.removeListener('updateMultiTeam', this.updateMultiTeam);
         g.emitter.removeListener('updateState', this.updateState);
         g.emitter.removeListener('updateTopMenu', this.updateTopMenu);
     }
 
-    setStateData(data) {
+    setStateData(data: {[key: string]: any}) {
         this.setState({
             data: Object.assign(this.state.data, data),
         });
@@ -102,7 +156,7 @@ class Controller extends React.Component {
         });
     }
 
-    async get(fnUpdate, args, ctx) {
+    async get(args: Args, ctx: PageCtx) {
         const [updateEvents, cb, abort] = await (args.inLeague ? beforeLeague(ctx, this.state.topMenu.lid) : beforeNonLeague(ctx));
 
         if (abort === 'abort') {
@@ -110,18 +164,18 @@ class Controller extends React.Component {
         }
 
         let inputs = args.get(ctx);
-        if (inputs === undefined) {
+        if (!inputs) {
             inputs = {};
         }
 
-        if (inputs.redirectUrl !== undefined) {
+        if (typeof inputs.redirectUrl === 'string') {
             return ui.realtimeUpdate([], inputs.redirectUrl, cb);
         }
 
         this.updatePage(args, inputs, updateEvents, cb);
     }
 
-    showAd(type) {
+    showAd(type: 'modal') {
         if (type === 'modal') {
             if (!window.enableLogging) {
                 return;
@@ -145,19 +199,19 @@ class Controller extends React.Component {
                 ads.showModal();
             } else {
                 // This is all in milliseconds!
-                const adTimer = localStorage.adTimer !== undefined ? parseInt(localStorage.adTimer, 10) : 0;
+                const adTimer = localStorage.getItem('adTimer') !== undefined ? parseInt(localStorage.getItem('adTimer'), 10) : 0;
                 const now = Date.now();
 
                 // Only show ad once per 60 minutes, at most
                 if (now - adTimer > 1000 * 60 * 60) {
                     ads.showSurvata();
-                    localStorage.adTimer = now;
+                    localStorage.setItem('adTimer', String(now));
                 }
             }
         }
     }
 
-    async updatePage(args, inputs, updateEvents, cb) {
+    async updatePage(args: Args, inputs: GetOutput, updateEvents: UpdateEvents, cb: () => void) {
         let prevData;
 
         // Reset league content and view model only if it's:
@@ -237,11 +291,21 @@ class Controller extends React.Component {
         });
     }
 
-    updateState(obj) {
+    updateState(obj: State) {
         this.setState(obj);
     }
 
-    updateTopMenu(obj) {
+    updateTopMenu(obj: {
+        email?: string,
+        godMode?: boolean,
+        goldCancelled?: boolean,
+        goldUntil?: number,
+        lid?: number,
+        options?: Option[],
+        phaseText?: string,
+        statusText?: string,
+        username?: string,
+    }) {
         this.setState({
             topMenu: Object.assign(this.state.topMenu, obj),
         });

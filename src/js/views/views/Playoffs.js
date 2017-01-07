@@ -1,8 +1,26 @@
+// @flow
+
 import React from 'react';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import {Dropdown, JumpTo, NewWindowLink, PlayoffMatchup} from '../components';
 
-const Playoffs = ({confNames, finalMatchups, matchups, numPlayoffRounds, season, series}) => {
+const Playoffs = ({confNames, finalMatchups, matchups, numPlayoffRounds, season, series}: {
+    confNames: string[],
+    finalMatchups: boolean,
+    matchups: {
+        matchup: [number, number],
+        rowspan: number,
+    }[][],
+    numPlayoffRounds: number,
+    season: number,
+    series: {
+        cid: number,
+        seed: number,
+        tid: number,
+        winp: number,
+        won?: number,
+    },
+}) => {
     bbgmViewReact.title(`Playoffs - ${season}`);
 
     return <div>

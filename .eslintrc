@@ -44,10 +44,12 @@
         "react/require-extension": ["error", {"extensions": [".js"]}],
         "react/sort-comp": "off", // Flow type definition of props in a React class confuses it
         "spaced-comment": "off",
-   },
-   "globals": {
-       "SyntheticEvent": false,
-       "SyntheticKeyboardEvent": false,
-       "SyntheticInputEvent": false
-   }
+    },
+    "globals": {
+        "$Diff": false,
+        "Class": false,
+        "SyntheticEvent": false,
+        "SyntheticKeyboardEvent": false,
+        "SyntheticInputEvent": false
+    }
 }

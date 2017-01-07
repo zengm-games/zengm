@@ -1,9 +1,19 @@
+// @flow
+
 import React from 'react';
 import * as helpers from '../../util/helpers';
 import SkillsBlock from './SkillsBlock';
 import WatchBlock from './WatchBlock';
+import type {PlayerInjury, PlayerSkill} from '../../util/types';
 
-const PlayerNameLabels = ({children, injury, pid, skills, style, watch}) => {
+const PlayerNameLabels = ({children, injury, pid, skills, style, watch}: {
+    children: string,
+    injury?: PlayerInjury,
+    pid: number,
+    skills?: PlayerSkill[],
+    style?: {[key: string]: string},
+    watch?: boolean | Function, // For Firefox's Object.watch
+}) => {
     let injuryIcon = null;
     if (injury !== undefined) {
         if (injury.gamesRemaining > 0) {

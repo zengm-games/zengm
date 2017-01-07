@@ -82,12 +82,12 @@ const Row = clickable(({clicked, row, toggleClicked}) => {
     </tr>;
 });
 
-Row.propTypes = {
+/*Row.propTypes = {
     row: React.PropTypes.shape({
         classNames: React.PropTypes.object,
         data: React.PropTypes.array.isRequired,
     }).isRequired,
-};
+};*/
 
 const getSearchVal = val => {
     try {

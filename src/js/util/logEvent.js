@@ -32,6 +32,7 @@ type LogEventOptions = {
         'refuseToSign' |
         'release' |
         'retired' |
+        'screenshot' |
         'trade' |
         'tragedy'
     ),

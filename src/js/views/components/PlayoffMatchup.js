@@ -1,8 +1,22 @@
+// @flow
+
 import React from 'react';
 import g from '../../globals';
 import * as helpers from '../../util/helpers';
 
-const PlayoffMatchup = ({season, series}) => {
+type SeriesTeam = {
+    seed: number,
+    tid: number,
+    won?: number,
+};
+
+const PlayoffMatchup = ({season, series}: {
+    season: number,
+    series?: {
+        away: SeriesTeam,
+        home: SeriesTeam,
+    },
+}) => {
     if (series === undefined || series.home === undefined || series.home.tid === undefined) {
         return null;
     }

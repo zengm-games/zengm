@@ -123,6 +123,12 @@ export type Message = {
 
 export type MessageWithMid = Message & {mid: number};
 
+export type Option = {
+    id: string,
+    label: string,
+    url?: string,
+};
+
 export type OwnerMoodDeltas = {
     money: number,
     playoffs: number,

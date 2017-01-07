@@ -7,7 +7,7 @@ import * as ui from '../../ui';
 import * as ads from '../../util/ads';
 import {beforeLeague, beforeNonLeague} from '../../util/viewHelpers';
 import {Footer, Header, LeagueWrapper, MultiTeamMenu, NagModal, NavBar} from './index';
-import type {GetOutput, PageCtx, RunFunction, UpdateEvents} from '../../util/types';
+import type {GetOutput, Option, PageCtx, RunFunction, UpdateEvents} from '../../util/types';
 
 class LeagueContent extends React.Component {
     // eslint-disable-next-line class-methods-use-this
@@ -35,14 +35,6 @@ type Args = {
     get: (ctx: PageCtx) => ?GetOutput,
     runBefore: RunFunction[],
     runWhenever: RunFunction[],
-};
-
-type Option = {
-    [key: string]: {
-        id: string,
-        label: string,
-        url?: string,
-    }
 };
 
 type State = {

@@ -1,3 +1,5 @@
+// @flow
+
 /* eslint react/no-find-dom-node: "off" */
 
 import Promise from 'bluebird';
@@ -16,18 +18,30 @@ import html2canvas from '../../lib/html2canvas';
 import * as actions from '../../util/actions';
 import * as helpers from '../../util/helpers';
 import logEvent from '../../util/logEvent';
+import type {Option} from '../../util/types';
 
 const toggleDebugMode = () => {
-    if (localStorage.debug === "debug") {
-        localStorage.debug = "";
+    if (localStorage.getItem('debug') === 'debug') {
+        localStorage.setItem('debug', '');
     } else {
-        localStorage.debug = "debug";
+        localStorage.setItem('debug', 'debug');
     }
     window.location.reload();
 };
 
+type TopMenuToggleProps = {
+    long: string,
+    onClick?: (SyntheticEvent) => void, // From react-bootstrap Dropdown
+    openId?: string,
+    short: string,
+};
+
 class TopMenuToggle extends React.Component {
-    constructor(props, context) {
+    props: TopMenuToggleProps;
+    handleClick: Function;
+    handleMouseEnter: Function;
+
+    constructor(props: TopMenuToggleProps, context) {
         super(props, context);
         this.handleClick = this.handleClick.bind(this);
         this.handleMouseEnter = this.handleMouseEnter.bind(this);
@@ -35,11 +49,13 @@ class TopMenuToggle extends React.Component {
 
     handleClick(e) {
         e.preventDefault();
-        this.props.onClick(e);
+        if (this.props.onClick) {
+            this.props.onClick(e);
+        }
     }
 
     handleMouseEnter(e) {
-        if (this.props.openId !== undefined && this.props.openId !== this.props.long) {
+        if (this.props.openId !== undefined && this.props.openId !== this.props.long && this.props.onClick) {
             this.props.onClick(e);
         }
     }
@@ -94,7 +110,11 @@ const handleScreenshotClick = e => {
 
     // Add watermark
     const watermark = document.createElement("div");
-    watermark.innerHTML = `<nav class="navbar navbar-default"><div class="container-fluid"><div class="navbar-header">${document.getElementsByClassName("navbar-brand")[0].parentNode.innerHTML}</div><p class="navbar-text navbar-right" style="color: #000; font-weight: bold">Play your own league free at basketball-gm.com</p></div></nav>`;
+    const navbarBrands = document.getElementsByClassName("navbar-brand");
+    if (navbarBrands.length === 0 || !navbarBrands[0].parentNode || !navbarBrands[0].parentNode.innerHTML) {
+        return;
+    }
+    watermark.innerHTML = `<nav class="navbar navbar-default"><div class="container-fluid"><div class="navbar-header">${String(navbarBrands[0].parentNode.innerHTML)}</div><p class="navbar-text navbar-right" style="color: #000; font-weight: bold">Play your own league free at basketball-gm.com</p></div></nav>`;
     contentEl.insertBefore(watermark, contentEl.firstChild);
     contentEl.style.padding = "8px";
 
@@ -103,7 +123,10 @@ const handleScreenshotClick = e => {
     notifications.classList.remove('notification-container');
     for (let i = 0; i < notifications.childNodes.length; i++) {
         // Otherwise screeenshot is taken before fade in is complete
-        notifications.childNodes[0].classList.remove('notification-fadein');
+        const el = notifications.childNodes[0];
+        if (el.classList && typeof el.classList.remove === 'function') {
+            el.classList.remove('notification-fadein');
+        }
     }
     contentEl.appendChild(notifications);
 
@@ -164,7 +187,14 @@ const handleToolsClick = (id, e) => {
     actions.toolsMenu[id]();
 };
 
+type DropdownLinksState = {
+    openId?: string,
+};
+
 class DropdownLinks extends React.Component {
+    state: DropdownLinksState;
+    handleTopMenuToggle: Function;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -173,7 +203,7 @@ class DropdownLinks extends React.Component {
         this.handleTopMenuToggle = this.handleTopMenuToggle.bind(this);
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
+    shouldComponentUpdate(nextProps, nextState: DropdownLinksState) {
         return this.state.openId !== nextState.openId || this.props.lid !== nextProps.lid || this.props.godMode !== nextProps.godMode;
     }
 
@@ -244,7 +274,7 @@ class DropdownLinks extends React.Component {
                 {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('skipToPreseason', e)}>Skip To Preseason</MenuItem> : null}
                 {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('forceResumeDraft', e)}>Force Resume Draft</MenuItem> : null}
                 <MenuItem href="" onClick={toggleDebugMode} id="toggle-debug-mode">
-                    {localStorage.debug === "debug" ? 'Disable Debug Mode' : 'Enable Debug Mode'}
+                    {localStorage.getItem('debug') === 'debug' ? 'Disable Debug Mode' : 'Enable Debug Mode'}
                 </MenuItem>
                 <MenuItem onClick={e => handleToolsClick('resetDb', e)}>Reset DB</MenuItem>
             </TopMenuDropdown>
@@ -302,6 +332,8 @@ const handleOptionClick = (option, e) => {
 };
 
 class PlayMenu extends React.Component {
+    handleAltP: Function;
+
     constructor(props) {
         super(props);
         this.handleAltP = this.handleAltP.bind(this);
@@ -312,10 +344,10 @@ class PlayMenu extends React.Component {
     }
 
     componentWillUnmount() {
-        document.removeListener('keyup', this.handleAltP);
+        document.removeEventListener('keyup', this.handleAltP);
     }
 
-    handleAltP(e) {
+    handleAltP(e: SyntheticKeyboardEvent) {
         // alt + p
         if (e.altKey && e.keyCode === 80) {
             const option = this.props.options[0];
@@ -370,8 +402,28 @@ PlayMenu.propTypes = {
     })).isRequired,
 };
 
+type Props = {
+    hasViewedALeague: boolean,
+    lid?: number,
+    godMode: boolean,
+    options: Option[],
+    phaseText: string,
+    popup: boolean,
+    statusText: string,
+    updating: boolean,
+    username?: string,
+};
+
+type State = {
+    hasViewedALeague: boolean,
+};
+
 class NavBar extends React.Component {
-    constructor(props) {
+    props: Props;
+    state: State;
+    playMenu: PlayMenu;
+
+    constructor(props: Props) {
         super(props);
         this.state = {
             hasViewedALeague: props.hasViewedALeague,
@@ -426,7 +478,7 @@ class NavBar extends React.Component {
                 <Overlay
                     onHide={() => {
                         this.setState({hasViewedALeague: true});
-                        localStorage.hasViewedALeague = 'true';
+                        localStorage.setItem('hasViewedALeague', 'true');
                     }}
                     placement="bottom"
                     rootClose

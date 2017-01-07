@@ -43,7 +43,7 @@ if (localStorage.getItem('debug') === 'debug') {
 window.Promise = Promise;
 window.Promise.config({warnings: false});
 
-((async () => {
+(async () => {
     window.bbgm = {
         account,
         ads,
@@ -226,4 +226,4 @@ window.Promise.config({warnings: false});
     page();
 
     account.check();
-})());
+})();

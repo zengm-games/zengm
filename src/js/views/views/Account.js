@@ -1,3 +1,5 @@
+// @flow
+
 import Promise from 'bluebird';
 import classNames from 'classnames';
 import $ from 'jquery';
@@ -9,6 +11,13 @@ import bbgmViewReact from '../../util/bbgmViewReact';
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
 
 class StripeButton extends React.Component {
+    state: {
+        handler: ?{
+            open: Function,
+        },
+    };
+    handleClick: Function;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -17,41 +26,43 @@ class StripeButton extends React.Component {
         this.handleClick = this.handleClick.bind(this);
     }
 
-    async componentWillMount() {
-        if (!window.StripeCheckout) {
-            await Promise.resolve($.getScript('https://checkout.stripe.com/checkout.js'));
-        }
-        if (!this.handler) {
-            this.setState({
-                handler: window.StripeCheckout.configure({
-                    key: g.stripePublishableKey,
-                    image: '/ico/icon128.png',
-                    token: async token => {
-                        try {
-                            const data = await Promise.resolve($.ajax({
-                                type: "POST",
-                                url: `//account.basketball-gm.${g.tld}/gold_start.php`,
-                                data: {
-                                    sport: "basketball",
-                                    token: token.id,
-                                },
-                                dataType: "json",
-                                xhrFields: {
-                                    withCredentials: true,
-                                },
-                            }));
-                            ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: data});
-                        } catch (err) {
-                            console.log(err);
-                            ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: {
-                                success: false,
-                                message: ajaxErrorMsg,
-                            }});
-                        }
-                    },
-                }),
-            });
-        }
+    componentWillMount() {
+        (async () => {
+            if (!window.StripeCheckout) {
+                await Promise.resolve($.getScript('https://checkout.stripe.com/checkout.js'));
+            }
+            if (!this.handler) {
+                this.setState({
+                    handler: window.StripeCheckout.configure({
+                        key: g.stripePublishableKey,
+                        image: '/ico/icon128.png',
+                        token: async token => {
+                            try {
+                                const data = await Promise.resolve($.ajax({
+                                    type: "POST",
+                                    url: `//account.basketball-gm.${g.tld}/gold_start.php`,
+                                    data: {
+                                        sport: "basketball",
+                                        token: token.id,
+                                    },
+                                    dataType: "json",
+                                    xhrFields: {
+                                        withCredentials: true,
+                                    },
+                                }));
+                                ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: data});
+                            } catch (err) {
+                                console.log(err);
+                                ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: {
+                                    success: false,
+                                    message: ajaxErrorMsg,
+                                }});
+                            }
+                        },
+                    }),
+                });
+            }
+        })();
     }
 
     handleClick() {
@@ -108,6 +119,11 @@ const handleCancel = async e => {
 };
 
 class UserInfo extends React.Component {
+    state: {
+        logoutError: ?string,
+    };
+    handleLogout: Function;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -165,7 +181,31 @@ UserInfo.propTypes = {
     username: React.PropTypes.string,
 };
 
-const Account = ({achievements, email, goldMessage, goldSuccess, goldUntilDateString, showGoldActive, showGoldCancelled, showGoldPitch, username}) => {
+const Account = ({
+    achievements,
+    email,
+    goldMessage,
+    goldSuccess,
+    goldUntilDateString,
+    showGoldActive,
+    showGoldCancelled,
+    showGoldPitch,
+    username,
+}: {
+    achievements: {
+        count: number,
+        desc: string,
+        name: string,
+    }[],
+    email?: string,
+    goldMessage?: string,
+    goldSuccess?: boolean,
+    goldUntilDateString: string,
+    showGoldActive: boolean,
+    showGoldCancelled: boolean,
+    showGoldPitch: boolean,
+    username?: string,
+}) => {
     bbgmViewReact.title('Account');
 
     let goldPitchDiv = null;

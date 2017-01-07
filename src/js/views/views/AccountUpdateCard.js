@@ -29,15 +29,17 @@ class AccountUpdateCard extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    async componentWillMount() {
-        if (!window.Stripe) {
-            await Promise.resolve($.getScript('https://js.stripe.com/v2/'));
-            window.Stripe.setPublishableKey(g.stripePublishableKey);
-        }
+    componentWillMount() {
+        (async () => {
+            if (!window.Stripe) {
+                await Promise.resolve($.getScript('https://js.stripe.com/v2/'));
+                window.Stripe.setPublishableKey(g.stripePublishableKey);
+            }
 
-        this.setState({
-            disabled: false,
-        });
+            this.setState({
+                disabled: false,
+            });
+        })();
     }
 
     handleChange(name, e) {

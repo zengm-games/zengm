@@ -336,6 +336,10 @@ async function newPhaseBeforeDraft(tx: BackboardTx) {
 
     await team.updateStrategies(tx);
 
+    // Achievements after awards
+    account.checkAchievement.hardware_store();
+    account.checkAchievement.sleeper_pick();
+
     const deltas = await season.updateOwnerMood(tx);
     await message.generate(tx, deltas);
 
@@ -351,10 +355,6 @@ async function newPhaseBeforeDraft(tx: BackboardTx) {
 }
 
 async function newPhaseDraft(tx: BackboardTx) {
-    // Achievements after awards
-    account.checkAchievement.hardware_store();
-    account.checkAchievement.sleeper_pick();
-
     // Kill off old retired players (done here since not much else happens in this phase change, so making it a little slower is fine)
     await tx.players.index('tid').iterate(g.PLAYER.RETIRED, p => {
         if (p.hasOwnProperty("diedYear") && p.diedYear) {

@@ -152,16 +152,32 @@ async function check() {
         // No ads for Gold members
         const currentTimestamp = Math.floor(Date.now() / 1000);
         if (currentTimestamp > data.gold_until) {
-            document.getElementById('banner-ad-top-wrapper').innerHTML = '<div id="div-gpt-ad-1473268147477-1" style="text-align: center; min-height: 95px; margin-top: 1em"></div>';
-            document.getElementById('banner-ad-bottom-wrapper-1').innerHTML = '<div id="div-gpt-ad-1479941549483-2" style="text-align: center; height: 250px; position: absolute; top: 5px; left: 0"></div>';
-            document.getElementById('banner-ad-bottom-wrapper-2').innerHTML = '<div id="div-gpt-ad-1479941549483-1" style="text-align: center; height: 250px; position: absolute; top: 5px; right: 0"></div>';
-            document.getElementById('banner-ad-bottom-wrapper-logo').innerHTML = '<div style="height: 250px; margin: 5px 310px 0 310px; display:flex; align-items: center; justify-content: center;"><img src="https://basketball-gm.com/files/logo.png" style="max-height: 100%; max-width: 100%"></div>';
+            let el;
+            el = document.getElementById('banner-ad-top-wrapper');
+            if (el) {
+                el.innerHTML = '<div id="div-gpt-ad-1473268147477-1" style="text-align: center; min-height: 95px; margin-top: 1em"></div>';
+            }
+            el = document.getElementById('banner-ad-bottom-wrapper-1');
+            if (el) {
+                el.innerHTML = '<div id="div-gpt-ad-1479941549483-2" style="text-align: center; height: 250px; position: absolute; top: 5px; left: 0"></div>';
+            }
+            el = document.getElementById('banner-ad-bottom-wrapper-2');
+            if (el) {
+                el.innerHTML = '<div id="div-gpt-ad-1479941549483-1" style="text-align: center; height: 250px; position: absolute; top: 5px; right: 0"></div>';
+            }
+            el = document.getElementById('banner-ad-bottom-wrapper-logo');
+            if (el) {
+                el.innerHTML = '<div style="height: 250px; margin: 5px 310px 0 310px; display:flex; align-items: center; justify-content: center;"><img src="https://basketball-gm.com/files/logo.png" style="max-height: 100%; max-width: 100%"></div>';
+            }
             ads.showBanner();
         } else {
-            document.getElementById('banner-ad-top-wrapper').innerHTML = "";
-            document.getElementById('banner-ad-bottom-wrapper-1').innerHTML = "";
-            document.getElementById('banner-ad-bottom-wrapper-2').innerHTML = "";
-            document.getElementById('banner-ad-bottom-wrapper-logo').innerHTML = "";
+            const wrappers = ['banner-ad-top-wrapper', 'banner-ad-bottom-wrapper-1', 'banner-ad-bottom-wrapper-logo', 'banner-ad-bottom-wrapper-2'];
+            for (const wrapper of wrappers) {
+                const el = document.getElementById(wrapper);
+                if (el) {
+                    el.innerHTML = '';
+                }
+            }
         }
 
         // If user is logged in, upload any locally saved achievements

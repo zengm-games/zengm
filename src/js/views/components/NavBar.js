@@ -105,8 +105,12 @@ TopMenuDropdown.propTypes = {
 const handleScreenshotClick = e => {
     e.preventDefault();
 
-    let contentEl = document.getElementById("screenshot-league");
-    if (!contentEl) { contentEl = document.getElementById("screenshot-nonleague"); }
+    let contentElTemp = document.getElementById("screenshot-league");
+    if (!contentElTemp) { contentElTemp = document.getElementById("screenshot-nonleague"); }
+    if (!contentElTemp) {
+        throw new Error('Missing DOM element #screenshot-league or #screenshot-nonleague');
+    }
+    const contentEl = contentElTemp;
 
     // Add watermark
     const watermark = document.createElement("div");

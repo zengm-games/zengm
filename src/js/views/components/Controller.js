@@ -118,13 +118,17 @@ class Controller extends React.Component {
         g.emitter.on('updateState', this.updateState);
         g.emitter.on('updateTopMenu', this.updateTopMenu);
 
-        if (this.state.topMenu.popup) {
-            document.body.style.paddingTop = '0';
+        if (this.state.topMenu.popup && document.body) {
+            if (document.body) {
+                document.body.style.paddingTop = '0';
+            }
 
             const css = document.createElement("style");
             css.type = "text/css";
             css.innerHTML = ".new_window { display: none }";
-            document.body.appendChild(css);
+            if (document.body) {
+                document.body.appendChild(css);
+            }
         }
     }
 

@@ -87,9 +87,9 @@ const logEvent = (tx: ?BackboardTx, {
 
     // Hacky way to make sure there is room for the multi team mode menu
     const notificationContainer = document.getElementById("notification-container");
-    if (g.userTids !== undefined && g.userTids.length > 1 && !notificationContainer.classList.contains("notification-container-extra-margin-bottom")) {
+    if (g.userTids !== undefined && g.userTids.length > 1 && notificationContainer && !notificationContainer.classList.contains("notification-container-extra-margin-bottom")) {
         notificationContainer.classList.add("notification-container-extra-margin-bottom");
-    } else if (g.userTids !== undefined && g.userTids.length === 1 && notificationContainer.classList.contains("notification-container-extra-margin-bottom")) {
+    } else if (g.userTids !== undefined && g.userTids.length === 1 && notificationContainer && notificationContainer.classList.contains("notification-container-extra-margin-bottom")) {
         notificationContainer.classList.remove("notification-container-extra-margin-bottom");
     }
 };

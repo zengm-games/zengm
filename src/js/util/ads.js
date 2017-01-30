@@ -102,10 +102,13 @@ async function showBanner() {
 
     if (window.screen && window.screen.width < 768) {
         // Hide ads on mobile, mobile is shitty enough already
-        document.getElementById('banner-ad-top-wrapper').innerHTML = "";
-        document.getElementById('banner-ad-bottom-wrapper-1').innerHTML = "";
-        document.getElementById('banner-ad-bottom-wrapper-logo').innerHTML = "";
-        document.getElementById('banner-ad-bottom-wrapper-2').innerHTML = "";
+        const wrappers = ['banner-ad-top-wrapper', 'banner-ad-bottom-wrapper-1', 'banner-ad-bottom-wrapper-logo', 'banner-ad-bottom-wrapper-2'];
+        for (const wrapper of wrappers) {
+            const el = document.getElementById(wrapper);
+            if (el) {
+                el.innerHTML = '';
+            }
+        }
     } else {
         const bannerAdTop = document.getElementById('div-gpt-ad-1473268147477-1');
         const bannerAdBottom1 = document.getElementById('div-gpt-ad-1479941549483-2');

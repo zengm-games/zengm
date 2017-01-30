@@ -211,15 +211,19 @@ function summary(teams: TradeTeams): TradeSummary {
     const dpids = [teams[0].dpids, teams[1].dpids];
 
     const s: TradeSummary = {
-        teams: [0, 1].map(() => {
-            return {
-                name: "",
-                payrollAfterTrade: 0,
-                picks: [],
-                total: 0,
-                trade: [],
-            };
-        }),
+        teams: [{
+            name: '',
+            payrollAfterTrade: 0,
+            picks: [],
+            total: 0,
+            trade: [],
+        }, {
+            name: '',
+            payrollAfterTrade: 0,
+            picks: [],
+            total: 0,
+            trade: [],
+        }],
         warning: null,
     };
 

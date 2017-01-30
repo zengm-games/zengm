@@ -216,7 +216,11 @@ async function exportPlayerInfo() {
     }
     output += "</pre>";
 
-    document.getElementById("content").innerHTML = output;
+    const contentEl = document.getElementById("content");
+    if (!contentEl) {
+        throw new Error('Missing DOM element #content');
+    }
+    contentEl.innerHTML = output;
 }
 
 function exportPlayerStats() {

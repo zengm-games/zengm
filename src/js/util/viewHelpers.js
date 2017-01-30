@@ -8,7 +8,7 @@ import * as league from '../core/league';
 import * as helpers from './helpers';
 import type {PageCtx, UpdateEvents} from './types';
 
-const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEvents, () => void]> => {
+const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEvents, () => void, ?string]> => {
     g.lid = parseInt(ctx.params.lid, 10);
 
     // Check for some other window making changes to the database
@@ -61,19 +61,19 @@ const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEv
         await ui.updatePlayMenu(null);
         g.emitter.emit('updateTopMenu', {lid: g.lid});
         checkDbChange(g.lid);
-        return [updateEvents, ctxCb];
+        return [updateEvents, ctxCb, undefined];
     }
 
-    return [updateEvents, ctxCb];
+    return [updateEvents, ctxCb, undefined];
 };
 
-const beforeNonLeague = (ctx: PageCtx): [UpdateEvents, () => void] => {
+const beforeNonLeague = (ctx: PageCtx): [UpdateEvents, () => void, ?string] => {
     g.lid = null;
     g.emitter.emit('updateTopMenu', {lid: undefined});
 
     const updateEvents = (ctx !== undefined && ctx.bbgm.updateEvents !== undefined) ? ctx.bbgm.updateEvents : [];
     const ctxCb = (ctx !== undefined && ctx.bbgm.cb !== undefined) ? ctx.bbgm.cb : () => {};
-    return [updateEvents, ctxCb];
+    return [updateEvents, ctxCb, undefined];
 };
 
 export {

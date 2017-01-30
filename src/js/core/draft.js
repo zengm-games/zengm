@@ -460,7 +460,7 @@ function getRookieSalaries(): number[] {
  * @return {Promise}
  */
 async function selectPlayer(pick: PickRealized, pid: number) {
-    return await g.dbl.tx(["players", "playerStats"], "readwrite", async tx => {
+    return g.dbl.tx(["players", "playerStats"], "readwrite", async tx => {
         let p = await tx.players.get(pid);
 
         // Draft player
@@ -504,7 +504,7 @@ async function selectPlayer(pick: PickRealized, pid: number) {
             tids: [p.tid],
         });
 
-        return await tx.players.put(p);
+        return tx.players.put(p);
     });
 }
 

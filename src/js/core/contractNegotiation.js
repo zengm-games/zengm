@@ -66,7 +66,7 @@ async function create(tx: BackboardTx, pid: number, resigning: boolean, tid: num
     await tx.negotiations.add(negotiation);
     league.updateLastDbChange();
     ui.updateStatus("Contract negotiation");
-    return await ui.updatePlayMenu(tx);
+    return ui.updatePlayMenu(tx);
 }
 
 /**
@@ -102,7 +102,7 @@ async function cancelAll(tx: BackboardTx) {
     await tx.negotiations.clear();
     league.updateLastDbChange();
     ui.updateStatus("Idle");
-    return await ui.updatePlayMenu(tx);
+    return ui.updatePlayMenu(tx);
 }
 
 /**

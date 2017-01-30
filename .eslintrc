@@ -22,6 +22,7 @@
         "jsx-a11y/no-static-element-interactions": "off",
         "max-len": "off",
         "no-alert": "off",
+        "no-await-in-loop": "off",
         "no-console": "off",
         "no-continue": "off",
         "no-mixed-operators": "off",
@@ -38,9 +39,11 @@
         "react/jsx-indent": ["error", 4],
         "react/jsx-indent-props": ["error", 4],
         "react/jsx-wrap-multilines": "off",
+        "react/no-array-index-key": "off",
         "react/no-multi-comp": "off",
         "react/no-unescaped-entities": "off",
         "react/no-unused-prop-types": "off", // Would be nice, but tons of false positives
+        "react/require-default-props": "off", // Flow handles this better, I think
         "react/require-extension": ["error", {"extensions": [".js"]}],
         "react/sort-comp": "off", // Flow type definition of props in a React class confuses it
         "spaced-comment": "off",

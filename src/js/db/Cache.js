@@ -68,7 +68,8 @@ class Cache {
         this.indexes.playerStatsByPid = {};
 
         // Only save latest stats row for each player (so playoff stats if available, and latest team if traded mid-season)
-        for (const psRows of await Promise.all(promises)) {
+        const resolvedPromises = await Promise.all(promises);
+        for (const psRows of resolvedPromises) {
             for (const ps of psRows) {
                 let latest = false;
                 if (!this.indexes.playerStatsByPid.hasOwnProperty(ps.pid)) {

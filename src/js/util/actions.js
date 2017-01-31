@@ -1,6 +1,6 @@
 // @flow
 
-import * as db from '../db';
+import {reset} from '../db';
 import g from '../globals';
 import * as ui from '../ui';
 import * as contractNegotiation from '../core/contractNegotiation';
@@ -234,7 +234,7 @@ const toolsMenu = {
 
     resetDb: () => {
         if (window.confirm("Are you sure you want to reset the database? This will delete all your current saved games.")) {
-            db.reset();
+            reset();
         }
     },
 };

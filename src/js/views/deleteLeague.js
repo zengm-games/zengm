@@ -2,7 +2,7 @@
 
 import backboard from 'backboard';
 import Promise from 'bluebird';
-import * as db from '../db';
+import {connectLeague} from '../db';
 import g from '../globals';
 import bbgmViewReact from '../util/bbgmViewReact';
 import DeleteLeague from './views/DeleteLeague';
@@ -18,7 +18,7 @@ async function updateDeleteLeague({lid}) {
         throw new Error('Invalid input for lid');
     }
 
-    await db.connectLeague(lid);
+    await connectLeague(lid);
     try {
         return g.dbl.tx(["games", "players", "teamSeasons"], async tx => {
             const [numGames, numPlayers, teamSeasons, l] = await Promise.all([

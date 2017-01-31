@@ -3,7 +3,7 @@
 import backboard from 'backboard';
 import Promise from 'bluebird';
 import _ from 'underscore';
-import * as db from '../db';
+import {connectLeague} from '../db';
 import g from '../globals';
 import * as ui from '../ui';
 import * as draft from './draft';
@@ -165,7 +165,7 @@ async function create(
         teamName: teams[tid].name,
         teamRegion: teams[tid].region,
     });
-    await db.connectLeague(g.lid);
+    await connectLeague(g.lid);
 
     const gameAttributes = _.extend(helpers.deepCopy(defaultGameAttributes), {
         userTid: tid,

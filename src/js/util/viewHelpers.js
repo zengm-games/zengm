@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import * as db from '../db';
+import {connectLeague} from '../db';
 import g from '../globals';
 import * as ui from '../ui';
 import * as league from '../core/league';
@@ -52,7 +52,7 @@ const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEv
             return [[], () => {}, 'abort'];
         }
 
-        await db.connectLeague(g.lid);
+        await connectLeague(g.lid);
         await league.loadGameAttributes(null);
 
         // Update play menu

@@ -9,7 +9,7 @@ import 'jquery-ui/sortable';
 import page from 'page';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import * as db from './db';
+import {connectMeta} from './db';
 import * as views from './views';
 import * as changes from './data/changes';
 import * as account from './util/account';
@@ -71,7 +71,7 @@ window.Promise.config({warnings: false});
     // Any news?
     changes.check();
 
-    await db.connectMeta();
+    await connectMeta();
 
     /*this.before((ctx) => {
             // Normal Cordova pages

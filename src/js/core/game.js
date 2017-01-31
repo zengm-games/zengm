@@ -251,7 +251,7 @@ async function writePlayerStats(tx: BackboardTx, results: GameResults) {
 
                 // Only update player object (values and injuries) every 10 regular season games or on injury
                 if ((ps.gp % 10 === 0 && g.phase !== g.PHASE.PLAYOFFS) || injuredThisGame) {
-                    const p2 = await tx.players.get(p.id);
+                    const p2 = await g.cache.get('players', p.id);
 
                     // Injury crap - assign injury type if player does not already have an injury in the database
                     let biggestRatingsLoss;
@@ -294,8 +294,6 @@ async function writePlayerStats(tx: BackboardTx, results: GameResults) {
                     if (biggestRatingsLoss) {
                         await player.updateValues(tx, p2, []);
                     }
-
-                    await tx.players.put(p2);
                 }
 
                 return ps;
@@ -522,7 +520,7 @@ function makeComposite(rating, components, weights) {
 async function loadTeams(tx) {
     return Promise.all(_.range(g.numTeams).map(async (tid) => {
         const [players, {cid, did}, teamSeason] = await Promise.all([
-            tx.players.index('tid').getAll(tid),
+            g.cache.indexGetAll('playersByTid', tid),
             tx.teams.get(tid),
             tx.teamSeasons.index("season, tid").get([g.season, tid]),
         ]);
@@ -663,18 +661,14 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
             promises.push(finances.updateRanks(tx, ["expenses", "revenues"]));
 
             // Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
-            promises.push(tx.players.index('tid').iterate(backboard.lowerBound(g.PLAYER.FREE_AGENT), p => {
-                let changed;
-
-                changed = false;
+            const players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.FREE_AGENT, Infinity]);
+            for (const p of players) {
                 if (p.injury.gamesRemaining > 0) {
                     p.injury.gamesRemaining -= 1;
-                    changed = true;
                 }
                 // Is it already over?
                 if (p.injury.type !== "Healthy" && p.injury.gamesRemaining <= 0) {
                     p.injury = {type: "Healthy", gamesRemaining: 0};
-                    changed = true;
 
                     logEvent(tx, {
                         type: "healed",
@@ -688,16 +682,10 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
                 // Also check for gamesUntilTradable
                 if (!p.hasOwnProperty("gamesUntilTradable")) {
                     p.gamesUntilTradable = 0; // Initialize for old leagues
-                    changed = true;
                 } else if (p.gamesUntilTradable > 0) {
                     p.gamesUntilTradable -= 1;
-                    changed = true;
                 }
-
-                if (changed) {
-                    return p;
-                }
-            }));
+            }
 
             await Promise.all(promises);
         });

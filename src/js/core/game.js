@@ -29,7 +29,7 @@ async function writeTeamStats(tx: BackboardTx, results: GameResults) {
 
         const [payroll, t, teamSeasons, teamStatsArray] = await Promise.all([
             team.getPayroll(tx, results.team[t1].id).get(0),
-            tx.teams.get(results.team[t1].id),
+            g.cache.get('teams', results.team[t1].id),
             tx.teamSeasons.index("tid, season").getAll(backboard.bound([results.team[t1].id, g.season - 2], [results.team[t1].id, g.season])),
             tx.teamStats.index("season, tid").getAll([g.season, results.team[t1].id]),
         ]);
@@ -208,7 +208,6 @@ async function writeTeamStats(tx: BackboardTx, results: GameResults) {
         }
 
         await Promise.all([
-            tx.teams.put(t),
             tx.teamSeasons.put(teamSeason),
             tx.teamStats.put(teamStats),
         ]);
@@ -521,12 +520,11 @@ async function loadTeams(tx) {
     return Promise.all(_.range(g.numTeams).map(async (tid) => {
         const [players, {cid, did}, teamSeason] = await Promise.all([
             g.cache.indexGetAll('playersByTid', tid),
-            tx.teams.get(tid),
+            g.cache.get('teams', tid),
             tx.teamSeasons.index("season, tid").get([g.season, tid]),
         ]);
 
         players.sort((a, b) => a.rosterOrder - b.rosterOrder);
-
 
         // Initialize team composite rating object
         const compositeRating = {};

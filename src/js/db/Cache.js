@@ -40,8 +40,10 @@ class Cache {
     async fillPlayers(tx: BackboardTx) {
         this.checkStatus('filling');
 
-        const players1 = await tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.UNDRAFTED));
-        const players2 = await tx.players.index('tid').getAll(backboard.bound(g.PLAYER.UNDRAFTED_FANTASY_TEMP, g.PLAYER.UNDRAFTED_2));
+        const [players1, players2] = await Promise.all([
+            tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.UNDRAFTED)),
+            tx.players.index('tid').getAll(backboard.bound(g.PLAYER.UNDRAFTED_FANTASY_TEMP, g.PLAYER.UNDRAFTED_2)),
+        ]);
 
         this.data.players = {};
         this.indexes.playersByTid = {};
@@ -70,6 +72,18 @@ class Cache {
         }
     }
 
+    async fillTeams(tx: BackboardTx) {
+        this.checkStatus('filling');
+
+        const teams = await tx.teams.getAll();
+
+        this.data.teams = {};
+
+        for (const t of teams) {
+            this.data.teams[t.tid] = t;
+        }
+    }
+
     // Load database from disk and save in cache, wiping out any prior values in cache
     async fill() {
         this.checkStatus('empty', 'full');
@@ -80,6 +94,7 @@ class Cache {
         await g.dbl.tx(STORES, async (tx) => {
             const promises = [
                 this.fillPlayers(tx),
+                this.fillTeams(tx),
             ];
 
             await Promise.all(promises);
@@ -106,6 +121,8 @@ class Cache {
         this.checkStatus('full');
 
         console.log('getAll', store);
+
+        return Object.values(this.data[store]);
     }
 
     async indexGetAll(index: Index, key: number | [number, number]) {

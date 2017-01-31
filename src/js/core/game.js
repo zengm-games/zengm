@@ -217,7 +217,7 @@ async function writeTeamStats(tx: BackboardTx, results: GameResults) {
 }
 
 async function writePlayerStats(tx: BackboardTx, results: GameResults) {
-    await Promise.all(results.team.map(t => Promise.all(t.player.map((p) => {
+    await Promise.all(results.team.map(t => Promise.all(t.player.map(async (p) => {
         // Only need to write stats if player got minutes
         if (p.stat.min === 0) {
             return;
@@ -227,76 +227,69 @@ async function writePlayerStats(tx: BackboardTx, results: GameResults) {
 
         promises.push(player.checkStatisticalFeat(tx, p.id, t.id, p, results));
 
-        promises.push(tx.playerStats.index("pid, season, tid")
-            // prev in case there are multiple entries for the same player, like he was traded away and then brought back
-            .iterate([p.id, g.season, t.id], "prev", async (ps, shortCircuit) => {
-                // Since index is not on playoffs, manually check
-                if (ps.playoffs !== (g.phase === g.PHASE.PLAYOFFS)) {
-                    return;
-                }
+        const ps = await g.cache.indexGet('playerStatsByPid', p.id);
 
-                // Found it!
-                shortCircuit();
+        // Since index is not on playoffs, manually check
+        if (ps.playoffs !== (g.phase === g.PHASE.PLAYOFFS)) {
+            throw new Error(`Missing playoff stats for player ${p.id}`);
+        }
 
-                // Update stats
-                const keys = ['gs', 'min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'pm', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'ba', 'pf', 'pts'];
-                for (let i = 0; i < keys.length; i++) {
-                    ps[keys[i]] += p.stat[keys[i]];
-                }
-                ps.gp += 1; // Already checked for non-zero minutes played above
-                ps.trb += p.stat.orb + p.stat.drb;
+        // Update stats
+        const keys = ['gs', 'min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'pm', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'ba', 'pf', 'pts'];
+        for (let i = 0; i < keys.length; i++) {
+            ps[keys[i]] += p.stat[keys[i]];
+        }
+        ps.gp += 1; // Already checked for non-zero minutes played above
+        ps.trb += p.stat.orb + p.stat.drb;
 
-                const injuredThisGame = p.injured && p.injury.type === "Healthy";
+        const injuredThisGame = p.injured && p.injury.type === "Healthy";
 
-                // Only update player object (values and injuries) every 10 regular season games or on injury
-                if ((ps.gp % 10 === 0 && g.phase !== g.PHASE.PLAYOFFS) || injuredThisGame) {
-                    const p2 = await g.cache.get('players', p.id);
+        // Only update player object (values and injuries) every 10 regular season games or on injury
+        if ((ps.gp % 10 === 0 && g.phase !== g.PHASE.PLAYOFFS) || injuredThisGame) {
+            const p2 = await g.cache.get('players', p.id);
 
-                    // Injury crap - assign injury type if player does not already have an injury in the database
-                    let biggestRatingsLoss;
-                    if (injuredThisGame) {
-                        p2.injury = player.injury(t.healthRank);
-                        p.injury = p2.injury; // So it gets written to box score
-                        logEvent(tx, {
-                            type: "injured",
-                            text: `<a href="${helpers.leagueUrl(["player", p2.pid])}">${p2.firstName} ${p2.lastName}</a> was injured! (${p2.injury.type}, out for ${p2.injury.gamesRemaining} games)`,
-                            showNotification: p2.tid === g.userTid,
-                            pids: [p2.pid],
-                            tids: [p2.tid],
-                        });
+            // Injury crap - assign injury type if player does not already have an injury in the database
+            let biggestRatingsLoss;
+            if (injuredThisGame) {
+                p2.injury = player.injury(t.healthRank);
+                p.injury = p2.injury; // So it gets written to box score
+                logEvent(tx, {
+                    type: "injured",
+                    text: `<a href="${helpers.leagueUrl(["player", p2.pid])}">${p2.firstName} ${p2.lastName}</a> was injured! (${p2.injury.type}, out for ${p2.injury.gamesRemaining} games)`,
+                    showNotification: p2.tid === g.userTid,
+                    pids: [p2.pid],
+                    tids: [p2.tid],
+                });
 
-                        // Some chance of a loss of athleticism from serious injuries
-                        // 100 game injury: 67% chance of losing between 0 and 10 of spd, jmp, endu
-                        // 50 game injury: 33% chance of losing between 0 and 5 of spd, jmp, endu
-                        if (p2.injury.gamesRemaining > 25 && Math.random() < p2.injury.gamesRemaining / 150) {
-                            biggestRatingsLoss = Math.round(p2.injury.gamesRemaining / 10);
-                            if (biggestRatingsLoss > 10) {
-                                biggestRatingsLoss = 10;
-                            }
-
-                            // Small chance of horrible things
-                            if (biggestRatingsLoss === 10 && Math.random() < 0.01) {
-                                biggestRatingsLoss = 30;
-                            }
-
-                            const r = p2.ratings.length - 1;
-                            p2.ratings[r].spd = helpers.bound(p2.ratings[r].spd - random.randInt(0, biggestRatingsLoss), 0, 100);
-                            p2.ratings[r].jmp = helpers.bound(p2.ratings[r].jmp - random.randInt(0, biggestRatingsLoss), 0, 100);
-                            p2.ratings[r].endu = helpers.bound(p2.ratings[r].endu - random.randInt(0, biggestRatingsLoss), 0, 100);
-                        }
+                // Some chance of a loss of athleticism from serious injuries
+                // 100 game injury: 67% chance of losing between 0 and 10 of spd, jmp, endu
+                // 50 game injury: 33% chance of losing between 0 and 5 of spd, jmp, endu
+                if (p2.injury.gamesRemaining > 25 && Math.random() < p2.injury.gamesRemaining / 150) {
+                    biggestRatingsLoss = Math.round(p2.injury.gamesRemaining / 10);
+                    if (biggestRatingsLoss > 10) {
+                        biggestRatingsLoss = 10;
                     }
 
-                    // Player value depends on ratings and regular season stats, neither of which can change in the playoffs (except for severe injuries)
-                    if (g.phase !== g.PHASE.PLAYOFFS) {
-                        await player.updateValues(tx, p2, [ps]);
+                    // Small chance of horrible things
+                    if (biggestRatingsLoss === 10 && Math.random() < 0.01) {
+                        biggestRatingsLoss = 30;
                     }
-                    if (biggestRatingsLoss) {
-                        await player.updateValues(tx, p2, []);
-                    }
-                }
 
-                return ps;
-            }));
+                    const r = p2.ratings.length - 1;
+                    p2.ratings[r].spd = helpers.bound(p2.ratings[r].spd - random.randInt(0, biggestRatingsLoss), 0, 100);
+                    p2.ratings[r].jmp = helpers.bound(p2.ratings[r].jmp - random.randInt(0, biggestRatingsLoss), 0, 100);
+                    p2.ratings[r].endu = helpers.bound(p2.ratings[r].endu - random.randInt(0, biggestRatingsLoss), 0, 100);
+                }
+            }
+
+            // Player value depends on ratings and regular season stats, neither of which can change in the playoffs (except for severe injuries)
+            if (g.phase !== g.PHASE.PLAYOFFS) {
+                await player.updateValues(tx, p2, [ps]);
+            }
+            if (biggestRatingsLoss) {
+                await player.updateValues(tx, p2, []);
+            }
+        }
 
         return Promise.all(promises);
     }))));

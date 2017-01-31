@@ -9,7 +9,7 @@ type Status = 'empty' | 'error' | 'filling' | 'flushing' | 'full';
 
 // Only these IDB object stores for now. Keep in memory only player info for non-retired players and team info for the current season.
 type Store = 'players' | 'playerStats' | 'teams' | 'teamSeasons' | 'teamStats';
-type Index = 'playersByTid';
+type Index = 'playerStats' | 'playerStatsByPid' | 'playersByTid';
 
 type Data = {
     [key: Store]: any,
@@ -65,9 +65,23 @@ class Cache {
         }
 
         this.data.playerStats = {};
+        this.indexes.playerStatsByPid = {};
+
+        // Only save latest stats row for each player (so playoff stats if available, and latest team if traded mid-season)
         for (const psRows of await Promise.all(promises)) {
             for (const ps of psRows) {
-                this.data.playerStats[ps.psid] = ps;
+                let latest = false;
+                if (!this.indexes.playerStatsByPid.hasOwnProperty(ps.pid)) {
+                    this.indexes.playerStatsByPid[ps.pid] = ps;
+                    latest = true;
+                } else if (ps.psid > this.indexes.playerStatsByPid[ps.pid].psid) {
+                    this.indexes.playerStatsByPid[ps.pid] = ps;
+                    latest = true;
+                }
+
+                if (latest) {
+//                    this.data.playerStats[ps.psid] = ps;
+                }
             }
         }
     }
@@ -111,7 +125,7 @@ class Cache {
         this.setStatus('empty');
     }
 
-    async get(store: Store, id: number | string) {
+    async get(store: Store, id: number) {
         this.checkStatus('full');
 
         return this.data[store][id];
@@ -125,10 +139,19 @@ class Cache {
         return Object.values(this.data[store]);
     }
 
-    async indexGetAll(index: Index, key: number | [number, number]) {
+    async indexGet(index: Index, key: number) {
         this.checkStatus('full');
 
-        console.log('indexGetAll', index, key);
+        const val = this.indexes[index][key];
+
+        if (Array.isArray(val)) {
+            return val[0];
+        }
+        return val;
+    }
+
+    async indexGetAll(index: Index, key: number | [number, number]) {
+        this.checkStatus('full');
 
         if (typeof key === 'number' || typeof key === 'string') {
             return this.indexes[index][key];

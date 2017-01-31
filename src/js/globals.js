@@ -139,6 +139,6 @@ g.compositeWeights = {
 g.stripePublishableKey = "pk_live_Dmo7Vs6uSaoYHrFngr4lM0sa";
 
 // THIS MUST BE ACCURATE OR BAD STUFF WILL HAPPEN
-g.notInDb = ["dbm", "dbl", "lid", "PHASE", "PLAYER", "PHASE_TEXT", "enableLogging", "tld", "sport", "compositeWeights", "stripePublishableKey", "notInDb", "emitter"];
+g.notInDb = ["dbm", "dbl", "lid", "PHASE", "PLAYER", "PHASE_TEXT", "enableLogging", "tld", "sport", "compositeWeights", "stripePublishableKey", "notInDb", "emitter", "cache"];
 
 export default g;

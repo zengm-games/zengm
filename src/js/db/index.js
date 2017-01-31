@@ -2,6 +2,7 @@
 
 import Backboard from 'backboard';
 import Promise from 'bluebird';
+import Cache from './Cache';
 import connectMeta from './connectMeta';
 import connectLeague from './connectLeague';
 import reset from './reset';
@@ -21,6 +22,7 @@ Backboard.on('blocked', () => {
 });
 
 export {
+    Cache,
     connectMeta,
     connectLeague,
     reset,

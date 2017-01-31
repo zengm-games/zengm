@@ -79,6 +79,7 @@ type GameAttributeKeyStatic = (
     'PHASE' |
     'PHASE_TEXT' |
     'PLAYER' |
+    'cache' |
     'compositeWeights' |
     'dbl' |
     'dbm' |

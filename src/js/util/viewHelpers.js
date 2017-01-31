@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import {connectLeague} from '../db';
+import {Cache, connectLeague} from '../db';
 import g from '../globals';
 import * as ui from '../ui';
 import * as league from '../core/league';
@@ -54,6 +54,9 @@ const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEv
 
         await connectLeague(g.lid);
         await league.loadGameAttributes(null);
+
+        g.cache = new Cache();
+        await g.cache.fill();
 
         // Update play menu
         ui.updateStatus();

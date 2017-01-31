@@ -1,3 +1,16 @@
+IVERSON
+
+replace usage of players and playerStats everywhere
+  start with game.js and anything that it touches
+
+indexes
+
+should get and getAll be async? a bit slower, but then can wait until filling/flushing finishes
+
+teams
+
+----
+
 HTML in play by play https://www.reddit.com/r/BasketballGM/comments/5963ym/playbyplay_bug/
 
 https://www.reddit.com/r/BasketballGM/comments/57cux2/small_issue/

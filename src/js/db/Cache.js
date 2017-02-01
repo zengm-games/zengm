@@ -9,7 +9,7 @@ type Status = 'empty' | 'error' | 'filling' | 'flushing' | 'full';
 
 // Only these IDB object stores for now. Keep in memory only player info for non-retired players and team info for the current season.
 type Store = 'playerStats' | 'players' | 'teamSeasons' | 'teamStats' | 'teams';
-type Index = 'playerStats' | 'playerStatsByPid' | 'playersByTid' | 'teamSeasonsBySeasonTid' | 'teamSeasonsByTidSeason';
+type Index = 'playerStats' | 'playerStatsByPid' | 'playersByTid' | 'teamSeasonsBySeasonTid' | 'teamSeasonsByTidSeason' | 'teamStatsByPlayoffsTid';
 
 type Data = {
     [key: Store]: any,
@@ -108,6 +108,21 @@ class Cache {
         }
     }
 
+    // Past 3 seasons
+    async fillTeamStats(tx: BackboardTx) {
+        this.checkStatus('filling');
+
+        const teamStats = await tx.teamStats.index('season, tid').getAll(backboard.bound([g.season], [g.season, '']));
+
+        this.data.teamStats = {};
+        this.indexes.teamStatsByPlayoffsTid = {};
+
+        for (const ts of teamStats) {
+//            this.data.teamStats[ts.rid] = ts;
+            this.indexes.teamStatsByPlayoffsTid[`${ts.playoffs ? 1 : 0},${ts.tid}`] = ts;
+        }
+    }
+
     async fillTeams(tx: BackboardTx) {
         this.checkStatus('filling');
 
@@ -131,6 +146,7 @@ class Cache {
             const promises = [
                 this.fillPlayers(tx),
                 this.fillTeamSeasons(tx),
+                this.fillTeamStats(tx),
                 this.fillTeams(tx),
             ];
 

@@ -26,15 +26,14 @@ async function writeTeamStats(tx: BackboardTx, results: GameResults) {
     for (const t1 of [0, 1]) {
         const t2 = t1 === 1 ? 0 : 1;
 
-        const [payroll, t, teamSeasons, teamStatsArray] = await Promise.all([
+        const [payroll, t, teamSeasons, teamStats] = await Promise.all([
             team.getPayroll(tx, results.team[t1].id).get(0),
             g.cache.get('teams', results.team[t1].id),
             g.cache.indexGetAll('teamSeasonsByTidSeason', [`${results.team[t1].id},${g.season - 2}`, `${results.team[t1].id},${g.season}`]),
-            tx.teamStats.index("season, tid").getAll([g.season, results.team[t1].id]),
+            g.cache.indexGet('teamStatsByPlayoffsTid', `${g.phase === g.PHASE.PLAYOFFS ? 1 : 0},${results.team[t1].id}`),
         ]);
 
         const teamSeason = teamSeasons[teamSeasons.length - 1];
-        const teamStats = teamStatsArray.find(ts => ts.playoffs === (g.phase === g.PHASE.PLAYOFFS));
         const won = results.team[t1].stat.pts > results.team[t2].stat.pts;
 
         // Attendance - base calculation now, which is used for other revenue estimates
@@ -205,8 +204,6 @@ async function writeTeamStats(tx: BackboardTx, results: GameResults) {
                 teamSeason.streak = -1;
             }
         }
-
-        await tx.teamStats.put(teamStats);
     }
 
     return att;
@@ -623,7 +620,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
 
     // Saves a vector of results objects for a day, as is output from cbSimGames
     const cbSaveResults = async results => {
-        const objectStores = ["events", "games", "players", "playerFeats", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teamStats"];
+        const objectStores = ["events", "games", "players", "playerFeats", "playerStats", "playoffSeries", "releasedPlayers", "schedule"];
         await g.dbl.tx(objectStores, "readwrite", async tx => {
             const gidsFinished = await Promise.all(results.map(async (result) => {
                 const att = await writeTeamStats(tx, result);

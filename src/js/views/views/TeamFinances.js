@@ -77,7 +77,7 @@ class FinancesForm extends React.Component {
             }
 
             await tx.teams.put(t);
-            await finances.updateRanks(tx, ["budget"]);
+            await finances.updateRanks(["budget"]);
         });
 
         logEvent(null, {

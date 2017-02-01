@@ -67,11 +67,10 @@ type BudgetTypes = 'budget' | 'expenses' | 'revenues';
  * Revenue and expenses ranks should be updated any time any revenue or expense occurs - so basically, after every game.
  *
  * @memberOf core.finances
- * @param {IDBTransaction} ot An IndexedDB transaction on teams, readwrite.
  * @param {Array.<string>} type The types of ranks to update - some combination of "budget", "expenses", and "revenues"
  * @param {Promise}
  */
-async function updateRanks(tx: BackboardTx, types: BudgetTypes[]) {
+async function updateRanks(types: BudgetTypes[]) {
     const sortFn = (a, b) => b.amount - a.amount;
 
     const getByItem = byTeam => {

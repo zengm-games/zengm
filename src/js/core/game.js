@@ -642,7 +642,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
             }
 
             // Update ranks
-            promises.push(finances.updateRanks(tx, ["expenses", "revenues"]));
+            promises.push(finances.updateRanks(["expenses", "revenues"]));
 
             // Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
             const players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.FREE_AGENT, Infinity]);

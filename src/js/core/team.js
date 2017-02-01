@@ -298,13 +298,12 @@ async function rosterAutoSort(tx: BackboardTx, tid: number) {
 * This includes contracts for players who have been released but are still owed money.
 *
 * @memberOf core.team
-* @param {IDBTransaction} tx An IndexedDB transaction on players and releasedPlayers.
 * @param {number} tid Team ID.
 * @returns {Promise.Array} Array of objects containing contract information.
 */
-async function getContracts(tx: BackboardTx, tid: number): Promise<ContractInfo[]> {
+async function getContracts(tid: number): Promise<ContractInfo[]> {
     // First, get players currently on the roster
-    const players = await tx.players.index('tid').getAll(tid);
+    const players = await g.cache.indexGetAll('playersByTid', tid);
 
     const contracts = players.map(p => {
         return {
@@ -321,10 +320,10 @@ async function getContracts(tx: BackboardTx, tid: number): Promise<ContractInfo[
     });
 
     // Then, get any released players still owed money
-    const releasedPlayers = await tx.releasedPlayers.index('tid').getAll(tid);
+    const releasedPlayers = await g.cache.indexGetAll('releasedPlayersByTid', tid);
 
     for (const releasedPlayer of releasedPlayers) {
-        const p = await tx.players.get(releasedPlayer.pid);
+        const p = await g.cache.get('players', releasedPlayer.pid);
         if (p !== undefined) { // If a player is deleted, such as if the user deletes retired players to improve performance, this will be undefined
             contracts.push({
                 pid: releasedPlayer.pid,
@@ -362,17 +361,15 @@ async function getContracts(tx: BackboardTx, tid: number): Promise<ContractInfo[
  * @param {number} tid Team ID.
  * @return {Promise.<number, Array=>} Resolves to an array; first argument is the payroll in thousands of dollars, second argument is the array of contract objects from getContracts.
  */
-function getPayroll(tx: BackboardTx, tid: number): Promise<[number, ContractInfo[]]> {
-    return helpers.maybeReuseTx(["players", "releasedPlayers"], "readonly", tx, async tx2 => {
-        const contracts = await getContracts(tx2, tid);
+async function getPayroll(tx: BackboardTx, tid: number): Promise<[number, ContractInfo[]]> {
+    const contracts = await getContracts(tid);
 
-        let payroll = 0;
-        for (let i = 0; i < contracts.length; i++) {
-            payroll += contracts[i].amount;  // No need to check exp, since anyone without a contract for the current season will not have an entry
-        }
+    let payroll = 0;
+    for (let i = 0; i < contracts.length; i++) {
+        payroll += contracts[i].amount;  // No need to check exp, since anyone without a contract for the current season will not have an entry
+    }
 
-        return [payroll, contracts];
-    });
+    return [payroll, contracts];
 }
 
 /**
@@ -383,14 +380,12 @@ function getPayroll(tx: BackboardTx, tid: number): Promise<[number, ContractInfo
  * @return {Promise} Resolves to an array of payrolls, ordered by team id.
  */
 function getPayrolls(tx: BackboardTx): Promise<number[]> {
-    return helpers.maybeReuseTx(["players", "releasedPlayers"], "readonly", tx, tx2 => {
-        const promises = [];
-        for (let tid = 0; tid < g.numTeams; tid++) {
-            promises.push(getPayroll(tx2, tid).get(0));
-        }
+    const promises = [];
+    for (let tid = 0; tid < g.numTeams; tid++) {
+        promises.push(getPayroll(tx, tid).get(0));
+    }
 
-        return Promise.all(promises);
-    });
+    return Promise.all(promises);
 }
 
 /**

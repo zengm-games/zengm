@@ -8,8 +8,8 @@ import type {BackboardTx} from '../util/types';
 type Status = 'empty' | 'error' | 'filling' | 'flushing' | 'full';
 
 // Only these IDB object stores for now. Keep in memory only player info for non-retired players and team info for the current season.
-type Store = 'playerStats' | 'players' | 'teamSeasons' | 'teamStats' | 'teams';
-type Index = 'playerStats' | 'playerStatsByPid' | 'playersByTid' | 'teamSeasonsBySeasonTid' | 'teamSeasonsByTidSeason' | 'teamStatsByPlayoffsTid';
+type Store = 'playerStats' | 'players' | 'releasedPlayers' | 'teamSeasons' | 'teamStats' | 'teams';
+type Index = 'playerStats' | 'playerStatsByPid' | 'playersByTid' | 'releasedPlayers' | 'releasedPlayersByTid' | 'teamSeasonsBySeasonTid' | 'teamSeasonsByTidSeason' | 'teamStatsByPlayoffsTid';
 
 type Data = {
     [key: Store]: any,
@@ -18,7 +18,7 @@ type Indexes = {
     [key: Index]: any,
 };
 
-const STORES: Store[] = ['playerStats', 'players', 'teamSeasons', 'teamStats', 'teams'];
+const STORES: Store[] = ['playerStats', 'players', 'releasedPlayers', 'teamSeasons', 'teamStats', 'teams'];
 
 class Cache {
     data: Data;
@@ -91,6 +91,24 @@ class Cache {
         }
     }
 
+    async fillReleasedPlayers(tx: BackboardTx) {
+        this.checkStatus('filling');
+
+        const releasedPlayers = await tx.releasedPlayers.getAll();
+
+        this.data.releasedPlayers = {};
+        this.indexes.releasedPlayersByTid = {};
+
+        for (const rp of releasedPlayers) {
+            this.data.releasedPlayers[rp.rid] = rp;
+
+            if (!this.indexes.releasedPlayersByTid.hasOwnProperty(rp.tid)) {
+                this.indexes.releasedPlayersByTid[rp.tid] = [];
+            }
+            this.indexes.releasedPlayersByTid[rp.tid].push(rp);
+        }
+    }
+
     // Past 3 seasons
     async fillTeamSeasons(tx: BackboardTx) {
         this.checkStatus('filling');
@@ -143,14 +161,13 @@ class Cache {
         this.data = {};
 
         await g.dbl.tx(STORES, async (tx) => {
-            const promises = [
+            await Promise.all([
                 this.fillPlayers(tx),
+                this.fillReleasedPlayers(tx),
                 this.fillTeamSeasons(tx),
                 this.fillTeamStats(tx),
                 this.fillTeams(tx),
-            ];
-
-            await Promise.all(promises);
+            ]);
         });
 
         this.setStatus('full');
@@ -176,7 +193,7 @@ class Cache {
         return Object.values(this.data[store]);
     }
 
-    async indexGet(index: Index, key: number) {
+    async indexGet(index: Index, key: number | string) {
         this.checkStatus('full');
 
         const val = this.indexes[index][key];
@@ -187,11 +204,14 @@ class Cache {
         return val;
     }
 
-    async indexGetAll(index: Index, key: number | [number, number]) {
+    async indexGetAll(index: Index, key: number | string | [number, number] | [string, string]) {
         this.checkStatus('full');
 
         if (typeof key === 'number' || typeof key === 'string') {
-            return this.indexes[index][key];
+            if (this.indexes[index].hasOwnProperty(key)) {
+                return this.indexes[index][key];
+            }
+            return [];
         }
 
         const [min, max] = key;

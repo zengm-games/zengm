@@ -84,6 +84,11 @@ async function updateRanks(tx: BackboardTx, types: BudgetTypes[]) {
     };
 
     const updateObj = (obj, byItem) => {
+        // Nonsense for flow
+        if (byItem === undefined) {
+            return;
+        }
+
         for (const item of Object.keys(obj)) {
             for (let i = 0; i < byItem[item].length; i++) {
                 if (byItem[item][i].amount === obj[item].amount) {
@@ -96,12 +101,12 @@ async function updateRanks(tx: BackboardTx, types: BudgetTypes[]) {
 
     let teamSeasonsPromise;
     if (types.includes('expenses') || types.includes('revenues')) {
-        teamSeasonsPromise = tx.teamSeasons.index("season, tid").getAll(backboard.bound([g.season], [g.season, '']));
+        teamSeasonsPromise = g.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season + 1}`]);
     } else {
         teamSeasonsPromise = Promise.resolve();
     }
 
-    const [teams, teamSeasons] = await Promise.all([tx.teams.getAll(), teamSeasonsPromise]);
+    const [teams, teamSeasons] = await Promise.all([g.cache.getAll('teams'), teamSeasonsPromise]);
 
     let budgetsByItem;
     let budgetsByTeam;
@@ -122,7 +127,7 @@ async function updateRanks(tx: BackboardTx, types: BudgetTypes[]) {
         revenuesByItem = getByItem(revenuesByTeam);
     }
 
-    await tx.teams.iterate(t => {
+    for (const t of teams) {
         if (types.includes('budget')) {
             updateObj(t.budget, budgetsByItem);
         }
@@ -132,12 +137,6 @@ async function updateRanks(tx: BackboardTx, types: BudgetTypes[]) {
         if (types.includes('expenses')) {
             updateObj(teamSeasons[t.tid].revenues, revenuesByItem);
         }
-
-        return t;
-    });
-
-    if (types.includes('revenues') || types.includes('expenses')) {
-        await Promise.all(teamSeasons.map(teamSeason => tx.teamSeasons.put(teamSeason)));
     }
 }
 

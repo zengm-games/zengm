@@ -1,6 +1,5 @@
 // @flow
 
-import backboard from 'backboard';
 import Promise from 'bluebird';
 import _ from 'underscore';
 import g from '../globals';
@@ -30,7 +29,7 @@ async function writeTeamStats(tx: BackboardTx, results: GameResults) {
         const [payroll, t, teamSeasons, teamStatsArray] = await Promise.all([
             team.getPayroll(tx, results.team[t1].id).get(0),
             g.cache.get('teams', results.team[t1].id),
-            tx.teamSeasons.index("tid, season").getAll(backboard.bound([results.team[t1].id, g.season - 2], [results.team[t1].id, g.season])),
+            g.cache.indexGetAll('teamSeasonsByTidSeason', [`${results.team[t1].id},${g.season - 2}`, `${results.team[t1].id},${g.season}`]),
             tx.teamStats.index("season, tid").getAll([g.season, results.team[t1].id]),
         ]);
 
@@ -207,10 +206,7 @@ async function writeTeamStats(tx: BackboardTx, results: GameResults) {
             }
         }
 
-        await Promise.all([
-            tx.teamSeasons.put(teamSeason),
-            tx.teamStats.put(teamStats),
-        ]);
+        await tx.teamStats.put(teamStats);
     }
 
     return att;
@@ -509,12 +505,12 @@ function makeComposite(rating, components, weights) {
  * @param {IDBTransaction} ot An IndexedDB transaction on players and teams.
  * @param {Promise} Resolves to an array of team objects, ordered by tid.
  */
-async function loadTeams(tx) {
+async function loadTeams() {
     return Promise.all(_.range(g.numTeams).map(async (tid) => {
         const [players, {cid, did}, teamSeason] = await Promise.all([
             g.cache.indexGetAll('playersByTid', tid),
             g.cache.get('teams', tid),
-            tx.teamSeasons.index("season, tid").get([g.season, tid]),
+            g.cache.indexGet('teamSeasonsByTidSeason', `${tid},${g.season}`),
         ]);
 
         players.sort((a, b) => a.rosterOrder - b.rosterOrder);
@@ -627,7 +623,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
 
     // Saves a vector of results objects for a day, as is output from cbSimGames
     const cbSaveResults = async results => {
-        const objectStores = ["events", "games", "players", "playerFeats", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams", "teamSeasons", "teamStats"];
+        const objectStores = ["events", "games", "players", "playerFeats", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teamStats"];
         await g.dbl.tx(objectStores, "readwrite", async tx => {
             const gidsFinished = await Promise.all(results.map(async (result) => {
                 const att = await writeTeamStats(tx, result);
@@ -739,30 +735,28 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
             ui.updateStatus(`Playing (${numDays} days left)`);
         }
 
-        await g.dbl.tx(["players", "schedule", "teams", "teamSeasons"], async tx => {
-            let schedule = await season.getSchedule(tx, true);
+        let schedule = await season.getSchedule(null, true);
 
-            // Stop if no games
-            // This should also call cbNoGames after the playoffs end, because g.phase will have been incremented by season.newSchedulePlayoffsDay after the previous day's games
-            if (schedule.length === 0 && g.phase !== g.PHASE.PLAYOFFS) {
-                return cbNoGames();
-            }
+        // Stop if no games
+        // This should also call cbNoGames after the playoffs end, because g.phase will have been incremented by season.newSchedulePlayoffsDay after the previous day's games
+        if (schedule.length === 0 && g.phase !== g.PHASE.PLAYOFFS) {
+            return cbNoGames();
+        }
 
-            // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
-            const teams = await loadTeams(tx);
+        // Load all teams, for now. Would be more efficient to load only some of them, I suppose.
+        const teams = await loadTeams();
 
-            // Play games
-            // Will loop through schedule and simulate all games
-            if (schedule.length === 0 && g.phase === g.PHASE.PLAYOFFS) {
-                // Sometimes the playoff schedule isn't made the day before, so make it now
-                // This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
+        // Play games
+        // Will loop through schedule and simulate all games
+        if (schedule.length === 0 && g.phase === g.PHASE.PLAYOFFS) {
+            // Sometimes the playoff schedule isn't made the day before, so make it now
+            // This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
 
-                // tx2 to make sure newSchedulePlayoffsDay finishes before continuing
-                await g.dbl.tx(["playoffSeries", "schedule", "teamSeasons"], "readwrite", tx2 => season.newSchedulePlayoffsDay(tx2));
-                schedule = await season.getSchedule(null, true);
-            }
-            await cbSimGames(schedule, teams);
-        });
+            // tx2 to make sure newSchedulePlayoffsDay finishes before continuing
+            await g.dbl.tx(["playoffSeries", "schedule", "teamSeasons"], "readwrite", tx2 => season.newSchedulePlayoffsDay(tx2));
+            schedule = await season.getSchedule(null, true);
+        }
+        await cbSimGames(schedule, teams);
     };
 
     // This simulates a day, including game simulation and any other bookkeeping that needs to be done

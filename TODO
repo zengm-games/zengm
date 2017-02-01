@@ -1,17 +1,21 @@
 IVERSON
 
-replace usage of players and playerStats everywhere
+make Cache more DRY regarding indexes, reading object stores
+
+replace all usage of IDB with cache, otherwise things will be more likely to get out of sync on flush failure
   start with game.js and anything that it touches
 
-indexes
+rewrite team.filter and player.filter
 
 should get and getAll be async? a bit slower, but then can wait until filling/flushing finishes
 
-teams
+when to fill/flush? phases, games, user interaction
 
-put playerStats back under players
+how to handle data not in cache?
 
-debug mode makes huge difference
+put playerStats back under players?
+
+debug mode makes huge perf difference
 
 ----
 

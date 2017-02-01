@@ -8,17 +8,21 @@ import type {BackboardTx} from '../util/types';
 type Status = 'empty' | 'error' | 'filling' | 'flushing' | 'full';
 
 // Only these IDB object stores for now. Keep in memory only player info for non-retired players and team info for the current season.
-type Store = 'players' | 'playerStats' | 'teams' | 'teamSeasons' | 'teamStats';
-type Index = 'playerStats' | 'playerStatsByPid' | 'playersByTid';
+type Store = 'playerStats' | 'players' | 'teamSeasons' | 'teamStats' | 'teams';
+type Index = 'playerStats' | 'playerStatsByPid' | 'playersByTid' | 'teamSeasonsBySeasonTid' | 'teamSeasonsByTidSeason';
 
 type Data = {
     [key: Store]: any,
 };
+type Indexes = {
+    [key: Index]: any,
+};
 
-const STORES: Store[] = ['players', 'playerStats', 'teams', 'teamSeasons', 'teamStats'];
+const STORES: Store[] = ['playerStats', 'players', 'teamSeasons', 'teamStats', 'teams'];
 
 class Cache {
     data: Data;
+    indexes: Indexes;
     status: Status;
 
     constructor() {
@@ -87,6 +91,23 @@ class Cache {
         }
     }
 
+    // Past 3 seasons
+    async fillTeamSeasons(tx: BackboardTx) {
+        this.checkStatus('filling');
+
+        const teamSeasons = await tx.teamSeasons.index('season, tid').getAll(backboard.bound([g.season - 2], [g.season, '']));
+
+        this.data.teamSeasons = {};
+        this.indexes.teamSeasonsBySeasonTid = {};
+        this.indexes.teamSeasonsByTidSeason = {};
+
+        for (const ts of teamSeasons) {
+//            this.data.teamSeasons[ts.rid] = ts;
+            this.indexes.teamSeasonsBySeasonTid[`${ts.season},${ts.tid}`] = ts;
+            this.indexes.teamSeasonsByTidSeason[`${ts.tid},${ts.season}`] = ts;
+        }
+    }
+
     async fillTeams(tx: BackboardTx) {
         this.checkStatus('filling');
 
@@ -109,6 +130,7 @@ class Cache {
         await g.dbl.tx(STORES, async (tx) => {
             const promises = [
                 this.fillPlayers(tx),
+                this.fillTeamSeasons(tx),
                 this.fillTeams(tx),
             ];
 
@@ -134,8 +156,6 @@ class Cache {
 
     async getAll(store: Store) {
         this.checkStatus('full');
-
-        console.log('getAll', store);
 
         return Object.values(this.data[store]);
     }

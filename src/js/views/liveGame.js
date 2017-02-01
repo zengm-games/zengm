@@ -22,7 +22,7 @@ async function updatePlayByPlay(inputs, updateEvents) {
     }
 
     if (inputs.playByPlay !== undefined && inputs.playByPlay.length > 0) {
-        const boxScore = await g.dbl.games.get(inputs.gidPlayByPlay);
+        const boxScore = await g.cache.get('games', inputs.gidPlayByPlay);
 
         // Stats to set to 0
         const resetStats = ["min", "fg", "fga", "tp", "tpa", "ft", "fta", "orb", "trb", "ast", "tov", "stl", "blk", "ba", "pf", "pts", "pm"];

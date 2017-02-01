@@ -17,7 +17,12 @@ async function boxScore(gid: number) {
         return {};
     }
 
-    const game = await g.dbl.games.get(gid);
+    let game = await g.cache.get('games', gid);
+
+    // Only this season is in cache
+    if (!game) {
+        game = await g.dbl.games.get(gid);
+    }
 
     // If game doesn't exist (bad gid or deleted box scores), show nothing
     if (!game) {

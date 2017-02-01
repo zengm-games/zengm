@@ -381,54 +381,63 @@ async function gameLogList(abbrev: string, season: number, gid: number, loadedGa
         maxGid = -1; // Load all games
     }
 
-    const games = [];
+    const gameInfos = [];
 
-    // This could be made much faster by using a compound index to search for season + team, but that's not supported by IE 10
-    await g.dbl.games.index('season').iterate(season, "prev", (game, shortCircuit) => {
-        if (game.gid <= maxGid) {
-            return shortCircuit();
+    let games;
+    if (season === g.season) {
+        games = await g.cache.getAll('games');
+    } else {
+        games = await g.dbl.games.index('season').getAll(season);
+    }
+
+    // Iterate backwards, was more useful back when current season wasn't cached
+    for (let i = games.length - 1; i >= 0; i--) {
+        const gm = games[i];
+
+        if (gm.gid <= maxGid) {
+            break;
         }
 
         let overtime;
-        if (game.overtimes === 1) {
+        if (gm.overtimes === 1) {
             overtime = " (OT)";
-        } else if (game.overtimes > 1) {
-            overtime = ` (${game.overtimes}OT)`;
+        } else if (gm.overtimes > 1) {
+            overtime = ` (${gm.overtimes}OT)`;
         } else {
             overtime = "";
         }
 
         // Check tid
-        if (game.teams[0].tid === tid || game.teams[1].tid === tid) {
-            if (game.teams[0].tid === tid) {
-                games.push({
-                    gid: game.gid,
+        if (gm.teams[0].tid === tid || gm.teams[1].tid === tid) {
+            if (gm.teams[0].tid === tid) {
+                gameInfos.push({
+                    gid: gm.gid,
                     overtime,
                     tid,
                     home: true,
-                    oppAbbrev: g.teamAbbrevsCache[game.teams[1].tid],
-                    oppPts: game.teams[1].pts,
-                    oppTid: game.teams[1].tid,
-                    pts: game.teams[0].pts,
-                    won: game.teams[0].pts > game.teams[1].pts,
+                    oppAbbrev: g.teamAbbrevsCache[gm.teams[1].tid],
+                    oppPts: gm.teams[1].pts,
+                    oppTid: gm.teams[1].tid,
+                    pts: gm.teams[0].pts,
+                    won: gm.teams[0].pts > gm.teams[1].pts,
                 });
-            } else if (game.teams[1].tid === tid) {
-                games.push({
-                    gid: game.gid,
+            } else if (gm.teams[1].tid === tid) {
+                gameInfos.push({
+                    gid: gm.gid,
                     overtime,
                     tid,
                     home: false,
-                    oppAbbrev: g.teamAbbrevsCache[game.teams[0].tid],
-                    oppPts: game.teams[0].pts,
-                    oppTid: game.teams[0].tid,
-                    pts: game.teams[1].pts,
-                    won: game.teams[1].pts > game.teams[0].pts,
+                    oppAbbrev: g.teamAbbrevsCache[gm.teams[0].tid],
+                    oppPts: gm.teams[0].pts,
+                    oppTid: gm.teams[0].tid,
+                    pts: gm.teams[1].pts,
+                    won: gm.teams[1].pts > gm.teams[0].pts,
                 });
             }
         }
-    });
+    }
 
-    return games;
+    return gameInfos;
 }
 
 function formatCompletedGame(game: GameProcessed): GameProcessedCompleted {

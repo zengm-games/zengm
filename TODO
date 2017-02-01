@@ -1,8 +1,5 @@
 IVERSON
 
-games
-- put, with logic to keep index updated(if i have an index)
-
 make Cache more DRY regarding indexes, reading object stores
 
 replace all usage of IDB with cache, otherwise things will be more likely to get out of sync on flush failure
@@ -19,6 +16,8 @@ how to handle data not in cache?
 put playerStats back under players?
 
 debug mode makes huge perf difference
+
+delete old data should empty cache?
 
 tests
 

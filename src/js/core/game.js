@@ -288,7 +288,7 @@ async function writePlayerStats(tx: BackboardTx, results: GameResults) {
     }))));
 }
 
-async function writeGameStats(tx: BackboardTx, results: GameResults, att: number) {
+async function writeGameStats(results: GameResults, att: number) {
     const gameStats = {
         gid: results.gid,
         att,
@@ -347,7 +347,7 @@ async function writeGameStats(tx: BackboardTx, results: GameResults, att: number
             text = `Your team lost to the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[results.team[tw].id], g.season])}">${g.teamNamesCache[results.team[tw].id]}`;
         }
         text += `</a> <a href="${helpers.leagueUrl(["game_log", g.teamAbbrevsCache[g.userTid], g.season, results.gid])}">${results.team[tw].stat.pts}-${results.team[tl].stat.pts}</a>.`;
-        logEvent(tx, {
+        logEvent(null, {
             type: results.team[tw].id === g.userTid ? "gameWon" : "gameLost",
             text,
             saveToDb: false,
@@ -366,11 +366,11 @@ async function writeGameStats(tx: BackboardTx, results: GameResults, att: number
                 }
                 delete results.clutchPlays[i].tempText;
             }
-            logEvent(tx, results.clutchPlays[i]);
+            logEvent(null, results.clutchPlays[i]);
         }
     }
 
-    await tx.games.put(gameStats);
+    await g.cache.put('games', gameStats);
 }
 
 async function updatePlayoffSeries(tx: BackboardTx, results: GameResults) {
@@ -624,7 +624,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
         await g.dbl.tx(objectStores, "readwrite", async tx => {
             const gidsFinished = await Promise.all(results.map(async (result) => {
                 const att = await writeTeamStats(result);
-                await writeGameStats(tx, result, att);
+                await writeGameStats(result, att);
                 await writePlayerStats(tx, result);
                 return result.gid;
             }));

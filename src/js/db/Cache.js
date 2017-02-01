@@ -8,7 +8,7 @@ import type {BackboardTx} from '../util/types';
 type Status = 'empty' | 'error' | 'filling' | 'flushing' | 'full';
 
 // Only these IDB object stores for now. Keep in memory only player info for non-retired players and team info for the current season.
-type Store = 'playerStats' | 'players' | 'releasedPlayers' | 'teamSeasons' | 'teamStats' | 'teams';
+type Store = 'games' | 'playerStats' | 'players' | 'releasedPlayers' | 'teamSeasons' | 'teamStats' | 'teams';
 type Index = 'playerStats' | 'playerStatsByPid' | 'playersByTid' | 'releasedPlayers' | 'releasedPlayersByTid' | 'teamSeasonsBySeasonTid' | 'teamSeasonsByTidSeason' | 'teamStatsByPlayoffsTid';
 
 type Data = {
@@ -18,7 +18,7 @@ type Indexes = {
     [key: Index]: any,
 };
 
-const STORES: Store[] = ['playerStats', 'players', 'releasedPlayers', 'teamSeasons', 'teamStats', 'teams'];
+const STORES: Store[] = ['games', 'playerStats', 'players', 'releasedPlayers', 'teamSeasons', 'teamStats', 'teams'];
 
 class Cache {
     data: Data;
@@ -41,6 +41,20 @@ class Cache {
         this.status = status;
     }
 
+    // Current season
+    async fillGames(tx: BackboardTx) {
+        this.checkStatus('filling');
+
+        const games = await tx.games.index('season').getAll(g.season);
+
+        this.data.games = {};
+
+        for (const gm of games) {
+            this.data.games[gm.gid] = gm;
+        }
+    }
+
+    // Non-retired players
     async fillPlayers(tx: BackboardTx) {
         this.checkStatus('filling');
 
@@ -126,7 +140,7 @@ class Cache {
         }
     }
 
-    // Past 3 seasons
+    // Current season
     async fillTeamStats(tx: BackboardTx) {
         this.checkStatus('filling');
 
@@ -162,6 +176,7 @@ class Cache {
 
         await g.dbl.tx(STORES, async (tx) => {
             await Promise.all([
+                this.fillGames(tx),
                 this.fillPlayers(tx),
                 this.fillReleasedPlayers(tx),
                 this.fillTeamSeasons(tx),
@@ -222,6 +237,15 @@ class Cache {
             }
         }
         return output;
+    }
+
+    async put(store: Store, obj: any) {
+        if (store !== 'games') {
+            throw new Error(`put not implemented for store "${store}"`);
+        }
+console.log('put', obj)
+
+        this.data.games[obj.gid] = obj;
     }
 }
 

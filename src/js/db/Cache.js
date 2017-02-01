@@ -240,12 +240,11 @@ class Cache {
     }
 
     async put(store: Store, obj: any) {
-        if (store !== 'games') {
+        if (store === 'games') {
+            this.data.games[obj.gid] = obj;
+        } else {
             throw new Error(`put not implemented for store "${store}"`);
         }
-console.log('put', obj)
-
-        this.data.games[obj.gid] = obj;
     }
 }
 

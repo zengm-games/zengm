@@ -1961,7 +1961,7 @@ function checkStatisticalFeat(tx: BackboardTx, pid: number, tid: number, p: Game
     let saveFeat = false;
 
     const logFeat = text => {
-        logEvent(tx, {
+        logEvent(null, {
             type: "playerFeat",
             text,
             showNotification: tid === g.userTid,

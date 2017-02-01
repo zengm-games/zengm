@@ -246,7 +246,7 @@ async function writePlayerStats(tx: BackboardTx, results: GameResults) {
             if (injuredThisGame) {
                 p2.injury = player.injury(t.healthRank);
                 p.injury = p2.injury; // So it gets written to box score
-                logEvent(tx, {
+                logEvent(null, {
                     type: "injured",
                     text: `<a href="${helpers.leagueUrl(["player", p2.pid])}">${p2.firstName} ${p2.lastName}</a> was injured! (${p2.injury.type}, out for ${p2.injury.gamesRemaining} games)`,
                     showNotification: p2.tid === g.userTid,
@@ -435,7 +435,7 @@ async function updatePlayoffSeries(tx: BackboardTx, results: GameResults) {
             }
 
             const showNotification = series.away.tid === g.userTid || series.home.tid === g.userTid || playoffSeries.currentRound === 3;
-            logEvent(tx, {
+            logEvent(null, {
                 type: "playoffs",
                 text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[winnerTid], g.season])}">${g.teamNamesCache[winnerTid]}</a> defeated the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[loserTid], g.season])}">${g.teamNamesCache[loserTid]}</a> in the ${currentRoundText}, 4-${loserWon}.`,
                 showNotification,
@@ -620,7 +620,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
 
     // Saves a vector of results objects for a day, as is output from cbSimGames
     const cbSaveResults = async results => {
-        const objectStores = ["events", "games", "players", "playerFeats", "playerStats", "playoffSeries", "schedule"];
+        const objectStores = ["players", "playerFeats", "playerStats", "playoffSeries", "schedule"];
         await g.dbl.tx(objectStores, "readwrite", async tx => {
             const gidsFinished = await Promise.all(results.map(async (result) => {
                 const att = await writeTeamStats(result);
@@ -654,7 +654,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
                 if (p.injury.type !== "Healthy" && p.injury.gamesRemaining <= 0) {
                     p.injury = {type: "Healthy", gamesRemaining: 0};
 
-                    logEvent(tx, {
+                    logEvent(null, {
                         type: "healed",
                         text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> has recovered from his injury.`,
                         showNotification: p.tid === g.userTid,

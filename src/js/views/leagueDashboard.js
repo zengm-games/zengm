@@ -50,7 +50,7 @@ async function updateTeam(inputs, updateEvents) {
 
 async function updatePayroll(inputs, updateEvents) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('playerMovement')) {
-        const payroll = await team.getPayroll(null, g.userTid).get(0);
+        const payroll = await team.getPayroll(g.userTid).get(0);
         return {
             payroll: payroll / 1000, // [millions of dollars]
         };

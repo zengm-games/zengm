@@ -273,7 +273,7 @@ function summary(teams: TradeTeams): TradeSummary {
                 ratios[j] = 100;
             }
 
-            const payroll = await team.getPayroll(tx, tids[j]).get(0);
+            const payroll = await team.getPayroll(tids[j]).get(0);
             s.teams[j].payrollAfterTrade = payroll / 1000 + s.teams[k].total - s.teams[j].total;
             if (s.teams[j].payrollAfterTrade > g.salaryCap / 1000) {
                 overCap[j] = true;

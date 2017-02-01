@@ -19,7 +19,7 @@ function get() {
 
 async function updateFreeAgents() {
     let [payroll, userPlayers, players] = await Promise.all([
-        team.getPayroll(null, g.userTid).get(0),
+        team.getPayroll(g.userTid).get(0),
         g.dbl.players.index('tid').getAll(g.userTid),
         g.dbl.players.index('tid').getAll(g.PLAYER.FREE_AGENT).then(players2 => {
             return player.withStats(null, players2, {

@@ -195,7 +195,7 @@ const augmentOffers = offers => {
                 pick.desc = helpers.pickDesc(pick);
             }
 
-            const payroll = await team.getPayroll(null, tid).get(0);
+            const payroll = await team.getPayroll(tid).get(0);
 
             return {
                 tid,

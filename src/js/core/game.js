@@ -19,7 +19,7 @@ import * as lock from '../util/lock';
 import * as random from '../util/random';
 import type {BackboardTx, GameResults} from '../util/types';
 
-async function writeTeamStats(tx: BackboardTx, results: GameResults) {
+async function writeTeamStats(results: GameResults) {
     let att = 0;
     let ticketPrice = 0;
 
@@ -27,7 +27,7 @@ async function writeTeamStats(tx: BackboardTx, results: GameResults) {
         const t2 = t1 === 1 ? 0 : 1;
 
         const [payroll, t, teamSeasons, teamStats] = await Promise.all([
-            team.getPayroll(tx, results.team[t1].id).get(0),
+            team.getPayroll(results.team[t1].id).get(0),
             g.cache.get('teams', results.team[t1].id),
             g.cache.indexGetAll('teamSeasonsByTidSeason', [`${results.team[t1].id},${g.season - 2}`, `${results.team[t1].id},${g.season}`]),
             g.cache.indexGet('teamStatsByPlayoffsTid', `${g.phase === g.PHASE.PLAYOFFS ? 1 : 0},${results.team[t1].id}`),
@@ -620,10 +620,10 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
 
     // Saves a vector of results objects for a day, as is output from cbSimGames
     const cbSaveResults = async results => {
-        const objectStores = ["events", "games", "players", "playerFeats", "playerStats", "playoffSeries", "releasedPlayers", "schedule"];
+        const objectStores = ["events", "games", "players", "playerFeats", "playerStats", "playoffSeries", "schedule"];
         await g.dbl.tx(objectStores, "readwrite", async tx => {
             const gidsFinished = await Promise.all(results.map(async (result) => {
-                const att = await writeTeamStats(tx, result);
+                const att = await writeTeamStats(result);
                 await writeGameStats(tx, result, att);
                 await writePlayerStats(tx, result);
                 return result.gid;

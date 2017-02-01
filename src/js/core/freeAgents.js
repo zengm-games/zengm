@@ -70,7 +70,7 @@ async function autoSign(tx: BackboardTx) {
 
             const [numPlayersOnRoster, payroll] = await Promise.all([
                 tx2.players.index('tid').count(tid),
-                team.getPayroll(tx2, tid).get(0),
+                team.getPayroll(tid).get(0),
             ]);
 
             if (numPlayersOnRoster < 15) {

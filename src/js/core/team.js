@@ -358,10 +358,9 @@ async function getContracts(tid: number): Promise<ContractInfo[]> {
  *
  * @memberOf core.team
  * @param {IDBTransaction|null} tx An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
- * @param {number} tid Team ID.
  * @return {Promise.<number, Array=>} Resolves to an array; first argument is the payroll in thousands of dollars, second argument is the array of contract objects from getContracts.
  */
-async function getPayroll(tx: BackboardTx, tid: number): Promise<[number, ContractInfo[]]> {
+async function getPayroll(tid: number): Promise<[number, ContractInfo[]]> {
     const contracts = await getContracts(tid);
 
     let payroll = 0;
@@ -376,13 +375,12 @@ async function getPayroll(tx: BackboardTx, tid: number): Promise<[number, Contra
  * Get the total current payroll for every team team.
  *
  * @memberOf core.team
- * @param {IDBTransaction|null} ot An IndexedDB transaction on players and releasedPlayers; if null is passed, then a new transaction will be used.
  * @return {Promise} Resolves to an array of payrolls, ordered by team id.
  */
-function getPayrolls(tx: BackboardTx): Promise<number[]> {
+function getPayrolls(): Promise<number[]> {
     const promises = [];
     for (let tid = 0; tid < g.numTeams; tid++) {
-        promises.push(getPayroll(tx, tid).get(0));
+        promises.push(getPayroll(tid).get(0));
     }
 
     return Promise.all(promises);
@@ -683,7 +681,7 @@ function filter(options: any): Promise<TeamFiltered | TeamFiltered[]> {
         }
 
         const savePayroll = async i => {
-            const payroll = await getPayroll(options.ot, teams[i].tid).get(0);
+            const payroll = await getPayroll(teams[i].tid).get(0);
             fts[i].payroll = payroll / 1000;
             if (i === fts.length - 1) {
                 return returnOneTeam ? fts[0] : fts;
@@ -930,7 +928,7 @@ async function valueChange(
         getPlayers();
         getPicks();
 
-        payroll = await getPayroll(tx, tid);
+        payroll = await getPayroll(tid);
     });
 
 /*    // Handle situations where the team goes over the roster size limit

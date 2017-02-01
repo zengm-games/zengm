@@ -117,7 +117,7 @@ async function cancelAll(tx: BackboardTx) {
 async function accept(pid: number, amount: number, exp: number): Promise<string> {
     const [negotiation, payroll] = await Promise.all([
         g.dbl.negotiations.get(pid),
-        team.getPayroll(null, g.userTid).get(0),
+        team.getPayroll(g.userTid).get(0),
     ]);
 
     // If this contract brings team over the salary cap, it's not a minimum;

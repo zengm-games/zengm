@@ -27,7 +27,7 @@ async function updateTeamFinances(inputs, updateEvents, state) {
             luxuryTax: g.luxuryTax,
         };
 
-        const contracts = await team.getPayroll(null, inputs.tid).get(1);
+        const contracts = await team.getPayroll(inputs.tid).get(1);
 
         let showInt;
         if (inputs.show === "all") {

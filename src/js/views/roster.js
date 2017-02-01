@@ -56,7 +56,7 @@ function updateRoster(inputs, updateEvents, state) {
                             statsTid: inputs.tid,
                         });
                     }),
-                    team.getPayroll(tx, inputs.tid).get(0),
+                    team.getPayroll(inputs.tid).get(0),
                 ]);
 
                 // numGamesRemaining doesn't need to be calculated except for g.userTid, but it is.

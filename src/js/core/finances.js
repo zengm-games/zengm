@@ -16,7 +16,7 @@ import type {BackboardTx, TeamSeason} from '../util/types';
 async function assessPayrollMinLuxury(tx: BackboardTx) {
     let collectedTax = 0;
 
-    const payrolls = await team.getPayrolls(tx);
+    const payrolls = await team.getPayrolls();
 
     await tx.teamSeasons.index("season, tid").iterate(backboard.bound([g.season], [g.season, '']), teamSeason => {
         // Store payroll

@@ -97,7 +97,7 @@ async function updateNegotiation(inputs) {
     // Generate contract options
     const contractOptions = generateContractOptions(p.contract, p.ratings.ovr);
 
-    const payroll = await team.getPayroll(null, g.userTid).get(0);
+    const payroll = await team.getPayroll(g.userTid).get(0);
     return {
         contractOptions,
         payroll: payroll / 1000,

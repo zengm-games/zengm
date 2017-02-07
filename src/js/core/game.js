@@ -17,7 +17,7 @@ import logEvent from '../util/logEvent';
 import * as helpers from '../util/helpers';
 import * as lock from '../util/lock';
 import * as random from '../util/random';
-import type {BackboardTx, GameResults} from '../util/types';
+import type {GameResults} from '../util/types';
 
 async function writeTeamStats(results: GameResults) {
     let att = 0;
@@ -373,78 +373,80 @@ async function writeGameStats(results: GameResults, att: number) {
     await g.cache.put('games', gameStats);
 }
 
-async function updatePlayoffSeries(tx: BackboardTx, results: GameResults) {
-    const playoffSeries = await tx.playoffSeries.get(g.season);
+async function updatePlayoffSeries(results: GameResults) {
+    await g.dbl.tx(['playoffSeries'], "readwrite", async (tx) => {
+        const playoffSeries = await tx.playoffSeries.get(g.season);
 
-    const playoffRound = playoffSeries.series[playoffSeries.currentRound];
+        const playoffRound = playoffSeries.series[playoffSeries.currentRound];
 
-    for (const result of results) {
-        // Did the home (true) or away (false) team win this game? Here, "home" refers to this game, not the team which has homecourt advnatage in the playoffs, which is what series.home refers to below.
-        const won0 = result.team[0].stat.pts > result.team[1].stat.pts;
+        for (const result of results) {
+            // Did the home (true) or away (false) team win this game? Here, "home" refers to this game, not the team which has homecourt advnatage in the playoffs, which is what series.home refers to below.
+            const won0 = result.team[0].stat.pts > result.team[1].stat.pts;
 
-        let series;
-        for (let i = 0; i < playoffRound.length; i++) {
-            series = playoffRound[i];
+            let series;
+            for (let i = 0; i < playoffRound.length; i++) {
+                series = playoffRound[i];
 
-            if (series.home.tid === result.team[0].id) {
-                if (won0) {
-                    series.home.won += 1;
-                } else {
-                    series.away.won += 1;
+                if (series.home.tid === result.team[0].id) {
+                    if (won0) {
+                        series.home.won += 1;
+                    } else {
+                        series.away.won += 1;
+                    }
+                    break;
+                } else if (series.away.tid === result.team[0].id) {
+                    if (won0) {
+                        series.away.won += 1;
+                    } else {
+                        series.home.won += 1;
+                    }
+                    break;
                 }
-                break;
-            } else if (series.away.tid === result.team[0].id) {
-                if (won0) {
-                    series.away.won += 1;
+            }
+
+            // For flow, not really necessary
+            if (series === undefined) {
+                continue;
+            }
+
+            // Log result of playoff series
+            if (series.away.won >= 4 || series.home.won >= 4) {
+                let winnerTid;
+                let loserTid;
+                let loserWon;
+                if (series.away.won >= 4) {
+                    winnerTid = series.away.tid;
+                    loserTid = series.home.tid;
+                    loserWon = series.home.won;
                 } else {
-                    series.home.won += 1;
+                    winnerTid = series.home.tid;
+                    loserTid = series.away.tid;
+                    loserWon = series.away.won;
                 }
-                break;
+
+                let currentRoundText = '';
+                if (playoffSeries.currentRound === 0) {
+                    currentRoundText = "first round of the playoffs";
+                } else if (playoffSeries.currentRound === 1) {
+                    currentRoundText = "second round of the playoffs";
+                } else if (playoffSeries.currentRound === 2) {
+                    currentRoundText = "conference finals";
+                } else if (playoffSeries.currentRound === 3) {
+                    currentRoundText = "league championship";
+                }
+
+                const showNotification = series.away.tid === g.userTid || series.home.tid === g.userTid || playoffSeries.currentRound === 3;
+                logEvent(null, {
+                    type: "playoffs",
+                    text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[winnerTid], g.season])}">${g.teamNamesCache[winnerTid]}</a> defeated the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[loserTid], g.season])}">${g.teamNamesCache[loserTid]}</a> in the ${currentRoundText}, 4-${loserWon}.`,
+                    showNotification,
+                    tids: [winnerTid, loserTid],
+                });
             }
         }
 
-        // For flow, not really necessary
-        if (series === undefined) {
-            continue;
-        }
-
-        // Log result of playoff series
-        if (series.away.won >= 4 || series.home.won >= 4) {
-            let winnerTid;
-            let loserTid;
-            let loserWon;
-            if (series.away.won >= 4) {
-                winnerTid = series.away.tid;
-                loserTid = series.home.tid;
-                loserWon = series.home.won;
-            } else {
-                winnerTid = series.home.tid;
-                loserTid = series.away.tid;
-                loserWon = series.away.won;
-            }
-
-            let currentRoundText = '';
-            if (playoffSeries.currentRound === 0) {
-                currentRoundText = "first round of the playoffs";
-            } else if (playoffSeries.currentRound === 1) {
-                currentRoundText = "second round of the playoffs";
-            } else if (playoffSeries.currentRound === 2) {
-                currentRoundText = "conference finals";
-            } else if (playoffSeries.currentRound === 3) {
-                currentRoundText = "league championship";
-            }
-
-            const showNotification = series.away.tid === g.userTid || series.home.tid === g.userTid || playoffSeries.currentRound === 3;
-            logEvent(null, {
-                type: "playoffs",
-                text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[winnerTid], g.season])}">${g.teamNamesCache[winnerTid]}</a> defeated the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[loserTid], g.season])}">${g.teamNamesCache[loserTid]}</a> in the ${currentRoundText}, 4-${loserWon}.`,
-                showNotification,
-                tids: [winnerTid, loserTid],
-            });
-        }
-    }
-
-    await tx.playoffSeries.put(playoffSeries);
+        await tx.playoffSeries.put(playoffSeries);
+    });
 }
 
 /**
@@ -620,58 +622,56 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
 
     // Saves a vector of results objects for a day, as is output from cbSimGames
     const cbSaveResults = async results => {
-        await g.dbl.tx(['playoffSeries'], "readwrite", async (tx) => {
-            const gidsFinished = await Promise.all(results.map(async (result) => {
-                const att = await writeTeamStats(result);
-                await writeGameStats(result, att);
-                await writePlayerStats(result);
-                return result.gid;
-            }));
+        const gidsFinished = await Promise.all(results.map(async (result) => {
+            const att = await writeTeamStats(result);
+            await writeGameStats(result, att);
+            await writePlayerStats(result);
+            return result.gid;
+        }));
 
-            const promises = [];
+        const promises = [];
 
-            // Update playoff series W/L
-            if (g.phase === g.PHASE.PLAYOFFS) {
-                promises.push(updatePlayoffSeries(tx, results));
+        // Update playoff series W/L
+        if (g.phase === g.PHASE.PLAYOFFS) {
+            promises.push(updatePlayoffSeries(results));
+        }
+
+        // Delete finished games from schedule
+        for (let j = 0; j < gidsFinished.length; j++) {
+            promises.push(g.cache.delete('schedule', gidsFinished[j]));
+        }
+
+        // Update ranks
+        promises.push(finances.updateRanks(["expenses", "revenues"]));
+
+        // Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
+        const players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.FREE_AGENT, Infinity]);
+        for (const p of players) {
+            if (p.injury.gamesRemaining > 0) {
+                p.injury.gamesRemaining -= 1;
+            }
+            // Is it already over?
+            if (p.injury.type !== "Healthy" && p.injury.gamesRemaining <= 0) {
+                p.injury = {type: "Healthy", gamesRemaining: 0};
+
+                logEvent(null, {
+                    type: "healed",
+                    text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> has recovered from his injury.`,
+                    showNotification: p.tid === g.userTid,
+                    pids: [p.pid],
+                    tids: [p.tid],
+                });
             }
 
-            // Delete finished games from schedule
-            for (let j = 0; j < gidsFinished.length; j++) {
-                promises.push(g.cache.delete('schedule', gidsFinished[j]));
+            // Also check for gamesUntilTradable
+            if (!p.hasOwnProperty("gamesUntilTradable")) {
+                p.gamesUntilTradable = 0; // Initialize for old leagues
+            } else if (p.gamesUntilTradable > 0) {
+                p.gamesUntilTradable -= 1;
             }
+        }
 
-            // Update ranks
-            promises.push(finances.updateRanks(["expenses", "revenues"]));
-
-            // Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
-            const players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.FREE_AGENT, Infinity]);
-            for (const p of players) {
-                if (p.injury.gamesRemaining > 0) {
-                    p.injury.gamesRemaining -= 1;
-                }
-                // Is it already over?
-                if (p.injury.type !== "Healthy" && p.injury.gamesRemaining <= 0) {
-                    p.injury = {type: "Healthy", gamesRemaining: 0};
-
-                    logEvent(null, {
-                        type: "healed",
-                        text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> has recovered from his injury.`,
-                        showNotification: p.tid === g.userTid,
-                        pids: [p.pid],
-                        tids: [p.tid],
-                    });
-                }
-
-                // Also check for gamesUntilTradable
-                if (!p.hasOwnProperty("gamesUntilTradable")) {
-                    p.gamesUntilTradable = 0; // Initialize for old leagues
-                } else if (p.gamesUntilTradable > 0) {
-                    p.gamesUntilTradable -= 1;
-                }
-            }
-
-            await Promise.all(promises);
-        });
+        await Promise.all(promises);
 
         // If there was a play by play done for one of these games, get it
         let raw;

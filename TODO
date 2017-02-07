@@ -1,8 +1,5 @@
 IVERSON
 
-player.updateValues
--  more playerStats in cache? or maybe a minimal index specifically for updateValues
-
 messages
 - like feats, maybe abstract playerFeats view merging getAll stuff
 

@@ -27,7 +27,22 @@ function get(ctx) {
 
 async function updatePlayers(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('gameSim') || inputs.abbrev !== state.abbrev || inputs.season !== state.season || inputs.playoffs !== state.playoffs) {
-        let feats = await g.dbl.playerFeats.getAll();
+        let feats = []
+            .concat(await g.dbl.playerFeats.getAll())
+            .concat(await g.cache.getAll('playerFeats'));
+
+        // Put fake fid on cached feats
+        let maxFid = 0;
+        for (const feat of feats) {
+            if (feat.hasOwnProperty('fid')) {
+                if (feat.fid > maxFid) {
+                    maxFid = feat.fid;
+                }
+            } else {
+                maxFid += 1;
+                feat.fid = maxFid;
+            }
+        }
 
         if (inputs.abbrev !== "all") {
             feats = feats.filter(feat => g.teamAbbrevsCache[feat.tid] === inputs.abbrev);

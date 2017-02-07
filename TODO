@@ -1,6 +1,10 @@
 IVERSON
 
-feats - don't store any in cache, except new ones. then on flush, reset. when read, concat cache and IDB
+player.updateValues
+-  more playerStats in cache? or maybe a minimal index specifically for updateValues
+
+messages
+- like feats, maybe abstract playerFeats view merging getAll stuff
 
 make Cache more DRY regarding indexes, reading object stores
 

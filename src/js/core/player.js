@@ -1950,7 +1950,7 @@ function augmentPartialPlayer(p: any, scoutingRank: number): PlayerWithStats {
     return p;
 }
 
-function checkStatisticalFeat(tx: BackboardTx, pid: number, tid: number, p: GamePlayer, results: GameResults) {
+function checkStatisticalFeat(pid: number, tid: number, p: GamePlayer, results: GameResults) {
     const minFactor = Math.sqrt(g.quarterLength / 12); // sqrt is to account for fatigue in short/long games. Also https://news.ycombinator.com/item?id=11032596
     const TEN = minFactor * 10;
     const FIVE = minFactor * 5;
@@ -2043,7 +2043,7 @@ function checkStatisticalFeat(tx: BackboardTx, pid: number, tid: number, p: Game
 
         logFeat(featText);
 
-        tx.playerFeats.add({
+        g.cache.put('playerFeats', {
             pid,
             name: p.name,
             pos: p.pos,

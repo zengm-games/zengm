@@ -218,7 +218,7 @@ async function writePlayerStats(tx: BackboardTx, results: GameResults) {
 
         const promises = [];
 
-        promises.push(player.checkStatisticalFeat(tx, p.id, t.id, p, results));
+        promises.push(player.checkStatisticalFeat(p.id, t.id, p, results));
 
         const ps = await g.cache.indexGet('playerStatsByPid', p.id);
 
@@ -620,7 +620,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
 
     // Saves a vector of results objects for a day, as is output from cbSimGames
     const cbSaveResults = async results => {
-        const objectStores = ["players", "playerFeats", "playerStats", "playoffSeries"];
+        const objectStores = ["players", "playerStats", "playoffSeries"];
         await g.dbl.tx(objectStores, "readwrite", async tx => {
             const gidsFinished = await Promise.all(results.map(async (result) => {
                 const att = await writeTeamStats(result);

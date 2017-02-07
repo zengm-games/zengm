@@ -8,7 +8,7 @@ import type {BackboardTx} from '../util/types';
 type Status = 'empty' | 'error' | 'filling' | 'flushing' | 'full';
 
 // Only these IDB object stores for now. Keep in memory only player info for non-retired players and team info for the current season.
-type Store = 'games' | 'playerStats' | 'players' | 'releasedPlayers' | 'schedule' | 'teamSeasons' | 'teamStats' | 'teams';
+type Store = 'games' | 'playerFeats' | 'playerStats' | 'players' | 'releasedPlayers' | 'schedule' | 'teamSeasons' | 'teamStats' | 'teams';
 type Index = 'playerStats' | 'playerStatsByPid' | 'playersByTid' | 'releasedPlayers' | 'releasedPlayersByTid' | 'teamSeasonsBySeasonTid' | 'teamSeasonsByTidSeason' | 'teamStatsByPlayoffsTid';
 
 type Data = {
@@ -21,7 +21,7 @@ type Deletes = {
     [key: Store]: number[],
 };
 
-const STORES: Store[] = ['games', 'playerStats', 'players', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams'];
+const STORES: Store[] = ['games', 'playerFeats', 'playerStats', 'players', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams'];
 
 class Cache {
     data: Data;
@@ -108,6 +108,8 @@ class Cache {
                 }
             }
         }
+
+        this.data.playerFeats = {};
     }
 
     async fillReleasedPlayers(tx: BackboardTx) {
@@ -186,24 +188,22 @@ class Cache {
     }
 
     // Load database from disk and save in cache, wiping out any prior values in cache
-    async fill(stores = STORES) {
+    async fill() {
         this.checkStatus('empty', 'full');
         this.setStatus('filling');
 
         this.data = {};
 
-        const storesToLoad = stores.filter((store) => store !== 'playerStats');
-
-        // playerStats is done in fillPlayers
-        if (stores.includes('playerStats') && !stores.includes('players')) {
-            storesToLoad.push('players');
-        }
-
-        await g.dbl.tx(stores, async (tx) => {
-            await Promise.all(storesToLoad.map((store) => {
-                const funcName = `fill${store[0].toUpperCase()}${store.substr(1)}`;
-                return this[funcName](tx);
-            }));
+        await g.dbl.tx(STORES, async (tx) => {
+            await Promise.all([
+                this.fillGames(tx),
+                this.fillPlayers(tx),
+                this.fillReleasedPlayers(tx),
+                this.fillSchedule(tx),
+                this.fillTeamSeasons(tx),
+                this.fillTeamStats(tx),
+                this.fillTeams(tx),
+            ]);
         });
 
         this.setStatus('full');
@@ -263,6 +263,13 @@ class Cache {
     async put(store: Store, obj: any) {
         if (store === 'games') {
             this.data.games[obj.gid] = obj;
+        } else if (store === 'playerFeats') {
+            // Don't know primary key, and don't care
+            let key = Math.min(...Object.keys(this.data.playerFeats));
+            if (key === -Infinity) {
+                key = 0;
+            }
+            this.data.playerFeats[key] = obj;
         } else if (store === 'schedule') {
             this.data.schedule[obj.gid] = obj;
         } else {

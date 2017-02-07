@@ -116,41 +116,38 @@ async function autoSign(tx: BackboardTx) {
  * @return {Promise}
  */
 async function decreaseDemands() {
-    await g.dbl.tx("players", "readwrite", async tx => {
-        await tx.players.index('tid').iterate(g.PLAYER.FREE_AGENT, p => {
-            // Decrease free agent demands
-            p.contract.amount -= 50 * Math.sqrt(g.maxContract / 20000);
-            if (p.contract.amount < g.minContract) {
-                p.contract.amount = g.minContract;
-            }
+    const players = await g.cache.indexGetAll('playersByTid', g.PLAYER.FREE_AGENT);
+    for (const p of players) {
+        // Decrease free agent demands
+        p.contract.amount -= 50 * Math.sqrt(g.maxContract / 20000);
+        if (p.contract.amount < g.minContract) {
+            p.contract.amount = g.minContract;
+        }
 
-            if (g.phase !== g.PHASE.FREE_AGENCY) {
-                // Since this is after the season has already started, ask for a short contract
-                if (p.contract.amount < 1000) {
-                    p.contract.exp = g.season;
-                } else {
-                    p.contract.exp = g.season + 1;
-                }
-            }
-
-            // Free agents' resistance to signing decays after every regular season game
-            for (let i = 0; i < p.freeAgentMood.length; i++) {
-                p.freeAgentMood[i] -= 0.075;
-                if (p.freeAgentMood[i] < 0) {
-                    p.freeAgentMood[i] = 0;
-                }
-            }
-
-            // Also, heal.
-            if (p.injury.gamesRemaining > 0) {
-                p.injury.gamesRemaining -= 1;
+        if (g.phase !== g.PHASE.FREE_AGENCY) {
+            // Since this is after the season has already started, ask for a short contract
+            if (p.contract.amount < 1000) {
+                p.contract.exp = g.season;
             } else {
-                p.injury = {type: "Healthy", gamesRemaining: 0};
+                p.contract.exp = g.season + 1;
             }
+        }
 
-            return p;
-        });
-    });
+        // Free agents' resistance to signing decays after every regular season game
+        for (let i = 0; i < p.freeAgentMood.length; i++) {
+            p.freeAgentMood[i] -= 0.075;
+            if (p.freeAgentMood[i] < 0) {
+                p.freeAgentMood[i] = 0;
+            }
+        }
+
+        // Also, heal.
+        if (p.injury.gamesRemaining > 0) {
+            p.injury.gamesRemaining -= 1;
+        } else {
+            p.injury = {type: "Healthy", gamesRemaining: 0};
+        }
+    }
 }
 
 /**

@@ -9,6 +9,7 @@ replace all usage of IDB with cache, otherwise things will be more likely to get
   start with game.js and anything that it touches
 
 rewrite team.filter and player.filter
+- incorporate player.withStats
 
 when to fill/flush? phases, games, user interaction
 
@@ -25,6 +26,8 @@ tests
 make sure all player.value calls happen with full cache or psOverride
 
 make cache sync? it'll be faster, any problems though?
+
+revisit lock system
 
 ----
 

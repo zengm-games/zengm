@@ -838,17 +838,13 @@ function addRatingsRow<T: {ratings: PlayerRatings[]}>(
  *
  * A row contains stats for unique values of (pid, team, season, playoffs). So new rows need to be added when a player joins a new team, when a new season starts, or when a player's team makes the playoffs. The team ID in p.tid and player ID in p.pid will be used in the stats row, so if a player is changing teams, update p.tid before calling this.
  *
- * The return value is the player object with an updated statsTids as its argument. This is NOT written to the database within addStatsRow because it is often updated in several different ways before being written. Only the entry to playerStats is actually written to the databse by this function (which happens asynchronously). You probably want to write the updated player object to the database soon after calling this, in the same transaction.
+ * Additionally, `p.statsTids` is mutated to reflect the new row.
  *
  * @memberOf core.player
- * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on playerStats readwrite; if null is passed, then a new transaction will be used.
  * @param {Object} p Player object.
  * @param {=boolean} playoffs Is this stats row for the playoffs or not? Default false.
- * @return {Object} Updated player object.
  */
-function addStatsRow(tx: ?BackboardTx, p: Player, playoffs?: boolean = false): Player {
-    const dbOrTx = tx !== undefined && tx !== null ? tx : g.dbl;
-
+async function addStatsRow(p: Player, playoffs?: boolean = false) {
     const statsRow = {
         pid: p.pid,
         season: g.season,
@@ -889,60 +885,13 @@ function addStatsRow(tx: ?BackboardTx, p: Player, playoffs?: boolean = false): P
     p.statsTids = _.uniq(p.statsTids);
 
     // Calculate yearsWithTeam
-    // Iterate over player stats objects, most recent first
-    let ps = [];
-    Promise.try(() => {
-        if (!playoffs) {
-            // Because the "pid, season, tid" index does not order by psid, the first time we see a tid !== p.tid could
-            // be the same season a player was traded to that team, and there still could be one more with tid ===
-            // p.tid. So when we se tid !== p.tid, set stopOnSeason to the previous (next... I mean lower) season so we
-            // can stop storing stats when it's totally safe.
-            let stopOnSeason = 0;
+    const ps = await g.cache.indexGetAll('playerStatsAllByPid', p.pid);
+    if (ps[0].season === g.season - 1 && ps[0].tid === p.tid) {
+        statsRow.yearsWithTeam = ps[0].yearsWithTeam + 1;
+    }
 
-            return dbOrTx.playerStats.index('pid, season, tid')
-                .iterate(backboard.bound([p.pid, 0], [p.pid, g.season + 1]), 'prev', (psTemp, shortCircuit) => {
-                    // Skip playoff stats
-                    if (psTemp.playoffs) {
-                        return;
-                    }
-
-                    // Continue only if we haven't hit a season with another team yet
-                    if (psTemp.season === stopOnSeason) {
-                        shortCircuit();
-                    } else {
-                        if (psTemp.tid !== p.tid) {
-                            // Hit another team! Stop after this season is exhausted
-                            stopOnSeason = psTemp.season - 1;
-                        }
-
-                        // Store stats
-                        ps.push(psTemp);
-                    }
-                });
-        }
-    }).then(() => {
-        // Sort seasons in descending order. This is necessary because otherwise the index will cause ordering to be by tid within a season, which is probably not what is ever wanted.
-        ps = ps.sort((a, b) => b.psid - a.psid);
-
-        // Count non-playoff seasons starting from the current one
-        for (let i = 0; i < ps.length; i++) {
-            if (ps[i].tid === p.tid) {
-                statsRow.yearsWithTeam += 1;
-            } else {
-                break;
-            }
-
-            // Is this a complete duplicate entry? If so, not needed. This can happen e.g. in fantasy draft
-            // This is not quite a unique constraint because if a player is traded away from a team then back again, this check won't be reached because of the "break" above. That's fine. It shows the stints separately, which is probably best.
-            if (ps[i].pid === statsRow.pid && ps[i].season === statsRow.season && ps[i].tid === statsRow.tid && ps[i].playoffs === statsRow.playoffs) {
-                return;
-            }
-        }
-
-        dbOrTx.playerStats.add(statsRow);
-    });
-
-    return p;
+console.log('somehow save row to database');
+//    dbOrTx.playerStats.add(statsRow);
 }
 
 function generate(

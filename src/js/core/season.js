@@ -325,10 +325,9 @@ async function setSchedule(tx: BackboardTx, tids: [number, number][]) {
             homeTid: matchup[0],
             awayTid: matchup[1],
         });
-console.log('added gid', gid);
         await tx.schedule.delete(gid);
 
-        await g.cache.put({
+        await g.cache.put('schedule', {
             gid,
             homeTid: matchup[0],
             awayTid: matchup[1],

@@ -100,7 +100,7 @@ class Cache {
                     this.indexes.playerStatsByPid[ps.pid] = ps;
                 }
 
-                // Save all regular season entries, for player.value calculation
+                // Save all regular season entries, for player.value and player.addStatsRow
                 if (!ps.playoffs) {
                     if (!this.indexes.playerStatsAllByPid.hasOwnProperty(ps.pid)) {
                         this.indexes.playerStatsAllByPid[ps.pid] = [ps];

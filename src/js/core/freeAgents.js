@@ -1,6 +1,7 @@
 // @flow
 
 import Promise from 'bluebird';
+import orderBy from 'lodash.orderBy';
 import _ from 'underscore';
 import g from '../globals';
 import * as ui from '../ui';
@@ -31,17 +32,17 @@ async function autoSign(tx: BackboardTx) {
                 attrs: ["strategy"],
                 season: g.season,
             }),
-            tx2.players.index('tid').getAll(g.PLAYER.FREE_AGENT),
+            g.cache.indexGetAll('playersByTid', g.PLAYER.FREE_AGENT),
         ]);
-
-        const strategies = teams.map(t => t.strategy);
-
-        // List of free agents, sorted by value
-        players.sort((a, b) => b.value - a.value);
 
         if (players.length === 0) {
             return;
         }
+
+        const strategies = teams.map(t => t.strategy);
+
+        // List of free agents, sorted by value
+        const playersSorted = orderBy(players, 'value', 'desc');
 
         // Randomly order teams
         const tids = _.range(g.numTeams);
@@ -68,19 +69,20 @@ async function autoSign(tx: BackboardTx) {
                 players.shift();
             }*/
 
-            const [numPlayersOnRoster, payroll] = await Promise.all([
-                tx2.players.index('tid').count(tid),
+            const [playersOnRoster, payroll] = await Promise.all([
+                g.cache.indexGetAll('playersByTid', tid),
                 team.getPayroll(tid).get(0),
             ]);
+            const numPlayersOnRoster = playersOnRoster.length;
 
             if (numPlayersOnRoster < 15) {
-                for (let i = 0; i < players.length; i++) {
+                for (let i = 0; i < playersSorted.length; i++) {
+                    let p = playersSorted[i];
                     // Don't sign minimum contract players to fill out the roster
-                    if (players[i].contract.amount + payroll <= g.salaryCap || (players[i].contract.amount === g.minContract && numPlayersOnRoster < 13)) {
-                        let p = players[i];
+                    if (p.contract.amount + payroll <= g.salaryCap || (p.contract.amount === g.minContract && numPlayersOnRoster < 13)) {
                         p.tid = tid;
                         if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
-                            p = player.addStatsRow(tx2, p, g.phase === g.PHASE.PLAYOFFS);
+                            p = player.addStatsRow(null, p, g.phase === g.PHASE.PLAYOFFS);
                         }
                         p = player.setContract(p, p.contract, true);
                         p.gamesUntilTradable = 15;
@@ -93,9 +95,8 @@ async function autoSign(tx: BackboardTx) {
                             tids: [p.tid],
                         });
 
-                        players.splice(i, 1); // Remove from list of free agents
+                        playersSorted.splice(i, 1); // Remove from list of free agents
 
-                        await tx2.players.put(p);
                         await team.rosterAutoSort(tx2, tid);
 
                         // We found one, so stop looking for this team

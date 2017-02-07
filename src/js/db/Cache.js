@@ -8,7 +8,7 @@ import type {BackboardTx} from '../util/types';
 type Status = 'empty' | 'error' | 'filling' | 'flushing' | 'full';
 
 // Only these IDB object stores for now. Keep in memory only player info for non-retired players and team info for the current season.
-type Store = 'games' | 'playerStats' | 'players' | 'releasedPlayers' | 'teamSeasons' | 'teamStats' | 'teams';
+type Store = 'games' | 'playerStats' | 'players' | 'releasedPlayers' | 'schedule' | 'teamSeasons' | 'teamStats' | 'teams';
 type Index = 'playerStats' | 'playerStatsByPid' | 'playersByTid' | 'releasedPlayers' | 'releasedPlayersByTid' | 'teamSeasonsBySeasonTid' | 'teamSeasonsByTidSeason' | 'teamStatsByPlayoffsTid';
 
 type Data = {
@@ -17,17 +17,22 @@ type Data = {
 type Indexes = {
     [key: Index]: any,
 };
+type Deletes = {
+    [key: Store]: number[],
+};
 
-const STORES: Store[] = ['games', 'playerStats', 'players', 'releasedPlayers', 'teamSeasons', 'teamStats', 'teams'];
+const STORES: Store[] = ['games', 'playerStats', 'players', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams'];
 
 class Cache {
     data: Data;
+    deletes: Deletes;
     indexes: Indexes;
     status: Status;
 
     constructor() {
         this.status = 'empty';
         this.data = {};
+        this.deletes = {};
         this.indexes = {};
     }
 
@@ -123,6 +128,19 @@ class Cache {
         }
     }
 
+    async fillSchedule(tx: BackboardTx) {
+        this.checkStatus('filling');
+
+        const schedule = await tx.schedule.getAll();
+
+        this.data.schedule = {};
+        this.deletes.schedule = [];
+
+        for (const s of schedule) {
+            this.data.schedule[s.gid] = s;
+        }
+    }
+
     // Past 3 seasons
     async fillTeamSeasons(tx: BackboardTx) {
         this.checkStatus('filling');
@@ -168,21 +186,24 @@ class Cache {
     }
 
     // Load database from disk and save in cache, wiping out any prior values in cache
-    async fill() {
+    async fill(stores = STORES) {
         this.checkStatus('empty', 'full');
         this.setStatus('filling');
 
         this.data = {};
 
-        await g.dbl.tx(STORES, async (tx) => {
-            await Promise.all([
-                this.fillGames(tx),
-                this.fillPlayers(tx),
-                this.fillReleasedPlayers(tx),
-                this.fillTeamSeasons(tx),
-                this.fillTeamStats(tx),
-                this.fillTeams(tx),
-            ]);
+        const storesToLoad = stores.filter((store) => store !== 'playerStats');
+
+        // playerStats is done in fillPlayers
+        if (stores.includes('playerStats') && !stores.includes('players')) {
+            storesToLoad.push('players');
+        }
+
+        await g.dbl.tx(stores, async (tx) => {
+            await Promise.all(storesToLoad.map((store) => {
+                const funcName = `fill${store[0].toUpperCase()}${store.substr(1)}`;
+                return this[funcName](tx);
+            }));
         });
 
         this.setStatus('full');
@@ -242,8 +263,34 @@ class Cache {
     async put(store: Store, obj: any) {
         if (store === 'games') {
             this.data.games[obj.gid] = obj;
+        } else if (store === 'schedule') {
+            this.data.schedule[obj.gid] = obj;
         } else {
             throw new Error(`put not implemented for store "${store}"`);
+        }
+    }
+
+    async delete(store: Store, key: number) {
+        if (store === 'schedule') {
+            if (this.data.schedule.hasOwnProperty(key)) {
+                delete this.data.schedule[key];
+                this.deletes.schedule.push(key);
+            } else {
+                throw new Error(`Invalid key to delete from "schedule" store: ${key}`);
+            }
+        } else {
+            throw new Error(`delete not implemented for store "${store}"`);
+        }
+    }
+
+    async clear(store: Store) {
+        if (store === 'schedule') {
+            for (const gid of Object.keys(this.data.schedule)) {
+                delete this.data.schedule[gid];
+                this.deletes.schedule.push(gid);
+            }
+        } else {
+            throw new Error(`clear not implemented for store "${store}"`);
         }
     }
 }

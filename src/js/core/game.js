@@ -620,7 +620,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
 
     // Saves a vector of results objects for a day, as is output from cbSimGames
     const cbSaveResults = async results => {
-        const objectStores = ["players", "playerFeats", "playerStats", "playoffSeries", "schedule"];
+        const objectStores = ["players", "playerFeats", "playerStats", "playoffSeries"];
         await g.dbl.tx(objectStores, "readwrite", async tx => {
             const gidsFinished = await Promise.all(results.map(async (result) => {
                 const att = await writeTeamStats(result);
@@ -638,7 +638,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
 
             // Delete finished games from schedule
             for (let j = 0; j < gidsFinished.length; j++) {
-                promises.push(tx.schedule.delete(gidsFinished[j]));
+                promises.push(g.cache.delete('schedule', gidsFinished[j]));
             }
 
             // Update ranks
@@ -732,7 +732,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
             ui.updateStatus(`Playing (${numDays} days left)`);
         }
 
-        let schedule = await season.getSchedule(null, true);
+        let schedule = await season.getSchedule(true);
 
         // Stop if no games
         // This should also call cbNoGames after the playoffs end, because g.phase will have been incremented by season.newSchedulePlayoffsDay after the previous day's games
@@ -751,7 +751,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
 
             // tx2 to make sure newSchedulePlayoffsDay finishes before continuing
             await g.dbl.tx(["playoffSeries", "schedule", "teamSeasons"], "readwrite", tx2 => season.newSchedulePlayoffsDay(tx2));
-            schedule = await season.getSchedule(null, true);
+            schedule = await season.getSchedule(true);
         }
         await cbSimGames(schedule, teams);
     };

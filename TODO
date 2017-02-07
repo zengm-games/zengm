@@ -1,8 +1,5 @@
 IVERSON
 
-how to handle deletes in schedule?
-  store IDs to delete, and then keep data and indexes in sync like put
-
 feats - don't store any in cache, except new ones. then on flush, reset. when read, concat cache and IDB
 
 make Cache more DRY regarding indexes, reading object stores

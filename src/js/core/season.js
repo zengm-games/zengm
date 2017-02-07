@@ -286,28 +286,26 @@ async function doAwards(tx: BackboardTx) {
  * @param {boolean} options.oneDay Return just one day (true) or all days (false). Default false.
  * @return {Promise} Resolves to the requested schedule array.
  */
-function getSchedule(tx?: BackboardTx, oneDay?: boolean = false): Promise<ScheduleGame[]> {
-    return helpers.maybeReuseTx(["schedule"], "readonly", tx, async tx2 => {
-        let schedule = await tx2.schedule.getAll();
-        if (oneDay) {
-            schedule = schedule.slice(0, g.numTeams / 2);  // This is the maximum number of games possible in a day
+async function getSchedule(oneDay?: boolean = false): Promise<ScheduleGame[]> {
+    let schedule = await g.cache.getAll('schedule');
+    if (oneDay) {
+        schedule = schedule.slice(0, g.numTeams / 2);  // This is the maximum number of games possible in a day
 
-            // Only take the games up until right before a team plays for the second time that day
-            const tids = [];
-            let i;
-            for (i = 0; i < schedule.length; i++) {
-                if (!tids.includes(schedule[i].homeTid) && !tids.includes(schedule[i].awayTid)) {
-                    tids.push(schedule[i].homeTid);
-                    tids.push(schedule[i].awayTid);
-                } else {
-                    break;
-                }
+        // Only take the games up until right before a team plays for the second time that day
+        const tids = [];
+        let i;
+        for (i = 0; i < schedule.length; i++) {
+            if (!tids.includes(schedule[i].homeTid) && !tids.includes(schedule[i].awayTid)) {
+                tids.push(schedule[i].homeTid);
+                tids.push(schedule[i].awayTid);
+            } else {
+                break;
             }
-            schedule = schedule.slice(0, i);
         }
+        schedule = schedule.slice(0, i);
+    }
 
-        return schedule;
-    });
+    return schedule;
 }
 
 /**
@@ -319,10 +317,19 @@ function getSchedule(tx?: BackboardTx, oneDay?: boolean = false): Promise<Schedu
  * @return {Promise}
  */
 async function setSchedule(tx: BackboardTx, tids: [number, number][]) {
-    await tx.schedule.clear();
+    await g.cache.clear();
 
     for (const matchup of tids) {
-        await tx.schedule.add({
+        // This is because otherwise (adding to cache directly) we might not know the auto-incrementing primary key
+        const gid = await tx.schedule.add({
+            homeTid: matchup[0],
+            awayTid: matchup[1],
+        });
+console.log('added gid', gid);
+        await tx.schedule.delete(gid);
+
+        await g.cache.put({
+            gid,
             homeTid: matchup[0],
             awayTid: matchup[1],
         });

@@ -106,7 +106,7 @@ class DraftScouting extends React.Component {
                     // Don't want lingering stats vector in player objects, and draft prospects don't have any stats
                     delete p.stats;
 
-                    p = await player.updateValues(tx, p, []);
+                    p = await player.updateValues(p);
                     await tx.players.put(p);
                 }));
 

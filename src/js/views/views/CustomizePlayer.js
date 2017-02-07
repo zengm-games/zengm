@@ -199,7 +199,7 @@ class CustomizePlayer extends React.Component {
         }
 
         // Recalculate player values, since ratings may have changed
-        p = await player.updateValues(null, p, []);
+        p = await player.updateValues(p);
         let pid;
         await g.dbl.tx(["players", "playerStats"], "readwrite", async tx => {
             // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition

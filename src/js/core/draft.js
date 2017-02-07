@@ -117,7 +117,7 @@ async function genPlayers(tx: BackboardTx, tid: number, scoutingRank?: ?number =
         p = player.develop(p, agingYears, true);
 
         // Update player values after ratings changes
-        promises.push(player.updateValues(tx, p, []).then(p2 => tx.players.put(p2)));
+        promises.push(player.updateValues(p).then(p2 => tx.players.put(p2)));
     }
 
     await Promise.all(promises);

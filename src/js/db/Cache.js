@@ -2,6 +2,7 @@
 
 import backboard from 'backboard';
 import Promise from 'bluebird';
+import orderBy from 'lodash.orderby';
 import g from '../globals';
 import type {BackboardTx} from '../util/types';
 
@@ -9,7 +10,7 @@ type Status = 'empty' | 'error' | 'filling' | 'flushing' | 'full';
 
 // Only these IDB object stores for now. Keep in memory only player info for non-retired players and team info for the current season.
 type Store = 'games' | 'playerFeats' | 'playerStats' | 'players' | 'releasedPlayers' | 'schedule' | 'teamSeasons' | 'teamStats' | 'teams';
-type Index = 'playerStats' | 'playerStatsByPid' | 'playersByTid' | 'releasedPlayers' | 'releasedPlayersByTid' | 'teamSeasonsBySeasonTid' | 'teamSeasonsByTidSeason' | 'teamStatsByPlayoffsTid';
+type Index = 'playerStats' | 'playerStatsAllByPid' | 'playerStatsByPid' | 'playersByTid' | 'releasedPlayers' | 'releasedPlayersByTid' | 'teamSeasonsBySeasonTid' | 'teamSeasonsByTidSeason' | 'teamStatsByPlayoffsTid';
 
 type Data = {
     [key: Store]: any,
@@ -83,29 +84,32 @@ class Cache {
 
             promises.push(
                 tx.playerStats.index('pid, season, tid')
-                    .getAll(backboard.bound([p.pid, g.season], [p.pid, g.season, ''])),
+                    .getAll(backboard.bound([p.pid, g.season - 1], [p.pid, g.season, ''])),
             );
         }
 
         this.data.playerStats = {};
         this.indexes.playerStatsByPid = {};
+        this.indexes.playerStatsAllByPid = {};
 
-        // Only save latest stats row for each player (so playoff stats if available, and latest team if traded mid-season)
         const resolvedPromises = await Promise.all(promises);
         for (const psRows of resolvedPromises) {
-            for (const ps of psRows) {
-                let latest = false;
-                if (!this.indexes.playerStatsByPid.hasOwnProperty(ps.pid)) {
+            for (const ps of orderBy(psRows, 'psid')) {
+                // Only save latest stats row for each player (so playoff stats if available, and latest team if traded mid-season)
+                if (ps.season === g.season) {
                     this.indexes.playerStatsByPid[ps.pid] = ps;
-                    latest = true;
-                } else if (ps.psid > this.indexes.playerStatsByPid[ps.pid].psid) {
-                    this.indexes.playerStatsByPid[ps.pid] = ps;
-                    latest = true;
                 }
 
-                if (latest) {
-//                    this.data.playerStats[ps.psid] = ps;
+                // Save all regular season entries, for player.value calculation
+                if (!ps.playoffs) {
+                    if (!this.indexes.playerStatsAllByPid.hasOwnProperty(ps.pid)) {
+                        this.indexes.playerStatsAllByPid[ps.pid] = [ps];
+                    } else {
+                        this.indexes.playerStatsAllByPid[ps.pid].unshift(ps);
+                    }
                 }
+
+//                this.data.playerStats[ps.psid] = ps;
             }
         }
 

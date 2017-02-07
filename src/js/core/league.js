@@ -364,7 +364,7 @@ async function create(
                 const playerStats = p.stats;
                 delete p.stats;
 
-                p = await player.updateValues(tx, p, playerStats.reverse());
+                p = await player.updateValues(p, playerStats.reverse());
                 p.pid = await tx.players.put(p);
 
                 // If no stats in League File, create blank stats rows for active players if necessary
@@ -441,7 +441,7 @@ async function create(
                     }
 
                     // Update player values after ratings changes
-                    p = await player.updateValues(tx, p, []);
+                    p = await player.updateValues(p);
 
                     // Randomize contract expiration for players who aren't free agents, because otherwise contract expiration dates will all be synchronized
                     const randomizeExp = (p.tid !== g.PLAYER.FREE_AGENT);

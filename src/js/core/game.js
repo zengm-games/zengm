@@ -209,7 +209,7 @@ async function writeTeamStats(results: GameResults) {
     return att;
 }
 
-async function writePlayerStats(tx: BackboardTx, results: GameResults) {
+async function writePlayerStats(results: GameResults) {
     await Promise.all(results.team.map(t => Promise.all(t.player.map(async (p) => {
         // Only need to write stats if player got minutes
         if (p.stat.min === 0) {
@@ -277,10 +277,10 @@ async function writePlayerStats(tx: BackboardTx, results: GameResults) {
 
             // Player value depends on ratings and regular season stats, neither of which can change in the playoffs (except for severe injuries)
             if (g.phase !== g.PHASE.PLAYOFFS) {
-                await player.updateValues(tx, p2, [ps]);
+                await player.updateValues(p2);
             }
             if (biggestRatingsLoss) {
-                await player.updateValues(tx, p2, []);
+                await player.updateValues(p2);
             }
         }
 
@@ -620,12 +620,11 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
 
     // Saves a vector of results objects for a day, as is output from cbSimGames
     const cbSaveResults = async results => {
-        const objectStores = ["players", "playerStats", "playoffSeries"];
-        await g.dbl.tx(objectStores, "readwrite", async tx => {
+        await g.dbl.tx(['playoffSeries'], "readwrite", async (tx) => {
             const gidsFinished = await Promise.all(results.map(async (result) => {
                 const att = await writeTeamStats(result);
                 await writeGameStats(result, att);
-                await writePlayerStats(tx, result);
+                await writePlayerStats(result);
                 return result.gid;
             }));
 

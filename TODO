@@ -13,8 +13,6 @@ replace all usage of IDB with cache, otherwise things will be more likely to get
 
 rewrite team.filter and player.filter
 
-should get and getAll be async? a bit slower, but then can wait until filling/flushing finishes
-
 when to fill/flush? phases, games, user interaction
 
 how to handle data not in cache?
@@ -26,6 +24,10 @@ debug mode makes huge perf difference
 delete old data should empty cache?
 
 tests
+
+make sure all player.value calls happen with full cache or psOverride
+
+make cache sync? it'll be faster, any problems though?
 
 ----
 

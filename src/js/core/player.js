@@ -1652,7 +1652,7 @@ function value(p: any, ps: PlayerStats[], options: ValueOptions = {}): number {
     // 1. Account for stats (and current ratings if not enough stats)
     let current = pr.ovr; // No stats at all? Just look at ratings more, then.
     if (ps.length > 0) {
-        if (ps.length === 1) {
+        if (ps.length === 1 || ps[0].min >= 2000) {
             // Only one year of stats
             current = 3.75 * ps[0].per;
             if (ps[0].min < 2000) {
@@ -1738,45 +1738,17 @@ function value(p: any, ps: PlayerStats[], options: ValueOptions = {}): number {
 
 // ps: player stats objects, regular season only, most recent first
 // Currently it is assumed that ps, if passed, will be the latest season. This assumption could be easily relaxed if necessary, just might make it a bit slower
-async function updateValues<T: Player | PlayerWithoutPid>(
-    tx: ?BackboardTx,
-    p: T,
-    ps: PlayerStats[],
-): Promise<T> {
-    const dbOrTx = tx !== undefined && tx !== null ? tx : g.dbl;
+async function updateValues<T: Player | PlayerWithoutPid>(p: T, psOverride?: PlayerStats[]): Promise<T> {
+    let ps;
 
-    // Require up to the two most recent regular season stats entries, unless the current season has 2000+ minutes
-    if (ps.length === 0 || (ps.length === 1 && ps[0].min < 2000)) {
-        // Start search for past stats either at this season or at the most recent ps season
-        // This assumes ps[0].season is the most recent entry for this player!
-        let season;
-        if (ps.length === 0) {
-            season = g.season;
-        } else {
-            season = ps[0].season - 1;
-        }
-
+    if (psOverride) {
+        // Only when creating new league from file, since no cache yet then
+        ps = psOverride;
+    } else if (typeof p.pid === 'number') {
+        ps = await g.cache.indexGetAll('playerStatsAllByPid', p.pid);
+    } else {
         // New player objects don't have pids let alone stats, so just skip
-        if (typeof p.pid === 'number') {
-            const pid = p.pid; // Otherwise, flow worries it could be mutated in the call to `index` I think
-
-            // Start at season and look backwards until we hit
-            // This will not work totally right if a player played for multiple teams in a season. It should be ordered by psid, instead it's ordered by tid because of the index used
-            await dbOrTx.playerStats.index('pid, season, tid').iterate(backboard.bound([pid, 0], [pid, season + 1]), 'prev', (psTemp: PlayerStats, shortCircuit) => {
-                // Skip playoff stats
-                if (psTemp.playoffs) {
-                    return;
-                }
-
-                // Store stats
-                ps.push(psTemp);
-
-                // Continue only if we need another row
-                if (ps.length === 1 && ps[0].min < 2000) {
-                    shortCircuit();
-                }
-            });
-        }
+        ps = [];
     }
 
     p.value = value(p, ps);

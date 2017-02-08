@@ -6,6 +6,7 @@ addStatsRow getting confusing
 
 alternative idea
 - cache within backboard. copy all indexes (including primary key index) to memory, keep them in sync by doing parallel operations to the underlying database (like on add, update indexes with new info). in each index, keep store name and primary key. then have a LRU cache on (store name, primary key) and either get records from there or hit IDB
+  - what about transactions?
 
 messages
 - like feats, maybe abstract playerFeats view merging getAll stuff

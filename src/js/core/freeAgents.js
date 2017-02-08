@@ -64,11 +64,6 @@ async function autoSign(tx: BackboardTx) {
                 continue;
             }
 
-/*            // Randomly don't try to sign some players this day
-            while (g.phase === g.PHASE.FREE_AGENCY && Math.random() < 0.7) {
-                players.shift();
-            }*/
-
             const [playersOnRoster, payroll] = await Promise.all([
                 g.cache.indexGetAll('playersByTid', tid),
                 team.getPayroll(tid).get(0),

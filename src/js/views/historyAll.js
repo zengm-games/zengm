@@ -1,21 +1,13 @@
-const g = require('../globals');
-const ui = require('../ui');
-const Promise = require('bluebird');
-const $ = require('jquery');
-const ko = require('knockout');
-const team = require('../core/team');
-const bbgmView = require('../util/bbgmView');
-const helpers = require('../util/helpers');
+// @flow
 
-
-const mapping = {
-    seasons: {
-        create: options => options.data,
-    },
-};
+import Promise from 'bluebird';
+import g from '../globals';
+import * as team from '../core/team';
+import bbgmViewReact from '../util/bbgmViewReact';
+import HistoryAll from './views/HistoryAll';
 
 async function updateHistory(inputs, updateEvents) {
-    if (updateEvents.indexOf("firstRun") >= 0) {
+    if (updateEvents.includes('firstRun')) {
         const [awards, teams] = await Promise.all([
             g.dbl.awards.getAll(),
             team.filter({
@@ -61,6 +53,7 @@ async function updateHistory(inputs, updateEvents) {
                     };
                 } else if (t.seasons[j].playoffRoundsWon === g.numPlayoffRounds - 1) {
                     seasons[i].runnerUp = {
+                        tid: t.tid,
                         abbrev: t.abbrev,
                         region: t.region,
                         name: t.name,
@@ -80,7 +73,6 @@ async function updateHistory(inputs, updateEvents) {
             if (seasons[i].champ) {
                 championshipsByTid[seasons[i].champ.tid] += 1;
                 seasons[i].champ.count = championshipsByTid[seasons[i].champ.tid];
-                delete seasons[i].champ.tid;
             }
         }
 
@@ -90,46 +82,8 @@ async function updateHistory(inputs, updateEvents) {
     }
 }
 
-function uiFirst(vm) {
-    ui.title("League History");
-
-    const awardName = (award, season) => {
-        if (!award) {
-            // For old seasons with no Finals MVP
-            return 'N/A';
-        }
-
-        return `${helpers.playerNameLabels(award.pid, award.name)} (<a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[award.tid], season])}">${g.teamAbbrevsCache[award.tid]}</a>)`;
-    };
-    const teamName = (t, season) => {
-        if (t) {
-            return `<a href="${helpers.leagueUrl(["roster", t.abbrev, season])}">${t.region}</a> (${t.won}-${t.lost})`;
-        }
-
-        // This happens if there is missing data, such as from Improve Performance
-        return 'N/A';
-    };
-
-    ko.computed(() => {
-        ui.datatable($("#history-all"), 0, vm.seasons().map(s => {
-            let countText, seasonLink;
-            if (s.champ) {
-                seasonLink = `<a href="${helpers.leagueUrl(["history", s.season])}">${s.season}</a>`;
-                countText = ` - ${helpers.ordinal(s.champ.count)} title`;
-            } else {
-                // This happens if there is missing data, such as from Improve Performance
-                seasonLink = String(s.season);
-                countText = '';
-            }
-
-            return [seasonLink, teamName(s.champ, s.season) + countText, teamName(s.runnerUp, s.season), awardName(s.finalsMvp, s.season), awardName(s.mvp, s.season), awardName(s.dpoy, s.season), awardName(s.roy, s.season)];
-        }));
-    }).extend({throttle: 1});
-}
-
-module.exports = bbgmView.init({
+export default bbgmViewReact.init({
     id: "historyAll",
-    mapping,
     runBefore: [updateHistory],
-    uiFirst,
+    Component: HistoryAll,
 });

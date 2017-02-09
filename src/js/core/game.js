@@ -1,24 +1,30 @@
-const g = require('../globals');
-const ui = require('../ui');
-const freeAgents = require('./freeAgents');
-const finances = require('./finances');
-const gameSim = require('./gameSim');
-const league = require('./league');
-const phase = require('./phase');
-const player = require('./player');
-const season = require('./season');
-const team = require('./team');
-const _ = require('underscore');
-const backboard = require('backboard');
-const Promise = require('bluebird');
-const advStats = require('../util/advStats');
-const eventLog = require('../util/eventLog');
-const lock = require('../util/lock');
-const helpers = require('../util/helpers');
-const random = require('../util/random');
+// @flow
 
-function writeTeamStats(tx, results) {
-    return Promise.reduce([0, 1], async (cache, t1) => {
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import _ from 'underscore';
+import g from '../globals';
+import * as ui from '../ui';
+import GameSim from './GameSim';
+import * as finances from './finances';
+import * as freeAgents from './freeAgents';
+import * as league from './league';
+import * as phase from './phase';
+import * as player from './player';
+import * as season from './season';
+import * as team from './team';
+import * as advStats from '../util/advStats';
+import logEvent from '../util/logEvent';
+import * as helpers from '../util/helpers';
+import * as lock from '../util/lock';
+import * as random from '../util/random';
+import type {BackboardTx, GameResults} from '../util/types';
+
+async function writeTeamStats(tx: BackboardTx, results: GameResults) {
+    let att = 0;
+    let ticketPrice = 0;
+
+    for (const t1 of [0, 1]) {
         const t2 = t1 === 1 ? 0 : 1;
 
         const [payroll, t, teamSeasons, teamStatsArray] = await Promise.all([
@@ -33,10 +39,8 @@ function writeTeamStats(tx, results) {
         const won = results.team[t1].stat.pts > results.team[t2].stat.pts;
 
         // Attendance - base calculation now, which is used for other revenue estimates
-        let att = cache.att;
-        let ticketPrice = cache.ticketPrice;
         if (t1 === 0) { // Base on home team
-            att = 10000 + (0.1 + 0.9 * Math.pow(teamSeason.hype, 2)) * teamSeason.pop * 1000000 * 0.01;  // Base attendance - between 2% and 0.2% of the region
+            att = 10000 + (0.1 + 0.9 * (teamSeason.hype ** 2)) * teamSeason.pop * 1000000 * 0.01;  // Base attendance - between 2% and 0.2% of the region
             if (g.phase === g.PHASE.PLAYOFFS) {
                 att *= 1.5;  // Playoff bonus
             }
@@ -60,16 +64,16 @@ function writeTeamStats(tx, results) {
             coachingPaid = t.budget.coaching.amount / g.numGames;
             healthPaid = t.budget.health.amount / g.numGames;
             facilitiesPaid = t.budget.facilities.amount / g.numGames;
-            merchRevenue = 3 * att / 1000;
+            merchRevenue = (g.salaryCap / 90000) * 4.5 * att / 1000;
             if (merchRevenue > 250) {
                 merchRevenue = 250;
             }
-            sponsorRevenue = 10 * att / 1000;
+            sponsorRevenue = (g.salaryCap / 90000) * 15 * att / 1000;
             if (sponsorRevenue > 600) {
                 sponsorRevenue = 600;
             }
-            nationalTvRevenue = 250;
-            localTvRevenue = 10 * att / 1000;
+            nationalTvRevenue = (g.salaryCap / 90000) * 375;
+            localTvRevenue = (g.salaryCap / 90000) * 15 * att / 1000;
             if (localTvRevenue > 1200) {
                 localTvRevenue = 1200;
             }
@@ -78,7 +82,7 @@ function writeTeamStats(tx, results) {
         // Attendance - final estimate
         if (t1 === 0) { // Base on home team
             att = random.gauss(att, 1000);
-            att *= 30 / ticketPrice;  // Attendance depends on ticket price. Not sure if this formula is reasonable.
+            att *= 45 / ((g.salaryCap / 90000) * ticketPrice);  // Attendance depends on ticket price. Not sure if this formula is reasonable.
             att *= 1 + 0.075 * (g.numTeams - finances.getRankLastThree(teamSeasons, "expenses", "facilities")) / (g.numTeams - 1);  // Attendance depends on facilities. Not sure if this formula is reasonable.
             if (att > 25000) {
                 att = 25000;
@@ -106,10 +110,10 @@ function writeTeamStats(tx, results) {
             }
 
             // It should never happen, but winp and winpOld sometimes turn up as NaN due to a duplicate season entry or the user skipping seasons
-            if (winp !== winp) {
+            if (isNaN(winp)) {
                 winp = 0;
             }
-            if (winpOld !== winpOld) {
+            if (isNaN(winpOld)) {
                 winpOld = 0;
             }
 
@@ -208,16 +212,13 @@ function writeTeamStats(tx, results) {
             tx.teamSeasons.put(teamSeason),
             tx.teamStats.put(teamStats),
         ]);
+    }
 
-        return {
-            att,
-            ticketPrice,
-        };
-    }, 0);
+    return att;
 }
 
-function writePlayerStats(tx, results) {
-    return Promise.map(results.team, t => Promise.map(t.player, p => {
+async function writePlayerStats(tx: BackboardTx, results: GameResults) {
+    await Promise.all(results.team.map(t => Promise.all(t.player.map((p) => {
         // Only need to write stats if player got minutes
         if (p.stat.min === 0) {
             return;
@@ -257,7 +258,7 @@ function writePlayerStats(tx, results) {
                     if (injuredThisGame) {
                         p2.injury = player.injury(t.healthRank);
                         p.injury = p2.injury; // So it gets written to box score
-                        eventLog.add(tx, {
+                        logEvent(tx, {
                             type: "injured",
                             text: `<a href="${helpers.leagueUrl(["player", p2.pid])}">${p2.firstName} ${p2.lastName}</a> was injured! (${p2.injury.type}, out for ${p2.injury.gamesRemaining} games)`,
                             showNotification: p2.tid === g.userTid,
@@ -301,10 +302,10 @@ function writePlayerStats(tx, results) {
             }));
 
         return Promise.all(promises);
-    }));
+    }))));
 }
 
-async function writeGameStats(tx, results, att) {
+async function writeGameStats(tx: BackboardTx, results: GameResults, att: number) {
     const gameStats = {
         gid: results.gid,
         att,
@@ -314,10 +315,14 @@ async function writeGameStats(tx, results, att) {
         won: {},
         lost: {},
         teams: [
-            {tid: results.team[0].id, players: []},
-            {tid: results.team[1].id, players: []},
+            {},
+            {},
         ],
     };
+    gameStats.teams[0].tid = results.team[0].id;
+    gameStats.teams[0].players = [];
+    gameStats.teams[1].tid = results.team[1].id;
+    gameStats.teams[1].players = [];
 
     for (let t = 0; t < 2; t++) {
         const keys = ['min', 'fg', 'fga', 'fgAtRim', 'fgaAtRim', 'fgLowPost', 'fgaLowPost', 'fgMidRange', 'fgaMidRange', 'tp', 'tpa', 'ft', 'fta', 'orb', 'drb', 'ast', 'tov', 'stl', 'blk', 'ba', 'pf', 'pts', 'ptsQtrs'];
@@ -329,10 +334,12 @@ async function writeGameStats(tx, results, att) {
         keys.unshift("gs"); // Also record starters, in addition to other stats
         keys.push("pm");
         for (let p = 0; p < results.team[t].player.length; p++) {
-            gameStats.teams[t].players[p] = {name: results.team[t].player[p].name, pos: results.team[t].player[p].pos};
+            gameStats.teams[t].players[p] = {};
             for (let i = 0; i < keys.length; i++) {
                 gameStats.teams[t].players[p][keys[i]] = results.team[t].player[p].stat[keys[i]];
             }
+            gameStats.teams[t].players[p].name = results.team[t].player[p].name;
+            gameStats.teams[t].players[p].pos = results.team[t].player[p].pos;
             gameStats.teams[t].players[p].trb = results.team[t].player[p].stat.orb + results.team[t].player[p].stat.drb;
             gameStats.teams[t].players[p].pid = results.team[t].player[p].id;
             gameStats.teams[t].players[p].skills = results.team[t].player[p].skills;
@@ -341,14 +348,7 @@ async function writeGameStats(tx, results, att) {
     }
 
     // Store some extra junk to make box scores easy
-    let tl, tw;
-    if (results.team[0].stat.pts > results.team[1].stat.pts) {
-        tw = 0;
-        tl = 1;
-    } else {
-        tw = 1;
-        tl = 0;
-    }
+    const [tw, tl] = results.team[0].stat.pts > results.team[1].stat.pts ? [0, 1] : [1, 0];
 
     gameStats.won.tid = results.team[tw].id;
     gameStats.lost.tid = results.team[tl].id;
@@ -364,7 +364,7 @@ async function writeGameStats(tx, results, att) {
             text = `Your team lost to the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[results.team[tw].id], g.season])}">${g.teamNamesCache[results.team[tw].id]}`;
         }
         text += `</a> <a href="${helpers.leagueUrl(["game_log", g.teamAbbrevsCache[g.userTid], g.season, results.gid])}">${results.team[tw].stat.pts}-${results.team[tl].stat.pts}</a>.`;
-        eventLog.add(tx, {
+        logEvent(tx, {
             type: results.team[tw].id === g.userTid ? "gameWon" : "gameLost",
             text,
             saveToDb: false,
@@ -383,29 +383,24 @@ async function writeGameStats(tx, results, att) {
                 }
                 delete results.clutchPlays[i].tempText;
             }
-            eventLog.add(tx, results.clutchPlays[i]);
+            logEvent(tx, results.clutchPlays[i]);
         }
     }
 
     await tx.games.put(gameStats);
 }
 
-async function updatePlayoffSeries(tx, results) {
+async function updatePlayoffSeries(tx: BackboardTx, results: GameResults) {
     const playoffSeries = await tx.playoffSeries.get(g.season);
 
     const playoffRound = playoffSeries.series[playoffSeries.currentRound];
 
-    results.forEach(result => {
-        let currentRoundText, i, loserTid, loserWon, series, showNotification, winnerTid, won0;
-
+    for (const result of results) {
         // Did the home (true) or away (false) team win this game? Here, "home" refers to this game, not the team which has homecourt advnatage in the playoffs, which is what series.home refers to below.
-        if (result.team[0].stat.pts > result.team[1].stat.pts) {
-            won0 = true;
-        } else {
-            won0 = false;
-        }
+        const won0 = result.team[0].stat.pts > result.team[1].stat.pts;
 
-        for (i = 0; i < playoffRound.length; i++) {
+        let series;
+        for (let i = 0; i < playoffRound.length; i++) {
             series = playoffRound[i];
 
             if (series.home.tid === result.team[0].id) {
@@ -425,8 +420,16 @@ async function updatePlayoffSeries(tx, results) {
             }
         }
 
+        // For flow, not really necessary
+        if (series === undefined) {
+            continue;
+        }
+
         // Log result of playoff series
         if (series.away.won >= 4 || series.home.won >= 4) {
+            let winnerTid;
+            let loserTid;
+            let loserWon;
             if (series.away.won >= 4) {
                 winnerTid = series.away.tid;
                 loserTid = series.home.tid;
@@ -437,6 +440,7 @@ async function updatePlayoffSeries(tx, results) {
                 loserWon = series.away.won;
             }
 
+            let currentRoundText = '';
             if (playoffSeries.currentRound === 0) {
                 currentRoundText = "first round of the playoffs";
             } else if (playoffSeries.currentRound === 1) {
@@ -447,19 +451,15 @@ async function updatePlayoffSeries(tx, results) {
                 currentRoundText = "league championship";
             }
 
-            if (series.away.tid === g.userTid || series.home.tid === g.userTid || playoffSeries.currentRound === 3) {
-                showNotification = true;
-            } else {
-                showNotification = false;
-            }
-            eventLog.add(tx, {
+            const showNotification = series.away.tid === g.userTid || series.home.tid === g.userTid || playoffSeries.currentRound === 3;
+            logEvent(tx, {
                 type: "playoffs",
                 text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[winnerTid], g.season])}">${g.teamNamesCache[winnerTid]}</a> defeated the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[loserTid], g.season])}">${g.teamNamesCache[loserTid]}</a> in the ${currentRoundText}, 4-${loserWon}.`,
                 showNotification,
                 tids: [winnerTid, loserTid],
             });
         }
-    });
+    }
 
     await tx.playoffSeries.put(playoffSeries);
 }
@@ -476,34 +476,31 @@ async function updatePlayoffSeries(tx, results) {
  * @return {number} Composite rating, a number between 0 and 1.
  */
 function makeComposite(rating, components, weights) {
-    let component, divideBy, i, r, rcomp;
-
     if (weights === undefined) {
         // Default: array of ones with same size as components
         weights = [];
-        for (i = 0; i < components.length; i++) {
+        for (let i = 0; i < components.length; i++) {
             weights.push(1);
         }
     }
 
     rating.constant = 50;
 
-    r = 0;
-    divideBy = 0;
-    for (i = 0; i < components.length; i++) {
-        component = components[i];
+    let r = 0;
+    let divideBy = 0;
+    for (let i = 0; i < components.length; i++) {
         // Sigmoidal transformation
         //y = (rating[component] - 70) / 10;
-        //rcomp = y / Math.sqrt(1 + Math.pow(y, 2));
+        //rcomp = y / Math.sqrt(1 + y ** 2);
         //rcomp = (rcomp + 1) * 50;
-        rcomp = weights[i] * rating[component];
+        const rcomp = weights[i] * rating[components[i]];
 
-        r = r + rcomp;
+        r += rcomp;
 
-        divideBy = divideBy + 100 * weights[i];
+        divideBy += 100 * weights[i];
     }
 
-    r = r / divideBy;  // Scale from 0 to 1
+    r /= divideBy;  // Scale from 0 to 1
     if (r > 1) {
         r = 1;
     } else if (r < 0) {
@@ -523,8 +520,8 @@ function makeComposite(rating, components, weights) {
  * @param {Promise} Resolves to an array of team objects, ordered by tid.
  */
 async function loadTeams(tx) {
-    return Promise.map(_.range(g.numTeams), async tid => {
-        const [players, team, teamSeason] = await Promise.all([
+    return Promise.all(_.range(g.numTeams).map(async (tid) => {
+        const [players, {cid, did}, teamSeason] = await Promise.all([
             tx.players.index('tid').getAll(tid),
             tx.teams.get(tid),
             tx.teamSeasons.index("season, tid").get([g.season, tid]),
@@ -532,40 +529,58 @@ async function loadTeams(tx) {
 
         players.sort((a, b) => a.rosterOrder - b.rosterOrder);
 
-        const t = {id: tid, defense: 0, pace: 0, won: 0, lost: 0, cid: 0, did: 0, stat: {}, player: [], synergy: {off: 0, def: 0, reb: 0}};
 
-        t.won = teamSeason.won;
-        t.lost = teamSeason.lost;
-        t.cid = team.cid;
-        t.did = team.did;
-        t.healthRank = teamSeason.expenses.health.rank;
+        // Initialize team composite rating object
+        const compositeRating = {};
+        for (const rating of Object.keys(g.compositeWeights)) {
+            compositeRating[rating] = 0;
+        }
 
-        let p;
+        const t = {
+            id: tid,
+            defense: 0,
+            pace: 0,
+            won: teamSeason.won,
+            lost: teamSeason.lost,
+            cid,
+            did,
+            stat: {},
+            player: [],
+            synergy: {off: 0, def: 0, reb: 0},
+            healthRank: teamSeason.expenses.health.rank,
+            compositeRating,
+        };
+
         for (let i = 0; i < players.length; i++) {
-            const pos = players[i].ratings[players[i].ratings.length - 1].pos;
-            p = {id: players[i].pid, name: `${players[i].firstName} ${players[i].lastName}`, pos, valueNoPot: players[i].valueNoPot, stat: {}, compositeRating: {}, skills: [], injury: players[i].injury, injured: players[i].injury.type !== "Healthy", ptModifier: players[i].ptModifier};
+            let rating = players[i].ratings.find(r => r.season === g.season);
+            if (rating === undefined) {
+                // Sometimes this happens for unknown reasons, so gracefully handle it
+                rating = players[i].ratings[players[i].ratings.length - 1];
+            }
+
+            const p = {
+                id: players[i].pid,
+                name: `${players[i].firstName} ${players[i].lastName}`,
+                pos: rating.pos,
+                valueNoPot: players[i].valueNoPot,
+                stat: {},
+                compositeRating: {},
+                skills: rating.skills,
+                injury: players[i].injury,
+                injured: players[i].injury.type !== "Healthy",
+                ptModifier: players[i].ptModifier,
+            };
 
             // Reset ptModifier for AI teams. This should not be necessary since it should always be 1, but let's be safe.
-            if (t.id !== g.userTid) {
+            if (!g.userTids.includes(t.id)) {
                 p.ptModifier = 1;
             }
 
-            const rating = players[i].ratings.find(r => r.season === g.season);
-            if (rating === undefined) {
-                throw new Error(`Player with no ratings for this season: ${players[i].firstName} ${players[i].lastName} (ID: ${players[i].pid})`);
-            }
-
-            p.skills = rating.skills;
-
-            p.ovr = rating.ovr;
-
             // These use the same formulas as the skill definitions in player.skills!
-            for (const k in g.compositeWeights) {
-                if (g.compositeWeights.hasOwnProperty(k)) {
-                    p.compositeRating[k] = makeComposite(rating, g.compositeWeights[k].ratings, g.compositeWeights[k].weights);
-                }
+            for (const k of Object.keys(g.compositeWeights)) {
+                p.compositeRating[k] = makeComposite(rating, g.compositeWeights[k].ratings, g.compositeWeights[k].weights);
             }
-            p.compositeRating.usage = Math.pow(p.compositeRating.usage, 1.9);
+            p.compositeRating.usage = p.compositeRating.usage ** 1.9;
 
             p.stat = {gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, pm: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, ba: 0, pf: 0, pts: 0, courtTime: 0, benchTime: 0, energy: 1};
 
@@ -586,18 +601,10 @@ async function loadTeams(tx) {
         t.pace /= numPlayers;
         t.pace = t.pace * 15 + 100;  // Scale between 100 and 115
 
-        // Initialize team composite rating object
-        t.compositeRating = {};
-        for (const rating in p.compositeRating) {
-            if (p.compositeRating.hasOwnProperty(rating)) {
-                t.compositeRating[rating] = 0;
-            }
-        }
-
         t.stat = {min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, ba: 0, pf: 0, pts: 0, ptsQtrs: [0]};
 
         return t;
-    });
+    }));
 }
 
 /**
@@ -610,12 +617,13 @@ async function loadTeams(tx) {
  * @param {boolean} start Is this a new request from the user to play games (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed. Default true.
  * @param {number?} gidPlayByPlay If this number matches a game ID number, then an array of strings representing the play-by-play game simulation are included in the ui.realtimeUpdate raw call.
  */
-async function play(numDays, start = true, gidPlayByPlay = null) {
+async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: number) {
     // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season
     const cbNoGames = async () => {
         ui.updateStatus("Idle");
         await league.setGameAttributesComplete({gamesInProgress: false});
         await ui.updatePlayMenu(null);
+        ui.realtimeUpdate(["g.gamesInProgress"]);
 
         // Check to see if the season is over
         if (g.phase < g.PHASE.PLAYOFFS) {
@@ -632,12 +640,12 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
     const cbSaveResults = async results => {
         const objectStores = ["events", "games", "players", "playerFeats", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams", "teamSeasons", "teamStats"];
         await g.dbl.tx(objectStores, "readwrite", async tx => {
-            const gidsFinished = await Promise.map(results, async result => {
-                const cache = await writeTeamStats(tx, result);
-                await writeGameStats(tx, result, cache.att);
+            const gidsFinished = await Promise.all(results.map(async (result) => {
+                const att = await writeTeamStats(tx, result);
+                await writeGameStats(tx, result, att);
                 await writePlayerStats(tx, result);
                 return result.gid;
-            });
+            }));
 
             const promises = [];
 
@@ -668,7 +676,7 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
                     p.injury = {type: "Healthy", gamesRemaining: 0};
                     changed = true;
 
-                    eventLog.add(tx, {
+                    logEvent(tx, {
                         type: "healed",
                         text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> has recovered from his injury.`,
                         showNotification: p.tid === g.userTid,
@@ -695,8 +703,9 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
         });
 
         // If there was a play by play done for one of these games, get it
-        let raw, url;
-        if (gidPlayByPlay !== null) {
+        let raw;
+        let url;
+        if (gidPlayByPlay !== undefined) {
             for (let i = 0; i < results.length; i++) {
                 if (results[i].playByPlay !== undefined) {
                     raw = {
@@ -721,13 +730,11 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
                 if (playoffsOver) {
                     await phase.newPhase(g.PHASE.BEFORE_DRAFT);
                 }
-            } else {
+            } else if (Math.random() < 1 / (100 * 50)) {
                 // Should a rare tragic event occur? ONLY IN REGULAR SEASON, playoffs would be tricky with roster limits and no free agents
                 // 100 days in a season (roughly), and we want a death every 50 years on average
-                if (Math.random() < 1 / (100 * 50)) {
-                    await player.killOne();
-                    ui.realtimeUpdate(["playerMovement"]);
-                }
+                await player.killOne();
+                ui.realtimeUpdate(["playerMovement"]);
             }
             play(numDays - 1, false);
         }, raw);
@@ -738,7 +745,7 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
         const results = [];
         for (let i = 0; i < schedule.length; i++) {
             const doPlayByPlay = gidPlayByPlay === schedule[i].gid;
-            const gs = new gameSim.GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid], doPlayByPlay);
+            const gs = new GameSim(schedule[i].gid, teams[schedule[i].homeTid], teams[schedule[i].awayTid], doPlayByPlay);
             results.push(gs.run());
         }
         await cbSaveResults(results);
@@ -754,7 +761,7 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
         }
 
         await g.dbl.tx(["players", "schedule", "teams", "teamSeasons"], async tx => {
-            let schedule = await season.getSchedule({ot: tx, oneDay: true});
+            let schedule = await season.getSchedule(tx, true);
 
             // Stop if no games
             // This should also call cbNoGames after the playoffs end, because g.phase will have been incremented by season.newSchedulePlayoffsDay after the previous day's games
@@ -773,7 +780,7 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
 
                 // tx2 to make sure newSchedulePlayoffsDay finishes before continuing
                 await g.dbl.tx(["playoffSeries", "schedule", "teamSeasons"], "readwrite", tx2 => season.newSchedulePlayoffsDay(tx2));
-                schedule = await season.getSchedule({oneDay: true});
+                schedule = await season.getSchedule(null, true);
             }
             await cbSimGames(schedule, teams);
         });
@@ -818,6 +825,7 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
             if (userTeamSizeError === null) {
                 await league.setGameAttributesComplete({gamesInProgress: true});
                 await ui.updatePlayMenu(null);
+                ui.realtimeUpdate(["g.gamesInProgress"]);
                 cbRunDay();
             } else {
                 ui.updateStatus("Idle");
@@ -829,6 +837,7 @@ async function play(numDays, start = true, gidPlayByPlay = null) {
     }
 }
 
-module.exports = {
+export {
+    // eslint-disable-next-line import/prefer-default-export
     play,
 };

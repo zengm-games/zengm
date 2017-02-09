@@ -1,7 +1,3 @@
 src/js/export_3.3.js
 src/js/lib/*
 !src/js/lib/bbgm-notifications.js
-!src/js/lib/boxPlot.js
-!src/js/lib/jquery.barGraph.js
-!src/js/lib/jquery.dataTables.bbgmSorting.js
-!src/js/lib/jquery.tabSlideOut.js

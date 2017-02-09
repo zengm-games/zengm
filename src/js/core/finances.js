@@ -1,6 +1,10 @@
-const g = require('../globals');
-const backboard = require('backboard');
-const Promise = require('bluebird');
+// @flow
+
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import g from '../globals';
+import * as team from './team';
+import type {BackboardTx, TeamSeason} from '../util/types';
 
 /**
  * Assess the payroll and apply minimum and luxury taxes.
@@ -9,10 +13,10 @@ const Promise = require('bluebird');
  * @memberOf core.finances
  * @return {Promise}
  */
-async function assessPayrollMinLuxury(tx) {
+async function assessPayrollMinLuxury(tx: BackboardTx) {
     let collectedTax = 0;
 
-    const payrolls = await require('./team').getPayrolls(tx);
+    const payrolls = await team.getPayrolls(tx);
 
     await tx.teamSeasons.index("season, tid").iterate(backboard.bound([g.season], [g.season, '']), teamSeason => {
         // Store payroll
@@ -35,7 +39,7 @@ async function assessPayrollMinLuxury(tx) {
     const payteams = payrolls.filter(x => x <= g.salaryCap);
     if (payteams.length > 0 && collectedTax > 0) {
         const distribute = (collectedTax * 0.5) / payteams.length;
-        return await tx.teamSeasons.index("season, tid").iterate(backboard.bound([g.season], [g.season, '']), teamSeason => {
+        return tx.teamSeasons.index("season, tid").iterate(backboard.bound([g.season], [g.season, '']), teamSeason => {
             if (payrolls[teamSeason.tid] <= g.salaryCap) {
                 teamSeason.revenues.luxuryTaxShare = {
                     amount: distribute,
@@ -53,6 +57,8 @@ async function assessPayrollMinLuxury(tx) {
     }
 }
 
+type BudgetTypes = 'budget' | 'expenses' | 'revenues';
+
 /**
  * Update the rankings of team budgets, expenses, and revenue sources.
  *
@@ -65,36 +71,31 @@ async function assessPayrollMinLuxury(tx) {
  * @param {Array.<string>} type The types of ranks to update - some combination of "budget", "expenses", and "revenues"
  * @param {Promise}
  */
-async function updateRanks(tx, types) {
+async function updateRanks(tx: BackboardTx, types: BudgetTypes[]) {
     const sortFn = (a, b) => b.amount - a.amount;
 
     const getByItem = byTeam => {
         const byItem = {};
-        for (const item in byTeam[0]) {
-            if (byTeam[0].hasOwnProperty(item)) {
-                byItem[item] = byTeam.map(x => x[item]);
-                byItem[item].sort(sortFn);
-            }
+        for (const item of Object.keys(byTeam[0])) {
+            byItem[item] = byTeam.map(x => x[item]);
+            byItem[item].sort(sortFn);
         }
         return byItem;
     };
 
     const updateObj = (obj, byItem) => {
-        let i, item;
-        for (item in obj) {
-            if (obj.hasOwnProperty(item)) {
-                for (i = 0; i < byItem[item].length; i++) {
-                    if (byItem[item][i].amount === obj[item].amount) {
-                        obj[item].rank = i + 1;
-                        break;
-                    }
+        for (const item of Object.keys(obj)) {
+            for (let i = 0; i < byItem[item].length; i++) {
+                if (byItem[item][i].amount === obj[item].amount) {
+                    obj[item].rank = i + 1;
+                    break;
                 }
             }
         }
     };
 
     let teamSeasonsPromise;
-    if (types.indexOf("expenses") >= 0 || types.indexOf("revenues") >= 0) {
+    if (types.includes('expenses') || types.includes('revenues')) {
         teamSeasonsPromise = tx.teamSeasons.index("season, tid").getAll(backboard.bound([g.season], [g.season, '']));
     } else {
         teamSeasonsPromise = Promise.resolve();
@@ -102,36 +103,41 @@ async function updateRanks(tx, types) {
 
     const [teams, teamSeasons] = await Promise.all([tx.teams.getAll(), teamSeasonsPromise]);
 
-    let budgetsByItem, budgetsByTeam, expensesByItem, expensesByTeam, revenuesByItem, revenuesByTeam;
-    if (types.indexOf("budget") >= 0) {
+    let budgetsByItem;
+    let budgetsByTeam;
+    if (types.includes('budget')) {
         budgetsByTeam = teams.map(t => t.budget);
         budgetsByItem = getByItem(budgetsByTeam);
     }
-    if (types.indexOf("expenses") >= 0) {
+    let expensesByItem;
+    let expensesByTeam;
+    if (types.includes('expenses')) {
         expensesByTeam = teamSeasons.map(ts => ts.expenses);
         expensesByItem = getByItem(expensesByTeam);
     }
-    if (types.indexOf("revenues") >= 0) {
+    let revenuesByItem;
+    let revenuesByTeam;
+    if (types.includes('revenues')) {
         revenuesByTeam = teamSeasons.map(ts => ts.revenues);
         revenuesByItem = getByItem(revenuesByTeam);
     }
 
     await tx.teams.iterate(t => {
-        if (types.indexOf("budget") >= 0) {
+        if (types.includes('budget')) {
             updateObj(t.budget, budgetsByItem);
         }
-        if (types.indexOf("revenues") >= 0) {
+        if (types.includes('revenues')) {
             updateObj(teamSeasons[t.tid].expenses, expensesByItem);
         }
-        if (types.indexOf("expenses") >= 0) {
+        if (types.includes('expenses')) {
             updateObj(teamSeasons[t.tid].revenues, revenuesByItem);
         }
 
         return t;
     });
 
-    if (types.indexOf("revenues") >= 0 || types.indexOf("expenses") >= 0) {
-        await Promise.map(teamSeasons, teamSeason => tx.teamSeasons.put(teamSeason));
+    if (types.includes('revenues') || types.includes('expenses')) {
+        await Promise.all(teamSeasons.map(teamSeason => tx.teamSeasons.put(teamSeason)));
     }
 }
 
@@ -146,7 +152,7 @@ async function updateRanks(tx, types) {
  * @param {string} item Item inside the category
  * @return {number} Rank, from 1 to g.numTeams (default 30)
  */
-function getRankLastThree(teamSeasons, category, item) {
+function getRankLastThree(teamSeasons: TeamSeason[], category: 'expenses' | 'revenues', item: string): number {
     const s = teamSeasons.length - 1; // Most recent season index
     if (s > 1) {
         // Use three seasons if possible
@@ -163,7 +169,7 @@ function getRankLastThree(teamSeasons, category, item) {
     return 15.5;
 }
 
-module.exports = {
+export {
     assessPayrollMinLuxury,
     updateRanks,
     getRankLastThree,

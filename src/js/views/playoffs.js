@@ -1,21 +1,22 @@
-const g = require('../globals');
-const ui = require('../ui');
-const season = require('../core/season');
-const team = require('../core/team');
-const ko = require('knockout');
-const bbgmView = require('../util/bbgmView');
-const helpers = require('../util/helpers');
-const components = require('./components');
+// @flow
 
-function get(req) {
+import g from '../globals';
+import * as season from '../core/season';
+import * as team from '../core/team';
+import bbgmViewReact from '../util/bbgmViewReact';
+import * as helpers from '../util/helpers';
+import Playoffs from './views/Playoffs';
+
+function get(ctx) {
     return {
-        season: helpers.validateSeason(req.params.season),
+        season: helpers.validateSeason(ctx.params.season),
     };
 }
 
-async function updatePlayoffs(inputs, updateEvents, vm) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.season !== vm.season() || (inputs.season === g.season && updateEvents.indexOf("gameSim") >= 0)) {
-        let finalMatchups, series;
+async function updatePlayoffs(inputs, updateEvents, state) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || inputs.season !== state.season || (inputs.season === g.season && updateEvents.includes('gameSim'))) {
+        let finalMatchups;
+        let series;
 
         // If in the current season and before playoffs started, display projected matchups
         if (inputs.season === g.season && g.phase < g.PHASE.PLAYOFFS) {
@@ -39,17 +40,17 @@ async function updatePlayoffs(inputs, updateEvents, vm) {
 
         // Formatting for the table in playoffs.html
         const matchups = [];
-        for (let i = 0; i < Math.pow(2, g.numPlayoffRounds - 2); i++) {
+        for (let i = 0; i < 2 ** (g.numPlayoffRounds - 2); i++) {
             matchups[i] = [];
         }
         // Fill in with each round. Good lord, this is confusing, due to having to assemble it for an HTML table with rowspans.
         for (let i = 0; i < g.numPlayoffRounds; i++) {
-            let numGamesInSide = Math.pow(2, g.numPlayoffRounds - i - 2);
+            let numGamesInSide = 2 ** (g.numPlayoffRounds - i - 2);
             if (numGamesInSide < 1) {
                 numGamesInSide = 1;
             }
 
-            const rowspan = Math.pow(2, i);
+            const rowspan = 2 ** i;
             for (let j = 0; j < numGamesInSide; j++) {
                 matchups[j * rowspan].splice(i, 0, {
                     rowspan,
@@ -64,32 +65,23 @@ async function updatePlayoffs(inputs, updateEvents, vm) {
             }
         }
 
+        const confNames = g.confs.map(conf => conf.name);
+
         // Display the current or archived playoffs
         return {
             finalMatchups,
             matchups,
             numPlayoffRounds: g.numPlayoffRounds,
-            playoffsByConference: g.confs.length === 2 && !localStorage.top16playoffs,
+            confNames,
             season: inputs.season,
             series,
         };
     }
 }
 
-function uiFirst(vm) {
-    ko.computed(() => {
-        ui.title(`Playoffs - ${vm.season()}`);
-    }).extend({throttle: 1});
-}
-
-function uiEvery(updateEvents, vm) {
-    components.dropdown("playoffs-dropdown", ["seasons"], [vm.season()], updateEvents);
-}
-
-module.exports = bbgmView.init({
+export default bbgmViewReact.init({
     id: "playoffs",
     get,
     runBefore: [updatePlayoffs],
-    uiFirst,
-    uiEvery,
+    Component: Playoffs,
 });

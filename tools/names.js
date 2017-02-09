@@ -9,8 +9,8 @@ const folder = '/media/external/www.draftexpress.com/profile';
 
 const upperCaseFirst = str => str.charAt(0).toUpperCase() + str.slice(1);
 
-const getName = (name, file) => {
-    name = name.trim().replace(/\s\s+/g, ' '); // Condense whitespace to just single spaces
+const getName = (untrimmedName, file) => {
+    const name = untrimmedName.trim().replace(/\s\s+/g, ' '); // Condense whitespace to just single spaces
     if (name === '') {
         throw new Error(`No name found in ${file}, probably it is not a valid player page`);
     }
@@ -381,7 +381,8 @@ for (const filename of fs.readdirSync(folder)) {
 
     const $ = cheerio.load(contents);
 
-    let fn, ln;
+    let fn;
+    let ln;
     try {
         [fn, ln] = getName($('.title').first().text(), file);
     } catch (err) {

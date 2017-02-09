@@ -1,52 +1,133 @@
-on new season, other tabs should stay at "current season" instead of switching URL to last season
+HTML in play by play https://www.reddit.com/r/BasketballGM/comments/5963ym/playbyplay_bug/
 
-conference glitches
-  hardcoded conference names in playoffs view https://www.reddit.com/r/BasketballGM/comments/4op2uo/8team_custom_league/d4gpmzs
-  best record https://www.reddit.com/r/BasketballGM/comments/4oxbgm/cant_view_the_playoffs/d4gmogi
+https://www.reddit.com/r/BasketballGM/comments/57cux2/small_issue/
+
+redo contracts after free agency ends
+
+flow
+  backboard
+    BackboardTx should specify object stores
+    should somehow specify contents of object stores
+  get rid of helpers.round, should be .toFixed (string output) or Math.round (number output)
+  get rid of ScheduleGame.highlight
+  in withStats, how to convert input obj of type Player to output obj of type PlayerWithStats
+  get rid of any, Object, etc
+  ESLint
+  React components: proptype validation only works for class-based ones. for functions, need proptypes and flow. even for class-based components, flow can give more flexibility, but does not do runtime checking. https://github.com/gcanti/babel-plugin-tcomb could help with that, but seems to create too many false positives. until there is a better solution, it's not urgent to port React components to flow.
+    https://codemix.github.io/flow-runtime/
+  views: thru live
+  views/views
+
+replace owner message text with numbers/chart
+
+upgrade GA https://developers.google.com/analytics/devguides/collection/upgrade/
+  bbgm web too
+    jekyll - too complicated
+    hexo - too opinionated/idiosyncratic
+    metalsmith - ??
+    phenomic - kind of nice, but maybe unstable and tricky deployment
+
+---
+
+REACT later
+
+close menu on responsive navbar https://github.com/react-bootstrap/react-bootstrap/issues/1301 resolved by https://github.com/react-bootstrap/react-bootstrap/pull/2280
+
+sorting
+  react dnd
+  rubaxa
+    maybe https://github.com/cheton/react-sortable
+  dragula
+
+Draft button on player pages https://www.reddit.com/r/BasketballGM/comments/53op85/feature_request/
+
+redux or similar for state
+  https://www.reddit.com/r/javascript/comments/53ja6l/redux_patterns_and_antipatterns/
+
+keep showing splash screen until first view hydrated
+
+reevaluate views folder structure... maybe views -> ui, and views/*.js -> ui/data-loaders/*.js
+reevaluate bbgmView API
+
+abstract games list in schedule and dashboard
+
+DataTable
+  USE FOR OTHER TABLES TOO, not just sortable ones. will be nice for colnames, especially
+  https://github.com/rwu823/react-addons-text-content/issues/1 prevents sorting by skills on draft summary
+    for now, pass sort key as child and it works
+  Fancy features
+    CSV export
+    show/hide columns
+    filtering
+
+Trade
+  could be cleaned up a lot
+
+Draft
+  make it cooler
+  fantasy draft is hacky and glitchy - do better!
+    https://www.reddit.com/message/messages/6ip35c
+
+---
+
+home court advantage should be based on seed, not record https://www.reddit.com/r/BasketballGM/comments/4xf5ik/minor_bug/
+
+convert Dexie.Promise to a minimal A+ version (or use es6-promise), then use that plus some promise utils (eithier exiting or write my own) to replace Bluebird
+
+change max roster size https://www.reddit.com/r/BasketballGM/comments/554dly/maximum_of_roster_spots/
+
+pressing alt+p rapidly can result in extra games being played
+
+filters on event log
+  tragic deaths https://www.reddit.com/r/BasketballGM/comments/52ljuy/would_it_be_possible_to_add_a_memorial_page/d7ou7ov?context=3
+
+more keyboard shortcuts https://www.reddit.com/r/BasketballGM/comments/531utg/incredible_game_a_few_suggestions/
+
+make positions edited in god mode sticky, like custom roster
+
+different height distributions by country https://www.reddit.com/message/messages/644he7
+  even global setting would be nice, for country specific leagues
+
+make FAs less eager to sign with bad teams
+  alternative idea to just threshold: https://www.reddit.com/r/nba/comments/4tfaph/i_made_basketball_gm_a_free_basketball_management/d5hqqal
+
+display numerical owner mood somehow
+
+AI trades
+
+all time leaders https://www.reddit.com/r/BasketballGM/comments/4qjkys/simple_feature_suggestion_all_time_season/
+
+seasons in header of team finances salaries table do not update when season changes
+
+refuse to sign in god mode https://www.reddit.com/r/BasketballGM/comments/4p2s1q/cant_sign_star_player/
 
 newScheduleCrappy should be better
 
 better salary AI
   old players undervalued
   dynamically set based on cap space
-  increase salary cap, and startingSeason
-    need to make revenue higher too, then
   https://www.reddit.com/r/gamedev/comments/4omk8h/simulating_marketbased_pricing/
+  FAs less likely to sign https://www.reddit.com/r/BasketballGM/comments/4qla6t/free_agent_mood/d4ww715?context=3
 
 international names
   accurate faces (race)
   in player ratings table, show country abbrevs not full names
 
-babel
-  how can i gracefully show an error message in browsers without generators?
-  after live, test that account emails (lost pw, and register) work
-  required babel transforms
-    transform-es2015-block-scoping
-      needed for firefox https://bugzilla.mozilla.org/show_bug.cgi?id=449811
-    transform-async-to-generator
-      needed until there is better native support for promises and indexeddb interaction
-    all others
-      http://stackoverflow.com/a/36824024/786644
+required babel transforms
+  transform-es2015-block-scoping
+    needed for firefox https://bugzilla.mozilla.org/show_bug.cgi?id=449811
+  transform-async-to-generator
+    needed until there is better native support for promises and indexeddb interaction
+  all others
+    http://stackoverflow.com/a/36824024/786644
 
 backboard
   investigate backboard tx canceling error propagation, see tx in newPhase. maybe interaction between promise manually being 
   player.withStats native support
 
-minify es2015, even just generators
-  https://github.com/mishoo/UglifyJS2/issues/448
-  https://www.reddit.com/r/javascript/comments/4h9htg/is_anyone_deploying_es2015_code_not_transpiled/d462rsn?context=3
-  npm install git+https://github.com/mishoo/UglifyJS2.git\#harmony
-
 bluebird has to stay on 3.3.4 because of https://github.com/petkaantonov/bluebird/issues/1022
 
-can i get rid of http/https links?
-  tracking prevalence in GA with "Season protocol" - don't proceed further until that goes to 0!
-  put bbgm_insecure htaccess in normal htaccess for account, play, beta, and web. then get rid of all insecure websites in webfaction and add http domains to normal websites
-  tryForceHttps
-
 new achievement for winning as 8 seed https://www.reddit.com/r/BasketballGM/comments/4l2arh/new_achievement_suggestion/
-
-clean up manual
 
 on new league, when play to regular season, message appears in inbox but does not show up on dashboard
 
@@ -73,16 +154,14 @@ service worker to repalce appcache
 
 get rid of everything in lib folder. either install from npm or create npm packages
 
-css build process?
-
 CI, dep version checking, etc
-
-eslint
-  "arrow-parens": ["error", "as-needed"],
-    doesn't seem to actually work as the documentation says... try again later
 
 CURRENT
 -------
+
+bold highest values in career on player stats tables like wikipedia https://www.reddit.com/r/BasketballGM/comments/4rgn0p/two_statrelated_suggestions/
+
+pages for each playoff series https://www.reddit.com/r/BasketballGM/comments/4qjahi/minor_suggestion_generate_separate_pages_for_each/
 
 old draft picks should be purged https://www.reddit.com/r/BasketballGM/comments/4nfesy/guys_staying_past_their_deadline_bugs/d43wbpc?context=3
 
@@ -97,8 +176,6 @@ team dropdown in dashboard
 feats table should show both playoffs and regular season by default
 
 https://www.reddit.com/r/BasketballGM/comments/3gjqgd/lets_brainstorm_a_bit_about_this_30_seasons/
-
-roster order bug https://www.reddit.com/r/BasketballGM/comments/3gch1i/why_is_my_coach_insane/
 
 fantasy draft summary https://www.reddit.com/r/BasketballGM/comments/3g4p5a/issues_with_fantasy_draft_records/ (link is in player transactions)
 
@@ -211,8 +288,6 @@ DEATH
       give extra draft picks as compensation?
         what would the nba do?
       reset owner mood, new owner message
-
-multi team UI - click from league to main dashboard and switch teams menu persists
 
 screenshot
   what do i link to? Imgur landing page? or include social links directly?
@@ -364,6 +439,7 @@ Too many good free agents available at the minimum: http://www.reddit.com/r/Bask
 TEAM.VALUECHANGE REVAMP
 -----------------------
 
+https://www.reddit.com/r/BasketballGM/comments/585af3/the_trade_ai_is_too_easy_to_abuse/
 loyalty: players should be reluctant to leave teams they've been on for a while.
 http://www.reddit.com/r/BasketballGM/comments/2v26p1/how_are_you_exploiting_the_trade_ai/
 http://www.reddit.com/r/BasketballGM/comments/255sta/i_think_we_need_longer_dynasty_achievements/che050a?context=3
@@ -442,13 +518,6 @@ trade UI
 cordova
   in portrait, games in dashboard looks like shit
   hide export link
-blog about cordova/web hybrid
-  base URL prefix - do in JS
-  davisjs: preprocess
-  images: data URLs
-  upload roster files problem
-firefox market
-windows 8
 upcoming free agents
   off by one contract year?
   should be visible all the time, not blocked by FA limit page
@@ -599,14 +668,7 @@ gameSim
   assists should be function of speed, since those players have the ball more
   situational awareness http://www.reddit.com/r/BasketballGM/comments/1yg6wi/end_of_game_simulation/
   mediocre players on bad teams should be less efficient (shouldn't put up such a high PER, which falls if they join a good team)
-contract negotiation
-  don't have counter-offers be too drastic
-  weirdness
-    http://www.reddit.com/r/nba/comments/1j1e6q/i_made_a_singleplayer_basketball_management/cbabaq1
-    http://www.reddit.com/r/BasketballGM/comments/1j3it8/free_agency_bug/
-    http://www.reddit.com/r/BasketballGM/comments/20k310/may_have_encountered_a_bug_during_contract/
-  add free agent to the end of roster
-  http://www.reddit.com/r/BasketballGM/comments/1ykybp/free_agent_signing_suggestion/
+add free agent to the end of roster
 fuzz should affect potential more than other variables, when pot is different than ovr
 mode with ratings hidden
   implement like fuzz?
@@ -616,9 +678,6 @@ mode with ratings hidden
 MINOR FIXES
 -----------
 
-komapping things should use update as well as create!
-  get rid of mapping where possible
-  related to roster bug?
 show team records in box score http://www.reddit.com/r/BasketballGM/comments/2dkpzw/request_team_record_in_box_scores/
 retired players should be eligible for season awards
 TS%
@@ -627,13 +686,8 @@ documentation
 smoother multi-window updates
   instead of dbChange, cache previous updateEvents and pass them
     cache expiration?
-most improved player
 assist leaders too low
 Number of years in college should depend on talent level
-DataTables - fix default sort order on column click
-  text should be asc, numeric should be desc (except draft picks)
-  http://datatables.net/ref#asSorting will work. maybe pass it as an option to bbgm_datatable
-  but can it be set globally, based on column type? can have ui.datatable automatically read columns and figure it out?
 Add MVP and Titles columns to HoF table
 Make good young players much less likely to become FAs
 Make rookie contracts 1 year longer
@@ -647,26 +701,18 @@ if a player refuses to resign, that decision should also be reflected in free ag
 add "drb" to usage so that good ball handlers shoot more (favor guards over bigs more)
 in player page, show red/green for ratings changes from the previous year, maybe as heatmap
 in ratings tables, show dpot and dovr columns? maybe?
-more owner messages - crowdsource? especially intro
 Add markers for clinching playoffs / 1st seed in league standings
 trading block crashing bug
   happens in chrome in old leagues, apparently. running out of memory somehow?
-expand play menu so it can be used with one click http://www.reddit.com/r/BasketballGM/comments/1ry65b/best_method_of_giving_feedback_and_requesting_new/cds6hph
 first errorNotify in contractNegotiation.js really should be inline within that page
 league leaders glitch http://www.reddit.com/r/BasketballGM/comments/1r20x5/league_leaders_bug/
 merge game.play and freeAgents.play
-make sure the changes alert and the "refuses to negotiate" alert both look good
-  link to player in "refuses to negotiate" alert
 replace random.gauss with random.realGauss
 current season shouldn't show in league history page dropdown
 make trade counter-offer faster by checking if no trade is possible first http://www.reddit.com/r/BasketballGM/comments/1jumc9/is_it_just_me_or_does_it_take_wayyyy_too_long_for/
 document things that affect player mood
-security
-  validate any user-added content, like custom team names (both in file and through form), custom players, and league names
 in playoffs, replace "play week" with "play until end of round"
 don't need to check every team's roster limits every time games are played - could auto keep AI teams in line after any trade (with user or between AI teams), and then only the user's team needs to be checked
-reorganize top menu
-http://code.google.com/p/htmlcompressor/ or something similar
 in playoffs, replace Week/Month in Play menu with Round http://www.reddit.com/r/BasketballGM/comments/1w55sb/suggestionplayoffs_simulate_by_round_instead_of/
 gamesim shot distribution - less people shooting 3s really poorly, especially tall players
 UI to easily switch between conference and division standings on small screens and dashboard http://www.reddit.com/r/BasketballGM/comments/2d4o9r/feature_requests_of_the_week_august_10_2014/cjqrwtf?context=3
@@ -681,10 +727,7 @@ attendance should change faster http://www.reddit.com/r/BasketballGM/comments/30
 track longest W/L streaks
 option to stop sim when player is injured http://www.reddit.com/r/BasketballGM/comments/2s265y/suggestion_option_to_automatically_stop/
 tooling
-  tools/build.js
-    test on windows
   istanbul https://github.com/karma-runner/karma-coverage
-  flow - doesn't seem to like requirejs or promises
 simple advanced stats
   TS%, etc
   pace-weighted stats
@@ -769,11 +812,6 @@ trades between AI teams
     generalize core.trade.makeItWork and other parts of core.trade
   transaction log is necessary to keep tabs on this stuff
   also propose trades to the user, somehow
-IE support
-  dropdowns disappear on refresh?
-    unit tests fail too, seemingly for the same reason
-  text in dashboard is messed up
-  compound indexes
 core.team.valueChange should be used to pick which free agents to sign in core.freeAgents.autoSign, but that would be a bitch beacuse of how transactions are set up
   also for resigning players in core.season
 trades
@@ -790,21 +828,11 @@ god mode
   options
     disable ratings display
     playoff round length
-  edit player
-    edit diedYear (or null if blank)
-    edit college
 profits too large, too easy
   add corporate tax?
   luxury tax increases for repeat offenders?
-only show retired players in season summary if they actually played some
-components.dropdown tests are very slow in chrome
 export/import roster
   some way to specify startingSeason
-  download link performance
-    http://mjtemplate.org/examples/rison.html
-    something besides a data URI?
-    no base64? Firefox can't handle #
-  error handling if blank or invalid file is supplied
   easily edit in excel?
 core.freeAgents should be core.freeAgent or core.freeAgency?
 after last resigning negotiation, switch to next phase?
@@ -832,9 +860,6 @@ test trades more
     but this should have something to do with the difference between numbers of players on each side?
 if fouling out drops team below 5 active players, play fouled out players but add a FT each foul (technical)
 show old contracts on old roster view
-reassess ui module. delete stuff like ui.dropdown. move other functions elsewhere?
-  what is the difference between util.viewHelpers, views.components, and ui?
-can i get rid of js/api.js?
 core.trade refactoring
   validateSavedTids crap should be in trade.js.
   trade.summary stuff should be automatic and stored in tradeStore
@@ -872,10 +897,6 @@ AI modules that contain functions which are called to determine actions
     trades
     budget items (like from team finances view)
     releasing/buying out players when over limit
-customize which columns are shown in roster view (and possibly other summary views like trade, free agent, etc)
-  http://datatables.net/extras/colvis/
-  would it be better just to toggle displays? http://www.reddit.com/r/BasketballGM/comments/1ygzlt/idea_watch_list_toggle_between_stats_and/
-    could be different levels of detail (all stats, some stats, min stats) and have these preprogrammed in somehow for toggling to the same number of ratings
 AI teams should periodically reorder rosters throughout the season
 PER
   slow, particularly after multiple seasons?
@@ -906,13 +927,9 @@ event log UI
   what about events with no tid? they are currently not viewable
 draftOrder should just be in globals, not a real table
 shot charts showing hot spots (red/yellow/green) based on shot location data
-most improved player
 If you are simulating through the whole season and execute a trade while simulating, it will continue simulating even if you are over the roster limit. http://www.reddit.com/r/BasketballGM/comments/1xch01/trades_after_season/cfamo73
-IE10 support
-  davisjs for knockoutjs links in IE10
-    elem.host comes up blank in originChecks
-    hacky solution used now (see js/lib/README.md) but maybe this will lead to a real answer: http://stackoverflow.com/q/17641380/786644
-  http://www.reddit.com/r/BasketballGM/comments/1kj8nv/i_have_updated_firefox_but_the_game_wont_load_in/
+IE/Edge support
+  compound indexes
 hire/fire different coaches with different strategies
 Web workers
   don't seem to actually help performance. maybe help responsiveness
@@ -958,8 +975,6 @@ bbgmView
     in practice, this doesn't seem to matter much
   shouldn't have newPhase updateEvent doing much. instead, have an array of what changed in that phase
     (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON) should be newSeason
-  use req.redirect from POST to manage history optimally
-  make it less tied to BBGM specifically. shouldn't depend on BBGM-specific modules like g, ui, and util/viewHelpers
 views.teamFinances should merge db call with team.filter to get seasonAttrs, but that will require rewriting seasonAttrs handling in team.filter to handle multiple seasons.
 git log -- js/core/gameSimNew.js
 live play-by-play simulation
@@ -971,78 +986,7 @@ live play-by-play simulation
   could fake where the shots are to display graphically
   when someone wins the title, you can see the phase change at the top even while watching the live play-by-play of the last game. this leaks info about who won
   allow the user to make substitutions in realtime
-when i have more money, get logos and colors for default teams - maybe by /u/mbingcrosby or /u/R_E_D_D_l_T
 multi team trades
-
-Template Stuff
---------------
-
-Below are relatively boring/minor improvements that would make the templating slightly better/faster/clearer/whatever.
-
-gameLog
-  boxScore should be observable, but nothing inside should be except gid
-dashboard
-  observables set right by mapping
-    historical things (old scores, old records) don't need to be observable?
-    arrays need correct keys
-team finances
-  smarter updating of player salaries table: contracts should only update on playerMovement
-feasible to use knockout for updating datatable? or kogrid?
-trade - not fully knockoutifieid
-  mapping to update summary.teams.trade, userRoster, otherRoster
-  can i do a redirect from post without refreshing everything?
-    just call ui.realtimeUpdate which should allow for smart handling
-      if trade is accepted/cleared, playerMovement will instigate a refresh of rosters
-      if trade is proposed, message will somehow explicity be sent (set in VM? but what if VM not initialized?)
-  when to delete stored message?
-    at beginning of new propose
-    on clear
-    when team changes
-  changing the trading partner shouldn't refresh the user's team
-negotiation
-  some things can probably be non-observable
-draftSummary
-  don't show this season as option if before draft - have an option in components.dropdown
-playerNameLabels always updates even if none of the inputs did - why
-  if ratings.skills is generated by the mapping plugin, it's an observable array and this fucks things up. it would be a bitch to fix, though.
-    quick fix - return a string for templates rather than array.
-leaders
-  flatten a bit
-roster
-  check release, buy out, trade for
-  flatten a bit
-  vars.ptModifiers does not need to be observable
-  for some reason, vars.players.injury stuff isnt' observable so days remaining injured doesn't update in a timely manner. very bizarre
-dataTables/grid knockout
-  examples
-    https://github.com/CogShift/Knockout.Extensions
-      https://github.com/CogShift/Knockout.Extensions/issues/9
-    https://github.com/Knockout-Contrib/KoGrid
-    http://chadmullins.com/javascript/knockout-js-series-part-2-binding-knockout-js-to-a-datatables-grid/
-inbox
-  on new message (can be a newMessage update event), just add to messages list rather than always refreshing
-player_
-  face display with forward/back button?
-    some things become observables - why???
-    mapping function not run right the second time - try to create jsfiddle
-      arrays are becoming observableArrays
-schedule, teamHistory
-  partial load of list for updates, like in gameLog list
-freeagents
-  optimize refreshes
-dist
-  allow updating box plots without refresh
-gameLog
-  set more stuff through mapping
-reassess dropdown - should it really be called like it is in uiEvery? can i use a computed? problem is, some things need to listen to updateEvents too, not just observables
-eventLog
-  don't need things inside events observableArray to be observable
-
----
-
-
-
-
 
 # Pre-JavaScript TODO
 

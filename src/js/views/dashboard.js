@@ -1,7 +1,8 @@
-const g = require('../globals');
-const ui = require('../ui');
-const bbgmView = require('../util/bbgmView');
-const viewHelpers = require('../util/viewHelpers');
+// @flow
+
+import g from '../globals';
+import bbgmViewReact from '../util/bbgmViewReact';
+import Dashboard from './views/Dashboard';
 
 async function updateDashboard() {
     const leagues = await g.dbm.leagues.getAll();
@@ -16,30 +17,14 @@ async function updateDashboard() {
         delete leagues[i].tid;
     }
 
-    // http/https crap
-    let otherUrl;
-    if (window.location.protocol === "http:") {
-        if (leagues.length === 0 && window.location.hostname.indexOf("basketball-gm.com") >= 0) {
-            window.location.replace(`https://${window.location.hostname}/`);
-        }
-        otherUrl = `https://${window.location.hostname}/`;
-    } else {
-        otherUrl = null;
-    }
-
     return {
         leagues,
-        otherUrl,
     };
 }
 
-function uiFirst() {
-    ui.title("Dashboard");
-}
-
-module.exports = bbgmView.init({
+export default bbgmViewReact.init({
     id: "dashboard",
-    beforeReq: viewHelpers.beforeNonLeague,
+    inLeague: false,
     runBefore: [updateDashboard],
-    uiFirst,
+    Component: Dashboard,
 });

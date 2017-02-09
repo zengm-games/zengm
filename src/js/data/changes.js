@@ -1,4 +1,6 @@
-const eventLog = require('../util/eventLog');
+// @flow
+
+import logEvent from '../util/logEvent';
 
 const all = [{
     date: "2013-09-21",
@@ -115,12 +117,13 @@ const all = [{
 
 function check() {
     // Don't show anything on first visit
-    if (localStorage.changesRead === undefined) {
-        localStorage.changesRead = all.length;
+    if (localStorage.getItem('changesRead') === null) {
+        localStorage.setItem('changesRead', String(all.length));
     }
 
-    if (localStorage.changesRead < all.length) {
-        const unread = all.slice(localStorage.changesRead);
+    const changesRead = parseInt(localStorage.getItem('changesRead'), 10);
+    if (changesRead < all.length) {
+        const unread = all.slice(changesRead);
 
         let text = "";
         let linked = false;
@@ -141,17 +144,17 @@ function check() {
             text += '<br><a href="/changes">View All Changes</a>';
         }
 
-        eventLog.add(null, {
+        logEvent(null, {
             type: "changes",
             text,
             saveToDb: false,
         });
 
-        localStorage.changesRead = all.length;
+        localStorage.setItem('changesRead', String(all.length));
     }
 }
 
-module.exports = {
+export {
     all,
     check,
 };

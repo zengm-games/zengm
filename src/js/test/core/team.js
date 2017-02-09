@@ -1,9 +1,9 @@
-const assert = require('assert');
-const db = require('../../db');
-const g = require('../../globals');
-const league = require('../../core/league');
-const player = require('../../core/player');
-const team = require('../../core/team');
+import assert from 'assert';
+import * as db from '../../db';
+import g from '../../globals';
+import * as league from '../../core/league';
+import * as player from '../../core/player';
+import * as team from '../../core/team';
 
 describe("core/team", () => {
     describe("#findStarters()", () => {
@@ -274,8 +274,8 @@ describe("core/team", () => {
                 // Confirm roster size errora nd no auto-signing of players
             const userTeamSizeError = await team.checkRosterSizes();
             assert.equal(typeof userTeamSizeError, "string");
-            assert(userTeamSizeError.indexOf("less") >= 0);
-            assert(userTeamSizeError.indexOf("minimum") >= 0);
+            assert(userTeamSizeError.includes('less'));
+            assert(userTeamSizeError.includes('minimum'));
             numPlayers = await g.dbl.players.index('tid').count(g.userTid);
             assert.equal(numPlayers, 4);
         });
@@ -290,8 +290,8 @@ describe("core/team", () => {
             // Confirm roster size error and no auto-release of players
             const userTeamSizeError = await team.checkRosterSizes();
             assert.equal(typeof userTeamSizeError, "string");
-            assert(userTeamSizeError.indexOf("more") >= 0);
-            assert(userTeamSizeError.indexOf("maximum") >= 0);
+            assert(userTeamSizeError.includes('more'));
+            assert(userTeamSizeError.includes('maximum'));
             numPlayers = await g.dbl.players.index('tid').count(g.userTid);
             assert.equal(numPlayers, 24);
         });

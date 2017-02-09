@@ -1,10 +1,3 @@
-# This should be kept in sync with mongoose.conf and runserver.py
-
-#Action php54-cgi /php54.cgi
-#<FilesMatch \.php$>
-#  SetHandler php54-cgi
-#</FilesMatch>
-
 <FilesMatch "\.(ttf|otf|eot|woff)$">
   <IfModule mod_headers.c>
     Header set Access-Control-Allow-Origin "*"
@@ -15,7 +8,11 @@ Options +FollowSymLinks
 RewriteEngine On
 RewriteBase /
 
-RewriteRule ^export_3.3$ export_3.3.html
+RewriteCond %{HTTP:X-Forwarded-SSL} !on
+RewriteCond %{HTTP_HOST} !=localhost
+RewriteCond %{HTTP_HOST} !\.dev$
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
 RewriteRule ^manifest_hack$ manifest_hack.html
 RewriteRule ^test$ test.html
 RewriteRule ^test_case$ test_case.html
@@ -23,7 +20,6 @@ RewriteRule ^test_case$ test_case.html
 RewriteCond %{REQUEST_URI} !^/bbgm.appcache
 RewriteCond %{REQUEST_URI} !^/robots.txt
 RewriteCond %{REQUEST_URI} !^/css
-RewriteCond %{REQUEST_URI} !^/export_3.3
 RewriteCond %{REQUEST_URI} !^/fonts
 RewriteCond %{REQUEST_URI} !^/gen
 RewriteCond %{REQUEST_URI} !^/ico

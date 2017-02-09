@@ -1,19 +1,24 @@
-const db = require('../db');
-const g = require('../globals');
-const ui = require('../ui');
-const draft = require('./draft');
-const finances = require('./finances');
-const phase = require('./phase');
-const player = require('./player');
-const team = require('./team');
-const backboard = require('backboard');
-const Promise = require('bluebird');
-const $ = require('jquery');
-const _ = require('underscore');
-const helpers = require('../util/helpers');
-const random = require('../util/random');
+// @flow
 
-const defaultGameAttributes = {
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import _ from 'underscore';
+import {connectLeague} from '../db';
+import g from '../globals';
+import * as ui from '../ui';
+import * as draft from './draft';
+import * as finances from './finances';
+import * as freeAgents from './freeAgents';
+import * as game from './game';
+import * as phase from './phase';
+import * as player from './player';
+import * as season from './season';
+import * as team from './team';
+import * as helpers from '../util/helpers';
+import * as random from '../util/random';
+import type {BackboardTx, GameAttributeKeyDynamic, GameAttributes} from '../util/types';
+
+const defaultGameAttributes: GameAttributes = {
     phase: 0,
     nextPhase: null, // Used only for fantasy draft
     daysLeft: 0, // Used only for free agency
@@ -31,12 +36,12 @@ const defaultGameAttributes = {
     autoPlaySeasons: 0,
     godMode: false,
     godModeInPast: false,
-    salaryCap: 60000, // [thousands of dollars]
-    minPayroll: 40000, // [thousands of dollars]
-    luxuryPayroll: 65000, // [thousands of dollars]
+    salaryCap: 90000, // [thousands of dollars]
+    minPayroll: 60000, // [thousands of dollars]
+    luxuryPayroll: 100000, // [thousands of dollars]
     luxuryTax: 1.5,
-    minContract: 500, // [thousands of dollars]
-    maxContract: 20000, // [thousands of dollars]
+    minContract: 750, // [thousands of dollars]
+    maxContract: 30000, // [thousands of dollars]
     minRosterSize: 10,
     numGames: 82, // per season
     quarterLength: 12, // [minutes]
@@ -57,11 +62,11 @@ const defaultGameAttributes = {
 };
 
 // x and y are both arrays of objects with the same length. For each object, any properties in y but not x will be copied over to x.
-function merge(x, y) {
+function merge(x: Object[], y: Object[]): Object[] {
     for (let i = 0; i < x.length; i++) {
         // Fill in default values as needed
-        for (const prop in y[i]) {
-            if (y[i].hasOwnProperty(prop) && !x[i].hasOwnProperty(prop)) {
+        for (const prop of Object.keys(y[i])) {
+            if (!x[i].hasOwnProperty(prop)) {
                 x[i][prop] = y[i][prop];
             }
         }
@@ -78,41 +83,30 @@ function merge(x, y) {
  * @param {Object} gameAttributes Each property in the object will be inserted/updated in the database with the key of the object representing the key in the database.
  * @returns {Promise} Promise for when it finishes.
  */
-async function setGameAttributes(tx, gameAttributes) {
+async function setGameAttributes(tx: BackboardTx, gameAttributes: GameAttributes) {
     const toUpdate = [];
-    for (const key in gameAttributes) {
-        if (gameAttributes.hasOwnProperty(key)) {
-            if (g[key] !== gameAttributes[key]) {
-                toUpdate.push(key);
-            }
+    for (const key of helpers.keys(gameAttributes)) {
+        if (g[key] !== gameAttributes[key]) {
+            toUpdate.push(key);
         }
     }
 
-    await Promise.map(toUpdate, async key => {
+    await Promise.all(toUpdate.map(async (key) => {
         await tx.gameAttributes.put({
             key,
             value: gameAttributes[key],
         });
 
         g[key] = gameAttributes[key];
+    }));
 
-        if (key === "userTid" || key === "userTids") {
-            g.vm.multiTeam[key](gameAttributes[key]);
-        }
-
-        // Trigger a signal for the team finances view. This is stupid.
-        if (key === "gamesInProgress") {
-            if (gameAttributes[key]) {
-                $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStart");
-            } else {
-                $("#finances-settings, #free-agents, #live-games-list").trigger("gameSimulationStop");
-            }
-        }
-    });
+    if (toUpdate.includes('userTid') || toUpdate.includes('userTids')) {
+        g.emitter.emit('updateMultiTeam');
+    }
 }
 
 // Calls setGameAttributes and ensures transaction is complete. Otherwise, manual transaction managment would always need to be there like this
-async function setGameAttributesComplete(gameAttributes) {
+async function setGameAttributesComplete(gameAttributes: GameAttributes) {
     await g.dbl.tx("gameAttributes", "readwrite", tx => setGameAttributes(tx, gameAttributes));
 }
 
@@ -129,13 +123,24 @@ function updateLastDbChange() {
  * @param {string} name The name of the league.
  * @param {number} tid The team ID for the team the user wants to manage (or -1 for random).
  */
-async function create(name, tid, leagueFile = {}, startingSeason, randomizeRosters) {
+async function create(
+    name: string,
+    tid: number,
+    leagueFile: Object = {},
+    startingSeason: number,
+    randomizeRosters: boolean,
+) {
     const teamsDefault = helpers.getTeamsDefault();
 
     // Any custom teams?
-    let teams;
+    let teams: any;
     if (leagueFile.hasOwnProperty("teams")) {
-        teams = merge(leagueFile.teams, teamsDefault);
+        if (leagueFile.teams.length <= teamsDefault.length) {
+            // This probably shouldn't be here, but oh well, backwards compatibility...
+            teams = merge(leagueFile.teams, teamsDefault);
+        } else {
+            teams = leagueFile.teams;
+        }
         teams = helpers.addPopRank(teams);
     } else {
         teams = teamsDefault;
@@ -160,7 +165,7 @@ async function create(name, tid, leagueFile = {}, startingSeason, randomizeRoste
         teamName: teams[tid].name,
         teamRegion: teams[tid].region,
     });
-    await db.connectLeague(g.lid);
+    await connectLeague(g.lid);
 
     const gameAttributes = _.extend(helpers.deepCopy(defaultGameAttributes), {
         userTid: tid,
@@ -190,7 +195,7 @@ async function create(name, tid, leagueFile = {}, startingSeason, randomizeRoste
         }
 
         // Special case for userTids - don't use saved value if userTid is not in it
-        if (gameAttributes.userTids.indexOf(gameAttributes.userTid) < 0) {
+        if (!gameAttributes.userTids.includes(gameAttributes.userTid)) {
             gameAttributes.userTids = [gameAttributes.userTid];
         }
     }
@@ -200,7 +205,8 @@ async function create(name, tid, leagueFile = {}, startingSeason, randomizeRoste
 
     await setGameAttributesComplete(gameAttributes);
 
-    let players, scoutingRank;
+    let players;
+    let scoutingRank;
     const objectStores = ["draftPicks", "draftOrder", "players", "playerStats", "teams", "teamSeasons", "teamStats", "trade", "releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games", "events", "playerFeats"];
     await g.dbl.tx(objectStores, "readwrite", async tx => {
         // Draft picks for the first 4 years, as those are the ones can be traded initially
@@ -347,11 +353,12 @@ async function create(name, tid, leagueFile = {}, startingSeason, randomizeRoste
                 }
             }
 
-            players.forEach(async p => {
-                p = player.augmentPartialPlayer(p, scoutingRank);
+            players.forEach(async p0 => {
+                // Has to be any because I cna't figure out how to change PlayerWithoutPidWithStats to Player
+                let p: any = player.augmentPartialPlayer(p0, scoutingRank);
 
                 // Don't let imported contracts be created for below the league minimum, and round to nearest $10,000.
-                p.contract.amount = Math.max(10 * helpers.round(p.contract.amount / 10), g.minContract);
+                p.contract.amount = Math.max(10 * Number(helpers.round(p.contract.amount / 10)), g.minContract);
 
                 // Separate out stats
                 const playerStats = p.stats;
@@ -406,9 +413,9 @@ async function create(name, tid, leagueFile = {}, startingSeason, randomizeRoste
             const baseRatings = [37, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 26, 26, 26];
             const pots = [75, 65, 55, 55, 60, 50, 70, 40, 55, 50, 60, 60, 45, 45];
 
-            for (let tid = -3; tid < teams.length; tid++) {
+            for (let tidTemp = -3; tidTemp < teams.length; tidTemp++) {
                 // Create multiple "teams" worth of players for the free agent pool
-                const tid2 = tid < 0 ? g.PLAYER.FREE_AGENT : tid;
+                const tid2 = tidTemp < 0 ? g.PLAYER.FREE_AGENT : tidTemp;
 
                 const goodNeutralBad = random.randInt(-1, 1);  // determines if this will be a good team or not
                 random.shuffle(pots);
@@ -444,7 +451,7 @@ async function create(name, tid, leagueFile = {}, startingSeason, randomizeRoste
 
                     // Save to database
                     if (p.tid === g.PLAYER.FREE_AGENT) {
-                        player.addToFreeAgents(tx, p, null, baseMoods);
+                        player.addToFreeAgents(tx, p, g.phase, baseMoods);
                     } else {
                         p.pid = await tx.players.put(p);
 
@@ -482,13 +489,13 @@ async function create(name, tid, leagueFile = {}, startingSeason, randomizeRoste
         }
         // If the draft has already happened this season but next year's class hasn't been bumped up, don't create any g.PLAYER.UNDRAFTED
         if (createUndrafted1 && (g.phase <= g.PHASE.BEFORE_DRAFT || g.phase >= g.PHASE.FREE_AGENCY)) {
-            draft.genPlayers(tx, g.PLAYER.UNDRAFTED, scoutingRank, createUndrafted1);
+            draft.genPlayers(tx, g.PLAYER.UNDRAFTED, scoutingRank, createUndrafted1, true);
         }
         if (createUndrafted2) {
-            draft.genPlayers(tx, g.PLAYER.UNDRAFTED_2, scoutingRank, createUndrafted2);
+            draft.genPlayers(tx, g.PLAYER.UNDRAFTED_2, scoutingRank, createUndrafted2, true);
         }
         if (createUndrafted3) {
-            draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3, scoutingRank, createUndrafted3);
+            draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3, scoutingRank, createUndrafted3, true);
         }
     });
 
@@ -506,7 +513,7 @@ async function create(name, tid, leagueFile = {}, startingSeason, randomizeRoste
 
     // Auto sort rosters
     return g.dbl.tx("players", "readwrite", async tx => {
-        await Promise.map(teams, t => team.rosterAutoSort(tx, t.tid));
+        await Promise.all(teams.map(t => team.rosterAutoSort(tx, t.tid)));
         return lid;
     });
 }
@@ -518,7 +525,7 @@ async function create(name, tid, leagueFile = {}, startingSeason, randomizeRoste
  * @param {number} lid League ID.
  * @param {function()=} cb Optional callback.
  */
-function remove(lid) {
+function remove(lid: number) {
     if (g.dbl !== undefined) {
         g.dbl.close();
     }
@@ -533,7 +540,7 @@ function remove(lid) {
  * @param {string[]} stores Array of names of objectStores to include in export
  * @return {Promise} Resolve to all the exported league data.
  */
-async function exportLeague(stores) {
+async function exportLeague(stores: string[]) {
     const exportedLeague = {};
 
     // Row from leagueStore in meta db.
@@ -541,12 +548,12 @@ async function exportLeague(stores) {
     // name is only used for the file name of the exported roster file.
     exportedLeague.meta = {phaseText: g.phaseText, name: g.leagueName};
 
-    await Promise.map(stores, async store => {
+    await Promise.all(stores.map(async store => {
         exportedLeague[store] = await g.dbl[store].getAll();
-    });
+    }));
 
     // Move playerStats to players object, similar to old DB structure. Makes editing JSON output nicer.
-    if (stores.indexOf("playerStats") >= 0) {
+    if (stores.includes('playerStats')) {
         for (let i = 0; i < exportedLeague.playerStats.length; i++) {
             const pid = exportedLeague.playerStats[i].pid;
             for (let j = 0; j < exportedLeague.players.length; j++) {
@@ -563,7 +570,7 @@ async function exportLeague(stores) {
         delete exportedLeague.playerStats;
     }
 
-    if (stores.indexOf("teams") >= 0) {
+    if (stores.includes('teams')) {
         for (let i = 0; i < exportedLeague.teamSeasons.length; i++) {
             const tid = exportedLeague.teamSeasons[i].tid;
             for (let j = 0; j < exportedLeague.teams.length; j++) {
@@ -597,7 +604,7 @@ async function exportLeague(stores) {
     return exportedLeague;
 }
 
-async function updateMetaNameRegion(name, region) {
+async function updateMetaNameRegion(name: string, region: string) {
     const l = await g.dbm.leagues.get(g.lid);
     l.teamName = name;
     l.teamRegion = region;
@@ -611,8 +618,8 @@ async function updateMetaNameRegion(name, region) {
  * @param {string} key Key in gameAttributes to load the value for.
  * @return {Promise}
  */
-async function loadGameAttribute(ot, key) {
-    const dbOrTx = ot !== null ? ot : g.dbl;
+async function loadGameAttribute(tx: ?BackboardTx, key: GameAttributeKeyDynamic) {
+    const dbOrTx = tx !== undefined && tx !== null ? tx : g.dbl;
     const gameAttribute = await dbOrTx.gameAttributes.get(key);
 
     if (gameAttribute === undefined) {
@@ -621,17 +628,17 @@ async function loadGameAttribute(ot, key) {
 
     g[key] = gameAttribute.value;
 
-    // UI stuff - see also loadGameAttributes
-    if (key === "godMode") {
-        g.vm.topMenu.godMode(g.godMode);
-    }
-    if (key === "userTid" || key === "userTids") {
-        g.vm.multiTeam[key](gameAttribute.value);
-    }
-
     // Set defaults to avoid IndexedDB upgrade
     if (g[key] === undefined && defaultGameAttributes.hasOwnProperty(key)) {
         g[key] = defaultGameAttributes[key];
+    }
+
+    // UI stuff - see also loadGameAttributes
+    if (key === "godMode") {
+        g.emitter.emit('updateTopMenu', {godMode: g.godMode});
+    }
+    if (key === "userTid" || key === "userTids") {
+        g.emitter.emit('updateMultiTeam');
     }
 }
 
@@ -641,8 +648,8 @@ async function loadGameAttribute(ot, key) {
  * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on gameAttributes; if null is passed, then a new transaction will be used.
  * @return {Promise}
  */
-async function loadGameAttributes(ot) {
-    const dbOrTx = ot !== null ? ot : g.dbl;
+async function loadGameAttributes(tx: ?BackboardTx) {
+    const dbOrTx = tx !== undefined && tx !== null ? tx : g.dbl;
 
     const gameAttributes = await dbOrTx.gameAttributes.getAll();
 
@@ -654,24 +661,19 @@ async function loadGameAttributes(ot) {
     if (g.userTids === undefined) { g.userTids = [g.userTid]; }
 
     // Set defaults to avoid IndexedDB upgrade
-    Object.keys(defaultGameAttributes).forEach(key => {
+    helpers.keys(defaultGameAttributes).forEach(key => {
         if (g[key] === undefined) {
             g[key] = defaultGameAttributes[key];
         }
     });
 
     // UI stuff - see also loadGameAttribute
-    g.vm.topMenu.godMode(g.godMode);
-    g.vm.multiTeam.userTid(g.userTid);
-    g.vm.multiTeam.userTids(g.userTids);
+    g.emitter.emit('updateTopMenu', {godMode: g.godMode});
+    g.emitter.emit('updateMultiTeam');
 }
 
 // Depending on phase, initiate action that will lead to the next phase
 async function autoPlay() {
-    const freeAgents = require('./freeAgents');
-    const game = require('./game');
-    const season = require('./season');
-
     if (g.phase === g.PHASE.PRESEASON) {
         await phase.newPhase(g.PHASE.REGULAR_SEASON);
     } else if (g.phase === g.PHASE.REGULAR_SEASON) {
@@ -704,7 +706,7 @@ async function initAutoPlay() {
     }
 }
 
-module.exports = {
+export {
     create,
     exportLeague,
     remove,

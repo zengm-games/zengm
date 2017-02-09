@@ -50,7 +50,7 @@ async function updatePlayers(inputs, updateEvents) {
                 }
             }
 
-            const careerTeam = Object.keys(players[i].legacy).reduce((teamA, teamB) => {return players[i].legacy[teamA] > players[i].legacy[teamB] ? teamA : teamB;});
+            const careerTeam = Object.keys(players[i].legacy).reduce((teamA, teamB) => players[i].legacy[teamA] > players[i].legacy[teamB] ? teamA : teamB)
             players[i].legacy.abbrev = careerTeam;
         }
 

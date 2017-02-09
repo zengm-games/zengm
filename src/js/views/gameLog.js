@@ -1,12 +1,9 @@
-const g = require('../globals');
-const ui = require('../ui');
-const $ = require('jquery');
-const ko = require('knockout');
-const components = require('./components');
-const bbgmView = require('../util/bbgmView');
-const helpers = require('../util/helpers');
+// @flow
 
-let listenersAdded = false;
+import g from '../globals';
+import bbgmViewReact from '../util/bbgmViewReact';
+import * as helpers from '../util/helpers';
+import GameLog from './views/GameLog';
 
 /**
  * Generate a box score.
@@ -15,7 +12,7 @@ let listenersAdded = false;
  * @param {number} gid Integer game ID for the box score (a negative number means no box score).
  * @return {Promise.Object} Resolves to an object containing the box score data (or a blank object).
  */
-async function boxScore(gid) {
+async function boxScore(gid: number) {
     if (gid < 0) {
         return {};
     }
@@ -77,68 +74,15 @@ async function boxScore(gid) {
     return game;
 }
 
-function get(req) {
+function get(ctx) {
     return {
-        abbrev: helpers.validateAbbrev(req.params.abbrev)[1],
-        gid: req.params.gid !== undefined ? parseInt(req.params.gid, 10) : -1,
-        season: helpers.validateSeason(req.params.season),
+        abbrev: helpers.validateAbbrev(ctx.params.abbrev)[1],
+        gid: ctx.params.gid !== undefined ? parseInt(ctx.params.gid, 10) : -1,
+        season: helpers.validateSeason(ctx.params.season),
     };
 }
 
-function InitViewModel() {
-    this.boxScore = {
-        gid: ko.observable(-1),
-        prevGid: ko.observable(null),
-        nextGid: ko.observable(null),
-    };
-    this.gamesList = {
-        abbrev: ko.observable(),
-        loading: ko.observable(true), // Needed because this isn't really set until updateGamesList, which could be after first render
-        season: ko.observable(),
-        games: ko.observableArray([]),
-    };
-
-    // This computed is used so the box score won't be rendered until after it is fully loaded (due to the throttle). Otherwise, the mapping plugin sometimes sets the gid before the rest of the box score.
-    // But because it's throttled, ui.tableClickableRows can't be called directly in uiFirst or uiEvery.
-    this.showBoxScore = ko.computed(function () {
-        return this.boxScore.gid() >= 0;
-    }, this).extend({throttle: 1});
-}
-
-/* This doesn't work for some reason.
-const mapping = {
-    gamesList: {
-        update(options) {
-            return new function () {
-                komapping.fromJS(options.data, {
-                    games: {
-                        create: options => options.data;
-                    }
-                }, this);
-            }();
-        }
-    }
-};*/
-
-function updatePrevNextLinks(vm) {
-    const games = vm.gamesList.games();
-    vm.boxScore.prevGid(null);
-    vm.boxScore.nextGid(null);
-
-    for (let i = 0; i < games.length; i++) {
-        if (games[i].gid === vm.boxScore.gid()) {
-            if (i > 0) {
-                vm.boxScore.nextGid(games[i - 1].gid);
-            }
-            if (i < games.length - 1) {
-                vm.boxScore.prevGid(games[i + 1].gid);
-            }
-            break;
-        }
-    }
-}
-
-function updateTeamSeason(inputs) {
+async function updateTeamSeason(inputs) {
     return {
         // Needed for dropdown
         abbrev: inputs.abbrev,
@@ -154,9 +98,14 @@ function updateTeamSeason(inputs) {
  * @memberOf views.gameLog
  * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score).
  */
-async function updateBoxScore(inputs, updateEvents, vm) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.gid !== vm.boxScore.gid()) {
-        const game = await boxScore(inputs.gid);
+async function updateBoxScore(inputs, updateEvents, state) {
+    const {gid} = inputs;
+    if (typeof gid !== 'number') {
+        return;
+    }
+
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || gid !== state.boxScore.gid) {
+        const game = await boxScore(gid);
 
         const vars = {
             boxScore: game,
@@ -166,10 +115,7 @@ async function updateBoxScore(inputs, updateEvents, vm) {
         if (!game.hasOwnProperty("teams")) {
             vars.boxScore.gid = -1;
         } else {
-            vars.boxScore.gid = inputs.gid;
-
-            // Force scroll to top, which otherwise wouldn't happen because this is an internal link
-            window.scrollTo(window.pageXOffset, 0);
+            vars.boxScore.gid = gid;
         }
 
         return vars;
@@ -186,91 +132,45 @@ async function updateBoxScore(inputs, updateEvents, vm) {
  * @param {number} inputs.season Season for the list of games.
  * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
  */
-async function updateGamesList(inputs, updateEvents, vm) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.abbrev !== vm.gamesList.abbrev() || inputs.season !== vm.gamesList.season()) {
-        // Load all games in list
-        vm.gamesList.loading(true);
-        vm.gamesList.games([]);
-        const games = await helpers.gameLogList(inputs.abbrev, inputs.season, inputs.gid, vm.gamesList.games());
-        vm.gamesList.games(games);
-        vm.gamesList.abbrev(inputs.abbrev);
-        vm.gamesList.season(inputs.season);
-        vm.gamesList.loading(false);
+async function updateGamesList(inputs, updateEvents, state) {
+    const {abbrev, gid, season} = inputs;
+    if (typeof abbrev !== 'string' || typeof gid !== 'number' || typeof season !== 'number') {
+        return;
+    }
 
-        // Update prev/next links, in case box score loaded before games list
-        updatePrevNextLinks(vm);
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || abbrev !== state.gamesList.abbrev || season !== state.gamesList.season || (updateEvents.includes('gameSim') && season === g.season)) {
+        let games;
+        if (state.gamesList && (abbrev !== state.gamesList.abbrev || season !== state.gamesList.season)) {
+            // Switching to a new list
+            games = [];
+        } else {
+            games = state.gamesList ? state.gamesList.games : [];
+        }
 
-/* This doesn't work for some reason.
+        const newGames = await helpers.gameLogList(abbrev, season, gid, games);
+
+        if (games.length === 0) {
+            games = newGames;
+        } else {
+            for (let i = newGames.length - 1; i >= 0; i--) {
+                games.unshift(newGames[i]);
+            }
+        }
+
         return {
             gamesList: {
-                games: games,
-                abbrev: inputs.abbrev,
-                season: inputs.season,
-                loading: false
-            }
-        };*/
-    }
-    if (updateEvents.indexOf("gameSim") >= 0 && inputs.season === g.season) {
-        // Partial update of only new games
-        const games = await helpers.gameLogList(inputs.abbrev, inputs.season, inputs.gid, vm.gamesList.games());
-        for (let i = games.length - 1; i >= 0; i--) {
-            vm.gamesList.games.unshift(games[i]);
-        }
-
-        // Update prev/next links, in case box score loaded before games list
-        updatePrevNextLinks(vm);
+                games,
+                abbrev,
+                season,
+            },
+        };
     }
 }
 
-function uiFirst(vm) {
-    ko.computed(() => {
-        ui.title(`Game Log - ${vm.season()}`);
-    }).extend({throttle: 1});
-
-    // Update prev/next links whenever box score gid is changed
-    ko.computed(() => {
-        vm.boxScore.gid();
-        updatePrevNextLinks(vm);
-    }).extend({throttle: 1});
-
-    // Would be better if I had an "unmount" function...
-    if (!listenersAdded) {
-        listenersAdded = true;
-        document.addEventListener("keydown", e => {
-            let el;
-            if (e.keyCode === 37) {
-                el = document.getElementById('game-log-prev');
-            } else if (e.keyCode === 39) {
-                el = document.getElementById('game-log-next');
-            }
-
-            if (el) {
-                el.click();
-            }
-        });
-    }
-}
-
-function uiEvery(updateEvents, vm) {
-    components.dropdown("game-log-dropdown", ["teams", "seasons"], [vm.abbrev(), vm.season()], updateEvents, vm.boxScore.gid() >= 0 ? vm.boxScore.gid() : undefined);
-
-    // UGLY HACK for two reasons:
-    // 1. Box score might be hidden if none is loaded, so in that case there is no table to make clickable
-    // 2. When box scores are shown, it might happen after uiEvery is called because vm.showBoxScore is throttled
-    window.setTimeout(() => {
-        const tableEls = $(".box-score-team");
-        if (tableEls.length > 0 && !tableEls[0].classList.contains("table-hover")) {
-            ui.tableClickableRows(tableEls);
-        }
-    }, 100);
-}
-
-module.exports = bbgmView.init({
+export default bbgmViewReact.init({
     id: "gameLog",
     get,
-    InitViewModel,
     runBefore: [updateBoxScore, updateTeamSeason],
     runWhenever: [updateGamesList],
-    uiFirst,
-    uiEvery,
+    Component: GameLog,
 });

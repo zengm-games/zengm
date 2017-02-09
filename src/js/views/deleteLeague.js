@@ -1,36 +1,35 @@
-const db = require('../db');
-const g = require('../globals');
-const ui = require('../ui');
-const league = require('../core/league');
-const backboard = require('backboard');
-const Promise = require('bluebird');
-const bbgmView = require('../util/bbgmView');
-const viewHelpers = require('../util/viewHelpers');
+// @flow
 
-function get(req) {
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import {connectLeague} from '../db';
+import g from '../globals';
+import bbgmViewReact from '../util/bbgmViewReact';
+import DeleteLeague from './views/DeleteLeague';
+
+function get(ctx) {
     return {
-        lid: parseInt(req.params.lid, 10),
+        lid: parseInt(ctx.params.lid, 10),
     };
 }
 
-async function post(req) {
-    await league.remove(parseInt(req.params.lid, 10));
-    ui.realtimeUpdate([], "/");
-}
+async function updateDeleteLeague({lid}) {
+    if (typeof lid !== 'number') {
+        throw new Error('Invalid input for lid');
+    }
 
-async function updateDeleteLeague(inputs) {
-    await db.connectLeague(inputs.lid);
+    await connectLeague(lid);
     try {
         return g.dbl.tx(["games", "players", "teamSeasons"], async tx => {
             const [numGames, numPlayers, teamSeasons, l] = await Promise.all([
                 tx.games.count(),
                 tx.players.count(),
                 tx.teamSeasons.index("tid, season").getAll(backboard.bound([0], [0, ''])),
-                g.dbm.leagues.get(inputs.lid),
+                g.dbm.leagues.get(lid),
             ]);
 
             return {
-                lid: inputs.lid,
+                lid,
                 name: l.name,
                 numGames,
                 numPlayers,
@@ -39,24 +38,19 @@ async function updateDeleteLeague(inputs) {
         });
     } catch (err) {
         return {
-            lid: inputs.lid,
-            name: null,
-            numGames: null,
-            numPlayers: null,
-            numSeasons: null,
+            lid,
+            name: undefined,
+            numGames: undefined,
+            numPlayers: undefined,
+            numSeasons: undefined,
         };
     }
 }
 
-function uiFirst() {
-    ui.title("Delete League");
-}
-
-module.exports = bbgmView.init({
+export default bbgmViewReact.init({
     id: "deleteLeague",
-    beforeReq: viewHelpers.beforeNonLeague,
+    inLeague: false,
     get,
-    post,
     runBefore: [updateDeleteLeague],
-    uiFirst,
+    Component: DeleteLeague,
 });

@@ -1,9 +1,12 @@
+// @flow
+
 // Functions only used for debugging the game, particularly balance issues. This should not be included or loaded in the compiled version.
 
-const g = require('../globals');
-const player = require('./player');
-const backboard = require('backboard');
-const _ = require('underscore');
+import backboard from 'backboard';
+import _ from 'underscore';
+import g from '../globals';
+import * as player from './player';
+import type {RatingKey} from '../util/types';
 
 async function regressRatingsPer() {
     // http://rosettacode.org/wiki/Multiple_regression#JavaScript
@@ -13,13 +16,14 @@ async function regressRatingsPer() {
         this.width = ary[0].length;
     }
 
+    /* Flow doesn't like this
     Matrix.prototype.toString = function () {
         const s = [];
         for (let i = 0; i < this.mtx.length; i++) {
             s.push(this.mtx[i].join(","));
         }
         return s.join("\n");
-    };
+    };*/
 
     // returns a new matrix
     Matrix.prototype.transpose = function () {
@@ -36,7 +40,7 @@ async function regressRatingsPer() {
     // returns a new matrix
     Matrix.prototype.mult = function (other) {
         if (this.width !== other.height) {
-            throw "error: incompatible sizes";
+            throw new Error('incompatible sizes');
         }
 
         const result = [];
@@ -60,21 +64,24 @@ async function regressRatingsPer() {
             if (this.width <= lead) {
                 return;
             }
-            let i = r;
-            while (this.mtx[i][lead] === 0) {
-                i++;
-                if (this.height === i) {
-                    i = r;
-                    lead++;
-                    if (this.width === lead) {
-                        return;
+
+            {
+                let i = r;
+                while (this.mtx[i][lead] === 0) {
+                    i++;
+                    if (this.height === i) {
+                        i = r;
+                        lead++;
+                        if (this.width === lead) {
+                            return;
+                        }
                     }
                 }
-            }
 
-            const tmp = this.mtx[i];
-            this.mtx[i] = this.mtx[r];
-            this.mtx[r] = tmp;
+                const tmp = this.mtx[i];
+                this.mtx[i] = this.mtx[r];
+                this.mtx[r] = tmp;
+            }
 
             let val = this.mtx[r][lead];
             for (let j = 0; j < this.width; j++) {
@@ -109,7 +116,7 @@ async function regressRatingsPer() {
     // modifies the matrix "in place"
     Matrix.prototype.inverse = function () {
         if (this.height !== this.width) {
-            throw "can't invert a non-square matrix";
+            throw new Error("can't invert a non-square matrix");
         }
 
         const I = new IdentityMatrix(this.height);
@@ -209,14 +216,18 @@ async function exportPlayerInfo() {
     }
     output += "</pre>";
 
-    document.getElementById("league_content").innerHTML = output;
+    const contentEl = document.getElementById("content");
+    if (!contentEl) {
+        throw new Error('Missing DOM element #content');
+    }
+    contentEl.innerHTML = output;
 }
 
 function exportPlayerStats() {
     console.log("Go to Tools > Export Stats, it's better!");
 }
 
-function averageCareerArc(baseOvr, basePot, ratingToSave) {
+function averageCareerArc(baseOvr: number, basePot: number, ratingToSave: RatingKey) {
     const numPlayers = 1000; // Number of players per profile
     const numSeasons = 20;
 
@@ -255,7 +266,7 @@ function averageCareerArc(baseOvr, basePot, ratingToSave) {
     if (ratingToSave) { console.log(`${ratingToSave}:`); console.log(averageRat); }
 }
 
-module.exports = {
+export {
     regressRatingsPer,
     leagueAverageContract,
     exportPlayerInfo,

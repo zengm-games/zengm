@@ -1,12 +1,16 @@
-const g = require('../globals');
-const player = require('./player');
-const team = require('./team');
-const backboard = require('backboard');
-const Promise = require('bluebird');
-const _ = require('underscore');
-const eventLog = require('../util/eventLog');
-const helpers = require('../util/helpers');
-const random = require('../util/random');
+// @flow
+
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import _ from 'underscore';
+import g from '../globals';
+import * as league from './league';
+import * as player from './player';
+import * as team from './team';
+import * as helpers from '../util/helpers';
+import logEvent from '../util/logEvent';
+import * as random from '../util/random';
+import type {BackboardTx, OwnerMoodDeltas, ScheduleGame, Team} from '../util/types';
 
 /**
  * Update g.ownerMood based on performance this season.
@@ -17,7 +21,7 @@ const random = require('../util/random');
  * @param {(IDBTransaction|null)} tx An IndexedDB transaction on gameAttributes and and teams, readwrite.
  * @return {Promise.Object} Resolves to an object containing the changes in g.ownerMood this season.
  */
-async function updateOwnerMood(tx) {
+async function updateOwnerMood(tx?: BackboardTx): Promise<OwnerMoodDeltas> {
     const t = await team.filter({
         ot: tx,
         seasonAttrs: ["won", "playoffRoundsWon", "profit"],
@@ -48,10 +52,27 @@ async function updateOwnerMood(tx) {
         if (ownerMood.playoffs > 1) { ownerMood.playoffs = 1; }
         if (ownerMood.money > 1) { ownerMood.money = 1; }
 
-        await require('../core/league').setGameAttributes(tx, {ownerMood});
+        await league.setGameAttributes(tx, {ownerMood});
     }
 
     return deltas;
+}
+
+
+async function saveAwardsByPlayer(tx: BackboardTx, awardsByPlayer: any) {
+    const pids = _.uniq(awardsByPlayer.map(award => award.pid));
+
+    await Promise.all(pids.map(async (pid) => {
+        const p = await tx.players.get(pid);
+
+        for (let i = 0; i < awardsByPlayer.length; i++) {
+            if (p.pid === awardsByPlayer[i].pid) {
+                p.awards.push({season: g.season, type: awardsByPlayer[i].type});
+            }
+        }
+
+        await tx.players.put(p);
+    }));
 }
 
 /**
@@ -63,27 +84,11 @@ async function updateOwnerMood(tx) {
  * @param {(IDBTransaction)} tx An IndexedDB transaction on awards, players, playerStats, releasedPlayers, and teams, readwrite.
  * @return {Promise}
  */
-async function awards(tx) {
-    const awards = {season: g.season};
+async function doAwards(tx: BackboardTx) {
+    const awards: any = {season: g.season};
 
     // [{pid, type}]
     const awardsByPlayer = [];
-
-    const saveAwardsByPlayer = async awardsByPlayer => {
-        const pids = _.uniq(awardsByPlayer.map(award => award.pid));
-
-        await Promise.map(pids, async pid => {
-            const p = await tx.players.get(pid);
-
-            for (let i = 0; i < awardsByPlayer.length; i++) {
-                if (p.pid === awardsByPlayer[i].pid) {
-                    p.awards.push({season: g.season, type: awardsByPlayer[i].type});
-                }
-            }
-
-            await tx.players.put(p);
-        });
-    };
 
     // Get teams for won/loss record for awards, as well as finding the teams with the best records
     const teams = await team.filter({
@@ -94,23 +99,11 @@ async function awards(tx) {
         ot: tx,
     });
 
-    let foundEast = false;
-    let foundWest = false;
-    for (let i = 0; i < teams.length; i++) {
-        if (!foundEast && teams[i].cid === 0) {
-            const t = teams[i];
-            awards.bre = {tid: t.tid, abbrev: t.abbrev, region: t.region, name: t.name, won: t.won, lost: t.lost};
-            foundEast = true;
-        } else if (!foundWest && teams[i].cid === 1) {
-            const t = teams[i];
-            awards.brw = {tid: t.tid, abbrev: t.abbrev, region: t.region, name: t.name, won: t.won, lost: t.lost};
-            foundWest = true;
-        }
-
-        if (foundEast && foundWest) {
-            break;
-        }
-    }
+    awards.bestRecord = {tid: teams[0].tid, abbrev: teams[0].abbrev, region: teams[0].region, name: teams[0].name, won: teams[0].won, lost: teams[0].lost};
+    awards.bestRecordConfs = g.confs.map(c => {
+        const t = teams.find(t2 => t2.cid === c.cid);
+        return {tid: t.tid, abbrev: t.abbrev, region: t.region, name: t.name, won: t.won, lost: t.lost};
+    });
 
     // Sort teams by tid so it can be easily used in awards formulas
     teams.sort((a, b) => a.tid - b.tid);
@@ -137,8 +130,7 @@ async function awards(tx) {
     ];
     for (const cat of categories) {
         players.sort((a, b) => b.stats[cat.stat] - a.stats[cat.stat]);
-        for (let j = 0; j < players.length; j++) {
-            p = players[j];
+        for (const p of players) {
             if (p.stats[cat.stat] * p.stats.gp >= cat.minValue * factor || p.stats.gp >= 70 * factor) {
                 awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: cat.name});
                 break;
@@ -149,7 +141,7 @@ async function awards(tx) {
     // Add team games won to players
     for (let i = 0; i < players.length; i++) {
         // Special handling for players who were cut mid-season
-        if (players[i].tid >= 0) {
+        if (players[i].tid > 0) {
             players[i].won = teams[players[i].tid].won;
         } else {
             players[i].won = 20;
@@ -161,17 +153,19 @@ async function awards(tx) {
         // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
         return p.draft.year === g.season - 1;
     }).sort((a, b) => b.stats.ewa - a.stats.ewa); // Same formula as MVP, but no wins because some years with bad rookie classes can have the wins term dominate EWA
-    let p = rookies[0];
-    if (p !== undefined) { // I suppose there could be no rookies at all.. which actually does happen when skip the draft from the debug menu
-        awards.roy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
-        awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Rookie of the Year"});
+    {
+        const p = rookies[0];
+        if (p !== undefined) { // I suppose there could be no rookies at all.. which actually does happen when skip the draft from the debug menu
+            awards.roy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
+            awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Rookie of the Year"});
+        }
     }
 
     // All Rookie Team - same sort as ROY
     awards.allRookie = [];
     for (let i = 0; i < 5; i++) {
         const p = rookies[i];
-        if (p !== undefined) {
+        if (p) {
             awards.allRookie.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast});
             awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "All Rookie Team"});
         }
@@ -179,14 +173,22 @@ async function awards(tx) {
 
     // Most Valuable Player
     players.sort((a, b) => (b.stats.ewa + 0.1 * b.won) - (a.stats.ewa + 0.1 * a.won));
-    p = players[0];
-    awards.mvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
-    awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Most Valuable Player"});
+    {
+        const p = players[0];
+        if (p) {
+            awards.mvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
+            awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Most Valuable Player"});
+        }
+    }
 
     // Sixth Man of the Year - same sort as MVP, must have come off the bench in most games
-    p = players.find(p => p.stats.gs === 0 || p.stats.gp / p.stats.gs > 2);
-    awards.smoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
-    awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Sixth Man of the Year"});
+    {
+        const p = players.find(p2 => p2.stats.gs === 0 || p2.stats.gp / p2.stats.gs > 2);
+        if (p) {
+            awards.smoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
+            awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Sixth Man of the Year"});
+        }
+    }
 
     // All League Team - same sort as MVP
     awards.allLeague = [{title: "First Team", players: []}];
@@ -206,15 +208,17 @@ async function awards(tx) {
 
     // Defensive Player of the Year
     players.sort((a, b) => b.stats.gp * (b.stats.trb + 5 * b.stats.blk + 5 * b.stats.stl) - a.stats.gp * (a.stats.trb + 5 * a.stats.blk + 5 * a.stats.stl));
-    p = players[0];
-    awards.dpoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.stats.trb, blk: p.stats.blk, stl: p.stats.stl};
-    awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Defensive Player of the Year"});
+    {
+        const p = players[0];
+        awards.dpoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.stats.trb, blk: p.stats.blk, stl: p.stats.stl};
+        awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Defensive Player of the Year"});
+    }
 
     // All Defensive Team - same sort as DPOY
     awards.allDefensive = [{title: "First Team", players: []}];
     type = "First Team All-Defensive";
     for (let i = 0; i < 15; i++) {
-        p = players[i];
+        const p = players[i];
         if (i === 5) {
             awards.allDefensive.push({title: "Second Team", players: []});
             type = "Second Team All-Defensive";
@@ -244,26 +248,28 @@ async function awards(tx) {
         tid: champTid,
     });
     champPlayers.sort((a, b) => b.statsPlayoffs.ewa - a.statsPlayoffs.ewa);
-    p = champPlayers[0];
-    awards.finalsMvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.statsPlayoffs.pts, trb: p.statsPlayoffs.trb, ast: p.statsPlayoffs.ast};
-    awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Finals MVP"});
+    {
+        const p = champPlayers[0];
+        awards.finalsMvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.statsPlayoffs.pts, trb: p.statsPlayoffs.trb, ast: p.statsPlayoffs.ast};
+        awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Finals MVP"});
+    }
 
     await tx.awards.put(awards);
-    await saveAwardsByPlayer(awardsByPlayer);
+    await saveAwardsByPlayer(tx, awardsByPlayer);
 
     // None of this stuff needs to block, it's just notifications of crap
     // Notifications for awards for user's players
     for (let i = 0; i < awardsByPlayer.length; i++) {
         const p = awardsByPlayer[i];
         let text = `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> (<a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamAbbrevsCache[p.tid]}</a>) `;
-        if (p.type.indexOf("Team") >= 0) {
+        if (p.type.includes('Team')) {
             text += `made the ${p.type}.`;
-        } else if (p.type.indexOf("Leader") >= 0) {
+        } else if (p.type.includes('Leader')) {
             text += `led the league in ${p.type.replace("League ", "").replace(" Leader", "").toLowerCase()}.`;
         } else {
             text += `won the ${p.type} award.`;
         }
-        eventLog.add(null, {
+        logEvent(null, {
             type: "award",
             text,
             showNotification: p.tid === g.userTid || p.type === "Most Valuable Player",
@@ -277,24 +283,20 @@ async function awards(tx) {
  * Get an array of games from the schedule.
  *
  * @param {(IDBObjectStore|IDBTransaction|null)} options.ot An IndexedDB object store or transaction on schedule; if null is passed, then a new transaction will be used.
- * @param {boolean} options.oneDay Number of days of games requested. Default false.
+ * @param {boolean} options.oneDay Return just one day (true) or all days (false). Default false.
  * @return {Promise} Resolves to the requested schedule array.
  */
-function getSchedule(options) {
-    options = options !== undefined ? options : {};
-    options.ot = options.ot !== undefined ? options.ot : null;
-    options.oneDay = options.oneDay !== undefined ? options.oneDay : false;
-
-    return helpers.maybeReuseTx(["schedule"], "readonly", options.ot, async tx => {
-        let schedule = await tx.schedule.getAll();
-        if (options.oneDay) {
+function getSchedule(tx?: BackboardTx, oneDay?: boolean = false): Promise<ScheduleGame[]> {
+    return helpers.maybeReuseTx(["schedule"], "readonly", tx, async tx2 => {
+        let schedule = await tx2.schedule.getAll();
+        if (oneDay) {
             schedule = schedule.slice(0, g.numTeams / 2);  // This is the maximum number of games possible in a day
 
             // Only take the games up until right before a team plays for the second time that day
             const tids = [];
             let i;
             for (i = 0; i < schedule.length; i++) {
-                if (tids.indexOf(schedule[i].homeTid) < 0 && tids.indexOf(schedule[i].awayTid) < 0) {
+                if (!tids.includes(schedule[i].homeTid) && !tids.includes(schedule[i].awayTid)) {
                     tids.push(schedule[i].homeTid);
                     tids.push(schedule[i].awayTid);
                 } else {
@@ -316,19 +318,14 @@ function getSchedule(options) {
         away teams, respectively, for every game in the season, respectively.
  * @return {Promise}
  */
-async function setSchedule(tx, tids) {
-    const newSchedule = [];
-    for (let i = 0; i < tids.length; i++) {
-        newSchedule.push({
-            homeTid: tids[i][0],
-            awayTid: tids[i][1],
-        });
-    }
-
+async function setSchedule(tx: BackboardTx, tids: [number, number][]) {
     await tx.schedule.clear();
 
-    for (const matchup of newSchedule) {
-        await tx.schedule.add(matchup);
+    for (const matchup of tids) {
+        await tx.schedule.add({
+            homeTid: matchup[0],
+            awayTid: matchup[1],
+        });
     }
 }
 
@@ -340,13 +337,15 @@ async function setSchedule(tx, tids) {
  * @memberOf core.season
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
-function newScheduleDefault(teams) {
+function newScheduleDefault(teams): [number, number][] {
     const tids = []; // tid_home, tid_away
 
     // Collect info needed for scheduling
+    const homeGames = [];
+    const awayGames = [];
     for (let i = 0; i < teams.length; i++) {
-        teams[i].homeGames = 0;
-        teams[i].awayGames = 0;
+        homeGames[i] = 0;
+        awayGames[i] = 0;
     }
     for (let i = 0; i < teams.length; i++) {
         for (let j = 0; j < teams.length; j++) {
@@ -356,24 +355,24 @@ function newScheduleDefault(teams) {
                 // Constraint: 1 home game vs. each team in other conference
                 if (teams[i].cid !== teams[j].cid) {
                     tids.push(game);
-                    teams[i].homeGames += 1;
-                    teams[j].awayGames += 1;
+                    homeGames[i] += 1;
+                    awayGames[j] += 1;
                 }
 
                 // Constraint: 2 home games vs. each team in same division
                 if (teams[i].did === teams[j].did) {
                     tids.push(game);
                     tids.push(game);
-                    teams[i].homeGames += 2;
-                    teams[j].awayGames += 2;
+                    homeGames[i] += 2;
+                    awayGames[j] += 2;
                 }
 
                 // Constraint: 1-2 home games vs. each team in same conference and different division
                 // Only do 1 now
                 if (teams[i].cid === teams[j].cid && teams[i].did !== teams[j].did) {
                     tids.push(game);
-                    teams[i].homeGames += 1;
-                    teams[j].awayGames += 1;
+                    homeGames[i] += 1;
+                    awayGames[j] += 1;
                 }
             }
         }
@@ -397,10 +396,11 @@ function newScheduleDefault(teams) {
             let n = 0;
             while (n <= 14) {  // 14 = num teams in conference - 1
                 let iters = 0;
+                // eslint-disable-next-line no-constant-condition
                 while (true) {
                     const tryNum = random.randInt(0, 14);
                     // Pick tryNum such that it is in a different division than n and has not been picked before
-                    if (dids[cid][tryNum] !== dids[cid][n] && newMatchup.indexOf(tryNum) < 0) {
+                    if (dids[cid][tryNum] !== dids[cid][n] && !newMatchup.includes(tryNum)) {
                         let good = true;
                         // Check for duplicate games
                         for (let j = 0; j < matchups.length; j++) {
@@ -438,8 +438,8 @@ function newScheduleDefault(teams) {
                 const jj = tidsByConf[cid][matchup[t]];
                 const game = [teams[ii].tid, teams[jj].tid];
                 tids.push(game);
-                teams[ii].homeGames += 1;
-                teams[jj].awayGames += 1;
+                homeGames[ii] += 1;
+                awayGames[jj] += 1;
             }
         }
     }
@@ -455,7 +455,7 @@ function newScheduleDefault(teams) {
  * @memberOf core.season
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
-function newScheduleCrappy() {
+function newScheduleCrappy(): [number, number][] {
     // Number of games left to reschedule for each team
     const numRemaining = [];
     for (let i = 0; i < g.numTeams; i++) {
@@ -510,7 +510,7 @@ function newScheduleCrappy() {
  * @memberOf core.season
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
-function newSchedule(teams) {
+function newSchedule(teams: Team[]): [number, number][] {
     let tids;
     let threeDivsPerConf = true;
     for (const conf of g.confs) {
@@ -533,7 +533,7 @@ function newSchedule(teams) {
     for (let i = 0; i < tids.length; i++) {
         let used = false;
         for (let j = 0; j <= jMax; j++) {
-            if (tidsInDays[j].indexOf(tids[i][0]) < 0 && tidsInDays[j].indexOf(tids[i][1]) < 0) {
+            if (!tidsInDays[j].includes(tids[i][0]) && !tidsInDays[j].includes(tids[i][1])) {
                 tidsInDays[j].push(tids[i][0]);
                 tidsInDays[j].push(tids[i][1]);
                 days[j].push(tids[i]);
@@ -561,7 +561,7 @@ function newSchedule(teams) {
  * @param {(IDBTransaction)} tx An IndexedDB transaction on playoffSeries, schedule, and teamSeasons, readwrite.
  * @return {Promise.boolean} Resolves to true if the playoffs are over. Otherwise, false.
  */
-async function newSchedulePlayoffsDay(tx) {
+async function newSchedulePlayoffsDay(tx: BackboardTx): Promise<boolean> {
     const playoffSeries = await tx.playoffSeries.get(g.season);
 
     const series = playoffSeries.series;
@@ -590,9 +590,9 @@ async function newSchedulePlayoffsDay(tx) {
     // If playoffs are over, update winner and go to next phase
     if (rnd === g.numPlayoffRounds - 1) {
         let key;
-        if (series[rnd][0].home.won === 4) {
+        if (series[rnd][0].home.won >= 4) {
             key = series[rnd][0].home.tid;
-        } else if (series[rnd][0].away.won === 4) {
+        } else {
             key = series[rnd][0].away.tid;
         }
 
@@ -616,15 +616,16 @@ async function newSchedulePlayoffsDay(tx) {
     const tidsWon = [];
     for (let i = 0; i < series[rnd].length; i += 2) {
         // Find the two winning teams
-        let team1, team2;
-        if (series[rnd][i].home.won === 4) {
+        let team1;
+        let team2;
+        if (series[rnd][i].home.won >= 4) {
             team1 = helpers.deepCopy(series[rnd][i].home);
             tidsWon.push(series[rnd][i].home.tid);
         } else {
             team1 = helpers.deepCopy(series[rnd][i].away);
             tidsWon.push(series[rnd][i].away.tid);
         }
-        if (series[rnd][i + 1].home.won === 4) {
+        if (series[rnd][i + 1].home.won >= 4) {
             team2 = helpers.deepCopy(series[rnd][i + 1].home);
             tidsWon.push(series[rnd][i + 1].home.tid);
         } else {
@@ -649,7 +650,7 @@ async function newSchedulePlayoffsDay(tx) {
     await tx.playoffSeries.put(playoffSeries);
 
     // Update hype for winning a series
-    await Promise.map(tidsWon, async tid => {
+    await Promise.all(tidsWon.map(async (tid) => {
         const teamSeason = await tx.teamSeasons.index("season, tid").get([g.season, tid]);
 
         teamSeason.playoffRoundsWon = playoffSeries.currentRound;
@@ -659,7 +660,7 @@ async function newSchedulePlayoffsDay(tx) {
         }
 
         await tx.teamSeasons.put(teamSeason);
-    });
+    }));
 
     // Next time, the schedule for the first day of the next round will be set
     return newSchedulePlayoffsDay(tx);
@@ -681,7 +682,7 @@ async function getDaysLeftSchedule() {
         const tids = [];
         let i;
         for (i = 0; i < schedule.length; i++) {
-            if (tids.indexOf(schedule[i].homeTid) < 0 && tids.indexOf(schedule[i].awayTid) < 0) {
+            if (!tids.includes(schedule[i].homeTid) && !tids.includes(schedule[i].awayTid)) {
                 tids.push(schedule[i].homeTid);
                 tids.push(schedule[i].awayTid);
             } else {
@@ -695,12 +696,12 @@ async function getDaysLeftSchedule() {
     return numDays;
 }
 
-function genPlayoffSeries(teams) {
+function genPlayoffSeries(teams: Team[]) {
     // Playoffs are split into two branches by conference only if there are exactly 2 conferences and the special secret option top16playoffs is not set
-    const playoffsByConference = g.confs.length === 2 && !localStorage.top16playoffs;
+    const playoffsByConference = g.confs.length === 2 && !localStorage.getItem('top16playoffs');
 
     const tidPlayoffs = [];
-    const numPlayoffTeams = Math.pow(2, g.numPlayoffRounds);
+    const numPlayoffTeams = 2 ** g.numPlayoffRounds;
     const series = _.range(g.numPlayoffRounds).map(() => []);
     if (playoffsByConference) {
         // Default: top 50% of teams in each of the two conferences
@@ -744,8 +745,8 @@ function genPlayoffSeries(teams) {
     return {series, tidPlayoffs};
 }
 
-module.exports = {
-    awards,
+export {
+    doAwards,
     updateOwnerMood,
     getSchedule,
     setSchedule,

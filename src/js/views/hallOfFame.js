@@ -1,29 +1,12 @@
-const g = require('../globals');
-const ui = require('../ui');
-const player = require('../core/player');
-const $ = require('jquery');
-const ko = require('knockout');
-const bbgmView = require('../util/bbgmView');
-const helpers = require('../util/helpers');
+// @flow
 
-function get(req) {
-    return {
-        season: helpers.validateSeason(req.params.season),
-    };
-}
-
-function InitViewModel() {
-    this.season = ko.observable();
-}
-
-const mapping = {
-    players: {
-        create: options => options.data,
-    },
-};
+import g from '../globals';
+import * as player from '../core/player';
+import bbgmViewReact from '../util/bbgmViewReact';
+import HallOfFame from './views/HallOfFame';
 
 async function updatePlayers(inputs, updateEvents) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.BEFORE_DRAFT)) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || (updateEvents.includes('newPhase') && g.phase === g.PHASE.BEFORE_DRAFT)) {
         let players = await g.dbl.players.index('tid').getAll(g.PLAYER.RETIRED);
         players = players.filter(p => p.hof);
         players = await player.withStats(null, players, {statsSeasons: "all", statsPlayoffs: true});
@@ -102,11 +85,8 @@ function uiFirst(vm) {
     ui.tableClickableRows($("#hall-of-fame"));
 }
 
-module.exports = bbgmView.init({
+module.exports = bbgmViewReact.init({
     id: "hallOfFame",
-    get,
-    InitViewModel,
-    mapping,
     runBefore: [updatePlayers],
-    uiFirst,
+    Component: HallOfFame,
 });

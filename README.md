@@ -41,8 +41,9 @@ License Agreement from YOUR_NAME_HERE (GITHUB_USERNAME_HERE)".
 
 ### Step 1 - Installing
 
-All of the tooling used in development can be installed by simply installing
-[npm](https://www.npmjs.com/) and running
+First, make sure you're using [Node.js](https://nodejs.org/) v6 or higher, older
+versions probably won't work. Then, all of the tooling used in development can
+be set up by simply installing [npm](https://www.npmjs.com/) and running
 
     npm install
 
@@ -50,19 +51,20 @@ from within this folder.
 
 ### Step 2 - Building
 
-Basketball GM uses the Browserify for JS minification and clean-css for
-CSS minification. To minify everything, run
+Basketball GM uses Browserify for JS minification and clean-css for
+CSS minification. To build the app along with all its assets, run
 
     npm run build
 
 However during development, you probably would rather do
 
-    npm run watch-js
+    npm run start-watch
 
-which will constantly look for changes in your JS files and recompile. Then for
-CSS files, if you go to Tools > Debug Mode (inside the game), it will use the
-raw uncompiled CSS files so you don't need to keep compiling them after each
-change.
+which will start the server and watch JS and CSS files for changes and
+recompile. This simply runs both `npm start` and `npm run watch` together, which
+alternatively can be run separately if you wish.
+
+Open `package.json` to see all available scripts.
 
 ### Step 3 - Running
 
@@ -70,26 +72,28 @@ To run the game locally, you need some way of running a web server to display
 the content. There are currently two ways to do it. It doesn't matter which
 you use as long as you can get it to run on your computer.
 
-#### 1. Express (easiest)
+#### 1. Node.js (easiest)
 
 Run
 
     npm start
 
-and point your browser to <http://localhost:3000/>.
+and point your browser to <http://localhost:3000/>. If you use the command
+`npm run start-watch` from above, then running the command `npm start` is not
+necessary.
 
 #### 2. Apache
 
 The mod_rewrite rules in `.htaccess` can be used to make Apache run Basketball
 GM. Everything should work if you point it at the `build` folder with
-mod_rewrite enabled. That's how it's done on basketball-gm.com.
+mod_rewrite enabled. That's how it's done on play.basketball-gm.com.
 
 ### Step 4 - Testing
 
-ESLint is used to enforce some coding standards. It's mostly pretty standard
-Crockfordian stuff. To run ESLint on the entire codebase, run
+ESLint and stylelint are used to enforce some coding standards. To run them on
+the entirecodebase, run
 
-    npm run lint
+    npm run lint-js
 
 Integration and unit tests are bunched together in the `js/test` folder.
 Coverage is not great. They can be run from the command line in Karma with
@@ -152,21 +156,6 @@ options:
 Abbreviations of stats should be done like basketball-reference.com stat pages.
 For instance, "defensive rebounds" is "drb".
 
-### To do on new version
-
-- Make sure tests all pass (if necessary)
-
-- Write database upgrade code in `db.js` (if not already done piecemeal)
-
-- Write key changes in `js/data/changes.js`
-
-- Set version in index.html, CHANGES.md, and README.md, like <http://semver.org/>
-
-- Tag it in git like:
-
-        git tag -a v3.0.0-beta.2 -m ''
-        git push --tags
-
 ### Cordova
 
 The game runs equally well within a web browser and within Cordova (Android
@@ -174,3 +163,8 @@ The game runs equally well within a web browser and within Cordova (Android
 is absolute vs relative paths, governed by window.inCordova in index.html).
 
 Warning: This hasn't been tested in a while and is probably broken by now.
+
+### Thank you BrowserStack
+
+Shout out to [BrowserStack](https://www.browserstack.com/) for helping with
+cross-browser testing.

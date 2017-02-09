@@ -1,8 +1,8 @@
-const assert = require('assert');
-const db = require('../../db');
-const g = require('../../globals');
-const league = require('../../core/league');
-const finances = require('../../core/finances');
+import assert from 'assert';
+import * as db from '../../db';
+import g from '../../globals';
+import * as league from '../../core/league';
+import * as finances from '../../core/finances';
 
 describe("core/finances", () => {
     before(async () => {

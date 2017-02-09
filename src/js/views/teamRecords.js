@@ -1,33 +1,20 @@
-const g = require('../globals');
-const ui = require('../ui');
-const $ = require('jquery');
-const ko = require('knockout');
-const _ = require('underscore');
-const team = require('../core/team');
-const bbgmView = require('../util/bbgmView');
-const helpers = require('../util/helpers');
-const components = require('./components');
-const Promise = require('bluebird');
+import Promise from 'bluebird';
+import React from 'react';
+import _ from 'underscore';
+import g from '../globals';
+import * as team from '../core/team';
+import bbgmViewReact from '../util/bbgmViewReact';
+import * as helpers from '../util/helpers';
+import TeamRecords from './views/TeamRecords';
 
-function get(req) {
+function get(ctx) {
     return {
-        byType: req.params.byType || "team",
+        byType: ctx.params.byType || "team",
     };
 }
 
-function InitViewModel() {
-    this.byType = ko.observable();
-    this.seasonCount = ko.observable();
-}
-
-const mapping = {
-    teamRecords: {
-        create: options => options.data,
-    },
-};
-
 function getTeamLink(t) {
-    return `<a href="${helpers.leagueUrl(["team_history", t.abbrev])}">${t.region} ${t.name}</a>`;
+    return <a href={helpers.leagueUrl(["team_history", t.abbrev])}>{t.region} {t.name}</a>;
 }
 
 function getTeamRecord(t, awards) {
@@ -36,8 +23,8 @@ function getTeamRecord(t, awards) {
     let playoffAppearances = 0;
     let championships = 0;
     let finals = 0;
-    let lastPlayoffAppearance = "-";
-    let lastChampionship = "-";
+    let lastPlayoffAppearance = null;
+    let lastChampionship = null;
     for (let i = 0; i < t.seasons.length; i++) {
         totalWon += t.seasons[i].won;
         totalLost += t.seasons[i].lost;
@@ -57,26 +44,27 @@ function getTeamRecord(t, awards) {
     const totalWP = (totalWon > 0) ? helpers.round(totalWon / (totalWon + totalLost), 3) : "0.000";
 
     return {
+        id: t.tid,
         team: getTeamLink(t),
         cid: t.cid,
         did: t.did,
-        won: totalWon.toString(),
-        lost: totalLost.toString(),
-        winp: totalWP.toString().slice(1),
-        playoffAppearances: playoffAppearances.toString(),
-        lastPlayoffAppearance: lastPlayoffAppearance.toString(),
-        championships: championships.toString(),
-        lastChampionship: lastChampionship.toString(),
-        finals: finals.toString(),
-        mvp: awards[t.tid].mvp.toString(),
-        dpoy: awards[t.tid].dpoy.toString(),
-        smoy: awards[t.tid].smoy.toString(),
-        roy: awards[t.tid].roy.toString(),
-        bestRecord: awards[t.tid].bestRecord.toString(),
-        bestRecordConf: awards[t.tid].bestRecordConf.toString(),
-        allRookie: awards[t.tid].allRookie.toString(),
-        allLeague: awards[t.tid].allLeagueTotal.toString(),
-        allDefense: awards[t.tid].allDefenseTotal.toString(),
+        won: totalWon,
+        lost: totalLost,
+        winp: totalWP.slice(1),
+        playoffAppearances,
+        lastPlayoffAppearance,
+        championships,
+        lastChampionship,
+        finals,
+        mvp: awards[t.tid].mvp,
+        dpoy: awards[t.tid].dpoy,
+        smoy: awards[t.tid].smoy,
+        roy: awards[t.tid].roy,
+        bestRecord: awards[t.tid].bestRecord,
+        bestRecordConf: awards[t.tid].bestRecordConf,
+        allRookie: awards[t.tid].allRookie,
+        allLeague: awards[t.tid].allLeagueTotal,
+        allDefense: awards[t.tid].allDefenseTotal,
     };
 }
 
@@ -102,33 +90,38 @@ function tallyAwards(awards) {
         teams[a.dpoy.tid].dpoy++;
         teams[a.smoy.tid].smoy++;
         teams[a.roy.tid].roy++;
-        teams[a.bre.tid].bestRecordConf++;
-        teams[a.brw.tid].bestRecordConf++;
-        if (a.bre.won === a.brw.won) {
-            teams[a.bre.tid].bestRecord += 0.5;
-            teams[a.brw.tid].bestRecord += 0.5;
-        } else if (a.bre.won > a.brw.won) {
-            teams[a.bre.tid].bestRecord++;
+        if (a.bre && a.brw) {
+            // For old league files, this format is obsolete now
+            teams[a.bre.tid].bestRecordConf++;
+            teams[a.brw.tid].bestRecordConf++;
+            if (a.bre.won >= a.brw.won) {
+                teams[a.bre.tid].bestRecord++;
+            } else {
+                teams[a.brw.tid].bestRecord++;
+            }
         } else {
-            teams[a.brw.tid].bestRecord++;
-        }
+            for (const t of a.bestRecordConfs) {
+                teams[t.tid].bestRecordConf++;
+            }
+            teams[a.bestRecord.tid].bestRecord++;
 
-        for (let i = 0; i < a.allRookie.length; i++) {
-            teams[a.allRookie[i].tid].allRookie++;
+            for (let i = 0; i < a.allRookie.length; i++) {
+                teams[a.allRookie[i].tid].allRookie++;
+            }
         }
 
         for (let i = 0; i < a.allLeague.length; i++) {
-            a.allLeague[i].players.forEach(p => {
+            for (const p of a.allLeague[i].players) {
                 teams[p.tid].allLeague[i]++;
                 teams[p.tid].allLeagueTotal++;
-            });
+            }
         }
 
         for (let i = 0; i < a.allDefensive.length; i++) {
-            a.allDefensive[i].players.forEach(p => {
+            for (const p of a.allDefensive[i].players) {
                 teams[p.tid].allDefense[i]++;
                 teams[p.tid].allDefenseTotal++;
-            });
+            }
         }
     });
 
@@ -136,29 +129,28 @@ function tallyAwards(awards) {
 }
 
 function sumRecordsFor(group, id, name, records) {
-    const except = ['lastChampionship', 'lastPlayoffAppearance', 'team', 'cid', 'did', 'winp'];
+    const except = ['id', 'lastChampionship', 'lastPlayoffAppearance', 'team', 'cid', 'did', 'winp'];
     const keys = Object.keys(records[0]);
     const out = {};
 
     const xRecords = records.filter(r => r[group] === id);
 
-    keys.forEach(k => {
-        let v;
-        if (except.indexOf(k) >= 0) {
-            v = "-";
+    for (const k of keys) {
+        if (except.includes(k)) {
+            out[k] = null;
         } else {
-            v = xRecords.reduce((a, b) => a + Number(b[k]), 0);
+            out[k] = xRecords.reduce((a, b) => a + Number(b[k]), 0);
         }
-        out[k] = v.toString();
-    });
+    }
+    out.id = id;
     out.team = name;
     out.winp = String(out.won / (out.won + out.lost));
     out.winp = (out.won > 0) ? helpers.round(Number(out.won) / (Number(out.won) + Number(out.lost)), 3) : "0.000";
     return out;
 }
 
-async function updateTeamRecords(inputs, updateEvents, vm) {
-    if (updateEvents.indexOf("dbChange") >= 0 || updateEvents.indexOf("firstRun") >= 0 || inputs.byType !== vm.byType()) {
+async function updateTeamRecords(inputs, updateEvents, state) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || inputs.byType !== state.byType) {
         const [teams, awards] = await Promise.all([
             team.filter({
                 attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
@@ -174,7 +166,8 @@ async function updateTeamRecords(inputs, updateEvents, vm) {
         }
         const seasonCount = teamRecords.map(tr => tr.championships).reduce((a, b) => Number(a) + Number(b));
 
-        let display, displayName;
+        let display;
+        let displayName;
         if (inputs.byType === "team") {
             display = teamRecords;
             displayName = "Team";
@@ -195,35 +188,10 @@ async function updateTeamRecords(inputs, updateEvents, vm) {
     }
 }
 
-function uiFirst(vm) {
-    ko.computed(() => {
-        ui.title("Team Records");
-    }).extend({
-        throttle: 1,
-    });
-
-    ko.computed(() => {
-        ui.datatableSinglePage($("#team-records"), 0, vm.teamRecords().map(t => {
-            return [t.team, t.won, t.lost, t.winp, t.playoffAppearances, t.lastPlayoffAppearance, t.finals, t.championships, t.lastChampionship, t.mvp, t.dpoy, t.smoy, t.roy, t.bestRecord, t.bestRecordConf, t.allRookie, t.allLeague, t.allDefense];
-        }));
-    }).extend({
-        throttle: 1,
-    });
-
-    ui.tableClickableRows($("#team-records"));
-}
-
-function uiEvery(updateTeamRecords, vm) {
-    components.dropdown("team-records-dropdown", ["teamRecordType"], [vm.byType(), updateTeamRecords]);
-}
-
-module.exports = bbgmView.init({
+export default bbgmViewReact.init({
     id: "teamRecords",
     get,
-    InitViewModel,
-    mapping,
     runBefore: [updateTeamRecords],
-    uiFirst,
-    uiEvery,
+    Component: TeamRecords,
 });
 

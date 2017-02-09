@@ -1,3 +1,5 @@
+// @flow
+
 /**
  * Choose a random integer from [a, b]
  *
@@ -6,7 +8,7 @@
  * @param {number} b Maximum integer that can be returned.
  * @return {number} Random integer between a and b.
  */
-function randInt(a, b) {
+function randInt(a: number, b: number): number {
     return Math.floor(Math.random() * (1 + b - a)) + a;
 }
 
@@ -16,7 +18,7 @@ function randInt(a, b) {
  * @memberOf util.random
  * @param {array} list List to be shuffled in place.
  */
-function shuffle(list) {
+function shuffle(list: any[]) {
     const l = list.length;
     for (let i = 1; i < l; i++) {
         const j = randInt(0, i);
@@ -40,7 +42,7 @@ function shuffle(list) {
  * @param {number} sigma Standard deviation (default: 1).
  * @return {number} Random number from Gaussian distribution.
  */
-function gauss(mu = 0, sigma = 1) {
+function gauss(mu?: number = 0, sigma?: number = 1): number {
     return ((Math.random() * 2 - 1) + (Math.random() * 2 - 1) + (Math.random() * 2 - 1)) * sigma + mu;
 }
 
@@ -62,8 +64,10 @@ function gauss(mu = 0, sigma = 1) {
  * @param {number} sigma Standard deviation (default: 1).
  * @return {number} Random number from Gaussian distribution.
  */
-function realGauss(mu = 0, sigma = 1) {
-    let radius, z1, z2;
+function realGauss(mu?: number = 0, sigma?: number = 1): number {
+    let radius;
+    let z1;
+    let z2;
     do {
         z1 = 2 * Math.random() - 1;
         z2 = 2 * Math.random() - 1;
@@ -83,7 +87,7 @@ function realGauss(mu = 0, sigma = 1) {
  * @param {number} b Maximum number that can be returned.
  * @return {number} Random number from uniform distribution.
  */
-function uniform(a, b) {
+function uniform(a: number, b: number): number {
     return Math.random() * (b - a) + a;
 }
 
@@ -93,11 +97,11 @@ function uniform(a, b) {
  * @memberOf util.random
  * @param {number} x Array to choose a random value from.
  */
-function choice(x) {
+function choice<T>(x: T[]): T {
     return x[Math.floor(Math.random() * x.length)];
 }
 
-module.exports = {
+export {
     randInt,
     shuffle,
     gauss,
@@ -105,4 +109,3 @@ module.exports = {
     uniform,
     choice,
 };
-

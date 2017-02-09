@@ -1,8 +1,8 @@
-const assert = require('assert');
-const db = require('../../db');
-const g = require('../../globals');
-const league = require('../../core/league');
-const trade = require('../../core/trade');
+import assert from 'assert';
+import * as db from '../../db';
+import g from '../../globals';
+import * as league from '../../core/league';
+import * as trade from '../../core/trade';
 
 describe("core/trade", () => {
     before(async () => {
@@ -29,7 +29,7 @@ describe("core/trade", () => {
             await testCreateTrade(22, [], []);
         });
         it("should create trade with player ID", async () => {
-            await trade.create([{tid: g.userTid, pids: [], dpids: []}, {tid: null, pids: [81], dpids: []}]);
+            await trade.create([{tid: g.userTid, pids: [], dpids: []}, {tid: 2, pids: [81], dpids: []}]);
             await testCreateTrade(2, [], [81]);
         });
     });

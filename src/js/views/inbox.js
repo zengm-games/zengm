@@ -1,6 +1,8 @@
-const g = require('../globals');
-const ui = require('../ui');
-const bbgmView = require('../util/bbgmView');
+// @flow
+
+import g from '../globals';
+import bbgmViewReact from '../util/bbgmViewReact';
+import Inbox from './views/Inbox';
 
 async function updateInbox() {
     const messages = await g.dbl.messages.getAll();
@@ -8,9 +10,9 @@ async function updateInbox() {
     messages.reverse();
 
     let anyUnread = false;
-    for (let i = 0; i < messages.length; i++) {
-        messages[i].text = messages[i].text.replace(/<p>/g, "").replace(/<\/p>/g, " "); // Needs to be regex otherwise it's cumbersome to do global replace
-        if (!messages[i].read) {
+    for (const message of messages) {
+        message.text = message.text.replace(/<p>/g, "").replace(/<\/p>/g, " "); // Needs to be regex otherwise it's cumbersome to do global replace
+        if (!message.read) {
             anyUnread = true;
         }
     }
@@ -21,12 +23,8 @@ async function updateInbox() {
     };
 }
 
-function uiFirst() {
-    ui.title("Inbox");
-}
-
-module.exports = bbgmView.init({
+export default bbgmViewReact.init({
     id: "inbox",
     runBefore: [updateInbox],
-    uiFirst,
+    Component: Inbox,
 });

@@ -13,6 +13,7 @@
     <script type="text/javascript">
       window.inCordova = document.URL.indexOf('file://') === 0;
       window.bbgmPrefix = window.inCordova ? "" : "/"; // Relative URLs for Cordova
+      window.bbgmVersion = "REV_GOES_HERE";
 
       function loadCSS(filename){
         var el = document.createElement("link");
@@ -21,62 +22,63 @@
         document.getElementsByTagName("head")[0].appendChild(el);
       }
 
-      if (localStorage.debug === "debug") {
-        loadCSS("css/bootstrap.css");
-        loadCSS("css/bbgm.css");
-        loadCSS("css/bbgm-notifications.css");
-        loadCSS("css/DT_bootstrap.css");
-      } else {
-        loadCSS("gen/bbgm.css");
-      }
+      loadCSS("gen/bbgm.css");
 
       window.enableLogging = location.host.indexOf("basketball-gm.com") >= 0 && location.pathname.indexOf("/test") === -1;
 
       if (window.enableLogging) {
-        // Google Analytics
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-38759330-1']);
-        _gaq.push(['_setDomainName', 'basketball-gm.com']);
-        _gaq.push(['_trackPageview']);
-        (function() {
-          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-        }());
-      }
-    </script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-    <script type="text/javascript">
+        ga('create', 'UA-38759330-1', {
+          cookieDomain: 'basketball-gm.com',
+          legacyCookieDomain: 'basketball-gm.com'
+        });
+        ga('send', 'pageview');
+      }
+
       if (localStorage.debug !== "debug") {
         var bs = document.createElement('script');
         bs.type = 'text/javascript';
-        bs.src = 'https://d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(bs, s);
-        if (window.Bugsnag) {
-          window.Bugsnag.apiKey = "c10b95290070cb8888a7a79cc5408555";
-          window.Bugsnag.appVersion = "REV_GOES_HERE";
-          if (location.host.indexOf("localhost") === 0) {
-            window.Bugsnag.releaseStage = "development";
-          } else if (location.host.indexOf("beta.basketball-gm.com") === 0) {
-            window.Bugsnag.releaseStage = "beta";
-          } else if (location.host.indexOf("play.basketball-gm.com") === 0) {
-            window.Bugsnag.releaseStage = "production";
-          } else {
-            window.Bugsnag.releaseStage = "unknown";
-          }
-          window.Bugsnag.notifyReleaseStages = ["beta", "production", "unknown"];
+        bs.src = '//d2wy8f7a9ursnm.cloudfront.net/bugsnag-3.min.js';
+        bs.addEventListener('load', function () {
+          if (window.Bugsnag) {
+            window.Bugsnag.apiKey = "c10b95290070cb8888a7a79cc5408555";
+            window.Bugsnag.appVersion = window.bbgmVersion;
+            if (location.host.indexOf("localhost") === 0) {
+              window.Bugsnag.releaseStage = "development";
+            } else if (location.host.indexOf("beta.basketball-gm.com") === 0) {
+              window.Bugsnag.releaseStage = "beta";
+            } else if (location.host.indexOf("play.basketball-gm.com") === 0) {
+              window.Bugsnag.releaseStage = "production";
+            } else {
+              window.Bugsnag.releaseStage = "unknown";
+            }
+            window.Bugsnag.notifyReleaseStages = ["beta", "production", "unknown"];
 
-          // For errors inside Bluebird
-          window.addEventListener("unhandledrejection", function (err) {
-              window.Bugsnag.notifyException(err);
-          });
-        }
+            // For errors inside Bluebird
+            window.addEventListener("unhandledrejection", function (e) {
+                if (e.detail && e.detail.reason) {
+                  window.Bugsnag.notifyException(e.detail.reason);
+                }
+            });
+          }
+        });
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(bs, s);
       }
     </script>
+
+    <script async="async" src="https://www.googletagservices.com/tag/js/gpt.js"></script>
   </head>
 
   <body>
     <script type="text/javascript">
+      // Banner ads
+      var googletag = googletag || {};
+      googletag.cmd = googletag.cmd || [];
+
       if (window.enableLogging) {
         // Google Consumer Surveys
         var TriggerPrompt = function(articleUrl, contentId) {
@@ -115,228 +117,156 @@
       }
     </script>
 
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation" id="top-menu">
-      <div class="container">
-        <div class="pull-right">
-            <a class="navbar-link user-menu" href="/account/login_or_register" data-bind="visible: !username()">
-              <span class="glyphicon glyphicon-user"></span>
-              <span class="visible-lg">Login/Register</span>
-            </a>
-            <a class="navbar-link user-menu" href="/account" data-bind="visible: username" style="display: none">
-              <span class="glyphicon glyphicon-user"></span>
-              <span class="visible-lg" data-bind="text: username"></span>
-            </a>
-        </div>
+    <div id="content">
+      <div id="loading-msg">
+        <div style="max-width: 360px; margin: 0 auto;">
+          <div style="margin: 0 15px; text-align: center">
+            <h1>Loading...</h1>
 
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#top-menu-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="/"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAAN1wAADdcBQiibeAAAAAd0SU1FB9wIFRUXBgiS2qAAAAN8SURBVDjLbZRdTFtlGMd/b885PaXfYOk2vqHODWFsZIqySGLMdJsx2SQGdZk3uzIaL4war0282LUX3ng7WLLdSEzcZqJxKmXOSLbBBoJaoBDWQktLP0/POT1etHSV7E3e5D0neX75///P+7yCJ6zeVuW9Vwc9r4eCSo9TtgVspo1Mzty+fi+bWUro1/6Na1/vrRH1H8+F3P2vHHdcOjPkfi2eNBSbBacH3LhtNtAADcandvTx31Nzq1vWxQebubu7tdLuYeSo69SH53zjn5x/aqirTZH6QirPtNm5OZMDAQGPDMBAiyp1+pQDflWMysKa/yepL9VAve32/o/fbJq4cNrfjR2wAzLYJMHhNpX1LYNbD/L0taoIoMOvsJY0XIMHHCPRtPnLelrfkAAuvOy//NlY4DgyoFRBSlWqBft9MgGXxNXwDh1NCk7FxtaOwYl2py+a0HvCq4XL0vBB5xtfng9+GvBLMjao7SqEMmCCW7Ux2O5geqHAXFQjUyzz7f0MA/scndGUMS8/36W+3aRKju/CGewNAkkVIINVbUPQK9HZpOBXJIQNTh5xVYIvglwWnDvokW4vF0bl7Ux5aGapwMkBNw0e8dhWtQ3xpMFfyyVSaRMMKGvQ5lE40qzW+t7hV7rlYy0O6dQhd8VGsWrFqIIEBJ0ywZBc+acDJVjd0Pl+Nks4kqfTreCyi2bZJYmK1Lo8aopEXVZmFWRUuqa0CholCQm4s1Zwytm8FUcjVIOYdYr2hB7bNphayIMBkbjOR8NN2E1BX8ARlZc3SxGKDNcgZhVSBW3nTW7MZdF1aPHJnDnsoUEIvvopyfWHWc4+7WE1U1qUp9e0a5GYPtYdUORdNUXL4lYkx6OMQaNLYrTPiyqJivUybCQMjgYdbGdNFh5p2p1V7aoAeKffGx7t9Q5bgIGFqgpe6nGyzys/tgc10MSfad7t97EYK/HFz5vTV+bSJ2SASMp830JMjj3r6aJ+CovVwOtCv71SYLDZgTDgj/XCym8ruc9rs7a+o8eSudKsJWwjx/Y7Gvfe6t29ENNI5E2GWhqYmE0tfzOT+uB+XPvxf9MfSRuR+U3th8Wt0qGeRntrwCnJ9U/Mjb+zZEoWoUa7fmkqcfPKvdzF6fVc+Inv0e56ocV59sX2hrfavErXwpbWrpmW6PAp0UTBXPw1mp18GCtN7q35D5RXZnIkhyKSAAAAAElFTkSuQmCC" width="18" height="18"><span class="hidden-md hidden-sm hidden-xs">Basketball GM</span><span class="visible-md visible-sm visible-xs" data-bind="if: lid() === undefined">Basketball GM</span></a>
-          <ul class="nav navbar-nav-no-collapse" id="play-menu" data-no-collapse="true" data-bind="visible: lid() !== undefined" style="display: none">
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" id="play-button-link" class="play-button"><span class="hidden-xs">Play</span> <b class="caret"></b></a>
-              <ul class="dropdown-menu" data-bind="foreach: options" id="play-menu-options">
-                <li><a data-bind="attr: {href: url, id: id}, html: label"></a></li>
-              </ul>
-            </li>
-          </ul>
-          <p class="navbar-text-two-line-no-collapse" data-no-collapse="true" data-bind="visible: lid() !== undefined" style="display: none">
-            <span data-bind="text: phaseText"></span><br />
-            <span data-bind="text: statusText"></span>
-          </p>
-        </div>
+            <p style="clear: both; margin-bottom: 6em"></p>
 
-        <div class="collapse navbar-collapse navbar-right" id="top-menu-collapse">
-          <ul class="nav navbar-nav" id="nav-primary">
-            <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: []}"><span class="glyphicon glyphicon-home"></span></a></li>
-            <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-sm">League <b class="caret"></b></span><span class="visible-sm">L <b class="caret"></b></span></a>
-              <ul class="dropdown-menu">
-                <li class="dropdown-header visible-sm">League</li>
-                <li><a data-bind="attrLeagueUrl: {href: ['standings']}">Standings</a></li>
-                <li><a data-bind="attrLeagueUrl: {href: ['playoffs']}">Playoffs</a></li>
-                <li><a data-bind="attrLeagueUrl: {href: ['league_finances']}">Finances</a></li>
-                <li><a data-bind="attrLeagueUrl: {href: ['history_all']}">History</a></li>
-                <li><a data-bind="attrLeagueUrl: {href: ['power_rankings']}">Power Rankings</a></li>
-                <li><a data-bind="attrLeagueUrl: {href: ['transactions', 'all']}">Transactions</a></li>
-              </ul>
-            </li>
-            <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-sm">Team <b class="caret"></b></span><span class="visible-sm">T <b class="caret"></b></span></a>
-              <ul class="dropdown-menu">
-                <li class="dropdown-header visible-sm">Team</li>
-                <li><a data-bind="attrLeagueUrl: {href: ['roster']}">Roster</a></li>
-                <li><a data-bind="attrLeagueUrl: {href: ['schedule']}">Schedule</a></li>
-                <li><a data-bind="attrLeagueUrl: {href: ['team_finances']}">Finances</a></li>
-                <li><a data-bind="attrLeagueUrl: {href: ['team_history']}">History</a></li>
-                <li><a data-bind="attrLeagueUrl: {href: ['transactions']}">Transactions</a></li>
-              </ul>
-            </li>
-            <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-sm">Players <b class="caret"></b></span><span class="visible-sm">P <b class="caret"></b></span></a>
-              <ul class="dropdown-menu">
-                <li class="dropdown-header visible-sm">Players</li>
-                <li><a data-bind="attrLeagueUrl: {href: ['free_agents']}">Free Agents</a></li>
-                <li><a data-bind="attrLeagueUrl: {href: ['trade']}">Trade</a></li>
-                <li><a data-bind="attrLeagueUrl: {href: ['trading_block']}">Trading Block</a></li>
-                <li><a data-bind="attrLeagueUrl: {href: ['draft']}">Draft</a></li>
-                <li><a data-bind="attrLeagueUrl: {href: ['watch_list']}">Watch List</a></li>
-                <li><a data-bind="attrLeagueUrl: {href: ['hall_of_fame']}">Hall of Fame</a></li>
-              </ul>
-            </li>
-            <li class="dropdown" data-bind="visible: lid() !== undefined" style="display: none">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-sm">Stats <b class="caret"></b></span><span class="visible-sm">S <b class="caret"></b></span></a>
-              <ul class="dropdown-menu">
-                <li class="dropdown-header visible-sm">Stats</li>
-                <li><a data-bind="attrLeagueUrl: {href: ['game_log']}">Game Log</a></li>
-                <li><a data-bind="attrLeagueUrl: {href: ['leaders']}">League Leaders</a></li>
-                <li><a data-bind="attrLeagueUrl: {href: ['player_ratings']}">Player Ratings</a></li>
-                <li><a data-bind="attrLeagueUrl: {href: ['player_stats']}">Player Stats</a></li>
-                <li><a data-bind="attrLeagueUrl: {href: ['team_stats']}">Team Stats</a></li>
-                <li><a data-bind="attrLeagueUrl: {href: ['player_feats']}">Statistical Feats</a></li>
-              </ul>
-            </li>
-            <li class="dropdown" id="tools-menu">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-sm">Tools <b class="caret"></b></span><span class="visible-sm">X <b class="caret"></b></span></a>
-              <ul class="dropdown-menu">
-                <li class="dropdown-header visible-sm">Tools</li>
-                <li><a href="/account">Achievements</a></li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" id="tools-menu-auto-play-seasons">Auto Play Seasons</a></li>
-                <li data-bind="visible: lid() !== undefined && godMode" style="display: none"><a data-bind="attrLeagueUrl: {href: ['customize_player']}" class="god-mode">Create A Player</a></li>
-                <li data-bind="visible: lid() !== undefined && godMode" style="display: none"><a data-bind="attrLeagueUrl: {href: ['edit_team_info']}" class="god-mode">Edit Team Info</a></li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['event_log']}">Event Log</a></li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['export_league']}">Export League</a></li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['export_stats']}">Export Stats</a></li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['fantasy_draft']}">Fantasy Draft</a></li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['god_mode']}">God Mode</a></li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a data-bind="attrLeagueUrl: {href: ['delete_old_data']}">Improve Performance</a></li>
-                <li data-bind="visible: lid() !== undefined && godMode" style="display: none"><a data-bind="attrLeagueUrl: {href: ['multi_team_mode']}" class="god-mode">Multi Team Mode</a></li>
-                <li data-bind="visible: lid() !== undefined && godMode" style="display: none"><a data-bind="attrLeagueUrl: {href: ['new_team']}" class="god-mode">Switch Team</a></li>
-                <li><a href="" id="screenshot" data-no-davis="true"><span class="glyphicon glyphicon-camera"></span> Screenshot</a></li>
-                <li data-bind="visible: lid() !== undefined" style="display: none" role="presentation" class="divider"></li>
-                <li role="presentation" class="dropdown-header">Use at your own risk!</li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" id="tools-menu-skip-to-playoffs">Skip To Playoffs</a></li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" id="tools-menu-skip-to-before-draft">Skip To Before Draft</a></li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" id="tools-menu-skip-to-after-draft">Skip To After Draft</a></li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" id="tools-menu-skip-to-preseason">Skip To Preseason</a></li>
-                <li data-bind="visible: lid() !== undefined" style="display: none"><a href="" id="tools-menu-force-resume-draft">Force Resume Draft</a></li>
-                <li><a href="" onclick="toggleDebugMode()" id="toggle-debug-mode">Toggle Debug Mode</a></li>
-                <li><a href="" id="tools-menu-reset-db">Reset DB</a></li>
-              </ul>
-            </li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="hidden-sm">Help <b class="caret"></b></span><span class="visible-sm">? <b class="caret"></b></span></a>
-              <ul class="dropdown-menu">
-                <li class="dropdown-header visible-sm">Help</li>
-                <li><a href="/manual">Overview</a></li>
-                <li><a href="/changes">Changes</a></li>
-                <li><a href="http://basketball-gm.com/manual/customization/">Custom Rosters</a></li>
-                <li><a href="http://basketball-gm.com/manual/debugging/" target="_blank">Debugging</a></li>
-              </ul>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-
-    <div class="container">
-      <div id="content" data-id-loading="" data-id-loaded="">
-        <h1>Loading...</h1>
-        <p>This should only take a couple seconds on a fast connection.</p>
-        <p>If this gets stuck for a while, try <a href="https://basketball-gm.com/manual/debugging/">the debugging instructions</a> and try to find an error message and report a bug.</p>
-      </div>
-
-      <p class="clearfix"></p>
-      <hr>
-
-      <footer>
-        <p>
-          <a href="http://basketball-gm.com/about/" target="_blank">About</a> ·
-          <a href="http://basketball-gm.com/advertise/" target="_blank">Advertise</a> ·
-          <a href="http://basketball-gm.com/blog/" target="_blank">Blog</a> ·
-          <a href="http://basketball-gm.com/contact/" target="_blank">Contact</a> ·
-          <a href="http://basketball-gm.com/share/" target="_blank">Share</a><br>
-          <p class="rev">v3.6 · REV_GOES_HERE</p>
-        </p>
-      </footer>
-    </div>
-
-    <div class="modal fade" id="modal-ads">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            <h4 class="modal-title">Please support Basketball GM!</h4>
-          </div>
-          <div class="modal-body">
-            <p>Basketball GM is completely free. There will never be any <a href="http://en.wikipedia.org/wiki/Freemium" target="_blank">"freemium"</a> or <a href="http://en.wikipedia.org/wiki/Free-to-play" target="_blank">"pay-to-win"</a> bullshit here. Why? Because if a game charges you money for power-ups, the developer makes more money if they make their game frustratingly annoying to play without power-ups. Because of this, <b>freemium games always suck</b>.</p>
-            <p>If you want to support Basketball GM continuing to be a non-sucky game, sign up for Basketball GM Gold! It's only <b>$5/month</b>. What do you get? More like, what don't you get? You get no new features, no new improvements, no new anything. Just <b>no more ads</b>. That's it. Why? For basically the same reason I won't make Basketball GM freemium. I don't want the free version to become a crippled advertisement for the pay version. If you agree that the world is a better place when anyone anywhere can play Basketball GM, sign up for Basketball GM Gold today!</p>
-            <div class="text-center">
-              <a href="/account" class="btn btn-primary" data-dismiss="modal">Sign up for Basketball GM Gold from your account page</a>
+            <div style="margin: 0 -15px">
+              <div class="team-picture-splash" id="team-picture-0"></div>
+              <div class="team-picture-splash" id="team-picture-1"></div>
+              <div class="team-picture-splash" id="team-picture-2"></div>
+              <div class="team-picture-splash" id="team-picture-3"></div>
+              <div class="team-picture-splash" id="team-picture-4"></div>
+              <div class="team-picture-splash" id="team-picture-5"></div>
+              <div class="team-picture-splash" id="team-picture-6"></div>
+              <div class="team-picture-splash" id="team-picture-7"></div>
+              <div class="team-picture-splash" id="team-picture-8"></div>
+              <div class="team-picture-splash" id="team-picture-9"></div>
+              <div class="team-picture-splash" id="team-picture-10"></div>
+              <div class="team-picture-splash" id="team-picture-11"></div>
             </div>
+
           </div>
         </div>
-      </div>
-    </div>
 
-    <div class="modal fade" id="modal-insticator">
-      <div class="modal-dialog" style="width: 1100px">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            <h4 class="modal-title">Please support Basketball GM!</h4>
-          </div>
-          <div class="modal-body">
-            <div id="insticator-api-div"></div>
-          </div>
+        <p style="clear: both; margin-bottom: 6em"></p>
+
+        <div class="container">
+          <p>This should only take a few seconds on a fast connection.</p>
+          <p style="margin-bottom: 0">If this gets stuck for a while, read the <a href="https://basketball-gm.com/manual/debugging/">the debugging instructions</a> and try to find an error message and <a href="https://basketball-gm.com/contact/">report a bug</a>.</p>
         </div>
       </div>
-    </div>
+      <div class="container">
+        <hr style="margin-bottom: 1.5em">
 
-    <div class="modal fade" id="modal-screenshot">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-body">
-            <a id="screenshot-link" target="_blank">Click here to view your screenshot.</a>
-          </div>
-        </div>
+        <footer>
+          <p>
+              <a href="https://basketball-gm.com/about/" rel="noopener noreferrer" target="_blank">About</a> ·
+              <a href="https://basketball-gm.com/advertise/" rel="noopener noreferrer" target="_blank">Advertise</a> ·
+              <a href="https://basketball-gm.com/blog/" rel="noopener noreferrer" target="_blank">Blog</a> ·
+              <a href="https://basketball-gm.com/contact/" rel="noopener noreferrer" target="_blank">Contact</a> ·
+              <a href="https://basketball-gm.com/share/" rel="noopener noreferrer" target="_blank">Share</a><br />
+          </p>
+          <p class="rev">v3.6 · REV_GOES_HERE</p>
+        </footer>
       </div>
     </div>
-
-    <div id="multi-team-menu" data-bind="multiTeamMenu: [userTid, userTids]" style="display: none"></div>
 
     <iframe style="display: none;" src="/manifest_hack"></iframe>
 
     <script>
-      // Tools > Toggle Debug Mode
-      if (localStorage.debug === "debug") {
-        document.getElementById("toggle-debug-mode").innerHTML = "Disable Debug Mode";
-      } else {
-        document.getElementById("toggle-debug-mode").innerHTML = "Enable Debug Mode";
-      }
-      function toggleDebugMode() {
-        if (localStorage.debug === "debug") {
-          localStorage.debug = "";
-        } else {
-          localStorage.debug = "debug";
+      function shuffle(array) {
+        var counter = array.length;
+        while (counter > 0) {
+          var index = Math.floor(Math.random() * counter);
+          counter--;
+          var temp = array[counter];
+          array[counter] = array[index];
+          array[index] = temp;
         }
-        location.reload();
-      }
-      // Hide in Cordova
-      if (window.inCordova) {
-        document.getElementById("toggle-debug-mode").parentNode.style.display = "none";
+        return array;
       }
 
-      // Load either compiled script or RequireJS loader
-      var body = document.getElementsByTagName('body').item(0);
-      var script = document.createElement('script');
-      script.type = 'text/javascript';
-      script.src = bbgmPrefix + "gen/app.js";
-      body.appendChild(script);
+      var abbrevs = shuffle(['ATL', 'BAL', 'BOS', 'CHI', 'CIN', 'CLE', 'DAL', 'DEN', 'DET', 'HOU', 'LV', 'LA', 'MXC', 'MIA', 'MIN', 'MON', 'NYC', 'PHI', 'PHO', 'PIT', 'POR', 'SAC', 'SD', 'SF', 'SEA', 'STL', 'TPA', 'TOR', 'VAN', 'WAS']);
+      for (var i = 0; i < 12; i++) {
+        document.getElementById('team-picture-' + i).style.backgroundImage = 'url(/img/logos/' + abbrevs[i] + '.png)';
+      }
+
+      // Browser compatibility checks! https://gist.github.com/jensarps/15f270874889e1717b3d
+      var goodIDB = function (cb) {
+        if (typeof window.indexedDB === "undefined") {
+          cb(false);
+          return;
+        }
+
+        var idb = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+        var keyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.mozIDBKeyRange;
+
+        try {
+          keyRange.only([1]);
+        } catch (e) {
+          cb(false);
+          return;
+        }
+
+        var openRequest = idb.open('__detectIDB_test2', 1);
+
+        openRequest.onupgradeneeded = function (evt) {
+          var db = evt.target.result;
+          var one = db.createObjectStore('one', {
+            autoIncrement: true,
+            keyPath: 'key'
+          });
+          one.createIndex('one', 'one');
+          one.add({one: 1});
+          var two = db.createObjectStore('two', {
+            autoIncrement: true,
+            keyPath: 'key'
+          });
+          two.createIndex ('two', 'two');
+          two.add({two: 2});
+        };
+
+        openRequest.onsuccess = function (evt) {
+          var db = evt.target.result;
+          var transaction;
+          try {
+            transaction = db.transaction(['one', 'two'], 'readwrite');
+          } catch (e) {
+            cb(false);
+            return;
+          }
+
+          var count = 0;
+          transaction.objectStore('one').index('one').openCursor().onsuccess = function (evt) {
+            cursor = evt.target.result;
+            if (cursor) {
+              count += 1;
+              cursor.continue();
+            }
+          };
+
+          transaction.oncomplete = function () {
+            db.close();
+            cb(count === 1); // Will be 2 in Safari 10 https://bugs.webkit.org/show_bug.cgi?id=158833
+          };
+        };
+      };
+
+      goodIDB(function (result) {
+        if (!result) {
+          var errorMsg = '<p><b>Error!</b> Your browser is not modern enough to run Basketball GM. <a href="https://www.firefox.com/">Mozilla Firefox</a> and <a href="https://www.google.com/chrome/">Google Chrome</a> work best.</p>';
+
+          // Special error for Apple's mobile devices, as that's the only platform that is totally unsupported (no alternative browser to install)
+          if (/(iPad|iPhone|iPod)/.test(navigator.userAgent)) {
+            errorMsg += '<p>If you\'re on an iPhone/iPad/iPod, there is currently no way to run Basketball GM. Please come back on a desktop/laptop or a non-Apple mobile device! And complain to Apple to fix IndexedDB if you want to play Basketball GM on your iDevice.</p>';
+          }
+
+          var loadingMsg = document.getElementById('loading-msg');
+          loadingMsg.className = 'container';
+          loadingMsg.innerHTML = '<div class="alert alert-danger" style="margin-bottom: 0">' + errorMsg + '</div>';
+        } else {
+          var body = document.getElementsByTagName('body').item(0);
+          var script = document.createElement('script');
+          script.type = 'text/javascript';
+          script.src = bbgmPrefix + "gen/app.js";
+          body.appendChild(script);
+        }
+      });
     </script>
   </body>
 </html>

@@ -1,18 +1,15 @@
-const g = require('../globals');
-const ui = require('../ui');
-const player = require('../core/player');
-const backboard = require('backboard');
-const $ = require('jquery');
-const ko = require('knockout');
-const components = require('./components');
-const bbgmView = require('../util/bbgmView');
-const helpers = require('../util/helpers');
+import backboard from 'backboard';
+import g from '../globals';
+import * as player from '../core/player';
+import bbgmViewReact from '../util/bbgmViewReact';
+import * as helpers from '../util/helpers';
+import PlayerStats from './views/PlayerStats';
 
-function get(req) {
+function get(ctx) {
     let abbrev;
-    if (g.teamAbbrevsCache.indexOf(req.params.abbrev) >= 0) {
-        abbrev = req.params.abbrev;
-    } else if (req.params.abbrev && req.params.abbrev === 'watch') {
+    if (g.teamAbbrevsCache.includes(ctx.params.abbrev)) {
+        abbrev = ctx.params.abbrev;
+    } else if (ctx.params.abbrev && ctx.params.abbrev === 'watch') {
         abbrev = "watch";
     } else {
         abbrev = "all";
@@ -20,27 +17,14 @@ function get(req) {
 
     return {
         abbrev,
-        season: req.params.season === "career" ? null : helpers.validateSeason(req.params.season),
-        statType: req.params.statType !== undefined ? req.params.statType : "per_game",
-        playoffs: req.params.playoffs !== undefined ? req.params.playoffs : "regular_season",
+        season: ctx.params.season === "career" ? null : helpers.validateSeason(ctx.params.season),
+        statType: ctx.params.statType !== undefined ? ctx.params.statType : "per_game",
+        playoffs: ctx.params.playoffs !== undefined ? ctx.params.playoffs : "regular_season",
     };
 }
 
-function InitViewModel() {
-    this.abbrev = ko.observable();
-    this.season = ko.observable();
-    this.statType = ko.observable();
-    this.playoffs = ko.observable();
-}
-
-const mapping = {
-    players: {
-        create: options => options.data,
-    },
-};
-
-async function updatePlayers(inputs, updateEvents, vm) {
-    if (updateEvents.indexOf("dbChange") >= 0 || (inputs.season === g.season && (updateEvents.indexOf("gameSim") >= 0 || updateEvents.indexOf("playerMovement") >= 0)) || inputs.abbrev !== vm.abbrev() || inputs.season !== vm.season() || inputs.statType !== vm.statType() || inputs.playoffs !== vm.playoffs()) {
+async function updatePlayers(inputs, updateEvents, state) {
+    if (updateEvents.includes('dbChange') || (inputs.season === g.season && (updateEvents.includes('gameSim') || updateEvents.includes('playerMovement'))) || inputs.abbrev !== state.abbrev || inputs.season !== state.season || inputs.statType !== state.statType || inputs.playoffs !== state.playoffs) {
         return g.dbl.tx(["players", "playerStats"], async tx => {
             let players = await tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.RETIRED));
             players = await player.withStats(tx, players, {
@@ -80,7 +64,7 @@ async function updatePlayers(inputs, updateEvents, vm) {
                 }
             }
 
-            // Only keep players with more than 5 mpg
+            // Only keep players with more than 5 mpg in regular season, of any PT in playoffs
             if (inputs.abbrev !== "watch") {
                 players = players.filter(p => {
                     // Minutes played
@@ -91,16 +75,27 @@ async function updatePlayers(inputs, updateEvents, vm) {
                         } else {
                             min = p.careerStats.min;
                         }
+                    } else if (inputs.season) {
+                        min = p.stats.gp * p.stats.min;
                     } else {
-                        if (inputs.season) {
-                            min = p.stats.gp * p.stats.min;
-                        } else {
-                            min = p.careerStats.gp * p.careerStats.min;
+                        min = p.careerStats.gp * p.careerStats.min;
+                    }
+
+                    if (inputs.playoffs !== 'playoffs') {
+                        if (min > gp * 5) {
+                            return true;
                         }
                     }
 
-                    if (min > gp * 5) {
-                        return true;
+                    // Or, keep players who played in playoffs
+                    if (inputs.playoffs === 'playoffs') {
+                        if (inputs.season) {
+                            if (p.statsPlayoffs.gp > 0) {
+                                return true;
+                            }
+                        } else if (p.careerStatsPlayoffs.gp > 0) {
+                            return true;
+                        }
                     }
                 });
             }
@@ -116,82 +111,9 @@ async function updatePlayers(inputs, updateEvents, vm) {
     }
 }
 
-function uiFirst(vm) {
-    ko.computed(() => {
-        const label = vm.season() !== null ? vm.season() : "Career Totals";
-        ui.title(`Player Stats - ${label}`);
-    }).extend({throttle: 1});
-
-    ko.computed(() => {
-        const season = vm.season();
-
-        // Number of decimals for many stats
-        const d = vm.statType() === "totals" ? 0 : 1;
-
-        const rows = [];
-        const players = vm.players();
-        for (let i = 0; i < vm.players().length; i++) {
-            const p = players[i];
-
-            let pos;
-            if (p.ratings.constructor === Array) {
-                pos = p.ratings[p.ratings.length - 1].pos;
-            } else if (p.ratings.pos) {
-                pos = p.ratings.pos;
-            } else {
-                pos = "?";
-            }
-
-            // HACKS to show right stats, info
-            let abbrev, tid;
-            if (season === null) {
-                p.stats = p.careerStats;
-                abbrev = helpers.getAbbrev(p.tid);
-                tid = p.tid;
-                if (vm.playoffs() === "playoffs") {
-                    p.stats = p.careerStatsPlayoffs;
-                }
-            } else {
-                abbrev = p.stats.abbrev;
-                tid = p.stats.tid;
-                if (vm.playoffs() === "playoffs") {
-                    p.stats = p.statsPlayoffs;
-                }
-            }
-
-            // Skip no stats: never played, didn't make playoffs, etc
-            if (p.stats.gp) {
-                rows.push([helpers.playerNameLabels(p.pid, p.name, p.injury, p.ratings.skills, p.watch), pos, `<a href="${helpers.leagueUrl(["roster", abbrev, season])}">${abbrev}</a>`, String(p.stats.gp), String(p.stats.gs), helpers.round(p.stats.min, d), helpers.round(p.stats.fg, d), helpers.round(p.stats.fga, d), helpers.round(p.stats.fgp, 1), helpers.round(p.stats.tp, d), helpers.round(p.stats.tpa, d), helpers.round(p.stats.tpp, 1), helpers.round(p.stats.ft, d), helpers.round(p.stats.fta, d), helpers.round(p.stats.ftp, 1), helpers.round(p.stats.orb, d), helpers.round(p.stats.drb, d), helpers.round(p.stats.trb, d), helpers.round(p.stats.ast, d), helpers.round(p.stats.tov, d), helpers.round(p.stats.stl, d), helpers.round(p.stats.blk, d), helpers.round(p.stats.ba, d), helpers.round(p.stats.pf, d), helpers.round(p.stats.pts, d), helpers.plusMinus(p.stats.pm, d), helpers.round(p.stats.per, 1), helpers.round(p.stats.ewa, 1), p.hof, tid === g.userTid]);
-            }
-        }
-
-        ui.datatable($("#player-stats"), 2, rows, {
-            rowCallback(row, data) {
-                // Highlight HOF players
-                if (data[data.length - 2]) {
-                    row.classList.add("danger");
-                }
-                // Highlight user's team
-                if (data[data.length - 1]) {
-                    row.classList.add("info");
-                }
-            },
-        });
-    }).extend({throttle: 1});
-
-    ui.tableClickableRows($("#player-stats"));
-}
-
-function uiEvery(updateEvents, vm) {
-    components.dropdown("player-stats-dropdown", ["teamsAndAllWatch", "seasonsAndCareer", "statTypes", "playoffs"], [vm.abbrev(), vm.season(), vm.statType(), vm.playoffs()], updateEvents);
-}
-
-module.exports = bbgmView.init({
+export default bbgmViewReact.init({
     id: "playerStats",
     get,
-    InitViewModel,
-    mapping,
     runBefore: [updatePlayers],
-    uiFirst,
-    uiEvery,
+    Component: PlayerStats,
 });

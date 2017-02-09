@@ -1,13 +1,18 @@
-const g = require('../globals');
-const ui = require('../ui');
-const player = require('./player');
-const team = require('./team');
-const Promise = require('bluebird');
-const _ = require('underscore');
-const eventLog = require('../util/eventLog');
-const helpers = require('../util/helpers');
-const lock = require('../util/lock');
-const random = require('../util/random');
+// @flow
+
+import Promise from 'bluebird';
+import _ from 'underscore';
+import g from '../globals';
+import * as ui from '../ui';
+import * as league from './league';
+import * as phase from './phase';
+import * as player from './player';
+import * as team from './team';
+import * as helpers from '../util/helpers';
+import * as lock from '../util/lock';
+import logEvent from '../util/logEvent';
+import * as random from '../util/random';
+import type {BackboardTx} from '../util/types';
 
 /**
  * AI teams sign free agents.
@@ -17,16 +22,16 @@ const random = require('../util/random');
  * @memberOf core.freeAgents
  * @return {Promise}
  */
-async function autoSign(tx) {
+async function autoSign(tx: BackboardTx) {
     const objectStores = ["players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"];
-    await helpers.maybeReuseTx(objectStores, "readwrite", tx, async tx => {
+    await helpers.maybeReuseTx(objectStores, "readwrite", tx, async tx2 => {
         const [teams, players] = await Promise.all([
             team.filter({
-                ot: tx,
+                ot: tx2,
                 attrs: ["strategy"],
                 season: g.season,
             }),
-            tx.players.index('tid').getAll(g.PLAYER.FREE_AGENT),
+            tx2.players.index('tid').getAll(g.PLAYER.FREE_AGENT),
         ]);
 
         const strategies = teams.map(t => t.strategy);
@@ -44,7 +49,7 @@ async function autoSign(tx) {
 
         for (const tid of tids) {
             // Skip the user's team
-            if (g.userTids.indexOf(tid) >= 0 && g.autoPlaySeasons === 0) {
+            if (g.userTids.includes(tid) && g.autoPlaySeasons === 0) {
                 continue;
             }
 
@@ -64,8 +69,8 @@ async function autoSign(tx) {
             }*/
 
             const [numPlayersOnRoster, payroll] = await Promise.all([
-                tx.players.index('tid').count(tid),
-                team.getPayroll(tx, tid).get(0),
+                tx2.players.index('tid').count(tid),
+                team.getPayroll(tx2, tid).get(0),
             ]);
 
             if (numPlayersOnRoster < 15) {
@@ -75,12 +80,12 @@ async function autoSign(tx) {
                         let p = players[i];
                         p.tid = tid;
                         if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
-                            p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
+                            p = player.addStatsRow(tx2, p, g.phase === g.PHASE.PLAYOFFS);
                         }
                         p = player.setContract(p, p.contract, true);
                         p.gamesUntilTradable = 15;
 
-                        eventLog.add(null, {
+                        logEvent(null, {
                             type: "freeAgent",
                             text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
                             showNotification: false,
@@ -90,8 +95,8 @@ async function autoSign(tx) {
 
                         players.splice(i, 1); // Remove from list of free agents
 
-                        await tx.players.put(p);
-                        await team.rosterAutoSort(tx, tid);
+                        await tx2.players.put(p);
+                        await team.rosterAutoSort(tx2, tid);
 
                         // We found one, so stop looking for this team
                         break;
@@ -156,20 +161,20 @@ async function decreaseDemands() {
  * @param {number} mood Player mood towards a team, from 0 (happy) to 1 (angry).
  * @return {number} Contract amoung adjusted for mood.
  */
-function amountWithMood(amount, mood) {
+function amountWithMood(amount: number, mood: number): number {
     amount *= 1 + 0.2 * mood;
 
     if (amount >= g.minContract) {
         if (amount > g.maxContract) {
             amount = g.maxContract;
         }
-        return helpers.round(amount / 10) * 10;  // Round to nearest 10k, assuming units are thousands
+        return Number(helpers.round(amount / 10)) * 10;  // Round to nearest 10k, assuming units are thousands
     }
 
     if (amount > g.maxContract / 1000) {
         amount = g.maxContract / 1000;
     }
-    return helpers.round(amount * 100) / 100;  // Round to nearest 10k, assuming units are millions
+    return Number(helpers.round(amount * 100)) / 100;  // Round to nearest 10k, assuming units are millions
 }
 
 /**
@@ -179,7 +184,7 @@ function amountWithMood(amount, mood) {
  * @param {number} mood Player's mood towards the team in question.
  * @return {boolean} Answer to the question.
  */
-function refuseToNegotiate(amount, mood) {
+function refuseToNegotiate(amount: number, mood: number): boolean {
     if (amount * mood > 10000) {
         return true;
     }
@@ -194,13 +199,12 @@ function refuseToNegotiate(amount, mood) {
  * @param {number} numDays An integer representing the number of days to be simulated. If numDays is larger than the number of days remaining, then all of free agency will be simulated up until the preseason starts.
  * @param {boolean} start Is this a new request from the user to simulate days (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed. Default true.
  */
-async function play(numDays, start = true) {
-    const phase = require('./phase');
-
+async function play(numDays: number, start?: boolean = true) {
     // This is called when there are no more days to play, either due to the user's request (e.g. 1 week) elapsing or at the end of free agency.
     const cbNoDays = async () => {
-        await require('../core/league').setGameAttributesComplete({gamesInProgress: false});
+        await league.setGameAttributesComplete({gamesInProgress: false});
         await ui.updatePlayMenu(null);
+        ui.realtimeUpdate(["g.gamesInProgress"]);
 
         // Check to see if free agency is over
         if (g.daysLeft === 0) {
@@ -215,27 +219,25 @@ async function play(numDays, start = true) {
         const cbYetAnother = async () => {
             await decreaseDemands();
             await autoSign();
-            await require('../core/league').setGameAttributesComplete({daysLeft: g.daysLeft - 1, lastDbChange: Date.now()});
+            await league.setGameAttributesComplete({daysLeft: g.daysLeft - 1, lastDbChange: Date.now()});
             if (g.daysLeft > 0 && numDays > 0) {
                 ui.realtimeUpdate(["playerMovement"], undefined, () => {
                     ui.updateStatus(`${g.daysLeft} days left`);
                     play(numDays - 1, false);
                 });
-            } else if (g.daysLeft === 0) {
+            } else {
                 cbNoDays();
             }
         };
 
-        if (numDays > 0) {
-            // If we didn't just stop games, let's play
-            // Or, if we are starting games (and already passed the lock), continue even if stopGames was just seen
-            if (start || !g.stopGames) {
-                if (g.stopGames) {
-                    await require('../core/league').setGameAttributesComplete({stopGames: false});
-                }
-                cbYetAnother();
+        // If we didn't just stop games, let's play
+        // Or, if we are starting games (and already passed the lock), continue even if stopGames was just seen
+        if (numDays > 0 && (start || !g.stopGames)) {
+            if (g.stopGames) {
+                await league.setGameAttributesComplete({stopGames: false});
             }
-        } else if (numDays === 0) {
+            cbYetAnother();
+        } else {
             // If this is the last day, update play menu
             cbNoDays();
         }
@@ -246,8 +248,9 @@ async function play(numDays, start = true) {
     if (start) {
         const canStartGames = await lock.canStartGames(null);
         if (canStartGames) {
-            await require('../core/league').setGameAttributesComplete({gamesInProgress: true});
+            await league.setGameAttributesComplete({gamesInProgress: true});
             await ui.updatePlayMenu(null);
+            ui.realtimeUpdate(["g.gamesInProgress"]);
             cbRunDay();
         }
     } else {
@@ -255,7 +258,7 @@ async function play(numDays, start = true) {
     }
 }
 
-module.exports = {
+export {
     autoSign,
     decreaseDemands,
     amountWithMood,

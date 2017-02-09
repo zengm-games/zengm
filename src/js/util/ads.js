@@ -1,8 +1,10 @@
-/*eslint new-cap: 0*/
-const g = require('../globals');
-const $ = require('jquery');
+// @flow
 
-function showGCS() {
+/*eslint new-cap: 0*/
+import Promise from 'bluebird';
+import g from '../globals';
+
+function showGcs() {
     window.TriggerPrompt("http://www.basketball-gm.com/", (new Date()).getTime());
 }
 
@@ -21,51 +23,113 @@ function showSurvata() {
                 s.startInterview();
             } else {
                 // If Survata doesn't have a survey to show, try GCS
-                showGCS();
+                showGcs();
             }
         });
     });
 
     // If Survata is down, try other ad
-    /*eslint no-use-before-define: 0*/
-    window.Survata.fail(show);
+    // eslint-disable-next-line no-use-before-define
+    window.Survata.fail(() => {
+        g.emitter.emit('showAd', 'modal');
+    });
 }
 
 function showModal() {
-    $("#modal-ads").modal("show");
+    g.emitter.emit('updateState', {showNagModal: true});
 }
 
-function show() {
-    // No ads during multi season auto sim
-    if (g.autoPlaySeasons > 0) {
-        return;
-    }
+let gptLoading = false;
+let gptLoaded = false;
+const gptAdSlots = [];
 
-    // No ads for Gold members
-    const currentTimestamp = Math.floor(Date.now() / 1000);
-    if (!g.vm.topMenu.goldCancelled() && currentTimestamp <= g.vm.topMenu.goldUntil()) {
-        return;
-    }
+async function showBanner() {
+    const initBanners = () => {
+        return new Promise(resolve => {
+            window.googletag.cmd.push(() => {
+                gptAdSlots[0] = window.googletag
+                    .defineSlot('/42283434/BBGM_Top', [[970, 90], [728, 90], [970, 250]], 'div-gpt-ad-1473268147477-1')
+                    .addService(window.googletag.pubads());
+                gptAdSlots[1] = window.googletag
+                    .defineSlot('/42283434/BBGM_Square_Left', [[300, 250], [336, 280]], 'div-gpt-ad-1479941549483-2')
+                    .addService(window.googletag.pubads());
+                gptAdSlots[2] = window.googletag
+                    .defineSlot('/42283434/BBGM_Square_Right', [[300, 250], [336, 280]], 'div-gpt-ad-1479941549483-1')
+                    .addService(window.googletag.pubads());
 
-    const r = Math.random();
-    if (r < 0.68) {
-        showGCS();
-    } else if (r < 0.75) {
-        showModal();
+                window.googletag.pubads().enableSingleRequest();
+
+                window.googletag.enableServices();
+
+                let count = 0;
+                window.googletag.cmd.push(() => {
+                    window.googletag.display('div-gpt-ad-1473268147477-1');
+                    count += 1;
+                    if (count >= 3) {
+                        resolve();
+                    }
+                });
+                window.googletag.cmd.push(() => {
+                    window.googletag.display('div-gpt-ad-1479941549483-2');
+                    count += 1;
+                    if (count >= 3) {
+                        resolve();
+                    }
+                });
+                window.googletag.cmd.push(() => {
+                    window.googletag.display('div-gpt-ad-1479941549483-1');
+                    count += 1;
+                    if (count >= 3) {
+                        resolve();
+                    }
+                });
+            });
+        });
+    };
+
+    // After banners are initially loaded, use this to refresh
+    const refreshBanners = () => {
+        window.googletag.cmd.push(() => {
+            window.googletag.pubads().refresh([gptAdSlots[0]]);
+        });
+        window.googletag.cmd.push(() => {
+            window.googletag.pubads().refresh([gptAdSlots[1]]);
+        });
+        window.googletag.cmd.push(() => {
+            window.googletag.pubads().refresh([gptAdSlots[2]]);
+        });
+    };
+
+    if (window.screen && window.screen.width < 768) {
+        // Hide ads on mobile, mobile is shitty enough already
+        const wrappers = ['banner-ad-top-wrapper', 'banner-ad-bottom-wrapper-1', 'banner-ad-bottom-wrapper-logo', 'banner-ad-bottom-wrapper-2'];
+        for (const wrapper of wrappers) {
+            const el = document.getElementById(wrapper);
+            if (el) {
+                el.innerHTML = '';
+            }
+        }
     } else {
-        // This is all in milliseconds!
-        const adTimer = localStorage.adTimer !== undefined ? parseInt(localStorage.adTimer, 10) : 0;
-        const now = Date.now();
+        const bannerAdTop = document.getElementById('div-gpt-ad-1473268147477-1');
+        const bannerAdBottom1 = document.getElementById('div-gpt-ad-1479941549483-2');
+        const bannerAdBottom2 = document.getElementById('div-gpt-ad-1479941549483-1');
 
-        // Only show ad once per 60 minutes, at most
-        if (now - adTimer > 1000 * 60 * 60) {
-            showSurvata();
-            localStorage.adTimer = now;
+        if (bannerAdTop && bannerAdBottom1 && bannerAdBottom2) {
+            if (!gptLoading && !gptLoaded) {
+                gptLoading = true;
+                await initBanners();
+                gptLoading = false;
+                gptLoaded = true;
+            } else if (gptLoaded) {
+                refreshBanners();
+            }
         }
     }
 }
 
-module.exports = {
-    show,
+export {
+    showBanner,
     showModal,
+    showSurvata,
+    showGcs,
 };

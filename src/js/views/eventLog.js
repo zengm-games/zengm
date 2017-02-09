@@ -1,39 +1,34 @@
-const g = require('../globals');
-const ui = require('../ui');
-const ko = require('knockout');
-const bbgmView = require('../util/bbgmView');
-const helpers = require('../util/helpers');
-const components = require('./components');
+// @flow
 
-function get(req) {
-    const [tid, abbrev] = helpers.validateAbbrev(req.params.abbrev);
+import g from '../globals';
+import bbgmViewReact from '../util/bbgmViewReact';
+import * as helpers from '../util/helpers';
+import EventLog from './views/EventLog';
+
+function get(ctx) {
+    const [tid, abbrev] = helpers.validateAbbrev(ctx.params.abbrev);
 
     return {
         tid,
         abbrev,
-        season: helpers.validateSeason(req.params.season),
+        season: helpers.validateSeason(ctx.params.season),
     };
 }
 
-function InitViewModel() {
-    this.abbrev = ko.observable();
-    this.season = ko.observable();
-    this.events = ko.observableArray([]);
-}
-
-async function updateEventLog(inputs, updateEvents, vm) {
-    if (updateEvents.length >= 0 || inputs.season !== vm.season() || inputs.abbrev !== vm.abbrev()) {
-        if (inputs.season !== vm.season() || inputs.abbrev !== vm.abbrev()) {
-            vm.events([]);
+async function updateEventLog(inputs, updateEvents, state) {
+    if (updateEvents.length >= 0 || inputs.season !== state.season || inputs.abbrev !== state.abbrev) {
+        let events = state.events;
+        if (inputs.season !== state.season || inputs.abbrev !== state.abbrev) {
+            events = [];
         }
 
-        if (vm.events().length === 0) {
+        if (events.length === 0) {
             // Show all events, newest at top
-            let events = await g.dbl.events.index('season').getAll(inputs.season);
+            events = await g.dbl.events.index('season').getAll(inputs.season);
             events.reverse(); // Newest first
 
             // Filter by team
-            events = events.filter(event => event.tids !== undefined && event.tids.indexOf(inputs.tid) >= 0);
+            events = events.filter(event => event.tids !== undefined && event.tids.includes(inputs.tid));
 
             events.forEach(helpers.correctLinkLid);
 
@@ -46,44 +41,33 @@ async function updateEventLog(inputs, updateEvents, vm) {
 
         if (inputs.season === g.season) { // Can't update old seasons!
             // Update by adding any new events to the top of the list
-            const maxEid = ko.unwrap(vm.events()[0].eid); // unwrap shouldn't be necessary
+            const maxEid = events[0].eid;
             const newEvents = [];
             await g.dbl.events.index('season').iterate(inputs.season, "prev", (event, shortCircuit) => {
                 if (event.eid > maxEid) {
-                    if (event.tids !== undefined && event.tids.indexOf(inputs.tid) >= 0) {
+                    if (event.tids !== undefined && event.tids.includes(inputs.tid)) {
                         newEvents.push(event);
                     }
                 } else {
                     shortCircuit();
-                    // Oldest first (cursor is in "prev" direction and we're adding to the front of vm.events)
+                    // Oldest first (cursor is in "prev" direction and we're adding to the front of events)
                     for (let i = newEvents.length - 1; i >= 0; i--) {
-                        vm.events.unshift(newEvents[i]);
+                        events.unshift(newEvents[i]);
                     }
                 }
             });
 
             return {
+                events,
                 season: inputs.season,
             };
         }
     }
 }
 
-function uiFirst(vm) {
-    ko.computed(() => {
-        ui.title(`Event Log - ${vm.season()}`);
-    }).extend({throttle: 1});
-}
-
-function uiEvery(updateEvents, vm) {
-    components.dropdown("event-log-dropdown", ["teams", "seasons"], [vm.abbrev(), vm.season()], updateEvents);
-}
-
-module.exports = bbgmView.init({
+export default bbgmViewReact.init({
     id: "eventLog",
     get,
-    InitViewModel,
     runBefore: [updateEventLog],
-    uiFirst,
-    uiEvery,
+    Component: EventLog,
 });

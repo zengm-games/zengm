@@ -5,9 +5,6 @@ gen/bbgm.css
 fonts/glyphicons-halflings-regular.woff
 ico/logo.png
 ico/new_window.png
-img/datatables/sort_asc.png
-img/datatables/sort_both.png
-img/datatables/sort_desc.png
 
 NETWORK:
 *

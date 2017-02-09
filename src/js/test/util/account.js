@@ -1,10 +1,10 @@
-/*eslint comma-spacing: 0, key-spacing: 0, no-unused-expressions: 0*/
-const assert = require('assert');
-const backboard = require('backboard');
-const db = require('../../db');
-const g = require('../../globals');
-const league = require('../../core/league');
-const account = require('../../util/account');
+/* eslint comma-spacing: "off", key-spacing: "off", no-unused-expressions: "off", quote-props: "off" */
+import assert from 'assert';
+import backboard from 'backboard';
+import * as db from '../../db';
+import g from '../../globals';
+import * as league from '../../core/league';
+import * as account from '../../util/account';
 
 describe("util/account", () => {
     before(async () => {
@@ -240,11 +240,11 @@ describe("util/account", () => {
     });
 
     describe("#checkAchievement.moneyball*()", () => {
-        it("should award moneyball and moneyball_2 for title with payroll <= $30M", async () => {
+        it("should award moneyball and moneyball_2 for title with payroll <= $45M", async () => {
             await g.dbl.tx("teamSeasons", "readwrite", async tx => {
                 const teamSeason = await tx.teamSeasons.index("tid, season").get([g.userTid, g.season]);
                 teamSeason.playoffRoundsWon = 4;
-                teamSeason.expenses.salary.amount = 30000;
+                teamSeason.expenses.salary.amount = 45000;
                 await tx.teamSeasons.put(teamSeason);
             });
 
@@ -267,11 +267,11 @@ describe("util/account", () => {
             awarded = await account.checkAchievement.moneyball_2(false);
             assert.equal(awarded, false);
         });
-        it("should award moneyball but not moneyball_2 for title with payroll > $30M and <= $40M", async () => {
+        it("should award moneyball but not moneyball_2 for title with payroll > $45M and <= $60M", async () => {
             await g.dbl.tx("teamSeasons", "readwrite", async tx => {
                 const teamSeason = await tx.teamSeasons.index("tid, season").get([g.userTid, g.season]);
                 teamSeason.playoffRoundsWon = 4;
-                teamSeason.expenses.salary.amount = 40000;
+                teamSeason.expenses.salary.amount = 60000;
                 await tx.teamSeasons.put(teamSeason);
             });
 
@@ -285,7 +285,7 @@ describe("util/account", () => {
             await g.dbl.tx("teamSeasons", "readwrite", async tx => {
                 const teamSeason = await tx.teamSeasons.index("tid, season").get([g.userTid, g.season]);
                 teamSeason.playoffRoundsWon = 4;
-                teamSeason.expenses.salary.amount = 40001;
+                teamSeason.expenses.salary.amount = 60001;
                 await tx.teamSeasons.put(teamSeason);
             });
 

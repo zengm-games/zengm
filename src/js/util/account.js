@@ -1,13 +1,22 @@
+// @flow
+
 /*eslint camelcase: 0*/
-const g = require('../globals');
-const team = require('../core/team');
-const backboard = require('backboard');
-const Promise = require('bluebird');
-const $ = require('jquery');
-const eventLog = require('./eventLog');
+import backboard from 'backboard';
+import Promise from 'bluebird';
+import $ from 'jquery';
+import g from '../globals';
+import * as team from '../core/team';
+import * as ads from './ads';
+import logEvent from './logEvent';
+import type {AchievementKey} from './types';
 
 // IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php
-const allAchievements = [{
+const allAchievements: {
+    slug: AchievementKey,
+    name: string,
+    desc: string,
+    count?: number,
+}[] = [{
     slug: "participation",
     name: "Participation",
     desc: "You get an achievement just for creating an account, you special snowflake!",
@@ -38,11 +47,11 @@ const allAchievements = [{
 }, {
     slug: "moneyball",
     name: "Moneyball",
-    desc: "Win a title with a payroll under $40 million.",
+    desc: "Win a title with a payroll under $60 million.",
 }, {
     slug: "moneyball_2",
     name: "Moneyball 2",
-    desc: "Win a title with a payroll under $30 million.",
+    desc: "Win a title with a payroll under $45 million.",
 }, {
     slug: "hardware_store",
     name: "Hardware Store",
@@ -58,7 +67,7 @@ const allAchievements = [{
 }, {
     slug: "hacker",
     name: "Hacker",
-    desc: 'Privately <a href="https://basketball-gm.com/contact/">report</a> a security issue in <a href="https://bitbucket.org/dumbmatter/bbgm-account">the account system</a> or some other part of the site.',
+    desc: 'Privately report a security issue in the account system or some other part of the site.',
 }];
 
 /**
@@ -71,7 +80,7 @@ const allAchievements = [{
  * @param {boolean=} silent If true, don't show any notifications (like if achievements are only being moved from IDB to remote). Default false.
  * @return {Promise}
  */
-async function addAchievements(achievements, silent = false) {
+async function addAchievements(achievements: AchievementKey[], silent?: boolean = false) {
     const notify = slug => {
         if (silent) {
             return;
@@ -80,7 +89,7 @@ async function addAchievements(achievements, silent = false) {
         // Find name of achievement
         for (let i = 0; i < allAchievements.length; i++) {
             if (allAchievements[i].slug === slug) {
-                eventLog.add(null, {
+                logEvent(null, {
                     type: "achievement",
                     text: `"${allAchievements[i].name}" achievement awarded! <a href="/account">View all achievements.</a>`,
                 });
@@ -89,9 +98,9 @@ async function addAchievements(achievements, silent = false) {
         }
     };
 
-    const addToIndexedDB = achievements => {
+    const addToIndexedDB = achievements2 => {
         return g.dbm.tx("achievements", "readwrite", async tx => {
-            for (const achievement of achievements) {
+            for (const achievement of achievements2) {
                 await tx.achievements.add({slug: achievement});
                 notify(achievement);
             }
@@ -132,10 +141,44 @@ async function check() {
         }));
 
         // Save username for display
-        g.vm.topMenu.username(data.username);
-        g.vm.topMenu.email(data.email);
-        g.vm.topMenu.goldUntil(data.gold_until);
-        g.vm.topMenu.goldCancelled(data.gold_cancelled);
+
+        g.emitter.emit('updateTopMenu', {
+            email: data.email,
+            goldCancelled: !!data.gold_cancelled,
+            goldUntil: data.gold_until,
+            username: data.username,
+        });
+
+        // No ads for Gold members
+        const currentTimestamp = Math.floor(Date.now() / 1000);
+        if (currentTimestamp > data.gold_until) {
+            let el;
+            el = document.getElementById('banner-ad-top-wrapper');
+            if (el) {
+                el.innerHTML = '<div id="div-gpt-ad-1473268147477-1" style="text-align: center; min-height: 95px; margin-top: 1em"></div>';
+            }
+            el = document.getElementById('banner-ad-bottom-wrapper-1');
+            if (el) {
+                el.innerHTML = '<div id="div-gpt-ad-1479941549483-2" style="text-align: center; height: 250px; position: absolute; top: 5px; left: 0"></div>';
+            }
+            el = document.getElementById('banner-ad-bottom-wrapper-2');
+            if (el) {
+                el.innerHTML = '<div id="div-gpt-ad-1479941549483-1" style="text-align: center; height: 250px; position: absolute; top: 5px; right: 0"></div>';
+            }
+            el = document.getElementById('banner-ad-bottom-wrapper-logo');
+            if (el) {
+                el.innerHTML = '<div style="height: 250px; margin: 5px 310px 0 310px; display:flex; align-items: center; justify-content: center;"><img src="https://basketball-gm.com/files/logo.png" style="max-height: 100%; max-width: 100%"></div>';
+            }
+            ads.showBanner();
+        } else {
+            const wrappers = ['banner-ad-top-wrapper', 'banner-ad-bottom-wrapper-1', 'banner-ad-bottom-wrapper-logo', 'banner-ad-bottom-wrapper-2'];
+            for (const wrapper of wrappers) {
+                const el = document.getElementById(wrapper);
+                if (el) {
+                    el.innerHTML = '';
+                }
+            }
+        }
 
         // If user is logged in, upload any locally saved achievements
         if (data.username !== "") {
@@ -153,6 +196,7 @@ async function check() {
         }
     } catch (err) {
         // Don't freak out if an AJAX request fails or whatever
+        console.log(err);
     }
 }
 
@@ -188,10 +232,14 @@ async function getAchievements() {
 
         // Merge local and remote achievements
         for (let i = 0; i < achievements.length; i++) {
-            achievements[i].count += achievementsRemote[achievements[i].slug] !== undefined ? achievementsRemote[achievements[i].slug] : 0;
+            if (achievementsRemote[achievements[i].slug] !== undefined) {
+                achievements[i].count += achievementsRemote[achievements[i].slug];
+            }
         }
-    } finally {
-        // If remote fails, this will be just local. Otherwise it will merge.
+
+        return achievements;
+    } catch (err) {
+        // If remote fails, still return local achievements
         return achievements;
     }
 }
@@ -201,7 +249,7 @@ async function getAchievements() {
 // HOWEVER, it's only saved to the database if saveAchievement is true (this is the default), but the saving happens asynchronously. It is theoretically possible that this could cause a notification to be displayed to the user about getting an achievement, but some error occurs when saving it.
 const checkAchievement = {};
 
-checkAchievement.fo_fo_fo = async (saveAchievement = true) => {
+checkAchievement.fo_fo_fo = async (saveAchievement: boolean = true) => {
     if (g.godModeInPast) {
         return false;
     }
@@ -232,7 +280,7 @@ checkAchievement.fo_fo_fo = async (saveAchievement = true) => {
     return true;
 };
 
-checkAchievement.septuawinarian = async (saveAchievement = true) => {
+checkAchievement.septuawinarian = async (saveAchievement: boolean = true) => {
     if (g.godModeInPast) {
         return false;
     }
@@ -253,7 +301,7 @@ checkAchievement.septuawinarian = async (saveAchievement = true) => {
     return false;
 };
 
-checkAchievement["98_degrees"] = async (saveAchievement = true) => {
+checkAchievement["98_degrees"] = async (saveAchievement: boolean = true) => {
     if (g.godModeInPast) {
         return false;
     }
@@ -278,7 +326,7 @@ checkAchievement["98_degrees"] = async (saveAchievement = true) => {
     return false;
 };
 
-async function checkDynasty(titles, years, slug, saveAchievement) {
+async function checkDynasty(titles: number, years: number, slug: AchievementKey, saveAchievement: boolean): Promise<boolean> {
     if (g.godModeInPast) {
         return false;
     }
@@ -309,9 +357,9 @@ async function checkDynasty(titles, years, slug, saveAchievement) {
     return false;
 }
 
-checkAchievement.dynasty = (saveAchievement = true) => checkDynasty(6, 8, "dynasty", saveAchievement);
-checkAchievement.dynasty_2 = (saveAchievement = true) => checkDynasty(8, 8, "dynasty_2", saveAchievement);
-checkAchievement.dynasty_3 = (saveAchievement = true) => checkDynasty(11, 13, "dynasty_3", saveAchievement);
+checkAchievement.dynasty = (saveAchievement: boolean = true) => checkDynasty(6, 8, "dynasty", saveAchievement);
+checkAchievement.dynasty_2 = (saveAchievement: boolean = true) => checkDynasty(8, 8, "dynasty_2", saveAchievement);
+checkAchievement.dynasty_3 = (saveAchievement: boolean = true) => checkDynasty(11, 13, "dynasty_3", saveAchievement);
 
 async function checkMoneyball(maxPayroll, slug, saveAchievement) {
     if (g.godModeInPast) {
@@ -334,11 +382,11 @@ async function checkMoneyball(maxPayroll, slug, saveAchievement) {
     return false;
 }
 
-checkAchievement.moneyball = (saveAchievement = true) => checkMoneyball(40000, "moneyball", saveAchievement);
+checkAchievement.moneyball = (saveAchievement: boolean = true) => checkMoneyball(60000, "moneyball", saveAchievement);
 
-checkAchievement.moneyball_2 = (saveAchievement = true) => checkMoneyball(30000, "moneyball_2", saveAchievement);
+checkAchievement.moneyball_2 = (saveAchievement: boolean = true) => checkMoneyball(45000, "moneyball_2", saveAchievement);
 
-checkAchievement.hardware_store = async (saveAchievement = true) => {
+checkAchievement.hardware_store = async (saveAchievement: boolean = true) => {
     if (g.godModeInPast) {
         return false;
     }
@@ -355,7 +403,7 @@ checkAchievement.hardware_store = async (saveAchievement = true) => {
     return false;
 };
 
-checkAchievement.small_market = async (saveAchievement = true) => {
+checkAchievement.small_market = async (saveAchievement: boolean = true) => {
     if (g.godModeInPast) {
         return false;
     }
@@ -376,7 +424,7 @@ checkAchievement.small_market = async (saveAchievement = true) => {
     return false;
 };
 
-checkAchievement.sleeper_pick = async (saveAchievement = true) => {
+checkAchievement.sleeper_pick = async (saveAchievement: boolean = true) => {
     if (g.godModeInPast) {
         return false;
     }
@@ -395,7 +443,7 @@ checkAchievement.sleeper_pick = async (saveAchievement = true) => {
     return false;
 };
 
-module.exports = {
+export {
     check,
     getAchievements,
     addAchievements,

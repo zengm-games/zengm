@@ -26,6 +26,36 @@ type MaxIds = {
 };
 
 const STORES: Store[] = ['games', 'playerFeats', 'playerStats', 'players', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams'];
+const storeInfos = {
+    games: {
+        pk: 'gid',
+        getData: (tx: BackboardTx) => tx.games.index('season').getAll(g.season),
+    },
+    playerFeats: {
+        pk: 'fid',
+    },
+    playerStats: {
+        pk: 'psid',
+    },
+    players: {
+        pk: 'pid',
+    },
+    releasedPlayers: {
+        pk: 'rid',
+    },
+    schedule: {
+        pk: 'gid',
+    },
+    teamSeasons: {
+        pk: 'rid',
+    },
+    teamStats: {
+        pk: 'rid',
+    },
+    teams: {
+        pk: 'tid',
+    },
+};
 
 class Cache {
     data: Data;
@@ -51,19 +81,6 @@ class Cache {
 
     setStatus(status: Status) {
         this.status = status;
-    }
-
-    // Current season
-    async fillGames(tx: BackboardTx) {
-        this.checkStatus('filling');
-
-        const games = await tx.games.index('season').getAll(g.season);
-
-        this.data.games = {};
-
-        for (const gm of games) {
-            this.data.games[gm.gid] = gm;
-        }
     }
 
     // Non-retired players
@@ -213,8 +230,14 @@ class Cache {
         this.data = {};
 
         await g.dbl.tx(STORES, async (tx) => {
+            await Promise.all(Object.entries(storeInfos).map(async ([store, storeInfo]) => {
+                if (storeInfo.getData) {
+                    const data = await storeInfo.getData(tx);
+                    this.data[store] = data;
+                }
+            }));
+
             await Promise.all([
-                this.fillGames(tx),
                 this.fillPlayers(tx),
                 this.fillReleasedPlayers(tx),
                 this.fillSchedule(tx),
@@ -326,11 +349,11 @@ class Cache {
 
     async delete(store: Store, key: number) {
         if (store === 'schedule') {
-            if (this.data.schedule.hasOwnProperty(key)) {
-                delete this.data.schedule[key];
-                this.deletes.schedule.push(key);
+            if (this.data[store].hasOwnProperty(key)) {
+                delete this.data[store][key];
+                this.deletes[store].push(key);
             } else {
-                throw new Error(`Invalid key to delete from "schedule" store: ${key}`);
+                throw new Error(`Invalid key to delete from store "${store}": ${key}`);
             }
         } else {
             throw new Error(`delete not implemented for store "${store}"`);
@@ -339,9 +362,9 @@ class Cache {
 
     async clear(store: Store) {
         if (store === 'schedule') {
-            for (const gid of Object.keys(this.data.schedule)) {
-                delete this.data.schedule[gid];
-                this.deletes.schedule.push(gid);
+            for (const key of Object.keys(this.data[store])) {
+                delete this.data[store][storeInfos[store].pk];
+                this.deletes[store].push(key);
             }
         } else {
             throw new Error(`clear not implemented for store "${store}"`);

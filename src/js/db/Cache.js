@@ -4,7 +4,7 @@ import backboard from 'backboard';
 import Promise from 'bluebird';
 import orderBy from 'lodash.orderby';
 import g from '../globals';
-import type {BackboardTx} from '../util/types';
+import type {BackboardTx, PlayerStats} from '../util/types';
 
 type Status = 'empty' | 'error' | 'filling' | 'flushing' | 'full';
 
@@ -15,11 +15,14 @@ type Index = 'playerStats' | 'playerStatsAllByPid' | 'playerStatsByPid' | 'playe
 type Data = {
     [key: Store]: any,
 };
+type Deletes = {
+    [key: Store]: number[],
+};
 type Indexes = {
     [key: Index]: any,
 };
-type Deletes = {
-    [key: Store]: number[],
+type MaxIds = {
+    [key: Index]: number,
 };
 
 const STORES: Store[] = ['games', 'playerFeats', 'playerStats', 'players', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams'];
@@ -28,13 +31,16 @@ class Cache {
     data: Data;
     deletes: Deletes;
     indexes: Indexes;
+    maxIds: MaxIds;
     status: Status;
 
     constructor() {
         this.status = 'empty';
+
         this.data = {};
         this.deletes = {};
         this.indexes = {};
+        this.maxIds = {};
     }
 
     checkStatus(...validStatuses: Status[]) {
@@ -109,9 +115,17 @@ class Cache {
                     }
                 }
 
-//                this.data.playerStats[ps.psid] = ps;
+                this.data.playerStats[ps.psid] = ps;
             }
         }
+
+        this.maxIds.playerStats = -1;
+        await tx.playerStats.iterate(null, 'prev', (ps: PlayerStats, shortCircuit) => {
+            if (ps) {
+                this.maxIds.playerStats = ps.psid;
+            }
+            shortCircuit();
+        });
 
         this.data.playerFeats = {};
     }
@@ -274,6 +288,25 @@ class Cache {
                 key = 0;
             }
             this.data.playerFeats[key] = obj;
+        } else if (store === 'playerStats') {
+            if (!obj.hasOwnProperty('psid')) {
+                this.maxIds.playerStats += 1;
+                obj.psid = this.maxIds.playerStats;
+            }
+
+            this.data.playerStats[obj.psid] = obj;
+
+            if (obj.season === g.season) {
+                this.indexes.playerStatsByPid[obj.pid] = obj;
+            }
+
+            if (!obj.playoffs) {
+                if (!this.indexes.playerStatsAllByPid.hasOwnProperty(obj.pid)) {
+                    this.indexes.playerStatsAllByPid[obj.pid] = [obj];
+                } else {
+                    this.indexes.playerStatsAllByPid[obj.pid].unshift(obj);
+                }
+            }
         } else if (store === 'schedule') {
             this.data.schedule[obj.gid] = obj;
         } else {

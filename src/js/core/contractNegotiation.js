@@ -137,13 +137,13 @@ async function accept(pid: number, amount: number, exp: number): Promise<string>
     }
 
     await g.dbl.tx(["players", "playerStats"], "readwrite", async tx => {
-        await tx.players.iterate(pid, p => {
+        await tx.players.iterate(pid, async (p) => {
             p.tid = g.userTid;
             p.gamesUntilTradable = 15;
 
             // Handle stats if the season is in progress
             if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
-                p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
+                await player.addStatsRow(p, g.phase === g.PHASE.PLAYOFFS);
             }
 
             p = player.setContract(p, {

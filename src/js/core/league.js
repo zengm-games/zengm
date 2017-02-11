@@ -371,7 +371,7 @@ async function create(
                 if (playerStats.length === 0) {
                     if (p.tid >= 0 && g.phase <= g.PHASE.PLAYOFFS) {
                         // Needs pid, so must be called after put. It's okay, statsTid was already set in player.augmentPartialPlayer
-                        p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
+                        await player.addStatsRow(p, g.phase === g.PHASE.PLAYOFFS);
                     }
                 } else {
                     // If there are stats in the League File, add them to the database
@@ -397,7 +397,7 @@ async function create(
                         // Delete psid because it can cause problems due to interaction addStatsRow above
                         delete ps.psid;
 
-                        await tx.playerStats.add(ps);
+                        await g.cache.put('playerStats', ps);
 
                         // On to the next one
                         if (playerStats.length > 0) {

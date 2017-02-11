@@ -1,7 +1,7 @@
 // @flow
 
 import Promise from 'bluebird';
-import orderBy from 'lodash.orderBy';
+import orderBy from 'lodash.orderby';
 import _ from 'underscore';
 import g from '../globals';
 import * as ui from '../ui';
@@ -77,7 +77,7 @@ async function autoSign(tx: BackboardTx) {
                     if (p.contract.amount + payroll <= g.salaryCap || (p.contract.amount === g.minContract && numPlayersOnRoster < 13)) {
                         p.tid = tid;
                         if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
-                            p = player.addStatsRow(null, p, g.phase === g.PHASE.PLAYOFFS);
+                            await player.addStatsRow(p, g.phase === g.PHASE.PLAYOFFS);
                         }
                         p = player.setContract(p, p.contract, true);
                         p.gamesUntilTradable = 15;

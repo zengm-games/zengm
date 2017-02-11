@@ -1,8 +1,7 @@
 IVERSON
 
-addStatsRow getting confusing
-- store max ID for each store, so it can be used for put (works for all except schedule, right? nothing else will be blank)
-- update indexes when put playerStats
+player.updateValues should not return anything, just mutate
+- same with setContract
 
 alternative idea
 - cache within backboard. copy all indexes (including primary key index) to memory, keep them in sync by doing parallel operations to the underlying database (like on add, update indexes with new info). in each index, keep store name and primary key. then have a LRU cache on (store name, primary key) and either get records from there or hit IDB
@@ -18,6 +17,9 @@ replace all usage of IDB with cache, otherwise things will be more likely to get
 
 rewrite team.filter and player.filter
 - incorporate player.withStats
+
+league creation
+- fill cache, then flush
 
 when to fill/flush? phases, games, user interaction
 

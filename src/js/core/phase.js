@@ -95,7 +95,7 @@ async function newPhasePreseason(tx: BackboardTx) {
 
         // Add row to player stats if they are on a team
         if (p.tid >= 0) {
-            p = player.addStatsRow(tx, p, false);
+            await player.addStatsRow(p, false);
         }
 
         return p;
@@ -221,10 +221,11 @@ async function newPhasePlayoffs(tx: BackboardTx) {
         }),
 
         // Add row to player stats
-        Promise.all(tidPlayoffs.map((tid) => {
-            return tx.players.index('tid').iterate(tid, (p) => {
-                return player.addStatsRow(tx, p, true);
-            });
+        Promise.all(tidPlayoffs.map(async (tid) => {
+            const players = await g.cache.indexGetAll('playersByTid', tid);
+            for (const p of players) {
+                await player.addStatsRow(p, true);
+            }
         })),
     ]);
 

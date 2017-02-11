@@ -353,13 +353,13 @@ async function propose(forceTrade?: boolean = false): Promise<[boolean, ?string]
                 const k = j === 0 ? 1 : 0;
 
                 pids[j].forEach(async (pid) => {
-                    let p = await tx.players.get(pid);
+                    const p = await g.cache.get('players', pid);
                     p.tid = tids[k];
                     // Don't make traded players untradable
                     //p.gamesUntilTradable = 15;
                     p.ptModifier = 1; // Reset
                     if (g.phase <= g.PHASE.PLAYOFFS) {
-                        p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
+                        await player.addStatsRow(p, g.phase === g.PHASE.PLAYOFFS);
                     }
                     await tx.players.put(p);
                 });

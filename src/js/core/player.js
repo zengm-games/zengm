@@ -890,8 +890,7 @@ async function addStatsRow(p: Player, playoffs?: boolean = false) {
         statsRow.yearsWithTeam = ps[0].yearsWithTeam + 1;
     }
 
-console.log('somehow save row to database');
-//    dbOrTx.playerStats.add(statsRow);
+    await g.cache.put('playerStats', statsRow);
 }
 
 function generate(

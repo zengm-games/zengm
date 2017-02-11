@@ -211,7 +211,7 @@ class CustomizePlayer extends React.Component {
                 p.pid = pid;
 
                 // If it is the playoffs, this is only necessary if p.tid actually made the playoffs, but causes only cosmetic harm otherwise.
-                p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
+                await player.addStatsRow(p, g.phase === g.PHASE.PLAYOFFS);
 
                 // Add back to database
                 await tx.players.put(p);

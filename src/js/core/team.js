@@ -1274,7 +1274,7 @@ function checkRosterSizes(): Promise<string | null> {
                         // See also core.phase
                         let p = minFreeAgents.shift();
                         p.tid = tid;
-                        p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
+                        await player.addStatsRow(p, g.phase === g.PHASE.PLAYOFFS);
                         p = player.setContract(p, p.contract, true);
                         p.gamesUntilTradable = 15;
 

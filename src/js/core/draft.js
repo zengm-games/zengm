@@ -460,51 +460,47 @@ function getRookieSalaries(): number[] {
  * @return {Promise}
  */
 async function selectPlayer(pick: PickRealized, pid: number) {
-    return g.dbl.tx(["players", "playerStats"], "readwrite", async tx => {
-        let p = await tx.players.get(pid);
+    let p = await g.cache.get('players', pid);
 
-        // Draft player
-        p.tid = pick.tid;
-        if (g.phase !== g.PHASE.FANTASY_DRAFT) {
-            p.draft = {
-                round: pick.round,
-                pick: pick.pick,
-                tid: pick.tid,
-                year: g.season,
-                originalTid: pick.originalTid,
-                pot: p.ratings[0].pot,
-                ovr: p.ratings[0].ovr,
-                skills: p.ratings[0].skills,
-            };
-        }
+    // Draft player
+    p.tid = pick.tid;
+    if (g.phase !== g.PHASE.FANTASY_DRAFT) {
+        p.draft = {
+            round: pick.round,
+            pick: pick.pick,
+            tid: pick.tid,
+            year: g.season,
+            originalTid: pick.originalTid,
+            pot: p.ratings[0].pot,
+            ovr: p.ratings[0].ovr,
+            skills: p.ratings[0].skills,
+        };
+    }
 
-        // Contract
-        if (g.phase !== g.PHASE.FANTASY_DRAFT) {
-            const rookieSalaries = getRookieSalaries();
-            const i = pick.pick - 1 + g.numTeams * (pick.round - 1);
-            const years = 4 - pick.round; // 2 years for 2nd round, 3 years for 1st round;
-            p = player.setContract(p, {
-                amount: rookieSalaries[i],
-                exp: g.season + years,
-            }, true);
-        }
+    // Contract
+    if (g.phase !== g.PHASE.FANTASY_DRAFT) {
+        const rookieSalaries = getRookieSalaries();
+        const i = pick.pick - 1 + g.numTeams * (pick.round - 1);
+        const years = 4 - pick.round; // 2 years for 2nd round, 3 years for 1st round;
+        p = player.setContract(p, {
+            amount: rookieSalaries[i],
+            exp: g.season + years,
+        }, true);
+    }
 
-        // Add stats row if necessary (fantasy draft in ongoing season)
-        if (g.phase === g.PHASE.FANTASY_DRAFT && g.nextPhase <= g.PHASE.PLAYOFFS) {
-            p = player.addStatsRow(tx, p, g.nextPhase === g.PHASE.PLAYOFFS);
-        }
+    // Add stats row if necessary (fantasy draft in ongoing season)
+    if (g.phase === g.PHASE.FANTASY_DRAFT && g.nextPhase <= g.PHASE.PLAYOFFS) {
+        await player.addStatsRow(p, g.nextPhase === g.PHASE.PLAYOFFS);
+    }
 
 
-        const draftName = g.phase === g.PHASE.FANTASY_DRAFT ? `${g.season} fantasy draft` : `${g.season} draft`;
-        logEvent(null, {
-            type: "draft",
-            text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[pick.tid], g.season])}">${g.teamNamesCache[pick.tid]}</a> selected <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> with the ${helpers.ordinal(pick.pick + (pick.round - 1) * 30)} pick in the <a href="${helpers.leagueUrl(["draft_summary", g.season])}">${draftName}</a>.`,
-            showNotification: false,
-            pids: [p.pid],
-            tids: [p.tid],
-        });
-
-        return tx.players.put(p);
+    const draftName = g.phase === g.PHASE.FANTASY_DRAFT ? `${g.season} fantasy draft` : `${g.season} draft`;
+    logEvent(null, {
+        type: "draft",
+        text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[pick.tid], g.season])}">${g.teamNamesCache[pick.tid]}</a> selected <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> with the ${helpers.ordinal(pick.pick + (pick.round - 1) * 30)} pick in the <a href="${helpers.leagueUrl(["draft_summary", g.season])}">${draftName}</a>.`,
+        showNotification: false,
+        pids: [p.pid],
+        tids: [p.tid],
     });
 }
 

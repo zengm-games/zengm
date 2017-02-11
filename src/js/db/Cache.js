@@ -44,6 +44,12 @@ const storeInfos = {
     },
     releasedPlayers: {
         pk: 'rid',
+        getData: (tx: BackboardTx) => tx.releasedPlayers.getAll(),
+        indexes: [{
+            name: 'releasedPlayersByTid',
+            key: (row) => String(row.tid),
+            array: true,
+        }],
     },
     schedule: {
         pk: 'gid',
@@ -170,24 +176,6 @@ class Cache {
         this.data.playerFeats = {};
     }
 
-    async fillReleasedPlayers(tx: BackboardTx) {
-        this.checkStatus('filling');
-
-        const releasedPlayers = await tx.releasedPlayers.getAll();
-
-        this.data.releasedPlayers = {};
-        this.indexes.releasedPlayersByTid = {};
-
-        for (const rp of releasedPlayers) {
-            this.data.releasedPlayers[rp.rid] = rp;
-
-            if (!this.indexes.releasedPlayersByTid.hasOwnProperty(rp.tid)) {
-                this.indexes.releasedPlayersByTid[rp.tid] = [];
-            }
-            this.indexes.releasedPlayersByTid[rp.tid].push(rp);
-        }
-    }
-
     // Load database from disk and save in cache, wiping out any prior values in cache
     async fill() {
         this.checkStatus('empty', 'full');
@@ -213,7 +201,16 @@ class Cache {
                             this.indexes[index.name] = {};
                             for (const row of data) {
                                 const key = index.key(row);
-                                this.indexes[index.name][key] = row;
+
+                                if (index.array) {
+                                    if (!this.indexes[index.name].hasOwnProperty(key)) {
+                                        this.indexes[index.name][key] = [row];
+                                    } else {
+                                        this.indexes[index.name][key].push(row);
+                                    }
+                                } else {
+                                    this.indexes[index.name][key] = row;
+                                }
                             }
                         }
                     }
@@ -222,7 +219,6 @@ class Cache {
 
             await Promise.all([
                 this.fillPlayers(tx),
-                this.fillReleasedPlayers(tx),
             ]);
         });
 

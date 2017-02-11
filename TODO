@@ -3,6 +3,9 @@ IVERSON
 refactor
 - for store with fake IDs, disable delete
 - clear, delete, and put need to handle indexes
+- push or unshift onto array indexes? be consistent
+
+document cache data format and API!
 
 what about mutation without a put/add, how to handle indexes in cache? need trigger for any mutation that will change cache
 

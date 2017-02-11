@@ -1224,8 +1224,8 @@ function filter(p: PlayerWithStats | PlayerWithStats[], options: any): PlayerFil
                 fp.name = `${p.firstName} ${p.lastName}`;
             } else if (options.attrs[i] === "nameAbbreviation") {
                 // can't use "abbrev" because that's Team Abbrev
-                const names = p.firstName.split(/[ .-]/);
-                const abbrev = names.map(s => {return s === "" ? "" : `${s[0]}.`;});
+                const nameParts = p.firstName.split(/[ .-]/);
+                const abbrev = nameParts.map(s => (s === "" ? "" : `${s[0]}.`));
                 const concat = abbrev.join("");
                 fp.nameAbbreviation = `${concat} ${p.lastName}`;
             } else {

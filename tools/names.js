@@ -106,7 +106,7 @@ const getName = (untrimmedName, file) => {
         'DAndre': "D'Andre",
         'DMarius': "D'Marius",
         'DMarr': "D'Marr",
-    }
+    };
     if (fnFixes.hasOwnProperty(parts[0])) {
         parts[0] = fnFixes[parts[0]];
     }

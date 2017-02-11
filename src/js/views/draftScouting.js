@@ -70,4 +70,4 @@ export default bbgmViewReact.init({
     id: "draftScouting",
     runBefore: [updateDraftScouting],
     Component: DraftScouting,
-);
+});

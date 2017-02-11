@@ -279,6 +279,8 @@ class Cache {
     }
 
     async add(store: Store, obj: any) {
+        this.checkStatus('full');
+
         if (store === 'games') {
             if (this.data.games[obj.gid]) {
                 throw new Error(`Primary key ${obj.gid} already exists in games`);
@@ -325,6 +327,8 @@ class Cache {
     }
 
     async delete(store: Store, key: number) {
+        this.checkStatus('full');
+
         if (store === 'schedule') {
             if (this.data[store].hasOwnProperty(key)) {
                 delete this.data[store][key];
@@ -338,6 +342,8 @@ class Cache {
     }
 
     async clear(store: Store) {
+        this.checkStatus('full');
+
         if (store === 'schedule') {
             for (const key of Object.keys(this.data[store])) {
                 delete this.data[store][storeInfos[store].pk];

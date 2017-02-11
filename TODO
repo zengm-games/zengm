@@ -1,7 +1,8 @@
 IVERSON
 
 refactor
-- for store with fake IDs, disable delete
+- getData for playerStats depends on players. how to make that work?
+- for store with fake IDs (playerFeats), disable delete
 - clear, delete, and put need to handle indexes
 - push or unshift onto array indexes? be consistent
 - getData should not be optional

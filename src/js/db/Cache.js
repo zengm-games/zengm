@@ -25,7 +25,6 @@ type MaxIds = {
     [key: Index]: number,
 };
 
-const STORES: Store[] = ['games', 'playerFeats', 'playerStats', 'players', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams'];
 const storeInfos = {
     games: {
         pk: 'gid',
@@ -185,7 +184,7 @@ class Cache {
 
         this.data = {};
 
-        await g.dbl.tx(STORES, async (tx) => {
+        await g.dbl.tx(Object.keys(storeInfos), async (tx) => {
             await Promise.all(Object.entries(storeInfos).map(async ([store, storeInfo]) => {
                 if (storeInfo.getData) {
                     const data = await storeInfo.getData(tx);

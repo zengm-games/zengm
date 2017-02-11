@@ -29,6 +29,8 @@ const STORES: Store[] = ['games', 'playerFeats', 'playerStats', 'players', 'rele
 const storeInfos = {
     games: {
         pk: 'gid',
+
+        // Current season
         getData: (tx: BackboardTx) => tx.games.index('season').getAll(g.season),
     },
     playerFeats: {
@@ -49,9 +51,28 @@ const storeInfos = {
     },
     teamSeasons: {
         pk: 'rid',
+
+        // Past 3 seasons
+        getData: (tx: BackboardTx) => tx.teamSeasons.index('season, tid').getAll(backboard.bound([g.season - 2], [g.season, ''])),
+
+        indexes: [{
+            name: 'teamSeasonsBySeasonTid',
+            key: (row) => `${row.season},${row.tid}`,
+        }, {
+            name: 'teamSeasonsByTidSeason',
+            key: (row) => `${row.tid},${row.season}`,
+        }],
     },
     teamStats: {
         pk: 'rid',
+
+        // Current season
+        getData: (tx: BackboardTx) => tx.teamStats.index('season, tid').getAll(backboard.bound([g.season], [g.season, ''])),
+
+        indexes: [{
+            name: 'teamStatsByPlayoffsTid',
+            key: (row) => `${row.playoffs ? 1 : 0},${row.tid}`,
+        }],
     },
     teams: {
         pk: 'tid',
@@ -167,38 +188,6 @@ class Cache {
         }
     }
 
-    // Past 3 seasons
-    async fillTeamSeasons(tx: BackboardTx) {
-        this.checkStatus('filling');
-
-        const teamSeasons = await tx.teamSeasons.index('season, tid').getAll(backboard.bound([g.season - 2], [g.season, '']));
-
-        this.data.teamSeasons = {};
-        this.indexes.teamSeasonsBySeasonTid = {};
-        this.indexes.teamSeasonsByTidSeason = {};
-
-        for (const ts of teamSeasons) {
-//            this.data.teamSeasons[ts.rid] = ts;
-            this.indexes.teamSeasonsBySeasonTid[`${ts.season},${ts.tid}`] = ts;
-            this.indexes.teamSeasonsByTidSeason[`${ts.tid},${ts.season}`] = ts;
-        }
-    }
-
-    // Current season
-    async fillTeamStats(tx: BackboardTx) {
-        this.checkStatus('filling');
-
-        const teamStats = await tx.teamStats.index('season, tid').getAll(backboard.bound([g.season], [g.season, '']));
-
-        this.data.teamStats = {};
-        this.indexes.teamStatsByPlayoffsTid = {};
-
-        for (const ts of teamStats) {
-//            this.data.teamStats[ts.rid] = ts;
-            this.indexes.teamStatsByPlayoffsTid[`${ts.playoffs ? 1 : 0},${ts.tid}`] = ts;
-        }
-    }
-
     // Load database from disk and save in cache, wiping out any prior values in cache
     async fill() {
         this.checkStatus('empty', 'full');
@@ -218,14 +207,22 @@ class Cache {
                     }
 
                     this.deletes[store] = new Set();
+
+                    if (storeInfo.indexes) {
+                        for (const index of storeInfo.indexes) {
+                            this.indexes[index.name] = {};
+                            for (const row of data) {
+                                const key = index.key(row);
+                                this.indexes[index.name][key] = row;
+                            }
+                        }
+                    }
                 }
             }));
 
             await Promise.all([
                 this.fillPlayers(tx),
                 this.fillReleasedPlayers(tx),
-                this.fillTeamSeasons(tx),
-                this.fillTeamStats(tx),
             ]);
         });
 

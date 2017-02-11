@@ -12,20 +12,20 @@ type Status = 'empty' | 'error' | 'filling' | 'flushing' | 'full';
 type Store = 'games' | 'playerFeats' | 'playerStats' | 'players' | 'releasedPlayers' | 'schedule' | 'teamSeasons' | 'teamStats' | 'teams';
 type Index = 'playerStats' | 'playerStatsAllByPid' | 'playerStatsByPid' | 'playersByTid' | 'releasedPlayers' | 'releasedPlayersByTid' | 'teamSeasonsBySeasonTid' | 'teamSeasonsByTidSeason' | 'teamStatsByPlayoffsTid';
 
-type Data = {
-    [key: Store]: any,
-};
-type Deletes = {
-    [key: Store]: Set<number>,
-};
-type Indexes = {
-    [key: Index]: any,
-};
-type MaxIds = {
-    [key: Index]: number,
-};
+// This variable is only needed because Object.keys(storeInfos) is not handled well in Flow
+const STORES: Store[] = ['games', 'playerFeats', 'playerStats', 'players', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams'];
 
-const storeInfos = {
+const storeInfos: {
+    [key: Store]: {
+        pk: string,
+        getData?: (BackboardTx) => Promise<any[]>,
+        indexes?: {
+            name: Index,
+            key: (any) => string,
+            unique?: boolean,
+        }[],
+    },
+} = {
     games: {
         pk: 'gid',
 
@@ -88,10 +88,10 @@ const storeInfos = {
 };
 
 class Cache {
-    data: Data;
-    deletes: Deletes;
-    indexes: Indexes;
-    maxIds: MaxIds;
+    data: {[key: Store]: any};
+    deletes: {[key: Store]: Set<number>};
+    indexes: {[key: Index]: any};
+    maxIds: {[key: Index]: number};
     status: Status;
 
     constructor() {
@@ -184,8 +184,9 @@ class Cache {
 
         this.data = {};
 
-        await g.dbl.tx(Object.keys(storeInfos), async (tx) => {
-            await Promise.all(Object.entries(storeInfos).map(async ([store, storeInfo]) => {
+        await g.dbl.tx(STORES, async (tx) => {
+            await Promise.all(STORES.map(async (store) => {
+                const storeInfo = storeInfos[store];
                 if (storeInfo.getData) {
                     const data = await storeInfo.getData(tx);
 

@@ -4,6 +4,7 @@ refactor
 - for store with fake IDs, disable delete
 - clear, delete, and put need to handle indexes
 - push or unshift onto array indexes? be consistent
+- getData should not be optional
 
 document cache data format and API!
 

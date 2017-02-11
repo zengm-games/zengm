@@ -16,7 +16,7 @@ type Data = {
     [key: Store]: any,
 };
 type Deletes = {
-    [key: Store]: number[],
+    [key: Store]: Set<number>,
 };
 type Indexes = {
     [key: Index]: any,
@@ -45,6 +45,7 @@ const storeInfos = {
     },
     schedule: {
         pk: 'gid',
+        getData: (tx: BackboardTx) => tx.schedule.getAll(),
     },
     teamSeasons: {
         pk: 'rid',
@@ -54,6 +55,7 @@ const storeInfos = {
     },
     teams: {
         pk: 'tid',
+        getData: (tx: BackboardTx) => tx.teams.getAll(),
     },
 };
 
@@ -165,19 +167,6 @@ class Cache {
         }
     }
 
-    async fillSchedule(tx: BackboardTx) {
-        this.checkStatus('filling');
-
-        const schedule = await tx.schedule.getAll();
-
-        this.data.schedule = {};
-        this.deletes.schedule = [];
-
-        for (const s of schedule) {
-            this.data.schedule[s.gid] = s;
-        }
-    }
-
     // Past 3 seasons
     async fillTeamSeasons(tx: BackboardTx) {
         this.checkStatus('filling');
@@ -210,18 +199,6 @@ class Cache {
         }
     }
 
-    async fillTeams(tx: BackboardTx) {
-        this.checkStatus('filling');
-
-        const teams = await tx.teams.getAll();
-
-        this.data.teams = {};
-
-        for (const t of teams) {
-            this.data.teams[t.tid] = t;
-        }
-    }
-
     // Load database from disk and save in cache, wiping out any prior values in cache
     async fill() {
         this.checkStatus('empty', 'full');
@@ -233,17 +210,22 @@ class Cache {
             await Promise.all(Object.entries(storeInfos).map(async ([store, storeInfo]) => {
                 if (storeInfo.getData) {
                     const data = await storeInfo.getData(tx);
-                    this.data[store] = data;
+
+                    this.data[store] = {};
+                    for (const row of data) {
+                        const key = row[storeInfo.pk];
+                        this.data[store][key] = row;
+                    }
+
+                    this.deletes[store] = new Set();
                 }
             }));
 
             await Promise.all([
                 this.fillPlayers(tx),
                 this.fillReleasedPlayers(tx),
-                this.fillSchedule(tx),
                 this.fillTeamSeasons(tx),
                 this.fillTeamStats(tx),
-                this.fillTeams(tx),
             ]);
         });
 
@@ -351,7 +333,7 @@ class Cache {
         if (store === 'schedule') {
             if (this.data[store].hasOwnProperty(key)) {
                 delete this.data[store][key];
-                this.deletes[store].push(key);
+                this.deletes[store].add(key);
             } else {
                 throw new Error(`Invalid key to delete from store "${store}": ${key}`);
             }
@@ -364,7 +346,7 @@ class Cache {
         if (store === 'schedule') {
             for (const key of Object.keys(this.data[store])) {
                 delete this.data[store][storeInfos[store].pk];
-                this.deletes[store].push(key);
+                this.deletes[store].add(key);
             }
         } else {
             throw new Error(`clear not implemented for store "${store}"`);

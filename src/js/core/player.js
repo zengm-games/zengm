@@ -876,7 +876,7 @@ async function addStatsRow(p: Player, playoffs?: boolean = false) {
         statsRow.yearsWithTeam = ps[0].yearsWithTeam + 1;
     }
 
-    await g.cache.put('playerStats', statsRow);
+    await g.cache.add('playerStats', statsRow);
 }
 
 function generate(
@@ -1947,7 +1947,7 @@ function checkStatisticalFeat(pid: number, tid: number, p: GamePlayer, results: 
 
         logFeat(featText);
 
-        g.cache.put('playerFeats', {
+        g.cache.add('playerFeats', {
             pid,
             name: p.name,
             pos: p.pos,

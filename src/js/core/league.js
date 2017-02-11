@@ -397,7 +397,7 @@ async function create(
                         // Delete psid because it can cause problems due to interaction addStatsRow above
                         delete ps.psid;
 
-                        await g.cache.put('playerStats', ps);
+                        await g.cache.add('playerStats', ps);
 
                         // On to the next one
                         if (playerStats.length > 0) {

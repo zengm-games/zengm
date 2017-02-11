@@ -278,8 +278,11 @@ class Cache {
         return output;
     }
 
-    async put(store: Store, obj: any) {
+    async add(store: Store, obj: any) {
         if (store === 'games') {
+            if (this.data.games[obj.gid]) {
+                throw new Error(`Primary key ${obj.gid} already exists in games`);
+            }
             this.data.games[obj.gid] = obj;
         } else if (store === 'playerFeats') {
             // Don't know primary key, and don't care
@@ -289,7 +292,11 @@ class Cache {
             }
             this.data.playerFeats[key] = obj;
         } else if (store === 'playerStats') {
-            if (!obj.hasOwnProperty('psid')) {
+            if (obj.hasOwnProperty('psid')) {
+                if (this.data.playerStats[obj.psid]) {
+                    throw new Error(`Primary key ${obj.psid} already exists in playerStats`);
+                }
+            } else {
                 this.maxIds.playerStats += 1;
                 obj.psid = this.maxIds.playerStats;
             }
@@ -308,6 +315,9 @@ class Cache {
                 }
             }
         } else if (store === 'schedule') {
+            if (this.data.schedule[obj.gid]) {
+                throw new Error(`Primary key ${obj.gid} already exists in schedule`);
+            }
             this.data.schedule[obj.gid] = obj;
         } else {
             throw new Error(`put not implemented for store "${store}"`);

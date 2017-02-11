@@ -1,11 +1,5 @@
 IVERSON
 
-in most cases, put should be add
-- enforce it's an insert, not update
-- handle indexes
-- indexes coudl get fucked up if it's an update
-- playerStats revisit, and player when implement
-
 alternative idea
 - cache within backboard. copy all indexes (including primary key index) to memory, keep them in sync by doing parallel operations to the underlying database (like on add, update indexes with new info). in each index, keep store name and primary key. then have a LRU cache on (store name, primary key) and either get records from there or hit IDB
   - what about transactions?

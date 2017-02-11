@@ -370,7 +370,7 @@ async function writeGameStats(results: GameResults, att: number) {
         }
     }
 
-    await g.cache.put('games', gameStats);
+    await g.cache.add('games', gameStats);
 }
 
 async function updatePlayoffSeries(results: GameResults) {

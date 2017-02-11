@@ -317,7 +317,7 @@ async function getSchedule(oneDay?: boolean = false): Promise<ScheduleGame[]> {
  * @return {Promise}
  */
 async function setSchedule(tx: BackboardTx, tids: [number, number][]) {
-    await g.cache.clear();
+    await g.cache.clear('schedule');
 
     for (const matchup of tids) {
         // This is because otherwise (adding to cache directly) we might not know the auto-incrementing primary key
@@ -327,7 +327,7 @@ async function setSchedule(tx: BackboardTx, tids: [number, number][]) {
         });
         await tx.schedule.delete(gid);
 
-        await g.cache.put('schedule', {
+        await g.cache.add('schedule', {
             gid,
             homeTid: matchup[0],
             awayTid: matchup[1],

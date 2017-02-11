@@ -48,7 +48,6 @@ const storeInfos = {
         indexes: [{
             name: 'releasedPlayersByTid',
             key: (row) => String(row.tid),
-            array: true,
         }],
     },
     schedule: {
@@ -64,9 +63,11 @@ const storeInfos = {
         indexes: [{
             name: 'teamSeasonsBySeasonTid',
             key: (row) => `${row.season},${row.tid}`,
+            unique: true,
         }, {
             name: 'teamSeasonsByTidSeason',
             key: (row) => `${row.tid},${row.season}`,
+            unique: true,
         }],
     },
     teamStats: {
@@ -78,6 +79,7 @@ const storeInfos = {
         indexes: [{
             name: 'teamStatsByPlayoffsTid',
             key: (row) => `${row.playoffs ? 1 : 0},${row.tid}`,
+            unique: true,
         }],
     },
     teams: {
@@ -202,7 +204,7 @@ class Cache {
                             for (const row of data) {
                                 const key = index.key(row);
 
-                                if (index.array) {
+                                if (!index.unique) {
                                     if (!this.indexes[index.name].hasOwnProperty(key)) {
                                         this.indexes[index.name][key] = [row];
                                     } else {

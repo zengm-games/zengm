@@ -146,7 +146,7 @@ async function accept(pid: number, amount: number, exp: number): Promise<string>
                 await player.addStatsRow(p, g.phase === g.PHASE.PLAYOFFS);
             }
 
-            p = player.setContract(p, {
+            player.setContract(p, {
                 amount,
                 exp,
             }, true);

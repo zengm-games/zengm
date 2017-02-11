@@ -72,14 +72,14 @@ async function autoSign(tx: BackboardTx) {
 
             if (numPlayersOnRoster < 15) {
                 for (let i = 0; i < playersSorted.length; i++) {
-                    let p = playersSorted[i];
+                    const p = playersSorted[i];
                     // Don't sign minimum contract players to fill out the roster
                     if (p.contract.amount + payroll <= g.salaryCap || (p.contract.amount === g.minContract && numPlayersOnRoster < 13)) {
                         p.tid = tid;
                         if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
                             await player.addStatsRow(p, g.phase === g.PHASE.PLAYOFFS);
                         }
-                        p = player.setContract(p, p.contract, true);
+                        player.setContract(p, p.contract, true);
                         p.gamesUntilTradable = 15;
 
                         logEvent(null, {

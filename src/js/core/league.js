@@ -447,7 +447,7 @@ async function create(
                     const randomizeExp = (p.tid !== g.PLAYER.FREE_AGENT);
 
                     // Update contract based on development. Only write contract to player log if not a free agent.
-                    p = player.setContract(p, player.genContract(p, randomizeExp), p.tid >= 0);
+                    player.setContract(p, player.genContract(p, randomizeExp), p.tid >= 0);
 
                     // Save to database
                     if (p.tid === g.PLAYER.FREE_AGENT) {

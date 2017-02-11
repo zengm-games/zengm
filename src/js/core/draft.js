@@ -482,7 +482,7 @@ async function selectPlayer(pick: PickRealized, pid: number) {
         const rookieSalaries = getRookieSalaries();
         const i = pick.pick - 1 + g.numTeams * (pick.round - 1);
         const years = 4 - pick.round; // 2 years for 2nd round, 3 years for 1st round;
-        p = player.setContract(p, {
+        player.setContract(p, {
             amount: rookieSalaries[i],
             exp: g.season + years,
         }, true);

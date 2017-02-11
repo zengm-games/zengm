@@ -217,15 +217,15 @@ function genContract(
  *
  * @memberOf core.player
  * @param {Object} p Player object.
- * @param {Object} contract Contract object with two properties, exp (year) and amount (thousands of dollars).
+ * @param {Object} contract Contract object with two properties,    exp (year) and amount (thousands of dollars).
  * @param {boolean} signed Is this an official signed contract (true), or just part of a negotiation (false)?
  * @return {Object} Updated player object.
  */
-function setContract<T: {contract: PlayerContract, salaries: PlayerSalary[]}>(
-    p: T,
+function setContract(
+    p: Player | PlayerWithoutPid,
     contract: PlayerContract,
     signed: boolean,
-): T {
+) {
     p.contract = contract;
 
     // Only write to salary log if the player is actually signed. Otherwise, we're just generating a value for a negotiation.
@@ -240,8 +240,6 @@ function setContract<T: {contract: PlayerContract, salaries: PlayerSalary[]}>(
             p.salaries.push({season: i, amount: contract.amount});
         }
     }
-
-    return p;
 }
 
 /**
@@ -583,7 +581,7 @@ async function addToFreeAgents(tx: ?BackboardTx, p: Player, phase: Phase, baseMo
     phase = phase !== null ? phase : g.phase;
 
     const pr = p.ratings[p.ratings.length - 1];
-    p = setContract(p, genContract(p), false);
+    setContract(p, genContract(p), false);
 
     // Set initial player mood towards each team
     p.freeAgentMood = baseMoods.map((mood) => {
@@ -980,7 +978,9 @@ function generate(
         p.hgt += 3;
     }
 
-    return setContract(p, genContract(p), false);
+    setContract(p, genContract(p), false);
+
+    return p;
 }
 
 /**
@@ -1810,7 +1810,7 @@ function augmentPartialPlayer(p: any, scoutingRank: number): PlayerWithStats {
             p.contract.exp = g.startingSeason;
         }
         if (p.tid >= 0) {
-            p = setContract(p, p.contract, true);
+            setContract(p, p.contract, true);
         }
     }
     if (!p.hasOwnProperty("stats")) {

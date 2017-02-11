@@ -446,7 +446,7 @@ async function newPhaseFreeAgency(tx: BackboardTx) {
                 // See also core.team
                 const contract = player.genContract(p);
                 contract.exp += 1; // Otherwise contracts could expire this season
-                p = player.setContract(p, contract, true);
+                player.setContract(p, contract, true);
                 p.gamesUntilTradable = 15;
 
                 logEvent(null, {

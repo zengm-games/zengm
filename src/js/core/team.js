@@ -1272,10 +1272,10 @@ function checkRosterSizes(): Promise<string | null> {
                     const promises = [];
                     while (numPlayersOnRoster < g.minRosterSize) {
                         // See also core.phase
-                        let p = minFreeAgents.shift();
+                        const p = minFreeAgents.shift();
                         p.tid = tid;
                         await player.addStatsRow(p, g.phase === g.PHASE.PLAYOFFS);
-                        p = player.setContract(p, p.contract, true);
+                        player.setContract(p, p.contract, true);
                         p.gamesUntilTradable = 15;
 
                         logEvent(null, {

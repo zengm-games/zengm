@@ -143,7 +143,7 @@ class CustomizePlayer extends React.Component {
             saving: true,
         });
 
-        let p = this.props.p;
+        const p = this.props.p;
         const r = p.ratings.length - 1;
 
         // Copy over values from state, if they're valid
@@ -177,7 +177,7 @@ class CustomizePlayer extends React.Component {
         // If player was retired, add ratings (but don't develop, because that would change ratings)
         if (this.props.originalTid === g.PLAYER.RETIRED) {
             if (g.season - p.ratings[r].season > 0) {
-                p = player.addRatingsRow(p, 15);
+                player.addRatingsRow(p, 15);
             }
         }
 
@@ -199,7 +199,7 @@ class CustomizePlayer extends React.Component {
         }
 
         // Recalculate player values, since ratings may have changed
-        p = await player.updateValues(p);
+        await player.updateValues(p);
         let pid;
         await g.dbl.tx(["players", "playerStats"], "readwrite", async tx => {
             // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition

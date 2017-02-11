@@ -113,11 +113,11 @@ async function genPlayers(tx: BackboardTx, tid: number, scoutingRank?: ?number =
             draftYear += 3;
         }
 
-        let p = player.generate(tid, baseAge, profile, baseRating, pot, draftYear, false, scoutingRank);
-        p = player.develop(p, agingYears, true);
+        const p = player.generate(tid, baseAge, profile, baseRating, pot, draftYear, false, scoutingRank);
+        player.develop(p, agingYears, true);
 
         // Update player values after ratings changes
-        promises.push(player.updateValues(p).then(p2 => tx.players.put(p2)));
+        promises.push(player.updateValues(p).then(() => tx.players.put(p)));
     }
 
     await Promise.all(promises);
@@ -460,7 +460,7 @@ function getRookieSalaries(): number[] {
  * @return {Promise}
  */
 async function selectPlayer(pick: PickRealized, pid: number) {
-    let p = await g.cache.get('players', pid);
+    const p = await g.cache.get('players', pid);
 
     // Draft player
     p.tid = pick.tid;

@@ -221,7 +221,6 @@ async function writePlayerStats(results: GameResults) {
         promises.push(player.checkStatisticalFeat(p.id, t.id, p, results));
 
         const ps = await g.cache.indexGet('playerStatsByPid', p.id);
-if (ps === undefined) { console.log('pid', p.id, 'ps', ps); }
 
         // Since index is not on playoffs, manually check
         if (ps.playoffs !== (g.phase === g.PHASE.PLAYOFFS)) {

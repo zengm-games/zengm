@@ -244,12 +244,12 @@ function averageCareerArc(baseOvr: number, basePot: number, ratingToSave: Rating
 
     for (let i = 0; i < numPlayers; i++) {
         for (let j = 0; j < profiles.length; j++) {
-            let p = player.generate(0, 19, profiles[j], baseOvr, basePot, 2013, true, 15);
+            const p = player.generate(0, 19, profiles[j], baseOvr, basePot, 2013, true, 15);
             for (let k = 0; k < numSeasons; k++) {
                 averageOvr[k] += p.ratings[0].ovr;
                 averagePot[k] += p.ratings[0].pot;
                 if (ratingToSave) { averageRat[k] += p.ratings[0][ratingToSave]; }
-                p = player.develop(p, 1, true);
+                player.develop(p, 1, true);
             }
         }
     }

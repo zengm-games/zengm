@@ -87,11 +87,11 @@ async function newPhasePreseason(tx: BackboardTx) {
     // Loop through all non-retired players
     await tx.players.index('tid').iterate(backboard.lowerBound(g.PLAYER.FREE_AGENT), async (p: Player) => {
         // Update ratings
-        p = player.addRatingsRow(p, scoutingRank);
-        p = player.develop(p, 1, false, coachingRanks[p.tid]);
+        player.addRatingsRow(p, scoutingRank);
+        player.develop(p, 1, false, coachingRanks[p.tid]);
 
         // Update player values after ratings changes
-        p = await player.updateValues(p);
+        await player.updateValues(p);
 
         // Add row to player stats if they are on a team
         if (p.tid >= 0) {

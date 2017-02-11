@@ -16,7 +16,7 @@ import * as season from './season';
 import * as team from './team';
 import * as helpers from '../util/helpers';
 import * as random from '../util/random';
-import type {BackboardTx, GameAttributeKeyDynamic, GameAttributes} from '../util/types';
+import type {BackboardTx, GameAttributeKeyDynamic, GameAttributes, Player, PlayerWithoutPid} from '../util/types';
 
 const defaultGameAttributes: GameAttributes = {
     phase: 0,
@@ -355,7 +355,7 @@ async function create(
 
             players.forEach(async p0 => {
                 // Has to be any because I cna't figure out how to change PlayerWithoutPidWithStats to Player
-                let p: any = player.augmentPartialPlayer(p0, scoutingRank);
+                const p: any = player.augmentPartialPlayer(p0, scoutingRank);
 
                 // Don't let imported contracts be created for below the league minimum, and round to nearest $10,000.
                 p.contract.amount = Math.max(10 * Number(helpers.round(p.contract.amount / 10)), g.minContract);
@@ -364,7 +364,7 @@ async function create(
                 const playerStats = p.stats;
                 delete p.stats;
 
-                p = await player.updateValues(p, playerStats.reverse());
+                await player.updateValues(p, playerStats.reverse());
                 p.pid = await tx.players.put(p);
 
                 // If no stats in League File, create blank stats rows for active players if necessary
@@ -424,24 +424,19 @@ async function create(
                     const agingYears = random.randInt(0, 13);
                     const draftYear = g.startingSeason - 1 - agingYears;
 
-                    let p = player.generate(tid2, 19, profile, baseRatings[n], pots[n], draftYear, true, scoutingRank);
-                    p = player.develop(p, agingYears, true);
+                    const p = player.generate(tid2, 19, profile, baseRatings[n], pots[n], draftYear, true, scoutingRank);
+                    player.develop(p, agingYears, true);
                     if (n < 5) {
-                        p = player.bonus(p, goodNeutralBad * random.randInt(0, 20));
+                        player.bonus(p, goodNeutralBad * random.randInt(0, 20));
                     } else {
-                        p = player.bonus(p, 0);
+                        player.bonus(p, 0);
                     }
                     if (tid2 === g.PLAYER.FREE_AGENT) {  // Free agents
-                        p = player.bonus(p, -15);
-                    }
-
-                    // Hack to account for player.addStatsRow being called after tx.players.put - manually assign statsTids
-                    if (p.tid >= 0) {
-                        p.statsTids = [p.tid];
+                        player.bonus(p, -15);
                     }
 
                     // Update player values after ratings changes
-                    p = await player.updateValues(p);
+                    await player.updateValues(p);
 
                     // Randomize contract expiration for players who aren't free agents, because otherwise contract expiration dates will all be synchronized
                     const randomizeExp = (p.tid !== g.PLAYER.FREE_AGENT);
@@ -453,10 +448,13 @@ async function create(
                     if (p.tid === g.PLAYER.FREE_AGENT) {
                         player.addToFreeAgents(tx, p, g.phase, baseMoods);
                     } else {
-                        p.pid = await tx.players.put(p);
+                        const pid = await tx.players.put(p);
+                        const addPid = (p2: PlayerWithoutPid, pid2: number): Player => {
+                            return Object.assign({}, p2, {pid: pid2});
+                        };
 
-                        // Needs pid, so must be called after put. It's okay, statsTid was already set above
-                        p = player.addStatsRow(tx, p, g.phase === g.PHASE.PLAYOFFS);
+                        // Needs pid, so must be called after put
+                        await player.addStatsRow(addPid(p, pid), g.phase === g.PHASE.PLAYOFFS);
                     }
                 }
 

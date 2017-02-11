@@ -122,7 +122,7 @@ describe("core/player", () => {
             g.season = 2012;
 // Replace with static array of stats row in helper function addStatsRow
             p = addStatsRow(p);
-            p = player.addRatingsRow(p, 15);
+            player.addRatingsRow(p, 15);
 
             p.contract.exp = g.season + 1;
 
@@ -137,9 +137,9 @@ describe("core/player", () => {
             p.stats[2].gp = 8;
             p.stats[2].fg = 56;
 
-            p = player.addRatingsRow(p, 15);
+            player.addRatingsRow(p, 15);
             p.ratings[2].season = 2013;
-            p = player.addRatingsRow(p, 15);
+            player.addRatingsRow(p, 15);
             p.ratings[3].season = 2014;
         });
 

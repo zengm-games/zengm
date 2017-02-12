@@ -57,7 +57,11 @@ const storeInfos: {
         pk: 'rid',
 
         // Past 3 seasons
-        getData: (tx: BackboardTx) => tx.teamSeasons.index('season, tid').getAll(backboard.bound([g.season - 2], [g.season, ''])),
+        getData: (tx: BackboardTx) => {
+            return tx.teamSeasons
+                .index('season, tid')
+                .getAll(backboard.bound([g.season - 2], [g.season, '']));
+        },
 
         indexes: [{
             name: 'teamSeasonsBySeasonTid',
@@ -73,7 +77,11 @@ const storeInfos: {
         pk: 'rid',
 
         // Current season
-        getData: (tx: BackboardTx) => tx.teamStats.index('season, tid').getAll(backboard.bound([g.season], [g.season, ''])),
+        getData: (tx: BackboardTx) => {
+            return tx.teamStats
+                .index('season, tid')
+                .getAll(backboard.bound([g.season], [g.season, '']));
+        },
 
         indexes: [{
             name: 'teamStatsByPlayoffsTid',

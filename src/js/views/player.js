@@ -15,7 +15,7 @@ function get(ctx) {
 
 async function updatePlayer(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || !state.retired) {
-        let [p, events] = await Promise.all([
+        let [p, events1, events2] = await Promise.all([
             g.dbl.players.get(inputs.pid).then(p2 => {
                 return player.withStats(null, [p2], {
                     statsSeasons: "all",
@@ -23,7 +23,12 @@ async function updatePlayer(inputs, updateEvents, state) {
                 }).then(players => players[0]);
             }),
             g.dbl.events.index('pids').getAll(inputs.pid),
+            g.cache.getAll('events'),
         ]);
+
+        let events = events1.concat(events2.filter((event) => {
+            return event.pids.includes(inputs.pid);
+        }));
 
         p = player.filter(p, {
             attrs: ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "age", "hgtFt", "hgtIn", "weight", "born", "diedYear", "contract", "draft", "face", "mood", "injury", "salaries", "salariesTotal", "awardsGrouped", "freeAgentMood", "imgURL", "watch", "gamesUntilTradable", "college"],

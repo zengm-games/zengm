@@ -1,5 +1,8 @@
 IVERSON
 
+rewrite team.filter and player.filter
+- incorporate player.withStats
+
 schedule stuff
 - special flag in schedule database, denoting that it could be blank. then, put can't rely on maxId because it could be 0 when in reality it's just a blank db but other games were played. for other databases, i think it doesn't matter, because they are isolated and even after deleting data it won't matter if there are dupes
   - or maybe store max gid elsewhere, and overwrite maxId calculation?
@@ -13,9 +16,6 @@ other stores
 -negotiations
 -gameAttributes
 -draftPicks
--events
-  - search for .events, fix usage
-  - indexes needed?
 
 refactor
 - clear, delete, and put need to handle indexes
@@ -31,11 +31,10 @@ alternative idea
 
 make Cache more DRY regarding indexes, reading object stores
 
+remove unused IDB indexes, if they exist (only on stores that are fully cached)
+
 replace all usage of IDB with cache, otherwise things will be more likely to get out of sync on flush failure
   start with game.js and anything that it touches
-
-rewrite team.filter and player.filter
-- incorporate player.withStats
 
 league creation
 - fill cache, then flush
@@ -47,14 +46,13 @@ how to handle data not in cache?
 put playerStats back under players?
 
 debug mode makes huge perf difference
+- warning bar
 
 delete old data should empty cache?
 
-tests
-
 make sure all player.value calls happen with full cache or psOverride
 
-make cache sync? it'll be faster, any problems though?
+make cache synchronous? it'll be faster, any problems though?
 
 revisit lock system
 

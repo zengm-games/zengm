@@ -872,9 +872,11 @@ async function addStatsRow(p: Player, playoffs?: boolean = false) {
 
     // Calculate yearsWithTeam
     const ps = await g.cache.indexGetAll('playerStatsAllByPid', p.pid);
-    const i = ps.length - 1;
-    if (ps[i].season === g.season - 1 && ps[i].tid === p.tid) {
-        statsRow.yearsWithTeam = ps[i].yearsWithTeam + 1;
+    if (ps.length > 0) {
+        const i = ps.length - 1;
+        if (ps[i].season === g.season - 1 && ps[i].tid === p.tid) {
+            statsRow.yearsWithTeam = ps[i].yearsWithTeam + 1;
+        }
     }
 
     await g.cache.add('playerStats', statsRow);

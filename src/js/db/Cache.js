@@ -290,7 +290,7 @@ class Cache {
     async add(store: Store, obj: any) {
         this.checkStatus('full');
 
-        if (['games', 'messages', 'playerFeats', 'schedule'].includes(store)) {
+        if (['events', 'games', 'messages', 'playerFeats', 'schedule'].includes(store)) {
             // This works if no indexes
 
             const pk = storeInfos[store].pk;
@@ -328,7 +328,7 @@ class Cache {
                 }
             }
         } else {
-            throw new Error(`put not implemented for store "${store}"`);
+            throw new Error(`Cache.add not implemented for store "${store}"`);
         }
     }
 

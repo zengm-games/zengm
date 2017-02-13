@@ -41,29 +41,37 @@ async function updateEventLog(inputs, updateEvents, state) {
         }
 
         if (events.length === 0) {
+            let events1;
+            let events2;
             if (inputs.season === "all") {
-                events = await g.dbl.events.getAll();
+                [events1, events2] = await Promise.all([
+                    await g.dbl.events.getAll(),
+                    await g.cache.getAll('events'),
+                ]);
             } else {
-                events = await g.dbl.events.index('season').getAll(inputs.season);
+                events1 = await g.dbl.events.index('season').getAll(inputs.season);
+                [events1, events2] = await Promise.all([
+                    await g.dbl.events.index('season').getAll(inputs.season),
+                    await g.cache.getAll('events'),
+                ]);
+                events2 = events2.filter((event) => event.season === inputs.season);
             }
+            events = helpers.deepCopy(events1.concat(events2));
 
-            // Show all events, newest at top
             events.reverse(); // Newest first
         } else if (inputs.season === g.season) { // Can't update old seasons!
             // Update by adding any new events to the top of the list
             const maxEid = events[0].eid;
-            const newEvents = [];
-            await g.dbl.events.index('season').iterate(inputs.season, "prev", (event, shortCircuit) => {
+
+            const cachedEvents = await g.cache.getAll('events');
+            for (const event of cachedEvents) {
                 if (event.eid > maxEid) {
-                    newEvents.push(event);
-                } else {
-                    shortCircuit();
-                    // Oldest first (cursor is in "prev" direction and we're adding to the front of events)
-                    for (let i = newEvents.length - 1; i >= 0; i--) {
-                        events.unshift(newEvents[i]);
+                    if (event.tids !== undefined && event.tids.includes(inputs.tid)) {
+                        // events has newest first
+                        events.unshift(event);
                     }
                 }
-            });
+            }
         }
 
         if (inputs.abbrev !== "all") {

@@ -24,7 +24,12 @@ async function updateEventLog(inputs, updateEvents, state) {
 
         if (events.length === 0) {
             // Show all events, newest at top
-            events = await g.dbl.events.index('season').getAll(inputs.season);
+            events = helpers.deepCopy([]
+                .concat(await g.dbl.events.index('season').getAll(inputs.season))
+                .concat(await g.cache.getAll('events'))
+                .filter((event) => {
+                    return event.season === inputs.season;
+                }));
             events.reverse(); // Newest first
 
             // Filter by team
@@ -42,20 +47,16 @@ async function updateEventLog(inputs, updateEvents, state) {
         if (inputs.season === g.season) { // Can't update old seasons!
             // Update by adding any new events to the top of the list
             const maxEid = events[0].eid;
-            const newEvents = [];
-            await g.dbl.events.index('season').iterate(inputs.season, "prev", (event, shortCircuit) => {
+
+            const cachedEvents = await g.cache.getAll('events');
+            for (const event of cachedEvents) {
                 if (event.eid > maxEid) {
                     if (event.tids !== undefined && event.tids.includes(inputs.tid)) {
-                        newEvents.push(event);
-                    }
-                } else {
-                    shortCircuit();
-                    // Oldest first (cursor is in "prev" direction and we're adding to the front of events)
-                    for (let i = newEvents.length - 1; i >= 0; i--) {
-                        events.unshift(newEvents[i]);
+                        // events has newest first
+                        events.unshift(event);
                     }
                 }
-            });
+            }
 
             return {
                 events,

@@ -4,16 +4,16 @@ import backboard from 'backboard';
 import Promise from 'bluebird';
 import orderBy from 'lodash.orderby';
 import g from '../globals';
-import type {BackboardTx, Player, PlayerStats} from '../util/types';
+import type {BackboardTx, Player} from '../util/types';
 
 type Status = 'empty' | 'error' | 'filling' | 'flushing' | 'full';
 
 // Only these IDB object stores for now. Keep in memory only player info for non-retired players and team info for the current season.
-type Store = 'games' | 'playerFeats' | 'playerStats' | 'players' | 'releasedPlayers' | 'schedule' | 'teamSeasons' | 'teamStats' | 'teams';
+type Store = 'games' | 'messages' | 'playerFeats' | 'playerStats' | 'players' | 'releasedPlayers' | 'schedule' | 'teamSeasons' | 'teamStats' | 'teams';
 type Index = 'playerStats' | 'playerStatsAllByPid' | 'playerStatsByPid' | 'playersByTid' | 'releasedPlayers' | 'releasedPlayersByTid' | 'teamSeasonsBySeasonTid' | 'teamSeasonsByTidSeason' | 'teamStatsByPlayoffsTid';
 
 // This variable is only needed because Object.keys(storeInfos) is not handled well in Flow
-const STORES: Store[] = ['games', 'playerFeats', 'playerStats', 'players', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams'];
+const STORES: Store[] = ['games', 'messages', 'playerFeats', 'playerStats', 'players', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams'];
 
 const storeInfos: {
     [key: Store]: {
@@ -33,11 +33,13 @@ const storeInfos: {
         // Current season
         getData: (tx: BackboardTx) => tx.games.index('season').getAll(g.season),
     },
+    messages: {
+        pk: 'mid',
+        getData: () => [], // No need to store any in cache except new ones
+    },
     playerFeats: {
         pk: 'fid',
-
-        // No need to store any in cache except new ones
-        getData: () => [],
+        getData: () => [], // No need to store any in cache except new ones
     },
     playerStats: {
         pk: 'psid',
@@ -155,24 +157,12 @@ class Cache {
         this.status = status;
     }
 
-    // Load database from disk and save in cache, wiping out any prior values in cache
-    async fill() {
-        this.checkStatus('empty', 'full');
-        this.setStatus('filling');
+    async loadStore(store: Store, tx: BackboardTx, players: Player[]) {
+        const storeInfo = storeInfos[store];
 
-        this.data = {};
-
-        await g.dbl.tx(STORES, async (tx) => {
-            // Non-retired players - this is special because it's used for players and playerStats
-            const [players1, players2] = await Promise.all([
-                tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.UNDRAFTED)),
-                tx.players.index('tid').getAll(backboard.bound(g.PLAYER.UNDRAFTED_FANTASY_TEMP, g.PLAYER.UNDRAFTED_2)),
-            ]);
-
-            const players = players1.concat(players2);
-
-            await Promise.all(STORES.map(async (store) => {
-                const storeInfo = storeInfos[store];
+        // Load data and do maxIds calculation in parallel
+        await Promise.all([
+            (async () => {
                 const data = await storeInfo.getData(tx, players);
 
                 this.data[store] = {};
@@ -205,16 +195,38 @@ class Cache {
                         }
                     }
                 }
-            }).concat(STORES.map(async (store) => {
-                const pk = storeInfos[store].pk;
+            })(),
+            (async () => {
                 this.maxIds[store] = -1;
                 await tx[store].iterate(null, 'prev', (row, shortCircuit) => {
                     if (row) {
-                        this.maxIds[store] = row[pk];
+                        this.maxIds[store] = row[storeInfo.pk];
                     }
                     shortCircuit();
                 });
-            })));
+            })(),
+        ]);
+    }
+
+    // Load database from disk and save in cache, wiping out any prior values in cache
+    async fill() {
+        this.checkStatus('empty', 'full');
+        this.setStatus('filling');
+
+        this.data = {};
+
+        await g.dbl.tx(STORES, async (tx) => {
+            // Non-retired players - this is special because it's used for players and playerStats
+            const [players1, players2] = await Promise.all([
+                tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.UNDRAFTED)),
+                tx.players.index('tid').getAll(backboard.bound(g.PLAYER.UNDRAFTED_FANTASY_TEMP, g.PLAYER.UNDRAFTED_2)),
+            ]);
+
+            const players = players1.concat(players2);
+
+            await Promise.all(STORES.map((store) => {
+                return this.loadStore(store, tx, players);
+            }));
         });
 
         this.setStatus('full');
@@ -274,18 +286,20 @@ class Cache {
     async add(store: Store, obj: any) {
         this.checkStatus('full');
 
-        if (store === 'games') {
-            if (this.data.games[obj.gid]) {
-                throw new Error(`Primary key ${obj.gid} already exists in games`);
+        if (['games', 'messages', 'playerFeats', 'schedule'].includes(store)) {
+            // This works if no indexes
+
+            const pk = storeInfos[store].pk;
+            if (obj.hasOwnProperty(pk)) {
+                if (this.data[store][obj[pk]]) {
+                    throw new Error(`Primary key ${obj[pk]} already exists in "${store}"`);
+                }
+            } else {
+                this.maxIds[store] += 1;
+                obj[pk] = this.maxIds[store];
             }
-            this.data.games[obj.gid] = obj;
-        } else if (store === 'playerFeats') {
-            // Don't know primary key, and don't care
-            let key = Math.min(...Object.keys(this.data.playerFeats));
-            if (key === -Infinity) {
-                key = 0;
-            }
-            this.data.playerFeats[key] = obj;
+
+            this.data[store][obj[pk]] = obj;
         } else if (store === 'playerStats') {
             if (obj.hasOwnProperty('psid')) {
                 if (this.data.playerStats[obj.psid]) {
@@ -309,11 +323,6 @@ class Cache {
                     this.indexes.playerStatsAllByPid[obj.pid].push(obj);
                 }
             }
-        } else if (store === 'schedule') {
-            if (this.data.schedule[obj.gid]) {
-                throw new Error(`Primary key ${obj.gid} already exists in schedule`);
-            }
-            this.data.schedule[obj.gid] = obj;
         } else {
             throw new Error(`put not implemented for store "${store}"`);
         }

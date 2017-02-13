@@ -4,6 +4,11 @@ rewrite team.filter and player.filter
 - incorporate player.withStats
 - maybe as part of larger data access thing? if so, look at all the concats for using events/messages/playerFeats too
 
+what about mutation without a put/add, how to handle indexes in cache? need trigger for any mutation that will change cache
+- or, maybe require a put after a mutation, just for consistency/safety. still no way to enforce, though..
+- examples
+  - freeAgents.autoSign, need to update player indexes
+
 schedule stuff
 - special flag in schedule database, denoting that it could be blank. then, put can't rely on maxId because it could be 0 when in reality it's just a blank db but other games were played. for other databases, i think it doesn't matter, because they are isolated and even after deleting data it won't matter if there are dupes
   - or maybe store max gid elsewhere, and overwrite maxId calculation?
@@ -22,13 +27,6 @@ refactor
 - clear, delete, and put need to handle indexes
 
 document cache data format and API!
-
-what about mutation without a put/add, how to handle indexes in cache? need trigger for any mutation that will change cache
-- or, maybe require a put after a mutation, just for consistency/safety. still no way to enforce, though..
-
-alternative idea
-- cache within backboard. copy all indexes (including primary key index) to memory, keep them in sync by doing parallel operations to the underlying database (like on add, update indexes with new info). in each index, keep store name and primary key. then have a LRU cache on (store name, primary key) and either get records from there or hit IDB
-  - what about transactions?
 
 make Cache more DRY regarding indexes, reading object stores
 

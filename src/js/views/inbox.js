@@ -2,10 +2,13 @@
 
 import g from '../globals';
 import bbgmViewReact from '../util/bbgmViewReact';
+import * as helpers from '../util/helpers';
 import Inbox from './views/Inbox';
 
 async function updateInbox() {
-    const messages = await g.dbl.messages.getAll();
+    const messages = helpers.deepCopy([]
+        .concat(await g.dbl.messages.getAll())
+        .concat(await g.cache.getAll('messages')));
 
     messages.reverse();
 

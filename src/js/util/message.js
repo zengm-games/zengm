@@ -237,7 +237,7 @@ async function generate(tx: BackboardTx, deltas: OwnerMoodDeltas) {
         }
     }
 
-    await tx.messages.add({
+    await g.cache.add('messages', {
         read: false,
         from: "The Owner",
         year: g.season,

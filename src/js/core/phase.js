@@ -132,7 +132,7 @@ async function newPhaseRegularSeason(tx: BackboardTx) {
 
         if (g.season === g.startingSeason + 3 && g.lid > 3 && nagged === 0) {
             localStorage.setItem('nagged', '1');
-            await tx.messages.add({
+            await g.cache.add('messages', {
                 read: false,
                 from: "The Commissioner",
                 year: g.season,
@@ -140,7 +140,7 @@ async function newPhaseRegularSeason(tx: BackboardTx) {
             });
         } else if ((nagged === 1 && Math.random() < 0.25) || (nagged >= 2 && Math.random() < 0.025)) {
             localStorage.setItem('nagged', '2');
-            await tx.messages.add({
+            await g.cache.add('messages', {
                 read: false,
                 from: "The Commissioner",
                 year: g.season,
@@ -149,7 +149,7 @@ async function newPhaseRegularSeason(tx: BackboardTx) {
         } else if ((nagged >= 2 && nagged <= 3 && Math.random() < 0.5) || (nagged >= 4 && Math.random() < 0.05)) {
             // Skipping 3, obsolete
             localStorage.setItem('nagged', '4');
-            await tx.messages.add({
+            await g.cache.add('messages', {
                 read: false,
                 from: "The Commissioner",
                 year: g.season,

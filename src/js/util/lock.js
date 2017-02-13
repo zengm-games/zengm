@@ -118,7 +118,9 @@ function canStartNegotiation(tx: ?BackboardTx): Promise<boolean> {
  */
 async function unreadMessage(tx: ?BackboardTx): Promise<boolean> {
     const dbOrTx = tx !== undefined && tx !== null ? tx : g.dbl;
-    const messages = await dbOrTx.messages.getAll();
+    const messages = []
+        .concat(await dbOrTx.messages.getAll())
+        .concat(await g.cache.getAll('messages'));
     for (let i = 0; i < messages.length; i++) {
         if (!messages[i].read) {
             return true;

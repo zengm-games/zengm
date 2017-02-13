@@ -12,7 +12,9 @@ import LeagueDashboard from './views/LeagueDashboard';
 
 async function updateInbox(inputs, updateEvents) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun')) {
-        let messages = await g.dbl.messages.getAll();
+        let messages = helpers.deepCopy([]
+            .concat(await g.dbl.messages.getAll())
+            .concat(await g.cache.getAll('messages')));
 
         messages.reverse();
 

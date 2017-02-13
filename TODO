@@ -5,7 +5,7 @@ refactor
 - for store with fake IDs (playerFeats), disable delete
 - clear, delete, and put need to handle indexes
 - push or unshift onto array indexes? be consistent
-- getData should not be optional
+- getData should not be optional, should default to [] for playerFeats
 
 document cache data format and API!
 
@@ -48,6 +48,8 @@ make cache sync? it'll be faster, any problems though?
 revisit lock system
 
 confirm ywt works
+
+fantasy draft
 
 ----
 

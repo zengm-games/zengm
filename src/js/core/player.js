@@ -872,8 +872,9 @@ async function addStatsRow(p: Player, playoffs?: boolean = false) {
 
     // Calculate yearsWithTeam
     const ps = await g.cache.indexGetAll('playerStatsAllByPid', p.pid);
-    if (ps[0].season === g.season - 1 && ps[0].tid === p.tid) {
-        statsRow.yearsWithTeam = ps[0].yearsWithTeam + 1;
+    const i = ps.length - 1;
+    if (ps[i].season === g.season - 1 && ps[i].tid === p.tid) {
+        statsRow.yearsWithTeam = ps[i].yearsWithTeam + 1;
     }
 
     await g.cache.add('playerStats', statsRow);
@@ -1558,7 +1559,7 @@ type ValueOptions = {
  *
  * @memberOf core.player
  * @param {Object} p Player object.
- * @param {Array.<Object>} Array of playerStats objects, regular season only, starting with most recent. Only the first 1 or 2 will be used.
+ * @param {Array.<Object>} Array of playerStats objects, regular season only, starting with oldest. Only the first 1 or 2 will be used.
  * @param {Object=} options Object containing several optional options:
  *     noPot: When true, don't include potential in the value calcuation (useful for roster
  *         ordering and game simulation). Default false.
@@ -1596,8 +1597,8 @@ function value(p: any, ps: PlayerStats[], options: ValueOptions = {}): number {
             }
         } else {
             // Two most recent seasons
-            const ps1 = ps[0];
-            const ps2 = ps[1];
+            const ps1 = ps[ps.length - 1];
+            const ps2 = ps[ps.length - 2];
             if (ps1.min + ps2.min > 0) {
                 current = 3.75 * (ps1.per * ps1.min + ps2.per * ps2.min) / (ps1.min + ps2.min);
             }

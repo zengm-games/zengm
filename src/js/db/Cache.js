@@ -4,7 +4,7 @@ import backboard from 'backboard';
 import Promise from 'bluebird';
 import orderBy from 'lodash.orderby';
 import g from '../globals';
-import type {BackboardTx, PlayerStats} from '../util/types';
+import type {BackboardTx, Player, PlayerStats} from '../util/types';
 
 type Status = 'empty' | 'error' | 'filling' | 'flushing' | 'full';
 
@@ -18,9 +18,10 @@ const STORES: Store[] = ['games', 'playerFeats', 'playerStats', 'players', 'rele
 const storeInfos: {
     [key: Store]: {
         pk: string,
-        getData?: (BackboardTx) => Promise<any[]>,
+        getData: (BackboardTx, Player[]) => Promise<any[]>,
         indexes?: {
             name: Index,
+            filter?: (any) => boolean,
             key: (any) => string,
             unique?: boolean,
         }[],
@@ -34,12 +35,45 @@ const storeInfos: {
     },
     playerFeats: {
         pk: 'fid',
+
+        // No need to store any in cache except new ones
+        getData: () => [],
     },
     playerStats: {
         pk: 'psid',
+
+        getData: async (tx: BackboardTx, players: Player[]) => {
+            const psNested = await Promise.all(players.map((p) => {
+                return tx.playerStats
+                    .index('pid, season, tid')
+                    .getAll(backboard.bound([p.pid, g.season - 1], [p.pid, g.season, '']));
+            }));
+
+            // Flatten
+            const psRows = [].concat(...psNested);
+
+            return orderBy(psRows, 'psid');
+        },
+
+        indexes: [{
+            // Only save latest stats row for each player (so playoff stats if available, and latest team if traded mid-season)
+            name: 'playerStatsByPid',
+            filter: (row) => row.season === g.season,
+            key: (row) => String(row.pid),
+            unique: true,
+        }, {
+            name: 'playerStatsAllByPid',
+            filter: (row) => !row.playoffs,
+            key: (row) => String(row.pid),
+        }],
     },
     players: {
         pk: 'pid',
+        getData: (tx: BackboardTx, players: Player[]) => players,
+        indexes: [{
+            name: 'playersByTid',
+            key: (row) => String(row.tid),
+        }],
     },
     releasedPlayers: {
         pk: 'rid',
@@ -99,7 +133,7 @@ class Cache {
     data: {[key: Store]: any};
     deletes: {[key: Store]: Set<number>};
     indexes: {[key: Index]: any};
-    maxIds: {[key: Index]: number};
+    maxIds: {[key: Store]: number};
     status: Status;
 
     constructor() {
@@ -121,70 +155,6 @@ class Cache {
         this.status = status;
     }
 
-    // Non-retired players
-    async fillPlayers(tx: BackboardTx) {
-        this.checkStatus('filling');
-
-        const [players1, players2] = await Promise.all([
-            tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.UNDRAFTED)),
-            tx.players.index('tid').getAll(backboard.bound(g.PLAYER.UNDRAFTED_FANTASY_TEMP, g.PLAYER.UNDRAFTED_2)),
-        ]);
-
-        this.data.players = {};
-        this.indexes.playersByTid = {};
-
-        const promises = [];
-
-        for (const p of players1.concat(players2)) {
-            this.data.players[p.pid] = p;
-
-            if (!this.indexes.playersByTid.hasOwnProperty(p.tid)) {
-                this.indexes.playersByTid[p.tid] = [];
-            }
-            this.indexes.playersByTid[p.tid].push(p);
-
-            promises.push(
-                tx.playerStats.index('pid, season, tid')
-                    .getAll(backboard.bound([p.pid, g.season - 1], [p.pid, g.season, ''])),
-            );
-        }
-
-        this.data.playerStats = {};
-        this.indexes.playerStatsByPid = {};
-        this.indexes.playerStatsAllByPid = {};
-
-        const resolvedPromises = await Promise.all(promises);
-        for (const psRows of resolvedPromises) {
-            for (const ps of orderBy(psRows, 'psid')) {
-                // Only save latest stats row for each player (so playoff stats if available, and latest team if traded mid-season)
-                if (ps.season === g.season) {
-                    this.indexes.playerStatsByPid[ps.pid] = ps;
-                }
-
-                // Save all regular season entries, for player.value and player.addStatsRow
-                if (!ps.playoffs) {
-                    if (!this.indexes.playerStatsAllByPid.hasOwnProperty(ps.pid)) {
-                        this.indexes.playerStatsAllByPid[ps.pid] = [ps];
-                    } else {
-                        this.indexes.playerStatsAllByPid[ps.pid].unshift(ps);
-                    }
-                }
-
-                this.data.playerStats[ps.psid] = ps;
-            }
-        }
-
-        this.maxIds.playerStats = -1;
-        await tx.playerStats.iterate(null, 'prev', (ps: PlayerStats, shortCircuit) => {
-            if (ps) {
-                this.maxIds.playerStats = ps.psid;
-            }
-            shortCircuit();
-        });
-
-        this.data.playerFeats = {};
-    }
-
     // Load database from disk and save in cache, wiping out any prior values in cache
     async fill() {
         this.checkStatus('empty', 'full');
@@ -193,43 +163,58 @@ class Cache {
         this.data = {};
 
         await g.dbl.tx(STORES, async (tx) => {
+            // Non-retired players - this is special because it's used for players and playerStats
+            const [players1, players2] = await Promise.all([
+                tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.UNDRAFTED)),
+                tx.players.index('tid').getAll(backboard.bound(g.PLAYER.UNDRAFTED_FANTASY_TEMP, g.PLAYER.UNDRAFTED_2)),
+            ]);
+
+            const players = players1.concat(players2);
+
             await Promise.all(STORES.map(async (store) => {
                 const storeInfo = storeInfos[store];
-                if (storeInfo.getData) {
-                    const data = await storeInfo.getData(tx);
+                const data = await storeInfo.getData(tx, players);
 
-                    this.data[store] = {};
-                    for (const row of data) {
-                        const key = row[storeInfo.pk];
-                        this.data[store][key] = row;
-                    }
+                this.data[store] = {};
+                for (const row of data) {
+                    const key = row[storeInfo.pk];
+                    this.data[store][key] = row;
+                }
 
-                    this.deletes[store] = new Set();
+                this.deletes[store] = new Set();
 
-                    if (storeInfo.indexes) {
-                        for (const index of storeInfo.indexes) {
-                            this.indexes[index.name] = {};
-                            for (const row of data) {
-                                const key = index.key(row);
+                if (storeInfo.indexes) {
+                    for (const index of storeInfo.indexes) {
+                        this.indexes[index.name] = {};
+                        for (const row of data) {
+                            if (index.filter && !index.filter(row)) {
+                                continue;
+                            }
 
-                                if (!index.unique) {
-                                    if (!this.indexes[index.name].hasOwnProperty(key)) {
-                                        this.indexes[index.name][key] = [row];
-                                    } else {
-                                        this.indexes[index.name][key].push(row);
-                                    }
+                            const key = index.key(row);
+
+                            if (!index.unique) {
+                                if (!this.indexes[index.name].hasOwnProperty(key)) {
+                                    this.indexes[index.name][key] = [row];
                                 } else {
-                                    this.indexes[index.name][key] = row;
+                                    this.indexes[index.name][key].push(row);
                                 }
+                            } else {
+                                this.indexes[index.name][key] = row;
                             }
                         }
                     }
                 }
-            }));
-
-            await Promise.all([
-                this.fillPlayers(tx),
-            ]);
+            }).concat(STORES.map(async (store) => {
+                const pk = storeInfos[store].pk;
+                this.maxIds[store] = -1;
+                await tx[store].iterate(null, 'prev', (row, shortCircuit) => {
+                    if (row) {
+                        this.maxIds[store] = row[pk];
+                    }
+                    shortCircuit();
+                });
+            })));
         });
 
         this.setStatus('full');
@@ -321,7 +306,7 @@ class Cache {
                 if (!this.indexes.playerStatsAllByPid.hasOwnProperty(obj.pid)) {
                     this.indexes.playerStatsAllByPid[obj.pid] = [obj];
                 } else {
-                    this.indexes.playerStatsAllByPid[obj.pid].unshift(obj);
+                    this.indexes.playerStatsAllByPid[obj.pid].push(obj);
                 }
             }
         } else if (store === 'schedule') {

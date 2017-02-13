@@ -83,7 +83,7 @@ class GodMode extends React.Component {
             dirty: false,
         });
 
-        logEvent(null, {
+        logEvent({
             type: "success",
             text: 'God Mode options successfully updated.',
             saveToDb: false,

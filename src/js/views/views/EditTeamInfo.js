@@ -105,7 +105,7 @@ class EditTeamInfo extends React.Component {
                 teams: newTeams,
             });
 
-            logEvent(null, {
+            logEvent({
                 type: 'success',
                 text: 'New team info successfully loaded.',
                 saveToDb: false,
@@ -160,7 +160,7 @@ class EditTeamInfo extends React.Component {
             teamNamesCache: this.state.teams.map(t => t.name),
         });
 
-        logEvent(null, {
+        logEvent({
             type: 'success',
             text: 'Saved team info.',
             saveToDb: false,

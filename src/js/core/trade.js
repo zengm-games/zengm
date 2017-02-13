@@ -400,7 +400,7 @@ async function propose(forceTrade?: boolean = false): Promise<[boolean, ?string]
                 return text;
             };
 
-            logEvent(null, {
+            logEvent({
                 type: "trade",
                 text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[0]], g.season])}">${g.teamNamesCache[tids[0]]}</a> traded ${formatAssetsEventLog(s.teams[0])} to the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[1]], g.season])}">${g.teamNamesCache[tids[1]]}</a> for ${formatAssetsEventLog(s.teams[1])}.`,
                 showNotification: false,

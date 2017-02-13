@@ -200,7 +200,7 @@ function error(errorText: React.Element<*> | string, cb: Function) {
  * @param {string} error Text of the error message to be displayed.
  */
 function errorNotify(errorText: string) {
-    logEvent(null, {
+    logEvent({
         type: "error",
         text: errorText,
         saveToDb: false,

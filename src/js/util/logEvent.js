@@ -3,7 +3,6 @@
 import g from '../globals';
 import * as league from '../core/league';
 import notify from '../lib/bbgm-notifications';
-import type {BackboardTx} from './types';
 
 // Really, pids, tids, and type should not be optional if saveToDb is true
 type LogEventOptions = {
@@ -38,7 +37,7 @@ type LogEventOptions = {
     ),
 }
 
-const logEvent = (tx: ?BackboardTx, {
+const logEvent = ({
     extraClass,
     persistent = false,
     pids,
@@ -49,8 +48,7 @@ const logEvent = (tx: ?BackboardTx, {
     type,
 }: LogEventOptions) => {
     if (saveToDb && g.lid) { // Only save to league event log if within a league
-        const dbOrTx = tx !== undefined && tx !== null ? tx : g.dbl;
-        dbOrTx.events.add({
+        g.cache.add('events', {
             season: g.season,
             type,
             text,

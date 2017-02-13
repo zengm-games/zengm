@@ -246,7 +246,7 @@ async function writePlayerStats(results: GameResults) {
             if (injuredThisGame) {
                 p2.injury = player.injury(t.healthRank);
                 p.injury = p2.injury; // So it gets written to box score
-                logEvent(null, {
+                logEvent({
                     type: "injured",
                     text: `<a href="${helpers.leagueUrl(["player", p2.pid])}">${p2.firstName} ${p2.lastName}</a> was injured! (${p2.injury.type}, out for ${p2.injury.gamesRemaining} games)`,
                     showNotification: p2.tid === g.userTid,
@@ -347,7 +347,7 @@ async function writeGameStats(results: GameResults, att: number) {
             text = `Your team lost to the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[results.team[tw].id], g.season])}">${g.teamNamesCache[results.team[tw].id]}`;
         }
         text += `</a> <a href="${helpers.leagueUrl(["game_log", g.teamAbbrevsCache[g.userTid], g.season, results.gid])}">${results.team[tw].stat.pts}-${results.team[tl].stat.pts}</a>.`;
-        logEvent(null, {
+        logEvent({
             type: results.team[tw].id === g.userTid ? "gameWon" : "gameLost",
             text,
             saveToDb: false,
@@ -366,7 +366,7 @@ async function writeGameStats(results: GameResults, att: number) {
                 }
                 delete results.clutchPlays[i].tempText;
             }
-            logEvent(null, results.clutchPlays[i]);
+            logEvent(results.clutchPlays[i]);
         }
     }
 
@@ -436,7 +436,7 @@ async function updatePlayoffSeries(results: GameResults) {
                 }
 
                 const showNotification = series.away.tid === g.userTid || series.home.tid === g.userTid || playoffSeries.currentRound === 3;
-                logEvent(null, {
+                logEvent({
                     type: "playoffs",
                     text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[winnerTid], g.season])}">${g.teamNamesCache[winnerTid]}</a> defeated the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[loserTid], g.season])}">${g.teamNamesCache[loserTid]}</a> in the ${currentRoundText}, 4-${loserWon}.`,
                     showNotification,
@@ -654,7 +654,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
             if (p.injury.type !== "Healthy" && p.injury.gamesRemaining <= 0) {
                 p.injury = {type: "Healthy", gamesRemaining: 0};
 
-                logEvent(null, {
+                logEvent({
                     type: "healed",
                     text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> has recovered from his injury.`,
                     showNotification: p.tid === g.userTid,

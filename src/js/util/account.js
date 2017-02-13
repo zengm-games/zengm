@@ -89,7 +89,7 @@ async function addAchievements(achievements: AchievementKey[], silent?: boolean 
         // Find name of achievement
         for (let i = 0; i < allAchievements.length; i++) {
             if (allAchievements[i].slug === slug) {
-                logEvent(null, {
+                logEvent({
                     type: "achievement",
                     text: `"${allAchievements[i].name}" achievement awarded! <a href="/account">View all achievements.</a>`,
                 });

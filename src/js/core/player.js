@@ -625,7 +625,7 @@ async function release(tx: BackboardTx, p: Player, justDrafted: boolean) {
         p.salaries = [];
     }
 
-    logEvent(null, {
+    logEvent({
         type: "release",
         text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> released <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a>.`,
         showNotification: false,
@@ -1703,9 +1703,9 @@ async function updateValues(p: Player | PlayerWithoutPid, psOverride?: PlayerSta
  * @param {Object} p Player object.
  * @return {Object} p Updated (retired) player object.
  */
-function retire(tx: BackboardTx, p: Player, playerStats: PlayerStats[], retiredNotification?: boolean = true) {
+function retire(p: Player, playerStats: PlayerStats[], retiredNotification?: boolean = true) {
     if (retiredNotification) {
-        logEvent(tx, {
+        logEvent({
             type: "retired",
             text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> retired.`,
             showNotification: p.tid === g.userTid,
@@ -1721,7 +1721,7 @@ function retire(tx: BackboardTx, p: Player, playerStats: PlayerStats[], retiredN
     if (madeHof(p, playerStats)) {
         p.hof = true;
         p.awards.push({season: g.season, type: "Inducted into the Hall of Fame"});
-        logEvent(tx, {
+        logEvent({
             type: "hallOfFame",
             text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> was inducted into the <a href="${helpers.leagueUrl(["hall_of_fame"])}">Hall of Fame</a>.`,
             showNotification: p.statsTids.includes(g.userTid),
@@ -1729,8 +1729,6 @@ function retire(tx: BackboardTx, p: Player, playerStats: PlayerStats[], retiredN
             tids: p.statsTids,
         });
     }
-
-    return p;
 }
 
 // See views.negotiation for moods as well
@@ -1866,7 +1864,7 @@ function checkStatisticalFeat(pid: number, tid: number, p: GamePlayer, results: 
     let saveFeat = false;
 
     const logFeat = text => {
-        logEvent(null, {
+        logEvent({
             type: "playerFeat",
             text,
             showNotification: tid === g.userTid,
@@ -1999,21 +1997,21 @@ async function killOne() {
     // Pick random team
     const tid = random.randInt(0, g.numTeams - 1);
 
-    await g.dbl.tx(["events", "playerStats", "players"], "readwrite", async tx => {
+    await g.dbl.tx(["playerStats", "players"], "readwrite", async tx => {
         const players = await tx.players.index('tid').getAll(tid);
 
         // Pick a random player on that team
-        let p = random.choice(players);
+        const p = random.choice(players);
 
         // Get player stats, used for HOF calculation
         const playerStats = await tx.playerStats.index('pid, season, tid').getAll(backboard.bound([p.pid], [p.pid, '']));
 
-        p = retire(tx, p, playerStats, false);
+        retire(p, playerStats, false);
         p.diedYear = g.season;
 
         await tx.players.put(p);
 
-        await logEvent(tx, {
+        logEvent({
             type: "tragedy",
             text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> ${reason}.`,
             showNotification: tid === g.userTid,

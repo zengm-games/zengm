@@ -82,7 +82,7 @@ async function autoSign(tx: BackboardTx) {
                         player.setContract(p, p.contract, true);
                         p.gamesUntilTradable = 15;
 
-                        logEvent(null, {
+                        logEvent({
                             type: "freeAgent",
                             text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
                             showNotification: false,

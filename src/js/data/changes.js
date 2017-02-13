@@ -144,7 +144,7 @@ function check() {
             text += '<br><a href="/changes">View All Changes</a>';
         }
 
-        logEvent(null, {
+        logEvent({
             type: "changes",
             text,
             saveToDb: false,

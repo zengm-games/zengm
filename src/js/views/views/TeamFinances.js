@@ -80,7 +80,7 @@ class FinancesForm extends React.Component {
             await finances.updateRanks(["budget"]);
         });
 
-        logEvent(null, {
+        logEvent({
             type: 'success',
             text: 'Team finances updated.',
             saveToDb: false,

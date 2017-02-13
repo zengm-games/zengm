@@ -269,7 +269,7 @@ async function doAwards(tx: BackboardTx) {
         } else {
             text += `won the ${p.type} award.`;
         }
-        logEvent(null, {
+        logEvent({
             type: "award",
             text,
             showNotification: p.tid === g.userTid || p.type === "Most Valuable Player",

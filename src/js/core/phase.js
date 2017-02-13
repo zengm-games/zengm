@@ -182,7 +182,7 @@ async function newPhasePlayoffs(tx: BackboardTx) {
     const {series, tidPlayoffs} = season.genPlayoffSeries(teams);
 
     for (const tid of tidPlayoffs) {
-        logEvent(null, {
+        logEvent({
             type: "playoffs",
             text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tid], g.season])}">${g.teamNamesCache[tid]}</a> made the <a href="${helpers.leagueUrl(["playoffs", g.season])}">playoffs</a>.`,
             showNotification: tid === g.userTid,
@@ -296,7 +296,7 @@ async function newPhaseBeforeDraft(tx: BackboardTx) {
                 }
                 const excessPot = (40 - pot) / 50;  // 0.02 for each potential rating below 40 (this can be negative)
                 if (excessAge + excessPot + random.gauss(0, 1) > 0) {
-                    p = player.retire(tx, p, playerStats);
+                    player.retire(p, playerStats);
                     update = true;
                 }
             }
@@ -305,7 +305,7 @@ async function newPhaseBeforeDraft(tx: BackboardTx) {
         // Update "free agent years" counter and retire players who have been free agents for more than one years
         if (p.tid === g.PLAYER.FREE_AGENT) {
             if (p.yearsFreeAgent >= 1) {
-                p = player.retire(tx, p, playerStats);
+                player.retire(p, playerStats);
             } else {
                 p.yearsFreeAgent += 1;
             }
@@ -402,7 +402,7 @@ async function newPhaseResignPlayers(tx: BackboardTx) {
             await player.addToFreeAgents(tx, p, g.PHASE.RESIGN_PLAYERS, baseMoods);
             const error = await contractNegotiation.create(tx, p.pid, true, tid);
             if (error !== undefined && error) {
-                logEvent(null, {
+                logEvent({
                     type: "refuseToSign",
                     text: error,
                     pids: [p.pid],
@@ -449,7 +449,7 @@ async function newPhaseFreeAgency(tx: BackboardTx) {
                 player.setContract(p, contract, true);
                 p.gamesUntilTradable = 15;
 
-                logEvent(null, {
+                logEvent({
                     type: "reSigned",
                     text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> re-signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
                     showNotification: false,
@@ -582,7 +582,7 @@ async function newPhase(phase: Phase, extra: any) {
 
                     await league.setGameAttributesComplete({phaseChangeInProgress: false});
                     await ui.updatePlayMenu(null);
-                    await logEvent(null, {
+                    logEvent({
                         type: "error",
                         text: 'Critical error during phase change. <a href="https://basketball-gm.com/manual/debugging/"><b>Read this to learn about debugging.</b></a>',
                         saveToDb: false,

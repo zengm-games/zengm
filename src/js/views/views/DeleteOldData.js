@@ -121,7 +121,7 @@ class DeleteOldData extends React.Component {
 
         league.updateLastDbChange();
 
-        logEvent(null, {
+        logEvent({
             type: 'success',
             text: 'Data successfully deleted.',
             saveToDb: false,

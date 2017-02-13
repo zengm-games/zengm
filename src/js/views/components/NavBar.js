@@ -144,7 +144,7 @@ const handleScreenshotClick = e => {
             // Remove notifications
             contentEl.removeChild(notifications);
 
-            logEvent(null, {
+            logEvent({
                 type: 'screenshot',
                 text: `Uploading your screenshot to Imgur...`,
                 saveToDb: false,
@@ -166,7 +166,7 @@ const handleScreenshotClick = e => {
                     },
                     dataType: "json",
                 }));
-                logEvent(null, {
+                logEvent({
                     type: 'screenshot',
                     text: `<a href="http://imgur.com/${data.data.id}" target="_blank">Click here to view your screenshot.</a>`,
                     saveToDb: false,

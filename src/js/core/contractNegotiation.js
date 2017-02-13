@@ -152,7 +152,7 @@ async function accept(pid: number, amount: number, exp: number): Promise<string>
             }, true);
 
             if (negotiation.resigning) {
-                logEvent(null, {
+                logEvent({
                     type: "reSigned",
                     text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[g.userTid], g.season])}">${g.teamNamesCache[g.userTid]}</a> re-signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
                     showNotification: false,
@@ -160,7 +160,7 @@ async function accept(pid: number, amount: number, exp: number): Promise<string>
                     tids: [g.userTid],
                 });
             } else {
-                logEvent(null, {
+                logEvent({
                     type: "freeAgent",
                     text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[g.userTid], g.season])}">${g.teamNamesCache[g.userTid]}</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
                     showNotification: false,

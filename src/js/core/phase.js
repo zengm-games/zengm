@@ -113,7 +113,7 @@ async function newPhasePreseason(tx: BackboardTx) {
 }
 
 async function newPhaseRegularSeason(tx: BackboardTx) {
-    const teams = await tx.teams.getAll();
+    const teams = await g.cache.getAll('teams');
     await season.setSchedule(tx, season.newSchedule(teams));
 
     // First message from owner
@@ -525,7 +525,7 @@ async function newPhase(phase: Phase, extra: any) {
             func: newPhasePreseason,
         },
         [g.PHASE.REGULAR_SEASON]: {
-            objectStores: ["gameAttributes", "messages", "schedule", "teams"],
+            objectStores: ["gameAttributes", "schedule"],
             func: newPhaseRegularSeason,
         },
         [g.PHASE.PLAYOFFS]: {

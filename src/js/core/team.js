@@ -36,10 +36,6 @@ function genSeasonRow(tid: number, prevSeason?: TeamSeason): TeamSeason {
         playoffRoundsWon: -1,  // -1: didn't make playoffs. 0: lost in first round. ... N: won championship
         hype: Math.random(),
         pop: 0,  // Needs to be set somewhere!
-        tvContract: {
-            amount: 0,
-            exp: 0,
-        },
         revenues: {
             merch: {
                 amount: 0,
@@ -100,7 +96,6 @@ function genSeasonRow(tid: number, prevSeason?: TeamSeason): TeamSeason {
         newSeason.pop = prevSeason.pop * random.uniform(0.98, 1.02);  // Mean population should stay constant, otherwise the economics change too much
         newSeason.hype = prevSeason.hype;
         newSeason.cash = prevSeason.cash;
-        newSeason.tvContract = prevSeason.tvContract;
     }
 
     return newSeason;

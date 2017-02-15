@@ -2,7 +2,21 @@ IVERSON
 
 rewrite team.filter and player.filter
 - incorporate player.withStats
+  - figure out if tx needed, and if so create one. hopefully don't need to accept passed one
 - maybe as part of larger data access thing? if so, look at all the concats for using events/messages/playerFeats too
+  - db.getCopy.teams, db.getCopy.players, db.getCopy.messages, db.getCopy.eventsBySeason
+  - idea is, these are ways to get data whose return values can be safely mutated - not from cache. also designed for convenience
+    - document this in readme
+- db.getCopy.teams
+  - get rid of merging seasonAttrs and stats into root object, for flow
+  - tests
+    - operate on individual functions, can export them just for tests
+    - confirm operations that don't require IDB
+    - use ava, fakeIDB, run in node. eventually move all tests over.
+  - payroll
+  - replace team.filter
+  - types for Attrs
+  - types for season/statType/playoffs options, which only have affect based on other options
 
 what about mutation without a put/add, how to handle indexes in cache? need trigger for any mutation that will change cache
 - or, maybe require a put after a mutation, just for consistency/safety. still no way to enforce, though..

@@ -59,19 +59,17 @@ async function updateOwnerMood(tx?: BackboardTx): Promise<OwnerMoodDeltas> {
 }
 
 
-async function saveAwardsByPlayer(tx: BackboardTx, awardsByPlayer: any) {
+async function saveAwardsByPlayer(awardsByPlayer: any) {
     const pids = _.uniq(awardsByPlayer.map(award => award.pid));
 
     await Promise.all(pids.map(async (pid) => {
-        const p = await tx.players.get(pid);
+        const p = await g.cache.get('players', pid);
 
         for (let i = 0; i < awardsByPlayer.length; i++) {
             if (p.pid === awardsByPlayer[i].pid) {
                 p.awards.push({season: g.season, type: awardsByPlayer[i].type});
             }
         }
-
-        await tx.players.put(p);
     }));
 }
 
@@ -255,7 +253,7 @@ async function doAwards(tx: BackboardTx) {
     }
 
     await tx.awards.put(awards);
-    await saveAwardsByPlayer(tx, awardsByPlayer);
+    await saveAwardsByPlayer(awardsByPlayer);
 
     // None of this stuff needs to block, it's just notifications of crap
     // Notifications for awards for user's players

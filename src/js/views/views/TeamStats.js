@@ -36,24 +36,27 @@ const TeamStats = ({season, stats, teams}) => {
     const cols = getCols('Team', 'GP', 'W', 'L', 'M', 'A', '%', 'M', 'A', '%', 'M', 'A', '%', 'Off', 'Def', 'Tot', 'Ast', 'TO', 'Stl', 'Blk', 'BA', 'PF', 'Pts', 'OPts', 'Diff');
 
     const teamCount = teams.length;
-    const rows = teams.map(t => {
+    const rows = teams.map((t) => {
         const statTypeColumns = ['fg', 'fga', 'fgp', 'tp', 'tpa', 'tpp', 'ft', 'fta', 'ftp', 'orb', 'drb', 'trb', 'ast', 'tov', 'stl', 'blk', 'ba', 'pf', 'pts', 'oppPts', 'diff'];
         const otherStatColumns = ['won', 'lost'];
+
+        const teamStats = t.stats.length > 0 ? t.stats[0] : {};
+        const teamSeason = t.seasons.length > 0 ? t.seasons[0] : {};
 
         // Create the cells for this row.
         const data = {
             abbrev: <a href={helpers.leagueUrl(["roster", t.abbrev, season])}>{t.abbrev}</a>,
-            gp: t.gp,
-            won: t.won,
-            lost: t.lost,
+            gp: teamStats.gp,
+            won: teamSeason.won,
+            lost: teamSeason.lost,
         };
 
         for (const column of statTypeColumns) {
-            const value = helpers.round(t[column], 1);
+            const value = helpers.round(teamStats[column], 1);
             data[column] = value;
         }
 
-        data.diff = <span className={t.diff > 0 ? 'text-success' : 'text-danger'}>{helpers.round(t.diff, 1)}</span>;
+        data.diff = <span className={teamStats.diff > 0 ? 'text-success' : 'text-danger'}>{helpers.round(teamStats.diff, 1)}</span>;
 
         // This is our team.
         if (g.userTid === t.tid) {

@@ -272,7 +272,11 @@ class Cache {
 
         if (typeof key === 'number' || typeof key === 'string') {
             if (this.indexes[index].hasOwnProperty(key)) {
-                return this.indexes[index][key];
+                const val = this.indexes[index][key];
+                if (!Array.isArray(val)) {
+                    return [val];
+                }
+                return val;
             }
             return [];
         }

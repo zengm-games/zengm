@@ -1,7 +1,7 @@
 // @flow
 
 import g from '../globals';
-import * as team from '../core/team';
+import * as getCopy from '../db/getCopy';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import TeamStats from './views/TeamStats';
@@ -14,16 +14,14 @@ function get(ctx) {
 
 async function updateTeams(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || (inputs.season === g.season && (updateEvents.includes('gameSim') || updateEvents.includes('playerMovement'))) || inputs.season !== state.season) {
-        const teams = await team.filter({
+        const teams = await getCopy.teams({
             attrs: ["tid", "abbrev"],
             seasonAttrs: ["won", "lost"],
             stats: ["gp", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "ba", "pf", "pts", "oppPts", "diff"],
             season: inputs.season,
         });
 
-        /*
-         * Sort stats so we can determine what percentile our team is in.
-         */
+        // Sort stats so we can determine what percentile our team is in.
         const stats = {};
         const statTypes = ['won', 'lost', 'fg', 'fga', 'fgp', 'tp', 'tpa', 'tpp', 'ft', 'fta', 'ftp', 'orb', 'drb', 'trb', 'ast', 'tov', 'stl', 'blk', 'ba', 'pf', 'pts', 'oppPts', 'diff'];
         const lowerIsBetter = ['lost', 'tov', 'ba', 'pf', 'oppPts'];
@@ -35,7 +33,7 @@ async function updateTeams(inputs, updateEvents, state) {
                     stats[statType] = [];
                 }
 
-                stats[statType].push(t[statType]);
+                stats[statType].push(t.stats[statType]);
             }
         }
 

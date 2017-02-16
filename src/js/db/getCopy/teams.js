@@ -40,7 +40,7 @@ const processSeasonAttrs = async (output: TeamFiltered, t: Team, seasonAttrs: Te
     if (season === undefined) {
         // All seasons
         seasons = await tx.teamSeasons.index('tid, season').getAll(backboard.bound([t.tid], [t.tid, '']));
-    } else if (season <= g.season - 2) {
+    } else if (season >= g.season - 2) {
         // Single season, from cache
         seasons = await g.cache.indexGetAll('teamSeasonsBySeasonTid', `${season},${t.tid}`);
     } else {

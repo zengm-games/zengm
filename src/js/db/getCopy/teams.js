@@ -48,7 +48,7 @@ const processSeasonAttrs = async (output: TeamFiltered, t: Team, seasonAttrs: Te
         seasons = await tx.teamSeasons.index('season, tid').getAll([season, t.tid]);
     }
 
-    output.seasons = seasons.map((ts) => {
+    output.seasonAttrs = seasons.map((ts) => {
         const row = {};
 
         // Revenue and expenses calculation
@@ -97,15 +97,19 @@ const processSeasonAttrs = async (output: TeamFiltered, t: Team, seasonAttrs: Te
 
         return row;
     });
+
+    if (season !== undefined) {
+        output.seasonAttrs = output.seasonAttrs[0];
+    }
 };
 
 const processStats = async (
     output: TeamFiltered,
     t: Team,
     stats: TeamStatAttr[],
-    statType: StatType,
     playoffs: boolean,
     regularSeason: boolean,
+    statType: StatType,
     season: ?number,
     tx: ?BackboardTx,
 ) => {
@@ -195,6 +199,10 @@ const processStats = async (
 
         return row;
     });
+
+    if (season !== undefined && ((playoffs && !regularSeason) || (!playoffs && regularSeason))) {
+        output.stats = output.stats[0];
+    }
 };
 
 const processTeam = async (t: Team, {
@@ -205,41 +213,24 @@ const processTeam = async (t: Team, {
     playoffs,
     regularSeason,
     statType,
-}: TeamOptions) => {
+}: TeamOptions, tx: ?BackboardTx) => {
     const output = {};
 
     if (attrs.length > 0) {
         processAttrs(output, t, attrs);
     }
 
-    // Does this require IDB?
-    const objectStores = [];
-    if (seasonAttrs.length > 0 && (season === undefined || season < g.season - 2)) {
-        objectStores.push('teamSeasons');
-    }
-    if (stats.length > 0 && season !== g.season) {
-        objectStores.push('teamStats');
+    const promises = [];
+
+    if (seasonAttrs.length > 0) {
+        promises.push(processSeasonAttrs(output, t, seasonAttrs, season, tx));
     }
 
-    const processMaybeWithIDB = async (tx: ?BackboardTx) => {
-        const promises = [];
-
-        if (seasonAttrs.length > 0) {
-            promises.push(processSeasonAttrs(output, t, seasonAttrs, season, tx));
-        }
-
-        if (stats.length > 0) {
-            promises.push(processStats(output, t, stats, playoffs, regularSeason, statType, season, tx));
-        }
-
-        await Promise.all(promises);
-    };
-
-    if (objectStores.length > 0) {
-        await g.dbl.tx(objectStores, (tx) => processMaybeWithIDB(tx));
-    } else {
-        await processMaybeWithIDB();
+    if (stats.length > 0) {
+        promises.push(processStats(output, t, stats, playoffs, regularSeason, statType, season, tx));
     }
+
+    await Promise.all(promises);
 
     return output;
 };
@@ -264,13 +255,29 @@ const getCopy = async ({
         statType,
     };
 
-    if (tid === undefined) {
-        const teams = await g.cache.getAll('teams');
-        return Promise.all(teams.map((t) => processTeam(t, options)));
+    // Does this require IDB?
+    const objectStores = [];
+    if (seasonAttrs.length > 0 && (season === undefined || season < g.season - 2)) {
+        objectStores.push('teamSeasons');
+    }
+    if (stats.length > 0 && season !== g.season) {
+        objectStores.push('teamStats');
     }
 
-    const t = await g.cache.get('teams', tid);
-    return processTeam(t, options);
+    const processMaybeWithIDB = async (tx: ?BackboardTx) => {
+        if (tid === undefined) {
+            const teams = await g.cache.getAll('teams');
+            return Promise.all(teams.map((t) => processTeam(t, options, tx)));
+        }
+
+        const t = await g.cache.get('teams', tid);
+        return processTeam(t, options, tx);
+    };
+
+    if (objectStores.length > 0) {
+        return g.dbl.tx(objectStores, (tx) => processMaybeWithIDB(tx));
+    }
+    return processMaybeWithIDB();
 };
 
 export default getCopy;

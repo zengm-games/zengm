@@ -8,7 +8,9 @@ rewrite team.filter and player.filter
   - idea is, these are ways to get data whose return values can be safely mutated - not from cache. also designed for convenience
     - document this in readme
 - db.getCopy.teams
-  - get rid of merging seasonAttrs and stats into root object, for flow
+  - getAlls from database need to use cache for this season still
+    - this is a more general problem, and is the same problem really faced by events/messages/playerFeats when concating cache. the problem is, need to getAll from db and then update based on primary key from cache, and then insert if no update available. abstract?
+      - with cache! do getAll, then iterate over cached records, and we know the primary key! just cloneDeep
   - tests
     - operate on individual functions, can export them just for tests
     - confirm operations that don't require IDB

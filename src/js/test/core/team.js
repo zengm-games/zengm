@@ -1,5 +1,5 @@
 import assert from 'assert';
-import * as db from '../../db';
+import {connectMeta, Cache} from '../../db';
 import g from '../../globals';
 import * as league from '../../core/league';
 import * as player from '../../core/player';
@@ -53,8 +53,10 @@ describe("core/team", () => {
     });
     describe("#filter()", () => {
         before(async () => {
-            await db.connectMeta();
+            await connectMeta();
             await league.create("Test", 0, undefined, 2013, false);
+            g.cache = new Cache();
+            await g.cache.fill();
 
             let teamStats = await g.dbl.teamStats.index('season, tid').get([g.season, 4]);
             teamStats.gp = 10;
@@ -206,7 +208,7 @@ describe("core/team", () => {
 
     describe("#checkRosterSizes()", () => {
         before(async () => {
-            await db.connectMeta();
+            await connectMeta();
             await league.create("Test", 0, undefined, 2013, false);
         });
         after(() => league.remove(g.lid));

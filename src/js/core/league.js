@@ -3,7 +3,7 @@
 import backboard from 'backboard';
 import Promise from 'bluebird';
 import _ from 'underscore';
-import {connectLeague} from '../db';
+import {Cache, connectLeague} from '../db';
 import g from '../globals';
 import * as ui from '../ui';
 import * as draft from './draft';
@@ -204,6 +204,10 @@ async function create(
     helpers.resetG();
 
     await setGameAttributesComplete(gameAttributes);
+
+    // Cache depends on g.season, so need to wait until here to fill it
+    g.cache = new Cache();
+    await g.cache.fill();
 
     let players;
     let scoutingRank;

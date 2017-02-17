@@ -1,5 +1,18 @@
 IVERSON
 
+get league creation working
+- cache used in league creation, then flush before redirect or viewHelpers will reload cache with no flush
+
+if i can gracefully handle absence of g.season etc, put cache creation inside connectLeague
+
+get tests working
+- db.getCopy.teams
+  - operate on individual functions? can export them just for tests
+  - confirm operations that don't require IDB
+  - confirm getAll updates from cache
+
+how do caches based on g.season work in preseason?
+
 rewrite team.filter and player.filter
 - incorporate player.withStats
   - figure out if tx needed, and if so create one. hopefully don't need to accept passed one
@@ -11,10 +24,6 @@ rewrite team.filter and player.filter
   - getAlls from database need to use cache for this season still
     - this is a more general problem, and is the same problem really faced by events/messages/playerFeats when concating cache. the problem is, need to getAll from db and then update based on primary key from cache, and then insert if no update available. abstract?
       - with cache! do getAll, then iterate over cached records, and we know the primary key! just cloneDeep
-  - tests
-    - operate on individual functions, can export them just for tests
-    - confirm operations that don't require IDB
-    - use ava, fakeIDB, run in node. eventually move all tests over.
   - payroll
   - replace team.filter
   - types for Attrs

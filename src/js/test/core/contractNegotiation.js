@@ -1,5 +1,5 @@
 import assert from 'assert';
-import * as db from '../../db';
+import {connectMeta, Cache} from '../../db';
 import g from '../../globals';
 import * as contractNegotiation from '../../core/contractNegotiation';
 import * as league from '../../core/league';
@@ -13,8 +13,10 @@ const givePlayerMinContract = async (tx, pid) => {
 
 describe("core/contractNegotiation", () => {
     before(async () => {
-        await db.connectMeta();
+        await connectMeta();
         await league.create("Test", 14, undefined, 2013, false);
+        g.cache = new Cache();
+        await g.cache.fill();
     });
     after(() => league.remove(g.lid));
     afterEach(() => {

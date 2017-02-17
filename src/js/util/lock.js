@@ -2,6 +2,7 @@
 
 import g from '../globals';
 import * as league from '../core/league';
+import {getCopy} from '../db';
 import * as helpers from './helpers';
 import type {BackboardTx} from './types';
 
@@ -111,14 +112,10 @@ function canStartNegotiation(tx: ?BackboardTx): Promise<boolean> {
  * Calls the callback function with either true or false.
  *
  * @memberOf util.lock
- * @param {IDBTransaction|null} tx An IndexedDB transaction on messages; if null is passed, then a new transaction will be used.
  * @return {Promise.boolean}
  */
-async function unreadMessage(tx: ?BackboardTx): Promise<boolean> {
-    const dbOrTx = tx !== undefined && tx !== null ? tx : g.dbl;
-    const messages = []
-        .concat(await dbOrTx.messages.getAll())
-        .concat(await g.cache.getAll('messages'));
+async function unreadMessage(): Promise<boolean> {
+    const messages = await getCopy.messages();
     for (let i = 0; i < messages.length; i++) {
         if (!messages[i].read) {
             return true;

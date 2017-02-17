@@ -1,4 +1,5 @@
 import g from '../globals';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import PlayerFeats from './views/PlayerFeats';
@@ -27,9 +28,7 @@ function get(ctx) {
 
 async function updatePlayers(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('gameSim') || inputs.abbrev !== state.abbrev || inputs.season !== state.season || inputs.playoffs !== state.playoffs) {
-        let feats = []
-            .concat(await g.dbl.playerFeats.getAll())
-            .concat(await g.cache.getAll('playerFeats'));
+        let feats = await getCopy.playerFeats();
 
         // Put fake fid on cached feats
         let maxFid = 0;

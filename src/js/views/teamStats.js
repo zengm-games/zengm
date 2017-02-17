@@ -1,7 +1,7 @@
 // @flow
 
 import g from '../globals';
-import * as getCopy from '../db/getCopy';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import TeamStats from './views/TeamStats';

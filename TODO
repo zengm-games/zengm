@@ -1,5 +1,12 @@
 IVERSON
 
+check page refresh for multi tab - overactive now?
+
+mergeByPk
+- should retain order of arrays, not sort by primary key. sometimes primary key is not what we want to sort by, or isn't available (like messages cache)
+  - write my own implementation
+  - also, for ones with missing primary key (like messages cache) just push
+
 get league creation working
 - cache used in league creation, then flush before redirect or viewHelpers will reload cache with no flush
 
@@ -31,6 +38,9 @@ rewrite team.filter and player.filter
   - replace team.filter
   - types for Attrs
   - types for season/statType/playoffs options, which only have affect based on other options
+- db.getCopy.events
+  - some options needed
+  - transactions.js, player.js
 
 what about mutation without a put/add, how to handle indexes in cache? need trigger for any mutation that will change cache
 - or, maybe require a put after a mutation, just for consistency/safety. still no way to enforce, though..

@@ -6,16 +6,14 @@ import g from '../globals';
 import * as player from '../core/player';
 import * as season from '../core/season';
 import * as team from '../core/team';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import LeagueDashboard from './views/LeagueDashboard';
 
 async function updateInbox(inputs, updateEvents) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun')) {
-        let messages = helpers.deepCopy([]
-            .concat(await g.dbl.messages.getAll())
-            .concat(await g.cache.getAll('messages')));
-
+        let messages = await getCopy.messages();
         messages.reverse();
 
         for (let i = 0; i < messages.length; i++) {

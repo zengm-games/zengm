@@ -5,6 +5,7 @@ import Promise from 'bluebird';
 import Cache from './Cache';
 import connectMeta from './connectMeta';
 import connectLeague from './connectLeague';
+import * as getCopy from './getCopy';
 import reset from './reset';
 import logEvent from '../util/logEvent';
 
@@ -25,5 +26,6 @@ export {
     Cache,
     connectMeta,
     connectLeague,
+    getCopy,
     reset,
 };

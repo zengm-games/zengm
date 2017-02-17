@@ -10,7 +10,7 @@ async function addSeason(season, tid) {
     let playersAll = await g.dbl.players.index('tid').getAll(tid);
 
     playersAll = player.filter(playersAll, {
-        attrs: ["pid", "nameAbbreviation", "age", "watch", "valueFuzz"],
+        attrs: ["pid", "nameAbbrev", "age", "watch", "valueFuzz"],
         ratings: ["ovr", "pot", "skills", "fuzz", "pos"],
         showNoStats: true,
         showRookies: true,
@@ -25,7 +25,7 @@ async function addSeason(season, tid) {
         players.push({
             // Attributes
             pid: pa.pid,
-            name: pa.nameAbbreviation, // use abbrev to prevent overflows
+            name: pa.nameAbbrev, // use abbrev to prevent overflows
             age: pa.age,
             watch: pa.watch,
             valueFuzz: pa.valueFuzz,

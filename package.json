@@ -41,6 +41,7 @@
     "jquery": "2.*",
     "jquery-ui": "1.10.x",
     "lodash.orderby": "4.6.0",
+    "lodash.unionby": "4.8.0",
     "page": "1.7.1",
     "react": "15.4.2",
     "react-addons-text-content": "0.0.4",

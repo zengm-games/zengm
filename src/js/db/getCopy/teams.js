@@ -2,6 +2,7 @@ import backboard from 'backboard';
 import orderBy from 'lodash.orderby';
 import _ from 'underscore';
 import g from '../../globals';
+import {mergeByPk} from './helpers';
 import * as helpers from '../../util/helpers';
 import type {BackboardTx, Team, TeamFiltered} from '../../util/types';
 
@@ -39,7 +40,11 @@ const processSeasonAttrs = async (output: TeamFiltered, t: Team, seasonAttrs: Te
     let seasons;
     if (season === undefined) {
         // All seasons
-        seasons = await tx.teamSeasons.index('tid, season').getAll(backboard.bound([t.tid], [t.tid, '']));
+        seasons = mergeByPk(
+            await tx.teamSeasons.index('tid, season').getAll(backboard.bound([t.tid], [t.tid, ''])),
+            await g.cache.indexGetAll('teamSeasonsBySeasonTid', `${g.season},${t.tid}`),
+            g.cache.storeInfos.teamSeasons.pk,
+        );
     } else if (season >= g.season - 2) {
         // Single season, from cache
         seasons = await g.cache.indexGetAll('teamSeasonsBySeasonTid', `${season},${t.tid}`);
@@ -114,22 +119,44 @@ const processStats = async (
     tx: ?BackboardTx,
 ) => {
     let teamStats;
-    if (season === undefined) {
-        // All seasons
-        teamStats = await tx.teamStats.index('tid').getAll(t.tid);
-    } else if (season === g.season) {
+
+    const teamStatsFromCache = async () => {
         // Single season, from cache
-        teamStats = [];
+        let teamStats2 = [];
         if (regularSeason) {
-            teamStats = teamStats.concat(await g.cache.indexGetAll('teamStatsByPlayoffsTid', `0,${t.tid}`));
+            teamStats2 = teamStats2.concat(await g.cache.indexGetAll('teamStatsByPlayoffsTid', `0,${t.tid}`));
         }
         if (playoffs) {
-            teamStats = teamStats.concat(await g.cache.indexGetAll('teamStatsByPlayoffsTid', `1,${t.tid}`));
+            teamStats2 = teamStats2.concat(await g.cache.indexGetAll('teamStatsByPlayoffsTid', `1,${t.tid}`));
         }
+
+        return teamStats2;
+    };
+
+    if (season === undefined) {
+        // All seasons
+        teamStats = mergeByPk(
+            await tx.teamStats.index('tid').getAll(t.tid),
+            await teamStatsFromCache(),
+            g.cache.storeInfos.teamStats.pk,
+        );
+    } else if (season === g.season) {
+        teamStats = await teamStatsFromCache();
     } else {
         // Single season, from database
         teamStats = await tx.teamStats.index('season, tid').getAll([season, t.tid]);
     }
+
+    // Handle playoffs/regularSeason
+    teamStats = teamStats.filter((ts) => {
+        if (playoffs && ts.playoffs) {
+            return true;
+        }
+        if (regularSeason && !ts.playoffs) {
+            return true;
+        }
+        return false;
+    });
 
     // Above queries come back in inconsistent order
     teamStats = orderBy(teamStats, ['season', 'playoffs']);

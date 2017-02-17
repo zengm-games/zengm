@@ -1,4 +1,5 @@
 import g from '../globals';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import Transactions from './views/Transactions';
@@ -41,23 +42,11 @@ async function updateEventLog(inputs, updateEvents, state) {
         }
 
         if (events.length === 0) {
-            let events1;
-            let events2;
             if (inputs.season === "all") {
-                [events1, events2] = await Promise.all([
-                    await g.dbl.events.getAll(),
-                    await g.cache.getAll('events'),
-                ]);
+                events = await getCopy.events();
             } else {
-                events1 = await g.dbl.events.index('season').getAll(inputs.season);
-                [events1, events2] = await Promise.all([
-                    await g.dbl.events.index('season').getAll(inputs.season),
-                    await g.cache.getAll('events'),
-                ]);
-                events2 = events2.filter((event) => event.season === inputs.season);
+                events = await getCopy.events({season: inputs.season});
             }
-            events = helpers.deepCopy(events1.concat(events2));
-
             events.reverse(); // Newest first
         } else if (inputs.season === g.season) { // Can't update old seasons!
             // Update by adding any new events to the top of the list

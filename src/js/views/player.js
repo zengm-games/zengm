@@ -3,6 +3,7 @@ import g from '../globals';
 import * as freeAgents from '../core/freeAgents';
 import * as player from '../core/player';
 import * as trade from '../core/trade';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import Player from './views/Player';
@@ -15,20 +16,15 @@ function get(ctx) {
 
 async function updatePlayer(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || !state.retired) {
-        let [p, events1, events2] = await Promise.all([
+        let [p, events] = await Promise.all([
             g.dbl.players.get(inputs.pid).then(p2 => {
                 return player.withStats(null, [p2], {
                     statsSeasons: "all",
                     statsPlayoffs: true,
                 }).then(players => players[0]);
             }),
-            g.dbl.events.index('pids').getAll(inputs.pid),
-            g.cache.getAll('events'),
+            await getCopy.events({pid: inputs.pid}),
         ]);
-
-        let events = events1.concat(events2.filter((event) => {
-            return event.pids.includes(inputs.pid);
-        }));
 
         p = player.filter(p, {
             attrs: ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "age", "hgtFt", "hgtIn", "weight", "born", "diedYear", "contract", "draft", "face", "mood", "injury", "salaries", "salariesTotal", "awardsGrouped", "freeAgentMood", "imgURL", "watch", "gamesUntilTradable", "college"],

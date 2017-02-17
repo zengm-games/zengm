@@ -1,6 +1,7 @@
 // @flow
 
 import g from '../globals';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import EventLog from './views/EventLog';
@@ -24,12 +25,7 @@ async function updateEventLog(inputs, updateEvents, state) {
 
         if (events.length === 0) {
             // Show all events, newest at top
-            events = helpers.deepCopy([]
-                .concat(await g.dbl.events.index('season').getAll(inputs.season))
-                .concat(await g.cache.getAll('events'))
-                .filter((event) => {
-                    return event.season === inputs.season;
-                }));
+            events = await getCopy.events({season: inputs.season});
             events.reverse(); // Newest first
 
             // Filter by team

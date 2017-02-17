@@ -271,7 +271,7 @@ const getCopy = async ({
     playoffs = false,
     regularSeason = true,
     statType = 'perGame',
-}: TeamOptions & {tid?: number}): Promise<TeamFiltered | TeamFiltered[]> => {
+}: TeamOptions & {tid?: number} = {}): Promise<TeamFiltered | TeamFiltered[]> => {
     const options = {
         season,
         attrs,

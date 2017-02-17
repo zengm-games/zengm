@@ -36,9 +36,6 @@ rewrite team.filter and player.filter
   - replace team.filter
   - types for Attrs
   - types for season/statType/playoffs options, which only have affect based on other options
-- db.getCopy.events
-  - some options needed
-  - transactions.js, player.js
 
 what about mutation without a put/add, how to handle indexes in cache? need trigger for any mutation that will change cache
 - or, maybe require a put after a mutation, just for consistency/safety. still no way to enforce, though..

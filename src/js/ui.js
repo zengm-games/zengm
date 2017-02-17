@@ -116,7 +116,7 @@ async function updatePlayMenu(tx?: BackboardTx) {
     }
 
     const [unreadMessage, gamesInProgress, negotiationInProgress, phaseChangeInProgress] = await Promise.all([
-        lock.unreadMessage(tx),
+        lock.unreadMessage(),
         lock.gamesInProgress(),
         lock.negotiationInProgress(tx),
         lock.phaseChangeInProgress(),

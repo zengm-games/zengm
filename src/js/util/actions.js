@@ -23,7 +23,7 @@ const negotiate = async (pid: number) => {
     // If there is no active negotiation with this pid, create it
     const negotiation = await g.dbl.negotiations.get(pid);
     if (!negotiation) {
-        const error = await g.dbl.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite", tx => {
+        const error = await g.dbl.tx(["messages", "negotiations", "players"], "readwrite", tx => {
             return contractNegotiation.create(tx, pid, false);
         });
         if (error !== undefined && error) {
@@ -112,12 +112,12 @@ const playAmount = async (amount: 'day' | 'week' | 'month' | 'untilPreseason') =
 };
 
 const playStop = async () => {
-    await league.setGameAttributesComplete({stopGames: true});
+    await league.setGameAttributes({stopGames: true});
     if (g.phase !== g.PHASE.FREE_AGENCY) {
         // This is needed because we can't be sure if core.game.play will be called again
         ui.updateStatus("Idle");
     }
-    await league.setGameAttributesComplete({gamesInProgress: false});
+    await league.setGameAttributes({gamesInProgress: false});
     ui.updatePlayMenu(null);
 };
 
@@ -201,7 +201,7 @@ const playMenu = {
     },
 
     stopAuto: async () => {
-        await league.setGameAttributesComplete({autoPlaySeasons: 0});
+        await league.setGameAttributes({autoPlaySeasons: 0});
         ui.updatePlayMenu(null);
         await playStop();
     },

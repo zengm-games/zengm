@@ -95,7 +95,7 @@ class EditTeamInfo extends React.Component {
 
             await league.updateMetaNameRegion(userName, userRegion);
 
-            await league.setGameAttributesComplete({
+            await league.setGameAttributes({
                 teamAbbrevsCache: newTeams.map(t => t.abbrev),
                 teamRegionsCache: newTeams.map(t => t.region),
                 teamNamesCache: newTeams.map(t => t.name),
@@ -154,7 +154,7 @@ class EditTeamInfo extends React.Component {
 
         await league.updateMetaNameRegion(userName, userRegion);
 
-        await league.setGameAttributesComplete({
+        await league.setGameAttributes({
             teamAbbrevsCache: this.state.teams.map(t => t.abbrev),
             teamRegionsCache: this.state.teams.map(t => t.region),
             teamNamesCache: this.state.teams.map(t => t.name),

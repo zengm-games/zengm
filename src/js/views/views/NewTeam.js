@@ -34,7 +34,7 @@ class NewTeam extends React.Component {
         ui.updateStatus("Idle");
         ui.updatePlayMenu(null);
 
-        await league.setGameAttributesComplete({
+        await league.setGameAttributes({
             gameOver: false,
             userTid: this.state.tid,
             userTids: [this.state.tid],

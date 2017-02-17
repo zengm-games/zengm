@@ -21,7 +21,7 @@ const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEv
         // league.loadGameAttribute cannot be used to check for a new lastDbChange because we need to have the old g.lastDbChange available right up to the last moment possible, for cases where league.loadGameAttribute might be blocked during a slow page refresh, as happens when viewing player rating and stat distributions. Otherwise, an extra refresh would occur with a stale lastDbChange.
         const lastDbChange = await g.dbl.gameAttributes.get("lastDbChange");
         if (g.lastDbChange !== lastDbChange.value) {
-            await league.loadGameAttributes(null);
+            await league.loadGameAttributes();
             //leagueContentEl.innerHTML = "&nbsp;";  // Blank doesn't work, for some reason
             ui.realtimeUpdate(["dbChange"], undefined, async () => {
                 await ui.updatePlayMenu(null);
@@ -53,10 +53,9 @@ const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEv
         }
 
         await connectLeague(g.lid);
-        await league.loadGameAttributes(null);
-
         g.cache = new Cache();
         await g.cache.fill();
+        await league.loadGameAttributes();
 
         // Update play menu
         ui.updateStatus();

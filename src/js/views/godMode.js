@@ -8,7 +8,7 @@ import GodMode from './views/GodMode';
 async function updateGodMode(inputs, updateEvents) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('toggleGodMode')) {
         // Make sure it's current
-        await league.loadGameAttributes(null);
+        await league.loadGameAttributes();
 
         return {
             godMode: g.godMode,

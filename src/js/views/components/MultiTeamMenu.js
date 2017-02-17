@@ -8,7 +8,7 @@ import * as league from '../../core/league';
 const handleChange = async (e: SyntheticInputEvent) => {
     const userTid = parseInt(e.target.value, 10);
 
-    await league.setGameAttributesComplete({
+    await league.setGameAttributes({
         userTid,
     });
     g.emitter.emit('updateMultiTeam');

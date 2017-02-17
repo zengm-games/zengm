@@ -16,7 +16,7 @@ import * as season from './season';
 import * as team from './team';
 import * as helpers from '../util/helpers';
 import * as random from '../util/random';
-import type {BackboardTx, GameAttributeKeyDynamic, GameAttributes, Player, PlayerWithoutPid} from '../util/types';
+import type {GameAttributeKeyDynamic, GameAttributes, Player, PlayerWithoutPid} from '../util/types';
 
 const defaultGameAttributes: GameAttributes = {
     phase: 0,
@@ -83,7 +83,7 @@ function merge(x: Object[], y: Object[]): Object[] {
  * @param {Object} gameAttributes Each property in the object will be inserted/updated in the database with the key of the object representing the key in the database.
  * @returns {Promise} Promise for when it finishes.
  */
-async function setGameAttributes(tx: BackboardTx, gameAttributes: GameAttributes) {
+async function setGameAttributes(gameAttributes: GameAttributes) {
     const toUpdate = [];
     for (const key of helpers.keys(gameAttributes)) {
         if (g[key] !== gameAttributes[key]) {
@@ -92,7 +92,7 @@ async function setGameAttributes(tx: BackboardTx, gameAttributes: GameAttributes
     }
 
     await Promise.all(toUpdate.map(async (key) => {
-        await tx.gameAttributes.put({
+        await g.cache.put('gameAttributes', {
             key,
             value: gameAttributes[key],
         });
@@ -105,15 +105,10 @@ async function setGameAttributes(tx: BackboardTx, gameAttributes: GameAttributes
     }
 }
 
-// Calls setGameAttributes and ensures transaction is complete. Otherwise, manual transaction managment would always need to be there like this
-async function setGameAttributesComplete(gameAttributes: GameAttributes) {
-    await g.dbl.tx("gameAttributes", "readwrite", tx => setGameAttributes(tx, gameAttributes));
-}
-
 // Call this after doing DB stuff so other tabs know there is new data.
 // Runs in its own transaction, shouldn't be waited for because this only influences other tabs
 function updateLastDbChange() {
-    setGameAttributesComplete({lastDbChange: Date.now()});
+    setGameAttributes({lastDbChange: Date.now()});
 }
 
 /**
@@ -203,11 +198,10 @@ async function create(
     // Clear old game attributes from g, to make sure the new ones are saved to the db in setGameAttributes
     helpers.resetG();
 
-    await setGameAttributesComplete(gameAttributes);
-
-    // Cache depends on g.season, so need to wait until here to fill it
     g.cache = new Cache();
-    await g.cache.fill();
+    await g.cache.fill(gameAttributes.season);
+
+    await setGameAttributes(gameAttributes);
 
     let players;
     let scoutingRank;
@@ -620,9 +614,8 @@ async function updateMetaNameRegion(name: string, region: string) {
  * @param {string} key Key in gameAttributes to load the value for.
  * @return {Promise}
  */
-async function loadGameAttribute(tx: ?BackboardTx, key: GameAttributeKeyDynamic) {
-    const dbOrTx = tx !== undefined && tx !== null ? tx : g.dbl;
-    const gameAttribute = await dbOrTx.gameAttributes.get(key);
+async function loadGameAttribute(key: GameAttributeKeyDynamic) {
+    const gameAttribute = await g.cache.get('gameAttributes', key);
 
     if (gameAttribute === undefined) {
         throw new Error(`Unknown game attribute: ${key}`);
@@ -647,13 +640,10 @@ async function loadGameAttribute(tx: ?BackboardTx, key: GameAttributeKeyDynamic)
 /**
  * Load game attributes from the database and update the global variable g.
  *
- * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on gameAttributes; if null is passed, then a new transaction will be used.
  * @return {Promise}
  */
-async function loadGameAttributes(tx: ?BackboardTx) {
-    const dbOrTx = tx !== undefined && tx !== null ? tx : g.dbl;
-
-    const gameAttributes = await dbOrTx.gameAttributes.getAll();
+async function loadGameAttributes() {
+    const gameAttributes = await g.cache.getAll('gameAttributes');
 
     for (let i = 0; i < gameAttributes.length; i++) {
         g[gameAttributes[i].key] = gameAttributes[i].value;
@@ -703,7 +693,7 @@ async function initAutoPlay() {
     const numSeasons = parseInt(result, 10);
 
     if (Number.isInteger(numSeasons)) {
-        await setGameAttributesComplete({autoPlaySeasons: numSeasons});
+        await setGameAttributes({autoPlaySeasons: numSeasons});
         autoPlay();
     }
 }
@@ -713,7 +703,6 @@ export {
     exportLeague,
     remove,
     setGameAttributes,
-    setGameAttributesComplete,
     updateMetaNameRegion,
     loadGameAttribute,
     loadGameAttributes,

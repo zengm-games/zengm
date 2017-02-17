@@ -16,7 +16,7 @@ import type {BackboardTx} from '../util/types';
  * Start a new contract negotiation with a player.
  *
  * @memberOf core.contractNegotiation
- * @param {IDBTransaction} tx An IndexedDB transaction on gameAttributes, messages, negotiations, and players, readwrite.
+ * @param {IDBTransaction} tx An IndexedDB transaction on messages, negotiations, and players, readwrite.
  * @param {number} pid An integer that must correspond with the player ID of a free agent.
  * @param {boolean} resigning Set to true if this is a negotiation for a contract extension, which will allow multiple simultaneous negotiations. Set to false otherwise.
  * @param {number=} tid Team ID the contract negotiation is with. This only matters for Multi Team Mode. If undefined, defaults to g.userTid.
@@ -73,7 +73,7 @@ async function create(tx: BackboardTx, pid: number, resigning: boolean, tid: num
  * Cancel contract negotiations with a player.
  */
 async function cancel(pid: number) {
-    await g.dbl.tx(["gameAttributes", "messages", "negotiations"], "readwrite", async tx => {
+    await g.dbl.tx(["messages", "negotiations"], "readwrite", async tx => {
         await tx.negotiations.delete(pid);
         const negotiationInProgress = await lock.negotiationInProgress(tx);
         if (!negotiationInProgress) {
@@ -95,7 +95,7 @@ async function cancel(pid: number) {
  * Currently, the only time there should be multiple ongoing negotiations in the first place is when a user is re-signing players at the end of the season, although that should probably change eventually.
  *
  * @memberOf core.contractNegotiation
- * @param {IDBTransaction} tx An IndexedDB transaction on gameAttributes, messages, and negotiations, readwrite.
+ * @param {IDBTransaction} tx An IndexedDB transaction on messages and negotiations, readwrite.
  * @return {Promise}
  */
 async function cancelAll(tx: BackboardTx) {

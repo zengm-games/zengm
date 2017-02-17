@@ -9,131 +9,11 @@ import type {BackboardTx, Player} from '../util/types';
 type Status = 'empty' | 'error' | 'filling' | 'flushing' | 'full';
 
 // Only these IDB object stores for now. Keep in memory only player info for non-retired players and team info for the current season.
-type Store = 'events' | 'games' | 'messages' | 'playerFeats' | 'playerStats' | 'players' | 'releasedPlayers' | 'schedule' | 'teamSeasons' | 'teamStats' | 'teams';
+type Store = 'events' | 'gameAttributes' | 'games' | 'messages' | 'playerFeats' | 'playerStats' | 'players' | 'releasedPlayers' | 'schedule' | 'teamSeasons' | 'teamStats' | 'teams';
 type Index = 'playerStats' | 'playerStatsAllByPid' | 'playerStatsByPid' | 'playersByTid' | 'releasedPlayers' | 'releasedPlayersByTid' | 'teamSeasonsBySeasonTid' | 'teamSeasonsByTidSeason' | 'teamStatsByPlayoffsTid';
 
 // This variable is only needed because Object.keys(storeInfos) is not handled well in Flow
-const STORES: Store[] = ['events', 'games', 'messages', 'playerFeats', 'playerStats', 'players', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams'];
-
-const storeInfos: {
-    [key: Store]: {
-        pk: string,
-        getData: (BackboardTx, Player[]) => Promise<any[]>,
-        indexes?: {
-            name: Index,
-            filter?: (any) => boolean,
-            key: (any) => string,
-            unique?: boolean,
-        }[],
-    },
-} = {
-    events: {
-        pk: 'eid',
-        getData: () => [], // No need to store any in cache except new ones
-    },
-    games: {
-        pk: 'gid',
-
-        // Current season
-        getData: (tx: BackboardTx) => tx.games.index('season').getAll(g.season),
-    },
-    messages: {
-        pk: 'mid',
-        getData: () => [], // No need to store any in cache except new ones
-    },
-    playerFeats: {
-        pk: 'fid',
-        getData: () => [], // No need to store any in cache except new ones
-    },
-    playerStats: {
-        pk: 'psid',
-
-        getData: async (tx: BackboardTx, players: Player[]) => {
-            const psNested = await Promise.all(players.map((p) => {
-                return tx.playerStats
-                    .index('pid, season, tid')
-                    .getAll(backboard.bound([p.pid, g.season - 1], [p.pid, g.season, '']));
-            }));
-
-            // Flatten
-            const psRows = [].concat(...psNested);
-
-            return orderBy(psRows, 'psid');
-        },
-
-        indexes: [{
-            // Only save latest stats row for each player (so playoff stats if available, and latest team if traded mid-season)
-            name: 'playerStatsByPid',
-            filter: (row) => row.season === g.season,
-            key: (row) => String(row.pid),
-            unique: true,
-        }, {
-            name: 'playerStatsAllByPid',
-            filter: (row) => !row.playoffs,
-            key: (row) => String(row.pid),
-        }],
-    },
-    players: {
-        pk: 'pid',
-        getData: (tx: BackboardTx, players: Player[]) => players,
-        indexes: [{
-            name: 'playersByTid',
-            key: (row) => String(row.tid),
-        }],
-    },
-    releasedPlayers: {
-        pk: 'rid',
-        getData: (tx: BackboardTx) => tx.releasedPlayers.getAll(),
-        indexes: [{
-            name: 'releasedPlayersByTid',
-            key: (row) => String(row.tid),
-        }],
-    },
-    schedule: {
-        pk: 'gid',
-        getData: (tx: BackboardTx) => tx.schedule.getAll(),
-    },
-    teamSeasons: {
-        pk: 'rid',
-
-        // Past 3 seasons
-        getData: (tx: BackboardTx) => {
-            return tx.teamSeasons
-                .index('season, tid')
-                .getAll(backboard.bound([g.season - 2], [g.season, '']));
-        },
-
-        indexes: [{
-            name: 'teamSeasonsBySeasonTid',
-            key: (row) => `${row.season},${row.tid}`,
-            unique: true,
-        }, {
-            name: 'teamSeasonsByTidSeason',
-            key: (row) => `${row.tid},${row.season}`,
-            unique: true,
-        }],
-    },
-    teamStats: {
-        pk: 'rid',
-
-        // Current season
-        getData: (tx: BackboardTx) => {
-            return tx.teamStats
-                .index('season, tid')
-                .getAll(backboard.bound([g.season], [g.season, '']));
-        },
-
-        indexes: [{
-            name: 'teamStatsByPlayoffsTid',
-            key: (row) => `${row.playoffs ? 1 : 0},${row.tid}`,
-            unique: true,
-        }],
-    },
-    teams: {
-        pk: 'tid',
-        getData: (tx: BackboardTx) => tx.teams.getAll(),
-    },
-};
+const STORES: Store[] = ['events', 'gameAttributes', 'games', 'messages', 'playerFeats', 'playerStats', 'players', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams'];
 
 class Cache {
     data: {[key: Store]: any};
@@ -141,6 +21,19 @@ class Cache {
     indexes: {[key: Index]: any};
     maxIds: {[key: Store]: number};
     status: Status;
+    storeInfos: {
+        [key: Store]: {
+            pk: string,
+            getData: (BackboardTx, Player[]) => Promise<any[]>,
+            indexes?: {
+                name: Index,
+                filter?: (any) => boolean,
+                key: (any) => string,
+                unique?: boolean,
+            }[],
+        },
+    };
+    season: ?number;
 
     constructor() {
         this.status = 'empty';
@@ -149,6 +42,120 @@ class Cache {
         this.deletes = {};
         this.indexes = {};
         this.maxIds = {};
+
+        this.storeInfos = {
+            events: {
+                pk: 'eid',
+                getData: () => [], // No need to store any in cache except new ones
+            },
+            gameAttributes: {
+                pk: 'key',
+
+                getData: (tx: BackboardTx) => tx.gameAttributes.getAll(),
+            },
+            games: {
+                pk: 'gid',
+
+                // Current season
+                getData: (tx: BackboardTx) => tx.games.index('season').getAll(this.season),
+            },
+            messages: {
+                pk: 'mid',
+                getData: () => [], // No need to store any in cache except new ones
+            },
+            playerFeats: {
+                pk: 'fid',
+                getData: () => [], // No need to store any in cache except new ones
+            },
+            playerStats: {
+                pk: 'psid',
+
+                getData: async (tx: BackboardTx, players: Player[]) => {
+                    const psNested = await Promise.all(players.map((p) => {
+                        return tx.playerStats
+                            .index('pid, season, tid')
+                            .getAll(backboard.bound([p.pid, this.season - 1], [p.pid, this.season, '']));
+                    }));
+
+                    // Flatten
+                    const psRows = [].concat(...psNested);
+
+                    return orderBy(psRows, 'psid');
+                },
+
+                indexes: [{
+                    // Only save latest stats row for each player (so playoff stats if available, and latest team if traded mid-season)
+                    name: 'playerStatsByPid',
+                    filter: (row) => row.season === this.season,
+                    key: (row) => String(row.pid),
+                    unique: true,
+                }, {
+                    name: 'playerStatsAllByPid',
+                    filter: (row) => !row.playoffs,
+                    key: (row) => String(row.pid),
+                }],
+            },
+            players: {
+                pk: 'pid',
+                getData: (tx: BackboardTx, players: Player[]) => players,
+                indexes: [{
+                    name: 'playersByTid',
+                    key: (row) => String(row.tid),
+                }],
+            },
+            releasedPlayers: {
+                pk: 'rid',
+                getData: (tx: BackboardTx) => tx.releasedPlayers.getAll(),
+                indexes: [{
+                    name: 'releasedPlayersByTid',
+                    key: (row) => String(row.tid),
+                }],
+            },
+            schedule: {
+                pk: 'gid',
+                getData: (tx: BackboardTx) => tx.schedule.getAll(),
+            },
+            teamSeasons: {
+                pk: 'rid',
+
+                // Past 3 seasons
+                getData: (tx: BackboardTx) => {
+                    return tx.teamSeasons
+                        .index('season, tid')
+                        .getAll(backboard.bound([this.season - 2], [this.season, '']));
+                },
+
+                indexes: [{
+                    name: 'teamSeasonsBySeasonTid',
+                    key: (row) => `${row.season},${row.tid}`,
+                    unique: true,
+                }, {
+                    name: 'teamSeasonsByTidSeason',
+                    key: (row) => `${row.tid},${row.season}`,
+                    unique: true,
+                }],
+            },
+            teamStats: {
+                pk: 'rid',
+
+                // Current season
+                getData: (tx: BackboardTx) => {
+                    return tx.teamStats
+                        .index('season, tid')
+                        .getAll(backboard.bound([this.season], [this.season, '']));
+                },
+
+                indexes: [{
+                    name: 'teamStatsByPlayoffsTid',
+                    key: (row) => `${row.playoffs ? 1 : 0},${row.tid}`,
+                    unique: true,
+                }],
+            },
+            teams: {
+                pk: 'tid',
+                getData: (tx: BackboardTx) => tx.teams.getAll(),
+            },
+        };
     }
 
     checkStatus(...validStatuses: Status[]) {
@@ -162,7 +169,7 @@ class Cache {
     }
 
     async loadStore(store: Store, tx: BackboardTx, players: Player[]) {
-        const storeInfo = storeInfos[store];
+        const storeInfo = this.storeInfos[store];
 
         // Load data and do maxIds calculation in parallel
         await Promise.all([
@@ -213,11 +220,21 @@ class Cache {
     }
 
     // Load database from disk and save in cache, wiping out any prior values in cache
-    async fill() {
+    async fill(season?: number) {
         this.checkStatus('empty', 'full');
         this.setStatus('filling');
 
         this.data = {};
+
+        // This is crap and should be fixed ASAP
+        this.season = season !== undefined ? season : g.season;
+        if (this.season === undefined) {
+            const seasonAttr = await g.dbl.gameAttributes.get('season');
+            this.season = seasonAttr.value;
+        }
+        if (this.season === undefined) {
+            throw new Error('Undefined season');
+        }
 
         await g.dbl.tx(STORES, async (tx) => {
             // Non-retired players - this is special because it's used for players and playerStats
@@ -297,7 +314,7 @@ class Cache {
         if (['events', 'games', 'messages', 'playerFeats', 'schedule'].includes(store)) {
             // This works if no indexes
 
-            const pk = storeInfos[store].pk;
+            const pk = this.storeInfos[store].pk;
             if (obj.hasOwnProperty(pk)) {
                 if (this.data[store][obj[pk]]) {
                     throw new Error(`Primary key ${obj[pk]} already exists in "${store}"`);
@@ -320,7 +337,7 @@ class Cache {
 
             this.data.playerStats[obj.psid] = obj;
 
-            if (obj.season === g.season) {
+            if (obj.season === this.season) {
                 this.indexes.playerStatsByPid[obj.pid] = obj;
             }
 
@@ -333,6 +350,24 @@ class Cache {
             }
         } else {
             throw new Error(`Cache.add not implemented for store "${store}"`);
+        }
+    }
+
+    async put(store: Store, obj: any) {
+        this.checkStatus('full');
+
+        const pk = this.storeInfos[store].pk;
+
+        if (['gameAttributes'].includes(store)) {
+            // This works if no indexes and no auto incrementing primary key
+
+            if (!obj.hasOwnProperty(pk)) {
+                throw new Error(`Cannot put "${store}" object without primary key "${pk}": ${JSON.stringify(obj)}`);
+            }
+
+            this.data[store][obj[pk]] = obj;
+        } else {
+            throw new Error(`Cache.put not implemented for store "${store}"`);
         }
     }
 
@@ -356,7 +391,7 @@ class Cache {
 
         if (store === 'schedule') {
             for (const key of Object.keys(this.data[store])) {
-                delete this.data[store][storeInfos[store].pk];
+                delete this.data[store][this.storeInfos[store].pk];
                 this.deletes[store].add(key);
             }
         } else {

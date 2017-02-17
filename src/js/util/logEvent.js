@@ -78,7 +78,7 @@ const logEvent = ({
 
             // Persistent notifications are very rare and should stop game sim when displayed
             if (persistent && g.autoPlaySeasons <= 0) {
-                league.setGameAttributesComplete({stopGames: true});
+                league.setGameAttributes({stopGames: true});
             }
         }
     }

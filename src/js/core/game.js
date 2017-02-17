@@ -605,7 +605,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
     // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season
     const cbNoGames = async () => {
         ui.updateStatus("Idle");
-        await league.setGameAttributesComplete({gamesInProgress: false});
+        await league.setGameAttributes({gamesInProgress: false});
         await ui.updatePlayMenu(null);
         ui.realtimeUpdate(["g.gamesInProgress"]);
 
@@ -759,14 +759,14 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
     const cbRunDay = async () => {
         if (numDays > 0) {
             // Hit the DB to check stopGames in case it came from another tab
-            await league.loadGameAttribute(null, "stopGames");
+            await league.loadGameAttribute('stopGames');
 
             // If we didn't just stop games, let's play
             // Or, if we are starting games (and already passed the lock), continue even if stopGames was just seen
             if (start || !g.stopGames) {
                 // If start is set, then reset stopGames
                 if (g.stopGames) {
-                    await league.setGameAttributesComplete({stopGames: false});
+                    await league.setGameAttributes({stopGames: false});
                 }
 
                 if (g.phase !== g.PHASE.PLAYOFFS) {
@@ -792,7 +792,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
         if (canStartGames) {
             const userTeamSizeError = await team.checkRosterSizes();
             if (userTeamSizeError === null) {
-                await league.setGameAttributesComplete({gamesInProgress: true});
+                await league.setGameAttributes({gamesInProgress: true});
                 await ui.updatePlayMenu(null);
                 ui.realtimeUpdate(["g.gamesInProgress"]);
                 cbRunDay();

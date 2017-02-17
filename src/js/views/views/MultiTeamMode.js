@@ -26,7 +26,7 @@ class MultiTeamMode extends React.Component {
             if (!newUserTids.includes(g.userTid)) {
                 gameAttributes.userTid = newUserTids[0];
             }
-            await league.setGameAttributesComplete(gameAttributes);
+            await league.setGameAttributes(gameAttributes);
 
             if (newUserTids.length === 1) {
                 league.updateMetaNameRegion(g.teamNamesCache[newUserTids[0]], g.teamRegionsCache[newUserTids[0]]);

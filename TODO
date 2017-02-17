@@ -4,6 +4,7 @@ get league creation working
 - cache used in league creation, then flush before redirect or viewHelpers will reload cache with no flush
 
 if i can gracefully handle absence of g.season etc, put cache creation inside connectLeague
+- not graceful now, see fill(season)
 
 get tests working
 - db.getCopy.teams
@@ -12,6 +13,8 @@ get tests working
   - confirm getAll updates from cache
 
 how do caches based on g.season work in preseason?
+
+revisit add.. move stuff to put
 
 rewrite team.filter and player.filter
 - incorporate player.withStats
@@ -45,7 +48,6 @@ other stores
 -trade
 -draftOrder
 -negotiations
--gameAttributes
 -draftPicks
 
 refactor
@@ -64,6 +66,7 @@ league creation
 - fill cache, then flush
 
 when to fill/flush? phases, games, user interaction
+- maybe even less often, should be entirely capable of running with all writes to the cache and only reading from archived IDB
 
 how to handle data not in cache?
 
@@ -78,11 +81,15 @@ make sure all player.value calls happen with full cache or psOverride
 
 make cache synchronous? it'll be faster, any problems though?
 
+get rid of teamAbbrevsCache, etc?
+
 revisit lock system
 
 confirm ywt works
 
 fantasy draft
+
+revisit g, which is basically another kind of ad hoc cache
 
 ----
 

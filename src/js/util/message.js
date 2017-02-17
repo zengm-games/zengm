@@ -141,10 +141,7 @@ ovr[2] = [
     "Anyway, overall I'm happy with the progress you've made, but I need to get back to {{activity}}.",
 ];
 
-/**
- * @param {IDBTransaction} tx An IndexedDB transaction on gameAttributes and messages, readwrite.
- */
-async function generate(tx: BackboardTx, deltas: OwnerMoodDeltas) {
+async function generate(deltas: OwnerMoodDeltas) {
     // If auto play seasons or multi team mode, no messages
     if (g.autoPlaySeasons > 0 || g.userTids.length > 1) {
         return;
@@ -155,7 +152,7 @@ async function generate(tx: BackboardTx, deltas: OwnerMoodDeltas) {
     let m;
     if (g.showFirstOwnerMessage) {
         m = random.choice(first);
-        league.setGameAttributes(tx, {showFirstOwnerMessage: false}); // Okay that this is async, since it won't be called again until much later
+        league.setGameAttributes({showFirstOwnerMessage: false}); // Okay that this is async, since it won't be called again until much later
     } else {
         const activity1 = random.choice(activities);
         let activity2 = random.choice(activities);
@@ -253,7 +250,7 @@ async function generate(tx: BackboardTx, deltas: OwnerMoodDeltas) {
     }
 
     // Fired!
-    await league.setGameAttributes(tx, {
+    await league.setGameAttributes({
         gameOver: true,
         showFirstOwnerMessage: true,
     });

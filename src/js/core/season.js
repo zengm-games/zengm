@@ -18,7 +18,7 @@ import type {BackboardTx, OwnerMoodDeltas, ScheduleGame, Team} from '../util/typ
  * This is based on three factors: regular season performance, playoff performance, and finances. Designed to be called after the playoffs end.
  *
  * @memberOf core.season
- * @param {(IDBTransaction|null)} tx An IndexedDB transaction on gameAttributes and and teams, readwrite.
+ * @param {(IDBTransaction|null)} tx An IndexedDB transaction on teams, readwrite.
  * @return {Promise.Object} Resolves to an object containing the changes in g.ownerMood this season.
  */
 async function updateOwnerMood(tx?: BackboardTx): Promise<OwnerMoodDeltas> {
@@ -52,7 +52,7 @@ async function updateOwnerMood(tx?: BackboardTx): Promise<OwnerMoodDeltas> {
         if (ownerMood.playoffs > 1) { ownerMood.playoffs = 1; }
         if (ownerMood.money > 1) { ownerMood.money = 1; }
 
-        await league.setGameAttributes(tx, {ownerMood});
+        await league.setGameAttributes({ownerMood});
     }
 
     return deltas;

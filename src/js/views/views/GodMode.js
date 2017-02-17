@@ -66,7 +66,7 @@ class GodMode extends React.Component {
     async handleFormSubmit(e) {
         e.preventDefault();
 
-        await league.setGameAttributesComplete({
+        await league.setGameAttributes({
             disableInjuries: this.state.disableInjuries === 'true',
             numGames: parseInt(this.state.numGames, 10),
             quarterLength: parseFloat(this.state.quarterLength),
@@ -100,7 +100,7 @@ class GodMode extends React.Component {
             attrs.godModeInPast = true;
         }
 
-        await league.setGameAttributesComplete(attrs);
+        await league.setGameAttributes(attrs);
 
         league.updateLastDbChange();
         ui.realtimeUpdate(["toggleGodMode"]);

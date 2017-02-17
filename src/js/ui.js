@@ -52,7 +52,7 @@ function realtimeUpdate(updateEvents: UpdateEvents = [], url?: string, cb?: Func
 * Update play menu options based on game state.
 *
 * @memberOf ui
-* @param {IDBTransaction|null} ot An IndexedDB transaction on gameAttributes, messages, and negotiations; if null is passed, then a new transaction will be used.
+* @param {IDBTransaction|null} ot An IndexedDB transaction on messages, and negotiations; if null is passed, then a new transaction will be used.
 * @return {Promise}
 */
 async function updatePlayMenu(tx?: BackboardTx) {
@@ -117,9 +117,9 @@ async function updatePlayMenu(tx?: BackboardTx) {
 
     const [unreadMessage, gamesInProgress, negotiationInProgress, phaseChangeInProgress] = await Promise.all([
         lock.unreadMessage(tx),
-        lock.gamesInProgress(tx),
+        lock.gamesInProgress(),
         lock.negotiationInProgress(tx),
-        lock.phaseChangeInProgress(tx),
+        lock.phaseChangeInProgress(),
     ]);
 
     if (unreadMessage) {
@@ -166,7 +166,7 @@ async function updateStatus(statusText?: string) {
     if (statusText === undefined) {
         g.emitter.emit('updateTopMenu', {statusText: oldStatus});
     } else if (statusText !== oldStatus) {
-        await league.setGameAttributesComplete({statusText});
+        await league.setGameAttributes({statusText});
         g.emitter.emit('updateTopMenu', {statusText});
     }
 }
@@ -185,7 +185,7 @@ async function updatePhase(phaseText?: string) {
     if (phaseText === undefined) {
         g.emitter.emit('updateTopMenu', {phaseText: oldPhaseText});
     } else if (phaseText !== oldPhaseText) {
-        await league.setGameAttributesComplete({phaseText});
+        await league.setGameAttributes({phaseText});
         g.emitter.emit('updateTopMenu', {phaseText});
 
         // Update phase in meta database. No need to have this block updating the UI or anything.

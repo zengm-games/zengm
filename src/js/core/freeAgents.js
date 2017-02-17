@@ -195,7 +195,7 @@ function refuseToNegotiate(amount: number, mood: number): boolean {
 async function play(numDays: number, start?: boolean = true) {
     // This is called when there are no more days to play, either due to the user's request (e.g. 1 week) elapsing or at the end of free agency.
     const cbNoDays = async () => {
-        await league.setGameAttributesComplete({gamesInProgress: false});
+        await league.setGameAttributes({gamesInProgress: false});
         await ui.updatePlayMenu(null);
         ui.realtimeUpdate(["g.gamesInProgress"]);
 
@@ -212,7 +212,7 @@ async function play(numDays: number, start?: boolean = true) {
         const cbYetAnother = async () => {
             await decreaseDemands();
             await autoSign();
-            await league.setGameAttributesComplete({daysLeft: g.daysLeft - 1, lastDbChange: Date.now()});
+            await league.setGameAttributes({daysLeft: g.daysLeft - 1, lastDbChange: Date.now()});
             if (g.daysLeft > 0 && numDays > 0) {
                 ui.realtimeUpdate(["playerMovement"], undefined, () => {
                     ui.updateStatus(`${g.daysLeft} days left`);
@@ -227,7 +227,7 @@ async function play(numDays: number, start?: boolean = true) {
         // Or, if we are starting games (and already passed the lock), continue even if stopGames was just seen
         if (numDays > 0 && (start || !g.stopGames)) {
             if (g.stopGames) {
-                await league.setGameAttributesComplete({stopGames: false});
+                await league.setGameAttributes({stopGames: false});
             }
             cbYetAnother();
         } else {
@@ -241,7 +241,7 @@ async function play(numDays: number, start?: boolean = true) {
     if (start) {
         const canStartGames = await lock.canStartGames(null);
         if (canStartGames) {
-            await league.setGameAttributesComplete({gamesInProgress: true});
+            await league.setGameAttributes({gamesInProgress: true});
             await ui.updatePlayMenu(null);
             ui.realtimeUpdate(["g.gamesInProgress"]);
             cbRunDay();

@@ -36,7 +36,7 @@ let phaseChangeTx;
  */
 async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = []) {
     // Set phase before updating play menu
-    await league.setGameAttributesComplete({
+    await league.setGameAttributes({
         phase,
         phaseChangeInProgress: false,
     });
@@ -59,7 +59,7 @@ async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = 
 
 async function newPhasePreseason(tx: BackboardTx) {
     await freeAgents.autoSign(tx);
-    await league.setGameAttributes(tx, {season: g.season + 1});
+    await league.setGameAttributes({season: g.season + 1});
 
     const tids: number[] = _.range(g.numTeams);
 
@@ -102,7 +102,7 @@ async function newPhasePreseason(tx: BackboardTx) {
     });
 
     if (g.autoPlaySeasons > 0) {
-        await league.setGameAttributes(tx, {autoPlaySeasons: g.autoPlaySeasons - 1});
+        await league.setGameAttributes({autoPlaySeasons: g.autoPlaySeasons - 1});
     }
 
     if (g.enableLogging && !window.inCordova) {
@@ -118,7 +118,7 @@ async function newPhaseRegularSeason(tx: BackboardTx) {
 
     // First message from owner
     if (g.showFirstOwnerMessage) {
-        await message.generate(tx, {wins: 0, playoffs: 0, money: 0});
+        await message.generate({wins: 0, playoffs: 0, money: 0});
     } else {
         // Spam user with another message?
         if (localStorage.getItem('nagged') === 'true') {
@@ -342,7 +342,7 @@ async function newPhaseBeforeDraft(tx: BackboardTx) {
     account.checkAchievement.sleeper_pick();
 
     const deltas = await season.updateOwnerMood(tx);
-    await message.generate(tx, deltas);
+    await message.generate(deltas);
 
     // Don't redirect if we're viewing a live game now
     let url;
@@ -413,7 +413,7 @@ async function newPhaseResignPlayers(tx: BackboardTx) {
     });
 
     // Set daysLeft here because this is "basically" free agency, so some functions based on daysLeft need to treat it that way (such as the trade AI being more reluctant)
-    await league.setGameAttributes(tx, {daysLeft: 30});
+    await league.setGameAttributes({daysLeft: 30});
 
     return [helpers.leagueUrl(["negotiation"]), ["playerMovement"]];
 }
@@ -483,7 +483,7 @@ async function newPhaseFreeAgency(tx: BackboardTx) {
 async function newPhaseFantasyDraft(tx: BackboardTx, position: number) {
     await contractNegotiation.cancelAll(tx);
     await draft.genOrderFantasy(tx, position);
-    await league.setGameAttributes(tx, {nextPhase: g.phase});
+    await league.setGameAttributes({nextPhase: g.phase});
     await tx.releasedPlayers.clear();
 
     // Protect draft prospects from being included in this
@@ -521,11 +521,11 @@ async function newPhase(phase: Phase, extra: any) {
 
     const phaseChangeInfo = {
         [g.PHASE.PRESEASON]: {
-            objectStores: ["gameAttributes", "players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"],
+            objectStores: ["players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"],
             func: newPhasePreseason,
         },
         [g.PHASE.REGULAR_SEASON]: {
-            objectStores: ["gameAttributes", "schedule"],
+            objectStores: ["schedule"],
             func: newPhaseRegularSeason,
         },
         [g.PHASE.PLAYOFFS]: {
@@ -533,36 +533,36 @@ async function newPhase(phase: Phase, extra: any) {
             func: newPhasePlayoffs,
         },
         [g.PHASE.BEFORE_DRAFT]: {
-            objectStores: ["awards", "events", "gameAttributes", "messages", "players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"],
+            objectStores: ["awards", "events", "messages", "players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"],
             func: newPhaseBeforeDraft,
         },
         [g.PHASE.DRAFT]: {
-            objectStores: ["draftPicks", "draftOrder", "gameAttributes", "players", "teams", "teamSeasons", "teamStats"],
+            objectStores: ["draftPicks", "draftOrder", "players", "teams", "teamSeasons", "teamStats"],
             func: newPhaseDraft,
         },
         [g.PHASE.AFTER_DRAFT]: {
-            objectStores: ["draftPicks", "gameAttributes"],
+            objectStores: ["draftPicks"],
             func: newPhaseAfterDraft,
         },
         [g.PHASE.RESIGN_PLAYERS]: {
-            objectStores: ["gameAttributes", "messages", "negotiations", "players", "teams", "teamSeasons", "teamStats"],
+            objectStores: ["messages", "negotiations", "players", "teams", "teamSeasons", "teamStats"],
             func: newPhaseResignPlayers,
         },
         [g.PHASE.FREE_AGENCY]: {
-            objectStores: ["gameAttributes", "messages", "negotiations", "players", "teams", "teamSeasons", "teamStats"],
+            objectStores: ["messages", "negotiations", "players", "teams", "teamSeasons", "teamStats"],
             func: newPhaseFreeAgency,
         },
         [g.PHASE.FANTASY_DRAFT]: {
-            objectStores: ["draftOrder", "gameAttributes", "messages", "negotiations", "players", "releasedPlayers"],
+            objectStores: ["draftOrder", "messages", "negotiations", "players", "releasedPlayers"],
             func: newPhaseFantasyDraft,
         },
     };
 
-    const phaseChangeInProgress = await lock.phaseChangeInProgress(null);
+    const phaseChangeInProgress = await lock.phaseChangeInProgress();
     if (phaseChangeInProgress) {
         helpers.errorNotify("Phase change already in progress, maybe in another tab.");
     } else {
-        await league.setGameAttributesComplete({phaseChangeInProgress: true});
+        await league.setGameAttributes({phaseChangeInProgress: true});
         ui.updatePlayMenu(null);
 
         // In Chrome, this will update play menu in other windows. In Firefox, it won't because ui.updatePlayMenu gets blocked until phaseChangeTx finishes for some reason.
@@ -580,7 +580,7 @@ async function newPhase(phase: Phase, extra: any) {
                         phaseChangeTx.abort();
                     }
 
-                    await league.setGameAttributesComplete({phaseChangeInProgress: false});
+                    await league.setGameAttributes({phaseChangeInProgress: false});
                     await ui.updatePlayMenu(null);
                     logEvent({
                         type: "error",
@@ -614,7 +614,7 @@ async function abort() {
         helpers.errorNotify("If \"Abort\" doesn't work, check if you have another tab open.");
     } finally {
         // If another window has a phase change in progress, this won't do anything until that finishes
-        await league.setGameAttributesComplete({phaseChangeInProgress: false});
+        await league.setGameAttributes({phaseChangeInProgress: false});
         ui.updatePlayMenu(null);
     }
 }

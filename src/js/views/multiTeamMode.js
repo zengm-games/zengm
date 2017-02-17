@@ -8,7 +8,7 @@ import MultiTeamMode from './views/MultiTeamMode';
 async function updateMultiTeamMode(inputs, updateEvents) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('g.userTids')) {
         // Make sure it's current
-        await league.loadGameAttribute(null, "godMode");
+        await league.loadGameAttribute('godMode');
 
         const teams = [];
         for (let i = 0; i < g.numTeams; i++) {

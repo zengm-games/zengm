@@ -21,12 +21,12 @@ describe("core/contractNegotiation", () => {
     after(() => league.remove(g.lid));
     afterEach(() => {
         // Set to a trade with team 1 and no players;
-        return g.dbl.tx(['gameAttributes', 'messages', 'negotiations'], 'readwrite', tx => contractNegotiation.cancelAll(tx));
+        return g.dbl.tx(['messages', 'negotiations'], 'readwrite', tx => contractNegotiation.cancelAll(tx));
     });
 
     describe("#create()", () => {
         it("should start a negotiation with a free agent", () => {
-            return g.dbl.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite", async tx => {
+            return g.dbl.tx(["messages", "negotiations", "players"], "readwrite", async tx => {
                 const pid = 7;
 
                 await givePlayerMinContract(tx, pid);
@@ -40,7 +40,7 @@ describe("core/contractNegotiation", () => {
             });
         });
         it("should fail to start a negotiation with anyone but a free agent", () => {
-            return g.dbl.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite", async tx => {
+            return g.dbl.tx(["messages", "negotiations", "players"], "readwrite", async tx => {
                 const pid = 70;
 
                 await givePlayerMinContract(tx, pid);
@@ -53,7 +53,7 @@ describe("core/contractNegotiation", () => {
             });
         });
         it("should only allow one concurrent negotiation if resigning is false", () => {
-            return g.dbl.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite", async tx => {
+            return g.dbl.tx(["messages", "negotiations", "players"], "readwrite", async tx => {
                 const pid1 = 7;
                 const pid2 = 8;
 
@@ -76,7 +76,7 @@ describe("core/contractNegotiation", () => {
             });
         });
         it("should allow multiple concurrent negotiations if resigning is true", () => {
-            return g.dbl.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite", async tx => {
+            return g.dbl.tx(["messages", "negotiations", "players"], "readwrite", async tx => {
                 const pid1 = 7;
                 const pid2 = 8;
 
@@ -101,7 +101,7 @@ describe("core/contractNegotiation", () => {
         });
         // The use of txs here might cause race conditions
         it("should not allow a negotiation to start if there are already 15 players on the user's roster, unless resigning is true", () => {
-            return g.dbl.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite", async tx => {
+            return g.dbl.tx(["messages", "negotiations", "players"], "readwrite", async tx => {
                 const pid1 = 7;
                 const pid2 = 8;
 
@@ -134,7 +134,7 @@ describe("core/contractNegotiation", () => {
 
     describe("#accept()", () => {
         it("should not allow signing non-minimum contracts that cause team to exceed the salary cap", async () => {
-            await g.dbl.tx(["gameAttributes", "messages", "negotiations", "players"], "readwrite", async tx => {
+            await g.dbl.tx(["messages", "negotiations", "players"], "readwrite", async tx => {
                 const pid = 8;
 
                 await givePlayerMinContract(tx, pid);

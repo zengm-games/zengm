@@ -542,7 +542,7 @@ async function untilUserOrEnd() {
                     });
                 });
 
-                await league.setGameAttributesComplete({
+                await league.setGameAttributes({
                     phase: g.nextPhase,
                     nextPhase: null,
                 });

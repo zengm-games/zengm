@@ -50,7 +50,7 @@ async function updatePlayers(inputs, updateEvents) {
                 }
             }
 
-            const careerTeam = Object.keys(players[i].legacy).reduce((teamA, teamB) => players[i].legacy[teamA] > players[i].legacy[teamB] ? teamA : teamB)
+            const careerTeam = Object.keys(players[i].legacy).reduce((teamA, teamB) => (players[i].legacy[teamA] > players[i].legacy[teamB] ? teamA : teamB));
             players[i].legacy.abbrev = careerTeam;
         }
 
@@ -60,32 +60,7 @@ async function updatePlayers(inputs, updateEvents) {
     }
 }
 
-function uiFirst(vm) {
-    ui.title("Hall of Fame");
-
-    ko.computed(() => {
-        ui.datatable($("#hall-of-fame"), 2, vm.players().map(p => {
-            let pick;
-            if (p.draft.round > 0) {
-                pick = `${p.draft.round}-${p.draft.pick}`;
-            } else {
-                pick = '';
-            }
-            return [`<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a>`, p.ratings[p.ratings.length - 1].pos, String(p.draft.year), String(p.retiredYear), `<a href="${helpers.leagueUrl(["team_history", p.legacy.abbrev])}">${p.legacy.abbrev}</a>`, pick, String(p.peakOvr), String(p.bestStats.season), `<a href="${helpers.leagueUrl(["roster", p.bestStats.abbrev, p.bestStats.season])}">${p.bestStats.abbrev}</a>`, String(p.bestStats.gp), helpers.round(p.bestStats.min, 1), helpers.round(p.bestStats.pts, 1), helpers.round(p.bestStats.trb, 1), helpers.round(p.bestStats.ast, 1), helpers.round(p.bestStats.per, 1), String(p.careerStats.gp), helpers.round(p.careerStats.min, 1), helpers.round(p.careerStats.pts, 1), helpers.round(p.careerStats.trb, 1), helpers.round(p.careerStats.ast, 1), helpers.round(p.careerStats.per, 1), helpers.round(p.careerStats.ewa, 1), p.statsTids.indexOf(g.userTid) >= 0];
-        }), {
-            rowCallback(row, data) {
-                // Highlight players from the user's team
-                if (data[data.length - 1]) {
-                    row.classList.add("info");
-                }
-            },
-        });
-    }).extend({throttle: 1});
-
-    ui.tableClickableRows($("#hall-of-fame"));
-}
-
-module.exports = bbgmViewReact.init({
+export default bbgmViewReact.init({
     id: "hallOfFame",
     runBefore: [updatePlayers],
     Component: HallOfFame,

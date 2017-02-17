@@ -24,7 +24,7 @@ class Cache {
     storeInfos: {
         [key: Store]: {
             pk: string,
-            getData: (BackboardTx, Player[]) => Promise<any[]>,
+            getData?: (BackboardTx, Player[]) => Promise<any[]>,
             indexes?: {
                 name: Index,
                 filter?: (any) => boolean,
@@ -46,11 +46,9 @@ class Cache {
         this.storeInfos = {
             awards: {
                 pk: 'season',
-                getData: () => [], // No need to store any in cache except new ones
             },
             events: {
                 pk: 'eid',
-                getData: () => [], // No need to store any in cache except new ones
             },
             gameAttributes: {
                 pk: 'key',
@@ -65,11 +63,9 @@ class Cache {
             },
             messages: {
                 pk: 'mid',
-                getData: () => [], // No need to store any in cache except new ones
             },
             playerFeats: {
                 pk: 'fid',
-                getData: () => [], // No need to store any in cache except new ones
             },
             playerStats: {
                 pk: 'psid',
@@ -178,7 +174,8 @@ class Cache {
         // Load data and do maxIds calculation in parallel
         await Promise.all([
             (async () => {
-                const data = await storeInfo.getData(tx, players);
+                // No getData implies no need to store any records in cache except new ones
+                const data = storeInfo.getData ? await storeInfo.getData(tx, players) : [];
 
                 this.data[store] = {};
                 for (const row of data) {

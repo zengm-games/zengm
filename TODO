@@ -1,7 +1,5 @@
 IVERSON
 
-check page refresh for multi tab - overactive now?
-
 mergeByPk
 - should retain order of arrays, not sort by primary key. sometimes primary key is not what we want to sort by, or isn't available (like messages cache)
   - write my own implementation
@@ -100,6 +98,9 @@ confirm ywt works
 fantasy draft
 
 revisit g, which is basically another kind of ad hoc cache
+
+multi window
+- for now, disabled checkDbChange
 
 ----
 

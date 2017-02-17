@@ -33,7 +33,7 @@ class Cache {
             }[],
         },
     };
-    season: ?number;
+    season: number;
 
     constructor() {
         this.status = 'empty';

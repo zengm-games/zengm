@@ -19,6 +19,7 @@ const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEv
         }
 
         // league.loadGameAttribute cannot be used to check for a new lastDbChange because we need to have the old g.lastDbChange available right up to the last moment possible, for cases where league.loadGameAttribute might be blocked during a slow page refresh, as happens when viewing player rating and stat distributions. Otherwise, an extra refresh would occur with a stale lastDbChange.
+
         const lastDbChange = await g.dbl.gameAttributes.get("lastDbChange");
         if (g.lastDbChange !== lastDbChange.value) {
             await league.loadGameAttributes();
@@ -62,7 +63,7 @@ const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEv
         ui.updatePhase();
         await ui.updatePlayMenu(null);
         g.emitter.emit('updateTopMenu', {lid: g.lid});
-        checkDbChange(g.lid);
+        //checkDbChange(g.lid); // Currently not working
         return [updateEvents, ctxCb, undefined];
     }
 

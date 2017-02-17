@@ -4,7 +4,7 @@ import g from '../globals';
 import * as league from '../core/league';
 import * as helpers from './helpers';
 import * as random from './random';
-import type {BackboardTx, OwnerMoodDeltas} from './types';
+import type {OwnerMoodDeltas} from './types';
 
 // First message after new game
 const first = [

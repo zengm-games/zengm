@@ -252,7 +252,7 @@ async function doAwards(tx: BackboardTx) {
         awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Finals MVP"});
     }
 
-    await tx.awards.put(awards);
+    await g.cache.put('awards', awards);
     await saveAwardsByPlayer(awardsByPlayer);
 
     // None of this stuff needs to block, it's just notifications of crap

@@ -533,7 +533,7 @@ async function newPhase(phase: Phase, extra: any) {
             func: newPhasePlayoffs,
         },
         [g.PHASE.BEFORE_DRAFT]: {
-            objectStores: ["awards", "events", "messages", "players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"],
+            objectStores: ["events", "messages", "players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"],
             func: newPhaseBeforeDraft,
         },
         [g.PHASE.DRAFT]: {

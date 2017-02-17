@@ -9,11 +9,11 @@ import type {BackboardTx, Player} from '../util/types';
 type Status = 'empty' | 'error' | 'filling' | 'flushing' | 'full';
 
 // Only these IDB object stores for now. Keep in memory only player info for non-retired players and team info for the current season.
-type Store = 'events' | 'gameAttributes' | 'games' | 'messages' | 'playerFeats' | 'playerStats' | 'players' | 'releasedPlayers' | 'schedule' | 'teamSeasons' | 'teamStats' | 'teams';
+type Store = 'awards' | 'events' | 'gameAttributes' | 'games' | 'messages' | 'playerFeats' | 'playerStats' | 'players' | 'releasedPlayers' | 'schedule' | 'teamSeasons' | 'teamStats' | 'teams';
 type Index = 'playerStats' | 'playerStatsAllByPid' | 'playerStatsByPid' | 'playersByTid' | 'releasedPlayers' | 'releasedPlayersByTid' | 'teamSeasonsBySeasonTid' | 'teamSeasonsByTidSeason' | 'teamStatsByPlayoffsTid';
 
 // This variable is only needed because Object.keys(storeInfos) is not handled well in Flow
-const STORES: Store[] = ['events', 'gameAttributes', 'games', 'messages', 'playerFeats', 'playerStats', 'players', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams'];
+const STORES: Store[] = ['awards', 'events', 'gameAttributes', 'games', 'messages', 'playerFeats', 'playerStats', 'players', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams'];
 
 class Cache {
     data: {[key: Store]: any};
@@ -44,6 +44,10 @@ class Cache {
         this.maxIds = {};
 
         this.storeInfos = {
+            awards: {
+                pk: 'season',
+                getData: () => [], // No need to store any in cache except new ones
+            },
             events: {
                 pk: 'eid',
                 getData: () => [], // No need to store any in cache except new ones
@@ -358,7 +362,7 @@ class Cache {
 
         const pk = this.storeInfos[store].pk;
 
-        if (['gameAttributes'].includes(store)) {
+        if (['awards', 'gameAttributes'].includes(store)) {
             // This works if no indexes and no auto incrementing primary key
 
             if (!obj.hasOwnProperty(pk)) {

@@ -4,6 +4,7 @@ import Promise from 'bluebird';
 import g from '../globals';
 import * as player from '../core/player';
 import * as team from '../core/team';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import History from './views/History';
@@ -39,7 +40,7 @@ async function updateHistory(inputs, updateEvents, state) {
         }
 
         let [awards, retiredPlayers, teams] = await Promise.all([
-            g.dbl.awards.get(season),
+            getCopy.awards({season}),
             g.dbl.players.index('retiredYear').getAll(season).then(players => {
                 return player.withStats(null, players, {
                     statsSeasons: [season],

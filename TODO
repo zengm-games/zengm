@@ -1,8 +1,5 @@
 IVERSON
 
-getCopy.awards
-- use for all instances of g.dbl.awards (there are no tx ones)
-
 mergeByPk
 - should retain order of arrays, not sort by primary key. sometimes primary key is not what we want to sort by, or isn't available (like messages cache)
   - write my own implementation

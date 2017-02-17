@@ -3,13 +3,14 @@
 import Promise from 'bluebird';
 import g from '../globals';
 import * as team from '../core/team';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import HistoryAll from './views/HistoryAll';
 
 async function updateHistory(inputs, updateEvents) {
     if (updateEvents.includes('firstRun')) {
         const [awards, teams] = await Promise.all([
-            g.dbl.awards.getAll(),
+            getCopy.awards(),
             team.filter({
                 attrs: ["tid", "abbrev", "region", "name"],
                 seasonAttrs: ["season", "playoffRoundsWon", "won", "lost"],

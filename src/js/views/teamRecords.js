@@ -3,6 +3,7 @@ import React from 'react';
 import _ from 'underscore';
 import g from '../globals';
 import * as team from '../core/team';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import TeamRecords from './views/TeamRecords';
@@ -156,7 +157,7 @@ async function updateTeamRecords(inputs, updateEvents, state) {
                 attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
                 seasonAttrs: ["season", "playoffRoundsWon", "won", "lost"],
             }),
-            g.dbl.awards.getAll(),
+            getCopy.awards(),
         ]);
 
         const awardsPerTeam = tallyAwards(awards);

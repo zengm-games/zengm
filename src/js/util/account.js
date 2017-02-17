@@ -6,6 +6,7 @@ import Promise from 'bluebird';
 import $ from 'jquery';
 import g from '../globals';
 import * as team from '../core/team';
+import {getCopy} from '../db';
 import * as ads from './ads';
 import logEvent from './logEvent';
 import type {AchievementKey} from './types';
@@ -391,7 +392,7 @@ checkAchievement.hardware_store = async (saveAchievement: boolean = true) => {
         return false;
     }
 
-    const awards = await g.dbl.awards.get(g.season);
+    const awards = await getCopy.awards({season: g.season});
 
     if (awards.mvp.tid === g.userTid && awards.dpoy.tid === g.userTid && awards.smoy.tid === g.userTid && awards.roy.tid === g.userTid && awards.finalsMvp.tid === g.userTid) {
         if (saveAchievement) {
@@ -429,7 +430,7 @@ checkAchievement.sleeper_pick = async (saveAchievement: boolean = true) => {
         return false;
     }
 
-    const awards = await g.dbl.awards.get(g.season);
+    const awards = await getCopy.awards({season: g.season});
     if (awards && awards.roy && awards.roy.tid === g.userTid) {
         const p = await g.dbl.players.get(awards.roy.pid);
         if (p.tid === g.userTid && p.draft.tid === g.userTid && p.draft.year === g.season - 1 && (p.draft.round > 1 || p.draft.pick >= 15)) {

@@ -23,8 +23,8 @@ const negotiate = async (pid: number) => {
     // If there is no active negotiation with this pid, create it
     const negotiation = await g.dbl.negotiations.get(pid);
     if (!negotiation) {
-        const error = await g.dbl.tx(["messages", "negotiations", "players"], "readwrite", tx => {
-            return contractNegotiation.create(tx, pid, false);
+        const error = await g.dbl.tx(["messages", "players"], "readwrite", tx => {
+            return contractNegotiation.create(pid, false);
         });
         if (error !== undefined && error) {
             helpers.errorNotify(error);
@@ -118,7 +118,7 @@ const playStop = async () => {
         ui.updateStatus("Idle");
     }
     await league.setGameAttributes({gamesInProgress: false});
-    ui.updatePlayMenu(null);
+    ui.updatePlayMenu();
 };
 
 const playMenu = {
@@ -177,7 +177,8 @@ const playMenu = {
 
     untilFreeAgency: async () => {
         if (g.phase === g.PHASE.RESIGN_PLAYERS) {
-            const numRemaining = await g.dbl.negotiations.count();
+            const negotiations = await g.cache.getAll('negotiations');
+            const numRemaining = negotiations.length;
             // Show warning dialog only if there are players remaining un-re-signed
             if (numRemaining === 0 || window.confirm(`Are you sure you want to proceed to free agency while ${numRemaining} of your players remain unsigned? If you do not re-sign them before free agency begins, they will be free to sign with any team, and you won't be able to go over the salary cap to sign them.`)) {
                 await phase.newPhase(g.PHASE.FREE_AGENCY);
@@ -202,7 +203,7 @@ const playMenu = {
 
     stopAuto: async () => {
         await league.setGameAttributes({autoPlaySeasons: 0});
-        ui.updatePlayMenu(null);
+        ui.updatePlayMenu();
         await playStop();
     },
 };

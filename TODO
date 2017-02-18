@@ -20,6 +20,7 @@ get tests working
 how do caches based on g.season work in preseason?
 
 revisit add.. move stuff to put
+- store if pk is auto incrementing, if not then require it on put/add
 
 rewrite team.filter and player.filter
 - incorporate player.withStats
@@ -51,7 +52,6 @@ schedule stuff
 other stores
 -playoffSeries
 -draftOrder
--negotiations
 -draftPicks
 
 refactor

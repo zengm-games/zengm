@@ -9,11 +9,11 @@ import type {BackboardTx, Player} from '../util/types';
 type Status = 'empty' | 'error' | 'filling' | 'flushing' | 'full';
 
 // Only these IDB object stores for now. Keep in memory only player info for non-retired players and team info for the current season.
-type Store = 'awards' | 'events' | 'gameAttributes' | 'games' | 'messages' | 'playerFeats' | 'playerStats' | 'players' | 'releasedPlayers' | 'schedule' | 'teamSeasons' | 'teamStats' | 'teams' | 'trade';
+type Store = 'awards' | 'events' | 'gameAttributes' | 'games' | 'messages' | 'negotiations' | 'playerFeats' | 'playerStats' | 'players' | 'releasedPlayers' | 'schedule' | 'teamSeasons' | 'teamStats' | 'teams' | 'trade';
 type Index = 'playerStats' | 'playerStatsAllByPid' | 'playerStatsByPid' | 'playersByTid' | 'releasedPlayers' | 'releasedPlayersByTid' | 'teamSeasonsBySeasonTid' | 'teamSeasonsByTidSeason' | 'teamStatsByPlayoffsTid';
 
 // This variable is only needed because Object.keys(storeInfos) is not handled well in Flow
-const STORES: Store[] = ['awards', 'events', 'gameAttributes', 'games', 'messages', 'playerFeats', 'playerStats', 'players', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams', 'trade'];
+const STORES: Store[] = ['awards', 'events', 'gameAttributes', 'games', 'messages', 'negotiations', 'playerFeats', 'playerStats', 'players', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams', 'trade'];
 
 class Cache {
     data: {[key: Store]: any};
@@ -63,6 +63,10 @@ class Cache {
             },
             messages: {
                 pk: 'mid',
+            },
+            negotiations: {
+                pk: 'pid',
+                getData: (tx: BackboardTx) => tx.negotiations.getAll(),
             },
             playerFeats: {
                 pk: 'fid',
@@ -316,7 +320,7 @@ class Cache {
     async add(store: Store, obj: any) {
         this.checkStatus('full');
 
-        if (['events', 'games', 'messages', 'playerFeats', 'schedule', 'trade'].includes(store)) {
+        if (['events', 'games', 'messages', 'negotiations', 'playerFeats', 'schedule', 'trade'].includes(store)) {
             // This works if no indexes
 
             const pk = this.storeInfos[store].pk;
@@ -364,7 +368,7 @@ class Cache {
         const pk = this.storeInfos[store].pk;
 
         if (['awards', 'gameAttributes'].includes(store)) {
-            // This works if no indexes and no auto incrementing primary key
+            // This works if no indexes and no auto incrementing primary key, otherwise it should auto assign primary key
 
             if (!obj.hasOwnProperty(pk)) {
                 throw new Error(`Cannot put "${store}" object without primary key "${pk}": ${JSON.stringify(obj)}`);
@@ -379,7 +383,7 @@ class Cache {
     async delete(store: Store, key: number) {
         this.checkStatus('full');
 
-        if (store === 'schedule') {
+        if (['negotiations', 'schedule'].includes(store)) {
             if (this.data[store].hasOwnProperty(key)) {
                 delete this.data[store][key];
                 this.deletes[store].add(key);
@@ -394,7 +398,7 @@ class Cache {
     async clear(store: Store) {
         this.checkStatus('full');
 
-        if (store === 'schedule') {
+        if (['negotiations', 'schedule'].includes(store)) {
             for (const key of Object.keys(this.data[store])) {
                 delete this.data[store][this.storeInfos[store].pk];
                 this.deletes[store].add(key);

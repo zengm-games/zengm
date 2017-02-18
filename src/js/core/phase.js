@@ -41,7 +41,7 @@ async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = 
         phaseChangeInProgress: false,
     });
     ui.updatePhase(`${g.season} ${g.PHASE_TEXT[phase]}`);
-    await ui.updatePlayMenu(null);
+    await ui.updatePlayMenu();
 
     // Set lastDbChange last so there is no race condition (WHAT DOES THIS MEAN??)
     league.updateLastDbChange();
@@ -400,7 +400,7 @@ async function newPhaseResignPlayers(tx: BackboardTx) {
 
             // Add to free agents first, to generate a contract demand, then open negotiations with player
             await player.addToFreeAgents(tx, p, g.PHASE.RESIGN_PLAYERS, baseMoods);
-            const error = await contractNegotiation.create(tx, p.pid, true, tid);
+            const error = await contractNegotiation.create(p.pid, true, tid);
             if (error !== undefined && error) {
                 logEvent({
                     type: "refuseToSign",
@@ -427,7 +427,7 @@ async function newPhaseFreeAgency(tx: BackboardTx) {
     const strategies = teams.map(t => t.strategy);
 
     // Delete all current negotiations to resign players
-    await contractNegotiation.cancelAll(tx);
+    await contractNegotiation.cancelAll();
 
     const baseMoods = await player.genBaseMoods(tx);
 
@@ -481,7 +481,7 @@ async function newPhaseFreeAgency(tx: BackboardTx) {
 }
 
 async function newPhaseFantasyDraft(tx: BackboardTx, position: number) {
-    await contractNegotiation.cancelAll(tx);
+    await contractNegotiation.cancelAll();
     await draft.genOrderFantasy(tx, position);
     await league.setGameAttributes({nextPhase: g.phase});
     await tx.releasedPlayers.clear();
@@ -545,15 +545,15 @@ async function newPhase(phase: Phase, extra: any) {
             func: newPhaseAfterDraft,
         },
         [g.PHASE.RESIGN_PLAYERS]: {
-            objectStores: ["messages", "negotiations", "players", "teams", "teamSeasons", "teamStats"],
+            objectStores: ["messages", "players", "teams", "teamSeasons", "teamStats"],
             func: newPhaseResignPlayers,
         },
         [g.PHASE.FREE_AGENCY]: {
-            objectStores: ["messages", "negotiations", "players", "teams", "teamSeasons", "teamStats"],
+            objectStores: ["messages", "players", "teams", "teamSeasons", "teamStats"],
             func: newPhaseFreeAgency,
         },
         [g.PHASE.FANTASY_DRAFT]: {
-            objectStores: ["draftOrder", "messages", "negotiations", "players", "releasedPlayers"],
+            objectStores: ["draftOrder", "messages", "players", "releasedPlayers"],
             func: newPhaseFantasyDraft,
         },
     };
@@ -563,7 +563,7 @@ async function newPhase(phase: Phase, extra: any) {
         helpers.errorNotify("Phase change already in progress, maybe in another tab.");
     } else {
         await league.setGameAttributes({phaseChangeInProgress: true});
-        ui.updatePlayMenu(null);
+        ui.updatePlayMenu();
 
         // In Chrome, this will update play menu in other windows. In Firefox, it won't because ui.updatePlayMenu gets blocked until phaseChangeTx finishes for some reason.
         league.updateLastDbChange();
@@ -581,7 +581,7 @@ async function newPhase(phase: Phase, extra: any) {
                     }
 
                     await league.setGameAttributes({phaseChangeInProgress: false});
-                    await ui.updatePlayMenu(null);
+                    await ui.updatePlayMenu();
                     logEvent({
                         type: "error",
                         text: 'Critical error during phase change. <a href="https://basketball-gm.com/manual/debugging/"><b>Read this to learn about debugging.</b></a>',
@@ -615,7 +615,7 @@ async function abort() {
     } finally {
         // If another window has a phase change in progress, this won't do anything until that finishes
         await league.setGameAttributes({phaseChangeInProgress: false});
-        ui.updatePlayMenu(null);
+        ui.updatePlayMenu();
     }
 }
 

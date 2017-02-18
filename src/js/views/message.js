@@ -54,7 +54,7 @@ async function updateMessage(inputs, updateEvents, state): Promise<void | {messa
                 ui.updateStatus("You're fired!");
             }
 
-            await ui.updatePlayMenu(null);
+            await ui.updatePlayMenu();
 
             league.updateLastDbChange();
         }

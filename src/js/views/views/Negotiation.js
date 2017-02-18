@@ -9,7 +9,7 @@ import {NewWindowLink} from '../components';
 
 // Show the negotiations list if there are more ongoing negotiations
 async function redirectNegotiationOrRoster(cancelled) {
-    const negotiations = await g.dbl.negotiations.getAll();
+    const negotiations = await g.cache.getAll('negotiations');
     if (negotiations.length > 0) {
         ui.realtimeUpdate([], helpers.leagueUrl(["negotiation"]));
     } else if (cancelled) {

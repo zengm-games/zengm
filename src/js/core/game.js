@@ -606,7 +606,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
     const cbNoGames = async () => {
         ui.updateStatus("Idle");
         await league.setGameAttributes({gamesInProgress: false});
-        await ui.updatePlayMenu(null);
+        await ui.updatePlayMenu();
         ui.realtimeUpdate(["g.gamesInProgress"]);
 
         // Check to see if the season is over
@@ -788,12 +788,12 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
     // If this is a request to start a new simulation... are we allowed to do
     // that? If so, set the lock and update the play menu
     if (start) {
-        const canStartGames = await lock.canStartGames(null);
+        const canStartGames = await lock.canStartGames();
         if (canStartGames) {
             const userTeamSizeError = await team.checkRosterSizes();
             if (userTeamSizeError === null) {
                 await league.setGameAttributes({gamesInProgress: true});
-                await ui.updatePlayMenu(null);
+                await ui.updatePlayMenu();
                 ui.realtimeUpdate(["g.gamesInProgress"]);
                 cbRunDay();
             } else {

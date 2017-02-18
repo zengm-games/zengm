@@ -10,34 +10,32 @@ import * as team from './team';
 import logEvent from '../util/logEvent';
 import * as helpers from '../util/helpers';
 import * as lock from '../util/lock';
-import type {BackboardTx} from '../util/types';
 
 /**
  * Start a new contract negotiation with a player.
  *
  * @memberOf core.contractNegotiation
- * @param {IDBTransaction} tx An IndexedDB transaction on messages, negotiations, and players, readwrite.
  * @param {number} pid An integer that must correspond with the player ID of a free agent.
  * @param {boolean} resigning Set to true if this is a negotiation for a contract extension, which will allow multiple simultaneous negotiations. Set to false otherwise.
  * @param {number=} tid Team ID the contract negotiation is with. This only matters for Multi Team Mode. If undefined, defaults to g.userTid.
  * @return {Promise.<string=>)} If an error occurs, resolve to a string error message.
  */
-async function create(tx: BackboardTx, pid: number, resigning: boolean, tid: number = g.userTid): Promise<string> {
+async function create(pid: number, resigning: boolean, tid: number = g.userTid): Promise<string> {
     if ((g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.RESIGN_PLAYERS) && !resigning) {
         return "You're not allowed to sign free agents now.";
     }
 
-    const canStartNegotiation = await lock.canStartNegotiation(tx);
+    const canStartNegotiation = await lock.canStartNegotiation();
     if (!canStartNegotiation) {
         return "You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process.";
     }
 
-    const numPlayersOnRoster = await tx.players.index('tid').count(g.userTid);
-    if (numPlayersOnRoster >= 15 && !resigning) {
+    const playersOnRoster = await g.cache.indexGetAll('playersByTid', g.userTid);
+    if (playersOnRoster.length >= 15 && !resigning) {
         return "Your roster is full. Before you can sign a free agent, you'll have to release or trade away one of your current players.";
     }
 
-    const p = await tx.players.get(pid);
+    const p = await g.cache.get('players', pid);
     if (p.tid !== g.PLAYER.FREE_AGENT) {
         return `${p.firstName} ${p.lastName} is not a free agent.`;
     }
@@ -63,28 +61,26 @@ async function create(tx: BackboardTx, pid: number, resigning: boolean, tid: num
         resigning,
     };
 
-    await tx.negotiations.add(negotiation);
+    await g.cache.add('negotiations', negotiation);
     league.updateLastDbChange();
     ui.updateStatus("Contract negotiation");
-    return ui.updatePlayMenu(tx);
+    return ui.updatePlayMenu();
 }
 
 /**
  * Cancel contract negotiations with a player.
  */
 async function cancel(pid: number) {
-    await g.dbl.tx(["messages", "negotiations"], "readwrite", async tx => {
-        await tx.negotiations.delete(pid);
-        const negotiationInProgress = await lock.negotiationInProgress(tx);
-        if (!negotiationInProgress) {
-            if (g.phase === g.PHASE.FREE_AGENCY) {
-                ui.updateStatus(`${g.daysLeft} days left`);
-            } else {
-                ui.updateStatus("Idle");
-            }
-            ui.updatePlayMenu(tx);
+    await g.cache.delete('negotiations', pid);
+    const negotiationInProgress = await lock.negotiationInProgress();
+    if (!negotiationInProgress) {
+        if (g.phase === g.PHASE.FREE_AGENCY) {
+            ui.updateStatus(`${g.daysLeft} days left`);
+        } else {
+            ui.updateStatus("Idle");
         }
-    });
+        ui.updatePlayMenu();
+    }
 
     league.updateLastDbChange();
 }
@@ -95,14 +91,13 @@ async function cancel(pid: number) {
  * Currently, the only time there should be multiple ongoing negotiations in the first place is when a user is re-signing players at the end of the season, although that should probably change eventually.
  *
  * @memberOf core.contractNegotiation
- * @param {IDBTransaction} tx An IndexedDB transaction on messages and negotiations, readwrite.
  * @return {Promise}
  */
-async function cancelAll(tx: BackboardTx) {
-    await tx.negotiations.clear();
+async function cancelAll() {
+    await g.cache.clear('negotiations');
     league.updateLastDbChange();
     ui.updateStatus("Idle");
-    return ui.updatePlayMenu(tx);
+    return ui.updatePlayMenu();
 }
 
 /**
@@ -116,7 +111,7 @@ async function cancelAll(tx: BackboardTx) {
  */
 async function accept(pid: number, amount: number, exp: number): Promise<string> {
     const [negotiation, payroll] = await Promise.all([
-        g.dbl.negotiations.get(pid),
+        g.cache.get('negotiations', pid),
         team.getPayroll(g.userTid).get(0),
     ]);
 
@@ -131,12 +126,7 @@ async function accept(pid: number, amount: number, exp: number): Promise<string>
         return `This negotiation was started by the ${g.teamRegionsCache[negotiation.tid]} ${g.teamNamesCache[negotiation.tid]} but you are the ${g.teamRegionsCache[g.userTid]} ${g.teamNamesCache[g.userTid]}. Either switch teams or cancel this negotiation.`;
     }
 
-    // Adjust to account for in-season signings;
-    if (g.phase <= g.PHASE.AFTER_TRADE_DEADLINE) {
-        negotiation.player.years -= 1;
-    }
-
-    await g.dbl.tx(["players", "playerStats"], "readwrite", async tx => {
+    await g.dbl.tx(["players"], "readwrite", async tx => {
         await tx.players.iterate(pid, async (p) => {
             p.tid = g.userTid;
             p.gamesUntilTradable = 15;

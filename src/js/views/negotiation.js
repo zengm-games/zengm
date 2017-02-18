@@ -53,21 +53,25 @@ function get(ctx) {
     const pid = parseInt(ctx.params.pid, 10);
 
     return {
-        pid: pid >= 0 ? pid : null, // Null will load whatever the active one is
+        pid: pid >= 0 ? pid : undefined, // undefined will load whatever the active one is
     };
 }
 
 async function updateNegotiation(inputs) {
-    // Call getAll so it works on null key
-    const negotiations = await g.dbl.negotiations.getAll(inputs.pid);
+    const negotiations = await g.cache.getAll('negotiations');
+    let negotiation;
+    if (inputs.pid === undefined) {
+        negotiation = negotiations[0];
+    } else {
+        negotiation = negotiations.find((neg) => neg.pid === inputs.pid);
+    }
 
-    if (negotiations.length === 0) {
+    if (!negotiation) {
         return {
             errorMessage: 'No negotiation with player in progress.',
         };
     }
 
-    const negotiation = negotiations[0];
     negotiation.player.expiration = negotiation.player.years + g.season;
     // Adjust to account for in-season signings
     if (g.phase <= g.PHASE.AFTER_TRADE_DEADLINE) {

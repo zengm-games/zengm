@@ -32,7 +32,7 @@ class NewTeam extends React.Component {
 
     async handleNewTeam() {
         ui.updateStatus("Idle");
-        ui.updatePlayMenu(null);
+        ui.updatePlayMenu();
 
         await league.setGameAttributes({
             gameOver: false,

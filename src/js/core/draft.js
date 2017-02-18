@@ -548,7 +548,7 @@ async function untilUserOrEnd() {
                 });
 
                 ui.updatePhase(`${g.season} ${g.PHASE_TEXT[g.phase]}`);
-                await ui.updatePlayMenu(null);
+                await ui.updatePlayMenu();
                 league.updateLastDbChange();
             } else {
                 // Non-fantasy draft

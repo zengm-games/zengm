@@ -6,7 +6,7 @@ import g from './globals';
 import * as league from './core/league';
 import * as helpers from './util/helpers';
 import * as lock from './util/lock';
-import type {BackboardTx, UpdateEvents} from './util/types';
+import type {UpdateEvents} from './util/types';
 
 /**
  * Smartly update the currently loaded view or redirect to a new one.
@@ -55,7 +55,7 @@ function realtimeUpdate(updateEvents: UpdateEvents = [], url?: string, cb?: Func
 * @param {IDBTransaction|null} ot An IndexedDB transaction on messages, and negotiations; if null is passed, then a new transaction will be used.
 * @return {Promise}
 */
-async function updatePlayMenu(tx?: BackboardTx) {
+async function updatePlayMenu() {
     const allOptions: {
         [key: string]: {
             id?: string,
@@ -118,7 +118,7 @@ async function updatePlayMenu(tx?: BackboardTx) {
     const [unreadMessage, gamesInProgress, negotiationInProgress, phaseChangeInProgress] = await Promise.all([
         lock.unreadMessage(),
         lock.gamesInProgress(),
-        lock.negotiationInProgress(tx),
+        lock.negotiationInProgress(),
         lock.phaseChangeInProgress(),
     ]);
 

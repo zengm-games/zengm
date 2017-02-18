@@ -154,7 +154,7 @@ async function decreaseDemands() {
  * @param {number} mood Player mood towards a team, from 0 (happy) to 1 (angry).
  * @return {number} Contract amoung adjusted for mood.
  */
-function amountWithMood(amount: number, mood: number): number {
+function amountWithMood(amount: number, mood: number = 0.5): number {
     amount *= 1 + 0.2 * mood;
 
     if (amount >= g.minContract) {
@@ -196,7 +196,7 @@ async function play(numDays: number, start?: boolean = true) {
     // This is called when there are no more days to play, either due to the user's request (e.g. 1 week) elapsing or at the end of free agency.
     const cbNoDays = async () => {
         await league.setGameAttributes({gamesInProgress: false});
-        await ui.updatePlayMenu(null);
+        await ui.updatePlayMenu();
         ui.realtimeUpdate(["g.gamesInProgress"]);
 
         // Check to see if free agency is over
@@ -239,10 +239,10 @@ async function play(numDays: number, start?: boolean = true) {
     // If this is a request to start a new simulation... are we allowed to do
     // that? If so, set the lock and update the play menu
     if (start) {
-        const canStartGames = await lock.canStartGames(null);
+        const canStartGames = await lock.canStartGames();
         if (canStartGames) {
             await league.setGameAttributes({gamesInProgress: true});
-            await ui.updatePlayMenu(null);
+            await ui.updatePlayMenu();
             ui.realtimeUpdate(["g.gamesInProgress"]);
             cbRunDay();
         }

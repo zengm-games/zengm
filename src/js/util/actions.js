@@ -23,9 +23,7 @@ const negotiate = async (pid: number) => {
     // If there is no active negotiation with this pid, create it
     const negotiation = await g.dbl.negotiations.get(pid);
     if (!negotiation) {
-        const error = await g.dbl.tx(["messages", "players"], "readwrite", tx => {
-            return contractNegotiation.create(pid, false);
-        });
+        const error = await contractNegotiation.create(pid, false);
         if (error !== undefined && error) {
             helpers.errorNotify(error);
         } else {

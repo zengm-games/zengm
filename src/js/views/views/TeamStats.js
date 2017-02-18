@@ -48,9 +48,9 @@ const TeamStats = ({season, stats, teams}) => {
             lost: t.seasonAttrs.lost,
         };
 
-        for (const column of statTypeColumns) {
-            const value = helpers.round(t.stats[column], 1);
-            data[column] = value;
+        for (const statType of statTypeColumns) {
+            const value = t.stats.hasOwnProperty(statType) ? t.stats[statType] : t.seasonAttrs[statType];
+            data[statType] = helpers.round(value, 1);
         }
 
         data.diff = <span className={t.stats.diff > 0 ? 'text-success' : 'text-danger'}>{helpers.round(t.stats.diff, 1)}</span>;
@@ -58,13 +58,14 @@ const TeamStats = ({season, stats, teams}) => {
         // This is our team.
         if (g.userTid === t.tid) {
             // Color stat values accordingly.
-            for (const [key, value] of _.pairs(data)) {
-                if (!statTypeColumns.includes(key) && !otherStatColumns.includes(key)) {
+            for (const [statType, value] of _.pairs(data)) {
+                if (!statTypeColumns.includes(statType) && !otherStatColumns.includes(statType)) {
                     continue;
                 }
 
                 // Determine our team's percentile for this stat type. Closer to the start is better.
-                const percentile = 1 - (stats[key].indexOf(t.stats[key]) / (teamCount - 1));
+                const statTypeValue = t.stats.hasOwnProperty(statType) ? t.stats[statType] : t.seasonAttrs[statType];
+                const percentile = 1 - (stats[statType].indexOf(statTypeValue) / (teamCount - 1));
 
                 let className;
                 if (percentile >= 2 / 3) {
@@ -75,7 +76,7 @@ const TeamStats = ({season, stats, teams}) => {
                     className = 'danger';
                 }
 
-                data[key] = {
+                data[statType] = {
                     classNames: className,
                     value,
                 };

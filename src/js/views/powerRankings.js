@@ -1,22 +1,21 @@
 // @flow
 
-import backboard from 'backboard';
 import Promise from 'bluebird';
 import g from '../globals';
-import * as team from '../core/team';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import PowerRankings from './views/PowerRankings';
 
 async function updatePowerRankings(inputs, updateEvents) {
     if (updateEvents.includes('firstRun') || updateEvents.includes('dbChange') || updateEvents.includes('gameSim')) {
         const [teams, players] = await Promise.all([
-            team.filter({
+            getCopy.teams({
                 attrs: ["tid", "abbrev", "region", "name"],
                 seasonAttrs: ["won", "lost", "lastTen"],
-                stats: ["gp", "pts", "oppPts", "diff"],
+                stats: ["gp", "diff"],
                 season: g.season,
             }),
-            g.dbl.players.index('tid').getAll(backboard.lowerBound(0)),
+            g.cache.indexGetAll('playersByTid', [0, Infinity]),
         ]);
 
         // Array of arrays, containing the values for each player on each team
@@ -48,7 +47,7 @@ async function updatePowerRankings(inputs, updateEvents) {
         for (let i = 0; i < g.numTeams; i++) {
             playerValuesByTid[i] = [];
             // Modulate point differential by recent record: +5 for 10-0 in last 10 and -5 for 0-10
-            teams[i].performance = teams[i].diff - 5 + 5 * (parseInt(teams[i].lastTen.split("-")[0], 10)) / 10;
+            teams[i].performance = teams[i].stats.diff - 5 + 5 * (parseInt(teams[i].seasonAttrs.lastTen.split("-")[0], 10)) / 10;
         }
 
         // RANKS
@@ -64,8 +63,8 @@ async function updatePowerRankings(inputs, updateEvents) {
         // OVERALL RANK
         // Weighted average depending on GP
         const overallRankMetric = t => {
-            if (t.gp < 10) {
-                return t.performanceRank * 4 * t.gp / 10 + t.talentRank * (30 - t.gp) / 10;
+            if (t.stats.gp < 10) {
+                return t.performanceRank * 4 * t.stats.gp / 10 + t.talentRank * (30 - t.stats.gp) / 10;
             }
 
             return t.performanceRank * 4 + t.talentRank * 2;

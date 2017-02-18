@@ -12,7 +12,7 @@ const PowerRankings = ({teams}) => {
     cols[3].width = '100%';
 
     const rows = teams.map(t => {
-        const performanceRank = t.gp > 0 ? t.performanceRank : "-";
+        const performanceRank = t.stats.gp > 0 ? t.performanceRank : "-";
 
         return {
             key: t.tid,
@@ -21,10 +21,10 @@ const PowerRankings = ({teams}) => {
                 performanceRank,
                 t.talentRank,
                 <a href={helpers.leagueUrl(["roster", t.abbrev])}>{t.region} {t.name}</a>,
-                t.won,
-                t.lost,
-                t.lastTen,
-                <span className={t.diff > 0 ? 'text-success' : 'text-danger'}>{helpers.round(t.diff, 1)}</span>,
+                t.seasonAttrs.won,
+                t.seasonAttrs.lost,
+                t.seasonAttrs.lastTen,
+                <span className={t.stats.diff > 0 ? 'text-success' : 'text-danger'}>{helpers.round(t.stats.diff, 1)}</span>,
             ],
             classNames: {
                 info: t.tid === g.userTid,
@@ -49,15 +49,19 @@ const PowerRankings = ({teams}) => {
 PowerRankings.propTypes = {
     teams: React.PropTypes.arrayOf(React.PropTypes.shape({
         abbrev: React.PropTypes.string.isRequired,
-        diff: React.PropTypes.number.isRequired,
-        lastTen: React.PropTypes.string.isRequired,
-        lost: React.PropTypes.number.isRequired,
         name: React.PropTypes.string.isRequired,
         overallRank: React.PropTypes.number.isRequired,
         performanceRank: React.PropTypes.number.isRequired,
         region: React.PropTypes.string.isRequired,
         tid: React.PropTypes.number.isRequired,
-        won: React.PropTypes.number.isRequired,
+        seasonAttrs: React.PropTypes.shape({
+            lastTen: React.PropTypes.string.isRequired,
+            lost: React.PropTypes.number.isRequired,
+            won: React.PropTypes.number.isRequired,
+        }),
+        stats: React.PropTypes.shape({
+            diff: React.PropTypes.number.isRequired,
+        }),
     })).isRequired,
 };
 

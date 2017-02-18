@@ -205,7 +205,11 @@ const processStats = async (
                         row.ftp = 0;
                     }
                 } else if (stat === 'diff') {
-                    row.diff = row.pts - row.oppPts;
+                    if (statType === 'totals') {
+                        row.diff = ts.pts - ts.oppPts;
+                    } else {
+                        row.diff = (ts.pts - ts.oppPts) / ts.gp;
+                    }
                 } else if (stat === 'season' || stat === 'playoffs') {
                     row[stat] = ts[stat];
                 } else if (statType === 'totals') {

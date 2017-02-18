@@ -29,11 +29,13 @@ async function updateTeams(inputs, updateEvents, state) {
         // Loop teams and stat types.
         for (const t of teams) {
             for (const statType of statTypes) {
-                if (!stats[statType]) {
-                    stats[statType] = [];
-                }
+                const value = t.stats.hasOwnProperty(statType) ? t.stats[statType] : t.seasonAttrs[statType];
 
-                stats[statType].push(t.stats[statType]);
+                if (!stats[statType]) {
+                    stats[statType] = [value];
+                } else {
+                    stats[statType].push(value);
+                }
             }
         }
 

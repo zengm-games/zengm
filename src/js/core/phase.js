@@ -58,7 +58,7 @@ async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = 
 }
 
 async function newPhasePreseason(tx: BackboardTx) {
-    await freeAgents.autoSign(tx);
+    await freeAgents.autoSign();
     await league.setGameAttributes({season: g.season + 1});
 
     const tids: number[] = _.range(g.numTeams);

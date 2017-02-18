@@ -3,11 +3,6 @@ IVERSON
 mutation for things involving indexes
 - implement like g.cache.markDirtyIndex('players');
 
-private methods in Cache
-
-get league creation working
-- in viewHelpers, somehow realize that g.cache is already set and can be used if creating a new league
-
 if i can gracefully handle absence of g.season etc, put cache creation inside connectLeague
 - not graceful now, see fill(season)
 
@@ -40,6 +35,8 @@ rewrite team.filter and player.filter
     - could make that a wrapper, after dealing with tx and payroll
   - types for Attrs
   - types for season/statType/playoffs options, which only have affect based on other options
+- db.getCopy.players
+  - test roster auto sort button
 
 schedule stuff
 - special flag in schedule database, denoting that it could be blank. then, put can't rely on maxId because it could be 0 when in reality it's just a blank db but other games were played. for other databases, i think it doesn't matter, because they are isolated and even after deleting data it won't matter if there are dupes

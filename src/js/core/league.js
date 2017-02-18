@@ -206,7 +206,7 @@ async function create(
 
     let players;
     let scoutingRank;
-    const objectStores = ["draftPicks", "draftOrder", "players", "playerStats", "teams", "teamSeasons", "teamStats", "releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games", "events", "playerFeats"];
+    const objectStores = ["draftPicks", "draftOrder"];
     await g.dbl.tx(objectStores, "readwrite", async tx => {
         // Draft picks for the first 4 years, as those are the ones can be traded initially
         if (leagueFile.hasOwnProperty("draftPicks")) {
@@ -503,9 +503,7 @@ async function create(
     const lid = g.lid; // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
 
     // Auto sort rosters
-    await g.dbl.tx("players", "readwrite", async tx => {
-        await Promise.all(teams.map(t => team.rosterAutoSort(tx, t.tid)));
-    });
+    await Promise.all(teams.map(t => team.rosterAutoSort(t.tid)));
 
     await g.cache.flush();
 

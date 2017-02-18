@@ -389,7 +389,7 @@ async function propose(forceTrade?: boolean = false): Promise<[boolean, ?string]
 
         // Auto-sort CPU team roster
         if (!g.userTids.includes(tids[1])) {
-            await g.dbl.tx("players", "readwrite", tx => team.rosterAutoSort(tx, tids[1]));
+            await team.rosterAutoSort(tids[1]);
         }
 
         return [true, 'Trade accepted! "Nice doing business with you!"'];

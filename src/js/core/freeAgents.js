@@ -24,84 +24,81 @@ import type {BackboardTx} from '../util/types';
  * @memberOf core.freeAgents
  * @return {Promise}
  */
-async function autoSign(tx: BackboardTx) {
-    const objectStores = ["players"];
-    await helpers.maybeReuseTx(objectStores, "readwrite", tx, async tx2 => {
-        const [teams, players] = await Promise.all([
-            getCopy.teams({
-                attrs: ["strategy"],
-                season: g.season,
-            }),
-            g.cache.indexGetAll('playersByTid', g.PLAYER.FREE_AGENT),
-        ]);
+async function autoSign() {
+    const [teams, players] = await Promise.all([
+        getCopy.teams({
+            attrs: ["strategy"],
+            season: g.season,
+        }),
+        g.cache.indexGetAll('playersByTid', g.PLAYER.FREE_AGENT),
+    ]);
 
-        if (players.length === 0) {
-            return;
+    if (players.length === 0) {
+        return;
+    }
+
+    const strategies = teams.map(t => t.strategy);
+
+    // List of free agents, sorted by value
+    const playersSorted = orderBy(players, 'value', 'desc');
+
+    // Randomly order teams
+    const tids = _.range(g.numTeams);
+    random.shuffle(tids);
+
+    for (const tid of tids) {
+        // Skip the user's team
+        if (g.userTids.includes(tid) && g.autoPlaySeasons === 0) {
+            continue;
         }
 
-        const strategies = teams.map(t => t.strategy);
+        // Small chance of actually trying to sign someone in free agency, gets greater as time goes on
+        if (g.phase === g.PHASE.FREE_AGENCY && Math.random() < 0.99 * g.daysLeft / 30) {
+            continue;
+        }
 
-        // List of free agents, sorted by value
-        const playersSorted = orderBy(players, 'value', 'desc');
+        // Skip rebuilding teams sometimes
+        if (strategies[tid] === "rebuilding" && Math.random() < 0.7) {
+            continue;
+        }
 
-        // Randomly order teams
-        const tids = _.range(g.numTeams);
-        random.shuffle(tids);
+        const [playersOnRoster, payroll] = await Promise.all([
+            g.cache.indexGetAll('playersByTid', tid),
+            team.getPayroll(tid).get(0),
+        ]);
+        const numPlayersOnRoster = playersOnRoster.length;
 
-        for (const tid of tids) {
-            // Skip the user's team
-            if (g.userTids.includes(tid) && g.autoPlaySeasons === 0) {
-                continue;
-            }
-
-            // Small chance of actually trying to sign someone in free agency, gets greater as time goes on
-            if (g.phase === g.PHASE.FREE_AGENCY && Math.random() < 0.99 * g.daysLeft / 30) {
-                continue;
-            }
-
-            // Skip rebuilding teams sometimes
-            if (strategies[tid] === "rebuilding" && Math.random() < 0.7) {
-                continue;
-            }
-
-            const [playersOnRoster, payroll] = await Promise.all([
-                g.cache.indexGetAll('playersByTid', tid),
-                team.getPayroll(tid).get(0),
-            ]);
-            const numPlayersOnRoster = playersOnRoster.length;
-
-            if (numPlayersOnRoster < 15) {
-                for (let i = 0; i < playersSorted.length; i++) {
-                    const p = playersSorted[i];
-                    // Don't sign minimum contract players to fill out the roster
-                    if (p.contract.amount + payroll <= g.salaryCap || (p.contract.amount === g.minContract && numPlayersOnRoster < 13)) {
-                        p.tid = tid;
-                        if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
-                            await player.addStatsRow(p, g.phase === g.PHASE.PLAYOFFS);
-                        }
-                        player.setContract(p, p.contract, true);
-                        p.gamesUntilTradable = 15;
-                        g.cache.markDirtyIndex('players');
-
-                        logEvent({
-                            type: "freeAgent",
-                            text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
-                            showNotification: false,
-                            pids: [p.pid],
-                            tids: [p.tid],
-                        });
-
-                        playersSorted.splice(i, 1); // Remove from list of free agents
-
-                        await team.rosterAutoSort(tx2, tid);
-
-                        // We found one, so stop looking for this team
-                        break;
+        if (numPlayersOnRoster < 15) {
+            for (let i = 0; i < playersSorted.length; i++) {
+                const p = playersSorted[i];
+                // Don't sign minimum contract players to fill out the roster
+                if (p.contract.amount + payroll <= g.salaryCap || (p.contract.amount === g.minContract && numPlayersOnRoster < 13)) {
+                    p.tid = tid;
+                    if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
+                        await player.addStatsRow(p, g.phase === g.PHASE.PLAYOFFS);
                     }
+                    player.setContract(p, p.contract, true);
+                    p.gamesUntilTradable = 15;
+                    g.cache.markDirtyIndex('players');
+
+                    logEvent({
+                        type: "freeAgent",
+                        text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
+                        showNotification: false,
+                        pids: [p.pid],
+                        tids: [p.tid],
+                    });
+
+                    playersSorted.splice(i, 1); // Remove from list of free agents
+
+                    await team.rosterAutoSort(tid);
+
+                    // We found one, so stop looking for this team
+                    break;
                 }
             }
         }
-    });
+    }
 }
 
 /**

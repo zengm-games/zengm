@@ -236,13 +236,13 @@ function findStarters(positions: string[]): number[] {
  * Sort a team's roster based on player ratings and stats.
  *
  * @memberOf core.team
- * @param {IDBTransaction} tx An IndexedDB transaction on players readwrite.
  * @param {number} tid Team ID.
  * @return {Promise}
  */
-async function rosterAutoSort(tx: BackboardTx, tid: number) {
+async function rosterAutoSort(tid: number) {
     // Get roster and sort by value (no potential included)
-    let players = await tx.players.index('tid').getAll(tid);
+    const playersFromCache = await g.cache.indexGetAll('playersByTid', tid);
+    let players = helpers.deepCopy(playersFromCache);
     players = player.filter(players, {
         attrs: ["pid", "valueNoPot", "valueNoPotFuzz"],
         ratings: ["pos"],
@@ -273,18 +273,17 @@ async function rosterAutoSort(tx: BackboardTx, tid: number) {
     }
 
     // Update rosterOrder
-    await tx.players.index('tid').iterate(tid, p => {
+    for (const p of playersFromCache) {
         for (let i = 0; i < players.length; i++) {
             if (players[i].pid === p.pid) {
                 if (p.rosterOrder !== players[i].rosterOrder) {
                     // Only write to DB if this actually changes
                     p.rosterOrder = players[i].rosterOrder;
-                    return p;
                 }
                 break;
             }
         }
-    });
+    }
 }
 
 /**
@@ -1292,7 +1291,7 @@ function checkRosterSizes(): Promise<string | null> {
             // Auto sort rosters (except player's team)
             // This will sort all AI rosters before every game. Excessive? It could change some times, but usually it won't
             if (!g.userTids.includes(tid) || g.autoPlaySeasons > 0) {
-                return rosterAutoSort(tx, tid);
+                return rosterAutoSort(tid);
             }
         };
 

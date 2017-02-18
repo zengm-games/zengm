@@ -40,7 +40,7 @@ const ptStyles = {
 
 const handleAutoSort = async () => {
     // Explicitly make sure writing is done before rosterAutoSort
-    await g.dbl.tx("players", "readwrite", tx => team.rosterAutoSort(tx, g.userTid));
+    await team.rosterAutoSort(g.userTid);
 
     ui.realtimeUpdate(["playerMovement"]);
     league.updateLastDbChange();

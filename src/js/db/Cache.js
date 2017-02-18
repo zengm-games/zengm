@@ -176,6 +176,33 @@ class Cache {
         this.status = status;
     }
 
+    refreshIndexes(store: Store) {
+        const storeInfo = this.storeInfos[store];
+
+        if (storeInfo.indexes) {
+            for (const index of storeInfo.indexes) {
+                this.indexes[index.name] = {};
+                for (const row of Object.values(this.data[store])) {
+                    if (index.filter && !index.filter(row)) {
+                        continue;
+                    }
+
+                    const key = index.key(row);
+
+                    if (!index.unique) {
+                        if (!this.indexes[index.name].hasOwnProperty(key)) {
+                            this.indexes[index.name][key] = [row];
+                        } else {
+                            this.indexes[index.name][key].push(row);
+                        }
+                    } else {
+                        this.indexes[index.name][key] = row;
+                    }
+                }
+            }
+        }
+    }
+
     async loadStore(store: Store, tx: BackboardTx, players: Player[]) {
         const storeInfo = this.storeInfos[store];
 
@@ -193,28 +220,7 @@ class Cache {
 
                 this.deletes[store] = new Set();
 
-                if (storeInfo.indexes) {
-                    for (const index of storeInfo.indexes) {
-                        this.indexes[index.name] = {};
-                        for (const row of data) {
-                            if (index.filter && !index.filter(row)) {
-                                continue;
-                            }
-
-                            const key = index.key(row);
-
-                            if (!index.unique) {
-                                if (!this.indexes[index.name].hasOwnProperty(key)) {
-                                    this.indexes[index.name][key] = [row];
-                                } else {
-                                    this.indexes[index.name][key].push(row);
-                                }
-                            } else {
-                                this.indexes[index.name][key] = row;
-                            }
-                        }
-                    }
-                }
+                this.refreshIndexes(store);
             })(),
             (async () => {
                 this.maxIds[store] = -1;

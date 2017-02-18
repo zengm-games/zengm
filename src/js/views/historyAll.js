@@ -2,7 +2,6 @@
 
 import Promise from 'bluebird';
 import g from '../globals';
-import * as team from '../core/team';
 import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import HistoryAll from './views/HistoryAll';
@@ -11,7 +10,7 @@ async function updateHistory(inputs, updateEvents) {
     if (updateEvents.includes('firstRun')) {
         const [awards, teams] = await Promise.all([
             getCopy.awards(),
-            team.filter({
+            getCopy.teams({
                 attrs: ["tid", "abbrev", "region", "name"],
                 seasonAttrs: ["season", "playoffRoundsWon", "won", "lost"],
             }),
@@ -28,13 +27,13 @@ async function updateHistory(inputs, updateEvents) {
         });
 
         teams.forEach(t => {
-            // t.seasons has same season entries as the "seasons" array built from awards
+            // t.seasonAttrs has same season entries as the "seasons" array built from awards
             for (let i = 0; i < seasons.length; i++) {
-                // Find corresponding entries in seasons and t.seasons. Can't assume they are the same because they aren't if some data has been deleted (Improve Performance)
+                // Find corresponding entries in seasons and t.seasonAttrs. Can't assume they are the same because they aren't if some data has been deleted (Improve Performance)
                 let found = false;
                 let j;
-                for (j = 0; j < t.seasons.length; j++) {
-                    if (t.seasons[j].season === seasons[i].season) {
+                for (j = 0; j < t.seasonAttrs.length; j++) {
+                    if (t.seasonAttrs[j].season === seasons[i].season) {
                         found = true;
                         break;
                     }
@@ -43,23 +42,23 @@ async function updateHistory(inputs, updateEvents) {
                     continue;
                 }
 
-                if (t.seasons[j].playoffRoundsWon === g.numPlayoffRounds) {
+                if (t.seasonAttrs[j].playoffRoundsWon === g.numPlayoffRounds) {
                     seasons[i].champ = {
                         tid: t.tid,
                         abbrev: t.abbrev,
                         region: t.region,
                         name: t.name,
-                        won: t.seasons[j].won,
-                        lost: t.seasons[j].lost,
+                        won: t.seasonAttrs[j].won,
+                        lost: t.seasonAttrs[j].lost,
                     };
-                } else if (t.seasons[j].playoffRoundsWon === g.numPlayoffRounds - 1) {
+                } else if (t.seasonAttrs[j].playoffRoundsWon === g.numPlayoffRounds - 1) {
                     seasons[i].runnerUp = {
                         tid: t.tid,
                         abbrev: t.abbrev,
                         region: t.region,
                         name: t.name,
-                        won: t.seasons[j].won,
-                        lost: t.seasons[j].lost,
+                        won: t.seasonAttrs[j].won,
+                        lost: t.seasonAttrs[j].lost,
                     };
                 }
             }

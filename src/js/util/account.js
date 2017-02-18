@@ -5,7 +5,6 @@ import backboard from 'backboard';
 import Promise from 'bluebird';
 import $ from 'jquery';
 import g from '../globals';
-import * as team from '../core/team';
 import {getCopy} from '../db';
 import * as ads from './ads';
 import logEvent from './logEvent';
@@ -286,13 +285,13 @@ checkAchievement.septuawinarian = async (saveAchievement: boolean = true) => {
         return false;
     }
 
-    const t = await team.filter({
+    const t = await getCopy.teams({
         seasonAttrs: ["won"],
         season: g.season,
         tid: g.userTid,
     });
 
-    if (t.won >= 70) {
+    if (t.seasonAttrs.won >= 70) {
         if (saveAchievement) {
             addAchievements(["septuawinarian"]);
         }
@@ -309,12 +308,12 @@ checkAchievement["98_degrees"] = async (saveAchievement: boolean = true) => {
 
     const awarded = await checkAchievement.fo_fo_fo(false);
     if (awarded) {
-        const t = await team.filter({
+        const t = await getCopy.teams({
             seasonAttrs: ["won", "lost"],
             season: g.season,
             tid: g.userTid,
         });
-        if (t.won === 82 && t.lost === 0) {
+        if (t.seasonAttrs.won === 82 && t.seasonAttrs.lost === 0) {
             if (saveAchievement) {
                 addAchievements(["98_degrees"]);
             }
@@ -367,13 +366,13 @@ async function checkMoneyball(maxPayroll, slug, saveAchievement) {
         return false;
     }
 
-    const t = await team.filter({
+    const t = await getCopy.teams({
         seasonAttrs: ["expenses", "playoffRoundsWon"],
         season: g.season,
         tid: g.userTid,
     });
 
-    if (t.playoffRoundsWon === g.numPlayoffRounds && t.expenses.salary.amount <= maxPayroll) {
+    if (t.seasonAttrs.playoffRoundsWon === g.numPlayoffRounds && t.seasonAttrs.expenses.salary.amount <= maxPayroll) {
         if (saveAchievement) {
             addAchievements([slug]);
         }
@@ -409,13 +408,13 @@ checkAchievement.small_market = async (saveAchievement: boolean = true) => {
         return false;
     }
 
-    const t = await team.filter({
+    const t = await getCopy.teams({
         seasonAttrs: ["playoffRoundsWon", "pop"],
         season: g.season,
         tid: g.userTid,
     });
 
-    if (t.playoffRoundsWon === g.numPlayoffRounds && t.pop <= 2) {
+    if (t.seasonAttrs.playoffRoundsWon === g.numPlayoffRounds && t.seasonAttrs.pop <= 2) {
         if (saveAchievement) {
             addAchievements(["small_market"]);
         }

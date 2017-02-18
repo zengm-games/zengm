@@ -1,6 +1,5 @@
 // @flow
 
-import orderBy from 'lodash.orderby';
 import g from '../globals';
 import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
@@ -15,15 +14,11 @@ function get(ctx) {
 
 async function updateStandings(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || (inputs.season === g.season && updateEvents.includes('gameSim')) || inputs.season !== state.season) {
-        const teams = orderBy(
-            await getCopy.teams({
-                attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
-                seasonAttrs: ["won", "lost", "winp", "wonHome", "lostHome", "wonAway", "lostAway", "wonDiv", "lostDiv", "wonConf", "lostConf", "lastTen", "streak"],
-                season: inputs.season,
-            }),
-            [(t) => t.seasonAttrs.winp, (t) => t.seasonAttrs.won],
-            ['desc', 'desc'],
-        );
+        const teams = helpers.orderByWinp(await getCopy.teams({
+            attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
+            seasonAttrs: ["won", "lost", "winp", "wonHome", "lostHome", "wonAway", "lostAway", "wonDiv", "lostDiv", "wonConf", "lostConf", "lastTen", "streak"],
+            season: inputs.season,
+        }));
 
         const numPlayoffTeams = 2 ** g.numPlayoffRounds;
 

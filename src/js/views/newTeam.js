@@ -1,10 +1,10 @@
 import g from '../globals';
-import * as team from '../core/team';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import NewTeam from './views/NewTeam';
 
 async function updateTeamSelect() {
-    let teams = await team.filter({
+    let teams = await getCopy.teams({
         attrs: ["tid", "region", "name"],
         seasonAttrs: ["winp"],
         season: g.season,
@@ -16,7 +16,7 @@ async function updateTeamSelect() {
     // If not in god mode, user must have been fired
     if (!g.godMode) {
         // Order by worst record
-        teams.sort((a, b) => a.winp - b.winp);
+        teams.sort((a, b) => a.seasonAttrs.winp - b.seasonAttrs.winp);
 
         // Only get option of 5 worst
         teams = teams.slice(0, 5);

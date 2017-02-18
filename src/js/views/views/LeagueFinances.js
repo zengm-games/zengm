@@ -11,16 +11,17 @@ const LeagueFinances = ({minPayroll, luxuryPayroll, luxuryTax, salaryCap, season
     const cols = getCols('Team', 'Avg Attendance', 'Revenue (YTD)', 'Profit (YTD)', 'Cash', 'Payroll');
 
     const rows = teams.map(t => {
-        const payroll = season === g.season ? t.payroll : t.salaryPaid;  // Display the current actual payroll for this season, or the salary actually paid out for prior seasons
+        // Display the current actual payroll for this season, or the salary actually paid out for prior seasons
+        const payroll = season === g.season ? t.seasonAttrs.payroll : t.seasonAttrs.salaryPaid;
 
         return {
             key: t.tid,
             data: [
                 <a href={helpers.leagueUrl(["team_finances", t.abbrev])}>{t.region} {t.name}</a>,
-                helpers.numberWithCommas(helpers.round(t.att)),
-                helpers.formatCurrency(t.revenue, "M"),
-                helpers.formatCurrency(t.profit, "M"),
-                helpers.formatCurrency(t.cash, "M"),
+                helpers.numberWithCommas(helpers.round(t.seasonAttrs.att)),
+                helpers.formatCurrency(t.seasonAttrs.revenue, "M"),
+                helpers.formatCurrency(t.seasonAttrs.profit, "M"),
+                helpers.formatCurrency(t.seasonAttrs.cash, "M"),
                 helpers.formatCurrency(payroll, "M"),
             ],
             classNames: {
@@ -57,14 +58,16 @@ LeagueFinances.propTypes = {
     season: React.PropTypes.number.isRequired,
     teams: React.PropTypes.arrayOf(React.PropTypes.shape({
         abbrev: React.PropTypes.string.isRequired,
-        att: React.PropTypes.number.isRequired,
-        cash: React.PropTypes.number.isRequired,
         name: React.PropTypes.string.isRequired,
-        payroll: React.PropTypes.number,
-        profit: React.PropTypes.number.isRequired,
         region: React.PropTypes.string.isRequired,
-        revenue: React.PropTypes.number.isRequired,
-        salaryPaid: React.PropTypes.number,
+        seasonAttrs: React.PropTypes.shape({
+            att: React.PropTypes.number.isRequired,
+            cash: React.PropTypes.number.isRequired,
+            payroll: React.PropTypes.number, // Not required for past seasons
+            profit: React.PropTypes.number.isRequired,
+            revenue: React.PropTypes.number.isRequired,
+            salaryPaid: React.PropTypes.number.isRequired,
+        }).isRequired,
         tid: React.PropTypes.number.isRequired,
     })).isRequired,
 };

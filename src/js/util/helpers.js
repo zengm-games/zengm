@@ -1,9 +1,10 @@
 // @flow
 
+import orderBy from 'lodash.orderby';
 import React from 'react';
 import g from '../globals';
 import logEvent from './logEvent';
-import type {BackboardTx, GameProcessed, GameProcessedCompleted, Pick, TeamBasic} from './types';
+import type {BackboardTx, GameProcessed, GameProcessedCompleted, Pick, TeamBasic, TeamFiltered} from './types';
 
 /**
  * Validate that a given abbreviation corresponds to a team.
@@ -660,6 +661,14 @@ function roundWinp(winp: number): string {
     return output;
 }
 
+const orderByWinp = (teams: TeamFiltered[]): TeamFiltered[] => {
+    return orderBy(
+        teams,
+        [(t) => t.seasonAttrs.winp, (t) => t.seasonAttrs.won],
+        ['desc', 'desc'],
+    );
+};
+
 export {
     validateAbbrev,
     getAbbrev,
@@ -693,4 +702,5 @@ export {
     maybeReuseTx,
     roundsWonText,
     roundWinp,
+    orderByWinp,
 };

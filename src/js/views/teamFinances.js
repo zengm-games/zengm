@@ -1,6 +1,7 @@
 import backboard from 'backboard';
 import g from '../globals';
 import * as team from '../core/team';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import TeamFinances from './views/TeamFinances';
@@ -27,7 +28,8 @@ async function updateTeamFinances(inputs, updateEvents, state) {
             luxuryTax: g.luxuryTax,
         };
 
-        const contracts = await team.getPayroll(inputs.tid).get(1);
+        const [payroll, contracts] = await team.getPayroll(inputs.tid);
+        vars.payroll = payroll / 1000;
 
         let showInt;
         if (inputs.show === "all") {
@@ -116,15 +118,12 @@ async function updateTeamFinances(inputs, updateEvents, state) {
         vars.barData = barData;
         vars.barSeasons = barSeasons;
         // Get stuff for the finances form
-        const t = await team.filter({
+        vars.t = await getCopy.teams({
             attrs: ["region", "name", "abbrev", "budget"],
-            seasonAttrs: ["expenses", "payroll"],
+            seasonAttrs: ["expenses"],
             season: g.season,
             tid: inputs.tid,
         });
-
-        vars.team = t;
-        vars.payroll = t.payroll; // For above/below observables
 
         return vars;
     }

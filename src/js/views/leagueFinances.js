@@ -1,7 +1,7 @@
 // @flow
 
 import g from '../globals';
-import * as team from '../core/team';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import LeagueFinances from './views/LeagueFinances';
@@ -14,7 +14,7 @@ function get(ctx) {
 
 async function updateLeagueFinances(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || inputs.season !== state.season || inputs.season === g.season) {
-        const teams = await team.filter({
+        const teams = await getCopy.teams({
             attrs: ["tid", "abbrev", "region", "name"],
             seasonAttrs: ["att", "revenue", "profit", "cash", "payroll", "salaryPaid"],
             season: inputs.season,

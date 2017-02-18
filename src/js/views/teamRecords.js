@@ -2,7 +2,6 @@ import Promise from 'bluebird';
 import React from 'react';
 import _ from 'underscore';
 import g from '../globals';
-import * as team from '../core/team';
 import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
@@ -26,19 +25,19 @@ function getTeamRecord(t, awards) {
     let finals = 0;
     let lastPlayoffAppearance = null;
     let lastChampionship = null;
-    for (let i = 0; i < t.seasons.length; i++) {
-        totalWon += t.seasons[i].won;
-        totalLost += t.seasons[i].lost;
-        if (t.seasons[i].playoffRoundsWon >= 0) {
+    for (let i = 0; i < t.seasonAttrs.length; i++) {
+        totalWon += t.seasonAttrs[i].won;
+        totalLost += t.seasonAttrs[i].lost;
+        if (t.seasonAttrs[i].playoffRoundsWon >= 0) {
             playoffAppearances++;
-            lastPlayoffAppearance = t.seasons[i].season;
+            lastPlayoffAppearance = t.seasonAttrs[i].season;
         }
-        if (t.seasons[i].playoffRoundsWon >= g.numPlayoffRounds - 1) {
+        if (t.seasonAttrs[i].playoffRoundsWon >= g.numPlayoffRounds - 1) {
             finals++;
         }
-        if (t.seasons[i].playoffRoundsWon === g.numPlayoffRounds) {
+        if (t.seasonAttrs[i].playoffRoundsWon === g.numPlayoffRounds) {
             championships++;
-            lastChampionship = t.seasons[i].season;
+            lastChampionship = t.seasonAttrs[i].season;
         }
     }
 
@@ -153,7 +152,7 @@ function sumRecordsFor(group, id, name, records) {
 async function updateTeamRecords(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || inputs.byType !== state.byType) {
         const [teams, awards] = await Promise.all([
-            team.filter({
+            getCopy.teams({
                 attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
                 seasonAttrs: ["season", "playoffRoundsWon", "won", "lost"],
             }),

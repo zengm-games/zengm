@@ -23,6 +23,9 @@ how do caches based on g.season work in preseason?
 revisit add.. move stuff to put
 - store if pk is auto incrementing, if not then require it on put/add
 
+getCopy.teamSeasons
+- for teamFinances, elsewhere?
+
 rewrite team.filter and player.filter
 - incorporate player.withStats
   - figure out if tx needed, and if so create one. hopefully don't need to accept passed one
@@ -34,8 +37,8 @@ rewrite team.filter and player.filter
   - getAlls from database need to use cache for this season still
     - this is a more general problem, and is the same problem really faced by events/messages/playerFeats when concating cache. the problem is, need to getAll from db and then update based on primary key from cache, and then insert if no update available. abstract?
       - with cache! do getAll, then iterate over cached records, and we know the primary key! just cloneDeep
-  - payroll
   - replace team.filter
+    - could make that a wrapper, after dealing with tx and payroll
   - types for Attrs
   - types for season/statType/playoffs options, which only have affect based on other options
 

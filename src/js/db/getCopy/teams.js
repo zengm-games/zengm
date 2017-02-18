@@ -3,6 +3,7 @@ import orderBy from 'lodash.orderby';
 import _ from 'underscore';
 import g from '../../globals';
 import {mergeByPk} from './helpers';
+import * as team from '../../core/team';
 import * as helpers from '../../util/helpers';
 import type {BackboardTx, Team, TeamFiltered} from '../../util/types';
 
@@ -53,7 +54,7 @@ const processSeasonAttrs = async (output: TeamFiltered, t: Team, seasonAttrs: Te
         seasons = await tx.teamSeasons.index('season, tid').getAll([season, t.tid]);
     }
 
-    output.seasonAttrs = seasons.map((ts) => {
+    output.seasonAttrs = await Promise.all(seasons.map(async (ts) => {
         const row = {};
 
         // Revenue and expenses calculation
@@ -81,8 +82,11 @@ const processSeasonAttrs = async (output: TeamFiltered, t: Team, seasonAttrs: Te
             } else if (attr === 'salaryPaid') {
                 row.salaryPaid = ts.expenses.salary.amount / 1000; // [millions of dollars]
             } else if (attr === 'payroll') {
-                // Handled later
-                row.payroll = null;
+                if (season === g.season) {
+                    row.payroll = (await team.getPayroll(t.tid).get(0)) / 1000;
+                } else {
+                    row.payroll = undefined;
+                }
             } else if (attr === 'lastTen') {
                 const lastTenWon = ts.lastTen.reduce((memo, num) => memo + num, 0);
                 const lastTenLost = ts.lastTen.length - lastTenWon;
@@ -101,7 +105,7 @@ const processSeasonAttrs = async (output: TeamFiltered, t: Team, seasonAttrs: Te
         }
 
         return row;
-    });
+    }));
 
     if (season !== undefined) {
         output.seasonAttrs = output.seasonAttrs[0];

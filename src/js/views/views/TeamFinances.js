@@ -14,12 +14,12 @@ class FinancesForm extends React.Component {
         super(props);
         this.state = {
             dirty: false,
-            coaching: props.team.budget.coaching.amount,
-            facilities: props.team.budget.facilities.amount,
-            health: props.team.budget.health.amount,
+            coaching: props.t.budget.coaching.amount,
+            facilities: props.t.budget.facilities.amount,
+            health: props.t.budget.health.amount,
             saving: false,
-            scouting: props.team.budget.scouting.amount,
-            ticketPrice: props.team.budget.ticketPrice.amount,
+            scouting: props.t.budget.scouting.amount,
+            ticketPrice: props.t.budget.ticketPrice.amount,
         };
         this.handleChanges = {
             coaching: this.handleChange.bind(this, 'coaching'),
@@ -34,11 +34,11 @@ class FinancesForm extends React.Component {
     componentWillReceiveProps(nextProps) {
         if (!this.state.dirty) {
             this.setState({
-                coaching: nextProps.team.budget.coaching.amount,
-                facilities: nextProps.team.budget.facilities.amount,
-                health: nextProps.team.budget.health.amount,
-                scouting: nextProps.team.budget.scouting.amount,
-                ticketPrice: nextProps.team.budget.ticketPrice.amount,
+                coaching: nextProps.t.budget.coaching.amount,
+                facilities: nextProps.t.budget.facilities.amount,
+                health: nextProps.t.budget.health.amount,
+                scouting: nextProps.t.budget.scouting.amount,
+                ticketPrice: nextProps.t.budget.ticketPrice.amount,
             });
         }
     }
@@ -96,7 +96,7 @@ class FinancesForm extends React.Component {
     }
 
     render() {
-        const {gamesInProgress, team, tid} = this.props;
+        const {gamesInProgress, t, tid} = this.props;
 
         const warningMessage = <p className="text-danger">
             {gamesInProgress && tid === g.userTid ? 'Stop game simulation to edit.' : null}
@@ -115,7 +115,7 @@ class FinancesForm extends React.Component {
                     <span className="input-group-addon">$</span>
                     <input type="text" className="form-control" disabled={formDisabled} onChange={this.handleChanges.ticketPrice} value={this.state.ticketPrice} />
                 </div>
-                <div className="pull-left finances-settings-text">Leaguewide rank: #{team.budget.ticketPrice.rank}</div>
+                <div className="pull-left finances-settings-text">Leaguewide rank: #{t.budget.ticketPrice.rank}</div>
             </div>
             <p />
             <h4>Expense Settings <HelpPopover placement="bottom" title="Expense Settings">
@@ -132,7 +132,7 @@ class FinancesForm extends React.Component {
                     <input type="text" className="form-control" disabled={formDisabled} onChange={this.handleChanges.scouting} value={this.state.scouting} />
                     <span className="input-group-addon">M</span>
                 </div>
-                <div className="pull-left finances-settings-text-small">Current spending rate: #{team.budget.scouting.rank}<br />Spent this season: #{team.expenses.scouting.rank}</div>
+                <div className="pull-left finances-settings-text-small">Current spending rate: #{t.budget.scouting.rank}<br />Spent this season: #{t.seasonAttrs.expenses.scouting.rank}</div>
             </div>
             <div className="row">
                 <div className="pull-left finances-settings-label">Coaching</div>
@@ -141,7 +141,7 @@ class FinancesForm extends React.Component {
                     <input type="text" className="form-control" disabled={formDisabled} onChange={this.handleChanges.coaching} value={this.state.coaching} />
                     <span className="input-group-addon">M</span>
                 </div>
-                <div className="pull-left finances-settings-text-small">Current spending rate: #{team.budget.coaching.rank}<br />Spent this season: #{team.expenses.coaching.rank}</div>
+                <div className="pull-left finances-settings-text-small">Current spending rate: #{t.budget.coaching.rank}<br />Spent this season: #{t.seasonAttrs.expenses.coaching.rank}</div>
             </div>
             <div className="row">
                 <div className="pull-left finances-settings-label">Health</div>
@@ -150,7 +150,7 @@ class FinancesForm extends React.Component {
                     <input type="text" className="form-control" disabled={formDisabled} onChange={this.handleChanges.health} value={this.state.health} />
                     <span className="input-group-addon">M</span>
                 </div>
-                <div className="pull-left finances-settings-text-small">Current spending rate: #{team.budget.health.rank}<br />Spent this season: #{team.expenses.health.rank}</div>
+                <div className="pull-left finances-settings-text-small">Current spending rate: #{t.budget.health.rank}<br />Spent this season: #{t.seasonAttrs.expenses.health.rank}</div>
             </div>
             <div className="row">
                 <div className="pull-left finances-settings-label">Facilities</div>
@@ -159,7 +159,7 @@ class FinancesForm extends React.Component {
                     <input type="text" className="form-control" disabled={formDisabled} onChange={this.handleChanges.facilities} value={this.state.facilities} />
                     <span className="input-group-addon">M</span>
                 </div>
-                <div className="pull-left finances-settings-text-small">Current spending rate: #{team.budget.facilities.rank}<br />Spent this season: #{team.expenses.facilities.rank}</div>
+                <div className="pull-left finances-settings-text-small">Current spending rate: #{t.budget.facilities.rank}<br />Spent this season: #{t.seasonAttrs.expenses.facilities.rank}</div>
             </div>
             <br />
             {tid === g.userTid ? <div className="row">
@@ -180,12 +180,12 @@ class FinancesForm extends React.Component {
 
 FinancesForm.propTypes = {
     gamesInProgress: React.PropTypes.bool.isRequired,
-    team: React.PropTypes.object.isRequired,
+    t: React.PropTypes.object.isRequired,
     tid: React.PropTypes.number.isRequired,
 };
 
-const TeamFinances = ({abbrev, barData, barSeasons, contractTotals, contracts, gamesInProgress, luxuryPayroll, luxuryTax, minContract, minPayroll, numGames, payroll, salariesSeasons, salaryCap, show, team, tid}) => {
-    bbgmViewReact.title(`${team.region} ${team.name} Finances`);
+const TeamFinances = ({abbrev, barData, barSeasons, contractTotals, contracts, gamesInProgress, luxuryPayroll, luxuryTax, minContract, minPayroll, numGames, payroll, salariesSeasons, salaryCap, show, t, tid}) => {
+    bbgmViewReact.title(`${t.region} ${t.name} Finances`);
 
     const cols = getCols('Name').concat(salariesSeasons.map(season => {
         return {
@@ -247,12 +247,12 @@ const TeamFinances = ({abbrev, barData, barSeasons, contractTotals, contracts, g
 
     return <div>
         <Dropdown view="team_finances" fields={["teams", "shows"]} values={[abbrev, show]} />
-        <h1>{team.region} {team.name} Finances <NewWindowLink /></h1>
+        <h1>{t.region} {t.name} Finances <NewWindowLink /></h1>
 
         <p>More: <a href={helpers.leagueUrl(['roster', abbrev])}>Roster</a> | <a href={helpers.leagueUrl(['game_log', abbrev])}>Game Log</a> | <a href={helpers.leagueUrl(['team_history', abbrev])}>History</a> | <a href={helpers.leagueUrl(['transactions', abbrev])}>Transactions</a></p>
 
 
-        <p className="clearfix">The current payroll (<b>{helpers.formatCurrency([team.payroll, 'M'])}</b>) is {payroll > minPayroll ? 'above' : 'below'} the minimum payroll limit (<b>{helpers.formatCurrency([minPayroll, 'M'])}</b>), {payroll > salaryCap ? 'above' : 'below'} the salary cap (<b>{helpers.formatCurrency([salaryCap, 'M'])}</b>), and {payroll > luxuryPayroll ? 'above' : 'below'} the luxury tax limit (<b>{helpers.formatCurrency([luxuryPayroll, 'M'])}</b>). <HelpPopover placement="bottom" title="Payroll Limits">
+        <p className="clearfix">The current payroll (<b>{helpers.formatCurrency(payroll, 'M')}</b>) is {payroll > minPayroll ? 'above' : 'below'} the minimum payroll limit (<b>{helpers.formatCurrency(minPayroll, 'M')}</b>), {payroll > salaryCap ? 'above' : 'below'} the salary cap (<b>{helpers.formatCurrency(salaryCap, 'M')}</b>), and {payroll > luxuryPayroll ? 'above' : 'below'} the luxury tax limit (<b>{helpers.formatCurrency(luxuryPayroll, 'M')}</b>). <HelpPopover placement="bottom" title="Payroll Limits">
             The salary cap is a soft cap, meaning that you can exceed it to re-sign your own players or to sign free agents to minimum contracts (${minContract}k/year); however, you cannot exceed the salary cap to sign a free agent for more than the minimum. Teams with payrolls below the minimum payroll limit will be assessed a fine equal to the difference at the end of the season. Teams with payrolls above the luxury tax limit will be assessed a fine equal to {luxuryTax} times the difference at the end of the season.
         </HelpPopover></p>
 
@@ -331,7 +331,7 @@ const TeamFinances = ({abbrev, barData, barSeasons, contractTotals, contracts, g
             <div className="col-md-5 col-sm-6">
                 <FinancesForm
                     gamesInProgress={gamesInProgress}
-                    team={team}
+                    t={t}
                     tid={tid}
                 />
             </div>
@@ -368,7 +368,7 @@ TeamFinances.propTypes = {
     salariesSeasons: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
     salaryCap: React.PropTypes.number.isRequired,
     show: React.PropTypes.oneOf(['10', 'all']).isRequired,
-    team: React.PropTypes.object.isRequired,
+    t: React.PropTypes.object.isRequired,
     tid: React.PropTypes.number.isRequired,
 };
 

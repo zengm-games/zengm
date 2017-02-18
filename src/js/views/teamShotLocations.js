@@ -1,7 +1,7 @@
 // @flow
 
 import g from '../globals';
-import * as team from '../core/team';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import TeamShotLocations from './views/TeamShotLocations';
@@ -14,7 +14,7 @@ function get(ctx) {
 
 async function updateTeams(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || (inputs.season === g.season && (updateEvents.includes('gameSim') || updateEvents.includes('playerMovement'))) || inputs.season !== state.season) {
-        const teams = await team.filter({
+        const teams = await getCopy.teams({
             attrs: ["abbrev", "tid"],
             seasonAttrs: ["won", "lost"],
             stats: ["gp", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp"],

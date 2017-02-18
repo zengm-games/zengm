@@ -63,28 +63,28 @@ async function updateTeams(inputs, updateEvents) {
         const vars = {};
         const stats = ["pts", "oppPts", "trb", "ast"];  // This is also used later to find ranks for these team stats
 
-        const teams = await team.filter({
+        const teams = helpers.orderByWinp(await getCopy.teams({
             attrs: ["tid", "cid"],
-            seasonAttrs: ["won", "lost", "winp", "att", "revenue", "profit"],
+            seasonAttrs: ["won", "winp", "att", "revenue", "profit"],
             stats,
             season: g.season,
-            sortBy: ["winp", "-lost", "won"],
-        });
+        }));
 
-        const cid = teams.find(t => t.tid === g.userTid).cid;
+        const t = teams.find(t2 => t2.tid === g.userTid);
+        const cid = t !== undefined ? t.cid : undefined;
 
         vars.rank = 1;
         for (let i = 0; i < teams.length; i++) {
             if (teams[i].cid === cid) {
                 if (teams[i].tid === g.userTid) {
-                    vars.pts = teams[i].pts;
-                    vars.oppPts = teams[i].oppPts;
-                    vars.trb = teams[i].trb;
-                    vars.ast = teams[i].ast;
+                    vars.pts = teams[i].stats.pts;
+                    vars.oppPts = teams[i].stats.oppPts;
+                    vars.trb = teams[i].stats.trb;
+                    vars.ast = teams[i].stats.ast;
 
-                    vars.att = teams[i].att;
-                    vars.revenue = teams[i].revenue;
-                    vars.profit = teams[i].profit;
+                    vars.att = teams[i].seasonAttrs.att;
+                    vars.revenue = teams[i].seasonAttrs.revenue;
+                    vars.profit = teams[i].seasonAttrs.profit;
                     break;
                 } else {
                     vars.rank += 1;
@@ -93,7 +93,7 @@ async function updateTeams(inputs, updateEvents) {
         }
 
         for (let i = 0; i < stats.length; i++) {
-            teams.sort((a, b) => b[stats[i]] - a[stats[i]]);
+            teams.sort((a, b) => b.stats[stats[i]] - a.stats[stats[i]]);
             for (let j = 0; j < teams.length; j++) {
                 if (teams[j].tid === g.userTid) {
                     vars[`${stats[i]}Rank`] = j + 1;
@@ -277,12 +277,11 @@ async function updatePlayoffs(inputs, updateEvents) {
 
 async function updateStandings(inputs, updateEvents) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('gameSim')) {
-        const teams = await team.filter({
+        const teams = helpers.orderByWinp(await getCopy.teams({
             attrs: ["tid", "cid", "abbrev", "region"],
             seasonAttrs: ["won", "lost", "winp"],
             season: g.season,
-            sortBy: ["winp", "-lost", "won"],
-        });
+        }));
 
         // Find user's conference
         let cid;
@@ -302,7 +301,7 @@ async function updateStandings(inputs, updateEvents) {
                 if (l === 0) {
                     confTeams[l].gb = 0;
                 } else {
-                    confTeams[l].gb = helpers.gb(confTeams[0], confTeams[l]);
+                    confTeams[l].gb = helpers.gb(confTeams[0].seasonAttrs, confTeams[l].seasonAttrs);
                 }
                 l += 1;
             }

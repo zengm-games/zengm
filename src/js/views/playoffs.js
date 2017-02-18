@@ -31,7 +31,7 @@ async function updatePlayoffs(inputs, updateEvents, state) {
 
             finalMatchups = false;
         } else {
-            const playoffSeries = await g.dbl.playoffSeries.get(inputs.season);
+            const playoffSeries = await getCopy.playoffSeries({season: inputs.season});
             series = playoffSeries.series;
 
             finalMatchups = true;

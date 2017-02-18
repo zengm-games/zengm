@@ -1,7 +1,6 @@
 IVERSON
 
 get everything from regular season to playoffs in cache
-- playoffSeries
 - phase change
 
 mutation for things involving indexes

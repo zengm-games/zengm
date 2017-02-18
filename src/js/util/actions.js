@@ -147,7 +147,7 @@ const playMenu = {
     throughPlayoffs: async () => {
         if (g.phase === g.PHASE.PLAYOFFS) {
             ui.updateStatus("Playing..."); // For quick UI updating, before await
-            const playoffSeries = await g.dbl.playoffSeries.get(g.season);
+            const playoffSeries = await g.cache.get('playoffSeries', g.season);
 
             // Max 7 days per round that hasn't started yet
             const numDaysFutureRounds = (g.numPlayoffRounds - 1 - playoffSeries.currentRound) * 7;

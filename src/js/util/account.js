@@ -254,7 +254,7 @@ checkAchievement.fo_fo_fo = async (saveAchievement: boolean = true) => {
         return false;
     }
 
-    const playoffSeries = await g.dbl.playoffSeries.get(g.season);
+    const playoffSeries = await getCopy.playoffSeries({season: g.season});
     const series = playoffSeries.series;
 
     for (let round = 0; round < series.length; round++) {

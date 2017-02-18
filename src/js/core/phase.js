@@ -191,7 +191,7 @@ async function newPhasePlayoffs(tx: BackboardTx) {
     }
 
     await Promise.all([
-        tx.playoffSeries.put({
+        g.cache.put('playoffSeries', {
             season: g.season,
             currentRound: 0,
             series,
@@ -531,7 +531,7 @@ async function newPhase(phase: Phase, extra: any) {
             func: newPhaseRegularSeason,
         },
         [g.PHASE.PLAYOFFS]: {
-            objectStores: ["players", "playerStats", "playoffSeries", "releasedPlayers", "schedule", "teams", "teamSeasons", "teamStats"],
+            objectStores: ["players", "playerStats", "releasedPlayers", "schedule", "teams", "teamSeasons", "teamStats"],
             func: newPhasePlayoffs,
         },
         [g.PHASE.BEFORE_DRAFT]: {

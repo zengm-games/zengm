@@ -232,7 +232,7 @@ async function updatePlayers(inputs, updateEvents) {
 
 async function updatePlayoffs(inputs, updateEvents) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || (g.phase >= g.PHASE.PLAYOFFS && updateEvents.includes('gameSim')) || (updateEvents.includes('newPhase') && g.phase === g.PHASE.PLAYOFFS)) {
-        const playoffSeries = await g.dbl.playoffSeries.get(g.season);
+        const playoffSeries = await getCopy.playoffSeries({season: g.season});
 
         let foundSeries;
         let seriesTitle = '';

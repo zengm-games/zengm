@@ -558,7 +558,7 @@ function newSchedule(teams: Team[]): [number, number][] {
  * @return {Promise.boolean} Resolves to true if the playoffs are over. Otherwise, false.
  */
 async function newSchedulePlayoffsDay(tx: BackboardTx): Promise<boolean> {
-    const playoffSeries = await tx.playoffSeries.get(g.season);
+    const playoffSeries = await g.cache.get('playoffSeries', g.season);
 
     const series = playoffSeries.series;
     const rnd = playoffSeries.currentRound;
@@ -643,7 +643,6 @@ async function newSchedulePlayoffsDay(tx: BackboardTx): Promise<boolean> {
     }
 
     playoffSeries.currentRound += 1;
-    await tx.playoffSeries.put(playoffSeries);
 
     // Update hype for winning a series
     await Promise.all(tidsWon.map(async (tid) => {

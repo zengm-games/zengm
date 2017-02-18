@@ -205,7 +205,7 @@ async function create(
 
     let players;
     let scoutingRank;
-    const objectStores = ["draftPicks", "draftOrder", "players", "playerStats", "teams", "teamSeasons", "teamStats", "trade", "releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games", "events", "playerFeats"];
+    const objectStores = ["draftPicks", "draftOrder", "players", "playerStats", "teams", "teamSeasons", "teamStats", "releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games", "events", "playerFeats"];
     await g.dbl.tx(objectStores, "readwrite", async tx => {
         // Draft picks for the first 4 years, as those are the ones can be traded initially
         if (leagueFile.hasOwnProperty("draftPicks")) {
@@ -278,10 +278,10 @@ async function create(
 
         if (leagueFile.hasOwnProperty("trade")) {
             for (let i = 0; i < leagueFile.trade.length; i++) {
-                tx.trade.add(leagueFile.trade[i]);
+                await g.cache.add('trade', leagueFile.trade[i]);
             }
         } else {
-            tx.trade.add({
+            await g.cache.add('trade', {
                 rid: 0,
                 teams: [{
                     tid,

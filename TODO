@@ -46,10 +46,10 @@ schedule stuff
 - special flag in schedule database, denoting that it could be blank. then, put can't rely on maxId because it could be 0 when in reality it's just a blank db but other games were played. for other databases, i think it doesn't matter, because they are isolated and even after deleting data it won't matter if there are dupes
   - or maybe store max gid elsewhere, and overwrite maxId calculation?
   - any other stores where id could get reset like this, and matter?
+- BETTER IDEA: check max GID for games and schedule, because it has to be in one of those
 
 other stores
 -playoffSeries
--trade
 -draftOrder
 -negotiations
 -draftPicks

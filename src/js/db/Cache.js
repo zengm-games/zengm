@@ -9,11 +9,11 @@ import type {BackboardTx, Player} from '../util/types';
 type Status = 'empty' | 'error' | 'filling' | 'flushing' | 'full';
 
 // Only these IDB object stores for now. Keep in memory only player info for non-retired players and team info for the current season.
-type Store = 'awards' | 'events' | 'gameAttributes' | 'games' | 'messages' | 'playerFeats' | 'playerStats' | 'players' | 'releasedPlayers' | 'schedule' | 'teamSeasons' | 'teamStats' | 'teams';
+type Store = 'awards' | 'events' | 'gameAttributes' | 'games' | 'messages' | 'playerFeats' | 'playerStats' | 'players' | 'releasedPlayers' | 'schedule' | 'teamSeasons' | 'teamStats' | 'teams' | 'trade';
 type Index = 'playerStats' | 'playerStatsAllByPid' | 'playerStatsByPid' | 'playersByTid' | 'releasedPlayers' | 'releasedPlayersByTid' | 'teamSeasonsBySeasonTid' | 'teamSeasonsByTidSeason' | 'teamStatsByPlayoffsTid';
 
 // This variable is only needed because Object.keys(storeInfos) is not handled well in Flow
-const STORES: Store[] = ['awards', 'events', 'gameAttributes', 'games', 'messages', 'playerFeats', 'playerStats', 'players', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams'];
+const STORES: Store[] = ['awards', 'events', 'gameAttributes', 'games', 'messages', 'playerFeats', 'playerStats', 'players', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams', 'trade'];
 
 class Cache {
     data: {[key: Store]: any};
@@ -154,6 +154,10 @@ class Cache {
             teams: {
                 pk: 'tid',
                 getData: (tx: BackboardTx) => tx.teams.getAll(),
+            },
+            trade: {
+                pk: 'rid',
+                getData: (tx: BackboardTx) => tx.trade.getAll(),
             },
         };
     }
@@ -312,7 +316,7 @@ class Cache {
     async add(store: Store, obj: any) {
         this.checkStatus('full');
 
-        if (['events', 'games', 'messages', 'playerFeats', 'schedule'].includes(store)) {
+        if (['events', 'games', 'messages', 'playerFeats', 'schedule', 'trade'].includes(store)) {
             // This works if no indexes
 
             const pk = this.storeInfos[store].pk;

@@ -10,18 +10,6 @@ import logEvent from '../util/logEvent';
 import type {BackboardTx, TradePickValues, TradeSummary, TradeTeams} from '../util/types';
 
 /**
- * Get the contents of the current trade from the database.
- *
- * @memberOf core.trade
- * @param {Promise.<Array.<Object>>} Resolves to an array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs).
- */
-async function get(tx: ?BackboardTx): Promise<TradeTeams> {
-    const dbOrTx = tx !== undefined && tx !== null ? tx : g.dbl;
-    const tr = await dbOrTx.trade.get(0);
-    return tr.teams;
-}
-
-/**
  * Start a new trade with a team.
  *
  * @memberOf core.trade
@@ -29,20 +17,15 @@ async function get(tx: ?BackboardTx): Promise<TradeTeams> {
  * @return {Promise}
  */
 async function create(teams: TradeTeams) {
-    const oldTeams = await get();
+    const tr = await g.cache.get('trade', 0);
 
     // If nothing is in this trade, it's just a team switch, so keep the old stuff from the user's team
     if (teams[0].pids.length === 0 && teams[1].pids.length === 0 && teams[0].dpids.length === 0 && teams[1].dpids.length === 0) {
-        teams[0].pids = oldTeams[0].pids;
-        teams[0].dpids = oldTeams[0].dpids;
+        teams[0].pids = tr.teams[0].pids;
+        teams[0].dpids = tr.teams[0].dpids;
     }
 
-    await g.dbl.tx("trade", "readwrite", tx => {
-        return tx.trade.put({
-            rid: 0,
-            teams,
-        });
-    });
+    tr.teams = teams;
 
     league.updateLastDbChange();
 }
@@ -54,8 +37,8 @@ async function create(teams: TradeTeams) {
  * @return {er} Resolves to the other team's team ID.
  */
 async function getOtherTid(): Promise<number> {
-    const teams = await get();
-    return teams[1].tid;
+    const tr = await g.cache.get('trade', 0);
+    return tr.teams[1].tid;
 }
 
 /**
@@ -165,30 +148,25 @@ async function updatePlayers(teams: TradeTeams): Promise<TradeTeams> {
 
     let updated = false; // Has the trade actually changed?
 
-    await g.dbl.tx("trade", "readwrite", async tx => {
-        const oldTeams = await get(tx);
-        for (let i = 0; i < 2; i++) {
-            if (teams[i].tid !== oldTeams[i].tid) {
-                updated = true;
-                break;
-            }
-            if (teams[i].pids.toString() !== oldTeams[i].pids.toString()) {
-                updated = true;
-                break;
-            }
-            if (teams[i].dpids.toString() !== oldTeams[i].dpids.toString()) {
-                updated = true;
-                break;
-            }
+    const tr = await g.cache.get('trade', 0);
+    for (let i = 0; i < 2; i++) {
+        if (teams[i].tid !== tr.teams[i].tid) {
+            updated = true;
+            break;
         }
+        if (teams[i].pids.toString() !== tr.teams[i].pids.toString()) {
+            updated = true;
+            break;
+        }
+        if (teams[i].dpids.toString() !== tr.teams[i].dpids.toString()) {
+            updated = true;
+            break;
+        }
+    }
 
-        if (updated) {
-            await tx.trade.put({
-                rid: 0,
-                teams,
-            });
-        }
-    });
+    if (updated) {
+        tr.teams = teams;
+    }
 
     if (updated) {
         league.updateLastDbChange();
@@ -298,16 +276,12 @@ function summary(teams: TradeTeams): TradeSummary {
  * @return {Promise}
  */
 async function clear() {
-    await g.dbl.tx("trade", "readwrite", async tx => {
-        const tr = await tx.trade.get(0);
+    const tr = await g.cache.get('trade', 0);
 
-        for (let i = 0; i < tr.teams.length; i++) {
-            tr.teams[i].pids = [];
-            tr.teams[i].dpids = [];
-        }
-
-        return tx.trade.put(tr);
-    });
+    for (const t of tr.teams) {
+        t.pids = [];
+        t.dpids = [];
+    }
 
     league.updateLastDbChange();
 }
@@ -326,7 +300,7 @@ async function propose(forceTrade?: boolean = false): Promise<[boolean, ?string]
         return [false, "Error! You're not allowed to make trades now."];
     }
 
-    const teams = await get();
+    const {teams} = await g.cache.get('trade', 0);
 
     const tids = [teams[0].tid, teams[1].tid];
     const pids = [teams[0].pids, teams[1].pids];
@@ -644,10 +618,11 @@ async function getPickValues(tx: ?BackboardTx): Promise<TradePickValues> {
  * @return {Promise.string} Resolves to a string containing a message to be dispalyed to the user, as if it came from the AI GM.
  */
 async function makeItWorkTrade() {
-    const [estValues, teams0] = await Promise.all([
+    const [estValues, tr] = await Promise.all([
         getPickValues(),
-        get(),
+        g.cache.get('trade', 0),
     ]);
+    const teams0 = tr.teams;
 
     const [found, teams] = await makeItWork(helpers.deepCopy(teams0), false, estValues);
 
@@ -676,10 +651,8 @@ async function makeItWorkTrade() {
     }
 
     if (updated) {
-        await g.dbl.tx("trade", "readwrite", tx => tx.trade.put({
-            rid: 0,
-            teams,
-        }));
+        const tr2 = await g.cache.get('trade', 0);
+        tr2.teams = teams;
     }
 
     if (s.warning) {
@@ -690,7 +663,6 @@ async function makeItWorkTrade() {
 }
 
 export {
-    get,
     create,
     updatePlayers,
     getOtherTid,

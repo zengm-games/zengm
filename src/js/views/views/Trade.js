@@ -87,7 +87,6 @@ class Trade extends React.Component {
         });
 
         const otherTid = g.teamAbbrevsCache.indexOf(event.target.value);
-        console.log(event.target.value, otherTid);
 
         const teams = [{
             tid: g.userTid,

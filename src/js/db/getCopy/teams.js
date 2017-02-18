@@ -1,8 +1,7 @@
 import backboard from 'backboard';
-import orderBy from 'lodash.orderby';
 import _ from 'underscore';
 import g from '../../globals';
-import {mergeByPk} from './helpers';
+import {filterOrderStats, mergeByPk} from './helpers';
 import * as team from '../../core/team';
 import * as helpers from '../../util/helpers';
 import type {BackboardTx, Team, TeamFiltered} from '../../util/types';
@@ -152,18 +151,7 @@ const processStats = async (
     }
 
     // Handle playoffs/regularSeason
-    teamStats = teamStats.filter((ts) => {
-        if (playoffs && ts.playoffs) {
-            return true;
-        }
-        if (regularSeason && !ts.playoffs) {
-            return true;
-        }
-        return false;
-    });
-
-    // Above queries come back in inconsistent order
-    teamStats = orderBy(teamStats, ['season', 'playoffs']);
+    teamStats = filterOrderStats(teamStats, playoffs, regularSeason);
 
     output.stats = teamStats.map((ts) => {
         const row = {};

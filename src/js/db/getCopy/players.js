@@ -1,8 +1,7 @@
 import backboard from 'backboard';
-import orderBy from 'lodash.orderby';
 import _ from 'underscore';
 import g from '../../globals';
-import {mergeByPk} from './helpers';
+import {filterOrderStats, mergeByPk} from './helpers';
 import {contractSeasonsRemaining, fuzzRating} from '../../core/player';
 import * as helpers from '../../util/helpers';
 import type {BackboardTx, Player, PlayerFiltered} from '../../util/types';
@@ -214,6 +213,38 @@ const processStats = async (output: PlayerFiltered, p: Player, {
     regularSeason,
     season,
 }: PlayerOptions, tx: ?BackboardTx) => {
+    let playerStats;
+
+    const playerStatsFromCache = () => {
+        // Last 1-2 seasons, from cache
+        return g.cache.indexGetAll('playerStatsAllByPid', p.pid);
+    };
+
+    if (season === undefined) {
+        // All seasons
+        playerStats = mergeByPk(
+            await tx.playerStats.index('pid, season, tid').getAll(backboard.bound([p.pid], [p.pid, ''])),
+            await playerStatsFromCache(),
+            g.cache.storeInfos.playerStats.pk,
+        );
+    } else if (season === g.season) {
+        playerStats = await playerStatsFromCache();
+    } else {
+        // Single season, from database
+        playerStats = await tx.playerStats.index('pid, season, tid').getAll(backboard.bound([p.pid, season], [p.pid, season, '']));
+    }
+
+    // Handle playoffs/regularSeason
+    playerStats = filterOrderStats(playerStats, playoffs, regularSeason);
+
+    output.stats = playerStats.map((ps) => {
+        const row = {};
+
+
+
+        return row;
+    });
+
     if (season !== undefined && ((playoffs && !regularSeason) || (!playoffs && regularSeason))) {
         output.stats = output.stats[0];
     }
@@ -222,16 +253,20 @@ const processStats = async (output: PlayerFiltered, p: Player, {
 const processPlayer = async (p: Player, options: PlayerOptions, tx: ?BackboardTx) => {
     const output = {};
 
-    if (options.attrs.length > 0) {
-        processAttrs(output, p, options);
-    }
-
     if (options.stats.length > 0) {
         await processStats(output, p, options, tx);
     }
 
+// Only add a player if filterStats finds something (either stats that season, or options overriding that check)
+
     if (options.ratings.length > 0) {
         processRatings(output, p, options);
+    }
+
+// Only add a player if he was active for this season and thus has ratings for this season
+
+    if (options.attrs.length > 0) {
+        processAttrs(output, p, options);
     }
 
     return output;
@@ -288,7 +323,10 @@ const getCopy = async (players: Player | Player[], {
     if (objectStores.length > 0) {
         return g.dbl.tx(objectStores, (tx) => processMaybeWithIDB(tx));
     }
-    return processMaybeWithIDB();
+
+    const playersFiltered = await processMaybeWithIDB();
+
+    return playersFiltered.filter((p) => p !== undefined);
 };
 
 export default getCopy;

@@ -1,8 +1,9 @@
 // @flow
 
+import orderBy from 'lodash.orderby';
 import g from '../globals';
 import * as season from '../core/season';
-import * as team from '../core/team';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import Playoffs from './views/Playoffs';
@@ -20,12 +21,15 @@ async function updatePlayoffs(inputs, updateEvents, state) {
 
         // If in the current season and before playoffs started, display projected matchups
         if (inputs.season === g.season && g.phase < g.PHASE.PLAYOFFS) {
-            const teams = await team.filter({
-                attrs: ["tid", "cid", "abbrev", "name"],
-                seasonAttrs: ["winp"],
-                season: inputs.season,
-                sortBy: ["winp", "-lost", "won"],
-            });
+            const teams = orderBy(
+                await getCopy.teams({
+                    attrs: ["tid", "cid", "abbrev", "name"],
+                    seasonAttrs: ["winp", "won"],
+                    season: inputs.season,
+                }),
+                [(t) => t.seasonAttrs.winp, (t) => t.seasonAttrs.won],
+                ['desc', 'desc'],
+            );
 
             const result = season.genPlayoffSeries(teams);
             series = result.series;

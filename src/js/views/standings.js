@@ -1,7 +1,8 @@
 // @flow
 
+import orderBy from 'lodash.orderby';
 import g from '../globals';
-import * as team from '../core/team';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import Standings from './views/Standings';
@@ -14,12 +15,15 @@ function get(ctx) {
 
 async function updateStandings(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || (inputs.season === g.season && updateEvents.includes('gameSim')) || inputs.season !== state.season) {
-        const teams = await team.filter({
-            attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
-            seasonAttrs: ["won", "lost", "winp", "wonHome", "lostHome", "wonAway", "lostAway", "wonDiv", "lostDiv", "wonConf", "lostConf", "lastTen", "streak"],
-            season: inputs.season,
-            sortBy: ["winp", "-lost", "won"],
-        });
+        const teams = orderBy(
+            await getCopy.teams({
+                attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
+                seasonAttrs: ["won", "lost", "winp", "wonHome", "lostHome", "wonAway", "lostAway", "wonDiv", "lostDiv", "wonConf", "lostConf", "lastTen", "streak"],
+                season: inputs.season,
+            }),
+            [(t) => t.seasonAttrs.winp, (t) => t.seasonAttrs.won],
+            ['desc', 'desc'],
+        );
 
         const numPlayoffTeams = 2 ** g.numPlayoffRounds;
 
@@ -36,7 +40,7 @@ async function updateStandings(inputs, updateEvents, state) {
                     if (j === 0) {
                         confTeams[j].gb = 0;
                     } else {
-                        confTeams[j].gb = helpers.gb(confTeams[0], confTeams[j]);
+                        confTeams[j].gb = helpers.gb(confTeams[0].seasonAttrs, confTeams[j].seasonAttrs);
                     }
                     if (confTeams[j].tid === g.userTid) {
                         confTeams[j].highlight = true;
@@ -59,7 +63,7 @@ async function updateStandings(inputs, updateEvents, state) {
                             if (k === 0) {
                                 divTeams[k].gb = 0;
                             } else {
-                                divTeams[k].gb = helpers.gb(divTeams[0], divTeams[k]);
+                                divTeams[k].gb = helpers.gb(divTeams[0].seasonAttrs, divTeams[k].seasonAttrs);
                             }
 
                             if (playoffsRank[divTeams[k].tid] <= numPlayoffTeams / 2) {

@@ -1,8 +1,8 @@
 import Promise from 'bluebird';
 import g from '../globals';
 import * as player from '../core/player';
-import * as team from '../core/team';
 import * as trade from '../core/trade';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import Trade from './views/Trade';
@@ -92,7 +92,7 @@ async function updateTrade() {
             return player.withStats(null, players, {statsSeasons: [g.season]});
         }),
         g.dbl.draftPicks.index('tid').getAll(otherTid),
-        team.filter({
+        getCopy.teams({
             tid: otherTid,
             season: g.season,
             attrs: ["strategy"],
@@ -136,8 +136,8 @@ async function updateTrade() {
         otherRoster,
         otherTid,
         strategy: t.strategy,
-        won: t.won,
-        lost: t.lost,
+        won: t.seasonAttrs.won,
+        lost: t.seasonAttrs.lost,
         gameOver: g.gameOver,
         godMode: g.godMode,
         forceTrade: false,

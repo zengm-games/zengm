@@ -9,6 +9,7 @@ import * as league from './league';
 import * as phase from './phase';
 import * as player from './player';
 import * as team from './team';
+import {getCopy} from '../db';
 import * as helpers from '../util/helpers';
 import * as lock from '../util/lock';
 import logEvent from '../util/logEvent';
@@ -24,11 +25,10 @@ import type {BackboardTx} from '../util/types';
  * @return {Promise}
  */
 async function autoSign(tx: BackboardTx) {
-    const objectStores = ["players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"];
+    const objectStores = ["players"];
     await helpers.maybeReuseTx(objectStores, "readwrite", tx, async tx2 => {
         const [teams, players] = await Promise.all([
-            team.filter({
-                ot: tx2,
+            getCopy.teams({
                 attrs: ["strategy"],
                 season: g.season,
             }),

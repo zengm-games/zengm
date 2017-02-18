@@ -358,9 +358,9 @@ class Roster extends React.Component {
                     Record: <RecordAndPlayoffs
                         abbrev={abbrev}
                         season={season}
-                        won={t.won}
-                        lost={t.lost}
-                        playoffRoundsWon={t.playoffRoundsWon}
+                        won={t.seasonAttrs.won}
+                        lost={t.seasonAttrs.lost}
+                        playoffRoundsWon={t.seasonAttrs.playoffRoundsWon}
                         option="noSeason"
                     />
                 </h3>
@@ -369,7 +369,7 @@ class Roster extends React.Component {
                     {15 - players.length} open roster spots<br />
                     Payroll: {helpers.formatCurrency(payroll, 'M')}<br />
                     Salary cap: {helpers.formatCurrency(salaryCap, 'M')}<br />
-                    Profit: {helpers.formatCurrency(t.profit, 'M')}<br />
+                    Profit: {helpers.formatCurrency(t.seasonAttrs.profit, 'M')}<br />
                     {showTradeFor ? `Strategy: ${t.strategy}` : null}
                 </p> : null}
             </div>

@@ -3,7 +3,6 @@
 import Promise from 'bluebird';
 import g from '../globals';
 import * as player from '../core/player';
-import * as team from '../core/team';
 import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
@@ -46,7 +45,7 @@ async function updateHistory(inputs, updateEvents, state) {
                     statsSeasons: [season],
                 });
             }),
-            team.filter({
+            getCopy.teams({
                 attrs: ["tid", "abbrev", "region", "name"],
                 seasonAttrs: ["playoffRoundsWon"],
                 season,
@@ -87,13 +86,7 @@ async function updateHistory(inputs, updateEvents, state) {
         retiredPlayers.sort((a, b) => b.age - a.age);
 
         // Get champs
-        let champ;
-        for (let i = 0; i < teams.length; i++) {
-            if (teams[i].playoffRoundsWon === g.numPlayoffRounds) {
-                champ = teams[i];
-                break;
-            }
-        }
+        const champ = teams.find((t) => t.seasonAttrs.playoffRoundsWon === g.numPlayoffRounds);
 
         return {
             awards,

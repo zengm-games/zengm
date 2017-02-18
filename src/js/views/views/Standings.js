@@ -11,16 +11,16 @@ const DivStandingsRow = clickable(({clicked, season, t, toggleClicked}) => {
             <a href={helpers.leagueUrl(['roster', t.abbrev, season])}>{t.region} {t.name}</a>
             <span>{t.playoffsRank ? ` (${t.playoffsRank})` : ''}</span>
         </td>
-        <td>{t.won}</td>
-        <td>{t.lost}</td>
-        <td>{helpers.roundWinp(t.winp)}</td>
+        <td>{t.seasonAttrs.won}</td>
+        <td>{t.seasonAttrs.lost}</td>
+        <td>{helpers.roundWinp(t.seasonAttrs.winp)}</td>
         <td>{t.gb}</td>
-        <td>{t.wonHome}-{t.lostHome}</td>
-        <td>{t.wonAway}-{t.lostAway}</td>
-        <td>{t.wonDiv}-{t.lostDiv}</td>
-        <td>{t.wonConf}-{t.lostConf}</td>
-        <td>{t.streak}</td>
-        <td>{t.lastTen}</td>
+        <td>{t.seasonAttrs.wonHome}-{t.seasonAttrs.lostHome}</td>
+        <td>{t.seasonAttrs.wonAway}-{t.seasonAttrs.lostAway}</td>
+        <td>{t.seasonAttrs.wonDiv}-{t.seasonAttrs.lostDiv}</td>
+        <td>{t.seasonAttrs.wonConf}-{t.seasonAttrs.lostConf}</td>
+        <td>{t.seasonAttrs.streak}</td>
+        <td>{t.seasonAttrs.lastTen}</td>
     </tr>;
 });
 

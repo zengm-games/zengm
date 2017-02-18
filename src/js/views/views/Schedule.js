@@ -4,7 +4,7 @@ import bbgmViewReact from '../../util/bbgmViewReact';
 import * as helpers from '../../util/helpers';
 import {Dropdown, NewWindowLink} from '../components';
 
-const Schedule = ({abbrev, completed, season, teamInfo, upcoming}) => {
+const Schedule = ({abbrev, completed, season, upcoming}) => {
     bbgmViewReact.title('Schedule');
 
     return <div>
@@ -16,9 +16,9 @@ const Schedule = ({abbrev, completed, season, teamInfo, upcoming}) => {
                 <h2>Upcoming Games</h2>
                 <ul className="list-group">
                     {upcoming.map(({gid, teams}) => <li className="list-group-item schedule-row" key={gid}>
-                        <a href={helpers.leagueUrl(['roster', teams[0].abbrev])}>{teams[0].region}</a> <span className="schedule-extra">({teamInfo[teams[0].tid].won}-{teamInfo[teams[0].tid].lost})</span>
+                        <a href={helpers.leagueUrl(['roster', teams[0].abbrev])}>{teams[0].region}</a> <span className="schedule-extra">({teams[0].seasonAttrs.won}-{teams[0].seasonAttrs.lost})</span>
                         <span className="schedule-at"> @ </span>
-                        <a href={helpers.leagueUrl(['roster', teams[1].abbrev])}>{teams[1].region}</a> <span className="schedule-extra">({teamInfo[teams[1].tid].won}-{teamInfo[teams[1].tid].lost})</span>
+                        <a href={helpers.leagueUrl(['roster', teams[1].abbrev])}>{teams[1].region}</a> <span className="schedule-extra">({teams[1].seasonAttrs.won}-{teams[1].seasonAttrs.lost})</span>
                     </li>)}
                 </ul>
             </div>
@@ -52,11 +52,18 @@ Schedule.propTypes = {
     abbrev: React.PropTypes.string.isRequired,
     completed: React.PropTypes.arrayOf(React.PropTypes.object),
     season: React.PropTypes.number.isRequired,
-    teamInfo: React.PropTypes.objectOf(React.PropTypes.shape({
-        lost: React.PropTypes.number.isRequired,
-        won: React.PropTypes.number.isRequired,
+    upcoming: React.PropTypes.arrayOf(React.PropTypes.shape({
+        gid: React.PropTypes.number.isRequired,
+        teams: React.PropTypes.arrayOf(React.PropTypes.shape({
+            abbrev: React.PropTypes.string.isRequired,
+            name: React.PropTypes.string.isRequired,
+            region: React.PropTypes.string.isRequired,
+            seasonAttrs: React.PropTypes.shape({
+                lost: React.PropTypes.number.isRequired,
+                won: React.PropTypes.number.isRequired,
+            }).isRequired,
+        })).isRequired,
     })).isRequired,
-    upcoming: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
 };
 
 export default Schedule;

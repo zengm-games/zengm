@@ -4,7 +4,7 @@ import backboard from 'backboard';
 import g from '../globals';
 import * as finances from '../core/finances';
 import * as player from '../core/player';
-import * as team from '../core/team';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import CustomizePlayer from './views/CustomizePlayer';
@@ -29,7 +29,7 @@ async function updateCustomizePlayer(inputs, updateEvents) {
     }
 
     if (updateEvents.includes('firstRun')) {
-        const teams = await team.filter({
+        const teams = await getCopy.teams({
             attrs: ["tid", "region", "name"],
         });
 

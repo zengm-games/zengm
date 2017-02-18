@@ -5,6 +5,7 @@ import g from '../../globals';
 import * as player from '../../core/player';
 import * as team from '../../core/team';
 import * as trade from '../../core/trade';
+import {getCopy} from '../../db';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import {tradeFor} from '../../util/actions';
 import getCols from '../../util/getCols';
@@ -105,7 +106,7 @@ Offer.propTypes = {
     region: React.PropTypes.string.isRequired,
     strategy: React.PropTypes.string.isRequired,
     tid: React.PropTypes.number.isRequired,
-    warning: React.PropTypes.string.isRequired,
+    warning: React.PropTypes.string,
     won: React.PropTypes.number.isRequired,
 };
 
@@ -155,19 +156,18 @@ const getOffers = async (userPids, userDpids, onProgress) => {
     return offers;
 };
 
-const augmentOffers = offers => {
+const augmentOffers = async (offers) => {
     if (offers.length === 0) {
         return [];
     }
 
-    return g.dbl.tx(["players", "playerStats", "draftPicks", "teams", "teamSeasons"], async tx => {
-        const teams = await team.filter({
-            attrs: ["abbrev", "region", "name", "strategy"],
-            seasonAttrs: ["won", "lost"],
-            season: g.season,
-            ot: tx,
-        });
+    const teams = await getCopy.teams({
+        attrs: ["abbrev", "region", "name", "strategy"],
+        seasonAttrs: ["won", "lost"],
+        season: g.season,
+    });
 
+    return g.dbl.tx(["players", "playerStats", "draftPicks"], async tx => {
         // Take the pids and dpids in each offer and get the info needed to display the offer
         return Promise.all(offers.map(async (offer, i) => {
             const tid = offers[i].tid;
@@ -203,8 +203,8 @@ const augmentOffers = offers => {
                 region: teams[tid].region,
                 name: teams[tid].name,
                 strategy: teams[tid].strategy,
-                won: teams[tid].won,
-                lost: teams[tid].lost,
+                won: teams[tid].seasonAttrs.won,
+                lost: teams[tid].seasonAttrs.lost,
                 pids: offers[i].pids,
                 dpids: offers[i].dpids,
                 warning: offers[i].warning,

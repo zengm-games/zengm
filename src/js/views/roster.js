@@ -4,6 +4,7 @@ import * as player from '../core/player';
 import * as season from '../core/season';
 import * as team from '../core/team';
 import * as trade from '../core/trade';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import Roster from './views/Roster';
@@ -23,7 +24,7 @@ function get(ctx) {
     return inputs;
 }
 
-function updateRoster(inputs, updateEvents, state) {
+async function updateRoster(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || (inputs.season === g.season && (updateEvents.includes('gameSim') || updateEvents.includes('playerMovement'))) || inputs.abbrev !== state.abbrev || inputs.season !== state.season) {
         const vars = {
             abbrev: inputs.abbrev,
@@ -33,15 +34,14 @@ function updateRoster(inputs, updateEvents, state) {
             showTradeFor: inputs.season === g.season && inputs.tid !== g.userTid,
         };
 
-        return g.dbl.tx(["players", "playerStats", "releasedPlayers", "schedule", "teams", "teamSeasons", "teamStats"], async tx => {
-            vars.t = await team.filter({
-                season: inputs.season,
-                tid: inputs.tid,
-                attrs: ["tid", "region", "name", "strategy", "imgURL"],
-                seasonAttrs: ["profit", "won", "lost", "playoffRoundsWon"],
-                ot: tx,
-            });
+        vars.t = await getCopy.teams({
+            season: inputs.season,
+            tid: inputs.tid,
+            attrs: ["tid", "region", "name", "strategy", "imgURL"],
+            seasonAttrs: ["profit", "won", "lost", "playoffRoundsWon"],
+        });
 
+        return g.dbl.tx(["players", "playerStats", "releasedPlayers", "schedule"], async tx => {
             const attrs = ["pid", "tid", "draft", "name", "age", "contract", "cashOwed", "rosterOrder", "injury", "ptModifier", "watch", "gamesUntilTradable"];  // tid and draft are used for checking if a player can be released without paying his salary
             const ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos"];
             const stats = ["gp", "min", "pts", "trb", "ast", "per", "yearsWithTeam"];

@@ -50,12 +50,7 @@ async function updateRoster(inputs, updateEvents, state) {
                 // Show players currently on the roster
                 let [schedule, players, payroll] = await Promise.all([
                     season.getSchedule(),
-                    tx.players.index('tid').getAll(inputs.tid).then(players2 => {
-                        return player.withStats(tx, players2, {
-                            statsSeasons: [inputs.season],
-                            statsTid: inputs.tid,
-                        });
-                    }),
+                    g.cache.indexGetAll('playersByTid', inputs.tid),
                     team.getPayroll(inputs.tid).get(0),
                 ]);
 
@@ -67,7 +62,7 @@ async function updateRoster(inputs, updateEvents, state) {
                     }
                 }
 
-                players = player.filter(players, {
+                players = await getCopy.players(players, {
                     attrs,
                     ratings,
                     stats,
@@ -79,6 +74,7 @@ async function updateRoster(inputs, updateEvents, state) {
                     numGamesRemaining,
                 });
                 players.sort((a, b) => a.rosterOrder - b.rosterOrder);
+console.log(players);
 
                 // Add untradable property
                 players = trade.filterUntradable(players);

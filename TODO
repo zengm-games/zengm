@@ -5,6 +5,7 @@ player.filter -> db.getCopy.players
 - how to filter records of output.. like not every player is returned by player.filter, see the end. does this matter?
   - yes, see comments in processPlayer, return undefined where appropriate
 - revisit when tx needed, playerStatsAllByPid
+- handle case where player is signed in offseason and needs to appear on roster, but has no stats
 - when IDB needed?
   - do the current indexes make sense? limits usefulness after playoffs
 - are input players cloned or not?

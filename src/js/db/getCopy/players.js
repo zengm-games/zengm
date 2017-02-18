@@ -106,13 +106,12 @@ const processRatings = async (output: PlayerFiltered, p: Player, {
     ratings,
     season,
 }: PlayerOptions) => {
-    output.ratings = p.ratings.filter((pr) => {
-        if (season !== undefined) {
-            return pr.season === season;
-        }
-        return true;
-    }).map((pr, i) => {
+    output.ratings = p.ratings.map((pr, i) => {
         const row = {};
+
+        if (season !== undefined && pr.season !== season) {
+            return undefined;
+        }
 
         for (const attr of ratings) {
             if (attr === 'skills') {
@@ -126,7 +125,7 @@ const processRatings = async (output: PlayerFiltered, p: Player, {
                     row[attr] = 0;
                 }
             } else if (fuzz && attr !== 'fuzz' && attr !== 'season' && attr !== 'hgt' && attr !== 'pos') {
-                row[attr] = fuzzRating(row[attr], pr.fuzz);
+                row[attr] = fuzzRating(pr[attr], pr.fuzz);
             } else {
                 row[attr] = pr[attr];
             }
@@ -160,7 +159,7 @@ for (let k = 0; k < p.ratings.length; k++) {
     if (options.tid !== null) {
         let hasStats = false;
         for (let j = 0; j < p.stats.length; j++) {
-            if (options.tid === p.stats[j].tid && p.attr.season === p.stats[j].season) {
+            if (options.tid === p.attr.tid && p.attr.season === p.attr.season) {
                 hasStats = true;
                 break;
             }
@@ -198,7 +197,8 @@ for (let k = 0; k < p.ratings.length; k++) {
 }*/
 
         return row;
-    });
+    }).filter((row) => row !== undefined); // Filter at the end because dovr/dpot needs to look back
+
 
     if (season !== undefined) {
         output.ratings = output.ratings[0];
@@ -206,12 +206,13 @@ for (let k = 0; k < p.ratings.length; k++) {
 };
 
 const processStats = async (output: PlayerFiltered, p: Player, {
-    attrs,
     fuzz,
     numGamesRemaining,
     playoffs,
     regularSeason,
     season,
+    statType,
+    stats,
 }: PlayerOptions, tx: ?BackboardTx) => {
     let playerStats;
 
@@ -240,13 +241,79 @@ const processStats = async (output: PlayerFiltered, p: Player, {
     output.stats = playerStats.map((ps) => {
         const row = {};
 
-
+        for (const attr of stats) {
+            if (attr === 'gp') {
+                row.gp = ps.gp;
+            } else if (attr === 'gs') {
+                row.gs = ps.gs;
+            } else if (attr === 'fgp') {
+                if (ps.fga > 0) {
+                    row.fgp = 100 * ps.fg / ps.fga;
+                } else {
+                    row.fgp = 0;
+                }
+            } else if (attr === 'fgpAtRim') {
+                if (ps.fgaAtRim > 0) {
+                    row.fgpAtRim = 100 * ps.fgAtRim / ps.fgaAtRim;
+                } else {
+                    row.fgpAtRim = 0;
+                }
+            } else if (attr === 'fgpLowPost') {
+                if (ps.fgaLowPost > 0) {
+                    row.fgpLowPost = 100 * ps.fgLowPost / ps.fgaLowPost;
+                } else {
+                    row.fgpLowPost = 0;
+                }
+            } else if (attr === 'fgpMidRange') {
+                if (ps.fgaMidRange > 0) {
+                    row.fgpMidRange = 100 * ps.fgMidRange / ps.fgaMidRange;
+                } else {
+                    row.fgpMidRange = 0;
+                }
+            } else if (attr === 'tpp') {
+                if (ps.tpa > 0) {
+                    row.tpp = 100 * ps.tp / ps.tpa;
+                } else {
+                    row.tpp = 0;
+                }
+            } else if (attr === 'ftp') {
+                if (ps.fta > 0) {
+                    row.ftp = 100 * ps.ft / ps.fta;
+                } else {
+                    row.ftp = 0;
+                }
+            } else if (attr === 'season') {
+                row.season = ps.season;
+            } else if (attr === 'age') {
+                row.age = ps.season - p.born.year;
+            } else if (attr === 'abbrev') {
+                row.abbrev = helpers.getAbbrev(ps.tid);
+            } else if (attr === 'tid') {
+                row.tid = ps.tid;
+            } else if (attr === 'per') {
+                row.per = ps.per;
+            } else if (attr === 'ewa') {
+                row.ewa = ps.ewa;
+            } else if (attr === 'yearsWithTeam') {
+                row.yearsWithTeam = ps.yearsWithTeam;
+            } else if (attr === 'psid') {
+                row.psid = ps.psid;
+            } else if (statType === 'totals') {
+                row[attr] = ps[attr];
+            } else if (statType === 'per36' && attr !== 'min') { // Don't scale min by 36 minutes
+                row[attr] = ps.min > 0 ? ps[attr] * 36 / ps.min : 0;
+            } else {
+                row[attr] = ps.gp > 0 ? ps[attr] / ps.gp : 0;
+            }
+        }
 
         return row;
     });
 
     if (season !== undefined && ((playoffs && !regularSeason) || (!playoffs && regularSeason))) {
         output.stats = output.stats[0];
+    } else {
+// Do career totals
     }
 };
 

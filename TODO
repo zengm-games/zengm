@@ -1,10 +1,16 @@
 IVERSON
 
 player.filter -> db.getCopy.players
-- accept list of players, or incorporate logic to get it from db?
+- ratings special cases in commented out code, some depend on stats
+- how to filter records of output.. like not every player is returned by player.filter, see the end. does this matter?
+- when IDB needed?
+  - do the current indexes make sense? limits usefulness after playoffs
+- are input players cloned or not?
+  - shouldn't matter, don't copy any references!
 - incorporate player.withStats
   - figure out if tx needed, and if so create one. hopefully don't need to accept passed one
 - test roster auto sort button
+- get rid of PlayerWithStats?
 
 mutation for things involving indexes
 - implement like g.cache.markDirtyIndex('players');
@@ -54,6 +60,10 @@ links slow while game sim in progress
 refactor
 - clear, delete need to handle indexes
 
+blog post for beta
+- tradeoffs due to chrome changing
+- new tradeoffs for cross tab play
+
 document cache data format and API!
 
 make Cache more DRY regarding indexes, reading object stores
@@ -82,6 +92,7 @@ delete old data should empty cache?
 make sure all player.value calls happen with full cache or psOverride
 
 make cache synchronous? it'll be faster, any problems though?
+- big problem: can't switch to db/cache in worker
 
 get rid of teamAbbrevsCache, etc?
 

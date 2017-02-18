@@ -2157,4 +2157,5 @@ export {
     checkStatisticalFeat,
     killOne,
     withStats,
+    fuzzRating,
 };

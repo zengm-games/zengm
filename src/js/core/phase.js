@@ -112,9 +112,9 @@ async function newPhasePreseason(tx: BackboardTx) {
     return [undefined, ["playerMovement"]];
 }
 
-async function newPhaseRegularSeason(tx: BackboardTx) {
+async function newPhaseRegularSeason() {
     const teams = await g.cache.getAll('teams');
-    await season.setSchedule(tx, season.newSchedule(teams));
+    await season.setSchedule(season.newSchedule(teams));
 
     // First message from owner
     if (g.showFirstOwnerMessage) {

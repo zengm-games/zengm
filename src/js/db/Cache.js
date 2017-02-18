@@ -255,6 +255,11 @@ class Cache {
                 });
             })(),
         ]);
+
+        // HACK - special case for schedule store, maxId can come from schedule or games because we can't rely on schedule always being populated
+        if (this.maxIds.schedule < this.maxIds.games) {
+            this.maxIds.schedule = this.maxIds.games;
+        }
     }
 
     // Load database from disk and save in cache, wiping out any prior values in cache

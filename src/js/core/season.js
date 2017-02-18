@@ -314,19 +314,11 @@ async function getSchedule(oneDay?: boolean = false): Promise<ScheduleGame[]> {
         away teams, respectively, for every game in the season, respectively.
  * @return {Promise}
  */
-async function setSchedule(tx: BackboardTx, tids: [number, number][]) {
+async function setSchedule(tids: [number, number][]) {
     await g.cache.clear('schedule');
 
     for (const matchup of tids) {
-        // This is because otherwise (adding to cache directly) we might not know the auto-incrementing primary key because the schedule store can be totally empty even after a league starts
-        const gid = await tx.schedule.add({
-            homeTid: matchup[0],
-            awayTid: matchup[1],
-        });
-        await tx.schedule.delete(gid);
-
         await g.cache.add('schedule', {
-            gid,
             homeTid: matchup[0],
             awayTid: matchup[1],
         });
@@ -587,7 +579,7 @@ async function newSchedulePlayoffsDay(tx: BackboardTx): Promise<boolean> {
 
     // If series are still in progress, write games and short circuit
     if (tids.length > 0) {
-        await setSchedule(tx, tids);
+        await setSchedule(tids);
         return false;
     }
 

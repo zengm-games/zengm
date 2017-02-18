@@ -10,7 +10,7 @@ import * as team from './team';
 import * as helpers from '../util/helpers';
 import logEvent from '../util/logEvent';
 import * as random from '../util/random';
-import type {BackboardTx, OwnerMoodDeltas, ScheduleGame, Team} from '../util/types';
+import type {BackboardTx, OwnerMoodDeltas, ScheduleGame, Team, TeamFiltered} from '../util/types';
 
 /**
  * Update g.ownerMood based on performance this season.
@@ -554,10 +554,9 @@ function newSchedule(teams: Team[]): [number, number][] {
  * Create a single day's schedule for an in-progress playoffs.
  *
  * @memberOf core.season
- * @param {(IDBTransaction)} tx An IndexedDB transaction on playoffSeries, schedule, and teamSeasons, readwrite.
  * @return {Promise.boolean} Resolves to true if the playoffs are over. Otherwise, false.
  */
-async function newSchedulePlayoffsDay(tx: BackboardTx): Promise<boolean> {
+async function newSchedulePlayoffsDay(): Promise<boolean> {
     const playoffSeries = await g.cache.get('playoffSeries', g.season);
 
     const series = playoffSeries.series;
@@ -592,15 +591,12 @@ async function newSchedulePlayoffsDay(tx: BackboardTx): Promise<boolean> {
             key = series[rnd][0].away.tid;
         }
 
-        await tx.teamSeasons.index("season, tid").iterate([g.season, key], teamSeason => {
-            teamSeason.playoffRoundsWon = g.numPlayoffRounds;
-            teamSeason.hype += 0.05;
-            if (teamSeason.hype > 1) {
-                teamSeason.hype = 1;
-            }
-
-            return teamSeason;
-        });
+        const teamSeason = g.cache.indexGet('teamSeasonsBySeasonTid', `${g.season},${key}`);
+        teamSeason.playoffRoundsWon = g.numPlayoffRounds;
+        teamSeason.hype += 0.05;
+        if (teamSeason.hype > 1) {
+            teamSeason.hype = 1;
+        }
 
         // Playoffs are over! Return true!
         return true;
@@ -646,19 +642,17 @@ async function newSchedulePlayoffsDay(tx: BackboardTx): Promise<boolean> {
 
     // Update hype for winning a series
     await Promise.all(tidsWon.map(async (tid) => {
-        const teamSeason = await tx.teamSeasons.index("season, tid").get([g.season, tid]);
+        const teamSeason = await g.cache.indexGet('teamSeasonsBySeasonTid', `${g.season},${tid}`);
 
         teamSeason.playoffRoundsWon = playoffSeries.currentRound;
         teamSeason.hype += 0.05;
         if (teamSeason.hype > 1) {
             teamSeason.hype = 1;
         }
-
-        await tx.teamSeasons.put(teamSeason);
     }));
 
     // Next time, the schedule for the first day of the next round will be set
-    return newSchedulePlayoffsDay(tx);
+    return newSchedulePlayoffsDay();
 }
 
 /**
@@ -691,7 +685,7 @@ async function getDaysLeftSchedule() {
     return numDays;
 }
 
-function genPlayoffSeries(teams: Team[]) {
+function genPlayoffSeries(teams: TeamFiltered[]) {
     // Playoffs are split into two branches by conference only if there are exactly 2 conferences and the special secret option top16playoffs is not set
     const playoffsByConference = g.confs.length === 2 && !localStorage.getItem('top16playoffs');
 

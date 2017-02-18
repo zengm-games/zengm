@@ -692,8 +692,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
             league.updateLastDbChange();
 
             if (g.phase === g.PHASE.PLAYOFFS) {
-                // tx2 is to make sure newSchedulePlayoffsDay finishes before continuing
-                const playoffsOver = await g.dbl.tx(["teamSeasons"], "readwrite", tx2 => season.newSchedulePlayoffsDay(tx2));
+                const playoffsOver = await season.newSchedulePlayoffsDay();
                 if (playoffsOver) {
                     await phase.newPhase(g.PHASE.BEFORE_DRAFT);
                 }
@@ -744,8 +743,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
             // Sometimes the playoff schedule isn't made the day before, so make it now
             // This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
 
-            // tx2 to make sure newSchedulePlayoffsDay finishes before continuing
-            await g.dbl.tx(["teamSeasons"], "readwrite", tx2 => season.newSchedulePlayoffsDay(tx2));
+            await season.newSchedulePlayoffsDay();
             schedule = await season.getSchedule(true);
         }
         await cbSimGames(schedule, teams);

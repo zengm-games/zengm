@@ -1,13 +1,15 @@
 IVERSON
 
-get everything from regular season to playoffs in cache
-- phase change
-
 mutation for things involving indexes
 - implement like g.cache.markDirtyIndex('players');
 
 if i can gracefully handle absence of g.season etc, put cache creation inside connectLeague
 - not graceful now, see fill(season)
+
+update maxIds on add/put with defind pk, otherwise it's stale
+
+seems to be bug associated with flush not syncing schedule/games right, see dupe games in schedule and then errors on saving box scores
+- deletes processing right?
 
 get tests working
 - db.getCopy.teams
@@ -45,8 +47,10 @@ other stores
 -draftOrder
 -draftPicks
 
+links slow while game sim in progress
+
 refactor
-- clear, delete, and put need to handle indexes
+- clear, delete need to handle indexes
 
 document cache data format and API!
 

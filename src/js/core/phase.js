@@ -13,6 +13,7 @@ import * as league from './league';
 import * as player from './player';
 import * as season from './season';
 import * as team from './team';
+import {getCopy} from '../db';
 import * as account from '../util/account';
 import * as helpers from '../util/helpers';
 import * as lock from '../util/lock';
@@ -161,22 +162,21 @@ async function newPhaseRegularSeason() {
     return [undefined, ["playerMovement"]];
 }
 
-async function newPhasePlayoffs(tx: BackboardTx) {
+async function newPhasePlayoffs() {
     // Achievements after regular season
     account.checkAchievement.septuawinarian();
 
     // Set playoff matchups
-    const teams = await team.filter({
-        ot: tx,
+    const teams = helpers.orderByWinp(await getCopy.teams({
         attrs: ["tid", "cid"],
-        seasonAttrs: ["winp"],
+        seasonAttrs: ["winp", "won"],
         season: g.season,
-        sortBy: "winp",
-    });
+    }));
 
-    // Add entry for wins for each team; delete winp, which was only needed for sorting
+    // Add entry for wins for each team, delete seasonAttrs just used for sorting
     for (let i = 0; i < teams.length; i++) {
         teams[i].won = 0;
+        delete teams[i].seasonAttrs;
     }
 
     const {series, tidPlayoffs} = season.genPlayoffSeries(teams);
@@ -190,49 +190,46 @@ async function newPhasePlayoffs(tx: BackboardTx) {
         });
     }
 
-    await Promise.all([
-        g.cache.put('playoffSeries', {
-            season: g.season,
-            currentRound: 0,
-            series,
-        }),
+    await g.cache.put('playoffSeries', {
+        season: g.season,
+        currentRound: 0,
+        series,
+    });
 
-        // Add row to team stats and team season attributes
-        tx.teamSeasons.index("season, tid").iterate(backboard.bound([g.season], [g.season, '']), async teamSeason => {
-            if (tidPlayoffs.includes(teamSeason.tid)) {
-                await tx.teamStats.add(team.genStatsRow(teamSeason.tid, true));
+    // Add row to team stats and team season attributes
+    const teamSeasons = await g.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season + 1}`]);
+    for (const teamSeason of teamSeasons) {
+        if (tidPlayoffs.includes(teamSeason.tid)) {
+            await g.cache.add('teamStats', team.genStatsRow(teamSeason.tid, true));
 
-                teamSeason.playoffRoundsWon = 0;
+            teamSeason.playoffRoundsWon = 0;
 
-                // More hype for making the playoffs
-                teamSeason.hype += 0.05;
-                if (teamSeason.hype > 1) {
-                    teamSeason.hype = 1;
-                }
-            } else {
-                // Less hype for missing the playoffs
-                teamSeason.hype -= 0.05;
-                if (teamSeason.hype < 0) {
-                    teamSeason.hype = 0;
-                }
+            // More hype for making the playoffs
+            teamSeason.hype += 0.05;
+            if (teamSeason.hype > 1) {
+                teamSeason.hype = 1;
             }
-
-            return teamSeason;
-        }),
-
-        // Add row to player stats
-        Promise.all(tidPlayoffs.map(async (tid) => {
-            const players = await g.cache.indexGetAll('playersByTid', tid);
-            for (const p of players) {
-                await player.addStatsRow(p, true);
+        } else {
+            // Less hype for missing the playoffs
+            teamSeason.hype -= 0.05;
+            if (teamSeason.hype < 0) {
+                teamSeason.hype = 0;
             }
-        })),
-    ]);
+        }
+    }
+
+    // Add row to player stats
+    await Promise.all(tidPlayoffs.map(async (tid) => {
+        const players = await g.cache.indexGetAll('playersByTid', tid);
+        for (const p of players) {
+            await player.addStatsRow(p, true);
+        }
+    }));
 
 
     await Promise.all([
-        finances.assessPayrollMinLuxury(tx),
-        season.newSchedulePlayoffsDay(tx),
+        finances.assessPayrollMinLuxury(),
+        season.newSchedulePlayoffsDay(),
     ]);
 
     // Don't redirect if we're viewing a live game now

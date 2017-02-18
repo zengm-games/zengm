@@ -16,7 +16,7 @@ describe("core/finances", () => {
     describe("#assessPayrollMinLuxury()", () => {
         it("should store payroll and appropriately assess luxury and minimum payroll taxes for each team", () => {
             return g.dbl.tx(["players", "releasedPlayers", "teamSeasons"], "readwrite", async tx => {
-                await finances.assessPayrollMinLuxury(tx);
+                await finances.assessPayrollMinLuxury();
                 const teamSeasons = await tx.teamSeasons.getAll();
                 assert.equal(teamSeasons.length, g.numTeams);
 

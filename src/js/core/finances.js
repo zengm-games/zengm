@@ -1,10 +1,9 @@
 // @flow
 
-import backboard from 'backboard';
 import Promise from 'bluebird';
 import g from '../globals';
 import * as team from './team';
-import type {BackboardTx, TeamSeason} from '../util/types';
+import type {TeamSeason} from '../util/types';
 
 /**
  * Assess the payroll and apply minimum and luxury taxes.
@@ -13,12 +12,13 @@ import type {BackboardTx, TeamSeason} from '../util/types';
  * @memberOf core.finances
  * @return {Promise}
  */
-async function assessPayrollMinLuxury(tx: BackboardTx) {
+async function assessPayrollMinLuxury() {
     let collectedTax = 0;
 
     const payrolls = await team.getPayrolls();
 
-    await tx.teamSeasons.index("season, tid").iterate(backboard.bound([g.season], [g.season, '']), teamSeason => {
+    const teamSeasons = await g.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season + 1}`]);
+    for (const teamSeason of teamSeasons) {
         // Store payroll
         teamSeason.payrollEndOfSeason = payrolls[teamSeason.tid];
 
@@ -32,14 +32,12 @@ async function assessPayrollMinLuxury(tx: BackboardTx) {
             teamSeason.expenses.luxuryTax.amount = amount;
             teamSeason.cash -= teamSeason.expenses.luxuryTax.amount;
         }
-
-        return teamSeason;
-    });
+    }
 
     const payteams = payrolls.filter(x => x <= g.salaryCap);
     if (payteams.length > 0 && collectedTax > 0) {
         const distribute = (collectedTax * 0.5) / payteams.length;
-        return tx.teamSeasons.index("season, tid").iterate(backboard.bound([g.season], [g.season, '']), teamSeason => {
+        for (const teamSeason of teamSeasons) {
             if (payrolls[teamSeason.tid] <= g.salaryCap) {
                 teamSeason.revenues.luxuryTaxShare = {
                     amount: distribute,
@@ -52,8 +50,7 @@ async function assessPayrollMinLuxury(tx: BackboardTx) {
                     rank: 15.5,
                 };
             }
-            return teamSeason;
-        });
+        }
     }
 }
 

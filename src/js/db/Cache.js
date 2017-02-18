@@ -399,7 +399,7 @@ class Cache {
 
         const pk = this.storeInfos[store].pk;
 
-        if (['awards', 'gameAttributes'].includes(store)) {
+        if (['awards', 'gameAttributes', 'playoffSeries'].includes(store)) {
             // This works if no indexes and no auto incrementing primary key, otherwise it should auto assign primary key
 
             if (!obj.hasOwnProperty(pk)) {

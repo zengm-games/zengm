@@ -81,6 +81,7 @@ async function autoSign(tx: BackboardTx) {
                         }
                         player.setContract(p, p.contract, true);
                         p.gamesUntilTradable = 15;
+                        g.cache.markDirtyIndex('players');
 
                         logEvent({
                             type: "freeAgent",

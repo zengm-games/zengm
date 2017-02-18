@@ -18,9 +18,12 @@ const STORES: Store[] = ['awards', 'events', 'gameAttributes', 'games', 'message
 class Cache {
     data: {[key: Store]: any};
     deletes: {[key: Store]: Set<number>};
+    dirtyIndexes: Set<Store>; // Does not distinguish individual indexes, just which stores have dirty indexes. Currently this distinction is not meaningful, but if it is at some point, this should be changed.
+    index2store: {[key: Index]: Store};
     indexes: {[key: Index]: any};
     maxIds: {[key: Store]: number};
     status: Status;
+    season: number;
     storeInfos: {
         [key: Store]: {
             pk: string,
@@ -33,13 +36,13 @@ class Cache {
             }[],
         },
     };
-    season: number;
 
     constructor() {
         this.status = 'empty';
 
         this.data = {};
         this.deletes = {};
+        this.dirtyIndexes = new Set();
         this.indexes = {};
         this.maxIds = {};
 
@@ -164,6 +167,15 @@ class Cache {
                 getData: (tx: BackboardTx) => tx.trade.getAll(),
             },
         };
+
+        this.index2store = {};
+        for (const [store, storeInfo] of Object.entries(this.storeInfos)) {
+            if (storeInfo.indexes) {
+                for (const index of storeInfo.indexes) {
+                    this.index2store[index.name] = store;
+                }
+            }
+        }
     }
 
     checkStatus(...validStatuses: Status[]) {
@@ -174,6 +186,10 @@ class Cache {
 
     setStatus(status: Status) {
         this.status = status;
+    }
+
+    markDirtyIndex(store: Store) {
+        this.dirtyIndexes.add(store);
     }
 
     refreshIndexes(store: Store) {
@@ -200,6 +216,8 @@ class Cache {
                     }
                 }
             }
+
+            this.dirtyIndexes.delete(store);
         }
     }
 
@@ -290,8 +308,16 @@ class Cache {
         return Object.values(this.data[store]);
     }
 
+    checkIndexFreshness(index: Index) {
+        const store = this.index2store[index];
+        if (this.dirtyIndexes.has(store)) {
+            this.refreshIndexes(store);
+        }
+    }
+
     async indexGet(index: Index, key: number | string) {
         this.checkStatus('full');
+        this.checkIndexFreshness(index);
 
         const val = this.indexes[index][key];
 
@@ -303,6 +329,7 @@ class Cache {
 
     async indexGetAll(index: Index, key: number | string | [number, number] | [string, string]) {
         this.checkStatus('full');
+        this.checkIndexFreshness(index);
 
         if (typeof key === 'number' || typeof key === 'string') {
             if (this.indexes[index].hasOwnProperty(key)) {

@@ -1,10 +1,10 @@
 IVERSON
 
-what about mutation without a put/add, how to handle indexes in cache? need trigger for any mutation that will change cache
-- or, maybe require a put after a mutation, just for consistency/safety. still no way to enforce, though..
-- examples
-  - freeAgents.autoSign, need to update player indexes
-- better idea: set a flag indicating index is dirty, then on next get from that index, regenerate
+mutation for things involving indexes
+- implement like g.cache.markDirtyIndex('players');
+- put/add - can do it intelligently, or need to do that same thing?
+
+private methods in Cache
 
 get league creation working
 - cache used in league creation, then flush before redirect or viewHelpers will reload cache with no flush
@@ -96,6 +96,8 @@ revisit g, which is basically another kind of ad hoc cache
 
 multi window
 - for now, disabled checkDbChange
+
+benchmark using proxies to detect change in index stuff rather than dirtyIndexes
 
 ----
 

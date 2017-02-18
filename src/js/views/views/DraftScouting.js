@@ -112,7 +112,7 @@ class DraftScouting extends React.Component {
 
                 // "Top off" the draft class if <70 players imported
                 if (players.length < 70) {
-                    await draft.genPlayers(tx, draftClassTid, scoutingRank, 70 - players.length);
+                    await draft.genPlayers(draftClassTid, scoutingRank, 70 - players.length);
                 }
             });
 

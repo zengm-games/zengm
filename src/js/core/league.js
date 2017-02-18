@@ -463,34 +463,31 @@ async function create(
         }
     });
 
-    // Use a new transaction so there is no race condition with generating draft prospects and regular players (PIDs can seemingly collide otherwise, if it's an imported roster)
-/*    await g.dbl.tx(["players", "playerStats"], "readwrite", tx => {
-        // See if imported roster has draft picks included. If so, create less than 70 (scaled for number of teams)
-        let createUndrafted1 = Math.round(70 * g.numTeams / 30);
-        let createUndrafted2 = Math.round(70 * g.numTeams / 30);
-        let createUndrafted3 = Math.round(70 * g.numTeams / 30);
-        if (players !== undefined) {
-            for (let i = 0; i < players.length; i++) {
-                if (players[i].tid === g.PLAYER.UNDRAFTED) {
-                    createUndrafted1 -= 1;
-                } else if (players[i].tid === g.PLAYER.UNDRAFTED_2) {
-                    createUndrafted2 -= 1;
-                } else if (players[i].tid === g.PLAYER.UNDRAFTED_3) {
-                    createUndrafted3 -= 1;
-                }
+    // See if imported roster has draft picks included. If so, create less than 70 (scaled for number of teams)
+    let createUndrafted1 = Math.round(70 * g.numTeams / 30);
+    let createUndrafted2 = Math.round(70 * g.numTeams / 30);
+    let createUndrafted3 = Math.round(70 * g.numTeams / 30);
+    if (players !== undefined) {
+        for (let i = 0; i < players.length; i++) {
+            if (players[i].tid === g.PLAYER.UNDRAFTED) {
+                createUndrafted1 -= 1;
+            } else if (players[i].tid === g.PLAYER.UNDRAFTED_2) {
+                createUndrafted2 -= 1;
+            } else if (players[i].tid === g.PLAYER.UNDRAFTED_3) {
+                createUndrafted3 -= 1;
             }
         }
-        // If the draft has already happened this season but next year's class hasn't been bumped up, don't create any g.PLAYER.UNDRAFTED
-        if (createUndrafted1 && (g.phase <= g.PHASE.BEFORE_DRAFT || g.phase >= g.PHASE.FREE_AGENCY)) {
-            draft.genPlayers(tx, g.PLAYER.UNDRAFTED, scoutingRank, createUndrafted1, true);
-        }
-        if (createUndrafted2) {
-            draft.genPlayers(tx, g.PLAYER.UNDRAFTED_2, scoutingRank, createUndrafted2, true);
-        }
-        if (createUndrafted3) {
-            draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3, scoutingRank, createUndrafted3, true);
-        }
-    });*/
+    }
+    // If the draft has already happened this season but next year's class hasn't been bumped up, don't create any g.PLAYER.UNDRAFTED
+    if (createUndrafted1 > 0 && (g.phase <= g.PHASE.BEFORE_DRAFT || g.phase >= g.PHASE.FREE_AGENCY)) {
+        await draft.genPlayers(g.PLAYER.UNDRAFTED, scoutingRank, createUndrafted1, true);
+    }
+    if (createUndrafted2 > 0) {
+        await draft.genPlayers(g.PLAYER.UNDRAFTED_2, scoutingRank, createUndrafted2, true);
+    }
+    if (createUndrafted3 > 0) {
+        await draft.genPlayers(g.PLAYER.UNDRAFTED_3, scoutingRank, createUndrafted3, true);
+    }
 
     if (skipNewPhase) {
         // Game already in progress, just start it

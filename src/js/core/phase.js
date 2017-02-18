@@ -474,7 +474,7 @@ async function newPhaseFreeAgency(tx: BackboardTx) {
         p.ratings[0].fuzz /= 2;
         return p;
     });
-    await draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3);
+    await draft.genPlayers(g.PLAYER.UNDRAFTED_3);
 
     return [helpers.leagueUrl(["free_agents"]), ["playerMovement"]];
 }

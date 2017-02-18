@@ -68,26 +68,23 @@ async function setOrder(tx: ?BackboardTx, draftOrder: PickRealized[]) {
  * This is called after draft classes are moved up a year, to create the new UNDRAFTED_3 class. It's also called 3 times when a new league starts, to create all 3 draft classes.
  *
  * @memberOf core.draft
- * @param {IDBTransaction} tx An IndexedDB transaction on players (and teamSeasons if scoutingRank is not set), readwrite.
  * @param {number} tid Team ID number for the generated draft class. Should be g.PLAYER.UNDRAFTED, g.PLAYER.UNDRAFTED_2, or g.PLAYER.UNDRAFTED_3.
  * @param {?number=} scoutingRank Between 1 and g.numTeams, the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree. If null, then it's automatically found.
  * @param {?number=} numPlayers The number of prospects to generate. Default value is 70.
  * @return {Promise}
  */
-async function genPlayers(tx: BackboardTx, tid: number, scoutingRank?: ?number = null, numPlayers?: number, newLeague?: boolean = false) {
+async function genPlayers(tid: number, scoutingRank?: ?number = null, numPlayers?: number, newLeague?: boolean = false) {
     if (numPlayers === null || numPlayers === undefined) {
         numPlayers = Math.round(70 * g.numTeams / 30); // 70 scaled by number of teams
     }
 
     // If scoutingRank is not supplied, have to hit the DB to get it
     if (scoutingRank === undefined || scoutingRank === null) {
-        const teamSeasons = await tx.teamSeasons.index("tid, season").getAll(backboard.bound([g.userTid, g.season - 2], [g.userTid, g.season]));
+        const teamSeasons = await g.cache.indexGetAll('teamSeasonsByTidSeason', [`${g.userTid},${g.season - 2}`, `${g.userTid},${g.season}`]);
         scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
     }
 
     const profiles = ["Point", "Wing", "Big", "Big", ""];
-
-    const promises = [];
 
     for (let i = 0; i < numPlayers; i++) {
         const baseRating = random.randInt(8, 31);
@@ -117,10 +114,9 @@ async function genPlayers(tx: BackboardTx, tid: number, scoutingRank?: ?number =
         player.develop(p, agingYears, true);
 
         // Update player values after ratings changes
-        promises.push(player.updateValues(p).then(() => tx.players.put(p)));
+        await player.updateValues(p);
+        await g.cache.add('players', p);
     }
-
-    await Promise.all(promises);
 }
 
 function lotteryLogTxt(tid: number, type: 'chance' | 'moveddown' | 'movedup' | 'normal', number: number) {

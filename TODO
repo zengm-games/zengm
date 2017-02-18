@@ -1,5 +1,11 @@
 IVERSON
 
+player.filter -> db.getCopy.players
+- accept list of players, or incorporate logic to get it from db?
+- incorporate player.withStats
+  - figure out if tx needed, and if so create one. hopefully don't need to accept passed one
+- test roster auto sort button
+
 mutation for things involving indexes
 - implement like g.cache.markDirtyIndex('players');
 
@@ -26,8 +32,6 @@ getCopy.teamSeasons
 - for teamFinances, elsewhere?
 
 rewrite team.filter and player.filter
-- incorporate player.withStats
-  - figure out if tx needed, and if so create one. hopefully don't need to accept passed one
 - maybe as part of larger data access thing? if so, look at all the concats for using events/messages/playerFeats too
   - db.getCopy.teams, db.getCopy.players, db.getCopy.messages, db.getCopy.eventsBySeason
   - idea is, these are ways to get data whose return values can be safely mutated - not from cache. also designed for convenience
@@ -40,8 +44,6 @@ rewrite team.filter and player.filter
     - could make that a wrapper, after dealing with tx and payroll
   - types for Attrs
   - types for season/statType/playoffs options, which only have affect based on other options
-- db.getCopy.players
-  - test roster auto sort button
 
 other stores
 -draftOrder

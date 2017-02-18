@@ -42,7 +42,7 @@ describe("core/draft", () => {
 
     describe("#genPlayers()", () => {
         it("should generate 70 players for the draft", async () => {
-            await g.dbl.tx(["players", "teams", "teamSeasons"], "readwrite", tx => draft.genPlayers(tx, g.PLAYER.UNDRAFTED, null, null));
+            await draft.genPlayers(g.PLAYER.UNDRAFTED, null, null);
             const numPlayers = await g.dbl.players.index('draft.year').count(g.season);
             assert.equal(numPlayers, 140); // 70 from original league, 70 from this
         });

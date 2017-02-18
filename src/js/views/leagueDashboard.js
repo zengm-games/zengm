@@ -30,8 +30,8 @@ async function updateInbox(inputs, updateEvents) {
 async function updateTeam(inputs, updateEvents) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || updateEvents.includes('newPhase')) {
         const [t, latestSeason] = await Promise.all([
-            g.dbl.teams.get(g.userTid),
-            g.dbl.teamSeasons.index("season, tid").get([g.season, g.userTid]),
+            g.cache.get('teams', g.userTid),
+            g.cache.indexGet('teamSeasonsBySeasonTid', `${g.season},${g.userTid}`),
         ]);
 
         return {

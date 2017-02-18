@@ -54,8 +54,15 @@ const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEv
         }
 
         await connectLeague(g.lid);
-        g.cache = new Cache();
-        await g.cache.fill();
+
+        // Reuse existing cache, if it was just created for a new league
+        if (!g.cache || !g.cache.newLeague) {
+            g.cache = new Cache();
+            await g.cache.fill();
+        } else if (g.cache && g.cache.newLeague) {
+            g.cache.newLeague = false;
+        }
+
         await league.loadGameAttributes();
 
         // Update play menu

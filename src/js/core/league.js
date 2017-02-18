@@ -199,6 +199,7 @@ async function create(
     helpers.resetG();
 
     g.cache = new Cache();
+    g.cache.newLeague = true;
     await g.cache.fill(gameAttributes.season);
 
     await setGameAttributes(gameAttributes);
@@ -242,7 +243,7 @@ async function create(
         // teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league.
         for (let i = 0; i < g.numTeams; i++) {
             const t = team.generate(teams[i]);
-            tx.teams.add(t);
+            await g.cache.add('teams', t);
 
             let teamSeasons;
             if (teams[i].hasOwnProperty("seasons")) {
@@ -251,10 +252,10 @@ async function create(
                 teamSeasons = [team.genSeasonRow(t.tid)];
                 teamSeasons[0].pop = teams[i].pop;
             }
-            teamSeasons.forEach(teamSeason => {
+            for (const teamSeason of teamSeasons) {
                 teamSeason.tid = t.tid;
-                tx.teamSeasons.add(teamSeason);
-            });
+                await g.cache.add('teamSeasons', teamSeason);
+            }
 
             let teamStats;
             if (teams[i].hasOwnProperty("stats")) {
@@ -262,13 +263,13 @@ async function create(
             } else {
                 teamStats = [team.genStatsRow(t.tid)];
             }
-            teamStats.forEach(teamStat => {
+            for (const teamStat of teamStats) {
                 teamStat.tid = t.tid;
                 if (!teamStat.hasOwnProperty("ba")) {
                     teamStat.ba = 0;
                 }
-                tx.teamStats.add(teamStat);
-            });
+                await g.cache.add('teamStats', teamStat);
+            }
 
             // Save scoutingRank for later
             if (i === g.userTid) {
@@ -326,7 +327,7 @@ async function create(
             }
         }
 
-        const baseMoods = await player.genBaseMoods(tx);
+        const baseMoods = await player.genBaseMoods();
 
         if (leagueFile.hasOwnProperty("players")) {
             // Use pre-generated players, filling in attributes as needed
@@ -443,31 +444,27 @@ async function create(
                     player.setContract(p, player.genContract(p, randomizeExp), p.tid >= 0);
 
                     // Save to database
-                    if (p.tid === g.PLAYER.FREE_AGENT) {
-                        player.addToFreeAgents(tx, p, g.phase, baseMoods);
-                    } else {
-                        const pid = await tx.players.put(p);
-                        const addPid = (p2: PlayerWithoutPid, pid2: number): Player => {
-                            return Object.assign({}, p2, {pid: pid2});
-                        };
+                    await g.cache.add('players', p);
 
-                        // Needs pid, so must be called after put
-                        await player.addStatsRow(addPid(p, pid), g.phase === g.PHASE.PLAYOFFS);
+                    // Needs pid, so must be called after put
+                    if (p.tid === g.PLAYER.FREE_AGENT) {
+                        player.addToFreeAgents(p, g.phase, baseMoods);
+                    } else {
+                        await player.addStatsRow(p, g.phase === g.PHASE.PLAYOFFS);
                     }
                 }
 
                 // Initialize rebuilding/contending, when possible
                 if (tid2 >= 0) {
-                    const t = await tx.teams.get(tid2);
+                    const t = await g.cache.get('teams', tid2);
                     t.strategy = goodNeutralBad === 1 ? "contending" : "rebuilding";
-                    tx.teams.put(t);
                 }
             }
         }
     });
 
     // Use a new transaction so there is no race condition with generating draft prospects and regular players (PIDs can seemingly collide otherwise, if it's an imported roster)
-    await g.dbl.tx(["players", "playerStats"], "readwrite", tx => {
+/*    await g.dbl.tx(["players", "playerStats"], "readwrite", tx => {
         // See if imported roster has draft picks included. If so, create less than 70 (scaled for number of teams)
         let createUndrafted1 = Math.round(70 * g.numTeams / 30);
         let createUndrafted2 = Math.round(70 * g.numTeams / 30);
@@ -493,7 +490,7 @@ async function create(
         if (createUndrafted3) {
             draft.genPlayers(tx, g.PLAYER.UNDRAFTED_3, scoutingRank, createUndrafted3, true);
         }
-    });
+    });*/
 
     if (skipNewPhase) {
         // Game already in progress, just start it
@@ -505,13 +502,16 @@ async function create(
 
     const lid = g.lid; // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
 
+    // Auto sort rosters
+    await g.dbl.tx("players", "readwrite", async tx => {
+        await Promise.all(teams.map(t => team.rosterAutoSort(tx, t.tid)));
+    });
+
+    await g.cache.flush();
+
     helpers.bbgmPing("league");
 
-    // Auto sort rosters
-    return g.dbl.tx("players", "readwrite", async tx => {
-        await Promise.all(teams.map(t => team.rosterAutoSort(tx, t.tid)));
-        return lid;
-    });
+    return lid;
 }
 
 /**

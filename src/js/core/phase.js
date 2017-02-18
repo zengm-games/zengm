@@ -391,7 +391,7 @@ async function newPhaseAfterDraft(tx: BackboardTx) {
 }
 
 async function newPhaseResignPlayers(tx: BackboardTx) {
-    const baseMoods = await player.genBaseMoods(tx);
+    const baseMoods = await player.genBaseMoods();
 
     // Re-sign players on user's team, and some AI players
     await tx.players.index('tid').iterate(backboard.lowerBound(0), async p => {
@@ -399,7 +399,7 @@ async function newPhaseResignPlayers(tx: BackboardTx) {
             const tid = p.tid;
 
             // Add to free agents first, to generate a contract demand, then open negotiations with player
-            await player.addToFreeAgents(tx, p, g.PHASE.RESIGN_PLAYERS, baseMoods);
+            player.addToFreeAgents(p, g.PHASE.RESIGN_PLAYERS, baseMoods);
             const error = await contractNegotiation.create(p.pid, true, tid);
             if (error !== undefined && error) {
                 logEvent({
@@ -429,11 +429,13 @@ async function newPhaseFreeAgency(tx: BackboardTx) {
     // Delete all current negotiations to resign players
     await contractNegotiation.cancelAll();
 
-    const baseMoods = await player.genBaseMoods(tx);
+    const baseMoods = await player.genBaseMoods();
 
     // Reset contract demands of current free agents and undrafted players
     // KeyRange only works because g.PLAYER.UNDRAFTED is -2 and g.PLAYER.FREE_AGENT is -1
-    await tx.players.index('tid').iterate(backboard.bound(g.PLAYER.UNDRAFTED, g.PLAYER.FREE_AGENT), p => player.addToFreeAgents(tx, p, g.PHASE.FREE_AGENCY, baseMoods));
+    await tx.players.index('tid').iterate(backboard.bound(g.PLAYER.UNDRAFTED, g.PLAYER.FREE_AGENT), (p) => {
+        player.addToFreeAgents(p, g.PHASE.FREE_AGENCY, baseMoods);
+    });
 
     // AI teams re-sign players or they become free agents
     // Run this after upding contracts for current free agents, or addToFreeAgents will be called twice for these guys
@@ -460,7 +462,7 @@ async function newPhaseFreeAgency(tx: BackboardTx) {
                 return p; // Other endpoints include calls to addToFreeAgents, which handles updating the database
             }
 
-            return player.addToFreeAgents(tx, p, g.PHASE.RESIGN_PLAYERS, baseMoods);
+            player.addToFreeAgents(p, g.PHASE.RESIGN_PLAYERS, baseMoods);
         }
     });
 

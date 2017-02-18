@@ -6,7 +6,7 @@ import orderBy from 'lodash.orderby';
 import g from '../globals';
 import type {BackboardTx, Player} from '../util/types';
 
-type Status = 'empty' | 'error' | 'filling' | 'flushing' | 'full';
+type Status = 'empty' | 'error' | 'filling' | 'full';
 
 // Only these IDB object stores for now. Keep in memory only player info for non-retired players and team info for the current season.
 type Store = 'awards' | 'events' | 'gameAttributes' | 'games' | 'messages' | 'negotiations' | 'playerFeats' | 'playerStats' | 'players' | 'releasedPlayers' | 'schedule' | 'teamSeasons' | 'teamStats' | 'teams' | 'trade';
@@ -21,7 +21,9 @@ class Cache {
     dirtyIndexes: Set<Store>; // Does not distinguish individual indexes, just which stores have dirty indexes. Currently this distinction is not meaningful, but if it is at some point, this should be changed.
     index2store: {[key: Index]: Store};
     indexes: {[key: Index]: any};
+    lid: number;
     maxIds: {[key: Store]: number};
+    newLeague: boolean;
     status: Status;
     season: number;
     storeInfos: {
@@ -45,6 +47,7 @@ class Cache {
         this.dirtyIndexes = new Set();
         this.indexes = {};
         this.maxIds = {};
+        this.newLeague = false;
 
         this.storeInfos = {
             awards: {
@@ -189,7 +192,9 @@ class Cache {
     }
 
     markDirtyIndex(store: Store) {
-        this.dirtyIndexes.add(store);
+        if (this.storeInfos[store].indexes) {
+            this.dirtyIndexes.add(store);
+        }
     }
 
     refreshIndexes(store: Store) {
@@ -291,9 +296,14 @@ class Cache {
     // Take current contents in database and write to disk
     async flush() {
         this.checkStatus('full');
-        this.setStatus('flushing');
 
-        this.setStatus('empty');
+        await g.dbl.tx(STORES, 'readwrite', async (tx) => {
+            await Promise.all(STORES.map(async (store) => {
+                for (const row of Object.values(this.data[store])) {
+                    await tx[store].put(row);
+                }
+            }));
+        });
     }
 
     async get(store: Store, id: number) {
@@ -355,9 +365,7 @@ class Cache {
     async add(store: Store, obj: any) {
         this.checkStatus('full');
 
-        if (['events', 'games', 'messages', 'negotiations', 'playerFeats', 'schedule', 'trade'].includes(store)) {
-            // This works if no indexes
-
+        if (['events', 'games', 'messages', 'negotiations', 'playerFeats', 'playerStats', 'players', 'schedule', 'teamSeasons', 'teamStats', 'teams', 'trade'].includes(store)) {
             const pk = this.storeInfos[store].pk;
             if (obj.hasOwnProperty(pk)) {
                 if (this.data[store][obj[pk]]) {
@@ -369,29 +377,7 @@ class Cache {
             }
 
             this.data[store][obj[pk]] = obj;
-        } else if (store === 'playerStats') {
-            if (obj.hasOwnProperty('psid')) {
-                if (this.data.playerStats[obj.psid]) {
-                    throw new Error(`Primary key ${obj.psid} already exists in playerStats`);
-                }
-            } else {
-                this.maxIds.playerStats += 1;
-                obj.psid = this.maxIds.playerStats;
-            }
-
-            this.data.playerStats[obj.psid] = obj;
-
-            if (obj.season === this.season) {
-                this.indexes.playerStatsByPid[obj.pid] = obj;
-            }
-
-            if (!obj.playoffs) {
-                if (!this.indexes.playerStatsAllByPid.hasOwnProperty(obj.pid)) {
-                    this.indexes.playerStatsAllByPid[obj.pid] = [obj];
-                } else {
-                    this.indexes.playerStatsAllByPid[obj.pid].push(obj);
-                }
-            }
+            this.markDirtyIndex(store);
         } else {
             throw new Error(`Cache.add not implemented for store "${store}"`);
         }
@@ -410,6 +396,7 @@ class Cache {
             }
 
             this.data[store][obj[pk]] = obj;
+            this.markDirtyIndex(store);
         } else {
             throw new Error(`Cache.put not implemented for store "${store}"`);
         }

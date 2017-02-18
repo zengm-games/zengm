@@ -1,9 +1,10 @@
 IVERSON
 
-mergeByPk
-- should retain order of arrays, not sort by primary key. sometimes primary key is not what we want to sort by, or isn't available (like messages cache)
-  - write my own implementation
-  - also, for ones with missing primary key (like messages cache) just push
+what about mutation without a put/add, how to handle indexes in cache? need trigger for any mutation that will change cache
+- or, maybe require a put after a mutation, just for consistency/safety. still no way to enforce, though..
+- examples
+  - freeAgents.autoSign, need to update player indexes
+- better idea: set a flag indicating index is dirty, then on next get from that index, regenerate
 
 get league creation working
 - cache used in league creation, then flush before redirect or viewHelpers will reload cache with no flush
@@ -37,11 +38,6 @@ rewrite team.filter and player.filter
   - replace team.filter
   - types for Attrs
   - types for season/statType/playoffs options, which only have affect based on other options
-
-what about mutation without a put/add, how to handle indexes in cache? need trigger for any mutation that will change cache
-- or, maybe require a put after a mutation, just for consistency/safety. still no way to enforce, though..
-- examples
-  - freeAgents.autoSign, need to update player indexes
 
 schedule stuff
 - special flag in schedule database, denoting that it could be blank. then, put can't rely on maxId because it could be 0 when in reality it's just a blank db but other games were played. for other databases, i think it doesn't matter, because they are isolated and even after deleting data it won't matter if there are dupes

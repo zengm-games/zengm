@@ -3229,11 +3229,6 @@
       "resolved": "https://registry.npmjs.org/lodash.pickby/-/lodash.pickby-4.6.0.tgz",
       "dev": true
     },
-    "lodash.unionby": {
-      "version": "4.8.0",
-      "from": "lodash.unionby@latest",
-      "resolved": "https://registry.npmjs.org/lodash.unionby/-/lodash.unionby-4.8.0.tgz"
-    },
     "log-symbols": {
       "version": "1.0.2",
       "from": "log-symbols@>=1.0.2 <2.0.0",

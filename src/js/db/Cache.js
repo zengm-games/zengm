@@ -239,7 +239,9 @@ class Cache {
         this.season = season !== undefined ? season : g.season;
         if (this.season === undefined) {
             const seasonAttr = await g.dbl.gameAttributes.get('season');
-            this.season = seasonAttr.value;
+            if (seasonAttr) {
+                this.season = seasonAttr.value;
+            }
         }
         if (this.season === undefined) {
             throw new Error('Undefined season');

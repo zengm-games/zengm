@@ -1,6 +1,7 @@
 IVERSON
 
 player.filter -> db.getCopy.players
+- watch list error switching ot playoffs, should just be 0s
 - ratings special cases in commented out code, some depend on stats
 - how to filter records of output.. like not every player is returned by player.filter, see the end. does this matter?
   - yes, see comments in processPlayer, return undefined where appropriate
@@ -14,6 +15,7 @@ player.filter -> db.getCopy.players
   - figure out if tx needed, and if so create one. hopefully don't need to accept passed one
 - test roster auto sort button
 - get rid of PlayerWithStats?
+- oldStats
 
 mutation for things involving indexes
 - implement like g.cache.markDirtyIndex('players');

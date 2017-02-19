@@ -18,7 +18,7 @@ function get(ctx) {
     return {
         abbrev,
         season: ctx.params.season === "career" ? null : helpers.validateSeason(ctx.params.season),
-        statType: ctx.params.statType !== undefined ? ctx.params.statType : "per_game",
+        statType: ctx.params.statType !== undefined ? ctx.params.statType : "perGame",
         playoffs: ctx.params.playoffs !== undefined ? ctx.params.playoffs : "regular_season",
     };
 }
@@ -46,7 +46,7 @@ async function updatePlayers(inputs, updateEvents, state) {
                 season: inputs.season, // If null, then show career stats!
                 tid,
                 totals: inputs.statType === "totals",
-                per36: inputs.statType === "per_36",
+                per36: inputs.statType === "per36",
                 playoffs: inputs.playoffs === "playoffs",
             });
 

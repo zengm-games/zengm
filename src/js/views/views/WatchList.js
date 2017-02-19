@@ -128,7 +128,7 @@ class WatchList extends React.Component {
 WatchList.propTypes = {
     players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
     playoffs: React.PropTypes.oneOf(['playoffs', 'regular_season']).isRequired,
-    statType: React.PropTypes.oneOf(['per_36', 'per_game', 'totals']).isRequired,
+    statType: React.PropTypes.oneOf(['per36', 'perGame', 'totals']).isRequired,
 };
 
 export default WatchList;

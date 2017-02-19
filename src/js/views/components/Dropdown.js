@@ -92,10 +92,10 @@ const Select = ({field, handleChange, value}) => {
     } else if (field === "statTypes") {
         options = [{
             val: "Per Game",
-            key: "per_game",
+            key: "perGame",
         }, {
             val: "Per 36 Mins",
-            key: "per_36",
+            key: "per36",
         }, {
             val: "Totals",
             key: "totals",

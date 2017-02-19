@@ -1,6 +1,7 @@
 import backboard from 'backboard';
 import g from '../globals';
 import * as player from '../core/player';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import UpcomingFreeAgents from './views/UpcomingFreeAgents';
@@ -24,7 +25,6 @@ function get(ctx) {
 async function updateUpcomingFreeAgents(inputs) {
     let players = await g.dbl.players.index('tid').getAll(backboard.lowerBound(0));
     players = players.filter(p => p.contract.exp === inputs.season);
-    players = await player.withStats(null, players, {statsSeasons: [g.season]});
 
     // Done before filter so full player object can be passed to player.genContract.
     for (let i = 0; i < players.length; i++) {
@@ -33,7 +33,7 @@ async function updateUpcomingFreeAgents(inputs) {
         players[i].contractDesired.exp += inputs.season - g.season;
     }
 
-    players = player.filter(players, {
+    players = await getCopy.players(players, {
         attrs: ["pid", "name", "age", "contract", "freeAgentMood", "injury", "watch", "contractDesired"],
         ratings: ["ovr", "pot", "skills", "pos"],
         stats: ["min", "pts", "trb", "ast", "per"],

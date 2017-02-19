@@ -137,7 +137,7 @@ PlayerStats.propTypes = {
         React.PropTypes.number,
         React.PropTypes.string,
     ]).isRequired,
-    statType: React.PropTypes.oneOf(['per_36', 'per_game', 'totals']).isRequired,
+    statType: React.PropTypes.oneOf(['per36', 'perGame', 'totals']).isRequired,
 };
 
 export default PlayerStats;

@@ -51,18 +51,6 @@ class WatchList extends React.Component {
         const d = statType === "totals" ? 0 : 1;
 
         const rows = players.map(p => {
-            // HACKS to show right stats, info
-            if (playoffs === "playoffs") {
-                p.stats = p.statsPlayoffs;
-
-                // If no playoff stats, blank them
-                ["gp", "min", "fgp", "tpp", "ftp", "trb", "ast", "tov", "stl", "blk", "pts", "per", "ewa"].forEach(category => {
-                    if (p.stats[category] === undefined) {
-                        p.stats[category] = 0;
-                    }
-                });
-            }
-
             let contract;
             if (p.tid === g.PLAYER.RETIRED) {
                 contract = "Retired";

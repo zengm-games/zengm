@@ -1,7 +1,7 @@
 import Promise from 'bluebird';
 import g from '../globals';
-import * as player from '../core/player';
 import * as trade from '../core/trade';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import TradingBlock from './views/TradingBlock';
@@ -9,16 +9,11 @@ import TradingBlock from './views/TradingBlock';
 async function updateUserRoster(inputs, updateEvents) {
     if (updateEvents.includes('firstRun') || updateEvents.includes('playerMovement') || updateEvents.includes('gameSim')) {
         let [userRoster, userPicks] = await Promise.all([
-            g.dbl.players.index('tid').getAll(g.userTid).then(players => {
-                return player.withStats(null, players, {
-                    statsSeasons: [g.season],
-                    statsTid: g.userTid,
-                });
-            }),
+            g.cache.indexGetAll('playersByTid', g.userTid),
             g.dbl.draftPicks.index('tid').getAll(g.userTid),
         ]);
 
-        userRoster = player.filter(userRoster, {
+        userRoster = await getCopy.players(userRoster, {
             attrs: ["pid", "name", "age", "contract", "injury", "watch", "gamesUntilTradable"],
             ratings: ["ovr", "pot", "skills", "pos"],
             stats: ["min", "pts", "trb", "ast", "per"],

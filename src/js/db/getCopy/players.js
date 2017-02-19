@@ -413,11 +413,14 @@ const getCopy = async (players: Player | Player[], {
         return processPlayer(players, options, tx);
     };
 
+    let playersFiltered;
     if (objectStores.length > 0) {
-        return g.dbl.tx(objectStores, (tx) => processMaybeWithIDB(tx));
+        console.log('getCopy.players with IDB');
+        playersFiltered = await g.dbl.tx(objectStores, (tx) => processMaybeWithIDB(tx));
+    } else {
+        console.log('getCopy.players without IDB');
+        playersFiltered = await processMaybeWithIDB();
     }
-
-    const playersFiltered = await processMaybeWithIDB();
 
     return playersFiltered.filter((p) => p !== undefined);
 };

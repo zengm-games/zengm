@@ -1,6 +1,5 @@
 import Promise from 'bluebird';
 import g from '../globals';
-import * as player from '../core/player';
 import * as trade from '../core/trade';
 import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
@@ -50,9 +49,7 @@ async function validateSavedPids() {
 async function updateTrade() {
     let [teams, userRoster, userPicks] = await Promise.all([
         validateSavedPids(),
-        g.dbl.players.index('tid').getAll(g.userTid).then(players => {
-            return player.withStats(null, players, {statsSeasons: [g.season]});
-        }),
+        g.cache.indexGetAll('playersByTid', g.userTid),
         g.dbl.draftPicks.index('tid').getAll(g.userTid),
     ]);
 
@@ -60,7 +57,7 @@ async function updateTrade() {
     const ratings = ["ovr", "pot", "skills", "pos"];
     const stats = ["min", "pts", "trb", "ast", "per"];
 
-    userRoster = player.filter(userRoster, {
+    userRoster = await getCopy.players(userRoster, {
         attrs,
         ratings,
         stats,
@@ -88,9 +85,7 @@ async function updateTrade() {
 
     // Need to do this after knowing otherTid
     let [otherRoster, otherPicks, t] = await Promise.all([
-        g.dbl.players.index('tid').getAll(otherTid).then(players => {
-            return player.withStats(null, players, {statsSeasons: [g.season]});
-        }),
+        g.cache.indexGetAll('playersByTid', otherTid),
         g.dbl.draftPicks.index('tid').getAll(otherTid),
         getCopy.teams({
             tid: otherTid,
@@ -100,7 +95,7 @@ async function updateTrade() {
         }),
     ]);
 
-    otherRoster = player.filter(otherRoster, {
+    otherRoster = await getCopy.players(otherRoster, {
         attrs,
         ratings,
         stats,

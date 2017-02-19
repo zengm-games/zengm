@@ -161,47 +161,41 @@ ReorderHandle.propTypes = {
 
 // This needs to look at all players, because rosterOrder is not guaranteed to be unique after free agent signings and trades
 const swapRosterOrder = async (sortedPlayers, pid1, pid2) => {
-    await g.dbl.tx("players", "readwrite", async tx => {
-        const rosterOrder1 = sortedPlayers.findIndex(p => p.pid === pid1);
-        const rosterOrder2 = sortedPlayers.findIndex(p => p.pid === pid2);
-        const promises = sortedPlayers.map(async (sortedPlayer, i) => {
-            const pid = sortedPlayers[i].pid;
-            const p = await tx.players.get(pid);
-            let rosterOrder = i;
-            if (pid === pid1) {
-                rosterOrder = rosterOrder2;
-            } else if (pid === pid2) {
-                rosterOrder = rosterOrder1;
-            }
+    const rosterOrder1 = sortedPlayers.findIndex(p => p.pid === pid1);
+    const rosterOrder2 = sortedPlayers.findIndex(p => p.pid === pid2);
+    const promises = sortedPlayers.map(async (sortedPlayer, i) => {
+        const pid = sortedPlayers[i].pid;
+        const p = await g.cache.get('players', pid);
+        let rosterOrder = i;
+        if (pid === pid1) {
+            rosterOrder = rosterOrder2;
+        } else if (pid === pid2) {
+            rosterOrder = rosterOrder1;
+        }
 
-            if (p.rosterOrder !== rosterOrder) {
-                p.rosterOrder = rosterOrder;
-                await tx.players.put(p);
-            }
-        });
-
-        await Promise.all(promises);
-
-        ui.realtimeUpdate(["playerMovement"]);
-        league.updateLastDbChange();
+        if (p.rosterOrder !== rosterOrder) {
+            p.rosterOrder = rosterOrder;
+        }
     });
+
+    await Promise.all(promises);
+
+    ui.realtimeUpdate(["playerMovement"]);
+    league.updateLastDbChange();
 };
 
 const handleReorderDrag = async sortedPids => {
-    await g.dbl.tx("players", "readwrite", async tx => {
-        const promises = sortedPids.map(async (pid, rosterOrder) => {
-            const p = await tx.players.get(pid);
-            if (p.rosterOrder !== rosterOrder) {
-                p.rosterOrder = rosterOrder;
-                await tx.players.put(p);
-            }
-        });
-
-        await Promise.all(promises);
-
-        ui.realtimeUpdate(["playerMovement"]);
-        league.updateLastDbChange();
+    const promises = sortedPids.map(async (pid, rosterOrder) => {
+        const p = await g.cache.get('players', pid);
+        if (p.rosterOrder !== rosterOrder) {
+            p.rosterOrder = rosterOrder;
+        }
     });
+
+    await Promise.all(promises);
+
+    ui.realtimeUpdate(["playerMovement"]);
+    league.updateLastDbChange();
 };
 
 const RosterRow = clickable(props => {

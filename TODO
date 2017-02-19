@@ -1,6 +1,7 @@
 IVERSON
 
 player.filter -> db.getCopy.players
+- how to handle cases where players from IDB are passed in? do i need to augment with cache, or is it all old?
 - watch list error switching ot playoffs, should just be 0s
 - ratings special cases in commented out code, some depend on stats
 - how to filter records of output.. like not every player is returned by player.filter, see the end. does this matter?
@@ -9,11 +10,6 @@ player.filter -> db.getCopy.players
 - handle case where player is signed in offseason and needs to appear on roster, but has no stats
 - when IDB needed?
   - do the current indexes make sense? limits usefulness after playoffs
-- are input players cloned or not?
-  - shouldn't matter, don't copy any references!
-- incorporate player.withStats
-  - figure out if tx needed, and if so create one. hopefully don't need to accept passed one
-- test roster auto sort button
 - get rid of PlayerWithStats?
 - oldStats
 

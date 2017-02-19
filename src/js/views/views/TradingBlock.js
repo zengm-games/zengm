@@ -2,7 +2,6 @@ import Promise from 'bluebird';
 import React from 'react';
 import _ from 'underscore';
 import g from '../../globals';
-import * as player from '../../core/player';
 import * as team from '../../core/team';
 import * as trade from '../../core/trade';
 import {getCopy} from '../../db';
@@ -167,53 +166,47 @@ const augmentOffers = async (offers) => {
         season: g.season,
     });
 
-    return g.dbl.tx(["players", "playerStats", "draftPicks"], async tx => {
-        // Take the pids and dpids in each offer and get the info needed to display the offer
-        return Promise.all(offers.map(async (offer, i) => {
-            const tid = offers[i].tid;
+    // Take the pids and dpids in each offer and get the info needed to display the offer
+    return Promise.all(offers.map(async (offer, i) => {
+        const tid = offers[i].tid;
 
-            let players = await tx.players.index('tid').getAll(tid);
-            players = players.filter(p => offers[i].pids.includes(p.pid));
-            players = await player.withStats(tx, players, {
-                statsSeasons: [g.season],
-                statsTid: tid,
-            });
-            players = player.filter(players, {
-                attrs: ["pid", "name", "age", "contract", "injury", "watch"],
-                ratings: ["ovr", "pot", "skills", "pos"],
-                stats: ["min", "pts", "trb", "ast", "per"],
-                season: g.season,
-                tid,
-                showNoStats: true,
-                showRookies: true,
-                fuzz: true,
-            });
+        let players = await g.cache.indexGetAll('playersByTid', tid);
+        players = players.filter(p => offers[i].pids.includes(p.pid));
+        players = await getCopy.players(players, {
+            attrs: ["pid", "name", "age", "contract", "injury", "watch"],
+            ratings: ["ovr", "pot", "skills", "pos"],
+            stats: ["min", "pts", "trb", "ast", "per"],
+            season: g.season,
+            tid,
+            showNoStats: true,
+            showRookies: true,
+            fuzz: true,
+        });
 
-            let picks = await tx.draftPicks.index('tid').getAll(tid);
-            picks = picks.filter(dp => offers[i].dpids.includes(dp.dpid));
-            for (const pick of picks) {
-                pick.desc = helpers.pickDesc(pick);
-            }
+        let picks = await g.dbl.draftPicks.index('tid').getAll(tid);
+        picks = picks.filter(dp => offers[i].dpids.includes(dp.dpid));
+        for (const pick of picks) {
+            pick.desc = helpers.pickDesc(pick);
+        }
 
-            const payroll = await team.getPayroll(tid).get(0);
+        const payroll = await team.getPayroll(tid).get(0);
 
-            return {
-                tid,
-                abbrev: teams[tid].abbrev,
-                region: teams[tid].region,
-                name: teams[tid].name,
-                strategy: teams[tid].strategy,
-                won: teams[tid].seasonAttrs.won,
-                lost: teams[tid].seasonAttrs.lost,
-                pids: offers[i].pids,
-                dpids: offers[i].dpids,
-                warning: offers[i].warning,
-                payroll,
-                picks,
-                players,
-            };
-        }));
-    });
+        return {
+            tid,
+            abbrev: teams[tid].abbrev,
+            region: teams[tid].region,
+            name: teams[tid].name,
+            strategy: teams[tid].strategy,
+            won: teams[tid].seasonAttrs.won,
+            lost: teams[tid].seasonAttrs.lost,
+            pids: offers[i].pids,
+            dpids: offers[i].dpids,
+            warning: offers[i].warning,
+            payroll,
+            picks,
+            players,
+        };
+    }));
 };
 
 const ProgressBar = ({progress}) => {

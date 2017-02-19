@@ -211,6 +211,8 @@ const processStats = async (output: PlayerFiltered, p: Player, {
     playoffs,
     regularSeason,
     season,
+    showNoStats,
+    showRookies,
     statType,
     stats,
 }: PlayerOptions, tx: ?BackboardTx) => {
@@ -237,6 +239,21 @@ const processStats = async (output: PlayerFiltered, p: Player, {
 
     // Handle playoffs/regularSeason
     playerStats = filterOrderStats(playerStats, playoffs, regularSeason);
+
+    // Only season(s) in question
+    playerStats = playerStats.filter((ps) => {
+        if (season !== undefined) {
+            return ps.season === season;
+        }
+        return true;
+    });
+
+
+    const keepWithNoStats = (showRookies && p.draft.year >= g.season && (season === g.season || season === undefined)) || (showNoStats && (season === undefined || season > p.draft.year));
+
+    if (playerStats.length === 0 && keepWithNoStats) {
+        playerStats.push({});
+    }
 
     output.stats = playerStats.map((ps) => {
         const row = {};
@@ -305,6 +322,11 @@ const processStats = async (output: PlayerFiltered, p: Player, {
             } else {
                 row[attr] = ps.gp > 0 ? ps[attr] / ps.gp : 0;
             }
+
+            // For keepWithNoStats
+            if (row[attr] === undefined || Number.isNaN(row[attr])) {
+                row[attr] = 0;
+            }
         }
 
         return row;
@@ -322,6 +344,10 @@ const processPlayer = async (p: Player, options: PlayerOptions, tx: ?BackboardTx
 
     if (options.stats.length > 0) {
         await processStats(output, p, options, tx);
+    }
+
+    if (output.stats === undefined) {
+        return undefined;
     }
 
 // Only add a player if filterStats finds something (either stats that season, or options overriding that check)

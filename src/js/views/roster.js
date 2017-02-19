@@ -74,7 +74,6 @@ async function updateRoster(inputs, updateEvents, state) {
                     numGamesRemaining,
                 });
                 players.sort((a, b) => a.rosterOrder - b.rosterOrder);
-console.log(players);
 
                 // Add untradable property
                 players = trade.filterUntradable(players);

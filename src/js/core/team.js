@@ -8,10 +8,11 @@ import g from '../globals';
 import * as draft from './draft';
 import * as player from './player';
 import * as trade from './trade';
+import {getCopy} from '../db';
 import logEvent from '../util/logEvent';
 import * as helpers from '../util/helpers';
 import * as random from '../util/random';
-import type {BackboardTx, ContractInfo, TeamFiltered, TeamSeason, TeamStats, TradePickValues} from '../util/types';
+import type {ContractInfo, TeamFiltered, TeamSeason, TeamStats, TradePickValues} from '../util/types';
 
 function genSeasonRow(tid: number, prevSeason?: TeamSeason): TeamSeason {
     const newSeason = {
@@ -1153,32 +1154,26 @@ console.log(dv);*/
  * Basically.. switch to rebuilding if you're old and your success is fading, and switch to contending if you have a good amount of young talent on rookie deals and your success is growing.
  *
  * @memberOf core.team
- * @param {IDBTransaction} tx An IndexedDB transaction on players, playerStats, and teams, readwrite.
  * @return {Promise}
  */
-function updateStrategies(tx: BackboardTx) {
-    return tx.teams.iterate(async t => {
+async function updateStrategies() {
+    const teams = await g.cache.getAll('teams');
+    for (const t of teams) {
         // Skip user's team
         if (t.tid === g.userTid) {
-            return;
+            continue;
         }
 
         // Change in wins
-        const [teamSeason, teamSeasonOld] = await Promise.all([
-            tx.teamSeasons.index("season, tid").get([g.season, t.tid]),
-            tx.teamSeasons.index("season, tid").get([g.season - 1, t.tid]),
-        ]);
+        const teamSeason = await g.cache.indexGet('teamSeasonsBySeasonTid', `${g.season},${t.tid}`);
+        const teamSeasonOld = await g.cache.indexGet('teamSeasonsBySeasonTid', `${g.season - 1},${t.tid}`);
 
         const won = teamSeason.won;
         const dWon = teamSeasonOld ? won - teamSeasonOld.won : 0;
 
         // Young stars
-        let players = await tx.players.index('tid').getAll(t.tid);
-        players = await player.withStats(tx, players, {
-            statsSeasons: [g.season],
-            statsTid: t.tid,
-        });
-        players = player.filter(players, {
+        let players = await g.cache.indexGetAll('playersByTid', t.tid);
+        players = await getCopy.players(players, {
             season: g.season,
             tid: t.tid,
             attrs: ["age", "value", "contract"],
@@ -1202,19 +1197,12 @@ function updateStrategies(tx: BackboardTx) {
         const age = numerator / denominator; // Average age, weighted by minutes played
         const score = 0.8 * dWon + (won - g.numGames / 2) + 5 * (26 - age) + youngStar * 20;
 
-        let updated = false;
         if (score > 20 && t.strategy === "rebuilding") {
             t.strategy = "contending";
-            updated = true;
         } else if (score < -20 && t.strategy === "contending") {
             t.strategy = "rebuilding";
-            updated = true;
         }
-
-        if (updated) {
-            return t;
-        }
-    });
+    }
 }
 
 /**

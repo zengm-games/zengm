@@ -230,7 +230,7 @@ const processStats = async (output: PlayerFiltered, p: Player, {
             await playerStatsFromCache(),
             g.cache.storeInfos.playerStats.pk,
         );
-    } else if (season === g.season) {
+    } else if (season >= g.season - 1) {
         playerStats = await playerStatsFromCache();
     } else {
         // Single season, from database
@@ -400,8 +400,7 @@ const getCopy = async (players: Player | Player[], {
 
     // Does this require IDB?
     const objectStores = [];
-    const useCache = season === g.season && ((regularSeason && !playoffs && g.phase < g.PHASE.PLAYOFFS) || (!regularSeason && playoffs && g.phase >= g.PHASE.PLAYOFFS));
-    if (stats.length > 0 && !useCache) {
+    if (stats.length > 0 && season < g.season - 1) {
         objectStores.push('playerStats');
     }
 
@@ -415,10 +414,10 @@ const getCopy = async (players: Player | Player[], {
 
     let playersFiltered;
     if (objectStores.length > 0) {
-        console.log('getCopy.players with IDB');
+        console.log('getCopy.players with IDB', options);
         playersFiltered = await g.dbl.tx(objectStores, (tx) => processMaybeWithIDB(tx));
     } else {
-        console.log('getCopy.players without IDB');
+        console.log('getCopy.players without IDB', options);
         playersFiltered = await processMaybeWithIDB();
     }
 

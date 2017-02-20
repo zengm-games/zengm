@@ -241,7 +241,7 @@ async function newPhasePlayoffs() {
     return [url, ["teamFinances"]];
 }
 
-async function newPhaseBeforeDraft(tx: BackboardTx) {
+async function newPhaseBeforeDraft() {
     // Achievements after playoffs
     account.checkAchievement.fo_fo_fo();
     account.checkAchievement["98_degrees"]();
@@ -252,22 +252,21 @@ async function newPhaseBeforeDraft(tx: BackboardTx) {
     account.checkAchievement.moneyball_2();
     account.checkAchievement.small_market();
 
-    await season.doAwards(tx);
+    await season.doAwards();
 
-    const teams = await team.filter({
-        ot: tx,
+    const teams = await getCopy.teams({
         attrs: ["tid"],
         seasonAttrs: ["playoffRoundsWon"],
         season: g.season,
     });
 
     // Give award to all players on the championship team
-    const tid = teams.find(t => t.playoffRoundsWon === g.numPlayoffRounds).tid;
-    if (tid !== undefined) {
-        await tx.players.index('tid').iterate(tid, p => {
+    const t = teams.find(t2 => t2.seasonAttrs.playoffRoundsWon === g.numPlayoffRounds);
+    if (t !== undefined) {
+        const players = await g.cache.indexGetAll('playersByTid', t.tid);
+        for (const p of players) {
             p.awards.push({season: g.season, type: "Won Championship"});
-            return p;
-        });
+        }
     }
 
     // Do annual tasks for each player, like checking for retirement
@@ -276,11 +275,10 @@ async function newPhaseBeforeDraft(tx: BackboardTx) {
     const maxAge = 34;
     const minPot = 40;
 
-    await tx.players.index('tid').iterate(backboard.lowerBound(g.PLAYER.FREE_AGENT), async p => {
-        let update = false;
-
+    const players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.FREE_AGENT, Infinity]);
+    for (const p of players) {
         // Get player stats, used for HOF calculation
-        const playerStats = await tx.playerStats.index("pid, season, tid").getAll(backboard.bound([p.pid], [p.pid, '']));
+        const playerStats = await getCopy.playerStats({pid: p.pid});
 
         const age = g.season - p.born.year;
         const pot = p.ratings[p.ratings.length - 1].pot;
@@ -294,7 +292,6 @@ async function newPhaseBeforeDraft(tx: BackboardTx) {
                 const excessPot = (40 - pot) / 50;  // 0.02 for each potential rating below 40 (this can be negative)
                 if (excessAge + excessPot + random.gauss(0, 1) > 0) {
                     player.retire(p, playerStats);
-                    update = true;
                 }
             }
         }
@@ -307,10 +304,8 @@ async function newPhaseBeforeDraft(tx: BackboardTx) {
                 p.yearsFreeAgent += 1;
             }
             p.contract.exp += 1;
-            update = true;
         } else if (p.tid >= 0 && p.yearsFreeAgent > 0) {
             p.yearsFreeAgent = 0;
-            update = true;
         }
 
         // Heal injures
@@ -321,24 +316,24 @@ async function newPhaseBeforeDraft(tx: BackboardTx) {
             } else {
                 p.injury.gamesRemaining -= 82;
             }
-            update = true;
         }
+    }
+    g.cache.markDirtyIndex('players'); // Players are almost guaranteed to have retired
 
-        // Update player in DB, if necessary
-        if (update) {
-            return p;
+    const releasedPlayers = await g.cache.getAll('releasedPlayers');
+    for (const rp of releasedPlayers) {
+        if (rp.contract.exp <= g.season) {
+            await g.cache.delete('releasedPlayers', rp.rid);
         }
-    });
+    }
 
-    await tx.releasedPlayers.index('contract.exp').iterate(backboard.upperBound(g.season), rp => tx.releasedPlayers.delete(rp.rid));
-
-    await team.updateStrategies(tx);
+    await team.updateStrategies();
 
     // Achievements after awards
     account.checkAchievement.hardware_store();
     account.checkAchievement.sleeper_pick();
 
-    const deltas = await season.updateOwnerMood(tx);
+    const deltas = await season.updateOwnerMood();
     await message.generate(deltas);
 
     // Don't redirect if we're viewing a live game now

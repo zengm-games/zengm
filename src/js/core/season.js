@@ -1,16 +1,15 @@
 // @flow
 
-import backboard from 'backboard';
 import Promise from 'bluebird';
 import _ from 'underscore';
 import g from '../globals';
 import * as league from './league';
 import * as player from './player';
-import * as team from './team';
+import {getCopy} from '../db';
 import * as helpers from '../util/helpers';
 import logEvent from '../util/logEvent';
 import * as random from '../util/random';
-import type {BackboardTx, OwnerMoodDeltas, ScheduleGame, Team, TeamFiltered} from '../util/types';
+import type {OwnerMoodDeltas, ScheduleGame, Team, TeamFiltered} from '../util/types';
 
 /**
  * Update g.ownerMood based on performance this season.
@@ -18,27 +17,25 @@ import type {BackboardTx, OwnerMoodDeltas, ScheduleGame, Team, TeamFiltered} fro
  * This is based on three factors: regular season performance, playoff performance, and finances. Designed to be called after the playoffs end.
  *
  * @memberOf core.season
- * @param {(IDBTransaction|null)} tx An IndexedDB transaction on teams, readwrite.
  * @return {Promise.Object} Resolves to an object containing the changes in g.ownerMood this season.
  */
-async function updateOwnerMood(tx?: BackboardTx): Promise<OwnerMoodDeltas> {
-    const t = await team.filter({
-        ot: tx,
+async function updateOwnerMood(): Promise<OwnerMoodDeltas> {
+    const t = await getCopy.teams({
         seasonAttrs: ["won", "playoffRoundsWon", "profit"],
         season: g.season,
         tid: g.userTid,
     });
 
     const deltas = {};
-    deltas.wins = 0.25 * (t.won - g.numGames / 2) / (g.numGames / 2);
+    deltas.wins = 0.25 * (t.seasonAttrs.won - g.numGames / 2) / (g.numGames / 2);
     if (t.playoffRoundsWon < 0) {
         deltas.playoffs = -0.2;
     } else if (t.playoffRoundsWon < 4) {
-        deltas.playoffs = 0.04 * t.playoffRoundsWon;
+        deltas.playoffs = 0.04 * t.seasonAttrs.playoffRoundsWon;
     } else {
         deltas.playoffs = 0.2;
     }
-    deltas.money = (t.profit - 15) / 100;
+    deltas.money = (t.seasonAttrs.profit - 15) / 100;
 
     // Only update owner mood if grace period is over
     if (g.season >= g.gracePeriodEnd) {
@@ -79,39 +76,32 @@ async function saveAwardsByPlayer(awardsByPlayer: any) {
  * The awards are saved to the "awards" object store.
  *
  * @memberOf core.season
- * @param {(IDBTransaction)} tx An IndexedDB transaction on awards, players, playerStats, releasedPlayers, and teams, readwrite.
  * @return {Promise}
  */
-async function doAwards(tx: BackboardTx) {
+async function doAwards() {
     const awards: any = {season: g.season};
 
     // [{pid, type}]
     const awardsByPlayer = [];
 
     // Get teams for won/loss record for awards, as well as finding the teams with the best records
-    const teams = await team.filter({
+    const teams = helpers.orderByWinp(await getCopy.teams({
         attrs: ["tid", "abbrev", "region", "name", "cid"],
         seasonAttrs: ["won", "lost", "winp", "playoffRoundsWon"],
         season: g.season,
-        sortBy: "winp",
-        ot: tx,
-    });
+    }));
 
-    awards.bestRecord = {tid: teams[0].tid, abbrev: teams[0].abbrev, region: teams[0].region, name: teams[0].name, won: teams[0].won, lost: teams[0].lost};
+    awards.bestRecord = {tid: teams[0].tid, abbrev: teams[0].abbrev, region: teams[0].region, name: teams[0].name, won: teams[0].seasonAttrs.won, lost: teams[0].seasonAttrs.lost};
     awards.bestRecordConfs = g.confs.map(c => {
         const t = teams.find(t2 => t2.cid === c.cid);
-        return {tid: t.tid, abbrev: t.abbrev, region: t.region, name: t.name, won: t.won, lost: t.lost};
+        return {tid: t.tid, abbrev: t.abbrev, region: t.region, name: t.name, won: t.seasonAttrs.won, lost: t.seasonAttrs.lost};
     });
 
     // Sort teams by tid so it can be easily used in awards formulas
     teams.sort((a, b) => a.tid - b.tid);
 
-    let players = await tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.FREE_AGENT));
-    players = await player.withStats(tx, players, {
-        statsSeasons: [g.season],
-    });
-
-    players = player.filter(players, {
+    let players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.FREE_AGENT, Infinity]);
+    players = await getCopy.players(players, {
         attrs: ["pid", "name", "tid", "abbrev", "draft"],
         stats: ["gp", "gs", "min", "pts", "trb", "ast", "blk", "stl", "ewa"],
         season: g.season,
@@ -140,7 +130,7 @@ async function doAwards(tx: BackboardTx) {
     for (let i = 0; i < players.length; i++) {
         // Special handling for players who were cut mid-season
         if (players[i].tid > 0) {
-            players[i].won = teams[players[i].tid].won;
+            players[i].won = teams[players[i].tid].seasonAttrs.won;
         } else {
             players[i].won = 20;
         }
@@ -229,27 +219,26 @@ async function doAwards(tx: BackboardTx) {
     }
 
     // Finals MVP - most WS in playoffs
-    const champTid = teams.find(t => t.playoffRoundsWon === g.numPlayoffRounds).tid;
+    const champTeam = teams.find(t => t.seasonAttrs.playoffRoundsWon === g.numPlayoffRounds);
+    if (champTeam) {
+        const champTid = champTeam.tid;
 
-    // Need to read from DB again to really make sure I'm only looking at players from the champs. player.filter might not be enough. This DB call could be replaced with a loop manually checking tids, though.
-    let champPlayers = await tx.players.index('tid').getAll(champTid);
-    champPlayers = await player.withStats(tx, champPlayers, {
-        statsSeasons: [g.season],
-        statsTid: champTid,
-        statsPlayoffs: true,
-    });
-    champPlayers = player.filter(champPlayers, { // Only the champions, only playoff stats
-        attrs: ["pid", "name", "tid", "abbrev"],
-        stats: ["pts", "trb", "ast", "ewa"],
-        season: g.season,
-        playoffs: true,
-        tid: champTid,
-    });
-    champPlayers.sort((a, b) => b.statsPlayoffs.ewa - a.statsPlayoffs.ewa);
-    {
-        const p = champPlayers[0];
-        awards.finalsMvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.statsPlayoffs.pts, trb: p.statsPlayoffs.trb, ast: p.statsPlayoffs.ast};
-        awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Finals MVP"});
+        // Need to read from DB again to really make sure I'm only looking at players from the champs. player.filter might not be enough. This DB call could be replaced with a loop manually checking tids, though.
+        let champPlayers = await g.cache.indexGetAll('playersByTid', champTid);
+        champPlayers = player.filter(champPlayers, { // Only the champions, only playoff stats
+            attrs: ["pid", "name", "tid", "abbrev"],
+            stats: ["pts", "trb", "ast", "ewa"],
+            season: g.season,
+            playoffs: true,
+            regularSeason: false,
+            tid: champTid,
+        });
+        champPlayers.sort((a, b) => b.statsPlayoffs.ewa - a.statsPlayoffs.ewa);
+        {
+            const p = champPlayers[0];
+            awards.finalsMvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.statsPlayoffs.pts, trb: p.statsPlayoffs.trb, ast: p.statsPlayoffs.ast};
+            awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Finals MVP"});
+        }
     }
 
     await g.cache.put('awards', awards);
@@ -309,7 +298,6 @@ async function getSchedule(oneDay?: boolean = false): Promise<ScheduleGame[]> {
 /**
  * Save the schedule to the database, overwriting what's currently there.
  *
- * @param {(IDBTransaction)} tx An IndexedDB transaction on schedule readwrite.
  * @param {Array} tids A list of lists, each containing the team IDs of the home and
         away teams, respectively, for every game in the season, respectively.
  * @return {Promise}

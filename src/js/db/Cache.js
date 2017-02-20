@@ -416,10 +416,11 @@ class Cache {
     async delete(store: Store, key: number) {
         this.checkStatus('full');
 
-        if (['negotiations', 'schedule'].includes(store)) {
+        if (['negotiations', 'releasedPlayers', 'schedule'].includes(store)) {
             if (this.data[store].hasOwnProperty(key)) {
                 delete this.data[store][key];
                 this.deletes[store].add(key);
+                this.markDirtyIndex(store);
             } else {
                 throw new Error(`Invalid key to delete from store "${store}": ${key}`);
             }
@@ -436,6 +437,7 @@ class Cache {
                 delete this.data[store][this.storeInfos[store].pk];
                 this.deletes[store].add(key);
             }
+            this.markDirtyIndex(store);
         } else {
             throw new Error(`clear not implemented for store "${store}"`);
         }

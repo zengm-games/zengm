@@ -24,12 +24,14 @@ const History = ({awards, champ, confs, invalidSeason, retiredPlayers, season, u
                 <div className="row">
                     <div className="col-sm-12 col-xs-6">
                         <h4>League Champions</h4>
-                        <p>
-                            <span className={champ.tid === userTid ? 'bg-info' : null}><b><a href={helpers.leagueUrl(['roster', champ.abbrev, season])}>{champ.region} {champ.name}</a></b></span><br />
-                            <a href={helpers.leagueUrl(['playoffs', season])}>Playoffs Bracket</a>
-                        </p>
-                        <p>Finals MVP: <b><a className={champ.tid === userTid ? 'bg-info' : null} href={helpers.leagueUrl(['player', awards.finalsMvp.pid])}>{awards.finalsMvp.name}</a></b><br />
-                            {helpers.round(awards.finalsMvp.pts, 1)} pts, {helpers.round(awards.finalsMvp.trb, 1)} reb, {helpers.round(awards.finalsMvp.ast, 1)} ast</p>
+                        {champ ? <div>
+                            <p>
+                                <span className={champ.tid === userTid ? 'bg-info' : null}><b><a href={helpers.leagueUrl(['roster', champ.abbrev, season])}>{champ.region} {champ.name}</a></b></span><br />
+                                <a href={helpers.leagueUrl(['playoffs', season])}>Playoffs Bracket</a>
+                            </p>
+                            <p>Finals MVP: <b><a className={champ.tid === userTid ? 'bg-info' : null} href={helpers.leagueUrl(['player', awards.finalsMvp.pid])}>{awards.finalsMvp.name}</a></b><br />
+                                {helpers.round(awards.finalsMvp.pts, 1)} pts, {helpers.round(awards.finalsMvp.trb, 1)} reb, {helpers.round(awards.finalsMvp.ast, 1)} ast</p>
+                        </div> : <p>???</p>}
                         <h4>Best Record</h4>
                         {awards.bestRecordConfs.map((t, i) => <p key={t.tid}>
                             {confs[i].name}:<br />

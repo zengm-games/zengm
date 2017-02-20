@@ -2,16 +2,17 @@ IVERSON
 
 player.filter -> db.getCopy.players
 - how to handle cases where players from IDB are passed in? do i need to augment with cache, or is it all old?
+  - basically just when some players are retired, right? in that case, could augment, since performance is not critical when reviewing archived data
 - watch list error switching ot playoffs, should just be 0s
 - ratings special cases in commented out code, some depend on stats
 - how to filter records of output.. like not every player is returned by player.filter, see the end. does this matter?
   - yes, see comments in processPlayer, return undefined where appropriate
-- revisit when tx needed, playerStatsAllByPid
 - handle case where player is signed in offseason and needs to appear on roster, but has no stats
 - when IDB needed?
   - do the current indexes make sense? limits usefulness after playoffs
 - get rid of PlayerWithStats?
 - oldStats
+- passing in players is kind of shitty, runs contrary to the whole "getCopy" idea because you have to figure out how to generate players object ahead of time. maybe rethink this..
 
 mutation for things involving indexes
 - implement like g.cache.markDirtyIndex('players');

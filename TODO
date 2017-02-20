@@ -1,8 +1,5 @@
 IVERSON
 
-draftOrder cache
-- is draft.setOrder needed, or will mutating the object be enough?
-
 player.filter -> db.getCopy.players
 - how to handle cases where players from IDB are passed in? do i need to augment with cache, or is it all old?
   - basically just when some players are retired, right? in that case, could augment, since performance is not critical when reviewing archived data
@@ -93,7 +90,7 @@ delete old data should empty cache?
 make sure all player.value calls happen with full cache or psOverride
 
 make cache synchronous? it'll be faster, any problems though?
-- big problem: can't switch to db/cache in worker
+- big problem: can't switch to db/cache in worker. but already can't do that, because mutating objects in place will not actually update anymore then
 
 get rid of teamAbbrevsCache, etc?
 

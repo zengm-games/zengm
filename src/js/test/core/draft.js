@@ -37,7 +37,6 @@ describe("core/draft", () => {
         await draft.selectPlayer(pick, p.pid);
         const p2 = await g.dbl.players.get(p.pid);
         assert.equal(p2.tid, g.userTid);
-        await draft.setOrder(draftOrder);
     };
 
     describe("#genPlayers()", () => {

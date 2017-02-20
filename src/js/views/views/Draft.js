@@ -70,7 +70,7 @@ class Draft extends React.Component {
         if (pick && g.userTids.includes(pick.tid)) {
             this.savePids([pid]);
             await draft.selectPlayer(pick, pid);
-            await g.dbl.tx("draftOrder", "readwrite", tx => draft.setOrder(tx, draftOrder));
+            await draft.setOrder(draftOrder);
             await this.draftUntilUserOrEnd();
         } else {
             console.log("ERROR: User trying to draft out of turn.");

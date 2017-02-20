@@ -37,7 +37,7 @@ describe("core/draft", () => {
         await draft.selectPlayer(pick, p.pid);
         const p2 = await g.dbl.players.get(p.pid);
         assert.equal(p2.tid, g.userTid);
-        await draft.setOrder(null, draftOrder);
+        await draft.setOrder(draftOrder);
     };
 
     describe("#genPlayers()", () => {
@@ -74,7 +74,7 @@ describe("core/draft", () => {
             return g.dbl.tx(["draftOrder", "draftPicks", "teams", "teamSeasons", "players"], "readwrite", async tx => {
                 // Load static data
                 await draft.genOrder(tx);
-                const draftOrder = await draft.getOrder(tx);
+                const draftOrder = await draft.getOrder();
                 assert.equal(draftOrder.length, 60);
 
                 draftResults = draftOrder.map(d => d.originalTid);

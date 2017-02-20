@@ -9,11 +9,11 @@ import type {BackboardTx, Player} from '../util/types';
 type Status = 'empty' | 'error' | 'filling' | 'full';
 
 // Only these IDB object stores for now. Keep in memory only player info for non-retired players and team info for the current season.
-type Store = 'awards' | 'draftPicks' | 'events' | 'gameAttributes' | 'games' | 'messages' | 'negotiations' | 'playerFeats' | 'playerStats' | 'players' | 'playoffSeries' | 'releasedPlayers' | 'schedule' | 'teamSeasons' | 'teamStats' | 'teams' | 'trade';
+type Store = 'awards' | 'draftOrder' | 'draftPicks' | 'events' | 'gameAttributes' | 'games' | 'messages' | 'negotiations' | 'playerFeats' | 'playerStats' | 'players' | 'playoffSeries' | 'releasedPlayers' | 'schedule' | 'teamSeasons' | 'teamStats' | 'teams' | 'trade';
 type Index = 'draftPicksBySeason' | 'draftPicksByTid' | 'playerStats' | 'playerStatsAllByPid' | 'playerStatsByPid' | 'playersByTid' | 'releasedPlayers' | 'releasedPlayersByTid' | 'teamSeasonsBySeasonTid' | 'teamSeasonsByTidSeason' | 'teamStatsByPlayoffsTid';
 
 // This variable is only needed because Object.keys(storeInfos) is not handled well in Flow
-const STORES: Store[] = ['awards', 'draftPicks', 'events', 'gameAttributes', 'games', 'messages', 'negotiations', 'playerFeats', 'playerStats', 'players', 'playoffSeries', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams', 'trade'];
+const STORES: Store[] = ['awards', 'draftOrder', 'draftPicks', 'events', 'gameAttributes', 'games', 'messages', 'negotiations', 'playerFeats', 'playerStats', 'players', 'playoffSeries', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams', 'trade'];
 
 class Cache {
     data: {[key: Store]: any};
@@ -52,6 +52,10 @@ class Cache {
         this.storeInfos = {
             awards: {
                 pk: 'season',
+            },
+            draftOrder: {
+                pk: 'key',
+                getData: (tx: BackboardTx) => tx.draftOrder.getAll(),
             },
             draftPicks: {
                 pk: 'dpid',
@@ -386,7 +390,7 @@ class Cache {
     async add(store: Store, obj: any) {
         this.checkStatus('full');
 
-        if (['draftPicks', 'events', 'games', 'messages', 'negotiations', 'playerFeats', 'playerStats', 'players', 'schedule', 'teamSeasons', 'teamStats', 'teams', 'trade'].includes(store)) {
+        if (['draftOrder', 'draftPicks', 'events', 'games', 'messages', 'negotiations', 'playerFeats', 'playerStats', 'players', 'schedule', 'teamSeasons', 'teamStats', 'teams', 'trade'].includes(store)) {
             const pk = this.storeInfos[store].pk;
             if (obj.hasOwnProperty(pk)) {
                 if (this.data[store][obj[pk]]) {
@@ -409,7 +413,7 @@ class Cache {
 
         const pk = this.storeInfos[store].pk;
 
-        if (['awards', 'gameAttributes', 'playoffSeries'].includes(store)) {
+        if (['awards', 'draftOrder', 'gameAttributes', 'playoffSeries'].includes(store)) {
             // This works if no indexes and no auto incrementing primary key, otherwise it should auto assign primary key
 
             if (!obj.hasOwnProperty(pk)) {

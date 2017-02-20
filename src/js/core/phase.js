@@ -365,13 +365,13 @@ async function newPhaseDraft(tx: BackboardTx) {
 
     await draft.genOrder(tx);
 
-    // This is a hack to handle weird cases where players have draft.year set to the current season, which fucks up the draft UI
-    await tx.players.index('draft.year').iterate(g.season, p => {
-        if (p.tid >= 0) {
+    // This is a hack to handle weird cases where already-drafted players have draft.year set to the current season, which fucks up the draft UI
+    const players = await g.cache.getAll('players');
+    for (const p of players) {
+        if (p.draft.year === g.season && p.tid >= 0) {
             p.draft.year -= 1;
-            return p;
         }
-    });
+    }
 
     return [helpers.leagueUrl(["draft"]), []];
 }

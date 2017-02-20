@@ -60,7 +60,7 @@ describe("core/league", () => {
         it("should initialize draftOrder object store", async () => {
             const draftOrder = await g.dbl.draftOrder.getAll();
             assert.equal(draftOrder.length, 1);
-            assert.equal(draftOrder[0].rid, 1);
+            assert.equal(draftOrder[0].rid, 0);
             assert.equal(draftOrder[0].draftOrder.length, 0);
         });
         it("should initialize teams object store", async () => {

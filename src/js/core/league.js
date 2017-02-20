@@ -234,7 +234,7 @@ async function create(
         }
     } else {
         await g.cache.add('draftOrder', {
-            rid: 1,
+            rid: 0,
             draftOrder: [],
         });
     }

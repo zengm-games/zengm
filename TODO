@@ -1,7 +1,6 @@
 IVERSON
 
 draftOrder cache
-- rid 0 (draft.js) or 1 (league.js)?
 - is draft.setOrder needed, or will mutating the object be enough?
 
 player.filter -> db.getCopy.players

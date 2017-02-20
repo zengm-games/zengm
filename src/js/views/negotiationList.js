@@ -1,8 +1,8 @@
 // @flow
 
-import Promise from 'bluebird';
 import g from '../globals';
 import * as player from '../core/player';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import NegotiationList from './views/NegotiationList';
@@ -16,23 +16,16 @@ function get() {
 }
 
 async function updateNegotiationList() {
-    // Get all free agents, filter array based on negotiations data, pass to player.filter, augment with contract data from negotiations
-    let [negotiations, players] = await Promise.all([
-        g.cache.getAll('negotiations'),
-        g.dbl.players.index('tid').getAll(g.PLAYER.FREE_AGENT).then(players2 => {
-            return player.withStats(null, players2, {
-                statsSeasons: [g.season],
-                statsTid: g.userTid,
-            });
-        }),
-    ]);
+    let negotiations = await g.cache.getAll('negotiations');
 
     // For Multi Team Mode, might have other team's negotiations going on
     negotiations = negotiations.filter(negotiation => negotiation.tid === g.userTid);
     const negotiationPids = negotiations.map(negotiation => negotiation.pid);
 
+    // Get all free agents, filter array based on negotiations data, pass to player.filter, augment with contract data from negotiations
+    let players = await g.cache.indexGetAll('playersByTid', g.PLAYER.FREE_AGENT);
     players = players.filter(p => negotiationPids.includes(p.pid));
-    players = player.filter(players, {
+    players = await getCopy.players(players, {
         attrs: ["pid", "name", "age", "freeAgentMood", "injury", "watch"],
         ratings: ["ovr", "pot", "skills", "pos"],
         stats: ["min", "pts", "trb", "ast", "per"],

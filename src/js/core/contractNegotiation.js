@@ -126,42 +126,39 @@ async function accept(pid: number, amount: number, exp: number): Promise<string>
         return `This negotiation was started by the ${g.teamRegionsCache[negotiation.tid]} ${g.teamNamesCache[negotiation.tid]} but you are the ${g.teamRegionsCache[g.userTid]} ${g.teamNamesCache[g.userTid]}. Either switch teams or cancel this negotiation.`;
     }
 
-    await g.dbl.tx(["players"], "readwrite", async tx => {
-        await tx.players.iterate(pid, async (p) => {
-            p.tid = g.userTid;
-            p.gamesUntilTradable = 15;
+    const p = await g.cache.get('players', pid);
+    p.tid = g.userTid;
+    p.gamesUntilTradable = 15;
 
-            // Handle stats if the season is in progress
-            if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
-                await player.addStatsRow(p, g.phase === g.PHASE.PLAYOFFS);
-            }
+    // Handle stats if the season is in progress
+    if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
+        await player.addStatsRow(p, g.phase === g.PHASE.PLAYOFFS);
+    }
 
-            player.setContract(p, {
-                amount,
-                exp,
-            }, true);
+    player.setContract(p, {
+        amount,
+        exp,
+    }, true);
 
-            if (negotiation.resigning) {
-                logEvent({
-                    type: "reSigned",
-                    text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[g.userTid], g.season])}">${g.teamNamesCache[g.userTid]}</a> re-signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
-                    showNotification: false,
-                    pids: [p.pid],
-                    tids: [g.userTid],
-                });
-            } else {
-                logEvent({
-                    type: "freeAgent",
-                    text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[g.userTid], g.season])}">${g.teamNamesCache[g.userTid]}</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
-                    showNotification: false,
-                    pids: [p.pid],
-                    tids: [g.userTid],
-                });
-            }
-
-            return p;
+    if (negotiation.resigning) {
+        logEvent({
+            type: "reSigned",
+            text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[g.userTid], g.season])}">${g.teamNamesCache[g.userTid]}</a> re-signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
+            showNotification: false,
+            pids: [p.pid],
+            tids: [g.userTid],
         });
-    });
+    } else {
+        logEvent({
+            type: "freeAgent",
+            text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[g.userTid], g.season])}">${g.teamNamesCache[g.userTid]}</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
+            showNotification: false,
+            pids: [p.pid],
+            tids: [g.userTid],
+        });
+    }
+
+    g.cache.markDirtyIndex('players');
 
     await cancel(pid);
 

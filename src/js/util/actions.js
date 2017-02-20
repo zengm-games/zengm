@@ -21,7 +21,7 @@ const liveGame = async (gid: number) => {
 
 const negotiate = async (pid: number) => {
     // If there is no active negotiation with this pid, create it
-    const negotiation = await g.dbl.negotiations.get(pid);
+    const negotiation = await g.cache.get('negotiations', pid);
     if (!negotiation) {
         const error = await contractNegotiation.create(pid, false);
         if (error !== undefined && error) {
@@ -47,10 +47,9 @@ const tradeFor = async ({otherDpids, otherPids, pid, tid, userDpids, userPids}: 
     let teams;
 
     if (pid !== undefined) {
-        const p = await g.dbl.players.get(pid);
-        const otherTid = p.tid;
-        if (otherTid < 0) {
-            console.log("Can't trade for a player not on a team");
+        const p = await g.cache.get('players', pid);
+
+        if (!p || p.tid < 0) {
             return;
         }
 
@@ -60,7 +59,7 @@ const tradeFor = async ({otherDpids, otherPids, pid, tid, userDpids, userPids}: 
             pids: [],
             dpids: [],
         }, {
-            tid: otherTid,
+            tid: p.tid,
             pids: [pid],
             dpids: [],
         }];

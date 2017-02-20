@@ -318,7 +318,6 @@ async function newPhaseBeforeDraft() {
             }
         }
     }
-    g.cache.markDirtyIndex('players'); // Players are almost guaranteed to have retired
 
     const releasedPlayers = await g.cache.getAll('releasedPlayers');
     for (const rp of releasedPlayers) {
@@ -382,11 +381,12 @@ async function newPhaseAfterDraft() {
     return [undefined, ["playerMovement"]];
 }
 
-async function newPhaseResignPlayers(tx: BackboardTx) {
+async function newPhaseResignPlayers() {
     const baseMoods = await player.genBaseMoods();
 
     // Re-sign players on user's team, and some AI players
-    await tx.players.index('tid').iterate(backboard.lowerBound(0), async p => {
+    const players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.FREE_AGENT, Infinity]);
+    for (const p of players) {
         if (p.contract.exp <= g.season && g.userTids.includes(p.tid) && g.autoPlaySeasons === 0) {
             const tid = p.tid;
 
@@ -402,7 +402,7 @@ async function newPhaseResignPlayers(tx: BackboardTx) {
                 });
             }
         }
-    });
+    }
 
     // Set daysLeft here because this is "basically" free agency, so some functions based on daysLeft need to treat it that way (such as the trade AI being more reluctant)
     await league.setGameAttributes({daysLeft: 30});
@@ -411,8 +411,7 @@ async function newPhaseResignPlayers(tx: BackboardTx) {
 }
 
 async function newPhaseFreeAgency(tx: BackboardTx) {
-    const teams = await team.filter({
-        ot: tx,
+    const teams = await getCopy.teams({
         attrs: ["strategy"],
         season: g.season,
     });

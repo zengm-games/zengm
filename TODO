@@ -1,10 +1,11 @@
 IVERSON
 
-retired players don't show up on summary after season
-
 player.filter -> db.getCopy.players
 - how to handle cases where players from IDB are passed in? do i need to augment with cache, or is it all old?
   - basically just when some players are retired, right? in that case, could augment, since performance is not critical when reviewing archived data
+  - retired players don't show up on summary after season
+    - they start in cache, and then the query to db misses them because not flushed yet. need to get players from cache + db
+      - maybe... getCopy.players and teams -> playersFiltered and teamsFiltered. Then have normal versions for normal stuff
 - watch list error switching ot playoffs, should just be 0s
 - ratings special cases in commented out code, some depend on stats
 - how to filter records of output.. like not every player is returned by player.filter, see the end. does this matter?

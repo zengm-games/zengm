@@ -1728,6 +1728,8 @@ function retire(p: Player, playerStats: PlayerStats[], retiredNotification?: boo
             tids: p.statsTids,
         });
     }
+
+    g.cache.markDirtyIndex('players');
 }
 
 // See views.negotiation for moods as well

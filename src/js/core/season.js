@@ -94,7 +94,21 @@ async function doAwards() {
     awards.bestRecord = {tid: teams[0].tid, abbrev: teams[0].abbrev, region: teams[0].region, name: teams[0].name, won: teams[0].seasonAttrs.won, lost: teams[0].seasonAttrs.lost};
     awards.bestRecordConfs = g.confs.map(c => {
         const t = teams.find(t2 => t2.cid === c.cid);
-        return {tid: t.tid, abbrev: t.abbrev, region: t.region, name: t.name, won: t.seasonAttrs.won, lost: t.seasonAttrs.lost};
+
+        if (!t) {
+            return {};
+        }
+
+        return {
+            tid: t.tid,
+            abbrev: t.abbrev,
+            region: t.region,
+            name: t.name,
+
+            // Flow can't handle complexity of getCopy.teams
+            won: t.seasonAttrs ? t.seasonAttrs.won : 0,
+            lost: t.seasonAttrs ? t.seasonAttrs.lost : 0,
+        };
     });
 
     // Sort teams by tid so it can be easily used in awards formulas

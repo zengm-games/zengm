@@ -188,9 +188,9 @@ class Cache {
         };
 
         this.index2store = {};
-        for (const [store, storeInfo] of Object.entries(this.storeInfos)) {
-            if (storeInfo.indexes) {
-                for (const index of storeInfo.indexes) {
+        for (const store of Object.keys(this.storeInfos)) {
+            if (this.storeInfos[store].indexes) {
+                for (const index of this.storeInfos[store].indexes) {
                     this.index2store[index.name] = store;
                 }
             }

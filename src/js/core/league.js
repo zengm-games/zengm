@@ -205,7 +205,7 @@ async function create(
     await setGameAttributes(gameAttributes);
 
     let players;
-    let scoutingRank;
+    let scoutingRankTemp;
 
     // Draft picks for the first 4 years, as those are the ones can be traded initially
     if (leagueFile.hasOwnProperty("draftPicks")) {
@@ -272,8 +272,12 @@ async function create(
 
         // Save scoutingRank for later
         if (i === g.userTid) {
-            scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
+            scoutingRankTemp = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
         }
+    }
+    const scoutingRank = scoutingRankTemp;
+    if (scoutingRank === undefined) {
+        throw new Error('scoutingRank should be defined');
     }
 
     if (leagueFile.hasOwnProperty("trade")) {
@@ -321,7 +325,7 @@ async function create(
     for (let j = 0; j < toMaybeAdd.length; j++) {
         if (leagueFile.hasOwnProperty(toMaybeAdd[j])) {
             for (let i = 0; i < leagueFile[toMaybeAdd[j]].length; i++) {
-                tx[toMaybeAdd[j]].add(leagueFile[toMaybeAdd[j]][i]);
+                await g.cache.add(toMaybeAdd[j], leagueFile[toMaybeAdd[j]][i]);
             }
         }
     }
@@ -363,7 +367,7 @@ async function create(
             delete p.stats;
 
             await player.updateValues(p, playerStats.reverse());
-            p.pid = await tx.players.put(p);
+            await g.cache.put('players', p);
 
             // If no stats in League File, create blank stats rows for active players if necessary
             if (playerStats.length === 0) {
@@ -399,10 +403,10 @@ async function create(
 
                     // On to the next one
                     if (playerStats.length > 0) {
-                        addStatsRows();
+                        await addStatsRows();
                     }
                 };
-                addStatsRows();
+                await addStatsRows();
             }
         });
     } else {
@@ -449,6 +453,7 @@ async function create(
                 if (p.tid === g.PLAYER.FREE_AGENT) {
                     player.addToFreeAgents(p, g.phase, baseMoods);
                 } else {
+                    // $FlowFixMe
                     await player.addStatsRow(p, g.phase === g.PHASE.PLAYOFFS);
                 }
             }

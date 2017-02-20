@@ -100,7 +100,7 @@ function validateSeason(season?: number | string): number {
  * @param {Array.<Object>} teams Teams without popRank properties.
  * @return {Array.<Object>} Teams with added popRank properties.
  */
-function addPopRank(teams: TeamBasic[]): TeamBasic[] {
+function addPopRank(teams: any[]): any[] {
     // Add popRank
     const teamsSorted = teams.slice(); // Deep copy
     teamsSorted.sort((a, b) => b.pop - a.pop);
@@ -116,8 +116,8 @@ function addPopRank(teams: TeamBasic[]): TeamBasic[] {
     return teams;
 }
 
-function getTeamsDefault(): TeamBasic[] {
-    let teams = [
+function getTeamsDefault(): any[] {
+    let teams: TeamBasic[] = [
         {tid: 0, cid: 0, did: 2, region: "Atlanta", name: "Gold Club", abbrev: "ATL", pop: 4.3},
         {tid: 1, cid: 0, did: 2, region: "Baltimore", name: "Crabs", abbrev: "BAL", pop: 2.2},
         {tid: 2, cid: 0, did: 0, region: "Boston", name: "Massacre", abbrev: "BOS", pop: 4.4},

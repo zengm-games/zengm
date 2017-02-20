@@ -712,7 +712,7 @@ async function valueChange(
     let payroll;
     let pop;
     let strategy;
-    await g.dbl.tx(["draftPicks", "players", "releasedPlayers", "teams", "teamSeasons", "teamStats"], async tx => {
+    await g.dbl.tx(["players", "releasedPlayers", "teams", "teamSeasons", "teamStats"], async tx => {
         // Get players
         const getPlayers = async () => {
             // Fudge factor for AI overvaluing its own players
@@ -817,7 +817,7 @@ async function valueChange(
                 let estValues;
                 const withEstValues = () => {
                     Promise.all(dpidsAdd.map(async (dpid) => {
-                        const dp = await tx.draftPicks.get(dpid);
+                        const dp = await g.cache.get('draftPicks', dpid);
 
                         let estPick = estPicks[dp.originalTid];
 
@@ -852,7 +852,7 @@ async function valueChange(
                     }));
 
                     Promise.all(dpidsRemove.map(async (dpid) => {
-                        const dp = await tx.draftPicks.get(dpid);
+                        const dp = await g.cache.get('draftPicks', dpid);
                         let estPick = estPicks[dp.originalTid];
 
                         // For future draft picks, add some uncertainty

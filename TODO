@@ -55,7 +55,6 @@ rewrite team.filter and player.filter
 
 other stores
 -draftOrder
--draftPicks
 
 links slow while game sim in progress
 
@@ -70,7 +69,7 @@ document cache data format and API!
 
 make Cache more DRY regarding indexes, reading object stores
 
-remove unused IDB indexes, if they exist (only on stores that are fully cached)
+remove unused IDB indexes, if they exist (only on stores that are fully cached, probably)
 
 replace all usage of IDB with cache, otherwise things will be more likely to get out of sync on flush failure
   start with game.js and anything that it touches

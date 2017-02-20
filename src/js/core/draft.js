@@ -14,22 +14,18 @@ import logEvent from '../util/logEvent';
 import * as random from '../util/random';
 import type {BackboardTx, PickRealized, TeamFiltered} from '../util/types';
 
-async function genPicks(tx: BackboardTx, season: number) {
-    const promises = [];
-
-    // Add a new set of draft picks
+// Add a new set of draft picks
+async function genPicks(season: number) {
     for (let tid = 0; tid < g.numTeams; tid++) {
         for (let round = 1; round <= 2; round++) {
-            promises.push(tx.draftPicks.add({
+            await g.cache.add('draftPicks', {
                 tid,
                 originalTid: tid,
                 round,
                 season,
-            }));
+            });
         }
     }
-
-    await Promise.all(promises);
 }
 
 /**
@@ -282,12 +278,12 @@ async function genOrder(tx: BackboardTx) {
         }
     }
 
-    let draftPicks = await tx.draftPicks.index('season').getAll(g.season);
+    let draftPicks = await g.cache.indexGetAll('draftPicksBySeason', g.season);
 
     // Sometimes picks just fail to generate, for reasons I don't understand
     if (draftPicks.length === 0) {
-        await genPicks(tx, g.season);
-        draftPicks = await tx.draftPicks.index('season').getAll(g.season);
+        await genPicks(g.season);
+        draftPicks = await g.cache.indexGetAll('draftPicksBySeason', g.season);
     }
 
     // Reorganize this to an array indexed on originalTid and round
@@ -358,7 +354,9 @@ async function genOrder(tx: BackboardTx) {
     }
 
     // Delete from draftPicks object store so that they are completely untradeable
-    await Promise.all(draftPicks.map(draftPick => tx.draftPicks.delete(draftPick.dpid)));
+    for (const dp of draftPicks) {
+        await g.cache.delete('draftPicks', dp.dpid);
+    }
 
     await setOrder(tx, draftOrder);
 }

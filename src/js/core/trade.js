@@ -115,7 +115,7 @@ async function updatePlayers(teams: TradeTeams): Promise<TradeTeams> {
         console.log(dv);
     });
 
-    await g.dbl.tx(["draftPicks", "players"], async tx => {
+    await g.dbl.tx(["players"], async tx => {
         // Make sure each entry in teams has pids and dpids that actually correspond to the correct tid
         const promises = [];
         teams.forEach(t => {
@@ -132,7 +132,7 @@ async function updatePlayers(teams: TradeTeams): Promise<TradeTeams> {
             }));
 
             // Check draft picks
-            promises.push(tx.draftPicks.index('tid').getAll(t.tid).then(dps => {
+            promises.push(g.cache.indexGetAll('draftPicksByTid', t.tid).then(dps => {
                 const dpidsGood = [];
                 for (let j = 0; j < dps.length; j++) {
                     if (t.dpids.includes(dps[j].dpid)) {
@@ -205,7 +205,7 @@ function summary(teams: TradeTeams): TradeSummary {
         warning: null,
     };
 
-    return g.dbl.tx(["draftPicks", "players", "releasedPlayers"], async tx => {
+    return g.dbl.tx(["players", "releasedPlayers"], async tx => {
         // Calculate properties of the trade
         const players = [[], []];
         const promises = [];
@@ -221,7 +221,7 @@ function summary(teams: TradeTeams): TradeSummary {
                 s.teams[i].total = s.teams[i].trade.reduce((memo, p) => memo + p.contract.amount, 0);
             }));
 
-            promises.push(tx.draftPicks.index('tid').getAll(tids[i]).then(picks => {
+            promises.push(g.cache.indexGetAll('draftPicksByTid', tids[i]).then(picks => {
                 for (let j = 0; j < picks.length; j++) {
                     if (dpids[i].includes(picks[j].dpid)) {
                         s.teams[i].picks.push({
@@ -319,7 +319,7 @@ async function propose(forceTrade?: boolean = false): Promise<[boolean, ?string]
 
     const dv = await team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids);
 
-    await g.dbl.tx(["draftPicks", "players", "playerStats"], "readwrite", tx => {
+    await g.dbl.tx(["players", "playerStats"], "readwrite", tx => {
         if (dv > 0 || forceTrade) {
             // Trade players
             outcome = "accepted";
@@ -339,12 +339,17 @@ async function propose(forceTrade?: boolean = false): Promise<[boolean, ?string]
                 });
 
                 dpids[j].forEach(async (dpid) => {
-                    const dp = await tx.draftPicks.get(dpid);
+                    const dp = await g.cache.get('draftPicks', dpid);
                     dp.tid = tids[k];
                     dp.abbrev = g.teamAbbrevsCache[tids[k]];
-                    await tx.draftPicks.put(dp);
                 });
             });
+            if (dpids[0].length > 0 || dpids[1].length > 0) {
+                g.cache.markDirtyIndex('draftPicks');
+            }
+            if (pids[0].length > 0 || pids[1].length > 0) {
+                g.cache.markDirtyIndex('players');
+            }
 
             // Log event
             const formatAssetsEventLog = t => {
@@ -431,7 +436,7 @@ async function makeItWork(
     const tryAddAsset = async () => {
         const assets = [];
 
-        await g.dbl.tx(["draftPicks", "players"], tx => {
+        await g.dbl.tx(["players"], async (tx) => {
             if (!holdUserConstant) {
                 // Get all players not in userPids
                 tx.players.index('tid').iterate(teams[0].tid, p => {
@@ -460,7 +465,8 @@ async function makeItWork(
 
             if (!holdUserConstant) {
                 // Get all draft picks not in userDpids
-                tx.draftPicks.index('tid').iterate(teams[0].tid, dp => {
+                const draftPicks = await g.cache.indexGetAll('draftPicksByTid', teams[0].tid);
+                for (const dp of draftPicks) {
                     if (!teams[0].dpids.includes(dp.dpid)) {
                         assets.push({
                             type: "draftPick",
@@ -469,11 +475,12 @@ async function makeItWork(
                             tid: teams[0].tid,
                         });
                     }
-                });
+                }
             }
 
             // Get all draft picks not in otherDpids
-            tx.draftPicks.index('tid').iterate(teams[1].tid, dp => {
+            const draftPicks = await g.cache.indexGetAll('draftPicksByTid', teams[1].tid);
+            for (const dp of draftPicks) {
                 if (!teams[1].dpids.includes(dp.dpid)) {
                     assets.push({
                         type: "draftPick",
@@ -482,7 +489,7 @@ async function makeItWork(
                         tid: teams[1].tid,
                     });
                 }
-            });
+            }
         });
 
         // If we've already added 5 assets or there are no more to try, stop

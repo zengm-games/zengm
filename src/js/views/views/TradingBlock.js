@@ -183,7 +183,7 @@ const augmentOffers = async (offers) => {
             fuzz: true,
         });
 
-        let picks = await g.dbl.draftPicks.index('tid').getAll(tid);
+        let picks = await g.cache.indexGetAll('draftPicksByTid', tid);
         picks = picks.filter(dp => offers[i].dpids.includes(dp.dpid));
         for (const pick of picks) {
             pick.desc = helpers.pickDesc(pick);

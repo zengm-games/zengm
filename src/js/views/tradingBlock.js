@@ -10,7 +10,7 @@ async function updateUserRoster(inputs, updateEvents) {
     if (updateEvents.includes('firstRun') || updateEvents.includes('playerMovement') || updateEvents.includes('gameSim')) {
         let [userRoster, userPicks] = await Promise.all([
             g.cache.indexGetAll('playersByTid', g.userTid),
-            g.dbl.draftPicks.index('tid').getAll(g.userTid),
+            g.cache.indexGetAll('draftPicksByTid', g.userTid),
         ]);
 
         userRoster = await getCopy.players(userRoster, {

@@ -376,8 +376,8 @@ async function newPhaseDraft(tx: BackboardTx) {
     return [helpers.leagueUrl(["draft"]), []];
 }
 
-async function newPhaseAfterDraft(tx: BackboardTx) {
-    await draft.genPicks(tx, g.season + 4);
+async function newPhaseAfterDraft() {
+    await draft.genPicks(g.season + 4);
 
     return [undefined, ["playerMovement"]];
 }

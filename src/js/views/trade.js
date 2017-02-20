@@ -50,7 +50,7 @@ async function updateTrade() {
     let [teams, userRoster, userPicks] = await Promise.all([
         validateSavedPids(),
         g.cache.indexGetAll('playersByTid', g.userTid),
-        g.dbl.draftPicks.index('tid').getAll(g.userTid),
+        g.cache.indexGetAll('draftPicksByTid', g.userTid),
     ]);
 
     const attrs = ["pid", "name", "age", "contract", "injury", "watch", "gamesUntilTradable"];
@@ -86,7 +86,7 @@ async function updateTrade() {
     // Need to do this after knowing otherTid
     let [otherRoster, otherPicks, t] = await Promise.all([
         g.cache.indexGetAll('playersByTid', otherTid),
-        g.dbl.draftPicks.index('tid').getAll(otherTid),
+        g.cache.indexGetAll('draftPicksByTid', otherTid),
         getCopy.teams({
             tid: otherTid,
             season: g.season,

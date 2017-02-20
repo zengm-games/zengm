@@ -9,11 +9,11 @@ import type {BackboardTx, Player} from '../util/types';
 type Status = 'empty' | 'error' | 'filling' | 'full';
 
 // Only these IDB object stores for now. Keep in memory only player info for non-retired players and team info for the current season.
-type Store = 'awards' | 'events' | 'gameAttributes' | 'games' | 'messages' | 'negotiations' | 'playerFeats' | 'playerStats' | 'players' | 'playoffSeries' | 'releasedPlayers' | 'schedule' | 'teamSeasons' | 'teamStats' | 'teams' | 'trade';
-type Index = 'playerStats' | 'playerStatsAllByPid' | 'playerStatsByPid' | 'playersByTid' | 'releasedPlayers' | 'releasedPlayersByTid' | 'teamSeasonsBySeasonTid' | 'teamSeasonsByTidSeason' | 'teamStatsByPlayoffsTid';
+type Store = 'awards' | 'draftPicks' | 'events' | 'gameAttributes' | 'games' | 'messages' | 'negotiations' | 'playerFeats' | 'playerStats' | 'players' | 'playoffSeries' | 'releasedPlayers' | 'schedule' | 'teamSeasons' | 'teamStats' | 'teams' | 'trade';
+type Index = 'draftPicksBySeason' | 'draftPicksByTid' | 'playerStats' | 'playerStatsAllByPid' | 'playerStatsByPid' | 'playersByTid' | 'releasedPlayers' | 'releasedPlayersByTid' | 'teamSeasonsBySeasonTid' | 'teamSeasonsByTidSeason' | 'teamStatsByPlayoffsTid';
 
 // This variable is only needed because Object.keys(storeInfos) is not handled well in Flow
-const STORES: Store[] = ['awards', 'events', 'gameAttributes', 'games', 'messages', 'negotiations', 'playerFeats', 'playerStats', 'players', 'playoffSeries', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams', 'trade'];
+const STORES: Store[] = ['awards', 'draftPicks', 'events', 'gameAttributes', 'games', 'messages', 'negotiations', 'playerFeats', 'playerStats', 'players', 'playoffSeries', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams', 'trade'];
 
 class Cache {
     data: {[key: Store]: any};
@@ -53,12 +53,22 @@ class Cache {
             awards: {
                 pk: 'season',
             },
+            draftPicks: {
+                pk: 'dpid',
+                getData: (tx: BackboardTx) => tx.draftPicks.getAll(),
+                indexes: [{
+                    name: 'draftPicksBySeason',
+                    key: (row) => String(row.season),
+                }, {
+                    name: 'draftPicksByTid',
+                    key: (row) => String(row.tid),
+                }],
+            },
             events: {
                 pk: 'eid',
             },
             gameAttributes: {
                 pk: 'key',
-
                 getData: (tx: BackboardTx) => tx.gameAttributes.getAll(),
             },
             games: {
@@ -376,7 +386,7 @@ class Cache {
     async add(store: Store, obj: any) {
         this.checkStatus('full');
 
-        if (['events', 'games', 'messages', 'negotiations', 'playerFeats', 'playerStats', 'players', 'schedule', 'teamSeasons', 'teamStats', 'teams', 'trade'].includes(store)) {
+        if (['draftPicks', 'events', 'games', 'messages', 'negotiations', 'playerFeats', 'playerStats', 'players', 'schedule', 'teamSeasons', 'teamStats', 'teams', 'trade'].includes(store)) {
             const pk = this.storeInfos[store].pk;
             if (obj.hasOwnProperty(pk)) {
                 if (this.data[store][obj[pk]]) {
@@ -416,7 +426,7 @@ class Cache {
     async delete(store: Store, key: number) {
         this.checkStatus('full');
 
-        if (['negotiations', 'releasedPlayers', 'schedule'].includes(store)) {
+        if (['draftPicks', 'negotiations', 'releasedPlayers', 'schedule'].includes(store)) {
             if (this.data[store].hasOwnProperty(key)) {
                 delete this.data[store][key];
                 this.deletes[store].add(key);

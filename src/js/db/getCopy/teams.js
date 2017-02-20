@@ -220,6 +220,9 @@ const processStats = async (
             }
         }
 
+        // Since they come in same stream, always need to be able to distinguish
+        row.playoffs = ts.playoffs;
+
         return row;
     });
 

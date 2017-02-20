@@ -255,6 +255,8 @@ const processStats = async (output: PlayerFiltered, p: Player, {
         playerStats.push({});
     }
 
+    const careerStats = [];
+
     output.stats = playerStats.map((ps) => {
         const row = {};
 
@@ -329,13 +331,33 @@ const processStats = async (output: PlayerFiltered, p: Player, {
             }
         }
 
+        // Since they come in same stream, always need to be able to distinguish
+        row.playoffs = ps.playoffs;
+
+        if (season === undefined) {
+            careerStats.push(row);
+        }
+
         return row;
     });
 
     if (season !== undefined && ((playoffs && !regularSeason) || (!playoffs && regularSeason))) {
         output.stats = output.stats[0];
-    } else {
-// Do career totals
+    } else if (season === undefined && regularSeason) {
+        output.careerStats = {};
+
+        // Aggregate annual stats and ignore other things
+        const ignoredKeys = ["age", "playoffs", "season", "tid"];
+        for (const attr of Object.keys(output.stats[0])) {
+            if (!ignoredKeys.includes(attr)) {
+                output.careerStats[attr] = careerStats
+                    .filter((cs) => !cs.playoffs)
+                    .map((cs) => cs[attr])
+                    .reduce((memo, num) => memo + num, 0);
+            }
+        }
+// Special cases for PER and EWA from player.filter?
+// Playoffs?
     }
 };
 
@@ -400,7 +422,7 @@ const getCopy = async (players: Player | Player[], {
 
     // Does this require IDB?
     const objectStores = [];
-    if (stats.length > 0 && season < g.season - 1) {
+    if (stats.length > 0 && (season === undefined || season < g.season - 1)) {
         objectStores.push('playerStats');
     }
 

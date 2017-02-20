@@ -1,7 +1,7 @@
 // @flow
 
 import g from '../globals';
-import * as player from '../core/player';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import DraftSummary from './views/DraftSummary';
@@ -30,11 +30,9 @@ function get(ctx) {
 
 async function updateDraftSummary(inputs) {
     // Update every time because anything could change this (unless all players from class are retired)
-    let playersAll = await g.dbl.players.index('draft.year').getAll(inputs.season);
-    playersAll = await player.withStats(null, playersAll, {
-        statsSeasons: "all",
-    });
-    playersAll = player.filter(playersAll, {
+    let playersAll = await g.cache.indexGetAll('playersByTid', [0, Infinity]);
+    playersAll = playersAll.filter((p) => p.draft.year === inputs.season);
+    playersAll = await getCopy.players(playersAll, {
         attrs: ["tid", "abbrev", "draft", "pid", "name", "age", "hof"],
         ratings: ["ovr", "pot", "skills", "pos"],
         stats: ["gp", "min", "pts", "trb", "ast", "per", "ewa"],

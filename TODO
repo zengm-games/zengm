@@ -1,5 +1,7 @@
 IVERSON
 
+playoffRoundsWon not being set to 4 for finals champ
+
 player.filter -> db.getCopy.players
 - how to handle cases where players from IDB are passed in? do i need to augment with cache, or is it all old?
   - basically just when some players are retired, right? in that case, could augment, since performance is not critical when reviewing archived data
@@ -24,6 +26,7 @@ update maxIds on add/put with defind pk, otherwise it's stale
 
 seems to be bug associated with flush not syncing schedule/games right, see dupe games in schedule and then errors on saving box scores
 - deletes processing right?
+- could have been bug just fixed in clear
 
 get tests working
 - db.getCopy.teams

@@ -363,7 +363,7 @@ async function newPhaseDraft(tx: BackboardTx) {
         }
     });
 
-    await draft.genOrder(tx);
+    await draft.genOrder();
 
     // This is a hack to handle weird cases where already-drafted players have draft.year set to the current season, which fucks up the draft UI
     const players = await g.cache.getAll('players');

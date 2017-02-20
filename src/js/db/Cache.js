@@ -54,7 +54,7 @@ class Cache {
                 pk: 'season',
             },
             draftOrder: {
-                pk: 'key',
+                pk: 'rid',
                 getData: (tx: BackboardTx) => tx.draftOrder.getAll(),
             },
             draftPicks: {
@@ -448,7 +448,7 @@ class Cache {
 
         if (['negotiations', 'schedule'].includes(store)) {
             for (const key of Object.keys(this.data[store])) {
-                delete this.data[store][this.storeInfos[store].pk];
+                delete this.data[store][key];
                 this.deletes[store].add(key);
             }
             this.markDirtyIndex(store);

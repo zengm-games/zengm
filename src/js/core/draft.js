@@ -8,7 +8,7 @@ import * as finances from './finances';
 import * as league from './league';
 import * as phase from './phase';
 import * as player from './player';
-import * as team from './team';
+import {getCopy} from '../db';
 import * as helpers from '../util/helpers';
 import logEvent from '../util/logEvent';
 import * as random from '../util/random';
@@ -206,14 +206,14 @@ function lotterySort(teams: TeamFiltered[]) {
     teams.sort((a, b) => {
         let r;
         r = 0;
-        if ((a.playoffRoundsWon >= 0) && !(b.playoffRoundsWon >= 0)) {
+        if ((a.seasonAttrs.playoffRoundsWon >= 0) && !(b.seasonAttrs.playoffRoundsWon >= 0)) {
             r = 1;
         }
-        if (!(a.playoffRoundsWon >= 0) && (b.playoffRoundsWon >= 0)) {
+        if (!(a.seasonAttrs.playoffRoundsWon >= 0) && (b.seasonAttrs.playoffRoundsWon >= 0)) {
             r = -1;
         }
 
-        r = (r === 0) ? a.winp - b.winp : r;
+        r = (r === 0) ? a.seasonAttrs.winp - b.seasonAttrs.winp : r;
         r = (r === 0) ? a.randVal - b.randVal : r;
         return r;
     });
@@ -225,12 +225,10 @@ function lotterySort(teams: TeamFiltered[]) {
  * This is currently based on an NBA-like lottery, where the first 3 picks can be any of the non-playoff teams (with weighted probabilities).
  *
  * @memberOf core.draft
- * @param {IDBTransaction} ot An IndexedDB transaction on teams, readwrite.
  * @return {Promise}
  */
-async function genOrder(tx: BackboardTx) {
-    const teams = await team.filter({
-        ot: tx,
+async function genOrder() {
+    const teams = await getCopy.teams({
         attrs: ["tid", "cid"],
         seasonAttrs: ["winp", "playoffRoundsWon"],
         season: g.season,
@@ -320,7 +318,7 @@ async function genOrder(tx: BackboardTx) {
 
     // Sort by winp with reverse randVal for tiebreakers.
     teams.sort((a, b) => {
-        const r = a.winp - b.winp;
+        const r = a.seasonAttrs.winp - b.seasonAttrs.winp;
         return (r === 0) ? b.randVal - a.randVal : r;
     });
 
@@ -339,6 +337,11 @@ async function genOrder(tx: BackboardTx) {
     for (const dp of draftPicks) {
         await g.cache.delete('draftPicks', dp.dpid);
     }
+
+    await g.cache.put('draftOrder', {
+        rid: 0,
+        draftOrder,
+    });
 }
 
 /**
@@ -464,6 +467,7 @@ async function selectPlayer(pick: PickRealized, pid: number) {
         await player.addStatsRow(p, g.nextPhase === g.PHASE.PLAYOFFS);
     }
 
+    g.cache.markDirtyIndex('players');
 
     const draftName = g.phase === g.PHASE.FANTASY_DRAFT ? `${g.season} fantasy draft` : `${g.season} draft`;
     logEvent({
@@ -487,7 +491,7 @@ async function untilUserOrEnd() {
     const pids = [];
 
     const [playersAll, draftOrder] = await Promise.all([
-        g.dbl.players.index('tid').getAll(g.PLAYER.UNDRAFTED),
+        g.cache.indexGetAll('playersByTid', g.PLAYER.UNDRAFTED),
         getOrder(),
     ]);
 

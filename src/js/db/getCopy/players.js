@@ -205,7 +205,7 @@ for (let k = 0; k < p.ratings.length; k++) {
     }
 };
 
-const processStats = async (output: PlayerFiltered, p: Player, {
+const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: boolean, {
     fuzz,
     numGamesRemaining,
     playoffs,
@@ -247,8 +247,6 @@ const processStats = async (output: PlayerFiltered, p: Player, {
         }
         return true;
     });
-
-    const keepWithNoStats = (showRookies && p.draft.year >= g.season && (season === g.season || season === undefined)) || (showNoStats && (season === undefined || season > p.draft.year));
 
     if (playerStats.length === 0 && keepWithNoStats) {
         playerStats.push({});
@@ -363,8 +361,9 @@ const processStats = async (output: PlayerFiltered, p: Player, {
 const processPlayer = async (p: Player, options: PlayerOptions, tx: ?BackboardTx) => {
     const output = {};
 
-    if (options.stats.length > 0) {
-        await processStats(output, p, options, tx);
+    const keepWithNoStats = (options.showRookies && p.draft.year >= g.season && (options.season === g.season || options.season === undefined)) || (options.showNoStats && (options.season === undefined || options.season > p.draft.year));
+    if (options.stats.length > 0 || keepWithNoStats) {
+        await processStats(output, p, keepWithNoStats, options, tx);
     }
 
     if (output.stats === undefined) {
@@ -420,8 +419,9 @@ const getCopy = async (players: Player | Player[], {
     };
 
     // Does this require IDB?
+    // There will be false positives, because showRookies and showNoStats often don't apply
     const objectStores = [];
-    if (stats.length > 0 && (season === undefined || season < g.season - 1)) {
+    if ((stats.length > 0 && (season === undefined || season < g.season - 1)) || (showRookies || showNoStats)) {
         objectStores.push('playerStats');
     }
 

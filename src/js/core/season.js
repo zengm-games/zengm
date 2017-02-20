@@ -4,7 +4,6 @@ import Promise from 'bluebird';
 import _ from 'underscore';
 import g from '../globals';
 import * as league from './league';
-import * as player from './player';
 import {getCopy} from '../db';
 import * as helpers from '../util/helpers';
 import logEvent from '../util/logEvent';

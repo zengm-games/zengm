@@ -410,7 +410,7 @@ async function newPhaseResignPlayers() {
     return [helpers.leagueUrl(["negotiation"]), ["playerMovement"]];
 }
 
-async function newPhaseFreeAgency(tx: BackboardTx) {
+async function newPhaseFreeAgency() {
     const teams = await getCopy.teams({
         attrs: ["strategy"],
         season: g.season,
@@ -424,13 +424,15 @@ async function newPhaseFreeAgency(tx: BackboardTx) {
 
     // Reset contract demands of current free agents and undrafted players
     // KeyRange only works because g.PLAYER.UNDRAFTED is -2 and g.PLAYER.FREE_AGENT is -1
-    await tx.players.index('tid').iterate(backboard.bound(g.PLAYER.UNDRAFTED, g.PLAYER.FREE_AGENT), (p) => {
+    const players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.UNDRAFTED, g.PLAYER.FREE_AGENT]);
+    for (const p of players) {
         player.addToFreeAgents(p, g.PHASE.FREE_AGENCY, baseMoods);
-    });
+    }
 
     // AI teams re-sign players or they become free agents
     // Run this after upding contracts for current free agents, or addToFreeAgents will be called twice for these guys
-    await tx.players.index('tid').iterate(backboard.lowerBound(0), p => {
+    const players2 = await g.cache.indexGetAll('playersByTid', [0, Infinity]);
+    for (const p of players2) {
         if (p.contract.exp <= g.season && (!g.userTids.includes(p.tid) || g.autoPlaySeasons > 0)) {
             // Automatically negotiate with teams
             const factor = strategies[p.tid] === "rebuilding" ? 0.4 : 0;
@@ -449,25 +451,24 @@ async function newPhaseFreeAgency(tx: BackboardTx) {
                     pids: [p.pid],
                     tids: [p.tid],
                 });
-
-                return p; // Other endpoints include calls to addToFreeAgents, which handles updating the database
+            } else {
+                player.addToFreeAgents(p, g.PHASE.RESIGN_PLAYERS, baseMoods);
             }
-
-            player.addToFreeAgents(p, g.PHASE.RESIGN_PLAYERS, baseMoods);
         }
-    });
+    }
 
     // Bump up future draft classes (not simultaneous so tid updates don't cause race conditions)
-    await tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED_2, p => {
+    const players3 = await g.cache.indexGetAll('playersByTid', g.PLAYER.UNDRAFTED_2);
+    for (const p of players3) {
         p.tid = g.PLAYER.UNDRAFTED;
         p.ratings[0].fuzz /= 2;
-        return p;
-    });
-    await tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED_3, p => {
+    }
+    const players4 = await g.cache.indexGetAll('playersByTid', g.PLAYER.UNDRAFTED_3);
+    for (const p of players4) {
         p.tid = g.PLAYER.UNDRAFTED_2;
         p.ratings[0].fuzz /= 2;
-        return p;
-    });
+    }
+    g.cache.markDirtyIndex('players');
     await draft.genPlayers(g.PLAYER.UNDRAFTED_3);
 
     return [helpers.leagueUrl(["free_agents"]), ["playerMovement"]];

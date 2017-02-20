@@ -2,14 +2,14 @@
 
 import Promise from 'bluebird';
 import g from '../globals';
-import * as player from '../core/player';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import DraftScouting from './views/DraftScouting';
 
 async function addSeason(season, tid) {
-    let playersAll = await g.dbl.players.index('tid').getAll(tid);
+    let playersAll = await g.cache.indexGetAll('playersByTid', tid);
 
-    playersAll = player.filter(playersAll, {
+    playersAll = await getCopy.players(playersAll, {
         attrs: ["pid", "firstName", "lastName", "age", "watch", "valueFuzz"],
         ratings: ["ovr", "pot", "skills", "fuzz", "pos"],
         showNoStats: true,

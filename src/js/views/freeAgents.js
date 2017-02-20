@@ -5,6 +5,7 @@ import g from '../globals';
 import * as freeAgents from '../core/freeAgents';
 import * as player from '../core/player';
 import * as team from '../core/team';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import FreeAgents from './views/FreeAgents';
@@ -21,16 +22,12 @@ async function updateFreeAgents() {
     let [payroll, userPlayers, players] = await Promise.all([
         team.getPayroll(g.userTid).get(0),
         g.cache.indexGetAll('playersByTid', g.userTid),
-        g.dbl.players.index('tid').getAll(g.PLAYER.FREE_AGENT).then(players2 => {
-            return player.withStats(null, players2, {
-                statsSeasons: [g.season, g.season - 1],
-            });
-        }),
+        g.cache.indexGetAll('playersByTid', g.PLAYER.FREE_AGENT),
     ]);
 
     const capSpace = g.salaryCap > payroll ? (g.salaryCap - payroll) / 1000 : 0;
 
-    players = player.filter(players, {
+    players = await getCopy.players(players, {
         attrs: ["pid", "name", "age", "contract", "freeAgentMood", "injury", "watch"],
         ratings: ["ovr", "pot", "skills", "pos"],
         stats: ["min", "pts", "trb", "ast", "per"],

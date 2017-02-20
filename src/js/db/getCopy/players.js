@@ -248,7 +248,6 @@ const processStats = async (output: PlayerFiltered, p: Player, {
         return true;
     });
 
-
     const keepWithNoStats = (showRookies && p.draft.year >= g.season && (season === g.season || season === undefined)) || (showNoStats && (season === undefined || season > p.draft.year));
 
     if (playerStats.length === 0 && keepWithNoStats) {

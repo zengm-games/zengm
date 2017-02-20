@@ -1,6 +1,6 @@
 IVERSON
 
-playoffRoundsWon not being set to 4 for finals champ
+retired players don't show up on summary after season
 
 player.filter -> db.getCopy.players
 - how to handle cases where players from IDB are passed in? do i need to augment with cache, or is it all old?

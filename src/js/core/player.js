@@ -866,11 +866,12 @@ async function addStatsRow(p: Player, playoffs?: boolean = false) {
     p.statsTids = _.uniq(p.statsTids);
 
     // Calculate yearsWithTeam
-    const ps = await g.cache.indexGetAll('playerStatsAllByPid', p.pid);
-    if (ps.length > 0) {
-        const i = ps.length - 1;
-        if (ps[i].season === g.season - 1 && ps[i].tid === p.tid) {
-            statsRow.yearsWithTeam = ps[i].yearsWithTeam + 1;
+    const playerStats = (await g.cache.indexGetAll('playerStatsAllByPid', p.pid))
+        .filter((ps) => !ps.playoffs);
+    if (playerStats.length > 0) {
+        const i = playerStats.length - 1;
+        if (playerStats[i].season === g.season - 1 && playerStats[i].tid === p.tid) {
+            statsRow.yearsWithTeam = playerStats[i].yearsWithTeam + 1;
         }
     }
 
@@ -1671,23 +1672,24 @@ function value(p: any, ps: PlayerStats[], options: ValueOptions = {}): number {
 }
 
 async function updateValues(p: Player | PlayerWithoutPid, psOverride?: PlayerStats[]) {
-    let ps;
+    let playerStats;
 
     if (psOverride) {
         // Only when creating new league from file, since no cache yet then
-        ps = psOverride;
+        playerStats = psOverride;
     } else if (typeof p.pid === 'number') {
-        ps = await g.cache.indexGetAll('playerStatsAllByPid', p.pid);
+        playerStats = (await g.cache.indexGetAll('playerStatsAllByPid', p.pid))
+            .filter((ps) => !ps.playoffs);
     } else {
         // New player objects don't have pids let alone stats, so just skip
-        ps = [];
+        playerStats = [];
     }
 
-    p.value = value(p, ps);
-    p.valueNoPot = value(p, ps, {noPot: true});
-    p.valueFuzz = value(p, ps, {fuzz: true});
-    p.valueNoPotFuzz = value(p, ps, {noPot: true, fuzz: true});
-    p.valueWithContract = value(p, ps, {withContract: true});
+    p.value = value(p, playerStats);
+    p.valueNoPot = value(p, playerStats, {noPot: true});
+    p.valueFuzz = value(p, playerStats, {fuzz: true});
+    p.valueNoPotFuzz = value(p, playerStats, {noPot: true, fuzz: true});
+    p.valueWithContract = value(p, playerStats, {withContract: true});
 }
 
 /**

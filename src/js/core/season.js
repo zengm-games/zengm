@@ -239,7 +239,7 @@ async function doAwards() {
 
         // Need to read from DB again to really make sure I'm only looking at players from the champs. player.filter might not be enough. This DB call could be replaced with a loop manually checking tids, though.
         let champPlayers = await g.cache.indexGetAll('playersByTid', champTid);
-        champPlayers = player.filter(champPlayers, { // Only the champions, only playoff stats
+        champPlayers = await getCopy.players(champPlayers, { // Only the champions, only playoff stats
             attrs: ["pid", "name", "tid", "abbrev"],
             stats: ["pts", "trb", "ast", "ewa"],
             season: g.season,
@@ -247,10 +247,10 @@ async function doAwards() {
             regularSeason: false,
             tid: champTid,
         });
-        champPlayers.sort((a, b) => b.statsPlayoffs.ewa - a.statsPlayoffs.ewa);
+        champPlayers.sort((a, b) => b.stats.ewa - a.stats.ewa);
         {
             const p = champPlayers[0];
-            awards.finalsMvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.statsPlayoffs.pts, trb: p.statsPlayoffs.trb, ast: p.statsPlayoffs.ast};
+            awards.finalsMvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
             awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Finals MVP"});
         }
     }
@@ -593,7 +593,7 @@ async function newSchedulePlayoffsDay(): Promise<boolean> {
             key = series[rnd][0].away.tid;
         }
 
-        const teamSeason = g.cache.indexGet('teamSeasonsBySeasonTid', `${g.season},${key}`);
+        const teamSeason = await g.cache.indexGet('teamSeasonsBySeasonTid', `${g.season},${key}`);
         teamSeason.playoffRoundsWon = g.numPlayoffRounds;
         teamSeason.hype += 0.05;
         if (teamSeason.hype > 1) {

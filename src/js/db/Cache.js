@@ -115,7 +115,6 @@ class Cache {
                     unique: true,
                 }, {
                     name: 'playerStatsAllByPid',
-                    filter: (row) => !row.playoffs,
                     key: (row) => String(row.pid),
                 }],
             },

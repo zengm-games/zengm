@@ -34,6 +34,7 @@ get tests working
   - operate on individual functions? can export them just for tests
   - confirm operations that don't require IDB
   - confirm getAll updates from cache
+- a lot of tests could run just from cache, no IDB
 
 how do caches based on g.season work in preseason?
 

@@ -1,28 +1,29 @@
 import assert from 'assert';
-import * as db from '../../db';
+import {Cache, connectMeta, getCopy} from '../../db';
 import g from '../../globals';
 import * as draft from '../../core/draft';
 import * as league from '../../core/league';
-import * as team from '../../core/team';
 import sampleTiebreakers from '../fixtures/sampleTiebreakers';
 
 describe("core/draft", () => {
     before(async () => {
-        await db.connectMeta();
+        await connectMeta();
         await league.create("Test", 15, undefined, 2015, false);
+        g.cache = new Cache();
+        await g.cache.fill();
     });
     after(() => league.remove(g.lid));
 
     const testDraftUntilUserOrEnd = async (numNow, numTotal) => {
         const pids = await draft.untilUserOrEnd();
         assert.equal(pids.length, numNow);
-        const players = await g.dbl.players.index('tid').getAll(g.PLAYER.UNDRAFTED);
+        const players = await g.cache.indexGetAll('playersByTid', g.PLAYER.UNDRAFTED);
         assert.equal(players.length, 140 - numTotal);
     };
 
     let userPick1;
     let userPick2;
-    const testDraftUser = async round => {
+    const testDraftUser = async (round) => {
         const draftOrder = await draft.getOrder();
         const pick = draftOrder.shift();
         assert.equal(pick.round, round);
@@ -33,53 +34,49 @@ describe("core/draft", () => {
         }
         assert.equal(pick.tid, g.userTid);
 
-        const p = await g.dbl.players.index('tid').get(g.PLAYER.UNDRAFTED);
+        const p = await g.cache.indexGet('playersByTid', g.PLAYER.UNDRAFTED);
         await draft.selectPlayer(pick, p.pid);
-        const p2 = await g.dbl.players.get(p.pid);
-        assert.equal(p2.tid, g.userTid);
+        assert.equal(p.tid, g.userTid);
     };
 
     describe("#genPlayers()", () => {
         it("should generate 70 players for the draft", async () => {
             await draft.genPlayers(g.PLAYER.UNDRAFTED, null, null);
-            const numPlayers = await g.dbl.players.index('draft.year').count(g.season);
-            assert.equal(numPlayers, 140); // 70 from original league, 70 from this
+            const players = await g.cache.indexGetAll('playersByTid', g.PLAYER.UNDRAFTED);
+            assert.equal(players.length, 140); // 70 from original league, 70 from this
         });
     });
 
     describe("#genOrder()", () => {
-        before(() => {
-            return g.dbl.tx(["teams", "teamSeasons"], "readwrite", async tx => {
-                // Load static data
-                await tx.teamSeasons.iterate(teamSeason => tx.teamSeasons.delete(teamSeason.rid));
-                await tx.teams.iterate(async t => {
-                    const st = sampleTiebreakers.teams[t.tid];
-                    const teamSeasons = st.seasons;
-                    delete st.seasons;
-                    delete st.stats;
+        before(async () => {
+            await g.cache.clear('teamSeasons');
 
-                    for (const teamSeason of teamSeasons) {
-                        teamSeason.tid = t.tid;
-                        await tx.teamSeasons.put(teamSeason);
-                    }
+            // Load static data
+            const teams = await g.cache.getAll('teams');
+            for (const t of teams) {
+                const st = sampleTiebreakers.teams[t.tid];
+                const teamSeasons = st.seasons;
+                delete st.seasons;
+                delete st.stats;
 
-                    return st;
-                });
-            });
+                for (const teamSeason of teamSeasons) {
+                    teamSeason.tid = t.tid;
+                    await g.cache.add('teamSeasons', teamSeason);
+                }
+
+                await g.cache.put('teams', st);
+            }
         });
 
         let draftResults;
-        it("should schedule 60 draft picks", () => {
-            return g.dbl.tx(["draftOrder", "draftPicks", "teams", "teamSeasons", "players"], "readwrite", async tx => {
-                // Load static data
-                await draft.genOrder(tx);
-                const draftOrder = await draft.getOrder();
-                assert.equal(draftOrder.length, 60);
+        it("should schedule 60 draft picks", async () => {
+            await draft.genOrder();
+            const draftOrder = await draft.getOrder();
+            assert.equal(draftOrder.length, 60);
 
-                draftResults = draftOrder.map(d => d.originalTid);
-                userPick1 = draftResults.indexOf(g.userTid) + 1;
-                userPick2 = draftResults.lastIndexOf(g.userTid) + 1;
-            });
+            draftResults = draftOrder.map(d => d.originalTid);
+            userPick1 = draftResults.indexOf(g.userTid) + 1;
+            userPick2 = draftResults.lastIndexOf(g.userTid) + 1;
         });
 
         it("should give the 3 teams with the lowest win percentage picks not lower than 6", () => {
@@ -135,49 +132,46 @@ describe("core/draft", () => {
     });
 
     describe("#updateChances()", () => {
-        it("should distribute combinations to teams with the same record", () => {
-            return g.dbl.tx(["draftOrder", "draftPicks", "teams", "teamSeasons"], "readwrite", async tx => {
-                const teams = await team.filter({
-                    ot: tx,
-                    attrs: ["tid", "cid"],
-                    seasonAttrs: ["winp", "playoffRoundsWon"],
-                    season: g.season,
-                });
-                const chances = [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5];
-                // index instead of tid
-                const sameRec = [
-                    [6, 7, 8],
-                    [10, 11, 12],
-                ];
-                draft.lotterySort(teams);
-                draft.updateChances(chances, teams, false);
-                for (let i = 0; i < sameRec.length; i++) {
-                    const tids = sameRec[i];
-                    let value = 0;
-                    for (let j = 0; j < tids.length; j++) {
-                        if (value === 0) {
-                            value = chances[tids[j]];
-                        } else {
-                            assert.equal(value, chances[tids[j]]);
-                        }
-                    }
-                }
-
-                // test if isFinal is true
-                draft.updateChances(chances, teams, true);
-                for (let i = 0; i < sameRec.length; i++) {
-                    const tids = sameRec[i];
-                    let value = 0;
-                    let maxIdx = -1;
-                    for (let j = tids.length - 1; j >= 0; j--) {
-                        if (value <= chances[tids[j]]) {
-                            value = chances[tids[j]];
-                            maxIdx = j;
-                        }
-                    }
-                    assert.equal(maxIdx, 0);
-                }
+        it("should distribute combinations to teams with the same record", async () => {
+            const teams = await getCopy.teams({
+                attrs: ["tid", "cid"],
+                seasonAttrs: ["winp", "playoffRoundsWon"],
+                season: g.season,
             });
+            const chances = [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5];
+            // index instead of tid
+            const sameRec = [
+                [6, 7, 8],
+                [10, 11, 12],
+            ];
+            draft.lotterySort(teams);
+            draft.updateChances(chances, teams, false);
+            for (let i = 0; i < sameRec.length; i++) {
+                const tids = sameRec[i];
+                let value = 0;
+                for (let j = 0; j < tids.length; j++) {
+                    if (value === 0) {
+                        value = chances[tids[j]];
+                    } else {
+                        assert.equal(value, chances[tids[j]]);
+                    }
+                }
+            }
+
+            // test if isFinal is true
+            draft.updateChances(chances, teams, true);
+            for (let i = 0; i < sameRec.length; i++) {
+                const tids = sameRec[i];
+                let value = 0;
+                let maxIdx = -1;
+                for (let j = tids.length - 1; j >= 0; j--) {
+                    if (value <= chances[tids[j]]) {
+                        value = chances[tids[j]];
+                        maxIdx = j;
+                    }
+                }
+                assert.equal(maxIdx, 0);
+            }
         });
     });
 

@@ -459,10 +459,10 @@ const getCopy = async (players: Player | Player[], {
 
     let playersFiltered;
     if (objectStores.length > 0) {
-        console.log('getCopy.players with IDB', options);
+        //console.log('getCopy.players with IDB', options);
         playersFiltered = await g.dbl.tx(objectStores, (tx) => processMaybeWithIDB(tx));
     } else {
-        console.log('getCopy.players without IDB', options);
+        //console.log('getCopy.players without IDB', options);
         playersFiltered = await processMaybeWithIDB();
     }
 

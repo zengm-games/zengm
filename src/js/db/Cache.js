@@ -412,8 +412,8 @@ class Cache {
 
         const pk = this.storeInfos[store].pk;
 
-        if (['awards', 'draftOrder', 'gameAttributes', 'playoffSeries'].includes(store)) {
-            // This works if no indexes and no auto incrementing primary key, otherwise it should auto assign primary key
+        if (['awards', 'draftOrder', 'gameAttributes', 'playoffSeries', 'teams'].includes(store)) {
+            // This works if no auto incrementing primary key, otherwise it should auto assign primary key
 
             if (!obj.hasOwnProperty(pk)) {
                 throw new Error(`Cannot put "${store}" object without primary key "${pk}": ${JSON.stringify(obj)}`);
@@ -429,7 +429,7 @@ class Cache {
     async delete(store: Store, key: number) {
         this.checkStatus('full');
 
-        if (['draftPicks', 'negotiations', 'releasedPlayers', 'schedule'].includes(store)) {
+        if (['draftPicks', 'negotiations', 'releasedPlayers', 'schedule', 'teamSeasons'].includes(store)) {
             if (this.data[store].hasOwnProperty(key)) {
                 delete this.data[store][key];
                 this.deletes[store].add(key);
@@ -445,7 +445,7 @@ class Cache {
     async clear(store: Store) {
         this.checkStatus('full');
 
-        if (['negotiations', 'schedule'].includes(store)) {
+        if (['negotiations', 'schedule', 'teamSeasons'].includes(store)) {
             for (const key of Object.keys(this.data[store])) {
                 delete this.data[store][key];
                 this.deletes[store].add(key);

@@ -1,5 +1,7 @@
 IVERSON
 
+after season, why all FAs insulted by my presence?
+
 add flow comments to new files!
 - hard for ones that return (T | T[]) depending on inputs. maybe rethink getCopy API
   - Cache.getCopy and Cache.getCopies?

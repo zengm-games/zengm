@@ -20,7 +20,7 @@ import * as lock from '../util/lock';
 import logEvent from '../util/logEvent';
 import * as message from '../util/message';
 import * as random from '../util/random';
-import type {BackboardTx, Phase, Player, UpdateEvents} from '../util/types';
+import type {BackboardTx, Phase, UpdateEvents} from '../util/types';
 
 let phaseChangeTx;
 
@@ -58,7 +58,7 @@ async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = 
     }
 }
 
-async function newPhasePreseason(tx: BackboardTx) {
+async function newPhasePreseason() {
     await freeAgents.autoSign();
     await league.setGameAttributes({season: g.season + 1});
 
@@ -69,7 +69,7 @@ async function newPhasePreseason(tx: BackboardTx) {
         // Only actually need 3 seasons for userTid, but get it for all just in case there is a
         // skipped season (alternatively could use cursor to just find most recent season, but this
         // is not performance critical code)
-        const teamSeasons = await tx.teamSeasons.index("tid, season").getAll(backboard.bound([tid, g.season - 3], [tid, g.season - 1]));
+        const teamSeasons = await getCopy.teamSeasons({tid, seasons: [g.season - 3, g.season - 1]});
         const prevSeason = teamSeasons[teamSeasons.length - 1];
 
         // Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
@@ -78,15 +78,16 @@ async function newPhasePreseason(tx: BackboardTx) {
             scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
         }
 
-        await tx.teamSeasons.add(team.genSeasonRow(tid, prevSeason));
-        await tx.teamStats.add(team.genStatsRow(tid));
+        await g.cache.add('teamSeasons', team.genSeasonRow(tid, prevSeason));
+        await g.cache.add('teamStats', team.genStatsRow(tid));
     }));
 
-    const teamSeasons = await tx.teamSeasons.index("season, tid").getAll(backboard.bound([g.season - 1], [g.season - 1, '']));
+    const teamSeasons = await g.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season - 1}`, `${g.season}`]);
     const coachingRanks = teamSeasons.map(teamSeason => teamSeason.expenses.coaching.rank);
 
     // Loop through all non-retired players
-    await tx.players.index('tid').iterate(backboard.lowerBound(g.PLAYER.FREE_AGENT), async (p: Player) => {
+    const players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.FREE_AGENT, Infinity]);
+    for (const p of players) {
         // Update ratings
         player.addRatingsRow(p, scoutingRank);
         player.develop(p, 1, false, coachingRanks[p.tid]);
@@ -98,13 +99,14 @@ async function newPhasePreseason(tx: BackboardTx) {
         if (p.tid >= 0) {
             await player.addStatsRow(p, false);
         }
-
-        return p;
-    });
+    }
 
     if (g.autoPlaySeasons > 0) {
         await league.setGameAttributes({autoPlaySeasons: g.autoPlaySeasons - 1});
     }
+
+    await g.cache.flush();
+    await g.cache.fill();
 
     if (g.enableLogging && !window.inCordova) {
         g.emitter.emit('showAd', 'modal');

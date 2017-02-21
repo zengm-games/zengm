@@ -205,11 +205,96 @@ for (let k = 0; k < p.ratings.length; k++) {
     }
 };
 
+const genStatsRow = (p, ps, stats, statType) => {
+    const row = {};
+
+    for (const attr of stats) {
+        if (attr === 'gp') {
+            row.gp = ps.gp;
+        } else if (attr === 'gs') {
+            row.gs = ps.gs;
+        } else if (attr === 'fgp') {
+            if (ps.fga > 0) {
+                row.fgp = 100 * ps.fg / ps.fga;
+            } else {
+                row.fgp = 0;
+            }
+        } else if (attr === 'fgpAtRim') {
+            if (ps.fgaAtRim > 0) {
+                row.fgpAtRim = 100 * ps.fgAtRim / ps.fgaAtRim;
+            } else {
+                row.fgpAtRim = 0;
+            }
+        } else if (attr === 'fgpLowPost') {
+            if (ps.fgaLowPost > 0) {
+                row.fgpLowPost = 100 * ps.fgLowPost / ps.fgaLowPost;
+            } else {
+                row.fgpLowPost = 0;
+            }
+        } else if (attr === 'fgpMidRange') {
+            if (ps.fgaMidRange > 0) {
+                row.fgpMidRange = 100 * ps.fgMidRange / ps.fgaMidRange;
+            } else {
+                row.fgpMidRange = 0;
+            }
+        } else if (attr === 'tpp') {
+            if (ps.tpa > 0) {
+                row.tpp = 100 * ps.tp / ps.tpa;
+            } else {
+                row.tpp = 0;
+            }
+        } else if (attr === 'ftp') {
+            if (ps.fta > 0) {
+                row.ftp = 100 * ps.ft / ps.fta;
+            } else {
+                row.ftp = 0;
+            }
+        } else if (attr === 'season') {
+            row.season = ps.season;
+        } else if (attr === 'age') {
+            row.age = ps.season - p.born.year;
+        } else if (attr === 'abbrev') {
+            row.abbrev = helpers.getAbbrev(ps.tid);
+        } else if (attr === 'tid') {
+            row.tid = ps.tid;
+        } else if (attr === 'per') {
+            row.per = ps.per;
+        } else if (attr === 'ewa') {
+            row.ewa = ps.ewa;
+        } else if (attr === 'yearsWithTeam') {
+            row.yearsWithTeam = ps.yearsWithTeam;
+        } else if (attr === 'psid') {
+            row.psid = ps.psid;
+        } else if (statType === 'totals') {
+            row[attr] = ps[attr];
+        } else if (statType === 'per36' && attr !== 'min') { // Don't scale min by 36 minutes
+            row[attr] = ps.min > 0 ? ps[attr] * 36 / ps.min : 0;
+        } else {
+            row[attr] = ps.gp > 0 ? ps[attr] / ps.gp : 0;
+        }
+
+        // For keepWithNoStats
+        if (row[attr] === undefined || Number.isNaN(row[attr])) {
+            row[attr] = 0;
+        }
+    }
+
+    // Since they come in same stream, always need to be able to distinguish
+    row.playoffs = ps.playoffs;
+
+    return row;
+};
 
 const reduceCareerStats = (careerStats, attr, playoffs) => {
     return careerStats
         .filter((cs) => cs.playoffs === playoffs)
-        .map((cs) => cs[attr])
+        .map((cs) => {
+            if (attr === 'per') {
+                // Special case for PER, weight by minutes
+                return cs.per * cs.min;
+            }
+            return cs[attr];
+        })
         .reduce((memo, num) => memo + num, 0);
 };
 
@@ -263,112 +348,37 @@ const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: 
     const careerStats = [];
 
     output.stats = playerStats.map((ps) => {
-        const row = {};
-
-        for (const attr of stats) {
-            if (attr === 'gp') {
-                row.gp = ps.gp;
-            } else if (attr === 'gs') {
-                row.gs = ps.gs;
-            } else if (attr === 'fgp') {
-                if (ps.fga > 0) {
-                    row.fgp = 100 * ps.fg / ps.fga;
-                } else {
-                    row.fgp = 0;
-                }
-            } else if (attr === 'fgpAtRim') {
-                if (ps.fgaAtRim > 0) {
-                    row.fgpAtRim = 100 * ps.fgAtRim / ps.fgaAtRim;
-                } else {
-                    row.fgpAtRim = 0;
-                }
-            } else if (attr === 'fgpLowPost') {
-                if (ps.fgaLowPost > 0) {
-                    row.fgpLowPost = 100 * ps.fgLowPost / ps.fgaLowPost;
-                } else {
-                    row.fgpLowPost = 0;
-                }
-            } else if (attr === 'fgpMidRange') {
-                if (ps.fgaMidRange > 0) {
-                    row.fgpMidRange = 100 * ps.fgMidRange / ps.fgaMidRange;
-                } else {
-                    row.fgpMidRange = 0;
-                }
-            } else if (attr === 'tpp') {
-                if (ps.tpa > 0) {
-                    row.tpp = 100 * ps.tp / ps.tpa;
-                } else {
-                    row.tpp = 0;
-                }
-            } else if (attr === 'ftp') {
-                if (ps.fta > 0) {
-                    row.ftp = 100 * ps.ft / ps.fta;
-                } else {
-                    row.ftp = 0;
-                }
-            } else if (attr === 'season') {
-                row.season = ps.season;
-            } else if (attr === 'age') {
-                row.age = ps.season - p.born.year;
-            } else if (attr === 'abbrev') {
-                row.abbrev = helpers.getAbbrev(ps.tid);
-            } else if (attr === 'tid') {
-                row.tid = ps.tid;
-            } else if (attr === 'per') {
-                row.per = ps.per;
-            } else if (attr === 'ewa') {
-                row.ewa = ps.ewa;
-            } else if (attr === 'yearsWithTeam') {
-                row.yearsWithTeam = ps.yearsWithTeam;
-            } else if (attr === 'psid') {
-                row.psid = ps.psid;
-            } else if (statType === 'totals') {
-                row[attr] = ps[attr];
-            } else if (statType === 'per36' && attr !== 'min') { // Don't scale min by 36 minutes
-                row[attr] = ps.min > 0 ? ps[attr] * 36 / ps.min : 0;
-            } else {
-                row[attr] = ps.gp > 0 ? ps[attr] / ps.gp : 0;
-            }
-
-            // For keepWithNoStats
-            if (row[attr] === undefined || Number.isNaN(row[attr])) {
-                row[attr] = 0;
-            }
-        }
-
-        // Since they come in same stream, always need to be able to distinguish
-        row.playoffs = ps.playoffs;
-
         if (season === undefined) {
-            careerStats.push(row);
+            careerStats.push(ps);
         }
 
-        return row;
+        return genStatsRow(p, ps, stats, statType);
     });
 
     if (season !== undefined && ((playoffs && !regularSeason) || (!playoffs && regularSeason))) {
         output.stats = output.stats[0];
     } else if (season === undefined) {
-        if (regularSeason) {
-            output.careerStats = {};
-        }
-        if (playoffs) {
-            output.careerStatsPlayoffs = {};
-        }
-
         // Aggregate annual stats and ignore other things
-        const ignoredKeys = ["age", "playoffs", "season", "tid"];
-        for (const attr of Object.keys(output.stats[0])) {
+        const ignoredKeys = ['pid', 'season', 'tid', 'yearsWithTeam'];
+        const statSums = {};
+        const statSumsPlayoffs = {};
+        for (const attr of Object.keys(careerStats[0])) {
             if (!ignoredKeys.includes(attr)) {
-                if (regularSeason) {
-                    output.careerStats[attr] = reduceCareerStats(careerStats, attr, false);
-                }
-                if (playoffs) {
-                    output.careerStatsPlayoffs[attr] = reduceCareerStats(careerStats, attr, true);
-                }
+                statSums[attr] = reduceCareerStats(careerStats, attr, false);
+                statSumsPlayoffs[attr] = reduceCareerStats(careerStats, attr, true);
             }
         }
-// Special cases for PER and EWA from player.filter?
+
+        // Special case for PER, weight by minutes
+        statSums.per /= statSums.min;
+        statSumsPlayoffs.per /= statSumsPlayoffs.min;
+
+        if (regularSeason) {
+            output.careerStats = genStatsRow(p, statSums, stats, statType);
+        }
+        if (playoffs) {
+            output.careerStatsPlayoffs = genStatsRow(p, statSumsPlayoffs, stats, statType);
+        }
     }
 };
 
@@ -458,9 +468,8 @@ const getCopy = async (players: Player | Player[], {
 
     if (Array.isArray(playersFiltered)) {
         return playersFiltered.filter((p) => p !== undefined);
-    } else {
-        return playersFiltered;
     }
+    return playersFiltered;
 };
 
 export default getCopy;

@@ -1,7 +1,5 @@
-import Promise from 'bluebird';
 import g from '../globals';
 import * as freeAgents from '../core/freeAgents';
-import * as player from '../core/player';
 import * as trade from '../core/trade';
 import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';

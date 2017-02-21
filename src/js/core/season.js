@@ -236,8 +236,7 @@ async function doAwards() {
     if (champTeam) {
         const champTid = champTeam.tid;
 
-        // Need to read from DB again to really make sure I'm only looking at players from the champs. player.filter might not be enough. This DB call could be replaced with a loop manually checking tids, though.
-        let champPlayers = await g.cache.indexGetAll('playersByTid', champTid);
+        let champPlayers = await g.cache.indexGetAll('playersByTid', champTid); // Alternatively, could filter players array by tid
         champPlayers = await getCopy.players(champPlayers, { // Only the champions, only playoff stats
             attrs: ["pid", "name", "tid", "abbrev"],
             stats: ["pts", "trb", "ast", "ewa"],

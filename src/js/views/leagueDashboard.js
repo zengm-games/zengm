@@ -1,9 +1,7 @@
 // @flow
 
-import backboard from 'backboard';
 import Promise from 'bluebird';
 import g from '../globals';
-import * as player from '../core/player';
 import * as season from '../core/season';
 import * as team from '../core/team';
 import {getCopy} from '../db';
@@ -173,60 +171,57 @@ async function updateSchedule(inputs, updateEvents) {
 
 async function updatePlayers(inputs, updateEvents) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || updateEvents.includes('newPhase')) {
-        return g.dbl.tx(["players", "playerStats"], async tx => {
-            const vars = {};
+        const vars = {};
 
-            let players = await tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.UNDRAFTED));
-            players = await player.withStats(tx, players, {statsSeasons: [g.season]});
-            players = player.filter(players, {
-                attrs: ["pid", "name", "abbrev", "tid", "age", "contract", "rosterOrder", "injury", "watch"],
-                ratings: ["ovr", "pot", "dovr", "dpot", "skills", "pos"],
-                stats: ["gp", "min", "pts", "trb", "ast", "per", "yearsWithTeam"],
-                season: g.season,
-                showNoStats: true,
-                showRookies: true,
-                fuzz: true,
-            });
+        let players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.UNDRAFTED, Infinity]);
+        players = await getCopy.players(players, {
+            attrs: ['pid', 'name', 'abbrev', 'tid', 'age', 'contract', 'rosterOrder', 'injury', 'watch'],
+            ratings: ['ovr', 'pot', 'dovr', 'dpot', 'skills', 'pos'],
+            stats: ['gp', 'min', 'pts', 'trb', 'ast', 'per', 'yearsWithTeam'],
+            season: g.season,
+            showNoStats: true,
+            showRookies: true,
+            fuzz: true,
+        });
 
-            // League leaders
-            vars.leagueLeaders = {};
-            const stats = ["pts", "trb", "ast"]; // Categories for leaders
-            for (const stat of stats) {
-                players.sort((a, b) => b.stats[stat] - a.stats[stat]);
-                vars.leagueLeaders[stat] = {
-                    pid: players[0].pid,
-                    name: players[0].name,
-                    abbrev: players[0].abbrev,
-                    stat: players[0].stats[stat],
+        // League leaders
+        vars.leagueLeaders = {};
+        const stats = ['pts', 'trb', 'ast']; // Categories for leaders
+        for (const stat of stats) {
+            players.sort((a, b) => b.stats[stat] - a.stats[stat]);
+            vars.leagueLeaders[stat] = {
+                pid: players[0].pid,
+                name: players[0].name,
+                abbrev: players[0].abbrev,
+                stat: players[0].stats[stat],
+            };
+        }
+
+        // Team leaders
+        const userPlayers = players.filter(p => p.tid === g.userTid);
+        vars.teamLeaders = {};
+        for (const stat of stats) {
+            if (userPlayers.length > 0) {
+                userPlayers.sort((a, b) => b.stats[stat] - a.stats[stat]);
+                vars.teamLeaders[stat] = {
+                    pid: userPlayers[0].pid,
+                    name: userPlayers[0].name,
+                    stat: userPlayers[0].stats[stat],
+                };
+            } else {
+                vars.teamLeaders[stat] = {
+                    pid: 0,
+                    name: '',
+                    stat: 0,
                 };
             }
+        }
 
-            // Team leaders
-            const userPlayers = players.filter(p => p.tid === g.userTid);
-            vars.teamLeaders = {};
-            for (const stat of stats) {
-                if (userPlayers.length > 0) {
-                    userPlayers.sort((a, b) => b.stats[stat] - a.stats[stat]);
-                    vars.teamLeaders[stat] = {
-                        pid: userPlayers[0].pid,
-                        name: userPlayers[0].name,
-                        stat: userPlayers[0].stats[stat],
-                    };
-                } else {
-                    vars.teamLeaders[stat] = {
-                        pid: 0,
-                        name: "",
-                        stat: 0,
-                    };
-                }
-            }
+        // Roster
+        // Find starting 5
+        vars.starters = userPlayers.sort((a, b) => a.rosterOrder - b.rosterOrder).slice(0, 5);
 
-            // Roster
-            // Find starting 5
-            vars.starters = userPlayers.sort((a, b) => a.rosterOrder - b.rosterOrder).slice(0, 5);
-
-            return vars;
-        });
+        return vars;
     }
 }
 

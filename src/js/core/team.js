@@ -244,7 +244,7 @@ async function rosterAutoSort(tid: number) {
     // Get roster and sort by value (no potential included)
     const playersFromCache = await g.cache.indexGetAll('playersByTid', tid);
     let players = helpers.deepCopy(playersFromCache);
-    players = player.filter(players, {
+    players = await getCopy.players(players, {
         attrs: ["pid", "valueNoPot", "valueNoPotFuzz"],
         ratings: ["pos"],
         season: g.season,

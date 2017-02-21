@@ -1,8 +1,8 @@
 import g from '../globals';
 import * as contractNegotiation from '../core/contractNegotiation';
 import * as freeAgents from '../core/freeAgents';
-import * as player from '../core/player';
 import * as team from '../core/team';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import Negotiation from './views/Negotiation';
 
@@ -78,8 +78,8 @@ async function updateNegotiation(inputs) {
         negotiation.player.expiration -= 1;
     }
 
-    let p = await g.dbl.players.get(negotiation.pid);
-    p = player.filter(p, {
+    let p = await g.cache.get('players', negotiation.pid);
+    p = await getCopy.players(p, {
         attrs: ["pid", "name", "age", "contract", "freeAgentMood"],
         ratings: ["ovr", "pot"],
         season: g.season,

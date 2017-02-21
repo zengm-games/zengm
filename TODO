@@ -1,7 +1,5 @@
 IVERSON
 
-delete team.filter, copy documentation to getCopy.teams
-
 add flow comments to new files!
 
 player.filter -> db.getCopy.players
@@ -52,14 +50,6 @@ rewrite team.filter and player.filter
   - db.getCopy.teams, db.getCopy.players, db.getCopy.messages, db.getCopy.eventsBySeason
   - idea is, these are ways to get data whose return values can be safely mutated - not from cache. also designed for convenience
     - document this in readme
-- db.getCopy.teams
-  - getAlls from database need to use cache for this season still
-    - this is a more general problem, and is the same problem really faced by events/messages/playerFeats when concating cache. the problem is, need to getAll from db and then update based on primary key from cache, and then insert if no update available. abstract?
-      - with cache! do getAll, then iterate over cached records, and we know the primary key! just cloneDeep
-  - replace team.filter
-    - could make that a wrapper, after dealing with tx and payroll
-  - types for Attrs
-  - types for season/statType/playoffs options, which only have affect based on other options
 
 links slow while game sim in progress
 - now the status text doesn't even update, I think finally due to using caches in advStats. maybe need to reintroduce some pauses

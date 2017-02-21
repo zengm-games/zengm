@@ -264,7 +264,25 @@ const processTeam = async (t: Team, {
 
     return output;
 };
-
+/**
+ * Retrieve a filtered copy of a team object, or an array of all team objects.
+ *
+ * This can be used to retrieve information about a certain season, compute average statistics from the raw data, etc.
+ *
+ * If you request just one season (so, explicitly set season and then only one of playoffs and regularSeason is true), then stats and seasonAttrs will be returned as an object. Otherwise, they will be arrays of objects.
+ *
+ * @memberOf core.team
+ * @param {Object} options Options, as described below.
+ * @param {number=} options.tid Team ID. Set this if you want to return only one team object. If undefined, an array of all teams is returned, ordered by tid.
+ * @param {number=} options.season Season to retrieve stats/seasonAttrs for. If undefined, all seasons will be returned.
+ * @param {Array.<string>=} options.attrs List of team attributes to include in output (e.g. region, abbrev, name, ...).
+ * @param {Array.<string>=} options.seasonAttrs List of seasonal team attributes to include in output (e.g. won, lost, payroll, ...).
+ * @param {Array.<string=>} options.stats List of team stats to include in output (e.g. fg, orb, ast, blk, ...).
+ * @param {boolean=} options.playoffs Boolean representing whether to return playoff stats or not; default is false.
+ * @param {boolean=} options.regularSeason Boolean representing whether to return playoff stats or not; default is false.
+ * @param {string=} options.statType: What type of stats to return, 'perGame' or 'totals' (default is 'perGame).
+ * @return {Promise.(Object|Array.<Object>)} Filtered team object or array of filtered team objects, depending on the inputs.
+ */
 const getCopy = async ({
     tid,
     season,

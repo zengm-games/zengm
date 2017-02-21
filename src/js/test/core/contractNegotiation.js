@@ -97,7 +97,7 @@ describe("core/contractNegotiation", () => {
 
             const p = await g.cache.get('players', pid1);
             p.tid = g.userTid;
-            g.cache.markDirtyIndex('players');
+            g.cache.markDirtyIndexes('players');
 
             let error = await contractNegotiation.create(pid2, false);
             assert.equal(error, "Your roster is full. Before you can sign a free agent, you'll have to release or trade away one of your current players.");
@@ -113,7 +113,7 @@ describe("core/contractNegotiation", () => {
             assert.equal(negotiations[0].pid, pid2);
 
             p.tid = g.PLAYER.FREE_AGENT;
-            g.cache.markDirtyIndex('players');
+            g.cache.markDirtyIndexes('players');
         });
     });
 

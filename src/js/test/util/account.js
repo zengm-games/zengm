@@ -319,7 +319,7 @@ describe("util/account", () => {
             p.draft.round = 1;
             p.draft.pick = 20;
             p.draft.year = g.season - 1;
-            g.cache.markDirtyIndex('players');
+            g.cache.markDirtyIndexes('players');
 
             // ROY is pid 1 on tid 7
             const awards = {"season":2013,"roy":{"pid":1,"name":"Timothy Gonzalez","tid":7,"abbrev":"ATL","pts":30.135135135135137,"trb":9.18918918918919,"ast":0.7972972972972973}};
@@ -332,7 +332,7 @@ describe("util/account", () => {
         it("should not award achievement if not currently on user's team", async () => {
             const p = await g.cache.get('players', 1);
             p.tid = 15;
-            g.cache.markDirtyIndex('players');
+            g.cache.markDirtyIndexes('players');
 
             const awarded = await account.checkAchievement.sleeper_pick(false);
             assert.equal(awarded, false);
@@ -341,7 +341,7 @@ describe("util/account", () => {
             const p = await g.cache.get('players', 1);
             p.tid = g.userTid;
             p.draft.tid = 15;
-            g.cache.markDirtyIndex('players');
+            g.cache.markDirtyIndexes('players');
 
             const awarded = await account.checkAchievement.sleeper_pick(false);
             assert.equal(awarded, false);
@@ -350,7 +350,7 @@ describe("util/account", () => {
             const p = await g.cache.get('players', 1);
             p.draft.tid = g.userTid;
             p.draft.pick = 7;
-            g.cache.markDirtyIndex('players');
+            g.cache.markDirtyIndexes('players');
 
             const awarded = await account.checkAchievement.sleeper_pick(false);
             assert.equal(awarded, false);
@@ -359,7 +359,7 @@ describe("util/account", () => {
             const p = await g.cache.get('players', 1);
             p.draft.pick = 15;
             p.draft.year = g.season - 2;
-            g.cache.markDirtyIndex('players');
+            g.cache.markDirtyIndexes('players');
 
             const awarded = await account.checkAchievement.sleeper_pick(false);
             assert.equal(awarded, false);
@@ -371,7 +371,7 @@ describe("util/account", () => {
 
             const p = await g.cache.get('players', 1);
             p.draft.year = g.season - 1;
-            g.cache.markDirtyIndex('players');
+            g.cache.markDirtyIndexes('players');
 
             const awarded = await account.checkAchievement.sleeper_pick(false);
             assert.equal(awarded, false);

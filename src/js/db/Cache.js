@@ -210,7 +210,7 @@ class Cache {
         this.status = status;
     }
 
-    markDirtyIndex(store: Store) {
+    markDirtyIndexes(store: Store) {
         if (this.storeInfos[store].indexes) {
             this.dirtyIndexes.add(store);
         }
@@ -401,7 +401,7 @@ class Cache {
             }
 
             this.data[store][obj[pk]] = obj;
-            this.markDirtyIndex(store);
+            this.markDirtyIndexes(store);
         } else {
             throw new Error(`Cache.add not implemented for store "${store}"`);
         }
@@ -420,7 +420,7 @@ class Cache {
             }
 
             this.data[store][obj[pk]] = obj;
-            this.markDirtyIndex(store);
+            this.markDirtyIndexes(store);
         } else {
             throw new Error(`Cache.put not implemented for store "${store}"`);
         }
@@ -433,7 +433,7 @@ class Cache {
             if (this.data[store].hasOwnProperty(key)) {
                 delete this.data[store][key];
                 this.deletes[store].add(key);
-                this.markDirtyIndex(store);
+                this.markDirtyIndexes(store);
             } else {
                 throw new Error(`Invalid key to delete from store "${store}": ${key}`);
             }
@@ -450,7 +450,7 @@ class Cache {
                 delete this.data[store][key];
                 this.deletes[store].add(key);
             }
-            this.markDirtyIndex(store);
+            this.markDirtyIndexes(store);
         } else {
             throw new Error(`clear not implemented for store "${store}"`);
         }

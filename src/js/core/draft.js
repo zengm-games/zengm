@@ -467,7 +467,7 @@ async function selectPlayer(pick: PickRealized, pid: number) {
         await player.addStatsRow(p, g.nextPhase === g.PHASE.PLAYOFFS);
     }
 
-    g.cache.markDirtyIndex('players');
+    g.cache.markDirtyIndexes('players');
 
     const draftName = g.phase === g.PHASE.FANTASY_DRAFT ? `${g.season} fantasy draft` : `${g.season} draft`;
     logEvent({

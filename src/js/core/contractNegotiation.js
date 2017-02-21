@@ -158,7 +158,7 @@ async function accept(pid: number, amount: number, exp: number): Promise<string>
         });
     }
 
-    g.cache.markDirtyIndex('players');
+    g.cache.markDirtyIndexes('players');
 
     await cancel(pid);
 

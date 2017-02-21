@@ -66,7 +66,7 @@ describe("core/team", () => {
             for (let i = 0; i < 10; i++) {
                 players[i].tid = tid;
             }
-            g.cache.markDirtyIndex('players');
+            g.cache.markDirtyIndexes('players');
         };
 
         const removeTen = async (tid) => {

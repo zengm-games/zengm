@@ -468,7 +468,7 @@ async function newPhaseFreeAgency() {
         p.tid = g.PLAYER.UNDRAFTED_2;
         p.ratings[0].fuzz /= 2;
     }
-    g.cache.markDirtyIndex('players');
+    g.cache.markDirtyIndexes('players');
     await draft.genPlayers(g.PLAYER.UNDRAFTED_3);
 
     return [helpers.leagueUrl(["free_agents"]), ["playerMovement"]];

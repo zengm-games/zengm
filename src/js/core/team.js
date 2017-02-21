@@ -940,7 +940,7 @@ async function checkRosterSizes(): Promise<string | null> {
                     await player.addStatsRow(p, g.phase === g.PHASE.PLAYOFFS);
                     player.setContract(p, p.contract, true);
                     p.gamesUntilTradable = 15;
-                    g.cache.markDirtyIndex('players');
+                    g.cache.markDirtyIndexes('players');
 
                     logEvent({
                         type: "freeAgent",

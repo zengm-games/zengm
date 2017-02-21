@@ -592,7 +592,7 @@ function addToFreeAgents(p: Player | PlayerWithoutPid, phase: Phase, baseMoods: 
 
     p.ptModifier = 1; // Reset
 
-    g.cache.markDirtyIndex('players');
+    g.cache.markDirtyIndexes('players');
 }
 
 /**
@@ -1728,7 +1728,7 @@ function retire(p: Player, playerStats: PlayerStats[], retiredNotification?: boo
         });
     }
 
-    g.cache.markDirtyIndex('players');
+    g.cache.markDirtyIndexes('players');
 }
 
 // See views.negotiation for moods as well

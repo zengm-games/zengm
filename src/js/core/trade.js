@@ -345,10 +345,10 @@ async function propose(forceTrade?: boolean = false): Promise<[boolean, ?string]
                 });
             });
             if (dpids[0].length > 0 || dpids[1].length > 0) {
-                g.cache.markDirtyIndex('draftPicks');
+                g.cache.markDirtyIndexes('draftPicks');
             }
             if (pids[0].length > 0 || pids[1].length > 0) {
-                g.cache.markDirtyIndex('players');
+                g.cache.markDirtyIndexes('players');
             }
 
             // Log event

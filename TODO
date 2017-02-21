@@ -1,6 +1,8 @@
 IVERSON
 
 add flow comments to new files!
+- hard for ones that return (T | T[]) depending on inputs. maybe rethink getCopy API
+  - Cache.getCopy and Cache.getCopies?
 
 player.filter -> db.getCopy.players
 - how to handle cases where players from IDB are passed in? do i need to augment with cache, or is it all old?
@@ -18,9 +20,6 @@ player.filter -> db.getCopy.players
 - get rid of PlayerWithStats?
 - oldStats
 - passing in players is kind of shitty, runs contrary to the whole "getCopy" idea because you have to figure out how to generate players object ahead of time. maybe rethink this..
-
-mutation for things involving indexes
-- implement like g.cache.markDirtyIndex('players');
 
 if i can gracefully handle absence of g.season etc, put cache creation inside connectLeague
 - not graceful now, see fill(season)

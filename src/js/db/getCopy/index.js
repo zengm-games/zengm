@@ -1,3 +1,5 @@
+// @flow
+
 import awards from './awards';
 import events from './events';
 import messages from './messages';

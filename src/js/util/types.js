@@ -16,6 +16,120 @@ export type AchievementKey = (
     'hacker'
 );
 
+type AwardTeam = {
+    tid: number,
+    abbrev: string,
+    region: string,
+    name: string,
+    won: number,
+    lost: number,
+};
+
+type AwardPlayer = {
+    pid: number,
+    name: string,
+    tid: number,
+    abbrev: string,
+    pts: number,
+    trb: number,
+    ast: number,
+};
+
+type AwardPlayerDefense = {
+    pid: number,
+    name: string,
+    tid: number,
+    abbrev: string,
+    trb: number,
+    blk: number,
+    stl: number,
+};
+
+export type Awards = {
+    season: number,
+    bestRecord: AwardTeam,
+    bestRecordConfs: [
+        AwardTeam,
+        AwardTeam,
+    ],
+    roy: AwardPlayer,
+    allRookie: [
+        AwardPlayer,
+        AwardPlayer,
+        AwardPlayer,
+        AwardPlayer,
+        AwardPlayer,
+    ],
+    mvp: AwardPlayer,
+    smoy: AwardPlayer,
+    allLeague: [
+        {
+            title: 'First Team',
+            players: [
+                AwardPlayer,
+                AwardPlayer,
+                AwardPlayer,
+                AwardPlayer,
+                AwardPlayer,
+            ]
+        },
+        {
+            title: 'Second Team',
+            players: [
+                AwardPlayer,
+                AwardPlayer,
+                AwardPlayer,
+                AwardPlayer,
+                AwardPlayer,
+            ]
+        },
+        {
+            title: 'Third Team',
+            players: [
+                AwardPlayer,
+                AwardPlayer,
+                AwardPlayer,
+                AwardPlayer,
+                AwardPlayer,
+            ]
+        },
+    ],
+    dpoy: AwardPlayerDefense,
+    allDefensive: [
+        {
+            title: 'First Team',
+            players: [
+                AwardPlayerDefense,
+                AwardPlayerDefense,
+                AwardPlayerDefense,
+                AwardPlayerDefense,
+                AwardPlayerDefense,
+            ]
+        },
+        {
+            title: 'Second Team',
+            players: [
+                AwardPlayerDefense,
+                AwardPlayerDefense,
+                AwardPlayerDefense,
+                AwardPlayerDefense,
+                AwardPlayerDefense,
+            ]
+        },
+        {
+            title: 'Third Team',
+            players: [
+                AwardPlayerDefense,
+                AwardPlayerDefense,
+                AwardPlayerDefense,
+                AwardPlayerDefense,
+                AwardPlayerDefense,
+            ]
+        },
+    ],
+    finalsMvp: AwardPlayer,
+};
+
 export type BackboardTx = any;
 
 export type Game = {

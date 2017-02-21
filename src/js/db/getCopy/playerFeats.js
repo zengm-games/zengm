@@ -1,3 +1,5 @@
+// @flow
+
 import g from '../../globals';
 import {mergeByPk} from './helpers';
 

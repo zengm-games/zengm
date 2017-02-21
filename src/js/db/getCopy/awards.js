@@ -1,11 +1,12 @@
 import g from '../../globals';
 import {mergeByPk} from './helpers';
+import type {Awards} from '../../util/types';
 
 const getCopy = async ({
     season,
 }: {
     season?: number,
-} = {}): Promise<any[]> => {
+} = {}): Promise<Awards | Awards[]> => {
     if (season !== undefined) {
         const awards = mergeByPk(
             await g.dbl.awards.getAll(season),

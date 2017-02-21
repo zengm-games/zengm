@@ -1,8 +1,11 @@
+// @flow
+
 import orderBy from 'lodash.orderby';
 import {deepCopy} from '../../util/helpers';
+import type {PlayerStats, TeamStats} from '../../util/types'; // eslint-disable-line no-unused-vars
 
 // Indexes can't handle playoffs/regularSeason and different ones can come back inconsistently sorted
-const filterOrderStats = (stats, playoffs, regularSeason) => {
+const filterOrderStats = <T: PlayerStats | TeamStats>(stats: T[], playoffs: boolean, regularSeason: boolean): T[] => {
     return orderBy(stats.filter((ps) => {
         if (playoffs && ps.playoffs) {
             return true;
@@ -15,9 +18,9 @@ const filterOrderStats = (stats, playoffs, regularSeason) => {
 };
 
 // Merge fromDb and fromCache by primary key. Records in fromCache will overwrite records in fromDb, and then extra records will be appended to end. Return value is cloned.
-const mergeByPk = (fromDb: any[], fromCache: any[], pk: string) => {
-    const cacheKeys = {};
-    const cacheKeysUsed = {};
+const mergeByPk = (fromDb: any[], fromCache: any[], pk: string): any[] => {
+    const cacheKeys: {[key: string]: number} = {};
+    const cacheKeysUsed: {[key: string]: boolean} = {};
     for (let i = 0; i < fromCache.length; i++) {
         cacheKeys[fromCache[i][pk]] = i;
         cacheKeysUsed[fromCache[i][pk]] = false;
@@ -32,8 +35,9 @@ const mergeByPk = (fromDb: any[], fromCache: any[], pk: string) => {
         return row;
     });
 
-    for (const [key, i] of Object.entries(cacheKeys)) {
+    for (const key of Object.keys(cacheKeys)) {
         if (!cacheKeysUsed[key]) {
+            const i = cacheKeys[key];
             output.push(deepCopy(fromCache[i]));
         }
     }

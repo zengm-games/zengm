@@ -1,3 +1,5 @@
+// @flow
+
 import backboard from 'backboard';
 import g from '../../globals';
 import {mergeByPk} from './helpers';

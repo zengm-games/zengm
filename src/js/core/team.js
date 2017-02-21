@@ -1216,92 +1216,89 @@ async function updateStrategies() {
  * @memberOf core.team
  * @return {Promise.?string} Resolves to null if there is no error, or a string with the error message otherwise.
  */
-function checkRosterSizes(): Promise<string | null> {
-    return g.dbl.tx(["players", "playerStats", "releasedPlayers", "teams", "teamSeasons"], "readwrite", async tx => {
-        const minFreeAgents = [];
-        let userTeamSizeError = null;
+async function checkRosterSizes(): Promise<string | null> {
+    const minFreeAgents = [];
+    let userTeamSizeError = null;
 
-        const checkRosterSize = async tid => {
-            const players = await tx.players.index('tid').getAll(tid);
-            let numPlayersOnRoster = players.length;
-            if (numPlayersOnRoster > 15) {
-                if (g.userTids.includes(tid) && g.autoPlaySeasons === 0) {
-                    if (g.userTids.length <= 1) {
-                        userTeamSizeError = 'Your team has ';
-                    } else {
-                        userTeamSizeError = `The ${g.teamRegionsCache[tid]} ${g.teamNamesCache[tid]} have `;
-                    }
-                    userTeamSizeError += `more than the maximum number of players (15). You must remove players (by <a href="${helpers.leagueUrl(["roster"])}">releasing them from your roster</a> or through <a href="${helpers.leagueUrl(["trade"])}">trades</a>) before continuing.`;
+    const checkRosterSize = async tid => {
+        const players = await g.cache.indexGetAll('playersByTid', tid);
+        let numPlayersOnRoster = players.length;
+        if (numPlayersOnRoster > 15) {
+            if (g.userTids.includes(tid) && g.autoPlaySeasons === 0) {
+                if (g.userTids.length <= 1) {
+                    userTeamSizeError = 'Your team has ';
                 } else {
-                    // Automatically drop lowest value players until we reach 15
-                    players.sort((a, b) => a.value - b.value); // Lowest first
-                    const promises = [];
-                    for (let i = 0; i < (numPlayersOnRoster - 15); i++) {
-                        promises.push(player.release(tx, players[i], false));
-                    }
-                    await Promise.all(promises);
+                    userTeamSizeError = `The ${g.teamRegionsCache[tid]} ${g.teamNamesCache[tid]} have `;
                 }
-            } else if (numPlayersOnRoster < g.minRosterSize) {
-                if (g.userTids.includes(tid) && g.autoPlaySeasons === 0) {
-                    if (g.userTids.length <= 1) {
-                        userTeamSizeError = 'Your team has ';
-                    } else {
-                        userTeamSizeError = `The ${g.teamRegionsCache[tid]} ${g.teamNamesCache[tid]} have `;
-                    }
-                    userTeamSizeError += `less than the minimum number of players (${g.minRosterSize}). You must add players (through <a href="${helpers.leagueUrl(["free_agents"])}">free agency</a> or <a href="${helpers.leagueUrl(["trade"])}">trades</a>) before continuing.<br><br>Reminder: you can always sign free agents to ${helpers.formatCurrency(g.minContract / 1000, "M", 1)}/yr contracts, even if you're over the cap!`;
+                userTeamSizeError += `more than the maximum number of players (15). You must remove players (by <a href="${helpers.leagueUrl(["roster"])}">releasing them from your roster</a> or through <a href="${helpers.leagueUrl(["trade"])}">trades</a>) before continuing.`;
+            } else {
+                // Automatically drop lowest value players until we reach 15
+                players.sort((a, b) => a.value - b.value); // Lowest first
+                const promises = [];
+                for (let i = 0; i < (numPlayersOnRoster - 15); i++) {
+                    promises.push(player.release(players[i], false));
+                }
+                await Promise.all(promises);
+            }
+        } else if (numPlayersOnRoster < g.minRosterSize) {
+            if (g.userTids.includes(tid) && g.autoPlaySeasons === 0) {
+                if (g.userTids.length <= 1) {
+                    userTeamSizeError = 'Your team has ';
                 } else {
-                    // Auto-add players
-                    const promises = [];
-                    while (numPlayersOnRoster < g.minRosterSize) {
-                        // See also core.phase
-                        const p = minFreeAgents.shift();
-                        p.tid = tid;
-                        await player.addStatsRow(p, g.phase === g.PHASE.PLAYOFFS);
-                        player.setContract(p, p.contract, true);
-                        p.gamesUntilTradable = 15;
-
-                        logEvent({
-                            type: "freeAgent",
-                            text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
-                            showNotification: false,
-                            pids: [p.pid],
-                            tids: [p.tid],
-                        });
-
-                        promises.push(tx.players.put(p));
-
-                        numPlayersOnRoster += 1;
-                    }
-                    await Promise.all(promises);
+                    userTeamSizeError = `The ${g.teamRegionsCache[tid]} ${g.teamNamesCache[tid]} have `;
                 }
-            }
+                userTeamSizeError += `less than the minimum number of players (${g.minRosterSize}). You must add players (through <a href="${helpers.leagueUrl(["free_agents"])}">free agency</a> or <a href="${helpers.leagueUrl(["trade"])}">trades</a>) before continuing.<br><br>Reminder: you can always sign free agents to ${helpers.formatCurrency(g.minContract / 1000, "M", 1)}/yr contracts, even if you're over the cap!`;
+            } else {
+                // Auto-add players
+                const promises = [];
+                while (numPlayersOnRoster < g.minRosterSize) {
+                    // See also core.phase
+                    const p = minFreeAgents.shift();
+                    p.tid = tid;
+                    await player.addStatsRow(p, g.phase === g.PHASE.PLAYOFFS);
+                    player.setContract(p, p.contract, true);
+                    p.gamesUntilTradable = 15;
+                    g.cache.markDirtyIndex('players');
 
-            // Auto sort rosters (except player's team)
-            // This will sort all AI rosters before every game. Excessive? It could change some times, but usually it won't
-            if (!g.userTids.includes(tid) || g.autoPlaySeasons > 0) {
-                return rosterAutoSort(tid);
-            }
-        };
+                    logEvent({
+                        type: "freeAgent",
+                        text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
+                        showNotification: false,
+                        pids: [p.pid],
+                        tids: [p.tid],
+                    });
 
-        const players = await tx.players.index('tid').getAll(g.PLAYER.FREE_AGENT);
-
-        // List of free agents looking for minimum contracts, sorted by value. This is used to bump teams up to the minimum roster size.
-        for (let i = 0; i < players.length; i++) {
-            if (players[i].contract.amount === g.minContract) {
-                minFreeAgents.push(players[i]);
+                    numPlayersOnRoster += 1;
+                }
+                await Promise.all(promises);
             }
         }
-        minFreeAgents.sort((a, b) => b.value - a.value);
 
-        // Make sure teams are all within the roster limits
-        const promises = [];
-        for (let i = 0; i < g.numTeams; i++) {
-            promises.push(checkRosterSize(i));
+        // Auto sort rosters (except player's team)
+        // This will sort all AI rosters before every game. Excessive? It could change some times, but usually it won't
+        if (!g.userTids.includes(tid) || g.autoPlaySeasons > 0) {
+            return rosterAutoSort(tid);
         }
-        await Promise.all(promises);
+    };
 
-        return userTeamSizeError;
-    });
+    const players = await g.cache.indexGetAll('playersByTid', g.PLAYER.FREE_AGENT);
+
+    // List of free agents looking for minimum contracts, sorted by value. This is used to bump teams up to the minimum roster size.
+    for (let i = 0; i < players.length; i++) {
+        if (players[i].contract.amount === g.minContract) {
+            minFreeAgents.push(players[i]);
+        }
+    }
+    minFreeAgents.sort((a, b) => b.value - a.value);
+
+    // Make sure teams are all within the roster limits
+    const promises = [];
+    for (let i = 0; i < g.numTeams; i++) {
+        promises.push(checkRosterSize(i));
+    }
+    await Promise.all(promises);
+
+    return userTeamSizeError;
 }
 
 export {

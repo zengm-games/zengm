@@ -389,7 +389,7 @@ class Cache {
     async add(store: Store, obj: any) {
         this.checkStatus('full');
 
-        if (['draftOrder', 'draftPicks', 'events', 'games', 'messages', 'negotiations', 'playerFeats', 'playerStats', 'players', 'schedule', 'teamSeasons', 'teamStats', 'teams', 'trade'].includes(store)) {
+        if (['draftOrder', 'draftPicks', 'events', 'games', 'messages', 'negotiations', 'playerFeats', 'playerStats', 'players', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams', 'trade'].includes(store)) {
             const pk = this.storeInfos[store].pk;
             if (obj.hasOwnProperty(pk)) {
                 if (this.data[store][obj[pk]]) {

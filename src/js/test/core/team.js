@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {connectMeta, Cache} from '../../db';
+import {Cache, connectMeta} from '../../db';
 import g from '../../globals';
 import * as league from '../../core/league';
 import * as player from '../../core/player';
@@ -210,92 +210,82 @@ describe("core/team", () => {
         before(async () => {
             await connectMeta();
             await league.create("Test", 0, undefined, 2013, false);
+            g.cache = new Cache();
+            await g.cache.fill();
         });
         after(() => league.remove(g.lid));
 
-        const addTen = (tid) => {
-            return g.dbl.tx("players", "readwrite", async tx => {
-                let i = 0;
-                await tx.players.index('tid').iterate(g.PLAYER.FREE_AGENT, (p, shortCircuit) => {
-                    if (i >= 10) {
-                        return shortCircuit();
-                    }
-                    i += 1;
-                    p.tid = tid;
-                    return p;
-                });
-            });
+        const addTen = async (tid) => {
+            const players = await g.cache.indexGetAll('playersByTid', g.PLAYER.FREE_AGENT);
+            for (let i = 0; i < 10; i++) {
+                players[i].tid = tid;
+            }
+            g.cache.markDirtyIndex('players');
         };
 
-        const removeTen = (tid) => {
-            return g.dbl.tx(["players", "releasedPlayers", "teams", "teamSeasons"], "readwrite", async tx => {
-                let i = 0;
-                await tx.players.index('tid').iterate(tid, (p, shortCircuit) => {
-                    if (i >= 10) {
-                        return shortCircuit();
-                    }
-                    i += 1;
-                    return player.release(tx, p, false);
-                });
-            });
+        const removeTen = async (tid) => {
+            const players = await g.cache.indexGetAll('playersByTid', tid);
+            for (let i = 0; i < 10; i++) {
+                await player.release(players[i], false);
+            }
         };
 
         it("should add players to AI team under roster limit without returning error message", async () => {
             await removeTen(5);
 
             // Confirm roster size under limit
-            let numPlayers = await g.dbl.players.index('tid').count(5);
-            assert.equal(numPlayers, 4);
+            let players = await g.cache.indexGetAll('playersByTid', 5);
+            assert.equal(players.length, 4);
             const userTeamSizeError = await team.checkRosterSizes();
             assert.equal(userTeamSizeError, null);
 
             // Confirm players added up to limit
-            numPlayers = await g.dbl.players.index('tid').count(5);
-            assert.equal(numPlayers, g.minRosterSize);
+            players = await g.cache.indexGetAll('playersByTid', 5);
+            assert.equal(players.length, g.minRosterSize);
         });
         it("should remove players to AI team over roster limit without returning error message", async () => {
             await addTen(8);
 
             // Confirm roster size over limit
-            let numPlayers = await g.dbl.players.index('tid').count(8);
-            assert.equal(numPlayers, 24);
+            let players = await g.cache.indexGetAll('playersByTid', 8);
+            assert.equal(players.length, 24);
 
             // Confirm no error message and roster size pruned to limit
             const userTeamSizeError = await team.checkRosterSizes();
             assert.equal(userTeamSizeError, null);
-            numPlayers = await g.dbl.players.index('tid').count(8);
-            assert.equal(numPlayers, 15);
+            players = await g.cache.indexGetAll('playersByTid', 8);
+            assert.equal(players.length, 15);
         });
         it("should return error message when user team is under roster limit", async () => {
             await removeTen(g.userTid);
 
             // Confirm roster size under limit
-            let numPlayers = await g.dbl.players.index('tid').count(g.userTid);
-            assert.equal(numPlayers, 4);
+            let players = await g.cache.indexGetAll('playersByTid', g.userTid);
+            assert.equal(players.length, 4);
 
-                // Confirm roster size errora nd no auto-signing of players
+            // Confirm roster size error and no auto-signing of players
             const userTeamSizeError = await team.checkRosterSizes();
             assert.equal(typeof userTeamSizeError, "string");
             assert(userTeamSizeError.includes('less'));
             assert(userTeamSizeError.includes('minimum'));
-            numPlayers = await g.dbl.players.index('tid').count(g.userTid);
-            assert.equal(numPlayers, 4);
+            players = await g.cache.indexGetAll('playersByTid', g.userTid);
+            assert.equal(players.length, 4);
         });
         it("should return error message when user team is over roster limit", async () => {
             await addTen(g.userTid);
             await addTen(g.userTid);
 
             // Confirm roster size over limit
-            let numPlayers = await g.dbl.players.index('tid').count(g.userTid);
-            assert.equal(numPlayers, 24);
+            let players = await g.cache.indexGetAll('playersByTid', g.userTid);
+            assert.equal(players.length, 24);
 
             // Confirm roster size error and no auto-release of players
             const userTeamSizeError = await team.checkRosterSizes();
             assert.equal(typeof userTeamSizeError, "string");
             assert(userTeamSizeError.includes('more'));
             assert(userTeamSizeError.includes('maximum'));
-            numPlayers = await g.dbl.players.index('tid').count(g.userTid);
-            assert.equal(numPlayers, 24);
+            players = await g.cache.indexGetAll('playersByTid', g.userTid);
+            assert.equal(players.length, 24);
         });
     });
 });

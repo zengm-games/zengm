@@ -46,23 +46,21 @@ const handleAutoSort = async () => {
     league.updateLastDbChange();
 };
 
-const doRelease = (pid, justDrafted) => {
-    return g.dbl.tx(["players", "releasedPlayers", "teamSeasons"], "readwrite", async tx => {
-        const numPlayersOnRoster = await tx.players.index('tid').count(g.userTid);
-        if (numPlayersOnRoster <= 5) {
-            return "You must keep at least 5 players on your roster.";
-        }
+const doRelease = async (pid, justDrafted) => {
+    const players = await g.cache.indexGetAll('playersByTid', g.userTid);
+    if (players.length <= 5) {
+        return "You must keep at least 5 players on your roster.";
+    }
 
-        const p = await tx.players.get(pid);
+    const p = await g.cache.get('players', pid);
 
-        // Don't let the user update CPU-controlled rosters
-        if (p.tid !== g.userTid) {
-            return "You aren't allowed to do this.";
-        }
+    // Don't let the user update CPU-controlled rosters
+    if (p.tid !== g.userTid) {
+        return "You aren't allowed to do this.";
+    }
 
-        await player.release(tx, p, justDrafted);
-        league.updateLastDbChange();
-    });
+    await player.release(p, justDrafted);
+    league.updateLastDbChange();
 };
 
 const handleRelease = async p => {

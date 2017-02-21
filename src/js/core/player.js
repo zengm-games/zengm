@@ -601,19 +601,18 @@ function addToFreeAgents(p: Player | PlayerWithoutPid, phase: Phase, baseMoods: 
  * This keeps track of what the player's current team owes him, and then calls player.addToFreeAgents.
  *
  * @memberOf core.player
- * @param {IDBTransaction} tx An IndexedDB transaction on players, releasedPlayers, and teamSeasons, readwrite.
  * @param {Object} p Player object.
  * @param {boolean} justDrafted True if the player was just drafted by his current team and the regular season hasn't started yet. False otherwise. If True, then the player can be released without paying his salary.
  * @return {Promise}
  */
-async function release(tx: BackboardTx, p: Player, justDrafted: boolean) {
+async function release(p: Player, justDrafted: boolean) {
     // Keep track of player salary even when he's off the team, but make an exception for players who were just drafted
     // Was the player just drafted?
     if (!justDrafted) {
-        tx.releasedPlayers.add({
+        await g.cache.add('releasedPlayers', {
             pid: p.pid,
             tid: p.tid,
-            contract: p.contract,
+            contract: helpers.deepCopy(p.contract),
         });
     } else {
         // Clear player salary log if just drafted, because this won't be paid.

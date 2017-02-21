@@ -36,13 +36,15 @@ get tests working
   - confirm getAll updates from cache
 - a lot of tests could run just from cache, no IDB
 
+player.sign, like player.addToFreeAgents to encapsulate tid changes
+
 how do caches based on g.season work in preseason?
 
 revisit add.. move stuff to put
 - store if pk is auto incrementing, if not then require it on put/add
 
 getCopy.teamSeasons
-- for teamFinances, elsewhere?
+- for teamFinances, account (should fix tests), getCopy.teams?
 
 rewrite team.filter and player.filter
 - maybe as part of larger data access thing? if so, look at all the concats for using events/messages/playerFeats too

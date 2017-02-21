@@ -1,5 +1,7 @@
 IVERSON
 
+delete team.filter, copy documentation to getCopy.teams
+
 player.filter -> db.getCopy.players
 - how to handle cases where players from IDB are passed in? do i need to augment with cache, or is it all old?
   - basically just when some players are retired, right? in that case, could augment, since performance is not critical when reviewing archived data
@@ -31,8 +33,6 @@ seems to be bug associated with flush not syncing schedule/games right, see dupe
 
 get tests working
 - db.getCopy.teams
-  - port over team.filter tests and delete team.filter
-    - copy documentation, though
   - operate on individual functions? can export them just for tests
   - confirm operations that don't require IDB
   - confirm getAll updates from cache

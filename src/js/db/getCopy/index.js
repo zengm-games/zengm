@@ -5,6 +5,7 @@ import playerFeats from './playerFeats';
 import playerStats from './playerStats';
 import players from './players';
 import playoffSeries from './playoffSeries';
+import teamSeasons from './teamSeasons';
 import teams from './teams';
 
 export {
@@ -15,5 +16,6 @@ export {
     playerStats,
     players,
     playoffSeries,
+    teamSeasons,
     teams,
 };

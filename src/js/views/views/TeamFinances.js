@@ -55,30 +55,27 @@ class FinancesForm extends React.Component {
 
         this.setState({saving: true});
 
-        await g.dbl.tx(["teams", "teamSeasons"], "readwrite", async tx => {
-            const t = await tx.teams.get(g.userTid);
+        const t = await g.cache.get('teams', g.userTid);
 
-            const vals = {
-                // Convert from [millions of dollars] to [thousands of dollars] rounded to the nearest $10k
-                coaching: helpers.bound(helpers.round(this.state.coaching * 100) * 10, 0, Infinity),
-                facilities: helpers.bound(helpers.round(this.state.facilities * 100) * 10, 0, Infinity),
-                health: helpers.bound(helpers.round(this.state.health * 100) * 10, 0, Infinity),
-                scouting: helpers.bound(helpers.round(this.state.scouting * 100) * 10, 0, Infinity),
+        const vals = {
+            // Convert from [millions of dollars] to [thousands of dollars] rounded to the nearest $10k
+            coaching: helpers.bound(helpers.round(this.state.coaching * 100) * 10, 0, Infinity),
+            facilities: helpers.bound(helpers.round(this.state.facilities * 100) * 10, 0, Infinity),
+            health: helpers.bound(helpers.round(this.state.health * 100) * 10, 0, Infinity),
+            scouting: helpers.bound(helpers.round(this.state.scouting * 100) * 10, 0, Infinity),
 
-                // Already in [dollars]
-                ticketPrice: helpers.bound(parseFloat(helpers.round(this.state.ticketPrice, 2)), 0, Infinity),
-            };
+            // Already in [dollars]
+            ticketPrice: helpers.bound(parseFloat(helpers.round(this.state.ticketPrice, 2)), 0, Infinity),
+        };
 
-            for (const key of Object.keys(vals)) {
-                // Check for NaN before updating
-                if (vals[key] === vals[key]) {
-                    t.budget[key].amount = vals[key];
-                }
+        for (const key of Object.keys(vals)) {
+            // Check for NaN before updating
+            if (vals[key] === vals[key]) {
+                t.budget[key].amount = vals[key];
             }
+        }
 
-            await tx.teams.put(t);
-            await finances.updateRanks(["budget"]);
-        });
+        await finances.updateRanks(["budget"]);
 
         logEvent({
             type: 'success',

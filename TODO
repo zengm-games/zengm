@@ -31,6 +31,8 @@ seems to be bug associated with flush not syncing schedule/games right, see dupe
 
 get tests working
 - db.getCopy.teams
+  - port over team.filter tests and delete team.filter
+    - copy documentation, though
   - operate on individual functions? can export them just for tests
   - confirm operations that don't require IDB
   - confirm getAll updates from cache
@@ -42,9 +44,6 @@ how do caches based on g.season work in preseason?
 
 revisit add.. move stuff to put
 - store if pk is auto incrementing, if not then require it on put/add
-
-getCopy.teamSeasons
-- for teamFinances, account (should fix tests), getCopy.teams?
 
 rewrite team.filter and player.filter
 - maybe as part of larger data access thing? if so, look at all the concats for using events/messages/playerFeats too

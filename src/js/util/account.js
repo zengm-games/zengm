@@ -1,7 +1,6 @@
 // @flow
 
 /*eslint camelcase: 0*/
-import backboard from 'backboard';
 import Promise from 'bluebird';
 import $ from 'jquery';
 import g from '../globals';
@@ -331,7 +330,7 @@ async function checkDynasty(titles: number, years: number, slug: AchievementKey,
         return false;
     }
 
-    const teamSeasons = await g.dbl.teamSeasons.index("tid, season").getAll(backboard.bound([g.userTid], [g.userTid, '']));
+    const teamSeasons = await getCopy.teamSeasons({tid: g.userTid});
 
     let titlesFound = 0;
     // Look over past years

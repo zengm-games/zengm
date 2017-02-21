@@ -1,4 +1,3 @@
-import backboard from 'backboard';
 import g from '../globals';
 import * as team from '../core/team';
 import {getCopy} from '../db';
@@ -64,7 +63,7 @@ async function updateTeamFinances(inputs, updateEvents, state) {
         vars.contractTotals = contractTotals;
         vars.salariesSeasons = [season, season + 1, season + 2, season + 3, season + 4];
 
-        const teamSeasons = await g.dbl.teamSeasons.index("tid, season").getAll(backboard.bound([inputs.tid], [inputs.tid, '']));
+        const teamSeasons = await getCopy.teamSeasons({tid: inputs.tid});
 
         teamSeasons.reverse(); // Most recent season first
 

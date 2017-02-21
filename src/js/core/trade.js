@@ -8,7 +8,7 @@ import * as team from './team';
 import {getCopy} from '../db';
 import * as helpers from '../util/helpers';
 import logEvent from '../util/logEvent';
-import type {BackboardTx, TradePickValues, TradeSummary, TradeTeams} from '../util/types';
+import type {TradePickValues, TradeSummary, TradeTeams} from '../util/types';
 
 /**
  * Start a new trade with a team.
@@ -587,20 +587,16 @@ async function makeItWork(
  * This was made for team.valueChange, so it could be called once and the results cached.
  *
  * @memberOf core.trade
- * @param {IDBObjectStore|IDBTransaction|null} ot An IndexedDB object store or transaction on players; if null is passed, then a new transaction will be used.
  * @return {Promise.Object} Resolves to estimated draft pick values.
  */
-async function getPickValues(tx: ?BackboardTx): Promise<TradePickValues> {
-    const dbOrTx = tx !== undefined && tx !== null ? tx : g.dbl;
-
+async function getPickValues(): Promise<TradePickValues> {
     const estValues = {
         default: [75, 73, 71, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 50, 50, 49, 49, 49, 48, 48, 48, 47, 47, 47, 46, 46, 46, 45, 45, 45, 44, 44, 44, 43, 43, 43, 42, 42, 42, 41, 41, 41, 40, 40, 39, 39, 38, 38, 37, 37], // This is basically arbitrary
     };
 
-    // Look up to 4 season in the future, but depending on whether this is before or after the draft, the first or last will be empty/incomplete
     const promises = [];
-    for (let i = g.season; i < g.season + 4; i++) {
-        promises.push(dbOrTx.players.index('draft.year').getAll(i).then(players => {
+    for (const tid of [g.PLAYER.UNDRAFTED, g.PLAYER.UNDRAFTED_2, g.PLAYER.UNDRAFTED_3]) {
+        promises.push(g.cache.indexGetAll('playersByTid', tid).then(players => {
             if (players.length > 0) {
                 for (const p of players) {
                     p.value += 4; // +4 is to generally make picks more valued

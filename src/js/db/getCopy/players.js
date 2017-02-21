@@ -205,6 +205,14 @@ for (let k = 0; k < p.ratings.length; k++) {
     }
 };
 
+
+const reduceCareerStats = (careerStats, attr, playoffs) => {
+    return careerStats
+        .filter((cs) => cs.playoffs === playoffs)
+        .map((cs) => cs[attr])
+        .reduce((memo, num) => memo + num, 0);
+};
+
 const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: boolean, {
     fuzz,
     numGamesRemaining,
@@ -340,21 +348,27 @@ const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: 
 
     if (season !== undefined && ((playoffs && !regularSeason) || (!playoffs && regularSeason))) {
         output.stats = output.stats[0];
-    } else if (season === undefined && regularSeason) {
-        output.careerStats = {};
+    } else if (season === undefined) {
+        if (regularSeason) {
+            output.careerStats = {};
+        }
+        if (playoffs) {
+            output.careerStatsPlayoffs = {};
+        }
 
         // Aggregate annual stats and ignore other things
         const ignoredKeys = ["age", "playoffs", "season", "tid"];
         for (const attr of Object.keys(output.stats[0])) {
             if (!ignoredKeys.includes(attr)) {
-                output.careerStats[attr] = careerStats
-                    .filter((cs) => !cs.playoffs)
-                    .map((cs) => cs[attr])
-                    .reduce((memo, num) => memo + num, 0);
+                if (regularSeason) {
+                    output.careerStats[attr] = reduceCareerStats(careerStats, attr, false);
+                }
+                if (playoffs) {
+                    output.careerStatsPlayoffs[attr] = reduceCareerStats(careerStats, attr, true);
+                }
             }
         }
 // Special cases for PER and EWA from player.filter?
-// Playoffs?
     }
 };
 
@@ -442,7 +456,11 @@ const getCopy = async (players: Player | Player[], {
         playersFiltered = await processMaybeWithIDB();
     }
 
-    return playersFiltered.filter((p) => p !== undefined);
+    if (Array.isArray(playersFiltered)) {
+        return playersFiltered.filter((p) => p !== undefined);
+    } else {
+        return playersFiltered;
+    }
 };
 
 export default getCopy;

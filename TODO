@@ -58,6 +58,7 @@ rewrite team.filter and player.filter
   - types for season/statType/playoffs options, which only have affect based on other options
 
 links slow while game sim in progress
+- now the status text doesn't even update, I think finally due to using caches in advStats. maybe need to reintroduce some pauses
 
 refactor
 - clear, delete need to handle indexes

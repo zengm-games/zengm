@@ -1,11 +1,9 @@
 // @flow
 
-import backboard from 'backboard';
 import Promise from 'bluebird';
 import _ from 'underscore';
 import g from '../globals';
-import * as player from '../core/player';
-import * as team from '../core/team';
+import {getCopy} from '../db';
 
 /**
  * Calcualte the current season's Player Efficiency Rating (PER) for each active player and write it to the database.
@@ -19,12 +17,13 @@ import * as team from '../core/team';
  */
 async function calculatePER() {
     // Total team stats (not per game averages) - gp, pts, ast, fg, plus all the others needed for league totals
-    const teams = await team.filter({
+    const teams = await getCopy.teams({
         attrs: ["tid"],
         stats: ["gp", "ft", "pf", "ast", "fg", "pts", "fga", "orb", "tov", "fta", "trb", "oppPts"],
         season: g.season,
-        totals: true,
         playoffs: g.PHASE.PLAYOFFS === g.phase,
+        regularSeason: g.PHASE.PLAYOFFS !== g.phase,
+        statType: 'totals',
     });
 
     // Total league stats (not per game averages) - gp, ft, pf, ast, fg, pts, fga, orb, tov, fta, trb
@@ -32,9 +31,9 @@ async function calculatePER() {
     const league = teams.reduce((memo, t) => {
         for (let i = 0; i < leagueStats.length; i++) {
             if (memo.hasOwnProperty(leagueStats[i])) {
-                memo[leagueStats[i]] += t[leagueStats[i]];
+                memo[leagueStats[i]] += t.stats[leagueStats[i]];
             } else {
-                memo[leagueStats[i]] = t[leagueStats[i]];
+                memo[leagueStats[i]] = t.stats[leagueStats[i]];
             }
         }
         return memo;
@@ -48,7 +47,7 @@ async function calculatePER() {
     // Calculate pace for each team, using the "estimated pace adjustment" formula rather than the "pace adjustment" formula because it's simpler and ends up at nearly the same result. To do this the real way, I'd probably have to store the number of possessions from core.gameSim.
     for (let i = 0; i < teams.length; i++) {
         //estimated pace adjustment = 2 * lg_PPG / (team_PPG + opp_PPG)
-        teams[i].pace = 2 * (league.pts / league.gp) / (teams[i].pts / teams[i].gp + teams[i].oppPts / teams[i].gp);
+        teams[i].pace = 2 * (league.pts / league.gp) / (teams[i].stats.pts / teams[i].stats.gp + teams[i].stats.oppPts / teams[i].stats.gp);
 
         // Handle divide by 0 error - check for NaN
         if (teams[i].pace !== teams[i].pace) {
@@ -58,19 +57,15 @@ async function calculatePER() {
 
     // Total player stats (not per game averages) - min, tp, ast, fg, ft, tov, fga, fta, trb, orb, stl, blk, pf
     // Active players have tid >= 0
-    let players = await g.dbl.players.index('tid').getAll(backboard.lowerBound(0));
-    players = await player.withStats(null, players, {
-        statsSeasons: [g.season],
-        statsPlayoffs: g.PHASE.PLAYOFFS === g.phase,
-    });
-
-    players = player.filter(players, {
+    let players = await g.cache.indexGetAll('playersByTid', [0, Infinity]);
+    players = await getCopy.players(players, {
         attrs: ["pid", "tid"],
         stats: ["min", "tp", "ast", "fg", "ft", "tov", "fga", "fta", "trb", "orb", "stl", "blk", "pf"],
         ratings: ["pos"],
         season: g.season,
-        totals: true,
         playoffs: g.PHASE.PLAYOFFS === g.phase,
+        regularSeason: g.PHASE.PLAYOFFS !== g.phase,
+        statType: 'totals',
     });
 
     const aPER = [];
@@ -99,8 +94,8 @@ async function calculatePER() {
                 uPER = (1 / players[i].stats.min) *
                              (players[i].stats.tp
                              + (2 / 3) * players[i].stats.ast
-                             + (2 - factor * (teams[tid].ast / teams[tid].fg)) * players[i].stats.fg
-                             + (players[i].stats.ft * 0.5 * (1 + (1 - (teams[tid].ast / teams[tid].fg)) + (2 / 3) * (teams[tid].ast / teams[tid].fg)))
+                             + (2 - factor * (teams[tid].stats.ast / teams[tid].stats.fg)) * players[i].stats.fg
+                             + (players[i].stats.ft * 0.5 * (1 + (1 - (teams[tid].stats.ast / teams[tid].stats.fg)) + (2 / 3) * (teams[tid].stats.ast / teams[tid].stats.fg)))
                              - vop * players[i].stats.tov
                              - vop * drbp * (players[i].stats.fga - players[i].stats.fg)
                              - vop * 0.44 * (0.44 + (0.56 * drbp)) * (players[i].stats.fta - players[i].stats.ft)

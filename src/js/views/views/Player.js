@@ -281,6 +281,9 @@ const Player = ({events, feats, freeAgent, godMode, injured, player, retired, sh
         </div>;
     }
 
+    const statsRegularSeason = player.stats.filter((ps) => !ps.playoffs);
+    const statsPlayoffs = player.stats.filter((ps) => ps.playoffs);
+
     return <div>
         <div className="row">
             <div className="col-sm-6">
@@ -328,14 +331,14 @@ const Player = ({events, feats, freeAgent, godMode, injured, player, retired, sh
         <StatsTable
             careerStats={player.careerStats}
             name="Player:Stats"
-            stats={player.stats}
+            stats={statsRegularSeason}
         />
 
         <h3>Shot Locations</h3>
         <ShotLocationsTable
             careerStats={player.careerStats}
             name="Player:ShotLocations"
-            stats={player.stats}
+            stats={statsRegularSeason}
         />
 
         <h2>Playoffs</h2>
@@ -343,14 +346,14 @@ const Player = ({events, feats, freeAgent, godMode, injured, player, retired, sh
         <StatsTable
             careerStats={player.careerStatsPlayoffs}
             name="Player:PlayoffStats"
-            stats={player.statsPlayoffs}
+            stats={statsPlayoffs}
         />
 
         <h3>Shot Locations</h3>
         <ShotLocationsTable
             careerStats={player.careerStatsPlayoffs}
             name="Player:PlayoffShotLocations"
-            stats={player.statsPlayoffs}
+            stats={statsPlayoffs}
         />
 
         <h2>Ratings</h2>

@@ -153,6 +153,10 @@ const processStats = async (
     // Handle playoffs/regularSeason
     teamStats = filterOrderStats(teamStats, playoffs, regularSeason);
 
+    if (teamStats.length === 0) {
+        teamStats.push({});
+    }
+
     output.stats = teamStats.map((ts) => {
         const row = {};
 
@@ -221,7 +225,7 @@ const processStats = async (
         }
 
         // Since they come in same stream, always need to be able to distinguish
-        row.playoffs = ts.playoffs;
+        row.playoffs = ts.playoffs !== undefined ? ts.playoffs : playoffs;
 
         return row;
     });

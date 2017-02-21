@@ -750,33 +750,36 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
     };
 
     // This simulates a day, including game simulation and any other bookkeeping that needs to be done
-    const cbRunDay = async () => {
-        if (numDays > 0) {
-            // Hit the DB to check stopGames in case it came from another tab
-            await league.loadGameAttribute('stopGames');
+    const cbRunDay = () => {
+        // setTimeout is for responsiveness during gameSim with UI that doesn't hit IDB
+        setTimeout(async () => {
+            if (numDays > 0) {
+                // Hit the DB to check stopGames in case it came from another tab
+                await league.loadGameAttribute('stopGames');
 
-            // If we didn't just stop games, let's play
-            // Or, if we are starting games (and already passed the lock), continue even if stopGames was just seen
-            if (start || !g.stopGames) {
-                // If start is set, then reset stopGames
-                if (g.stopGames) {
-                    await league.setGameAttributes({stopGames: false});
+                // If we didn't just stop games, let's play
+                // Or, if we are starting games (and already passed the lock), continue even if stopGames was just seen
+                if (start || !g.stopGames) {
+                    // If start is set, then reset stopGames
+                    if (g.stopGames) {
+                        await league.setGameAttributes({stopGames: false});
+                    }
+
+                    if (g.phase !== g.PHASE.PLAYOFFS) {
+                        await freeAgents.decreaseDemands();
+                        await freeAgents.autoSign();
+                    }
+
+                    await cbPlayGames();
+                } else {
+                    // Update UI if stopped
+                    await cbNoGames();
                 }
-
-                if (g.phase !== g.PHASE.PLAYOFFS) {
-                    await freeAgents.decreaseDemands();
-                    await freeAgents.autoSign();
-                }
-
-                await cbPlayGames();
-            } else {
-                // Update UI if stopped
+            } else if (numDays === 0) {
+                // If this is the last day, update play menu
                 await cbNoGames();
             }
-        } else if (numDays === 0) {
-            // If this is the last day, update play menu
-            await cbNoGames();
-        }
+        }, 0);
     };
 
     // If this is a request to start a new simulation... are we allowed to do

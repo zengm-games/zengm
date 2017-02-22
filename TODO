@@ -1,7 +1,5 @@
 IVERSON
 
-on player page under ratings, age shows as NaN, team is blank
-
 PER and EWA not working. in general, or because of fantasy draft?
 - related to auto sort and PT being weird, or is that a separate issue?
 
@@ -10,6 +8,7 @@ in fantasy draft, are current season draft prospects being protected?
 after season, why all FAs insulted by my presence?
 
 since phase change can't be aborted anymore... what should menu be like then? what was it before abortable?
+- also, what about the lock system?
 
 add flow comments to new files!
 - hard for ones that return (T | T[]) depending on inputs. maybe rethink getCopy API

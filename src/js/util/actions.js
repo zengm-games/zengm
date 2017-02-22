@@ -195,7 +195,7 @@ const playMenu = {
     },
 
     abortPhaseChange: () => {
-        phase.abort();
+        console.log('This does nothing');
     },
 
     stopAuto: async () => {

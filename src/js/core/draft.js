@@ -12,7 +12,7 @@ import {getCopy} from '../db';
 import * as helpers from '../util/helpers';
 import logEvent from '../util/logEvent';
 import * as random from '../util/random';
-import type {BackboardTx, PickRealized, TeamFiltered} from '../util/types';
+import type {PickRealized, TeamFiltered} from '../util/types';
 
 // Add a new set of draft picks
 async function genPicks(season: number) {
@@ -350,17 +350,13 @@ async function genOrder() {
  * Randomize team order and then snake for 12 rounds.
  *
  * @memberOf core.draft
- * @param {IDBTransaction} ot An IndexedDB transaction on draftOrder, readwrite.
  * @return {Promise}
  */
-async function genOrderFantasy(tx: BackboardTx, position: number) {
+async function genOrderFantasy(position: number) {
     // Randomly-ordered list of tids
-    const tids = [];
-    for (let i = 0; i < g.numTeams; i++) {
-        tids.push(i);
-    }
+    const tids = _.range(g.numTeams);
     random.shuffle(tids);
-    if (position >= 1 && position <= g.numTeams) {
+    if (position !== undefined && position >= 1 && position <= g.numTeams) {
         let i = 0;
         while (tids[position - 1] !== g.userTid && i < 1000) {
             random.shuffle(tids);
@@ -382,6 +378,11 @@ async function genOrderFantasy(tx: BackboardTx, position: number) {
 
         tids.reverse(); // Snake
     }
+
+    await g.cache.put('draftOrder', {
+        rid: 0,
+        draftOrder,
+    });
 }
 
 /**

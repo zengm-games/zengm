@@ -1,6 +1,5 @@
 // @flow
 
-import backboard from 'backboard';
 import Promise from 'bluebird';
 import _ from 'underscore';
 import g from '../globals';
@@ -20,9 +19,7 @@ import * as lock from '../util/lock';
 import logEvent from '../util/logEvent';
 import * as message from '../util/message';
 import * as random from '../util/random';
-import type {BackboardTx, Phase, UpdateEvents} from '../util/types';
-
-let phaseChangeTx;
+import type {Phase, UpdateEvents} from '../util/types';
 
 /**
  * Common tasks run after a new phrase is set.
@@ -64,7 +61,7 @@ async function newPhasePreseason() {
 
     const tids: number[] = _.range(g.numTeams);
 
-    let scoutingRank;
+    let scoutingRankTemp;
     await Promise.all(tids.map(async (tid) => {
         // Only actually need 3 seasons for userTid, but get it for all just in case there is a
         // skipped season (alternatively could use cursor to just find most recent season, but this
@@ -75,12 +72,16 @@ async function newPhasePreseason() {
         // Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
         // This is done BEFORE a new season row is added.
         if (tid === g.userTid) {
-            scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
+            scoutingRankTemp = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
         }
 
         await g.cache.add('teamSeasons', team.genSeasonRow(tid, prevSeason));
         await g.cache.add('teamStats', team.genStatsRow(tid));
     }));
+    const scoutingRank = scoutingRankTemp;
+    if (scoutingRank === undefined) {
+        throw new Error('scoutingRank should be defined');
+    }
 
     const teamSeasons = await g.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season - 1}`, `${g.season}`]);
     const coachingRanks = teamSeasons.map(teamSeason => teamSeason.expenses.coaching.rank);
@@ -478,23 +479,25 @@ async function newPhaseFreeAgency() {
     return [helpers.leagueUrl(["free_agents"]), ["playerMovement"]];
 }
 
-async function newPhaseFantasyDraft(tx: BackboardTx, position: number) {
+async function newPhaseFantasyDraft(position: number) {
     await contractNegotiation.cancelAll();
-    await draft.genOrderFantasy(tx, position);
+    await draft.genOrderFantasy(position);
     await league.setGameAttributes({nextPhase: g.phase});
-    await tx.releasedPlayers.clear();
+    await g.cache.clear('releasedPlayers');
 
     // Protect draft prospects from being included in this
-    await tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED, p => {
+    const playersUndrafted = await g.cache.indexGetAll('playersByTid', g.PLAYER.UNDRAFTED);
+    for (const p of playersUndrafted) {
         p.tid = g.PLAYER.UNDRAFTED_FANTASY_TEMP;
-        return p;
-    });
+    }
 
     // Make all players draftable
-    await tx.players.index('tid').iterate(backboard.lowerBound(g.PLAYER.FREE_AGENT), p => {
+    const players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.FREE_AGENT, Infinity]);
+    for (const p of players) {
         p.tid = g.PLAYER.UNDRAFTED;
-        return p;
-    });
+    }
+
+    g.cache.markDirtyIndexes('players');
 
     return [helpers.leagueUrl(["draft"]), ["playerMovement"]];
 }
@@ -519,39 +522,30 @@ async function newPhase(phase: Phase, extra: any) {
 
     const phaseChangeInfo = {
         [g.PHASE.PRESEASON]: {
-            objectStores: ["players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"],
             func: newPhasePreseason,
         },
         [g.PHASE.REGULAR_SEASON]: {
-            objectStores: ["schedule"],
             func: newPhaseRegularSeason,
         },
         [g.PHASE.PLAYOFFS]: {
-            objectStores: ["players", "playerStats", "releasedPlayers", "schedule", "teams", "teamSeasons", "teamStats"],
             func: newPhasePlayoffs,
         },
         [g.PHASE.BEFORE_DRAFT]: {
-            objectStores: ["events", "messages", "players", "playerStats", "releasedPlayers", "teams", "teamSeasons", "teamStats"],
             func: newPhaseBeforeDraft,
         },
         [g.PHASE.DRAFT]: {
-            objectStores: ["draftPicks", "draftOrder", "players", "teams", "teamSeasons", "teamStats"],
             func: newPhaseDraft,
         },
         [g.PHASE.AFTER_DRAFT]: {
-            objectStores: ["draftPicks"],
             func: newPhaseAfterDraft,
         },
         [g.PHASE.RESIGN_PLAYERS]: {
-            objectStores: ["messages", "players", "teams", "teamSeasons", "teamStats"],
             func: newPhaseResignPlayers,
         },
         [g.PHASE.FREE_AGENCY]: {
-            objectStores: ["messages", "players", "teams", "teamSeasons", "teamStats"],
             func: newPhaseFreeAgency,
         },
         [g.PHASE.FANTASY_DRAFT]: {
-            objectStores: ["draftOrder", "messages", "players", "releasedPlayers"],
             func: newPhaseFantasyDraft,
         },
     };
@@ -567,29 +561,21 @@ async function newPhase(phase: Phase, extra: any) {
         league.updateLastDbChange();
 
         if (phaseChangeInfo.hasOwnProperty(phase)) {
-            // Careful rewriting this async/await style... for some reason that "throw err" does not stop execution of things after the tx promise because that still resolves
-            const result = await g.dbl.tx(phaseChangeInfo[phase].objectStores, "readwrite", async tx => {
-                phaseChangeTx = tx;
+            let result;
+            try {
+                result = await phaseChangeInfo[phase].func(extra);
+            } catch (err) {
+                await league.setGameAttributes({phaseChangeInProgress: false});
+                await ui.updatePlayMenu();
+                logEvent({
+                    type: "error",
+                    text: 'Critical error during phase change. <a href="https://basketball-gm.com/manual/debugging/"><b>Read this to learn about debugging.</b></a>',
+                    saveToDb: false,
+                    persistent: true,
+                });
 
-                try {
-                    return await phaseChangeInfo[phase].func(tx, extra);
-                } catch (err) {
-                    if (phaseChangeTx && phaseChangeTx.abort) {
-                        phaseChangeTx.abort();
-                    }
-
-                    await league.setGameAttributes({phaseChangeInProgress: false});
-                    await ui.updatePlayMenu();
-                    logEvent({
-                        type: "error",
-                        text: 'Critical error during phase change. <a href="https://basketball-gm.com/manual/debugging/"><b>Read this to learn about debugging.</b></a>',
-                        saveToDb: false,
-                        persistent: true,
-                    });
-
-                    throw err;
-                }
-            });
+                throw err;
+            }
 
             if (result && result.length === 2) {
                 const [url, updateEvents] = result;
@@ -602,22 +588,7 @@ async function newPhase(phase: Phase, extra: any) {
     }
 }
 
-async function abort() {
-    try {
-        phaseChangeTx.abort();
-    } catch (err) {
-        // Could be here because tx already ended, phase change is happening in another tab, or something weird.
-        console.log("This is probably not actually an error:");
-        console.log(err);
-        helpers.errorNotify("If \"Abort\" doesn't work, check if you have another tab open.");
-    } finally {
-        // If another window has a phase change in progress, this won't do anything until that finishes
-        await league.setGameAttributes({phaseChangeInProgress: false});
-        ui.updatePlayMenu();
-    }
-}
-
 export {
+    // eslint-disable-next-line import/prefer-default-export
     newPhase,
-    abort,
 };

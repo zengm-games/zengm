@@ -1,8 +1,14 @@
 IVERSON
 
-fantasy draft
+on player page under ratings, age shows as NaN
+
+PER and EWA not working. in general, or because of fantasy draft?
+
+in fantasy draft, are current season draft prospects being protected?
 
 after season, why all FAs insulted by my presence?
+
+since phase change can't be aborted anymore... what should menu be like then? what was it before abortable?
 
 add flow comments to new files!
 - hard for ones that return (T | T[]) depending on inputs. maybe rethink getCopy API
@@ -31,8 +37,7 @@ if i can gracefully handle absence of g.season etc, put cache creation inside co
 update maxIds on add/put with defind pk, otherwise it's stale
 
 seems to be bug associated with flush not syncing schedule/games right, see dupe games in schedule and then errors on saving box scores
-- deletes processing right?
-- could have been bug just fixed in clear
+- deletes processing right? seems to occur when nothing gets deleted from schedule
 
 get tests working
 - db.getCopy.teams

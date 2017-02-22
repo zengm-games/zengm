@@ -304,6 +304,7 @@ const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: 
     playoffs,
     regularSeason,
     season,
+    tid,
     showNoStats,
     showRookies,
     statType,
@@ -333,12 +334,11 @@ const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: 
     // Handle playoffs/regularSeason
     playerStats = filterOrderStats(playerStats, playoffs, regularSeason);
 
-    // Only season(s) in question
+    // Only season(s) and team in question
     playerStats = playerStats.filter((ps) => {
-        if (season !== undefined) {
-            return ps.season === season;
-        }
-        return true;
+        const seasonCheck = season === undefined || ps.season === season;
+        const tidCheck = tid === undefined || ps.tid === tid;
+        return seasonCheck && tidCheck;
     });
 
     if (playerStats.length === 0 && keepWithNoStats) {
@@ -356,7 +356,7 @@ const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: 
     });
 
     if (season !== undefined && ((playoffs && !regularSeason) || (!playoffs && regularSeason))) {
-        output.stats = output.stats[0];
+        output.stats = output.stats[output.stats.length - 1]; // Take last value, in case player was traded/signed to team twice in a season
     } else if (season === undefined) {
         // Aggregate annual stats and ignore other things
         const ignoredKeys = ['pid', 'season', 'tid', 'yearsWithTeam'];

@@ -445,7 +445,7 @@ class Cache {
     async clear(store: Store) {
         this.checkStatus('full');
 
-        if (['negotiations', 'schedule', 'teamSeasons'].includes(store)) {
+        if (['negotiations', 'releasedPlayers', 'schedule', 'teamSeasons'].includes(store)) {
             for (const key of Object.keys(this.data[store])) {
                 delete this.data[store][key];
                 this.deletes[store].add(key);

@@ -1228,7 +1228,7 @@ function filter(p: PlayerWithStats | PlayerWithStats[], options: any): PlayerFil
                 const nameParts = p.firstName.split(/[ .-]/);
                 const abbrev = nameParts.map(s => (s === "" ? "" : `${s[0]}.`));
                 const concat = abbrev.join("");
-                fp.nameAbbreviation = `${concat} ${p.lastName}`;
+                fp.nameAbbrev = `${concat} ${p.lastName}`;
             } else {
                 fp[options.attrs[i]] = p[options.attrs[i]];
             }

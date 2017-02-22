@@ -17,7 +17,7 @@ async function updatePlayers(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('clearWatchList') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || inputs.statType !== state.statType || inputs.playoffs !== state.playoffs) {
         let players = await g.dbl.players.getAll();
         players = players.filter(p => p.watch && typeof p.watch !== "function"); // In Firefox, objects have a "watch" function
-        players = await getCopy.players(players, {
+        players = await getCopy.playersPlus(players, {
             attrs: ["pid", "name", "age", "injury", "tid", "abbrev", "watch", "contract", "freeAgentMood", "draft"],
             ratings: ["ovr", "pot", "skills", "pos"],
             stats: ["gp", "min", "fgp", "tpp", "ftp", "trb", "ast", "tov", "stl", "blk", "pts", "per", "ewa"],

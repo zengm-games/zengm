@@ -431,9 +431,9 @@ const Player = ({events, feats, freeAgent, godMode, injured, player, retired, sh
                     defaultSort={[0, 'asc']}
                     footer={['Total', helpers.formatCurrency(player.salariesTotal, 'M')]}
                     name="Player:Salaries"
-                    rows={player.salaries.map(s => {
+                    rows={player.salaries.map((s, i) => {
                         return {
-                            key: s.season,
+                            key: i,
                             data: [s.season, helpers.formatCurrency(s.amount, 'M')],
                         };
                     })}

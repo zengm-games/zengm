@@ -172,7 +172,7 @@ const augmentOffers = async (offers) => {
 
         let players = await g.cache.indexGetAll('playersByTid', tid);
         players = players.filter(p => offers[i].pids.includes(p.pid));
-        players = await getCopy.players(players, {
+        players = await getCopy.playersPlus(players, {
             attrs: ["pid", "name", "age", "contract", "injury", "watch"],
             ratings: ["ovr", "pot", "skills", "pos"],
             stats: ["min", "pts", "trb", "ast", "per"],

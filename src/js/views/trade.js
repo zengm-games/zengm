@@ -57,7 +57,7 @@ async function updateTrade() {
     const ratings = ["ovr", "pot", "skills", "pos"];
     const stats = ["min", "pts", "trb", "ast", "per"];
 
-    userRoster = await getCopy.players(userRoster, {
+    userRoster = await getCopy.playersPlus(userRoster, {
         attrs,
         ratings,
         stats,
@@ -95,7 +95,7 @@ async function updateTrade() {
         }),
     ]);
 
-    otherRoster = await getCopy.players(otherRoster, {
+    otherRoster = await getCopy.playersPlus(otherRoster, {
         attrs,
         ratings,
         stats,

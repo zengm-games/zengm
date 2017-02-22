@@ -27,7 +27,7 @@ async function updateFreeAgents() {
 
     const capSpace = g.salaryCap > payroll ? (g.salaryCap - payroll) / 1000 : 0;
 
-    players = await getCopy.players(players, {
+    players = await getCopy.playersPlus(players, {
         attrs: ["pid", "name", "age", "contract", "freeAgentMood", "injury", "watch"],
         ratings: ["ovr", "pot", "skills", "pos"],
         stats: ["min", "pts", "trb", "ast", "per"],

@@ -68,7 +68,7 @@ async function updateHistory(inputs, updateEvents, state) {
             awards.bestRecordConfs = [awards.bre, awards.brw];
         }
 
-        retiredPlayers = await getCopy.players(retiredPlayers, {
+        retiredPlayers = await getCopy.playersPlus(retiredPlayers, {
             attrs: ["pid", "name", "age", "hof"],
             season,
             stats: ["tid", "abbrev"],

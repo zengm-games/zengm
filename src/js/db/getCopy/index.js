@@ -6,6 +6,7 @@ import messages from './messages';
 import playerFeats from './playerFeats';
 import playerStats from './playerStats';
 import players from './players';
+import playersPlus from './playersPlus';
 import playoffSeries from './playoffSeries';
 import teamSeasons from './teamSeasons';
 import teams from './teams';
@@ -17,6 +18,7 @@ export {
     playerFeats,
     playerStats,
     players,
+    playersPlus,
     playoffSeries,
     teamSeasons,
     teams,

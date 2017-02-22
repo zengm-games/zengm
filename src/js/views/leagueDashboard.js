@@ -174,7 +174,7 @@ async function updatePlayers(inputs, updateEvents) {
         const vars = {};
 
         let players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.UNDRAFTED, Infinity]);
-        players = await getCopy.players(players, {
+        players = await getCopy.playersPlus(players, {
             attrs: ['pid', 'name', 'abbrev', 'tid', 'age', 'contract', 'rosterOrder', 'injury', 'watch'],
             ratings: ['ovr', 'pot', 'dovr', 'dpot', 'skills', 'pos'],
             stats: ['gp', 'min', 'pts', 'trb', 'ast', 'per', 'yearsWithTeam'],

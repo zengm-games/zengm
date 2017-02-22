@@ -13,7 +13,7 @@ async function updateUserRoster(inputs, updateEvents) {
             g.cache.indexGetAll('draftPicksByTid', g.userTid),
         ]);
 
-        userRoster = await getCopy.players(userRoster, {
+        userRoster = await getCopy.playersPlus(userRoster, {
             attrs: ["pid", "name", "age", "contract", "injury", "watch", "gamesUntilTradable"],
             ratings: ["ovr", "pot", "skills", "pos"],
             stats: ["min", "pts", "trb", "ast", "per"],

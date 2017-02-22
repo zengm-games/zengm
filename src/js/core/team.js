@@ -242,7 +242,7 @@ async function rosterAutoSort(tid: number) {
     // Get roster and sort by value (no potential included)
     const playersFromCache = await g.cache.indexGetAll('playersByTid', tid);
     let players = helpers.deepCopy(playersFromCache);
-    players = await getCopy.players(players, {
+    players = await getCopy.playersPlus(players, {
         attrs: ["pid", "valueNoPot", "valueNoPotFuzz"],
         ratings: ["pos"],
         season: g.season,
@@ -855,7 +855,7 @@ async function updateStrategies() {
 
         // Young stars
         let players = await g.cache.indexGetAll('playersByTid', t.tid);
-        players = await getCopy.players(players, {
+        players = await getCopy.playersPlus(players, {
             season: g.season,
             tid: t.tid,
             attrs: ["age", "value", "contract"],

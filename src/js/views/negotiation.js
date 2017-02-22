@@ -79,7 +79,7 @@ async function updateNegotiation(inputs) {
     }
 
     let p = await g.cache.get('players', negotiation.pid);
-    p = await getCopy.players(p, {
+    p = await getCopy.playersPlus(p, {
         attrs: ["pid", "name", "age", "contract", "freeAgentMood"],
         ratings: ["ovr", "pot"],
         season: g.season,

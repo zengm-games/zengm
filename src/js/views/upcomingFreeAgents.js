@@ -33,7 +33,7 @@ async function updateUpcomingFreeAgents(inputs) {
         players[i].contractDesired.exp += inputs.season - g.season;
     }
 
-    players = await getCopy.players(players, {
+    players = await getCopy.playersPlus(players, {
         attrs: ["pid", "name", "age", "contract", "freeAgentMood", "injury", "watch", "contractDesired"],
         ratings: ["ovr", "pot", "skills", "pos"],
         stats: ["min", "pts", "trb", "ast", "per"],

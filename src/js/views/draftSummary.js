@@ -32,7 +32,7 @@ async function updateDraftSummary(inputs) {
     // Update every time because anything could change this (unless all players from class are retired)
     let playersAll = await g.cache.indexGetAll('playersByTid', [0, Infinity]);
     playersAll = playersAll.filter((p) => p.draft.year === inputs.season);
-    playersAll = await getCopy.players(playersAll, {
+    playersAll = await getCopy.playersPlus(playersAll, {
         attrs: ["tid", "abbrev", "draft", "pid", "name", "age", "hof"],
         ratings: ["ovr", "pot", "skills", "pos"],
         stats: ["gp", "min", "pts", "trb", "ast", "per", "ewa"],

@@ -1,5 +1,7 @@
 IVERSON
 
+getCopy.players use everywhere as input to getCopy.playersPlus
+
 PER and EWA not working. in general, or because of fantasy draft?
 - related to auto sort and PT being weird, or is that a separate issue?
 
@@ -17,6 +19,8 @@ add flow comments to new files!
 player.filter -> db.getCopy.players
 - how to handle cases where players from IDB are passed in? do i need to augment with cache, or is it all old?
   - basically just when some players are retired, right? in that case, could augment, since performance is not critical when reviewing archived data
+    - evne when querying by pid, it could be the pid of a retired player. you never know unless you check the cache, or if you got the pid from an active-only context
+      - make db.getCopy.players (and rename current one... getCopy.playersPlus?) which handles all player-getting, such as "for individual pid, look in cache first, then database if necessary". but others too
   - retired players don't show up on summary after season
     - they start in cache, and then the query to db misses them because not flushed yet. need to get players from cache + db
       - maybe... getCopy.players and teams -> playersFiltered and teamsFiltered. Then have normal versions for normal stuff
@@ -31,6 +35,8 @@ player.filter -> db.getCopy.players
 - oldStats
 - passing in players is kind of shitty, runs contrary to the whole "getCopy" idea because you have to figure out how to generate players object ahead of time. maybe rethink this..
 
+eventually merge players and playersPlus
+
 if i can gracefully handle absence of g.season etc, put cache creation inside connectLeague
 - not graceful now, see fill(season)
 
@@ -39,6 +45,8 @@ update maxIds on add/put with defind pk, otherwise it's stale
 seems to be bug associated with flush not syncing schedule/games right, see dupe games in schedule and then errors on saving box scores
 - deletes processing right? seems to occur when nothing gets deleted from schedule
 - fixed by this commit's changes in flush? seems not. why?
+
+get everything working here, then move everything but the UI to a web worker
 
 get tests working
 - db.getCopy.teams

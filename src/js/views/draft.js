@@ -33,7 +33,7 @@ async function updateDraft() {
 
     let undrafted = await g.cache.indexGetAll('playersByTid', g.PLAYER.UNDRAFTED);
     undrafted.sort((a, b) => b.valueFuzz - a.valueFuzz);
-    undrafted = await getCopy.players(undrafted, {
+    undrafted = await getCopy.playersPlus(undrafted, {
         attrs: ["pid", "name", "age", "injury", "contract", "watch"],
         ratings: ["ovr", "pot", "skills", "pos"],
         stats: ["per", "ewa"],
@@ -46,7 +46,7 @@ async function updateDraft() {
     let drafted = await g.cache.indexGetAll('playersByTid', [0, Infinity]);
     drafted = drafted.filter((p) => p.draft.year === g.season);
     drafted.sort((a, b) => (100 * a.draft.round + a.draft.pick) - (100 * b.draft.round + b.draft.pick));
-    drafted = await getCopy.players(drafted, {
+    drafted = await getCopy.playersPlus(drafted, {
         attrs: ["pid", "tid", "name", "age", "draft", "injury", "contract", "watch"],
         ratings: ["ovr", "pot", "skills", "pos"],
         stats: ["per", "ewa"],

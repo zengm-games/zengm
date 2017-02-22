@@ -211,7 +211,7 @@ async function summary(teams: TradeTeams): Promise<TradeSummary> {
     [0, 1].forEach(i => {
         promises.push(g.cache.indexGetAll('playersByTid', tids[i]).then(async (playersTemp) => {
             let players = playersTemp.filter(p => pids[i].includes(p.pid));
-            players = await getCopy.players(players, {
+            players = await getCopy.playersPlus(players, {
                 attrs: ['pid', 'name', 'contract'],
                 season: g.season,
                 tid: tids[i],

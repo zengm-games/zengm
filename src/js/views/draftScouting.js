@@ -9,7 +9,7 @@ import DraftScouting from './views/DraftScouting';
 async function addSeason(season, tid) {
     let playersAll = await g.cache.indexGetAll('playersByTid', tid);
 
-    playersAll = await getCopy.players(playersAll, {
+    playersAll = await getCopy.playersPlus(playersAll, {
         attrs: ["pid", "firstName", "lastName", "age", "watch", "valueFuzz"],
         ratings: ["ovr", "pot", "skills", "fuzz", "pos"],
         showNoStats: true,

@@ -62,7 +62,7 @@ async function updateRoster(inputs, updateEvents, state) {
                     }
                 }
 
-                players = await getCopy.players(players, {
+                players = await getCopy.playersPlus(players, {
                     attrs,
                     ratings,
                     stats,

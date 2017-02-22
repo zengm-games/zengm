@@ -114,7 +114,7 @@ async function doAwards() {
     teams.sort((a, b) => a.tid - b.tid);
 
     let players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.FREE_AGENT, Infinity]);
-    players = await getCopy.players(players, {
+    players = await getCopy.playersPlus(players, {
         attrs: ["pid", "name", "tid", "abbrev", "draft"],
         stats: ["gp", "gs", "min", "pts", "trb", "ast", "blk", "stl", "ewa"],
         season: g.season,
@@ -237,7 +237,7 @@ async function doAwards() {
         const champTid = champTeam.tid;
 
         let champPlayers = await g.cache.indexGetAll('playersByTid', champTid); // Alternatively, could filter players array by tid
-        champPlayers = await getCopy.players(champPlayers, { // Only the champions, only playoff stats
+        champPlayers = await getCopy.playersPlus(champPlayers, { // Only the champions, only playoff stats
             attrs: ["pid", "name", "tid", "abbrev"],
             stats: ["pts", "trb", "ast", "ewa"],
             season: g.season,

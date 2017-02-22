@@ -1,5 +1,7 @@
 IVERSON
 
+fantasy draft
+
 after season, why all FAs insulted by my presence?
 
 add flow comments to new files!
@@ -95,10 +97,6 @@ make cache synchronous? it'll be faster, any problems though?
 get rid of teamAbbrevsCache, etc?
 
 revisit lock system
-
-confirm ywt works
-
-fantasy draft
 
 in put/add, can we incrementally update indexes?
 

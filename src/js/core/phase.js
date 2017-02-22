@@ -348,20 +348,22 @@ async function newPhaseBeforeDraft() {
     return [url, ["playerMovement"]];
 }
 
-async function newPhaseDraft(tx: BackboardTx) {
+async function newPhaseDraft() {
     // Kill off old retired players (done here since not much else happens in this phase change, so making it a little slower is fine)
-    await tx.players.index('tid').iterate(g.PLAYER.RETIRED, p => {
-        if (p.hasOwnProperty("diedYear") && p.diedYear) {
-            return;
-        }
+    await g.dbl.tx('players', 'readwrite', async (tx) => {
+        await tx.players.index('tid').iterate(g.PLAYER.RETIRED, p => {
+            if (p.hasOwnProperty("diedYear") && p.diedYear) {
+                return;
+            }
 
-        // Formula badly fit to http://www.ssa.gov/oact/STATS/table4c6.html
-        const probDeath = 0.0001165111 * Math.exp(0.0761889274 * (g.season - p.born.year));
+            // Formula badly fit to http://www.ssa.gov/oact/STATS/table4c6.html
+            const probDeath = 0.0001165111 * Math.exp(0.0761889274 * (g.season - p.born.year));
 
-        if (Math.random() < probDeath) {
-            p.diedYear = g.season;
-            return p;
-        }
+            if (Math.random() < probDeath) {
+                p.diedYear = g.season;
+                return p;
+            }
+        });
     });
 
     await draft.genOrder();

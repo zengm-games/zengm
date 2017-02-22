@@ -463,7 +463,7 @@ async function valueChange(
         // For each draft pick, estimate its value based on the recent performance of the team
         if (dpidsAdd.length > 0 || dpidsRemove.length > 0) {
             // Estimate the order of the picks by team
-            const allTeamSeasons = await g.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season + 1}`]);
+            const allTeamSeasons = await g.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
 
             // This part needs to be run every time so that gpAvg is available
             const wps = []; // Contains estimated winning percentages for all teams by the end of the season

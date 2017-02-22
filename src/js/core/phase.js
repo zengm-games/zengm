@@ -200,7 +200,7 @@ async function newPhasePlayoffs() {
     });
 
     // Add row to team stats and team season attributes
-    const teamSeasons = await g.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season + 1}`]);
+    const teamSeasons = await g.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
     for (const teamSeason of teamSeasons) {
         if (tidPlayoffs.includes(teamSeason.tid)) {
             await g.cache.add('teamStats', team.genStatsRow(teamSeason.tid, true));

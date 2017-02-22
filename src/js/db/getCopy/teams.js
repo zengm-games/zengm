@@ -42,7 +42,7 @@ const processSeasonAttrs = async (output: TeamFiltered, t: Team, seasonAttrs: Te
         // All seasons
         seasons = mergeByPk(
             await tx.teamSeasons.index('tid, season').getAll(backboard.bound([t.tid], [t.tid, ''])),
-            await g.cache.indexGetAll('teamSeasonsByTidSeason', [`${t.tid}`, `${t.tid + 1}`]),
+            await g.cache.indexGetAll('teamSeasonsByTidSeason', [`${t.tid}`, `${t.tid},Z`]),
             g.cache.storeInfos.teamSeasons.pk,
         );
     } else if (season >= g.season - 2) {

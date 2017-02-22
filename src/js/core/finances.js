@@ -17,7 +17,7 @@ async function assessPayrollMinLuxury() {
 
     const payrolls = await team.getPayrolls();
 
-    const teamSeasons = await g.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season + 1}`]);
+    const teamSeasons = await g.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
     for (const teamSeason of teamSeasons) {
         // Store payroll
         teamSeason.payrollEndOfSeason = payrolls[teamSeason.tid];
@@ -97,7 +97,7 @@ async function updateRanks(types: BudgetTypes[]) {
 
     let teamSeasonsPromise;
     if (types.includes('expenses') || types.includes('revenues')) {
-        teamSeasonsPromise = g.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season + 1}`]);
+        teamSeasonsPromise = g.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
     } else {
         teamSeasonsPromise = Promise.resolve();
     }

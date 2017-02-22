@@ -106,7 +106,7 @@ describe("util/account", () => {
 
     describe("#checkAchievement.dynasty*()", () => {
         after(async () => {
-            const teamSeasons = await g.cache.indexGetAll('teamSeasonsByTidSeason', [`${g.userTid}`, `${g.userTid + 1}`]);
+            const teamSeasons = await g.cache.indexGetAll('teamSeasonsByTidSeason', [`${g.userTid}`, `${g.userTid},Z`]);
             for (const teamSeason of teamSeasons) {
                 if (teamSeason.season > g.season) {
                     await g.cache.delete('teamSeasons', teamSeason.rid);

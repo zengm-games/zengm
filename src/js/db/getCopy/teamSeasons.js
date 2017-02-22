@@ -11,7 +11,7 @@ const getCopy = async ({tid, season, seasons}: {tid?: number, season?: number, s
         if (season !== undefined) {
             if (season >= g.season - 2) {
                 // Single season, from cache
-                return deepCopy(await g.cache.indexGetAll('teamSeasonsBySeasonTid', [`${season}`, `${season + 1}`]));
+                return deepCopy(await g.cache.indexGetAll('teamSeasonsBySeasonTid', [`${season}`, `${season},Z`]));
             }
             // Single season, from database
             return g.dbl.teamSeasons.index("season, tid").getAll(backboard.bound([season], [season, '']));
@@ -30,7 +30,7 @@ const getCopy = async ({tid, season, seasons}: {tid?: number, season?: number, s
 
     return mergeByPk(
         await g.dbl.teamSeasons.index('tid, season').getAll(backboard.bound([tid], [tid, ''])),
-        await g.cache.indexGetAll('teamSeasonsByTidSeason', [`${tid}`, `${tid + 1}`]),
+        await g.cache.indexGetAll('teamSeasonsByTidSeason', [`${tid}`, `${tid},Z`]),
         g.cache.storeInfos.teamSeasons.pk,
     );
 };

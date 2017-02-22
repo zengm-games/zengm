@@ -8,11 +8,13 @@ const getCopy = async ({
     pid,
     retired,
     activeAndRetired,
+    statsTid,
 //    tid,
 }: {
     pid?: number,
     retired?: boolean,
     activeAndRetired?: boolean,
+    statsTid?: number,
 //    tid?: [number, number] | number,
 } = {}): Promise<(Player | Player[])> => {
     if (pid !== undefined) {
@@ -58,6 +60,17 @@ const getCopy = async ({
                 await g.cache.indexGetAll('playersByTid', g.PLAYER.RETIRED),
                 await g.cache.indexGetAll('playersByTid', [g.PLAYER.FREE_AGENT, Infinity]),
             ),
+            g.cache.storeInfos.players.pk,
+        );
+    }
+
+    if (statsTid !== undefined) {
+        return mergeByPk(
+            await g.dbl.players.index('statsTids').getAll(statsTid),
+            [].concat(
+                await g.cache.indexGetAll('playersByTid', g.PLAYER.RETIRED),
+                await g.cache.indexGetAll('playersByTid', [g.PLAYER.FREE_AGENT, Infinity]),
+            ).filter((p) => p.statsTids.includes(statsTid)),
             g.cache.storeInfos.players.pk,
         );
     }

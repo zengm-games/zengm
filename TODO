@@ -1,6 +1,6 @@
 IVERSON
 
-on player page under ratings, age shows as NaN
+on player page under ratings, age shows as NaN, team is blank
 
 PER and EWA not working. in general, or because of fantasy draft?
 - related to auto sort and PT being weird, or is that a separate issue?
@@ -39,6 +39,7 @@ update maxIds on add/put with defind pk, otherwise it's stale
 
 seems to be bug associated with flush not syncing schedule/games right, see dupe games in schedule and then errors on saving box scores
 - deletes processing right? seems to occur when nothing gets deleted from schedule
+- fixed by this commit's changes in flush? seems not. why?
 
 get tests working
 - db.getCopy.teams

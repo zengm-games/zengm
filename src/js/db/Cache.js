@@ -323,8 +323,12 @@ class Cache {
 
         await g.dbl.tx(STORES, 'readwrite', async (tx) => {
             await Promise.all(STORES.map(async (store) => {
+                for (const id of this.deletes[store]) {
+                    tx[store].delete(id);
+                }
+
                 for (const row of Object.values(this.data[store])) {
-                    await tx[store].put(row);
+                    tx[store].put(row);
                 }
             }));
         });

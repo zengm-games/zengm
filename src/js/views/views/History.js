@@ -55,10 +55,10 @@ const History = ({awards, champ, confs, invalidSeason, retiredPlayers, season, u
                             {helpers.round(awards.smoy.pts, 1)} pts, {helpers.round(awards.smoy.trb, 1)} reb, {helpers.round(awards.smoy.ast, 1)} ast
                         </p>
                         <h4>Rookie of the Year</h4>
-                        <p>
+                        {awards.roy ? <p>
                             <span className={awards.roy.tid === userTid ? 'bg-info' : null}><b><a href={helpers.leagueUrl(['player', awards.roy.pid])}>{awards.roy.name}</a></b> (<a href={helpers.leagueUrl(['roster', awards.roy.abbrev, season])}>{awards.roy.abbrev}</a>)</span><br />
                             {helpers.round(awards.roy.pts, 1)} pts, {helpers.round(awards.roy.trb, 1)} reb, {helpers.round(awards.roy.ast, 1)} ast
-                        </p>
+                        </p> : <p>???</p>}
                     </div>
                 </div>
             </div>
@@ -92,7 +92,7 @@ const History = ({awards, champ, confs, invalidSeason, retiredPlayers, season, u
                 <h4>Retired Players</h4>
                 <p style={{MozColumnWidth: '12em', MozColumns: '12em', WebkitColumns: '12em', columns: '12em'}}>
                     {retiredPlayers.map(p => <span key={p.pid} className={p.stats.tid === userTid ? 'bg-info' : null}>
-                        <a href={helpers.leagueUrl(['player', p.pid])}>{p.name}</a> ({p.stats.abbrev !== 'FA' ? <span><a href={helpers.leagueUrl(['roster', p.stats.abbrev, season])}>{p.stats.abbrev}</a>, </span> : null}age: {p.age}{p.hof ? <span>; <a href={helpers.leagueUrl(['hall_of_fame'])}><b>HoF</b></a></span> : null})<br />
+                        <a href={helpers.leagueUrl(['player', p.pid])}>{p.name}</a> ({p.stats.tid >= 0 ? <span><a href={helpers.leagueUrl(['roster', p.stats.abbrev, season])}>{p.stats.abbrev}</a>, </span> : null}age: {p.age}{p.hof ? <span>; <a href={helpers.leagueUrl(['hall_of_fame'])}><b>HoF</b></a></span> : null})<br />
                     </span>)}
                 </p>
             </div>

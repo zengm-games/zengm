@@ -274,7 +274,8 @@ const genStatsRow = (p, ps, stats, statType) => {
         }
 
         // For keepWithNoStats
-        if (row[attr] === undefined || Number.isNaN(row[attr])) {
+        const keepUndefined = ['tid'];
+        if ((row[attr] === undefined || Number.isNaN(row[attr])) && !keepUndefined.includes(attr)) {
             row[attr] = 0;
         }
     }
@@ -317,8 +318,8 @@ const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: 
         return g.cache.indexGetAll('playerStatsAllByPid', p.pid);
     };
 
-    if (season === undefined) {
-        // All seasons
+    if (season === undefined || p.tid === g.PLAYER.RETIRED) {
+        // All seasons, or retired player with stats not in cache
         playerStats = mergeByPk(
             await tx.playerStats.index('pid, season, tid').getAll(backboard.bound([p.pid], [p.pid, ''])),
             await playerStatsFromCache(),

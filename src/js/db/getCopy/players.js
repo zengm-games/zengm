@@ -104,6 +104,7 @@ const processAttrs = (output: PlayerFiltered, p: Player, {
 const processRatings = async (output: PlayerFiltered, p: Player, {
     fuzz,
     ratings,
+    stats,
     season,
 }: PlayerOptions) => {
     output.ratings = p.ratings.map((pr, i) => {
@@ -123,6 +124,24 @@ const processRatings = async (output: PlayerFiltered, p: Player, {
                     row[attr] = fuzzRating(pr[cat], pr.fuzz) - fuzzRating(p.ratings[i - 1][cat], p.ratings[i - 1].fuzz);
                 } else {
                     row[attr] = 0;
+                }
+            } else if (attr === 'age') {
+                row.age = pr.season - p.born.year;
+            } else if (attr === 'abbrev') {
+                // Find the last stats entry for that season, and use that to determine the team. Requires tid to be requested from stats (otherwise, need to refactor stats fetching to happen outside of processStats)
+                if (!stats.includes('tid')) {
+                    throw new Error('Crazy I know, but if you request "abbrev" from ratings, you must also request "tid" from stats');
+                }
+                let tidTemp;
+                for (const ps of output.stats) {
+                    if (ps.season === pr.season && ps.playoffs === false) {
+                        tidTemp = ps.tid;
+                    }
+                }
+                if (tidTemp !== undefined) {
+                    row.abbrev = helpers.getAbbrev(tidTemp);
+                } else {
+                    row.abbrev = undefined;
                 }
             } else if (fuzz && attr !== 'fuzz' && attr !== 'season' && attr !== 'hgt' && attr !== 'pos') {
                 row[attr] = fuzzRating(pr[attr], pr.fuzz);

@@ -1,5 +1,5 @@
 import g from '../globals';
-import * as player from '../core/player';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import PlayerRatings from './views/PlayerRatings';
@@ -22,10 +22,13 @@ function get(ctx) {
 
 async function updatePlayers(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || (inputs.season === g.season && updateEvents.includes('playerMovement')) || (updateEvents.includes('newPhase') && g.phase === g.PHASE.PRESEASON) || inputs.season !== state.season || inputs.abbrev !== state.abbrev) {
-        let players = await g.dbl.players.getAll();
-        players = await player.withStats(null, players, {
-            statsSeasons: [inputs.season],
-        });
+        let players;
+        if (g.season === inputs.season && g.phase <= g.PHASE.PLAYOFFS) {
+            players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.FREE_AGENT, Infinity]);
+        } else {
+            // If it's not this season, get all players, because retired players could apply to the selected season
+            players = await getCopy.players({activeAndRetired: true});
+        }
 
         let tid = g.teamAbbrevsCache.indexOf(inputs.abbrev);
         if (tid < 0) { tid = undefined; } // Show all teams
@@ -34,7 +37,7 @@ async function updatePlayers(inputs, updateEvents, state) {
             players = players.filter(p => p.watch && typeof p.watch !== "function");
         }
 
-        players = player.filter(players, {
+        players = await getCopy.playersPlus(players, {
             attrs: ["pid", "name", "abbrev", "age", "born", "injury", "watch", "hof"],
             ratings: ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills", "pos"],
             stats: ["abbrev", "tid"],

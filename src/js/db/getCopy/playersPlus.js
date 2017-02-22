@@ -273,9 +273,17 @@ const genStatsRow = (p, ps, stats, statType) => {
         } else if (attr === 'age') {
             row.age = ps.season - p.born.year;
         } else if (attr === 'abbrev') {
-            row.abbrev = helpers.getAbbrev(ps.tid);
+            if (ps.tid === undefined) {
+                row.abbrev = helpers.getAbbrev(g.PLAYER.FREE_AGENT);
+            } else {
+                row.abbrev = helpers.getAbbrev(ps.tid);
+            }
         } else if (attr === 'tid') {
-            row.tid = ps.tid;
+            if (ps.tid === undefined) {
+                row.tid = g.PLAYER.FREE_AGENT;
+            } else {
+                row.tid = ps.tid;
+            }
         } else if (attr === 'per') {
             row.per = ps.per;
         } else if (attr === 'ewa') {
@@ -293,8 +301,7 @@ const genStatsRow = (p, ps, stats, statType) => {
         }
 
         // For keepWithNoStats
-        const keepUndefined = ['tid'];
-        if ((row[attr] === undefined || Number.isNaN(row[attr])) && !keepUndefined.includes(attr)) {
+        if ((row[attr] === undefined || Number.isNaN(row[attr]))) {
             row[attr] = 0;
         }
     }
@@ -408,19 +415,21 @@ const processPlayer = async (p: Player, options: PlayerOptions, tx: ?BackboardTx
     const keepWithNoStats = (options.showRookies && p.draft.year >= g.season && (options.season === g.season || options.season === undefined)) || (options.showNoStats && (options.season === undefined || options.season > p.draft.year));
     if (options.stats.length > 0 || keepWithNoStats) {
         await processStats(output, p, keepWithNoStats, options, tx);
-    }
 
-    if (output.stats === undefined) {
-        return undefined;
+        // Only add a player if filterStats finds something (either stats that season, or options overriding that check)
+        if (output.stats === undefined) {
+            return undefined;
+        }
     }
-
-// Only add a player if filterStats finds something (either stats that season, or options overriding that check)
 
     if (options.ratings.length > 0) {
         processRatings(output, p, options);
-    }
 
-// Only add a player if he was active for this season and thus has ratings for this season
+        // Only add a player if he was active for this season and thus has ratings for this season
+        if (output.ratings === undefined) {
+            return undefined;
+        }
+    }
 
     if (options.attrs.length > 0) {
         processAttrs(output, p, options);

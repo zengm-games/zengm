@@ -15,7 +15,7 @@ async function updatePlayers(inputs, updateEvents) {
             stats: ["season", "abbrev", "gp", "min", "trb", "ast", "pts", "per", "ewa"],
         });
 
-        // This stuff isn't in player.filter because it's only used here.
+        // This stuff isn't in getCopy.playersPlus because it's only used here.
         for (const p of players) {
             p.peakOvr = 0;
             for (const pr of p.ratings) {

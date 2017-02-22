@@ -22,7 +22,6 @@ async function updateNegotiationList() {
     negotiations = negotiations.filter(negotiation => negotiation.tid === g.userTid);
     const negotiationPids = negotiations.map(negotiation => negotiation.pid);
 
-    // Get all free agents, filter array based on negotiations data, pass to player.filter, augment with contract data from negotiations
     let players = await g.cache.indexGetAll('playersByTid', g.PLAYER.FREE_AGENT);
     players = players.filter(p => negotiationPids.includes(p.pid));
     players = await getCopy.playersPlus(players, {

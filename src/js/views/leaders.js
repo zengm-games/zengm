@@ -34,8 +34,8 @@ async function updateLeaders(inputs, updateEvents, state) {
         if (g.season === season && g.phase <= g.PHASE.PLAYOFFS) {
             players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.FREE_AGENT, Infinity]);
         } else {
-            // If it's not this season, get all players, because retired players could be on leaders
-            players = await getCopy.players();
+            // If it's not this season, get all players, because retired players could apply to the selected season
+            players = await getCopy.players({activeAndRetired: true});
         }
         players = await getCopy.playersPlus(players, {
             attrs: ["pid", "name", "injury", "watch"],

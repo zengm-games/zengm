@@ -1,3 +1,4 @@
+import backboard from 'backboard';
 import g from '../../globals';
 import {mergeByPk} from './helpers';
 import * as helpers from '../../util/helpers';
@@ -6,10 +7,12 @@ import type {Player} from '../../util/types';
 const getCopy = async ({
     pid,
     retired,
+    activeAndRetired,
 //    tid,
 }: {
     pid?: number,
     retired?: boolean,
+    activeAndRetired?: boolean,
 //    tid?: [number, number] | number,
 } = {}): Promise<(Player | Player[])> => {
     if (pid !== undefined) {
@@ -43,6 +46,21 @@ const getCopy = async ({
         return helpers.deepCopy(await g.cache.indexGetAll('playersByTid', tid));
     }*/
 
+
+    if (activeAndRetired === true) {
+        // All except draft prospects
+        return mergeByPk(
+            [].concat(
+                await g.dbl.players.index('tid').getAll(g.PLAYER.RETIRED),
+                await g.dbl.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.FREE_AGENT)),
+            ),
+            [].concat(
+                await g.cache.indexGetAll('playersByTid', g.PLAYER.RETIRED),
+                await g.cache.indexGetAll('playersByTid', [g.PLAYER.FREE_AGENT, Infinity]),
+            ),
+            g.cache.storeInfos.players.pk,
+        );
+    }
 
     return mergeByPk(
         await g.dbl.players.getAll(),

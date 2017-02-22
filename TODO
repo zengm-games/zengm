@@ -1,7 +1,9 @@
 IVERSON
 
+player stats for a draft prospect should be 0 rows http://localhost/l/49/player/532
+
 getCopy.players use only where needed for input to player.filter
-- abstract season logic from leaders, use in ratings/stats pages too
+- abstract season logic from leaders/playerRatings, use in stats pages too (plus a bit extra, for ones showing draft prospects too)
 
 getCopy.playersPlus
 - don't figure out if tx needed ahead of time. dynamically open it if required, then reuse

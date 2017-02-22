@@ -1,38 +1,37 @@
 // @flow
 
 import g from '../globals';
-import * as player from '../core/player';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import HallOfFame from './views/HallOfFame';
 
 async function updatePlayers(inputs, updateEvents) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || (updateEvents.includes('newPhase') && g.phase === g.PHASE.BEFORE_DRAFT)) {
-        let players = await g.dbl.players.index('tid').getAll(g.PLAYER.RETIRED);
+        let players = await getCopy.players({retired: true});
         players = players.filter(p => p.hof);
-        players = await player.withStats(null, players, {statsSeasons: "all"});
-        players = player.filter(players, {
+        players = await getCopy.playersPlus(players, {
             attrs: ["pid", "name", "draft", "retiredYear", "statsTids"],
             ratings: ["ovr", "pos"],
             stats: ["season", "abbrev", "gp", "min", "trb", "ast", "pts", "per", "ewa"],
         });
 
         // This stuff isn't in player.filter because it's only used here.
-        for (let i = 0; i < players.length; i++) {
-            players[i].peakOvr = 0;
-            for (let j = 0; j < players[i].ratings.length; j++) {
-                if (players[i].ratings[j].ovr > players[i].peakOvr) {
-                    players[i].peakOvr = players[i].ratings[j].ovr;
+        for (const p of players) {
+            p.peakOvr = 0;
+            for (const pr of p.ratings) {
+                if (pr.ovr > p.peakOvr) {
+                    p.peakOvr = pr.ovr;
                 }
             }
 
-            players[i].bestStats = {
+            p.bestStats = {
                 gp: 0,
                 min: 0,
                 per: 0,
             };
-            for (let j = 0; j < players[i].stats.length; j++) {
-                if (players[i].stats[j].gp * players[i].stats[j].min * players[i].stats[j].per > players[i].bestStats.gp * players[i].bestStats.min * players[i].bestStats.per) {
-                    players[i].bestStats = players[i].stats[j];
+            for (const ps of p.stats) {
+                if (ps.gp * ps.min * ps.per > p.bestStats.gp * p.bestStats.min * p.bestStats.per) {
+                    p.bestStats = ps;
                 }
             }
         }

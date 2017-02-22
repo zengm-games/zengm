@@ -1,9 +1,7 @@
 // @flow
 
-import backboard from 'backboard';
-import Promise from 'bluebird';
 import g from '../globals';
-import * as player from '../core/player';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import Leaders from './views/Leaders';
@@ -22,14 +20,8 @@ async function updateLeaders(inputs, updateEvents, state) {
 
     // Respond to watchList in case players are listed twice in different categories
     if (updateEvents.includes('dbChange') || updateEvents.includes('watchList') || (season === g.season && updateEvents.includes('gameSim')) || season !== state.season) {
-        let [teamSeasons, players] = await Promise.all([
-            g.dbl.teamSeasons.index("season, tid").getAll(backboard.bound([season], [season, ''])),
-            g.dbl.players.getAll().then(players2 => {
-                return player.withStats(null, players2, {statsSeasons: [season]});
-            }),
-        ]);
-
         // Calculate the number of games played for each team, which is used later to test if a player qualifies as a league leader
+        const teamSeasons = await getCopy.teamSeasons({season});
         const gps = teamSeasons.map(teamSeason => {
             // Don't count playoff games
             if (teamSeason.gp > g.numGames) {
@@ -38,7 +30,14 @@ async function updateLeaders(inputs, updateEvents, state) {
             return teamSeason.gp;
         });
 
-        players = player.filter(players, {
+        let players;
+        if (g.season === season && g.phase <= g.PHASE.PLAYOFFS) {
+            players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.FREE_AGENT, Infinity]);
+        } else {
+            // If it's not this season, get all players, because retired players could be on leaders
+            players = await getCopy.players();
+        }
+        players = await getCopy.playersPlus(players, {
             attrs: ["pid", "name", "injury", "watch"],
             ratings: ["skills"],
             stats: ["pts", "trb", "ast", "fgp", "tpp", "ftp", "blk", "stl", "min", "per", "ewa", "gp", "fg", "tp", "ft", "abbrev", "tid"],

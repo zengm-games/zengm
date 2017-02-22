@@ -464,8 +464,9 @@ const getCopy = async (players: Player | Player[], {
 
     // Does this require IDB?
     // There will be false positives, because showRookies and showNoStats often don't apply
+    // Even more false positives from "true" :)
     const objectStores = [];
-    if ((stats.length > 0 && (season === undefined || season < g.season - 1)) || (showRookies || showNoStats)) {
+    if ((stats.length > 0 && (season === undefined || season < g.season - 1)) || (showRookies || showNoStats) || true) {
         objectStores.push('playerStats');
     }
 

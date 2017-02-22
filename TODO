@@ -1,6 +1,12 @@
 IVERSON
 
-getCopy.players use everywhere as input to getCopy.playersPlus
+getCopy.players use only where needed for input to player.filter
+- abstract season logic from leaders, use in ratings/stats pages too
+
+getCopy.playersPlus
+- don't figure out if tx needed ahead of time. dynamically open it if required, then reuse
+
+i think withStats was faster that playersPlus for getting stats for a large number of players
 
 PER and EWA not working. in general, or because of fantasy draft?
 - related to auto sort and PT being weird, or is that a separate issue?
@@ -21,9 +27,6 @@ player.filter -> db.getCopy.players
   - basically just when some players are retired, right? in that case, could augment, since performance is not critical when reviewing archived data
     - evne when querying by pid, it could be the pid of a retired player. you never know unless you check the cache, or if you got the pid from an active-only context
       - make db.getCopy.players (and rename current one... getCopy.playersPlus?) which handles all player-getting, such as "for individual pid, look in cache first, then database if necessary". but others too
-  - retired players don't show up on summary after season
-    - they start in cache, and then the query to db misses them because not flushed yet. need to get players from cache + db
-      - maybe... getCopy.players and teams -> playersFiltered and teamsFiltered. Then have normal versions for normal stuff
 - watch list error switching ot playoffs, should just be 0s
 - ratings special cases in commented out code, some depend on stats
 - how to filter records of output.. like not every player is returned by player.filter, see the end. does this matter?
@@ -82,7 +85,7 @@ document cache data format and API!
 
 make Cache more DRY regarding indexes, reading object stores
 
-remove unused IDB indexes, if they exist (only on stores that are fully cached, probably)
+remove unused IDB indexes, if they exist (mostly stores that are fully cached, but others too, like retired year)
 
 replace all usage of IDB with cache, otherwise things will be more likely to get out of sync on flush failure
   start with game.js and anything that it touches
@@ -97,6 +100,7 @@ when to fill/flush? phases, games, user interaction
 how to handle data not in cache?
 
 put playerStats back under players?
+- could be worth it, because getting stats to display for a large number of players seems pretty slow now
 
 debug mode makes huge perf difference
 - warning bar

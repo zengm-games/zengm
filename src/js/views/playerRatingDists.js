@@ -1,5 +1,5 @@
 import g from '../globals';
-import * as player from '../core/player';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import PlayerRatingDists from './views/PlayerRatingDists';
@@ -12,10 +12,15 @@ function get(ctx) {
 
 async function updatePlayers(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || (inputs.season === g.season && (updateEvents.includes('gameSim') || updateEvents.includes('playerMovement'))) || inputs.season !== state.season) {
-        let players = await g.dbl.players.getAll();
-        players = await player.withStats(null, players, {statsSeasons: [inputs.season]});
+        let players;
+        if (g.season === inputs.season && g.phase <= g.PHASE.PLAYOFFS) {
+            players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.FREE_AGENT, Infinity]);
+        } else {
+            // If it's not this season, get all players, because retired players could apply to the selected season
+            players = await getCopy.players({activeAndRetired: true});
+        }
 
-        players = player.filter(players, {
+        players = await getCopy.playersPlus(players, {
             ratings: ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"],
             season: inputs.season,
             showNoStats: true,

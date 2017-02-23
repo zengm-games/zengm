@@ -6,7 +6,7 @@ import * as helpers from '../../util/helpers';
 import {DataTable, Dropdown, JumpTo, NewWindowLink, PlayerNameLabels} from '../components';
 
 const PlayerStats = ({abbrev, players, playoffs, season, statType}) => {
-    const label = season !== undefined && season !== null ? season : 'Career Totals';
+    const label = season !== undefined ? season : 'Career Totals';
     bbgmViewReact.title(`Player Stats - ${label}`);
 
     const superCols = [{
@@ -51,7 +51,7 @@ const PlayerStats = ({abbrev, players, playoffs, season, statType}) => {
         // HACKS to show right stats, info
         let actualAbbrev;
         let actualTid;
-        if (season === null) {
+        if (season === undefined) {
             p.stats = p.careerStats;
             actualAbbrev = helpers.getAbbrev(p.tid);
             actualTid = p.tid;
@@ -61,9 +61,6 @@ const PlayerStats = ({abbrev, players, playoffs, season, statType}) => {
         } else {
             actualAbbrev = p.stats.abbrev;
             actualTid = p.stats.tid;
-            if (playoffs === "playoffs") {
-                p.stats = p.statsPlayoffs;
-            }
         }
 
         return {
@@ -111,7 +108,7 @@ const PlayerStats = ({abbrev, players, playoffs, season, statType}) => {
     });
 
     return <div>
-        <Dropdown view="player_stats" fields={["teamsAndAllWatch", "seasonsAndCareer", "statTypes", "playoffs"]} values={[abbrev, season === null ? 'career' : season, statType, playoffs]} />
+        <Dropdown view="player_stats" fields={["teamsAndAllWatch", "seasonsAndCareer", "statTypes", "playoffs"]} values={[abbrev, season === undefined ? 'career' : season, statType, playoffs]} />
         <JumpTo season={season} />
         <h1>Player Stats <NewWindowLink /></h1>
         <p>More: <a href={helpers.leagueUrl(['player_shot_locations', season])}>Shot Locations</a> | <a href={helpers.leagueUrl(['player_stat_dists', season])}>Stat Distributions</a></p>
@@ -132,7 +129,7 @@ const PlayerStats = ({abbrev, players, playoffs, season, statType}) => {
 PlayerStats.propTypes = {
     abbrev: React.PropTypes.string.isRequired,
     players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-    playoffs: React.PropTypes.oneOf(['playoffs', 'regular_season']).isRequired,
+    playoffs: React.PropTypes.oneOf(['playoffs', 'regularSeason']).isRequired,
     season: React.PropTypes.oneOfType([
         React.PropTypes.number,
         React.PropTypes.string,

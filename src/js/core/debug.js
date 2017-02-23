@@ -6,6 +6,7 @@ import backboard from 'backboard';
 import _ from 'underscore';
 import g from '../globals';
 import * as player from './player';
+import {getCopy} from '../db';
 import type {RatingKey} from '../util/types';
 
 async function regressRatingsPer() {
@@ -146,29 +147,26 @@ async function regressRatingsPer() {
         return xT.mult(x).inverse().mult(xT).mult(this);
     };
 
-    let players = await g.dbl.players.getAll();
-    players = await player.withStats(null, players, {statsSeasons: "all"});
-    players = player.filter(players, {
+    let players = await getCopy.players({activeAndRetired: true});
+    players = await getCopy.playersPlus(players, {
         ratings: ["season", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"],
         stats: ["season", "per", "min"],
-        totals: true,
+        statType: 'totals',
     });
 
     const pers = [];
     const ratings = [];
 
-    for (let i = 0; i < players.length; i++) {
-        const p = players[i];
-
+    for (const p of players) {
         // Loop through seasons
-        for (let j = 0; j < p.ratings.length; j++) {
+        for (const pr of p.ratings) {
             // Find stats entry to match ratings
-            for (let k = 0; k < p.stats.length; k++) {
-                if (p.ratings[j].season === p.stats[k].season && !p.stats[k].playoffs) {
+            for (const ps of p.stats) {
+                if (pr.season === ps.season && !ps.playoffs) {
                     // Ignore anything under 500 minutes
-                    if (p.stats[k].min > 500) {
-                        pers.push(p.stats[k].per);
-                        ratings.push([p.ratings[j].hgt, p.ratings[j].stre, p.ratings[j].spd, p.ratings[j].jmp, p.ratings[j].endu, p.ratings[j].ins, p.ratings[j].dnk, p.ratings[j].ft, p.ratings[j].fg, p.ratings[j].tp, p.ratings[j].blk, p.ratings[j].stl, p.ratings[j].drb, p.ratings[j].pss, p.ratings[j].reb]);
+                    if (ps.min > 500) {
+                        pers.push(ps.per);
+                        ratings.push([pr.hgt, pr.stre, pr.spd, pr.jmp, pr.endu, pr.ins, pr.dnk, pr.ft, pr.fg, pr.tp, pr.blk, pr.stl, pr.drb, pr.pss, pr.reb]);
                     }
                 }
             }

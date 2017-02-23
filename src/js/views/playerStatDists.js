@@ -1,6 +1,5 @@
-import backboard from 'backboard';
 import g from '../globals';
-import * as player from '../core/player';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import PlayerStatDists from './views/PlayerStatDists';
@@ -13,9 +12,14 @@ function get(ctx) {
 
 async function updatePlayers(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || (inputs.season === g.season && (updateEvents.includes('gameSim') || updateEvents.includes('playerMovement'))) || inputs.season !== state.season) {
-        let players = await g.dbl.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.RETIRED));
-        players = await player.withStats(null, players, {statsSeasons: [inputs.season]});
-        players = player.filter(players, {
+        let players;
+        if (g.season === inputs.season && g.phase <= g.PHASE.PLAYOFFS) {
+            players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.FREE_AGENT, Infinity]);
+        } else {
+            // If it's not this season, get all players, because retired players could apply to the selected season
+            players = await getCopy.players({activeAndRetired: true});
+        }
+        players = await getCopy.playersPlus(players, {
             ratings: ["skills"],
             stats: ["gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per"],
             season: inputs.season,
@@ -23,6 +27,10 @@ async function updatePlayers(inputs, updateEvents, state) {
 
         const statsAll = players.reduce((memo, p) => {
             for (const stat of Object.keys(p.stats)) {
+                if (stat === 'playoffs') {
+                    continue;
+                }
+
                 if (memo.hasOwnProperty(stat)) {
                     memo[stat].push(p.stats[stat]);
                 } else {

@@ -9,7 +9,7 @@ import WatchList from './views/WatchList';
 function get(ctx) {
     return {
         statType: ctx.params.statType !== undefined ? ctx.params.statType : "perGame",
-        playoffs: ctx.params.playoffs !== undefined ? ctx.params.playoffs : "regular_season",
+        playoffs: ctx.params.playoffs !== undefined ? ctx.params.playoffs : "regularSeason",
     };
 }
 

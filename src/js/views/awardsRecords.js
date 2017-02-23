@@ -1,8 +1,6 @@
 // @flow
 
-import _ from 'underscore';
-import g from '../globals';
-import * as player from '../core/player';
+import {getCopy} from '../db';
 import bbgmViewReact from '../util/bbgmViewReact';
 import AwardsRecords from './views/AwardsRecords';
 
@@ -93,21 +91,19 @@ function getPlayerAwards(p, awardType) {
         filter = a => a.type === aType;
     }
 
-    const getTeam = season => {
+    const getTeam = (season) => {
         const stats = p.stats.filter(s => s.season === season);
         if (stats.length > 0) {
-            const tid = stats[stats.length - 1].tid;
-            return g.teamAbbrevsCache[tid];
+            return stats[stats.length - 1].abbrev;
         }
-
-        return '-';
+        return '???';
     };
 
     const awards = p.awards.filter(filter);
     const years = awards.map(a => {
         return {team: getTeam(a.season), season: a.season};
     });
-    const lastYear = _.max(years.map(y => y.season)).toString();
+    const lastYear = Math.max(...years.map((y) => y.season)).toString();
 
     return {
         name: `${p.firstName} ${p.lastName}`,
@@ -123,9 +119,10 @@ function getPlayerAwards(p, awardType) {
 
 async function updateAwardsRecords(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || inputs.awardType !== state.awardType) {
-        let players = await g.dbl.players.getAll();
-        players = await player.withStats(null, players, {
-            statsSeasons: 'all',
+        let players = await getCopy.players({activeAndRetired: true});
+        players = await getCopy.playersPlus(players, {
+            attrs: ['awards', 'firstName', 'lastName', 'pid', 'retiredYear', 'hof'],
+            stats: ['abbrev', 'season'],
         });
         players = players.filter(p => p.awards.length > 0);
 

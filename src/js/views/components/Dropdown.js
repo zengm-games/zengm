@@ -76,7 +76,7 @@ const Select = ({field, handleChange, value}) => {
     } else if (field === "playoffs") {
         options = [{
             val: "Regular Season",
-            key: "regular_season",
+            key: "regularSeason",
         }, {
             val: "Playoffs",
             key: "playoffs",

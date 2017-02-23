@@ -22,7 +22,7 @@ function get(ctx) {
     return {
         abbrev,
         season,
-        playoffs: ctx.params.playoffs !== undefined ? ctx.params.playoffs : "regular_season",
+        playoffs: ctx.params.playoffs !== undefined ? ctx.params.playoffs : "regularSeason",
     };
 }
 
@@ -50,7 +50,7 @@ async function updatePlayers(inputs, updateEvents, state) {
             feats = feats.filter(feat => feat.season === inputs.season);
         }
         feats = feats.filter(feat => {
-            if (inputs.playoffs === "regular_season") {
+            if (inputs.playoffs === "regularSeason") {
                 return !feat.playoffs;
             }
             if (inputs.playoffs === "playoffs") {

@@ -99,7 +99,7 @@ const PlayerFeats = ({abbrev, feats, playoffs, season}) => {
 PlayerFeats.propTypes = {
     abbrev: React.PropTypes.string.isRequired,
     feats: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-    playoffs: React.PropTypes.oneOf(['playoffs', 'regular_season']).isRequired,
+    playoffs: React.PropTypes.oneOf(['playoffs', 'regularSeason']).isRequired,
     season: React.PropTypes.oneOfType([
         React.PropTypes.number,
         React.PropTypes.string,

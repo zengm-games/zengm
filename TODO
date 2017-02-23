@@ -1,5 +1,9 @@
 IVERSON
 
+move everything but the UI to a web worker
+- split code, with concrete API for communication between frontend and backend
+- never use g in views?
+
 draft tests fail sometimes
 
 getCopy.players use only where needed for input to player.filter
@@ -9,6 +13,7 @@ getCopy.playersPlus
 - don't figure out if tx needed ahead of time. dynamically open it if required, then reuse
 
 i think withStats was faster that playersPlus for getting stats for a large number of players
+- move stats back within players
 
 PER and EWA not working. in general, or because of fantasy draft?
 - related to auto sort and PT being weird, or is that a separate issue?
@@ -50,8 +55,6 @@ update maxIds on add/put with defind pk, otherwise it's stale
 seems to be bug associated with flush not syncing schedule/games right, see dupe games in schedule and then errors on saving box scores
 - deletes processing right? seems to occur when nothing gets deleted from schedule
 - fixed by this commit's changes in flush? seems not. why?
-
-get everything working here, then move everything but the UI to a web worker
 
 get tests working
 - db.getCopy.teams

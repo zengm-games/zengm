@@ -2,7 +2,7 @@ import Promise from 'bluebird';
 import React from 'react';
 import _ from 'underscore';
 import g from '../../globals';
-import * as player from '../../core/player';
+import {getCopy} from '../../db';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import {DownloadDataLink} from '../components';
 
@@ -15,26 +15,36 @@ function genFilename(leagueName, season, grouping) {
 // playerAveragesCSV(2015) - just 2015 stats
 // playerAveragesCSV("all") - all stats
 async function playerAveragesCSV(season) {
-    let players = await g.dbl.players.getAll();
-    players = await player.withStats(null, players, {
-        statsSeasons: season === "all" ? "all" : [season],
-    });
+    let players;
+    if (g.season === season && g.phase <= g.PHASE.PLAYOFFS) {
+        players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.FREE_AGENT, Infinity]);
+    } else {
+        // If it's not this season, get all players, because retired players could apply to the selected season
+        players = await getCopy.players({activeAndRetired: true});
+    }
 
     // Array of seasons in stats, either just one or all of them
-    const seasons = _.uniq(_.flatten(players.map(p => p.stats)).map(ps => ps.season));
+    let seasons;
+    if (season === 'all') {
+        seasons = _.uniq(_.flatten(players.map(p => p.ratings)).map(pr => pr.season));
+    } else {
+        seasons = [season];
+    }
 
     let output = "pid,Name,Pos,Age,Team,Season,GP,GS,Min,FGM,FGA,FG%,3PM,3PA,3P%,FTM,FTA,FT%,OReb,DReb,Reb,Ast,TO,Stl,Blk,BA,PF,Pts,+/-,PER,EWA\n";
 
-    seasons.forEach(s => {
-        player.filter(players, {
+    for (const s of seasons) {
+        const players2 = await getCopy.playersPlus(players, {
             attrs: ["pid", "name", "age"],
             ratings: ["pos"],
             stats: ["abbrev", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "ba", "pf", "pts", "pm", "per", "ewa"],
             season: s,
-        }).forEach(p => {
-            output += `${[p.pid, p.name, p.ratings.pos, p.age, p.stats.abbrev, s, p.stats.gp, p.stats.gs, p.stats.min, p.stats.fg, p.stats.fga, p.stats.fgp, p.stats.tp, p.stats.tpa, p.stats.tpp, p.stats.ft, p.stats.fta, p.stats.ftp, p.stats.orb, p.stats.drb, p.stats.trb, p.stats.ast, p.stats.tov, p.stats.stl, p.stats.blk, p.stats.ba, p.stats.pf, p.stats.pts, p.stats.pm, p.stats.per, p.stats.ewa].join(",")}\n`;
         });
-    });
+
+        for (const p of players2) {
+            output += `${[p.pid, p.name, p.ratings.pos, p.age, p.stats.abbrev, s, p.stats.gp, p.stats.gs, p.stats.min, p.stats.fg, p.stats.fga, p.stats.fgp, p.stats.tp, p.stats.tpa, p.stats.tpp, p.stats.ft, p.stats.fta, p.stats.ftp, p.stats.orb, p.stats.drb, p.stats.trb, p.stats.ast, p.stats.tov, p.stats.stl, p.stats.blk, p.stats.ba, p.stats.pf, p.stats.pts, p.stats.pm, p.stats.per, p.stats.ewa].join(",")}\n`;
+        }
+    }
 
     return output;
 }

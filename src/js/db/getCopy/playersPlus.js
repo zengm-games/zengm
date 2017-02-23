@@ -368,7 +368,7 @@ const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: 
         return seasonCheck && tidCheck;
     });
 
-    if (playerStats.length === 0 && keepWithNoStats) {
+    if (playerStats.length === 0 && showNoStats) {
         playerStats.push({});
     }
 
@@ -389,7 +389,8 @@ const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: 
         const ignoredKeys = ['pid', 'season', 'tid', 'yearsWithTeam'];
         const statSums = {};
         const statSumsPlayoffs = {};
-        for (const attr of Object.keys(careerStats[0])) {
+        const attrs = careerStats.length > 0 ? Object.keys(careerStats[0]) : [];
+        for (const attr of attrs) {
             if (!ignoredKeys.includes(attr)) {
                 statSums[attr] = reduceCareerStats(careerStats, attr, false);
                 statSumsPlayoffs[attr] = reduceCareerStats(careerStats, attr, true);
@@ -417,7 +418,7 @@ const processPlayer = async (p: Player, options: PlayerOptions, tx: ?BackboardTx
         await processStats(output, p, keepWithNoStats, options, tx);
 
         // Only add a player if filterStats finds something (either stats that season, or options overriding that check)
-        if (output.stats === undefined) {
+        if (output.stats === undefined && !keepWithNoStats) {
             return undefined;
         }
     }

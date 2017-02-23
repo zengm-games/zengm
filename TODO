@@ -1,6 +1,6 @@
 IVERSON
 
-player stats for a draft prospect should be 0 rows http://localhost/l/49/player/532
+draft tests fail sometimes
 
 getCopy.players use only where needed for input to player.filter
 - abstract season logic from leaders/playerRatings, use in stats pages too (plus a bit extra, for ones showing draft prospects too)

@@ -2022,119 +2022,6 @@ async function killOne() {
     });
 }
 
-type WithStatsOptions = {
-    statsPlayoffs?: boolean,
-    statsSeasons: 'all' | number[],
-    statsTid?: number,
-};
-async function withStats(
-    tx: BackboardTx,
-    players: (Player & {stats?: PlayerStats[]})[], // This mutates the input, so input must have optional stats property
-    {
-        statsPlayoffs = false,
-        statsSeasons,
-        statsTid,
-    }: WithStatsOptions,
-): Promise<PlayerWithStats[]> {
-    players = await Promise.all(players);
-    players = players.sort((a, b) => a.pid - b.pid);
-
-    for (const p of players) {
-        p.stats = [];
-    }
-
-    if ((statsSeasons !== "all" && statsSeasons.length === 0) || players.length === 0) {
-        // No stats needed! Yay!
-        return players;
-    }
-
-    const pidsToIdx = {};
-    const pids = players.map((p, i) => {
-        pidsToIdx[p.pid] = i;
-
-        return p.pid;
-    });
-
-    let seasonsRange;
-    if (statsSeasons === "all") {
-        // All seasons
-        seasonsRange = [0, Infinity];
-    } else if (statsSeasons.length === 1) {
-        // Restrict to one season
-        seasonsRange = [statsSeasons[0], statsSeasons[0]];
-    } else if (statsSeasons.length > 1) {
-        // Restrict to range between seasons
-        seasonsRange = [Math.min(...statsSeasons), Math.max(...statsSeasons)];
-    }
-    const range = backboard.bound([Math.min(...pids)], [Math.max(...pids), '']);
-
-    return helpers.maybeReuseTx("playerStats", "readonly", tx, async tx2 => {
-        const index = tx2.playerStats.index('pid, season, tid')._rawIndex; // eslint-disable-line no-underscore-dangle
-
-        await new Promise((resolve, reject) => {
-            const request = index.openCursor(range);
-            request.onerror = e => reject(e.target.error);
-            request.onsuccess = e => {
-                const cursor = e.target.result;
-                if (!cursor) {
-                    resolve();
-                    return;
-                }
-
-                const [pid, season] = cursor.key;
-                if (!pidsToIdx.hasOwnProperty(pid)) {
-                    // Skip to next player if we don't care about this player
-                    const newPid = pids.find(x => x > pid);
-                    if (newPid === undefined) {
-                        resolve();
-                    } else {
-                        cursor.continue([newPid, seasonsRange[0]]);
-                    }
-                    return;
-                }
-                const i = pidsToIdx[pid];
-
-                if (season >= seasonsRange[0] && season <= seasonsRange[1]) {
-                    const ps = cursor.value;
-
-                    let save = true;
-                    if (statsSeasons !== "all" && !statsSeasons.includes(ps.season)) {
-                        // statsSeasons is defined, but this season isn't in it
-                        save = false;
-                    } else if (!statsPlayoffs && statsPlayoffs !== ps.playoffs) {
-                        // If options.statsPlayoffs is false, don't include playoffs. Otherwise, include both
-                        save = false;
-                    } else if (statsTid !== undefined && statsTid !== ps.tid) {
-                        save = false;
-                    }
-
-                    if (save) {
-                        players[i].stats.push(ps);
-                    }
-
-                    // Could immediately skip to next player if we've hit seasonsRange[1], although playoffs complicates it... be careful!
-                    cursor.continue();
-                } else if (season < seasonsRange[0]) {
-                    cursor.continue([pid, seasonsRange[0]]);
-                } else if (season > seasonsRange[1]) {
-                    if (i < pids.length - 1) {
-                        cursor.continue([pids[i + 1], seasonsRange[0]]);
-                    } else {
-                        resolve();
-                    }
-                }
-            };
-        });
-
-        for (const p of players) {
-            // Sort seasons in ascending order. This is necessary because the index will be ordering them by tid within a season, which is probably not what is ever wanted.
-            p.stats.sort((a, b) => a.psid - b.psid);
-        }
-
-        return players;
-    });
-}
-
 export {
     addRatingsRow,
     addStatsRow,
@@ -2159,6 +2046,5 @@ export {
     augmentPartialPlayer,
     checkStatisticalFeat,
     killOne,
-    withStats,
     fuzzRating,
 };

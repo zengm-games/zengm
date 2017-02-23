@@ -2,15 +2,24 @@ IVERSON
 
 move everything but the UI to a web worker
 - split code, with concrete API for communication between frontend and backend
+- ui folder
+  - output: ui.js
+  - all the react components, routing, and boilerplate to connect to worker and communicate
+- worker folder
+  - output: worker.js
+  - everything else
 - never use g in views?
 
 draft tests fail sometimes
+- should give reverse round 2 order for teams with the same record
 
 getCopy.players use only where needed for input to player.filter
 - abstract season logic from leaders/playerRatings, use in stats pages too (plus a bit extra, for ones showing draft prospects too)
 
 getCopy.playersPlus
 - don't figure out if tx needed ahead of time. dynamically open it if required, then reuse
+- tests (port from player.filter, and more)
+- oldStats
 
 i think withStats was faster that playersPlus for getting stats for a large number of players
 - move stats back within players
@@ -28,22 +37,6 @@ since phase change can't be aborted anymore... what should menu be like then? wh
 add flow comments to new files!
 - hard for ones that return (T | T[]) depending on inputs. maybe rethink getCopy API
   - Cache.getCopy and Cache.getCopies?
-
-player.filter -> db.getCopy.players
-- how to handle cases where players from IDB are passed in? do i need to augment with cache, or is it all old?
-  - basically just when some players are retired, right? in that case, could augment, since performance is not critical when reviewing archived data
-    - evne when querying by pid, it could be the pid of a retired player. you never know unless you check the cache, or if you got the pid from an active-only context
-      - make db.getCopy.players (and rename current one... getCopy.playersPlus?) which handles all player-getting, such as "for individual pid, look in cache first, then database if necessary". but others too
-- watch list error switching ot playoffs, should just be 0s
-- ratings special cases in commented out code, some depend on stats
-- how to filter records of output.. like not every player is returned by player.filter, see the end. does this matter?
-  - yes, see comments in processPlayer, return undefined where appropriate
-- handle case where player is signed in offseason and needs to appear on roster, but has no stats
-- when IDB needed?
-  - do the current indexes make sense? limits usefulness after playoffs
-- get rid of PlayerWithStats?
-- oldStats
-- passing in players is kind of shitty, runs contrary to the whole "getCopy" idea because you have to figure out how to generate players object ahead of time. maybe rethink this..
 
 eventually merge players and playersPlus
 

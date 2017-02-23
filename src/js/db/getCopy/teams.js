@@ -280,7 +280,7 @@ const processTeam = async (t: Team, {
  * @param {Array.<string=>} options.stats List of team stats to include in output (e.g. fg, orb, ast, blk, ...).
  * @param {boolean=} options.playoffs Boolean representing whether to return playoff stats or not; default is false.
  * @param {boolean=} options.regularSeason Boolean representing whether to return playoff stats or not; default is false.
- * @param {string=} options.statType: What type of stats to return, 'perGame' or 'totals' (default is 'perGame).
+ * @param {string=} options.statType What type of stats to return, 'perGame' or 'totals' (default is 'perGame).
  * @return {Promise.(Object|Array.<Object>)} Filtered team object or array of filtered team objects, depending on the inputs.
  */
 const getCopy = async ({

@@ -439,6 +439,35 @@ const processPlayer = async (p: Player, options: PlayerOptions, tx: ?BackboardTx
     return output;
 };
 
+/**
+ * Retrieve a filtered copy of a player object, or an array of filtered player objects.
+ *
+ * This can be used to retrieve information about a certain season, compute average statistics from the raw data, etc.
+ *
+ * For a player object (p), create an object suitible for output based on the appropriate options, most notably a options.season and options.tid to find rows in of stats and ratings, and options.attributes, options.stats, and options.ratings to extract teh desired information. In the output, the attributes keys will be in the root of the object. There will also be stats and ratings properties containing filtered stats and ratings objects.
+ *
+ * If options.season is undefined, then the stats and ratings objects will contain lists of objects for each season and options.tid is ignored. Then, there will also be a careerStats property in the output object containing an object with career averages.
+ *
+ * There are several more options (all described below) which can make things pretty complicated, but most of the time, they are not needed.
+ *
+ * @memberOf core.player
+ * @param {Object|Array.<Object>} players Player object or array of player objects to be filtered.
+ * @param {Object} options Options, as described below.
+ * @param {number=} options.season Season to retrieve stats/ratings for. If undefined, return stats/ratings for all seasons in a list as well as career totals in player.careerStats.
+ * @param {number=} options.tid Team ID to retrieve stats for. This is useful in the case where a player played for multiple teams in a season. Eventually, there should be some way to specify whether the stats for multiple teams in a single season should be merged together or not. For now, if this is undefined, it just picks the first entry, which is clearly wrong.
+ * @param {Array.<string>=} options.attrs List of player attributes to include in output.
+ * @param {Array.<string>=} options.ratings List of player ratings to include in output.
+ * @param {Array.<string>=} options.stats List of player stats to include in output.
+ * @param {boolean=} options.playoffs Boolean representing whether to return playoff stats (statsPlayoffs and careerStatsPlayoffs) or not; default is false. Either way, regular season stats are always returned.
+ * @param {boolean=} options.showNoStats When true, players are returned with zeroed stats objects even if they have accumulated no stats for a team (such as  players who were just traded for, free agents, etc.); this applies only for regular season stats. Even when this is true, undefined will still be returned if a season is requested from before they entered the league. To show draft prospects, options.showRookies is needed. Default is false, but if options.stats is empty, this is always true.
+ * @param {boolean=} options.showRookies If true (default false), then future draft prospects and rookies drafted in the current season (g.season) are shown if that season is requested. This is mainly so, after the draft, rookies can show up in the roster, player ratings view, etc; and also so prospects can be shown in the watch list. After the next season starts, then they will no longer show up in a request for that season since they didn't actually play that season.
+ * @param {boolean=} options.showRetired If true (default false), then players with no ratings for the current season are still returned, with either 0 for every rating and a blank array for skills (retired players) or future ratings (draft prospects). This is currently only used for the watch list, so retired players (and future draft prospects!) can still be watched.
+ * @param {boolean=} options.fuzz When true (default false), noise is added to any returned ratings based on the fuzz variable for the given season (default: false); any user-facing rating should use true, any non-user-facing rating should use false.
+ * @param {boolean=} options.oldStats CURRENTLY NOT IMPLEMENTED! When true (default false), stats from the previous season are displayed if there are no stats for the current season. This is currently only used for the free agents list, so it will either display stats from this season if they exist, or last season if they don't.
+ * @param {number=} options.numGamesRemaining If the "cashOwed" attr is requested, options.numGamesRemaining is used to calculate how much of the current season's contract remains to be paid. This is used for buying out players.
+ * @param {string=} options.statType What type of stats to return, 'perGame', 'per36', or 'totals' (default is 'perGame).
+ * @return {Object|Array.<Object>} Filtered player object or array of filtered player objects, depending on the first argument.
+ */
 const getCopy = async (players: Player | Player[], {
     season,
     tid,

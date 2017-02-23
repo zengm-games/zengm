@@ -830,14 +830,37 @@ function name(): {country: string, firstName: string, lastName: string} {
     }
     let lastName = lastNameRow[0];
 
-    // Jr. or III, randomly
-    const son = random.uniform(0, 1);
+    // patronym names are not based on actually finding Dad
+    // we go up to XXX (30th) to outlast the popes,
+    // who currently set the record with John XXIII (23rd)
+    // however, we only do it in English-speaking countries
+    // we use a base rate of 2% of all players
+    const patBase = 0.02;
+    const patronymRand = random.uniform(0, 1);
+    const patNames = ["Jr.", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX", "XXI", "XXII", "XXIII", "XXIV", "XXV", "XXVI", "XXVII", "XXVIII", "XXIX", "XXX"];
+    const patPercents = [patBase];
+    let sonContinue = 0.1; // 10% will name their kid III
+    while (patPercents.length < patNames.length) {
+        // III rate increases but tops out at 60%
+        if (patPercents.length <= 6) {
+            sonContinue = patPercents.length / 10.0;
+        }
+        patPercents.push(sonContinue * Math.min(...patPercents));
+    }
     const english = ["USA", "Canada", "Australia", "New Zealand", "England", "Ireland", "Jamaica", "Phillippines"];
-    if (english.includes(country) && son < 0.01) {
-        if (son < 0.004) {
-            lastName = `${lastName} III`;
-        } else {
-            lastName = `${lastName} Jr.`;
+    if (english.includes(country)) {
+        // we start at a base rate of 2% of all players
+        // then drill until we find out which patronym
+        if (patronymRand < patBase) {
+            const patNameRow = patPercents.findIndex(row => row <= patronymRand) - 1;
+            if (patNameRow < 0) {
+                // patronymRand less than 1.89e-10
+                // patronym would be higher than 30th
+                lastName = `${lastName} the Unlucky`;
+            } else {
+                const patronym = patNames[patNameRow];
+                lastName = `${lastName} ${patronym}`;
+            }
         }
     }
 

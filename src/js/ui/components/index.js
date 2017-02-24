@@ -1,49 +1,23 @@
-import BarGraph from './BarGraph';
-import BoxPlot from './BoxPlot';
-import DataTable from './DataTable';
-import DownloadDataLink from './DownloadDataLink';
-import DraftAbbrev from './DraftAbbrev';
-import Dropdown from './Dropdown';
-import Footer from './Footer';
-import Header from './Header';
-import HelpPopover from './HelpPopover';
-import JumpTo from './JumpTo';
-import LeagueWrapper from './LeagueWrapper';
-import MultiTeamMenu from './MultiTeamMenu';
-import NagModal from './NagModal';
-import NavBar from './NavBar';
-import NewWindowLink from './NewWindowLink';
-import PlayerNameLabels from './PlayerNameLabels';
-import PlayerPicture from './PlayerPicture';
-import PlayoffMatchup from './PlayoffMatchup';
-import RatingWithChange from './RatingWithChange';
-import RecordAndPlayoffs from './RecordAndPlayoffs';
-import SafeHtml from './SafeHtml';
-import SkillsBlock from './SkillsBlock';
-import WatchBlock from './WatchBlock';
-
-export {
-    BarGraph,
-    BoxPlot,
-    DataTable,
-    DownloadDataLink,
-    DraftAbbrev,
-    Dropdown,
-    Footer,
-    Header,
-    HelpPopover,
-    JumpTo,
-    LeagueWrapper,
-    MultiTeamMenu,
-    NagModal,
-    NavBar,
-    NewWindowLink,
-    PlayerNameLabels,
-    PlayerPicture,
-    PlayoffMatchup,
-    RatingWithChange,
-    RecordAndPlayoffs,
-    SafeHtml,
-    SkillsBlock,
-    WatchBlock,
-};
+export {default as BarGraph} from './BarGraph';
+export {default as BoxPlot} from './BoxPlot';
+export {default as DataTable} from './DataTable';
+export {default as DownloadDataLink} from './DownloadDataLink';
+export {default as DraftAbbrev} from './DraftAbbrev';
+export {default as Dropdown} from './Dropdown';
+export {default as Footer} from './Footer';
+export {default as Header} from './Header';
+export {default as HelpPopover} from './HelpPopover';
+export {default as JumpTo} from './JumpTo';
+export {default as LeagueWrapper} from './LeagueWrapper';
+export {default as MultiTeamMenu} from './MultiTeamMenu';
+export {default as NagModal} from './NagModal';
+export {default as NavBar} from './NavBar';
+export {default as NewWindowLink} from './NewWindowLink';
+export {default as PlayerNameLabels} from './PlayerNameLabels';
+export {default as PlayerPicture} from './PlayerPicture';
+export {default as PlayoffMatchup} from './PlayoffMatchup';
+export {default as RatingWithChange} from './RatingWithChange';
+export {default as RecordAndPlayoffs} from './RecordAndPlayoffs';
+export {default as SafeHtml} from './SafeHtml';
+export {default as SkillsBlock} from './SkillsBlock';
+export {default as WatchBlock} from './WatchBlock';

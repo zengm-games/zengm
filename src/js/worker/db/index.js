@@ -2,11 +2,7 @@
 
 import Backboard from 'backboard';
 import Promise from 'bluebird';
-import Cache from './Cache';
-import connectMeta from './connectMeta';
-import connectLeague from './connectLeague';
 import * as getCopy from './getCopy';
-import reset from './reset';
 import logEvent from '../../util/logEvent';
 
 Backboard.setPromiseConstructor(Promise);
@@ -23,9 +19,9 @@ Backboard.on('blocked', () => {
 });
 
 export {
-    Cache,
-    connectMeta,
-    connectLeague,
     getCopy,
-    reset,
 };
+export {default as Cache} from './Cache';
+export {default as connectMeta} from './connectMeta';
+export {default as connectLeague} from './connectLeague';
+export {default as reset} from './reset';

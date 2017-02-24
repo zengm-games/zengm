@@ -1,125 +1,62 @@
 // @flow
 
-import account from './account';
-import accountUpdateCard from './accountUpdateCard';
-import awardsRecords from './awardsRecords';
-import changes from './changes';
-import customizePlayer from './customizePlayer';
-import dashboard from './dashboard';
-import deleteLeague from './deleteLeague';
-import deleteOldData from './deleteOldData';
-import draft from './draft';
-import draftScouting from './draftScouting';
-import draftSummary from './draftSummary';
-import editTeamInfo from './editTeamInfo';
-import eventLog from './eventLog';
-import exportLeague from './exportLeague';
-import exportStats from './exportStats';
-import fantasyDraft from './fantasyDraft';
-import freeAgents from './freeAgents';
-import gameLog from './gameLog';
-import godMode from './godMode';
-import hallOfFame from './hallOfFame';
-import history from './history';
-import historyAll from './historyAll';
-import inbox from './inbox';
-import leaders from './leaders';
-import leagueDashboard from './leagueDashboard';
-import leagueFinances from './leagueFinances';
-import live from './live';
-import liveGame from './liveGame';
-import loginOrRegister from './loginOrRegister';
-import lostPassword from './lostPassword';
-import message from './message';
-import multiTeamMode from './multiTeamMode';
-import negotiation from './negotiation';
-import negotiationList from './negotiationList';
-import newLeague from './newLeague';
-import newTeam from './newTeam';
-import player from './player';
-import playerFeats from './playerFeats';
-import playerRatingDists from './playerRatingDists';
-import playerRatings from './playerRatings';
-import playerShotLocations from './playerShotLocations';
-import playerStatDists from './playerStatDists';
-import playerStats from './playerStats';
-import playoffs from './playoffs';
-import powerRankings from './powerRankings';
-import resetPassword from './resetPassword';
-import roster from './roster';
-import schedule from './schedule';
-import standings from './standings';
-import teamFinances from './teamFinances';
-import teamHistory from './teamHistory';
-import teamRecords from './teamRecords';
-import teamShotLocations from './teamShotLocations';
-import teamStatDists from './teamStatDists';
-import teamStats from './teamStats';
-import trade from './trade';
-import tradingBlock from './tradingBlock';
-import transactions from './transactions';
-import upcomingFreeAgents from './upcomingFreeAgents';
-import watchList from './watchList';
-
-export {
-    account,
-    accountUpdateCard,
-    awardsRecords,
-    changes,
-    customizePlayer,
-    dashboard,
-    deleteLeague,
-    deleteOldData,
-    draft,
-    draftScouting,
-    draftSummary,
-    editTeamInfo,
-    eventLog,
-    exportLeague,
-    exportStats,
-    fantasyDraft,
-    freeAgents,
-    gameLog,
-    godMode,
-    hallOfFame,
-    history,
-    historyAll,
-    inbox,
-    leaders,
-    leagueDashboard,
-    leagueFinances,
-    live,
-    liveGame,
-    loginOrRegister,
-    lostPassword,
-    message,
-    multiTeamMode,
-    negotiation,
-    negotiationList,
-    newLeague,
-    newTeam,
-    player,
-    playerFeats,
-    playerRatingDists,
-    playerRatings,
-    playerShotLocations,
-    playerStatDists,
-    playerStats,
-    playoffs,
-    powerRankings,
-    resetPassword,
-    roster,
-    schedule,
-    standings,
-    teamFinances,
-    teamHistory,
-    teamRecords,
-    teamShotLocations,
-    teamStatDists,
-    teamStats,
-    trade,
-    tradingBlock,
-    transactions,
-    upcomingFreeAgents,
-    watchList,
-};
+export {default as account} from './account';
+export {default as accountUpdateCard} from './accountUpdateCard';
+export {default as awardsRecords} from './awardsRecords';
+export {default as changes} from './changes';
+export {default as customizePlayer} from './customizePlayer';
+export {default as dashboard} from './dashboard';
+export {default as deleteLeague} from './deleteLeague';
+export {default as deleteOldData} from './deleteOldData';
+export {default as draft} from './draft';
+export {default as draftScouting} from './draftScouting';
+export {default as draftSummary} from './draftSummary';
+export {default as editTeamInfo} from './editTeamInfo';
+export {default as eventLog} from './eventLog';
+export {default as exportLeague} from './exportLeague';
+export {default as exportStats} from './exportStats';
+export {default as fantasyDraft} from './fantasyDraft';
+export {default as freeAgents} from './freeAgents';
+export {default as gameLog} from './gameLog';
+export {default as godMode} from './godMode';
+export {default as hallOfFame} from './hallOfFame';
+export {default as history} from './history';
+export {default as historyAll} from './historyAll';
+export {default as inbox} from './inbox';
+export {default as leaders} from './leaders';
+export {default as leagueDashboard} from './leagueDashboard';
+export {default as leagueFinances} from './leagueFinances';
+export {default as live} from './live';
+export {default as liveGame} from './liveGame';
+export {default as loginOrRegister} from './loginOrRegister';
+export {default as lostPassword} from './lostPassword';
+export {default as message} from './message';
+export {default as multiTeamMode} from './multiTeamMode';
+export {default as negotiation} from './negotiation';
+export {default as negotiationList} from './negotiationList';
+export {default as newLeague} from './newLeague';
+export {default as newTeam} from './newTeam';
+export {default as player} from './player';
+export {default as playerFeats} from './playerFeats';
+export {default as playerRatingDists} from './playerRatingDists';
+export {default as playerRatings} from './playerRatings';
+export {default as playerShotLocations} from './playerShotLocations';
+export {default as playerStatDists} from './playerStatDists';
+export {default as playerStats} from './playerStats';
+export {default as playoffs} from './playoffs';
+export {default as powerRankings} from './powerRankings';
+export {default as resetPassword} from './resetPassword';
+export {default as roster} from './roster';
+export {default as schedule} from './schedule';
+export {default as standings} from './standings';
+export {default as teamFinances} from './teamFinances';
+export {default as teamHistory} from './teamHistory';
+export {default as teamRecords} from './teamRecords';
+export {default as teamShotLocations} from './teamShotLocations';
+export {default as teamStatDists} from './teamStatDists';
+export {default as teamStats} from './teamStats';
+export {default as trade} from './trade';
+export {default as tradingBlock} from './tradingBlock';
+export {default as transactions} from './transactions';
+export {default as upcomingFreeAgents} from './upcomingFreeAgents';
+export {default as watchList} from './watchList';

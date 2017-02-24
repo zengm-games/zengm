@@ -71,6 +71,8 @@ player.sign, like player.addToFreeAgents to encapsulate tid changes
 
 how do caches based on g.season work in preseason?
 
+in clearWatchList, instead of writing right to IDB, it should be writing the edited player to the cache, even if he's retired
+
 revisit add.. move stuff to put
 - store if pk is auto incrementing, if not then require it on put/add
 

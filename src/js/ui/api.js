@@ -5,8 +5,16 @@ import g from '../globals';
 import * as ui from './ui';
 import {init, views} from '../worker';
 import {league} from '../worker/core';
+import type {GetOutput, UpdateEvents} from '../util/types';
 
-const runBefore = async (viewId, inputs, updateEvents, prevData, setStateData, topMenu) => {
+const runBefore = async (
+    viewId: string,
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+    prevData: any,
+    setStateData: (state: any) => void,
+    topMenu: any,
+): Promise<(void | {[key: string]: any})[]> => {
     if (views.hasOwnProperty(viewId) && views[viewId].hasOwnProperty('runBefore')) {
         return Promise.all(views[viewId].runBefore.map((fn) => {
             return fn(inputs, updateEvents, prevData, setStateData, topMenu);
@@ -43,7 +51,7 @@ const updatePlayerWatch = async (pid: number, watch: boolean) => {
         cachedPlayer.watch = watch;
     } else {
         await g.dbl.tx('players', 'readwrite', async tx => {
-            const p = await tx.players.get(this.props.pid);
+            const p = await tx.players.get(pid);
             p.watch = watch;
             await tx.players.put(p);
         });

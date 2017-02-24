@@ -1,15 +1,6 @@
 // @flow
 
 import * as account from '../../util/account';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import Account from '../../ui/views/Account';
-
-function get(ctx) {
-    return {
-        goldMessage: ctx.bbgm.goldResult !== undefined ? ctx.bbgm.goldResult.message : undefined,
-        goldSuccess: ctx.bbgm.goldResult !== undefined ? ctx.bbgm.goldResult.success : undefined,
-    };
-}
 
 async function updateAccount(inputs, updateEvents, state, setState, topMenu) {
     if (updateEvents.includes('firstRun') || updateEvents.includes('account')) {
@@ -46,10 +37,6 @@ async function updateAchievements(inputs, updateEvents) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "account",
-    get,
-    inLeague: false,
+export default {
     runBefore: [updateAccount, updateAchievements],
-    Component: Account,
-});
+};

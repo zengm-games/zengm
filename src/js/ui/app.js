@@ -53,7 +53,7 @@ const leagueView = (id, inLeague = true) => {
     return bbgmViewReact.init({
         id,
         inLeague,
-        get: processInputs[id],
+        get: processInputs.hasOwnProperty(id) ? processInputs[id] : undefined,
         Component: views[componentName],
     });
 };
@@ -85,14 +85,14 @@ const leagueView = (id, inLeague = true) => {
     page('/delete_league/:lid', leagueView('deleteLeague', false));
     page('/manual', staticView('manual', 'Manual', Manual, false));
     page('/manual/:page', staticView('manual', 'Manual', Manual, false));
-/*    page('/changes', views.changes.get);
-    page('/account', views.account.get);
-    page('/account/login_or_register', views.loginOrRegister.get);
-    page('/account/lost_password', views.lostPassword.get);
-    page('/account/reset_password/:token', views.resetPassword.get);
-    page('/account/update_card', views.accountUpdateCard.get);
+    page('/changes', leagueView('changes', false));
+    page('/account', leagueView('account', false));
+    page('/account/login_or_register', leagueView('loginOrRegister', false));
+    page('/account/lost_password', leagueView('lostPassword', false));
+    page('/account/reset_password/:token', leagueView('resetPassword', false));
+    page('/account/update_card', leagueView('accountUpdateCard', false));
 
-    // League views
+/*    // League views
     page('/l/:lid', views.leagueDashboard.get);
     page('/l/:lid/new_team', views.newTeam.get);
     page('/l/:lid/inbox', views.inbox.get);

@@ -2,20 +2,12 @@
 
 import React from 'react';
 import g from '../../globals';
-import * as ui from '../ui';
-import * as league from '../../worker/core/league';
+import * as api from '../api';
 
 const handleChange = async (e: SyntheticInputEvent) => {
     const userTid = parseInt(e.target.value, 10);
 
-    await league.setGameAttributes({
-        userTid,
-    });
-    g.emitter.emit('updateMultiTeam');
-
-    // dbChange is kind of a hack because it was designed for multi-window update only, but it should update everything
-    ui.realtimeUpdate(["dbChange"]);
-    league.updateLastDbChange();
+    api.updateUserTid(userTid);
 };
 
 type Props = {

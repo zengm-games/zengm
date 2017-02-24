@@ -1,9 +1,7 @@
 // @flow
 
 import React from 'react';
-import g from '../../globals';
-import * as ui from '../ui';
-import * as league from '../../worker/core/league';
+import * as api from '../api';
 
 type Props = {
     pid: number,
@@ -51,14 +49,7 @@ class WatchBlock extends React.Component {
             watch,
         });
 
-        await g.dbl.tx("players", "readwrite", async tx => {
-            const p = await tx.players.get(this.props.pid);
-            p.watch = watch;
-            await tx.players.put(p);
-        });
-
-        league.updateLastDbChange();
-        ui.realtimeUpdate(["playerMovement", "watchList"]);
+        await api.updatePlayerWatch(this.props.pid, watch);
     }
 
     render() {

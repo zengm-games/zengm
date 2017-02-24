@@ -11,6 +11,7 @@ move everything but the UI to a web worker
 - confirm 404 still works
 - never use g in views?
   - ignore for now, just write code to keep g in sync in both places
+  - what about emitter?
 - current todo
   - find references between worker and ui, and break them apart
   - split up util - ui, worker, or both
@@ -131,6 +132,7 @@ revisit g, which is basically another kind of ad hoc cache
 
 multi window
 - for now, disabled checkDbChange
+- what to do about dbChange?
 
 benchmark using proxies to detect change in index stuff rather than dirtyIndexes
 

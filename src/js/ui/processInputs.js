@@ -334,7 +334,7 @@ export {
     player,
     playerFeats,
     validateSeason as playerRatingDists,
-    validateSeason as playerRatings,
+    playerRatings,
     validateSeason as playerShotLocations,
     validateSeason as playerStatDists,
     playerStats,

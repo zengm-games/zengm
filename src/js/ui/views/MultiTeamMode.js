@@ -1,7 +1,7 @@
 import React from 'react';
 import g from '../../globals';
+import * as api from '../api';
 import * as ui from '../ui';
-import * as league from '../../worker/core/league';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import {NewWindowLink} from '../components';
 
@@ -26,16 +26,10 @@ class MultiTeamMode extends React.Component {
             if (!newUserTids.includes(g.userTid)) {
                 gameAttributes.userTid = newUserTids[0];
             }
-            await league.setGameAttributes(gameAttributes);
 
-            if (newUserTids.length === 1) {
-                league.updateMetaNameRegion(g.teamNamesCache[newUserTids[0]], g.teamRegionsCache[newUserTids[0]]);
-            } else {
-                league.updateMetaNameRegion("Multi Team Mode", "");
-            }
+            await api.updateMultiTeamMode(gameAttributes);
 
             ui.realtimeUpdate(['g.userTids']);
-            league.updateLastDbChange();
         }
     }
 

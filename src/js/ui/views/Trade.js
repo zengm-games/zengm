@@ -1,9 +1,8 @@
 import classNames from 'classnames';
 import React from 'react';
 import g from '../../globals';
+import * as api from '../api';
 import * as ui from '../ui';
-import * as league from '../../worker/core/league';
-import * as trade from '../../worker/core/trade';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import getCols from '../../util/getCols';
 import * as helpers from '../../util/helpers';
@@ -75,10 +74,10 @@ class Trade extends React.Component {
             pids: ids['other-pids'],
             dpids: ids['other-dpids'],
         }];
-        await trade.updatePlayers(teams);
+
+        await api.updateTrade(teams);
 
         ui.realtimeUpdate();
-        league.updateLastDbChange();
     }
 
     async handleChangeTeam(event) {
@@ -97,10 +96,10 @@ class Trade extends React.Component {
             pids: [],
             dpids: [],
         }];
-        await trade.create(teams);
+
+        await api.createTrade(teams);
 
         ui.realtimeUpdate();
-        league.updateLastDbChange();
     }
 
     async handleClickAsk() {
@@ -109,7 +108,7 @@ class Trade extends React.Component {
             message: null,
         });
 
-        const message = await trade.makeItWorkTrade();
+        const message = await api.tradeCounterOffer();
 
         this.setState({
             asking: false,
@@ -117,18 +116,15 @@ class Trade extends React.Component {
         });
 
         ui.realtimeUpdate();
-        league.updateLastDbChange();
     }
 
     async handleClickClear() {
         this.setState({
             message: null,
         });
-
-        await trade.clear();
+        await api.clearTrade();
 
         ui.realtimeUpdate();
-        league.updateLastDbChange();
     }
 
     handleClickForceTrade() {
@@ -138,7 +134,7 @@ class Trade extends React.Component {
     }
 
     async handleClickPropose() {
-        const [accepted, message] = await trade.propose(this.state.forceTrade);
+        const [accepted, message] = await api.proposeTrade(this.state.forceTrade);
 
         this.setState({
             accepted,
@@ -146,7 +142,6 @@ class Trade extends React.Component {
         });
 
         ui.realtimeUpdate();
-        league.updateLastDbChange();
     }
 
     render() {

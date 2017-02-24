@@ -168,21 +168,6 @@ function amountWithMood(amount: number, mood: number = 0.5): number {
 }
 
 /**
- * Will a player negotiate with a team, or not?
- *
- * @param {number} amount Player's desired contract amount, already adjusted for mood as in amountWithMood, in thousands of dollars
- * @param {number} mood Player's mood towards the team in question.
- * @return {boolean} Answer to the question.
- */
-function refuseToNegotiate(amount: number, mood: number): boolean {
-    if (amount * mood > 10000) {
-        return true;
-    }
-
-    return false;
-}
-
-/**
  * Simulates one or more days of free agency.
  *
  * @memberOf core.freeAgents
@@ -252,6 +237,5 @@ export {
     autoSign,
     decreaseDemands,
     amountWithMood,
-    refuseToNegotiate,
     play,
 };

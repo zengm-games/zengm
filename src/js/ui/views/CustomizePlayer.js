@@ -3,9 +3,8 @@
 import faces from 'facesjs';
 import React from 'react';
 import g from '../../globals';
+import * as api from '../api';
 import * as ui from '../ui';
-import * as league from '../../worker/core/league';
-import * as player from '../../worker/core/player';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import * as helpers from '../../util/helpers';
 import {NewWindowLink, PlayerPicture} from '../components';
@@ -144,81 +143,12 @@ class CustomizePlayer extends React.Component {
         });
 
         const p = this.props.p;
-        const r = p.ratings.length - 1;
 
         // Copy over values from state, if they're valid
         copyValidValues(this.state.p, p, this.props.season);
 
-        // Fix draft season
-        if (p.tid === g.PLAYER.UNDRAFTED || p.tid === g.PLAYER.UNDRAFTED_2 || p.tid === g.PLAYER.UNDRAFTED_3) {
-            if (p.tid === g.PLAYER.UNDRAFTED) {
-                p.draft.year = this.props.season;
-            } else if (p.tid === g.PLAYER.UNDRAFTED_2) {
-                p.draft.year = this.props.season + 1;
-            } else if (p.tid === g.PLAYER.UNDRAFTED_3) {
-                p.draft.year = this.props.season + 2;
-            }
+        const pid = await api.upsertCustomizedPlayer(p, this.props.originalTid);
 
-            // Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
-            if (g.phase >= g.PHASE.FREE_AGENCY) {
-                p.draft.year += 1;
-            }
-
-            p.ratings[r].season = p.draft.year;
-        }
-
-        // Set ovr, skills, and bound pot by ovr
-        p.ratings[r].ovr = player.ovr(p.ratings[r]);
-        p.ratings[r].skills = player.skills(p.ratings[r]);
-        if (p.ratings[r].ovr > p.ratings[r].pot) {
-            p.ratings[r].pot = p.ratings[r].ovr;
-        }
-
-        // If player was retired, add ratings (but don't develop, because that would change ratings)
-        if (this.props.originalTid === g.PLAYER.RETIRED) {
-            if (g.season - p.ratings[r].season > 0) {
-                player.addRatingsRow(p, 15);
-            }
-        }
-
-        // Only save image URL if it's selected
-        if (this.state.appearanceOption !== "Image URL") {
-            p.imgURL = "";
-        }
-
-        // If we are *creating* a player who is not a draft prospect, make sure he won't show up in the draft this year
-        if (p.tid !== g.PLAYER.UNDRAFTED && p.tid !== g.PLAYER.UNDRAFTED_2 && p.tid !== g.PLAYER.UNDRAFTED_3 && g.phase < g.PHASE.FREE_AGENCY) {
-            // This makes sure it's only for created players, not edited players
-            if (!p.hasOwnProperty("pid")) {
-                p.draft.year = g.season - 1;
-            }
-        }
-        // Similarly, if we are editing a draft prospect and moving him to a team, make his draft year in the past
-        if ((p.tid !== g.PLAYER.UNDRAFTED && p.tid !== g.PLAYER.UNDRAFTED_2 && p.tid !== g.PLAYER.UNDRAFTED_3) && (this.props.originalTid === g.PLAYER.UNDRAFTED || this.props.originalTid === g.PLAYER.UNDRAFTED_2 || this.props.originalTid === g.PLAYER.UNDRAFTED_3) && g.phase < g.PHASE.FREE_AGENCY) {
-            p.draft.year = g.season - 1;
-        }
-
-        // Recalculate player values, since ratings may have changed
-        await player.updateValues(p);
-        let pid;
-        await g.dbl.tx(["players", "playerStats"], "readwrite", async tx => {
-            // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition
-            // When adding a player, this is the only way to know the pid
-            pid = await tx.players.put(p);
-
-            // Add regular season or playoffs stat row, if necessary
-            if (p.tid >= 0 && p.tid !== this.props.originalTid && g.phase <= g.PHASE.PLAYOFFS) {
-                p.pid = pid;
-
-                // If it is the playoffs, this is only necessary if p.tid actually made the playoffs, but causes only cosmetic harm otherwise.
-                await player.addStatsRow(p, g.phase === g.PHASE.PLAYOFFS);
-
-                // Add back to database
-                await tx.players.put(p);
-            }
-        });
-
-        league.updateLastDbChange();
         ui.realtimeUpdate([], helpers.leagueUrl(["player", pid]));
     }
 

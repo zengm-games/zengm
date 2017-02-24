@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
+import * as api from '../api';
 import * as ui from '../ui';
-import * as league from '../../worker/core/league';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import * as helpers from '../../util/helpers';
 import logEvent from '../../util/logEvent';
@@ -66,7 +66,7 @@ class GodMode extends React.Component {
     async handleFormSubmit(e) {
         e.preventDefault();
 
-        await league.setGameAttributes({
+        await api.updateGameAttributes({
             disableInjuries: this.state.disableInjuries === 'true',
             numGames: parseInt(this.state.numGames, 10),
             quarterLength: parseFloat(this.state.quarterLength),
@@ -90,7 +90,6 @@ class GodMode extends React.Component {
         });
 
         ui.realtimeUpdate(["toggleGodMode"], helpers.leagueUrl(["god_mode"]));
-        league.updateLastDbChange();
     }
 
     async handleGodModeToggle() {
@@ -100,9 +99,8 @@ class GodMode extends React.Component {
             attrs.godModeInPast = true;
         }
 
-        await league.setGameAttributes(attrs);
+        await api.updateGameAttributes(attrs);
 
-        league.updateLastDbChange();
         ui.realtimeUpdate(["toggleGodMode"]);
     }
 

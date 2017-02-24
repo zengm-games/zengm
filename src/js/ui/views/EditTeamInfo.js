@@ -1,6 +1,6 @@
 import React from 'react';
 import g from '../../globals';
-import * as league from '../../worker/core/league';
+import * as api from '../api';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import * as helpers from '../../util/helpers';
 import logEvent from '../../util/logEvent';
@@ -67,39 +67,7 @@ class EditTeamInfo extends React.Component {
                 }
             }
 
-            let userName;
-            let userRegion;
-            await g.dbl.tx(['teams', 'teamSeasons'], 'readwrite', tx => {
-                return tx.teams.iterate(async t => {
-                    t.cid = newTeams[t.tid].cid;
-                    t.did = newTeams[t.tid].did;
-                    t.region = newTeams[t.tid].region;
-                    t.name = newTeams[t.tid].name;
-                    t.abbrev = newTeams[t.tid].abbrev;
-                    if (newTeams[t.tid].imgURL) {
-                        t.imgURL = newTeams[t.tid].imgURL;
-                    }
-
-                    if (t.tid === g.userTid) {
-                        userName = t.name;
-                        userRegion = t.region;
-                    }
-
-                    const teamSeason = await tx.teamSeasons.index('season, tid').get([g.season, t.tid]);
-                    teamSeason.pop = newTeams[t.tid].pop;
-                    await tx.teamSeasons.put(teamSeason);
-
-                    return t;
-                });
-            });
-
-            await league.updateMetaNameRegion(userName, userRegion);
-
-            await league.setGameAttributes({
-                teamAbbrevsCache: newTeams.map(t => t.abbrev),
-                teamRegionsCache: newTeams.map(t => t.region),
-                teamNamesCache: newTeams.map(t => t.name),
-            });
+            await api.updateTeamInfo(newTeams);
 
             this.setState({
                 teams: newTeams,
@@ -110,8 +78,6 @@ class EditTeamInfo extends React.Component {
                 text: 'New team info successfully loaded.',
                 saveToDb: false,
             });
-
-            league.updateLastDbChange();
         };
     }
 
@@ -130,43 +96,13 @@ class EditTeamInfo extends React.Component {
             saving: true,
         });
 
-        let userName;
-        let userRegion;
-        await g.dbl.tx(['teams', 'teamSeasons'], 'readwrite', tx => {
-            return tx.teams.iterate(async t => {
-                t.abbrev = this.state.teams[t.tid].abbrev;
-                t.region = this.state.teams[t.tid].region;
-                t.name = this.state.teams[t.tid].name;
-                t.imgURL = this.state.teams[t.tid].imgURL;
-
-                if (t.tid === g.userTid) {
-                    userName = t.name;
-                    userRegion = t.region;
-                }
-
-                const teamSeason = await tx.teamSeasons.index('season, tid').get([g.season, t.tid]);
-                teamSeason.pop = parseFloat(this.state.teams[t.tid].pop);
-                await tx.teamSeasons.put(teamSeason);
-
-                return t;
-            });
-        });
-
-        await league.updateMetaNameRegion(userName, userRegion);
-
-        await league.setGameAttributes({
-            teamAbbrevsCache: this.state.teams.map(t => t.abbrev),
-            teamRegionsCache: this.state.teams.map(t => t.region),
-            teamNamesCache: this.state.teams.map(t => t.name),
-        });
+        await api.updateTeamInfo(this.state.teams);
 
         logEvent({
             type: 'success',
             text: 'Saved team info.',
             saveToDb: false,
         });
-
-        league.updateLastDbChange();
 
         this.setState({
             saving: false,

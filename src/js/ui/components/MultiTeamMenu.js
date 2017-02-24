@@ -7,10 +7,11 @@ import * as ui from '../ui';
 
 const handleChange = async (e: SyntheticInputEvent) => {
     const userTid = parseInt(e.target.value, 10);
-    api.updateUserTid(userTid);
+    await api.updateGameAttributes({userTid});
 
     // dbChange is kind of a hack because it was designed for multi-window update only, but it should update everything
     ui.realtimeUpdate(['dbChange']);
+    g.emitter.emit('updateMultiTeam');
 };
 
 type Props = {

@@ -1,6 +1,6 @@
 import React from 'react';
 import g from '../../globals';
-import * as league from '../../worker/core/league';
+import * as api from '../api';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import {DownloadDataLink} from '../components';
 
@@ -108,7 +108,7 @@ class ExportLeague extends React.Component {
             return;
         }
 
-        const data = await league.exportLeague(objectStores);
+        const data = await api.exportLeague(objectStores);
         const json = JSON.stringify(data, undefined, 2);
 
         const filename = genFilename(data);

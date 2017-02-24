@@ -1,6 +1,5 @@
 import React from 'react';
-import g from '../../globals';
-import * as league from '../../worker/core/league';
+import * as api from '../api';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import logEvent from '../../util/logEvent';
 import {NewWindowLink} from '../components';
@@ -42,84 +41,7 @@ class DeleteOldData extends React.Component {
             deleting: true,
         });
 
-        await g.dbl.tx(["games", "teams", "teamSeasons", "teamStats", "players", "playerStats"], "readwrite", async tx => {
-            if (this.state.boxScores) {
-                await tx.games.clear();
-            }
-
-            if (this.state.teamHistory) {
-                await tx.teamSeasons.iterate(teamSeason => {
-                    if (teamSeason.season < g.season) {
-                        return tx.teamSeasons.delete(teamSeason.rid);
-                    }
-                });
-            }
-
-            if (this.state.teamStats) {
-                await tx.teamStats.iterate(teamStats => {
-                    if (teamStats.season < g.season) {
-                        return tx.teamStats.delete(teamStats.rid);
-                    }
-                });
-            }
-
-            if (this.state.retiredPlayers) {
-                const toDelete = [];
-
-                await tx.players.index('tid').iterate(g.PLAYER.RETIRED, p => {
-                    toDelete.push(p.pid);
-                    return tx.players.delete(p.pid);
-                });
-                await tx.playerStats.iterate(ps => {
-                    if (toDelete.includes(ps.pid)) {
-                        return tx.playerStats.delete(ps.psid);
-                    }
-                });
-            } else if (this.state.retiredPlayersUnnotable) {
-                const toDelete = [];
-
-                await tx.players.index('tid').iterate(g.PLAYER.RETIRED, p => {
-                    if (p.awards.length === 0 && !p.statsTids.includes(g.userTid)) {
-                        toDelete.push(p.pid);
-                        return tx.players.delete(p.pid);
-                    }
-                });
-                await tx.playerStats.iterate(ps => {
-                    if (toDelete.includes(ps.pid)) {
-                        return tx.playerStats.delete(ps.psid);
-                    }
-                });
-            }
-
-            if (this.state.playerStats) {
-                await tx.players.iterate(p => {
-                    p.ratings = [p.ratings[p.ratings.length - 1]];
-                    return p;
-                });
-                await tx.playerStats.iterate(ps => {
-                    if (ps.season < g.season) {
-                        return tx.playerStats.delete(ps.psid);
-                    }
-                });
-            } else if (this.state.playerStatsUnnotable) {
-                const toDelete = [];
-
-                tx.players.iterate(p => {
-                    if (p.awards.length === 0 && !p.statsTids.includes(g.userTid)) {
-                        p.ratings = [p.ratings[p.ratings.length - 1]];
-                        toDelete.push(p.pid);
-                    }
-                    return p;
-                });
-                await tx.playerStats.iterate(ps => {
-                    if (ps.season < g.season && toDelete.includes(ps.pid)) {
-                        return tx.playerStats.delete(ps.psid);
-                    }
-                });
-            }
-        });
-
-        league.updateLastDbChange();
+        await api.deleteOldData(this.state);
 
         logEvent({
             type: 'success',

@@ -1,16 +1,15 @@
 import classNames from 'classnames';
 import React from 'react';
-import g from '../../globals';
+import * as api from '../api';
 import * as ui from '../ui';
-import * as contractNegotiation from '../../worker/core/contractNegotiation';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import * as helpers from '../../util/helpers';
 import {NewWindowLink} from '../components';
 
 // Show the negotiations list if there are more ongoing negotiations
 async function redirectNegotiationOrRoster(cancelled) {
-    const negotiations = await g.cache.getAll('negotiations');
-    if (negotiations.length > 0) {
+    const count = await api.countNegotiations();
+    if (count > 0) {
         ui.realtimeUpdate([], helpers.leagueUrl(["negotiation"]));
     } else if (cancelled) {
         ui.realtimeUpdate([], helpers.leagueUrl(["free_agents"]));
@@ -20,12 +19,12 @@ async function redirectNegotiationOrRoster(cancelled) {
 }
 
 const cancel = async pid => {
-    await contractNegotiation.cancel(pid);
+    await api.cancelContractNegotiation(pid);
     redirectNegotiationOrRoster(true);
 };
 
 const sign = async (pid, amount, exp) => {
-    const error = await contractNegotiation.accept(pid, Math.round(amount * 1000), exp);
+    const error = await api.acceptContractNegotiation(pid, Math.round(amount * 1000), exp);
     if (error !== undefined && error) {
         helpers.errorNotify(error);
     }

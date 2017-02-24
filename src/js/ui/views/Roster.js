@@ -1,14 +1,11 @@
-import Promise from 'bluebird';
 import classNames from 'classnames';
 import $ from 'jquery';
 import React from 'react';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import g from '../../globals';
+import * as api from '../api';
 import * as ui from '../ui';
-import * as league from '../../worker/core/league';
-import * as player from '../../worker/core/player';
-import * as team from '../../worker/core/team';
 import {tradeFor} from '../../util/actions';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import * as helpers from '../../util/helpers';
@@ -39,28 +36,9 @@ const ptStyles = {
 };
 
 const handleAutoSort = async () => {
-    // Explicitly make sure writing is done before rosterAutoSort
-    await team.rosterAutoSort(g.userTid);
+    await api.autoSortRoster();
 
     ui.realtimeUpdate(["playerMovement"]);
-    league.updateLastDbChange();
-};
-
-const doRelease = async (pid, justDrafted) => {
-    const players = await g.cache.indexGetAll('playersByTid', g.userTid);
-    if (players.length <= 5) {
-        return "You must keep at least 5 players on your roster.";
-    }
-
-    const p = await g.cache.get('players', pid);
-
-    // Don't let the user update CPU-controlled rosters
-    if (p.tid !== g.userTid) {
-        return "You aren't allowed to do this.";
-    }
-
-    await player.release(p, justDrafted);
-    league.updateLastDbChange();
 };
 
 const handleRelease = async p => {
@@ -75,7 +53,7 @@ const handleRelease = async p => {
     }
 
     if (window.confirm(releaseMessage)) {
-        const errorMsg = await doRelease(p.pid, justDrafted);
+        const errorMsg = await api.releasePlayer(p.pid, justDrafted);
         if (errorMsg) {
             helpers.errorNotify(errorMsg);
         } else {
@@ -97,15 +75,9 @@ const handlePtChange = async (p, event) => {
         return;
     }
 
-    // Update ptModifier in database
-    const p2 = await g.dbl.players.get(p.pid);
-    if (p2.ptModifier !== ptModifier) {
-        p2.ptModifier = ptModifier;
-        await g.dbl.players.put(p2);
+    await api.updatePlayingTime(p.pid, ptModifier);
 
-        ui.realtimeUpdate(["playerMovement"]);
-        league.updateLastDbChange();
-    }
+    ui.realtimeUpdate(["playerMovement"]);
 };
 
 const PlayingTime = ({p}) => {
@@ -159,41 +131,15 @@ ReorderHandle.propTypes = {
 
 // This needs to look at all players, because rosterOrder is not guaranteed to be unique after free agent signings and trades
 const swapRosterOrder = async (sortedPlayers, pid1, pid2) => {
-    const rosterOrder1 = sortedPlayers.findIndex(p => p.pid === pid1);
-    const rosterOrder2 = sortedPlayers.findIndex(p => p.pid === pid2);
-    const promises = sortedPlayers.map(async (sortedPlayer, i) => {
-        const pid = sortedPlayers[i].pid;
-        const p = await g.cache.get('players', pid);
-        let rosterOrder = i;
-        if (pid === pid1) {
-            rosterOrder = rosterOrder2;
-        } else if (pid === pid2) {
-            rosterOrder = rosterOrder1;
-        }
-
-        if (p.rosterOrder !== rosterOrder) {
-            p.rosterOrder = rosterOrder;
-        }
-    });
-
-    await Promise.all(promises);
+    await api.reorderRosterSwap(sortedPlayers, pid1, pid2);
 
     ui.realtimeUpdate(["playerMovement"]);
-    league.updateLastDbChange();
 };
 
-const handleReorderDrag = async sortedPids => {
-    const promises = sortedPids.map(async (pid, rosterOrder) => {
-        const p = await g.cache.get('players', pid);
-        if (p.rosterOrder !== rosterOrder) {
-            p.rosterOrder = rosterOrder;
-        }
-    });
-
-    await Promise.all(promises);
+const handleReorderDrag = async (sortedPids) => {
+    await api.reorderRosterDrag(sortedPids);
 
     ui.realtimeUpdate(["playerMovement"]);
-    league.updateLastDbChange();
 };
 
 const RosterRow = clickable(props => {

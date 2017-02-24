@@ -1,8 +1,7 @@
 import React from 'react';
 import g from '../../globals';
+import * as api from '../api';
 import * as ui from '../ui';
-import * as finances from '../../worker/core/finances';
-import * as league from '../../worker/core/league';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import getCols from '../../util/getCols';
 import * as helpers from '../../util/helpers';
@@ -55,9 +54,7 @@ class FinancesForm extends React.Component {
 
         this.setState({saving: true});
 
-        const t = await g.cache.get('teams', g.userTid);
-
-        const vals = {
+        const budgetAmounts = {
             // Convert from [millions of dollars] to [thousands of dollars] rounded to the nearest $10k
             coaching: helpers.bound(helpers.round(this.state.coaching * 100) * 10, 0, Infinity),
             facilities: helpers.bound(helpers.round(this.state.facilities * 100) * 10, 0, Infinity),
@@ -68,14 +65,7 @@ class FinancesForm extends React.Component {
             ticketPrice: helpers.bound(parseFloat(helpers.round(this.state.ticketPrice, 2)), 0, Infinity),
         };
 
-        for (const key of Object.keys(vals)) {
-            // Check for NaN before updating
-            if (vals[key] === vals[key]) {
-                t.budget[key].amount = vals[key];
-            }
-        }
-
-        await finances.updateRanks(["budget"]);
+        await api.updateBudget(budgetAmounts);
 
         logEvent({
             type: 'success',
@@ -89,7 +79,6 @@ class FinancesForm extends React.Component {
         });
 
         ui.realtimeUpdate(["teamFinances"]);
-        league.updateLastDbChange();
     }
 
     render() {

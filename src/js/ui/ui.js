@@ -3,7 +3,7 @@
 import Promise from 'bluebird';
 import page from 'page';
 import g from '../globals';
-import * as league from '../worker/core/league';
+import * as api from './api';
 import * as helpers from '../util/helpers';
 import * as lock from '../util/lock';
 import type {UpdateEvents} from '../util/types';
@@ -166,7 +166,7 @@ async function updateStatus(statusText?: string) {
     if (statusText === undefined) {
         g.emitter.emit('updateTopMenu', {statusText: oldStatus});
     } else if (statusText !== oldStatus) {
-        await league.setGameAttributes({statusText});
+        await api.updateGameAttributes({statusText}, false);
         g.emitter.emit('updateTopMenu', {statusText});
     }
 }
@@ -185,13 +185,8 @@ async function updatePhase(phaseText?: string) {
     if (phaseText === undefined) {
         g.emitter.emit('updateTopMenu', {phaseText: oldPhaseText});
     } else if (phaseText !== oldPhaseText) {
-        await league.setGameAttributes({phaseText});
+        await api.updatePhaseText(phaseText);
         g.emitter.emit('updateTopMenu', {phaseText});
-
-        // Update phase in meta database. No need to have this block updating the UI or anything.
-        const l = await g.dbm.leagues.get(g.lid);
-        l.phaseText = phaseText;
-        await g.dbm.leagues.put(l);
     }
 }
 

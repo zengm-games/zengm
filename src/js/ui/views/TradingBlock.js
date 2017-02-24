@@ -1,15 +1,10 @@
-import Promise from 'bluebird';
 import React from 'react';
-import _ from 'underscore';
 import g from '../../globals';
-import * as team from '../../worker/core/team';
-import * as trade from '../../worker/core/trade';
-import {getCopy} from '../../worker/db';
+import * as api from '../api';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import {tradeFor} from '../../util/actions';
 import getCols from '../../util/getCols';
 import * as helpers from '../../util/helpers';
-import * as random from '../../util/random';
 import clickable from '../wrappers/clickable';
 import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
 
@@ -109,106 +104,6 @@ Offer.propTypes = {
     won: React.PropTypes.number.isRequired,
 };
 
-const getOffers = async (userPids, userDpids, onProgress) => {
-    // Pick 10 random teams to try (or all teams, if g.numTeams < 10)
-    const tids = _.range(g.numTeams);
-    random.shuffle(tids);
-    tids.splice(10);
-
-    const estValues = await trade.getPickValues();
-
-    // For width of progress bar
-    let numTeams = tids.length;
-    if (tids.includes(g.userTid)) {
-        numTeams -= 1;
-    }
-    let done = 0;
-
-    const offers = [];
-    for (const tid of tids) {
-        let teams = [{
-            tid: g.userTid,
-            pids: userPids,
-            dpids: userDpids,
-        }, {
-            tid,
-            pids: [],
-            dpids: [],
-        }];
-
-        if (tid !== g.userTid) {
-            const [found, teams2] = await trade.makeItWork(teams, true, estValues);
-            teams = teams2;
-
-            // Update progress bar
-            done += 1;
-            onProgress(done, numTeams);
-
-            if (found) {
-                const summary = await trade.summary(teams);
-                teams[1].warning = summary.warning;
-                offers.push(teams[1]);
-            }
-        }
-    }
-
-    return offers;
-};
-
-const augmentOffers = async (offers) => {
-    if (offers.length === 0) {
-        return [];
-    }
-
-    const teams = await getCopy.teams({
-        attrs: ["abbrev", "region", "name", "strategy"],
-        seasonAttrs: ["won", "lost"],
-        season: g.season,
-    });
-
-    // Take the pids and dpids in each offer and get the info needed to display the offer
-    return Promise.all(offers.map(async (offer, i) => {
-        const tid = offers[i].tid;
-
-        let players = await g.cache.indexGetAll('playersByTid', tid);
-        players = players.filter(p => offers[i].pids.includes(p.pid));
-        players = await getCopy.playersPlus(players, {
-            attrs: ["pid", "name", "age", "contract", "injury", "watch"],
-            ratings: ["ovr", "pot", "skills", "pos"],
-            stats: ["min", "pts", "trb", "ast", "per"],
-            season: g.season,
-            tid,
-            showNoStats: true,
-            showRookies: true,
-            fuzz: true,
-        });
-
-        let picks = await g.cache.indexGetAll('draftPicksByTid', tid);
-        picks = picks.filter(dp => offers[i].dpids.includes(dp.dpid));
-        for (const pick of picks) {
-            pick.desc = helpers.pickDesc(pick);
-        }
-
-        const payroll = await team.getPayroll(tid).get(0);
-
-        return {
-            tid,
-            abbrev: teams[tid].abbrev,
-            region: teams[tid].region,
-            name: teams[tid].name,
-            strategy: teams[tid].strategy,
-            won: teams[tid].seasonAttrs.won,
-            lost: teams[tid].seasonAttrs.lost,
-            pids: offers[i].pids,
-            dpids: offers[i].dpids,
-            warning: offers[i].warning,
-            payroll,
-            picks,
-            players,
-        };
-    }));
-};
-
 const ProgressBar = ({progress}) => {
     return <div className="progress progress-striped active" style={{width: '300px'}}>
         <div className="progress-bar" style={{width: `${progress}%`}} />
@@ -258,16 +153,15 @@ class TradingBlock extends React.Component {
             progress: 10, // Start with something on the progress bar, so user knows shit is happening
         });
 
-        const offers = await getOffers(this.state.pids, this.state.dpids, (i, numTeams) => {
+        const offers = await api.getTradingBlockOffers(this.state.pids, this.state.dpids, (i, numTeams) => {
             this.setState({
                 progress: Math.round(10 + i / numTeams * 100),
             });
         });
-        const augmentedOffers = await augmentOffers(offers);
 
         this.setState({
             asking: false,
-            offers: augmentedOffers,
+            offers,
             progress: 0,
         });
     }

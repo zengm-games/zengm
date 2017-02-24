@@ -1,8 +1,7 @@
 import Promise from 'bluebird';
 import React from 'react';
-import _ from 'underscore';
 import g from '../../globals';
-import {getCopy} from '../../worker/db';
+import * as api from '../api';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import {DownloadDataLink} from '../components';
 
@@ -10,70 +9,6 @@ function genFilename(leagueName, season, grouping) {
     const filename = `BBGM_${leagueName.replace(/[^a-z0-9]/gi, '_')}_${season}_${season === "all" ? "seasons" : "season"}_${grouping === "averages" ? "Average_Stats" : "Game_Stats"}`;
 
     return `${filename}.csv`;
-}
-
-// playerAveragesCSV(2015) - just 2015 stats
-// playerAveragesCSV("all") - all stats
-async function playerAveragesCSV(season) {
-    let players;
-    if (g.season === season && g.phase <= g.PHASE.PLAYOFFS) {
-        players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.FREE_AGENT, Infinity]);
-    } else {
-        // If it's not this season, get all players, because retired players could apply to the selected season
-        players = await getCopy.players({activeAndRetired: true});
-    }
-
-    // Array of seasons in stats, either just one or all of them
-    let seasons;
-    if (season === 'all') {
-        seasons = _.uniq(_.flatten(players.map(p => p.ratings)).map(pr => pr.season));
-    } else {
-        seasons = [season];
-    }
-
-    let output = "pid,Name,Pos,Age,Team,Season,GP,GS,Min,FGM,FGA,FG%,3PM,3PA,3P%,FTM,FTA,FT%,OReb,DReb,Reb,Ast,TO,Stl,Blk,BA,PF,Pts,+/-,PER,EWA\n";
-
-    for (const s of seasons) {
-        const players2 = await getCopy.playersPlus(players, {
-            attrs: ["pid", "name", "age"],
-            ratings: ["pos"],
-            stats: ["abbrev", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "ba", "pf", "pts", "pm", "per", "ewa"],
-            season: s,
-        });
-
-        for (const p of players2) {
-            output += `${[p.pid, p.name, p.ratings.pos, p.age, p.stats.abbrev, s, p.stats.gp, p.stats.gs, p.stats.min, p.stats.fg, p.stats.fga, p.stats.fgp, p.stats.tp, p.stats.tpa, p.stats.tpp, p.stats.ft, p.stats.fta, p.stats.ftp, p.stats.orb, p.stats.drb, p.stats.trb, p.stats.ast, p.stats.tov, p.stats.stl, p.stats.blk, p.stats.ba, p.stats.pf, p.stats.pts, p.stats.pm, p.stats.per, p.stats.ewa].join(",")}\n`;
-        }
-    }
-
-    return output;
-}
-
-// playerAveragesCSV(2015) - just 2015 games
-// playerAveragesCSV("all") - all games
-async function playerGamesCSV(season) {
-    let games;
-    if (season === "all") {
-        games = await g.dbl.games.getAll();
-    } else {
-        games = await g.dbl.games.index('season').getAll(season);
-    }
-
-    let output = "pid,Name,Pos,Team,Opp,Score,WL,Season,Playoffs,Min,FGM,FGA,FG%,3PM,3PA,3P%,FTM,FTA,FT%,OReb,DReb,Reb,Ast,TO,Stl,Blk,BA,PF,Pts,+/-\n";
-
-    const teams = games.map(gm => gm.teams);
-    const seasons = games.map(gm => gm.season);
-    for (let i = 0; i < teams.length; i++) {
-        for (let j = 0; j < 2; j++) {
-            const t = teams[i][j];
-            const t2 = teams[i][j === 0 ? 1 : 0];
-            for (const p of t.players) {
-                output += `${[p.pid, p.name, p.pos, g.teamAbbrevsCache[t.tid], g.teamAbbrevsCache[t2.tid], `${t.pts}-${t2.pts}`, t.pts > t2.pts ? "W" : "L", seasons[i], games[i].playoffs, p.min, p.fg, p.fga, p.fgp, p.tp, p.tpa, p.tpp, p.ft, p.fta, p.ftp, p.orb, p.drb, p.trb, p.ast, p.tov, p.stl, p.blk, p.ba, p.pf, p.pts, p.pm].join(",")}\n`;
-            }
-        }
-    }
-
-    return output;
 }
 
 class ExportStats extends React.Component {
@@ -104,9 +39,9 @@ class ExportStats extends React.Component {
 
         let csvPromise;
         if (grouping === "averages") {
-            csvPromise = playerAveragesCSV(season);
+            csvPromise = api.exportPlayerAveragesCsv(season);
         } else if (grouping === "games") {
-            csvPromise = playerGamesCSV(season);
+            csvPromise = api.exportPlayerGamesCsv(season);
         } else {
             this.setState({
                 data: null,
@@ -116,12 +51,12 @@ class ExportStats extends React.Component {
             return;
         }
 
-        const [data, l] = await Promise.all([
+        const [data, leagueName] = await Promise.all([
             csvPromise,
-            g.dbm.leagues.get(g.lid),
+            api.getLeagueName(g.lid),
         ]);
 
-        const filename = genFilename(l.name, season, grouping);
+        const filename = genFilename(leagueName, season, grouping);
 
         this.setState({
             data,

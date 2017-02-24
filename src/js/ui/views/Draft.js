@@ -2,9 +2,8 @@ import classNames from 'classnames';
 import $ from 'jquery';
 import React from 'react';
 import g from '../../globals';
+import * as api from '../api';
 import * as ui from '../ui';
-import * as draft from '../../worker/core/draft';
-import * as league from '../../worker/core/league';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import getCols from '../../util/getCols';
 import * as helpers from '../../util/helpers';
@@ -52,28 +51,21 @@ class Draft extends React.Component {
 
     async draftUntilUserOrEnd() {
         ui.updateStatus("Draft in progress...");
-        const pids = await draft.untilUserOrEnd();
-        this.savePids(pids);
-        const draftOrder = await draft.getOrder();
 
+        const {draftOrder, pids} = await api.draftUntilUserOrEnd();
+
+        this.savePids(pids);
         if (draftOrder.length === 0) {
             ui.updateStatus("Idle");
         }
 
         ui.realtimeUpdate(["playerMovement"]);
-        league.updateLastDbChange();
     }
 
     async draftUser(pid) {
-        const draftOrder = await draft.getOrder();
-        const pick = draftOrder.shift();
-        if (pick && g.userTids.includes(pick.tid)) {
-            this.savePids([pid]);
-            await draft.selectPlayer(pick, pid);
-            await this.draftUntilUserOrEnd();
-        } else {
-            console.log("ERROR: User trying to draft out of turn.");
-        }
+        await api.draftUser(pid);
+        this.savePids([pid]);
+        await this.draftUntilUserOrEnd();
     }
 
     render() {

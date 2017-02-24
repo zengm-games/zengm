@@ -1,7 +1,7 @@
 import React from 'react';
 import g from '../../globals';
-import * as phase from '../../worker/core/phase';
 import bbgmViewReact from '../../util/bbgmViewReact';
+import * as api from '../api';
 import {NewWindowLink} from '../components';
 
 class FantasyDraft extends React.Component {
@@ -18,7 +18,7 @@ class FantasyDraft extends React.Component {
 
     startDraft() {
         this.setState({starting: true});
-        phase.newPhase(g.PHASE.FANTASY_DRAFT, this.state.position);
+        api.startFantasyDraft(this.state.position);
     }
 
     handlePositionChange(event) {

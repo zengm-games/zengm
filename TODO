@@ -13,7 +13,7 @@ move everything but the UI to a web worker
   - ignore for now, just write code to keep g in sync in both places
   - what about emitter?
 - current todo
-  - find references between worker and ui, and break them apart
+  - remove references to ui in worker
   - split up util - ui, worker, or both
   - restore runWhenever ability (really necessary?)
 
@@ -50,6 +50,8 @@ add flow comments to new files!
   - Cache.getCopy and Cache.getCopies?
 
 eventually merge players and playersPlus
+
+various dbl-using things in api need to be updated
 
 if i can gracefully handle absence of g.season etc, put cache creation inside connectLeague
 - not graceful now, see fill(season)
@@ -91,6 +93,7 @@ refactor
 blog post for beta
 - tradeoffs due to chrome changing
 - new tradeoffs for cross tab play
+- 3 prongs: cache, playerStats denormalization, worker
 
 document cache data format and API!
 

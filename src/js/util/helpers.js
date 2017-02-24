@@ -669,6 +669,17 @@ const orderByWinp = (teams: TeamFiltered[]): TeamFiltered[] => {
     );
 };
 
+/**
+ * Will a player negotiate with a team, or not?
+ *
+ * @param {number} amount Player's desired contract amount, already adjusted for mood as in amountWithMood, in thousands of dollars
+ * @param {number} mood Player's mood towards the team in question.
+ * @return {boolean} Answer to the question.
+ */
+const refuseToNegotiate = (amount: number, mood: number): boolean => {
+    return amount * mood > 10000;
+};
+
 export {
     validateAbbrev,
     getAbbrev,
@@ -703,4 +714,5 @@ export {
     roundsWonText,
     roundWinp,
     orderByWinp,
+    refuseToNegotiate,
 };

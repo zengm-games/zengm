@@ -1,6 +1,5 @@
 import React from 'react';
 import g from '../../globals';
-import * as freeAgents from '../../worker/core/freeAgents';
 import {negotiate} from '../../util/actions';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import getCols from '../../util/getCols';
@@ -14,7 +13,7 @@ const NegotiationList = ({players}) => {
 
     const rows = players.map(p => {
         let negotiateButton;
-        if (freeAgents.refuseToNegotiate(p.contract.amount * 1000, p.freeAgentMood[g.userTid])) {
+        if (helpers.refuseToNegotiate(p.contract.amount * 1000, p.freeAgentMood[g.userTid])) {
             negotiateButton = "Refuses!";
         } else {
             negotiateButton = <button

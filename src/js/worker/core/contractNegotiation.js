@@ -48,7 +48,7 @@ async function create(pid: number, resigning: boolean, tid: number = g.userTid):
         playerYears += 1;
     }
 
-    if (freeAgents.refuseToNegotiate(playerAmount, p.freeAgentMood[g.userTid])) {
+    if (helpers.refuseToNegotiate(playerAmount, p.freeAgentMood[g.userTid])) {
         return `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> refuses to sign with you, no matter what you offer.`;
     }
 
@@ -109,7 +109,7 @@ async function cancelAll() {
  * @param {number} pid An integer that must correspond with the player ID of a player in an ongoing negotiation.
  * @return {Promise.<string=>} If an error occurs, resolves to a string error message.
  */
-async function accept(pid: number, amount: number, exp: number): Promise<string> {
+async function accept(pid: number, amount: number, exp: number): Promise<?string> {
     const [negotiation, payroll] = await Promise.all([
         g.cache.get('negotiations', pid),
         team.getPayroll(g.userTid).get(0),

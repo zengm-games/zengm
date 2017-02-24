@@ -157,7 +157,7 @@ const draftUntilUserOrEnd = async () => {
     return {draftOrder, pids};
 };
 
-const draftUser = async (pid) => {
+const draftUser = async (pid: number) => {
     const draftOrder = await draft.getOrder();
     const pick = draftOrder.shift();
     if (pick && g.userTids.includes(pick.tid)) {
@@ -346,7 +346,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[], progressCa
     return augmentOffers(offers);
 };
 
-const handleUploadedDraftClass = async (uploadedFile, seasonOffset) => {
+const handleUploadedDraftClass = async (uploadedFile: any, seasonOffset: 0 | 1 | 2) => {
     // What tid to replace?
     let draftClassTid;
     if (seasonOffset === 0) {
@@ -431,7 +431,7 @@ const handleUploadedDraftClass = async (uploadedFile, seasonOffset) => {
     });
 };
 
-const releasePlayer = async (pid, justDrafted) => {
+const releasePlayer = async (pid: number, justDrafted: boolean) => {
     const players = await g.cache.indexGetAll('playersByTid', g.userTid);
     if (players.length <= 5) {
         return 'You must keep at least 5 players on your roster.';
@@ -602,7 +602,7 @@ const updateTeamInfo = async (newTeams: {
     abbrev: string,
     imgURL?: string,
     pop: number,
-}) => {
+}[]) => {
     let userName;
     let userRegion;
     await g.dbl.tx(['teams', 'teamSeasons'], 'readwrite', tx => {
@@ -644,17 +644,17 @@ const updateTeamInfo = async (newTeams: {
     league.updateLastDbChange();
 };
 
-const upsertCustomizedPlayer = async (p: Player | PlayerWithoutPid, originalTid: number): Promise<number> => {
+const upsertCustomizedPlayer = async (p: Player | PlayerWithoutPid, originalTid: number, season: number): Promise<number> => {
     const r = p.ratings.length - 1;
 
     // Fix draft season
     if (p.tid === g.PLAYER.UNDRAFTED || p.tid === g.PLAYER.UNDRAFTED_2 || p.tid === g.PLAYER.UNDRAFTED_3) {
         if (p.tid === g.PLAYER.UNDRAFTED) {
-            p.draft.year = this.props.season;
+            p.draft.year = season;
         } else if (p.tid === g.PLAYER.UNDRAFTED_2) {
-            p.draft.year = this.props.season + 1;
+            p.draft.year = season + 1;
         } else if (p.tid === g.PLAYER.UNDRAFTED_3) {
-            p.draft.year = this.props.season + 2;
+            p.draft.year = season + 2;
         }
 
         // Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
@@ -679,11 +679,6 @@ const upsertCustomizedPlayer = async (p: Player | PlayerWithoutPid, originalTid:
         }
     }
 
-    // Only save image URL if it's selected
-    if (this.state.appearanceOption !== "Image URL") {
-        p.imgURL = "";
-    }
-
     // If we are *creating* a player who is not a draft prospect, make sure he won't show up in the draft this year
     if (p.tid !== g.PLAYER.UNDRAFTED && p.tid !== g.PLAYER.UNDRAFTED_2 && p.tid !== g.PLAYER.UNDRAFTED_3 && g.phase < g.PHASE.FREE_AGENCY) {
         // This makes sure it's only for created players, not edited players
@@ -692,7 +687,7 @@ const upsertCustomizedPlayer = async (p: Player | PlayerWithoutPid, originalTid:
         }
     }
     // Similarly, if we are editing a draft prospect and moving him to a team, make his draft year in the past
-    if ((p.tid !== g.PLAYER.UNDRAFTED && p.tid !== g.PLAYER.UNDRAFTED_2 && p.tid !== g.PLAYER.UNDRAFTED_3) && (this.props.originalTid === g.PLAYER.UNDRAFTED || this.props.originalTid === g.PLAYER.UNDRAFTED_2 || this.props.originalTid === g.PLAYER.UNDRAFTED_3) && g.phase < g.PHASE.FREE_AGENCY) {
+    if ((p.tid !== g.PLAYER.UNDRAFTED && p.tid !== g.PLAYER.UNDRAFTED_2 && p.tid !== g.PLAYER.UNDRAFTED_3) && (originalTid === g.PLAYER.UNDRAFTED || originalTid === g.PLAYER.UNDRAFTED_2 || originalTid === g.PLAYER.UNDRAFTED_3) && g.phase < g.PHASE.FREE_AGENCY) {
         p.draft.year = g.season - 1;
     }
 
@@ -705,7 +700,7 @@ const upsertCustomizedPlayer = async (p: Player | PlayerWithoutPid, originalTid:
         pid = await tx.players.put(p);
 
         // Add regular season or playoffs stat row, if necessary
-        if (p.tid >= 0 && p.tid !== this.props.originalTid && g.phase <= g.PHASE.PLAYOFFS) {
+        if (p.tid >= 0 && p.tid !== originalTid && g.phase <= g.PHASE.PLAYOFFS) {
             p.pid = pid;
 
             // If it is the playoffs, this is only necessary if p.tid actually made the playoffs, but causes only cosmetic harm otherwise.
@@ -739,13 +734,13 @@ const createTrade = async (teams: [{
     league.updateLastDbChange();
 };
 
-const proposeTrade = async (forceTrade: boolean): [boolean, string] => {
-    const [accepted, message] = await trade.propose(forceTrade);
+const proposeTrade = async (forceTrade: boolean): Promise<[boolean, ?string]> => {
+    const output = await trade.propose(forceTrade);
     league.updateLastDbChange();
-    return [accepted, message];
+    return output;
 };
 
-const tradeCounterOffer = async (): ?string => {
+const tradeCounterOffer = async (): Promise<string> => {
     const message = await trade.makeItWorkTrade();
     league.updateLastDbChange();
     return message;

@@ -147,7 +147,12 @@ class CustomizePlayer extends React.Component {
         // Copy over values from state, if they're valid
         copyValidValues(this.state.p, p, this.props.season);
 
-        const pid = await api.upsertCustomizedPlayer(p, this.props.originalTid);
+        // Only save image URL if it's selected
+        if (this.state.appearanceOption !== "Image URL") {
+            p.imgURL = "";
+        }
+
+        const pid = await api.upsertCustomizedPlayer(p, this.props.originalTid, this.props.season);
 
         ui.realtimeUpdate([], helpers.leagueUrl(["player", pid]));
     }

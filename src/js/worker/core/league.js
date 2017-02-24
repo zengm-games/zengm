@@ -124,7 +124,7 @@ async function create(
     leagueFile: Object = {},
     startingSeason: number,
     randomizeRosters: boolean,
-): number {
+): Promise<number> {
     const teamsDefault = helpers.getTeamsDefault();
 
     // Any custom teams?

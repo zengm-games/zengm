@@ -2,8 +2,7 @@ import React from 'react';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import g from '../../globals';
-import * as ui from '../ui';
-import * as league from '../../worker/core/league';
+import * as api from '../api';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import getCols from '../../util/getCols';
 import * as helpers from '../../util/helpers';
@@ -23,17 +22,7 @@ class WatchList extends React.Component {
             clearing: true,
         });
 
-        await g.dbl.tx("players", "readwrite", tx => {
-            return tx.players.iterate(p => {
-                if (p.watch) {
-                    p.watch = false;
-                    return p;
-                }
-            });
-        });
-
-        league.updateLastDbChange();
-        ui.realtimeUpdate(["clearWatchList"]);
+        await api.clearWatchList();
 
         this.setState({
             clearing: false,

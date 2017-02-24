@@ -16,6 +16,27 @@ const runBefore = async (viewId, inputs, updateEvents, prevData, setStateData, t
     return [];
 };
 
+const clearWatchList = async () => {
+    const players = await g.cache.getAll('players');
+    for (const p of players) {
+        if (p.watch) {
+            p.watch = false;
+        }
+    }
+
+    await g.dbl.tx("players", "readwrite", tx => {
+        return tx.players.iterate(p => {
+            if (p.watch) {
+                p.watch = false;
+                return p;
+            }
+        });
+    });
+
+    ui.realtimeUpdate(["clearWatchList"]);
+    league.updateLastDbChange();
+};
+
 const updatePlayerWatch = async (pid: number, watch: boolean) => {
     const cachedPlayer = await g.cache.get('players', pid);
     if (cachedPlayer) {
@@ -45,6 +66,7 @@ const updateUserTid = async (userTid: number) => {
 
 export {
     init,
+    clearWatchList,
     runBefore,
     updatePlayerWatch,
     updateUserTid,

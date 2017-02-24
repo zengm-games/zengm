@@ -1,7 +1,6 @@
 import React from 'react';
-import g from '../../globals';
+import * as api from '../api';
 import * as ui from '../ui';
-import * as league from '../../worker/core/league';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import * as helpers from '../../util/helpers';
 import {NewWindowLink} from '../components';
@@ -34,20 +33,7 @@ class NewTeam extends React.Component {
         ui.updateStatus("Idle");
         ui.updatePlayMenu();
 
-        await league.setGameAttributes({
-            gameOver: false,
-            userTid: this.state.tid,
-            userTids: [this.state.tid],
-            ownerMood: {
-                wins: 0,
-                playoffs: 0,
-                money: 0,
-            },
-            gracePeriodEnd: g.season + 3, // +3 is the same as +2 when staring a new league, since this happens at the end of a season
-        });
-
-        league.updateLastDbChange();
-        league.updateMetaNameRegion(g.teamNamesCache[g.userTid], g.teamRegionsCache[g.userTid]);
+        await api.switchTeam(this.state.tid);
         ui.realtimeUpdate([], helpers.leagueUrl([]));
     }
 

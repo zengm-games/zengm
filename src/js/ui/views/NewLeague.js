@@ -1,6 +1,6 @@
 import React from 'react';
 import * as ui from '../ui';
-import * as league from '../../worker/core/league';
+import * as api from '../api';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import * as helpers from '../../util/helpers';
 
@@ -181,7 +181,7 @@ class NewLeague extends React.Component {
             startingSeason = leagueFile.startingSeason !== undefined ? leagueFile.startingSeason : startingSeason;
         }
 
-        const lid = await league.create(this.state.name, this.state.tid, leagueFile, startingSeason, randomizeRosters);
+        const lid = await api.createLeague(this.state.name, this.state.tid, leagueFile, startingSeason, randomizeRosters);
         ui.realtimeUpdate([], `/l/${lid}`);
     }
 

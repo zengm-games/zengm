@@ -1,8 +1,8 @@
 // @flow
 
 import g from '../globals';
-import * as league from '../core/league';
-import {getCopy} from '../db';
+import * as league from '../worker/core/league';
+import {getCopy} from '../worker/db';
 
 /**
  * Is game simulation in progress?

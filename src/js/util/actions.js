@@ -1,16 +1,16 @@
 // @flow
 
-import {reset} from '../db';
+import {reset} from '../worker/db';
 import g from '../globals';
-import * as ui from '../ui';
-import * as contractNegotiation from '../core/contractNegotiation';
-import * as draft from '../core/draft';
-import * as freeAgents from '../core/freeAgents';
-import * as game from '../core/game';
-import * as league from '../core/league';
-import * as phase from '../core/phase';
-import * as season from '../core/season';
-import * as trade from '../core/trade';
+import * as ui from '../ui/ui';
+import * as contractNegotiation from '../worker/core/contractNegotiation';
+import * as draft from '../worker/core/draft';
+import * as freeAgents from '../worker/core/freeAgents';
+import * as game from '../worker/core/game';
+import * as league from '../worker/core/league';
+import * as phase from '../worker/core/phase';
+import * as season from '../worker/core/season';
+import * as trade from '../worker/core/trade';
 import * as helpers from './helpers';
 
 const liveGame = async (gid: number) => {

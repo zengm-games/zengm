@@ -20,7 +20,7 @@
     "watch-css": "node tools/watch-css.js",
     "build-js": "node tools/build-js.js",
     "minify-js": "node tools/minify-js.js",
-    "watch-js": "watchify -d src/js/app.js -o build/gen/app.js -v",
+    "watch-js": "watchify -d src/js/ui/app.js -o build/gen/app.js -v",
     "lint": "concurrently --raw 'npm run flow' 'npm run lint-css' 'npm run lint-js'",
     "flow": "flow",
     "lint-css": "stylelint 'src/css/*.*css'",

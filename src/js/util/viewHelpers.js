@@ -1,10 +1,10 @@
 // @flow
 
 import React from 'react';
-import {Cache, connectLeague} from '../db';
+import {Cache, connectLeague} from '../worker/db';
 import g from '../globals';
-import * as ui from '../ui';
-import * as league from '../core/league';
+import * as ui from '../ui/ui';
+import * as league from '../worker/core/league';
 import * as helpers from './helpers';
 import type {PageCtx, UpdateEvents} from './types';
 

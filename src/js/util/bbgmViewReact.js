@@ -1,22 +1,18 @@
 // @flow
 
 import g from '../globals';
-import type {GetOutput, PageCtx, RunFunction} from './types';
+import type {GetOutput, PageCtx} from './types';
 
 type InitArgs = {
     Component: any,
     id: string,
     inLeague?: boolean,
     get?: (ctx: PageCtx) => ?GetOutput,
-    runBefore?: RunFunction[],
-    runWhenever?: RunFunction[],
 };
 
 function init(args: InitArgs) {
     args.inLeague = args.inLeague !== undefined ? args.inLeague : true;
     args.get = args.get !== undefined ? args.get : () => { return {}; };
-    args.runBefore = args.runBefore !== undefined ? args.runBefore : [];
-    args.runWhenever = args.runWhenever !== undefined ? args.runWhenever : [];
 
     if (!args.Component) { throw new Error('Missing arg Component'); }
 

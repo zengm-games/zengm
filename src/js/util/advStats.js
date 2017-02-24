@@ -3,7 +3,7 @@
 import Promise from 'bluebird';
 import _ from 'underscore';
 import g from '../globals';
-import {getCopy} from '../db';
+import {getCopy} from '../worker/db';
 
 /**
  * Calcualte the current season's Player Efficiency Rating (PER) for each active player and write it to the database.

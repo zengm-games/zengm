@@ -1,7 +1,7 @@
 // @flow
 
 import g from '../globals';
-import * as league from '../core/league';
+import * as league from '../worker/core/league';
 import * as helpers from './helpers';
 import * as random from './random';
 import type {OwnerMoodDeltas} from './types';

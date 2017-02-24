@@ -9,6 +9,17 @@ move everything but the UI to a web worker
   - output: worker.js
   - everything else
 - never use g in views?
+  - ignore for now, just write code to keep g in sync in both places
+- get a view displaying
+  - worker references to ui - make api.js in worker folder
+  - viewHelpers
+  - move get functions to ui
+  - have place that calles runBefore etc instead do it through the API
+  - restore runWhenever ability
+
+bbgm.g.cache.flush().then(() => console.log('done'));
+fucked = false; Object.values(bbgm.g.cache.indexes.teamSeasonsBySeasonTid).forEach((ts) => { if (ts.hasOwnProperty('ast')) { console.log(ts); fucked = true } }); if (fucked) { throw new Error('FUCK'); }
+bbgm.league.setGameAttributes({phaseChangeInProgress: false})
 
 draft tests fail sometimes
 - should give reverse round 2 order for teams with the same record
@@ -84,6 +95,7 @@ document cache data format and API!
 make Cache more DRY regarding indexes, reading object stores
 
 remove unused IDB indexes, if they exist (mostly stores that are fully cached, but others too, like retired year)
+- works in IE?
 
 replace all usage of IDB with cache, otherwise things will be more likely to get out of sync on flush failure
   start with game.js and anything that it touches

@@ -9,7 +9,7 @@ const envify = require('envify/custom');
 const exorcist = require('exorcist');
 const fs = require('fs');
 
-const bundler = browserify('src/js/app.js', {debug: true});
+const bundler = browserify('src/js/ui/app.js', {debug: true});
 
 console.log('Bundling JavaScript files...');
 

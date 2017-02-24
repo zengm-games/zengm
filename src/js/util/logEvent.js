@@ -1,7 +1,7 @@
 // @flow
 
 import g from '../globals';
-import * as league from '../core/league';
+import * as league from '../worker/core/league';
 import notify from '../lib/bbgm-notifications';
 
 // Really, pids, tids, and type should not be optional if saveToDb is true

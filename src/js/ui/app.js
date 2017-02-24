@@ -30,7 +30,7 @@ if (localStorage.getItem('debug') === 'debug') {
 window.Promise = Promise;
 window.Promise.config({warnings: false});
 
-const staticView = (name: string, title: string, content: React.Element<*>, inLeague: boolean) => {
+const genStaticPage = (name: string, title: string, content: React.Element<*>, inLeague: boolean) => {
     return bbgmViewReact.init({
         id: name,
         inLeague,
@@ -47,7 +47,7 @@ const Manual = <div>
     <p><a href="https://basketball-gm.com/manual/" rel="noopener noreferrer" target="_blank">Click here for an overview of Basketball GM.</a></p>
 </div>;
 
-const leagueView = (id, inLeague = true) => {
+const genPage = (id, inLeague = true) => {
     const componentName = id.charAt(0).toUpperCase() + id.slice(1);
 
     return bbgmViewReact.init({
@@ -80,114 +80,114 @@ const leagueView = (id, inLeague = true) => {
     });*/
 
     // Non-league views
-    page('/', leagueView('dashboard', false));
-    page('/new_league', leagueView('newLeague', false));
-    page('/delete_league/:lid', leagueView('deleteLeague', false));
-    page('/manual', staticView('manual', 'Manual', Manual, false));
-    page('/manual/:page', staticView('manual', 'Manual', Manual, false));
-    page('/changes', leagueView('changes', false));
-    page('/account', leagueView('account', false));
-    page('/account/login_or_register', leagueView('loginOrRegister', false));
-    page('/account/lost_password', leagueView('lostPassword', false));
-    page('/account/reset_password/:token', leagueView('resetPassword', false));
-    page('/account/update_card', leagueView('accountUpdateCard', false));
+    page('/', genPage('dashboard', false));
+    page('/new_league', genPage('newLeague', false));
+    page('/delete_league/:lid', genPage('deleteLeague', false));
+    page('/manual', genStaticPage('manual', 'Manual', Manual, false));
+    page('/manual/:page', genStaticPage('manual', 'Manual', Manual, false));
+    page('/changes', genPage('changes', false));
+    page('/account', genPage('account', false));
+    page('/account/login_or_register', genPage('loginOrRegister', false));
+    page('/account/lost_password', genPage('lostPassword', false));
+    page('/account/reset_password/:token', genPage('resetPassword', false));
+    page('/account/update_card', genPage('accountUpdateCard', false));
 
 /*    // League views
-    page('/l/:lid', views.leagueDashboard.get);
-    page('/l/:lid/new_team', views.newTeam.get);
-    page('/l/:lid/inbox', views.inbox.get);
-    page('/l/:lid/message', views.message.get);
-    page('/l/:lid/message/:mid', views.message.get);
-    page('/l/:lid/standings', views.standings.get);
-    page('/l/:lid/standings/:season', views.standings.get);
-    page('/l/:lid/playoffs', views.playoffs.get);
-    page('/l/:lid/playoffs/:season', views.playoffs.get);
-    page('/l/:lid/league_finances', views.leagueFinances.get);
-    page('/l/:lid/league_finances/:season', views.leagueFinances.get);
-    page('/l/:lid/history', views.history.get);
-    page('/l/:lid/history/:season', views.history.get);
-    page('/l/:lid/hall_of_fame', views.hallOfFame.get);
-    page('/l/:lid/edit_team_info', views.editTeamInfo.get);
-    page('/l/:lid/roster', views.roster.get);
-    page('/l/:lid/roster/:abbrev', views.roster.get);
-    page('/l/:lid/roster/:abbrev/:season', views.roster.get);
-    page('/l/:lid/schedule', views.schedule.get);
-    page('/l/:lid/schedule/:abbrev', views.schedule.get);
-    page('/l/:lid/team_finances', views.teamFinances.get);
-    page('/l/:lid/team_finances/:abbrev', views.teamFinances.get);
-    page('/l/:lid/team_finances/:abbrev/:show', views.teamFinances.get);
-    page('/l/:lid/team_history', views.teamHistory.get);
-    page('/l/:lid/team_history/:abbrev', views.teamHistory.get);
-    page('/l/:lid/free_agents', views.freeAgents.get);
-    page('/l/:lid/trade', views.trade.get);
-    page('/l/:lid/trading_block', views.tradingBlock.get);
-    page('/l/:lid/draft', views.draft.get);
-    page('/l/:lid/draft_summary', views.draftSummary.get);
-    page('/l/:lid/draft_summary/:season', views.draftSummary.get);
-    page('/l/:lid/game_log', views.gameLog.get);
-    page('/l/:lid/game_log/:abbrev', views.gameLog.get);
-    page('/l/:lid/game_log/:abbrev/:season', views.gameLog.get);
-    page('/l/:lid/game_log/:abbrev/:season/:gid', views.gameLog.get);
-    page('/l/:lid/game_log/:abbrev/:season/:gid/:view', views.gameLog.get);
-    page('/l/:lid/leaders', views.leaders.get);
-    page('/l/:lid/leaders/:season', views.leaders.get);
-    page('/l/:lid/player_ratings', views.playerRatings.get);
-    page('/l/:lid/player_ratings/:abbrev', views.playerRatings.get);
-    page('/l/:lid/player_ratings/:abbrev/:season', views.playerRatings.get);
-    page('/l/:lid/player_stats', views.playerStats.get);
-    page('/l/:lid/player_stats/:abbrev', views.playerStats.get);
-    page('/l/:lid/player_stats/:abbrev/:season', views.playerStats.get);
-    page('/l/:lid/player_stats/:abbrev/:season/:statType', views.playerStats.get);
-    page('/l/:lid/player_stats/:abbrev/:season/:statType/:playoffs', views.playerStats.get);
-    page('/l/:lid/team_stats', views.teamStats.get);
-    page('/l/:lid/team_stats/:season', views.teamStats.get);
-    page('/l/:lid/player/:pid', views.player.get);
-    page('/l/:lid/negotiation', views.negotiationList.get);
-    page('/l/:lid/negotiation/:pid', views.negotiation.get);
-    page('/l/:lid/player_rating_dists', views.playerRatingDists.get);
-    page('/l/:lid/player_rating_dists/:season', views.playerRatingDists.get);
-    page('/l/:lid/player_stat_dists', views.playerStatDists.get);
-    page('/l/:lid/player_stat_dists/:season', views.playerStatDists.get);
-    page('/l/:lid/team_stat_dists', views.teamStatDists.get);
-    page('/l/:lid/team_stat_dists/:season', views.teamStatDists.get);
-    page('/l/:lid/player_shot_locations', views.playerShotLocations.get);
-    page('/l/:lid/player_shot_locations/:season', views.playerShotLocations.get);
-    page('/l/:lid/team_shot_locations', views.teamShotLocations.get);
-    page('/l/:lid/team_shot_locations/:season', views.teamShotLocations.get);
-    page('/l/:lid/export_league', views.exportLeague.get);
-    page('/l/:lid/fantasy_draft', views.fantasyDraft.get);
-    page('/l/:lid/live', views.live.get);
-    page('/l/:lid/live_game', views.liveGame.get);
-    page('/l/:lid/event_log', views.eventLog.get);
-    page('/l/:lid/event_log/:abbrev', views.eventLog.get);
-    page('/l/:lid/event_log/:abbrev/:season', views.eventLog.get);
-    page('/l/:lid/delete_old_data', views.deleteOldData.get);
-    page('/l/:lid/draft_scouting', views.draftScouting.get);
-    page('/l/:lid/draft_scouting/:season', views.draftScouting.get);
-    page('/l/:lid/watch_list', views.watchList.get);
-    page('/l/:lid/watch_list/:statType', views.watchList.get);
-    page('/l/:lid/watch_list/:statType/:playoffs', views.watchList.get);
-    page('/l/:lid/customize_player', views.customizePlayer.get);
-    page('/l/:lid/customize_player/:pid', views.customizePlayer.get);
-    page('/l/:lid/history_all', views.historyAll.get);
-    page('/l/:lid/upcoming_free_agents', views.upcomingFreeAgents.get);
-    page('/l/:lid/upcoming_free_agents/:season', views.upcomingFreeAgents.get);
-    page('/l/:lid/god_mode', views.godMode.get);
-    page('/l/:lid/power_rankings', views.powerRankings.get);
-    page('/l/:lid/export_stats', views.exportStats.get);
-    page('/l/:lid/player_feats', views.playerFeats.get);
-    page('/l/:lid/player_feats/:abbrev', views.playerFeats.get);
-    page('/l/:lid/player_feats/:abbrev/:season', views.playerFeats.get);
-    page('/l/:lid/player_feats/:abbrev/:season/:playoffs', views.playerFeats.get);
-    page('/l/:lid/multi_team_mode', views.multiTeamMode.get);
-    page('/l/:lid/team_records', views.teamRecords.get);
-    page('/l/:lid/team_records/:byType', views.teamRecords.get);
-    page('/l/:lid/awards_records', views.awardsRecords.get);
-    page('/l/:lid/awards_records/:awardType', views.awardsRecords.get);
-    page('/l/:lid/transactions', views.transactions.get);
-    page('/l/:lid/transactions/:abbrev', views.transactions.get);
-    page('/l/:lid/transactions/:abbrev/:season', views.transactions.get);
-    page('/l/:lid/transactions/:abbrev/:season/:eventType', views.transactions.get);*/
+    page('/l/:lid', genPage('leagueDashboard'));
+    page('/l/:lid/new_team', genPage('newTeam'));
+    page('/l/:lid/inbox', genPage('inbox'));
+    page('/l/:lid/message', genPage('message'));
+    page('/l/:lid/message/:mid', genPage('message'));
+    page('/l/:lid/standings', genPage('standings'));
+    page('/l/:lid/standings/:season', genPage('standings'));
+    page('/l/:lid/playoffs', genPage('playoffs'));
+    page('/l/:lid/playoffs/:season', genPage('playoffs'));
+    page('/l/:lid/league_finances', genPage('leagueFinances'));
+    page('/l/:lid/league_finances/:season', genPage('leagueFinances'));
+    page('/l/:lid/history', genPage('history'));
+    page('/l/:lid/history/:season', genPage('history'));
+    page('/l/:lid/hall_of_fame', genPage('hallOfFame'));
+    page('/l/:lid/edit_team_info', genPage('editTeamInfo'));
+    page('/l/:lid/roster', genPage('roster'));
+    page('/l/:lid/roster/:abbrev', genPage('roster'));
+    page('/l/:lid/roster/:abbrev/:season', genPage('roster'));
+    page('/l/:lid/schedule', genPage('schedule'));
+    page('/l/:lid/schedule/:abbrev', genPage('schedule'));
+    page('/l/:lid/team_finances', genPage('teamFinances'));
+    page('/l/:lid/team_finances/:abbrev', genPage('teamFinances'));
+    page('/l/:lid/team_finances/:abbrev/:show', genPage('teamFinances'));
+    page('/l/:lid/team_history', genPage('teamHistory'));
+    page('/l/:lid/team_history/:abbrev', genPage('teamHistory'));
+    page('/l/:lid/free_agents', genPage('freeAgents'));
+    page('/l/:lid/trade', genPage('trade'));
+    page('/l/:lid/trading_block', genPage('tradingBlock'));
+    page('/l/:lid/draft', genPage('draft'));
+    page('/l/:lid/draft_summary', genPage('draftSummary'));
+    page('/l/:lid/draft_summary/:season', genPage('draftSummary'));
+    page('/l/:lid/game_log', genPage('gameLog'));
+    page('/l/:lid/game_log/:abbrev', genPage('gameLog'));
+    page('/l/:lid/game_log/:abbrev/:season', genPage('gameLog'));
+    page('/l/:lid/game_log/:abbrev/:season/:gid', genPage('gameLog'));
+    page('/l/:lid/game_log/:abbrev/:season/:gid/:view', genPage('gameLog'));
+    page('/l/:lid/leaders', genPage('leaders'));
+    page('/l/:lid/leaders/:season', genPage('leaders'));
+    page('/l/:lid/player_ratings', genPage('playerRatings'));
+    page('/l/:lid/player_ratings/:abbrev', genPage('playerRatings'));
+    page('/l/:lid/player_ratings/:abbrev/:season', genPage('playerRatings'));
+    page('/l/:lid/player_stats', genPage('playerStats'));
+    page('/l/:lid/player_stats/:abbrev', genPage('playerStats'));
+    page('/l/:lid/player_stats/:abbrev/:season', genPage('playerStats'));
+    page('/l/:lid/player_stats/:abbrev/:season/:statType', genPage('playerStats'));
+    page('/l/:lid/player_stats/:abbrev/:season/:statType/:playoffs', genPage('playerStats'));
+    page('/l/:lid/team_stats', genPage('teamStats'));
+    page('/l/:lid/team_stats/:season', genPage('teamStats'));
+    page('/l/:lid/player/:pid', genPage('player'));
+    page('/l/:lid/negotiation', genPage('negotiationList'));
+    page('/l/:lid/negotiation/:pid', genPage('negotiation'));
+    page('/l/:lid/player_rating_dists', genPage('playerRatingDists'));
+    page('/l/:lid/player_rating_dists/:season', genPage('playerRatingDists'));
+    page('/l/:lid/player_stat_dists', genPage('playerStatDists'));
+    page('/l/:lid/player_stat_dists/:season', genPage('playerStatDists'));
+    page('/l/:lid/team_stat_dists', genPage('teamStatDists'));
+    page('/l/:lid/team_stat_dists/:season', genPage('teamStatDists'));
+    page('/l/:lid/player_shot_locations', genPage('playerShotLocations'));
+    page('/l/:lid/player_shot_locations/:season', genPage('playerShotLocations'));
+    page('/l/:lid/team_shot_locations', genPage('teamShotLocations'));
+    page('/l/:lid/team_shot_locations/:season', genPage('teamShotLocations'));
+    page('/l/:lid/export_league', genPage('exportLeague'));
+    page('/l/:lid/fantasy_draft', genPage('fantasyDraft'));
+    page('/l/:lid/live', genPage('live'));
+    page('/l/:lid/live_game', genPage('liveGame'));
+    page('/l/:lid/event_log', genPage('eventLog'));
+    page('/l/:lid/event_log/:abbrev', genPage('eventLog'));
+    page('/l/:lid/event_log/:abbrev/:season', genPage('eventLog'));
+    page('/l/:lid/delete_old_data', genPage('deleteOldData'));
+    page('/l/:lid/draft_scouting', genPage('draftScouting'));
+    page('/l/:lid/draft_scouting/:season', genPage('draftScouting'));
+    page('/l/:lid/watch_list', genPage('watchList'));
+    page('/l/:lid/watch_list/:statType', genPage('watchList'));
+    page('/l/:lid/watch_list/:statType/:playoffs', genPage('watchList'));
+    page('/l/:lid/customize_player', genPage('customizePlayer'));
+    page('/l/:lid/customize_player/:pid', genPage('customizePlayer'));
+    page('/l/:lid/history_all', genPage('historyAll'));
+    page('/l/:lid/upcoming_free_agents', genPage('upcomingFreeAgents'));
+    page('/l/:lid/upcoming_free_agents/:season', genPage('upcomingFreeAgents'));
+    page('/l/:lid/god_mode', genPage('godMode'));
+    page('/l/:lid/power_rankings', genPage('powerRankings'));
+    page('/l/:lid/export_stats', genPage('exportStats'));
+    page('/l/:lid/player_feats', genPage('playerFeats'));
+    page('/l/:lid/player_feats/:abbrev', genPage('playerFeats'));
+    page('/l/:lid/player_feats/:abbrev/:season', genPage('playerFeats'));
+    page('/l/:lid/player_feats/:abbrev/:season/:playoffs', genPage('playerFeats'));
+    page('/l/:lid/multi_team_mode', genPage('multiTeamMode'));
+    page('/l/:lid/team_records', genPage('teamRecords'));
+    page('/l/:lid/team_records/:byType', genPage('teamRecords'));
+    page('/l/:lid/awards_records', genPage('awardsRecords'));
+    page('/l/:lid/awards_records/:awardType', genPage('awardsRecords'));
+    page('/l/:lid/transactions', genPage('transactions'));
+    page('/l/:lid/transactions/:abbrev', genPage('transactions'));
+    page('/l/:lid/transactions/:abbrev/:season', genPage('transactions'));
+    page('/l/:lid/transactions/:abbrev/:season/:eventType', genPage('transactions')); */
 
     page('*', (ctx, next) => {
         if (!ctx.bbgm || !ctx.bbgm.handled) {

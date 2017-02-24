@@ -17,6 +17,7 @@ move everything but the UI to a web worker
     - in processInputs now... better would be to move to view file as "get" function
   - have place that calles runBefore etc instead do it through the API
   - restore runWhenever ability
+- confirm 404 still works
 
 bbgm.g.cache.flush().then(() => console.log('done'));
 fucked = false; Object.values(bbgm.g.cache.indexes.teamSeasonsBySeasonTid).forEach((ts) => { if (ts.hasOwnProperty('ast')) { console.log(ts); fucked = true } }); if (fucked) { throw new Error('FUCK'); }

@@ -13,12 +13,11 @@ import * as player from './player';
 import * as season from './season';
 import * as team from './team';
 import {getCopy} from '../db';
+import {genMessage, random} from '../util';
 import * as account from '../../util/account';
 import * as helpers from '../../util/helpers';
 import * as lock from '../../util/lock';
 import logEvent from '../../util/logEvent';
-import * as message from '../../util/message';
-import * as random from '../../util/random';
 import type {Phase, UpdateEvents} from '../../util/types';
 
 /**
@@ -122,7 +121,7 @@ async function newPhaseRegularSeason() {
 
     // First message from owner
     if (g.showFirstOwnerMessage) {
-        await message.generate({wins: 0, playoffs: 0, money: 0});
+        await genMessage({wins: 0, playoffs: 0, money: 0});
     } else {
         // Spam user with another message?
         if (localStorage.getItem('nagged') === 'true') {
@@ -336,7 +335,7 @@ async function newPhaseBeforeDraft() {
     account.checkAchievement.sleeper_pick();
 
     const deltas = await season.updateOwnerMood();
-    await message.generate(deltas);
+    await genMessage(deltas);
 
     // Don't redirect if we're viewing a live game now
     let url;

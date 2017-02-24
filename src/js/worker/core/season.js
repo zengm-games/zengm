@@ -7,7 +7,7 @@ import * as league from './league';
 import {getCopy} from '../db';
 import * as helpers from '../../util/helpers';
 import logEvent from '../../util/logEvent';
-import * as random from '../../util/random';
+import {random} from '../util';
 import type {OwnerMoodDeltas, ScheduleGame, Team, TeamFiltered} from '../../util/types';
 
 /**

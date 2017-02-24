@@ -7,7 +7,7 @@ import g from '../../globals';
 import * as api from '../api';
 import * as ui from '../ui';
 import {tradeFor} from '../../util/actions';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels, RatingWithChange, RecordAndPlayoffs} from '../components';
 import clickable from '../wrappers/clickable';
@@ -271,7 +271,7 @@ class Roster extends React.Component {
     render() {
         const {abbrev, editable, payroll, players, salaryCap, season, showTradeFor, t} = this.props;
 
-        bbgmViewReact.title(`${t.region} ${t.name} Roster - ${season}`);
+        setTitle(`${t.region} ${t.name} Roster - ${season}`);
 
         const logoStyle = {};
         if (t.imgURL) {

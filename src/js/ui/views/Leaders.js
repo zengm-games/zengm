@@ -1,10 +1,10 @@
 import React from 'react';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {Dropdown, JumpTo, NewWindowLink, PlayerNameLabels} from '../components';
 
 const Leaders = ({categories, season}) => {
-    bbgmViewReact.title(`League Leaders - ${season}`);
+    setTitle(`League Leaders - ${season}`);
 
     return <div>
         <Dropdown view="leaders" fields={["seasons"]} values={[season]} />

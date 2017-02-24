@@ -2,7 +2,7 @@
 
 import g from '../../globals';
 import * as helpers from '../../util/helpers';
-import * as random from '../../util/random';
+import {random} from '../util';
 import type {PlayerSkill} from '../../util/types';
 
 type PlayType = 'ast' | 'blkAtRim' | 'blkLowPost' | 'blkMidRange' | 'blkTp' | 'drb' | 'fgAtRim' | 'fgAtRimAndOne' | 'fgLowPost' | 'fgLowPostAndOne' | 'fgMidRange' | 'fgMidRangeAndOne' | 'foulOut' | 'ft' | 'injury' | 'missAtRim' | 'missFt' | 'missLowPost' | 'missMidRange' | 'missTp' | 'orb' | 'overtime' | 'pf' | 'quarter' | 'stl' | 'sub' | 'tov' | 'tp' | 'tpAndOne';

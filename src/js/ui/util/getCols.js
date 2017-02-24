@@ -2,8 +2,8 @@
 
 /* eslint quote-props: "off" */
 
-import * as helpers from './helpers';
-import type {SortOrder, SortType} from './types';
+import * as helpers from '../../util/helpers';
+import type {SortOrder, SortType} from '../../util/types';
 
 const cols: {
     [key: string]: {

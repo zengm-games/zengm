@@ -2,7 +2,7 @@ import $ from 'jquery';
 import React from 'react';
 import g from '../../globals';
 import * as ui from '../ui';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
 
@@ -105,7 +105,7 @@ class ResetPassword extends React.Component {
     }
 
     render() {
-        bbgmViewReact.title('Reset Password');
+        setTitle('Reset Password');
 
         const form = <div>
             <p>Enter a new password for your account below.</p>

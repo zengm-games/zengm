@@ -1,12 +1,11 @@
 import React from 'react';
 import g from '../../globals';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import getCols from '../../util/getCols';
+import {getCols, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {DataTable, Dropdown, NewWindowLink} from '../components';
 
 const TeamShotLocations = ({season, teams}) => {
-    bbgmViewReact.title(`Team Shot Locations - ${season}`);
+    setTitle(`Team Shot Locations - ${season}`);
 
     const superCols = [{
         title: '',

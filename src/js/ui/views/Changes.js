@@ -1,9 +1,9 @@
 import React from 'react';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import {NewWindowLink, SafeHtml} from '../components';
 
 const Changes = ({changes}) => {
-    bbgmViewReact.title('Changes');
+    setTitle('Changes');
 
     return <div>
         <h1>Changes <NewWindowLink /></h1>

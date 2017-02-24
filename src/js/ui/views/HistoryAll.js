@@ -1,9 +1,8 @@
 import React from 'react';
 import g from '../../globals';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import getCols from '../../util/getCols';
 import * as helpers from '../../util/helpers';
 import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
+import {getCols, setTitle} from '../util';
 
 const awardName = (award, season) => {
     if (!award) {
@@ -38,7 +37,7 @@ const teamName = (t, season) => {
 };
 
 const HistoryAll = ({seasons}) => {
-    bbgmViewReact.title('League History');
+    setTitle('League History');
 
     const cols = getCols('', 'League Champion', 'Runner Up', 'Finals MVP', 'MVP', 'DPOY', 'ROY');
 

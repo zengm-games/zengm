@@ -15,7 +15,7 @@ import * as player from './player';
 import * as season from './season';
 import * as team from './team';
 import * as helpers from '../../util/helpers';
-import * as random from '../../util/random';
+import {random} from '../util';
 import type {GameAttributeKeyDynamic, GameAttributes} from '../../util/types';
 
 const defaultGameAttributes: GameAttributes = {

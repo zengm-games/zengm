@@ -1,8 +1,8 @@
 import React from 'react';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 
 const Dashboard = ({leagues}) => {
-    bbgmViewReact.title('Dashboard');
+    setTitle('Dashboard');
 
     return <div>
         <ul className="dashboard-boxes">

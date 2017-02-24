@@ -3,7 +3,7 @@ import $ from 'jquery';
 import React from 'react';
 import g from '../../globals';
 import * as ui from '../ui';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import * as account from '../../util/account';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
@@ -130,7 +130,7 @@ class LoginOrRegister extends React.Component {
     }
 
     render() {
-        bbgmViewReact.title('Login or Register');
+        setTitle('Login or Register');
 
         return <div>
             <h1 />

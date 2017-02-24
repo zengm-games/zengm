@@ -5,7 +5,7 @@ import Promise from 'bluebird';
 import _ from 'underscore';
 import g from '../globals';
 import * as helpers from '../util/helpers';
-import * as random from '../util/random';
+import {random} from '../worker/util';
 import {init, views} from '../worker';
 import {contractNegotiation, draft, finances, league, phase, player, team, trade} from '../worker/core';
 import {getCopy} from '../worker/db';

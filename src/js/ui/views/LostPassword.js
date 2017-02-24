@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import React from 'react';
 import g from '../../globals';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
 
@@ -48,7 +48,7 @@ class LostPassword extends React.Component {
     }
 
     render() {
-        bbgmViewReact.title('Lost Password');
+        setTitle('Lost Password');
 
         return <div>
             <div className="row">

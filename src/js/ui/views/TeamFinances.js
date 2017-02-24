@@ -2,8 +2,7 @@ import React from 'react';
 import g from '../../globals';
 import * as api from '../api';
 import * as ui from '../ui';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import getCols from '../../util/getCols';
+import {getCols, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import logEvent from '../../util/logEvent';
 import {BarGraph, DataTable, Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels} from '../components';
@@ -171,7 +170,7 @@ FinancesForm.propTypes = {
 };
 
 const TeamFinances = ({abbrev, barData, barSeasons, contractTotals, contracts, gamesInProgress, luxuryPayroll, luxuryTax, minContract, minPayroll, numGames, payroll, salariesSeasons, salaryCap, show, t, tid}) => {
-    bbgmViewReact.title(`${t.region} ${t.name} Finances`);
+    setTitle(`${t.region} ${t.name} Finances`);
 
     const cols = getCols('Name').concat(salariesSeasons.map(season => {
         return {

@@ -1,7 +1,6 @@
 import React from 'react';
 import _ from 'underscore';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import getCols from '../../util/getCols';
+import {getCols, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {DataTable, Dropdown, NewWindowLink} from '../components';
 
@@ -24,7 +23,7 @@ CheckmarkOrCross.propTypes = {
 };
 
 const AwardsRecords = ({awardType, awardTypeVal, awardsRecords, playerCount}) => {
-    bbgmViewReact.title('Awards Records');
+    setTitle('Awards Records');
     const cols = getCols('Name', 'Count', 'Year', 'Last', 'Retired', 'HOF');
 
     const rows = awardsRecords.map(a => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import * as ui from '../ui';
 import * as api from '../api';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 
 class DeleteLeague extends React.Component {
@@ -19,7 +19,7 @@ class DeleteLeague extends React.Component {
     render() {
         const {lid, name, numGames, numPlayers, numSeasons} = this.props;
 
-        bbgmViewReact.title(`Delete League ${lid}?`);
+        setTitle(`Delete League ${lid}?`);
 
         let message;
         if (name !== undefined) {

@@ -1,11 +1,11 @@
 import classNames from 'classnames';
 import React from 'react';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {Dropdown, NewWindowLink} from '../components';
 
 const Schedule = ({abbrev, completed, season, upcoming}) => {
-    bbgmViewReact.title('Schedule');
+    setTitle('Schedule');
 
     return <div>
         <Dropdown view="schedule" fields={["teams"]} values={[abbrev]} />

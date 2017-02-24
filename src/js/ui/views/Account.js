@@ -6,7 +6,7 @@ import $ from 'jquery';
 import React from 'react';
 import g from '../../globals';
 import * as ui from '../ui';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
 
@@ -206,7 +206,7 @@ const Account = ({
     showGoldPitch: boolean,
     username?: string,
 }) => {
-    bbgmViewReact.title('Account');
+    setTitle('Account');
 
     let goldPitchDiv = null;
     if (showGoldPitch) {

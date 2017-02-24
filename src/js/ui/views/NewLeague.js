@@ -1,7 +1,7 @@
 import React from 'react';
 import * as ui from '../ui';
 import * as api from '../api';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 
 const PopText = ({teams, tid}) => {
@@ -188,7 +188,7 @@ class NewLeague extends React.Component {
     render() {
         const {creating, customize, invalidLeagueFile, leagueFile, name, parsing, randomizeRosters, teams, tid} = this.state;
 
-        bbgmViewReact.title('Create New League');
+        setTitle('Create New League');
 
         return <div>
             <h1>Create New League</h1>

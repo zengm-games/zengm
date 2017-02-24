@@ -2,7 +2,7 @@ import Promise from 'bluebird';
 import React from 'react';
 import g from '../../globals';
 import * as api from '../api';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import {DownloadDataLink} from '../components';
 
 function genFilename(leagueName, season, grouping) {
@@ -74,7 +74,7 @@ class ExportStats extends React.Component {
     }
 
     render() {
-        bbgmViewReact.title('Export Stats');
+        setTitle('Export Stats');
 
         const {seasons} = this.props;
 

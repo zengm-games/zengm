@@ -101,7 +101,7 @@ function choice<T>(x: T[]): T {
     return x[Math.floor(Math.random() * x.length)];
 }
 
-export {
+export default {
     randInt,
     shuffle,
     gauss,

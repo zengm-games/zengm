@@ -11,14 +11,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import g from '../globals';
 import * as api from './api';
+import Controller from './components/Controller';
 import * as processInputs from './processInputs';
+import {initView, setTitle} from './util';
 import * as views from './views';
 import * as changes from '../data/changes';
 import * as account from '../util/account';
 import * as ads from '../util/ads';
-import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
-import Controller from './components/Controller';
 
 // Needed because of https://github.com/petkaantonov/bluebird/issues/363
 // Sadly only enabled in debug mode, due to weird interactions with Bugsnag: https://github.com/bugsnag/bugsnag-js/issues/181
@@ -31,11 +31,11 @@ window.Promise = Promise;
 window.Promise.config({warnings: false});
 
 const genStaticPage = (name: string, title: string, content: React.Element<*>, inLeague: boolean) => {
-    return bbgmViewReact.init({
+    return initView({
         id: name,
         inLeague,
         Component: () => {
-            bbgmViewReact.title(title);
+            setTitle(title);
 
             return content;
         },
@@ -50,7 +50,7 @@ const Manual = <div>
 const genPage = (id, inLeague = true) => {
     const componentName = id.charAt(0).toUpperCase() + id.slice(1);
 
-    return bbgmViewReact.init({
+    return initView({
         id,
         inLeague,
         get: processInputs.hasOwnProperty(id) ? processInputs[id] : undefined,

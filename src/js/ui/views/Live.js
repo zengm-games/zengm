@@ -1,11 +1,11 @@
 import classNames from 'classnames';
 import React from 'react';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import {liveGame} from '../../util/actions';
 import {NewWindowLink} from '../components';
 
 const Live = ({games, gamesInProgress}) => {
-    bbgmViewReact.title('Live Game Simulation');
+    setTitle('Live Game Simulation');
 
     return <div>
         <h1>Live Game Simulation <NewWindowLink /></h1>

@@ -1,10 +1,10 @@
 import React from 'react';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {Dropdown, JumpTo, NewWindowLink, SafeHtml} from '../components';
 
 const Transactions = ({abbrev, eventType, events, season}) => {
-    bbgmViewReact.title(`Transactions - ${season}`);
+    setTitle(`Transactions - ${season}`);
 
     const moreLinks = abbrev !== 'all' ? <p>
         More:{' '}

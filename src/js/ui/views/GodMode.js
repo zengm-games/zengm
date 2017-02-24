@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React from 'react';
 import * as api from '../api';
 import * as ui from '../ui';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import logEvent from '../../util/logEvent';
 import {HelpPopover, NewWindowLink} from '../components';
@@ -107,7 +107,7 @@ class GodMode extends React.Component {
     render() {
         const {godMode} = this.props;
 
-        bbgmViewReact.title('God Mode');
+        setTitle('God Mode');
 
         return <div>
             <h1>God Mode <NewWindowLink /></h1>

@@ -4,8 +4,7 @@ import React from 'react';
 import g from '../../globals';
 import * as api from '../api';
 import * as ui from '../ui';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import getCols from '../../util/getCols';
+import {getCols, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {DataTable, DraftAbbrev, NewWindowLink, PlayerNameLabels} from '../components';
 
@@ -71,7 +70,7 @@ class Draft extends React.Component {
     render() {
         const {drafted, fantasyDraft, started, undrafted, userTids} = this.props;
 
-        bbgmViewReact.title('Draft');
+        setTitle('Draft');
 
         const nextPick = drafted.find(p => p.pid < 0);
         const usersTurn = nextPick && userTids.includes(nextPick.draft.tid);

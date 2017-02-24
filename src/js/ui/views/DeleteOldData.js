@@ -1,6 +1,6 @@
 import React from 'react';
 import * as api from '../api';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import logEvent from '../../util/logEvent';
 import {NewWindowLink} from '../components';
 
@@ -54,7 +54,7 @@ class DeleteOldData extends React.Component {
     }
 
     render() {
-        bbgmViewReact.title('Delete Old Data');
+        setTitle('Delete Old Data');
 
         return <div>
             <h1>Delete Old Data <NewWindowLink /></h1>

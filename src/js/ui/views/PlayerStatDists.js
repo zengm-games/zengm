@@ -1,6 +1,6 @@
 import React from 'react';
 import g from '../../globals';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {BoxPlot, Dropdown, NewWindowLink} from '../components';
 
@@ -28,7 +28,7 @@ const nbaQuartiles = {
 };
 
 const PlayerStatDists = ({season, statsAll}) => {
-    bbgmViewReact.title(`Player Stat Distributions - ${season}`);
+    setTitle(`Player Stat Distributions - ${season}`);
 
     // Scales for the box plots. This is not done dynamically so that the plots will be comparable across seasons.
     // Needs to be in render for g, for some reason

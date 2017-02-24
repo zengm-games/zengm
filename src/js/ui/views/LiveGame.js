@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
 import AutoAffix from 'react-overlays/lib/AutoAffix';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {PlayerNameLabels} from '../components';
 
@@ -272,7 +272,7 @@ class LiveGame extends React.Component {
     }
 
     render() {
-        bbgmViewReact.title('Live Game Simulation');
+        setTitle('Live Game Simulation');
 
         return <div>
             <h1>Live Game Simulation</h1>

@@ -1,9 +1,8 @@
 import React from 'react';
 import g from '../../globals';
 import * as api from '../api';
-import bbgmViewReact from '../../util/bbgmViewReact';
 import {tradeFor} from '../../util/actions';
-import getCols from '../../util/getCols';
+import {getCols, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import clickable from '../wrappers/clickable';
 import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
@@ -179,7 +178,7 @@ class TradingBlock extends React.Component {
     render() {
         const {gameOver, phase, userPicks, userRoster} = this.props;
 
-        bbgmViewReact.title('Trading Block');
+        setTitle('Trading Block');
 
         if ((phase >= g.PHASE.AFTER_TRADE_DEADLINE && phase <= g.PHASE.PLAYOFFS) || phase === g.PHASE.FANTASY_DRAFT || gameOver) {
             return <div>

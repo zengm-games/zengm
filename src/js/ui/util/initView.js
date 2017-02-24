@@ -1,7 +1,7 @@
 // @flow
 
-import g from '../globals';
-import type {GetOutput, PageCtx} from './types';
+import g from '../../globals';
+import type {GetOutput, PageCtx} from '../../util/types';
 
 type InitArgs = {
     Component: any,
@@ -10,7 +10,7 @@ type InitArgs = {
     get?: (ctx: PageCtx) => ?GetOutput,
 };
 
-function init(args: InitArgs) {
+const initView = (args: InitArgs) => {
     args.inLeague = args.inLeague !== undefined ? args.inLeague : true;
     args.get = args.get !== undefined ? args.get : () => { return {}; };
 
@@ -32,21 +32,6 @@ function init(args: InitArgs) {
         ctx.bbgm.handled = true;
         g.emitter.emit('get', args, ctx);
     };
-}
-
-let currentTitle = 'Basketball GM';
-function title(newTitle: string) {
-    if (g.lid !== null) {
-        newTitle += ` - ${g.leagueName}`;
-    }
-    newTitle = `${newTitle} - Basketball GM`;
-    if (newTitle !== currentTitle) {
-        currentTitle = newTitle;
-        document.title = newTitle;
-    }
-}
-
-export default {
-    init,
-    title,
 };
+
+export default initView;

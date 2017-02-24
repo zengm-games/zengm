@@ -2,7 +2,7 @@ import React from 'react';
 import g from '../../globals';
 import * as api from '../api';
 import * as ui from '../ui';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import {NewWindowLink} from '../components';
 
 class MultiTeamMode extends React.Component {
@@ -36,7 +36,7 @@ class MultiTeamMode extends React.Component {
     render() {
         const {teams, userTids} = this.props;
 
-        bbgmViewReact.title('Multi Team Mode');
+        setTitle('Multi Team Mode');
 
         let statusText;
         if (userTids.length === 1) {

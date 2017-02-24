@@ -1,12 +1,11 @@
 import React from 'react';
 import g from '../../globals';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import getCols from '../../util/getCols';
+import {getCols, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {DataTable, DraftAbbrev, Dropdown, JumpTo, NewWindowLink, SkillsBlock} from '../components';
 
 const DraftSummary = ({players, season}) => {
-    bbgmViewReact.title(`${season} Draft Summary`);
+    setTitle(`${season} Draft Summary`);
 
     const superCols = [{
         title: '',

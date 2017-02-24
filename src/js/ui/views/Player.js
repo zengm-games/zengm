@@ -1,7 +1,6 @@
 import React from 'react';
 import {negotiate, tradeFor} from '../../util/actions';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import getCols from '../../util/getCols';
+import {getCols, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {DataTable, NewWindowLink, PlayerPicture, SafeHtml, SkillsBlock, WatchBlock} from '../components';
 
@@ -247,7 +246,7 @@ ShotLocationsTable.propTypes = {
 };
 
 const Player = ({events, feats, freeAgent, godMode, injured, player, retired, showContract, showTradeFor}) => {
-    bbgmViewReact.title(player.name);
+    setTitle(player.name);
 
     let draftInfo = null;
     if (player.draft.round) {

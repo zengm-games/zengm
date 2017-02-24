@@ -2,13 +2,13 @@
 
 import classNames from 'classnames';
 import React from 'react';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {NewWindowLink} from '../components';
 import type {MessageWithMid} from '../../util/types';
 
 const Inbox = ({anyUnread, messages}: {anyUnread: boolean, messages: MessageWithMid[]}) => {
-    bbgmViewReact.title('Inbox');
+    setTitle('Inbox');
 
     return <div>
         <h1>Inbox <NewWindowLink /></h1>

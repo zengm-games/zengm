@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {NewWindowLink, SafeHtml} from '../components';
 import type {Message as Message_} from '../../util/types';
@@ -12,7 +12,7 @@ type MessageProps = {
 
 const Message = ({message}: MessageProps) => {
     if (!message) {
-        bbgmViewReact.title('Message');
+        setTitle('Message');
 
         return <div>
             <h1>Error</h1>
@@ -20,7 +20,7 @@ const Message = ({message}: MessageProps) => {
         </div>;
     }
 
-    bbgmViewReact.title(`Message From ${message.from}`);
+    setTitle(`Message From ${message.from}`);
 
     return <div>
         <h4 style={{marginTop: '23px'}}>From: {message.from}, {message.year} <NewWindowLink /></h4>

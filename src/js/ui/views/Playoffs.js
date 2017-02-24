@@ -1,8 +1,8 @@
 // @flow
 
 import React from 'react';
-import bbgmViewReact from '../../util/bbgmViewReact';
 import {Dropdown, JumpTo, NewWindowLink, PlayoffMatchup} from '../components';
+import {setTitle} from '../util';
 
 const Playoffs = ({confNames, finalMatchups, matchups, numPlayoffRounds, season, series}: {
     confNames: string[],
@@ -21,7 +21,7 @@ const Playoffs = ({confNames, finalMatchups, matchups, numPlayoffRounds, season,
         won?: number,
     },
 }) => {
-    bbgmViewReact.title(`Playoffs - ${season}`);
+    setTitle(`Playoffs - ${season}`);
 
     return <div>
         <Dropdown view="playoffs" fields={["seasons"]} values={[season]} />

@@ -1,7 +1,7 @@
 import React from 'react';
 import * as api from '../api';
 import * as ui from '../ui';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {NewWindowLink} from '../components';
 
@@ -40,7 +40,7 @@ class NewTeam extends React.Component {
     render() {
         const {gameOver, godMode, teams} = this.props;
 
-        bbgmViewReact.title('New Team');
+        setTitle('New Team');
 
         if (!gameOver && !godMode) {
             return <div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import g from '../../globals';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import * as api from '../api';
 import {NewWindowLink} from '../components';
 
@@ -27,7 +27,7 @@ class FantasyDraft extends React.Component {
     }
 
     render() {
-        bbgmViewReact.title('Fantasy Draft');
+        setTitle('Fantasy Draft');
 
         if (this.props.phase === g.PHASE.DRAFT) {
             return <div>

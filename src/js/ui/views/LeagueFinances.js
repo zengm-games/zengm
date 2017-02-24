@@ -1,12 +1,11 @@
 import React from 'react';
 import g from '../../globals';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import getCols from '../../util/getCols';
+import {getCols, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {DataTable, Dropdown, JumpTo, NewWindowLink} from '../components';
 
 const LeagueFinances = ({minPayroll, luxuryPayroll, luxuryTax, salaryCap, season, teams}) => {
-    bbgmViewReact.title(`League Finances - ${season}`);
+    setTitle(`League Finances - ${season}`);
 
     const cols = getCols('Team', 'Avg Attendance', 'Revenue (YTD)', 'Profit (YTD)', 'Cash', 'Payroll');
 

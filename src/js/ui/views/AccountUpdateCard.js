@@ -5,7 +5,7 @@ import $ from 'jquery';
 import React from 'react';
 import g from '../../globals';
 import * as ui from '../ui';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
 
@@ -97,7 +97,7 @@ class AccountUpdateCard extends React.Component {
     render() {
         const {goldCancelled, expMonth, expYear, last4, username} = this.props;
 
-        bbgmViewReact.title('Update Card');
+        setTitle('Update Card');
 
         let errorMessage;
         if (username === undefined || username === null || username === '') {

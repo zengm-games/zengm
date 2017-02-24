@@ -2,8 +2,8 @@
 
 import Promise from 'bluebird';
 import _ from 'underscore';
-import g from '../globals';
-import {getCopy} from '../worker/db';
+import g from '../../globals';
+import {getCopy} from '../db';
 
 /**
  * Calcualte the current season's Player Efficiency Rating (PER) for each active player and write it to the database.
@@ -173,11 +173,8 @@ async function calculatePER() {
  * @memberOf util.advStats
  * @return {Promise}
  */
-function calculateAll() {
-    return calculatePER();
-}
-
-export {
-    // eslint-disable-next-line import/prefer-default-export
-    calculateAll,
+const advStats = async () => {
+    await calculatePER();
 };
+
+export default advStats;

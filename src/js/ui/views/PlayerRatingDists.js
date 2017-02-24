@@ -1,10 +1,10 @@
 import React from 'react';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {BoxPlot, Dropdown, NewWindowLink} from '../components';
 
 const PlayerRatingDists = ({ratingsAll, season}) => {
-    bbgmViewReact.title(`Player Rating Distributions - ${season}`);
+    setTitle(`Player Rating Distributions - ${season}`);
 
     return <div>
         <Dropdown view="player_rating_dists" fields={["seasons"]} values={[season]} />

@@ -5,7 +5,7 @@ import React from 'react';
 import g from '../../globals';
 import * as api from '../api';
 import * as ui from '../ui';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {NewWindowLink, PlayerPicture} from '../components';
 
@@ -223,7 +223,7 @@ class CustomizePlayer extends React.Component {
 
         const title = originalTid === undefined ? 'Create Player' : 'Edit Player';
 
-        bbgmViewReact.title(title);
+        setTitle(title);
 
         if (!godMode) {
             return <div>

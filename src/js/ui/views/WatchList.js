@@ -4,8 +4,7 @@ import MenuItem from 'react-bootstrap/lib/MenuItem';
 import g from '../../globals';
 import * as api from '../api';
 import * as ui from '../ui';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import getCols from '../../util/getCols';
+import {getCols, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {DataTable, Dropdown, NewWindowLink, PlayerNameLabels} from '../components';
 
@@ -34,7 +33,7 @@ class WatchList extends React.Component {
     render() {
         const {players, playoffs, statType} = this.props;
 
-        bbgmViewReact.title('Watch List');
+        setTitle('Watch List');
 
         const cols = getCols('Name', 'Pos', 'Age', 'Team', 'Ovr', 'Pot', 'Contract', 'GP', 'Min', 'FG%', 'TP%', 'FT%', 'Reb', 'Ast', 'TO', 'Stl', 'Blk', 'Pts', 'PER', 'EWA');
 

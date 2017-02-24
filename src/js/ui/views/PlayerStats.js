@@ -1,13 +1,12 @@
 import React from 'react';
 import g from '../../globals';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import getCols from '../../util/getCols';
-import * as helpers from '../../util/helpers';
 import {DataTable, Dropdown, JumpTo, NewWindowLink, PlayerNameLabels} from '../components';
+import {getCols, setTitle} from '../util';
+import * as helpers from '../../util/helpers';
 
 const PlayerStats = ({abbrev, players, playoffs, season, statType}) => {
     const label = season !== undefined ? season : 'Career Totals';
-    bbgmViewReact.title(`Player Stats - ${label}`);
+    setTitle(`Player Stats - ${label}`);
 
     const superCols = [{
         title: '',

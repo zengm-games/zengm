@@ -1,12 +1,11 @@
 import React from 'react';
 import g from '../../globals';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import getCols from '../../util/getCols';
+import {getCols, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {DataTable, NewWindowLink} from '../components';
 
 const HallOfFame = ({players}) => {
-    bbgmViewReact.title('Hall of Fame');
+    setTitle('Hall of Fame');
 
     const superCols = [{
         title: '',

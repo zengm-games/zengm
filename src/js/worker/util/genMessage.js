@@ -1,10 +1,10 @@
 // @flow
 
-import g from '../globals';
-import * as league from '../worker/core/league';
-import * as helpers from './helpers';
-import * as random from './random';
-import type {OwnerMoodDeltas} from './types';
+import g from '../../globals';
+import * as league from '../core/league';
+import * as helpers from '../../util/helpers';
+import {random} from '../util';
+import type {OwnerMoodDeltas} from '../../util/types';
 
 // First message after new game
 const first = [
@@ -141,7 +141,7 @@ ovr[2] = [
     "Anyway, overall I'm happy with the progress you've made, but I need to get back to {{activity}}.",
 ];
 
-async function generate(deltas: OwnerMoodDeltas) {
+async function genMessage(deltas: OwnerMoodDeltas) {
     // If auto play seasons or multi team mode, no messages
     if (g.autoPlaySeasons > 0 || g.userTids.length > 1) {
         return;
@@ -256,7 +256,4 @@ async function generate(deltas: OwnerMoodDeltas) {
     });
 }
 
-export {
-    // eslint-disable-next-line import/prefer-default-export
-    generate,
-};
+export default genMessage;

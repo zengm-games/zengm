@@ -1,13 +1,12 @@
 import React from 'react';
 import g from '../../globals';
 import {negotiate} from '../../util/actions';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import getCols from '../../util/getCols';
+import {getCols, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {DataTable, HelpPopover, NewWindowLink, PlayerNameLabels} from '../components';
 
 const FreeAgents = ({capSpace, gamesInProgress, minContract, numRosterSpots, phase, players}) => {
-    bbgmViewReact.title('Free Agents');
+    setTitle('Free Agents');
 
     if (phase >= g.PHASE.AFTER_TRADE_DEADLINE && phase <= g.PHASE.RESIGN_PLAYERS) {
         return <div>

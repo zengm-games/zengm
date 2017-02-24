@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
 import * as ui from '../ui';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {Dropdown, NewWindowLink, PlayerNameLabels} from '../components';
 import clickable from '../wrappers/clickable';
@@ -201,7 +201,7 @@ function findPrevNextGids(games = [], currentGid) {
 }
 
 const GameLog = ({abbrev, boxScore, gamesList = {games: []}, season}) => {
-    bbgmViewReact.title(`Game Log - ${season}`);
+    setTitle(`Game Log - ${season}`);
 
     const {nextGid, prevGid} = findPrevNextGids(gamesList.games, boxScore.gid);
 

@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React from 'react';
 import * as api from '../api';
 import * as ui from '../ui';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {NewWindowLink} from '../components';
 
@@ -32,7 +32,7 @@ const sign = async (pid, amount, exp) => {
 };
 
 const Negotiation = ({contractOptions, errorMessage, payroll, player = {}, resigning, salaryCap, userTid}) => {
-    bbgmViewReact.title(`Contract Negotiation - ${player.name}`);
+    setTitle(`Contract Negotiation - ${player.name}`);
 
     if (errorMessage) {
         return <div>

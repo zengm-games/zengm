@@ -1,11 +1,10 @@
 import React from 'react';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import getCols from '../../util/getCols';
+import {getCols, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {DataTable, Dropdown, NewWindowLink} from '../components';
 
 const TeamRecords = ({byType, displayName, seasonCount, teamRecords}) => {
-    bbgmViewReact.title('Team Records');
+    setTitle('Team Records');
 
     const cols = getCols(displayName, 'W', 'L', '%', 'Playoffs', 'Last Playoffs', 'Finals', 'Championships', 'Last Title', 'MVP', 'DPOY', 'SMOY', 'ROY', 'BR', 'BRC', 'ART', 'ALT', 'ADT');
     // MVP, DPOY, SMOY, ROY

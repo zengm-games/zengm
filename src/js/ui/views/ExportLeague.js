@@ -1,7 +1,7 @@
 import React from 'react';
 import g from '../../globals';
 import * as api from '../api';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import {DownloadDataLink} from '../components';
 
 const categories = [{
@@ -121,7 +121,7 @@ class ExportLeague extends React.Component {
     }
 
     render() {
-        bbgmViewReact.title('Export League');
+        setTitle('Export League');
 
         return <div>
             <h1>Export League</h1>

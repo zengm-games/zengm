@@ -1,12 +1,11 @@
 import React from 'react';
 import g from '../../globals';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import getCols from '../../util/getCols';
+import {getCols, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {DataTable, Dropdown, JumpTo, NewWindowLink, PlayerNameLabels} from '../components';
 
 const PlayerRatings = ({abbrev, players, season}) => {
-    bbgmViewReact.title(`Player Ratings - ${season}`);
+    setTitle(`Player Ratings - ${season}`);
 
     const cols = getCols('Name', 'Pos', 'Team', 'Age', 'Country', 'Ovr', 'Pot', 'rating:Hgt', 'rating:Str', 'rating:Spd', 'rating:Jmp', 'rating:End', 'rating:Ins', 'rating:Dnk', 'rating:FT', 'rating:2Pt', 'rating:3Pt', 'rating:Blk', 'rating:Stl', 'rating:Drb', 'rating:Pss', 'rating:Reb');
 

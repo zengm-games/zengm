@@ -1,7 +1,7 @@
 import React from 'react';
 import g from '../../globals';
 import * as api from '../api';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import logEvent from '../../util/logEvent';
 
@@ -110,7 +110,7 @@ class EditTeamInfo extends React.Component {
     }
 
     render() {
-        bbgmViewReact.title('Edit Team Info');
+        setTitle('Edit Team Info');
 
         if (!this.props.godMode) {
             return <div>

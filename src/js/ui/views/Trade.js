@@ -3,8 +3,7 @@ import React from 'react';
 import g from '../../globals';
 import * as api from '../api';
 import * as ui from '../ui';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import getCols from '../../util/getCols';
+import {getCols, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
 
@@ -147,7 +146,7 @@ class Trade extends React.Component {
     render() {
         const {gameOver, godMode, lost, otherDpids, otherPicks, otherRoster, otherTid, phase, salaryCap, summary, showResigningMsg, strategy, teams, userDpids, userPicks, userRoster, userTeamName, won} = this.props;
 
-        bbgmViewReact.title('Trade');
+        setTitle('Trade');
 
         if ((phase >= g.PHASE.AFTER_TRADE_DEADLINE && phase <= g.PHASE.PLAYOFFS) || phase === g.PHASE.FANTASY_DRAFT || gameOver) {
             return <div>

@@ -11,7 +11,7 @@ import * as player from './player';
 import {getCopy} from '../db';
 import * as helpers from '../../util/helpers';
 import logEvent from '../../util/logEvent';
-import * as random from '../../util/random';
+import {random} from '../util';
 import type {PickRealized, TeamFiltered} from '../../util/types';
 
 // Add a new set of draft picks

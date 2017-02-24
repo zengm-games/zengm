@@ -12,11 +12,10 @@ import * as phase from './phase';
 import * as player from './player';
 import * as season from './season';
 import * as team from './team';
-import * as advStats from '../../util/advStats';
+import {advStats, random} from '../util';
 import logEvent from '../../util/logEvent';
 import * as helpers from '../../util/helpers';
 import * as lock from '../../util/lock';
-import * as random from '../../util/random';
 import type {GameResults} from '../../util/types';
 
 async function writeTeamStats(results: GameResults) {
@@ -686,7 +685,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
             url = undefined;
         }
 
-        await advStats.calculateAll();
+        await advStats();
 
         ui.realtimeUpdate(["gameSim"], url, async () => {
             league.updateLastDbChange();

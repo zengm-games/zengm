@@ -1,13 +1,12 @@
 import React from 'react';
 import g from '../../globals';
 import {negotiate} from '../../util/actions';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import getCols from '../../util/getCols';
+import {getCols, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
 
 const NegotiationList = ({players}) => {
-    bbgmViewReact.title('Re-sign Players');
+    setTitle('Re-sign Players');
 
     const cols = getCols('Name', 'Pos', 'Age', 'Ovr', 'Pot', 'Min', 'Pts', 'Reb', 'Ast', 'PER', 'Asking For', 'Mood', 'Negotiate');
 

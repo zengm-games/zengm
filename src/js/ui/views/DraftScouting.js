@@ -1,8 +1,7 @@
 import React from 'react';
 import * as ui from '../ui';
 import * as api from '../api';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import getCols from '../../util/getCols';
+import {getCols, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
 
@@ -41,7 +40,7 @@ class DraftScouting extends React.Component {
     render() {
         const {seasons} = this.props;
 
-        bbgmViewReact.title('Draft Scouting');
+        setTitle('Draft Scouting');
 
         const cols = getCols('#', 'Name', 'Pos', 'Age', 'Ovr', 'Pot');
 

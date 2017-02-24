@@ -1,11 +1,10 @@
 import React from 'react';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import getCols from '../../util/getCols';
+import {getCols, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {DataTable, Dropdown, NewWindowLink, PlayerNameLabels} from '../components';
 
 const UpcomingFreeAgents = ({players, season}) => {
-    bbgmViewReact.title('Upcoming Free Agents');
+    setTitle('Upcoming Free Agents');
 
     const cols = getCols('Name', 'Pos', 'Age', 'Ovr', 'Pot', 'Min', 'Pts', 'Reb', 'Ast', 'PER', 'Current Contract', 'Desired Contract');
 

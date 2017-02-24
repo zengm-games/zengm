@@ -1,9 +1,9 @@
 import React from 'react';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import {Dropdown, NewWindowLink, SafeHtml} from '../components';
 
 const EventLog = ({abbrev, events, season}) => {
-    bbgmViewReact.title(`Event Log - ${season}`);
+    setTitle(`Event Log - ${season}`);
 
     return <div>
         <Dropdown view="event_log" fields={["teams", "seasons"]} values={[abbrev, season]} />

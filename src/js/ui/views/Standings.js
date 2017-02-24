@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import React from 'react';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {Dropdown, JumpTo, NewWindowLink} from '../components';
 import clickable from '../wrappers/clickable';
@@ -86,9 +86,9 @@ ConfStandings.propTypes = {
 
 const Standings = ({confs, playoffsByConference, season}) => {
     if (season === undefined) {
-        bbgmViewReact.title('Standings');
+        setTitle('Standings');
     } else {
-        bbgmViewReact.title(`Standings - ${season}`);
+        setTitle(`Standings - ${season}`);
     }
 
     return <div>

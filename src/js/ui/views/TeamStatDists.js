@@ -1,5 +1,5 @@
 import React from 'react';
-import bbgmViewReact from '../../util/bbgmViewReact';
+import {setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {BoxPlot, Dropdown, NewWindowLink} from '../components';
 
@@ -53,7 +53,7 @@ const scale = {
 };
 
 const TeamStatDists = ({season, statsAll}) => {
-    bbgmViewReact.title(`Team Stat Distributions - ${season}`);
+    setTitle(`Team Stat Distributions - ${season}`);
 
     return <div>
         <Dropdown view="team_stat_dists" fields={["seasons"]} values={[season]} />

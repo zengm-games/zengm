@@ -1,12 +1,11 @@
 import React from 'react';
 import g from '../../globals';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import getCols from '../../util/getCols';
+import {getCols, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {DataTable, NewWindowLink} from '../components';
 
 const PowerRankings = ({teams}) => {
-    bbgmViewReact.title('Power Rankings');
+    setTitle('Power Rankings');
 
     const cols = getCols('O', 'P', 'T', 'Team', 'W', 'L', 'L10', 'Diff');
     cols[3].width = '100%';

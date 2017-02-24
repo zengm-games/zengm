@@ -15,6 +15,7 @@ move everything but the UI to a web worker
 - current todo
   - remove references to ui in worker
   - split up util - ui, worker, or both
+    - commong things remain in a 'common' folder, maybe?
   - restore runWhenever ability (really necessary?)
 
 bbgm.g.cache.flush().then(() => console.log('done'));

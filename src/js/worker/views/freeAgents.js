@@ -6,17 +6,6 @@ import * as freeAgents from '../core/freeAgents';
 import * as player from '../core/player';
 import * as team from '../core/team';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import * as helpers from '../../util/helpers';
-import FreeAgents from '../../ui/views/FreeAgents';
-
-function get() {
-    if (g.phase === g.PHASE.RESIGN_PLAYERS) {
-        return {
-            redirectUrl: helpers.leagueUrl(["negotiation"]),
-        };
-    }
-}
 
 async function updateFreeAgents() {
     let [payroll, userPlayers, players] = await Promise.all([
@@ -53,9 +42,6 @@ async function updateFreeAgents() {
     };
 }
 
-export default bbgmViewReact.init({
-    id: "freeAgents",
-    get,
+export default {
     runBefore: [updateFreeAgents],
-    Component: FreeAgents,
-});
+};

@@ -92,7 +92,7 @@ const genPage = (id, inLeague = true) => {
     page('/account/reset_password/:token', genPage('resetPassword', false));
     page('/account/update_card', genPage('accountUpdateCard', false));
 
-/*    // League views
+    // League views
     page('/l/:lid', genPage('leagueDashboard'));
     page('/l/:lid/new_team', genPage('newTeam'));
     page('/l/:lid/inbox', genPage('inbox'));
@@ -187,7 +187,7 @@ const genPage = (id, inLeague = true) => {
     page('/l/:lid/transactions', genPage('transactions'));
     page('/l/:lid/transactions/:abbrev', genPage('transactions'));
     page('/l/:lid/transactions/:abbrev/:season', genPage('transactions'));
-    page('/l/:lid/transactions/:abbrev/:season/:eventType', genPage('transactions')); */
+    page('/l/:lid/transactions/:abbrev/:season/:eventType', genPage('transactions'));
 
     page('*', (ctx, next) => {
         if (!ctx.bbgm || !ctx.bbgm.handled) {

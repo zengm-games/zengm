@@ -3,15 +3,7 @@
 import g from '../../globals';
 import * as season from '../core/season';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
 import * as helpers from '../../util/helpers';
-import Playoffs from '../../ui/views/Playoffs';
-
-function get(ctx) {
-    return {
-        season: helpers.validateSeason(ctx.params.season),
-    };
-}
 
 async function updatePlayoffs(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || inputs.season !== state.season || (inputs.season === g.season && updateEvents.includes('gameSim'))) {
@@ -78,9 +70,6 @@ async function updatePlayoffs(inputs, updateEvents, state) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "playoffs",
-    get,
+export default {
     runBefore: [updatePlayoffs],
-    Component: Playoffs,
-});
+};

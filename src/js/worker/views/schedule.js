@@ -2,15 +2,7 @@ import Promise from 'bluebird';
 import g from '../../globals';
 import * as season from '../core/season';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
 import * as helpers from '../../util/helpers';
-import Schedule from '../../ui/views/Schedule';
-
-function get(ctx) {
-    const inputs = {};
-    [inputs.tid, inputs.abbrev] = helpers.validateAbbrev(ctx.params.abbrev);
-    return inputs;
-}
 
 async function updateUpcoming(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('newPhase') || inputs.abbrev !== state.abbrev) {
@@ -75,9 +67,6 @@ async function updateCompleted(inputs, updateEvents, state, setState) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "schedule",
-    get,
+export default {
     runBefore: [updateUpcoming, updateCompleted],
-    Component: Schedule,
-});
+};

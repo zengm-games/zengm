@@ -3,15 +3,7 @@ import React from 'react';
 import _ from 'underscore';
 import g from '../../globals';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
 import * as helpers from '../../util/helpers';
-import TeamRecords from '../../ui/views/TeamRecords';
-
-function get(ctx) {
-    return {
-        byType: ctx.params.byType || "team",
-    };
-}
 
 function getTeamLink(t) {
     return <a href={helpers.leagueUrl(["team_history", t.abbrev])}>{t.region} {t.name}</a>;
@@ -188,10 +180,6 @@ async function updateTeamRecords(inputs, updateEvents, state) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "teamRecords",
-    get,
+export default {
     runBefore: [updateTeamRecords],
-    Component: TeamRecords,
-});
-
+};

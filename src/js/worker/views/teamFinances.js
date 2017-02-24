@@ -1,16 +1,7 @@
 import g from '../../globals';
 import * as team from '../core/team';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
 import * as helpers from '../../util/helpers';
-import TeamFinances from '../../ui/views/TeamFinances';
-
-function get(ctx) {
-    const inputs = {};
-    inputs.show = ctx.params.show !== undefined ? ctx.params.show : "10";
-    [inputs.tid, inputs.abbrev] = helpers.validateAbbrev(ctx.params.abbrev);
-    return inputs;
-}
 
 async function updateTeamFinances(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || updateEvents.includes('teamFinances') || inputs.tid !== state.tid || inputs.show !== state.show) {
@@ -136,9 +127,6 @@ function updateGamesInProgress(inputs, updateEvents, state) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "teamFinances",
-    get,
+export default {
     runBefore: [updateTeamFinances, updateGamesInProgress],
-    Component: TeamFinances,
-});
+};

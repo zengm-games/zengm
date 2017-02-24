@@ -1,24 +1,5 @@
 import g from '../../globals';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import * as helpers from '../../util/helpers';
-import PlayerRatings from '../../ui/views/PlayerRatings';
-
-function get(ctx) {
-    let abbrev;
-    if (g.teamAbbrevsCache.includes(ctx.params.abbrev)) {
-        abbrev = ctx.params.abbrev;
-    } else if (ctx.params.abbrev && ctx.params.abbrev === 'watch') {
-        abbrev = "watch";
-    } else {
-        abbrev = "all";
-    }
-
-    return {
-        abbrev,
-        season: helpers.validateSeason(ctx.params.season),
-    };
-}
 
 async function updatePlayers(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || (inputs.season === g.season && updateEvents.includes('playerMovement')) || (updateEvents.includes('newPhase') && g.phase === g.PHASE.PRESEASON) || inputs.season !== state.season || inputs.abbrev !== state.abbrev) {
@@ -70,10 +51,6 @@ async function updatePlayers(inputs, updateEvents, state) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "playerRatings",
-    get,
+export default {
     runBefore: [updatePlayers],
-    Component: PlayerRatings,
-});
-
+};

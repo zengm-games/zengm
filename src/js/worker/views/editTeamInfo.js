@@ -2,9 +2,7 @@
 
 import g from '../../globals';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
 import * as helpers from '../../util/helpers';
-import EditTeamInfo from '../../ui/views/EditTeamInfo';
 
 async function updateTeamInfo() {
     const teams = await getCopy.teams({
@@ -23,8 +21,6 @@ async function updateTeamInfo() {
     };
 }
 
-export default bbgmViewReact.init({
-    id: "editTeamInfo",
+export default {
     runBefore: [updateTeamInfo],
-    Component: EditTeamInfo,
-});
+};

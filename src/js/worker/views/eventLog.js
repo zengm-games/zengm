@@ -2,19 +2,7 @@
 
 import g from '../../globals';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
 import * as helpers from '../../util/helpers';
-import EventLog from '../../ui/views/EventLog';
-
-function get(ctx) {
-    const [tid, abbrev] = helpers.validateAbbrev(ctx.params.abbrev);
-
-    return {
-        tid,
-        abbrev,
-        season: helpers.validateSeason(ctx.params.season),
-    };
-}
 
 async function updateEventLog(inputs, updateEvents, state) {
     if (updateEvents.length >= 0 || inputs.season !== state.season || inputs.abbrev !== state.abbrev) {
@@ -62,9 +50,6 @@ async function updateEventLog(inputs, updateEvents, state) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "eventLog",
-    get,
+export default {
     runBefore: [updateEventLog],
-    Component: EventLog,
-});
+};

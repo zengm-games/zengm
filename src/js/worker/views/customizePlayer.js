@@ -5,21 +5,7 @@ import g from '../../globals';
 import * as finances from '../core/finances';
 import * as player from '../core/player';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
 import * as helpers from '../../util/helpers';
-import CustomizePlayer from '../../ui/views/CustomizePlayer';
-
-function get(ctx) {
-    if (ctx.params.hasOwnProperty("pid")) {
-        return {
-            pid: parseInt(ctx.params.pid, 10),
-        };
-    }
-
-    return {
-        pid: null,
-    };
-}
 
 async function updateCustomizePlayer(inputs, updateEvents) {
     if (!g.godMode) {
@@ -110,9 +96,6 @@ async function updateCustomizePlayer(inputs, updateEvents) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "customizePlayer",
-    get,
+export default {
     runBefore: [updateCustomizePlayer],
-    Component: CustomizePlayer,
-});
+};

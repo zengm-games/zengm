@@ -3,8 +3,6 @@
 import Promise from 'bluebird';
 import g from '../../globals';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import PowerRankings from '../../ui/views/PowerRankings';
 
 async function updatePowerRankings(inputs, updateEvents) {
     if (updateEvents.includes('firstRun') || updateEvents.includes('dbChange') || updateEvents.includes('gameSim')) {
@@ -80,8 +78,6 @@ async function updatePowerRankings(inputs, updateEvents) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "powerRankings",
+export default {
     runBefore: [updatePowerRankings],
-    Component: PowerRankings,
-});
+};

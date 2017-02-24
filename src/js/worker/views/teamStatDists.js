@@ -2,15 +2,6 @@
 
 import g from '../../globals';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import * as helpers from '../../util/helpers';
-import TeamStatDists from '../../ui/views/TeamStatDists';
-
-function get(ctx) {
-    return {
-        season: helpers.validateSeason(ctx.params.season),
-    };
-}
 
 async function updateTeams(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || (inputs.season === g.season && (updateEvents.includes('gameSim') || updateEvents.includes('playerMovement'))) || inputs.season !== state.season) {
@@ -40,9 +31,6 @@ async function updateTeams(inputs, updateEvents, state) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "teamStatDists",
-    get,
+export default {
     runBefore: [updateTeams],
-    Component: TeamStatDists,
-});
+};

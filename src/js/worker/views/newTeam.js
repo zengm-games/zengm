@@ -1,7 +1,5 @@
 import g from '../../globals';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import NewTeam from '../../ui/views/NewTeam';
 
 async function updateTeamSelect() {
     let teams = await getCopy.teams({
@@ -29,8 +27,6 @@ async function updateTeamSelect() {
     };
 }
 
-export default bbgmViewReact.init({
-    id: "newTeam",
+export default {
     runBefore: [updateTeamSelect],
-    Component: NewTeam,
-});
+};

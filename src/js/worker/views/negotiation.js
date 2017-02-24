@@ -3,8 +3,6 @@ import * as contractNegotiation from '../core/contractNegotiation';
 import * as freeAgents from '../core/freeAgents';
 import * as team from '../core/team';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import Negotiation from '../../ui/views/Negotiation';
 
 function generateContractOptions(contract, ovr) {
     let growthFactor = 0.15;
@@ -47,14 +45,6 @@ function generateContractOptions(contract, ovr) {
     }
 
     return contractOptions.filter(contractOption => contractOption.amount * 1000 <= g.maxContract);
-}
-
-function get(ctx) {
-    const pid = parseInt(ctx.params.pid, 10);
-
-    return {
-        pid: pid >= 0 ? pid : undefined, // undefined will load whatever the active one is
-    };
 }
 
 async function updateNegotiation(inputs) {
@@ -112,9 +102,6 @@ async function updateNegotiation(inputs) {
     };
 }
 
-export default bbgmViewReact.init({
-    id: "negotiation",
-    get,
+export default {
     runBefore: [updateNegotiation],
-    Component: Negotiation,
-});
+};

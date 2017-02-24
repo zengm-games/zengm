@@ -3,8 +3,6 @@
 import Promise from 'bluebird';
 import g from '../../globals';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import DraftScouting from '../../ui/views/DraftScouting';
 
 async function addSeason(season, tid) {
     let playersAll = await g.cache.indexGetAll('playersByTid', tid);
@@ -69,8 +67,6 @@ async function updateDraftScouting(inputs, updateEvents) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "draftScouting",
+export default {
     runBefore: [updateDraftScouting],
-    Component: DraftScouting,
-});
+};

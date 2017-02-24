@@ -2,31 +2,6 @@
 
 import g from '../../globals';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import * as helpers from '../../util/helpers';
-import DraftSummary from '../../ui/views/DraftSummary';
-
-function get(ctx) {
-    let season = helpers.validateSeason(ctx.params.season);
-
-    // Draft hasn't happened yet this year
-    if (g.phase < g.PHASE.DRAFT) {
-        if (g.season === g.startingSeason) {
-            // No draft history
-            return {
-                redirectUrl: helpers.leagueUrl(["draft_scouting"]),
-            };
-        }
-        if (season === g.season) {
-            // View last season by default
-            season = g.season - 1;
-        }
-    }
-
-    return {
-        season,
-    };
-}
 
 async function updateDraftSummary(inputs) {
     // Update every time because anything could change this (unless all players from class are retired)
@@ -75,9 +50,6 @@ async function updateDraftSummary(inputs) {
     };
 }
 
-export default bbgmViewReact.init({
-    id: "draftSummary",
-    get,
+export default {
     runBefore: [updateDraftSummary],
-    Component: DraftSummary,
-});
+};

@@ -1,8 +1,6 @@
 // @flow
 
 import g from '../../globals';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import ExportStats from '../../ui/views/ExportStats';
 
 async function updateExportStats(inputs, updateEvents) {
     if (updateEvents.includes('firstRun') || updateEvents.includes('newPhase') || updateEvents.includes('dbChange')) {
@@ -22,8 +20,6 @@ async function updateExportStats(inputs, updateEvents) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "exportStats",
+export default {
     runBefore: [updateExportStats],
-    Component: ExportStats,
-});
+};

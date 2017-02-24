@@ -2,9 +2,7 @@ import Promise from 'bluebird';
 import g from '../../globals';
 import * as trade from '../core/trade';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
 import * as helpers from '../../util/helpers';
-import TradingBlock from '../../ui/views/TradingBlock';
 
 async function updateUserRoster(inputs, updateEvents) {
     if (updateEvents.includes('firstRun') || updateEvents.includes('playerMovement') || updateEvents.includes('gameSim')) {
@@ -38,8 +36,6 @@ async function updateUserRoster(inputs, updateEvents) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "tradingBlock",
+export default {
     runBefore: [updateUserRoster],
-    Component: TradingBlock,
-});
+};

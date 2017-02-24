@@ -2,15 +2,7 @@
 
 import g from '../../globals';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
 import * as helpers from '../../util/helpers';
-import Standings from '../../ui/views/Standings';
-
-function get(ctx) {
-    return {
-        season: helpers.validateSeason(ctx.params.season),
-    };
-}
 
 async function updateStandings(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || (inputs.season === g.season && updateEvents.includes('gameSim')) || inputs.season !== state.season) {
@@ -106,9 +98,6 @@ async function updateStandings(inputs, updateEvents, state) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "standings",
-    get,
+export default {
     runBefore: [updateStandings],
-    Component: Standings,
-});
+};

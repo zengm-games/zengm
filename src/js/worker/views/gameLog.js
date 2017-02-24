@@ -1,9 +1,7 @@
 // @flow
 
 import g from '../../globals';
-import bbgmViewReact from '../../util/bbgmViewReact';
 import * as helpers from '../../util/helpers';
-import GameLog from '../../ui/views/GameLog';
 
 /**
  * Generate a box score.
@@ -77,14 +75,6 @@ async function boxScore(gid: number) {
     game.qtrs.push("F");
 
     return game;
-}
-
-function get(ctx) {
-    return {
-        abbrev: helpers.validateAbbrev(ctx.params.abbrev)[1],
-        gid: ctx.params.gid !== undefined ? parseInt(ctx.params.gid, 10) : -1,
-        season: helpers.validateSeason(ctx.params.season),
-    };
 }
 
 async function updateTeamSeason(inputs) {
@@ -172,10 +162,7 @@ async function updateGamesList(inputs, updateEvents, state) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "gameLog",
-    get,
+export default {
     runBefore: [updateBoxScore, updateTeamSeason],
     runWhenever: [updateGamesList],
-    Component: GameLog,
-});
+};

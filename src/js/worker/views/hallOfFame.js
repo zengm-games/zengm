@@ -2,8 +2,6 @@
 
 import g from '../../globals';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import HallOfFame from '../../ui/views/HallOfFame';
 
 async function updatePlayers(inputs, updateEvents) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || (updateEvents.includes('newPhase') && g.phase === g.PHASE.BEFORE_DRAFT)) {
@@ -42,8 +40,6 @@ async function updatePlayers(inputs, updateEvents) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "hallOfFame",
+export default {
     runBefore: [updatePlayers],
-    Component: HallOfFame,
-});
+};

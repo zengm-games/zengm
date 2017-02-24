@@ -5,9 +5,7 @@ import g from '../../globals';
 import * as season from '../core/season';
 import * as team from '../core/team';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
 import * as helpers from '../../util/helpers';
-import LeagueDashboard from '../../ui/views/LeagueDashboard';
 
 async function updateInbox(inputs, updateEvents) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun')) {
@@ -311,8 +309,7 @@ async function updateStandings(inputs, updateEvents) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "leagueDashboard",
+export default {
     runBefore: [
         updateInbox,
         updateTeam,
@@ -324,5 +321,4 @@ export default bbgmViewReact.init({
         updatePlayoffs,
         updateStandings,
     ],
-    Component: LeagueDashboard,
-});
+};

@@ -3,17 +3,6 @@
 import g from '../../globals';
 import * as player from '../core/player';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import * as helpers from '../../util/helpers';
-import NegotiationList from '../../ui/views/NegotiationList';
-
-function get() {
-    if (g.phase !== g.PHASE.RESIGN_PLAYERS) {
-        return {
-            redirectUrl: helpers.leagueUrl(["negotiation", -1]),
-        };
-    }
-}
 
 async function updateNegotiationList() {
     let negotiations = await g.cache.getAll('negotiations');
@@ -52,9 +41,6 @@ async function updateNegotiationList() {
     };
 }
 
-export default bbgmViewReact.init({
-    id: "negotiationList",
-    get,
+export default {
     runBefore: [updateNegotiationList],
-    Component: NegotiationList,
-});
+};

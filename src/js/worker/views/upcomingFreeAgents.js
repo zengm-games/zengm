@@ -2,25 +2,6 @@ import backboard from 'backboard';
 import g from '../../globals';
 import * as player from '../core/player';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import * as helpers from '../../util/helpers';
-import UpcomingFreeAgents from '../../ui/views/UpcomingFreeAgents';
-
-function get(ctx) {
-    let season = helpers.validateSeason(ctx.params.season);
-
-    if (g.phase <= g.PHASE.RESIGN_PLAYERS) {
-        if (season < g.season) {
-            season = g.season;
-        }
-    } else if (season < g.season + 1) {
-        season = g.season + 1;
-    }
-
-    return {
-        season,
-    };
-}
 
 async function updateUpcomingFreeAgents(inputs) {
     let players = await g.dbl.players.index('tid').getAll(backboard.lowerBound(0));
@@ -49,9 +30,6 @@ async function updateUpcomingFreeAgents(inputs) {
     };
 }
 
-export default bbgmViewReact.init({
-    id: "upcomingFreeAgents",
-    get,
+export default {
     runBefore: [updateUpcomingFreeAgents],
-    Component: UpcomingFreeAgents,
-});
+};

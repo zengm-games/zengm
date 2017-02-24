@@ -8,16 +8,13 @@ move everything but the UI to a web worker
 - worker folder
   - output: worker.js
   - everything else
+- confirm 404 still works
 - never use g in views?
   - ignore for now, just write code to keep g in sync in both places
-- get a view displaying
-  - worker references to ui - make api.js in worker folder
-  - viewHelpers
-  - move get functions to ui
-    - in processInputs now... better would be to move to view file as "get" function
-  - have place that calles runBefore etc instead do it through the API
-  - restore runWhenever ability
-- confirm 404 still works
+- current todo
+  - find references between worker and ui, and break them apart
+  - split up util - ui, worker, or both
+  - restore runWhenever ability (really necessary?)
 
 bbgm.g.cache.flush().then(() => console.log('done'));
 fucked = false; Object.values(bbgm.g.cache.indexes.teamSeasonsBySeasonTid).forEach((ts) => { if (ts.hasOwnProperty('ast')) { console.log(ts); fucked = true } }); if (fucked) { throw new Error('FUCK'); }

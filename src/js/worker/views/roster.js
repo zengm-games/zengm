@@ -4,24 +4,6 @@ import * as season from '../core/season';
 import * as team from '../core/team';
 import * as trade from '../core/trade';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import * as helpers from '../../util/helpers';
-import Roster from '../../ui/views/Roster';
-
-function get(ctx) {
-    // Fix broken links
-    if (ctx.params.abbrev === "FA") {
-        return {
-            redirectUrl: helpers.leagueUrl(["free_agents"]),
-        };
-    }
-
-    const inputs = {};
-    [inputs.tid, inputs.abbrev] = helpers.validateAbbrev(ctx.params.abbrev);
-    inputs.season = helpers.validateSeason(ctx.params.season);
-
-    return inputs;
-}
 
 async function updateRoster(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || (inputs.season === g.season && (updateEvents.includes('gameSim') || updateEvents.includes('playerMovement'))) || inputs.abbrev !== state.abbrev || inputs.season !== state.season) {
@@ -120,9 +102,6 @@ async function updateRoster(inputs, updateEvents, state) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "roster",
-    get,
+export default {
     runBefore: [updateRoster],
-    Component: Roster,
-});
+};

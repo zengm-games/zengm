@@ -3,15 +3,6 @@
 import g from '../../globals';
 import * as freeAgents from '../core/freeAgents';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import WatchList from '../../ui/views/WatchList';
-
-function get(ctx) {
-    return {
-        statType: ctx.params.statType !== undefined ? ctx.params.statType : "perGame",
-        playoffs: ctx.params.playoffs !== undefined ? ctx.params.playoffs : "regularSeason",
-    };
-}
 
 async function updatePlayers(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('clearWatchList') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || inputs.statType !== state.statType || inputs.playoffs !== state.playoffs) {
@@ -47,9 +38,6 @@ async function updatePlayers(inputs, updateEvents, state) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "watchList",
-    get,
+export default {
     runBefore: [updatePlayers],
-    Component: WatchList,
-});
+};

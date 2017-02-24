@@ -1,14 +1,6 @@
 // @flow
 
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import AwardsRecords from '../../ui/views/AwardsRecords';
-
-function get(ctx) {
-    return {
-        awardType: ctx.params.awardType || 'champion',
-    };
-}
 
 const optionsTmp = [{
     val: "Won Championship",
@@ -144,10 +136,6 @@ async function updateAwardsRecords(inputs, updateEvents, state) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "awardsRecords",
-    get,
+export default {
     runBefore: [updateAwardsRecords],
-    Component: AwardsRecords,
-});
-
+};

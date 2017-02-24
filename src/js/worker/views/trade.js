@@ -2,9 +2,7 @@ import Promise from 'bluebird';
 import g from '../../globals';
 import * as trade from '../core/trade';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
 import * as helpers from '../../util/helpers';
-import Trade from '../../ui/views/Trade';
 
 // This relies on vars being populated, so it can't be called in parallel with updateTrade
 async function updateSummary(vars) {
@@ -162,8 +160,6 @@ async function updateTrade() {
     return vars;
 }
 
-export default bbgmViewReact.init({
-    id: "trade",
+export default {
     runBefore: [updateTrade],
-    Component: Trade,
-});
+};

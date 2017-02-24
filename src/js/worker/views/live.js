@@ -2,8 +2,6 @@
 
 import g from '../../globals';
 import * as season from '../core/season';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import Live from '../../ui/views/Live';
 
 async function updateGamesList() {
     const games = await season.getSchedule(true);
@@ -33,8 +31,6 @@ async function updateGamesInProgress(inputs, updateEvents) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "live",
+export default {
     runBefore: [updateGamesList, updateGamesInProgress],
-    Component: Live,
-});
+};

@@ -2,15 +2,7 @@ import g from '../../globals';
 import * as freeAgents from '../core/freeAgents';
 import * as trade from '../core/trade';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
 import * as helpers from '../../util/helpers';
-import Player from '../../ui/views/Player';
-
-function get(ctx) {
-    return {
-        pid: ctx.params.pid !== undefined ? parseInt(ctx.params.pid, 10) : undefined,
-    };
-}
 
 async function updatePlayer(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || !state.retired) {
@@ -68,9 +60,6 @@ async function updatePlayer(inputs, updateEvents, state) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "player",
-    get,
+export default {
     runBefore: [updatePlayer],
-    Component: Player,
-});
+};

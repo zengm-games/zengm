@@ -1,30 +1,5 @@
 import g from '../../globals';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import * as helpers from '../../util/helpers';
-import PlayerFeats from '../../ui/views/PlayerFeats';
-
-function get(ctx) {
-    let abbrev;
-    if (g.teamAbbrevsCache.includes(ctx.params.abbrev)) {
-        abbrev = ctx.params.abbrev;
-    } else {
-        abbrev = "all";
-    }
-
-    let season;
-    if (ctx.params.season && ctx.params.season !== "all") {
-        season = helpers.validateSeason(ctx.params.season);
-    } else {
-        season = "all";
-    }
-
-    return {
-        abbrev,
-        season,
-        playoffs: ctx.params.playoffs !== undefined ? ctx.params.playoffs : "regularSeason",
-    };
-}
 
 async function updatePlayers(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('gameSim') || inputs.abbrev !== state.abbrev || inputs.season !== state.season || inputs.playoffs !== state.playoffs) {
@@ -81,9 +56,6 @@ async function updatePlayers(inputs, updateEvents, state) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "playerFeats",
-    get,
+export default {
     runBefore: [updatePlayers],
-    Component: PlayerFeats,
-});
+};

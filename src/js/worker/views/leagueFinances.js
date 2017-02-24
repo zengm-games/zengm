@@ -2,15 +2,6 @@
 
 import g from '../../globals';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import * as helpers from '../../util/helpers';
-import LeagueFinances from '../../ui/views/LeagueFinances';
-
-function get(ctx) {
-    return {
-        season: helpers.validateSeason(ctx.params.season),
-    };
-}
 
 async function updateLeagueFinances(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || inputs.season !== state.season || inputs.season === g.season) {
@@ -31,9 +22,6 @@ async function updateLeagueFinances(inputs, updateEvents, state) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "leagueFinances",
-    get,
+export default {
     runBefore: [updateLeagueFinances],
-    Component: LeagueFinances,
-});
+};

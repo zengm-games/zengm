@@ -1,38 +1,6 @@
 import g from '../../globals';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
 import * as helpers from '../../util/helpers';
-import Transactions from '../../ui/views/Transactions';
-
-function get(ctx) {
-    let abbrev;
-    let tid;
-    if (ctx.params.abbrev && ctx.params.abbrev !== "all") {
-        [tid, abbrev] = helpers.validateAbbrev(ctx.params.abbrev);
-    } else if (ctx.params.abbrev && ctx.params.abbrev === "all") {
-        tid = -1;
-        abbrev = "all";
-    } else {
-        tid = g.userTid;
-        abbrev = g.teamAbbrevsCache[tid];
-    }
-
-    let season;
-    if (ctx.params.season && ctx.params.season !== "all") {
-        season = helpers.validateSeason(ctx.params.season);
-    } else if (ctx.params.season && ctx.params.season === "all") {
-        season = "all";
-    } else {
-        season = g.season;
-    }
-
-    return {
-        tid,
-        abbrev,
-        season,
-        eventType: ctx.params.eventType || 'all',
-    };
-}
 
 async function updateEventLog(inputs, updateEvents, state) {
     if (updateEvents.length >= 0 || inputs.season !== state.season || inputs.abbrev !== state.abbrev || inputs.eventType !== state.eventType) {
@@ -83,9 +51,6 @@ async function updateEventLog(inputs, updateEvents, state) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "transactions",
-    get,
+export default {
     runBefore: [updateEventLog],
-    Component: Transactions,
-});
+};

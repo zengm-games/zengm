@@ -1,8 +1,6 @@
 // @flow
 
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import Inbox from '../../ui/views/Inbox';
 
 async function updateInbox() {
     const messages = await getCopy.messages();
@@ -23,8 +21,6 @@ async function updateInbox() {
     };
 }
 
-export default bbgmViewReact.init({
-    id: "inbox",
+export default {
     runBefore: [updateInbox],
-    Component: Inbox,
-});
+};

@@ -2,8 +2,6 @@
 
 import g from '../../globals';
 import * as league from '../core/league';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import MultiTeamMode from '../../ui/views/MultiTeamMode';
 
 async function updateMultiTeamMode(inputs, updateEvents) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('g.userTids')) {
@@ -25,8 +23,6 @@ async function updateMultiTeamMode(inputs, updateEvents) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "multiTeamMode",
+export default {
     runBefore: [updateMultiTeamMode],
-    Component: MultiTeamMode,
-});
+};

@@ -3,15 +3,7 @@
 import g from '../../globals';
 import * as ui from '../../ui/ui';
 import * as league from '../core/league';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import Message from '../../ui/views/Message';
 import type {Message as Message_} from '../../util/types';
-
-function get(ctx) {
-    return {
-        mid: ctx.params.mid ? parseInt(ctx.params.mid, 10) : null,
-    };
-}
 
 async function updateMessage(inputs, updateEvents, state): Promise<void | {message?: Message_}> {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || state.message.mid !== inputs.mid) {
@@ -65,9 +57,6 @@ async function updateMessage(inputs, updateEvents, state): Promise<void | {messa
     }
 }
 
-export default bbgmViewReact.init({
-    id: "message",
-    get,
+export default {
     runBefore: [updateMessage],
-    Component: Message,
-});
+};

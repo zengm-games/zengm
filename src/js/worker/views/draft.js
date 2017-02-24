@@ -3,17 +3,6 @@
 import g from '../../globals';
 import * as draft from '../core/draft';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import * as helpers from '../../util/helpers';
-import Draft from '../../ui/views/Draft';
-
-function get() {
-    if (g.phase !== g.PHASE.DRAFT && g.phase !== g.PHASE.FANTASY_DRAFT) {
-        return {
-            redirectUrl: helpers.leagueUrl(["draft_summary"]),
-        };
-    }
-}
 
 async function updateDraft() {
     // DIRTY QUICK FIX FOR v10 db upgrade bug - eventually remove
@@ -84,9 +73,6 @@ async function updateDraft() {
     };
 }
 
-export default bbgmViewReact.init({
-    id: "draft",
-    get,
+export default {
     runBefore: [updateDraft],
-    Component: Draft,
-});
+};

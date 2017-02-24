@@ -2,15 +2,7 @@
 
 import g from '../../globals';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
 import * as helpers from '../../util/helpers';
-import Leaders from '../../ui/views/Leaders';
-
-function get(ctx) {
-    return {
-        season: helpers.validateSeason(ctx.params.season),
-    };
-}
 
 async function updateLeaders(inputs, updateEvents, state) {
     const {season} = inputs;
@@ -113,9 +105,6 @@ async function updateLeaders(inputs, updateEvents, state) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "leaders",
-    get,
+export default {
     runBefore: [updateLeaders],
-    Component: Leaders,
-});
+};

@@ -1,17 +1,6 @@
 // @flow
 
 import g from '../../globals';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import * as helpers from '../../util/helpers';
-import FantasyDraft from '../../ui/views/FantasyDraft';
-
-function get() {
-    if (g.phase === g.PHASE.FANTASY_DRAFT) {
-        return {
-            redirectUrl: helpers.leagueUrl(["draft"]),
-        };
-    }
-}
 
 async function updateFantasyDraft() {
     return {
@@ -19,9 +8,6 @@ async function updateFantasyDraft() {
     };
 }
 
-export default bbgmViewReact.init({
-    id: "fantasyDraft",
-    get,
+export default {
     runBefore: [updateFantasyDraft],
-    Component: FantasyDraft,
-});
+};

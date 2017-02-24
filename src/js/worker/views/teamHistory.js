@@ -1,15 +1,5 @@
 import g from '../../globals';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import * as helpers from '../../util/helpers';
-import TeamHistory from '../../ui/views/TeamHistory';
-
-function get(ctx) {
-    const inputs = {};
-    inputs.show = ctx.params.show !== undefined ? ctx.params.show : "10";
-    [inputs.tid, inputs.abbrev] = helpers.validateAbbrev(ctx.params.abbrev);
-    return inputs;
-}
 
 async function updateTeamHistory(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || inputs.abbrev !== state.abbrev) {
@@ -90,9 +80,6 @@ async function updateTeamHistory(inputs, updateEvents, state) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "teamHistory",
-    get,
+export default {
     runBefore: [updateTeamHistory],
-    Component: TeamHistory,
-});
+};

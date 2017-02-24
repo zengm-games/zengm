@@ -3,25 +3,6 @@
 import Promise from 'bluebird';
 import g from '../../globals';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import * as helpers from '../../util/helpers';
-import History from '../../ui/views/History';
-
-function get(ctx) {
-    let season = helpers.validateSeason(ctx.params.season);
-
-    // If playoffs aren't over, season awards haven't been set
-    if (g.phase <= g.PHASE.PLAYOFFS) {
-        // View last season by default
-        if (season === g.season) {
-            season -= 1;
-        }
-    }
-
-    return {
-        season,
-    };
-}
 
 async function updateHistory(inputs, updateEvents, state) {
     const {season} = inputs;
@@ -96,9 +77,6 @@ async function updateHistory(inputs, updateEvents, state) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "history",
-    get,
+export default {
     runBefore: [updateHistory],
-    Component: History,
-});
+};

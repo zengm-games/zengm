@@ -2,8 +2,6 @@
 
 import g from '../../globals';
 import * as league from '../core/league';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import GodMode from '../../ui/views/GodMode';
 
 async function updateGodMode(inputs, updateEvents) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('toggleGodMode')) {
@@ -26,8 +24,6 @@ async function updateGodMode(inputs, updateEvents) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "godMode",
+export default {
     runBefore: [updateGodMode],
-    Component: GodMode,
-});
+};

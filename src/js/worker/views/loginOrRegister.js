@@ -1,10 +1,6 @@
 // @flow
 
-import bbgmViewReact from '../../util/bbgmViewReact';
-import LoginOrRegister from '../../ui/views/LoginOrRegister';
 
-export default bbgmViewReact.init({
-    id: "loginOrRegister",
+export default {
     inLeague: false,
-    Component: LoginOrRegister,
-});
+};

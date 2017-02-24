@@ -1,18 +1,5 @@
 import g from '../../globals';
 import * as helpers from '../../util/helpers';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import LiveGame from '../../ui/views/LiveGame';
-
-function get(ctx) {
-    const obj = {
-        fromAction: !!ctx.bbgm.fromAction,
-    };
-    if (ctx.bbgm.playByPlay !== undefined) {
-        obj.gidPlayByPlay = ctx.bbgm.gidPlayByPlay;
-        obj.playByPlay = ctx.bbgm.playByPlay;
-    }
-    return obj;
-}
 
 async function updatePlayByPlay(inputs, updateEvents) {
     if (updateEvents.includes('firstRun') && !inputs.fromAction) {
@@ -66,9 +53,6 @@ async function updatePlayByPlay(inputs, updateEvents) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "liveGame",
-    get,
+export default {
     runBefore: [updatePlayByPlay],
-    Component: LiveGame,
-});
+};

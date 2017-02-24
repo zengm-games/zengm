@@ -4,8 +4,6 @@ import Promise from 'bluebird';
 import $ from 'jquery';
 import g from '../../globals';
 import * as account from '../../util/account';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import AccountUpdateCard from '../../ui/views/AccountUpdateCard';
 
 async function updateAccountUpdateCard(inputs, updateEvents, state, setState, topMenu) {
     if (updateEvents.includes('firstRun') || updateEvents.includes('account')) {
@@ -42,9 +40,7 @@ async function updateAccountUpdateCard(inputs, updateEvents, state, setState, to
     }
 }
 
-export default bbgmViewReact.init({
-    id: "accountUpdateCard",
+export default {
     inLeague: false,
     runBefore: [updateAccountUpdateCard],
-    Component: AccountUpdateCard,
-});
+};

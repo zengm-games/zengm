@@ -3,8 +3,6 @@
 import Promise from 'bluebird';
 import g from '../../globals';
 import {getCopy} from '../db';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import HistoryAll from '../../ui/views/HistoryAll';
 
 async function updateHistory(inputs, updateEvents) {
     if (updateEvents.includes('firstRun')) {
@@ -82,8 +80,6 @@ async function updateHistory(inputs, updateEvents) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "historyAll",
+export default {
     runBefore: [updateHistory],
-    Component: HistoryAll,
-});
+};

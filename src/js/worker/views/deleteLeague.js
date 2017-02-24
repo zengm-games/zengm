@@ -5,12 +5,6 @@ import Promise from 'bluebird';
 import {connectLeague} from '../db';
 import g from '../../globals';
 
-function get(ctx) {
-    return {
-        lid: parseInt(ctx.params.lid, 10),
-    };
-}
-
 async function updateDeleteLeague({lid}) {
     if (typeof lid !== 'number') {
         throw new Error('Invalid input for lid');

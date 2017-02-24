@@ -11,6 +11,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import g from '../globals';
 import * as api from './api';
+import * as processInputs from './processInputs';
 import * as views from './views';
 import * as changes from '../data/changes';
 import * as account from '../util/account';
@@ -29,7 +30,7 @@ if (localStorage.getItem('debug') === 'debug') {
 window.Promise = Promise;
 window.Promise.config({warnings: false});
 
-const staticView = (name: string, content: React.Element<*>, inLeague: boolean, title: string) => {
+const staticView = (name: string, title: string, content: React.Element<*>, inLeague: boolean) => {
     return bbgmViewReact.init({
         id: name,
         inLeague,
@@ -46,11 +47,14 @@ const Manual = <div>
     <p><a href="https://basketball-gm.com/manual/" rel="noopener noreferrer" target="_blank">Click here for an overview of Basketball GM.</a></p>
 </div>;
 
-const leagueView = (id, Component, inLeague = true) => {
+const leagueView = (id, inLeague = true) => {
+    const componentName = id.charAt(0).toUpperCase() + id.slice(1);
+
     return bbgmViewReact.init({
         id,
         inLeague,
-        Component,
+        get: processInputs[id],
+        Component: views[componentName],
     });
 };
 
@@ -76,11 +80,11 @@ const leagueView = (id, Component, inLeague = true) => {
     });*/
 
     // Non-league views
-    page('/', leagueView('dashboard', views.Dashboard, false));
-    page('/new_league', leagueView('newLeague', views.NewLeague, false));
-    page('/delete_league/:lid', leagueView('deleteLeague', views.DeleteLeague, false));
-    page('/manual', staticView('manual', Manual, false, 'Manual'));
-    page('/manual/:page', staticView('manual', Manual, false, 'Manual'));
+    page('/', leagueView('dashboard', false));
+    page('/new_league', leagueView('newLeague', false));
+    page('/delete_league/:lid', leagueView('deleteLeague', false));
+    page('/manual', staticView('manual', 'Manual', Manual, false));
+    page('/manual/:page', staticView('manual', 'Manual', Manual, false));
 /*    page('/changes', views.changes.get);
     page('/account', views.account.get);
     page('/account/login_or_register', views.loginOrRegister.get);

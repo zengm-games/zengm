@@ -4,8 +4,6 @@ import backboard from 'backboard';
 import Promise from 'bluebird';
 import {connectLeague} from '../db';
 import g from '../../globals';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import DeleteLeague from '../../ui/views/DeleteLeague';
 
 function get(ctx) {
     return {
@@ -47,10 +45,6 @@ async function updateDeleteLeague({lid}) {
     }
 }
 
-export default bbgmViewReact.init({
-    id: "deleteLeague",
-    inLeague: false,
-    get,
+export default {
     runBefore: [updateDeleteLeague],
-    Component: DeleteLeague,
-});
+};

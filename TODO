@@ -14,6 +14,7 @@ move everything but the UI to a web worker
   - worker references to ui - make api.js in worker folder
   - viewHelpers
   - move get functions to ui
+    - where? see deleteLeague
   - have place that calles runBefore etc instead do it through the API
   - restore runWhenever ability
 

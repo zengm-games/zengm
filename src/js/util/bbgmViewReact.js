@@ -16,8 +16,7 @@ function init(args: InitArgs) {
 
     if (!args.Component) { throw new Error('Missing arg Component'); }
 
-    const output = {};
-    output.get = (ctx: PageCtx, next: () => void) => {
+    return (ctx: PageCtx, next: () => void) => {
         if (ctx.bbgm === undefined) {
             ctx.bbgm = {};
         }
@@ -33,8 +32,6 @@ function init(args: InitArgs) {
         ctx.bbgm.handled = true;
         g.emitter.emit('get', args, ctx);
     };
-
-    return output;
 }
 
 let currentTitle = 'Basketball GM';

@@ -10,10 +10,12 @@ import page from 'page';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import g from '../globals';
+import * as api from './api';
 import * as views from './views';
 import * as changes from '../data/changes';
 import * as account from '../util/account';
 import * as ads from '../util/ads';
+import bbgmViewReact from '../util/bbgmViewReact';
 import * as helpers from '../util/helpers';
 import Controller from './components/Controller';
 
@@ -27,7 +29,34 @@ if (localStorage.getItem('debug') === 'debug') {
 window.Promise = Promise;
 window.Promise.config({warnings: false});
 
+const staticView = (name: string, content: React.Element<*>, inLeague: boolean, title: string) => {
+    return bbgmViewReact.init({
+        id: name,
+        inLeague,
+        Component: () => {
+            bbgmViewReact.title(title);
+
+            return content;
+        },
+    });
+};
+
+const Manual = <div>
+    <h1>Manual</h1>
+    <p><a href="https://basketball-gm.com/manual/" rel="noopener noreferrer" target="_blank">Click here for an overview of Basketball GM.</a></p>
+</div>;
+
+const leagueView = (id, Component, inLeague = true) => {
+    return bbgmViewReact.init({
+        id,
+        inLeague,
+        Component,
+    });
+};
+
 (async () => {
+    await api.init();
+
     ReactDOM.render(<Controller />, document.getElementById('content'));
 
     // Any news?
@@ -47,11 +76,11 @@ window.Promise.config({warnings: false});
     });*/
 
     // Non-league views
-/*    page('/', views.dashboard.get);
-    page('/new_league', views.newLeague.get);
-    page('/delete_league/:lid', views.deleteLeague.get);*/
-    page('/manual', views.manual.get);
-    page('/manual/:page', views.manual.get);
+    page('/', leagueView('dashboard', views.Dashboard, false));
+    page('/new_league', leagueView('newLeague', views.NewLeague, false));
+    page('/delete_league/:lid', leagueView('deleteLeague', views.DeleteLeague, false));
+    page('/manual', staticView('manual', Manual, false, 'Manual'));
+    page('/manual/:page', staticView('manual', Manual, false, 'Manual'));
 /*    page('/changes', views.changes.get);
     page('/account', views.account.get);
     page('/account/login_or_register', views.loginOrRegister.get);
@@ -157,7 +186,7 @@ window.Promise.config({warnings: false});
     page('/l/:lid/transactions/:abbrev/:season/:eventType', views.transactions.get);*/
 
     page('*', (ctx, next) => {
-        if (!ctx.bbgm.handled) {
+        if (!ctx.bbgm || !ctx.bbgm.handled) {
             helpers.error('Page not found.', ctx.bbgm.cb);
             ctx.bbgm.handled = true;
         }
@@ -167,7 +196,7 @@ window.Promise.config({warnings: false});
     // This will run after all the routes defined above, because they all call next()
     let initialLoad = true;
     page('*', (ctx) => {
-        if (!ctx.bbgm.noTrack) {
+        if (ctx.bbgm && !ctx.bbgm.noTrack) {
             if (g.enableLogging && window.ga) {
                 if (!initialLoad) {
                     window.ga('set', 'page', ctx.path);

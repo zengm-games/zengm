@@ -1,6 +1,4 @@
 import g from '../../globals';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import NewLeague from '../../ui/views/NewLeague';
 
 async function updateNewLeague() {
     let newLid = null;
@@ -26,9 +24,6 @@ async function updateNewLeague() {
     };
 }
 
-export default bbgmViewReact.init({
-    id: "newLeague",
-    inLeague: false,
+export default {
     runBefore: [updateNewLeague],
-    Component: NewLeague,
-});
+};

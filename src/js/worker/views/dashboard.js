@@ -1,8 +1,6 @@
 // @flow
 
 import g from '../../globals';
-import bbgmViewReact from '../../util/bbgmViewReact';
-import Dashboard from '../../ui/views/Dashboard';
 
 async function updateDashboard() {
     const leagues = await g.dbm.leagues.getAll();
@@ -22,9 +20,6 @@ async function updateDashboard() {
     };
 }
 
-export default bbgmViewReact.init({
-    id: "dashboard",
-    inLeague: false,
+export default {
     runBefore: [updateDashboard],
-    Component: Dashboard,
-});
+};

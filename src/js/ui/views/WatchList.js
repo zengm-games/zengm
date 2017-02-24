@@ -3,6 +3,7 @@ import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import g from '../../globals';
 import * as api from '../api';
+import * as ui from '../ui';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import getCols from '../../util/getCols';
 import * as helpers from '../../util/helpers';
@@ -23,6 +24,7 @@ class WatchList extends React.Component {
         });
 
         await api.clearWatchList();
+        ui.realtimeUpdate(["clearWatchList"]);
 
         this.setState({
             clearing: false,

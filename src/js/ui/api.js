@@ -2,7 +2,6 @@
 
 import Promise from 'bluebird';
 import g from '../globals';
-import * as ui from './ui';
 import {init, views} from '../worker';
 import {league} from '../worker/core';
 import type {GetOutput, UpdateEvents} from '../util/types';
@@ -41,8 +40,11 @@ const clearWatchList = async () => {
         });
     });
 
-    ui.realtimeUpdate(["clearWatchList"]);
     league.updateLastDbChange();
+};
+
+const removeLeague = async (lid: number) => {
+    await league.remove(lid);
 };
 
 const updatePlayerWatch = async (pid: number, watch: boolean) => {
@@ -57,7 +59,6 @@ const updatePlayerWatch = async (pid: number, watch: boolean) => {
         });
     }
 
-    ui.realtimeUpdate(['playerMovement', 'watchList']);
     league.updateLastDbChange();
 };
 
@@ -67,14 +68,13 @@ const updateUserTid = async (userTid: number) => {
     });
     g.emitter.emit('updateMultiTeam');
 
-    // dbChange is kind of a hack because it was designed for multi-window update only, but it should update everything
-    ui.realtimeUpdate(['dbChange']);
     league.updateLastDbChange();
 };
 
 export {
     init,
     clearWatchList,
+    removeLeague,
     runBefore,
     updatePlayerWatch,
     updateUserTid,

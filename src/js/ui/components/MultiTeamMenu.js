@@ -3,11 +3,14 @@
 import React from 'react';
 import g from '../../globals';
 import * as api from '../api';
+import * as ui from '../ui';
 
 const handleChange = async (e: SyntheticInputEvent) => {
     const userTid = parseInt(e.target.value, 10);
-
     api.updateUserTid(userTid);
+
+    // dbChange is kind of a hack because it was designed for multi-window update only, but it should update everything
+    ui.realtimeUpdate(['dbChange']);
 };
 
 type Props = {

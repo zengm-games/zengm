@@ -1,6 +1,6 @@
 import React from 'react';
 import * as ui from '../ui';
-import * as league from '../../worker/core/league';
+import * as api from '../api';
 import bbgmViewReact from '../../util/bbgmViewReact';
 import * as helpers from '../../util/helpers';
 
@@ -12,8 +12,7 @@ class DeleteLeague extends React.Component {
 
     async handleDeleteLeague(lid) {
         this.setState({deleting: true});
-
-        await league.remove(lid);
+        await api.removeLeague(lid);
         ui.realtimeUpdate([], "/");
     }
 

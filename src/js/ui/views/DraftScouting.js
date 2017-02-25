@@ -1,7 +1,6 @@
 import React from 'react';
-import * as ui from '../ui';
 import * as api from '../api';
-import {getCols, setTitle} from '../util';
+import {getCols, realtimeUpdate, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
 
@@ -33,7 +32,7 @@ class DraftScouting extends React.Component {
                 customize: undefined,
             });
 
-            ui.realtimeUpdate(["dbChange"]);
+            realtimeUpdate(["dbChange"]);
         };
     }
 

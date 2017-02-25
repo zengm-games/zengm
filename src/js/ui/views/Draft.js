@@ -3,8 +3,7 @@ import $ from 'jquery';
 import React from 'react';
 import g from '../../globals';
 import * as api from '../api';
-import * as ui from '../ui';
-import {getCols, setTitle} from '../util';
+import {getCols, realtimeUpdate, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {DataTable, DraftAbbrev, NewWindowLink, PlayerNameLabels} from '../components';
 
@@ -51,7 +50,7 @@ class Draft extends React.Component {
     async draftUntilUserOrEnd() {
         const pids = await api.draftUntilUserOrEnd();
         this.savePids(pids);
-        ui.realtimeUpdate(["playerMovement"]);
+        realtimeUpdate(["playerMovement"]);
     }
 
     async draftUser(pid) {

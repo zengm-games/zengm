@@ -3,8 +3,7 @@ import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import g from '../../globals';
 import * as api from '../api';
-import * as ui from '../ui';
-import {getCols, setTitle} from '../util';
+import {getCols, realtimeUpdate, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {DataTable, Dropdown, NewWindowLink, PlayerNameLabels} from '../components';
 
@@ -23,7 +22,7 @@ class WatchList extends React.Component {
         });
 
         await api.clearWatchList();
-        ui.realtimeUpdate(["clearWatchList"]);
+        realtimeUpdate(["clearWatchList"]);
 
         this.setState({
             clearing: false,

@@ -3,7 +3,7 @@
 import Promise from 'bluebird';
 import _ from 'underscore';
 import g from '../../globals';
-import * as ui from '../../ui/ui';
+import * as api from '../api';
 import * as contractNegotiation from './contractNegotiation';
 import * as draft from './draft';
 import * as finances from './finances';
@@ -25,7 +25,7 @@ import type {Phase, UpdateEvents} from '../../util/types';
  *
  * @memberOf core.phase
  * @param {number} phase Integer representing the new phase of the game (see other functions in this module).
- * @param {string=} url Optional URL to pass to ui.realtimeUpdate for redirecting on new phase. If undefined, then the current page will just be refreshed.
+ * @param {string=} url Optional URL to pass to api.realtimeUpdate for redirecting on new phase. If undefined, then the current page will just be refreshed.
  * @param {Array.<string>=} updateEvents Array of strings.
  * @return {Promise}
  */
@@ -41,7 +41,7 @@ async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = 
     // Set lastDbChange last so there is no race condition (WHAT DOES THIS MEAN??)
     league.updateLastDbChange();
     updateEvents.push("newPhase");
-    ui.realtimeUpdate(updateEvents, url);
+    api.realtimeUpdate(updateEvents, url);
 
     // If auto-simulating, initiate next action
     if (g.autoPlaySeasons > 0) {

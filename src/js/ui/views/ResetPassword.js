@@ -1,8 +1,7 @@
 import $ from 'jquery';
 import React from 'react';
 import g from '../../globals';
-import * as ui from '../ui';
-import {setTitle} from '../util';
+import {realtimeUpdate, setTitle} from '../util';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
 
@@ -74,7 +73,7 @@ class ResetPassword extends React.Component {
                 if (data.success) {
                     g.emitter.emit('updateTopMenu', {username: data.username});
 
-                    ui.realtimeUpdate([], "/account");
+                    realtimeUpdate([], "/account");
                 } else {
                     const updatedState = {
                         resetpwError: null,

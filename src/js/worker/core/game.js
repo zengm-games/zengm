@@ -3,7 +3,7 @@
 import Promise from 'bluebird';
 import _ from 'underscore';
 import g from '../../globals';
-import * as ui from '../../ui/ui';
+import * as api from '../api';
 import GameSim from './GameSim';
 import * as finances from './finances';
 import * as freeAgents from './freeAgents';
@@ -593,7 +593,7 @@ async function loadTeams() {
  * @memberOf core.game
  * @param {number} numDays An integer representing the number of days to be simulated. If numDays is larger than the number of days remaining, then all games will be simulated up until either the end of the regular season or the end of the playoffs, whichever happens first.
  * @param {boolean} start Is this a new request from the user to play games (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed. Default true.
- * @param {number?} gidPlayByPlay If this number matches a game ID number, then an array of strings representing the play-by-play game simulation are included in the ui.realtimeUpdate raw call.
+ * @param {number?} gidPlayByPlay If this number matches a game ID number, then an array of strings representing the play-by-play game simulation are included in the api.realtimeUpdate raw call.
  */
 async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: number) {
     // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season
@@ -601,7 +601,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
         updateStatus("Idle");
         await league.setGameAttributes({gamesInProgress: false});
         await updatePlayMenu();
-        ui.realtimeUpdate(["g.gamesInProgress"]);
+        api.realtimeUpdate(["g.gamesInProgress"]);
 
         // Check to see if the season is over
         if (g.phase < g.PHASE.PLAYOFFS) {
@@ -686,7 +686,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
 
         await advStats();
 
-        ui.realtimeUpdate(["gameSim"], url, async () => {
+        api.realtimeUpdate(["gameSim"], url, async () => {
             league.updateLastDbChange();
 
             if (g.phase === g.PHASE.PLAYOFFS) {
@@ -698,7 +698,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
                 // Should a rare tragic event occur? ONLY IN REGULAR SEASON, playoffs would be tricky with roster limits and no free agents
                 // 100 days in a season (roughly), and we want a death every 50 years on average
                 await player.killOne();
-                ui.realtimeUpdate(["playerMovement"]);
+                api.realtimeUpdate(["playerMovement"]);
             }
             play(numDays - 1, false);
         }, raw);
@@ -789,7 +789,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
             if (userTeamSizeError === null) {
                 await league.setGameAttributes({gamesInProgress: true});
                 await updatePlayMenu();
-                ui.realtimeUpdate(["g.gamesInProgress"]);
+                api.realtimeUpdate(["g.gamesInProgress"]);
                 cbRunDay();
             } else {
                 updateStatus("Idle");

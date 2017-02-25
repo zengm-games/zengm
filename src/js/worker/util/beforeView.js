@@ -3,7 +3,7 @@
 import React from 'react';
 import {Cache, connectLeague} from '../db';
 import g from '../../globals';
-import * as ui from '../../ui/ui';
+import * as api from '../api';
 import {league} from '../core';
 import {updatePhase, updatePlayMenu, updateStatus} from '../util';
 import * as helpers from '../../util/helpers';
@@ -25,7 +25,7 @@ const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEv
         if (g.lastDbChange !== lastDbChange.value) {
             await league.loadGameAttributes();
             //leagueContentEl.innerHTML = "&nbsp;";  // Blank doesn't work, for some reason
-            ui.realtimeUpdate(["dbChange"], undefined, async () => {
+            api.realtimeUpdate(["dbChange"], undefined, async () => {
                 await updatePlayMenu();
                 updatePhase();
                 updateStatus();

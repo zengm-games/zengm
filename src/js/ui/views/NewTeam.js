@@ -1,7 +1,6 @@
 import React from 'react';
 import * as api from '../api';
-import * as ui from '../ui';
-import {setTitle} from '../util';
+import {realtimeUpdate, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {NewWindowLink} from '../components';
 
@@ -31,7 +30,7 @@ class NewTeam extends React.Component {
 
     async handleNewTeam() {
         await api.switchTeam(this.state.tid);
-        ui.realtimeUpdate([], helpers.leagueUrl([]));
+        realtimeUpdate([], helpers.leagueUrl([]));
     }
 
     render() {

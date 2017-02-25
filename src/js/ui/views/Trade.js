@@ -2,8 +2,7 @@ import classNames from 'classnames';
 import React from 'react';
 import g from '../../globals';
 import * as api from '../api';
-import * as ui from '../ui';
-import {getCols, setTitle} from '../util';
+import {getCols, realtimeUpdate, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
 
@@ -76,7 +75,7 @@ class Trade extends React.Component {
 
         await api.updateTrade(teams);
 
-        ui.realtimeUpdate();
+        realtimeUpdate();
     }
 
     async handleChangeTeam(event) {
@@ -98,7 +97,7 @@ class Trade extends React.Component {
 
         await api.createTrade(teams);
 
-        ui.realtimeUpdate();
+        realtimeUpdate();
     }
 
     async handleClickAsk() {
@@ -114,7 +113,7 @@ class Trade extends React.Component {
             message,
         });
 
-        ui.realtimeUpdate();
+        realtimeUpdate();
     }
 
     async handleClickClear() {
@@ -123,7 +122,7 @@ class Trade extends React.Component {
         });
         await api.clearTrade();
 
-        ui.realtimeUpdate();
+        realtimeUpdate();
     }
 
     handleClickForceTrade() {
@@ -140,7 +139,7 @@ class Trade extends React.Component {
             message,
         });
 
-        ui.realtimeUpdate();
+        realtimeUpdate();
     }
 
     render() {

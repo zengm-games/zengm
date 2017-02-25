@@ -1,8 +1,7 @@
 import React from 'react';
 import g from '../../globals';
 import * as api from '../api';
-import * as ui from '../ui';
-import {setTitle} from '../util';
+import {realtimeUpdate, setTitle} from '../util';
 import {NewWindowLink} from '../components';
 
 class MultiTeamMode extends React.Component {
@@ -29,7 +28,7 @@ class MultiTeamMode extends React.Component {
 
             await api.updateMultiTeamMode(gameAttributes);
 
-            ui.realtimeUpdate(['g.userTids']);
+            realtimeUpdate(['g.userTids']);
         }
     }
 

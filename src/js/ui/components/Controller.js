@@ -3,8 +3,7 @@
 import React from 'react';
 import g from '../../globals';
 import * as api from '../api';
-import * as ui from '../ui';
-import {ads} from '../util';
+import {ads, realtimeUpdate} from '../util';
 import {Footer, Header, LeagueWrapper, MultiTeamMenu, NagModal, NavBar} from './index';
 import type {GetOutput, Option, PageCtx, UpdateEvents} from '../../util/types';
 
@@ -162,7 +161,7 @@ class Controller extends React.Component {
         }
 
         if (typeof inputs.redirectUrl === 'string') {
-            return ui.realtimeUpdate([], inputs.redirectUrl, cb);
+            return realtimeUpdate([], inputs.redirectUrl, cb);
         }
 
         this.updatePage(args, inputs, updateEvents, cb);
@@ -251,7 +250,7 @@ class Controller extends React.Component {
         };
 
         if (vars.data && vars.data.redirectUrl !== undefined) {
-            return ui.realtimeUpdate([], vars.data.redirectUrl, cb);
+            return realtimeUpdate([], vars.data.redirectUrl, cb);
         }
 
         this.setState(vars);

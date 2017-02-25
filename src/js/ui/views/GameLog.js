@@ -1,7 +1,6 @@
 import classNames from 'classnames';
 import React from 'react';
-import * as ui from '../ui';
-import {setTitle} from '../util';
+import {realtimeUpdate, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {Dropdown, NewWindowLink, PlayerNameLabels} from '../components';
 import clickable from '../wrappers/clickable';
@@ -61,10 +60,10 @@ class BoxScore extends React.Component {
     handleKeydown(e) {
         if (e.keyCode === 37 && this.props.boxScore && this.props.prevGid !== null) {
             // prev
-            ui.realtimeUpdate([], helpers.leagueUrl(['game_log', this.props.abbrev, this.props.season, this.props.prevGid]));
+            realtimeUpdate([], helpers.leagueUrl(['game_log', this.props.abbrev, this.props.season, this.props.prevGid]));
         } else if (e.keyCode === 39 && this.props.boxScore && this.props.nextGid !== null) {
             // next
-            ui.realtimeUpdate([], helpers.leagueUrl(['game_log', this.props.abbrev, this.props.season, this.props.nextGid]));
+            realtimeUpdate([], helpers.leagueUrl(['game_log', this.props.abbrev, this.props.season, this.props.nextGid]));
         }
     }
 

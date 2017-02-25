@@ -13,7 +13,7 @@ import Navbar from 'react-bootstrap/lib/Navbar';
 import Overlay from 'react-bootstrap/lib/Overlay';
 import Popover from 'react-bootstrap/lib/Popover';
 import ReactDOM from 'react-dom';
-import * as ui from '../ui';
+import {realtimeUpdate} from '../util';
 import html2canvas from '../../lib/html2canvas';
 import * as actions from '../../util/actions';
 import * as helpers from '../../util/helpers';
@@ -361,7 +361,7 @@ class PlayMenu extends React.Component {
             }
 
             if (option.url) {
-                ui.realtimeUpdate([], option.url);
+                realtimeUpdate([], option.url);
             } else {
                 actions.playMenu[option.id]();
             }

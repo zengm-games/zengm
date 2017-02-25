@@ -1,7 +1,7 @@
 // @flow
 
 import page from 'page';
-import type {UpdateEvents} from '../util/types';
+import type {UpdateEvents} from '../../util/types';
 
 /**
  * Smartly update the currently loaded view or redirect to a new one.
@@ -43,7 +43,4 @@ function realtimeUpdate(updateEvents: UpdateEvents = [], url?: string, cb?: Func
     }
 }
 
-export {
-    // eslint-disable-next-line import/prefer-default-export
-    realtimeUpdate,
-};
+export default realtimeUpdate;

@@ -5,9 +5,8 @@ import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import g from '../../globals';
 import * as api from '../api';
-import * as ui from '../ui';
 import {tradeFor} from '../../util/actions';
-import {setTitle} from '../util';
+import {realtimeUpdate, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels, RatingWithChange, RecordAndPlayoffs} from '../components';
 import clickable from '../wrappers/clickable';
@@ -38,7 +37,7 @@ const ptStyles = {
 const handleAutoSort = async () => {
     await api.autoSortRoster();
 
-    ui.realtimeUpdate(["playerMovement"]);
+    realtimeUpdate(["playerMovement"]);
 };
 
 const handleRelease = async p => {
@@ -57,7 +56,7 @@ const handleRelease = async p => {
         if (errorMsg) {
             helpers.errorNotify(errorMsg);
         } else {
-            ui.realtimeUpdate(["playerMovement"]);
+            realtimeUpdate(["playerMovement"]);
         }
     }
 };
@@ -77,7 +76,7 @@ const handlePtChange = async (p, event) => {
 
     await api.updatePlayingTime(p.pid, ptModifier);
 
-    ui.realtimeUpdate(["playerMovement"]);
+    realtimeUpdate(["playerMovement"]);
 };
 
 const PlayingTime = ({p}) => {
@@ -133,13 +132,13 @@ ReorderHandle.propTypes = {
 const swapRosterOrder = async (sortedPlayers, pid1, pid2) => {
     await api.reorderRosterSwap(sortedPlayers, pid1, pid2);
 
-    ui.realtimeUpdate(["playerMovement"]);
+    realtimeUpdate(["playerMovement"]);
 };
 
 const handleReorderDrag = async (sortedPids) => {
     await api.reorderRosterDrag(sortedPids);
 
-    ui.realtimeUpdate(["playerMovement"]);
+    realtimeUpdate(["playerMovement"]);
 };
 
 const RosterRow = clickable(props => {

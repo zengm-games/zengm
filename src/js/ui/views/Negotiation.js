@@ -1,8 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
 import * as api from '../api';
-import * as ui from '../ui';
-import {setTitle} from '../util';
+import {realtimeUpdate, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {NewWindowLink} from '../components';
 
@@ -10,11 +9,11 @@ import {NewWindowLink} from '../components';
 async function redirectNegotiationOrRoster(cancelled) {
     const count = await api.countNegotiations();
     if (count > 0) {
-        ui.realtimeUpdate([], helpers.leagueUrl(["negotiation"]));
+        realtimeUpdate([], helpers.leagueUrl(["negotiation"]));
     } else if (cancelled) {
-        ui.realtimeUpdate([], helpers.leagueUrl(["free_agents"]));
+        realtimeUpdate([], helpers.leagueUrl(["free_agents"]));
     } else {
-        ui.realtimeUpdate([], helpers.leagueUrl(["roster"]));
+        realtimeUpdate([], helpers.leagueUrl(["roster"]));
     }
 }
 

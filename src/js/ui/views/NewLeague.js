@@ -1,7 +1,6 @@
 import React from 'react';
-import * as ui from '../ui';
 import * as api from '../api';
-import {setTitle} from '../util';
+import {realtimeUpdate, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 
 const PopText = ({teams, tid}) => {
@@ -182,7 +181,7 @@ class NewLeague extends React.Component {
         }
 
         const lid = await api.createLeague(this.state.name, this.state.tid, leagueFile, startingSeason, randomizeRosters);
-        ui.realtimeUpdate([], `/l/${lid}`);
+        realtimeUpdate([], `/l/${lid}`);
     }
 
     render() {

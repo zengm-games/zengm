@@ -2,7 +2,7 @@
 
 import React from 'react';
 import * as api from '../api';
-import * as ui from '../ui';
+import {realtimeUpdate} from '../util';
 
 type Props = {
     pid: number,
@@ -51,7 +51,7 @@ class WatchBlock extends React.Component {
         });
 
         await api.updatePlayerWatch(this.props.pid, watch);
-        ui.realtimeUpdate(['playerMovement', 'watchList']);
+        realtimeUpdate(['playerMovement', 'watchList']);
     }
 
     render() {

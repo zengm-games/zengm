@@ -1,8 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
 import * as api from '../api';
-import * as ui from '../ui';
-import {setTitle} from '../util';
+import {realtimeUpdate, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import logEvent from '../../util/logEvent';
 import {HelpPopover, NewWindowLink} from '../components';
@@ -89,7 +88,7 @@ class GodMode extends React.Component {
             saveToDb: false,
         });
 
-        ui.realtimeUpdate(["toggleGodMode"], helpers.leagueUrl(["god_mode"]));
+        realtimeUpdate(["toggleGodMode"], helpers.leagueUrl(["god_mode"]));
     }
 
     async handleGodModeToggle() {
@@ -101,7 +100,7 @@ class GodMode extends React.Component {
 
         await api.updateGameAttributes(attrs);
 
-        ui.realtimeUpdate(["toggleGodMode"]);
+        realtimeUpdate(["toggleGodMode"]);
     }
 
     render() {

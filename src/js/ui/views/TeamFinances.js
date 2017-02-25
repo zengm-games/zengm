@@ -1,8 +1,7 @@
 import React from 'react';
 import g from '../../globals';
 import * as api from '../api';
-import * as ui from '../ui';
-import {getCols, setTitle} from '../util';
+import {getCols, realtimeUpdate, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import logEvent from '../../util/logEvent';
 import {BarGraph, DataTable, Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels} from '../components';
@@ -77,7 +76,7 @@ class FinancesForm extends React.Component {
             saving: false,
         });
 
-        ui.realtimeUpdate(["teamFinances"]);
+        realtimeUpdate(["teamFinances"]);
     }
 
     render() {

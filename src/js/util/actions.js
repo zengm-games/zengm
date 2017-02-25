@@ -2,7 +2,7 @@
 
 import {reset} from '../worker/db';
 import g from '../globals';
-import * as ui from '../ui/ui';
+import {realtimeUpdate} from '../ui/util';
 import * as contractNegotiation from '../worker/core/contractNegotiation';
 import * as draft from '../worker/core/draft';
 import * as freeAgents from '../worker/core/freeAgents';
@@ -15,7 +15,7 @@ import {updatePlayMenu, updateStatus} from '../worker/util';
 import * as helpers from './helpers';
 
 const liveGame = async (gid: number) => {
-    ui.realtimeUpdate([], helpers.leagueUrl(["live_game"]), () => {
+    realtimeUpdate([], helpers.leagueUrl(["live_game"]), () => {
         game.play(1, true, gid);
     }, {fromAction: true});
 };
@@ -28,10 +28,10 @@ const negotiate = async (pid: number) => {
         if (error !== undefined && error) {
             helpers.errorNotify(error);
         } else {
-            ui.realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));
+            realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));
         }
     } else {
-        ui.realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));
+        realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));
     }
 };
 
@@ -79,7 +79,7 @@ const tradeFor = async ({otherDpids, otherPids, pid, tid, userDpids, userPids}: 
 
     // Start a new trade based on a list of pids and dpids, like from the trading block
     await trade.create(teams);
-    ui.realtimeUpdate([], helpers.leagueUrl(["trade"]));
+    realtimeUpdate([], helpers.leagueUrl(["trade"]));
     league.updateLastDbChange();
 };
 

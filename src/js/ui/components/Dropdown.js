@@ -2,7 +2,7 @@
 
 import React from 'react';
 import g from '../../globals';
-import * as ui from '../ui';
+import {realtimeUpdate} from '../util';
 import * as helpers from '../../util/helpers';
 
 const Select = ({field, handleChange, value}) => {
@@ -250,7 +250,7 @@ class Dropdown extends React.Component {
             parts.push(this.props.extraParam);
         }
 
-        ui.realtimeUpdate([], helpers.leagueUrl(parts));
+        realtimeUpdate([], helpers.leagueUrl(parts));
     }
 
     render() {

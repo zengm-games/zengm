@@ -4,8 +4,7 @@ import faces from 'facesjs';
 import React from 'react';
 import g from '../../globals';
 import * as api from '../api';
-import * as ui from '../ui';
-import {setTitle} from '../util';
+import {realtimeUpdate, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {NewWindowLink, PlayerPicture} from '../components';
 
@@ -154,7 +153,7 @@ class CustomizePlayer extends React.Component {
 
         const pid = await api.upsertCustomizedPlayer(p, this.props.originalTid, this.props.season);
 
-        ui.realtimeUpdate([], helpers.leagueUrl(["player", pid]));
+        realtimeUpdate([], helpers.leagueUrl(["player", pid]));
     }
 
     handleChange(type, field, e) {

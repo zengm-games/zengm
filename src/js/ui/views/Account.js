@@ -5,8 +5,7 @@ import classNames from 'classnames';
 import $ from 'jquery';
 import React from 'react';
 import g from '../../globals';
-import * as ui from '../ui';
-import {setTitle} from '../util';
+import {realtimeUpdate, setTitle} from '../util';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
 
@@ -50,10 +49,10 @@ class StripeButton extends React.Component {
                                         withCredentials: true,
                                     },
                                 }));
-                                ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: data});
+                                realtimeUpdate(["account"], "/account", undefined, {goldResult: data});
                             } catch (err) {
                                 console.log(err);
-                                ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: {
+                                realtimeUpdate(["account"], "/account", undefined, {goldResult: {
                                     success: false,
                                     message: ajaxErrorMsg,
                                 }});
@@ -107,10 +106,10 @@ const handleCancel = async e => {
                     withCredentials: true,
                 },
             }));
-            ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: data});
+            realtimeUpdate(["account"], "/account", undefined, {goldResult: data});
         } catch (err) {
             console.log(err);
-            ui.realtimeUpdate(["account"], "/account", undefined, {goldResult: {
+            realtimeUpdate(["account"], "/account", undefined, {goldResult: {
                 success: false,
                 message: ajaxErrorMsg,
             }});
@@ -148,7 +147,7 @@ class UserInfo extends React.Component {
             },
             success: () => {
                 g.emitter.emit('updateTopMenu', {username: ''});
-                ui.realtimeUpdate(["account"], "/");
+                realtimeUpdate(["account"], "/");
             },
             error: () => {
                 this.setState({

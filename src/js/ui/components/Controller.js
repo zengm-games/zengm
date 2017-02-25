@@ -4,7 +4,7 @@ import React from 'react';
 import g from '../../globals';
 import * as api from '../api';
 import * as ui from '../ui';
-import * as ads from '../../util/ads';
+import {ads} from '../util';
 import {beforeLeague, beforeNonLeague} from '../../util/viewHelpers';
 import {Footer, Header, LeagueWrapper, MultiTeamMenu, NagModal, NavBar} from './index';
 import type {GetOutput, Option, PageCtx, UpdateEvents} from '../../util/types';

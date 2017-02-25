@@ -5,7 +5,7 @@ import Promise from 'bluebird';
 import $ from 'jquery';
 import g from '../globals';
 import {getCopy} from '../worker/db';
-import * as ads from './ads';
+import {ads} from '../ui/util';
 import logEvent from './logEvent';
 import type {AchievementKey} from './types';
 

@@ -13,11 +13,10 @@ import g from '../globals';
 import * as api from './api';
 import Controller from './components/Controller';
 import * as processInputs from './processInputs';
-import {initView, setTitle} from './util';
+import {ads, initView, setTitle} from './util';
 import * as views from './views';
 import * as changes from '../data/changes';
 import * as account from '../util/account';
-import * as ads from '../util/ads';
 import * as helpers from '../util/helpers';
 
 // Needed because of https://github.com/petkaantonov/bluebird/issues/363

@@ -1,8 +1,7 @@
 // @flow
 
-/*eslint new-cap: 0*/
 import Promise from 'bluebird';
-import g from '../globals';
+import g from '../../globals';
 
 function showGcs() {
     window.TriggerPrompt("http://www.basketball-gm.com/", (new Date()).getTime());
@@ -127,7 +126,7 @@ async function showBanner() {
     }
 }
 
-export {
+export default {
     showBanner,
     showModal,
     showSurvata,

@@ -30,9 +30,6 @@ class NewTeam extends React.Component {
     }
 
     async handleNewTeam() {
-        ui.updateStatus("Idle");
-        ui.updatePlayMenu();
-
         await api.switchTeam(this.state.tid);
         ui.realtimeUpdate([], helpers.leagueUrl([]));
     }

@@ -11,9 +11,8 @@ import * as player from './player';
 import * as team from './team';
 import {getCopy} from '../db';
 import * as helpers from '../../util/helpers';
-import * as lock from '../../util/lock';
 import logEvent from '../../util/logEvent';
-import {random} from '../util';
+import {lock, random, updatePlayMenu, updateStatus} from '../util';
 
 /**
  * AI teams sign free agents.
@@ -178,13 +177,13 @@ async function play(numDays: number, start?: boolean = true) {
     // This is called when there are no more days to play, either due to the user's request (e.g. 1 week) elapsing or at the end of free agency.
     const cbNoDays = async () => {
         await league.setGameAttributes({gamesInProgress: false});
-        await ui.updatePlayMenu();
+        await updatePlayMenu();
         ui.realtimeUpdate(["g.gamesInProgress"]);
 
         // Check to see if free agency is over
         if (g.daysLeft === 0) {
             await phase.newPhase(g.PHASE.PRESEASON);
-            ui.updateStatus("Idle");
+            updateStatus("Idle");
         }
     };
 
@@ -197,7 +196,7 @@ async function play(numDays: number, start?: boolean = true) {
             await league.setGameAttributes({daysLeft: g.daysLeft - 1, lastDbChange: Date.now()});
             if (g.daysLeft > 0 && numDays > 0) {
                 ui.realtimeUpdate(["playerMovement"], undefined, () => {
-                    ui.updateStatus(`${g.daysLeft} days left`);
+                    updateStatus(`${g.daysLeft} days left`);
                     play(numDays - 1, false);
                 });
             } else {
@@ -224,7 +223,7 @@ async function play(numDays: number, start?: boolean = true) {
         const canStartGames = await lock.canStartGames();
         if (canStartGames) {
             await league.setGameAttributes({gamesInProgress: true});
-            await ui.updatePlayMenu();
+            await updatePlayMenu();
             ui.realtimeUpdate(["g.gamesInProgress"]);
             cbRunDay();
         }

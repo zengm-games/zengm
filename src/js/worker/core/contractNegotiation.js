@@ -2,14 +2,13 @@
 
 import Promise from 'bluebird';
 import g from '../../globals';
-import * as ui from '../../ui/ui';
 import * as freeAgents from './freeAgents';
 import * as league from './league';
 import * as player from './player';
 import * as team from './team';
 import logEvent from '../../util/logEvent';
+import {lock, updatePlayMenu, updateStatus} from '../util';
 import * as helpers from '../../util/helpers';
-import * as lock from '../../util/lock';
 
 /**
  * Start a new contract negotiation with a player.
@@ -63,8 +62,8 @@ async function create(pid: number, resigning: boolean, tid: number = g.userTid):
 
     await g.cache.add('negotiations', negotiation);
     league.updateLastDbChange();
-    ui.updateStatus("Contract negotiation");
-    return ui.updatePlayMenu();
+    updateStatus("Contract negotiation");
+    return updatePlayMenu();
 }
 
 /**
@@ -75,11 +74,11 @@ async function cancel(pid: number) {
     const negotiationInProgress = await lock.negotiationInProgress();
     if (!negotiationInProgress) {
         if (g.phase === g.PHASE.FREE_AGENCY) {
-            ui.updateStatus(`${g.daysLeft} days left`);
+            updateStatus(`${g.daysLeft} days left`);
         } else {
-            ui.updateStatus("Idle");
+            updateStatus("Idle");
         }
-        ui.updatePlayMenu();
+        updatePlayMenu();
     }
 
     league.updateLastDbChange();
@@ -96,8 +95,8 @@ async function cancel(pid: number) {
 async function cancelAll() {
     await g.cache.clear('negotiations');
     league.updateLastDbChange();
-    ui.updateStatus("Idle");
-    return ui.updatePlayMenu();
+    updateStatus("Idle");
+    return updatePlayMenu();
 }
 
 /**

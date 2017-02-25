@@ -1,8 +1,8 @@
 // @flow
 
-import g from '../globals';
-import * as league from '../worker/core/league';
-import {getCopy} from '../worker/db';
+import g from '../../globals';
+import * as league from '../core/league';
+import {getCopy} from '../db';
 
 /**
  * Is game simulation in progress?
@@ -113,7 +113,7 @@ async function unreadMessage(): Promise<boolean> {
     return false;
 }
 
-export {
+export default {
     gamesInProgress,
     negotiationInProgress,
     phaseChangeInProgress,
@@ -121,4 +121,3 @@ export {
     canStartNegotiation,
     unreadMessage,
 };
-

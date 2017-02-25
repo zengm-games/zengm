@@ -5,6 +5,7 @@ import {Cache, connectLeague} from '../worker/db';
 import g from '../globals';
 import * as ui from '../ui/ui';
 import * as league from '../worker/core/league';
+import {updatePhase, updatePlayMenu, updateStatus} from '../worker/util';
 import * as helpers from './helpers';
 import type {PageCtx, UpdateEvents} from './types';
 
@@ -25,9 +26,9 @@ const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEv
             await league.loadGameAttributes();
             //leagueContentEl.innerHTML = "&nbsp;";  // Blank doesn't work, for some reason
             ui.realtimeUpdate(["dbChange"], undefined, async () => {
-                await ui.updatePlayMenu();
-                ui.updatePhase();
-                ui.updateStatus();
+                await updatePlayMenu();
+                updatePhase();
+                updateStatus();
                 setTimeout(() => checkDbChange(lid), 3000);
             });
         } else {
@@ -66,9 +67,9 @@ const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEv
         await league.loadGameAttributes();
 
         // Update play menu
-        ui.updateStatus();
-        ui.updatePhase();
-        await ui.updatePlayMenu();
+        updateStatus();
+        updatePhase();
+        await updatePlayMenu();
         g.emitter.emit('updateTopMenu', {lid: g.lid});
         //checkDbChange(g.lid); // Currently not working
         return [updateEvents, ctxCb, undefined];

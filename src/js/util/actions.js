@@ -11,6 +11,7 @@ import * as league from '../worker/core/league';
 import * as phase from '../worker/core/phase';
 import * as season from '../worker/core/season';
 import * as trade from '../worker/core/trade';
+import {updatePlayMenu, updateStatus} from '../worker/util';
 import * as helpers from './helpers';
 
 const liveGame = async (gid: number) => {
@@ -97,7 +98,7 @@ const playAmount = async (amount: 'day' | 'week' | 'month' | 'untilPreseason') =
     }
 
     if (g.phase <= g.PHASE.PLAYOFFS) {
-        ui.updateStatus("Playing..."); // For quick UI updating, before game.play
+        updateStatus("Playing..."); // For quick UI updating, before game.play
         // Start playing games
         game.play(numDays);
     } else if (g.phase === g.PHASE.FREE_AGENCY) {
@@ -112,10 +113,10 @@ const playStop = async () => {
     await league.setGameAttributes({stopGames: true});
     if (g.phase !== g.PHASE.FREE_AGENCY) {
         // This is needed because we can't be sure if core.game.play will be called again
-        ui.updateStatus("Idle");
+        updateStatus("Idle");
     }
     await league.setGameAttributes({gamesInProgress: false});
-    ui.updatePlayMenu();
+    updatePlayMenu();
 };
 
 const playMenu = {
@@ -137,7 +138,7 @@ const playMenu = {
 
     untilPlayoffs: async () => {
         if (g.phase < g.PHASE.PLAYOFFS) {
-            ui.updateStatus("Playing..."); // For quick UI updating, before await
+            updateStatus("Playing..."); // For quick UI updating, before await
             const numDays = await season.getDaysLeftSchedule();
             game.play(numDays);
         }
@@ -145,7 +146,7 @@ const playMenu = {
 
     throughPlayoffs: async () => {
         if (g.phase === g.PHASE.PLAYOFFS) {
-            ui.updateStatus("Playing..."); // For quick UI updating, before await
+            updateStatus("Playing..."); // For quick UI updating, before await
             const playoffSeries = await g.cache.get('playoffSeries', g.season);
 
             // Max 7 days per round that hasn't started yet
@@ -179,7 +180,7 @@ const playMenu = {
             // Show warning dialog only if there are players remaining un-re-signed
             if (numRemaining === 0 || window.confirm(`Are you sure you want to proceed to free agency while ${numRemaining} of your players remain unsigned? If you do not re-sign them before free agency begins, they will be free to sign with any team, and you won't be able to go over the salary cap to sign them.`)) {
                 await phase.newPhase(g.PHASE.FREE_AGENCY);
-                ui.updateStatus(`${g.daysLeft} days left`);
+                updateStatus(`${g.daysLeft} days left`);
             }
         }
     },
@@ -200,7 +201,7 @@ const playMenu = {
 
     stopAuto: async () => {
         await league.setGameAttributes({autoPlaySeasons: 0});
-        ui.updatePlayMenu();
+        updatePlayMenu();
         await playStop();
     },
 };

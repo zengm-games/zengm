@@ -5,7 +5,6 @@ import Promise from 'bluebird';
 import _ from 'underscore';
 import {Cache, connectLeague} from '../db';
 import g from '../../globals';
-import * as ui from '../../ui/ui';
 import * as draft from './draft';
 import * as finances from './finances';
 import * as freeAgents from './freeAgents';
@@ -15,7 +14,7 @@ import * as player from './player';
 import * as season from './season';
 import * as team from './team';
 import * as helpers from '../../util/helpers';
-import {random} from '../util';
+import {random, updatePhase, updateStatus} from '../util';
 import type {GameAttributeKeyDynamic, GameAttributes} from '../../util/types';
 
 const defaultGameAttributes: GameAttributes = {
@@ -497,8 +496,8 @@ async function create(
         return g.lid;
     }
 
-    ui.updatePhase(`${g.season} ${g.PHASE_TEXT[g.phase]}`);
-    ui.updateStatus("Idle");
+    updatePhase(`${g.season} ${g.PHASE_TEXT[g.phase]}`);
+    updateStatus("Idle");
 
     const lid = g.lid; // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
 

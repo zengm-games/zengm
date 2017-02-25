@@ -13,10 +13,9 @@ import * as player from './player';
 import * as season from './season';
 import * as team from './team';
 import {getCopy} from '../db';
-import {genMessage, random} from '../util';
+import {genMessage, lock, random, updatePhase, updatePlayMenu} from '../util';
 import * as account from '../../util/account';
 import * as helpers from '../../util/helpers';
-import * as lock from '../../util/lock';
 import logEvent from '../../util/logEvent';
 import type {Phase, UpdateEvents} from '../../util/types';
 
@@ -37,8 +36,8 @@ async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = 
         phase,
         phaseChangeInProgress: false,
     });
-    ui.updatePhase(`${g.season} ${g.PHASE_TEXT[phase]}`);
-    await ui.updatePlayMenu();
+    updatePhase(`${g.season} ${g.PHASE_TEXT[phase]}`);
+    await updatePlayMenu();
 
     // Set lastDbChange last so there is no race condition (WHAT DOES THIS MEAN??)
     league.updateLastDbChange();
@@ -554,9 +553,9 @@ async function newPhase(phase: Phase, extra: any) {
         helpers.errorNotify("Phase change already in progress, maybe in another tab.");
     } else {
         await league.setGameAttributes({phaseChangeInProgress: true});
-        ui.updatePlayMenu();
+        updatePlayMenu();
 
-        // In Chrome, this will update play menu in other windows. In Firefox, it won't because ui.updatePlayMenu gets blocked until phaseChangeTx finishes for some reason.
+        // In Chrome, this will update play menu in other windows. In Firefox, it won't because updatePlayMenu gets blocked until phaseChangeTx finishes for some reason.
         league.updateLastDbChange();
 
         if (phaseChangeInfo.hasOwnProperty(phase)) {
@@ -565,7 +564,7 @@ async function newPhase(phase: Phase, extra: any) {
                 result = await phaseChangeInfo[phase].func(extra);
             } catch (err) {
                 await league.setGameAttributes({phaseChangeInProgress: false});
-                await ui.updatePlayMenu();
+                await updatePlayMenu();
                 logEvent({
                     type: "error",
                     text: 'Critical error during phase change. <a href="https://basketball-gm.com/manual/debugging/"><b>Read this to learn about debugging.</b></a>',

@@ -49,15 +49,8 @@ class Draft extends React.Component {
     }
 
     async draftUntilUserOrEnd() {
-        ui.updateStatus("Draft in progress...");
-
-        const {draftOrder, pids} = await api.draftUntilUserOrEnd();
-
+        const pids = await api.draftUntilUserOrEnd();
         this.savePids(pids);
-        if (draftOrder.length === 0) {
-            ui.updateStatus("Idle");
-        }
-
         ui.realtimeUpdate(["playerMovement"]);
     }
 

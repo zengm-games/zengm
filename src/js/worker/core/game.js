@@ -12,10 +12,9 @@ import * as phase from './phase';
 import * as player from './player';
 import * as season from './season';
 import * as team from './team';
-import {advStats, random} from '../util';
+import {advStats, lock, random, updatePlayMenu, updateStatus} from '../util';
 import logEvent from '../../util/logEvent';
 import * as helpers from '../../util/helpers';
-import * as lock from '../../util/lock';
 import type {GameResults} from '../../util/types';
 
 async function writeTeamStats(results: GameResults) {
@@ -599,9 +598,9 @@ async function loadTeams() {
 async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: number) {
     // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season
     const cbNoGames = async () => {
-        ui.updateStatus("Idle");
+        updateStatus("Idle");
         await league.setGameAttributes({gamesInProgress: false});
-        await ui.updatePlayMenu();
+        await updatePlayMenu();
         ui.realtimeUpdate(["g.gamesInProgress"]);
 
         // Check to see if the season is over
@@ -610,7 +609,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
             if (schedule.length === 0) {
                 // No return here, meaning no need to wait for phase.newPhase to resolve - is that correct?
                 phase.newPhase(g.PHASE.PLAYOFFS);
-                ui.updateStatus("Idle"); // Just to be sure..
+                updateStatus("Idle"); // Just to be sure..
             }
         }
     };
@@ -720,9 +719,9 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
     // Promise is resolved after games are run
     const cbPlayGames = async () => {
         if (numDays === 1) {
-            ui.updateStatus("Playing (1 day left)");
+            updateStatus("Playing (1 day left)");
         } else {
-            ui.updateStatus(`Playing (${numDays} days left)`);
+            updateStatus(`Playing (${numDays} days left)`);
         }
 
         let schedule = await season.getSchedule(true);
@@ -789,11 +788,11 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
             const userTeamSizeError = await team.checkRosterSizes();
             if (userTeamSizeError === null) {
                 await league.setGameAttributes({gamesInProgress: true});
-                await ui.updatePlayMenu();
+                await updatePlayMenu();
                 ui.realtimeUpdate(["g.gamesInProgress"]);
                 cbRunDay();
             } else {
-                ui.updateStatus("Idle");
+                updateStatus("Idle");
                 helpers.errorNotify(userTeamSizeError);
             }
         }

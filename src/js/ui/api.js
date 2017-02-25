@@ -5,7 +5,7 @@ import Promise from 'bluebird';
 import _ from 'underscore';
 import g from '../globals';
 import * as helpers from '../util/helpers';
-import {random} from '../worker/util';
+import {random, updatePlayMenu, updateStatus} from '../worker/util';
 import {init, views} from '../worker';
 import {contractNegotiation, draft, finances, league, phase, player, team, trade} from '../worker/core';
 import {getCopy} from '../worker/db';
@@ -149,12 +149,18 @@ const deleteOldData = async (options: {
 };
 
 const draftUntilUserOrEnd = async () => {
+    updateStatus('Draft in progress...');
+
     const pids = await draft.untilUserOrEnd();
     const draftOrder = await draft.getOrder();
 
     league.updateLastDbChange();
 
-    return {draftOrder, pids};
+    if (draftOrder.length === 0) {
+        updateStatus("Idle");
+    }
+
+    return pids;
 };
 
 const draftUser = async (pid: number) => {
@@ -506,6 +512,9 @@ const startFantasyDraft = async (position: number | 'random') => {
 };
 
 const switchTeam = async (tid: number) => {
+    updateStatus("Idle");
+    updatePlayMenu();
+
     await league.setGameAttributes({
         gameOver: false,
         userTid: tid,
@@ -561,16 +570,6 @@ const updateMultiTeamMode = async (gameAttributes: {userTids: number[], userTid?
     }
 
     league.updateLastDbChange();
-};
-
-const updatePhaseText = async (phaseText: string) => {
-    await league.setGameAttributes({phaseText});
-    g.emitter.emit('updateTopMenu', {phaseText});
-
-    // Update phase in meta database. No need to have this block updating the UI or anything.
-    const l = await g.dbm.leagues.get(g.lid);
-    l.phaseText = phaseText;
-    await g.dbm.leagues.put(l);
 };
 
 const updatePlayerWatch = async (pid: number, watch: boolean) => {
@@ -790,7 +789,6 @@ export {
     updateBudget,
     updateGameAttributes,
     updateMultiTeamMode,
-    updatePhaseText,
     updatePlayerWatch,
     updatePlayingTime,
     updateTeamInfo,

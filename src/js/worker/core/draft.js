@@ -3,7 +3,6 @@
 import Promise from 'bluebird';
 import _ from 'underscore';
 import g from '../../globals';
-import * as ui from '../../ui/ui';
 import * as finances from './finances';
 import * as league from './league';
 import * as phase from './phase';
@@ -11,7 +10,7 @@ import * as player from './player';
 import {getCopy} from '../db';
 import * as helpers from '../../util/helpers';
 import logEvent from '../../util/logEvent';
-import {random} from '../util';
+import {random, updatePlayMenu, updatePhase} from '../util';
 import type {PickRealized, TeamFiltered} from '../../util/types';
 
 // Add a new set of draft picks
@@ -523,8 +522,8 @@ async function untilUserOrEnd() {
                     nextPhase: null,
                 });
 
-                ui.updatePhase(`${g.season} ${g.PHASE_TEXT[g.phase]}`);
-                await ui.updatePlayMenu();
+                updatePhase(`${g.season} ${g.PHASE_TEXT[g.phase]}`);
+                await updatePlayMenu();
                 league.updateLastDbChange();
             } else {
                 // Non-fantasy draft

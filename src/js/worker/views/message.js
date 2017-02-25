@@ -1,8 +1,8 @@
 // @flow
 
 import g from '../../globals';
-import * as ui from '../../ui/ui';
 import * as league from '../core/league';
+import {updatePlayMenu, updateStatus} from '../util';
 import type {Message as Message_} from '../../util/types';
 
 async function updateMessage(inputs, updateEvents, state): Promise<void | {message?: Message_}> {
@@ -43,10 +43,10 @@ async function updateMessage(inputs, updateEvents, state): Promise<void | {messa
 
         if (readThisPageview) {
             if (g.gameOver) {
-                ui.updateStatus("You're fired!");
+                updateStatus("You're fired!");
             }
 
-            await ui.updatePlayMenu();
+            await updatePlayMenu();
 
             league.updateLastDbChange();
         }

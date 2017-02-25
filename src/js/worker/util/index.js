@@ -1,6 +1,8 @@
 // @flow
 
+export {default as account} from './account';
 export {default as advStats} from './advStats';
+export {default as beforeView} from './beforeView';
 export {default as genMessage} from './genMessage';
 export {default as lock} from './lock';
 export {default as random} from './random';

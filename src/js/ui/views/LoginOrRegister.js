@@ -2,9 +2,9 @@ import classNames from 'classnames';
 import $ from 'jquery';
 import React from 'react';
 import g from '../../globals';
+import * as api from '../api';
 import * as ui from '../ui';
 import {setTitle} from '../util';
-import * as account from '../../util/account';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
 
@@ -48,10 +48,7 @@ class LoginOrRegister extends React.Component {
                     });
 
                     // Check for participation achievement, if this is the first time logging in to this sport
-                    const achievements = await account.getAchievements();
-                    if (achievements[0].count === 0) {
-                        await account.addAchievements(["participation"]);
-                    }
+                    await api.checkParticipationAchievement();
                     ui.realtimeUpdate(["account"], "/account");
                 } else {
                     this.setState({loginError: 'Invalid username or password.'});
@@ -88,7 +85,7 @@ class LoginOrRegister extends React.Component {
                 if (data.success) {
                     g.emitter.emit('updateTopMenu', {username: data.username});
 
-                    await account.addAchievements(["participation"]);
+                    await api.checkParticipationAchievement(true);
                     ui.realtimeUpdate([], "/account");
                 } else {
                     const updatedState = {

@@ -3,11 +3,11 @@
 /*eslint camelcase: 0*/
 import Promise from 'bluebird';
 import $ from 'jquery';
-import g from '../globals';
-import {getCopy} from '../worker/db';
-import {ads} from '../ui/util';
-import logEvent from './logEvent';
-import type {AchievementKey} from './types';
+import g from '../../globals';
+import {getCopy} from '../db';
+import {ads} from '../../ui/util';
+import logEvent from '../../util/logEvent';
+import type {AchievementKey} from '../../util/types';
 
 // IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php
 const allAchievements: {
@@ -442,7 +442,7 @@ checkAchievement.sleeper_pick = async (saveAchievement: boolean = true) => {
     return false;
 };
 
-export {
+export default {
     check,
     getAchievements,
     addAchievements,

@@ -1,13 +1,13 @@
 // @flow
 
 import React from 'react';
-import {Cache, connectLeague} from '../worker/db';
-import g from '../globals';
-import * as ui from '../ui/ui';
-import * as league from '../worker/core/league';
-import {updatePhase, updatePlayMenu, updateStatus} from '../worker/util';
-import * as helpers from './helpers';
-import type {PageCtx, UpdateEvents} from './types';
+import {Cache, connectLeague} from '../db';
+import g from '../../globals';
+import * as ui from '../../ui/ui';
+import {league} from '../core';
+import {updatePhase, updatePlayMenu, updateStatus} from '../util';
+import * as helpers from '../../util/helpers';
+import type {PageCtx, UpdateEvents} from '../../util/types';
 
 const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEvents, () => void, ?string]> => {
     g.lid = parseInt(ctx.params.lid, 10);
@@ -87,7 +87,7 @@ const beforeNonLeague = (ctx: PageCtx): [UpdateEvents, () => void, ?string] => {
     return [updateEvents, ctxCb, undefined];
 };
 
-export {
-    beforeLeague,
-    beforeNonLeague,
+export default {
+    league: beforeLeague,
+    nonLeague: beforeNonLeague,
 };

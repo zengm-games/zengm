@@ -3,7 +3,7 @@
 import Promise from 'bluebird';
 import $ from 'jquery';
 import g from '../../globals';
-import * as account from '../../util/account';
+import {account} from '../util';
 
 async function updateAccountUpdateCard(inputs, updateEvents, state, setState, topMenu) {
     if (updateEvents.includes('firstRun') || updateEvents.includes('account')) {

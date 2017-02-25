@@ -5,11 +5,11 @@ import Promise from 'bluebird';
 import _ from 'underscore';
 import g from '../globals';
 import * as helpers from '../util/helpers';
-import {random, updatePlayMenu, updateStatus} from '../worker/util';
+import {account, beforeView, random, updatePlayMenu, updateStatus} from '../worker/util';
 import {init, views} from '../worker';
 import {contractNegotiation, draft, finances, league, phase, player, team, trade} from '../worker/core';
 import {getCopy} from '../worker/db';
-import type {GameAttributes, GetOutput, Player, PlayerWithoutPid, UpdateEvents} from '../util/types';
+import type {GameAttributes, GetOutput, PageCtx, Player, PlayerWithoutPid, UpdateEvents} from '../util/types';
 
 const acceptContractNegotiation = async (pid: number, amount: number, exp: number): Promise<?string> => {
     return contractNegotiation.accept(pid, amount, exp);
@@ -20,8 +20,31 @@ const autoSortRoster = async () => {
     league.updateLastDbChange();
 };
 
+const beforeViewLeague = async (ctx: PageCtx, lid: ?number) => {
+    return beforeView.league(ctx, lid);
+};
+
+const beforeViewNonLeague = async (ctx: PageCtx) => {
+    return beforeView.nonLeague(ctx);
+};
+
 const cancelContractNegotiation = async (pid: number) => {
     return contractNegotiation.cancel(pid);
+};
+
+const checkAccount = async () => {
+    await account.check();
+};
+
+const checkParticipationAchievevment = async (force: boolean = false) => {
+    if (force) {
+        await account.addAchievements(['participation']);
+    } else {
+        const achievements = await account.getAchievements();
+        if (achievements[0].count === 0) {
+            await account.addAchievements(['participation']);
+        }
+    }
 };
 
 const clearWatchList = async (): Promise<string> => {
@@ -761,7 +784,11 @@ const updateTrade = async (teams: [{
 export {
     acceptContractNegotiation,
     autoSortRoster,
+    beforeViewLeague,
+    beforeViewNonLeague,
     cancelContractNegotiation,
+    checkAccount,
+    checkParticipationAchievevment,
     clearTrade,
     clearWatchList,
     countNegotiations,

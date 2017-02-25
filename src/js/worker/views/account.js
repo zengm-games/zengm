@@ -1,6 +1,6 @@
 // @flow
 
-import * as account from '../../util/account';
+import {account} from '../util';
 
 async function updateAccount(inputs, updateEvents, state, setState, topMenu) {
     if (updateEvents.includes('firstRun') || updateEvents.includes('account')) {

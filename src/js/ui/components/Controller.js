@@ -5,7 +5,6 @@ import g from '../../globals';
 import * as api from '../api';
 import * as ui from '../ui';
 import {ads} from '../util';
-import {beforeLeague, beforeNonLeague} from '../../util/viewHelpers';
 import {Footer, Header, LeagueWrapper, MultiTeamMenu, NagModal, NavBar} from './index';
 import type {GetOutput, Option, PageCtx, UpdateEvents} from '../../util/types';
 
@@ -151,7 +150,7 @@ class Controller extends React.Component {
     }
 
     async get(args: Args, ctx: PageCtx) {
-        const [updateEvents, cb, abort] = await (args.inLeague ? beforeLeague(ctx, this.state.topMenu.lid) : beforeNonLeague(ctx));
+        const [updateEvents, cb, abort] = await (args.inLeague ? api.beforeViewLeague(ctx, this.state.topMenu.lid) : api.beforeViewNonLeague(ctx));
 
         if (abort === 'abort') {
             return;

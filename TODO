@@ -14,9 +14,13 @@ move everything but the UI to a web worker
   - what about emitter?
 - current todo
   - remove references to ui in worker
+  - remove references to document/window in worker
   - split up util - ui, worker, or both
     - commong things remain in a 'common' folder, maybe?
+  - split up data/lib
+  - how to ensure that files are not required into both ui and worker inadvertently?
   - restore runWhenever ability (really necessary?)
+- does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
 
 bbgm.g.cache.flush().then(() => console.log('done'));
 fucked = false; Object.values(bbgm.g.cache.indexes.teamSeasonsBySeasonTid).forEach((ts) => { if (ts.hasOwnProperty('ast')) { console.log(ts); fucked = true } }); if (fucked) { throw new Error('FUCK'); }

@@ -807,17 +807,19 @@ function name(): {country: string, firstName: string, lastName: string} {
         let middleName = middleNameRow[0];
 
         // abbreviation rules:
-        // 25%% will initialize their middle name
+        // 25% will initialize their middle name
         //   e.g. {Xavier Y. Zed}
-        // 25%% will use it fully but as a 'nickname'
-        //   e.g. {Xavier 'Yanick' Zed}
+        // 50% will use it fully but as a 'nickname'
+        //   e.g. {Xavier "Yanick" Zed}
+        // 25% will use it fully with no quotes
+        //   e.g. {Xavier Yanick Zed}
         const abbrev = random.uniform(0, 1);
-        if (abbrev < 0.25 || country === "USA") {
+        if (abbrev < 0.25) {
             // initialize it
             middleName = `${middleName.charAt(0)}.`;
-        } else if (abbrev < 0.5) {
-            // use it fully
-            middleName = `'${middleName}'`;
+        } else if (abbrev < 0.75) {
+            // wrap it in double-quotes
+            middleName = `"${middleName}"`;
         }
         firstName = `${firstName} ${middleName}`;
     }

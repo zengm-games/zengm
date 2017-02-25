@@ -28,7 +28,6 @@ async function updatePlayers(inputs, updateEvents) {
 
             players[i].bestStats = {};
             let bestEWA = 0;
-            players[i].legacy = {};
             for (let j = 0; j < players[i].stats.length; j++) {
                 const rEWA = players[i].stats[j].ewa;
                 const team = players[i].stats[j].abbrev;
@@ -43,15 +42,7 @@ async function updatePlayers(inputs, updateEvents) {
                     bestEWA = rEWA + pEWA;
                     players[i].bestStats = players[i].stats[j];
                 }
-                if (players[i].legacy.hasOwnProperty(team)) {
-                    players[i].legacy[team] += rEWA + pEWA;
-                } else {
-                    players[i].legacy[team] = rEWA + pEWA;
-                }
             }
-
-            const careerTeam = Object.keys(players[i].legacy).reduce((teamA, teamB) => (players[i].legacy[teamA] > players[i].legacy[teamB] ? teamA : teamB));
-            players[i].legacy.abbrev = careerTeam;
         }
 
         return {

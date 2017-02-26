@@ -3,8 +3,13 @@
 import Promise from 'bluebird';
 import g from '../../globals';
 import {getCopy} from '../db';
+import type {GetOutput, UpdateEvents} from '../../util/types';
 
-async function updateHistory(inputs, updateEvents, state) {
+async function updateHistory(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+    state: any,
+): void | {[key: string]: any} {
     const {season} = inputs;
     if (typeof season !== 'number') {
         return;

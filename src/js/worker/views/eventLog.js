@@ -3,8 +3,13 @@
 import g from '../../globals';
 import {getCopy} from '../db';
 import * as helpers from '../../util/helpers';
+import type {GetOutput, UpdateEvents} from '../../util/types';
 
-async function updateEventLog(inputs, updateEvents, state) {
+async function updateEventLog(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+    state: any,
+): void | {[key: string]: any} {
     if (updateEvents.length >= 0 || inputs.season !== state.season || inputs.abbrev !== state.abbrev) {
         let events = state.events;
         if (inputs.season !== state.season || inputs.abbrev !== state.abbrev) {

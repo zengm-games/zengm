@@ -3,9 +3,13 @@
 import g from '../../globals';
 import * as league from '../core/league';
 import {updatePlayMenu, updateStatus} from '../util';
-import type {Message as Message_} from '../../util/types';
+import type {GetOutput, Message as Message_, UpdateEvents} from '../../util/types';
 
-async function updateMessage(inputs, updateEvents, state): Promise<void | {message?: Message_}> {
+async function updateMessage(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+    state: any,
+): Promise<void | {message?: Message_}> {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || state.message.mid !== inputs.mid) {
         let message;
         let readThisPageview = false;

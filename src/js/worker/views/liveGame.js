@@ -1,7 +1,11 @@
 import g from '../../globals';
 import * as helpers from '../../util/helpers';
+import type {GetOutput, UpdateEvents} from '../../util/types';
 
-async function updatePlayByPlay(inputs, updateEvents) {
+async function updatePlayByPlay(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') && !inputs.fromAction) {
         return {
             redirectUrl: helpers.leagueUrl(["live"]),

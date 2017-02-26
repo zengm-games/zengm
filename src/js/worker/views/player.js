@@ -3,8 +3,13 @@ import * as freeAgents from '../core/freeAgents';
 import * as trade from '../core/trade';
 import {getCopy} from '../db';
 import * as helpers from '../../util/helpers';
+import type {GetOutput, UpdateEvents} from '../../util/types';
 
-async function updatePlayer(inputs, updateEvents, state) {
+async function updatePlayer(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+    state: any,
+): void | {[key: string]: any} {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || !state.retired) {
         let p = await getCopy.players({pid: inputs.pid});
         p = await getCopy.playersPlus(p, {

@@ -3,8 +3,13 @@ import g from '../../globals';
 import * as season from '../core/season';
 import {getCopy} from '../db';
 import * as helpers from '../../util/helpers';
+import type {GetOutput, UpdateEvents} from '../../util/types';
 
-async function updateUpcoming(inputs, updateEvents, state) {
+async function updateUpcoming(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+    state: any,
+): void | {[key: string]: any} {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('newPhase') || inputs.abbrev !== state.abbrev) {
         // Get schedule and all teams.
         const [schedule, teams] = await Promise.all([
@@ -39,7 +44,12 @@ async function updateUpcoming(inputs, updateEvents, state) {
 }
 
 // Based on views.gameLog.updateGamesList
-async function updateCompleted(inputs, updateEvents, state, setState) {
+async function updateCompleted(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+    state: any,
+    setState: (state: any) => void,
+): void | {[key: string]: any} {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || inputs.abbrev !== state.abbrev) {
         // Reset list, so old completed games don't temporarily show when switching team
         if (state.completed) {

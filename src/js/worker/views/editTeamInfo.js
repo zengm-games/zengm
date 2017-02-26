@@ -4,7 +4,7 @@ import g from '../../globals';
 import {getCopy} from '../db';
 import * as helpers from '../../util/helpers';
 
-async function updateTeamInfo() {
+async function updateTeamInfo(): void | {[key: string]: any} {
     const teams = await getCopy.teams({
         attrs: ["tid", "abbrev", "region", "name", "imgURL"],
         seasonAttrs: ["pop"],

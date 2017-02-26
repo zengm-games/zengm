@@ -2,8 +2,13 @@ import g from '../../globals';
 import * as team from '../core/team';
 import {getCopy} from '../db';
 import * as helpers from '../../util/helpers';
+import type {GetOutput, UpdateEvents} from '../../util/types';
 
-async function updateTeamFinances(inputs, updateEvents, state) {
+async function updateTeamFinances(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+    state: any,
+): void | {[key: string]: any} {
     if (updateEvents.includes('dbChange') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || updateEvents.includes('teamFinances') || inputs.tid !== state.tid || inputs.show !== state.show) {
         const vars = {
             abbrev: inputs.abbrev,
@@ -119,7 +124,11 @@ async function updateTeamFinances(inputs, updateEvents, state) {
     }
 }
 
-function updateGamesInProgress(inputs, updateEvents, state) {
+function updateGamesInProgress(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+    state: any,
+): void | {[key: string]: any} {
     if (updateEvents.includes('dbChange') || updateEvents.includes('g.gamesInProgress') || inputs.tid !== state.tid || inputs.show !== state.show) {
         return {
             gamesInProgress: g.gamesInProgress,

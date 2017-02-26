@@ -4,8 +4,15 @@ import Promise from 'bluebird';
 import $ from 'jquery';
 import g from '../../globals';
 import {account} from '../util';
+import type {GetOutput, UpdateEvents} from '../../util/types';
 
-async function updateAccountUpdateCard(inputs, updateEvents, state, setState, topMenu) {
+async function updateAccountUpdateCard(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+    state: any,
+    setState: (state: any) => void,
+    topMenu: any,
+): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') || updateEvents.includes('account')) {
         await account.check();
 

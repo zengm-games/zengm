@@ -1,7 +1,12 @@
 import g from '../../globals';
 import {getCopy} from '../db';
+import type {GetOutput, UpdateEvents} from '../../util/types';
 
-async function updatePlayers(inputs, updateEvents, state) {
+async function updatePlayers(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+    state: any,
+): void | {[key: string]: any} {
     if (updateEvents.includes('dbChange') || updateEvents.includes('gameSim') || inputs.abbrev !== state.abbrev || inputs.season !== state.season || inputs.playoffs !== state.playoffs) {
         let feats = await getCopy.playerFeats();
 

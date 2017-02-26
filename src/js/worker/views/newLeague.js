@@ -1,6 +1,6 @@
 import g from '../../globals';
 
-async function updateNewLeague() {
+async function updateNewLeague(): void | {[key: string]: any} {
     let newLid = null;
 
     // Find most recent league and add one to the LID

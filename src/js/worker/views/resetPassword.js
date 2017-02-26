@@ -1,4 +1,8 @@
-async function updateToken(inputs) {
+import type {GetOutput} from '../../util/types';
+
+async function updateToken(
+    inputs: GetOutput,
+): void | {[key: string]: any} {
     return {
         token: inputs.token,
     };

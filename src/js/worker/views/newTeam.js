@@ -1,7 +1,7 @@
 import g from '../../globals';
 import {getCopy} from '../db';
 
-async function updateTeamSelect() {
+async function updateTeamSelect(): void | {[key: string]: any} {
     let teams = await getCopy.teams({
         attrs: ["tid", "region", "name"],
         seasonAttrs: ["winp"],

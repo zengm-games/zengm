@@ -44,7 +44,7 @@ async function validateSavedPids() {
     return trade.updatePlayers(teams);
 }
 
-async function updateTrade() {
+async function updateTrade(): void | {[key: string]: any} {
     let [teams, userRoster, userPicks] = await Promise.all([
         validateSavedPids(),
         g.cache.indexGetAll('playersByTid', g.userTid),

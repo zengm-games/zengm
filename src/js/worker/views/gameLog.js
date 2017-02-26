@@ -2,6 +2,7 @@
 
 import g from '../../globals';
 import * as helpers from '../../util/helpers';
+import type {GetOutput, UpdateEvents} from '../../util/types';
 
 /**
  * Generate a box score.
@@ -77,7 +78,9 @@ async function boxScore(gid: number) {
     return game;
 }
 
-async function updateTeamSeason(inputs) {
+async function updateTeamSeason(
+    inputs: GetOutput,
+): void | {[key: string]: any} {
     return {
         // Needed for dropdown
         abbrev: inputs.abbrev,
@@ -93,7 +96,11 @@ async function updateTeamSeason(inputs) {
  * @memberOf views.gameLog
  * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score).
  */
-async function updateBoxScore(inputs, updateEvents, state) {
+async function updateBoxScore(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+    state: any,
+): void | {[key: string]: any} {
     const {gid} = inputs;
     if (typeof gid !== 'number') {
         return;
@@ -127,7 +134,11 @@ async function updateBoxScore(inputs, updateEvents, state) {
  * @param {number} inputs.season Season for the list of games.
  * @param {number} inputs.gid Integer game ID for the box score (a negative number means no box score), which is used only for highlighting the relevant entry in the list.
  */
-async function updateGamesList(inputs, updateEvents, state) {
+async function updateGamesList(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+    state: any,
+): void | {[key: string]: any} {
     const {abbrev, gid, season} = inputs;
     if (typeof abbrev !== 'string' || typeof gid !== 'number' || typeof season !== 'number') {
         return;

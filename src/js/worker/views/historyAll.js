@@ -3,8 +3,12 @@
 import Promise from 'bluebird';
 import g from '../../globals';
 import {getCopy} from '../db';
+import type {GetOutput, UpdateEvents} from '../../util/types';
 
-async function updateHistory(inputs, updateEvents) {
+async function updateHistory(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun')) {
         const [awards, teams] = await Promise.all([
             getCopy.awards(),

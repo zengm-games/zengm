@@ -4,6 +4,7 @@ import _ from 'underscore';
 import g from '../../globals';
 import {getCopy} from '../db';
 import * as helpers from '../../util/helpers';
+import type {GetOutput, UpdateEvents} from '../../util/types';
 
 function getTeamLink(t) {
     return <a href={helpers.leagueUrl(["team_history", t.abbrev])}>{t.region} {t.name}</a>;
@@ -141,7 +142,11 @@ function sumRecordsFor(group, id, name, records) {
     return out;
 }
 
-async function updateTeamRecords(inputs, updateEvents, state) {
+async function updateTeamRecords(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+    state: any,
+): void | {[key: string]: any} {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || inputs.byType !== state.byType) {
         const [teams, awards] = await Promise.all([
             getCopy.teams({

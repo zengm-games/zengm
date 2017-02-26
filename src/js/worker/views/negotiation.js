@@ -3,6 +3,7 @@ import * as contractNegotiation from '../core/contractNegotiation';
 import * as freeAgents from '../core/freeAgents';
 import * as team from '../core/team';
 import {getCopy} from '../db';
+import type {GetOutput} from '../../util/types';
 
 function generateContractOptions(contract, ovr) {
     let growthFactor = 0.15;
@@ -47,7 +48,9 @@ function generateContractOptions(contract, ovr) {
     return contractOptions.filter(contractOption => contractOption.amount * 1000 <= g.maxContract);
 }
 
-async function updateNegotiation(inputs) {
+async function updateNegotiation(
+    inputs: GetOutput,
+): void | {[key: string]: any} {
     const negotiations = await g.cache.getAll('negotiations');
     let negotiation;
     if (inputs.pid === undefined) {

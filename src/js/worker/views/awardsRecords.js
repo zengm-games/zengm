@@ -1,6 +1,7 @@
 // @flow
 
 import {getCopy} from '../db';
+import type {GetOutput, UpdateEvents} from '../../util/types';
 
 const optionsTmp = [{
     val: "Won Championship",
@@ -109,7 +110,11 @@ function getPlayerAwards(p, awardType) {
     };
 }
 
-async function updateAwardsRecords(inputs, updateEvents, state) {
+async function updateAwardsRecords(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+    state: any,
+): void | {[key: string]: any} {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || inputs.awardType !== state.awardType) {
         let players = await getCopy.players({activeAndRetired: true});
         players = await getCopy.playersPlus(players, {

@@ -2,7 +2,7 @@
 
 import g from '../../globals';
 
-async function updateFantasyDraft() {
+async function updateFantasyDraft(): void | {[key: string]: any} {
     return {
         phase: g.phase,
     };

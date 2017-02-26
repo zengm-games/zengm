@@ -3,8 +3,13 @@
 import g from '../../globals';
 import {getCopy} from '../db';
 import * as helpers from '../../util/helpers';
+import type {GetOutput, UpdateEvents} from '../../util/types';
 
-async function updateStandings(inputs, updateEvents, state) {
+async function updateStandings(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+    state: any,
+): void | {[key: string]: any} {
     if (updateEvents.includes('dbChange') || (inputs.season === g.season && updateEvents.includes('gameSim')) || inputs.season !== state.season) {
         const teams = helpers.orderByWinp(await getCopy.teams({
             attrs: ["tid", "cid", "did", "abbrev", "region", "name"],

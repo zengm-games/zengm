@@ -3,8 +3,13 @@
 import g from '../../globals';
 import * as freeAgents from '../core/freeAgents';
 import {getCopy} from '../db';
+import type {GetOutput, UpdateEvents} from '../../util/types';
 
-async function updatePlayers(inputs, updateEvents, state) {
+async function updatePlayers(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+    state: any,
+): void | {[key: string]: any} {
     if (updateEvents.includes('dbChange') || updateEvents.includes('clearWatchList') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || inputs.statType !== state.statType || inputs.playoffs !== state.playoffs) {
         let players = await getCopy.players();
         players = players.filter(p => p.watch && typeof p.watch !== "function"); // In Firefox, objects have a "watch" function

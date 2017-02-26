@@ -2,7 +2,7 @@
 
 import {getCopy} from '../db';
 
-async function updateInbox() {
+async function updateInbox(): void | {[key: string]: any} {
     const messages = await getCopy.messages();
 
     messages.reverse();

@@ -2,7 +2,7 @@
 
 import g from '../../globals';
 
-async function updateDashboard() {
+async function updateDashboard(): void | {[key: string]: any} {
     const leagues = await g.dbm.leagues.getAll();
 
     for (let i = 0; i < leagues.length; i++) {

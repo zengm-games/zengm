@@ -2,8 +2,9 @@
 
 import g from '../../globals';
 import * as season from '../core/season';
+import type {GetOutput, UpdateEvents} from '../../util/types';
 
-async function updateGamesList() {
+async function updateGamesList(): void | {[key: string]: any} {
     const games = await season.getSchedule(true);
 
     for (const game of games) {
@@ -23,7 +24,10 @@ async function updateGamesList() {
     };
 }
 
-async function updateGamesInProgress(inputs, updateEvents) {
+async function updateGamesInProgress(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+): void | {[key: string]: any} {
     if (updateEvents.includes('dbChange') || updateEvents.includes('g.gamesInProgress')) {
         return {
             gamesInProgress: g.gamesInProgress,

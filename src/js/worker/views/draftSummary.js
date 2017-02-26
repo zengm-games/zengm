@@ -2,8 +2,11 @@
 
 import g from '../../globals';
 import {getCopy} from '../db';
+import type {GetOutput} from '../../util/types';
 
-async function updateDraftSummary(inputs) {
+async function updateDraftSummary(
+    inputs: GetOutput,
+): void | {[key: string]: any} {
     // Update every time because anything could change this (unless all players from class are retired)
     let playersAll = await g.cache.indexGetAll('playersByTid', [0, Infinity]);
     playersAll = playersAll.filter((p) => p.draft.year === inputs.season);

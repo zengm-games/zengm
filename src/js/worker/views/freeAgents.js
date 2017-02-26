@@ -7,7 +7,7 @@ import * as player from '../core/player';
 import * as team from '../core/team';
 import {getCopy} from '../db';
 
-async function updateFreeAgents() {
+async function updateFreeAgents(): void | {[key: string]: any} {
     let [payroll, userPlayers, players] = await Promise.all([
         team.getPayroll(g.userTid).get(0),
         g.cache.indexGetAll('playersByTid', g.userTid),

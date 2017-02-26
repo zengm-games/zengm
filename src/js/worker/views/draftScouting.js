@@ -3,6 +3,7 @@
 import Promise from 'bluebird';
 import g from '../../globals';
 import {getCopy} from '../db';
+import type {GetOutput, UpdateEvents} from '../../util/types';
 
 async function addSeason(season, tid) {
     let playersAll = await g.cache.indexGetAll('playersByTid', tid);
@@ -47,7 +48,10 @@ async function addSeason(season, tid) {
     };
 }
 
-async function updateDraftScouting(inputs, updateEvents) {
+async function updateDraftScouting(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') || updateEvents.includes('dbChange')) {
         // Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
         const seasonOffset = g.phase < g.PHASE.FREE_AGENCY ? 0 : 1;

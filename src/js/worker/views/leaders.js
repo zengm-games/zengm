@@ -3,8 +3,13 @@
 import g from '../../globals';
 import {getCopy} from '../db';
 import * as helpers from '../../util/helpers';
+import type {GetOutput, UpdateEvents} from '../../util/types';
 
-async function updateLeaders(inputs, updateEvents, state) {
+async function updateLeaders(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+    state: any,
+): void | {[key: string]: any} {
     const {season} = inputs;
     if (typeof season !== 'number') {
         return;

@@ -3,8 +3,12 @@ import g from '../../globals';
 import * as trade from '../core/trade';
 import {getCopy} from '../db';
 import * as helpers from '../../util/helpers';
+import type {GetOutput, UpdateEvents} from '../../util/types';
 
-async function updateUserRoster(inputs, updateEvents) {
+async function updateUserRoster(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') || updateEvents.includes('playerMovement') || updateEvents.includes('gameSim')) {
         let [userRoster, userPicks] = await Promise.all([
             g.cache.indexGetAll('playersByTid', g.userTid),

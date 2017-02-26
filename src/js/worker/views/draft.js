@@ -4,7 +4,7 @@ import g from '../../globals';
 import * as draft from '../core/draft';
 import {getCopy} from '../db';
 
-async function updateDraft() {
+async function updateDraft(): void | {[key: string]: any} {
     // DIRTY QUICK FIX FOR v10 db upgrade bug - eventually remove
     // This isn't just for v10 db upgrade! Needed the same fix for http://www.reddit.com/r/BasketballGM/comments/2tf5ya/draft_bug/cnz58m2?context=3 - draft class not always generated with the correct seasons
     {

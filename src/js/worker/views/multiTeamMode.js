@@ -2,8 +2,12 @@
 
 import g from '../../globals';
 import * as league from '../core/league';
+import type {GetOutput, UpdateEvents} from '../../util/types';
 
-async function updateMultiTeamMode(inputs, updateEvents) {
+async function updateMultiTeamMode(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+): void | {[key: string]: any} {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('g.userTids')) {
         // Make sure it's current
         await league.loadGameAttribute('godMode');

@@ -2,8 +2,13 @@
 
 import g from '../../globals';
 import {getCopy} from '../db';
+import type {GetOutput, UpdateEvents} from '../../util/types';
 
-async function updateLeagueFinances(inputs, updateEvents, state) {
+async function updateLeagueFinances(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+    state: any,
+): void | {[key: string]: any} {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || inputs.season !== state.season || inputs.season === g.season) {
         const teams = await getCopy.teams({
             attrs: ["tid", "abbrev", "region", "name"],

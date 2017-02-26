@@ -3,8 +3,12 @@
 import Promise from 'bluebird';
 import g from '../../globals';
 import {getCopy} from '../db';
+import type {GetOutput, UpdateEvents} from '../../util/types';
 
-async function updatePowerRankings(inputs, updateEvents) {
+async function updatePowerRankings(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') || updateEvents.includes('dbChange') || updateEvents.includes('gameSim')) {
         const [teams, players] = await Promise.all([
             getCopy.teams({

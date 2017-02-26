@@ -4,8 +4,13 @@ import * as season from '../core/season';
 import * as team from '../core/team';
 import * as trade from '../core/trade';
 import {getCopy} from '../db';
+import type {GetOutput, UpdateEvents} from '../../util/types';
 
-async function updateRoster(inputs, updateEvents, state) {
+async function updateRoster(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+    state: any,
+): void | {[key: string]: any} {
     if (updateEvents.includes('dbChange') || (inputs.season === g.season && (updateEvents.includes('gameSim') || updateEvents.includes('playerMovement'))) || inputs.abbrev !== state.abbrev || inputs.season !== state.season) {
         const vars = {
             abbrev: inputs.abbrev,

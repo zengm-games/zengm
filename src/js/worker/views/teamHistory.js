@@ -1,7 +1,12 @@
 import g from '../../globals';
 import {getCopy} from '../db';
+import type {GetOutput, UpdateEvents} from '../../util/types';
 
-async function updateTeamHistory(inputs, updateEvents, state) {
+async function updateTeamHistory(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+    state: any,
+): void | {[key: string]: any} {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || inputs.abbrev !== state.abbrev) {
         let bestRecord = null;
         let worstRecord = null;

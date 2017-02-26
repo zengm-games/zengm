@@ -1,8 +1,15 @@
 // @flow
 
 import {account} from '../util';
+import type {GetOutput, UpdateEvents} from '../../util/types';
 
-async function updateAccount(inputs, updateEvents, state, setState, topMenu) {
+async function updateAccount(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+    state: any,
+    setState: (state: any) => void,
+    topMenu: any,
+): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') || updateEvents.includes('account')) {
         await account.check();
 
@@ -27,7 +34,10 @@ async function updateAccount(inputs, updateEvents, state, setState, topMenu) {
     }
 }
 
-async function updateAchievements(inputs, updateEvents) {
+async function updateAchievements(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun')) {
         const achievements = await account.getAchievements();
 

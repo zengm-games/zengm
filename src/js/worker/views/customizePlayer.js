@@ -6,8 +6,12 @@ import * as finances from '../core/finances';
 import * as player from '../core/player';
 import {getCopy} from '../db';
 import * as helpers from '../../util/helpers';
+import type {GetOutput, UpdateEvents} from '../../util/types';
 
-async function updateCustomizePlayer(inputs, updateEvents) {
+async function updateCustomizePlayer(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+): void | {[key: string]: any} {
     if (!g.godMode) {
         return {
             godMode: g.godMode,

@@ -4,7 +4,7 @@ import g from '../../globals';
 import * as player from '../core/player';
 import {getCopy} from '../db';
 
-async function updateNegotiationList() {
+async function updateNegotiationList(): void | {[key: string]: any} {
     let negotiations = await g.cache.getAll('negotiations');
 
     // For Multi Team Mode, might have other team's negotiations going on

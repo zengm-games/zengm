@@ -1,8 +1,12 @@
 // @flow
 
 import g from '../../globals';
+import type {GetOutput, UpdateEvents} from '../../util/types';
 
-async function updateExportStats(inputs, updateEvents) {
+async function updateExportStats(
+    inputs: GetOutput,
+    updateEvents: UpdateEvents,
+): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') || updateEvents.includes('newPhase') || updateEvents.includes('dbChange')) {
         const options = [{
             key: "all",

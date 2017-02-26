@@ -792,7 +792,11 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
                 cbRunDay();
             } else {
                 updateStatus("Idle");
-                helpers.errorNotify(userTeamSizeError);
+                logEvent({
+                    type: 'error',
+                    text: userTeamSizeError,
+                    saveToDb: false,
+                });
             }
         }
     } else {

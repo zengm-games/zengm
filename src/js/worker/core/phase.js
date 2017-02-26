@@ -548,7 +548,11 @@ async function newPhase(phase: Phase, extra: any) {
 
     const phaseChangeInProgress = await lock.phaseChangeInProgress();
     if (phaseChangeInProgress) {
-        helpers.errorNotify("Phase change already in progress, maybe in another tab.");
+        logEvent({
+            type: 'error',
+            text: 'Phase change already in progress, maybe in another tab.',
+            saveToDb: false,
+        });
     } else {
         await league.setGameAttributes({phaseChangeInProgress: true});
         updatePlayMenu();

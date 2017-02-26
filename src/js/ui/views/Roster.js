@@ -6,7 +6,7 @@ import MenuItem from 'react-bootstrap/lib/MenuItem';
 import g from '../../globals';
 import * as api from '../api';
 import {tradeFor} from '../../util/actions';
-import {realtimeUpdate, setTitle} from '../util';
+import {logEvent, realtimeUpdate, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels, RatingWithChange, RecordAndPlayoffs} from '../components';
 import clickable from '../wrappers/clickable';
@@ -54,7 +54,11 @@ const handleRelease = async p => {
     if (window.confirm(releaseMessage)) {
         const errorMsg = await api.releasePlayer(p.pid, justDrafted);
         if (errorMsg) {
-            helpers.errorNotify(errorMsg);
+            logEvent({
+                type: 'error',
+                text: errorMsg,
+                saveToDb: false,
+            });
         } else {
             realtimeUpdate(["playerMovement"]);
         }

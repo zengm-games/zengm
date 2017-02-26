@@ -175,11 +175,17 @@ const handleScreenshotClick = e => {
                 });
             } catch (err) {
                 console.log(err);
+                let errorMsg;
                 if (err && err.responseJSON && err.responseJSON.error && err.responseJSON.error.message) {
-                    helpers.errorNotify(`Error saving screenshot. Error message from Imgur: "${err.responseJSON.error.message}"`);
+                    errorMsg = `Error saving screenshot. Error message from Imgur: "${err.responseJSON.error.message}"`;
                 } else {
-                    helpers.errorNotify("Error saving screenshot.");
+                    errorMsg = "Error saving screenshot.";
                 }
+                logEvent({
+                    type: 'error',
+                    text: errorMsg,
+                    saveToDb: false,
+                });
             }
         },
     });

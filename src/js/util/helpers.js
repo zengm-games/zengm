@@ -3,7 +3,6 @@
 import orderBy from 'lodash.orderby';
 import React from 'react';
 import g from '../globals';
-import {logEvent} from '../ui/util';
 import type {GameProcessed, GameProcessedCompleted, Pick, TeamBasic, TeamFiltered} from '../common/types';
 
 /**
@@ -191,23 +190,6 @@ function error(errorText: React.Element<*> | string, cb: Function) {
         cb();
     }
 }
-
-/**
- * Display a transient error message as a notification popup.
- *
- * Use error if you need to block the whole page.
- *
- * @memberOf util.helpers
- * @param {string} error Text of the error message to be displayed.
- */
-function errorNotify(errorText: string) {
-    logEvent({
-        type: "error",
-        text: errorText,
-        saveToDb: false,
-    });
-}
-
 
 // Hacky solution to http://stackoverflow.com/q/39683076/786644
 function keys<T: string>(obj: any): Array<T> {
@@ -681,7 +663,6 @@ export {
     getTeamsDefault,
     deepCopy,
     error,
-    errorNotify,
     keys,
     resetG,
     bbgmPing,

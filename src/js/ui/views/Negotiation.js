@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
 import * as api from '../api';
-import {realtimeUpdate, setTitle} from '../util';
+import {logEvent, realtimeUpdate, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {NewWindowLink} from '../components';
 
@@ -23,9 +23,13 @@ const cancel = async pid => {
 };
 
 const sign = async (pid, amount, exp) => {
-    const error = await api.acceptContractNegotiation(pid, Math.round(amount * 1000), exp);
-    if (error !== undefined && error) {
-        helpers.errorNotify(error);
+    const errorMsg = await api.acceptContractNegotiation(pid, Math.round(amount * 1000), exp);
+    if (errorMsg !== undefined && errorMsg) {
+        logEvent({
+            type: 'error',
+            text: errorMsg,
+            saveToDb: false,
+        });
     }
     redirectNegotiationOrRoster(false);
 };

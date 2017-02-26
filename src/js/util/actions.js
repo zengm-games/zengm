@@ -2,7 +2,7 @@
 
 import {reset} from '../worker/db';
 import g from '../globals';
-import {realtimeUpdate} from '../ui/util';
+import {logEvent, realtimeUpdate} from '../ui/util';
 import * as contractNegotiation from '../worker/core/contractNegotiation';
 import * as draft from '../worker/core/draft';
 import * as freeAgents from '../worker/core/freeAgents';
@@ -24,9 +24,13 @@ const negotiate = async (pid: number) => {
     // If there is no active negotiation with this pid, create it
     const negotiation = await g.cache.get('negotiations', pid);
     if (!negotiation) {
-        const error = await contractNegotiation.create(pid, false);
-        if (error !== undefined && error) {
-            helpers.errorNotify(error);
+        const errorMsg = await contractNegotiation.create(pid, false);
+        if (errorMsg !== undefined && errorMsg) {
+            logEvent({
+                type: 'error',
+                text: errorMsg,
+                saveToDb: false,
+            });
         } else {
             realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));
         }

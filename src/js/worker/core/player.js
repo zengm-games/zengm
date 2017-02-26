@@ -6,10 +6,9 @@ import faces from 'facesjs';
 import _ from 'underscore';
 import g from '../../globals';
 import * as finances from './finances';
-import * as injuries from '../../data/injuries';
 import * as names from '../../data/names';
 import * as helpers from '../../util/helpers';
-import {logEvent, random} from '../util';
+import {injuries, logEvent, random} from '../util';
 import type {
     GamePlayer,
     GameResults,

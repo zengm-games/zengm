@@ -1,6 +1,6 @@
 // @flow
 
-import {logEvent} from '../ui/util';
+import {logEvent} from '../util';
 
 const all = [{
     date: "2013-09-21",
@@ -154,7 +154,7 @@ function check() {
     }
 }
 
-export {
+export default {
     all,
     check,
 };

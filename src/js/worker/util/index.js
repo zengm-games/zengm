@@ -3,7 +3,9 @@
 export {default as account} from './account';
 export {default as advStats} from './advStats';
 export {default as beforeView} from './beforeView';
+export {default as changes} from './changes';
 export {default as genMessage} from './genMessage';
+export {default as injuries} from './injuries';
 export {default as lock} from './lock';
 export {default as logEvent} from './logEvent';
 export {default as random} from './random';

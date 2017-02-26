@@ -1,6 +1,6 @@
 // @flow
 
-import * as changes from '../../data/changes';
+import {changes} from '../util';
 
 async function updateChanges(): void | {[key: string]: any} {
     return {

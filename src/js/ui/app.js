@@ -15,7 +15,6 @@ import Controller from './components/Controller';
 import * as processInputs from './processInputs';
 import {ads, initView, setTitle} from './util';
 import * as views from './views';
-import * as changes from '../data/changes';
 import * as helpers from '../util/helpers';
 
 // Needed because of https://github.com/petkaantonov/bluebird/issues/363
@@ -60,9 +59,6 @@ const genPage = (id, inLeague = true) => {
     await api.init();
 
     ReactDOM.render(<Controller />, document.getElementById('content'));
-
-    // Any news?
-    changes.check();
 
     /*this.before((ctx) => {
             // Normal Cordova pages

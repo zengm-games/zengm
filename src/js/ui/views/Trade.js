@@ -18,11 +18,11 @@ const genRows = (players, handleChangeAsset) => {
                 p.ratings.ovr,
                 p.ratings.pot,
                 <span>{helpers.formatCurrency(p.contract.amount, "M")} thru {p.contract.exp}</span>,
-                helpers.round(p.stats.min, 1),
-                helpers.round(p.stats.pts, 1),
-                helpers.round(p.stats.trb, 1),
-                helpers.round(p.stats.ast, 1),
-                helpers.round(p.stats.per, 1),
+                p.stats.min.toFixed(1),
+                p.stats.pts.toFixed(1),
+                p.stats.trb.toFixed(1),
+                p.stats.ast.toFixed(1),
+                p.stats.per.toFixed(1),
             ],
         };
     });

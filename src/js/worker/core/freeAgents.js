@@ -156,13 +156,13 @@ function amountWithMood(amount: number, mood: number = 0.5): number {
         if (amount > g.maxContract) {
             amount = g.maxContract;
         }
-        return Number(helpers.round(amount / 10)) * 10;  // Round to nearest 10k, assuming units are thousands
+        return Math.round(amount / 10) * 10;  // Round to nearest 10k, assuming units are thousands
     }
 
     if (amount > g.maxContract / 1000) {
         amount = g.maxContract / 1000;
     }
-    return Number(helpers.round(amount * 100)) / 100;  // Round to nearest 10k, assuming units are millions
+    return Math.round(amount * 100) / 100;  // Round to nearest 10k, assuming units are millions
 }
 
 /**

@@ -50,7 +50,7 @@ const copyValidValues = (source, target, season) => {
 
     {
         // Allow any value, even above or below normal limits, but round to $10k and convert from M to k
-        let amount = helpers.round(100 * parseFloat(source.contract.amount)) * 10;
+        let amount = Math.round(100 * parseFloat(source.contract.amount)) * 10;
         if (isNaN(amount)) {
             amount = g.minContract;
         }
@@ -211,9 +211,9 @@ class CustomizePlayer extends React.Component {
         const face = faces.generate();
 
         // Round long decimals
-        face.fatness = helpers.round(face.fatness, 2);
-        face.eyes[0].angle = helpers.round(face.eyes[0].angle, 1);
-        face.eyes[1].angle = helpers.round(face.eyes[1].angle, 1);
+        face.fatness = face.fatness.toFixed(2);
+        face.eyes[0].angle = face.eyes[0].angle.toFixed(1);
+        face.eyes[1].angle = face.eyes[1].angle.toFixed(1);
 
         this.state.p.face = face;
         this.setState({

@@ -29,7 +29,7 @@ class PlayerRow extends React.Component {
                 >{p.name}</PlayerNameLabels>
             </td>
             <td>{p.pos}</td>
-            <td>{helpers.round(p.min, 1)}</td>
+            <td>{p.min.toFixed(1)}</td>
             <td>{p.fg}-{p.fga}</td>
             <td>{p.tp}-{p.tpa}</td>
             <td>{p.ft}-{p.fta}</td>
@@ -81,7 +81,7 @@ const BoxScore = ({boxScore}) => <div>
                     <tr>
                         <td>Total</td>
                         <td />
-                        <td>{helpers.round(t.min, 1)}</td>
+                        <td>{t.min.toFixed(1)}</td>
                         <td>{t.fg}-{t.fga}</td>
                         <td>{t.tp}-{t.tpa}</td>
                         <td>{t.ft}-{t.fta}</td>

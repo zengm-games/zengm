@@ -29,7 +29,7 @@ const Leaders = ({categories, season}) => {
                                         skills={p.ratings.skills}
                                         watch={p.watch}
                                     >{p.name}</PlayerNameLabels>, <a href={helpers.leagueUrl(['roster', p.abbrev, season])}>{p.abbrev}</a></td>
-                                    <td>{helpers.round(p.stat, 1)}</td>
+                                    <td>{p.stat.toFixed(1)}</td>
                                 </tr>)}
                             </tbody>
                         </table>

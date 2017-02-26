@@ -70,9 +70,9 @@ async function updateCustomizePlayer(
                 scoutingRank,
             );
 
-            p.face.fatness = helpers.round(p.face.fatness, 2);
-            p.face.eyes[0].angle = helpers.round(p.face.eyes[0].angle, 1);
-            p.face.eyes[1].angle = helpers.round(p.face.eyes[1].angle, 1);
+            p.face.fatness = p.face.fatness.toFixed(2);
+            p.face.eyes[0].angle = p.face.eyes[0].angle.toFixed(1);
+            p.face.eyes[1].angle = p.face.eyes[1].angle.toFixed(1);
 
             appearanceOption = 'Cartoon Face';
             p.imgURL = "http://";

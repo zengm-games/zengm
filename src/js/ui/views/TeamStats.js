@@ -49,10 +49,10 @@ const TeamStats = ({season, stats, teams}) => {
 
         for (const statType of statTypeColumns) {
             const value = t.stats.hasOwnProperty(statType) ? t.stats[statType] : t.seasonAttrs[statType];
-            data[statType] = helpers.round(value, 1);
+            data[statType] = value.toFixed(1);
         }
 
-        data.diff = <span className={t.stats.diff > 0 ? 'text-success' : 'text-danger'}>{helpers.round(t.stats.diff, 1)}</span>;
+        data.diff = <span className={t.stats.diff > 0 ? 'text-success' : 'text-danger'}>{t.stats.diff.toFixed(1)}</span>;
 
         // This is our team.
         if (g.userTid === t.tid) {

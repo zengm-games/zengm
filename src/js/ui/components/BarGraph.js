@@ -181,21 +181,25 @@ const BarGraph = ({data = [], labels, tooltipCb = val => val, ylim: ylimArg}: Ba
                 cssClass = 'bar-graph-3';
             }
 
-            const tooltip = <Tooltip id="tooltip">{titleStart}{tooltipCb(val)}</Tooltip>;
+            const bar = <div
+                className={cssClass}
+                key={i}
+                style={{
+                    marginLeft: `${gap}px`,
+                    position: 'absolute',
+                    bottom: `${bottom}%`,
+                    height: `${height}%`,
+                    left: `${i * widthPct}%`,
+                    width: `calc(${widthPct}% - ${gap}px)`,
+                }}
+            />;
 
-            return <OverlayTrigger key={i} overlay={tooltip} placement="top">
-                <div
-                    className={cssClass}
-                    style={{
-                        marginLeft: `${gap}px`,
-                        position: 'absolute',
-                        bottom: `${bottom}%`,
-                        height: `${height}%`,
-                        left: `${i * widthPct}%`,
-                        width: `calc(${widthPct}% - ${gap}px)`,
-                    }}
-                />
-            </OverlayTrigger>;
+            if (typeof val === 'number' && !isNaN(val)) {
+                const tooltip = <Tooltip id="tooltip">{titleStart}{tooltipCb(val)}</Tooltip>;
+                return <OverlayTrigger key={i} overlay={tooltip} placement="top">{bar}</OverlayTrigger>;
+            }
+
+            return bar;
         });
     } else {
         // Stacked

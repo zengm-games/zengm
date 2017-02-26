@@ -53,16 +53,16 @@ const LeagueDashboard = ({abbrev, ast, astRank, att, cash, completed, confTeams,
                             <div className="col-xs-6">
                                 <h3>Team Leaders</h3>
                                 <p>
-                                    <a href={helpers.leagueUrl(['player', teamLeaders.pts.pid])}>{teamLeaders.pts.name}</a>: {helpers.round(teamLeaders.pts.stat, 1)} pts<br />
-                                    <a href={helpers.leagueUrl(['player', teamLeaders.trb.pid])}>{teamLeaders.trb.name}</a>: {helpers.round(teamLeaders.trb.stat, 1)} reb<br />
-                                    <a href={helpers.leagueUrl(['player', teamLeaders.ast.pid])}>{teamLeaders.ast.name}</a>: {helpers.round(teamLeaders.ast.stat, 1)} ast<br />
+                                    <a href={helpers.leagueUrl(['player', teamLeaders.pts.pid])}>{teamLeaders.pts.name}</a>: {teamLeaders.pts.stat.toFixed(1)} pts<br />
+                                    <a href={helpers.leagueUrl(['player', teamLeaders.trb.pid])}>{teamLeaders.trb.name}</a>: {teamLeaders.trb.stat.toFixed(1)} reb<br />
+                                    <a href={helpers.leagueUrl(['player', teamLeaders.ast.pid])}>{teamLeaders.ast.name}</a>: {teamLeaders.ast.stat.toFixed(1)} ast<br />
                                     <a href={helpers.leagueUrl(['roster'])}>» Full Roster</a>
                                 </p>
                                 <h3>League Leaders</h3>
                                 <p>
-                                    <a href={helpers.leagueUrl(['player', leagueLeaders.pts.pid])}>{leagueLeaders.pts.name}</a>, <a href={helpers.leagueUrl(['roster', leagueLeaders.pts.abbrev])}>{leagueLeaders.pts.abbrev}</a>: {helpers.round(leagueLeaders.pts.stat, 1)} pts<br />
-                                    <a href={helpers.leagueUrl(['player', leagueLeaders.trb.pid])}>{leagueLeaders.trb.name}</a>, <a href={helpers.leagueUrl(['roster', leagueLeaders.trb.abbrev])}>{leagueLeaders.trb.abbrev}</a>: {helpers.round(leagueLeaders.trb.stat, 1)} reb<br />
-                                    <a href={helpers.leagueUrl(['player', leagueLeaders.ast.pid])}>{leagueLeaders.ast.name}</a>, <a href={helpers.leagueUrl(['roster', leagueLeaders.ast.abbrev])}>{leagueLeaders.ast.abbrev}</a>: {helpers.round(leagueLeaders.ast.stat, 1)} ast<br />
+                                    <a href={helpers.leagueUrl(['player', leagueLeaders.pts.pid])}>{leagueLeaders.pts.name}</a>, <a href={helpers.leagueUrl(['roster', leagueLeaders.pts.abbrev])}>{leagueLeaders.pts.abbrev}</a>: {leagueLeaders.pts.stat.toFixed(1)} pts<br />
+                                    <a href={helpers.leagueUrl(['player', leagueLeaders.trb.pid])}>{leagueLeaders.trb.name}</a>, <a href={helpers.leagueUrl(['roster', leagueLeaders.trb.abbrev])}>{leagueLeaders.trb.abbrev}</a>: {leagueLeaders.trb.stat.toFixed(1)} reb<br />
+                                    <a href={helpers.leagueUrl(['player', leagueLeaders.ast.pid])}>{leagueLeaders.ast.name}</a>, <a href={helpers.leagueUrl(['roster', leagueLeaders.ast.abbrev])}>{leagueLeaders.ast.abbrev}</a>: {leagueLeaders.ast.stat.toFixed(1)} ast<br />
                                     <a href={helpers.leagueUrl(['leaders'])}>» League Leaders</a><br />
                                     <a href={helpers.leagueUrl(['player_stats'])}>» Player Stats</a>
                                 </p>
@@ -82,10 +82,10 @@ const LeagueDashboard = ({abbrev, ast, astRank, att, cash, completed, confTeams,
                             <div className="col-xs-6">
                                 <h3>Team Stats</h3>
                                 <p>
-                                    Points: {helpers.round(pts, 1)} ({helpers.ordinal(ptsRank)})<br />
-                                    Allowed: {helpers.round(oppPts, 1)} ({helpers.ordinal(oppPtsRank)})<br />
-                                    Rebounds: {helpers.round(trb, 1)} ({helpers.ordinal(trbRank)})<br />
-                                    Assists: {helpers.round(ast, 1)} ({helpers.ordinal(astRank)})<br />
+                                    Points: {pts.toFixed(1)} ({helpers.ordinal(ptsRank)})<br />
+                                    Allowed: {oppPts.toFixed(1)} ({helpers.ordinal(oppPtsRank)})<br />
+                                    Rebounds: {trb.toFixed(1)} ({helpers.ordinal(trbRank)})<br />
+                                    Assists: {ast.toFixed(1)} ({helpers.ordinal(astRank)})<br />
                                     <a href={helpers.leagueUrl(['team_stats'])}>» Team Stats</a>
                                 </p>
                                 <h3>Finances</h3>
@@ -172,11 +172,11 @@ const LeagueDashboard = ({abbrev, ast, astRank, att, cash, completed, confTeams,
                             {helpers.formatCurrency(p.contract.amount, 'M')} thru {p.contract.exp}
                         </td>
                         <td>{p.stats.gp}</td>
-                        <td>{helpers.round(p.stats.min, 1)}</td>
-                        <td>{helpers.round(p.stats.pts, 1)}</td>
-                        <td>{helpers.round(p.stats.trb, 1)}</td>
-                        <td>{helpers.round(p.stats.ast, 1)}</td>
-                        <td>{helpers.round(p.stats.per, 1)}</td>
+                        <td>{p.stats.min.toFixed(1)}</td>
+                        <td>{p.stats.pts.toFixed(1)}</td>
+                        <td>{p.stats.trb.toFixed(1)}</td>
+                        <td>{p.stats.ast.toFixed(1)}</td>
+                        <td>{p.stats.per.toFixed(1)}</td>
                     </tr>)}
                 </tbody>
             </table>

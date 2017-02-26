@@ -174,11 +174,11 @@ const RosterRow = clickable(props => {
             {helpers.formatCurrency(p.contract.amount, 'M')} thru {p.contract.exp}
         </td> : null}
         <td onClick={toggleClicked}>{p.stats.gp}</td>
-        <td onClick={toggleClicked}>{helpers.round(p.stats.min, 1)}</td>
-        <td onClick={toggleClicked}>{helpers.round(p.stats.pts, 1)}</td>
-        <td onClick={toggleClicked}>{helpers.round(p.stats.trb, 1)}</td>
-        <td onClick={toggleClicked}>{helpers.round(p.stats.ast, 1)}</td>
-        <td onClick={toggleClicked}>{helpers.round(p.stats.per, 1)}</td>
+        <td onClick={toggleClicked}>{p.stats.min.toFixed(1)}</td>
+        <td onClick={toggleClicked}>{p.stats.pts.toFixed(1)}</td>
+        <td onClick={toggleClicked}>{p.stats.trb.toFixed(1)}</td>
+        <td onClick={toggleClicked}>{p.stats.ast.toFixed(1)}</td>
+        <td onClick={toggleClicked}>{p.stats.per.toFixed(1)}</td>
         {editable ? <td onClick={toggleClicked}><PlayingTime p={p} /></td> : null}
         {editable ? <td onClick={toggleClicked}>
             <button

@@ -87,7 +87,7 @@ const Negotiation = ({contractOptions, errorMessage, payroll, player = {}, resig
                     {contractOptions.map((contract, i) => {
                         return <div key={i} className={classNames('list-group-item', {'list-group-item-success': contract.smallestAmount})} style={{height: '54px'}}>
                             <div className="pull-left" style={{paddingTop: '8px'}}>
-                                ${helpers.round(contract.amount, 2)}M per year<span className="hidden-xs">, through {contract.exp}</span> ({contract.years} {contract.years === 1 ? 'season' : 'seasons'})
+                                ${contract.amount.toFixed(2)}M per year<span className="hidden-xs">, through {contract.exp}</span> ({contract.years} {contract.years === 1 ? 'season' : 'seasons'})
                             </div>
 
                             <button

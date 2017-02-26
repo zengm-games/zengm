@@ -17,7 +17,7 @@ const LeagueFinances = ({minPayroll, luxuryPayroll, luxuryTax, salaryCap, season
             key: t.tid,
             data: [
                 <a href={helpers.leagueUrl(["team_finances", t.abbrev])}>{t.region} {t.name}</a>,
-                helpers.numberWithCommas(helpers.round(t.seasonAttrs.att)),
+                helpers.numberWithCommas(Math.round(t.seasonAttrs.att)),
                 helpers.formatCurrency(t.seasonAttrs.revenue, "M"),
                 helpers.formatCurrency(t.seasonAttrs.profit, "M"),
                 helpers.formatCurrency(t.seasonAttrs.cash, "M"),

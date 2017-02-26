@@ -97,17 +97,6 @@ describe("util/helpers", () => {
         });
     });
 
-    describe("#round()", () => {
-        it("should work with default precision", () => {
-            assert.equal(helpers.round(20.5827), "21");
-            assert.equal(helpers.round("205.227"), "205");
-        });
-        it("should work with user-supplied precision", () => {
-            assert.equal(helpers.round(20.5827, 3), "20.583");
-            assert.equal(helpers.round("20.5827", 1), "20.6");
-        });
-    });
-
     describe("#nullPad()", () => {
         const array = [1, 2, 3, 4, 5];
         it("should do nothing if already long enough", () => {

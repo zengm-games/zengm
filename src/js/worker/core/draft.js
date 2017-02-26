@@ -97,7 +97,7 @@ async function genPlayers(tid: number, scoutingRank?: ?number = null, numPlayers
 function lotteryLogTxt(tid: number, type: 'chance' | 'moveddown' | 'movedup' | 'normal', number: number) {
     let txt = `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tid], g.season])}">${g.teamNamesCache[tid]}</a>`;
     if (type === 'chance') {
-        txt += ` have a ${helpers.round(number, 2)}% chance of getting the top overall pick of the ${g.season} draft.`;
+        txt += ` have a ${number.toFixed(2)}% chance of getting the top overall pick of the ${g.season} draft.`;
     } else if (type === 'movedup') {
         txt += ` moved up in the lottery and will select ${helpers.ordinal(number)} overall in the ${g.season} draft.`;
     } else if (type === 'moveddown') {

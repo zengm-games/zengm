@@ -27,6 +27,8 @@ move everything but the UI to a web worker
   - for realtimeUpdate, make async, and then manually do callback code after awaiting?
 - index.js or app.js for main file in ui/worker?
 
+for modules that should always be consumed as whole (core/*), export default object and then re-export in index.js
+
 bbgm.g.cache.flush().then(() => console.log('done'));
 fucked = false; Object.values(bbgm.g.cache.indexes.teamSeasonsBySeasonTid).forEach((ts) => { if (ts.hasOwnProperty('ast')) { console.log(ts); fucked = true } }); if (fucked) { throw new Error('FUCK'); }
 bbgm.league.setGameAttributes({phaseChangeInProgress: false})
@@ -169,7 +171,6 @@ flow
   backboard
     BackboardTx should specify object stores
     should somehow specify contents of object stores
-  get rid of helpers.round, should be .toFixed (string output) or Math.round (number output)
   get rid of ScheduleGame.highlight
   in withStats, how to convert input obj of type Player to output obj of type PlayerWithStats
   get rid of any, Object, etc

@@ -23,7 +23,7 @@ const PowerRankings = ({teams}) => {
                 t.seasonAttrs.won,
                 t.seasonAttrs.lost,
                 t.seasonAttrs.lastTen,
-                <span className={t.stats.diff > 0 ? 'text-success' : 'text-danger'}>{helpers.round(t.stats.diff, 1)}</span>,
+                <span className={t.stats.diff > 0 ? 'text-success' : 'text-danger'}>{t.stats.diff.toFixed(1)}</span>,
             ],
             classNames: {
                 info: t.tid === g.userTid,

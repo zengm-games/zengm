@@ -2,7 +2,6 @@
 
 import g from '../../globals';
 import {getCopy} from '../db';
-import * as helpers from '../../util/helpers';
 
 async function updateTeamInfo(): void | {[key: string]: any} {
     const teams = await getCopy.teams({
@@ -12,7 +11,7 @@ async function updateTeamInfo(): void | {[key: string]: any} {
     });
 
     for (let i = 0; i < teams.length; i++) {
-        teams[i].pop = helpers.round(teams[i].seasonAttrs.pop, 6);
+        teams[i].pop = parseFloat(teams[i].seasonAttrs.pop.toFixed(6));
     }
 
     return {

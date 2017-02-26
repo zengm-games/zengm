@@ -19,7 +19,7 @@ const StatsRow = clickable(({clicked, i, numPlayers, p, toggleClicked}) => {
             >{p.name}</PlayerNameLabels>
         </td>
         <td>{p.pos}</td>
-        <td>{helpers.round(p.min, 1)}</td>
+        <td>{p.min.toFixed(1)}</td>
         <td>{p.fg}-{p.fga}</td>
         <td>{p.tp}-{p.tpa}</td>
         <td>{p.ft}-{p.fta}</td>
@@ -105,16 +105,16 @@ class BoxScore extends React.Component {
                                 <tbody>
                                     {boxScore.teams.map((t, i) => <tr key={t.abbrev}>
                                         <td className={t.efg >= boxScore.teams[1 - i].efg ? 'success' : null}>
-                                            {helpers.round(t.efg, 1)}
+                                            {t.efg.toFixed(1)}
                                         </td>
                                         <td className={t.tovp <= boxScore.teams[1 - i].tovp ? 'success' : null}>
-                                            {helpers.round(t.tovp, 1)}
+                                            {t.tovp.toFixed(1)}
                                         </td>
                                         <td className={t.orbp >= boxScore.teams[1 - i].orbp ? 'success' : null}>
-                                            {helpers.round(t.orbp, 1)}
+                                            {t.orbp.toFixed(1)}
                                         </td>
                                         <td className={t.ftpfga >= boxScore.teams[1 - i].ftpfga ? 'success' : null}>
-                                            {helpers.round(t.ftpfga, 3)}
+                                            {t.ftpfga.toFixed(3)}
                                         </td>
                                     </tr>)}
                                 </tbody>

@@ -3,7 +3,7 @@
 import orderBy from 'lodash.orderby';
 import React from 'react';
 import g from '../globals';
-import type {GameProcessed, GameProcessedCompleted, Pick, TeamBasic, TeamFiltered} from '../common/types';
+import type {GameProcessed, GameProcessedCompleted, Pick, TeamBasic} from '../common/types';
 
 /**
  * Validate that a given abbreviation corresponds to a team.
@@ -246,10 +246,6 @@ function leagueUrl(components: (number | string)[]): string {
     return url;
 }
 
-function round(value: number | string, precision: number | string = 0): string {
-    return parseFloat(value).toFixed(parseInt(precision, 10));
-}
-
 /**
  * Pad an array with nulls or truncate it so that it has a fixed length.
  *
@@ -281,16 +277,16 @@ function nullPad<T>(array: (?T)[], length: number): (?T)[] {
  */
 function formatCurrency(amount: number, append: string = '', precision: number = 2): string {
     if (amount < 0) {
-        return `-$${round(Math.abs(amount), precision)}${append}`;
+        return `-$${Math.abs(amount).toFixed(precision)}${append}`;
     }
-    return `$${round(amount, precision)}${append}`;
+    return `$${amount.toFixed(precision)}${append}`;
 }
 
 /**
  * Format a number as an integer with commas in the thousands places.
  */
 function numberWithCommas(x: number | string): string {
-    return round(x).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return parseFloat(x).toFixed().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
 /**
@@ -542,12 +538,12 @@ function checkNaNs() {
 }
 
 function gameScore(arg: {[key: string]: number}): string {
-    return round(arg.pts + 0.4 * arg.fg - 0.7 * arg.fga - 0.4 * (arg.fta - arg.ft) + 0.7 * arg.orb + 0.3 * (arg.trb - arg.orb) + arg.stl + 0.7 * arg.ast + 0.7 * arg.blk - 0.4 * arg.pf - arg.tov, 1);
+    return (arg.pts + 0.4 * arg.fg - 0.7 * arg.fga - 0.4 * (arg.fta - arg.ft) + 0.7 * arg.orb + 0.3 * (arg.trb - arg.orb) + arg.stl + 0.7 * arg.ast + 0.7 * arg.blk - 0.4 * arg.pf - arg.tov).toFixed(1);
 }
 
 function plusMinus(arg: number, d: number): string {
     if (isNaN(arg)) { return ""; }
-    return (arg > 0 ? "+" : "") + round(arg, d);
+    return (arg > 0 ? "+" : "") + arg.toFixed(d);
 }
 
 // Used to fix links in the event log, which will be wrong if a league is exported and then imported
@@ -635,7 +631,7 @@ function roundWinp(winp: number): string {
     return output;
 }
 
-const orderByWinp = (teams: TeamFiltered[]): TeamFiltered[] => {
+const orderByWinp = <T: {seasonAttrs: {winp: number, won: number}}>(teams: T[]): T[] => {
     return orderBy(
         teams,
         [(t) => t.seasonAttrs.winp, (t) => t.seasonAttrs.won],
@@ -666,7 +662,6 @@ export {
     keys,
     resetG,
     bbgmPing,
-    round,
     nullPad,
     formatCurrency,
     numberWithCommas,

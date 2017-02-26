@@ -359,7 +359,7 @@ async function create(
             const p: any = player.augmentPartialPlayer(p0, scoutingRank);
 
             // Don't let imported contracts be created for below the league minimum, and round to nearest $10,000.
-            p.contract.amount = Math.max(10 * Number(helpers.round(p.contract.amount / 10)), g.minContract);
+            p.contract.amount = Math.max(10 * Math.round(p.contract.amount / 10), g.minContract);
 
             // Separate out stats
             const playerStats = p.stats;

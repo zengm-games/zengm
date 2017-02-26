@@ -53,13 +53,13 @@ class FinancesForm extends React.Component {
 
         const budgetAmounts = {
             // Convert from [millions of dollars] to [thousands of dollars] rounded to the nearest $10k
-            coaching: helpers.bound(helpers.round(this.state.coaching * 100) * 10, 0, Infinity),
-            facilities: helpers.bound(helpers.round(this.state.facilities * 100) * 10, 0, Infinity),
-            health: helpers.bound(helpers.round(this.state.health * 100) * 10, 0, Infinity),
-            scouting: helpers.bound(helpers.round(this.state.scouting * 100) * 10, 0, Infinity),
+            coaching: helpers.bound(Math.round(this.state.coaching * 100) * 10, 0, Infinity),
+            facilities: helpers.bound(Math.round(this.state.facilities * 100) * 10, 0, Infinity),
+            health: helpers.bound(Math.round(this.state.health * 100) * 10, 0, Infinity),
+            scouting: helpers.bound(Math.round(this.state.scouting * 100) * 10, 0, Infinity),
 
             // Already in [dollars]
-            ticketPrice: helpers.bound(parseFloat(helpers.round(this.state.ticketPrice, 2)), 0, Infinity),
+            ticketPrice: helpers.bound(parseFloat(this.state.ticketPrice.toFixed(2)), 0, Infinity),
         };
 
         await api.updateBudget(budgetAmounts);
@@ -256,7 +256,7 @@ const TeamFinances = ({abbrev, barData, barSeasons, contractTotals, contracts, g
                     <BarGraph
                         data={barData.hype}
                         labels={barSeasons}
-                        tooltipCb={val => helpers.round(val, 2)}
+                        tooltipCb={val => val.toFixed(2)}
                         ylim={[0, 1]}
                     />
                 </div><br /><br />
@@ -265,7 +265,7 @@ const TeamFinances = ({abbrev, barData, barSeasons, contractTotals, contracts, g
                     <BarGraph
                         data={barData.pop}
                         labels={barSeasons}
-                        tooltipCb={val => `${helpers.round(val, 1)}M`}
+                        tooltipCb={val => `${val.toFixed(1)}M`}
                         ylim={[0, 20]}
                     />
                 </div><br /><br />
@@ -274,7 +274,7 @@ const TeamFinances = ({abbrev, barData, barSeasons, contractTotals, contracts, g
                     <BarGraph
                         data={barData.att}
                         labels={barSeasons}
-                        tooltipCb={val => helpers.numberWithCommas(helpers.round(val))}
+                        tooltipCb={val => helpers.numberWithCommas(Math.round(val))}
                         ylim={[0, 25000]}
                     />
                 </div>

@@ -34,7 +34,7 @@ function getTeamRecord(t, awards) {
         }
     }
 
-    const totalWP = (totalWon > 0) ? helpers.round(totalWon / (totalWon + totalLost), 3) : "0.000";
+    const totalWP = totalWon > 0 ? (totalWon / (totalWon + totalLost)).toFixed(3) : '0.000';
 
     return {
         id: t.tid,
@@ -138,7 +138,7 @@ function sumRecordsFor(group, id, name, records) {
     out.id = id;
     out.team = name;
     out.winp = String(out.won / (out.won + out.lost));
-    out.winp = (out.won > 0) ? helpers.round(Number(out.won) / (Number(out.won) + Number(out.lost)), 3) : "0.000";
+    out.winp = out.won > 0 ? (Number(out.won) / (Number(out.won) + Number(out.lost))).toFixed(3) : '0.000';
     return out;
 }
 

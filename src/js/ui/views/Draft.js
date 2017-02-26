@@ -87,8 +87,8 @@ class Draft extends React.Component {
             if (fantasyDraft) {
                 data.splice(5, 0,
                     `${helpers.formatCurrency(p.contract.amount, 'M')} thru ${p.contract.exp}`,
-                    helpers.round(p.stats.per, 1),
-                    helpers.round(p.stats.ewa, 1),
+                    p.stats.per.toFixed(1),
+                    p.stats.ewa.toFixed(1),
                 );
             }
 
@@ -115,8 +115,8 @@ class Draft extends React.Component {
             if (fantasyDraft) {
                 data.splice(7, 0,
                     p.pid >= 0 ? `${helpers.formatCurrency(p.contract.amount, 'M')} thru ${p.contract.exp}` : null,
-                    p.pid >= 0 ? helpers.round(p.stats.per, 1) : null,
-                    p.pid >= 0 ? helpers.round(p.stats.ewa, 1) : null,
+                    p.pid >= 0 ? p.stats.per.toFixed(1) : null,
+                    p.pid >= 0 ? p.stats.ewa.toFixed(1) : null,
                 );
             }
 

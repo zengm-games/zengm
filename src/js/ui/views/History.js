@@ -30,7 +30,7 @@ const History = ({awards, champ, confs, invalidSeason, retiredPlayers, season, u
                                 <a href={helpers.leagueUrl(['playoffs', season])}>Playoffs Bracket</a>
                             </p>
                             <p>Finals MVP: <b><a className={champ.tid === userTid ? 'bg-info' : null} href={helpers.leagueUrl(['player', awards.finalsMvp.pid])}>{awards.finalsMvp.name}</a></b><br />
-                                {helpers.round(awards.finalsMvp.pts, 1)} pts, {helpers.round(awards.finalsMvp.trb, 1)} reb, {helpers.round(awards.finalsMvp.ast, 1)} ast</p>
+                                {awards.finalsMvp.pts.toFixed(1)} pts, {awards.finalsMvp.trb.toFixed(1)} reb, {awards.finalsMvp.ast.toFixed(1)} ast</p>
                         </div> : <p>???</p>}
                         <h4>Best Record</h4>
                         {awards.bestRecordConfs.map((t, i) => <p key={t.tid}>
@@ -40,24 +40,24 @@ const History = ({awards, champ, confs, invalidSeason, retiredPlayers, season, u
                         <h4>Most Valuable Player</h4>
                         <p>
                             <span className={awards.mvp.tid === userTid ? 'bg-info' : null}><b><a href={helpers.leagueUrl(['player', awards.mvp.pid])}>{awards.mvp.name}</a></b> (<a href={helpers.leagueUrl(['roster', awards.mvp.abbrev, season])}>{awards.mvp.abbrev}</a>)</span><br />
-                            {helpers.round(awards.mvp.pts, 1)} pts, {helpers.round(awards.mvp.trb, 1)} reb, {helpers.round(awards.mvp.ast, 1)} ast
+                            {awards.mvp.pts.toFixed(1)} pts, {awards.mvp.trb.toFixed(1)} reb, {awards.mvp.ast.toFixed(1)} ast
                         </p>
                     </div>
                     <div className="col-sm-12 col-xs-6">
                         <h4>Defensive Player of the Year</h4>
                         <p>
                             <span className={awards.dpoy.tid === userTid ? 'bg-info' : null}><b><a href={helpers.leagueUrl(['player', awards.dpoy.pid])}>{awards.dpoy.name}</a></b> (<a href={helpers.leagueUrl(['roster', awards.dpoy.abbrev, season])}>{awards.dpoy.abbrev}</a>)</span><br />
-                            {helpers.round(awards.dpoy.trb, 1)} reb, {helpers.round(awards.dpoy.blk, 1)} blk, {helpers.round(awards.dpoy.stl, 1)} stl
+                            {awards.dpoy.trb.toFixed(1)} reb, {awards.dpoy.blk.toFixed(1)} blk, {awards.dpoy.stl.toFixed(1)} stl
                         </p>
                         <h4>Sixth Man of the Year</h4>
                         <p>
                             <span className={awards.smoy.tid === userTid ? 'bg-info' : null}><b><a href={helpers.leagueUrl(['player', awards.smoy.pid])}>{awards.smoy.name}</a></b> (<a href={helpers.leagueUrl(['roster', awards.smoy.abbrev, season])}>{awards.smoy.abbrev}</a>)</span><br />
-                            {helpers.round(awards.smoy.pts, 1)} pts, {helpers.round(awards.smoy.trb, 1)} reb, {helpers.round(awards.smoy.ast, 1)} ast
+                            {awards.smoy.pts.toFixed(1)} pts, {awards.smoy.trb.toFixed(1)} reb, {awards.smoy.ast.toFixed(1)} ast
                         </p>
                         <h4>Rookie of the Year</h4>
                         {awards.roy ? <p>
                             <span className={awards.roy.tid === userTid ? 'bg-info' : null}><b><a href={helpers.leagueUrl(['player', awards.roy.pid])}>{awards.roy.name}</a></b> (<a href={helpers.leagueUrl(['roster', awards.roy.abbrev, season])}>{awards.roy.abbrev}</a>)</span><br />
-                            {helpers.round(awards.roy.pts, 1)} pts, {helpers.round(awards.roy.trb, 1)} reb, {helpers.round(awards.roy.ast, 1)} ast
+                            {awards.roy.pts.toFixed(1)} pts, {awards.roy.trb.toFixed(1)} reb, {awards.roy.ast.toFixed(1)} ast
                         </p> : <p>???</p>}
                     </div>
                 </div>

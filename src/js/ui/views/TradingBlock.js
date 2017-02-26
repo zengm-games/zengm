@@ -22,11 +22,11 @@ const OfferPlayerRow = clickable(({clicked, p, toggleClicked}) => {
         <td>{p.ratings.ovr}</td>
         <td>{p.ratings.pot}</td>
         <td>{helpers.formatCurrency(p.contract.amount, 'M')} thru {p.contract.exp}</td>
-        <td>{helpers.round(p.stats.min, 1)}</td>
-        <td>{helpers.round(p.stats.pts, 1)}</td>
-        <td>{helpers.round(p.stats.trb, 1)}</td>
-        <td>{helpers.round(p.stats.ast, 1)}</td>
-        <td>{helpers.round(p.stats.per, 1)}</td>
+        <td>{p.stats.min.toFixed(1)}</td>
+        <td>{p.stats.pts.toFixed(1)}</td>
+        <td>{p.stats.trb.toFixed(1)}</td>
+        <td>{p.stats.ast.toFixed(1)}</td>
+        <td>{p.stats.per.toFixed(1)}</td>
     </tr>;
 });
 
@@ -212,11 +212,11 @@ class TradingBlock extends React.Component {
                     p.ratings.ovr,
                     p.ratings.pot,
                     <span>{helpers.formatCurrency(p.contract.amount, 'M')} thru {p.contract.exp}</span>,
-                    helpers.round(p.stats.min, 1),
-                    helpers.round(p.stats.pts, 1),
-                    helpers.round(p.stats.trb, 1),
-                    helpers.round(p.stats.ast, 1),
-                    helpers.round(p.stats.per, 1),
+                    p.stats.min.toFixed(1),
+                    p.stats.pts.toFixed(1),
+                    p.stats.trb.toFixed(1),
+                    p.stats.ast.toFixed(1),
+                    p.stats.per.toFixed(1),
                 ],
             };
         });

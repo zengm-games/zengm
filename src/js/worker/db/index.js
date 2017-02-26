@@ -3,7 +3,7 @@
 import Backboard from 'backboard';
 import Promise from 'bluebird';
 import * as getCopy from './getCopy';
-import logEvent from '../../util/logEvent';
+import {logEvent} from '../util';
 
 Backboard.setPromiseConstructor(Promise);
 Backboard.on('quotaexceeded', () => {

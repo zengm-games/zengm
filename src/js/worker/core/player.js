@@ -9,8 +9,7 @@ import * as finances from './finances';
 import * as injuries from '../../data/injuries';
 import * as names from '../../data/names';
 import * as helpers from '../../util/helpers';
-import logEvent from '../../util/logEvent';
-import {random} from '../util';
+import {logEvent, random} from '../util';
 import type {
     GamePlayer,
     GameResults,

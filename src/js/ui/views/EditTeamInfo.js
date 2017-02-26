@@ -1,9 +1,8 @@
 import React from 'react';
 import g from '../../globals';
 import * as api from '../api';
-import {setTitle} from '../util';
+import {logEvent, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
-import logEvent from '../../util/logEvent';
 
 class EditTeamInfo extends React.Component {
     constructor(props) {

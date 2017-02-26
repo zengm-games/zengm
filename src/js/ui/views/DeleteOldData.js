@@ -1,8 +1,7 @@
 import React from 'react';
 import * as api from '../api';
-import {setTitle} from '../util';
-import logEvent from '../../util/logEvent';
 import {NewWindowLink} from '../components';
+import {logEvent, setTitle} from '../util';
 
 class DeleteOldData extends React.Component {
     constructor(props) {

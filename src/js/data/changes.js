@@ -1,6 +1,6 @@
 // @flow
 
-import logEvent from '../util/logEvent';
+import {logEvent} from '../ui/util';
 
 const all = [{
     date: "2013-09-21",

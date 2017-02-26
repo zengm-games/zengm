@@ -7,9 +7,8 @@ import * as draft from './draft';
 import * as player from './player';
 import * as trade from './trade';
 import {getCopy} from '../db';
-import logEvent from '../../util/logEvent';
+import {logEvent, random} from '../util';
 import * as helpers from '../../util/helpers';
-import {random} from '../util';
 import type {ContractInfo, TeamSeason, TeamStats, TradePickValues} from '../../util/types';
 
 function genSeasonRow(tid: number, prevSeason?: TeamSeason): TeamSeason {

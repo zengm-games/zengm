@@ -3,7 +3,7 @@
 import orderBy from 'lodash.orderby';
 import React from 'react';
 import g from '../globals';
-import logEvent from './logEvent';
+import {logEvent} from '../ui/util';
 import type {BackboardTx, GameProcessed, GameProcessedCompleted, Pick, TeamBasic, TeamFiltered} from './types';
 
 /**

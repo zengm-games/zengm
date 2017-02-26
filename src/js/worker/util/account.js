@@ -6,7 +6,7 @@ import $ from 'jquery';
 import g from '../../globals';
 import {getCopy} from '../db';
 import {ads} from '../../ui/util';
-import logEvent from '../../util/logEvent';
+import {logEvent} from '../util';
 import type {AchievementKey} from '../../util/types';
 
 // IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php

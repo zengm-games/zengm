@@ -6,8 +6,7 @@ import g from '../../globals';
 import * as league from './league';
 import {getCopy} from '../db';
 import * as helpers from '../../util/helpers';
-import logEvent from '../../util/logEvent';
-import {random} from '../util';
+import {logEvent, random} from '../util';
 import type {OwnerMoodDeltas, ScheduleGame, Team, TeamFiltered} from '../../util/types';
 
 /**

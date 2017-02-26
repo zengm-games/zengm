@@ -13,9 +13,8 @@ import * as player from './player';
 import * as season from './season';
 import * as team from './team';
 import {getCopy} from '../db';
-import {account, genMessage, lock, random, updatePhase, updatePlayMenu} from '../util';
+import {account, genMessage, lock, logEvent, random, updatePhase, updatePlayMenu} from '../util';
 import * as helpers from '../../util/helpers';
-import logEvent from '../../util/logEvent';
 import type {Phase, UpdateEvents} from '../../util/types';
 
 /**

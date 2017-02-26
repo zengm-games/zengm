@@ -11,8 +11,7 @@ import * as player from './player';
 import * as team from './team';
 import {getCopy} from '../db';
 import * as helpers from '../../util/helpers';
-import logEvent from '../../util/logEvent';
-import {lock, random, updatePlayMenu, updateStatus} from '../util';
+import {lock, logEvent, random, updatePlayMenu, updateStatus} from '../util';
 
 /**
  * AI teams sign free agents.

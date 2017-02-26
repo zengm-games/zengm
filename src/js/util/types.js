@@ -229,6 +229,43 @@ export type GameProcessedCompleted = {
 
 export type GetOutput = {[key: string]: ?(number | string)};
 
+export type LogEventType = (
+    'achievement' |
+    'award' |
+    'changes' |
+    'draft' |
+    'error' |
+    'freeAgent' |
+    'gameLost' |
+    'gameWon' |
+    'hallOfFame' |
+    'healed' |
+    'injured' |
+    'playerFeat' |
+    'playoffs' |
+    'reSigned' |
+    'refuseToSign' |
+    'release' |
+    'retired' |
+    'screenshot' |
+    'trade' |
+    'tragedy'
+);
+
+export type LogEventSaveOptions = {
+    type: LogEventType,
+    text: string,
+    pids: number[],
+    tids: number[],
+};
+
+export type LogEventShowOptions = {
+    extraClass?: string,
+    persistent: boolean,
+    text: string,
+    type: string,
+};
+
 export type Message = {
     from: string,
     read: boolean,

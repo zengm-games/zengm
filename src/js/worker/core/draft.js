@@ -9,8 +9,7 @@ import * as phase from './phase';
 import * as player from './player';
 import {getCopy} from '../db';
 import * as helpers from '../../util/helpers';
-import logEvent from '../../util/logEvent';
-import {random, updatePlayMenu, updatePhase} from '../util';
+import {logEvent, random, updatePlayMenu, updatePhase} from '../util';
 import type {PickRealized, TeamFiltered} from '../../util/types';
 
 // Add a new set of draft picks

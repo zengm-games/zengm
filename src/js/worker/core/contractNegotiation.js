@@ -6,8 +6,7 @@ import * as freeAgents from './freeAgents';
 import * as league from './league';
 import * as player from './player';
 import * as team from './team';
-import logEvent from '../../util/logEvent';
-import {lock, updatePlayMenu, updateStatus} from '../util';
+import {lock, logEvent, updatePlayMenu, updateStatus} from '../util';
 import * as helpers from '../../util/helpers';
 
 /**

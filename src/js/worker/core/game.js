@@ -12,8 +12,7 @@ import * as phase from './phase';
 import * as player from './player';
 import * as season from './season';
 import * as team from './team';
-import {advStats, lock, random, updatePlayMenu, updateStatus} from '../util';
-import logEvent from '../../util/logEvent';
+import {advStats, lock, logEvent, random, updatePlayMenu, updateStatus} from '../util';
 import * as helpers from '../../util/helpers';
 import type {GameResults} from '../../util/types';
 

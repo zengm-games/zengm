@@ -8,7 +8,7 @@ import * as team from './team';
 import {getCopy} from '../db';
 import {logEvent} from '../util';
 import * as helpers from '../../util/helpers';
-import type {TradePickValues, TradeSummary, TradeTeams} from '../../util/types';
+import type {TradePickValues, TradeSummary, TradeTeams} from '../../common/types';
 
 /**
  * Start a new trade with a team.

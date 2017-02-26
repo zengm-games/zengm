@@ -2,7 +2,7 @@
 
 import g from '../../globals';
 import {createLogger} from '../../common';
-import type {LogEventSaveOptions} from '../../util/types';
+import type {LogEventSaveOptions} from '../../common/types';
 import * as api from '../api';
 
 const saveEvent = (event: LogEventSaveOptions) => {

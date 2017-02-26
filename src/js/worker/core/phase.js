@@ -15,7 +15,7 @@ import * as team from './team';
 import {getCopy} from '../db';
 import {account, genMessage, lock, logEvent, random, updatePhase, updatePlayMenu} from '../util';
 import * as helpers from '../../util/helpers';
-import type {Phase, UpdateEvents} from '../../util/types';
+import type {Phase, UpdateEvents} from '../../common/types';
 
 /**
  * Common tasks run after a new phrase is set.

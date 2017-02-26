@@ -4,7 +4,7 @@ import React from 'react';
 import {setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {NewWindowLink, SafeHtml} from '../components';
-import type {Message as Message_} from '../../util/types';
+import type {Message as Message_} from '../../common/types';
 
 type MessageProps = {
     message: void | Message_,

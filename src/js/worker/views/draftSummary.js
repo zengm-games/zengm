@@ -2,7 +2,7 @@
 
 import g from '../../globals';
 import {getCopy} from '../db';
-import type {GetOutput} from '../../util/types';
+import type {GetOutput} from '../../common/types';
 
 async function updateDraftSummary(
     inputs: GetOutput,

@@ -4,7 +4,7 @@ import g from '../../globals';
 import * as league from '../core/league';
 import * as helpers from '../../util/helpers';
 import {random} from '../util';
-import type {OwnerMoodDeltas} from '../../util/types';
+import type {OwnerMoodDeltas} from '../../common/types';
 
 // First message after new game
 const first = [

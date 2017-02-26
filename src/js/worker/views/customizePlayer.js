@@ -6,7 +6,7 @@ import * as finances from '../core/finances';
 import * as player from '../core/player';
 import {getCopy} from '../db';
 import * as helpers from '../../util/helpers';
-import type {GetOutput, UpdateEvents} from '../../util/types';
+import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateCustomizePlayer(
     inputs: GetOutput,

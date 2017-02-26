@@ -4,7 +4,7 @@ import g from '../../../globals';
 import {filterOrderStats, mergeByPk} from './helpers';
 import {contractSeasonsRemaining, fuzzRating} from '../../core/player';
 import * as helpers from '../../../util/helpers';
-import type {BackboardTx, Player, PlayerFiltered} from '../../../util/types';
+import type {BackboardTx, Player, PlayerFiltered} from '../../../common/types';
 
 type PlayerAttr = string;
 type PlayerRatingAttr = string;

@@ -2,7 +2,7 @@ import backboard from 'backboard';
 import g from '../../globals';
 import * as player from '../core/player';
 import {getCopy} from '../db';
-import type {GetOutput} from '../../util/types';
+import type {GetOutput} from '../../common/types';
 
 async function updateUpcomingFreeAgents(
     inputs: GetOutput,

@@ -4,7 +4,7 @@ import backboard from 'backboard';
 import Promise from 'bluebird';
 import {connectLeague} from '../db';
 import g from '../../globals';
-import type {GetOutput} from '../../util/types';
+import type {GetOutput} from '../../common/types';
 
 async function updateDeleteLeague({lid}: GetOutput): void | {[key: string]: any} {
     if (typeof lid !== 'number') {

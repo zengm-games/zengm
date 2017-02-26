@@ -9,7 +9,7 @@ import {account, beforeView, random, updatePlayMenu, updateStatus} from '../work
 import {init, views} from '../worker';
 import {contractNegotiation, draft, finances, league, phase, player, team, trade} from '../worker/core';
 import {getCopy} from '../worker/db';
-import type {GameAttributes, GetOutput, PageCtx, Player, PlayerWithoutPid, UpdateEvents} from '../util/types';
+import type {GameAttributes, GetOutput, PageCtx, Player, PlayerWithoutPid, UpdateEvents} from '../common/types';
 
 const acceptContractNegotiation = async (pid: number, amount: number, exp: number): Promise<?string> => {
     return contractNegotiation.accept(pid, amount, exp);

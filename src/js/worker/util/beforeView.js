@@ -7,7 +7,7 @@ import * as api from '../api';
 import {league} from '../core';
 import {updatePhase, updatePlayMenu, updateStatus} from '../util';
 import * as helpers from '../../util/helpers';
-import type {PageCtx, UpdateEvents} from '../../util/types';
+import type {PageCtx, UpdateEvents} from '../../common/types';
 
 const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEvents, () => void, ?string]> => {
     g.lid = parseInt(ctx.params.lid, 10);

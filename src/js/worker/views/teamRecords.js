@@ -4,7 +4,7 @@ import _ from 'underscore';
 import g from '../../globals';
 import {getCopy} from '../db';
 import * as helpers from '../../util/helpers';
-import type {GetOutput, UpdateEvents} from '../../util/types';
+import type {GetOutput, UpdateEvents} from '../../common/types';
 
 function getTeamLink(t) {
     return <a href={helpers.leagueUrl(["team_history", t.abbrev])}>{t.region} {t.name}</a>;

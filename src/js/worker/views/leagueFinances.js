@@ -2,7 +2,7 @@
 
 import g from '../../globals';
 import {getCopy} from '../db';
-import type {GetOutput, UpdateEvents} from '../../util/types';
+import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateLeagueFinances(
     inputs: GetOutput,

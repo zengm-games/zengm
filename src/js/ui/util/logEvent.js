@@ -4,7 +4,7 @@ import g from '../../globals';
 import * as api from '../api';
 import {notify} from '../util';
 import {createLogger} from '../../common';
-import type {LogEventShowOptions} from '../../util/types';
+import type {LogEventShowOptions} from '../../common/types';
 
 const saveEvent = () => {
     throw new Error('UI events should not be saved to DB');

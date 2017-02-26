@@ -2,7 +2,7 @@
 
 import g from '../../globals';
 import * as league from '../core/league';
-import type {GetOutput, UpdateEvents} from '../../util/types';
+import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateMultiTeamMode(
     inputs: GetOutput,

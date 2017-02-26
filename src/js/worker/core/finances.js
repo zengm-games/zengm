@@ -3,7 +3,7 @@
 import Promise from 'bluebird';
 import g from '../../globals';
 import * as team from './team';
-import type {TeamSeason} from '../../util/types';
+import type {TeamSeason} from '../../common/types';
 
 /**
  * Assess the payroll and apply minimum and luxury taxes.

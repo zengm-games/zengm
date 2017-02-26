@@ -1,7 +1,7 @@
 // @flow
 
 import page from 'page';
-import type {UpdateEvents} from '../../util/types';
+import type {UpdateEvents} from '../../common/types';
 
 /**
  * Smartly update the currently loaded view or redirect to a new one.

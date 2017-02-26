@@ -3,7 +3,7 @@
 import backboard from 'backboard';
 import g from '../../../globals';
 import {mergeByPk} from './helpers';
-import type {PlayerStats} from '../../../util/types';
+import type {PlayerStats} from '../../../common/types';
 
 const getCopy = async ({pid}: {pid: number}): Promise<PlayerStats[]> => {
     return mergeByPk(

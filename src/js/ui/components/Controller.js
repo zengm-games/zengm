@@ -5,7 +5,7 @@ import g from '../../globals';
 import * as api from '../api';
 import {ads, realtimeUpdate} from '../util';
 import {Footer, Header, LeagueWrapper, MultiTeamMenu, NagModal, NavBar} from '../components';
-import type {GetOutput, Option, PageCtx, UpdateEvents} from '../../util/types';
+import type {GetOutput, Option, PageCtx, UpdateEvents} from '../../common/types';
 
 class LeagueContent extends React.Component {
     // eslint-disable-next-line class-methods-use-this

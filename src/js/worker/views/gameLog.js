@@ -2,7 +2,7 @@
 
 import g from '../../globals';
 import * as helpers from '../../util/helpers';
-import type {GetOutput, UpdateEvents} from '../../util/types';
+import type {GetOutput, UpdateEvents} from '../../common/types';
 
 /**
  * Generate a box score.

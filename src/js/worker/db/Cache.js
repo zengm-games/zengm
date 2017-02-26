@@ -4,7 +4,7 @@ import backboard from 'backboard';
 import Promise from 'bluebird';
 import orderBy from 'lodash.orderby';
 import g from '../../globals';
-import type {BackboardTx, Player} from '../../util/types';
+import type {BackboardTx, Player} from '../../common/types';
 
 type Status = 'empty' | 'error' | 'filling' | 'full';
 

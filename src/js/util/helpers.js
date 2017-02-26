@@ -4,7 +4,7 @@ import orderBy from 'lodash.orderby';
 import React from 'react';
 import g from '../globals';
 import {logEvent} from '../ui/util';
-import type {BackboardTx, GameProcessed, GameProcessedCompleted, Pick, TeamBasic, TeamFiltered} from './types';
+import type {BackboardTx, GameProcessed, GameProcessedCompleted, Pick, TeamBasic, TeamFiltered} from '../common/types';
 
 /**
  * Validate that a given abbreviation corresponds to a team.

@@ -1,6 +1,6 @@
 // @flow
 
-import type {LogEventSaveOptions, LogEventShowOptions, LogEventType} from '../util/types';
+import type {LogEventSaveOptions, LogEventShowOptions, LogEventType} from '../common/types';
 
 // Really, pids, tids, and type should not be optional if saveToDb is true
 type LogEventOptions = {

@@ -6,7 +6,7 @@ import * as season from '../core/season';
 import * as team from '../core/team';
 import {getCopy} from '../db';
 import * as helpers from '../../util/helpers';
-import type {GetOutput, UpdateEvents} from '../../util/types';
+import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateInbox(
     inputs: GetOutput,

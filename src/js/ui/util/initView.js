@@ -1,7 +1,7 @@
 // @flow
 
 import g from '../../globals';
-import type {GetOutput, PageCtx} from '../../util/types';
+import type {GetOutput, PageCtx} from '../../common/types';
 
 type InitArgs = {
     Component: any,

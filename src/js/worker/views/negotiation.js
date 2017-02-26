@@ -3,7 +3,7 @@ import * as contractNegotiation from '../core/contractNegotiation';
 import * as freeAgents from '../core/freeAgents';
 import * as team from '../core/team';
 import {getCopy} from '../db';
-import type {GetOutput} from '../../util/types';
+import type {GetOutput} from '../../common/types';
 
 function generateContractOptions(contract, ovr) {
     let growthFactor = 0.15;

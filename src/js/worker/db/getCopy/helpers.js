@@ -2,7 +2,7 @@
 
 import orderBy from 'lodash.orderby';
 import {deepCopy} from '../../../util/helpers';
-import type {PlayerStats, TeamStats} from '../../../util/types'; // eslint-disable-line no-unused-vars
+import type {PlayerStats, TeamStats} from '../../../common/types'; // eslint-disable-line no-unused-vars
 
 // Indexes can't handle playoffs/regularSeason and different ones can come back inconsistently sorted
 const filterOrderStats = <T: PlayerStats | TeamStats>(stats: T[], playoffs: boolean, regularSeason: boolean): T[] => {

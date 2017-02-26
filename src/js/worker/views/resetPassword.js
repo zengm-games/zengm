@@ -1,4 +1,4 @@
-import type {GetOutput} from '../../util/types';
+import type {GetOutput} from '../../common/types';
 
 async function updateToken(
     inputs: GetOutput,

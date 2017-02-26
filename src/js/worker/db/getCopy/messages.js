@@ -2,7 +2,7 @@
 
 import g from '../../../globals';
 import {mergeByPk} from './helpers';
-import type {Message, MessageWithMid} from '../../../util/types';
+import type {Message, MessageWithMid} from '../../../common/types';
 
 const getCopy = async (): Promise<(Message | MessageWithMid)[]> => {
     return mergeByPk(

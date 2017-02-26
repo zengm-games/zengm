@@ -4,7 +4,7 @@ import * as season from '../core/season';
 import * as team from '../core/team';
 import * as trade from '../core/trade';
 import {getCopy} from '../db';
-import type {GetOutput, UpdateEvents} from '../../util/types';
+import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateRoster(
     inputs: GetOutput,

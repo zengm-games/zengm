@@ -4,7 +4,7 @@ import React from 'react';
 import * as helpers from '../../util/helpers';
 import SkillsBlock from './SkillsBlock';
 import WatchBlock from './WatchBlock';
-import type {PlayerInjury, PlayerSkill} from '../../util/types';
+import type {PlayerInjury, PlayerSkill} from '../../common/types';
 
 const PlayerNameLabels = ({children, injury, pid, skills, style, watch}: {
     children: string,

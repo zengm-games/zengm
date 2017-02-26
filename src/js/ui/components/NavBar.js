@@ -17,7 +17,7 @@ import {logEvent, realtimeUpdate} from '../util';
 import html2canvas from '../../lib/html2canvas';
 import * as actions from '../../util/actions';
 import * as helpers from '../../util/helpers';
-import type {Option} from '../../util/types';
+import type {Option} from '../../common/types';
 
 const toggleDebugMode = () => {
     if (localStorage.getItem('debug') === 'debug') {

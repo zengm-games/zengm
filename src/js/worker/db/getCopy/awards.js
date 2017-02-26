@@ -1,6 +1,6 @@
 import g from '../../../globals';
 import {mergeByPk} from './helpers';
-import type {Awards} from '../../../util/types';
+import type {Awards} from '../../../common/types';
 
 const getCopy = async ({
     season,

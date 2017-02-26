@@ -7,7 +7,7 @@ import _ from 'underscore';
 import g from '../../globals';
 import * as player from './player';
 import {getCopy} from '../db';
-import type {RatingKey} from '../../util/types';
+import type {RatingKey} from '../../common/types';
 
 async function regressRatingsPer() {
     // http://rosettacode.org/wiki/Multiple_regression#JavaScript

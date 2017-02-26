@@ -4,7 +4,7 @@ import Promise from 'bluebird';
 import $ from 'jquery';
 import g from '../../globals';
 import {account} from '../util';
-import type {GetOutput, UpdateEvents} from '../../util/types';
+import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateAccountUpdateCard(
     inputs: GetOutput,

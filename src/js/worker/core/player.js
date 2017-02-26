@@ -24,7 +24,7 @@ import type {
     PlayerWithStats,
     PlayerWithoutPid,
     RatingKey,
-} from '../../util/types';
+} from '../../common/types';
 
 type Profile = '' | 'Big' | 'Point' | 'Wing';
 

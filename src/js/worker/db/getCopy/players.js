@@ -2,7 +2,7 @@ import backboard from 'backboard';
 import g from '../../../globals';
 import {mergeByPk} from './helpers';
 import * as helpers from '../../../util/helpers';
-import type {Player} from '../../../util/types';
+import type {Player} from '../../../common/types';
 
 const getCopy = async ({
     pid,

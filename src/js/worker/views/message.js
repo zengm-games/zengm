@@ -3,7 +3,7 @@
 import g from '../../globals';
 import * as league from '../core/league';
 import {updatePlayMenu, updateStatus} from '../util';
-import type {GetOutput, Message as Message_, UpdateEvents} from '../../util/types';
+import type {GetOutput, Message as Message_, UpdateEvents} from '../../common/types';
 
 async function updateMessage(
     inputs: GetOutput,

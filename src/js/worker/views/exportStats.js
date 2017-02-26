@@ -1,7 +1,7 @@
 // @flow
 
 import g from '../../globals';
-import type {GetOutput, UpdateEvents} from '../../util/types';
+import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateExportStats(
     inputs: GetOutput,

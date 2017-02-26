@@ -7,7 +7,7 @@ import textContent from 'react-addons-text-content';
 import g from '../../globals';
 import * as helpers from '../../util/helpers';
 import clickable from '../wrappers/clickable';
-import type {SortOrder, SortType} from '../../util/types';
+import type {SortOrder, SortType} from '../../common/types';
 
 const Header = ({cols, handleColClick, sortBys, superCols}) => {
     return <thead>

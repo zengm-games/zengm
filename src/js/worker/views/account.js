@@ -1,7 +1,7 @@
 // @flow
 
 import {account} from '../util';
-import type {GetOutput, UpdateEvents} from '../../util/types';
+import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateAccount(
     inputs: GetOutput,

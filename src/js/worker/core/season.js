@@ -7,7 +7,7 @@ import * as league from './league';
 import {getCopy} from '../db';
 import * as helpers from '../../util/helpers';
 import {logEvent, random} from '../util';
-import type {OwnerMoodDeltas, ScheduleGame, Team, TeamFiltered} from '../../util/types';
+import type {OwnerMoodDeltas, ScheduleGame, Team, TeamFiltered} from '../../common/types';
 
 /**
  * Update g.ownerMood based on performance this season.

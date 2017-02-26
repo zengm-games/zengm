@@ -14,7 +14,7 @@ import * as season from './season';
 import * as team from './team';
 import {advStats, lock, logEvent, random, updatePlayMenu, updateStatus} from '../util';
 import * as helpers from '../../util/helpers';
-import type {GameResults} from '../../util/types';
+import type {GameResults} from '../../common/types';
 
 async function writeTeamStats(results: GameResults) {
     let att = 0;

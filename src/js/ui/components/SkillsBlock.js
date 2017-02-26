@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import type {PlayerSkill} from '../../util/types';
+import type {PlayerSkill} from '../../common/types';
 
 const SkillsBlock = ({className, skills}: {className?: string, skills?: PlayerSkill[]}) => {
     if (skills === undefined) {

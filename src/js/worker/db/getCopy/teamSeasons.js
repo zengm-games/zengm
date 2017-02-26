@@ -4,7 +4,7 @@ import backboard from 'backboard';
 import g from '../../../globals';
 import {mergeByPk} from './helpers';
 import {deepCopy} from '../../../util/helpers';
-import type {TeamSeason} from '../../../util/types';
+import type {TeamSeason} from '../../../common/types';
 
 const getCopy = async ({tid, season, seasons}: {tid?: number, season?: number, seasons?: [number, number]} = {}): Promise<TeamSeason[]> => {
     if (tid === undefined) {

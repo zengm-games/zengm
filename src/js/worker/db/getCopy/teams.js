@@ -4,7 +4,7 @@ import g from '../../../globals';
 import {filterOrderStats, mergeByPk} from './helpers';
 import * as team from '../../core/team';
 import * as helpers from '../../../util/helpers';
-import type {BackboardTx, Team, TeamFiltered} from '../../../util/types';
+import type {BackboardTx, Team, TeamFiltered} from '../../../common/types';
 
 type TeamAttr = string;
 type TeamSeasonAttr = string;

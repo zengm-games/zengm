@@ -1,7 +1,7 @@
 // @flow
 
 import {getCopy} from '../db';
-import type {GetOutput, UpdateEvents} from '../../util/types';
+import type {GetOutput, UpdateEvents} from '../../common/types';
 
 const optionsTmp = [{
     val: "Won Championship",

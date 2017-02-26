@@ -2,7 +2,7 @@
 
 import g from '../../globals';
 import * as season from '../core/season';
-import type {GetOutput, UpdateEvents} from '../../util/types';
+import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateGamesList(): void | {[key: string]: any} {
     const games = await season.getSchedule(true);

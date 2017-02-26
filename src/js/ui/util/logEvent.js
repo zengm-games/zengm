@@ -3,7 +3,7 @@
 import g from '../../globals';
 import * as api from '../api';
 import notify from '../../lib/bbgm-notifications';
-import createLogger from '../../common/createLogger';
+import {createLogger} from '../../common';
 import type {LogEventShowOptions} from '../../util/types';
 
 const saveEvent = () => {
@@ -51,4 +51,7 @@ const showEvent = ({
 
 const logEvent = createLogger(saveEvent, showEvent);
 
-export default logEvent;
+export {
+    logEvent as default,
+    showEvent,
+};

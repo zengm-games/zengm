@@ -1,13 +1,18 @@
 // @flow
 
 import {realtimeUpdate} from '../ui/util';
-import type {UpdateEvents} from '../util/types';
+import {showEvent} from '../ui/util/logEvent';
+import type {LogEventShowOptions, UpdateEvents} from '../util/types';
 
 function realtimeUpdate2(updateEvents: UpdateEvents = [], url?: string, cb?: Function, raw?: Object = {}) {
     realtimeUpdate(updateEvents, url, cb, raw);
 }
 
+const showEvent2 = (options: LogEventShowOptions) => {
+    showEvent(options);
+};
+
 export {
-    // eslint-disable-next-line import/prefer-default-export
     realtimeUpdate2 as realtimeUpdate,
+    showEvent2 as showEvent,
 };

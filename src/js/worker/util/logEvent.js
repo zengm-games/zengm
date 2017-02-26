@@ -1,8 +1,9 @@
 // @flow
 
 import g from '../../globals';
-import createLogger from '../../common/createLogger';
-import type {LogEventSaveOptions, LogEventShowOptions} from '../../util/types';
+import {createLogger} from '../../common';
+import type {LogEventSaveOptions} from '../../util/types';
+import * as api from '../api';
 
 const saveEvent = (event: LogEventSaveOptions) => {
     if (g.cache) {
@@ -10,10 +11,6 @@ const saveEvent = (event: LogEventSaveOptions) => {
     }
 };
 
-const showEvent = (options: LogEventShowOptions) => {
-    console.log('worker showEvent', options);
-};
-
-const logEvent = createLogger(saveEvent, showEvent);
+const logEvent = createLogger(saveEvent, api.showEvent);
 
 export default logEvent;

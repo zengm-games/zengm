@@ -18,7 +18,6 @@ move everything but the UI to a web worker
   - split up util - ui, worker, or both
     - actions: only called from ui, but mixes worker calls and realtimeUpdate
       - put worker calls in api, move to ui/util/actions
-    - logEvent: display notification in UI from worker
   - split up data/lib
   - how to ensure that files are not required into both ui and worker inadvertently?
   - restore runWhenever ability (really necessary?)

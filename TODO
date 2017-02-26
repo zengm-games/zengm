@@ -22,6 +22,7 @@ move everything but the UI to a web worker
   - how to ensure that files are not required into both ui and worker inadvertently?
   - restore runWhenever ability (really necessary?)
 - does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
+- should checks to update data in worker/views be in worker, or could they be in UI somehow and avoid call to worker if update not needed?
 - things in API using callback functions won't work across web workers
   - for realtimeUpdate, make async, and then manually do callback code after awaiting?
 
@@ -149,6 +150,8 @@ multi window
 
 benchmark using proxies to detect change in index stuff rather than dirtyIndexes
 
+can ui/util/logEvent be replaced by just notify? since it never writes to db?
+
 ----
 
 getPayroll().get() bluebird function
@@ -158,6 +161,8 @@ HTML in play by play https://www.reddit.com/r/BasketballGM/comments/5963ym/playb
 https://www.reddit.com/r/BasketballGM/comments/57cux2/small_issue/
 
 redo contracts after free agency ends
+
+rewrite notify.js in React
 
 flow
   backboard

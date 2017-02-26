@@ -2,7 +2,7 @@
 
 import g from '../../globals';
 import * as api from '../api';
-import notify from '../../lib/bbgm-notifications';
+import {notify} from '../util';
 import {createLogger} from '../../common';
 import type {LogEventShowOptions} from '../../util/types';
 

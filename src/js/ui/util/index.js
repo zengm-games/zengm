@@ -4,5 +4,6 @@ export {default as ads} from './ads';
 export {default as getCols} from './getCols';
 export {default as initView} from './initView';
 export {default as logEvent} from './logEvent';
+export {default as notify} from './notify';
 export {default as realtimeUpdate} from './realtimeUpdate';
 export {default as setTitle} from './setTitle';

@@ -5,7 +5,6 @@ import * as draft from './draft';
 import * as finances from './finances';
 import * as freeAgents from './freeAgents';
 import * as game from './game';
-import * as index from './index';
 import * as league from './league';
 import * as phase from './phase';
 import * as player from './player';
@@ -21,7 +20,6 @@ export {
     finances,
     freeAgents,
     game,
-    index,
     league,
     phase,
     player,

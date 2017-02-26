@@ -4,7 +4,7 @@ import orderBy from 'lodash.orderby';
 import React from 'react';
 import g from '../globals';
 import {logEvent} from '../ui/util';
-import type {BackboardTx, GameProcessed, GameProcessedCompleted, Pick, TeamBasic, TeamFiltered} from '../common/types';
+import type {GameProcessed, GameProcessedCompleted, Pick, TeamBasic, TeamFiltered} from '../common/types';
 
 /**
  * Validate that a given abbreviation corresponds to a team.
@@ -618,14 +618,6 @@ function yearRanges(arr: number[]): string[] {
     return runArr;
 }
 
-function maybeReuseTx(storeNames: string | string[], mode: string, tx: BackboardTx, cb: Function) {
-    if (tx !== undefined && tx !== null) {
-        return cb(tx);
-    }
-
-    return g.dbl.tx(storeNames, mode, cb);
-}
-
 function roundsWonText(playoffRoundsWon: number): string {
     const playoffsByConference = g.confs.length === 2 && !localStorage.getItem('top16playoffs');
 
@@ -710,7 +702,6 @@ export {
     correctLinkLid,
     overtimeCounter,
     yearRanges,
-    maybeReuseTx,
     roundsWonText,
     roundWinp,
     orderByWinp,

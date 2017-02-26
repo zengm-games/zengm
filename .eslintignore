@@ -1,3 +1,2 @@
-src/js/lib/*
-!src/js/lib/bbgm-notifications.js
 src/js/test/**/*
+src/js/vendor/*

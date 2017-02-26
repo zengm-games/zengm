@@ -25,6 +25,7 @@ move everything but the UI to a web worker
 - should checks to update data in worker/views be in worker, or could they be in UI somehow and avoid call to worker if update not needed?
 - things in API using callback functions won't work across web workers
   - for realtimeUpdate, make async, and then manually do callback code after awaiting?
+- index.js or app.js for main file in ui/worker?
 
 bbgm.g.cache.flush().then(() => console.log('done'));
 fucked = false; Object.values(bbgm.g.cache.indexes.teamSeasonsBySeasonTid).forEach((ts) => { if (ts.hasOwnProperty('ast')) { console.log(ts); fucked = true } }); if (fucked) { throw new Error('FUCK'); }

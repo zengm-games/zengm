@@ -1,7 +1,7 @@
 // @flow
 
 /* eslint-disable import/first */
-import '../lib/babel-external-helpers';
+import '../vendor/babel-external-helpers';
 import Promise from 'bluebird';
 import sourceMapSupport from 'source-map-support';
 import 'indexeddb-getall-shim';

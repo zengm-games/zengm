@@ -29,8 +29,8 @@ function createLogger(
         type,
     }: LogEventOptions) => {
         if (saveToDb) {
-            if (pids === undefined || tids === undefined || type === undefined) {
-                throw new Error('Saved event must include pids, tids, and type');
+            if (pids === undefined && tids === undefined) {
+                throw new Error('Saved event must include pids or tids');
             }
             saveEvent({
                 type,

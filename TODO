@@ -21,7 +21,7 @@ move everything but the UI to a web worker
     - helpers: move some to individual files in util, then hopefully it's just some small global functions that can go in common/helpers
   - split up data/lib
   - how to ensure that files are not required into both ui and worker inadvertently?
-  - restore runWhenever ability (really necessary?)
+  - restore runWhenever ability (really necessary? was only used in gameLog)
 - does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
 - should checks to update data in worker/views be in worker, or could they be in UI somehow and avoid call to worker if update not needed?
 - things in API using callback functions won't work across web workers

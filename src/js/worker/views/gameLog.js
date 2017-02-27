@@ -1,7 +1,7 @@
 // @flow
 
 import g from '../../globals';
-import * as helpers from '../../util/helpers';
+import {getProcessedGames} from '../util';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 /**
@@ -139,8 +139,8 @@ async function updateGamesList(
     updateEvents: UpdateEvents,
     state: any,
 ): void | {[key: string]: any} {
-    const {abbrev, gid, season} = inputs;
-    if (typeof abbrev !== 'string' || typeof gid !== 'number' || typeof season !== 'number') {
+    const {abbrev, season} = inputs;
+    if (typeof abbrev !== 'string' || typeof season !== 'number') {
         return;
     }
 
@@ -153,7 +153,7 @@ async function updateGamesList(
             games = state.gamesList ? state.gamesList.games : [];
         }
 
-        const newGames = await helpers.gameLogList(abbrev, season, gid, games);
+        const newGames = await getProcessedGames(abbrev, season, games);
 
         if (games.length === 0) {
             games = newGames;
@@ -174,6 +174,5 @@ async function updateGamesList(
 }
 
 export default {
-    runBefore: [updateBoxScore, updateTeamSeason],
-    runWhenever: [updateGamesList],
+    runBefore: [updateBoxScore, updateGamesList, updateTeamSeason],
 };

@@ -2,6 +2,7 @@ import Promise from 'bluebird';
 import g from '../../globals';
 import * as season from '../core/season';
 import {getCopy} from '../db';
+import {getProcessedGames} from '../util';
 import * as helpers from '../../util/helpers';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
@@ -57,7 +58,7 @@ async function updateCompleted(
         }
 
         // Load all games in list
-        const games = await helpers.gameLogList(inputs.abbrev, g.season, -1);
+        const games = await getProcessedGames(inputs.abbrev, g.season);
         for (let i = 0; i < games.length; i++) {
             games[i] = helpers.formatCompletedGame(games[i]);
         }
@@ -67,7 +68,7 @@ async function updateCompleted(
     if (updateEvents.includes('gameSim')) {
         const completed = state.completed;
         // Partial update of only new games
-        const games = await helpers.gameLogList(inputs.abbrev, g.season, -1, state.completed);
+        const games = await getProcessedGames(inputs.abbrev, g.season, state.completed);
         for (let i = games.length - 1; i >= 0; i--) {
             games[i] = helpers.formatCompletedGame(games[i]);
             completed.unshift(games[i]);

@@ -107,7 +107,7 @@ async function newPhasePreseason() {
     await g.cache.fill();
 
     if (g.enableLogging && !window.inCordova) {
-        g.emitter.emit('showAd', 'modal');
+        api.emit('showAd', 'modal');
     }
 
     return [undefined, ["playerMovement"]];

@@ -5,6 +5,7 @@ import Promise from 'bluebird';
 import $ from 'jquery';
 import {SPORT} from '../../common';
 import g from '../../globals';
+import * as api from '../api';
 import {getCopy} from '../db';
 import {ads} from '../../ui/util';
 import {logEvent} from '../util';
@@ -142,7 +143,7 @@ async function check() {
 
         // Save username for display
 
-        g.emitter.emit('updateTopMenu', {
+        api.emit('updateTopMenu', {
             email: data.email,
             goldCancelled: !!data.gold_cancelled,
             goldUntil: data.gold_until,

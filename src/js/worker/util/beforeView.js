@@ -70,7 +70,7 @@ const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEv
         updateStatus();
         updatePhase();
         await updatePlayMenu();
-        g.emitter.emit('updateTopMenu', {lid: g.lid});
+        api.emit('updateTopMenu', {lid: g.lid});
         //checkDbChange(g.lid); // Currently not working
         return [updateEvents, ctxCb, undefined];
     }
@@ -80,7 +80,7 @@ const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEv
 
 const beforeNonLeague = (ctx: PageCtx): [UpdateEvents, () => void, ?string] => {
     g.lid = null;
-    g.emitter.emit('updateTopMenu', {lid: undefined});
+    api.emit('updateTopMenu', {lid: undefined});
 
     const updateEvents = (ctx !== undefined && ctx.bbgm.updateEvents !== undefined) ? ctx.bbgm.updateEvents : [];
     const ctxCb = (ctx !== undefined && ctx.bbgm.cb !== undefined) ? ctx.bbgm.cb : () => {};

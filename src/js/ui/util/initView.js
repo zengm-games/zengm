@@ -1,7 +1,7 @@
 // @flow
 
-import g from '../../globals';
 import type {GetOutput, PageCtx} from '../../common/types';
+import {emitter} from '../util';
 
 type InitArgs = {
     Component: any,
@@ -30,7 +30,7 @@ const initView = (args: InitArgs) => {
             };
         }
         ctx.bbgm.handled = true;
-        g.emitter.emit('get', args, ctx);
+        emitter.emit('get', args, ctx);
     };
 };
 

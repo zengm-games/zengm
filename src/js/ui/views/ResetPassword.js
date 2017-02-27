@@ -2,7 +2,7 @@ import $ from 'jquery';
 import React from 'react';
 import {SPORT} from '../../common';
 import g from '../../globals';
-import {realtimeUpdate, setTitle} from '../util';
+import {emitter, realtimeUpdate, setTitle} from '../util';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
 
@@ -72,7 +72,7 @@ class ResetPassword extends React.Component {
             },
             success: data => {
                 if (data.success) {
-                    g.emitter.emit('updateTopMenu', {username: data.username});
+                    emitter.emit('updateTopMenu', {username: data.username});
 
                     realtimeUpdate([], "/account");
                 } else {

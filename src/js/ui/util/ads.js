@@ -1,7 +1,7 @@
 // @flow
 
 import Promise from 'bluebird';
-import g from '../../globals';
+import {emitter} from '../util';
 
 function showGcs() {
     window.TriggerPrompt("http://www.basketball-gm.com/", (new Date()).getTime());
@@ -30,12 +30,12 @@ function showSurvata() {
     // If Survata is down, try other ad
     // eslint-disable-next-line no-use-before-define
     window.Survata.fail(() => {
-        g.emitter.emit('showAd', 'modal');
+        emitter.emit('showAd', 'modal');
     });
 }
 
 function showModal() {
-    g.emitter.emit('updateState', {showNagModal: true});
+    emitter.emit('updateState', {showNagModal: true});
 }
 
 let gptLoading = false;

@@ -3,7 +3,7 @@
 import React from 'react';
 import g from '../../globals';
 import * as api from '../api';
-import {ads, realtimeUpdate} from '../util';
+import {ads, emitter, realtimeUpdate} from '../util';
 import {Footer, Header, LeagueWrapper, MultiTeamMenu, NagModal, NavBar} from '../components';
 import type {GetOutput, Option, PageCtx, UpdateEvents} from '../../common/types';
 
@@ -108,11 +108,11 @@ class Controller extends React.Component {
     }
 
     componentDidMount() {
-        g.emitter.on('get', this.get);
-        g.emitter.on('showAd', this.showAd);
-        g.emitter.on('updateMultiTeam', this.updateMultiTeam);
-        g.emitter.on('updateState', this.updateState);
-        g.emitter.on('updateTopMenu', this.updateTopMenu);
+        emitter.on('get', this.get);
+        emitter.on('showAd', this.showAd);
+        emitter.on('updateMultiTeam', this.updateMultiTeam);
+        emitter.on('updateState', this.updateState);
+        emitter.on('updateTopMenu', this.updateTopMenu);
 
         if (this.state.topMenu.popup && document.body) {
             if (document.body) {
@@ -129,11 +129,11 @@ class Controller extends React.Component {
     }
 
     componentWillUnmount() {
-        g.emitter.removeListener('get', this.get);
-        g.emitter.removeListener('showAd', this.showAd);
-        g.emitter.removeListener('updateMultiTeam', this.updateMultiTeam);
-        g.emitter.removeListener('updateState', this.updateState);
-        g.emitter.removeListener('updateTopMenu', this.updateTopMenu);
+        emitter.removeListener('get', this.get);
+        emitter.removeListener('showAd', this.showAd);
+        emitter.removeListener('updateMultiTeam', this.updateMultiTeam);
+        emitter.removeListener('updateState', this.updateState);
+        emitter.removeListener('updateTopMenu', this.updateTopMenu);
     }
 
     setStateData(data: {[key: string]: any}) {

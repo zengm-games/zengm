@@ -1,6 +1,7 @@
 // @flow
 
 import g from '../../globals';
+import * as api from '../api';
 import {league} from '../core';
 
 /*Save status to database and push to client.
@@ -15,10 +16,10 @@ Args:
 async function updateStatus(statusText?: string) {
     const oldStatus = g.statusText;
     if (statusText === undefined) {
-        g.emitter.emit('updateTopMenu', {statusText: oldStatus});
+        api.emit('updateTopMenu', {statusText: oldStatus});
     } else if (statusText !== oldStatus) {
         await league.setGameAttributes({statusText});
-        g.emitter.emit('updateTopMenu', {statusText});
+        api.emit('updateTopMenu', {statusText});
     }
 }
 

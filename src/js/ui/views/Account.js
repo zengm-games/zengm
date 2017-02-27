@@ -6,7 +6,7 @@ import $ from 'jquery';
 import React from 'react';
 import {SPORT, STRIPE_PUBLISHABLE_KEY} from '../../common';
 import g from '../../globals';
-import {realtimeUpdate, setTitle} from '../util';
+import {emitter, realtimeUpdate, setTitle} from '../util';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
 
@@ -147,7 +147,7 @@ class UserInfo extends React.Component {
                 withCredentials: true,
             },
             success: () => {
-                g.emitter.emit('updateTopMenu', {username: ''});
+                emitter.emit('updateTopMenu', {username: ''});
                 realtimeUpdate(["account"], "/");
             },
             error: () => {

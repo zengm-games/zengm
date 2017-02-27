@@ -4,6 +4,7 @@ import Promise from 'bluebird';
 import {PHASE} from '../../common';
 import g from '../../globals';
 import * as helpers from '../../util/helpers';
+import * as api from '../api';
 import {lock} from '../util';
 
 /**
@@ -106,7 +107,7 @@ const updatePlayMenu = async () => {
         return allOptions[id];
     });
 
-    g.emitter.emit('updateTopMenu', {options: someOptions});
+    api.emit('updateTopMenu', {options: someOptions});
 };
 
 export default updatePlayMenu;

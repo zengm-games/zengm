@@ -6,6 +6,7 @@ import _ from 'underscore';
 import {Cache, connectLeague} from '../db';
 import {PHASE, PHASE_TEXT, PLAYER} from '../../common';
 import g from '../../globals';
+import * as api from '../api';
 import * as draft from './draft';
 import * as finances from './finances';
 import * as freeAgents from './freeAgents';
@@ -101,7 +102,7 @@ async function setGameAttributes(gameAttributes: GameAttributes) {
     }));
 
     if (toUpdate.includes('userTid') || toUpdate.includes('userTids')) {
-        g.emitter.emit('updateMultiTeam');
+        api.emit('updateMultiTeam');
     }
 }
 
@@ -628,10 +629,10 @@ async function loadGameAttribute(key: GameAttributeKeyDynamic) {
 
     // UI stuff - see also loadGameAttributes
     if (key === "godMode") {
-        g.emitter.emit('updateTopMenu', {godMode: g.godMode});
+        api.emit('updateTopMenu', {godMode: g.godMode});
     }
     if (key === "userTid" || key === "userTids") {
-        g.emitter.emit('updateMultiTeam');
+        api.emit('updateMultiTeam');
     }
 }
 
@@ -658,8 +659,8 @@ async function loadGameAttributes() {
     });
 
     // UI stuff - see also loadGameAttribute
-    g.emitter.emit('updateTopMenu', {godMode: g.godMode});
-    g.emitter.emit('updateMultiTeam');
+    api.emit('updateTopMenu', {godMode: g.godMode});
+    api.emit('updateMultiTeam');
 }
 
 // Depending on phase, initiate action that will lead to the next phase

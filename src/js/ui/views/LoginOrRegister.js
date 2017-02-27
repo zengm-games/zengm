@@ -4,7 +4,7 @@ import React from 'react';
 import {SPORT} from '../../common';
 import g from '../../globals';
 import * as api from '../api';
-import {realtimeUpdate, setTitle} from '../util';
+import {emitter, realtimeUpdate, setTitle} from '../util';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
 
@@ -40,7 +40,7 @@ class LoginOrRegister extends React.Component {
             },
             success: async data => {
                 if (data.success) {
-                    g.emitter.emit('updateTopMenu', {
+                    emitter.emit('updateTopMenu', {
                         email: data.email,
                         goldCancelled: !!data.gold_cancelled,
                         goldUntil: data.gold_until,
@@ -83,7 +83,7 @@ class LoginOrRegister extends React.Component {
             },
             success: async data => {
                 if (data.success) {
-                    g.emitter.emit('updateTopMenu', {username: data.username});
+                    emitter.emit('updateTopMenu', {username: data.username});
 
                     await api.checkParticipationAchievement(true);
                     realtimeUpdate([], "/account");

@@ -1,6 +1,7 @@
 // @flow
 
 import g from '../../globals';
+import * as api from '../api';
 import {league} from '../core';
 
 /*Save phase text to database and push to client.
@@ -15,10 +16,10 @@ Args:
 async function updatePhase(phaseText?: string) {
     const oldPhaseText = g.phaseText;
     if (phaseText === undefined) {
-        g.emitter.emit('updateTopMenu', {phaseText: oldPhaseText});
+        api.emit('updateTopMenu', {phaseText: oldPhaseText});
     } else if (phaseText !== oldPhaseText) {
         await league.setGameAttributes({phaseText});
-        g.emitter.emit('updateTopMenu', {phaseText});
+        api.emit('updateTopMenu', {phaseText});
 
         // Update phase in meta database. No need to have this block updating the UI or anything.
         (async () => {

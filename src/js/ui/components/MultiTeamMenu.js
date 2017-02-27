@@ -3,7 +3,7 @@
 import React from 'react';
 import g from '../../globals';
 import * as api from '../api';
-import {realtimeUpdate} from '../util';
+import {emitter, realtimeUpdate} from '../util';
 
 const handleChange = async (e: SyntheticInputEvent) => {
     const userTid = parseInt(e.target.value, 10);
@@ -11,7 +11,7 @@ const handleChange = async (e: SyntheticInputEvent) => {
 
     // dbChange is kind of a hack because it was designed for multi-window update only, but it should update everything
     realtimeUpdate(['dbChange']);
-    g.emitter.emit('updateMultiTeam');
+    emitter.emit('updateMultiTeam');
 };
 
 type Props = {

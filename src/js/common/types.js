@@ -193,7 +193,6 @@ type GameAttributeKeyStatic = (
     'cache' |
     'dbl' |
     'dbm' |
-    'emitter' |
     'enableLogging' |
     'notInDb' |
     'tld'

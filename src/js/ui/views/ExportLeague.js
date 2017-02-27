@@ -1,4 +1,5 @@
 import React from 'react';
+import {PHASE, PHASE_TEXT} from '../../common';
 import g from '../../globals';
 import * as api from '../api';
 import {setTitle} from '../util';
@@ -44,14 +45,14 @@ const categories = [{
 function genFilename(data) {
     const leagueName = data.meta !== undefined ? data.meta.name : `League ${g.lid}`;
 
-    let filename = `BBGM_${leagueName.replace(/[^a-z0-9]/gi, '_')}_${g.season}_${g.PHASE_TEXT[g.phase].replace(/[^a-z0-9]/gi, '_')}`;
+    let filename = `BBGM_${leagueName.replace(/[^a-z0-9]/gi, '_')}_${g.season}_${PHASE_TEXT[g.phase].replace(/[^a-z0-9]/gi, '_')}`;
 
-    if (g.phase === g.PHASE.REGULAR_SEASON && data.hasOwnProperty("teams")) {
+    if (g.phase === PHASE.REGULAR_SEASON && data.hasOwnProperty("teams")) {
         const season = data.teams[g.userTid].seasons[data.teams[g.userTid].seasons.length - 1];
         filename += `_${season.won}-${season.lost}`;
     }
 
-    if (g.phase === g.PHASE.PLAYOFFS && data.hasOwnProperty("playoffSeries")) {
+    if (g.phase === PHASE.PLAYOFFS && data.hasOwnProperty("playoffSeries")) {
         // Most recent series info
         const playoffSeries = data.playoffSeries[data.playoffSeries.length - 1];
         const rnd = playoffSeries.currentRound;

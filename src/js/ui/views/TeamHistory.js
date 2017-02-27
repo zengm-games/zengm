@@ -1,4 +1,5 @@
 import React from 'react';
+import {PLAYER} from '../../common';
 import g from '../../globals';
 import {getCols, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
@@ -47,7 +48,7 @@ const TeamHistory = ({abbrev, bestRecord, championships, history, players, playo
             classNames: {
                 // Highlight active and HOF players
                 danger: p.hof,
-                info: p.tid > g.PLAYER.RETIRED && p.tid !== team.tid, // On other team
+                info: p.tid > PLAYER.RETIRED && p.tid !== team.tid, // On other team
                 success: p.tid === team.tid, // On this team
             },
         };

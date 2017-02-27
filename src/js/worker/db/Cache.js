@@ -3,6 +3,7 @@
 import backboard from 'backboard';
 import Promise from 'bluebird';
 import orderBy from 'lodash.orderby';
+import {PLAYER} from '../../common';
 import g from '../../globals';
 import type {BackboardTx, Player} from '../../common/types';
 
@@ -303,8 +304,8 @@ class Cache {
         await g.dbl.tx(STORES, async (tx) => {
             // Non-retired players - this is special because it's used for players and playerStats
             const [players1, players2] = await Promise.all([
-                tx.players.index('tid').getAll(backboard.lowerBound(g.PLAYER.UNDRAFTED)),
-                tx.players.index('tid').getAll(backboard.bound(g.PLAYER.UNDRAFTED_FANTASY_TEMP, g.PLAYER.UNDRAFTED_2)),
+                tx.players.index('tid').getAll(backboard.lowerBound(PLAYER.UNDRAFTED)),
+                tx.players.index('tid').getAll(backboard.bound(PLAYER.UNDRAFTED_FANTASY_TEMP, PLAYER.UNDRAFTED_2)),
             ]);
 
             const players = players1.concat(players2);

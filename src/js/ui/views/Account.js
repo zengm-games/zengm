@@ -4,6 +4,7 @@ import Promise from 'bluebird';
 import classNames from 'classnames';
 import $ from 'jquery';
 import React from 'react';
+import {SPORT, STRIPE_PUBLISHABLE_KEY} from '../../common';
 import g from '../../globals';
 import {realtimeUpdate, setTitle} from '../util';
 
@@ -33,7 +34,7 @@ class StripeButton extends React.Component {
             if (!this.handler) {
                 this.setState({
                     handler: window.StripeCheckout.configure({
-                        key: g.stripePublishableKey,
+                        key: STRIPE_PUBLISHABLE_KEY,
                         image: '/ico/icon128.png',
                         token: async token => {
                             try {
@@ -141,7 +142,7 @@ class UserInfo extends React.Component {
         $.ajax({
             type: "POST",
             url: `//account.basketball-gm.${g.tld}/logout.php`,
-            data: `sport=${g.sport}`,
+            data: `sport=${SPORT}`,
             xhrFields: {
                 withCredentials: true,
             },

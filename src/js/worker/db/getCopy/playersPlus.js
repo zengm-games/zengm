@@ -1,5 +1,6 @@
 import backboard from 'backboard';
 import _ from 'underscore';
+import {PLAYER} from '../../../common';
 import g from '../../../globals';
 import {filterOrderStats, mergeByPk} from './helpers';
 import {contractSeasonsRemaining, fuzzRating} from '../../core/player';
@@ -69,11 +70,11 @@ const processAttrs = (output: PlayerFiltered, p: Player, {
         } else if (attr === 'teamName') {
             if (p.tid >= 0) {
                 output.teamName = g.teamNamesCache[p.tid];
-            } else if (p.tid === g.PLAYER.FREE_AGENT) {
+            } else if (p.tid === PLAYER.FREE_AGENT) {
                 output.teamName = 'Free Agent';
-            } else if (p.tid === g.PLAYER.UNDRAFTED || p.tid === g.PLAYER.UNDRAFTED_2 || p.tid === g.PLAYER.UNDRAFTED_3 || p.tid === g.PLAYER.UNDRAFTED_FANTASY_TEMP) {
+            } else if (p.tid === PLAYER.UNDRAFTED || p.tid === PLAYER.UNDRAFTED_2 || p.tid === PLAYER.UNDRAFTED_3 || p.tid === PLAYER.UNDRAFTED_FANTASY_TEMP) {
                 output.teamName = 'Draft Prospect';
-            } else if (p.tid === g.PLAYER.RETIRED) {
+            } else if (p.tid === PLAYER.RETIRED) {
                 output.teamName = 'Retired';
             }
         } else if (attr === 'injury' && season !== undefined && season < g.season) {
@@ -152,7 +153,7 @@ const processRatings = async (output: PlayerFiltered, p: Player, {
 
 /*if (pr === null) {
     // Must be retired, or not in the league yet
-    if (options.showRetired && p.tid === g.PLAYER.RETIRED) {
+    if (options.showRetired && p.tid === PLAYER.RETIRED) {
         // If forcing to show retired players, blank it out
         row = {};
         for (let k = 0; k < ratings.length; k++) {
@@ -163,7 +164,7 @@ const processRatings = async (output: PlayerFiltered, p: Player, {
             }
         }
         return true;
-    } else if (options.showRetired && (p.tid === g.PLAYER.UNDRAFTED || p.tid === g.PLAYER.UNDRAFTED_2 || p.tid === g.PLAYER.UNDRAFTED_3)) {
+    } else if (options.showRetired && (p.tid === PLAYER.UNDRAFTED || p.tid === PLAYER.UNDRAFTED_2 || p.tid === PLAYER.UNDRAFTED_3)) {
         // What not show draft prospects too? Just for fun.
         pr = p.ratings[0]; // Only has one entry
     } else {
@@ -274,13 +275,13 @@ const genStatsRow = (p, ps, stats, statType) => {
             row.age = ps.season - p.born.year;
         } else if (attr === 'abbrev') {
             if (ps.tid === undefined) {
-                row.abbrev = helpers.getAbbrev(g.PLAYER.FREE_AGENT);
+                row.abbrev = helpers.getAbbrev(PLAYER.FREE_AGENT);
             } else {
                 row.abbrev = helpers.getAbbrev(ps.tid);
             }
         } else if (attr === 'tid') {
             if (ps.tid === undefined) {
-                row.tid = g.PLAYER.FREE_AGENT;
+                row.tid = PLAYER.FREE_AGENT;
             } else {
                 row.tid = ps.tid;
             }
@@ -344,7 +345,7 @@ const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: 
         return g.cache.indexGetAll('playerStatsAllByPid', p.pid);
     };
 
-    if (season === undefined || p.tid === g.PLAYER.RETIRED) {
+    if (season === undefined || p.tid === PLAYER.RETIRED) {
         // All seasons, or retired player with stats not in cache
         playerStats = mergeByPk(
             await tx.playerStats.index('pid, season, tid').getAll(backboard.bound([p.pid], [p.pid, ''])),

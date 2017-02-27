@@ -1,3 +1,4 @@
+import {PHASE} from '../../common';
 import g from '../../globals';
 import * as team from '../core/team';
 import {getCopy} from '../db';
@@ -36,7 +37,7 @@ async function updateTeamFinances(
         // Convert contract objects into table rows
         const contractTotals = [0, 0, 0, 0, 0];
         let season = g.season;
-        if (g.phase >= g.PHASE.DRAFT) {
+        if (g.phase >= PHASE.DRAFT) {
             // After the draft, don't show old contract year
             season += 1;
         }

@@ -1,7 +1,7 @@
 import React from 'react';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
-import g from '../../globals';
+import {PLAYER} from '../../common';
 import * as api from '../api';
 import {getCols, realtimeUpdate, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
@@ -41,9 +41,9 @@ class WatchList extends React.Component {
 
         const rows = players.map(p => {
             let contract;
-            if (p.tid === g.PLAYER.RETIRED) {
+            if (p.tid === PLAYER.RETIRED) {
                 contract = "Retired";
-            } else if (p.tid === g.PLAYER.UNDRAFTED || p.tid === g.PLAYER.UNDRAFTED_2 || p.tid === g.PLAYER.UNDRAFTED_3) {
+            } else if (p.tid === PLAYER.UNDRAFTED || p.tid === PLAYER.UNDRAFTED_2 || p.tid === PLAYER.UNDRAFTED_3) {
                 contract = `${p.draft.year} Draft Prospect`;
             } else {
                 contract = `${helpers.formatCurrency(p.contract.amount, "M")} thru ${p.contract.exp}`;

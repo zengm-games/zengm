@@ -17,7 +17,7 @@ move everything but the UI to a web worker
   - remove references to document/window in worker
   - split up util - ui, worker, or both
     - globals
-      - break into static and dynamic, first
+      - get rid of everything left in globals.js (weird dynamic stuff)
       - then, be careful!
     - actions: only called from ui, but mixes worker calls and realtimeUpdate
       - put worker calls in api, move to ui/util/actions

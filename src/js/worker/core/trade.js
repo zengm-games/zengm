@@ -1,6 +1,7 @@
 // @flow
 
 import Promise from 'bluebird';
+import {PHASE, PLAYER} from '../../common';
 import g from '../../globals';
 import * as league from './league';
 import * as player from './player';
@@ -65,7 +66,7 @@ function filterUntradable(players: {
     untradableMsg: string,
 }[] {
     return players.map((p) => {
-        if (p.contract.exp <= g.season && g.phase > g.PHASE.PLAYOFFS && g.phase < g.PHASE.FREE_AGENCY) {
+        if (p.contract.exp <= g.season && g.phase > PHASE.PLAYOFFS && g.phase < PHASE.FREE_AGENCY) {
             // If the season is over, can't trade players whose contracts are expired
             return Object.assign({}, p, {
                 untradable: true,
@@ -296,7 +297,7 @@ async function clear() {
  * @return {Promise.<boolean, string>} Resolves to an array. The first argument is a boolean for whether the trade was accepted or not. The second argument is a string containing a message to be dispalyed to the user.
  */
 async function propose(forceTrade?: boolean = false): Promise<[boolean, ?string]> {
-    if (g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.PLAYOFFS) {
+    if (g.phase >= PHASE.AFTER_TRADE_DEADLINE && g.phase <= PHASE.PLAYOFFS) {
         return [false, "Error! You're not allowed to make trades now."];
     }
 
@@ -332,8 +333,8 @@ async function propose(forceTrade?: boolean = false): Promise<[boolean, ?string]
                     // Don't make traded players untradable
                     //p.gamesUntilTradable = 15;
                     p.ptModifier = 1; // Reset
-                    if (g.phase <= g.PHASE.PLAYOFFS) {
-                        await player.addStatsRow(p, g.phase === g.PHASE.PLAYOFFS);
+                    if (g.phase <= PHASE.PLAYOFFS) {
+                        await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
                     }
                     await tx.players.put(p);
                 });
@@ -595,7 +596,7 @@ async function getPickValues(): Promise<TradePickValues> {
     };
 
     const promises = [];
-    for (const tid of [g.PLAYER.UNDRAFTED, g.PLAYER.UNDRAFTED_2, g.PLAYER.UNDRAFTED_3]) {
+    for (const tid of [PLAYER.UNDRAFTED, PLAYER.UNDRAFTED_2, PLAYER.UNDRAFTED_3]) {
         promises.push(g.cache.indexGetAll('playersByTid', tid).then(players => {
             if (players.length > 0) {
                 for (const p of players) {

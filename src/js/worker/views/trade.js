@@ -1,4 +1,5 @@
 import Promise from 'bluebird';
+import {PHASE} from '../../common';
 import g from '../../globals';
 import * as trade from '../core/trade';
 import {getCopy} from '../db';
@@ -151,7 +152,7 @@ async function updateTrade(): void | {[key: string]: any} {
     vars.userTeamName = `${g.teamRegionsCache[g.userTid]} ${g.teamNamesCache[g.userTid]}`;
 
     // If the season is over, can't trade players whose contracts are expired
-    if (g.phase > g.PHASE.PLAYOFFS && g.phase < g.PHASE.FREE_AGENCY) {
+    if (g.phase > PHASE.PLAYOFFS && g.phase < PHASE.FREE_AGENCY) {
         vars.showResigningMsg = true;
     } else {
         vars.showResigningMsg = false;

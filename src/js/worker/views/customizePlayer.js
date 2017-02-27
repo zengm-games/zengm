@@ -1,6 +1,7 @@
 // @flow
 
 import backboard from 'backboard';
+import {PHASE, PLAYER} from '../../common';
 import g from '../../globals';
 import * as finances from '../core/finances';
 import * as player from '../core/player';
@@ -23,29 +24,29 @@ async function updateCustomizePlayer(
         });
 
         // Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
-        const seasonOffset = g.phase < g.PHASE.FREE_AGENCY ? 0 : 1;
+        const seasonOffset = g.phase < PHASE.FREE_AGENCY ? 0 : 1;
 
         for (let i = 0; i < teams.length; i++) {
             teams[i].text = `${teams[i].region} ${teams[i].name}`;
         }
         teams.unshift({
-            tid: g.PLAYER.RETIRED,
+            tid: PLAYER.RETIRED,
             text: "Retired",
         });
         teams.unshift({
-            tid: g.PLAYER.UNDRAFTED_3,
+            tid: PLAYER.UNDRAFTED_3,
             text: `${g.season + seasonOffset + 2} Draft Prospect`,
         });
         teams.unshift({
-            tid: g.PLAYER.UNDRAFTED_2,
+            tid: PLAYER.UNDRAFTED_2,
             text: `${g.season + seasonOffset + 1} Draft Prospect`,
         });
         teams.unshift({
-            tid: g.PLAYER.UNDRAFTED,
+            tid: PLAYER.UNDRAFTED,
             text: `${g.season + seasonOffset} Draft Prospect`,
         });
         teams.unshift({
-            tid: g.PLAYER.FREE_AGENT,
+            tid: PLAYER.FREE_AGENT,
             text: "Free Agent",
         });
 
@@ -59,7 +60,7 @@ async function updateCustomizePlayer(
             const scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
 
             p = player.generate(
-                g.PLAYER.FREE_AGENT,
+                PLAYER.FREE_AGENT,
                 20,
                 '',
                 50,

@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import React from 'react';
+import {SPORT} from '../../common';
 import g from '../../globals';
 import {setTitle} from '../util';
 
@@ -29,7 +30,7 @@ class LostPassword extends React.Component {
         $.ajax({
             type: "POST",
             url: `//account.basketball-gm.${g.tld}/lost_password.php`,
-            data: `${$lostpw.serialize()}&sport=${g.sport}`,
+            data: `${$lostpw.serialize()}&sport=${SPORT}`,
             dataType: "json",
             xhrFields: {
                 withCredentials: true,

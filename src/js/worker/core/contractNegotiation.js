@@ -1,6 +1,7 @@
 // @flow
 
 import Promise from 'bluebird';
+import {PHASE, PLAYER} from '../../common';
 import g from '../../globals';
 import * as freeAgents from './freeAgents';
 import * as league from './league';
@@ -19,7 +20,7 @@ import * as helpers from '../../util/helpers';
  * @return {Promise.<string=>)} If an error occurs, resolve to a string error message.
  */
 async function create(pid: number, resigning: boolean, tid: number = g.userTid): Promise<string> {
-    if ((g.phase >= g.PHASE.AFTER_TRADE_DEADLINE && g.phase <= g.PHASE.RESIGN_PLAYERS) && !resigning) {
+    if ((g.phase >= PHASE.AFTER_TRADE_DEADLINE && g.phase <= PHASE.RESIGN_PLAYERS) && !resigning) {
         return "You're not allowed to sign free agents now.";
     }
 
@@ -34,7 +35,7 @@ async function create(pid: number, resigning: boolean, tid: number = g.userTid):
     }
 
     const p = await g.cache.get('players', pid);
-    if (p.tid !== g.PLAYER.FREE_AGENT) {
+    if (p.tid !== PLAYER.FREE_AGENT) {
         return `${p.firstName} ${p.lastName} is not a free agent.`;
     }
 
@@ -42,7 +43,7 @@ async function create(pid: number, resigning: boolean, tid: number = g.userTid):
     const playerAmount = freeAgents.amountWithMood(p.contract.amount, p.freeAgentMood[g.userTid]);
     let playerYears = p.contract.exp - g.season;
     // Adjust to account for in-season signings;
-    if (g.phase <= g.PHASE.AFTER_TRADE_DEADLINE) {
+    if (g.phase <= PHASE.AFTER_TRADE_DEADLINE) {
         playerYears += 1;
     }
 
@@ -72,7 +73,7 @@ async function cancel(pid: number) {
     await g.cache.delete('negotiations', pid);
     const negotiationInProgress = await lock.negotiationInProgress();
     if (!negotiationInProgress) {
-        if (g.phase === g.PHASE.FREE_AGENCY) {
+        if (g.phase === PHASE.FREE_AGENCY) {
             updateStatus(`${g.daysLeft} days left`);
         } else {
             updateStatus("Idle");
@@ -129,8 +130,8 @@ async function accept(pid: number, amount: number, exp: number): Promise<?string
     p.gamesUntilTradable = 15;
 
     // Handle stats if the season is in progress
-    if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
-        await player.addStatsRow(p, g.phase === g.PHASE.PLAYOFFS);
+    if (g.phase <= PHASE.PLAYOFFS) { // Otherwise, not needed until next season
+        await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
     }
 
     player.setContract(p, {

@@ -2,6 +2,7 @@
 
 import Promise from 'bluebird';
 import _ from 'underscore';
+import {PHASE} from '../../common';
 import g from '../../globals';
 import {getCopy} from '../db';
 
@@ -21,8 +22,8 @@ async function calculatePER() {
         attrs: ["tid"],
         stats: ["gp", "ft", "pf", "ast", "fg", "pts", "fga", "orb", "tov", "fta", "trb", "oppPts"],
         season: g.season,
-        playoffs: g.PHASE.PLAYOFFS === g.phase,
-        regularSeason: g.PHASE.PLAYOFFS !== g.phase,
+        playoffs: PHASE.PLAYOFFS === g.phase,
+        regularSeason: PHASE.PLAYOFFS !== g.phase,
         statType: 'totals',
     });
 
@@ -63,8 +64,8 @@ async function calculatePER() {
         stats: ["min", "tp", "ast", "fg", "ft", "tov", "fga", "fta", "trb", "orb", "stl", "blk", "pf"],
         ratings: ["pos"],
         season: g.season,
-        playoffs: g.PHASE.PLAYOFFS === g.phase,
-        regularSeason: g.PHASE.PLAYOFFS !== g.phase,
+        playoffs: PHASE.PLAYOFFS === g.phase,
+        regularSeason: PHASE.PLAYOFFS !== g.phase,
         statType: 'totals',
     });
 
@@ -76,7 +77,7 @@ async function calculatePER() {
 
         // Is the player active?
         players[i].active = true; // Assume all players are active, since the IndexedDB query above only takes tid >= 0
-        if (g.PHASE.PLAYOFFS === g.phase) {
+        if (PHASE.PLAYOFFS === g.phase) {
             players[i].active = false;
             if (!_.isEmpty(players[i].statsPlayoffs)) {
                 players[i].active = true;

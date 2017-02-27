@@ -1,5 +1,6 @@
 // @flow
 
+import {PLAYER} from '../../common';
 import g from '../../globals';
 import * as player from '../core/player';
 import {getCopy} from '../db';
@@ -11,7 +12,7 @@ async function updateNegotiationList(): void | {[key: string]: any} {
     negotiations = negotiations.filter(negotiation => negotiation.tid === g.userTid);
     const negotiationPids = negotiations.map(negotiation => negotiation.pid);
 
-    let players = await g.cache.indexGetAll('playersByTid', g.PLAYER.FREE_AGENT);
+    let players = await g.cache.indexGetAll('playersByTid', PLAYER.FREE_AGENT);
     players = players.filter(p => negotiationPids.includes(p.pid));
     players = await getCopy.playersPlus(players, {
         attrs: ["pid", "name", "age", "freeAgentMood", "injury", "watch"],

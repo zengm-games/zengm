@@ -1,5 +1,6 @@
 // @flow
 
+import {PHASE} from '../../common';
 import g from '../../globals';
 import * as season from '../core/season';
 import {getCopy} from '../db';
@@ -16,7 +17,7 @@ async function updatePlayoffs(
         let series;
 
         // If in the current season and before playoffs started, display projected matchups
-        if (inputs.season === g.season && g.phase < g.PHASE.PLAYOFFS) {
+        if (inputs.season === g.season && g.phase < PHASE.PLAYOFFS) {
             const teams = helpers.orderByWinp(await getCopy.teams({
                 attrs: ["tid", "cid", "abbrev", "name"],
                 seasonAttrs: ["winp", "won"],

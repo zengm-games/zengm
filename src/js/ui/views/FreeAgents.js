@@ -1,4 +1,5 @@
 import React from 'react';
+import {PHASE} from '../../common';
 import g from '../../globals';
 import {negotiate} from '../../util/actions';
 import {getCols, setTitle} from '../util';
@@ -8,7 +9,7 @@ import {DataTable, HelpPopover, NewWindowLink, PlayerNameLabels} from '../compon
 const FreeAgents = ({capSpace, gamesInProgress, minContract, numRosterSpots, phase, players}) => {
     setTitle('Free Agents');
 
-    if (phase >= g.PHASE.AFTER_TRADE_DEADLINE && phase <= g.PHASE.RESIGN_PLAYERS) {
+    if (phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.RESIGN_PLAYERS) {
         return <div>
             <h1>Error</h1>
             <p>You're not allowed to sign free agents now.</p>

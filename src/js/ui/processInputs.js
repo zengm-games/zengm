@@ -1,3 +1,4 @@
+import {PHASE} from '../common';
 import g from '../globals';
 import * as helpers from '../util/helpers';
 
@@ -33,7 +34,7 @@ const deleteLeague = (ctx) => {
 };
 
 const draft = () => {
-    if (g.phase !== g.PHASE.DRAFT && g.phase !== g.PHASE.FANTASY_DRAFT) {
+    if (g.phase !== PHASE.DRAFT && g.phase !== PHASE.FANTASY_DRAFT) {
         return {
             redirectUrl: helpers.leagueUrl(['draft_summary']),
         };
@@ -44,7 +45,7 @@ const draftSummary = (ctx) => {
     let season = helpers.validateSeason(ctx.params.season);
 
     // Draft hasn't happened yet this year
-    if (g.phase < g.PHASE.DRAFT) {
+    if (g.phase < PHASE.DRAFT) {
         if (g.season === g.startingSeason) {
             // No draft history
             return {
@@ -73,7 +74,7 @@ const eventLog = (ctx) => {
 };
 
 const fantasyDraft = () => {
-    if (g.phase === g.PHASE.FANTASY_DRAFT) {
+    if (g.phase === PHASE.FANTASY_DRAFT) {
         return {
             redirectUrl: helpers.leagueUrl(['draft']),
         };
@@ -81,7 +82,7 @@ const fantasyDraft = () => {
 };
 
 const freeAgents = () => {
-    if (g.phase === g.PHASE.RESIGN_PLAYERS) {
+    if (g.phase === PHASE.RESIGN_PLAYERS) {
         return {
             redirectUrl: helpers.leagueUrl(['negotiation']),
         };
@@ -100,7 +101,7 @@ const history = (ctx) => {
     let season = helpers.validateSeason(ctx.params.season);
 
     // If playoffs aren't over, season awards haven't been set
-    if (g.phase <= g.PHASE.PLAYOFFS) {
+    if (g.phase <= PHASE.PLAYOFFS) {
         // View last season by default
         if (season === g.season) {
             season -= 1;
@@ -138,7 +139,7 @@ const negotiation = (ctx) => {
 };
 
 const negotiationList = () => {
-    if (g.phase !== g.PHASE.RESIGN_PLAYERS) {
+    if (g.phase !== PHASE.RESIGN_PLAYERS) {
         return {
             redirectUrl: helpers.leagueUrl(['negotiation', -1]),
         };
@@ -287,7 +288,7 @@ const transactions = (ctx) => {
 const upcomingFreeAgents = (ctx) => {
     let season = helpers.validateSeason(ctx.params.season);
 
-    if (g.phase <= g.PHASE.RESIGN_PLAYERS) {
+    if (g.phase <= PHASE.RESIGN_PLAYERS) {
         if (season < g.season) {
             season = g.season;
         }

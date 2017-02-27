@@ -1,6 +1,7 @@
 // @flow
 
 import Promise from 'bluebird';
+import {PHASE} from '../../common';
 import g from '../../globals';
 import * as helpers from '../../util/helpers';
 import {lock} from '../util';
@@ -42,31 +43,31 @@ const updatePlayMenu = async () => {
     };
 
     let keys = [];
-    if (g.phase === g.PHASE.PRESEASON) {
+    if (g.phase === PHASE.PRESEASON) {
         // Preseason
         keys = ["untilRegularSeason"];
-    } else if (g.phase === g.PHASE.REGULAR_SEASON) {
+    } else if (g.phase === PHASE.REGULAR_SEASON) {
         // Regular season - pre trading deadline
         keys = ["day", "dayLive", "week", "month", "untilPlayoffs"];
-    } else if (g.phase === g.PHASE.AFTER_TRADE_DEADLINE) {
+    } else if (g.phase === PHASE.AFTER_TRADE_DEADLINE) {
         // Regular season - post trading deadline
         keys = ["day", "dayLive", "week", "month", "untilPlayoffs"];
-    } else if (g.phase === g.PHASE.PLAYOFFS) {
+    } else if (g.phase === PHASE.PLAYOFFS) {
         // Playoffs
         keys = ["day", "dayLive", "week", "month", "throughPlayoffs"];
-    } else if (g.phase === g.PHASE.BEFORE_DRAFT) {
+    } else if (g.phase === PHASE.BEFORE_DRAFT) {
         // Offseason - pre draft
         keys = ["untilDraft"];
-    } else if (g.phase === g.PHASE.DRAFT || g.phase === g.PHASE.FANTASY_DRAFT) {
+    } else if (g.phase === PHASE.DRAFT || g.phase === PHASE.FANTASY_DRAFT) {
         // Draft
         keys = ["viewDraft"];
-    } else if (g.phase === g.PHASE.AFTER_DRAFT) {
+    } else if (g.phase === PHASE.AFTER_DRAFT) {
         // Offseason - post draft
         keys = ["untilResignPlayers"];
-    } else if (g.phase === g.PHASE.RESIGN_PLAYERS) {
+    } else if (g.phase === PHASE.RESIGN_PLAYERS) {
         // Offseason - re-sign players
         keys = ["contractNegotiationList", "untilFreeAgency"];
-    } else if (g.phase === g.PHASE.FREE_AGENCY) {
+    } else if (g.phase === PHASE.FREE_AGENCY) {
         // Offseason - free agency
         keys = ["day", "week", "untilPreseason"];
     }
@@ -84,7 +85,7 @@ const updatePlayMenu = async () => {
     if (gamesInProgress) {
         keys = ["stop"];
     }
-    if (negotiationInProgress && g.phase !== g.PHASE.RESIGN_PLAYERS) {
+    if (negotiationInProgress && g.phase !== PHASE.RESIGN_PLAYERS) {
         keys = ["contractNegotiation"];
     }
     if (phaseChangeInProgress) {

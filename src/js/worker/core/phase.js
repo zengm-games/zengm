@@ -2,6 +2,7 @@
 
 import Promise from 'bluebird';
 import _ from 'underscore';
+import {PHASE, PHASE_TEXT, PLAYER} from '../../common';
 import g from '../../globals';
 import * as api from '../api';
 import * as contractNegotiation from './contractNegotiation';
@@ -34,7 +35,7 @@ async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = 
         phase,
         phaseChangeInProgress: false,
     });
-    updatePhase(`${g.season} ${g.PHASE_TEXT[phase]}`);
+    updatePhase(`${g.season} ${PHASE_TEXT[phase]}`);
     await updatePlayMenu();
 
     // Set lastDbChange last so there is no race condition (WHAT DOES THIS MEAN??)
@@ -83,7 +84,7 @@ async function newPhasePreseason() {
     const coachingRanks = teamSeasons.map(teamSeason => teamSeason.expenses.coaching.rank);
 
     // Loop through all non-retired players
-    const players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.FREE_AGENT, Infinity]);
+    const players = await g.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
     for (const p of players) {
         // Update ratings
         player.addRatingsRow(p, scoutingRank);
@@ -274,7 +275,7 @@ async function newPhaseBeforeDraft() {
     const maxAge = 34;
     const minPot = 40;
 
-    const players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.FREE_AGENT, Infinity]);
+    const players = await g.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
     for (const p of players) {
         // Get player stats, used for HOF calculation
         const playerStats = await getCopy.playerStats({pid: p.pid});
@@ -283,7 +284,7 @@ async function newPhaseBeforeDraft() {
         const pot = p.ratings[p.ratings.length - 1].pot;
 
         if (age > maxAge || pot < minPot) {
-            if (age > 34 || p.tid === g.PLAYER.FREE_AGENT) {  // Only players older than 34 or without a contract will retire
+            if (age > 34 || p.tid === PLAYER.FREE_AGENT) {  // Only players older than 34 or without a contract will retire
                 let excessAge = 0;
                 if (age > 34) {
                     excessAge = (age - 34) / 20;  // 0.05 for each year beyond 34
@@ -296,7 +297,7 @@ async function newPhaseBeforeDraft() {
         }
 
         // Update "free agent years" counter and retire players who have been free agents for more than one years
-        if (p.tid === g.PLAYER.FREE_AGENT) {
+        if (p.tid === PLAYER.FREE_AGENT) {
             if (p.yearsFreeAgent >= 1) {
                 player.retire(p, playerStats);
             } else {
@@ -348,7 +349,7 @@ async function newPhaseBeforeDraft() {
 async function newPhaseDraft() {
     // Kill off old retired players (done here since not much else happens in this phase change, so making it a little slower is fine)
     await g.dbl.tx('players', 'readwrite', async (tx) => {
-        await tx.players.index('tid').iterate(g.PLAYER.RETIRED, p => {
+        await tx.players.index('tid').iterate(PLAYER.RETIRED, p => {
             if (p.hasOwnProperty("diedYear") && p.diedYear) {
                 return;
             }
@@ -386,13 +387,13 @@ async function newPhaseResignPlayers() {
     const baseMoods = await player.genBaseMoods();
 
     // Re-sign players on user's team, and some AI players
-    const players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.FREE_AGENT, Infinity]);
+    const players = await g.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
     for (const p of players) {
         if (p.contract.exp <= g.season && g.userTids.includes(p.tid) && g.autoPlaySeasons === 0) {
             const tid = p.tid;
 
             // Add to free agents first, to generate a contract demand, then open negotiations with player
-            player.addToFreeAgents(p, g.PHASE.RESIGN_PLAYERS, baseMoods);
+            player.addToFreeAgents(p, PHASE.RESIGN_PLAYERS, baseMoods);
             const error = await contractNegotiation.create(p.pid, true, tid);
             if (error !== undefined && error) {
                 logEvent({
@@ -424,10 +425,10 @@ async function newPhaseFreeAgency() {
     const baseMoods = await player.genBaseMoods();
 
     // Reset contract demands of current free agents and undrafted players
-    // KeyRange only works because g.PLAYER.UNDRAFTED is -2 and g.PLAYER.FREE_AGENT is -1
-    const players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.UNDRAFTED, g.PLAYER.FREE_AGENT]);
+    // KeyRange only works because PLAYER.UNDRAFTED is -2 and PLAYER.FREE_AGENT is -1
+    const players = await g.cache.indexGetAll('playersByTid', [PLAYER.UNDRAFTED, PLAYER.FREE_AGENT]);
     for (const p of players) {
-        player.addToFreeAgents(p, g.PHASE.FREE_AGENCY, baseMoods);
+        player.addToFreeAgents(p, PHASE.FREE_AGENCY, baseMoods);
     }
 
     // AI teams re-sign players or they become free agents
@@ -453,24 +454,24 @@ async function newPhaseFreeAgency() {
                     tids: [p.tid],
                 });
             } else {
-                player.addToFreeAgents(p, g.PHASE.RESIGN_PLAYERS, baseMoods);
+                player.addToFreeAgents(p, PHASE.RESIGN_PLAYERS, baseMoods);
             }
         }
     }
 
     // Bump up future draft classes (not simultaneous so tid updates don't cause race conditions)
-    const players3 = await g.cache.indexGetAll('playersByTid', g.PLAYER.UNDRAFTED_2);
+    const players3 = await g.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED_2);
     for (const p of players3) {
-        p.tid = g.PLAYER.UNDRAFTED;
+        p.tid = PLAYER.UNDRAFTED;
         p.ratings[0].fuzz /= 2;
     }
-    const players4 = await g.cache.indexGetAll('playersByTid', g.PLAYER.UNDRAFTED_3);
+    const players4 = await g.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED_3);
     for (const p of players4) {
-        p.tid = g.PLAYER.UNDRAFTED_2;
+        p.tid = PLAYER.UNDRAFTED_2;
         p.ratings[0].fuzz /= 2;
     }
     g.cache.markDirtyIndexes('players');
-    await draft.genPlayers(g.PLAYER.UNDRAFTED_3);
+    await draft.genPlayers(PLAYER.UNDRAFTED_3);
 
     return [helpers.leagueUrl(["free_agents"]), ["playerMovement"]];
 }
@@ -482,15 +483,15 @@ async function newPhaseFantasyDraft(position: number) {
     await g.cache.clear('releasedPlayers');
 
     // Protect draft prospects from being included in this
-    const playersUndrafted = await g.cache.indexGetAll('playersByTid', g.PLAYER.UNDRAFTED);
+    const playersUndrafted = await g.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
     for (const p of playersUndrafted) {
-        p.tid = g.PLAYER.UNDRAFTED_FANTASY_TEMP;
+        p.tid = PLAYER.UNDRAFTED_FANTASY_TEMP;
     }
 
     // Make all players draftable
-    const players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.FREE_AGENT, Infinity]);
+    const players = await g.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
     for (const p of players) {
-        p.tid = g.PLAYER.UNDRAFTED;
+        p.tid = PLAYER.UNDRAFTED;
     }
 
     g.cache.markDirtyIndexes('players');
@@ -501,12 +502,12 @@ async function newPhaseFantasyDraft(position: number) {
 /**
  * Set a new phase of the game.
  *
- * This function is called to do all the crap that must be done during transitions between phases of the game, such as moving from the regular season to the playoffs. Phases are defined in the g.PHASE.* global variables. The phase update may happen asynchronously if the database must be accessed, so do not rely on g.phase being updated immediately after this function is called. Instead, pass a callback.
+ * This function is called to do all the crap that must be done during transitions between phases of the game, such as moving from the regular season to the playoffs. Phases are defined in the PHASE.* global variables. The phase update may happen asynchronously if the database must be accessed, so do not rely on g.phase being updated immediately after this function is called. Instead, pass a callback.
  *
  * phaseChangeTx contains the transaction for the phase change. Phase changes are atomic: if there is an error, it all gets cancelled. The user can also manually abort the phase change. IMPORTANT: For this reason, gameAttributes must be included in every phaseChangeTx to prevent g.phaseChangeInProgress from being changed. Since phaseChangeTx is readwrite, nothing else will be able to touch phaseChangeInProgress until it finishes.
  *
  * @memberOf core.phase
- * @param {number} phase Numeric phase ID. This should always be one of the g.PHASE.* variables defined in globals.js.
+ * @param {number} phase Numeric phase ID. This should always be one of the PHASE.* variables defined in globals.js.
  * @param {} extra Parameter containing extra info to be passed to phase changing function. Currently only used for newPhaseFantasyDraft.
  * @return {Promise}
  */
@@ -517,31 +518,31 @@ async function newPhase(phase: Phase, extra: any) {
     }
 
     const phaseChangeInfo = {
-        [g.PHASE.PRESEASON]: {
+        [PHASE.PRESEASON]: {
             func: newPhasePreseason,
         },
-        [g.PHASE.REGULAR_SEASON]: {
+        [PHASE.REGULAR_SEASON]: {
             func: newPhaseRegularSeason,
         },
-        [g.PHASE.PLAYOFFS]: {
+        [PHASE.PLAYOFFS]: {
             func: newPhasePlayoffs,
         },
-        [g.PHASE.BEFORE_DRAFT]: {
+        [PHASE.BEFORE_DRAFT]: {
             func: newPhaseBeforeDraft,
         },
-        [g.PHASE.DRAFT]: {
+        [PHASE.DRAFT]: {
             func: newPhaseDraft,
         },
-        [g.PHASE.AFTER_DRAFT]: {
+        [PHASE.AFTER_DRAFT]: {
             func: newPhaseAfterDraft,
         },
-        [g.PHASE.RESIGN_PLAYERS]: {
+        [PHASE.RESIGN_PLAYERS]: {
             func: newPhaseResignPlayers,
         },
-        [g.PHASE.FREE_AGENCY]: {
+        [PHASE.FREE_AGENCY]: {
             func: newPhaseFreeAgency,
         },
-        [g.PHASE.FANTASY_DRAFT]: {
+        [PHASE.FANTASY_DRAFT]: {
             func: newPhaseFantasyDraft,
         },
     };

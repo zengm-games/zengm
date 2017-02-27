@@ -1,5 +1,6 @@
 import assert from 'assert';
 import {Cache, connectMeta} from '../../db';
+import {PLAYER} from '../../common';
 import g from '../../globals';
 import * as contractNegotiation from '../../core/contractNegotiation';
 import * as league from '../../core/league';
@@ -112,7 +113,7 @@ describe("core/contractNegotiation", () => {
             assert.equal(negotiations.length, 1);
             assert.equal(negotiations[0].pid, pid2);
 
-            p.tid = g.PLAYER.FREE_AGENT;
+            p.tid = PLAYER.FREE_AGENT;
             g.cache.markDirtyIndexes('players');
         });
     });

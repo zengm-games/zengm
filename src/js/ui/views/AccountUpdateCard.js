@@ -3,6 +3,7 @@
 import Promise from 'bluebird';
 import $ from 'jquery';
 import React from 'react';
+import {STRIPE_PUBLISHABLE_KEY} from '../../common';
 import g from '../../globals';
 import {realtimeUpdate, setTitle} from '../util';
 
@@ -32,7 +33,7 @@ class AccountUpdateCard extends React.Component {
         (async () => {
             if (!window.Stripe) {
                 await Promise.resolve($.getScript('https://js.stripe.com/v2/'));
-                window.Stripe.setPublishableKey(g.stripePublishableKey);
+                window.Stripe.setPublishableKey(STRIPE_PUBLISHABLE_KEY);
             }
 
             this.setState({

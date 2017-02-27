@@ -3,6 +3,7 @@
 import backboard from 'backboard';
 import Promise from 'bluebird';
 import _ from 'underscore';
+import {PHASE, PLAYER} from '../common';
 import g from '../globals';
 import * as helpers from '../util/helpers';
 import {account, beforeView, random, updatePlayMenu, updateStatus} from '../worker/util';
@@ -115,7 +116,7 @@ const deleteOldData = async (options: {
         if (options.retiredPlayers) {
             const toDelete = [];
 
-            await tx.players.index('tid').iterate(g.PLAYER.RETIRED, p => {
+            await tx.players.index('tid').iterate(PLAYER.RETIRED, p => {
                 toDelete.push(p.pid);
                 return tx.players.delete(p.pid);
             });
@@ -127,7 +128,7 @@ const deleteOldData = async (options: {
         } else if (options.retiredPlayersUnnotable) {
             const toDelete = [];
 
-            await tx.players.index('tid').iterate(g.PLAYER.RETIRED, p => {
+            await tx.players.index('tid').iterate(PLAYER.RETIRED, p => {
                 if (p.awards.length === 0 && !p.statsTids.includes(g.userTid)) {
                     toDelete.push(p.pid);
                     return tx.players.delete(p.pid);
@@ -200,8 +201,8 @@ const draftUser = async (pid: number) => {
 // exportPlayerAveragesCsv("all") - all stats
 const exportPlayerAveragesCsv = async (season: number | 'all') => {
     let players;
-    if (g.season === season && g.phase <= g.PHASE.PLAYOFFS) {
-        players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.FREE_AGENT, Infinity]);
+    if (g.season === season && g.phase <= PHASE.PLAYOFFS) {
+        players = await g.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
     } else {
         // If it's not this season, get all players, because retired players could apply to the selected season
         players = await getCopy.players({activeAndRetired: true});
@@ -379,11 +380,11 @@ const handleUploadedDraftClass = async (uploadedFile: any, seasonOffset: 0 | 1 |
     // What tid to replace?
     let draftClassTid;
     if (seasonOffset === 0) {
-        draftClassTid = g.PLAYER.UNDRAFTED;
+        draftClassTid = PLAYER.UNDRAFTED;
     } else if (seasonOffset === 1) {
-        draftClassTid = g.PLAYER.UNDRAFTED_2;
+        draftClassTid = PLAYER.UNDRAFTED_2;
     } else if (seasonOffset === 2) {
-        draftClassTid = g.PLAYER.UNDRAFTED_3;
+        draftClassTid = PLAYER.UNDRAFTED_3;
     } else {
         throw new Error("Invalid draft class index");
     }
@@ -392,7 +393,7 @@ const handleUploadedDraftClass = async (uploadedFile: any, seasonOffset: 0 | 1 |
     let players = uploadedFile.players;
 
     // Filter out any that are not draft prospects
-    players = players.filter(p => p.tid === g.PLAYER.UNDRAFTED);
+    players = players.filter(p => p.tid === PLAYER.UNDRAFTED);
 
     // Get scouting rank, which is used in a couple places below
     const teamSeasons = await g.dbl.teamSeasons.index("tid, season").getAll(backboard.bound([g.userTid, g.season - 2], [g.userTid, g.season]));
@@ -417,7 +418,7 @@ const handleUploadedDraftClass = async (uploadedFile: any, seasonOffset: 0 | 1 |
         }
 
         let seasonOffset2 = seasonOffset;
-        if (g.phase >= g.PHASE.FREE_AGENCY) {
+        if (g.phase >= PHASE.FREE_AGENCY) {
             // Already generated next year's draft, so bump up one
             seasonOffset2 += 1;
         }
@@ -429,7 +430,7 @@ const handleUploadedDraftClass = async (uploadedFile: any, seasonOffset: 0 | 1 |
             // Make sure player object is fully defined
             p = player.augmentPartialPlayer(p, scoutingRank);
 
-            // Manually set TID, since at this point it is always g.PLAYER.UNDRAFTED
+            // Manually set TID, since at this point it is always PLAYER.UNDRAFTED
             p.tid = draftClassTid;
 
             // Manually remove PID, since all it can do is cause trouble
@@ -531,7 +532,7 @@ const runBefore = async (
 };
 
 const startFantasyDraft = async (position: number | 'random') => {
-    await phase.newPhase(g.PHASE.FANTASY_DRAFT, position);
+    await phase.newPhase(PHASE.FANTASY_DRAFT, position);
 };
 
 const switchTeam = async (tid: number) => {
@@ -670,17 +671,17 @@ const upsertCustomizedPlayer = async (p: Player | PlayerWithoutPid, originalTid:
     const r = p.ratings.length - 1;
 
     // Fix draft season
-    if (p.tid === g.PLAYER.UNDRAFTED || p.tid === g.PLAYER.UNDRAFTED_2 || p.tid === g.PLAYER.UNDRAFTED_3) {
-        if (p.tid === g.PLAYER.UNDRAFTED) {
+    if (p.tid === PLAYER.UNDRAFTED || p.tid === PLAYER.UNDRAFTED_2 || p.tid === PLAYER.UNDRAFTED_3) {
+        if (p.tid === PLAYER.UNDRAFTED) {
             p.draft.year = season;
-        } else if (p.tid === g.PLAYER.UNDRAFTED_2) {
+        } else if (p.tid === PLAYER.UNDRAFTED_2) {
             p.draft.year = season + 1;
-        } else if (p.tid === g.PLAYER.UNDRAFTED_3) {
+        } else if (p.tid === PLAYER.UNDRAFTED_3) {
             p.draft.year = season + 2;
         }
 
         // Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
-        if (g.phase >= g.PHASE.FREE_AGENCY) {
+        if (g.phase >= PHASE.FREE_AGENCY) {
             p.draft.year += 1;
         }
 
@@ -695,21 +696,21 @@ const upsertCustomizedPlayer = async (p: Player | PlayerWithoutPid, originalTid:
     }
 
     // If player was retired, add ratings (but don't develop, because that would change ratings)
-    if (originalTid === g.PLAYER.RETIRED) {
+    if (originalTid === PLAYER.RETIRED) {
         if (g.season - p.ratings[r].season > 0) {
             player.addRatingsRow(p, 15);
         }
     }
 
     // If we are *creating* a player who is not a draft prospect, make sure he won't show up in the draft this year
-    if (p.tid !== g.PLAYER.UNDRAFTED && p.tid !== g.PLAYER.UNDRAFTED_2 && p.tid !== g.PLAYER.UNDRAFTED_3 && g.phase < g.PHASE.FREE_AGENCY) {
+    if (p.tid !== PLAYER.UNDRAFTED && p.tid !== PLAYER.UNDRAFTED_2 && p.tid !== PLAYER.UNDRAFTED_3 && g.phase < PHASE.FREE_AGENCY) {
         // This makes sure it's only for created players, not edited players
         if (!p.hasOwnProperty("pid")) {
             p.draft.year = g.season - 1;
         }
     }
     // Similarly, if we are editing a draft prospect and moving him to a team, make his draft year in the past
-    if ((p.tid !== g.PLAYER.UNDRAFTED && p.tid !== g.PLAYER.UNDRAFTED_2 && p.tid !== g.PLAYER.UNDRAFTED_3) && (originalTid === g.PLAYER.UNDRAFTED || originalTid === g.PLAYER.UNDRAFTED_2 || originalTid === g.PLAYER.UNDRAFTED_3) && g.phase < g.PHASE.FREE_AGENCY) {
+    if ((p.tid !== PLAYER.UNDRAFTED && p.tid !== PLAYER.UNDRAFTED_2 && p.tid !== PLAYER.UNDRAFTED_3) && (originalTid === PLAYER.UNDRAFTED || originalTid === PLAYER.UNDRAFTED_2 || originalTid === PLAYER.UNDRAFTED_3) && g.phase < PHASE.FREE_AGENCY) {
         p.draft.year = g.season - 1;
     }
 
@@ -722,11 +723,11 @@ const upsertCustomizedPlayer = async (p: Player | PlayerWithoutPid, originalTid:
         pid = await tx.players.put(p);
 
         // Add regular season or playoffs stat row, if necessary
-        if (p.tid >= 0 && p.tid !== originalTid && g.phase <= g.PHASE.PLAYOFFS) {
+        if (p.tid >= 0 && p.tid !== originalTid && g.phase <= PHASE.PLAYOFFS) {
             p.pid = pid;
 
             // If it is the playoffs, this is only necessary if p.tid actually made the playoffs, but causes only cosmetic harm otherwise.
-            await player.addStatsRow(p, g.phase === g.PHASE.PLAYOFFS);
+            await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
 
             // Add back to database
             await tx.players.put(p);

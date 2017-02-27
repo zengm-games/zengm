@@ -1,4 +1,5 @@
 import assert from 'assert';
+import {PLAYER} from '../../common';
 import {Cache, connectMeta} from '../../db';
 import g from '../../globals';
 import * as league from '../../core/league';
@@ -62,7 +63,7 @@ describe("core/team", () => {
         after(() => league.remove(g.lid));
 
         const addTen = async (tid) => {
-            const players = await g.cache.indexGetAll('playersByTid', g.PLAYER.FREE_AGENT);
+            const players = await g.cache.indexGetAll('playersByTid', PLAYER.FREE_AGENT);
             for (let i = 0; i < 10; i++) {
                 players[i].tid = tid;
             }

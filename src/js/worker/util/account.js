@@ -3,6 +3,7 @@
 /*eslint camelcase: 0*/
 import Promise from 'bluebird';
 import $ from 'jquery';
+import {SPORT} from '../../common';
 import g from '../../globals';
 import {getCopy} from '../db';
 import {ads} from '../../ui/util';
@@ -110,7 +111,7 @@ async function addAchievements(achievements: AchievementKey[], silent?: boolean 
         const data = await Promise.resolve($.ajax({
             type: "POST",
             url: `//account.basketball-gm.${g.tld}/add_achievements.php`,
-            data: {achievements, sport: g.sport},
+            data: {achievements, sport: SPORT},
             dataType: "json",
             xhrFields: {
                 withCredentials: true,
@@ -132,7 +133,7 @@ async function check() {
         const data = await Promise.resolve($.ajax({
             type: "GET",
             url: `//account.basketball-gm.${g.tld}/user_info.php`,
-            data: `sport=${g.sport}`,
+            data: `sport=${SPORT}`,
             dataType: "json",
             xhrFields: {
                 withCredentials: true,
@@ -222,7 +223,7 @@ async function getAchievements() {
         const achievementsRemote = await Promise.resolve($.ajax({
             type: "GET",
             url: `//account.basketball-gm.${g.tld}/get_achievements.php`,
-            data: `sport=${g.sport}`,
+            data: `sport=${SPORT}`,
             dataType: "json",
             xhrFields: {
                 withCredentials: true,

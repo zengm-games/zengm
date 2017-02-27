@@ -1,6 +1,7 @@
 // @flow
 
 import Promise from 'bluebird';
+import {PLAYER} from '../../common';
 import g from '../../globals';
 import * as freeAgents from '../core/freeAgents';
 import * as player from '../core/player';
@@ -11,7 +12,7 @@ async function updateFreeAgents(): void | {[key: string]: any} {
     let [payroll, userPlayers, players] = await Promise.all([
         team.getPayroll(g.userTid).get(0),
         g.cache.indexGetAll('playersByTid', g.userTid),
-        g.cache.indexGetAll('playersByTid', g.PLAYER.FREE_AGENT),
+        g.cache.indexGetAll('playersByTid', PLAYER.FREE_AGENT),
     ]);
 
     const capSpace = g.salaryCap > payroll ? (g.salaryCap - payroll) / 1000 : 0;

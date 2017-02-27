@@ -1,6 +1,7 @@
 // @flow
 
 import Promise from 'bluebird';
+import {PHASE, PLAYER} from '../../common';
 import g from '../../globals';
 import {getCopy} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
@@ -54,15 +55,15 @@ async function updateDraftScouting(
 ): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') || updateEvents.includes('dbChange')) {
         // Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
-        const seasonOffset = g.phase < g.PHASE.FREE_AGENCY ? 0 : 1;
+        const seasonOffset = g.phase < PHASE.FREE_AGENCY ? 0 : 1;
 
         // In fantasy draft, use temp tid
-        const firstUndraftedTid = g.phase === g.PHASE.FANTASY_DRAFT ? g.PLAYER.UNDRAFTED_FANTASY_TEMP : g.PLAYER.UNDRAFTED;
+        const firstUndraftedTid = g.phase === PHASE.FANTASY_DRAFT ? PLAYER.UNDRAFTED_FANTASY_TEMP : PLAYER.UNDRAFTED;
 
         const seasons = await Promise.all([
             addSeason(g.season + seasonOffset, firstUndraftedTid),
-            addSeason(g.season + seasonOffset + 1, g.PLAYER.UNDRAFTED_2),
-            addSeason(g.season + seasonOffset + 2, g.PLAYER.UNDRAFTED_3),
+            addSeason(g.season + seasonOffset + 1, PLAYER.UNDRAFTED_2),
+            addSeason(g.season + seasonOffset + 2, PLAYER.UNDRAFTED_3),
         ]);
 
         return {

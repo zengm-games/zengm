@@ -2,6 +2,7 @@
 
 import orderBy from 'lodash.orderby';
 import React from 'react';
+import {PLAYER} from '../common';
 import g from '../globals';
 import type {GameProcessed, GameProcessedCompleted, Pick, TeamBasic} from '../common/types';
 
@@ -48,7 +49,7 @@ function validateTid(tid: number | string): [number, string] {
 /**
  * Get the team abbreviation for a team ID.
  *
- * For instance, team ID 0 is Atlanta, which has an abbreviation of ATL. This is a convenience wrapper around validateTid, excpet it will return "FA" if you pass g.PLAYER.FREE_AGENT.
+ * For instance, team ID 0 is Atlanta, which has an abbreviation of ATL. This is a convenience wrapper around validateTid, excpet it will return "FA" if you pass PLAYER.FREE_AGENT.
  *
  * @memberOf util.helpers
  * @param {number|string} tid Integer team ID.
@@ -57,7 +58,7 @@ function validateTid(tid: number | string): [number, string] {
 function getAbbrev(tid: number | string): string {
     tid = parseInt(tid, 10);
 
-    if (tid === g.PLAYER.FREE_AGENT) {
+    if (tid === PLAYER.FREE_AGENT) {
         return "FA";
     }
     if (tid < 0 || isNaN(tid)) {

@@ -1,5 +1,6 @@
 import assert from 'assert';
 import {Cache, connectMeta, getCopy} from '../../db';
+import {PLAYER} from '../../common';
 import g from '../../globals';
 import * as draft from '../../core/draft';
 import * as league from '../../core/league';
@@ -17,7 +18,7 @@ describe("core/draft", () => {
     const testDraftUntilUserOrEnd = async (numNow, numTotal) => {
         const pids = await draft.untilUserOrEnd();
         assert.equal(pids.length, numNow);
-        const players = await g.cache.indexGetAll('playersByTid', g.PLAYER.UNDRAFTED);
+        const players = await g.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
         assert.equal(players.length, 140 - numTotal);
     };
 
@@ -34,15 +35,15 @@ describe("core/draft", () => {
         }
         assert.equal(pick.tid, g.userTid);
 
-        const p = await g.cache.indexGet('playersByTid', g.PLAYER.UNDRAFTED);
+        const p = await g.cache.indexGet('playersByTid', PLAYER.UNDRAFTED);
         await draft.selectPlayer(pick, p.pid);
         assert.equal(p.tid, g.userTid);
     };
 
     describe("#genPlayers()", () => {
         it("should generate 70 players for the draft", async () => {
-            await draft.genPlayers(g.PLAYER.UNDRAFTED, null, null);
-            const players = await g.cache.indexGetAll('playersByTid', g.PLAYER.UNDRAFTED);
+            await draft.genPlayers(PLAYER.UNDRAFTED, null, null);
+            const players = await g.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
             assert.equal(players.length, 140); // 70 from original league, 70 from this
         });
     });

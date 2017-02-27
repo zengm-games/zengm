@@ -1,3 +1,4 @@
+import {PLAYER} from '../../common';
 import g from '../../globals';
 import * as freeAgents from '../core/freeAgents';
 import * as trade from '../core/trade';
@@ -22,7 +23,7 @@ async function updatePlayer(
         });
 
         // Account for extra free agent demands
-        if (p.tid === g.PLAYER.FREE_AGENT) {
+        if (p.tid === PLAYER.FREE_AGENT) {
             p.contract.amount = freeAgents.amountWithMood(p.contract.amount, p.freeAgentMood[g.userTid]);
         }
 
@@ -54,9 +55,9 @@ async function updatePlayer(
         return {
             player: p,
             showTradeFor: p.tid !== g.userTid && p.tid >= 0,
-            freeAgent: p.tid === g.PLAYER.FREE_AGENT,
-            retired: p.tid === g.PLAYER.RETIRED,
-            showContract: p.tid !== g.PLAYER.UNDRAFTED && p.tid !== g.PLAYER.UNDRAFTED_2 && p.tid !== g.PLAYER.UNDRAFTED_3 && p.tid !== g.PLAYER.UNDRAFTED_FANTASY_TEMP && p.tid !== g.PLAYER.RETIRED,
+            freeAgent: p.tid === PLAYER.FREE_AGENT,
+            retired: p.tid === PLAYER.RETIRED,
+            showContract: p.tid !== PLAYER.UNDRAFTED && p.tid !== PLAYER.UNDRAFTED_2 && p.tid !== PLAYER.UNDRAFTED_3 && p.tid !== PLAYER.UNDRAFTED_FANTASY_TEMP && p.tid !== PLAYER.RETIRED,
             injured: p.injury.type !== "Healthy",
             godMode: g.godMode,
             events,

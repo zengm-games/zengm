@@ -2,6 +2,7 @@
 
 import Promise from 'bluebird';
 import _ from 'underscore';
+import {PHASE, PLAYER} from '../../common';
 import g from '../../globals';
 import * as draft from './draft';
 import * as player from './player';
@@ -804,7 +805,7 @@ console.log("Removed contract quality: -" + contractExcessFactor + " * " + sumCo
 console.log("Total contract amount: " + contractsFactor + " * " + salaryRemoved);*/
 
     // Aversion towards losing cap space in a trade during free agency
-    if (g.phase >= g.PHASE.RESIGN_PLAYERS || g.phase <= g.PHASE.FREE_AGENCY) {
+    if (g.phase >= PHASE.RESIGN_PLAYERS || g.phase <= PHASE.FREE_AGENCY) {
         // Only care if cap space is over 2 million
         if (payroll + 2000 < g.salaryCap) {
             const salaryAddedThisSeason = sumContracts(add, true) - sumContracts(remove, true);
@@ -936,7 +937,7 @@ async function checkRosterSizes(): Promise<string | null> {
                     // See also core.phase
                     const p = minFreeAgents.shift();
                     p.tid = tid;
-                    await player.addStatsRow(p, g.phase === g.PHASE.PLAYOFFS);
+                    await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
                     player.setContract(p, p.contract, true);
                     p.gamesUntilTradable = 15;
                     g.cache.markDirtyIndexes('players');
@@ -962,7 +963,7 @@ async function checkRosterSizes(): Promise<string | null> {
         }
     };
 
-    const players = await g.cache.indexGetAll('playersByTid', g.PLAYER.FREE_AGENT);
+    const players = await g.cache.indexGetAll('playersByTid', PLAYER.FREE_AGENT);
 
     // List of free agents looking for minimum contracts, sorted by value. This is used to bump teams up to the minimum roster size.
     for (let i = 0; i < players.length; i++) {

@@ -3,6 +3,7 @@
 import Promise from 'bluebird';
 import orderBy from 'lodash.orderby';
 import _ from 'underscore';
+import {PHASE, PLAYER} from '../../common';
 import g from '../../globals';
 import * as api from '../api';
 import * as league from './league';
@@ -27,7 +28,7 @@ async function autoSign() {
             attrs: ["strategy"],
             season: g.season,
         }),
-        g.cache.indexGetAll('playersByTid', g.PLAYER.FREE_AGENT),
+        g.cache.indexGetAll('playersByTid', PLAYER.FREE_AGENT),
     ]);
 
     if (players.length === 0) {
@@ -50,7 +51,7 @@ async function autoSign() {
         }
 
         // Small chance of actually trying to sign someone in free agency, gets greater as time goes on
-        if (g.phase === g.PHASE.FREE_AGENCY && Math.random() < 0.99 * g.daysLeft / 30) {
+        if (g.phase === PHASE.FREE_AGENCY && Math.random() < 0.99 * g.daysLeft / 30) {
             continue;
         }
 
@@ -71,8 +72,8 @@ async function autoSign() {
                 // Don't sign minimum contract players to fill out the roster
                 if (p.contract.amount + payroll <= g.salaryCap || (p.contract.amount === g.minContract && numPlayersOnRoster < 13)) {
                     p.tid = tid;
-                    if (g.phase <= g.PHASE.PLAYOFFS) { // Otherwise, not needed until next season
-                        await player.addStatsRow(p, g.phase === g.PHASE.PLAYOFFS);
+                    if (g.phase <= PHASE.PLAYOFFS) { // Otherwise, not needed until next season
+                        await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
                     }
                     player.setContract(p, p.contract, true);
                     p.gamesUntilTradable = 15;
@@ -107,7 +108,7 @@ async function autoSign() {
  * @return {Promise}
  */
 async function decreaseDemands() {
-    const players = await g.cache.indexGetAll('playersByTid', g.PLAYER.FREE_AGENT);
+    const players = await g.cache.indexGetAll('playersByTid', PLAYER.FREE_AGENT);
     for (const p of players) {
         // Decrease free agent demands
         p.contract.amount -= 50 * Math.sqrt(g.maxContract / 20000);
@@ -115,7 +116,7 @@ async function decreaseDemands() {
             p.contract.amount = g.minContract;
         }
 
-        if (g.phase !== g.PHASE.FREE_AGENCY) {
+        if (g.phase !== PHASE.FREE_AGENCY) {
             // Since this is after the season has already started, ask for a short contract
             if (p.contract.amount < 1000) {
                 p.contract.exp = g.season;
@@ -181,7 +182,7 @@ async function play(numDays: number, start?: boolean = true) {
 
         // Check to see if free agency is over
         if (g.daysLeft === 0) {
-            await phase.newPhase(g.PHASE.PRESEASON);
+            await phase.newPhase(PHASE.PRESEASON);
             updateStatus("Idle");
         }
     };

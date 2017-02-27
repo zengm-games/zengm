@@ -1,5 +1,6 @@
 // @flow
 
+import {PHASE} from '../../common';
 import g from '../../globals';
 import {getCopy} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
@@ -8,7 +9,7 @@ async function updatePlayers(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || (updateEvents.includes('newPhase') && g.phase === g.PHASE.BEFORE_DRAFT)) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || (updateEvents.includes('newPhase') && g.phase === PHASE.BEFORE_DRAFT)) {
         let players = await getCopy.players({retired: true});
         players = players.filter(p => p.hof);
         players = await getCopy.playersPlus(players, {

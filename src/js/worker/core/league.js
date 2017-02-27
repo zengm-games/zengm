@@ -4,6 +4,7 @@ import backboard from 'backboard';
 import Promise from 'bluebird';
 import _ from 'underscore';
 import {Cache, connectLeague} from '../db';
+import {PHASE, PHASE_TEXT, PLAYER} from '../../common';
 import g from '../../globals';
 import * as draft from './draft';
 import * as finances from './finances';
@@ -339,12 +340,12 @@ async function create(
         if (randomizeRosters) {
             // Assign the team ID of all players to the 'playerTids' array.
             // Check tid to prevent draft prospects from being swapped with established players
-            const playerTids = players.filter(p => p.tid > g.PLAYER.FREE_AGENT).map(p => p.tid);
+            const playerTids = players.filter(p => p.tid > PLAYER.FREE_AGENT).map(p => p.tid);
 
             // Shuffle the teams that players are assigned to.
             random.shuffle(playerTids);
             for (const p of players) {
-                if (p.tid > g.PLAYER.FREE_AGENT) {
+                if (p.tid > PLAYER.FREE_AGENT) {
                     p.tid = playerTids.pop();
                     if (p.stats && p.stats.length > 0) {
                         p.stats[p.stats.length - 1].tid = p.tid;
@@ -370,9 +371,9 @@ async function create(
 
             // If no stats in League File, create blank stats rows for active players if necessary
             if (playerStats.length === 0) {
-                if (p.tid >= 0 && g.phase <= g.PHASE.PLAYOFFS) {
+                if (p.tid >= 0 && g.phase <= PHASE.PLAYOFFS) {
                     // Needs pid, so must be called after put. It's okay, statsTid was already set in player.augmentPartialPlayer
-                    await player.addStatsRow(p, g.phase === g.PHASE.PLAYOFFS);
+                    await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
                 }
             } else {
                 // If there are stats in the League File, add them to the database
@@ -416,7 +417,7 @@ async function create(
 
         for (let tidTemp = -3; tidTemp < teams.length; tidTemp++) {
             // Create multiple "teams" worth of players for the free agent pool
-            const tid2 = tidTemp < 0 ? g.PLAYER.FREE_AGENT : tidTemp;
+            const tid2 = tidTemp < 0 ? PLAYER.FREE_AGENT : tidTemp;
 
             const goodNeutralBad = random.randInt(-1, 1);  // determines if this will be a good team or not
             random.shuffle(pots);
@@ -432,7 +433,7 @@ async function create(
                 } else {
                     player.bonus(p, 0);
                 }
-                if (tid2 === g.PLAYER.FREE_AGENT) {  // Free agents
+                if (tid2 === PLAYER.FREE_AGENT) {  // Free agents
                     player.bonus(p, -15);
                 }
 
@@ -440,7 +441,7 @@ async function create(
                 await player.updateValues(p);
 
                 // Randomize contract expiration for players who aren't free agents, because otherwise contract expiration dates will all be synchronized
-                const randomizeExp = (p.tid !== g.PLAYER.FREE_AGENT);
+                const randomizeExp = (p.tid !== PLAYER.FREE_AGENT);
 
                 // Update contract based on development. Only write contract to player log if not a free agent.
                 player.setContract(p, player.genContract(p, randomizeExp), p.tid >= 0);
@@ -449,11 +450,11 @@ async function create(
                 await g.cache.add('players', p);
 
                 // Needs pid, so must be called after put
-                if (p.tid === g.PLAYER.FREE_AGENT) {
+                if (p.tid === PLAYER.FREE_AGENT) {
                     player.addToFreeAgents(p, g.phase, baseMoods);
                 } else {
                     // $FlowFixMe
-                    await player.addStatsRow(p, g.phase === g.PHASE.PLAYOFFS);
+                    await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
                 }
             }
 
@@ -471,24 +472,24 @@ async function create(
     let createUndrafted3 = Math.round(70 * g.numTeams / 30);
     if (players !== undefined) {
         for (let i = 0; i < players.length; i++) {
-            if (players[i].tid === g.PLAYER.UNDRAFTED) {
+            if (players[i].tid === PLAYER.UNDRAFTED) {
                 createUndrafted1 -= 1;
-            } else if (players[i].tid === g.PLAYER.UNDRAFTED_2) {
+            } else if (players[i].tid === PLAYER.UNDRAFTED_2) {
                 createUndrafted2 -= 1;
-            } else if (players[i].tid === g.PLAYER.UNDRAFTED_3) {
+            } else if (players[i].tid === PLAYER.UNDRAFTED_3) {
                 createUndrafted3 -= 1;
             }
         }
     }
-    // If the draft has already happened this season but next year's class hasn't been bumped up, don't create any g.PLAYER.UNDRAFTED
-    if (createUndrafted1 > 0 && (g.phase <= g.PHASE.BEFORE_DRAFT || g.phase >= g.PHASE.FREE_AGENCY)) {
-        await draft.genPlayers(g.PLAYER.UNDRAFTED, scoutingRank, createUndrafted1, true);
+    // If the draft has already happened this season but next year's class hasn't been bumped up, don't create any PLAYER.UNDRAFTED
+    if (createUndrafted1 > 0 && (g.phase <= PHASE.BEFORE_DRAFT || g.phase >= PHASE.FREE_AGENCY)) {
+        await draft.genPlayers(PLAYER.UNDRAFTED, scoutingRank, createUndrafted1, true);
     }
     if (createUndrafted2 > 0) {
-        await draft.genPlayers(g.PLAYER.UNDRAFTED_2, scoutingRank, createUndrafted2, true);
+        await draft.genPlayers(PLAYER.UNDRAFTED_2, scoutingRank, createUndrafted2, true);
     }
     if (createUndrafted3 > 0) {
-        await draft.genPlayers(g.PLAYER.UNDRAFTED_3, scoutingRank, createUndrafted3, true);
+        await draft.genPlayers(PLAYER.UNDRAFTED_3, scoutingRank, createUndrafted3, true);
     }
 
     if (skipNewPhase) {
@@ -496,7 +497,7 @@ async function create(
         return g.lid;
     }
 
-    updatePhase(`${g.season} ${g.PHASE_TEXT[g.phase]}`);
+    updatePhase(`${g.season} ${PHASE_TEXT[g.phase]}`);
     updateStatus("Idle");
 
     const lid = g.lid; // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
@@ -663,22 +664,22 @@ async function loadGameAttributes() {
 
 // Depending on phase, initiate action that will lead to the next phase
 async function autoPlay() {
-    if (g.phase === g.PHASE.PRESEASON) {
-        await phase.newPhase(g.PHASE.REGULAR_SEASON);
-    } else if (g.phase === g.PHASE.REGULAR_SEASON) {
+    if (g.phase === PHASE.PRESEASON) {
+        await phase.newPhase(PHASE.REGULAR_SEASON);
+    } else if (g.phase === PHASE.REGULAR_SEASON) {
         const numDays = await season.getDaysLeftSchedule();
         await game.play(numDays);
-    } else if (g.phase === g.PHASE.PLAYOFFS) {
+    } else if (g.phase === PHASE.PLAYOFFS) {
         await game.play(100);
-    } else if (g.phase === g.PHASE.BEFORE_DRAFT) {
-        await phase.newPhase(g.PHASE.DRAFT);
-    } else if (g.phase === g.PHASE.DRAFT) {
+    } else if (g.phase === PHASE.BEFORE_DRAFT) {
+        await phase.newPhase(PHASE.DRAFT);
+    } else if (g.phase === PHASE.DRAFT) {
         await draft.untilUserOrEnd();
-    } else if (g.phase === g.PHASE.AFTER_DRAFT) {
-        await phase.newPhase(g.PHASE.RESIGN_PLAYERS);
-    } else if (g.phase === g.PHASE.RESIGN_PLAYERS) {
-        await phase.newPhase(g.PHASE.FREE_AGENCY);
-    } else if (g.phase === g.PHASE.FREE_AGENCY) {
+    } else if (g.phase === PHASE.AFTER_DRAFT) {
+        await phase.newPhase(PHASE.RESIGN_PLAYERS);
+    } else if (g.phase === PHASE.RESIGN_PLAYERS) {
+        await phase.newPhase(PHASE.FREE_AGENCY);
+    } else if (g.phase === PHASE.FREE_AGENCY) {
         await freeAgents.play(g.daysLeft);
     } else {
         throw new Error(`Unknown phase: ${g.phase}`);

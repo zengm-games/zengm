@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import React from 'react';
+import {PHASE} from '../../common';
 import g from '../../globals';
 import {setTitle} from '../util';
 import * as helpers from '../../util/helpers';
@@ -14,7 +15,7 @@ const LeagueDashboard = ({abbrev, ast, astRank, att, cash, completed, confTeams,
     const percentComplete = gamesPlayed / g.numGames;
 
     let gamesRemainingTag = null;
-    if (g.phase === g.PHASE.REGULAR_SEASON) {
+    if (g.phase === PHASE.REGULAR_SEASON) {
         gamesRemainingTag = <p>{gamesRemaining} games remaining ({(percentComplete * 100).toFixed(1)}% complete)</p>;
     }
 

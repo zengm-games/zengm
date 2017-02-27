@@ -1,5 +1,6 @@
 // @flow
 
+import {PLAYER} from '../../common';
 import g from '../../globals';
 import {getCopy} from '../db';
 import type {GetOutput} from '../../common/types';
@@ -36,9 +37,9 @@ async function updateDraftSummary(
                 hof: pa.hof,
 
                 // Ratings
-                currentOvr: pa.tid !== g.PLAYER.RETIRED ? currentPr.ovr : null,
-                currentPot: pa.tid !== g.PLAYER.RETIRED ? currentPr.pot : null,
-                currentSkills: pa.tid !== g.PLAYER.RETIRED ? currentPr.skills : [],
+                currentOvr: pa.tid !== PLAYER.RETIRED ? currentPr.ovr : null,
+                currentPot: pa.tid !== PLAYER.RETIRED ? currentPr.pot : null,
+                currentSkills: pa.tid !== PLAYER.RETIRED ? currentPr.skills : [],
                 pos: currentPr.pos,
 
                 // Stats

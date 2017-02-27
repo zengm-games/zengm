@@ -1,6 +1,7 @@
 // @flow
 
 import Promise from 'bluebird';
+import {PHASE, PLAYER} from '../../common';
 import g from '../../globals';
 import * as season from '../core/season';
 import * as team from '../core/team';
@@ -193,7 +194,7 @@ async function updatePlayers(
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || updateEvents.includes('newPhase')) {
         const vars = {};
 
-        let players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.UNDRAFTED, Infinity]);
+        let players = await g.cache.indexGetAll('playersByTid', [PLAYER.UNDRAFTED, Infinity]);
         players = await getCopy.playersPlus(players, {
             attrs: ['pid', 'name', 'abbrev', 'tid', 'age', 'contract', 'rosterOrder', 'injury', 'watch'],
             ratings: ['ovr', 'pot', 'dovr', 'dpot', 'skills', 'pos'],
@@ -249,7 +250,7 @@ async function updatePlayoffs(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || (g.phase >= g.PHASE.PLAYOFFS && updateEvents.includes('gameSim')) || (updateEvents.includes('newPhase') && g.phase === g.PHASE.PLAYOFFS)) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || (g.phase >= PHASE.PLAYOFFS && updateEvents.includes('gameSim')) || (updateEvents.includes('newPhase') && g.phase === PHASE.PLAYOFFS)) {
         const playoffSeries = await getCopy.playoffSeries({season: g.season});
 
         let foundSeries;

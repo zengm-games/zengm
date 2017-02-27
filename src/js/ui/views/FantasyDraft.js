@@ -1,5 +1,5 @@
 import React from 'react';
-import g from '../../globals';
+import {PHASE} from '../../common';
 import {setTitle} from '../util';
 import * as api from '../api';
 import {NewWindowLink} from '../components';
@@ -29,7 +29,7 @@ class FantasyDraft extends React.Component {
     render() {
         setTitle('Fantasy Draft');
 
-        if (this.props.phase === g.PHASE.DRAFT) {
+        if (this.props.phase === PHASE.DRAFT) {
             return <div>
                 <h1>Error</h1>
                 <p>You can't start a fantasy draft while a regular draft is already in progress.</p>

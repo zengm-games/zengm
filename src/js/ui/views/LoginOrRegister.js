@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import $ from 'jquery';
 import React from 'react';
+import {SPORT} from '../../common';
 import g from '../../globals';
 import * as api from '../api';
 import {realtimeUpdate, setTitle} from '../util';
@@ -32,7 +33,7 @@ class LoginOrRegister extends React.Component {
         $.ajax({
             type: "POST",
             url: `//account.basketball-gm.${g.tld}/login.php`,
-            data: `${$login.serialize()}&sport=${g.sport}`,
+            data: `${$login.serialize()}&sport=${SPORT}`,
             dataType: "json",
             xhrFields: {
                 withCredentials: true,
@@ -75,7 +76,7 @@ class LoginOrRegister extends React.Component {
         $.ajax({
             type: "POST",
             url: `//account.basketball-gm.${g.tld}/register.php`,
-            data: `${$register.serialize()}&sport=${g.sport}`,
+            data: `${$register.serialize()}&sport=${SPORT}`,
             dataType: "json",
             xhrFields: {
                 withCredentials: true,

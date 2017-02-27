@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import React from 'react';
+import {PHASE} from '../../common';
 import g from '../../globals';
 import * as api from '../api';
 import {getCols, realtimeUpdate, setTitle} from '../util';
@@ -147,7 +148,7 @@ class Trade extends React.Component {
 
         setTitle('Trade');
 
-        if ((phase >= g.PHASE.AFTER_TRADE_DEADLINE && phase <= g.PHASE.PLAYOFFS) || phase === g.PHASE.FANTASY_DRAFT || gameOver) {
+        if ((phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.PLAYOFFS) || phase === PHASE.FANTASY_DRAFT || gameOver) {
             return <div>
                 <h1>Error</h1>
                 <p>You're not allowed to make trades now.</p>

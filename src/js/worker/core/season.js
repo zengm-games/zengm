@@ -2,6 +2,7 @@
 
 import Promise from 'bluebird';
 import _ from 'underscore';
+import {PLAYER} from '../../common';
 import g from '../../globals';
 import * as league from './league';
 import {getCopy} from '../db';
@@ -112,7 +113,7 @@ async function doAwards() {
     // Sort teams by tid so it can be easily used in awards formulas
     teams.sort((a, b) => a.tid - b.tid);
 
-    let players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.FREE_AGENT, Infinity]);
+    let players = await g.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
     players = await getCopy.playersPlus(players, {
         attrs: ["pid", "name", "tid", "abbrev", "draft"],
         stats: ["gp", "gs", "min", "pts", "trb", "ast", "blk", "stl", "ewa"],

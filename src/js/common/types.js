@@ -190,18 +190,12 @@ export type GameAttributeKeyDynamic = (
 );
 
 type GameAttributeKeyStatic = (
-    'PHASE' |
-    'PHASE_TEXT' |
-    'PLAYER' |
     'cache' |
-    'compositeWeights' |
     'dbl' |
     'dbm' |
     'emitter' |
     'enableLogging' |
     'notInDb' |
-    'sport' |
-    'stripePublishableKey' |
     'tld'
 );
 

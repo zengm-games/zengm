@@ -3,6 +3,7 @@ import $ from 'jquery';
 import React from 'react';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
+import {PHASE} from '../../common';
 import g from '../../globals';
 import * as api from '../api';
 import {tradeFor} from '../../util/actions';
@@ -42,7 +43,7 @@ const handleAutoSort = async () => {
 
 const handleRelease = async p => {
     // If a player was just drafted by his current team and the regular season hasn't started, then he can be released without paying anything
-    const justDrafted = p.tid === p.draft.tid && ((p.draft.year === g.season && g.phase >= g.PHASE.DRAFT) || (p.draft.year === g.season - 1 && g.phase < g.PHASE.REGULAR_SEASON));
+    const justDrafted = p.tid === p.draft.tid && ((p.draft.year === g.season && g.phase >= PHASE.DRAFT) || (p.draft.year === g.season - 1 && g.phase < PHASE.REGULAR_SEASON));
 
     let releaseMessage;
     if (justDrafted) {

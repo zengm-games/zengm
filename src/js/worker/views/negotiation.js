@@ -1,3 +1,4 @@
+import {PHASE} from '../../common';
 import g from '../../globals';
 import * as contractNegotiation from '../core/contractNegotiation';
 import * as freeAgents from '../core/freeAgents';
@@ -12,7 +13,7 @@ function generateContractOptions(contract, ovr) {
     growthFactor += (ovr % 10) * 0.01 - 0.05;
 
     let exp = g.season;
-    if (g.phase > g.PHASE.AFTER_TRADE_DEADLINE) {
+    if (g.phase > PHASE.AFTER_TRADE_DEADLINE) {
         exp += 1;
     }
 
@@ -67,7 +68,7 @@ async function updateNegotiation(
 
     negotiation.player.expiration = negotiation.player.years + g.season;
     // Adjust to account for in-season signings
-    if (g.phase <= g.PHASE.AFTER_TRADE_DEADLINE) {
+    if (g.phase <= PHASE.AFTER_TRADE_DEADLINE) {
         negotiation.player.expiration -= 1;
     }
 

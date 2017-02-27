@@ -1,6 +1,7 @@
 /*eslint no-unused-expressions: 0*/
 import assert from 'assert';
 import _ from 'underscore';
+import {PLAYER} from '../../common';
 import g from '../../globals';
 import * as player from '../../core/player';
 import * as helpers from '../../util/helpers';
@@ -115,7 +116,7 @@ describe("core/player", () => {
         let p;
         before(() => {
             g.season = 2011;
-            p = player.generate(g.PLAYER.UNDRAFTED, 19, "", 50, 60, 2011, false, 28);
+            p = player.generate(PLAYER.UNDRAFTED, 19, "", 50, 60, 2011, false, 28);
             p.stats = []; // Fake it being here
             p.tid = 4;
 

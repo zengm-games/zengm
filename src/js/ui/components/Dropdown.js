@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react';
+import {PHASE} from '../../common';
 import g from '../../globals';
 import {realtimeUpdate} from '../util';
 import * as helpers from '../../util/helpers';
@@ -66,7 +67,7 @@ const Select = ({field, handleChange, value}) => {
     } else if (field === "seasonsUpcoming") {
         options = [];
         // For upcomingFreeAgents, bump up 1 if we're past the season
-        const offset = g.phase <= g.PHASE.RESIGN_PLAYERS ? 0 : 1;
+        const offset = g.phase <= PHASE.RESIGN_PLAYERS ? 0 : 1;
         for (let j = 0 + offset; j < 5 + offset; j++) {
             options.push({
                 key: g.season + j,

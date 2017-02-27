@@ -2,6 +2,7 @@
 
 import faces from 'facesjs';
 import React from 'react';
+import {PHASE} from '../../common';
 import g from '../../globals';
 import * as api from '../api';
 import {realtimeUpdate, setTitle} from '../util';
@@ -66,7 +67,7 @@ const copyValidValues = (source, target, season) => {
             }
 
             // If current season contracts already expired, then current season can't be allowed for new contract
-            if (exp === season && g.phase >= g.PHASE.RESIGN_PLAYERS) {
+            if (exp === season && g.phase >= PHASE.RESIGN_PLAYERS) {
                 exp += 1;
             }
 

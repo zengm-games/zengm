@@ -4,6 +4,7 @@ import backboard from 'backboard';
 import Promise from 'bluebird';
 import faces from 'facesjs';
 import _ from 'underscore';
+import {COMPOSITE_WEIGHTS, PHASE, PLAYER} from '../../common';
 import g from '../../globals';
 import * as finances from './finances';
 import * as names from '../../data/names';
@@ -112,28 +113,28 @@ function skills(ratings: PlayerRatings): PlayerSkill[] {
     const sk = [];
 
     // These use the same formulas as the composite rating definitions in core.game!
-    if (hasSkill(ratings, g.compositeWeights.shootingThreePointer.ratings, g.compositeWeights.shootingThreePointer.weights)) {
+    if (hasSkill(ratings, COMPOSITE_WEIGHTS.shootingThreePointer.ratings, COMPOSITE_WEIGHTS.shootingThreePointer.weights)) {
         sk.push("3");
     }
-    if (hasSkill(ratings, g.compositeWeights.athleticism.ratings, g.compositeWeights.athleticism.weights)) {
+    if (hasSkill(ratings, COMPOSITE_WEIGHTS.athleticism.ratings, COMPOSITE_WEIGHTS.athleticism.weights)) {
         sk.push("A");
     }
-    if (hasSkill(ratings, g.compositeWeights.dribbling.ratings)) {
+    if (hasSkill(ratings, COMPOSITE_WEIGHTS.dribbling.ratings)) {
         sk.push("B");
     }
-    if (hasSkill(ratings, g.compositeWeights.defenseInterior.ratings, g.compositeWeights.defenseInterior.weights)) {
+    if (hasSkill(ratings, COMPOSITE_WEIGHTS.defenseInterior.ratings, COMPOSITE_WEIGHTS.defenseInterior.weights)) {
         sk.push("Di");
     }
-    if (hasSkill(ratings, g.compositeWeights.defensePerimeter.ratings, g.compositeWeights.defensePerimeter.weights)) {
+    if (hasSkill(ratings, COMPOSITE_WEIGHTS.defensePerimeter.ratings, COMPOSITE_WEIGHTS.defensePerimeter.weights)) {
         sk.push("Dp");
     }
-    if (hasSkill(ratings, g.compositeWeights.shootingLowPost.ratings, g.compositeWeights.shootingLowPost.weights)) {
+    if (hasSkill(ratings, COMPOSITE_WEIGHTS.shootingLowPost.ratings, COMPOSITE_WEIGHTS.shootingLowPost.weights)) {
         sk.push("Po");
     }
-    if (hasSkill(ratings, g.compositeWeights.passing.ratings, g.compositeWeights.passing.weights)) {
+    if (hasSkill(ratings, COMPOSITE_WEIGHTS.passing.ratings, COMPOSITE_WEIGHTS.passing.weights)) {
         sk.push("Ps");
     }
-    if (hasSkill(ratings, g.compositeWeights.rebounding.ratings, g.compositeWeights.rebounding.weights)) {
+    if (hasSkill(ratings, COMPOSITE_WEIGHTS.rebounding.ratings, COMPOSITE_WEIGHTS.rebounding.weights)) {
         sk.push("R");
     }
 
@@ -228,7 +229,7 @@ function setContract(
     if (signed) {
         // Is this contract beginning with an in-progress season, or next season?
         let start = g.season;
-        if (g.phase > g.PHASE.AFTER_TRADE_DEADLINE) {
+        if (g.phase > PHASE.AFTER_TRADE_DEADLINE) {
             start += 1;
         }
 
@@ -571,7 +572,7 @@ function addToFreeAgents(p: Player | PlayerWithoutPid, phase: Phase, baseMoods: 
             // Bad players don't have the luxury to be choosy about teams
             return 0;
         }
-        if (phase === g.PHASE.RESIGN_PLAYERS) {
+        if (phase === PHASE.RESIGN_PLAYERS) {
             // More likely to re-sign your own players
             return helpers.bound(mood + random.uniform(-1, 0.5), 0, 1000);
         }
@@ -580,11 +581,11 @@ function addToFreeAgents(p: Player | PlayerWithoutPid, phase: Phase, baseMoods: 
 
     // During regular season, or before season starts, allow contracts for
     // just this year.
-    if (phase > g.PHASE.AFTER_TRADE_DEADLINE) {
+    if (phase > PHASE.AFTER_TRADE_DEADLINE) {
         p.contract.exp += 1;
     }
 
-    p.tid = g.PLAYER.FREE_AGENT;
+    p.tid = PLAYER.FREE_AGENT;
 
     p.ptModifier = 1; // Reset
 
@@ -739,9 +740,9 @@ function genRatings(
 
     ratings.ovr = ovr(ratings);
 
-    if (tid === g.PLAYER.UNDRAFTED_2) {
+    if (tid === PLAYER.UNDRAFTED_2) {
         ratings.fuzz *= 2;
-    } else if (tid === g.PLAYER.UNDRAFTED_3) {
+    } else if (tid === PLAYER.UNDRAFTED_3) {
         ratings.fuzz *= 4;
     }
 
@@ -1225,7 +1226,7 @@ function retire(p: Player, playerStats: PlayerStats[], retiredNotification?: boo
         });
     }
 
-    p.tid = g.PLAYER.RETIRED;
+    p.tid = PLAYER.RETIRED;
     p.retiredYear = g.season;
 
     // Add to Hall of Fame?
@@ -1314,7 +1315,7 @@ function augmentPartialPlayer(p: any, scoutingRank: number): PlayerWithStats {
     }
     if (!p.hasOwnProperty("statsTids")) {
         p.statsTids = [];
-        if (p.tid >= 0 && g.phase <= g.PHASE.PLAYOFFS) {
+        if (p.tid >= 0 && g.phase <= PHASE.PLAYOFFS) {
             p.statsTids.push(p.tid);
         }
     }
@@ -1338,9 +1339,9 @@ function augmentPartialPlayer(p: any, scoutingRank: number): PlayerWithStats {
     }
 
     // Fix always-missing info
-    if (p.tid === g.PLAYER.UNDRAFTED_2) {
+    if (p.tid === PLAYER.UNDRAFTED_2) {
         p.ratings[0].season = g.startingSeason + 1;
-    } else if (p.tid === g.PLAYER.UNDRAFTED_3) {
+    } else if (p.tid === PLAYER.UNDRAFTED_3) {
         p.ratings[0].season = g.startingSeason + 2;
     } else {
         if (!p.ratings[0].hasOwnProperty("season")) {
@@ -1348,7 +1349,7 @@ function augmentPartialPlayer(p: any, scoutingRank: number): PlayerWithStats {
         }
 
         // Fix improperly-set season in ratings
-        if (p.ratings.length === 1 && p.ratings[0].season < g.startingSeason && p.tid !== g.PLAYER.RETIRED) {
+        if (p.ratings.length === 1 && p.ratings[0].season < g.startingSeason && p.tid !== PLAYER.RETIRED) {
             p.ratings[0].season = g.startingSeason;
         }
     }
@@ -1466,7 +1467,7 @@ function checkStatisticalFeat(pid: number, tid: number, p: GamePlayer, results: 
             season: g.season,
             tid,
             oppTid: results.team[j].id,
-            playoffs: g.phase === g.PHASE.PLAYOFFS,
+            playoffs: g.phase === PHASE.PLAYOFFS,
             gid: results.gid,
             stats: p.stat,
             won,

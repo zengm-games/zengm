@@ -2,6 +2,7 @@
 
 import Promise from 'bluebird';
 import _ from 'underscore';
+import {PHASE, PHASE_TEXT, PLAYER} from '../../common';
 import g from '../../globals';
 import * as finances from './finances';
 import * as league from './league';
@@ -43,7 +44,7 @@ async function getOrder() {
  * This is called after draft classes are moved up a year, to create the new UNDRAFTED_3 class. It's also called 3 times when a new league starts, to create all 3 draft classes.
  *
  * @memberOf core.draft
- * @param {number} tid Team ID number for the generated draft class. Should be g.PLAYER.UNDRAFTED, g.PLAYER.UNDRAFTED_2, or g.PLAYER.UNDRAFTED_3.
+ * @param {number} tid Team ID number for the generated draft class. Should be PLAYER.UNDRAFTED, PLAYER.UNDRAFTED_2, or PLAYER.UNDRAFTED_3.
  * @param {?number=} scoutingRank Between 1 and g.numTeams, the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree. If null, then it's automatically found.
  * @param {?number=} numPlayers The number of prospects to generate. Default value is 70.
  * @return {Promise}
@@ -72,14 +73,14 @@ async function genPlayers(tid: number, scoutingRank?: ?number = null, numPlayers
         let baseAge = 19;
         if (newLeague) {
             // New league, creating players for draft in same season and following 2 seasons
-            if (tid === g.PLAYER.UNDRAFTED_2) {
+            if (tid === PLAYER.UNDRAFTED_2) {
                 baseAge -= 1;
                 draftYear += 1;
-            } else if (tid === g.PLAYER.UNDRAFTED_3) {
+            } else if (tid === PLAYER.UNDRAFTED_3) {
                 baseAge -= 2;
                 draftYear += 2;
             }
-        } else if (tid === g.PLAYER.UNDRAFTED_3) {
+        } else if (tid === PLAYER.UNDRAFTED_3) {
             // Player being generated after draft ends, for draft in 3 years
             baseAge -= 3;
             draftYear += 3;
@@ -437,7 +438,7 @@ async function selectPlayer(pick: PickRealized, pid: number) {
 
     // Draft player
     p.tid = pick.tid;
-    if (g.phase !== g.PHASE.FANTASY_DRAFT) {
+    if (g.phase !== PHASE.FANTASY_DRAFT) {
         p.draft = {
             round: pick.round,
             pick: pick.pick,
@@ -451,7 +452,7 @@ async function selectPlayer(pick: PickRealized, pid: number) {
     }
 
     // Contract
-    if (g.phase !== g.PHASE.FANTASY_DRAFT) {
+    if (g.phase !== PHASE.FANTASY_DRAFT) {
         const rookieSalaries = getRookieSalaries();
         const i = pick.pick - 1 + g.numTeams * (pick.round - 1);
         const years = 4 - pick.round; // 2 years for 2nd round, 3 years for 1st round;
@@ -462,13 +463,13 @@ async function selectPlayer(pick: PickRealized, pid: number) {
     }
 
     // Add stats row if necessary (fantasy draft in ongoing season)
-    if (g.phase === g.PHASE.FANTASY_DRAFT && g.nextPhase <= g.PHASE.PLAYOFFS) {
-        await player.addStatsRow(p, g.nextPhase === g.PHASE.PLAYOFFS);
+    if (g.phase === PHASE.FANTASY_DRAFT && g.nextPhase <= PHASE.PLAYOFFS) {
+        await player.addStatsRow(p, g.nextPhase === PHASE.PLAYOFFS);
     }
 
     g.cache.markDirtyIndexes('players');
 
-    const draftName = g.phase === g.PHASE.FANTASY_DRAFT ? `${g.season} fantasy draft` : `${g.season} draft`;
+    const draftName = g.phase === PHASE.FANTASY_DRAFT ? `${g.season} fantasy draft` : `${g.season} draft`;
     logEvent({
         type: "draft",
         text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[pick.tid], g.season])}">${g.teamNamesCache[pick.tid]}</a> selected <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> with the ${helpers.ordinal(pick.pick + (pick.round - 1) * 30)} pick in the <a href="${helpers.leagueUrl(["draft_summary", g.season])}">${draftName}</a>.`,
@@ -490,7 +491,7 @@ async function untilUserOrEnd() {
     const pids = [];
 
     const [playersAll, draftOrder] = await Promise.all([
-        g.cache.indexGetAll('playersByTid', g.PLAYER.UNDRAFTED),
+        g.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED),
         getOrder(),
     ]);
 
@@ -501,17 +502,17 @@ async function untilUserOrEnd() {
         // Is draft over?;
         if (draftOrder.length === 0) {
             // Fantasy draft special case!
-            if (g.phase === g.PHASE.FANTASY_DRAFT) {
+            if (g.phase === PHASE.FANTASY_DRAFT) {
                 await g.dbl.tx(["players", "teamSeasons"], "readwrite", async tx => {
                     // Undrafted players become free agents
                     const baseMoods = await player.genBaseMoods();
-                    await tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED, (p) => {
-                        player.addToFreeAgents(p, g.PHASE.FREE_AGENCY, baseMoods);
+                    await tx.players.index('tid').iterate(PLAYER.UNDRAFTED, (p) => {
+                        player.addToFreeAgents(p, PHASE.FREE_AGENCY, baseMoods);
                     });
 
                     // Swap back in normal draft class
-                    await tx.players.index('tid').iterate(g.PLAYER.UNDRAFTED_FANTASY_TEMP, p => {
-                        p.tid = g.PLAYER.UNDRAFTED;
+                    await tx.players.index('tid').iterate(PLAYER.UNDRAFTED_FANTASY_TEMP, p => {
+                        p.tid = PLAYER.UNDRAFTED;
                         return p;
                     });
                 });
@@ -521,12 +522,12 @@ async function untilUserOrEnd() {
                     nextPhase: null,
                 });
 
-                updatePhase(`${g.season} ${g.PHASE_TEXT[g.phase]}`);
+                updatePhase(`${g.season} ${PHASE_TEXT[g.phase]}`);
                 await updatePlayMenu();
                 league.updateLastDbChange();
             } else {
                 // Non-fantasy draft
-                await phase.newPhase(g.PHASE.AFTER_DRAFT);
+                await phase.newPhase(PHASE.AFTER_DRAFT);
             }
         } else {
             // Draft is not over, so continue

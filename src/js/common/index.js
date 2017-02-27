@@ -1,4 +1,4 @@
 // @flow
 
-// eslint-disable-next-line import/prefer-default-export
+export * from './constants';
 export {default as createLogger} from './createLogger';

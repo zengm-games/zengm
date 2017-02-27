@@ -1,4 +1,5 @@
 import assert from 'assert';
+import {PLAYER} from '../../common';
 import g from '../../globals';
 import * as helpers from '../../util/helpers';
 
@@ -59,7 +60,7 @@ describe("util/helpers", () => {
             assert.equal(helpers.getAbbrev("6"), "DAL");
         });
         it("should return \"FA\" for free agents", () => {
-            assert.equal(helpers.getAbbrev(g.PLAYER.FREE_AGENT), "FA");
+            assert.equal(helpers.getAbbrev(PLAYER.FREE_AGENT), "FA");
         });
     });
 

@@ -1,5 +1,6 @@
 // @flow
 
+import {PLAYER} from '../../common';
 import g from '../../globals';
 import * as freeAgents from '../core/freeAgents';
 import {getCopy} from '../db';
@@ -30,7 +31,7 @@ async function updatePlayers(
 
         // Add mood to free agent contracts
         for (let i = 0; i < players.length; i++) {
-            if (players[i].tid === g.PLAYER.FREE_AGENT) {
+            if (players[i].tid === PLAYER.FREE_AGENT) {
                 players[i].contract.amount = freeAgents.amountWithMood(players[i].contract.amount, players[i].freeAgentMood[g.userTid]);
             }
         }

@@ -1,6 +1,7 @@
 // @flow
 
 import {reset} from '../worker/db';
+import {PHASE} from '../common';
 import g from '../globals';
 import {logEvent, realtimeUpdate} from '../ui/util';
 import * as contractNegotiation from '../worker/core/contractNegotiation';
@@ -101,11 +102,11 @@ const playAmount = async (amount: 'day' | 'week' | 'month' | 'untilPreseason') =
         throw new Error(`Invalid amount: ${amount}`);
     }
 
-    if (g.phase <= g.PHASE.PLAYOFFS) {
+    if (g.phase <= PHASE.PLAYOFFS) {
         updateStatus("Playing..."); // For quick UI updating, before game.play
         // Start playing games
         game.play(numDays);
-    } else if (g.phase === g.PHASE.FREE_AGENCY) {
+    } else if (g.phase === PHASE.FREE_AGENCY) {
         if (numDays > g.daysLeft) {
             numDays = g.daysLeft;
         }
@@ -115,7 +116,7 @@ const playAmount = async (amount: 'day' | 'week' | 'month' | 'untilPreseason') =
 
 const playStop = async () => {
     await league.setGameAttributes({stopGames: true});
-    if (g.phase !== g.PHASE.FREE_AGENCY) {
+    if (g.phase !== PHASE.FREE_AGENCY) {
         // This is needed because we can't be sure if core.game.play will be called again
         updateStatus("Idle");
     }
@@ -141,7 +142,7 @@ const playMenu = {
     },
 
     untilPlayoffs: async () => {
-        if (g.phase < g.PHASE.PLAYOFFS) {
+        if (g.phase < PHASE.PLAYOFFS) {
             updateStatus("Playing..."); // For quick UI updating, before await
             const numDays = await season.getDaysLeftSchedule();
             game.play(numDays);
@@ -149,7 +150,7 @@ const playMenu = {
     },
 
     throughPlayoffs: async () => {
-        if (g.phase === g.PHASE.PLAYOFFS) {
+        if (g.phase === PHASE.PLAYOFFS) {
             updateStatus("Playing..."); // For quick UI updating, before await
             const playoffSeries = await g.cache.get('playoffSeries', g.season);
 
@@ -166,24 +167,24 @@ const playMenu = {
     },
 
     untilDraft: async () => {
-        if (g.phase === g.PHASE.BEFORE_DRAFT) {
-            await phase.newPhase(g.PHASE.DRAFT);
+        if (g.phase === PHASE.BEFORE_DRAFT) {
+            await phase.newPhase(PHASE.DRAFT);
         }
     },
 
     untilResignPlayers: async () => {
-        if (g.phase === g.PHASE.AFTER_DRAFT) {
-            await phase.newPhase(g.PHASE.RESIGN_PLAYERS);
+        if (g.phase === PHASE.AFTER_DRAFT) {
+            await phase.newPhase(PHASE.RESIGN_PLAYERS);
         }
     },
 
     untilFreeAgency: async () => {
-        if (g.phase === g.PHASE.RESIGN_PLAYERS) {
+        if (g.phase === PHASE.RESIGN_PLAYERS) {
             const negotiations = await g.cache.getAll('negotiations');
             const numRemaining = negotiations.length;
             // Show warning dialog only if there are players remaining un-re-signed
             if (numRemaining === 0 || window.confirm(`Are you sure you want to proceed to free agency while ${numRemaining} of your players remain unsigned? If you do not re-sign them before free agency begins, they will be free to sign with any team, and you won't be able to go over the salary cap to sign them.`)) {
-                await phase.newPhase(g.PHASE.FREE_AGENCY);
+                await phase.newPhase(PHASE.FREE_AGENCY);
                 updateStatus(`${g.daysLeft} days left`);
             }
         }
@@ -194,8 +195,8 @@ const playMenu = {
     },
 
     untilRegularSeason: async () => {
-        if (g.phase === g.PHASE.PRESEASON) {
-            await phase.newPhase(g.PHASE.REGULAR_SEASON);
+        if (g.phase === PHASE.PRESEASON) {
+            await phase.newPhase(PHASE.REGULAR_SEASON);
         }
     },
 
@@ -216,19 +217,19 @@ const toolsMenu = {
     },
 
     skipToPlayoffs: async () => {
-        await phase.newPhase(g.PHASE.PLAYOFFS);
+        await phase.newPhase(PHASE.PLAYOFFS);
     },
 
     skipToBeforeDraft: async () => {
-        await phase.newPhase(g.PHASE.BEFORE_DRAFT);
+        await phase.newPhase(PHASE.BEFORE_DRAFT);
     },
 
     skipToAfterDraft: async () => {
-        await phase.newPhase(g.PHASE.AFTER_DRAFT);
+        await phase.newPhase(PHASE.AFTER_DRAFT);
     },
 
     skipToPreseason: async () => {
-        await phase.newPhase(g.PHASE.PRESEASON);
+        await phase.newPhase(PHASE.PRESEASON);
     },
 
     forceResumeDraft: async () => {

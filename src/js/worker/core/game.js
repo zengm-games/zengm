@@ -2,6 +2,7 @@
 
 import Promise from 'bluebird';
 import _ from 'underscore';
+import {COMPOSITE_WEIGHTS, PHASE, PLAYER} from '../../common';
 import g from '../../globals';
 import * as api from '../api';
 import GameSim from './GameSim';
@@ -27,7 +28,7 @@ async function writeTeamStats(results: GameResults) {
             team.getPayroll(results.team[t1].id).get(0),
             g.cache.get('teams', results.team[t1].id),
             g.cache.indexGetAll('teamSeasonsByTidSeason', [`${results.team[t1].id},${g.season - 2}`, `${results.team[t1].id},${g.season}`]),
-            g.cache.indexGet('teamStatsByPlayoffsTid', `${g.phase === g.PHASE.PLAYOFFS ? 1 : 0},${results.team[t1].id}`),
+            g.cache.indexGet('teamStatsByPlayoffsTid', `${g.phase === PHASE.PLAYOFFS ? 1 : 0},${results.team[t1].id}`),
         ]);
 
         const teamSeason = teamSeasons[teamSeasons.length - 1];
@@ -36,7 +37,7 @@ async function writeTeamStats(results: GameResults) {
         // Attendance - base calculation now, which is used for other revenue estimates
         if (t1 === 0) { // Base on home team
             att = 10000 + (0.1 + 0.9 * (teamSeason.hype ** 2)) * teamSeason.pop * 1000000 * 0.01;  // Base attendance - between 2% and 0.2% of the region
-            if (g.phase === g.PHASE.PLAYOFFS) {
+            if (g.phase === PHASE.PLAYOFFS) {
                 att *= 1.5;  // Playoff bonus
             }
             ticketPrice = t.budget.ticketPrice.amount;
@@ -52,7 +53,7 @@ async function writeTeamStats(results: GameResults) {
         let sponsorRevenue = 0;
         let nationalTvRevenue = 0;
         let localTvRevenue = 0;
-        if (g.phase !== g.PHASE.PLAYOFFS) {
+        if (g.phase !== PHASE.PLAYOFFS) {
             // All in [thousands of dollars]
             salaryPaid = payroll / g.numGames;
             scoutingPaid = t.budget.scouting.amount / g.numGames;
@@ -90,7 +91,7 @@ async function writeTeamStats(results: GameResults) {
         const ticketRevenue = ticketPrice * att / 1000;  // [thousands of dollars]
 
         // Hype - relative to the expectations of prior seasons
-        if (teamSeason.gp > 5 && g.phase !== g.PHASE.PLAYOFFS) {
+        if (teamSeason.gp > 5 && g.phase !== PHASE.PLAYOFFS) {
             let winp = teamSeason.won / (teamSeason.won + teamSeason.lost);
             let winpOld = 0;
 
@@ -152,11 +153,11 @@ async function writeTeamStats(results: GameResults) {
         teamStats.oppPts += results.team[t2].stat.pts;
         teamStats.ba += results.team[t2].stat.blk;
 
-        if (teamSeason.lastTen.length === 10 && g.phase !== g.PHASE.PLAYOFFS) {
+        if (teamSeason.lastTen.length === 10 && g.phase !== PHASE.PLAYOFFS) {
             teamSeason.lastTen.pop();
         }
 
-        if (won && g.phase !== g.PHASE.PLAYOFFS) {
+        if (won && g.phase !== PHASE.PLAYOFFS) {
             teamSeason.won += 1;
             if (results.team[0].did === results.team[1].did) {
                 teamSeason.wonDiv += 1;
@@ -178,7 +179,7 @@ async function writeTeamStats(results: GameResults) {
             } else {
                 teamSeason.streak = 1;
             }
-        } else if (g.phase !== g.PHASE.PLAYOFFS) {
+        } else if (g.phase !== PHASE.PLAYOFFS) {
             teamSeason.lost += 1;
             if (results.team[0].did === results.team[1].did) {
                 teamSeason.lostDiv += 1;
@@ -220,7 +221,7 @@ async function writePlayerStats(results: GameResults) {
         const ps = await g.cache.indexGet('playerStatsByPid', p.id);
 
         // Since index is not on playoffs, manually check
-        if (ps.playoffs !== (g.phase === g.PHASE.PLAYOFFS)) {
+        if (ps.playoffs !== (g.phase === PHASE.PLAYOFFS)) {
             throw new Error(`Missing playoff stats for player ${p.id}`);
         }
 
@@ -235,7 +236,7 @@ async function writePlayerStats(results: GameResults) {
         const injuredThisGame = p.injured && p.injury.type === "Healthy";
 
         // Only update player object (values and injuries) every 10 regular season games or on injury
-        if ((ps.gp % 10 === 0 && g.phase !== g.PHASE.PLAYOFFS) || injuredThisGame) {
+        if ((ps.gp % 10 === 0 && g.phase !== PHASE.PLAYOFFS) || injuredThisGame) {
             const p2 = await g.cache.get('players', p.id);
 
             // Injury crap - assign injury type if player does not already have an injury in the database
@@ -273,7 +274,7 @@ async function writePlayerStats(results: GameResults) {
             }
 
             // Player value depends on ratings and regular season stats, neither of which can change in the playoffs (except for severe injuries)
-            if (g.phase !== g.PHASE.PLAYOFFS) {
+            if (g.phase !== PHASE.PLAYOFFS) {
                 await player.updateValues(p2);
             }
             if (biggestRatingsLoss) {
@@ -290,7 +291,7 @@ async function writeGameStats(results: GameResults, att: number) {
         gid: results.gid,
         att,
         season: g.season,
-        playoffs: g.phase === g.PHASE.PLAYOFFS,
+        playoffs: g.phase === PHASE.PLAYOFFS,
         overtimes: results.overtimes,
         won: {},
         lost: {},
@@ -509,7 +510,7 @@ async function loadTeams() {
 
         // Initialize team composite rating object
         const compositeRating = {};
-        for (const rating of Object.keys(g.compositeWeights)) {
+        for (const rating of Object.keys(COMPOSITE_WEIGHTS)) {
             compositeRating[rating] = 0;
         }
 
@@ -554,8 +555,8 @@ async function loadTeams() {
             }
 
             // These use the same formulas as the skill definitions in player.skills!
-            for (const k of Object.keys(g.compositeWeights)) {
-                p.compositeRating[k] = makeComposite(rating, g.compositeWeights[k].ratings, g.compositeWeights[k].weights);
+            for (const k of helpers.keys(COMPOSITE_WEIGHTS)) {
+                p.compositeRating[k] = makeComposite(rating, COMPOSITE_WEIGHTS[k].ratings, COMPOSITE_WEIGHTS[k].weights);
             }
             p.compositeRating.usage = p.compositeRating.usage ** 1.9;
 
@@ -603,11 +604,11 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
         api.realtimeUpdate(["g.gamesInProgress"]);
 
         // Check to see if the season is over
-        if (g.phase < g.PHASE.PLAYOFFS) {
+        if (g.phase < PHASE.PLAYOFFS) {
             const schedule = await season.getSchedule();
             if (schedule.length === 0) {
                 // No return here, meaning no need to wait for phase.newPhase to resolve - is that correct?
-                phase.newPhase(g.PHASE.PLAYOFFS);
+                phase.newPhase(PHASE.PLAYOFFS);
                 updateStatus("Idle"); // Just to be sure..
             }
         }
@@ -625,7 +626,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
         const promises = [];
 
         // Update playoff series W/L
-        if (g.phase === g.PHASE.PLAYOFFS) {
+        if (g.phase === PHASE.PLAYOFFS) {
             promises.push(updatePlayoffSeries(results));
         }
 
@@ -638,7 +639,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
         promises.push(finances.updateRanks(["expenses", "revenues"]));
 
         // Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
-        const players = await g.cache.indexGetAll('playersByTid', [g.PLAYER.FREE_AGENT, Infinity]);
+        const players = await g.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
         for (const p of players) {
             if (p.injury.gamesRemaining > 0) {
                 p.injury.gamesRemaining -= 1;
@@ -688,10 +689,10 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
         api.realtimeUpdate(["gameSim"], url, async () => {
             league.updateLastDbChange();
 
-            if (g.phase === g.PHASE.PLAYOFFS) {
+            if (g.phase === PHASE.PLAYOFFS) {
                 const playoffsOver = await season.newSchedulePlayoffsDay();
                 if (playoffsOver) {
-                    await phase.newPhase(g.PHASE.BEFORE_DRAFT);
+                    await phase.newPhase(PHASE.BEFORE_DRAFT);
                 }
             } else if (Math.random() < 1 / (100 * 50)) {
                 // Should a rare tragic event occur? ONLY IN REGULAR SEASON, playoffs would be tricky with roster limits and no free agents
@@ -727,7 +728,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
 
         // Stop if no games
         // This should also call cbNoGames after the playoffs end, because g.phase will have been incremented by season.newSchedulePlayoffsDay after the previous day's games
-        if (schedule.length === 0 && g.phase !== g.PHASE.PLAYOFFS) {
+        if (schedule.length === 0 && g.phase !== PHASE.PLAYOFFS) {
             return cbNoGames();
         }
 
@@ -736,7 +737,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
 
         // Play games
         // Will loop through schedule and simulate all games
-        if (schedule.length === 0 && g.phase === g.PHASE.PLAYOFFS) {
+        if (schedule.length === 0 && g.phase === PHASE.PLAYOFFS) {
             // Sometimes the playoff schedule isn't made the day before, so make it now
             // This works because there should always be games in the playoffs phase. The next phase will start before reaching this point when the playoffs are over.
 
@@ -762,7 +763,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
                         await league.setGameAttributes({stopGames: false});
                     }
 
-                    if (g.phase !== g.PHASE.PLAYOFFS) {
+                    if (g.phase !== PHASE.PLAYOFFS) {
                         await freeAgents.decreaseDemands();
                         await freeAgents.autoSign();
                     }

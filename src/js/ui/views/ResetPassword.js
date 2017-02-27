@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import React from 'react';
+import {SPORT} from '../../common';
 import g from '../../globals';
 import {realtimeUpdate, setTitle} from '../util';
 
@@ -23,7 +24,7 @@ class ResetPassword extends React.Component {
         $.ajax({
             type: "POST",
             url: `//account.basketball-gm.${g.tld}/reset_password.php`,
-            data: {action: "check_token", token: this.props.token, sport: g.sport},
+            data: {action: "check_token", token: this.props.token, sport: SPORT},
             dataType: "json",
             xhrFields: {
                 withCredentials: true,
@@ -64,7 +65,7 @@ class ResetPassword extends React.Component {
         $.ajax({
             type: "POST",
             url: `//account.basketball-gm.${g.tld}/reset_password.php`,
-            data: `${$resetpw.serialize()}&sport=${g.sport}`,
+            data: `${$resetpw.serialize()}&sport=${SPORT}`,
             dataType: "json",
             xhrFields: {
                 withCredentials: true,

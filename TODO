@@ -16,9 +16,13 @@ move everything but the UI to a web worker
   - remove references to ui in worker
   - remove references to document/window in worker
   - split up util - ui, worker, or both
+    - globals
+      - break into static and dynamic, first
+      - then, be careful!
     - actions: only called from ui, but mixes worker calls and realtimeUpdate
       - put worker calls in api, move to ui/util/actions
     - helpers: move some to individual files in util, then hopefully it's just some small global functions that can go in common/helpers
+      - careful of anything in g
   - split up data/lib
   - how to ensure that files are not required into both ui and worker inadvertently?
   - restore runWhenever ability (really necessary? was only used in gameLog)
@@ -27,6 +31,7 @@ move everything but the UI to a web worker
 - things in API using callback functions won't work across web workers
   - for realtimeUpdate, make async, and then manually do callback code after awaiting?
 - index.js or app.js for main file in ui/worker?
+- bbgmPing needs to be done in ui through API
 
 for modules that should always be consumed as whole (core/*), export default object and then re-export in index.js
 

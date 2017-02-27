@@ -255,8 +255,8 @@ export type LogEventType = (
 export type LogEventSaveOptions = {
     type: LogEventType,
     text: string,
-    pids: number[],
-    tids: number[],
+    pids?: number[],
+    tids?: number[],
 };
 
 export type LogEventShowOptions = {

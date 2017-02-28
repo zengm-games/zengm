@@ -1,12 +1,12 @@
 import assert from 'assert';
-import * as db from '../../db';
+import {connectMeta, idb} from '../../../db';
 import g from '../../globals';
 import * as league from '../../core/league';
 import * as trade from '../../core/trade';
 
 describe("core/trade", () => {
     before(async () => {
-        await db.connectMeta();
+        await connectMeta();
         await league.create("Test", 0, undefined, 2013, false);
     });
     after(() => league.remove(g.lid));
@@ -17,7 +17,7 @@ describe("core/trade", () => {
     });
 
     const testCreateTrade = async (otherTidTest, userPidsTest, otherPidsTest) => {
-        const {teams} = await g.cache.get('trade', 0);
+        const {teams} = await idb.cache.get('trade', 0);
         assert.deepEqual(teams[1].tid, otherTidTest);
         assert.deepEqual(teams[0].pids, userPidsTest);
         assert.deepEqual(teams[1].pids, otherPidsTest);
@@ -58,7 +58,7 @@ describe("core/trade", () => {
             assert.deepEqual(teams[1].pids, otherPidsTest);
 
             await trade.create([{tid: g.userTid, pids: [], dpids: []}, {tid: 4, pids: [], dpids: []}]);
-            const tr = await g.cache.get('trade', 0);
+            const tr = await idb.cache.get('trade', 0);
             teams = tr.teams;
             assert.deepEqual(teams[0].pids, userPidsTest);
             assert.deepEqual(teams[1].pids, []);

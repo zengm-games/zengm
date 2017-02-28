@@ -9,6 +9,6 @@ const g: GameAttributes = {};
 // If any of these things are supposed to change at any point, they should be stored in gameAttributes rather than here.
 
 // THIS MUST BE ACCURATE OR BAD STUFF WILL HAPPEN
-g.notInDb = ["lid", "notInDb", "cache"];
+g.notInDb = ["lid", "notInDb"];
 
 export default g;

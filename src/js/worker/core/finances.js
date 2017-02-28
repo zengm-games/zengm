@@ -3,6 +3,7 @@
 import Promise from 'bluebird';
 import g from '../../globals';
 import * as team from './team';
+import {idb} from '../db';
 import type {TeamSeason} from '../../common/types';
 
 /**
@@ -17,7 +18,7 @@ async function assessPayrollMinLuxury() {
 
     const payrolls = await team.getPayrolls();
 
-    const teamSeasons = await g.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
+    const teamSeasons = await idb.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
     for (const teamSeason of teamSeasons) {
         // Store payroll
         teamSeason.payrollEndOfSeason = payrolls[teamSeason.tid];
@@ -97,12 +98,12 @@ async function updateRanks(types: BudgetTypes[]) {
 
     let teamSeasonsPromise;
     if (types.includes('expenses') || types.includes('revenues')) {
-        teamSeasonsPromise = g.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
+        teamSeasonsPromise = idb.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
     } else {
         teamSeasonsPromise = Promise.resolve();
     }
 
-    const [teams, teamSeasons] = await Promise.all([g.cache.getAll('teams'), teamSeasonsPromise]);
+    const [teams, teamSeasons] = await Promise.all([idb.cache.getAll('teams'), teamSeasonsPromise]);
 
     let budgetsByItem;
     let budgetsByTeam;

@@ -2,7 +2,7 @@
 
 import g from '../../globals';
 import * as league from '../core/league';
-import {getCopy} from '../db';
+import {getCopy, idb} from '../db';
 
 /**
  * Is game simulation in progress?
@@ -26,7 +26,7 @@ async function gamesInProgress(): Promise<boolean> {
  * @return {Promise.boolean}
  */
 async function negotiationInProgress(): Promise<boolean> {
-    const negotiations = await g.cache.getAll('negotiations');
+    const negotiations = await idb.cache.getAll('negotiations');
     return negotiations.length > 0;
 }
 
@@ -83,7 +83,7 @@ async function canStartNegotiation(): Promise<boolean> {
     }
 
     // Allow multiple parallel negotiations only for re-signing players
-    const negotiations = await g.cache.getAll('negotiations');
+    const negotiations = await idb.cache.getAll('negotiations');
     for (const negotiation of negotiations) {
         if (!negotiation.resigning) {
             return false;

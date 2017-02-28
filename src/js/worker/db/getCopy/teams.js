@@ -43,12 +43,12 @@ const processSeasonAttrs = async (output: TeamFiltered, t: Team, seasonAttrs: Te
         // All seasons
         seasons = mergeByPk(
             await tx.teamSeasons.index('tid, season').getAll(backboard.bound([t.tid], [t.tid, ''])),
-            await g.cache.indexGetAll('teamSeasonsByTidSeason', [`${t.tid}`, `${t.tid},Z`]),
-            g.cache.storeInfos.teamSeasons.pk,
+            await idb.cache.indexGetAll('teamSeasonsByTidSeason', [`${t.tid}`, `${t.tid},Z`]),
+            idb.cache.storeInfos.teamSeasons.pk,
         );
     } else if (season >= g.season - 2) {
         // Single season, from cache
-        seasons = await g.cache.indexGetAll('teamSeasonsBySeasonTid', `${season},${t.tid}`);
+        seasons = await idb.cache.indexGetAll('teamSeasonsBySeasonTid', `${season},${t.tid}`);
     } else {
         // Single season, from database
         seasons = await tx.teamSeasons.index('season, tid').getAll([season, t.tid]);
@@ -128,10 +128,10 @@ const processStats = async (
         // Single season, from cache
         let teamStats2 = [];
         if (regularSeason) {
-            teamStats2 = teamStats2.concat(await g.cache.indexGetAll('teamStatsByPlayoffsTid', `0,${t.tid}`));
+            teamStats2 = teamStats2.concat(await idb.cache.indexGetAll('teamStatsByPlayoffsTid', `0,${t.tid}`));
         }
         if (playoffs) {
-            teamStats2 = teamStats2.concat(await g.cache.indexGetAll('teamStatsByPlayoffsTid', `1,${t.tid}`));
+            teamStats2 = teamStats2.concat(await idb.cache.indexGetAll('teamStatsByPlayoffsTid', `1,${t.tid}`));
         }
 
         return teamStats2;
@@ -142,7 +142,7 @@ const processStats = async (
         teamStats = mergeByPk(
             await tx.teamStats.index('tid').getAll(t.tid),
             await teamStatsFromCache(),
-            g.cache.storeInfos.teamStats.pk,
+            idb.cache.storeInfos.teamStats.pk,
         );
     } else if (season === g.season) {
         teamStats = await teamStatsFromCache();
@@ -315,11 +315,11 @@ const getCopy = async ({
 
     const processMaybeWithIDB = async (tx: ?BackboardTx) => {
         if (tid === undefined) {
-            const teams = await g.cache.getAll('teams');
+            const teams = await idb.cache.getAll('teams');
             return Promise.all(teams.map((t) => processTeam(t, options, tx)));
         }
 
-        const t = await g.cache.get('teams', tid);
+        const t = await idb.cache.get('teams', tid);
         return processTeam(t, options, tx);
     };
 

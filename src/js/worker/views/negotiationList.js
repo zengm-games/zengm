@@ -3,16 +3,16 @@
 import {PLAYER} from '../../common';
 import g from '../../globals';
 import * as player from '../core/player';
-import {getCopy} from '../db';
+import {getCopy, idb} from '../db';
 
 async function updateNegotiationList(): void | {[key: string]: any} {
-    let negotiations = await g.cache.getAll('negotiations');
+    let negotiations = await idb.cache.getAll('negotiations');
 
     // For Multi Team Mode, might have other team's negotiations going on
     negotiations = negotiations.filter(negotiation => negotiation.tid === g.userTid);
     const negotiationPids = negotiations.map(negotiation => negotiation.pid);
 
-    let players = await g.cache.indexGetAll('playersByTid', PLAYER.FREE_AGENT);
+    let players = await idb.cache.indexGetAll('playersByTid', PLAYER.FREE_AGENT);
     players = players.filter(p => negotiationPids.includes(p.pid));
     players = await getCopy.playersPlus(players, {
         attrs: ["pid", "name", "age", "freeAgentMood", "injury", "watch"],

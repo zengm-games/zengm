@@ -49,7 +49,7 @@ const checkParticipationAchievevment = async (force: boolean = false) => {
 };
 
 const clearWatchList = async (): Promise<string> => {
-    const players = await g.cache.getAll('players');
+    const players = await idb.cache.getAll('players');
     for (const p of players) {
         if (p.watch) {
             p.watch = false;
@@ -69,7 +69,7 @@ const clearWatchList = async (): Promise<string> => {
 };
 
 const countNegotiations = async () => {
-    const negotiations = await g.cache.getAll('negotiations');
+    const negotiations = await idb.cache.getAll('negotiations');
     return negotiations.length;
 };
 
@@ -202,7 +202,7 @@ const draftUser = async (pid: number) => {
 const exportPlayerAveragesCsv = async (season: number | 'all') => {
     let players;
     if (g.season === season && g.phase <= PHASE.PLAYOFFS) {
-        players = await g.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
+        players = await idb.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
     } else {
         // If it's not this season, get all players, because retired players could apply to the selected season
         players = await getCopy.players({activeAndRetired: true});
@@ -332,7 +332,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[], progressCa
         return Promise.all(offers.map(async (offer, i) => {
             const tid = offers[i].tid;
 
-            let players = await g.cache.indexGetAll('playersByTid', tid);
+            let players = await idb.cache.indexGetAll('playersByTid', tid);
             players = players.filter(p => offers[i].pids.includes(p.pid));
             players = await getCopy.playersPlus(players, {
                 attrs: ["pid", "name", "age", "contract", "injury", "watch"],
@@ -345,7 +345,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[], progressCa
                 fuzz: true,
             });
 
-            let picks = await g.cache.indexGetAll('draftPicksByTid', tid);
+            let picks = await idb.cache.indexGetAll('draftPicksByTid', tid);
             picks = helpers.deepCopy(picks.filter(dp => offers[i].dpids.includes(dp.dpid)));
             for (const pick of picks) {
                 pick.desc = helpers.pickDesc(pick);
@@ -462,12 +462,12 @@ const handleUploadedDraftClass = async (uploadedFile: any, seasonOffset: 0 | 1 |
 };
 
 const releasePlayer = async (pid: number, justDrafted: boolean) => {
-    const players = await g.cache.indexGetAll('playersByTid', g.userTid);
+    const players = await idb.cache.indexGetAll('playersByTid', g.userTid);
     if (players.length <= 5) {
         return 'You must keep at least 5 players on your roster.';
     }
 
-    const p = await g.cache.get('players', pid);
+    const p = await idb.cache.get('players', pid);
 
     // Don't let the user update CPU-controlled rosters
     if (p.tid !== g.userTid) {
@@ -484,7 +484,7 @@ const removeLeague = async (lid: number) => {
 
 const reorderRosterDrag = async (sortedPids: number[]) => {
     await Promise.all(sortedPids.map(async (pid, rosterOrder) => {
-        const p = await g.cache.get('players', pid);
+        const p = await idb.cache.get('players', pid);
         if (p.rosterOrder !== rosterOrder) {
             p.rosterOrder = rosterOrder;
         }
@@ -498,7 +498,7 @@ const reorderRosterSwap = async (sortedPlayers: {pid: number}[], pid1: number, p
 
     await Promise.all(sortedPlayers.map(async (sortedPlayer, i) => {
         const pid = sortedPlayers[i].pid;
-        const p = await g.cache.get('players', pid);
+        const p = await idb.cache.get('players', pid);
         let rosterOrder = i;
         if (pid === pid1) {
             rosterOrder = rosterOrder2;
@@ -562,7 +562,7 @@ const updateBudget = async (budgetAmounts: {
     scouting: number,
     ticketPrice: number,
 }) => {
-    const t = await g.cache.get('teams', g.userTid);
+    const t = await idb.cache.get('teams', g.userTid);
 
     for (const key of Object.keys(budgetAmounts)) {
         // Check for NaN before updating
@@ -597,7 +597,7 @@ const updateMultiTeamMode = async (gameAttributes: {userTids: number[], userTid?
 };
 
 const updatePlayerWatch = async (pid: number, watch: boolean) => {
-    const cachedPlayer = await g.cache.get('players', pid);
+    const cachedPlayer = await idb.cache.get('players', pid);
     if (cachedPlayer) {
         cachedPlayer.watch = watch;
     } else {
@@ -612,7 +612,7 @@ const updatePlayerWatch = async (pid: number, watch: boolean) => {
 };
 
 const updatePlayingTime = async (pid: number, ptModifier: number) => {
-    const p = await g.cache.get('players', pid);
+    const p = await idb.cache.get('players', pid);
     p.ptModifier = ptModifier;
     league.updateLastDbChange();
 };

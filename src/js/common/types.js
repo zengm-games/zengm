@@ -190,7 +190,6 @@ export type GameAttributeKeyDynamic = (
 );
 
 type GameAttributeKeyStatic = (
-    'cache' |
     'notInDb'
 );
 

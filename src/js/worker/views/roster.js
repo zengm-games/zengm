@@ -4,7 +4,7 @@ import g from '../../globals';
 import * as season from '../core/season';
 import * as team from '../core/team';
 import * as trade from '../core/trade';
-import {getCopy} from '../db';
+import {getCopy, idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateRoster(
@@ -36,7 +36,7 @@ async function updateRoster(
             // Show players currently on the roster
             let [schedule, players, payroll] = await Promise.all([
                 season.getSchedule(),
-                g.cache.indexGetAll('playersByTid', inputs.tid),
+                idb.cache.indexGetAll('playersByTid', inputs.tid),
                 team.getPayroll(inputs.tid).get(0),
             ]);
 

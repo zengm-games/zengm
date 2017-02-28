@@ -343,7 +343,7 @@ const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: 
 
     const playerStatsFromCache = () => {
         // Last 1-2 seasons, from cache
-        return g.cache.indexGetAll('playerStatsAllByPid', p.pid);
+        return idb.cache.indexGetAll('playerStatsAllByPid', p.pid);
     };
 
     if (season === undefined || p.tid === PLAYER.RETIRED) {
@@ -351,7 +351,7 @@ const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: 
         playerStats = mergeByPk(
             await tx.playerStats.index('pid, season, tid').getAll(backboard.bound([p.pid], [p.pid, ''])),
             await playerStatsFromCache(),
-            g.cache.storeInfos.playerStats.pk,
+            idb.cache.storeInfos.playerStats.pk,
         );
     } else if (season >= g.season - 1) {
         playerStats = await playerStatsFromCache();

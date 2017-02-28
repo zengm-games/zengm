@@ -9,10 +9,10 @@ describe("db/getCopy", () => {
         before(async () => {
             idb.meta = await connectMeta();
             await league.create("Test", 0, undefined, 2013, false);
-            g.cache = new Cache();
-            await g.cache.fill();
+            idb.cache = new Cache();
+            await idb.cache.fill();
 
-            let teamStats = await g.cache.indexGet('teamStatsByPlayoffsTid', '0,4');
+            let teamStats = await idb.cache.indexGet('teamStatsByPlayoffsTid', '0,4');
             teamStats.gp = 10;
             teamStats.fg = 50;
             teamStats.fga = 100;
@@ -21,7 +21,7 @@ describe("db/getCopy", () => {
             teamStats.gp = 4;
             teamStats.fg = 12;
             teamStats.fga = 120;
-            await g.cache.add('teamStats', teamStats);
+            await idb.cache.add('teamStats', teamStats);
         });
         after(() => league.remove(g.lid));
 

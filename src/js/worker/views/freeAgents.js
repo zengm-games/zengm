@@ -6,13 +6,13 @@ import g from '../../globals';
 import * as freeAgents from '../core/freeAgents';
 import * as player from '../core/player';
 import * as team from '../core/team';
-import {getCopy} from '../db';
+import {getCopy, idb} from '../db';
 
 async function updateFreeAgents(): void | {[key: string]: any} {
     let [payroll, userPlayers, players] = await Promise.all([
         team.getPayroll(g.userTid).get(0),
-        g.cache.indexGetAll('playersByTid', g.userTid),
-        g.cache.indexGetAll('playersByTid', PLAYER.FREE_AGENT),
+        idb.cache.indexGetAll('playersByTid', g.userTid),
+        idb.cache.indexGetAll('playersByTid', PLAYER.FREE_AGENT),
     ]);
 
     const capSpace = g.salaryCap > payroll ? (g.salaryCap - payroll) / 1000 : 0;
@@ -28,9 +28,9 @@ async function updateFreeAgents(): void | {[key: string]: any} {
         oldStats: true,
     });
 
-    for (let i = 0; i < players.length; i++) {
-        players[i].contract.amount = freeAgents.amountWithMood(players[i].contract.amount, players[i].freeAgentMood[g.userTid]);
-        players[i].mood = player.moodColorText(players[i]);
+    for (const p of players) {
+        p.contract.amount = freeAgents.amountWithMood(p.contract.amount, p.freeAgentMood[g.userTid]);
+        p.mood = player.moodColorText(p);
     }
 
     return {

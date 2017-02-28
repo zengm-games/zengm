@@ -4,7 +4,7 @@ import Promise from 'bluebird';
 import _ from 'underscore';
 import {PHASE} from '../../common';
 import g from '../../globals';
-import {getCopy} from '../db';
+import {getCopy, idb} from '../db';
 
 /**
  * Calcualte the current season's Player Efficiency Rating (PER) for each active player and write it to the database.
@@ -58,7 +58,7 @@ async function calculatePER() {
 
     // Total player stats (not per game averages) - min, tp, ast, fg, ft, tov, fga, fta, trb, orb, stl, blk, pf
     // Active players have tid >= 0
-    let players = await g.cache.indexGetAll('playersByTid', [0, Infinity]);
+    let players = await idb.cache.indexGetAll('playersByTid', [0, Infinity]);
     players = await getCopy.playersPlus(players, {
         attrs: ["pid", "tid"],
         stats: ["min", "tp", "ast", "fg", "ft", "tov", "fga", "fta", "trb", "orb", "stl", "blk", "pf"],
@@ -159,7 +159,7 @@ async function calculatePER() {
             return;
         }
 
-        const ps = await g.cache.indexGet('playerStatsByPid', p.pid);
+        const ps = await idb.cache.indexGet('playerStatsByPid', p.pid);
         ps.per = PER[i];
         ps.ewa = EWA[i];
     }));

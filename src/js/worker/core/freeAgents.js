@@ -10,7 +10,7 @@ import * as league from './league';
 import * as phase from './phase';
 import * as player from './player';
 import * as team from './team';
-import {getCopy} from '../db';
+import {getCopy, idb} from '../db';
 import * as helpers from '../../util/helpers';
 import {lock, logEvent, random, updatePlayMenu, updateStatus} from '../util';
 
@@ -28,7 +28,7 @@ async function autoSign() {
             attrs: ["strategy"],
             season: g.season,
         }),
-        g.cache.indexGetAll('playersByTid', PLAYER.FREE_AGENT),
+        idb.cache.indexGetAll('playersByTid', PLAYER.FREE_AGENT),
     ]);
 
     if (players.length === 0) {
@@ -61,7 +61,7 @@ async function autoSign() {
         }
 
         const [playersOnRoster, payroll] = await Promise.all([
-            g.cache.indexGetAll('playersByTid', tid),
+            idb.cache.indexGetAll('playersByTid', tid),
             team.getPayroll(tid).get(0),
         ]);
         const numPlayersOnRoster = playersOnRoster.length;
@@ -77,7 +77,7 @@ async function autoSign() {
                     }
                     player.setContract(p, p.contract, true);
                     p.gamesUntilTradable = 15;
-                    g.cache.markDirtyIndexes('players');
+                    idb.cache.markDirtyIndexes('players');
 
                     logEvent({
                         type: "freeAgent",
@@ -108,7 +108,7 @@ async function autoSign() {
  * @return {Promise}
  */
 async function decreaseDemands() {
-    const players = await g.cache.indexGetAll('playersByTid', PLAYER.FREE_AGENT);
+    const players = await idb.cache.indexGetAll('playersByTid', PLAYER.FREE_AGENT);
     for (const p of players) {
         // Decrease free agent demands
         p.contract.amount -= 50 * Math.sqrt(g.maxContract / 20000);

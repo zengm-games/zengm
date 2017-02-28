@@ -1,7 +1,7 @@
 import Promise from 'bluebird';
 import g from '../../globals';
 import * as trade from '../core/trade';
-import {getCopy} from '../db';
+import {getCopy, idb} from '../db';
 import * as helpers from '../../util/helpers';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
@@ -11,8 +11,8 @@ async function updateUserRoster(
 ): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') || updateEvents.includes('playerMovement') || updateEvents.includes('gameSim')) {
         let [userRoster, userPicks] = await Promise.all([
-            g.cache.indexGetAll('playersByTid', g.userTid),
-            g.cache.indexGetAll('draftPicksByTid', g.userTid),
+            idb.cache.indexGetAll('playersByTid', g.userTid),
+            idb.cache.indexGetAll('draftPicksByTid', g.userTid),
         ]);
 
         userRoster = await getCopy.playersPlus(userRoster, {

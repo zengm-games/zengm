@@ -93,7 +93,7 @@ async function setGameAttributes(gameAttributes: GameAttributes) {
     }
 
     await Promise.all(toUpdate.map(async (key) => {
-        await g.cache.put('gameAttributes', {
+        await idb.cache.put('gameAttributes', {
             key,
             value: gameAttributes[key],
         });
@@ -199,9 +199,9 @@ async function create(
     // Clear old game attributes from g, to make sure the new ones are saved to the db in setGameAttributes
     helpers.resetG();
 
-    g.cache = new Cache();
-    g.cache.newLeague = true;
-    await g.cache.fill(gameAttributes.season);
+    idb.cache = new Cache();
+    idb.cache.newLeague = true;
+    await idb.cache.fill(gameAttributes.season);
 
     await setGameAttributes(gameAttributes);
 
@@ -211,13 +211,13 @@ async function create(
     // Draft picks for the first 4 years, as those are the ones can be traded initially
     if (leagueFile.hasOwnProperty("draftPicks")) {
         for (let i = 0; i < leagueFile.draftPicks.length; i++) {
-            await g.cache.add('draftPicks', leagueFile.draftPicks[i]);
+            await idb.cache.add('draftPicks', leagueFile.draftPicks[i]);
         }
     } else {
         for (let i = 0; i < 4; i++) {
             for (let t = 0; t < g.numTeams; t++) {
                 for (let round = 1; round <= 2; round++) {
-                    await g.cache.add('draftPicks', {
+                    await idb.cache.add('draftPicks', {
                         tid: t,
                         originalTid: t,
                         round,
@@ -231,10 +231,10 @@ async function create(
     // Initialize draft order object store for later use
     if (leagueFile.hasOwnProperty("draftOrder")) {
         for (let i = 0; i < leagueFile.draftOrder.length; i++) {
-            await g.cache.add('draftOrder', leagueFile.draftOrder[i]);
+            await idb.cache.add('draftOrder', leagueFile.draftOrder[i]);
         }
     } else {
-        await g.cache.add('draftOrder', {
+        await idb.cache.add('draftOrder', {
             rid: 0,
             draftOrder: [],
         });
@@ -243,7 +243,7 @@ async function create(
     // teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league.
     for (let i = 0; i < g.numTeams; i++) {
         const t = team.generate(teams[i]);
-        await g.cache.add('teams', t);
+        await idb.cache.add('teams', t);
 
         let teamSeasons;
         if (teams[i].hasOwnProperty("seasons")) {
@@ -254,7 +254,7 @@ async function create(
         }
         for (const teamSeason of teamSeasons) {
             teamSeason.tid = t.tid;
-            await g.cache.add('teamSeasons', teamSeason);
+            await idb.cache.add('teamSeasons', teamSeason);
         }
 
         let teamStats;
@@ -268,7 +268,7 @@ async function create(
             if (!teamStat.hasOwnProperty("ba")) {
                 teamStat.ba = 0;
             }
-            await g.cache.add('teamStats', teamStat);
+            await idb.cache.add('teamStats', teamStat);
         }
 
         // Save scoutingRank for later
@@ -283,10 +283,10 @@ async function create(
 
     if (leagueFile.hasOwnProperty("trade")) {
         for (let i = 0; i < leagueFile.trade.length; i++) {
-            await g.cache.add('trade', leagueFile.trade[i]);
+            await idb.cache.add('trade', leagueFile.trade[i]);
         }
     } else {
-        await g.cache.add('trade', {
+        await idb.cache.add('trade', {
             rid: 0,
             teams: [{
                 tid,
@@ -326,7 +326,7 @@ async function create(
     for (let j = 0; j < toMaybeAdd.length; j++) {
         if (leagueFile.hasOwnProperty(toMaybeAdd[j])) {
             for (let i = 0; i < leagueFile[toMaybeAdd[j]].length; i++) {
-                await g.cache.add(toMaybeAdd[j], leagueFile[toMaybeAdd[j]][i]);
+                await idb.cache.add(toMaybeAdd[j], leagueFile[toMaybeAdd[j]][i]);
             }
         }
     }
@@ -368,7 +368,7 @@ async function create(
             delete p.stats;
 
             await player.updateValues(p, playerStats.reverse());
-            await g.cache.put('players', p);
+            await idb.cache.put('players', p);
 
             // If no stats in League File, create blank stats rows for active players if necessary
             if (playerStats.length === 0) {
@@ -400,7 +400,7 @@ async function create(
                     // Delete psid because it can cause problems due to interaction addStatsRow above
                     delete ps.psid;
 
-                    await g.cache.add('playerStats', ps);
+                    await idb.cache.add('playerStats', ps);
 
                     // On to the next one
                     if (playerStats.length > 0) {
@@ -448,7 +448,7 @@ async function create(
                 player.setContract(p, player.genContract(p, randomizeExp), p.tid >= 0);
 
                 // Save to database
-                await g.cache.add('players', p);
+                await idb.cache.add('players', p);
 
                 // Needs pid, so must be called after put
                 if (p.tid === PLAYER.FREE_AGENT) {
@@ -461,7 +461,7 @@ async function create(
 
             // Initialize rebuilding/contending, when possible
             if (tid2 >= 0) {
-                const t = await g.cache.get('teams', tid2);
+                const t = await idb.cache.get('teams', tid2);
                 t.strategy = goodNeutralBad === 1 ? "contending" : "rebuilding";
             }
         }
@@ -506,7 +506,7 @@ async function create(
     // Auto sort rosters
     await Promise.all(teams.map(t => team.rosterAutoSort(t.tid)));
 
-    await g.cache.flush();
+    await idb.cache.flush();
 
     helpers.bbgmPing("league");
 
@@ -614,7 +614,7 @@ async function updateMetaNameRegion(name: string, region: string) {
  * @return {Promise}
  */
 async function loadGameAttribute(key: GameAttributeKeyDynamic) {
-    const gameAttribute = await g.cache.get('gameAttributes', key);
+    const gameAttribute = await idb.cache.get('gameAttributes', key);
 
     if (gameAttribute === undefined) {
         throw new Error(`Unknown game attribute: ${key}`);
@@ -642,7 +642,7 @@ async function loadGameAttribute(key: GameAttributeKeyDynamic) {
  * @return {Promise}
  */
 async function loadGameAttributes() {
-    const gameAttributes = await g.cache.getAll('gameAttributes');
+    const gameAttributes = await idb.cache.getAll('gameAttributes');
 
     for (let i = 0; i < gameAttributes.length; i++) {
         g[gameAttributes[i].key] = gameAttributes[i].value;

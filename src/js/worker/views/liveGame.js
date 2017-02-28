@@ -1,5 +1,6 @@
 import g from '../../globals';
 import * as helpers from '../../util/helpers';
+import {idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updatePlayByPlay(
@@ -13,7 +14,7 @@ async function updatePlayByPlay(
     }
 
     if (inputs.playByPlay !== undefined && inputs.playByPlay.length > 0) {
-        const boxScore = await g.cache.get('games', inputs.gidPlayByPlay);
+        const boxScore = await idb.cache.get('games', inputs.gidPlayByPlay);
 
         // Stats to set to 0
         const resetStats = ["min", "fg", "fga", "tp", "tpa", "ft", "fta", "orb", "trb", "ast", "tov", "stl", "blk", "ba", "pf", "pts", "pm"];
@@ -42,11 +43,7 @@ async function updatePlayByPlay(
                     boxScore.teams[i].players[j][resetStats[s]] = 0;
                 }
 
-                if (j < 5) {
-                    boxScore.teams[i].players[j].inGame = true;
-                } else {
-                    boxScore.teams[i].players[j].inGame = false;
-                }
+                boxScore.teams[i].players[j].inGame = j < 5;
             }
         }
 

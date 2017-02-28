@@ -19,7 +19,7 @@ import type {TradePickValues, TradeSummary, TradeTeams} from '../../common/types
  * @return {Promise}
  */
 async function create(teams: TradeTeams) {
-    const tr = await g.cache.get('trade', 0);
+    const tr = await idb.cache.get('trade', 0);
 
     // If nothing is in this trade, it's just a team switch, so keep the old stuff from the user's team
     if (teams[0].pids.length === 0 && teams[1].pids.length === 0 && teams[0].dpids.length === 0 && teams[1].dpids.length === 0) {
@@ -39,7 +39,7 @@ async function create(teams: TradeTeams) {
  * @return {er} Resolves to the other team's team ID.
  */
 async function getOtherTid(): Promise<number> {
-    const tr = await g.cache.get('trade', 0);
+    const tr = await idb.cache.get('trade', 0);
     return tr.teams[1].tid;
 }
 
@@ -134,7 +134,7 @@ async function updatePlayers(teams: TradeTeams): Promise<TradeTeams> {
             }));
 
             // Check draft picks
-            promises.push(g.cache.indexGetAll('draftPicksByTid', t.tid).then(dps => {
+            promises.push(idb.cache.indexGetAll('draftPicksByTid', t.tid).then(dps => {
                 const dpidsGood = [];
                 for (let j = 0; j < dps.length; j++) {
                     if (t.dpids.includes(dps[j].dpid)) {
@@ -150,7 +150,7 @@ async function updatePlayers(teams: TradeTeams): Promise<TradeTeams> {
 
     let updated = false; // Has the trade actually changed?
 
-    const tr = await g.cache.get('trade', 0);
+    const tr = await idb.cache.get('trade', 0);
     for (let i = 0; i < 2; i++) {
         if (teams[i].tid !== tr.teams[i].tid) {
             updated = true;
@@ -210,7 +210,7 @@ async function summary(teams: TradeTeams): Promise<TradeSummary> {
     // Calculate properties of the trade
     const promises = [];
     [0, 1].forEach(i => {
-        promises.push(g.cache.indexGetAll('playersByTid', tids[i]).then(async (playersTemp) => {
+        promises.push(idb.cache.indexGetAll('playersByTid', tids[i]).then(async (playersTemp) => {
             let players = playersTemp.filter(p => pids[i].includes(p.pid));
             players = await getCopy.playersPlus(players, {
                 attrs: ['pid', 'name', 'contract'],
@@ -223,7 +223,7 @@ async function summary(teams: TradeTeams): Promise<TradeSummary> {
             s.teams[i].total = s.teams[i].trade.reduce((memo, p) => memo + p.contract.amount, 0);
         }));
 
-        promises.push(g.cache.indexGetAll('draftPicksByTid', tids[i]).then((picks) => {
+        promises.push(idb.cache.indexGetAll('draftPicksByTid', tids[i]).then((picks) => {
             for (let j = 0; j < picks.length; j++) {
                 if (dpids[i].includes(picks[j].dpid)) {
                     s.teams[i].picks.push({
@@ -277,7 +277,7 @@ async function summary(teams: TradeTeams): Promise<TradeSummary> {
  * @return {Promise}
  */
 async function clear() {
-    const tr = await g.cache.get('trade', 0);
+    const tr = await idb.cache.get('trade', 0);
 
     for (const t of tr.teams) {
         t.pids = [];
@@ -301,7 +301,7 @@ async function propose(forceTrade?: boolean = false): Promise<[boolean, ?string]
         return [false, "Error! You're not allowed to make trades now."];
     }
 
-    const {teams} = await g.cache.get('trade', 0);
+    const {teams} = await idb.cache.get('trade', 0);
 
     const tids = [teams[0].tid, teams[1].tid];
     const pids = [teams[0].pids, teams[1].pids];
@@ -328,7 +328,7 @@ async function propose(forceTrade?: boolean = false): Promise<[boolean, ?string]
                 const k = j === 0 ? 1 : 0;
 
                 pids[j].forEach(async (pid) => {
-                    const p = await g.cache.get('players', pid);
+                    const p = await idb.cache.get('players', pid);
                     p.tid = tids[k];
                     // Don't make traded players untradable
                     //p.gamesUntilTradable = 15;
@@ -340,16 +340,16 @@ async function propose(forceTrade?: boolean = false): Promise<[boolean, ?string]
                 });
 
                 dpids[j].forEach(async (dpid) => {
-                    const dp = await g.cache.get('draftPicks', dpid);
+                    const dp = await idb.cache.get('draftPicks', dpid);
                     dp.tid = tids[k];
                     dp.abbrev = g.teamAbbrevsCache[tids[k]];
                 });
             });
             if (dpids[0].length > 0 || dpids[1].length > 0) {
-                g.cache.markDirtyIndexes('draftPicks');
+                idb.cache.markDirtyIndexes('draftPicks');
             }
             if (pids[0].length > 0 || pids[1].length > 0) {
-                g.cache.markDirtyIndexes('players');
+                idb.cache.markDirtyIndexes('players');
             }
 
             // Log event
@@ -466,7 +466,7 @@ async function makeItWork(
 
             if (!holdUserConstant) {
                 // Get all draft picks not in userDpids
-                const draftPicks = await g.cache.indexGetAll('draftPicksByTid', teams[0].tid);
+                const draftPicks = await idb.cache.indexGetAll('draftPicksByTid', teams[0].tid);
                 for (const dp of draftPicks) {
                     if (!teams[0].dpids.includes(dp.dpid)) {
                         assets.push({
@@ -480,7 +480,7 @@ async function makeItWork(
             }
 
             // Get all draft picks not in otherDpids
-            const draftPicks = await g.cache.indexGetAll('draftPicksByTid', teams[1].tid);
+            const draftPicks = await idb.cache.indexGetAll('draftPicksByTid', teams[1].tid);
             for (const dp of draftPicks) {
                 if (!teams[1].dpids.includes(dp.dpid)) {
                     assets.push({
@@ -597,7 +597,7 @@ async function getPickValues(): Promise<TradePickValues> {
 
     const promises = [];
     for (const tid of [PLAYER.UNDRAFTED, PLAYER.UNDRAFTED_2, PLAYER.UNDRAFTED_3]) {
-        promises.push(g.cache.indexGetAll('playersByTid', tid).then(players => {
+        promises.push(idb.cache.indexGetAll('playersByTid', tid).then(players => {
             if (players.length > 0) {
                 for (const p of players) {
                     p.value += 4; // +4 is to generally make picks more valued
@@ -624,7 +624,7 @@ async function getPickValues(): Promise<TradePickValues> {
 async function makeItWorkTrade() {
     const [estValues, tr] = await Promise.all([
         getPickValues(),
-        g.cache.get('trade', 0),
+        idb.cache.get('trade', 0),
     ]);
     const teams0 = tr.teams;
 
@@ -655,7 +655,7 @@ async function makeItWorkTrade() {
     }
 
     if (updated) {
-        const tr2 = await g.cache.get('trade', 0);
+        const tr2 = await idb.cache.get('trade', 0);
         tr2.teams = teams;
     }
 

@@ -7,6 +7,7 @@ import * as freeAgents from './freeAgents';
 import * as league from './league';
 import * as player from './player';
 import * as team from './team';
+import {idb} from '../db';
 import {lock, logEvent, updatePlayMenu, updateStatus} from '../util';
 import * as helpers from '../../util/helpers';
 
@@ -29,12 +30,12 @@ async function create(pid: number, resigning: boolean, tid: number = g.userTid):
         return "You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process.";
     }
 
-    const playersOnRoster = await g.cache.indexGetAll('playersByTid', g.userTid);
+    const playersOnRoster = await idb.cache.indexGetAll('playersByTid', g.userTid);
     if (playersOnRoster.length >= 15 && !resigning) {
         return "Your roster is full. Before you can sign a free agent, you'll have to release or trade away one of your current players.";
     }
 
-    const p = await g.cache.get('players', pid);
+    const p = await idb.cache.get('players', pid);
     if (p.tid !== PLAYER.FREE_AGENT) {
         return `${p.firstName} ${p.lastName} is not a free agent.`;
     }
@@ -60,7 +61,7 @@ async function create(pid: number, resigning: boolean, tid: number = g.userTid):
         resigning,
     };
 
-    await g.cache.add('negotiations', negotiation);
+    await idb.cache.add('negotiations', negotiation);
     league.updateLastDbChange();
     updateStatus("Contract negotiation");
     return updatePlayMenu();
@@ -70,7 +71,7 @@ async function create(pid: number, resigning: boolean, tid: number = g.userTid):
  * Cancel contract negotiations with a player.
  */
 async function cancel(pid: number) {
-    await g.cache.delete('negotiations', pid);
+    await idb.cache.delete('negotiations', pid);
     const negotiationInProgress = await lock.negotiationInProgress();
     if (!negotiationInProgress) {
         if (g.phase === PHASE.FREE_AGENCY) {
@@ -93,7 +94,7 @@ async function cancel(pid: number) {
  * @return {Promise}
  */
 async function cancelAll() {
-    await g.cache.clear('negotiations');
+    await idb.cache.clear('negotiations');
     league.updateLastDbChange();
     updateStatus("Idle");
     return updatePlayMenu();
@@ -110,7 +111,7 @@ async function cancelAll() {
  */
 async function accept(pid: number, amount: number, exp: number): Promise<?string> {
     const [negotiation, payroll] = await Promise.all([
-        g.cache.get('negotiations', pid),
+        idb.cache.get('negotiations', pid),
         team.getPayroll(g.userTid).get(0),
     ]);
 
@@ -125,7 +126,7 @@ async function accept(pid: number, amount: number, exp: number): Promise<?string
         return `This negotiation was started by the ${g.teamRegionsCache[negotiation.tid]} ${g.teamNamesCache[negotiation.tid]} but you are the ${g.teamRegionsCache[g.userTid]} ${g.teamNamesCache[g.userTid]}. Either switch teams or cancel this negotiation.`;
     }
 
-    const p = await g.cache.get('players', pid);
+    const p = await idb.cache.get('players', pid);
     p.tid = g.userTid;
     p.gamesUntilTradable = 15;
 
@@ -157,7 +158,7 @@ async function accept(pid: number, amount: number, exp: number): Promise<?string
         });
     }
 
-    g.cache.markDirtyIndexes('players');
+    idb.cache.markDirtyIndexes('players');
 
     await cancel(pid);
 

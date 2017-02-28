@@ -8,15 +8,15 @@ describe("core/finances", () => {
     before(async () => {
         idb.meta = await connectMeta();
         await league.create("Test", 0, undefined, 2013, false);
-        g.cache = new Cache();
-        await g.cache.fill();
+        idb.cache = new Cache();
+        await idb.cache.fill();
     });
     after(() => league.remove(g.lid));
 
     describe("#assessPayrollMinLuxury()", () => {
         it("should store payroll and appropriately assess luxury and minimum payroll taxes for each team", async () => {
             await finances.assessPayrollMinLuxury();
-            const teamSeasons = await g.cache.getAll('teamSeasons');
+            const teamSeasons = await idb.cache.getAll('teamSeasons');
             assert.equal(teamSeasons.length, g.numTeams);
 
             for (let i = 0; i < g.numTeams; i++) {

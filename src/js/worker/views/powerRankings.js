@@ -2,7 +2,7 @@
 
 import Promise from 'bluebird';
 import g from '../../globals';
-import {getCopy} from '../db';
+import {getCopy, idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updatePowerRankings(
@@ -17,7 +17,7 @@ async function updatePowerRankings(
                 stats: ["gp", "diff"],
                 season: g.season,
             }),
-            g.cache.indexGetAll('playersByTid', [0, Infinity]),
+            idb.cache.indexGetAll('playersByTid', [0, Infinity]),
         ]);
 
         // Array of arrays, containing the values for each player on each team

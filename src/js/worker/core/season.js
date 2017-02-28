@@ -5,7 +5,7 @@ import _ from 'underscore';
 import {PLAYER} from '../../common';
 import g from '../../globals';
 import * as league from './league';
-import {getCopy} from '../db';
+import {getCopy, idb} from '../db';
 import * as helpers from '../../util/helpers';
 import {logEvent, random} from '../util';
 import type {OwnerMoodDeltas, ScheduleGame, Team, TeamFiltered} from '../../common/types';
@@ -59,7 +59,7 @@ async function saveAwardsByPlayer(awardsByPlayer: any) {
     const pids = _.uniq(awardsByPlayer.map(award => award.pid));
 
     await Promise.all(pids.map(async (pid) => {
-        const p = await g.cache.get('players', pid);
+        const p = await idb.cache.get('players', pid);
 
         for (let i = 0; i < awardsByPlayer.length; i++) {
             if (p.pid === awardsByPlayer[i].pid) {
@@ -113,7 +113,7 @@ async function doAwards() {
     // Sort teams by tid so it can be easily used in awards formulas
     teams.sort((a, b) => a.tid - b.tid);
 
-    let players = await g.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
+    let players = await idb.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
     players = await getCopy.playersPlus(players, {
         attrs: ["pid", "name", "tid", "abbrev", "draft"],
         stats: ["gp", "gs", "min", "pts", "trb", "ast", "blk", "stl", "ewa"],
@@ -236,7 +236,7 @@ async function doAwards() {
     if (champTeam) {
         const champTid = champTeam.tid;
 
-        let champPlayers = await g.cache.indexGetAll('playersByTid', champTid); // Alternatively, could filter players array by tid
+        let champPlayers = await idb.cache.indexGetAll('playersByTid', champTid); // Alternatively, could filter players array by tid
         champPlayers = await getCopy.playersPlus(champPlayers, { // Only the champions, only playoff stats
             attrs: ["pid", "name", "tid", "abbrev"],
             stats: ["pts", "trb", "ast", "ewa"],
@@ -253,7 +253,7 @@ async function doAwards() {
         }
     }
 
-    await g.cache.put('awards', awards);
+    await idb.cache.put('awards', awards);
     await saveAwardsByPlayer(awardsByPlayer);
 
     // None of this stuff needs to block, it's just notifications of crap
@@ -286,7 +286,7 @@ async function doAwards() {
  * @return {Promise} Resolves to the requested schedule array.
  */
 async function getSchedule(oneDay?: boolean = false): Promise<ScheduleGame[]> {
-    let schedule = await g.cache.getAll('schedule');
+    let schedule = await idb.cache.getAll('schedule');
     if (oneDay) {
         schedule = schedule.slice(0, g.numTeams / 2);  // This is the maximum number of games possible in a day
 
@@ -315,10 +315,10 @@ async function getSchedule(oneDay?: boolean = false): Promise<ScheduleGame[]> {
  * @return {Promise}
  */
 async function setSchedule(tids: [number, number][]) {
-    await g.cache.clear('schedule');
+    await idb.cache.clear('schedule');
 
     for (const matchup of tids) {
-        await g.cache.add('schedule', {
+        await idb.cache.add('schedule', {
             homeTid: matchup[0],
             awayTid: matchup[1],
         });
@@ -557,7 +557,7 @@ function newSchedule(teams: Team[]): [number, number][] {
  * @return {Promise.boolean} Resolves to true if the playoffs are over. Otherwise, false.
  */
 async function newSchedulePlayoffsDay(): Promise<boolean> {
-    const playoffSeries = await g.cache.get('playoffSeries', g.season);
+    const playoffSeries = await idb.cache.get('playoffSeries', g.season);
 
     const series = playoffSeries.series;
     const rnd = playoffSeries.currentRound;
@@ -591,7 +591,7 @@ async function newSchedulePlayoffsDay(): Promise<boolean> {
             key = series[rnd][0].away.tid;
         }
 
-        const teamSeason = await g.cache.indexGet('teamSeasonsBySeasonTid', `${g.season},${key}`);
+        const teamSeason = await idb.cache.indexGet('teamSeasonsBySeasonTid', `${g.season},${key}`);
         teamSeason.playoffRoundsWon = g.numPlayoffRounds;
         teamSeason.hype += 0.05;
         if (teamSeason.hype > 1) {
@@ -642,7 +642,7 @@ async function newSchedulePlayoffsDay(): Promise<boolean> {
 
     // Update hype for winning a series
     await Promise.all(tidsWon.map(async (tid) => {
-        const teamSeason = await g.cache.indexGet('teamSeasonsBySeasonTid', `${g.season},${tid}`);
+        const teamSeason = await idb.cache.indexGet('teamSeasonsBySeasonTid', `${g.season},${tid}`);
 
         teamSeason.playoffRoundsWon = playoffSeries.currentRound;
         teamSeason.hype += 0.05;

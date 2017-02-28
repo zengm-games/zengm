@@ -8,7 +8,7 @@ const getCopy = ({
     season: number,
 } = {}): Promise<any> => {
     if (season === g.season) {
-        return g.cache.get('playoffSeries', season);
+        return idb.cache.get('playoffSeries', season);
     }
 
     return deepCopy(idb.league.playoffSeries.get(season));

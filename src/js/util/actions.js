@@ -1,6 +1,6 @@
 // @flow
 
-import {reset} from '../worker/db';
+import {idb, reset} from '../worker/db';
 import {PHASE} from '../common';
 import g from '../globals';
 import {logEvent, realtimeUpdate} from '../ui/util';
@@ -23,7 +23,7 @@ const liveGame = async (gid: number) => {
 
 const negotiate = async (pid: number) => {
     // If there is no active negotiation with this pid, create it
-    const negotiation = await g.cache.get('negotiations', pid);
+    const negotiation = await idb.cache.get('negotiations', pid);
     if (!negotiation) {
         const errorMsg = await contractNegotiation.create(pid, false);
         if (errorMsg !== undefined && errorMsg) {
@@ -53,7 +53,7 @@ const tradeFor = async ({otherDpids, otherPids, pid, tid, userDpids, userPids}: 
     let teams;
 
     if (pid !== undefined) {
-        const p = await g.cache.get('players', pid);
+        const p = await idb.cache.get('players', pid);
 
         if (!p || p.tid < 0) {
             return;
@@ -152,7 +152,7 @@ const playMenu = {
     throughPlayoffs: async () => {
         if (g.phase === PHASE.PLAYOFFS) {
             updateStatus("Playing..."); // For quick UI updating, before await
-            const playoffSeries = await g.cache.get('playoffSeries', g.season);
+            const playoffSeries = await idb.cache.get('playoffSeries', g.season);
 
             // Max 7 days per round that hasn't started yet
             const numDaysFutureRounds = (g.numPlayoffRounds - 1 - playoffSeries.currentRound) * 7;
@@ -180,7 +180,7 @@ const playMenu = {
 
     untilFreeAgency: async () => {
         if (g.phase === PHASE.RESIGN_PLAYERS) {
-            const negotiations = await g.cache.getAll('negotiations');
+            const negotiations = await idb.cache.getAll('negotiations');
             const numRemaining = negotiations.length;
             // Show warning dialog only if there are players remaining un-re-signed
             if (numRemaining === 0 || window.confirm(`Are you sure you want to proceed to free agency while ${numRemaining} of your players remain unsigned? If you do not re-sign them before free agency begins, they will be free to sign with any team, and you won't be able to go over the salary cap to sign them.`)) {

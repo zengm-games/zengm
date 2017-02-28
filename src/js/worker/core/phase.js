@@ -72,19 +72,19 @@ async function newPhasePreseason() {
             scoutingRankTemp = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
         }
 
-        await g.cache.add('teamSeasons', team.genSeasonRow(tid, prevSeason));
-        await g.cache.add('teamStats', team.genStatsRow(tid));
+        await idb.cache.add('teamSeasons', team.genSeasonRow(tid, prevSeason));
+        await idb.cache.add('teamStats', team.genStatsRow(tid));
     }));
     const scoutingRank = scoutingRankTemp;
     if (scoutingRank === undefined) {
         throw new Error('scoutingRank should be defined');
     }
 
-    const teamSeasons = await g.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season - 1}`, `${g.season}`]);
+    const teamSeasons = await idb.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season - 1}`, `${g.season}`]);
     const coachingRanks = teamSeasons.map(teamSeason => teamSeason.expenses.coaching.rank);
 
     // Loop through all non-retired players
-    const players = await g.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
+    const players = await idb.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
     for (const p of players) {
         // Update ratings
         player.addRatingsRow(p, scoutingRank);
@@ -103,8 +103,8 @@ async function newPhasePreseason() {
         await league.setGameAttributes({autoPlaySeasons: g.autoPlaySeasons - 1});
     }
 
-    await g.cache.flush();
-    await g.cache.fill();
+    await idb.cache.flush();
+    await idb.cache.fill();
 
     if (window.enableLogging && !window.inCordova) {
         api.emit('showAd', 'modal');
@@ -114,7 +114,7 @@ async function newPhasePreseason() {
 }
 
 async function newPhaseRegularSeason() {
-    const teams = await g.cache.getAll('teams');
+    const teams = await idb.cache.getAll('teams');
     await season.setSchedule(season.newSchedule(teams));
 
     // First message from owner
@@ -133,7 +133,7 @@ async function newPhaseRegularSeason() {
 
         if (g.season === g.startingSeason + 3 && g.lid > 3 && nagged === 0) {
             localStorage.setItem('nagged', '1');
-            await g.cache.add('messages', {
+            await idb.cache.add('messages', {
                 read: false,
                 from: "The Commissioner",
                 year: g.season,
@@ -141,7 +141,7 @@ async function newPhaseRegularSeason() {
             });
         } else if ((nagged === 1 && Math.random() < 0.25) || (nagged >= 2 && Math.random() < 0.025)) {
             localStorage.setItem('nagged', '2');
-            await g.cache.add('messages', {
+            await idb.cache.add('messages', {
                 read: false,
                 from: "The Commissioner",
                 year: g.season,
@@ -150,7 +150,7 @@ async function newPhaseRegularSeason() {
         } else if ((nagged >= 2 && nagged <= 3 && Math.random() < 0.5) || (nagged >= 4 && Math.random() < 0.05)) {
             // Skipping 3, obsolete
             localStorage.setItem('nagged', '4');
-            await g.cache.add('messages', {
+            await idb.cache.add('messages', {
                 read: false,
                 from: "The Commissioner",
                 year: g.season,
@@ -190,17 +190,17 @@ async function newPhasePlayoffs() {
         });
     }
 
-    await g.cache.put('playoffSeries', {
+    await idb.cache.put('playoffSeries', {
         season: g.season,
         currentRound: 0,
         series,
     });
 
     // Add row to team stats and team season attributes
-    const teamSeasons = await g.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
+    const teamSeasons = await idb.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
     for (const teamSeason of teamSeasons) {
         if (tidPlayoffs.includes(teamSeason.tid)) {
-            await g.cache.add('teamStats', team.genStatsRow(teamSeason.tid, true));
+            await idb.cache.add('teamStats', team.genStatsRow(teamSeason.tid, true));
 
             teamSeason.playoffRoundsWon = 0;
 
@@ -220,7 +220,7 @@ async function newPhasePlayoffs() {
 
     // Add row to player stats
     await Promise.all(tidPlayoffs.map(async (tid) => {
-        const players = await g.cache.indexGetAll('playersByTid', tid);
+        const players = await idb.cache.indexGetAll('playersByTid', tid);
         for (const p of players) {
             await player.addStatsRow(p, true);
         }
@@ -263,7 +263,7 @@ async function newPhaseBeforeDraft() {
     // Give award to all players on the championship team
     const t = teams.find(t2 => t2.seasonAttrs.playoffRoundsWon === g.numPlayoffRounds);
     if (t !== undefined) {
-        const players = await g.cache.indexGetAll('playersByTid', t.tid);
+        const players = await idb.cache.indexGetAll('playersByTid', t.tid);
         for (const p of players) {
             p.awards.push({season: g.season, type: "Won Championship"});
         }
@@ -275,7 +275,7 @@ async function newPhaseBeforeDraft() {
     const maxAge = 34;
     const minPot = 40;
 
-    const players = await g.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
+    const players = await idb.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
     for (const p of players) {
         // Get player stats, used for HOF calculation
         const playerStats = await getCopy.playerStats({pid: p.pid});
@@ -319,10 +319,10 @@ async function newPhaseBeforeDraft() {
         }
     }
 
-    const releasedPlayers = await g.cache.getAll('releasedPlayers');
+    const releasedPlayers = await idb.cache.getAll('releasedPlayers');
     for (const rp of releasedPlayers) {
         if (rp.contract.exp <= g.season) {
-            await g.cache.delete('releasedPlayers', rp.rid);
+            await idb.cache.delete('releasedPlayers', rp.rid);
         }
     }
 
@@ -367,7 +367,7 @@ async function newPhaseDraft() {
     await draft.genOrder();
 
     // This is a hack to handle weird cases where already-drafted players have draft.year set to the current season, which fucks up the draft UI
-    const players = await g.cache.getAll('players');
+    const players = await idb.cache.getAll('players');
     for (const p of players) {
         if (p.draft.year === g.season && p.tid >= 0) {
             p.draft.year -= 1;
@@ -387,7 +387,7 @@ async function newPhaseResignPlayers() {
     const baseMoods = await player.genBaseMoods();
 
     // Re-sign players on user's team, and some AI players
-    const players = await g.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
+    const players = await idb.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
     for (const p of players) {
         if (p.contract.exp <= g.season && g.userTids.includes(p.tid) && g.autoPlaySeasons === 0) {
             const tid = p.tid;
@@ -426,14 +426,14 @@ async function newPhaseFreeAgency() {
 
     // Reset contract demands of current free agents and undrafted players
     // KeyRange only works because PLAYER.UNDRAFTED is -2 and PLAYER.FREE_AGENT is -1
-    const players = await g.cache.indexGetAll('playersByTid', [PLAYER.UNDRAFTED, PLAYER.FREE_AGENT]);
+    const players = await idb.cache.indexGetAll('playersByTid', [PLAYER.UNDRAFTED, PLAYER.FREE_AGENT]);
     for (const p of players) {
         player.addToFreeAgents(p, PHASE.FREE_AGENCY, baseMoods);
     }
 
     // AI teams re-sign players or they become free agents
     // Run this after upding contracts for current free agents, or addToFreeAgents will be called twice for these guys
-    const players2 = await g.cache.indexGetAll('playersByTid', [0, Infinity]);
+    const players2 = await idb.cache.indexGetAll('playersByTid', [0, Infinity]);
     for (const p of players2) {
         if (p.contract.exp <= g.season && (!g.userTids.includes(p.tid) || g.autoPlaySeasons > 0)) {
             // Automatically negotiate with teams
@@ -460,17 +460,17 @@ async function newPhaseFreeAgency() {
     }
 
     // Bump up future draft classes (not simultaneous so tid updates don't cause race conditions)
-    const players3 = await g.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED_2);
+    const players3 = await idb.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED_2);
     for (const p of players3) {
         p.tid = PLAYER.UNDRAFTED;
         p.ratings[0].fuzz /= 2;
     }
-    const players4 = await g.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED_3);
+    const players4 = await idb.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED_3);
     for (const p of players4) {
         p.tid = PLAYER.UNDRAFTED_2;
         p.ratings[0].fuzz /= 2;
     }
-    g.cache.markDirtyIndexes('players');
+    idb.cache.markDirtyIndexes('players');
     await draft.genPlayers(PLAYER.UNDRAFTED_3);
 
     return [helpers.leagueUrl(["free_agents"]), ["playerMovement"]];
@@ -480,21 +480,21 @@ async function newPhaseFantasyDraft(position: number) {
     await contractNegotiation.cancelAll();
     await draft.genOrderFantasy(position);
     await league.setGameAttributes({nextPhase: g.phase});
-    await g.cache.clear('releasedPlayers');
+    await idb.cache.clear('releasedPlayers');
 
     // Protect draft prospects from being included in this
-    const playersUndrafted = await g.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
+    const playersUndrafted = await idb.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
     for (const p of playersUndrafted) {
         p.tid = PLAYER.UNDRAFTED_FANTASY_TEMP;
     }
 
     // Make all players draftable
-    const players = await g.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
+    const players = await idb.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
     for (const p of players) {
         p.tid = PLAYER.UNDRAFTED;
     }
 
-    g.cache.markDirtyIndexes('players');
+    idb.cache.markDirtyIndexes('players');
 
     return [helpers.leagueUrl(["draft"]), ["playerMovement"]];
 }

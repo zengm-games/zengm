@@ -336,13 +336,13 @@ class Cache {
         });
     }
 
-    async get(store: Store, id: number) {
+    async get(store: Store, id: number | string): Promise<any> {
         this.checkStatus('full');
 
         return this.data[store][id];
     }
 
-    async getAll(store: Store) {
+    async getAll(store: Store): Promise<any[]> {
         this.checkStatus('full');
 
         return Object.values(this.data[store]);
@@ -355,7 +355,7 @@ class Cache {
         }
     }
 
-    async indexGet(index: Index, key: number | string) {
+    async indexGet(index: Index, key: number | string): Promise<any> {
         this.checkStatus('full');
         this.checkIndexFreshness(index);
 
@@ -367,7 +367,7 @@ class Cache {
         return val;
     }
 
-    async indexGetAll(index: Index, key: number | string | [number, number] | [string, string]) {
+    async indexGetAll(index: Index, key: number | string | [number, number] | [string, string]): Promise<any[]> {
         this.checkStatus('full');
         this.checkIndexFreshness(index);
 

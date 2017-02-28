@@ -2,6 +2,7 @@
 
 import g from '../../globals';
 import * as league from '../core/league';
+import {idb} from '../db';
 import * as helpers from '../../util/helpers';
 import {random} from '../util';
 import type {OwnerMoodDeltas} from '../../common/types';
@@ -234,7 +235,7 @@ async function genMessage(deltas: OwnerMoodDeltas) {
         }
     }
 
-    await g.cache.add('messages', {
+    await idb.cache.add('messages', {
         read: false,
         from: "The Owner",
         year: g.season,

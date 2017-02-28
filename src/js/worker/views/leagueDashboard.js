@@ -34,8 +34,8 @@ async function updateTeam(
 ): void | {[key: string]: any} {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || updateEvents.includes('newPhase')) {
         const [t, latestSeason] = await Promise.all([
-            g.cache.get('teams', g.userTid),
-            g.cache.indexGet('teamSeasonsBySeasonTid', `${g.season},${g.userTid}`),
+            idb.cache.get('teams', g.userTid),
+            idb.cache.indexGet('teamSeasonsBySeasonTid', `${g.season},${g.userTid}`),
         ]);
 
         return {
@@ -194,7 +194,7 @@ async function updatePlayers(
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || updateEvents.includes('newPhase')) {
         const vars = {};
 
-        let players = await g.cache.indexGetAll('playersByTid', [PLAYER.UNDRAFTED, Infinity]);
+        let players = await idb.cache.indexGetAll('playersByTid', [PLAYER.UNDRAFTED, Infinity]);
         players = await getCopy.playersPlus(players, {
             attrs: ['pid', 'name', 'abbrev', 'tid', 'age', 'contract', 'rosterOrder', 'injury', 'watch'],
             ratings: ['ovr', 'pot', 'dovr', 'dpot', 'skills', 'pos'],

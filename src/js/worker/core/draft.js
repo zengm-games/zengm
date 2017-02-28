@@ -17,7 +17,7 @@ import type {PickRealized, TeamFiltered} from '../../common/types';
 async function genPicks(season: number) {
     for (let tid = 0; tid < g.numTeams; tid++) {
         for (let round = 1; round <= 2; round++) {
-            await g.cache.add('draftPicks', {
+            await idb.cache.add('draftPicks', {
                 tid,
                 originalTid: tid,
                 round,
@@ -34,7 +34,7 @@ async function genPicks(season: number) {
  * @return {Promise} Resolves to an ordered array of pick objects.
  */
 async function getOrder() {
-    const row = await g.cache.get('draftOrder', 0);
+    const row = await idb.cache.get('draftOrder', 0);
     return row.draftOrder;
 }
 
@@ -56,7 +56,7 @@ async function genPlayers(tid: number, scoutingRank?: ?number = null, numPlayers
 
     // If scoutingRank is not supplied, have to hit the DB to get it
     if (scoutingRank === undefined || scoutingRank === null) {
-        const teamSeasons = await g.cache.indexGetAll('teamSeasonsByTidSeason', [`${g.userTid},${g.season - 2}`, `${g.userTid},${g.season}`]);
+        const teamSeasons = await idb.cache.indexGetAll('teamSeasonsByTidSeason', [`${g.userTid},${g.season - 2}`, `${g.userTid},${g.season}`]);
         scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
     }
 
@@ -91,7 +91,7 @@ async function genPlayers(tid: number, scoutingRank?: ?number = null, numPlayers
 
         // Update player values after ratings changes
         await player.updateValues(p);
-        await g.cache.add('players', p);
+        await idb.cache.add('players', p);
     }
 }
 
@@ -257,12 +257,12 @@ async function genOrder() {
         }
     }
 
-    let draftPicks = await g.cache.indexGetAll('draftPicksBySeason', g.season);
+    let draftPicks = await idb.cache.indexGetAll('draftPicksBySeason', g.season);
 
     // Sometimes picks just fail to generate, for reasons I don't understand
     if (draftPicks.length === 0) {
         await genPicks(g.season);
-        draftPicks = await g.cache.indexGetAll('draftPicksBySeason', g.season);
+        draftPicks = await idb.cache.indexGetAll('draftPicksBySeason', g.season);
     }
 
     // Reorganize this to an array indexed on originalTid and round
@@ -334,10 +334,10 @@ async function genOrder() {
 
     // Delete from draftPicks object store so that they are completely untradeable
     for (const dp of draftPicks) {
-        await g.cache.delete('draftPicks', dp.dpid);
+        await idb.cache.delete('draftPicks', dp.dpid);
     }
 
-    await g.cache.put('draftOrder', {
+    await idb.cache.put('draftOrder', {
         rid: 0,
         draftOrder,
     });
@@ -378,7 +378,7 @@ async function genOrderFantasy(position: number) {
         tids.reverse(); // Snake
     }
 
-    await g.cache.put('draftOrder', {
+    await idb.cache.put('draftOrder', {
         rid: 0,
         draftOrder,
     });
@@ -434,7 +434,7 @@ function getRookieSalaries(): number[] {
  * @return {Promise}
  */
 async function selectPlayer(pick: PickRealized, pid: number) {
-    const p = await g.cache.get('players', pid);
+    const p = await idb.cache.get('players', pid);
 
     // Draft player
     p.tid = pick.tid;
@@ -467,7 +467,7 @@ async function selectPlayer(pick: PickRealized, pid: number) {
         await player.addStatsRow(p, g.nextPhase === PHASE.PLAYOFFS);
     }
 
-    g.cache.markDirtyIndexes('players');
+    idb.cache.markDirtyIndexes('players');
 
     const draftName = g.phase === PHASE.FANTASY_DRAFT ? `${g.season} fantasy draft` : `${g.season} draft`;
     logEvent({
@@ -491,7 +491,7 @@ async function untilUserOrEnd() {
     const pids = [];
 
     const [playersAll, draftOrder] = await Promise.all([
-        g.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED),
+        idb.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED),
         getOrder(),
     ]);
 

@@ -3,7 +3,7 @@ import g from '../../globals';
 import * as contractNegotiation from '../core/contractNegotiation';
 import * as freeAgents from '../core/freeAgents';
 import * as team from '../core/team';
-import {getCopy} from '../db';
+import {getCopy, idb} from '../db';
 import type {GetOutput} from '../../common/types';
 
 function generateContractOptions(contract, ovr) {
@@ -52,7 +52,7 @@ function generateContractOptions(contract, ovr) {
 async function updateNegotiation(
     inputs: GetOutput,
 ): void | {[key: string]: any} {
-    const negotiations = await g.cache.getAll('negotiations');
+    const negotiations = await idb.cache.getAll('negotiations');
     let negotiation;
     if (inputs.pid === undefined) {
         negotiation = negotiations[0];
@@ -72,7 +72,7 @@ async function updateNegotiation(
         negotiation.player.expiration -= 1;
     }
 
-    let p = await g.cache.get('players', negotiation.pid);
+    let p = await idb.cache.get('players', negotiation.pid);
     p = await getCopy.playersPlus(p, {
         attrs: ["pid", "name", "age", "contract", "freeAgentMood"],
         ratings: ["ovr", "pot"],

@@ -183,6 +183,7 @@ flow
   backboard
     BackboardTx should specify object stores
     should somehow specify contents of object stores
+  cache - similar issue as backboard, would be great to type inputs and outputs
   get rid of ScheduleGame.highlight
   in withStats, how to convert input obj of type Player to output obj of type PlayerWithStats
   get rid of any, Object, etc

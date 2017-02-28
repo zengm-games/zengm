@@ -2,7 +2,7 @@
 
 import {PHASE, PLAYER} from '../../common';
 import g from '../../globals';
-import {getCopy} from '../db';
+import {getCopy, idb} from '../db';
 import * as helpers from '../../util/helpers';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
@@ -30,7 +30,7 @@ async function updateLeaders(
 
         let players;
         if (g.season === season && g.phase <= PHASE.PLAYOFFS) {
-            players = await g.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
+            players = await idb.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
         } else {
             // If it's not this season, get all players, because retired players could apply to the selected season
             players = await getCopy.players({activeAndRetired: true});

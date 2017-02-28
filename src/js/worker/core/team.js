@@ -7,7 +7,7 @@ import g from '../../globals';
 import * as draft from './draft';
 import * as player from './player';
 import * as trade from './trade';
-import {getCopy} from '../db';
+import {getCopy, idb} from '../db';
 import {logEvent, random} from '../util';
 import * as helpers from '../../util/helpers';
 import type {ContractInfo, TeamSeason, TeamStats, TradePickValues} from '../../common/types';
@@ -240,7 +240,7 @@ function findStarters(positions: string[]): number[] {
  */
 async function rosterAutoSort(tid: number) {
     // Get roster and sort by value (no potential included)
-    const playersFromCache = await g.cache.indexGetAll('playersByTid', tid);
+    const playersFromCache = await idb.cache.indexGetAll('playersByTid', tid);
     let players = helpers.deepCopy(playersFromCache);
     players = await getCopy.playersPlus(players, {
         attrs: ["pid", "valueNoPot", "valueNoPotFuzz"],
@@ -296,7 +296,7 @@ async function rosterAutoSort(tid: number) {
 */
 async function getContracts(tid: number): Promise<ContractInfo[]> {
     // First, get players currently on the roster
-    const players = await g.cache.indexGetAll('playersByTid', tid);
+    const players = await idb.cache.indexGetAll('playersByTid', tid);
 
     const contracts = players.map(p => {
         return {
@@ -313,10 +313,10 @@ async function getContracts(tid: number): Promise<ContractInfo[]> {
     });
 
     // Then, get any released players still owed money
-    const releasedPlayers = await g.cache.indexGetAll('releasedPlayersByTid', tid);
+    const releasedPlayers = await idb.cache.indexGetAll('releasedPlayersByTid', tid);
 
     for (const releasedPlayer of releasedPlayers) {
-        const p = await g.cache.get('players', releasedPlayer.pid);
+        const p = await idb.cache.get('players', releasedPlayer.pid);
         if (p !== undefined) { // If a player is deleted, such as if the user deletes retired players to improve performance, this will be undefined
             contracts.push({
                 pid: releasedPlayer.pid,
@@ -422,7 +422,7 @@ async function valueChange(
         const fudgeFactor = tid !== g.userTid ? 1.05 : 1;
 
         // Get roster and players to remove
-        const players = await g.cache.indexGetAll('playersByTid', tid);
+        const players = await idb.cache.indexGetAll('playersByTid', tid);
         for (const p of players) {
             if (!pidsRemove.includes(p.pid)) {
                 roster.push({
@@ -447,7 +447,7 @@ async function valueChange(
 
         // Get players to add
         for (const pid of pidsAdd) {
-            const p = await g.cache.get('players', pid);
+            const p = await idb.cache.get('players', pid);
             add.push({
                 value: p.valueWithContract,
                 skills: _.last(p.ratings).skills,
@@ -463,7 +463,7 @@ async function valueChange(
         // For each draft pick, estimate its value based on the recent performance of the team
         if (dpidsAdd.length > 0 || dpidsRemove.length > 0) {
             // Estimate the order of the picks by team
-            const allTeamSeasons = await g.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
+            const allTeamSeasons = await idb.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
 
             // This part needs to be run every time so that gpAvg is available
             const wps = []; // Contains estimated winning percentages for all teams by the end of the season
@@ -519,7 +519,7 @@ async function valueChange(
             let estValues;
             const withEstValues = () => {
                 Promise.all(dpidsAdd.map(async (dpid) => {
-                    const dp = await g.cache.get('draftPicks', dpid);
+                    const dp = await idb.cache.get('draftPicks', dpid);
 
                     let estPick = estPicks[dp.originalTid];
 
@@ -554,7 +554,7 @@ async function valueChange(
                 }));
 
                 Promise.all(dpidsRemove.map(async (dpid) => {
-                    const dp = await g.cache.get('draftPicks', dpid);
+                    const dp = await idb.cache.get('draftPicks', dpid);
                     let estPick = estPicks[dp.originalTid];
 
                     // For future draft picks, add some uncertainty
@@ -839,7 +839,7 @@ console.log(dv);*/
  * @return {Promise}
  */
 async function updateStrategies() {
-    const teams = await g.cache.getAll('teams');
+    const teams = await idb.cache.getAll('teams');
     for (const t of teams) {
         // Skip user's team
         if (t.tid === g.userTid) {
@@ -847,14 +847,14 @@ async function updateStrategies() {
         }
 
         // Change in wins
-        const teamSeason = await g.cache.indexGet('teamSeasonsBySeasonTid', `${g.season},${t.tid}`);
-        const teamSeasonOld = await g.cache.indexGet('teamSeasonsBySeasonTid', `${g.season - 1},${t.tid}`);
+        const teamSeason = await idb.cache.indexGet('teamSeasonsBySeasonTid', `${g.season},${t.tid}`);
+        const teamSeasonOld = await idb.cache.indexGet('teamSeasonsBySeasonTid', `${g.season - 1},${t.tid}`);
 
         const won = teamSeason.won;
         const dWon = teamSeasonOld ? won - teamSeasonOld.won : 0;
 
         // Young stars
-        let players = await g.cache.indexGetAll('playersByTid', t.tid);
+        let players = await idb.cache.indexGetAll('playersByTid', t.tid);
         players = await getCopy.playersPlus(players, {
             season: g.season,
             tid: t.tid,
@@ -903,7 +903,7 @@ async function checkRosterSizes(): Promise<string | null> {
     let userTeamSizeError = null;
 
     const checkRosterSize = async tid => {
-        const players = await g.cache.indexGetAll('playersByTid', tid);
+        const players = await idb.cache.indexGetAll('playersByTid', tid);
         let numPlayersOnRoster = players.length;
         if (numPlayersOnRoster > 15) {
             if (g.userTids.includes(tid) && g.autoPlaySeasons === 0) {
@@ -940,7 +940,7 @@ async function checkRosterSizes(): Promise<string | null> {
                     await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
                     player.setContract(p, p.contract, true);
                     p.gamesUntilTradable = 15;
-                    g.cache.markDirtyIndexes('players');
+                    idb.cache.markDirtyIndexes('players');
 
                     logEvent({
                         type: "freeAgent",
@@ -963,7 +963,7 @@ async function checkRosterSizes(): Promise<string | null> {
         }
     };
 
-    const players = await g.cache.indexGetAll('playersByTid', PLAYER.FREE_AGENT);
+    const players = await idb.cache.indexGetAll('playersByTid', PLAYER.FREE_AGENT);
 
     // List of free agents looking for minimum contracts, sorted by value. This is used to bump teams up to the minimum roster size.
     for (let i = 0; i < players.length; i++) {

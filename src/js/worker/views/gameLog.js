@@ -17,7 +17,7 @@ async function boxScore(gid: number) {
         return {};
     }
 
-    let game = await g.cache.get('games', gid);
+    let game = await idb.cache.get('games', gid);
 
     // Only this season is in cache
     if (!game) {

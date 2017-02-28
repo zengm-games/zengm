@@ -10,15 +10,15 @@ describe("core/draft", () => {
     before(async () => {
         idb.meta = await connectMeta();
         await league.create("Test", 15, undefined, 2015, false);
-        g.cache = new Cache();
-        await g.cache.fill();
+        idb.cache = new Cache();
+        await idb.cache.fill();
     });
     after(() => league.remove(g.lid));
 
     const testDraftUntilUserOrEnd = async (numNow, numTotal) => {
         const pids = await draft.untilUserOrEnd();
         assert.equal(pids.length, numNow);
-        const players = await g.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
+        const players = await idb.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
         assert.equal(players.length, 140 - numTotal);
     };
 
@@ -35,7 +35,7 @@ describe("core/draft", () => {
         }
         assert.equal(pick.tid, g.userTid);
 
-        const p = await g.cache.indexGet('playersByTid', PLAYER.UNDRAFTED);
+        const p = await idb.cache.indexGet('playersByTid', PLAYER.UNDRAFTED);
         await draft.selectPlayer(pick, p.pid);
         assert.equal(p.tid, g.userTid);
     };
@@ -43,17 +43,17 @@ describe("core/draft", () => {
     describe("#genPlayers()", () => {
         it("should generate 70 players for the draft", async () => {
             await draft.genPlayers(PLAYER.UNDRAFTED, null, null);
-            const players = await g.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
+            const players = await idb.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
             assert.equal(players.length, 140); // 70 from original league, 70 from this
         });
     });
 
     describe("#genOrder()", () => {
         before(async () => {
-            await g.cache.clear('teamSeasons');
+            await idb.cache.clear('teamSeasons');
 
             // Load static data
-            const teams = await g.cache.getAll('teams');
+            const teams = await idb.cache.getAll('teams');
             for (const t of teams) {
                 const st = sampleTiebreakers.teams[t.tid];
                 const teamSeasons = st.seasons;
@@ -62,10 +62,10 @@ describe("core/draft", () => {
 
                 for (const teamSeason of teamSeasons) {
                     teamSeason.tid = t.tid;
-                    await g.cache.add('teamSeasons', teamSeason);
+                    await idb.cache.add('teamSeasons', teamSeason);
                 }
 
-                await g.cache.put('teams', st);
+                await idb.cache.put('teams', st);
             }
         });
 

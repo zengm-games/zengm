@@ -1,7 +1,6 @@
 // @flow
 
 import g from '../../globals';
-import * as league from '../core/league';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateMultiTeamMode(
@@ -9,9 +8,6 @@ async function updateMultiTeamMode(
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('g.userTids')) {
-        // Make sure it's current
-        await league.loadGameAttribute('godMode');
-
         const teams = [];
         for (let i = 0; i < g.numTeams; i++) {
             teams.push({

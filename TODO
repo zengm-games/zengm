@@ -19,7 +19,7 @@ move everything but the UI to a web worker
   - split up util - ui, worker, or both
     - globals
       - get rid of everything left in globals.js (weird dynamic stuff)
-      - then, maybe make it just for game attributes, and carefully sync between worker and ui. should be easy since setting g is only done in loadGameAttribute
+      - then, maybe make it just for game attributes, and carefully sync between worker and ui. should be easy since setting g is only done in loadGameAttributes and setGameAttributes
     - actions: only called from ui, but mixes worker calls and realtimeUpdate
       - put worker calls in api, move to ui/util/actions
     - helpers: move some to individual files in util, then hopefully it's just some small global functions that can go in common/helpers

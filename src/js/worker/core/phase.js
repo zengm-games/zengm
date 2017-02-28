@@ -14,7 +14,7 @@ import * as player from './player';
 import * as season from './season';
 import * as team from './team';
 import {getCopy, idb} from '../db';
-import {account, genMessage, lock, logEvent, random, updatePhase, updatePlayMenu} from '../util';
+import {account, genMessage, logEvent, random, updatePhase, updatePlayMenu} from '../util';
 import * as helpers from '../../util/helpers';
 import type {Phase, UpdateEvents} from '../../common/types';
 
@@ -547,8 +547,7 @@ async function newPhase(phase: Phase, extra: any) {
         },
     };
 
-    const phaseChangeInProgress = await lock.phaseChangeInProgress();
-    if (phaseChangeInProgress) {
+    if (g.phaseChangeInProgress) {
         logEvent({
             type: 'error',
             text: 'Phase change already in progress, maybe in another tab.',

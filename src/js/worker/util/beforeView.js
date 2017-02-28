@@ -79,7 +79,7 @@ const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEv
 };
 
 const beforeNonLeague = (ctx: PageCtx): [UpdateEvents, () => void, ?string] => {
-    g.lid = null;
+    g.lid = undefined;
     api.emit('updateTopMenu', {lid: undefined});
 
     const updateEvents = (ctx !== undefined && ctx.bbgm.updateEvents !== undefined) ? ctx.bbgm.updateEvents : [];

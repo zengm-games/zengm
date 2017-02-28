@@ -4,7 +4,7 @@ import g from '../../globals';
 
 let currentTitle = 'Basketball GM';
 const setTitle = (newTitle: string) => {
-    if (g.lid !== null) {
+    if (g.lid !== undefined) {
         newTitle += ` - ${g.leagueName}`;
     }
     newTitle = `${newTitle} - Basketball GM`;

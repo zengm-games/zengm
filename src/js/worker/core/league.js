@@ -17,7 +17,7 @@ import * as season from './season';
 import * as team from './team';
 import * as helpers from '../../util/helpers';
 import {random, updatePhase, updateStatus} from '../util';
-import type {GameAttributeKeyDynamic, GameAttributes} from '../../common/types';
+import type {GameAttributeKey, GameAttributes} from '../../common/types';
 
 const defaultGameAttributes: GameAttributes = {
     phase: 0,
@@ -613,7 +613,7 @@ async function updateMetaNameRegion(name: string, region: string) {
  * @param {string} key Key in gameAttributes to load the value for.
  * @return {Promise}
  */
-async function loadGameAttribute(key: GameAttributeKeyDynamic) {
+async function loadGameAttribute(key: GameAttributeKey) {
     const gameAttribute = await idb.cache.get('gameAttributes', key);
 
     if (gameAttribute === undefined) {

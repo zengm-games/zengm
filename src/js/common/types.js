@@ -146,7 +146,7 @@ export type GamePlayer = any;
 
 export type GameResults = any;
 
-export type GameAttributeKeyDynamic = (
+export type GameAttributeKey = (
     'autoPlaySeasons' |
     'confs' |
     'daysLeft' |
@@ -189,11 +189,7 @@ export type GameAttributeKeyDynamic = (
     'userTids'
 );
 
-type GameAttributeKeyStatic = (
-    'notInDb'
-);
-
-export type GameAttributes = {[key: GameAttributeKeyDynamic | GameAttributeKeyStatic]: any}
+export type GameAttributes = {[key: GameAttributeKey]: any}
 
 export type GameProcessed = {
     gid: number,

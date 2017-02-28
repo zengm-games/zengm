@@ -206,7 +206,7 @@ function keys<T: string>(obj: any): Array<T> {
  */
 function resetG() {
     for (const key of keys(g)) {
-        if (!g.notInDb.includes(key)) {
+        if (key !== 'lid') {
             delete g[key];
         }
     }

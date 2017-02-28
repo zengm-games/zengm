@@ -2,8 +2,7 @@
 
 import Promise from 'bluebird';
 import _ from 'underscore';
-import {COMPOSITE_WEIGHTS, PHASE, PLAYER} from '../../common';
-import g from '../../globals';
+import {COMPOSITE_WEIGHTS, PHASE, PLAYER, g} from '../../common';
 import * as api from '../api';
 import GameSim from './GameSim';
 import * as finances from './finances';
@@ -753,9 +752,6 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
         // setTimeout is for responsiveness during gameSim with UI that doesn't hit IDB
         setTimeout(async () => {
             if (numDays > 0) {
-                // Hit the DB to check stopGames in case it came from another tab
-                await league.loadGameAttribute('stopGames');
-
                 // If we didn't just stop games, let's play
                 // Or, if we are starting games (and already passed the lock), continue even if stopGames was just seen
                 if (start || !g.stopGames) {

@@ -2,7 +2,7 @@
 
 /* eslint quote-props: "off" */
 
-import g from '../globals';
+import {g} from '../common';
 
 type PlayerNames = {
     countries: [string, number][],

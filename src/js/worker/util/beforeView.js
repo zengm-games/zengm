@@ -2,7 +2,7 @@
 
 import React from 'react';
 import {Cache, connectLeague, idb} from '../db';
-import g from '../../globals';
+import {g} from '../../common';
 import * as api from '../api';
 import {league} from '../core';
 import {updatePhase, updatePlayMenu, updateStatus} from '../util';

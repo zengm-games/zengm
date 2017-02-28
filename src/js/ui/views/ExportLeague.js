@@ -1,6 +1,5 @@
 import React from 'react';
-import {PHASE, PHASE_TEXT} from '../../common';
-import g from '../../globals';
+import {PHASE, PHASE_TEXT, g} from '../../common';
 import * as api from '../api';
 import {setTitle} from '../util';
 import {DownloadDataLink} from '../components';

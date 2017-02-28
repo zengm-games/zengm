@@ -1,8 +1,7 @@
 /*eslint no-unused-expressions: 0*/
 import assert from 'assert';
 import _ from 'underscore';
-import {PLAYER} from '../../common';
-import g from '../../globals';
+import {PLAYER, g} from '../../common';
 import * as player from '../../core/player';
 import * as helpers from '../../util/helpers';
 

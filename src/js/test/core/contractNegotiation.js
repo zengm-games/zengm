@@ -1,7 +1,6 @@
 import assert from 'assert';
 import {Cache, connectMeta, idb} from '../../db';
-import {PLAYER} from '../../common';
-import g from '../../globals';
+import {PLAYER, g} from '../../common';
 import * as contractNegotiation from '../../core/contractNegotiation';
 import * as league from '../../core/league';
 

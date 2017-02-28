@@ -1,5 +1,4 @@
-import {PHASE} from '../../common';
-import g from '../../globals';
+import {PHASE, g} from '../../common';
 import * as contractNegotiation from '../core/contractNegotiation';
 import * as freeAgents from '../core/freeAgents';
 import * as team from '../core/team';

@@ -1,4 +1,4 @@
-import g from '../../globals';
+import {g} from '../../common';
 import {getCopy} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 

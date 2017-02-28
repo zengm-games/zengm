@@ -4,8 +4,7 @@ import backboard from 'backboard';
 import Promise from 'bluebird';
 import _ from 'underscore';
 import {Cache, connectLeague, idb} from '../db';
-import {PHASE, PHASE_TEXT, PLAYER} from '../../common';
-import g from '../../globals';
+import {PHASE, PHASE_TEXT, PLAYER, g} from '../../common';
 import * as api from '../api';
 import * as draft from './draft';
 import * as finances from './finances';
@@ -17,7 +16,7 @@ import * as season from './season';
 import * as team from './team';
 import * as helpers from '../../util/helpers';
 import {random, updatePhase, updateStatus} from '../util';
-import type {GameAttributeKey, GameAttributes} from '../../common/types';
+import type {GameAttributes} from '../../common/types';
 
 const defaultGameAttributes: GameAttributes = {
     phase: 0,
@@ -607,36 +606,6 @@ async function updateMetaNameRegion(name: string, region: string) {
 }
 
 /**
- * Load a game attribute from the database and update the global variable g.
- *
- * @param {(IDBObjectStore|IDBTransaction|null)} ot An IndexedDB object store or transaction on gameAttributes; if null is passed, then a new transaction will be used.
- * @param {string} key Key in gameAttributes to load the value for.
- * @return {Promise}
- */
-async function loadGameAttribute(key: GameAttributeKey) {
-    const gameAttribute = await idb.cache.get('gameAttributes', key);
-
-    if (gameAttribute === undefined) {
-        throw new Error(`Unknown game attribute: ${key}`);
-    }
-
-    g[key] = gameAttribute.value;
-
-    // Set defaults to avoid IndexedDB upgrade
-    if (g[key] === undefined && defaultGameAttributes.hasOwnProperty(key)) {
-        g[key] = defaultGameAttributes[key];
-    }
-
-    // UI stuff - see also loadGameAttributes
-    if (key === "godMode") {
-        api.emit('updateTopMenu', {godMode: g.godMode});
-    }
-    if (key === "userTid" || key === "userTids") {
-        api.emit('updateMultiTeam');
-    }
-}
-
-/**
  * Load game attributes from the database and update the global variable g.
  *
  * @return {Promise}
@@ -658,7 +627,7 @@ async function loadGameAttributes() {
         }
     });
 
-    // UI stuff - see also loadGameAttribute
+    // UI stuff
     api.emit('updateTopMenu', {godMode: g.godMode});
     api.emit('updateMultiTeam');
 }
@@ -703,7 +672,6 @@ export {
     remove,
     setGameAttributes,
     updateMetaNameRegion,
-    loadGameAttribute,
     loadGameAttributes,
     updateLastDbChange,
     autoPlay,

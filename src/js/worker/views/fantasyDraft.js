@@ -1,6 +1,6 @@
 // @flow
 
-import g from '../../globals';
+import {g} from '../../common';
 
 async function updateFantasyDraft(): void | {[key: string]: any} {
     return {

@@ -1,5 +1,4 @@
-import {PHASE} from '../common';
-import g from '../globals';
+import {PHASE, g} from '../common';
 import * as helpers from '../util/helpers';
 
 const account = (ctx) => {

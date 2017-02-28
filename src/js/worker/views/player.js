@@ -1,5 +1,4 @@
-import {PLAYER} from '../../common';
-import g from '../../globals';
+import {PLAYER, g} from '../../common';
 import * as freeAgents from '../core/freeAgents';
 import * as trade from '../core/trade';
 import {getCopy} from '../db';

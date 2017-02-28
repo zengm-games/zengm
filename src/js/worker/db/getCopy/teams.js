@@ -1,6 +1,6 @@
 import backboard from 'backboard';
 import _ from 'underscore';
-import g from '../../../globals';
+import {g} from '../../../common';
 import {filterOrderStats, mergeByPk} from './helpers';
 import {team} from '../../core';
 import {idb} from '../../db';

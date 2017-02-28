@@ -2,8 +2,7 @@
 
 import Promise from 'bluebird';
 import _ from 'underscore';
-import {PLAYER} from '../../common';
-import g from '../../globals';
+import {PLAYER, g} from '../../common';
 import * as league from './league';
 import {getCopy, idb} from '../db';
 import * as helpers from '../../util/helpers';

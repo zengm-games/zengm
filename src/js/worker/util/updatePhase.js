@@ -1,6 +1,6 @@
 // @flow
 
-import g from '../../globals';
+import {g} from '../../common';
 import * as api from '../api';
 import {league} from '../core';
 import {idb} from '../db';

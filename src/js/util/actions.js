@@ -1,8 +1,7 @@
 // @flow
 
 import {idb, reset} from '../worker/db';
-import {PHASE} from '../common';
-import g from '../globals';
+import {PHASE, g} from '../common';
 import {logEvent, realtimeUpdate} from '../ui/util';
 import * as contractNegotiation from '../worker/core/contractNegotiation';
 import * as draft from '../worker/core/draft';

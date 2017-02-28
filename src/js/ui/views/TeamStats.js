@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'underscore';
-import g from '../../globals';
+import {g} from '../../common';
 import {getCols, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {DataTable, Dropdown, JumpTo, NewWindowLink} from '../components';

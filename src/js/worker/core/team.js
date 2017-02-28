@@ -2,8 +2,7 @@
 
 import Promise from 'bluebird';
 import _ from 'underscore';
-import {PHASE, PLAYER} from '../../common';
-import g from '../../globals';
+import {PHASE, PLAYER, g} from '../../common';
 import * as draft from './draft';
 import * as player from './player';
 import * as trade from './trade';

@@ -1,7 +1,7 @@
 import Promise from 'bluebird';
 import React from 'react';
 import _ from 'underscore';
-import g from '../../globals';
+import {g} from '../../common';
 import {getCopy} from '../db';
 import * as helpers from '../../util/helpers';
 import type {GetOutput, UpdateEvents} from '../../common/types';

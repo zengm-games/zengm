@@ -1,5 +1,5 @@
 import assert from 'assert';
-import g from '../../globals';
+import {g} from '../../common';
 import * as season from '../../core/season';
 import * as helpers from '../../util/helpers';
 import * as testHelpers from '../helpers';

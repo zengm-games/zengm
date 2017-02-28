@@ -1,7 +1,6 @@
 // @flow
 
-import g from '../../globals';
-import {createLogger} from '../../common';
+import {createLogger, g} from '../../common';
 import * as api from '../api';
 import {idb} from '../db';
 import type {LogEventSaveOptions} from '../../common/types';

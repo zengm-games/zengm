@@ -1,7 +1,7 @@
 // @flow
 
 import backboard from 'backboard';
-import g from '../../../globals';
+import {g} from '../../../common';
 import {idb} from '../../db';
 import {mergeByPk} from './helpers';
 import {deepCopy} from '../../../util/helpers';

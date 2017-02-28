@@ -1,6 +1,6 @@
 // @flow
 
-import g from '../../globals';
+import {g} from '../../common';
 import {idb} from '../db';
 import {getProcessedGames} from '../util';
 import type {GetOutput, UpdateEvents} from '../../common/types';

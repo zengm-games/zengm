@@ -1,4 +1,4 @@
-import g from '../../globals';
+import {g} from '../../common';
 import {getCopy} from '../db';
 
 async function updateTeamSelect(): void | {[key: string]: any} {

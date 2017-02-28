@@ -2,8 +2,7 @@
 
 import faces from 'facesjs';
 import React from 'react';
-import {PHASE} from '../../common';
-import g from '../../globals';
+import {PHASE, g} from '../../common';
 import * as api from '../api';
 import {realtimeUpdate, setTitle} from '../util';
 import * as helpers from '../../util/helpers';

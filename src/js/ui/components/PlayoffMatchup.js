@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import g from '../../globals';
+import {g} from '../../common';
 import * as helpers from '../../util/helpers';
 
 type SeriesTeam = {

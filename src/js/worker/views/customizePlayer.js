@@ -1,8 +1,7 @@
 // @flow
 
 import backboard from 'backboard';
-import {PHASE, PLAYER} from '../../common';
-import g from '../../globals';
+import {PHASE, PLAYER, g} from '../../common';
 import {finances, player} from '../core';
 import {getCopy, idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';

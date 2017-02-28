@@ -1,6 +1,6 @@
 // @flow
 
-import g from '../../globals';
+import {g} from '../../common';
 
 let currentTitle = 'Basketball GM';
 const setTitle = (newTitle: string) => {

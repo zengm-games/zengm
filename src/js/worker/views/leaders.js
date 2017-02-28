@@ -1,7 +1,6 @@
 // @flow
 
-import {PHASE, PLAYER} from '../../common';
-import g from '../../globals';
+import {PHASE, PLAYER, g} from '../../common';
 import {getCopy, idb} from '../db';
 import * as helpers from '../../util/helpers';
 import type {GetOutput, UpdateEvents} from '../../common/types';

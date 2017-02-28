@@ -1,7 +1,6 @@
 // @flow
 
-import {PHASE, PLAYER} from '../../common';
-import g from '../../globals';
+import {PHASE, PLAYER, g} from '../../common';
 import * as draft from '../core/draft';
 import {getCopy, idb} from '../db';
 

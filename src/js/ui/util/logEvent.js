@@ -1,9 +1,8 @@
 // @flow
 
-import g from '../../globals';
+import {createLogger, g} from '../../common';
 import * as api from '../api';
 import {notify} from '../util';
-import {createLogger} from '../../common';
 import type {LogEventShowOptions} from '../../common/types';
 
 const saveEvent = () => {

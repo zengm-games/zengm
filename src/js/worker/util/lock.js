@@ -1,21 +1,7 @@
 // @flow
 
-import g from '../../globals';
-import * as league from '../core/league';
+import {g} from '../../common';
 import {getCopy, idb} from '../db';
-
-/**
- * Is game simulation in progress?
- *
- * Calls the callback function with either true or false depending on whether there is a game simulation currently in progress.
- *
- * @memberOf util.lock
- * @return {Promise.boolean}
- */
-async function gamesInProgress(): Promise<boolean> {
-    await league.loadGameAttribute("gamesInProgress");
-    return g.gamesInProgress;
-}
 
 /**
  * Is a negotiation in progress?
@@ -31,17 +17,6 @@ async function negotiationInProgress(): Promise<boolean> {
 }
 
 /**
- * Is a phase change in progress?
- *
- * @memberOf util.lock
- * @return {Promise.boolean}
- */
-async function phaseChangeInProgress(): Promise<boolean> {
-    await league.loadGameAttribute("phaseChangeInProgress");
-    return g.phaseChangeInProgress;
-}
-
-/**
  * Can new game simulations be started?
  *
  * Calls the callback function with either true or false. If games are in progress or any contract negotiation is in progress, false.
@@ -50,8 +25,7 @@ async function phaseChangeInProgress(): Promise<boolean> {
  * @return {Promise.boolean}
  */
 async function canStartGames(): Promise<boolean> {
-    const gamesInProgressBool = await gamesInProgress();
-    if (gamesInProgressBool) {
+    if (g.gamesInProgress) {
         return false;
     }
 
@@ -60,8 +34,7 @@ async function canStartGames(): Promise<boolean> {
         return false;
     }
 
-    const phaseChangeInProgressBool = await phaseChangeInProgress();
-    if (phaseChangeInProgressBool) {
+    if (g.phaseChangeInProgress) {
         return false;
     }
 
@@ -77,8 +50,7 @@ async function canStartGames(): Promise<boolean> {
  * @return {Promise.boolean}
  */
 async function canStartNegotiation(): Promise<boolean> {
-    const gamesInProgressBool = await gamesInProgress();
-    if (gamesInProgressBool) {
+    if (g.gamesInProgress) {
         return false;
     }
 
@@ -114,9 +86,7 @@ async function unreadMessage(): Promise<boolean> {
 }
 
 export default {
-    gamesInProgress,
     negotiationInProgress,
-    phaseChangeInProgress,
     canStartGames,
     canStartNegotiation,
     unreadMessage,

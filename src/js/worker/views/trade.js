@@ -1,6 +1,5 @@
 import Promise from 'bluebird';
-import {PHASE} from '../../common';
-import g from '../../globals';
+import {PHASE, g} from '../../common';
 import * as trade from '../core/trade';
 import {getCopy, idb} from '../db';
 import * as helpers from '../../util/helpers';

@@ -1,7 +1,6 @@
 import classNames from 'classnames';
 import React from 'react';
-import {PHASE} from '../../common';
-import g from '../../globals';
+import {PHASE, g} from '../../common';
 import {setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {NewWindowLink, PlayerNameLabels, PlayoffMatchup, RatingWithChange} from '../components';

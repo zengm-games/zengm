@@ -2,8 +2,7 @@
 
 import Promise from 'bluebird';
 import _ from 'underscore';
-import {PHASE, PHASE_TEXT, PLAYER} from '../../common';
-import g from '../../globals';
+import {PHASE, PHASE_TEXT, PLAYER, g} from '../../common';
 import * as api from '../api';
 import * as contractNegotiation from './contractNegotiation';
 import * as draft from './draft';
@@ -14,7 +13,7 @@ import * as player from './player';
 import * as season from './season';
 import * as team from './team';
 import {getCopy, idb} from '../db';
-import {account, genMessage, lock, logEvent, random, updatePhase, updatePlayMenu} from '../util';
+import {account, genMessage, logEvent, random, updatePhase, updatePlayMenu} from '../util';
 import * as helpers from '../../util/helpers';
 import type {Phase, UpdateEvents} from '../../common/types';
 
@@ -547,8 +546,7 @@ async function newPhase(phase: Phase, extra: any) {
         },
     };
 
-    const phaseChangeInProgress = await lock.phaseChangeInProgress();
-    if (phaseChangeInProgress) {
+    if (g.phaseChangeInProgress) {
         logEvent({
             type: 'error',
             text: 'Phase change already in progress, maybe in another tab.',

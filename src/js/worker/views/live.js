@@ -1,6 +1,6 @@
 // @flow
 
-import g from '../../globals';
+import {g} from '../../common';
 import * as season from '../core/season';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 

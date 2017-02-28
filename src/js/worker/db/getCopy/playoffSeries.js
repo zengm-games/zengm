@@ -1,4 +1,4 @@
-import g from '../../../globals';
+import {g} from '../../../common';
 import {deepCopy} from '../../../util/helpers';
 import {idb} from '../../db';
 

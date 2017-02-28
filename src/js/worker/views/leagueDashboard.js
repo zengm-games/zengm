@@ -1,8 +1,7 @@
 // @flow
 
 import Promise from 'bluebird';
-import {PHASE, PLAYER} from '../../common';
-import g from '../../globals';
+import {PHASE, PLAYER, g} from '../../common';
 import * as season from '../core/season';
 import * as team from '../core/team';
 import {getCopy, idb} from '../db';

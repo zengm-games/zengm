@@ -1,7 +1,6 @@
 // @flow
 
-import {PLAYER} from '../../common';
-import g from '../../globals';
+import {PLAYER, g} from '../../common';
 import * as player from '../core/player';
 import {getCopy, idb} from '../db';
 

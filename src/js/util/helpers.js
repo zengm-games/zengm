@@ -2,8 +2,7 @@
 
 import orderBy from 'lodash.orderby';
 import React from 'react';
-import {PLAYER} from '../common';
-import g from '../globals';
+import {PLAYER, g} from '../common';
 import type {GameProcessed, GameProcessedCompleted, Pick, TeamBasic} from '../common/types';
 
 /**

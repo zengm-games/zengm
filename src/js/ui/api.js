@@ -3,8 +3,7 @@
 import backboard from 'backboard';
 import Promise from 'bluebird';
 import _ from 'underscore';
-import {PHASE, PLAYER} from '../common';
-import g from '../globals';
+import {PHASE, PLAYER, g} from '../common';
 import * as helpers from '../util/helpers';
 import {account, beforeView, random, updatePlayMenu, updateStatus} from '../worker/util';
 import {init, views} from '../worker';

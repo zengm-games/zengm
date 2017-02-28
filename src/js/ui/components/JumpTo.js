@@ -3,7 +3,7 @@
 import React from 'react';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
-import g from '../../globals';
+import {g} from '../../common';
 import * as helpers from '../../util/helpers';
 
 const genUrl = (parts, season) => {

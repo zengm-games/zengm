@@ -3,8 +3,7 @@
 import Promise from 'bluebird';
 import orderBy from 'lodash.orderby';
 import _ from 'underscore';
-import {PHASE, PLAYER} from '../../common';
-import g from '../../globals';
+import {PHASE, PLAYER, g} from '../../common';
 import * as api from '../api';
 import * as league from './league';
 import * as phase from './phase';

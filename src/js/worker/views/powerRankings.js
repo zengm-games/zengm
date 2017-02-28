@@ -1,7 +1,7 @@
 // @flow
 
 import Promise from 'bluebird';
-import g from '../../globals';
+import {g} from '../../common';
 import {getCopy, idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 

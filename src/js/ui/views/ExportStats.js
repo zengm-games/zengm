@@ -1,6 +1,6 @@
 import Promise from 'bluebird';
 import React from 'react';
-import g from '../../globals';
+import {g} from '../../common';
 import * as api from '../api';
 import {setTitle} from '../util';
 import {DownloadDataLink} from '../components';

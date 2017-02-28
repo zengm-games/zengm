@@ -3,8 +3,7 @@
 import backboard from 'backboard';
 import Promise from 'bluebird';
 import orderBy from 'lodash.orderby';
-import {PLAYER} from '../../common';
-import g from '../../globals';
+import {PLAYER, g} from '../../common';
 import {idb} from '../db';
 import type {BackboardTx, Player} from '../../common/types';
 

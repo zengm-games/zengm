@@ -1,7 +1,6 @@
 // @flow
 
-import {PHASE} from '../../common';
-import g from '../../globals';
+import {PHASE, g} from '../../common';
 import * as season from '../core/season';
 import {getCopy} from '../db';
 import * as helpers from '../../util/helpers';

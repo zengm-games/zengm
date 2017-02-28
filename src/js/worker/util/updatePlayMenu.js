@@ -1,8 +1,7 @@
 // @flow
 
 import Promise from 'bluebird';
-import {PHASE} from '../../common';
-import g from '../../globals';
+import {PHASE, g} from '../../common';
 import * as helpers from '../../util/helpers';
 import * as api from '../api';
 import {lock} from '../util';
@@ -73,23 +72,21 @@ const updatePlayMenu = async () => {
         keys = ["day", "week", "untilPreseason"];
     }
 
-    const [unreadMessage, gamesInProgress, negotiationInProgress, phaseChangeInProgress] = await Promise.all([
+    const [unreadMessage, negotiationInProgress] = await Promise.all([
         lock.unreadMessage(),
-        lock.gamesInProgress(),
         lock.negotiationInProgress(),
-        lock.phaseChangeInProgress(),
     ]);
 
     if (unreadMessage) {
         keys = ["message"];
     }
-    if (gamesInProgress) {
+    if (g.gamesInProgress) {
         keys = ["stop"];
     }
     if (negotiationInProgress && g.phase !== PHASE.RESIGN_PLAYERS) {
         keys = ["contractNegotiation"];
     }
-    if (phaseChangeInProgress) {
+    if (g.phaseChangeInProgress) {
         keys = ["abortPhaseChange"];
     }
 

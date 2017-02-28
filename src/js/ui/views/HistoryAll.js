@@ -1,5 +1,5 @@
 import React from 'react';
-import g from '../../globals';
+import {g} from '../../common';
 import * as helpers from '../../util/helpers';
 import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
 import {getCols, setTitle} from '../util';

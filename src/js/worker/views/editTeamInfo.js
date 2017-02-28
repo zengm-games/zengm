@@ -1,6 +1,6 @@
 // @flow
 
-import g from '../../globals';
+import {g} from '../../common';
 import {getCopy} from '../db';
 
 async function updateTeamInfo(): void | {[key: string]: any} {

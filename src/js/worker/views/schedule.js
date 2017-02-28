@@ -1,5 +1,5 @@
 import Promise from 'bluebird';
-import g from '../../globals';
+import {g} from '../../common';
 import * as season from '../core/season';
 import {getCopy} from '../db';
 import {getProcessedGames} from '../util';

@@ -1,7 +1,6 @@
 import backboard from 'backboard';
 import _ from 'underscore';
-import {PLAYER} from '../../../common';
-import g from '../../../globals';
+import {PLAYER, g} from '../../../common';
 import {filterOrderStats, mergeByPk} from './helpers';
 import {contractSeasonsRemaining, fuzzRating} from '../../core/player';
 import {idb} from '../../db';

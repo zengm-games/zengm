@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import g from '../../globals';
+import {g} from '../../common';
 import * as api from '../api';
 import {emitter, realtimeUpdate} from '../util';
 

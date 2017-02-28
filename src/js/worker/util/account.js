@@ -3,8 +3,7 @@
 /*eslint camelcase: 0*/
 import Promise from 'bluebird';
 import $ from 'jquery';
-import {SPORT} from '../../common';
-import g from '../../globals';
+import {SPORT, g} from '../../common';
 import * as api from '../api';
 import {getCopy, idb} from '../db';
 import {ads} from '../../ui/util';

@@ -1,5 +1,4 @@
-import {PHASE} from '../../common';
-import g from '../../globals';
+import {PHASE, g} from '../../common';
 import * as team from '../core/team';
 import {getCopy} from '../db';
 import * as helpers from '../../util/helpers';

@@ -1,6 +1,6 @@
 // @flow
 
-import g from '../../globals';
+import {g} from '../../common';
 import * as helpers from '../../util/helpers';
 import {random} from '../util';
 import type {PlayerSkill} from '../../common/types';

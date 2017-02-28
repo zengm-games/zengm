@@ -1,8 +1,7 @@
 // @flow
 
 import Promise from 'bluebird';
-import {PLAYER} from '../../common';
-import g from '../../globals';
+import {PLAYER, g} from '../../common';
 import * as freeAgents from '../core/freeAgents';
 import * as player from '../core/player';
 import * as team from '../core/team';

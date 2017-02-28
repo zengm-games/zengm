@@ -1,7 +1,6 @@
 import classNames from 'classnames';
 import React from 'react';
-import {PHASE} from '../../common';
-import g from '../../globals';
+import {PHASE, g} from '../../common';
 import * as api from '../api';
 import {getCols, realtimeUpdate, setTitle} from '../util';
 import * as helpers from '../../util/helpers';

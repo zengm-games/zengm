@@ -100,6 +100,8 @@ async function setGameAttributes(gameAttributes: GameAttributes) {
         g[key] = gameAttributes[key];
     }));
 
+    await api.setGameAttributes(gameAttributes);
+
     if (toUpdate.includes('userTid') || toUpdate.includes('userTids')) {
         api.emit('updateMultiTeam');
     }
@@ -626,6 +628,8 @@ async function loadGameAttributes() {
             g[key] = defaultGameAttributes[key];
         }
     });
+
+    await api.setGameAttributes(g);
 
     // UI stuff
     api.emit('updateTopMenu', {godMode: g.godMode});

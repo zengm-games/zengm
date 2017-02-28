@@ -17,12 +17,9 @@ move everything but the UI to a web worker
   - remove references to document/window in worker
     - move window variables to new "env" variable, somehow. contains constants derived from the environment (document/window) which never change after initial load
   - split up util - ui, worker, or both
-    - globals
-      - then, maybe make it just for game attributes, and carefully sync between worker and ui. should be easy since setting g is only done in loadGameAttributes and setGameAttributes
     - actions: only called from ui, but mixes worker calls and realtimeUpdate
       - put worker calls in api, move to ui/util/actions
     - helpers: move some to individual files in util, then hopefully it's just some small global functions that can go in common/helpers
-      - careful of anything in g
   - split up data/lib
   - how to ensure that files are not required into both ui and worker inadvertently?
   - restore runWhenever ability (really necessary? was only used in gameLog)
@@ -33,6 +30,8 @@ move everything but the UI to a web worker
 - index.js or app.js for main file in ui/worker?
 - bbgmPing needs to be done in ui through API
 - write lint script to check for ui/worker cross-contamination. also DB/cache in ui, document/window in worker
+
+lastDbChange still needed?
 
 for modules that should always be consumed as whole (core/*), export default object and then re-export in index.js
 

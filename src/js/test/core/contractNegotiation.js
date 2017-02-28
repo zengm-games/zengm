@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {Cache, connectMeta} from '../../db';
+import {Cache, connectMeta, idb} from '../../db';
 import {PLAYER} from '../../common';
 import g from '../../globals';
 import * as contractNegotiation from '../../core/contractNegotiation';
@@ -13,7 +13,7 @@ const givePlayerMinContract = async (pid) => {
 
 describe("core/contractNegotiation", () => {
     before(async () => {
-        await connectMeta();
+        idb.meta = await connectMeta();
         await league.create("Test", 14, undefined, 2013, false);
         g.cache = new Cache();
         await g.cache.fill();

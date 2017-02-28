@@ -1,6 +1,7 @@
 // @flow
 
 import g from '../../globals';
+import {idb} from '../db';
 import type {GameProcessed} from '../../common/types';
 
 /**
@@ -32,7 +33,7 @@ async function getProcessedGameList(abbrev: string, season: number, loadedGames:
     if (season === g.season) {
         games = await g.cache.getAll('games');
     } else {
-        games = await g.dbl.games.index('season').getAll(season);
+        games = await idb.league.games.index('season').getAll(season);
     }
 
     // Iterate backwards, was more useful back when current season wasn't cached

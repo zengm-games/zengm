@@ -1,7 +1,6 @@
 import $ from 'jquery';
 import React from 'react';
 import {SPORT} from '../../common';
-import g from '../../globals';
 import {emitter, realtimeUpdate, setTitle} from '../util';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
@@ -23,7 +22,7 @@ class ResetPassword extends React.Component {
         // First, see if this is a valid token
         $.ajax({
             type: "POST",
-            url: `//account.basketball-gm.${g.tld}/reset_password.php`,
+            url: `//account.basketball-gm.${window.tld}/reset_password.php`,
             data: {action: "check_token", token: this.props.token, sport: SPORT},
             dataType: "json",
             xhrFields: {
@@ -64,7 +63,7 @@ class ResetPassword extends React.Component {
 
         $.ajax({
             type: "POST",
-            url: `//account.basketball-gm.${g.tld}/reset_password.php`,
+            url: `//account.basketball-gm.${window.tld}/reset_password.php`,
             data: `${$resetpw.serialize()}&sport=${SPORT}`,
             dataType: "json",
             xhrFields: {

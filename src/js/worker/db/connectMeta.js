@@ -1,7 +1,6 @@
 // @flow
 
 import Backboard from 'backboard';
-import g from '../../globals';
 
 /**
  * Create new meta database with the latest structure.
@@ -38,7 +37,8 @@ const connectMeta = async () => {
     });
 
     db.on('versionchange', () => db.close());
-    g.dbm = db;
+
+    return db;
 };
 
 export default connectMeta;

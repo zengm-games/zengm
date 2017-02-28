@@ -3,9 +3,8 @@
 import backboard from 'backboard';
 import {PHASE, PLAYER} from '../../common';
 import g from '../../globals';
-import * as finances from '../core/finances';
-import * as player from '../core/player';
-import {getCopy} from '../db';
+import {finances, player} from '../core';
+import {getCopy, idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateCustomizePlayer(
@@ -56,7 +55,7 @@ async function updateCustomizePlayer(
 
         if (inputs.pid === null) {
             // Generate new player as basis
-            const teamSeasons = await g.dbl.teamSeasons.index("tid, season").getAll(backboard.bound([g.userTid, g.season - 2], [g.userTid, g.season]));
+            const teamSeasons = await idb.league.teamSeasons.index("tid, season").getAll(backboard.bound([g.userTid, g.season - 2], [g.userTid, g.season]));
             const scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
 
             p = player.generate(
@@ -78,7 +77,7 @@ async function updateCustomizePlayer(
             p.imgURL = "http://";
         } else {
             // Load a player to edit
-            p = await g.dbl.players.get(inputs.pid);
+            p = await idb.league.players.get(inputs.pid);
             if (p.imgURL.length > 0) {
                 appearanceOption = 'Image URL';
             } else {

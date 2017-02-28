@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {Cache, connectMeta, getCopy} from '../../../db';
+import {Cache, connectMeta, getCopy, idb} from '../../../db';
 import g from '../../../globals';
 import * as league from '../../../core/league';
 import * as team from '../../../core/team';
@@ -7,7 +7,7 @@ import * as team from '../../../core/team';
 describe("db/getCopy", () => {
     describe("#teams()", () => {
         before(async () => {
-            await connectMeta();
+            idb.meta = await connectMeta();
             await league.create("Test", 0, undefined, 2013, false);
             g.cache = new Cache();
             await g.cache.fill();

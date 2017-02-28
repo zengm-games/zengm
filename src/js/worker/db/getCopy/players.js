@@ -1,6 +1,7 @@
 import backboard from 'backboard';
 import {PLAYER} from '../../../common';
 import g from '../../../globals';
+import {idb} from '../../db';
 import {mergeByPk} from './helpers';
 import * as helpers from '../../../util/helpers';
 import type {Player} from '../../../common/types';
@@ -24,12 +25,12 @@ const getCopy = async ({
             return helpers.deepCopy(cachedPlayer);
         }
 
-        return g.dbl.players.get(pid);
+        return idb.league.players.get(pid);
     }
 
     if (retired === true) {
         return mergeByPk(
-            await g.dbl.players.index('tid').getAll(PLAYER.RETIRED),
+            await idb.league.players.index('tid').getAll(PLAYER.RETIRED),
             await g.cache.indexGetAll('playersByTid', PLAYER.RETIRED),
             g.cache.storeInfos.players.pk,
         );
@@ -54,8 +55,8 @@ const getCopy = async ({
         // All except draft prospects
         return mergeByPk(
             [].concat(
-                await g.dbl.players.index('tid').getAll(PLAYER.RETIRED),
-                await g.dbl.players.index('tid').getAll(backboard.lowerBound(PLAYER.FREE_AGENT)),
+                await idb.league.players.index('tid').getAll(PLAYER.RETIRED),
+                await idb.league.players.index('tid').getAll(backboard.lowerBound(PLAYER.FREE_AGENT)),
             ),
             [].concat(
                 await g.cache.indexGetAll('playersByTid', PLAYER.RETIRED),
@@ -67,7 +68,7 @@ const getCopy = async ({
 
     if (statsTid !== undefined) {
         return mergeByPk(
-            await g.dbl.players.index('statsTids').getAll(statsTid),
+            await idb.league.players.index('statsTids').getAll(statsTid),
             [].concat(
                 await g.cache.indexGetAll('playersByTid', PLAYER.RETIRED),
                 await g.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]),
@@ -77,7 +78,7 @@ const getCopy = async ({
     }
 
     return mergeByPk(
-        await g.dbl.players.getAll(),
+        await idb.league.players.getAll(),
         await g.cache.getAll('players'),
         g.cache.storeInfos.players.pk,
     );

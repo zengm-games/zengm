@@ -2,7 +2,8 @@ import backboard from 'backboard';
 import _ from 'underscore';
 import g from '../../../globals';
 import {filterOrderStats, mergeByPk} from './helpers';
-import * as team from '../../core/team';
+import {team} from '../../core';
+import {idb} from '../../db';
 import * as helpers from '../../../util/helpers';
 import type {BackboardTx, Team, TeamFiltered} from '../../../common/types';
 
@@ -323,7 +324,7 @@ const getCopy = async ({
     };
 
     if (objectStores.length > 0) {
-        return g.dbl.tx(objectStores, (tx) => processMaybeWithIDB(tx));
+        return idb.league.tx(objectStores, (tx) => processMaybeWithIDB(tx));
     }
     return processMaybeWithIDB();
 };

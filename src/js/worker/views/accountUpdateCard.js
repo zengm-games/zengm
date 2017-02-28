@@ -2,7 +2,6 @@
 
 import Promise from 'bluebird';
 import $ from 'jquery';
-import g from '../../globals';
 import {account} from '../util';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
@@ -19,7 +18,7 @@ async function updateAccountUpdateCard(
         try {
             const data = await Promise.resolve($.ajax({
                 type: "GET",
-                url: `//account.basketball-gm.${g.tld}/gold_card_info.php`,
+                url: `//account.basketball-gm.${window.tld}/gold_card_info.php`,
                 data: {
                     sport: "basketball",
                 },

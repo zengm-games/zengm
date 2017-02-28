@@ -13,7 +13,7 @@ import * as league from './league';
 import * as player from './player';
 import * as season from './season';
 import * as team from './team';
-import {getCopy} from '../db';
+import {getCopy, idb} from '../db';
 import {account, genMessage, lock, logEvent, random, updatePhase, updatePlayMenu} from '../util';
 import * as helpers from '../../util/helpers';
 import type {Phase, UpdateEvents} from '../../common/types';
@@ -106,7 +106,7 @@ async function newPhasePreseason() {
     await g.cache.flush();
     await g.cache.fill();
 
-    if (g.enableLogging && !window.inCordova) {
+    if (window.enableLogging && !window.inCordova) {
         api.emit('showAd', 'modal');
     }
 
@@ -348,7 +348,7 @@ async function newPhaseBeforeDraft() {
 
 async function newPhaseDraft() {
     // Kill off old retired players (done here since not much else happens in this phase change, so making it a little slower is fine)
-    await g.dbl.tx('players', 'readwrite', async (tx) => {
+    await idb.league.tx('players', 'readwrite', async (tx) => {
         await tx.players.index('tid').iterate(PLAYER.RETIRED, p => {
             if (p.hasOwnProperty("diedYear") && p.diedYear) {
                 return;

@@ -2,7 +2,6 @@
 
 import Backboard from 'backboard';
 import Promise from 'bluebird';
-import g from '../../globals';
 import * as helpers from '../../util/helpers';
 
 /**
@@ -156,7 +155,8 @@ const connectLeague = async (lid: number) => {
     });
 
     db.on('versionchange', () => db.close());
-    g.dbl = db;
+
+    return db;
 };
 
 export default connectLeague;

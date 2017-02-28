@@ -1,6 +1,6 @@
 // @flow
 
-import {connectMeta} from './db';
+import {connectMeta, idb} from './db';
 import {changes, checkNaNs} from './util';
 import * as views from './views';
 
@@ -11,7 +11,7 @@ const init = async () => {
     // Any news?
     changes.check();
 
-    await connectMeta();
+    idb.meta = await connectMeta();
 };
 
 export {

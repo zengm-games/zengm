@@ -18,8 +18,14 @@ Backboard.on('blocked', () => {
     window.alert("Please close any other tabs with this league open!");
 });
 
+const idb: any = {
+    league: undefined,
+    meta: undefined,
+};
+
 export {
     getCopy,
+    idb,
 };
 export {default as Cache} from './Cache';
 export {default as connectMeta} from './connectMeta';

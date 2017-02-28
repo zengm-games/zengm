@@ -1,13 +1,13 @@
 import backboard from 'backboard';
 import g from '../../globals';
 import * as player from '../core/player';
-import {getCopy} from '../db';
+import {getCopy, idb} from '../db';
 import type {GetOutput} from '../../common/types';
 
 async function updateUpcomingFreeAgents(
     inputs: GetOutput,
 ): void | {[key: string]: any} {
-    let players = await g.dbl.players.index('tid').getAll(backboard.lowerBound(0));
+    let players = await idb.league.players.index('tid').getAll(backboard.lowerBound(0));
     players = players.filter(p => p.contract.exp === inputs.season);
 
     // Done before filter so full player object can be passed to player.genContract.

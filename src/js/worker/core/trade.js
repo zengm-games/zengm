@@ -6,7 +6,7 @@ import g from '../../globals';
 import * as league from './league';
 import * as player from './player';
 import * as team from './team';
-import {getCopy} from '../db';
+import {getCopy, idb} from '../db';
 import {logEvent} from '../util';
 import * as helpers from '../../util/helpers';
 import type {TradePickValues, TradeSummary, TradeTeams} from '../../common/types';
@@ -117,7 +117,7 @@ async function updatePlayers(teams: TradeTeams): Promise<TradeTeams> {
         console.log(dv);
     });
 
-    await g.dbl.tx(["players"], async tx => {
+    await idb.league.tx(["players"], async tx => {
         // Make sure each entry in teams has pids and dpids that actually correspond to the correct tid
         const promises = [];
         teams.forEach(t => {
@@ -320,7 +320,7 @@ async function propose(forceTrade?: boolean = false): Promise<[boolean, ?string]
 
     const dv = await team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids);
 
-    await g.dbl.tx(["players", "playerStats"], "readwrite", tx => {
+    await idb.league.tx(["players", "playerStats"], "readwrite", tx => {
         if (dv > 0 || forceTrade) {
             // Trade players
             outcome = "accepted";
@@ -437,7 +437,7 @@ async function makeItWork(
     const tryAddAsset = async () => {
         const assets = [];
 
-        await g.dbl.tx(["players"], async (tx) => {
+        await idb.league.tx(["players"], async (tx) => {
             if (!holdUserConstant) {
                 // Get all players not in userPids
                 tx.players.index('tid').iterate(teams[0].tid, p => {

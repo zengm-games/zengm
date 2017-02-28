@@ -1,7 +1,6 @@
 import $ from 'jquery';
 import React from 'react';
 import {SPORT} from '../../common';
-import g from '../../globals';
 import {setTitle} from '../util';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
@@ -29,7 +28,7 @@ class LostPassword extends React.Component {
 
         $.ajax({
             type: "POST",
-            url: `//account.basketball-gm.${g.tld}/lost_password.php`,
+            url: `//account.basketball-gm.${window.tld}/lost_password.php`,
             data: `${$lostpw.serialize()}&sport=${SPORT}`,
             dataType: "json",
             xhrFields: {

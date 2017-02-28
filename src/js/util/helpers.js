@@ -221,7 +221,7 @@ function resetG() {
  * @param {string} type Either "league" for a new league, or "season" for a completed season
  */
 function bbgmPing(type: 'league' | 'season') {
-    if (g.enableLogging && window.ga) {
+    if (window.enableLogging && window.ga) {
         if (type === "league") {
             window.ga('send', 'event', 'BBGM', 'New league', String(g.lid));
         } else if (type === "season" && g.autoPlaySeasons === 0) {

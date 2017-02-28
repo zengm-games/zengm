@@ -5,7 +5,7 @@ import {PHASE, PLAYER} from '../../common';
 import g from '../../globals';
 import * as season from '../core/season';
 import * as team from '../core/team';
-import {getCopy} from '../db';
+import {getCopy, idb} from '../db';
 import * as helpers from '../../util/helpers';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
@@ -126,7 +126,7 @@ async function updateGames(
         const completed = [];
 
         // This could be made much faster by using a compound index to search for season + team, but that's not supported by IE 10
-        await g.dbl.games.index('season').iterate(g.season, "prev", (game, shortCircuit) => {
+        await idb.league.games.index('season').iterate(g.season, "prev", (game, shortCircuit) => {
             if (completed.length >= numShowCompleted) {
                 return shortCircuit();
             }

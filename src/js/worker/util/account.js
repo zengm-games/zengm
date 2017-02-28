@@ -6,7 +6,7 @@ import $ from 'jquery';
 import {SPORT} from '../../common';
 import g from '../../globals';
 import * as api from '../api';
-import {getCopy} from '../db';
+import {getCopy, idb} from '../db';
 import {ads} from '../../ui/util';
 import {logEvent} from '../util';
 import type {AchievementKey} from '../../common/types';
@@ -100,7 +100,7 @@ async function addAchievements(achievements: AchievementKey[], silent?: boolean 
     };
 
     const addToIndexedDB = achievements2 => {
-        return g.dbm.tx("achievements", "readwrite", async tx => {
+        return idb.meta.tx("achievements", "readwrite", async tx => {
             for (const achievement of achievements2) {
                 await tx.achievements.add({slug: achievement});
                 notify(achievement);
@@ -111,7 +111,7 @@ async function addAchievements(achievements: AchievementKey[], silent?: boolean 
     try {
         const data = await Promise.resolve($.ajax({
             type: "POST",
-            url: `//account.basketball-gm.${g.tld}/add_achievements.php`,
+            url: `//account.basketball-gm.${window.tld}/add_achievements.php`,
             data: {achievements, sport: SPORT},
             dataType: "json",
             xhrFields: {
@@ -133,7 +133,7 @@ async function check() {
     try {
         const data = await Promise.resolve($.ajax({
             type: "GET",
-            url: `//account.basketball-gm.${g.tld}/user_info.php`,
+            url: `//account.basketball-gm.${window.tld}/user_info.php`,
             data: `sport=${SPORT}`,
             dataType: "json",
             xhrFields: {
@@ -183,7 +183,7 @@ async function check() {
 
         // If user is logged in, upload any locally saved achievements
         if (data.username !== "") {
-            await g.dbm.tx("achievements", "readwrite", async tx => {
+            await idb.meta.tx("achievements", "readwrite", async tx => {
                 let achievements = await tx.achievements.getAll();
                 achievements = achievements.map(achievement => achievement.slug);
 
@@ -203,7 +203,7 @@ async function check() {
 
 async function getAchievements() {
     const achievements = allAchievements.slice();
-    const achievementsLocal = await g.dbm.achievements.getAll();
+    const achievementsLocal = await idb.meta.achievements.getAll();
 
     // Initialize counts
     for (let i = 0; i < achievements.length; i++) {
@@ -223,7 +223,7 @@ async function getAchievements() {
         // Handle any achievements stored in the cloud
         const achievementsRemote = await Promise.resolve($.ajax({
             type: "GET",
-            url: `//account.basketball-gm.${g.tld}/get_achievements.php`,
+            url: `//account.basketball-gm.${window.tld}/get_achievements.php`,
             data: `sport=${SPORT}`,
             dataType: "json",
             xhrFields: {

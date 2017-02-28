@@ -3,7 +3,7 @@
 import backboard from 'backboard';
 import Promise from 'bluebird';
 import _ from 'underscore';
-import {Cache, connectLeague} from '../db';
+import {Cache, connectLeague, idb} from '../db';
 import {PHASE, PHASE_TEXT, PLAYER} from '../../common';
 import g from '../../globals';
 import * as api from '../api';
@@ -154,14 +154,14 @@ async function create(
         phaseText = "";
     }
 
-    g.lid = await g.dbm.leagues.add({
+    g.lid = await idb.meta.leagues.add({
         name,
         tid,
         phaseText,
         teamName: teams[tid].name,
         teamRegion: teams[tid].region,
     });
-    await connectLeague(g.lid);
+    idb.league = await connectLeague(g.lid);
 
     const gameAttributes = _.extend(helpers.deepCopy(defaultGameAttributes), {
         userTid: tid,
@@ -521,10 +521,10 @@ async function create(
  * @param {function()=} cb Optional callback.
  */
 function remove(lid: number) {
-    if (g.dbl !== undefined) {
-        g.dbl.close();
+    if (idb.league !== undefined) {
+        idb.league.close();
     }
-    g.dbm.leagues.delete(lid);
+    idb.meta.leagues.delete(lid);
     return backboard.delete(`league${lid}`);
 }
 
@@ -543,8 +543,8 @@ async function exportLeague(stores: string[]) {
     // name is only used for the file name of the exported roster file.
     exportedLeague.meta = {phaseText: g.phaseText, name: g.leagueName};
 
-    await Promise.all(stores.map(async store => {
-        exportedLeague[store] = await g.dbl[store].getAll();
+    await Promise.all(stores.map(async (store) => {
+        exportedLeague[store] = await idb.league[store].getAll();
     }));
 
     // Move playerStats to players object, similar to old DB structure. Makes editing JSON output nicer.
@@ -600,10 +600,10 @@ async function exportLeague(stores: string[]) {
 }
 
 async function updateMetaNameRegion(name: string, region: string) {
-    const l = await g.dbm.leagues.get(g.lid);
+    const l = await idb.meta.leagues.get(g.lid);
     l.teamName = name;
     l.teamRegion = region;
-    await g.dbm.leagues.put(l);
+    await idb.meta.leagues.put(l);
 }
 
 /**

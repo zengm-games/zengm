@@ -2,8 +2,7 @@
 
 import backboard from 'backboard';
 import Promise from 'bluebird';
-import {connectLeague} from '../db';
-import g from '../../globals';
+import {connectLeague, idb} from '../db';
 import type {GetOutput} from '../../common/types';
 
 async function updateDeleteLeague({lid}: GetOutput): void | {[key: string]: any} {
@@ -11,14 +10,14 @@ async function updateDeleteLeague({lid}: GetOutput): void | {[key: string]: any}
         throw new Error('Invalid input for lid');
     }
 
-    await connectLeague(lid);
+    const db = await connectLeague(lid);
     try {
-        return g.dbl.tx(["games", "players", "teamSeasons"], async tx => {
+        return db.tx(["games", "players", "teamSeasons"], async tx => {
             const [numGames, numPlayers, teamSeasons, l] = await Promise.all([
                 tx.games.count(),
                 tx.players.count(),
                 tx.teamSeasons.index("tid, season").getAll(backboard.bound([0], [0, ''])),
-                g.dbm.leagues.get(lid),
+                idb.meta.leagues.get(lid),
             ]);
 
             return {

@@ -1,6 +1,7 @@
 // @flow
 
 import g from '../../globals';
+import {idb} from '../db';
 import {getProcessedGames} from '../util';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
@@ -20,7 +21,7 @@ async function boxScore(gid: number) {
 
     // Only this season is in cache
     if (!game) {
-        game = await g.dbl.games.get(gid);
+        game = await idb.league.games.get(gid);
     }
 
     // If game doesn't exist (bad gid or deleted box scores), show nothing

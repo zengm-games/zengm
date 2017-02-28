@@ -4,7 +4,6 @@ import Promise from 'bluebird';
 import $ from 'jquery';
 import React from 'react';
 import {STRIPE_PUBLISHABLE_KEY} from '../../common';
-import g from '../../globals';
 import {realtimeUpdate, setTitle} from '../util';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
@@ -72,7 +71,7 @@ class AccountUpdateCard extends React.Component {
                 try {
                     const data = await Promise.resolve($.ajax({
                         type: "POST",
-                        url: `//account.basketball-gm.${g.tld}/gold_card_update.php`,
+                        url: `//account.basketball-gm.${window.tld}/gold_card_update.php`,
                         data: {
                             sport: "basketball",
                             token,

@@ -8,18 +8,7 @@ const g: GameAttributes = {};
 
 // If any of these things are supposed to change at any point, they should be stored in gameAttributes rather than here.
 
-g.enableLogging = window.enableLogging;
-
-// .com or .dev TLD
-if (!window.inCordova) {
-    const splitUrl = window.location.hostname.split(".");
-    g.tld = splitUrl[splitUrl.length - 1];
-} else {
-    // From within Cordova, window.location.hostname is not set, so always use .com
-    g.tld = "com";
-}
-
 // THIS MUST BE ACCURATE OR BAD STUFF WILL HAPPEN
-g.notInDb = ["dbm", "dbl", "lid", "enableLogging", "tld", "notInDb", "cache"];
+g.notInDb = ["lid", "notInDb", "cache"];
 
 export default g;

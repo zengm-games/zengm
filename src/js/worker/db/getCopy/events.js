@@ -1,4 +1,5 @@
 import g from '../../../globals';
+import {idb} from '../../db';
 import {mergeByPk} from './helpers';
 
 const getCopy = async ({
@@ -14,7 +15,7 @@ const getCopy = async ({
 
     if (season !== undefined) {
         return mergeByPk(
-            await g.dbl.events.index('season').getAll(season),
+            await idb.league.events.index('season').getAll(season),
             (await g.cache.getAll('events')).filter((event) => {
                 return event.season === season;
             }),
@@ -24,7 +25,7 @@ const getCopy = async ({
 
     if (pid !== undefined) {
         return mergeByPk(
-            await g.dbl.events.index('pids').getAll(pid),
+            await idb.league.events.index('pids').getAll(pid),
             (await g.cache.getAll('events')).filter((event) => {
                 return event.pids !== undefined && event.pids.includes(pid);
             }),
@@ -33,7 +34,7 @@ const getCopy = async ({
     }
 
     return mergeByPk(
-        await g.dbl.events.getAll(),
+        await idb.league.events.getAll(),
         await g.cache.getAll('events'),
         g.cache.storeInfos.events.pk,
     );

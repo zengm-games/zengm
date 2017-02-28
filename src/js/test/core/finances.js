@@ -1,12 +1,12 @@
 import assert from 'assert';
-import {Cache, connectMeta} from '../../db';
+import {Cache, connectMeta, idb} from '../../db';
 import g from '../../globals';
 import * as league from '../../core/league';
 import * as finances from '../../core/finances';
 
 describe("core/finances", () => {
     before(async () => {
-        await connectMeta();
+        idb.meta = await connectMeta();
         await league.create("Test", 0, undefined, 2013, false);
         g.cache = new Cache();
         await g.cache.fill();

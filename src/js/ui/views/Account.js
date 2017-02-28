@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import $ from 'jquery';
 import React from 'react';
 import {SPORT, STRIPE_PUBLISHABLE_KEY} from '../../common';
-import g from '../../globals';
 import {emitter, realtimeUpdate, setTitle} from '../util';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
@@ -40,7 +39,7 @@ class StripeButton extends React.Component {
                             try {
                                 const data = await Promise.resolve($.ajax({
                                     type: "POST",
-                                    url: `//account.basketball-gm.${g.tld}/gold_start.php`,
+                                    url: `//account.basketball-gm.${window.tld}/gold_start.php`,
                                     data: {
                                         sport: "basketball",
                                         token: token.id,
@@ -98,7 +97,7 @@ const handleCancel = async e => {
         try {
             const data = await Promise.resolve($.ajax({
                 type: "POST",
-                url: `//account.basketball-gm.${g.tld}/gold_cancel.php`,
+                url: `//account.basketball-gm.${window.tld}/gold_cancel.php`,
                 data: {
                     sport: "basketball",
                 },
@@ -141,7 +140,7 @@ class UserInfo extends React.Component {
 
         $.ajax({
             type: "POST",
-            url: `//account.basketball-gm.${g.tld}/logout.php`,
+            url: `//account.basketball-gm.${window.tld}/logout.php`,
             data: `sport=${SPORT}`,
             xhrFields: {
                 withCredentials: true,

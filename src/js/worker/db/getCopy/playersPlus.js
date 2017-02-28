@@ -4,6 +4,7 @@ import {PLAYER} from '../../../common';
 import g from '../../../globals';
 import {filterOrderStats, mergeByPk} from './helpers';
 import {contractSeasonsRemaining, fuzzRating} from '../../core/player';
+import {idb} from '../../db';
 import * as helpers from '../../../util/helpers';
 import type {BackboardTx, Player, PlayerFiltered} from '../../../common/types';
 
@@ -521,7 +522,7 @@ const getCopy = async (players: Player | Player[], {
     let playersFiltered;
     if (objectStores.length > 0) {
         //console.log('getCopy.playersPlus with IDB', options);
-        playersFiltered = await g.dbl.tx(objectStores, (tx) => processMaybeWithIDB(tx));
+        playersFiltered = await idb.league.tx(objectStores, (tx) => processMaybeWithIDB(tx));
     } else {
         //console.log('getCopy.playersPlus without IDB', options);
         playersFiltered = await processMaybeWithIDB();

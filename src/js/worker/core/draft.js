@@ -8,7 +8,7 @@ import * as finances from './finances';
 import * as league from './league';
 import * as phase from './phase';
 import * as player from './player';
-import {getCopy} from '../db';
+import {getCopy, idb} from '../db';
 import * as helpers from '../../util/helpers';
 import {logEvent, random, updatePlayMenu, updatePhase} from '../util';
 import type {PickRealized, TeamFiltered} from '../../common/types';
@@ -503,7 +503,7 @@ async function untilUserOrEnd() {
         if (draftOrder.length === 0) {
             // Fantasy draft special case!
             if (g.phase === PHASE.FANTASY_DRAFT) {
-                await g.dbl.tx(["players", "teamSeasons"], "readwrite", async tx => {
+                await idb.league.tx(["players", "teamSeasons"], "readwrite", async tx => {
                     // Undrafted players become free agents
                     const baseMoods = await player.genBaseMoods();
                     await tx.players.index('tid').iterate(PLAYER.UNDRAFTED, (p) => {

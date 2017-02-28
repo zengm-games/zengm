@@ -5,9 +5,8 @@
 import backboard from 'backboard';
 import _ from 'underscore';
 import {PLAYER} from '../../common';
-import g from '../../globals';
 import * as player from './player';
-import {getCopy} from '../db';
+import {getCopy, idb} from '../db';
 import type {RatingKey} from '../../common/types';
 
 async function regressRatingsPer() {
@@ -189,7 +188,7 @@ async function regressRatingsPer() {
 // Useful to run this while playing with the contract formula in core.player.genContract
 async function leagueAverageContract() {
     // All non-retired players
-    const players = await g.dbl.players.index('tid').getAll(backboard.lowerBound(PLAYER.FREE_AGENT));
+    const players = await idb.league.players.index('tid').getAll(backboard.lowerBound(PLAYER.FREE_AGENT));
 
     let total = 0;
 
@@ -204,7 +203,7 @@ async function leagueAverageContract() {
 
 async function exportPlayerInfo() {
     // All non-retired players
-    const players = await g.dbl.players.index('tid').getAll(backboard.lowerBound(PLAYER.FREE_AGENT));
+    const players = await idb.league.players.index('tid').getAll(backboard.lowerBound(PLAYER.FREE_AGENT));
 
     let output = "<pre>value,contract.amount,ovr,pot\n";
 

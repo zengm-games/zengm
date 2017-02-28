@@ -9,7 +9,6 @@ import 'jquery-ui/sortable';
 import page from 'page';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import g from '../globals';
 import * as api from './api';
 import Controller from './components/Controller';
 import * as processInputs from './processInputs';
@@ -195,7 +194,7 @@ const genPage = (id, inLeague = true) => {
     let initialLoad = true;
     page('*', (ctx) => {
         if (ctx.bbgm && !ctx.bbgm.noTrack) {
-            if (g.enableLogging && window.ga) {
+            if (window.enableLogging && window.ga) {
                 if (!initialLoad) {
                     window.ga('set', 'page', ctx.path);
                     window.ga('send', 'pageview');

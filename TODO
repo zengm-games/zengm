@@ -15,10 +15,11 @@ move everything but the UI to a web worker
 - current todo
   - remove references to ui in worker
   - remove references to document/window in worker
+    - move window variables to new "env" variable, somehow. contains constants derived from the environment (document/window) which never change after initial load
   - split up util - ui, worker, or both
     - globals
       - get rid of everything left in globals.js (weird dynamic stuff)
-      - then, be careful!
+      - then, maybe make it just for game attributes, and carefully sync between worker and ui
     - actions: only called from ui, but mixes worker calls and realtimeUpdate
       - put worker calls in api, move to ui/util/actions
     - helpers: move some to individual files in util, then hopefully it's just some small global functions that can go in common/helpers

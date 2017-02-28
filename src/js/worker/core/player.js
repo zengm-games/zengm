@@ -7,6 +7,7 @@ import _ from 'underscore';
 import {COMPOSITE_WEIGHTS, PHASE, PLAYER} from '../../common';
 import g from '../../globals';
 import * as finances from './finances';
+import {idb} from '../db';
 import * as names from '../../data/names';
 import * as helpers from '../../util/helpers';
 import {injuries, logEvent, random} from '../util';
@@ -1511,7 +1512,7 @@ async function killOne() {
     // Pick random team
     const tid = random.randInt(0, g.numTeams - 1);
 
-    await g.dbl.tx(["playerStats", "players"], "readwrite", async tx => {
+    await idb.league.tx(["playerStats", "players"], "readwrite", async tx => {
         const players = await tx.players.index('tid').getAll(tid);
 
         // Pick a random player on that team

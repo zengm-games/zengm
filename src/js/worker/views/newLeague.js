@@ -1,10 +1,10 @@
-import g from '../../globals';
+import {idb} from '../db';
 
 async function updateNewLeague(): void | {[key: string]: any} {
     let newLid = null;
 
     // Find most recent league and add one to the LID
-    await g.dbm.leagues.iterate("prev", (l, shortCircuit) => {
+    await idb.meta.leagues.iterate("prev", (l, shortCircuit) => {
         newLid = l.lid + 1;
         shortCircuit();
     });

@@ -1,13 +1,13 @@
 /* eslint comma-spacing: "off", key-spacing: "off", no-unused-expressions: "off", quote-props: "off" */
 import assert from 'assert';
-import {Cache, connectMeta} from '../../db';
+import {Cache, connectMeta, idb} from '../../db';
 import g from '../../globals';
 import * as league from '../../core/league';
 import * as account from '../../util/account';
 
 describe("util/account", () => {
     before(async () => {
-        await connectMeta();
+        idb.meta = await connectMeta();
         await league.create("Test", 7, undefined, 2013, false);
         g.cache = new Cache();
         await g.cache.fill();

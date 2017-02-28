@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import {Cache, connectLeague} from '../db';
+import {Cache, connectLeague, idb} from '../db';
 import g from '../../globals';
 import * as api from '../api';
 import {league} from '../core';
@@ -21,7 +21,7 @@ const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEv
 
         // league.loadGameAttribute cannot be used to check for a new lastDbChange because we need to have the old g.lastDbChange available right up to the last moment possible, for cases where league.loadGameAttribute might be blocked during a slow page refresh, as happens when viewing player rating and stat distributions. Otherwise, an extra refresh would occur with a stale lastDbChange.
 
-        const lastDbChange = await g.dbl.gameAttributes.get("lastDbChange");
+        const lastDbChange = await idb.league.gameAttributes.get("lastDbChange");
         if (g.lastDbChange !== lastDbChange.value) {
             await league.loadGameAttributes();
             //leagueContentEl.innerHTML = "&nbsp;";  // Blank doesn't work, for some reason
@@ -48,13 +48,13 @@ const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEv
         helpers.resetG();
 
         // Make sure this league exists before proceeding
-        const l = await g.dbm.leagues.get(g.lid);
+        const l = await idb.meta.leagues.get(g.lid);
         if (l === undefined) {
             helpers.error(<span>League not found. <a href="/new_league">Create a new league</a> or <a href="/">load an existing league</a> to play!</span>, ctxCb, true);
             return [[], () => {}, 'abort'];
         }
 
-        await connectLeague(g.lid);
+        idb.league = await connectLeague(g.lid);
 
         // Reuse existing cache, if it was just created for a new league
         if (!g.cache || !g.cache.newLeague) {

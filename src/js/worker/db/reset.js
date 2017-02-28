@@ -3,8 +3,8 @@
 import Backboard from 'backboard';
 import Promise from 'bluebird';
 import page from 'page';
-import g from '../../globals';
-import * as league from '../core/league';
+import {league} from '../core';
+import {idb} from '../db';
 
 const reset = async () => {
     // localStorage, which is just use for table sorting currently
@@ -18,7 +18,7 @@ const reset = async () => {
 
     // Delete any current league databases
     console.log("Deleting any current league databases...");
-    const leagues = await g.dbm.leagues.getAll();
+    const leagues = await idb.meta.leagues.getAll();
     if (leagues.length === 0) {
         console.log('No leagues found.');
         page('/');
@@ -28,7 +28,7 @@ const reset = async () => {
 
     // Delete any current meta database
     console.log("Deleting any current meta database...");
-    g.dbm.close();
+    idb.meta.close();
     await Backboard.delete("meta");
 
     location.reload();

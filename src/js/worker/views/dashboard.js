@@ -1,9 +1,9 @@
 // @flow
 
-import g from '../../globals';
+import {idb} from '../db';
 
 async function updateDashboard(): void | {[key: string]: any} {
-    const leagues = await g.dbm.leagues.getAll();
+    const leagues = await idb.meta.leagues.getAll();
 
     for (let i = 0; i < leagues.length; i++) {
         if (leagues[i].teamRegion === undefined) {

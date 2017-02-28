@@ -191,11 +191,7 @@ export type GameAttributeKeyDynamic = (
 
 type GameAttributeKeyStatic = (
     'cache' |
-    'dbl' |
-    'dbm' |
-    'enableLogging' |
-    'notInDb' |
-    'tld'
+    'notInDb'
 );
 
 export type GameAttributes = {[key: GameAttributeKeyDynamic | GameAttributeKeyStatic]: any}

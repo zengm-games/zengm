@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {Cache, connectMeta, getCopy} from '../../db';
+import {Cache, connectMeta, getCopy, idb} from '../../db';
 import {PLAYER} from '../../common';
 import g from '../../globals';
 import * as draft from '../../core/draft';
@@ -8,7 +8,7 @@ import sampleTiebreakers from '../fixtures/sampleTiebreakers';
 
 describe("core/draft", () => {
     before(async () => {
-        await connectMeta();
+        idb.meta = await connectMeta();
         await league.create("Test", 15, undefined, 2015, false);
         g.cache = new Cache();
         await g.cache.fill();

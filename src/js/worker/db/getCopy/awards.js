@@ -1,4 +1,5 @@
 import g from '../../../globals';
+import {idb} from '../../db';
 import {mergeByPk} from './helpers';
 import type {Awards} from '../../../common/types';
 
@@ -9,7 +10,7 @@ const getCopy = async ({
 } = {}): Promise<Awards | Awards[]> => {
     if (season !== undefined) {
         const awards = mergeByPk(
-            await g.dbl.awards.getAll(season),
+            await idb.league.awards.getAll(season),
             (await g.cache.getAll('awards')).filter((event) => {
                 return event.season === season;
             }),
@@ -19,7 +20,7 @@ const getCopy = async ({
     }
 
     return mergeByPk(
-        await g.dbl.awards.getAll(),
+        await idb.league.awards.getAll(),
         await g.cache.getAll('awards'),
         g.cache.storeInfos.awards.pk,
     );

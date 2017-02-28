@@ -2,6 +2,7 @@
 
 import g from '../../globals';
 import * as league from '../core/league';
+import {idb} from '../db';
 import {updatePlayMenu, updateStatus} from '../util';
 import type {GetOutput, Message as Message_, UpdateEvents} from '../../common/types';
 
@@ -28,7 +29,7 @@ async function updateMessage(
                 }
             }
         } else {
-            await g.dbl.tx("messages", "readwrite", async tx => {
+            await idb.league.tx("messages", "readwrite", async tx => {
                 // If mid is null, this will open the *unread* message with the highest mid
                 await tx.messages.iterate(inputs.mid, 'prev', (messageLocal: Message_, shortCircuit) => {
                     message = messageLocal;

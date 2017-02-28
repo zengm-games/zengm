@@ -5,6 +5,7 @@ import Promise from 'bluebird';
 import orderBy from 'lodash.orderby';
 import {PLAYER} from '../../common';
 import g from '../../globals';
+import {idb} from '../db';
 import type {BackboardTx, Player} from '../../common/types';
 
 type Status = 'empty' | 'error' | 'filling' | 'full';
@@ -292,7 +293,7 @@ class Cache {
         // This is crap and should be fixed ASAP
         this.season = season !== undefined ? season : g.season;
         if (this.season === undefined) {
-            const seasonAttr = await g.dbl.gameAttributes.get('season');
+            const seasonAttr = await idb.league.gameAttributes.get('season');
             if (seasonAttr) {
                 this.season = seasonAttr.value;
             }
@@ -301,7 +302,7 @@ class Cache {
             throw new Error('Undefined season');
         }
 
-        await g.dbl.tx(STORES, async (tx) => {
+        await idb.league.tx(STORES, async (tx) => {
             // Non-retired players - this is special because it's used for players and playerStats
             const [players1, players2] = await Promise.all([
                 tx.players.index('tid').getAll(backboard.lowerBound(PLAYER.UNDRAFTED)),
@@ -322,7 +323,7 @@ class Cache {
     async flush() {
         this.checkStatus('full');
 
-        await g.dbl.tx(STORES, 'readwrite', async (tx) => {
+        await idb.league.tx(STORES, 'readwrite', async (tx) => {
             await Promise.all(STORES.map(async (store) => {
                 for (const id of this.deletes[store]) {
                     tx[store].delete(id);

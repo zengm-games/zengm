@@ -1,45 +1,45 @@
 import assert from 'assert';
-import * as db from '../../db';
+import {connectMeta, idb} from '../../db';
 import g from '../../globals';
 import * as league from '../../core/league';
 import * as testHelpers from '../helpers';
 
 describe("core/league", () => {
     before(async () => {
-        await db.connectMeta();
+        await connectMeta();
         await league.create("Test", 0, undefined, 2013, false);
     });
     // After not needed because last test removes DB
 
     describe("#create()", () => {
         it("should add entry in meta leagues object store", async () => {
-            const l = await g.dbm.leagues.get(g.lid);
+            const l = await idb.meta.leagues.get(g.lid);
             assert.equal(l.name, "Test");
             assert.equal(l.tid, 0);
             assert.equal(l.phaseText, `${g.startingSeason} preseason`);
         });
         it("should create all necessary object stores", () => {
-            assert.equal(g.dbl.objectStoreNames.length, 18);
-            assert.equal(g.dbl.objectStoreNames.contains("awards"), true);
-            assert.equal(g.dbl.objectStoreNames.contains("events"), true);
-            assert.equal(g.dbl.objectStoreNames.contains("draftOrder"), true);
-            assert.equal(g.dbl.objectStoreNames.contains("gameAttributes"), true);
-            assert.equal(g.dbl.objectStoreNames.contains("games"), true);
-            assert.equal(g.dbl.objectStoreNames.contains("messages"), true);
-            assert.equal(g.dbl.objectStoreNames.contains("negotiations"), true);
-            assert.equal(g.dbl.objectStoreNames.contains("players"), true);
-            assert.equal(g.dbl.objectStoreNames.contains("playerFeats"), true);
-            assert.equal(g.dbl.objectStoreNames.contains("playerStats"), true);
-            assert.equal(g.dbl.objectStoreNames.contains("playoffSeries"), true);
-            assert.equal(g.dbl.objectStoreNames.contains("releasedPlayers"), true);
-            assert.equal(g.dbl.objectStoreNames.contains("schedule"), true);
-            assert.equal(g.dbl.objectStoreNames.contains("teams"), true);
-            assert.equal(g.dbl.objectStoreNames.contains("teamSeasons"), true);
-            assert.equal(g.dbl.objectStoreNames.contains("teamStats"), true);
-            assert.equal(g.dbl.objectStoreNames.contains("trade"), true);
+            assert.equal(idb.league.objectStoreNames.length, 18);
+            assert.equal(idb.league.objectStoreNames.contains("awards"), true);
+            assert.equal(idb.league.objectStoreNames.contains("events"), true);
+            assert.equal(idb.league.objectStoreNames.contains("draftOrder"), true);
+            assert.equal(idb.league.objectStoreNames.contains("gameAttributes"), true);
+            assert.equal(idb.league.objectStoreNames.contains("games"), true);
+            assert.equal(idb.league.objectStoreNames.contains("messages"), true);
+            assert.equal(idb.league.objectStoreNames.contains("negotiations"), true);
+            assert.equal(idb.league.objectStoreNames.contains("players"), true);
+            assert.equal(idb.league.objectStoreNames.contains("playerFeats"), true);
+            assert.equal(idb.league.objectStoreNames.contains("playerStats"), true);
+            assert.equal(idb.league.objectStoreNames.contains("playoffSeries"), true);
+            assert.equal(idb.league.objectStoreNames.contains("releasedPlayers"), true);
+            assert.equal(idb.league.objectStoreNames.contains("schedule"), true);
+            assert.equal(idb.league.objectStoreNames.contains("teams"), true);
+            assert.equal(idb.league.objectStoreNames.contains("teamSeasons"), true);
+            assert.equal(idb.league.objectStoreNames.contains("teamStats"), true);
+            assert.equal(idb.league.objectStoreNames.contains("trade"), true);
         });
         it("should initialize gameAttributes object store", async () => {
-            const gameAttributes = await g.dbl.gameAttributes.getAll();
+            const gameAttributes = await idb.league.gameAttributes.getAll();
             const gTest = gameAttributes.reduce((obj, row) => { obj[row.key] = row.value; return obj; }, {});
 
             assert.equal(gTest.gamesInProgress, false);
@@ -58,13 +58,13 @@ describe("core/league", () => {
             assert.equal(Object.keys(gTest).length, 38);
         });
         it("should initialize draftOrder object store", async () => {
-            const draftOrder = await g.dbl.draftOrder.getAll();
+            const draftOrder = await idb.league.draftOrder.getAll();
             assert.equal(draftOrder.length, 1);
             assert.equal(draftOrder[0].rid, 0);
             assert.equal(draftOrder[0].draftOrder.length, 0);
         });
         it("should initialize teams object store", async () => {
-            const teams = await g.dbl.teams.getAll();
+            const teams = await idb.league.teams.getAll();
 
             const cids = teams.map(t => t.cid);
             const dids = teams.map(t => t.did);
@@ -83,21 +83,21 @@ describe("core/league", () => {
             }
         });
         it("should initialize teamSeasons object store", async () => {
-            const teamSeasons = await g.dbl.teamSeasons.getAll();
+            const teamSeasons = await idb.league.teamSeasons.getAll();
             assert.equal(teamSeasons.length, g.numTeams);
         });
         it("should initialize teamStats object store", async () => {
-            const teamStats = await g.dbl.teamStats.getAll();
+            const teamStats = await idb.league.teamStats.getAll();
             assert.equal(teamStats.length, g.numTeams);
         });
         it("should initialize trade object store", async () => {
-            const tr = await g.dbl.trade.getAll();
+            const tr = await idb.league.trade.getAll();
             assert.equal(tr.length, 1);
             assert.equal(tr[0].rid, 0);
             assert.equal(tr[0].teams.length, 2);
         });
         it("should initialize players object store", async () => {
-            const players = await g.dbl.players.getAll();
+            const players = await idb.league.players.getAll();
             assert.equal(players.length, 33 * 14 + 70 * 3);
         });
     });

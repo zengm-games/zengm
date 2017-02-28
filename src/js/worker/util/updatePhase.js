@@ -3,6 +3,7 @@
 import g from '../../globals';
 import * as api from '../api';
 import {league} from '../core';
+import {idb} from '../db';
 
 /*Save phase text to database and push to client.
 
@@ -23,9 +24,9 @@ async function updatePhase(phaseText?: string) {
 
         // Update phase in meta database. No need to have this block updating the UI or anything.
         (async () => {
-            const l = await g.dbm.leagues.get(g.lid);
+            const l = await idb.meta.leagues.get(g.lid);
             l.phaseText = phaseText;
-            await g.dbm.leagues.put(l);
+            await idb.meta.leagues.put(l);
         })();
     }
 }

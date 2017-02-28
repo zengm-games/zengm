@@ -9,7 +9,7 @@ import * as helpers from '../util/helpers';
 import {account, beforeView, random, updatePlayMenu, updateStatus} from '../worker/util';
 import {init, views} from '../worker';
 import {contractNegotiation, draft, finances, league, phase, player, team, trade} from '../worker/core';
-import {getCopy} from '../worker/db';
+import {getCopy, idb} from '../worker/db';
 import type {GameAttributes, GetOutput, PageCtx, Player, PlayerWithoutPid, UpdateEvents} from '../common/types';
 
 const acceptContractNegotiation = async (pid: number, amount: number, exp: number): Promise<?string> => {
@@ -56,7 +56,7 @@ const clearWatchList = async (): Promise<string> => {
         }
     }
 
-    await g.dbl.tx("players", "readwrite", tx => {
+    await idb.league.tx("players", "readwrite", tx => {
         return tx.players.iterate(p => {
             if (p.watch) {
                 p.watch = false;
@@ -92,7 +92,7 @@ const deleteOldData = async (options: {
     playerStatsUnnotable: boolean,
     playerStats: boolean,
 }) => {
-    await g.dbl.tx(["games", "teams", "teamSeasons", "teamStats", "players", "playerStats"], "readwrite", async tx => {
+    await idb.league.tx(["games", "teams", "teamSeasons", "teamStats", "players", "playerStats"], "readwrite", async tx => {
         if (options.boxScores) {
             await tx.games.clear();
         }
@@ -239,9 +239,9 @@ const exportPlayerAveragesCsv = async (season: number | 'all') => {
 const exportPlayerGamesCsv = async (season: number | 'all') => {
     let games;
     if (season === "all") {
-        games = await g.dbl.games.getAll();
+        games = await idb.league.games.getAll();
     } else {
-        games = await g.dbl.games.index('season').getAll(season);
+        games = await idb.league.games.index('season').getAll(season);
     }
 
     let output = "pid,Name,Pos,Team,Opp,Score,WL,Season,Playoffs,Min,FGM,FGA,FG%,3PM,3PA,3P%,FTM,FTA,FT%,OReb,DReb,Reb,Ast,TO,Stl,Blk,BA,PF,Pts,+/-\n";
@@ -266,7 +266,7 @@ const exportLeague = async (stores: string[]) => {
 };
 
 const getLeagueName = async (lid: number) => {
-    const l = await g.dbm.leagues.get(lid);
+    const l = await idb.meta.leagues.get(lid);
     return l.name;
 };
 
@@ -396,12 +396,12 @@ const handleUploadedDraftClass = async (uploadedFile: any, seasonOffset: 0 | 1 |
     players = players.filter(p => p.tid === PLAYER.UNDRAFTED);
 
     // Get scouting rank, which is used in a couple places below
-    const teamSeasons = await g.dbl.teamSeasons.index("tid, season").getAll(backboard.bound([g.userTid, g.season - 2], [g.userTid, g.season]));
+    const teamSeasons = await idb.league.teamSeasons.index("tid, season").getAll(backboard.bound([g.userTid, g.season - 2], [g.userTid, g.season]));
 
     const scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
 
     // Delete old players from draft class
-    await g.dbl.tx(["players", "playerStats"], "readwrite", async tx => {
+    await idb.league.tx(["players", "playerStats"], "readwrite", async tx => {
         await tx.players.index('tid').iterate(draftClassTid, p => tx.players.delete(p.pid));
 
         // Find season from uploaded file, for age adjusting
@@ -601,7 +601,7 @@ const updatePlayerWatch = async (pid: number, watch: boolean) => {
     if (cachedPlayer) {
         cachedPlayer.watch = watch;
     } else {
-        await g.dbl.tx('players', 'readwrite', async tx => {
+        await idb.league.tx('players', 'readwrite', async tx => {
             const p = await tx.players.get(pid);
             p.watch = watch;
             await tx.players.put(p);
@@ -628,7 +628,7 @@ const updateTeamInfo = async (newTeams: {
 }[]) => {
     let userName;
     let userRegion;
-    await g.dbl.tx(['teams', 'teamSeasons'], 'readwrite', tx => {
+    await idb.league.tx(['teams', 'teamSeasons'], 'readwrite', tx => {
         return tx.teams.iterate(async t => {
             if (newTeams[t.tid].hasOwnProperty('cid')) {
                 t.cid = newTeams[t.tid].cid;
@@ -717,7 +717,7 @@ const upsertCustomizedPlayer = async (p: Player | PlayerWithoutPid, originalTid:
     // Recalculate player values, since ratings may have changed
     await player.updateValues(p);
     let pid;
-    await g.dbl.tx(["players", "playerStats"], "readwrite", async tx => {
+    await idb.league.tx(["players", "playerStats"], "readwrite", async tx => {
         // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition
         // When adding a player, this is the only way to know the pid
         pid = await tx.players.put(p);

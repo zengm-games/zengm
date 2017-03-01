@@ -201,30 +201,6 @@ async function leagueAverageContract() {
     console.log(total / players.length);
 }
 
-async function exportPlayerInfo() {
-    // All non-retired players
-    const players = await idb.league.players.index('tid').getAll(backboard.lowerBound(PLAYER.FREE_AGENT));
-
-    let output = "<pre>value,contract.amount,ovr,pot\n";
-
-    for (let i = 0; i < players.length; i++) {
-        const p = players[i];
-        const contract = player.genContract(p);
-        output += `${p.value},${contract.amount},${_.last(p.ratings).ovr},${_.last(p.ratings).pot}\n`;
-    }
-    output += "</pre>";
-
-    const contentEl = document.getElementById("content");
-    if (!contentEl) {
-        throw new Error('Missing DOM element #content');
-    }
-    contentEl.innerHTML = output;
-}
-
-function exportPlayerStats() {
-    console.log("Go to Tools > Export Stats, it's better!");
-}
-
 function averageCareerArc(baseOvr: number, basePot: number, ratingToSave: RatingKey) {
     const numPlayers = 1000; // Number of players per profile
     const numSeasons = 20;
@@ -267,7 +243,5 @@ function averageCareerArc(baseOvr: number, basePot: number, ratingToSave: Rating
 export {
     regressRatingsPer,
     leagueAverageContract,
-    exportPlayerInfo,
-    exportPlayerStats,
     averageCareerArc,
 };

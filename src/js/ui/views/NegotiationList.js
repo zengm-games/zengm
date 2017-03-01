@@ -1,8 +1,8 @@
 import React from 'react';
 import {g, helpers} from '../../common';
-import {negotiate} from '../../util/actions';
-import {getCols, setTitle} from '../util';
+import * as api from '../api';
 import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
+import {getCols, setTitle} from '../util';
 
 const NegotiationList = ({players}) => {
     setTitle('Re-sign Players');
@@ -16,7 +16,7 @@ const NegotiationList = ({players}) => {
         } else {
             negotiateButton = <button
                 className="btn btn-default btn-xs"
-                onClick={() => negotiate(p.pid)}
+                onClick={() => api.actions.negotiate(p.pid)}
             >Negotiate</button>;
         }
         return {

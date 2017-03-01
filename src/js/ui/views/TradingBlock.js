@@ -1,7 +1,6 @@
 import React from 'react';
 import {PHASE, helpers} from '../../common';
 import * as api from '../api';
-import {tradeFor} from '../../util/actions';
 import {getCols, setTitle} from '../util';
 import clickable from '../wrappers/clickable';
 import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
@@ -165,7 +164,7 @@ class TradingBlock extends React.Component {
     }
 
     async handleClickNegotiate(tid, otherPids, otherDpids) {
-        await tradeFor({
+        await api.actions.tradeFor({
             otherDpids,
             otherPids,
             tid,

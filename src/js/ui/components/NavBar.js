@@ -14,9 +14,9 @@ import Overlay from 'react-bootstrap/lib/Overlay';
 import Popover from 'react-bootstrap/lib/Popover';
 import ReactDOM from 'react-dom';
 import {helpers} from '../../common';
-import * as actions from '../../util/actions';
-import html2canvas from '../../vendor/html2canvas';
+import * as api from '../api';
 import {logEvent, realtimeUpdate} from '../util';
+import html2canvas from '../../vendor/html2canvas';
 import type {Option} from '../../common/types';
 
 const toggleDebugMode = () => {
@@ -193,7 +193,7 @@ const handleScreenshotClick = e => {
 
 const handleToolsClick = (id, e) => {
     e.preventDefault();
-    actions.toolsMenu[id]();
+    api.actions.toolsMenu[id]();
 };
 
 type DropdownLinksState = {
@@ -336,7 +336,7 @@ LogoAndText.propTypes = {
 const handleOptionClick = (option, e) => {
     if (!option.url) {
         e.preventDefault();
-        actions.playMenu[option.id]();
+        api.actions.playMenu[option.id]();
     }
 };
 
@@ -368,7 +368,7 @@ class PlayMenu extends React.Component {
             if (option.url) {
                 realtimeUpdate([], option.url);
             } else {
-                actions.playMenu[option.id]();
+                api.actions.playMenu[option.id]();
             }
         }
     }

@@ -3,12 +3,13 @@
 import backboard from 'backboard';
 import Promise from 'bluebird';
 import _ from 'underscore';
-import {PHASE, PLAYER, g, helpers} from '../common';
-import {account, beforeView, random, updatePlayMenu, updateStatus} from '../worker/util';
-import {init, views} from '../worker';
-import {contractNegotiation, draft, finances, league, phase, player, team, trade} from '../worker/core';
-import {getCopy, idb} from '../worker/db';
-import type {GameAttributes, GetOutput, PageCtx, Player, PlayerWithoutPid, UpdateEvents} from '../common/types';
+import {PHASE, PLAYER, g, helpers} from '../../common';
+import actions from './actions';
+import {account, beforeView, random, updatePlayMenu, updateStatus} from '../../worker/util';
+import {init, views} from '../../worker';
+import {contractNegotiation, draft, finances, league, phase, player, team, trade} from '../../worker/core';
+import {getCopy, idb} from '../../worker/db';
+import type {GameAttributes, GetOutput, PageCtx, Player, PlayerWithoutPid, UpdateEvents} from '../../common/types';
 
 const acceptContractNegotiation = async (pid: number, amount: number, exp: number): Promise<?string> => {
     return contractNegotiation.accept(pid, amount, exp);
@@ -781,6 +782,7 @@ const updateTrade = async (teams: [{
 };
 
 export {
+    actions,
     acceptContractNegotiation,
     autoSortRoster,
     beforeViewLeague,

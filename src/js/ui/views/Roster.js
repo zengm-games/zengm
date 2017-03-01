@@ -5,7 +5,6 @@ import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import {PHASE, g, helpers} from '../../common';
 import * as api from '../api';
-import {tradeFor} from '../../util/actions';
 import {logEvent, realtimeUpdate, setTitle} from '../util';
 import {Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels, RatingWithChange, RecordAndPlayoffs} from '../components';
 import clickable from '../wrappers/clickable';
@@ -192,7 +191,7 @@ const RosterRow = clickable(props => {
             <button
                 className="btn btn-default btn-xs"
                 disabled={p.untradable}
-                onClick={() => tradeFor({pid: p.pid})}
+                onClick={() => api.actions.tradeFor({pid: p.pid})}
             >Trade For</button>
         </td> : null}
     </tr>;

@@ -1,6 +1,6 @@
 import React from 'react';
 import {helpers} from '../../common';
-import {negotiate, tradeFor} from '../../util/actions';
+import * as api from '../api';
 import {DataTable, NewWindowLink, PlayerPicture, SafeHtml, SkillsBlock, WatchBlock} from '../components';
 import {getCols, setTitle} from '../util';
 
@@ -317,12 +317,12 @@ const Player = ({events, feats, freeAgent, godMode, injured, player, retired, sh
             <button
                 className="btn btn-default"
                 disabled={player.untradable}
-                onClick={() => tradeFor({pid: player.pid})}
+                onClick={() => api.actions.tradeFor({pid: player.pid})}
             >Trade For</button>
         </span> : null}
         {freeAgent ? <button
             className="btn btn-default"
-            onClick={() => negotiate(player.pid)}
+            onClick={() => api.actions.negotiate(player.pid)}
         >Sign Free Agent</button> : null}
 
         <h2>Regular Season</h2>

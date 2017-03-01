@@ -32,14 +32,14 @@ async function updatePlayers(inputs, updateEvents) {
             };
             players[i].teamSums = {};
             for (let j = 0; j < players[i].stats.length; j++) {
-                const team = players[i].stats[j].tid;
+                const tid = players[i].stats[j].tid;
                 if (players[i].stats[j].gp * players[i].stats[j].min * players[i].stats[j].per > players[i].bestStats.gp * players[i].bestStats.min * players[i].bestStats.per) {
                     players[i].bestStats = players[i].stats[j];
                 }
-                if (players[i].teamSums.hasOwnProperty(team)) {
-                    players[i].teamSums[team] += players[i].stats[j].gp * players[i].stats[j].min * players[i].stats[j].per;
+                if (players[i].teamSums.hasOwnProperty(tid)) {
+                    players[i].teamSums[tid] += players[i].stats[j].gp * players[i].stats[j].min * players[i].stats[j].per;
                 } else {
-                    players[i].teamSums[team] = players[i].stats[j].gp * players[i].stats[j].min * players[i].stats[j].per;
+                    players[i].teamSums[tid] = players[i].stats[j].gp * players[i].stats[j].min * players[i].stats[j].per;
                 }
             }
             players[i].legacyTid = parseInt(Object.keys(players[i].teamSums).reduce((teamA, teamB) => (players[i].teamSums[teamA] > players[i].teamSums[teamB] ? teamA : teamB)));

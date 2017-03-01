@@ -41,6 +41,16 @@ const initAds = (goldUntil: number | void) => {
     }
 };
 
+const notifyException = (err: Error, name: string, metadata: any) => {
+    if (window.Bugsnag) {
+        window.Bugsnag.notifyException(err, name, metadata);
+    }
+};
+
+const prompt = (message: string, defaultVal?: string) => {
+    return window.prompt(message, defaultVal);
+};
+
 async function realtimeUpdate2(updateEvents: UpdateEvents = [], url?: string, raw?: Object = {}) {
     await realtimeUpdate(updateEvents, url, raw);
 }
@@ -56,6 +66,8 @@ const showEvent2 = (options: LogEventShowOptions) => {
 export {
     emit,
     initAds,
+    notifyException,
+    prompt,
     realtimeUpdate2 as realtimeUpdate,
     setGameAttributes,
     showEvent2 as showEvent,

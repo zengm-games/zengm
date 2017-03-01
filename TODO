@@ -12,7 +12,6 @@ move everything but the UI to a web worker
   - ignore for now, just write code to keep g in sync in both places
   - what about emitter?
 - current todo
-  - remove references to ui in worker
   - remove references to document/window in worker
     - move window variables to new "env" variable, somehow. contains constants derived from the environment (document/window) which never change after initial load
   - how to ensure that files are not required into both ui and worker inadvertently?
@@ -21,7 +20,7 @@ move everything but the UI to a web worker
 - should checks to update data in worker/views be in worker, or could they be in UI somehow and avoid call to worker if update not needed?
 - index.js or app.js for main file in ui/worker?
 - bbgmPing needs to be done in ui through API
-- write lint script to check for ui/worker cross-contamination. also DB/cache in ui, document/window in worker
+- write lint script to check for ui/worker cross-contamination. also document/window/react in worker
 
 lastDbChange still needed?
 

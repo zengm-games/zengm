@@ -4,9 +4,8 @@
 import Promise from 'bluebird';
 import $ from 'jquery';
 import {SPORT, g} from '../../common';
-import * as api from '../api';
 import {getCopy, idb} from '../db';
-import {env, logEvent} from '../util';
+import {env, logEvent, toUI} from '../util';
 import type {AchievementKey} from '../../common/types';
 
 // IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php
@@ -141,14 +140,14 @@ async function check() {
 
         // Save username for display
 
-        api.emit('updateTopMenu', {
+        toUI('emit', 'updateTopMenu', {
             email: data.email,
             goldCancelled: !!data.gold_cancelled,
             goldUntil: data.gold_until,
             username: data.username,
         });
 
-        api.initAds(data.gold_until);
+        toUI('initAds', data.gold_until);
 
         // If user is logged in, upload any locally saved achievements
         if (data.username !== "") {

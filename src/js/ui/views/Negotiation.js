@@ -1,13 +1,12 @@
 import classNames from 'classnames';
 import React from 'react';
 import {helpers} from '../../common';
-import * as api from '../api';
 import {NewWindowLink} from '../components';
-import {logEvent, realtimeUpdate, setTitle} from '../util';
+import {logEvent, realtimeUpdate, setTitle, toWorker} from '../util';
 
 // Show the negotiations list if there are more ongoing negotiations
 async function redirectNegotiationOrRoster(cancelled) {
-    const count = await api.countNegotiations();
+    const count = await toWorker('countNegotiations');
     if (count > 0) {
         realtimeUpdate([], helpers.leagueUrl(["negotiation"]));
     } else if (cancelled) {
@@ -18,12 +17,12 @@ async function redirectNegotiationOrRoster(cancelled) {
 }
 
 const cancel = async pid => {
-    await api.cancelContractNegotiation(pid);
+    await toWorker('cancelContractNegotiation', pid);
     redirectNegotiationOrRoster(true);
 };
 
 const sign = async (pid, amount, exp) => {
-    const errorMsg = await api.acceptContractNegotiation(pid, Math.round(amount * 1000), exp);
+    const errorMsg = await toWorker('acceptContractNegotiation', pid, Math.round(amount * 1000), exp);
     if (errorMsg !== undefined && errorMsg) {
         logEvent({
             type: 'error',

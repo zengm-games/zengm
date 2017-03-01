@@ -2,9 +2,8 @@
 
 import {Cache, connectLeague, idb} from '../db';
 import {g, helpers} from '../../common';
-import * as api from '../api';
 import {league} from '../core';
-import {updatePhase, updatePlayMenu, updateStatus} from '../util';
+import {toUI, updatePhase, updatePlayMenu, updateStatus} from '../util';
 import type {PageCtx, UpdateEvents} from '../../common/types';
 
 const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEvents, () => void, ?string]> => {
@@ -23,7 +22,7 @@ const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEv
         if (g.lastDbChange !== lastDbChange.value) {
             await league.loadGameAttributes();
             //leagueContentEl.innerHTML = "&nbsp;";  // Blank doesn't work, for some reason
-            await api.realtimeUpdate(["dbChange"]);
+            await toUI('realtimeUpdate', ["dbChange"]);
             await updatePlayMenu();
             updatePhase();
             updateStatus();
@@ -67,7 +66,7 @@ const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEv
         updateStatus();
         updatePhase();
         await updatePlayMenu();
-        api.emit('updateTopMenu', {lid: g.lid});
+        toUI('emit', 'updateTopMenu', {lid: g.lid});
         //checkDbChange(g.lid); // Currently not working
         return [updateEvents, ctxCb, undefined];
     }
@@ -77,7 +76,7 @@ const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEv
 
 const beforeNonLeague = (ctx: PageCtx): [UpdateEvents, () => void, ?string] => {
     g.lid = undefined;
-    api.emit('updateTopMenu', {lid: undefined});
+    toUI('emit', 'updateTopMenu', {lid: undefined});
 
     const updateEvents = (ctx !== undefined && ctx.bbgm.updateEvents !== undefined) ? ctx.bbgm.updateEvents : [];
     const ctxCb = (ctx !== undefined && ctx.bbgm.cb !== undefined) ? ctx.bbgm.cb : () => {};

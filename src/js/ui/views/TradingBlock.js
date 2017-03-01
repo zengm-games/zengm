@@ -1,7 +1,6 @@
 import React from 'react';
 import {PHASE, helpers} from '../../common';
-import * as api from '../api';
-import {getCols, setTitle} from '../util';
+import {getCols, setTitle, toWorker} from '../util';
 import clickable from '../wrappers/clickable';
 import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
 
@@ -150,7 +149,7 @@ class TradingBlock extends React.Component {
             progress: 10, // Start with something on the progress bar, so user knows shit is happening
         });
 
-        const offers = await api.getTradingBlockOffers(this.state.pids, this.state.dpids, (i, numTeams) => {
+        const offers = await toWorker('getTradingBlockOffers', this.state.pids, this.state.dpids, (i, numTeams) => {
             this.setState({
                 progress: Math.round(10 + i / numTeams * 100),
             });
@@ -164,7 +163,7 @@ class TradingBlock extends React.Component {
     }
 
     async handleClickNegotiate(tid, otherPids, otherDpids) {
-        await api.actions.tradeFor({
+        await toWorker('actions.tradeFor', {
             otherDpids,
             otherPids,
             tid,

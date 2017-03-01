@@ -9,10 +9,9 @@ import 'jquery-ui/sortable';
 import page from 'page';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import * as api from './api';
 import Controller from './components/Controller';
 import * as processInputs from './processInputs';
-import {ads, genStaticPage, initView} from './util';
+import {ads, genStaticPage, initView, toWorker} from './util';
 import * as views from './views';
 import type {Env} from '../common/types';
 
@@ -49,7 +48,7 @@ const genPage = (id, inLeague = true) => {
         tld: window.tld,
     };
 
-    await api.init(env);
+    await toWorker('init', env);
 
     ReactDOM.render(<Controller />, document.getElementById('content'));
 
@@ -210,5 +209,5 @@ const genPage = (id, inLeague = true) => {
 
     page();
 
-    api.checkAccount();
+    toWorker('checkAccount');
 })();

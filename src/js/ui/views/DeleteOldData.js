@@ -1,7 +1,6 @@
 import React from 'react';
-import * as api from '../api';
 import {NewWindowLink} from '../components';
-import {logEvent, setTitle} from '../util';
+import {logEvent, setTitle, toWorker} from '../util';
 
 class DeleteOldData extends React.Component {
     constructor(props) {
@@ -40,7 +39,7 @@ class DeleteOldData extends React.Component {
             deleting: true,
         });
 
-        await api.deleteOldData(this.state);
+        await toWorker('deleteOldData', this.state);
 
         logEvent({
             type: 'success',

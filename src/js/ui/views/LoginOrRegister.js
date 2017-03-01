@@ -2,8 +2,7 @@ import classNames from 'classnames';
 import $ from 'jquery';
 import React from 'react';
 import {SPORT} from '../../common';
-import * as api from '../api';
-import {emitter, realtimeUpdate, setTitle} from '../util';
+import {emitter, realtimeUpdate, setTitle, toWorker} from '../util';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
 
@@ -47,7 +46,7 @@ class LoginOrRegister extends React.Component {
                     });
 
                     // Check for participation achievement, if this is the first time logging in to this sport
-                    await api.checkParticipationAchievement();
+                    await toWorker('checkParticipationAchievement');
                     realtimeUpdate(["account"], "/account");
                 } else {
                     this.setState({loginError: 'Invalid username or password.'});
@@ -84,7 +83,7 @@ class LoginOrRegister extends React.Component {
                 if (data.success) {
                     emitter.emit('updateTopMenu', {username: data.username});
 
-                    await api.checkParticipationAchievement(true);
+                    await toWorker('checkParticipationAchievement', true);
                     realtimeUpdate([], "/account");
                 } else {
                     const updatedState = {

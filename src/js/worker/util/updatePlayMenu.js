@@ -2,8 +2,7 @@
 
 import Promise from 'bluebird';
 import {PHASE, g, helpers} from '../../common';
-import * as api from '../api';
-import {lock} from '../util';
+import {lock, toUI} from '../util';
 
 /**
 * Update play menu options based on game state.
@@ -103,7 +102,7 @@ const updatePlayMenu = async () => {
         return allOptions[id];
     });
 
-    api.emit('updateTopMenu', {options: someOptions});
+    toUI('emit', 'updateTopMenu', {options: someOptions});
 };
 
 export default updatePlayMenu;

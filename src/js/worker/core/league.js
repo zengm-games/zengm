@@ -5,9 +5,8 @@ import Promise from 'bluebird';
 import _ from 'underscore';
 import {Cache, connectLeague, idb} from '../db';
 import {PHASE, PHASE_TEXT, PLAYER, g, helpers} from '../../common';
-import * as api from '../api';
 import {draft, finances, freeAgents, game, phase, player, season, team} from '../core';
-import {random, updatePhase, updateStatus} from '../util';
+import {random, toUI, updatePhase, updateStatus} from '../util';
 import type {GameAttributes} from '../../common/types';
 
 const defaultGameAttributes: GameAttributes = {
@@ -92,10 +91,10 @@ async function setGameAttributes(gameAttributes: GameAttributes) {
         g[key] = gameAttributes[key];
     }));
 
-    await api.setGameAttributes(gameAttributes);
+    await toUI('setGameAttributes', gameAttributes);
 
     if (toUpdate.includes('userTid') || toUpdate.includes('userTids')) {
-        api.emit('updateMultiTeam');
+        toUI('emit', 'updateMultiTeam');
     }
 }
 
@@ -500,7 +499,7 @@ async function create(
 
     await idb.cache.flush();
 
-    api.bbgmPing("league");
+    toUI('bbgmPing', "league");
 
     return lid;
 }
@@ -620,11 +619,11 @@ async function loadGameAttributes() {
         }
     });
 
-    await api.setGameAttributes(g);
+    await toUI('setGameAttributes', g);
 
     // UI stuff
-    api.emit('updateTopMenu', {godMode: g.godMode});
-    api.emit('updateMultiTeam');
+    toUI('emit', 'updateTopMenu', {godMode: g.godMode});
+    toUI('emit', 'updateMultiTeam');
 }
 
 // Depending on phase, initiate action that will lead to the next phase
@@ -652,7 +651,7 @@ async function autoPlay() {
 }
 
 async function initAutoPlay() {
-    const result = api.prompt('This will play through multiple seasons, using the AI to manage your team. How many seasons do you want to simulate?', '5');
+    const result = toUI('prompt', 'This will play through multiple seasons, using the AI to manage your team. How many seasons do you want to simulate?', '5');
     const numSeasons = parseInt(result, 10);
 
     if (Number.isInteger(numSeasons)) {

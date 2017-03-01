@@ -1,7 +1,6 @@
 import React from 'react';
 import {helpers} from '../../common';
-import * as api from '../api';
-import {realtimeUpdate, setTitle} from '../util';
+import {realtimeUpdate, setTitle, toWorker} from '../util';
 
 class DeleteLeague extends React.Component {
     constructor(props) {
@@ -11,7 +10,7 @@ class DeleteLeague extends React.Component {
 
     async handleDeleteLeague(lid) {
         this.setState({deleting: true});
-        await api.removeLeague(lid);
+        await toWorker('removeLeague', lid);
         realtimeUpdate([], "/");
     }
 

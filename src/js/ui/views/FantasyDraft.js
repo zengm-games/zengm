@@ -1,8 +1,7 @@
 import React from 'react';
 import {PHASE} from '../../common';
-import {setTitle} from '../util';
-import * as api from '../api';
 import {NewWindowLink} from '../components';
+import {setTitle, toWorker} from '../util';
 
 class FantasyDraft extends React.Component {
     constructor(props) {
@@ -18,7 +17,7 @@ class FantasyDraft extends React.Component {
 
     startDraft() {
         this.setState({starting: true});
-        api.startFantasyDraft(this.state.position);
+        toWorker('startFantasyDraft', this.state.position);
     }
 
     handlePositionChange(event) {

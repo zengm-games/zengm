@@ -1,6 +1,6 @@
 // @flow
 
-import * as api from '../api';
+import {toUI} from '../util';
 
 // Check all properties of an object for NaN
 const checkObject = (obj, foundNaN, replace) => {
@@ -32,7 +32,7 @@ const wrapperNaNChecker = (_super) => {
         if (checkObject(obj)) {
             const err = new Error('NaN found before writing to IndexedDB');
 
-            api.notifyException(err, 'NaNFound', {
+            toUI('notifyException', err, 'NaNFound', {
                 details: {
                     objectWithNaN: JSON.stringify(obj, (key, value) => {
                         if (Number.isNaN) {

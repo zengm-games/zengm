@@ -11,8 +11,7 @@ move everything but the UI to a web worker
 - current todo
   - get it running in worker
     - ui/worker api modules
-      - swap current API modules, keep as is
-      - create new toUi and toWorker functions that just serve to call them, like toUi('realtimeUpdate', arg1, arg2)
+      - can promiseWorker initiate call from worker? if not, add for toUI https://github.com/nolanlawson/promise-worker/issues/18
 - does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
 - should checks to update data in worker/views be in worker, or could they be in UI somehow and avoid call to worker if update not needed?
 - write lint script to check for ui/worker cross-contamination. also document/window/react in worker. also any of that stuff in common.

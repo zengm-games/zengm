@@ -2,8 +2,7 @@
 
 import React from 'react';
 import {g} from '../../common';
-import * as api from '../api';
-import {ads, emitter, realtimeUpdate} from '../util';
+import {ads, emitter, realtimeUpdate, toWorker} from '../util';
 import {Footer, Header, LeagueWrapper, MultiTeamMenu, NagModal, NavBar} from '../components';
 import type {GetOutput, Option, PageCtx, UpdateEvents} from '../../common/types';
 
@@ -149,7 +148,7 @@ class Controller extends React.Component {
     }
 
     async get(args: Args, ctx: PageCtx) {
-        const [updateEvents, cb, abort] = await (args.inLeague ? api.beforeViewLeague(ctx, this.state.topMenu.lid) : api.beforeViewNonLeague(ctx));
+        const [updateEvents, cb, abort] = await (args.inLeague ? toWorker('beforeViewLeague', ctx, this.state.topMenu.lid) : api.beforeViewNonLeague(ctx));
 
         if (abort === 'abort') {
             return;
@@ -230,7 +229,7 @@ class Controller extends React.Component {
         });
 
         // Resolve all the promises before updating the UI to minimize flicker
-        const promiseBefore = api.runBefore(args.id, inputs, updateEvents, prevData, this.setStateData, this.state.topMenu);
+        const promiseBefore = toWorker('runBefore', args.id, inputs, updateEvents, prevData, this.setStateData, this.state.topMenu);
 
         // Run promises in parallel, update when each one is ready
         // This runs no matter what

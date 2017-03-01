@@ -1,7 +1,6 @@
 import React from 'react';
 import {PHASE, PHASE_TEXT, g} from '../../common';
-import * as api from '../api';
-import {setTitle} from '../util';
+import {setTitle, toWorker} from '../util';
 import {DownloadDataLink} from '../components';
 
 const categories = [{
@@ -108,7 +107,7 @@ class ExportLeague extends React.Component {
             return;
         }
 
-        const data = await api.exportLeague(objectStores);
+        const data = await toWorker('exportLeague', objectStores);
         const json = JSON.stringify(data, undefined, 2);
 
         const filename = genFilename(data);

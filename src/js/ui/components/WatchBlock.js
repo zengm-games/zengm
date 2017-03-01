@@ -1,8 +1,7 @@
 // @flow
 
 import React from 'react';
-import * as api from '../api';
-import {realtimeUpdate} from '../util';
+import {realtimeUpdate, toWorker} from '../util';
 
 type Props = {
     pid: number,
@@ -50,7 +49,7 @@ class WatchBlock extends React.Component {
             watch,
         });
 
-        await api.updatePlayerWatch(this.props.pid, watch);
+        await toWorker('updatePlayerWatch', this.props.pid, watch);
         realtimeUpdate(['playerMovement', 'watchList']);
     }
 

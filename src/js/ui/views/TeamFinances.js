@@ -1,7 +1,6 @@
 import React from 'react';
 import {g, helpers} from '../../common';
-import * as api from '../api';
-import {getCols, logEvent, realtimeUpdate, setTitle} from '../util';
+import {getCols, logEvent, realtimeUpdate, setTitle, toWorker} from '../util';
 import {BarGraph, DataTable, Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels} from '../components';
 
 class FinancesForm extends React.Component {
@@ -61,7 +60,7 @@ class FinancesForm extends React.Component {
             ticketPrice: helpers.bound(parseFloat(this.state.ticketPrice.toFixed(2)), 0, Infinity),
         };
 
-        await api.updateBudget(budgetAmounts);
+        await toWorker('updateBudget', budgetAmounts);
 
         logEvent({
             type: 'success',

@@ -4,8 +4,7 @@ import React from 'react';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import {PHASE, g, helpers} from '../../common';
-import * as api from '../api';
-import {logEvent, realtimeUpdate, setTitle} from '../util';
+import {logEvent, realtimeUpdate, setTitle, toWorker} from '../util';
 import {Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels, RatingWithChange, RecordAndPlayoffs} from '../components';
 import clickable from '../wrappers/clickable';
 
@@ -33,7 +32,7 @@ const ptStyles = {
 };
 
 const handleAutoSort = async () => {
-    await api.autoSortRoster();
+    await toWorker('autoSortRoster');
 
     realtimeUpdate(["playerMovement"]);
 };
@@ -50,7 +49,7 @@ const handleRelease = async p => {
     }
 
     if (window.confirm(releaseMessage)) {
-        const errorMsg = await api.releasePlayer(p.pid, justDrafted);
+        const errorMsg = await toWorker('releasePlayer', p.pid, justDrafted);
         if (errorMsg) {
             logEvent({
                 type: 'error',
@@ -76,7 +75,7 @@ const handlePtChange = async (p, event) => {
         return;
     }
 
-    await api.updatePlayingTime(p.pid, ptModifier);
+    await toWorker('updatePlayingTime', p.pid, ptModifier);
 
     realtimeUpdate(["playerMovement"]);
 };
@@ -132,13 +131,13 @@ ReorderHandle.propTypes = {
 
 // This needs to look at all players, because rosterOrder is not guaranteed to be unique after free agent signings and trades
 const swapRosterOrder = async (sortedPlayers, pid1, pid2) => {
-    await api.reorderRosterSwap(sortedPlayers, pid1, pid2);
+    await toWorker('reorderRosterSwap', sortedPlayers, pid1, pid2);
 
     realtimeUpdate(["playerMovement"]);
 };
 
 const handleReorderDrag = async (sortedPids) => {
-    await api.reorderRosterDrag(sortedPids);
+    await toWorker('reorderRosterDrag', sortedPids);
 
     realtimeUpdate(["playerMovement"]);
 };
@@ -191,7 +190,7 @@ const RosterRow = clickable(props => {
             <button
                 className="btn btn-default btn-xs"
                 disabled={p.untradable}
-                onClick={() => api.actions.tradeFor({pid: p.pid})}
+                onClick={() => toWorker('actions.tradeFor', {pid: p.pid})}
             >Trade For</button>
         </td> : null}
     </tr>;

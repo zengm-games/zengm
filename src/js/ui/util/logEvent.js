@@ -1,8 +1,7 @@
 // @flow
 
 import {createLogger, g} from '../../common';
-import * as api from '../api';
-import {notify} from '../util';
+import {notify, toWorker} from '../util';
 import type {LogEventShowOptions} from '../../common/types';
 
 const saveEvent = () => {
@@ -35,7 +34,7 @@ const showEvent = ({
 
         // Persistent notifications are very rare and should stop game sim when displayed
         if (persistent && g.autoPlaySeasons <= 0) {
-            api.updateGameAttributes({stopGames: true}, false);
+            toWorker('updateGameAttributes', {stopGames: true}, false);
         }
     }
 

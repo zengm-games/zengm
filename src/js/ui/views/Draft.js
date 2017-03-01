@@ -2,8 +2,7 @@ import classNames from 'classnames';
 import $ from 'jquery';
 import React from 'react';
 import {g, helpers} from '../../common';
-import * as api from '../api';
-import {getCols, realtimeUpdate, setTitle} from '../util';
+import {getCols, realtimeUpdate, setTitle, toWorker} from '../util';
 import {DataTable, DraftAbbrev, NewWindowLink, PlayerNameLabels} from '../components';
 
 const viewDrafted = () => {
@@ -47,13 +46,13 @@ class Draft extends React.Component {
     }
 
     async draftUntilUserOrEnd() {
-        const pids = await api.draftUntilUserOrEnd();
+        const pids = await toWorker('draftUntilUserOrEnd');
         this.savePids(pids);
         realtimeUpdate(["playerMovement"]);
     }
 
     async draftUser(pid) {
-        await api.draftUser(pid);
+        await toWorker('draftUser', pid);
         this.savePids([pid]);
         await this.draftUntilUserOrEnd();
     }

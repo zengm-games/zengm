@@ -1,8 +1,7 @@
 import Promise from 'bluebird';
 import React from 'react';
 import {g} from '../../common';
-import * as api from '../api';
-import {setTitle} from '../util';
+import {setTitle, toWorker} from '../util';
 import {DownloadDataLink} from '../components';
 
 function genFilename(leagueName, season, grouping) {
@@ -39,9 +38,9 @@ class ExportStats extends React.Component {
 
         let csvPromise;
         if (grouping === "averages") {
-            csvPromise = api.exportPlayerAveragesCsv(season);
+            csvPromise = toWorker('exportPlayerAveragesCsv', season);
         } else if (grouping === "games") {
-            csvPromise = api.exportPlayerGamesCsv(season);
+            csvPromise = toWorker('exportPlayerGamesCsv', season);
         } else {
             this.setState({
                 data: null,
@@ -53,7 +52,7 @@ class ExportStats extends React.Component {
 
         const [data, leagueName] = await Promise.all([
             csvPromise,
-            api.getLeagueName(g.lid),
+            toWorker('getLeagueName', g.lid),
         ]);
 
         const filename = genFilename(leagueName, season, grouping);

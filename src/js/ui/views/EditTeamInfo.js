@@ -1,7 +1,6 @@
 import React from 'react';
 import {g, helpers} from '../../common';
-import * as api from '../api';
-import {logEvent, setTitle} from '../util';
+import {logEvent, setTitle, toWorker} from '../util';
 
 class EditTeamInfo extends React.Component {
     constructor(props) {
@@ -65,7 +64,7 @@ class EditTeamInfo extends React.Component {
                 }
             }
 
-            await api.updateTeamInfo(newTeams);
+            await toWorker('updateTeamInfo', newTeams);
 
             this.setState({
                 teams: newTeams,
@@ -94,7 +93,7 @@ class EditTeamInfo extends React.Component {
             saving: true,
         });
 
-        await api.updateTeamInfo(this.state.teams);
+        await toWorker('updateTeamInfo', this.state.teams);
 
         logEvent({
             type: 'success',

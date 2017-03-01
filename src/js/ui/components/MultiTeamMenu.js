@@ -2,12 +2,11 @@
 
 import React from 'react';
 import {g} from '../../common';
-import * as api from '../api';
-import {emitter, realtimeUpdate} from '../util';
+import {emitter, realtimeUpdate, toWorker} from '../util';
 
 const handleChange = async (e: SyntheticInputEvent) => {
     const userTid = parseInt(e.target.value, 10);
-    await api.updateGameAttributes({userTid});
+    await toWorker('updateGameAttributes', {userTid});
 
     // dbChange is kind of a hack because it was designed for multi-window update only, but it should update everything
     realtimeUpdate(['dbChange']);

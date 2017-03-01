@@ -1,8 +1,7 @@
 import React from 'react';
 import {helpers} from '../../common';
-import * as api from '../api';
 import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
-import {getCols, realtimeUpdate, setTitle} from '../util';
+import {getCols, realtimeUpdate, setTitle, toWorker} from '../util';
 
 class DraftScouting extends React.Component {
     constructor(props) {
@@ -26,7 +25,7 @@ class DraftScouting extends React.Component {
         reader.onload = async event => {
             const uploadedFile = JSON.parse(event.target.result);
 
-            await api.handleUploadedDraftClass(uploadedFile, seasonOffset);
+            await toWorker('handleUploadedDraftClass', uploadedFile, seasonOffset);
 
             this.setState({
                 customize: undefined,

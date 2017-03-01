@@ -4,10 +4,9 @@ import Promise from 'bluebird';
 import orderBy from 'lodash.orderby';
 import _ from 'underscore';
 import {PHASE, PLAYER, g, helpers} from '../../common';
-import * as api from '../api';
 import {league, phase, player, team} from '../core';
 import {getCopy, idb} from '../db';
-import {lock, logEvent, random, updatePlayMenu, updateStatus} from '../util';
+import {lock, logEvent, random, updatePlayMenu, updateStatus, toUI} from '../util';
 
 /**
  * AI teams sign free agents.
@@ -173,7 +172,7 @@ async function play(numDays: number, start?: boolean = true) {
     const cbNoDays = async () => {
         await league.setGameAttributes({gamesInProgress: false});
         await updatePlayMenu();
-        api.realtimeUpdate(["g.gamesInProgress"]);
+        toUI('realtimeUpdate', ["g.gamesInProgress"]);
 
         // Check to see if free agency is over
         if (g.daysLeft === 0) {
@@ -190,7 +189,7 @@ async function play(numDays: number, start?: boolean = true) {
             await autoSign();
             await league.setGameAttributes({daysLeft: g.daysLeft - 1, lastDbChange: Date.now()});
             if (g.daysLeft > 0 && numDays > 0) {
-                await api.realtimeUpdate(["playerMovement"]);
+                await toUI('realtimeUpdate', ["playerMovement"]);
                 updateStatus(`${g.daysLeft} days left`);
                 play(numDays - 1, false);
             } else {
@@ -218,7 +217,7 @@ async function play(numDays: number, start?: boolean = true) {
         if (canStartGames) {
             await league.setGameAttributes({gamesInProgress: true});
             await updatePlayMenu();
-            api.realtimeUpdate(["g.gamesInProgress"]);
+            toUI('realtimeUpdate', ["g.gamesInProgress"]);
             cbRunDay();
         }
     } else {

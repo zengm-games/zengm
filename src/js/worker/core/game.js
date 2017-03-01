@@ -3,7 +3,6 @@
 import Promise from 'bluebird';
 import _ from 'underscore';
 import {COMPOSITE_WEIGHTS, PHASE, PLAYER, g, helpers} from '../../common';
-import * as api from '../api';
 import GameSim from './GameSim';
 import * as finances from './finances';
 import * as freeAgents from './freeAgents';
@@ -13,7 +12,7 @@ import * as player from './player';
 import * as season from './season';
 import * as team from './team';
 import {idb} from '../db';
-import {advStats, lock, logEvent, random, updatePlayMenu, updateStatus} from '../util';
+import {advStats, lock, logEvent, random, toUI, updatePlayMenu, updateStatus} from '../util';
 import type {GameResults} from '../../common/types';
 
 async function writeTeamStats(results: GameResults) {
@@ -600,7 +599,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
         updateStatus("Idle");
         await league.setGameAttributes({gamesInProgress: false});
         await updatePlayMenu();
-        api.realtimeUpdate(["g.gamesInProgress"]);
+        toUI('realtimeUpdate', ["g.gamesInProgress"]);
 
         // Check to see if the season is over
         if (g.phase < PHASE.PLAYOFFS) {
@@ -685,7 +684,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
 
         await advStats();
 
-        await api.realtimeUpdate(["gameSim"], url, raw);
+        await toUI('realtimeUpdate', ["gameSim"], url, raw);
 
         league.updateLastDbChange();
 
@@ -698,7 +697,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
             // Should a rare tragic event occur? ONLY IN REGULAR SEASON, playoffs would be tricky with roster limits and no free agents
             // 100 days in a season (roughly), and we want a death every 50 years on average
             await player.killOne();
-            api.realtimeUpdate(["playerMovement"]);
+            toUI('realtimeUpdate', ["playerMovement"]);
         }
         play(numDays - 1, false);
     };
@@ -785,7 +784,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
             if (userTeamSizeError === null) {
                 await league.setGameAttributes({gamesInProgress: true});
                 await updatePlayMenu();
-                api.realtimeUpdate(["g.gamesInProgress"]);
+                toUI('realtimeUpdate', ["g.gamesInProgress"]);
                 cbRunDay();
             } else {
                 updateStatus("Idle");

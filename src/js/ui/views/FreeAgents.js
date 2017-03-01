@@ -1,8 +1,7 @@
 import React from 'react';
 import {PHASE, g, helpers} from '../../common';
-import * as api from '../api';
 import {DataTable, HelpPopover, NewWindowLink, PlayerNameLabels} from '../components';
-import {getCols, setTitle} from '../util';
+import {getCols, setTitle, toWorker} from '../util';
 
 const FreeAgents = ({capSpace, gamesInProgress, minContract, numRosterSpots, phase, players}) => {
     setTitle('Free Agents');
@@ -24,7 +23,7 @@ const FreeAgents = ({capSpace, gamesInProgress, minContract, numRosterSpots, pha
             negotiateButton = <button
                 className="btn btn-default btn-xs"
                 disabled={gamesInProgress}
-                onClick={() => api.actions.negotiate(p.pid)}
+                onClick={() => toWorker('actions.negotiate', p.pid)}
             >Negotiate</button>;
         }
         return {

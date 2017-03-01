@@ -11,9 +11,12 @@ import type {Env} from '../common/types';
 
 registerPromiseWorker(([name, params]) => {
     if (!api.hasOwnProperty(name)) {
-        throw new Error(`API call to nonexistant worker function "${name}"`);
+        throw new Error(`API call to nonexistant worker function "${name}" with params ${JSON.stringify(params)}`);
     }
 
+    if (name.indexOf('actions.') === 0) {
+        return api.actions[name.replace('actions.')](...params);
+    }
     return api[name](...params);
 });
 

@@ -14,8 +14,7 @@ import Overlay from 'react-bootstrap/lib/Overlay';
 import Popover from 'react-bootstrap/lib/Popover';
 import ReactDOM from 'react-dom';
 import {helpers} from '../../common';
-import * as api from '../api';
-import {logEvent, realtimeUpdate} from '../util';
+import {logEvent, realtimeUpdate, toWorker} from '../util';
 import html2canvas from '../../vendor/html2canvas';
 import type {Option} from '../../common/types';
 
@@ -193,7 +192,7 @@ const handleScreenshotClick = e => {
 
 const handleToolsClick = (id, e) => {
     e.preventDefault();
-    api.actions.toolsMenu[id]();
+    toWorker('actions.toolsMenu[id]');
 };
 
 type DropdownLinksState = {
@@ -336,7 +335,7 @@ LogoAndText.propTypes = {
 const handleOptionClick = (option, e) => {
     if (!option.url) {
         e.preventDefault();
-        api.actions.playMenu[option.id]();
+        toWorker('actions.playMenu[option.id]');
     }
 };
 
@@ -368,7 +367,7 @@ class PlayMenu extends React.Component {
             if (option.url) {
                 realtimeUpdate([], option.url);
             } else {
-                api.actions.playMenu[option.id]();
+                toWorker('actions.playMenu[option.id]');
             }
         }
     }

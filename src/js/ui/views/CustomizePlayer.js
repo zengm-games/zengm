@@ -3,8 +3,7 @@
 import faces from 'facesjs';
 import React from 'react';
 import {PHASE, g, helpers} from '../../common';
-import * as api from '../api';
-import {realtimeUpdate, setTitle} from '../util';
+import {realtimeUpdate, setTitle, toWorker} from '../util';
 import {NewWindowLink, PlayerPicture} from '../components';
 
 const positions = ["PG", "SG", "SF", "PF", "C", "G", "GF", "F", "FC"];
@@ -150,7 +149,7 @@ class CustomizePlayer extends React.Component {
             p.imgURL = "";
         }
 
-        const pid = await api.upsertCustomizedPlayer(p, this.props.originalTid, this.props.season);
+        const pid = await toWorker('upsertCustomizedPlayer', p, this.props.originalTid, this.props.season);
 
         realtimeUpdate([], helpers.leagueUrl(["player", pid]));
     }

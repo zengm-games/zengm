@@ -1,8 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
-import * as api from '../api';
 import {NewWindowLink} from '../components';
-import {setTitle} from '../util';
+import {setTitle, toWorker} from '../util';
 
 const Live = ({games, gamesInProgress}) => {
     setTitle('Live Game Simulation');
@@ -19,7 +18,7 @@ const Live = ({games, gamesInProgress}) => {
                 key={gm.gid}
                 className={classNames('btn', 'btn-default', {'btn-success': gm.highlight})}
                 disabled={gamesInProgress}
-                onClick={() => api.actions.liveGame(gm.gid)}
+                onClick={() => toWorker('actions.liveGame', gm.gid)}
                 style={{float: 'left', margin: '0 1em 1em 0'}}
             >
                 {gm.awayRegion} {gm.awayName} at<br />

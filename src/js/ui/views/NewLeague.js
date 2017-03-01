@@ -1,7 +1,6 @@
 import React from 'react';
 import {helpers} from '../../common';
-import * as api from '../api';
-import {realtimeUpdate, setTitle} from '../util';
+import {realtimeUpdate, setTitle, toWorker} from '../util';
 
 const PopText = ({teams, tid}) => {
     let msg = <span>Region population: ?<br />Difficulty: ?</span>;
@@ -180,7 +179,7 @@ class NewLeague extends React.Component {
             startingSeason = leagueFile.startingSeason !== undefined ? leagueFile.startingSeason : startingSeason;
         }
 
-        const lid = await api.createLeague(this.state.name, this.state.tid, leagueFile, startingSeason, randomizeRosters);
+        const lid = await toWorker('createLeague', this.state.name, this.state.tid, leagueFile, startingSeason, randomizeRosters);
         realtimeUpdate([], `/l/${lid}`);
     }
 

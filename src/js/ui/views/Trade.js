@@ -1,8 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
 import {PHASE, g, helpers} from '../../common';
-import * as api from '../api';
-import {getCols, realtimeUpdate, setTitle} from '../util';
+import {getCols, realtimeUpdate, setTitle, toWorker} from '../util';
 import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
 
 const genRows = (players, handleChangeAsset) => {
@@ -72,7 +71,7 @@ class Trade extends React.Component {
             dpids: ids['other-dpids'],
         }];
 
-        await api.updateTrade(teams);
+        await toWorker('updateTrade', teams);
 
         realtimeUpdate();
     }
@@ -94,7 +93,7 @@ class Trade extends React.Component {
             dpids: [],
         }];
 
-        await api.createTrade(teams);
+        await toWorker('createTrade', teams);
 
         realtimeUpdate();
     }
@@ -105,7 +104,7 @@ class Trade extends React.Component {
             message: null,
         });
 
-        const message = await api.tradeCounterOffer();
+        const message = await toWorker('tradeCounterOffer');
 
         this.setState({
             asking: false,
@@ -119,7 +118,7 @@ class Trade extends React.Component {
         this.setState({
             message: null,
         });
-        await api.clearTrade();
+        await toWorker('clearTrade');
 
         realtimeUpdate();
     }
@@ -131,7 +130,7 @@ class Trade extends React.Component {
     }
 
     async handleClickPropose() {
-        const [accepted, message] = await api.proposeTrade(this.state.forceTrade);
+        const [accepted, message] = await toWorker('proposeTrade', this.state.forceTrade);
 
         this.setState({
             accepted,

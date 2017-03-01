@@ -3,10 +3,9 @@
 import Promise from 'bluebird';
 import _ from 'underscore';
 import {PHASE, PHASE_TEXT, PLAYER, g, helpers} from '../../common';
-import * as api from '../api';
 import {contractNegotiation, draft, finances, freeAgents, league, player, season, team} from '../core';
 import {getCopy, idb} from '../db';
-import {account, env, genMessage, logEvent, random, updatePhase, updatePlayMenu} from '../util';
+import {account, env, genMessage, logEvent, random, toUI, updatePhase, updatePlayMenu} from '../util';
 import type {Phase, UpdateEvents} from '../../common/types';
 
 /**
@@ -32,7 +31,7 @@ async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = 
     // Set lastDbChange last so there is no race condition (WHAT DOES THIS MEAN??)
     league.updateLastDbChange();
     updateEvents.push("newPhase");
-    api.realtimeUpdate(updateEvents, url);
+    toUI('realtimeUpdate', updateEvents, url);
 
     // If auto-simulating, initiate next action
     if (g.autoPlaySeasons > 0) {
@@ -98,7 +97,7 @@ async function newPhasePreseason() {
     await idb.cache.fill();
 
     if (env.enableLogging && !env.inCordova) {
-        api.emit('showAd', 'modal');
+        toUI('emit', 'showAd', 'modal');
     }
 
     return [undefined, ["playerMovement"]];
@@ -332,7 +331,7 @@ async function newPhaseBeforeDraft() {
         url = helpers.leagueUrl(["history"]);
     }
 
-    api.bbgmPing("season");
+    toUI('bbgmPing', "season");
 
     return [url, ["playerMovement"]];
 }

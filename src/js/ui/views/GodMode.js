@@ -1,8 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
 import {helpers} from '../../common';
-import * as api from '../api';
-import {logEvent, realtimeUpdate, setTitle} from '../util';
+import {logEvent, realtimeUpdate, setTitle, toWorker} from '../util';
 import {HelpPopover, NewWindowLink} from '../components';
 
 class GodMode extends React.Component {
@@ -64,7 +63,7 @@ class GodMode extends React.Component {
     async handleFormSubmit(e) {
         e.preventDefault();
 
-        await api.updateGameAttributes({
+        await toWorker('updateGameAttributes', {
             disableInjuries: this.state.disableInjuries === 'true',
             numGames: parseInt(this.state.numGames, 10),
             quarterLength: parseFloat(this.state.quarterLength),
@@ -97,7 +96,7 @@ class GodMode extends React.Component {
             attrs.godModeInPast = true;
         }
 
-        await api.updateGameAttributes(attrs);
+        await toWorker('updateGameAttributes', attrs);
 
         realtimeUpdate(["toggleGodMode"]);
     }

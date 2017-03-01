@@ -6,7 +6,7 @@ import {PHASE, PHASE_TEXT, PLAYER, g, helpers} from '../../common';
 import * as api from '../api';
 import {contractNegotiation, draft, finances, freeAgents, league, player, season, team} from '../core';
 import {getCopy, idb} from '../db';
-import {account, genMessage, logEvent, random, updatePhase, updatePlayMenu} from '../util';
+import {account, env, genMessage, logEvent, random, updatePhase, updatePlayMenu} from '../util';
 import type {Phase, UpdateEvents} from '../../common/types';
 
 /**
@@ -97,7 +97,7 @@ async function newPhasePreseason() {
     await idb.cache.flush();
     await idb.cache.fill();
 
-    if (window.enableLogging && !window.inCordova) {
+    if (env.enableLogging && !env.inCordova) {
         api.emit('showAd', 'modal');
     }
 

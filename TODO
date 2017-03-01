@@ -9,9 +9,9 @@ move everything but the UI to a web worker
   - output: worker.js
   - everything else
 - current todo
-  - remove references to window in worker
-    - move window variables to new "env" variable, somehow. contains constants derived from the environment (document/window) which never change after initial load
   - get it running in worker
+    - web worker API
+    - ui/worker api modules
 - does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
 - should checks to update data in worker/views be in worker, or could they be in UI somehow and avoid call to worker if update not needed?
 - index.js or app.js for main file in ui/worker?

@@ -132,6 +132,12 @@ export type Awards = {
 
 export type BackboardTx = any;
 
+export type Env = {
+    enableLogging: boolean,
+    inCordova: boolean,
+    tld: string,
+};
+
 export type Game = {
     att: number,
     gid: number,

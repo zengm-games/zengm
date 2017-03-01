@@ -5,6 +5,7 @@ export {default as advStats} from './advStats';
 export {default as beforeView} from './beforeView';
 export {default as changes} from './changes';
 export {default as checkNaNs} from './checkNaNs';
+export {default as env} from './env';
 export {default as genMessage} from './genMessage';
 export {default as injuries} from './injuries';
 export {default as lock} from './lock';

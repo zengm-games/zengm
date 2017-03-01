@@ -6,7 +6,7 @@ import $ from 'jquery';
 import {SPORT, g} from '../../common';
 import * as api from '../api';
 import {getCopy, idb} from '../db';
-import {logEvent} from '../util';
+import {env, logEvent} from '../util';
 import type {AchievementKey} from '../../common/types';
 
 // IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php
@@ -109,7 +109,7 @@ async function addAchievements(achievements: AchievementKey[], silent?: boolean 
     try {
         const data = await Promise.resolve($.ajax({
             type: "POST",
-            url: `//account.basketball-gm.${window.tld}/add_achievements.php`,
+            url: `//account.basketball-gm.${env.tld}/add_achievements.php`,
             data: {achievements, sport: SPORT},
             dataType: "json",
             xhrFields: {
@@ -131,7 +131,7 @@ async function check() {
     try {
         const data = await Promise.resolve($.ajax({
             type: "GET",
-            url: `//account.basketball-gm.${window.tld}/user_info.php`,
+            url: `//account.basketball-gm.${env.tld}/user_info.php`,
             data: `sport=${SPORT}`,
             dataType: "json",
             xhrFields: {
@@ -192,7 +192,7 @@ async function getAchievements() {
         // Handle any achievements stored in the cloud
         const achievementsRemote = await Promise.resolve($.ajax({
             type: "GET",
-            url: `//account.basketball-gm.${window.tld}/get_achievements.php`,
+            url: `//account.basketball-gm.${env.tld}/get_achievements.php`,
             data: `sport=${SPORT}`,
             dataType: "json",
             xhrFields: {

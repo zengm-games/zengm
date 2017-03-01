@@ -14,6 +14,7 @@ import Controller from './components/Controller';
 import * as processInputs from './processInputs';
 import {ads, genStaticPage, initView} from './util';
 import * as views from './views';
+import type {Env} from '../common/types';
 
 // Needed because of https://github.com/petkaantonov/bluebird/issues/363
 // Sadly only enabled in debug mode, due to weird interactions with Bugsnag: https://github.com/bugsnag/bugsnag-js/issues/181
@@ -42,7 +43,13 @@ const genPage = (id, inLeague = true) => {
 };
 
 (async () => {
-    await api.init();
+    const env: Env = {
+        enableLogging: window.enableLogging,
+        inCordova: window.inCordova,
+        tld: window.tld,
+    };
+
+    await api.init(env);
 
     ReactDOM.render(<Controller />, document.getElementById('content'));
 

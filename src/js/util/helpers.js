@@ -1,7 +1,6 @@
 // @flow
 
 import orderBy from 'lodash.orderby';
-import React from 'react';
 import {PLAYER, g} from '../common';
 import type {GameProcessed, GameProcessedCompleted, Pick, TeamBasic} from '../common/types';
 
@@ -172,23 +171,6 @@ function deepCopy<T>(obj: T): T {
         retVal[key] = deepCopy(obj[key]);
     }
     return retVal;
-}
-
-function error(errorText: React.Element<*> | string, cb: Function) {
-    // eslint-disable-next-line global-require
-    const views = require('../ui/views');
-    const view = views.staticPage('error', 'Error', false, <div>
-        <h1>Error</h1>
-
-        {errorText}
-    </div>);
-
-    view.get({raw: {}}, () => {
-        throw new Error('Fake "next" function - this should never be called!');
-    });
-    if (cb) {
-        cb();
-    }
 }
 
 // Hacky solution to http://stackoverflow.com/q/39683076/786644
@@ -483,7 +465,6 @@ export {
     addPopRank,
     getTeamsDefault,
     deepCopy,
-    error,
     keys,
     resetG,
     bbgmPing,

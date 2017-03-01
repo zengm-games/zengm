@@ -35,11 +35,15 @@ lastDbChange still needed?
 
 for modules that should always be consumed as whole (core/*), export default object and then re-export in index.js
 
+helpers.resetG needs to run in ui and worker
+
 things like gameSimInProgress, phaseChangeInProgress... why ever save to db? maybe take out of gameAttributes
 
 bbgm.g.cache.flush().then(() => console.log('done'));
 fucked = false; Object.values(bbgm.g.cache.indexes.teamSeasonsBySeasonTid).forEach((ts) => { if (ts.hasOwnProperty('ast')) { console.log(ts); fucked = true } }); if (fucked) { throw new Error('FUCK'); }
 bbgm.league.setGameAttributes({phaseChangeInProgress: false})
+
+Better "League not found error page"
 
 draft tests fail sometimes
 - should give reverse round 2 order for teams with the same record

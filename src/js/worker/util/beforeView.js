@@ -1,6 +1,5 @@
 // @flow
 
-import React from 'react';
 import {Cache, connectLeague, idb} from '../db';
 import {g} from '../../common';
 import * as api from '../api';
@@ -50,8 +49,8 @@ const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEv
         // Make sure this league exists before proceeding
         const l = await idb.meta.leagues.get(g.lid);
         if (l === undefined) {
-            helpers.error(<span>League not found. <a href="/new_league">Create a new league</a> or <a href="/">load an existing league</a> to play!</span>, ctxCb, true);
-            return [[], () => {}, 'abort'];
+            // League not found. <a href="/new_league">Create a new league</a> or <a href="/">load an existing league</a> to play!
+            throw new Error('League not found');
         }
 
         idb.league = await connectLeague(g.lid);

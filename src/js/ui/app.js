@@ -12,9 +12,8 @@ import ReactDOM from 'react-dom';
 import * as api from './api';
 import Controller from './components/Controller';
 import * as processInputs from './processInputs';
-import {ads, initView, setTitle} from './util';
+import {ads, genStaticPage, initView} from './util';
 import * as views from './views';
-import * as helpers from '../util/helpers';
 
 // Needed because of https://github.com/petkaantonov/bluebird/issues/363
 // Sadly only enabled in debug mode, due to weird interactions with Bugsnag: https://github.com/bugsnag/bugsnag-js/issues/181
@@ -25,18 +24,6 @@ if (localStorage.getItem('debug') === 'debug') {
 // Overwrite Promise object globally so Babel uses it when transpiling async/await (not totally sure if necessary)
 window.Promise = Promise;
 window.Promise.config({warnings: false});
-
-const genStaticPage = (name: string, title: string, content: React.Element<*>, inLeague: boolean) => {
-    return initView({
-        id: name,
-        inLeague,
-        Component: () => {
-            setTitle(title);
-
-            return content;
-        },
-    });
-};
 
 const Manual = <div>
     <h1>Manual</h1>
@@ -186,7 +173,7 @@ const genPage = (id, inLeague = true) => {
         if (!ctx.bbgm || !ctx.bbgm.handled) {
             const ErrorPage = <div>
                 <h1>Error</h1>
-                <p>Page not found.</p>
+                <h2>Page not found.</h2>
             </div>;
             const errorPage = genStaticPage('error', 'Error', ErrorPage, false);
             errorPage(ctx, next);

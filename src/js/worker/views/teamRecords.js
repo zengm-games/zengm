@@ -1,14 +1,9 @@
 import Promise from 'bluebird';
-import React from 'react';
 import _ from 'underscore';
 import {g} from '../../common';
 import {getCopy} from '../db';
 import * as helpers from '../../util/helpers';
 import type {GetOutput, UpdateEvents} from '../../common/types';
-
-function getTeamLink(t) {
-    return <a href={helpers.leagueUrl(["team_history", t.abbrev])}>{t.region} {t.name}</a>;
-}
 
 function getTeamRecord(t, awards) {
     let totalWon = 0;
@@ -38,7 +33,11 @@ function getTeamRecord(t, awards) {
 
     return {
         id: t.tid,
-        team: getTeamLink(t),
+        team: {
+            abbrev: t.abbrev,
+            name: t.name,
+            region: t.region,
+        },
         cid: t.cid,
         did: t.did,
         won: totalWon,

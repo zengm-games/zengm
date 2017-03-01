@@ -3,6 +3,10 @@ import {getCols, setTitle} from '../util';
 import * as helpers from '../../util/helpers';
 import {DataTable, Dropdown, NewWindowLink} from '../components';
 
+const teamLink = (t) => {
+    return <a href={helpers.leagueUrl(['team_history', t.abbrev])}>{t.region} {t.name}</a>;
+};
+
 const TeamRecords = ({byType, displayName, seasonCount, teamRecords}) => {
     setTitle('Team Records');
 
@@ -17,7 +21,7 @@ const TeamRecords = ({byType, displayName, seasonCount, teamRecords}) => {
         return {
             key: tr.id,
             data: [
-                tr.team,
+                teamLink(tr.team),
                 tr.won,
                 tr.lost,
                 tr.winp,

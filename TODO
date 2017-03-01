@@ -8,19 +8,15 @@ move everything but the UI to a web worker
 - worker folder
   - output: worker.js
   - everything else
-- never use g in views?
-  - ignore for now, just write code to keep g in sync in both places
-  - what about emitter?
 - current todo
   - remove references to window in worker
     - move window variables to new "env" variable, somehow. contains constants derived from the environment (document/window) which never change after initial load
-  - how to ensure that files are not required into both ui and worker inadvertently?
-  - restore runWhenever ability (really necessary? was only used in gameLog)
+  - get it running in worker
 - does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
 - should checks to update data in worker/views be in worker, or could they be in UI somehow and avoid call to worker if update not needed?
 - index.js or app.js for main file in ui/worker?
-- bbgmPing needs to be done in ui through API
-- write lint script to check for ui/worker cross-contamination. also document/window/react in worker
+- write lint script to check for ui/worker cross-contamination. also document/window/react in worker. also any of that stuff in common.
+- restore runWhenever ability (really necessary? was only used in gameLog)
 
 lastDbChange still needed?
 
@@ -34,7 +30,7 @@ bbgm.g.cache.flush().then(() => console.log('done'));
 fucked = false; Object.values(bbgm.g.cache.indexes.teamSeasonsBySeasonTid).forEach((ts) => { if (ts.hasOwnProperty('ast')) { console.log(ts); fucked = true } }); if (fucked) { throw new Error('FUCK'); }
 bbgm.league.setGameAttributes({phaseChangeInProgress: false})
 
-Better "League not found error page"
+Better "League not found" error page
 
 draft tests fail sometimes
 - should give reverse round 2 order for teams with the same record

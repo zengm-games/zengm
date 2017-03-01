@@ -4,14 +4,7 @@ import Promise from 'bluebird';
 import _ from 'underscore';
 import {PHASE, PHASE_TEXT, PLAYER, g, helpers} from '../../common';
 import * as api from '../api';
-import * as contractNegotiation from './contractNegotiation';
-import * as draft from './draft';
-import * as finances from './finances';
-import * as freeAgents from './freeAgents';
-import * as league from './league';
-import * as player from './player';
-import * as season from './season';
-import * as team from './team';
+import {contractNegotiation, draft, finances, freeAgents, league, player, season, team} from '../core';
 import {getCopy, idb} from '../db';
 import {account, genMessage, logEvent, random, updatePhase, updatePlayMenu} from '../util';
 import type {Phase, UpdateEvents} from '../../common/types';
@@ -339,7 +332,7 @@ async function newPhaseBeforeDraft() {
         url = helpers.leagueUrl(["history"]);
     }
 
-    helpers.bbgmPing("season");
+    api.bbgmPing("season");
 
     return [url, ["playerMovement"]];
 }

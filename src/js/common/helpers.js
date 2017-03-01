@@ -194,24 +194,6 @@ function resetG() {
 }
 
 /**
- * Ping a counter at basketball-gm.com.
- *
- * This should only do something if it isn't being run from a unit test and it's actually on basketball-gm.com.
- *
- * @memberOf util.helpers
- * @param {string} type Either "league" for a new league, or "season" for a completed season
- */
-function bbgmPing(type: 'league' | 'season') {
-    if (window.enableLogging && window.ga) {
-        if (type === "league") {
-            window.ga('send', 'event', 'BBGM', 'New league', String(g.lid));
-        } else if (type === "season" && g.autoPlaySeasons === 0) {
-            window.ga('send', 'event', 'BBGM', 'Completed season', String(g.season));
-        }
-    }
-}
-
-/**
  * Create a URL for a page within a league.
  *
  * @param {Array.<string|number>} components Array of components for the URL after the league ID, which will be combined with / in between.
@@ -467,7 +449,6 @@ export default {
     deepCopy,
     keys,
     resetG,
-    bbgmPing,
     nullPad,
     formatCurrency,
     numberWithCommas,

@@ -1,8 +1,27 @@
 // @flow
 
+import {g} from '../common';
 import {ads, emitter, realtimeUpdate} from '../ui/util';
 import {showEvent} from '../ui/util/logEvent';
 import type {GameAttributes, LogEventShowOptions, UpdateEvents} from '../common/types';
+
+/**
+ * Ping a counter at basketball-gm.com.
+ *
+ * This should only do something if it isn't being run from a unit test and it's actually on basketball-gm.com.
+ *
+ * @memberOf util.helpers
+ * @param {string} type Either "league" for a new league, or "season" for a completed season
+ */
+const bbgmPing = (type: 'league' | 'season') => {
+    if (window.enableLogging && window.ga) {
+        if (type === 'league') {
+            window.ga('send', 'event', 'BBGM', 'New league', String(g.lid));
+        } else if (type === 'season') {
+            window.ga('send', 'event', 'BBGM', 'Completed season', String(g.season));
+        }
+    }
+};
 
 const emit = (name: string, content: any) => {
     emitter.emit(name, content);
@@ -11,7 +30,7 @@ const emit = (name: string, content: any) => {
 const initAds = (goldUntil: number | void) => {
     // No ads for Gold members
     const currentTimestamp = Math.floor(Date.now() / 1000);
-    if (currentTimestamp > goldUntil) {
+    if (goldUntil === undefined || currentTimestamp > goldUntil) {
         let el;
         el = document.getElementById('banner-ad-top-wrapper');
         if (el) {
@@ -64,6 +83,7 @@ const showEvent2 = (options: LogEventShowOptions) => {
 };
 
 export {
+    bbgmPing,
     emit,
     initAds,
     notifyException,

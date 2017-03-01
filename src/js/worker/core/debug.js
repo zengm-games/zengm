@@ -3,7 +3,6 @@
 // Functions only used for debugging the game, particularly balance issues. This should not be included or loaded in the compiled version.
 
 import backboard from 'backboard';
-import _ from 'underscore';
 import {PLAYER} from '../../common';
 import * as player from './player';
 import {getCopy, idb} from '../db';

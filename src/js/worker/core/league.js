@@ -6,14 +6,7 @@ import _ from 'underscore';
 import {Cache, connectLeague, idb} from '../db';
 import {PHASE, PHASE_TEXT, PLAYER, g, helpers} from '../../common';
 import * as api from '../api';
-import * as draft from './draft';
-import * as finances from './finances';
-import * as freeAgents from './freeAgents';
-import * as game from './game';
-import * as phase from './phase';
-import * as player from './player';
-import * as season from './season';
-import * as team from './team';
+import {draft, finances, freeAgents, game, phase, player, season, team} from '../core';
 import {random, updatePhase, updateStatus} from '../util';
 import type {GameAttributes} from '../../common/types';
 
@@ -447,14 +440,13 @@ async function create(
                 // Update contract based on development. Only write contract to player log if not a free agent.
                 player.setContract(p, player.genContract(p, randomizeExp), p.tid >= 0);
 
-                // Save to database
+                // Save to database, adding pid
                 await idb.cache.add('players', p);
 
-                // Needs pid, so must be called after put
+                // Needs pid, so must be called after add
                 if (p.tid === PLAYER.FREE_AGENT) {
                     player.addToFreeAgents(p, g.phase, baseMoods);
                 } else {
-                    // $FlowFixMe
                     await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
                 }
             }
@@ -508,7 +500,7 @@ async function create(
 
     await idb.cache.flush();
 
-    helpers.bbgmPing("league");
+    api.bbgmPing("league");
 
     return lid;
 }

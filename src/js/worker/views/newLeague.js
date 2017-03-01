@@ -13,7 +13,7 @@ async function updateNewLeague(): void | {[key: string]: any} {
         newLid = 1;
     }
 
-    let lastSelectedTid = parseInt(localStorage.lastSelectedTid, 10);
+    let lastSelectedTid = parseInt(localStorage.getItem('lastSelectedTid'), 10);
     if (isNaN(lastSelectedTid)) {
         lastSelectedTid = -1;
     }

@@ -5,12 +5,11 @@ import Promise from 'bluebird';
 import _ from 'underscore';
 import {PHASE, PLAYER, g, helpers} from '../../common';
 import actions from './actions';
-import {init} from '..';
 import {contractNegotiation, draft, finances, league, phase, player, team, trade} from '../core';
-import {getCopy, idb} from '../db';
-import {account, beforeView, random, updatePlayMenu, updateStatus} from '../util';
+import {connectMeta, getCopy, idb} from '../db';
+import {account, beforeView, changes, checkNaNs, env, random, updatePlayMenu, updateStatus} from '../util';
 import * as views from '../views';
-import type {GameAttributes, GetOutput, PageCtx, Player, PlayerWithoutPid, UpdateEvents} from '../../common/types';
+import type {Env, GameAttributes, GetOutput, PageCtx, Player, PlayerWithoutPid, UpdateEvents} from '../../common/types';
 
 const acceptContractNegotiation = async (pid: number, amount: number, exp: number): Promise<?string> => {
     return contractNegotiation.accept(pid, amount, exp);
@@ -459,6 +458,20 @@ const handleUploadedDraftClass = async (uploadedFile: any, seasonOffset: 0 | 1 |
             await draft.genPlayers(draftClassTid, scoutingRank, 70 - players.length);
         }
     });
+};
+
+const init = async (inputEnv: Env) => {
+    env.enableLogging = inputEnv.enableLogging;
+    env.inCordova = inputEnv.inCordova;
+    env.tld = inputEnv.tld;
+
+    // NaN detection
+    checkNaNs();
+
+    // Any news?
+    changes.check();
+
+    idb.meta = await connectMeta();
 };
 
 const releasePlayer = async (pid: number, justDrafted: boolean) => {

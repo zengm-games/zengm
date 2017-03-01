@@ -1,13 +1,12 @@
 // @flow
 
 import {PHASE, g, helpers} from '../../common';
-import {realtimeUpdate} from '../api';
 import {contractNegotiation, draft, freeAgents, game, league, phase, season, trade} from '../core';
 import {idb, reset} from '../db';
-import {logEvent, updatePlayMenu, updateStatus} from '../util';
+import {logEvent, toUI, updatePlayMenu, updateStatus} from '../util';
 
 const liveGame = async (gid: number) => {
-    await realtimeUpdate([], helpers.leagueUrl(["live_game"]), {fromAction: true});
+    await toUI('realtimeUpdate', [], helpers.leagueUrl(["live_game"]), {fromAction: true});
     game.play(1, true, gid);
 };
 
@@ -23,10 +22,10 @@ const negotiate = async (pid: number) => {
                 saveToDb: false,
             });
         } else {
-            realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));
+            toUI('realtimeUpdate', [], helpers.leagueUrl(["negotiation", pid]));
         }
     } else {
-        realtimeUpdate([], helpers.leagueUrl(["negotiation", pid]));
+        toUI('realtimeUpdate', [], helpers.leagueUrl(["negotiation", pid]));
     }
 };
 
@@ -74,7 +73,7 @@ const tradeFor = async ({otherDpids, otherPids, pid, tid, userDpids, userPids}: 
 
     // Start a new trade based on a list of pids and dpids, like from the trading block
     await trade.create(teams);
-    realtimeUpdate([], helpers.leagueUrl(["trade"]));
+    toUI('realtimeUpdate', [], helpers.leagueUrl(["trade"]));
     league.updateLastDbChange();
 };
 

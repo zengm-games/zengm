@@ -35,6 +35,8 @@ lastDbChange still needed?
 
 for modules that should always be consumed as whole (core/*), export default object and then re-export in index.js
 
+things like gameSimInProgress, phaseChangeInProgress... why ever save to db? maybe take out of gameAttributes
+
 bbgm.g.cache.flush().then(() => console.log('done'));
 fucked = false; Object.values(bbgm.g.cache.indexes.teamSeasonsBySeasonTid).forEach((ts) => { if (ts.hasOwnProperty('ast')) { console.log(ts); fucked = true } }); if (fucked) { throw new Error('FUCK'); }
 bbgm.league.setGameAttributes({phaseChangeInProgress: false})

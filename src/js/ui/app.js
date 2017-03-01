@@ -184,10 +184,15 @@ const genPage = (id, inLeague = true) => {
 
     page('*', (ctx, next) => {
         if (!ctx.bbgm || !ctx.bbgm.handled) {
-            helpers.error('Page not found.', ctx.bbgm.cb);
-            ctx.bbgm.handled = true;
+            const ErrorPage = <div>
+                <h1>Error</h1>
+                <p>Page not found.</p>
+            </div>;
+            const errorPage = genStaticPage('error', 'Error', ErrorPage, false);
+            errorPage(ctx, next);
+        } else {
+            next();
         }
-        next();
     });
 
     // This will run after all the routes defined above, because they all call next()

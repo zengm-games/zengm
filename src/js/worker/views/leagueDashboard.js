@@ -327,7 +327,7 @@ async function updateStandings(
             }
         }
 
-        const playoffsByConference = g.confs.length === 2 && !localStorage.getItem('top16playoffs');
+        const playoffsByConference = g.confs.length === 2;// && !localStorage.getItem('top16playoffs');
 
         return {
             confTeams,

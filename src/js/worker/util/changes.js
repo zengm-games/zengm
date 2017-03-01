@@ -116,7 +116,7 @@ const all = [{
 }];
 
 function check() {
-    // Don't show anything on first visit
+/*    // Don't show anything on first visit
     if (localStorage.getItem('changesRead') === null) {
         localStorage.setItem('changesRead', String(all.length));
     }
@@ -151,7 +151,7 @@ function check() {
         });
 
         localStorage.setItem('changesRead', String(all.length));
-    }
+    }*/
 }
 
 export default {

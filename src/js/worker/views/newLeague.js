@@ -13,10 +13,10 @@ async function updateNewLeague(): void | {[key: string]: any} {
         newLid = 1;
     }
 
-    let lastSelectedTid = parseInt(localStorage.getItem('lastSelectedTid'), 10);
+    const lastSelectedTid = -1;/*parseInt(localStorage.getItem('lastSelectedTid'), 10);
     if (isNaN(lastSelectedTid)) {
         lastSelectedTid = -1;
-    }
+    }*/
 
     return {
         name: `League ${newLid}`,

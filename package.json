@@ -7,7 +7,6 @@
     "url": "https://github.com/dumbmatter/basketball-gm/issues"
   },
   "author": "Jeremy Scheff <jdscheff@gmail.com>",
-  "main": "js/app.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/dumbmatter/basketball-gm.git"

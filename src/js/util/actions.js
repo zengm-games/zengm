@@ -3,14 +3,7 @@
 import {idb, reset} from '../worker/db';
 import {PHASE, g, helpers} from '../common';
 import {logEvent, realtimeUpdate} from '../ui/util';
-import * as contractNegotiation from '../worker/core/contractNegotiation';
-import * as draft from '../worker/core/draft';
-import * as freeAgents from '../worker/core/freeAgents';
-import * as game from '../worker/core/game';
-import * as league from '../worker/core/league';
-import * as phase from '../worker/core/phase';
-import * as season from '../worker/core/season';
-import * as trade from '../worker/core/trade';
+import {contractNegotiation, draft, freeAgents, game, league, phase, season, trade} from '../worker/core';
 import {updatePlayMenu, updateStatus} from '../worker/util';
 
 const liveGame = async (gid: number) => {

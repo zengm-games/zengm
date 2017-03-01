@@ -41,7 +41,7 @@ async function updatePlayers(inputs, updateEvents) {
                     players[i].teamSums[tid] = EWA;
                 }
             }
-            players[i].legacyTid = parseInt(Object.keys(players[i].teamSums).reduce((teamA, teamB) => (players[i].teamSums[teamA] > players[i].teamSums[teamB] ? teamA : teamB)));
+            players[i].legacyTid = parseInt(Object.keys(players[i].teamSums).reduce((teamA, teamB) => (players[i].teamSums[teamA] > players[i].teamSums[teamB] ? teamA : teamB)), 10);
         }
 
         return {

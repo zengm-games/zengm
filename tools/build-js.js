@@ -11,8 +11,10 @@ const fs = require('fs');
 
 console.log('Bundling JavaScript files...');
 
-browserify('src/js/ui/index.js', {debug: true})
-    .transform({global: true}, envify({NODE_ENV: 'production'}))
-    .bundle()
-    .pipe(exorcist('build/gen/app.js.map'))
-    .pipe(fs.createWriteStream('build/gen/app.js'));
+for (const name of ['ui', 'worker']) {
+    browserify(`src/js/${name}/index.js`, {debug: true})
+        .transform({global: true}, envify({NODE_ENV: 'production'}))
+        .bundle()
+        .pipe(exorcist(`build/gen/${name}.js.map`))
+        .pipe(fs.createWriteStream(`build/gen/${name}.js`));
+}

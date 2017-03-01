@@ -5,11 +5,13 @@ const UglifyJS = require('uglify-js');
 
 console.log('Minifying JS bundle...\nWARNING: This is likely to cause bugs');
 
-const result = UglifyJS.minify('build/gen/app.js', {
-    inSourceMap: 'build/gen/app.js.map',
-    outSourceMap: 'build/gen/app.js.map',
-    sourceMapUrl: 'app.js.map',
-});
+for (const name of ['ui', 'worker']) {
+    const result = UglifyJS.minify(`build/gen/${name}.js`, {
+        inSourceMap: `build/gen/${name}.js.map`,
+        outSourceMap: `build/gen/${name}.js.map`,
+        sourceMapUrl: `${name}.js.map`,
+    });
 
-fs.writeFileSync('build/gen/app.js', result.code);
-fs.writeFileSync('build/gen/app.js.map', result.map);
+    fs.writeFileSync(`build/gen/${name}.js`, result.code);
+    fs.writeFileSync(`build/gen/${name}.js.map`, result.map);
+}

@@ -2499,6 +2499,11 @@
       "resolved": "https://registry.npmjs.org/ignore/-/ignore-3.2.2.tgz",
       "dev": true
     },
+    "immediate": {
+      "version": "3.0.6",
+      "from": "immediate@>=3.0.5 <3.1.0",
+      "resolved": "https://registry.npmjs.org/immediate/-/immediate-3.0.6.tgz"
+    },
     "imurmurhash": {
       "version": "0.1.4",
       "from": "imurmurhash@>=0.1.4 <0.2.0",
@@ -2706,6 +2711,11 @@
       "from": "is-primitive@>=2.0.0 <3.0.0",
       "resolved": "https://registry.npmjs.org/is-primitive/-/is-primitive-2.0.0.tgz",
       "dev": true
+    },
+    "is-promise": {
+      "version": "2.1.0",
+      "from": "is-promise@>=2.1.0 <3.0.0",
+      "resolved": "https://registry.npmjs.org/is-promise/-/is-promise-2.1.0.tgz"
     },
     "is-property": {
       "version": "1.0.2",
@@ -3113,6 +3123,11 @@
       "from": "lexical-scope@>=1.2.0 <2.0.0",
       "resolved": "https://registry.npmjs.org/lexical-scope/-/lexical-scope-1.2.0.tgz",
       "dev": true
+    },
+    "lie": {
+      "version": "3.1.1",
+      "from": "lie@>=3.0.2 <4.0.0",
+      "resolved": "https://registry.npmjs.org/lie/-/lie-3.1.1.tgz"
     },
     "load-json-file": {
       "version": "1.1.0",
@@ -3934,6 +3949,11 @@
       "version": "7.1.1",
       "from": "promise@>=7.1.1 <8.0.0",
       "resolved": "https://registry.npmjs.org/promise/-/promise-7.1.1.tgz"
+    },
+    "promise-worker": {
+      "version": "1.1.1",
+      "from": "promise-worker@latest",
+      "resolved": "https://registry.npmjs.org/promise-worker/-/promise-worker-1.1.1.tgz"
     },
     "pseudomap": {
       "version": "1.0.2",

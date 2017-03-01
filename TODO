@@ -10,8 +10,9 @@ move everything but the UI to a web worker
   - everything else
 - current todo
   - get it running in worker
-    - web worker API
     - ui/worker api modules
+      - swap current API modules, keep as is
+      - create new toUi and toWorker functions that just serve to call them, like toUi('realtimeUpdate', arg1, arg2)
 - does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
 - should checks to update data in worker/views be in worker, or could they be in UI somehow and avoid call to worker if update not needed?
 - write lint script to check for ui/worker cross-contamination. also document/window/react in worker. also any of that stuff in common.
@@ -28,6 +29,8 @@ things like gameSimInProgress, phaseChangeInProgress... why ever save to db? may
 bbgm.g.cache.flush().then(() => console.log('done'));
 fucked = false; Object.values(bbgm.g.cache.indexes.teamSeasonsBySeasonTid).forEach((ts) => { if (ts.hasOwnProperty('ast')) { console.log(ts); fucked = true } }); if (fucked) { throw new Error('FUCK'); }
 bbgm.league.setGameAttributes({phaseChangeInProgress: false})
+
+how to deal with debug mode in worker? relies on localstorage
 
 Better "League not found" error page
 

@@ -2,14 +2,21 @@
 
 import backboard from 'backboard';
 import Promise from 'bluebird';
+import PromiseWorker from 'promise-worker';
 import _ from 'underscore';
 import {PHASE, PLAYER, g, helpers} from '../../common';
 import actions from './actions';
 import {account, beforeView, random, updatePlayMenu, updateStatus} from '../../worker/util';
-import {init, views} from '../../worker';
+import {init} from '../../worker';
 import {contractNegotiation, draft, finances, league, phase, player, team, trade} from '../../worker/core';
 import {getCopy, idb} from '../../worker/db';
+import * as views from '../../worker/views';
 import type {GameAttributes, GetOutput, PageCtx, Player, PlayerWithoutPid, UpdateEvents} from '../../common/types';
+
+const worker = new Worker('/gen/worker.js');
+const promiseWorker = new PromiseWorker(worker);
+
+promiseWorker.postMessage('ping').then(foo => console.log('ui', foo));
 
 const acceptContractNegotiation = async (pid: number, amount: number, exp: number): Promise<?string> => {
     return contractNegotiation.accept(pid, amount, exp);

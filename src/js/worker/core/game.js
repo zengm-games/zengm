@@ -685,22 +685,22 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
 
         await advStats();
 
-        api.realtimeUpdate(["gameSim"], url, async () => {
-            league.updateLastDbChange();
+        await api.realtimeUpdate(["gameSim"], url, raw);
 
-            if (g.phase === PHASE.PLAYOFFS) {
-                const playoffsOver = await season.newSchedulePlayoffsDay();
-                if (playoffsOver) {
-                    await phase.newPhase(PHASE.BEFORE_DRAFT);
-                }
-            } else if (Math.random() < 1 / (100 * 50)) {
-                // Should a rare tragic event occur? ONLY IN REGULAR SEASON, playoffs would be tricky with roster limits and no free agents
-                // 100 days in a season (roughly), and we want a death every 50 years on average
-                await player.killOne();
-                api.realtimeUpdate(["playerMovement"]);
+        league.updateLastDbChange();
+
+        if (g.phase === PHASE.PLAYOFFS) {
+            const playoffsOver = await season.newSchedulePlayoffsDay();
+            if (playoffsOver) {
+                await phase.newPhase(PHASE.BEFORE_DRAFT);
             }
-            play(numDays - 1, false);
-        }, raw);
+        } else if (Math.random() < 1 / (100 * 50)) {
+            // Should a rare tragic event occur? ONLY IN REGULAR SEASON, playoffs would be tricky with roster limits and no free agents
+            // 100 days in a season (roughly), and we want a death every 50 years on average
+            await player.killOne();
+            api.realtimeUpdate(["playerMovement"]);
+        }
+        play(numDays - 1, false);
     };
 
     // Simulates a day of games (whatever is in schedule) and passes the results to cbSaveResults

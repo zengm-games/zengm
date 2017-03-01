@@ -190,10 +190,9 @@ async function play(numDays: number, start?: boolean = true) {
             await autoSign();
             await league.setGameAttributes({daysLeft: g.daysLeft - 1, lastDbChange: Date.now()});
             if (g.daysLeft > 0 && numDays > 0) {
-                api.realtimeUpdate(["playerMovement"], undefined, () => {
-                    updateStatus(`${g.daysLeft} days left`);
-                    play(numDays - 1, false);
-                });
+                await api.realtimeUpdate(["playerMovement"]);
+                updateStatus(`${g.daysLeft} days left`);
+                play(numDays - 1, false);
             } else {
                 cbNoDays();
             }

@@ -11,36 +11,37 @@ import type {UpdateEvents} from '../../common/types';
  * @memberOf ui
  * @param {Array.<string>=} updateEvents Optional array of strings containing information about what caused this update, e.g. "gameSim" or "playerMovement".
  * @param {string=} url Optional URL to redirect to. The current URL is used if this is not defined. If this URL is either undefined or the same as location.pathname, it is considered to be an "refresh" and no entry in the history or stat tracker is made. Otherwise, it's considered to be a new pageview.
- * @param {function()=} cb Optional callback that will run after the page updates.
  * @param {Object=} raw Optional object passed through to the page.js request context's bbgm property.
  */
-function realtimeUpdate(updateEvents: UpdateEvents = [], url?: string, cb?: Function, raw?: Object = {}) {
-    url = url !== undefined ? url : location.pathname + location.search;
+async function realtimeUpdate(updateEvents: UpdateEvents = [], url?: string, raw?: Object = {}) {
+    return new Promise((resolve) => {
+        url = url !== undefined ? url : location.pathname + location.search;
 
-    const inLeague = url.substr(0, 3) === "/l/"; // Check the URL to be redirected to, not the current league (g.lid)
-    const refresh = url === location.pathname && inLeague;
+        const inLeague = url.substr(0, 3) === "/l/"; // Check the URL to be redirected to, not the current league (g.lid)
+        const refresh = url === location.pathname && inLeague;
 
-    const ctx = new page.Context(url);
-    ctx.bbgm = {};
-    for (const key of Object.keys(raw)) {
-        ctx.bbgm[key] = raw[key];
-    }
-    ctx.bbgm.updateEvents = updateEvents;
-    ctx.bbgm.cb = cb;
-    if (refresh) {
-        ctx.bbgm.noTrack = true;
-    }
-    page.current = ctx.path;
+        const ctx = new page.Context(url);
+        ctx.bbgm = {};
+        for (const key of Object.keys(raw)) {
+            ctx.bbgm[key] = raw[key];
+        }
+        ctx.bbgm.updateEvents = updateEvents;
+        ctx.bbgm.cb = () => resolve();
+        if (refresh) {
+            ctx.bbgm.noTrack = true;
+        }
+        page.current = ctx.path;
 
-    // This prevents the Create New League form from inappropriately refreshing after it is submitted
-    if (refresh) {
-        page.dispatch(ctx);
-    } else if (inLeague || url === "/" || url.indexOf("/account") === 0) {
-        page.dispatch(ctx);
-        ctx.pushState();
-    } else if (cb !== undefined) {
-        cb();
-    }
+        // This prevents the Create New League form from inappropriately refreshing after it is submitted
+        if (refresh) {
+            page.dispatch(ctx);
+        } else if (inLeague || url === "/" || url.indexOf("/account") === 0) {
+            page.dispatch(ctx);
+            ctx.pushState();
+        } else {
+            resolve();
+        }
+    });
 }
 
 export default realtimeUpdate;

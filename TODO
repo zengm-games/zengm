@@ -24,8 +24,6 @@ move everything but the UI to a web worker
   - restore runWhenever ability (really necessary? was only used in gameLog)
 - does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
 - should checks to update data in worker/views be in worker, or could they be in UI somehow and avoid call to worker if update not needed?
-- things in API using callback functions won't work across web workers
-  - for realtimeUpdate, make async, and then manually do callback code after awaiting?
 - index.js or app.js for main file in ui/worker?
 - bbgmPing needs to be done in ui through API
 - write lint script to check for ui/worker cross-contamination. also DB/cache in ui, document/window in worker

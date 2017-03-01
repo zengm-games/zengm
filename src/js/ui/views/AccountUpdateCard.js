@@ -81,7 +81,7 @@ class AccountUpdateCard extends React.Component {
                             withCredentials: true,
                         },
                     }));
-                    realtimeUpdate(["account"], "/account", undefined, {goldResult: data});
+                    realtimeUpdate(["account"], "/account", {goldResult: data});
                 } catch (err) {
                     console.log(err);
                     this.setState({

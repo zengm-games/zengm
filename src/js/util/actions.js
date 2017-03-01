@@ -14,9 +14,8 @@ import * as trade from '../worker/core/trade';
 import {updatePlayMenu, updateStatus} from '../worker/util';
 
 const liveGame = async (gid: number) => {
-    realtimeUpdate([], helpers.leagueUrl(["live_game"]), () => {
-        game.play(1, true, gid);
-    }, {fromAction: true});
+    await realtimeUpdate([], helpers.leagueUrl(["live_game"]), {fromAction: true});
+    game.play(1, true, gid);
 };
 
 const negotiate = async (pid: number) => {

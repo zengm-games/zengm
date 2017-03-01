@@ -8,8 +8,8 @@ const emit = (name: string, content: any) => {
     emitter.emit(name, content);
 };
 
-function realtimeUpdate2(updateEvents: UpdateEvents = [], url?: string, cb?: Function, raw?: Object = {}) {
-    realtimeUpdate(updateEvents, url, cb, raw);
+async function realtimeUpdate2(updateEvents: UpdateEvents = [], url?: string, raw?: Object = {}) {
+    await realtimeUpdate(updateEvents, url, raw);
 }
 
 const setGameAttributes = (gameAttributes: GameAttributes) => {

@@ -161,10 +161,11 @@ class Controller extends React.Component {
         }
 
         if (typeof inputs.redirectUrl === 'string') {
-            return realtimeUpdate([], inputs.redirectUrl, cb);
+            await realtimeUpdate([], inputs.redirectUrl);
+            cb();
+        } else {
+            this.updatePage(args, inputs, updateEvents, cb);
         }
-
-        this.updatePage(args, inputs, updateEvents, cb);
     }
 
     showAd(type: 'modal') {
@@ -250,7 +251,9 @@ class Controller extends React.Component {
         };
 
         if (vars.data && vars.data.redirectUrl !== undefined) {
-            return realtimeUpdate([], vars.data.redirectUrl, cb);
+            await realtimeUpdate([], vars.data.redirectUrl);
+            cb();
+            return;
         }
 
         this.setState(vars);

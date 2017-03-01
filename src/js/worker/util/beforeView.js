@@ -23,12 +23,11 @@ const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEv
         if (g.lastDbChange !== lastDbChange.value) {
             await league.loadGameAttributes();
             //leagueContentEl.innerHTML = "&nbsp;";  // Blank doesn't work, for some reason
-            api.realtimeUpdate(["dbChange"], undefined, async () => {
-                await updatePlayMenu();
-                updatePhase();
-                updateStatus();
-                setTimeout(() => checkDbChange(lid), 3000);
-            });
+            await api.realtimeUpdate(["dbChange"]);
+            await updatePlayMenu();
+            updatePhase();
+            updateStatus();
+            setTimeout(() => checkDbChange(lid), 3000);
         } else {
             setTimeout(() => checkDbChange(lid), 3000);
         }

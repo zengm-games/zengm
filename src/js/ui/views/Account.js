@@ -49,10 +49,10 @@ class StripeButton extends React.Component {
                                         withCredentials: true,
                                     },
                                 }));
-                                realtimeUpdate(["account"], "/account", undefined, {goldResult: data});
+                                realtimeUpdate(["account"], "/account", {goldResult: data});
                             } catch (err) {
                                 console.log(err);
-                                realtimeUpdate(["account"], "/account", undefined, {goldResult: {
+                                realtimeUpdate(["account"], "/account", {goldResult: {
                                     success: false,
                                     message: ajaxErrorMsg,
                                 }});
@@ -106,10 +106,10 @@ const handleCancel = async e => {
                     withCredentials: true,
                 },
             }));
-            realtimeUpdate(["account"], "/account", undefined, {goldResult: data});
+            realtimeUpdate(["account"], "/account", {goldResult: data});
         } catch (err) {
             console.log(err);
-            realtimeUpdate(["account"], "/account", undefined, {goldResult: {
+            realtimeUpdate(["account"], "/account", {goldResult: {
                 success: false,
                 message: ajaxErrorMsg,
             }});

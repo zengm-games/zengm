@@ -9,11 +9,9 @@ const envify = require('envify/custom');
 const exorcist = require('exorcist');
 const fs = require('fs');
 
-const bundler = browserify('src/js/ui/app.js', {debug: true});
-
 console.log('Bundling JavaScript files...');
 
-bundler
+browserify('src/js/ui/index.js', {debug: true})
     .transform({global: true}, envify({NODE_ENV: 'production'}))
     .bundle()
     .pipe(exorcist('build/gen/app.js.map'))

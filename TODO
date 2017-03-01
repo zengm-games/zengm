@@ -14,7 +14,6 @@ move everything but the UI to a web worker
     - ui/worker api modules
 - does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
 - should checks to update data in worker/views be in worker, or could they be in UI somehow and avoid call to worker if update not needed?
-- index.js or app.js for main file in ui/worker?
 - write lint script to check for ui/worker cross-contamination. also document/window/react in worker. also any of that stuff in common.
 - restore runWhenever ability (really necessary? was only used in gameLog)
 
@@ -235,6 +234,8 @@ Draft
     https://www.reddit.com/message/messages/6ip35c
 
 ---
+
+bundle-collapser
 
 home court advantage should be based on seed, not record https://www.reddit.com/r/BasketballGM/comments/4xf5ik/minor_bug/
 

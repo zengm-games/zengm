@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import React from 'react';
+import {helpers} from '../../common';
 import * as api from '../api';
 import {logEvent, realtimeUpdate, setTitle} from '../util';
-import * as helpers from '../../util/helpers';
 import {HelpPopover, NewWindowLink} from '../components';
 
 class GodMode extends React.Component {

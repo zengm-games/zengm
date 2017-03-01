@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'underscore';
+import {helpers} from '../../common';
 import {getCols, setTitle} from '../util';
-import * as helpers from '../../util/helpers';
 import {DataTable, Dropdown, NewWindowLink} from '../components';
 
 const formatYear = (year) => {

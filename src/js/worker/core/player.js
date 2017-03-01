@@ -4,11 +4,10 @@ import backboard from 'backboard';
 import Promise from 'bluebird';
 import faces from 'facesjs';
 import _ from 'underscore';
-import {COMPOSITE_WEIGHTS, PHASE, PLAYER, g} from '../../common';
+import {COMPOSITE_WEIGHTS, PHASE, PLAYER, g, helpers} from '../../common';
 import * as finances from './finances';
 import {idb} from '../db';
 import * as names from '../../data/names';
-import * as helpers from '../../util/helpers';
 import {injuries, logEvent, random} from '../util';
 import type {
     GamePlayer,

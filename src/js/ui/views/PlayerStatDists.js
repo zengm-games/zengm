@@ -1,7 +1,6 @@
 import React from 'react';
-import {g} from '../../common';
+import {g, helpers} from '../../common';
 import {setTitle} from '../util';
-import * as helpers from '../../util/helpers';
 import {BoxPlot, Dropdown, NewWindowLink} from '../components';
 
 const nbaQuartiles = {

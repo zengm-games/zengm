@@ -1,7 +1,7 @@
 // @flow
 
 import orderBy from 'lodash.orderby';
-import {deepCopy} from '../../../util/helpers';
+import {helpers} from '../../../common';
 import type {PlayerStats, TeamStats} from '../../../common/types'; // eslint-disable-line no-unused-vars
 
 // Indexes can't handle playoffs/regularSeason and different ones can come back inconsistently sorted
@@ -30,7 +30,7 @@ const mergeByPk = (fromDb: any[], fromCache: any[], pk: string): any[] => {
         const key = row[pk];
         if (cacheKeys.hasOwnProperty(key)) {
             cacheKeysUsed[key] = true;
-            return deepCopy(fromCache[cacheKeys[key]]);
+            return helpers.deepCopy(fromCache[cacheKeys[key]]);
         }
         return row;
     });
@@ -38,7 +38,7 @@ const mergeByPk = (fromDb: any[], fromCache: any[], pk: string): any[] => {
     for (const key of Object.keys(cacheKeys)) {
         if (!cacheKeysUsed[key]) {
             const i = cacheKeys[key];
-            output.push(deepCopy(fromCache[i]));
+            output.push(helpers.deepCopy(fromCache[i]));
         }
     }
 

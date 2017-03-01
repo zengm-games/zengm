@@ -3,8 +3,7 @@
 import React from 'react';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
-import {g} from '../../common';
-import * as helpers from '../../util/helpers';
+import {g, helpers} from '../../common';
 
 const genUrl = (parts, season) => {
     if (season !== undefined) {

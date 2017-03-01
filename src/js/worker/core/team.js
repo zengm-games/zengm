@@ -2,13 +2,12 @@
 
 import Promise from 'bluebird';
 import _ from 'underscore';
-import {PHASE, PLAYER, g} from '../../common';
+import {PHASE, PLAYER, g, helpers} from '../../common';
 import * as draft from './draft';
 import * as player from './player';
 import * as trade from './trade';
 import {getCopy, idb} from '../db';
 import {logEvent, random} from '../util';
-import * as helpers from '../../util/helpers';
 import type {ContractInfo, TeamSeason, TeamStats, TradePickValues} from '../../common/types';
 
 function genSeasonRow(tid: number, prevSeason?: TeamSeason): TeamSeason {

@@ -1,8 +1,7 @@
 // @flow
 
 import React from 'react';
-import {g} from '../../common';
-import * as helpers from '../../util/helpers';
+import {g, helpers} from '../../common';
 
 type SeriesTeam = {
     seed: number,

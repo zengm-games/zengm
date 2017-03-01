@@ -1,11 +1,10 @@
 // @flow
 
 import {Cache, connectLeague, idb} from '../db';
-import {g} from '../../common';
+import {g, helpers} from '../../common';
 import * as api from '../api';
 import {league} from '../core';
 import {updatePhase, updatePlayMenu, updateStatus} from '../util';
-import * as helpers from '../../util/helpers';
 import type {PageCtx, UpdateEvents} from '../../common/types';
 
 const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEvents, () => void, ?string]> => {

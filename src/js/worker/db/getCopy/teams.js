@@ -1,10 +1,9 @@
 import backboard from 'backboard';
 import _ from 'underscore';
-import {g} from '../../../common';
+import {g, helpers} from '../../../common';
 import {filterOrderStats, mergeByPk} from './helpers';
 import {team} from '../../core';
 import {idb} from '../../db';
-import * as helpers from '../../../util/helpers';
 import type {BackboardTx, Team, TeamFiltered} from '../../../common/types';
 
 type TeamAttr = string;

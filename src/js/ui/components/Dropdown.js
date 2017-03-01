@@ -1,9 +1,8 @@
 // @flow
 
 import React from 'react';
-import {PHASE, g} from '../../common';
+import {PHASE, g, helpers} from '../../common';
 import {realtimeUpdate} from '../util';
-import * as helpers from '../../util/helpers';
 
 const Select = ({field, handleChange, value}) => {
     let options: {

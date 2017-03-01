@@ -1,9 +1,8 @@
 import Promise from 'bluebird';
-import {g} from '../../common';
-import * as season from '../core/season';
+import {g, helpers} from '../../common';
+import {season} from '../core/season';
 import {getCopy} from '../db';
 import {getProcessedGames} from '../util';
-import * as helpers from '../../util/helpers';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateUpcoming(

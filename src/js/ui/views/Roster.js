@@ -3,11 +3,10 @@ import $ from 'jquery';
 import React from 'react';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
-import {PHASE, g} from '../../common';
+import {PHASE, g, helpers} from '../../common';
 import * as api from '../api';
 import {tradeFor} from '../../util/actions';
 import {logEvent, realtimeUpdate, setTitle} from '../util';
-import * as helpers from '../../util/helpers';
 import {Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels, RatingWithChange, RecordAndPlayoffs} from '../components';
 import clickable from '../wrappers/clickable';
 

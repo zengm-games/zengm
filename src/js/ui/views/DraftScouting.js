@@ -1,8 +1,8 @@
 import React from 'react';
+import {helpers} from '../../common';
 import * as api from '../api';
-import {getCols, realtimeUpdate, setTitle} from '../util';
-import * as helpers from '../../util/helpers';
 import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
+import {getCols, realtimeUpdate, setTitle} from '../util';
 
 class DraftScouting extends React.Component {
     constructor(props) {

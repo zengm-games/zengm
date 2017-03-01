@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
+import {helpers} from '../../common';
 import {setTitle} from '../util';
-import * as helpers from '../../util/helpers';
 import {Dropdown, JumpTo, NewWindowLink} from '../components';
 import clickable from '../wrappers/clickable';
 

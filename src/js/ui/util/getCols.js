@@ -2,7 +2,7 @@
 
 /* eslint quote-props: "off" */
 
-import * as helpers from '../../util/helpers';
+import {helpers} from '../../common';
 import type {SortOrder, SortType} from '../../common/types';
 
 const cols: {

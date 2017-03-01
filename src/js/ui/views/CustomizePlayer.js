@@ -2,10 +2,9 @@
 
 import faces from 'facesjs';
 import React from 'react';
-import {PHASE, g} from '../../common';
+import {PHASE, g, helpers} from '../../common';
 import * as api from '../api';
 import {realtimeUpdate, setTitle} from '../util';
-import * as helpers from '../../util/helpers';
 import {NewWindowLink, PlayerPicture} from '../components';
 
 const positions = ["PG", "SG", "SF", "PF", "C", "G", "GF", "F", "FC"];

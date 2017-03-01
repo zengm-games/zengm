@@ -1,8 +1,8 @@
 import React from 'react';
+import {helpers} from '../../common';
 import * as api from '../api';
-import {realtimeUpdate, setTitle} from '../util';
-import * as helpers from '../../util/helpers';
 import {NewWindowLink} from '../components';
+import {realtimeUpdate, setTitle} from '../util';
 
 class NewTeam extends React.Component {
     constructor(props) {

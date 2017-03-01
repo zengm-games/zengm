@@ -1,8 +1,8 @@
 import React from 'react';
+import {helpers} from '../../common';
 import {negotiate, tradeFor} from '../../util/actions';
-import {getCols, setTitle} from '../util';
-import * as helpers from '../../util/helpers';
 import {DataTable, NewWindowLink, PlayerPicture, SafeHtml, SkillsBlock, WatchBlock} from '../components';
+import {getCols, setTitle} from '../util';
 
 const RatingsOverview = ({ratings}) => {
     const r = ratings.length - 1;

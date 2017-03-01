@@ -3,8 +3,7 @@
 import backboard from 'backboard';
 import Promise from 'bluebird';
 import _ from 'underscore';
-import {PHASE, PLAYER, g} from '../common';
-import * as helpers from '../util/helpers';
+import {PHASE, PLAYER, g, helpers} from '../common';
 import {account, beforeView, random, updatePlayMenu, updateStatus} from '../worker/util';
 import {init, views} from '../worker';
 import {contractNegotiation, draft, finances, league, phase, player, team, trade} from '../worker/core';

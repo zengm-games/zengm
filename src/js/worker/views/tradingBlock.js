@@ -1,8 +1,7 @@
 import Promise from 'bluebird';
-import {g} from '../../common';
-import * as trade from '../core/trade';
+import {g, helpers} from '../../common';
+import {trade} from '../core';
 import {getCopy, idb} from '../db';
-import * as helpers from '../../util/helpers';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateUserRoster(

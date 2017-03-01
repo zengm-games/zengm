@@ -1,8 +1,7 @@
 import React from 'react';
-import {g} from '../../common';
+import {g, helpers} from '../../common';
 import * as api from '../api';
 import {getCols, logEvent, realtimeUpdate, setTitle} from '../util';
-import * as helpers from '../../util/helpers';
 import {BarGraph, DataTable, Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels} from '../components';
 
 class FinancesForm extends React.Component {

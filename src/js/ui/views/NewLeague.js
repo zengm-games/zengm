@@ -1,7 +1,7 @@
 import React from 'react';
+import {helpers} from '../../common';
 import * as api from '../api';
 import {realtimeUpdate, setTitle} from '../util';
-import * as helpers from '../../util/helpers';
 
 const PopText = ({teams, tid}) => {
     let msg = <span>Region population: ?<br />Difficulty: ?</span>;

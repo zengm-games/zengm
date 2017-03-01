@@ -2,10 +2,9 @@
 
 import Promise from 'bluebird';
 import _ from 'underscore';
-import {PLAYER, g} from '../../common';
+import {PLAYER, g, helpers} from '../../common';
 import * as league from './league';
 import {getCopy, idb} from '../db';
-import * as helpers from '../../util/helpers';
 import {logEvent, random} from '../util';
 import type {OwnerMoodDeltas, ScheduleGame, Team, TeamFiltered} from '../../common/types';
 

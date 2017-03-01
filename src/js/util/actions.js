@@ -1,7 +1,7 @@
 // @flow
 
 import {idb, reset} from '../worker/db';
-import {PHASE, g} from '../common';
+import {PHASE, g, helpers} from '../common';
 import {logEvent, realtimeUpdate} from '../ui/util';
 import * as contractNegotiation from '../worker/core/contractNegotiation';
 import * as draft from '../worker/core/draft';
@@ -12,7 +12,6 @@ import * as phase from '../worker/core/phase';
 import * as season from '../worker/core/season';
 import * as trade from '../worker/core/trade';
 import {updatePlayMenu, updateStatus} from '../worker/util';
-import * as helpers from './helpers';
 
 const liveGame = async (gid: number) => {
     realtimeUpdate([], helpers.leagueUrl(["live_game"]), () => {

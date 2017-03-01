@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import React from 'react';
 import AutoAffix from 'react-overlays/lib/AutoAffix';
+import {helpers} from '../../common';
 import {setTitle} from '../util';
-import * as helpers from '../../util/helpers';
 import {PlayerNameLabels} from '../components';
 
 class PlayerRow extends React.Component {

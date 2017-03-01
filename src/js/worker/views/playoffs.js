@@ -1,9 +1,8 @@
 // @flow
 
-import {PHASE, g} from '../../common';
-import * as season from '../core/season';
+import {PHASE, g, helpers} from '../../common';
+import {season} from '../core';
 import {getCopy} from '../db';
-import * as helpers from '../../util/helpers';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updatePlayoffs(

@@ -1,8 +1,7 @@
-import {PLAYER, g} from '../../common';
+import {PLAYER, g, helpers} from '../../common';
 import * as freeAgents from '../core/freeAgents';
 import * as trade from '../core/trade';
 import {getCopy} from '../db';
-import * as helpers from '../../util/helpers';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updatePlayer(

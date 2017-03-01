@@ -1,5 +1,4 @@
-import {g} from '../../../common';
-import {deepCopy} from '../../../util/helpers';
+import {g, helpers} from '../../../common';
 import {idb} from '../../db';
 
 const getCopy = ({
@@ -11,7 +10,7 @@ const getCopy = ({
         return idb.cache.get('playoffSeries', season);
     }
 
-    return deepCopy(idb.league.playoffSeries.get(season));
+    return helpers.deepCopy(idb.league.playoffSeries.get(season));
 };
 
 export default getCopy;

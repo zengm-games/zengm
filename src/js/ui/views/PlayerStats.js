@@ -1,8 +1,7 @@
 import React from 'react';
-import {g} from '../../common';
+import {g, helpers} from '../../common';
 import {DataTable, Dropdown, JumpTo, NewWindowLink, PlayerNameLabels} from '../components';
 import {getCols, setTitle} from '../util';
-import * as helpers from '../../util/helpers';
 
 const PlayerStats = ({abbrev, players, playoffs, season, statType}) => {
     const label = season !== undefined ? season : 'Career Totals';

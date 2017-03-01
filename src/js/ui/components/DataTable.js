@@ -4,8 +4,7 @@ import classNames from 'classnames';
 import orderBy from 'lodash.orderby';
 import React from 'react';
 import textContent from 'react-addons-text-content';
-import {g} from '../../common';
-import * as helpers from '../../util/helpers';
+import {g, helpers} from '../../common';
 import clickable from '../wrappers/clickable';
 import type {SortOrder, SortType} from '../../common/types';
 

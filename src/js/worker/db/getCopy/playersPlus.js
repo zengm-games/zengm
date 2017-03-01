@@ -1,10 +1,9 @@
 import backboard from 'backboard';
 import _ from 'underscore';
-import {PLAYER, g} from '../../../common';
+import {PLAYER, g, helpers} from '../../../common';
 import {filterOrderStats, mergeByPk} from './helpers';
 import {contractSeasonsRemaining, fuzzRating} from '../../core/player';
 import {idb} from '../../db';
-import * as helpers from '../../../util/helpers';
 import type {BackboardTx, Player, PlayerFiltered} from '../../../common/types';
 
 type PlayerAttr = string;

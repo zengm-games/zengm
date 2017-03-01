@@ -1,6 +1,6 @@
 import React from 'react';
+import {helpers} from '../../common';
 import {setTitle} from '../util';
-import * as helpers from '../../util/helpers';
 import {BoxPlot, Dropdown, NewWindowLink} from '../components';
 
 const nbaStatsAll = {

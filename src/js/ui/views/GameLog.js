@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import React from 'react';
-import {realtimeUpdate, setTitle} from '../util';
-import * as helpers from '../../util/helpers';
+import {helpers} from '../../common';
 import {Dropdown, NewWindowLink, PlayerNameLabels} from '../components';
+import {realtimeUpdate, setTitle} from '../util';
 import clickable from '../wrappers/clickable';
 
 const StatsRow = clickable(({clicked, i, numPlayers, p, toggleClicked}) => {

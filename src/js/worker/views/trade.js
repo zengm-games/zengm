@@ -1,8 +1,7 @@
 import Promise from 'bluebird';
-import {PHASE, g} from '../../common';
-import * as trade from '../core/trade';
+import {PHASE, g, helpers} from '../../common';
+import {trade} from '../core';
 import {getCopy, idb} from '../db';
-import * as helpers from '../../util/helpers';
 
 // This relies on vars being populated, so it can't be called in parallel with updateTrade
 async function updateSummary(vars) {

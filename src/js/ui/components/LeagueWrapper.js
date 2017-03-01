@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import * as helpers from '../../util/helpers';
+import {helpers} from '../../common';
 
 class SideMenu extends React.Component {
     shouldComponentUpdate(nextProps) {

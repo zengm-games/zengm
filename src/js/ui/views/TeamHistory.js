@@ -1,7 +1,6 @@
 import React from 'react';
-import {PLAYER, g} from '../../common';
+import {PLAYER, g, helpers} from '../../common';
 import {getCols, setTitle} from '../util';
-import * as helpers from '../../util/helpers';
 import {DataTable, Dropdown, NewWindowLink, PlayerNameLabels, RecordAndPlayoffs} from '../components';
 
 const TeamHistory = ({abbrev, bestRecord, championships, history, players, playoffAppearances, team, totalLost, totalWon, worstRecord}) => {

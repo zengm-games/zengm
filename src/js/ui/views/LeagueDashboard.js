@@ -1,8 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
-import {PHASE, g} from '../../common';
+import {PHASE, g, helpers} from '../../common';
 import {setTitle} from '../util';
-import * as helpers from '../../util/helpers';
 import {NewWindowLink, PlayerNameLabels, PlayoffMatchup, RatingWithChange} from '../components';
 
 const LeagueDashboard = ({abbrev, ast, astRank, att, cash, completed, confTeams, leagueLeaders, lost, messages, name, oppPts, oppPtsRank, payroll, playoffRoundsWon, playoffsByConference, profit, pts, ptsRank, rank, region, revenue, salaryCap, season, series, seriesTitle, showPlayoffSeries, starters, teamLeaders, trb, trbRank, upcoming, won}) => {

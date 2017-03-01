@@ -1,8 +1,7 @@
 import React from 'react';
-import {PHASE, g} from '../../common';
+import {PHASE, g, helpers} from '../../common';
 import {negotiate} from '../../util/actions';
 import {getCols, setTitle} from '../util';
-import * as helpers from '../../util/helpers';
 import {DataTable, HelpPopover, NewWindowLink, PlayerNameLabels} from '../components';
 
 const FreeAgents = ({capSpace, gamesInProgress, minContract, numRosterSpots, phase, players}) => {

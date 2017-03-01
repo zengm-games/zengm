@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import * as helpers from '../../util/helpers';
+import {helpers} from '../../common';
 
 const RecordAndPlayoffs = ({abbrev, lost, option, playoffRoundsWon, season, style, won}: {
     abbrev: string,

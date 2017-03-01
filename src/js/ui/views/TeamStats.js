@@ -1,8 +1,7 @@
 import React from 'react';
 import _ from 'underscore';
-import {g} from '../../common';
+import {g, helpers} from '../../common';
 import {getCols, setTitle} from '../util';
-import * as helpers from '../../util/helpers';
 import {DataTable, Dropdown, JumpTo, NewWindowLink} from '../components';
 
 const TeamStats = ({season, stats, teams}) => {

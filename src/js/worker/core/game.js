@@ -2,7 +2,7 @@
 
 import Promise from 'bluebird';
 import _ from 'underscore';
-import {COMPOSITE_WEIGHTS, PHASE, PLAYER, g} from '../../common';
+import {COMPOSITE_WEIGHTS, PHASE, PLAYER, g, helpers} from '../../common';
 import * as api from '../api';
 import GameSim from './GameSim';
 import * as finances from './finances';
@@ -14,7 +14,6 @@ import * as season from './season';
 import * as team from './team';
 import {idb} from '../db';
 import {advStats, lock, logEvent, random, updatePlayMenu, updateStatus} from '../util';
-import * as helpers from '../../util/helpers';
 import type {GameResults} from '../../common/types';
 
 async function writeTeamStats(results: GameResults) {

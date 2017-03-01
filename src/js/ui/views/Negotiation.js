@@ -1,9 +1,9 @@
 import classNames from 'classnames';
 import React from 'react';
+import {helpers} from '../../common';
 import * as api from '../api';
-import {logEvent, realtimeUpdate, setTitle} from '../util';
-import * as helpers from '../../util/helpers';
 import {NewWindowLink} from '../components';
+import {logEvent, realtimeUpdate, setTitle} from '../util';
 
 // Show the negotiations list if there are more ongoing negotiations
 async function redirectNegotiationOrRoster(cancelled) {

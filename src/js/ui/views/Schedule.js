@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
+import {helpers} from '../../common';
 import {setTitle} from '../util';
-import * as helpers from '../../util/helpers';
 import {Dropdown, NewWindowLink} from '../components';
 
 const Schedule = ({abbrev, completed, season, upcoming}) => {

@@ -457,7 +457,7 @@ const refuseToNegotiate = (amount: number, mood: number): boolean => {
     return amount * mood > 10000;
 };
 
-export {
+export default {
     validateAbbrev,
     getAbbrev,
     validateTid,

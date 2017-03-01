@@ -1,7 +1,7 @@
 import React from 'react';
+import {helpers} from '../../common';
 import * as api from '../api';
 import {realtimeUpdate, setTitle} from '../util';
-import * as helpers from '../../util/helpers';
 
 class DeleteLeague extends React.Component {
     constructor(props) {

@@ -1,9 +1,8 @@
 import React from 'react';
-import {PHASE} from '../../common';
+import {PHASE, helpers} from '../../common';
 import * as api from '../api';
 import {tradeFor} from '../../util/actions';
 import {getCols, setTitle} from '../util';
-import * as helpers from '../../util/helpers';
 import clickable from '../wrappers/clickable';
 import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
 

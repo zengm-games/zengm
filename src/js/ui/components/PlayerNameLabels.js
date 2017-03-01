@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import * as helpers from '../../util/helpers';
+import {helpers} from '../../common';
 import SkillsBlock from './SkillsBlock';
 import WatchBlock from './WatchBlock';
 import type {PlayerInjury, PlayerSkill} from '../../common/types';

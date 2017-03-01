@@ -2,7 +2,7 @@
 
 import Backboard from 'backboard';
 import Promise from 'bluebird';
-import * as helpers from '../../util/helpers';
+import {helpers} from '../../common';
 
 /**
  * Create a new league database with the latest structure.

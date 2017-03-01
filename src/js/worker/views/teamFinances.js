@@ -1,7 +1,6 @@
-import {PHASE, g} from '../../common';
-import * as team from '../core/team';
+import {PHASE, g, helpers} from '../../common';
+import {team} from '../core';
 import {getCopy} from '../db';
-import * as helpers from '../../util/helpers';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateTeamFinances(

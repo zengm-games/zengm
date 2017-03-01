@@ -2,7 +2,7 @@
 
 import Promise from 'bluebird';
 import _ from 'underscore';
-import {PHASE, PHASE_TEXT, PLAYER, g} from '../../common';
+import {PHASE, PHASE_TEXT, PLAYER, g, helpers} from '../../common';
 import * as api from '../api';
 import * as contractNegotiation from './contractNegotiation';
 import * as draft from './draft';
@@ -14,7 +14,6 @@ import * as season from './season';
 import * as team from './team';
 import {getCopy, idb} from '../db';
 import {account, genMessage, logEvent, random, updatePhase, updatePlayMenu} from '../util';
-import * as helpers from '../../util/helpers';
 import type {Phase, UpdateEvents} from '../../common/types';
 
 /**

@@ -1,6 +1,6 @@
 import React from 'react';
+import {helpers} from '../../common';
 import {setTitle} from '../util';
-import * as helpers from '../../util/helpers';
 import {Dropdown, JumpTo, NewWindowLink, PlayerNameLabels} from '../components';
 
 const Leaders = ({categories, season}) => {

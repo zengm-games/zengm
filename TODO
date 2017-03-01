@@ -19,7 +19,6 @@ move everything but the UI to a web worker
   - split up util - ui, worker, or both
     - actions: only called from ui, but mixes worker calls and realtimeUpdate
       - put worker calls in api, move to ui/util/actions
-    - helpers: move some to individual files in util, then hopefully it's just some small global functions that can go in common/helpers
   - split up data/lib
   - how to ensure that files are not required into both ui and worker inadvertently?
   - restore runWhenever ability (really necessary? was only used in gameLog)

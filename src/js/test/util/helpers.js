@@ -1,6 +1,5 @@
 import assert from 'assert';
-import {PLAYER, g} from '../../common';
-import * as helpers from '../../util/helpers';
+import {PLAYER, g, helpers} from '../../common';
 
 describe("util/helpers", () => {
     before(() => {

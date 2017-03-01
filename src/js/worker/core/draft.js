@@ -2,13 +2,9 @@
 
 import Promise from 'bluebird';
 import _ from 'underscore';
-import {PHASE, PHASE_TEXT, PLAYER, g} from '../../common';
-import * as finances from './finances';
-import * as league from './league';
-import * as phase from './phase';
-import * as player from './player';
+import {PHASE, PHASE_TEXT, PLAYER, g, helpers} from '../../common';
+import {finances, league, phase, player} from '../core';
 import {getCopy, idb} from '../db';
-import * as helpers from '../../util/helpers';
 import {logEvent, random, updatePlayMenu, updatePhase} from '../util';
 import type {PickRealized, TeamFiltered} from '../../common/types';
 

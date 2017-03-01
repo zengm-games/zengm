@@ -1,14 +1,10 @@
 // @flow
 
 import Promise from 'bluebird';
-import {PHASE, PLAYER, g} from '../../common';
-import * as freeAgents from './freeAgents';
-import * as league from './league';
-import * as player from './player';
-import * as team from './team';
+import {PHASE, PLAYER, g, helpers} from '../../common';
+import {freeAgents, league, player, team} from '../core';
 import {idb} from '../db';
 import {lock, logEvent, updatePlayMenu, updateStatus} from '../util';
-import * as helpers from '../../util/helpers';
 
 /**
  * Start a new contract negotiation with a player.

@@ -1,8 +1,7 @@
 // @flow
 
-import {g} from '../../common';
+import {g, helpers} from '../../common';
 import {getCopy} from '../db';
-import * as helpers from '../../util/helpers';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateStandings(

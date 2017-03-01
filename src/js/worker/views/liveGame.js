@@ -1,5 +1,4 @@
-import {g} from '../../common';
-import * as helpers from '../../util/helpers';
+import {g, helpers} from '../../common';
 import {idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 

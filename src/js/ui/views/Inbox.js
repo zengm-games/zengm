@@ -2,9 +2,9 @@
 
 import classNames from 'classnames';
 import React from 'react';
-import {setTitle} from '../util';
-import * as helpers from '../../util/helpers';
+import {helpers} from '../../common';
 import {NewWindowLink} from '../components';
+import {setTitle} from '../util';
 import type {MessageWithMid} from '../../common/types';
 
 const Inbox = ({anyUnread, messages}: {anyUnread: boolean, messages: MessageWithMid[]}) => {

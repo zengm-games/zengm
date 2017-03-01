@@ -4,7 +4,7 @@ import backboard from 'backboard';
 import Promise from 'bluebird';
 import _ from 'underscore';
 import {Cache, connectLeague, idb} from '../db';
-import {PHASE, PHASE_TEXT, PLAYER, g} from '../../common';
+import {PHASE, PHASE_TEXT, PLAYER, g, helpers} from '../../common';
 import * as api from '../api';
 import * as draft from './draft';
 import * as finances from './finances';
@@ -14,7 +14,6 @@ import * as phase from './phase';
 import * as player from './player';
 import * as season from './season';
 import * as team from './team';
-import * as helpers from '../../util/helpers';
 import {random, updatePhase, updateStatus} from '../util';
 import type {GameAttributes} from '../../common/types';
 

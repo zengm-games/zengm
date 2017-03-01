@@ -1,6 +1,6 @@
 import React from 'react';
+import {helpers} from '../../common';
 import {getCols, setTitle} from '../util';
-import * as helpers from '../../util/helpers';
 import {DataTable, Dropdown, NewWindowLink} from '../components';
 
 const teamLink = (t) => {

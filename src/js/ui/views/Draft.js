@@ -1,10 +1,9 @@
 import classNames from 'classnames';
 import $ from 'jquery';
 import React from 'react';
-import {g} from '../../common';
+import {g, helpers} from '../../common';
 import * as api from '../api';
 import {getCols, realtimeUpdate, setTitle} from '../util';
-import * as helpers from '../../util/helpers';
 import {DataTable, DraftAbbrev, NewWindowLink, PlayerNameLabels} from '../components';
 
 const viewDrafted = () => {

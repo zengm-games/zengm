@@ -2,7 +2,6 @@ import Promise from 'bluebird';
 import _ from 'underscore';
 import {g} from '../../common';
 import {getCopy} from '../db';
-import * as helpers from '../../util/helpers';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 function getTeamRecord(t, awards) {

@@ -1,7 +1,7 @@
 import React from 'react';
-import {setTitle} from '../util';
-import * as helpers from '../../util/helpers';
+import {helpers} from '../../common';
 import {BoxPlot, Dropdown, NewWindowLink} from '../components';
+import {setTitle} from '../util';
 
 const PlayerRatingDists = ({ratingsAll, season}) => {
     setTitle(`Player Rating Distributions - ${season}`);

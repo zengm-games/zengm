@@ -1,9 +1,9 @@
 // @flow
 
 import React from 'react';
-import {setTitle} from '../util';
-import * as helpers from '../../util/helpers';
+import {helpers} from '../../common';
 import {NewWindowLink, SafeHtml} from '../components';
+import {setTitle} from '../util';
 import type {Message as Message_} from '../../common/types';
 
 type MessageProps = {

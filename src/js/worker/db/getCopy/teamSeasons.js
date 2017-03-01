@@ -1,10 +1,9 @@
 // @flow
 
 import backboard from 'backboard';
-import {g} from '../../../common';
+import {g, helpers} from '../../../common';
 import {idb} from '../../db';
 import {mergeByPk} from './helpers';
-import {deepCopy} from '../../../util/helpers';
 import type {TeamSeason} from '../../../common/types';
 
 const getCopy = async ({tid, season, seasons}: {tid?: number, season?: number, seasons?: [number, number]} = {}): Promise<TeamSeason[]> => {
@@ -12,7 +11,7 @@ const getCopy = async ({tid, season, seasons}: {tid?: number, season?: number, s
         if (season !== undefined) {
             if (season >= g.season - 2) {
                 // Single season, from cache
-                return deepCopy(await idb.cache.indexGetAll('teamSeasonsBySeasonTid', [`${season}`, `${season},Z`]));
+                return helpers.deepCopy(await idb.cache.indexGetAll('teamSeasonsBySeasonTid', [`${season}`, `${season},Z`]));
             }
             // Single season, from database
             return idb.league.teamSeasons.index("season, tid").getAll(backboard.bound([season], [season, '']));

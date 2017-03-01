@@ -13,10 +13,10 @@ import Navbar from 'react-bootstrap/lib/Navbar';
 import Overlay from 'react-bootstrap/lib/Overlay';
 import Popover from 'react-bootstrap/lib/Popover';
 import ReactDOM from 'react-dom';
-import {logEvent, realtimeUpdate} from '../util';
-import html2canvas from '../../vendor/html2canvas';
+import {helpers} from '../../common';
 import * as actions from '../../util/actions';
-import * as helpers from '../../util/helpers';
+import html2canvas from '../../vendor/html2canvas';
+import {logEvent, realtimeUpdate} from '../util';
 import type {Option} from '../../common/types';
 
 const toggleDebugMode = () => {

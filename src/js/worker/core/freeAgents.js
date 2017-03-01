@@ -3,14 +3,10 @@
 import Promise from 'bluebird';
 import orderBy from 'lodash.orderby';
 import _ from 'underscore';
-import {PHASE, PLAYER, g} from '../../common';
+import {PHASE, PLAYER, g, helpers} from '../../common';
 import * as api from '../api';
-import * as league from './league';
-import * as phase from './phase';
-import * as player from './player';
-import * as team from './team';
+import {league, phase, player, team} from '../core';
 import {getCopy, idb} from '../db';
-import * as helpers from '../../util/helpers';
 import {lock, logEvent, random, updatePlayMenu, updateStatus} from '../util';
 
 /**

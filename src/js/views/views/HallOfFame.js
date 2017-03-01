@@ -49,8 +49,8 @@ const HallOfFame = ({players}) => {
             ],
             classNames: {
                 danger: p.legacyTid === g.userTid,
-                info: p.statsTids.includes(g.userTid) && p.statsTids[p.statsTids.length - 1] !== g.userTid,
-                success: p.statsTids[p.statsTids.length - 1] === g.userTid,
+                info: p.statsTids.slice(0, p.statsTids.length - 1).includes(g.userTid) && p.legacyTid !== g.userTid,
+                success: p.statsTids[p.statsTids.length - 1] === g.userTid && p.legacyTid !== g.userTid,
             },
         };
     });

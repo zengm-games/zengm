@@ -532,12 +532,11 @@ const runBefore = async (
     inputs: GetOutput,
     updateEvents: UpdateEvents,
     prevData: any,
-    setStateData: (state: any) => void,
     topMenu: any,
 ): Promise<(void | {[key: string]: any})[]> => {
     if (views.hasOwnProperty(viewId) && views[viewId].hasOwnProperty('runBefore')) {
         return Promise.all(views[viewId].runBefore.map((fn) => {
-            return fn(inputs, updateEvents, prevData, setStateData, topMenu);
+            return fn(inputs, updateEvents, prevData, topMenu);
         }));
     }
 

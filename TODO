@@ -12,8 +12,8 @@ move everything but the UI to a web worker
   - get it running in worker
     - get rid of any callback functions being called between ui/worker
       - runBefore
-      - beforeViewLeague
-      - beforeViewNonLeague
+      - beforeViewLeague, beforeViewNonLeague
+        - ctx.bbgm.cb - is this still used for anything worthwhile? if so, what? maybe can be async/awaited like i did for realtimeUpdate
     - ui/worker api modules
       - can promiseWorker initiate call from worker? if not, add for toUI https://github.com/nolanlawson/promise-worker/issues/18
 - does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
@@ -23,6 +23,7 @@ move everything but the UI to a web worker
 - uncomment things using localstorage in worker, after moving to either env+api or idb
 - test fetch, maybe polyfill too
   - and replace other jquery, after abstracting into function
+- setState was used in schedule so old completed games don't temporarily show when switching team. still an issue? if not, get rid of setStateData completely
 
 lastDbChange still needed?
 

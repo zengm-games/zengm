@@ -48,13 +48,12 @@ async function updateCompleted(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
     state: any,
-    setState: (state: any) => void,
 ): void | {[key: string]: any} {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || inputs.abbrev !== state.abbrev) {
-        // Reset list, so old completed games don't temporarily show when switching team
+        /*// Reset list, so old completed games don't temporarily show when switching team
         if (state.completed) {
             setState({completed: undefined});
-        }
+        }*/
 
         // Load all games in list
         const games = await getProcessedGames(inputs.abbrev, g.season);

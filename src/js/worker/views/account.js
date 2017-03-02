@@ -7,7 +7,6 @@ async function updateAccount(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
     state: any,
-    setState: (state: any) => void,
     topMenu: any,
 ): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') || updateEvents.includes('account')) {

@@ -148,7 +148,7 @@ class Controller extends React.Component {
     }
 
     async get(args: Args, ctx: PageCtx) {
-        const [updateEvents, cb, abort] = await (args.inLeague ? toWorker('beforeViewLeague', ctx, this.state.topMenu.lid) : toWorker('beforeViewNonLeague', ctx));
+        const [updateEvents, abort] = await (args.inLeague ? toWorker('beforeViewLeague', ctx, this.state.topMenu.lid) : toWorker('beforeViewNonLeague', ctx));
 
         if (abort === 'abort') {
             return;
@@ -158,6 +158,8 @@ class Controller extends React.Component {
         if (!inputs) {
             inputs = {};
         }
+
+        const cb = ctx.bbgm.cb !== undefined ? ctx.bbgm.cb : () => {};
 
         if (typeof inputs.redirectUrl === 'string') {
             await realtimeUpdate([], inputs.redirectUrl);

@@ -10,10 +10,7 @@ move everything but the UI to a web worker
   - everything else
 - current todo
   - get it running in worker
-    - get rid of any callback functions being called between ui/worker
-      - runBefore
-      - beforeViewLeague, beforeViewNonLeague
-        - ctx.bbgm.cb - is this still used for anything worthwhile? if so, what? maybe can be async/awaited like i did for realtimeUpdate
+    - tx errors - am i trying to keep tx alive over awaiting communication across ui/worker?
     - ui/worker api modules
       - can promiseWorker initiate call from worker? if not, add for toUI https://github.com/nolanlawson/promise-worker/issues/18
 - does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
@@ -24,6 +21,8 @@ move everything but the UI to a web worker
 - test fetch, maybe polyfill too
   - and replace other jquery, after abstracting into function
 - setState was used in schedule so old completed games don't temporarily show when switching team. still an issue? if not, get rid of setStateData completely
+- beforeView - is abort param used? was used for "league not found" page before
+- move cb out of ctx, no need for it there, pass directly to get
 
 lastDbChange still needed?
 

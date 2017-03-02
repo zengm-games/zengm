@@ -1,7 +1,6 @@
 // @flow
 
 import {createLogger, g} from '../../common';
-import * as api from '../api';
 import {idb} from '../db';
 import type {LogEventSaveOptions} from '../../common/types';
 
@@ -11,6 +10,6 @@ const saveEvent = (event: LogEventSaveOptions) => {
     }
 };
 
-const logEvent = createLogger(saveEvent, api.showEvent);
+const logEvent = createLogger(saveEvent, () => { console.log('Somehow connect to api.showEvent from worker/util/logEvent'); });
 
 export default logEvent;

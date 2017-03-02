@@ -253,7 +253,7 @@ class Cache {
         await Promise.all([
             (async () => {
                 // No getData implies no need to store any records in cache except new ones
-                const data = storeInfo.getData ? await storeInfo.getData(tx, players) : [];
+                const data = storeInfo.getData ? await storeInfo.getData(idb.league, players) : [];
 
                 this.data[store] = {};
                 for (const row of data) {
@@ -267,7 +267,7 @@ class Cache {
             })(),
             (async () => {
                 this.maxIds[store] = -1;
-                await tx[store].iterate(null, 'prev', (row, shortCircuit) => {
+                await idb.league[store].iterate(null, 'prev', (row, shortCircuit) => {
                     if (row) {
                         this.maxIds[store] = row[storeInfo.pk];
                     }

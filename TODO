@@ -23,6 +23,9 @@ move everything but the UI to a web worker
 - setState was used in schedule so old completed games don't temporarily show when switching team. still an issue? if not, get rid of setStateData completely
 - beforeView - is abort param used? was used for "league not found" page before
 - move cb out of ctx, no need for it there, pass directly to get
+- why can't use tx when filling cache?
+
+appcache
 
 lastDbChange still needed?
 

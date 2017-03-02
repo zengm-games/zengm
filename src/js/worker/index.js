@@ -2,8 +2,13 @@
 
 /* eslint-disable import/first */
 import '../vendor/babel-external-helpers';
+import Promise from 'bluebird';
 import registerPromiseWorker from 'promise-worker/register';
 import * as api from './api';
+
+// Overwrite Promise object globally so Babel uses it when transpiling async/await (not totally sure if necessary)
+self.Promise = Promise;
+self.Promise.config({warnings: false});
 
 registerPromiseWorker(([name, ...params]) => {
     if (name.indexOf('actions.') === 0) {

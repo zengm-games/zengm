@@ -10,6 +10,10 @@ move everything but the UI to a web worker
   - everything else
 - current todo
   - get it running in worker
+    - get rid of any callback functions being called between ui/worker
+      - runBefore
+      - beforeViewLeague
+      - beforeViewNonLeague
     - ui/worker api modules
       - can promiseWorker initiate call from worker? if not, add for toUI https://github.com/nolanlawson/promise-worker/issues/18
 - does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
@@ -17,6 +21,8 @@ move everything but the UI to a web worker
 - write lint script to check for ui/worker cross-contamination. also document/window/localStorage/react in worker. also any of that stuff in common.
 - restore runWhenever ability (really necessary? was only used in gameLog)
 - uncomment things using localstorage in worker, after moving to either env+api or idb
+- test fetch, maybe polyfill too
+  - and replace other jquery, after abstracting into function
 
 lastDbChange still needed?
 

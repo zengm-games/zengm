@@ -1,8 +1,7 @@
 // @flow
 
 /*eslint camelcase: 0*/
-import Promise from 'bluebird';
-import $ from 'jquery';
+import queryString from 'query-string';
 import {SPORT, g} from '../../common';
 import {getCopy, idb} from '../db';
 import {env, logEvent, toUI} from '../util';
@@ -106,15 +105,12 @@ async function addAchievements(achievements: AchievementKey[], silent?: boolean 
     };
 
     try {
-        const data = await Promise.resolve($.ajax({
-            type: "POST",
-            url: `//account.basketball-gm.${env.tld}/add_achievements.php`,
-            data: {achievements, sport: SPORT},
-            dataType: "json",
-            xhrFields: {
-                withCredentials: true,
-            },
-        }));
+        const response = await fetch(`//account.basketball-gm.${env.tld}/add_achievements.php`, {
+            method: 'POST',
+            body: queryString.stringify({achievements, sport: SPORT}),
+            credentials: 'include',
+        });
+        const data = await response.json();
 
         if (data.success) {
             achievements.forEach(notify);
@@ -128,15 +124,11 @@ async function addAchievements(achievements: AchievementKey[], silent?: boolean 
 
 async function check() {
     try {
-        const data = await Promise.resolve($.ajax({
-            type: "GET",
-            url: `//account.basketball-gm.${env.tld}/user_info.php`,
-            data: `sport=${SPORT}`,
-            dataType: "json",
-            xhrFields: {
-                withCredentials: true,
-            },
-        }));
+        const response = await fetch(`//account.basketball-gm.${env.tld}/user_info.php?${queryString.stringify({sport: SPORT})}`, {
+            method: 'GET',
+            credentials: 'include',
+        });
+        const data = await response.json();
 
         // Save username for display
 
@@ -189,15 +181,11 @@ async function getAchievements() {
 
     try {
         // Handle any achievements stored in the cloud
-        const achievementsRemote = await Promise.resolve($.ajax({
-            type: "GET",
-            url: `//account.basketball-gm.${env.tld}/get_achievements.php`,
-            data: `sport=${SPORT}`,
-            dataType: "json",
-            xhrFields: {
-                withCredentials: true,
-            },
-        }));
+        const response = await fetch(`//account.basketball-gm.${env.tld}/get_achievements.php?${queryString.stringify({sport: SPORT})}`, {
+            method: 'GET',
+            credentials: 'include',
+        });
+        const achievementsRemote = await response.json();
 
         // Merge local and remote achievements
         for (let i = 0; i < achievements.length; i++) {

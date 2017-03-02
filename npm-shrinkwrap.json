@@ -3985,6 +3985,11 @@
       "resolved": "https://registry.npmjs.org/qs/-/qs-6.3.0.tgz",
       "dev": true
     },
+    "query-string": {
+      "version": "4.3.2",
+      "from": "query-string@latest",
+      "resolved": "https://registry.npmjs.org/query-string/-/query-string-4.3.2.tgz"
+    },
     "querystring": {
       "version": "0.2.0",
       "from": "querystring@0.2.0",
@@ -4549,6 +4554,11 @@
       "from": "stream-splicer@>=2.0.0 <3.0.0",
       "resolved": "https://registry.npmjs.org/stream-splicer/-/stream-splicer-2.0.0.tgz",
       "dev": true
+    },
+    "strict-uri-encode": {
+      "version": "1.1.0",
+      "from": "strict-uri-encode@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/strict-uri-encode/-/strict-uri-encode-1.1.0.tgz"
     },
     "string_decoder": {
       "version": "0.10.31",

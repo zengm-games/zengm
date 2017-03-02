@@ -44,6 +44,7 @@
     "lodash.orderby": "4.6.0",
     "page": "1.7.1",
     "promise-worker": "1.1.1",
+    "query-string": "^4.3.2",
     "react": "15.4.2",
     "react-addons-text-content": "0.0.4",
     "react-bootstrap": "0.30.7",

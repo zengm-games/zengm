@@ -1,7 +1,7 @@
 // @flow
 
-import Promise from 'bluebird';
-import $ from 'jquery';
+import queryString from 'query-string';
+import {SPORT} from '../../common';
 import {account, env} from '../util';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
@@ -16,17 +16,11 @@ async function updateAccountUpdateCard(
         await account.check();
 
         try {
-            const data = await Promise.resolve($.ajax({
-                type: "GET",
-                url: `//account.basketball-gm.${env.tld}/gold_card_info.php`,
-                data: {
-                    sport: "basketball",
-                },
-                dataType: "json",
-                xhrFields: {
-                    withCredentials: true,
-                },
-            }));
+            const response = await fetch(`//account.basketball-gm.${env.tld}/gold_card_info.php?${queryString.stringify({sport: SPORT})}`, {
+                method: 'GET',
+                credentials: 'include',
+            });
+            const data = await response.json();
             return {
                 goldCancelled: topMenu.goldCancelled,
                 last4: data.last4,

@@ -191,7 +191,7 @@ const handleScreenshotClick = e => {
 
 const handleToolsClick = (id, e) => {
     e.preventDefault();
-    toWorker('actions.toolsMenu[id]');
+    toWorker(`actions.toolsMenu.${id}`);
 };
 
 type DropdownLinksState = {
@@ -334,7 +334,7 @@ LogoAndText.propTypes = {
 const handleOptionClick = (option, e) => {
     if (!option.url) {
         e.preventDefault();
-        toWorker('actions.playMenu[option.id]');
+        toWorker(`actions.playMenu.${option.id}`);
     }
 };
 
@@ -366,7 +366,7 @@ class PlayMenu extends React.Component {
             if (option.url) {
                 realtimeUpdate([], option.url);
             } else {
-                toWorker('actions.playMenu[option.id]');
+                toWorker(`actions.playMenu.${option.id}`);
             }
         }
     }

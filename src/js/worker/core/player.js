@@ -518,7 +518,7 @@ function bonus(p: Player | PlayerWithoutPid, amount: number) {
  * @return {Promise} Array of base moods, one for each team.
  */
 async function genBaseMoods(): Promise<number[]> {
-    const teamSeasons = await idb.cache.indexGetAll('teamSeasonsBySeasonTid', `${g.season}`, `${g.season},Z`);
+    const teamSeasons = await idb.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
 
     return teamSeasons.map(teamSeason => {
         // Special case for winning a title - basically never refuse to re-sign unless a miracle occurs

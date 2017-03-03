@@ -107,9 +107,6 @@ rewrite team.filter and player.filter
   - idea is, these are ways to get data whose return values can be safely mutated - not from cache. also designed for convenience
     - document this in readme
 
-links slow while game sim in progress
-- now the status text doesn't even update, I think finally due to using caches in advStats. maybe need to reintroduce some pauses
-
 refactor
 - clear, delete need to handle indexes
 
@@ -129,7 +126,6 @@ replace all usage of IDB with cache, otherwise things will be more likely to get
   start with game.js and anything that it touches
 
 league creation
-- fill cache, then flush
 - reading from league file
 
 when to fill/flush? phases, games, user interaction
@@ -156,11 +152,10 @@ revisit lock system
 
 in put/add, can we incrementally update indexes?
 
-revisit g, which is basically another kind of ad hoc cache
-
 multi window
 - for now, disabled checkDbChange
 - what to do about dbChange?
+- shared worker?
 
 benchmark using proxies to detect change in index stuff rather than dirtyIndexes
 

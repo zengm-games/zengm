@@ -10,6 +10,7 @@ move everything but the UI to a web worker
   - everything else
 - current todo
   - get it running in worker
+    - create league
 - does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
 - should checks to update data in worker/views be in worker, or could they be in UI somehow and avoid call to worker if update not needed?
 - write lint script to check for ui/worker cross-contamination. also document/window/localStorage/react in worker. also any of that stuff in common.

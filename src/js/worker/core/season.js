@@ -684,7 +684,7 @@ async function getDaysLeftSchedule() {
 
 function genPlayoffSeries(teams: TeamFiltered[]) {
     // Playoffs are split into two branches by conference only if there are exactly 2 conferences and the special secret option top16playoffs is not set
-    const playoffsByConference = g.confs.length === 2 && !localStorage.getItem('top16playoffs');
+    const playoffsByConference = g.confs.length === 2;// && !localStorage.getItem('top16playoffs');
 
     const tidPlayoffs = [];
     const numPlayoffTeams = 2 ** g.numPlayoffRounds;

@@ -650,7 +650,7 @@ async function autoPlay() {
 }
 
 async function initAutoPlay() {
-    const result = toUI('prompt', 'This will play through multiple seasons, using the AI to manage your team. How many seasons do you want to simulate?', '5');
+    const result = await toUI('prompt', 'This will play through multiple seasons, using the AI to manage your team. How many seasons do you want to simulate?', '5');
     const numSeasons = parseInt(result, 10);
 
     if (Number.isInteger(numSeasons)) {

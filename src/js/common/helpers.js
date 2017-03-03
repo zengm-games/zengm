@@ -386,7 +386,7 @@ function yearRanges(arr: number[]): string[] {
 }
 
 function roundsWonText(playoffRoundsWon: number): string {
-    const playoffsByConference = g.confs.length === 2 && !localStorage.getItem('top16playoffs');
+    const playoffsByConference = g.confs.length === 2;// && !localStorage.getItem('top16playoffs');
 
     if (playoffRoundsWon === g.numPlayoffRounds) {
         return "League champs";

@@ -1,7 +1,6 @@
 // @flow
 
 import backboard from 'backboard';
-import Promise from 'bluebird';
 import _ from 'underscore';
 import {Cache, connectLeague, idb} from '../db';
 import {PHASE, PHASE_TEXT, PLAYER, g, helpers} from '../../common';

@@ -1,6 +1,5 @@
 // @flow
 
-import Promise from 'bluebird';
 import orderBy from 'lodash.orderby';
 import _ from 'underscore';
 import {PHASE, PLAYER, g, helpers} from '../../common';
@@ -54,10 +53,8 @@ async function autoSign() {
             continue;
         }
 
-        const [playersOnRoster, payroll] = await Promise.all([
-            idb.cache.indexGetAll('playersByTid', tid),
-            team.getPayroll(tid).get(0),
-        ]);
+        const playersOnRoster = await idb.cache.indexGetAll('playersByTid', tid);
+        const payroll = (await team.getPayroll(tid))[0];
         const numPlayersOnRoster = playersOnRoster.length;
 
         if (numPlayersOnRoster < 15) {

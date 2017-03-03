@@ -1,6 +1,5 @@
 // @flow
 
-import Promise from 'bluebird';
 import {g} from '../../common';
 import * as team from './team';
 import {idb} from '../db';

@@ -1,6 +1,5 @@
 // @flow
 
-import Promise from 'bluebird';
 import _ from 'underscore';
 import {COMPOSITE_WEIGHTS, PHASE, PLAYER, g, helpers} from '../../common';
 import GameSim from './GameSim';
@@ -22,8 +21,8 @@ async function writeTeamStats(results: GameResults) {
     for (const t1 of [0, 1]) {
         const t2 = t1 === 1 ? 0 : 1;
 
-        const [payroll, t, teamSeasons, teamStats] = await Promise.all([
-            team.getPayroll(results.team[t1].id).get(0),
+        const payroll = (await team.getPayroll(results.team[t1].id))[0];
+        const [t, teamSeasons, teamStats] = await Promise.all([
             idb.cache.get('teams', results.team[t1].id),
             idb.cache.indexGetAll('teamSeasonsByTidSeason', [`${results.team[t1].id},${g.season - 2}`, `${results.team[t1].id},${g.season}`]),
             idb.cache.indexGet('teamStatsByPlayoffsTid', `${g.phase === PHASE.PLAYOFFS ? 1 : 0},${results.team[t1].id}`),

@@ -1,6 +1,5 @@
 // @flow
 
-import Promise from 'bluebird';
 import _ from 'underscore';
 import {PLAYER, g, helpers} from '../../common';
 import * as league from './league';

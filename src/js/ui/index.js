@@ -2,7 +2,6 @@
 
 /* eslint-disable import/first */
 import '../vendor/babel-external-helpers';
-import Promise from 'bluebird';
 import sourceMapSupport from 'source-map-support';
 import 'jquery-ui/sortable';
 import page from 'page';
@@ -20,10 +19,6 @@ import type {Env} from '../common/types';
 if (localStorage.getItem('debug') === 'debug') {
     sourceMapSupport.install();
 }
-
-// Overwrite Promise object globally so Babel uses it when transpiling async/await (not totally sure if necessary)
-window.Promise = Promise;
-window.Promise.config({warnings: false});
 
 promiseWorker.register(([name, ...params]) => {
     if (!api.hasOwnProperty(name)) {

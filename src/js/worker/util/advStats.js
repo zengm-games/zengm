@@ -1,6 +1,5 @@
 // @flow
 
-import Promise from 'bluebird';
 import _ from 'underscore';
 import {PHASE, g} from '../../common';
 import {getCopy, idb} from '../db';

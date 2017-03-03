@@ -1,7 +1,6 @@
 // @flow
 
 import Backboard from 'backboard';
-import Promise from 'bluebird';
 import {helpers} from '../../common';
 
 /**

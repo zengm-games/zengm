@@ -1,7 +1,6 @@
 // @flow
 
 import backboard from 'backboard';
-import Promise from 'bluebird';
 import _ from 'underscore';
 import {PHASE, PLAYER, g, helpers} from '../../common';
 import actions from './actions';
@@ -350,7 +349,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[], progressCa
                 pick.desc = helpers.pickDesc(pick);
             }
 
-            const payroll = await team.getPayroll(tid).get(0);
+            const payroll = (await team.getPayroll(tid))[0];
 
             return {
                 tid,

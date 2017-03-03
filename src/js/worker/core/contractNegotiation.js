@@ -1,6 +1,5 @@
 // @flow
 
-import Promise from 'bluebird';
 import {PHASE, PLAYER, g, helpers} from '../../common';
 import {freeAgents, league, player, team} from '../core';
 import {idb} from '../db';
@@ -105,10 +104,8 @@ async function cancelAll() {
  * @return {Promise.<string=>} If an error occurs, resolves to a string error message.
  */
 async function accept(pid: number, amount: number, exp: number): Promise<?string> {
-    const [negotiation, payroll] = await Promise.all([
-        idb.cache.get('negotiations', pid),
-        team.getPayroll(g.userTid).get(0),
-    ]);
+    const negotiation = await idb.cache.get('negotiations', pid);
+    const payroll = (await team.getPayroll(g.userTid))[0];
 
     // If this contract brings team over the salary cap, it's not a minimum;
     // contract, and it's not re-signing a current player, ERROR!

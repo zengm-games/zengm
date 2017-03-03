@@ -1,6 +1,5 @@
 // @flow
 
-import Promise from 'bluebird';
 import {PLAYER, g} from '../../common';
 import * as freeAgents from '../core/freeAgents';
 import * as player from '../core/player';
@@ -8,8 +7,8 @@ import * as team from '../core/team';
 import {getCopy, idb} from '../db';
 
 async function updateFreeAgents(): void | {[key: string]: any} {
-    let [payroll, userPlayers, players] = await Promise.all([
-        team.getPayroll(g.userTid).get(0),
+    const payroll = (await team.getPayroll(g.userTid))[0];
+    let [userPlayers, players] = await Promise.all([
         idb.cache.indexGetAll('playersByTid', g.userTid),
         idb.cache.indexGetAll('playersByTid', PLAYER.FREE_AGENT),
     ]);

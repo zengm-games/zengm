@@ -1,7 +1,6 @@
 // @flow
 
 import backboard from 'backboard';
-import Promise from 'bluebird';
 import orderBy from 'lodash.orderby';
 import {PLAYER, g} from '../../common';
 import {idb} from '../db';

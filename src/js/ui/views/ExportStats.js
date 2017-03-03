@@ -1,4 +1,3 @@
-import Promise from 'bluebird';
 import React from 'react';
 import {g} from '../../common';
 import {setTitle, toWorker} from '../util';

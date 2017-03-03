@@ -1,6 +1,5 @@
 // @flow
 
-import Promise from 'bluebird';
 import _ from 'underscore';
 import {PHASE, PHASE_TEXT, PLAYER, g, helpers} from '../../common';
 import {finances, league, phase, player} from '../core';

@@ -1,4 +1,3 @@
-import Promise from 'bluebird';
 import _ from 'underscore';
 import {g} from '../../common';
 import {getCopy} from '../db';

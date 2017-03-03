@@ -1,6 +1,5 @@
 // @flow
 
-import Promise from 'bluebird';
 import {emitter} from '../util';
 
 function showGcs() {

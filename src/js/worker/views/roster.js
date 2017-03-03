@@ -1,4 +1,3 @@
-import Promise from 'bluebird';
 import {PHASE, g} from '../../common';
 import * as season from '../core/season';
 import * as team from '../core/team';
@@ -33,11 +32,11 @@ async function updateRoster(
 
         if (inputs.season === g.season) {
             // Show players currently on the roster
-            let [schedule, players, payroll] = await Promise.all([
+            let [schedule, players] = await Promise.all([
                 season.getSchedule(),
                 idb.cache.indexGetAll('playersByTid', inputs.tid),
-                team.getPayroll(inputs.tid).get(0),
             ]);
+            const payroll = (await team.getPayroll(inputs.tid))[0];
 
             // numGamesRemaining doesn't need to be calculated except for g.userTid, but it is.
             let numGamesRemaining = 0;

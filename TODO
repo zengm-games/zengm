@@ -10,9 +10,6 @@ move everything but the UI to a web worker
   - everything else
 - current todo
   - get it running in worker
-    - tx errors - am i trying to keep tx alive over awaiting communication across ui/worker?
-    - ui/worker api modules
-      - can promiseWorker initiate call from worker? if not, add for toUI https://github.com/nolanlawson/promise-worker/issues/18
 - does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
 - should checks to update data in worker/views be in worker, or could they be in UI somehow and avoid call to worker if update not needed?
 - write lint script to check for ui/worker cross-contamination. also document/window/localStorage/react in worker. also any of that stuff in common.
@@ -24,6 +21,8 @@ move everything but the UI to a web worker
 - beforeView - is abort param used? was used for "league not found" page before
 - move cb out of ctx, no need for it there, pass directly to get
 - why can't use tx when filling cache?
+
+switch to native promises and/or lie, bluebird doens't work with IDB transactions in worker
 
 get rid of getall shim??
 
@@ -168,8 +167,6 @@ benchmark using proxies to detect change in index stuff rather than dirtyIndexes
 can ui/util/logEvent be replaced by just notify? since it never writes to db?
 
 ----
-
-getPayroll().get() bluebird function
 
 HTML in play by play https://www.reddit.com/r/BasketballGM/comments/5963ym/playbyplay_bug/
 

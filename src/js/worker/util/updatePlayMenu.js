@@ -1,6 +1,5 @@
 // @flow
 
-import Promise from 'bluebird';
 import {PHASE, g, helpers} from '../../common';
 import {lock, toUI} from '../util';
 

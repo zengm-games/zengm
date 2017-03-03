@@ -34,7 +34,6 @@
   },
   "dependencies": {
     "backboard": "1.0.6",
-    "bluebird": "3.3.4",
     "classnames": "2.2.5",
     "dompurify": "0.8.4",
     "facesjs": "1.0.1",

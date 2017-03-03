@@ -1,6 +1,5 @@
 /* eslint camelcase: "off" */
 
-import Promise from 'bluebird';
 import $ from 'jquery';
 import React from 'react';
 import {STRIPE_PUBLISHABLE_KEY} from '../../common';

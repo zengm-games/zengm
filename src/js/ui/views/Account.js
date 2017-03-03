@@ -1,6 +1,5 @@
 // @flow
 
-import Promise from 'bluebird';
 import classNames from 'classnames';
 import $ from 'jquery';
 import React from 'react';

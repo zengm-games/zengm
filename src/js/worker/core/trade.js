@@ -1,6 +1,5 @@
 // @flow
 
-import Promise from 'bluebird';
 import {PHASE, PLAYER, g, helpers} from '../../common';
 import * as league from './league';
 import * as player from './player';
@@ -251,7 +250,7 @@ async function summary(teams: TradeTeams): Promise<TradeSummary> {
             ratios[j] = 100;
         }
 
-        const payroll = await team.getPayroll(tids[j]).get(0);
+        const payroll = (await team.getPayroll(tids[j]))[0];
         s.teams[j].payrollAfterTrade = payroll / 1000 + s.teams[k].total - s.teams[j].total;
         if (s.teams[j].payrollAfterTrade > g.salaryCap / 1000) {
             overCap[j] = true;

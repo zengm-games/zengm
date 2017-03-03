@@ -1,7 +1,6 @@
 // @flow
 
 import Backboard from 'backboard';
-import Promise from 'bluebird';
 import page from 'page';
 import {league} from '../core';
 import {idb} from '../db';

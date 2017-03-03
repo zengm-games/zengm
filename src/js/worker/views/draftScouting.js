@@ -1,6 +1,5 @@
 // @flow
 
-import Promise from 'bluebird';
 import {PHASE, PLAYER, g} from '../../common';
 import {getCopy, idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';

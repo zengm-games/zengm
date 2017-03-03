@@ -82,7 +82,7 @@ const processSeasonAttrs = async (output: TeamFiltered, t: Team, seasonAttrs: Te
                 row.salaryPaid = ts.expenses.salary.amount / 1000; // [millions of dollars]
             } else if (attr === 'payroll') {
                 if (season === g.season) {
-                    row.payroll = (await team.getPayroll(t.tid).get(0)) / 1000;
+                    row.payroll = ((await team.getPayroll(t.tid))[0]) / 1000;
                 } else {
                     row.payroll = undefined;
                 }

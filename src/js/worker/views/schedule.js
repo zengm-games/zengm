@@ -1,4 +1,3 @@
-import Promise from 'bluebird';
 import {g, helpers} from '../../common';
 import {season} from '../core/season';
 import {getCopy} from '../db';

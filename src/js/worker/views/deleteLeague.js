@@ -1,7 +1,6 @@
 // @flow
 
 import backboard from 'backboard';
-import Promise from 'bluebird';
 import {connectLeague, idb} from '../db';
 import type {GetOutput} from '../../common/types';
 

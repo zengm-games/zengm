@@ -1,6 +1,5 @@
 // @flow
 
-import Promise from 'bluebird';
 import _ from 'underscore';
 import {PHASE, PLAYER, g, helpers} from '../../common';
 import * as draft from './draft';
@@ -369,12 +368,9 @@ async function getPayroll(tid: number): Promise<[number, ContractInfo[]]> {
  * @return {Promise} Resolves to an array of payrolls, ordered by team id.
  */
 function getPayrolls(): Promise<number[]> {
-    const promises = [];
-    for (let tid = 0; tid < g.numTeams; tid++) {
-        promises.push(getPayroll(tid).get(0));
-    }
-
-    return Promise.all(promises);
+    return Promise.all(_.range(g.numTeams).map(async (tid) => {
+        return (await getPayroll(tid))[0];
+    }));
 }
 
 // estValuesCached is either a copy of estValues (defined below) or null. When it's cached, it's much faster for repeated calls (like trading block).

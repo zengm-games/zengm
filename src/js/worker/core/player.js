@@ -1,7 +1,6 @@
 // @flow
 
 import backboard from 'backboard';
-import Promise from 'bluebird';
 import faces from 'facesjs';
 import _ from 'underscore';
 import {COMPOSITE_WEIGHTS, PHASE, PLAYER, g, helpers} from '../../common';

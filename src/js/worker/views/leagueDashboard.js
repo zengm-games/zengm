@@ -1,6 +1,5 @@
 // @flow
 
-import Promise from 'bluebird';
 import {PHASE, PLAYER, g, helpers} from '../../common';
 import * as season from '../core/season';
 import * as team from '../core/team';
@@ -55,7 +54,7 @@ async function updatePayroll(
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('playerMovement')) {
-        const payroll = await team.getPayroll(g.userTid).get(0);
+        const payroll = (await team.getPayroll(g.userTid))[0];
         return {
             payroll: payroll / 1000, // [millions of dollars]
         };

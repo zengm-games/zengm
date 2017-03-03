@@ -1,7 +1,6 @@
 // @flow
 
 import Backboard from 'backboard';
-import Promise from 'bluebird';
 import Cache from './Cache';
 import * as getCopy from './getCopy';
 import {logEvent} from '../util';

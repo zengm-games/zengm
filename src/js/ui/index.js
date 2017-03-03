@@ -21,6 +21,7 @@ if (localStorage.getItem('debug') === 'debug') {
 }
 
 promiseWorker.register(([name, ...params]) => {
+console.log('fromWorker', name, params);
     if (!api.hasOwnProperty(name)) {
         throw new Error(`API call to nonexistant worker function "${name}" with params ${JSON.stringify(params)}`);
     }

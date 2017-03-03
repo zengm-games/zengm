@@ -75,7 +75,7 @@ async function realtimeUpdate2(updateEvents: UpdateEvents = [], url?: string, ra
 }
 
 const setGameAttributes = (gameAttributes: GameAttributes) => {
-    console.log('Should populate g in ui', gameAttributes);
+    Object.assign(g, gameAttributes);
 };
 
 const showEvent2 = (options: LogEventShowOptions) => {

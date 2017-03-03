@@ -22,6 +22,8 @@ move everything but the UI to a web worker
 - move cb out of ctx, no need for it there, pass directly to get
 - why can't use tx when filling cache?
 
+auto play seasons doesn't work
+
 switch to native promises and/or lie, bluebird doens't work with IDB transactions in worker
 
 get rid of getall shim??

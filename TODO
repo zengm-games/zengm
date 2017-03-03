@@ -10,7 +10,10 @@ move everything but the UI to a web worker
   - everything else
 - current todo
   - get it running in worker
-    - create league
+    - stringification worth it in promise-worker-bi? brings in issues with undefined serialization to null
+      - benchmark
+    - how fast would it be without the cache, just hitting IDB directly? maybe too far gone...
+      - no, it's not too far gone! if the cache isn't improving performance, i should get rid of it
 - does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
 - should checks to update data in worker/views be in worker, or could they be in UI somehow and avoid call to worker if update not needed?
 - write lint script to check for ui/worker cross-contamination. also document/window/localStorage/react in worker. also any of that stuff in common.
@@ -26,6 +29,7 @@ move everything but the UI to a web worker
 auto play seasons doesn't work
 
 switch to native promises and/or lie, bluebird doens't work with IDB transactions in worker
+- debug mode still needed?
 
 get rid of getall shim??
 
@@ -253,8 +257,6 @@ bundle-collapser
 
 home court advantage should be based on seed, not record https://www.reddit.com/r/BasketballGM/comments/4xf5ik/minor_bug/
 
-convert Dexie.Promise to a minimal A+ version (or use es6-promise), then use that plus some promise utils (eithier exiting or write my own) to replace Bluebird
-
 change max roster size https://www.reddit.com/r/BasketballGM/comments/554dly/maximum_of_roster_spots/
 
 pressing alt+p rapidly can result in extra games being played
@@ -305,8 +307,6 @@ required babel transforms
 backboard
   investigate backboard tx canceling error propagation, see tx in newPhase. maybe interaction between promise manually being 
   player.withStats native support
-
-bluebird has to stay on 3.3.4 because of https://github.com/petkaantonov/bluebird/issues/1022
 
 new achievement for winning as 8 seed https://www.reddit.com/r/BasketballGM/comments/4l2arh/new_achievement_suggestion/
 

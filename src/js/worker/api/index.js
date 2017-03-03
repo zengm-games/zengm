@@ -78,6 +78,9 @@ const createLeague = async (
     startingSeason: number,
     randomizeRosters: boolean,
 ): Promise<number> => {
+    // nulls can get erroneously passed in, due to JSON stringification in promise-worker-bi
+    leagueFile = leagueFile === null ? {} : leagueFile;
+
     return league.create(name, tid, leagueFile, startingSeason, randomizeRosters);
 };
 

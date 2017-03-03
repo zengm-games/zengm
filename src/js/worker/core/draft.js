@@ -146,7 +146,7 @@ function logLotteryWinners(chances: number[], teams: TeamFiltered[], tm: number,
  * of being set as a decimal value on the result.
  */
 function updateChances(chances: number[], teams: TeamFiltered[], isFinal?: boolean = false) {
-    let wps = _.countBy(teams, 'winp');
+    let wps = _.countBy(teams, (t) => t.seasonAttrs.winp);
     wps = _.pairs(wps);
     wps = _.sortBy(wps, x => Number(x[0]));
     let tc = 0;

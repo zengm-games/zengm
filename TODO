@@ -17,9 +17,7 @@ move everything but the UI to a web worker
 - move cb out of ctx, no need for it there, pass directly to get
 - maybe restore console.error('Error when generating response:', error); in promise-worker-bi
 
-play all playoff game estimation is off
-
-lottery odds seem all even, why?
+play all playoff game estimation is off (only in auto play mode)
 
 switch to native promises and/or lie, bluebird doens't work with IDB transactions in worker
 - debug mode still needed?

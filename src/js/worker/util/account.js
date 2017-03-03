@@ -212,6 +212,11 @@ checkAchievement.fo_fo_fo = async (saveAchievement: boolean = true) => {
     }
 
     const playoffSeries = await getCopy.playoffSeries({season: g.season});
+    if (playoffSeries === undefined) {
+        // Should only happen if playoffs are skipped
+        return false;
+    }
+
     const series = playoffSeries.series;
 
     for (let round = 0; round < series.length; round++) {

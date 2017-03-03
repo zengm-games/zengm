@@ -253,7 +253,7 @@ class Cache {
         await Promise.all([
             (async () => {
                 // No getData implies no need to store any records in cache except new ones
-                const data = storeInfo.getData ? await storeInfo.getData(idb.league, players) : [];
+                const data = storeInfo.getData ? await storeInfo.getData(tx, players) : [];
 
                 this.data[store] = {};
                 for (const row of data) {
@@ -267,7 +267,7 @@ class Cache {
             })(),
             (async () => {
                 this.maxIds[store] = -1;
-                await idb.league[store].iterate(null, 'prev', (row, shortCircuit) => {
+                await tx[store].iterate(null, 'prev', (row, shortCircuit) => {
                     if (row) {
                         this.maxIds[store] = row[storeInfo.pk];
                     }
@@ -275,11 +275,6 @@ class Cache {
                 });
             })(),
         ]);
-
-        // HACK - special case for schedule store, maxId can come from schedule or games because we can't rely on schedule always being populated
-        if (this.maxIds.schedule < this.maxIds.games) {
-            this.maxIds.schedule = this.maxIds.games;
-        }
     }
 
     // Load database from disk and save in cache, wiping out any prior values in cache
@@ -314,6 +309,11 @@ class Cache {
                 return this.loadStore(store, tx, players);
             }));
         });
+
+        // HACK - special case for schedule store, maxId can come from schedule or games because we can't rely on schedule always being populated
+        if (this.maxIds.schedule < this.maxIds.games) {
+            this.maxIds.schedule = this.maxIds.games;
+        }
 
         this.setStatus('full');
     }

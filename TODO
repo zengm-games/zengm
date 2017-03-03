@@ -3,8 +3,6 @@ IVERSON
 move everything but the UI to a web worker
 - current todo
   - get it running in worker
-    - how fast would it be without the cache, just hitting IDB directly? maybe too far gone...
-      - no, it's not too far gone! if the cache isn't improving performance, i should get rid of it
     - stringification worth it in promise-worker-bi? brings in issues with undefined serialization to null
       - benchmark
 - does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
@@ -19,7 +17,7 @@ move everything but the UI to a web worker
 - move cb out of ctx, no need for it there, pass directly to get
 - maybe restore console.error('Error when generating response:', error); in promise-worker-bi
 
-auto play seasons doesn't work
+play all playoff game estimation is off
 
 lottery odds seem all even, why?
 

@@ -27,6 +27,12 @@ async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = 
     updatePhase(`${g.season} ${PHASE_TEXT[phase]}`);
     await updatePlayMenu();
 
+    // Flush/fill only in preseason
+    if (phase === PHASE.PRESEASON) {
+        await idb.cache.flush();
+        await idb.cache.fill();
+    }
+
     // Set lastDbChange last so there is no race condition (WHAT DOES THIS MEAN??)
     league.updateLastDbChange();
     updateEvents.push("newPhase");
@@ -92,9 +98,6 @@ async function newPhasePreseason() {
         await league.setGameAttributes({autoPlaySeasons: g.autoPlaySeasons - 1});
     }
 
-    await idb.cache.flush();
-    await idb.cache.fill();
-
     if (env.enableLogging && !env.inCordova) {
         toUI('emit', 'showAd', 'modal');
     }
@@ -110,7 +113,7 @@ async function newPhaseRegularSeason() {
     if (g.showFirstOwnerMessage) {
         await genMessage({wins: 0, playoffs: 0, money: 0});
     } else {
-        // Spam user with another message?
+        /*// Spam user with another message?
         if (localStorage.getItem('nagged') === 'true') {
             // This used to store a boolean, switch to number
             localStorage.setItem('nagged', '1');
@@ -145,7 +148,7 @@ async function newPhaseRegularSeason() {
                 year: g.season,
                 text: '<p>Want to try multiplayer Basketball GM? Some intrepid souls have banded together to form online multiplayer leagues, and <a href="http://basketball-gm.co.nf/">you can find a user-made list of them here</a>.</p>',
             });
-        }
+        }*/
     }
 
     return [undefined, ["playerMovement"]];

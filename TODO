@@ -1,32 +1,27 @@
 IVERSON
 
 move everything but the UI to a web worker
-- split code, with concrete API for communication between frontend and backend
-- ui folder
-  - output: ui.js
-  - all the react components, routing, and boilerplate to connect to worker and communicate
-- worker folder
-  - output: worker.js
-  - everything else
 - current todo
   - get it running in worker
-    - stringification worth it in promise-worker-bi? brings in issues with undefined serialization to null
-      - benchmark
     - how fast would it be without the cache, just hitting IDB directly? maybe too far gone...
       - no, it's not too far gone! if the cache isn't improving performance, i should get rid of it
+    - stringification worth it in promise-worker-bi? brings in issues with undefined serialization to null
+      - benchmark
 - does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
 - should checks to update data in worker/views be in worker, or could they be in UI somehow and avoid call to worker if update not needed?
 - write lint script to check for ui/worker cross-contamination. also document/window/localStorage/react in worker. also any of that stuff in common.
 - restore runWhenever ability (really necessary? was only used in gameLog)
-- uncomment things using localstorage in worker, after moving to either env+api or idb
+- uncomment things using localstorage in worker, after moving to either env+api or idb (meta)
 - test fetch, maybe polyfill too
   - and replace other jquery, after abstracting into function
 - setState was used in schedule so old completed games don't temporarily show when switching team. still an issue? if not, get rid of setStateData completely
 - beforeView - is abort param used? was used for "league not found" page before
 - move cb out of ctx, no need for it there, pass directly to get
-- why can't use tx when filling cache?
+- maybe restore console.error('Error when generating response:', error); in promise-worker-bi
 
 auto play seasons doesn't work
+
+lottery odds seem all even, why?
 
 switch to native promises and/or lie, bluebird doens't work with IDB transactions in worker
 - debug mode still needed?

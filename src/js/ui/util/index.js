@@ -1,5 +1,9 @@
 // @flow
 
+import PromiseWorker from 'promise-worker-bi';
+const worker = new Worker('/gen/worker.js');
+export const promiseWorker = new PromiseWorker(worker);
+
 export {default as ads} from './ads';
 export {default as emitter} from './emitter';
 export {default as genStaticPage} from './genStaticPage';

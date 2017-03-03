@@ -1,9 +1,6 @@
 // @flow
 
-import PromiseWorker from 'promise-worker';
-
-const worker = new Worker('/gen/worker.js');
-const promiseWorker = new PromiseWorker(worker);
+import {promiseWorker} from '../util';
 
 const toWorker = (...args) => {
 console.log('toWorker', args);

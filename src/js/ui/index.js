@@ -4,14 +4,14 @@
 import '../vendor/babel-external-helpers';
 import Promise from 'bluebird';
 import sourceMapSupport from 'source-map-support';
-import 'indexeddb-getall-shim';
 import 'jquery-ui/sortable';
 import page from 'page';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import * as api from './api';
 import Controller from './components/Controller';
 import * as processInputs from './processInputs';
-import {ads, genStaticPage, initView, toWorker} from './util';
+import {ads, genStaticPage, initView, promiseWorker, toWorker} from './util';
 import * as views from './views';
 import type {Env} from '../common/types';
 
@@ -24,6 +24,15 @@ if (localStorage.getItem('debug') === 'debug') {
 // Overwrite Promise object globally so Babel uses it when transpiling async/await (not totally sure if necessary)
 window.Promise = Promise;
 window.Promise.config({warnings: false});
+
+promiseWorker.register(([name, ...params]) => {
+    if (!api.hasOwnProperty(name)) {
+        throw new Error(`API call to nonexistant worker function "${name}" with params ${JSON.stringify(params)}`);
+    }
+
+    return api[name](...params);
+});
+
 
 const Manual = <div>
     <h1>Manual</h1>

@@ -25,6 +25,8 @@ move everything but the UI to a web worker
 - move cb out of ctx, no need for it there, pass directly to get
 - why can't use tx when filling cache?
 
+get rid of getall shim??
+
 appcache
 
 lastDbChange still needed?

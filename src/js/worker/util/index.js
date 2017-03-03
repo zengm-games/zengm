@@ -1,5 +1,8 @@
 // @flow
 
+import PromiseWorker from 'promise-worker-bi';
+export const promiseWorker = new PromiseWorker();
+
 export {default as account} from './account';
 export {default as advStats} from './advStats';
 export {default as beforeView} from './beforeView';

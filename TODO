@@ -104,17 +104,15 @@ blog post for beta
 - 3 prongs: cache, playerStats denormalization, worker
 
 document cache data format and API!
-
-replace all usage of IDB with cache, otherwise things will be more likely to get out of sync on flush failure
-  start with game.js and anything that it touches
+- different things are cached, depending on object store
+- all modifications go into cache
+- read from just the cache if you're sure everything is there (like an active player). otherwise, read from db and augment with cache (because anything could be in cache, even if it's not normally.. like retired player added to watch list). getCopy variables do this
 
 league creation
 - reading from league file
 
 when to fill/flush? phases, games, user interaction
 - maybe even less often, should be entirely capable of running with all writes to the cache and only reading from archived IDB
-
-how to handle data not in cache?
 
 put playerStats back under players?
 - could be worth it, because getting stats to display for a large number of players seems pretty slow now
@@ -128,8 +126,6 @@ make sure all player.value calls happen with full cache or psOverride
 
 make cache synchronous? it'll be faster, any problems though?
 - big problem: can't switch to db/cache in worker. but already can't do that, because mutating objects in place will not actually update anymore then
-
-get rid of teamAbbrevsCache, etc?
 
 revisit lock system
 

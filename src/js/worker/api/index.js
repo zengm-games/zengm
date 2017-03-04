@@ -8,7 +8,7 @@ import {contractNegotiation, draft, finances, league, phase, player, team, trade
 import {connectMeta, getCopy, idb} from '../db';
 import {account, beforeView, changes, checkNaNs, env, random, updatePlayMenu, updateStatus} from '../util';
 import * as views from '../views';
-import type {Env, GameAttributes, GetOutput, PageCtx, Player, PlayerWithoutPid, UpdateEvents} from '../../common/types';
+import type {Env, GameAttributes, GetOutput, Player, PlayerWithoutPid, UpdateEvents} from '../../common/types';
 
 const acceptContractNegotiation = async (pid: number, amount: number, exp: number): Promise<?string> => {
     return contractNegotiation.accept(pid, amount, exp);
@@ -19,12 +19,12 @@ const autoSortRoster = async () => {
     league.updateLastDbChange();
 };
 
-const beforeViewLeague = async (ctx: PageCtx, lid: ?number) => {
-    return beforeView.league(ctx, lid);
+const beforeViewLeague = async (newLid: number, loadedLid: ?number) => {
+    return beforeView.league(newLid, loadedLid);
 };
 
-const beforeViewNonLeague = async (ctx: PageCtx) => {
-    return beforeView.nonLeague(ctx);
+const beforeViewNonLeague = async () => {
+    return beforeView.nonLeague();
 };
 
 const cancelContractNegotiation = async (pid: number) => {

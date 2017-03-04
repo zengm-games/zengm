@@ -4,10 +4,9 @@ import {Cache, connectLeague, idb} from '../db';
 import {g, helpers} from '../../common';
 import {league} from '../core';
 import {toUI, updatePhase, updatePlayMenu, updateStatus} from '../util';
-import type {PageCtx, UpdateEvents} from '../../common/types';
 
-const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEvents, ?string]> => {
-    g.lid = parseInt(ctx.params.lid, 10);
+const beforeLeague = async (newLid: number, loadedLid: ?number): Promise<?string> => {
+    g.lid = newLid;
 
     // Check for some other window making changes to the database
     const checkDbChange = async lid => {
@@ -31,11 +30,6 @@ const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEv
             setTimeout(() => checkDbChange(lid), 3000);
         }
     };
-
-    // Make sure league exists
-
-    // Handle some common internal parameters
-    const updateEvents = ctx.bbgm.updateEvents !== undefined ? ctx.bbgm.updateEvents : [];
 
     // Make sure league template FOR THE CURRENT LEAGUE is showing
     if (loadedLid !== g.lid) {
@@ -68,18 +62,12 @@ const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEv
         await updatePlayMenu();
         toUI('emit', 'updateTopMenu', {lid: g.lid});
         //checkDbChange(g.lid); // Currently not working
-        return [updateEvents, undefined];
     }
-
-    return [updateEvents, undefined];
 };
 
-const beforeNonLeague = (ctx: PageCtx): [UpdateEvents, ?string] => {
+const beforeNonLeague = (): ?string => {
     g.lid = undefined;
     toUI('emit', 'updateTopMenu', {lid: undefined});
-
-    const updateEvents = (ctx !== undefined && ctx.bbgm.updateEvents !== undefined) ? ctx.bbgm.updateEvents : [];
-    return [updateEvents, undefined];
 };
 
 export default {

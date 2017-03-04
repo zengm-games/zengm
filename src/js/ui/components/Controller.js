@@ -148,7 +148,10 @@ class Controller extends React.Component {
     }
 
     async get(args: Args, ctx: PageCtx) {
-        const [updateEvents, abort] = await (args.inLeague ? toWorker('beforeViewLeague', ctx, this.state.topMenu.lid) : toWorker('beforeViewNonLeague', ctx));
+        const updateEvents = (ctx !== undefined && ctx.bbgm.updateEvents !== undefined) ? ctx.bbgm.updateEvents : [];
+
+        const newLid = parseInt(ctx.params.lid, 10);
+        const abort = await (args.inLeague ? toWorker('beforeViewLeague', newLid, this.state.topMenu.lid) : toWorker('beforeViewNonLeague'));
 
         if (abort === 'abort') {
             return;

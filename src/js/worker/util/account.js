@@ -1,8 +1,7 @@
 // @flow
 
 /*eslint camelcase: 0*/
-import queryString from 'query-string';
-import {SPORT, g} from '../../common';
+import {SPORT, fetchWrapper, g} from '../../common';
 import {getCopy, idb} from '../db';
 import {env, logEvent, toUI} from '../util';
 import type {AchievementKey} from '../../common/types';
@@ -105,12 +104,12 @@ async function addAchievements(achievements: AchievementKey[], silent?: boolean 
     };
 
     try {
-        const response = await fetch(`//account.basketball-gm.${env.tld}/add_achievements.php`, {
+        const data = await fetchWrapper({
+            url: `//account.basketball-gm.${env.tld}/add_achievements.php`,
             method: 'POST',
-            body: queryString.stringify({achievements, sport: SPORT}),
+            data: {achievements, sport: SPORT},
             credentials: 'include',
         });
-        const data = await response.json();
 
         if (data.success) {
             achievements.forEach(notify);
@@ -124,8 +123,10 @@ async function addAchievements(achievements: AchievementKey[], silent?: boolean 
 
 async function check() {
     try {
-        const response = await fetch(`//account.basketball-gm.${env.tld}/user_info.php?${queryString.stringify({sport: SPORT})}`, {
+        const response = await fetchWrapper({
+            url: `//account.basketball-gm.${env.tld}/user_info.php`,
             method: 'GET',
+            data: {sport: SPORT},
             credentials: 'include',
         });
         const data = await response.json();
@@ -181,8 +182,10 @@ async function getAchievements() {
 
     try {
         // Handle any achievements stored in the cloud
-        const response = await fetch(`//account.basketball-gm.${env.tld}/get_achievements.php?${queryString.stringify({sport: SPORT})}`, {
+        const response = await fetchWrapper({
+            url: `//account.basketball-gm.${env.tld}/get_achievements.php`,
             method: 'GET',
+            data: {sport: SPORT},
             credentials: 'include',
         });
         const achievementsRemote = await response.json();

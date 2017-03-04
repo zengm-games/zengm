@@ -1,7 +1,6 @@
 // @flow
 
-import queryString from 'query-string';
-import {SPORT} from '../../common';
+import {SPORT, fetchWrapper} from '../../common';
 import {account, env} from '../util';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
@@ -15,8 +14,10 @@ async function updateAccountUpdateCard(
         await account.check();
 
         try {
-            const response = await fetch(`//account.basketball-gm.${env.tld}/gold_card_info.php?${queryString.stringify({sport: SPORT})}`, {
+            const response = await fetchWrapper({
+                url: `//account.basketball-gm.${env.tld}/gold_card_info.php`,
                 method: 'GET',
+                data: {sport: SPORT},
                 credentials: 'include',
             });
             const data = await response.json();

@@ -1,23 +1,19 @@
 IVERSON
 
 move everything but the UI to a web worker
-- current todo
-  - get it running in worker
-    - stringification worth it in promise-worker-bi? brings in issues with undefined serialization to null
-      - benchmark
 - does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
 - should checks to update data in worker/views be in worker, or could they be in UI somehow and avoid call to worker if update not needed?
 - write lint script to check for ui/worker cross-contamination. also document/window/localStorage/react in worker. also any of that stuff in common.
 - restore runWhenever ability (really necessary? was only used in gameLog)
 - uncomment things using localstorage in worker, after moving to either env+api or idb (meta)
 - test fetch, maybe polyfill too
-  - and replace other jquery, after abstracting into function
+  - and replace other jquery with fetchWrapper
 - setState was used in schedule so old completed games don't temporarily show when switching team. still an issue? if not, get rid of setStateData completely
 - beforeView - is abort param used? was used for "league not found" page before
 - move cb out of ctx, no need for it there, pass directly to get
 - maybe restore console.error('Error when generating response:', error); in promise-worker-bi
-
-play all playoff game estimation is off (only in auto play mode)
+- stringification worth it in promise-worker-bi? brings in issues with undefined serialization to null
+  - benchmark, but first would have to get rid of passing around ctx and any other weird variables. maybe that would be a good idea anyway
 
 switch to native promises and/or lie, bluebird doens't work with IDB transactions in worker
 - debug mode still needed?
@@ -41,9 +37,6 @@ bbgm.league.setGameAttributes({phaseChangeInProgress: false})
 how to deal with debug mode in worker? relies on localstorage
 
 Better "League not found" error page
-
-draft tests fail sometimes
-- should give reverse round 2 order for teams with the same record
 
 getCopy.players use only where needed for input to player.filter
 - abstract season logic from leaders/playerRatings, use in stats pages too (plus a bit extra, for ones showing draft prospects too)

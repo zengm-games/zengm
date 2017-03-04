@@ -14,7 +14,7 @@ async function updatePlayers(
         players = await getCopy.playersPlus(players, {
             attrs: ["pid", "name", "draft", "retiredYear", "statsTids"],
             ratings: ["ovr", "pos"],
-            stats: ["season", "abbrev", "gp", "min", "trb", "ast", "pts", "per", "ewa"],
+            stats: ["season", "abbrev", "tid", "gp", "min", "trb", "ast", "pts", "per", "ewa"],
         });
 
         // This stuff isn't in getCopy.playersPlus because it's only used here.
@@ -26,16 +26,23 @@ async function updatePlayers(
                 }
             }
 
-            p.bestStats = {
-                gp: 0,
-                min: 0,
-                per: 0,
-            };
-            for (const ps of p.stats) {
-                if (ps.gp * ps.min * ps.per > p.bestStats.gp * p.bestStats.min * p.bestStats.per) {
-                    p.bestStats = ps;
+            p.bestStats = {};
+            let bestEWA = 0;
+            p.teamSums = {};
+            for (let j = 0; j < p.stats.length; j++) {
+                const tid = p.stats[j].tid;
+                const EWA = p.stats[j].ewa;
+                if (EWA > bestEWA) {
+                    p.bestStats = p.stats[j];
+                    bestEWA = EWA;
+                }
+                if (p.teamSums.hasOwnProperty(tid)) {
+                    p.teamSums[tid] += EWA;
+                } else {
+                    p.teamSums[tid] = EWA;
                 }
             }
+            p.legacyTid = parseInt(Object.keys(p.teamSums).reduce((teamA, teamB) => (p.teamSums[teamA] > p.teamSums[teamB] ? teamA : teamB)), 10);
         }
 
         return {

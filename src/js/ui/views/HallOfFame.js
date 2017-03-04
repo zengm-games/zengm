@@ -46,7 +46,9 @@ const HallOfFame = ({players}) => {
                 p.careerStats.ewa.toFixed(1),
             ],
             classNames: {
-                info: p.statsTids.includes(g.userTid),
+                danger: p.legacyTid === g.userTid,
+                info: p.statsTids.slice(0, p.statsTids.length - 1).includes(g.userTid) && p.legacyTid !== g.userTid,
+                success: p.statsTids[p.statsTids.length - 1] === g.userTid && p.legacyTid !== g.userTid,
             },
         };
     });
@@ -54,7 +56,7 @@ const HallOfFame = ({players}) => {
     return <div>
         <h1>Hall of Fame <NewWindowLink /></h1>
 
-        <p>Players are eligible to be inducted into the Hall of Fame after they retire. The formula for inclusion is very similar to <a href="http://espn.go.com/nba/story/_/id/8736873/nba-experts-rebuild-springfield-hall-fame-espn-magazine">the method described in this article</a>. Hall of famers who played for your team are <span className="text-info">highlighted in blue</span>.</p>
+        <p>Players are eligible to be inducted into the Hall of Fame after they retire. The formula for inclusion is very similar to <a href="http://espn.go.com/nba/story/_/id/8736873/nba-experts-rebuild-springfield-hall-fame-espn-magazine">the method described in this article</a>. Hall of Famers who played for your team are <span className="text-info">highlighted in blue</span>. Hall of Famers who retired with your team are <span className="text-success">highlighted in green</span>. Hall of Famers who played most of their career with your team are <span className="text-danger">highlighted in red</span>.</p>
 
         <DataTable
             cols={cols}

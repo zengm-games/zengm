@@ -16,6 +16,8 @@ switch to native promises and/or lie, bluebird doens't work with IDB transaction
   - if so, how to deal with debug mode in worker? relies on localstorage
   - what about core.debug?
 
+watch flag doesn't update right on old roster seasons
+
 get rid of getall shim?? if not, only in the worker, and make work in worker
 
 lastDbChange still needed?
@@ -57,7 +59,10 @@ add flow comments to new files!
 
 eventually merge players and playersPlus
 
-various dbl-using things in api need to be updated
+update to cache
+- various idb.league-using things in api need to be updated
+- also search for any readwrite transaction
+- customize player
 
 if i can gracefully handle absence of g.season etc, put cache creation inside connectLeague
 - not graceful now, see fill(season)

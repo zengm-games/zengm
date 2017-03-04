@@ -47,20 +47,22 @@ const checkParticipationAchievevment = async (force: boolean = false) => {
 };
 
 const clearWatchList = async () => {
+    const pids = new Set();
+
     const players = await idb.cache.getAll('players');
     for (const p of players) {
-        if (p.watch) {
+        if (p.watch && typeof p.watch !== "function") {
             p.watch = false;
         }
+        pids.add(p.pid);
     }
 
-    await idb.league.tx("players", "readwrite", tx => {
-        return tx.players.iterate(p => {
-            if (p.watch) {
-                p.watch = false;
-                return p;
-            }
-        });
+    // For watched players not in cache, mark as unwatched an add to cache
+    await idb.league.players.iterate(async (p) => {
+        if (p.watch && typeof p.watch !== "function" && !pids.has(p.pid)) {
+            p.watch = false;
+            await idb.cache.add('players', p);
+        }
     });
 
     league.updateLastDbChange();
@@ -611,11 +613,9 @@ const updatePlayerWatch = async (pid: number, watch: boolean) => {
     if (cachedPlayer) {
         cachedPlayer.watch = watch;
     } else {
-        await idb.league.tx('players', 'readwrite', async tx => {
-            const p = await tx.players.get(pid);
-            p.watch = watch;
-            await tx.players.put(p);
-        });
+        const p = await idb.league.players.get(pid);
+        p.watch = watch;
+        await idb.cache.add('players', p);
     }
 
     league.updateLastDbChange();

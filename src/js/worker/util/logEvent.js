@@ -2,7 +2,8 @@
 
 import {createLogger, g} from '../../common';
 import {idb} from '../db';
-import type {LogEventSaveOptions} from '../../common/types';
+import {toUI} from '../util';
+import type {LogEventSaveOptions, LogEventShowOptions} from '../../common/types';
 
 const saveEvent = (event: LogEventSaveOptions) => {
     if (idb.cache) {
@@ -10,6 +11,8 @@ const saveEvent = (event: LogEventSaveOptions) => {
     }
 };
 
-const logEvent = createLogger(saveEvent, () => { console.log('Somehow connect to api.showEvent from worker/util/logEvent'); });
+const logEvent = createLogger(saveEvent, (options: LogEventShowOptions) => {
+    toUI('showEvent', options);
+});
 
 export default logEvent;

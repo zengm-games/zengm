@@ -1,6 +1,6 @@
 // @flow
 
-import {g} from '../../common';
+import {g, helpers} from '../../common';
 import {ads, emitter, realtimeUpdate} from '../util';
 import {showEvent} from '../util/logEvent';
 import type {GameAttributes, LogEventShowOptions, UpdateEvents} from '../../common/types';
@@ -78,6 +78,14 @@ async function realtimeUpdate2(updateEvents: UpdateEvents = [], url?: string, ra
     await realtimeUpdate(updateEvents, url, raw);
 }
 
+const resetG = () => {
+    helpers.resetG();
+
+    // Additionally, here we want to ignore the old lid just to be sure, since the real one will be sent to the UI
+    // later. But in the worker, g.lid is already correctly set, so this can't be in helpers.resetG.
+    g.lid = undefined;
+};
+
 const setGameAttributes = (gameAttributes: GameAttributes) => {
     Object.assign(g, gameAttributes);
 };
@@ -93,6 +101,7 @@ export {
     notifyException,
     prompt,
     realtimeUpdate2 as realtimeUpdate,
+    resetG,
     setGameAttributes,
     showEvent2 as showEvent,
 };

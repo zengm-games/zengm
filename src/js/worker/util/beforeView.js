@@ -39,8 +39,9 @@ const beforeLeague = async (ctx: PageCtx, loadedLid: ?number): Promise<[UpdateEv
 
     // Make sure league template FOR THE CURRENT LEAGUE is showing
     if (loadedLid !== g.lid) {
-        // Clear old game attributes from g, to make sure the new ones are saved to the db in league.setGameAttributes
+        // Clear old game attributes from g, just to be sure
         helpers.resetG();
+        await toUI('resetG');
 
         // Make sure this league exists before proceeding
         const l = await idb.meta.leagues.get(g.lid);

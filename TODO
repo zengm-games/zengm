@@ -14,25 +14,24 @@ move everything but the UI to a web worker
   - benchmark, but first would have to get rid of passing around ctx and any other weird variables. maybe that would be a good idea anyway
 
 switch to native promises and/or lie, bluebird doens't work with IDB transactions in worker
+- native works on chrome. can do feature detection and conditionally load lie?
+- should only need lie in worker, not UI
 - debug mode still needed?
+  - if so, how to deal with debug mode in worker? relies on localstorage
 
-get rid of getall shim??
+get rid of getall shim?? if not, only in the worker, and make work in worker
 
 lastDbChange still needed?
 
 for modules that should always be consumed as whole (core/*), export default object and then re-export in index.js
 
-helpers.resetG needs to run in ui and worker
-
-ttest all instances of fetchWrapper, and move $.ajax over (maybe some try to move to worker)
+test all instances of fetchWrapper, and move $.ajax over (maybe some try to move to worker)
 
 things like gameSimInProgress, phaseChangeInProgress... why ever save to db? maybe take out of gameAttributes
 
 bbgm.g.cache.flush().then(() => console.log('done'));
 fucked = false; Object.values(bbgm.g.cache.indexes.teamSeasonsBySeasonTid).forEach((ts) => { if (ts.hasOwnProperty('ast')) { console.log(ts); fucked = true } }); if (fucked) { throw new Error('FUCK'); }
 bbgm.league.setGameAttributes({phaseChangeInProgress: false})
-
-how to deal with debug mode in worker? relies on localstorage
 
 Better "League not found" error page
 

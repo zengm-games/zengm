@@ -6,8 +6,6 @@ move everything but the UI to a web worker
 - write lint script to check for ui/worker cross-contamination. also document/window/localStorage/react in worker. also any of that stuff in common.
 - restore runWhenever ability (really necessary? was only used in gameLog)
 - uncomment things using localstorage in worker, after moving to either env+api or idb (meta)
-- test fetch, maybe polyfill too
-  - and replace other jquery with fetchWrapper
 - setState was used in schedule so old completed games don't temporarily show when switching team. still an issue? if not, get rid of setStateData completely
 - beforeView - is abort param used? was used for "league not found" page before
 - move cb out of ctx, no need for it there, pass directly to get
@@ -27,6 +25,8 @@ lastDbChange still needed?
 for modules that should always be consumed as whole (core/*), export default object and then re-export in index.js
 
 helpers.resetG needs to run in ui and worker
+
+ttest all instances of fetchWrapper, and move $.ajax over (maybe some try to move to worker)
 
 things like gameSimInProgress, phaseChangeInProgress... why ever save to db? maybe take out of gameAttributes
 

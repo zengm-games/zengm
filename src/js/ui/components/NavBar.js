@@ -2,7 +2,6 @@
 
 /* eslint react/no-find-dom-node: "off" */
 
-import $ from 'jquery';
 import React from 'react';
 import Dropdown from 'react-bootstrap/lib/Dropdown';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
@@ -12,7 +11,7 @@ import Navbar from 'react-bootstrap/lib/Navbar';
 import Overlay from 'react-bootstrap/lib/Overlay';
 import Popover from 'react-bootstrap/lib/Popover';
 import ReactDOM from 'react-dom';
-import {helpers} from '../../common';
+import {fetchWrapper, helpers} from '../../common';
 import {logEvent, realtimeUpdate, toWorker} from '../util';
 import html2canvas from '../../vendor/html2canvas';
 import type {Option} from '../../common/types';
@@ -151,9 +150,9 @@ const handleScreenshotClick = e => {
             });
 
             try {
-                const data = await Promise.resolve($.ajax({
-                    url: "https://imgur-apiv3.p.mashape.com/3/image",
-                    type: "post",
+                const data = await fetchWrapper({
+                    url: 'https://imgur-apiv3.p.mashape.com/3/image',
+                    method: 'POST',
                     headers: {
                         Authorization: "Client-ID c2593243d3ea679",
                         "X-Mashape-Key": "H6XlGK0RRnmshCkkElumAWvWjiBLp1ItTOBjsncst1BaYKMS8H",
@@ -161,8 +160,8 @@ const handleScreenshotClick = e => {
                     data: {
                         image: canvas.toDataURL().split(',')[1],
                     },
-                    dataType: "json",
-                }));
+                });
+
                 logEvent({
                     type: 'screenshot',
                     text: `<a href="http://imgur.com/${data.data.id}" target="_blank">Click here to view your screenshot.</a>`,

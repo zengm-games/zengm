@@ -18,8 +18,6 @@ switch to native promises and/or lie, bluebird doens't work with IDB transaction
 
 get rid of getall shim??
 
-appcache
-
 lastDbChange still needed?
 
 for modules that should always be consumed as whole (core/*), export default object and then re-export in index.js

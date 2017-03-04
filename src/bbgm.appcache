@@ -1,7 +1,8 @@
 CACHE MANIFEST
 
-gen/app.js
 gen/bbgm.css
+gen/ui.js
+gen/worker.js
 fonts/glyphicons-halflings-regular.woff
 ico/logo.png
 ico/new_window.png

@@ -112,13 +112,13 @@ async function updateRanks(types: BudgetTypes[]) {
     }
     let expensesByItem;
     let expensesByTeam;
-    if (types.includes('expenses')) {
+    if (types.includes('expenses') && teamSeasons !== undefined) {
         expensesByTeam = teamSeasons.map(ts => ts.expenses);
         expensesByItem = getByItem(expensesByTeam);
     }
     let revenuesByItem;
     let revenuesByTeam;
-    if (types.includes('revenues')) {
+    if (types.includes('revenues') && teamSeasons !== undefined) {
         revenuesByTeam = teamSeasons.map(ts => ts.revenues);
         revenuesByItem = getByItem(revenuesByTeam);
     }
@@ -127,10 +127,10 @@ async function updateRanks(types: BudgetTypes[]) {
         if (types.includes('budget')) {
             updateObj(t.budget, budgetsByItem);
         }
-        if (types.includes('revenues')) {
+        if (types.includes('revenues') && teamSeasons !== undefined) {
             updateObj(teamSeasons[t.tid].expenses, expensesByItem);
         }
-        if (types.includes('expenses')) {
+        if (types.includes('expenses') && teamSeasons !== undefined) {
             updateObj(teamSeasons[t.tid].revenues, revenuesByItem);
         }
     }

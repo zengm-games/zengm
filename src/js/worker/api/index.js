@@ -46,7 +46,7 @@ const checkParticipationAchievevment = async (force: boolean = false) => {
     }
 };
 
-const clearWatchList = async (): Promise<string> => {
+const clearWatchList = async () => {
     const players = await idb.cache.getAll('players');
     for (const p of players) {
         if (p.watch) {
@@ -300,14 +300,13 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[], progressCa
             }];
 
             if (tid !== g.userTid) {
-                const [found, teams2] = await trade.makeItWork(teams, true, estValues);
-                teams = teams2;
+                teams = await trade.makeItWork(teams, true, estValues);
 
                 // Update progress bar
                 done += 1;
                 onProgress(done, numTeams);
 
-                if (found) {
+                if (teams !== undefined) {
                     const summary = await trade.summary(teams);
                     teams[1].warning = summary.warning;
                     offers.push(teams[1]);
@@ -730,7 +729,7 @@ const upsertCustomizedPlayer = async (p: Player | PlayerWithoutPid, originalTid:
 
     // Recalculate player values, since ratings may have changed
     await player.updateValues(p);
-    let pid;
+    let pid: number | void;
     await idb.league.tx(["players", "playerStats"], "readwrite", async tx => {
         // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition
         // When adding a player, this is the only way to know the pid
@@ -748,9 +747,14 @@ const upsertCustomizedPlayer = async (p: Player | PlayerWithoutPid, originalTid:
         }
     });
 
+    const pid2 = pid;
+    if (pid2 === undefined) {
+        throw new Error('Undefined pid');
+    }
+
     league.updateLastDbChange();
 
-    return pid;
+    return pid2;
 };
 
 const clearTrade = async () => {

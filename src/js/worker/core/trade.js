@@ -420,13 +420,13 @@ async function propose(forceTrade?: boolean = false): Promise<[boolean, ?string]
  * @param {Array.<Object>} teams Array of objects containing the assets for the two teams in the trade. The first object is for the user's team and the second is for the other team. Values in the objects are tid (team ID), pids (player IDs) and dpids (draft pick IDs).
  * @param {boolean} holdUserConstant If true, then players/picks will only be added from the other team. This is useful for the trading block feature.
  * @param {?Object} estValuesCached Estimated draft pick values from trade.getPickValues, or null. Only pass if you're going to call this repeatedly, then it'll be faster if you cache the values up front.
- * @return {Promise.[boolean, Object]} Resolves to an array with one or two elements. First is a boolean indicating whether "make it work" was successful. If true, then the second argument is set to a teams object (similar to first input) with the "made it work" trade info.
+ * @return {Promise.<?Object>} If it works, resolves to a teams object (similar to first input) with the "made it work" trade info. Otherwise, resolves to undefined
  */
 async function makeItWork(
     teams: TradeTeams,
     holdUserConstant: boolean,
     estValuesCached?: TradePickValues,
-): Promise<[boolean, TradeTeams]> {
+): Promise<TradeTeams | void> {
     let initialSign;
     let added = 0;
 
@@ -492,7 +492,7 @@ async function makeItWork(
 
         // If we've already added 5 assets or there are no more to try, stop
         if (initialSign === -1 && (assets.length === 0 || added >= 5)) {
-            return [false];
+            return;
         }
 
         // Calculate the value for each asset added to the trade, for use in forward selection
@@ -553,15 +553,15 @@ async function makeItWork(
         const dv = await team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids, estValuesCached);
 
         if (dv > 0 && initialSign === -1) {
-            return [true, teams];
+            return teams;
         }
 
         if ((added > 2 || (added > 0 && Math.random() > 0.5)) && initialSign === 1) {
             if (dv > 0) {
-                return [true, teams];
+                return teams;
             }
 
-            return [false];
+            return;
         }
 
         return tryAddAsset();
@@ -625,9 +625,9 @@ async function makeItWorkTrade() {
     ]);
     const teams0 = tr.teams;
 
-    const [found, teams] = await makeItWork(helpers.deepCopy(teams0), false, estValues);
+    const teams = await makeItWork(helpers.deepCopy(teams0), false, estValues);
 
-    if (!found) {
+    if (teams === undefined) {
         return `${g.teamRegionsCache[teams0[1].tid]} GM: "I can't afford to give up so much."`;
     }
 

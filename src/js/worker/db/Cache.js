@@ -29,7 +29,7 @@ class Cache {
     storeInfos: {
         [key: Store]: {
             pk: string,
-            getData?: (BackboardTx, Player[]) => Promise<any[]>,
+            getData?: (BackboardTx, Player[]) => (Promise<any[]> | any[]),
             indexes?: {
                 name: Index,
                 filter?: (any) => boolean,

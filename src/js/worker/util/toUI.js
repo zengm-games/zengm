@@ -2,7 +2,7 @@
 
 import {promiseWorker} from '../util';
 
-const toUI = (...args) => {
+const toUI = (...args: any[]) => {
     return promiseWorker.postMessage(args);
 };
 

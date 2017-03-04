@@ -14,7 +14,7 @@ import {lock, logEvent, updatePlayMenu, updateStatus} from '../util';
  * @param {number=} tid Team ID the contract negotiation is with. This only matters for Multi Team Mode. If undefined, defaults to g.userTid.
  * @return {Promise.<string=>)} If an error occurs, resolve to a string error message.
  */
-async function create(pid: number, resigning: boolean, tid: number = g.userTid): Promise<string> {
+async function create(pid: number, resigning: boolean, tid: number = g.userTid): Promise<string | void> {
     if ((g.phase >= PHASE.AFTER_TRADE_DEADLINE && g.phase <= PHASE.RESIGN_PLAYERS) && !resigning) {
         return "You're not allowed to sign free agents now.";
     }
@@ -58,7 +58,7 @@ async function create(pid: number, resigning: boolean, tid: number = g.userTid):
     await idb.cache.add('negotiations', negotiation);
     league.updateLastDbChange();
     updateStatus("Contract negotiation");
-    return updatePlayMenu();
+    await updatePlayMenu();
 }
 
 /**

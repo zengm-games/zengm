@@ -408,7 +408,7 @@ async function valueChange(
     }
     const gpAvg = helpers.bound(t.stats.gp, 0, g.numGames); // Ideally would be done separately for each team, but close enough
 
-    const payroll = await getPayroll(tid);
+    const payroll = (await getPayroll(tid))[0];
 
     // Get players
     const getPlayers = async () => {

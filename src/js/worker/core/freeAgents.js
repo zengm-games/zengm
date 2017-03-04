@@ -222,7 +222,7 @@ async function play(numDays: number, start?: boolean = true) {
     }
 }
 
-export {
+export default {
     autoSign,
     decreaseDemands,
     amountWithMood,

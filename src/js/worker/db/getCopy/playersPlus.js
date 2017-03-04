@@ -2,7 +2,7 @@ import backboard from 'backboard';
 import _ from 'underscore';
 import {PLAYER, g, helpers} from '../../../common';
 import {filterOrderStats, mergeByPk} from './helpers';
-import {contractSeasonsRemaining, fuzzRating} from '../../core/player';
+import {player} from '../../core';
 import {idb} from '../../db';
 import type {BackboardTx, Player, PlayerFiltered} from '../../../common/types';
 
@@ -43,8 +43,8 @@ const processAttrs = (output: PlayerFiltered, p: Player, {
         } else if (attr === 'draft') {
             output.draft = Object.assign({}, p.draft, {age: p.draft.year - p.born.year});
             if (fuzz) {
-                output.draft.ovr = fuzzRating(output.draft.ovr, p.ratings[0].fuzz);
-                output.draft.pot = fuzzRating(output.draft.pot, p.ratings[0].fuzz);
+                output.draft.ovr = player.fuzzRating(output.draft.ovr, p.ratings[0].fuzz);
+                output.draft.pot = player.fuzzRating(output.draft.pot, p.ratings[0].fuzz);
             }
             // Inject abbrevs
             output.draft.abbrev = g.teamAbbrevsCache[output.draft.tid];
@@ -57,7 +57,7 @@ const processAttrs = (output: PlayerFiltered, p: Player, {
             output.contract = helpers.deepCopy(p.contract);  // [millions of dollars]
             output.contract.amount /= 1000;  // [millions of dollars]
         } else if (attr === 'cashOwed') {
-            output.cashOwed = contractSeasonsRemaining(p.contract.exp, numGamesRemaining) * p.contract.amount / 1000;  // [millions of dollars]
+            output.cashOwed = player.contractSeasonsRemaining(p.contract.exp, numGamesRemaining) * p.contract.amount / 1000;  // [millions of dollars]
         } else if (attr === 'abbrev') {
             output.abbrev = helpers.getAbbrev(p.tid);
         } else if (attr === 'teamRegion') {
@@ -121,7 +121,7 @@ const processRatings = async (output: PlayerFiltered, p: Player, {
                 // Handle dovr and dpot - if there are previous ratings, calculate the fuzzed difference
                 const cat = attr.slice(1); // either ovr or pot
                 if (i > 0) {
-                    row[attr] = fuzzRating(pr[cat], pr.fuzz) - fuzzRating(p.ratings[i - 1][cat], p.ratings[i - 1].fuzz);
+                    row[attr] = player.fuzzRating(pr[cat], pr.fuzz) - player.fuzzRating(p.ratings[i - 1][cat], p.ratings[i - 1].fuzz);
                 } else {
                     row[attr] = 0;
                 }
@@ -144,7 +144,7 @@ const processRatings = async (output: PlayerFiltered, p: Player, {
                     row.abbrev = undefined;
                 }
             } else if (fuzz && attr !== 'fuzz' && attr !== 'season' && attr !== 'hgt' && attr !== 'pos') {
-                row[attr] = fuzzRating(pr[attr], pr.fuzz);
+                row[attr] = player.fuzzRating(pr[attr], pr.fuzz);
             } else {
                 row[attr] = pr[attr];
             }

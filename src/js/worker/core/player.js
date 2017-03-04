@@ -4,7 +4,7 @@ import backboard from 'backboard';
 import faces from 'facesjs';
 import _ from 'underscore';
 import {COMPOSITE_WEIGHTS, PHASE, PLAYER, g, helpers} from '../../common';
-import * as finances from './finances';
+import {finances} from '../core';
 import {idb} from '../db';
 import * as names from '../../data/names';
 import {injuries, logEvent, random} from '../util';
@@ -1534,7 +1534,7 @@ async function killOne() {
     });
 }
 
-export {
+export default {
     addRatingsRow,
     addStatsRow,
     genBaseMoods,

@@ -90,14 +90,14 @@ const showEvent2 = (options: LogEventShowOptions) => {
     showEvent(options);
 };
 
-export {
+export default {
     bbgmPing,
     emit,
     initAds,
     notifyException,
     prompt,
-    realtimeUpdate2 as realtimeUpdate,
+    realtimeUpdate: realtimeUpdate2,
     resetG,
     setGameAttributes,
-    showEvent2 as showEvent,
+    showEvent: showEvent2,
 };

@@ -1,7 +1,7 @@
 // @flow
 
 import {g} from '../../common';
-import * as league from '../core/league';
+import {league} from '../core';
 import {idb} from '../db';
 import {updatePlayMenu, updateStatus} from '../util';
 import type {GetOutput, Message as Message_, UpdateEvents} from '../../common/types';

@@ -1,8 +1,7 @@
 // @flow
 
 import {PHASE, PLAYER, g, helpers} from '../../common';
-import * as season from '../core/season';
-import * as team from '../core/team';
+import {season, team} from '../core';
 import {getCopy, idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 

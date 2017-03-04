@@ -1,8 +1,7 @@
 import assert from 'assert';
 import {Cache, connectMeta, getCopy, idb} from '../../db';
 import {PLAYER, g} from '../../common';
-import * as draft from '../../core/draft';
-import * as league from '../../core/league';
+import {draft, league} from '../../core';
 import sampleTiebreakers from '../fixtures/sampleTiebreakers';
 
 describe("core/draft", () => {

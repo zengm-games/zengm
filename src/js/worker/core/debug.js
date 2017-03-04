@@ -4,7 +4,7 @@
 
 import backboard from 'backboard';
 import {PLAYER} from '../../common';
-import * as player from './player';
+import {player} from '../core';
 import {getCopy, idb} from '../db';
 import type {RatingKey} from '../../common/types';
 
@@ -239,7 +239,7 @@ function averageCareerArc(baseOvr: number, basePot: number, ratingToSave: Rating
     if (ratingToSave) { console.log(`${ratingToSave}:`); console.log(averageRat); }
 }
 
-export {
+export default {
     regressRatingsPer,
     leagueAverageContract,
     averageCareerArc,

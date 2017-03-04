@@ -2,14 +2,7 @@
 
 import _ from 'underscore';
 import {COMPOSITE_WEIGHTS, PHASE, PLAYER, g, helpers} from '../../common';
-import GameSim from './GameSim';
-import * as finances from './finances';
-import * as freeAgents from './freeAgents';
-import * as league from './league';
-import * as phase from './phase';
-import * as player from './player';
-import * as season from './season';
-import * as team from './team';
+import {GameSim, finances, freeAgents, league, phase, player, season, team} from '../core';
 import {idb} from '../db';
 import {advStats, lock, logEvent, random, toUI, updatePlayMenu, updateStatus} from '../util';
 import type {GameResults} from '../../common/types';
@@ -800,7 +793,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
     }
 }
 
-export {
+export default {
     // eslint-disable-next-line import/prefer-default-export
     play,
 };

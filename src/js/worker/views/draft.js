@@ -1,7 +1,7 @@
 // @flow
 
 import {PHASE, PLAYER, g} from '../../common';
-import * as draft from '../core/draft';
+import {draft} from '../core';
 import {getCopy, idb} from '../db';
 
 async function updateDraft(): void | {[key: string]: any} {

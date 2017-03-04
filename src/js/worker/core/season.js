@@ -2,7 +2,7 @@
 
 import _ from 'underscore';
 import {PLAYER, g, helpers} from '../../common';
-import * as league from './league';
+import {league} from '../core';
 import {getCopy, idb} from '../db';
 import {logEvent, random} from '../util';
 import type {OwnerMoodDeltas, ScheduleGame, Team, TeamFiltered} from '../../common/types';
@@ -731,7 +731,7 @@ function genPlayoffSeries(teams: TeamFiltered[]) {
     return {series, tidPlayoffs};
 }
 
-export {
+export default {
     doAwards,
     updateOwnerMood,
     getSchedule,

@@ -18,7 +18,6 @@ function numInArrayEqualTo<T>(array: T[], x: T): number {
     return n;
 }
 
-export {
-    // eslint-disable-next-line import/prefer-default-export
+export default {
     numInArrayEqualTo,
 };

@@ -1,9 +1,7 @@
 // @flow
 
 import {PLAYER, g} from '../../common';
-import * as freeAgents from '../core/freeAgents';
-import * as player from '../core/player';
-import * as team from '../core/team';
+import {freeAgents, player, team} from '../core/';
 import {getCopy, idb} from '../db';
 
 async function updateFreeAgents(): void | {[key: string]: any} {

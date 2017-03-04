@@ -157,7 +157,7 @@ async function accept(pid: number, amount: number, exp: number): Promise<?string
     league.updateLastDbChange();
 }
 
-export {
+export default {
     accept,
     cancel,
     cancelAll,

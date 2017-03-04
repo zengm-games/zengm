@@ -1,7 +1,7 @@
 // @flow
 
 import {PLAYER, g} from '../../common';
-import * as freeAgents from '../core/freeAgents';
+import {freeAgents} from '../core';
 import {getCopy} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 

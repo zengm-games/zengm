@@ -1,7 +1,6 @@
 // @flow
 
 import {g} from '../../common';
-import * as league from '../core/league';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateGodMode(
@@ -9,9 +8,6 @@ async function updateGodMode(
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('toggleGodMode')) {
-        // Make sure it's current
-        await league.loadGameAttributes();
-
         return {
             godMode: g.godMode,
             disableInjuries: g.disableInjuries,

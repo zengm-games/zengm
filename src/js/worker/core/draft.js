@@ -556,7 +556,7 @@ async function untilUserOrEnd() {
     return autoSelectPlayer();
 }
 
-export {
+export default {
     genPicks,
     getOrder,
     genPlayers,

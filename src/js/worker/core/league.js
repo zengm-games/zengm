@@ -660,7 +660,7 @@ async function initAutoPlay() {
     }
 }
 
-export {
+export default {
     create,
     exportLeague,
     remove,

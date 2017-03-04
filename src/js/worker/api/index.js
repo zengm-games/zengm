@@ -797,7 +797,7 @@ const updateTrade = async (teams: [{
     league.updateLastDbChange();
 };
 
-export {
+export default {
     actions,
     acceptContractNegotiation,
     autoSortRoster,

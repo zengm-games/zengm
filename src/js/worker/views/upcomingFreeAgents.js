@@ -1,6 +1,6 @@
 import backboard from 'backboard';
 import {g} from '../../common';
-import * as player from '../core/player';
+import {player} from '../core';
 import {getCopy, idb} from '../db';
 import type {GetOutput} from '../../common/types';
 

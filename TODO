@@ -9,19 +9,19 @@ move everything but the UI to a web worker
 - setState was used in schedule so old completed games don't temporarily show when switching team. still an issue? if not, get rid of setStateData completely
 - beforeView - is abort param used? was used for "league not found" page before
 - move cb out of ctx, no need for it there, pass directly to get
-- maybe restore console.error('Error when generating response:', error); in promise-worker-bi
 
 switch to native promises and/or lie, bluebird doens't work with IDB transactions in worker
 - native works on chrome. can do feature detection and conditionally load lie?
 - should only need lie in worker, not UI
 - debug mode still needed?
   - if so, how to deal with debug mode in worker? relies on localstorage
+  - what about core.debug?
+
+alt-p not working?
 
 get rid of getall shim?? if not, only in the worker, and make work in worker
 
 lastDbChange still needed?
-
-for modules that should always be consumed as whole (core/*), export default object and then re-export in index.js
 
 test all instances of fetchWrapper, and move $.ajax over (maybe some try to move to worker)
 

@@ -1,7 +1,7 @@
 // @flow
 
 import {g} from '../../common';
-import * as team from './team';
+import {team} from '../core';
 import {idb} from '../db';
 import type {TeamSeason} from '../../common/types';
 
@@ -164,7 +164,7 @@ function getRankLastThree(teamSeasons: TeamSeason[], category: 'expenses' | 'rev
     return 15.5;
 }
 
-export {
+export default {
     assessPayrollMinLuxury,
     updateRanks,
     getRankLastThree,

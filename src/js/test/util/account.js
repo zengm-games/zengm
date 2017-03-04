@@ -2,8 +2,8 @@
 import assert from 'assert';
 import {Cache, connectMeta, idb} from '../../db';
 import {g} from '../../common';
-import * as league from '../../core/league';
-import * as account from '../../util/account';
+import {league} from '../../core';
+import {account} from '../../util';
 
 describe("util/account", () => {
     before(async () => {

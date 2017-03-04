@@ -1,7 +1,5 @@
 import {PHASE, g} from '../../common';
-import * as contractNegotiation from '../core/contractNegotiation';
-import * as freeAgents from '../core/freeAgents';
-import * as team from '../core/team';
+import {contractNegotiation, freeAgents, team} from '../core';
 import {getCopy, idb} from '../db';
 import type {GetOutput} from '../../common/types';
 

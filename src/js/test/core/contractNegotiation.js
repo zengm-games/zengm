@@ -1,8 +1,7 @@
 import assert from 'assert';
 import {Cache, connectMeta, idb} from '../../db';
 import {PLAYER, g} from '../../common';
-import * as contractNegotiation from '../../core/contractNegotiation';
-import * as league from '../../core/league';
+import {contractNegotiation, league} from '../../core';
 
 // Make player ask for a min contract, to ensure he'll never refuse to sign
 const givePlayerMinContract = async (pid) => {

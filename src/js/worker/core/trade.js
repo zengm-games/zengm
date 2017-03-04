@@ -1,9 +1,7 @@
 // @flow
 
 import {PHASE, PLAYER, g, helpers} from '../../common';
-import * as league from './league';
-import * as player from './player';
-import * as team from './team';
+import {league, player, team} from '../core';
 import {getCopy, idb} from '../db';
 import {logEvent} from '../util';
 import type {TradePickValues, TradeSummary, TradeTeams} from '../../common/types';
@@ -663,7 +661,7 @@ async function makeItWorkTrade() {
     return `${g.teamRegionsCache[teams[1].tid]} GM: "How does this sound?"`;
 }
 
-export {
+export default {
     create,
     updatePlayers,
     getOtherTid,

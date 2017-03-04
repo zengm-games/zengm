@@ -2,7 +2,7 @@
 import assert from 'assert';
 import _ from 'underscore';
 import {PLAYER, g, helpers} from '../../common';
-import * as player from '../../core/player';
+import {player} from '../../core';
 
 // Synchronous version of player.addStatsRow which does not require IndexedDB
 const addStatsRow = (p, playoffs = false) => {

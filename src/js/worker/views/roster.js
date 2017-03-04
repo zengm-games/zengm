@@ -1,7 +1,5 @@
 import {PHASE, g} from '../../common';
-import * as season from '../core/season';
-import * as team from '../core/team';
-import * as trade from '../core/trade';
+import {season, team, trade} from '../core';
 import {getCopy, idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 

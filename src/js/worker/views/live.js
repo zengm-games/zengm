@@ -1,7 +1,7 @@
 // @flow
 
 import {g} from '../../common';
-import * as season from '../core/season';
+import {season} from '../core';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateGamesList(): void | {[key: string]: any} {

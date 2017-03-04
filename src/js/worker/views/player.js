@@ -1,6 +1,5 @@
 import {PLAYER, g, helpers} from '../../common';
-import * as freeAgents from '../core/freeAgents';
-import * as trade from '../core/trade';
+import {freeAgents, trade} from '../core';
 import {getCopy} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 

@@ -2,7 +2,7 @@
 
 /* eslint-disable import/first */
 import '../vendor/babel-external-helpers';
-import * as api from './api';
+import api from './api';
 import {promiseWorker} from './util';
 
 // God damn this function is ugly, clean up! Can probably share with ui.

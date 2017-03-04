@@ -580,7 +580,7 @@ async function newPhase(phase: Phase, extra: any) {
     }
 }
 
-export {
+export default {
     // eslint-disable-next-line import/prefer-default-export
     newPhase,
 };

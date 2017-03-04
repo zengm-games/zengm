@@ -1,7 +1,7 @@
 // @flow
 
 import {PLAYER, g} from '../../common';
-import * as player from '../core/player';
+import {player} from '../core';
 import {getCopy, idb} from '../db';
 
 async function updateNegotiationList(): void | {[key: string]: any} {

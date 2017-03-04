@@ -1,7 +1,7 @@
 import assert from 'assert';
 import {g, helpers} from '../../common';
-import * as season from '../../core/season';
-import * as testHelpers from '../helpers';
+import {season} from '../../core';
+import testHelpers from '../helpers';
 
 const defaultTeams = helpers.getTeamsDefault();
 

@@ -555,6 +555,7 @@ async function loadTeams() {
             for (const k of helpers.keys(COMPOSITE_WEIGHTS)) {
                 p.compositeRating[k] = makeComposite(rating, COMPOSITE_WEIGHTS[k].ratings, COMPOSITE_WEIGHTS[k].weights);
             }
+            // eslint-disable-next-line operator-assignment
             p.compositeRating.usage = p.compositeRating.usage ** 1.9;
 
             p.stat = {gs: 0, min: 0, fg: 0, fga: 0, fgAtRim: 0, fgaAtRim: 0, fgLowPost: 0, fgaLowPost: 0, fgMidRange: 0, fgaMidRange: 0, tp: 0, tpa: 0, ft: 0, fta: 0, pm: 0, orb: 0, drb: 0, ast: 0, tov: 0, stl: 0, blk: 0, ba: 0, pf: 0, pts: 0, courtTime: 0, benchTime: 0, energy: 1};

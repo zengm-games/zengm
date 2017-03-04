@@ -71,10 +71,6 @@ const prompt = (message: string, defaultVal?: string) => {
 };
 
 async function realtimeUpdate2(updateEvents: UpdateEvents = [], url?: string, raw?: Object) {
-    // nulls can get erroneously passed in, due to JSON stringification in promise-worker-bi
-    url = url === null ? undefined : url;
-    raw = raw === null ? {} : raw;
-
     await realtimeUpdate(updateEvents, url, raw);
 }
 

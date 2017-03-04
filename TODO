@@ -10,8 +10,6 @@ move everything but the UI to a web worker
 - beforeView - is abort param used? was used for "league not found" page before
 - move cb out of ctx, no need for it there, pass directly to get
 - maybe restore console.error('Error when generating response:', error); in promise-worker-bi
-- stringification worth it in promise-worker-bi? brings in issues with undefined serialization to null
-  - benchmark, but first would have to get rid of passing around ctx and any other weird variables. maybe that would be a good idea anyway
 
 switch to native promises and/or lie, bluebird doens't work with IDB transactions in worker
 - native works on chrome. can do feature detection and conditionally load lie?

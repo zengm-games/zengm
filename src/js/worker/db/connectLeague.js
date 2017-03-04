@@ -13,45 +13,35 @@ const createLeague = (upgradeDB, lid: number) => {
     console.log(`Creating league${lid} database`);
 
     // rid ("row id") is used as the keyPath for objects without an innate unique identifier
-    const playerStore = upgradeDB.createObjectStore("players", {keyPath: "pid", autoIncrement: true});
+    upgradeDB.createObjectStore("awards", {keyPath: "season"});
+    const eventStore = upgradeDB.createObjectStore("events", {keyPath: "eid", autoIncrement: true});
+    upgradeDB.createObjectStore("draftOrder", {keyPath: "rid"});
+    upgradeDB.createObjectStore("draftPicks", {keyPath: "dpid", autoIncrement: true});
+    upgradeDB.createObjectStore("gameAttributes", {keyPath: "key"});
+    const gameStore = upgradeDB.createObjectStore("games", {keyPath: "gid"});
+    upgradeDB.createObjectStore("messages", {keyPath: "mid", autoIncrement: true});
+    upgradeDB.createObjectStore("negotiations", {keyPath: "pid"});
+    upgradeDB.createObjectStore("playerFeats", {keyPath: "fid", autoIncrement: true});
     const playerStatsStore = upgradeDB.createObjectStore("playerStats", {keyPath: "psid", autoIncrement: true});
-    upgradeDB.createObjectStore("teams", {keyPath: "tid"});
+    const playerStore = upgradeDB.createObjectStore("players", {keyPath: "pid", autoIncrement: true});
+    upgradeDB.createObjectStore("playoffSeries", {keyPath: "season"});
+    upgradeDB.createObjectStore("releasedPlayers", {keyPath: "rid", autoIncrement: true});
+    upgradeDB.createObjectStore("schedule", {keyPath: "gid", autoIncrement: true});
     const teamSeasonsStore = upgradeDB.createObjectStore("teamSeasons", {keyPath: "rid", autoIncrement: true});
     const teamStatsStore = upgradeDB.createObjectStore("teamStats", {keyPath: "rid", autoIncrement: true});
-    const gameStore = upgradeDB.createObjectStore("games", {keyPath: "gid"});
-    upgradeDB.createObjectStore("schedule", {keyPath: "gid", autoIncrement: true});
-    upgradeDB.createObjectStore("playoffSeries", {keyPath: "season"});
-    const releasedPlayerStore = upgradeDB.createObjectStore("releasedPlayers", {keyPath: "rid", autoIncrement: true});
-    upgradeDB.createObjectStore("awards", {keyPath: "season"});
+    upgradeDB.createObjectStore("teams", {keyPath: "tid"});
     upgradeDB.createObjectStore("trade", {keyPath: "rid"});
-    upgradeDB.createObjectStore("draftOrder", {keyPath: "rid"});
-    upgradeDB.createObjectStore("negotiations", {keyPath: "pid"});
-    upgradeDB.createObjectStore("gameAttributes", {keyPath: "key"});
-    upgradeDB.createObjectStore("messages", {keyPath: "mid", autoIncrement: true});
-    const draftPickStore = upgradeDB.createObjectStore("draftPicks", {keyPath: "dpid", autoIncrement: true});
-    const eventStore = upgradeDB.createObjectStore("events", {keyPath: "eid", autoIncrement: true});
-    const playerFeatStore = upgradeDB.createObjectStore("playerFeats", {keyPath: "fid", autoIncrement: true});
 
-    playerStore.createIndex("tid", "tid", {unique: false});
-    playerStore.createIndex("draft.year", "draft.year", {unique: false});
-    playerStore.createIndex("retiredYear", "retiredYear", {unique: false});
-    playerStore.createIndex("statsTids", "statsTids", {unique: false, multiEntry: true});
-    playerStatsStore.createIndex("pid, season, tid", ["pid", "season", "tid"], {unique: false}); // Can't be unique because player could get traded back to same team in one season (and because playoffs is boolean)
-//        gameStore.createIndex("tids", "tids", {unique: false, multiEntry: true}); // Not used because currently the season index is used. If multiple indexes are eventually supported, then use this too.
-    teamSeasonsStore.createIndex("tid, season", ["tid", "season"], {unique: false});
-    teamSeasonsStore.createIndex("season, tid", ["season", "tid"], {unique: true});
-    teamStatsStore.createIndex("tid", "tid", {unique: false});
-    teamStatsStore.createIndex("season, tid", ["season", "tid"], {unique: false}); // Not unique because of playoffs
-    gameStore.createIndex("season", "season", {unique: false});
-    releasedPlayerStore.createIndex("tid", "tid", {unique: false});
-    releasedPlayerStore.createIndex("contract.exp", "contract.exp", {unique: false});
-    draftPickStore.createIndex("season", "season", {unique: false});
-    draftPickStore.createIndex("tid", "tid", {unique: false});
     eventStore.createIndex("season", "season", {unique: false});
     eventStore.createIndex("pids", "pids", {unique: false, multiEntry: true});
-    playerFeatStore.createIndex("pid", "pid", {unique: false});
-    playerFeatStore.createIndex("tid", "tid", {unique: false});
-//        eventStore.createIndex("tids", "tids", {unique: false, multiEntry: true}); // Not used currently, but might need to be added later
+    gameStore.createIndex("season", "season", {unique: false});
+    playerStatsStore.createIndex("pid, season, tid", ["pid", "season", "tid"], {unique: false}); // Can't be unique because player could get traded back to same team in one season (and because playoffs is boolean)
+    playerStore.createIndex("statsTids", "statsTids", {unique: false, multiEntry: true});
+    playerStore.createIndex("tid", "tid", {unique: false});
+    teamSeasonsStore.createIndex("season, tid", ["season", "tid"], {unique: true});
+    teamSeasonsStore.createIndex("tid, season", ["tid", "season"], {unique: false});
+    teamStatsStore.createIndex("season, tid", ["season", "tid"], {unique: false}); // Not unique because of playoffs
+    teamStatsStore.createIndex("tid", "tid", {unique: false});
 };
 
 /**
@@ -142,10 +132,21 @@ const migrateLeague = async (upgradeDB, lid) => {
             }
         });
     }
+    if (upgradeDB.oldVersion <= 20) {
+        // Removing indexes when upgrading to cache version
+        upgradeDB.draftPicks.deleteIndex('season');
+        upgradeDB.draftPicks.deleteIndex('tid');
+        upgradeDB.playerFeats.deleteIndex('pid');
+        upgradeDB.playerFeats.deleteIndex('tid');
+        upgradeDB.players.deleteIndex('draft.year');
+        upgradeDB.players.deleteIndex('retiredYear');
+        upgradeDB.releasedPlayers.deleteIndex('tid');
+        upgradeDB.releasedPlayers.deleteIndex('contract.exp');
+    }
 };
 
 const connectLeague = async (lid: number) => {
-    const db = await Backboard.open(`league${lid}`, 20, async (upgradeDB) => {
+    const db = await Backboard.open(`league${lid}`, 21, async (upgradeDB) => {
         if (upgradeDB.oldVersion === 0) {
             createLeague(upgradeDB, lid);
         } else {

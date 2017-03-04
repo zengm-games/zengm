@@ -8,7 +8,6 @@ move everything but the UI to a web worker
 - uncomment things using localstorage in worker, after moving to either env+api or idb (meta)
 - setState was used in schedule so old completed games don't temporarily show when switching team. still an issue? if not, get rid of setStateData completely
 - beforeView - is abort param used? was used for "league not found" page before
-- move cb out of ctx, no need for it there, pass directly to get
 
 switch to native promises and/or lie, bluebird doens't work with IDB transactions in worker
 - native works on chrome. can do feature detection and conditionally load lie?
@@ -16,8 +15,6 @@ switch to native promises and/or lie, bluebird doens't work with IDB transaction
 - debug mode still needed?
   - if so, how to deal with debug mode in worker? relies on localstorage
   - what about core.debug?
-
-alt-p not working?
 
 get rid of getall shim?? if not, only in the worker, and make work in worker
 
@@ -102,11 +99,6 @@ blog post for beta
 - 3 prongs: cache, playerStats denormalization, worker
 
 document cache data format and API!
-
-make Cache more DRY regarding indexes, reading object stores
-
-remove unused IDB indexes, if they exist (mostly stores that are fully cached, but others too, like retired year)
-- works in IE?
 
 replace all usage of IDB with cache, otherwise things will be more likely to get out of sync on flush failure
   start with game.js and anything that it touches

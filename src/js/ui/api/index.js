@@ -23,6 +23,10 @@ const bbgmPing = (type: 'league' | 'season') => {
     }
 };
 
+const confirm = (message: string) => {
+    return window.confirm(message);
+};
+
 const emit = (name: string, content: any) => {
     emitter.emit(name, content);
 };
@@ -92,6 +96,7 @@ const showEvent2 = (options: LogEventShowOptions) => {
 
 export default {
     bbgmPing,
+    confirm,
     emit,
     initAds,
     notifyException,

@@ -124,13 +124,12 @@ async function addAchievements(achievements: AchievementKey[], silent?: boolean 
 
 async function check() {
     try {
-        const response = await fetchWrapper({
+        const data = await fetchWrapper({
             url: `//account.basketball-gm.${env.tld}/user_info.php`,
             method: 'GET',
             data: {sport: SPORT},
             credentials: 'include',
         });
-        const data = await response.json();
 
         // Save username for display
 

@@ -19,7 +19,8 @@ switch to native promises and/or lie, bluebird doens't work with IDB transaction
 lastDbChange still needed?
 
 test all instances of fetchWrapper
-- login and register work, but logout and persisting login over reloads doesn't. problem with php sessions somehow
+- login/logout/register work, but persisting login over reloads doesn't
+- others?
 
 things like gameSimInProgress, phaseChangeInProgress... why ever save to db? maybe take out of gameAttributes
 

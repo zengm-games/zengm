@@ -39,6 +39,11 @@ const fetchWrapper = async ({
         body,
         credentials,
     });
+
+    // HACK HACK HACK! Some of my APIs (logout) return no content, rather than JSON
+    if (url.includes('logout.php')) {
+        return undefined;
+    }
     return response.json();
 };
 

@@ -16,8 +16,6 @@ switch to native promises and/or lie, bluebird doens't work with IDB transaction
   - if so, how to deal with debug mode in worker? relies on localstorage
   - what about core.debug?
 
-lastDbChange still needed?
-
 test all instances of fetchWrapper
 - login/logout/register work, but persisting login over reloads doesn't
 - others?

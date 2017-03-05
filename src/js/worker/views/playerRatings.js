@@ -7,7 +7,7 @@ async function updatePlayers(
     updateEvents: UpdateEvents,
     state: any,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('dbChange') || (inputs.season === g.season && updateEvents.includes('playerMovement')) || (updateEvents.includes('newPhase') && g.phase === PHASE.PRESEASON) || inputs.season !== state.season || inputs.abbrev !== state.abbrev) {
+    if ((inputs.season === g.season && updateEvents.includes('playerMovement')) || (updateEvents.includes('newPhase') && g.phase === PHASE.PRESEASON) || inputs.season !== state.season || inputs.abbrev !== state.abbrev) {
         let players;
         if (g.season === inputs.season && g.phase <= PHASE.PLAYOFFS) {
             players = await idb.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);

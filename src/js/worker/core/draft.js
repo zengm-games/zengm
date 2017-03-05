@@ -519,16 +519,13 @@ async function untilUserOrEnd() {
 
                 updatePhase(`${g.season} ${PHASE_TEXT[g.phase]}`);
                 await updatePlayMenu();
-                league.updateLastDbChange();
             } else {
                 // Non-fantasy draft
                 await phase.newPhase(PHASE.AFTER_DRAFT);
             }
-        } else {
-            // Draft is not over, so continue
-            league.updateLastDbChange();
         }
 
+        // Draft is not over, so continue
         return pids;
     };
 

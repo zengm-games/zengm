@@ -7,7 +7,7 @@ async function updateGodMode(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('toggleGodMode')) {
+    if (updateEvents.includes('firstRun') || updateEvents.includes('toggleGodMode')) {
         return {
             godMode: g.godMode,
             disableInjuries: g.disableInjuries,

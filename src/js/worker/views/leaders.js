@@ -15,7 +15,7 @@ async function updateLeaders(
     }
 
     // Respond to watchList in case players are listed twice in different categories
-    if (updateEvents.includes('dbChange') || updateEvents.includes('watchList') || (season === g.season && updateEvents.includes('gameSim')) || season !== state.season) {
+    if (updateEvents.includes('watchList') || (season === g.season && updateEvents.includes('gameSim')) || season !== state.season) {
         // Calculate the number of games played for each team, which is used later to test if a player qualifies as a league leader
         const teamSeasons = await getCopy.teamSeasons({season});
         const gps = teamSeasons.map(teamSeason => {

@@ -14,7 +14,7 @@ async function updateHistory(
         return;
     }
 
-    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || state.season !== season) {
+    if (updateEvents.includes('firstRun') || state.season !== season) {
         if (season < g.startingSeason) {
             return {
                 invalidSeason: true,

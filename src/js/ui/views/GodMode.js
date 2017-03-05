@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
 import {helpers} from '../../common';
-import {logEvent, realtimeUpdate, setTitle, toWorker} from '../util';
+import {emitter, logEvent, realtimeUpdate, setTitle, toWorker} from '../util';
 import {HelpPopover, NewWindowLink} from '../components';
 
 class GodMode extends React.Component {
@@ -92,12 +92,12 @@ class GodMode extends React.Component {
     async handleGodModeToggle() {
         const attrs = {godMode: !this.props.godMode};
 
-        if (!this.props.godMode) {
+        if (attrs.godMode) {
             attrs.godModeInPast = true;
         }
 
         await toWorker('updateGameAttributes', attrs);
-
+        emitter.emit('updateTopMenu', {godMode: attrs.godMode});
         realtimeUpdate(["toggleGodMode"]);
     }
 

@@ -9,7 +9,7 @@ async function updateInbox(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun')) {
+    if (updateEvents.includes('firstRun')) {
         let messages = await getCopy.messages();
         messages.reverse();
 
@@ -28,7 +28,7 @@ async function updateTeam(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || updateEvents.includes('newPhase')) {
+    if (updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || updateEvents.includes('newPhase')) {
         const [t, latestSeason] = await Promise.all([
             idb.cache.get('teams', g.userTid),
             idb.cache.indexGet('teamSeasonsBySeasonTid', `${g.season},${g.userTid}`),
@@ -52,7 +52,7 @@ async function updatePayroll(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('playerMovement')) {
+    if (updateEvents.includes('firstRun') || updateEvents.includes('playerMovement')) {
         const payroll = (await team.getPayroll(g.userTid))[0];
         return {
             payroll: payroll / 1000, // [millions of dollars]
@@ -65,7 +65,7 @@ async function updateTeams(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || updateEvents.includes('newPhase')) {
+    if (updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || updateEvents.includes('newPhase')) {
         const vars = {};
         const stats = ["pts", "oppPts", "trb", "ast"];  // This is also used later to find ranks for these team stats
 
@@ -117,7 +117,7 @@ async function updateGames(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('newPhase')) {
+    if (updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('newPhase')) {
         const numShowCompleted = 4;
         const completed = [];
 
@@ -162,7 +162,7 @@ async function updateSchedule(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('newPhase')) {
+    if (updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('newPhase')) {
         const schedule = await season.getSchedule();
         const games = [];
         const numShowUpcoming = 3;
@@ -187,7 +187,7 @@ async function updatePlayers(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || updateEvents.includes('newPhase')) {
+    if (updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || updateEvents.includes('newPhase')) {
         const vars = {};
 
         let players = await idb.cache.indexGetAll('playersByTid', [PLAYER.UNDRAFTED, Infinity]);
@@ -246,7 +246,7 @@ async function updatePlayoffs(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || (g.phase >= PHASE.PLAYOFFS && updateEvents.includes('gameSim')) || (updateEvents.includes('newPhase') && g.phase === PHASE.PLAYOFFS)) {
+    if (updateEvents.includes('firstRun') || (g.phase >= PHASE.PLAYOFFS && updateEvents.includes('gameSim')) || (updateEvents.includes('newPhase') && g.phase === PHASE.PLAYOFFS)) {
         const playoffSeries = await getCopy.playoffSeries({season: g.season});
 
         let foundSeries;
@@ -294,7 +294,7 @@ async function updateStandings(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('gameSim')) {
+    if (updateEvents.includes('firstRun') || updateEvents.includes('gameSim')) {
         const teams = helpers.orderByWinp(await getCopy.teams({
             attrs: ["tid", "cid", "abbrev", "region"],
             seasonAttrs: ["won", "lost", "winp"],

@@ -306,6 +306,7 @@ class Controller extends React.Component {
         statusText?: string,
         username?: string,
     }) {
+console.log('updateTopMenu', obj);
         this.setState({
             topMenu: Object.assign(this.state.topMenu, obj),
         });
@@ -337,6 +338,7 @@ class Controller extends React.Component {
             </div>;
         }
 
+console.log('render', topMenu);
         return <div className="container">
             <NavBar {...topMenu} updating={updating} />
             <Header />

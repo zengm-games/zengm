@@ -15,7 +15,6 @@ const defaultGameAttributes: GameAttributes = {
     gamesInProgress: false,
     phaseChangeInProgress: false,
     stopGames: false,
-    lastDbChange: 0,
     ownerMood: {
         wins: 0,
         playoffs: 0,
@@ -95,12 +94,6 @@ async function setGameAttributes(gameAttributes: GameAttributes) {
     if (toUpdate.includes('userTid') || toUpdate.includes('userTids')) {
         toUI('emit', 'updateMultiTeam');
     }
-}
-
-// Call this after doing DB stuff so other tabs know there is new data.
-// Runs in its own transaction, shouldn't be waited for because this only influences other tabs
-function updateLastDbChange() {
-    setGameAttributes({lastDbChange: Date.now()});
 }
 
 /**
@@ -667,7 +660,6 @@ export default {
     setGameAttributes,
     updateMetaNameRegion,
     loadGameAttributes,
-    updateLastDbChange,
     autoPlay,
     initAutoPlay,
 };

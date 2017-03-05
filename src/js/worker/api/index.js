@@ -15,7 +15,6 @@ const acceptContractNegotiation = async (pid: number, amount: number, exp: numbe
 
 const autoSortRoster = async () => {
     await team.rosterAutoSort(g.userTid);
-    league.updateLastDbChange();
 };
 
 const beforeViewLeague = async (newLid: number, loadedLid: ?number) => {
@@ -63,8 +62,6 @@ const clearWatchList = async () => {
             await idb.cache.add('players', p);
         }
     });
-
-    league.updateLastDbChange();
 };
 
 const countNegotiations = async () => {
@@ -167,8 +164,6 @@ const deleteOldData = async (options: {
             });
         }
     });
-
-    league.updateLastDbChange();
 };
 
 const draftUntilUserOrEnd = async () => {
@@ -176,8 +171,6 @@ const draftUntilUserOrEnd = async () => {
 
     const pids = await draft.untilUserOrEnd();
     const draftOrder = await draft.getOrder();
-
-    league.updateLastDbChange();
 
     if (draftOrder.length === 0) {
         updateStatus("Idle");
@@ -487,7 +480,6 @@ const releasePlayer = async (pid: number, justDrafted: boolean) => {
     }
 
     await player.release(p, justDrafted);
-    league.updateLastDbChange();
 };
 
 const removeLeague = async (lid: number) => {
@@ -501,7 +493,6 @@ const reorderRosterDrag = async (sortedPids: number[]) => {
             p.rosterOrder = rosterOrder;
         }
     }));
-    league.updateLastDbChange();
 };
 
 const reorderRosterSwap = async (sortedPlayers: {pid: number}[], pid1: number, pid2: number) => {
@@ -522,8 +513,6 @@ const reorderRosterSwap = async (sortedPlayers: {pid: number}[], pid1: number, p
             p.rosterOrder = rosterOrder;
         }
     }));
-
-    league.updateLastDbChange();
 };
 
 const runBefore = async (
@@ -561,8 +550,6 @@ const switchTeam = async (tid: number) => {
         },
         gracePeriodEnd: g.season + 3, // +3 is the same as +2 when staring a new league, since this happens at the end of a season
     });
-
-    league.updateLastDbChange();
     league.updateMetaNameRegion(g.teamNamesCache[g.userTid], g.teamRegionsCache[g.userTid]);
 };
 
@@ -583,16 +570,12 @@ const updateBudget = async (budgetAmounts: {
     }
 
     await finances.updateRanks(["budget"]);
-
-    league.updateLastDbChange();
 };
 
-const updateGameAttributes = async (gameAttributes: GameAttributes, updateLastDbChange: boolean = true) => {
+const updateGameAttributes = async (gameAttributes: GameAttributes) => {
+console.log('updateGameAttributes', gameAttributes);
     await league.setGameAttributes(gameAttributes);
-
-    if (updateLastDbChange) {
-        league.updateLastDbChange();
-    }
+console.log('godmode after', g.godMode);
 };
 
 const updateMultiTeamMode = async (gameAttributes: {userTids: number[], userTid?: number}) => {
@@ -603,8 +586,6 @@ const updateMultiTeamMode = async (gameAttributes: {userTids: number[], userTid?
     } else {
         league.updateMetaNameRegion('Multi Team Mode', '');
     }
-
-    league.updateLastDbChange();
 };
 
 const updatePlayerWatch = async (pid: number, watch: boolean) => {
@@ -616,14 +597,11 @@ const updatePlayerWatch = async (pid: number, watch: boolean) => {
         p.watch = watch;
         await idb.cache.add('players', p);
     }
-
-    league.updateLastDbChange();
 };
 
 const updatePlayingTime = async (pid: number, ptModifier: number) => {
     const p = await idb.cache.get('players', pid);
     p.ptModifier = ptModifier;
-    league.updateLastDbChange();
 };
 
 const updateTeamInfo = async (newTeams: {
@@ -669,8 +647,6 @@ const updateTeamInfo = async (newTeams: {
         teamRegionsCache: newTeams.map(t => t.region),
         teamNamesCache: newTeams.map(t => t.name),
     });
-
-    league.updateLastDbChange();
 };
 
 const upsertCustomizedPlayer = async (p: Player | PlayerWithoutPid, originalTid: number, season: number): Promise<number> => {
@@ -745,14 +721,11 @@ const upsertCustomizedPlayer = async (p: Player | PlayerWithoutPid, originalTid:
         throw new Error('Undefined pid');
     }
 
-    league.updateLastDbChange();
-
     return pid2;
 };
 
 const clearTrade = async () => {
     await trade.clear();
-    league.updateLastDbChange();
 };
 
 const createTrade = async (teams: [{
@@ -765,18 +738,15 @@ const createTrade = async (teams: [{
     dpids: number[],
 }]) => {
     await trade.create(teams);
-    league.updateLastDbChange();
 };
 
 const proposeTrade = async (forceTrade: boolean): Promise<[boolean, ?string]> => {
     const output = await trade.propose(forceTrade);
-    league.updateLastDbChange();
     return output;
 };
 
 const tradeCounterOffer = async (): Promise<string> => {
     const message = await trade.makeItWorkTrade();
-    league.updateLastDbChange();
     return message;
 };
 
@@ -790,7 +760,6 @@ const updateTrade = async (teams: [{
     dpids: number[],
 }]) => {
     await trade.updatePlayers(teams);
-    league.updateLastDbChange();
 };
 
 export default {

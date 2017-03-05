@@ -43,7 +43,6 @@ describe("core/league", () => {
             const gTest = gameAttributes.reduce((obj, row) => { obj[row.key] = row.value; return obj; }, {});
 
             assert.equal(gTest.gamesInProgress, false);
-            assert.equal(typeof gTest.lastDbChange, "number");
             assert.equal(gTest.leagueName, "Test");
             assert.equal(gTest.phase, 0);
             assert.equal(gTest.phaseText, `${gTest.startingSeason} preseason`);

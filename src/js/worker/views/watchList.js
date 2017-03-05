@@ -10,7 +10,7 @@ async function updatePlayers(
     updateEvents: UpdateEvents,
     state: any,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('dbChange') || updateEvents.includes('clearWatchList') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || inputs.statType !== state.statType || inputs.playoffs !== state.playoffs) {
+    if (updateEvents.includes('clearWatchList') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || inputs.statType !== state.statType || inputs.playoffs !== state.playoffs) {
         let players = await getCopy.players();
         players = players.filter(p => p.watch && typeof p.watch !== "function"); // In Firefox, objects have a "watch" function
         players = await getCopy.playersPlus(players, {

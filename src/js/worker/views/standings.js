@@ -9,7 +9,7 @@ async function updateStandings(
     updateEvents: UpdateEvents,
     state: any,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('dbChange') || (inputs.season === g.season && updateEvents.includes('gameSim')) || inputs.season !== state.season) {
+    if ((inputs.season === g.season && updateEvents.includes('gameSim')) || inputs.season !== state.season) {
         const teams = helpers.orderByWinp(await getCopy.teams({
             attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
             seasonAttrs: ["won", "lost", "winp", "wonHome", "lostHome", "wonAway", "lostAway", "wonDiv", "lostDiv", "wonConf", "lostConf", "lastTen", "streak"],

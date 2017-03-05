@@ -8,7 +8,7 @@ async function updatePlayer(
     updateEvents: UpdateEvents,
     state: any,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || !state.retired) {
+    if (updateEvents.includes('firstRun') || !state.retired) {
         let p = await getCopy.players({pid: inputs.pid});
         p = await getCopy.playersPlus(p, {
             attrs: ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "age", "hgtFt", "hgtIn", "weight", "born", "diedYear", "contract", "draft", "face", "mood", "injury", "salaries", "salariesTotal", "awardsGrouped", "freeAgentMood", "imgURL", "watch", "gamesUntilTradable", "college"],

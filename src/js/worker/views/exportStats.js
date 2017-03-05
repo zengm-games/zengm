@@ -7,7 +7,7 @@ async function updateExportStats(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('firstRun') || updateEvents.includes('newPhase') || updateEvents.includes('dbChange')) {
+    if (updateEvents.includes('firstRun') || updateEvents.includes('newPhase')) {
         const options = [{
             key: "all",
             val: "All Seasons",

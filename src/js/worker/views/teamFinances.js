@@ -8,7 +8,7 @@ async function updateTeamFinances(
     updateEvents: UpdateEvents,
     state: any,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('dbChange') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || updateEvents.includes('teamFinances') || inputs.tid !== state.tid || inputs.show !== state.show) {
+    if (updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || updateEvents.includes('teamFinances') || inputs.tid !== state.tid || inputs.show !== state.show) {
         const vars = {
             abbrev: inputs.abbrev,
             gamesInProgress: g.gamesInProgress,
@@ -128,7 +128,7 @@ function updateGamesInProgress(
     updateEvents: UpdateEvents,
     state: any,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('dbChange') || updateEvents.includes('g.gamesInProgress') || inputs.tid !== state.tid || inputs.show !== state.show) {
+    if (updateEvents.includes('g.gamesInProgress') || inputs.tid !== state.tid || inputs.show !== state.show) {
         return {
             gamesInProgress: g.gamesInProgress,
         };

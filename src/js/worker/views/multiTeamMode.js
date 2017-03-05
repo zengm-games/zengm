@@ -7,7 +7,7 @@ async function updateMultiTeamMode(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('g.userTids')) {
+    if (updateEvents.includes('firstRun') || updateEvents.includes('g.userTids')) {
         const teams = [];
         for (let i = 0; i < g.numTeams; i++) {
             teams.push({

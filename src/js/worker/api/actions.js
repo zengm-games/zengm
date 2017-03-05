@@ -74,7 +74,6 @@ const tradeFor = async ({otherDpids, otherPids, pid, tid, userDpids, userPids}: 
     // Start a new trade based on a list of pids and dpids, like from the trading block
     await trade.create(teams);
     toUI('realtimeUpdate', [], helpers.leagueUrl(["trade"]));
-    league.updateLastDbChange();
 };
 
 const playAmount = async (amount: 'day' | 'week' | 'month' | 'untilPreseason') => {

@@ -163,7 +163,6 @@ export type GameAttributeKey = (
     'godMode' |
     'godModeInPast' |
     'gracePeriodEnd' |
-    'lastDbChange' |
     'leagueName' |
     'lid' |
     'luxuryPayroll' |
@@ -501,7 +500,6 @@ export type TradeTeams = [TradeTeam, TradeTeam];
 export type UpdateEvents = (
     'account' |
     'clearWatchList' |
-    'dbChange' |
     'firstRun' |
     'g.gamesInProgress' |
     'g.userTids' |

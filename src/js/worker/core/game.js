@@ -679,8 +679,6 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
 
         await toUI('realtimeUpdate', ["gameSim"], url, raw);
 
-        league.updateLastDbChange();
-
         if (g.phase === PHASE.PLAYOFFS) {
             const playoffsOver = await season.newSchedulePlayoffsDay();
             if (playoffsOver) {

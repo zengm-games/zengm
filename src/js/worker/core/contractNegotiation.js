@@ -56,7 +56,6 @@ async function create(pid: number, resigning: boolean, tid: number = g.userTid):
     };
 
     await idb.cache.add('negotiations', negotiation);
-    league.updateLastDbChange();
     updateStatus("Contract negotiation");
     await updatePlayMenu();
 }
@@ -75,8 +74,6 @@ async function cancel(pid: number) {
         }
         updatePlayMenu();
     }
-
-    league.updateLastDbChange();
 }
 
 /**
@@ -89,7 +86,6 @@ async function cancel(pid: number) {
  */
 async function cancelAll() {
     await idb.cache.clear('negotiations');
-    league.updateLastDbChange();
     updateStatus("Idle");
     return updatePlayMenu();
 }
@@ -153,8 +149,6 @@ async function accept(pid: number, amount: number, exp: number): Promise<?string
     idb.cache.markDirtyIndexes('players');
 
     await cancel(pid);
-
-    league.updateLastDbChange();
 }
 
 export default {

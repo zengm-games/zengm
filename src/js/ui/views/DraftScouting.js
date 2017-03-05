@@ -30,8 +30,6 @@ class DraftScouting extends React.Component {
             this.setState({
                 customize: undefined,
             });
-
-            realtimeUpdate(["dbChange"]);
         };
     }
 

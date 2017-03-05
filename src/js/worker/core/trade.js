@@ -23,8 +23,6 @@ async function create(teams: TradeTeams) {
     }
 
     tr.teams = teams;
-
-    league.updateLastDbChange();
 }
 
 /**
@@ -165,10 +163,6 @@ async function updatePlayers(teams: TradeTeams): Promise<TradeTeams> {
         tr.teams = teams;
     }
 
-    if (updated) {
-        league.updateLastDbChange();
-    }
-
     return teams;
 }
 
@@ -278,8 +272,6 @@ async function clear() {
         t.pids = [];
         t.dpids = [];
     }
-
-    league.updateLastDbChange();
 }
 
 /**
@@ -386,7 +378,7 @@ async function propose(forceTrade?: boolean = false): Promise<[boolean, ?string]
     });
 
     if (outcome === "accepted") {
-        await clear(); // This includes dbChange
+        await clear();
 
         // Auto-sort CPU team roster
         if (!g.userTids.includes(tids[1])) {

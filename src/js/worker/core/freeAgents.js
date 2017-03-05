@@ -184,7 +184,7 @@ async function play(numDays: number, start?: boolean = true) {
         const cbYetAnother = async () => {
             await decreaseDemands();
             await autoSign();
-            await league.setGameAttributes({daysLeft: g.daysLeft - 1, lastDbChange: Date.now()});
+            await league.setGameAttributes({daysLeft: g.daysLeft - 1});
             if (g.daysLeft > 0 && numDays > 0) {
                 await toUI('realtimeUpdate', ["playerMovement"]);
                 updateStatus(`${g.daysLeft} days left`);

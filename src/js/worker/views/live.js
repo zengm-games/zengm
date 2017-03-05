@@ -28,7 +28,7 @@ async function updateGamesInProgress(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('dbChange') || updateEvents.includes('g.gamesInProgress')) {
+    if (updateEvents.includes('g.gamesInProgress')) {
         return {
             gamesInProgress: g.gamesInProgress,
         };

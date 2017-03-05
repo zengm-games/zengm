@@ -107,7 +107,7 @@ async function updateBoxScore(
         return;
     }
 
-    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || gid !== state.boxScore.gid) {
+    if (updateEvents.includes('firstRun') || gid !== state.boxScore.gid) {
         const game = await boxScore(gid);
 
         const vars = {
@@ -145,7 +145,7 @@ async function updateGamesList(
         return;
     }
 
-    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || abbrev !== state.gamesList.abbrev || season !== state.gamesList.season || (updateEvents.includes('gameSim') && season === g.season)) {
+    if (updateEvents.includes('firstRun') || abbrev !== state.gamesList.abbrev || season !== state.gamesList.season || (updateEvents.includes('gameSim') && season === g.season)) {
         let games;
         if (state.gamesList && (abbrev !== state.gamesList.abbrev || season !== state.gamesList.season)) {
             // Switching to a new list

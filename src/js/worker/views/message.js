@@ -11,7 +11,7 @@ async function updateMessage(
     updateEvents: UpdateEvents,
     state: any,
 ): Promise<void | {message?: Message_}> {
-    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || state.message.mid !== inputs.mid) {
+    if (updateEvents.includes('firstRun') || state.message.mid !== inputs.mid) {
         let message;
         let readThisPageview = false;
 
@@ -52,8 +52,6 @@ async function updateMessage(
             }
 
             await updatePlayMenu();
-
-            league.updateLastDbChange();
         }
 
         return {

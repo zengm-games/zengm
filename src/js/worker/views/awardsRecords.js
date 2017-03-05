@@ -115,7 +115,7 @@ async function updateAwardsRecords(
     updateEvents: UpdateEvents,
     state: any,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || inputs.awardType !== state.awardType) {
+    if (updateEvents.includes('firstRun') || inputs.awardType !== state.awardType) {
         let players = await getCopy.players({activeAndRetired: true});
         players = await getCopy.playersPlus(players, {
             attrs: ['awards', 'firstName', 'lastName', 'pid', 'retiredYear', 'hof'],

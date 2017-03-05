@@ -8,8 +8,8 @@ const handleChange = async (e: SyntheticInputEvent) => {
     const userTid = parseInt(e.target.value, 10);
     await toWorker('updateGameAttributes', {userTid});
 
-    // dbChange is kind of a hack because it was designed for multi-window update only, but it should update everything
-    realtimeUpdate(['dbChange']);
+    // firstRun is kind of a hack, but it should update everything
+    realtimeUpdate(['firstRun']);
     emitter.emit('updateMultiTeam');
 };
 

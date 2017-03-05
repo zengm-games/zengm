@@ -8,7 +8,7 @@ async function updatePowerRankings(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('firstRun') || updateEvents.includes('dbChange') || updateEvents.includes('gameSim')) {
+    if (updateEvents.includes('firstRun') || updateEvents.includes('gameSim')) {
         const [teams, players] = await Promise.all([
             getCopy.teams({
                 attrs: ["tid", "abbrev", "region", "name"],

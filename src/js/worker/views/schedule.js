@@ -9,7 +9,7 @@ async function updateUpcoming(
     updateEvents: UpdateEvents,
     state: any,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('newPhase') || inputs.abbrev !== state.abbrev) {
+    if (updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('newPhase') || inputs.abbrev !== state.abbrev) {
         // Get schedule and all teams.
         const [schedule, teams] = await Promise.all([
             season.getSchedule(),
@@ -48,7 +48,7 @@ async function updateCompleted(
     updateEvents: UpdateEvents,
     state: any,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || inputs.abbrev !== state.abbrev) {
+    if (updateEvents.includes('firstRun') || inputs.abbrev !== state.abbrev) {
         /*// Reset list, so old completed games don't temporarily show when switching team
         if (state.completed) {
             setState({completed: undefined});

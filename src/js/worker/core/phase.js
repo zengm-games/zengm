@@ -33,8 +33,6 @@ async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = 
         await idb.cache.fill();
     }
 
-    // Set lastDbChange last so there is no race condition (WHAT DOES THIS MEAN??)
-    league.updateLastDbChange();
     updateEvents.push("newPhase");
     toUI('realtimeUpdate', updateEvents, url);
 
@@ -548,9 +546,6 @@ async function newPhase(phase: Phase, extra: any) {
     } else {
         await league.setGameAttributes({phaseChangeInProgress: true});
         updatePlayMenu();
-
-        // In Chrome, this will update play menu in other windows. In Firefox, it won't because updatePlayMenu gets blocked until phaseChangeTx finishes for some reason.
-        league.updateLastDbChange();
 
         if (phaseChangeInfo.hasOwnProperty(phase)) {
             let result;

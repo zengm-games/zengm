@@ -182,13 +182,12 @@ async function getAchievements() {
 
     try {
         // Handle any achievements stored in the cloud
-        const response = await fetchWrapper({
+        const achievementsRemote = await fetchWrapper({
             url: `//account.basketball-gm.${env.tld}/get_achievements.php`,
             method: 'GET',
             data: {sport: SPORT},
             credentials: 'include',
         });
-        const achievementsRemote = await response.json();
 
         // Merge local and remote achievements
         for (let i = 0; i < achievements.length; i++) {

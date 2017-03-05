@@ -14,13 +14,12 @@ async function updateAccountUpdateCard(
         await account.check();
 
         try {
-            const response = await fetchWrapper({
+            const data = await fetchWrapper({
                 url: `//account.basketball-gm.${env.tld}/gold_card_info.php`,
                 method: 'GET',
                 data: {sport: SPORT},
                 credentials: 'include',
             });
-            const data = await response.json();
             return {
                 goldCancelled: topMenu.goldCancelled,
                 last4: data.last4,

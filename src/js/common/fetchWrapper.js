@@ -12,7 +12,7 @@ const fetchWrapper = async ({
     headers?: {[key: string]: string},
     data: Object,
     credentials?: 'include',
-}) => {
+}): any => {
     let body;
     if (data instanceof FormData || data instanceof URLSearchParams) {
         body = data;

@@ -8,7 +8,7 @@ async function updateRoster(
     updateEvents: UpdateEvents,
     state: any,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('dbChange') || (inputs.season === g.season && (updateEvents.includes('gameSim') || updateEvents.includes('playerMovement'))) || inputs.abbrev !== state.abbrev || inputs.season !== state.season) {
+    if (updateEvents.includes('dbChange') || updateEvents.includes('watchList') || (inputs.season === g.season && (updateEvents.includes('gameSim') || updateEvents.includes('playerMovement'))) || inputs.abbrev !== state.abbrev || inputs.season !== state.season) {
         const vars = {
             abbrev: inputs.abbrev,
             season: inputs.season,
@@ -97,7 +97,7 @@ async function updateRoster(
             }
 
             vars.players = players;
-            vars.payroll = null;
+            vars.payroll = undefined;
         }
 
         return vars;

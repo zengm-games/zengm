@@ -51,7 +51,7 @@ add flow comments to new files!
 eventually merge players and playersPlus
 
 update to cache
-- various idb.league-using things in api need to be updated
+- api: exportPlayerGamesCsv, upsertCustomizedPlayer
 - also search for any readwrite transaction
 - customize player
 

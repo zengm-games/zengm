@@ -1,6 +1,5 @@
 // @flow
 
-import backboard from 'backboard';
 import _ from 'underscore';
 import {PHASE, PLAYER, g, helpers} from '../../common';
 import actions from './actions';
@@ -395,69 +394,69 @@ const handleUploadedDraftClass = async (uploadedFile: any, seasonOffset: 0 | 1 |
     players = players.filter(p => p.tid === PLAYER.UNDRAFTED);
 
     // Get scouting rank, which is used in a couple places below
-    const teamSeasons = await idb.league.teamSeasons.index("tid, season").getAll(backboard.bound([g.userTid, g.season - 2], [g.userTid, g.season]));
-
+    const teamSeasons = await idb.cache.indexGetAll('teamSeasonsByTidSeason', [`${g.userTid},${g.season - 2}`, `${g.userTid},${g.season}`]);
     const scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
 
     // Delete old players from draft class
-    await idb.league.tx(["players", "playerStats"], "readwrite", async tx => {
-        await tx.players.index('tid').iterate(draftClassTid, p => tx.players.delete(p.pid));
+    const oldPlayers = await idb.cache.indexGetAll('playersByTid', draftClassTid);
+    for (const p of oldPlayers) {
+        await idb.cache.delete('players', p.pid);
+    }
 
-        // Find season from uploaded file, for age adjusting
-        let uploadedSeason;
-        if (uploadedFile.hasOwnProperty("gameAttributes")) {
-            for (let i = 0; i < uploadedFile.gameAttributes.length; i++) {
-                if (uploadedFile.gameAttributes[i].key === "season") {
-                    uploadedSeason = uploadedFile.gameAttributes[i].value;
-                    break;
-                }
+    // Find season from uploaded file, for age adjusting
+    let uploadedSeason;
+    if (uploadedFile.hasOwnProperty("gameAttributes")) {
+        for (let i = 0; i < uploadedFile.gameAttributes.length; i++) {
+            if (uploadedFile.gameAttributes[i].key === "season") {
+                uploadedSeason = uploadedFile.gameAttributes[i].value;
+                break;
             }
-        } else if (uploadedFile.hasOwnProperty("startingSeason")) {
-            uploadedSeason = uploadedFile.startingSeason;
+        }
+    } else if (uploadedFile.hasOwnProperty("startingSeason")) {
+        uploadedSeason = uploadedFile.startingSeason;
+    }
+
+    let seasonOffset2 = seasonOffset;
+    if (g.phase >= PHASE.FREE_AGENCY) {
+        // Already generated next year's draft, so bump up one
+        seasonOffset2 += 1;
+    }
+
+    const draftYear = g.season + seasonOffset2;
+
+    // Add new players to database
+    await Promise.all(players.map(async (p) => {
+        // Make sure player object is fully defined
+        p = player.augmentPartialPlayer(p, scoutingRank);
+
+        // Manually set TID, since at this point it is always PLAYER.UNDRAFTED
+        p.tid = draftClassTid;
+
+        // Manually remove PID, since all it can do is cause trouble
+        if (p.hasOwnProperty("pid")) {
+            delete p.pid;
         }
 
-        let seasonOffset2 = seasonOffset;
-        if (g.phase >= PHASE.FREE_AGENCY) {
-            // Already generated next year's draft, so bump up one
-            seasonOffset2 += 1;
+        // Adjust age
+        if (uploadedSeason !== undefined) {
+            p.born.year += g.season - uploadedSeason + seasonOffset2;
         }
 
-        const draftYear = g.season + seasonOffset2;
+        // Adjust seasons
+        p.ratings[0].season = draftYear;
+        p.draft.year = draftYear;
 
-        // Add new players to database
-        await Promise.all(players.map(async (p) => {
-            // Make sure player object is fully defined
-            p = player.augmentPartialPlayer(p, scoutingRank);
+        // Don't want lingering stats vector in player objects, and draft prospects don't have any stats
+        delete p.stats;
 
-            // Manually set TID, since at this point it is always PLAYER.UNDRAFTED
-            p.tid = draftClassTid;
+        await player.updateValues(p);
+        await idb.cache.add('players', p);
+    }));
 
-            // Manually remove PID, since all it can do is cause trouble
-            if (p.hasOwnProperty("pid")) {
-                delete p.pid;
-            }
-
-            // Adjust age
-            if (uploadedSeason !== undefined) {
-                p.born.year += g.season - uploadedSeason + seasonOffset2;
-            }
-
-            // Adjust seasons
-            p.ratings[0].season = draftYear;
-            p.draft.year = draftYear;
-
-            // Don't want lingering stats vector in player objects, and draft prospects don't have any stats
-            delete p.stats;
-
-            await player.updateValues(p);
-            await tx.players.put(p);
-        }));
-
-        // "Top off" the draft class if <70 players imported
-        if (players.length < 70) {
-            await draft.genPlayers(draftClassTid, scoutingRank, 70 - players.length);
-        }
-    });
+    // "Top off" the draft class if <70 players imported
+    if (players.length < 70) {
+        await draft.genPlayers(draftClassTid, scoutingRank, 70 - players.length);
+    }
 };
 
 const init = async (inputEnv: Env) => {

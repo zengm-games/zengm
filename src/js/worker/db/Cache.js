@@ -433,7 +433,7 @@ class Cache {
     async delete(store: Store, key: number) {
         this.checkStatus('full');
 
-        if (['draftPicks', 'negotiations', 'releasedPlayers', 'schedule', 'teamSeasons'].includes(store)) {
+        if (['draftPicks', 'negotiations', 'players', 'releasedPlayers', 'schedule', 'teamSeasons'].includes(store)) {
             if (this.data[store].hasOwnProperty(key)) {
                 delete this.data[store][key];
                 this.deletes[store].add(key);

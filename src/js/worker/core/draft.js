@@ -517,7 +517,7 @@ async function untilUserOrEnd() {
                     nextPhase: null,
                 });
 
-                updatePhase(`${g.season} ${PHASE_TEXT[g.phase]}`);
+                await updatePhase(`${g.season} ${PHASE_TEXT[g.phase]}`);
                 await updatePlayMenu();
             } else {
                 // Non-fantasy draft

@@ -167,13 +167,13 @@ const deleteOldData = async (options: {
 };
 
 const draftUntilUserOrEnd = async () => {
-    updateStatus('Draft in progress...');
+    await updateStatus('Draft in progress...');
 
     const pids = await draft.untilUserOrEnd();
     const draftOrder = await draft.getOrder();
 
     if (draftOrder.length === 0) {
-        updateStatus("Idle");
+        await updateStatus('Idle');
     }
 
     return pids;
@@ -536,7 +536,7 @@ const startFantasyDraft = async (position: number | 'random') => {
 };
 
 const switchTeam = async (tid: number) => {
-    updateStatus("Idle");
+    await updateStatus('Idle');
     updatePlayMenu();
 
     await league.setGameAttributes({

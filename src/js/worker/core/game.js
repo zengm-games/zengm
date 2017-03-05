@@ -589,7 +589,7 @@ async function loadTeams() {
 async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: number) {
     // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season
     const cbNoGames = async () => {
-        updateStatus("Idle");
+        await updateStatus('Idle');
         await league.setGameAttributes({gamesInProgress: false});
         await updatePlayMenu();
         toUI('realtimeUpdate', ["g.gamesInProgress"]);
@@ -600,7 +600,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
             if (schedule.length === 0) {
                 // No return here, meaning no need to wait for phase.newPhase to resolve - is that correct?
                 phase.newPhase(PHASE.PLAYOFFS);
-                updateStatus("Idle"); // Just to be sure..
+                await updateStatus('Idle'); // Just to be sure..
             }
         }
     };
@@ -708,9 +708,9 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
     // Promise is resolved after games are run
     const cbPlayGames = async () => {
         if (numDays === 1) {
-            updateStatus("Playing (1 day left)");
+            await updateStatus('Playing (1 day left)');
         } else {
-            updateStatus(`Playing (${numDays} days left)`);
+            await updateStatus(`Playing (${numDays} days left)`);
         }
 
         let schedule = await season.getSchedule(true);
@@ -778,7 +778,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
                 toUI('realtimeUpdate', ["g.gamesInProgress"]);
                 cbRunDay();
             } else {
-                updateStatus("Idle");
+                await updateStatus('Idle');
                 logEvent({
                     type: 'error',
                     text: userTeamSizeError,

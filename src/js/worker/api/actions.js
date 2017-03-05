@@ -91,7 +91,7 @@ const playAmount = async (amount: 'day' | 'week' | 'month' | 'untilPreseason') =
     }
 
     if (g.phase <= PHASE.PLAYOFFS) {
-        updateStatus("Playing..."); // For quick UI updating, before game.play
+        await updateStatus('Playing...'); // For quick UI updating, before game.play
         // Start playing games
         game.play(numDays);
     } else if (g.phase === PHASE.FREE_AGENCY) {
@@ -106,7 +106,7 @@ const playStop = async () => {
     await league.setGameAttributes({stopGames: true});
     if (g.phase !== PHASE.FREE_AGENCY) {
         // This is needed because we can't be sure if core.game.play will be called again
-        updateStatus("Idle");
+        await updateStatus('Idle');
     }
     await league.setGameAttributes({gamesInProgress: false});
     updatePlayMenu();
@@ -131,7 +131,7 @@ const playMenu = {
 
     untilPlayoffs: async () => {
         if (g.phase < PHASE.PLAYOFFS) {
-            updateStatus("Playing..."); // For quick UI updating, before await
+            await updateStatus('Playing...'); // For quick UI updating, before await
             const numDays = await season.getDaysLeftSchedule();
             game.play(numDays);
         }
@@ -139,7 +139,7 @@ const playMenu = {
 
     throughPlayoffs: async () => {
         if (g.phase === PHASE.PLAYOFFS) {
-            updateStatus("Playing..."); // For quick UI updating, before await
+            await updateStatus('Playing...'); // For quick UI updating, before await
             const playoffSeries = await idb.cache.get('playoffSeries', g.season);
 
             // Max 7 days per round that hasn't started yet
@@ -178,7 +178,7 @@ const playMenu = {
             }
             if (proceed) {
                 await phase.newPhase(PHASE.FREE_AGENCY);
-                updateStatus(`${g.daysLeft} days left`);
+                await updateStatus(`${g.daysLeft} days left`);
             }
         }
     },

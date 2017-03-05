@@ -24,7 +24,7 @@ async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = 
         phase,
         phaseChangeInProgress: false,
     });
-    updatePhase(`${g.season} ${PHASE_TEXT[phase]}`);
+    await updatePhase(`${g.season} ${PHASE_TEXT[phase]}`);
     await updatePlayMenu();
 
     // Flush/fill only in preseason

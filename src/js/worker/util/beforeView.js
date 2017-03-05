@@ -33,8 +33,8 @@ const beforeLeague = async (newLid: number, loadedLid: ?number) => {
         await league.loadGameAttributes();
 
         // Update play menu
-        updateStatus();
-        updatePhase();
+        await updateStatus();
+        await updatePhase();
         await updatePlayMenu();
         toUI('emit', 'updateTopMenu', {lid: g.lid});
     }

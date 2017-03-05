@@ -56,7 +56,7 @@ async function create(pid: number, resigning: boolean, tid: number = g.userTid):
     };
 
     await idb.cache.add('negotiations', negotiation);
-    updateStatus("Contract negotiation");
+    await updateStatus('Contract negotiation');
     await updatePlayMenu();
 }
 
@@ -68,9 +68,9 @@ async function cancel(pid: number) {
     const negotiationInProgress = await lock.negotiationInProgress();
     if (!negotiationInProgress) {
         if (g.phase === PHASE.FREE_AGENCY) {
-            updateStatus(`${g.daysLeft} days left`);
+            await updateStatus(`${g.daysLeft} days left`);
         } else {
-            updateStatus("Idle");
+            await updateStatus('Idle');
         }
         updatePlayMenu();
     }
@@ -86,7 +86,7 @@ async function cancel(pid: number) {
  */
 async function cancelAll() {
     await idb.cache.clear('negotiations');
-    updateStatus("Idle");
+    await updateStatus('Idle');
     return updatePlayMenu();
 }
 

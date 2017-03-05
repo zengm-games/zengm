@@ -48,7 +48,7 @@ async function updateMessage(
 
         if (readThisPageview) {
             if (g.gameOver) {
-                updateStatus("You're fired!");
+                await updateStatus("You're fired!");
             }
 
             await updatePlayMenu();

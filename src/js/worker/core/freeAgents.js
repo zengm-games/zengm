@@ -173,8 +173,8 @@ async function play(numDays: number, start?: boolean = true) {
 
         // Check to see if free agency is over
         if (g.daysLeft === 0) {
+            await updateStatus('Idle');
             await phase.newPhase(PHASE.PRESEASON);
-            updateStatus("Idle");
         }
     };
 
@@ -187,10 +187,10 @@ async function play(numDays: number, start?: boolean = true) {
             await league.setGameAttributes({daysLeft: g.daysLeft - 1});
             if (g.daysLeft > 0 && numDays > 0) {
                 await toUI('realtimeUpdate', ["playerMovement"]);
-                updateStatus(`${g.daysLeft} days left`);
+                await updateStatus(`${g.daysLeft} days left`);
                 play(numDays - 1, false);
             } else {
-                cbNoDays();
+                await cbNoDays();
             }
         };
 
@@ -200,10 +200,10 @@ async function play(numDays: number, start?: boolean = true) {
             if (g.stopGames) {
                 await league.setGameAttributes({stopGames: false});
             }
-            cbYetAnother();
+            await cbYetAnother();
         } else {
             // If this is the last day, update play menu
-            cbNoDays();
+            await cbNoDays();
         }
     };
 
@@ -215,10 +215,10 @@ async function play(numDays: number, start?: boolean = true) {
             await league.setGameAttributes({gamesInProgress: true});
             await updatePlayMenu();
             toUI('realtimeUpdate', ["g.gamesInProgress"]);
-            cbRunDay();
+            await cbRunDay();
         }
     } else {
-        cbRunDay();
+        await cbRunDay();
     }
 }
 

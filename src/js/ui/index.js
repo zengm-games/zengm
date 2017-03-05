@@ -180,10 +180,22 @@ const genPage = (id, inLeague = true) => {
     page('/l/:lid/transactions/:abbrev/:season/:eventType', genPage('transactions'));
 
     page('*', (ctx, next) => {
-        if (!ctx.bbgm || !ctx.bbgm.handled) {
+        if (!ctx.bbgm) {
+            ctx.bbgm = {};
+        }
+
+        if (!ctx.bbgm.handled || ctx.bbgm.err) {
+            let errMsg = 'Page not found.';
+            if (ctx.bbgm.err) {
+                errMsg = ctx.bbgm.err.message;
+                if (errMsg === 'League not found.') {
+                    errMsg = <span>League not found. <a href="/new_league">Create a new league</a> or <a href="/">load an existing league</a> to play!</span>
+                }
+            }
+
             const ErrorPage = <div>
                 <h1>Error</h1>
-                <h2>Page not found.</h2>
+                <h2>{errMsg}</h2>
             </div>;
             const errorPage = genStaticPage('error', 'Error', ErrorPage, false);
             errorPage(ctx, next);

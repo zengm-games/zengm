@@ -5,7 +5,7 @@ import {g, helpers} from '../../common';
 import {league} from '../core';
 import {toUI, updatePhase, updatePlayMenu, updateStatus} from '../util';
 
-const beforeLeague = async (newLid: number, loadedLid: ?number): Promise<?string> => {
+const beforeLeague = async (newLid: number, loadedLid: ?number) => {
     g.lid = newLid;
 
     // Check for some other window making changes to the database
@@ -40,8 +40,7 @@ const beforeLeague = async (newLid: number, loadedLid: ?number): Promise<?string
         // Make sure this league exists before proceeding
         const l = await idb.meta.leagues.get(g.lid);
         if (l === undefined) {
-            // League not found. <a href="/new_league">Create a new league</a> or <a href="/">load an existing league</a> to play!
-            throw new Error('League not found');
+            throw new Error('League not found.');
         }
 
         idb.league = await connectLeague(g.lid);
@@ -65,7 +64,7 @@ const beforeLeague = async (newLid: number, loadedLid: ?number): Promise<?string
     }
 };
 
-const beforeNonLeague = (): ?string => {
+const beforeNonLeague = () => {
     g.lid = undefined;
     toUI('emit', 'updateTopMenu', {lid: undefined});
 };

@@ -151,9 +151,14 @@ class Controller extends React.Component {
         const updateEvents = (ctx !== undefined && ctx.bbgm.updateEvents !== undefined) ? ctx.bbgm.updateEvents : [];
 
         const newLid = parseInt(ctx.params.lid, 10);
-        const abort = await (args.inLeague ? toWorker('beforeViewLeague', newLid, this.state.topMenu.lid) : toWorker('beforeViewNonLeague'));
 
-        if (abort === 'abort') {
+        const cb = ctx.bbgm.cb !== undefined ? ctx.bbgm.cb : () => {};
+
+        try {
+            await (args.inLeague ? toWorker('beforeViewLeague', newLid, this.state.topMenu.lid) : toWorker('beforeViewNonLeague'));
+        } catch (err) {
+            ctx.bbgm.err = err;
+            cb();
             return;
         }
 
@@ -161,8 +166,6 @@ class Controller extends React.Component {
         if (!inputs) {
             inputs = {};
         }
-
-        const cb = ctx.bbgm.cb !== undefined ? ctx.bbgm.cb : () => {};
 
         if (typeof inputs.redirectUrl === 'string') {
             await realtimeUpdate([], inputs.redirectUrl);

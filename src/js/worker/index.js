@@ -2,6 +2,7 @@
 
 /* eslint-disable import/first */
 import '../vendor/babel-external-helpers';
+import 'indexeddb-getall-shim';
 import api from './api';
 import {promiseWorker} from './util';
 

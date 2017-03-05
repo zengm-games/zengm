@@ -16,8 +16,6 @@ switch to native promises and/or lie, bluebird doens't work with IDB transaction
   - if so, how to deal with debug mode in worker? relies on localstorage
   - what about core.debug?
 
-get rid of getall shim?? if not, only in the worker, and make work in worker
-
 lastDbChange still needed?
 
 test all instances of fetchWrapper, and move $.ajax over (maybe some try to move to worker)

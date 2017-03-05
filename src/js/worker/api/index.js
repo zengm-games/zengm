@@ -638,33 +638,30 @@ const updateTeamInfo = async (newTeams: {
 }[]) => {
     let userName;
     let userRegion;
-    await idb.league.tx(['teams', 'teamSeasons'], 'readwrite', tx => {
-        return tx.teams.iterate(async t => {
-            if (newTeams[t.tid].hasOwnProperty('cid')) {
-                t.cid = newTeams[t.tid].cid;
-            }
-            if (newTeams[t.tid].hasOwnProperty('did')) {
-                t.did = newTeams[t.tid].did;
-            }
-            t.region = newTeams[t.tid].region;
-            t.name = newTeams[t.tid].name;
-            t.abbrev = newTeams[t.tid].abbrev;
-            if (newTeams[t.tid].hasOwnProperty('imgURL')) {
-                t.imgURL = newTeams[t.tid].imgURL;
-            }
 
-            if (t.tid === g.userTid) {
-                userName = t.name;
-                userRegion = t.region;
-            }
+    const teams = await idb.cache.getAll('teams');
+    for (const t of teams) {
+        if (newTeams[t.tid].hasOwnProperty('cid')) {
+            t.cid = newTeams[t.tid].cid;
+        }
+        if (newTeams[t.tid].hasOwnProperty('did')) {
+            t.did = newTeams[t.tid].did;
+        }
+        t.region = newTeams[t.tid].region;
+        t.name = newTeams[t.tid].name;
+        t.abbrev = newTeams[t.tid].abbrev;
+        if (newTeams[t.tid].hasOwnProperty('imgURL')) {
+            t.imgURL = newTeams[t.tid].imgURL;
+        }
 
-            const teamSeason = await tx.teamSeasons.index('season, tid').get([g.season, t.tid]);
-            teamSeason.pop = parseFloat(newTeams[t.tid].pop);
-            await tx.teamSeasons.put(teamSeason);
+        if (t.tid === g.userTid) {
+            userName = t.name;
+            userRegion = t.region;
+        }
 
-            return t;
-        });
-    });
+        const teamSeason = await idb.cache.indexGet('teamSeasonsByTidSeason', `${t.tid},${g.season}`);
+        teamSeason.pop = parseFloat(newTeams[t.tid].pop);
+    }
 
     await league.updateMetaNameRegion(userName, userRegion);
 

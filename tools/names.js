@@ -15,7 +15,9 @@ const getName = (untrimmedName, file) => {
         throw new Error(`No name found in ${file}, probably it is not a valid player page`);
     }
 
-    // Handles rare first names with spaces manually, along with Nene having no last name and some typos
+    // Handles rare first names manually:
+    // 1. names with spaces
+    // 2. Nene having no last name
     const nameFixes = {
         'Billy Ray Bates': ['Billy Ray', 'Bates'],
         'Hot Rod Williams': ['Hot Rod', 'Williams'],
@@ -99,9 +101,46 @@ const getName = (untrimmedName, file) => {
         }
     }
 
-    const fnFixes = {};
+    const fnFixes = {
+        'ATorri': "A'Torri",
+        'DAndre': "D'Andre",
+        'DMarius': "D'Marius",
+        'DMarr': "D'Marr",
+    };
     if (fnFixes.hasOwnProperty(parts[0])) {
         parts[0] = fnFixes[parts[0]];
+    }
+
+    const lnFixes = {
+        'MBaye': "M'Baye",
+        'NDoye': "N'Doye",
+        'NDiaye': "N'Diaye",
+        'OBrien': "O'Brien",
+        'Mccoy': "McCoy",
+        'Mckay': "McKay",
+        'Mckenzie': "McKenzie",
+        'Mckinley': "McKinley",
+        'Mccarthy': "McCarthy",
+        'Mcbride': "McBride",
+        'Mccall': "McCall",
+        'Mcclain': "McClain",
+        'Mcclanahan': "McClanahan",
+        'Mcclelland': "McClelland",
+        'Mccloud': "McCloud",
+        'Mccrea': "McCrea",
+        'Mcgloin': "McGloin",
+        'Mcguire': "McGuire",
+        'Mchugh': "McHugh",
+        'Mclean': "McLean",
+        'Mcmillon': "McMillon",
+        'Mcmurray': "McMurray",
+        'Mcneal': "McNeal",
+        'Mcroberts': "McRoberts",
+        'Macculloch': "MacCulloch",
+    };
+    const lnIndex = parts.length - 1;
+    if (lnFixes.hasOwnProperty(parts[lnIndex])) {
+        parts[lnIndex] = lnFixes[parts[lnIndex]];
     }
 
     return parts;

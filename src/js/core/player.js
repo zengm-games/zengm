@@ -792,17 +792,79 @@ function name(): {country: string, firstName: string, lastName: string} {
     const fnRand = random.uniform(0, playerNames.first[country][playerNames.first[country].length - 1][1]);
     const firstNameRow = playerNames.first[country].find(row => row[1] >= fnRand);
     if (firstNameRow === undefined) {
-        throw new Error(`Undefined firstNameRow (fnRand=${fnRand}`);
+        throw new Error(`Undefined firstNameRow (fnRand=${fnRand})`);
     }
-    const firstName = firstNameRow[0];
+    let firstName = firstNameRow[0];
+
+    // Middle Name, randomly
+    const middle = random.uniform(0, 1);
+    if (middle < 0.05) {
+        const mnRand = random.uniform(0, playerNames.first[country][playerNames.first[country].length - 1][1]);
+        const middleNameRow = playerNames.first[country].find(row => row[1] >= mnRand);
+        if (middleNameRow === undefined) {
+            throw new Error(`Undefined middleNameRow (mnRand=${mnRand})`);
+        }
+        let middleName = middleNameRow[0];
+
+        // abbreviation rules:
+        // 25% will initialize their middle name
+        //   e.g. {Xavier Y. Zed}
+        // 50% will use it fully but as a 'nickname'
+        //   e.g. {Xavier "Yanick" Zed}
+        // 25% will use it fully with no quotes
+        //   e.g. {Xavier Yanick Zed}
+        const abbrev = random.uniform(0, 1);
+        if (abbrev < 0.25) {
+            // initialize it
+            middleName = `${middleName.charAt(0)}.`;
+        } else if (abbrev < 0.75) {
+            // wrap it in double-quotes
+            middleName = `"${middleName}"`;
+        }
+        firstName = `${firstName} ${middleName}`;
+    }
 
     // Last name
     const lnRand = random.uniform(0, playerNames.last[country][playerNames.last[country].length - 1][1]);
     const lastNameRow = playerNames.last[country].find(row => row[1] >= lnRand);
     if (lastNameRow === undefined) {
-        throw new Error(`Undefined lastNameRow (lnRand=${lnRand}`);
+        throw new Error(`Undefined lastNameRow (lnRand=${lnRand})`);
     }
-    const lastName = lastNameRow[0];
+    let lastName = lastNameRow[0];
+
+    // patronym names are not based on actually finding Dad
+    // we go up to XXX (30th) to outlast the popes,
+    // who currently set the record with John XXIII (23rd)
+    // however, we only do it in English-speaking countries
+    // we use a base rate of 2% of all players
+    const patBase = 0.02;
+    const patronymRand = random.uniform(0, 1);
+    const patNames = ["Jr.", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX", "XXI", "XXII", "XXIII", "XXIV", "XXV", "XXVI", "XXVII", "XXVIII", "XXIX", "XXX"];
+    const patPercents = [patBase];
+    let sonContinue = 0.1; // 10% will name their kid III
+    while (patPercents.length < patNames.length) {
+        // III rate increases but tops out at 60%
+        if (patPercents.length <= 6) {
+            sonContinue = patPercents.length / 10.0;
+        }
+        patPercents.push(sonContinue * Math.min(...patPercents));
+    }
+    const english = ["USA", "Canada", "Australia", "New Zealand", "England", "Ireland", "Jamaica", "Phillippines"];
+    if (english.includes(country)) {
+        // we start at a base rate of 2% of all players
+        // then drill until we find out which patronym
+        if (patronymRand < patBase) {
+            const patNameRow = patPercents.findIndex(row => row <= patronymRand) - 1;
+            if (patNameRow < 0) {
+                // patronymRand less than 1.89e-10
+                // patronym would be higher than 30th
+                lastName = `${lastName} the Unlucky`;
+            } else {
+                const patronym = patNames[patNameRow];
+                lastName = `${lastName} ${patronym}`;
+            }
+        }
+    }
 
     return {
         country,
@@ -1186,6 +1248,12 @@ function filter(p: PlayerWithStats | PlayerWithStats[], options: any): PlayerFil
                 }
             } else if (options.attrs[i] === "name") {
                 fp.name = `${p.firstName} ${p.lastName}`;
+            } else if (options.attrs[i] === "nameAbbrev") {
+                // can't use "abbrev" because that's Team Abbrev
+                const nameParts = p.firstName.split(/[ .-]/);
+                const abbrev = nameParts.map(s => (s === "" ? "" : `${s[0]}.`));
+                const concat = abbrev.join("");
+                fp.nameAbbrev = `${concat} ${p.lastName}`;
             } else {
                 fp[options.attrs[i]] = p[options.attrs[i]];
             }

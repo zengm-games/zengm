@@ -142,7 +142,6 @@ class UserInfo extends React.Component {
             emitter.emit('updateTopMenu', {username: ''});
             realtimeUpdate(["account"], "/");
         } catch (err) {
-            console.error(err);
             this.setState({
                 logoutError: ajaxErrorMsg,
             });

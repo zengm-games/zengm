@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import React from 'react';
 import {SPORT, fetchWrapper} from '../../common';
 import {setTitle} from '../util';
@@ -19,7 +18,8 @@ class LostPassword extends React.Component {
     async handleSubmit(e) {
         e.preventDefault();
 
-        const $lostpw = $("#lostpw");
+        const formData = new FormData(document.getElementById('lostpw'));
+        formData.set('sport', SPORT);
 
         this.setState({
             lostpwError: null,
@@ -30,7 +30,7 @@ class LostPassword extends React.Component {
             const data = await fetchWrapper({
                 url: `//account.basketball-gm.${window.tld}/lost_password.php`,
                 method: 'POST',
-                data: `${$lostpw.serialize()}&sport=${SPORT}`,
+                data: formData,
                 credentials: 'include',
             });
 

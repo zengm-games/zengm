@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import React from 'react';
 import {SPORT, fetchWrapper} from '../../common';
 import {emitter, realtimeUpdate, setTitle} from '../util';
@@ -56,13 +55,14 @@ class ResetPassword extends React.Component {
             resetpwPassword2Error: null,
         });
 
-        const $resetpw = $('#resetpw');
+        const formData = new FormData(document.getElementById('resetpw'));
+        formData.set('sport', SPORT);
 
         try {
             const data = await fetchWrapper({
                 url: `//account.basketball-gm.${window.tld}/reset_password.php`,
                 method: 'POST',
-                data: `${$resetpw.serialize()}&sport=${SPORT}`,
+                data: formData,
                 credentials: 'include',
             });
 

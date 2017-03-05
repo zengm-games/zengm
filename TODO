@@ -19,6 +19,7 @@ switch to native promises and/or lie, bluebird doens't work with IDB transaction
 lastDbChange still needed?
 
 test all instances of fetchWrapper
+- login and register work, but logout and persisting login over reloads doesn't. problem with php sessions somehow
 
 things like gameSimInProgress, phaseChangeInProgress... why ever save to db? maybe take out of gameAttributes
 
@@ -128,6 +129,10 @@ multi window
 benchmark using proxies to detect change in index stuff rather than dirtyIndexes
 
 can ui/util/logEvent be replaced by just notify? since it never writes to db?
+
+why ads not working on .dev?
+
+3.8
 
 ----
 

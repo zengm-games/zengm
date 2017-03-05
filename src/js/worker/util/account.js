@@ -88,6 +88,7 @@ async function addAchievements(achievements: AchievementKey[], silent?: boolean 
                 logEvent({
                     type: "achievement",
                     text: `"${allAchievements[i].name}" achievement awarded! <a href="/account">View all achievements.</a>`,
+                    saveToDb: false,
                 });
                 break;
             }

@@ -1,5 +1,4 @@
 import classNames from 'classnames';
-import $ from 'jquery';
 import React from 'react';
 import {SPORT, fetchWrapper} from '../../common';
 import {emitter, realtimeUpdate, setTitle, toWorker} from '../util';
@@ -26,13 +25,14 @@ class LoginOrRegister extends React.Component {
 
         this.setState({loginError: null});
 
-        const $login = $("#login");
+        const formData = new FormData(document.getElementById('login'));
+        formData.set('sport', SPORT);
 
         try {
             const data = await fetchWrapper({
                 url: `//account.basketball-gm.${window.tld}/login.php`,
                 method: 'POST',
-                data: `${$login.serialize()}&sport=${SPORT}`,
+                data: formData,
                 credentials: 'include',
             });
 
@@ -66,13 +66,14 @@ class LoginOrRegister extends React.Component {
             registerUsernameError: null,
         });
 
-        const $register = $("#register");
+        const formData = new FormData(document.getElementById('register'));
+        formData.set('sport', SPORT);
 
         try {
             const data = await fetchWrapper({
                 url: `//account.basketball-gm.${window.tld}/register.php`,
                 method: 'POST',
-                data: `${$register.serialize()}&sport=${SPORT}`,
+                data: formData,
                 credentials: 'include',
             });
 

@@ -1,7 +1,5 @@
 // @flow
 
-import queryString from 'query-string';
-
 const fetchWrapper = async ({
     url,
     method,
@@ -12,19 +10,22 @@ const fetchWrapper = async ({
     url: string,
     method: 'GET' | 'POST',
     headers?: {[key: string]: string},
-    data?: any,
+    data: Object,
     credentials?: 'include',
 }) => {
     let body;
-    if (typeof data === 'string') {
+    if (data instanceof FormData || data instanceof URLSearchParams) {
         body = data;
     } else if (data !== undefined) {
-        body = queryString.stringify(data);
+        body = new URLSearchParams();
+        for (const key of Object.keys(data)) {
+            body.set(key, data[key]);
+        }
     }
 
     // For GET request, append data to query string, since fetch doesn't like GET and body
     if (method === 'GET' && body !== undefined) {
-        url += `?${body}`;
+        url += `?${body.toString()}`;
         body = undefined;
     }
 

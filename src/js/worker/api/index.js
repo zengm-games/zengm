@@ -35,7 +35,7 @@ const checkAccount = async () => {
     await account.check();
 };
 
-const checkParticipationAchievevment = async (force: boolean = false) => {
+const checkParticipationAchievement = async (force: boolean = false) => {
     if (force) {
         await account.addAchievements(['participation']);
     } else {
@@ -805,7 +805,7 @@ export default {
     beforeViewNonLeague,
     cancelContractNegotiation,
     checkAccount,
-    checkParticipationAchievevment,
+    checkParticipationAchievement,
     clearTrade,
     clearWatchList,
     countNegotiations,

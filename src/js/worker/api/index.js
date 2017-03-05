@@ -573,9 +573,7 @@ const updateBudget = async (budgetAmounts: {
 };
 
 const updateGameAttributes = async (gameAttributes: GameAttributes) => {
-console.log('updateGameAttributes', gameAttributes);
     await league.setGameAttributes(gameAttributes);
-console.log('godmode after', g.godMode);
 };
 
 const updateMultiTeamMode = async (gameAttributes: {userTids: number[], userTid?: number}) => {
@@ -698,30 +696,20 @@ const upsertCustomizedPlayer = async (p: Player | PlayerWithoutPid, originalTid:
 
     // Recalculate player values, since ratings may have changed
     await player.updateValues(p);
-    let pid: number | void;
-    await idb.league.tx(["players", "playerStats"], "readwrite", async tx => {
-        // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition
-        // When adding a player, this is the only way to know the pid
-        pid = await tx.players.put(p);
 
-        // Add regular season or playoffs stat row, if necessary
-        if (p.tid >= 0 && p.tid !== originalTid && g.phase <= PHASE.PLAYOFFS) {
-            p.pid = pid;
+    // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition
+    // When creating a new player, this is the only way to know the pid
+    const pid: number = await idb.cache.put('players', p);
 
-            // If it is the playoffs, this is only necessary if p.tid actually made the playoffs, but causes only cosmetic harm otherwise.
-            await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
+    // Add regular season or playoffs stat row, if necessary
+    if (p.tid >= 0 && p.tid !== originalTid && g.phase <= PHASE.PLAYOFFS) {
+        p.pid = pid;
 
-            // Add back to database
-            await tx.players.put(p);
-        }
-    });
-
-    const pid2 = pid;
-    if (pid2 === undefined) {
-        throw new Error('Undefined pid');
+        // If it is the playoffs, this is only necessary if p.tid actually made the playoffs, but causes only cosmetic harm otherwise.
+        await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
     }
 
-    return pid2;
+    return pid;
 };
 
 const clearTrade = async () => {

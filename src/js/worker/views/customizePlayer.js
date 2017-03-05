@@ -1,6 +1,5 @@
 // @flow
 
-import backboard from 'backboard';
 import {PHASE, PLAYER, g} from '../../common';
 import {finances, player} from '../core';
 import {getCopy, idb} from '../db';
@@ -54,7 +53,7 @@ async function updateCustomizePlayer(
 
         if (inputs.pid === null) {
             // Generate new player as basis
-            const teamSeasons = await idb.league.teamSeasons.index("tid, season").getAll(backboard.bound([g.userTid, g.season - 2], [g.userTid, g.season]));
+            const teamSeasons = await idb.cache.indexGetAll('teamSeasonsByTidSeason', [`${g.userTid},${g.season - 2}`, `${g.userTid},${g.season}`]);
             const scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
 
             p = player.generate(
@@ -76,7 +75,7 @@ async function updateCustomizePlayer(
             p.imgURL = "http://";
         } else {
             // Load a player to edit
-            p = await idb.league.players.get(inputs.pid);
+            p = await getCopy.players({pid: inputs.pid});
             if (p.imgURL.length > 0) {
                 appearanceOption = 'Image URL';
             } else {

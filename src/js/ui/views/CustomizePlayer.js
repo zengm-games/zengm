@@ -121,8 +121,10 @@ class CustomizePlayer extends React.Component {
         super(props);
 
         const p = helpers.deepCopy(props.p);
-        p.age = this.props.season - p.born.year;
-        p.contract.amount /= 1000;
+        if (p !== undefined) {
+            p.age = this.props.season - p.born.year;
+            p.contract.amount /= 1000;
+        }
         this.state = {
             appearanceOption: props.appearanceOption,
             saving: false,
@@ -501,15 +503,15 @@ CustomizePlayer.propTypes = {
     appearanceOption: React.PropTypes.oneOf([
         'Cartoon Face',
         'Image URL',
-    ]).isRequired,
+    ]),
     godMode: React.PropTypes.bool.isRequired,
     originalTid: React.PropTypes.number,
-    p: React.PropTypes.object.isRequired,
-    season: React.PropTypes.number.isRequired,
+    p: React.PropTypes.object,
+    season: React.PropTypes.number,
     teams: React.PropTypes.arrayOf(React.PropTypes.shape({
         text: React.PropTypes.string.isRequired,
         tid: React.PropTypes.number.isRequired,
-    })).isRequired,
+    })),
 };
 
 export default CustomizePlayer;

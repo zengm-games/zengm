@@ -390,7 +390,7 @@ class Cache {
         return output;
     }
 
-    async add(store: Store, obj: any) {
+    async add(store: Store, obj: any): number | string {
         this.checkStatus('full');
 
         if (['draftOrder', 'draftPicks', 'events', 'games', 'messages', 'negotiations', 'playerFeats', 'playerStats', 'players', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams', 'trade'].includes(store)) {
@@ -406,28 +406,31 @@ class Cache {
 
             this.data[store][obj[pk]] = obj;
             this.markDirtyIndexes(store);
-        } else {
-            throw new Error(`Cache.add not implemented for store "${store}"`);
+
+            return obj[pk];
         }
+
+        throw new Error(`Cache.add not implemented for store "${store}"`);
     }
 
-    async put(store: Store, obj: any) {
+    async put(store: Store, obj: any): number | string {
         this.checkStatus('full');
 
         const pk = this.storeInfos[store].pk;
 
-        if (['awards', 'draftOrder', 'gameAttributes', 'playoffSeries', 'teams'].includes(store)) {
-            // This works if no auto incrementing primary key, otherwise it should auto assign primary key
-
+        if (['awards', 'draftOrder', 'gameAttributes', 'playoffSeries', 'players', 'teams'].includes(store)) {
             if (!obj.hasOwnProperty(pk)) {
-                throw new Error(`Cannot put "${store}" object without primary key "${pk}": ${JSON.stringify(obj)}`);
+                this.maxIds[store] += 1;
+                obj[pk] = this.maxIds[store];
             }
 
             this.data[store][obj[pk]] = obj;
             this.markDirtyIndexes(store);
-        } else {
-            throw new Error(`Cache.put not implemented for store "${store}"`);
+
+            return obj[pk];
         }
+
+        throw new Error(`Cache.put not implemented for store "${store}"`);
     }
 
     async delete(store: Store, key: number) {

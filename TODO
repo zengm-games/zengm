@@ -1,8 +1,5 @@
 IVERSON
 
-revisit add.. move stuff to put
-- update maxIds on add/put with defind pk, otherwise it's stale
-
 move everything but the UI to a web worker
 - does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
 - should checks to update data in worker/views be in worker, or could they be in UI somehow and avoid call to worker if update not needed?

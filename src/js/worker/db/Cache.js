@@ -412,51 +412,42 @@ class Cache {
         return output;
     }
 
-    getNextPrimaryKey(store: string): number {
-        if (!this.storeInfos[store].autoIncrement) {
-            throw new Error(`Primary key field "${this.storeInfos[store].pk}" is required for non-autoincrementing store "${store}"`);
+    storeObj(type: 'add' | 'put', store: Store, obj: any) {
+        this.checkStatus('full');
+
+        const pk = this.storeInfos[store].pk;
+        if (obj.hasOwnProperty(pk)) {
+            if (type === 'add' && this.data[store][obj[pk]]) {
+                throw new Error(`Primary key "${obj[pk]}" already exists in "${store}"`);
+            }
+
+            if (this.maxIds.hasOwnProperty(store) && obj[pk] > this.maxIds[store]) {
+                this.maxIds[store] = obj[pk];
+            }
+        } else {
+            if (!this.storeInfos[store].autoIncrement) {
+                throw new Error(`Primary key field "${pk}" is required for non-autoincrementing store "${store}"`);
+            }
+
+            this.maxIds[store] += 1;
+            obj[pk] = this.maxIds[store];
         }
 
-        this.maxIds[store] += 1;
-        return this.maxIds[store];
+        this.data[store][obj[pk]] = obj;
+        this.markDirtyIndexes(store);
     }
 
     async add(store: Store, obj: any): number | string {
-        this.checkStatus('full');
-
         if (['draftOrder', 'draftPicks', 'events', 'games', 'messages', 'negotiations', 'playerFeats', 'playerStats', 'players', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams', 'trade'].includes(store)) {
-            const pk = this.storeInfos[store].pk;
-            if (obj.hasOwnProperty(pk)) {
-                if (this.data[store][obj[pk]]) {
-                    throw new Error(`Primary key "${obj[pk]}" already exists in "${store}"`);
-                }
-            } else {
-                obj[pk] = this.getNextPrimaryKey(store);
-            }
-
-            this.data[store][obj[pk]] = obj;
-            this.markDirtyIndexes(store);
-
-            return obj[pk];
+            return this.storeObj('add', store, obj);
         }
 
         throw new Error(`Cache.add not implemented for store "${store}"`);
     }
 
     async put(store: Store, obj: any): number | string {
-        this.checkStatus('full');
-
-        const pk = this.storeInfos[store].pk;
-
         if (['awards', 'draftOrder', 'gameAttributes', 'playoffSeries', 'players', 'teams'].includes(store)) {
-            if (!obj.hasOwnProperty(pk)) {
-                obj[pk] = this.getNextPrimaryKey(store);
-            }
-
-            this.data[store][obj[pk]] = obj;
-            this.markDirtyIndexes(store);
-
-            return obj[pk];
+            return this.storeObj('put', store, obj);
         }
 
         throw new Error(`Cache.put not implemented for store "${store}"`);

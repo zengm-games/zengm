@@ -22,8 +22,6 @@ test all instances of fetchWrapper
 - login/logout/register work, but persisting login over reloads doesn't
 - others?
 
-things like gameSimInProgress, phaseChangeInProgress... why ever save to db? maybe take out of gameAttributes
-
 bbgm.g.cache.flush().then(() => console.log('done'));
 fucked = false; Object.values(bbgm.g.cache.indexes.teamSeasonsBySeasonTid).forEach((ts) => { if (ts.hasOwnProperty('ast')) { console.log(ts); fucked = true } }); if (fucked) { throw new Error('FUCK'); }
 bbgm.league.setGameAttributes({phaseChangeInProgress: false})
@@ -40,9 +38,6 @@ getCopy.playersPlus
 
 i think withStats was faster that playersPlus for getting stats for a large number of players
 - move stats back within players
-
-since phase change can't be aborted anymore... what should menu be like then? what was it before abortable?
-- also, what about the lock system?
 
 add flow comments to new files!
 - hard for ones that return (T | T[]) depending on inputs. maybe rethink getCopy API
@@ -130,6 +125,10 @@ multi window
 benchmark using proxies to detect change in index stuff rather than dirtyIndexes
 
 can ui/util/logEvent be replaced by just notify? since it never writes to db?
+
+db sync issues
+- on window close, what do we do?
+- if closed in phase change, unset g.phaseChangeInProgress on league load
 
 why ads not working on .dev?
 

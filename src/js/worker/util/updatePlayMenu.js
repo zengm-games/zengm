@@ -35,7 +35,6 @@ const updatePlayMenu = async () => {
         message: {url: helpers.leagueUrl(["message"]), label: "Read new message"},
         newLeague: {url: "/new_league", label: "Try again in a new league"},
         newTeam: {url: helpers.leagueUrl(["new_team"]), label: "Try again with a new team"},
-        abortPhaseChange: {label: "Abort"},
         stopAuto: {label: `Stop auto play (${g.autoPlaySeasons} seasons left)`},
     };
 
@@ -84,7 +83,7 @@ const updatePlayMenu = async () => {
         keys = ["contractNegotiation"];
     }
     if (g.phaseChangeInProgress) {
-        keys = ["abortPhaseChange"];
+        keys = [];
     }
 
     // If there is an unread message, it's from the owner saying the player is fired, so let the user see that first.

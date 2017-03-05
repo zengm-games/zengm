@@ -194,10 +194,6 @@ const playMenu = {
         }
     },
 
-    abortPhaseChange: () => {
-        console.log('This does nothing');
-    },
-
     stopAuto: async () => {
         await league.setGameAttributes({autoPlaySeasons: 0});
         updatePlayMenu();

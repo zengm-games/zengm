@@ -3,7 +3,7 @@
 import classNames from 'classnames';
 import $ from 'jquery';
 import React from 'react';
-import {SPORT, STRIPE_PUBLISHABLE_KEY} from '../../common';
+import {SPORT, STRIPE_PUBLISHABLE_KEY, fetchWrapper} from '../../common';
 import {emitter, realtimeUpdate, setTitle} from '../util';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
@@ -36,18 +36,15 @@ class StripeButton extends React.Component {
                         image: '/ico/icon128.png',
                         token: async token => {
                             try {
-                                const data = await Promise.resolve($.ajax({
-                                    type: "POST",
+                                const data = await fetchWrapper({
                                     url: `//account.basketball-gm.${window.tld}/gold_start.php`,
+                                    method: 'POST',
                                     data: {
                                         sport: "basketball",
                                         token: token.id,
                                     },
-                                    dataType: "json",
-                                    xhrFields: {
-                                        withCredentials: true,
-                                    },
-                                }));
+                                    credentials: 'include',
+                                });
                                 realtimeUpdate(["account"], "/account", {goldResult: data});
                             } catch (err) {
                                 console.log(err);
@@ -94,17 +91,14 @@ const handleCancel = async e => {
 
     if (result) {
         try {
-            const data = await Promise.resolve($.ajax({
-                type: "POST",
+            const data = await fetchWrapper({
                 url: `//account.basketball-gm.${window.tld}/gold_cancel.php`,
+                method: 'POST',
                 data: {
                     sport: "basketball",
                 },
-                dataType: "json",
-                xhrFields: {
-                    withCredentials: true,
-                },
-            }));
+                credentials: 'include',
+            });
             realtimeUpdate(["account"], "/account", {goldResult: data});
         } catch (err) {
             console.log(err);
@@ -130,30 +124,29 @@ class UserInfo extends React.Component {
         this.handleLogout = this.handleLogout.bind(this);
     }
 
-    handleLogout(e) {
+    async handleLogout(e) {
         e.preventDefault();
 
         this.setState({
             logoutError: null,
         });
 
-        $.ajax({
-            type: "POST",
-            url: `//account.basketball-gm.${window.tld}/logout.php`,
-            data: `sport=${SPORT}`,
-            xhrFields: {
-                withCredentials: true,
-            },
-            success: () => {
-                emitter.emit('updateTopMenu', {username: ''});
-                realtimeUpdate(["account"], "/");
-            },
-            error: () => {
-                this.setState({
-                    logoutError: ajaxErrorMsg,
-                });
-            },
-        });
+        try {
+            await fetchWrapper({
+                url: `//account.basketball-gm.${window.tld}/logout.php`,
+                method: 'POST',
+                data: {sport: SPORT},
+                credentials: 'include',
+            });
+
+            emitter.emit('updateTopMenu', {username: ''});
+            realtimeUpdate(["account"], "/");
+        } catch (err) {
+            console.error(err);
+            this.setState({
+                logoutError: ajaxErrorMsg,
+            });
+        }
     }
 
     render() {

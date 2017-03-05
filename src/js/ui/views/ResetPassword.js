@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import React from 'react';
-import {SPORT} from '../../common';
+import {SPORT, fetchWrapper} from '../../common';
 import {emitter, realtimeUpdate, setTitle} from '../util';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
@@ -18,39 +18,36 @@ class ResetPassword extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         // First, see if this is a valid token
-        $.ajax({
-            type: "POST",
-            url: `//account.basketball-gm.${window.tld}/reset_password.php`,
-            data: {action: "check_token", token: this.props.token, sport: SPORT},
-            dataType: "json",
-            xhrFields: {
-                withCredentials: true,
-            },
-            success: (data) => {
-                if (data.success) {
-                    this.setState({
-                        globalErrorMsg: null,
-                        showForm: true,
-                    });
-                } else {
-                    this.setState({
-                        globalErrorMsg: <span>Invalid password reset token. <a href="/account/lost_password">Request another and try again.</a></span>,
-                        showForm: false,
-                    });
-                }
-            },
-            error: () => {
+        try {
+            const data = await fetchWrapper({
+                url: `//account.basketball-gm.${window.tld}/reset_password.php`,
+                method: 'POST',
+                data: {action: "check_token", token: this.props.token, sport: SPORT},
+                credentials: 'include',
+            });
+
+            if (data.success) {
                 this.setState({
-                    globalErrorMsg: ajaxErrorMsg,
+                    globalErrorMsg: null,
+                    showForm: true,
+                });
+            } else {
+                this.setState({
+                    globalErrorMsg: <span>Invalid password reset token. <a href="/account/lost_password">Request another and try again.</a></span>,
                     showForm: false,
                 });
-            },
-        });
+            }
+        } catch (err) {
+            this.setState({
+                globalErrorMsg: ajaxErrorMsg,
+                showForm: false,
+            });
+        }
     }
 
-    handleSubmit(e) {
+    async handleSubmit(e) {
         e.preventDefault();
 
         this.setState({
@@ -61,46 +58,43 @@ class ResetPassword extends React.Component {
 
         const $resetpw = $('#resetpw');
 
-        $.ajax({
-            type: "POST",
-            url: `//account.basketball-gm.${window.tld}/reset_password.php`,
-            data: `${$resetpw.serialize()}&sport=${SPORT}`,
-            dataType: "json",
-            xhrFields: {
-                withCredentials: true,
-            },
-            success: data => {
-                if (data.success) {
-                    emitter.emit('updateTopMenu', {username: data.username});
+        try {
+            const data = await fetchWrapper({
+                url: `//account.basketball-gm.${window.tld}/reset_password.php`,
+                method: 'POST',
+                data: `${$resetpw.serialize()}&sport=${SPORT}`,
+                credentials: 'include',
+            });
 
-                    realtimeUpdate([], "/account");
-                } else {
-                    const updatedState = {
-                        resetpwError: null,
-                        resetpwPasswordError: null,
-                        resetpwPassword2Error: null,
-                    };
+            if (data.success) {
+                emitter.emit('updateTopMenu', {username: data.username});
 
-                    for (const error of Object.keys(data.errors)) {
-                        if (error === "password") {
-                            updatedState.resetpwPasswordError = data.errors[error];
-                        } else if (error === "password2") {
-                            updatedState.resetpwPassword2Error = data.errors[error];
-                        } else if (error === "passwords") {
-                            updatedState.resetpwPasswordError = updatedState.resetpwPasswordError === null ? '' : updatedState.resetpwPasswordError; // So it gets highlighted too
-                            updatedState.resetpwPassword2Error = data.errors[error];
-                        }
-                    }
-                }
-            },
-            error: () => {
-                this.setState({
-                    resetpwError: ajaxErrorMsg,
+                realtimeUpdate([], "/account");
+            } else {
+                const updatedState = {
+                    resetpwError: null,
                     resetpwPasswordError: null,
                     resetpwPassword2Error: null,
-                });
-            },
-        });
+                };
+
+                for (const error of Object.keys(data.errors)) {
+                    if (error === "password") {
+                        updatedState.resetpwPasswordError = data.errors[error];
+                    } else if (error === "password2") {
+                        updatedState.resetpwPassword2Error = data.errors[error];
+                    } else if (error === "passwords") {
+                        updatedState.resetpwPasswordError = updatedState.resetpwPasswordError === null ? '' : updatedState.resetpwPasswordError; // So it gets highlighted too
+                        updatedState.resetpwPassword2Error = data.errors[error];
+                    }
+                }
+            }
+        } catch (err) {
+            this.setState({
+                resetpwError: ajaxErrorMsg,
+                resetpwPasswordError: null,
+                resetpwPassword2Error: null,
+            });
+        }
     }
 
     render() {

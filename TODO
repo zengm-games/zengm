@@ -18,7 +18,7 @@ switch to native promises and/or lie, bluebird doens't work with IDB transaction
 
 lastDbChange still needed?
 
-test all instances of fetchWrapper, and move $.ajax over (maybe some try to move to worker)
+test all instances of fetchWrapper
 
 things like gameSimInProgress, phaseChangeInProgress... why ever save to db? maybe take out of gameAttributes
 

@@ -15,10 +15,15 @@ const fetchWrapper = async ({
     data?: any,
     credentials?: 'include',
 }) => {
-    let body = queryString.stringify(data);
+    let body;
+    if (typeof data === 'string') {
+        body = data;
+    } else if (data !== undefined) {
+        body = queryString.stringify(data);
+    }
 
     // For GET request, append data to query string, since fetch doesn't like GET and body
-    if (method === 'GET' && data !== undefined) {
+    if (method === 'GET' && body !== undefined) {
         url += `?${body}`;
         body = undefined;
     }

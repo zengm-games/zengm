@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import $ from 'jquery';
 import React from 'react';
-import {SPORT} from '../../common';
+import {SPORT, fetchWrapper} from '../../common';
 import {emitter, realtimeUpdate, setTitle, toWorker} from '../util';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
@@ -28,34 +28,31 @@ class LoginOrRegister extends React.Component {
 
         const $login = $("#login");
 
-        $.ajax({
-            type: "POST",
-            url: `//account.basketball-gm.${window.tld}/login.php`,
-            data: `${$login.serialize()}&sport=${SPORT}`,
-            dataType: "json",
-            xhrFields: {
-                withCredentials: true,
-            },
-            success: async data => {
-                if (data.success) {
-                    emitter.emit('updateTopMenu', {
-                        email: data.email,
-                        goldCancelled: !!data.gold_cancelled,
-                        goldUntil: data.gold_until,
-                        username: data.username,
-                    });
+        try {
+            const data = await fetchWrapper({
+                url: `//account.basketball-gm.${window.tld}/login.php`,
+                method: 'POST',
+                data: `${$login.serialize()}&sport=${SPORT}`,
+                credentials: 'include',
+            });
 
-                    // Check for participation achievement, if this is the first time logging in to this sport
-                    await toWorker('checkParticipationAchievement');
-                    realtimeUpdate(["account"], "/account");
-                } else {
-                    this.setState({loginError: 'Invalid username or password.'});
-                }
-            },
-            error: () => {
-                this.setState({loginError: ajaxErrorMsg});
-            },
-        });
+            if (data.success) {
+                emitter.emit('updateTopMenu', {
+                    email: data.email,
+                    goldCancelled: !!data.gold_cancelled,
+                    goldUntil: data.gold_until,
+                    username: data.username,
+                });
+
+                // Check for participation achievement, if this is the first time logging in to this sport
+                await toWorker('checkParticipationAchievement');
+                realtimeUpdate(["account"], "/account");
+            } else {
+                this.setState({loginError: 'Invalid username or password.'});
+            }
+        } catch (err) {
+            this.setState({loginError: ajaxErrorMsg});
+        }
     }
 
     async handleRegister(e) {
@@ -71,57 +68,54 @@ class LoginOrRegister extends React.Component {
 
         const $register = $("#register");
 
-        $.ajax({
-            type: "POST",
-            url: `//account.basketball-gm.${window.tld}/register.php`,
-            data: `${$register.serialize()}&sport=${SPORT}`,
-            dataType: "json",
-            xhrFields: {
-                withCredentials: true,
-            },
-            success: async data => {
-                if (data.success) {
-                    emitter.emit('updateTopMenu', {username: data.username});
+        try {
+            const data = await fetchWrapper({
+                url: `//account.basketball-gm.${window.tld}/register.php`,
+                method: 'POST',
+                data: `${$register.serialize()}&sport=${SPORT}`,
+                credentials: 'include',
+            });
 
-                    await toWorker('checkParticipationAchievement', true);
-                    realtimeUpdate([], "/account");
-                } else {
-                    const updatedState = {
-                        registerEmailError: null,
-                        registerError: null,
-                        registerPasswordError: null,
-                        registerPassword2Error: null,
-                        registerUsernameError: null,
-                    };
+            if (data.success) {
+                emitter.emit('updateTopMenu', {username: data.username});
 
-                    for (const error of Object.keys(data.errors)) {
-                        if (error === "username") {
-                            updatedState.registerUsernameError = data.errors[error];
-                        } else if (error === "email") {
-                            updatedState.registerEmailError = data.errors[error];
-                        } else if (error === "password") {
-                            updatedState.registerPasswordError = data.errors[error];
-                        } else if (error === "password2") {
-                            updatedState.registerPassword2Error = data.errors[error];
-                        } else if (error === "passwords") {
-                            updatedState.registerPasswordError = updatedState.registerPasswordError === null ? '' : updatedState.registerPasswordError; // So it gets highlighted too
-                            updatedState.registerPassword2Error = data.errors[error];
-                        }
-                    }
-
-                    this.setState(updatedState);
-                }
-            },
-            error: () => {
-                this.setState({
+                await toWorker('checkParticipationAchievement', true);
+                realtimeUpdate([], "/account");
+            } else {
+                const updatedState = {
                     registerEmailError: null,
-                    registerError: ajaxErrorMsg,
+                    registerError: null,
                     registerPasswordError: null,
                     registerPassword2Error: null,
                     registerUsernameError: null,
-                });
-            },
-        });
+                };
+
+                for (const error of Object.keys(data.errors)) {
+                    if (error === "username") {
+                        updatedState.registerUsernameError = data.errors[error];
+                    } else if (error === "email") {
+                        updatedState.registerEmailError = data.errors[error];
+                    } else if (error === "password") {
+                        updatedState.registerPasswordError = data.errors[error];
+                    } else if (error === "password2") {
+                        updatedState.registerPassword2Error = data.errors[error];
+                    } else if (error === "passwords") {
+                        updatedState.registerPasswordError = updatedState.registerPasswordError === null ? '' : updatedState.registerPasswordError; // So it gets highlighted too
+                        updatedState.registerPassword2Error = data.errors[error];
+                    }
+                }
+
+                this.setState(updatedState);
+            }
+        } catch (err) {
+            this.setState({
+                registerEmailError: null,
+                registerError: ajaxErrorMsg,
+                registerPasswordError: null,
+                registerPassword2Error: null,
+                registerUsernameError: null,
+            });
+        }
     }
 
     render() {

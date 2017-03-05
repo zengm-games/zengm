@@ -2,7 +2,7 @@
 
 import $ from 'jquery';
 import React from 'react';
-import {STRIPE_PUBLISHABLE_KEY} from '../../common';
+import {STRIPE_PUBLISHABLE_KEY, fetchWrapper} from '../../common';
 import {realtimeUpdate, setTitle} from '../util';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
@@ -68,21 +68,17 @@ class AccountUpdateCard extends React.Component {
                 const token = response.id;
 
                 try {
-                    const data = await Promise.resolve($.ajax({
-                        type: "POST",
+                    const data = await fetchWrapper({
                         url: `//account.basketball-gm.${window.tld}/gold_card_update.php`,
+                        method: 'POST',
                         data: {
                             sport: "basketball",
                             token,
                         },
-                        dataType: "json",
-                        xhrFields: {
-                            withCredentials: true,
-                        },
-                    }));
+                        credentials: 'include',
+                    });
                     realtimeUpdate(["account"], "/account", {goldResult: data});
                 } catch (err) {
-                    console.log(err);
                     this.setState({
                         disabled: false,
                         formError: ajaxErrorMsg,

@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import React from 'react';
-import {SPORT} from '../../common';
+import {SPORT, fetchWrapper} from '../../common';
 import {setTitle} from '../util';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
@@ -26,25 +26,22 @@ class LostPassword extends React.Component {
             lostpwSuccess: null,
         });
 
-        $.ajax({
-            type: "POST",
-            url: `//account.basketball-gm.${window.tld}/lost_password.php`,
-            data: `${$lostpw.serialize()}&sport=${SPORT}`,
-            dataType: "json",
-            xhrFields: {
-                withCredentials: true,
-            },
-            success: data => {
-                if (data.success) {
-                    this.setState({lostpwSuccess: 'Check your email for further instructions.'});
-                } else {
-                    this.setState({lostpwError: 'Account not found.'});
-                }
-            },
-            error: () => {
-                this.setState({lostpwError: ajaxErrorMsg});
-            },
-        });
+        try {
+            const data = await fetchWrapper({
+                url: `//account.basketball-gm.${window.tld}/lost_password.php`,
+                method: 'POST',
+                data: `${$lostpw.serialize()}&sport=${SPORT}`,
+                credentials: 'include',
+            });
+
+            if (data.success) {
+                this.setState({lostpwSuccess: 'Check your email for further instructions.'});
+            } else {
+                this.setState({lostpwError: 'Account not found.'});
+            }
+        } catch (err) {
+            this.setState({lostpwError: ajaxErrorMsg});
+        }
     }
 
     render() {

@@ -497,19 +497,20 @@ async function untilUserOrEnd() {
         if (draftOrder.length === 0) {
             // Fantasy draft special case!
             if (g.phase === PHASE.FANTASY_DRAFT) {
-                await idb.league.tx(["players", "teamSeasons"], "readwrite", async tx => {
-                    // Undrafted players become free agents
-                    const baseMoods = await player.genBaseMoods();
-                    await tx.players.index('tid').iterate(PLAYER.UNDRAFTED, (p) => {
-                        player.addToFreeAgents(p, PHASE.FREE_AGENCY, baseMoods);
-                    });
+                // Undrafted players become free agents
+                const baseMoods = await player.genBaseMoods();
+                const playersUndrafted = await idb.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
+                for (const p of playersUndrafted) {
+                    player.addToFreeAgents(p, PHASE.FREE_AGENCY, baseMoods);
+                }
 
-                    // Swap back in normal draft class
-                    await tx.players.index('tid').iterate(PLAYER.UNDRAFTED_FANTASY_TEMP, p => {
-                        p.tid = PLAYER.UNDRAFTED;
-                        return p;
-                    });
-                });
+                // Swap back in normal draft class
+                const players = await idb.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED_FANTASY_TEMP);
+                for (const p of players) {
+                    p.tid = PLAYER.UNDRAFTED;
+                }
+
+                idb.cache.markDirtyIndexes('players');
 
                 await league.setGameAttributes({
                     phase: g.nextPhase,

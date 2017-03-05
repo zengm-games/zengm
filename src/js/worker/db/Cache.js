@@ -29,6 +29,7 @@ class Cache {
     storeInfos: {
         [key: Store]: {
             pk: string,
+            autoIncrement: boolean,
             getData?: (BackboardTx, Player[]) => (Promise<any[]> | any[]),
             indexes?: {
                 name: Index,
@@ -52,13 +53,16 @@ class Cache {
         this.storeInfos = {
             awards: {
                 pk: 'season',
+                autoIncrement: false,
             },
             draftOrder: {
                 pk: 'rid',
+                autoIncrement: false,
                 getData: (tx: BackboardTx) => tx.draftOrder.getAll(),
             },
             draftPicks: {
                 pk: 'dpid',
+                autoIncrement: true,
                 getData: (tx: BackboardTx) => tx.draftPicks.getAll(),
                 indexes: [{
                     name: 'draftPicksBySeason',
@@ -70,29 +74,36 @@ class Cache {
             },
             events: {
                 pk: 'eid',
+                autoIncrement: true,
             },
             gameAttributes: {
                 pk: 'key',
+                autoIncrement: false,
                 getData: (tx: BackboardTx) => tx.gameAttributes.getAll(),
             },
             games: {
                 pk: 'gid',
+                autoIncrement: false,
 
                 // Current season
                 getData: (tx: BackboardTx) => tx.games.index('season').getAll(this.season),
             },
             messages: {
                 pk: 'mid',
+                autoIncrement: true,
             },
             negotiations: {
                 pk: 'pid',
+                autoIncrement: false,
                 getData: (tx: BackboardTx) => tx.negotiations.getAll(),
             },
             playerFeats: {
                 pk: 'fid',
+                autoIncrement: true,
             },
             playerStats: {
                 pk: 'psid',
+                autoIncrement: true,
 
                 getData: async (tx: BackboardTx, players: Player[]) => {
                     const psNested = await Promise.all(players.map((p) => {
@@ -120,6 +131,7 @@ class Cache {
             },
             players: {
                 pk: 'pid',
+                autoIncrement: true,
                 getData: (tx: BackboardTx, players: Player[]) => players,
                 indexes: [{
                     name: 'playersByTid',
@@ -128,12 +140,14 @@ class Cache {
             },
             playoffSeries: {
                 pk: 'season',
+                autoIncrement: false,
 
                 // Current season
                 getData: (tx: BackboardTx) => tx.playoffSeries.getAll(this.season),
             },
             releasedPlayers: {
                 pk: 'rid',
+                autoIncrement: true,
                 getData: (tx: BackboardTx) => tx.releasedPlayers.getAll(),
                 indexes: [{
                     name: 'releasedPlayersByTid',
@@ -142,10 +156,12 @@ class Cache {
             },
             schedule: {
                 pk: 'gid',
+                autoIncrement: true,
                 getData: (tx: BackboardTx) => tx.schedule.getAll(),
             },
             teamSeasons: {
                 pk: 'rid',
+                autoIncrement: true,
 
                 // Past 3 seasons
                 getData: (tx: BackboardTx) => {
@@ -166,6 +182,7 @@ class Cache {
             },
             teamStats: {
                 pk: 'rid',
+                autoIncrement: true,
 
                 // Current season
                 getData: (tx: BackboardTx) => {
@@ -182,10 +199,12 @@ class Cache {
             },
             teams: {
                 pk: 'tid',
+                autoIncrement: false,
                 getData: (tx: BackboardTx) => tx.teams.getAll(),
             },
             trade: {
                 pk: 'rid',
+                autoIncrement: false,
                 getData: (tx: BackboardTx) => tx.trade.getAll(),
             },
         };
@@ -390,6 +409,15 @@ class Cache {
         return output;
     }
 
+    getNextPrimaryKey(store: string): number {
+        if (!this.storeInfos[store].autoIncrement) {
+            throw new Error(`Primary key field "${this.storeInfos[store].pk}" is required for non-autoincrementing store "${store}"`);
+        }
+
+        this.maxIds[store] += 1;
+        return this.maxIds[store];
+    }
+
     async add(store: Store, obj: any): number | string {
         this.checkStatus('full');
 
@@ -397,11 +425,10 @@ class Cache {
             const pk = this.storeInfos[store].pk;
             if (obj.hasOwnProperty(pk)) {
                 if (this.data[store][obj[pk]]) {
-                    throw new Error(`Primary key ${obj[pk]} already exists in "${store}"`);
+                    throw new Error(`Primary key "${obj[pk]}" already exists in "${store}"`);
                 }
             } else {
-                this.maxIds[store] += 1;
-                obj[pk] = this.maxIds[store];
+                obj[pk] = this.getNextPrimaryKey(store);
             }
 
             this.data[store][obj[pk]] = obj;
@@ -420,8 +447,7 @@ class Cache {
 
         if (['awards', 'draftOrder', 'gameAttributes', 'playoffSeries', 'players', 'teams'].includes(store)) {
             if (!obj.hasOwnProperty(pk)) {
-                this.maxIds[store] += 1;
-                obj[pk] = this.maxIds[store];
+                obj[pk] = this.getNextPrimaryKey(store);
             }
 
             this.data[store][obj[pk]] = obj;

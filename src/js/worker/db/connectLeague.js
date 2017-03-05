@@ -14,9 +14,9 @@ const createLeague = (upgradeDB, lid: number) => {
 
     // rid ("row id") is used as the keyPath for objects without an innate unique identifier
     upgradeDB.createObjectStore("awards", {keyPath: "season"});
-    const eventStore = upgradeDB.createObjectStore("events", {keyPath: "eid", autoIncrement: true});
     upgradeDB.createObjectStore("draftOrder", {keyPath: "rid"});
     upgradeDB.createObjectStore("draftPicks", {keyPath: "dpid", autoIncrement: true});
+    const eventStore = upgradeDB.createObjectStore("events", {keyPath: "eid", autoIncrement: true});
     upgradeDB.createObjectStore("gameAttributes", {keyPath: "key"});
     const gameStore = upgradeDB.createObjectStore("games", {keyPath: "gid"});
     upgradeDB.createObjectStore("messages", {keyPath: "mid", autoIncrement: true});

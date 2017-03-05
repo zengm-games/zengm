@@ -1,7 +1,6 @@
 IVERSON
 
 revisit add.. move stuff to put
-- store if pk is auto incrementing, if not then require it on put/add
 - update maxIds on add/put with defind pk, otherwise it's stale
 
 move everything but the UI to a web worker

@@ -284,13 +284,16 @@ class Cache {
                 this.refreshIndexes(store);
             })(),
             (async () => {
-                this.maxIds[store] = -1;
-                await tx[store].iterate(null, 'prev', (row, shortCircuit) => {
-                    if (row) {
-                        this.maxIds[store] = row[storeInfo.pk];
-                    }
-                    shortCircuit();
-                });
+                // Special case for games, due to interaction with schedule (see hack below)
+                if (storeInfo.autoIncrement || store === 'games') {
+                    this.maxIds[store] = -1;
+                    await tx[store].iterate(null, 'prev', (row, shortCircuit) => {
+                        if (row) {
+                            this.maxIds[store] = row[storeInfo.pk];
+                        }
+                        shortCircuit();
+                    });
+                }
             })(),
         ]);
     }

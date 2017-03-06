@@ -112,36 +112,29 @@ async function updatePlayers(teams: TradeTeams): Promise<TradeTeams> {
         console.log(dv);
     });
 
-    await idb.league.tx(["players"], async tx => {
-        // Make sure each entry in teams has pids and dpids that actually correspond to the correct tid
-        const promises = [];
-        teams.forEach(t => {
-            // Check players
-            promises.push(tx.players.index('tid').getAll(t.tid).then(players => {
-                const pidsGood = [];
-                for (let j = 0; j < players.length; j++) {
-                    // Also, make sure player is not untradable
-                    if (t.pids.includes(players[j].pid) && !isUntradable(players[j])) {
-                        pidsGood.push(players[j].pid);
-                    }
-                }
-                t.pids = pidsGood;
-            }));
+    // Make sure each entry in teams has pids and dpids that actually correspond to the correct tid
+    for (const t of teams) {
+        // Check players
+        const players = await idb.cache.indexGetAll('playersByTid', t.tid);
+        const pidsGood = [];
+        for (const p of players) {
+            // Also, make sure player is not untradable
+            if (t.pids.includes(p.pid) && !isUntradable(p)) {
+                pidsGood.push(p.pid);
+            }
+        }
+        t.pids = pidsGood;
 
-            // Check draft picks
-            promises.push(idb.cache.indexGetAll('draftPicksByTid', t.tid).then(dps => {
-                const dpidsGood = [];
-                for (let j = 0; j < dps.length; j++) {
-                    if (t.dpids.includes(dps[j].dpid)) {
-                        dpidsGood.push(dps[j].dpid);
-                    }
-                }
-                t.dpids = dpidsGood;
-            }));
-        });
-
-        await Promise.all(promises);
-    });
+        // Check draft picks
+        const draftPicks = await idb.cache.indexGetAll('draftPicksByTid', t.tid);
+        const dpidsGood = [];
+        for (const dp of draftPicks) {
+            if (t.dpids.includes(dp.dpid)) {
+                dpidsGood.push(dp.dpid);
+            }
+        }
+        t.dpids = dpidsGood;
+    }
 
     let updated = false; // Has the trade actually changed?
 
@@ -429,61 +422,61 @@ async function makeItWork(
     const tryAddAsset = async () => {
         const assets = [];
 
-        await idb.league.tx(["players"], async (tx) => {
-            if (!holdUserConstant) {
-                // Get all players not in userPids
-                tx.players.index('tid').iterate(teams[0].tid, p => {
-                    if (!teams[0].pids.includes(p.pid) && !isUntradable(p)) {
-                        assets.push({
-                            type: "player",
-                            dv: 0,
-                            pid: p.pid,
-                            tid: teams[0].tid,
-                        });
-                    }
-                });
-            }
-
-            // Get all players not in otherPids
-            tx.players.index('tid').iterate(teams[1].tid, p => {
-                if (!teams[1].pids.includes(p.pid) && !isUntradable(p)) {
+        if (!holdUserConstant) {
+            // Get all players not in userPids
+            const players = await idb.cache.indexGetAll('playersByTid', teams[0].tid);
+            for (const p of players) {
+                if (!teams[0].pids.includes(p.pid) && !isUntradable(p)) {
                     assets.push({
                         type: "player",
                         dv: 0,
                         pid: p.pid,
-                        tid: teams[1].tid,
+                        tid: teams[0].tid,
                     });
                 }
-            });
-
-            if (!holdUserConstant) {
-                // Get all draft picks not in userDpids
-                const draftPicks = await idb.cache.indexGetAll('draftPicksByTid', teams[0].tid);
-                for (const dp of draftPicks) {
-                    if (!teams[0].dpids.includes(dp.dpid)) {
-                        assets.push({
-                            type: "draftPick",
-                            dv: 0,
-                            dpid: dp.dpid,
-                            tid: teams[0].tid,
-                        });
-                    }
-                }
             }
+        }
 
-            // Get all draft picks not in otherDpids
-            const draftPicks = await idb.cache.indexGetAll('draftPicksByTid', teams[1].tid);
+        // Get all players not in otherPids
+        const players = await idb.cache.indexGetAll('playersByTid', teams[1].tid);
+        for (const p of players) {
+            if (!teams[1].pids.includes(p.pid) && !isUntradable(p)) {
+                assets.push({
+                    type: "player",
+                    dv: 0,
+                    pid: p.pid,
+                    tid: teams[1].tid,
+                });
+            }
+        }
+
+        if (!holdUserConstant) {
+            // Get all draft picks not in userDpids
+            const draftPicks = await idb.cache.indexGetAll('draftPicksByTid', teams[0].tid);
             for (const dp of draftPicks) {
-                if (!teams[1].dpids.includes(dp.dpid)) {
+                if (!teams[0].dpids.includes(dp.dpid)) {
                     assets.push({
                         type: "draftPick",
                         dv: 0,
                         dpid: dp.dpid,
-                        tid: teams[1].tid,
+                        tid: teams[0].tid,
                     });
                 }
             }
-        });
+        }
+
+        // Get all draft picks not in otherDpids
+        const draftPicks = await idb.cache.indexGetAll('draftPicksByTid', teams[1].tid);
+        for (const dp of draftPicks) {
+            if (!teams[1].dpids.includes(dp.dpid)) {
+                assets.push({
+                    type: "draftPick",
+                    dv: 0,
+                    dpid: dp.dpid,
+                    tid: teams[1].tid,
+                });
+            }
+        }
 
         // If we've already added 5 assets or there are no more to try, stop
         if (initialSign === -1 && (assets.length === 0 || added >= 5)) {

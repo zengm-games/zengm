@@ -57,7 +57,9 @@ update to cache
 - api: exportPlayerGamesCsv
 - also search for any readwrite transaction
 - death code in phase - should not be writing to db, and (maybe) should not assume retired players are not cached
-- makeItWork
+- repeatedly clicking "propose" makes dv go down - why?
+- trading block fails due to promise communication issue, maybe passing cb or something
+  - getTradingBlockOffers has cb passed to it. how to replace? need to update UI incrementally
 
 if i can gracefully handle absence of g.season etc, put cache creation inside connectLeague
 - not graceful now, see fill(season)
@@ -135,6 +137,8 @@ why ads not working on .dev?
 3.8
 
 ----
+
+put death rate in god mode options
 
 HTML in play by play https://www.reddit.com/r/BasketballGM/comments/5963ym/playbyplay_bug/
 

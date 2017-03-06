@@ -1,5 +1,18 @@
 IVERSON
 
+db sync issues
+- on window close, what do we do?
+- if closed in phase change, unset g.phaseChangeInProgress on league load
+- expose to user when dirty, to let them save?
+- is the cache really worth this confusion?
+  - maybe give IDB an earnest try again
+    - make new branch, roll back changes in game.js and anything that touches
+  - alternatively, could force a put after every obj update, and write to db on add/put
+    - try this first, and benchmark
+    - could have option to ignore index updates
+    - or, instead of writing to db, just flag that primary key as "dirty" and then flush can write only dirty ones
+      - then flush every phase, every day, and in background. onbeforeunload if dirty
+
 move everything but the UI to a web worker
 - does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
 - should checks to update data in worker/views be in worker, or could they be in UI somehow and avoid call to worker if update not needed?
@@ -115,12 +128,6 @@ multi window
 benchmark using proxies to detect change in index stuff rather than dirtyIndexes
 
 can ui/util/logEvent be replaced by just notify? since it never writes to db?
-
-db sync issues
-- on window close, what do we do?
-- if closed in phase change, unset g.phaseChangeInProgress on league load
-- expose to user when dirty, to let them save?
-- is the cache really worth this confusion?
 
 why ads not working on .dev?
 

@@ -1,7 +1,7 @@
 // @flow
 
 import {PHASE, PLAYER, g, helpers} from '../../common';
-import {freeAgents, league, player, team} from '../core';
+import {freeAgents, player, team} from '../core';
 import {idb} from '../db';
 import {lock, logEvent, updatePlayMenu, updateStatus} from '../util';
 

@@ -1,7 +1,7 @@
 // @flow
 
 import {PHASE, PLAYER, g, helpers} from '../../common';
-import {league, player, team} from '../core';
+import {player, team} from '../core';
 import {getCopy, idb} from '../db';
 import {logEvent} from '../util';
 import type {TradePickValues, TradeSummary, TradeTeams} from '../../common/types';

@@ -17,6 +17,10 @@ class ResetPassword extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
+    // I think the react/no-did-mount-set-state warning is a bug, it isn't considered bad practice to setState after
+    // waiting for an HTTP request, just when used synchronously:
+    // https://facebook.github.io/react/docs/react-component.html#componentdidmount
+    /* eslint-disable react/no-did-mount-set-state */
     async componentDidMount() {
         // First, see if this is a valid token
         try {
@@ -45,6 +49,7 @@ class ResetPassword extends React.Component {
             });
         }
     }
+    /* eslint-enable react/no-did-mount-set-state */
 
     async handleSubmit(e) {
         e.preventDefault();

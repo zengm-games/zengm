@@ -189,7 +189,7 @@ const genPage = (id, inLeague = true) => {
             if (ctx.bbgm.err) {
                 errMsg = ctx.bbgm.err.message;
                 if (errMsg === 'League not found.') {
-                    errMsg = <span>League not found. <a href="/new_league">Create a new league</a> or <a href="/">load an existing league</a> to play!</span>
+                    errMsg = <span>League not found. <a href="/new_league">Create a new league</a> or <a href="/">load an existing league</a> to play!</span>;
                 }
             }
 

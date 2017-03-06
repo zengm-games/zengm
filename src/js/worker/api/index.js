@@ -184,6 +184,7 @@ const draftUser = async (pid: number) => {
     const pick = draftOrder.shift();
     if (pick && g.userTids.includes(pick.tid)) {
         await draft.selectPlayer(pick, pid);
+        await draft.setOrder(draftOrder);
     } else {
         throw new Error('User trying to draft out of turn.');
     }

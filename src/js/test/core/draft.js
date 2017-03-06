@@ -36,6 +36,7 @@ describe("core/draft", () => {
         const p = await idb.cache.indexGet('playersByTid', PLAYER.UNDRAFTED);
         await draft.selectPlayer(pick, p.pid);
         assert.equal(p.tid, g.userTid);
+        await draft.setOrder(draftOrder);
     };
 
     describe("#genPlayers()", () => {

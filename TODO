@@ -14,6 +14,8 @@ db sync issues
       - then flush every phase, every day (or maybe just after group of games), and in background (or after any other writes manually.. not sure). onbeforeunload if dirty
       - flag as dirty with "put/add" or "markDirtyRecord"? put/add makes more sense, i think
         - then eventually can get indexes working that way too (check if field in index is updated, and if not, don't flag)
+      - working throuhg .put( - done 1/105
+      - working throuhg .add( - done 0
 
 move everything but the UI to a web worker
 - does beforeView stuff always need to go back to worker? only if switching leagues, maybe?

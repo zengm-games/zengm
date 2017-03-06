@@ -17,9 +17,11 @@ db sync issues
       - restoring writes
         - put - done
         - add - not needed, those are only inserts, shouldn't have changed
-        - iterate return value - todo (such as contractNegotiation accept)
+        - iterate return value - done 24/86
+        - look at every markDirtyIndexes and make sure there is a put/add before it
     - throttle updating player value during gamesim, like before?
     - short circuit in put on === of objects, benchmark. markDirtyIndexes is still there, so don't even need to set that on these puts
+- regardless of outcome, benchmark against iverson-badflush
 
 move everything but the UI to a web worker
 - does beforeView stuff always need to go back to worker? only if switching leagues, maybe?

@@ -227,6 +227,8 @@ async function writePlayerStats(results: GameResults) {
         ps.gp += 1; // Already checked for non-zero minutes played above
         ps.trb += p.stat.orb + p.stat.drb;
 
+        await idb.cache.put('playerStats', ps);
+
         const injuredThisGame = p.injured && p.injury.type === "Healthy";
 
         // Only update player object (values and injuries) every 10 regular season games or on injury
@@ -640,12 +642,15 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
         // Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
         const players = await idb.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
         for (const p of players) {
+            let changed = false;
             if (p.injury.gamesRemaining > 0) {
                 p.injury.gamesRemaining -= 1;
+                changed = true;
             }
             // Is it already over?
             if (p.injury.type !== "Healthy" && p.injury.gamesRemaining <= 0) {
                 p.injury = {type: "Healthy", gamesRemaining: 0};
+                changed = true;
 
                 logEvent({
                     type: "healed",
@@ -659,8 +664,14 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
             // Also check for gamesUntilTradable
             if (!p.hasOwnProperty("gamesUntilTradable")) {
                 p.gamesUntilTradable = 0; // Initialize for old leagues
+                changed = true;
             } else if (p.gamesUntilTradable > 0) {
                 p.gamesUntilTradable -= 1;
+                changed = true;
+            }
+
+            if (changed) {
+                await idb.cache.put('players', p);
             }
         }
 

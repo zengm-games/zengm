@@ -520,6 +520,7 @@ async function untilUserOrEnd() {
                 const players = await idb.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED_FANTASY_TEMP);
                 for (const p of players) {
                     p.tid = PLAYER.UNDRAFTED;
+                    await idb.cache.put('players', p);
                 }
 
                 idb.cache.markDirtyIndexes('players');

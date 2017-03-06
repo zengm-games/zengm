@@ -131,6 +131,8 @@ async function decreaseDemands() {
         } else {
             p.injury = {type: "Healthy", gamesRemaining: 0};
         }
+
+        await idb.cache.put('players', p);
     }
 }
 

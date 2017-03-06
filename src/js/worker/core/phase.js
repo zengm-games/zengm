@@ -290,6 +290,7 @@ async function newPhaseBeforeDraft() {
                 const excessPot = (40 - pot) / 50;  // 0.02 for each potential rating below 40 (this can be negative)
                 if (excessAge + excessPot + random.gauss(0, 1) > 0) {
                     player.retire(p, playerStats);
+                    update = true;
                 }
             }
         }

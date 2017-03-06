@@ -63,6 +63,7 @@ describe("core/team", () => {
             const players = await idb.cache.indexGetAll('playersByTid', PLAYER.FREE_AGENT);
             for (let i = 0; i < 10; i++) {
                 players[i].tid = tid;
+                await idb.cache.put('players', players[i]);
             }
             idb.cache.markDirtyIndexes('players');
         };

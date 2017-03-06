@@ -160,6 +160,7 @@ async function calculatePER() {
         const ps = await idb.cache.indexGet('playerStatsByPid', p.pid);
         ps.per = PER[i];
         ps.ewa = EWA[i];
+        await idb.cache.put('playerStats', ps);
     }));
 }
 

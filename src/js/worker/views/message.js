@@ -17,13 +17,14 @@ async function updateMessage(
         const messagesCache = await idb.cache.getAll('messages');
 
         // Below code is ugly... checking both cache and database for the same thing
-        if (messagesCache.length) {
+        if (messagesCache.length > 0) {
             for (let i = messagesCache.length - 1; i >= 0; i--) {
                 message = messagesCache[i];
 
                 if (!message.read) {
                     message.read = true;
                     readThisPageview = true;
+                    await idb.cache.put('messages', message);
                     break; // Keep looking until we find an unread one!
                 }
             }

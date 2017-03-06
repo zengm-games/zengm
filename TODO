@@ -17,8 +17,8 @@ db sync issues
       - restoring writes
         - put - done
         - add - not needed, those are only inserts, shouldn't have changed
-        - iterate return value - done 24/86
-        - look at every markDirtyIndexes and make sure there is a put/add before it
+        - iterate return value - done
+        - look at every markDirtyIndexes and make sure there is a put/add before it - done
     - throttle updating player value during gamesim, like before?
     - short circuit in put on === of objects, benchmark. markDirtyIndexes is still there, so don't even need to set that on these puts
 - regardless of outcome, benchmark against iverson-badflush
@@ -71,6 +71,7 @@ update to cache
 - also search for any readwrite transaction
 - killOne
 - death code in phase - should not be writing to db, and (maybe) should not assume retired players are not cached
+- makeItWork
 
 if i can gracefully handle absence of g.season etc, put cache creation inside connectLeague
 - not graceful now, see fill(season)

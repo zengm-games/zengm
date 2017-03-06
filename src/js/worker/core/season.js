@@ -596,6 +596,7 @@ async function newSchedulePlayoffsDay(): Promise<boolean> {
         if (teamSeason.hype > 1) {
             teamSeason.hype = 1;
         }
+        await idb.cache.put('teamSeasons', teamSeason);
 
         // Playoffs are over! Return true!
         return true;

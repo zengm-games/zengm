@@ -51,6 +51,7 @@ const clearWatchList = async () => {
     for (const p of players) {
         if (p.watch && typeof p.watch !== "function") {
             p.watch = false;
+            await idb.cache.add('players', p);
         }
         pids.add(p.pid);
     }

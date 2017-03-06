@@ -1239,8 +1239,6 @@ function retire(p: Player, playerStats: PlayerStats[], retiredNotification?: boo
             tids: p.statsTids,
         });
     }
-
-    idb.cache.markDirtyIndexes('players');
 }
 
 // See views.negotiation for moods as well
@@ -1522,6 +1520,7 @@ async function killOne() {
         p.diedYear = g.season;
 
         await tx.players.put(p);
+        idb.cache.markDirtyIndexes('players');
 
         logEvent({
             type: "tragedy",

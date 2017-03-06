@@ -268,11 +268,12 @@ async function rosterAutoSort(tid: number) {
 
     // Update rosterOrder
     for (const p of playersFromCache) {
-        for (let i = 0; i < players.length; i++) {
-            if (players[i].pid === p.pid) {
-                if (p.rosterOrder !== players[i].rosterOrder) {
+        for (const p2 of players) {
+            if (p2.pid === p.pid) {
+                if (p.rosterOrder !== p2.rosterOrder) {
                     // Only write to DB if this actually changes
-                    p.rosterOrder = players[i].rosterOrder;
+                    p.rosterOrder = p2.rosterOrder;
+                    await idb.cache.put('players', p);
                 }
                 break;
             }
@@ -871,10 +872,17 @@ async function updateStrategies() {
         const age = numerator / denominator; // Average age, weighted by minutes played
         const score = 0.8 * dWon + (won - g.numGames / 2) + 5 * (26 - age) + youngStar * 20;
 
+        let updated = false;
         if (score > 20 && t.strategy === "rebuilding") {
             t.strategy = "contending";
+            updated = true;
         } else if (score < -20 && t.strategy === "contending") {
             t.strategy = "rebuilding";
+            updated = true;
+        }
+
+        if (updated) {
+            await idb.cache.put('teams', t);
         }
     }
 }

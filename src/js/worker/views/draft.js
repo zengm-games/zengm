@@ -16,6 +16,7 @@ async function updateDraft(): void | {[key: string]: any} {
                 console.log(season);
                 p.ratings[0].season = g.season;
                 p.draft.year = g.season;
+                await idb.cache.put('players', p);
             }
         }
     }

@@ -56,7 +56,6 @@ eventually merge players and playersPlus
 update to cache
 - api: exportPlayerGamesCsv
 - also search for any readwrite transaction
-- killOne
 - death code in phase - should not be writing to db, and (maybe) should not assume retired players are not cached
 - makeItWork
 

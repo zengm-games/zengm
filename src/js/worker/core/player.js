@@ -1,11 +1,10 @@
 // @flow
 
-import backboard from 'backboard';
 import faces from 'facesjs';
 import _ from 'underscore';
 import {COMPOSITE_WEIGHTS, PHASE, PLAYER, g, helpers} from '../../common';
 import {finances} from '../core';
-import {idb} from '../db';
+import {getCopy, idb} from '../db';
 import * as names from '../../data/names';
 import {injuries, logEvent, random} from '../util';
 import type {
@@ -1507,29 +1506,27 @@ async function killOne() {
     // Pick random team
     const tid = random.randInt(0, g.numTeams - 1);
 
-    await idb.league.tx(["playerStats", "players"], "readwrite", async tx => {
-        const players = await tx.players.index('tid').getAll(tid);
+    const players = await idb.cache.indexGetAll('playersByTid', tid);
 
-        // Pick a random player on that team
-        const p = random.choice(players);
+    // Pick a random player on that team
+    const p = random.choice(players);
 
-        // Get player stats, used for HOF calculation
-        const playerStats = await tx.playerStats.index('pid, season, tid').getAll(backboard.bound([p.pid], [p.pid, '']));
+    // Get player stats, used for HOF calculation
+    const playerStats = await getCopy.playerStats({pid: p.pid});
 
-        retire(p, playerStats, false);
-        p.diedYear = g.season;
+    retire(p, playerStats, false);
+    p.diedYear = g.season;
 
-        await tx.players.put(p);
-        idb.cache.markDirtyIndexes('players');
+    await idb.cache.put('players', p);
+    idb.cache.markDirtyIndexes('players');
 
-        logEvent({
-            type: "tragedy",
-            text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> ${reason}.`,
-            showNotification: tid === g.userTid,
-            pids: [p.pid],
-            tids: [tid],
-            persistent: true,
-        });
+    logEvent({
+        type: 'tragedy',
+        text: `<a href="${helpers.leagueUrl(['player', p.pid])}">${p.firstName} ${p.lastName}</a> ${reason}.`,
+        showNotification: tid === g.userTid,
+        pids: [p.pid],
+        tids: [tid],
+        persistent: true,
     });
 }
 

@@ -119,6 +119,8 @@ can ui/util/logEvent be replaced by just notify? since it never writes to db?
 db sync issues
 - on window close, what do we do?
 - if closed in phase change, unset g.phaseChangeInProgress on league load
+- expose to user when dirty, to let them save?
+- is the cache really worth this confusion?
 
 why ads not working on .dev?
 

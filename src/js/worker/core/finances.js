@@ -134,6 +134,12 @@ async function updateRanks(types: BudgetTypes[]) {
             updateObj(teamSeasons[t.tid].revenues, revenuesByItem);
         }
     }
+
+    if (teamSeasons !== undefined) {
+        for (const teamSeason of teamSeasons) {
+            await idb.cache.put('teamSeasons', teamSeason);
+        }
+    }
 }
 
 /**

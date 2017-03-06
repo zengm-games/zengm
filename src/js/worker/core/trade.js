@@ -23,6 +23,8 @@ async function create(teams: TradeTeams) {
     }
 
     tr.teams = teams;
+
+    await idb.cache.put('trade', tr);
 }
 
 /**
@@ -161,6 +163,7 @@ async function updatePlayers(teams: TradeTeams): Promise<TradeTeams> {
 
     if (updated) {
         tr.teams = teams;
+        await idb.cache.put('trade', tr);
     }
 
     return teams;
@@ -272,6 +275,9 @@ async function clear() {
         t.pids = [];
         t.dpids = [];
     }
+
+
+    await idb.cache.put('trade', tr);
 }
 
 /**
@@ -307,75 +313,74 @@ async function propose(forceTrade?: boolean = false): Promise<[boolean, ?string]
 
     const dv = await team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids);
 
-    await idb.league.tx(["players", "playerStats"], "readwrite", tx => {
-        if (dv > 0 || forceTrade) {
-            // Trade players
-            outcome = "accepted";
-            [0, 1].forEach(j => {
-                const k = j === 0 ? 1 : 0;
+    if (dv > 0 || forceTrade) {
+        // Trade players
+        outcome = "accepted";
+        for (const j of [0, 1]) {
+            const k = j === 0 ? 1 : 0;
 
-                pids[j].forEach(async (pid) => {
-                    const p = await idb.cache.get('players', pid);
-                    p.tid = tids[k];
-                    // Don't make traded players untradable
-                    //p.gamesUntilTradable = 15;
-                    p.ptModifier = 1; // Reset
-                    if (g.phase <= PHASE.PLAYOFFS) {
-                        await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
-                    }
-                    await tx.players.put(p);
-                });
-
-                dpids[j].forEach(async (dpid) => {
-                    const dp = await idb.cache.get('draftPicks', dpid);
-                    dp.tid = tids[k];
-                    dp.abbrev = g.teamAbbrevsCache[tids[k]];
-                });
-            });
-            if (dpids[0].length > 0 || dpids[1].length > 0) {
-                idb.cache.markDirtyIndexes('draftPicks');
-            }
-            if (pids[0].length > 0 || pids[1].length > 0) {
-                idb.cache.markDirtyIndexes('players');
+            for (const pid of pids[j]) {
+                const p = await idb.cache.get('players', pid);
+                p.tid = tids[k];
+                // Don't make traded players untradable
+                //p.gamesUntilTradable = 15;
+                p.ptModifier = 1; // Reset
+                if (g.phase <= PHASE.PLAYOFFS) {
+                    await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
+                }
+                await idb.cache.put('players', p);
             }
 
-            // Log event
-            const formatAssetsEventLog = t => {
-                const strings = [];
+            for (const dpid of dpids[j]) {
+                const dp = await idb.cache.get('draftPicks', dpid);
+                dp.tid = tids[k];
+                dp.abbrev = g.teamAbbrevsCache[tids[k]];
+                await idb.cache.put('draftPicks', dp);
+            }
+        }
+        if (dpids[0].length > 0 || dpids[1].length > 0) {
+            idb.cache.markDirtyIndexes('draftPicks');
+        }
+        if (pids[0].length > 0 || pids[1].length > 0) {
+            idb.cache.markDirtyIndexes('players');
+        }
 
-                t.trade.forEach(p => strings.push(`<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a>`));
-                t.picks.forEach(dp => strings.push(`a ${dp.desc}`));
+        // Log event
+        const formatAssetsEventLog = t => {
+            const strings = [];
 
-                let text;
-                if (strings.length === 0) {
-                    text = "nothing";
-                } else if (strings.length === 1) {
-                    text = strings[0];
-                } else if (strings.length === 2) {
-                    text = `${strings[0]} and ${strings[1]}`;
-                } else {
-                    text = strings[0];
-                    for (let i = 1; i < strings.length; i++) {
-                        if (i === strings.length - 1) {
-                            text += `, and ${strings[i]}`;
-                        } else {
-                            text += `, ${strings[i]}`;
-                        }
+            t.trade.forEach(p => strings.push(`<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a>`));
+            t.picks.forEach(dp => strings.push(`a ${dp.desc}`));
+
+            let text;
+            if (strings.length === 0) {
+                text = "nothing";
+            } else if (strings.length === 1) {
+                text = strings[0];
+            } else if (strings.length === 2) {
+                text = `${strings[0]} and ${strings[1]}`;
+            } else {
+                text = strings[0];
+                for (let i = 1; i < strings.length; i++) {
+                    if (i === strings.length - 1) {
+                        text += `, and ${strings[i]}`;
+                    } else {
+                        text += `, ${strings[i]}`;
                     }
                 }
+            }
 
-                return text;
-            };
+            return text;
+        };
 
-            logEvent({
-                type: "trade",
-                text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[0]], g.season])}">${g.teamNamesCache[tids[0]]}</a> traded ${formatAssetsEventLog(s.teams[0])} to the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[1]], g.season])}">${g.teamNamesCache[tids[1]]}</a> for ${formatAssetsEventLog(s.teams[1])}.`,
-                showNotification: false,
-                pids: pids[0].concat(pids[1]),
-                tids,
-            });
-        }
-    });
+        logEvent({
+            type: "trade",
+            text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[0]], g.season])}">${g.teamNamesCache[tids[0]]}</a> traded ${formatAssetsEventLog(s.teams[0])} to the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[1]], g.season])}">${g.teamNamesCache[tids[1]]}</a> for ${formatAssetsEventLog(s.teams[1])}.`,
+            showNotification: false,
+            pids: pids[0].concat(pids[1]),
+            tids,
+        });
+    }
 
     if (outcome === "accepted") {
         await clear();
@@ -644,6 +649,7 @@ async function makeItWorkTrade() {
     if (updated) {
         const tr2 = await idb.cache.get('trade', 0);
         tr2.teams = teams;
+        await idb.cache.put('trade', tr2);
     }
 
     if (s.warning) {

@@ -437,7 +437,7 @@ async function create(
 
                 // Needs pid, so must be called after add
                 if (p.tid === PLAYER.FREE_AGENT) {
-                    player.addToFreeAgents(p, g.phase, baseMoods);
+                    await player.addToFreeAgents(p, g.phase, baseMoods);
                 } else {
                     await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
                 }
@@ -447,6 +447,7 @@ async function create(
             if (tid2 >= 0) {
                 const t = await idb.cache.get('teams', tid2);
                 t.strategy = goodNeutralBad === 1 ? "contending" : "rebuilding";
+                await idb.cache.put('teams', t);
             }
         }
     }

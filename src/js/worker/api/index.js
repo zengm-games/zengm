@@ -492,6 +492,7 @@ const reorderRosterDrag = async (sortedPids: number[]) => {
         const p = await idb.cache.get('players', pid);
         if (p.rosterOrder !== rosterOrder) {
             p.rosterOrder = rosterOrder;
+            await idb.cache.put('players', p);
         }
     }));
 };
@@ -512,6 +513,7 @@ const reorderRosterSwap = async (sortedPlayers: {pid: number}[], pid1: number, p
 
         if (p.rosterOrder !== rosterOrder) {
             p.rosterOrder = rosterOrder;
+            await idb.cache.put('players', p);
         }
     }));
 };
@@ -570,6 +572,8 @@ const updateBudget = async (budgetAmounts: {
         }
     }
 
+    await idb.cache.put('teams', t);
+
     await finances.updateRanks(["budget"]);
 };
 
@@ -591,6 +595,7 @@ const updatePlayerWatch = async (pid: number, watch: boolean) => {
     const cachedPlayer = await idb.cache.get('players', pid);
     if (cachedPlayer) {
         cachedPlayer.watch = watch;
+        await idb.cache.put('players', cachedPlayer);
     } else {
         const p = await idb.league.players.get(pid);
         p.watch = watch;
@@ -601,6 +606,7 @@ const updatePlayerWatch = async (pid: number, watch: boolean) => {
 const updatePlayingTime = async (pid: number, ptModifier: number) => {
     const p = await idb.cache.get('players', pid);
     p.ptModifier = ptModifier;
+    await idb.cache.put('players', p);
 };
 
 const updateTeamInfo = async (newTeams: {
@@ -630,6 +636,8 @@ const updateTeamInfo = async (newTeams: {
             t.imgURL = newTeams[t.tid].imgURL;
         }
 
+        await idb.cache.put('teams', t);
+
         if (t.tid === g.userTid) {
             userName = t.name;
             userRegion = t.region;
@@ -637,6 +645,7 @@ const updateTeamInfo = async (newTeams: {
 
         const teamSeason = await idb.cache.indexGet('teamSeasonsByTidSeason', `${t.tid},${g.season}`);
         teamSeason.pop = parseFloat(newTeams[t.tid].pop);
+        await idb.cache.put('teamSeasons', teamSeason);
     }
 
     await league.updateMetaNameRegion(userName, userRegion);

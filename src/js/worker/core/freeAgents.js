@@ -80,6 +80,7 @@ async function autoSign() {
 
                     playersSorted.splice(i, 1); // Remove from list of free agents
 
+                    await idb.cache.put('players', p);
                     await team.rosterAutoSort(tid);
 
                     // We found one, so stop looking for this team

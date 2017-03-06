@@ -469,6 +469,8 @@ async function selectPlayer(pick: PickRealized, pid: number) {
         await player.addStatsRow(p, g.nextPhase === PHASE.PLAYOFFS);
     }
 
+    await idb.cache.put('players', p);
+
     idb.cache.markDirtyIndexes('players');
 
     const draftName = g.phase === PHASE.FANTASY_DRAFT ? `${g.season} fantasy draft` : `${g.season} draft`;
@@ -511,7 +513,7 @@ async function untilUserOrEnd() {
                 const baseMoods = await player.genBaseMoods();
                 const playersUndrafted = await idb.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
                 for (const p of playersUndrafted) {
-                    player.addToFreeAgents(p, PHASE.FREE_AGENCY, baseMoods);
+                    await player.addToFreeAgents(p, PHASE.FREE_AGENCY, baseMoods);
                 }
 
                 // Swap back in normal draft class

@@ -90,6 +90,8 @@ async function newPhasePreseason() {
         if (p.tid >= 0) {
             await player.addStatsRow(p, false);
         }
+
+        await idb.cache.put('players', p);
     }
 
     if (g.autoPlaySeasons > 0) {
@@ -383,7 +385,7 @@ async function newPhaseResignPlayers() {
             const tid = p.tid;
 
             // Add to free agents first, to generate a contract demand, then open negotiations with player
-            player.addToFreeAgents(p, PHASE.RESIGN_PLAYERS, baseMoods);
+            await player.addToFreeAgents(p, PHASE.RESIGN_PLAYERS, baseMoods);
             const error = await contractNegotiation.create(p.pid, true, tid);
             if (error !== undefined && error) {
                 logEvent({
@@ -418,7 +420,7 @@ async function newPhaseFreeAgency() {
     // KeyRange only works because PLAYER.UNDRAFTED is -2 and PLAYER.FREE_AGENT is -1
     const players = await idb.cache.indexGetAll('playersByTid', [PLAYER.UNDRAFTED, PLAYER.FREE_AGENT]);
     for (const p of players) {
-        player.addToFreeAgents(p, PHASE.FREE_AGENCY, baseMoods);
+        await player.addToFreeAgents(p, PHASE.FREE_AGENCY, baseMoods);
     }
 
     // AI teams re-sign players or they become free agents
@@ -444,7 +446,7 @@ async function newPhaseFreeAgency() {
                     tids: [p.tid],
                 });
             } else {
-                player.addToFreeAgents(p, PHASE.RESIGN_PLAYERS, baseMoods);
+                await player.addToFreeAgents(p, PHASE.RESIGN_PLAYERS, baseMoods);
             }
         }
     }

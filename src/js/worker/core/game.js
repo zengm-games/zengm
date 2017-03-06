@@ -192,6 +192,10 @@ async function writeTeamStats(results: GameResults) {
                 teamSeason.streak = -1;
             }
         }
+
+        await idb.cache.put('teams', t);
+        await idb.cache.put('teamSeasons', teamSeason);
+        await idb.cache.put('teamStats', teamStats);
     }
 
     return att;
@@ -270,6 +274,8 @@ async function writePlayerStats(results: GameResults) {
             if (biggestRatingsLoss) {
                 await player.updateValues(p2);
             }
+
+            await idb.cache.put('players', p2);
         }
 
         return Promise.all(promises);
@@ -431,6 +437,8 @@ async function updatePlayoffSeries(results: GameResults) {
             });
         }
     }
+
+    await idb.cache.put('playoffSeries', playoffSeries);
 }
 
 /**

@@ -48,6 +48,7 @@ describe("util/account", () => {
 
             const teamSeason = await idb.cache.indexGet('teamSeasonsByTidSeason', `${g.userTid},${g.season}`);
             teamSeason.won = 70;
+            await idb.cache.put('teamSeasons', teamSeason);
 
             awarded = await account.checkAchievement.septuawinarian(false);
             assert.equal(awarded, true);
@@ -63,6 +64,7 @@ describe("util/account", () => {
             const teamSeason = await idb.cache.indexGet('teamSeasonsByTidSeason', `${g.userTid},${g.season}`);
             teamSeason.won = 82;
             teamSeason.lost = 0;
+            await idb.cache.put('teamSeasons', teamSeason);
 
             const awarded = await account.checkAchievement["98_degrees"](false);
             assert.equal(awarded, true);
@@ -71,12 +73,14 @@ describe("util/account", () => {
             const teamSeason = await idb.cache.indexGet('teamSeasonsByTidSeason', `${g.userTid},${g.season}`);
             teamSeason.won = 82;
             teamSeason.lost = 1;
+            await idb.cache.put('teamSeasons', teamSeason);
 
             let awarded = await account.checkAchievement["98_degrees"](false);
             assert.equal(awarded, false);
 
             teamSeason.won = 81;
             teamSeason.lost = 0;
+            await idb.cache.put('teamSeasons', teamSeason);
 
             awarded = await account.checkAchievement["98_degrees"](false);
             assert.equal(awarded, false);
@@ -89,6 +93,7 @@ describe("util/account", () => {
             const teamSeason = await idb.cache.indexGet('teamSeasonsByTidSeason', `${g.userTid},${g.season}`);
             teamSeason.won = 82;
             teamSeason.lost = 0;
+            await idb.cache.put('teamSeasons', teamSeason);
 
             const awarded = await account.checkAchievement["98_degrees"](false);
             assert.equal(awarded, false);
@@ -155,9 +160,11 @@ describe("util/account", () => {
             // Update non-winning years from last test
             let teamSeason = await idb.cache.indexGet('teamSeasonsByTidSeason', `${g.userTid},${g.season}`);
             teamSeason.playoffRoundsWon = 4;
+            await idb.cache.put('teamSeasons', teamSeason);
 
             teamSeason = await idb.cache.indexGet('teamSeasonsByTidSeason', `${g.userTid},${g.season + 7}`);
             teamSeason.playoffRoundsWon = 4;
+            await idb.cache.put('teamSeasons', teamSeason);
 
             let awarded = await account.checkAchievement.dynasty(false);
             assert.equal(awarded, true);
@@ -176,9 +183,11 @@ describe("util/account", () => {
 
             let teamSeason = await idb.cache.indexGet('teamSeasonsByTidSeason', `${g.userTid},${g.season}`);
             teamSeason.playoffRoundsWon = 0;
+            await idb.cache.put('teamSeasons', teamSeason);
 
             teamSeason = await idb.cache.indexGet('teamSeasonsByTidSeason', `${g.userTid},${g.season + 1}`);
             teamSeason.playoffRoundsWon = 0;
+            await idb.cache.put('teamSeasons', teamSeason);
 
             let awarded = await account.checkAchievement.dynasty(false);
             assert.equal(awarded, true);
@@ -193,9 +202,11 @@ describe("util/account", () => {
             // Swap a couple titles to make no 8 in a row
             let teamSeason = await idb.cache.indexGet('teamSeasonsByTidSeason', `${g.userTid},${g.season}`);
             teamSeason.playoffRoundsWon = 4;
+            await idb.cache.put('teamSeasons', teamSeason);
 
             teamSeason = await idb.cache.indexGet('teamSeasonsByTidSeason', `${g.userTid},${g.season + 9}`);
             teamSeason.playoffRoundsWon = 0;
+            await idb.cache.put('teamSeasons', teamSeason);
 
             let awarded = await account.checkAchievement.dynasty(false);
             assert.equal(awarded, true);
@@ -213,6 +224,7 @@ describe("util/account", () => {
             const teamSeason = await idb.cache.indexGet('teamSeasonsByTidSeason', `${g.userTid},${g.season}`);
             teamSeason.playoffRoundsWon = 4;
             teamSeason.expenses.salary.amount = 45000;
+            await idb.cache.put('teamSeasons', teamSeason);
 
             let awarded = await account.checkAchievement.moneyball(false);
             assert.equal(awarded, true);
@@ -223,6 +235,7 @@ describe("util/account", () => {
         it("should not award either if didn't win title", async () => {
             const teamSeason = await idb.cache.indexGet('teamSeasonsByTidSeason', `${g.userTid},${g.season}`);
             teamSeason.playoffRoundsWon = 3;
+            await idb.cache.put('teamSeasons', teamSeason);
 
             let awarded = await account.checkAchievement.moneyball(false);
             assert.equal(awarded, false);
@@ -234,6 +247,7 @@ describe("util/account", () => {
             const teamSeason = await idb.cache.indexGet('teamSeasonsByTidSeason', `${g.userTid},${g.season}`);
             teamSeason.playoffRoundsWon = 4;
             teamSeason.expenses.salary.amount = 60000;
+            await idb.cache.put('teamSeasons', teamSeason);
 
             let awarded = await account.checkAchievement.moneyball(false);
             assert.equal(awarded, true);
@@ -245,6 +259,7 @@ describe("util/account", () => {
             const teamSeason = await idb.cache.indexGet('teamSeasonsByTidSeason', `${g.userTid},${g.season}`);
             teamSeason.playoffRoundsWon = 4;
             teamSeason.expenses.salary.amount = 60001;
+            await idb.cache.put('teamSeasons', teamSeason);
 
             let awarded = await account.checkAchievement.moneyball(false);
             assert.equal(awarded, false);
@@ -286,6 +301,7 @@ describe("util/account", () => {
             const teamSeason = await idb.cache.indexGet('teamSeasonsByTidSeason', `${g.userTid},${g.season}`);
             teamSeason.playoffRoundsWon = 4;
             teamSeason.pop = 1.5;
+            await idb.cache.put('teamSeasons', teamSeason);
 
             const awarded = await account.checkAchievement.small_market(false);
             assert.equal(awarded, true);
@@ -294,6 +310,7 @@ describe("util/account", () => {
             const teamSeason = await idb.cache.indexGet('teamSeasonsByTidSeason', `${g.userTid},${g.season}`);
             teamSeason.playoffRoundsWon = 4;
             teamSeason.pop = 3;
+            await idb.cache.put('teamSeasons', teamSeason);
 
             const awarded = await account.checkAchievement.small_market(false);
             assert.equal(awarded, false);
@@ -302,6 +319,7 @@ describe("util/account", () => {
             const teamSeason = await idb.cache.indexGet('teamSeasonsByTidSeason', `${g.userTid},${g.season}`);
             teamSeason.playoffRoundsWon = 3;
             teamSeason.pop = 1.5;
+            await idb.cache.put('teamSeasons', teamSeason);
 
             const awarded = await account.checkAchievement.small_market(false);
             assert.equal(awarded, false);
@@ -319,6 +337,7 @@ describe("util/account", () => {
             p.draft.round = 1;
             p.draft.pick = 20;
             p.draft.year = g.season - 1;
+            await idb.cache.put('players', p);
             idb.cache.markDirtyIndexes('players');
 
             // ROY is pid 1 on tid 7
@@ -332,6 +351,7 @@ describe("util/account", () => {
         it("should not award achievement if not currently on user's team", async () => {
             const p = await idb.cache.get('players', 1);
             p.tid = 15;
+            await idb.cache.put('players', p);
             idb.cache.markDirtyIndexes('players');
 
             const awarded = await account.checkAchievement.sleeper_pick(false);
@@ -341,6 +361,7 @@ describe("util/account", () => {
             const p = await idb.cache.get('players', 1);
             p.tid = g.userTid;
             p.draft.tid = 15;
+            await idb.cache.put('players', p);
             idb.cache.markDirtyIndexes('players');
 
             const awarded = await account.checkAchievement.sleeper_pick(false);
@@ -350,6 +371,7 @@ describe("util/account", () => {
             const p = await idb.cache.get('players', 1);
             p.draft.tid = g.userTid;
             p.draft.pick = 7;
+            await idb.cache.put('players', p);
             idb.cache.markDirtyIndexes('players');
 
             const awarded = await account.checkAchievement.sleeper_pick(false);
@@ -359,6 +381,7 @@ describe("util/account", () => {
             const p = await idb.cache.get('players', 1);
             p.draft.pick = 15;
             p.draft.year = g.season - 2;
+            await idb.cache.put('players', p);
             idb.cache.markDirtyIndexes('players');
 
             const awarded = await account.checkAchievement.sleeper_pick(false);
@@ -371,6 +394,7 @@ describe("util/account", () => {
 
             const p = await idb.cache.get('players', 1);
             p.draft.year = g.season - 1;
+            await idb.cache.put('players', p);
             idb.cache.markDirtyIndexes('players');
 
             const awarded = await account.checkAchievement.sleeper_pick(false);

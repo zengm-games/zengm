@@ -63,6 +63,8 @@ async function saveAwardsByPlayer(awardsByPlayer: any) {
                 p.awards.push({season: g.season, type: awardsByPlayer[i].type});
             }
         }
+
+        await idb.cache.put('players', p);
     }));
 }
 
@@ -636,6 +638,7 @@ async function newSchedulePlayoffsDay(): Promise<boolean> {
     }
 
     playoffSeries.currentRound += 1;
+    await idb.cache.put('playoffSeries', playoffSeries);
 
     // Update hype for winning a series
     await Promise.all(tidsWon.map(async (tid) => {
@@ -646,6 +649,8 @@ async function newSchedulePlayoffsDay(): Promise<boolean> {
         if (teamSeason.hype > 1) {
             teamSeason.hype = 1;
         }
+
+        await idb.cache.put('teamSeasons', teamSeason);
     }));
 
     // Next time, the schedule for the first day of the next round will be set

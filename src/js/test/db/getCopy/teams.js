@@ -15,6 +15,7 @@ describe("db/getCopy", () => {
             teamStats.gp = 10;
             teamStats.fg = 50;
             teamStats.fga = 100;
+            await idb.cache.put('teamStats', teamStats);
 
             teamStats = team.genStatsRow(4, true);
             teamStats.gp = 4;

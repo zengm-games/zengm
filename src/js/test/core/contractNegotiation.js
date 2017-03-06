@@ -7,6 +7,7 @@ import {contractNegotiation, league} from '../../core';
 const givePlayerMinContract = async (pid) => {
     const p = await idb.cache.get('players', pid);
     p.contract.amount = g.minContract;
+    await idb.cache.put('players', p);
 };
 
 describe("core/contractNegotiation", () => {
@@ -96,6 +97,7 @@ describe("core/contractNegotiation", () => {
 
             const p = await idb.cache.get('players', pid1);
             p.tid = g.userTid;
+            await idb.cache.put('players', p);
             idb.cache.markDirtyIndexes('players');
 
             let error = await contractNegotiation.create(pid2, false);
@@ -112,6 +114,7 @@ describe("core/contractNegotiation", () => {
             assert.equal(negotiations[0].pid, pid2);
 
             p.tid = PLAYER.FREE_AGENT;
+            await idb.cache.put('players', p);
             idb.cache.markDirtyIndexes('players');
         });
     });
@@ -128,6 +131,7 @@ describe("core/contractNegotiation", () => {
             // Force a non-minimum contract that will always go over the salary cap
             const negotiation = await idb.cache.get('negotiations', pid);
             negotiation.player.amount = g.salaryCap;
+            await idb.cache.put('negotiations', negotiation);
 
             const error2 = await contractNegotiation.accept(8, g.salaryCap, 2017);
             assert.equal(error2, "This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract or cancel the negotiation.");

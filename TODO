@@ -14,8 +14,12 @@ db sync issues
       - then flush every phase, every day (or maybe just after group of games), and in background (or after any other writes manually.. not sure). onbeforeunload if dirty
       - flag as dirty with "put/add" or "markDirtyRecord"? put/add makes more sense, i think
         - then eventually can get indexes working that way too (check if field in index is updated, and if not, don't flag)
-      - working throuhg .put( - done 1/105
-      - working throuhg .add( - done 0
+      - restoring writes
+        - put - done
+        - add - not needed, those are only inserts, shouldn't have changed
+        - iterate return value - todo (such as contractNegotiation accept)
+    - throttle updating player value during gamesim, like before?
+    - short circuit in put on === of objects, benchmark. markDirtyIndexes is still there, so don't even need to set that on these puts
 
 move everything but the UI to a web worker
 - does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
@@ -56,11 +60,15 @@ add flow comments to new files!
 - hard for ones that return (T | T[]) depending on inputs. maybe rethink getCopy API
   - Cache.getCopy and Cache.getCopies?
 
+rethink cache API, with goal of having it typed
+
 eventually merge players and playersPlus
 
 update to cache
 - api: exportPlayerGamesCsv
 - also search for any readwrite transaction
+- killOne
+- death code in phase - should not be writing to db, and (maybe) should not assume retired players are not cached
 
 if i can gracefully handle absence of g.season etc, put cache creation inside connectLeague
 - not graceful now, see fill(season)

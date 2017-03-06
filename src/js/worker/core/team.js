@@ -942,6 +942,8 @@ async function checkRosterSizes(): Promise<string | null> {
                         tids: [p.tid],
                     });
 
+                    promises.push(idb.cache.put('players', p));
+
                     numPlayersOnRoster += 1;
                 }
                 await Promise.all(promises);

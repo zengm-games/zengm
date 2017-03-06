@@ -11,7 +11,9 @@ db sync issues
     - try this first, and benchmark
     - could have option to ignore index updates
     - or, instead of writing to db, just flag that primary key as "dirty" and then flush can write only dirty ones
-      - then flush every phase, every day, and in background. onbeforeunload if dirty
+      - then flush every phase, every day (or maybe just after group of games), and in background (or after any other writes manually.. not sure). onbeforeunload if dirty
+      - flag as dirty with "put/add" or "markDirtyRecord"? put/add makes more sense, i think
+        - then eventually can get indexes working that way too (check if field in index is updated, and if not, don't flag)
 
 move everything but the UI to a web worker
 - does beforeView stuff always need to go back to worker? only if switching leagues, maybe?

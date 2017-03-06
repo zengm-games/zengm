@@ -19,6 +19,7 @@ class Cache {
     data: {[key: Store]: any};
     deletes: {[key: Store]: Set<number>};
     dirtyIndexes: Set<Store>; // Does not distinguish individual indexes, just which stores have dirty indexes. Currently this distinction is not meaningful, but if it is at some point, this should be changed.
+    dirtyRecords: {[key: Store]: Set<number | string>};
     index2store: {[key: Index]: Store};
     indexes: {[key: Index]: any};
     lid: number;
@@ -46,6 +47,7 @@ class Cache {
         this.data = {};
         this.deletes = {};
         this.dirtyIndexes = new Set();
+        this.dirtyRecords = {};
         this.indexes = {};
         this.maxIds = {};
         this.newLeague = false;
@@ -267,6 +269,9 @@ class Cache {
     async loadStore(store: Store, tx: BackboardTx, players: Player[]) {
         const storeInfo = this.storeInfos[store];
 
+        this.deletes[store] = new Set();
+        this.dirtyRecords[store] = new Set();
+
         // Load data and do maxIds calculation in parallel
         await Promise.all([
             (async () => {
@@ -279,12 +284,10 @@ class Cache {
                     this.data[store][key] = row;
                 }
 
-                this.deletes[store] = new Set();
-
                 this.refreshIndexes(store);
             })(),
             (async () => {
-                // Special case for games, due to interaction with schedule (see hack below)
+                // Special case for games is due to interaction with schedule (see hack below)
                 if (storeInfo.autoIncrement || store === 'games') {
                     this.maxIds[store] = -1;
                     await tx[store].iterate(null, 'prev', (row, shortCircuit) => {
@@ -349,8 +352,13 @@ class Cache {
                     tx[store].delete(id);
                 }
 
-                for (const row of Object.values(this.data[store])) {
-                    tx[store].put(row);
+                for (const id of this.dirtyRecords[store]) {
+                    const record = this.data[store][id];
+
+                    // If record was deleted after being marked as dirty, it will be undefined here
+                    if (record !== undefined) {
+                        tx[store].put(record);
+                    }
                 }
             }));
         });
@@ -434,25 +442,19 @@ class Cache {
         }
 
         this.data[store][obj[pk]] = obj;
+
+        this.dirtyRecords[store].add(obj[pk]);
         this.markDirtyIndexes(store);
 
         return obj[pk];
     }
 
     async add(store: Store, obj: any): Promise<number | string> {
-        if (['draftOrder', 'draftPicks', 'events', 'games', 'messages', 'negotiations', 'playerFeats', 'playerStats', 'players', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams', 'trade'].includes(store)) {
-            return this.storeObj('add', store, obj);
-        }
-
-        throw new Error(`Cache.add not implemented for store "${store}"`);
+        return this.storeObj('add', store, obj);
     }
 
     async put(store: Store, obj: any): Promise<number | string> {
-        if (['awards', 'draftOrder', 'gameAttributes', 'playoffSeries', 'players', 'teams'].includes(store)) {
-            return this.storeObj('put', store, obj);
-        }
-
-        throw new Error(`Cache.put not implemented for store "${store}"`);
+        return this.storeObj('put', store, obj);
     }
 
     async delete(store: Store, key: number) {

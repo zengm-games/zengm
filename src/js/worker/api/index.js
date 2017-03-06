@@ -697,19 +697,20 @@ const upsertCustomizedPlayer = async (p: Player | PlayerWithoutPid, originalTid:
     // Recalculate player values, since ratings may have changed
     await player.updateValues(p);
 
-    // Get pid (primary key) after add, but can't redirect to player page until transaction completes or else it's a race condition
-    // When creating a new player, this is the only way to know the pid
-    const pid: number = await idb.cache.put('players', p);
+    // Save to database, adding pid if it doesn't already exist
+    await idb.cache.put('players', p);
 
     // Add regular season or playoffs stat row, if necessary
     if (p.tid >= 0 && p.tid !== originalTid && g.phase <= PHASE.PLAYOFFS) {
-        p.pid = pid;
-
         // If it is the playoffs, this is only necessary if p.tid actually made the playoffs, but causes only cosmetic harm otherwise.
         await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
     }
 
-    return pid;
+    if (typeof p.pid !== 'number') {
+        throw new Error('Unknown pid');
+    }
+
+    return p.pid;
 };
 
 const clearTrade = async () => {

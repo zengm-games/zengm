@@ -412,7 +412,7 @@ class Cache {
         return output;
     }
 
-    storeObj(type: 'add' | 'put', store: Store, obj: any) {
+    storeObj(type: 'add' | 'put', store: Store, obj: any): Promise<number | string> {
         this.checkStatus('full');
 
         const pk = this.storeInfos[store].pk;
@@ -435,9 +435,11 @@ class Cache {
 
         this.data[store][obj[pk]] = obj;
         this.markDirtyIndexes(store);
+
+        return obj[pk];
     }
 
-    async add(store: Store, obj: any): number | string {
+    async add(store: Store, obj: any): Promise<number | string> {
         if (['draftOrder', 'draftPicks', 'events', 'games', 'messages', 'negotiations', 'playerFeats', 'playerStats', 'players', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams', 'trade'].includes(store)) {
             return this.storeObj('add', store, obj);
         }
@@ -445,7 +447,7 @@ class Cache {
         throw new Error(`Cache.add not implemented for store "${store}"`);
     }
 
-    async put(store: Store, obj: any): number | string {
+    async put(store: Store, obj: any): Promise<number | string> {
         if (['awards', 'draftOrder', 'gameAttributes', 'playoffSeries', 'players', 'teams'].includes(store)) {
             return this.storeObj('put', store, obj);
         }

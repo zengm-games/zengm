@@ -1,27 +1,14 @@
 IVERSON
 
 db sync issues
-- on window close, what do we do?
 - if closed in phase change, unset g.phaseChangeInProgress on league load
-- expose to user when dirty, to let them save?
-- is the cache really worth this confusion?
-  - maybe give IDB an earnest try again
-    - make new branch, roll back changes in game.js and anything that touches
-  - alternatively, could force a put after every obj update, and write to db on add/put
-    - try this first, and benchmark
-    - could have option to ignore index updates
-    - or, instead of writing to db, just flag that primary key as "dirty" and then flush can write only dirty ones
-      - then flush every phase, every day (or maybe just after group of games), and in background (or after any other writes manually.. not sure). onbeforeunload if dirty
-      - flag as dirty with "put/add" or "markDirtyRecord"? put/add makes more sense, i think
-        - then eventually can get indexes working that way too (check if field in index is updated, and if not, don't flag)
-      - restoring writes
-        - put - done
-        - add - not needed, those are only inserts, shouldn't have changed
-        - iterate return value - done
-        - look at every markDirtyIndexes and make sure there is a put/add before it - done
-    - throttle updating player value during gamesim, like before?
-    - short circuit in put on === of objects, benchmark. markDirtyIndexes is still there, so don't even need to set that on these puts
-- regardless of outcome, benchmark against iverson-badflush
+- have timer running in background, maybe once/second, flushing cache if various locks/inProgress things deem it reasonable
+- index updating
+  - stupid option: parameter in put saying "skip index update"
+  - smarter option: test if object === prev object on put, and if so, skip write and indexing (only if we leave markDirtyIndexes behind), just mark record as dirty
+  - smarter option: know what fields the index is on, and test if they changed. if so, re-index
+  - smartest option: as above, but incrementally update index
+  - goal: get rid of markDirtyIndexes calls in application code
 
 move everything but the UI to a web worker
 - does beforeView stuff always need to go back to worker? only if switching leagues, maybe?

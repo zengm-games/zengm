@@ -346,11 +346,13 @@ class Cache {
     async flush() {
         this.checkStatus('full');
 
+//performance.mark('flushStart');
         await idb.league.tx(STORES, 'readwrite', async (tx) => {
             await Promise.all(STORES.map(async (store) => {
                 for (const id of this.deletes[store]) {
                     tx[store].delete(id);
                 }
+                this.deletes[store].clear();
 
                 for (const id of this.dirtyRecords[store]) {
                     const record = this.data[store][id];
@@ -360,8 +362,12 @@ class Cache {
                         tx[store].put(record);
                     }
                 }
+                this.dirtyRecords[store].clear();
             }));
         });
+//performance.measure('flushTime', 'flushStart');
+//const entries = performance.getEntriesByName('flushTime');
+//console.log(`${g.phase} flush duration: ${entries[entries.length - 1].duration / 1000} seconds`);
     }
 
     async get(store: Store, id: number | string): Promise<any> {

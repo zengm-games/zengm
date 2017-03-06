@@ -27,9 +27,9 @@ async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = 
     await updatePhase(`${g.season} ${PHASE_TEXT[phase]}`);
     await updatePlayMenu();
 
-    // Flush/fill only in preseason
+    // Fill only in preseason, because not much changes before then
+    await idb.cache.flush();
     if (phase === PHASE.PRESEASON) {
-        await idb.cache.flush();
         await idb.cache.fill();
     }
 

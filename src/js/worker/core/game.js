@@ -613,6 +613,8 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
                 await updateStatus('Idle'); // Just to be sure..
             }
         }
+
+        await idb.cache.flush();
     };
 
     // Saves a vector of results objects for a day, as is output from cbSimGames

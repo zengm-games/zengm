@@ -1,14 +1,35 @@
 IVERSON
 
+browser support
+- firefox
+  - use lie, but only conditionally (so native on chrome) - feature detection!
+    - doesn't seem to be working.. make small test case and try again
+    - https://github.com/calvinmetcalf/immediate/issues/27
+    - http://stackoverflow.com/questions/42660581/microtasks-inside-web-workers
+    - do i really need transactions still?
+  - really slow to init worker!
+- at least test failure in IE/edge/safari
+- mobile
+
+add flow comments to new files!
+- hard for ones that return (T | T[]) depending on inputs. maybe rethink getCopy API
+  - Cache.getCopy and Cache.getCopies?
+
+rethink cache API, with goal of having it typed
+
+shared worker
+
 db sync issues
 - if closed in phase change, unset g.phaseChangeInProgress on league load
 - have timer running in background, maybe once/second, flushing cache if various locks/inProgress things deem it reasonable
+  - when dirty on close, show warning window
 - index updating
   - stupid option: parameter in put saying "skip index update"
   - smarter option: test if object === prev object on put, and if so, skip write and indexing (only if we leave markDirtyIndexes behind), just mark record as dirty
   - smarter option: know what fields the index is on, and test if they changed. if so, re-index
   - smartest option: as above, but incrementally update index
   - goal: get rid of markDirtyIndexes calls in application code
+- Last update time could be computed in flush if necessary
 
 move everything but the UI to a web worker
 - does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
@@ -45,12 +66,6 @@ getCopy.playersPlus
 i think withStats was faster that playersPlus for getting stats for a large number of players
 - move stats back within players
 
-add flow comments to new files!
-- hard for ones that return (T | T[]) depending on inputs. maybe rethink getCopy API
-  - Cache.getCopy and Cache.getCopies?
-
-rethink cache API, with goal of having it typed
-
 eventually merge players and playersPlus
 
 update to cache
@@ -79,14 +94,6 @@ player.sign, like player.addToFreeAgents to encapsulate tid changes
 
 how do caches based on g.season work in preseason?
 
-in clearWatchList, instead of writing right to IDB, it should be writing the edited player to the cache, even if he's retired
-
-rewrite team.filter and player.filter
-- maybe as part of larger data access thing? if so, look at all the concats for using events/messages/playerFeats too
-  - db.getCopy.teams, db.getCopy.players, db.getCopy.messages, db.getCopy.eventsBySeason
-  - idea is, these are ways to get data whose return values can be safely mutated - not from cache. also designed for convenience
-    - document this in readme
-
 refactor
 - clear, delete need to handle indexes
 
@@ -98,6 +105,7 @@ blog post for beta
 document cache data format and API!
 - different things are cached, depending on object store
 - all modifications go into cache
+- cache mutations are dangerous, see getCopy
 - read from just the cache if you're sure everything is there (like an active player). otherwise, read from db and augment with cache (because anything could be in cache, even if it's not normally.. like retired player added to watch list). getCopy variables do this
 
 league creation
@@ -114,8 +122,6 @@ debug mode makes huge perf difference
 
 delete old data should empty cache?
 
-make sure all player.value calls happen with full cache or psOverride
-
 make cache synchronous? it'll be faster, any problems though?
 - big problem: can't switch to db/cache in worker. but already can't do that, because mutating objects in place will not actually update anymore then
 
@@ -123,16 +129,13 @@ revisit lock system
 
 in put/add, can we incrementally update indexes?
 
-multi window
-- for now, disabled checkDbChange
-- what to do about dbChange?
-- shared worker?
-
 benchmark using proxies to detect change in index stuff rather than dirtyIndexes
 
 can ui/util/logEvent be replaced by just notify? since it never writes to db?
 
 why ads not working on .dev?
+
+Email users after bbgm update. But first allow opt out on register
 
 3.8
 

@@ -1,3 +1,5 @@
+// @flow
+
 import {idb} from '../../db';
 import {mergeByPk} from './helpers';
 import type {Message} from '../../../common/types';
@@ -12,7 +14,7 @@ const getCopies = async ({
 }: {
     limit?: number,
     mid?: number,
-} = {}): Promise<(Message | Message[])> => {
+} = {}): Promise<Message[]> => {
     if (mid !== undefined) {
         let message = await idb.cache.messages.get(mid);
         if (!message) {
@@ -21,24 +23,25 @@ const getCopies = async ({
         return message;
     }
 
-    if (limit !== undefined) {
+    const constLimit = limit; // For flow
+    if (constLimit !== undefined) {
         const fromDb: Message[] = [];
 
         await idb.league.messages.iterate(undefined, 'prev', (message: Message, shortCircuit) => {
             fromDb.unshift(message);
-            if (fromDb.length >= limit) {
+            if (fromDb.length >= constLimit) {
                 shortCircuit();
             }
         });
 
         const messages = mergeByPk(
             fromDb,
-            getLastEntries(await idb.cache.messages.getAll(), limit),
+            getLastEntries(await idb.cache.messages.getAll(), constLimit),
             idb.cache.storeInfos.messages.pk,
         );
 
         // Need another getLastEntries because DB and cache will probably combine for (2 * limit) entries
-        return getLastEntries(messages, limit);
+        return getLastEntries(messages, constLimit);
     }
 
     return mergeByPk(

@@ -3,13 +3,13 @@
 import {g, helpers} from '../../common';
 import {idb} from '../db';
 import {updatePlayMenu, updateStatus} from '../util';
-import type {GetOutput, Message as Message_, UpdateEvents} from '../../common/types';
+import type {Message, UpdateEvents} from '../../common/types';
 
 async function updateMessage(
-    inputs: GetOutput,
+    inputs: {mid?: number},
     updateEvents: UpdateEvents,
     state: any,
-): Promise<void | {message?: Message_}> {
+): Promise<void | {message?: Message}> {
     // Complexity of updating is to handle auto-read message, so inputs.mid is blank
     if (updateEvents.includes('firstRun') || !state.message || state.message.mid !== inputs.mid) {
         let message;
@@ -27,7 +27,7 @@ async function updateMessage(
                 }
             }
         } else {
-            message = await idb.getCopies.messages({mid: inputs.mid});
+            message = await idb.getCopy.messages({mid: inputs.mid});
         }
 
         if (message && !message.read) {

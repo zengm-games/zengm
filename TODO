@@ -53,6 +53,8 @@ get tests working again
 - a lot could just run from cache
 - come up with easy way of filling cache
 
+fix all lint errors and warnings
+
 reassess delete old data - still needed? should be renamed if no performance impact?
 
 why ads not working on .dev?

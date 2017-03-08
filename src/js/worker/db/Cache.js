@@ -88,17 +88,17 @@ class StoreAPI<Input, Output, ID> {
 }
 
 class Cache {
-    data: {[key: Store]: any};
-    deletes: {[key: Store]: Set<number>};
-    dirtyIndexes: Set<Store>; // Does not distinguish individual indexes, just which stores have dirty indexes. Currently this distinction is not meaningful, but if it is at some point, this should be changed.
-    dirtyRecords: {[key: Store]: Set<number | string>};
-    index2store: {[key: Index]: Store};
-    indexes: {[key: Index]: any};
-    lid: number;
-    maxIds: {[key: Store]: number};
+    _data: {[key: Store]: any};
+    _deletes: {[key: Store]: Set<number>};
+    _dirtyIndexes: Set<Store>; // Does not distinguish individual indexes, just which stores have dirty indexes. Currently this distinction is not meaningful, but if it is at some point, this should be changed.
+    _dirtyRecords: {[key: Store]: Set<number | string>};
+    _index2store: {[key: Index]: Store};
+    _indexes: {[key: Index]: any};
+    _lid: number;
+    _maxIds: {[key: Store]: number};
     newLeague: boolean;
-    status: Status;
-    season: number;
+    _status: Status;
+    _season: number;
     storeInfos: {
         [key: Store]: {
             pk: string,
@@ -133,14 +133,14 @@ class Cache {
     trade: StoreAPI<Trade, Trade, number>;
 
     constructor() {
-        this.status = 'empty';
+        this._status = 'empty';
 
-        this.data = {};
-        this.deletes = {};
-        this.dirtyIndexes = new Set();
-        this.dirtyRecords = {};
-        this.indexes = {};
-        this.maxIds = {};
+        this._data = {};
+        this._deletes = {};
+        this._dirtyIndexes = new Set();
+        this._dirtyRecords = {};
+        this._indexes = {};
+        this._maxIds = {};
         this.newLeague = false;
 
         this.storeInfos = {
@@ -179,7 +179,7 @@ class Cache {
                 autoIncrement: false,
 
                 // Current season
-                getData: (tx: BackboardTx) => tx.games.index('season').getAll(this.season),
+                getData: (tx: BackboardTx) => tx.games.index('season').getAll(this._season),
             },
             messages: {
                 pk: 'mid',
@@ -202,7 +202,7 @@ class Cache {
                     const psNested = await Promise.all(players.map((p) => {
                         return tx.playerStats
                             .index('pid, season, tid')
-                            .getAll(backboard.bound([p.pid, this.season - 1], [p.pid, this.season, '']));
+                            .getAll(backboard.bound([p.pid, this._season - 1], [p.pid, this._season, '']));
                     }));
 
                     // Flatten
@@ -214,7 +214,7 @@ class Cache {
                 indexes: [{
                     // Only save latest stats row for each player (so playoff stats if available, and latest team if traded mid-season)
                     name: 'playerStatsByPid',
-                    filter: (row) => row.season === this.season,
+                    filter: (row) => row.season === this._season,
                     key: (row) => String(row.pid),
                     unique: true,
                 }, {
@@ -236,7 +236,7 @@ class Cache {
                 autoIncrement: false,
 
                 // Current season
-                getData: (tx: BackboardTx) => tx.playoffSeries.getAll(this.season),
+                getData: (tx: BackboardTx) => tx.playoffSeries.getAll(this._season),
             },
             releasedPlayers: {
                 pk: 'rid',
@@ -260,7 +260,7 @@ class Cache {
                 getData: (tx: BackboardTx) => {
                     return tx.teamSeasons
                         .index('season, tid')
-                        .getAll(backboard.bound([this.season - 2], [this.season, '']));
+                        .getAll(backboard.bound([this._season - 2], [this._season, '']));
                 },
 
                 indexes: [{
@@ -281,7 +281,7 @@ class Cache {
                 getData: (tx: BackboardTx) => {
                     return tx.teamStats
                         .index('season, tid')
-                        .getAll(backboard.bound([this.season], [this.season, '']));
+                        .getAll(backboard.bound([this._season], [this._season, '']));
                 },
 
                 indexes: [{
@@ -302,11 +302,11 @@ class Cache {
             },
         };
 
-        this.index2store = {};
+        this._index2store = {};
         for (const store of Object.keys(this.storeInfos)) {
             if (this.storeInfos[store].indexes) {
                 for (const index of this.storeInfos[store].indexes) {
-                    this.index2store[index.name] = store;
+                    this._index2store[index.name] = store;
                 }
             }
         }
@@ -331,29 +331,29 @@ class Cache {
         this.trade = new StoreAPI(this, 'trade');
     }
 
-    checkStatus(...validStatuses: Status[]) {
-        if (!validStatuses.includes(this.status)) {
-            throw new Error(`Invalid cache status "${this.status}"`);
+    _checkStatus(...validStatuses: Status[]) {
+        if (!validStatuses.includes(this._status)) {
+            throw new Error(`Invalid cache status "${this._status}"`);
         }
     }
 
-    setStatus(status: Status) {
-        this.status = status;
+    _setStatus(status: Status) {
+        this._status = status;
     }
 
     markDirtyIndexes(store: Store) {
         if (this.storeInfos[store].indexes) {
-            this.dirtyIndexes.add(store);
+            this._dirtyIndexes.add(store);
         }
     }
 
-    refreshIndexes(store: Store) {
+    _refreshIndexes(store: Store) {
         const storeInfo = this.storeInfos[store];
 
         if (storeInfo.indexes) {
             for (const index of storeInfo.indexes) {
-                this.indexes[index.name] = {};
-                for (const row of Object.values(this.data[store])) {
+                this._indexes[index.name] = {};
+                for (const row of Object.values(this._data[store])) {
                     if (index.filter && !index.filter(row)) {
                         continue;
                     }
@@ -361,26 +361,26 @@ class Cache {
                     const key = index.key(row);
 
                     if (!index.unique) {
-                        if (!this.indexes[index.name].hasOwnProperty(key)) {
-                            this.indexes[index.name][key] = [row];
+                        if (!this._indexes[index.name].hasOwnProperty(key)) {
+                            this._indexes[index.name][key] = [row];
                         } else {
-                            this.indexes[index.name][key].push(row);
+                            this._indexes[index.name][key].push(row);
                         }
                     } else {
-                        this.indexes[index.name][key] = row;
+                        this._indexes[index.name][key] = row;
                     }
                 }
             }
 
-            this.dirtyIndexes.delete(store);
+            this._dirtyIndexes.delete(store);
         }
     }
 
-    async loadStore(store: Store, tx: BackboardTx, players: Player[]) {
+    async _loadStore(store: Store, tx: BackboardTx, players: Player[]) {
         const storeInfo = this.storeInfos[store];
 
-        this.deletes[store] = new Set();
-        this.dirtyRecords[store] = new Set();
+        this._deletes[store] = new Set();
+        this._dirtyRecords[store] = new Set();
 
         // Load data and do maxIds calculation in parallel
         await Promise.all([
@@ -388,21 +388,21 @@ class Cache {
                 // No getData implies no need to store any records in cache except new ones
                 const data = storeInfo.getData ? await storeInfo.getData(tx, players) : [];
 
-                this.data[store] = {};
+                this._data[store] = {};
                 for (const row of data) {
                     const key = row[storeInfo.pk];
-                    this.data[store][key] = row;
+                    this._data[store][key] = row;
                 }
 
-                this.refreshIndexes(store);
+                this._refreshIndexes(store);
             })(),
             (async () => {
                 // Special case for games is due to interaction with schedule (see hack below)
                 if (storeInfo.autoIncrement || store === 'games') {
-                    this.maxIds[store] = -1;
+                    this._maxIds[store] = -1;
                     await tx[store].iterate(null, 'prev', (row, shortCircuit) => {
                         if (row) {
-                            this.maxIds[store] = row[storeInfo.pk];
+                            this._maxIds[store] = row[storeInfo.pk];
                         }
                         shortCircuit();
                     });
@@ -413,20 +413,20 @@ class Cache {
 
     // Load database from disk and save in cache, wiping out any prior values in cache
     async fill(season?: number) {
-        this.checkStatus('empty', 'full');
-        this.setStatus('filling');
+        this._checkStatus('empty', 'full');
+        this._setStatus('filling');
 
-        this.data = {};
+        this._data = {};
 
         // This is crap and should be fixed ASAP
-        this.season = season !== undefined ? season : g.season;
-        if (this.season === undefined) {
+        this._season = season !== undefined ? season : g.season;
+        if (this._season === undefined) {
             const seasonAttr = await idb.league.gameAttributes.get('season');
             if (seasonAttr) {
-                this.season = seasonAttr.value;
+                this._season = seasonAttr.value;
             }
         }
-        if (this.season === undefined) {
+        if (this._season === undefined) {
             throw new Error('Undefined season');
         }
 
@@ -440,39 +440,39 @@ class Cache {
             const players = players1.concat(players2);
 
             await Promise.all(STORES.map((store) => {
-                return this.loadStore(store, tx, players);
+                return this._loadStore(store, tx, players);
             }));
         });
 
         // HACK - special case for schedule store, maxId can come from schedule or games because we can't rely on schedule always being populated
-        if (this.maxIds.schedule < this.maxIds.games) {
-            this.maxIds.schedule = this.maxIds.games;
+        if (this._maxIds.schedule < this._maxIds.games) {
+            this._maxIds.schedule = this._maxIds.games;
         }
 
-        this.setStatus('full');
+        this._setStatus('full');
     }
 
     // Take current contents in database and write to disk
     async flush() {
-        this.checkStatus('full');
+        this._checkStatus('full');
 
 //performance.mark('flushStart');
         await idb.league.tx(STORES, 'readwrite', async (tx) => {
             await Promise.all(STORES.map(async (store) => {
-                for (const id of this.deletes[store]) {
+                for (const id of this._deletes[store]) {
                     tx[store].delete(id);
                 }
-                this.deletes[store].clear();
+                this._deletes[store].clear();
 
-                for (const id of this.dirtyRecords[store]) {
-                    const record = this.data[store][id];
+                for (const id of this._dirtyRecords[store]) {
+                    const record = this._data[store][id];
 
                     // If record was deleted after being marked as dirty, it will be undefined here
                     if (record !== undefined) {
                         tx[store].put(record);
                     }
                 }
-                this.dirtyRecords[store].clear();
+                this._dirtyRecords[store].clear();
             }));
         });
 //performance.measure('flushTime', 'flushStart');
@@ -481,29 +481,29 @@ class Cache {
     }
 
     async get(store: Store, id: number | string): Promise<any> {
-        this.checkStatus('full');
+        this._checkStatus('full');
 
-        return this.data[store][id];
+        return this._data[store][id];
     }
 
     async getAll(store: Store): Promise<any[]> {
-        this.checkStatus('full');
+        this._checkStatus('full');
 
-        return Object.values(this.data[store]);
+        return Object.values(this._data[store]);
     }
 
-    checkIndexFreshness(index: Index) {
-        const store = this.index2store[index];
-        if (this.dirtyIndexes.has(store)) {
-            this.refreshIndexes(store);
+    _checkIndexFreshness(index: Index) {
+        const store = this._index2store[index];
+        if (this._dirtyIndexes.has(store)) {
+            this._refreshIndexes(store);
         }
     }
 
     async _indexGet(index: Index, key: number | string): Promise<any> {
-        this.checkStatus('full');
-        this.checkIndexFreshness(index);
+        this._checkStatus('full');
+        this._checkIndexFreshness(index);
 
-        const val = this.indexes[index][key];
+        const val = this._indexes[index][key];
 
         if (Array.isArray(val)) {
             return val[0];
@@ -512,12 +512,12 @@ class Cache {
     }
 
     async _indexGetAll(index: Index, key: number | string | [number, number] | [string, string]): Promise<any[]> {
-        this.checkStatus('full');
-        this.checkIndexFreshness(index);
+        this._checkStatus('full');
+        this._checkIndexFreshness(index);
 
         if (typeof key === 'number' || typeof key === 'string') {
-            if (this.indexes[index].hasOwnProperty(key)) {
-                const val = this.indexes[index][key];
+            if (this._indexes[index].hasOwnProperty(key)) {
+                const val = this._indexes[index][key];
                 if (!Array.isArray(val)) {
                     return [val];
                 }
@@ -528,38 +528,38 @@ class Cache {
 
         const [min, max] = key;
         let output = [];
-        for (const i of Object.keys(this.indexes[index])) {
+        for (const i of Object.keys(this._indexes[index])) {
             if (i >= min && i <= max) {
-                output = output.concat(this.indexes[index][i]);
+                output = output.concat(this._indexes[index][i]);
             }
         }
         return output;
     }
 
     _storeObj(type: 'add' | 'put', store: Store, obj: any): Promise<number | string> {
-        this.checkStatus('full');
+        this._checkStatus('full');
 
         const pk = this.storeInfos[store].pk;
         if (obj.hasOwnProperty(pk)) {
-            if (type === 'add' && this.data[store][obj[pk]]) {
+            if (type === 'add' && this._data[store][obj[pk]]) {
                 throw new Error(`Primary key "${obj[pk]}" already exists in "${store}"`);
             }
 
-            if (this.maxIds.hasOwnProperty(store) && obj[pk] > this.maxIds[store]) {
-                this.maxIds[store] = obj[pk];
+            if (this._maxIds.hasOwnProperty(store) && obj[pk] > this._maxIds[store]) {
+                this._maxIds[store] = obj[pk];
             }
         } else {
             if (!this.storeInfos[store].autoIncrement) {
                 throw new Error(`Primary key field "${pk}" is required for non-autoincrementing store "${store}"`);
             }
 
-            this.maxIds[store] += 1;
-            obj[pk] = this.maxIds[store];
+            this._maxIds[store] += 1;
+            obj[pk] = this._maxIds[store];
         }
 
-        this.data[store][obj[pk]] = obj;
+        this._data[store][obj[pk]] = obj;
 
-        this.dirtyRecords[store].add(obj[pk]);
+        this._dirtyRecords[store].add(obj[pk]);
         this.markDirtyIndexes(store);
 
         return obj[pk];
@@ -574,12 +574,12 @@ class Cache {
     }
 
     async _delete(store: Store, id: number) {
-        this.checkStatus('full');
+        this._checkStatus('full');
 
         if (['draftPicks', 'negotiations', 'players', 'releasedPlayers', 'schedule', 'teamSeasons'].includes(store)) {
-            if (this.data[store].hasOwnProperty(id)) {
-                delete this.data[store][id];
-                this.deletes[store].add(id);
+            if (this._data[store].hasOwnProperty(id)) {
+                delete this._data[store][id];
+                this._deletes[store].add(id);
                 this.markDirtyIndexes(store);
             } else {
                 throw new Error(`Invalid primary key to delete from store "${store}": ${id}`);
@@ -590,12 +590,12 @@ class Cache {
     }
 
     async _clear(store: Store) {
-        this.checkStatus('full');
+        this._checkStatus('full');
 
         if (['negotiations', 'releasedPlayers', 'schedule', 'teamSeasons'].includes(store)) {
-            for (const key of Object.keys(this.data[store])) {
-                delete this.data[store][key];
-                this.deletes[store].add(key);
+            for (const key of Object.keys(this._data[store])) {
+                delete this._data[store][key];
+                this._deletes[store].add(key);
             }
             this.markDirtyIndexes(store);
         } else {

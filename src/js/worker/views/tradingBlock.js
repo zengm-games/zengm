@@ -9,7 +9,7 @@ async function updateUserRoster(
 ): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') || updateEvents.includes('playerMovement') || updateEvents.includes('gameSim')) {
         let [userRoster, userPicks] = await Promise.all([
-            idb.cache.indexGetAll('playersByTid', g.userTid),
+            idb.cache.players.indexGetAll('playersByTid', g.userTid),
             idb.cache.indexGetAll('draftPicksByTid', g.userTid),
         ]);
 

@@ -16,7 +16,7 @@ describe("core/draft", () => {
     const testDraftUntilUserOrEnd = async (numNow, numTotal) => {
         const pids = await draft.untilUserOrEnd();
         assert.equal(pids.length, numNow);
-        const players = await idb.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
+        const players = await idb.cache.players.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
         assert.equal(players.length, 140 - numTotal);
     };
 
@@ -42,7 +42,7 @@ describe("core/draft", () => {
     describe("#genPlayers()", () => {
         it("should generate 70 players for the draft", async () => {
             await draft.genPlayers(PLAYER.UNDRAFTED, null, null);
-            const players = await idb.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
+            const players = await idb.cache.players.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
             assert.equal(players.length, 140); // 70 from original league, 70 from this
         });
     });

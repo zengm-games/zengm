@@ -5,7 +5,7 @@ import {getCopy, idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function addSeason(season, tid) {
-    let playersAll = await idb.cache.indexGetAll('playersByTid', tid);
+    let playersAll = await idb.cache.players.indexGetAll('playersByTid', tid);
 
     playersAll = await getCopy.playersPlus(playersAll, {
         attrs: ["pid", "firstName", "lastName", "age", "watch", "valueFuzz"],

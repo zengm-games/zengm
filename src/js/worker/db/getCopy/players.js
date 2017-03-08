@@ -9,16 +9,16 @@ const getCopy = async ({
     retired,
     activeAndRetired,
     statsTid,
-//    tid,
+    tid,
 }: {
     pid?: number,
     retired?: boolean,
     activeAndRetired?: boolean,
     statsTid?: number,
-//    tid?: [number, number] | number,
+    tid?: [number, number] | number,
 } = {}): Promise<(Player | Player[])> => {
     if (pid !== undefined) {
-        const cachedPlayer = await idb.cache.get('players', pid);
+        const cachedPlayer = await idb.cache.players.get(pid);
         if (cachedPlayer) {
             return helpers.deepCopy(cachedPlayer);
         }
@@ -29,12 +29,12 @@ const getCopy = async ({
     if (retired === true) {
         return mergeByPk(
             await idb.league.players.index('tid').getAll(PLAYER.RETIRED),
-            await idb.cache.indexGetAll('playersByTid', PLAYER.RETIRED),
+            await idb.cache.players.indexGetAll('playersByTid', PLAYER.RETIRED),
             idb.cache.storeInfos.players.pk,
         );
     }
 
-/*    if (tid !== undefined) {
+    if (tid !== undefined) {
         if (Array.isArray(tid)) {
             const [minTid, maxTid] = tid;
 
@@ -45,8 +45,8 @@ const getCopy = async ({
         }
 
         // This works if tid is a number or [min, max]
-        return helpers.deepCopy(await idb.cache.indexGetAll('playersByTid', tid));
-    }*/
+        return helpers.deepCopy(await idb.cache.players.indexGetAll('playersByTid', tid));
+    }
 
 
     if (activeAndRetired === true) {
@@ -57,8 +57,8 @@ const getCopy = async ({
                 await idb.league.players.index('tid').getAll(backboard.lowerBound(PLAYER.FREE_AGENT)),
             ),
             [].concat(
-                await idb.cache.indexGetAll('playersByTid', PLAYER.RETIRED),
-                await idb.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]),
+                await idb.cache.players.indexGetAll('playersByTid', PLAYER.RETIRED),
+                await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]),
             ),
             idb.cache.storeInfos.players.pk,
         );
@@ -68,8 +68,8 @@ const getCopy = async ({
         return mergeByPk(
             await idb.league.players.index('statsTids').getAll(statsTid),
             [].concat(
-                await idb.cache.indexGetAll('playersByTid', PLAYER.RETIRED),
-                await idb.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]),
+                await idb.cache.players.indexGetAll('playersByTid', PLAYER.RETIRED),
+                await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]),
             ).filter((p) => p.statsTids.includes(statsTid)),
             idb.cache.storeInfos.players.pk,
         );
@@ -77,7 +77,7 @@ const getCopy = async ({
 
     return mergeByPk(
         await idb.league.players.getAll(),
-        await idb.cache.getAll('players'),
+        await idb.cache.players.getAll(),
         idb.cache.storeInfos.players.pk,
     );
 };

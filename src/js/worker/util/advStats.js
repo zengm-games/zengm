@@ -56,7 +56,7 @@ async function calculatePER() {
 
     // Total player stats (not per game averages) - min, tp, ast, fg, ft, tov, fga, fta, trb, orb, stl, blk, pf
     // Active players have tid >= 0
-    let players = await idb.cache.indexGetAll('playersByTid', [0, Infinity]);
+    let players = await idb.cache.players.indexGetAll('playersByTid', [0, Infinity]);
     players = await getCopy.playersPlus(players, {
         attrs: ["pid", "tid"],
         stats: ["min", "tp", "ast", "fg", "ft", "tov", "fga", "fta", "trb", "orb", "stl", "blk", "pf"],

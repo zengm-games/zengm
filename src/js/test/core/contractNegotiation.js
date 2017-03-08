@@ -5,7 +5,7 @@ import {contractNegotiation, league} from '../../core';
 
 // Make player ask for a min contract, to ensure he'll never refuse to sign
 const givePlayerMinContract = async (pid) => {
-    const p = await idb.cache.get('players', pid);
+    const p = await idb.cache.players.get(pid);
     p.contract.amount = g.minContract;
     await idb.cache.put('players', p);
 };
@@ -95,7 +95,7 @@ describe("core/contractNegotiation", () => {
             await givePlayerMinContract(pid1);
             await givePlayerMinContract(pid2);
 
-            const p = await idb.cache.get('players', pid1);
+            const p = await idb.cache.players.get(pid1);
             p.tid = g.userTid;
             await idb.cache.put('players', p);
             idb.cache.markDirtyIndexes('players');

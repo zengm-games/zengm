@@ -24,12 +24,12 @@ async function create(pid: number, resigning: boolean, tid: number = g.userTid):
         return "You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process.";
     }
 
-    const playersOnRoster = await idb.cache.indexGetAll('playersByTid', g.userTid);
+    const playersOnRoster = await idb.cache.players.indexGetAll('playersByTid', g.userTid);
     if (playersOnRoster.length >= 15 && !resigning) {
         return "Your roster is full. Before you can sign a free agent, you'll have to release or trade away one of your current players.";
     }
 
-    const p = await idb.cache.get('players', pid);
+    const p = await idb.cache.players.get(pid);
     if (p.tid !== PLAYER.FREE_AGENT) {
         return `${p.firstName} ${p.lastName} is not a free agent.`;
     }
@@ -114,7 +114,7 @@ async function accept(pid: number, amount: number, exp: number): Promise<?string
         return `This negotiation was started by the ${g.teamRegionsCache[negotiation.tid]} ${g.teamNamesCache[negotiation.tid]} but you are the ${g.teamRegionsCache[g.userTid]} ${g.teamNamesCache[g.userTid]}. Either switch teams or cancel this negotiation.`;
     }
 
-    const p = await idb.cache.get('players', pid);
+    const p = await idb.cache.players.get(pid);
     p.tid = g.userTid;
     p.gamesUntilTradable = 15;
 

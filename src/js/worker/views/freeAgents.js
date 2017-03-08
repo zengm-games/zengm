@@ -7,8 +7,8 @@ import {getCopy, idb} from '../db';
 async function updateFreeAgents(): void | {[key: string]: any} {
     const payroll = (await team.getPayroll(g.userTid))[0];
     let [userPlayers, players] = await Promise.all([
-        idb.cache.indexGetAll('playersByTid', g.userTid),
-        idb.cache.indexGetAll('playersByTid', PLAYER.FREE_AGENT),
+        idb.cache.players.indexGetAll('playersByTid', g.userTid),
+        idb.cache.players.indexGetAll('playersByTid', PLAYER.FREE_AGENT),
     ]);
 
     const capSpace = g.salaryCap > payroll ? (g.salaryCap - payroll) / 1000 : 0;

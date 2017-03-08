@@ -47,7 +47,7 @@ const checkParticipationAchievement = async (force: boolean = false) => {
 const clearWatchList = async () => {
     const pids = new Set();
 
-    const players = await idb.cache.getAll('players');
+    const players = await idb.cache.players.getAll();
     for (const p of players) {
         if (p.watch && typeof p.watch !== "function") {
             p.watch = false;
@@ -196,7 +196,7 @@ const draftUser = async (pid: number) => {
 const exportPlayerAveragesCsv = async (season: number | 'all') => {
     let players;
     if (g.season === season && g.phase <= PHASE.PLAYOFFS) {
-        players = await idb.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
+        players = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
     } else {
         // If it's not this season, get all players, because retired players could apply to the selected season
         players = await getCopy.players({activeAndRetired: true});
@@ -325,7 +325,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[], progressCa
         return Promise.all(offers.map(async (offer, i) => {
             const tid = offers[i].tid;
 
-            let players = await idb.cache.indexGetAll('playersByTid', tid);
+            let players = await idb.cache.players.indexGetAll('playersByTid', tid);
             players = players.filter(p => offers[i].pids.includes(p.pid));
             players = await getCopy.playersPlus(players, {
                 attrs: ["pid", "name", "age", "contract", "injury", "watch"],
@@ -393,7 +393,7 @@ const handleUploadedDraftClass = async (uploadedFile: any, seasonOffset: 0 | 1 |
     const scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
 
     // Delete old players from draft class
-    const oldPlayers = await idb.cache.indexGetAll('playersByTid', draftClassTid);
+    const oldPlayers = await idb.cache.players.indexGetAll('playersByTid', draftClassTid);
     for (const p of oldPlayers) {
         await idb.cache.delete('players', p.pid);
     }
@@ -469,12 +469,12 @@ const init = async (inputEnv: Env) => {
 };
 
 const releasePlayer = async (pid: number, justDrafted: boolean) => {
-    const players = await idb.cache.indexGetAll('playersByTid', g.userTid);
+    const players = await idb.cache.players.indexGetAll('playersByTid', g.userTid);
     if (players.length <= 5) {
         return 'You must keep at least 5 players on your roster.';
     }
 
-    const p = await idb.cache.get('players', pid);
+    const p = await idb.cache.players.get(pid);
 
     // Don't let the user update CPU-controlled rosters
     if (p.tid !== g.userTid) {
@@ -490,7 +490,7 @@ const removeLeague = async (lid: number) => {
 
 const reorderRosterDrag = async (sortedPids: number[]) => {
     await Promise.all(sortedPids.map(async (pid, rosterOrder) => {
-        const p = await idb.cache.get('players', pid);
+        const p = await idb.cache.players.get(pid);
         if (p.rosterOrder !== rosterOrder) {
             p.rosterOrder = rosterOrder;
             await idb.cache.put('players', p);
@@ -504,7 +504,7 @@ const reorderRosterSwap = async (sortedPlayers: {pid: number}[], pid1: number, p
 
     await Promise.all(sortedPlayers.map(async (sortedPlayer, i) => {
         const pid = sortedPlayers[i].pid;
-        const p = await idb.cache.get('players', pid);
+        const p = await idb.cache.players.get(pid);
         let rosterOrder = i;
         if (pid === pid1) {
             rosterOrder = rosterOrder2;
@@ -593,7 +593,7 @@ const updateMultiTeamMode = async (gameAttributes: {userTids: number[], userTid?
 };
 
 const updatePlayerWatch = async (pid: number, watch: boolean) => {
-    const cachedPlayer = await idb.cache.get('players', pid);
+    const cachedPlayer = await idb.cache.players.get(pid);
     if (cachedPlayer) {
         cachedPlayer.watch = watch;
         await idb.cache.put('players', cachedPlayer);
@@ -605,7 +605,7 @@ const updatePlayerWatch = async (pid: number, watch: boolean) => {
 };
 
 const updatePlayingTime = async (pid: number, ptModifier: number) => {
-    const p = await idb.cache.get('players', pid);
+    const p = await idb.cache.players.get(pid);
     p.ptModifier = ptModifier;
     await idb.cache.put('players', p);
 };

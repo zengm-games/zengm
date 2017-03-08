@@ -80,7 +80,7 @@ const COMPOSITE_WEIGHTS = {
         weights: [1.5, 0.1, 0.1, 0.7],
     },
     stealing: {
-        ratings: ['constant', 'spd', 'stl'],
+        ratings: [50, 'spd', 'stl'],
         weights: [1, 1, 1],
     },
     blocking: {
@@ -88,7 +88,7 @@ const COMPOSITE_WEIGHTS = {
         weights: [1.5, 0.5, 0.5],
     },
     fouling: {
-        ratings: ['constant', 'hgt', 'blk', 'spd'],
+        ratings: [50, 'hgt', 'blk', 'spd'],
         weights: [1.5, 1, 1, -1],
     },
     defense: {
@@ -104,7 +104,7 @@ const COMPOSITE_WEIGHTS = {
         weights: [1, 1, 2, 0.5, 1],
     },
     endurance: {
-        ratings: ['constant', 'endu', 'hgt'],
+        ratings: [50, 'endu', 'hgt'],
         weights: [1, 1, -0.1],
     },
     athleticism: {

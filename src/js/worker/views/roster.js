@@ -32,7 +32,7 @@ async function updateRoster(
             // Show players currently on the roster
             let [schedule, players] = await Promise.all([
                 season.getSchedule(),
-                idb.cache.indexGetAll('playersByTid', inputs.tid),
+                idb.cache.players.indexGetAll('playersByTid', inputs.tid),
             ]);
             const payroll = (await team.getPayroll(inputs.tid))[0];
 

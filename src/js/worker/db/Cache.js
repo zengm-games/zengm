@@ -15,6 +15,39 @@ type Index = 'draftPicksBySeason' | 'draftPicksByTid' | 'playerStats' | 'playerS
 // This variable is only needed because Object.keys(storeInfos) is not handled well in Flow
 const STORES: Store[] = ['awards', 'draftOrder', 'draftPicks', 'events', 'gameAttributes', 'games', 'messages', 'negotiations', 'playerFeats', 'playerStats', 'players', 'playoffSeries', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams', 'trade'];
 
+class StoreAPI<T, U> {
+    cache: Cache;
+    store: Store;
+
+    constructor(cache: Cache, store: Store) {
+        this.cache = cache;
+        this.store = store;
+    }
+
+    get(id: U): Promise<T> {
+        if (typeof id !== 'number' && typeof id !== 'string') {
+            throw new Error('Invalid input type');
+        }
+        return this.cache.get(this.store, id);
+    }
+
+    getAll(): Promise<T[]> {
+        return this.cache.getAll(this.store);
+    }
+
+    indexGet(index: Index, key: U): Promise<T> {
+        if (typeof key !== 'number' && typeof key !== 'string') {
+            throw new Error('Invalid input type');
+        }
+        return this.cache.indexGet(index, key);
+    }
+
+    // Not sure how to type key as U
+    indexGetAll(index: Index, key: number | string | [number, number] | [string, string]): Promise<T[]> {
+        return this.cache.indexGetAll(index, key);
+    }
+}
+
 class Cache {
     data: {[key: Store]: any};
     deletes: {[key: Store]: Set<number>};
@@ -40,6 +73,8 @@ class Cache {
             }[],
         },
     };
+
+    players: StoreAPI<Player, number>;
 
     constructor() {
         this.status = 'empty';
@@ -219,6 +254,8 @@ class Cache {
                 }
             }
         }
+
+        this.players = new StoreAPI(this, 'players');
     }
 
     checkStatus(...validStatuses: Status[]) {

@@ -436,7 +436,7 @@ function getRookieSalaries(): number[] {
  * @return {Promise}
  */
 async function selectPlayer(pick: PickRealized, pid: number) {
-    const p = await idb.cache.get('players', pid);
+    const p = await idb.cache.players.get(pid);
 
     // Draft player
     p.tid = pick.tid;
@@ -495,7 +495,7 @@ async function untilUserOrEnd() {
     const pids = [];
 
     const [playersAll, draftOrder] = await Promise.all([
-        idb.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED),
+        idb.cache.players.indexGetAll('playersByTid', PLAYER.UNDRAFTED),
         getOrder(),
     ]);
 
@@ -511,13 +511,13 @@ async function untilUserOrEnd() {
             if (g.phase === PHASE.FANTASY_DRAFT) {
                 // Undrafted players become free agents
                 const baseMoods = await player.genBaseMoods();
-                const playersUndrafted = await idb.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
+                const playersUndrafted = await idb.cache.players.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
                 for (const p of playersUndrafted) {
                     await player.addToFreeAgents(p, PHASE.FREE_AGENCY, baseMoods);
                 }
 
                 // Swap back in normal draft class
-                const players = await idb.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED_FANTASY_TEMP);
+                const players = await idb.cache.players.indexGetAll('playersByTid', PLAYER.UNDRAFTED_FANTASY_TEMP);
                 for (const p of players) {
                     p.tid = PLAYER.UNDRAFTED;
                     await idb.cache.put('players', p);

@@ -16,7 +16,7 @@ async function updatePowerRankings(
                 stats: ["gp", "diff"],
                 season: g.season,
             }),
-            idb.cache.indexGetAll('playersByTid', [0, Infinity]),
+            idb.cache.players.indexGetAll('playersByTid', [0, Infinity]),
         ]);
 
         // Array of arrays, containing the values for each player on each team

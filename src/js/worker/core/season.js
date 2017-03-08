@@ -56,7 +56,7 @@ async function saveAwardsByPlayer(awardsByPlayer: any) {
     const pids = _.uniq(awardsByPlayer.map(award => award.pid));
 
     await Promise.all(pids.map(async (pid) => {
-        const p = await idb.cache.get('players', pid);
+        const p = await idb.cache.players.get(pid);
 
         for (let i = 0; i < awardsByPlayer.length; i++) {
             if (p.pid === awardsByPlayer[i].pid) {

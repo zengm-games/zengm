@@ -24,11 +24,11 @@ Backboard.on('blocked', () => {
 
 
 const idb: {
-    cache: any,
+    cache: Cache,
     league: any,
     meta: any,
 } = {
-    cache: undefined,
+    cache: new Cache(),
     league: undefined,
     meta: undefined,
 };

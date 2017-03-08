@@ -233,7 +233,7 @@ async function writePlayerStats(results: GameResults) {
 
         // Only update player object (values and injuries) every 10 regular season games or on injury
         if ((ps.gp % 10 === 0 && g.phase !== PHASE.PLAYOFFS) || injuredThisGame) {
-            const p2 = await idb.cache.get('players', p.id);
+            const p2 = await idb.cache.players.get(p.id);
 
             // Injury crap - assign injury type if player does not already have an injury in the database
             let biggestRatingsLoss;
@@ -463,16 +463,16 @@ function makeComposite(rating, components, weights) {
         }
     }
 
-    rating.constant = 50;
-
     let r = 0;
     let divideBy = 0;
     for (let i = 0; i < components.length; i++) {
+        const factor: number = typeof components[i] === 'string' ? rating[components[i]] : components[i];
+
         // Sigmoidal transformation
         //y = (rating[component] - 70) / 10;
         //rcomp = y / Math.sqrt(1 + y ** 2);
         //rcomp = (rcomp + 1) * 50;
-        const rcomp = weights[i] * rating[components[i]];
+        const rcomp = weights[i] * factor;
 
         r += rcomp;
 
@@ -501,7 +501,7 @@ function makeComposite(rating, components, weights) {
 async function loadTeams() {
     return Promise.all(_.range(g.numTeams).map(async (tid) => {
         const [players, {cid, did}, teamSeason] = await Promise.all([
-            idb.cache.indexGetAll('playersByTid', tid),
+            idb.cache.players.indexGetAll('playersByTid', tid),
             idb.cache.get('teams', tid),
             idb.cache.indexGet('teamSeasonsByTidSeason', `${tid},${g.season}`),
         ]);
@@ -642,7 +642,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
         promises.push(finances.updateRanks(["expenses", "revenues"]));
 
         // Injury countdown - This must be after games are saved, of there is a race condition involving new injury assignment in writeStats
-        const players = await idb.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
+        const players = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
         for (const p of players) {
             let changed = false;
             if (p.injury.gamesRemaining > 0) {

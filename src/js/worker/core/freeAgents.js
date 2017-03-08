@@ -21,7 +21,7 @@ async function autoSign() {
             attrs: ["strategy"],
             season: g.season,
         }),
-        idb.cache.indexGetAll('playersByTid', PLAYER.FREE_AGENT),
+        idb.cache.players.indexGetAll('playersByTid', PLAYER.FREE_AGENT),
     ]);
 
     if (players.length === 0) {
@@ -53,7 +53,7 @@ async function autoSign() {
             continue;
         }
 
-        const playersOnRoster = await idb.cache.indexGetAll('playersByTid', tid);
+        const playersOnRoster = await idb.cache.players.indexGetAll('playersByTid', tid);
         const payroll = (await team.getPayroll(tid))[0];
         const numPlayersOnRoster = playersOnRoster.length;
 
@@ -100,7 +100,7 @@ async function autoSign() {
  * @return {Promise}
  */
 async function decreaseDemands() {
-    const players = await idb.cache.indexGetAll('playersByTid', PLAYER.FREE_AGENT);
+    const players = await idb.cache.players.indexGetAll('playersByTid', PLAYER.FREE_AGENT);
     for (const p of players) {
         // Decrease free agent demands
         p.contract.amount -= 50 * Math.sqrt(g.maxContract / 20000);

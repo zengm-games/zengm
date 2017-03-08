@@ -11,7 +11,7 @@ async function updateNegotiationList(): void | {[key: string]: any} {
     negotiations = negotiations.filter(negotiation => negotiation.tid === g.userTid);
     const negotiationPids = negotiations.map(negotiation => negotiation.pid);
 
-    let players = await idb.cache.indexGetAll('playersByTid', PLAYER.FREE_AGENT);
+    let players = await idb.cache.players.indexGetAll('playersByTid', PLAYER.FREE_AGENT);
     players = players.filter(p => negotiationPids.includes(p.pid));
     players = await getCopy.playersPlus(players, {
         attrs: ["pid", "name", "age", "freeAgentMood", "injury", "watch"],

@@ -42,7 +42,7 @@ const tradeFor = async ({otherDpids, otherPids, pid, tid, userDpids, userPids}: 
     let teams;
 
     if (pid !== undefined) {
-        const p = await idb.cache.get('players', pid);
+        const p = await idb.cache.players.get(pid);
 
         if (!p || p.tid < 0) {
             return;

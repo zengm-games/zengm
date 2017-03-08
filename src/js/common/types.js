@@ -358,8 +358,6 @@ export type PlayerWithoutPid = {
         tid: number,
         originalTid: number,
         year: number,
-        teamName: null | string,
-        teamRegion: null | string,
         pot: number,
         ovr: number,
         skills: PlayerSkill[],

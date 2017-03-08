@@ -45,7 +45,7 @@ async function validateSavedPids() {
 async function updateTrade(): void | {[key: string]: any} {
     let [teams, userRoster, userPicks] = await Promise.all([
         validateSavedPids(),
-        idb.cache.indexGetAll('playersByTid', g.userTid),
+        idb.cache.players.indexGetAll('playersByTid', g.userTid),
         idb.cache.indexGetAll('draftPicksByTid', g.userTid),
     ]);
 
@@ -81,7 +81,7 @@ async function updateTrade(): void | {[key: string]: any} {
 
     // Need to do this after knowing otherTid
     let [otherRoster, otherPicks, t] = await Promise.all([
-        idb.cache.indexGetAll('playersByTid', otherTid),
+        idb.cache.players.indexGetAll('playersByTid', otherTid),
         idb.cache.indexGetAll('draftPicksByTid', otherTid),
         getCopy.teams({
             tid: otherTid,

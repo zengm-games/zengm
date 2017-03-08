@@ -10,7 +10,7 @@ async function updatePlayers(
     if ((inputs.season === g.season && (updateEvents.includes('gameSim') || updateEvents.includes('playerMovement'))) || inputs.season !== state.season) {
         let players;
         if (g.season === inputs.season && g.phase <= PHASE.PLAYOFFS) {
-            players = await idb.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
+            players = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
         } else {
             // If it's not this season, get all players, because retired players could apply to the selected season
             players = await getCopy.players({activeAndRetired: true});

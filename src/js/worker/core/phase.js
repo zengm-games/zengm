@@ -77,7 +77,7 @@ async function newPhasePreseason() {
     const coachingRanks = teamSeasons.map(teamSeason => teamSeason.expenses.coaching.rank);
 
     // Loop through all non-retired players
-    const players = await idb.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
+    const players = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
     for (const p of players) {
         // Update ratings
         player.addRatingsRow(p, scoutingRank);
@@ -214,7 +214,7 @@ async function newPhasePlayoffs() {
 
     // Add row to player stats
     await Promise.all(tidPlayoffs.map(async (tid) => {
-        const players = await idb.cache.indexGetAll('playersByTid', tid);
+        const players = await idb.cache.players.indexGetAll('playersByTid', tid);
         for (const p of players) {
             await player.addStatsRow(p, true);
             await idb.cache.put('players', p);
@@ -258,7 +258,7 @@ async function newPhaseBeforeDraft() {
     // Give award to all players on the championship team
     const t = teams.find(t2 => t2.seasonAttrs.playoffRoundsWon === g.numPlayoffRounds);
     if (t !== undefined) {
-        const players = await idb.cache.indexGetAll('playersByTid', t.tid);
+        const players = await idb.cache.players.indexGetAll('playersByTid', t.tid);
         for (const p of players) {
             p.awards.push({season: g.season, type: "Won Championship"});
             await idb.cache.put('players', p);
@@ -271,7 +271,7 @@ async function newPhaseBeforeDraft() {
     const maxAge = 34;
     const minPot = 40;
 
-    const players = await idb.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
+    const players = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
     for (const p of players) {
         let update = false;
 
@@ -374,7 +374,7 @@ async function newPhaseDraft() {
     await draft.genOrder();
 
     // This is a hack to handle weird cases where already-drafted players have draft.year set to the current season, which fucks up the draft UI
-    const players = await idb.cache.getAll('players');
+    const players = await idb.cache.players.getAll();
     for (const p of players) {
         if (p.draft.year === g.season && p.tid >= 0) {
             p.draft.year -= 1;
@@ -395,7 +395,7 @@ async function newPhaseResignPlayers() {
     const baseMoods = await player.genBaseMoods();
 
     // Re-sign players on user's team, and some AI players
-    const players = await idb.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
+    const players = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
     for (const p of players) {
         if (p.contract.exp <= g.season && g.userTids.includes(p.tid) && g.autoPlaySeasons === 0) {
             const tid = p.tid;
@@ -434,14 +434,14 @@ async function newPhaseFreeAgency() {
 
     // Reset contract demands of current free agents and undrafted players
     // KeyRange only works because PLAYER.UNDRAFTED is -2 and PLAYER.FREE_AGENT is -1
-    const players = await idb.cache.indexGetAll('playersByTid', [PLAYER.UNDRAFTED, PLAYER.FREE_AGENT]);
+    const players = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.UNDRAFTED, PLAYER.FREE_AGENT]);
     for (const p of players) {
         await player.addToFreeAgents(p, PHASE.FREE_AGENCY, baseMoods);
     }
 
     // AI teams re-sign players or they become free agents
     // Run this after upding contracts for current free agents, or addToFreeAgents will be called twice for these guys
-    const players2 = await idb.cache.indexGetAll('playersByTid', [0, Infinity]);
+    const players2 = await idb.cache.players.indexGetAll('playersByTid', [0, Infinity]);
     for (const p of players2) {
         if (p.contract.exp <= g.season && (!g.userTids.includes(p.tid) || g.autoPlaySeasons > 0)) {
             // Automatically negotiate with teams
@@ -471,13 +471,13 @@ async function newPhaseFreeAgency() {
     }
 
     // Bump up future draft classes (not simultaneous so tid updates don't cause race conditions)
-    const players3 = await idb.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED_2);
+    const players3 = await idb.cache.players.indexGetAll('playersByTid', PLAYER.UNDRAFTED_2);
     for (const p of players3) {
         p.tid = PLAYER.UNDRAFTED;
         p.ratings[0].fuzz /= 2;
         await idb.cache.put('players', p);
     }
-    const players4 = await idb.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED_3);
+    const players4 = await idb.cache.players.indexGetAll('playersByTid', PLAYER.UNDRAFTED_3);
     for (const p of players4) {
         p.tid = PLAYER.UNDRAFTED_2;
         p.ratings[0].fuzz /= 2;
@@ -496,14 +496,14 @@ async function newPhaseFantasyDraft(position: number) {
     await idb.cache.clear('releasedPlayers');
 
     // Protect draft prospects from being included in this
-    const playersUndrafted = await idb.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
+    const playersUndrafted = await idb.cache.players.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
     for (const p of playersUndrafted) {
         p.tid = PLAYER.UNDRAFTED_FANTASY_TEMP;
         await idb.cache.put('players', p);
     }
 
     // Make all players draftable
-    const players = await idb.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
+    const players = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
     for (const p of players) {
         p.tid = PLAYER.UNDRAFTED;
         await idb.cache.put('players', p);

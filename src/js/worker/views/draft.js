@@ -8,7 +8,7 @@ async function updateDraft(): void | {[key: string]: any} {
     // DIRTY QUICK FIX FOR v10 db upgrade bug - eventually remove
     // This isn't just for v10 db upgrade! Needed the same fix for http://www.reddit.com/r/BasketballGM/comments/2tf5ya/draft_bug/cnz58m2?context=3 - draft class not always generated with the correct seasons
     {
-        const players = await idb.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
+        const players = await idb.cache.players.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
         for (const p of players) {
             const season = p.ratings[0].season;
             if (season !== g.season && g.phase === PHASE.DRAFT) {
@@ -21,7 +21,7 @@ async function updateDraft(): void | {[key: string]: any} {
         }
     }
 
-    let undrafted = await idb.cache.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
+    let undrafted = await idb.cache.players.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
     undrafted.sort((a, b) => b.valueFuzz - a.valueFuzz);
     undrafted = await getCopy.playersPlus(undrafted, {
         attrs: ["pid", "name", "age", "injury", "contract", "watch"],
@@ -33,7 +33,7 @@ async function updateDraft(): void | {[key: string]: any} {
         fuzz: true,
     });
 
-    let drafted = await idb.cache.indexGetAll('playersByTid', [0, Infinity]);
+    let drafted = await idb.cache.players.indexGetAll('playersByTid', [0, Infinity]);
     drafted = drafted.filter((p) => p.draft.year === g.season);
     drafted.sort((a, b) => (100 * a.draft.round + a.draft.pick) - (100 * b.draft.round + b.draft.pick));
     drafted = await getCopy.playersPlus(drafted, {

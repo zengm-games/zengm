@@ -190,7 +190,7 @@ async function updatePlayers(
     if (updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || updateEvents.includes('newPhase')) {
         const vars = {};
 
-        let players = await idb.cache.indexGetAll('playersByTid', [PLAYER.UNDRAFTED, Infinity]);
+        let players = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.UNDRAFTED, Infinity]);
         players = await getCopy.playersPlus(players, {
             attrs: ['pid', 'name', 'abbrev', 'tid', 'age', 'contract', 'rosterOrder', 'injury', 'watch'],
             ratings: ['ovr', 'pot', 'dovr', 'dpot', 'skills', 'pos'],

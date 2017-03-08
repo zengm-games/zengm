@@ -1506,7 +1506,7 @@ async function killOne() {
     // Pick random team
     const tid = random.randInt(0, g.numTeams - 1);
 
-    const players = await idb.cache.indexGetAll('playersByTid', tid);
+    const players = await idb.cache.players.indexGetAll('playersByTid', tid);
 
     // Pick a random player on that team
     const p = random.choice(players);

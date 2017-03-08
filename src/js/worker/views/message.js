@@ -24,7 +24,7 @@ async function updateMessage(
                 if (!message.read) {
                     message.read = true;
                     readThisPageview = true;
-                    await idb.cache.put('messages', message);
+                    await idb.cache.messages.put(message);
                     break; // Keep looking until we find an unread one!
                 }
             }

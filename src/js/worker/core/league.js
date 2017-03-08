@@ -81,7 +81,7 @@ async function setGameAttributes(gameAttributes: GameAttributes) {
     }
 
     await Promise.all(toUpdate.map(async (key) => {
-        await idb.cache.put('gameAttributes', {
+        await idb.cache.gameAttributes.put({
             key,
             value: gameAttributes[key],
         });
@@ -353,7 +353,7 @@ async function create(
             delete p.stats;
 
             await player.updateValues(p, playerStats.reverse());
-            await idb.cache.put('players', p);
+            await idb.cache.players.put(p);
 
             // If no stats in League File, create blank stats rows for active players if necessary
             if (playerStats.length === 0) {
@@ -447,7 +447,7 @@ async function create(
             if (tid2 >= 0) {
                 const t = await idb.cache.teams.get(tid2);
                 t.strategy = goodNeutralBad === 1 ? "contending" : "rebuilding";
-                await idb.cache.put('teams', t);
+                await idb.cache.teams.put(t);
             }
         }
     }

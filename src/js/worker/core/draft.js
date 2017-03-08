@@ -40,7 +40,7 @@ async function getOrder() {
  * @return {Promise}
  */
 async function setOrder(draftOrder: PickRealized[]) {
-    await idb.cache.put('draftOrder', {
+    await idb.cache.draftOrder.put({
         rid: 0,
         draftOrder,
     });
@@ -469,7 +469,7 @@ async function selectPlayer(pick: PickRealized, pid: number) {
         await player.addStatsRow(p, g.nextPhase === PHASE.PLAYOFFS);
     }
 
-    await idb.cache.put('players', p);
+    await idb.cache.players.put(p);
 
     idb.cache.markDirtyIndexes('players');
 
@@ -520,7 +520,7 @@ async function untilUserOrEnd() {
                 const players = await idb.cache.players.indexGetAll('playersByTid', PLAYER.UNDRAFTED_FANTASY_TEMP);
                 for (const p of players) {
                     p.tid = PLAYER.UNDRAFTED;
-                    await idb.cache.put('players', p);
+                    await idb.cache.players.put(p);
                 }
 
                 idb.cache.markDirtyIndexes('players');

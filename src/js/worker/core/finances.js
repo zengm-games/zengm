@@ -54,7 +54,7 @@ async function assessPayrollMinLuxury() {
     }
 
     for (const teamSeason of teamSeasons) {
-        await idb.cache.put('teamSeasons', teamSeason);
+        await idb.cache.teamSeasons.put(teamSeason);
     }
 }
 
@@ -130,7 +130,7 @@ async function updateRanks(types: BudgetTypes[]) {
     for (const t of teams) {
         if (types.includes('budget')) {
             updateObj(t.budget, budgetsByItem);
-            await idb.cache.put('teams', t);
+            await idb.cache.teams.put(t);
         }
         if (types.includes('revenues') && teamSeasons !== undefined) {
             updateObj(teamSeasons[t.tid].expenses, expensesByItem);
@@ -142,7 +142,7 @@ async function updateRanks(types: BudgetTypes[]) {
 
     if (teamSeasons !== undefined) {
         for (const teamSeason of teamSeasons) {
-            await idb.cache.put('teamSeasons', teamSeason);
+            await idb.cache.teamSeasons.put(teamSeason);
         }
     }
 }

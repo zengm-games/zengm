@@ -80,7 +80,7 @@ async function autoSign() {
 
                     playersSorted.splice(i, 1); // Remove from list of free agents
 
-                    await idb.cache.put('players', p);
+                    await idb.cache.players.put(p);
                     await team.rosterAutoSort(tid);
 
                     // We found one, so stop looking for this team
@@ -132,7 +132,7 @@ async function decreaseDemands() {
             p.injury = {type: "Healthy", gamesRemaining: 0};
         }
 
-        await idb.cache.put('players', p);
+        await idb.cache.players.put(p);
     }
 }
 

@@ -91,7 +91,7 @@ async function newPhasePreseason() {
             await player.addStatsRow(p, false);
         }
 
-        await idb.cache.put('players', p);
+        await idb.cache.players.put(p);
     }
 
     if (g.autoPlaySeasons > 0) {
@@ -182,7 +182,7 @@ async function newPhasePlayoffs() {
         });
     }
 
-    await idb.cache.put('playoffSeries', {
+    await idb.cache.playoffSeries.put({
         season: g.season,
         currentRound: 0,
         series,
@@ -209,7 +209,7 @@ async function newPhasePlayoffs() {
             }
         }
 
-        await idb.cache.put('teamSeasons', teamSeason);
+        await idb.cache.teamSeasons.put(teamSeason);
     }
 
     // Add row to player stats
@@ -217,7 +217,7 @@ async function newPhasePlayoffs() {
         const players = await idb.cache.players.indexGetAll('playersByTid', tid);
         for (const p of players) {
             await player.addStatsRow(p, true);
-            await idb.cache.put('players', p);
+            await idb.cache.players.put(p);
         }
     }));
 
@@ -261,7 +261,7 @@ async function newPhaseBeforeDraft() {
         const players = await idb.cache.players.indexGetAll('playersByTid', t.tid);
         for (const p of players) {
             p.awards.push({season: g.season, type: "Won Championship"});
-            await idb.cache.put('players', p);
+            await idb.cache.players.put(p);
         }
     }
 
@@ -322,7 +322,7 @@ async function newPhaseBeforeDraft() {
         }
 
         if (update) {
-            await idb.cache.put('players', p);
+            await idb.cache.players.put(p);
         }
     }
 
@@ -378,7 +378,7 @@ async function newPhaseDraft() {
     for (const p of players) {
         if (p.draft.year === g.season && p.tid >= 0) {
             p.draft.year -= 1;
-            await idb.cache.put('players', p);
+            await idb.cache.players.put(p);
         }
     }
 
@@ -463,7 +463,7 @@ async function newPhaseFreeAgency() {
                 });
 
                 // Else branch include call to addToFreeAgents, which handles updating the database
-                await idb.cache.put('players', p);
+                await idb.cache.players.put(p);
             } else {
                 await player.addToFreeAgents(p, PHASE.RESIGN_PLAYERS, baseMoods);
             }
@@ -475,13 +475,13 @@ async function newPhaseFreeAgency() {
     for (const p of players3) {
         p.tid = PLAYER.UNDRAFTED;
         p.ratings[0].fuzz /= 2;
-        await idb.cache.put('players', p);
+        await idb.cache.players.put(p);
     }
     const players4 = await idb.cache.players.indexGetAll('playersByTid', PLAYER.UNDRAFTED_3);
     for (const p of players4) {
         p.tid = PLAYER.UNDRAFTED_2;
         p.ratings[0].fuzz /= 2;
-        await idb.cache.put('players', p);
+        await idb.cache.players.put(p);
     }
     idb.cache.markDirtyIndexes('players');
     await draft.genPlayers(PLAYER.UNDRAFTED_3);
@@ -499,14 +499,14 @@ async function newPhaseFantasyDraft(position: number) {
     const playersUndrafted = await idb.cache.players.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
     for (const p of playersUndrafted) {
         p.tid = PLAYER.UNDRAFTED_FANTASY_TEMP;
-        await idb.cache.put('players', p);
+        await idb.cache.players.put(p);
     }
 
     // Make all players draftable
     const players = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
     for (const p of players) {
         p.tid = PLAYER.UNDRAFTED;
-        await idb.cache.put('players', p);
+        await idb.cache.players.put(p);
     }
 
     idb.cache.markDirtyIndexes('players');

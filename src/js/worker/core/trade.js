@@ -24,7 +24,7 @@ async function create(teams: TradeTeams) {
 
     tr.teams = teams;
 
-    await idb.cache.put('trade', tr);
+    await idb.cache.trade.put(tr);
 }
 
 /**
@@ -156,7 +156,7 @@ async function updatePlayers(teams: TradeTeams): Promise<TradeTeams> {
 
     if (updated) {
         tr.teams = teams;
-        await idb.cache.put('trade', tr);
+        await idb.cache.trade.put(tr);
     }
 
     return teams;
@@ -270,7 +270,7 @@ async function clear() {
     }
 
 
-    await idb.cache.put('trade', tr);
+    await idb.cache.trade.put(tr);
 }
 
 /**
@@ -321,13 +321,13 @@ async function propose(forceTrade?: boolean = false): Promise<[boolean, ?string]
                 if (g.phase <= PHASE.PLAYOFFS) {
                     await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
                 }
-                await idb.cache.put('players', p);
+                await idb.cache.players.put(p);
             }
 
             for (const dpid of dpids[j]) {
                 const dp = await idb.cache.draftPicks.get(dpid);
                 dp.tid = tids[k];
-                await idb.cache.put('draftPicks', dp);
+                await idb.cache.draftPicks.put(dp);
             }
         }
         if (dpids[0].length > 0 || dpids[1].length > 0) {
@@ -641,7 +641,7 @@ async function makeItWorkTrade() {
     if (updated) {
         const tr2 = await idb.cache.trade.get(0);
         tr2.teams = teams;
-        await idb.cache.put('trade', tr2);
+        await idb.cache.trade.put(tr2);
     }
 
     if (s.warning) {

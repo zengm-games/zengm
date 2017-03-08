@@ -146,7 +146,7 @@ async function accept(pid: number, amount: number, exp: number): Promise<?string
         });
     }
 
-    await idb.cache.put('players', p);
+    await idb.cache.players.put(p);
     idb.cache.markDirtyIndexes('players');
 
     await cancel(pid);

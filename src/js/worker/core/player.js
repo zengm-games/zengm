@@ -585,7 +585,7 @@ async function addToFreeAgents(p: Player | PlayerWithoutPid, phase: Phase, baseM
 
     p.ptModifier = 1; // Reset
 
-    await idb.cache.put('players', p);
+    await idb.cache.players.put(p);
     idb.cache.markDirtyIndexes('players');
 }
 
@@ -1517,7 +1517,7 @@ async function killOne() {
     retire(p, playerStats, false);
     p.diedYear = g.season;
 
-    await idb.cache.put('players', p);
+    await idb.cache.players.put(p);
     idb.cache.markDirtyIndexes('players');
 
     logEvent({

@@ -277,7 +277,7 @@ async function rosterAutoSort(tid: number) {
                 if (p.rosterOrder !== p2.rosterOrder) {
                     // Only write to DB if this actually changes
                     p.rosterOrder = p2.rosterOrder;
-                    await idb.cache.put('players', p);
+                    await idb.cache.players.put(p);
                 }
                 break;
             }
@@ -887,7 +887,7 @@ async function updateStrategies() {
         }
 
         if (updated) {
-            await idb.cache.put('teams', t);
+            await idb.cache.teams.put(t);
         }
     }
 }
@@ -955,7 +955,7 @@ async function checkRosterSizes(): Promise<string | null> {
                         tids: [p.tid],
                     });
 
-                    promises.push(idb.cache.put('players', p));
+                    promises.push(idb.cache.players.put(p));
 
                     numPlayersOnRoster += 1;
                 }

@@ -64,7 +64,7 @@ async function saveAwardsByPlayer(awardsByPlayer: any) {
             }
         }
 
-        await idb.cache.put('players', p);
+        await idb.cache.players.put(p);
     }));
 }
 
@@ -252,7 +252,7 @@ async function doAwards() {
         }
     }
 
-    await idb.cache.put('awards', awards);
+    await idb.cache.awards.put(awards);
     await saveAwardsByPlayer(awardsByPlayer);
 
     // None of this stuff needs to block, it's just notifications of crap
@@ -596,7 +596,7 @@ async function newSchedulePlayoffsDay(): Promise<boolean> {
         if (teamSeason.hype > 1) {
             teamSeason.hype = 1;
         }
-        await idb.cache.put('teamSeasons', teamSeason);
+        await idb.cache.teamSeasons.put(teamSeason);
 
         // Playoffs are over! Return true!
         return true;
@@ -639,7 +639,7 @@ async function newSchedulePlayoffsDay(): Promise<boolean> {
     }
 
     playoffSeries.currentRound += 1;
-    await idb.cache.put('playoffSeries', playoffSeries);
+    await idb.cache.playoffSeries.put(playoffSeries);
 
     // Update hype for winning a series
     await Promise.all(tidsWon.map(async (tid) => {
@@ -651,7 +651,7 @@ async function newSchedulePlayoffsDay(): Promise<boolean> {
             teamSeason.hype = 1;
         }
 
-        await idb.cache.put('teamSeasons', teamSeason);
+        await idb.cache.teamSeasons.put(teamSeason);
     }));
 
     // Next time, the schedule for the first day of the next round will be set

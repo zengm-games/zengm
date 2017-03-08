@@ -493,7 +493,7 @@ const reorderRosterDrag = async (sortedPids: number[]) => {
         const p = await idb.cache.players.get(pid);
         if (p.rosterOrder !== rosterOrder) {
             p.rosterOrder = rosterOrder;
-            await idb.cache.put('players', p);
+            await idb.cache.players.put(p);
         }
     }));
 };
@@ -514,7 +514,7 @@ const reorderRosterSwap = async (sortedPlayers: {pid: number}[], pid1: number, p
 
         if (p.rosterOrder !== rosterOrder) {
             p.rosterOrder = rosterOrder;
-            await idb.cache.put('players', p);
+            await idb.cache.players.put(p);
         }
     }));
 };
@@ -573,7 +573,7 @@ const updateBudget = async (budgetAmounts: {
         }
     }
 
-    await idb.cache.put('teams', t);
+    await idb.cache.teams.put(t);
 
     await finances.updateRanks(["budget"]);
 };
@@ -596,7 +596,7 @@ const updatePlayerWatch = async (pid: number, watch: boolean) => {
     const cachedPlayer = await idb.cache.players.get(pid);
     if (cachedPlayer) {
         cachedPlayer.watch = watch;
-        await idb.cache.put('players', cachedPlayer);
+        await idb.cache.players.put(cachedPlayer);
     } else {
         const p = await idb.league.players.get(pid);
         p.watch = watch;
@@ -607,7 +607,7 @@ const updatePlayerWatch = async (pid: number, watch: boolean) => {
 const updatePlayingTime = async (pid: number, ptModifier: number) => {
     const p = await idb.cache.players.get(pid);
     p.ptModifier = ptModifier;
-    await idb.cache.put('players', p);
+    await idb.cache.players.put(p);
 };
 
 const updateTeamInfo = async (newTeams: {
@@ -637,7 +637,7 @@ const updateTeamInfo = async (newTeams: {
             t.imgURL = newTeams[t.tid].imgURL;
         }
 
-        await idb.cache.put('teams', t);
+        await idb.cache.teams.put(t);
 
         if (t.tid === g.userTid) {
             userName = t.name;
@@ -646,7 +646,7 @@ const updateTeamInfo = async (newTeams: {
 
         const teamSeason = await idb.cache.teamSeasons.indexGet('teamSeasonsByTidSeason', `${t.tid},${g.season}`);
         teamSeason.pop = parseFloat(newTeams[t.tid].pop);
-        await idb.cache.put('teamSeasons', teamSeason);
+        await idb.cache.teamSeasons.put(teamSeason);
     }
 
     await league.updateMetaNameRegion(userName, userRegion);
@@ -709,7 +709,7 @@ const upsertCustomizedPlayer = async (p: Player | PlayerWithoutPid, originalTid:
     await player.updateValues(p);
 
     // Save to database, adding pid if it doesn't already exist
-    await idb.cache.put('players', p);
+    await idb.cache.players.put(p);
 
     // Add regular season or playoffs stat row, if necessary
     if (p.tid >= 0 && p.tid !== originalTid && g.phase <= PHASE.PLAYOFFS) {

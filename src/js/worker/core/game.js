@@ -193,9 +193,9 @@ async function writeTeamStats(results: GameResults) {
             }
         }
 
-        await idb.cache.put('teams', t);
-        await idb.cache.put('teamSeasons', teamSeason);
-        await idb.cache.put('teamStats', teamStats);
+        await idb.cache.teams.put(t);
+        await idb.cache.teamSeasons.put(teamSeason);
+        await idb.cache.teamStats.put(teamStats);
     }
 
     return att;
@@ -227,7 +227,7 @@ async function writePlayerStats(results: GameResults) {
         ps.gp += 1; // Already checked for non-zero minutes played above
         ps.trb += p.stat.orb + p.stat.drb;
 
-        await idb.cache.put('playerStats', ps);
+        await idb.cache.playerStats.put(ps);
 
         const injuredThisGame = p.injured && p.injury.type === "Healthy";
 
@@ -277,7 +277,7 @@ async function writePlayerStats(results: GameResults) {
                 await player.updateValues(p2);
             }
 
-            await idb.cache.put('players', p2);
+            await idb.cache.players.put(p2);
         }
 
         return Promise.all(promises);
@@ -440,7 +440,7 @@ async function updatePlayoffSeries(results: GameResults) {
         }
     }
 
-    await idb.cache.put('playoffSeries', playoffSeries);
+    await idb.cache.playoffSeries.put(playoffSeries);
 }
 
 /**
@@ -673,7 +673,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
             }
 
             if (changed) {
-                await idb.cache.put('players', p);
+                await idb.cache.players.put(p);
             }
         }
 

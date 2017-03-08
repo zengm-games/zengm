@@ -1,3 +1,5 @@
+// @flow
+
 import {idb} from '../../db';
 import {mergeByPk} from './helpers';
 import type {Game} from '../../../common/types';

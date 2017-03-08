@@ -2,10 +2,14 @@
 
 import {g, helpers} from '../../common';
 import {idb} from '../db';
-import type {GetOutput, UpdateEvents} from '../../common/types';
+import type {UpdateEvents} from '../../common/types';
 
 async function updateEventLog(
-    inputs: GetOutput,
+    inputs: {
+        abbrev: string,
+        season: number,
+        tid: number,
+    },
     updateEvents: UpdateEvents,
     state: any,
 ): void | {[key: string]: any} {

@@ -7,7 +7,7 @@ import type {Message, MessageWithMid} from '../../../common/types';
 const getCopy = async (): Promise<(Message | MessageWithMid)[]> => {
     return mergeByPk(
         await idb.league.messages.getAll(),
-        await idb.cache.getAll('messages'),
+        await idb.cache.messages.getAll(),
         idb.cache.storeInfos.messages.pk,
     );
 };

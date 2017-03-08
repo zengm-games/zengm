@@ -10,7 +10,7 @@ const getCopy = async ({
     if (season !== undefined) {
         return mergeByPk(
             await idb.league.games.index('season').getAll(season),
-            (await idb.cache.getAll('games')).filter((gm) => {
+            (await idb.cache.games.getAll()).filter((gm) => {
                 return gm.season === season;
             }),
             idb.cache.storeInfos.games.pk,
@@ -19,7 +19,7 @@ const getCopy = async ({
 
     return mergeByPk(
         await idb.league.games.getAll(),
-        await idb.cache.getAll('games'),
+        await idb.cache.games.getAll(),
         idb.cache.storeInfos.games.pk,
     );
 };

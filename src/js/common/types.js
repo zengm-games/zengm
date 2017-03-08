@@ -475,6 +475,7 @@ export type RatingKey = (
 );
 
 export type ReleasedPlayer = {
+    rid: number,
     pid: number,
     tid: number,
     contract: PlayerContract,

@@ -106,7 +106,7 @@ async function newPhasePreseason() {
 }
 
 async function newPhaseRegularSeason() {
-    const teams = await idb.cache.getAll('teams');
+    const teams = await idb.cache.teams.getAll();
     await season.setSchedule(season.newSchedule(teams));
 
     // First message from owner
@@ -326,10 +326,10 @@ async function newPhaseBeforeDraft() {
         }
     }
 
-    const releasedPlayers = await idb.cache.getAll('releasedPlayers');
+    const releasedPlayers = await idb.cache.releasedPlayers.getAll();
     for (const rp of releasedPlayers) {
-        if (rp.contract.exp <= g.season) {
-            await idb.cache.delete('releasedPlayers', rp.rid);
+        if (rp.contract.exp <= g.season && typeof rp.rid === 'number') {
+            await idb.cache.releasedPlayers.delete(rp.rid);
         }
     }
 
@@ -493,7 +493,7 @@ async function newPhaseFantasyDraft(position: number) {
     await contractNegotiation.cancelAll();
     await draft.genOrderFantasy(position);
     await league.setGameAttributes({nextPhase: g.phase});
-    await idb.cache.clear('releasedPlayers');
+    await idb.cache.releasedPlayers.clear();
 
     // Protect draft prospects from being included in this
     const playersUndrafted = await idb.cache.players.indexGetAll('playersByTid', PLAYER.UNDRAFTED);

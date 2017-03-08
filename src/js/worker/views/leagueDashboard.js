@@ -30,7 +30,7 @@ async function updateTeam(
 ): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || updateEvents.includes('newPhase')) {
         const [t, latestSeason] = await Promise.all([
-            idb.cache.get('teams', g.userTid),
+            idb.cache.teams.get(g.userTid),
             idb.cache.indexGet('teamSeasonsBySeasonTid', `${g.season},${g.userTid}`),
         ]);
 

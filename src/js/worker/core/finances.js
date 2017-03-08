@@ -106,7 +106,7 @@ async function updateRanks(types: BudgetTypes[]) {
         teamSeasonsPromise = Promise.resolve();
     }
 
-    const [teams, teamSeasons] = await Promise.all([idb.cache.getAll('teams'), teamSeasonsPromise]);
+    const [teams, teamSeasons] = await Promise.all([idb.cache.teams.getAll(), teamSeasonsPromise]);
 
     let budgetsByItem;
     let budgetsByTeam;

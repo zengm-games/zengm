@@ -14,7 +14,7 @@ import type {TradePickValues, TradeSummary, TradeTeams} from '../../common/types
  * @return {Promise}
  */
 async function create(teams: TradeTeams) {
-    const tr = await idb.cache.get('trade', 0);
+    const tr = await idb.cache.trade.get(0);
 
     // If nothing is in this trade, it's just a team switch, so keep the old stuff from the user's team
     if (teams[0].pids.length === 0 && teams[1].pids.length === 0 && teams[0].dpids.length === 0 && teams[1].dpids.length === 0) {
@@ -34,7 +34,7 @@ async function create(teams: TradeTeams) {
  * @return {er} Resolves to the other team's team ID.
  */
 async function getOtherTid(): Promise<number> {
-    const tr = await idb.cache.get('trade', 0);
+    const tr = await idb.cache.trade.get(0);
     return tr.teams[1].tid;
 }
 
@@ -138,7 +138,7 @@ async function updatePlayers(teams: TradeTeams): Promise<TradeTeams> {
 
     let updated = false; // Has the trade actually changed?
 
-    const tr = await idb.cache.get('trade', 0);
+    const tr = await idb.cache.trade.get(0);
     for (let i = 0; i < 2; i++) {
         if (teams[i].tid !== tr.teams[i].tid) {
             updated = true;
@@ -262,7 +262,7 @@ async function summary(teams: TradeTeams): Promise<TradeSummary> {
  * @return {Promise}
  */
 async function clear() {
-    const tr = await idb.cache.get('trade', 0);
+    const tr = await idb.cache.trade.get(0);
 
     for (const t of tr.teams) {
         t.pids = [];
@@ -287,7 +287,7 @@ async function propose(forceTrade?: boolean = false): Promise<[boolean, ?string]
         return [false, "Error! You're not allowed to make trades now."];
     }
 
-    const {teams} = await idb.cache.get('trade', 0);
+    const {teams} = await idb.cache.trade.get(0);
 
     const tids = [teams[0].tid, teams[1].tid];
     const pids = [teams[0].pids, teams[1].pids];
@@ -325,7 +325,7 @@ async function propose(forceTrade?: boolean = false): Promise<[boolean, ?string]
             }
 
             for (const dpid of dpids[j]) {
-                const dp = await idb.cache.get('draftPicks', dpid);
+                const dp = await idb.cache.draftPicks.get(dpid);
                 dp.tid = tids[k];
                 dp.abbrev = g.teamAbbrevsCache[tids[k]];
                 await idb.cache.put('draftPicks', dp);
@@ -609,7 +609,7 @@ async function getPickValues(): Promise<TradePickValues> {
 async function makeItWorkTrade() {
     const [estValues, tr] = await Promise.all([
         getPickValues(),
-        idb.cache.get('trade', 0),
+        idb.cache.trade.get(0),
     ]);
     const teams0 = tr.teams;
 
@@ -640,7 +640,7 @@ async function makeItWorkTrade() {
     }
 
     if (updated) {
-        const tr2 = await idb.cache.get('trade', 0);
+        const tr2 = await idb.cache.trade.get(0);
         tr2.teams = teams;
         await idb.cache.put('trade', tr2);
     }

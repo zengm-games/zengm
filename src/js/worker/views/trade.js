@@ -38,7 +38,7 @@ async function updateSummary(vars) {
 
 // Validate that the stored player IDs correspond with the active team ID
 async function validateSavedPids() {
-    const {teams} = await idb.cache.get('trade', 0);
+    const {teams} = await idb.cache.trade.get(0);
     return trade.updatePlayers(teams);
 }
 

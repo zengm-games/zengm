@@ -12,7 +12,7 @@ import {getCopy, idb} from '../db';
  * @return {Promise.boolean}
  */
 async function negotiationInProgress(): Promise<boolean> {
-    const negotiations = await idb.cache.getAll('negotiations');
+    const negotiations = await idb.cache.negotiations.getAll();
     return negotiations.length > 0;
 }
 
@@ -55,7 +55,7 @@ async function canStartNegotiation(): Promise<boolean> {
     }
 
     // Allow multiple parallel negotiations only for re-signing players
-    const negotiations = await idb.cache.getAll('negotiations');
+    const negotiations = await idb.cache.negotiations.getAll();
     for (const negotiation of negotiations) {
         if (!negotiation.resigning) {
             return false;

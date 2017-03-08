@@ -64,7 +64,7 @@ async function create(pid: number, resigning: boolean, tid: number = g.userTid):
  * Cancel contract negotiations with a player.
  */
 async function cancel(pid: number) {
-    await idb.cache.delete('negotiations', pid);
+    await idb.cache.negotiations.delete(pid);
     const negotiationInProgress = await lock.negotiationInProgress();
     if (!negotiationInProgress) {
         if (g.phase === PHASE.FREE_AGENCY) {
@@ -85,7 +85,7 @@ async function cancel(pid: number) {
  * @return {Promise}
  */
 async function cancelAll() {
-    await idb.cache.clear('negotiations');
+    await idb.cache.negotiations.clear();
     await updateStatus('Idle');
     return updatePlayMenu();
 }
@@ -100,7 +100,7 @@ async function cancelAll() {
  * @return {Promise.<string=>} If an error occurs, resolves to a string error message.
  */
 async function accept(pid: number, amount: number, exp: number): Promise<?string> {
-    const negotiation = await idb.cache.get('negotiations', pid);
+    const negotiation = await idb.cache.negotiations.get(pid);
     const payroll = (await team.getPayroll(g.userTid))[0];
 
     // If this contract brings team over the salary cap, it's not a minimum;

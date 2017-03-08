@@ -36,7 +36,7 @@ async function updateEventLog(
             // Update by adding any new events to the top of the list
             const maxEid = events[0].eid;
 
-            const cachedEvents = await idb.cache.getAll('events');
+            const cachedEvents = await idb.cache.events.getAll();
             for (const event of cachedEvents) {
                 if (event.eid > maxEid) {
                     if (event.tids !== undefined && event.tids.includes(inputs.tid)) {

@@ -49,7 +49,7 @@ function generateContractOptions(contract, ovr) {
 async function updateNegotiation(
     inputs: GetOutput,
 ): void | {[key: string]: any} {
-    const negotiations = await idb.cache.getAll('negotiations');
+    const negotiations = await idb.cache.negotiations.getAll();
     let negotiation;
     if (inputs.pid === undefined) {
         negotiation = negotiations[0];

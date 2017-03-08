@@ -30,6 +30,7 @@
         "no-plusplus": "off",
         "no-prototype-builtins": "off",
         "no-restricted-syntax": "off",
+        "no-underscore-dangle": "off",
         "object-curly-spacing": ["error", "never"],
         "prefer-const": ["error", {"destructuring": "all"}],
         "quotes": "off",

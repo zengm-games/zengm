@@ -5,7 +5,7 @@ import {player} from '../core';
 import {getCopy, idb} from '../db';
 
 async function updateNegotiationList(): void | {[key: string]: any} {
-    let negotiations = await idb.cache.getAll('negotiations');
+    let negotiations = await idb.cache.negotiations.getAll();
 
     // For Multi Team Mode, might have other team's negotiations going on
     negotiations = negotiations.filter(negotiation => negotiation.tid === g.userTid);

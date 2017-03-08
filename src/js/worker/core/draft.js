@@ -28,7 +28,7 @@ async function genPicks(season: number) {
  * @return {Promise} Resolves to an ordered array of pick objects.
  */
 async function getOrder() {
-    const row = await idb.cache.get('draftOrder', 0);
+    const row = await idb.cache.draftOrder.get(0);
     return row.draftOrder;
 }
 
@@ -342,7 +342,7 @@ async function genOrder() {
 
     // Delete from draftPicks object store so that they are completely untradeable
     for (const dp of draftPicks) {
-        await idb.cache.delete('draftPicks', dp.dpid);
+        await idb.cache.draftPicks.delete(dp.dpid);
     }
 
     await setOrder(draftOrder);

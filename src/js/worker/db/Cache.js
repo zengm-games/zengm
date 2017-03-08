@@ -76,11 +76,11 @@ class StoreAPI<T, U> {
     }
 
     delete(id: number): Promise<void> {
-        return this.cache.delete(this.store, id);
+        return this.cache._delete(this.store, id);
     }
 
     clear(): Promise<void> {
-        return this.cache.clear(this.store);
+        return this.cache._clear(this.store);
     }
 }
 
@@ -114,7 +114,7 @@ class Cache {
     draftOrder: StoreAPI<DraftOrder, number>;
     draftPicks: StoreAPI<DraftPick, number>;
     events: StoreAPI<EventBBGM, number>;
-    gameAttributes: StoreAPI<GameAttribute, number>;
+    gameAttributes: StoreAPI<GameAttribute, string>;
     games: StoreAPI<Game, number>;
     messages: StoreAPI<Message, number>;
     negotiations: StoreAPI<Negotiation, number>;
@@ -570,7 +570,7 @@ class Cache {
         return this.storeObj('put', store, obj);
     }
 
-    async delete(store: Store, id: number) {
+    async _delete(store: Store, id: number) {
         this.checkStatus('full');
 
         if (['draftPicks', 'negotiations', 'players', 'releasedPlayers', 'schedule', 'teamSeasons'].includes(store)) {
@@ -586,7 +586,7 @@ class Cache {
         }
     }
 
-    async clear(store: Store) {
+    async _clear(store: Store) {
         this.checkStatus('full');
 
         if (['negotiations', 'releasedPlayers', 'schedule', 'teamSeasons'].includes(store)) {

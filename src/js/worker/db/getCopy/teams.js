@@ -314,11 +314,11 @@ const getCopy = async ({
 
     const processMaybeWithIDB = async (tx: ?BackboardTx) => {
         if (tid === undefined) {
-            const teams = await idb.cache.getAll('teams');
+            const teams = await idb.cache.teams.getAll();
             return Promise.all(teams.map((t) => processTeam(t, options, tx)));
         }
 
-        const t = await idb.cache.get('teams', tid);
+        const t = await idb.cache.teams.get(tid);
         return processTeam(t, options, tx);
     };
 

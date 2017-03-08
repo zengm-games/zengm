@@ -12,7 +12,7 @@ const liveGame = async (gid: number) => {
 
 const negotiate = async (pid: number) => {
     // If there is no active negotiation with this pid, create it
-    const negotiation = await idb.cache.get('negotiations', pid);
+    const negotiation = await idb.cache.negotiations.get(pid);
     if (!negotiation) {
         const errorMsg = await contractNegotiation.create(pid, false);
         if (errorMsg !== undefined && errorMsg) {
@@ -140,7 +140,7 @@ const playMenu = {
     throughPlayoffs: async () => {
         if (g.phase === PHASE.PLAYOFFS) {
             await updateStatus('Playing...'); // For quick UI updating, before await
-            const playoffSeries = await idb.cache.get('playoffSeries', g.season);
+            const playoffSeries = await idb.cache.playoffSeries.get(g.season);
 
             // Max 7 days per round that hasn't started yet
             const numDaysFutureRounds = (g.numPlayoffRounds - 1 - playoffSeries.currentRound) * 7;
@@ -168,7 +168,7 @@ const playMenu = {
 
     untilFreeAgency: async () => {
         if (g.phase === PHASE.RESIGN_PLAYERS) {
-            const negotiations = await idb.cache.getAll('negotiations');
+            const negotiations = await idb.cache.negotiations.getAll();
             const numRemaining = negotiations.length;
 
             // Show warning dialog only if there are players remaining un-re-signed

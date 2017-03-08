@@ -14,7 +14,7 @@ async function updateMessage(
         let message;
         let readThisPageview = false;
 
-        const messagesCache = await idb.cache.getAll('messages');
+        const messagesCache = await idb.cache.messages.getAll();
 
         // Below code is ugly... checking both cache and database for the same thing
         if (messagesCache.length > 0) {

@@ -445,7 +445,7 @@ async function create(
 
             // Initialize rebuilding/contending, when possible
             if (tid2 >= 0) {
-                const t = await idb.cache.get('teams', tid2);
+                const t = await idb.cache.teams.get(tid2);
                 t.strategy = goodNeutralBad === 1 ? "contending" : "rebuilding";
                 await idb.cache.put('teams', t);
             }
@@ -597,7 +597,7 @@ async function updateMetaNameRegion(name: string, region: string) {
  * @return {Promise}
  */
 async function loadGameAttributes() {
-    const gameAttributes = await idb.cache.getAll('gameAttributes');
+    const gameAttributes = await idb.cache.gameAttributes.getAll();
 
     for (let i = 0; i < gameAttributes.length; i++) {
         g[gameAttributes[i].key] = gameAttributes[i].value;

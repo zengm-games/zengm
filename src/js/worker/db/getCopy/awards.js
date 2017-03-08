@@ -10,7 +10,7 @@ const getCopy = async ({
     if (season !== undefined) {
         const awards = mergeByPk(
             await idb.league.awards.getAll(season),
-            (await idb.cache.getAll('awards')).filter((event) => {
+            (await idb.cache.awards.getAll()).filter((event) => {
                 return event.season === season;
             }),
             idb.cache.storeInfos.awards.pk,
@@ -20,7 +20,7 @@ const getCopy = async ({
 
     return mergeByPk(
         await idb.league.awards.getAll(),
-        await idb.cache.getAll('awards'),
+        await idb.cache.awards.getAll(),
         idb.cache.storeInfos.awards.pk,
     );
 };

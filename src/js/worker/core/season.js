@@ -285,7 +285,7 @@ async function doAwards() {
  * @return {Promise} Resolves to the requested schedule array.
  */
 async function getSchedule(oneDay?: boolean = false): Promise<ScheduleGame[]> {
-    let schedule = await idb.cache.getAll('schedule');
+    let schedule = await idb.cache.schedule.getAll();
     if (oneDay) {
         schedule = schedule.slice(0, g.numTeams / 2);  // This is the maximum number of games possible in a day
 
@@ -314,7 +314,7 @@ async function getSchedule(oneDay?: boolean = false): Promise<ScheduleGame[]> {
  * @return {Promise}
  */
 async function setSchedule(tids: [number, number][]) {
-    await idb.cache.clear('schedule');
+    await idb.cache.schedule.clear();
 
     for (const matchup of tids) {
         await idb.cache.add('schedule', {

@@ -513,7 +513,7 @@ async function valueChange(
             let estValues;
             const withEstValues = () => {
                 Promise.all(dpidsAdd.map(async (dpid) => {
-                    const dp = await idb.cache.get('draftPicks', dpid);
+                    const dp = await idb.cache.draftPicks.get(dpid);
 
                     let estPick = estPicks[dp.originalTid];
 
@@ -548,7 +548,7 @@ async function valueChange(
                 }));
 
                 Promise.all(dpidsRemove.map(async (dpid) => {
-                    const dp = await idb.cache.get('draftPicks', dpid);
+                    const dp = await idb.cache.draftPicks.get(dpid);
                     let estPick = estPicks[dp.originalTid];
 
                     // For future draft picks, add some uncertainty
@@ -833,7 +833,7 @@ console.log(dv);*/
  * @return {Promise}
  */
 async function updateStrategies() {
-    const teams = await idb.cache.getAll('teams');
+    const teams = await idb.cache.teams.getAll();
     for (const t of teams) {
         // Skip user's team
         if (t.tid === g.userTid) {

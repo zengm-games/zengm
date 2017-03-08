@@ -16,7 +16,7 @@ async function writeTeamStats(results: GameResults) {
 
         const payroll = (await team.getPayroll(results.team[t1].id))[0];
         const [t, teamSeasons, teamStats] = await Promise.all([
-            idb.cache.get('teams', results.team[t1].id),
+            idb.cache.teams.get(results.team[t1].id),
             idb.cache.indexGetAll('teamSeasonsByTidSeason', [`${results.team[t1].id},${g.season - 2}`, `${results.team[t1].id},${g.season}`]),
             idb.cache.indexGet('teamStatsByPlayoffsTid', `${g.phase === PHASE.PLAYOFFS ? 1 : 0},${results.team[t1].id}`),
         ]);
@@ -370,7 +370,7 @@ async function writeGameStats(results: GameResults, att: number) {
 }
 
 async function updatePlayoffSeries(results: GameResults) {
-    const playoffSeries = await idb.cache.get('playoffSeries', g.season);
+    const playoffSeries = await idb.cache.playoffSeries.get(g.season);
 
     const playoffRound = playoffSeries.series[playoffSeries.currentRound];
 
@@ -502,7 +502,7 @@ async function loadTeams() {
     return Promise.all(_.range(g.numTeams).map(async (tid) => {
         const [players, {cid, did}, teamSeason] = await Promise.all([
             idb.cache.players.indexGetAll('playersByTid', tid),
-            idb.cache.get('teams', tid),
+            idb.cache.teams.get(tid),
             idb.cache.indexGet('teamSeasonsByTidSeason', `${tid},${g.season}`),
         ]);
 
@@ -635,7 +635,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
 
         // Delete finished games from schedule
         for (let j = 0; j < gidsFinished.length; j++) {
-            promises.push(idb.cache.delete('schedule', gidsFinished[j]));
+            promises.push(idb.cache.schedule.delete(gidsFinished[j]));
         }
 
         // Update ranks

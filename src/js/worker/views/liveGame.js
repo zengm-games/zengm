@@ -13,7 +13,7 @@ async function updatePlayByPlay(
     }
 
     if (inputs.playByPlay !== undefined && inputs.playByPlay.length > 0) {
-        const boxScore = await idb.cache.get('games', inputs.gidPlayByPlay);
+        const boxScore = await idb.cache.games.get(inputs.gidPlayByPlay);
 
         // Stats to set to 0
         const resetStats = ["min", "fg", "fga", "tp", "tpa", "ft", "fta", "orb", "trb", "ast", "tov", "stl", "blk", "ba", "pf", "pts", "pm"];

@@ -66,7 +66,7 @@ const clearWatchList = async () => {
 };
 
 const countNegotiations = async () => {
-    const negotiations = await idb.cache.getAll('negotiations');
+    const negotiations = await idb.cache.negotiations.getAll();
     return negotiations.length;
 };
 
@@ -564,7 +564,7 @@ const updateBudget = async (budgetAmounts: {
     scouting: number,
     ticketPrice: number,
 }) => {
-    const t = await idb.cache.get('teams', g.userTid);
+    const t = await idb.cache.teams.get(g.userTid);
 
     for (const key of Object.keys(budgetAmounts)) {
         // Check for NaN before updating
@@ -622,12 +622,12 @@ const updateTeamInfo = async (newTeams: {
     let userName;
     let userRegion;
 
-    const teams = await idb.cache.getAll('teams');
+    const teams = await idb.cache.teams.getAll();
     for (const t of teams) {
-        if (newTeams[t.tid].hasOwnProperty('cid')) {
+        if (newTeams[t.tid].hasOwnProperty('cid') && typeof newTeams[t.tid].cid === 'number') {
             t.cid = newTeams[t.tid].cid;
         }
-        if (newTeams[t.tid].hasOwnProperty('did')) {
+        if (newTeams[t.tid].hasOwnProperty('did') && typeof newTeams[t.tid].did === 'number') {
             t.did = newTeams[t.tid].did;
         }
         t.region = newTeams[t.tid].region;

@@ -99,7 +99,7 @@ async function genPlayers(tid: number, scoutingRank?: ?number = null, numPlayers
 
         // Update player values after ratings changes
         await player.updateValues(p);
-        await idb.cache.add('players', p);
+        await idb.cache.players.add(p);
     }
 }
 

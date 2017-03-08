@@ -42,9 +42,25 @@ class StoreAPI<T, U> {
         return this.cache.indexGet(index, key);
     }
 
-    // Not sure how to type key as U
+    // Not sure how to type key as U in some methods below
     indexGetAll(index: Index, key: number | string | [number, number] | [string, string]): Promise<T[]> {
         return this.cache.indexGetAll(index, key);
+    }
+
+    add(obj: T): Promise<number | string> {
+        return this.cache.add(this.store, obj);
+    }
+
+    put(obj: T): Promise<number | string> {
+        return this.cache.put(this.store, obj);
+    }
+
+    delete(id: number): Promise<void> {
+        return this.cache.delete(this.store, id);
+    }
+
+    clear(): Promise<void> {
+        return this.cache.clear(this.store);
     }
 }
 
@@ -500,16 +516,16 @@ class Cache {
         return this.storeObj('put', store, obj);
     }
 
-    async delete(store: Store, key: number) {
+    async delete(store: Store, id: number) {
         this.checkStatus('full');
 
         if (['draftPicks', 'negotiations', 'players', 'releasedPlayers', 'schedule', 'teamSeasons'].includes(store)) {
-            if (this.data[store].hasOwnProperty(key)) {
-                delete this.data[store][key];
-                this.deletes[store].add(key);
+            if (this.data[store].hasOwnProperty(id)) {
+                delete this.data[store][id];
+                this.deletes[store].add(id);
                 this.markDirtyIndexes(store);
             } else {
-                throw new Error(`Invalid key to delete from store "${store}": ${key}`);
+                throw new Error(`Invalid primary key to delete from store "${store}": ${id}`);
             }
         } else {
             throw new Error(`delete not implemented for store "${store}"`);

@@ -51,7 +51,7 @@ const clearWatchList = async () => {
     for (const p of players) {
         if (p.watch && typeof p.watch !== "function") {
             p.watch = false;
-            await idb.cache.add('players', p);
+            await idb.cache.players.add(p);
         }
         pids.add(p.pid);
     }
@@ -60,7 +60,7 @@ const clearWatchList = async () => {
     await idb.league.players.iterate(async (p) => {
         if (p.watch && typeof p.watch !== "function" && !pids.has(p.pid)) {
             p.watch = false;
-            await idb.cache.add('players', p);
+            await idb.cache.players.add(p);
         }
     });
 };
@@ -395,7 +395,7 @@ const handleUploadedDraftClass = async (uploadedFile: any, seasonOffset: 0 | 1 |
     // Delete old players from draft class
     const oldPlayers = await idb.cache.players.indexGetAll('playersByTid', draftClassTid);
     for (const p of oldPlayers) {
-        await idb.cache.delete('players', p.pid);
+        await idb.cache.players.delete(p.pid);
     }
 
     // Find season from uploaded file, for age adjusting
@@ -445,7 +445,7 @@ const handleUploadedDraftClass = async (uploadedFile: any, seasonOffset: 0 | 1 |
         delete p.stats;
 
         await player.updateValues(p);
-        await idb.cache.add('players', p);
+        await idb.cache.players.add(p);
     }));
 
     // "Top off" the draft class if <70 players imported
@@ -600,7 +600,7 @@ const updatePlayerWatch = async (pid: number, watch: boolean) => {
     } else {
         const p = await idb.league.players.get(pid);
         p.watch = watch;
-        await idb.cache.add('players', p);
+        await idb.cache.players.add(p);
     }
 };
 

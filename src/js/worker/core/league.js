@@ -433,7 +433,7 @@ async function create(
                 player.setContract(p, player.genContract(p, randomizeExp), p.tid >= 0);
 
                 // Save to database, adding pid
-                await idb.cache.add('players', p);
+                await idb.cache.players.add(p);
 
                 // Needs pid, so must be called after add
                 if (p.tid === PLAYER.FREE_AGENT) {

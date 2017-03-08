@@ -233,9 +233,9 @@ const exportPlayerAveragesCsv = async (season: number | 'all') => {
 const exportPlayerGamesCsv = async (season: number | 'all') => {
     let games;
     if (season === "all") {
-        games = await idb.league.games.getAll();
+        games = await getCopy.games();
     } else {
-        games = await idb.league.games.index('season').getAll(season);
+        games = await getCopy.games({season});
     }
 
     let output = "pid,Name,Pos,Team,Opp,Score,WL,Season,Playoffs,Min,FGM,FGA,FG%,3PM,3PA,3P%,FTM,FTA,FT%,OReb,DReb,Reb,Ast,TO,Stl,Blk,BA,PF,Pts,+/-\n";

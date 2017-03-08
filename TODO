@@ -69,12 +69,12 @@ i think withStats was faster that playersPlus for getting stats for a large numb
 eventually merge players and playersPlus
 
 update to cache
-- api: exportPlayerGamesCsv
 - also search for any readwrite transaction
 - death code in phase - should not be writing to db, and (maybe) should not assume retired players are not cached
 - repeatedly clicking "propose" makes dv go down - why?
 - trading block fails due to promise communication issue, maybe passing cb or something
   - getTradingBlockOffers has cb passed to it. how to replace? need to update UI incrementally
+- look at all IDB usage
 
 if i can gracefully handle absence of g.season etc, put cache creation inside connectLeague
 - not graceful now, see fill(season)

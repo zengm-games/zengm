@@ -55,11 +55,11 @@ class StoreAPI<T, U> {
         return this.cache.getAll(this.store);
     }
 
-    indexGet(index: Index, key: U): Promise<T> {
+    indexGet(index: Index, key: U | string): Promise<T> {
         if (typeof key !== 'number' && typeof key !== 'string') {
             throw new Error('Invalid input type');
         }
-        return this.cache.indexGet(index, key);
+        return this.cache._indexGet(index, key);
     }
 
     // Not sure how to type key as U in some methods below
@@ -496,7 +496,7 @@ class Cache {
         }
     }
 
-    async indexGet(index: Index, key: number | string): Promise<any> {
+    async _indexGet(index: Index, key: number | string): Promise<any> {
         this.checkStatus('full');
         this.checkIndexFreshness(index);
 
@@ -533,7 +533,7 @@ class Cache {
         return output;
     }
 
-    storeObj(type: 'add' | 'put', store: Store, obj: any): Promise<number | string> {
+    _storeObj(type: 'add' | 'put', store: Store, obj: any): Promise<number | string> {
         this.checkStatus('full');
 
         const pk = this.storeInfos[store].pk;
@@ -563,11 +563,11 @@ class Cache {
     }
 
     async add(store: Store, obj: any): Promise<number | string> {
-        return this.storeObj('add', store, obj);
+        return this._storeObj('add', store, obj);
     }
 
     async put(store: Store, obj: any): Promise<number | string> {
-        return this.storeObj('put', store, obj);
+        return this._storeObj('put', store, obj);
     }
 
     async _delete(store: Store, id: number) {

@@ -644,7 +644,7 @@ const updateTeamInfo = async (newTeams: {
             userRegion = t.region;
         }
 
-        const teamSeason = await idb.cache.indexGet('teamSeasonsByTidSeason', `${t.tid},${g.season}`);
+        const teamSeason = await idb.cache.teamSeasons.indexGet('teamSeasonsByTidSeason', `${t.tid},${g.season}`);
         teamSeason.pop = parseFloat(newTeams[t.tid].pop);
         await idb.cache.put('teamSeasons', teamSeason);
     }

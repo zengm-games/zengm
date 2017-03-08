@@ -841,8 +841,8 @@ async function updateStrategies() {
         }
 
         // Change in wins
-        const teamSeason = await idb.cache.indexGet('teamSeasonsBySeasonTid', `${g.season},${t.tid}`);
-        const teamSeasonOld = await idb.cache.indexGet('teamSeasonsBySeasonTid', `${g.season - 1},${t.tid}`);
+        const teamSeason = await idb.cache.teamSeasons.indexGet('teamSeasonsBySeasonTid', `${g.season},${t.tid}`);
+        const teamSeasonOld = await idb.cache.teamSeasons.indexGet('teamSeasonsBySeasonTid', `${g.season - 1},${t.tid}`);
 
         const won = teamSeason.won;
         const dWon = teamSeasonOld ? won - teamSeasonOld.won : 0;

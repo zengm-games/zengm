@@ -18,7 +18,7 @@ async function writeTeamStats(results: GameResults) {
         const [t, teamSeasons, teamStats] = await Promise.all([
             idb.cache.teams.get(results.team[t1].id),
             idb.cache.indexGetAll('teamSeasonsByTidSeason', [`${results.team[t1].id},${g.season - 2}`, `${results.team[t1].id},${g.season}`]),
-            idb.cache.indexGet('teamStatsByPlayoffsTid', `${g.phase === PHASE.PLAYOFFS ? 1 : 0},${results.team[t1].id}`),
+            idb.cache.teamStats.indexGet('teamStatsByPlayoffsTid', `${g.phase === PHASE.PLAYOFFS ? 1 : 0},${results.team[t1].id}`),
         ]);
 
         const teamSeason = teamSeasons[teamSeasons.length - 1];
@@ -212,7 +212,7 @@ async function writePlayerStats(results: GameResults) {
 
         promises.push(player.checkStatisticalFeat(p.id, t.id, p, results));
 
-        const ps = await idb.cache.indexGet('playerStatsByPid', p.id);
+        const ps = await idb.cache.playerStats.indexGet('playerStatsByPid', p.id);
 
         // Since index is not on playoffs, manually check
         if (ps.playoffs !== (g.phase === PHASE.PLAYOFFS)) {
@@ -503,7 +503,7 @@ async function loadTeams() {
         const [players, {cid, did}, teamSeason] = await Promise.all([
             idb.cache.players.indexGetAll('playersByTid', tid),
             idb.cache.teams.get(tid),
-            idb.cache.indexGet('teamSeasonsByTidSeason', `${tid},${g.season}`),
+            idb.cache.teamSeasons.indexGet('teamSeasonsByTidSeason', `${tid},${g.season}`),
         ]);
 
         players.sort((a, b) => a.rosterOrder - b.rosterOrder);

@@ -590,7 +590,7 @@ async function newSchedulePlayoffsDay(): Promise<boolean> {
             key = series[rnd][0].away.tid;
         }
 
-        const teamSeason = await idb.cache.indexGet('teamSeasonsBySeasonTid', `${g.season},${key}`);
+        const teamSeason = await idb.cache.teamSeasons.indexGet('teamSeasonsBySeasonTid', `${g.season},${key}`);
         teamSeason.playoffRoundsWon = g.numPlayoffRounds;
         teamSeason.hype += 0.05;
         if (teamSeason.hype > 1) {
@@ -643,7 +643,7 @@ async function newSchedulePlayoffsDay(): Promise<boolean> {
 
     // Update hype for winning a series
     await Promise.all(tidsWon.map(async (tid) => {
-        const teamSeason = await idb.cache.indexGet('teamSeasonsBySeasonTid', `${g.season},${tid}`);
+        const teamSeason = await idb.cache.teamSeasons.indexGet('teamSeasonsBySeasonTid', `${g.season},${tid}`);
 
         teamSeason.playoffRoundsWon = playoffSeries.currentRound;
         teamSeason.hype += 0.05;

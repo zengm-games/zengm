@@ -29,8 +29,6 @@ const reset = async () => {
     console.log("Deleting any current meta database...");
     idb.meta.close();
     await Backboard.delete("meta");
-
-    location.reload();
 };
 
 export default reset;

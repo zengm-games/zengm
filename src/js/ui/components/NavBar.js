@@ -188,9 +188,12 @@ const handleScreenshotClick = e => {
     });
 };
 
-const handleToolsClick = (id, e) => {
+const handleToolsClick = async (id, e) => {
     e.preventDefault();
-    toWorker(`actions.toolsMenu.${id}`);
+    await toWorker(`actions.toolsMenu.${id}`);
+    if (id === 'resetDb') {
+        window.location.reload();
+    }
 };
 
 type DropdownLinksState = {

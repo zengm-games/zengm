@@ -258,6 +258,11 @@ class Controller extends React.Component {
         };
 
         if (vars.data && vars.data.redirectUrl !== undefined) {
+            // Reset idLoading, otherwise it will think loading is already in progress on redirect
+            this.setState({
+                idLoading: undefined,
+            });
+
             await realtimeUpdate([], vars.data.redirectUrl);
             cb();
             return;

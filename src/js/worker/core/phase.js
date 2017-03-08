@@ -429,7 +429,6 @@ async function newPhaseFreeAgency() {
     const strategies = teams.map(t => t.strategy);
 
     // Delete all current negotiations to resign players
-console.log('cancel all');
     await contractNegotiation.cancelAll();
 
     const baseMoods = await player.genBaseMoods();

@@ -83,7 +83,6 @@ class StoreAPI<Input, Output, ID> {
     }
 
     clear(): Promise<void> {
-console.log('clear', this.store);
         return this.cache._clear(this.store);
     }
 }
@@ -103,6 +102,7 @@ class Cache {
     storeInfos: {
         [key: Store]: {
             pk: string,
+            pkType: 'number' | 'string',
             autoIncrement: boolean,
             getData?: (BackboardTx, Player[]) => (Promise<any[]> | any[]),
             indexes?: {
@@ -147,15 +147,18 @@ class Cache {
         this.storeInfos = {
             awards: {
                 pk: 'season',
+                pkType: 'number',
                 autoIncrement: false,
             },
             draftOrder: {
                 pk: 'rid',
+                pkType: 'number',
                 autoIncrement: false,
                 getData: (tx: BackboardTx) => tx.draftOrder.getAll(),
             },
             draftPicks: {
                 pk: 'dpid',
+                pkType: 'number',
                 autoIncrement: true,
                 getData: (tx: BackboardTx) => tx.draftPicks.getAll(),
                 indexes: [{
@@ -168,15 +171,18 @@ class Cache {
             },
             events: {
                 pk: 'eid',
+                pkType: 'number',
                 autoIncrement: true,
             },
             gameAttributes: {
                 pk: 'key',
+                pkType: 'string',
                 autoIncrement: false,
                 getData: (tx: BackboardTx) => tx.gameAttributes.getAll(),
             },
             games: {
                 pk: 'gid',
+                pkType: 'number',
                 autoIncrement: false,
 
                 // Current season
@@ -184,19 +190,23 @@ class Cache {
             },
             messages: {
                 pk: 'mid',
+                pkType: 'number',
                 autoIncrement: true,
             },
             negotiations: {
                 pk: 'pid',
+                pkType: 'number',
                 autoIncrement: false,
                 getData: (tx: BackboardTx) => tx.negotiations.getAll(),
             },
             playerFeats: {
                 pk: 'fid',
+                pkType: 'number',
                 autoIncrement: true,
             },
             playerStats: {
                 pk: 'psid',
+                pkType: 'number',
                 autoIncrement: true,
 
                 getData: async (tx: BackboardTx, players: Player[]) => {
@@ -225,6 +235,7 @@ class Cache {
             },
             players: {
                 pk: 'pid',
+                pkType: 'number',
                 autoIncrement: true,
                 getData: (tx: BackboardTx, players: Player[]) => players,
                 indexes: [{
@@ -234,6 +245,7 @@ class Cache {
             },
             playoffSeries: {
                 pk: 'season',
+                pkType: 'number',
                 autoIncrement: false,
 
                 // Current season
@@ -241,6 +253,7 @@ class Cache {
             },
             releasedPlayers: {
                 pk: 'rid',
+                pkType: 'number',
                 autoIncrement: true,
                 getData: (tx: BackboardTx) => tx.releasedPlayers.getAll(),
                 indexes: [{
@@ -250,11 +263,13 @@ class Cache {
             },
             schedule: {
                 pk: 'gid',
+                pkType: 'number',
                 autoIncrement: true,
                 getData: (tx: BackboardTx) => tx.schedule.getAll(),
             },
             teamSeasons: {
                 pk: 'rid',
+                pkType: 'number',
                 autoIncrement: true,
 
                 // Past 3 seasons
@@ -276,6 +291,7 @@ class Cache {
             },
             teamStats: {
                 pk: 'rid',
+                pkType: 'number',
                 autoIncrement: true,
 
                 // Current season
@@ -293,11 +309,13 @@ class Cache {
             },
             teams: {
                 pk: 'tid',
+                pkType: 'number',
                 autoIncrement: false,
                 getData: (tx: BackboardTx) => tx.teams.getAll(),
             },
             trade: {
                 pk: 'rid',
+                pkType: 'number',
                 autoIncrement: false,
                 getData: (tx: BackboardTx) => tx.trade.getAll(),
             },
@@ -560,7 +578,9 @@ class Cache {
 
         this._data[store][obj[pk]] = obj;
 
-        this._dirtyRecords[store].add(obj[pk]);
+        // Need to have the correct type here for IndexedDB
+        const idParsed = this.storeInfos[store].pkType === 'number' ? parseInt(obj[pk], 10) : obj[pk];
+        this._dirtyRecords[store].add(idParsed);
         this.markDirtyIndexes(store);
 
         return obj[pk];
@@ -580,7 +600,10 @@ class Cache {
         if (['draftPicks', 'negotiations', 'players', 'releasedPlayers', 'schedule', 'teamSeasons'].includes(store)) {
             if (this._data[store].hasOwnProperty(id)) {
                 delete this._data[store][id];
-                this._deletes[store].add(id);
+
+                // Need to have the correct type here for IndexedDB
+                const idParsed = this.storeInfos[store].pkType === 'number' ? parseInt(id, 10) : id;
+                this._deletes[store].add(idParsed);
                 this.markDirtyIndexes(store);
             } else {
                 throw new Error(`Invalid primary key to delete from store "${store}": ${id}`);
@@ -591,15 +614,16 @@ class Cache {
     }
 
     async _clear(store: Store) {
-console.log('_clear', store);
         this._checkStatus('full');
 
         if (['negotiations', 'releasedPlayers', 'schedule', 'teamSeasons'].includes(store)) {
-            for (const key of Object.keys(this._data[store])) {
-                delete this._data[store][key];
-                this._deletes[store].add(key);
+            for (const id of Object.keys(this._data[store])) {
+                delete this._data[store][id];
+
+                // Need to have the correct type here for IndexedDB
+                const idParsed = this.storeInfos[store].pkType === 'number' ? parseInt(id, 10) : id;
+                this._deletes[store].add(idParsed);
             }
-console.log('cleared', this._data[store]);
             this.markDirtyIndexes(store);
         } else {
             throw new Error(`clear not implemented for store "${store}"`);

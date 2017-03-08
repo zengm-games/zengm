@@ -1,8 +1,10 @@
 IVERSON
 
-negotiations not clearing at end of that phase
+unread message check for menu could be faster (don't load all, just last ~10)
+- abstract into getCopy.messages, and use in worker/views/message.js too
+  - use in leagueDashboard too. "limit" parameter
 
-redirectUrl working from worker/views? If not, reassess
+clicking Play > To Regular Season quickly results in 'Invalid cache status "filling"'
 
 browser support
 - firefox
@@ -28,7 +30,7 @@ shared worker
 db sync issues
 - if closed in phase change, unset g.phaseChangeInProgress on league load
 - have timer running in background, maybe once/second, flushing cache if various locks/inProgress things deem it reasonable
-  - when dirty on close, show warning window
+  - when dirty on close, show warning window, and initiate flush (if not already in progress)
 - index updating
   - stupid option: parameter in put saying "skip index update"
   - smarter option: test if object === prev object on put, and if so, skip write and indexing (only if we leave markDirtyIndexes behind), just mark record as dirty
@@ -40,7 +42,7 @@ db sync issues
 move everything but the UI to a web worker
 - does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
 - should checks to update data in worker/views be in worker, or could they be in UI somehow and avoid call to worker if update not needed?
-- write lint script to check for ui/worker cross-contamination. also document/window/localStorage/react in worker. also any of that stuff in common.
+- write lint script to check for ui/worker cross-contamination. also document/location/window/localStorage/react in worker. also any of that stuff in common.
 - restore runWhenever ability (really necessary? was only used in gameLog)
 - uncomment things using localstorage in worker, after moving to either env+api or idb (meta)
 - setState was used in schedule so old completed games don't temporarily show when switching team. still an issue? if not, get rid of setStateData completely

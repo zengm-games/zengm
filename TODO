@@ -18,6 +18,7 @@ browser support
 add flow comments to new files!
 - hard for ones that return (T | T[]) depending on inputs. maybe rethink getCopy API
   - move non-array responses to getCopy
+  - teams and playersPlus only remaining
 
 rethink cache API, with goal of having it typed
 - rename indexes, store prefixed with storename

@@ -3,10 +3,10 @@
 import {PHASE, g, helpers} from '../../common';
 import {season} from '../core';
 import {idb} from '../db';
-import type {GetOutput, UpdateEvents} from '../../common/types';
+import type {UpdateEvents} from '../../common/types';
 
 async function updatePlayoffs(
-    inputs: GetOutput,
+    inputs: {season: number},
     updateEvents: UpdateEvents,
     state: any,
 ): void | {[key: string]: any} {
@@ -34,7 +34,7 @@ async function updatePlayoffs(
 
             finalMatchups = false;
         } else {
-            const playoffSeries = await idb.getCopies.playoffSeries({season: inputs.season});
+            const playoffSeries = await idb.getCopy.playoffSeries({season: inputs.season});
             series = playoffSeries.series;
 
             finalMatchups = true;

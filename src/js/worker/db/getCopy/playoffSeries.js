@@ -1,11 +1,10 @@
+// @flow
+
 import {g, helpers} from '../../../common';
 import {idb} from '../../db';
+import type {PlayoffSeries} from '../../../common/types';
 
-const getCopies = ({
-    season,
-}: {
-    season: number,
-} = {}): Promise<any> => {
+const getCopy = ({season}: {season: number} = {}): Promise<PlayoffSeries> => {
     if (season === g.season) {
         return idb.cache.playoffSeries.get(season);
     }
@@ -13,4 +12,4 @@ const getCopies = ({
     return helpers.deepCopy(idb.league.playoffSeries.get(season));
 };
 
-export default getCopies;
+export default getCopy;

@@ -246,7 +246,7 @@ async function updatePlayoffs(
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') || (g.phase >= PHASE.PLAYOFFS && updateEvents.includes('gameSim')) || (updateEvents.includes('newPhase') && g.phase === PHASE.PLAYOFFS)) {
-        const playoffSeries = await idb.getCopies.playoffSeries({season: g.season});
+        const playoffSeries = await idb.getCopy.playoffSeries({season: g.season});
 
         let foundSeries;
         let seriesTitle = '';

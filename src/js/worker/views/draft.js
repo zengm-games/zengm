@@ -62,6 +62,12 @@ async function updateDraft(): void | {[key: string]: any} {
         });
     }
 
+    if (drafted.length === 0) {
+        console.log('drafted:', drafted);
+        console.log('draftOrder:', draftOrder);
+        throw new Error("drafted.length should always be 60, combo of drafted players and picks. But now it's 0. Why?");
+    }
+
     // ...or start draft if the user has the first pick (in which case starting it has no effect, might as well do it automatically)
     started = started || g.userTids.includes(drafted[0].draft.tid);
 

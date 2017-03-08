@@ -1,6 +1,6 @@
 import _ from 'underscore';
 import {g} from '../../common';
-import {getCopy} from '../db';
+import {idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 function getTeamRecord(t, awards) {
@@ -146,11 +146,11 @@ async function updateTeamRecords(
 ): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') || inputs.byType !== state.byType) {
         const [teams, awards] = await Promise.all([
-            getCopy.teams({
+            idb.getCopies.teams({
                 attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
                 seasonAttrs: ["season", "playoffRoundsWon", "won", "lost"],
             }),
-            getCopy.awards(),
+            idb.getCopies.awards(),
         ]);
 
         const awardsPerTeam = tallyAwards(awards);

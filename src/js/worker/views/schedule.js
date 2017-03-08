@@ -1,6 +1,6 @@
 import {g, helpers} from '../../common';
 import {season} from '../core/season';
-import {getCopy} from '../db';
+import {idb} from '../db';
 import {getProcessedGames} from '../util';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
@@ -13,7 +13,7 @@ async function updateUpcoming(
         // Get schedule and all teams.
         const [schedule, teams] = await Promise.all([
             season.getSchedule(),
-            getCopy.teams({
+            idb.getCopies.teams({
                 attrs: ['abbrev', 'name', 'region'],
                 seasonAttrs: ['won', 'lost'],
                 season: g.season,

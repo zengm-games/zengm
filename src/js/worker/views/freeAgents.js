@@ -1,8 +1,8 @@
 // @flow
 
 import {PLAYER, g} from '../../common';
-import {freeAgents, player, team} from '../core/';
-import {getCopy, idb} from '../db';
+import {freeAgents, player, team} from '../core';
+import {idb} from '../db';
 
 async function updateFreeAgents(): void | {[key: string]: any} {
     const payroll = (await team.getPayroll(g.userTid))[0];
@@ -13,7 +13,7 @@ async function updateFreeAgents(): void | {[key: string]: any} {
 
     const capSpace = g.salaryCap > payroll ? (g.salaryCap - payroll) / 1000 : 0;
 
-    players = await getCopy.playersPlus(players, {
+    players = await idb.getCopies.playersPlus(players, {
         attrs: ["pid", "name", "age", "contract", "freeAgentMood", "injury", "watch"],
         ratings: ["ovr", "pot", "skills", "pos"],
         stats: ["min", "pts", "trb", "ast", "per"],

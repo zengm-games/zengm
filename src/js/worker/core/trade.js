@@ -2,7 +2,7 @@
 
 import {PHASE, PLAYER, g, helpers} from '../../common';
 import {player, team} from '../core';
-import {getCopy, idb} from '../db';
+import {idb} from '../db';
 import {logEvent} from '../util';
 import type {TradePickValues, TradeSummary, TradeTeams} from '../../common/types';
 
@@ -115,7 +115,7 @@ async function updatePlayers(teams: TradeTeams): Promise<TradeTeams> {
     // Make sure each entry in teams has pids and dpids that actually correspond to the correct tid
     for (const t of teams) {
         // Check players
-        const players = await getCopy.players({tid: t.tid});
+        const players = await idb.getCopies.players({tid: t.tid});
         const pidsGood = [];
         for (const p of players) {
             // Also, make sure player is not untradable
@@ -197,7 +197,7 @@ async function summary(teams: TradeTeams): Promise<TradeSummary> {
     [0, 1].forEach(i => {
         promises.push(idb.cache.players.indexGetAll('playersByTid', tids[i]).then(async (playersTemp) => {
             let players = playersTemp.filter(p => pids[i].includes(p.pid));
-            players = await getCopy.playersPlus(players, {
+            players = await idb.getCopies.playersPlus(players, {
                 attrs: ['pid', 'name', 'contract'],
                 season: g.season,
                 tid: tids[i],
@@ -423,7 +423,7 @@ async function makeItWork(
 
         if (!holdUserConstant) {
             // Get all players not in userPids
-            const players = await getCopy.players({tid: teams[0].tid});
+            const players = await idb.getCopies.players({tid: teams[0].tid});
             for (const p of players) {
                 if (!teams[0].pids.includes(p.pid) && !isUntradable(p)) {
                     assets.push({
@@ -437,7 +437,7 @@ async function makeItWork(
         }
 
         // Get all players not in otherPids
-        const players = await getCopy.players({tid: teams[1].tid});
+        const players = await idb.getCopies.players({tid: teams[1].tid});
         for (const p of players) {
             if (!teams[1].pids.includes(p.pid) && !isUntradable(p)) {
                 assets.push({

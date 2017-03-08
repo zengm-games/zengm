@@ -1,6 +1,6 @@
 import {PHASE, g} from '../../common';
 import {season, team, trade} from '../core';
-import {getCopy, idb} from '../db';
+import {idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateRoster(
@@ -17,7 +17,7 @@ async function updateRoster(
             showTradeFor: inputs.season === g.season && inputs.tid !== g.userTid,
         };
 
-        vars.t = await getCopy.teams({
+        vars.t = await idb.getCopies.teams({
             season: inputs.season,
             tid: inputs.tid,
             attrs: ["tid", "region", "name", "strategy", "imgURL"],
@@ -44,7 +44,7 @@ async function updateRoster(
                 }
             }
 
-            players = await getCopy.playersPlus(players, {
+            players = await idb.getCopies.playersPlus(players, {
                 attrs,
                 ratings,
                 stats,
@@ -77,8 +77,8 @@ async function updateRoster(
         } else {
             // Show all players with stats for the given team and year
             // Needs all seasons because of YWT!
-            let players = await getCopy.players({statsTid: inputs.tid});
-            players = await getCopy.playersPlus(players, {
+            let players = await idb.getCopies.players({statsTid: inputs.tid});
+            players = await idb.getCopies.playersPlus(players, {
                 attrs,
                 ratings,
                 stats,

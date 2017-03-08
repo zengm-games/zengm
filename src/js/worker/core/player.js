@@ -4,7 +4,7 @@ import faces from 'facesjs';
 import _ from 'underscore';
 import {COMPOSITE_WEIGHTS, PHASE, PLAYER, g, helpers} from '../../common';
 import {finances} from '../core';
-import {getCopy, idb} from '../db';
+import {idb} from '../db';
 import * as names from '../../data/names';
 import {injuries, logEvent, random} from '../util';
 import type {
@@ -1512,7 +1512,7 @@ async function killOne() {
     const p = random.choice(players);
 
     // Get player stats, used for HOF calculation
-    const playerStats = await getCopy.playerStats({pid: p.pid});
+    const playerStats = await idb.getCopies.playerStats({pid: p.pid});
 
     retire(p, playerStats, false);
     p.diedYear = g.season;

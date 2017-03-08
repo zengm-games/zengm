@@ -2,7 +2,7 @@
 
 import _ from 'underscore';
 import {PHASE, g} from '../../common';
-import {getCopy, idb} from '../db';
+import {idb} from '../db';
 
 /**
  * Calcualte the current season's Player Efficiency Rating (PER) for each active player and write it to the database.
@@ -16,7 +16,7 @@ import {getCopy, idb} from '../db';
  */
 async function calculatePER() {
     // Total team stats (not per game averages) - gp, pts, ast, fg, plus all the others needed for league totals
-    const teams = await getCopy.teams({
+    const teams = await idb.getCopies.teams({
         attrs: ["tid"],
         stats: ["gp", "ft", "pf", "ast", "fg", "pts", "fga", "orb", "tov", "fta", "trb", "oppPts"],
         season: g.season,
@@ -57,7 +57,7 @@ async function calculatePER() {
     // Total player stats (not per game averages) - min, tp, ast, fg, ft, tov, fga, fta, trb, orb, stl, blk, pf
     // Active players have tid >= 0
     let players = await idb.cache.players.indexGetAll('playersByTid', [0, Infinity]);
-    players = await getCopy.playersPlus(players, {
+    players = await idb.getCopies.playersPlus(players, {
         attrs: ["pid", "tid"],
         stats: ["min", "tp", "ast", "fg", "ft", "tov", "fga", "fta", "trb", "orb", "stl", "blk", "pf"],
         ratings: ["pos"],

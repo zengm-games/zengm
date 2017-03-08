@@ -283,7 +283,7 @@ const processTeam = async (t: Team, {
  * @param {string=} options.statType What type of stats to return, 'perGame' or 'totals' (default is 'perGame).
  * @return {Promise.(Object|Array.<Object>)} Filtered team object or array of filtered team objects, depending on the inputs.
  */
-const getCopy = async ({
+const getCopies = async ({
     tid,
     season,
     attrs = [],
@@ -328,4 +328,4 @@ const getCopy = async ({
     return processMaybeWithIDB();
 };
 
-export default getCopy;
+export default getCopies;

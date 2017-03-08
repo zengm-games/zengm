@@ -5,7 +5,7 @@
 import backboard from 'backboard';
 import {PLAYER} from '../../common';
 import {player} from '../core';
-import {getCopy, idb} from '../db';
+import {idb} from '../db';
 import type {RatingKey} from '../../common/types';
 
 async function regressRatingsPer() {
@@ -146,8 +146,8 @@ async function regressRatingsPer() {
         return xT.mult(x).inverse().mult(xT).mult(this);
     };
 
-    let players = await getCopy.players({activeAndRetired: true});
-    players = await getCopy.playersPlus(players, {
+    let players = await idb.getCopies.players({activeAndRetired: true});
+    players = await idb.getCopies.playersPlus(players, {
         ratings: ["season", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"],
         stats: ["season", "per", "min"],
         statType: 'totals',

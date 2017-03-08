@@ -1,6 +1,6 @@
 // @flow
 
-import {getCopy} from '../db';
+import {idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 const optionsTmp = [{
@@ -116,8 +116,8 @@ async function updateAwardsRecords(
     state: any,
 ): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') || inputs.awardType !== state.awardType) {
-        let players = await getCopy.players({activeAndRetired: true});
-        players = await getCopy.playersPlus(players, {
+        let players = await idb.getCopies.players({activeAndRetired: true});
+        players = await idb.getCopies.playersPlus(players, {
             attrs: ['awards', 'firstName', 'lastName', 'pid', 'retiredYear', 'hof'],
             stats: ['abbrev', 'season'],
         });

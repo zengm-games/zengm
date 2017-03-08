@@ -1,7 +1,7 @@
 // @flow
 
 import {g} from '../../common';
-import {getCopy, idb} from '../db';
+import {idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updatePowerRankings(
@@ -10,7 +10,7 @@ async function updatePowerRankings(
 ): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') || updateEvents.includes('gameSim')) {
         const [teams, players] = await Promise.all([
-            getCopy.teams({
+            idb.getCopies.teams({
                 attrs: ["tid", "abbrev", "region", "name"],
                 seasonAttrs: ["won", "lost", "lastTen"],
                 stats: ["gp", "diff"],

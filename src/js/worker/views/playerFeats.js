@@ -1,5 +1,5 @@
 import {g} from '../../common';
-import {getCopy} from '../db';
+import {idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updatePlayers(
@@ -8,7 +8,7 @@ async function updatePlayers(
     state: any,
 ): void | {[key: string]: any} {
     if (updateEvents.includes('gameSim') || inputs.abbrev !== state.abbrev || inputs.season !== state.season || inputs.playoffs !== state.playoffs) {
-        let feats = await getCopy.playerFeats();
+        let feats = await idb.getCopies.playerFeats();
 
         // Put fake fid on cached feats
         let maxFid = 0;

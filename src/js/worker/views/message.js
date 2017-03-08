@@ -1,7 +1,7 @@
 // @flow
 
 import {g, helpers} from '../../common';
-import {getCopy, idb} from '../db';
+import {idb} from '../db';
 import {updatePlayMenu, updateStatus} from '../util';
 import type {GetOutput, Message as Message_, UpdateEvents} from '../../common/types';
 
@@ -16,7 +16,7 @@ async function updateMessage(
         let readThisPageview = false;
 
         if (inputs.mid === undefined) {
-            const messages = await getCopy.messages({limit: 10});
+            const messages = await idb.getCopies.messages({limit: 10});
             if (messages.length > 0) {
                 for (let i = messages.length - 1; i >= 0; i--) {
                     if (!messages[i].read) {
@@ -27,7 +27,7 @@ async function updateMessage(
                 }
             }
         } else {
-            message = await getCopy.messages({mid: inputs.mid});
+            message = await idb.getCopies.messages({mid: inputs.mid});
         }
 
         if (message && !message.read) {

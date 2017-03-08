@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {Cache, connectMeta, getCopy, idb} from '../../db';
+import {Cache, connectMeta, idb} from '../../db';
 import {PLAYER, g} from '../../common';
 import {draft, league} from '../../core';
 import sampleTiebreakers from '../fixtures/sampleTiebreakers';
@@ -133,7 +133,7 @@ describe("core/draft", () => {
 
     describe("#updateChances()", () => {
         it("should distribute combinations to teams with the same record", async () => {
-            const teams = await getCopy.teams({
+            const teams = await idb.getCopies.teams({
                 attrs: ["tid", "cid"],
                 seasonAttrs: ["winp", "playoffRoundsWon"],
                 season: g.season,

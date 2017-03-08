@@ -2,7 +2,7 @@
 
 import {PHASE, PLAYER, g, helpers} from '../../common';
 import {season, team} from '../core';
-import {getCopy, idb} from '../db';
+import {idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateInbox(
@@ -10,7 +10,7 @@ async function updateInbox(
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun')) {
-        const messages = await getCopy.messages({limit: 2});
+        const messages = await idb.getCopies.messages({limit: 2});
         messages.reverse();
 
         for (let i = 0; i < messages.length; i++) {
@@ -68,7 +68,7 @@ async function updateTeams(
         const vars = {};
         const stats = ["pts", "oppPts", "trb", "ast"];  // This is also used later to find ranks for these team stats
 
-        const teams = helpers.orderByWinp(await getCopy.teams({
+        const teams = helpers.orderByWinp(await idb.getCopies.teams({
             attrs: ["tid", "cid"],
             seasonAttrs: ["won", "winp", "att", "revenue", "profit"],
             stats,
@@ -190,7 +190,7 @@ async function updatePlayers(
         const vars = {};
 
         let players = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.UNDRAFTED, Infinity]);
-        players = await getCopy.playersPlus(players, {
+        players = await idb.getCopies.playersPlus(players, {
             attrs: ['pid', 'name', 'abbrev', 'tid', 'age', 'contract', 'rosterOrder', 'injury', 'watch'],
             ratings: ['ovr', 'pot', 'dovr', 'dpot', 'skills', 'pos'],
             stats: ['gp', 'min', 'pts', 'trb', 'ast', 'per', 'yearsWithTeam'],
@@ -246,7 +246,7 @@ async function updatePlayoffs(
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') || (g.phase >= PHASE.PLAYOFFS && updateEvents.includes('gameSim')) || (updateEvents.includes('newPhase') && g.phase === PHASE.PLAYOFFS)) {
-        const playoffSeries = await getCopy.playoffSeries({season: g.season});
+        const playoffSeries = await idb.getCopies.playoffSeries({season: g.season});
 
         let foundSeries;
         let seriesTitle = '';
@@ -294,7 +294,7 @@ async function updateStandings(
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') || updateEvents.includes('gameSim')) {
-        const teams = helpers.orderByWinp(await getCopy.teams({
+        const teams = helpers.orderByWinp(await idb.getCopies.teams({
             attrs: ["tid", "cid", "abbrev", "region"],
             seasonAttrs: ["won", "lost", "winp"],
             season: g.season,

@@ -1,13 +1,13 @@
 // @flow
 
 import {PHASE, PLAYER, g} from '../../common';
-import {getCopy, idb} from '../db';
+import {idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function addSeason(season, tid) {
     let playersAll = await idb.cache.players.indexGetAll('playersByTid', tid);
 
-    playersAll = await getCopy.playersPlus(playersAll, {
+    playersAll = await idb.getCopies.playersPlus(playersAll, {
         attrs: ["pid", "firstName", "lastName", "age", "watch", "valueFuzz"],
         ratings: ["ovr", "pot", "skills", "fuzz", "pos"],
         showNoStats: true,

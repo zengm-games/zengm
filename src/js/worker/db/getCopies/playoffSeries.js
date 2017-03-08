@@ -1,7 +1,7 @@
 import {g, helpers} from '../../../common';
 import {idb} from '../../db';
 
-const getCopy = ({
+const getCopies = ({
     season,
 }: {
     season: number,
@@ -13,4 +13,4 @@ const getCopy = ({
     return helpers.deepCopy(idb.league.playoffSeries.get(season));
 };
 
-export default getCopy;
+export default getCopies;

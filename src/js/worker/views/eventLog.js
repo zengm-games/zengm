@@ -1,7 +1,7 @@
 // @flow
 
 import {g, helpers} from '../../common';
-import {getCopy, idb} from '../db';
+import {idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateEventLog(
@@ -17,7 +17,7 @@ async function updateEventLog(
 
         if (events.length === 0) {
             // Show all events, newest at top
-            events = await getCopy.events({season: inputs.season});
+            events = await idb.getCopies.events({season: inputs.season});
             events.reverse(); // Newest first
 
             // Filter by team

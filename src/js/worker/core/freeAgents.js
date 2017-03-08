@@ -4,7 +4,7 @@ import orderBy from 'lodash.orderby';
 import _ from 'underscore';
 import {PHASE, PLAYER, g, helpers} from '../../common';
 import {league, phase, player, team} from '../core';
-import {getCopy, idb} from '../db';
+import {idb} from '../db';
 import {lock, logEvent, random, updatePlayMenu, updateStatus, toUI} from '../util';
 
 /**
@@ -17,7 +17,7 @@ import {lock, logEvent, random, updatePlayMenu, updateStatus, toUI} from '../uti
  */
 async function autoSign() {
     const [teams, players] = await Promise.all([
-        getCopy.teams({
+        idb.getCopies.teams({
             attrs: ["strategy"],
             season: g.season,
         }),

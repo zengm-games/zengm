@@ -1,5 +1,5 @@
 import {PHASE, PLAYER, g} from '../../common';
-import {getCopy, idb} from '../db';
+import {idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updatePlayers(
@@ -13,7 +13,7 @@ async function updatePlayers(
             players = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
         } else {
             // If it's not this season, get all players, because retired players could apply to the selected season
-            players = await getCopy.players({activeAndRetired: true});
+            players = await idb.getCopies.players({activeAndRetired: true});
         }
 
         let tid = g.teamAbbrevsCache.indexOf(inputs.abbrev);
@@ -23,7 +23,7 @@ async function updatePlayers(
             players = players.filter(p => p.watch && typeof p.watch !== "function");
         }
 
-        players = await getCopy.playersPlus(players, {
+        players = await idb.getCopies.playersPlus(players, {
             attrs: ["pid", "name", "abbrev", "age", "born", "injury", "watch", "hof"],
             ratings: ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills", "pos"],
             stats: ["abbrev", "tid"],
@@ -33,7 +33,7 @@ async function updatePlayers(
             fuzz: true,
         });
 
-        // getCopy.playersPlus `tid` option doesn't work well enough (factoring in showNoStats and showRookies), so let's do it manually
+        // idb.getCopies.playersPlus `tid` option doesn't work well enough (factoring in showNoStats and showRookies), so let's do it manually
         // For the current season, use the current abbrev (including FA), not the last stats abbrev
         // For other seasons, use the stats abbrev for filtering
         if (g.season === inputs.season) {

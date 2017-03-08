@@ -1,7 +1,7 @@
 import {idb} from '../../db';
 import {mergeByPk} from './helpers';
 
-const getCopy = async ({
+const getCopies = async ({
     pid,
     season,
 }: {
@@ -39,4 +39,4 @@ const getCopy = async ({
     );
 };
 
-export default getCopy;
+export default getCopies;

@@ -1,6 +1,6 @@
 import {PHASE, g, helpers} from '../../common';
 import {team} from '../core';
-import {getCopy} from '../db';
+import {idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateTeamFinances(
@@ -58,7 +58,7 @@ async function updateTeamFinances(
         vars.contractTotals = contractTotals;
         vars.salariesSeasons = [season, season + 1, season + 2, season + 3, season + 4];
 
-        const teamSeasons = await getCopy.teamSeasons({tid: inputs.tid});
+        const teamSeasons = await idb.getCopies.teamSeasons({tid: inputs.tid});
 
         teamSeasons.reverse(); // Most recent season first
 
@@ -112,7 +112,7 @@ async function updateTeamFinances(
         vars.barData = barData;
         vars.barSeasons = barSeasons;
         // Get stuff for the finances form
-        vars.t = await getCopy.teams({
+        vars.t = await idb.getCopies.teams({
             attrs: ["region", "name", "abbrev", "budget"],
             seasonAttrs: ["expenses"],
             season: g.season,

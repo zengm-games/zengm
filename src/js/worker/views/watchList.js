@@ -2,7 +2,7 @@
 
 import {PLAYER, g} from '../../common';
 import {freeAgents} from '../core';
-import {getCopy} from '../db';
+import {idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updatePlayers(
@@ -11,9 +11,9 @@ async function updatePlayers(
     state: any,
 ): void | {[key: string]: any} {
     if (updateEvents.includes('clearWatchList') || updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || inputs.statType !== state.statType || inputs.playoffs !== state.playoffs) {
-        let players = await getCopy.players();
+        let players = await idb.getCopies.players();
         players = players.filter(p => p.watch && typeof p.watch !== "function"); // In Firefox, objects have a "watch" function
-        players = await getCopy.playersPlus(players, {
+        players = await idb.getCopies.playersPlus(players, {
             attrs: ["pid", "name", "age", "injury", "tid", "abbrev", "watch", "contract", "freeAgentMood", "draft"],
             ratings: ["ovr", "pot", "skills", "pos"],
             stats: ["gp", "min", "fgp", "tpp", "ftp", "trb", "ast", "tov", "stl", "blk", "pts", "per", "ewa"],

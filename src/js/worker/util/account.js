@@ -2,7 +2,7 @@
 
 /*eslint camelcase: 0*/
 import {SPORT, fetchWrapper, g} from '../../common';
-import {getCopy, idb} from '../db';
+import {idb} from '../db';
 import {env, logEvent, toUI} from '../util';
 import type {AchievementKey} from '../../common/types';
 
@@ -213,7 +213,7 @@ checkAchievement.fo_fo_fo = async (saveAchievement: boolean = true) => {
         return false;
     }
 
-    const playoffSeries = await getCopy.playoffSeries({season: g.season});
+    const playoffSeries = await idb.getCopies.playoffSeries({season: g.season});
     if (playoffSeries === undefined) {
         // Should only happen if playoffs are skipped
         return false;
@@ -249,7 +249,7 @@ checkAchievement.septuawinarian = async (saveAchievement: boolean = true) => {
         return false;
     }
 
-    const t = await getCopy.teams({
+    const t = await idb.getCopies.teams({
         seasonAttrs: ["won"],
         season: g.season,
         tid: g.userTid,
@@ -272,7 +272,7 @@ checkAchievement["98_degrees"] = async (saveAchievement: boolean = true) => {
 
     const awarded = await checkAchievement.fo_fo_fo(false);
     if (awarded) {
-        const t = await getCopy.teams({
+        const t = await idb.getCopies.teams({
             seasonAttrs: ["won", "lost"],
             season: g.season,
             tid: g.userTid,
@@ -295,7 +295,7 @@ async function checkDynasty(titles: number, years: number, slug: AchievementKey,
         return false;
     }
 
-    const teamSeasons = await getCopy.teamSeasons({tid: g.userTid});
+    const teamSeasons = await idb.getCopies.teamSeasons({tid: g.userTid});
 
     let titlesFound = 0;
     // Look over past years
@@ -330,7 +330,7 @@ async function checkMoneyball(maxPayroll, slug, saveAchievement) {
         return false;
     }
 
-    const t = await getCopy.teams({
+    const t = await idb.getCopies.teams({
         seasonAttrs: ["expenses", "playoffRoundsWon"],
         season: g.season,
         tid: g.userTid,
@@ -355,9 +355,9 @@ checkAchievement.hardware_store = async (saveAchievement: boolean = true) => {
         return false;
     }
 
-    const awards = await getCopy.awards({season: g.season});
+    const awards = await idb.getCopy.awards({season: g.season});
 
-    if (awards.mvp.tid === g.userTid && awards.dpoy.tid === g.userTid && awards.smoy.tid === g.userTid && awards.roy.tid === g.userTid && awards.finalsMvp.tid === g.userTid) {
+    if (awards !== undefined && awards.mvp.tid === g.userTid && awards.dpoy.tid === g.userTid && awards.smoy.tid === g.userTid && awards.roy.tid === g.userTid && awards.finalsMvp.tid === g.userTid) {
         if (saveAchievement) {
             addAchievements(["hardware_store"]);
         }
@@ -372,7 +372,7 @@ checkAchievement.small_market = async (saveAchievement: boolean = true) => {
         return false;
     }
 
-    const t = await getCopy.teams({
+    const t = await idb.getCopies.teams({
         seasonAttrs: ["playoffRoundsWon", "pop"],
         season: g.season,
         tid: g.userTid,
@@ -393,7 +393,7 @@ checkAchievement.sleeper_pick = async (saveAchievement: boolean = true) => {
         return false;
     }
 
-    const awards = await getCopy.awards({season: g.season});
+    const awards = await idb.getCopy.awards({season: g.season});
     if (awards && awards.roy && awards.roy.tid === g.userTid) {
         const p = await idb.cache.players.get(awards.roy.pid);
         if (p.tid === g.userTid && p.draft.tid === g.userTid && p.draft.year === g.season - 1 && (p.draft.round > 1 || p.draft.pick >= 15)) {

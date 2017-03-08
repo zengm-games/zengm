@@ -3,7 +3,7 @@
 import _ from 'underscore';
 import {PHASE, PLAYER, g, helpers} from '../../common';
 import {draft, player, trade} from '../core';
-import {getCopy, idb} from '../db';
+import {idb} from '../db';
 import {logEvent, random} from '../util';
 import type {ContractInfo, TeamSeason, TeamStats, TradePickValues} from '../../common/types';
 
@@ -241,7 +241,7 @@ async function rosterAutoSort(tid: number) {
     // Get roster and sort by value (no potential included)
     const playersFromCache = await idb.cache.players.indexGetAll('playersByTid', tid);
     let players = helpers.deepCopy(playersFromCache);
-    players = await getCopy.playersPlus(players, {
+    players = await idb.getCopies.playersPlus(players, {
         attrs: ["pid", "valueNoPot", "valueNoPotFuzz"],
         ratings: ["pos"],
         season: g.season,
@@ -397,7 +397,7 @@ async function valueChange(
     let remove = [];
 
     // Get team strategy and population, for future use
-    const t = await getCopy.teams({
+    const t = await idb.getCopies.teams({
         attrs: ["strategy"],
         seasonAttrs: ["pop"],
         stats: ["gp"],
@@ -853,7 +853,7 @@ async function updateStrategies() {
 
         // Young stars
         let players = await idb.cache.players.indexGetAll('playersByTid', t.tid);
-        players = await getCopy.playersPlus(players, {
+        players = await idb.getCopies.playersPlus(players, {
             season: g.season,
             tid: t.tid,
             attrs: ["age", "value", "contract"],

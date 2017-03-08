@@ -1,8 +1,8 @@
 import {g} from '../../common';
-import {getCopy} from '../db';
+import {idb} from '../db';
 
 async function updateTeamSelect(): void | {[key: string]: any} {
-    let teams = await getCopy.teams({
+    let teams = await idb.getCopies.teams({
         attrs: ["tid", "region", "name"],
         seasonAttrs: ["winp"],
         season: g.season,

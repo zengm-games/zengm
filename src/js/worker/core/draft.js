@@ -3,7 +3,7 @@
 import _ from 'underscore';
 import {PHASE, PHASE_TEXT, PLAYER, g, helpers} from '../../common';
 import {finances, league, phase, player} from '../core';
-import {getCopy, idb} from '../db';
+import {idb} from '../db';
 import {logEvent, random, updatePlayMenu, updatePhase} from '../util';
 import type {PickRealized, TeamFiltered} from '../../common/types';
 
@@ -235,7 +235,7 @@ function lotterySort(teams: TeamFiltered[]) {
  * @return {Promise}
  */
 async function genOrder() {
-    const teams = await getCopy.teams({
+    const teams = await idb.getCopies.teams({
         attrs: ["tid", "cid"],
         seasonAttrs: ["winp", "playoffRoundsWon"],
         season: g.season,

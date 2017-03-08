@@ -1,6 +1,6 @@
 import {PLAYER, g, helpers} from '../../common';
 import {freeAgents, trade} from '../core';
-import {getCopy} from '../db';
+import {idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updatePlayer(
@@ -9,8 +9,8 @@ async function updatePlayer(
     state: any,
 ): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') || !state.retired || state.pid !== inputs.pid) {
-        let p = await getCopy.players({pid: inputs.pid});
-        p = await getCopy.playersPlus(p, {
+        let p = await idb.getCopies.players({pid: inputs.pid});
+        p = await idb.getCopies.playersPlus(p, {
             attrs: ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "age", "hgtFt", "hgtIn", "weight", "born", "diedYear", "contract", "draft", "face", "mood", "injury", "salaries", "salariesTotal", "awardsGrouped", "freeAgentMood", "imgURL", "watch", "gamesUntilTradable", "college"],
             ratings: ["season", "abbrev", "age", "ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills", "pos"],
             stats: ["psid", "season", "tid", "abbrev", "age", "gp", "gs", "min", "fg", "fga", "fgp", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp", "ft", "fta", "ftp", "pm", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "ba", "pf", "pts", "per", "ewa"],
@@ -24,7 +24,7 @@ async function updatePlayer(
             p.contract.amount = freeAgents.amountWithMood(p.contract.amount, p.freeAgentMood[g.userTid]);
         }
 
-        let events = await getCopy.events({pid: inputs.pid});
+        let events = await idb.getCopies.events({pid: inputs.pid});
 
         const feats = events.filter(event => event.type === "playerFeat").map(event => {
             return {

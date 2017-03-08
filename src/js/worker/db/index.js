@@ -2,6 +2,7 @@
 
 import Backboard from 'backboard';
 import Cache from './Cache';
+import * as getCopies from './getCopies';
 import * as getCopy from './getCopy';
 import {logEvent} from '../util';
 
@@ -25,17 +26,20 @@ Backboard.on('blocked', () => {
 
 const idb: {
     cache: Cache,
+    getCopies: typeof getCopies,
+    getCopy: typeof getCopy,
     league: any,
     meta: any,
 } = {
     cache: new Cache(),
+    getCopies,
+    getCopy,
     league: undefined,
     meta: undefined,
 };
 
 export {
     Cache,
-    getCopy,
     idb,
 };
 export {default as connectMeta} from './connectMeta';

@@ -4,7 +4,7 @@ import {idb} from '../../db';
 import {mergeByPk} from './helpers';
 import type {Player} from '../../../common/types';
 
-const getCopy = async ({
+const getCopies = async ({
     pid,
     retired,
     activeAndRetired,
@@ -82,4 +82,4 @@ const getCopy = async ({
     );
 };
 
-export default getCopy;
+export default getCopies;

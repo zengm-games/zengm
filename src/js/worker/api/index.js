@@ -4,7 +4,7 @@ import _ from 'underscore';
 import {PHASE, PLAYER, g, helpers} from '../../common';
 import actions from './actions';
 import {contractNegotiation, draft, finances, league, phase, player, team, trade} from '../core';
-import {connectMeta, getCopy, idb} from '../db';
+import {connectMeta, idb} from '../db';
 import {account, beforeView, changes, checkNaNs, env, random, updatePlayMenu, updateStatus} from '../util';
 import * as views from '../views';
 import type {Env, GameAttributes, GetOutput, Player, PlayerWithoutPid, UpdateEvents} from '../../common/types';
@@ -199,7 +199,7 @@ const exportPlayerAveragesCsv = async (season: number | 'all') => {
         players = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
     } else {
         // If it's not this season, get all players, because retired players could apply to the selected season
-        players = await getCopy.players({activeAndRetired: true});
+        players = await idb.getCopies.players({activeAndRetired: true});
     }
 
     // Array of seasons in stats, either just one or all of them
@@ -213,7 +213,7 @@ const exportPlayerAveragesCsv = async (season: number | 'all') => {
     let output = "pid,Name,Pos,Age,Team,Season,GP,GS,Min,FGM,FGA,FG%,3PM,3PA,3P%,FTM,FTA,FT%,OReb,DReb,Reb,Ast,TO,Stl,Blk,BA,PF,Pts,+/-,PER,EWA\n";
 
     for (const s of seasons) {
-        const players2 = await getCopy.playersPlus(players, {
+        const players2 = await idb.getCopies.playersPlus(players, {
             attrs: ["pid", "name", "age"],
             ratings: ["pos"],
             stats: ["abbrev", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "ba", "pf", "pts", "pm", "per", "ewa"],
@@ -233,9 +233,9 @@ const exportPlayerAveragesCsv = async (season: number | 'all') => {
 const exportPlayerGamesCsv = async (season: number | 'all') => {
     let games;
     if (season === "all") {
-        games = await getCopy.games();
+        games = await idb.getCopies.games();
     } else {
-        games = await getCopy.games({season});
+        games = await idb.getCopies.games({season});
     }
 
     let output = "pid,Name,Pos,Team,Opp,Score,WL,Season,Playoffs,Min,FGM,FGA,FG%,3PM,3PA,3P%,FTM,FTA,FT%,OReb,DReb,Reb,Ast,TO,Stl,Blk,BA,PF,Pts,+/-\n";
@@ -315,7 +315,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[], progressCa
             return [];
         }
 
-        const teams = await getCopy.teams({
+        const teams = await idb.getCopies.teams({
             attrs: ["abbrev", "region", "name", "strategy"],
             seasonAttrs: ["won", "lost"],
             season: g.season,
@@ -327,7 +327,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[], progressCa
 
             let players = await idb.cache.players.indexGetAll('playersByTid', tid);
             players = players.filter(p => offers[i].pids.includes(p.pid));
-            players = await getCopy.playersPlus(players, {
+            players = await idb.getCopies.playersPlus(players, {
                 attrs: ["pid", "name", "age", "contract", "injury", "watch"],
                 ratings: ["ovr", "pot", "skills", "pos"],
                 stats: ["min", "pts", "trb", "ast", "per"],

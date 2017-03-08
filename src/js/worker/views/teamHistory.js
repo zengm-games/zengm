@@ -1,5 +1,5 @@
 import {g} from '../../common';
-import {getCopy} from '../db';
+import {idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateTeamHistory(
@@ -11,7 +11,7 @@ async function updateTeamHistory(
         let bestRecord = null;
         let worstRecord = null;
 
-        const teamSeasons = await getCopy.teamSeasons({tid: inputs.tid});
+        const teamSeasons = await idb.getCopies.teamSeasons({tid: inputs.tid});
         const history = [];
         let totalWon = 0;
         let totalLost = 0;
@@ -42,8 +42,8 @@ async function updateTeamHistory(
         }
         history.reverse(); // Show most recent season first
 
-        let players = await getCopy.players({statsTid: inputs.tid});
-        players = await getCopy.playersPlus(players, {
+        let players = await idb.getCopies.players({statsTid: inputs.tid});
+        players = await idb.getCopies.playersPlus(players, {
             attrs: ["pid", "name", "injury", "tid", "hof", "watch"],
             ratings: ["pos"],
             stats: ["season", "abbrev", "gp", "min", "pts", "trb", "ast", "per", "ewa"],

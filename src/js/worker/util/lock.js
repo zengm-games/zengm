@@ -1,7 +1,7 @@
 // @flow
 
 import {g} from '../../common';
-import {getCopy, idb} from '../db';
+import {idb} from '../db';
 
 /**
  * Is a negotiation in progress?
@@ -76,7 +76,7 @@ async function canStartNegotiation(): Promise<boolean> {
  * @return {Promise.boolean}
  */
 async function unreadMessage(): Promise<boolean> {
-    const messages = await getCopy.messages({limit: 10});
+    const messages = await idb.getCopies.messages({limit: 10});
     for (let i = 0; i < messages.length; i++) {
         if (!messages[i].read) {
             return true;

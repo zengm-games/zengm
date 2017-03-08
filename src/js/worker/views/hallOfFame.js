@@ -1,7 +1,7 @@
 // @flow
 
 import {PHASE, g} from '../../common';
-import {getCopy} from '../db';
+import {idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updatePlayers(
@@ -9,15 +9,15 @@ async function updatePlayers(
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') || (updateEvents.includes('newPhase') && g.phase === PHASE.BEFORE_DRAFT)) {
-        let players = await getCopy.players({retired: true});
+        let players = await idb.getCopies.players({retired: true});
         players = players.filter(p => p.hof);
-        players = await getCopy.playersPlus(players, {
+        players = await idb.getCopies.playersPlus(players, {
             attrs: ["pid", "name", "draft", "retiredYear", "statsTids"],
             ratings: ["ovr", "pos"],
             stats: ["season", "abbrev", "tid", "gp", "min", "trb", "ast", "pts", "per", "ewa"],
         });
 
-        // This stuff isn't in getCopy.playersPlus because it's only used here.
+        // This stuff isn't in idb.getCopies.playersPlus because it's only used here.
         for (const p of players) {
             p.peakOvr = 0;
             for (const pr of p.ratings) {

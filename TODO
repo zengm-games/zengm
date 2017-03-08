@@ -15,7 +15,7 @@ browser support
 
 add flow comments to new files!
 - hard for ones that return (T | T[]) depending on inputs. maybe rethink getCopy API
-  - Cache.getCopy and Cache.getCopies?
+  - move non-array responses to getCopy
 
 rethink cache API, with goal of having it typed
 - rename indexes, store prefixed with storename

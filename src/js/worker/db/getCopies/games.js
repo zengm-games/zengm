@@ -2,7 +2,7 @@ import {idb} from '../../db';
 import {mergeByPk} from './helpers';
 import type {Game} from '../../../common/types';
 
-const getCopy = async ({
+const getCopies = async ({
     season,
 }: {
     season?: number,
@@ -24,4 +24,4 @@ const getCopy = async ({
     );
 };
 
-export default getCopy;
+export default getCopies;

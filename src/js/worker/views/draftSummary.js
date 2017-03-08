@@ -1,7 +1,7 @@
 // @flow
 
 import {PLAYER} from '../../common';
-import {getCopy, idb} from '../db';
+import {idb} from '../db';
 import type {GetOutput} from '../../common/types';
 
 async function updateDraftSummary(
@@ -10,7 +10,7 @@ async function updateDraftSummary(
     // Update every time because anything could change this (unless all players from class are retired)
     let playersAll = await idb.cache.players.indexGetAll('playersByTid', [0, Infinity]);
     playersAll = playersAll.filter((p) => p.draft.year === inputs.season);
-    playersAll = await getCopy.playersPlus(playersAll, {
+    playersAll = await idb.getCopies.playersPlus(playersAll, {
         attrs: ["tid", "abbrev", "draft", "pid", "name", "age", "hof"],
         ratings: ["ovr", "pot", "skills", "pos"],
         stats: ["gp", "min", "pts", "trb", "ast", "per", "ewa"],

@@ -1,6 +1,6 @@
 import {PHASE, g, helpers} from '../../common';
 import {trade} from '../core';
-import {getCopy, idb} from '../db';
+import {idb} from '../db';
 
 // This relies on vars being populated, so it can't be called in parallel with updateTrade
 async function updateSummary(vars) {
@@ -53,7 +53,7 @@ async function updateTrade(): void | {[key: string]: any} {
     const ratings = ["ovr", "pot", "skills", "pos"];
     const stats = ["min", "pts", "trb", "ast", "per"];
 
-    userRoster = await getCopy.playersPlus(userRoster, {
+    userRoster = await idb.getCopies.playersPlus(userRoster, {
         attrs,
         ratings,
         stats,
@@ -83,7 +83,7 @@ async function updateTrade(): void | {[key: string]: any} {
     let [otherRoster, otherPicks, t] = await Promise.all([
         idb.cache.players.indexGetAll('playersByTid', otherTid),
         idb.cache.draftPicks.indexGetAll('draftPicksByTid', otherTid),
-        getCopy.teams({
+        idb.getCopies.teams({
             tid: otherTid,
             season: g.season,
             attrs: ["strategy"],
@@ -91,7 +91,7 @@ async function updateTrade(): void | {[key: string]: any} {
         }),
     ]);
 
-    otherRoster = await getCopy.playersPlus(otherRoster, {
+    otherRoster = await idb.getCopies.playersPlus(otherRoster, {
         attrs,
         ratings,
         stats,

@@ -1,9 +1,9 @@
 import assert from 'assert';
-import {Cache, connectMeta, getCopy, idb} from '../../../db';
+import {Cache, connectMeta, idb} from '../../../db';
 import {g} from '../../../common';
 import {league, team} from '../../../core';
 
-describe("db/getCopy", () => {
+describe("db/getCopies", () => {
     describe("#teams()", () => {
         before(async () => {
             idb.meta = await connectMeta();
@@ -26,7 +26,7 @@ describe("db/getCopy", () => {
         after(() => league.remove(g.lid));
 
         it("should return requested info if tid/season match", async () => {
-            const t = await getCopy.teams({
+            const t = await idb.getCopies.teams({
                 attrs: ["tid", "abbrev"],
                 seasonAttrs: ["season", "won", "payroll"],
                 stats: ["gp", "fg", "fgp"],
@@ -52,7 +52,7 @@ describe("db/getCopy", () => {
             });
         });
         it("should return an array if no team ID is specified", async () => {
-            const teams = await getCopy.teams({
+            const teams = await idb.getCopies.teams({
                 attrs: ["tid", "abbrev"],
                 seasonAttrs: ["season", "won"],
                 stats: ["gp", "fg", "fgp"],
@@ -77,7 +77,7 @@ describe("db/getCopy", () => {
             });
         });
         it("should return requested info if tid/season match, even when no attrs requested", async () => {
-            const t = await getCopy.teams({
+            const t = await idb.getCopies.teams({
                 seasonAttrs: ["season", "won"],
                 stats: ["gp", "fg", "fgp"],
                 tid: 4,
@@ -98,7 +98,7 @@ describe("db/getCopy", () => {
             });
         });
         it("should return requested info if tid/season match, even when no seasonAttrs requested", async () => {
-            const t = await getCopy.teams({
+            const t = await idb.getCopies.teams({
                 attrs: ["tid", "abbrev"],
                 stats: ["gp", "fg", "fgp"],
                 tid: 4,
@@ -117,7 +117,7 @@ describe("db/getCopy", () => {
             });
         });
         it("should return requested info if tid/season match, even when no stats requested", async () => {
-            const t = await getCopy.teams({
+            const t = await idb.getCopies.teams({
                 attrs: ["tid", "abbrev"],
                 seasonAttrs: ["season", "won"],
                 tid: 4,
@@ -134,7 +134,7 @@ describe("db/getCopy", () => {
             });
         });
         it("should return season totals if statType is 'totals'", async () => {
-            const t = await getCopy.teams({
+            const t = await idb.getCopies.teams({
                 stats: ["gp", "fg", "fga", "fgp"],
                 tid: 4,
                 season: g.season,
@@ -152,7 +152,7 @@ describe("db/getCopy", () => {
             });
         });
         it("should return playoff stats if playoffs is true", async () => {
-            const t = await getCopy.teams({
+            const t = await idb.getCopies.teams({
                 stats: ["gp", "fg", "fga", "fgp"],
                 tid: 4,
                 season: g.season,
@@ -171,7 +171,7 @@ describe("db/getCopy", () => {
             });
         });
         it("should return stats in an array if no season is specified", async () => {
-            const t = await getCopy.teams({
+            const t = await idb.getCopies.teams({
                 stats: ["gp", "fg", "fga", "fgp"],
                 tid: 4,
                 playoffs: true,
@@ -189,7 +189,7 @@ describe("db/getCopy", () => {
             });
         });
         it("should return stats in an array if regular season and playoffs are specified", async () => {
-            const t = await getCopy.teams({
+            const t = await idb.getCopies.teams({
                 stats: ["gp", "fg", "fga", "fgp"],
                 tid: 4,
                 playoffs: true,

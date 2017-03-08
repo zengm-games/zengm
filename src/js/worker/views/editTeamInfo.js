@@ -1,10 +1,10 @@
 // @flow
 
 import {g} from '../../common';
-import {getCopy} from '../db';
+import {idb} from '../db';
 
 async function updateTeamInfo(): void | {[key: string]: any} {
-    const teams = await getCopy.teams({
+    const teams = await idb.getCopies.teams({
         attrs: ["tid", "abbrev", "region", "name", "imgURL"],
         seasonAttrs: ["pop"],
         season: g.season,

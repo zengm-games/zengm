@@ -2,7 +2,7 @@
 
 import {PHASE, PLAYER, g} from '../../common';
 import {finances, player} from '../core';
-import {getCopy, idb} from '../db';
+import {idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateCustomizePlayer(
@@ -16,7 +16,7 @@ async function updateCustomizePlayer(
     }
 
     if (updateEvents.includes('firstRun')) {
-        const teams = await getCopy.teams({
+        const teams = await idb.getCopies.teams({
             attrs: ["tid", "region", "name"],
         });
 
@@ -75,7 +75,7 @@ async function updateCustomizePlayer(
             p.imgURL = "http://";
         } else {
             // Load a player to edit
-            p = await getCopy.players({pid: inputs.pid});
+            p = await idb.getCopies.players({pid: inputs.pid});
             if (p.imgURL.length > 0) {
                 appearanceOption = 'Image URL';
             } else {

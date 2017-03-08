@@ -2,7 +2,7 @@
 
 import {PHASE, g, helpers} from '../../common';
 import {season} from '../core';
-import {getCopy} from '../db';
+import {idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updatePlayoffs(
@@ -16,7 +16,7 @@ async function updatePlayoffs(
 
         // If in the current season and before playoffs started, display projected matchups
         if (inputs.season === g.season && g.phase < PHASE.PLAYOFFS) {
-            const teams = helpers.orderByWinp(await getCopy.teams({
+            const teams = helpers.orderByWinp(await idb.getCopies.teams({
                 attrs: ["tid", "cid", "abbrev", "name"],
                 seasonAttrs: ["winp", "won"],
                 season: inputs.season,
@@ -34,7 +34,7 @@ async function updatePlayoffs(
 
             finalMatchups = false;
         } else {
-            const playoffSeries = await getCopy.playoffSeries({season: inputs.season});
+            const playoffSeries = await idb.getCopies.playoffSeries({season: inputs.season});
             series = playoffSeries.series;
 
             finalMatchups = true;

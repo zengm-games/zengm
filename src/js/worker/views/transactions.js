@@ -1,5 +1,5 @@
 import {g, helpers} from '../../common';
-import {getCopy, idb} from '../db';
+import {idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateEventLog(
@@ -15,9 +15,9 @@ async function updateEventLog(
 
         if (events.length === 0) {
             if (inputs.season === "all") {
-                events = await getCopy.events();
+                events = await idb.getCopies.events();
             } else {
-                events = await getCopy.events({season: inputs.season});
+                events = await idb.getCopies.events({season: inputs.season});
             }
             events.reverse(); // Newest first
         } else if (inputs.season === g.season) { // Can't update old seasons!

@@ -3,7 +3,7 @@
 import _ from 'underscore';
 import {PLAYER, g, helpers} from '../../common';
 import {league} from '../core';
-import {getCopy, idb} from '../db';
+import {idb} from '../db';
 import {logEvent, random} from '../util';
 import type {OwnerMoodDeltas, ScheduleGame, Team, TeamFiltered} from '../../common/types';
 
@@ -16,7 +16,7 @@ import type {OwnerMoodDeltas, ScheduleGame, Team, TeamFiltered} from '../../comm
  * @return {Promise.Object} Resolves to an object containing the changes in g.ownerMood this season.
  */
 async function updateOwnerMood(): Promise<OwnerMoodDeltas> {
-    const t = await getCopy.teams({
+    const t = await idb.getCopies.teams({
         seasonAttrs: ["won", "playoffRoundsWon", "profit"],
         season: g.season,
         tid: g.userTid,
@@ -83,7 +83,7 @@ async function doAwards() {
     const awardsByPlayer = [];
 
     // Get teams for won/loss record for awards, as well as finding the teams with the best records
-    const teams = helpers.orderByWinp(await getCopy.teams({
+    const teams = helpers.orderByWinp(await idb.getCopies.teams({
         attrs: ["tid", "abbrev", "region", "name", "cid"],
         seasonAttrs: ["won", "lost", "winp", "playoffRoundsWon"],
         season: g.season,
@@ -103,7 +103,7 @@ async function doAwards() {
             region: t.region,
             name: t.name,
 
-            // Flow can't handle complexity of getCopy.teams
+            // Flow can't handle complexity of idb.getCopies.teams
             won: t.seasonAttrs ? t.seasonAttrs.won : 0,
             lost: t.seasonAttrs ? t.seasonAttrs.lost : 0,
         };
@@ -113,7 +113,7 @@ async function doAwards() {
     teams.sort((a, b) => a.tid - b.tid);
 
     let players: any = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
-    players = await getCopy.playersPlus(players, {
+    players = await idb.getCopies.playersPlus(players, {
         attrs: ["pid", "name", "tid", "abbrev", "draft"],
         stats: ["gp", "gs", "min", "pts", "trb", "ast", "blk", "stl", "ewa"],
         season: g.season,
@@ -236,7 +236,7 @@ async function doAwards() {
         const champTid = champTeam.tid;
 
         let champPlayers = await idb.cache.players.indexGetAll('playersByTid', champTid); // Alternatively, could filter players array by tid
-        champPlayers = await getCopy.playersPlus(champPlayers, { // Only the champions, only playoff stats
+        champPlayers = await idb.getCopies.playersPlus(champPlayers, { // Only the champions, only playoff stats
             attrs: ["pid", "name", "tid", "abbrev"],
             stats: ["pts", "trb", "ast", "ewa"],
             season: g.season,

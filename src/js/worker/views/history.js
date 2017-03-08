@@ -1,7 +1,7 @@
 // @flow
 
 import {g} from '../../common';
-import {getCopy} from '../db';
+import {idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateHistory(
@@ -23,8 +23,8 @@ async function updateHistory(
         }
 
         const [awards, teams] = await Promise.all([
-            getCopy.awards({season}),
-            getCopy.teams({
+            idb.getCopy.awards({season}),
+            idb.getCopies.teams({
                 attrs: ["tid", "abbrev", "region", "name"],
                 seasonAttrs: ["playoffRoundsWon"],
                 season,
@@ -32,10 +32,12 @@ async function updateHistory(
         ]);
 
         // Hack placeholder for old seasons before Finals MVP existed
-        if (!awards.hasOwnProperty("finalsMvp")) {
+        if (awards && !awards.hasOwnProperty("finalsMvp")) {
             awards.finalsMvp = {
                 pid: 0,
                 name: "N/A",
+                tid: -1,
+                abbrev: '',
                 pts: 0,
                 trb: 0,
                 ast: 0,
@@ -43,18 +45,20 @@ async function updateHistory(
         }
 
         // Hack placeholder for old seasons before Finals MVP existed
-        if (!awards.hasOwnProperty("allRookie")) {
+        if (awards && !awards.hasOwnProperty("allRookie")) {
+            // $FlowFixMe
             awards.allRookie = [];
         }
 
         // For old league files, this format is obsolete now
-        if (awards.bre && awards.brw) {
+        if (awards && awards.bre && awards.brw) {
+            // $FlowFixMe
             awards.bestRecordConfs = [awards.bre, awards.brw];
         }
 
-        let retiredPlayers = await getCopy.players({retired: true});
+        let retiredPlayers = await idb.getCopies.players({retired: true});
         retiredPlayers = retiredPlayers.filter((p) => p.retiredYear === season);
-        retiredPlayers = await getCopy.playersPlus(retiredPlayers, {
+        retiredPlayers = await idb.getCopies.playersPlus(retiredPlayers, {
             attrs: ["pid", "name", "age", "hof"],
             season,
             stats: ["tid", "abbrev"],

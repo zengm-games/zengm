@@ -1,9 +1,9 @@
 // @flow
 
-import {getCopy} from '../db';
+import {idb} from '../db';
 
 async function updateInbox(): void | {[key: string]: any} {
-    const messages = await getCopy.messages();
+    const messages = await idb.getCopies.messages();
 
     messages.reverse();
 

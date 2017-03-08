@@ -6,7 +6,7 @@ const getLastEntries = <T>(arr: T[], limit: number): T[] => {
     return arr.slice(arr.length - limit);
 };
 
-const getCopy = async ({
+const getCopies = async ({
     limit,
     mid,
 }: {
@@ -48,4 +48,4 @@ const getCopy = async ({
     );
 };
 
-export default getCopy;
+export default getCopies;

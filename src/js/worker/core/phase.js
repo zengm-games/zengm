@@ -3,7 +3,7 @@
 import _ from 'underscore';
 import {PHASE, PHASE_TEXT, PLAYER, g, helpers} from '../../common';
 import {contractNegotiation, draft, finances, freeAgents, league, player, season, team} from '../core';
-import {getCopy, idb} from '../db';
+import {idb} from '../db';
 import {account, env, genMessage, logEvent, random, toUI, updatePhase, updatePlayMenu} from '../util';
 import type {Phase, UpdateEvents} from '../../common/types';
 
@@ -56,7 +56,7 @@ async function newPhasePreseason() {
         // Only actually need 3 seasons for userTid, but get it for all just in case there is a
         // skipped season (alternatively could use cursor to just find most recent season, but this
         // is not performance critical code)
-        const teamSeasons = await getCopy.teamSeasons({tid, seasons: [g.season - 3, g.season - 1]});
+        const teamSeasons = await idb.getCopies.teamSeasons({tid, seasons: [g.season - 3, g.season - 1]});
         const prevSeason = teamSeasons[teamSeasons.length - 1];
 
         // Only need scoutingRank for the user's team to calculate fuzz when ratings are updated below.
@@ -159,7 +159,7 @@ async function newPhasePlayoffs() {
     account.checkAchievement.septuawinarian();
 
     // Set playoff matchups
-    const teams = helpers.orderByWinp(await getCopy.teams({
+    const teams = helpers.orderByWinp(await idb.getCopies.teams({
         attrs: ["tid", "cid"],
         seasonAttrs: ["winp", "won"],
         season: g.season,
@@ -250,7 +250,7 @@ async function newPhaseBeforeDraft() {
 
     await season.doAwards();
 
-    const teams = await getCopy.teams({
+    const teams = await idb.getCopies.teams({
         attrs: ["tid"],
         seasonAttrs: ["playoffRoundsWon"],
         season: g.season,
@@ -277,7 +277,7 @@ async function newPhaseBeforeDraft() {
         let update = false;
 
         // Get player stats, used for HOF calculation
-        const playerStats = await getCopy.playerStats({pid: p.pid});
+        const playerStats = await idb.getCopies.playerStats({pid: p.pid});
 
         const age = g.season - p.born.year;
         const pot = p.ratings[p.ratings.length - 1].pot;
@@ -422,7 +422,7 @@ async function newPhaseResignPlayers() {
 }
 
 async function newPhaseFreeAgency() {
-    const teams = await getCopy.teams({
+    const teams = await idb.getCopies.teams({
         attrs: ["strategy"],
         season: g.season,
     });

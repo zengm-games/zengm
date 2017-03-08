@@ -1,6 +1,6 @@
 import {g, helpers} from '../../common';
 import {trade} from '../core';
-import {getCopy, idb} from '../db';
+import {idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateUserRoster(
@@ -13,7 +13,7 @@ async function updateUserRoster(
             idb.cache.draftPicks.indexGetAll('draftPicksByTid', g.userTid),
         ]);
 
-        userRoster = await getCopy.playersPlus(userRoster, {
+        userRoster = await idb.getCopies.playersPlus(userRoster, {
             attrs: ["pid", "name", "age", "contract", "injury", "watch", "gamesUntilTradable"],
             ratings: ["ovr", "pot", "skills", "pos"],
             stats: ["min", "pts", "trb", "ast", "per"],

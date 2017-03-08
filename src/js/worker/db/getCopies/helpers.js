@@ -18,7 +18,7 @@ const filterOrderStats = <T: PlayerStats | TeamStats>(stats: T[], playoffs: bool
 };
 
 // Merge fromDb and fromCache by primary key. Records in fromCache will overwrite records in fromDb, and then extra records will be appended to end. Return value is cloned.
-const mergeByPk = (fromDb: any[], fromCache: any[], pk: string): any[] => {
+const mergeByPk = <T: {[key: string]: any}>(fromDb: T[], fromCache: T[], pk: string): T[] => {
     const cacheKeys: {[key: string]: number} = {};
     const cacheKeysUsed: {[key: string]: boolean} = {};
     for (let i = 0; i < fromCache.length; i++) {

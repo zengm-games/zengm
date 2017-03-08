@@ -468,7 +468,7 @@ const processPlayer = async (p: Player, options: PlayerOptions, tx: ?BackboardTx
  * @param {string=} options.statType What type of stats to return, 'perGame', 'per36', or 'totals' (default is 'perGame).
  * @return {Object|Array.<Object>} Filtered player object or array of filtered player objects, depending on the first argument.
  */
-const getCopy = async (players: Player | Player[], {
+const getCopies = async (players: Player | Player[], {
     season,
     tid,
     attrs = [],
@@ -519,10 +519,10 @@ const getCopy = async (players: Player | Player[], {
 
     let playersFiltered;
     if (objectStores.length > 0) {
-        //console.log('getCopy.playersPlus with IDB', options);
+        //console.log('idb.getCopies.playersPlus with IDB', options);
         playersFiltered = await idb.league.tx(objectStores, (tx) => processMaybeWithIDB(tx));
     } else {
-        //console.log('getCopy.playersPlus without IDB', options);
+        //console.log('idb.getCopies.playersPlus without IDB', options);
         playersFiltered = await processMaybeWithIDB();
     }
 
@@ -532,4 +532,4 @@ const getCopy = async (players: Player | Player[], {
     return playersFiltered;
 };
 
-export default getCopy;
+export default getCopies;

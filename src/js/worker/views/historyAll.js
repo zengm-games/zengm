@@ -1,7 +1,7 @@
 // @flow
 
 import {g} from '../../common';
-import {getCopy} from '../db';
+import {idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateHistory(
@@ -10,8 +10,8 @@ async function updateHistory(
 ): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun')) {
         const [awards, teams] = await Promise.all([
-            getCopy.awards(),
-            getCopy.teams({
+            idb.getCopies.awards(),
+            idb.getCopies.teams({
                 attrs: ["tid", "abbrev", "region", "name"],
                 seasonAttrs: ["season", "playoffRoundsWon", "won", "lost"],
             }),
@@ -24,6 +24,8 @@ async function updateHistory(
                 mvp: a.mvp,
                 dpoy: a.dpoy,
                 roy: a.roy,
+                runnerUp: undefined,
+                champ: undefined,
             };
         });
 
@@ -51,6 +53,7 @@ async function updateHistory(
                         name: t.name,
                         won: t.seasonAttrs[j].won,
                         lost: t.seasonAttrs[j].lost,
+                        count: 0,
                     };
                 } else if (t.seasonAttrs[j].playoffRoundsWon === g.numPlayoffRounds - 1) {
                     seasons[i].runnerUp = {

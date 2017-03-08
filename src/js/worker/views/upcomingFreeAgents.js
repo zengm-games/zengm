@@ -1,7 +1,7 @@
 import backboard from 'backboard';
 import {g} from '../../common';
 import {player} from '../core';
-import {getCopy, idb} from '../db';
+import {idb} from '../db';
 import type {GetOutput} from '../../common/types';
 
 async function updateUpcomingFreeAgents(
@@ -17,7 +17,7 @@ async function updateUpcomingFreeAgents(
         players[i].contractDesired.exp += inputs.season - g.season;
     }
 
-    players = await getCopy.playersPlus(players, {
+    players = await idb.getCopies.playersPlus(players, {
         attrs: ["pid", "name", "age", "contract", "freeAgentMood", "injury", "watch", "contractDesired"],
         ratings: ["ovr", "pot", "skills", "pos"],
         stats: ["min", "pts", "trb", "ast", "per"],

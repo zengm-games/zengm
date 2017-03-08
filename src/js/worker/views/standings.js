@@ -1,7 +1,7 @@
 // @flow
 
 import {g, helpers} from '../../common';
-import {getCopy} from '../db';
+import {idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateStandings(
@@ -10,7 +10,7 @@ async function updateStandings(
     state: any,
 ): void | {[key: string]: any} {
     if ((inputs.season === g.season && updateEvents.includes('gameSim')) || inputs.season !== state.season) {
-        const teams = helpers.orderByWinp(await getCopy.teams({
+        const teams = helpers.orderByWinp(await idb.getCopies.teams({
             attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
             seasonAttrs: ["won", "lost", "winp", "wonHome", "lostHome", "wonAway", "lostAway", "wonDiv", "lostDiv", "wonConf", "lostConf", "lastTen", "streak"],
             season: inputs.season,

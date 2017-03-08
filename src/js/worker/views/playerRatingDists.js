@@ -1,5 +1,5 @@
 import {PHASE, PLAYER, g} from '../../common';
-import {getCopy, idb} from '../db';
+import {idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updatePlayers(
@@ -13,10 +13,10 @@ async function updatePlayers(
             players = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
         } else {
             // If it's not this season, get all players, because retired players could apply to the selected season
-            players = await getCopy.players({activeAndRetired: true});
+            players = await idb.getCopies.players({activeAndRetired: true});
         }
 
-        players = await getCopy.playersPlus(players, {
+        players = await idb.getCopies.playersPlus(players, {
             ratings: ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"],
             season: inputs.season,
             showNoStats: true,

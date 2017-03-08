@@ -5,7 +5,7 @@ import {idb} from '../../db';
 import {mergeByPk} from './helpers';
 import type {PlayerStats} from '../../../common/types';
 
-const getCopy = async ({pid}: {pid: number}): Promise<PlayerStats[]> => {
+const getCopies = async ({pid}: {pid: number}): Promise<PlayerStats[]> => {
     return mergeByPk(
         await idb.league.playerStats.index("pid, season, tid").getAll(backboard.bound([pid], [pid, ''])),
         await idb.cache.playerStats.indexGetAll('playerStatsAllByPid', pid),
@@ -13,4 +13,4 @@ const getCopy = async ({pid}: {pid: number}): Promise<PlayerStats[]> => {
     );
 };
 
-export default getCopy;
+export default getCopies;

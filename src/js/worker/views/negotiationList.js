@@ -2,7 +2,7 @@
 
 import {PLAYER, g} from '../../common';
 import {player} from '../core';
-import {getCopy, idb} from '../db';
+import {idb} from '../db';
 
 async function updateNegotiationList(): void | {[key: string]: any} {
     let negotiations = await idb.cache.negotiations.getAll();
@@ -13,7 +13,7 @@ async function updateNegotiationList(): void | {[key: string]: any} {
 
     let players = await idb.cache.players.indexGetAll('playersByTid', PLAYER.FREE_AGENT);
     players = players.filter(p => negotiationPids.includes(p.pid));
-    players = await getCopy.playersPlus(players, {
+    players = await idb.getCopies.playersPlus(players, {
         attrs: ["pid", "name", "age", "freeAgentMood", "injury", "watch"],
         ratings: ["ovr", "pot", "skills", "pos"],
         stats: ["min", "pts", "trb", "ast", "per"],

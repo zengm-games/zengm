@@ -6,7 +6,7 @@ import {idb} from '../../db';
 import {mergeByPk} from './helpers';
 import type {TeamSeason} from '../../../common/types';
 
-const getCopy = async ({tid, season, seasons}: {tid?: number, season?: number, seasons?: [number, number]} = {}): Promise<TeamSeason[]> => {
+const getCopies = async ({tid, season, seasons}: {tid?: number, season?: number, seasons?: [number, number]} = {}): Promise<TeamSeason[]> => {
     if (tid === undefined) {
         if (season !== undefined) {
             if (season >= g.season - 2) {
@@ -17,7 +17,7 @@ const getCopy = async ({tid, season, seasons}: {tid?: number, season?: number, s
             return idb.league.teamSeasons.index("season, tid").getAll(backboard.bound([season], [season, '']));
         }
 
-        throw new Error('getCopy.teamSeasons requires season if tid is undefined');
+        throw new Error('idb.getCopies.teamSeasons requires season if tid is undefined');
     }
 
     if (seasons !== undefined) {
@@ -35,4 +35,4 @@ const getCopy = async ({tid, season, seasons}: {tid?: number, season?: number, s
     );
 };
 
-export default getCopy;
+export default getCopies;

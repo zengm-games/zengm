@@ -73,9 +73,10 @@ async function updateCustomizePlayer(
 
             appearanceOption = 'Cartoon Face';
             p.imgURL = "http://";
-        } else {
+        } else if (typeof inputs.pid === 'number') {
             // Load a player to edit
-            p = await idb.getCopies.players({pid: inputs.pid});
+            p = await idb.getCopy.players({pid: inputs.pid});
+            if (!p) { throw new Error('Invalid player ID'); }
             if (p.imgURL.length > 0) {
                 appearanceOption = 'Image URL';
             } else {

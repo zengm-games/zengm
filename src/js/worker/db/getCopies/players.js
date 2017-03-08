@@ -1,3 +1,5 @@
+// @flow
+
 import backboard from 'backboard';
 import {PLAYER, helpers} from '../../../common';
 import {idb} from '../../db';
@@ -16,14 +18,14 @@ const getCopies = async ({
     activeAndRetired?: boolean,
     statsTid?: number,
     tid?: [number, number] | number,
-} = {}): Promise<(Player | Player[])> => {
+} = {}): Promise<Player[]> => {
     if (pid !== undefined) {
         const cachedPlayer = await idb.cache.players.get(pid);
         if (cachedPlayer) {
-            return helpers.deepCopy(cachedPlayer);
+            return [helpers.deepCopy(cachedPlayer)];
         }
 
-        return idb.league.players.get(pid);
+        return [idb.league.players.get(pid)];
     }
 
     if (retired === true) {
@@ -64,13 +66,14 @@ const getCopies = async ({
         );
     }
 
-    if (statsTid !== undefined) {
+    const constStatsTids = statsTid;
+    if (constStatsTids !== undefined) {
         return mergeByPk(
-            await idb.league.players.index('statsTids').getAll(statsTid),
+            await idb.league.players.index('statsTids').getAll(constStatsTids),
             [].concat(
                 await idb.cache.players.indexGetAll('playersByTid', PLAYER.RETIRED),
                 await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]),
-            ).filter((p) => p.statsTids.includes(statsTid)),
+            ).filter((p) => p.statsTids.includes(constStatsTids)),
             idb.cache.storeInfos.players.pk,
         );
     }

@@ -93,7 +93,7 @@ function filterUntradable(players: {
  * @param {Object} p Player object or partial player object
  * @return {boolean} Processed input
  */
-function isUntradable(p): boolean {
+function isUntradable(p: any): boolean {
     return filterUntradable([p])[0].untradable;
 }
 

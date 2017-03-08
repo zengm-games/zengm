@@ -20,7 +20,7 @@ const getCopies = async ({
         if (!message) {
             message = await idb.league.messages.get(mid);
         }
-        return message;
+        return [message];
     }
 
     const constLimit = limit; // For flow

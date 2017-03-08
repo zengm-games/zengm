@@ -2,6 +2,8 @@ IVERSON
 
 clicking Play > To Regular Season quickly results in 'Invalid cache status "filling"'
 
+throw error in worker view should be displayed on generic error page (try player with invalid pid)
+
 browser support
 - firefox
   - use lie, but only conditionally (so native on chrome) - feature detection!

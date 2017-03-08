@@ -13,11 +13,11 @@
   },
   "scripts": {
     "start": "node tools/server.js",
-    "build": "node tools/build.js && npm run build-js && npm run minify-js",
+    "build": "NODE_ENV=production node tools/build.js && npm run build-js",
     "start-watch": "concurrently --kill-others 'npm run start' 'npm run watch-css' 'npm run watch-js'",
     "watch": "concurrently --kill-others 'npm run watch-css' 'npm run watch-js'",
     "watch-css": "node tools/watch-css.js",
-    "build-js": "node tools/build-js.js",
+    "build-js": "NODE_ENV=production node tools/build-js.js",
     "minify-js": "node tools/minify-js.js",
     "watch-js": "concurrently --raw 'npm run watch-js-ui' 'npm run watch-js-worker'",
     "watch-js-ui": "watchify -d src/js/ui/index.js -o build/gen/ui.js -v",

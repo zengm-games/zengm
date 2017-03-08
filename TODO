@@ -1,7 +1,5 @@
 IVERSON - BEFORE BETA
 
-minify is broken
-
 clicking Play > To Regular Season quickly results in 'Invalid cache status "filling"'
 
 browser support
@@ -60,6 +58,9 @@ reassess delete old data - still needed? should be renamed if no performance imp
 why ads not working on .dev?
 
 IVERSON - BEFORE FINAL
+
+minify is broken
+- disable mangle and compress, still broken. maybe just fuck it, who cares
 
 Email users after bbgm update. But first allow opt out on register
 

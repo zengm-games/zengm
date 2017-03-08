@@ -22,8 +22,6 @@ rethink cache API, with goal of having it typed
 - rename indexes, store prefixed with storename
 - get rid of new any types in types.js
 
-don't need to pass updatePage cb, can call after try/catch in get
-
 error page (like invalid pid) should show league UI if in league
 
 shared worker

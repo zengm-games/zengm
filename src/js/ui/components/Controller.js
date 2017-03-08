@@ -148,8 +148,6 @@ class Controller extends React.Component {
     }
 
     async get(args: Args, ctx: PageCtx) {
-        const cb = ctx.bbgm.cb !== undefined ? ctx.bbgm.cb : () => {};
-
         try {
             const updateEvents = (ctx !== undefined && ctx.bbgm.updateEvents !== undefined) ? ctx.bbgm.updateEvents : [];
             const newLid = parseInt(ctx.params.lid, 10);
@@ -163,13 +161,15 @@ class Controller extends React.Component {
 
             if (typeof inputs.redirectUrl === 'string') {
                 await realtimeUpdate([], inputs.redirectUrl);
-                cb();
             } else {
-                await this.updatePage(args, inputs, updateEvents, cb);
+                await this.updatePage(args, inputs, updateEvents);
             }
         } catch (err) {
             ctx.bbgm.err = err;
-            cb();
+        }
+
+        if (ctx !== undefined && ctx.bbgm !== undefined && ctx.bbgm.cb !== undefined) {
+            ctx.bbgm.cb();
         }
     }
 
@@ -209,7 +209,7 @@ class Controller extends React.Component {
         }
     }
 
-    async updatePage(args: Args, inputs: GetOutput, updateEvents: UpdateEvents, cb: () => void) {
+    async updatePage(args: Args, inputs: GetOutput, updateEvents: UpdateEvents) {
         let prevData;
 
         // Reset league content and view model only if it's:
@@ -224,7 +224,6 @@ class Controller extends React.Component {
             prevData = {};
         } else if (this.state.idLoading === args.id) {
             // If this view is already loading, no need to update (in fact, updating can cause errors because the firstRun updateEvent is not set and thus some first-run-defined view model properties might be accessed).
-            cb();
             return;
         } else {
             prevData = this.state.data;
@@ -262,7 +261,6 @@ class Controller extends React.Component {
             });
 
             await realtimeUpdate([], vars.data.redirectUrl);
-            cb();
             return;
         }
 
@@ -281,8 +279,6 @@ class Controller extends React.Component {
                 }
             });
         }
-
-        cb();
     }
 
     updateMultiTeam() {

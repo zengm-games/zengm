@@ -14,6 +14,7 @@ import type {
     Game,
     GameAttribute,
     Message,
+    MessageWithoutMid,
     Negotiation,
     Player,
     PlayerFeat,
@@ -120,7 +121,7 @@ class Cache {
     events: StoreAPI<EventBBGM, EventBBGM, number>;
     gameAttributes: StoreAPI<GameAttribute, GameAttribute, string>;
     games: StoreAPI<Game, Game, number>;
-    messages: StoreAPI<Message, Message, number>;
+    messages: StoreAPI<(Message | MessageWithoutMid), Message, number>;
     negotiations: StoreAPI<Negotiation, Negotiation, number>;
     playerFeats: StoreAPI<PlayerFeat, PlayerFeat, number>;
     playerStats: StoreAPI<PlayerStats, PlayerStats, number>;

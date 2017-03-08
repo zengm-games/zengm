@@ -279,14 +279,14 @@ export type LogEventShowOptions = {
     type: string,
 };
 
-export type Message = {
+export type MessageWithoutMid = {
     from: string,
     read: boolean,
     text: string,
     year: number,
 };
 
-export type MessageWithMid = Message & {mid: number};
+export type Message = MessageWithoutMid & {mid: number};
 
 export type Negotiation = {
     pid: number,

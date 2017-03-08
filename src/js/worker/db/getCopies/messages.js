@@ -1,6 +1,6 @@
 import {idb} from '../../db';
 import {mergeByPk} from './helpers';
-import type {Message, MessageWithMid} from '../../../common/types';
+import type {Message} from '../../../common/types';
 
 const getLastEntries = <T>(arr: T[], limit: number): T[] => {
     return arr.slice(arr.length - limit);
@@ -12,7 +12,7 @@ const getCopies = async ({
 }: {
     limit?: number,
     mid?: number,
-} = {}): Promise<(Message | MessageWithMid | (Message | MessageWithMid)[])> => {
+} = {}): Promise<(Message | Message[])> => {
     if (mid !== undefined) {
         let message = await idb.cache.messages.get(mid);
         if (!message) {

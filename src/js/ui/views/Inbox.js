@@ -5,9 +5,9 @@ import React from 'react';
 import {helpers} from '../../common';
 import {NewWindowLink} from '../components';
 import {setTitle} from '../util';
-import type {MessageWithMid} from '../../common/types';
+import type {Message} from '../../common/types';
 
-const Inbox = ({anyUnread, messages}: {anyUnread: boolean, messages: MessageWithMid[]}) => {
+const Inbox = ({anyUnread, messages}: {anyUnread: boolean, messages: Message[]}) => {
     setTitle('Inbox');
 
     return <div>

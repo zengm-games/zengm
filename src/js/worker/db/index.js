@@ -23,7 +23,6 @@ Backboard.on('blocked', () => {
     });
 });
 
-
 const idb: {
     cache: Cache,
     getCopies: typeof getCopies,

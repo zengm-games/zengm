@@ -3,8 +3,9 @@
     extends: "airbnb",
     env: {
         browser: true,
-        node: true,
-        mocha: true,
+        mocha: false,
+        node: false,
+        worker: false,
     },
     rules: {
         "array-callback-return": "off", // False positives w/ async functions
@@ -49,11 +50,11 @@
         "react/sort-comp": "off", // Flow type definition of props in a React class confuses it
         "spaced-comment": "off",
     },
-    "globals": {
+    globals: {
         "$Diff": false,
         "Class": false,
         "SyntheticEvent": false,
         "SyntheticKeyboardEvent": false,
-        "SyntheticInputEvent": false
-    }
+        "SyntheticInputEvent": false,
+    },
 }

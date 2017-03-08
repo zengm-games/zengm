@@ -1,3 +1,5 @@
+/* eslint-env node */
+
 module.exports = function (config) {
     config.set({
         basePath: '',

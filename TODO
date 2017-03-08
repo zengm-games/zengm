@@ -1,5 +1,7 @@
 IVERSON - BEFORE BETA
 
+minify is broken
+
 clicking Play > To Regular Season quickly results in 'Invalid cache status "filling"'
 
 browser support
@@ -27,8 +29,9 @@ db sync issues
   - goal: get rid of markDirtyIndexes calls in application code
 - Last update time could be computed in flush if necessary
 
-write lint script to check for ui/worker cross-contamination. also document/location/window/localStorage/react in worker. also any of that stuff in common.
-- basically i have a blacklist of global variables and modules that I want to ensure are not used in a file or set of files. best approach?
+write lint script to check for ui/worker cross-contamination
+- variables are already handled, but need to check for import contamination. post-build script is only true way, operating on compiled js
+  - or https://github.com/jharting/banify
 
 uncomment things using localstorage in worker, after moving to either env+api or idb (meta)
 

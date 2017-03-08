@@ -9,4 +9,4 @@ export {default as playerStats} from './playerStats';
 export {default as players} from './players';
 export {default as playersPlus} from './playersPlus';
 export {default as teamSeasons} from './teamSeasons';
-export {default as teams} from './teams';
+export {default as teamsPlus} from './teamsPlus';

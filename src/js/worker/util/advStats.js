@@ -16,7 +16,7 @@ import {idb} from '../db';
  */
 async function calculatePER() {
     // Total team stats (not per game averages) - gp, pts, ast, fg, plus all the others needed for league totals
-    const teams = await idb.getCopies.teams({
+    const teams = await idb.getCopies.teamsPlus({
         attrs: ["tid"],
         stats: ["gp", "ft", "pf", "ast", "fg", "pts", "fga", "orb", "tov", "fta", "trb", "oppPts"],
         season: g.season,

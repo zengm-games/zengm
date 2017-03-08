@@ -235,7 +235,7 @@ function lotterySort(teams: TeamFiltered[]) {
  * @return {Promise}
  */
 async function genOrder() {
-    const teams = await idb.getCopies.teams({
+    const teams = await idb.getCopies.teamsPlus({
         attrs: ["tid", "cid"],
         seasonAttrs: ["winp", "playoffRoundsWon"],
         season: g.season,

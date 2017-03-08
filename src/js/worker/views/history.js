@@ -24,7 +24,7 @@ async function updateHistory(
 
         const [awards, teams] = await Promise.all([
             idb.getCopy.awards({season}),
-            idb.getCopies.teams({
+            idb.getCopies.teamsPlus({
                 attrs: ["tid", "abbrev", "region", "name"],
                 seasonAttrs: ["playoffRoundsWon"],
                 season,

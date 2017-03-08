@@ -83,7 +83,7 @@ async function updateTrade(): void | {[key: string]: any} {
     let [otherRoster, otherPicks, t] = await Promise.all([
         idb.cache.players.indexGetAll('playersByTid', otherTid),
         idb.cache.draftPicks.indexGetAll('draftPicksByTid', otherTid),
-        idb.getCopies.teams({
+        idb.getCopy.teamsPlus({
             tid: otherTid,
             season: g.season,
             attrs: ["strategy"],

@@ -133,7 +133,7 @@ describe("core/draft", () => {
 
     describe("#updateChances()", () => {
         it("should distribute combinations to teams with the same record", async () => {
-            const teams = await idb.getCopies.teams({
+            const teams = await idb.getCopies.teamsPlus({
                 attrs: ["tid", "cid"],
                 seasonAttrs: ["winp", "playoffRoundsWon"],
                 season: g.season,

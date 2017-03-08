@@ -16,7 +16,7 @@ async function updateCustomizePlayer(
     }
 
     if (updateEvents.includes('firstRun')) {
-        const teams = await idb.getCopies.teams({
+        const teams = await idb.getCopies.teamsPlus({
             attrs: ["tid", "region", "name"],
         });
 

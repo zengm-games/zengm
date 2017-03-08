@@ -249,7 +249,7 @@ checkAchievement.septuawinarian = async (saveAchievement: boolean = true) => {
         return false;
     }
 
-    const t = await idb.getCopies.teams({
+    const t = await idb.getCopy.teamsPlus({
         seasonAttrs: ["won"],
         season: g.season,
         tid: g.userTid,
@@ -272,7 +272,7 @@ checkAchievement["98_degrees"] = async (saveAchievement: boolean = true) => {
 
     const awarded = await checkAchievement.fo_fo_fo(false);
     if (awarded) {
-        const t = await idb.getCopies.teams({
+        const t = await idb.getCopy.teamsPlus({
             seasonAttrs: ["won", "lost"],
             season: g.season,
             tid: g.userTid,
@@ -330,7 +330,7 @@ async function checkMoneyball(maxPayroll, slug, saveAchievement) {
         return false;
     }
 
-    const t = await idb.getCopies.teams({
+    const t = await idb.getCopy.teamsPlus({
         seasonAttrs: ["expenses", "playoffRoundsWon"],
         season: g.season,
         tid: g.userTid,
@@ -372,7 +372,7 @@ checkAchievement.small_market = async (saveAchievement: boolean = true) => {
         return false;
     }
 
-    const t = await idb.getCopies.teams({
+    const t = await idb.getCopy.teamsPlus({
         seasonAttrs: ["playoffRoundsWon", "pop"],
         season: g.season,
         tid: g.userTid,

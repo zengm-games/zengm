@@ -2,15 +2,15 @@
 
 import {g, helpers} from '../../common';
 import {idb} from '../db';
-import type {GetOutput, UpdateEvents} from '../../common/types';
+import type {UpdateEvents} from '../../common/types';
 
 async function updateStandings(
-    inputs: GetOutput,
+    inputs: {season: number},
     updateEvents: UpdateEvents,
     state: any,
 ): void | {[key: string]: any} {
     if ((inputs.season === g.season && updateEvents.includes('gameSim')) || inputs.season !== state.season) {
-        const teams = helpers.orderByWinp(await idb.getCopies.teams({
+        const teams = helpers.orderByWinp(await idb.getCopies.teamsPlus({
             attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
             seasonAttrs: ["won", "lost", "winp", "wonHome", "lostHome", "wonAway", "lostAway", "wonDiv", "lostDiv", "wonConf", "lostConf", "lastTen", "streak"],
             season: inputs.season,

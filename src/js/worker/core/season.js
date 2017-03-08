@@ -16,11 +16,12 @@ import type {OwnerMoodDeltas, ScheduleGame, Team, TeamFiltered} from '../../comm
  * @return {Promise.Object} Resolves to an object containing the changes in g.ownerMood this season.
  */
 async function updateOwnerMood(): Promise<OwnerMoodDeltas> {
-    const t = await idb.getCopies.teams({
+    const t = await idb.getCopy.teamsPlus({
         seasonAttrs: ["won", "playoffRoundsWon", "profit"],
         season: g.season,
         tid: g.userTid,
     });
+    if (!t) { throw new Error('Invalid g.userTid'); }
 
     const deltas = {};
     deltas.wins = 0.25 * (t.seasonAttrs.won - g.numGames / 2) / (g.numGames / 2);
@@ -83,7 +84,7 @@ async function doAwards() {
     const awardsByPlayer = [];
 
     // Get teams for won/loss record for awards, as well as finding the teams with the best records
-    const teams = helpers.orderByWinp(await idb.getCopies.teams({
+    const teams = helpers.orderByWinp(await idb.getCopies.teamsPlus({
         attrs: ["tid", "abbrev", "region", "name", "cid"],
         seasonAttrs: ["won", "lost", "winp", "playoffRoundsWon"],
         season: g.season,

@@ -1,15 +1,12 @@
+// @flow
+
 import backboard from 'backboard';
 import _ from 'underscore';
 import {g, helpers} from '../../../common';
 import {filterOrderStats, mergeByPk} from './helpers';
 import {team} from '../../core';
 import {idb} from '../../db';
-import type {BackboardTx, Team, TeamFiltered} from '../../../common/types';
-
-type TeamAttr = string;
-type TeamSeasonAttr = string;
-type TeamStatAttr = string;
-type StatType = 'perGame' | 'totals';
+import type {BackboardTx, Team, TeamAttr, TeamFiltered, TeamSeasonAttr, TeamStatAttr, TeamStatType} from '../../../common/types';
 
 type TeamOptions = {
     season?: number,
@@ -18,7 +15,7 @@ type TeamOptions = {
     stats: TeamStatAttr[],
     playoffs: boolean,
     regularSeason: boolean,
-    statType: StatType,
+    statType: TeamStatType,
 };
 
 const processAttrs = (output: TeamFiltered, t: Team, attrs: TeamAttr[]) => {
@@ -26,7 +23,7 @@ const processAttrs = (output: TeamFiltered, t: Team, attrs: TeamAttr[]) => {
         if (attr === 'budget') {
             output.budget = helpers.deepCopy(t.budget);
             for (const [key, value] of Object.entries(output.budget)) {
-                if (key !== 'ticketPrice') { // ticketPrice is the only thing in dollars always
+                if (key !== 'ticketPrice' && value && typeof value.amount === 'number') { // ticketPrice is the only thing in dollars always
                     value.amount /= 1000;
                 }
             }
@@ -36,9 +33,10 @@ const processAttrs = (output: TeamFiltered, t: Team, attrs: TeamAttr[]) => {
     }
 };
 
-const processSeasonAttrs = async (output: TeamFiltered, t: Team, seasonAttrs: TeamSeasonAttr[], season: ?number, tx: ?BackboardTx) => {
+const processSeasonAttrs = async (output: TeamFiltered, t: Team, seasonAttrs: TeamSeasonAttr[], season: number | void, tx: BackboardTx | void) => {
     let seasons;
     if (season === undefined) {
+        if (!tx) { throw new Error('No transaction'); }
         // All seasons
         seasons = mergeByPk(
             await tx.teamSeasons.index('tid, season').getAll(backboard.bound([t.tid], [t.tid, ''])),
@@ -49,6 +47,7 @@ const processSeasonAttrs = async (output: TeamFiltered, t: Team, seasonAttrs: Te
         // Single season, from cache
         seasons = await idb.cache.teamSeasons.indexGetAll('teamSeasonsBySeasonTid', `${season},${t.tid}`);
     } else {
+        if (!tx) { throw new Error('No transaction'); }
         // Single season, from database
         seasons = await tx.teamSeasons.index('season, tid').getAll([season, t.tid]);
     }
@@ -117,9 +116,9 @@ const processStats = async (
     stats: TeamStatAttr[],
     playoffs: boolean,
     regularSeason: boolean,
-    statType: StatType,
-    season: ?number,
-    tx: ?BackboardTx,
+    statType: TeamStatType,
+    season?: number,
+    tx?: BackboardTx,
 ) => {
     let teamStats;
 
@@ -137,6 +136,7 @@ const processStats = async (
     };
 
     if (season === undefined) {
+        if (!tx) { throw new Error('No transaction'); }
         // All seasons
         teamStats = mergeByPk(
             await tx.teamStats.index('tid').getAll(t.tid),
@@ -146,6 +146,7 @@ const processStats = async (
     } else if (season === g.season) {
         teamStats = await teamStatsFromCache();
     } else {
+        if (!tx) { throw new Error('No transaction'); }
         // Single season, from database
         teamStats = await tx.teamStats.index('season, tid').getAll([season, t.tid]);
     }
@@ -243,7 +244,7 @@ const processTeam = async (t: Team, {
     playoffs,
     regularSeason,
     statType,
-}: TeamOptions, tx: ?BackboardTx) => {
+}: TeamOptions, tx: BackboardTx | void) => {
     const output = {};
 
     if (attrs.length > 0) {
@@ -292,7 +293,16 @@ const getCopies = async ({
     playoffs = false,
     regularSeason = true,
     statType = 'perGame',
-}: TeamOptions & {tid?: number} = {}): Promise<TeamFiltered | TeamFiltered[]> => {
+}: {
+    tid?: number,
+    season?: number,
+    attrs?: TeamAttr[],
+    seasonAttrs?: TeamSeasonAttr[],
+    stats?: TeamStatAttr[],
+    playoffs?: boolean,
+    regularSeason?: boolean,
+    statType?: TeamStatType,
+} = {}): Promise<TeamFiltered[]> => {
     const options = {
         season,
         attrs,
@@ -312,14 +322,14 @@ const getCopies = async ({
         objectStores.push('teamStats');
     }
 
-    const processMaybeWithIDB = async (tx: ?BackboardTx) => {
+    const processMaybeWithIDB = async (tx: BackboardTx | void) => {
         if (tid === undefined) {
             const teams = await idb.cache.teams.getAll();
             return Promise.all(teams.map((t) => processTeam(t, options, tx)));
         }
 
         const t = await idb.cache.teams.get(tid);
-        return processTeam(t, options, tx);
+        return [processTeam(t, options, tx)];
     };
 
     if (objectStores.length > 0) {

@@ -4,7 +4,7 @@ import {g} from '../../common';
 import {idb} from '../db';
 
 async function updateTeamInfo(): void | {[key: string]: any} {
-    const teams = await idb.getCopies.teams({
+    const teams = await idb.getCopies.teamsPlus({
         attrs: ["tid", "abbrev", "region", "name", "imgURL"],
         seasonAttrs: ["pop"],
         season: g.season,

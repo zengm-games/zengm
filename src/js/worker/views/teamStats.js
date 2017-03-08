@@ -2,15 +2,15 @@
 
 import {g} from '../../common';
 import {idb} from '../db';
-import type {GetOutput, UpdateEvents} from '../../common/types';
+import type {UpdateEvents} from '../../common/types';
 
 async function updateTeams(
-    inputs: GetOutput,
+    inputs: {season: number},
     updateEvents: UpdateEvents,
     state: any,
 ): void | {[key: string]: any} {
     if ((inputs.season === g.season && (updateEvents.includes('gameSim') || updateEvents.includes('playerMovement'))) || inputs.season !== state.season) {
-        const teams = await idb.getCopies.teams({
+        const teams = await idb.getCopies.teamsPlus({
             attrs: ["tid", "abbrev"],
             seasonAttrs: ["won", "lost"],
             stats: ["gp", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "ba", "pf", "pts", "oppPts", "diff"],

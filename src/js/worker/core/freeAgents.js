@@ -17,7 +17,7 @@ import {lock, logEvent, random, updatePlayMenu, updateStatus, toUI} from '../uti
  */
 async function autoSign() {
     const [teams, players] = await Promise.all([
-        idb.getCopies.teams({
+        idb.getCopies.teamsPlus({
             attrs: ["strategy"],
             season: g.season,
         }),

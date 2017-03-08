@@ -534,6 +534,15 @@ export type TeamBasic = {
     imgURL?: string,
 };
 
+
+export type TeamAttr = string;
+
+export type TeamSeasonAttr = string;
+
+export type TeamStatAttr = string;
+
+export type TeamStatType = 'perGame' | 'totals';
+
 export type TeamFiltered = any;
 
 type BudgetItem = {

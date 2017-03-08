@@ -146,7 +146,7 @@ async function updateTeamRecords(
 ): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') || inputs.byType !== state.byType) {
         const [teams, awards] = await Promise.all([
-            idb.getCopies.teams({
+            idb.getCopies.teamsPlus({
                 attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
                 seasonAttrs: ["season", "playoffRoundsWon", "won", "lost"],
             }),

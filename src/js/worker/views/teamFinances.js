@@ -112,7 +112,7 @@ async function updateTeamFinances(
         vars.barData = barData;
         vars.barSeasons = barSeasons;
         // Get stuff for the finances form
-        vars.t = await idb.getCopies.teams({
+        vars.t = await idb.getCopy.teamsPlus({
             attrs: ["region", "name", "abbrev", "budget"],
             seasonAttrs: ["expenses"],
             season: g.season,

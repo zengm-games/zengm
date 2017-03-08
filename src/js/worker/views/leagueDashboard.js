@@ -68,7 +68,7 @@ async function updateTeams(
         const vars = {};
         const stats = ["pts", "oppPts", "trb", "ast"];  // This is also used later to find ranks for these team stats
 
-        const teams = helpers.orderByWinp(await idb.getCopies.teams({
+        const teams = helpers.orderByWinp(await idb.getCopies.teamsPlus({
             attrs: ["tid", "cid"],
             seasonAttrs: ["won", "winp", "att", "revenue", "profit"],
             stats,
@@ -294,7 +294,7 @@ async function updateStandings(
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') || updateEvents.includes('gameSim')) {
-        const teams = helpers.orderByWinp(await idb.getCopies.teams({
+        const teams = helpers.orderByWinp(await idb.getCopies.teamsPlus({
             attrs: ["tid", "cid", "abbrev", "region"],
             seasonAttrs: ["won", "lost", "winp"],
             season: g.season,

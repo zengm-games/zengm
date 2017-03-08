@@ -13,7 +13,7 @@ async function updateUpcoming(
         // Get schedule and all teams.
         const [schedule, teams] = await Promise.all([
             season.getSchedule(),
-            idb.getCopies.teams({
+            idb.getCopies.teamsPlus({
                 attrs: ['abbrev', 'name', 'region'],
                 seasonAttrs: ['won', 'lost'],
                 season: g.season,

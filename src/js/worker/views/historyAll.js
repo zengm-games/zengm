@@ -11,7 +11,7 @@ async function updateHistory(
     if (updateEvents.includes('firstRun')) {
         const [awards, teams] = await Promise.all([
             idb.getCopies.awards(),
-            idb.getCopies.teams({
+            idb.getCopies.teamsPlus({
                 attrs: ["tid", "abbrev", "region", "name"],
                 seasonAttrs: ["season", "playoffRoundsWon", "won", "lost"],
             }),

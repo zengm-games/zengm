@@ -159,7 +159,7 @@ async function newPhasePlayoffs() {
     account.checkAchievement.septuawinarian();
 
     // Set playoff matchups
-    const teams = helpers.orderByWinp(await idb.getCopies.teams({
+    const teams = helpers.orderByWinp(await idb.getCopies.teamsPlus({
         attrs: ["tid", "cid"],
         seasonAttrs: ["winp", "won"],
         season: g.season,
@@ -250,7 +250,7 @@ async function newPhaseBeforeDraft() {
 
     await season.doAwards();
 
-    const teams = await idb.getCopies.teams({
+    const teams = await idb.getCopies.teamsPlus({
         attrs: ["tid"],
         seasonAttrs: ["playoffRoundsWon"],
         season: g.season,
@@ -422,7 +422,7 @@ async function newPhaseResignPlayers() {
 }
 
 async function newPhaseFreeAgency() {
-    const teams = await idb.getCopies.teams({
+    const teams = await idb.getCopies.teamsPlus({
         attrs: ["strategy"],
         season: g.season,
     });

@@ -10,7 +10,7 @@ async function updatePowerRankings(
 ): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') || updateEvents.includes('gameSim')) {
         const [teams, players] = await Promise.all([
-            idb.getCopies.teams({
+            idb.getCopies.teamsPlus({
                 attrs: ["tid", "abbrev", "region", "name"],
                 seasonAttrs: ["won", "lost", "lastTen"],
                 stats: ["gp", "diff"],

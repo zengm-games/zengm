@@ -17,7 +17,7 @@ async function updateRoster(
             showTradeFor: inputs.season === g.season && inputs.tid !== g.userTid,
         };
 
-        vars.t = await idb.getCopies.teams({
+        vars.t = await idb.getCopy.teamsPlus({
             season: inputs.season,
             tid: inputs.tid,
             attrs: ["tid", "region", "name", "strategy", "imgURL"],

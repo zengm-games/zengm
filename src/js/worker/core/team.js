@@ -397,13 +397,14 @@ async function valueChange(
     let remove = [];
 
     // Get team strategy and population, for future use
-    const t = await idb.getCopies.teams({
+    const t = await idb.getCopy.teamsPlus({
         attrs: ["strategy"],
         seasonAttrs: ["pop"],
         stats: ["gp"],
         season: g.season,
         tid,
     });
+    if (!t) { throw new Error('Invalid team ID'); }
 
     const strategy = t.strategy;
     let pop = t.seasonAttrs.pop;

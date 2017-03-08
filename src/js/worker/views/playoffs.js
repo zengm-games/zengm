@@ -16,7 +16,7 @@ async function updatePlayoffs(
 
         // If in the current season and before playoffs started, display projected matchups
         if (inputs.season === g.season && g.phase < PHASE.PLAYOFFS) {
-            const teams = helpers.orderByWinp(await idb.getCopies.teams({
+            const teams = helpers.orderByWinp(await idb.getCopies.teamsPlus({
                 attrs: ["tid", "cid", "abbrev", "name"],
                 seasonAttrs: ["winp", "won"],
                 season: inputs.season,

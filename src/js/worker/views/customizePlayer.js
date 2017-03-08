@@ -53,7 +53,7 @@ async function updateCustomizePlayer(
 
         if (inputs.pid === null) {
             // Generate new player as basis
-            const teamSeasons = await idb.cache.indexGetAll('teamSeasonsByTidSeason', [`${g.userTid},${g.season - 2}`, `${g.userTid},${g.season}`]);
+            const teamSeasons = await idb.cache.teamSeasons.indexGetAll('teamSeasonsByTidSeason', [`${g.userTid},${g.season - 2}`, `${g.userTid},${g.season}`]);
             const scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
 
             p = player.generate(

@@ -1,6 +1,6 @@
 // @flow
 
-import {g} from '../../common';
+import {g, helpers} from '../../common';
 import {team} from '../core';
 import {idb} from '../db';
 import type {TeamSeason} from '../../common/types';
@@ -17,7 +17,7 @@ async function assessPayrollMinLuxury() {
 
     const payrolls = await team.getPayrolls();
 
-    const teamSeasons = await idb.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
+    const teamSeasons = await idb.cache.teamSeasons.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
     for (const teamSeason of teamSeasons) {
         // Store payroll
         teamSeason.payrollEndOfSeason = payrolls[teamSeason.tid];
@@ -74,10 +74,10 @@ type BudgetTypes = 'budget' | 'expenses' | 'revenues';
 async function updateRanks(types: BudgetTypes[]) {
     const sortFn = (a, b) => b.amount - a.amount;
 
-    const getByItem = byTeam => {
+    const getByItem = (byTeam) => {
         const byItem = {};
         for (const item of Object.keys(byTeam[0])) {
-            byItem[item] = byTeam.map(x => x[item]);
+            byItem[item] = byTeam.map((x: any) => x[item]);
             byItem[item].sort(sortFn);
         }
         return byItem;
@@ -89,7 +89,7 @@ async function updateRanks(types: BudgetTypes[]) {
             return;
         }
 
-        for (const item of Object.keys(obj)) {
+        for (const item of helpers.keys(obj)) {
             for (let i = 0; i < byItem[item].length; i++) {
                 if (byItem[item][i].amount === obj[item].amount) {
                     obj[item].rank = i + 1;
@@ -101,7 +101,7 @@ async function updateRanks(types: BudgetTypes[]) {
 
     let teamSeasonsPromise;
     if (types.includes('expenses') || types.includes('revenues')) {
-        teamSeasonsPromise = idb.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
+        teamSeasonsPromise = idb.cache.teamSeasons.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
     } else {
         teamSeasonsPromise = Promise.resolve();
     }

@@ -31,6 +31,10 @@ function genSeasonRow(tid: number, prevSeason?: TeamSeason): TeamSeason {
         hype: Math.random(),
         pop: 0,  // Needs to be set somewhere!
         revenues: {
+            luxuryTaxShare: {
+                amount: 0,
+                rank: 15.5,
+            },
             merch: {
                 amount: 0,
                 rank: 15.5,
@@ -309,7 +313,7 @@ async function getContracts(tid: number): Promise<ContractInfo[]> {
     });
 
     // Then, get any released players still owed money
-    const releasedPlayers = await idb.cache.indexGetAll('releasedPlayersByTid', tid);
+    const releasedPlayers = await idb.cache.releasedPlayers.indexGetAll('releasedPlayersByTid', tid);
 
     for (const releasedPlayer of releasedPlayers) {
         const p = await idb.cache.players.get(releasedPlayer.pid);
@@ -457,7 +461,7 @@ async function valueChange(
         // For each draft pick, estimate its value based on the recent performance of the team
         if (dpidsAdd.length > 0 || dpidsRemove.length > 0) {
             // Estimate the order of the picks by team
-            const allTeamSeasons = await idb.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
+            const allTeamSeasons = await idb.cache.teamSeasons.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
 
             // This part needs to be run every time so that gpAvg is available
             const wps = []; // Contains estimated winning percentages for all teams by the end of the season

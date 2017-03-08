@@ -73,7 +73,7 @@ async function newPhasePreseason() {
         throw new Error('scoutingRank should be defined');
     }
 
-    const teamSeasons = await idb.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season - 1}`, `${g.season}`]);
+    const teamSeasons = await idb.cache.teamSeasons.indexGetAll('teamSeasonsBySeasonTid', [`${g.season - 1}`, `${g.season}`]);
     const coachingRanks = teamSeasons.map(teamSeason => teamSeason.expenses.coaching.rank);
 
     // Loop through all non-retired players
@@ -189,7 +189,7 @@ async function newPhasePlayoffs() {
     });
 
     // Add row to team stats and team season attributes
-    const teamSeasons = await idb.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
+    const teamSeasons = await idb.cache.teamSeasons.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
     for (const teamSeason of teamSeasons) {
         if (tidPlayoffs.includes(teamSeason.tid)) {
             await idb.cache.add('teamStats', team.genStatsRow(teamSeason.tid, true));

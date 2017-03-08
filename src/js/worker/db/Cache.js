@@ -64,7 +64,7 @@ class StoreAPI<T, U> {
 
     // Not sure how to type key as U in some methods below
     indexGetAll(index: Index, key: number | string | [number, number] | [string, string]): Promise<T[]> {
-        return this.cache.indexGetAll(index, key);
+        return this.cache._indexGetAll(index, key);
     }
 
     add(obj: T): Promise<number | string> {
@@ -508,7 +508,7 @@ class Cache {
         return val;
     }
 
-    async indexGetAll(index: Index, key: number | string | [number, number] | [string, string]): Promise<any[]> {
+    async _indexGetAll(index: Index, key: number | string | [number, number] | [string, string]): Promise<any[]> {
         this.checkStatus('full');
         this.checkIndexFreshness(index);
 

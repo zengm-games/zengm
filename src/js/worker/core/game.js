@@ -17,7 +17,7 @@ async function writeTeamStats(results: GameResults) {
         const payroll = (await team.getPayroll(results.team[t1].id))[0];
         const [t, teamSeasons, teamStats] = await Promise.all([
             idb.cache.teams.get(results.team[t1].id),
-            idb.cache.indexGetAll('teamSeasonsByTidSeason', [`${results.team[t1].id},${g.season - 2}`, `${results.team[t1].id},${g.season}`]),
+            idb.cache.teamSeasons.indexGetAll('teamSeasonsByTidSeason', [`${results.team[t1].id},${g.season - 2}`, `${results.team[t1].id},${g.season}`]),
             idb.cache.teamStats.indexGet('teamStatsByPlayoffsTid', `${g.phase === PHASE.PLAYOFFS ? 1 : 0},${results.team[t1].id}`),
         ]);
 

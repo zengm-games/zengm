@@ -126,7 +126,7 @@ async function updatePlayers(teams: TradeTeams): Promise<TradeTeams> {
         t.pids = pidsGood;
 
         // Check draft picks
-        const draftPicks = await idb.cache.indexGetAll('draftPicksByTid', t.tid);
+        const draftPicks = await idb.cache.draftPicks.indexGetAll('draftPicksByTid', t.tid);
         const dpidsGood = [];
         for (const dp of draftPicks) {
             if (t.dpids.includes(dp.dpid)) {
@@ -208,7 +208,7 @@ async function summary(teams: TradeTeams): Promise<TradeSummary> {
             s.teams[i].total = s.teams[i].trade.reduce((memo, p) => memo + p.contract.amount, 0);
         }));
 
-        promises.push(idb.cache.indexGetAll('draftPicksByTid', tids[i]).then((picks) => {
+        promises.push(idb.cache.draftPicks.indexGetAll('draftPicksByTid', tids[i]).then((picks) => {
             for (let j = 0; j < picks.length; j++) {
                 if (dpids[i].includes(picks[j].dpid)) {
                     s.teams[i].picks.push({
@@ -452,7 +452,7 @@ async function makeItWork(
 
         if (!holdUserConstant) {
             // Get all draft picks not in userDpids
-            const draftPicks = await idb.cache.indexGetAll('draftPicksByTid', teams[0].tid);
+            const draftPicks = await idb.cache.draftPicks.indexGetAll('draftPicksByTid', teams[0].tid);
             for (const dp of draftPicks) {
                 if (!teams[0].dpids.includes(dp.dpid)) {
                     assets.push({
@@ -466,7 +466,7 @@ async function makeItWork(
         }
 
         // Get all draft picks not in otherDpids
-        const draftPicks = await idb.cache.indexGetAll('draftPicksByTid', teams[1].tid);
+        const draftPicks = await idb.cache.draftPicks.indexGetAll('draftPicksByTid', teams[1].tid);
         for (const dp of draftPicks) {
             if (!teams[1].dpids.includes(dp.dpid)) {
                 assets.push({

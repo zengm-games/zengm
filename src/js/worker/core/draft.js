@@ -64,7 +64,7 @@ async function genPlayers(tid: number, scoutingRank?: ?number = null, numPlayers
 
     // If scoutingRank is not supplied, have to hit the DB to get it
     if (scoutingRank === undefined || scoutingRank === null) {
-        const teamSeasons = await idb.cache.indexGetAll('teamSeasonsByTidSeason', [`${g.userTid},${g.season - 2}`, `${g.userTid},${g.season}`]);
+        const teamSeasons = await idb.cache.teamSeasons.indexGetAll('teamSeasonsByTidSeason', [`${g.userTid},${g.season - 2}`, `${g.userTid},${g.season}`]);
         scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
     }
 
@@ -265,12 +265,12 @@ async function genOrder() {
         }
     }
 
-    let draftPicks = await idb.cache.indexGetAll('draftPicksBySeason', g.season);
+    let draftPicks = await idb.cache.draftPicks.indexGetAll('draftPicksBySeason', g.season);
 
     // Sometimes picks just fail to generate, for reasons I don't understand
     if (draftPicks.length === 0) {
         await genPicks(g.season);
-        draftPicks = await idb.cache.indexGetAll('draftPicksBySeason', g.season);
+        draftPicks = await idb.cache.draftPicks.indexGetAll('draftPicksBySeason', g.season);
     }
 
     // Reorganize this to an array indexed on originalTid and round

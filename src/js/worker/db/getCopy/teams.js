@@ -42,12 +42,12 @@ const processSeasonAttrs = async (output: TeamFiltered, t: Team, seasonAttrs: Te
         // All seasons
         seasons = mergeByPk(
             await tx.teamSeasons.index('tid, season').getAll(backboard.bound([t.tid], [t.tid, ''])),
-            await idb.cache.indexGetAll('teamSeasonsByTidSeason', [`${t.tid}`, `${t.tid},Z`]),
+            await idb.cache.teamSeasons.indexGetAll('teamSeasonsByTidSeason', [`${t.tid}`, `${t.tid},Z`]),
             idb.cache.storeInfos.teamSeasons.pk,
         );
     } else if (season >= g.season - 2) {
         // Single season, from cache
-        seasons = await idb.cache.indexGetAll('teamSeasonsBySeasonTid', `${season},${t.tid}`);
+        seasons = await idb.cache.teamSeasons.indexGetAll('teamSeasonsBySeasonTid', `${season},${t.tid}`);
     } else {
         // Single season, from database
         seasons = await tx.teamSeasons.index('season, tid').getAll([season, t.tid]);
@@ -127,10 +127,10 @@ const processStats = async (
         // Single season, from cache
         let teamStats2 = [];
         if (regularSeason) {
-            teamStats2 = teamStats2.concat(await idb.cache.indexGetAll('teamStatsByPlayoffsTid', `0,${t.tid}`));
+            teamStats2 = teamStats2.concat(await idb.cache.teamStats.indexGetAll('teamStatsByPlayoffsTid', `0,${t.tid}`));
         }
         if (playoffs) {
-            teamStats2 = teamStats2.concat(await idb.cache.indexGetAll('teamStatsByPlayoffsTid', `1,${t.tid}`));
+            teamStats2 = teamStats2.concat(await idb.cache.teamStats.indexGetAll('teamStatsByPlayoffsTid', `1,${t.tid}`));
         }
 
         return teamStats2;

@@ -341,7 +341,7 @@ const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: 
 
     const playerStatsFromCache = () => {
         // Last 1-2 seasons, from cache
-        return idb.cache.indexGetAll('playerStatsAllByPid', p.pid);
+        return idb.cache.playerStats.indexGetAll('playerStatsAllByPid', p.pid);
     };
 
     if (season === undefined || p.tid === PLAYER.RETIRED) {

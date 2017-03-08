@@ -338,7 +338,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[], progressCa
                 fuzz: true,
             });
 
-            let picks = await idb.cache.indexGetAll('draftPicksByTid', tid);
+            let picks = await idb.cache.draftPicks.indexGetAll('draftPicksByTid', tid);
             picks = helpers.deepCopy(picks.filter(dp => offers[i].dpids.includes(dp.dpid)));
             for (const pick of picks) {
                 pick.desc = helpers.pickDesc(pick);
@@ -389,7 +389,7 @@ const handleUploadedDraftClass = async (uploadedFile: any, seasonOffset: 0 | 1 |
     players = players.filter(p => p.tid === PLAYER.UNDRAFTED);
 
     // Get scouting rank, which is used in a couple places below
-    const teamSeasons = await idb.cache.indexGetAll('teamSeasonsByTidSeason', [`${g.userTid},${g.season - 2}`, `${g.userTid},${g.season}`]);
+    const teamSeasons = await idb.cache.teamSeasons.indexGetAll('teamSeasonsByTidSeason', [`${g.userTid},${g.season - 2}`, `${g.userTid},${g.season}`]);
     const scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
 
     // Delete old players from draft class

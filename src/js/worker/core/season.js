@@ -112,7 +112,7 @@ async function doAwards() {
     // Sort teams by tid so it can be easily used in awards formulas
     teams.sort((a, b) => a.tid - b.tid);
 
-    let players = await idb.cache.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
+    let players: any = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
     players = await getCopy.playersPlus(players, {
         attrs: ["pid", "name", "tid", "abbrev", "draft"],
         stats: ["gp", "gs", "min", "pts", "trb", "ast", "blk", "stl", "ewa"],
@@ -235,7 +235,7 @@ async function doAwards() {
     if (champTeam) {
         const champTid = champTeam.tid;
 
-        let champPlayers = await idb.cache.indexGetAll('playersByTid', champTid); // Alternatively, could filter players array by tid
+        let champPlayers = await idb.cache.players.indexGetAll('playersByTid', champTid); // Alternatively, could filter players array by tid
         champPlayers = await getCopy.playersPlus(champPlayers, { // Only the champions, only playoff stats
             attrs: ["pid", "name", "tid", "abbrev"],
             stats: ["pts", "trb", "ast", "ewa"],

@@ -11,7 +11,7 @@ const getCopy = async ({tid, season, seasons}: {tid?: number, season?: number, s
         if (season !== undefined) {
             if (season >= g.season - 2) {
                 // Single season, from cache
-                return helpers.deepCopy(await idb.cache.indexGetAll('teamSeasonsBySeasonTid', [`${season}`, `${season},Z`]));
+                return helpers.deepCopy(await idb.cache.teamSeasons.indexGetAll('teamSeasonsBySeasonTid', [`${season}`, `${season},Z`]));
             }
             // Single season, from database
             return idb.league.teamSeasons.index("season, tid").getAll(backboard.bound([season], [season, '']));
@@ -23,14 +23,14 @@ const getCopy = async ({tid, season, seasons}: {tid?: number, season?: number, s
     if (seasons !== undefined) {
         return mergeByPk(
             await idb.league.teamSeasons.index("tid, season").getAll(backboard.bound([tid, seasons[0]], [tid, seasons[1]])),
-            await idb.cache.indexGetAll('teamSeasonsByTidSeason', [`${tid},${seasons[0]}`, `${tid},${seasons[1]}`]),
+            await idb.cache.teamSeasons.indexGetAll('teamSeasonsByTidSeason', [`${tid},${seasons[0]}`, `${tid},${seasons[1]}`]),
             idb.cache.storeInfos.teamSeasons.pk,
         );
     }
 
     return mergeByPk(
         await idb.league.teamSeasons.index('tid, season').getAll(backboard.bound([tid], [tid, ''])),
-        await idb.cache.indexGetAll('teamSeasonsByTidSeason', [`${tid}`, `${tid},Z`]),
+        await idb.cache.teamSeasons.indexGetAll('teamSeasonsByTidSeason', [`${tid}`, `${tid},Z`]),
         idb.cache.storeInfos.teamSeasons.pk,
     );
 };

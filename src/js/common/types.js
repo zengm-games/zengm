@@ -522,7 +522,52 @@ export type TeamBasic = {
 
 export type TeamFiltered = any;
 
-export type TeamSeason = any;
+type BudgetItem = {
+    amount: number,
+    rank: number,
+};
+
+export type TeamSeason = {
+    tid: number,
+    season: number,
+    gp: number,
+    gpHome: number,
+    att: number,
+    cash: number,
+    won: number,
+    lost: number,
+    wonHome: number,
+    lostHome: number,
+    wonAway: number,
+    lostAway: number,
+    wonDiv: number,
+    lostDiv: number,
+    wonConf: number,
+    lostConf: number,
+    lastTen: (0 | 1)[],
+    streak: number,
+    playoffRoundsWon: number,  // -1: didn't make playoffs. 0: lost in first round. ... N: won championship
+    hype: number,
+    pop: number,
+    revenues: {
+        luxuryTaxShare: BudgetItem,
+        merch: BudgetItem,
+        sponsor: BudgetItem,
+        ticket: BudgetItem,
+        nationalTv: BudgetItem,
+        localTv: BudgetItem,
+    },
+    expenses: {
+        salary: BudgetItem,
+        luxuryTax: BudgetItem,
+        minTax: BudgetItem,
+        scouting: BudgetItem,
+        coaching: BudgetItem,
+        health: BudgetItem,
+        facilities: BudgetItem,
+    },
+    payrollEndOfSeason: number,
+};
 
 export type TeamStats = any;
 

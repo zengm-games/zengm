@@ -517,7 +517,7 @@ function bonus(p: Player | PlayerWithoutPid, amount: number) {
  * @return {Promise} Array of base moods, one for each team.
  */
 async function genBaseMoods(): Promise<number[]> {
-    const teamSeasons = await idb.cache.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
+    const teamSeasons = await idb.cache.teamSeasons.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
 
     return teamSeasons.map(teamSeason => {
         // Special case for winning a title - basically never refuse to re-sign unless a miracle occurs
@@ -859,7 +859,7 @@ async function addStatsRow(p: Player, playoffs?: boolean = false) {
     p.statsTids = _.uniq(p.statsTids);
 
     // Calculate yearsWithTeam
-    const playerStats = (await idb.cache.indexGetAll('playerStatsAllByPid', p.pid))
+    const playerStats = (await idb.cache.playerStats.indexGetAll('playerStatsAllByPid', p.pid))
         .filter((ps) => !ps.playoffs);
     if (playerStats.length > 0) {
         const i = playerStats.length - 1;
@@ -1188,7 +1188,7 @@ async function updateValues(p: Player | PlayerWithoutPid, psOverride?: PlayerSta
         // Only when creating new league from file, since no cache yet then
         playerStats = psOverride;
     } else if (typeof p.pid === 'number') {
-        playerStats = (await idb.cache.indexGetAll('playerStatsAllByPid', p.pid))
+        playerStats = (await idb.cache.playerStats.indexGetAll('playerStatsAllByPid', p.pid))
             .filter((ps) => !ps.playoffs);
     } else {
         // New player objects don't have pids let alone stats, so just skip

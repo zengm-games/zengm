@@ -1,6 +1,6 @@
 // @flow
 
-import {g} from '../../common';
+import {g, helpers} from '../../common';
 import {idb} from '../db';
 import {getProcessedGames} from '../util';
 import type {GetOutput, UpdateEvents} from '../../common/types';
@@ -17,7 +17,7 @@ async function boxScore(gid: number) {
         return {};
     }
 
-    let game = await idb.cache.get('games', gid);
+    let game: any = helpers.deepCopy(await idb.cache.games.get(gid));
 
     // Only this season is in cache
     if (!game) {

@@ -446,6 +446,7 @@ type PlayoffSeriesTeam = {
     cid: number,
     seed: number,
     tid: number,
+    winp: number,
     won: number,
 };
 

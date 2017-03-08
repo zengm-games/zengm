@@ -556,7 +556,7 @@ function newSchedule(teams: Team[]): [number, number][] {
  * @return {Promise.boolean} Resolves to true if the playoffs are over. Otherwise, false.
  */
 async function newSchedulePlayoffsDay(): Promise<boolean> {
-    const playoffSeries = await idb.cache.get('playoffSeries', g.season);
+    const playoffSeries = await idb.cache.playoffSeries.get(g.season);
 
     const series = playoffSeries.series;
     const rnd = playoffSeries.currentRound;

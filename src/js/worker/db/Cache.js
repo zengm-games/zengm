@@ -51,7 +51,7 @@ class StoreAPI<Input, Output, ID> {
         if (typeof id !== 'number' && typeof id !== 'string') {
             throw new Error('Invalid input type');
         }
-        return this.cache.get(this.store, id);
+        return this.cache._get(this.store, id);
     }
 
     getAll(): Promise<Output[]> {
@@ -480,7 +480,7 @@ class Cache {
 //console.log(`${g.phase} flush duration: ${entries[entries.length - 1].duration / 1000} seconds`);
     }
 
-    async get(store: Store, id: number | string): Promise<any> {
+    async _get(store: Store, id: number | string): Promise<any> {
         this._checkStatus('full');
 
         return this._data[store][id];

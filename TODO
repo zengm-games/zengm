@@ -1,10 +1,10 @@
-IVERSON
+IVERSON - BEFORE BETA
 
 clicking Play > To Regular Season quickly results in 'Invalid cache status "filling"'
 
 browser support
 - firefox
-  - use lie, but only conditionally (so native on chrome) - feature detection!
+  - use lie in worker, but only conditionally (so native on chrome) - feature detection!
     - doesn't seem to be working.. make small test case and try again
     - https://github.com/calvinmetcalf/immediate/issues/27
     - http://stackoverflow.com/questions/42660581/microtasks-inside-web-workers
@@ -12,12 +12,6 @@ browser support
   - really slow to init worker!
 - at least test failure in IE/edge/safari
 - mobile
-
-rethink cache API, with goal of having it typed
-- rename indexes, store prefixed with storename
-- get rid of new any types in types.js
-
-error page (like invalid pid) should show league UI if in league
 
 shared worker
 
@@ -33,21 +27,56 @@ db sync issues
   - goal: get rid of markDirtyIndexes calls in application code
 - Last update time could be computed in flush if necessary
 
-move everything but the UI to a web worker
-- does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
-- should checks to update data in worker/views be in worker, or could they be in UI somehow and avoid call to worker if update not needed?
-- write lint script to check for ui/worker cross-contamination. also document/location/window/localStorage/react in worker. also any of that stuff in common.
-- restore runWhenever ability (really necessary? was only used in gameLog)
-- uncomment things using localstorage in worker, after moving to either env+api or idb (meta)
-- setState was used in schedule so old completed games don't temporarily show when switching team. still an issue? if not, get rid of setStateData completely
-- beforeView - is abort param used? was used for "league not found" page before
+write lint script to check for ui/worker cross-contamination. also document/location/window/localStorage/react in worker. also any of that stuff in common.
+- basically i have a blacklist of global variables and modules that I want to ensure are not used in a file or set of files. best approach?
 
-switch to native promises and/or lie, bluebird doens't work with IDB transactions in worker
-- native works on chrome. can do feature detection and conditionally load lie?
-- should only need lie in worker, not UI
-- debug mode still needed?
-  - if so, how to deal with debug mode in worker? relies on localstorage
-  - what about core.debug?
+uncomment things using localstorage in worker, after moving to either env+api or idb (meta)
+
+debug mode still needed?
+- if so, how to deal with debug mode in worker? relies on localstorage
+- what about core.debug?
+
+getCopy.playersPlus
+- don't figure out if tx needed ahead of time. dynamically open it if required, then reuse
+- tests (port from player.filter, and more)
+- oldStats
+
+update to cache
+- death code in phase - should not be writing to db, and (maybe) should not assume retired players are not cached
+- repeatedly clicking "propose" makes dv go down - why?
+- trading block fails due to promise communication issue, maybe passing cb or something
+  - getTradingBlockOffers has cb passed to it. how to replace? need to update UI incrementally
+- look at all IDB usage
+
+get tests working again
+- a lot could just run from cache
+- come up with easy way of filling cache
+
+reassess delete old data - still needed? should be renamed if no performance impact?
+
+why ads not working on .dev?
+
+IVERSON - BEFORE FINAL
+
+Email users after bbgm update. But first allow opt out on register
+
+3.8
+
+IVERSON - EVENTUALLY
+
+rethink cache API, with goal of having it typed
+- rename indexes, store prefixed with storename
+- get rid of new any types in types.js
+
+error page (like invalid pid) should show league UI if in league
+
+does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
+
+should checks to update data in worker/views be in worker, or could they be in UI somehow and avoid call to worker if update not needed?
+
+restore runWhenever ability (really necessary? was only used in gameLog)
+
+setState was used in schedule so old completed games don't temporarily show when switching team. still an issue? if not, get rid of setStateData completely
 
 test all instances of fetchWrapper
 - login/logout/register work, but persisting login over reloads doesn't
@@ -60,30 +89,10 @@ bbgm.league.setGameAttributes({phaseChangeInProgress: false})
 getCopy.players use only where needed for input to player.filter
 - abstract season logic from leaders/playerRatings, use in stats pages too (plus a bit extra, for ones showing draft prospects too)
 
-getCopy.playersPlus
-- don't figure out if tx needed ahead of time. dynamically open it if required, then reuse
-- tests (port from player.filter, and more)
-- oldStats
-
-i think withStats was faster that playersPlus for getting stats for a large number of players
-- move stats back within players
-
-eventually merge players and playersPlus
-
-update to cache
-- also search for any readwrite transaction
-- death code in phase - should not be writing to db, and (maybe) should not assume retired players are not cached
-- repeatedly clicking "propose" makes dv go down - why?
-- trading block fails due to promise communication issue, maybe passing cb or something
-  - getTradingBlockOffers has cb passed to it. how to replace? need to update UI incrementally
-- look at all IDB usage
+try moving stats back within players
 
 if i can gracefully handle absence of g.season etc, put cache creation inside connectLeague
 - not graceful now, see fill(season)
-
-seems to be bug associated with flush not syncing schedule/games right, see dupe games in schedule and then errors on saving box scores
-- deletes processing right? seems to occur when nothing gets deleted from schedule
-- fixed by this commit's changes in flush? seems not. why?
 
 get tests working
 - db.getCopy.teams
@@ -113,33 +122,18 @@ document cache data format and API!
 league creation
 - reading from league file
 
-when to fill/flush? phases, games, user interaction
-- maybe even less often, should be entirely capable of running with all writes to the cache and only reading from archived IDB
-
-put playerStats back under players?
-- could be worth it, because getting stats to display for a large number of players seems pretty slow now
-
 debug mode makes huge perf difference
 - warning bar
-
-delete old data should empty cache?
+- is this still true?
 
 make cache synchronous? it'll be faster, any problems though?
-- big problem: can't switch to db/cache in worker. but already can't do that, because mutating objects in place will not actually update anymore then
+- won't be able to wait while flushing
 
 revisit lock system
-
-in put/add, can we incrementally update indexes?
 
 benchmark using proxies to detect change in index stuff rather than dirtyIndexes
 
 can ui/util/logEvent be replaced by just notify? since it never writes to db?
-
-why ads not working on .dev?
-
-Email users after bbgm update. But first allow opt out on register
-
-3.8
 
 ----
 

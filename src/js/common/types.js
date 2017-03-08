@@ -132,6 +132,12 @@ export type Awards = {
 
 export type BackboardTx = any;
 
+export type DraftOrder = any;
+
+export type DraftPick = any;
+
+export type EventBBGM = any;
+
 export type Env = {
     enableLogging: boolean,
     inCordova: boolean,
@@ -194,7 +200,12 @@ export type GameAttributeKey = (
     'userTids'
 );
 
-export type GameAttributes = {[key: GameAttributeKey]: any}
+export type GameAttribute = {
+    key: GameAttributeKey,
+    value: any,
+};
+
+export type GameAttributes = {[key: GameAttributeKey]: any};
 
 export type GameProcessed = {
     gid: number,
@@ -264,6 +275,15 @@ export type Message = {
 
 export type MessageWithMid = Message & {mid: number};
 
+export type Negotiation = {
+    pid: number,
+    tid: number,
+    team: {amount: number, years: number},
+    player: {amount: number, years: number},
+    orig: {amount: number, years: number},
+    resigning: boolean,
+};
+
 export type Option = {
     id: string,
     label: string,
@@ -298,6 +318,22 @@ export type PickRealized = {
 export type PlayerContract = {
     amount: number,
     exp: number,
+};
+
+export type PlayerFeat = {
+    fid?: number,
+    pid: number,
+    name: string,
+    pos: string,
+    season: number,
+    tid: number,
+    oppTid: number,
+    playoffs: boolean,
+    gid: number,
+    stats: any,
+    won: boolean,
+    score: string,
+    overtimes: number,
 };
 
 export type PlayerFiltered = any;
@@ -393,6 +429,22 @@ export type Player = PlayerWithoutPid & {pid: number};
 
 export type PlayerWithStats = Player & {stats: PlayerStats[]};
 
+type PlayoffSeriesTeam = {
+    cid: number,
+    seed: number,
+    tid: number,
+    won: number,
+};
+
+export type PlayoffSeries = {
+    season: number,
+    currentRound: number,
+    series: {
+        home: PlayoffSeriesTeam,
+        away: PlayoffSeriesTeam,
+    }[][],
+};
+
 export type ContractInfo = {
     pid: number,
     firstName: string,
@@ -421,6 +473,12 @@ export type RatingKey = (
     'stre' |
     'tp'
 );
+
+export type ReleasedPlayer = {
+    pid: number,
+    tid: number,
+    contract: PlayerContract,
+};
 
 export type ScheduleGame = {
     awayName: string,
@@ -494,6 +552,11 @@ type TradeTeam = {
 };
 
 export type TradeTeams = [TradeTeam, TradeTeam];
+
+export type Trade = {
+    rid: 0,
+    teams: TradeTeams,
+};
 
 export type UpdateEvents = (
     'account' |

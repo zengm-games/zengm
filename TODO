@@ -21,6 +21,7 @@ rethink cache API, with goal of having it typed
 - rename indexes, store prefixed with storename
 - do for all stores, all methods!
 - replace all instances of old variables with typed versions!
+- get rid of new any types in types.js
 
 shared worker
 

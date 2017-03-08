@@ -4,7 +4,27 @@ import backboard from 'backboard';
 import orderBy from 'lodash.orderby';
 import {PLAYER, g} from '../../common';
 import {idb} from '../db';
-import type {BackboardTx, Player} from '../../common/types';
+import type {
+    Awards,
+    BackboardTx,
+    DraftOrder,
+    DraftPick,
+    EventBBGM,
+    Game,
+    GameAttribute,
+    Message,
+    Negotiation,
+    Player,
+    PlayerFeat,
+    PlayerStats,
+    PlayoffSeries,
+    ReleasedPlayer,
+    ScheduleGame,
+    TeamSeason,
+    TeamStats,
+    Team,
+    Trade,
+} from '../../common/types';
 
 type Status = 'empty' | 'error' | 'filling' | 'full';
 
@@ -90,7 +110,24 @@ class Cache {
         },
     };
 
+    awards: StoreAPI<Awards, number>;
+    draftOrder: StoreAPI<DraftOrder, number>;
+    draftPicks: StoreAPI<DraftPick, number>;
+    events: StoreAPI<EventBBGM, number>;
+    gameAttributes: StoreAPI<GameAttribute, number>;
+    games: StoreAPI<Game, number>;
+    messages: StoreAPI<Message, number>;
+    negotiations: StoreAPI<Negotiation, number>;
+    playerFeats: StoreAPI<PlayerFeat, number>;
+    playerStats: StoreAPI<PlayerStats, number>;
     players: StoreAPI<Player, number>;
+    playoffSeries: StoreAPI<PlayoffSeries, number>;
+    releasedPlayers: StoreAPI<ReleasedPlayer, number>;
+    schedule: StoreAPI<ScheduleGame, number>;
+    teamSeasons: StoreAPI<TeamSeason, number>;
+    teamStats: StoreAPI<TeamStats, number>;
+    teams: StoreAPI<Team, number>;
+    trade: StoreAPI<Trade, number>;
 
     constructor() {
         this.status = 'empty';
@@ -271,7 +308,24 @@ class Cache {
             }
         }
 
+        this.awards = new StoreAPI(this, 'awards');
+        this.draftOrder = new StoreAPI(this, 'draftOrder');
+        this.draftPicks = new StoreAPI(this, 'draftPicks');
+        this.events = new StoreAPI(this, 'events');
+        this.gameAttributes = new StoreAPI(this, 'gameAttributes');
+        this.games = new StoreAPI(this, 'games');
+        this.messages = new StoreAPI(this, 'messages');
+        this.negotiations = new StoreAPI(this, 'negotiations');
+        this.playerFeats = new StoreAPI(this, 'playerFeats');
+        this.playerStats = new StoreAPI(this, 'playerStats');
         this.players = new StoreAPI(this, 'players');
+        this.playoffSeries = new StoreAPI(this, 'playoffSeries');
+        this.releasedPlayers = new StoreAPI(this, 'releasedPlayers');
+        this.schedule = new StoreAPI(this, 'schedule');
+        this.teamSeasons = new StoreAPI(this, 'teamSeasons');
+        this.teamStats = new StoreAPI(this, 'teamStats');
+        this.teams = new StoreAPI(this, 'teams');
+        this.trade = new StoreAPI(this, 'trade');
     }
 
     checkStatus(...validStatuses: Status[]) {

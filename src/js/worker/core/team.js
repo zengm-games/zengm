@@ -527,8 +527,8 @@ async function valueChange(
 
                     // No fudge factor, since this is coming from the user's team (or eventually, another AI)
                     let value;
-                    if (estValues[dp.season]) {
-                        value = estValues[dp.season][estPick - 1 + g.numTeams * (dp.round - 1)];
+                    if (estValues[String(dp.season)]) {
+                        value = estValues[String(dp.season)][estPick - 1 + g.numTeams * (dp.round - 1)];
                     }
                     if (!value) {
                         value = estValues.default[estPick - 1 + g.numTeams * (dp.round - 1)];
@@ -569,8 +569,8 @@ async function valueChange(
 
                     // Use fudge factor: AI teams like their own picks
                     let value;
-                    if (estValues[dp.season]) {
-                        value = estValues[dp.season][estPick - 1 + g.numTeams * (dp.round - 1)] + (tid !== g.userTid ? 1 : 0) * fudgeFactor;
+                    if (estValues[String(dp.season)]) {
+                        value = estValues[String(dp.season)][estPick - 1 + g.numTeams * (dp.round - 1)] + (tid !== g.userTid ? 1 : 0) * fudgeFactor;
                     }
                     if (!value) {
                         value = estValues.default[estPick - 1 + g.numTeams * (dp.round - 1)] + (tid !== g.userTid ? 1 : 0) * fudgeFactor;

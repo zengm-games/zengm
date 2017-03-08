@@ -9,6 +9,7 @@ import type {
     BackboardTx,
     DraftOrder,
     DraftPick,
+    DraftPickWithoutDpid,
     EventBBGM,
     Game,
     GameAttribute,
@@ -17,8 +18,10 @@ import type {
     Player,
     PlayerFeat,
     PlayerStats,
+    PlayerWithoutPid,
     PlayoffSeries,
     ReleasedPlayer,
+    ReleasedPlayerWithoutRid,
     ScheduleGame,
     TeamSeason,
     TeamStats,
@@ -35,7 +38,7 @@ type Index = 'draftPicksBySeason' | 'draftPicksByTid' | 'playerStats' | 'playerS
 // This variable is only needed because Object.keys(storeInfos) is not handled well in Flow
 const STORES: Store[] = ['awards', 'draftOrder', 'draftPicks', 'events', 'gameAttributes', 'games', 'messages', 'negotiations', 'playerFeats', 'playerStats', 'players', 'playoffSeries', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams', 'trade'];
 
-class StoreAPI<T, U> {
+class StoreAPI<Input, Output, ID> {
     cache: Cache;
     store: Store;
 
@@ -44,34 +47,34 @@ class StoreAPI<T, U> {
         this.store = store;
     }
 
-    get(id: U): Promise<T> {
+    get(id: ID): Promise<Output> {
         if (typeof id !== 'number' && typeof id !== 'string') {
             throw new Error('Invalid input type');
         }
         return this.cache.get(this.store, id);
     }
 
-    getAll(): Promise<T[]> {
+    getAll(): Promise<Output[]> {
         return this.cache.getAll(this.store);
     }
 
-    indexGet(index: Index, key: U | string): Promise<T> {
+    indexGet(index: Index, key: ID | string): Promise<Output> {
         if (typeof key !== 'number' && typeof key !== 'string') {
             throw new Error('Invalid input type');
         }
         return this.cache._indexGet(index, key);
     }
 
-    // Not sure how to type key as U in some methods below
-    indexGetAll(index: Index, key: number | string | [number, number] | [string, string]): Promise<T[]> {
+    // Not sure how to type key as ID in some methods below
+    indexGetAll(index: Index, key: number | string | [number, number] | [string, string]): Promise<Output[]> {
         return this.cache._indexGetAll(index, key);
     }
 
-    add(obj: T): Promise<number | string> {
+    add(obj: Input): Promise<number | string> {
         return this.cache._add(this.store, obj);
     }
 
-    put(obj: T): Promise<number | string> {
+    put(obj: Input): Promise<number | string> {
         return this.cache.put(this.store, obj);
     }
 
@@ -110,24 +113,24 @@ class Cache {
         },
     };
 
-    awards: StoreAPI<Awards, number>;
-    draftOrder: StoreAPI<DraftOrder, number>;
-    draftPicks: StoreAPI<DraftPick, number>;
-    events: StoreAPI<EventBBGM, number>;
-    gameAttributes: StoreAPI<GameAttribute, string>;
-    games: StoreAPI<Game, number>;
-    messages: StoreAPI<Message, number>;
-    negotiations: StoreAPI<Negotiation, number>;
-    playerFeats: StoreAPI<PlayerFeat, number>;
-    playerStats: StoreAPI<PlayerStats, number>;
-    players: StoreAPI<Player, number>;
-    playoffSeries: StoreAPI<PlayoffSeries, number>;
-    releasedPlayers: StoreAPI<ReleasedPlayer, number>;
-    schedule: StoreAPI<ScheduleGame, number>;
-    teamSeasons: StoreAPI<TeamSeason, number>;
-    teamStats: StoreAPI<TeamStats, number>;
-    teams: StoreAPI<Team, number>;
-    trade: StoreAPI<Trade, number>;
+    awards: StoreAPI<Awards, Awards, number>;
+    draftOrder: StoreAPI<DraftOrder, DraftOrder, number>;
+    draftPicks: StoreAPI<(DraftPick | DraftPickWithoutDpid), DraftPick, number>;
+    events: StoreAPI<EventBBGM, EventBBGM, number>;
+    gameAttributes: StoreAPI<GameAttribute, GameAttribute, string>;
+    games: StoreAPI<Game, Game, number>;
+    messages: StoreAPI<Message, Message, number>;
+    negotiations: StoreAPI<Negotiation, Negotiation, number>;
+    playerFeats: StoreAPI<PlayerFeat, PlayerFeat, number>;
+    playerStats: StoreAPI<PlayerStats, PlayerStats, number>;
+    players: StoreAPI<(Player | PlayerWithoutPid), Player, number>;
+    playoffSeries: StoreAPI<PlayoffSeries, PlayoffSeries, number>;
+    releasedPlayers: StoreAPI<(ReleasedPlayer | ReleasedPlayerWithoutRid), ReleasedPlayer, number>;
+    schedule: StoreAPI<ScheduleGame, ScheduleGame, number>;
+    teamSeasons: StoreAPI<TeamSeason, TeamSeason, number>;
+    teamStats: StoreAPI<TeamStats, TeamStats, number>;
+    teams: StoreAPI<Team, Team, number>;
+    trade: StoreAPI<Trade, Trade, number>;
 
     constructor() {
         this.status = 'empty';

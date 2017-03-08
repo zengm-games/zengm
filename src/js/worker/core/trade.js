@@ -327,7 +327,6 @@ async function propose(forceTrade?: boolean = false): Promise<[boolean, ?string]
             for (const dpid of dpids[j]) {
                 const dp = await idb.cache.draftPicks.get(dpid);
                 dp.tid = tids[k];
-                dp.abbrev = g.teamAbbrevsCache[tids[k]];
                 await idb.cache.put('draftPicks', dp);
             }
         }

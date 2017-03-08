@@ -338,7 +338,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[], progressCa
                 fuzz: true,
             });
 
-            let picks = await idb.cache.draftPicks.indexGetAll('draftPicksByTid', tid);
+            let picks: any = await idb.cache.draftPicks.indexGetAll('draftPicksByTid', tid);
             picks = helpers.deepCopy(picks.filter(dp => offers[i].dpids.includes(dp.dpid)));
             for (const pick of picks) {
                 pick.desc = helpers.pickDesc(pick);

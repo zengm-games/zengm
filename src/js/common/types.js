@@ -134,12 +134,20 @@ export type BackboardTx = any;
 
 export type DraftOrder = any;
 
-export type DraftPick = any;/*{
+export type DraftPick = {
+    dpid: number,
     tid: number,
     originalTid: number,
     round: number,
     season: number,
-};*/
+};
+
+export type DraftPickWithoutDpid = {
+    tid: number,
+    originalTid: number,
+    round: number,
+    season: number,
+};
 
 export type EventBBGM = any;
 
@@ -479,12 +487,18 @@ export type RatingKey = (
     'tp'
 );
 
-export type ReleasedPlayer = any;/*{
+export type ReleasedPlayer = {
     rid: number,
     pid: number,
     tid: number,
     contract: PlayerContract,
-};*/
+};
+
+export type ReleasedPlayerWithoutRid = {
+    pid: number,
+    tid: number,
+    contract: PlayerContract,
+};
 
 export type ScheduleGame = {
     awayTid: number,

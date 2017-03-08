@@ -22,7 +22,6 @@ rethink cache API, with goal of having it typed
 - do for all stores, all methods!
 - replace all instances of old variables with typed versions!
 - get rid of new any types in types.js
-- handle add/put having optional primary key, but not the others - do DraftPick and ReleasedPlayer to test
 
 shared worker
 

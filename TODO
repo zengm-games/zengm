@@ -1,9 +1,5 @@
 IVERSON
 
-unread message check for menu could be faster (don't load all, just last ~10)
-- abstract into getCopy.messages, and use in worker/views/message.js too
-  - use in leagueDashboard too. "limit" parameter
-
 clicking Play > To Regular Season quickly results in 'Invalid cache status "filling"'
 
 browser support

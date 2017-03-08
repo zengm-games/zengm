@@ -10,13 +10,12 @@ async function updateInbox(
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun')) {
-        let messages = await getCopy.messages();
+        const messages = await getCopy.messages({limit: 2});
         messages.reverse();
 
         for (let i = 0; i < messages.length; i++) {
             delete messages[i].text;
         }
-        messages = messages.slice(0, 2);
 
         return {
             messages,

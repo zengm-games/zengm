@@ -76,7 +76,7 @@ async function canStartNegotiation(): Promise<boolean> {
  * @return {Promise.boolean}
  */
 async function unreadMessage(): Promise<boolean> {
-    const messages = await getCopy.messages();
+    const messages = await getCopy.messages({limit: 10});
     for (let i = 0; i < messages.length; i++) {
         if (!messages[i].read) {
             return true;

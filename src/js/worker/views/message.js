@@ -16,7 +16,7 @@ async function updateMessage(
         let readThisPageview = false;
 
         if (inputs.mid === undefined) {
-            const messages = await getCopy.messages();
+            const messages = await getCopy.messages({limit: 10});
             if (messages.length > 0) {
                 for (let i = messages.length - 1; i >= 0; i--) {
                     if (!messages[i].read) {

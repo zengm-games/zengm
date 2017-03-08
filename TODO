@@ -2,8 +2,6 @@ IVERSON
 
 clicking Play > To Regular Season quickly results in 'Invalid cache status "filling"'
 
-throw error in worker view should be displayed on generic error page (try player with invalid pid)
-
 browser support
 - firefox
   - use lie, but only conditionally (so native on chrome) - feature detection!
@@ -23,6 +21,10 @@ add flow comments to new files!
 rethink cache API, with goal of having it typed
 - rename indexes, store prefixed with storename
 - get rid of new any types in types.js
+
+don't need to pass updatePage cb, can call after try/catch in get
+
+error page (like invalid pid) should show league UI if in league
 
 shared worker
 

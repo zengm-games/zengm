@@ -148,30 +148,28 @@ class Controller extends React.Component {
     }
 
     async get(args: Args, ctx: PageCtx) {
-        const updateEvents = (ctx !== undefined && ctx.bbgm.updateEvents !== undefined) ? ctx.bbgm.updateEvents : [];
-
-        const newLid = parseInt(ctx.params.lid, 10);
-
         const cb = ctx.bbgm.cb !== undefined ? ctx.bbgm.cb : () => {};
 
         try {
+            const updateEvents = (ctx !== undefined && ctx.bbgm.updateEvents !== undefined) ? ctx.bbgm.updateEvents : [];
+            const newLid = parseInt(ctx.params.lid, 10);
+
             await (args.inLeague ? toWorker('beforeViewLeague', newLid, this.state.topMenu.lid) : toWorker('beforeViewNonLeague'));
+
+            let inputs = args.get(ctx);
+            if (!inputs) {
+                inputs = {};
+            }
+
+            if (typeof inputs.redirectUrl === 'string') {
+                await realtimeUpdate([], inputs.redirectUrl);
+                cb();
+            } else {
+                await this.updatePage(args, inputs, updateEvents, cb);
+            }
         } catch (err) {
             ctx.bbgm.err = err;
             cb();
-            return;
-        }
-
-        let inputs = args.get(ctx);
-        if (!inputs) {
-            inputs = {};
-        }
-
-        if (typeof inputs.redirectUrl === 'string') {
-            await realtimeUpdate([], inputs.redirectUrl);
-            cb();
-        } else {
-            this.updatePage(args, inputs, updateEvents, cb);
         }
     }
 

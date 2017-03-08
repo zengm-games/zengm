@@ -349,6 +349,8 @@ export type PlayerFeat = {
     overtimes: number,
 };
 
+export type PlayerStatType = 'per36' | 'perGame' | 'totals';
+
 export type PlayerFiltered = any;
 
 export type PlayerInjury = {

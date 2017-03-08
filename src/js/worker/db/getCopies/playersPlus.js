@@ -1,17 +1,35 @@
+// Typing is too hard due to https://github.com/facebook/flow/issues/183
+
 import backboard from 'backboard';
 import _ from 'underscore';
 import {PLAYER, g, helpers} from '../../../common';
 import {filterOrderStats, mergeByPk} from './helpers';
 import {player} from '../../core';
 import {idb} from '../../db';
-import type {BackboardTx, Player, PlayerFiltered} from '../../../common/types';
+import type {BackboardTx, Player, PlayerFiltered, PlayerStatType} from '../../../common/types';
 
 type PlayerAttr = string;
 type PlayerRatingAttr = string;
 type PlayerStatAttr = string;
-type StatType = 'per36' | 'perGame' | 'totals';
 
-type PlayerOptions = {
+export type PlayerOptions = {
+    season?: number,
+    tid?: number,
+    attrs?: PlayerAttr[],
+    ratings?: PlayerStatAttr[],
+    stats?: PlayerRatingAttr[],
+    playoffs?: boolean,
+    regularSeason?: boolean,
+    showNoStats?: boolean,
+    showRookies?: boolean,
+    showRetired?: boolean,
+    fuzz?: boolean,
+    oldStats?: boolean,
+    numGamesRemaining?: number,
+    statType?: PlayerStatType,
+};
+
+type PlayerOptionsRequired = {
     season?: number,
     tid?: number,
     attrs: PlayerAttr[],
@@ -25,7 +43,7 @@ type PlayerOptions = {
     fuzz: boolean,
     oldStats: boolean,
     numGamesRemaining: number,
-    statType: StatType,
+    statType: PlayerStatType,
 };
 
 const processAttrs = (output: PlayerFiltered, p: Player, {
@@ -33,7 +51,7 @@ const processAttrs = (output: PlayerFiltered, p: Player, {
     fuzz,
     numGamesRemaining,
     season,
-}: PlayerOptions) => {
+}: PlayerOptionsRequired) => {
     for (const attr of attrs) {
         if (attr === 'age') {
             output.age = g.season - p.born.year;
@@ -106,7 +124,7 @@ const processRatings = async (output: PlayerFiltered, p: Player, {
     ratings,
     stats,
     season,
-}: PlayerOptions) => {
+}: PlayerOptionsRequired) => {
     output.ratings = p.ratings.map((pr, i) => {
         const row = {};
 
@@ -336,7 +354,7 @@ const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: 
     showRookies,
     statType,
     stats,
-}: PlayerOptions, tx: ?BackboardTx) => {
+}: PlayerOptionsRequired, tx: ?BackboardTx) => {
     let playerStats;
 
     const playerStatsFromCache = () => {
@@ -468,7 +486,7 @@ const processPlayer = async (p: Player, options: PlayerOptions, tx: ?BackboardTx
  * @param {string=} options.statType What type of stats to return, 'perGame', 'per36', or 'totals' (default is 'perGame).
  * @return {Object|Array.<Object>} Filtered player object or array of filtered player objects, depending on the first argument.
  */
-const getCopies = async (players: Player | Player[], {
+const getCopies = async (players: Player[], {
     season,
     tid,
     attrs = [],
@@ -483,8 +501,8 @@ const getCopies = async (players: Player | Player[], {
     oldStats = false,
     numGamesRemaining = 0,
     statType = 'perGame',
-}: PlayerOptions = {}): Promise<PlayerFiltered | PlayerFiltered[]> => {
-    const options = {
+}: PlayerOptions = {}): Promise<PlayerFiltered[]> => {
+    const options: PlayerOptionsRequired = {
         season,
         tid,
         attrs,
@@ -509,12 +527,8 @@ const getCopies = async (players: Player | Player[], {
         objectStores.push('playerStats');
     }
 
-    const processMaybeWithIDB = async (tx: ?BackboardTx) => {
-        if (Array.isArray(players)) {
-            return Promise.all(players.map((p) => processPlayer(p, options, tx)));
-        }
-
-        return processPlayer(players, options, tx);
+    const processMaybeWithIDB = (tx?: BackboardTx) => {
+        return Promise.all(players.map((p) => processPlayer(p, options, tx)));
     };
 
     let playersFiltered;
@@ -526,10 +540,7 @@ const getCopies = async (players: Player | Player[], {
         playersFiltered = await processMaybeWithIDB();
     }
 
-    if (Array.isArray(playersFiltered)) {
-        return playersFiltered.filter((p) => p !== undefined);
-    }
-    return playersFiltered;
+    return playersFiltered.filter((p) => p !== undefined);
 };
 
 export default getCopies;

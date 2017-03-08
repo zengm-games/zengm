@@ -3,10 +3,13 @@
 import {PLAYER, g} from '../../common';
 import {freeAgents} from '../core';
 import {idb} from '../db';
-import type {GetOutput, UpdateEvents} from '../../common/types';
+import type {UpdateEvents, PlayerStatType} from '../../common/types';
 
 async function updatePlayers(
-    inputs: GetOutput,
+    inputs: {
+        playoffs: 'playoffs' | 'regularSeasons',
+        statType: PlayerStatType,
+    },
     updateEvents: UpdateEvents,
     state: any,
 ): void | {[key: string]: any} {

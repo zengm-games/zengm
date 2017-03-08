@@ -70,7 +70,7 @@ async function updateNegotiation(
     }
 
     let p = await idb.cache.players.get(negotiation.pid);
-    p = await idb.getCopies.playersPlus(p, {
+    p = await idb.getCopy.playersPlus(p, {
         attrs: ["pid", "name", "age", "contract", "freeAgentMood"],
         ratings: ["ovr", "pot"],
         season: g.season,

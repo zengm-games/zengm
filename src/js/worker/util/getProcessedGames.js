@@ -31,7 +31,8 @@ async function getProcessedGameList(abbrev: string, season: number, loadedGames:
 
     let games;
     if (season === g.season) {
-        games = await idb.cache.getAll('games');
+        // $FlowFixMe
+        games = await idb.cache.games.getAll();
     } else {
         games = await idb.league.games.index('season').getAll(season);
     }

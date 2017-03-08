@@ -55,7 +55,7 @@ class StoreAPI<Input, Output, ID> {
     }
 
     getAll(): Promise<Output[]> {
-        return this.cache.getAll(this.store);
+        return this.cache._getAll(this.store);
     }
 
     indexGet(index: Index, key: ID | string): Promise<Output> {
@@ -486,7 +486,7 @@ class Cache {
         return this._data[store][id];
     }
 
-    async getAll(store: Store): Promise<any[]> {
+    async _getAll(store: Store): Promise<any[]> {
         this._checkStatus('full');
 
         return Object.values(this._data[store]);

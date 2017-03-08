@@ -1,5 +1,9 @@
 IVERSON
 
+negotiations not clearing at end of that phase
+
+redirectUrl working from worker/views? If not, reassess
+
 browser support
 - firefox
   - use lie, but only conditionally (so native on chrome) - feature detection!

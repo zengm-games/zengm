@@ -124,7 +124,7 @@ const liveGame = (ctx) => {
 
 const message = (ctx) => {
     return {
-        mid: ctx.params.mid ? parseInt(ctx.params.mid, 10) : null,
+        mid: ctx.params.mid ? parseInt(ctx.params.mid, 10) : undefined,
     };
 };
 

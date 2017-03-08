@@ -1,7 +1,7 @@
 // @flow
 
-import {g} from '../../common';
-import {idb} from '../db';
+import {g, helpers} from '../../common';
+import {getCopy, idb} from '../db';
 import {updatePlayMenu, updateStatus} from '../util';
 import type {GetOutput, Message as Message_, UpdateEvents} from '../../common/types';
 
@@ -10,40 +10,30 @@ async function updateMessage(
     updateEvents: UpdateEvents,
     state: any,
 ): Promise<void | {message?: Message_}> {
-    if (updateEvents.includes('firstRun') || state.message.mid !== inputs.mid) {
+    // Complexity of updating is to handle auto-read message, so inputs.mid is blank
+    if (updateEvents.includes('firstRun') || !state.message || state.message.mid !== inputs.mid) {
         let message;
         let readThisPageview = false;
 
-        const messagesCache = await idb.cache.messages.getAll();
-
-        // Below code is ugly... checking both cache and database for the same thing
-        if (messagesCache.length > 0) {
-            for (let i = messagesCache.length - 1; i >= 0; i--) {
-                message = messagesCache[i];
-
-                if (!message.read) {
-                    message.read = true;
-                    readThisPageview = true;
-                    await idb.cache.messages.put(message);
-                    break; // Keep looking until we find an unread one!
+        if (inputs.mid === undefined) {
+            const messages = await getCopy.messages();
+            if (messages.length > 0) {
+                for (let i = messages.length - 1; i >= 0; i--) {
+                    if (!messages[i].read) {
+                        return {
+                            redirectUrl: helpers.leagueUrl(['message', messages[i].mid]),
+                        };
+                    }
                 }
             }
         } else {
-            await idb.league.tx("messages", "readwrite", async tx => {
-                // If mid is null, this will open the *unread* message with the highest mid
-                await tx.messages.iterate(inputs.mid, 'prev', (messageLocal: Message_, shortCircuit) => {
-                    message = messageLocal;
+            message = await getCopy.messages({mid: inputs.mid});
+        }
 
-                    if (!message.read) {
-                        shortCircuit(); // Keep looking until we find an unread one!
-
-                        message.read = true;
-                        readThisPageview = true;
-
-                        return message;
-                    }
-                });
-            });
+        if (message && !message.read) {
+            message.read = true;
+            readThisPageview = true;
+            await idb.cache.messages.put(message);
         }
 
         if (readThisPageview) {

@@ -83,6 +83,7 @@ class StoreAPI<Input, Output, ID> {
     }
 
     clear(): Promise<void> {
+console.log('clear', this.store);
         return this.cache._clear(this.store);
     }
 }
@@ -590,6 +591,7 @@ class Cache {
     }
 
     async _clear(store: Store) {
+console.log('_clear', store);
         this._checkStatus('full');
 
         if (['negotiations', 'releasedPlayers', 'schedule', 'teamSeasons'].includes(store)) {
@@ -597,6 +599,7 @@ class Cache {
                 delete this._data[store][key];
                 this._deletes[store].add(key);
             }
+console.log('cleared', this._data[store]);
             this.markDirtyIndexes(store);
         } else {
             throw new Error(`clear not implemented for store "${store}"`);

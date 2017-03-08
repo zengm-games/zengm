@@ -55,7 +55,7 @@ async function create(pid: number, resigning: boolean, tid: number = g.userTid):
         resigning,
     };
 
-    await idb.cache.add('negotiations', negotiation);
+    await idb.cache.negotiations.add(negotiation);
     await updateStatus('Contract negotiation');
     await updatePlayMenu();
 }

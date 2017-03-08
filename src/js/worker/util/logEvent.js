@@ -7,7 +7,7 @@ import type {LogEventSaveOptions, LogEventShowOptions} from '../../common/types'
 
 const saveEvent = (event: LogEventSaveOptions) => {
     if (idb.cache) {
-        idb.cache.add('events', Object.assign({}, event, {season: g.season}));
+        idb.cache.events.add(Object.assign({}, event, {season: g.season}));
     }
 };
 

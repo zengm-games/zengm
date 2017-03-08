@@ -234,7 +234,7 @@ async function genMessage(deltas: OwnerMoodDeltas) {
         }
     }
 
-    await idb.cache.add('messages', {
+    await idb.cache.messages.add({
         read: false,
         from: "The Owner",
         year: g.season,

@@ -1,11 +1,11 @@
 // @flow
 
-import {g} from '../../common';
+import {g, helpers} from '../../common';
 import {season} from '../core';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateGamesList(): void | {[key: string]: any} {
-    const games = await season.getSchedule(true);
+    const games = helpers.deepCopy(await season.getSchedule(true));
 
     for (const game of games) {
         if (game.awayTid === g.userTid || game.homeTid === g.userTid) {

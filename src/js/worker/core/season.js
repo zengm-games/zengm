@@ -317,7 +317,7 @@ async function setSchedule(tids: [number, number][]) {
     await idb.cache.schedule.clear();
 
     for (const matchup of tids) {
-        await idb.cache.add('schedule', {
+        await idb.cache.schedule.add({
             homeTid: matchup[0],
             awayTid: matchup[1],
         });

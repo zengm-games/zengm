@@ -366,7 +366,7 @@ async function writeGameStats(results: GameResults, att: number) {
         }
     }
 
-    await idb.cache.add('games', gameStats);
+    await idb.cache.games.add(gameStats);
 }
 
 async function updatePlayoffSeries(results: GameResults) {

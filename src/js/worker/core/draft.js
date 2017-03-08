@@ -11,7 +11,7 @@ import type {PickRealized, TeamFiltered} from '../../common/types';
 async function genPicks(season: number) {
     for (let tid = 0; tid < g.numTeams; tid++) {
         for (let round = 1; round <= 2; round++) {
-            await idb.cache.add('draftPicks', {
+            await idb.cache.draftPicks.add({
                 tid,
                 originalTid: tid,
                 round,

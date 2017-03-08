@@ -68,7 +68,7 @@ class StoreAPI<T, U> {
     }
 
     add(obj: T): Promise<number | string> {
-        return this.cache.add(this.store, obj);
+        return this.cache._add(this.store, obj);
     }
 
     put(obj: T): Promise<number | string> {
@@ -562,7 +562,7 @@ class Cache {
         return obj[pk];
     }
 
-    async add(store: Store, obj: any): Promise<number | string> {
+    async _add(store: Store, obj: any): Promise<number | string> {
         return this._storeObj('add', store, obj);
     }
 

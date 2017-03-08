@@ -196,13 +196,13 @@ async function create(
     // Draft picks for the first 4 years, as those are the ones can be traded initially
     if (leagueFile.hasOwnProperty("draftPicks")) {
         for (let i = 0; i < leagueFile.draftPicks.length; i++) {
-            await idb.cache.add('draftPicks', leagueFile.draftPicks[i]);
+            await idb.cache.draftPicks.add(leagueFile.draftPicks[i]);
         }
     } else {
         for (let i = 0; i < 4; i++) {
             for (let t = 0; t < g.numTeams; t++) {
                 for (let round = 1; round <= 2; round++) {
-                    await idb.cache.add('draftPicks', {
+                    await idb.cache.draftPicks.add({
                         tid: t,
                         originalTid: t,
                         round,
@@ -216,10 +216,10 @@ async function create(
     // Initialize draft order object store for later use
     if (leagueFile.hasOwnProperty("draftOrder")) {
         for (let i = 0; i < leagueFile.draftOrder.length; i++) {
-            await idb.cache.add('draftOrder', leagueFile.draftOrder[i]);
+            await idb.cache.draftOrder.add(leagueFile.draftOrder[i]);
         }
     } else {
-        await idb.cache.add('draftOrder', {
+        await idb.cache.draftOrder.add({
             rid: 0,
             draftOrder: [],
         });
@@ -228,7 +228,7 @@ async function create(
     // teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league.
     for (let i = 0; i < g.numTeams; i++) {
         const t = team.generate(teams[i]);
-        await idb.cache.add('teams', t);
+        await idb.cache.teams.add(t);
 
         let teamSeasons;
         if (teams[i].hasOwnProperty("seasons")) {
@@ -239,7 +239,7 @@ async function create(
         }
         for (const teamSeason of teamSeasons) {
             teamSeason.tid = t.tid;
-            await idb.cache.add('teamSeasons', teamSeason);
+            await idb.cache.teamSeasons.add(teamSeason);
         }
 
         let teamStats;
@@ -253,7 +253,7 @@ async function create(
             if (!teamStat.hasOwnProperty("ba")) {
                 teamStat.ba = 0;
             }
-            await idb.cache.add('teamStats', teamStat);
+            await idb.cache.teamStats.add(teamStat);
         }
 
         // Save scoutingRank for later
@@ -268,10 +268,10 @@ async function create(
 
     if (leagueFile.hasOwnProperty("trade")) {
         for (let i = 0; i < leagueFile.trade.length; i++) {
-            await idb.cache.add('trade', leagueFile.trade[i]);
+            await idb.cache.trade.add(leagueFile.trade[i]);
         }
     } else {
-        await idb.cache.add('trade', {
+        await idb.cache.trade.add({
             rid: 0,
             teams: [{
                 tid,
@@ -311,7 +311,7 @@ async function create(
     for (let j = 0; j < toMaybeAdd.length; j++) {
         if (leagueFile.hasOwnProperty(toMaybeAdd[j])) {
             for (let i = 0; i < leagueFile[toMaybeAdd[j]].length; i++) {
-                await idb.cache.add(toMaybeAdd[j], leagueFile[toMaybeAdd[j]][i]);
+                await idb.cache._add(toMaybeAdd[j], leagueFile[toMaybeAdd[j]][i]);
             }
         }
     }
@@ -385,7 +385,7 @@ async function create(
                     // Delete psid because it can cause problems due to interaction addStatsRow above
                     delete ps.psid;
 
-                    await idb.cache.add('playerStats', ps);
+                    await idb.cache.playerStats.add(ps);
 
                     // On to the next one
                     if (playerStats.length > 0) {

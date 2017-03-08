@@ -65,8 +65,8 @@ async function newPhasePreseason() {
             scoutingRankTemp = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
         }
 
-        await idb.cache.add('teamSeasons', team.genSeasonRow(tid, prevSeason));
-        await idb.cache.add('teamStats', team.genStatsRow(tid));
+        await idb.cache.teamSeasons.add(team.genSeasonRow(tid, prevSeason));
+        await idb.cache.teamStats.add(team.genStatsRow(tid));
     }));
     const scoutingRank = scoutingRankTemp;
     if (scoutingRank === undefined) {
@@ -125,7 +125,7 @@ async function newPhaseRegularSeason() {
 
         if (g.season === g.startingSeason + 3 && g.lid > 3 && nagged === 0) {
             localStorage.setItem('nagged', '1');
-            await idb.cache.add('messages', {
+            await idb.cache.messages.add({
                 read: false,
                 from: "The Commissioner",
                 year: g.season,
@@ -133,7 +133,7 @@ async function newPhaseRegularSeason() {
             });
         } else if ((nagged === 1 && Math.random() < 0.25) || (nagged >= 2 && Math.random() < 0.025)) {
             localStorage.setItem('nagged', '2');
-            await idb.cache.add('messages', {
+            await idb.cache.messages.add({
                 read: false,
                 from: "The Commissioner",
                 year: g.season,
@@ -142,7 +142,7 @@ async function newPhaseRegularSeason() {
         } else if ((nagged >= 2 && nagged <= 3 && Math.random() < 0.5) || (nagged >= 4 && Math.random() < 0.05)) {
             // Skipping 3, obsolete
             localStorage.setItem('nagged', '4');
-            await idb.cache.add('messages', {
+            await idb.cache.messages.add({
                 read: false,
                 from: "The Commissioner",
                 year: g.season,
@@ -192,7 +192,7 @@ async function newPhasePlayoffs() {
     const teamSeasons = await idb.cache.teamSeasons.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
     for (const teamSeason of teamSeasons) {
         if (tidPlayoffs.includes(teamSeason.tid)) {
-            await idb.cache.add('teamStats', team.genStatsRow(teamSeason.tid, true));
+            await idb.cache.teamStats.add(team.genStatsRow(teamSeason.tid, true));
 
             teamSeason.playoffRoundsWon = 0;
 

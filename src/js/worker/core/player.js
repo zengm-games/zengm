@@ -603,7 +603,7 @@ async function release(p: Player, justDrafted: boolean) {
     // Keep track of player salary even when he's off the team, but make an exception for players who were just drafted
     // Was the player just drafted?
     if (!justDrafted) {
-        await idb.cache.add('releasedPlayers', {
+        await idb.cache.releasedPlayers.add({
             pid: p.pid,
             tid: p.tid,
             contract: helpers.deepCopy(p.contract),
@@ -868,7 +868,7 @@ async function addStatsRow(p: Player, playoffs?: boolean = false) {
         }
     }
 
-    await idb.cache.add('playerStats', statsRow);
+    await idb.cache.playerStats.add(statsRow);
 }
 
 function generate(
@@ -1455,7 +1455,7 @@ function checkStatisticalFeat(pid: number, tid: number, p: GamePlayer, results: 
 
         logFeat(featText);
 
-        idb.cache.add('playerFeats', {
+        idb.cache.playerFeats.add({
             pid,
             name: p.name,
             pos: p.pos,

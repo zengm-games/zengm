@@ -105,7 +105,7 @@ describe("util/account", () => {
             lastSeason += 1;
             extraSeason.tid = tid;
             extraSeason.season = lastSeason;
-            await idb.cache.add('teamSeasons', extraSeason);
+            await idb.cache.teamSeasons.add(extraSeason);
         }
     };
 

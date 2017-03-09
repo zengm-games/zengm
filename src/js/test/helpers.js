@@ -38,8 +38,13 @@ const resetCache = async (data: {[key: Store]: any[]}) => {
     idb.cache._status = 'full';
 
     if (data.players) {
-        for (const p of data.players) {
-            await idb.cache.players.add(p);
+        for (const obj of data.players) {
+            await idb.cache.players.add(obj);
+        }
+    }
+    if (data.teamSeasons) {
+        for (const obj of data.teamSeasons) {
+            await idb.cache.teamSeasons.add(obj);
         }
     }
 };

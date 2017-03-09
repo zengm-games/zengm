@@ -49,10 +49,10 @@ describe("core/draft", () => {
 
     describe("#genOrder()", () => {
         before(async () => {
-            await idb.cache.clear('teamSeasons');
+            await idb.cache.teamSeasons.clear();
 
             // Load static data
-            const teams = await idb.cache.getAll('teams');
+            const teams = await idb.cache.teams.getAll();
             for (const t of teams) {
                 const st = sampleTiebreakers.teams[t.tid];
                 const teamSeasons = st.seasons;
@@ -61,7 +61,7 @@ describe("core/draft", () => {
 
                 for (const teamSeason of teamSeasons) {
                     teamSeason.tid = t.tid;
-                    await idb.cache.add('teamSeasons', teamSeason);
+                    await idb.cache.teamSeasons.add(teamSeason);
                 }
 
                 await idb.cache.teams.put(st);

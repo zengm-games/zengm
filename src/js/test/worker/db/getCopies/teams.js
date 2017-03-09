@@ -21,7 +21,7 @@ describe("db/getCopies", () => {
             teamStats.gp = 4;
             teamStats.fg = 12;
             teamStats.fga = 120;
-            await idb.cache.add('teamStats', teamStats);
+            await idb.cache.teamStats.add(teamStats);
         });
         after(() => league.remove(g.lid));
 

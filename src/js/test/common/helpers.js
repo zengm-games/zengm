@@ -113,15 +113,14 @@ describe("util/helpers", () => {
     describe("#formatCurrency()", () => {
         it("should work with no extra options", () => {
             assert.equal(helpers.formatCurrency(52.766), "$52.77");
-            assert.equal(helpers.formatCurrency("2.7"), "$2.70");
         });
         it("should append a string, if supplied", () => {
             assert.equal(helpers.formatCurrency(64363.764376, "Q"), "$64363.76Q");
-            assert.equal(helpers.formatCurrency(".794", "whatever"), "$0.79whatever");
+            assert.equal(helpers.formatCurrency(0.794, "whatever"), "$0.79whatever");
         });
         it("should round to any precision", () => {
             assert.equal(helpers.formatCurrency(64363.764376, "Q", 5), "$64363.76438Q");
-            assert.equal(helpers.formatCurrency(".794", "whatever", 0), "$1whatever");
+            assert.equal(helpers.formatCurrency(0.794, "whatever", 0), "$1whatever");
         });
     });
 

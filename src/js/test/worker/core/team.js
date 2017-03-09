@@ -1,7 +1,7 @@
 import assert from 'assert';
-import {g, PLAYER} from '../../common';
-import {Cache, connectMeta, idb} from '../../db';
-import {league, player, team} from '../../core';
+import {g, PLAYER} from '../../../common';
+import {Cache, connectMeta, idb} from '../../../worker/db';
+import {league, player, team} from '../../../worker/core';
 
 describe("core/team", () => {
     describe("#findStarters()", () => {

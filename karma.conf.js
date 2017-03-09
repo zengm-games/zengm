@@ -6,7 +6,7 @@ module.exports = function (config) {
 
         frameworks: ['mocha', 'browserify'],
 
-        files: ['src/js/test/app.js', 'src/js/test/**/*.js'],
+        files: ['src/js/test/index.js', 'src/js/test/**/*.js'],
 
         exclude: [],
 
@@ -24,7 +24,7 @@ module.exports = function (config) {
 
         autoWatch: false,
 
-        browsers: ['Chrome', 'Firefox'],
+        browsers: ['Chrome'],
 
         singleRun: true,
 

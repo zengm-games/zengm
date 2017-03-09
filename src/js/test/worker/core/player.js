@@ -1,8 +1,8 @@
 /*eslint no-unused-expressions: 0*/
 import assert from 'assert';
 import _ from 'underscore';
-import {PLAYER, g, helpers} from '../../common';
-import {player} from '../../core';
+import {PLAYER, g, helpers} from '../../../common';
+import {player} from '../../../worker/core';
 
 // Synchronous version of player.addStatsRow which does not require IndexedDB
 const addStatsRow = (p, playoffs = false) => {

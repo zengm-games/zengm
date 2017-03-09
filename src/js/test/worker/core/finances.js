@@ -1,7 +1,7 @@
 import assert from 'assert';
-import {Cache, connectMeta, idb} from '../../db';
-import {g} from '../../common';
-import {league, finances} from '../../core';
+import {Cache, connectMeta, idb} from '../../../worker/db';
+import {g} from '../../../common';
+import {league, finances} from '../../../worker/core';
 
 describe("core/finances", () => {
     before(async () => {

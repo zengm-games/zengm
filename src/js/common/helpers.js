@@ -234,7 +234,7 @@ function nullPad<T>(array: (?T)[], length: number): (?T)[] {
  * Format a number as currency, correctly handling negative values.
  *
  * @memberOf util.helpers
- * @param {number|string} amount Input value.
+ * @param {number} amount Input value.
  * @param {string=} append Suffix to append to the number, like "M" for things like $2M.
  * @param {number|string|undefined} precision Number of decimal places. Default is 2 (like $17.62).
  * @return {string} Formatted currency string.

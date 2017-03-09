@@ -1,8 +1,8 @@
 import assert from 'assert';
-import {Cache, connectMeta, idb} from '../../db';
-import {PLAYER, g} from '../../common';
-import {draft, league} from '../../core';
-import sampleTiebreakers from '../fixtures/sampleTiebreakers';
+import {Cache, connectMeta, idb} from '../../../worker/db';
+import {PLAYER, g} from '../../../common';
+import {draft, league} from '../../../worker/core';
+import sampleTiebreakers from '../../fixtures/sampleTiebreakers';
 
 describe("core/draft", () => {
     before(async () => {

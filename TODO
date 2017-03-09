@@ -1,5 +1,10 @@
 IVERSON - BEFORE BETA
 
+get tests working again
+- a lot could just run from cache
+- come up with easy way of filling cache
+- restore in Firefox
+
 clicking Play > To Regular Season quickly results in 'Invalid cache status "filling"'
 
 browser support
@@ -49,10 +54,6 @@ update to cache
   - getTradingBlockOffers has cb passed to it. how to replace? need to update UI incrementally
 - look at all IDB usage
 
-get tests working again
-- a lot could just run from cache
-- come up with easy way of filling cache
-
 fix all lint errors and warnings
 
 reassess delete old data - still needed? should be renamed if no performance impact?
@@ -69,6 +70,8 @@ Email users after bbgm update. But first allow opt out on register
 3.8
 
 IVERSON - EVENTUALLY
+
+lint tests
 
 rethink cache API, with goal of having it typed
 - rename indexes, store prefixed with storename

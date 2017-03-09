@@ -1,9 +1,9 @@
 /* eslint comma-spacing: "off", key-spacing: "off", no-unused-expressions: "off", quote-props: "off" */
 import assert from 'assert';
-import {Cache, connectMeta, idb} from '../../db';
-import {g} from '../../common';
-import {league} from '../../core';
-import {account} from '../../util';
+import {Cache, connectMeta, idb} from '../../../worker/db';
+import {g} from '../../../common';
+import {league} from '../../../worker/core';
+import {account} from '../../../worker/util';
 
 describe("util/account", () => {
     before(async () => {

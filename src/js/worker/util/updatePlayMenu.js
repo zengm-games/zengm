@@ -10,6 +10,7 @@ import {lock, toUI} from '../util';
 * @return {Promise}
 */
 const updatePlayMenu = async () => {
+    // $FlowFixMe
     if (typeof it === 'function') { return; }
 
     const allOptions: {

@@ -114,7 +114,7 @@ describe("util/account", () => {
             const teamSeasons = await idb.cache.teamSeasons.indexGetAll('teamSeasonsByTidSeason', [`${g.userTid}`, `${g.userTid},Z`]);
             for (const teamSeason of teamSeasons) {
                 if (teamSeason.season > g.season) {
-                    await idb.cache.delete('teamSeasons', teamSeason.rid);
+                    await idb.cache.teamSeasons.delete(teamSeason.rid);
                 }
             }
         });

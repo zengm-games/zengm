@@ -28,7 +28,9 @@ const resetCache = async (data?: {[key: Store]: any[]}) => {
     idb.cache = new Cache();
 
     // We want these to do nothing while testing, usually
+    // $FlowFixMe
     idb.cache.fill = async () => {};
+    // $FlowFixMe
     idb.cache.flush = async () => {};
 
     for (const store of STORES) {

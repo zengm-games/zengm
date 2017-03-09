@@ -15,6 +15,7 @@ Args:
         the client.
 */
 async function updatePhase(phaseText?: string) {
+    // $FlowFixMe
     if (typeof it === 'function') { return; }
     const oldPhaseText = g.phaseText;
     if (phaseText === undefined) {

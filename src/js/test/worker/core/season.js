@@ -6,6 +6,10 @@ import testHelpers from '../../helpers';
 const defaultTeams = helpers.getTeamsDefault();
 
 describe("core/season", () => {
+    before(() => {
+        testHelpers.resetG();
+    });
+
     describe("#newSchedule()", () => {
         it("should schedule 1230 games (82 each for 30 teams)", () => {
             assert.equal(season.newSchedule(defaultTeams).length, 1230);

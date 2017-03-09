@@ -4,6 +4,6 @@
         worker: true,
     },
     rules: {
-        "id-blacklist": ["error", "$", "React", "location"],
+        "id-blacklist": ["error", "$", "React"],
     },
 }

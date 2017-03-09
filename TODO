@@ -3,6 +3,7 @@ IVERSON - BEFORE BETA
 get tests working again
 - a lot could just run from cache
 - come up with easy way of filling cache
+- unskip player.generate test
 - restore in Firefox
 - this shit is UGLY UGLY UGLY, fix ASAP!!!
     if (typeof it === 'function') { return; }

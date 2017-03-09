@@ -64,7 +64,7 @@ describe("core/draft", () => {
                     await idb.cache.add('teamSeasons', teamSeason);
                 }
 
-                await idb.cache.put('teams', st);
+                await idb.cache.teams.put(st);
             }
         });
 

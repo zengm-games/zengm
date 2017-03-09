@@ -16,7 +16,7 @@ describe("core/trade", () => {
     });
 
     const testCreateTrade = async (otherTidTest, userPidsTest, otherPidsTest) => {
-        const {teams} = await idb.cache.get('trade', 0);
+        const {teams} = await idb.cache.trade.get(0);
         assert.deepEqual(teams[1].tid, otherTidTest);
         assert.deepEqual(teams[0].pids, userPidsTest);
         assert.deepEqual(teams[1].pids, otherPidsTest);
@@ -57,7 +57,7 @@ describe("core/trade", () => {
             assert.deepEqual(teams[1].pids, otherPidsTest);
 
             await trade.create([{tid: g.userTid, pids: [], dpids: []}, {tid: 4, pids: [], dpids: []}]);
-            const tr = await idb.cache.get('trade', 0);
+            const tr = await idb.cache.trade.get(0);
             teams = tr.teams;
             assert.deepEqual(teams[0].pids, userPidsTest);
             assert.deepEqual(teams[1].pids, []);

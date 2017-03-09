@@ -10,6 +10,8 @@ import {lock, toUI} from '../util';
 * @return {Promise}
 */
 const updatePlayMenu = async () => {
+    if (typeof it === 'function') { return; }
+
     const allOptions: {
         [key: string]: {
             id?: string,

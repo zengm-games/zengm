@@ -4,7 +4,7 @@ module.exports = function (config) {
     config.set({
         basePath: '',
 
-        frameworks: ['mocha', 'browserify'],
+        frameworks: ['mocha', 'browserify', 'source-map-support'],
 
         files: ['src/js/test/index.js', 'src/js/test/**/*.js'],
 
@@ -29,6 +29,7 @@ module.exports = function (config) {
         singleRun: true,
 
         browserify: {
+            debug: true,
             transform: ['babelify'],
         },
     });

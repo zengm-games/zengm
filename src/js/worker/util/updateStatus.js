@@ -14,6 +14,7 @@ Args:
         the client.
 */
 async function updateStatus(statusText?: string) {
+    if (typeof it === 'function') { return; }
     const oldStatus = g.statusText;
     if (statusText === undefined) {
         toUI('emit', 'updateTopMenu', {statusText: oldStatus});

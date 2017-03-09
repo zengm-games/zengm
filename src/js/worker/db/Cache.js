@@ -33,11 +33,11 @@ import type {
 type Status = 'empty' | 'error' | 'filling' | 'full';
 
 // Only these IDB object stores for now. Keep in memory only player info for non-retired players and team info for the current season.
-type Store = 'awards' | 'draftOrder' | 'draftPicks' | 'events' | 'gameAttributes' | 'games' | 'messages' | 'negotiations' | 'playerFeats' | 'playerStats' | 'players' | 'playoffSeries' | 'releasedPlayers' | 'schedule' | 'teamSeasons' | 'teamStats' | 'teams' | 'trade';
+export type Store = 'awards' | 'draftOrder' | 'draftPicks' | 'events' | 'gameAttributes' | 'games' | 'messages' | 'negotiations' | 'playerFeats' | 'playerStats' | 'players' | 'playoffSeries' | 'releasedPlayers' | 'schedule' | 'teamSeasons' | 'teamStats' | 'teams' | 'trade';
 type Index = 'draftPicksBySeason' | 'draftPicksByTid' | 'playerStats' | 'playerStatsAllByPid' | 'playerStatsByPid' | 'playersByTid' | 'releasedPlayers' | 'releasedPlayersByTid' | 'teamSeasonsBySeasonTid' | 'teamSeasonsByTidSeason' | 'teamStatsByPlayoffsTid';
 
 // This variable is only needed because Object.keys(storeInfos) is not handled well in Flow
-const STORES: Store[] = ['awards', 'draftOrder', 'draftPicks', 'events', 'gameAttributes', 'games', 'messages', 'negotiations', 'playerFeats', 'playerStats', 'players', 'playoffSeries', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams', 'trade'];
+export const STORES: Store[] = ['awards', 'draftOrder', 'draftPicks', 'events', 'gameAttributes', 'games', 'messages', 'negotiations', 'playerFeats', 'playerStats', 'players', 'playoffSeries', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams', 'trade'];
 
 class StoreAPI<Input, Output, ID> {
     cache: Cache;

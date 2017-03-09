@@ -56,6 +56,11 @@ const resetCache = async (data?: {[key: Store]: any[]}) => {
             await idb.cache.teamSeasons.add(obj);
         }
     }
+    if (data.trade) {
+        for (const obj of data.trade) {
+            await idb.cache.trade.add(obj);
+        }
+    }
 };
 
 const resetG = () => {

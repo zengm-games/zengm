@@ -11,7 +11,7 @@ describe("db/getCopies", () => {
             idb.cache = new Cache();
             await idb.cache.fill();
 
-            let teamStats = await idb.cache.indexGet('teamStatsByPlayoffsTid', '0,4');
+            let teamStats = await idb.cache.teamSeasons.indexGet('teamStatsByPlayoffsTid', '0,4');
             teamStats.gp = 10;
             teamStats.fg = 50;
             teamStats.fga = 100;

@@ -1,23 +1,22 @@
 import assert from 'assert';
-import {Cache, connectMeta, idb} from '../../../worker/db';
 import {PLAYER, g} from '../../../common';
-import {draft, league} from '../../../worker/core';
 import sampleTiebreakers from '../../fixtures/sampleTiebreakers';
+import helpers from '../../helpers';
+import {draft} from '../../../worker/core';
+import {idb} from '../../../worker/db';
 
 describe("core/draft", () => {
     before(async () => {
-        idb.meta = await connectMeta();
-        await league.create("Test", 15, undefined, 2015, false);
-        idb.cache = new Cache();
-        await idb.cache.fill();
+        helpers.resetG();
+
+        await helpers.resetCache();
     });
-    after(() => league.remove(g.lid));
 
     const testDraftUntilUserOrEnd = async (numNow, numTotal) => {
         const pids = await draft.untilUserOrEnd();
         assert.equal(pids.length, numNow);
         const players = await idb.cache.players.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
-        assert.equal(players.length, 140 - numTotal);
+        assert.equal(players.length, 70 - numTotal);
     };
 
     let userPick1;
@@ -33,7 +32,7 @@ describe("core/draft", () => {
         }
         assert.equal(pick.tid, g.userTid);
 
-        const p = await idb.cache.indexGet('playersByTid', PLAYER.UNDRAFTED);
+        const p = await idb.cache.players.indexGet('playersByTid', PLAYER.UNDRAFTED);
         await draft.selectPlayer(pick, p.pid);
         assert.equal(p.tid, g.userTid);
         await draft.setOrder(draftOrder);
@@ -41,9 +40,9 @@ describe("core/draft", () => {
 
     describe("#genPlayers()", () => {
         it("should generate 70 players for the draft", async () => {
-            await draft.genPlayers(PLAYER.UNDRAFTED, null, null);
+            await draft.genPlayers(PLAYER.UNDRAFTED, 15.5);
             const players = await idb.cache.players.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
-            assert.equal(players.length, 140); // 70 from original league, 70 from this
+            assert.equal(players.length, 70); // 70 players in a draft class
         });
     });
 
@@ -52,19 +51,18 @@ describe("core/draft", () => {
             await idb.cache.teamSeasons.clear();
 
             // Load static data
-            const teams = await idb.cache.teams.getAll();
-            for (const t of teams) {
-                const st = sampleTiebreakers.teams[t.tid];
+            for (let tid = 0; tid < g.numTeams; tid++) {
+                const st = sampleTiebreakers.teams[tid];
                 const teamSeasons = st.seasons;
                 delete st.seasons;
                 delete st.stats;
 
                 for (const teamSeason of teamSeasons) {
-                    teamSeason.tid = t.tid;
+                    teamSeason.tid = tid;
                     await idb.cache.teamSeasons.add(teamSeason);
                 }
 
-                await idb.cache.teams.put(st);
+                await idb.cache.teams.add(st);
             }
         });
 

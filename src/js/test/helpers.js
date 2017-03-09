@@ -24,8 +24,12 @@ function numInArrayEqualTo<T>(array: T[], x: T): number {
     return n;
 }
 
-const resetCache = async (data: {[key: Store]: any[]}) => {
+const resetCache = async (data?: {[key: Store]: any[]}) => {
     idb.cache = new Cache();
+
+    // We want these to do nothing while testing, usually
+    idb.cache.fill = async () => {};
+    idb.cache.flush = async () => {};
 
     for (const store of STORES) {
         idb.cache._data[store] = {};
@@ -37,6 +41,9 @@ const resetCache = async (data: {[key: Store]: any[]}) => {
     }
     idb.cache._status = 'full';
 
+    if (!data) {
+        return;
+    }
     if (data.players) {
         for (const obj of data.players) {
             await idb.cache.players.add(obj);

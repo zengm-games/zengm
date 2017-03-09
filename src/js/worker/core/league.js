@@ -47,10 +47,10 @@ async function setGameAttributes(gameAttributes: GameAttributes) {
         g[key] = gameAttributes[key];
     }));
 
+    if (typeof it === 'function') { return; }
     await toUI('setGameAttributes', gameAttributes);
-
     if (toUpdate.includes('userTid') || toUpdate.includes('userTids')) {
-        toUI('emit', 'updateMultiTeam');
+        await toUI('emit', 'updateMultiTeam');
     }
 }
 

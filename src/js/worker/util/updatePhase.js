@@ -15,6 +15,7 @@ Args:
         the client.
 */
 async function updatePhase(phaseText?: string) {
+    if (typeof it === 'function') { return; }
     const oldPhaseText = g.phaseText;
     if (phaseText === undefined) {
         toUI('emit', 'updateTopMenu', {phaseText: oldPhaseText});

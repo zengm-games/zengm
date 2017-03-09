@@ -14,7 +14,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19729.999999999985,
@@ -43,7 +43,7 @@ export default {
                     oppPts: 8393,
                 },
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: true,
                     gp: 0,
                     min: 0,
@@ -74,7 +74,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 622645,
@@ -198,7 +198,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19705.000000000073,
@@ -229,7 +229,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 1017849,
@@ -353,7 +353,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19780.00000000005,
@@ -382,7 +382,7 @@ export default {
                     oppPts: 7875,
                 },
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: true,
                     gp: 0,
                     min: 0,
@@ -413,7 +413,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 1025000,
@@ -537,7 +537,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19730.00000000011,
@@ -568,7 +568,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 891596,
@@ -692,7 +692,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19730.00000000005,
@@ -721,7 +721,7 @@ export default {
                     oppPts: 8142,
                 },
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: true,
                     gp: 0,
                     min: 0,
@@ -752,7 +752,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 1025000,
@@ -876,7 +876,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19755.00000000007,
@@ -905,7 +905,7 @@ export default {
                     oppPts: 8088,
                 },
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: true,
                     gp: 0,
                     min: 0,
@@ -936,7 +936,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 921028,
@@ -1060,7 +1060,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19705.000000000055,
@@ -1091,7 +1091,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 1004576,
@@ -1215,7 +1215,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19705.000000000055,
@@ -1244,7 +1244,7 @@ export default {
                     oppPts: 7658,
                 },
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: true,
                     gp: 0,
                     min: 0,
@@ -1275,7 +1275,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 583357,
@@ -1399,7 +1399,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19730.000000000047,
@@ -1430,7 +1430,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 1025000,
@@ -1554,7 +1554,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19680.000000000022,
@@ -1585,7 +1585,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 797211,
@@ -1709,7 +1709,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19730.000000000025,
@@ -1738,7 +1738,7 @@ export default {
                     oppPts: 8268,
                 },
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: true,
                     gp: 0,
                     min: 0,
@@ -1769,7 +1769,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 589223,
@@ -1893,7 +1893,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19780.000000000087,
@@ -1924,7 +1924,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 982103,
@@ -2048,7 +2048,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19680.00000000005,
@@ -2077,7 +2077,7 @@ export default {
                     oppPts: 8338,
                 },
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: true,
                     gp: 0,
                     min: 0,
@@ -2108,7 +2108,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 1025000,
@@ -2232,7 +2232,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19680,
@@ -2261,7 +2261,7 @@ export default {
                     oppPts: 7554,
                 },
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: true,
                     gp: 0,
                     min: 0,
@@ -2292,7 +2292,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 888237,
@@ -2416,7 +2416,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19705.000000000036,
@@ -2445,7 +2445,7 @@ export default {
                     oppPts: 8338,
                 },
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: true,
                     gp: 0,
                     min: 0,
@@ -2476,7 +2476,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 565153,
@@ -2600,7 +2600,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19680.000000000062,
@@ -2631,7 +2631,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 975042,
@@ -2755,7 +2755,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19680.000000000062,
@@ -2786,7 +2786,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 992049,
@@ -2910,7 +2910,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19705.000000000076,
@@ -2941,7 +2941,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 777757,
@@ -3065,7 +3065,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19730.000000000025,
@@ -3094,7 +3094,7 @@ export default {
                     oppPts: 8464,
                 },
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: true,
                     gp: 0,
                     min: 0,
@@ -3125,7 +3125,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 459847,
@@ -3249,7 +3249,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19730.0000000001,
@@ -3280,7 +3280,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 946393,
@@ -3404,7 +3404,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19730.00000000002,
@@ -3435,7 +3435,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 972320,
@@ -3559,7 +3559,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19755.00000000003,
@@ -3590,7 +3590,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 574196,
@@ -3714,7 +3714,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19680.00000000008,
@@ -3743,7 +3743,7 @@ export default {
                     oppPts: 7310,
                 },
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: true,
                     gp: 0,
                     min: 0,
@@ -3774,7 +3774,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 1023751,
@@ -3898,7 +3898,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19705.000000000044,
@@ -3927,7 +3927,7 @@ export default {
                     oppPts: 8470,
                 },
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: true,
                     gp: 0,
                     min: 0,
@@ -3958,7 +3958,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 812717,
@@ -4082,7 +4082,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19755.000000000065,
@@ -4111,7 +4111,7 @@ export default {
                     oppPts: 8684,
                 },
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: true,
                     gp: 0,
                     min: 0,
@@ -4142,7 +4142,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 1025000,
@@ -4266,7 +4266,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19680.00000000008,
@@ -4297,7 +4297,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 860339,
@@ -4421,7 +4421,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19705,
@@ -4450,7 +4450,7 @@ export default {
                     oppPts: 7677,
                 },
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: true,
                     gp: 0,
                     min: 0,
@@ -4481,7 +4481,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 979779,
@@ -4605,7 +4605,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19730.00000000002,
@@ -4634,7 +4634,7 @@ export default {
                     oppPts: 7914,
                 },
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: true,
                     gp: 0,
                     min: 0,
@@ -4665,7 +4665,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 1025000,
@@ -4789,7 +4789,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19680.00000000007,
@@ -4820,7 +4820,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 494481,
@@ -4944,7 +4944,7 @@ export default {
             imgURL: "",
             stats: [
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: false,
                     gp: 82,
                     min: 19780.000000000065,
@@ -4973,7 +4973,7 @@ export default {
                     oppPts: 7951,
                 },
                 {
-                    season: 2015,
+                    season: 2016,
                     playoffs: true,
                     gp: 0,
                     min: 0,
@@ -5004,7 +5004,7 @@ export default {
             ],
             seasons: [
                 {
-                    season: 2015,
+                    season: 2016,
                     gp: 82,
                     gpHome: 41,
                     att: 1005222,

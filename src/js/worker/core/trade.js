@@ -574,20 +574,13 @@ async function getPickValues(): Promise<TradePickValues> {
         default: [75, 73, 71, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 50, 50, 49, 49, 49, 48, 48, 48, 47, 47, 47, 46, 46, 46, 45, 45, 45, 44, 44, 44, 43, 43, 43, 42, 42, 42, 41, 41, 41, 40, 40, 39, 39, 38, 38, 37, 37], // This is basically arbitrary
     };
 
-    const promises = [];
     for (const tid of [PLAYER.UNDRAFTED, PLAYER.UNDRAFTED_2, PLAYER.UNDRAFTED_3]) {
-        promises.push(idb.cache.players.indexGetAll('playersByTid', tid).then(players => {
-            if (players.length > 0) {
-                for (const p of players) {
-                    p.value += 4; // +4 is to generally make picks more valued
-                }
-                players.sort((a, b) => b.value - a.value);
-                estValues[players[0].draft.year] = players.map(p => p.value);
-            }
-        }));
+        const players = await idb.cache.players.indexGetAll('playersByTid', tid);
+        if (players.length > 0) {
+            players.sort((a, b) => b.value - a.value);
+            estValues[players[0].draft.year] = players.map(p => p.value + 4); // +4 is to generally make picks more valued
+        }
     }
-
-    await Promise.all(promises);
 
     return estValues;
 }

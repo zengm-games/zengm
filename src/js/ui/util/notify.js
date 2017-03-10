@@ -51,6 +51,7 @@ const notify = (message, title, {extraClass, persistent = false, timeOut}) => {
         closeLink.addEventListener('click', () => {
             notificationElement.classList.add('notification-delete');
         });
+        notificationElement.classList.add('notification-persistent');
 
         notificationElement.appendChild(closeLink);
     }

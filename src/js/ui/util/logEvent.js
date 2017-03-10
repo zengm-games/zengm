@@ -34,7 +34,7 @@ const showEvent = ({
 
         // Persistent notifications are very rare and should stop game sim when displayed
         if (persistent && g.autoPlaySeasons <= 0) {
-            toWorker('updateGameAttributes', {stopGames: true});
+            toWorker('lockSet', 'stopGameSim', true);
         }
     }
 

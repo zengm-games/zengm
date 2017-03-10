@@ -197,10 +197,11 @@ async function play(numDays: number, start?: boolean = true) {
         };
 
         // If we didn't just stop games, let's play
-        // Or, if we are starting games (and already passed the lock), continue even if stopGames was just seen
-        if (numDays > 0 && (start || !g.stopGames)) {
-            if (g.stopGames) {
-                await league.setGameAttributes({stopGames: false});
+        // Or, if we are starting games (and already passed the lock), continue even if stopGameSim was just seen
+        const stopGameSim = lock.get('stopGameSim');
+        if (numDays > 0 && (start || !stopGameSim)) {
+            if (stopGameSim) {
+                lock.set('stopGameSim', false);
             }
             await cbYetAnother();
         } else {

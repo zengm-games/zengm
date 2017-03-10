@@ -5,9 +5,9 @@ import {PHASE, PLAYER, g, helpers} from '../../common';
 import actions from './actions';
 import {contractNegotiation, draft, finances, league, phase, player, team, trade} from '../core';
 import {connectMeta, idb} from '../db';
-import {account, beforeView, changes, checkNaNs, env, random, updatePlayMenu, updateStatus} from '../util';
+import {account, beforeView, changes, checkNaNs, env, lock, random, updatePlayMenu, updateStatus} from '../util';
 import * as views from '../views';
-import type {Env, GameAttributes, GetOutput, Player, PlayerWithoutPid, UpdateEvents} from '../../common/types';
+import type {Env, GameAttributes, GetOutput, LockName, Player, PlayerWithoutPid, UpdateEvents} from '../../common/types';
 
 const acceptContractNegotiation = async (pid: number, amount: number, exp: number): Promise<?string> => {
     return contractNegotiation.accept(pid, amount, exp);
@@ -468,6 +468,10 @@ const init = async (inputEnv: Env) => {
     idb.meta = await connectMeta();
 };
 
+const lockSet = async (name: LockName, value: boolean) => {
+    lock.set(name, value);
+};
+
 const releasePlayer = async (pid: number, justDrafted: boolean) => {
     const players = await idb.cache.players.indexGetAll('playersByTid', g.userTid);
     if (players.length <= 5) {
@@ -786,6 +790,7 @@ export default {
     getTradingBlockOffers,
     handleUploadedDraftClass,
     init,
+    lockSet,
     proposeTrade,
     releasePlayer,
     removeLeague,

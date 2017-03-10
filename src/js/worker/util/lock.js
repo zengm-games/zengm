@@ -2,12 +2,13 @@
 
 import {idb} from '../db';
 import {toUI} from '../util';
+import type {LockName} from '../../common/types';
 
-type LockName = 'newPhase' | 'gameSim';
-
+// These are transient variables that always reset to "false" on reload
 const locks: {[key: LockName]: boolean} = {
     gameSim: false,
     newPhase: false,
+    stopGameSim: false,
 };
 
 const get = (name: LockName): boolean => {

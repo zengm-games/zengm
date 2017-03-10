@@ -2,7 +2,7 @@
 
 import _ from 'underscore';
 import {COMPOSITE_WEIGHTS, PHASE, PLAYER, g, helpers} from '../../common';
-import {GameSim, finances, freeAgents, league, phase, player, season, team} from '../core';
+import {GameSim, finances, freeAgents, phase, player, season, team} from '../core';
 import {idb} from '../db';
 import {advStats, lock, logEvent, random, toUI, updatePlayMenu, updateStatus} from '../util';
 import type {GameResults} from '../../common/types';
@@ -600,8 +600,8 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
     // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season
     const cbNoGames = async () => {
         await updateStatus('Idle');
-        await updatePlayMenu();
         lock.set('gameSim', false);
+        await updatePlayMenu();
 
         // Check to see if the season is over
         if (g.phase < PHASE.PLAYOFFS) {
@@ -762,11 +762,12 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
         setTimeout(async () => {
             if (numDays > 0) {
                 // If we didn't just stop games, let's play
-                // Or, if we are starting games (and already passed the lock), continue even if stopGames was just seen
-                if (start || !g.stopGames) {
+                // Or, if we are starting games (and already passed the lock), continue even if stopGameSim was just seen
+                const stopGameSim = lock.get('stopGameSim');
+                if (start || !stopGameSim) {
                     // If start is set, then reset stopGames
-                    if (g.stopGames) {
-                        await league.setGameAttributes({stopGames: false});
+                    if (stopGameSim) {
+                        lock.set('stopGameSim', false);
                     }
 
                     if (g.phase !== PHASE.PLAYOFFS) {
@@ -790,7 +791,6 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
     // that? If so, set the lock and update the play menu
     if (start) {
         const canStartGames = await lock.canStartGames();
-console.log('canStartGames', canStartGames);
         if (canStartGames) {
             const userTeamSizeError = await team.checkRosterSizes();
             if (userTeamSizeError === null) {

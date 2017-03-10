@@ -6,7 +6,6 @@ const defaultGameAttributes: GameAttributes = {
     phase: 0,
     nextPhase: null, // Used only for fantasy draft
     daysLeft: 0, // Used only for free agency
-    stopGames: false,
     ownerMood: {
         wins: 0,
         playoffs: 0,

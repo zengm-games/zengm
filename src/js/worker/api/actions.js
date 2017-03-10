@@ -103,7 +103,7 @@ const playAmount = async (amount: 'day' | 'week' | 'month' | 'untilPreseason') =
 };
 
 const playStop = async () => {
-    await league.setGameAttributes({stopGames: true});
+    lock.set('stopGameSim', true);
     if (g.phase !== PHASE.FREE_AGENCY) {
         // This is needed because we can't be sure if core.game.play will be called again
         await updateStatus('Idle');

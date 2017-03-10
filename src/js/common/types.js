@@ -203,7 +203,6 @@ export type GameAttributeKey = (
     'showFirstOwnerMessage' |
     'startingSeason' |
     'statusText' |
-    'stopGames' |
     'teamAbbrevsCache' |
     'teamNamesCache' |
     'teamRegionsCache' |
@@ -239,6 +238,8 @@ export type GameProcessedCompleted = {
 };
 
 export type GetOutput = {[key: string]: ?(number | string)};
+
+export type LockName = 'newPhase' | 'gameSim' | 'stopGameSim';
 
 export type LogEventType = (
     'achievement' |

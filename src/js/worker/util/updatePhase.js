@@ -15,8 +15,6 @@ Args:
         the client.
 */
 async function updatePhase(phaseText?: string) {
-    // $FlowFixMe
-    if (typeof it === 'function') { return; }
     const oldPhaseText = g.phaseText;
     if (phaseText === undefined) {
         toUI('emit', 'updateTopMenu', {phaseText: oldPhaseText});
@@ -26,9 +24,11 @@ async function updatePhase(phaseText?: string) {
 
         // Update phase in meta database. No need to have this block updating the UI or anything.
         (async () => {
-            const l = await idb.meta.leagues.get(g.lid);
-            l.phaseText = phaseText;
-            await idb.meta.leagues.put(l);
+            if (idb.meta) {
+                const l = await idb.meta.leagues.get(g.lid);
+                l.phaseText = phaseText;
+                await idb.meta.leagues.put(l);
+            }
         })();
     }
 }

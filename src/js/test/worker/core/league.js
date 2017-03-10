@@ -56,12 +56,10 @@ describe("core/league", () => {
             assert.equal(gTest.gameOver, false);
             assert.equal(gTest.daysLeft, 0);
             assert.equal(gTest.showFirstOwnerMessage, true);
+            assert.equal(gTest.statusText, 'Idle');
+            assert.equal(gTest.phaseText, `${gTest.startingSeason} preseason`);
 
-            // This doesn't work because updatePhase and updateStatus are hacked for testing, I think
-            //assert.equal(gTest.phaseText, `${gTest.startingSeason} preseason`);
-            //assert.equal(gTest.statusText, "Idle");
-
-            assert.equal(Object.keys(gTest).length, 35);
+            assert.equal(Object.keys(gTest).length, 37);
         });
         it("should initialize draftOrder object store", async () => {
             const draftOrder = await idb.league.draftOrder.getAll();

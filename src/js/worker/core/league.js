@@ -47,8 +47,6 @@ async function setGameAttributes(gameAttributes: GameAttributes) {
         g[key] = gameAttributes[key];
     }));
 
-    // $FlowFixMe
-    if (typeof it === 'function') { return; }
     await toUI('setGameAttributes', gameAttributes);
     if (toUpdate.includes('userTid') || toUpdate.includes('userTids')) {
         await toUI('emit', 'updateMultiTeam');

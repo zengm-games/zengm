@@ -3,8 +3,7 @@ IVERSON - BEFORE BETA
 game sim is so fast that persistent notifications get pushed off screen!
   util.logEvent({type: 'error', text: 'aaa', saveToDb: false, showNotification: true, persistent: true});
 
-played to start of draft, menu blank (no "View Draft"), but reappears on ctrl+r - race condition somewhere?
-- same after draft and many other places
+some shitty players ask for huge contracts, why
 
 shared worker
 

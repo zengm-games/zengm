@@ -24,7 +24,6 @@ async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = 
         phase,
     });
     await updatePhase(`${g.season} ${PHASE_TEXT[phase]}`);
-    await updatePlayMenu();
 
     // Fill only in preseason, because not much changes before then
     await idb.cache.flush();
@@ -33,6 +32,7 @@ async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = 
     }
 
     lock.set('newPhase', false);
+    await updatePlayMenu();
 
     updateEvents.push("newPhase");
     toUI('realtimeUpdate', updateEvents, url);

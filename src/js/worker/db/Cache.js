@@ -98,6 +98,8 @@ class Cache {
     _lid: number;
     _maxIds: {[key: Store]: number};
     newLeague: boolean;
+    _requestInd: number;
+    _requestQueue: Map<number, {resolve: () => void, validStatuses: Status[]}>;
     _status: Status;
     _season: number;
     storeInfos: {
@@ -144,7 +146,7 @@ class Cache {
         this._indexes = {};
         this._maxIds = {};
         this.newLeague = false;
-        this._requestQueue = {};
+        this._requestQueue = new Map();
         this._requestInd = 0;
 
         this.storeInfos = {
@@ -364,11 +366,11 @@ class Cache {
             return new Promise((resolve, reject) => {
                 this._requestInd += 1;
                 const ind = this._requestInd;
-                this._requestQueue[ind] = {resolve, validStatuses};
+                this._requestQueue.set(ind, {resolve, validStatuses});
 
                 setTimeout(() => {
                     reject(new Error(`Timeout while waiting for valid status (one of ${validStatuses.join('/')})`));
-                    delete this._requestQueue[ind];
+                    this._requestQueue.delete(ind);
                 }, 10000);
             });
         }
@@ -377,10 +379,10 @@ class Cache {
     _setStatus(status: Status) {
         this._status = status;
 
-        for (const [ind, entry] of Object.entries(this._requestQueue)) {
+        for (const [ind, entry] of this._requestQueue.entries()) {
             if (entry.validStatuses.includes(status)) {
                 entry.resolve();
-                delete this._requestQueue[ind];
+                this._requestQueue.delete(ind);
             }
         }
     }

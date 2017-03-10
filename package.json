@@ -74,6 +74,7 @@
     "babel-plugin-transform-flow-strip-types": "6.22.0",
     "babel-preset-react": "6.23.0",
     "babelify": "7.3.0",
+    "blacklistify": "0.0.3",
     "browserify": "14.1.0",
     "cheerio": "0.20.0",
     "chokidar": "1.6.1",

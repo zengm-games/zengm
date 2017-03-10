@@ -32,10 +32,6 @@ db sync issues
   - goal: get rid of markDirtyIndexes calls in application code
 - Last update time could be computed in flush if necessary
 
-write lint script to check for ui/worker cross-contamination
-- variables are already handled, but need to check for import contamination. post-build script is only true way, operating on compiled js
-  - or https://github.com/jharting/banify
-
 uncomment things using localstorage in worker, after moving to either env+api or idb (meta)
 
 debug mode still needed?
@@ -59,6 +55,7 @@ fix all lint errors and warnings
 reassess delete old data - still needed? should be renamed if no performance impact?
 
 why ads not working on .dev?
+- beta?
 
 IVERSON - BEFORE FINAL
 
@@ -67,9 +64,22 @@ minify is broken
 
 Email users after bbgm update. But first allow opt out on register
 
+blog post
+- tradeoffs due to chrome changing
+- new tradeoffs for cross tab play
+- cache and worker
+- cache underwhelming
+- promise-worker-bi
+- worker microtask issues
+
+followup blog posts
+- user metrics after performance increase
+
 3.8
 
 IVERSON - EVENTUALLY
+
+unify build and watch scripts - use watchify programmatically
 
 run tests from cache
 - getCopies.teams
@@ -123,11 +133,6 @@ how do caches based on g.season work in preseason?
 
 refactor
 - clear, delete need to handle indexes
-
-blog post for beta
-- tradeoffs due to chrome changing
-- new tradeoffs for cross tab play
-- 3 prongs: cache, playerStats denormalization, worker
 
 document cache data format and API!
 - different things are cached, depending on object store

@@ -85,7 +85,7 @@ const updatePlayMenu = async () => {
     if (negotiationInProgress && g.phase !== PHASE.RESIGN_PLAYERS) {
         keys = ["contractNegotiation"];
     }
-    if (g.phaseChangeInProgress) {
+    if (lock.get('newPhase')) {
         keys = [];
     }
 

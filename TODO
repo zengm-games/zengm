@@ -6,9 +6,8 @@ this shit is UGLY UGLY UGLY, fix ASAP!!!
     if (typeof it === 'function') { return; }
   http://railsware.com/blog/2017/01/10/mocking-es6-module-import-without-dependency-injection/
 
-how to prevent phases from being run twice by fast clickers?
-- set in-memory-only variable for locking. forget the g variables for that.
-  - how to recover on error?
+gamesInProgress lock like newPhase lock
+- how to handle event?
 
 browser support
 - firefox

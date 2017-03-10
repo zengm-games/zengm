@@ -59,7 +59,7 @@ describe("core/league", () => {
             assert.equal(gTest.statusText, 'Idle');
             assert.equal(gTest.phaseText, `${gTest.startingSeason} preseason`);
 
-            assert.equal(Object.keys(gTest).length, 37);
+            assert.equal(Object.keys(gTest).length, 36);
         });
         it("should initialize draftOrder object store", async () => {
             const draftOrder = await idb.league.draftOrder.getAll();

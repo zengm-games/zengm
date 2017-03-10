@@ -3,6 +3,21 @@
 import {g} from '../../common';
 import {idb} from '../db';
 
+type LockName = 'newPhase' | 'gameSim';
+
+const locks: {[key: LockName]: boolean} = {
+    gameSim: false,
+    newPhase: false,
+};
+
+const get = (name: LockName): boolean => {
+    return locks[name];
+};
+
+const set = (name: LockName, value: boolean) => {
+    locks[name] = value;
+};
+
 /**
  * Is a negotiation in progress?
  *
@@ -34,7 +49,7 @@ async function canStartGames(): Promise<boolean> {
         return false;
     }
 
-    if (g.phaseChangeInProgress) {
+    if (locks.newPhase) {
         return false;
     }
 
@@ -86,6 +101,8 @@ async function unreadMessage(): Promise<boolean> {
 }
 
 export default {
+    get,
+    set,
     negotiationInProgress,
     canStartGames,
     canStartNegotiation,

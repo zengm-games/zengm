@@ -197,7 +197,6 @@ export type GameAttributeKey = (
     'numTeams' |
     'ownerMood' |
     'phase' |
-    'phaseChangeInProgress' |
     'phaseText' |
     'quarterLength' |
     'salaryCap' |

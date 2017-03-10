@@ -4,15 +4,16 @@
 import '../vendor/babel-external-helpers';
 import 'indexeddb-getall-shim';
 import api from './api';
-import {promiseWorker} from './util';
-
-// Only for debugging
 import * as core from './core';
 import * as db from './db';
-self.bbgm = Object.assign({}, core, db);
+import * as util from './util';
+
+self.core = core;
+self.db = db;
+self.util = util;
 
 // God damn this function is ugly, clean up! Can probably share with ui.
-promiseWorker.register(([name, ...params]) => {
+util.promiseWorker.register(([name, ...params]) => {
     if (name.indexOf('actions.') === 0) {
         let subname = name.replace('actions.', '');
 

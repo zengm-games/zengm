@@ -4,7 +4,7 @@ import _ from 'underscore';
 import {PHASE, PHASE_TEXT, PLAYER, g, helpers} from '../../common';
 import {contractNegotiation, draft, finances, freeAgents, league, player, season, team} from '../core';
 import {idb} from '../db';
-import {account, env, genMessage, logEvent, random, toUI, updatePhase, updatePlayMenu} from '../util';
+import {account, env, genMessage, lock, logEvent, random, toUI, updatePhase, updatePlayMenu} from '../util';
 import type {Phase, UpdateEvents} from '../../common/types';
 
 /**
@@ -22,7 +22,6 @@ async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = 
     // Set phase before updating play menu
     await league.setGameAttributes({
         phase,
-        phaseChangeInProgress: false,
     });
     await updatePhase(`${g.season} ${PHASE_TEXT[phase]}`);
     await updatePlayMenu();
@@ -32,6 +31,8 @@ async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = 
     if (phase === PHASE.PRESEASON) {
         await idb.cache.fill();
     }
+
+    lock.set('newPhase', false);
 
     updateEvents.push("newPhase");
     toUI('realtimeUpdate', updateEvents, url);
@@ -559,40 +560,41 @@ async function newPhase(phase: Phase, extra: any) {
         },
     };
 
-    if (g.phaseChangeInProgress) {
+    if (lock.get('newPhase')) {
         logEvent({
             type: 'error',
-            text: 'Phase change already in progress, maybe in another tab.',
+            text: 'Phase change already in progress.',
             saveToDb: false,
         });
     } else {
-        await league.setGameAttributes({phaseChangeInProgress: true});
-        updatePlayMenu();
+        try {
+            lock.set('newPhase', true);
+            await updatePlayMenu();
 
-        if (phaseChangeInfo.hasOwnProperty(phase)) {
-            let result;
-            try {
-                result = await phaseChangeInfo[phase].func(extra);
-            } catch (err) {
-                await league.setGameAttributes({phaseChangeInProgress: false});
-                await updatePlayMenu();
-                logEvent({
-                    type: "error",
-                    text: 'Critical error during phase change. <a href="https://basketball-gm.com/manual/debugging/"><b>Read this to learn about debugging.</b></a>',
-                    saveToDb: false,
-                    persistent: true,
-                });
+            if (phaseChangeInfo.hasOwnProperty(phase)) {
+                const result = await phaseChangeInfo[phase].func(extra);
 
-                throw err;
+                if (result && result.length === 2) {
+                    const [url, updateEvents] = result;
+                    await finalize(phase, url, updateEvents);
+                } else {
+                    throw new Error(`Invalid result from phase change: ${JSON.stringify(result)}`);
+                }
+            } else {
+                throw new Error(`Unknown phase number ${phase}`);
             }
+        } catch (err) {
+            lock.set('newPhase', false);
+            await updatePlayMenu();
 
-            if (result && result.length === 2) {
-                const [url, updateEvents] = result;
-                return finalize(phase, url, updateEvents);
-            }
-            throw new Error(`Invalid result from phase change: ${JSON.stringify(result)}`);
-        } else {
-            throw new Error(`Unknown phase number ${phase}`);
+            logEvent({
+                type: 'error',
+                text: 'Critical error during phase change. <a href="https://basketball-gm.com/manual/debugging/"><b>Read this to learn about debugging.</b></a>',
+                saveToDb: false,
+                persistent: true,
+            });
+
+            console.error(err);
         }
     }
 }

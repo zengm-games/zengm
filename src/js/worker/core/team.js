@@ -467,7 +467,7 @@ async function valueChange(
             // This part needs to be run every time so that gpAvg is available
             const wps = []; // Contains estimated winning percentages for all teams by the end of the season
 
-            let gp;
+            let gp = 0;
             for (let tid2 = 0; tid2 < g.numTeams; tid2++) {
                 const teamSeasons = allTeamSeasons.filter(teamSeason => teamSeason.tid === tid2);
                 const s = teamSeasons.length;

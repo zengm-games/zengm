@@ -170,9 +170,8 @@ function amountWithMood(amount: number, mood: number = 0.5): number {
 async function play(numDays: number, start?: boolean = true) {
     // This is called when there are no more days to play, either due to the user's request (e.g. 1 week) elapsing or at the end of free agency.
     const cbNoDays = async () => {
-        await league.setGameAttributes({gamesInProgress: false});
+        lock.set('gameSim', false);
         await updatePlayMenu();
-        toUI('realtimeUpdate', ["g.gamesInProgress"]);
 
         // Check to see if free agency is over
         if (g.daysLeft === 0) {
@@ -215,9 +214,8 @@ async function play(numDays: number, start?: boolean = true) {
     if (start) {
         const canStartGames = await lock.canStartGames();
         if (canStartGames) {
-            await league.setGameAttributes({gamesInProgress: true});
+            lock.set('gameSim', true);
             await updatePlayMenu();
-            toUI('realtimeUpdate', ["g.gamesInProgress"]);
             await cbRunDay();
         }
     } else {

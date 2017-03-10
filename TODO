@@ -7,7 +7,8 @@ this shit is UGLY UGLY UGLY, fix ASAP!!!
   http://railsware.com/blog/2017/01/10/mocking-es6-module-import-without-dependency-injection/
 
 gamesInProgress lock like newPhase lock
-- how to handle event?
+- lock.canStartGames still allows for race condition, since it can return "true" twice before lock.gameSim is updated
+- get rid of g.stopGames too?
 
 browser support
 - firefox

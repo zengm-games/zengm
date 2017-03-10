@@ -3,7 +3,7 @@
 import {PHASE, g, helpers} from '../../common';
 import {contractNegotiation, draft, freeAgents, game, league, phase, season, trade} from '../core';
 import {idb, reset} from '../db';
-import {logEvent, toUI, updatePlayMenu, updateStatus} from '../util';
+import {lock, logEvent, toUI, updatePlayMenu, updateStatus} from '../util';
 
 const liveGame = async (gid: number) => {
     await toUI('realtimeUpdate', [], helpers.leagueUrl(["live_game"]), {fromAction: true});
@@ -108,8 +108,8 @@ const playStop = async () => {
         // This is needed because we can't be sure if core.game.play will be called again
         await updateStatus('Idle');
     }
-    await league.setGameAttributes({gamesInProgress: false});
-    updatePlayMenu();
+    lock.set('gameSim', false);
+    await updatePlayMenu();
 };
 
 const playMenu = {

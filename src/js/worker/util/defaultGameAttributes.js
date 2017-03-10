@@ -1,10 +1,11 @@
 import type {GameAttributes} from '../../common/types';
 
+// Additional league-specific attributes (userTid, userTids, season, ...) are set when creating a new league
+
 const defaultGameAttributes: GameAttributes = {
     phase: 0,
     nextPhase: null, // Used only for fantasy draft
     daysLeft: 0, // Used only for free agency
-    gamesInProgress: false,
     stopGames: false,
     ownerMood: {
         wins: 0,

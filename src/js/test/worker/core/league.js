@@ -47,7 +47,6 @@ describe("core/league", () => {
             const gameAttributes = await idb.league.gameAttributes.getAll();
             const gTest = gameAttributes.reduce((obj, row) => { obj[row.key] = row.value; return obj; }, {});
 
-            assert.equal(gTest.gamesInProgress, false);
             assert.equal(gTest.leagueName, "Test");
             assert.equal(gTest.phase, 0);
             assert.equal(gTest.season, gTest.startingSeason);
@@ -59,7 +58,7 @@ describe("core/league", () => {
             assert.equal(gTest.statusText, 'Idle');
             assert.equal(gTest.phaseText, `${gTest.startingSeason} preseason`);
 
-            assert.equal(Object.keys(gTest).length, 36);
+            assert.equal(Object.keys(gTest).length, 35);
         });
         it("should initialize draftOrder object store", async () => {
             const draftOrder = await idb.league.draftOrder.getAll();

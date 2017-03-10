@@ -3,6 +3,7 @@
 import {PLAYER, g} from '../../common';
 import {freeAgents, player, team} from '../core';
 import {idb} from '../db';
+import {lock} from '../util';
 
 async function updateFreeAgents(): void | {[key: string]: any} {
     const payroll = (await team.getPayroll(g.userTid))[0];
@@ -31,7 +32,7 @@ async function updateFreeAgents(): void | {[key: string]: any} {
 
     return {
         capSpace,
-        gamesInProgress: g.gamesInProgress,
+        gamesInProgress: lock.get('gameSim'),
         minContract: g.minContract,
         numRosterSpots: 15 - userPlayers.length,
         phase: g.phase,

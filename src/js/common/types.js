@@ -178,7 +178,6 @@ export type GameAttributeKey = (
     'disableInjuries' |
     'divs' |
     'gameOver' |
-    'gamesInProgress' |
     'godMode' |
     'godModeInPast' |
     'gracePeriodEnd' |
@@ -632,9 +631,9 @@ export type UpdateEvents = (
     'account' |
     'clearWatchList' |
     'firstRun' |
-    'g.gamesInProgress' |
     'g.userTids' |
     'gameSim' |
+    'lock.gameSim' |
     'newPhase' |
     'playerMovement' |
     'toggleGodMode' |

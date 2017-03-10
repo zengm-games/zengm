@@ -1,6 +1,7 @@
 import {PHASE, g, helpers} from '../../common';
 import {team} from '../core';
 import {idb} from '../db';
+import {lock} from '../util';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateTeamFinances(
@@ -11,7 +12,7 @@ async function updateTeamFinances(
     if (updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || updateEvents.includes('teamFinances') || inputs.tid !== state.tid || inputs.show !== state.show) {
         const vars = {
             abbrev: inputs.abbrev,
-            gamesInProgress: g.gamesInProgress,
+            gamesInProgress: lock.get('gameSim'),
             numGames: g.numGames,
             tid: inputs.tid,
             show: inputs.show,
@@ -128,9 +129,9 @@ function updateGamesInProgress(
     updateEvents: UpdateEvents,
     state: any,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('g.gamesInProgress') || inputs.tid !== state.tid || inputs.show !== state.show) {
+    if (updateEvents.includes('lock.gameSim') || inputs.tid !== state.tid || inputs.show !== state.show) {
         return {
-            gamesInProgress: g.gamesInProgress,
+            gamesInProgress: lock.get('gameSim'),
         };
     }
 }

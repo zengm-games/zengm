@@ -79,7 +79,7 @@ const updatePlayMenu = async () => {
     if (unreadMessage) {
         keys = ["message"];
     }
-    if (g.gamesInProgress) {
+    if (lock.get('gameSim')) {
         keys = ["stop"];
     }
     if (negotiationInProgress && g.phase !== PHASE.RESIGN_PLAYERS) {

@@ -1,7 +1,7 @@
 // @flow
 
-import {g} from '../../common';
 import {idb} from '../db';
+import {toUI} from '../util';
 
 type LockName = 'newPhase' | 'gameSim';
 
@@ -16,6 +16,10 @@ const get = (name: LockName): boolean => {
 
 const set = (name: LockName, value: boolean) => {
     locks[name] = value;
+
+    if (name === 'gameSim') {
+        toUI('realtimeUpdate', ['lock.gameSim']);
+    }
 };
 
 /**
@@ -40,7 +44,7 @@ async function negotiationInProgress(): Promise<boolean> {
  * @return {Promise.boolean}
  */
 async function canStartGames(): Promise<boolean> {
-    if (g.gamesInProgress) {
+    if (locks.gameSim) {
         return false;
     }
 
@@ -65,7 +69,7 @@ async function canStartGames(): Promise<boolean> {
  * @return {Promise.boolean}
  */
 async function canStartNegotiation(): Promise<boolean> {
-    if (g.gamesInProgress) {
+    if (locks.gameSim) {
         return false;
     }
 

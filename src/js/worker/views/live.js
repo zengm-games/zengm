@@ -2,6 +2,7 @@
 
 import {g, helpers} from '../../common';
 import {season} from '../core';
+import {lock} from '../util';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateGamesList(): void | {[key: string]: any} {
@@ -28,9 +29,9 @@ async function updateGamesInProgress(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('g.gamesInProgress')) {
+    if (updateEvents.includes('lock.gameSim')) {
         return {
-            gamesInProgress: g.gamesInProgress,
+            gamesInProgress: lock.get('gameSim'),
         };
     }
 }

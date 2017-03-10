@@ -600,9 +600,8 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
     // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season
     const cbNoGames = async () => {
         await updateStatus('Idle');
-        await league.setGameAttributes({gamesInProgress: false});
         await updatePlayMenu();
-        toUI('realtimeUpdate', ["g.gamesInProgress"]);
+        lock.set('gameSim', false);
 
         // Check to see if the season is over
         if (g.phase < PHASE.PLAYOFFS) {
@@ -791,12 +790,12 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
     // that? If so, set the lock and update the play menu
     if (start) {
         const canStartGames = await lock.canStartGames();
+console.log('canStartGames', canStartGames);
         if (canStartGames) {
             const userTeamSizeError = await team.checkRosterSizes();
             if (userTeamSizeError === null) {
-                await league.setGameAttributes({gamesInProgress: true});
+                lock.set('gameSim', true);
                 await updatePlayMenu();
-                toUI('realtimeUpdate', ["g.gamesInProgress"]);
                 cbRunDay();
             } else {
                 await updateStatus('Idle');

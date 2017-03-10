@@ -144,6 +144,8 @@ class Cache {
         this._indexes = {};
         this._maxIds = {};
         this.newLeague = false;
+        this._requestQueue = {};
+        this._requestInd = 0;
 
         this.storeInfos = {
             awards: {
@@ -351,14 +353,36 @@ class Cache {
         this.trade = new StoreAPI(this, 'trade');
     }
 
-    _checkStatus(...validStatuses: Status[]) {
+    _validateStatus(...validStatuses: Status[]) {
         if (!validStatuses.includes(this._status)) {
             throw new Error(`Invalid cache status "${this._status}"`);
         }
     }
 
+    _waitForStatus(...validStatuses: Status[]) {
+        if (!validStatuses.includes(this._status)) {
+            return new Promise((resolve, reject) => {
+                this._requestInd += 1;
+                const ind = this._requestInd;
+                this._requestQueue[ind] = {resolve, validStatuses};
+
+                setTimeout(() => {
+                    reject(new Error(`Timeout while waiting for valid status (one of ${validStatuses.join('/')})`));
+                    delete this._requestQueue[ind];
+                }, 10000);
+            });
+        }
+    }
+
     _setStatus(status: Status) {
         this._status = status;
+
+        for (const [ind, entry] of Object.entries(this._requestQueue)) {
+            if (entry.validStatuses.includes(status)) {
+                entry.resolve();
+                delete this._requestQueue[ind];
+            }
+        }
     }
 
     markDirtyIndexes(store: Store) {
@@ -433,7 +457,7 @@ class Cache {
 
     // Load database from disk and save in cache, wiping out any prior values in cache
     async fill(season?: number) {
-        this._checkStatus('empty', 'full');
+        this._validateStatus('empty', 'full');
         this._setStatus('filling');
 
         this._data = {};
@@ -474,7 +498,7 @@ class Cache {
 
     // Take current contents in database and write to disk
     async flush() {
-        this._checkStatus('full');
+        this._validateStatus('full');
 
 //performance.mark('flushStart');
         await idb.league.tx(STORES, 'readwrite', async (tx) => {
@@ -501,13 +525,13 @@ class Cache {
     }
 
     async _get(store: Store, id: number | string): Promise<any> {
-        this._checkStatus('full');
+        await this._waitForStatus('full');
 
         return this._data[store][id];
     }
 
     async _getAll(store: Store): Promise<any[]> {
-        this._checkStatus('full');
+        await this._waitForStatus('full');
 
         return Object.values(this._data[store]);
     }
@@ -520,7 +544,7 @@ class Cache {
     }
 
     async _indexGet(index: Index, key: number | string): Promise<any> {
-        this._checkStatus('full');
+        await this._waitForStatus('full');
         this._checkIndexFreshness(index);
 
         const val = this._indexes[index][key];
@@ -532,7 +556,7 @@ class Cache {
     }
 
     async _indexGetAll(index: Index, key: number | string | [number, number] | [string, string]): Promise<any[]> {
-        this._checkStatus('full');
+        await this._waitForStatus('full');
         this._checkIndexFreshness(index);
 
         if (typeof key === 'number' || typeof key === 'string') {
@@ -556,8 +580,8 @@ class Cache {
         return output;
     }
 
-    _storeObj(type: 'add' | 'put', store: Store, obj: any): Promise<number | string> {
-        this._checkStatus('full');
+    async _storeObj(type: 'add' | 'put', store: Store, obj: any): Promise<number | string> {
+        await this._waitForStatus('full');
 
         const pk = this.storeInfos[store].pk;
         if (obj.hasOwnProperty(pk)) {
@@ -596,7 +620,7 @@ class Cache {
     }
 
     async _delete(store: Store, id: number) {
-        this._checkStatus('full');
+        await this._waitForStatus('full');
 
         if (['draftPicks', 'negotiations', 'players', 'releasedPlayers', 'schedule', 'teamSeasons'].includes(store)) {
             if (this._data[store].hasOwnProperty(id)) {
@@ -615,7 +639,7 @@ class Cache {
     }
 
     async _clear(store: Store) {
-        this._checkStatus('full');
+        await this._waitForStatus('full');
 
         if (['negotiations', 'releasedPlayers', 'schedule', 'teamSeasons'].includes(store)) {
             for (const id of Object.keys(this._data[store])) {

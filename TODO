@@ -1,10 +1,14 @@
 IVERSON - BEFORE BETA
 
+shared worker
+
 this shit is UGLY UGLY UGLY, fix ASAP!!!
     if (typeof it === 'function') { return; }
+  http://railsware.com/blog/2017/01/10/mocking-es6-module-import-without-dependency-injection/
 
-clicking Play > To Regular Season quickly results in 'Invalid cache status "filling"'
-- write unit tests for cache, handle this case
+how to prevent phases from being run twice by fast clickers?
+- set in-memory-only variable for locking. forget the g variables for that.
+  - how to recover on error?
 
 browser support
 - firefox
@@ -17,8 +21,6 @@ browser support
   - restore tests in karma when it works
 - at least test failure in IE/edge/safari
 - mobile
-
-shared worker
 
 db sync issues
 - if closed in phase change, unset g.phaseChangeInProgress on league load

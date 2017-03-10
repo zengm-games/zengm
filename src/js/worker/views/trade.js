@@ -1,5 +1,5 @@
 import {PHASE, g, helpers} from '../../common';
-import {trade} from '../core';
+import {team, trade} from '../core';
 import {idb} from '../db';
 
 // This relies on vars being populated, so it can't be called in parallel with updateTrade
@@ -39,6 +39,11 @@ async function updateSummary(vars) {
 // Validate that the stored player IDs correspond with the active team ID
 async function validateSavedPids() {
     const {teams} = await idb.cache.trade.get(0);
+
+    // This is just for debugging
+    team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids).then(dv => {
+        console.log(dv);
+    });
     return trade.updatePlayers(teams);
 }
 

@@ -107,11 +107,6 @@ function isUntradable(p: any): boolean {
  * @return {Promise.<Array.<Object>>} Resolves to an array taht's the same as the input, but with invalid entries removed.
  */
 async function updatePlayers(teams: TradeTeams): Promise<TradeTeams> {
-    // This is just for debugging
-    team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids).then(dv => {
-        console.log(dv);
-    });
-
     // Make sure each entry in teams has pids and dpids that actually correspond to the correct tid
     for (const t of teams) {
         // Check players

@@ -462,7 +462,7 @@ async function valueChange(
         // For each draft pick, estimate its value based on the recent performance of the team
         if (dpidsAdd.length > 0 || dpidsRemove.length > 0) {
             // Estimate the order of the picks by team
-            const allTeamSeasons = await idb.cache.teamSeasons.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
+            const allTeamSeasons = await idb.cache.teamSeasons.indexGetAll('teamSeasonsBySeasonTid', [`${g.season - 1}`, `${g.season},Z`]);
 
             // This part needs to be run every time so that gpAvg is available
             const wps = []; // Contains estimated winning percentages for all teams by the end of the season
@@ -516,8 +516,8 @@ async function valueChange(
 
             // Actually add picks after some stuff below is done
             let estValues;
-            const withEstValues = () => {
-                Promise.all(dpidsAdd.map(async (dpid) => {
+            const withEstValues = async () => {
+                for (const dpid of dpidsAdd) {
                     const dp = await idb.cache.draftPicks.get(dpid);
 
                     let estPick = estPicks[dp.originalTid];
@@ -550,9 +550,9 @@ async function valueChange(
                         age: 19,
                         draftPick: true,
                     });
-                }));
+                }
 
-                Promise.all(dpidsRemove.map(async (dpid) => {
+                for (const dpid of dpidsRemove) {
                     const dp = await idb.cache.draftPicks.get(dpid);
                     let estPick = estPicks[dp.originalTid];
 
@@ -592,7 +592,7 @@ async function valueChange(
                         age: 19,
                         draftPick: true,
                     });
-                }));
+                }
             };
 
             if (estValuesCached) {
@@ -600,7 +600,7 @@ async function valueChange(
             } else {
                 estValues = await trade.getPickValues();
             }
-            withEstValues();
+            await withEstValues();
         }
     };
 

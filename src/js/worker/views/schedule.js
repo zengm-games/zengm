@@ -1,5 +1,5 @@
 import {g, helpers} from '../../common';
-import {season} from '../core/season';
+import {season} from '../core';
 import {idb} from '../db';
 import {getProcessedGames} from '../util';
 import type {GetOutput, UpdateEvents} from '../../common/types';

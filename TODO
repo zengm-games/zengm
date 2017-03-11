@@ -11,6 +11,7 @@ shared worker
     - all common functions, accept g as param
     - something to handle init/close of tabs
     - in worker, store all ports along with hostID (incrementing integer) and lid. then can send either to specific window (how?) or to all in league
+      - store in Map with key=hostID
 - maybe, for now, ignore shared worker and force single tab (at least per league)
 
 this shit is UGLY UGLY UGLY, fix ASAP!!!

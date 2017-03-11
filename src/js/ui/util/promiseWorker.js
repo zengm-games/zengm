@@ -1,4 +1,8 @@
+// @flow
+
 import {MSGTYPE} from '../../common';
+
+type QueryCallback = (any[]) => any;
 
 // Inlined from https://github.com/then/is-promise
 function isPromise(obj) {
@@ -16,23 +20,31 @@ function tryCatchFunc(callback, message) {
 let messageIds = 0;
 
 class PromiseWorker {
-    constructor(worker) {
+    _callbacks: {
+        [key: number]: (null | Error, any) => void,
+    };
+    _queryCallback: QueryCallback;
+    _worker: SharedWorker;
+
+    constructor(worker: SharedWorker) {
         this._worker = worker;
-        worker.port.addEventListener('message', this._onMessage.bind(this));
+
+        // $FlowFixMe
+        worker.port.addEventListener('message', (e: MessageEvent) => this._onMessage(e)); // eslint-disable-line no-undef
         worker.port.start();
 
         this._callbacks = {};
     }
 
-    register(cb) {
+    register(cb: QueryCallback) {
         this._queryCallback = cb;
     }
 
-    _postMessageBi(obj) {
+    _postMessageBi(obj: any) {
         this._worker.port.postMessage(obj);
     }
 
-    postMessage(userMessage) {
+    postMessage(userMessage: any) {
         return new Promise((resolve, reject) => {
             const messageId = messageIds++;
 
@@ -48,7 +60,7 @@ class PromiseWorker {
         });
     }
 
-    _postResponse(messageId, error, result) {
+    _postResponse(messageId: number, error: Error | null, result: any) {
         if (error) {
             // This is to make errors easier to debug. I think it's important
             // enough to just leave here without giving the user an option
@@ -62,7 +74,7 @@ class PromiseWorker {
         }
     }
 
-    _handleQuery(messageId, query) {
+    _handleQuery(messageId: number, query: any) {
         const result = tryCatchFunc(this._queryCallback, query);
 
         if (result.err) {
@@ -78,14 +90,21 @@ class PromiseWorker {
         }
     }
 
-    _onMessage(e) {
+    _onMessage(e: MessageEvent) { // eslint-disable-line no-undef
         const message = e.data;
         if (!Array.isArray(message) || message.length < 3 || message.length > 4) {
-            // Ignore - this message is not for us.
             return;
         }
+
         const type = message[0];
+        if (type !== MSGTYPE.QUERY && type !== MSGTYPE.RESPONSE) {
+            return;
+        }
         const messageId = message[1];
+        if (typeof messageId !== 'number') {
+            return;
+        }
+
 
         if (type === MSGTYPE.QUERY) {
             const query = message[2];
@@ -93,6 +112,11 @@ class PromiseWorker {
             this._handleQuery(messageId, query);
         } else if (type === MSGTYPE.RESPONSE) {
             const error = message[2];
+            if (error !== null && !(error instanceof Error)) {
+                console.log('error', error);
+                throw new Error('Invalid error, should be null or Error');
+            }
+
             const result = message[3];
 
             const callback = this._callbacks[messageId];

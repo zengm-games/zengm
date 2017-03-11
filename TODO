@@ -3,14 +3,14 @@ IVERSON - BEFORE BETA
 shared worker
 - get it working, same API, just talking back to one tab
 - some things should be broadcast to all tabs, though...
+- location var inside shared worker?
 - how is this supposed to work if user opens two different leagues in different tabs? i think i either need multiple shared workers, or to enforce only one league open at a time
   - when switch league, switch sub-windows too?
   - namespace leagues
     - namespace locks, g (in worker only), idb.league, and idb.cache
     - all common functions, accept g as param
     - something to handle init/close of tabs
-- location var inside shared worker?
-- 30% slower than web worker
+    - in worker, store all ports along with hostID (incrementing integer) and lid. then can send either to specific window (how?) or to all in league
 - maybe, for now, ignore shared worker and force single tab (at least per league)
 
 this shit is UGLY UGLY UGLY, fix ASAP!!!
@@ -45,6 +45,7 @@ db sync issues
 - Last update time could be computed in flush if necessary
 
 uncomment things using localstorage in worker, after moving to either env+api or idb (meta)
+- need way to keep in sync across tabs
 
 debug mode still needed?
 - if so, how to deal with debug mode in worker? relies on localstorage

@@ -1,8 +1,5 @@
 // @flow
 
-import PromiseWorker from '../../vendor/promise-worker-bi';
-export const promiseWorker = new PromiseWorker();
-
 export {default as account} from './account';
 export {default as advStats} from './advStats';
 export {default as beforeView} from './beforeView';
@@ -14,6 +11,7 @@ export {default as genMessage} from './genMessage';
 export {default as injuries} from './injuries';
 export {default as lock} from './lock';
 export {default as logEvent} from './logEvent';
+export {default as promiseWorker} from './promiseWorker';
 export {default as getProcessedGames} from './getProcessedGames';
 export {default as random} from './random';
 export {default as toUI} from './toUI';

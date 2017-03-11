@@ -3,6 +3,8 @@ IVERSON - BEFORE BETA
 force single tab per league
 - ...how?
   - have some kind of heartbeat to know league is still alive (also way to imperatively close it, like when navigating to main page)
+    - store in meta database
+    - can keep some unique window ID, so i know if this window is the active one?
   - when you open a new league, check if there is an active heartbeat in another window
 
 this shit is UGLY UGLY UGLY, fix ASAP!!!
@@ -84,17 +86,9 @@ followup blog posts
 IVERSON - EVENTUALLY
 
 shared worker
-- get it working, same API, just talking back to one tab
-- some things should be broadcast to all tabs, though...
-- how is this supposed to work if user opens two different leagues in different tabs? i think i either need multiple shared workers, or to enforce only one league open at a time
-  - when switch league, switch sub-windows too?
-  - namespace leagues
-    - namespace locks, g (in worker only), idb.league, and idb.cache
-    - all common functions, accept g as param
-    - something to handle init/close of tabs
-- location var inside shared worker?
-- 30% slower than web worker
-- maybe, for now, ignore shared worker and force single tab (at least per league)
+- see iverson-shared-worker branch
+- shitty browser compat, no hope for better
+- or service worker, is 30 second limit really killer?
 
 unify build and watch scripts - use watchify programmatically
 

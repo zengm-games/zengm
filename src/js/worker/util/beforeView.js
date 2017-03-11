@@ -6,6 +6,8 @@ import {league} from '../core';
 import {env, toUI, updatePhase, updatePlayMenu, updateStatus} from '../util';
 import type {BackboardTx, League} from '../../common/types';
 
+let heartbeatIntervalID: number | void;
+
 const getLeague = async (tx: BackboardTx, lid: number): League => {
     // Make sure this league exists before proceeding
     const l = await tx.leagues.get(lid);
@@ -24,12 +26,13 @@ console.log('runHeartbeat', l.heartbeatID, l.heartbeatTimestamp)
 
 const startHeartbeat = async (tx: BackboardTx, l: League) => {
     // First one within this transaction
-    runHeartbeat(tx, l);
+    await runHeartbeat(tx, l);
 
     // Then in new transaction
     const lid = l.lid;
     setTimeout(() => {
-        setInterval(() => {
+        clearInterval(heartbeatIntervalID); // Shouldn't be necessary, but just in case
+        heartbeatIntervalID = setInterval(() => {
             idb.meta.tx(['leagues'], 'readwrite', async (tx2) => {
                 const l2 = await getLeague(tx2, lid);
                 await runHeartbeat(tx2, l2);
@@ -59,18 +62,19 @@ console.log('checkHeartbeat', l.heartbeatID, l.heartbeatTimestamp)
         const diff = Date.now() - l.heartbeatTimestamp;
 
         // If diff is greater than 10 seconds, assume other tab was closed
-        if (diff > 10 * 1000) {
+        if (diff > 5 * 1000) {
             await startHeartbeat(tx, l);
             return;
         }
 
-        throw new Error('A league can only be open in one tab at a time.');
+        throw new Error('A league can only be open in one tab at a time. If this league is not open in another tab, please wait a few seconds and reload.');
     });
 };
 
 const beforeLeague = async (newLid: number, loadedLid: ?number) => {
     // Make sure league template FOR THE CURRENT LEAGUE is showing
     if (loadedLid !== newLid) {
+        clearInterval(heartbeatIntervalID);
         await checkHeartbeat(newLid);
 
         // Clear old game attributes from g, just to be sure
@@ -100,6 +104,7 @@ const beforeLeague = async (newLid: number, loadedLid: ?number) => {
 
 const beforeNonLeague = () => {
     g.lid = undefined;
+    clearInterval(heartbeatIntervalID);
     toUI('emit', 'updateTopMenu', {lid: undefined});
 };
 

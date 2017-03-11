@@ -3,6 +3,15 @@ IVERSON - BEFORE BETA
 shared worker
 - get it working, same API, just talking back to one tab
 - some things should be broadcast to all tabs, though...
+- how is this supposed to work if user opens two different leagues in different tabs? i think i either need multiple shared workers, or to enforce only one league open at a time
+  - when switch league, switch sub-windows too?
+  - namespace leagues
+    - namespace locks, g (in worker only), idb.league, and idb.cache
+    - all common functions, accept g as param
+    - something to handle init/close of tabs
+- location var inside shared worker?
+- 30% slower than web worker
+- maybe, for now, ignore shared worker and force single tab (at least per league)
 
 this shit is UGLY UGLY UGLY, fix ASAP!!!
     if (typeof it === 'function') { return; }

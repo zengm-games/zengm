@@ -101,6 +101,8 @@ async function create(
         phaseText,
         teamName: teams[tid].name,
         teamRegion: teams[tid].region,
+        heartbeatID: undefined,
+        heartbeatTimestamp: undefined,
     });
     idb.league = await connectLeague(g.lid);
 

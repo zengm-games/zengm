@@ -153,6 +153,7 @@ export type EventBBGM = any;
 
 export type Env = {
     enableLogging: boolean,
+    heartbeatID: string,
     inCordova: boolean,
     tld: string,
 };
@@ -238,6 +239,17 @@ export type GameProcessedCompleted = {
 };
 
 export type GetOutput = {[key: string]: ?(number | string)};
+
+export type League = {
+    lid: number,
+    name: string,
+    tid: number,
+    phaseText: string,
+    teamName: string,
+    teamRegion: string,
+    heartbeatID?: string,
+    heartbeatTimestamp?: number,
+};
 
 export type LockName = 'newPhase' | 'gameSim' | 'stopGameSim';
 

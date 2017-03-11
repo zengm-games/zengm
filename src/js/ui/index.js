@@ -46,9 +46,16 @@ const genPage = (id, inLeague = true) => {
 };
 
 (async () => {
+    let heartbeatID = sessionStorage.getItem('heartbeatID');
+    if (heartbeatID === null) {
+        heartbeatID = Math.random().toString(16).slice(2);
+        sessionStorage.setItem('heartbeatID', heartbeatID);
+    }
+
     const env: Env = {
         enableLogging: window.enableLogging,
         inCordova: window.inCordova,
+        heartbeatID,
         tld: window.tld,
     };
 

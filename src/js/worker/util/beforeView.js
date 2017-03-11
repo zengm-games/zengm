@@ -3,23 +3,81 @@
 import {Cache, connectLeague, idb} from '../db';
 import {g, helpers} from '../../common';
 import {league} from '../core';
-import {toUI, updatePhase, updatePlayMenu, updateStatus} from '../util';
+import {env, toUI, updatePhase, updatePlayMenu, updateStatus} from '../util';
+import type {BackboardTx, League} from '../../common/types';
+
+const getLeague = async (tx: BackboardTx, lid: number): League => {
+    // Make sure this league exists before proceeding
+    const l = await tx.leagues.get(lid);
+    if (l === undefined) {
+        throw new Error('League not found.');
+    }
+    return l;
+};
+
+const runHeartbeat = async (tx: BackboardTx, l: League) => {
+    l.heartbeatID = env.heartbeatID;
+    l.heartbeatTimestamp = Date.now();
+console.log('runHeartbeat', l.heartbeatID, l.heartbeatTimestamp)
+    await tx.leagues.put(l);
+};
+
+const startHeartbeat = async (tx: BackboardTx, l: League) => {
+    // First one within this transaction
+    runHeartbeat(tx, l);
+
+    // Then in new transaction
+    const lid = l.lid;
+    setTimeout(() => {
+        setInterval(() => {
+            idb.meta.tx(['leagues'], 'readwrite', async (tx2) => {
+                const l2 = await getLeague(tx2, lid);
+                await runHeartbeat(tx2, l2);
+            });
+        }, 1000);
+    }, 1000);
+};
+
+// Check if loaded in another tab
+const checkHeartbeat = async (lid: number) => {
+    await idb.meta.tx(['leagues'], 'readwrite', async (tx) => {
+        const l = await getLeague(tx, lid);
+console.log('checkHeartbeat', l.heartbeatID, l.heartbeatTimestamp)
+
+        if (l.heartbeatID === undefined || l.heartbeatTimestamp === undefined) {
+            await startHeartbeat(tx, l);
+            return;
+        }
+
+        // If this is the same active tab (like on ctrl+R), no problem
+        if (env.heartbeatID === l.heartbeatID) {
+            await startHeartbeat(tx, l);
+            return;
+        }
+
+        // Difference between now and stored heartbeat in milliseconds
+        const diff = Date.now() - l.heartbeatTimestamp;
+
+        // If diff is greater than 10 seconds, assume other tab was closed
+        if (diff > 10 * 1000) {
+            await startHeartbeat(tx, l);
+            return;
+        }
+
+        throw new Error('A league can only be open in one tab at a time.');
+    });
+};
 
 const beforeLeague = async (newLid: number, loadedLid: ?number) => {
-    g.lid = newLid;
-
     // Make sure league template FOR THE CURRENT LEAGUE is showing
-    if (loadedLid !== g.lid) {
+    if (loadedLid !== newLid) {
+        await checkHeartbeat(newLid);
+
         // Clear old game attributes from g, just to be sure
         helpers.resetG();
         await toUI('resetG');
 
-        // Make sure this league exists before proceeding
-        const l = await idb.meta.leagues.get(g.lid);
-        if (l === undefined) {
-            throw new Error('League not found.');
-        }
-
+        g.lid = newLid;
         idb.league = await connectLeague(g.lid);
 
         // Reuse existing cache, if it was just created for a new league

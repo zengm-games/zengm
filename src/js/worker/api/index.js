@@ -457,6 +457,7 @@ const handleUploadedDraftClass = async (uploadedFile: any, seasonOffset: 0 | 1 |
 const init = async (inputEnv: Env) => {
     env.enableLogging = inputEnv.enableLogging;
     env.inCordova = inputEnv.inCordova;
+    env.heartbeatID = inputEnv.heartbeatID;
     env.tld = inputEnv.tld;
 
     // NaN detection

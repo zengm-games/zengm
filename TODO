@@ -1,11 +1,15 @@
 IVERSON - BEFORE BETA
 
 force single tab per league
-- ...how?
-  - have some kind of heartbeat to know league is still alive (also way to imperatively close it, like when navigating to main page)
-    - store in meta database
-    - can keep some unique window ID, so i know if this window is the active one?
-  - when you open a new league, check if there is an active heartbeat in another window
+- have some kind of heartbeat to know league is still alive (also way to imperatively close it, like when navigating to main page)
+  - store in meta database
+    - upgrade!
+  - can keep some unique window ID, so i know if this window is the active one?
+- when you open a new league, check if there is an active heartbeat in another window
+- handle ctrl+R
+  - store hearbeatID in sessionStorage
+- when < 10 seconds, wait for another heartbeat before deciding
+- how to cancel setInterval when league changes?
 
 this shit is UGLY UGLY UGLY, fix ASAP!!!
     if (typeof it === 'function') { return; }

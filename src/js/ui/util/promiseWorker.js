@@ -1,7 +1,4 @@
-let messageIds = 0;
-
-const MSGTYPE_QUERY = 0;
-const MSGTYPE_RESPONSE = 1;
+import {MSGTYPE} from '../../common';
 
 // Inlined from https://github.com/then/is-promise
 function isPromise(obj) {
@@ -16,19 +13,13 @@ function tryCatchFunc(callback, message) {
     }
 }
 
+let messageIds = 0;
+
 class PromiseWorker {
     constructor(worker) {
-        if (worker === undefined) {
-            self.onconnect = (e) => {
-                this.port = e.ports[0];
-                this.port.addEventListener('message', this._onMessage.bind(this));
-                this.port.start();
-            };
-        } else {
-            this._worker = worker;
-            worker.port.addEventListener('message', this._onMessage.bind(this));
-            worker.port.start();
-        }
+        this._worker = worker;
+        worker.port.addEventListener('message', this._onMessage.bind(this));
+        worker.port.start();
 
         this._callbacks = {};
     }
@@ -38,18 +29,14 @@ class PromiseWorker {
     }
 
     _postMessageBi(obj) {
-        if (this._worker) {
-            this._worker.port.postMessage(obj);
-        } else {
-            this.port.postMessage(obj);
-        }
+        this._worker.port.postMessage(obj);
     }
 
     postMessage(userMessage) {
         return new Promise((resolve, reject) => {
             const messageId = messageIds++;
 
-            const messageToSend = [MSGTYPE_QUERY, messageId, userMessage];
+            const messageToSend = [MSGTYPE.QUERY, messageId, userMessage];
 
             this._callbacks[messageId] = (error, result) => {
                 if (error) {
@@ -67,11 +54,11 @@ class PromiseWorker {
             // enough to just leave here without giving the user an option
             // to silence it.
             console.error('Error when generating response:', error);
-            this._postMessageBi([MSGTYPE_RESPONSE, messageId, {
+            this._postMessageBi([MSGTYPE.RESPONSE, messageId, {
                 message: error.message,
             }]);
         } else {
-            this._postMessageBi([MSGTYPE_RESPONSE, messageId, null, result]);
+            this._postMessageBi([MSGTYPE.RESPONSE, messageId, null, result]);
         }
     }
 
@@ -100,11 +87,11 @@ class PromiseWorker {
         const type = message[0];
         const messageId = message[1];
 
-        if (type === MSGTYPE_QUERY) {
+        if (type === MSGTYPE.QUERY) {
             const query = message[2];
 
             this._handleQuery(messageId, query);
-        } else if (type === MSGTYPE_RESPONSE) {
+        } else if (type === MSGTYPE.RESPONSE) {
             const error = message[2];
             const result = message[3];
 

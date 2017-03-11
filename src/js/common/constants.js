@@ -116,8 +116,14 @@ const COMPOSITE_WEIGHTS = {
 // Test: pk_test_gFqvUZCI8RgSl5KMIYTmZ5yI
 const STRIPE_PUBLISHABLE_KEY = 'pk_live_Dmo7Vs6uSaoYHrFngr4lM0sa';
 
+const MSGTYPE = {
+    QUERY: 0,
+    RESPONSE: 1,
+};
+
 export {
     COMPOSITE_WEIGHTS,
+    MSGTYPE,
     PHASE,
     PLAYER,
     PHASE_TEXT,

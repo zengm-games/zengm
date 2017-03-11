@@ -1,17 +1,17 @@
 IVERSON - BEFORE BETA
 
 shared worker
-- get it working, same API, just talking back to one tab
-- some things should be broadcast to all tabs, though...
 - location var inside shared worker?
-- how is this supposed to work if user opens two different leagues in different tabs? i think i either need multiple shared workers, or to enforce only one league open at a time
-  - when switch league, switch sub-windows too?
-  - namespace leagues
-    - namespace locks, g (in worker only), idb.league, and idb.cache
-    - all common functions, accept g as param
-    - something to handle init/close of tabs
-    - in worker, store all ports along with hostID (incrementing integer) and lid. then can send either to specific window (how?) or to all in league
-      - store in Map with key=hostID
+- namespace leagues
+  - namespace locks, g (in worker only), idb.league, and idb.cache
+  - all common functions, accept g as param
+  - something to handle init/close of tabs
+  - in worker, store all ports along with hostID (incrementing integer) and lid. then can send either to specific window (how?) or to all in league
+    - need some way to register this info with the worker. it gets the port in onconnect, and then in response can send hostID back to host. finally, host can send lid on that port via some special message
+  - send message from worker - broadcast vs individual host
+    - requires hostID sent to host and included with each message, or can it rely on port sent along with message even in which case maybe sending hostID back to host on init is not required?
+  - some toUI ones require a response, and also need to send bbgmPing/notifyError/showAd to individual tab
+    - need to track hostID or pass port around
 - maybe, for now, ignore shared worker and force single tab (at least per league)
 
 this shit is UGLY UGLY UGLY, fix ASAP!!!

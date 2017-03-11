@@ -23,14 +23,22 @@ class PromiseWorker {
     _callbacks: {
         [key: number]: (null | Error, any) => void,
     };
-    port: MessagePort;
+    _hosts: Map<number, {lid: number | void, port: MessagePort}>;
+    _maxHostID: number;
     _queryCallback: QueryCallback;
 
     constructor() {
+        this._hosts = new Map();
+        this._maxHostID = -1;
+
         self.addEventListener('connect', (e) => {
-            this.port = e.ports[0];
-            this.port.addEventListener('message', (e2: MessageEvent) => this._onMessage(e2)); // eslint-disable-line no-undef
-            this.port.start();
+            const port = e.ports[0];
+            port.addEventListener('message', (e2: MessageEvent) => this._onMessage(e2)); // eslint-disable-line no-undef
+            port.start();
+
+            this._maxHostID += 1;
+            const hostID = this._maxHostID;
+            this._hosts.set(hostID, {lid: undefined, port});
         });
 
         this._callbacks = {};
@@ -41,7 +49,9 @@ class PromiseWorker {
     }
 
     _postMessageBi(obj: any) {
-        this.port.postMessage(obj);
+        for (const {port} of this._hosts.values()) {
+            port.postMessage(obj);
+        }
     }
 
     postMessage(userMessage: any) {
@@ -60,7 +70,7 @@ class PromiseWorker {
         });
     }
 
-    _postResponse(messageId: number, error: Error | null, result: any) {
+    _postResponse(messageId: number, error: any, result: any) {
         if (error) {
             // This is to make errors easier to debug. I think it's important
             // enough to just leave here without giving the user an option
@@ -112,11 +122,6 @@ class PromiseWorker {
             this._handleQuery(messageId, query);
         } else if (type === MSGTYPE.RESPONSE) {
             const error = message[2];
-            if (error !== null && !(error instanceof Error)) {
-                console.log('error', error);
-                throw new Error('Invalid error, should be null or Error');
-            }
-
             const result = message[3];
 
             const callback = this._callbacks[messageId];

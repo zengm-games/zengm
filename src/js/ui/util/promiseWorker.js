@@ -60,7 +60,7 @@ class PromiseWorker {
         });
     }
 
-    _postResponse(messageId: number, error: Error | null, result: any) {
+    _postResponse(messageId: number, error: any, result: any) {
         if (error) {
             // This is to make errors easier to debug. I think it's important
             // enough to just leave here without giving the user an option
@@ -112,11 +112,6 @@ class PromiseWorker {
             this._handleQuery(messageId, query);
         } else if (type === MSGTYPE.RESPONSE) {
             const error = message[2];
-            if (error !== null && !(error instanceof Error)) {
-                console.log('error', error);
-                throw new Error('Invalid error, should be null or Error');
-            }
-
             const result = message[3];
 
             const callback = this._callbacks[messageId];

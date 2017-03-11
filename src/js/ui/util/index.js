@@ -1,7 +1,7 @@
 // @flow
 
-import PromiseWorker from 'promise-worker-bi';
-const worker = new Worker('/gen/worker.js');
+import PromiseWorker from '../../vendor/promise-worker-bi';
+const worker = new SharedWorker('/gen/worker.js');
 export const promiseWorker = new PromiseWorker(worker);
 
 export {default as ads} from './ads';

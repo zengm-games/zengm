@@ -1,6 +1,6 @@
 // @flow
 
-import PromiseWorker from 'promise-worker-bi';
+import PromiseWorker from '../../vendor/promise-worker-bi';
 export const promiseWorker = new PromiseWorker();
 
 export {default as account} from './account';

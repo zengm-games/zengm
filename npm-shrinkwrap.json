@@ -64,9 +64,9 @@
       "dev": true
     },
     "ajv": {
-      "version": "4.11.4",
+      "version": "4.11.5",
       "from": "ajv@>=4.9.1 <5.0.0",
-      "resolved": "https://registry.npmjs.org/ajv/-/ajv-4.11.4.tgz",
+      "resolved": "https://registry.npmjs.org/ajv/-/ajv-4.11.5.tgz",
       "dev": true,
       "dependencies": {
         "json-stable-stringify": {
@@ -294,9 +294,9 @@
       "dev": true
     },
     "autoprefixer": {
-      "version": "6.7.6",
+      "version": "6.7.7",
       "from": "autoprefixer@>=6.0.0 <7.0.0",
-      "resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-6.7.6.tgz",
+      "resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-6.7.7.tgz",
       "dev": true
     },
     "aws-sign2": {
@@ -887,7 +887,7 @@
     },
     "browserslist": {
       "version": "1.7.6",
-      "from": "browserslist@>=1.7.5 <2.0.0",
+      "from": "browserslist@>=1.7.6 <2.0.0",
       "resolved": "https://registry.npmjs.org/browserslist/-/browserslist-1.7.6.tgz",
       "dev": true
     },
@@ -965,7 +965,7 @@
     },
     "caniuse-db": {
       "version": "1.0.30000634",
-      "from": "caniuse-db@>=1.0.30000628 <2.0.0",
+      "from": "caniuse-db@>=1.0.30000634 <2.0.0",
       "resolved": "https://registry.npmjs.org/caniuse-db/-/caniuse-db-1.0.30000634.tgz",
       "dev": true
     },
@@ -2678,9 +2678,9 @@
       "dev": true
     },
     "is-buffer": {
-      "version": "1.1.4",
+      "version": "1.1.5",
       "from": "is-buffer@>=1.1.0 <2.0.0",
-      "resolved": "https://registry.npmjs.org/is-buffer/-/is-buffer-1.1.4.tgz",
+      "resolved": "https://registry.npmjs.org/is-buffer/-/is-buffer-1.1.5.tgz",
       "dev": true
     },
     "is-builtin-module": {
@@ -3123,7 +3123,7 @@
     },
     "karma-source-map-support": {
       "version": "1.2.0",
-      "from": "karma-source-map-support@latest",
+      "from": "karma-source-map-support@1.2.0",
       "resolved": "https://registry.npmjs.org/karma-source-map-support/-/karma-source-map-support-1.2.0.tgz",
       "dev": true
     },
@@ -5337,9 +5337,9 @@
       "dev": true
     },
     "yallist": {
-      "version": "2.0.0",
+      "version": "2.0.1",
       "from": "yallist@>=2.0.0 <3.0.0",
-      "resolved": "https://registry.npmjs.org/yallist/-/yallist-2.0.0.tgz",
+      "resolved": "https://registry.npmjs.org/yallist/-/yallist-2.0.1.tgz",
       "dev": true
     },
     "yargs": {

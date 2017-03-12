@@ -20,7 +20,13 @@ module.exports = function (config) {
 
         colors: true,
 
-        logLevel: config.LOG_DEBUG,
+//        logLevel: config.LOG_DEBUG,
+
+        // http://stackoverflow.com/a/42379383/786644
+        browserConsoleLogOptions: {
+            terminal: true,
+            level: '',
+        },
 
         autoWatch: false,
 

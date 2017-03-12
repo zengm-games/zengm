@@ -106,7 +106,7 @@ async function create(
     });
     idb.league = await connectLeague(g.lid);
 
-    const gameAttributes = _.extend(helpers.deepCopy(defaultGameAttributes), {
+    const gameAttributes = Object.assign({}, defaultGameAttributes, {
         userTid: tid,
         userTids: [tid],
         season: startingSeason,

@@ -1,15 +1,8 @@
 IVERSON - BEFORE BETA
 
-run tests from cache
-- getCopies.teams
-- util.account
-- unskip player.generate test
-- delete meta database after league tests
-
 browser support
 - firefox
-  - really slow to init worker!
-  - restore tests in karma when it works
+  - tests in karma seem to intermittently break when creating a new league, maybe too many callbacks?
 - at least test failure in IE/edge/safari
 - mobile
 
@@ -78,6 +71,12 @@ followup blog posts
 3.8
 
 IVERSON - EVENTUALLY
+
+run tests from cache
+- getCopies.teams
+- util.account
+- unskip player.generate test
+- delete meta database after league tests
 
 this shit is UGLY UGLY UGLY, fix ASAP!!!
     if (typeof it === 'function') { return; }

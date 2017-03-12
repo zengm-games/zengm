@@ -613,11 +613,11 @@ class Cache {
         return obj[pk];
     }
 
-    async _add(store: Store, obj: any): Promise<number | string> {
+    _add(store: Store, obj: any): Promise<number | string> {
         return this._storeObj('add', store, obj);
     }
 
-    async _put(store: Store, obj: any): Promise<number | string> {
+    _put(store: Store, obj: any): Promise<number | string> {
         return this._storeObj('put', store, obj);
     }
 

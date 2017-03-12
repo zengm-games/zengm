@@ -20,7 +20,6 @@ const getLeague = async (tx: BackboardTx, lid: number): Promise<League> => {
 const runHeartbeat = async (tx: BackboardTx, l: League) => {
     l.heartbeatID = env.heartbeatID;
     l.heartbeatTimestamp = Date.now();
-console.log('runHeartbeat', l.heartbeatID, l.heartbeatTimestamp)
     await tx.leagues.put(l);
 };
 
@@ -46,7 +45,6 @@ const checkHeartbeat = async (lid: number) => {
     await idb.meta.tx(['leagues'], 'readwrite', async (tx) => {
         const l = await getLeague(tx, lid);
         const {heartbeatID, heartbeatTimestamp} = l;
-console.log('checkHeartbeat', heartbeatID, heartbeatTimestamp);
 
         if (heartbeatID === undefined || heartbeatTimestamp === undefined) {
             await startHeartbeat(tx, l);

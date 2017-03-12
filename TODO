@@ -1,6 +1,9 @@
 IVERSON - BEFORE BETA
 
 browser support
+- firefox
+  - transaction errors still happen, somehow
+  - playoffs seems to fail
 - at least test failure in IE/edge/safari
 - mobile
 
@@ -18,10 +21,6 @@ db sync issues
 
 uncomment things using localstorage in worker, after moving to either env+api or idb (meta)
 - top16playoffs - used in both, would be better in gameAttributes as a God Mode option
-
-debug mode still needed?
-- if so, how to deal with debug mode in worker? relies on localstorage
-- what about core.debug?
 
 getCopy.playersPlus
 - tests (port from player.filter, and more)
@@ -44,6 +43,8 @@ why ads not working on .dev?
 is it too fast? artificially slow down?
 - if not, revamp notifications
 
+splash screen about load time
+
 IVERSON - BEFORE FINAL
 
 force single tab per league
@@ -54,6 +55,8 @@ minify is broken
 - disable mangle and compress, still broken. maybe just fuck it, who cares
 
 Email users after bbgm update. But first allow opt out on register
+
+get rid of debug mode info in manual
 
 blog post
 - tradeoffs due to chrome changing

@@ -16,15 +16,6 @@ import {logEvent, realtimeUpdate, toWorker} from '../util';
 import html2canvas from '../../vendor/html2canvas';
 import type {Option} from '../../common/types';
 
-const toggleDebugMode = () => {
-    if (localStorage.getItem('debug') === 'debug') {
-        localStorage.setItem('debug', '');
-    } else {
-        localStorage.setItem('debug', 'debug');
-    }
-    window.location.reload();
-};
-
 type TopMenuToggleProps = {
     long: string,
     onClick?: (SyntheticEvent) => void, // From react-bootstrap Dropdown
@@ -282,9 +273,6 @@ class DropdownLinks extends React.Component {
                 {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('skipToAfterDraft', e)}>Skip To After Draft</MenuItem> : null}
                 {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('skipToPreseason', e)}>Skip To Preseason</MenuItem> : null}
                 {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('forceResumeDraft', e)}>Force Resume Draft</MenuItem> : null}
-                <MenuItem href="" onClick={toggleDebugMode} id="toggle-debug-mode">
-                    {localStorage.getItem('debug') === 'debug' ? 'Disable Debug Mode' : 'Enable Debug Mode'}
-                </MenuItem>
                 <MenuItem onClick={e => handleToolsClick('resetDb', e)}>Reset DB</MenuItem>
             </TopMenuDropdown>
             <TopMenuDropdown long="Help" short="?" openId={this.state.openId} onToggle={this.handleTopMenuToggle}>

@@ -47,7 +47,6 @@ const migrateMeta = async (upgradeDB, fromLocalStorage) => {
 };
 
 const connectMeta = async (fromLocalStorage: {[key: string]: ?string}) => {
-    console.log(fromLocalStorage);
     const db = await Backboard.open('meta', 8, async (upgradeDB) => {
         if (upgradeDB.oldVersion === 0) {
             await createMeta(upgradeDB);

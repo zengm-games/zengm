@@ -2,7 +2,6 @@
 
 /* eslint-disable import/first */
 import '../vendor/babel-external-helpers';
-import sourceMapSupport from 'source-map-support';
 import 'jquery-ui/sortable';
 import page from 'page';
 import React from 'react';
@@ -14,11 +13,7 @@ import {ads, genStaticPage, initView, promiseWorker, toWorker} from './util';
 import * as views from './views';
 import type {Env} from '../common/types';
 
-// Needed because of https://github.com/petkaantonov/bluebird/issues/363
-// Sadly only enabled in debug mode, due to weird interactions with Bugsnag: https://github.com/bugsnag/bugsnag-js/issues/181
-if (localStorage.getItem('debug') === 'debug') {
-    sourceMapSupport.install();
-}
+// source-map-support is no longer needed here because no Promise polyfill in the UI, only sometimes in the worker.
 
 promiseWorker.register(([name, ...params]) => {
     if (!api.hasOwnProperty(name)) {

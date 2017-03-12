@@ -8,6 +8,7 @@ const env: Env = {
     heartbeatID: '',
     inCordova: false,
     tld: 'com',
+    fromLocalStorage: {},
 };
 
 export default env;

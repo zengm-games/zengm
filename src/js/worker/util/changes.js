@@ -1,5 +1,6 @@
 // @flow
 
+import {idb} from '../db';
 import {logEvent} from '../util';
 
 const all = [{
@@ -115,13 +116,15 @@ const all = [{
     msg: "International players are here! And American players have more realistic names. Gameplay hasn't changed at all, this is purely cosmetic at this point.",
 }];
 
-function check() {
-/*    // Don't show anything on first visit
-    if (localStorage.getItem('changesRead') === null) {
-        localStorage.setItem('changesRead', String(all.length));
+const check = async () => {
+    const changesRead = await idb.meta.attributes.get('changesRead');
+
+    // Don't show anything on first visit
+    if (changesRead < 0) {
+        await idb.meta.attributes.put(all.length, 'changesRead');
+        return;
     }
 
-    const changesRead = parseInt(localStorage.getItem('changesRead'), 10);
     if (changesRead < all.length) {
         const unread = all.slice(changesRead);
 
@@ -150,9 +153,9 @@ function check() {
             saveToDb: false,
         });
 
-        localStorage.setItem('changesRead', String(all.length));
-    }*/
-}
+        await idb.meta.attributes.put(all.length, 'changesRead');
+    }
+};
 
 export default {
     all,

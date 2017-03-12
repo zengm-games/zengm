@@ -460,15 +460,13 @@ const init = async (inputEnv: Env) => {
     env.heartbeatID = inputEnv.heartbeatID;
     env.tld = inputEnv.tld;
 
-    // NaN detection
     checkNaNs();
-
-    // Any news?
-    changes.check();
-
     await checkPromiseImplementation();
 
-    idb.meta = await connectMeta();
+    idb.meta = await connectMeta(inputEnv.fromLocalStorage);
+
+    // Any news? If so, display notification.
+    await changes.check();
 };
 
 const lockSet = async (name: LockName, value: boolean) => {

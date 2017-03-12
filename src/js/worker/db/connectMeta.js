@@ -7,11 +7,16 @@ import Backboard from 'backboard';
  *
  * @param {Object} event Event from onupgradeneeded, with oldVersion 0.
  */
-const createMeta = (upgradeDB) => {
-    console.log("Creating meta database");
+const createMeta = async (upgradeDB) => {
+    console.log('Creating meta database');
 
-    upgradeDB.createObjectStore("leagues", {keyPath: "lid", autoIncrement: true});
-    upgradeDB.createObjectStore("achievements", {keyPath: "aid", autoIncrement: true});
+    upgradeDB.createObjectStore('achievements', {keyPath: 'aid', autoIncrement: true});
+    const attributeStore = upgradeDB.createObjectStore('attributes');
+    upgradeDB.createObjectStore('leagues', {keyPath: 'lid', autoIncrement: true});
+
+    await attributeStore.add(-1, 'changesRead');
+    await attributeStore.add(-1, 'lastSelectedTid');
+    await attributeStore.add(0, 'nagged');
 };
 
 /**
@@ -19,20 +24,35 @@ const createMeta = (upgradeDB) => {
  *
  * @param {Object} event Event from onupgradeneeded, with oldVersion > 0.
  */
-const migrateMeta = (upgradeDB) => {
+const migrateMeta = async (upgradeDB, fromLocalStorage) => {
     console.log(`Upgrading meta database from version ${upgradeDB.oldVersion} to version ${upgradeDB.version}`);
 
     if (upgradeDB.oldVersion <= 6) {
-        upgradeDB.createObjectStore("achievements", {keyPath: "aid", autoIncrement: true});
+        upgradeDB.createObjectStore('achievements', {keyPath: 'aid', autoIncrement: true});
+    }
+    if (upgradeDB.oldVersion <= 7) {
+        const attributeStore = upgradeDB.createObjectStore('attributes');
+
+        await attributeStore.add(-1, 'changesRead');
+        await attributeStore.add(-1, 'lastSelectedTid');
+        await attributeStore.add(0, 'nagged');
+
+        for (const key of Object.keys(fromLocalStorage)) {
+            const int = parseInt(fromLocalStorage[key], 10);
+            if (!isNaN(int)) {
+                await attributeStore.add(int, key);
+            }
+        }
     }
 };
 
-const connectMeta = async () => {
-    const db = await Backboard.open('meta', 7, async (upgradeDB) => {
+const connectMeta = async (fromLocalStorage: {[key: string]: ?string}) => {
+    console.log(fromLocalStorage);
+    const db = await Backboard.open('meta', 8, async (upgradeDB) => {
         if (upgradeDB.oldVersion === 0) {
-            createMeta(upgradeDB);
+            await createMeta(upgradeDB);
         } else {
-            await migrateMeta(upgradeDB);
+            await migrateMeta(upgradeDB, fromLocalStorage);
         }
     });
 

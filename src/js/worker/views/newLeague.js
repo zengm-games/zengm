@@ -13,10 +13,10 @@ async function updateNewLeague(): void | {[key: string]: any} {
         newLid = 1;
     }
 
-    const lastSelectedTid = -1;/*parseInt(localStorage.getItem('lastSelectedTid'), 10);
+    let lastSelectedTid = await idb.meta.attributes.get('lastSelectedTid');
     if (isNaN(lastSelectedTid)) {
         lastSelectedTid = -1;
-    }*/
+    }
 
     return {
         name: `League ${newLid}`,

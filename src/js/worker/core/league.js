@@ -66,6 +66,8 @@ async function create(
     startingSeason: number,
     randomizeRosters: boolean,
 ): Promise<number> {
+    await idb.meta.attributes.put(tid, 'lastSelectedTid');
+
     const teamsDefault = helpers.getTeamsDefault();
 
     // Any custom teams?

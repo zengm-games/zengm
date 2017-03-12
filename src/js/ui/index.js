@@ -56,6 +56,13 @@ const genPage = (id, inLeague = true) => {
         inCordova: window.inCordova,
         heartbeatID,
         tld: window.tld,
+
+        // These are just legacy variables sent to the worker to be stored in idb.meta.attributes
+        fromLocalStorage: {
+            changesRead: localStorage.getItem('changesRead'),
+            lastSelectedTid: localStorage.getItem('lastSelectedTid'),
+            nagged: localStorage.getItem('nagged'),
+        },
     };
 
     await toWorker('init', env);

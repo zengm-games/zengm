@@ -114,18 +114,10 @@ async function newPhaseRegularSeason() {
     if (g.showFirstOwnerMessage) {
         await genMessage({wins: 0, playoffs: 0, money: 0});
     } else {
-        /*// Spam user with another message?
-        if (localStorage.getItem('nagged') === 'true') {
-            // This used to store a boolean, switch to number
-            localStorage.setItem('nagged', '1');
-        } else if (localStorage.nagged === undefined) {
-            localStorage.setItem('nagged', '0');
-        }
-
-        const nagged = parseInt(localStorage.getItem('nagged'), 10);
+        const nagged = await idb.meta.attributes.get('nagged');
 
         if (g.season === g.startingSeason + 3 && g.lid > 3 && nagged === 0) {
-            localStorage.setItem('nagged', '1');
+            await idb.meta.attributes.put(1, 'nagged');
             await idb.cache.messages.add({
                 read: false,
                 from: "The Commissioner",
@@ -133,7 +125,7 @@ async function newPhaseRegularSeason() {
                 text: '<p>Hi. Sorry to bother you, but I noticed that you\'ve been playing this game a bit. Hopefully that means you like it. Either way, we would really appreciate some feedback so we can make this game better. <a href="mailto:commissioner@basketball-gm.com">Send an email</a> (commissioner@basketball-gm.com) or <a href="http://www.reddit.com/r/BasketballGM/">join the discussion on Reddit</a>.</p>',
             });
         } else if ((nagged === 1 && Math.random() < 0.25) || (nagged >= 2 && Math.random() < 0.025)) {
-            localStorage.setItem('nagged', '2');
+            await idb.meta.attributes.put(2, 'nagged');
             await idb.cache.messages.add({
                 read: false,
                 from: "The Commissioner",
@@ -142,14 +134,14 @@ async function newPhaseRegularSeason() {
             });
         } else if ((nagged >= 2 && nagged <= 3 && Math.random() < 0.5) || (nagged >= 4 && Math.random() < 0.05)) {
             // Skipping 3, obsolete
-            localStorage.setItem('nagged', '4');
+            await idb.meta.attributes.put(4, 'nagged');
             await idb.cache.messages.add({
                 read: false,
                 from: "The Commissioner",
                 year: g.season,
                 text: '<p>Want to try multiplayer Basketball GM? Some intrepid souls have banded together to form online multiplayer leagues, and <a href="http://basketball-gm.co.nf/">you can find a user-made list of them here</a>.</p>',
             });
-        }*/
+        }
     }
 
     return [undefined, ["playerMovement"]];

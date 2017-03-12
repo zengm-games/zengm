@@ -17,6 +17,7 @@ db sync issues
 - when leaving a league (beforeView), flush
 
 uncomment things using localstorage in worker, after moving to either env+api or idb (meta)
+- top16playoffs - used in both, would be better in gameAttributes as a God Mode option
 
 debug mode still needed?
 - if so, how to deal with debug mode in worker? relies on localstorage

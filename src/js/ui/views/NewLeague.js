@@ -169,7 +169,6 @@ class NewLeague extends React.Component {
         this.setState({creating: true});
 
         let startingSeason = 2016;
-        localStorage.lastSelectedTid = this.state.tid;
 
         let leagueFile;
         let randomizeRosters = false;

@@ -45,10 +45,6 @@ async function negotiationInProgress(): Promise<boolean> {
  * @return {Promise.boolean}
  */
 async function canStartGames(): Promise<boolean> {
-    if (locks.gameSim) {
-        return false;
-    }
-
     const negotiationInProgressBool = await negotiationInProgress();
     if (negotiationInProgressBool) {
         return false;
@@ -57,6 +53,13 @@ async function canStartGames(): Promise<boolean> {
     if (locks.newPhase) {
         return false;
     }
+
+    if (locks.gameSim) {
+        return false;
+    }
+
+    // Otherwise, doing it outside of this function would be a race condition if anything else async happened
+    locks.gameSim = true;
 
     return true;
 }

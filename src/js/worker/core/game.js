@@ -794,10 +794,10 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
         if (canStartGames) {
             const userTeamSizeError = await team.checkRosterSizes();
             if (userTeamSizeError === null) {
-                lock.set('gameSim', true);
                 await updatePlayMenu();
                 cbRunDay();
             } else {
+                lock.set('gameSim', false); // Counteract auto-start in lock.canStartGames
                 await updateStatus('Idle');
                 logEvent({
                     type: 'error',

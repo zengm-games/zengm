@@ -215,7 +215,6 @@ async function play(numDays: number, start?: boolean = true) {
     if (start) {
         const canStartGames = await lock.canStartGames();
         if (canStartGames) {
-            lock.set('gameSim', true);
             await updatePlayMenu();
             await cbRunDay();
         }

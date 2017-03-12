@@ -1,9 +1,5 @@
 IVERSON - BEFORE BETA
 
-this shit is UGLY UGLY UGLY, fix ASAP!!!
-    if (typeof it === 'function') { return; }
-  http://railsware.com/blog/2017/01/10/mocking-es6-module-import-without-dependency-injection/
-
 gamesInProgress lock like newPhase lock
 - lock.canStartGames still allows for race condition, since it can return "true" twice before lock.gameSim is updated
 
@@ -85,6 +81,10 @@ followup blog posts
 3.8
 
 IVERSON - EVENTUALLY
+
+this shit is UGLY UGLY UGLY, fix ASAP!!!
+    if (typeof it === 'function') { return; }
+  http://railsware.com/blog/2017/01/10/mocking-es6-module-import-without-dependency-injection/
 
 shared worker
 - see iverson-shared-worker branch

@@ -3121,6 +3121,12 @@
       "resolved": "https://registry.npmjs.org/karma-mocha-reporter/-/karma-mocha-reporter-2.2.2.tgz",
       "dev": true
     },
+    "karma-source-map-support": {
+      "version": "1.2.0",
+      "from": "karma-source-map-support@latest",
+      "resolved": "https://registry.npmjs.org/karma-source-map-support/-/karma-source-map-support-1.2.0.tgz",
+      "dev": true
+    },
     "keycode": {
       "version": "2.1.8",
       "from": "keycode@>=2.1.2 <3.0.0",

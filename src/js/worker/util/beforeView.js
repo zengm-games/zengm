@@ -8,7 +8,7 @@ import type {BackboardTx, League} from '../../common/types';
 
 let heartbeatIntervalID: number | void;
 
-const getLeague = async (tx: BackboardTx, lid: number): League => {
+const getLeague = async (tx: BackboardTx, lid: number): Promise<League> => {
     // Make sure this league exists before proceeding
     const l = await tx.leagues.get(lid);
     if (l === undefined) {
@@ -45,21 +45,22 @@ const startHeartbeat = async (tx: BackboardTx, l: League) => {
 const checkHeartbeat = async (lid: number) => {
     await idb.meta.tx(['leagues'], 'readwrite', async (tx) => {
         const l = await getLeague(tx, lid);
-console.log('checkHeartbeat', l.heartbeatID, l.heartbeatTimestamp)
+        const {heartbeatID, heartbeatTimestamp} = l;
+console.log('checkHeartbeat', heartbeatID, heartbeatTimestamp);
 
-        if (l.heartbeatID === undefined || l.heartbeatTimestamp === undefined) {
+        if (heartbeatID === undefined || heartbeatTimestamp === undefined) {
             await startHeartbeat(tx, l);
             return;
         }
 
         // If this is the same active tab (like on ctrl+R), no problem
-        if (env.heartbeatID === l.heartbeatID) {
+        if (env.heartbeatID === heartbeatID) {
             await startHeartbeat(tx, l);
             return;
         }
 
         // Difference between now and stored heartbeat in milliseconds
-        const diff = Date.now() - l.heartbeatTimestamp;
+        const diff = Date.now() - heartbeatTimestamp;
 
         // If diff is greater than 10 seconds, assume other tab was closed
         if (diff > 5 * 1000) {

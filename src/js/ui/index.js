@@ -28,7 +28,6 @@ promiseWorker.register(([name, ...params]) => {
     return api[name](...params);
 });
 
-
 const Manual = <div>
     <h1>Manual</h1>
     <p><a href="https://basketball-gm.com/manual/" rel="noopener noreferrer" target="_blank">Click here for an overview of Basketball GM.</a></p>
@@ -47,7 +46,7 @@ const genPage = (id, inLeague = true) => {
 
 (async () => {
     let heartbeatID = sessionStorage.getItem('heartbeatID');
-    if (heartbeatID === null) {
+    if (heartbeatID === null || heartbeatID === undefined) {
         heartbeatID = Math.random().toString(16).slice(2);
         sessionStorage.setItem('heartbeatID', heartbeatID);
     }

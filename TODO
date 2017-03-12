@@ -1,14 +1,9 @@
 IVERSON - BEFORE BETA
 
-benchmark native promise instead of bluebird in old version
+try putting sync promise just in Backboard, not global
 
 browser support
 - firefox
-  - use lie in worker, but only conditionally (so native on chrome) - feature detection!
-    - doesn't seem to be working.. make small test case and try again
-    - https://github.com/calvinmetcalf/immediate/issues/27
-    - http://stackoverflow.com/questions/42660581/microtasks-inside-web-workers
-    - do i really need transactions still?
   - really slow to init worker!
   - restore tests in karma when it works
 - at least test failure in IE/edge/safari

@@ -1,7 +1,9 @@
 // @flow
 
+import Backboard from 'backboard';
 import _ from 'underscore';
 import {PHASE, PLAYER, g, helpers} from '../../common';
+import lie from '../../vendor/lie';
 import actions from './actions';
 import {contractNegotiation, draft, finances, league, phase, player, team, trade} from '../core';
 import {connectMeta, idb} from '../db';
@@ -465,6 +467,37 @@ const init = async (inputEnv: Env) => {
 
     // Any news?
     changes.check();
+
+    // See if we need an IndexedDB polyfill
+    await new Promise((resolve, reject) => {
+        const request = self.indexedDB.open('test-idb-microtasks', 1);
+        request.onerror = (event) => reject(event.target.error);
+        request.onblocked = () => reject('Blocked');
+        request.onupgradeneeded = (event) => {
+            const db = event.target.result;
+            db.createObjectStore('whatever', {keyPath: 'id'});
+        };
+        request.onsuccess = (event) => {
+            const db = event.target.result;
+            const tx = db.transaction('whatever');
+            Promise.resolve().then(() => {
+                try {
+                    tx.objectStore('whatever');
+                    console.log('Using native promises');
+                } catch (err) {
+                    if (err.name === 'InvalidStateError') {
+                        console.log('Using sync promise polyfill');
+                        self.Promise = lie;
+                        Backboard.setPromiseConstructor(self.Promise);
+                    } else {
+                        reject(err);
+                        return;
+                    }
+                }
+                resolve();
+            });
+        };
+    });
 
     idb.meta = await connectMeta();
 };

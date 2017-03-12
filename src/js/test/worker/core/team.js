@@ -1,7 +1,8 @@
 import assert from 'assert';
 import {g, PLAYER} from '../../../common';
-import {Cache, connectMeta, idb} from '../../../worker/db';
+import helpers from '../../helpers';
 import {league, player, team} from '../../../worker/core';
+import {Cache, connectMeta, idb} from '../../../worker/db';
 
 describe("core/team", () => {
     describe("#findStarters()", () => {
@@ -52,73 +53,86 @@ describe("core/team", () => {
 
     describe("#checkRosterSizes()", () => {
         before(async () => {
-            idb.meta = await connectMeta();
-            await league.create("Test", 0, undefined, 2013, false);
-            idb.cache = new Cache();
-            await idb.cache.fill();
+            helpers.resetG();
+
+            // Two teams: user and AI
+            g.numTeams = 2;
         });
-        after(() => league.remove(g.lid));
 
-        const addTen = async (tid) => {
-            const players = await idb.cache.players.indexGetAll('playersByTid', PLAYER.FREE_AGENT);
-            for (let i = 0; i < 10; i++) {
-                players[i].tid = tid;
-                await idb.cache.players.put(players[i]);
+        // resetCacheWithPlayers({0: 10, 1: 9, [PLAYER.FREE_AGENT]: 1}) will make 10 players on team 0, 9 on team 1, and
+        // 1 free agent with a minimum contract.
+        const resetCacheWithPlayers = async (info: {[key: number]: number}) => {
+            const players = [];
+            for (let tid of Object.keys(info)) {
+                tid = parseInt(tid, 10);
+                for (let i = 0; i < info[tid]; i++) {
+                    const p = player.generate(tid, 30, '', 50, 50, 2017, true, 15.5);
+                    if (tid === PLAYER.FREE_AGENT) {
+                        p.contract.amount = g.minContract;
+                    }
+                    players.push(p);
+                }
             }
-            idb.cache.markDirtyIndexes('players');
-        };
 
-        const removeTen = async (tid) => {
-            const players = await idb.cache.players.indexGetAll('playersByTid', tid);
-            for (let i = 0; i < 10; i++) {
-                await player.release(players[i], false);
-            }
+            await helpers.resetCache({
+                players,
+            });
         };
 
         it("should add players to AI team under roster limit without returning error message", async () => {
-            await removeTen(5);
+            await resetCacheWithPlayers({0: 10, 1: 9, [PLAYER.FREE_AGENT]: 1});
 
             // Confirm roster size under limit
-            let players = await idb.cache.players.indexGetAll('playersByTid', 5);
-            assert.equal(players.length, 4);
+            let players = await idb.cache.players.indexGetAll('playersByTid', 1);
+            assert.equal(players.length, 9);
             const userTeamSizeError = await team.checkRosterSizes();
-            assert.equal(userTeamSizeError, null);
+            assert.equal(userTeamSizeError, undefined);
 
             // Confirm players added up to limit
-            players = await idb.cache.players.indexGetAll('playersByTid', 5);
+            players = await idb.cache.players.indexGetAll('playersByTid', 1);
             assert.equal(players.length, g.minRosterSize);
         });
+        it("should return error message when AI team needs to add a player but there is none", async () => {
+            await resetCacheWithPlayers({0: 10, 1: 9});
+
+            // Confirm roster size under limit
+            try {
+                await team.checkRosterSizes();
+                throw new Error('Should not reach here');
+            } catch (err) {
+                assert.equal(err.message, 'AI team 1 needs to add a player to meet the minimum roster requirements, but there are no free agents asking for a minimum salary.');
+            }
+        });
         it("should remove players to AI team over roster limit without returning error message", async () => {
-            await addTen(8);
+            await resetCacheWithPlayers({0: 10, 1: 24});
 
             // Confirm roster size over limit
-            let players = await idb.cache.players.indexGetAll('playersByTid', 8);
+            let players = await idb.cache.players.indexGetAll('playersByTid', 1);
             assert.equal(players.length, 24);
 
             // Confirm no error message and roster size pruned to limit
             const userTeamSizeError = await team.checkRosterSizes();
-            assert.equal(userTeamSizeError, null);
-            players = await idb.cache.players.indexGetAll('playersByTid', 8);
+            assert.equal(userTeamSizeError, undefined);
+            players = await idb.cache.players.indexGetAll('playersByTid', 1);
             assert.equal(players.length, 15);
         });
         it("should return error message when user team is under roster limit", async () => {
-            await removeTen(g.userTid);
+            await resetCacheWithPlayers({0: 9, 1: 10, [PLAYER.FREE_AGENT]: 1});
 
             // Confirm roster size under limit
             let players = await idb.cache.players.indexGetAll('playersByTid', g.userTid);
-            assert.equal(players.length, 4);
+            assert.equal(players.length, 9);
 
             // Confirm roster size error and no auto-signing of players
             const userTeamSizeError = await team.checkRosterSizes();
-            assert.equal(typeof userTeamSizeError, "string");
+            assert.equal(typeof userTeamSizeError, 'string');
             assert(userTeamSizeError.includes('less'));
             assert(userTeamSizeError.includes('minimum'));
             players = await idb.cache.players.indexGetAll('playersByTid', g.userTid);
-            assert.equal(players.length, 4);
+            assert.equal(players.length, 9);
         });
         it("should return error message when user team is over roster limit", async () => {
-            await addTen(g.userTid);
-            await addTen(g.userTid);
+            await resetCacheWithPlayers({0: 24, 1: 10});
 
             // Confirm roster size over limit
             let players = await idb.cache.players.indexGetAll('playersByTid', g.userTid);
@@ -126,7 +140,7 @@ describe("core/team", () => {
 
             // Confirm roster size error and no auto-release of players
             const userTeamSizeError = await team.checkRosterSizes();
-            assert.equal(typeof userTeamSizeError, "string");
+            assert.equal(typeof userTeamSizeError, 'string');
             assert(userTeamSizeError.includes('more'));
             assert(userTeamSizeError.includes('maximum'));
             players = await idb.cache.players.indexGetAll('playersByTid', g.userTid);

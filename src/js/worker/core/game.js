@@ -793,7 +793,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
         const canStartGames = await lock.canStartGames();
         if (canStartGames) {
             const userTeamSizeError = await team.checkRosterSizes();
-            if (userTeamSizeError === null) {
+            if (userTeamSizeError === undefined) {
                 await updatePlayMenu();
                 cbRunDay();
             } else {

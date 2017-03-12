@@ -1,6 +1,10 @@
 IVERSON - BEFORE BETA
 
-try putting sync promise just in Backboard, not global
+run tests from cache
+- getCopies.teams
+- util.account
+- unskip player.generate test
+- delete meta database after league tests
 
 browser support
 - firefox
@@ -85,13 +89,6 @@ shared worker
 - or service worker, is 30 second limit really killer?
 
 unify build and watch scripts - use watchify programmatically
-
-run tests from cache
-- team.checkRosterSizes
-- getCopies.teams
-- util.account
-- unskip player.generate test
-- delete meta database after league tests
 
 lint tests
 

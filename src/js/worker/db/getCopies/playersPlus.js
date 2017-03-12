@@ -343,6 +343,14 @@ const reduceCareerStats = (careerStats, attr, playoffs) => {
         .reduce((memo, num) => memo + num, 0);
 };
 
+const getTx = () => {
+    let tx;
+    idb.league.tx(['playerStats'], (tx2) => {
+        tx = tx2;
+    });
+    return tx;
+};
+
 const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: boolean, {
     fuzz,
     numGamesRemaining,
@@ -363,6 +371,10 @@ const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: 
     };
 
     if (season === undefined || p.tid === PLAYER.RETIRED) {
+        if (tx === undefined) {
+            tx = await getTx(tx);
+        }
+
         // All seasons, or retired player with stats not in cache
         playerStats = mergeByPk(
             await tx.playerStats.index('pid, season, tid').getAll(backboard.bound([p.pid], [p.pid, ''])),
@@ -372,6 +384,10 @@ const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: 
     } else if (season >= g.season - 1) {
         playerStats = await playerStatsFromCache();
     } else {
+        if (tx === undefined) {
+            tx = await getTx(tx);
+        }
+
         // Single season, from database
         playerStats = await tx.playerStats.index('pid, season, tid').getAll(backboard.bound([p.pid, season], [p.pid, season, '']));
     }
@@ -426,6 +442,8 @@ const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: 
             output.careerStatsPlayoffs = genStatsRow(p, statSumsPlayoffs, stats, statType);
         }
     }
+
+    return tx;
 };
 
 const processPlayer = async (p: Player, options: PlayerOptions, tx: ?BackboardTx) => {
@@ -433,7 +451,7 @@ const processPlayer = async (p: Player, options: PlayerOptions, tx: ?BackboardTx
 
     const keepWithNoStats = (options.showRookies && p.draft.year >= g.season && (options.season === g.season || options.season === undefined)) || (options.showNoStats && (options.season === undefined || options.season > p.draft.year));
     if (options.stats.length > 0 || keepWithNoStats) {
-        await processStats(output, p, keepWithNoStats, options, tx);
+        tx = await processStats(output, p, keepWithNoStats, options, tx);
 
         // Only add a player if filterStats finds something (either stats that season, or options overriding that check)
         if (output.stats === undefined && !keepWithNoStats) {
@@ -454,7 +472,7 @@ const processPlayer = async (p: Player, options: PlayerOptions, tx: ?BackboardTx
         processAttrs(output, p, options);
     }
 
-    return output;
+    return {p: output, tx};
 };
 
 /**
@@ -519,26 +537,14 @@ const getCopies = async (players: Player[], {
         statType,
     };
 
-    // Does this require IDB?
-    // There will be false positives, because showRookies and showNoStats often don't apply
-    // Even more false positives from "true" :)
-    const objectStores = [];
-    if ((stats.length > 0 && (season === undefined || season < g.season - 1)) || (showRookies || showNoStats) || true) {
-        objectStores.push('playerStats');
-    }
-
-    const processMaybeWithIDB = (tx?: BackboardTx) => {
-        return Promise.all(players.map((p) => processPlayer(p, options, tx)));
-    };
-
-    let playersFiltered;
-    if (objectStores.length > 0) {
-        //console.log('idb.getCopies.playersPlus with IDB', options);
-        playersFiltered = await idb.league.tx(objectStores, (tx) => processMaybeWithIDB(tx));
-    } else {
-        //console.log('idb.getCopies.playersPlus without IDB', options);
-        playersFiltered = await processMaybeWithIDB();
-    }
+    let tx;
+    const playersFiltered = await Promise.all(players.map(async (p) => {
+        const output = await processPlayer(p, options, tx);
+        if (output.tx !== undefined) {
+            tx = output.tx;
+        }
+        return output.p;
+    }));
 
     return playersFiltered.filter((p) => p !== undefined);
 };

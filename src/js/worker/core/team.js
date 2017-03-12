@@ -901,9 +901,9 @@ async function updateStrategies() {
  * @memberOf core.team
  * @return {Promise.?string} Resolves to null if there is no error, or a string with the error message otherwise.
  */
-async function checkRosterSizes(): Promise<string | null> {
+async function checkRosterSizes(): Promise<string | void> {
     const minFreeAgents = [];
-    let userTeamSizeError = null;
+    let userTeamSizeError;
 
     const checkRosterSize = async tid => {
         const players = await idb.cache.players.indexGetAll('playersByTid', tid);
@@ -939,6 +939,9 @@ async function checkRosterSizes(): Promise<string | null> {
                 while (numPlayersOnRoster < g.minRosterSize) {
                     // See also core.phase
                     const p = minFreeAgents.shift();
+                    if (!p) {
+                        throw new Error(`AI team ${tid} needs to add a player to meet the minimum roster requirements, but there are no free agents asking for a minimum salary.`);
+                    }
                     p.tid = tid;
                     await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
                     player.setContract(p, p.contract, true);
@@ -979,11 +982,12 @@ async function checkRosterSizes(): Promise<string | null> {
     minFreeAgents.sort((a, b) => b.value - a.value);
 
     // Make sure teams are all within the roster limits
-    const promises = [];
     for (let i = 0; i < g.numTeams; i++) {
-        promises.push(checkRosterSize(i));
+        await checkRosterSize(i);
+        if (userTeamSizeError) {
+            break;
+        }
     }
-    await Promise.all(promises);
 
     return userTeamSizeError;
 }

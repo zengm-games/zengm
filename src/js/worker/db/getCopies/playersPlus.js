@@ -455,7 +455,7 @@ const processPlayer = async (p: Player, options: PlayerOptions, tx: ?BackboardTx
 
         // Only add a player if filterStats finds something (either stats that season, or options overriding that check)
         if (output.stats === undefined && !keepWithNoStats) {
-            return undefined;
+            return {p: undefined, tx};
         }
     }
 
@@ -464,7 +464,7 @@ const processPlayer = async (p: Player, options: PlayerOptions, tx: ?BackboardTx
 
         // Only add a player if he was active for this season and thus has ratings for this season
         if (output.ratings === undefined) {
-            return undefined;
+            return {p: undefined, tx};
         }
     }
 

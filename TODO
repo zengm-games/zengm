@@ -2,8 +2,7 @@ IVERSON - BEFORE BETA
 
 browser support
 - firefox
-  - transaction errors still happen, somehow
-  - playoffs seems to fail
+  - transaction errors still happen, somehow. just play through a season, it'll happen a few times
 - at least test failure in IE/edge/safari
 - mobile
 

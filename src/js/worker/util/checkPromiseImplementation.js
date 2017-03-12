@@ -1,3 +1,5 @@
+// @flow
+
 import Backboard from 'backboard';
 import lie from '../../vendor/lie';
 
@@ -30,6 +32,32 @@ const checkPromiseImplementation = () => {
                         console.log('Using sync promise polyfill');
                         self.Promise = lie;
                         Backboard.setPromiseConstructor(self.Promise);
+
+                        // Keep track of when a transaction is active, which is used inside lie.js
+                        const nativeIDBDatabaseTransaction = IDBDatabase.prototype.transaction;
+                        const handleTransactionEnd = function () {
+                            this.txCount -= 1;
+                            if (this.txCount === 0) {
+                                self.Promise.idbTransaction = false;
+                            }
+                            if (this.txCount < 0) {
+                                throw new Error('txCount below 0 should not be possible!');
+                            }
+                        };
+                        // $FlowFixMe
+                        IDBDatabase.prototype.transaction = function (...args) {
+                            self.Promise.idbTransaction = true;
+                            if (!this.hasOwnProperty('txCount')) {
+                                this.txCount = 1;
+                            } else {
+                                this.txCount += 1;
+                            }
+                            const tx2 = nativeIDBDatabaseTransaction.apply(this, args);
+                            tx2.addEventListener('abort', handleTransactionEnd.bind(this));
+                            tx2.addEventListener('complete', handleTransactionEnd.bind(this));
+                            tx2.addEventListener('error', handleTransactionEnd.bind(this));
+                            return tx2;
+                        };
                     } else {
                         reject(err);
                         return;

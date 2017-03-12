@@ -1,8 +1,6 @@
 IVERSON - BEFORE BETA
 
 browser support
-- firefox
-  - tests in karma seem to intermittently break when creating a new league, maybe too many callbacks?
 - at least test failure in IE/edge/safari
 - mobile
 
@@ -25,7 +23,6 @@ debug mode still needed?
 - what about core.debug?
 
 getCopy.playersPlus
-- don't figure out if tx needed ahead of time. dynamically open it if required, then reuse
 - tests (port from player.filter, and more)
 - oldStats
 

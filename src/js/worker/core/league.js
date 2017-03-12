@@ -1,7 +1,6 @@
 // @flow
 
 import backboard from 'backboard';
-import _ from 'underscore';
 import {Cache, connectLeague, idb} from '../db';
 import {PHASE, PHASE_TEXT, PLAYER, g, helpers} from '../../common';
 import {draft, finances, freeAgents, game, phase, player, season, team} from '../core';

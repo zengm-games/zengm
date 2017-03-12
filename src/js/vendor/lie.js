@@ -3,7 +3,15 @@
 // https://github.com/calvinmetcalf/lie/blob/20a72c44401c391be8265f589e5d0c9ee7c4cacb/src/index.js
 
 'use strict';
-var immediate = (fn) => fn();
+var immediateAsync = require('immediate');
+var immediateSync = (fn) => fn();
+function immediate(fn) {
+  if (Promise.idbTransaction) {
+    immediateSync(fn);
+  } else {
+    immediateAsync(fn);
+  }
+}
 
 /* istanbul ignore next */
 function INTERNAL() {}
@@ -280,3 +288,5 @@ function race(iterable) {
     });
   }
 }
+
+Promise.idbTransaction = false;

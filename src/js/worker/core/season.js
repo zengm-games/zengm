@@ -315,14 +315,19 @@ async function getSchedule(oneDay?: boolean = false): Promise<ScheduleGame[]> {
  * @return {Promise}
  */
 async function setSchedule(tids: [number, number][]) {
+console.log('setScheudle1');
     await idb.cache.schedule.clear();
-
+console.log('setScheudle2');
+let i = 0
     for (const matchup of tids) {
+i += 1;
+console.log('setScheudle2', i, tids.length);
         await idb.cache.schedule.add({
             homeTid: matchup[0],
             awayTid: matchup[1],
         });
     }
+console.log('setScheudle3');
 }
 
 /**
@@ -546,6 +551,7 @@ function newSchedule(teams: Team[]): [number, number][] {
     random.shuffle(days); // Otherwise the most dense days will be at the beginning and the least dense days will be at the end
     tids = _.flatten(days, true);
 
+console.log('newSchedule', tids);
     return tids;
 }
 

@@ -42,7 +42,7 @@ const startHeartbeat = async (tx: BackboardTx, l: League) => {
 
 // Check if loaded in another tab
 const checkHeartbeat = async (lid: number) => {
-    await idb.meta.tx(['leagues'], 'readwrite', async (tx) => {
+    await idb.meta.tx('leagues', 'readwrite', async (tx) => {
         const l = await getLeague(tx, lid);
         const {heartbeatID, heartbeatTimestamp} = l;
 

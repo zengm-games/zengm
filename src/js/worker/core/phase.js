@@ -19,6 +19,7 @@ import type {Phase, UpdateEvents} from '../../common/types';
  * @return {Promise}
  */
 async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = []) {
+console.log('finalize', PHASE_TEXT[phase]);
     // Set phase before updating play menu
     await league.setGameAttributes({
         phase,
@@ -26,6 +27,7 @@ async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = 
     await updatePhase(`${g.season} ${PHASE_TEXT[phase]}`);
 
     // Fill only in preseason, because not much changes before then
+console.log('flush');
     await idb.cache.flush();
     if (phase === PHASE.PRESEASON) {
         await idb.cache.fill();
@@ -44,6 +46,7 @@ async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = 
             league.autoPlay();
         }, 100);
     }
+console.log('end finalize');
 }
 
 async function newPhasePreseason() {
@@ -107,8 +110,11 @@ async function newPhasePreseason() {
 }
 
 async function newPhaseRegularSeason() {
+console.log('newPhaseRegularSeason1');
     const teams = await idb.cache.teams.getAll();
+console.log('newPhaseRegularSeason2');
     await season.setSchedule(season.newSchedule(teams));
+console.log('newPhaseRegularSeason3');
 
     // First message from owner
     if (g.showFirstOwnerMessage) {

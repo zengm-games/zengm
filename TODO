@@ -2,7 +2,10 @@ IVERSON - BEFORE BETA
 
 browser support
 - firefox
-  - transaction errors still happen, somehow. just play through a season, it'll happen a few times
+  - transaction errors still happen, somehow. just play through a season, it'll happen a few times. usually in phase change. why??
+    - also in chrome on auto play
+    - where is this happening? there aren't too many readwrite txs
+      - callstack problems on addSchedule. either manually fix those, or earnestly make an effort at no promise transactions
 - at least test failure in IE/edge/safari
 - mobile
 

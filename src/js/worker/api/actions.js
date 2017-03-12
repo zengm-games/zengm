@@ -188,6 +188,7 @@ const playMenu = {
     },
 
     untilRegularSeason: async () => {
+console.log('actions.play.untilRegularSeason', g.phase, PHASE.PRESEASON);
         if (g.phase === PHASE.PRESEASON) {
             await phase.newPhase(PHASE.REGULAR_SEASON);
         }

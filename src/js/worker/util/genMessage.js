@@ -152,7 +152,7 @@ async function genMessage(deltas: OwnerMoodDeltas) {
     let m;
     if (g.showFirstOwnerMessage) {
         m = random.choice(first);
-        league.setGameAttributes({showFirstOwnerMessage: false}); // Okay that this is async, since it won't be called again until much later
+        await league.setGameAttributes({showFirstOwnerMessage: false});
     } else {
         const activity1 = random.choice(activities);
         let activity2 = random.choice(activities);

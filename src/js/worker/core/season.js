@@ -318,15 +318,10 @@ async function setSchedule(tids: [number, number][]) {
 console.log('setScheudle1');
     await idb.cache.schedule.clear();
 console.log('setScheudle2');
-let i = 0
-    for (const matchup of tids) {
-i += 1;
-console.log('setScheudle2', i, tids.length);
-        await idb.cache.schedule.add({
-            homeTid: matchup[0],
-            awayTid: matchup[1],
-        });
-    }
+    await Promise.all(tids.map(([homeTid, awayTid]) => idb.cache.schedule.add({
+        homeTid,
+        awayTid,
+    })));
 console.log('setScheudle3');
 }
 

@@ -110,11 +110,8 @@ async function newPhasePreseason() {
 }
 
 async function newPhaseRegularSeason() {
-console.log('newPhaseRegularSeason1');
     const teams = await idb.cache.teams.getAll();
-console.log('newPhaseRegularSeason2');
     await season.setSchedule(season.newSchedule(teams));
-console.log('newPhaseRegularSeason3');
 
     // First message from owner
     if (g.showFirstOwnerMessage) {

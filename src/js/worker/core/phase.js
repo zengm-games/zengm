@@ -349,8 +349,8 @@ async function newPhaseBeforeDraft() {
 
 async function newPhaseDraft() {
     // Kill off old retired players (done here since not much else happens in this phase change, so making it a little slower is fine)
-    await idb.league.tx('players', 'readwrite', async (tx) => {
-        await tx.players.index('tid').iterate(PLAYER.RETIRED, p => {
+    await idb.league.tx('players', 'readwrite', (tx) => {
+        return tx.players.index('tid').iterate(PLAYER.RETIRED, p => {
             if (p.hasOwnProperty("diedYear") && p.diedYear) {
                 return;
             }

@@ -11,22 +11,20 @@ async function updateDeleteLeague({lid}: GetOutput): void | {[key: string]: any}
 
     const db = await connectLeague(lid);
     try {
-        return db.tx(["games", "players", "teamSeasons"], async tx => {
-            const [numGames, numPlayers, teamSeasons, l] = await Promise.all([
-                tx.games.count(),
-                tx.players.count(),
-                tx.teamSeasons.index("tid, season").getAll(backboard.bound([0], [0, ''])),
-                idb.meta.leagues.get(lid),
-            ]);
+        const [numGames, numPlayers, teamSeasons, l] = await Promise.all([
+            db.games.count(),
+            db.players.count(),
+            db.teamSeasons.index("tid, season").getAll(backboard.bound([0], [0, ''])),
+            idb.meta.leagues.get(lid),
+        ]);
 
-            return {
-                lid,
-                name: l.name,
-                numGames,
-                numPlayers,
-                numSeasons: teamSeasons.length,
-            };
-        });
+        return {
+            lid,
+            name: l.name,
+            numGames,
+            numPlayers,
+            numSeasons: teamSeasons.length,
+        };
     } catch (err) {
         return {
             lid,

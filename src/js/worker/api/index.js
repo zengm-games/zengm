@@ -89,23 +89,23 @@ const deleteOldData = async (options: {
     playerStatsUnnotable: boolean,
     playerStats: boolean,
 }) => {
-    await idb.league.tx(["games", "teams", "teamSeasons", "teamStats", "players", "playerStats"], "readwrite", async tx => {
+    await idb.league.tx(["games", "teams", "teamSeasons", "teamStats", "players", "playerStats"], "readwrite", (tx) => {
         if (options.boxScores) {
-            await tx.games.clear();
+            tx.games.clear();
         }
 
         if (options.teamHistory) {
-            await tx.teamSeasons.iterate(teamSeason => {
+            tx.teamSeasons.iterate((teamSeason) => {
                 if (teamSeason.season < g.season) {
-                    return tx.teamSeasons.delete(teamSeason.rid);
+                    tx.teamSeasons.delete(teamSeason.rid);
                 }
             });
         }
 
         if (options.teamStats) {
-            await tx.teamStats.iterate(teamStats => {
+            tx.teamStats.iterate((teamStats) => {
                 if (teamStats.season < g.season) {
-                    return tx.teamStats.delete(teamStats.rid);
+                    tx.teamStats.delete(teamStats.rid);
                 }
             });
         }
@@ -113,54 +113,54 @@ const deleteOldData = async (options: {
         if (options.retiredPlayers) {
             const toDelete = [];
 
-            await tx.players.index('tid').iterate(PLAYER.RETIRED, p => {
+            tx.players.index('tid').iterate(PLAYER.RETIRED, (p) => {
                 toDelete.push(p.pid);
-                return tx.players.delete(p.pid);
+                tx.players.delete(p.pid);
             });
-            await tx.playerStats.iterate(ps => {
+            tx.playerStats.iterate((ps) => {
                 if (toDelete.includes(ps.pid)) {
-                    return tx.playerStats.delete(ps.psid);
+                    tx.playerStats.delete(ps.psid);
                 }
             });
         } else if (options.retiredPlayersUnnotable) {
             const toDelete = [];
 
-            await tx.players.index('tid').iterate(PLAYER.RETIRED, p => {
+            tx.players.index('tid').iterate(PLAYER.RETIRED, (p) => {
                 if (p.awards.length === 0 && !p.statsTids.includes(g.userTid)) {
                     toDelete.push(p.pid);
-                    return tx.players.delete(p.pid);
+                    tx.players.delete(p.pid);
                 }
             });
-            await tx.playerStats.iterate(ps => {
+            tx.playerStats.iterate((ps) => {
                 if (toDelete.includes(ps.pid)) {
-                    return tx.playerStats.delete(ps.psid);
+                    tx.playerStats.delete(ps.psid);
                 }
             });
         }
 
         if (options.playerStats) {
-            await tx.players.iterate(p => {
+            tx.players.iterate((p) => {
                 p.ratings = [p.ratings[p.ratings.length - 1]];
                 return p;
             });
-            await tx.playerStats.iterate(ps => {
+            tx.playerStats.iterate((ps) => {
                 if (ps.season < g.season) {
-                    return tx.playerStats.delete(ps.psid);
+                    tx.playerStats.delete(ps.psid);
                 }
             });
         } else if (options.playerStatsUnnotable) {
             const toDelete = [];
 
-            tx.players.iterate(p => {
+            tx.players.iterate((p) => {
                 if (p.awards.length === 0 && !p.statsTids.includes(g.userTid)) {
                     p.ratings = [p.ratings[p.ratings.length - 1]];
                     toDelete.push(p.pid);
                 }
                 return p;
             });
-            await tx.playerStats.iterate(ps => {
+            tx.playerStats.iterate((ps) => {
                 if (ps.season < g.season && toDelete.includes(ps.pid)) {
-                    return tx.playerStats.delete(ps.psid);
+                    tx.playerStats.delete(ps.psid);
                 }
             });
         }

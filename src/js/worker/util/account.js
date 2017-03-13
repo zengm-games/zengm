@@ -96,9 +96,9 @@ async function addAchievements(achievements: AchievementKey[], silent?: boolean 
     };
 
     const addToIndexedDB = achievements2 => {
-        return idb.meta.tx("achievements", "readwrite", async tx => {
+        return idb.meta.tx('achievements', 'readwrite', (tx) => {
             for (const achievement of achievements2) {
-                await tx.achievements.add({slug: achievement});
+                tx.achievements.add({slug: achievement});
                 notify(achievement);
             }
         });
@@ -133,28 +133,27 @@ async function check() {
 
         // Save username for display
 
-        toUI('emit', 'updateTopMenu', {
+        await toUI('emit', 'updateTopMenu', {
             email: data.email,
             goldCancelled: !!data.gold_cancelled,
             goldUntil: data.gold_until,
             username: data.username,
         });
 
-        toUI('initAds', data.gold_until);
+        await toUI('initAds', data.gold_until);
 
         // If user is logged in, upload any locally saved achievements
         if (data.username !== "") {
-            await idb.meta.tx("achievements", "readwrite", async tx => {
-                let achievements = await tx.achievements.getAll();
-                achievements = achievements.map(achievement => achievement.slug);
-
-                // If any exist, delete and upload
-                if (achievements.length > 0) {
-                    await tx.achievements.clear();
-                    // If this fails to save remotely, will be added to IDB again
-                    await addAchievements(achievements, true);
-                }
-            });
+            // Should be done inside one transaction to eliminate race conditions, but Firefox doesn't like that and the
+            // risk is very small.
+            let achievements = await idb.league.achievements.getAll();
+            achievements = achievements.map(achievement => achievement.slug);
+            // If any exist, delete and upload
+            if (achievements.length > 0) {
+                await idb.league.achievements.clear();
+                // If this fails to save remotely, will be added to IDB again
+                await addAchievements(achievements, true);
+            }
         }
     } catch (err) {
         // Don't freak out if an AJAX request fails or whatever

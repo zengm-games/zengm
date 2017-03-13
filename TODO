@@ -1,5 +1,9 @@
 IVERSON - BEFORE BETA
 
+no promise transactions
+- call still call .tx, but can't pass it an async function (i think)
+- reenable heartbeat
+
 browser support
 - firefox
   - transaction errors still happen, somehow. just play through a season, it'll happen a few times. usually in phase change. why??

@@ -19,7 +19,6 @@ import type {Phase, UpdateEvents} from '../../common/types';
  * @return {Promise}
  */
 async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = []) {
-console.log('finalize', PHASE_TEXT[phase]);
     // Set phase before updating play menu
     await league.setGameAttributes({
         phase,
@@ -27,7 +26,6 @@ console.log('finalize', PHASE_TEXT[phase]);
     await updatePhase(`${g.season} ${PHASE_TEXT[phase]}`);
 
     // Fill only in preseason, because not much changes before then
-console.log('flush');
     await idb.cache.flush();
     if (phase === PHASE.PRESEASON) {
         await idb.cache.fill();
@@ -46,7 +44,6 @@ console.log('flush');
             league.autoPlay();
         }, 100);
     }
-console.log('end finalize');
 }
 
 async function newPhasePreseason() {

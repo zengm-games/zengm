@@ -24,7 +24,6 @@ const applyPromisePolyfill = () => {
             this.txCount = 0;
             console.log('txCount below 0 should not be possible!');
         }
-if (this.name !== 'meta') { console.log('end tx', this.txCount, self.Promise.idbTransaction); }
     };
     // $FlowFixMe
     IDBDatabase.prototype.transaction = function (...args) {
@@ -34,7 +33,6 @@ if (this.name !== 'meta') { console.log('end tx', this.txCount, self.Promise.idb
         } else {
             this.txCount += 1;
         }
-if (this.name !== 'meta') { console.log('start tx', args, this.txCount, self.Promise.idbTransaction); }
         const tx2 = nativeIDBDatabaseTransaction.apply(this, args);
         tx2.addEventListener('abort', handleTransactionEnd.bind(this));
         tx2.addEventListener('complete', handleTransactionEnd.bind(this));
@@ -44,9 +42,6 @@ if (this.name !== 'meta') { console.log('start tx', args, this.txCount, self.Pro
 };
 
 const checkPromiseImplementation = () => {
-applyPromisePolyfill();
-return;
-
     return new Promise((resolve, reject) => {
         const request = self.indexedDB.open('test-idb-microtasks', 1);
         request.onerror = (event) => reject(event.target.error);

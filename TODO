@@ -1,7 +1,8 @@
 IVERSON - BEFORE BETA
 
+auto play status should be stored in lock, similar to game sim, otherwise can get stuck
+
 browser support
-- safari - FormData and friends not in worker
 - mobile
 
 db sync issues
@@ -41,6 +42,8 @@ is it too fast? artificially slow down?
 - if not, revamp notifications
 
 splash screen about load time
+
+some kind of status indicator when flushing
 
 IVERSON - BEFORE FINAL
 

@@ -14,7 +14,7 @@ const fetchWrapper = async ({
     credentials?: 'include',
 }): any => {
     let body;
-    if (data instanceof FormData || data instanceof URLSearchParams) {
+    if ((typeof FormData !== 'undefined' && data instanceof FormData) || (typeof URLSearchParams !== 'undefined' && data instanceof URLSearchParams)) {
         body = data;
     } else if (data !== undefined) {
         body = new URLSearchParams();

@@ -41,6 +41,8 @@
     "jquery": "2.*",
     "jquery-ui": "1.10.x",
     "lodash.orderby": "4.6.0",
+    "object.entries": "1.0.4",
+    "object.values": "1.0.4",
     "page": "1.7.1",
     "promise-worker-bi": "2.0.1",
     "react": "15.4.2",
@@ -48,7 +50,9 @@
     "react-bootstrap": "0.30.8",
     "react-dom": "15.4.2",
     "react-overlays": "0.6.12",
-    "underscore": "1.8.3"
+    "underscore": "1.8.3",
+    "url-search-params-polyfill": "1.0.2",
+    "whatwg-fetch": "2.0.3"
   },
   "devDependencies": {
     "babel-eslint": "7.1.1",

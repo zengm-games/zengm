@@ -317,7 +317,7 @@ async function getContracts(tid: number): Promise<ContractInfo[]> {
 
     for (const releasedPlayer of releasedPlayers) {
         const p = await idb.cache.players.get(releasedPlayer.pid);
-        if (p !== undefined) { // If a player is deleted, such as if the user deletes retired players to improve performance, this will be undefined
+        if (p !== undefined) { // If a player is deleted, such as if the user deletes retired players, this will be undefined
             contracts.push({
                 pid: releasedPlayer.pid,
                 firstName: p.firstName,

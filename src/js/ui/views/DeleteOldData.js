@@ -57,12 +57,12 @@ class DeleteOldData extends React.Component {
         return <div>
             <h1>Delete Old Data <NewWindowLink /></h1>
 
-            <p>As you play multiple seasons in a league, the game tends to slow down as data is accumulated in the database. For instance, if you play 20 seasons, game simulation will be approximately twice as slow as in a new league. If you delete old data using the form below, it will restore performance to roughly that of a new league.</p>
+            <p>As you play multiple seasons in a league, the database can grow quite large. This used to slow down performance, but doesn't much anymore. However it does still use up hard drive space, which you can reclaim here by deleting old data from this league.</p>
 
             <form onSubmit={this.handleSubmit}>
                 <div className="checkbox">
                     <label>
-                        <input onChange={this.handleChanges.boxScores} type="checkbox" checked={this.state.boxScores} /> Delete Old Box Scores
+                        <input onChange={this.handleChanges.boxScores} type="checkbox" checked={this.state.boxScores} /> Delete Old Box Scores <b>(This is the biggest factor!)</b>
                     </label>
                 </div>
                 <div className="checkbox">
@@ -87,12 +87,12 @@ class DeleteOldData extends React.Component {
                 </div>
                 <div className="checkbox">
                     <label>
-                        <input onChange={this.handleChanges.playerStatsUnnotable} type="checkbox" checked={this.state.playerStatsUnnotable} /> Delete Unnotable Player Stats and Ratings <b>(This is the second biggest factor!)</b><br /><i>Won't delete your past players or players who have won awards</i>
+                        <input onChange={this.handleChanges.playerStatsUnnotable} type="checkbox" checked={this.state.playerStatsUnnotable} /> Delete Unnotable Player Stats and Ratings<br /><i>Won't delete your past players or players who have won awards</i>
                     </label>
                 </div>
                 <div className="checkbox">
                     <label>
-                        <input onChange={this.handleChanges.playerStats} type="checkbox" checked={this.state.playerStats} /> Delete <b>All</b> Player Stats and Ratings <b>(This is the biggest factor!)</b>
+                        <input onChange={this.handleChanges.playerStats} type="checkbox" checked={this.state.playerStats} /> Delete <b>All</b> Player Stats and Ratings
                     </label>
                 </div>
 

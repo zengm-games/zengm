@@ -32,7 +32,7 @@ async function updateHistory(
         teams.forEach(t => {
             // t.seasonAttrs has same season entries as the "seasons" array built from awards
             for (let i = 0; i < seasons.length; i++) {
-                // Find corresponding entries in seasons and t.seasonAttrs. Can't assume they are the same because they aren't if some data has been deleted (Improve Performance)
+                // Find corresponding entries in seasons and t.seasonAttrs. Can't assume they are the same because they aren't if some data has been deleted (Delete Old Data)
                 let found = false;
                 let j;
                 for (j = 0; j < t.seasonAttrs.length; j++) {

@@ -31,7 +31,7 @@ const teamName = (t, season) => {
         </span>;
     }
 
-    // This happens if there is missing data, such as from Improve Performance
+    // This happens if there is missing data, such as from Delete Old Data
     return 'N/A';
 };
 
@@ -47,7 +47,7 @@ const HistoryAll = ({seasons}) => {
             seasonLink = <a href={helpers.leagueUrl(["history", s.season])}>{s.season}</a>;
             countText = ` - ${helpers.ordinal(s.champ.count)} title`;
         } else {
-            // This happens if there is missing data, such as from Improve Performance
+            // This happens if there is missing data, such as from Delete Old Data
             seasonLink = String(s.season);
             countText = null;
         }

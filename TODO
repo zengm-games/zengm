@@ -1,11 +1,7 @@
 IVERSON - BEFORE BETA
 
-get rid of appcache
-
-check un-awaited toUI calls
-
 browser support
-- at least test failure in IE/edge/safari
+- safari - FormData and friends not in worker
 - mobile
 
 db sync issues

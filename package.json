@@ -28,6 +28,7 @@
     "lint-js": "eslint '*.js' 'src/js/**/*.js' 'tools/**/*.js'",
     "lint-js-fix": "npm run lint-js -- --fix",
     "test": "karma start karma.conf.js",
+    "test-watch": "karma start karma.conf.js --auto-watch --no-single-run",
     "test-browserstack": "karma start karma-browserstack.conf.js",
     "copy-mocha": "cp node_modules/mocha/mocha.css build/gen/mocha.css && cp node_modules/mocha/mocha.js build/gen/mocha.js",
     "build-test": "npm run copy-mocha && browserify -d src/js/test/index.js -o build/gen/test.js",

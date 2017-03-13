@@ -23,7 +23,6 @@ uncomment things using localstorage in worker, after moving to either env+api or
 - top16playoffs - used in both, would be better in gameAttributes as a God Mode option
 
 getCopy.playersPlus
-- tests (port from player.filter, and more)
 - oldStats
 
 update to cache
@@ -32,6 +31,7 @@ update to cache
   - getTradingBlockOffers has cb passed to it. how to replace? need to update UI incrementally
 - look at all IDB usage
 - export league - ensure flush first
+- addStatsRow revisit - mutates p
 
 fix all lint errors and warnings
 

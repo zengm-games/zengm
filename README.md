@@ -100,6 +100,10 @@ Coverage is not great. They can be run from the command line in Karma with
 
     npm test
 
+or
+
+    npm run test-watch
+
 or manually within a web browser by running `npm run build-test` (or
 `npm run watch-test`) and going to <http://localhost:3000/test>.
 

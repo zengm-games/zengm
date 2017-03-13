@@ -2,25 +2,13 @@
 
 module.exports = function (config) {
     config.set({
-        basePath: '',
-
         frameworks: ['mocha', 'browserify', 'source-map-support'],
 
         files: ['src/js/test/index.js', 'src/js/test/**/*.js'],
 
-        exclude: [],
-
         preprocessors: {
             'src/js/**/*.js': ['browserify'],
         },
-
-        reporters: ['mocha'],
-
-        port: 9876,
-
-        colors: true,
-
-//        logLevel: config.LOG_DEBUG,
 
         // http://stackoverflow.com/a/42379383/786644
         browserConsoleLogOptions: {
@@ -30,13 +18,15 @@ module.exports = function (config) {
 
         autoWatch: false,
 
-        browsers: ['Chrome', 'Firefox'],
-
         singleRun: true,
 
         browserify: {
             debug: true,
             transform: ['babelify'],
         },
+
+        reporters: ['mocha'],
+
+        browsers: ['Chrome', 'Firefox'],
     });
 };

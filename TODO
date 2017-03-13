@@ -1,5 +1,7 @@
 IVERSON - BEFORE BETA
 
+benchmark after 500 seasons
+
 auto play status should be stored in lock, similar to game sim, otherwise can get stuck
 
 browser support
@@ -42,6 +44,8 @@ is it too fast? artificially slow down?
 splash screen about load time
 
 some kind of status indicator when flushing
+
+add smoke test (create league, play season) to karma
 
 IVERSON - BEFORE FINAL
 

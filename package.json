@@ -27,7 +27,8 @@
     "lint-css": "stylelint 'src/css/*.*css'",
     "lint-js": "eslint '*.js' 'src/js/**/*.js' 'tools/**/*.js'",
     "lint-js-fix": "npm run lint-js -- --fix",
-    "test": "karma start",
+    "test": "karma start karma.conf.js",
+    "test-browserstack": "karma start karma-browserstack.conf.js",
     "copy-mocha": "cp node_modules/mocha/mocha.css build/gen/mocha.css && cp node_modules/mocha/mocha.js build/gen/mocha.js",
     "build-test": "npm run copy-mocha && browserify -d src/js/test/index.js -o build/gen/test.js",
     "watch-test": "npm run copy-mocha && watchify -d src/js/test/index.js -o build/gen/test.js"
@@ -94,6 +95,7 @@
     "fs-extra": "2.0.0",
     "karma": "1.5.0",
     "karma-browserify": "5.1.1",
+    "karma-browserstack-launcher": "1.2.0",
     "karma-chrome-launcher": "2.0.0",
     "karma-firefox-launcher": "1.0.1",
     "karma-mocha": "1.3.0",

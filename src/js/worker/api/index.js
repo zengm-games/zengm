@@ -5,7 +5,7 @@ import {PHASE, PLAYER, g, helpers} from '../../common';
 import actions from './actions';
 import {contractNegotiation, draft, finances, league, phase, player, team, trade} from '../core';
 import {connectMeta, idb} from '../db';
-import {account, beforeView, changes, checkNaNs, checkPromiseImplementation, env, lock, random, updatePlayMenu, updateStatus} from '../util';
+import {account, beforeView, changes, checkNaNs, env, lock, random, updatePlayMenu, updateStatus} from '../util';
 import * as views from '../views';
 import type {Env, GameAttributes, GetOutput, LockName, Player, PlayerWithoutPid, UpdateEvents} from '../../common/types';
 
@@ -461,7 +461,6 @@ const init = async (inputEnv: Env) => {
     env.tld = inputEnv.tld;
 
     checkNaNs();
-    await checkPromiseImplementation();
 
     idb.meta = await connectMeta(inputEnv.fromLocalStorage);
 

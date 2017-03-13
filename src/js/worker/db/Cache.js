@@ -476,19 +476,17 @@ class Cache {
             throw new Error('Undefined season');
         }
 
-        await idb.league.tx(STORES, async (tx) => {
-            // Non-retired players - this is special because it's used for players and playerStats
-            const [players1, players2] = await Promise.all([
-                tx.players.index('tid').getAll(backboard.lowerBound(PLAYER.UNDRAFTED)),
-                tx.players.index('tid').getAll(backboard.bound(PLAYER.UNDRAFTED_FANTASY_TEMP, PLAYER.UNDRAFTED_2)),
-            ]);
+        // Non-retired players - this is special because it's used for players and playerStats
+        const [players1, players2] = await Promise.all([
+            idb.league.players.index('tid').getAll(backboard.lowerBound(PLAYER.UNDRAFTED)),
+            idb.league.players.index('tid').getAll(backboard.bound(PLAYER.UNDRAFTED_FANTASY_TEMP, PLAYER.UNDRAFTED_2)),
+        ]);
 
-            const players = players1.concat(players2);
+        const players = players1.concat(players2);
 
-            await Promise.all(STORES.map((store) => {
-                return this._loadStore(store, tx, players);
-            }));
-        });
+        await Promise.all(STORES.map((store) => {
+            return this._loadStore(store, idb.league, players);
+        }));
 
         // HACK - special case for schedule store, maxId can come from schedule or games because we can't rely on schedule always being populated
         if (this._maxIds.schedule < this._maxIds.games) {
@@ -503,8 +501,8 @@ class Cache {
         this._validateStatus('full');
 
 //performance.mark('flushStart');
-        await idb.league.tx(STORES, 'readwrite', async (tx) => {
-            await Promise.all(STORES.map(async (store) => {
+        await idb.league.tx(STORES, 'readwrite', (tx) => {
+            for (const store of STORES) {
                 for (const id of this._deletes[store]) {
                     tx[store].delete(id);
                 }
@@ -519,7 +517,7 @@ class Cache {
                     }
                 }
                 this._dirtyRecords[store].clear();
-            }));
+            }
         });
 //performance.measure('flushTime', 'flushStart');
 //const entries = performance.getEntriesByName('flushTime');

@@ -74,7 +74,7 @@ const beforeLeague = async (newLid: number, loadedLid: ?number) => {
     // Make sure league template FOR THE CURRENT LEAGUE is showing
     if (loadedLid !== newLid) {
         clearInterval(heartbeatIntervalID);
-        await checkHeartbeat(newLid);
+//        await checkHeartbeat(newLid);
 
         // Clear old game attributes from g, just to be sure
         helpers.resetG();

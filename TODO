@@ -2,7 +2,10 @@ IVERSON - BEFORE BETA
 
 no promise transactions
 - call still call .tx, but can't pass it an async function (i think)
+  - need to fix iterate in backboard package so it doesn't check for promise resolution unless necessary
+- benchmark
 - reenable heartbeat
+- look over any other calls to .tx
 
 browser support
 - firefox
@@ -149,6 +152,7 @@ document cache data format and API!
 - all modifications go into cache
 - cache mutations are dangerous, see getCopy
 - read from just the cache if you're sure everything is there (like an active player). otherwise, read from db and augment with cache (because anything could be in cache, even if it's not normally.. like retired player added to watch list). getCopy variables do this
+- promise microtask worker crap - for firefox support, if you start a backboard tx manually, you can't do any promise/asyncawait stuff inside the callback
 
 league creation
 - reading from league file

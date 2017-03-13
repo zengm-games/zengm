@@ -6,7 +6,7 @@ import {g, helpers} from '../../../common';
 import {filterOrderStats, mergeByPk} from './helpers';
 import {team} from '../../core';
 import {idb} from '../../db';
-import type {BackboardTx, Team, TeamAttr, TeamFiltered, TeamSeasonAttr, TeamStatAttr, TeamStatType} from '../../../common/types';
+import type {Team, TeamAttr, TeamFiltered, TeamSeasonAttr, TeamStatAttr, TeamStatType} from '../../../common/types';
 
 type TeamOptions = {
     season?: number,
@@ -33,13 +33,12 @@ const processAttrs = (output: TeamFiltered, t: Team, attrs: TeamAttr[]) => {
     }
 };
 
-const processSeasonAttrs = async (output: TeamFiltered, t: Team, seasonAttrs: TeamSeasonAttr[], season: number | void, tx: BackboardTx | void) => {
+const processSeasonAttrs = async (output: TeamFiltered, t: Team, seasonAttrs: TeamSeasonAttr[], season: number | void) => {
     let seasons;
     if (season === undefined) {
-        if (!tx) { throw new Error('No transaction'); }
         // All seasons
         seasons = mergeByPk(
-            await tx.teamSeasons.index('tid, season').getAll(backboard.bound([t.tid], [t.tid, ''])),
+            await idb.league.teamSeasons.index('tid, season').getAll(backboard.bound([t.tid], [t.tid, ''])),
             await idb.cache.teamSeasons.indexGetAll('teamSeasonsByTidSeason', [`${t.tid}`, `${t.tid},Z`]),
             idb.cache.storeInfos.teamSeasons.pk,
         );
@@ -47,9 +46,8 @@ const processSeasonAttrs = async (output: TeamFiltered, t: Team, seasonAttrs: Te
         // Single season, from cache
         seasons = await idb.cache.teamSeasons.indexGetAll('teamSeasonsBySeasonTid', `${season},${t.tid}`);
     } else {
-        if (!tx) { throw new Error('No transaction'); }
         // Single season, from database
-        seasons = await tx.teamSeasons.index('season, tid').getAll([season, t.tid]);
+        seasons = await idb.league.teamSeasons.index('season, tid').getAll([season, t.tid]);
     }
 
     output.seasonAttrs = await Promise.all(seasons.map(async (ts) => {
@@ -118,7 +116,6 @@ const processStats = async (
     regularSeason: boolean,
     statType: TeamStatType,
     season?: number,
-    tx?: BackboardTx,
 ) => {
     let teamStats;
 
@@ -136,19 +133,17 @@ const processStats = async (
     };
 
     if (season === undefined) {
-        if (!tx) { throw new Error('No transaction'); }
         // All seasons
         teamStats = mergeByPk(
-            await tx.teamStats.index('tid').getAll(t.tid),
+            await idb.league.teamStats.index('tid').getAll(t.tid),
             await teamStatsFromCache(),
             idb.cache.storeInfos.teamStats.pk,
         );
     } else if (season === g.season) {
         teamStats = await teamStatsFromCache();
     } else {
-        if (!tx) { throw new Error('No transaction'); }
         // Single season, from database
-        teamStats = await tx.teamStats.index('season, tid').getAll([season, t.tid]);
+        teamStats = await idb.league.teamStats.index('season, tid').getAll([season, t.tid]);
     }
 
     // Handle playoffs/regularSeason
@@ -322,20 +317,13 @@ const getCopies = async ({
         objectStores.push('teamStats');
     }
 
-    const processMaybeWithIDB = async (tx: BackboardTx | void) => {
-        if (tid === undefined) {
-            const teams = await idb.cache.teams.getAll();
-            return Promise.all(teams.map((t) => processTeam(t, options, tx)));
-        }
-
-        const t = await idb.cache.teams.get(tid);
-        return [processTeam(t, options, tx)];
-    };
-
-    if (objectStores.length > 0) {
-        return idb.league.tx(objectStores, (tx) => processMaybeWithIDB(tx));
+    if (tid === undefined) {
+        const teams = await idb.cache.teams.getAll();
+        return Promise.all(teams.map((t) => processTeam(t, options)));
     }
-    return processMaybeWithIDB();
+
+    const t = await idb.cache.teams.get(tid);
+    return [processTeam(t, options)];
 };
 
 export default getCopies;

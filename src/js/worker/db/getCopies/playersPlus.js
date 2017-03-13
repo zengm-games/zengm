@@ -343,14 +343,6 @@ const reduceCareerStats = (careerStats, attr, playoffs) => {
         .reduce((memo, num) => memo + num, 0);
 };
 
-const getTx = () => {
-    let tx;
-    idb.league.tx(['playerStats'], (tx2) => {
-        tx = tx2;
-    });
-    return tx;
-};
-
 const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: boolean, {
     fuzz,
     numGamesRemaining,
@@ -362,7 +354,7 @@ const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: 
     showRookies,
     statType,
     stats,
-}: PlayerOptionsRequired, tx: ?BackboardTx) => {
+}: PlayerOptionsRequired) => {
     let playerStats;
 
     const playerStatsFromCache = () => {
@@ -371,25 +363,17 @@ const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: 
     };
 
     if (season === undefined || p.tid === PLAYER.RETIRED) {
-        if (tx === undefined) {
-            tx = await getTx(tx);
-        }
-
         // All seasons, or retired player with stats not in cache
         playerStats = mergeByPk(
-            await tx.playerStats.index('pid, season, tid').getAll(backboard.bound([p.pid], [p.pid, ''])),
+            await idb.league.playerStats.index('pid, season, tid').getAll(backboard.bound([p.pid], [p.pid, ''])),
             await playerStatsFromCache(),
             idb.cache.storeInfos.playerStats.pk,
         );
     } else if (season >= g.season - 1) {
         playerStats = await playerStatsFromCache();
     } else {
-        if (tx === undefined) {
-            tx = await getTx(tx);
-        }
-
         // Single season, from database
-        playerStats = await tx.playerStats.index('pid, season, tid').getAll(backboard.bound([p.pid, season], [p.pid, season, '']));
+        playerStats = await idb.league.playerStats.index('pid, season, tid').getAll(backboard.bound([p.pid, season], [p.pid, season, '']));
     }
 
     // Handle playoffs/regularSeason
@@ -442,20 +426,18 @@ const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: 
             output.careerStatsPlayoffs = genStatsRow(p, statSumsPlayoffs, stats, statType);
         }
     }
-
-    return tx;
 };
 
-const processPlayer = async (p: Player, options: PlayerOptions, tx: ?BackboardTx) => {
+const processPlayer = async (p: Player, options: PlayerOptions) => {
     const output = {};
 
     const keepWithNoStats = (options.showRookies && p.draft.year >= g.season && (options.season === g.season || options.season === undefined)) || (options.showNoStats && (options.season === undefined || options.season > p.draft.year));
     if (options.stats.length > 0 || keepWithNoStats) {
-        tx = await processStats(output, p, keepWithNoStats, options, tx);
+        await processStats(output, p, keepWithNoStats, options);
 
         // Only add a player if filterStats finds something (either stats that season, or options overriding that check)
         if (output.stats === undefined && !keepWithNoStats) {
-            return {p: undefined, tx};
+            return undefined;
         }
     }
 
@@ -464,7 +446,7 @@ const processPlayer = async (p: Player, options: PlayerOptions, tx: ?BackboardTx
 
         // Only add a player if he was active for this season and thus has ratings for this season
         if (output.ratings === undefined) {
-            return {p: undefined, tx};
+            return undefined;
         }
     }
 
@@ -472,7 +454,7 @@ const processPlayer = async (p: Player, options: PlayerOptions, tx: ?BackboardTx
         processAttrs(output, p, options);
     }
 
-    return {p: output, tx};
+    return output;
 };
 
 /**
@@ -537,14 +519,7 @@ const getCopies = async (players: Player[], {
         statType,
     };
 
-    let tx;
-    const playersFiltered = await Promise.all(players.map(async (p) => {
-        const output = await processPlayer(p, options, tx);
-        if (output.tx !== undefined) {
-            tx = output.tx;
-        }
-        return output.p;
-    }));
+    const playersFiltered = await Promise.all(players.map((p) => processPlayer(p, options)));
 
     return playersFiltered.filter((p) => p !== undefined);
 };

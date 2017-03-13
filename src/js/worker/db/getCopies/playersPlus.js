@@ -6,7 +6,7 @@ import {PLAYER, g, helpers} from '../../../common';
 import {filterOrderStats, mergeByPk} from './helpers';
 import {player} from '../../core';
 import {idb} from '../../db';
-import type {BackboardTx, Player, PlayerFiltered, PlayerStatType} from '../../../common/types';
+import type {Player, PlayerFiltered, PlayerStatType} from '../../../common/types';
 
 type PlayerAttr = string;
 type PlayerRatingAttr = string;
@@ -344,14 +344,11 @@ const reduceCareerStats = (careerStats, attr, playoffs) => {
 };
 
 const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: boolean, {
-    fuzz,
-    numGamesRemaining,
     playoffs,
     regularSeason,
     season,
     tid,
     showNoStats,
-    showRookies,
     statType,
     stats,
 }: PlayerOptionsRequired) => {

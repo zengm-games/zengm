@@ -239,7 +239,7 @@ const processTeam = async (t: Team, {
     playoffs,
     regularSeason,
     statType,
-}: TeamOptions, tx: BackboardTx | void) => {
+}: TeamOptions) => {
     const output = {};
 
     if (attrs.length > 0) {
@@ -249,11 +249,11 @@ const processTeam = async (t: Team, {
     const promises = [];
 
     if (seasonAttrs.length > 0) {
-        promises.push(processSeasonAttrs(output, t, seasonAttrs, season, tx));
+        promises.push(processSeasonAttrs(output, t, seasonAttrs, season));
     }
 
     if (stats.length > 0) {
-        promises.push(processStats(output, t, stats, playoffs, regularSeason, statType, season, tx));
+        promises.push(processStats(output, t, stats, playoffs, regularSeason, statType, season));
     }
 
     await Promise.all(promises);

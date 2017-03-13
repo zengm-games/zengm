@@ -1,11 +1,6 @@
 IVERSON - BEFORE BETA
 
-no promise transactions
-- call still call .tx, but can't pass it an async function (i think)
-  - need to fix iterate in backboard package so it doesn't check for promise resolution unless necessary
-- benchmark
-- reenable heartbeat
-- look over any other calls to .tx
+get rid of appcache
 
 check un-awaited toUI calls
 
@@ -168,6 +163,8 @@ benchmark using proxies to detect change in index stuff rather than dirtyIndexes
 can ui/util/logEvent be replaced by just notify? since it never writes to db?
 
 ----
+
+service worker
 
 put death rate in god mode options
 

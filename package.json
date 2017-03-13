@@ -33,7 +33,7 @@
     "watch-test": "npm run copy-mocha && watchify -d src/js/test/index.js -o build/gen/test.js"
   },
   "dependencies": {
-    "backboard": "1.0.6",
+    "backboard": "1.0.7",
     "classnames": "2.2.5",
     "dompurify": "0.8.5",
     "facesjs": "1.0.1",

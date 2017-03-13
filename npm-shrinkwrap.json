@@ -650,9 +650,9 @@
       "dev": true
     },
     "backboard": {
-      "version": "1.0.6",
-      "from": "backboard@1.0.6",
-      "resolved": "https://registry.npmjs.org/backboard/-/backboard-1.0.6.tgz"
+      "version": "1.0.7",
+      "from": "backboard@1.0.7",
+      "resolved": "https://registry.npmjs.org/backboard/-/backboard-1.0.7.tgz"
     },
     "backo2": {
       "version": "1.0.2",
@@ -4537,13 +4537,15 @@
     },
     "source-map": {
       "version": "0.5.6",
-      "from": "source-map@>=0.5.3 <0.6.0",
-      "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.5.6.tgz"
+      "from": "source-map@>=0.5.0 <0.6.0",
+      "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.5.6.tgz",
+      "dev": true
     },
     "source-map-support": {
       "version": "0.4.11",
-      "from": "source-map-support@0.4.11",
-      "resolved": "https://registry.npmjs.org/source-map-support/-/source-map-support-0.4.11.tgz"
+      "from": "source-map-support@>=0.4.2 <0.5.0",
+      "resolved": "https://registry.npmjs.org/source-map-support/-/source-map-support-0.4.11.tgz",
+      "dev": true
     },
     "spawn-command": {
       "version": "0.0.2-1",
@@ -5337,9 +5339,9 @@
       "dev": true
     },
     "yallist": {
-      "version": "2.0.1",
+      "version": "2.1.0",
       "from": "yallist@>=2.0.0 <3.0.0",
-      "resolved": "https://registry.npmjs.org/yallist/-/yallist-2.0.1.tgz",
+      "resolved": "https://registry.npmjs.org/yallist/-/yallist-2.1.0.tgz",
       "dev": true
     },
     "yargs": {

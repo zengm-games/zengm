@@ -10,7 +10,7 @@ describe("core/league", () => {
         idb.meta = await connectMeta();
         await league.create("Test", 0, undefined, 2013, false);
     });
-    after(async () => {        
+    after(async () => {
         if (idb.meta !== undefined) {
             idb.meta.close();
         }

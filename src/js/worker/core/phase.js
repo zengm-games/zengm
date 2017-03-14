@@ -4,7 +4,7 @@ import _ from 'underscore';
 import {PHASE, PHASE_TEXT, PLAYER, g, helpers} from '../../common';
 import {contractNegotiation, draft, finances, freeAgents, league, player, season, team} from '../core';
 import {idb} from '../db';
-import {account, env, genMessage, local, lock, logEvent, random, toUI, updatePhase, updatePlayMenu} from '../util';
+import {account, env, genMessage, local, lock, logEvent, random, toUI, updatePhase, updatePlayMenu, updateStatus} from '../util';
 import type {Phase, UpdateEvents} from '../../common/types';
 
 /**
@@ -19,6 +19,7 @@ import type {Phase, UpdateEvents} from '../../common/types';
  * @return {Promise}
  */
 async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = []) {
+    await updateStatus('Saving...');
     // Set phase before updating play menu
     await league.setGameAttributes({
         phase,
@@ -30,6 +31,7 @@ async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = 
     if (phase === PHASE.PRESEASON) {
         await idb.cache.fill();
     }
+    await updateStatus('Idle');
 
     lock.set('newPhase', false);
     await updatePlayMenu();
@@ -560,6 +562,8 @@ async function newPhase(phase: Phase, extra: any) {
         });
     } else {
         try {
+            await updateStatus('Processing...');
+
             lock.set('newPhase', true);
             await updatePlayMenu();
 

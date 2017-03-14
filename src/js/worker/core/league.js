@@ -2,7 +2,7 @@
 
 import backboard from 'backboard';
 import {Cache, connectLeague, idb} from '../db';
-import {PHASE, PHASE_TEXT, PLAYER, g, helpers} from '../../common';
+import {PHASE, PLAYER, g, helpers} from '../../common';
 import {draft, finances, freeAgents, game, phase, player, season, team} from '../core';
 import {defaultGameAttributes, local, lock, random, toUI, updatePhase, updateStatus} from '../util';
 import type {GameAttributes} from '../../common/types';
@@ -443,7 +443,7 @@ async function create(
         return g.lid;
     }
 
-    await updatePhase(`${g.season} ${PHASE_TEXT[g.phase]}`);
+    await updatePhase();
     await updateStatus('Idle');
 
     const lid = g.lid; // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
@@ -486,7 +486,7 @@ async function exportLeague(stores: string[]) {
     // Row from leagueStore in meta db.
     // phaseText is needed if a phase is set in gameAttributes.
     // name is only used for the file name of the exported roster file.
-    exportedLeague.meta = {phaseText: g.phaseText, name: g.leagueName};
+    exportedLeague.meta = {phaseText: local.phaseText, name: g.leagueName};
 
     await Promise.all(stores.map(async (store) => {
         exportedLeague[store] = await idb.league[store].getAll();

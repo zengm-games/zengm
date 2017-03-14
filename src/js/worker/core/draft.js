@@ -1,7 +1,7 @@
 // @flow
 
 import _ from 'underscore';
-import {PHASE, PHASE_TEXT, PLAYER, g, helpers} from '../../common';
+import {PHASE, PLAYER, g, helpers} from '../../common';
 import {finances, league, phase, player} from '../core';
 import {idb} from '../db';
 import {local, logEvent, random, updatePlayMenu, updatePhase} from '../util';
@@ -530,7 +530,7 @@ async function untilUserOrEnd() {
                     nextPhase: null,
                 });
 
-                await updatePhase(`${g.season} ${PHASE_TEXT[g.phase]}`);
+                await updatePhase();
                 await updatePlayMenu();
             } else {
                 // Non-fantasy draft

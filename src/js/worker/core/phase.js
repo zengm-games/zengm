@@ -1,7 +1,7 @@
 // @flow
 
 import _ from 'underscore';
-import {PHASE, PHASE_TEXT, PLAYER, g, helpers} from '../../common';
+import {PHASE, PLAYER, g, helpers} from '../../common';
 import {contractNegotiation, draft, finances, freeAgents, league, player, season, team} from '../core';
 import {idb} from '../db';
 import {account, env, genMessage, local, lock, logEvent, random, toUI, updatePhase, updatePlayMenu, updateStatus} from '../util';
@@ -24,7 +24,7 @@ async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = 
     await league.setGameAttributes({
         phase,
     });
-    await updatePhase(`${g.season} ${PHASE_TEXT[phase]}`);
+    await updatePhase();
 
     // Fill only in preseason, because not much changes before then
     await idb.cache.flush();

@@ -1,8 +1,9 @@
 import assert from 'assert';
 import backboard from 'backboard';
-import {connectMeta, idb} from '../../../worker/db';
 import {g} from '../../../common';
 import {league} from '../../../worker/core';
+import {connectMeta, idb} from '../../../worker/db';
+import {local} from '../../../worker/util';
 import testHelpers from '../../helpers';
 
 describe("core/league", () => {
@@ -24,9 +25,7 @@ describe("core/league", () => {
             const l = await idb.meta.leagues.get(g.lid);
             assert.equal(l.name, "Test");
             assert.equal(l.tid, 0);
-
-            // This doesn't work because updatePhase is hacked for testing, I think
-            // assert.equal(l.phaseText, `${g.startingSeason} preseason`);
+            assert.equal(local.phaseText, `${g.startingSeason} preseason`);
         });
         it("should create all necessary object stores", () => {
             assert.equal(idb.league.objectStoreNames.length, 18);
@@ -60,9 +59,8 @@ describe("core/league", () => {
             assert.equal(gTest.daysLeft, 0);
             assert.equal(gTest.showFirstOwnerMessage, true);
             assert.equal(gTest.statusText, 'Idle');
-            assert.equal(gTest.phaseText, `${gTest.startingSeason} preseason`);
 
-            assert.equal(Object.keys(gTest).length, 33);
+            assert.equal(Object.keys(gTest).length, 32);
         });
         it("should initialize draftOrder object store", async () => {
             const draftOrder = await idb.league.draftOrder.getAll();

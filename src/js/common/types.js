@@ -199,7 +199,6 @@ export type GameAttributeKey = (
     'numTeams' |
     'ownerMood' |
     'phase' |
-    'phaseText' |
     'quarterLength' |
     'salaryCap' |
     'season' |
@@ -255,6 +254,7 @@ export type League = {
 
 export type Local = {
     autoPlaySeasons: number,
+    phaseText: string,
 };
 
 export type Locks = {

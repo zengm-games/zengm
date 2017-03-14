@@ -2,7 +2,6 @@ IVERSON - BEFORE BETA
 
 statusText and phaseText in g - necessary? Or move them to local?
 - if not, then make sure not to set after flushing
-  - phaseText is always derivable from phase, right?
   - statusText is always Idle on load, except:
     - draft: 'Draft in progres...' when appropriate (draft phase and started)
     - free agency: number of days left

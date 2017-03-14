@@ -1,0 +1,9 @@
+CACHE MANIFEST
+
+# http://stackoverflow.com/a/31083156/786644
+
+NETWORK:
+*
+
+CACHE:
+FALLBACK:

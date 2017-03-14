@@ -14,9 +14,9 @@ const createMeta = async (upgradeDB) => {
     const attributeStore = upgradeDB.createObjectStore('attributes');
     upgradeDB.createObjectStore('leagues', {keyPath: 'lid', autoIncrement: true});
 
-    await attributeStore.add(-1, 'changesRead');
-    await attributeStore.add(-1, 'lastSelectedTid');
-    await attributeStore.add(0, 'nagged');
+    await attributeStore.put(-1, 'changesRead');
+    await attributeStore.put(-1, 'lastSelectedTid');
+    await attributeStore.put(0, 'nagged');
 };
 
 /**
@@ -33,14 +33,14 @@ const migrateMeta = async (upgradeDB, fromLocalStorage) => {
     if (upgradeDB.oldVersion <= 7) {
         const attributeStore = upgradeDB.createObjectStore('attributes');
 
-        await attributeStore.add(-1, 'changesRead');
-        await attributeStore.add(-1, 'lastSelectedTid');
-        await attributeStore.add(0, 'nagged');
+        await attributeStore.put(-1, 'changesRead');
+        await attributeStore.put(-1, 'lastSelectedTid');
+        await attributeStore.put(0, 'nagged');
 
         for (const key of Object.keys(fromLocalStorage)) {
             const int = parseInt(fromLocalStorage[key], 10);
             if (!isNaN(int)) {
-                await attributeStore.add(int, key);
+                await attributeStore.put(int, key);
             }
         }
     }

@@ -14,16 +14,15 @@ update to cache
 - export league - ensure flush first
 - addStatsRow revisit - mutates p
 
-fix all lint errors and warnings
-
-why ads not working on .dev?
-- beta?
-
 splash screen about load time
 
 better loading screen, after React takes control but before initial page is rendered - because it can be slow for loading a league
 
 when entering league and cache filling, should have some loading indicator
+
+fix all lint errors and warnings
+
+confirm ads in beta
 
 IVERSON - BEFORE FINAL
 

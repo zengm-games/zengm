@@ -30,7 +30,7 @@ class Footer extends React.Component {
                     <a href="https://basketball-gm.com/contact/" rel="noopener noreferrer" target="_blank">Contact</a> ·{' '}
                     <a href="https://basketball-gm.com/share/" rel="noopener noreferrer" target="_blank">Share</a><br />
                 </p>
-                <p className="rev">v3.6 · {window.bbgmVersion}</p>
+                <p className="rev">v4.0 · {window.bbgmVersion}</p>
             </footer>
         </div>;
     }

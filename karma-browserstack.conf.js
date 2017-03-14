@@ -1,5 +1,7 @@
 /* eslint-env node */
 
+const browserStack = require('../../.browserstack.json');
+
 const customLaunchers = [{
     base: 'BrowserStack',
     browser: 'firefox',
@@ -50,7 +52,7 @@ module.exports = function (config) {
 
         browserNoActivityTimeout: 100000,
 
-        browserStack: require('../../.browserstack.json'),
+        browserStack,
 
         customLaunchers,
 

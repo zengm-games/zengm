@@ -3,6 +3,8 @@ IVERSON - BEFORE BETA
 benchmark after 500 seasons
 
 auto play status should be stored in lock, similar to game sim, otherwise can get stuck
+- can't be stored in lock, because it's a number, not a boolean
+  - could store boolean and use that in UI, but still need actual number in worker. where?
 
 browser support
 - mobile
@@ -21,9 +23,6 @@ db sync issues
 
 uncomment things using localstorage in worker, after moving to either env+api or idb (meta)
 - top16playoffs - used in both, would be better in gameAttributes as a God Mode option
-
-getCopy.playersPlus
-- oldStats
 
 update to cache
 - death code in phase - should not be writing to db, and (maybe) should not assume retired players are not cached

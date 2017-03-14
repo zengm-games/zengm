@@ -168,71 +168,6 @@ const processRatings = async (output: PlayerFiltered, p: Player, {
             }
         }
 
-/*if (pr === null) {
-    // Must be retired, or not in the league yet
-    if (options.showRetired && p.tid === PLAYER.RETIRED) {
-        // If forcing to show retired players, blank it out
-        row = {};
-        for (let k = 0; k < ratings.length; k++) {
-            if (attr === 'skills') {
-                row[attr] = [];
-            } else {
-                row[attr] = 0;
-            }
-        }
-        return true;
-    } else if (options.showRetired && (p.tid === PLAYER.UNDRAFTED || p.tid === PLAYER.UNDRAFTED_2 || p.tid === PLAYER.UNDRAFTED_3)) {
-        // What not show draft prospects too? Just for fun.
-        pr = p.ratings[0]; // Only has one entry
-    } else {
-        return false;
-    }
-}
-
-// All seasons
-row = [];
-for (let k = 0; k < p.ratings.length; k++) {
-    // If a specific tid was requested, only return ratings if a stat was accumulated for that tid
-    if (options.tid !== null) {
-        let hasStats = false;
-        for (let j = 0; j < p.stats.length; j++) {
-            if (options.tid === p.attr.tid && p.attr.season === p.attr.season) {
-                hasStats = true;
-                break;
-            }
-        }
-        if (!hasStats) {
-            continue;
-        }
-    }
-
-    const kk = row.length; // Not always the same as k, due to hasStats filtering above
-    row[kk] = {};
-    for (let j = 0; j < ratings.length; j++) {
-        if (ratings[j] === 'age') {
-            row[kk].age = p.attr.season - p.born.year;
-        } else if (ratings[j] === 'abbrev') {
-            // Find the last stats entry for that season, and use that to determine the team
-            let tidTemp;
-            for (let i = 0; i < p.stats.length; i++) {
-                if (p.stats[i].season === p.attr.season && p.stats[i].playoffs === false) {
-                    tidTemp = p.stats[i].tid;
-                }
-            }
-            if (tidTemp !== undefined) {
-                row[kk].abbrev = helpers.getAbbrev(tidTemp);
-            } else {
-                row[kk].abbrev = null;
-            }
-        } else {
-            row[kk][ratings[j]] = p.attr[ratings[j]];
-            if (options.fuzz && ratings[j] !== 'fuzz' && ratings[j] !== 'season' && ratings[j] !== 'skills' && ratings[j] !== 'hgt' && ratings[j] !== 'pos') {
-                row[kk][ratings[j]] = fuzzRating(p.attr[ratings[j]], p.attr.fuzz);
-            }
-        }
-    }
-}*/
-
         return row;
     }).filter((row) => row !== undefined); // Filter at the end because dovr/dpot needs to look back
 
@@ -349,6 +284,7 @@ const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: 
     season,
     tid,
     showNoStats,
+    oldStats,
     statType,
     stats,
 }: PlayerOptionsRequired) => {
@@ -382,6 +318,25 @@ const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: 
         const tidCheck = tid === undefined || ps.tid === tid;
         return seasonCheck && tidCheck;
     });
+
+    // oldStats crap
+    if (oldStats && season !== undefined && playerStats.length === 0) {
+        const oldSeason = season - 1;
+
+        // This isn't very DRY with above code, but oh well
+
+        if (oldSeason >= g.season - 1) {
+            playerStats = await playerStatsFromCache();
+        } else {
+            playerStats = await idb.league.playerStats.index('pid, season, tid').getAll(backboard.bound([p.pid, oldSeason], [p.pid, oldSeason, '']));
+        }
+        playerStats = filterOrderStats(playerStats, playoffs, regularSeason);
+        playerStats = playerStats.filter((ps) => {
+            const seasonCheck = season === undefined || ps.season === oldSeason;
+            const tidCheck = tid === undefined || ps.tid === tid;
+            return seasonCheck && tidCheck;
+        });
+    }
 
     if (playerStats.length === 0 && showNoStats) {
         playerStats.push({});
@@ -478,7 +433,7 @@ const processPlayer = async (p: Player, options: PlayerOptions) => {
  * @param {boolean=} options.showRookies If true (default false), then future draft prospects and rookies drafted in the current season (g.season) are shown if that season is requested. This is mainly so, after the draft, rookies can show up in the roster, player ratings view, etc; and also so prospects can be shown in the watch list. After the next season starts, then they will no longer show up in a request for that season since they didn't actually play that season.
  * @param {boolean=} options.showRetired If true (default false), then players with no ratings for the current season are still returned, with either 0 for every rating and a blank array for skills (retired players) or future ratings (draft prospects). This is currently only used for the watch list, so retired players (and future draft prospects!) can still be watched.
  * @param {boolean=} options.fuzz When true (default false), noise is added to any returned ratings based on the fuzz variable for the given season (default: false); any user-facing rating should use true, any non-user-facing rating should use false.
- * @param {boolean=} options.oldStats CURRENTLY NOT IMPLEMENTED! When true (default false), stats from the previous season are displayed if there are no stats for the current season. This is currently only used for the free agents list, so it will either display stats from this season if they exist, or last season if they don't.
+ * @param {boolean=} options.oldStats When true (default false), stats from the previous season are displayed if there are no stats for the current season. This is currently only used for the free agents list, so it will either display stats from this season if they exist, or last season if they don't.
  * @param {number=} options.numGamesRemaining If the "cashOwed" attr is requested, options.numGamesRemaining is used to calculate how much of the current season's contract remains to be paid. This is used for buying out players.
  * @param {string=} options.statType What type of stats to return, 'perGame', 'per36', or 'totals' (default is 'perGame).
  * @return {Object|Array.<Object>} Filtered player object or array of filtered player objects, depending on the first argument.

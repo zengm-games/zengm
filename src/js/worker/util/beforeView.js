@@ -71,6 +71,7 @@ const checkHeartbeat = async (lid: number) => {
 const beforeLeague = async (newLid: number, loadedLid: ?number) => {
     // Make sure league template FOR THE CURRENT LEAGUE is showing
     if (loadedLid !== newLid) {
+        await league.disconnect();
         clearInterval(heartbeatIntervalID);
         await checkHeartbeat(newLid);
 
@@ -99,10 +100,21 @@ const beforeLeague = async (newLid: number, loadedLid: ?number) => {
     }
 };
 
-const beforeNonLeague = () => {
-    g.lid = undefined;
-    clearInterval(heartbeatIntervalID);
-    toUI('emit', 'updateTopMenu', {lid: undefined});
+// beforeNonLeagueRunning is to handle extra realtimeUpdate request triggered by stopping gameSim in league.disconnect
+let beforeNonLeagueRunning = false;
+const beforeNonLeague = async () => {
+    if (!beforeNonLeagueRunning) {
+        try {
+            beforeNonLeagueRunning = true;
+            await league.disconnect();
+            clearInterval(heartbeatIntervalID);
+            toUI('emit', 'updateTopMenu', {lid: g.lid});
+            beforeNonLeagueRunning = false;
+        } catch (err) {
+            beforeNonLeagueRunning = false;
+            throw err;
+        }
+    }
 };
 
 export default {

@@ -16,6 +16,11 @@ const get = (name: LockName): boolean => {
 };
 
 const set = (name: LockName, value: boolean) => {
+    if (locks[name] === value) {
+        // Short circuit to prevent realtimeUpdate
+        return;
+    }
+
     locks[name] = value;
 
     if (name === 'gameSim') {

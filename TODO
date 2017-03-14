@@ -1,5 +1,7 @@
 IVERSON - BEFORE BETA
 
+does lock need to reset across leagues? probably
+
 browser support
 - mobile
 
@@ -14,7 +16,6 @@ db sync issues
   - smartest option: as above, but incrementally update index
   - goal: get rid of markDirtyIndexes calls in application code
 - Last update time could be computed in flush if necessary
-- when leaving a league (beforeView), flush
 
 update to cache
 - death code in phase - should not be writing to db, and (maybe) should not assume retired players are not cached
@@ -30,6 +31,8 @@ why ads not working on .dev?
 splash screen about load time
 
 better loading screen, after React takes control but before initial page is rendered - because it can be slow for loading a league
+
+when entering league and cache filling, should have some loading indicator
 
 IVERSON - BEFORE FINAL
 

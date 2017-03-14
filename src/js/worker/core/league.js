@@ -4,7 +4,7 @@ import backboard from 'backboard';
 import {Cache, connectLeague, idb} from '../db';
 import {PHASE, PHASE_TEXT, PLAYER, g, helpers} from '../../common';
 import {draft, finances, freeAgents, game, phase, player, season, team} from '../core';
-import {defaultGameAttributes, local, random, toUI, updatePhase, updateStatus} from '../util';
+import {defaultGameAttributes, local, lock, random, toUI, updatePhase, updateStatus} from '../util';
 import type {GameAttributes} from '../../common/types';
 
 // x and y are both arrays of objects with the same length. For each object, any properties in y but not x will be copied over to x.
@@ -614,6 +614,35 @@ async function initAutoPlay() {
     }
 }
 
+// Flush cache, disconnect from league database, and unset g.lid
+const disconnect = async () => {
+    if (g.lid === undefined || idb.league === undefined) {
+        return;
+    }
+
+    const gameSim = lock.get('gameSim');
+
+    lock.set('stopGameSim', true);
+    lock.set('gameSim', false);
+
+    // Wait in case stuff is still happening (ugh)
+    if (gameSim) {
+        await new Promise((resolve) => {
+            setTimeout(() => {
+                resolve();
+            }, 1000);
+        });
+    }
+
+    await idb.cache.flush();
+
+    // Should probably "close" cache here too, but no way to do that now
+
+    idb.league.close();
+
+    g.lid = undefined;
+};
+
 export default {
     create,
     exportLeague,
@@ -623,4 +652,5 @@ export default {
     loadGameAttributes,
     autoPlay,
     initAutoPlay,
+    disconnect,
 };

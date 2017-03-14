@@ -599,21 +599,20 @@ async function loadTeams() {
 async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: number) {
     // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season
     const cbNoGames = async () => {
-        await updateStatus('Idle');
-        lock.set('gameSim', false);
-        await updatePlayMenu();
-
         // Check to see if the season is over
         if (g.phase < PHASE.PLAYOFFS) {
             const schedule = await season.getSchedule();
             if (schedule.length === 0) {
-                // No return here, meaning no need to wait for phase.newPhase to resolve - is that correct?
-                phase.newPhase(PHASE.PLAYOFFS);
-                await updateStatus('Idle'); // Just to be sure..
+                await phase.newPhase(PHASE.PLAYOFFS);
             }
         }
 
+        await updateStatus('Saving...');
         await idb.cache.flush();
+
+        await updateStatus('Idle');
+        lock.set('gameSim', false);
+        await updatePlayMenu();
     };
 
     // Saves a vector of results objects for a day, as is output from cbSimGames

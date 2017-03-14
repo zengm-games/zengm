@@ -50,7 +50,7 @@ const createLeague = (upgradeDB, lid: number) => {
  * @param {Object} event Event from onupgradeneeded, with oldVersion > 0.
  * @param {number} lid Integer league ID number.
  */
-const migrateLeague = async (upgradeDB, lid) => {
+const migrateLeague = (upgradeDB, lid) => {
     console.log(`Upgrading league${lid} database from version ${upgradeDB.oldVersion} to version ${upgradeDB.version}`);
 
     if (upgradeDB.oldVersion <= 15) {
@@ -65,7 +65,7 @@ const migrateLeague = async (upgradeDB, lid) => {
         teamStatsStore.createIndex("tid", "tid", {unique: false});
         teamStatsStore.createIndex("season, tid", ["season", "tid"], {unique: false});
 
-        await upgradeDB.teams.iterate((t) => {
+        upgradeDB.teams.iterate((t) => {
             for (const teamStats of t.stats) {
                 teamStats.tid = t.tid;
                 if (!teamStats.hasOwnProperty("ba")) {
@@ -83,34 +83,11 @@ const migrateLeague = async (upgradeDB, lid) => {
         });
     }
     if (upgradeDB.oldVersion <= 17) {
-        // Use new default team logos, unless teams have been edited
-        const teamsDefault = helpers.getTeamsDefault();
-        const [teamAbbrevsCache, teamNamesCache, teamRegionsCache] = await Promise.all([
-            upgradeDB.gameAttributes.get('teamAbbrevsCache').then(ga => JSON.stringify(ga.value)),
-            upgradeDB.gameAttributes.get('teamNamesCache').then(ga => JSON.stringify(ga.value)),
-            upgradeDB.gameAttributes.get('teamRegionsCache').then(ga => JSON.stringify(ga.value)),
-        ]);
-
-        if (JSON.stringify(teamsDefault.map(t => t.abbrev)) !== teamAbbrevsCache) {
-            return;
-        }
-        if (JSON.stringify(teamsDefault.map(t => t.name)) !== teamNamesCache) {
-            return;
-        }
-        if (JSON.stringify(teamsDefault.map(t => t.region)) !== teamRegionsCache) {
-            return;
-        }
-
-        await upgradeDB.teams.iterate((t) => {
-            if (!t.imgURL) {
-                t.imgURL = teamsDefault[t.tid].imgURL;
-            }
-            upgradeDB.teams.put(t);
-        });
+        // This used to upgrade team logos to the new ones, but Firefox
     }
     if (upgradeDB.oldVersion <= 18) {
         // Split old single string p.name into two names
-        await upgradeDB.players.iterate((p) => {
+        upgradeDB.players.iterate((p) => {
             if (p.name) {
                 const bothNames = p.name.split(" ");
                 p.firstName = bothNames[0];
@@ -122,7 +99,7 @@ const migrateLeague = async (upgradeDB, lid) => {
     }
     if (upgradeDB.oldVersion <= 19) {
         // New best records format in awards
-        await upgradeDB.awards.iterate((a) => {
+        upgradeDB.awards.iterate((a) => {
             if (a.bre && a.brw) {
                 a.bestRecordConfs = [a.bre, a.brw];
                 a.bestRecord = a.bre.won >= a.brw.won ? a.bre : a.brw;
@@ -146,11 +123,12 @@ const migrateLeague = async (upgradeDB, lid) => {
 };
 
 const connectLeague = async (lid: number) => {
-    const db = await Backboard.open(`league${lid}`, 21, async (upgradeDB) => {
+    // Would like to await on migrateLeague and inside there, but Firefox
+    const db = await Backboard.open(`league${lid}`, 21, (upgradeDB) => {
         if (upgradeDB.oldVersion === 0) {
             createLeague(upgradeDB, lid);
         } else {
-            await migrateLeague(upgradeDB, lid);
+            migrateLeague(upgradeDB, lid);
         }
     });
 

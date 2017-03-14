@@ -15,8 +15,6 @@ better loading screen, after React takes control but before initial page is rend
 
 when entering league and cache filling, should have some loading indicator
 
-promise-worker-bi update w/ local changes
-
 fix all lint errors and warnings
 
 release beta, then:

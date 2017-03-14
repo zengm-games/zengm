@@ -13,7 +13,6 @@ const defaultGameAttributes: GameAttributes = {
     },
     gameOver: false,
     showFirstOwnerMessage: true, // true when user starts with a new team, so initial owner message can be shown
-    autoPlaySeasons: 0,
     godMode: false,
     godModeInPast: false,
     salaryCap: 90000, // [thousands of dollars]

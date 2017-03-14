@@ -3,7 +3,7 @@
 import {g, helpers} from '../../common';
 import {league} from '../core';
 import {idb} from '../db';
-import {random} from '../util';
+import {local, random} from '../util';
 import type {OwnerMoodDeltas} from '../../common/types';
 
 // First message after new game
@@ -143,7 +143,7 @@ ovr[2] = [
 
 async function genMessage(deltas: OwnerMoodDeltas) {
     // If auto play seasons or multi team mode, no messages
-    if (g.autoPlaySeasons > 0 || g.userTids.length > 1) {
+    if (local.autoPlaySeasons > 0 || g.userTids.length > 1) {
         return;
     }
 

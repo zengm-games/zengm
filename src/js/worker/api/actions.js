@@ -3,7 +3,7 @@
 import {PHASE, g, helpers} from '../../common';
 import {contractNegotiation, draft, freeAgents, game, league, phase, season, trade} from '../core';
 import {idb, reset} from '../db';
-import {lock, logEvent, toUI, updatePlayMenu, updateStatus} from '../util';
+import {local, lock, logEvent, toUI, updatePlayMenu, updateStatus} from '../util';
 
 const liveGame = async (gid: number) => {
     await toUI('realtimeUpdate', [], helpers.leagueUrl(["live_game"]), {fromAction: true});
@@ -194,7 +194,7 @@ const playMenu = {
     },
 
     stopAuto: async () => {
-        await league.setGameAttributes({autoPlaySeasons: 0});
+        local.autoPlaySeasons = 0;
         updatePlayMenu();
         await playStop();
     },

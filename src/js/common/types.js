@@ -176,7 +176,6 @@ export type GamePlayer = any;
 export type GameResults = any;
 
 export type GameAttributeKey = (
-    'autoPlaySeasons' |
     'confs' |
     'daysLeft' |
     'disableInjuries' |
@@ -252,6 +251,10 @@ export type League = {
     teamRegion: string,
     heartbeatID?: string,
     heartbeatTimestamp?: number,
+};
+
+export type Local = {
+    autoPlaySeasons: number,
 };
 
 export type LockName = 'newPhase' | 'gameSim' | 'stopGameSim';

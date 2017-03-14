@@ -4,7 +4,7 @@ import _ from 'underscore';
 import {PHASE, PHASE_TEXT, PLAYER, g, helpers} from '../../common';
 import {contractNegotiation, draft, finances, freeAgents, league, player, season, team} from '../core';
 import {idb} from '../db';
-import {account, env, genMessage, lock, logEvent, random, toUI, updatePhase, updatePlayMenu} from '../util';
+import {account, env, genMessage, local, lock, logEvent, random, toUI, updatePhase, updatePlayMenu} from '../util';
 import type {Phase, UpdateEvents} from '../../common/types';
 
 /**
@@ -38,7 +38,7 @@ async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = 
     toUI('realtimeUpdate', updateEvents, url);
 
     // If auto-simulating, initiate next action
-    if (g.autoPlaySeasons > 0) {
+    if (local.autoPlaySeasons > 0) {
         // Not totally sure why setTimeout is needed, but why not?
         setTimeout(() => {
             league.autoPlay();
@@ -95,12 +95,12 @@ async function newPhasePreseason() {
         await idb.cache.players.put(p);
     }
 
-    if (g.autoPlaySeasons > 0) {
-        await league.setGameAttributes({autoPlaySeasons: g.autoPlaySeasons - 1});
+    if (local.autoPlaySeasons > 0) {
+        local.autoPlaySeasons -= 1;
     }
 
     if (env.enableLogging && !env.inCordova) {
-        toUI('emit', 'showAd', 'modal');
+        toUI('emit', 'showAd', 'modal', local.autoPlaySeasons);
     }
 
     return [undefined, ["playerMovement"]];
@@ -391,7 +391,7 @@ async function newPhaseResignPlayers() {
     // Re-sign players on user's team, and some AI players
     const players = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
     for (const p of players) {
-        if (p.contract.exp <= g.season && g.userTids.includes(p.tid) && g.autoPlaySeasons === 0) {
+        if (p.contract.exp <= g.season && g.userTids.includes(p.tid) && local.autoPlaySeasons === 0) {
             const tid = p.tid;
 
             // Add to free agents first, to generate a contract demand, then open negotiations with player
@@ -437,7 +437,7 @@ async function newPhaseFreeAgency() {
     // Run this after upding contracts for current free agents, or addToFreeAgents will be called twice for these guys
     const players2 = await idb.cache.players.indexGetAll('playersByTid', [0, Infinity]);
     for (const p of players2) {
-        if (p.contract.exp <= g.season && (!g.userTids.includes(p.tid) || g.autoPlaySeasons > 0)) {
+        if (p.contract.exp <= g.season && (!g.userTids.includes(p.tid) || local.autoPlaySeasons > 0)) {
             // Automatically negotiate with teams
             const factor = strategies[p.tid] === "rebuilding" ? 0.4 : 0;
 

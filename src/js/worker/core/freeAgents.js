@@ -5,7 +5,7 @@ import _ from 'underscore';
 import {PHASE, PLAYER, g, helpers} from '../../common';
 import {league, phase, player, team} from '../core';
 import {idb} from '../db';
-import {lock, logEvent, random, updatePlayMenu, updateStatus, toUI} from '../util';
+import {local, lock, logEvent, random, updatePlayMenu, updateStatus, toUI} from '../util';
 
 /**
  * AI teams sign free agents.
@@ -39,7 +39,7 @@ async function autoSign() {
 
     for (const tid of tids) {
         // Skip the user's team
-        if (g.userTids.includes(tid) && g.autoPlaySeasons === 0) {
+        if (g.userTids.includes(tid) && local.autoPlaySeasons === 0) {
             continue;
         }
 

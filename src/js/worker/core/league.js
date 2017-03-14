@@ -4,7 +4,7 @@ import backboard from 'backboard';
 import {Cache, connectLeague, idb} from '../db';
 import {PHASE, PHASE_TEXT, PLAYER, g, helpers} from '../../common';
 import {draft, finances, freeAgents, game, phase, player, season, team} from '../core';
-import {defaultGameAttributes, random, toUI, updatePhase, updateStatus} from '../util';
+import {defaultGameAttributes, local, random, toUI, updatePhase, updateStatus} from '../util';
 import type {GameAttributes} from '../../common/types';
 
 // x and y are both arrays of objects with the same length. For each object, any properties in y but not x will be copied over to x.
@@ -609,7 +609,7 @@ async function initAutoPlay() {
     const numSeasons = parseInt(result, 10);
 
     if (Number.isInteger(numSeasons)) {
-        await setGameAttributes({autoPlaySeasons: numSeasons});
+        local.autoPlaySeasons = numSeasons;
         autoPlay();
     }
 }

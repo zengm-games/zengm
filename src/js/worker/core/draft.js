@@ -4,7 +4,7 @@ import _ from 'underscore';
 import {PHASE, PHASE_TEXT, PLAYER, g, helpers} from '../../common';
 import {finances, league, phase, player} from '../core';
 import {idb} from '../db';
-import {logEvent, random, updatePlayMenu, updatePhase} from '../util';
+import {local, logEvent, random, updatePlayMenu, updatePhase} from '../util';
 import type {PickRealized, TeamFiltered} from '../../common/types';
 
 // Add a new set of draft picks
@@ -547,7 +547,7 @@ async function untilUserOrEnd() {
         if (draftOrder.length > 0) {
             const pick = draftOrder.shift();
 
-            if (g.userTids.includes(pick.tid) && g.autoPlaySeasons === 0) {
+            if (g.userTids.includes(pick.tid) && local.autoPlaySeasons === 0) {
                 draftOrder.unshift(pick);
                 return afterDoneAuto();
             }

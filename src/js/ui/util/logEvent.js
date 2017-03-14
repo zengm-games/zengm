@@ -32,9 +32,13 @@ const showEvent = ({
             persistent,
         });
 
-        // Persistent notifications are very rare and should stop game sim when displayed
-        if (persistent && g.autoPlaySeasons <= 0) {
-            toWorker('lockSet', 'stopGameSim', true);
+        // Persistent notifications are very rare and should stop game sim when displayed. Run async for performance
+        if (persistent) {
+            toWorker('getLocal', 'autoPlaySeasons').then((autoPlaySeasons) => {
+                if (autoPlaySeasons <= 0) {
+                    toWorker('lockSet', 'stopGameSim', true);
+                }
+            });
         }
     }
 

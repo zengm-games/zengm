@@ -4,7 +4,7 @@ import {idb} from '../db';
 import {toUI} from '../util';
 import type {LockName} from '../../common/types';
 
-// These are transient variables that always reset to "false" on reload
+// These are transient variables that always reset to "false" on reload. See local.js for more.
 const locks: {[key: LockName]: boolean} = {
     gameSim: false,
     newPhase: false,

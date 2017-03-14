@@ -29,7 +29,8 @@ function showSurvata() {
     // If Survata is down, try other ad
     // eslint-disable-next-line no-use-before-define
     window.Survata.fail(() => {
-        emitter.emit('showAd', 'modal');
+        // Pass autoPlaySeasons as 0 because this code would never be reached otherwise (showAd would early exit)
+        emitter.emit('showAd', 'modal', 0);
     });
 }
 

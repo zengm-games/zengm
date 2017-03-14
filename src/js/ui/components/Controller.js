@@ -173,14 +173,14 @@ class Controller extends React.Component {
         }
     }
 
-    showAd(type: 'modal') {
+    showAd(type: 'modal', autoPlaySeasons: number) {
         if (type === 'modal') {
             if (!window.enableLogging) {
                 return;
             }
 
             // No ads during multi season auto sim
-            if (g.autoPlaySeasons > 0) {
+            if (autoPlaySeasons > 0) {
                 return;
             }
 

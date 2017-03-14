@@ -1,7 +1,7 @@
 // @flow
 
 import {PHASE, g, helpers} from '../../common';
-import {lock, toUI} from '../util';
+import {local, lock, toUI} from '../util';
 
 /**
 * Update play menu options based on game state.
@@ -38,7 +38,7 @@ const updatePlayMenu = async () => {
         message: {url: helpers.leagueUrl(["message"]), label: "Read new message"},
         newLeague: {url: "/new_league", label: "Try again in a new league"},
         newTeam: {url: helpers.leagueUrl(["new_team"]), label: "Try again with a new team"},
-        stopAuto: {label: `Stop auto play (${g.autoPlaySeasons} seasons left)`},
+        stopAuto: {label: `Stop auto play (${local.autoPlaySeasons} seasons left)`},
     };
 
     let keys = [];
@@ -94,7 +94,7 @@ const updatePlayMenu = async () => {
         keys = ["newTeam", "newLeague"];
     }
 
-    if (g.autoPlaySeasons > 0) {
+    if (local.autoPlaySeasons > 0) {
         keys = ["stopAuto"];
     }
 

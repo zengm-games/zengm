@@ -4,7 +4,7 @@ import _ from 'underscore';
 import {PHASE, PLAYER, g, helpers} from '../../common';
 import {draft, player, trade} from '../core';
 import {idb} from '../db';
-import {logEvent, random} from '../util';
+import {local, logEvent, random} from '../util';
 import type {ContractInfo, TeamSeason, TeamStats, TradePickValues} from '../../common/types';
 
 function genSeasonRow(tid: number, prevSeason?: TeamSeason): TeamSeason {
@@ -909,7 +909,7 @@ async function checkRosterSizes(): Promise<string | void> {
         const players = await idb.cache.players.indexGetAll('playersByTid', tid);
         let numPlayersOnRoster = players.length;
         if (numPlayersOnRoster > 15) {
-            if (g.userTids.includes(tid) && g.autoPlaySeasons === 0) {
+                if (g.userTids.includes(tid) && local.autoPlaySeasons === 0) {
                 if (g.userTids.length <= 1) {
                     userTeamSizeError = 'Your team has ';
                 } else {
@@ -926,7 +926,7 @@ async function checkRosterSizes(): Promise<string | void> {
                 await Promise.all(promises);
             }
         } else if (numPlayersOnRoster < g.minRosterSize) {
-            if (g.userTids.includes(tid) && g.autoPlaySeasons === 0) {
+            if (g.userTids.includes(tid) && local.autoPlaySeasons === 0) {
                 if (g.userTids.length <= 1) {
                     userTeamSizeError = 'Your team has ';
                 } else {
@@ -966,7 +966,7 @@ async function checkRosterSizes(): Promise<string | void> {
 
         // Auto sort rosters (except player's team)
         // This will sort all AI rosters before every game. Excessive? It could change some times, but usually it won't
-        if (!g.userTids.includes(tid) || g.autoPlaySeasons > 0) {
+        if (!g.userTids.includes(tid) || local.autoPlaySeasons > 0) {
             return rosterAutoSort(tid);
         }
     };

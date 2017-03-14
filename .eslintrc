@@ -52,6 +52,7 @@
     },
     globals: {
         "$Diff": false,
+        "$Keys": false,
         "Class": false,
         "SyntheticEvent": false,
         "SyntheticKeyboardEvent": false,

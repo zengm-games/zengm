@@ -2,10 +2,6 @@ IVERSON - BEFORE BETA
 
 benchmark after 500 seasons
 
-auto play status should be stored in lock, similar to game sim, otherwise can get stuck
-- can't be stored in lock, because it's a number, not a boolean
-  - could store boolean and use that in UI, but still need actual number in worker. where?
-
 browser support
 - mobile
 
@@ -43,6 +39,8 @@ is it too fast? artificially slow down?
 splash screen about load time
 
 some kind of status indicator when flushing
+
+better loading screen, after React takes control but before initial page is rendered - because it can be slow for loading a league
 
 add smoke test (create league, play season) to karma
 

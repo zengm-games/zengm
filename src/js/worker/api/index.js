@@ -5,9 +5,9 @@ import {PHASE, PLAYER, g, helpers} from '../../common';
 import actions from './actions';
 import {contractNegotiation, draft, finances, league, phase, player, team, trade} from '../core';
 import {connectMeta, idb} from '../db';
-import {account, beforeView, changes, checkNaNs, env, lock, random, updatePlayMenu, updateStatus} from '../util';
+import {account, beforeView, changes, checkNaNs, env, local, lock, random, updatePlayMenu, updateStatus} from '../util';
 import * as views from '../views';
-import type {Env, GameAttributes, GetOutput, LockName, Player, PlayerWithoutPid, UpdateEvents} from '../../common/types';
+import type {Env, GameAttributes, GetOutput, Local, LockName, Player, PlayerWithoutPid, UpdateEvents} from '../../common/types';
 
 const acceptContractNegotiation = async (pid: number, amount: number, exp: number): Promise<?string> => {
     return contractNegotiation.accept(pid, amount, exp);
@@ -262,6 +262,10 @@ const exportLeague = async (stores: string[]) => {
 const getLeagueName = async (lid: number) => {
     const l = await idb.meta.leagues.get(lid);
     return l.name;
+};
+
+const getLocal = async (name: $Keys<Local>): any => {
+    return local[name];
 };
 
 const getTradingBlockOffers = async (pids: number[], dpids: number[], progressCallback: (i: number, numTeams: number) => void) => {
@@ -787,6 +791,7 @@ export default {
     exportPlayerAveragesCsv,
     exportPlayerGamesCsv,
     getLeagueName,
+    getLocal,
     getTradingBlockOffers,
     handleUploadedDraftClass,
     init,

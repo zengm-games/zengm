@@ -1,7 +1,5 @@
 IVERSON - BEFORE BETA
 
-wtf it's a little slower now, go back in history and see if that changed at some point
-
 browser support
 - mobile
 
@@ -23,7 +21,9 @@ when entering league and cache filling, should have some loading indicator
 
 fix all lint errors and warnings
 
-confirm ads in beta
+release beta, then:
+- confirm ads
+- test on mobile
 
 IVERSON - BEFORE FINAL
 

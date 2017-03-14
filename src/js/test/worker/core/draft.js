@@ -107,24 +107,21 @@ describe("core/draft", () => {
                 [10, 18],
                 [13, 26],
             ];
-            for (let i = 0; i < sameRec.length; i++) {
-                const tids = sameRec[i];
-                const r1picks = [];
-                const r2picks = [];
-                for (let j = 0; j < 30; j++) {
-                    if (tids.includes(draftResults[j])) {
-                        r1picks.push(draftResults[j]);
-                    }
+
+            // First set of tids can fail because all 3 teams are in the lottery, although with low odds
+            const lotteryTids = draftResults.slice(0, 3);
+            for (const tid of sameRec[0]) {
+                if (lotteryTids.includes(tid)) {
+                    // Skip this test, it will fail otherwise
+                    sameRec.shift();
+                    break;
                 }
-                for (let j = 59; j > 29; j--) {
-                    if (tids.includes(draftResults[j])) {
-                        r2picks.push(draftResults[j]);
-                    }
-                }
-                assert.equal(r1picks.length, r2picks.length);
-                for (let j = 0; j < r1picks.length; j++) {
-                    assert.equal(r1picks[j], r2picks[j]);
-                }
+            }
+
+            for (const tids of sameRec) {
+                const r1picks = draftResults.filter((tid, i) => tids.includes(tid) && i < 30);
+                const r2picks = draftResults.filter((tid, i) => tids.includes(tid) && i >= 30);
+                assert.deepEqual(r1picks, r2picks.reverse());
             }
         });
     });

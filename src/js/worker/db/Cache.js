@@ -459,6 +459,8 @@ class Cache {
 
     // Load database from disk and save in cache, wiping out any prior values in cache
     async fill(season?: number) {
+//console.log('fill start');
+//performance.mark('fillStart');
         this._validateStatus('empty', 'full');
         this._setStatus('filling');
 
@@ -494,13 +496,17 @@ class Cache {
         }
 
         this._setStatus('full');
+//performance.measure('fillTime', 'fillStart');
+//const entries = performance.getEntriesByName('fillTime');
+//console.log(`${g.phase} fill duration: ${entries[entries.length - 1].duration / 1000} seconds`);
     }
 
     // Take current contents in database and write to disk
     async flush() {
+//console.log('flush start');
+//performance.mark('flushStart');
         this._validateStatus('full');
 
-//performance.mark('flushStart');
         await idb.league.tx(STORES, 'readwrite', (tx) => {
             for (const store of STORES) {
                 for (const id of this._deletes[store]) {

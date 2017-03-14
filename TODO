@@ -9,10 +9,6 @@ update to cache
 - look at all IDB usage
 - addStatsRow revisit - mutates p
 
-splash screen about load time
-
-better loading screen, after React takes control but before initial page is rendered - because it can be slow for loading a league
-
 when entering league and cache filling, should have some loading indicator
 
 fix all lint errors and warnings
@@ -51,6 +47,8 @@ followup blog posts
 3.8
 
 IVERSON - EVENTUALLY
+
+better loading screen, after React takes control but before initial page is rendered - because it can be slow for loading a league
 
 index updating
 - stupid option: parameter in put saying "skip index update"

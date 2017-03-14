@@ -257,6 +257,12 @@ export type Local = {
     autoPlaySeasons: number,
 };
 
+export type Locks = {
+    gameSim: boolean,
+    newPhase: boolean,
+    stopGameSim: boolean,
+}
+
 export type LockName = 'newPhase' | 'gameSim' | 'stopGameSim';
 
 export type LogEventType = (

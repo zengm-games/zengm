@@ -2,20 +2,26 @@
 
 import {idb} from '../db';
 import {toUI} from '../util';
-import type {LockName} from '../../common/types';
+import type {Locks} from '../../common/types';
 
 // These are transient variables that always reset to "false" on reload. See local.js for more.
-const locks: {[key: LockName]: boolean} = {
+const locks: Locks = {
     gameSim: false,
     newPhase: false,
     stopGameSim: false,
 };
 
-const get = (name: LockName): boolean => {
+const reset = () => {
+    for (const key of Object.keys(locks)) {
+        locks[key] = false;
+    }
+};
+
+const get = (name: $Keys<Locks>): boolean => {
     return locks[name];
 };
 
-const set = (name: LockName, value: boolean) => {
+const set = (name: $Keys<Locks>, value: boolean) => {
     if (locks[name] === value) {
         // Short circuit to prevent realtimeUpdate
         return;
@@ -114,6 +120,7 @@ async function unreadMessage(): Promise<boolean> {
 }
 
 export default {
+    reset,
     get,
     set,
     negotiationInProgress,

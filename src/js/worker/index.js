@@ -4,6 +4,7 @@
 import '../vendor/babel-external-helpers';
 import 'indexeddb-getall-shim';
 import api from './api';
+import * as common from '../common';
 import * as core from './core';
 import * as db from './db';
 import * as util from './util';
@@ -11,9 +12,7 @@ import * as util from './util';
 // source-map-support doesn't seem to do anything here. Source maps work great in Chrome with native promises, and
 // shitty in Firefox with polyfill. Either way, sourceMapSupport doesn't change anything.
 
-self.core = core;
-self.db = db;
-self.util = util;
+self.bbgm = Object.assign({}, common, core, db, util);
 
 // God damn this function is ugly, clean up! Can probably share with ui.
 util.promiseWorker.register(([name, ...params]) => {

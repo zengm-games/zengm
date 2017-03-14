@@ -37,14 +37,14 @@ async function setGameAttributes(gameAttributes: GameAttributes) {
         }
     }
 
-    await Promise.all(toUpdate.map(async (key) => {
+    for (const key of toUpdate) {
         await idb.cache.gameAttributes.put({
             key,
             value: gameAttributes[key],
         });
 
         g[key] = gameAttributes[key];
-    }));
+    }
 
     await toUI('setGameAttributes', gameAttributes);
     if (toUpdate.includes('userTid') || toUpdate.includes('userTids')) {
@@ -632,7 +632,9 @@ const disconnect = async () => {
     }
 
     if (g.lid !== undefined && idb.league !== undefined) {
+        await updateStatus('Saving...');
         await idb.cache.flush();
+        await updateStatus('Idle');
 
         // Should probably "close" cache here too, but no way to do that now
 

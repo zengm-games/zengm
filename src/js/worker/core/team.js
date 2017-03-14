@@ -909,7 +909,7 @@ async function checkRosterSizes(): Promise<string | void> {
         const players = await idb.cache.players.indexGetAll('playersByTid', tid);
         let numPlayersOnRoster = players.length;
         if (numPlayersOnRoster > 15) {
-                if (g.userTids.includes(tid) && local.autoPlaySeasons === 0) {
+            if (g.userTids.includes(tid) && local.autoPlaySeasons === 0) {
                 if (g.userTids.length <= 1) {
                     userTeamSizeError = 'Your team has ';
                 } else {

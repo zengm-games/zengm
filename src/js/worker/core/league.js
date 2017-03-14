@@ -64,7 +64,7 @@ async function create(
     tid: number,
     leagueFile: Object = {},
     startingSeason: number,
-    randomizeRosters: boolean,
+    randomizeRosters?: boolean = false,
 ): Promise<number> {
     await idb.meta.attributes.put(tid, 'lastSelectedTid');
 
@@ -465,12 +465,12 @@ async function create(
  * @param {number} lid League ID.
  * @param {function()=} cb Optional callback.
  */
-function remove(lid: number) {
+async function remove(lid: number) {
     if (idb.league !== undefined) {
         idb.league.close();
     }
     idb.meta.leagues.delete(lid);
-    return backboard.delete(`league${lid}`);
+    await backboard.delete(`league${lid}`);
 }
 
 /**

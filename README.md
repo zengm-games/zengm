@@ -105,7 +105,8 @@ or
     npm run test-watch
 
 or manually within a web browser by running `npm run build-test` (or
-`npm run watch-test`) and going to <http://localhost:3000/test>.
+`npm run watch-test`) and going to <http://localhost:3000/test> (this might be
+broken currently).
 
 ### Code Overview
 

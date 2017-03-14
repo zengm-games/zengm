@@ -1,4 +1,5 @@
 import assert from 'assert';
+import backboard from 'backboard';
 import {connectMeta, idb} from '../../../worker/db';
 import {g} from '../../../common';
 import {league} from '../../../worker/core';
@@ -9,7 +10,11 @@ describe("core/league", () => {
         idb.meta = await connectMeta();
         await league.create("Test", 0, undefined, 2013, false);
     });
-    after(() => {
+    after(async () => {        
+        if (idb.meta !== undefined) {
+            idb.meta.close();
+        }
+        await backboard.delete('meta');
         idb.meta = undefined;
         // Last test removes league DB
     });

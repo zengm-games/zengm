@@ -50,7 +50,7 @@ module.exports = function (config) {
             transform: ['babelify'],
         },
 
-        browserNoActivityTimeout: 100000,
+        browserNoActivityTimeout: 5 * 60 * 1000, // 5 minutes
 
         browserStack,
 

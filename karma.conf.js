@@ -25,6 +25,8 @@ module.exports = function (config) {
             transform: ['babelify'],
         },
 
+        browserNoActivityTimeout: 5 * 60 * 1000, // 5 minutes
+
         reporters: ['mocha'],
 
         browsers: ['Chrome', 'Firefox'],

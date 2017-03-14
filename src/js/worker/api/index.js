@@ -268,21 +268,14 @@ const getLocal = async (name: $Keys<Local>): any => {
     return local[name];
 };
 
-const getTradingBlockOffers = async (pids: number[], dpids: number[], progressCallback: (i: number, numTeams: number) => void) => {
-    const getOffers = async (userPids, userDpids, onProgress) => {
+const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
+    const getOffers = async (userPids, userDpids) => {
         // Pick 10 random teams to try (or all teams, if g.numTeams < 10)
         const tids = _.range(g.numTeams);
         random.shuffle(tids);
         tids.splice(10);
 
         const estValues = await trade.getPickValues();
-
-        // For width of progress bar
-        let numTeams = tids.length;
-        if (tids.includes(g.userTid)) {
-            numTeams -= 1;
-        }
-        let done = 0;
 
         const offers = [];
         for (const tid of tids) {
@@ -299,9 +292,6 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[], progressCa
             if (tid !== g.userTid) {
                 teams = await trade.makeItWork(teams, true, estValues);
 
-                // Update progress bar
-                done += 1;
-                onProgress(done, numTeams);
 
                 if (teams !== undefined) {
                     const summary = await trade.summary(teams);
@@ -368,7 +358,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[], progressCa
         }));
     };
 
-    const offers = await getOffers(pids, dpids, progressCallback);
+    const offers = await getOffers(pids, dpids);
 
     return augmentOffers(offers);
 };

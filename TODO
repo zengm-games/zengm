@@ -18,9 +18,6 @@ db sync issues
 
 update to cache
 - death code in phase - should not be writing to db, and (maybe) should not assume retired players are not cached
-- trading block fails due to promise communication issue, maybe passing cb or something
-  - getTradingBlockOffers has cb passed to it. how to replace? need to update UI incrementally
-    - no, it's fast enough to not have a progress bar
 - look at all IDB usage
 - export league - ensure flush first
 - addStatsRow revisit - mutates p

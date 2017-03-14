@@ -146,19 +146,13 @@ class TradingBlock extends React.Component {
         this.setState({
             asking: true,
             offers: [],
-            progress: 10, // Start with something on the progress bar, so user knows shit is happening
         });
 
-        const offers = await toWorker('getTradingBlockOffers', this.state.pids, this.state.dpids, (i, numTeams) => {
-            this.setState({
-                progress: Math.round(10 + i / numTeams * 100),
-            });
-        });
+        const offers = await toWorker('getTradingBlockOffers', this.state.pids, this.state.dpids);
 
         this.setState({
             asking: false,
             offers,
-            progress: 0,
         });
     }
 
@@ -218,15 +212,6 @@ class TradingBlock extends React.Component {
             };
         });
 
-        let askButtonOrProgress;
-        if (!this.state.asking) {
-            askButtonOrProgress = <button className="btn btn-lg btn-primary" onClick={this.handleClickAsk}>
-                Ask For Trade Proposals
-            </button>;
-        } else {
-            askButtonOrProgress = <ProgressBar progress={this.state.progress} />;
-        }
-
         return <div>
             <h1>Trading Block <NewWindowLink /></h1>
 
@@ -264,7 +249,9 @@ class TradingBlock extends React.Component {
 
             <p />
             <center>
-                {askButtonOrProgress}
+                <button className="btn btn-lg btn-primary" disabled={this.state.asking} onClick={this.handleClickAsk}>
+                    {!this.state.asking ? 'Ask For Trade Proposals' : 'Asking...'}
+                </button>
             </center>
 
             {this.state.offers.map((offer, i) => {

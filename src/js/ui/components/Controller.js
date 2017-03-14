@@ -317,7 +317,7 @@ class Controller extends React.Component {
 
         let contents;
         if (!Component) {
-            contents = null;
+            contents = <h1 style={{textAlign: 'center'}}>Loading...</h1>; // Nice, aligned with splash screen
         } else if (!inLeague) {
             contents = <Component {...data} topMenu={topMenu} />;
         } else {

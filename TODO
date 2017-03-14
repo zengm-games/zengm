@@ -9,7 +9,7 @@ update to cache
 - look at all IDB usage
 - addStatsRow revisit - mutates p
 
-when entering league and cache filling, should have some loading indicator
+after clicking league in dashboard, it appears as if UI is frozen. need some loading/progress indicator
 
 fix all lint errors and warnings
 

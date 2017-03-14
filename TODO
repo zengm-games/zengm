@@ -1,5 +1,7 @@
 IVERSON - BEFORE BETA
 
+wtf it's a little slower now, go back in history and see if that changed at some point
+
 browser support
 - mobile
 
@@ -9,7 +11,6 @@ db sync issues
     - handle updateStatus like in phase.finalize
 
 update to cache
-- death code in phase - should not be writing to db, and (maybe) should not assume retired players are not cached
 - look at all IDB usage
 - export league - ensure flush first
 - addStatsRow revisit - mutates p

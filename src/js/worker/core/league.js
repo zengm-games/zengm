@@ -481,6 +481,9 @@ async function remove(lid: number) {
  * @return {Promise} Resolve to all the exported league data.
  */
 async function exportLeague(stores: string[]) {
+    // Always flush before export, so export is current!
+    await idb.cache.flush();
+
     const exportedLeague = {};
 
     // Row from leagueStore in meta db.

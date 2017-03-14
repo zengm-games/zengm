@@ -7,7 +7,6 @@ db sync issues
 
 update to cache
 - look at all IDB usage
-- export league - ensure flush first
 - addStatsRow revisit - mutates p
 
 splash screen about load time

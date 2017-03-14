@@ -204,7 +204,6 @@ export type GameAttributeKey = (
     'season' |
     'showFirstOwnerMessage' |
     'startingSeason' |
-    'statusText' |
     'teamAbbrevsCache' |
     'teamNamesCache' |
     'teamRegionsCache' |
@@ -255,6 +254,7 @@ export type League = {
 export type Local = {
     autoPlaySeasons: number,
     phaseText: string,
+    statusText: string,
 };
 
 export type Locks = {

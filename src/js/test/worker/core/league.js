@@ -26,6 +26,7 @@ describe("core/league", () => {
             assert.equal(l.name, "Test");
             assert.equal(l.tid, 0);
             assert.equal(local.phaseText, `${g.startingSeason} preseason`);
+            assert.equal(local.statusText, 'Idle');
         });
         it("should create all necessary object stores", () => {
             assert.equal(idb.league.objectStoreNames.length, 18);
@@ -58,9 +59,8 @@ describe("core/league", () => {
             assert.equal(gTest.gameOver, false);
             assert.equal(gTest.daysLeft, 0);
             assert.equal(gTest.showFirstOwnerMessage, true);
-            assert.equal(gTest.statusText, 'Idle');
 
-            assert.equal(Object.keys(gTest).length, 32);
+            assert.equal(Object.keys(gTest).length, 31);
         });
         it("should initialize draftOrder object store", async () => {
             const draftOrder = await idb.league.draftOrder.getAll();

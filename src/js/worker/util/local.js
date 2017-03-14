@@ -7,15 +7,17 @@ import type {Local} from '../../common/types';
 const defaultLocal: Local = {
     autoPlaySeasons: 0,
     phaseText: '',
+    statusText: 'Idle',
 };
 
 const local: Local & {reset: () => void} = {
     autoPlaySeasons: 0,
     phaseText: '',
+    statusText: 'Idle',
     reset: () => {
-        for (const key of Object.keys(defaultLocal)) {
-            local[key] = defaultLocal[key];
-        }
+        local.autoPlaySeasons = defaultLocal.autoPlaySeasons;
+        local.phaseText = defaultLocal.phaseText;
+        local.statusText = defaultLocal.statusText;
     },
 };
 

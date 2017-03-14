@@ -20,11 +20,11 @@ import type {Phase, UpdateEvents} from '../../common/types';
  */
 async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = []) {
     await updateStatus('Saving...');
-    // Set phase before updating play menu
+
+    // Set phase before saving to database
     await league.setGameAttributes({
         phase,
     });
-    await updatePhase();
 
     // Fill only in preseason, because not much changes before then
     await idb.cache.flush();
@@ -34,6 +34,7 @@ async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = 
     await updateStatus('Idle');
 
     lock.set('newPhase', false);
+    await updatePhase();
     await updatePlayMenu();
 
     updateEvents.push("newPhase");

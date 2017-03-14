@@ -1,10 +1,6 @@
 IVERSON - BEFORE BETA
 
-statusText and phaseText in g - necessary? Or move them to local?
-- if not, then make sure not to set after flushing
-  - statusText is always Idle on load, except:
-    - draft: 'Draft in progres...' when appropriate (draft phase and started)
-    - free agency: number of days left
+playmenu/phase/status transition is weird at end of regular season, but not playoffs. why?
 
 browser support
 - mobile

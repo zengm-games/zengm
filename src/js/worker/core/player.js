@@ -812,7 +812,7 @@ function addRatingsRow(
  *
  * A row contains stats for unique values of (pid, team, season, playoffs). So new rows need to be added when a player joins a new team, when a new season starts, or when a player's team makes the playoffs. The team ID in p.tid and player ID in p.pid will be used in the stats row, so if a player is changing teams, update p.tid before calling this.
  *
- * Additionally, `p.statsTids` is mutated to reflect the new row.
+ * Additionally, `p.statsTids` is mutated to reflect the new row, but `p` is NOT saved to the database! So make sure you do that after calling this function. (Or before would be fine too probably, it'd still get marked dirty and flush from cache).
  *
  * @memberOf core.player
  * @param {Object} p Player object.

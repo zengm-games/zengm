@@ -7,9 +7,6 @@ db sync issues
 
 firefox initial load performance
 
-update to cache
-- addStatsRow revisit - mutates p
-
 after clicking league in dashboard, it appears as if UI is frozen. need some loading/progress indicator
 
 fix all lint errors and warnings

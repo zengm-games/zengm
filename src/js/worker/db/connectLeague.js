@@ -65,21 +65,21 @@ const migrateLeague = async (upgradeDB, lid) => {
         teamStatsStore.createIndex("tid", "tid", {unique: false});
         teamStatsStore.createIndex("season, tid", ["season", "tid"], {unique: false});
 
-        await upgradeDB.teams.iterate(async t => {
+        await upgradeDB.teams.iterate((t) => {
             for (const teamStats of t.stats) {
                 teamStats.tid = t.tid;
                 if (!teamStats.hasOwnProperty("ba")) {
                     teamStats.ba = 0;
                 }
-                await upgradeDB.teamStats.add(teamStats);
+                upgradeDB.teamStats.add(teamStats);
             }
             for (const teamSeason of t.seasons) {
                 teamSeason.tid = t.tid;
-                await upgradeDB.teamSeasons.add(teamSeason);
+                upgradeDB.teamSeasons.add(teamSeason);
             }
             delete t.stats;
             delete t.seasons;
-            return t;
+            upgradeDB.teams.put(t);
         });
     }
     if (upgradeDB.oldVersion <= 17) {
@@ -101,34 +101,34 @@ const migrateLeague = async (upgradeDB, lid) => {
             return;
         }
 
-        await upgradeDB.teams.iterate(async t => {
+        await upgradeDB.teams.iterate((t) => {
             if (!t.imgURL) {
                 t.imgURL = teamsDefault[t.tid].imgURL;
             }
-            return t;
+            upgradeDB.teams.put(t);
         });
     }
     if (upgradeDB.oldVersion <= 18) {
         // Split old single string p.name into two names
-        await upgradeDB.players.iterate(async p => {
+        await upgradeDB.players.iterate((p) => {
             if (p.name) {
                 const bothNames = p.name.split(" ");
                 p.firstName = bothNames[0];
                 p.lastName = bothNames[1];
                 delete p.name;
             }
-            return p;
+            upgradeDB.players.put(p);
         });
     }
     if (upgradeDB.oldVersion <= 19) {
         // New best records format in awards
-        await upgradeDB.awards.iterate(async (a) => {
+        await upgradeDB.awards.iterate((a) => {
             if (a.bre && a.brw) {
                 a.bestRecordConfs = [a.bre, a.brw];
                 a.bestRecord = a.bre.won >= a.brw.won ? a.bre : a.brw;
                 delete a.bre;
                 delete a.brw;
-                return a;
+                upgradeDB.awards.put(a);
             }
         });
     }

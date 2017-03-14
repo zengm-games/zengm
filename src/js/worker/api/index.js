@@ -51,18 +51,20 @@ const clearWatchList = async () => {
     for (const p of players) {
         if (p.watch && typeof p.watch !== "function") {
             p.watch = false;
-            await idb.cache.players.add(p);
+            await idb.cache.players.put(p);
         }
         pids.add(p.pid);
     }
 
     // For watched players not in cache, mark as unwatched an add to cache
-    await idb.league.players.iterate(async (p) => {
+    const promises = [];
+    await idb.league.players.iterate((p) => {
         if (p.watch && typeof p.watch !== "function" && !pids.has(p.pid)) {
             p.watch = false;
-            await idb.cache.players.add(p);
+            promises.push(idb.cache.players.add(p)); // Can't await here because of Firefox IndexedDB issues
         }
     });
+    await Promise.all(promises);
 };
 
 const countNegotiations = async () => {

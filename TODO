@@ -5,8 +5,11 @@ db sync issues
   - when dirty on close, show warning window, and initiate flush (if not already in progress)
     - handle updateStatus like in phase.finalize
 
+firefox initial load performance
+
+firefox upgrade from old version
+
 update to cache
-- look at all IDB usage
 - addStatsRow revisit - mutates p
 
 after clicking league in dashboard, it appears as if UI is frozen. need some loading/progress indicator

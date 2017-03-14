@@ -1,8 +1,5 @@
 IVERSON - BEFORE BETA
 
-browser support
-- mobile
-
 db sync issues
 - have timer running in background, maybe once/second, flushing cache if various locks/inProgress things deem it reasonable
   - when dirty on close, show warning window, and initiate flush (if not already in progress)
@@ -18,6 +15,8 @@ splash screen about load time
 better loading screen, after React takes control but before initial page is rendered - because it can be slow for loading a league
 
 when entering league and cache filling, should have some loading indicator
+
+promise-worker-bi update w/ local changes
 
 fix all lint errors and warnings
 
@@ -93,6 +92,8 @@ rethink cache API, with goal of having it typed
 - rename indexes, store prefixed with storename
 - get rid of new any types in types.js
 
+Exceptions should be exceptional. Are my user facing ones?
+
 error page (like invalid pid) should show league UI if in league
 
 does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
@@ -159,6 +160,8 @@ can ui/util/logEvent be replaced by just notify? since it never writes to db?
 ----
 
 service worker
+- sw-offline-google-analytics
+- https://github.com/GoogleChrome/lighthouse
 
 put death rate in god mode options
 

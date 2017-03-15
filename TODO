@@ -1,11 +1,12 @@
 IVERSON - BEFORE FINAL
 
-team finances don't save (ticket price, etc)
+finals MVP is sometimes wrong
 
 multi tab play?
 
 is it too fast? artificially slow down?
 - if not, revamp notifications
+- could also make it configurable, some users might want it slower
 
 force single tab per league
 - when < 5 seconds, wait for another heartbeat before deciding

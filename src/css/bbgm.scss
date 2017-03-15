@@ -274,6 +274,13 @@ ul.dashboard-boxes {
       }
     }
 
+    a.league-active {
+      background: black;
+      -webkit-animation: oscillate-bg 1.5s infinite;
+      -moz-animation: oscillate-bg 1.5s infinite;
+      animation: oscillate-bg 1.5s infinite;
+    }
+
     .close {
       border-radius: 0 4px;
       position: absolute;
@@ -296,6 +303,48 @@ ul.dashboard-boxes {
         margin-top: 1px;
       }
     }
+  }
+}
+
+@-moz-keyframes oscillate-bg {
+  0% {
+    background: #afd9ee;
+  }
+
+  50% {
+    background: #d9edf7;
+  }
+
+  100% {
+    background: #afd9ee;
+  }
+}
+
+@-webkit-keyframes oscillate-bg {
+  0% {
+    background: #afd9ee;
+  }
+
+  50% {
+    background: #d9edf7;
+  }
+
+  100% {
+    background: #afd9ee;
+  }
+}
+
+@keyframes oscillate-bg {
+  0% {
+    background: #afd9ee;
+  }
+
+  50% {
+    background: #d9edf7;
+  }
+
+  100% {
+    background: #afd9ee;
   }
 }
 

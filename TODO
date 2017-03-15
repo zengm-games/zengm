@@ -5,10 +5,6 @@ db sync issues
   - when dirty on close, show warning window, and initiate flush (if not already in progress)
     - handle updateStatus like in phase.finalize
 
-firefox initial load performance
-
-after clicking league in dashboard, it appears as if UI is frozen. need some loading/progress indicator
-
 fix all lint errors and warnings
 
 release beta, then:
@@ -38,6 +34,7 @@ blog post
 - cache underwhelming
 - promise-worker-bi
 - worker microtask issues
+- safari
 
 followup blog posts
 - user metrics after performance increase

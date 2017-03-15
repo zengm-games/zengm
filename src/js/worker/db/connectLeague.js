@@ -1,7 +1,6 @@
 // @flow
 
 import Backboard from 'backboard';
-import {helpers} from '../../common';
 
 /**
  * Create a new league database with the latest structure.

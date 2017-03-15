@@ -1,23 +1,58 @@
+import classNames from 'classnames';
 import React from 'react';
 import {setTitle} from '../util';
 
-const Dashboard = ({leagues}) => {
-    setTitle('Dashboard');
 
-    return <div>
-        <ul className="dashboard-boxes">
-            {leagues.map(l => <li key={l.lid}>
-                <a className="btn btn-default league" href={`/l/${l.lid}`} title={`${l.lid}. ${l.name}`}>
-                    <b>{l.lid}. {l.name}</b><br />
-                    {l.teamRegion} {l.teamName}<br />
-                    {l.phaseText}
-                </a>
-                <a className="close" href={`/delete_league/${l.lid}`}>&times;</a>
-            </li>)}
-            <li className="dashboard-box-new"><a href="/new_league" className="btn btn-primary league"><h2>Create new<br />league</h2></a></li>
-        </ul>
-    </div>;
-};
+class Dashboard extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            activeLid: undefined,
+        };
+    }
+
+    setActiveLid(lid: number) {
+        this.setState({
+            activeLid: lid,
+        });
+    }
+
+    render() {
+        const {leagues} = this.props;
+
+        setTitle('Dashboard');
+
+        return <div>
+            <ul className="dashboard-boxes">
+                {leagues.map(l => <li key={l.lid}>
+                    <a
+                        className={classNames('btn btn-default league', {'league-active': l.lid === this.state.activeLid})}
+                        href={`/l/${l.lid}`}
+                        onClick={() => this.setActiveLid(l.lid)}
+                        title={`${l.lid}. ${l.name}`}
+                    >
+                        {
+                            l.lid !== this.state.activeLid
+                        ?
+                            <div>
+                                <b>{l.lid}. {l.name}</b><br />
+                                {l.teamRegion} {l.teamName}<br />
+                                {l.phaseText}
+                            </div>
+                        :
+                            <div>
+                                <br />
+                                <b>Loading...</b><br />
+                            </div>
+                        }
+                    </a>
+                    <a className="close" href={`/delete_league/${l.lid}`}>&times;</a>
+                </li>)}
+                <li className="dashboard-box-new"><a href="/new_league" className="btn btn-primary league"><h2>Create new<br />league</h2></a></li>
+            </ul>
+        </div>;
+    }
+}
 
 Dashboard.propTypes = {
     leagues: React.PropTypes.arrayOf(React.PropTypes.shape({

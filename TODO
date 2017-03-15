@@ -1,9 +1,8 @@
 IVERSON - BEFORE BETA
 
 db sync issues
-- have timer running in background, maybe once/second, flushing cache if various locks/inProgress things deem it reasonable
-  - when dirty on close, show warning window, and initiate flush (if not already in progress)
-    - handle updateStatus like in phase.finalize
+- autoFlush should know if state is dirty
+- when dirty on close, show warning window, and initiate flush (if not already in progress)
 
 fix all lint errors and warnings
 

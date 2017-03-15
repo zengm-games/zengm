@@ -4,6 +4,7 @@ import backboard from 'backboard';
 import orderBy from 'lodash.orderby';
 import {PLAYER, g} from '../../common';
 import {idb} from '../db';
+import {lock, local} from '../util';
 import type {
     Awards,
     BackboardTx,
@@ -38,6 +39,8 @@ type Index = 'draftPicksBySeason' | 'draftPicksByTid' | 'playerStats' | 'playerS
 
 // This variable is only needed because Object.keys(storeInfos) is not handled well in Flow
 export const STORES: Store[] = ['awards', 'draftOrder', 'draftPicks', 'events', 'gameAttributes', 'games', 'messages', 'negotiations', 'playerFeats', 'playerStats', 'players', 'playoffSeries', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams', 'trade'];
+
+const AUTO_FLUSH_INTERVAL = 2000; // 2 seconds
 
 class StoreAPI<Input, Output, ID> {
     cache: Cache;
@@ -102,6 +105,7 @@ class Cache {
     _requestQueue: Map<number, {resolve: () => void, validStatuses: Status[]}>;
     _status: Status;
     _season: number;
+    _stopAutoFlush: boolean;
     storeInfos: {
         [key: Store]: {
             pk: string,
@@ -148,6 +152,7 @@ class Cache {
         this.newLeague = false;
         this._requestQueue = new Map();
         this._requestInd = 0;
+        this._stopAutoFlush = false;
 
         this.storeInfos = {
             awards: {
@@ -508,6 +513,7 @@ class Cache {
         this._validateStatus('full');
 
         await idb.league.tx(STORES, 'readwrite', (tx) => {
+            // This is synchronous not because of Firefox, but to prevent any race condition
             for (const store of STORES) {
                 for (const id of this._deletes[store]) {
                     tx[store].delete(id);
@@ -528,6 +534,33 @@ class Cache {
 //performance.measure('flushTime', 'flushStart');
 //const entries = performance.getEntriesByName('flushTime');
 //console.log(`${g.phase} flush duration: ${entries[entries.length - 1].duration / 1000} seconds`);
+    }
+
+    async _autoFlush() {
+        if (this._stopAutoFlush) {
+            return;
+        }
+
+        // Only flush if nothing is going on
+        const skipFlush = lock.get('gameSim') || lock.get('newPhase') || local.autoPlaySeasons > 0;
+        if (!skipFlush) {
+            await this.flush();
+        }
+
+        setTimeout(() => {
+            this._autoFlush();
+        }, AUTO_FLUSH_INTERVAL);
+    }
+
+    startAutoFlush() {
+        this._stopAutoFlush = false;
+        setTimeout(() => {
+            this._autoFlush();
+        }, AUTO_FLUSH_INTERVAL);
+    }
+
+    stopAutoFlush() {
+        this._stopAutoFlush = true;
     }
 
     async _get(store: Store, id: number | string): Promise<any> {

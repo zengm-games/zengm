@@ -96,6 +96,10 @@ const beforeLeague = async (newLid: number, loadedLid: ?number) => {
         await updateStatus();
         await updatePhase();
         await updatePlayMenu();
+
+        // This is the only place we need to do this, since every league connection passes through here
+        await idb.cache.startAutoFlush();
+
         toUI('emit', 'updateTopMenu', {lid: g.lid});
     }
 };

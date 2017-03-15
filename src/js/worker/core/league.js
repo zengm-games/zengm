@@ -639,6 +639,8 @@ const disconnect = async () => {
         await idb.cache.flush();
         await updateStatus('Idle');
 
+        await idb.cache.stopAutoFlush();
+
         // Should probably "close" cache here too, but no way to do that now
 
         idb.league.close();

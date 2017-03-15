@@ -94,6 +94,7 @@ class StoreAPI<Input, Output, ID> {
 class Cache {
     _data: {[key: Store]: any};
     _deletes: {[key: Store]: Set<number>};
+    _dirty: boolean; // Refers only to _deletes and _dirtyRecords (stuff that needs to be synced to IDB), not _dirtyIndexes!
     _dirtyIndexes: Set<Store>; // Does not distinguish individual indexes, just which stores have dirty indexes. Currently this distinction is not meaningful, but if it is at some point, this should be changed.
     _dirtyRecords: {[key: Store]: Set<number | string>};
     _index2store: {[key: Index]: Store};
@@ -145,6 +146,7 @@ class Cache {
 
         this._data = {};
         this._deletes = {};
+        this._dirty = false;
         this._dirtyIndexes = new Set();
         this._dirtyRecords = {};
         this._indexes = {};
@@ -500,6 +502,8 @@ class Cache {
             this._maxIds.schedule = this._maxIds.games;
         }
 
+        this._dirty = false;
+
         this._setStatus('full');
 //performance.measure('fillTime', 'fillStart');
 //const entries = performance.getEntriesByName('fillTime');
@@ -529,6 +533,8 @@ class Cache {
                     }
                 }
                 this._dirtyRecords[store].clear();
+
+                this._dirty = false;
             }
         });
 //performance.measure('flushTime', 'flushStart');
@@ -541,10 +547,12 @@ class Cache {
             return;
         }
 
-        // Only flush if nothing is going on
-        const skipFlush = lock.get('gameSim') || lock.get('newPhase') || local.autoPlaySeasons > 0;
-        if (!skipFlush) {
-            await this.flush();
+        // Only flush if cache is dirty and nothing is going on
+        if (this._dirty) {
+            const skipFlush = lock.get('gameSim') || lock.get('newPhase') || local.autoPlaySeasons > 0;
+            if (!skipFlush) {
+                await this.flush();
+            }
         }
 
         setTimeout(() => {
@@ -645,6 +653,7 @@ class Cache {
         // Need to have the correct type here for IndexedDB
         const idParsed = this.storeInfos[store].pkType === 'number' ? parseInt(obj[pk], 10) : obj[pk];
         this._dirtyRecords[store].add(idParsed);
+        this._dirty = true;
         this.markDirtyIndexes(store);
 
         return obj[pk];
@@ -668,6 +677,7 @@ class Cache {
                 // Need to have the correct type here for IndexedDB
                 const idParsed = this.storeInfos[store].pkType === 'number' ? parseInt(id, 10) : id;
                 this._deletes[store].add(idParsed);
+                this._dirty = true;
                 this.markDirtyIndexes(store);
             } else {
                 throw new Error(`Invalid primary key to delete from store "${store}": ${id}`);
@@ -688,6 +698,7 @@ class Cache {
                 const idParsed = this.storeInfos[store].pkType === 'number' ? parseInt(id, 10) : id;
                 this._deletes[store].add(idParsed);
             }
+            this._dirty = true;
             this.markDirtyIndexes(store);
         } else {
             throw new Error(`clear not implemented for store "${store}"`);

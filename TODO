@@ -1,7 +1,5 @@
 IVERSON - BEFORE FINAL
 
-finals MVP is sometimes wrong
-
 multi tab play?
 
 is it too fast? artificially slow down?
@@ -36,6 +34,9 @@ followup blog posts
 - changes
 
 IVERSON - EVENTUALLY
+
+Triggers: the sim stops if different situations happen. This may include injuries, bad streaks, reaching a certain amount of wins/losses... https://www.reddit.com/r/BasketballGM/comments/5zgrv9/basketball_gm_40_beta/dez5jn4/
+- "Play until..." menu item
 
 when dirty on close, show warning window, and initiate flush (if not already in progress)
 - hard to coordinate across UI and worker...

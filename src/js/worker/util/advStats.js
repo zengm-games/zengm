@@ -73,15 +73,8 @@ async function calculatePER() {
     for (let i = 0; i < players.length; i++) {
         const tid = players[i].tid;
 
-        // Is the player active?
-        players[i].active = true; // Assume all players are active, since the IndexedDB query above only takes tid >= 0
-        if (PHASE.PLAYOFFS === g.phase) {
-            players[i].active = false;
-            if (!_.isEmpty(players[i].statsPlayoffs)) {
-                players[i].active = true;
-                players[i].stats = players[i].statsPlayoffs;
-            }
-        }
+        // In the playoffs, only look at active players (aka players with stats)
+        players[i].active = PHASE.PLAYOFFS !== g.phase || (PHASE.PLAYOFFS === g.phase && !_.isEmpty(players[i].stats));
 
         if (players[i].active) {  // No need to calculate for non-active players
             const factor = (2 / 3) - (0.5 * (league.ast / league.fg)) / (2 * (league.fg / league.ft));

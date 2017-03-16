@@ -14,6 +14,7 @@
       window.inCordova = document.URL.indexOf('file://') === 0;
       window.bbgmPrefix = window.inCordova ? "" : "/"; // Relative URLs for Cordova
       window.bbgmVersion = "REV_GOES_HERE";
+      window.useSharedWorker = typeof SharedWorker !== 'undefined';
 
       // .com or .dev TLD
       if (!window.inCordova) {

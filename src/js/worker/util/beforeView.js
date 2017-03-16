@@ -72,8 +72,12 @@ const beforeLeague = async (newLid: number, loadedLid: ?number) => {
     // Make sure league template FOR THE CURRENT LEAGUE is showing
     if (loadedLid !== newLid) {
         await league.disconnect();
-        clearInterval(heartbeatIntervalID);
-        await checkHeartbeat(newLid);
+
+        // If this is a Web Worker, only one tab of a league can be open at a time
+        if (!env.useSharedWorker) {
+            clearInterval(heartbeatIntervalID);
+            await checkHeartbeat(newLid);
+        }
 
         // Clear old game attributes from g, just to be sure
         helpers.resetG();

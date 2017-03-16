@@ -156,6 +156,7 @@ export type Env = {
     heartbeatID: string,
     inCordova: boolean,
     tld: string,
+    useSharedWorker: boolean,
 
     // These are just legacy variables sent to the worker to be stored in idb.meta.attributes
     fromLocalStorage: {[key: string]: ?string},

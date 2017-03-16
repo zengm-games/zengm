@@ -11,6 +11,9 @@ shared worker
   - messageId uniqueness when coming from tab
 - query API: flag to determine if broadcast or single response. default single response. optional last arg, so single response use case is same API as now
   - if broadcast, then response is always undefined
+- namespacing issue (see branch) or force only one league
+- broadcast needs to be namespaced, too. like only "update all league 5" not "update all tabs open in every league"
+- when closing tab, how to forget port?
 
 mozilla glitches https://www.reddit.com/r/BasketballGM/comments/5zgrv9/basketball_gm_40_beta/dez4upt/
 

@@ -9,6 +9,7 @@ const env: Env = {
     inCordova: false,
     tld: 'com',
     fromLocalStorage: {},
+    useSharedWorker: false,
 };
 
 export default env;

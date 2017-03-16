@@ -1,6 +1,18 @@
 IVERSON - BEFORE FINAL
 
-multi tab play?
+shared worker
+- see iverson-shared-worker branch
+- (window/env).useSharedWorker
+- promise-worker-bi needs to be aware and abstract
+- need ID?
+  - heartbeatID -> tabID
+  - when registering, send along tabID
+  - but then i'd need to send it with every request, right? or can IDs be assigned inside worker, somehow?
+  - messageId uniqueness when coming from tab
+- query API: flag to determine if broadcast or single response. default single response. optional last arg, so single response use case is same API as now
+  - if broadcast, then response is always undefined
+
+mozilla glitches https://www.reddit.com/r/BasketballGM/comments/5zgrv9/basketball_gm_40_beta/dez4upt/
 
 is it too fast? artificially slow down?
 - if not, revamp notifications
@@ -64,11 +76,6 @@ run tests from cache
 this shit is UGLY UGLY UGLY, fix ASAP!!!
     if (typeof it === 'function') { return; }
   http://railsware.com/blog/2017/01/10/mocking-es6-module-import-without-dependency-injection/
-
-shared worker
-- see iverson-shared-worker branch
-- shitty browser compat, no hope for better
-- or service worker, is 30 second limit really killer?
 
 unify build and watch scripts - use watchify programmatically
 

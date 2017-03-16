@@ -10,7 +10,8 @@ async function updatePlayers(
     if ((inputs.season === g.season && updateEvents.includes('playerMovement')) || (updateEvents.includes('newPhase') && g.phase === PHASE.PRESEASON) || inputs.season !== state.season || inputs.abbrev !== state.abbrev) {
         let players;
         if (g.season === inputs.season && g.phase <= PHASE.PLAYOFFS) {
-            players = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
+            players = await idb.cache.players.getAll();
+            players = players.filter((p) => p.tid !== PLAYER.RETIRED); // Normally won't be in cache, but who knows...
         } else {
             // If it's not this season, get all players, because retired players could apply to the selected season
             players = await idb.getCopies.players({activeAndRetired: true});

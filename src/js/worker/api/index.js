@@ -184,8 +184,9 @@ const draftUntilUserOrEnd = async () => {
 
 const draftUser = async (pid: number) => {
     const draftOrder = await draft.getOrder();
-    const pick = draftOrder.shift();
+    const pick = draftOrder[0];
     if (pick && g.userTids.includes(pick.tid)) {
+        draftOrder.shift();
         await draft.selectPlayer(pick, pid);
         await draft.setOrder(draftOrder);
     } else {

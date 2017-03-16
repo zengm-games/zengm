@@ -23,7 +23,7 @@
     "watch-js-ui": "watchify -d src/js/ui/index.js -o build/gen/ui.js -v",
     "watch-js-worker": "watchify -d src/js/worker/index.js -o build/gen/worker.js -v",
     "lint": "concurrently --raw 'npm run flow' 'npm run lint-css' 'npm run lint-js'",
-    "flow": "flow",
+    "flow": "flow; test $? -eq 0 -o $? -eq 2",
     "lint-css": "stylelint 'src/css/*.*css'",
     "lint-js": "eslint '*.js' 'src/js/**/*.js' 'tools/**/*.js'",
     "lint-js-fix": "npm run lint-js -- --fix",

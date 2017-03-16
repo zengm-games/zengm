@@ -48,13 +48,14 @@ class Draft extends React.Component {
     async draftUntilUserOrEnd() {
         const pids = await toWorker('draftUntilUserOrEnd');
         this.savePids(pids);
-        realtimeUpdate(["playerMovement"]);
+        await realtimeUpdate(["playerMovement"]);
     }
 
     async draftUser(pid) {
         await toWorker('draftUser', pid);
         this.savePids([pid]);
-        await this.draftUntilUserOrEnd();
+        await realtimeUpdate(["playerMovement"]);
+        await this.draftUntilUserOrEnd(); // Needed for when user has #1 pick in fantasy draft, otherwise no
     }
 
     render() {

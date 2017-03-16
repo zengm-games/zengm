@@ -49,14 +49,13 @@ async function updateDraft(): void | {[key: string]: any} {
     let started = drafted.length > 0;
 
     const draftOrder = await draft.getOrder();
-    for (let i = 0; i < draftOrder.length; i++) {
-        const slot = draftOrder[i];
+    for (const pick of draftOrder) {
         drafted.push({
             draft: {
-                tid: slot.tid,
-                originalTid: slot.originalTid,
-                round: slot.round,
-                pick: slot.pick,
+                tid: pick.tid,
+                originalTid: pick.originalTid,
+                round: pick.round,
+                pick: pick.pick,
             },
             pid: -1,
         });

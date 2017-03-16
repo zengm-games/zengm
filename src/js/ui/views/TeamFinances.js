@@ -57,7 +57,7 @@ class FinancesForm extends React.Component {
             scouting: helpers.bound(Math.round(this.state.scouting * 100) * 10, 0, Infinity),
 
             // Already in [dollars]
-            ticketPrice: helpers.bound(parseFloat(this.state.ticketPrice).toFixed(2), 0, Infinity),
+            ticketPrice: helpers.bound(parseFloat(parseFloat(this.state.ticketPrice).toFixed(2)), 0, Infinity),
         };
 
         await toWorker('updateBudget', budgetAmounts);

@@ -72,7 +72,7 @@ const PlayerFeats = ({abbrev, feats, playoffs, season}) => {
                 p.season,
             ],
             classNames: {
-                info: p.pid === g.userTid,
+                info: p.tid === g.userTid,
             },
         };
     });

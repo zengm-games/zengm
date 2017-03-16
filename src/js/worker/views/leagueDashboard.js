@@ -3,6 +3,7 @@
 import {PHASE, PLAYER, g, helpers} from '../../common';
 import {season, team} from '../core';
 import {idb} from '../db';
+import {getProcessedGames} from '../util';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateInbox(
@@ -115,43 +116,27 @@ async function updateTeams(
 async function updateGames(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
+    state: any,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('newPhase')) {
-        const numShowCompleted = 4;
-        const completed = [];
+    const NUM_SHOW_COMPLETED = 4;
+    if (updateEvents.includes('firstRun')) {
+        // Load all games in list - would be more efficient to just load NUM_SHOW_COMPLETED
+        const games = await getProcessedGames(g.teamAbbrevsCache[g.userTid], g.season);
 
-        // This could be made much faster by using a compound index to search for season + team, but that's not supported by IE 10
-        await idb.league.games.index('season').iterate(g.season, "prev", (game, shortCircuit) => {
-            if (completed.length >= numShowCompleted) {
-                return shortCircuit();
-            }
+        const completed = games
+            .slice(0, NUM_SHOW_COMPLETED)
+            .map((game) => helpers.formatCompletedGame(game));
 
-            let overtime;
-            if (game.overtimes === 1) {
-                overtime = " (OT)";
-            } else if (game.overtimes > 1) {
-                overtime = ` (${game.overtimes}OT)`;
-            } else {
-                overtime = "";
-            }
-
-            // Check tid
-            if (game.teams[0].tid === g.userTid || game.teams[1].tid === g.userTid) {
-                const i = game.teams[0].tid === g.userTid ? 0 : 1;
-                const j = 1 - i;
-
-                completed.push(helpers.formatCompletedGame({
-                    gid: game.gid,
-                    overtime,
-                    home: i === 0,
-                    pts: game.teams[i].pts,
-                    oppPts: game.teams[j].pts,
-                    oppTid: game.teams[j].tid,
-                    oppAbbrev: g.teamAbbrevsCache[game.teams[j].tid],
-                    won: game.teams[i].pts > game.teams[j].pts,
-                }));
-            }
-        });
+        return {completed};
+    }
+    if (updateEvents.includes('gameSim')) {
+        const completed = state.completed;
+        // Partial update of only new games
+        const games = await getProcessedGames(g.teamAbbrevsCache[g.userTid], g.season, state.completed);
+        for (let i = games.length - 1; i >= 0; i--) {
+            completed.unshift(helpers.formatCompletedGame(games[i]));
+            completed.pop();
+        }
 
         return {completed};
     }

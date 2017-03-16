@@ -153,6 +153,11 @@ const handleScreenshotClick = e => {
                     },
                 });
 
+                if (data.data.error) {
+                    console.log(data.data.error);
+                    throw new Error(data.data.error.message);
+                }
+
                 logEvent({
                     type: 'screenshot',
                     text: `<a href="http://imgur.com/${data.data.id}" target="_blank">Click here to view your screenshot.</a>`,
@@ -166,6 +171,8 @@ const handleScreenshotClick = e => {
                 let errorMsg;
                 if (err && err.responseJSON && err.responseJSON.error && err.responseJSON.error.message) {
                     errorMsg = `Error saving screenshot. Error message from Imgur: "${err.responseJSON.error.message}"`;
+                } else if (err.message) {
+                    errorMsg = `Error saving screenshot. Error message from Imgur: "${err.message}"`;
                 } else {
                     errorMsg = "Error saving screenshot.";
                 }

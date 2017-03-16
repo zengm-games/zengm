@@ -56,19 +56,18 @@ async function updateCompleted(
 
         // Load all games in list
         const games = await getProcessedGames(inputs.abbrev, g.season);
-        for (let i = 0; i < games.length; i++) {
-            games[i] = helpers.formatCompletedGame(games[i]);
-        }
 
-        return {completed: games};
+        const completed = games
+            .map((game) => helpers.formatCompletedGame(game));
+
+        return {completed};
     }
     if (updateEvents.includes('gameSim')) {
         const completed = state.completed;
         // Partial update of only new games
         const games = await getProcessedGames(inputs.abbrev, g.season, state.completed);
         for (let i = games.length - 1; i >= 0; i--) {
-            games[i] = helpers.formatCompletedGame(games[i]);
-            completed.unshift(games[i]);
+            completed.unshift(helpers.formatCompletedGame(games[i]));
         }
 
         return {completed};

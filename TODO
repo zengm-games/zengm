@@ -1,7 +1,6 @@
 IVERSON - BEFORE FINAL
 
 shared worker
-- see iverson-shared-worker branch
 - (window/env).useSharedWorker
 - promise-worker-bi needs to be aware and abstract
 - need ID?
@@ -11,9 +10,19 @@ shared worker
   - messageId uniqueness when coming from tab
 - query API: flag to determine if broadcast or single response. default single response. optional last arg, so single response use case is same API as now
   - if broadcast, then response is always undefined
-- namespacing issue (see branch) or force only one league
 - broadcast needs to be namespaced, too. like only "update all league 5" not "update all tabs open in every league"
 - when closing tab, how to forget port?
+- location var inside shared worker?
+- namespace leagues (or force only one league)
+  - namespace locks, g (in worker only), idb.league, and idb.cache
+  - all common functions, accept g as param
+  - something to handle init/close of tabs
+  - in worker, store all ports along with hostID (incrementing integer) and lid. then can send either to specific window (how?) or to all in league
+    - need some way to register this info with the worker. it gets the port in onconnect, and then in response can send hostID back to host. finally, host can send lid on that port via some special message
+  - send message from worker - broadcast vs individual host
+    - requires hostID sent to host and included with each message, or can it rely on port sent along with message even in which case maybe sending hostID back to host on init is not required?
+  - some toUI ones require a response, and also need to send bbgmPing/notifyError/showAd to individual tab
+- need to track hostID or pass port around
 
 mozilla glitches https://www.reddit.com/r/BasketballGM/comments/5zgrv9/basketball_gm_40_beta/dez4upt/
 

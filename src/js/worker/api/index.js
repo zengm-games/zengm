@@ -457,12 +457,15 @@ const init = async (inputEnv: Env) => {
     env.heartbeatID = inputEnv.heartbeatID;
     env.tld = inputEnv.tld;
 
-    checkNaNs();
+    // Kind of hacky, only run this for the first host tab
+    if (idb.meta === undefined) {
+        checkNaNs();
 
-    idb.meta = await connectMeta(inputEnv.fromLocalStorage);
+        idb.meta = await connectMeta(inputEnv.fromLocalStorage);
 
-    // Any news? If so, display notification.
-    await changes.check();
+        // Any news? If so, display notification.
+        await changes.check();
+    }
 };
 
 const lockSet = async (name: LockName, value: boolean) => {

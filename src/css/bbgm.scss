@@ -832,3 +832,8 @@ label input {
 .dropdown-toggle {
   cursor: pointer;
 }
+
+img.losing-team {
+  -webkit-filter: grayscale(1);
+  filter: grayscale(1);
+}

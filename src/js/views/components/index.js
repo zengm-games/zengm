@@ -16,6 +16,7 @@ import NewWindowLink from './NewWindowLink';
 import PlayerNameLabels from './PlayerNameLabels';
 import PlayerPicture from './PlayerPicture';
 import PlayoffMatchup from './PlayoffMatchup';
+import PlayoffJumbotron from './PlayoffJumbotron';
 import RatingWithChange from './RatingWithChange';
 import RecordAndPlayoffs from './RecordAndPlayoffs';
 import SafeHtml from './SafeHtml';
@@ -41,6 +42,7 @@ export {
     PlayerNameLabels,
     PlayerPicture,
     PlayoffMatchup,
+    PlayoffJumbotron,
     RatingWithChange,
     RecordAndPlayoffs,
     SafeHtml,

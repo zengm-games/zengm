@@ -49,7 +49,8 @@ async function updateDraft() {
     undrafted.sort((a, b) => b.valueFuzz - a.valueFuzz);
     undrafted = player.filter(undrafted, {
         attrs: ["pid", "name", "age", "injury", "contract", "watch"],
-        ratings: ["ovr", "pot", "skills", "pos"],
+        ratings: ["ovr", "pot", "skills", "pos", "hgt", "stre", "spd",
+            "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"],
         stats: ["per", "ewa"],
         season: g.season,
         showNoStats: true,
@@ -59,7 +60,8 @@ async function updateDraft() {
 
     players = player.filter(players, {
         attrs: ["pid", "tid", "name", "age", "draft", "injury", "contract", "watch"],
-        ratings: ["ovr", "pot", "skills", "pos"],
+        ratings: ["ovr", "pot", "skills", "pos", "hgt", "stre", "spd",
+            "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"],
         stats: ["per", "ewa"],
         season: g.season,
         showRookies: true,

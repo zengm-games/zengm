@@ -75,7 +75,7 @@ class WatchList extends React.Component {
             return {
                 key: p.pid,
                 data: [
-                    <PlayerNameLabels injury={p.injury} pid={p.pid} skills={p.ratings.skills} watch={p.watch}>{p.name}</PlayerNameLabels>,
+                    <PlayerNameLabels injury={p.injury} pid={p.pid} skills={p.ratings.skills} watch={p.watch} ratings={p.ratings}>{p.name}</PlayerNameLabels>,
                     p.ratings.pos,
                     p.age,
                     <a href={helpers.leagueUrl(["roster", p.abbrev])}>{p.abbrev}</a>,

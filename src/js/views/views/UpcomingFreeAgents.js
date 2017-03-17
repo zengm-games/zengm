@@ -18,6 +18,7 @@ const UpcomingFreeAgents = ({players, season}) => {
                     pid={p.pid}
                     skills={p.ratings.skills}
                     watch={p.watch}
+                    ratings={p.ratings}
                 >{p.name}</PlayerNameLabels>,
                 p.ratings.pos,
                 p.age,

@@ -94,7 +94,7 @@ class Draft extends React.Component {
 
         const rowsUndrafted = undrafted.map(p => {
             const data = [
-                <PlayerNameLabels pid={p.pid} injury={p.injury} skills={p.ratings.skills} watch={p.watch}>{p.name}</PlayerNameLabels>,
+                <PlayerNameLabels pid={p.pid} injury={p.injury} skills={p.ratings.skills} watch={p.watch} ratings={p.ratings}>{p.name}</PlayerNameLabels>,
                 p.ratings.pos,
                 p.age,
                 p.ratings.ovr,
@@ -123,7 +123,7 @@ class Draft extends React.Component {
             const data = [
                 `${p.draft.round}-${p.draft.pick}`,
                 <DraftAbbrev originalTid={p.draft.originalTid} season={g.season} tid={p.draft.tid}>{p.draft.tid} {p.draft.originalTid}</DraftAbbrev>,
-                p.pid >= 0 ? <PlayerNameLabels pid={p.pid} injury={p.injury} skills={p.ratings.skills} watch={p.watch}>{p.name}</PlayerNameLabels> : null,
+                p.pid >= 0 ? <PlayerNameLabels pid={p.pid} injury={p.injury} skills={p.ratings.skills} watch={p.watch} ratings={p.ratings}>{p.name}</PlayerNameLabels> : null,
                 p.pid >= 0 ? p.ratings.pos : null,
                 p.pid >= 0 ? p.age : null,
                 p.pid >= 0 ? p.ratings.ovr : null,

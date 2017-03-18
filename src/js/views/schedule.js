@@ -18,7 +18,7 @@ async function updateUpcoming(inputs, updateEvents, state) {
         const [schedule, teamsFiltered] = await Promise.all([
             season.getSchedule(),
             team.filter({
-                attrs: ['tid'],
+                attrs: ['tid', 'imgURL'],
                 seasonAttrs: ['won', 'lost'],
                 season: g.season,
             }),

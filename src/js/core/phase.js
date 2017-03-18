@@ -168,7 +168,7 @@ async function newPhasePlayoffs(tx: BackboardTx) {
     // Set playoff matchups
     const teams = await team.filter({
         ot: tx,
-        attrs: ["tid", "cid"],
+        attrs: ["tid", "cid", "imgURL"],
         seasonAttrs: ["winp"],
         season: g.season,
         sortBy: "winp",

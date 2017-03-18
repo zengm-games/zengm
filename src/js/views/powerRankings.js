@@ -11,7 +11,7 @@ async function updatePowerRankings(inputs, updateEvents) {
     if (updateEvents.includes('firstRun') || updateEvents.includes('dbChange') || updateEvents.includes('gameSim')) {
         const [teams, players] = await Promise.all([
             team.filter({
-                attrs: ["tid", "abbrev", "region", "name"],
+                attrs: ["tid", "abbrev", "region", "name", "imgURL"],
                 seasonAttrs: ["won", "lost", "lastTen"],
                 stats: ["gp", "pts", "oppPts", "diff"],
                 season: g.season,

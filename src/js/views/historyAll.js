@@ -11,7 +11,7 @@ async function updateHistory(inputs, updateEvents) {
         const [awards, teams] = await Promise.all([
             g.dbl.awards.getAll(),
             team.filter({
-                attrs: ["tid", "abbrev", "region", "name"],
+                attrs: ["tid", "abbrev", "region", "name", "imgURL"],
                 seasonAttrs: ["season", "playoffRoundsWon", "won", "lost"],
             }),
         ]);
@@ -50,6 +50,7 @@ async function updateHistory(inputs, updateEvents) {
                         name: t.name,
                         won: t.seasons[j].won,
                         lost: t.seasons[j].lost,
+                        imgURL: t.imgURL,
                     };
                 } else if (t.seasons[j].playoffRoundsWon === g.numPlayoffRounds - 1) {
                     seasons[i].runnerUp = {
@@ -59,6 +60,7 @@ async function updateHistory(inputs, updateEvents) {
                         name: t.name,
                         won: t.seasons[j].won,
                         lost: t.seasons[j].lost,
+                        imgURL: t.imgURL,
                     };
                 }
             }

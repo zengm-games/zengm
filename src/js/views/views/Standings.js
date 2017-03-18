@@ -8,6 +8,7 @@ import clickable from '../wrappers/clickable';
 const DivStandingsRow = clickable(({clicked, season, t, toggleClicked}) => {
     return <tr key={t.tid} className={classNames({info: t.highlight, warning: clicked})} onClick={toggleClicked}>
         <td>
+            <span className="table-logo"><img src={t.imgURL} alt="" /></span>
             <a href={helpers.leagueUrl(['roster', t.abbrev, season])}>{t.region} {t.name}</a>
             <span>{t.playoffsRank ? ` (${t.playoffsRank})` : ''}</span>
         </td>
@@ -70,7 +71,10 @@ const ConfStandings = ({playoffsByConference, season, teams}) => {
         <tbody>
             {teams.map((t, i) => {
                 return <tr key={t.tid} className={classNames({info: t.highlight, separator: i === 7 && playoffsByConference})}>
-                    <td>{t.rank}. <a href={helpers.leagueUrl(['roster', t.abbrev, season])}>{t.region}</a></td>
+                    <td>{t.rank}.
+                        <span className="table-logo"><img src={t.imgURL} alt="" /></span>
+                        <a href={helpers.leagueUrl(['roster', t.abbrev, season])}>{t.region}</a>
+                    </td>
                     <td style={{textAlign: 'right'}}>{t.gb}</td>
                 </tr>;
             })}

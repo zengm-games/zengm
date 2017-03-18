@@ -21,7 +21,7 @@ async function updatePlayoffs(inputs, updateEvents, state) {
         // If in the current season and before playoffs started, display projected matchups
         if (inputs.season === g.season && g.phase < g.PHASE.PLAYOFFS) {
             const teams = await team.filter({
-                attrs: ["tid", "cid", "abbrev", "name"],
+                attrs: ["tid", "cid", "abbrev", "name", "imgURL"],
                 seasonAttrs: ["winp"],
                 season: inputs.season,
                 sortBy: ["winp", "-lost", "won"],

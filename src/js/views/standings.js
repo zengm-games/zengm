@@ -15,7 +15,7 @@ function get(ctx) {
 async function updateStandings(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || (inputs.season === g.season && updateEvents.includes('gameSim')) || inputs.season !== state.season) {
         const teams = await team.filter({
-            attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
+            attrs: ["tid", "cid", "did", "abbrev", "region", "name", "imgURL"],
             seasonAttrs: ["won", "lost", "winp", "wonHome", "lostHome", "wonAway", "lostAway", "wonDiv", "lostDiv", "wonConf", "lostConf", "lastTen", "streak"],
             season: inputs.season,
             sortBy: ["winp", "-lost", "won"],

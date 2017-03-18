@@ -278,7 +278,7 @@ async function updatePlayoffs(inputs, updateEvents) {
 async function updateStandings(inputs, updateEvents) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || updateEvents.includes('gameSim')) {
         const teams = await team.filter({
-            attrs: ["tid", "cid", "abbrev", "region"],
+            attrs: ["tid", "cid", "abbrev", "region", "imgURL"],
             seasonAttrs: ["won", "lost", "winp"],
             season: g.season,
             sortBy: ["winp", "-lost", "won"],

@@ -29,6 +29,9 @@ const awardName = (award, season) => {
 const teamName = (t, season) => {
     if (t) {
         return <span>
+            <span className="table-logo">
+                <img src={t.imgURL} alt="" />
+            </span>
             <a href={helpers.leagueUrl(["roster", t.abbrev, season])}>{t.region}</a> ({t.won}-{t.lost})
         </span>;
     }

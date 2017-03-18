@@ -16,7 +16,10 @@ const LeagueFinances = ({minPayroll, luxuryPayroll, luxuryTax, salaryCap, season
         return {
             key: t.tid,
             data: [
-                <a href={helpers.leagueUrl(["team_finances", t.abbrev])}>{t.region} {t.name}</a>,
+                <span>
+                    <span className="table-logo"><img src={t.imgURL} alt="" /></span>
+                    <a href={helpers.leagueUrl(["team_finances", t.abbrev])}>{t.region} {t.name}</a>
+                </span>,
                 helpers.numberWithCommas(helpers.round(t.att)),
                 helpers.formatCurrency(t.revenue, "M"),
                 helpers.formatCurrency(t.profit, "M"),

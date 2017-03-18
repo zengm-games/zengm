@@ -33,7 +33,10 @@ const LeagueDashboard = ({abbrev, ast, astRank, att, cash, completed, confTeams,
                             <tbody>
                                 {confTeams.map((t, i) => {
                                     return <tr key={t.tid} className={classNames({separator: i === 7 && playoffsByConference, info: t.tid === g.userTid})}>
-                                        <td>{t.rank}. <a href={helpers.leagueUrl(['roster', t.abbrev])}>{t.region}</a></td>
+                                        <td>{t.rank}.
+                                            <span className="table-logo"><img src={t.imgURL} alt="" /></span>
+                                            <a href={helpers.leagueUrl(['roster', t.abbrev])}>{t.region}</a>
+                                        </td>
                                         <td style={{textAlign: 'right'}}>{t.gb}</td>
                                     </tr>;
                                 })}

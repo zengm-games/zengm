@@ -20,7 +20,10 @@ const PowerRankings = ({teams}) => {
                 t.overallRank,
                 performanceRank,
                 t.talentRank,
-                <a href={helpers.leagueUrl(["roster", t.abbrev])}>{t.region} {t.name}</a>,
+                <span>
+                    <span className="table-logo"><img src={t.imgURL} alt="" /></span>
+                    <a href={helpers.leagueUrl(["roster", t.abbrev])}>{t.region} {t.name}</a>
+                </span>,
                 t.won,
                 t.lost,
                 t.lastTen,

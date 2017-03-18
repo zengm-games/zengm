@@ -24,17 +24,23 @@ const PlayoffMatchup = ({season, series}: {
     const homeWon = series.home.hasOwnProperty("won") && series.home.won === 4;
     const awayWon = series.away.hasOwnProperty("won") && series.away.won === 4;
 
-    const homeImg = `img-circle ${awayWon && "losing-team"}`;
-    const awayImg = `img-circle ${homeWon && "losing-team"}`;
+    const homeImg = `${awayWon && "losing-team" || ""}`;
+    const awayImg = `${homeWon && "losing-team" || ""}`;
 
     return <div>
         {series.home.imgURL && series.away.imgURL &&
-            <p>
+            <span>
                 <a href={helpers.leagueUrl(["roster", g.teamAbbrevsCache[series.home.tid], season])}>
-                    <img className={homeImg} height="36" width="36" src={series.home.imgURL} alt="" /></a> vs
-                <a href={helpers.leagueUrl(["roster", g.teamAbbrevsCache[series.away.tid], season])}>
-                    <img className={awayImg} height="36" width="36" src={series.away.imgURL} alt="" /></a>
-            </p>}
+                    <div className="playoff-matchup-logo">
+                        <img className={homeImg} src={series.home.imgURL} alt="" />
+                    </div>
+                </a> vs <a href={helpers.leagueUrl(["roster", g.teamAbbrevsCache[series.away.tid], season])}>
+                    <div className="playoff-matchup-logo">
+                        <img className={awayImg} src={series.away.imgURL} alt="" />
+                    </div>
+                </a>
+                <br />
+            </span>}
 
         <span className={series.home.tid === g.userTid ? 'bg-info' : ''} style={{fontWeight: homeWon ? 'bold' : 'normal'}}>
             {series.home.seed}. <a href={helpers.leagueUrl(["roster", g.teamAbbrevsCache[series.home.tid], season])}>{g.teamRegionsCache[series.home.tid]}</a>

@@ -15,7 +15,7 @@ function get(ctx) {
 async function updateLeagueFinances(inputs, updateEvents, state) {
     if (updateEvents.includes('dbChange') || updateEvents.includes('firstRun') || inputs.season !== state.season || inputs.season === g.season) {
         const teams = await team.filter({
-            attrs: ["tid", "abbrev", "region", "name"],
+            attrs: ["tid", "abbrev", "region", "name", "imgURL"],
             seasonAttrs: ["att", "revenue", "profit", "cash", "payroll", "salaryPaid"],
             season: inputs.season,
         });

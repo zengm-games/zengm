@@ -34,7 +34,8 @@ async function updateNegotiationList() {
     players = players.filter(p => negotiationPids.includes(p.pid));
     players = player.filter(players, {
         attrs: ["pid", "name", "age", "freeAgentMood", "injury", "watch"],
-        ratings: ["ovr", "pot", "skills", "pos"],
+        ratings: ["ovr", "pot", "skills", "pos", "hgt", "stre", "spd",
+            "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"],
         stats: ["min", "pts", "trb", "ast", "per"],
         season: g.season,
         tid: g.userTid,

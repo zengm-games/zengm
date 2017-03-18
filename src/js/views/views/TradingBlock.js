@@ -21,6 +21,7 @@ const OfferPlayerRow = clickable(({clicked, p, toggleClicked}) => {
                 pid={p.pid}
                 skills={p.ratings.skills}
                 watch={p.watch}
+                ratings={p.ratings}
             >{p.name}</PlayerNameLabels>
         </td>
         <td>{p.ratings.pos}</td>
@@ -180,7 +181,8 @@ const augmentOffers = offers => {
             });
             players = player.filter(players, {
                 attrs: ["pid", "name", "age", "contract", "injury", "watch"],
-                ratings: ["ovr", "pot", "skills", "pos"],
+                ratings: ["ovr", "pot", "skills", "pos", "hgt", "stre", "spd",
+                    "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"],
                 stats: ["min", "pts", "trb", "ast", "per"],
                 season: g.season,
                 tid,
@@ -320,6 +322,7 @@ class TradingBlock extends React.Component {
                         pid={p.pid}
                         skills={p.ratings.skills}
                         watch={p.watch}
+                        ratings={p.ratings}
                     >{p.name}</PlayerNameLabels>,
                     p.ratings.pos,
                     p.age,

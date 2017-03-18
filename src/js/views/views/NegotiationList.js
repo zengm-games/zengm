@@ -30,6 +30,7 @@ const NegotiationList = ({players}) => {
                     injury={p.injury}
                     skills={p.ratings.skills}
                     watch={p.watch}
+                    ratings={p.ratings}
                 >{p.name}</PlayerNameLabels>,
                 p.ratings.pos,
                 p.age,

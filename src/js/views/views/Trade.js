@@ -15,7 +15,7 @@ const genRows = (players, handleChangeAsset) => {
             key: p.pid,
             data: [
                 <input type="checkbox" value={p.pid} title={p.untradableMsg} checked={p.selected} disabled={p.untradable} onChange={() => handleChangeAsset(p.pid)} />,
-                <PlayerNameLabels injury={p.injury} pid={p.pid} skills={p.ratings.skills} watch={p.watch}>{p.name}</PlayerNameLabels>,
+                <PlayerNameLabels injury={p.injury} pid={p.pid} skills={p.ratings.skills} watch={p.watch} ratings={p.ratings}>{p.name}</PlayerNameLabels>,
                 p.ratings.pos,
                 p.age,
                 p.ratings.ovr,

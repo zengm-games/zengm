@@ -57,7 +57,8 @@ async function updateTrade() {
     ]);
 
     const attrs = ["pid", "name", "age", "contract", "injury", "watch", "gamesUntilTradable"];
-    const ratings = ["ovr", "pot", "skills", "pos"];
+    const ratings = ["ovr", "pot", "skills", "pos", "hgt", "stre", "spd",
+        "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
     const stats = ["min", "pts", "trb", "ast", "per"];
 
     userRoster = player.filter(userRoster, {

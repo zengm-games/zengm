@@ -23,7 +23,8 @@ async function updatePlayers(inputs, updateEvents, state) {
         });
         players = player.filter(players, {
             attrs: ["pid", "name", "age", "injury", "tid", "abbrev", "watch", "contract", "freeAgentMood", "draft"],
-            ratings: ["ovr", "pot", "skills", "pos"],
+            ratings: ["ovr", "pot", "skills", "pos", "hgt", "stre", "spd",
+                "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"],
             stats: ["gp", "min", "fgp", "tpp", "ftp", "trb", "ast", "tov", "stl", "blk", "pts", "per", "ewa"],
             season: g.season,
             totals: inputs.statType === "totals",

@@ -32,7 +32,8 @@ async function updateFreeAgents() {
 
     players = player.filter(players, {
         attrs: ["pid", "name", "age", "contract", "freeAgentMood", "injury", "watch"],
-        ratings: ["ovr", "pot", "skills", "pos"],
+        ratings: ["ovr", "pot", "skills", "pos", "hgt", "stre", "spd",
+            "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"],
         stats: ["min", "pts", "trb", "ast", "per"],
         season: g.season,
         showNoStats: true,

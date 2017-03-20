@@ -65,6 +65,7 @@ async function create(
     leagueFile: Object = {},
     startingSeason: number,
     randomizeRosters?: boolean = false,
+    conditions: Conditions,
 ): Promise<number> {
     await idb.meta.attributes.put(tid, 'lastSelectedTid');
 
@@ -453,7 +454,7 @@ async function create(
 
     await idb.cache.flush();
 
-    toUI(['bbgmPing', 'league']); // Add conditions with hostID
+    toUI(['bbgmPing', 'league'], conditions);
 
     return lid;
 }

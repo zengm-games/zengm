@@ -693,7 +693,7 @@ async function play(numDays: number, conditions: Conditions, start?: boolean = t
                 }
             }
 
-            await toUI(['realtimeUpdate', ['gameSim'], url, raw]); // Add conditions with hostID
+            await toUI(['realtimeUpdate', ['gameSim'], url, raw], conditions);
         } else {
             url = undefined;
 

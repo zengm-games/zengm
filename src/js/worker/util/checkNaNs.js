@@ -1,7 +1,5 @@
 // @flow
 
-import {toUI} from '../util';
-
 // Check all properties of an object for NaN
 const checkObject = (obj, foundNaN, replace) => {
     foundNaN = foundNaN !== undefined ? foundNaN : false;
@@ -29,6 +27,7 @@ const wrap = (parent: any, name, wrapper) => {
 
 const wrapperNaNChecker = (_super) => {
     return function (obj, ...args) {
+/* Commented out becuse I'm not sure how to make this send just once from worker
         if (checkObject(obj)) {
             const err = new Error('NaN found before writing to IndexedDB');
 
@@ -42,11 +41,13 @@ const wrapperNaNChecker = (_super) => {
                         return value;
                     }),
                 },
-            }]); // Add conditions with hostID
+            }], conditions);
 
             // Try to recover gracefully
             checkObject(obj, false, true); // This will update obj
-        }
+        }*/
+
+        checkObject(obj, false, true); // This will update obj
 
         return _super.call(this, obj, ...args);
     };

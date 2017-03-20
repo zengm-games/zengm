@@ -7,7 +7,7 @@ import {contractNegotiation, draft, finances, league, phase, player, team, trade
 import {connectMeta, idb} from '../db';
 import {account, beforeView, changes, checkNaNs, env, local, lock, random, updatePlayMenu, updateStatus} from '../util';
 import * as views from '../views';
-import type {Env, GameAttributes, GetOutput, Local, LockName, Player, PlayerWithoutPid, UpdateEvents} from '../../common/types';
+import type {Conditions, Env, GameAttributes, GetOutput, Local, LockName, Player, PlayerWithoutPid, UpdateEvents} from '../../common/types';
 
 const acceptContractNegotiation = async (pid: number, amount: number, exp: number): Promise<?string> => {
     return contractNegotiation.accept(pid, amount, exp);
@@ -80,7 +80,7 @@ const createLeague = async (
     randomizeRosters: boolean,
     conditions: Conditions,
 ): Promise<number> => {
-    return league.create(name, tid, leagueFile, startingSeason, randomizeRosters);
+    return league.create(name, tid, leagueFile, startingSeason, randomizeRosters, conditions);
 };
 
 const deleteOldData = async (options: {

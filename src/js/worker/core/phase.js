@@ -5,7 +5,7 @@ import {PHASE, PLAYER, g, helpers} from '../../common';
 import {contractNegotiation, draft, finances, freeAgents, league, player, season, team} from '../core';
 import {idb} from '../db';
 import {account, env, genMessage, local, lock, logEvent, random, toUI, updatePhase, updatePlayMenu, updateStatus} from '../util';
-import type {Phase, UpdateEvents} from '../../common/types';
+import type {Conditions, Phase, UpdateEvents} from '../../common/types';
 
 /**
  * Common tasks run after a new phrase is set.
@@ -18,7 +18,7 @@ import type {Phase, UpdateEvents} from '../../common/types';
  * @param {Array.<string>=} updateEvents Array of strings.
  * @return {Promise}
  */
-async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = []) {
+async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = [], conditions: Conditions) {
     await updateStatus('Saving...');
 
     // Set phase before saving to database
@@ -37,19 +37,19 @@ async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = 
     await updatePhase();
     await updatePlayMenu();
 
-    updateEvents.push("newPhase");
-    toUI(['realtimeUpdate', updateEvents, url]); // Add conditions with hostID
+    updateEvents.push('newPhase');
+    toUI(['realtimeUpdate', updateEvents, url], conditions);
 
     // If auto-simulating, initiate next action
     if (local.autoPlaySeasons > 0) {
         // Not totally sure why setTimeout is needed, but why not?
         setTimeout(() => {
-            league.autoPlay();
+            league.autoPlay(conditions);
         }, 100);
     }
 }
 
-async function newPhasePreseason() {
+async function newPhasePreseason(conditions: Conditions) {
     await freeAgents.autoSign();
     await league.setGameAttributes({season: g.season + 1});
 
@@ -103,7 +103,7 @@ async function newPhasePreseason() {
     }
 
     if (env.enableLogging && !env.inCordova) {
-        toUI(['emit', 'showAd', 'modal', local.autoPlaySeasons]); // Add conditions with hostID
+        toUI(['emit', 'showAd', 'modal', local.autoPlaySeasons], conditions);
     }
 
     return [undefined, ["playerMovement"]];
@@ -233,7 +233,7 @@ async function newPhasePlayoffs() {
     return [url, ["teamFinances"]];
 }
 
-async function newPhaseBeforeDraft() {
+async function newPhaseBeforeDraft(conditions: Conditions) {
     // Achievements after playoffs
     account.checkAchievement.fo_fo_fo();
     account.checkAchievement["98_degrees"]();
@@ -345,7 +345,7 @@ async function newPhaseBeforeDraft() {
         url = helpers.leagueUrl(["history"]);
     }
 
-    toUI(['bbgmPing', 'season']); // Add conditions with hostID
+    toUI(['bbgmPing', 'season'], conditions);
 
     return [url, ["playerMovement"]];
 }
@@ -488,7 +488,7 @@ async function newPhaseFreeAgency() {
     return [helpers.leagueUrl(["free_agents"]), ["playerMovement"]];
 }
 
-async function newPhaseFantasyDraft(position: number) {
+async function newPhaseFantasyDraft(conditions: Conditions, position: number) {
     await contractNegotiation.cancelAll();
     await draft.genOrderFantasy(position);
     await league.setGameAttributes({nextPhase: g.phase});
@@ -521,7 +521,7 @@ async function newPhaseFantasyDraft(position: number) {
  * @param {} extra Parameter containing extra info to be passed to phase changing function. Currently only used for newPhaseFantasyDraft.
  * @return {Promise}
  */
-async function newPhase(phase: Phase, extra: any) {
+async function newPhase(phase: Phase, conditions: Conditions, extra?: any) {
     // Prevent at least some cases of code running twice
     if (phase === g.phase) {
         return;
@@ -571,11 +571,11 @@ async function newPhase(phase: Phase, extra: any) {
             await updatePlayMenu();
 
             if (phaseChangeInfo.hasOwnProperty(phase)) {
-                const result = await phaseChangeInfo[phase].func(extra);
+                const result = await phaseChangeInfo[phase].func(conditions, extra);
 
                 if (result && result.length === 2) {
                     const [url, updateEvents] = result;
-                    await finalize(phase, url, updateEvents);
+                    await finalize(phase, url, updateEvents, conditions);
                 } else {
                     throw new Error(`Invalid result from phase change: ${JSON.stringify(result)}`);
                 }

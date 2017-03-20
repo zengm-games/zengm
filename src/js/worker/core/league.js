@@ -5,7 +5,7 @@ import {Cache, connectLeague, idb} from '../db';
 import {PHASE, PLAYER, g, helpers} from '../../common';
 import {draft, finances, freeAgents, game, phase, player, season, team} from '../core';
 import {defaultGameAttributes, local, lock, random, toUI, updatePhase, updateStatus} from '../util';
-import type {GameAttributes} from '../../common/types';
+import type {Conditions, GameAttributes} from '../../common/types';
 
 // x and y are both arrays of objects with the same length. For each object, any properties in y but not x will be copied over to x.
 function merge(x: Object[], y: Object[]): Object[] {
@@ -584,36 +584,36 @@ async function loadGameAttributes() {
 }
 
 // Depending on phase, initiate action that will lead to the next phase
-async function autoPlay() {
+async function autoPlay(conditions: Conditions) {
     if (g.phase === PHASE.PRESEASON) {
-        await phase.newPhase(PHASE.REGULAR_SEASON);
+        await phase.newPhase(PHASE.REGULAR_SEASON, conditions);
     } else if (g.phase === PHASE.REGULAR_SEASON) {
         const numDays = await season.getDaysLeftSchedule();
-        await game.play(numDays);
+        await game.play(numDays, conditions);
     } else if (g.phase === PHASE.PLAYOFFS) {
-        await game.play(100);
+        await game.play(100, conditions);
     } else if (g.phase === PHASE.BEFORE_DRAFT) {
-        await phase.newPhase(PHASE.DRAFT);
+        await phase.newPhase(PHASE.DRAFT, conditions);
     } else if (g.phase === PHASE.DRAFT) {
-        await draft.untilUserOrEnd();
+        await draft.untilUserOrEnd(conditions);
     } else if (g.phase === PHASE.AFTER_DRAFT) {
-        await phase.newPhase(PHASE.RESIGN_PLAYERS);
+        await phase.newPhase(PHASE.RESIGN_PLAYERS, conditions);
     } else if (g.phase === PHASE.RESIGN_PLAYERS) {
-        await phase.newPhase(PHASE.FREE_AGENCY);
+        await phase.newPhase(PHASE.FREE_AGENCY, conditions);
     } else if (g.phase === PHASE.FREE_AGENCY) {
-        await freeAgents.play(g.daysLeft);
+        await freeAgents.play(g.daysLeft, conditions);
     } else {
         throw new Error(`Unknown phase: ${g.phase}`);
     }
 }
 
-async function initAutoPlay() {
-    const result = await toUI(['prompt', 'This will play through multiple seasons, using the AI to manage your team. How many seasons do you want to simulate?', '5']); // Add conditions with hostID
+async function initAutoPlay(conditions: Conditions) {
+    const result = await toUI(['prompt', 'This will play through multiple seasons, using the AI to manage your team. How many seasons do you want to simulate?', '5'], conditions);
     const numSeasons = parseInt(result, 10);
 
     if (Number.isInteger(numSeasons)) {
         local.autoPlaySeasons = numSeasons;
-        autoPlay();
+        autoPlay(conditions);
     }
 }
 

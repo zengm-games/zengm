@@ -6,6 +6,7 @@ import {PHASE, PLAYER, g, helpers} from '../../common';
 import {league, phase, player, team} from '../core';
 import {idb} from '../db';
 import {local, lock, logEvent, random, updatePlayMenu, updateStatus, toUI} from '../util';
+import type {Conditions} from '../../common/types';
 
 /**
  * AI teams sign free agents.
@@ -167,7 +168,7 @@ function amountWithMood(amount: number, mood: number = 0.5): number {
  * @param {number} numDays An integer representing the number of days to be simulated. If numDays is larger than the number of days remaining, then all of free agency will be simulated up until the preseason starts.
  * @param {boolean} start Is this a new request from the user to simulate days (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed. Default true.
  */
-async function play(numDays: number, start?: boolean = true) {
+async function play(numDays: number, conditions: Conditions, start?: boolean = true) {
     // This is called when there are no more days to play, either due to the user's request (e.g. 1 week) elapsing or at the end of free agency.
     const cbNoDays = async () => {
         lock.set('gameSim', false);
@@ -176,7 +177,7 @@ async function play(numDays: number, start?: boolean = true) {
         // Check to see if free agency is over
         if (g.daysLeft === 0) {
             await updateStatus('Idle');
-            await phase.newPhase(PHASE.PRESEASON);
+            await phase.newPhase(PHASE.PRESEASON, conditions);
         }
     };
 
@@ -190,7 +191,7 @@ async function play(numDays: number, start?: boolean = true) {
             if (g.daysLeft > 0 && numDays > 0) {
                 await toUI(['realtimeUpdate', ['playerMovement']]);
                 await updateStatus(`${g.daysLeft} days left`);
-                play(numDays - 1, false);
+                play(numDays - 1, conditions, false);
             } else {
                 await cbNoDays();
             }

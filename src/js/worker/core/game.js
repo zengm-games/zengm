@@ -5,7 +5,7 @@ import {COMPOSITE_WEIGHTS, PHASE, PLAYER, g, helpers} from '../../common';
 import {GameSim, finances, freeAgents, phase, player, season, team} from '../core';
 import {idb} from '../db';
 import {advStats, lock, logEvent, random, toUI, updatePlayMenu, updateStatus} from '../util';
-import type {GameResults} from '../../common/types';
+import type {Conditions, GameResults} from '../../common/types';
 
 async function writeTeamStats(results: GameResults) {
     let att = 0;
@@ -596,14 +596,14 @@ async function loadTeams() {
  * @param {boolean} start Is this a new request from the user to play games (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed. Default true.
  * @param {number?} gidPlayByPlay If this number matches a game ID number, then an array of strings representing the play-by-play game simulation are included in the api.realtimeUpdate raw call.
  */
-async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: number) {
+async function play(numDays: number, conditions: Conditions, start?: boolean = true, gidPlayByPlay?: number) {
     // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season
     const cbNoGames = async () => {
         // Check to see if the season is over
         if (g.phase < PHASE.PLAYOFFS) {
             const schedule = await season.getSchedule();
             if (schedule.length === 0) {
-                await phase.newPhase(PHASE.PLAYOFFS);
+                await phase.newPhase(PHASE.PLAYOFFS, conditions);
             }
         }
 
@@ -703,7 +703,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
         if (g.phase === PHASE.PLAYOFFS) {
             const playoffsOver = await season.newSchedulePlayoffsDay();
             if (playoffsOver) {
-                await phase.newPhase(PHASE.BEFORE_DRAFT);
+                await phase.newPhase(PHASE.BEFORE_DRAFT, conditions);
             }
         } else if (Math.random() < 1 / (100 * 50)) {
             // Should a rare tragic event occur? ONLY IN REGULAR SEASON, playoffs would be tricky with roster limits and no free agents
@@ -711,7 +711,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
             await player.killOne();
             toUI(['realtimeUpdate', ['playerMovement']]);
         }
-        play(numDays - 1, false);
+        play(numDays - 1, conditions, false);
     };
 
     // Simulates a day of games (whatever is in schedule) and passes the results to cbSaveResults

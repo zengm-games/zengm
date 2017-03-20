@@ -8,7 +8,7 @@ import type {Conditions} from '../../common/types';
 
 const liveGame = async (gid: number, conditions: Conditions) => {
     await toUI(['realtimeUpdate', [], helpers.leagueUrl(["live_game"]), {fromAction: true}], conditions);
-    game.play(1, true, gid);
+    game.play(1, conditions, true, gid);
 };
 
 const negotiate = async (pid: number, conditions: Conditions) => {
@@ -94,12 +94,12 @@ const playAmount = async (amount: 'day' | 'week' | 'month' | 'untilPreseason', c
     if (g.phase <= PHASE.PLAYOFFS) {
         await updateStatus('Playing...'); // For quick UI updating, before game.play
         // Start playing games
-        game.play(numDays);
+        game.play(numDays, conditions);
     } else if (g.phase === PHASE.FREE_AGENCY) {
         if (numDays > g.daysLeft) {
             numDays = g.daysLeft;
         }
-        freeAgents.play(numDays);
+        freeAgents.play(numDays, conditions);
     }
 };
 
@@ -134,7 +134,7 @@ const playMenu = {
         if (g.phase < PHASE.PLAYOFFS) {
             await updateStatus('Playing...'); // For quick UI updating, before await
             const numDays = await season.getDaysLeftSchedule();
-            game.play(numDays);
+            game.play(numDays, conditions);
         }
     },
 
@@ -151,19 +151,19 @@ const playMenu = {
             const numDaysThisSeries = 7 - series.home.won - series.away.won;
 
             const numDays = numDaysFutureRounds + numDaysThisSeries;
-            game.play(numDays);
+            game.play(numDays, conditions);
         }
     },
 
     untilDraft: async (conditions: Conditions) => {
         if (g.phase === PHASE.BEFORE_DRAFT) {
-            await phase.newPhase(PHASE.DRAFT);
+            await phase.newPhase(PHASE.DRAFT, conditions);
         }
     },
 
     untilResignPlayers: async (conditions: Conditions) => {
         if (g.phase === PHASE.AFTER_DRAFT) {
-            await phase.newPhase(PHASE.RESIGN_PLAYERS);
+            await phase.newPhase(PHASE.RESIGN_PLAYERS, conditions);
         }
     },
 
@@ -178,7 +178,7 @@ const playMenu = {
                 proceed = await toUI(['confirm', `Are you sure you want to proceed to free agency while ${numRemaining} of your players remain unsigned? If you do not re-sign them before free agency begins, they will be free to sign with any team, and you won't be able to go over the salary cap to sign them.`], conditions);
             }
             if (proceed) {
-                await phase.newPhase(PHASE.FREE_AGENCY);
+                await phase.newPhase(PHASE.FREE_AGENCY, conditions);
                 await updateStatus(`${g.daysLeft} days left`);
             }
         }
@@ -190,7 +190,7 @@ const playMenu = {
 
     untilRegularSeason: async (conditions: Conditions) => {
         if (g.phase === PHASE.PRESEASON) {
-            await phase.newPhase(PHASE.REGULAR_SEASON);
+            await phase.newPhase(PHASE.REGULAR_SEASON, conditions);
         }
     },
 
@@ -203,27 +203,27 @@ const playMenu = {
 
 const toolsMenu = {
     autoPlaySeasons: (conditions: Conditions) => {
-        league.initAutoPlay();
+        league.initAutoPlay(conditions);
     },
 
     skipToPlayoffs: async (conditions: Conditions) => {
-        await phase.newPhase(PHASE.PLAYOFFS);
+        await phase.newPhase(PHASE.PLAYOFFS, conditions);
     },
 
     skipToBeforeDraft: async (conditions: Conditions) => {
-        await phase.newPhase(PHASE.BEFORE_DRAFT);
+        await phase.newPhase(PHASE.BEFORE_DRAFT, conditions);
     },
 
     skipToAfterDraft: async (conditions: Conditions) => {
-        await phase.newPhase(PHASE.AFTER_DRAFT);
+        await phase.newPhase(PHASE.AFTER_DRAFT, conditions);
     },
 
     skipToPreseason: async (conditions: Conditions) => {
-        await phase.newPhase(PHASE.PRESEASON);
+        await phase.newPhase(PHASE.PRESEASON, conditions);
     },
 
     forceResumeDraft: async (conditions: Conditions) => {
-        await draft.untilUserOrEnd();
+        await draft.untilUserOrEnd(conditions);
     },
 
     resetDb: async (conditions: Conditions) => {

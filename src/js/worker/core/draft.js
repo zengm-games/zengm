@@ -5,7 +5,7 @@ import {PHASE, PLAYER, g, helpers} from '../../common';
 import {finances, league, phase, player} from '../core';
 import {idb} from '../db';
 import {local, logEvent, random, updatePlayMenu, updatePhase} from '../util';
-import type {PickRealized, TeamFiltered} from '../../common/types';
+import type {Conditions, PickRealized, TeamFiltered} from '../../common/types';
 
 // Add a new set of draft picks
 async function genPicks(season: number) {
@@ -491,7 +491,7 @@ async function selectPlayer(pick: PickRealized, pid: number) {
  * @memberOf core.draft
  * @return {Promise.[Array.<Object>, Array.<number>]} Resolves to array. First argument is the list of draft picks (from getOrder). Second argument is a list of player IDs who were drafted during this function call, in order.
  */
-async function untilUserOrEnd() {
+async function untilUserOrEnd(conditions: Conditions) {
     const pids = [];
 
     const [playersAll, draftOrder] = await Promise.all([
@@ -534,7 +534,7 @@ async function untilUserOrEnd() {
                 await updatePlayMenu();
             } else {
                 // Non-fantasy draft
-                await phase.newPhase(PHASE.AFTER_DRAFT);
+                await phase.newPhase(PHASE.AFTER_DRAFT, conditions);
             }
         }
 

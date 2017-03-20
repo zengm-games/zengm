@@ -173,7 +173,7 @@ const deleteOldData = async (options: {
 const draftUntilUserOrEnd = async (conditions: Conditions) => {
     await updateStatus('Draft in progress...');
 
-    const pids = await draft.untilUserOrEnd();
+    const pids = await draft.untilUserOrEnd(conditions);
     const draftOrder = await draft.getOrder();
 
     if (draftOrder.length === 0) {
@@ -542,7 +542,7 @@ const runBefore = async (
 };
 
 const startFantasyDraft = async (position: number | 'random', conditions: Conditions) => {
-    await phase.newPhase(PHASE.FANTASY_DRAFT, position);
+    await phase.newPhase(PHASE.FANTASY_DRAFT, conditions, position);
 };
 
 const switchTeam = async (tid: number, conditions: Conditions) => {

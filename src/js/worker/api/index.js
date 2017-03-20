@@ -18,11 +18,11 @@ const autoSortRoster = async (conditions: Conditions) => {
 };
 
 const beforeViewLeague = async (newLid: number, loadedLid: ?number, conditions: Conditions) => {
-    return beforeView.league(newLid, loadedLid);
+    return beforeView.league(newLid, loadedLid, conditions);
 };
 
 const beforeViewNonLeague = async (conditions: Conditions) => {
-    return beforeView.nonLeague();
+    return beforeView.nonLeague(conditions);
 };
 
 const cancelContractNegotiation = async (pid: number, conditions: Conditions) => {
@@ -453,10 +453,7 @@ const handleUploadedDraftClass = async (uploadedFile: any, seasonOffset: 0 | 1 |
 };
 
 const init = async (inputEnv: Env, conditions: Conditions) => {
-    env.enableLogging = inputEnv.enableLogging;
-    env.inCordova = inputEnv.inCordova;
-    env.heartbeatID = inputEnv.heartbeatID;
-    env.tld = inputEnv.tld;
+    Object.assign(env, inputEnv);
 
     // Kind of hacky, only run this for the first host tab
     if (idb.meta === undefined) {

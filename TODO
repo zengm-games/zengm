@@ -2,13 +2,13 @@ IVERSON - BEFORE FINAL
 
 shared worker
 - release beta without multileague support?
+  - league.disconnect has some stuff which needs to run in beforeView.beforeNonLeague
+  - any race condition if load two tabs at same time?
+  - fix comments like // Add conditions with hostID
+  - benchmark
 - need to track hostID or pass port around, through gameSim and stuff
   - solution eventually needs to handle multi-league case. all new stuff should be namespaced
   - new League(lid), then everything inside is the same? or pass lid and hostID to individual functions?
-  - look at every toUI call, pass hostID to it when necessary, have promise-worker-bi recognize that and emit only to that worker
-    - calls to worker should automatically include lid (metadata) and hostID
-      - should that be in every API call? handle it in "register" function?
-  - fix comments like // Add conditions with hostID
 - namespace stuff, after it's working for one league
   - attach lid to promiseWorker instance in host (call it "metadata"), update lid if it changes, and attach to every request from host
     - then from worker, pass into toUI

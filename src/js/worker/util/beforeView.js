@@ -4,7 +4,7 @@ import {Cache, connectLeague, idb} from '../db';
 import {g, helpers} from '../../common';
 import {league} from '../core';
 import {env, toUI, updatePhase, updatePlayMenu, updateStatus} from '../util';
-import type {League} from '../../common/types';
+import type {Conditions, League} from '../../common/types';
 
 let heartbeatIntervalID: number | void;
 
@@ -68,10 +68,13 @@ const checkHeartbeat = async (lid: number) => {
     throw new Error('A league can only be open in one tab at a time. If this league is not open in another tab, please wait a few seconds and reload.');
 };
 
-const beforeLeague = async (newLid: number, loadedLid: ?number) => {
+const beforeLeague = async (newLid: number, loadedLid: ?number, conditions: Conditions) => {
+console.log('newLid', newLid, 'loadedLid', loadedLid);
     // Make sure league template FOR THE CURRENT LEAGUE is showing
-    if (loadedLid !== newLid) {
-        await league.disconnect();
+    if (newLid !== loadedLid) {
+        if (newLid !== g.lid) {
+            await league.disconnect();
+        }
 
         // If this is a Web Worker, only one tab of a league can be open at a time
         if (!env.useSharedWorker) {
@@ -79,44 +82,48 @@ const beforeLeague = async (newLid: number, loadedLid: ?number) => {
             await checkHeartbeat(newLid);
         }
 
-        // Clear old game attributes from g, just to be sure
-        helpers.resetG();
-        await toUI(['resetG']); // Add conditions with hostID
+        if (newLid !== g.lid) {
+            // Clear old game attributes from g, just to be sure
+            helpers.resetG();
+            await toUI(['resetG'], conditions);
 
-        g.lid = newLid;
-        idb.league = await connectLeague(g.lid);
+            g.lid = newLid;
+            idb.league = await connectLeague(g.lid);
 
-        // Reuse existing cache, if it was just created for a new league
-        if (!idb.cache || !idb.cache.newLeague) {
-            idb.cache = new Cache();
-            await idb.cache.fill();
-        } else if (idb.cache && idb.cache.newLeague) {
-            idb.cache.newLeague = false;
+            // Reuse existing cache, if it was just created for a new league
+            if (!idb.cache || !idb.cache.newLeague) {
+                idb.cache = new Cache();
+                await idb.cache.fill();
+            } else if (idb.cache && idb.cache.newLeague) {
+                idb.cache.newLeague = false;
+            }
         }
 
         await league.loadGameAttributes();
 
         // Update play menu
-        await updateStatus();
-        await updatePhase();
+        await updateStatus(undefined, conditions);
+        await updatePhase(conditions);
         await updatePlayMenu();
 
-        // This is the only place we need to do this, since every league connection passes through here
-        await idb.cache.startAutoFlush();
+        if (newLid !== g.lid) {
+            // This is the only place we need to do this, since every league connection passes through here
+            await idb.cache.startAutoFlush();
+        }
 
-        toUI(['emit', 'updateTopMenu', {lid: g.lid}]); // Add conditions with hostID
+        toUI(['emit', 'updateTopMenu', {lid: g.lid}], conditions);
     }
 };
 
 // beforeNonLeagueRunning is to handle extra realtimeUpdate request triggered by stopping gameSim in league.disconnect
 let beforeNonLeagueRunning = false;
-const beforeNonLeague = async () => {
+const beforeNonLeague = async (conditions: Conditions) => {
     if (!beforeNonLeagueRunning) {
         try {
             beforeNonLeagueRunning = true;
-            await league.disconnect();
+//            await league.disconnect(); // Breaks multi tab mode unless we track open tabs
             clearInterval(heartbeatIntervalID);
-            await toUI(['emit', 'updateTopMenu', {lid: g.lid}]); // Add conditions with hostID
+            await toUI(['emit', 'updateTopMenu', {lid: undefined}], conditions);
             beforeNonLeagueRunning = false;
         } catch (err) {
             beforeNonLeagueRunning = false;

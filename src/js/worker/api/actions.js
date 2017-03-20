@@ -119,15 +119,15 @@ const playMenu = {
     },
 
     day: async (conditions: Conditions) => {
-        await playAmount('day');
+        await playAmount('day', conditions);
     },
 
     week: async (conditions: Conditions) => {
-        await playAmount('week');
+        await playAmount('week', conditions);
     },
 
     month: async (conditions: Conditions) => {
-        await playAmount('month');
+        await playAmount('month', conditions);
     },
 
     untilPlayoffs: async (conditions: Conditions) => {
@@ -185,7 +185,7 @@ const playMenu = {
     },
 
     untilPreseason: async (conditions: Conditions) => {
-        await playAmount('untilPreseason');
+        await playAmount('untilPreseason', conditions);
     },
 
     untilRegularSeason: async (conditions: Conditions) => {

@@ -5,7 +5,7 @@ import {PLAYER, g, helpers} from '../../common';
 import {league} from '../core';
 import {idb} from '../db';
 import {logEvent, random} from '../util';
-import type {OwnerMoodDeltas, ScheduleGame, Team, TeamFiltered} from '../../common/types';
+import type {Conditions, OwnerMoodDeltas, ScheduleGame, Team, TeamFiltered} from '../../common/types';
 
 /**
  * Update g.ownerMood based on performance this season.
@@ -77,7 +77,7 @@ async function saveAwardsByPlayer(awardsByPlayer: any) {
  * @memberOf core.season
  * @return {Promise}
  */
-async function doAwards() {
+async function doAwards(conditions: Conditions) {
     const awards: any = {season: g.season};
 
     // [{pid, type}]
@@ -274,7 +274,7 @@ async function doAwards() {
             showNotification: p.tid === g.userTid || p.type === "Most Valuable Player",
             pids: [p.pid],
             tids: [p.tid],
-        });
+        }, conditions);
     }
 }
 

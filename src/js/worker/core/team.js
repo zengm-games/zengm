@@ -5,7 +5,7 @@ import {PHASE, PLAYER, g, helpers} from '../../common';
 import {draft, player, trade} from '../core';
 import {idb} from '../db';
 import {local, logEvent, random} from '../util';
-import type {ContractInfo, TeamSeason, TeamStats, TradePickValues} from '../../common/types';
+import type {Conditions, ContractInfo, TeamSeason, TeamStats, TradePickValues} from '../../common/types';
 
 function genSeasonRow(tid: number, prevSeason?: TeamSeason): TeamSeason {
     const newSeason = {
@@ -901,7 +901,7 @@ async function updateStrategies() {
  * @memberOf core.team
  * @return {Promise.?string} Resolves to null if there is no error, or a string with the error message otherwise.
  */
-async function checkRosterSizes(): Promise<string | void> {
+async function checkRosterSizes(conditions: Conditions): Promise<string | void> {
     const minFreeAgents = [];
     let userTeamSizeError;
 
@@ -932,7 +932,7 @@ async function checkRosterSizes(): Promise<string | void> {
                 } else {
                     userTeamSizeError = `The ${g.teamRegionsCache[tid]} ${g.teamNamesCache[tid]} have `;
                 }
-                userTeamSizeError += `less than the minimum number of players (${g.minRosterSize}). You must add players (through <a href="${helpers.leagueUrl(["free_agents"])}">free agency</a> or <a href="${helpers.leagueUrl(["trade"])}">trades</a>) before continuing.<br><br>Reminder: you can always sign free agents to ${helpers.formatCurrency(g.minContract / 1000, "M", 1)}/yr contracts, even if you're over the cap!`;
+                userTeamSizeError += `less than the minimum number of players (${g.minRosterSize}). You must add players (through <a href="${helpers.leagueUrl(["free_agents"])}">free agency</a> or <a href="${helpers.leagueUrl(["trade"])}">trades</a>) before continuing.<br><br>Reminder: you can always sign free agents to ${helpers.formatCurrency(g.minContract / 1000, "M", 2)}/yr contracts, even if you're over the cap!`;
             } else {
                 // Auto-add players
                 const promises = [];
@@ -954,7 +954,7 @@ async function checkRosterSizes(): Promise<string | void> {
                         showNotification: false,
                         pids: [p.pid],
                         tids: [p.tid],
-                    });
+                    }, conditions);
 
                     promises.push(idb.cache.players.put(p));
 

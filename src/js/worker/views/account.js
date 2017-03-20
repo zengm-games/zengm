@@ -1,16 +1,17 @@
 // @flow
 
 import {account} from '../util';
-import type {GetOutput, UpdateEvents} from '../../common/types';
+import type {Conditions, GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateAccount(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
     state: any,
     topMenu: any,
+    conditions: Conditions,
 ): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') || updateEvents.includes('account')) {
-        await account.check();
+        await account.check(conditions);
 
         const goldUntilDate = new Date(topMenu.goldUntil * 1000);
         const goldUntilDateString = goldUntilDate.toDateString();

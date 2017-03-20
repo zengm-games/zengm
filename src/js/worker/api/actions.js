@@ -21,7 +21,7 @@ const negotiate = async (pid: number, conditions: Conditions) => {
                 type: 'error',
                 text: errorMsg,
                 saveToDb: false,
-            });
+            }, conditions);
         } else {
             toUI(['realtimeUpdate', [], helpers.leagueUrl(["negotiation", pid])], conditions);
         }

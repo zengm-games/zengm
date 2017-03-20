@@ -150,9 +150,9 @@ async function newPhaseRegularSeason() {
     return [undefined, ["playerMovement"]];
 }
 
-async function newPhasePlayoffs() {
+async function newPhasePlayoffs(conditions: Conditions) {
     // Achievements after regular season
-    account.checkAchievement.septuawinarian();
+    account.checkAchievement.septuawinarian(conditions);
 
     // Set playoff matchups
     const teams = helpers.orderByWinp(await idb.getCopies.teamsPlus({
@@ -176,7 +176,7 @@ async function newPhasePlayoffs() {
             text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tid], g.season])}">${g.teamNamesCache[tid]}</a> made the <a href="${helpers.leagueUrl(["playoffs", g.season])}">playoffs</a>.`,
             showNotification: tid === g.userTid,
             tids: [tid],
-        });
+        }, conditions);
     }
 
     await idb.cache.playoffSeries.put({
@@ -235,16 +235,16 @@ async function newPhasePlayoffs() {
 
 async function newPhaseBeforeDraft(conditions: Conditions) {
     // Achievements after playoffs
-    account.checkAchievement.fo_fo_fo();
-    account.checkAchievement["98_degrees"]();
-    account.checkAchievement.dynasty();
-    account.checkAchievement.dynasty_2();
-    account.checkAchievement.dynasty_3();
-    account.checkAchievement.moneyball();
-    account.checkAchievement.moneyball_2();
-    account.checkAchievement.small_market();
+    account.checkAchievement.fo_fo_fo(conditions);
+    account.checkAchievement["98_degrees"](conditions);
+    account.checkAchievement.dynasty(conditions);
+    account.checkAchievement.dynasty_2(conditions);
+    account.checkAchievement.dynasty_3(conditions);
+    account.checkAchievement.moneyball(conditions);
+    account.checkAchievement.moneyball_2(conditions);
+    account.checkAchievement.small_market(conditions);
 
-    await season.doAwards();
+    await season.doAwards(conditions);
 
     const teams = await idb.getCopies.teamsPlus({
         attrs: ["tid"],
@@ -286,7 +286,7 @@ async function newPhaseBeforeDraft(conditions: Conditions) {
                 }
                 const excessPot = (40 - pot) / 50;  // 0.02 for each potential rating below 40 (this can be negative)
                 if (excessAge + excessPot + random.gauss(0, 1) > 0) {
-                    player.retire(p, playerStats);
+                    player.retire(p, playerStats, conditions);
                     update = true;
                 }
             }
@@ -295,7 +295,7 @@ async function newPhaseBeforeDraft(conditions: Conditions) {
         // Update "free agent years" counter and retire players who have been free agents for more than one years
         if (p.tid === PLAYER.FREE_AGENT) {
             if (p.yearsFreeAgent >= 1) {
-                player.retire(p, playerStats);
+                player.retire(p, playerStats, conditions);
                 update = true;
             } else {
                 p.yearsFreeAgent += 1;
@@ -333,8 +333,8 @@ async function newPhaseBeforeDraft(conditions: Conditions) {
     await team.updateStrategies();
 
     // Achievements after awards
-    account.checkAchievement.hardware_store();
-    account.checkAchievement.sleeper_pick();
+    account.checkAchievement.hardware_store(conditions);
+    account.checkAchievement.sleeper_pick(conditions);
 
     const deltas = await season.updateOwnerMood();
     await genMessage(deltas);
@@ -350,7 +350,7 @@ async function newPhaseBeforeDraft(conditions: Conditions) {
     return [url, ["playerMovement"]];
 }
 
-async function newPhaseDraft() {
+async function newPhaseDraft(conditions: Conditions) {
     // Kill off old retired players (done here since not much else happens in this phase change, so making it a little
     // slower is fine). This assumes all killable players have no changes in the cache, which is almost certainly true,
     // but under certain rare cases could cause a minor problem.
@@ -370,7 +370,7 @@ async function newPhaseDraft() {
     });
     await Promise.all(promises);
 
-    await draft.genOrder();
+    await draft.genOrder(conditions);
 
     // This is a hack to handle weird cases where already-drafted players have draft.year set to the current season, which fucks up the draft UI
     const players = await idb.cache.players.getAll();
@@ -390,7 +390,7 @@ async function newPhaseAfterDraft() {
     return [undefined, ["playerMovement"]];
 }
 
-async function newPhaseResignPlayers() {
+async function newPhaseResignPlayers(conditions: Conditions) {
     const baseMoods = await player.genBaseMoods();
 
     // Re-sign players on user's team, and some AI players
@@ -408,7 +408,7 @@ async function newPhaseResignPlayers() {
                     text: error,
                     pids: [p.pid],
                     tids: [tid],
-                });
+                }, conditions);
             }
         }
     }
@@ -419,7 +419,7 @@ async function newPhaseResignPlayers() {
     return [helpers.leagueUrl(["negotiation"]), ["playerMovement"]];
 }
 
-async function newPhaseFreeAgency() {
+async function newPhaseFreeAgency(conditions: Conditions) {
     const teams = await idb.getCopies.teamsPlus({
         attrs: ["strategy"],
         season: g.season,
@@ -459,7 +459,7 @@ async function newPhaseFreeAgency() {
                     showNotification: false,
                     pids: [p.pid],
                     tids: [p.tid],
-                });
+                }, conditions);
 
                 // Else branch include call to addToFreeAgents, which handles updating the database
                 await idb.cache.players.put(p);
@@ -562,7 +562,7 @@ async function newPhase(phase: Phase, conditions: Conditions, extra?: any) {
             type: 'error',
             text: 'Phase change already in progress.',
             saveToDb: false,
-        });
+        }, conditions);
     } else {
         try {
             await updateStatus('Processing...');
@@ -591,7 +591,7 @@ async function newPhase(phase: Phase, conditions: Conditions, extra?: any) {
                 text: 'Critical error during phase change. <a href="https://basketball-gm.com/manual/debugging/"><b>Read this to learn about debugging.</b></a>',
                 saveToDb: false,
                 persistent: true,
-            });
+            }, conditions);
 
             console.error(err);
         }

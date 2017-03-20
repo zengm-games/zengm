@@ -3,7 +3,7 @@
 import {createLogger, g} from '../../common';
 import {idb} from '../db';
 import {toUI} from '../util';
-import type {LogEventSaveOptions, LogEventShowOptions} from '../../common/types';
+import type {Conditions, LogEventSaveOptions, LogEventShowOptions} from '../../common/types';
 
 const saveEvent = (event: LogEventSaveOptions) => {
     if (idb.cache) {
@@ -11,8 +11,9 @@ const saveEvent = (event: LogEventSaveOptions) => {
     }
 };
 
-const logEvent = createLogger(saveEvent, (options: LogEventShowOptions) => {
-    toUI(['showEvent', options]); // Add conditions with hostID
+// conditions only needed when showNotification is true, otherwise this is never called
+const logEvent = createLogger(saveEvent, (options: LogEventShowOptions, conditions?: Conditions) => {
+    toUI(['showEvent', options], conditions);
 });
 
 export default logEvent;

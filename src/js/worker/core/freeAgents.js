@@ -71,6 +71,7 @@ async function autoSign() {
                     p.gamesUntilTradable = 15;
                     idb.cache.markDirtyIndexes('players');
 
+                    // No conditions needed here because showNotification is false
                     logEvent({
                         type: "freeAgent",
                         text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,

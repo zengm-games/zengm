@@ -2,6 +2,7 @@
 
 import {idb} from '../db';
 import {logEvent} from '../util';
+import type {Conditions} from '../../common/types';
 
 const all = [{
     date: "2013-09-21",
@@ -116,7 +117,7 @@ const all = [{
     msg: "International players are here! And American players have more realistic names. Gameplay hasn't changed at all, this is purely cosmetic at this point.",
 }];
 
-const check = async () => {
+const check = async (conditions: Conditions) => {
     const changesRead = await idb.meta.attributes.get('changesRead');
 
     // Don't show anything on first visit
@@ -151,7 +152,7 @@ const check = async () => {
             type: "changes",
             text,
             saveToDb: false,
-        });
+        }, conditions);
 
         await idb.meta.attributes.put(all.length, 'changesRead');
     }

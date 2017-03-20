@@ -8,6 +8,7 @@ import {idb} from '../db';
 import * as names from '../../data/names';
 import {injuries, logEvent, random} from '../util';
 import type {
+    Conditions,
     GamePlayer,
     GameResults,
     Phase,
@@ -1212,7 +1213,7 @@ async function updateValues(p: Player | PlayerWithoutPid, psOverride?: PlayerSta
  * @param {Object} p Player object.
  * @return {Object} p Updated (retired) player object.
  */
-function retire(p: Player, playerStats: PlayerStats[], retiredNotification?: boolean = true) {
+function retire(p: Player, playerStats: PlayerStats[], conditions: Conditions, retiredNotification?: boolean = true) {
     if (retiredNotification) {
         logEvent({
             type: "retired",
@@ -1220,7 +1221,7 @@ function retire(p: Player, playerStats: PlayerStats[], retiredNotification?: boo
             showNotification: p.tid === g.userTid,
             pids: [p.pid],
             tids: [p.tid],
-        });
+        }, conditions);
     }
 
     p.tid = PLAYER.RETIRED;
@@ -1236,7 +1237,7 @@ function retire(p: Player, playerStats: PlayerStats[], retiredNotification?: boo
             showNotification: p.statsTids.includes(g.userTid),
             pids: [p.pid],
             tids: p.statsTids,
-        });
+        }, conditions);
     }
 }
 
@@ -1362,7 +1363,7 @@ function augmentPartialPlayer(p: any, scoutingRank: number): PlayerWithStats {
     return p;
 }
 
-function checkStatisticalFeat(pid: number, tid: number, p: GamePlayer, results: GameResults) {
+function checkStatisticalFeat(pid: number, tid: number, p: GamePlayer, results: GameResults, conditions: Conditions) {
     const minFactor = Math.sqrt(g.quarterLength / 12); // sqrt is to account for fatigue in short/long games. Also https://news.ycombinator.com/item?id=11032596
     const TEN = minFactor * 10;
     const FIVE = minFactor * 5;
@@ -1379,7 +1380,7 @@ function checkStatisticalFeat(pid: number, tid: number, p: GamePlayer, results: 
             showNotification: tid === g.userTid,
             pids: [pid],
             tids: [tid],
-        });
+        }, conditions);
     };
 
     let doubles = ["pts", "ast", "stl", "blk"].reduce((count, stat) => {
@@ -1472,7 +1473,7 @@ function checkStatisticalFeat(pid: number, tid: number, p: GamePlayer, results: 
     }
 }
 
-async function killOne() {
+async function killOne(conditions: Conditions) {
     const reason = random.choice([
         "died from a drug overdose",
         "was killed by a gunshot during an altercation at a night club",
@@ -1514,7 +1515,7 @@ async function killOne() {
     // Get player stats, used for HOF calculation
     const playerStats = await idb.getCopies.playerStats({pid: p.pid});
 
-    retire(p, playerStats, false);
+    retire(p, playerStats, conditions, false);
     p.diedYear = g.season;
 
     await idb.cache.players.put(p);
@@ -1527,7 +1528,7 @@ async function killOne() {
         pids: [p.pid],
         tids: [tid],
         persistent: true,
-    });
+    }, conditions);
 }
 
 export default {

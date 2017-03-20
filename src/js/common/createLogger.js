@@ -1,6 +1,6 @@
 // @flow
 
-import type {LogEventSaveOptions, LogEventShowOptions, LogEventType} from '../common/types';
+import type {Conditions, LogEventSaveOptions, LogEventShowOptions, LogEventType} from '../common/types';
 
 // Really, pids, tids, and type should not be optional if saveToDb is true
 type LogEventOptions = {
@@ -27,7 +27,7 @@ function createLogger(
         text,
         tids,
         type,
-    }: LogEventOptions) => {
+    }: LogEventOptions, conditions?: Conditions) => {
         if (saveToDb) {
             if (pids === undefined && tids === undefined) {
                 throw new Error('Saved event must include pids or tids');
@@ -46,7 +46,7 @@ function createLogger(
                 persistent,
                 text,
                 type,
-            });
+            }, conditions);
         }
     };
 

@@ -201,7 +201,7 @@ async function writeTeamStats(results: GameResults) {
     return att;
 }
 
-async function writePlayerStats(results: GameResults) {
+async function writePlayerStats(results: GameResults, conditions: Conditions) {
     await Promise.all(results.team.map(t => Promise.all(t.player.map(async (p) => {
         // Only need to write stats if player got minutes
         if (p.stat.min === 0) {
@@ -210,7 +210,7 @@ async function writePlayerStats(results: GameResults) {
 
         const promises = [];
 
-        promises.push(player.checkStatisticalFeat(p.id, t.id, p, results));
+        promises.push(player.checkStatisticalFeat(p.id, t.id, p, results, conditions));
 
         const ps = await idb.cache.playerStats.indexGet('playerStatsByPid', p.id);
 
@@ -246,7 +246,7 @@ async function writePlayerStats(results: GameResults) {
                     showNotification: p2.tid === g.userTid,
                     pids: [p2.pid],
                     tids: [p2.tid],
-                });
+                }, conditions);
 
                 // Some chance of a loss of athleticism from serious injuries
                 // 100 game injury: 67% chance of losing between 0 and 10 of spd, jmp, endu
@@ -284,7 +284,7 @@ async function writePlayerStats(results: GameResults) {
     }))));
 }
 
-async function writeGameStats(results: GameResults, att: number) {
+async function writeGameStats(results: GameResults, att: number, conditions: Conditions) {
     const gameStats = {
         gid: results.gid,
         att,
@@ -348,7 +348,7 @@ async function writeGameStats(results: GameResults, att: number) {
             text,
             saveToDb: false,
             tids: [results.team[0].id, results.team[1].id],
-        });
+        }, conditions);
     }
 
     if (results.clutchPlays.length > 0) {
@@ -362,14 +362,14 @@ async function writeGameStats(results: GameResults, att: number) {
                 }
                 delete results.clutchPlays[i].tempText;
             }
-            logEvent(results.clutchPlays[i]);
+            logEvent(results.clutchPlays[i], conditions);
         }
     }
 
     await idb.cache.games.add(gameStats);
 }
 
-async function updatePlayoffSeries(results: GameResults) {
+async function updatePlayoffSeries(results: GameResults, conditions: Conditions) {
     const playoffSeries = await idb.cache.playoffSeries.get(g.season);
 
     const playoffRound = playoffSeries.series[playoffSeries.currentRound];
@@ -436,7 +436,7 @@ async function updatePlayoffSeries(results: GameResults) {
                 text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[winnerTid], g.season])}">${g.teamNamesCache[winnerTid]}</a> defeated the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[loserTid], g.season])}">${g.teamNamesCache[loserTid]}</a> in the ${currentRoundText}, 4-${loserWon}.`,
                 showNotification,
                 tids: [winnerTid, loserTid],
-            });
+            }, conditions);
         }
     }
 
@@ -619,8 +619,8 @@ async function play(numDays: number, conditions: Conditions, start?: boolean = t
     const cbSaveResults = async results => {
         const gidsFinished = await Promise.all(results.map(async (result) => {
             const att = await writeTeamStats(result);
-            await writeGameStats(result, att);
-            await writePlayerStats(result);
+            await writeGameStats(result, att, conditions);
+            await writePlayerStats(result, conditions);
             return result.gid;
         }));
 
@@ -628,7 +628,7 @@ async function play(numDays: number, conditions: Conditions, start?: boolean = t
 
         // Update playoff series W/L
         if (g.phase === PHASE.PLAYOFFS) {
-            promises.push(updatePlayoffSeries(results));
+            promises.push(updatePlayoffSeries(results, conditions));
         }
 
         // Delete finished games from schedule
@@ -658,7 +658,7 @@ async function play(numDays: number, conditions: Conditions, start?: boolean = t
                     showNotification: p.tid === g.userTid,
                     pids: [p.pid],
                     tids: [p.tid],
-                });
+                }, conditions);
             }
 
             // Also check for gamesUntilTradable
@@ -708,7 +708,7 @@ async function play(numDays: number, conditions: Conditions, start?: boolean = t
         } else if (Math.random() < 1 / (100 * 50)) {
             // Should a rare tragic event occur? ONLY IN REGULAR SEASON, playoffs would be tricky with roster limits and no free agents
             // 100 days in a season (roughly), and we want a death every 50 years on average
-            await player.killOne();
+            await player.killOne(conditions);
             toUI(['realtimeUpdate', ['playerMovement']]);
         }
         play(numDays - 1, conditions, false);
@@ -793,7 +793,7 @@ async function play(numDays: number, conditions: Conditions, start?: boolean = t
     if (start) {
         const canStartGames = await lock.canStartGames();
         if (canStartGames) {
-            const userTeamSizeError = await team.checkRosterSizes();
+            const userTeamSizeError = await team.checkRosterSizes(conditions);
             if (userTeamSizeError === undefined) {
                 await updatePlayMenu();
                 cbRunDay();
@@ -804,7 +804,7 @@ async function play(numDays: number, conditions: Conditions, start?: boolean = t
                     type: 'error',
                     text: userTeamSizeError,
                     saveToDb: false,
-                });
+                }, conditions);
             }
         }
     } else {

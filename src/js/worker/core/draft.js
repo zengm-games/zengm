@@ -117,28 +117,28 @@ function lotteryLogTxt(tid: number, type: 'chance' | 'moveddown' | 'movedup' | '
     return txt;
 }
 
-function logAction(tid: number, text: string) {
+function logAction(tid: number, text: string, conditions: Conditions) {
     logEvent({
         type: "draft",
         text,
         showNotification: tid === g.userTid,
         pids: [],
         tids: [tid],
-    });
+    }, conditions);
 }
 
-function logLotteryChances(chances: number[], teams: TeamFiltered[], draftOrder) {
+function logLotteryChances(chances: number[], teams: TeamFiltered[], draftOrder, conditions: Conditions) {
     for (let i = 0; i < chances.length; i++) {
         if (i < teams.length) {
             const origTm = teams[i].tid;
             const tm = draftOrder[origTm][1].tid;
             const txt = lotteryLogTxt(tm, 'chance', chances[i]);
-            logAction(tm, txt);
+            logAction(tm, txt, conditions);
         }
     }
 }
 
-function logLotteryWinners(chances: number[], teams: TeamFiltered[], tm: number, origTm: number, pick: number) {
+function logLotteryWinners(chances: number[], teams: TeamFiltered[], tm: number, origTm: number, pick: number, conditions: Conditions) {
     const idx = teams.find(t => t.tid === origTm);
     if (idx !== undefined) {
         let txt;
@@ -149,7 +149,7 @@ function logLotteryWinners(chances: number[], teams: TeamFiltered[], tm: number,
         } else {
             txt = lotteryLogTxt(tm, 'normal', pick);
         }
-        logAction(tm, txt);
+        logAction(tm, txt, conditions);
     }
 }
 
@@ -234,7 +234,7 @@ function lotterySort(teams: TeamFiltered[]) {
  * @memberOf core.draft
  * @return {Promise}
  */
-async function genOrder() {
+async function genOrder(conditions: Conditions) {
     const teams = await idb.getCopies.teamsPlus({
         attrs: ["tid", "cid"],
         seasonAttrs: ["winp", "playoffRoundsWon"],
@@ -286,7 +286,7 @@ async function genOrder() {
         };
     }
 
-    logLotteryChances(chancePct, teams, draftPicksIndexed);
+    logLotteryChances(chancePct, teams, draftPicksIndexed, conditions);
 
     const draftOrder = [];
 
@@ -300,7 +300,7 @@ async function genOrder() {
             originalTid: teams[firstThree[i]].tid,
         });
 
-        logLotteryWinners(chancePct, teams, tid, teams[firstThree[i]].tid, i + 1);
+        logLotteryWinners(chancePct, teams, tid, teams[firstThree[i]].tid, i + 1, conditions);
     }
 
     // First round - everyone else
@@ -316,7 +316,7 @@ async function genOrder() {
             });
 
             if (pick < 15) {
-                logLotteryWinners(chancePct, teams, tid, teams[i].tid, pick);
+                logLotteryWinners(chancePct, teams, tid, teams[i].tid, pick, conditions);
             }
 
             pick += 1;

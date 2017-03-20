@@ -2,16 +2,17 @@
 
 import {SPORT, fetchWrapper} from '../../common';
 import {account, env} from '../util';
-import type {GetOutput, UpdateEvents} from '../../common/types';
+import type {Conditions, GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateAccountUpdateCard(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
     state: any,
     topMenu: any,
+    conditions: Conditions,
 ): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') || updateEvents.includes('account')) {
-        await account.check();
+        await account.check(conditions);
 
         try {
             const data = await fetchWrapper({

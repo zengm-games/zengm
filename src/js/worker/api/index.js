@@ -30,16 +30,16 @@ const cancelContractNegotiation = async (pid: number, conditions: Conditions) =>
 };
 
 const checkAccount = async (conditions: Conditions) => {
-    await account.check();
+    await account.check(conditions);
 };
 
 const checkParticipationAchievement = async (force: boolean = false, conditions: Conditions) => {
     if (force) {
-        await account.addAchievements(['participation']);
+        await account.addAchievements(['participation'], conditions);
     } else {
         const achievements = await account.getAchievements();
         if (achievements[0].count === 0) {
-            await account.addAchievements(['participation']);
+            await account.addAchievements(['participation'], conditions);
         }
     }
 };
@@ -462,7 +462,7 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
         idb.meta = await connectMeta(inputEnv.fromLocalStorage);
 
         // Any news? If so, display notification.
-        await changes.check();
+        await changes.check(conditions);
     }
 };
 
@@ -531,7 +531,7 @@ const runBefore = async (
 ): Promise<(void | {[key: string]: any})[]> => {
     if (views.hasOwnProperty(viewId) && views[viewId].hasOwnProperty('runBefore')) {
         return Promise.all(views[viewId].runBefore.map((fn) => {
-            return fn(inputs, updateEvents, prevData, topMenu);
+            return fn(inputs, updateEvents, prevData, topMenu, conditions);
         }));
     }
 

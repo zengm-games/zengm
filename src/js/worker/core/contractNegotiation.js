@@ -128,6 +128,7 @@ async function accept(pid: number, amount: number, exp: number): Promise<?string
         exp,
     }, true);
 
+    // No conditions needed here because showNotification is false
     if (negotiation.resigning) {
         logEvent({
             type: "reSigned",

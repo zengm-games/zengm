@@ -81,7 +81,7 @@ const beforeLeague = async (newLid: number, loadedLid: ?number) => {
 
         // Clear old game attributes from g, just to be sure
         helpers.resetG();
-        await toUI('resetG');
+        await toUI(['resetG']); // Add conditions with hostID
 
         g.lid = newLid;
         idb.league = await connectLeague(g.lid);
@@ -104,7 +104,7 @@ const beforeLeague = async (newLid: number, loadedLid: ?number) => {
         // This is the only place we need to do this, since every league connection passes through here
         await idb.cache.startAutoFlush();
 
-        toUI('emit', 'updateTopMenu', {lid: g.lid});
+        toUI(['emit', 'updateTopMenu', {lid: g.lid}]); // Add conditions with hostID
     }
 };
 
@@ -116,7 +116,7 @@ const beforeNonLeague = async () => {
             beforeNonLeagueRunning = true;
             await league.disconnect();
             clearInterval(heartbeatIntervalID);
-            toUI('emit', 'updateTopMenu', {lid: g.lid});
+            await toUI(['emit', 'updateTopMenu', {lid: g.lid}]); // Add conditions with hostID
             beforeNonLeagueRunning = false;
         } catch (err) {
             beforeNonLeagueRunning = false;

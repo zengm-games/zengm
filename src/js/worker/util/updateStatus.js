@@ -28,10 +28,10 @@ async function updateStatus(statusText?: string) {
             }
         }
 
-        toUI('emit', 'updateTopMenu', {statusText: defaultStatusText});
+        toUI(['emit', 'updateTopMenu', {statusText: defaultStatusText}]);
     } else if (statusText !== local.statusText) {
         local.statusText = statusText;
-        toUI('emit', 'updateTopMenu', {statusText});
+        toUI(['emit', 'updateTopMenu', {statusText}]);
     }
 }
 

@@ -46,9 +46,9 @@ async function setGameAttributes(gameAttributes: GameAttributes) {
         g[key] = gameAttributes[key];
     }
 
-    await toUI('setGameAttributes', gameAttributes);
+    await toUI(['setGameAttributes', gameAttributes]);
     if (toUpdate.includes('userTid') || toUpdate.includes('userTids')) {
-        await toUI('emit', 'updateMultiTeam');
+        await toUI(['emit', 'updateMultiTeam']);
     }
 }
 
@@ -142,7 +142,7 @@ async function create(
 
     // Clear old game attributes from g, to make sure the new ones are saved to the db in setGameAttributes
     helpers.resetG();
-    await toUI('resetG');
+    await toUI(['resetG']);
 
     idb.cache = new Cache();
     idb.cache.newLeague = true;
@@ -453,7 +453,7 @@ async function create(
 
     await idb.cache.flush();
 
-    toUI('bbgmPing', "league");
+    toUI(['bbgmPing', 'league']); // Add conditions with hostID
 
     return lid;
 }
@@ -576,11 +576,11 @@ async function loadGameAttributes() {
         }
     });
 
-    await toUI('setGameAttributes', g);
+    await toUI(['setGameAttributes', g]);
 
     // UI stuff
-    toUI('emit', 'updateTopMenu', {godMode: g.godMode});
-    toUI('emit', 'updateMultiTeam');
+    toUI(['emit', 'updateTopMenu', {godMode: g.godMode}]);
+    toUI(['emit', 'updateMultiTeam']);
 }
 
 // Depending on phase, initiate action that will lead to the next phase
@@ -608,7 +608,7 @@ async function autoPlay() {
 }
 
 async function initAutoPlay() {
-    const result = await toUI('prompt', 'This will play through multiple seasons, using the AI to manage your team. How many seasons do you want to simulate?', '5');
+    const result = await toUI(['prompt', 'This will play through multiple seasons, using the AI to manage your team. How many seasons do you want to simulate?', '5']); // Add conditions with hostID
     const numSeasons = parseInt(result, 10);
 
     if (Number.isInteger(numSeasons)) {

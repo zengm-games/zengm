@@ -4,13 +4,14 @@ import {PHASE, g, helpers} from '../../common';
 import {contractNegotiation, draft, freeAgents, game, league, phase, season, trade} from '../core';
 import {idb, reset} from '../db';
 import {local, lock, logEvent, toUI, updatePlayMenu, updateStatus} from '../util';
+import type {Conditions} from '../../common/types';
 
-const liveGame = async (gid: number) => {
-    await toUI('realtimeUpdate', [], helpers.leagueUrl(["live_game"]), {fromAction: true});
+const liveGame = async (gid: number, conditions: Conditions) => {
+    await toUI(['realtimeUpdate', [], helpers.leagueUrl(["live_game"]), {fromAction: true}], conditions);
     game.play(1, true, gid);
 };
 
-const negotiate = async (pid: number) => {
+const negotiate = async (pid: number, conditions: Conditions) => {
     // If there is no active negotiation with this pid, create it
     const negotiation = await idb.cache.negotiations.get(pid);
     if (!negotiation) {
@@ -22,10 +23,10 @@ const negotiate = async (pid: number) => {
                 saveToDb: false,
             });
         } else {
-            toUI('realtimeUpdate', [], helpers.leagueUrl(["negotiation", pid]));
+            toUI(['realtimeUpdate', [], helpers.leagueUrl(["negotiation", pid])], conditions);
         }
     } else {
-        toUI('realtimeUpdate', [], helpers.leagueUrl(["negotiation", pid]));
+        toUI(['realtimeUpdate', [], helpers.leagueUrl(["negotiation", pid])], conditions);
     }
 };
 
@@ -38,7 +39,7 @@ type TradeForOptions = {
     userPids: number[],
 };
 
-const tradeFor = async ({otherDpids, otherPids, pid, tid, userDpids, userPids}: TradeForOptions) => {
+const tradeFor = async ({otherDpids, otherPids, pid, tid, userDpids, userPids}: TradeForOptions, conditions: Conditions) => {
     let teams;
 
     if (pid !== undefined) {
@@ -73,10 +74,10 @@ const tradeFor = async ({otherDpids, otherPids, pid, tid, userDpids, userPids}: 
 
     // Start a new trade based on a list of pids and dpids, like from the trading block
     await trade.create(teams);
-    toUI('realtimeUpdate', [], helpers.leagueUrl(["trade"]));
+    toUI(['realtimeUpdate', [], helpers.leagueUrl(["trade"])], conditions);
 };
 
-const playAmount = async (amount: 'day' | 'week' | 'month' | 'untilPreseason') => {
+const playAmount = async (amount: 'day' | 'week' | 'month' | 'untilPreseason', conditions: Conditions) => {
     let numDays;
     if (amount === "day") {
         numDays = 1;
@@ -102,7 +103,7 @@ const playAmount = async (amount: 'day' | 'week' | 'month' | 'untilPreseason') =
     }
 };
 
-const playStop = async () => {
+const playStop = async (conditions: Conditions) => {
     lock.set('stopGameSim', true);
     if (g.phase !== PHASE.FREE_AGENCY) {
         // This is needed because we can't be sure if core.game.play will be called again
@@ -113,23 +114,23 @@ const playStop = async () => {
 };
 
 const playMenu = {
-    stop: async () => {
+    stop: async (conditions: Conditions) => {
         await playStop();
     },
 
-    day: async () => {
+    day: async (conditions: Conditions) => {
         await playAmount('day');
     },
 
-    week: async () => {
+    week: async (conditions: Conditions) => {
         await playAmount('week');
     },
 
-    month: async () => {
+    month: async (conditions: Conditions) => {
         await playAmount('month');
     },
 
-    untilPlayoffs: async () => {
+    untilPlayoffs: async (conditions: Conditions) => {
         if (g.phase < PHASE.PLAYOFFS) {
             await updateStatus('Playing...'); // For quick UI updating, before await
             const numDays = await season.getDaysLeftSchedule();
@@ -137,7 +138,7 @@ const playMenu = {
         }
     },
 
-    throughPlayoffs: async () => {
+    throughPlayoffs: async (conditions: Conditions) => {
         if (g.phase === PHASE.PLAYOFFS) {
             await updateStatus('Playing...'); // For quick UI updating, before await
             const playoffSeries = await idb.cache.playoffSeries.get(g.season);
@@ -154,19 +155,19 @@ const playMenu = {
         }
     },
 
-    untilDraft: async () => {
+    untilDraft: async (conditions: Conditions) => {
         if (g.phase === PHASE.BEFORE_DRAFT) {
             await phase.newPhase(PHASE.DRAFT);
         }
     },
 
-    untilResignPlayers: async () => {
+    untilResignPlayers: async (conditions: Conditions) => {
         if (g.phase === PHASE.AFTER_DRAFT) {
             await phase.newPhase(PHASE.RESIGN_PLAYERS);
         }
     },
 
-    untilFreeAgency: async () => {
+    untilFreeAgency: async (conditions: Conditions) => {
         if (g.phase === PHASE.RESIGN_PLAYERS) {
             const negotiations = await idb.cache.negotiations.getAll();
             const numRemaining = negotiations.length;
@@ -174,7 +175,7 @@ const playMenu = {
             // Show warning dialog only if there are players remaining un-re-signed
             let proceed = true;
             if (numRemaining > 0) {
-                proceed = await toUI('confirm', `Are you sure you want to proceed to free agency while ${numRemaining} of your players remain unsigned? If you do not re-sign them before free agency begins, they will be free to sign with any team, and you won't be able to go over the salary cap to sign them.`);
+                proceed = await toUI(['confirm', `Are you sure you want to proceed to free agency while ${numRemaining} of your players remain unsigned? If you do not re-sign them before free agency begins, they will be free to sign with any team, and you won't be able to go over the salary cap to sign them.`], conditions);
             }
             if (proceed) {
                 await phase.newPhase(PHASE.FREE_AGENCY);
@@ -183,17 +184,17 @@ const playMenu = {
         }
     },
 
-    untilPreseason: async () => {
+    untilPreseason: async (conditions: Conditions) => {
         await playAmount('untilPreseason');
     },
 
-    untilRegularSeason: async () => {
+    untilRegularSeason: async (conditions: Conditions) => {
         if (g.phase === PHASE.PRESEASON) {
             await phase.newPhase(PHASE.REGULAR_SEASON);
         }
     },
 
-    stopAuto: async () => {
+    stopAuto: async (conditions: Conditions) => {
         local.autoPlaySeasons = 0;
         updatePlayMenu();
         await playStop();
@@ -201,32 +202,32 @@ const playMenu = {
 };
 
 const toolsMenu = {
-    autoPlaySeasons: () => {
+    autoPlaySeasons: (conditions: Conditions) => {
         league.initAutoPlay();
     },
 
-    skipToPlayoffs: async () => {
+    skipToPlayoffs: async (conditions: Conditions) => {
         await phase.newPhase(PHASE.PLAYOFFS);
     },
 
-    skipToBeforeDraft: async () => {
+    skipToBeforeDraft: async (conditions: Conditions) => {
         await phase.newPhase(PHASE.BEFORE_DRAFT);
     },
 
-    skipToAfterDraft: async () => {
+    skipToAfterDraft: async (conditions: Conditions) => {
         await phase.newPhase(PHASE.AFTER_DRAFT);
     },
 
-    skipToPreseason: async () => {
+    skipToPreseason: async (conditions: Conditions) => {
         await phase.newPhase(PHASE.PRESEASON);
     },
 
-    forceResumeDraft: async () => {
+    forceResumeDraft: async (conditions: Conditions) => {
         await draft.untilUserOrEnd();
     },
 
-    resetDb: async () => {
-        const response = await toUI('confirm', 'Are you sure you want to reset the database? This will delete all your current saved games.');
+    resetDb: async (conditions: Conditions) => {
+        const response = await toUI(['confirm', 'Are you sure you want to reset the database? This will delete all your current saved games.'], conditions);
         if (response) {
             await reset();
         }

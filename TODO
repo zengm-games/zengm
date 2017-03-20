@@ -3,8 +3,14 @@ IVERSON - BEFORE FINAL
 shared worker
 - need to track hostID or pass port around, through gameSim and stuff
   - solution eventually needs to handle multi-league case. all new stuff should be namespaced
+  - new League(lid), then everything inside is the same? or pass lid and hostID to individual functions?
+  - look at every toUI call, pass hostID to it when necessary, have promise-worker-bi recognize that and emit only to that worker
+    - calls to worker should automatically include lid (metadata) and hostID
+      - should that be in every API call? handle it in "register" function?
+  - fix comments like // Add conditions with hostID
 - namespace stuff, after it's working for one league
-  - attach lid to promiseWorker instance in host (call it "metadata"), update lid if it changes, and attach to every request
+  - attach lid to promiseWorker instance in host (call it "metadata"), update lid if it changes, and attach to every request from host
+    - then from worker, pass into toUI
   - query API: flag to determine if broadcast or single response. default single response. optional last arg, so single response use case is same API as now
     - if broadcast, then response is always undefined
     - broadcast needs to be namespaced, too. like only "update all league 5" not "update all tabs open in every league"
@@ -18,12 +24,21 @@ shared worker
     - send message from worker - broadcast vs individual host
       - requires hostID sent to host and included with each message, or can it rely on port sent along with message even in which case maybe sending hostID back to host on init is not required?
     - some toUI ones require a response, and also need to send bbgmPing/notifyError/showAd to individual tab
+      - look at all toUI calls
 - after it's working
   - is there a race condition where host can query worker before host knows its hostID? might not matter if it's only init
   - benchmark
   - disconnect league only when none are left registered to promise worker (so need api to get all metadata)
   - location var inside shared worker?
   - when closing tab, how to forget port? http://stackoverflow.com/questions/13662089/javascript-how-to-know-if-a-connection-with-a-shared-worker-is-still-alive
+  - split promise-worker-bi into two classes, sharing some base class
+    - register function doens't need to recieve hostID and metadata on host
+  - test live gamesim
+  - rethink account.check
+
+minor bugs
+- once players retire, they disappear from draft summary
+- draft picks too valuable in trading block - can repeatedly trade 2nd round pick for two 2nd round picks
 
 mozilla glitches https://www.reddit.com/r/BasketballGM/comments/5zgrv9/basketball_gm_40_beta/dez4upt/
 

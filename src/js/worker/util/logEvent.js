@@ -12,7 +12,7 @@ const saveEvent = (event: LogEventSaveOptions) => {
 };
 
 const logEvent = createLogger(saveEvent, (options: LogEventShowOptions) => {
-    toUI('showEvent', options);
+    toUI(['showEvent', options]); // Add conditions with hostID
 });
 
 export default logEvent;

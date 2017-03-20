@@ -17,7 +17,7 @@ async function updatePhase() {
     const phaseText = `${g.season} ${PHASE_TEXT[g.phase]}`;
     if (phaseText !== local.phaseText) {
         local.phaseText = phaseText;
-        toUI('emit', 'updateTopMenu', {phaseText});
+        toUI(['emit', 'updateTopMenu', {phaseText}]);
 
         // Update phase in meta database. No need to have this block updating the UI or anything.
         (async () => {

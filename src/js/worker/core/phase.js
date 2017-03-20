@@ -38,7 +38,7 @@ async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = 
     await updatePlayMenu();
 
     updateEvents.push("newPhase");
-    toUI('realtimeUpdate', updateEvents, url);
+    toUI(['realtimeUpdate', updateEvents, url]); // Add conditions with hostID
 
     // If auto-simulating, initiate next action
     if (local.autoPlaySeasons > 0) {
@@ -103,7 +103,7 @@ async function newPhasePreseason() {
     }
 
     if (env.enableLogging && !env.inCordova) {
-        toUI('emit', 'showAd', 'modal', local.autoPlaySeasons);
+        toUI(['emit', 'showAd', 'modal', local.autoPlaySeasons]); // Add conditions with hostID
     }
 
     return [undefined, ["playerMovement"]];
@@ -345,7 +345,7 @@ async function newPhaseBeforeDraft() {
         url = helpers.leagueUrl(["history"]);
     }
 
-    toUI('bbgmPing', "season");
+    toUI(['bbgmPing', 'season']); // Add conditions with hostID
 
     return [url, ["playerMovement"]];
 }

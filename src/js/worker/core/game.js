@@ -677,6 +677,8 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
 
         await Promise.all(promises);
 
+        await advStats();
+
         // If there was a play by play done for one of these games, get it
         let raw;
         let url;
@@ -690,13 +692,13 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
                     url = helpers.leagueUrl(["live_game"]);
                 }
             }
+
+            await toUI(['realtimeUpdate', ['gameSim'], url, raw]); // Add conditions with hostID
         } else {
             url = undefined;
+
+            await toUI(['realtimeUpdate', ['gameSim']]);
         }
-
-        await advStats();
-
-        await toUI('realtimeUpdate', ["gameSim"], url, raw);
 
         if (g.phase === PHASE.PLAYOFFS) {
             const playoffsOver = await season.newSchedulePlayoffsDay();
@@ -707,7 +709,7 @@ async function play(numDays: number, start?: boolean = true, gidPlayByPlay?: num
             // Should a rare tragic event occur? ONLY IN REGULAR SEASON, playoffs would be tricky with roster limits and no free agents
             // 100 days in a season (roughly), and we want a death every 50 years on average
             await player.killOne();
-            toUI('realtimeUpdate', ["playerMovement"]);
+            toUI(['realtimeUpdate', ['playerMovement']]);
         }
         play(numDays - 1, false);
     };

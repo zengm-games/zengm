@@ -103,7 +103,7 @@ const updatePlayMenu = async () => {
         return allOptions[id];
     });
 
-    toUI('emit', 'updateTopMenu', {options: someOptions});
+    toUI(['emit', 'updateTopMenu', {options: someOptions}]);
 };
 
 export default updatePlayMenu;

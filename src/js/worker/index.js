@@ -15,7 +15,11 @@ import * as util from './util';
 self.bbgm = Object.assign({}, common, core, db, util);
 
 // God damn this function is ugly, clean up! Can probably share with ui.
-util.promiseWorker.register(([name, ...params]) => {
+util.promiseWorker.register((hostID, metadata, [name, ...params]) => {
+    const conditions = {
+        hostID,
+    };
+
     if (name.indexOf('actions.') === 0) {
         let subname = name.replace('actions.', '');
 
@@ -26,7 +30,7 @@ util.promiseWorker.register(([name, ...params]) => {
                 throw new Error(`API call to nonexistant worker function "${name}" with params ${JSON.stringify(params)}`);
             }
 
-            return api.actions.playMenu[subname](...params);
+            return api.actions.playMenu[subname](...params, conditions);
         } else if (subname.indexOf('toolsMenu.') === 0) {
             subname = subname.replace('toolsMenu.', '');
 
@@ -34,19 +38,19 @@ util.promiseWorker.register(([name, ...params]) => {
                 throw new Error(`API call to nonexistant worker function "${name}" with params ${JSON.stringify(params)}`);
             }
 
-            return api.actions.toolsMenu[subname](...params);
+            return api.actions.toolsMenu[subname](...params, conditions);
         }
 
         if (!api.actions.hasOwnProperty(subname)) {
             throw new Error(`API call to nonexistant worker function "${name}" with params ${JSON.stringify(params)}`);
         }
 
-        return api.actions[subname](...params);
+        return api.actions[subname](...params, conditions);
     }
 
     if (!api.hasOwnProperty(name)) {
         throw new Error(`API call to nonexistant worker function "${name}" with params ${JSON.stringify(params)}`);
     }
 
-    return api[name](...params);
+    return api[name](...params, conditions);
 });

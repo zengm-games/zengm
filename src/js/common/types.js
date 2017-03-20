@@ -132,6 +132,10 @@ export type Awards = {
 
 export type BackboardTx = any;
 
+export type Conditions = {
+    hostID?: number,
+};
+
 export type DraftOrder = any;
 
 export type DraftPick = {

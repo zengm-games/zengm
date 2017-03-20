@@ -15,7 +15,7 @@ import type {Env} from '../common/types';
 
 // source-map-support is no longer needed here because no Promise polyfill in the UI, only sometimes in the worker.
 
-promiseWorker.register(([name, ...params]) => {
+promiseWorker.register((hostID, metadata, [name, ...params]) => {
     if (!api.hasOwnProperty(name)) {
         throw new Error(`API call to nonexistant worker function "${name}" with params ${JSON.stringify(params)}`);
     }
@@ -51,7 +51,7 @@ const genPage = (id, inLeague = true) => {
         inCordova: window.inCordova,
         heartbeatID,
         tld: window.tld,
-//        useSharedWorker: window.useSharedWorker,
+        useSharedWorker: window.useSharedWorker,
 
         // These are just legacy variables sent to the worker to be stored in idb.meta.attributes
         fromLocalStorage: {

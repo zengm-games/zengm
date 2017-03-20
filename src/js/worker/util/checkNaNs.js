@@ -32,7 +32,7 @@ const wrapperNaNChecker = (_super) => {
         if (checkObject(obj)) {
             const err = new Error('NaN found before writing to IndexedDB');
 
-            toUI('notifyException', err, 'NaNFound', {
+            toUI(['notifyException', err, 'NaNFound', {
                 details: {
                     objectWithNaN: JSON.stringify(obj, (key, value) => {
                         if (Number.isNaN) {
@@ -42,7 +42,7 @@ const wrapperNaNChecker = (_super) => {
                         return value;
                     }),
                 },
-            });
+            }]); // Add conditions with hostID
 
             // Try to recover gracefully
             checkObject(obj, false, true); // This will update obj

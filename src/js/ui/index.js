@@ -233,6 +233,4 @@ const genPage = (id, inLeague = true) => {
     });
 
     page();
-
-    toWorker('checkAccount');
 })();

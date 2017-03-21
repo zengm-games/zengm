@@ -29,10 +29,6 @@ const cancelContractNegotiation = async (pid: number) => {
     return contractNegotiation.cancel(pid);
 };
 
-const checkAccount = async (conditions: Conditions) => {
-    await account.check(conditions);
-};
-
 const checkParticipationAchievement = async (force: boolean = false, conditions: Conditions) => {
     if (force) {
         await account.addAchievements(['participation'], conditions);
@@ -461,8 +457,9 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 
         idb.meta = await connectMeta(inputEnv.fromLocalStorage);
 
-        // Any news? If so, display notification.
-        await changes.check(conditions);
+        // Account and changes checks can be async
+        changes.check(conditions);
+        account.check(conditions);
     }
 };
 
@@ -775,7 +772,6 @@ export default {
     beforeViewLeague,
     beforeViewNonLeague,
     cancelContractNegotiation,
-    checkAccount,
     checkParticipationAchievement,
     clearTrade,
     clearWatchList,

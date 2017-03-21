@@ -103,7 +103,7 @@ const playAmount = async (amount: 'day' | 'week' | 'month' | 'untilPreseason', c
     }
 };
 
-const playStop = async (conditions: Conditions) => {
+const playStop = async () => {
     lock.set('stopGameSim', true);
     if (g.phase !== PHASE.FREE_AGENCY) {
         // This is needed because we can't be sure if core.game.play will be called again
@@ -114,7 +114,7 @@ const playStop = async (conditions: Conditions) => {
 };
 
 const playMenu = {
-    stop: async (conditions: Conditions) => {
+    stop: async () => {
         await playStop();
     },
 
@@ -194,7 +194,7 @@ const playMenu = {
         }
     },
 
-    stopAuto: async (conditions: Conditions) => {
+    stopAuto: async () => {
         local.autoPlaySeasons = 0;
         updatePlayMenu();
         await playStop();

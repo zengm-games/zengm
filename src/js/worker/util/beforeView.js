@@ -69,7 +69,6 @@ const checkHeartbeat = async (lid: number) => {
 };
 
 const beforeLeague = async (newLid: number, loadedLid: ?number, conditions: Conditions) => {
-console.log('newLid', newLid, 'loadedLid', loadedLid);
     // Make sure league template FOR THE CURRENT LEAGUE is showing
     if (newLid !== loadedLid) {
         if (newLid !== g.lid) {

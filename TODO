@@ -4,7 +4,8 @@ shared worker
 - release beta without multileague support?
   - league.disconnect has some stuff which needs to run in beforeView.beforeNonLeague
   - any race condition if load two tabs at same time?
-  - benchmark
+  - fix tests/lint
+  - test in safari, and chrome with useSharedWorker=false
 - need to track hostID or pass port around, through gameSim and stuff
   - solution eventually needs to handle multi-league case. all new stuff should be namespaced
   - new League(lid), then everything inside is the same? or pass lid and hostID to individual functions?

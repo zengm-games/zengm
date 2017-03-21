@@ -13,7 +13,7 @@ const acceptContractNegotiation = async (pid: number, amount: number, exp: numbe
     return contractNegotiation.accept(pid, amount, exp);
 };
 
-const autoSortRoster = async (conditions: Conditions) => {
+const autoSortRoster = async () => {
     await team.rosterAutoSort(g.userTid);
 };
 
@@ -25,7 +25,7 @@ const beforeViewNonLeague = async (conditions: Conditions) => {
     return beforeView.nonLeague(conditions);
 };
 
-const cancelContractNegotiation = async (pid: number, conditions: Conditions) => {
+const cancelContractNegotiation = async (pid: number) => {
     return contractNegotiation.cancel(pid);
 };
 
@@ -44,7 +44,7 @@ const checkParticipationAchievement = async (force: boolean = false, conditions:
     }
 };
 
-const clearWatchList = async (conditions: Conditions) => {
+const clearWatchList = async () => {
     const pids = new Set();
 
     const players = await idb.cache.players.getAll();
@@ -67,7 +67,7 @@ const clearWatchList = async (conditions: Conditions) => {
     await Promise.all(promises);
 };
 
-const countNegotiations = async (conditions: Conditions) => {
+const countNegotiations = async () => {
     const negotiations = await idb.cache.negotiations.getAll();
     return negotiations.length;
 };
@@ -91,7 +91,7 @@ const deleteOldData = async (options: {
     retiredPlayers: boolean,
     playerStatsUnnotable: boolean,
     playerStats: boolean,
-}, conditions: Conditions) => {
+}) => {
     await idb.league.tx(["games", "teams", "teamSeasons", "teamStats", "players", "playerStats"], "readwrite", (tx) => {
         if (options.boxScores) {
             tx.games.clear();
@@ -183,7 +183,7 @@ const draftUntilUserOrEnd = async (conditions: Conditions) => {
     return pids;
 };
 
-const draftUser = async (pid: number, conditions: Conditions) => {
+const draftUser = async (pid: number) => {
     const draftOrder = await draft.getOrder();
     const pick = draftOrder[0];
     if (pick && g.userTids.includes(pick.tid)) {
@@ -197,7 +197,7 @@ const draftUser = async (pid: number, conditions: Conditions) => {
 
 // exportPlayerAveragesCsv(2015) - just 2015 stats
 // exportPlayerAveragesCsv("all") - all stats
-const exportPlayerAveragesCsv = async (season: number | 'all', conditions: Conditions) => {
+const exportPlayerAveragesCsv = async (season: number | 'all') => {
     let players;
     if (g.season === season && g.phase <= PHASE.PLAYOFFS) {
         players = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
@@ -234,7 +234,7 @@ const exportPlayerAveragesCsv = async (season: number | 'all', conditions: Condi
 
 // exportPlayerGamesCsv(2015) - just 2015 games
 // exportPlayerGamesCsv("all") - all games
-const exportPlayerGamesCsv = async (season: number | 'all', conditions: Conditions) => {
+const exportPlayerGamesCsv = async (season: number | 'all') => {
     let games;
     if (season === "all") {
         games = await idb.getCopies.games();
@@ -259,11 +259,11 @@ const exportPlayerGamesCsv = async (season: number | 'all', conditions: Conditio
     return output;
 };
 
-const exportLeague = async (stores: string[], conditions: Conditions) => {
+const exportLeague = async (stores: string[]) => {
     return league.exportLeague(stores);
 };
 
-const getLeagueName = async (lid: number, conditions: Conditions) => {
+const getLeagueName = async (lid: number) => {
     const l = await idb.meta.leagues.get(lid);
     return l.name;
 };
@@ -272,7 +272,7 @@ const getLocal = async (name: $Keys<Local>): any => {
     return local[name];
 };
 
-const getTradingBlockOffers = async (pids: number[], dpids: number[], conditions: Conditions) => {
+const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
     const getOffers = async (userPids, userDpids) => {
         // Pick 10 random teams to try (or all teams, if g.numTeams < 10)
         const tids = _.range(g.numTeams);
@@ -367,7 +367,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[], conditions
     return augmentOffers(offers);
 };
 
-const handleUploadedDraftClass = async (uploadedFile: any, seasonOffset: 0 | 1 | 2, conditions: Conditions) => {
+const handleUploadedDraftClass = async (uploadedFile: any, seasonOffset: 0 | 1 | 2) => {
     // What tid to replace?
     let draftClassTid;
     if (seasonOffset === 0) {
@@ -466,11 +466,11 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
     }
 };
 
-const lockSet = async (name: LockName, value: boolean, conditions: Conditions) => {
+const lockSet = async (name: LockName, value: boolean) => {
     lock.set(name, value);
 };
 
-const releasePlayer = async (pid: number, justDrafted: boolean, conditions: Conditions) => {
+const releasePlayer = async (pid: number, justDrafted: boolean) => {
     const players = await idb.cache.players.indexGetAll('playersByTid', g.userTid);
     if (players.length <= 5) {
         return 'You must keep at least 5 players on your roster.';
@@ -486,11 +486,11 @@ const releasePlayer = async (pid: number, justDrafted: boolean, conditions: Cond
     await player.release(p, justDrafted);
 };
 
-const removeLeague = async (lid: number, conditions: Conditions) => {
+const removeLeague = async (lid: number) => {
     await league.remove(lid);
 };
 
-const reorderRosterDrag = async (sortedPids: number[], conditions: Conditions) => {
+const reorderRosterDrag = async (sortedPids: number[]) => {
     await Promise.all(sortedPids.map(async (pid, rosterOrder) => {
         const p = await idb.cache.players.get(pid);
         if (p.rosterOrder !== rosterOrder) {
@@ -500,7 +500,7 @@ const reorderRosterDrag = async (sortedPids: number[], conditions: Conditions) =
     }));
 };
 
-const reorderRosterSwap = async (sortedPlayers: {pid: number}[], pid1: number, pid2: number, conditions: Conditions) => {
+const reorderRosterSwap = async (sortedPlayers: {pid: number}[], pid1: number, pid2: number) => {
     const rosterOrder1 = sortedPlayers.findIndex(p => p.pid === pid1);
     const rosterOrder2 = sortedPlayers.findIndex(p => p.pid === pid2);
 
@@ -542,7 +542,7 @@ const startFantasyDraft = async (position: number | 'random', conditions: Condit
     await phase.newPhase(PHASE.FANTASY_DRAFT, conditions, position);
 };
 
-const switchTeam = async (tid: number, conditions: Conditions) => {
+const switchTeam = async (tid: number) => {
     await updateStatus('Idle');
     updatePlayMenu();
 
@@ -566,7 +566,7 @@ const updateBudget = async (budgetAmounts: {
     health: number,
     scouting: number,
     ticketPrice: number,
-}, conditions: Conditions) => {
+}) => {
     const t = await idb.cache.teams.get(g.userTid);
 
     for (const key of Object.keys(budgetAmounts)) {
@@ -581,11 +581,11 @@ const updateBudget = async (budgetAmounts: {
     await finances.updateRanks(["budget"]);
 };
 
-const updateGameAttributes = async (gameAttributes: GameAttributes, conditions: Conditions) => {
+const updateGameAttributes = async (gameAttributes: GameAttributes) => {
     await league.setGameAttributes(gameAttributes);
 };
 
-const updateMultiTeamMode = async (gameAttributes: {userTids: number[], userTid?: number}, conditions: Conditions) => {
+const updateMultiTeamMode = async (gameAttributes: {userTids: number[], userTid?: number}) => {
     await league.setGameAttributes(gameAttributes);
 
     if (gameAttributes.userTids.length === 1) {
@@ -595,7 +595,7 @@ const updateMultiTeamMode = async (gameAttributes: {userTids: number[], userTid?
     }
 };
 
-const updatePlayerWatch = async (pid: number, watch: boolean, conditions: Conditions) => {
+const updatePlayerWatch = async (pid: number, watch: boolean) => {
     const cachedPlayer = await idb.cache.players.get(pid);
     if (cachedPlayer) {
         cachedPlayer.watch = watch;
@@ -607,7 +607,7 @@ const updatePlayerWatch = async (pid: number, watch: boolean, conditions: Condit
     }
 };
 
-const updatePlayingTime = async (pid: number, ptModifier: number, conditions: Conditions) => {
+const updatePlayingTime = async (pid: number, ptModifier: number) => {
     const p = await idb.cache.players.get(pid);
     p.ptModifier = ptModifier;
     await idb.cache.players.put(p);
@@ -621,7 +621,7 @@ const updateTeamInfo = async (newTeams: {
     abbrev: string,
     imgURL?: string,
     pop: number,
-}[], conditions: Conditions) => {
+}[]) => {
     let userName;
     let userRegion;
 
@@ -664,7 +664,6 @@ const updateTeamInfo = async (newTeams: {
 const upsertCustomizedPlayer = async (
     p: Player | PlayerWithoutPid,
     originalTid: number, season: number,
-    conditions: Conditions,
 ): Promise<number> => {
     const r = p.ratings.length - 1;
 
@@ -731,7 +730,7 @@ const upsertCustomizedPlayer = async (
     return p.pid;
 };
 
-const clearTrade = async (conditions: Conditions) => {
+const clearTrade = async () => {
     await trade.clear();
 };
 
@@ -743,7 +742,7 @@ const createTrade = async (teams: [{
     tid: number,
     pids: number[],
     dpids: number[],
-}], conditions: Conditions) => {
+}]) => {
     await trade.create(teams);
 };
 
@@ -765,7 +764,7 @@ const updateTrade = async (teams: [{
     tid: number,
     pids: number[],
     dpids: number[],
-}], conditions: Conditions) => {
+}]) => {
     await trade.updatePlayers(teams);
 };
 

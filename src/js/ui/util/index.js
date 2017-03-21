@@ -1,7 +1,6 @@
 // @flow
 
-import PromiseWorker from '../../../../../promise-worker-bi';
-console.log('window.useSharedWorker', window.useSharedWorker);
+import PromiseWorker from 'promise-worker-bi';
 const worker = window.useSharedWorker ? new SharedWorker('/gen/worker.js') : new Worker('/gen/worker.js');
 export const promiseWorker = new PromiseWorker(worker);
 

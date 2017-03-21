@@ -1,3 +1,5 @@
+// @flow
+
 import {idb} from '../db';
 
 async function updateNewLeague(): void | {[key: string]: any} {

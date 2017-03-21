@@ -41,6 +41,5 @@ async function updateAccountUpdateCard(
 }
 
 export default {
-    inLeague: false,
     runBefore: [updateAccountUpdateCard],
 };

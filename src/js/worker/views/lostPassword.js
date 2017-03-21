@@ -1,6 +1,3 @@
 // @flow
 
-
-export default {
-    inLeague: false,
-};
+export default {};

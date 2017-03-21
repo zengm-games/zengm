@@ -1,11 +1,12 @@
+// @flow
+
 import backboard from 'backboard';
 import {g} from '../../common';
 import {player} from '../core';
 import {idb} from '../db';
-import type {GetOutput} from '../../common/types';
 
 async function updateUpcomingFreeAgents(
-    inputs: GetOutput,
+    inputs: {season: number},
 ): void | {[key: string]: any} {
     let players = await idb.league.players.index('tid').getAll(backboard.lowerBound(0));
     players = players.filter(p => p.contract.exp === inputs.season);

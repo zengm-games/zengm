@@ -128,10 +128,7 @@ PlayerStats.propTypes = {
     abbrev: React.PropTypes.string.isRequired,
     players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
     playoffs: React.PropTypes.oneOf(['playoffs', 'regularSeason']).isRequired,
-    season: React.PropTypes.oneOfType([
-        React.PropTypes.number,
-        React.PropTypes.string,
-    ]).isRequired,
+    season: React.PropTypes.number, // Undefined for career totals
     statType: React.PropTypes.oneOf(['per36', 'perGame', 'totals']).isRequired,
 };
 

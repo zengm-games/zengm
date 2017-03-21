@@ -150,9 +150,10 @@ class Controller extends React.Component {
     async get(args: Args, ctx: PageCtx) {
         try {
             const updateEvents = (ctx !== undefined && ctx.bbgm.updateEvents !== undefined) ? ctx.bbgm.updateEvents : [];
-            const newLid = parseInt(ctx.params.lid, 10);
+            const newLidInt = parseInt(ctx.params.lid, 10);
+            const newLid = isNaN(newLidInt) ? undefined : newLidInt;
 
-            await (args.inLeague ? toWorker('beforeViewLeague', newLid, this.state.topMenu.lid) : toWorker('beforeViewNonLeague'));
+            await (args.inLeague ? toWorker('beforeViewLeague', newLid, this.state.topMenu.lid) : toWorker('beforeViewNonLeague', this.state.topMenu.lid));
 
             let inputs = args.get(ctx);
             if (!inputs) {
@@ -219,7 +220,7 @@ class Controller extends React.Component {
             (this.state.idLoaded !== args.id && this.state.idLoading !== args.id) ||
             (this.state.idLoaded === args.id && this.state.idLoading !== args.id && this.state.idLoading !== undefined)
         ) {
-            updateEvents.push("firstRun");
+            updateEvents.push('firstRun');
 
             prevData = {};
         } else if (this.state.idLoading === args.id) {
@@ -274,7 +275,7 @@ class Controller extends React.Component {
                 idLoading: undefined,
             }, () => {
                 // Scroll to top
-                if (updateEvents.length === 1 && updateEvents[0] === "firstRun") {
+                if (updateEvents.length === 1 && updateEvents[0] === 'firstRun') {
                     window.scrollTo(window.pageXOffset, 0);
                 }
             });

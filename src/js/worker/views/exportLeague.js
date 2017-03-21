@@ -1,5 +1,4 @@
 // @flow
 
 
-export default {
-};
+export default {};

@@ -1,3 +1,5 @@
+// @flow
+
 import {g, helpers} from '../../common';
 import {trade} from '../core';
 import {idb} from '../db';
@@ -25,14 +27,16 @@ async function updateUserRoster(
         });
         userRoster = trade.filterUntradable(userRoster);
 
-        for (let i = 0; i < userPicks.length; i++) {
-            userPicks[i].desc = helpers.pickDesc(userPicks[i]);
-        }
+        const userPicksWithDescs = userPicks.map((pick) => {
+            const pickWithDesc: any = helpers.deepCopy(pick);
+            pickWithDesc.desc = helpers.pickDesc(pickWithDesc);
+            return pickWithDesc;
+        });
 
         return {
             gameOver: g.gameOver,
             phase: g.phase,
-            userPicks,
+            userPicks: userPicksWithDescs,
             userRoster,
         };
     }

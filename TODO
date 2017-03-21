@@ -2,12 +2,7 @@ IVERSON - BEFORE FINAL
 
 shared worker
 - release beta without multileague support?
-  - league.disconnect has some stuff which needs to run in beforeView.beforeNonLeague
-  - test in safari
   - promise-worker-bi release beta
-- need to track hostID or pass port around, through gameSim and stuff
-  - solution eventually needs to handle multi-league case. all new stuff should be namespaced
-  - new League(lid), then everything inside is the same? or pass lid and hostID to individual functions?
 - namespace stuff, after it's working for one league
   - attach lid to promiseWorker instance in host (call it "metadata"), update lid if it changes, and attach to every request from host
     - then from worker, pass into toUI
@@ -19,27 +14,13 @@ shared worker
     - namespace locks, g (in worker only), idb.league, and idb.cache
     - all common functions, accept g as param
     - something to handle init/close of tabs
-    - in worker, store all ports along with hostID (incrementing integer) and lid. then can send either to specific window (how?) or to all in league
-      - need some way to register this info with the worker. it gets the port in onconnect, and then in response can send hostID back to host. finally, host can send lid on that port via some special message
-    - send message from worker - broadcast vs individual host
-      - requires hostID sent to host and included with each message, or can it rely on port sent along with message even in which case maybe sending hostID back to host on init is not required?
-    - some toUI ones require a response, and also need to send bbgmPing/notifyError/showAd to individual tab
-      - look at all toUI calls
+    - look at all toUI calls
+  - disconnect league when none are left registered to promise worker (so need api to get all metadata)
 - after it's working
-  - is there a race condition where host can query worker before host knows its hostID? might not matter if it's only init
-  - benchmark
-  - disconnect league only when none are left registered to promise worker (so need api to get all metadata)
-  - location var inside shared worker?
-    - should fix live gamesim bug
   - when closing tab, how to forget port? http://stackoverflow.com/questions/13662089/javascript-how-to-know-if-a-connection-with-a-shared-worker-is-still-alive
   - split promise-worker-bi into two classes, sharing some base class
     - register function doens't need to recieve hostID and metadata on host
-  - test live gamesim
   - rethink account.check
-
-minor bugs
-- once players retire, they disappear from draft summary
-- draft picks too valuable in trading block - can repeatedly trade 2nd round pick for two 2nd round picks
 
 mozilla glitches https://www.reddit.com/r/BasketballGM/comments/5zgrv9/basketball_gm_40_beta/dez4upt/
 
@@ -182,6 +163,8 @@ benchmark using proxies to detect change in index stuff rather than dirtyIndexes
 can ui/util/logEvent be replaced by just notify? since it never writes to db?
 
 ----
+
+https://github.com/pinojs/pino
 
 service worker
 - sw-offline-google-analytics

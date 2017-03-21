@@ -65,14 +65,14 @@ const checkHeartbeat = async (lid: number) => {
         return;
     }
 
-    throw new Error('A league can only be open in one tab at a time. If this league is not open in another tab, please wait a few seconds and reload.');
+    throw new Error("A league can only be open in one tab at a time. If this league is not open in another tab, please wait a few seconds and reload. Or switch to Chrome or Firefox, they don't have this limitation.");
 };
 
-const beforeLeague = async (newLid: number, loadedLid: ?number, conditions: Conditions) => {
+const beforeLeague = async (newLid: number, loadedLid: number | void, conditions: Conditions) => {
     // Make sure league template FOR THE CURRENT LEAGUE is showing
     if (newLid !== loadedLid) {
         if (newLid !== g.lid) {
-            await league.disconnect();
+            await league.close(true);
         }
 
         // If this is a Web Worker, only one tab of a league can be open at a time
@@ -84,7 +84,7 @@ const beforeLeague = async (newLid: number, loadedLid: ?number, conditions: Cond
         if (newLid !== g.lid) {
             // Clear old game attributes from g, just to be sure
             helpers.resetG();
-            await toUI(['resetG'], conditions);
+            await toUI(['resetG']);
 
             g.lid = newLid;
             idb.league = await connectLeague(g.lid);
@@ -101,7 +101,7 @@ const beforeLeague = async (newLid: number, loadedLid: ?number, conditions: Cond
         await league.loadGameAttributes();
 
         // Update play menu
-        await updateStatus(undefined, conditions);
+        await updateStatus(undefined);
         await updatePhase(conditions);
         await updatePlayMenu();
 
@@ -110,18 +110,25 @@ const beforeLeague = async (newLid: number, loadedLid: ?number, conditions: Cond
             await idb.cache.startAutoFlush();
         }
 
-        toUI(['emit', 'updateTopMenu', {lid: g.lid}], conditions);
+        await toUI(['emit', 'updateTopMenu', {lid: g.lid}], conditions);
+
+        // If this is a Shared Worker, only one league can be open at a time
+        if (env.useSharedWorker) {
+            await toUI(['newLid', g.lid]);
+        }
     }
 };
 
 // beforeNonLeagueRunning is to handle extra realtimeUpdate request triggered by stopping gameSim in league.disconnect
 let beforeNonLeagueRunning = false;
-const beforeNonLeague = async (conditions: Conditions) => {
-    if (!beforeNonLeagueRunning) {
+const beforeNonLeague = async (loadedLid: number | void, conditions: Conditions) => {
+    if (!beforeNonLeagueRunning && loadedLid !== undefined) {
         try {
             beforeNonLeagueRunning = true;
-//            await league.disconnect(); // Breaks multi tab mode unless we track open tabs
-            clearInterval(heartbeatIntervalID);
+            await league.close(false);
+            if (!env.useSharedWorker) {
+                clearInterval(heartbeatIntervalID);
+            }
             await toUI(['emit', 'updateTopMenu', {lid: undefined}], conditions);
             beforeNonLeagueRunning = false;
         } catch (err) {

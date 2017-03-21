@@ -1,3 +1,5 @@
+// @flow
+
 import {PHASE, PLAYER, g} from '../../common';
 import {idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';

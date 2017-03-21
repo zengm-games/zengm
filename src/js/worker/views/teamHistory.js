@@ -1,9 +1,11 @@
+// @flow
+
 import {g} from '../../common';
 import {idb} from '../db';
-import type {GetOutput, UpdateEvents} from '../../common/types';
+import type {UpdateEvents} from '../../common/types';
 
 async function updateTeamHistory(
-    inputs: GetOutput,
+    inputs: {abbrev: string, tid: number},
     updateEvents: UpdateEvents,
     state: any,
 ): void | {[key: string]: any} {

@@ -1,3 +1,5 @@
+// @flow
+
 import {PHASE, g, helpers} from '../../common';
 import {team, trade} from '../core';
 import {idb} from '../db';
@@ -21,9 +23,8 @@ async function updateSummary(vars) {
         warning: summary.warning,
     };
 
-    vars.summary.teams = [];
-    for (let i = 0; i < 2; i++) {
-        vars.summary.teams[i] = {
+    vars.summary.teams = [0, 1].map((i) => {
+        return {
             name: summary.teams[i].name,
             payrollAfterTrade: summary.teams[i].payrollAfterTrade,
             total: summary.teams[i].total,
@@ -31,7 +32,7 @@ async function updateSummary(vars) {
             picks: summary.teams[i].picks,
             other: i === 0 ? 1 : 0,  // Index of other team
         };
-    }
+    });
 
     return vars;
 }
@@ -48,11 +49,9 @@ async function validateSavedPids() {
 }
 
 async function updateTrade(): void | {[key: string]: any} {
-    let [teams, userRoster, userPicks] = await Promise.all([
-        validateSavedPids(),
-        idb.cache.players.indexGetAll('playersByTid', g.userTid),
-        idb.cache.draftPicks.indexGetAll('draftPicksByTid', g.userTid),
-    ]);
+    const teams = await validateSavedPids();
+    let userRoster = await idb.cache.players.indexGetAll('playersByTid', g.userTid);
+    const userPicks: any = await idb.cache.draftPicks.indexGetAll('draftPicksByTid', g.userTid);
 
     const attrs = ["pid", "name", "age", "contract", "injury", "watch", "gamesUntilTradable"];
     const ratings = ["ovr", "pot", "skills", "pos"];
@@ -85,16 +84,18 @@ async function updateTrade(): void | {[key: string]: any} {
     const otherTid = teams[1].tid;
 
     // Need to do this after knowing otherTid
-    let [otherRoster, otherPicks, t] = await Promise.all([
-        idb.cache.players.indexGetAll('playersByTid', otherTid),
-        idb.cache.draftPicks.indexGetAll('draftPicksByTid', otherTid),
-        idb.getCopy.teamsPlus({
-            tid: otherTid,
-            season: g.season,
-            attrs: ["strategy"],
-            seasonAttrs: ["won", "lost"],
-        }),
-    ]);
+    let otherRoster = await idb.cache.players.indexGetAll('playersByTid', otherTid);
+    const otherPicks: any = await idb.cache.draftPicks.indexGetAll('draftPicksByTid', otherTid);
+    const t = await idb.getCopy.teamsPlus({
+        tid: otherTid,
+        season: g.season,
+        attrs: ["strategy"],
+        seasonAttrs: ["won", "lost"],
+    });
+
+    if (t === undefined) {
+        throw new Error(`Invalid team ID ${otherTid}`);
+    }
 
     otherRoster = await idb.getCopies.playersPlus(otherRoster, {
         attrs,
@@ -120,7 +121,7 @@ async function updateTrade(): void | {[key: string]: any} {
         otherPicks[i].desc = helpers.pickDesc(otherPicks[i]);
     }
 
-    let vars = {
+    let vars: any = {
         salaryCap: g.salaryCap / 1000,
         userDpids: teams[0].dpids,
         userPicks,
@@ -154,11 +155,7 @@ async function updateTrade(): void | {[key: string]: any} {
     vars.userTeamName = `${g.teamRegionsCache[g.userTid]} ${g.teamNamesCache[g.userTid]}`;
 
     // If the season is over, can't trade players whose contracts are expired
-    if (g.phase > PHASE.PLAYOFFS && g.phase < PHASE.FREE_AGENCY) {
-        vars.showResigningMsg = true;
-    } else {
-        vars.showResigningMsg = false;
-    }
+    vars.showResigningMsg = g.phase > PHASE.PLAYOFFS && g.phase < PHASE.FREE_AGENCY;
 
     return vars;
 }

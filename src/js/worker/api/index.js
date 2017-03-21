@@ -17,12 +17,12 @@ const autoSortRoster = async () => {
     await team.rosterAutoSort(g.userTid);
 };
 
-const beforeViewLeague = async (newLid: number, loadedLid: ?number, conditions: Conditions) => {
+const beforeViewLeague = async (newLid: number, loadedLid: number | void, conditions: Conditions) => {
     return beforeView.league(newLid, loadedLid, conditions);
 };
 
-const beforeViewNonLeague = async (conditions: Conditions) => {
-    return beforeView.nonLeague(conditions);
+const beforeViewNonLeague = async (loadedLid: number | void, conditions: Conditions) => {
+    return beforeView.nonLeague(loadedLid, conditions);
 };
 
 const cancelContractNegotiation = async (pid: number) => {

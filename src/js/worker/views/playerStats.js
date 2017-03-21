@@ -1,3 +1,5 @@
+// @flow
+
 import {PHASE, PLAYER, g} from '../../common';
 import {idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
@@ -49,24 +51,24 @@ async function updatePlayers(
         }
 
         // Only keep players with more than 5 mpg in regular season, of any PT in playoffs
-        if (inputs.abbrev !== "watch") {
+        if (inputs.abbrev !== 'watch') {
             players = players.filter(p => {
                 // Minutes played
                 let min;
-                if (inputs.statType === "totals") {
+                if (inputs.statType === 'totals') {
                     if (inputs.season) {
                         min = p.stats.min;
-                    } else {
+                    } else if (inputs.playoffs !== 'playoffs') {
                         min = p.careerStats.min;
                     }
                 } else if (inputs.season) {
                     min = p.stats.gp * p.stats.min;
-                } else {
+                } else if (inputs.playoffs !== 'playoffs') {
                     min = p.careerStats.gp * p.careerStats.min;
                 }
 
                 if (inputs.playoffs !== 'playoffs') {
-                    if (min > gp * 5) {
+                    if (min !== undefined && min > gp * 5) {
                         return true;
                     }
                 }
@@ -81,6 +83,8 @@ async function updatePlayers(
                         return true;
                     }
                 }
+
+                return false;
             });
         }
 

@@ -1,3 +1,5 @@
+// @flow
+
 import {g} from '../../common';
 import {idb} from '../db';
 

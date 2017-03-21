@@ -1,16 +1,18 @@
+// @flow
+
 import {PLAYER, g, helpers} from '../../common';
 import {freeAgents, trade} from '../core';
 import {idb} from '../db';
-import type {GetOutput, UpdateEvents} from '../../common/types';
+import type {UpdateEvents} from '../../common/types';
 
 async function updatePlayer(
-    inputs: GetOutput,
+    inputs: {pid: number},
     updateEvents: UpdateEvents,
     state: any,
 ): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') || !state.retired || state.pid !== inputs.pid) {
         let p = await idb.getCopy.players({pid: inputs.pid});
-        if (!p) { throw new Error('Invalid player ID'); }
+        if (p === undefined) { throw new Error('Invalid player ID'); }
         p = await idb.getCopy.playersPlus(p, {
             attrs: ["pid", "name", "tid", "abbrev", "teamRegion", "teamName", "age", "hgtFt", "hgtIn", "weight", "born", "diedYear", "contract", "draft", "face", "mood", "injury", "salaries", "salariesTotal", "awardsGrouped", "freeAgentMood", "imgURL", "watch", "gamesUntilTradable", "college"],
             ratings: ["season", "abbrev", "age", "ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills", "pos"],
@@ -19,6 +21,7 @@ async function updatePlayer(
             showRookies: true,
             fuzz: true,
         });
+        if (p === undefined) { throw new Error('Invalid player ID'); }
 
         // Account for extra free agent demands
         if (p.tid === PLAYER.FREE_AGENT) {

@@ -619,7 +619,7 @@ async function initAutoPlay(conditions: Conditions) {
 }
 
 // Flush cache, disconnect from league database, and unset g.lid
-const disconnect = async () => {
+const close = async (disconnect?: boolean) => {
     const gameSim = lock.get('gameSim');
 
     local.autoPlaySeasons = 0;
@@ -640,17 +640,21 @@ const disconnect = async () => {
         await idb.cache.flush();
         await updateStatus('Idle');
 
-        await idb.cache.stopAutoFlush();
+        if (disconnect) {
+            await idb.cache.stopAutoFlush();
 
-        // Should probably "close" cache here too, but no way to do that now
+            // Should probably "close" cache here too, but no way to do that now
 
-        idb.league.close();
+            idb.league.close();
+        }
     }
 
-    lock.reset();
-    local.reset();
+    if (disconnect) {
+        lock.reset();
+        local.reset();
 
-    g.lid = undefined;
+        g.lid = undefined;
+    }
 };
 
 export default {
@@ -662,5 +666,5 @@ export default {
     loadGameAttributes,
     autoPlay,
     initAutoPlay,
-    disconnect,
+    close,
 };

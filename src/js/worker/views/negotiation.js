@@ -1,3 +1,5 @@
+// @flow
+
 import {PHASE, g} from '../../common';
 import {contractNegotiation, freeAgents, team} from '../core';
 import {idb} from '../db';
@@ -49,7 +51,7 @@ function generateContractOptions(contract, ovr) {
 async function updateNegotiation(
     inputs: GetOutput,
 ): void | {[key: string]: any} {
-    const negotiations = await idb.cache.negotiations.getAll();
+    const negotiations: any = await idb.cache.negotiations.getAll();
     let negotiation;
     if (inputs.pid === undefined) {
         negotiation = negotiations[0];

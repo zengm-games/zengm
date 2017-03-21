@@ -1,9 +1,16 @@
+// @flow
+
 import {g, helpers} from '../../common';
 import {idb} from '../db';
-import type {GetOutput, UpdateEvents} from '../../common/types';
+import type {UpdateEvents} from '../../common/types';
 
 async function updateEventLog(
-    inputs: GetOutput,
+    inputs: {
+        abbrev: string,
+        eventType: string,
+        season: number | 'all',
+        tid: number,
+    },
     updateEvents: UpdateEvents,
     state: any,
 ): void | {[key: string]: any} {

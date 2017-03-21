@@ -1,8 +1,10 @@
+// @flow
+
 import React from 'react';
 import {setTitle} from '../util';
 import {NewWindowLink, SafeHtml} from '../components';
 
-const Changes = ({changes}) => {
+const Changes = ({changes}: {changes: {date: string, msg: string}[]}) => {
     setTitle('Changes');
 
     return <div>

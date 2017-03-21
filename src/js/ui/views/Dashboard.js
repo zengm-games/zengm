@@ -1,10 +1,27 @@
+// @flow
+
 import classNames from 'classnames';
 import React from 'react';
 import {setTitle} from '../util';
 
+type Props = {
+    leagues: {
+        lid: number,
+        name: string,
+        phaseText: string,
+        teamName: string,
+        teamRegion: string,
+    }[]
+};
 
 class Dashboard extends React.Component {
-    constructor(props) {
+    props: Props;
+
+    state: {
+        activeLid: number | void,
+    };
+
+    constructor(props: Props) {
         super(props);
         this.state = {
             activeLid: undefined,

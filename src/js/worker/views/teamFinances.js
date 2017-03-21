@@ -5,12 +5,12 @@ import {lock} from '../util';
 import type {GetOutput, UpdateEvents} from '../../common/types';
 
 async function updateTeamFinances(
-    inputs: GetOutput,
+    inputs: {abbrev: string, show: number | 'all', tid: number},
     updateEvents: UpdateEvents,
     state: any,
 ): void | {[key: string]: any} {
     if (updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || updateEvents.includes('teamFinances') || inputs.tid !== state.tid || inputs.show !== state.show) {
-        const vars = {
+        const vars: any = {
             abbrev: inputs.abbrev,
             gamesInProgress: lock.get('gameSim'),
             numGames: g.numGames,

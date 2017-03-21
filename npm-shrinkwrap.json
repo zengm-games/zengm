@@ -918,9 +918,9 @@
       "dev": true
     },
     "browserslist": {
-      "version": "1.7.6",
+      "version": "1.7.7",
       "from": "browserslist@>=1.7.6 <2.0.0",
-      "resolved": "https://registry.npmjs.org/browserslist/-/browserslist-1.7.6.tgz",
+      "resolved": "https://registry.npmjs.org/browserslist/-/browserslist-1.7.7.tgz",
       "dev": true
     },
     "browserstack": {
@@ -1768,7 +1768,7 @@
     },
     "electron-to-chromium": {
       "version": "1.2.7",
-      "from": "electron-to-chromium@>=1.2.5 <2.0.0",
+      "from": "electron-to-chromium@>=1.2.7 <2.0.0",
       "resolved": "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.2.7.tgz",
       "dev": true
     },
@@ -2245,9 +2245,9 @@
       "dev": true
     },
     "fbjs": {
-      "version": "0.8.10",
+      "version": "0.8.11",
       "from": "fbjs@>=0.8.4 <0.9.0",
-      "resolved": "https://registry.npmjs.org/fbjs/-/fbjs-0.8.10.tgz"
+      "resolved": "https://registry.npmjs.org/fbjs/-/fbjs-0.8.11.tgz"
     },
     "figures": {
       "version": "1.7.0",
@@ -2306,9 +2306,9 @@
       "dev": true
     },
     "flow-bin": {
-      "version": "0.40.0",
-      "from": "flow-bin@0.40.0",
-      "resolved": "https://registry.npmjs.org/flow-bin/-/flow-bin-0.40.0.tgz",
+      "version": "0.42.0",
+      "from": "flow-bin@0.42.0",
+      "resolved": "https://registry.npmjs.org/flow-bin/-/flow-bin-0.42.0.tgz",
       "dev": true
     },
     "for-in": {
@@ -3690,9 +3690,9 @@
       }
     },
     "node-sass": {
-      "version": "4.5.0",
-      "from": "node-sass@4.5.0",
-      "resolved": "https://registry.npmjs.org/node-sass/-/node-sass-4.5.0.tgz",
+      "version": "4.5.1",
+      "from": "node-sass@4.5.1",
+      "resolved": "https://registry.npmjs.org/node-sass/-/node-sass-4.5.1.tgz",
       "dev": true
     },
     "nomnom": {

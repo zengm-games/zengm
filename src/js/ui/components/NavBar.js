@@ -438,17 +438,24 @@ class NavBar extends React.Component {
     componentDidMount() {
         const navBar = ReactDOM.findDOMNode(this);
         if (!navBar) { return; }
+        // $FlowFixMe
         const collapsibleNav = navBar.querySelector('div.navbar-collapse');
         if (!collapsibleNav) { return; }
+        // $FlowFixMe
         const btnToggle = navBar.querySelector('button.navbar-toggle');
         if (!btnToggle) { return; }
 
-        navBar.addEventListener('click', (evt) => {
-            if (evt.target.classList.contains('dropdown-toggle') || !collapsibleNav.classList.contains('in')) {
+        navBar.addEventListener('click', (evt: MouseEvent) => {
+            const target = evt.target;
+            if (!(target instanceof HTMLElement)) {
+                throw new Error('Invalid event target');
+            }
+
+            if (target.classList.contains('dropdown-toggle') || !collapsibleNav.classList.contains('in')) {
                 return;
             }
 
-            if (evt.target.tagName === 'A' || evt.target.classList.contains('toggle-responsive-menu')) {
+            if (target.tagName === 'A' || target.classList.contains('toggle-responsive-menu')) {
                 btnToggle.click();
             }
         }, false);

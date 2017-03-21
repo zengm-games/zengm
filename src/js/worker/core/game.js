@@ -603,7 +603,7 @@ async function play(numDays: number, conditions: Conditions, start?: boolean = t
         if (g.phase < PHASE.PLAYOFFS) {
             const schedule = await season.getSchedule();
             if (schedule.length === 0) {
-                await phase.newPhase(PHASE.PLAYOFFS, conditions);
+                await phase.newPhase(PHASE.PLAYOFFS, conditions, gidPlayByPlay !== undefined);
             }
         }
 
@@ -703,7 +703,7 @@ async function play(numDays: number, conditions: Conditions, start?: boolean = t
         if (g.phase === PHASE.PLAYOFFS) {
             const playoffsOver = await season.newSchedulePlayoffsDay();
             if (playoffsOver) {
-                await phase.newPhase(PHASE.BEFORE_DRAFT, conditions);
+                await phase.newPhase(PHASE.BEFORE_DRAFT, conditions, gidPlayByPlay !== undefined);
             }
         } else if (Math.random() < 1 / (100 * 50)) {
             // Should a rare tragic event occur? ONLY IN REGULAR SEASON, playoffs would be tricky with roster limits and no free agents
@@ -711,7 +711,12 @@ async function play(numDays: number, conditions: Conditions, start?: boolean = t
             await player.killOne(conditions);
             toUI(['realtimeUpdate', ['playerMovement']]);
         }
-        play(numDays - 1, conditions, false);
+
+        if (numDays - 1 <= 0) {
+            await cbNoGames();
+        } else {
+            play(numDays - 1, conditions, false);
+        }
     };
 
     // Simulates a day of games (whatever is in schedule) and passes the results to cbSaveResults

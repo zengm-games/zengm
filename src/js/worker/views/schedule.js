@@ -1,3 +1,5 @@
+// @flow
+
 import {g, helpers} from '../../common';
 import {season} from '../core';
 import {idb} from '../db';
@@ -44,7 +46,7 @@ async function updateUpcoming(
 
 // Based on views.gameLog.updateGamesList
 async function updateCompleted(
-    inputs: GetOutput,
+    inputs: {abbrev: string},
     updateEvents: UpdateEvents,
     state: any,
 ): void | {[key: string]: any} {

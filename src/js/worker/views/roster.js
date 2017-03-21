@@ -1,15 +1,17 @@
+// @flow
+
 import {PHASE, g} from '../../common';
 import {season, team, trade} from '../core';
 import {idb} from '../db';
-import type {GetOutput, UpdateEvents} from '../../common/types';
+import type {UpdateEvents} from '../../common/types';
 
 async function updateRoster(
-    inputs: GetOutput,
+    inputs: {abbrev: string, season: number, tid: number},
     updateEvents: UpdateEvents,
     state: any,
 ): void | {[key: string]: any} {
     if (updateEvents.includes('watchList') || (inputs.season === g.season && (updateEvents.includes('gameSim') || updateEvents.includes('playerMovement'))) || inputs.abbrev !== state.abbrev || inputs.season !== state.season) {
-        const vars = {
+        const vars: any = {
             abbrev: inputs.abbrev,
             season: inputs.season,
             editable: inputs.season === g.season && inputs.tid === g.userTid,

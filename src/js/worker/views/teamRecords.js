@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import {g} from '../../common';
 import {idb} from '../db';
-import type {GetOutput, UpdateEvents} from '../../common/types';
+import type {UpdateEvents} from '../../common/types';
 
 function getTeamRecord(t, awards) {
     let totalWon = 0;
@@ -140,7 +140,7 @@ function sumRecordsFor(group, id, name, records) {
 }
 
 async function updateTeamRecords(
-    inputs: GetOutput,
+    inputs: {byType: string},
     updateEvents: UpdateEvents,
     state: any,
 ): void | {[key: string]: any} {

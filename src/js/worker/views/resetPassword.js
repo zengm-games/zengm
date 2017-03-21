@@ -1,3 +1,5 @@
+// @flow
+
 import type {GetOutput} from '../../common/types';
 
 async function updateToken(
@@ -9,6 +11,5 @@ async function updateToken(
 }
 
 export default {
-    inLeague: false,
     runBefore: [updateToken],
 };

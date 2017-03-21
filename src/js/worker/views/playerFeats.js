@@ -1,3 +1,5 @@
+// @flow
+
 import {g} from '../../common';
 import {idb} from '../db';
 import type {GetOutput, UpdateEvents} from '../../common/types';
@@ -13,7 +15,7 @@ async function updatePlayers(
         // Put fake fid on cached feats
         let maxFid = 0;
         for (const feat of feats) {
-            if (feat.hasOwnProperty('fid')) {
+            if (feat.fid !== undefined) {
                 if (feat.fid > maxFid) {
                     maxFid = feat.fid;
                 }

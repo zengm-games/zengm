@@ -150,7 +150,7 @@ async function newPhaseRegularSeason() {
     return [undefined, ["playerMovement"]];
 }
 
-async function newPhasePlayoffs(conditions: Conditions) {
+async function newPhasePlayoffs(conditions: Conditions, liveGameSim?: boolean = false) {
     // Achievements after regular season
     account.checkAchievement.septuawinarian(conditions);
 
@@ -226,14 +226,14 @@ async function newPhasePlayoffs(conditions: Conditions) {
 
     // Don't redirect if we're viewing a live game now
     let url;
-    if (!location.pathname.includes("/live_game")) {
+    if (!liveGameSim) {
         url = helpers.leagueUrl(["playoffs"]);
     }
 
     return [url, ["teamFinances"]];
 }
 
-async function newPhaseBeforeDraft(conditions: Conditions) {
+async function newPhaseBeforeDraft(conditions: Conditions, liveGameSim?: boolean = false) {
     // Achievements after playoffs
     account.checkAchievement.fo_fo_fo(conditions);
     account.checkAchievement["98_degrees"](conditions);
@@ -341,7 +341,7 @@ async function newPhaseBeforeDraft(conditions: Conditions) {
 
     // Don't redirect if we're viewing a live game now
     let url;
-    if (!location.pathname.includes("/live_game")) {
+    if (!liveGameSim) {
         url = helpers.leagueUrl(["history"]);
     }
 

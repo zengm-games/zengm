@@ -1,9 +1,11 @@
+// @flow
+
 import {g, helpers} from '../../common';
 import {idb} from '../db';
-import type {GetOutput, UpdateEvents} from '../../common/types';
+import type {UpdateEvents} from '../../common/types';
 
 async function updatePlayByPlay(
-    inputs: GetOutput,
+    inputs: {fromAction: boolean, gidPlayByPlay: number, playByPlay: any[]},
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') && !inputs.fromAction) {
@@ -13,7 +15,7 @@ async function updatePlayByPlay(
     }
 
     if (inputs.playByPlay !== undefined && inputs.playByPlay.length > 0) {
-        const boxScore = helpers.deepCopy(await idb.cache.games.get(inputs.gidPlayByPlay));
+        const boxScore: any = helpers.deepCopy(await idb.cache.games.get(inputs.gidPlayByPlay));
 
         // Stats to set to 0
         const resetStats = ["min", "fg", "fga", "tp", "tpa", "ft", "fta", "orb", "trb", "ast", "tov", "stl", "blk", "ba", "pf", "pts", "pm"];

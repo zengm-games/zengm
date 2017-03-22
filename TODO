@@ -6,7 +6,6 @@ shared worker
   - test league tab redirects
     - left menu doesn't update immediately - why?
   - on phase change to preseason, status is Idle but play menu is blank for a couple seconds
-  - can i make single season player retrieval (player stats, leaders, draft summary, etc) faster with same trick as in old withStats, but using retired and draft years?
 - namespace stuff, after it's working for one league
   - attach lid to promiseWorker instance in host (call it "metadata"), update lid if it changes, and attach to every request from host
     - then from worker, pass into toUI

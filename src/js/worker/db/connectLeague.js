@@ -35,6 +35,7 @@ const createLeague = (upgradeDB, lid: number) => {
     eventStore.createIndex("pids", "pids", {unique: false, multiEntry: true});
     gameStore.createIndex("season", "season", {unique: false});
     playerStatsStore.createIndex("pid, season, tid", ["pid", "season", "tid"], {unique: false}); // Can't be unique because player could get traded back to same team in one season (and because playoffs is boolean)
+    playerStore.createIndex('draft.year, retiredYear', ['draft.year', 'retiredYear'], {unique: false});
     playerStore.createIndex("statsTids", "statsTids", {unique: false, multiEntry: true});
     playerStore.createIndex("tid", "tid", {unique: false});
     teamSeasonsStore.createIndex("season, tid", ["season", "tid"], {unique: true});
@@ -119,11 +120,20 @@ const migrateLeague = (upgradeDB, lid) => {
         upgradeDB.releasedPlayers.deleteIndex('tid');
         upgradeDB.releasedPlayers.deleteIndex('contract.exp');
     }
+    if (upgradeDB.oldVersion <= 21) {
+        upgradeDB.players.createIndex('draft.year, retiredYear', ['draft.year', 'retiredYear'], {unique: false});
+        upgradeDB.players.iterate((p) => {
+            if (p.retiredYear === null || p.retiredYear === undefined) {
+                p.retiredYear = Infinity;
+                upgradeDB.players.put(p);
+            }
+        });
+    }
 };
 
 const connectLeague = async (lid: number) => {
     // Would like to await on migrateLeague and inside there, but Firefox
-    const db = await Backboard.open(`league${lid}`, 21, (upgradeDB) => {
+    const db = await Backboard.open(`league${lid}`, 22, (upgradeDB) => {
         if (upgradeDB.oldVersion === 0) {
             createLeague(upgradeDB, lid);
         } else {

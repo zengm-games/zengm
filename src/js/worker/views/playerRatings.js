@@ -2,10 +2,10 @@
 
 import {PHASE, PLAYER, g} from '../../common';
 import {idb} from '../db';
-import type {GetOutput, UpdateEvents} from '../../common/types';
+import type {UpdateEvents} from '../../common/types';
 
 async function updatePlayers(
-    inputs: GetOutput,
+    inputs: {abbrev: string, season: number},
     updateEvents: UpdateEvents,
     state: any,
 ): void | {[key: string]: any} {
@@ -15,8 +15,7 @@ async function updatePlayers(
             players = await idb.cache.players.getAll();
             players = players.filter((p) => p.tid !== PLAYER.RETIRED); // Normally won't be in cache, but who knows...
         } else {
-            // If it's not this season, get all players, because retired players could apply to the selected season
-            players = await idb.getCopies.players({activeAndRetired: true});
+            players = await idb.getCopies.players({activeSeason: inputs.season});
         }
 
         let tid = g.teamAbbrevsCache.indexOf(inputs.abbrev);

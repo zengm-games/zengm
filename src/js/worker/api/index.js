@@ -197,9 +197,10 @@ const exportPlayerAveragesCsv = async (season: number | 'all') => {
     let players;
     if (g.season === season && g.phase <= PHASE.PLAYOFFS) {
         players = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
-    } else {
-        // If it's not this season, get all players, because retired players could apply to the selected season
+    } else if (season === 'all') {
         players = await idb.getCopies.players({activeAndRetired: true});
+    } else {
+        players = await idb.getCopies.players({activeSeason: season});
     }
 
     // Array of seasons in stats, either just one or all of them

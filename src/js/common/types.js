@@ -453,7 +453,7 @@ export type PlayerWithoutPid = {
     pos?: string, // Only in players from custom league files
     ptModifier: number,
     ratings: PlayerRatings[],
-    retiredYear: null | number,
+    retiredYear: number,
     rosterOrder: number,
     salaries: PlayerSalary[],
     statsTids: number[],

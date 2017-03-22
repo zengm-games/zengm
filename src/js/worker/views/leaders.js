@@ -2,22 +2,17 @@
 
 import {PHASE, PLAYER, g, helpers} from '../../common';
 import {idb} from '../db';
-import type {GetOutput, UpdateEvents} from '../../common/types';
+import type {UpdateEvents} from '../../common/types';
 
 async function updateLeaders(
-    inputs: GetOutput,
+    inputs: {season: number},
     updateEvents: UpdateEvents,
     state: any,
 ): void | {[key: string]: any} {
-    const {season} = inputs;
-    if (typeof season !== 'number') {
-        return;
-    }
-
     // Respond to watchList in case players are listed twice in different categories
-    if (updateEvents.includes('watchList') || (season === g.season && updateEvents.includes('gameSim')) || season !== state.season) {
+    if (updateEvents.includes('watchList') || (inputs.season === g.season && updateEvents.includes('gameSim')) || inputs.season !== state.season) {
         // Calculate the number of games played for each team, which is used later to test if a player qualifies as a league leader
-        const teamSeasons = await idb.getCopies.teamSeasons({season});
+        const teamSeasons = await idb.getCopies.teamSeasons({season: inputs.season});
         const gps = teamSeasons.map(teamSeason => {
             // Don't count playoff games
             if (teamSeason.gp > g.numGames) {
@@ -27,17 +22,16 @@ async function updateLeaders(
         });
 
         let players;
-        if (g.season === season && g.phase <= PHASE.PLAYOFFS) {
+        if (g.season === inputs.season && g.phase <= PHASE.PLAYOFFS) {
             players = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
         } else {
-            // If it's not this season, get all players, because retired players could apply to the selected season
-            players = await idb.getCopies.players({activeAndRetired: true});
+            players = await idb.getCopies.players({activeSeason: inputs.season});
         }
         players = await idb.getCopies.playersPlus(players, {
             attrs: ["pid", "name", "injury", "watch"],
             ratings: ["skills"],
             stats: ["pts", "trb", "ast", "fgp", "tpp", "ftp", "blk", "stl", "min", "per", "ewa", "gp", "fg", "tp", "ft", "abbrev", "tid"],
-            season,
+            season: inputs.season,
         });
 
         const userAbbrev = helpers.getAbbrev(g.userTid);
@@ -104,7 +98,7 @@ async function updateLeaders(
 
         return {
             categories,
-            season,
+            season: inputs.season,
         };
     }
 }

@@ -933,7 +933,7 @@ function generate(
         lastName: nameInfo.lastName,
         ptModifier: 1,
         ratings: [ratings],
-        retiredYear: null,
+        retiredYear: Infinity,
         rosterOrder: 666, // Will be set later
         salaries: [],
         statsTids: [],

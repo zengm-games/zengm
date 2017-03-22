@@ -15,6 +15,7 @@ async function updatePlayers(
             attrs: ["pid", "name", "draft", "retiredYear", "statsTids"],
             ratings: ["ovr", "pos"],
             stats: ["season", "abbrev", "tid", "gp", "min", "trb", "ast", "pts", "per", "ewa"],
+            fuzz: true,
         });
 
         // This stuff isn't in idb.getCopies.playersPlus because it's only used here.

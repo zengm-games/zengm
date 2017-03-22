@@ -71,10 +71,8 @@ const updatePlayMenu = async () => {
         keys = ["day", "week", "untilPreseason"];
     }
 
-    const [unreadMessage, negotiationInProgress] = await Promise.all([
-        lock.unreadMessage(),
-        lock.negotiationInProgress(),
-    ]);
+    const unreadMessage = await lock.unreadMessage();
+    const negotiationInProgress = await lock.negotiationInProgress();
 
     if (unreadMessage) {
         keys = ["message"];

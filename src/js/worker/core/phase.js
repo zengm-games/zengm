@@ -31,11 +31,11 @@ async function finalize(phase: Phase, url: string, updateEvents: UpdateEvents = 
     if (phase === PHASE.PRESEASON) {
         await idb.cache.fill();
     }
-    await updateStatus('Idle');
 
     lock.set('newPhase', false);
     await updatePhase();
     await updatePlayMenu();
+    await updateStatus('Idle');
 
     updateEvents.push('newPhase');
     toUI(['realtimeUpdate', updateEvents, url], conditions);

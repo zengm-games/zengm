@@ -34,9 +34,11 @@ const getCopies = async ({
             }
         });
 
+        const fromCache = await idb.cache.messages.getAll();
+
         const messages = mergeByPk(
             fromDb,
-            getLastEntries(await idb.cache.messages.getAll(), constLimit),
+            getLastEntries(fromCache, constLimit),
             idb.cache.storeInfos.messages.pk,
         );
 

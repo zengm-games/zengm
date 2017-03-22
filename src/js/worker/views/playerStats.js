@@ -2,10 +2,15 @@
 
 import {PHASE, PLAYER, g} from '../../common';
 import {idb} from '../db';
-import type {GetOutput, UpdateEvents} from '../../common/types';
+import type {PlayerStatType, UpdateEvents} from '../../common/types';
 
 async function updatePlayers(
-    inputs: GetOutput,
+    inputs: {
+        abbrev: string,
+        playoffs: 'playoffs' | 'regularSeason',
+        season: number,
+        statType: PlayerStatType,
+    },
     updateEvents: UpdateEvents,
     state: any,
 ): void | {[key: string]: any} {

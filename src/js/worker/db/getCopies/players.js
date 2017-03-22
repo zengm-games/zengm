@@ -106,6 +106,7 @@ const getCopies = async ({
 
         return mergeByPk(
             fromDB,
+            // $FlowFixMe this seems like a bug in Flow, I don't know what's wrong here
             [].concat(
                 await idb.cache.players.indexGetAll('playersByTid', PLAYER.RETIRED),
                 await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]),

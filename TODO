@@ -2,6 +2,7 @@ IVERSON - BEFORE FINAL
 
 shared worker
 - release beta without multileague support?
+  - if disabled and league-active, no disabled visualization
   - promise-worker-bi release beta
   - test league tab redirects
     - left menu doesn't update immediately - why?
@@ -22,8 +23,6 @@ shared worker
   - when closing tab, how to forget port? http://stackoverflow.com/questions/13662089/javascript-how-to-know-if-a-connection-with-a-shared-worker-is-still-alive
   - split promise-worker-bi into two classes, sharing some base class
     - register function doens't need to recieve hostID and metadata on host
-
-quick click on two leagues on dashboard -> broken state
 
 force single tab per league
 - when < 5 seconds, wait for another heartbeat before deciding
@@ -160,6 +159,11 @@ revisit lock system
 benchmark using proxies to detect change in index stuff rather than dirtyIndexes
 
 can ui/util/logEvent be replaced by just notify? since it never writes to db?
+
+event log refactor
+- react
+- keep state just on worker
+- "event log" page with ALL events, should be impossible to "miss" an event
 
 ----
 

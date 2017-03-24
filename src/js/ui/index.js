@@ -15,7 +15,7 @@ import type {Env} from '../common/types';
 
 // source-map-support is no longer needed here because no Promise polyfill in the UI, only sometimes in the worker.
 
-promiseWorker.register((hostID, metadata, [name, ...params]) => {
+promiseWorker.register(([name, ...params]) => {
     if (!api.hasOwnProperty(name)) {
         throw new Error(`API call to nonexistant UI function "${name}" with params ${JSON.stringify(params)}`);
     }

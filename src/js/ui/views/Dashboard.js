@@ -47,7 +47,6 @@ class Dashboard extends React.Component {
                         href={`/l/${l.lid}`}
                         onClick={() => this.setActiveLid(l.lid)}
                         title={`${l.lid}. ${l.name}`}
-                        disabled={this.state.activeLid !== undefined}
                     >
                         {
                             l.lid !== this.state.activeLid
@@ -69,7 +68,6 @@ class Dashboard extends React.Component {
                 <li className="dashboard-box-new"><a
                     href="/new_league"
                     className="btn btn-primary league"
-                    disabled={this.state.activeLid !== undefined}
                 ><h2>Create new<br />league</h2></a></li>
             </ul>
         </div>;

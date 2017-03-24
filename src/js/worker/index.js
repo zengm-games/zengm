@@ -15,7 +15,7 @@ import * as util from './util';
 self.bbgm = Object.assign({}, common, core, db, util);
 
 // God damn this function is ugly, clean up! Can probably share with ui.
-util.promiseWorker.register((hostID, metadata, [name, ...params]) => {
+util.promiseWorker.register(([name, ...params], hostID) => {
     const conditions = {
         hostID,
     };

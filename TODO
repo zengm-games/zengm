@@ -2,8 +2,6 @@ IVERSON - BEFORE FINAL
 
 shared worker
 - release beta without multileague support?
-  - if disabled and league-active, no disabled visualization
-  - promise-worker-bi release beta
   - test league tab redirects
     - left menu doesn't update immediately - why?
 - namespace stuff, after it's working for one league

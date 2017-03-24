@@ -46,7 +46,7 @@
     "object.entries": "1.0.4",
     "object.values": "1.0.4",
     "page": "1.7.1",
-    "promise-worker-bi": "dumbmatter/promise-worker-bi#shared-worker",
+    "promise-worker-bi": "2.1.0",
     "react": "15.4.2",
     "react-addons-text-content": "0.0.4",
     "react-bootstrap": "0.30.8",
@@ -57,7 +57,7 @@
     "whatwg-fetch": "2.0.3"
   },
   "devDependencies": {
-    "babel-eslint": "7.2.0",
+    "babel-eslint": "7.2.1",
     "babel-plugin-check-es2015-constants": "6.22.0",
     "babel-plugin-external-helpers": "6.22.0",
     "babel-plugin-transform-async-to-generator": "6.22.0",
@@ -83,7 +83,7 @@
     "browserify": "14.1.0",
     "cheerio": "0.20.0",
     "chokidar": "1.6.1",
-    "clean-css": "4.0.9",
+    "clean-css": "4.0.10",
     "concurrently": "3.4.0",
     "envify": "4.0.0",
     "eslint": "3.18.0",
@@ -107,7 +107,7 @@
     "replace": "0.3.0",
     "stylelint": "7.9.0",
     "stylelint-config-standard": "16.0.0",
-    "uglify-js": "git+https://github.com/mishoo/UglifyJS2.git#1db50c3b169ee4195e1935013d6721628eb5b4bd",
+    "uglify-js": "mishoo/UglifyJS2#1db50c3b169ee4195e1935013d6721628eb5b4bd",
     "watchify": "3.9.0"
   },
   "browserify": {

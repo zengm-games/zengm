@@ -350,9 +350,9 @@
       "dev": true
     },
     "babel-eslint": {
-      "version": "7.2.0",
-      "from": "babel-eslint@7.2.0",
-      "resolved": "https://registry.npmjs.org/babel-eslint/-/babel-eslint-7.2.0.tgz",
+      "version": "7.2.1",
+      "from": "babel-eslint@7.2.1",
+      "resolved": "https://registry.npmjs.org/babel-eslint/-/babel-eslint-7.2.1.tgz",
       "dev": true
     },
     "babel-generator": {
@@ -1014,9 +1014,9 @@
       "dev": true
     },
     "caniuse-db": {
-      "version": "1.0.30000639",
+      "version": "1.0.30000640",
       "from": "caniuse-db@>=1.0.30000634 <2.0.0",
-      "resolved": "https://registry.npmjs.org/caniuse-db/-/caniuse-db-1.0.30000639.tgz",
+      "resolved": "https://registry.npmjs.org/caniuse-db/-/caniuse-db-1.0.30000640.tgz",
       "dev": true
     },
     "caseless": {
@@ -1073,9 +1073,9 @@
       "resolved": "https://registry.npmjs.org/classnames/-/classnames-2.2.5.tgz"
     },
     "clean-css": {
-      "version": "4.0.9",
-      "from": "clean-css@4.0.9",
-      "resolved": "https://registry.npmjs.org/clean-css/-/clean-css-4.0.9.tgz",
+      "version": "4.0.10",
+      "from": "clean-css@4.0.10",
+      "resolved": "https://registry.npmjs.org/clean-css/-/clean-css-4.0.10.tgz",
       "dev": true
     },
     "cli-cursor": {
@@ -1475,9 +1475,9 @@
       "dev": true
     },
     "damerau-levenshtein": {
-      "version": "1.0.3",
+      "version": "1.0.4",
       "from": "damerau-levenshtein@>=1.0.0 <2.0.0",
-      "resolved": "https://registry.npmjs.org/damerau-levenshtein/-/damerau-levenshtein-1.0.3.tgz",
+      "resolved": "https://registry.npmjs.org/damerau-levenshtein/-/damerau-levenshtein-1.0.4.tgz",
       "dev": true
     },
     "dashdash": {
@@ -1767,9 +1767,9 @@
       "dev": true
     },
     "electron-to-chromium": {
-      "version": "1.2.7",
+      "version": "1.2.8",
       "from": "electron-to-chromium@>=1.2.7 <2.0.0",
-      "resolved": "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.2.7.tgz",
+      "resolved": "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.2.8.tgz",
       "dev": true
     },
     "elliptic": {
@@ -2585,9 +2585,9 @@
       "dev": true
     },
     "hosted-git-info": {
-      "version": "2.3.1",
+      "version": "2.4.1",
       "from": "hosted-git-info@>=2.1.4 <3.0.0",
-      "resolved": "https://registry.npmjs.org/hosted-git-info/-/hosted-git-info-2.3.1.tgz",
+      "resolved": "https://registry.npmjs.org/hosted-git-info/-/hosted-git-info-2.4.1.tgz",
       "dev": true
     },
     "html-tags": {
@@ -2958,9 +2958,9 @@
       "dev": true
     },
     "isexe": {
-      "version": "1.1.2",
-      "from": "isexe@>=1.1.1 <2.0.0",
-      "resolved": "https://registry.npmjs.org/isexe/-/isexe-1.1.2.tgz",
+      "version": "2.0.0",
+      "from": "isexe@>=2.0.0 <3.0.0",
+      "resolved": "https://registry.npmjs.org/isexe/-/isexe-2.0.0.tgz",
       "dev": true
     },
     "isobject": {
@@ -3318,7 +3318,7 @@
     },
     "lodash": {
       "version": "4.17.4",
-      "from": "lodash@>=4.17.4 <5.0.0",
+      "from": "lodash@>=4.2.0 <5.0.0",
       "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.4.tgz",
       "dev": true
     },
@@ -3497,15 +3497,15 @@
       "dev": true
     },
     "mime-db": {
-      "version": "1.26.0",
-      "from": "mime-db@>=1.26.0 <1.27.0",
-      "resolved": "https://registry.npmjs.org/mime-db/-/mime-db-1.26.0.tgz",
+      "version": "1.27.0",
+      "from": "mime-db@>=1.27.0 <1.28.0",
+      "resolved": "https://registry.npmjs.org/mime-db/-/mime-db-1.27.0.tgz",
       "dev": true
     },
     "mime-types": {
-      "version": "2.1.14",
+      "version": "2.1.15",
       "from": "mime-types@>=2.1.7 <2.2.0",
-      "resolved": "https://registry.npmjs.org/mime-types/-/mime-types-2.1.14.tgz",
+      "resolved": "https://registry.npmjs.org/mime-types/-/mime-types-2.1.15.tgz",
       "dev": true
     },
     "minimalistic-assert": {
@@ -4195,9 +4195,9 @@
       "resolved": "https://registry.npmjs.org/promise/-/promise-7.1.1.tgz"
     },
     "promise-worker-bi": {
-      "version": "2.0.2",
-      "from": "dumbmatter/promise-worker-bi#shared-worker",
-      "resolved": "git://github.com/dumbmatter/promise-worker-bi.git#4c3606588f5f954619d2a58143e9ed19aa7b15ff"
+      "version": "2.1.0",
+      "from": "promise-worker-bi@2.1.0",
+      "resolved": "https://registry.npmjs.org/promise-worker-bi/-/promise-worker-bi-2.1.0.tgz"
     },
     "pseudomap": {
       "version": "1.0.2",
@@ -5228,8 +5228,8 @@
     },
     "uglify-js": {
       "version": "2.7.3",
-      "from": "git+https://github.com/mishoo/UglifyJS2.git#1db50c3b169ee4195e1935013d6721628eb5b4bd",
-      "resolved": "git+https://github.com/mishoo/UglifyJS2.git#1db50c3b169ee4195e1935013d6721628eb5b4bd",
+      "from": "mishoo/UglifyJS2#1db50c3b169ee4195e1935013d6721628eb5b4bd",
+      "resolved": "git://github.com/mishoo/UglifyJS2.git#1db50c3b169ee4195e1935013d6721628eb5b4bd",
       "dev": true,
       "dependencies": {
         "camelcase": {
@@ -5448,9 +5448,9 @@
       "optional": true
     },
     "which": {
-      "version": "1.2.12",
+      "version": "1.2.14",
       "from": "which@>=1.2.1 <2.0.0",
-      "resolved": "https://registry.npmjs.org/which/-/which-1.2.12.tgz",
+      "resolved": "https://registry.npmjs.org/which/-/which-1.2.14.tgz",
       "dev": true
     },
     "which-module": {

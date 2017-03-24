@@ -68,53 +68,68 @@ const checkHeartbeat = async (lid: number) => {
     throw new Error("A league can only be open in one tab at a time. If this league is not open in another tab, please wait a few seconds and reload. Or switch to Chrome or Firefox, they don't have this limitation.");
 };
 
+let loadingNewLid;
 const beforeLeague = async (newLid: number, loadedLid: number | void, conditions: Conditions) => {
     // Make sure league template FOR THE CURRENT LEAGUE is showing
     if (newLid !== loadedLid) {
+        loadingNewLid = newLid;
+
         if (newLid !== g.lid) {
             await league.close(true);
         }
+        if (loadingNewLid !== newLid) { return; } // Check after every async action
 
         // If this is a Web Worker, only one tab of a league can be open at a time
         if (!env.useSharedWorker) {
             clearInterval(heartbeatIntervalID);
             await checkHeartbeat(newLid);
         }
+        if (loadingNewLid !== newLid) { return; }
 
         if (newLid !== g.lid) {
             // Clear old game attributes from g, just to be sure
             helpers.resetG();
             await toUI(['resetG']);
+            if (loadingNewLid !== newLid) { return; }
 
             g.lid = newLid;
             idb.league = await connectLeague(g.lid);
+            if (loadingNewLid !== newLid) { return; }
 
             // Reuse existing cache, if it was just created for a new league
             if (!idb.cache || !idb.cache.newLeague) {
                 idb.cache = new Cache();
                 await idb.cache.fill();
+                if (loadingNewLid !== newLid) { return; }
             } else if (idb.cache && idb.cache.newLeague) {
                 idb.cache.newLeague = false;
             }
         }
 
         await league.loadGameAttributes();
+        if (loadingNewLid !== newLid) { return; }
 
         // Update play menu
         await updateStatus(undefined);
+        if (loadingNewLid !== newLid) { return; }
         await updatePhase(conditions);
+        if (loadingNewLid !== newLid) { return; }
         await updatePlayMenu();
+        if (loadingNewLid !== newLid) { return; }
 
         if (newLid !== g.lid) {
             // This is the only place we need to do this, since every league connection passes through here
             await idb.cache.startAutoFlush();
+            if (loadingNewLid !== newLid) { return; }
         }
 
         await toUI(['emit', 'updateTopMenu', {lid: g.lid}], conditions);
+        if (loadingNewLid !== newLid) { return; }
 
         // If this is a Shared Worker, only one league can be open at a time
         if (env.useSharedWorker) {
             await toUI(['newLid', g.lid]);
+            if (loadingNewLid !== newLid) { return; }
         }
     }
 };

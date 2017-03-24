@@ -325,7 +325,7 @@ class Controller extends React.Component {
             const pageId = idLoading !== undefined ? idLoading : idLoaded;
 
             contents = <div>
-                <LeagueWrapper pageId={pageId}>
+                <LeagueWrapper lid={topMenu.lid} pageId={pageId}>
                     <LeagueContent
                         Component={Component}
                         data={data}

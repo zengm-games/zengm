@@ -5,7 +5,7 @@ import {helpers} from '../../common';
 
 class SideMenu extends React.Component {
     shouldComponentUpdate(nextProps) {
-        return this.props.pageId !== nextProps.pageId;
+        return this.props.pageId !== nextProps.pageId || this.props.lid !== nextProps.lid;
     }
 
     render() {
@@ -92,13 +92,14 @@ class SideMenu extends React.Component {
 }
 
 SideMenu.propTypes = {
+    lid: React.PropTypes.number,
     pageId: React.PropTypes.string.isRequired,
 };
 
-const LeagueWrapper = ({children, pageId}: {children: React.Element<*>, pageId: string}) => {
+const LeagueWrapper = ({children, lid, pageId}: {children: React.Element<*>, lid: number | void, pageId: string}) => {
     return <div className="row">
         <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
-            <SideMenu pageId={pageId} />
+            <SideMenu lid={lid} pageId={pageId} />
         </div>
         <div className="col-lg-10 col-xs-12 p402_premium" id="screenshot-league">
             {children}
@@ -108,6 +109,7 @@ const LeagueWrapper = ({children, pageId}: {children: React.Element<*>, pageId: 
 
 LeagueWrapper.propTypes = {
     children: React.PropTypes.any.isRequired,
+    lid: React.PropTypes.number,
     pageId: React.PropTypes.string.isRequired,
 };
 

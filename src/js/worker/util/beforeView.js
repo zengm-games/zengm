@@ -129,7 +129,6 @@ const beforeLeague = async (newLid: number, loadedLid: number | void, conditions
         // If this is a Shared Worker, only one league can be open at a time
         if (env.useSharedWorker) {
             await toUI(['newLid', g.lid]);
-            if (loadingNewLid !== newLid) { return; }
         }
     }
 };

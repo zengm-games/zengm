@@ -2,6 +2,13 @@ IVERSON - BEFORE FINAL
 
 at beginning of season, read message and then press ctrl+R, seems to never persist
 
+filtering datatables
+- option to enable, default true
+- button in top right, when clicked it puts a row with textboxes below last thead row
+- display help icon too, explaining rules
+- for numeric ones, accept strings with > or < before number (maybe strip all chars except > < . 0-9 before processing)
+- for others, just straight search
+
 shared worker
 - release beta without multileague support?
 - namespace stuff, after it's working for one league

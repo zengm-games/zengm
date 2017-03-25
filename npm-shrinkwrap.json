@@ -2446,9 +2446,9 @@
       "dev": true
     },
     "globals": {
-      "version": "9.16.0",
+      "version": "9.17.0",
       "from": "globals@>=9.0.0 <10.0.0",
-      "resolved": "https://registry.npmjs.org/globals/-/globals-9.16.0.tgz",
+      "resolved": "https://registry.npmjs.org/globals/-/globals-9.17.0.tgz",
       "dev": true
     },
     "globby": {
@@ -4189,9 +4189,9 @@
       "resolved": "https://registry.npmjs.org/promise/-/promise-7.1.1.tgz"
     },
     "promise-worker-bi": {
-      "version": "2.1.0",
-      "from": "promise-worker-bi@2.1.0",
-      "resolved": "https://registry.npmjs.org/promise-worker-bi/-/promise-worker-bi-2.1.0.tgz"
+      "version": "2.1.1",
+      "from": "promise-worker-bi@2.1.1",
+      "resolved": "https://registry.npmjs.org/promise-worker-bi/-/promise-worker-bi-2.1.1.tgz"
     },
     "pseudomap": {
       "version": "1.0.2",
@@ -5320,9 +5320,9 @@
       }
     },
     "url-search-params-polyfill": {
-      "version": "1.0.2",
-      "from": "url-search-params-polyfill@1.0.2",
-      "resolved": "https://registry.npmjs.org/url-search-params-polyfill/-/url-search-params-polyfill-1.0.2.tgz"
+      "version": "1.1.0",
+      "from": "url-search-params-polyfill@1.1.0",
+      "resolved": "https://registry.npmjs.org/url-search-params-polyfill/-/url-search-params-polyfill-1.1.0.tgz"
     },
     "user-home": {
       "version": "2.0.0",

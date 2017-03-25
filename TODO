@@ -17,10 +17,6 @@ shared worker
     - something to handle init/close of tabs
     - look at all toUI calls
   - disconnect league when none are left registered to promise worker (so need api to get all metadata)
-- after it's working
-  - when closing tab, how to forget port? http://stackoverflow.com/questions/13662089/javascript-how-to-know-if-a-connection-with-a-shared-worker-is-still-alive
-  - split promise-worker-bi into two classes, sharing some base class
-    - register function doens't need to recieve hostID and metadata on host
 
 force single tab per league
 - when < 5 seconds, wait for another heartbeat before deciding

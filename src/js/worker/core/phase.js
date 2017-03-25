@@ -446,7 +446,15 @@ async function newPhaseFreeAgency(conditions: Conditions) {
             // Automatically negotiate with teams
             const factor = strategies[p.tid] === "rebuilding" ? 0.4 : 0;
 
-            if (Math.random() < p.value / 100 - factor) { // Should eventually be smarter than a coin flip
+            const isFirstRounder = p.draft.round === 1 && p.draft.year === g.season - 3;
+            let ewa = 0;
+            if (isFirstRounder) {
+                let playerStats = await idb.getCopies.playerStats({pid: p.pid});
+                playerStats = playerStats.filter(ps => ps.season === g.season - 1);
+                ewa = playerStats.reduce((acc, ps) => acc + ps.ewa, 0);
+            }
+
+            if (Math.random() < p.value / 100 - factor || (isFirstRounder && ewa > 1)) { // Should eventually be smarter than a coin flip
                 // See also core.team
                 const contract = player.genContract(p);
                 contract.exp += 1; // Otherwise contracts could expire this season

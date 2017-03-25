@@ -82,7 +82,7 @@ const setTimestamps = () => {
 
     const d = new Date();
     const date = d.toISOString().split('T')[0].replace(/-/g, '.');
-    const rev = `${date}.${d.getMinutes() + 60 * d.getHours()}`;
+    const rev = `${date}.${d.getUTCMinutes() + 60 * d.getUTCHours()}`;
     console.log(`rev ${rev}`);
 
     replace({

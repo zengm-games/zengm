@@ -13,7 +13,7 @@
   },
   "scripts": {
     "start": "node tools/server.js",
-    "build": "NODE_ENV=production node tools/build.js && npm run build-js",
+    "build": "NODE_ENV=production node tools/build.js && npm run build-js && npm run minify-js",
     "start-watch": "concurrently --kill-others 'npm run start' 'npm run watch-css' 'npm run watch-js'",
     "watch": "concurrently --kill-others 'npm run watch-css' 'npm run watch-js'",
     "watch-css": "node tools/watch-css.js",
@@ -107,7 +107,7 @@
     "replace": "0.3.0",
     "stylelint": "7.9.0",
     "stylelint-config-standard": "16.0.0",
-    "uglify-js": "mishoo/UglifyJS2#1db50c3b169ee4195e1935013d6721628eb5b4bd",
+    "uglify-js": "mishoo/UglifyJS2#9e2290b29c86caf847e291cf120ab23bea40544c",
     "watchify": "3.9.0"
   },
   "browserify": {

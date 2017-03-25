@@ -26,9 +26,6 @@ force single tab per league
 - when < 5 seconds, wait for another heartbeat before deciding
 - check for collission in setInterval, and somehow show error page if that happens
 
-minify is broken
-- disable mangle and compress, still broken. maybe just fuck it, who cares
-
 Email users after bbgm update
 
 get rid of debug mode info in manual

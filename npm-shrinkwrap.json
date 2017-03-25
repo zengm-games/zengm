@@ -295,12 +295,6 @@
       "resolved": "https://registry.npmjs.org/astw/-/astw-2.2.0.tgz",
       "dev": true
     },
-    "async": {
-      "version": "0.2.10",
-      "from": "async@>=0.2.6 <0.3.0",
-      "resolved": "https://registry.npmjs.org/async/-/async-0.2.10.tgz",
-      "dev": true
-    },
     "async-each": {
       "version": "1.0.1",
       "from": "async-each@>=1.0.0 <2.0.0",
@@ -5227,9 +5221,9 @@
       "resolved": "https://registry.npmjs.org/ua-parser-js/-/ua-parser-js-0.7.12.tgz"
     },
     "uglify-js": {
-      "version": "2.7.3",
-      "from": "mishoo/UglifyJS2#1db50c3b169ee4195e1935013d6721628eb5b4bd",
-      "resolved": "git://github.com/mishoo/UglifyJS2.git#1db50c3b169ee4195e1935013d6721628eb5b4bd",
+      "version": "2.8.15",
+      "from": "mishoo/UglifyJS2#9e2290b29c86caf847e291cf120ab23bea40544c",
+      "resolved": "git://github.com/mishoo/UglifyJS2.git#9e2290b29c86caf847e291cf120ab23bea40544c",
       "dev": true,
       "dependencies": {
         "camelcase": {
@@ -5268,7 +5262,8 @@
       "version": "1.0.2",
       "from": "uglify-to-browserify@>=1.0.0 <1.1.0",
       "resolved": "https://registry.npmjs.org/uglify-to-browserify/-/uglify-to-browserify-1.0.2.tgz",
-      "dev": true
+      "dev": true,
+      "optional": true
     },
     "ultron": {
       "version": "1.0.2",

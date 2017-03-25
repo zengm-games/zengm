@@ -179,6 +179,12 @@ class LoginOrRegister extends React.Component {
                             <input type="password" className="form-control" id="register-password2" name="password2" required="required" />
                             <span className="help-block">{this.state.registerPassword2Error}</span>
                         </div>
+                        <div className="checkbox">
+                            <label htmlFor="register-mailinglist">
+                                <input type="checkbox" defaultChecked="checked" id="register-mailinglist" name="mailinglist" />
+                                Join BBGM Mailing List (Only major announcements, about once/year)
+                            </label>
+                        </div>
                         <button type="submit" className="btn btn-default btn-primary">Create New Account</button>
                         <p className="text-danger" style={{marginTop: '1em'}}>{this.state.registerError}</p>
                     </form>

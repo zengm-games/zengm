@@ -1,5 +1,7 @@
 IVERSON - BEFORE FINAL
 
+at beginning of season, read message and then press ctrl+R, seems to never persist
+
 shared worker
 - release beta without multileague support?
 - namespace stuff, after it's working for one league
@@ -27,7 +29,7 @@ force single tab per league
 minify is broken
 - disable mangle and compress, still broken. maybe just fuck it, who cares
 
-Email users after bbgm update. But first allow opt out on register
+Email users after bbgm update
 
 get rid of debug mode info in manual
 
@@ -39,6 +41,8 @@ blog post
 - promise-worker-bi
 - worker microtask issues
 - safari
+- shared worker
+- safari again
 
 followup blog posts
 - user metrics after performance increase
@@ -209,6 +213,8 @@ upgrade GA https://developers.google.com/analytics/devguides/collection/upgrade/
 ---
 
 REACT later
+
+https://marmelab.com/blog/2017/02/06/react-is-slow-react-is-fast.html
 
 close menu on responsive navbar https://github.com/react-bootstrap/react-bootstrap/issues/1301 resolved by https://github.com/react-bootstrap/react-bootstrap/pull/2280
 

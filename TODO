@@ -2,11 +2,6 @@ IVERSON - BEFORE FINAL
 
 at beginning of season, read message and then press ctrl+R, seems to never persist
 
-filtering datatables
-- option to enable in DataTable tag, default true
-- button in top right, when clicked it puts a row with textboxes below last thead row
-- display help icon too, explaining rules (><=)
-
 search for Set home/away in the next round
 - should go by seed, not winp. possible?
 

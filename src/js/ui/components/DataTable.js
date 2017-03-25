@@ -5,6 +5,7 @@ import orderBy from 'lodash.orderby';
 import React from 'react';
 import textContent from 'react-addons-text-content';
 import {g, helpers} from '../../common';
+import {HelpPopover} from '../components';
 import clickable from '../wrappers/clickable';
 import type {SortOrder, SortType} from '../../common/types';
 
@@ -33,7 +34,7 @@ FilterHeader.propTypes = {
     handleFilterUpdate: React.PropTypes.func.isRequired,
 };
 
-const Header = ({cols, filters, handleColClick, handleFilterUpdate, sortBys, superCols}) => {
+const Header = ({cols, enableFilters, filters, handleColClick, handleFilterUpdate, sortBys, superCols}) => {
     return <thead>
         {superCols ? <tr>
             {superCols.map(({colspan, desc, title}, i) => {
@@ -72,7 +73,7 @@ const Header = ({cols, filters, handleColClick, handleFilterUpdate, sortBys, sup
                 </th>;
             })}
         </tr>
-        <FilterHeader cols={cols} filters={filters} handleFilterUpdate={handleFilterUpdate} />
+        {enableFilters ? <FilterHeader cols={cols} filters={filters} handleFilterUpdate={handleFilterUpdate} /> : null}
     </thead>;
 };
 
@@ -83,6 +84,7 @@ Header.propTypes = {
         title: React.PropTypes.string.isRequired,
         width: React.PropTypes.string,
     })).isRequired,
+    enableFilters: React.PropTypes.bool.isRequired,
     filters: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
     handleColClick: React.PropTypes.func.isRequired,
     handleFilterUpdate: React.PropTypes.func.isRequired,
@@ -307,7 +309,7 @@ class DataTable extends React.Component {
 
         this.state = {
             currentPage: 1,
-            enableFilters: true,
+            enableFilters: false,
             filters: props.cols.map(() => ''),
             perPage,
             searchText: '',
@@ -315,6 +317,7 @@ class DataTable extends React.Component {
         };
 
         this.handleColClick = this.handleColClick.bind(this);
+        this.handleEnableFilters = this.handleEnableFilters.bind(this);
         this.handleFilterUpdate = this.handleFilterUpdate.bind(this);
         this.handlePaging = this.handlePaging.bind(this);
         this.handlePerPage = this.handlePerPage.bind(this);
@@ -381,6 +384,12 @@ class DataTable extends React.Component {
         this.setState({
             currentPage: 1,
             sortBys,
+        });
+    }
+
+    handleEnableFilters() {
+        this.setState({
+            enableFilters: !this.state.enableFilters,
         });
     }
 
@@ -528,6 +537,18 @@ class DataTable extends React.Component {
                     </label>
                 </div>
                 <div className="dataTables_filter">
+                    <HelpPopover placement="bottom" style={{marginRight: '6px'}} title="Filtering">
+                        <p>The main search box looks in all columns, but you can filter on the values in specific columns by clicking the "Filter" button <span className="glyphicon glyphicon-filter" /> and entering text below the column headers.</p>
+                        <p>For numeric columns, you can enter "&gt;50" to show values greater than or equal to 50, "&lt;50" for the opposite, and "=50" for values exactly equal to 50.</p>
+                    </HelpPopover>
+                    <a
+                        className={classNames('btn btn-default', {active: this.state.enableFilters})}
+                        onClick={this.handleEnableFilters}
+                        style={{marginRight: '6px'}}
+                        title="Filter"
+                    >
+                        <span className="glyphicon glyphicon-filter" />
+                    </a>
                     <label>
                         <input
                             className="form-control input-sm"
@@ -587,6 +608,7 @@ class DataTable extends React.Component {
             <table className="table table-striped table-bordered table-condensed table-hover">
                 <Header
                     cols={cols}
+                    enableFilters={this.state.enableFilters}
                     filters={this.state.filters}
                     handleColClick={this.handleColClick}
                     handleFilterUpdate={this.handleFilterUpdate}

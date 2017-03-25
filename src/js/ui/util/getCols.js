@@ -65,6 +65,7 @@ const cols: {
     },
     'Avg Attendance': {
         sortSequence: ['desc', 'asc'],
+        sortType: 'number',
     },
     'BA': {
         desc: 'Blocks Against',
@@ -177,6 +178,7 @@ const cols: {
     'L': {
         desc: 'Games Lost',
         sortSequence: ['desc', 'asc'],
+        sortType: 'number',
     },
     'L10': {
         desc: 'Last Ten Games',
@@ -220,6 +222,7 @@ const cols: {
     'Negotiate': {},
     'O': {
         desc: 'Overall',
+        sortType: 'number',
     },
     'OPts': {
         desc: "Opponent's Points",
@@ -241,6 +244,7 @@ const cols: {
     },
     'P': {
         desc: 'Performance',
+        sortType: 'number',
     },
     'PER': {
         desc: 'Player Efficiency Rating',
@@ -264,6 +268,7 @@ const cols: {
     'Peak Ovr': {
         desc: 'Peak Overall Rating',
         sortSequence: ['desc', 'asc'],
+        sortType: 'number',
     },
     'Pick': {
         desc: 'Draft Pick',
@@ -315,6 +320,7 @@ const cols: {
     },
     'Season': {
         sortSequence: ['desc', 'asc'],
+        sortType: 'number',
     },
     'Skills': {},
     'Stl': {
@@ -324,6 +330,7 @@ const cols: {
     },
     'T': {
         desc: 'Talent',
+        sortType: 'number',
     },
     'TO': {
         desc: 'Turnovers',
@@ -344,6 +351,7 @@ const cols: {
     'W': {
         desc: 'Games Won',
         sortSequence: ['desc', 'asc'],
+        sortType: 'number',
     },
     'Year': {},
 
@@ -351,62 +359,77 @@ const cols: {
     'rating:2Pt': {
         desc: 'Two-Point Shooting',
         sortSequence: ['desc', 'asc'],
+        sortType: 'number',
     },
     'rating:3Pt': {
         desc: 'Three-Point Shooting',
         sortSequence: ['desc', 'asc'],
+        sortType: 'number',
     },
     'rating:Blk': {
         desc: 'Blocks',
         sortSequence: ['desc', 'asc'],
+        sortType: 'number',
     },
     'rating:Dnk': {
         desc: 'Dunks/Layups',
         sortSequence: ['desc', 'asc'],
+        sortType: 'number',
     },
     'rating:Drb': {
         desc: 'Dribbling',
         sortSequence: ['desc', 'asc'],
+        sortType: 'number',
     },
     'rating:End': {
         desc: 'Endurance',
         sortSequence: ['desc', 'asc'],
+        sortType: 'number',
     },
     'rating:Hgt': {
         desc: 'Height',
         sortSequence: ['desc', 'asc'],
+        sortType: 'number',
     },
     'rating:Ins': {
         desc: 'Inside Scoring',
         sortSequence: ['desc', 'asc'],
+        sortType: 'number',
     },
     'rating:Jmp': {
         desc: 'Jumping',
         sortSequence: ['desc', 'asc'],
+        sortType: 'number',
     },
     'rating:FT': {
         desc: 'Free Throw Shooting',
         sortSequence: ['desc', 'asc'],
+        sortType: 'number',
     },
     'rating:Pss': {
         desc: 'Passing',
         sortSequence: ['desc', 'asc'],
+        sortType: 'number',
     },
     'rating:Reb': {
         desc: 'Rebounding',
         sortSequence: ['desc', 'asc'],
+        sortType: 'number',
     },
     'rating:Spd': {
         desc: 'Speed',
         sortSequence: ['desc', 'asc'],
+        sortType: 'number',
     },
     'rating:Stl': {
         desc: 'Steals',
         sortSequence: ['desc', 'asc'],
+        sortType: 'number',
     },
     'rating:Str': {
         desc: 'Strength',
         sortSequence: ['desc', 'asc'],
+        sortType: 'number',
     },
 };
 

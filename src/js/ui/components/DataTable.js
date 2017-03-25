@@ -8,7 +8,32 @@ import {g, helpers} from '../../common';
 import clickable from '../wrappers/clickable';
 import type {SortOrder, SortType} from '../../common/types';
 
-const Header = ({cols, handleColClick, sortBys, superCols}) => {
+const FilterHeader = ({cols, filters, handleFilterUpdate}) => {
+    return <tr>
+        {cols.map(({title}, i) => {
+            const filter = filters[i] === undefined ? '' : filters[i];
+
+            return <th key={i}>
+                <input
+                    onChange={event => handleFilterUpdate(event, i)}
+                    style={{border: '1px solid #ccc', fontWeight: 'normal', fontSize: '12px', width: '100%'}}
+                    type="text"
+                    value={filter}
+                />
+            </th>;
+        })}
+    </tr>;
+};
+
+FilterHeader.propTypes = {
+    cols: React.PropTypes.arrayOf(React.PropTypes.shape({
+        title: React.PropTypes.string.isRequired,
+    })).isRequired,
+    filters: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+    handleFilterUpdate: React.PropTypes.func.isRequired,
+};
+
+const Header = ({cols, filters, handleColClick, handleFilterUpdate, sortBys, superCols}) => {
     return <thead>
         {superCols ? <tr>
             {superCols.map(({colspan, desc, title}, i) => {
@@ -47,6 +72,7 @@ const Header = ({cols, handleColClick, sortBys, superCols}) => {
                 </th>;
             })}
         </tr>
+        <FilterHeader cols={cols} filters={filters} handleFilterUpdate={handleFilterUpdate} />
     </thead>;
 };
 
@@ -57,7 +83,9 @@ Header.propTypes = {
         title: React.PropTypes.string.isRequired,
         width: React.PropTypes.string,
     })).isRequired,
+    filters: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
     handleColClick: React.PropTypes.func.isRequired,
+    handleFilterUpdate: React.PropTypes.func.isRequired,
     sortBys: React.PropTypes.arrayOf(React.PropTypes.arrayOf(React.PropTypes.oneOfType([
         React.PropTypes.number,
         React.PropTypes.string,
@@ -245,6 +273,8 @@ type Props = {
 
 type State = {
     currentPage: number,
+    enableFilters: boolean,
+    filters: string[],
     perPage: number,
     searchText: string,
     sortBys: SortBy[],
@@ -277,12 +307,15 @@ class DataTable extends React.Component {
 
         this.state = {
             currentPage: 1,
+            enableFilters: true,
+            filters: props.cols.map(() => ''),
             perPage,
             searchText: '',
             sortBys,
         };
 
         this.handleColClick = this.handleColClick.bind(this);
+        this.handleFilterUpdate = this.handleFilterUpdate.bind(this);
         this.handlePaging = this.handlePaging.bind(this);
         this.handlePerPage = this.handlePerPage.bind(this);
         this.handleSearch = this.handleSearch.bind(this);
@@ -351,6 +384,14 @@ class DataTable extends React.Component {
         });
     }
 
+    handleFilterUpdate(event: SyntheticKeyboardEvent, i: number) {
+        const filters = this.state.filters.slice();
+        filters[i] = event.target.value;
+        this.setState({
+            filters,
+        });
+    }
+
     handlePaging(newPage: number) {
         if (newPage !== this.state.currentPage) {
             this.setState({currentPage: newPage});
@@ -378,14 +419,81 @@ class DataTable extends React.Component {
     render() {
         const {cols, footer, pagination, rows, superCols} = this.props;
 
-        const rowsFiltered = this.state.searchText === '' ? rows : rows.filter(row => {
-            for (let i = 0; i < row.data.length; i++) {
-                if (getSearchVal(row.data[i]).includes(this.state.searchText)) {
-                    return true;
+        const filters = this.state.enableFilters ? this.state.filters.map((filter, i) => {
+            if (cols[i].sortType === 'number') {
+                let number = filter.replace(/[^0-9.<>]/g, '');
+                let direction;
+                if (number[0] === '>' || number[0] === '<' || number[0] === '=') {
+                    direction = number[0];
+                    number = number.slice(1); // Remove first char
+                }
+                number = parseFloat(number);
+
+                return {
+                    direction,
+                    original: filter,
+                    number,
+                };
+            }
+
+            return filter.toLowerCase();
+        }) : undefined;
+
+        const skipFiltering = this.state.searchText === '' && !this.state.enableFilters;
+
+        const rowsFiltered = skipFiltering ? rows : rows.filter(row => {
+            // Search
+            if (this.state.searchText !== '') {
+                let found = false;
+                for (let i = 0; i < row.data.length; i++) {
+                    if (getSearchVal(row.data[i]).includes(this.state.searchText)) {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    return false;
                 }
             }
 
-            return false;
+            // Filter
+            if (this.state.enableFilters) {
+                for (let i = 0; i < row.data.length; i++) {
+                    const filter = filters[i];
+
+                    if (typeof filter === 'string') {
+                        if (filter === '') {
+                            continue;
+                        }
+
+                        if (!getSearchVal(row.data[i]).includes(filter)) {
+                            return false;
+                        }
+                    } else {
+                        if (Number.isNaN(filter.number)) {
+                            continue;
+                        }
+
+                        const numericVal = parseFloat(row.data[i]);
+                        if (isNaN(numericVal)) {
+                            continue;
+                        }
+
+                        if (filter.direction === '>' && numericVal < filter.number) {
+                            return false;
+                        } else if (filter.direction === '<' && numericVal > filter.number) {
+                            return false;
+                        } else if (filter.direction === '=' && numericVal !== filter.number) {
+                            return false;
+                        } else if (filter.direction === undefined && !getSearchVal(row.data[i]).includes(filter.original)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return true;
         });
 
         const start = 1 + (this.state.currentPage - 1) * this.state.perPage;
@@ -479,7 +587,9 @@ class DataTable extends React.Component {
             <table className="table table-striped table-bordered table-condensed table-hover">
                 <Header
                     cols={cols}
+                    filters={this.state.filters}
                     handleColClick={this.handleColClick}
+                    handleFilterUpdate={this.handleFilterUpdate}
                     sortBys={this.state.sortBys}
                     superCols={superCols}
                 />

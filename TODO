@@ -3,11 +3,12 @@ IVERSON - BEFORE FINAL
 at beginning of season, read message and then press ctrl+R, seems to never persist
 
 filtering datatables
-- option to enable, default true
+- option to enable in DataTable tag, default true
 - button in top right, when clicked it puts a row with textboxes below last thead row
-- display help icon too, explaining rules
-- for numeric ones, accept strings with > or < before number (maybe strip all chars except > < . 0-9 before processing)
-- for others, just straight search
+- display help icon too, explaining rules (><=)
+
+search for Set home/away in the next round
+- should go by seed, not winp. possible?
 
 shared worker
 - release beta without multileague support?

@@ -188,6 +188,9 @@ const getSortVal = (value = null, sortType) => {
                 return -Infinity;
             }
             // Drop $ and parseFloat will just keep the numeric part at the beginning of the string
+            if (sortVal.includes('B')) {
+                return parseFloat(sortVal.replace('$', '')) * 1000;
+            }
             return parseFloat(sortVal.replace('$', ''));
         }
         return sortVal;

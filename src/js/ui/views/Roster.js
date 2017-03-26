@@ -156,6 +156,8 @@ const RosterRow = clickable(props => {
                 injury={p.injury}
                 skills={p.ratings.skills}
                 watch={p.watch}
+                ratings={p.ratings}
+                stats={p.stats}
             >{p.name}</PlayerNameLabels>
         </td>
         <td onClick={toggleClicked}>{p.ratings.pos}</td>

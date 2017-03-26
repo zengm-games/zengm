@@ -27,8 +27,10 @@ async function updateRoster(
         });
 
         const attrs = ["pid", "tid", "draft", "name", "age", "contract", "cashOwed", "rosterOrder", "injury", "ptModifier", "watch", "gamesUntilTradable"];  // tid and draft are used for checking if a player can be released without paying his salary
-        const ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos"];
-        const stats = ["gp", "min", "pts", "trb", "ast", "per", "yearsWithTeam"];
+        const ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos", "hgt", "stre", "spd",
+            "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
+        const stats = ["gp", "min", "pts", "trb", "ast", "per", "yearsWithTeam",
+            "fg", "fga", "tp", "tpa", "ft", "fta"];
 
         if (inputs.season === g.season) {
             // Show players currently on the roster

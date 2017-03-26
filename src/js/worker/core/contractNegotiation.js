@@ -42,7 +42,8 @@ async function create(pid: number, resigning: boolean, tid: number = g.userTid):
         playerYears += 1;
     }
 
-    if (helpers.refuseToNegotiate(playerAmount, p.freeAgentMood[g.userTid])) {
+    const isFirstRounder = p.draft.round === 1 && p.draft.year === g.season - 3;
+    if (!isFirstRounder && helpers.refuseToNegotiate(playerAmount, p.freeAgentMood[g.userTid])) {
         return `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> refuses to sign with you, no matter what you offer.`;
     }
 

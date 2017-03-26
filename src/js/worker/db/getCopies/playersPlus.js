@@ -46,6 +46,28 @@ type PlayerOptionsRequired = {
     statType: PlayerStatType,
 };
 
+const awardsOrder = [
+    "Inducted into the Hall of Fame",
+    "Won Championship",
+    "Most Valuable Player",
+    "Finals MVP",
+    "Defensive Player of the Year",
+    "Sixth Man of the Year",
+    "Rookie of the Year",
+    "League Scoring Leader",
+    "League Rebounding Leader",
+    "League Assists Leader",
+    "League Steals Leader",
+    "League Blocks Leader",
+    "First Team All-League",
+    "Second Team All-League",
+    "Third Team All-League",
+    "First Team All-Defensive",
+    "Second Team All-Defensive",
+    "Third Team All-Defensive",
+    "All Rookie Team",
+];
+
 const processAttrs = (output: PlayerFiltered, p: Player, {
     attrs,
     fuzz,
@@ -103,12 +125,14 @@ const processAttrs = (output: PlayerFiltered, p: Player, {
         } else if (attr === 'awardsGrouped') {
             output.awardsGrouped = [];
             const awardsGroupedTemp = _.groupBy(p.awards, award => award.type);
-            for (const award of Object.keys(awardsGroupedTemp)) {
-                output.awardsGrouped.push({
-                    type: award,
-                    count: awardsGroupedTemp[award].length,
-                    seasons: helpers.yearRanges(_.pluck(awardsGroupedTemp[award], 'season')),
-                });
+            for (const award of awardsOrder) {
+                if (awardsGroupedTemp.hasOwnProperty(award)) {
+                    output.awardsGrouped.push({
+                        type: award,
+                        count: awardsGroupedTemp[award].length,
+                        seasons: helpers.yearRanges(_.pluck(awardsGroupedTemp[award], 'season')),
+                    });
+                }
             }
         } else if (attr === 'name') {
             output.name = `${p.firstName} ${p.lastName}`;

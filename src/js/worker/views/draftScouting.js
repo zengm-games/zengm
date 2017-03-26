@@ -9,7 +9,9 @@ async function addSeason(season, tid) {
 
     playersAll = await idb.getCopies.playersPlus(playersAll, {
         attrs: ["pid", "firstName", "lastName", "age", "watch", "valueFuzz"],
-        ratings: ["ovr", "pot", "skills", "fuzz", "pos"],
+        ratings: ["ovr", "pot", "skills", "fuzz", "pos", "hgt", "stre", "spd",
+            "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl",
+            "drb", "pss", "reb"],
         showNoStats: true,
         showRookies: true,
         fuzz: true,
@@ -36,6 +38,7 @@ async function addSeason(season, tid) {
             pot: pa.ratings[0].pot,
             skills: pa.ratings[0].skills,
             pos: pa.ratings[0].pos,
+            ratings: pa.ratings[0],
 
             rank: i + 1,
         });

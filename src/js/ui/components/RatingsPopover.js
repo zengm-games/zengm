@@ -18,7 +18,7 @@ const RatingsPopover = ({pid, ratings, stats}) => {
     const formatShot = (made, attempt, type) => {
         const f = made.toFixed(1);
         const fa = attempt.toFixed(1);
-        const pct = attempt > 0 ? (made / attempt).toFixed(2) * 100 : 0;
+        const pct = attempt > 0 ? Math.round((made / attempt).toFixed(2) * 100) : 0;
         let color = "";
         if (type === 'fg') {
             color = pct > 45 ? "text-success" : color;
@@ -63,8 +63,10 @@ const RatingsPopover = ({pid, ratings, stats}) => {
                     <span className={colorRating(ratings.reb)}>Reb: {ratings.reb}</span>
                 </div>
             </div>
-            { (stats.fg && stats.fga) &&
+            { (stats && stats.fg !== null && stats.fga !== null && stats.tp !== null && stats.tpa !== null &&
+                stats.ft !== null && stats.fta !== null) &&
                 <div>
+                    <br />
                     <div className="row">
                         <div className="col-xs-4">
                             <b>FG</b><br />

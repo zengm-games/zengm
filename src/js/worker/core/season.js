@@ -625,7 +625,7 @@ async function newSchedulePlayoffsDay(): Promise<boolean> {
 
         // Set home/away in the next round
         let matchup;
-        if (team1.winp > team2.winp) {
+        if (team1.seed < team2.seed) {
             matchup = {home: team1, away: team2};
         } else {
             matchup = {home: team2, away: team1};

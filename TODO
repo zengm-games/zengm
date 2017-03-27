@@ -1,5 +1,17 @@
 IVERSON - BEFORE FINAL
 
+filtering
+- disable in some columns, like "Negotiate" buttons. maybe config in getCols?
+
+test bugsnag
+
+bugs from jerick
+- There is an exploit during the draft, after selecting "Start Draft" and before you make your last selection, you can refresh the page to reset all draft selections. This is on the beta.(edited)
+- Another, when you import a League File and refresh the page before moving to the next phase (Preseason to Regular season) it will raise an error "Undefined" season. After this you can no longer load this league instance, you need to re-import on a new league. Current  workaround is to move to the next phase triggering a long "Saving..." state.
+- Same case  with Switching Teams on God Mode, needed to trigger a save (sim day) action to make the changes permanent.
+- Also when you delete a League then select another an error is raised. Need to refresh to load another league.
+  - Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing.
+
 at beginning of season, read message and then press ctrl+R, seems to never persist
 
 search for Set home/away in the next round

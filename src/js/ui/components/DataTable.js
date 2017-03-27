@@ -286,6 +286,8 @@ class DataTable extends React.Component {
     props: Props;
     state: State;
     handleColClick: Function;
+    handleEnableFilters: Function;
+    handleFilterUpdate: Function;
     handlePaging: Function;
     handlePerPage: Function;
     handleSearch: Function;
@@ -393,7 +395,7 @@ class DataTable extends React.Component {
         });
     }
 
-    handleFilterUpdate(event: SyntheticKeyboardEvent, i: number) {
+    handleFilterUpdate(event: SyntheticInputEvent, i: number) {
         const filters = this.state.filters.slice();
         filters[i] = event.target.value;
         this.setState({
@@ -429,7 +431,7 @@ class DataTable extends React.Component {
         const {cols, footer, pagination, rows, superCols} = this.props;
 
         const filters = this.state.enableFilters ? this.state.filters.map((filter, i) => {
-            if (cols[i].sortType === 'number') {
+            if (cols[i].sortType === 'number' || cols[i].sortType === 'currency') {
                 let number = filter.replace(/[^0-9.<>]/g, '');
                 let direction;
                 if (number[0] === '>' || number[0] === '<' || number[0] === '=') {
@@ -446,7 +448,7 @@ class DataTable extends React.Component {
             }
 
             return filter.toLowerCase();
-        }) : undefined;
+        }) : [];
 
         const skipFiltering = this.state.searchText === '' && !this.state.enableFilters;
 
@@ -484,7 +486,7 @@ class DataTable extends React.Component {
                             continue;
                         }
 
-                        const numericVal = parseFloat(row.data[i]);
+                        const numericVal = parseFloat(getSortVal(row.data[i], cols[i].sortType));
                         if (isNaN(numericVal)) {
                             continue;
                         }

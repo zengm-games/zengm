@@ -135,7 +135,9 @@ async function updateGames(
         const games = await getProcessedGames(g.teamAbbrevsCache[g.userTid], g.season, state.completed);
         for (let i = games.length - 1; i >= 0; i--) {
             completed.unshift(helpers.formatCompletedGame(games[i]));
-            completed.pop();
+            if (completed.length > NUM_SHOW_COMPLETED) {
+                completed.pop();
+            }
         }
 
         return {completed};

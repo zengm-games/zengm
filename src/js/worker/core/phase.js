@@ -450,7 +450,7 @@ async function newPhaseFreeAgency(conditions: Conditions) {
             let ewa = 0;
             if (isFirstRounder) {
                 let playerStats = await idb.getCopies.playerStats({pid: p.pid});
-                playerStats = playerStats.filter(ps => ps.season === g.season - 1);
+                playerStats = playerStats.filter(ps => ps.season === g.season);
                 ewa = playerStats.reduce((acc, ps) => acc + ps.ewa, 0);
             }
 

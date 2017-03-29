@@ -4189,9 +4189,9 @@
       "resolved": "https://registry.npmjs.org/promise/-/promise-7.1.1.tgz"
     },
     "promise-worker-bi": {
-      "version": "2.1.1",
-      "from": "promise-worker-bi@2.1.1",
-      "resolved": "https://registry.npmjs.org/promise-worker-bi/-/promise-worker-bi-2.1.1.tgz"
+      "version": "2.2.0",
+      "from": "promise-worker-bi@>=2.2.0 <2.3.0",
+      "resolved": "https://registry.npmjs.org/promise-worker-bi/-/promise-worker-bi-2.2.0.tgz"
     },
     "pseudomap": {
       "version": "1.0.2",

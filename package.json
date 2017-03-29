@@ -46,7 +46,7 @@
     "object.entries": "1.0.4",
     "object.values": "1.0.4",
     "page": "1.7.1",
-    "promise-worker-bi": "2.1.1",
+    "promise-worker-bi": "2.2.0",
     "react": "15.4.2",
     "react-addons-text-content": "0.0.4",
     "react-bootstrap": "0.30.8",

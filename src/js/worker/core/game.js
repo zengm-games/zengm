@@ -239,7 +239,7 @@ async function writePlayerStats(results: GameResults, conditions: Conditions) {
             let biggestRatingsLoss;
             if (injuredThisGame) {
                 p2.injury = player.injury(t.healthRank);
-                p.injury = p2.injury; // So it gets written to box score
+                p.injury = helpers.deepCopy(p2.injury); // So it gets written to box score
                 logEvent({
                     type: "injured",
                     text: `<a href="${helpers.leagueUrl(["player", p2.pid])}">${p2.firstName} ${p2.lastName}</a> was injured! (${p2.injury.type}, out for ${p2.injury.gamesRemaining} games)`,
@@ -321,8 +321,8 @@ async function writeGameStats(results: GameResults, att: number, conditions: Con
             gameStats.teams[t].players[p].pos = results.team[t].player[p].pos;
             gameStats.teams[t].players[p].trb = results.team[t].player[p].stat.orb + results.team[t].player[p].stat.drb;
             gameStats.teams[t].players[p].pid = results.team[t].player[p].id;
-            gameStats.teams[t].players[p].skills = results.team[t].player[p].skills;
-            gameStats.teams[t].players[p].injury = results.team[t].player[p].injury;
+            gameStats.teams[t].players[p].skills = helpers.deepCopy(results.team[t].player[p].skills);
+            gameStats.teams[t].players[p].injury = helpers.deepCopy(results.team[t].player[p].injury);
         }
     }
 
@@ -619,8 +619,8 @@ async function play(numDays: number, conditions: Conditions, start?: boolean = t
     const cbSaveResults = async results => {
         const gidsFinished = await Promise.all(results.map(async (result) => {
             const att = await writeTeamStats(result);
+            await writePlayerStats(result, conditions); // Before writeGameStats, so injury is set correctly
             await writeGameStats(result, att, conditions);
-            await writePlayerStats(result, conditions);
             return result.gid;
         }));
 

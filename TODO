@@ -1,7 +1,6 @@
 IVERSON - BEFORE FINAL
 
-reported bugs
-- if a player was injured and out for a game, once the player isn't injured anymore the injury isn't shown in the old box score
+load league -> main dashboard -> new league -> main dashboard -> switch to first league and main league is displayed!
 
 bugs from jerick
 - There is an exploit during the draft, after selecting "Start Draft" and before you make your last selection, you can refresh the page to reset all draft selections. This is on the beta.(edited)

@@ -460,21 +460,6 @@ async function create(
 }
 
 /**
- * Delete an existing league.
- *
- * @memberOf core.league
- * @param {number} lid League ID.
- * @param {function()=} cb Optional callback.
- */
-async function remove(lid: number) {
-    if (idb.league !== undefined) {
-        idb.league.close();
-    }
-    idb.meta.leagues.delete(lid);
-    await backboard.delete(`league${lid}`);
-}
-
-/**
  * Export existing active league.
  *
  * @memberOf core.league
@@ -656,6 +641,21 @@ const close = async (disconnect?: boolean) => {
         g.lid = undefined;
     }
 };
+
+/**
+ * Delete an existing league.
+ *
+ * @memberOf core.league
+ * @param {number} lid League ID.
+ * @param {function()=} cb Optional callback.
+ */
+async function remove(lid: number) {
+    if (g.lid === lid) {
+        close(true);
+    }
+    idb.meta.leagues.delete(lid);
+    await backboard.delete(`league${lid}`);
+}
 
 export default {
     create,

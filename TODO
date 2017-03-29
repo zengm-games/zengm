@@ -1,13 +1,5 @@
 IVERSON - BEFORE FINAL
 
-bugs from jerick
-- Another, when you import a League File and refresh the page before moving to the next phase (Preseason to Regular season) it will raise an error "Undefined" season. After this you can no longer load this league instance, you need to re-import on a new league. Current  workaround is to move to the next phase triggering a long "Saving..." state.
-- Same case  with Switching Teams on God Mode, needed to trigger a save (sim day) action to make the changes permanent.
-- Also when you delete a League then select another an error is raised. Need to refresh to load another league.
-  - Failed to execute 'transaction' on 'IDBDatabase': The database connection is closing.
-
-at beginning of season, read message and then press ctrl+R, seems to never persist
-
 shared worker
 - release beta without multileague support?
 - namespace stuff, after it's working for one league

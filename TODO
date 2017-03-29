@@ -1,25 +1,5 @@
 IVERSON - BEFORE FINAL
 
-shared worker
-- release beta without multileague support?
-- namespace stuff, after it's working for one league
-  - attach lid to promiseWorker instance in host (call it "metadata"), update lid if it changes, and attach to every request from host
-    - then from worker, pass into toUI
-  - query API: flag to determine if broadcast or single response. default single response. optional last arg, so single response use case is same API as now
-    - if broadcast, then response is always undefined
-    - broadcast needs to be namespaced, too. like only "update all league 5" not "update all tabs open in every league"
-      - figure out some way to abstract... like maybe a conditional broadcast function defined based on metadata
-  - namespace leagues (or force only one league)
-    - namespace locks, g (in worker only), idb.league, and idb.cache
-    - all common functions, accept g as param
-    - something to handle init/close of tabs
-    - look at all toUI calls
-  - disconnect league when none are left registered to promise worker (so need api to get all metadata)
-
-force single tab per league
-- when < 5 seconds, wait for another heartbeat before deciding
-- check for collission in setInterval, and somehow show error page if that happens
-
 Email users after bbgm update
 
 get rid of debug mode info in manual
@@ -53,6 +33,25 @@ cache unread messages, will make it faster and simpler
 
 Triggers: the sim stops if different situations happen. This may include injuries, bad streaks, reaching a certain amount of wins/losses... https://www.reddit.com/r/BasketballGM/comments/5zgrv9/basketball_gm_40_beta/dez5jn4/
 - "Play until..." menu item
+
+force single tab per league
+- when < 5 seconds, wait for another heartbeat before deciding
+- check for collission in setInterval, and somehow show error page if that happens
+
+shared worker
+- namespace stuff, after it's working for one league
+  - attach lid to promiseWorker instance in host (call it "metadata"), update lid if it changes, and attach to every request from host
+    - then from worker, pass into toUI
+  - query API: flag to determine if broadcast or single response. default single response. optional last arg, so single response use case is same API as now
+    - if broadcast, then response is always undefined
+    - broadcast needs to be namespaced, too. like only "update all league 5" not "update all tabs open in every league"
+      - figure out some way to abstract... like maybe a conditional broadcast function defined based on metadata
+  - namespace leagues (or force only one league)
+    - namespace locks, g (in worker only), idb.league, and idb.cache
+    - all common functions, accept g as param
+    - something to handle init/close of tabs
+    - look at all toUI calls
+  - disconnect league when none are left registered to promise worker (so need api to get all metadata)
 
 when dirty on close, show warning window, and initiate flush (if not already in progress)
 - hard to coordinate across UI and worker...
@@ -252,12 +251,6 @@ Draft
 ---
 
 bundle-collapser
-
-home court advantage should be based on seed, not record https://www.reddit.com/r/BasketballGM/comments/4xf5ik/minor_bug/
-
-change max roster size https://www.reddit.com/r/BasketballGM/comments/554dly/maximum_of_roster_spots/
-
-pressing alt+p rapidly can result in extra games being played
 
 filters on event log
   tragic deaths https://www.reddit.com/r/BasketballGM/comments/52ljuy/would_it_be_possible_to_add_a_memorial_page/d7ou7ov?context=3
@@ -543,19 +536,12 @@ github
 THE FLATTENING
 --------------
 
-API design
-  player.filter and team.filter should be renamed, otherwise it's confusing
-    player.fitler -> player.process
-    team.filter -> team.getAndProcess
-
 after fully abstracting IndexedDB, could i improve performance by running it locally in node and using another database?
   same with mobile on phonegap
   same with web - "turbo mode" where only one window (db connection) is allowed and caching is heavy
 
 PERFORMANCE CRAP
 ----------------
-
-is iOS detector working? getting weird errors in logs
 
 test!
   write unit tests for dao.players.getAll

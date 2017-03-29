@@ -641,7 +641,7 @@ const close = async (disconnect?: boolean) => {
         await updateStatus('Idle');
 
         if (disconnect) {
-            await idb.cache.stopAutoFlush();
+            idb.cache.stopAutoFlush();
 
             // Should probably "close" cache here too, but no way to do that now
 

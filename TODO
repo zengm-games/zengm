@@ -1,9 +1,6 @@
 IVERSON - BEFORE FINAL
 
-load league -> main dashboard -> new league -> main dashboard -> switch to first league and main league is displayed!
-
 bugs from jerick
-- There is an exploit during the draft, after selecting "Start Draft" and before you make your last selection, you can refresh the page to reset all draft selections. This is on the beta.(edited)
 - Another, when you import a League File and refresh the page before moving to the next phase (Preseason to Regular season) it will raise an error "Undefined" season. After this you can no longer load this league instance, you need to re-import on a new league. Current  workaround is to move to the next phase triggering a long "Saving..." state.
 - Same case  with Switching Teams on God Mode, needed to trigger a save (sim day) action to make the changes permanent.
 - Also when you delete a League then select another an error is raised. Need to refresh to load another league.

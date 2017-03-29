@@ -74,7 +74,8 @@ const beforeLeague = async (newLid: number, loadedLid: number | void, conditions
     if (newLid !== loadedLid) {
         loadingNewLid = newLid;
 
-        if (newLid !== g.lid) {
+        const switchingDatabaseLid = newLid !== g.lid;
+        if (switchingDatabaseLid) {
             await league.close(true);
         }
         if (loadingNewLid !== newLid) { return; } // Check after every async action
@@ -86,7 +87,7 @@ const beforeLeague = async (newLid: number, loadedLid: number | void, conditions
         }
         if (loadingNewLid !== newLid) { return; }
 
-        if (newLid !== g.lid) {
+        if (switchingDatabaseLid) {
             // Clear old game attributes from g, just to be sure
             helpers.resetG();
             await toUI(['resetG']);
@@ -97,7 +98,7 @@ const beforeLeague = async (newLid: number, loadedLid: number | void, conditions
             if (loadingNewLid !== newLid) { return; }
 
             // Reuse existing cache, if it was just created for a new league
-            if (!idb.cache || !idb.cache.newLeague) {
+            if (!idb.cache || !idb.cache.newLeague || switchingDatabaseLid) {
                 idb.cache = new Cache();
                 await idb.cache.fill();
                 if (loadingNewLid !== newLid) { return; }
@@ -117,7 +118,7 @@ const beforeLeague = async (newLid: number, loadedLid: number | void, conditions
         await updatePlayMenu();
         if (loadingNewLid !== newLid) { return; }
 
-        if (newLid !== g.lid) {
+        if (switchingDatabaseLid) {
             // This is the only place we need to do this, since every league connection passes through here
             await idb.cache.startAutoFlush();
             if (loadingNewLid !== newLid) { return; }

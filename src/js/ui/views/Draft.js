@@ -1,15 +1,27 @@
 import classNames from 'classnames';
-import $ from 'jquery';
 import React from 'react';
 import {g, helpers} from '../../common';
 import {getCols, realtimeUpdate, setTitle, toWorker} from '../util';
 import {DataTable, DraftAbbrev, NewWindowLink, PlayerNameLabels} from '../components';
 
+function scrollLeft(pos: number) {
+    // https://blog.hospodarets.com/native_smooth_scrolling
+    if ('scrollBehavior' in document.documentElement.style) {
+        window.scrollTo({
+            left: pos,
+            top: document.body.scrollTop,
+            behavior: 'smooth',
+        });
+    } else {
+        window.scrollTo(pos, document.body.scrollTop);
+    }
+}
+
 const viewDrafted = () => {
-    $("body, html").animate({scrollLeft: $(document).outerWidth() - $(window).width()}, 250);
+    scrollLeft(document.body.scrollWidth - document.body.clientWidth);
 };
 const viewUndrafted = () => {
-    $("body, html").animate({scrollLeft: 0}, 250);
+    scrollLeft(0);
 };
 
 class Draft extends React.Component {

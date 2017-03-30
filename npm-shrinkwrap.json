@@ -3313,8 +3313,7 @@
     "lodash": {
       "version": "4.17.4",
       "from": "lodash@>=4.2.0 <5.0.0",
-      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.4.tgz",
-      "dev": true
+      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.4.tgz"
     },
     "lodash._baseassign": {
       "version": "3.2.0",
@@ -4300,6 +4299,11 @@
       "version": "0.4.0",
       "from": "react-prop-types@>=0.4.0 <0.5.0",
       "resolved": "https://registry.npmjs.org/react-prop-types/-/react-prop-types-0.4.0.tgz"
+    },
+    "react-sortable-hoc": {
+      "version": "0.6.1",
+      "from": "react-sortable-hoc@latest",
+      "resolved": "https://registry.npmjs.org/react-sortable-hoc/-/react-sortable-hoc-0.6.1.tgz"
     },
     "read-file-stdin": {
       "version": "0.2.1",

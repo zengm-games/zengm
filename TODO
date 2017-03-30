@@ -1,6 +1,3 @@
-get rid of jquery
-- roster drag-and-drop
-
 IVERSON - BEFORE FINAL
 
 Email users after bbgm update
@@ -26,6 +23,14 @@ followup blog posts
 - changes
 
 IVERSON - EVENTUALLY
+
+On the newest beta, the home team is not determined correctly for the Finals when the two teams have the same seed https://github.com/dumbmatter/basketball-gm/commit/cc961720376658ed905492c1a574232e37f5997e
+
+I'm not sure if it this happens for others but I'm always getting the playoff result messages
+  "Winning titles can cover up a lot of flaws.",
+  "I need some more jewelry. Go get me another ring.",
+regardless of my team's performance. One season my team had the worse record and the owner message was
+  What have you done for me lately? Winning titles can cover up a lot of flaws.
 
 confirm Bugsnag errors are being reported from worker
 

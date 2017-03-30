@@ -498,27 +498,6 @@ const reorderRosterDrag = async (sortedPids: number[]) => {
     }));
 };
 
-const reorderRosterSwap = async (sortedPlayers: {pid: number}[], pid1: number, pid2: number) => {
-    const rosterOrder1 = sortedPlayers.findIndex(p => p.pid === pid1);
-    const rosterOrder2 = sortedPlayers.findIndex(p => p.pid === pid2);
-
-    await Promise.all(sortedPlayers.map(async (sortedPlayer, i) => {
-        const pid = sortedPlayers[i].pid;
-        const p = await idb.cache.players.get(pid);
-        let rosterOrder = i;
-        if (pid === pid1) {
-            rosterOrder = rosterOrder2;
-        } else if (pid === pid2) {
-            rosterOrder = rosterOrder1;
-        }
-
-        if (p.rosterOrder !== rosterOrder) {
-            p.rosterOrder = rosterOrder;
-            await idb.cache.players.put(p);
-        }
-    }));
-};
-
 const runBefore = async (
     viewId: string,
     inputs: GetOutput,
@@ -794,7 +773,6 @@ export default {
     releasePlayer,
     removeLeague,
     reorderRosterDrag,
-    reorderRosterSwap,
     runBefore,
     startFantasyDraft,
     switchTeam,

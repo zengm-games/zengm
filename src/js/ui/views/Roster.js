@@ -1,8 +1,8 @@
 import classNames from 'classnames';
-import $ from 'jquery';
 import React from 'react';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
+import {SortableContainer, SortableElement, SortableHandle, arrayMove} from 'react-sortable-hoc';
 import {PHASE, g, helpers} from '../../common';
 import {logEvent, realtimeUpdate, setTitle, toWorker} from '../util';
 import {Dropdown, HelpPopover, NewWindowLink, PlayerNameLabels, RatingWithChange, RecordAndPlayoffs} from '../components';
@@ -105,7 +105,7 @@ PlayingTime.propTypes = {
     p: React.PropTypes.object.isRequired,
 };
 
-const ReorderHandle = ({i, onClick, pid, selectedPid}) => {
+const ReorderHandle = SortableHandle(({i, pid, selectedPid}) => {
     let backgroundColor = 'rgb(91, 192, 222)';
     if (selectedPid === pid) {
         backgroundColor = '#d9534f';
@@ -119,37 +119,23 @@ const ReorderHandle = ({i, onClick, pid, selectedPid}) => {
         backgroundColor = 'rgb(66, 139, 202)';
     }
 
-    return <td className="roster-handle" style={{backgroundColor}} onClick={onClick} />;
-};
+    return <td className="roster-handle" style={{backgroundColor}} />;
+});
 
 ReorderHandle.propTypes = {
     i: React.PropTypes.number.isRequired,
-    onClick: React.PropTypes.func.isRequired,
     pid: React.PropTypes.number.isRequired,
     selectedPid: React.PropTypes.number,
 };
 
-// This needs to look at all players, because rosterOrder is not guaranteed to be unique after free agent signings and trades
-const swapRosterOrder = async (sortedPlayers, pid1, pid2) => {
-    await toWorker('reorderRosterSwap', sortedPlayers, pid1, pid2);
-
-    realtimeUpdate(["playerMovement"]);
-};
-
-const handleReorderDrag = async (sortedPids) => {
-    await toWorker('reorderRosterDrag', sortedPids);
-
-    realtimeUpdate(["playerMovement"]);
-};
-
-const RosterRow = clickable(props => {
-    const {clicked, editable, handleReorderClick, i, p, season, selectedPid, showTradeFor, toggleClicked} = props;
+const RosterRow = SortableElement(clickable(props => {
+    const {clicked, editable, i, p, season, selectedPid, showTradeFor, toggleClicked} = props;
     return <tr
         key={p.pid}
         className={classNames({separator: i === 4, warning: clicked})}
         data-pid={p.pid}
     >
-        {editable ? <ReorderHandle i={i} pid={p.pid} onClick={() => handleReorderClick(p.pid)} selectedPid={selectedPid} /> : null}
+        {editable ? <ReorderHandle i={i} pid={p.pid} selectedPid={selectedPid} /> : null}
         <td onClick={toggleClicked}>
             <PlayerNameLabels
                 pid={p.pid}
@@ -194,13 +180,37 @@ const RosterRow = clickable(props => {
             >Trade For</button>
         </td> : null}
     </tr>;
-});
+}));
 
 RosterRow.propTypes = {
     editable: React.PropTypes.bool.isRequired,
-    handleReorderClick: React.PropTypes.func.isRequired,
     i: React.PropTypes.number.isRequired,
     p: React.PropTypes.object.isRequired,
+    season: React.PropTypes.number.isRequired,
+    selectedPid: React.PropTypes.number,
+    showTradeFor: React.PropTypes.bool.isRequired,
+};
+
+const TBody = SortableContainer(({editable, players, season, selectedPid, showTradeFor}) => {
+    return <tbody id="roster-tbody">
+        {players.map((p, i) => {
+            return <RosterRow
+                key={p.pid}
+                editable={editable}
+                i={i}
+                index={i}
+                p={p}
+                season={season}
+                selectedPid={selectedPid}
+                showTradeFor={showTradeFor}
+            />;
+        })}
+    </tbody>;
+});
+
+TBody.propTypes = {
+    editable: React.PropTypes.bool.isRequired,
+    players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
     season: React.PropTypes.number.isRequired,
     selectedPid: React.PropTypes.number,
     showTradeFor: React.PropTypes.bool.isRequired,
@@ -211,61 +221,26 @@ class Roster extends React.Component {
         super(props);
         this.state = {
             selectedPid: undefined,
+            sortedPids: undefined,
         };
-        this.handleReorderClick = this.handleReorderClick.bind(this);
+
+        this.handleReorderDrag = this.handleReorderDrag.bind(this);
     }
 
-    componentDidMount() {
-        this.initSortable();
+    async handleReorderDrag({oldIndex, newIndex}) {
+        const pids = this.props.players.map((p) => p.pid);
+        const sortedPids = arrayMove(pids, oldIndex, newIndex);
+        this.setState({
+            sortedPids,
+        });
+        await toWorker('reorderRosterDrag', sortedPids);
+        realtimeUpdate(['playerMovement']);
     }
 
-    componentDidUpdate() {
-        this.initSortable();
-    }
-
-    async handleReorderClick(pid) {
-        if (this.state.selectedPid === undefined) {
-            this.setState({selectedPid: pid});
-        } else if (this.state.selectedPid === pid) {
-            this.setState({selectedPid: undefined});
-        } else {
-            await swapRosterOrder(this.props.players, pid, this.state.selectedPid);
-            this.setState({selectedPid: undefined});
-        }
-    }
-
-    initSortable() {
-        const rosterTbody = $("#roster-tbody");
-
-        // The first this is called, set up sorting, but disable it by default
-        if (!rosterTbody.is(":ui-sortable")) {
-            rosterTbody.sortable({
-                helper(e, el) {
-                    // Return helper which preserves the width of table cells being reordered
-                    el.children().each(() => {
-                        $(this).width($(this).width());
-                    });
-                    return el;
-                },
-                cursor: "move",
-                async update() {
-                    const sortedPids = $(this).sortable("toArray", {attribute: "data-pid"});
-                    for (let i = 0; i < sortedPids.length; i++) {
-                        sortedPids[i] = parseInt(sortedPids[i], 10);
-                    }
-
-                    await handleReorderDrag(sortedPids);
-                },
-                handle: ".roster-handle",
-                disabled: true,
-            });
-        }
-
-        if (this.props.editable) {
-            rosterTbody.sortable("enable");
-        } else {
-            rosterTbody.sortable("disable");
-        }
+    componentWillReceiveProps() {
+        this.setState({
+            sortedPids: undefined,
+        });
     }
 
     render() {
@@ -277,6 +252,16 @@ class Roster extends React.Component {
         if (t.imgURL) {
             logoStyle.display = "inline";
             logoStyle.backgroundImage = `url('${t.imgURL}')`;
+        }
+
+        // Use the result of drag and drop to sort players, before the "official" order comes back as props
+        let playersSorted;
+        if (this.state.sortedPids !== undefined) {
+            playersSorted = this.state.sortedPids.map((pid) => {
+                return players.find((p) => p.pid === pid);
+            });
+        } else {
+            playersSorted = players;
         }
 
         return <div>
@@ -311,7 +296,7 @@ class Roster extends React.Component {
                     {showTradeFor ? `Strategy: ${t.strategy}` : null}
                 </p> : null}
             </div>
-            {editable ? <p>Click or drag row handles to move players between the starting lineup (<span className="roster-starter">&#9632;</span>) and the bench (<span className="roster-bench">&#9632;</span>).</p> : null}
+            {editable ? <p>Drag row handles to move players between the starting lineup (<span className="roster-starter">&#9632;</span>) and the bench (<span className="roster-bench">&#9632;</span>).</p> : null}
             {editable ? <p><button className="btn btn-default" onClick={handleAutoSort}>Auto sort roster</button>
             </p> : null}
 
@@ -350,20 +335,17 @@ class Roster extends React.Component {
                             {showTradeFor ? <th>Trade For</th> : null}
                         </tr>
                     </thead>
-                    <tbody id="roster-tbody">
-                        {players.map((p, i) => {
-                            return <RosterRow
-                                key={p.pid}
-                                editable={editable}
-                                handleReorderClick={this.handleReorderClick}
-                                i={i}
-                                p={p}
-                                season={season}
-                                selectedPid={this.state.selectedPid}
-                                showTradeFor={showTradeFor}
-                            />;
-                        })}
-                    </tbody>
+                    <TBody
+                        players={playersSorted}
+                        editable={editable}
+                        lockAxis="y"
+                        lockToContainerEdges
+                        onSortEnd={this.handleReorderDrag}
+                        season={season}
+                        selectedPid={this.state.selectedPid}
+                        showTradeFor={showTradeFor}
+                        useDragHandle
+                    />
                 </table>
             </div>
         </div>;

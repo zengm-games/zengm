@@ -2,7 +2,6 @@
 
 /* eslint-disable import/first */
 import '../vendor/babel-external-helpers';
-import 'jquery-ui/sortable';
 import page from 'page';
 import React from 'react';
 import ReactDOM from 'react-dom';

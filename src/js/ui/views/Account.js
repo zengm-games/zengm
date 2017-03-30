@@ -1,10 +1,9 @@
 // @flow
 
 import classNames from 'classnames';
-import $ from 'jquery';
 import React from 'react';
 import {SPORT, STRIPE_PUBLISHABLE_KEY, fetchWrapper} from '../../common';
-import {emitter, realtimeUpdate, setTitle} from '../util';
+import {emitter, getScript, realtimeUpdate, setTitle} from '../util';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
 
@@ -27,7 +26,7 @@ class StripeButton extends React.Component {
     componentWillMount() {
         (async () => {
             if (!window.StripeCheckout) {
-                await Promise.resolve($.getScript('https://checkout.stripe.com/checkout.js'));
+                await getScript('https://checkout.stripe.com/checkout.js');
             }
             if (!this.handler) {
                 this.setState({

@@ -235,7 +235,7 @@ class Controller extends React.Component {
         });
 
         // Resolve all the promises before updating the UI to minimize flicker
-        const promiseBefore = toWorker('runBefore', args.id, inputs, updateEvents, prevData, this.state.topMenu);
+        const promiseBefore = toWorker('runBefore', args.id, inputs, updateEvents, prevData);
 
         // Run promises in parallel, update when each one is ready
         // This runs no matter what

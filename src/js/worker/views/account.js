@@ -7,29 +7,28 @@ async function updateAccount(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
     state: any,
-    topMenu: any,
     conditions: Conditions,
 ): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') || updateEvents.includes('account')) {
-        await account.check(conditions);
+        const partialTopMenu = await account.check(conditions);
 
-        const goldUntilDate = new Date(topMenu.goldUntil * 1000);
+        const goldUntilDate = new Date(partialTopMenu.goldUntil * 1000);
         const goldUntilDateString = goldUntilDate.toDateString();
 
         const currentTimestamp = Math.floor(Date.now() / 1000);
-        const showGoldActive = !topMenu.goldCancelled && currentTimestamp <= topMenu.goldUntil;
-        const showGoldCancelled = topMenu.goldCancelled && currentTimestamp <= topMenu.goldUntil;
+        const showGoldActive = !partialTopMenu.goldCancelled && currentTimestamp <= partialTopMenu.goldUntil;
+        const showGoldCancelled = partialTopMenu.goldCancelled && currentTimestamp <= partialTopMenu.goldUntil;
         const showGoldPitch = !showGoldActive;
 
         return {
-            email: topMenu.email,
+            email: partialTopMenu.email,
             goldMessage: inputs.goldMessage,
             goldSuccess: inputs.goldSuccess,
             goldUntilDateString,
             showGoldActive,
             showGoldCancelled,
             showGoldPitch,
-            username: topMenu.username,
+            username: partialTopMenu.username,
         };
     }
 }

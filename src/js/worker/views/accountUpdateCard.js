@@ -8,11 +8,10 @@ async function updateAccountUpdateCard(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
     state: any,
-    topMenu: any,
     conditions: Conditions,
 ): void | {[key: string]: any} {
     if (updateEvents.includes('firstRun') || updateEvents.includes('account')) {
-        await account.check(conditions);
+        const partialTopMenu = await account.check(conditions);
 
         try {
             const data = await fetchWrapper({
@@ -22,19 +21,19 @@ async function updateAccountUpdateCard(
                 credentials: 'include',
             });
             return {
-                goldCancelled: topMenu.goldCancelled,
+                goldCancelled: partialTopMenu.goldCancelled,
                 last4: data.last4,
                 expMonth: data.expMonth,
                 expYear: data.expYear,
-                username: topMenu.username,
+                username: partialTopMenu.username,
             };
         } catch (err) {
             return {
-                goldCancelled: topMenu.goldCancelled,
+                goldCancelled: partialTopMenu.goldCancelled,
                 last4: "????",
                 expMonth: "??",
                 expYear: "????",
-                username: topMenu.username,
+                username: partialTopMenu.username,
             };
         }
     }

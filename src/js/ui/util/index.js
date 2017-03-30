@@ -16,6 +16,7 @@ export {default as ads} from './ads';
 export {default as emitter} from './emitter';
 export {default as genStaticPage} from './genStaticPage';
 export {default as getCols} from './getCols';
+export {default as getScript} from './getScript';
 export {default as initView} from './initView';
 export {default as logEvent} from './logEvent';
 export {default as notify} from './notify';

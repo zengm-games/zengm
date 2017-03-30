@@ -1,9 +1,8 @@
 /* eslint camelcase: "off" */
 
-import $ from 'jquery';
 import React from 'react';
 import {STRIPE_PUBLISHABLE_KEY, fetchWrapper} from '../../common';
-import {realtimeUpdate, setTitle} from '../util';
+import {getScript, realtimeUpdate, setTitle} from '../util';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
 
@@ -30,7 +29,7 @@ class AccountUpdateCard extends React.Component {
     componentWillMount() {
         (async () => {
             if (!window.Stripe) {
-                await Promise.resolve($.getScript('https://js.stripe.com/v2/'));
+                await getScript('https://js.stripe.com/v2/');
                 window.Stripe.setPublishableKey(STRIPE_PUBLISHABLE_KEY);
             }
 

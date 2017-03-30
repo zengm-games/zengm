@@ -1,3 +1,7 @@
+get rid of jquery
+- roster drag-and-drop
+- draft (fantasy or small screen)
+
 IVERSON - BEFORE FINAL
 
 Email users after bbgm update
@@ -732,10 +736,6 @@ per36, totals, playoffs options elsewhere
 per 36 stats in player pages http://www.reddit.com/r/BasketballGM/comments/1ofz6s/per36_stats/
   already implemented for stats page, but should it be a separate entry from player.filter like playoffs? totals isn't. maybe should just be a dropdown to change this all on the player page?
 when left menu is shown (lg), don't show the same top menus (only tools and help). but adding hidden-lg to top menu items makes them persist when going from league to non-league dashboard
-switch to bitbucket issues
-  DON'T ADD ANYTHING NEW HERE!
-  gradually move these issues over
-  move over github issues
 http://www.reddit.com/r/BasketballGM/comments/1sarll/open_source/cdxx3ql
 free agents going unsigned?
   salary cap exception? too complicated?
@@ -848,9 +848,6 @@ retired players should be eligible for season awards
 TS%
 documentation
   http://www.reddit.com/r/BasketballGM/comments/2agxoe/questions_and_suggestions_from_a_new_player/
-smoother multi-window updates
-  instead of dbChange, cache previous updateEvents and pass them
-    cache expiration?
 assist leaders too low
 Number of years in college should depend on talent level
 Add MVP and Titles columns to HoF table

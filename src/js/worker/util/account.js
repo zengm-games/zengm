@@ -4,7 +4,7 @@
 import {SPORT, fetchWrapper, g} from '../../common';
 import {idb} from '../db';
 import {env, logEvent, toUI} from '../util';
-import type {AchievementKey, Conditions} from '../../common/types';
+import type {AchievementKey, Conditions, PartialTopMenu} from '../../common/types';
 
 // IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php
 const allAchievements: {
@@ -122,7 +122,7 @@ async function addAchievements(achievements: AchievementKey[], conditions: Condi
     }
 }
 
-async function check(conditions: Conditions) {
+async function check(conditions: Conditions): Promise<PartialTopMenu> {
     try {
         const data = await fetchWrapper({
             url: `//account.basketball-gm.${env.tld}/user_info.php`,
@@ -131,19 +131,18 @@ async function check(conditions: Conditions) {
             credentials: 'include',
         });
 
-        // Save username for display
-
-        await toUI(['emit', 'updateTopMenu', {
+        const partialTopMenu: PartialTopMenu = {
             email: data.email,
             goldCancelled: !!data.gold_cancelled,
             goldUntil: data.gold_until,
             username: data.username,
-        }]);
+        };
+        await toUI(['emit', 'updateTopMenu', partialTopMenu]);
 
         await toUI(['initAds', data.gold_until]);
 
         // If user is logged in, upload any locally saved achievements
-        if (data.username !== "") {
+        if (data.username !== '' && idb.league !== undefined) {
             // Should be done inside one transaction to eliminate race conditions, but Firefox doesn't like that and the
             // risk is very small.
             let achievements = await idb.league.achievements.getAll();
@@ -155,9 +154,18 @@ async function check(conditions: Conditions) {
                 await addAchievements(achievements, conditions, true);
             }
         }
+
+        return partialTopMenu;
     } catch (err) {
         // Don't freak out if an AJAX request fails or whatever
         console.log(err);
+
+        return {
+            email: '',
+            goldCancelled: false,
+            goldUntil: Infinity,
+            username: '',
+        };
     }
 }
 

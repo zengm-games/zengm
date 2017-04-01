@@ -1,7 +1,7 @@
 import React from 'react';
 import {helpers} from '../../common';
 import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
-import {getCols, setTitle, toWorker} from '../util';
+import {getCols, realtimeUpdate, setTitle, toWorker} from '../util';
 
 class DraftScouting extends React.Component {
     constructor(props) {
@@ -30,6 +30,8 @@ class DraftScouting extends React.Component {
             this.setState({
                 customize: undefined,
             });
+
+            await realtimeUpdate(['playerMovement']);
         };
     }
 

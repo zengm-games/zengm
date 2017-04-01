@@ -1,6 +1,6 @@
 {
   "name": "basketball-gm",
-  "version": "3.6.0",
+  "version": "4.0.0",
   "dependencies": {
     "abab": {
       "version": "1.0.3",

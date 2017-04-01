@@ -115,6 +115,9 @@ const all = [{
 }, {
     date: "2016-06-13",
     msg: "International players are here! And American players have more realistic names. Gameplay hasn't changed at all, this is purely cosmetic at this point.",
+}, {
+    date: "2017-04-01",
+    msg: '<a href="https://basketball-gm.com/blog/2017/04/basketball-gm-4-0-is-here/">Basketball GM 4.0 is here!</a> This is not an April Fool\'s Day joke! Everything should be crazy fast now.',
 }];
 
 const check = async (conditions: Conditions) => {

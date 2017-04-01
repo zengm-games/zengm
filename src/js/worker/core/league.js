@@ -302,7 +302,7 @@ async function create(
             }
         }
 
-        players.forEach(async p0 => {
+        for (const p0 of players) {
             // Has to be any because I cna't figure out how to change PlayerWithoutPidWithStats to Player
             const p: any = player.augmentPartialPlayer(p0, scoutingRank);
 
@@ -355,7 +355,7 @@ async function create(
                 };
                 await addStatsRows();
             }
-        });
+        }
     } else {
         // No players in league file, so generate new players
         const profiles = ["Point", "Wing", "Big", ""];
@@ -439,18 +439,15 @@ async function create(
         await draft.genPlayers(PLAYER.UNDRAFTED_3, scoutingRank, createUndrafted3, true);
     }
 
-    if (skipNewPhase) {
-        // Game already in progress, just start it
-        return g.lid;
-    }
-
-    await updatePhase();
-    await updateStatus('Idle');
-
     const lid = g.lid; // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
 
-    // Auto sort rosters
-    await Promise.all(teams.map(t => team.rosterAutoSort(t.tid)));
+    if (!skipNewPhase) {
+        await updatePhase();
+        await updateStatus('Idle');
+
+        // Auto sort rosters
+        await Promise.all(teams.map(t => team.rosterAutoSort(t.tid)));
+    }
 
     await idb.cache.flush();
 

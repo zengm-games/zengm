@@ -1297,6 +1297,9 @@ function augmentPartialPlayer(p: any, scoutingRank: number): PlayerWithStats {
             p[simpleDefaults[i]] = pg[simpleDefaults[i]];
         }
     }
+    if (p.retiredYear === null) {
+        p.retiredYear = Infinity;
+    }
     if (!p.hasOwnProperty("salaries")) {
         p.salaries = [];
         if (p.contract.exp < g.startingSeason) {

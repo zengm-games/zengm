@@ -216,6 +216,16 @@ TBody.propTypes = {
     showTradeFor: React.PropTypes.bool.isRequired,
 };
 
+// Ideally, this function wouldn't be necessary https://github.com/clauderic/react-sortable-hoc/issues/175
+const onSortStart = ({clonedNode, node}) => {
+    const clonedChildren = clonedNode.childNodes;
+    const children = node.childNodes;
+    for (let i = 0; i < children.length; i++) {
+        clonedChildren[i].style.padding = '5px';
+        clonedChildren[i].style.width = `${children[i].offsetWidth}px`;
+    }
+};
+
 class Roster extends React.Component {
     constructor(props) {
         super(props);
@@ -338,12 +348,12 @@ class Roster extends React.Component {
                     <TBody
                         players={playersSorted}
                         editable={editable}
-                        lockAxis="y"
-                        lockToContainerEdges
                         onSortEnd={this.handleReorderDrag}
+                        onSortStart={onSortStart}
                         season={season}
                         selectedPid={this.state.selectedPid}
                         showTradeFor={showTradeFor}
+                        transitionDuration={0}
                         useDragHandle
                     />
                 </table>

@@ -2,19 +2,6 @@ IVERSON - BEFORE FINAL
 
 Email users after bbgm update
 
-blog post
-- tradeoffs due to chrome changing
-- new tradeoffs for cross tab play
-- cache and worker
-- cache underwhelming
-- promise-worker-bi
-- worker microtask issues
-- safari
-- shared worker
-- safari again
-- safari again
-- jquery
-
 followup blog posts
 - user metrics after performance increase
 

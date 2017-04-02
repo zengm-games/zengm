@@ -19,7 +19,7 @@ async function updateUpcomingFreeAgents(
     }
 
     players = await idb.getCopies.playersPlus(players, {
-        attrs: ["pid", "name", "age", "contract", "freeAgentMood", "injury", "watch", "contractDesired"],
+        attrs: ["pid", "name", "abbrev", "age", "contract", "freeAgentMood", "injury", "watch", "contractDesired"],
         ratings: ["ovr", "pot", "skills", "pos"],
         stats: ["min", "pts", "trb", "ast", "per"],
         season: g.season,

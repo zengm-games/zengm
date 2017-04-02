@@ -2,8 +2,6 @@ IVERSON - BEFORE FINAL
 
 Email users after bbgm update
 
-get rid of debug mode info in manual
-
 blog post
 - tradeoffs due to chrome changing
 - new tradeoffs for cross tab play
@@ -21,8 +19,6 @@ followup blog posts
 - user metrics after performance increase
 
 IVERSON - EVENTUALLY
-
-confirm Bugsnag errors are being reported from worker
 
 filtering
 - disable in some columns, like "Negotiate" buttons. maybe config in getCols?

@@ -8,8 +8,11 @@ promiseWorker.registerError((e) => {
         window.Bugsnag.notifyException(new Error(e.message), 'ErrorInWorker', {
             colno: e.colno,
             lineno: e.lineno,
+            groupingHash: JSON.stringify([e.message, e.colno, e.lineno]),
         });
     }
+    console.error('Error from worker:');
+    console.error(e);
 });
 
 export {default as ads} from './ads';

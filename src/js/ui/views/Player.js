@@ -296,7 +296,7 @@ const Player = ({events, feats, freeAgent, godMode, injured, player, retired, sh
                     Born: {player.born.year} - {player.born.loc}<br />
                     {!player.diedYear ? <div>Age: {player.age}<br /></div> : <div>Died: {player.diedYear}<br /></div>}
                     {draftInfo}
-                    {player.college && player.college !== "" ? <div>College: {player.college}<br /></div> : null}
+                    {player.college && player.college !== "" ? <div>From: {player.college}<br /></div> : null}
                     {contractInfo}
                     {godMode ? <div><a href={helpers.leagueUrl(['customize_player', player.pid])} className="god-mode god-mode-text">Edit Player</a><br /></div> : null}
                     {statusInfo}

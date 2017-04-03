@@ -360,7 +360,7 @@ class CustomizePlayer extends React.Component {
                                 <input type="text" className="form-control" onChange={this.handleChange.bind(this, 'root', 'diedYear')} value={p.diedYear} />
                             </div>
                             <div className="col-sm-3 form-group">
-                                <label>College</label>
+                                <label>From</label>
                                 <input type="text" className="form-control" onChange={this.handleChange.bind(this, 'root', 'college')} value={p.college} />
                             </div>
                             <div className="col-sm-6 form-group">

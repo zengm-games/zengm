@@ -1,3 +1,4 @@
+import JSONStream from 'JSONStream';
 import React from 'react';
 import {PHASE, PHASE_TEXT, g} from '../../common';
 import {setTitle, toWorker} from '../util';
@@ -108,7 +109,29 @@ class ExportLeague extends React.Component {
         }
 
         const data = await toWorker('exportLeague', objectStores);
-        const json = JSON.stringify(data, undefined, 2);
+
+        // const json = JSON.stringify(data, undefined, 2); // Crashes some times if data is too large
+        const json = await new Promise((resolve, reject) => {
+            let output = '';
+            const stream = JSONStream.stringifyObject()
+                .on('close', () => {
+                    reject(new Error('Unexpected stream close event'));
+                })
+                .on('error', (err2) => {
+                    reject(err2);
+                })
+                .on('data', (chunk) => {
+                    output += chunk;
+                })
+                .on('end', () => {
+                    resolve(output);
+                });
+
+            for (const key of Object.keys(data)) {
+                stream.write([key, data[key]]);
+            }
+            stream.end();
+        });
 
         const filename = genFilename(data);
 

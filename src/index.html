@@ -67,13 +67,7 @@
               window.Bugsnag.releaseStage = "unknown";
             }
             window.Bugsnag.notifyReleaseStages = ["beta", "production", "unknown"];
-
-            // For errors inside Bluebird
-            window.addEventListener("unhandledrejection", function (e) {
-                if (e.detail && e.detail.reason) {
-                  window.Bugsnag.notifyException(e.detail.reason);
-                }
-            });
+            window.Bugsnag.enableNotifyUnhandledRejections();
           }
         });
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(bs, s);

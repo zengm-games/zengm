@@ -47,13 +47,13 @@ async function showBanner() {
         return new Promise(resolve => {
             window.googletag.cmd.push(() => {
                 gptAdSlots[0] = window.googletag
-                    .defineSlot('/42283434/BBGM_Top', [[970, 90], [728, 90], [970, 250]], 'div-gpt-ad-1473268147477-1')
+                    .defineSlot('/42283434/BBGM_Top', [[970, 90], [728, 90], [970, 250]], 'div-gpt-ad-1491246142345-0')
                     .addService(window.googletag.pubads());
                 gptAdSlots[1] = window.googletag
-                    .defineSlot('/42283434/BBGM_Square_Left', [[300, 250], [336, 280]], 'div-gpt-ad-1479941549483-2')
+                    .defineSlot('/42283434/BBGM_Square_Left', [[300, 250], [336, 280]], 'div-gpt-ad-1491246142345-2')
                     .addService(window.googletag.pubads());
                 gptAdSlots[2] = window.googletag
-                    .defineSlot('/42283434/BBGM_Square_Right', [[300, 250], [336, 280]], 'div-gpt-ad-1479941549483-1')
+                    .defineSlot('/42283434/BBGM_Square_Right', [[300, 250], [336, 280]], 'div-gpt-ad-1491246142345-1')
                     .addService(window.googletag.pubads());
 
                 window.googletag.pubads().enableSingleRequest();
@@ -62,21 +62,21 @@ async function showBanner() {
 
                 let count = 0;
                 window.googletag.cmd.push(() => {
-                    window.googletag.display('div-gpt-ad-1473268147477-1');
+                    window.googletag.display('div-gpt-ad-1491246142345-0');
                     count += 1;
                     if (count >= 3) {
                         resolve();
                     }
                 });
                 window.googletag.cmd.push(() => {
-                    window.googletag.display('div-gpt-ad-1479941549483-2');
+                    window.googletag.display('div-gpt-ad-1491246142345-2');
                     count += 1;
                     if (count >= 3) {
                         resolve();
                     }
                 });
                 window.googletag.cmd.push(() => {
-                    window.googletag.display('div-gpt-ad-1479941549483-1');
+                    window.googletag.display('div-gpt-ad-1491246142345-1');
                     count += 1;
                     if (count >= 3) {
                         resolve();
@@ -109,9 +109,9 @@ async function showBanner() {
             }
         }
     } else {
-        const bannerAdTop = document.getElementById('div-gpt-ad-1473268147477-1');
-        const bannerAdBottom1 = document.getElementById('div-gpt-ad-1479941549483-2');
-        const bannerAdBottom2 = document.getElementById('div-gpt-ad-1479941549483-1');
+        const bannerAdTop = document.getElementById('div-gpt-ad-1491246142345-0');
+        const bannerAdBottom1 = document.getElementById('div-gpt-ad-1491246142345-2');
+        const bannerAdBottom2 = document.getElementById('div-gpt-ad-1491246142345-1');
 
         if (bannerAdTop && bannerAdBottom1 && bannerAdBottom2) {
             if (!gptLoading && !gptLoaded) {

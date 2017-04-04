@@ -38,15 +38,15 @@ const initAds = (goldUntil: number | void) => {
         let el;
         el = document.getElementById('banner-ad-top-wrapper');
         if (el) {
-            el.innerHTML = '<div id="div-gpt-ad-1473268147477-1" style="text-align: center; min-height: 95px; margin-top: 1em"></div>';
+            el.innerHTML = '<div id="div-gpt-ad-1491246142345-0" style="text-align: center; min-height: 95px; margin-top: 1em"></div>';
         }
         el = document.getElementById('banner-ad-bottom-wrapper-1');
         if (el) {
-            el.innerHTML = '<div id="div-gpt-ad-1479941549483-2" style="text-align: center; height: 250px; position: absolute; top: 5px; left: 0"></div>';
+            el.innerHTML = '<div id="div-gpt-ad-1491246142345-2" style="text-align: center; height: 250px; position: absolute; top: 5px; left: 0"></div>';
         }
         el = document.getElementById('banner-ad-bottom-wrapper-2');
         if (el) {
-            el.innerHTML = '<div id="div-gpt-ad-1479941549483-1" style="text-align: center; height: 250px; position: absolute; top: 5px; right: 0"></div>';
+            el.innerHTML = '<div id="div-gpt-ad-1491246142345-1" style="text-align: center; height: 250px; position: absolute; top: 5px; right: 0"></div>';
         }
         el = document.getElementById('banner-ad-bottom-wrapper-logo');
         if (el) {

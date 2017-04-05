@@ -850,9 +850,9 @@
       "dev": true
     },
     "browserify": {
-      "version": "14.1.0",
-      "from": "browserify@14.1.0",
-      "resolved": "https://registry.npmjs.org/browserify/-/browserify-14.1.0.tgz",
+      "version": "14.3.0",
+      "from": "browserify@14.3.0",
+      "resolved": "https://registry.npmjs.org/browserify/-/browserify-14.3.0.tgz",
       "dev": true,
       "dependencies": {
         "isarray": {
@@ -1008,9 +1008,9 @@
       "dev": true
     },
     "caniuse-db": {
-      "version": "1.0.30000646",
+      "version": "1.0.30000649",
       "from": "caniuse-db@>=1.0.30000634 <2.0.0",
-      "resolved": "https://registry.npmjs.org/caniuse-db/-/caniuse-db-1.0.30000646.tgz",
+      "resolved": "https://registry.npmjs.org/caniuse-db/-/caniuse-db-1.0.30000649.tgz",
       "dev": true
     },
     "caseless": {
@@ -1067,9 +1067,9 @@
       "resolved": "https://registry.npmjs.org/classnames/-/classnames-2.2.5.tgz"
     },
     "clean-css": {
-      "version": "4.0.10",
-      "from": "clean-css@4.0.10",
-      "resolved": "https://registry.npmjs.org/clean-css/-/clean-css-4.0.10.tgz",
+      "version": "4.0.11",
+      "from": "clean-css@4.0.11",
+      "resolved": "https://registry.npmjs.org/clean-css/-/clean-css-4.0.11.tgz",
       "dev": true
     },
     "cli-cursor": {
@@ -1950,9 +1950,9 @@
       }
     },
     "eslint": {
-      "version": "3.18.0",
-      "from": "eslint@3.18.0",
-      "resolved": "https://registry.npmjs.org/eslint/-/eslint-3.18.0.tgz",
+      "version": "3.19.0",
+      "from": "eslint@3.19.0",
+      "resolved": "https://registry.npmjs.org/eslint/-/eslint-3.19.0.tgz",
       "dev": true,
       "dependencies": {
         "estraverse": {
@@ -1976,9 +1976,9 @@
       "dev": true
     },
     "eslint-config-airbnb-base": {
-      "version": "11.1.2",
+      "version": "11.1.3",
       "from": "eslint-config-airbnb-base@>=11.1.0 <12.0.0",
-      "resolved": "https://registry.npmjs.org/eslint-config-airbnb-base/-/eslint-config-airbnb-base-11.1.2.tgz",
+      "resolved": "https://registry.npmjs.org/eslint-config-airbnb-base/-/eslint-config-airbnb-base-11.1.3.tgz",
       "dev": true
     },
     "eslint-import-resolver-node": {
@@ -2300,9 +2300,9 @@
       "dev": true
     },
     "flow-bin": {
-      "version": "0.42.0",
-      "from": "flow-bin@0.42.0",
-      "resolved": "https://registry.npmjs.org/flow-bin/-/flow-bin-0.42.0.tgz",
+      "version": "0.43.0",
+      "from": "flow-bin@0.43.0",
+      "resolved": "https://registry.npmjs.org/flow-bin/-/flow-bin-0.43.0.tgz",
       "dev": true
     },
     "for-in": {
@@ -2635,9 +2635,9 @@
       "dev": true
     },
     "https-browserify": {
-      "version": "0.0.1",
-      "from": "https-browserify@>=0.0.0 <0.1.0",
-      "resolved": "https://registry.npmjs.org/https-browserify/-/https-browserify-0.0.1.tgz",
+      "version": "1.0.0",
+      "from": "https-browserify@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/https-browserify/-/https-browserify-1.0.0.tgz",
       "dev": true
     },
     "https-proxy-agent": {
@@ -3245,9 +3245,9 @@
       "dev": true
     },
     "known-css-properties": {
-      "version": "0.0.6",
-      "from": "known-css-properties@>=0.0.6 <0.0.7",
-      "resolved": "https://registry.npmjs.org/known-css-properties/-/known-css-properties-0.0.6.tgz",
+      "version": "0.0.7",
+      "from": "known-css-properties@>=0.0.7 <0.0.8",
+      "resolved": "https://registry.npmjs.org/known-css-properties/-/known-css-properties-0.0.7.tgz",
       "dev": true
     },
     "labeled-stream-splicer": {
@@ -3673,9 +3673,9 @@
       }
     },
     "node-sass": {
-      "version": "4.5.1",
-      "from": "node-sass@4.5.1",
-      "resolved": "https://registry.npmjs.org/node-sass/-/node-sass-4.5.1.tgz",
+      "version": "4.5.2",
+      "from": "node-sass@4.5.2",
+      "resolved": "https://registry.npmjs.org/node-sass/-/node-sass-4.5.2.tgz",
       "dev": true
     },
     "nomnom": {
@@ -4845,9 +4845,9 @@
       }
     },
     "stream-http": {
-      "version": "2.6.3",
+      "version": "2.7.0",
       "from": "stream-http@>=2.0.0 <3.0.0",
-      "resolved": "https://registry.npmjs.org/stream-http/-/stream-http-2.6.3.tgz",
+      "resolved": "https://registry.npmjs.org/stream-http/-/stream-http-2.7.0.tgz",
       "dev": true,
       "dependencies": {
         "isarray": {
@@ -4858,7 +4858,7 @@
         },
         "readable-stream": {
           "version": "2.2.6",
-          "from": "readable-stream@>=2.1.0 <3.0.0",
+          "from": "readable-stream@>=2.2.6 <3.0.0",
           "resolved": "https://registry.npmjs.org/readable-stream/-/readable-stream-2.2.6.tgz",
           "dev": true
         }
@@ -4934,7 +4934,7 @@
     },
     "stylehacks": {
       "version": "2.3.2",
-      "from": "stylehacks@>=2.3.0 <3.0.0",
+      "from": "stylehacks@>=2.3.2 <3.0.0",
       "resolved": "https://registry.npmjs.org/stylehacks/-/stylehacks-2.3.2.tgz",
       "dev": true,
       "dependencies": {
@@ -4953,9 +4953,9 @@
       }
     },
     "stylelint": {
-      "version": "7.9.0",
-      "from": "stylelint@7.9.0",
-      "resolved": "https://registry.npmjs.org/stylelint/-/stylelint-7.9.0.tgz",
+      "version": "7.10.1",
+      "from": "stylelint@7.10.1",
+      "resolved": "https://registry.npmjs.org/stylelint/-/stylelint-7.10.1.tgz",
       "dev": true,
       "dependencies": {
         "get-stdin": {

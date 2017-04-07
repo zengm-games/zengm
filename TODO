@@ -5,13 +5,14 @@ followup blog posts
 
 ratings popup
 - why those stats?
-- clicking shouldn't highlight row
 - move to left of watch flag, maybe skills too
 - add to:
   - player stats
   - player ratings
   - team finances
 - for stats, shooting 0 for 0 at 0% shouldn't show up as red
+
+color ratings on ratings page (and tables), just like ratings popup
 
 playersPlus - worth passing in ratings, or is it always all?
 

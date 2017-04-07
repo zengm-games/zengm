@@ -17,10 +17,8 @@ async function updateUserRoster(
 
         userRoster = await idb.getCopies.playersPlus(userRoster, {
             attrs: ["pid", "name", "age", "contract", "injury", "watch", "gamesUntilTradable"],
-            ratings: ["ovr", "pot", "skills", "pos", "hgt", "stre", "spd",
-                "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"],
-            stats: ["min", "pts", "trb", "ast", "per",
-                "fg", "fga", "tp", "tpa", "ft", "fta"],
+            ratings: ["ovr", "pot", "skills", "pos", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"],
+            stats: ["min", "pts", "trb", "ast", "per", "fg", "fga", "tp", "tpa", "ft", "fta"],
             season: g.season,
             tid: g.userTid,
             showNoStats: true,

@@ -324,10 +324,8 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
             players = players.filter(p => offers[i].pids.includes(p.pid));
             players = await idb.getCopies.playersPlus(players, {
                 attrs: ["pid", "name", "age", "contract", "injury", "watch"],
-                ratings: ["ovr", "pot", "skills", "pos", "hgt", "stre", "spd",
-                    "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"],
-                stats: ["min", "pts", "trb", "ast", "per",
-                    "fg", "fga", "tp", "tpa", "ft", "fta"],
+                ratings: ["ovr", "pot", "skills", "pos", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"],
+                stats: ["min", "pts", "trb", "ast", "per", "fg", "fga", "tp", "tpa", "ft", "fta"],
                 season: g.season,
                 tid,
                 showNoStats: true,

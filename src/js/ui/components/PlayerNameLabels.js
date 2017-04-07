@@ -14,8 +14,8 @@ const PlayerNameLabels = ({children, injury, pid, skills, style, watch, ratings,
     skills?: PlayerSkill[],
     style?: {[key: string]: string},
     watch?: boolean | Function, // For Firefox's Object.watch
-    ratings?: {},
-    stats?: {},
+    ratings?: any,
+    stats?: any,
 }) => {
     let injuryIcon = null;
     if (injury !== undefined) {

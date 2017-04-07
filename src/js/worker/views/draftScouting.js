@@ -9,9 +9,7 @@ async function addSeason(season, tid) {
 
     playersAll = await idb.getCopies.playersPlus(playersAll, {
         attrs: ["pid", "firstName", "lastName", "age", "watch", "valueFuzz"],
-        ratings: ["ovr", "pot", "skills", "fuzz", "pos", "hgt", "stre", "spd",
-            "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl",
-            "drb", "pss", "reb"],
+        ratings: ["ovr", "pot", "skills", "fuzz", "pos", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"],
         showNoStats: true,
         showRookies: true,
         fuzz: true,

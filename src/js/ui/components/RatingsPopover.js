@@ -4,37 +4,60 @@ import React from 'react';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
 import Popover from 'react-bootstrap/lib/Popover';
 
-const RatingsPopover = ({pid, ratings, stats}) => {
-    const colorRating = (rating) => {
-        if (rating >= 80) {
-            return "text-success";
-        } else if (rating > 30 && rating <= 60) {
-            return "text-warning";
-        } else if (rating <= 30) {
-            return "text-danger";
-        }
-        return "";
-    };
-    const formatShot = (made, attempt, type) => {
-        const f = made.toFixed(1);
-        const fa = attempt.toFixed(1);
-        const pct = attempt > 0 ? Math.round((made / attempt).toFixed(2) * 100) : 0;
-        let color = "";
-        if (type === 'fg') {
-            color = pct > 45 ? "text-success" : color;
-            color = pct < 40 ? "text-warning" : color;
-            color = pct < 35 ? "text-danger" : color;
-        } else if (type === 'tp') {
-            color = pct > 40 ? "text-success" : color;
-            color = pct < 35 ? "text-warning" : color;
-            color = pct < 30 ? "text-danger" : color;
-        } else if (type === 'ft') {
-            color = pct > 85 ? "text-success" : color;
-            color = pct < 80 ? "text-warning" : color;
-            color = pct < 60 ? "text-danger" : color;
-        }
-        return <span className={color}>{f}/{fa}/{pct}%</span>;
-    };
+const colorRating = (rating) => {
+    if (rating >= 80) {
+        return "text-success";
+    } else if (rating > 30 && rating <= 60) {
+        return "text-warning";
+    } else if (rating <= 30) {
+        return "text-danger";
+    }
+    return "";
+};
+
+const formatShot = (made, attempt, type) => {
+    const f = made.toFixed(1);
+    const fa = attempt.toFixed(1);
+    const pct = attempt > 0 ? Math.round(parseFloat((made / attempt).toFixed(2)) * 100) : 0;
+    let color = "";
+    if (type === 'fg') {
+        color = pct > 45 ? "text-success" : color;
+        color = pct < 40 ? "text-warning" : color;
+        color = pct < 35 ? "text-danger" : color;
+    } else if (type === 'tp') {
+        color = pct > 40 ? "text-success" : color;
+        color = pct < 35 ? "text-warning" : color;
+        color = pct < 30 ? "text-danger" : color;
+    } else if (type === 'ft') {
+        color = pct > 85 ? "text-success" : color;
+        color = pct < 80 ? "text-warning" : color;
+        color = pct < 60 ? "text-danger" : color;
+    }
+    return <span className={color}>{f}/{fa}/{pct}%</span>;
+};
+
+const RatingsPopover = ({pid, ratings, stats}: {pid: number, ratings: any, stats: any | void}) => {
+    let statsBlock = null;
+    if (stats) {
+        statsBlock = <div>
+            <br />
+            <div className="row">
+                <div className="col-xs-4">
+                    <b>FG</b><br />
+                    {formatShot(stats.fg, stats.fga, 'fg')}
+                </div>
+                <div className="col-xs-4">
+                    <b>3PT</b><br />
+                    <span>{formatShot(stats.tp, stats.tpa, 'tp')}</span>
+                </div>
+                <div className="col-xs-4">
+                    <b>FT</b><br />
+                    <span>{formatShot(stats.ft, stats.fta, 'ft')}</span>
+                </div>
+            </div>
+        </div>;
+    }
+
     const popoverPlayerRatings = (
         <Popover id={`ratings-pop-${pid}`}>
             <div className="row">
@@ -63,27 +86,7 @@ const RatingsPopover = ({pid, ratings, stats}) => {
                     <span className={colorRating(ratings.reb)}>Reb: {ratings.reb}</span>
                 </div>
             </div>
-            { (stats && stats.fg !== null && stats.fga !== null && stats.tp !== null && stats.tpa !== null &&
-                stats.ft !== null && stats.fta !== null) &&
-                <div>
-                    <br />
-                    <div className="row">
-                        <div className="col-xs-4">
-                            <b>FG</b><br />
-                            {formatShot(stats.fg, stats.fga, 'fg')}
-                        </div>
-                        <div className="col-xs-4">
-                            <b>3PT</b><br />
-                            <span>{formatShot(stats.tp, stats.tpa, 'tp')}</span>
-                        </div>
-                        <div className="col-xs-4">
-                            <b>FT</b><br />
-                            <span>{formatShot(stats.ft, stats.fta, 'ft')}</span>
-                        </div>
-                    </div>
-                </div>
-                || null
-            }
+            {statsBlock}
         </Popover>
     );
 
@@ -92,8 +95,8 @@ const RatingsPopover = ({pid, ratings, stats}) => {
     </OverlayTrigger>;
 };
 RatingsPopover.propTypes = {
-    pid: React.PropTypes.number,
-    ratings: React.PropTypes.object,
+    pid: React.PropTypes.number.isRequired,
+    ratings: React.PropTypes.object.isRequired,
     stats: React.PropTypes.object,
 };
 

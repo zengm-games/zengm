@@ -2,12 +2,18 @@ Email users after bbgm update
 
 ratings popup
 - why those stats?
+  - Pts/Reb/Ast
+  - Blk/Stl/TO
+  - Min/PER/EWA
+- move to left of watch flag, maybe skills too?
 - add to:
   - player stats
   - player ratings
   - team finances
   - league dashboard
 - for stats, shooting 0 for 0 at 0% shouldn't show up as red
+
+"in my 12 team league the dashboard displays team points allowed as 30th - 19th rather than 12th-1st"
 
 color ratings on ratings page (and tables), just like ratings popup
 

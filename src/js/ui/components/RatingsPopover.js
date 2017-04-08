@@ -39,58 +39,56 @@ const formatShot = (made, attempt, type) => {
 const RatingsPopover = ({pid, ratings, stats}: {pid: number, ratings: any, stats: any | void}) => {
     let statsBlock = null;
     if (stats) {
-        statsBlock = <div>
-            <br />
-            <div className="row">
-                <div className="col-xs-4">
-                    <b>FG</b><br />
-                    {formatShot(stats.fg, stats.fga, 'fg')}
-                </div>
-                <div className="col-xs-4">
-                    <b>3PT</b><br />
-                    <span>{formatShot(stats.tp, stats.tpa, 'tp')}</span>
-                </div>
-                <div className="col-xs-4">
-                    <b>FT</b><br />
-                    <span>{formatShot(stats.ft, stats.fta, 'ft')}</span>
-                </div>
+        statsBlock = <div className="row" style={{marginTop: '1em'}}>
+            <div className="col-xs-12">
+                <b>Stats</b>
+            </div>
+            <div className="col-xs-4">
+                <b>FG</b><br />
+                {formatShot(stats.fg, stats.fga, 'fg')}
+            </div>
+            <div className="col-xs-4">
+                <b>3PT</b><br />
+                <span>{formatShot(stats.tp, stats.tpa, 'tp')}</span>
+            </div>
+            <div className="col-xs-4">
+                <b>FT</b><br />
+                <span>{formatShot(stats.ft, stats.fta, 'ft')}</span>
             </div>
         </div>;
     }
 
-    const popoverPlayerRatings = (
-        <Popover id={`ratings-pop-${pid}`}>
-            <div className="row">
-                <div className="col-xs-4">
-                    <b>Physical</b><br />
-                    <span>Hgt: {ratings.hgt}</span><br />
-                    <span className={colorRating(ratings.stre)}>Str: {ratings.stre}</span><br />
-                    <span className={colorRating(ratings.spd)}>Spd: {ratings.spd}</span><br />
-                    <span className={colorRating(ratings.jmp)}>Jmp: {ratings.jmp}</span><br />
-                    <span className={colorRating(ratings.endu)}>End: {ratings.endu}</span>
-                </div>
-                <div className="col-xs-4">
-                    <b>Shooting</b><br />
-                    <span className={colorRating(ratings.ins)}>Ins: {ratings.ins}</span><br />
-                    <span className={colorRating(ratings.dnk)}>Dnk: {ratings.dnk}</span><br />
-                    <span className={colorRating(ratings.ft)}>Ft: {ratings.ft}</span><br />
-                    <span className={colorRating(ratings.fg)}>2Pt: {ratings.fg}</span><br />
-                    <span className={colorRating(ratings.tp)}>3Pt: {ratings.tp}</span>
-                </div>
-                <div className="col-xs-4">
-                    <b>Skill</b><br />
-                    <span className={colorRating(ratings.blk)}>Blk: {ratings.blk}</span><br />
-                    <span className={colorRating(ratings.stl)}>Stl: {ratings.stl}</span><br />
-                    <span className={colorRating(ratings.drb)}>Drb: {ratings.drb}</span><br />
-                    <span className={colorRating(ratings.pss)}>Pss: {ratings.pss}</span><br />
-                    <span className={colorRating(ratings.reb)}>Reb: {ratings.reb}</span>
-                </div>
+    const popoverPlayerRatings = <Popover id={`ratings-pop-${pid}`}>
+        <div className="row">
+            <div className="col-xs-12">
+                <b>Ratings</b>
             </div>
-            {statsBlock}
-        </Popover>
-    );
+            <div className="col-xs-4">
+                <span>Hgt: {ratings.hgt}</span><br />
+                <span className={colorRating(ratings.stre)}>Str: {ratings.stre}</span><br />
+                <span className={colorRating(ratings.spd)}>Spd: {ratings.spd}</span><br />
+                <span className={colorRating(ratings.jmp)}>Jmp: {ratings.jmp}</span><br />
+                <span className={colorRating(ratings.endu)}>End: {ratings.endu}</span>
+            </div>
+            <div className="col-xs-4">
+                <span className={colorRating(ratings.ins)}>Ins: {ratings.ins}</span><br />
+                <span className={colorRating(ratings.dnk)}>Dnk: {ratings.dnk}</span><br />
+                <span className={colorRating(ratings.ft)}>Ft: {ratings.ft}</span><br />
+                <span className={colorRating(ratings.fg)}>2Pt: {ratings.fg}</span><br />
+                <span className={colorRating(ratings.tp)}>3Pt: {ratings.tp}</span>
+            </div>
+            <div className="col-xs-4">
+                <span className={colorRating(ratings.blk)}>Blk: {ratings.blk}</span><br />
+                <span className={colorRating(ratings.stl)}>Stl: {ratings.stl}</span><br />
+                <span className={colorRating(ratings.drb)}>Drb: {ratings.drb}</span><br />
+                <span className={colorRating(ratings.pss)}>Pss: {ratings.pss}</span><br />
+                <span className={colorRating(ratings.reb)}>Reb: {ratings.reb}</span>
+            </div>
+        </div>
+        {statsBlock}
+    </Popover>;
 
-    return <OverlayTrigger trigger="click" rootClose placement="right" overlay={popoverPlayerRatings}>
+    return <OverlayTrigger trigger="click" rootClose placement="top" overlay={popoverPlayerRatings}>
         <span className="glyphicon glyphicon-stats watch" data-no-row-highlight="true" title="View ratings and stats" />
     </OverlayTrigger>;
 };

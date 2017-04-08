@@ -15,8 +15,8 @@ async function updateNegotiationList(): void | {[key: string]: any} {
     players = players.filter(p => negotiationPids.includes(p.pid));
     players = await idb.getCopies.playersPlus(players, {
         attrs: ["pid", "name", "age", "freeAgentMood", "injury", "watch"],
-        ratings: ["ovr", "pot", "skills", "pos", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"],
-        stats: ["min", "pts", "trb", "ast", "per", "fg", "fga", "tp", "tpa", "ft", "fta"],
+        ratings: ["ovr", "pot", "skills", "pos"],
+        stats: ["min", "pts", "trb", "ast", "per"],
         season: g.season,
         tid: g.userTid,
         showNoStats: true,

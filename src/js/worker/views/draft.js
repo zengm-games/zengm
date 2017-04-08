@@ -25,7 +25,7 @@ async function updateDraft(): void | {[key: string]: any} {
     undrafted.sort((a, b) => b.valueFuzz - a.valueFuzz);
     undrafted = await idb.getCopies.playersPlus(undrafted, {
         attrs: ["pid", "name", "age", "injury", "contract", "watch"],
-        ratings: ["ovr", "pot", "skills", "pos", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"],
+        ratings: ["ovr", "pot", "skills", "pos"],
         stats: ["per", "ewa"],
         season: g.season,
         showNoStats: true,
@@ -38,7 +38,7 @@ async function updateDraft(): void | {[key: string]: any} {
     drafted.sort((a, b) => (100 * a.draft.round + a.draft.pick) - (100 * b.draft.round + b.draft.pick));
     drafted = await idb.getCopies.playersPlus(drafted, {
         attrs: ["pid", "tid", "name", "age", "draft", "injury", "contract", "watch"],
-        ratings: ["ovr", "pot", "skills", "pos", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"],
+        ratings: ["ovr", "pot", "skills", "pos"],
         stats: ["per", "ewa"],
         season: g.season,
         showRookies: true,

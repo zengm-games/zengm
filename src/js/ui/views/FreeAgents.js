@@ -34,8 +34,6 @@ const FreeAgents = ({capSpace, gamesInProgress, minContract, numRosterSpots, pha
                     injury={p.injury}
                     skills={p.ratings.skills}
                     watch={p.watch}
-                    ratings={p.ratings}
-                    stats={p.stats}
                 >{p.name}</PlayerNameLabels>,
                 p.ratings.pos,
                 p.age,

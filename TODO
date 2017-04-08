@@ -8,9 +8,7 @@ ratings popup
   - team finances
   - league dashboard
 - for stats, shooting 0 for 0 at 0% shouldn't show up as red
-- maybe make request for stats and ratings, separate from others. why? because then it can always show latest values, even when view is displaying different season to statType or whatever
-  - change back all stats/ratings requests in views
-  - don't pass stats and ratings to playernamelabels
+- confirm it works with draft prospects and undrafted FAs (should show no stats, ideally)
 - rename to RatingsStatsPopover
 
 "in my 12 team league the dashboard displays team points allowed as 30th - 19th rather than 12th-1st"

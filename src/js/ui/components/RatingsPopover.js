@@ -64,7 +64,7 @@ const RatingsPopover = ({pid, ratings, stats}: {pid: number, ratings: any, stats
                 <b>Ratings</b>
             </div>
             <div className="col-xs-4">
-                <span>Hgt: {ratings.hgt}</span><br />
+                <span className={colorRating(ratings.hgt)}>Hgt: {ratings.hgt}</span><br />
                 <span className={colorRating(ratings.stre)}>Str: {ratings.stre}</span><br />
                 <span className={colorRating(ratings.spd)}>Spd: {ratings.spd}</span><br />
                 <span className={colorRating(ratings.jmp)}>Jmp: {ratings.jmp}</span><br />

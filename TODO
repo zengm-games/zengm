@@ -1,20 +1,13 @@
 Email users after bbgm update
 
 ratings popup
-- move to left of watch flag, maybe skills too?
-- add to:
-  - player stats
-  - player ratings
-  - team finances
-  - league dashboard
-- for stats, shooting 0 for 0 at 0% shouldn't show up as red
 - confirm it works with draft prospects and undrafted FAs (should show no stats, ideally)
-- rename to RatingsStatsPopover
-- popover position - if top, then clips on league leaders
 
 "in my 12 team league the dashboard displays team points allowed as 30th - 19th rather than 12th-1st"
 
-color ratings on ratings page (and tables), just like ratings popup
+colors
+- color ratings on ratings page (and tables), just like ratings popup
+- color stats in ratings popover
 
 playersPlus - worth passing in ratings/stats, or is it always all? or at least default to all?
 

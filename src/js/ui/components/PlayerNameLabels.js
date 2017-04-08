@@ -4,7 +4,7 @@ import React from 'react';
 import {helpers} from '../../common';
 import SkillsBlock from './SkillsBlock';
 import WatchBlock from './WatchBlock';
-import RatingsPopover from './RatingsPopover';
+import RatingsStatsPopover from './RatingsStatsPopover';
 import type {PlayerInjury, PlayerSkill} from '../../common/types';
 
 const PlayerNameLabels = ({children, injury, pid, skills, style, watch}: {
@@ -32,7 +32,7 @@ const PlayerNameLabels = ({children, injury, pid, skills, style, watch}: {
         </a>
         {injuryIcon}
         <SkillsBlock skills={skills} />
-        <RatingsPopover pid={pid} />
+        <RatingsStatsPopover pid={pid} />
         {typeof watch === 'boolean' ? <WatchBlock pid={pid} watch={watch} /> : null}
     </span>;
 };

@@ -55,7 +55,7 @@ type State = {
     } | void,
 };
 
-class RatingsPopover extends React.Component {
+class RatingsStatsPopover extends React.Component {
     props: Props;
     state: State;
 
@@ -176,8 +176,8 @@ class RatingsPopover extends React.Component {
     }
 }
 
-RatingsPopover.propTypes = {
+RatingsStatsPopover.propTypes = {
     pid: React.PropTypes.number.isRequired,
 };
 
-export default RatingsPopover;
+export default RatingsStatsPopover;

@@ -26,7 +26,7 @@ export default <Props, C: React.Component<*, Props, *>>(
             if (event.target.nodeName && ignoredElements.includes(event.target.nodeName)) {
                 return;
             }
-            if (event.target.dataset && event.target.dataset.notClickable) {
+            if (event.target.dataset && event.target.dataset.noRowHighlight) {
                 return;
             }
 

@@ -91,7 +91,7 @@ const RatingsPopover = ({pid, ratings, stats}: {pid: number, ratings: any, stats
     );
 
     return <OverlayTrigger trigger="click" rootClose placement="right" overlay={popoverPlayerRatings}>
-        <span className="glyphicon glyphicon-th watch" aria-hidden="true" data-not-clickable="true" />
+        <span className="glyphicon glyphicon-stats watch" data-no-row-highlight="true" title="View ratings and stats" />
     </OverlayTrigger>;
 };
 RatingsPopover.propTypes = {

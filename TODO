@@ -1,20 +1,17 @@
 Email users after bbgm update
 
-followup blog posts
-- user metrics after performance increase
-
 ratings popup
 - why those stats?
-- move to left of watch flag, maybe skills too
 - add to:
   - player stats
   - player ratings
   - team finances
+  - league dashboard
 - for stats, shooting 0 for 0 at 0% shouldn't show up as red
 
 color ratings on ratings page (and tables), just like ratings popup
 
-playersPlus - worth passing in ratings, or is it always all?
+playersPlus - worth passing in ratings/stats, or is it always all? or at least default to all?
 
 confirm Bugsnag errors are being reported from worker
 

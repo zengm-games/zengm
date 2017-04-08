@@ -474,6 +474,7 @@ const ratingsStatsPopoverInfo = async (pid: number) => {
         ratings: ['ovr', 'pot', 'hgt', 'stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb'],
         stats: ['pts', 'trb', 'ast', 'blk', 'stl', 'tov', 'min', 'per', 'ewa'],
         season: g.season,
+        showNoStats: true,
         oldStats: true,
     });
 };

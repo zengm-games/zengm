@@ -167,7 +167,7 @@ class RatingsPopover extends React.Component {
         return <OverlayTrigger
             onEnter={this.loadData}
             overlay={popoverPlayerRatings}
-            placement="top"
+            placement="bottom"
             rootClose
             trigger="click"
         >

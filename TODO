@@ -10,6 +10,7 @@ ratings popup
 - for stats, shooting 0 for 0 at 0% shouldn't show up as red
 - confirm it works with draft prospects and undrafted FAs (should show no stats, ideally)
 - rename to RatingsStatsPopover
+- popover position - if top, then clips on league leaders
 
 "in my 12 team league the dashboard displays team points allowed as 30th - 19th rather than 12th-1st"
 

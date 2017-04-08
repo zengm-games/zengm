@@ -1,14 +1,15 @@
-bugs in really big leagues
-- https://www.reddit.com/r/BasketballGM/comments/63dwny/error_maximum_ipc_message_size_exceeded/
-
-test QuotaError, other Backboard crap
-
 Email users after bbgm update
 
-followup blog posts
-- user metrics after performance increase
+"in my 12 team league the dashboard displays team points allowed as 30th - 19th rather than 12th-1st"
 
-IVERSON - EVENTUALLY
+colors
+- color ratings on ratings page (and tables), just like ratings popup
+- color stats in ratings popover
+
+playersPlus - worth passing in ratings/stats, or is it always all? or at least default to all?
+
+bugs in really big leagues
+- https://www.reddit.com/r/BasketballGM/comments/63dwny/error_maximum_ipc_message_size_exceeded/
 
 filtering
 - disable in some columns, like "Negotiate" buttons. maybe config in getCols?

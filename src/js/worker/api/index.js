@@ -468,6 +468,20 @@ const lockSet = async (name: LockName, value: boolean) => {
     lock.set(name, value);
 };
 
+const ratingsStatsPopoverInfo = async (pid: number) => {
+    const p = await idb.getCopy.players({pid});
+    if (p === undefined) {
+        throw new Error(`Invalid player ID ${pid}`);
+    }
+    return idb.getCopy.playersPlus(p, {
+        ratings: ['ovr', 'pot', 'hgt', 'stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb'],
+        stats: ['pts', 'trb', 'ast', 'blk', 'stl', 'tov', 'min', 'per', 'ewa'],
+        season: g.season,
+        showNoStats: true,
+        oldStats: true,
+    });
+};
+
 const releasePlayer = async (pid: number, justDrafted: boolean) => {
     const players = await idb.cache.players.indexGetAll('playersByTid', g.userTid);
     if (players.length <= 5) {
@@ -770,6 +784,7 @@ export default {
     init,
     lockSet,
     proposeTrade,
+    ratingsStatsPopoverInfo,
     releasePlayer,
     removeLeague,
     reorderRosterDrag,

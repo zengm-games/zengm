@@ -26,6 +26,8 @@ type Props = {
 
 type State = {
     ratings: {
+        ovr: number,
+        pot: number,
         hgt: number,
         stre: number,
         spd: number,
@@ -58,6 +60,7 @@ type State = {
 class RatingsStatsPopover extends React.Component {
     props: Props;
     state: State;
+    loadData: () => void;
 
     constructor(props: Props) {
         super(props);

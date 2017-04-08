@@ -1,10 +1,6 @@
 Email users after bbgm update
 
 ratings popup
-- why those stats?
-  - Pts/Reb/Ast
-  - Blk/Stl/TO
-  - Min/PER/EWA
 - move to left of watch flag, maybe skills too?
 - add to:
   - player stats
@@ -14,6 +10,8 @@ ratings popup
 - for stats, shooting 0 for 0 at 0% shouldn't show up as red
 - maybe make request for stats and ratings, separate from others. why? because then it can always show latest values, even when view is displaying different season to statType or whatever
   - change back all stats/ratings requests in views
+  - don't pass stats and ratings to playernamelabels
+- rename to RatingsStatsPopover
 
 "in my 12 team league the dashboard displays team points allowed as 30th - 19th rather than 12th-1st"
 

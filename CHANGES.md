@@ -2,7 +2,7 @@ Don't read much into the release dates. Changes are pushed live as often as
 possible, regardless of whether I make an official release with a new version
 number or not.
 
-# 4.0.0 (???)
+# 4.0.0 (2017-04-01)
 
 - Previously, the version number was incremented when the previous version was done, and then the date was assigned for the previous version then. Now, the version and date will be assigned at the same time, and then features and improvements will gradualyl be added to the version.
 

@@ -243,6 +243,10 @@ function formatCurrency(amount: number, append: string = '', precision: number =
     if (amount < 0) {
         return `-$${Math.abs(amount).toFixed(precision)}${append}`;
     }
+    if (append === 'M' && amount > 1000) {
+        amount /= 1000;
+        append = 'B';
+    }
     return `$${amount.toFixed(precision)}${append}`;
 }
 

@@ -6,7 +6,7 @@ import {DataTable, Dropdown, NewWindowLink, PlayerNameLabels} from '../component
 const UpcomingFreeAgents = ({players, season}) => {
     setTitle('Upcoming Free Agents');
 
-    const cols = getCols('Name', 'Pos', 'Age', 'Ovr', 'Pot', 'Min', 'Pts', 'Reb', 'Ast', 'PER', 'Current Contract', 'Desired Contract');
+    const cols = getCols('Name', 'Pos', 'Team', 'Age', 'Ovr', 'Pot', 'Min', 'Pts', 'Reb', 'Ast', 'PER', 'Current Contract', 'Desired Contract');
 
     const rows = players.map(p => {
         return {
@@ -19,6 +19,7 @@ const UpcomingFreeAgents = ({players, season}) => {
                     watch={p.watch}
                 >{p.name}</PlayerNameLabels>,
                 p.ratings.pos,
+                <a href={helpers.leagueUrl(['roster', p.abbrev])}>{p.abbrev}</a>,
                 p.age,
                 p.ratings.ovr,
                 p.ratings.pot,

@@ -479,6 +479,7 @@ const ratingsStatsPopoverInfo = async (pid: number) => {
         season: g.season,
         showNoStats: true,
         oldStats: true,
+        fuzz: true,
     });
 };
 

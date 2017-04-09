@@ -90,10 +90,10 @@ mod_rewrite enabled. That's how it's done on play.basketball-gm.com.
 
 ### Step 4 - Testing
 
-ESLint and stylelint are used to enforce some coding standards. To run them on
-the entirecodebase, run
+ESLint, Flow, and, stylelint are used to enforce some coding standards. To run
+them on the entire codebase, run
 
-    npm run lint-js
+    npm run lint
 
 Integration and unit tests are bunched together in the `js/test` folder.
 Coverage is not great. They can be run from the command line in Karma with
@@ -111,30 +111,29 @@ broken currently).
 ### Code Overview
 
 Basketball GM is a single-page app that runs almost entirely client-side by
-storing data in IndexedDB. All the application code is in the `js` folder.
-Routes are set in `js/app.js`. Most of the important stuff is in `js/core`.
+storing data in IndexedDB. The core of the game runs inside a Shared Worker (or
+a Web Worker in crappy browsers that don't support Shared Workers), and then
+each open tab runs only UI code that talks to the worker. The UI code is in the
+`src/js/ui` folder and the core game code is in the `src/js/worker` folder. They
+communicate through the `toUI` and `toWorker` functions.
 
-UI is ultimately driven by `js/util/bbgmView.js`, a small UI layer I wrote on
-top of Knockout which is used by all the views in the `js/views` folder. Each
-view also has a corresponding HTML file in the `templates` folder. Adding a new
-page is kind of a bitch. You need to explicitly include the template file in
-`js/templates.js`, and explicitly include the view in `js/views.js`. Beyond
-that, my best guidance is to copy from an existing page and use that as a
-starting point.
+The UI is built with React and Bootstrap.
 
-For database access, I wrote a very thin Promises-based wrapper around IndexedDB
-called [Backboard](https://github.com/dumbmatter/backboard). Understanding how
-IndexedDB works is critical in any non-trivial work on Basketball GM.
+In the worker, data is ultimately stored in IndexedDB, but for performance and
+cross-browser compatibility reasons, a cache (implemented in
+`src/js/worker/db/Cache.js`) sits on top of the database containing all commonly
+accessed data. The idea is that IndexedDB should only be accessed for uncommon
+situations, like viewing stats from past seasons. For simulating games and
+viewing current data, only the cache should be necessary.
 
-Also, there is a global variable `window.bbgm` which gives you access to many of
-the internal functions of Basketball GM from within your browser.
+The cache is overly complicated because (1) the values it returns are mutable,
+so you better not mess with them accidentally, and (2) when you do purposely
+mutate a value (like updating a player's stats), you need to remember to always
+write it back to the cache manually by calling `idb.cache.*.put`.
 
-### Documentation
-
-Code should ideally be documented as described in the Google Closure Compiler
-documentation:
-<https://developers.google.com/closure/compiler/docs/js-for-compiler>.
-Google Closure Compiler itself isn't actually used for anything (yet).
+Also in the worker, there is a global variable `self.bbgm` which gives you
+access to many of the internal functions of Basketball GM from within your
+browser.
 
 ### Git Workflow
 

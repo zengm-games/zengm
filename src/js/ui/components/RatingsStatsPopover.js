@@ -106,7 +106,7 @@ class RatingsStatsPopover extends React.Component {
                     <span className={colorRating(ratings.tp)}>3Pt: {ratings.tp}</span>
                 </div>
                 <div className="col-xs-4">
-                    <span className={colorRating(ratings.pot, 'ovr')}>Pot: {ratings.pot}</span><br />
+                    <span className={colorRating(ratings.pot, 'ovr')}>Pot: {Math.round(ratings.pot)}</span><br />
                     <span className={colorRating(ratings.blk)}>Blk: {ratings.blk}</span><br />
                     <span className={colorRating(ratings.stl)}>Stl: {ratings.stl}</span><br />
                     <span className={colorRating(ratings.drb)}>Drb: {ratings.drb}</span><br />

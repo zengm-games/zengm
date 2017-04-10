@@ -107,7 +107,7 @@ async function updateTeams(
                 }
             }
         }
-        vars.oppPtsRank = 31 - vars.oppPtsRank;
+        vars.oppPtsRank = g.numTeams + 1 - vars.oppPtsRank;
 
         return vars;
     }

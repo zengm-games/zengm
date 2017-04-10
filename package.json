@@ -80,6 +80,7 @@
     "babelify": "7.3.0",
     "blacklistify": "0.0.3",
     "browserify": "14.3.0",
+    "bundle-collapser": "1.2.1",
     "cheerio": "0.20.0",
     "chokidar": "1.6.1",
     "clean-css": "4.0.11",

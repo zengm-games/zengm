@@ -101,6 +101,10 @@ async function cancelAll() {
  */
 async function accept(pid: number, amount: number, exp: number): Promise<?string> {
     const negotiation = await idb.cache.negotiations.get(pid);
+    if (!negotiation) {
+        return `No negotiation with player ${pid} found.`;
+    }
+
     const payroll = (await team.getPayroll(g.userTid))[0];
 
     // If this contract brings team over the salary cap, it's not a minimum;

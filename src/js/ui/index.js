@@ -2,6 +2,7 @@
 
 /* eslint-disable import/first */
 import '../vendor/babel-external-helpers';
+import '../common/polyfills';
 import page from 'page';
 import React from 'react';
 import ReactDOM from 'react-dom';

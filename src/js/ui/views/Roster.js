@@ -274,6 +274,17 @@ class Roster extends React.Component {
             playersSorted = players;
         }
 
+        const profit = t.seasonAttrs !== undefined ? t.seasonAttrs.profit : 0;
+
+        const recordAndPlayoffs = t.seasonAttrs !== undefined ? <span>Record: <RecordAndPlayoffs
+            abbrev={abbrev}
+            season={season}
+            won={t.seasonAttrs.won}
+            lost={t.seasonAttrs.lost}
+            playoffRoundsWon={t.seasonAttrs.playoffRoundsWon}
+            option="noSeason"
+        /></span> : 'Season not found';
+
         return <div>
             <Dropdown view="roster" fields={["teams", "seasons"]} values={[abbrev, season]} />
             <div className="pull-right">
@@ -287,22 +298,13 @@ class Roster extends React.Component {
             <p>More: <a href={helpers.leagueUrl(['team_finances', abbrev])}>Finances</a> | <a href={helpers.leagueUrl(['game_log', abbrev, season])}>Game Log</a> | <a href={helpers.leagueUrl(['team_history', abbrev])}>History</a> | <a href={helpers.leagueUrl(['transactions', abbrev])}>Transactions</a></p>
             <div className="team-picture" style={logoStyle} />
             <div>
-                <h3>
-                    Record: <RecordAndPlayoffs
-                        abbrev={abbrev}
-                        season={season}
-                        won={t.seasonAttrs.won}
-                        lost={t.seasonAttrs.lost}
-                        playoffRoundsWon={t.seasonAttrs.playoffRoundsWon}
-                        option="noSeason"
-                    />
-                </h3>
+                <h3>{recordAndPlayoffs}</h3>
 
                 {season === g.season ? <p>
                     {15 - players.length} open roster spots<br />
                     Payroll: {helpers.formatCurrency(payroll, 'M')}<br />
                     Salary cap: {helpers.formatCurrency(salaryCap, 'M')}<br />
-                    Profit: {helpers.formatCurrency(t.seasonAttrs.profit, 'M')}<br />
+                    Profit: {helpers.formatCurrency(profit, 'M')}<br />
                     {showTradeFor ? `Strategy: ${t.strategy}` : null}
                 </p> : null}
             </div>

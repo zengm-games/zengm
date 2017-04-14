@@ -126,8 +126,10 @@ class Draft extends React.Component {
             if (fantasyDraft) {
                 data.splice(7, 0,
                     p.pid >= 0 ? `${helpers.formatCurrency(p.contract.amount, 'M')} thru ${p.contract.exp}` : null,
-                    p.pid >= 0 ? p.stats.per.toFixed(1) : null,
-                    p.pid >= 0 ? p.stats.ewa.toFixed(1) : null,
+
+                    // Not sure why these extra checks for PER and EWA being numeric are needed, bug Bugsnag showed errors
+                    p.pid >= 0 && p.stats && typeof p.stats.per === 'number' ? p.stats.per.toFixed(1) : null,
+                    p.pid >= 0 && p.stats && typeof p.stats.ewa === 'number' ? p.stats.ewa.toFixed(1) : null,
                 );
             }
 

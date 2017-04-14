@@ -74,12 +74,16 @@ class RatingsStatsPopover extends React.Component {
     }
 
     async loadData() {
-        const {ratings, stats} = await toWorker('ratingsStatsPopoverInfo', this.props.pid);
+        const p = await toWorker('ratingsStatsPopoverInfo', this.props.pid);
 
-        this.setState({
-            ratings,
-            stats,
-        });
+        // This means retired players will show placeholder, which is probably not ideal
+        if (p !== undefined) {
+            const {ratings, stats} = p;
+            this.setState({
+                ratings,
+                stats,
+            });
+        }
     }
 
 

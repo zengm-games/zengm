@@ -262,7 +262,7 @@ checkAchievement.septuawinarian = async (conditions: Conditions, saveAchievement
         tid: g.userTid,
     });
 
-    if (t.seasonAttrs.won >= 70) {
+    if (t && t.seasonAttrs && t.seasonAttrs.won >= 70) {
         if (saveAchievement) {
             addAchievements(["septuawinarian"], conditions);
         }
@@ -284,7 +284,7 @@ checkAchievement["98_degrees"] = async (conditions: Conditions, saveAchievement:
             season: g.season,
             tid: g.userTid,
         });
-        if (t.seasonAttrs.won === 82 && t.seasonAttrs.lost === 0) {
+        if (t && t.seasonAttrs && t.seasonAttrs.won === 82 && t.seasonAttrs.lost === 0) {
             if (saveAchievement) {
                 addAchievements(["98_degrees"], conditions);
             }
@@ -334,14 +334,13 @@ async function checkMoneyball(maxPayroll, slug, conditions: Conditions, saveAchi
     if (g.godModeInPast) {
         return false;
     }
-
     const t = await idb.getCopy.teamsPlus({
         seasonAttrs: ["expenses", "playoffRoundsWon"],
         season: g.season,
         tid: g.userTid,
     });
 
-    if (t.seasonAttrs.playoffRoundsWon === g.numPlayoffRounds && t.seasonAttrs.expenses.salary.amount <= maxPayroll) {
+    if (t && t.seasonAttrs && t.seasonAttrs.playoffRoundsWon === g.numPlayoffRounds && t.seasonAttrs.expenses.salary.amount <= maxPayroll) {
         if (saveAchievement) {
             addAchievements([slug], conditions);
         }
@@ -383,7 +382,7 @@ checkAchievement.small_market = async (conditions: Conditions, saveAchievement: 
         tid: g.userTid,
     });
 
-    if (t.seasonAttrs.playoffRoundsWon === g.numPlayoffRounds && t.seasonAttrs.pop <= 2) {
+    if (t && t.seasonAttrs && t.seasonAttrs.playoffRoundsWon === g.numPlayoffRounds && t.seasonAttrs.pop <= 2) {
         if (saveAchievement) {
             addAchievements(["small_market"], conditions);
         }

@@ -763,34 +763,32 @@ async function play(numDays: number, conditions: Conditions, start?: boolean = t
     };
 
     // This simulates a day, including game simulation and any other bookkeeping that needs to be done
-    const cbRunDay = () => {
+    const cbRunDay = async () => {
         // setTimeout is for responsiveness during gameSim with UI that doesn't hit IDB
-        setTimeout(async () => {
-            if (numDays > 0) {
-                // If we didn't just stop games, let's play
-                // Or, if we are starting games (and already passed the lock), continue even if stopGameSim was just seen
-                const stopGameSim = lock.get('stopGameSim');
-                if (start || !stopGameSim) {
-                    // If start is set, then reset stopGames
-                    if (stopGameSim) {
-                        lock.set('stopGameSim', false);
-                    }
-
-                    if (g.phase !== PHASE.PLAYOFFS) {
-                        await freeAgents.decreaseDemands();
-                        await freeAgents.autoSign();
-                    }
-
-                    await cbPlayGames();
-                } else {
-                    // Update UI if stopped
-                    await cbNoGames();
+        if (numDays > 0) {
+            // If we didn't just stop games, let's play
+            // Or, if we are starting games (and already passed the lock), continue even if stopGameSim was just seen
+            const stopGameSim = lock.get('stopGameSim');
+            if (start || !stopGameSim) {
+                // If start is set, then reset stopGames
+                if (stopGameSim) {
+                    lock.set('stopGameSim', false);
                 }
-            } else if (numDays === 0) {
-                // If this is the last day, update play menu
+
+                if (g.phase !== PHASE.PLAYOFFS) {
+                    await freeAgents.decreaseDemands();
+                    await freeAgents.autoSign();
+                }
+
+                await cbPlayGames();
+            } else {
+                // Update UI if stopped
                 await cbNoGames();
             }
-        }, 0);
+        } else if (numDays === 0) {
+            // If this is the last day, update play menu
+            await cbNoGames();
+        }
     };
 
     // If this is a request to start a new simulation... are we allowed to do
@@ -801,7 +799,7 @@ async function play(numDays: number, conditions: Conditions, start?: boolean = t
             const userTeamSizeError = await team.checkRosterSizes(conditions);
             if (userTeamSizeError === undefined) {
                 await updatePlayMenu();
-                cbRunDay();
+                await cbRunDay();
             } else {
                 lock.set('gameSim', false); // Counteract auto-start in lock.canStartGames
                 await updateStatus('Idle');
@@ -813,7 +811,7 @@ async function play(numDays: number, conditions: Conditions, start?: boolean = t
             }
         }
     } else {
-        cbRunDay();
+        await cbRunDay();
     }
 }
 

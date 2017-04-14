@@ -1,7 +1,7 @@
 import React from 'react';
 import {helpers} from '../../common';
 import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
-import {getCols, realtimeUpdate, setTitle, toWorker} from '../util';
+import {getCols, logEvent, realtimeUpdate, setTitle, toWorker} from '../util';
 
 class DraftScouting extends React.Component {
     constructor(props) {
@@ -22,8 +22,23 @@ class DraftScouting extends React.Component {
 
         const reader = new window.FileReader();
         reader.readAsText(file);
-        reader.onload = async event => {
-            const uploadedFile = JSON.parse(event.target.result);
+        reader.onload = async (event) => {
+            let uploadedFile;
+            try {
+                uploadedFile = JSON.parse(event.target.result);
+            } catch (err) {
+                logEvent({
+                    type: 'error',
+                    text: `Error parsing file: ${err.message}`,
+                    saveToDb: false,
+                });
+
+                this.setState({
+                    customize: undefined,
+                });
+
+                return;
+            }
 
             await toWorker('handleUploadedDraftClass', uploadedFile, seasonOffset);
 

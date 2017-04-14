@@ -135,6 +135,14 @@ class NewLeague extends React.Component {
                         t.pop = t.seasons[t.seasons.length - 1].pop;
                     }
 
+                    // God, I hate being permissive...
+                    if (typeof t.pop !== 'number') {
+                        t.pop = parseFloat(t.pop);
+                    }
+                    if (isNaN(t.pop)) {
+                        t.pop = 1;
+                    }
+
                     t.pop = parseFloat(t.pop.toFixed(2));
                 }
 

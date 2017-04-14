@@ -1,10 +1,11 @@
-Email users after bbgm update
+auto delete old box scores, leave behind feats
+
+slow down playoffs
+- somehow add delay to game sim, N - (actual time)
 
 colors
 - color ratings on ratings page (and tables), just like ratings popup
 - color stats in ratings popover
-
-playersPlus - worth passing in ratings/stats, or is it always all? or at least default to all?
 
 bugs in really big leagues
 - https://www.reddit.com/r/BasketballGM/comments/63dwny/error_maximum_ipc_message_size_exceeded/

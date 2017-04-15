@@ -258,12 +258,9 @@ const transactions = (ctx) => {
     let tid;
     if (ctx.params.abbrev && ctx.params.abbrev !== 'all') {
         [tid, abbrev] = helpers.validateAbbrev(ctx.params.abbrev);
-    } else if (ctx.params.abbrev && ctx.params.abbrev === 'all') {
+    } else {
         tid = -1;
         abbrev = 'all';
-    } else {
-        tid = g.userTid;
-        abbrev = g.teamAbbrevsCache[tid];
     }
 
     let season;

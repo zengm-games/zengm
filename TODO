@@ -1,7 +1,7 @@
 AI trades
-- sometimes trades for nothing still happened. investigated one, saw it thought a FA was in the trade. weird
 - make sure fudge factors in trade logic don't apply
-- notification?
+  - especially with picks, make sure trades are sensible
+- notification? only for big trades. quantify! maybe show that info in transactions page too
 - changes
 - transaction log defaults to all teams
 - benchmark

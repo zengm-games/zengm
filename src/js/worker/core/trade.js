@@ -379,8 +379,10 @@ async function propose(forceTrade?: boolean = false): Promise<[boolean, ?string]
         await clear();
 
         // Auto-sort CPU team roster
-        if (!g.userTids.includes(tids[1])) {
-            await team.rosterAutoSort(tids[1]);
+        for (const tid of tids) {
+            if (!g.userTids.includes(tid)) {
+                await team.rosterAutoSort(tid);
+            }
         }
 
         return [true, 'Trade accepted! "Nice doing business with you!"'];
@@ -427,6 +429,7 @@ async function makeItWork(
             const players = await idb.getCopies.players({tid: teams[0].tid});
             for (const p of players) {
                 if (!teams[0].pids.includes(p.pid) && !isUntradable(p)) {
+console.log('player team0', p.tid);
                     assets.push({
                         type: "player",
                         dv: 0,
@@ -441,6 +444,7 @@ async function makeItWork(
         const players = await idb.getCopies.players({tid: teams[1].tid});
         for (const p of players) {
             if (!teams[1].pids.includes(p.pid) && !isUntradable(p)) {
+console.log('player team1', p.tid);
                 assets.push({
                     type: "player",
                     dv: 0,
@@ -491,12 +495,12 @@ async function makeItWork(
             const otherDpids = teams[1].dpids.slice();
 
             if (asset.type === "player") {
-                if (asset.tid === g.userTid) {
+                if (asset.tid === teams[0].tid) {
                     userPids.push(asset.pid);
                 } else {
                     otherPids.push(asset.pid);
                 }
-            } else if (asset.tid === g.userTid) {
+            } else if (asset.tid === teams[0].tid) {
                 userDpids.push(asset.dpid);
             } else {
                 otherDpids.push(asset.dpid);
@@ -519,12 +523,12 @@ async function makeItWork(
         }
         const asset = assets[j];
         if (asset.type === "player") {
-            if (asset.tid === g.userTid) {
+            if (asset.tid === teams[0].tid) {
                 teams[0].pids.push(asset.pid);
             } else {
                 teams[1].pids.push(asset.pid);
             }
-        } else if (asset.tid === g.userTid) {
+        } else if (asset.tid === teams[0].tid) {
             teams[0].dpids.push(asset.dpid);
         } else {
             teams[1].dpids.push(asset.dpid);
@@ -708,8 +712,6 @@ const betweenAiTeams = async () => {
 
     const tradeSummary = await summary(teams);
     if (!tradeSummary.warning) {
-console.log('TRADE', tradeSummary, teams[0], teams[1]);
-
         const finalTids = [teams[0].tid, teams[1].tid];
         const finalPids = [teams[0].pids, teams[1].pids];
         const finalDpids = [teams[0].dpids, teams[1].dpids];

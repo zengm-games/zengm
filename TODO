@@ -1,3 +1,13 @@
+AI trades
+- sometimes trades for nothing still happened. investigated one, saw it thought a FA was in the trade. weird
+- make sure fudge factors in trade logic don't apply
+- notification?
+- changes
+- transaction log defaults to all teams
+- benchmark
+- offseason trades
+- not too many during season!
+
 auto delete old box scores, leave behind feats
 
 slow down playoffs

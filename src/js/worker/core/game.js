@@ -2,7 +2,7 @@
 
 import _ from 'underscore';
 import {COMPOSITE_WEIGHTS, PHASE, PLAYER, g, helpers} from '../../common';
-import {GameSim, finances, freeAgents, phase, player, season, team} from '../core';
+import {GameSim, finances, freeAgents, phase, player, season, team, trade} from '../core';
 import {idb} from '../db';
 import {advStats, lock, logEvent, random, toUI, updatePlayMenu, updateStatus} from '../util';
 import type {Conditions, GameResults} from '../../common/types';
@@ -778,6 +778,7 @@ async function play(numDays: number, conditions: Conditions, start?: boolean = t
                 if (g.phase !== PHASE.PLAYOFFS) {
                     await freeAgents.decreaseDemands();
                     await freeAgents.autoSign();
+                    await trade.betweenAiTeams();
                 }
 
                 await cbPlayGames();

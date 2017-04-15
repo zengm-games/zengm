@@ -15,32 +15,13 @@ async function updateEventLog(
     state: any,
 ): void | {[key: string]: any} {
     if (updateEvents.length >= 0 || inputs.season !== state.season || inputs.abbrev !== state.abbrev || inputs.eventType !== state.eventType) {
-        let events = state.events === undefined ? [] : state.events;
-        if (inputs.season !== state.season || inputs.abbrev !== state.abbrev || inputs.eventType !== state.eventType) {
-            events = [];
+        let events;
+        if (inputs.season === "all") {
+            events = await idb.getCopies.events();
+        } else {
+            events = await idb.getCopies.events({season: inputs.season});
         }
-
-        if (events.length === 0) {
-            if (inputs.season === "all") {
-                events = await idb.getCopies.events();
-            } else {
-                events = await idb.getCopies.events({season: inputs.season});
-            }
-            events.reverse(); // Newest first
-        } else if (inputs.season === g.season) { // Can't update old seasons!
-            // Update by adding any new events to the top of the list
-            const maxEid = events[0].eid;
-
-            const cachedEvents = await idb.cache.events.getAll();
-            for (const event of cachedEvents) {
-                if (event.eid > maxEid) {
-                    if (event.tids !== undefined && event.tids.includes(inputs.tid)) {
-                        // events has newest first
-                        events.unshift(event);
-                    }
-                }
-            }
-        }
+        events.reverse(); // Newest first
 
         if (inputs.abbrev !== "all") {
             events = events.filter(event => event.tids !== undefined && event.tids.includes(inputs.tid));

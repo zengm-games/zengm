@@ -1,9 +1,10 @@
 // @flow
 
+import _ from 'underscore';
 import {PHASE, PLAYER, g, helpers} from '../../common';
 import {player, team} from '../core';
 import {idb} from '../db';
-import {logEvent} from '../util';
+import {logEvent, random} from '../util';
 import type {TradePickValues, TradeSummary, TradeTeams} from '../../common/types';
 
 /**
@@ -268,6 +269,72 @@ async function clear() {
     await idb.cache.trade.put(tr);
 }
 
+
+const formatAssetsEventLog = (t) => {
+    const strings = [];
+
+    t.trade.forEach(p => strings.push(`<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a>`));
+    t.picks.forEach(dp => strings.push(`a ${dp.desc}`));
+
+    let text;
+    if (strings.length === 0) {
+        text = "nothing";
+    } else if (strings.length === 1) {
+        text = strings[0];
+    } else if (strings.length === 2) {
+        text = `${strings[0]} and ${strings[1]}`;
+    } else {
+        text = strings[0];
+        for (let i = 1; i < strings.length; i++) {
+            if (i === strings.length - 1) {
+                text += `, and ${strings[i]}`;
+            } else {
+                text += `, ${strings[i]}`;
+            }
+        }
+    }
+
+    return text;
+};
+
+const processTrade = async (tradeSummary, tids, pids, dpids) => {
+    for (const j of [0, 1]) {
+        const k = j === 0 ? 1 : 0;
+
+        for (const pid of pids[j]) {
+            const p = await idb.cache.players.get(pid);
+            p.tid = tids[k];
+            // Don't make traded players untradable
+            //p.gamesUntilTradable = 15;
+            p.ptModifier = 1; // Reset
+            if (g.phase <= PHASE.PLAYOFFS) {
+                await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
+            }
+            await idb.cache.players.put(p);
+        }
+
+        for (const dpid of dpids[j]) {
+            const dp = await idb.cache.draftPicks.get(dpid);
+            dp.tid = tids[k];
+            await idb.cache.draftPicks.put(dp);
+        }
+    }
+    if (dpids[0].length > 0 || dpids[1].length > 0) {
+        idb.cache.markDirtyIndexes('draftPicks');
+    }
+    if (pids[0].length > 0 || pids[1].length > 0) {
+        idb.cache.markDirtyIndexes('players');
+    }
+
+    logEvent({
+        type: "trade",
+        text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[0]], g.season])}">${g.teamNamesCache[tids[0]]}</a> traded ${formatAssetsEventLog(tradeSummary.teams[0])} to the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[1]], g.season])}">${g.teamNamesCache[tids[1]]}</a> for ${formatAssetsEventLog(tradeSummary.teams[1])}.`,
+        showNotification: false,
+        pids: pids[0].concat(pids[1]),
+        tids,
+    });
+};
+
 /**
  * Proposes the current trade in the database.
  *
@@ -304,69 +371,8 @@ async function propose(forceTrade?: boolean = false): Promise<[boolean, ?string]
     if (dv > 0 || forceTrade) {
         // Trade players
         outcome = "accepted";
-        for (const j of [0, 1]) {
-            const k = j === 0 ? 1 : 0;
 
-            for (const pid of pids[j]) {
-                const p = await idb.cache.players.get(pid);
-                p.tid = tids[k];
-                // Don't make traded players untradable
-                //p.gamesUntilTradable = 15;
-                p.ptModifier = 1; // Reset
-                if (g.phase <= PHASE.PLAYOFFS) {
-                    await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
-                }
-                await idb.cache.players.put(p);
-            }
-
-            for (const dpid of dpids[j]) {
-                const dp = await idb.cache.draftPicks.get(dpid);
-                dp.tid = tids[k];
-                await idb.cache.draftPicks.put(dp);
-            }
-        }
-        if (dpids[0].length > 0 || dpids[1].length > 0) {
-            idb.cache.markDirtyIndexes('draftPicks');
-        }
-        if (pids[0].length > 0 || pids[1].length > 0) {
-            idb.cache.markDirtyIndexes('players');
-        }
-
-        // Log event
-        const formatAssetsEventLog = t => {
-            const strings = [];
-
-            t.trade.forEach(p => strings.push(`<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a>`));
-            t.picks.forEach(dp => strings.push(`a ${dp.desc}`));
-
-            let text;
-            if (strings.length === 0) {
-                text = "nothing";
-            } else if (strings.length === 1) {
-                text = strings[0];
-            } else if (strings.length === 2) {
-                text = `${strings[0]} and ${strings[1]}`;
-            } else {
-                text = strings[0];
-                for (let i = 1; i < strings.length; i++) {
-                    if (i === strings.length - 1) {
-                        text += `, and ${strings[i]}`;
-                    } else {
-                        text += `, ${strings[i]}`;
-                    }
-                }
-            }
-
-            return text;
-        };
-
-        logEvent({
-            type: "trade",
-            text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[0]], g.season])}">${g.teamNamesCache[tids[0]]}</a> traded ${formatAssetsEventLog(s.teams[0])} to the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[1]], g.season])}">${g.teamNamesCache[tids[1]]}</a> for ${formatAssetsEventLog(s.teams[1])}.`,
-            showNotification: false,
-            pids: pids[0].concat(pids[1]),
-            tids,
-        });
+        await processTrade(s, tids, pids, dpids);
     }
 
     if (outcome === "accepted") {
@@ -639,6 +645,85 @@ async function makeItWorkTrade() {
     return `${g.teamRegionsCache[teams[1].tid]} GM: "How does this sound?"`;
 }
 
+const betweenAiTeams = async () => {
+    const aiTids = _.range(g.numTeams).filter((i) => {
+        return !g.userTids.includes(i);
+    });
+    if (aiTids.length === 0) {
+        return;
+    }
+    const tid = random.choice(aiTids);
+
+    const otherTids = _.range(g.numTeams).filter((i) => {
+        return i !== tid && !g.userTids.includes(i);
+    });
+    if (otherTids.length === 0) {
+        return;
+    }
+    const otherTid = random.choice(otherTids);
+
+    const players = (await idb.getCopies.players({tid})).filter((p) => !isUntradable(p));
+    const draftPicks = await idb.cache.draftPicks.indexGetAll('draftPicksByTid', tid);
+
+    if (players.length === 0 && draftPicks.length === 0) {
+        return;
+    }
+
+    const r = Math.random();
+
+    const pids = [];
+    const dpids = [];
+    if (r < 0.33 || draftPicks.length === 0) {
+        pids.push(random.choice(players).pid);
+    } else if (r < 0.67 || players.length === 0) {
+        dpids.push(random.choice(draftPicks).dpid);
+    } else {
+        pids.push(random.choice(players).pid);
+        dpids.push(random.choice(draftPicks).dpid);
+    }
+
+    const teams0 = [{
+        tid,
+        pids,
+        dpids,
+    }, {
+        tid: otherTid,
+        pids: [],
+        dpids: [],
+    }];
+    const teams = await makeItWork(teams0, false);
+    if (teams === undefined) {
+        return;
+    }
+
+    // Don't do trades of just picks, it's weird usually
+    if (teams[0].pids.length === 0 && teams[1].pids.length === 0) {
+        return;
+    }
+
+    // Don't do trades for nothing, it's weird usually
+    if (teams[1].pids.length === 0 && teams[1].dpids.length === 0) {
+        return;
+    }
+
+    const tradeSummary = await summary(teams);
+    if (!tradeSummary.warning) {
+console.log('TRADE', tradeSummary, teams[0], teams[1]);
+
+        const finalTids = [teams[0].tid, teams[1].tid];
+        const finalPids = [teams[0].pids, teams[1].pids];
+        const finalDpids = [teams[0].dpids, teams[1].dpids];
+        await processTrade(tradeSummary, finalTids, finalPids, finalDpids);
+    }
+
+/*    get all picks and players
+    randomly pick 1-2
+
+    pick a trade type, then pick an asset, then make it work (without forcing no new assets to the original team) with a random team. if it passes the salary cap, do it
+
+    notification if notable enough (by value?)*/
+};
+
 export default {
     create,
     updatePlayers,
@@ -650,4 +735,5 @@ export default {
     makeItWorkTrade,
     filterUntradable,
     getPickValues,
+    betweenAiTeams,
 };

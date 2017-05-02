@@ -935,12 +935,12 @@ async function checkRosterSizes(conditions: Conditions): Promise<string | void> 
                 userTeamSizeError += `less than the minimum number of players (${g.minRosterSize}). You must add players (through <a href="${helpers.leagueUrl(["free_agents"])}">free agency</a> or <a href="${helpers.leagueUrl(["trade"])}">trades</a>) before continuing.<br><br>Reminder: you can always sign free agents to ${helpers.formatCurrency(g.minContract / 1000, "M", 2)}/yr contracts, even if you're over the cap!`;
             } else {
                 // Auto-add players
-                const promises = [];
                 while (numPlayersOnRoster < g.minRosterSize) {
                     // See also core.phase
                     const p = minFreeAgents.shift();
                     if (!p) {
-                        throw new Error(`AI team ${tid} needs to add a player to meet the minimum roster requirements, but there are no free agents asking for a minimum salary.`);
+                        userTeamSizeError = `AI team ${g.teamAbbrevsCache[tid]} needs to add a player to meet the minimum roster requirements, but there are not enough free agents asking for a minimum salary. Easiest way to fix this is God Mode, give them extra players.`;
+                        break;
                     }
                     p.tid = tid;
                     await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
@@ -956,11 +956,10 @@ async function checkRosterSizes(conditions: Conditions): Promise<string | void> 
                         tids: [p.tid],
                     }, conditions);
 
-                    promises.push(idb.cache.players.put(p));
+                    await idb.cache.players.put(p);
 
                     numPlayersOnRoster += 1;
                 }
-                await Promise.all(promises);
             }
         }
 

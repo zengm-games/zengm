@@ -429,7 +429,6 @@ async function makeItWork(
             const players = await idb.getCopies.players({tid: teams[0].tid});
             for (const p of players) {
                 if (!teams[0].pids.includes(p.pid) && !isUntradable(p)) {
-console.log('player team0', p.tid);
                     assets.push({
                         type: "player",
                         dv: 0,
@@ -444,7 +443,6 @@ console.log('player team0', p.tid);
         const players = await idb.getCopies.players({tid: teams[1].tid});
         for (const p of players) {
             if (!teams[1].pids.includes(p.pid) && !isUntradable(p)) {
-console.log('player team1', p.tid);
                 assets.push({
                     type: "player",
                     dv: 0,

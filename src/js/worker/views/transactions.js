@@ -1,6 +1,6 @@
 // @flow
 
-import {g, helpers} from '../../common';
+import {helpers} from '../../common';
 import {idb} from '../db';
 import type {UpdateEvents} from '../../common/types';
 

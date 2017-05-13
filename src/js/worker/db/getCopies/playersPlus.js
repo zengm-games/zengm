@@ -452,8 +452,8 @@ const processPlayer = async (p: Player, options: PlayerOptions) => {
  * @param {Array.<string>=} options.attrs List of player attributes to include in output.
  * @param {Array.<string>=} options.ratings List of player ratings to include in output.
  * @param {Array.<string>=} options.stats List of player stats to include in output.
- * @param {boolean=} options.playoffs Boolean representing whether to return playoff stats or not; default is false. 
- * @param {boolean=} options.regularSeason Boolean representing whether to return regular season stats or not; default is true. 
+ * @param {boolean=} options.playoffs Boolean representing whether to return playoff stats or not; default is false.
+ * @param {boolean=} options.regularSeason Boolean representing whether to return regular season stats or not; default is true.
  * @param {boolean=} options.showNoStats When true, players are returned with zeroed stats objects even if they have accumulated no stats for a team (such as  players who were just traded for, free agents, etc.); this applies only for regular season stats. To show draft prospects, options.showRookies is needed. Default is false, but if options.stats is empty, this is always true.
  * @param {boolean=} options.showRookies If true (default false), then future draft prospects and rookies drafted in the current season (g.season) are shown if that season is requested. This is mainly so, after the draft, rookies can show up in the roster, player ratings view, etc; and also so prospects can be shown in the watch list. After the next season starts, then they will no longer show up in a request for that season since they didn't actually play that season.
  * @param {boolean=} options.showRetired If true (default false), then players with no ratings for the current season are still returned, with either 0 for every rating and a blank array for skills (retired players) or future ratings (draft prospects). This is currently only used for the watch list, so retired players (and future draft prospects!) can still be watched.

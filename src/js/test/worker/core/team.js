@@ -96,12 +96,8 @@ describe("core/team", () => {
             await resetCacheWithPlayers({0: 10, 1: 9});
 
             // Confirm roster size under limit
-            try {
-                await team.checkRosterSizes();
-                throw new Error('Should not reach here');
-            } catch (err) {
-                assert.equal(err.message, 'AI team 1 needs to add a player to meet the minimum roster requirements, but there are no free agents asking for a minimum salary.');
-            }
+            const teamSizeError = await team.checkRosterSizes();
+            assert.equal(teamSizeError, 'AI team BAL needs to add a player to meet the minimum roster requirements, but there are not enough free agents asking for a minimum salary. Easiest way to fix this is God Mode, give them extra players.');
         });
         it("should remove players to AI team over roster limit without returning error message", async () => {
             await resetCacheWithPlayers({0: 10, 1: 24});

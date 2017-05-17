@@ -7,6 +7,8 @@ AI trades
 - offseason trades
 - not too many during season!
 
+revisit auto flush code, make more robust
+
 AI propose trade to user
 - need way to show popup with link to trade page
 
@@ -249,8 +251,6 @@ Draft
 
 ---
 
-bundle-collapser
-
 filters on event log
   tragic deaths https://www.reddit.com/r/BasketballGM/comments/52ljuy/would_it_be_possible_to_add_a_memorial_page/d7ou7ov?context=3
 
@@ -322,8 +322,6 @@ delete most negotiation code
 
 service worker to repalce appcache
   harder than it would appear, see branch
-
-get rid of everything in lib folder. either install from npm or create npm packages
 
 CI, dep version checking, etc
 
@@ -531,13 +529,6 @@ phase changes in atomic transactions
 
 github
   bitbucket issues
-
-THE FLATTENING
---------------
-
-after fully abstracting IndexedDB, could i improve performance by running it locally in node and using another database?
-  same with mobile on phonegap
-  same with web - "turbo mode" where only one window (db connection) is allowed and caching is heavy
 
 PERFORMANCE CRAP
 ----------------
@@ -985,6 +976,7 @@ god mode
   options
     disable ratings display
     playoff round length
+  edit other player attributes (draft, etc)
 profits too large, too easy
   add corporate tax?
   luxury tax increases for repeat offenders?

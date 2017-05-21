@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 import {g, helpers} from '../../common';
 import {getCols, realtimeUpdate, setTitle, toWorker} from '../util';
@@ -191,11 +192,11 @@ class Draft extends React.Component {
 }
 
 Draft.propTypes = {
-    drafted: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-    fantasyDraft: React.PropTypes.bool.isRequired,
-    started: React.PropTypes.bool.isRequired,
-    undrafted: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-    userTids: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
+    drafted: PropTypes.arrayOf(PropTypes.object).isRequired,
+    fantasyDraft: PropTypes.bool.isRequired,
+    started: PropTypes.bool.isRequired,
+    undrafted: PropTypes.arrayOf(PropTypes.object).isRequired,
+    userTids: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
 
 export default Draft;

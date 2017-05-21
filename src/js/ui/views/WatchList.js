@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
@@ -102,9 +103,9 @@ class WatchList extends React.Component {
 }
 
 WatchList.propTypes = {
-    players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-    playoffs: React.PropTypes.oneOf(['playoffs', 'regularSeason']).isRequired,
-    statType: React.PropTypes.oneOf(['per36', 'perGame', 'totals']).isRequired,
+    players: PropTypes.arrayOf(PropTypes.object).isRequired,
+    playoffs: PropTypes.oneOf(['playoffs', 'regularSeason']).isRequired,
+    statType: PropTypes.oneOf(['per36', 'perGame', 'totals']).isRequired,
 };
 
 export default WatchList;

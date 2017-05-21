@@ -103,6 +103,7 @@
     "karma-source-map-support": "1.2.0",
     "mocha": "3.4.1",
     "node-sass": "4.5.3",
+    "prop-types": "15.5.10",
     "replace": "0.3.0",
     "stylelint": "7.10.1",
     "stylelint-config-standard": "16.0.0",

@@ -1,5 +1,6 @@
 // @flow
 
+import PropTypes from 'prop-types';
 import React from 'react';
 
 type Props = {
@@ -72,13 +73,13 @@ class DownloadDataLink extends React.Component {
 }
 
 DownloadDataLink.propTypes = {
-    data: React.PropTypes.string,
-    downloadText: React.PropTypes.string.isRequired,
-    filename: React.PropTypes.string,
-    mimeType: React.PropTypes.string.isRequired,
-    status: React.PropTypes.oneOfType([
-        React.PropTypes.element,
-        React.PropTypes.string,
+    data: PropTypes.string,
+    downloadText: PropTypes.string.isRequired,
+    filename: PropTypes.string,
+    mimeType: PropTypes.string.isRequired,
+    status: PropTypes.oneOfType([
+        PropTypes.element,
+        PropTypes.string,
     ]),
 };
 

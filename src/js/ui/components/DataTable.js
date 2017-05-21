@@ -2,6 +2,7 @@
 
 import classNames from 'classnames';
 import orderBy from 'lodash.orderby';
+import PropTypes from 'prop-types';
 import React from 'react';
 import textContent from 'react-addons-text-content';
 import {g, helpers} from '../../common';
@@ -27,11 +28,11 @@ const FilterHeader = ({cols, filters, handleFilterUpdate}) => {
 };
 
 FilterHeader.propTypes = {
-    cols: React.PropTypes.arrayOf(React.PropTypes.shape({
-        title: React.PropTypes.string.isRequired,
+    cols: PropTypes.arrayOf(PropTypes.shape({
+        title: PropTypes.string.isRequired,
     })).isRequired,
-    filters: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-    handleFilterUpdate: React.PropTypes.func.isRequired,
+    filters: PropTypes.arrayOf(PropTypes.string).isRequired,
+    handleFilterUpdate: PropTypes.func.isRequired,
 };
 
 const Header = ({cols, enableFilters, filters, handleColClick, handleFilterUpdate, sortBys, superCols}) => {
@@ -78,24 +79,24 @@ const Header = ({cols, enableFilters, filters, handleColClick, handleFilterUpdat
 };
 
 Header.propTypes = {
-    cols: React.PropTypes.arrayOf(React.PropTypes.shape({
-        desc: React.PropTypes.string,
-        sortSequence: React.PropTypes.arrayOf(React.PropTypes.string),
-        title: React.PropTypes.string.isRequired,
-        width: React.PropTypes.string,
+    cols: PropTypes.arrayOf(PropTypes.shape({
+        desc: PropTypes.string,
+        sortSequence: PropTypes.arrayOf(PropTypes.string),
+        title: PropTypes.string.isRequired,
+        width: PropTypes.string,
     })).isRequired,
-    enableFilters: React.PropTypes.bool.isRequired,
-    filters: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-    handleColClick: React.PropTypes.func.isRequired,
-    handleFilterUpdate: React.PropTypes.func.isRequired,
-    sortBys: React.PropTypes.arrayOf(React.PropTypes.arrayOf(React.PropTypes.oneOfType([
-        React.PropTypes.number,
-        React.PropTypes.string,
+    enableFilters: PropTypes.bool.isRequired,
+    filters: PropTypes.arrayOf(PropTypes.string).isRequired,
+    handleColClick: PropTypes.func.isRequired,
+    handleFilterUpdate: PropTypes.func.isRequired,
+    sortBys: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.oneOfType([
+        PropTypes.number,
+        PropTypes.string,
     ]))).isRequired,
-    superCols: React.PropTypes.arrayOf(React.PropTypes.shape({
-        colspan: React.PropTypes.number.isRequired,
-        desc: React.PropTypes.string,
-        title: React.PropTypes.string.isRequired,
+    superCols: PropTypes.arrayOf(PropTypes.shape({
+        colspan: PropTypes.number.isRequired,
+        desc: PropTypes.string,
+        title: PropTypes.string.isRequired,
     })),
 };
 
@@ -112,9 +113,9 @@ const Row = clickable(({clicked, row, toggleClicked}) => {
 });
 
 /*Row.propTypes = {
-    row: React.PropTypes.shape({
-        classNames: React.PropTypes.object,
-        data: React.PropTypes.array.isRequired,
+    row: PropTypes.shape({
+        classNames: PropTypes.object,
+        data: PropTypes.array.isRequired,
     }).isRequired,
 };*/
 
@@ -207,10 +208,10 @@ const Info = ({end, numRows, numRowsUnfiltered, start}) => {
 };
 
 Info.propTypes = {
-    end: React.PropTypes.number.isRequired,
-    numRows: React.PropTypes.number.isRequired,
-    numRowsUnfiltered: React.PropTypes.number.isRequired,
-    start: React.PropTypes.number.isRequired,
+    end: PropTypes.number.isRequired,
+    numRows: PropTypes.number.isRequired,
+    numRowsUnfiltered: PropTypes.number.isRequired,
+    start: PropTypes.number.isRequired,
 };
 
 const Paging = ({currentPage, numRows, onClick, perPage}) => {
@@ -248,10 +249,10 @@ const Paging = ({currentPage, numRows, onClick, perPage}) => {
 };
 
 Paging.propTypes = {
-    currentPage: React.PropTypes.number.isRequired,
-    numRows: React.PropTypes.number.isRequired,
-    onClick: React.PropTypes.func.isRequired,
-    perPage: React.PropTypes.number.isRequired,
+    currentPage: PropTypes.number.isRequired,
+    numRows: PropTypes.number.isRequired,
+    onClick: PropTypes.func.isRequired,
+    perPage: PropTypes.number.isRequired,
 };
 
 type SortBy = [number, SortOrder];
@@ -631,16 +632,16 @@ class DataTable extends React.Component {
 }
 
 DataTable.propTypes = {
-    cols: React.PropTypes.array.isRequired,
-    defaultSort: React.PropTypes.arrayOf(React.PropTypes.oneOfType([
-        React.PropTypes.number,
-        React.PropTypes.string,
+    cols: PropTypes.array.isRequired,
+    defaultSort: PropTypes.arrayOf(PropTypes.oneOfType([
+        PropTypes.number,
+        PropTypes.string,
     ])).isRequired,
-    footer: React.PropTypes.array,
-    name: React.PropTypes.string.isRequired,
-    pagination: React.PropTypes.bool,
-    rows: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-    superCols: React.PropTypes.array,
+    footer: PropTypes.array,
+    name: PropTypes.string.isRequired,
+    pagination: PropTypes.bool,
+    rows: PropTypes.arrayOf(PropTypes.object).isRequired,
+    superCols: PropTypes.array,
 };
 
 export default DataTable;

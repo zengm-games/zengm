@@ -1,5 +1,6 @@
 // @flow
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import {setTitle} from '../util';
 import {NewWindowLink, SafeHtml} from '../components';
@@ -22,9 +23,9 @@ const Changes = ({changes}: {changes: {date: string, msg: string}[]}) => {
     </div>;
 };
 Changes.propTypes = {
-    changes: React.PropTypes.arrayOf(React.PropTypes.shape({
-        date: React.PropTypes.string.isRequired,
-        msg: React.PropTypes.string.isRequired,
+    changes: PropTypes.arrayOf(PropTypes.shape({
+        date: PropTypes.string.isRequired,
+        msg: PropTypes.string.isRequired,
     })),
 };
 

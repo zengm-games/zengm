@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'underscore';
 import {helpers} from '../../common';
@@ -19,7 +20,7 @@ const CheckmarkOrCross = ({children}) => {
     return <span className="glyphicon glyphicon-remove text-danger" />;
 };
 CheckmarkOrCross.propTypes = {
-    children: React.PropTypes.number.isRequired,
+    children: PropTypes.number.isRequired,
 };
 
 const AwardsRecords = ({awardType, awardTypeVal, awardsRecords, playerCount}) => {
@@ -59,7 +60,7 @@ const AwardsRecords = ({awardType, awardTypeVal, awardsRecords, playerCount}) =>
 };
 
 AwardsRecords.propTypes = {
-    awardType: React.PropTypes.oneOf([
+    awardType: PropTypes.oneOf([
         'champion',
         'mvp',
         'finals_mvp',
@@ -80,9 +81,9 @@ AwardsRecords.propTypes = {
         'spg_leader',
         'bpg_leader',
     ]).isRequired,
-    awardTypeVal: React.PropTypes.string.isRequired,
-    awardsRecords: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-    playerCount: React.PropTypes.number.isRequired,
+    awardTypeVal: PropTypes.string.isRequired,
+    awardsRecords: PropTypes.arrayOf(PropTypes.object).isRequired,
+    playerCount: PropTypes.number.isRequired,
 };
 
 export default AwardsRecords;

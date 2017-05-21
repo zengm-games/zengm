@@ -2,6 +2,7 @@
 
 /* eslint react/no-find-dom-node: "off" */
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import Dropdown from 'react-bootstrap/lib/Dropdown';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
@@ -60,10 +61,10 @@ class TopMenuToggle extends React.Component {
 }
 
 TopMenuToggle.propTypes = {
-    long: React.PropTypes.string.isRequired,
-    onClick: React.PropTypes.func, // From react-bootstrap Dropdown
-    openId: React.PropTypes.string,
-    short: React.PropTypes.string.isRequired,
+    long: PropTypes.string.isRequired,
+    onClick: PropTypes.func, // From react-bootstrap Dropdown
+    openId: PropTypes.string,
+    short: PropTypes.string.isRequired,
 };
 
 const TopMenuDropdown = ({children, long, short, openId, onToggle}) => {
@@ -82,11 +83,11 @@ const TopMenuDropdown = ({children, long, short, openId, onToggle}) => {
 };
 
 TopMenuDropdown.propTypes = {
-    children: React.PropTypes.any,
-    long: React.PropTypes.string.isRequired,
-    onToggle: React.PropTypes.func.isRequired,
-    openId: React.PropTypes.string,
-    short: React.PropTypes.string.isRequired,
+    children: PropTypes.any,
+    long: PropTypes.string.isRequired,
+    onToggle: PropTypes.func.isRequired,
+    openId: PropTypes.string,
+    short: PropTypes.string.isRequired,
 };
 
 const handleScreenshotClick = e => {
@@ -293,8 +294,8 @@ class DropdownLinks extends React.Component {
 }
 
 DropdownLinks.propTypes = {
-    godMode: React.PropTypes.bool.isRequired,
-    lid: React.PropTypes.number,
+    godMode: PropTypes.bool.isRequired,
+    lid: PropTypes.number,
 };
 
 class LogoAndText extends React.Component {
@@ -324,8 +325,8 @@ class LogoAndText extends React.Component {
 }
 
 LogoAndText.propTypes = {
-    lid: React.PropTypes.number,
-    updating: React.PropTypes.bool.isRequired,
+    lid: PropTypes.number,
+    updating: PropTypes.bool.isRequired,
 };
 
 const handleOptionClick = (option, e) => {
@@ -398,11 +399,11 @@ class PlayMenu extends React.Component {
 }
 
 PlayMenu.propTypes = {
-    lid: React.PropTypes.number,
-    options: React.PropTypes.arrayOf(React.PropTypes.shape({
-        id: React.PropTypes.string.isRequired,
-        label: React.PropTypes.string.isRequired,
-        url: React.PropTypes.string,
+    lid: PropTypes.number,
+    options: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        label: PropTypes.string.isRequired,
+        url: PropTypes.string,
     })).isRequired,
 };
 
@@ -514,15 +515,15 @@ class NavBar extends React.Component {
 }
 
 NavBar.propTypes = {
-    hasViewedALeague: React.PropTypes.bool.isRequired,
-    lid: React.PropTypes.number,
-    godMode: React.PropTypes.bool.isRequired,
-    options: React.PropTypes.array.isRequired,
-    phaseText: React.PropTypes.string.isRequired,
-    popup: React.PropTypes.bool.isRequired,
-    statusText: React.PropTypes.string.isRequired,
-    updating: React.PropTypes.bool.isRequired,
-    username: React.PropTypes.string,
+    hasViewedALeague: PropTypes.bool.isRequired,
+    lid: PropTypes.number,
+    godMode: PropTypes.bool.isRequired,
+    options: PropTypes.array.isRequired,
+    phaseText: PropTypes.string.isRequired,
+    popup: PropTypes.bool.isRequired,
+    statusText: PropTypes.string.isRequired,
+    updating: PropTypes.bool.isRequired,
+    username: PropTypes.string,
 };
 
 export default NavBar;

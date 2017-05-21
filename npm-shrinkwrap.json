@@ -4358,9 +4358,9 @@
       "resolved": "https://registry.npmjs.org/react-prop-types/-/react-prop-types-0.4.0.tgz"
     },
     "react-sortable-hoc": {
-      "version": "0.6.1",
+      "version": "0.6.3",
       "from": "dumbmatter/react-sortable-hoc#clonedNode-in-onSortStart",
-      "resolved": "git://github.com/dumbmatter/react-sortable-hoc.git#502ef32e771653656385843ffb3c1ac491d70d36"
+      "resolved": "git://github.com/dumbmatter/react-sortable-hoc.git#fd02b1a472456ab5a2a332e06f71ad2b4df6cf94"
     },
     "read-file-stdin": {
       "version": "0.2.1",

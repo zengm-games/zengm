@@ -1,5 +1,6 @@
 // @flow
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import {helpers} from '../../common';
 
@@ -40,9 +41,9 @@ class NewWindowLink extends React.Component {
 }
 
 NewWindowLink.propTypes = {
-    parts: React.PropTypes.arrayOf(React.PropTypes.oneOfType([
-        React.PropTypes.number,
-        React.PropTypes.string,
+    parts: PropTypes.arrayOf(PropTypes.oneOfType([
+        PropTypes.number,
+        PropTypes.string,
     ])),
 };
 

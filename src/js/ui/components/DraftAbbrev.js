@@ -1,5 +1,6 @@
 // @flow
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import {g, helpers} from '../../common';
 
@@ -17,9 +18,9 @@ const DraftAbbrev = ({originalTid, tid, season}: {originalTid: number, tid: numb
     </span>;
 };
 DraftAbbrev.propTypes = {
-    originalTid: React.PropTypes.number.isRequired,
-    season: React.PropTypes.number,
-    tid: React.PropTypes.number.isRequired,
+    originalTid: PropTypes.number.isRequired,
+    season: PropTypes.number,
+    tid: PropTypes.number.isRequired,
 };
 
 export default DraftAbbrev;

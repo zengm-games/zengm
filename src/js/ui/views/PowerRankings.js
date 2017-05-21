@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {g, helpers} from '../../common';
 import {getCols, setTitle} from '../util';
@@ -45,20 +46,20 @@ const PowerRankings = ({teams}) => {
 };
 
 PowerRankings.propTypes = {
-    teams: React.PropTypes.arrayOf(React.PropTypes.shape({
-        abbrev: React.PropTypes.string.isRequired,
-        name: React.PropTypes.string.isRequired,
-        overallRank: React.PropTypes.number.isRequired,
-        performanceRank: React.PropTypes.number.isRequired,
-        region: React.PropTypes.string.isRequired,
-        tid: React.PropTypes.number.isRequired,
-        seasonAttrs: React.PropTypes.shape({
-            lastTen: React.PropTypes.string.isRequired,
-            lost: React.PropTypes.number.isRequired,
-            won: React.PropTypes.number.isRequired,
+    teams: PropTypes.arrayOf(PropTypes.shape({
+        abbrev: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        overallRank: PropTypes.number.isRequired,
+        performanceRank: PropTypes.number.isRequired,
+        region: PropTypes.string.isRequired,
+        tid: PropTypes.number.isRequired,
+        seasonAttrs: PropTypes.shape({
+            lastTen: PropTypes.string.isRequired,
+            lost: PropTypes.number.isRequired,
+            won: PropTypes.number.isRequired,
         }),
-        stats: React.PropTypes.shape({
-            diff: React.PropTypes.number.isRequired,
+        stats: PropTypes.shape({
+            diff: PropTypes.number.isRequired,
         }),
     })).isRequired,
 };

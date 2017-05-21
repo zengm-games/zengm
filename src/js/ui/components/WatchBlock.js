@@ -1,5 +1,6 @@
 // @flow
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import {realtimeUpdate, toWorker} from '../util';
 
@@ -68,10 +69,10 @@ class WatchBlock extends React.Component {
 }
 
 WatchBlock.propTypes = {
-    pid: React.PropTypes.number.isRequired,
-    watch: React.PropTypes.oneOfType([
-        React.PropTypes.bool,
-        React.PropTypes.func, // For Firefox's Object.watch
+    pid: PropTypes.number.isRequired,
+    watch: PropTypes.oneOfType([
+        PropTypes.bool,
+        PropTypes.func, // For Firefox's Object.watch
     ]).isRequired,
 };
 

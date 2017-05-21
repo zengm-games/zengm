@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {PLAYER, g, helpers} from '../../common';
 import {getCols, setTitle} from '../util';
@@ -99,27 +100,27 @@ const TeamHistory = ({abbrev, bestRecord, championships, history, players, playo
 };
 
 TeamHistory.propTypes = {
-    abbrev: React.PropTypes.string.isRequired,
-    bestRecord: React.PropTypes.shape({
-        lost: React.PropTypes.number.isRequired,
-        season: React.PropTypes.number.isRequired,
-        won: React.PropTypes.number.isRequired,
+    abbrev: PropTypes.string.isRequired,
+    bestRecord: PropTypes.shape({
+        lost: PropTypes.number.isRequired,
+        season: PropTypes.number.isRequired,
+        won: PropTypes.number.isRequired,
     }).isRequired,
-    championships: React.PropTypes.number.isRequired,
-    history: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-    players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-    playoffAppearances: React.PropTypes.number.isRequired,
-    team: React.PropTypes.shape({
-        name: React.PropTypes.string.isRequired,
-        region: React.PropTypes.string.isRequired,
-        tid: React.PropTypes.number.isRequired,
+    championships: PropTypes.number.isRequired,
+    history: PropTypes.arrayOf(PropTypes.object).isRequired,
+    players: PropTypes.arrayOf(PropTypes.object).isRequired,
+    playoffAppearances: PropTypes.number.isRequired,
+    team: PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        region: PropTypes.string.isRequired,
+        tid: PropTypes.number.isRequired,
     }).isRequired,
-    totalLost: React.PropTypes.number.isRequired,
-    totalWon: React.PropTypes.number.isRequired,
-    worstRecord: React.PropTypes.shape({
-        lost: React.PropTypes.number.isRequired,
-        season: React.PropTypes.number.isRequired,
-        won: React.PropTypes.number.isRequired,
+    totalLost: PropTypes.number.isRequired,
+    totalWon: PropTypes.number.isRequired,
+    worstRecord: PropTypes.shape({
+        lost: PropTypes.number.isRequired,
+        season: PropTypes.number.isRequired,
+        won: PropTypes.number.isRequired,
     }).isRequired,
 };
 

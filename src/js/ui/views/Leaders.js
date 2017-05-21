@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {helpers} from '../../common';
 import {setTitle} from '../util';
@@ -43,8 +44,8 @@ const Leaders = ({categories, season}) => {
 };
 
 Leaders.propTypes = {
-    categories: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-    season: React.PropTypes.number.isRequired,
+    categories: PropTypes.arrayOf(PropTypes.object).isRequired,
+    season: PropTypes.number.isRequired,
 };
 
 export default Leaders;

@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
@@ -102,7 +103,7 @@ const PlayingTime = ({p}) => {
 };
 
 PlayingTime.propTypes = {
-    p: React.PropTypes.object.isRequired,
+    p: PropTypes.object.isRequired,
 };
 
 const ReorderHandle = SortableHandle(({i, pid, selectedPid}) => {
@@ -123,9 +124,9 @@ const ReorderHandle = SortableHandle(({i, pid, selectedPid}) => {
 });
 
 ReorderHandle.propTypes = {
-    i: React.PropTypes.number.isRequired,
-    pid: React.PropTypes.number.isRequired,
-    selectedPid: React.PropTypes.number,
+    i: PropTypes.number.isRequired,
+    pid: PropTypes.number.isRequired,
+    selectedPid: PropTypes.number,
 };
 
 const RosterRow = SortableElement(clickable(props => {
@@ -183,12 +184,12 @@ const RosterRow = SortableElement(clickable(props => {
 }));
 
 RosterRow.propTypes = {
-    editable: React.PropTypes.bool.isRequired,
-    i: React.PropTypes.number.isRequired,
-    p: React.PropTypes.object.isRequired,
-    season: React.PropTypes.number.isRequired,
-    selectedPid: React.PropTypes.number,
-    showTradeFor: React.PropTypes.bool.isRequired,
+    editable: PropTypes.bool.isRequired,
+    i: PropTypes.number.isRequired,
+    p: PropTypes.object.isRequired,
+    season: PropTypes.number.isRequired,
+    selectedPid: PropTypes.number,
+    showTradeFor: PropTypes.bool.isRequired,
 };
 
 const TBody = SortableContainer(({editable, players, season, selectedPid, showTradeFor}) => {
@@ -209,11 +210,11 @@ const TBody = SortableContainer(({editable, players, season, selectedPid, showTr
 });
 
 TBody.propTypes = {
-    editable: React.PropTypes.bool.isRequired,
-    players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-    season: React.PropTypes.number.isRequired,
-    selectedPid: React.PropTypes.number,
-    showTradeFor: React.PropTypes.bool.isRequired,
+    editable: PropTypes.bool.isRequired,
+    players: PropTypes.arrayOf(PropTypes.object).isRequired,
+    season: PropTypes.number.isRequired,
+    selectedPid: PropTypes.number,
+    showTradeFor: PropTypes.bool.isRequired,
 };
 
 // Ideally, this function wouldn't be necessary https://github.com/clauderic/react-sortable-hoc/issues/175
@@ -365,14 +366,14 @@ class Roster extends React.Component {
 }
 
 Roster.propTypes = {
-    abbrev: React.PropTypes.string.isRequired,
-    editable: React.PropTypes.bool.isRequired,
-    payroll: React.PropTypes.number,
-    players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-    salaryCap: React.PropTypes.number.isRequired,
-    season: React.PropTypes.number.isRequired,
-    showTradeFor: React.PropTypes.bool.isRequired,
-    t: React.PropTypes.object.isRequired,
+    abbrev: PropTypes.string.isRequired,
+    editable: PropTypes.bool.isRequired,
+    payroll: PropTypes.number,
+    players: PropTypes.arrayOf(PropTypes.object).isRequired,
+    salaryCap: PropTypes.number.isRequired,
+    season: PropTypes.number.isRequired,
+    showTradeFor: PropTypes.bool.isRequired,
+    t: PropTypes.object.isRequired,
 };
 
 export default Roster;

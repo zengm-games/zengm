@@ -1,5 +1,6 @@
 // @flow
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import {g} from '../../common';
 import {ads, emitter, realtimeUpdate, toWorker} from '../util';
@@ -20,9 +21,9 @@ class LeagueContent extends React.Component {
 }
 
 LeagueContent.propTypes = {
-    Component: React.PropTypes.func,
-    data: React.PropTypes.object,
-    topMenu: React.PropTypes.object,
+    Component: PropTypes.func,
+    data: PropTypes.object,
+    topMenu: PropTypes.object,
 };
 
 type Args = {

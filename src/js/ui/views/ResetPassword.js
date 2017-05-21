@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {SPORT, fetchWrapper} from '../../common';
 import {emitter, realtimeUpdate, setTitle} from '../util';
@@ -140,7 +141,7 @@ class ResetPassword extends React.Component {
 }
 
 ResetPassword.propTypes = {
-    token: React.PropTypes.string.isRequired,
+    token: PropTypes.string.isRequired,
 };
 
 export default ResetPassword;

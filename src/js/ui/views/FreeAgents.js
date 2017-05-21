@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {PHASE, g, helpers} from '../../common';
 import {DataTable, HelpPopover, NewWindowLink, PlayerNameLabels} from '../components';
@@ -74,12 +75,12 @@ const FreeAgents = ({capSpace, gamesInProgress, minContract, numRosterSpots, pha
 };
 
 FreeAgents.propTypes = {
-    capSpace: React.PropTypes.number.isRequired,
-    gamesInProgress: React.PropTypes.bool.isRequired,
-    minContract: React.PropTypes.number.isRequired,
-    numRosterSpots: React.PropTypes.number.isRequired,
-    phase: React.PropTypes.number.isRequired,
-    players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    capSpace: PropTypes.number.isRequired,
+    gamesInProgress: PropTypes.bool.isRequired,
+    minContract: PropTypes.number.isRequired,
+    numRosterSpots: PropTypes.number.isRequired,
+    phase: PropTypes.number.isRequired,
+    players: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default FreeAgents;

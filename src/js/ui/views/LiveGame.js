@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 import AutoAffix from 'react-overlays/lib/AutoAffix';
 import {helpers} from '../../common';
@@ -49,8 +50,8 @@ class PlayerRow extends React.Component {
 }
 
 PlayerRow.propTypes = {
-    i: React.PropTypes.number.isRequired,
-    p: React.PropTypes.object.isRequired,
+    i: PropTypes.number.isRequired,
+    p: PropTypes.object.isRequired,
 };
 
 const BoxScore = ({boxScore}) => <div>
@@ -106,7 +107,7 @@ const BoxScore = ({boxScore}) => <div>
 </div>;
 
 BoxScore.propTypes = {
-    boxScore: React.PropTypes.object.isRequired,
+    boxScore: PropTypes.object.isRequired,
 };
 
 class LiveGame extends React.Component {
@@ -306,10 +307,10 @@ class LiveGame extends React.Component {
 }
 
 LiveGame.propTypes = {
-    events: React.PropTypes.arrayOf(React.PropTypes.shape({
-        type: React.PropTypes.string.isRequried,
+    events: PropTypes.arrayOf(PropTypes.shape({
+        type: PropTypes.string.isRequried,
     })),
-    initialBoxScore: React.PropTypes.object,
+    initialBoxScore: PropTypes.object,
 };
 
 export default LiveGame;

@@ -1,5 +1,6 @@
 // @flow
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import {PHASE, g, helpers} from '../../common';
 import {realtimeUpdate} from '../util';
@@ -199,11 +200,11 @@ const Select = ({field, handleChange, value}) => {
 };
 
 Select.propTypes = {
-    field: React.PropTypes.string.isRequired,
-    handleChange: React.PropTypes.func.isRequired,
-    value: React.PropTypes.oneOfType([
-        React.PropTypes.number,
-        React.PropTypes.string,
+    field: PropTypes.string.isRequired,
+    handleChange: PropTypes.func.isRequired,
+    value: PropTypes.oneOfType([
+        PropTypes.number,
+        PropTypes.string,
     ]).isRequired,
 };
 
@@ -268,13 +269,13 @@ class Dropdown extends React.Component {
 }
 
 Dropdown.propTypes = {
-    extraParam: React.PropTypes.oneOfType([
-        React.PropTypes.number,
-        React.PropTypes.string,
+    extraParam: PropTypes.oneOfType([
+        PropTypes.number,
+        PropTypes.string,
     ]),
-    fields: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-    values: React.PropTypes.array.isRequired,
-    view: React.PropTypes.string.isRequired,
+    fields: PropTypes.arrayOf(PropTypes.string).isRequired,
+    values: PropTypes.array.isRequired,
+    view: PropTypes.string.isRequired,
 };
 
 export default Dropdown;

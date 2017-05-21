@@ -1,6 +1,7 @@
 // @flow
 
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 import {setTitle} from '../util';
 
@@ -75,12 +76,12 @@ class Dashboard extends React.Component {
 }
 
 Dashboard.propTypes = {
-    leagues: React.PropTypes.arrayOf(React.PropTypes.shape({
-        lid: React.PropTypes.number.isRequired,
-        name: React.PropTypes.string.isRequired,
-        phaseText: React.PropTypes.string.isRequired,
-        teamName: React.PropTypes.string.isRequired,
-        teamRegion: React.PropTypes.string.isRequired,
+    leagues: PropTypes.arrayOf(PropTypes.shape({
+        lid: PropTypes.number.isRequired,
+        name: PropTypes.string.isRequired,
+        phaseText: PropTypes.string.isRequired,
+        teamName: PropTypes.string.isRequired,
+        teamRegion: PropTypes.string.isRequired,
     })).isRequired,
 };
 

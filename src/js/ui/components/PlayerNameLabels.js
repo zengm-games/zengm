@@ -1,5 +1,6 @@
 // @flow
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import {helpers} from '../../common';
 import SkillsBlock from './SkillsBlock';
@@ -37,17 +38,17 @@ const PlayerNameLabels = ({children, injury, pid, skills, style, watch}: {
     </span>;
 };
 PlayerNameLabels.propTypes = {
-    children: React.PropTypes.any,
-    injury: React.PropTypes.shape({
-        gamesRemaining: React.PropTypes.number.isRequired,
-        type: React.PropTypes.string.isRequired,
+    children: PropTypes.any,
+    injury: PropTypes.shape({
+        gamesRemaining: PropTypes.number.isRequired,
+        type: PropTypes.string.isRequired,
     }),
-    pid: React.PropTypes.number.isRequired,
-    skills: React.PropTypes.arrayOf(React.PropTypes.string),
-    style: React.PropTypes.object,
-    watch: React.PropTypes.oneOfType([
-        React.PropTypes.bool,
-        React.PropTypes.func, // For Firefox's Object.watch
+    pid: PropTypes.number.isRequired,
+    skills: PropTypes.arrayOf(PropTypes.string),
+    style: PropTypes.object,
+    watch: PropTypes.oneOfType([
+        PropTypes.bool,
+        PropTypes.func, // For Firefox's Object.watch
     ]),
 };
 

@@ -1,5 +1,6 @@
 // @flow
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
 import Popover from 'react-bootstrap/lib/Popover';
@@ -22,10 +23,10 @@ const HelpPopover = ({children, placement, style, title}: {
 };
 
 HelpPopover.propTypes = {
-    children: React.PropTypes.any,
-    placement: React.PropTypes.string,
-    style: React.PropTypes.object,
-    title: React.PropTypes.string.isRequired,
+    children: PropTypes.any,
+    placement: PropTypes.string,
+    style: PropTypes.object,
+    title: PropTypes.string.isRequired,
 };
 
 export default HelpPopover;

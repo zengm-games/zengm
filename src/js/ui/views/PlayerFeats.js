@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {g, helpers} from '../../common';
 import {getCols, setTitle} from '../util';
@@ -95,12 +96,12 @@ const PlayerFeats = ({abbrev, feats, playoffs, season}) => {
 };
 
 PlayerFeats.propTypes = {
-    abbrev: React.PropTypes.string.isRequired,
-    feats: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-    playoffs: React.PropTypes.oneOf(['playoffs', 'regularSeason']).isRequired,
-    season: React.PropTypes.oneOfType([
-        React.PropTypes.number,
-        React.PropTypes.string,
+    abbrev: PropTypes.string.isRequired,
+    feats: PropTypes.arrayOf(PropTypes.object).isRequired,
+    playoffs: PropTypes.oneOf(['playoffs', 'regularSeason']).isRequired,
+    season: PropTypes.oneOfType([
+        PropTypes.number,
+        PropTypes.string,
     ]).isRequired,
 };
 

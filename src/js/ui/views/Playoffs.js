@@ -1,5 +1,6 @@
 // @flow
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import {Dropdown, JumpTo, NewWindowLink, PlayoffMatchup} from '../components';
 import {setTitle} from '../util';
@@ -52,12 +53,12 @@ const Playoffs = ({confNames, finalMatchups, matchups, numPlayoffRounds, season,
 };
 
 Playoffs.propTypes = {
-    confNames: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-    finalMatchups: React.PropTypes.bool.isRequired,
-    matchups: React.PropTypes.arrayOf(React.PropTypes.arrayOf(React.PropTypes.object)).isRequired,
-    numPlayoffRounds: React.PropTypes.number.isRequired,
-    season: React.PropTypes.number.isRequired,
-    series: React.PropTypes.arrayOf(React.PropTypes.arrayOf(React.PropTypes.object)).isRequired,
+    confNames: PropTypes.arrayOf(PropTypes.string).isRequired,
+    finalMatchups: PropTypes.bool.isRequired,
+    matchups: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.object)).isRequired,
+    numPlayoffRounds: PropTypes.number.isRequired,
+    season: PropTypes.number.isRequired,
+    series: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.object)).isRequired,
 };
 
 export default Playoffs;

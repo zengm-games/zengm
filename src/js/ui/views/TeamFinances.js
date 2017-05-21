@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {g, helpers} from '../../common';
 import {getCols, logEvent, realtimeUpdate, setTitle, toWorker} from '../util';
@@ -160,9 +161,9 @@ class FinancesForm extends React.Component {
 }
 
 FinancesForm.propTypes = {
-    gamesInProgress: React.PropTypes.bool.isRequired,
-    t: React.PropTypes.object.isRequired,
-    tid: React.PropTypes.number.isRequired,
+    gamesInProgress: PropTypes.bool.isRequired,
+    t: PropTypes.object.isRequired,
+    tid: PropTypes.number.isRequired,
 };
 
 const TeamFinances = ({abbrev, barData, barSeasons, contractTotals, contracts, gamesInProgress, luxuryPayroll, luxuryTax, minContract, minPayroll, numGames, payroll, salariesSeasons, salaryCap, show, t, tid}) => {
@@ -334,23 +335,23 @@ const TeamFinances = ({abbrev, barData, barSeasons, contractTotals, contracts, g
 };
 
 TeamFinances.propTypes = {
-    abbrev: React.PropTypes.string.isRequired,
-    barData: React.PropTypes.object.isRequired,
-    barSeasons: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
-    contractTotals: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
-    contracts: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-    gamesInProgress: React.PropTypes.bool.isRequired,
-    luxuryPayroll: React.PropTypes.number.isRequired,
-    luxuryTax: React.PropTypes.number.isRequired,
-    minContract: React.PropTypes.number.isRequired,
-    minPayroll: React.PropTypes.number.isRequired,
-    numGames: React.PropTypes.number.isRequired,
-    payroll: React.PropTypes.number.isRequired,
-    salariesSeasons: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
-    salaryCap: React.PropTypes.number.isRequired,
-    show: React.PropTypes.oneOf(['10', 'all']).isRequired,
-    t: React.PropTypes.object.isRequired,
-    tid: React.PropTypes.number.isRequired,
+    abbrev: PropTypes.string.isRequired,
+    barData: PropTypes.object.isRequired,
+    barSeasons: PropTypes.arrayOf(PropTypes.number).isRequired,
+    contractTotals: PropTypes.arrayOf(PropTypes.number).isRequired,
+    contracts: PropTypes.arrayOf(PropTypes.object).isRequired,
+    gamesInProgress: PropTypes.bool.isRequired,
+    luxuryPayroll: PropTypes.number.isRequired,
+    luxuryTax: PropTypes.number.isRequired,
+    minContract: PropTypes.number.isRequired,
+    minPayroll: PropTypes.number.isRequired,
+    numGames: PropTypes.number.isRequired,
+    payroll: PropTypes.number.isRequired,
+    salariesSeasons: PropTypes.arrayOf(PropTypes.number).isRequired,
+    salaryCap: PropTypes.number.isRequired,
+    show: PropTypes.oneOf(['10', 'all']).isRequired,
+    t: PropTypes.object.isRequired,
+    tid: PropTypes.number.isRequired,
 };
 
 export default TeamFinances;

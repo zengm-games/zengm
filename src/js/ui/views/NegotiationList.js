@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {g, helpers} from '../../common';
 import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
@@ -61,7 +62,7 @@ const NegotiationList = ({players}) => {
 };
 
 NegotiationList.propTypes = {
-    players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    players: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default NegotiationList;

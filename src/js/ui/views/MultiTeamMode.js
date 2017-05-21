@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {g} from '../../common';
 import {realtimeUpdate, setTitle, toWorker} from '../util';
@@ -78,11 +79,11 @@ class MultiTeamMode extends React.Component {
 }
 
 MultiTeamMode.propTypes = {
-    teams: React.PropTypes.arrayOf(React.PropTypes.shape({
-        name: React.PropTypes.string.isRequired,
-        tid: React.PropTypes.number.isRequired,
+    teams: PropTypes.arrayOf(PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        tid: PropTypes.number.isRequired,
     })).isRequired,
-    userTids: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
+    userTids: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
 
 export default MultiTeamMode;

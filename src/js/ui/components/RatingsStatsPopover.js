@@ -1,5 +1,6 @@
 // @flow
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
 import Popover from 'react-bootstrap/lib/Popover';
@@ -184,7 +185,7 @@ class RatingsStatsPopover extends React.Component {
 }
 
 RatingsStatsPopover.propTypes = {
-    pid: React.PropTypes.number.isRequired,
+    pid: PropTypes.number.isRequired,
 };
 
 export default RatingsStatsPopover;

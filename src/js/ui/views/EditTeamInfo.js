@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {g, helpers} from '../../common';
 import {logEvent, setTitle, toWorker} from '../util';
@@ -188,8 +189,8 @@ class EditTeamInfo extends React.Component {
 }
 
 EditTeamInfo.propTypes = {
-    godMode: React.PropTypes.bool.isRequired,
-    teams: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    godMode: PropTypes.bool.isRequired,
+    teams: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default EditTeamInfo;

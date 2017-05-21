@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 import {helpers} from '../../common';
 import {setTitle} from '../util';
@@ -25,8 +26,8 @@ const DivStandingsRow = clickable(({clicked, season, t, toggleClicked}) => {
 });
 
 DivStandingsRow.propTypes = {
-    season: React.PropTypes.number.isRequired,
-    t: React.PropTypes.object.isRequired,
+    season: PropTypes.number.isRequired,
+    t: PropTypes.object.isRequired,
 };
 
 const DivStandings = ({div, season}) => {
@@ -55,11 +56,11 @@ const DivStandings = ({div, season}) => {
 };
 
 DivStandings.propTypes = {
-    div: React.PropTypes.shape({
-        name: React.PropTypes.string.isRequired,
-        teams: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    div: PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        teams: PropTypes.arrayOf(PropTypes.object).isRequired,
     }).isRequired,
-    season: React.PropTypes.number.isRequired,
+    season: PropTypes.number.isRequired,
 };
 
 const ConfStandings = ({playoffsByConference, season, teams}) => {
@@ -79,9 +80,9 @@ const ConfStandings = ({playoffsByConference, season, teams}) => {
 };
 
 ConfStandings.propTypes = {
-    teams: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-    playoffsByConference: React.PropTypes.bool.isRequired,
-    season: React.PropTypes.number.isRequired,
+    teams: PropTypes.arrayOf(PropTypes.object).isRequired,
+    playoffsByConference: PropTypes.bool.isRequired,
+    season: PropTypes.number.isRequired,
 };
 
 const Standings = ({confs, playoffsByConference, season}) => {
@@ -111,13 +112,13 @@ const Standings = ({confs, playoffsByConference, season}) => {
 };
 
 Standings.propTypes = {
-    confs: React.PropTypes.arrayOf(React.PropTypes.shape({
-        cid: React.PropTypes.number.isRequired,
-        name: React.PropTypes.string.isRequired,
-        divs: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    confs: PropTypes.arrayOf(PropTypes.shape({
+        cid: PropTypes.number.isRequired,
+        name: PropTypes.string.isRequired,
+        divs: PropTypes.arrayOf(PropTypes.object).isRequired,
     })).isRequired,
-    playoffsByConference: React.PropTypes.bool.isRequired,
-    season: React.PropTypes.number.isRequired,
+    playoffsByConference: PropTypes.bool.isRequired,
+    season: PropTypes.number.isRequired,
 };
 
 export default Standings;

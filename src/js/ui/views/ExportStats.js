@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {g} from '../../common';
 import {setTitle, toWorker} from '../util';
@@ -114,9 +115,9 @@ class ExportStats extends React.Component {
 }
 
 ExportStats.propTypes = {
-    seasons: React.PropTypes.arrayOf(React.PropTypes.shape({
-        key: React.PropTypes.string.isRequired,
-        val: React.PropTypes.string.isRequired,
+    seasons: PropTypes.arrayOf(PropTypes.shape({
+        key: PropTypes.string.isRequired,
+        val: PropTypes.string.isRequired,
     })).isRequired,
 };
 

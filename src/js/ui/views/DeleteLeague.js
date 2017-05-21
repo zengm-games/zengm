@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {helpers} from '../../common';
 import {realtimeUpdate, setTitle, toWorker} from '../util';
@@ -47,11 +48,11 @@ class DeleteLeague extends React.Component {
 }
 
 DeleteLeague.propTypes = {
-    lid: React.PropTypes.number.isRequired,
-    name: React.PropTypes.string,
-    numGames: React.PropTypes.number,
-    numPlayers: React.PropTypes.number,
-    numSeasons: React.PropTypes.number,
+    lid: PropTypes.number.isRequired,
+    name: PropTypes.string,
+    numGames: PropTypes.number,
+    numPlayers: PropTypes.number,
+    numSeasons: PropTypes.number,
 };
 
 export default DeleteLeague;

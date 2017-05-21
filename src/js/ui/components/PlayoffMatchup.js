@@ -1,5 +1,6 @@
 // @flow
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import {g, helpers} from '../../common';
 
@@ -38,17 +39,17 @@ const PlayoffMatchup = ({season, series}: {
 };
 
 PlayoffMatchup.propTypes = {
-    season: React.PropTypes.number.isRequired,
-    series: React.PropTypes.shape({
-        away: React.PropTypes.shape({
-            seed: React.PropTypes.number.isRequired,
-            tid: React.PropTypes.number.isRequired,
-            won: React.PropTypes.number,
+    season: PropTypes.number.isRequired,
+    series: PropTypes.shape({
+        away: PropTypes.shape({
+            seed: PropTypes.number.isRequired,
+            tid: PropTypes.number.isRequired,
+            won: PropTypes.number,
         }),
-        home: React.PropTypes.shape({
-            seed: React.PropTypes.number.isRequired,
-            tid: React.PropTypes.number.isRequired,
-            won: React.PropTypes.number,
+        home: PropTypes.shape({
+            seed: PropTypes.number.isRequired,
+            tid: PropTypes.number.isRequired,
+            won: PropTypes.number,
         }),
     }),
 };

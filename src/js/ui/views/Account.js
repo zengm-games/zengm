@@ -1,6 +1,7 @@
 // @flow
 
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 import {SPORT, STRIPE_PUBLISHABLE_KEY, fetchWrapper} from '../../common';
 import {emitter, getScript, realtimeUpdate, setTitle} from '../util';
@@ -80,7 +81,7 @@ class StripeButton extends React.Component {
 }
 
 StripeButton.propTypes = {
-    email: React.PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
 };
 
 const handleCancel = async e => {
@@ -164,10 +165,10 @@ class UserInfo extends React.Component {
 }
 
 UserInfo.propTypes = {
-    goldUntilDateString: React.PropTypes.string.isRequired,
-    showGoldActive: React.PropTypes.bool.isRequired,
-    showGoldCancelled: React.PropTypes.bool.isRequired,
-    username: React.PropTypes.string,
+    goldUntilDateString: PropTypes.string.isRequired,
+    showGoldActive: PropTypes.bool.isRequired,
+    showGoldCancelled: PropTypes.bool.isRequired,
+    username: PropTypes.string,
 };
 
 const Account = ({
@@ -264,19 +265,19 @@ const Account = ({
 };
 
 Account.propTypes = {
-    achievements: React.PropTypes.arrayOf(React.PropTypes.shape({
-        count: React.PropTypes.number.isRequired,
-        desc: React.PropTypes.string.isRequired,
-        name: React.PropTypes.string.isRequired,
+    achievements: PropTypes.arrayOf(PropTypes.shape({
+        count: PropTypes.number.isRequired,
+        desc: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
     })).isRequired,
-    email: React.PropTypes.string,
-    goldMessage: React.PropTypes.string,
-    goldSuccess: React.PropTypes.bool,
-    goldUntilDateString: React.PropTypes.string.isRequired,
-    showGoldActive: React.PropTypes.bool.isRequired,
-    showGoldCancelled: React.PropTypes.bool.isRequired,
-    showGoldPitch: React.PropTypes.bool.isRequired,
-    username: React.PropTypes.string,
+    email: PropTypes.string,
+    goldMessage: PropTypes.string,
+    goldSuccess: PropTypes.bool,
+    goldUntilDateString: PropTypes.string.isRequired,
+    showGoldActive: PropTypes.bool.isRequired,
+    showGoldCancelled: PropTypes.bool.isRequired,
+    showGoldPitch: PropTypes.bool.isRequired,
+    username: PropTypes.string,
 };
 
 export default Account;

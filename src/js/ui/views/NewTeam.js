@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {helpers} from '../../common';
 import {NewWindowLink} from '../components';
@@ -72,12 +73,12 @@ class NewTeam extends React.Component {
 }
 
 NewTeam.propTypes = {
-    gameOver: React.PropTypes.bool.isRequired,
-    godMode: React.PropTypes.bool.isRequired,
-    teams: React.PropTypes.arrayOf(React.PropTypes.shape({
-        name: React.PropTypes.string.isRequired,
-        region: React.PropTypes.string.isRequired,
-        tid: React.PropTypes.number.isRequired,
+    gameOver: PropTypes.bool.isRequired,
+    godMode: PropTypes.bool.isRequired,
+    teams: PropTypes.arrayOf(PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        region: PropTypes.string.isRequired,
+        tid: PropTypes.number.isRequired,
     })).isRequired,
 };
 

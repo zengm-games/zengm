@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {helpers} from '../../common';
 import {setTitle} from '../util';
@@ -101,13 +102,13 @@ const History = ({awards, champ, confs, invalidSeason, retiredPlayers, season, u
 };
 
 History.propTypes = {
-    awards: React.PropTypes.object,
-    champ: React.PropTypes.object,
-    confs: React.PropTypes.arrayOf(React.PropTypes.object),
-    invalidSeason: React.PropTypes.bool.isRequired,
-    retiredPlayers: React.PropTypes.arrayOf(React.PropTypes.object),
-    season: React.PropTypes.number.isRequired,
-    userTid: React.PropTypes.number,
+    awards: PropTypes.object,
+    champ: PropTypes.object,
+    confs: PropTypes.arrayOf(PropTypes.object),
+    invalidSeason: PropTypes.bool.isRequired,
+    retiredPlayers: PropTypes.arrayOf(PropTypes.object),
+    season: PropTypes.number.isRequired,
+    userTid: PropTypes.number,
 };
 
 export default History;

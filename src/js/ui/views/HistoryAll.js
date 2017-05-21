@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {g, helpers} from '../../common';
 import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
@@ -97,7 +98,7 @@ const HistoryAll = ({seasons}) => {
 };
 
 HistoryAll.propTypes = {
-    seasons: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    seasons: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default HistoryAll;

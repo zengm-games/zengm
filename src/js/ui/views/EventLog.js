@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {setTitle} from '../util';
 import {Dropdown, NewWindowLink, SafeHtml} from '../components';
@@ -18,12 +19,12 @@ const EventLog = ({abbrev, events, season}) => {
 };
 
 EventLog.propTypes = {
-    abbrev: React.PropTypes.string.isRequired,
-    events: React.PropTypes.arrayOf(React.PropTypes.shape({
-        eid: React.PropTypes.number.isRequired,
-        text: React.PropTypes.string.isRequired,
+    abbrev: PropTypes.string.isRequired,
+    events: PropTypes.arrayOf(PropTypes.shape({
+        eid: PropTypes.number.isRequired,
+        text: PropTypes.string.isRequired,
     })).isRequired,
-    season: React.PropTypes.number.isRequired,
+    season: PropTypes.number.isRequired,
 };
 
 export default EventLog;

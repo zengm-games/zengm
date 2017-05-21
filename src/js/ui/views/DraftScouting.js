@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {helpers} from '../../common';
 import {DataTable, NewWindowLink, PlayerNameLabels} from '../components';
@@ -109,9 +110,9 @@ class DraftScouting extends React.Component {
 }
 
 DraftScouting.propTypes = {
-    seasons: React.PropTypes.arrayOf(React.PropTypes.shape({
-        players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-        season: React.PropTypes.number.isRequired,
+    seasons: PropTypes.arrayOf(PropTypes.shape({
+        players: PropTypes.arrayOf(PropTypes.object).isRequired,
+        season: PropTypes.number.isRequired,
     })).isRequired,
 };
 

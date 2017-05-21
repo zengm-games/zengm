@@ -1,5 +1,6 @@
 // @flow
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
@@ -37,9 +38,9 @@ const JumpTo = ({season}: {season: number | 'all'}) => {
 
 JumpTo.propTypes = {
     // Not just a number, because sometimes the season might be something like "all"
-    season: React.PropTypes.oneOfType([
-        React.PropTypes.number,
-        React.PropTypes.string,
+    season: PropTypes.oneOfType([
+        PropTypes.number,
+        PropTypes.string,
     ]),
 };
 

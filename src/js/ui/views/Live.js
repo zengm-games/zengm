@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 import {NewWindowLink} from '../components';
 import {setTitle, toWorker} from '../util';
@@ -29,15 +30,15 @@ const Live = ({games, gamesInProgress}) => {
 };
 
 Live.propTypes = {
-    games: React.PropTypes.arrayOf(React.PropTypes.shape({
-        awayName: React.PropTypes.string.isRequried,
-        awayRegion: React.PropTypes.string.isRequried,
-        gid: React.PropTypes.number.isRequried,
-        highlight: React.PropTypes.bool.isRequried,
-        homeName: React.PropTypes.string.isRequried,
-        homeRegion: React.PropTypes.string.isRequried,
+    games: PropTypes.arrayOf(PropTypes.shape({
+        awayName: PropTypes.string.isRequried,
+        awayRegion: PropTypes.string.isRequried,
+        gid: PropTypes.number.isRequried,
+        highlight: PropTypes.bool.isRequried,
+        homeName: PropTypes.string.isRequried,
+        homeRegion: PropTypes.string.isRequried,
     })),
-    gamesInProgress: React.PropTypes.bool,
+    gamesInProgress: PropTypes.bool,
 };
 
 export default Live;

@@ -1,5 +1,6 @@
 // @flow
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import type {PlayerSkill} from '../../common/types';
 
@@ -24,8 +25,8 @@ const SkillsBlock = ({className, skills}: {className?: string, skills?: PlayerSk
     </span>;
 };
 SkillsBlock.propTypes = {
-    className: React.PropTypes.string,
-    skills: React.PropTypes.arrayOf(React.PropTypes.string),
+    className: PropTypes.string,
+    skills: PropTypes.arrayOf(PropTypes.string),
 };
 
 export default SkillsBlock;

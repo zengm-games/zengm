@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 import {helpers} from '../../common';
 import {NewWindowLink} from '../components';
@@ -108,18 +109,18 @@ const Negotiation = ({contractOptions, errorMessage, payroll, player = {}, resig
 };
 
 Negotiation.propTypes = {
-    contractOptions: React.PropTypes.arrayOf(React.PropTypes.shape({
-        smallestAmount: React.PropTypes.bool.isRequired,
-        amount: React.PropTypes.number.isRequired,
-        years: React.PropTypes.number.isRequired,
-        exp: React.PropTypes.number.isRequired,
+    contractOptions: PropTypes.arrayOf(PropTypes.shape({
+        smallestAmount: PropTypes.bool.isRequired,
+        amount: PropTypes.number.isRequired,
+        years: PropTypes.number.isRequired,
+        exp: PropTypes.number.isRequired,
     })),
-    errorMessage: React.PropTypes.string,
-    payroll: React.PropTypes.number,
-    player: React.PropTypes.object,
-    resigning: React.PropTypes.bool,
-    salaryCap: React.PropTypes.number,
-    userTid: React.PropTypes.number,
+    errorMessage: PropTypes.string,
+    payroll: PropTypes.number,
+    player: PropTypes.object,
+    resigning: PropTypes.bool,
+    salaryCap: PropTypes.number,
+    userTid: PropTypes.number,
 };
 
 export default Negotiation;

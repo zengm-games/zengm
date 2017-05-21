@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {g, helpers} from '../../common';
 import {getCols, setTitle} from '../util';
@@ -67,9 +68,9 @@ const PlayerRatings = ({abbrev, players, season}) => {
 };
 
 PlayerRatings.propTypes = {
-    abbrev: React.PropTypes.string.isRequired,
-    players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-    season: React.PropTypes.number.isRequired,
+    abbrev: PropTypes.string.isRequired,
+    players: PropTypes.arrayOf(PropTypes.object).isRequired,
+    season: PropTypes.number.isRequired,
 };
 
 export default PlayerRatings;

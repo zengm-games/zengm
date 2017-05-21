@@ -1,6 +1,7 @@
 /* eslint react/jsx-no-bind: "off" */
 
 import faces from 'facesjs';
+import PropTypes from 'prop-types';
 import React from 'react';
 import {PHASE, g, helpers} from '../../common';
 import {realtimeUpdate, setTitle, toWorker} from '../util';
@@ -500,17 +501,17 @@ class CustomizePlayer extends React.Component {
 }
 
 CustomizePlayer.propTypes = {
-    appearanceOption: React.PropTypes.oneOf([
+    appearanceOption: PropTypes.oneOf([
         'Cartoon Face',
         'Image URL',
     ]),
-    godMode: React.PropTypes.bool.isRequired,
-    originalTid: React.PropTypes.number,
-    p: React.PropTypes.object,
-    season: React.PropTypes.number,
-    teams: React.PropTypes.arrayOf(React.PropTypes.shape({
-        text: React.PropTypes.string.isRequired,
-        tid: React.PropTypes.number.isRequired,
+    godMode: PropTypes.bool.isRequired,
+    originalTid: PropTypes.number,
+    p: PropTypes.object,
+    season: PropTypes.number,
+    teams: PropTypes.arrayOf(PropTypes.shape({
+        text: PropTypes.string.isRequired,
+        tid: PropTypes.number.isRequired,
     })),
 };
 

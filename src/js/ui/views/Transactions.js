@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {helpers} from '../../common';
 import {setTitle} from '../util';
@@ -30,15 +31,15 @@ const Transactions = ({abbrev, eventType, events, season}) => {
 };
 
 Transactions.propTypes = {
-    abbrev: React.PropTypes.string.isRequired,
-    eventType: React.PropTypes.oneOf(['all', 'draft', 'freeAgent', 'reSigned', 'release', 'trade']).isRequired,
-    events: React.PropTypes.arrayOf(React.PropTypes.shape({
-        eid: React.PropTypes.number.isRequired,
-        text: React.PropTypes.string.isRequired,
+    abbrev: PropTypes.string.isRequired,
+    eventType: PropTypes.oneOf(['all', 'draft', 'freeAgent', 'reSigned', 'release', 'trade']).isRequired,
+    events: PropTypes.arrayOf(PropTypes.shape({
+        eid: PropTypes.number.isRequired,
+        text: PropTypes.string.isRequired,
     })).isRequired,
-    season: React.PropTypes.oneOfType([
-        React.PropTypes.number,
-        React.PropTypes.string,
+    season: PropTypes.oneOfType([
+        PropTypes.number,
+        PropTypes.string,
     ]).isRequired,
 };
 

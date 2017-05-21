@@ -1,5 +1,6 @@
 /* eslint camelcase: "off" */
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import {STRIPE_PUBLISHABLE_KEY, fetchWrapper} from '../../common';
 import {getScript, realtimeUpdate, setTitle} from '../util';
@@ -155,11 +156,11 @@ class AccountUpdateCard extends React.Component {
 }
 
 AccountUpdateCard.propTypes = {
-    goldCancelled: React.PropTypes.bool.isRequired,
-    expMonth: React.PropTypes.number.isRequired,
-    expYear: React.PropTypes.number.isRequired,
-    last4: React.PropTypes.string.isRequired,
-    username: React.PropTypes.string,
+    goldCancelled: PropTypes.bool.isRequired,
+    expMonth: PropTypes.number.isRequired,
+    expYear: PropTypes.number.isRequired,
+    last4: PropTypes.string.isRequired,
+    username: PropTypes.string,
 };
 
 export default AccountUpdateCard;

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {helpers} from '../../common';
 import {setTitle} from '../util';
@@ -82,8 +83,8 @@ const TeamStatDists = ({season, statsAll}) => {
 };
 
 TeamStatDists.propTypes = {
-    season: React.PropTypes.number.isRequired,
-    statsAll: React.PropTypes.object.isRequired,
+    season: PropTypes.number.isRequired,
+    statsAll: PropTypes.object.isRequired,
 };
 
 export default TeamStatDists;

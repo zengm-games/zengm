@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {PHASE} from '../../common';
 import {NewWindowLink} from '../components';
@@ -90,7 +91,7 @@ class FantasyDraft extends React.Component {
 }
 
 FantasyDraft.propTypes = {
-    phase: React.PropTypes.number.isRequired,
+    phase: PropTypes.number.isRequired,
 };
 
 export default FantasyDraft;

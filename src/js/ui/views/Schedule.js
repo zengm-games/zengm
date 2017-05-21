@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 import {helpers} from '../../common';
 import {setTitle} from '../util';
@@ -49,18 +50,18 @@ const Schedule = ({abbrev, completed, season, upcoming}) => {
 };
 
 Schedule.propTypes = {
-    abbrev: React.PropTypes.string.isRequired,
-    completed: React.PropTypes.arrayOf(React.PropTypes.object),
-    season: React.PropTypes.number.isRequired,
-    upcoming: React.PropTypes.arrayOf(React.PropTypes.shape({
-        gid: React.PropTypes.number.isRequired,
-        teams: React.PropTypes.arrayOf(React.PropTypes.shape({
-            abbrev: React.PropTypes.string.isRequired,
-            name: React.PropTypes.string.isRequired,
-            region: React.PropTypes.string.isRequired,
-            seasonAttrs: React.PropTypes.shape({
-                lost: React.PropTypes.number.isRequired,
-                won: React.PropTypes.number.isRequired,
+    abbrev: PropTypes.string.isRequired,
+    completed: PropTypes.arrayOf(PropTypes.object),
+    season: PropTypes.number.isRequired,
+    upcoming: PropTypes.arrayOf(PropTypes.shape({
+        gid: PropTypes.number.isRequired,
+        teams: PropTypes.arrayOf(PropTypes.shape({
+            abbrev: PropTypes.string.isRequired,
+            name: PropTypes.string.isRequired,
+            region: PropTypes.string.isRequired,
+            seasonAttrs: PropTypes.shape({
+                lost: PropTypes.number.isRequired,
+                won: PropTypes.number.isRequired,
             }).isRequired,
         })).isRequired,
     })).isRequired,

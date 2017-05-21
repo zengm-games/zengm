@@ -1,5 +1,6 @@
 // @flow
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import Modal from 'react-bootstrap/lib/Modal';
 
@@ -34,8 +35,8 @@ class NagModal extends React.Component {
 }
 
 NagModal.propTypes = {
-    close: React.PropTypes.func.isRequired,
-    show: React.PropTypes.bool.isRequired,
+    close: PropTypes.func.isRequired,
+    show: PropTypes.bool.isRequired,
 };
 
 export default NagModal;

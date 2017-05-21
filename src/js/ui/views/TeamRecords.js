@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {helpers} from '../../common';
 import {getCols, setTitle} from '../util';
@@ -61,10 +62,10 @@ const TeamRecords = ({byType, displayName, seasonCount, teamRecords}) => {
 };
 
 TeamRecords.propTypes = {
-    byType: React.PropTypes.oneOf(['conf', 'div', 'team']).isRequired,
-    displayName: React.PropTypes.string.isRequired,
-    seasonCount: React.PropTypes.number.isRequired,
-    teamRecords: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    byType: PropTypes.oneOf(['conf', 'div', 'team']).isRequired,
+    displayName: PropTypes.string.isRequired,
+    seasonCount: PropTypes.number.isRequired,
+    teamRecords: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default TeamRecords;

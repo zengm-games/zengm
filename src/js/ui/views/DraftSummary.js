@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {g, helpers} from '../../common';
 import {getCols, setTitle} from '../util';
@@ -74,8 +75,8 @@ const DraftSummary = ({players, season}) => {
 };
 
 DraftSummary.propTypes = {
-    players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-    season: React.PropTypes.number.isRequired,
+    players: PropTypes.arrayOf(PropTypes.object).isRequired,
+    season: PropTypes.number.isRequired,
 };
 
 export default DraftSummary;

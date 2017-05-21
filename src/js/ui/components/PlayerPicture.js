@@ -1,6 +1,7 @@
 // @flow
 
 import faces from 'facesjs';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 class PlayerPicture extends React.Component {
@@ -46,8 +47,8 @@ class PlayerPicture extends React.Component {
 }
 
 PlayerPicture.propTypes = {
-    face: React.PropTypes.object,
-    imgURL: React.PropTypes.string,
+    face: PropTypes.object,
+    imgURL: PropTypes.string,
 };
 
 export default PlayerPicture;

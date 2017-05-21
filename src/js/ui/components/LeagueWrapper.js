@@ -1,5 +1,6 @@
 // @flow
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import {helpers} from '../../common';
 
@@ -92,8 +93,8 @@ class SideMenu extends React.Component {
 }
 
 SideMenu.propTypes = {
-    lid: React.PropTypes.number,
-    pageId: React.PropTypes.string.isRequired,
+    lid: PropTypes.number,
+    pageId: PropTypes.string.isRequired,
 };
 
 const LeagueWrapper = ({children, lid, pageId}: {children: React.Element<*>, lid: number | void, pageId: string}) => {
@@ -108,9 +109,9 @@ const LeagueWrapper = ({children, lid, pageId}: {children: React.Element<*>, lid
 };
 
 LeagueWrapper.propTypes = {
-    children: React.PropTypes.any.isRequired,
-    lid: React.PropTypes.number,
-    pageId: React.PropTypes.string.isRequired,
+    children: PropTypes.any.isRequired,
+    lid: PropTypes.number,
+    pageId: PropTypes.string.isRequired,
 };
 
 export default LeagueWrapper;

@@ -1,5 +1,6 @@
 // @flow
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import {helpers} from '../../common';
 
@@ -24,13 +25,13 @@ const RecordAndPlayoffs = ({abbrev, lost, option, playoffRoundsWon, season, styl
 };
 
 RecordAndPlayoffs.propTypes = {
-    abbrev: React.PropTypes.string.isRequired,
-    lost: React.PropTypes.number.isRequired,
-    option: React.PropTypes.oneOf(['noSeason']),
-    playoffRoundsWon: React.PropTypes.number,
-    season: React.PropTypes.number.isRequired,
-    style: React.PropTypes.object,
-    won: React.PropTypes.number.isRequired,
+    abbrev: PropTypes.string.isRequired,
+    lost: PropTypes.number.isRequired,
+    option: PropTypes.oneOf(['noSeason']),
+    playoffRoundsWon: PropTypes.number,
+    season: PropTypes.number.isRequired,
+    style: PropTypes.object,
+    won: PropTypes.number.isRequired,
 };
 
 export default RecordAndPlayoffs;

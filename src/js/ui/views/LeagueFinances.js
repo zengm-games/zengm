@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {g, helpers} from '../../common';
 import {getCols, setTitle} from '../util';
@@ -49,24 +50,24 @@ const LeagueFinances = ({minPayroll, luxuryPayroll, luxuryTax, salaryCap, season
 };
 
 LeagueFinances.propTypes = {
-    minPayroll: React.PropTypes.number.isRequired,
-    luxuryPayroll: React.PropTypes.number.isRequired,
-    luxuryTax: React.PropTypes.number.isRequired,
-    salaryCap: React.PropTypes.number.isRequired,
-    season: React.PropTypes.number.isRequired,
-    teams: React.PropTypes.arrayOf(React.PropTypes.shape({
-        abbrev: React.PropTypes.string.isRequired,
-        name: React.PropTypes.string.isRequired,
-        region: React.PropTypes.string.isRequired,
-        seasonAttrs: React.PropTypes.shape({
-            att: React.PropTypes.number.isRequired,
-            cash: React.PropTypes.number.isRequired,
-            payroll: React.PropTypes.number, // Not required for past seasons
-            profit: React.PropTypes.number.isRequired,
-            revenue: React.PropTypes.number.isRequired,
-            salaryPaid: React.PropTypes.number.isRequired,
+    minPayroll: PropTypes.number.isRequired,
+    luxuryPayroll: PropTypes.number.isRequired,
+    luxuryTax: PropTypes.number.isRequired,
+    salaryCap: PropTypes.number.isRequired,
+    season: PropTypes.number.isRequired,
+    teams: PropTypes.arrayOf(PropTypes.shape({
+        abbrev: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        region: PropTypes.string.isRequired,
+        seasonAttrs: PropTypes.shape({
+            att: PropTypes.number.isRequired,
+            cash: PropTypes.number.isRequired,
+            payroll: PropTypes.number, // Not required for past seasons
+            profit: PropTypes.number.isRequired,
+            revenue: PropTypes.number.isRequired,
+            salaryPaid: PropTypes.number.isRequired,
         }).isRequired,
-        tid: React.PropTypes.number.isRequired,
+        tid: PropTypes.number.isRequired,
     })).isRequired,
 };
 

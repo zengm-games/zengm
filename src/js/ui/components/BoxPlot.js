@@ -1,5 +1,6 @@
 // @flow
 
+import PropTypes from 'prop-types';
 import React from 'react';
 
 const quartile = (data, quart) => {
@@ -237,11 +238,11 @@ const BoxPlot = ({color = '#000000', data, labels = true, quartiles, scale}: {
 };
 
 BoxPlot.propTypes = {
-    color: React.PropTypes.string,
-    data: React.PropTypes.arrayOf(React.PropTypes.number),
-    labels: React.PropTypes.bool,
-    quartiles: React.PropTypes.arrayOf(React.PropTypes.number),
-    scale: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
+    color: PropTypes.string,
+    data: PropTypes.arrayOf(PropTypes.number),
+    labels: PropTypes.bool,
+    quartiles: PropTypes.arrayOf(PropTypes.number),
+    scale: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
 
 export default BoxPlot;

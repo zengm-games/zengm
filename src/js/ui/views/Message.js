@@ -1,5 +1,6 @@
 // @flow
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import {helpers} from '../../common';
 import {NewWindowLink, SafeHtml} from '../components';
@@ -32,10 +33,10 @@ const Message = ({message}: MessageProps) => {
 };
 
 Message.propTypes = {
-    message: React.PropTypes.shape({
-        from: React.PropTypes.string.isRequired,
-        text: React.PropTypes.string.isRequired,
-        year: React.PropTypes.number.isRequired,
+    message: PropTypes.shape({
+        from: PropTypes.string.isRequired,
+        text: PropTypes.string.isRequired,
+        year: PropTypes.number.isRequired,
     }),
 };
 

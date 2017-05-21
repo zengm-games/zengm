@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 import {helpers} from '../../common';
 import {emitter, logEvent, realtimeUpdate, setTitle, toWorker} from '../util';
@@ -203,17 +204,17 @@ class GodMode extends React.Component {
 }
 
 GodMode.propTypes = {
-    disableInjuries: React.PropTypes.bool.isRequired,
-    godMode: React.PropTypes.bool.isRequired,
-    luxuryPayroll: React.PropTypes.number.isRequired,
-    luxuryTax: React.PropTypes.number.isRequired,
-    maxContract: React.PropTypes.number.isRequired,
-    minContract: React.PropTypes.number.isRequired,
-    minPayroll: React.PropTypes.number.isRequired,
-    minRosterSize: React.PropTypes.number.isRequired,
-    numGames: React.PropTypes.number.isRequired,
-    quarterLength: React.PropTypes.number.isRequired,
-    salaryCap: React.PropTypes.number.isRequired,
+    disableInjuries: PropTypes.bool.isRequired,
+    godMode: PropTypes.bool.isRequired,
+    luxuryPayroll: PropTypes.number.isRequired,
+    luxuryTax: PropTypes.number.isRequired,
+    maxContract: PropTypes.number.isRequired,
+    minContract: PropTypes.number.isRequired,
+    minPayroll: PropTypes.number.isRequired,
+    minRosterSize: PropTypes.number.isRequired,
+    numGames: PropTypes.number.isRequired,
+    quarterLength: PropTypes.number.isRequired,
+    salaryCap: PropTypes.number.isRequired,
 };
 
 export default GodMode;

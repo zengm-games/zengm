@@ -1,6 +1,7 @@
 // @flow
 
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 import {helpers} from '../../common';
 import {NewWindowLink} from '../components';
@@ -30,13 +31,13 @@ const Inbox = ({anyUnread, messages}: {anyUnread: boolean, messages: Message[]})
 };
 
 Inbox.propTypes = {
-    anyUnread: React.PropTypes.bool.isRequired,
-    messages: React.PropTypes.arrayOf(React.PropTypes.shape({
-        from: React.PropTypes.string.isRequired,
-        mid: React.PropTypes.number.isRequired,
-        read: React.PropTypes.bool.isRequired,
-        text: React.PropTypes.string.isRequired,
-        year: React.PropTypes.number.isRequired,
+    anyUnread: PropTypes.bool.isRequired,
+    messages: PropTypes.arrayOf(PropTypes.shape({
+        from: PropTypes.string.isRequired,
+        mid: PropTypes.number.isRequired,
+        read: PropTypes.bool.isRequired,
+        text: PropTypes.string.isRequired,
+        year: PropTypes.number.isRequired,
     })).isRequired,
 };
 

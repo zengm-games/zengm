@@ -1,6 +1,7 @@
 // @flow
 
 import createDOMPurify from 'dompurify';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 const DOMPurify = createDOMPurify(window);
@@ -13,7 +14,7 @@ const SafeHtml = ({dirty}: {dirty: string}) => {
 };
 
 SafeHtml.propTypes = {
-    dirty: React.PropTypes.string.isRequired,
+    dirty: PropTypes.string.isRequired,
 };
 
 export default SafeHtml;

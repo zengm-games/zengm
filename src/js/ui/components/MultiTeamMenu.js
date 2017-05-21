@@ -1,5 +1,6 @@
 // @flow
 
+import PropTypes from 'prop-types';
 import React from 'react';
 import {g} from '../../common';
 import {emitter, realtimeUpdate, toWorker} from '../util';
@@ -45,8 +46,8 @@ class MultiTeamMenu extends React.Component {
 }
 
 MultiTeamMenu.propTypes = {
-    userTid: React.PropTypes.number.isRequired,
-    userTids: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
+    userTid: PropTypes.number.isRequired,
+    userTids: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
 
 export default MultiTeamMenu;

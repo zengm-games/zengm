@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {helpers} from '../../common';
 import {DataTable, NewWindowLink, PlayerPicture, SafeHtml, SkillsBlock, WatchBlock} from '../components';
@@ -45,24 +46,24 @@ const RatingsOverview = ({ratings}) => {
 };
 
 RatingsOverview.propTypes = {
-    ratings: React.PropTypes.arrayOf(React.PropTypes.shape({
-        blk: React.PropTypes.number.isRequired,
-        dnk: React.PropTypes.number.isRequired,
-        drb: React.PropTypes.number.isRequired,
-        endu: React.PropTypes.number.isRequired,
-        fg: React.PropTypes.number.isRequired,
-        ft: React.PropTypes.number.isRequired,
-        hgt: React.PropTypes.number.isRequired,
-        ins: React.PropTypes.number.isRequired,
-        jmp: React.PropTypes.number.isRequired,
-        ovr: React.PropTypes.number.isRequired,
-        pot: React.PropTypes.number.isRequired,
-        pss: React.PropTypes.number.isRequired,
-        reb: React.PropTypes.number.isRequired,
-        spd: React.PropTypes.number.isRequired,
-        stl: React.PropTypes.number.isRequired,
-        stre: React.PropTypes.number.isRequired,
-        tp: React.PropTypes.number.isRequired,
+    ratings: PropTypes.arrayOf(PropTypes.shape({
+        blk: PropTypes.number.isRequired,
+        dnk: PropTypes.number.isRequired,
+        drb: PropTypes.number.isRequired,
+        endu: PropTypes.number.isRequired,
+        fg: PropTypes.number.isRequired,
+        ft: PropTypes.number.isRequired,
+        hgt: PropTypes.number.isRequired,
+        ins: PropTypes.number.isRequired,
+        jmp: PropTypes.number.isRequired,
+        ovr: PropTypes.number.isRequired,
+        pot: PropTypes.number.isRequired,
+        pss: PropTypes.number.isRequired,
+        reb: PropTypes.number.isRequired,
+        spd: PropTypes.number.isRequired,
+        stl: PropTypes.number.isRequired,
+        stre: PropTypes.number.isRequired,
+        tp: PropTypes.number.isRequired,
     })).isRequired,
 };
 
@@ -163,9 +164,9 @@ const StatsTable = ({careerStats = {}, name, stats = []}) => {
 };
 
 StatsTable.propTypes = {
-    careerStats: React.PropTypes.object,
-    name: React.PropTypes.string.isRequired,
-    stats: React.PropTypes.arrayOf(React.PropTypes.object),
+    careerStats: PropTypes.object,
+    name: PropTypes.string.isRequired,
+    stats: PropTypes.arrayOf(PropTypes.object),
 };
 
 const ShotLocationsTable = ({careerStats = {}, name, stats = []}) => {
@@ -239,9 +240,9 @@ const ShotLocationsTable = ({careerStats = {}, name, stats = []}) => {
 };
 
 ShotLocationsTable.propTypes = {
-    careerStats: React.PropTypes.object,
-    name: React.PropTypes.string.isRequired,
-    stats: React.PropTypes.arrayOf(React.PropTypes.object),
+    careerStats: PropTypes.object,
+    name: PropTypes.string.isRequired,
+    stats: PropTypes.arrayOf(PropTypes.object),
 };
 
 const Player = ({events, feats, freeAgent, godMode, injured, player, retired, showContract, showTradeFor}) => {
@@ -442,23 +443,23 @@ const Player = ({events, feats, freeAgent, godMode, injured, player, retired, sh
 };
 
 Player.propTypes = {
-    events: React.PropTypes.arrayOf(React.PropTypes.shape({
-        eid: React.PropTypes.number.isRequired,
-        season: React.PropTypes.number.isRequired,
-        text: React.PropTypes.string.isRequired,
+    events: PropTypes.arrayOf(PropTypes.shape({
+        eid: PropTypes.number.isRequired,
+        season: PropTypes.number.isRequired,
+        text: PropTypes.string.isRequired,
     })).isRequired,
-    feats: React.PropTypes.arrayOf(React.PropTypes.shape({
-        eid: React.PropTypes.number.isRequired,
-        season: React.PropTypes.number.isRequired,
-        text: React.PropTypes.string.isRequired,
+    feats: PropTypes.arrayOf(PropTypes.shape({
+        eid: PropTypes.number.isRequired,
+        season: PropTypes.number.isRequired,
+        text: PropTypes.string.isRequired,
     })).isRequired,
-    freeAgent: React.PropTypes.bool.isRequired,
-    godMode: React.PropTypes.bool.isRequired,
-    injured: React.PropTypes.bool.isRequired,
-    player: React.PropTypes.object.isRequired,
-    retired: React.PropTypes.bool.isRequired,
-    showContract: React.PropTypes.bool.isRequired,
-    showTradeFor: React.PropTypes.bool.isRequired,
+    freeAgent: PropTypes.bool.isRequired,
+    godMode: PropTypes.bool.isRequired,
+    injured: PropTypes.bool.isRequired,
+    player: PropTypes.object.isRequired,
+    retired: PropTypes.bool.isRequired,
+    showContract: PropTypes.bool.isRequired,
+    showTradeFor: PropTypes.bool.isRequired,
 };
 
 export default Player;

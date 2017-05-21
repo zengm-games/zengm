@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {PHASE, helpers} from '../../common';
 import {getCols, setTitle, toWorker} from '../util';
@@ -28,7 +29,7 @@ const OfferPlayerRow = clickable(({clicked, p, toggleClicked}) => {
 });
 
 OfferPlayerRow.propTypes = {
-    p: React.PropTypes.object.isRequired,
+    p: PropTypes.object.isRequired,
 };
 
 const Offer = props => {
@@ -83,21 +84,21 @@ const Offer = props => {
 };
 
 Offer.propTypes = {
-    abbrev: React.PropTypes.string.isRequired,
-    dpids: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
-    handleClickNegotiate: React.PropTypes.func.isRequired,
-    i: React.PropTypes.number.isRequired,
-    lost: React.PropTypes.number.isRequired,
-    name: React.PropTypes.string.isRequired,
-    payroll: React.PropTypes.number.isRequired,
-    picks: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-    pids: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
-    players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-    region: React.PropTypes.string.isRequired,
-    strategy: React.PropTypes.string.isRequired,
-    tid: React.PropTypes.number.isRequired,
-    warning: React.PropTypes.string,
-    won: React.PropTypes.number.isRequired,
+    abbrev: PropTypes.string.isRequired,
+    dpids: PropTypes.arrayOf(PropTypes.number).isRequired,
+    handleClickNegotiate: PropTypes.func.isRequired,
+    i: PropTypes.number.isRequired,
+    lost: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    payroll: PropTypes.number.isRequired,
+    picks: PropTypes.arrayOf(PropTypes.object).isRequired,
+    pids: PropTypes.arrayOf(PropTypes.number).isRequired,
+    players: PropTypes.arrayOf(PropTypes.object).isRequired,
+    region: PropTypes.string.isRequired,
+    strategy: PropTypes.string.isRequired,
+    tid: PropTypes.number.isRequired,
+    warning: PropTypes.string,
+    won: PropTypes.number.isRequired,
 };
 
 const ProgressBar = ({progress}) => {
@@ -107,7 +108,7 @@ const ProgressBar = ({progress}) => {
 };
 
 ProgressBar.propTypes = {
-    progress: React.PropTypes.number.isRequired,
+    progress: PropTypes.number.isRequired,
 };
 
 class TradingBlock extends React.Component {
@@ -267,10 +268,10 @@ class TradingBlock extends React.Component {
 }
 
 TradingBlock.propTypes = {
-    gameOver: React.PropTypes.bool.isRequired,
-    phase: React.PropTypes.number.isRequired,
-    userPicks: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-    userRoster: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    gameOver: PropTypes.bool.isRequired,
+    phase: PropTypes.number.isRequired,
+    userPicks: PropTypes.arrayOf(PropTypes.object).isRequired,
+    userRoster: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default TradingBlock;

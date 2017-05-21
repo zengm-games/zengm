@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {g, helpers} from '../../common';
 import {getCols, setTitle} from '../util';
@@ -70,8 +71,8 @@ const TeamShotLocations = ({season, teams}) => {
 };
 
 TeamShotLocations.propTypes = {
-    season: React.PropTypes.number.isRequired,
-    teams: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    season: PropTypes.number.isRequired,
+    teams: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default TeamShotLocations;

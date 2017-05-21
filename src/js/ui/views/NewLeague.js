@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {helpers} from '../../common';
 import {realtimeUpdate, setTitle, toWorker} from '../util';
@@ -28,13 +29,13 @@ const PopText = ({teams, tid}) => {
 };
 
 PopText.propTypes = {
-    teams: React.PropTypes.arrayOf(React.PropTypes.shape({
+    teams: PropTypes.arrayOf(PropTypes.shape({
         // pop and popRank not required for Random Team
-        pop: React.PropTypes.number,
-        popRank: React.PropTypes.number,
-        tid: React.PropTypes.number.isRequired,
+        pop: PropTypes.number,
+        popRank: PropTypes.number,
+        tid: PropTypes.number.isRequired,
     })).isRequired,
-    tid: React.PropTypes.number.isRequired,
+    tid: PropTypes.number.isRequired,
 };
 
 const defaultTeams = helpers.getTeamsDefault();
@@ -264,8 +265,8 @@ class NewLeague extends React.Component {
 }
 
 NewLeague.propTypes = {
-    name: React.PropTypes.string.isRequired,
-    lastSelectedTid: React.PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    lastSelectedTid: PropTypes.number.isRequired,
 };
 
 export default NewLeague;

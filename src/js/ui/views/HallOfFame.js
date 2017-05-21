@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {g, helpers} from '../../common';
 import {getCols, setTitle} from '../util';
@@ -70,7 +71,7 @@ const HallOfFame = ({players}) => {
 };
 
 HallOfFame.propTypes = {
-    players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    players: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default HallOfFame;

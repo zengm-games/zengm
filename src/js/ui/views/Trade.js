@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 import {PHASE, g, helpers} from '../../common';
 import {getCols, realtimeUpdate, setTitle, toWorker} from '../util';
@@ -265,26 +266,26 @@ class Trade extends React.Component {
 }
 
 Trade.propTypes = {
-    gameOver: React.PropTypes.bool.isRequired,
-    godMode: React.PropTypes.bool.isRequired,
-    lost: React.PropTypes.number.isRequired,
-    otherDpids: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
-    otherPicks: React.PropTypes.array.isRequired,
-    otherPids: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
-    otherRoster: React.PropTypes.array.isRequired,
-    otherTid: React.PropTypes.number.isRequired,
-    phase: React.PropTypes.number.isRequired,
-    salaryCap: React.PropTypes.number.isRequired,
-    summary: React.PropTypes.object.isRequired,
-    showResigningMsg: React.PropTypes.bool.isRequired,
-    strategy: React.PropTypes.string.isRequired,
-    teams: React.PropTypes.array.isRequired,
-    userDpids: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
-    userPicks: React.PropTypes.array.isRequired,
-    userPids: React.PropTypes.arrayOf(React.PropTypes.number).isRequired,
-    userRoster: React.PropTypes.array.isRequired,
-    userTeamName: React.PropTypes.string.isRequired,
-    won: React.PropTypes.number.isRequired,
+    gameOver: PropTypes.bool.isRequired,
+    godMode: PropTypes.bool.isRequired,
+    lost: PropTypes.number.isRequired,
+    otherDpids: PropTypes.arrayOf(PropTypes.number).isRequired,
+    otherPicks: PropTypes.array.isRequired,
+    otherPids: PropTypes.arrayOf(PropTypes.number).isRequired,
+    otherRoster: PropTypes.array.isRequired,
+    otherTid: PropTypes.number.isRequired,
+    phase: PropTypes.number.isRequired,
+    salaryCap: PropTypes.number.isRequired,
+    summary: PropTypes.object.isRequired,
+    showResigningMsg: PropTypes.bool.isRequired,
+    strategy: PropTypes.string.isRequired,
+    teams: PropTypes.array.isRequired,
+    userDpids: PropTypes.arrayOf(PropTypes.number).isRequired,
+    userPicks: PropTypes.array.isRequired,
+    userPids: PropTypes.arrayOf(PropTypes.number).isRequired,
+    userRoster: PropTypes.array.isRequired,
+    userTeamName: PropTypes.string.isRequired,
+    won: PropTypes.number.isRequired,
 };
 
 export default Trade;

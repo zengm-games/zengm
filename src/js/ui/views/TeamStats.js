@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'underscore';
 import {g, helpers} from '../../common';
@@ -136,9 +137,9 @@ const TeamStats = ({season, stats, teams}) => {
 };
 
 TeamStats.propTypes = {
-    season: React.PropTypes.number.isRequired,
-    stats: React.PropTypes.object.isRequired,
-    teams: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    season: PropTypes.number.isRequired,
+    stats: PropTypes.object.isRequired,
+    teams: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default TeamStats;

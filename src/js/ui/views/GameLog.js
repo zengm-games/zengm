@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 import {helpers} from '../../common';
 import {Dropdown, NewWindowLink, PlayerNameLabels} from '../components';
@@ -38,9 +39,9 @@ const StatsRow = clickable(({clicked, i, numPlayers, p, toggleClicked}) => {
 });
 
 StatsRow.propTypes = {
-    i: React.PropTypes.number.isRequired,
-    numPlayers: React.PropTypes.number.isRequired,
-    p: React.PropTypes.object.isRequired,
+    i: PropTypes.number.isRequired,
+    numPlayers: PropTypes.number.isRequired,
+    p: PropTypes.object.isRequired,
 };
 
 class BoxScore extends React.Component {
@@ -173,11 +174,11 @@ class BoxScore extends React.Component {
 }
 
 BoxScore.propTypes = {
-    abbrev: React.PropTypes.string.isRequired,
-    boxScore: React.PropTypes.object.isRequired,
-    nextGid: React.PropTypes.number,
-    prevGid: React.PropTypes.number,
-    season: React.PropTypes.number.isRequired,
+    abbrev: PropTypes.string.isRequired,
+    boxScore: PropTypes.object.isRequired,
+    nextGid: PropTypes.number,
+    prevGid: PropTypes.number,
+    season: PropTypes.number.isRequired,
 };
 
 function findPrevNextGids(games = [], currentGid) {
@@ -257,10 +258,10 @@ const GameLog = ({abbrev, boxScore, gamesList = {games: []}, season}) => {
 };
 
 GameLog.propTypes = {
-    abbrev: React.PropTypes.string.isRequired,
-    boxScore: React.PropTypes.object.isRequired,
-    gamesList: React.PropTypes.object,
-    season: React.PropTypes.number.isRequired,
+    abbrev: PropTypes.string.isRequired,
+    boxScore: PropTypes.object.isRequired,
+    gamesList: PropTypes.object,
+    season: PropTypes.number.isRequired,
 };
 
 export default GameLog;

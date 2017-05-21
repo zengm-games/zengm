@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {g, helpers} from '../../common';
 import {DataTable, Dropdown, JumpTo, NewWindowLink, PlayerNameLabels} from '../components';
@@ -125,11 +126,11 @@ const PlayerStats = ({abbrev, players, playoffs, season, statType}) => {
 };
 
 PlayerStats.propTypes = {
-    abbrev: React.PropTypes.string.isRequired,
-    players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-    playoffs: React.PropTypes.oneOf(['playoffs', 'regularSeason']).isRequired,
-    season: React.PropTypes.number, // Undefined for career totals
-    statType: React.PropTypes.oneOf(['per36', 'perGame', 'totals']).isRequired,
+    abbrev: PropTypes.string.isRequired,
+    players: PropTypes.arrayOf(PropTypes.object).isRequired,
+    playoffs: PropTypes.oneOf(['playoffs', 'regularSeason']).isRequired,
+    season: PropTypes.number, // Undefined for career totals
+    statType: PropTypes.oneOf(['per36', 'perGame', 'totals']).isRequired,
 };
 
 export default PlayerStats;

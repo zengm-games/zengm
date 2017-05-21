@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {helpers} from '../../common';
 import {BoxPlot, Dropdown, NewWindowLink} from '../components';
@@ -27,8 +28,8 @@ const PlayerRatingDists = ({ratingsAll, season}) => {
 };
 
 PlayerRatingDists.propTypes = {
-    ratingsAll: React.PropTypes.object.isRequired,
-    season: React.PropTypes.number.isRequired,
+    ratingsAll: PropTypes.object.isRequired,
+    season: PropTypes.number.isRequired,
 };
 
 export default PlayerRatingDists;

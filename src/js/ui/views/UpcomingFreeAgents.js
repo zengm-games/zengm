@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import {helpers} from '../../common';
 import {getCols, setTitle} from '../util';
@@ -52,8 +53,8 @@ const UpcomingFreeAgents = ({players, season}) => {
 };
 
 UpcomingFreeAgents.propTypes = {
-    players: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-    season: React.PropTypes.number.isRequired,
+    players: PropTypes.arrayOf(PropTypes.object).isRequired,
+    season: PropTypes.number.isRequired,
 };
 
 export default UpcomingFreeAgents;

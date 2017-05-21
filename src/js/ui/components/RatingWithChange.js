@@ -1,6 +1,7 @@
 // @flow
 
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 const RatingWithChange = ({change, children}: {change: number, children: number}) => {
@@ -15,8 +16,8 @@ const RatingWithChange = ({change, children}: {change: number, children: number}
 };
 
 RatingWithChange.propTypes = {
-    change: React.PropTypes.number.isRequired,
-    children: React.PropTypes.number.isRequired,
+    change: PropTypes.number.isRequired,
+    children: PropTypes.number.isRequired,
 };
 
 export default RatingWithChange;

@@ -1,6 +1,5 @@
 AI trades
 - notification? only for big trades. quantify! maybe show that info in transactions page too
-- changes
 
 revisit auto flush code, make more robust
 

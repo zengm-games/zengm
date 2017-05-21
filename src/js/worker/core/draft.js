@@ -68,6 +68,24 @@ async function genPlayers(tid: number, scoutingRank?: ?number = null, numPlayers
         scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
     }
 
+    let draftYear = g.season;
+
+    let baseAge = 19;
+    if (newLeague) {
+        // New league, creating players for draft in same season and following 2 seasons
+        if (tid === PLAYER.UNDRAFTED_2) {
+            baseAge -= 1;
+            draftYear += 1;
+        } else if (tid === PLAYER.UNDRAFTED_3) {
+            baseAge -= 2;
+            draftYear += 2;
+        }
+    } else if (tid === PLAYER.UNDRAFTED_3) {
+        // Player being generated after draft ends, for draft in 3 years
+        baseAge -= 3;
+        draftYear += 3;
+    }
+
     const profiles = ["Point", "Wing", "Big", "Big", ""];
 
     for (let i = 0; i < numPlayers; i++) {
@@ -76,23 +94,6 @@ async function genPlayers(tid: number, scoutingRank?: ?number = null, numPlayers
 
         const profile = profiles[random.randInt(0, profiles.length - 1)];
         const agingYears = random.randInt(0, 3);
-        let draftYear = g.season;
-
-        let baseAge = 19;
-        if (newLeague) {
-            // New league, creating players for draft in same season and following 2 seasons
-            if (tid === PLAYER.UNDRAFTED_2) {
-                baseAge -= 1;
-                draftYear += 1;
-            } else if (tid === PLAYER.UNDRAFTED_3) {
-                baseAge -= 2;
-                draftYear += 2;
-            }
-        } else if (tid === PLAYER.UNDRAFTED_3) {
-            // Player being generated after draft ends, for draft in 3 years
-            baseAge -= 3;
-            draftYear += 3;
-        }
 
         const p = player.generate(tid, baseAge, profile, baseRating, pot, draftYear, false, scoutingRank);
         player.develop(p, agingYears, true);
@@ -100,6 +101,30 @@ async function genPlayers(tid: number, scoutingRank?: ?number = null, numPlayers
         // Update player values after ratings changes
         await player.updateValues(p);
         await idb.cache.players.add(p);
+    }
+
+    // Easter egg!
+    if (Math.random() < 1 / 1000) {
+        const p = player.generate(tid, 19, profiles[1], 90, 90, draftYear, false, scoutingRank);
+        p.born.year = draftYear - 48;
+        p.born.loc = 'Los Angeles, CA';
+        p.college = 'Washington State University';
+        p.firstName = 'LaVar';
+        p.hgt = 78;
+        p.imgURL = '/img/lavar.jpg';
+        p.lastName = 'Ball';
+        p.weight = 250;
+        await player.updateValues(p);
+        const pid = await idb.cache.players.add(p);
+        if (typeof pid === 'number') {
+            await logEvent({
+                type: 'playerFeat',
+                text: `<a href="${helpers.leagueUrl(['player', pid])}">${p.firstName} ${p.lastName}</a> got sick of the haters and decided to show the world how a big baller plays.`,
+                showNotification: false,
+                pids: [pid],
+                tids: [g.userTid],
+            });
+        }
     }
 }
 

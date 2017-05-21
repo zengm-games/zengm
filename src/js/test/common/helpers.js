@@ -1,7 +1,7 @@
 import assert from 'assert';
 import {PLAYER, g, helpers} from '../../common';
 
-describe("util/helpers", () => {
+describe("common/helpers", () => {
     before(() => {
         g.userTid = 4;
         g.startingSeason = 2007;

@@ -10,6 +10,7 @@ number or not.
 
 - Massive performance improvement, like an order of magnitude (see technical details for more)
 - Table filtering, like "show only players with >1 block per game and >1 steal per game"
+- AI teams trade wtih each other
 
 ## Technical details
 

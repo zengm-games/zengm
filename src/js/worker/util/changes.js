@@ -118,6 +118,9 @@ const all = [{
 }, {
     date: "2017-04-01",
     msg: '<a href="https://basketball-gm.com/blog/2017/04/basketball-gm-4-0-is-here/">Basketball GM 4.0 is here!</a> This is not an April Fool\'s Day joke! Everything should be crazy fast now.',
+}, {
+    date: "2017-05-21",
+    msg: "AI teams will now trade with each other. Go to League > Transactions to see trades.",
 }];
 
 const check = async (conditions: Conditions) => {

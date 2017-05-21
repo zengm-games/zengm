@@ -778,7 +778,9 @@ async function play(numDays: number, conditions: Conditions, start?: boolean = t
                 if (g.phase !== PHASE.PLAYOFFS) {
                     await freeAgents.decreaseDemands();
                     await freeAgents.autoSign();
-                    await trade.betweenAiTeams();
+                    if (Math.random() < 0.5) {
+                        await trade.betweenAiTeams();
+                    }
                 }
 
                 await cbPlayGames();

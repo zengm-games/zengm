@@ -3,7 +3,7 @@
 import orderBy from 'lodash.orderby';
 import _ from 'underscore';
 import {PHASE, PLAYER, g, helpers} from '../../common';
-import {league, phase, player, team} from '../core';
+import {league, phase, player, team, trade} from '../core';
 import {idb} from '../db';
 import {local, lock, logEvent, random, updatePlayMenu, updateStatus, toUI} from '../util';
 import type {Conditions} from '../../common/types';
@@ -192,6 +192,7 @@ async function play(numDays: number, conditions: Conditions, start?: boolean = t
             if (g.daysLeft > 0 && numDays > 0) {
                 await toUI(['realtimeUpdate', ['playerMovement']]);
                 await updateStatus(`${g.daysLeft} days left`);
+                await trade.betweenAiTeams();
                 play(numDays - 1, conditions, false);
             } else {
                 await cbNoDays();

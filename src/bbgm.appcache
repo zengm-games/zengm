@@ -1,9 +1,15 @@
 CACHE MANIFEST
 
-# http://stackoverflow.com/a/31083156/786644
+gen/bbgm.css
+gen/ui.js
+gen/worker.js
+fonts/glyphicons-halflings-regular.woff
+ico/logo.png
 
 NETWORK:
 *
 
-CACHE:
 FALLBACK:
+/ /
+
+# LAST UPDATED: TIMESTAMP_GOES_HERE

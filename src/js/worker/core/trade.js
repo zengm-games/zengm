@@ -648,6 +648,10 @@ async function makeItWorkTrade() {
 }
 
 const betweenAiTeams = async () => {
+    if (!g.aiTrades) {
+        return;
+    }
+
     const aiTids = _.range(g.numTeams).filter((i) => {
         return !g.userTids.includes(i);
     });

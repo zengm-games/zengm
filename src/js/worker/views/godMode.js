@@ -20,6 +20,7 @@ async function updateGodMode(
             luxuryTax: g.luxuryTax,
             minContract: g.minContract / 1000,
             maxContract: g.maxContract / 1000,
+            aiTrades: g.aiTrades,
         };
     }
 }

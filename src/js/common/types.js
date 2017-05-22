@@ -181,6 +181,7 @@ export type GamePlayer = any;
 export type GameResults = any;
 
 export type GameAttributeKey = (
+    'aiTrades' |
     'confs' |
     'daysLeft' |
     'disableInjuries' |

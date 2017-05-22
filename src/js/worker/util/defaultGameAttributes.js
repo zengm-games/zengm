@@ -38,6 +38,7 @@ const defaultGameAttributes: GameAttributes = {
         {did: 5, cid: 1, name: "Pacific"},
     ],
     numPlayoffRounds: 4,
+    aiTrades: true,
 };
 
 export default defaultGameAttributes;

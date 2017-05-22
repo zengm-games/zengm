@@ -20,6 +20,7 @@ class GodMode extends React.Component {
             numGames: props.numGames,
             quarterLength: props.quarterLength,
             salaryCap: props.salaryCap,
+            aiTrades: props.aiTrades,
         };
         this.handleChanges = {
             disableInjuries: this.handleChange.bind(this, 'disableInjuries'),
@@ -32,6 +33,7 @@ class GodMode extends React.Component {
             numGames: this.handleChange.bind(this, 'numGames'),
             quarterLength: this.handleChange.bind(this, 'quarterLength'),
             salaryCap: this.handleChange.bind(this, 'salaryCap'),
+            aiTrades: this.handleChange.bind(this, 'aiTrades'),
         };
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
         this.handleGodModeToggle = this.handleGodModeToggle.bind(this);
@@ -75,6 +77,7 @@ class GodMode extends React.Component {
             luxuryTax: parseFloat(this.state.luxuryTax),
             minContract: parseInt(this.state.minContract * 1000, 10),
             maxContract: parseInt(this.state.maxContract * 1000, 10),
+            aiTrades: this.state.aiTrades === 'true',
         });
 
         this.setState({
@@ -195,6 +198,13 @@ class GodMode extends React.Component {
                             <span className="input-group-addon">$</span><input type="text" className="form-control" disabled={!godMode} onChange={this.handleChanges.maxContract} value={this.state.maxContract} /><span className="input-group-addon">M</span>
                         </div>
                     </div>
+                    <div className="col-sm-3 col-xs-6 form-group">
+                        <label>Trades Between AI Teams</label>
+                        <select className="form-control" disabled={!godMode} onChange={this.handleChanges.aiTrades} value={this.state.aiTrades}>
+                            <option value="true">Enabled</option>
+                            <option value="false">Disabled</option>
+                        </select>
+                    </div>
                 </div>
 
                 <button className="btn btn-primary" id="save-god-mode-options" disabled={!godMode}>Save God Mode Options</button>
@@ -215,6 +225,7 @@ GodMode.propTypes = {
     numGames: PropTypes.number.isRequired,
     quarterLength: PropTypes.number.isRequired,
     salaryCap: PropTypes.number.isRequired,
+    aiTrades: PropTypes.bool.isRequired,
 };
 
 export default GodMode;

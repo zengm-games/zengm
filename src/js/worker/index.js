@@ -3,7 +3,7 @@
 /* eslint-disable import/first */
 import '../vendor/babel-external-helpers';
 import '../common/polyfills';
-import 'indexeddb-getall-shim';
+import '../vendor/IndexedDB-getAll-shim';
 import api from './api';
 import * as common from '../common';
 import * as core from './core';

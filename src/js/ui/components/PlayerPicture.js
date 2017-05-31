@@ -30,7 +30,7 @@ class PlayerPicture extends React.Component {
             return <img
                 alt="Player"
                 src={this.props.imgURL}
-                style={{maxHeigth: '100%', maxWidth: '100%'}}
+                style={{maxHeight: '100%', maxWidth: '100%'}}
             />;
         }
 

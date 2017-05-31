@@ -1,5 +1,7 @@
 ads don't show on safari, why?
 
+some way to see draft picks by team, now that there are AI trades. like preview the lottery?
+
 AI trades
 - notification? only for big trades. quantify! maybe show that info in transactions page too
 
@@ -25,6 +27,7 @@ bugs in really big leagues
 
 filtering
 - disable in some columns, like "Negotiate" buttons. maybe config in getCols?
+- persist, same as sort order
 
 cache unread messages, will make it faster and simpler
 

@@ -16,8 +16,8 @@ type LogEventOptions = {
 
 function createLogger(
     saveEvent: (LogEventSaveOptions) => void,
-    showEvent: (LogEventShowOptions) => void,
-): (LogEventOptions) => void {
+    showEvent: (LogEventShowOptions, conditions?: Conditions) => void,
+): (LogEventOptions, conditions?: Conditions) => void {
     const logEvent = ({
         extraClass,
         persistent = false,

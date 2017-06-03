@@ -440,7 +440,7 @@ const orderByWinp = <T: {seasonAttrs: {winp: number, won: number}}>(teams: T[]):
  * @return {boolean} Answer to the question.
  */
 const refuseToNegotiate = (amount: number, mood: number): boolean => {
-    return amount * mood > 10000;
+    return amount * mood > 9500;
 };
 
 export default {

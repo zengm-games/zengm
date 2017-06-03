@@ -538,9 +538,10 @@ async function genBaseMoods(): Promise<number[]> {
         baseMood += 0.2 * (1 - teamSeason.pop / 10);
 
         // Randomness
-        baseMood += random.uniform(-0.2, 0.2);
+        baseMood += random.uniform(-0.2, 0.4);
 
-        baseMood = helpers.bound(baseMood, 0, 1);
+
+        baseMood = helpers.bound(baseMood, 0, 1.2);
 
         return baseMood;
     });

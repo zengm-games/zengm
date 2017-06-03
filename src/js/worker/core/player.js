@@ -184,8 +184,8 @@ function genContract(
         years = random.randInt(1, years);
 
         // Make rookie contracts more reasonable
-        if (g.season - p.born.year <= 22) {
-            amount /= 4; // Max $5 million/year
+        if (g.season - p.born.year <= 21) {
+            amount /= 3;
         }
     }
 

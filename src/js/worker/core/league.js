@@ -370,7 +370,7 @@ async function create(
             random.shuffle(pots);
             for (let n = 0; n < 14; n++) {
                 const profile = profiles[random.randInt(0, profiles.length - 1)];
-                const agingYears = random.randInt(0, 13);
+                const agingYears = random.randInt(0, 16);
                 const draftYear = g.startingSeason - 1 - agingYears;
 
                 const p = player.generate(tid2, 19, profile, baseRatings[n], pots[n], draftYear, true, scoutingRank);

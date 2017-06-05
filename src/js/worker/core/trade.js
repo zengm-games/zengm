@@ -326,6 +326,7 @@ const processTrade = async (tradeSummary, tids, pids, dpids) => {
         idb.cache.markDirtyIndexes('players');
     }
 
+console.log(`The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[0]], g.season])}">${g.teamNamesCache[tids[0]]}</a> traded ${formatAssetsEventLog(tradeSummary.teams[0])} to the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[1]], g.season])}">${g.teamNamesCache[tids[1]]}</a> for ${formatAssetsEventLog(tradeSummary.teams[1])}.`);
     logEvent({
         type: "trade",
         text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[0]], g.season])}">${g.teamNamesCache[tids[0]]}</a> traded ${formatAssetsEventLog(tradeSummary.teams[0])} to the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[1]], g.season])}">${g.teamNamesCache[tids[1]]}</a> for ${formatAssetsEventLog(tradeSummary.teams[1])}.`,
@@ -712,11 +713,19 @@ const betweenAiTeams = async () => {
         return;
     }
 
+
     const tradeSummary = await summary(teams);
     if (!tradeSummary.warning) {
+        // Make sure this isn't a really shitty trade
+        const dv2 = await team.valueChange(teams[0].tid, teams[1].pids, teams[0].pids, teams[1].dpids, teams[0].dpids);
+        if (dv2 < -15) {
+            return;
+        }
+
         const finalTids = [teams[0].tid, teams[1].tid];
         const finalPids = [teams[0].pids, teams[1].pids];
         const finalDpids = [teams[0].dpids, teams[1].dpids];
+
         await processTrade(tradeSummary, finalTids, finalPids, finalDpids);
     }
 

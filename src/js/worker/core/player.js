@@ -202,7 +202,7 @@ function genContract(
         amount = 0;
     }
 
-    amount = 50 * Math.round(amount / 50);  // Make it a multiple of 50k
+    amount = 50 * Math.round(amount / 50); // Make it a multiple of 50k
 
     return {amount, exp: expiration};
 }

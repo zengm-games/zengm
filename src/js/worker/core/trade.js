@@ -728,13 +728,6 @@ const betweenAiTeams = async () => {
 
         await processTrade(tradeSummary, finalTids, finalPids, finalDpids);
     }
-
-/*    get all picks and players
-    randomly pick 1-2
-
-    pick a trade type, then pick an asset, then make it work (without forcing no new assets to the original team) with a random team. if it passes the salary cap, do it
-
-    notification if notable enough (by value?)*/
 };
 
 export default {

@@ -213,7 +213,7 @@ function averageCareerArc(baseOvr: number, basePot: number, ratingToSave: Rating
         averageRat[i] = 0;
     }
 
-    const profiles = ["Point", "Wing", "Big", ""];
+    const profiles = ["Point", "Wing", "Big", "Big", "Big", ""];
 
     for (let i = 0; i < numPlayers; i++) {
         for (let j = 0; j < profiles.length; j++) {

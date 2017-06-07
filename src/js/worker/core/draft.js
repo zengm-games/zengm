@@ -86,7 +86,7 @@ async function genPlayers(tid: number, scoutingRank?: ?number = null, numPlayers
         draftYear += 3;
     }
 
-    const profiles = ["Point", "Wing", "Big", "Big", "Big", "Big", ""];
+    const profiles = ["Point", "Wing", "Big", "Big", "Big", ""];
 
     for (let i = 0; i < numPlayers; i++) {
         const baseRating = random.randInt(8, 31);

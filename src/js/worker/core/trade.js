@@ -326,7 +326,6 @@ const processTrade = async (tradeSummary, tids, pids, dpids) => {
         idb.cache.markDirtyIndexes('players');
     }
 
-console.log(`The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[0]], g.season])}">${g.teamNamesCache[tids[0]]}</a> traded ${formatAssetsEventLog(tradeSummary.teams[0])} to the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[1]], g.season])}">${g.teamNamesCache[tids[1]]}</a> for ${formatAssetsEventLog(tradeSummary.teams[1])}.`);
     logEvent({
         type: "trade",
         text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[0]], g.season])}">${g.teamNamesCache[tids[0]]}</a> traded ${formatAssetsEventLog(tradeSummary.teams[0])} to the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tids[1]], g.season])}">${g.teamNamesCache[tids[1]]}</a> for ${formatAssetsEventLog(tradeSummary.teams[1])}.`,

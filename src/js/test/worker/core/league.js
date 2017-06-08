@@ -60,7 +60,7 @@ describe("core/league", () => {
             assert.equal(gTest.daysLeft, 0);
             assert.equal(gTest.showFirstOwnerMessage, true);
 
-            assert.equal(Object.keys(gTest).length, 32);
+            assert.equal(Object.keys(gTest).length, 33);
         });
         it("should initialize draftOrder object store", async () => {
             const draftOrder = await idb.league.draftOrder.getAll();

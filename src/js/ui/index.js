@@ -187,6 +187,7 @@ const genPage = (id, inLeague = true) => {
     page('/l/:lid/transactions/:abbrev', genPage('transactions'));
     page('/l/:lid/transactions/:abbrev/:season', genPage('transactions'));
     page('/l/:lid/transactions/:abbrev/:season/:eventType', genPage('transactions'));
+    page('/l/:lid/options', genPage('options'));
 
     page('*', (ctx, next) => {
         if (!ctx.bbgm) {

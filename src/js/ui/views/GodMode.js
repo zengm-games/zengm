@@ -52,6 +52,7 @@ class GodMode extends React.Component {
                 numGames: nextProps.numGames,
                 quarterLength: nextProps.quarterLength,
                 salaryCap: nextProps.salaryCap,
+                aiTrades: nextProps.aiTrades,
             });
         }
     }
@@ -207,7 +208,7 @@ class GodMode extends React.Component {
                     </div>
                 </div>
 
-                <button className="btn btn-primary" id="save-god-mode-options" disabled={!godMode}>Save God Mode Options</button>
+                <button className="btn btn-primary" disabled={!godMode}>Save God Mode Options</button>
             </form>
         </div>;
     }

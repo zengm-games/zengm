@@ -182,6 +182,7 @@ export type GameResults = any;
 
 export type GameAttributeKey = (
     'aiTrades' |
+    'autoDeleteOldBoxScores' |
     'confs' |
     'daysLeft' |
     'disableInjuries' |

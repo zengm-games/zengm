@@ -36,6 +36,7 @@ export {default as Negotiation} from './Negotiation';
 export {default as NegotiationList} from './NegotiationList';
 export {default as NewLeague} from './NewLeague';
 export {default as NewTeam} from './NewTeam';
+export {default as Options} from './Options';
 export {default as Player} from './Player';
 export {default as PlayerFeats} from './PlayerFeats';
 export {default as PlayerRatingDists} from './PlayerRatingDists';

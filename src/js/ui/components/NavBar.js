@@ -273,6 +273,7 @@ class DropdownLinks extends React.Component {
                 {lid !== undefined ? <MenuItem href={helpers.leagueUrl(['god_mode'])}>God Mode</MenuItem> : null}
                 {lid !== undefined && godMode ? <MenuItem href={helpers.leagueUrl(['multi_team_mode'])} className="god-mode-menu">Multi Team Mode</MenuItem> : null}
                 {lid !== undefined && godMode ? <MenuItem href={helpers.leagueUrl(['new_team'])} className="god-mode-menu">Switch Team</MenuItem> : null}
+                {lid !== undefined ? <MenuItem href={helpers.leagueUrl(['options'])}>Options</MenuItem> : null}
                 <MenuItem onClick={handleScreenshotClick}><span className="glyphicon glyphicon-camera" /> Screenshot</MenuItem>
                 {lid !== undefined ? <li className="divider" /> : null}
                 <li role="presentation" className="dropdown-header">Use at your own risk!</li>

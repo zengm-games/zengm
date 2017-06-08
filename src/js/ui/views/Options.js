@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import {helpers} from '../../common';
-import {logEvent, setTitle, toWorker} from '../util';
 import {HelpPopover, NewWindowLink} from '../components';
+import {logEvent, setTitle, toWorker} from '../util';
 
 class GodMode extends React.Component {
     constructor(props) {
@@ -60,7 +60,7 @@ class GodMode extends React.Component {
                 <div className="row">
                     <div className="col-sm-3 col-xs-6 form-group">
                         <label>Auto Delete Old Box Scores <HelpPopover placement="right" title="Injuries">
-                        This will delete any box score more than 2 seasons old because box scores use a lot of disk space. See <a href={helpers.leagueUrl(['delete_old_data'])}>Delete Old Data</a> for more.
+                        This will automatically delete box scores from previous seasons because box scores use a lot of disk space. See <a href={helpers.leagueUrl(['delete_old_data'])}>Delete Old Data</a> for more.
                         </HelpPopover></label>
                         <select className="form-control" onChange={this.handleChanges.autoDeleteOldBoxScores} value={this.state.autoDeleteOldBoxScores}>
                             <option value="true">Enabled</option>

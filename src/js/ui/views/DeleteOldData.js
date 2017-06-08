@@ -1,4 +1,5 @@
 import React from 'react';
+import {helpers} from '../../common';
 import {NewWindowLink} from '../components';
 import {logEvent, setTitle, toWorker} from '../util';
 
@@ -62,7 +63,7 @@ class DeleteOldData extends React.Component {
             <form onSubmit={this.handleSubmit}>
                 <div className="checkbox">
                     <label>
-                        <input onChange={this.handleChanges.boxScores} type="checkbox" checked={this.state.boxScores} /> Delete Old Box Scores <b>(This is the biggest factor!)</b>
+                        <input onChange={this.handleChanges.boxScores} type="checkbox" checked={this.state.boxScores} /> Delete Old Box Scores <a href={helpers.leagueUrl(['options'])}>(done automatically by default)</a>
                     </label>
                 </div>
                 <div className="checkbox">

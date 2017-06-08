@@ -113,6 +113,12 @@ async function newPhaseRegularSeason() {
     const teams = await idb.cache.teams.getAll();
     await season.setSchedule(season.newSchedule(teams));
 
+    if (g.autoDeleteOldBoxScores) {
+        await idb.league.tx('games', 'readwrite', (tx) => {
+            return tx.games.clear();
+        });
+    }
+
     // First message from owner
     if (g.showFirstOwnerMessage) {
         await genMessage({wins: 0, playoffs: 0, money: 0});

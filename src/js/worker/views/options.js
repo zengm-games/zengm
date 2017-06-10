@@ -10,6 +10,8 @@ async function updateOptions(
     if (updateEvents.includes('firstRun')) {
         return {
             autoDeleteOldBoxScores: g.autoDeleteOldBoxScores,
+            stopOnInjury: g.stopOnInjury,
+            stopOnInjuryGames: g.stopOnInjuryGames,
         };
     }
 }

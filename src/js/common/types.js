@@ -211,6 +211,8 @@ export type GameAttributeKey = (
     'season' |
     'showFirstOwnerMessage' |
     'startingSeason' |
+    'stopOnInjury' |
+    'stopOnInjuryGames' |
     'teamAbbrevsCache' |
     'teamNamesCache' |
     'teamRegionsCache' |

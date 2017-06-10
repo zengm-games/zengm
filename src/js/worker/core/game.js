@@ -4,7 +4,7 @@ import _ from 'underscore';
 import {COMPOSITE_WEIGHTS, PHASE, PLAYER, g, helpers} from '../../common';
 import {GameSim, finances, freeAgents, phase, player, season, team, trade} from '../core';
 import {idb} from '../db';
-import {advStats, lock, logEvent, random, toUI, updatePlayMenu, updateStatus} from '../util';
+import {advStats, local, lock, logEvent, random, toUI, updatePlayMenu, updateStatus} from '../util';
 import type {Conditions, GameResults} from '../../common/types';
 
 async function writeTeamStats(results: GameResults) {
@@ -240,10 +240,14 @@ async function writePlayerStats(results: GameResults, conditions: Conditions) {
             if (injuredThisGame) {
                 p2.injury = player.injury(t.healthRank);
                 p.injury = helpers.deepCopy(p2.injury); // So it gets written to box score
+
+                const stopPlay = g.stopOnInjury && p2.injury.gamesRemaining > g.stopOnInjuryGames && local.autoPlaySeasons === 0 && g.userTids.includes(p2.tid);
                 logEvent({
                     type: "injured",
-                    text: `<a href="${helpers.leagueUrl(["player", p2.pid])}">${p2.firstName} ${p2.lastName}</a> was injured! (${p2.injury.type}, out for ${p2.injury.gamesRemaining} games)`,
-                    showNotification: p2.tid === g.userTid,
+                    // - 1 is because this will be decremented later today, so it's less confusing to display that value
+                    text: `<a href="${helpers.leagueUrl(["player", p2.pid])}">${p2.firstName} ${p2.lastName}</a> was injured! (${p2.injury.type}, out for ${p2.injury.gamesRemaining - 1} games)`,
+                    showNotification: g.userTids.includes(p2.tid),
+                    persistent: stopPlay,
                     pids: [p2.pid],
                     tids: [p2.tid],
                 }, conditions);
@@ -266,6 +270,10 @@ async function writePlayerStats(results: GameResults, conditions: Conditions) {
                     p2.ratings[r].spd = helpers.bound(p2.ratings[r].spd - random.randInt(0, biggestRatingsLoss), 0, 100);
                     p2.ratings[r].jmp = helpers.bound(p2.ratings[r].jmp - random.randInt(0, biggestRatingsLoss), 0, 100);
                     p2.ratings[r].endu = helpers.bound(p2.ratings[r].endu - random.randInt(0, biggestRatingsLoss), 0, 100);
+                }
+
+                if (stopPlay) {
+                    lock.set('stopGameSim', true);
                 }
             }
 

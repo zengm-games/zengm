@@ -40,6 +40,8 @@ const defaultGameAttributes: GameAttributes = {
     numPlayoffRounds: 4,
     aiTrades: true,
     autoDeleteOldBoxScores: true,
+    stopOnInjury: false,
+    stopOnInjuryGames: 20,
 };
 
 export default defaultGameAttributes;

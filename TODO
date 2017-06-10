@@ -10,9 +10,6 @@ revisit auto flush code, make more robust
 AI propose trade to user
 - need way to show popup with link to trade page
 
-options screen (non god mode)
-- stop if injury > X days, in which case injury notification is persistent
-
 auto delete old box scores, leave behind feats
 
 slow down playoffs

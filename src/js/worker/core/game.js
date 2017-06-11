@@ -717,6 +717,9 @@ async function play(numDays: number, conditions: Conditions, start?: boolean = t
             // Should a rare tragic event occur? ONLY IN REGULAR SEASON, playoffs would be tricky with roster limits and no free agents
             // 100 days in a season (roughly), and we want a death every 50 years on average
             await player.killOne(conditions);
+            if (g.stopOnInjury) {
+                lock.set('stopGameSim', true);
+            }
             toUI(['realtimeUpdate', ['playerMovement']]);
         }
 

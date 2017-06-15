@@ -310,7 +310,17 @@ class DataTable extends React.Component {
         if (sortBys === null || sortBys === undefined) {
             sortBys = [this.props.defaultSort];
         } else {
-            sortBys = JSON.parse(sortBys);
+            try {
+                sortBys = JSON.parse(sortBys);
+            } catch (err) {
+                sortBys = [this.props.defaultSort];
+            }
+        }
+
+        // Don't let sortBy reference invalid col
+        sortBys = sortBys.filter((sortBy) => sortBy[0] < props.cols.length);
+        if (sortBys.length === 0) {
+            sortBys = [this.props.defaultSort];
         }
 
         this.state = {

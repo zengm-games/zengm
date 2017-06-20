@@ -102,15 +102,21 @@ function tallyAwards(awards) {
 
         for (let i = 0; i < a.allLeague.length; i++) {
             for (const p of a.allLeague[i].players) {
-                teams[p.tid].allLeague[i]++;
-                teams[p.tid].allLeagueTotal++;
+                // https://www.reddit.com/r/BasketballGM/comments/6i80ph/weird_error_message_while_viewing_certain_pages/
+                if (teams[p.tid]) {
+                    teams[p.tid].allLeague[i]++;
+                    teams[p.tid].allLeagueTotal++;
+                }
             }
         }
 
         for (let i = 0; i < a.allDefensive.length; i++) {
             for (const p of a.allDefensive[i].players) {
-                teams[p.tid].allDefense[i]++;
-                teams[p.tid].allDefenseTotal++;
+                // https://www.reddit.com/r/BasketballGM/comments/6i80ph/weird_error_message_while_viewing_certain_pages/
+                if (teams[p.tid]) {
+                    teams[p.tid].allDefense[i]++;
+                    teams[p.tid].allDefenseTotal++;
+                }
             }
         }
     });

@@ -376,9 +376,9 @@ class Cache {
                 this._requestQueue.set(ind, {resolve, validStatuses});
 
                 setTimeout(() => {
-                    reject(new Error(`Timeout while waiting for valid status (one of ${validStatuses.join('/')})`));
+                    reject(new Error(`Timeout while waiting for valid status (${validStatuses.join('/')})`));
                     this._requestQueue.delete(ind);
-                }, 10000);
+                }, 30000);
             });
         }
     }

@@ -80,8 +80,38 @@ async function newPhasePreseason(conditions: Conditions) {
     const teamSeasons = await idb.cache.teamSeasons.indexGetAll('teamSeasonsBySeasonTid', [`${g.season - 1}`, `${g.season}`]);
     const coachingRanks = teamSeasons.map(teamSeason => teamSeason.expenses.coaching.rank);
 
-    // Loop through all non-retired players
     const players = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
+
+    // Small chance that a player was lying about his age!
+    if (Math.random() < 0.02) {
+        const p = await player.getPlayerFakeAge(players);
+        if (p !== undefined) {
+            const years = random.randInt(1, 4);
+            const age0 = g.season - p.born.year + 1; // + 1 is because this phase is the year change, which happens below this code
+            p.born.year += years;
+            const age1 = g.season - p.born.year + 1; // + 1 is because this phase is the year change, which happens below this code
+
+            const name = `${p.firstName} ${p.lastName}`;
+
+            const reason = random.choice([
+                `A newly discovered Kenyan birth certificate suggests that ${name}`,
+                `In a televised press conference, the parents of ${name} explained how they faked his age as a child to make him perform better against younger competition. He`,
+                `Internet sleuths on /r/nba uncovered evidence that ${name}`,
+                `Internet sleuths on Twitter uncovered evidence that ${name}`,
+            ]);
+
+            logEvent({
+                type: 'fraudulentAge',
+                text: `${reason} is actually ${age1} years old, not ${age0}.`,
+                showNotification: p.tid === g.userTid,
+                tids: [p.tid],
+            }, conditions);
+
+            await idb.cache.players.put(p);
+        }
+    }
+
+    // Loop through all non-retired players
     for (const p of players) {
         // Update ratings
         player.addRatingsRow(p, scoutingRank);

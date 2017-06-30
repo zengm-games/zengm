@@ -280,6 +280,7 @@ export type LogEventType = (
     'changes' |
     'draft' |
     'error' |
+    'fraudulentAge' |
     'freeAgent' |
     'gameLost' |
     'gameWon' |

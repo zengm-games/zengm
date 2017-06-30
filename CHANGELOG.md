@@ -12,6 +12,7 @@ number or not.
 - Table filtering, like "show only players with >1 block per game and >1 steal per game"
 - AI teams trade wtih each other
 - New Options screen
+- Sometimes young players (particularly from certain countries) will fake their ages
 
 ## Technical details
 

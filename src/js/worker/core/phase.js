@@ -83,28 +83,35 @@ async function newPhasePreseason(conditions: Conditions) {
     const players = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
 
     // Small chance that a player was lying about his age!
-    if (Math.random() < 0.02) {
+    if (Math.random() < 0.1) {
         const p = await player.getPlayerFakeAge(players);
         if (p !== undefined) {
             const years = random.randInt(1, 4);
-            const age0 = g.season - p.born.year + 1; // + 1 is because this phase is the year change, which happens below this code
-            p.born.year += years;
-            const age1 = g.season - p.born.year + 1; // + 1 is because this phase is the year change, which happens below this code
+            const age0 = g.season - p.born.year;
+            p.born.year -= years;
+            const age1 = g.season - p.born.year;
 
-            const name = `${p.firstName} ${p.lastName}`;
+            const name = `<a href="${helpers.leagueUrl(['player', p.pid])}">${p.firstName} ${p.lastName}</a>`;
 
             const reason = random.choice([
                 `A newly discovered Kenyan birth certificate suggests that ${name}`,
                 `In a televised press conference, the parents of ${name} explained how they faked his age as a child to make him perform better against younger competition. He`,
                 `Internet sleuths on /r/nba uncovered evidence that ${name}`,
                 `Internet sleuths on Twitter uncovered evidence that ${name}`,
+                `In an emotional interview on 60 Minutes, ${name} admitted that he`,
+                `During a preaseason locker room interview, ${name} accidentally revealed that he`,
+                `In a Reddit AMA, ${name} confirmed that he`,
+                `A recent Wikileaks report revealed that ${name}`,
+                `A foreign ID from the stolen luggage of ${name} revealed he`,
             ]);
 
             logEvent({
-                type: 'fraudulentAge',
-                text: `${reason} is actually ${age1} years old, not ${age0}.`,
+                type: 'ageFraud',
+                text: `${reason} is actually ${age1} years old, not ${age0} as was previously thought.`,
                 showNotification: p.tid === g.userTid,
+                pids: [p.pid],
                 tids: [p.tid],
+                persistent: true,
             }, conditions);
 
             await idb.cache.players.put(p);

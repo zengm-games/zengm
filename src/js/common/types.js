@@ -276,11 +276,11 @@ export type LockName = 'newPhase' | 'gameSim' | 'stopGameSim';
 
 export type LogEventType = (
     'achievement' |
+    'ageFraud' |
     'award' |
     'changes' |
     'draft' |
     'error' |
-    'fraudulentAge' |
     'freeAgent' |
     'gameLost' |
     'gameWon' |

@@ -52,7 +52,7 @@ class GodMode extends React.Component {
                 numGames: nextProps.numGames,
                 quarterLength: nextProps.quarterLength,
                 salaryCap: nextProps.salaryCap,
-                aiTrades: nextProps.aiTrades,
+                aiTrades: String(nextProps.aiTrades),
             });
         }
     }

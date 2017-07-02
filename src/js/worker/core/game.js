@@ -241,12 +241,12 @@ async function writePlayerStats(results: GameResults, conditions: Conditions) {
                 p2.injury = player.injury(t.healthRank);
                 p.injury = helpers.deepCopy(p2.injury); // So it gets written to box score
 
-                const stopPlay = g.stopOnInjury && p2.injury.gamesRemaining > g.stopOnInjuryGames && local.autoPlaySeasons === 0 && g.userTids.includes(p2.tid);
+                const stopPlay = g.stopOnInjury && p2.injury.gamesRemaining > g.stopOnInjuryGames && local.autoPlaySeasons === 0 && g.userTid === p2.tid;
                 logEvent({
                     type: "injured",
                     // - 1 is because this will be decremented later today, so it's less confusing to display that value
                     text: `<a href="${helpers.leagueUrl(["player", p2.pid])}">${p2.firstName} ${p2.lastName}</a> was injured! (${p2.injury.type}, out for ${p2.injury.gamesRemaining - 1} games)`,
-                    showNotification: g.userTids.includes(p2.tid),
+                    showNotification: g.userTid === p2.tid,
                     persistent: stopPlay,
                     pids: [p2.pid],
                     tids: [p2.tid],

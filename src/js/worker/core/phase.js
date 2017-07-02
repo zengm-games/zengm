@@ -83,7 +83,7 @@ async function newPhasePreseason(conditions: Conditions) {
     const players = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
 
     // Small chance that a player was lying about his age!
-    if (Math.random() < 0.1) {
+    if (Math.random() < 0.01) {
         const p = await player.getPlayerFakeAge(players);
         if (p !== undefined) {
             const years = random.randInt(1, 4);

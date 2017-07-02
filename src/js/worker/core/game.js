@@ -244,8 +244,7 @@ async function writePlayerStats(results: GameResults, conditions: Conditions) {
                 const stopPlay = g.stopOnInjury && p2.injury.gamesRemaining > g.stopOnInjuryGames && local.autoPlaySeasons === 0 && g.userTid === p2.tid;
                 logEvent({
                     type: "injured",
-                    // - 1 is because this will be decremented later today, so it's less confusing to display that value
-                    text: `<a href="${helpers.leagueUrl(["player", p2.pid])}">${p2.firstName} ${p2.lastName}</a> was injured! (${p2.injury.type}, out for ${p2.injury.gamesRemaining - 1} games)`,
+                    text: `<a href="${helpers.leagueUrl(["player", p2.pid])}">${p2.firstName} ${p2.lastName}</a> was injured! (${p2.injury.type}, out for ${p2.injury.gamesRemaining} games)`,
                     showNotification: g.userTid === p2.tid,
                     persistent: stopPlay,
                     pids: [p2.pid],

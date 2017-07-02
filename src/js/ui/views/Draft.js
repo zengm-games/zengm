@@ -30,6 +30,7 @@ class Draft extends React.Component {
         super(props);
 
         this.state = {
+            drafting: false,
             fantasyDrafted: [],
             fantasyDraftedNewPids: [],
         };
@@ -59,16 +60,20 @@ class Draft extends React.Component {
     }
 
     async draftUntilUserOrEnd() {
+        this.setState({drafting: true});
         const pids = await toWorker('draftUntilUserOrEnd');
         this.savePids(pids);
         await realtimeUpdate(["playerMovement"]);
+        this.setState({drafting: false});
     }
 
     async draftUser(pid) {
+        this.setState({drafting: true});
         await toWorker('draftUser', pid);
         this.savePids([pid]);
         await realtimeUpdate(["playerMovement"]);
         await this.draftUntilUserOrEnd(); // Needed for when user has #1 pick in fantasy draft, otherwise no
+        this.setState({drafting: false});
     }
 
     render() {
@@ -93,7 +98,7 @@ class Draft extends React.Component {
                 p.age,
                 p.ratings.ovr,
                 p.ratings.pot,
-                <button className="btn btn-xs btn-primary" disabled={!usersTurn} onClick={() => this.draftUser(p.pid)}>Draft</button>,
+                <button className="btn btn-xs btn-primary" disabled={!usersTurn || this.state.drafting} onClick={() => this.draftUser(p.pid)}>Draft</button>,
             ];
 
             if (fantasyDraft) {

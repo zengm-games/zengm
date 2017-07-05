@@ -290,6 +290,7 @@ const Player = ({events, feats, freeAgent, godMode, injured, player, retired, sh
                 <div className="player-picture">
                     <PlayerPicture face={player.face} imgURL={player.imgURL} />
                 </div>
+                <div></div>
                 <div style={{float: 'left'}}>
                     <strong>{player.ratings[player.ratings.length - 1].pos}, {player.teamRegion} {player.teamName}</strong><br />
                     Height: {player.hgtFt}'{player.hgtIn}"<br />
@@ -301,6 +302,7 @@ const Player = ({events, feats, freeAgent, godMode, injured, player, retired, sh
                     {contractInfo}
                     {godMode ? <div><a href={helpers.leagueUrl(['customize_player', player.pid])} className="god-mode god-mode-text">Edit Player</a><br /></div> : null}
                     {statusInfo}
+                    Legacy Score: {player.hofScore > 0 ? <div>{player.hofScore.toFixed(2)}</div> : <div>None</div>}
                 </div>
             </div>
 
@@ -310,7 +312,6 @@ const Player = ({events, feats, freeAgent, godMode, injured, player, retired, sh
                 {!retired ? <RatingsOverview ratings={player.ratings} /> : null}
             </div>
         </div>
-
         <p />
 
         {showTradeFor ? <span title={player.untradableMsg}>
@@ -356,6 +357,7 @@ const Player = ({events, feats, freeAgent, godMode, injured, player, retired, sh
         />
 
         <h2>Ratings</h2>
+        <div>HOF Score: {player.hofScore}</div>
         <DataTable
             cols={getCols('Year', 'Team', 'Age', 'Pos', 'Ovr', 'Pot', 'rating:Hgt', 'rating:Str', 'rating:Spd', 'rating:Jmp', 'rating:End', 'rating:Ins', 'rating:Dnk', 'rating:FT', 'rating:2Pt', 'rating:3Pt', 'rating:Blk', 'rating:Stl', 'rating:Drb', 'rating:Pss', 'rating:Reb', 'Skills')}
             defaultSort={[0, 'asc']}

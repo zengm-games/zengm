@@ -300,6 +300,10 @@ const cols: {
         desc: 'Rookie of the Year',
         sortType: 'name',
     },
+    'Rank': {
+      desc: 'Pyramid Rank',
+      sortType: 'number'
+    },
     'Reb': {
         desc: 'Rebounds Per Game',
         sortSequence: ['desc', 'asc'],
@@ -314,6 +318,12 @@ const cols: {
         sortType: 'currency',
     },
     'Runner Up': {},
+    'Score':
+    {
+      desc: 'Pyrmaid Score',
+      sortSequence: ['desc', 'asc'],
+      sortType: 'number'
+    },
     'SMOY': {
         desc: 'Sixth Man of the Year',
         sortType: 'name',

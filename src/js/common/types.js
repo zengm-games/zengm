@@ -478,6 +478,7 @@ export type PlayerWithoutPid = {
     watch: boolean,
     weight: number,
     yearsFreeAgent: number,
+    hofScore: number
 };
 
 export type Player = PlayerWithoutPid & {pid: number};

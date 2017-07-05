@@ -122,6 +122,7 @@ async function newPhasePreseason(conditions: Conditions) {
     for (const p of players) {
         // Update ratings
         player.addRatingsRow(p, scoutingRank);
+        p.stats = await idb.cache.playerStats.indexGetAll('playerStatsAllByPid', p.pid);
         player.develop(p, 1, false, coachingRanks[p.tid]);
 
         // Update player values after ratings changes

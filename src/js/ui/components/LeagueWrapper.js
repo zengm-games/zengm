@@ -68,6 +68,9 @@ class SideMenu extends React.Component {
                 <li className={pageId === 'hallOfFame' ? 'active' : null}>
                     <a href={helpers.leagueUrl(['hall_of_fame'])}>Hall of Fame</a>
                 </li>
+                <li className={pageId === 'pyramid' ? 'active' : null}>
+                    <a href={helpers.leagueUrl(['pyramid'])}>Pyramid</a>
+                </li>
                 <li className="bs-navheader">Stats</li>
                 <li className={pageId === 'gameLog' ? 'active' : null}>
                     <a href={helpers.leagueUrl(['game_log'])}>Game Log</a>

@@ -106,6 +106,7 @@ const genPage = (id, inLeague = true) => {
     page('/l/:lid/history', genPage('history'));
     page('/l/:lid/history/:season', genPage('history'));
     page('/l/:lid/hall_of_fame', genPage('hallOfFame'));
+    page('/l/:lid/pyramid', genPage('pyramid'));
     page('/l/:lid/edit_team_info', genPage('editTeamInfo'));
     page('/l/:lid/roster', genPage('roster'));
     page('/l/:lid/roster/:abbrev', genPage('roster'));

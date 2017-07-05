@@ -46,6 +46,7 @@ export {default as PlayerStatDists} from './PlayerStatDists';
 export {default as PlayerStats} from './PlayerStats';
 export {default as Playoffs} from './Playoffs';
 export {default as PowerRankings} from './PowerRankings';
+export {default as Pyramid} from './Pyramid';
 export {default as ResetPassword} from './ResetPassword';
 export {default as Roster} from './Roster';
 export {default as Schedule} from './Schedule';

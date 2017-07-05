@@ -302,7 +302,7 @@ const Player = ({events, feats, freeAgent, godMode, injured, player, retired, sh
                     {contractInfo}
                     {godMode ? <div><a href={helpers.leagueUrl(['customize_player', player.pid])} className="god-mode god-mode-text">Edit Player</a><br /></div> : null}
                     {statusInfo}
-                    <div>Pyramid Score: {player.hofScore > 0 ? {player.hofScore.toFixed(2)}</div> : 'None'}</div>
+                    <div>Pyramid Score: {player.hofScore > 0 ? `${player.hofScore.toFixed(2)}` : 'None'}</div>
                 </div>
             </div>
 

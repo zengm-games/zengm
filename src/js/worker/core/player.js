@@ -477,8 +477,6 @@ function develop(
     } else {
         p.ratings[r].pos = pos(p.ratings[r]);
     }
-
-    p.hofScore = hofScore(p, p.stats);
 }
 
 /**
@@ -1246,9 +1244,7 @@ function retire(p: Player, playerStats: PlayerStats[], conditions: Conditions, r
     }
 
     p.tid = PLAYER.RETIRED;
-    p.retiredYear = g.season;
-
-    p.hofScore = hofScore(p, playerStats);
+    p.retiredYear = g.season;    
 
     // Add to Hall of Fame?
     if (madeHof(p, playerStats)) {

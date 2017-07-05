@@ -319,6 +319,8 @@ async function newPhaseBeforeDraft(conditions: Conditions, liveGameSim?: boolean
         // Get player stats, used for HOF calculation
         const playerStats = await idb.getCopies.playerStats({pid: p.pid});
 
+        p.hofScore = player.hofScore(p,playerStats);
+
         const age = g.season - p.born.year;
         const pot = p.ratings[p.ratings.length - 1].pot;
 

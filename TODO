@@ -140,17 +140,9 @@ document cache data format and API!
 - read from just the cache if you're sure everything is there (like an active player). otherwise, read from db and augment with cache (because anything could be in cache, even if it's not normally.. like retired player added to watch list). getCopy variables do this
 - promise microtask worker crap - for firefox support, if you start a backboard tx manually, you can't do any promise/asyncawait stuff inside the callback
 
-league creation
-- reading from league file
-
 debug mode makes huge perf difference
 - warning bar
 - is this still true?
-
-make cache synchronous? it'll be faster, any problems though?
-- won't be able to wait while flushing
-
-revisit lock system
 
 benchmark using proxies to detect change in index stuff rather than dirtyIndexes
 

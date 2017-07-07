@@ -7,9 +7,9 @@ import _ from 'underscore';
 import {g, helpers} from '../../common';
 import {setTitle} from '../util';
 import {DraftAbbrev, Dropdown, JumpTo, NewWindowLink} from '../components';
-import type {DraftLotteryResult} from '../../common/types';
+import type {DraftLotteryResultArray} from '../../common/types';
 
-const getProbs = (result: DraftLotteryResult): (number | void)[][] => {
+const getProbs = (result: DraftLotteryResultArray): (number | void)[][] => {
     const probs = [];
 
     const topThreeCombos = new Map();
@@ -69,7 +69,7 @@ const getProbs = (result: DraftLotteryResult): (number | void)[][] => {
     return probs;
 };
 
-const DraftLottery = ({result, season}: {result: DraftLotteryResult | void, season: number}) => {
+const DraftLottery = ({result, season}: {result: DraftLotteryResultArray | void, season: number}) => {
     setTitle(`${season} Draft Lottery`);
 
     const probs = result !== undefined ? getProbs(result) : undefined;
@@ -131,7 +131,7 @@ const DraftLottery = ({result, season}: {result: DraftLotteryResult | void, seas
         <JumpTo season={season} />
         <h1>{season} Draft Lottery <NewWindowLink /></h1>
 
-        <p>More: <a href={helpers.leagueUrl(['draft_scouting'])}>Future Draft Scouting</a></p>
+        <p>More: <a href={helpers.leagueUrl(['draft_scouting'])}>Future Draft Scouting</a> | <a href={helpers.leagueUrl(['draft_summary', season])}>Draft Summary</a></p>
 
         {table}
     </div>;

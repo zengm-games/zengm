@@ -1,7 +1,5 @@
 draft lottery UI
 - create UI to view past draft lotteries
-  - show probability grid, highlight like https://en.wikipedia.org/wiki/2017_NBA_draft#Draft_lottery
-  - links to/from lottery page and other draft pages
   - in season, projected (like playoffs)
 - reuse same UI for live draft lottery
   - button to Run Lottery, which instantly computes and saves lottery and sends results to UI for gradual updating

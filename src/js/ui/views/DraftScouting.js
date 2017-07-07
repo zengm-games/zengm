@@ -61,7 +61,7 @@ class DraftScouting extends React.Component {
         return <div>
             <h1>Draft Scouting <NewWindowLink /></h1>
 
-            <p>More: <a href={helpers.leagueUrl(['draft_summary'])}>Old Draft Summaries</a></p>
+            <p>More: <a href={helpers.leagueUrl(['draft_summary'])}>Draft Summary</a> | <a href={helpers.leagueUrl(['draft_lottery'])}>Draft Lottery</a></p>
 
             <p>The ratings shown are your scouts' projections for what the players' ratings will be when they enter the draft. The further in the future, the more uncertainty there is in their estimates.</p>
 

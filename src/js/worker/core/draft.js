@@ -350,7 +350,7 @@ async function genOrder(conditions: Conditions) {
     }
 
     // Save draft lottery results separately
-    const draftLotteryResults = {
+    const draftLotteryResult = {
         season: g.season,
         result: draftOrder
             .filter(({round, pick: pickNum}) => round === 1 && pickNum <= chances.length)
@@ -375,9 +375,10 @@ async function genOrder(conditions: Conditions) {
                     won,
                     lost,
                 };
-            }),
+            })
+            .sort((a, b) => b.chances - a.chances),
     };
-    await idb.cache.draftLotteryResults.put(draftLotteryResults);
+    await idb.cache.draftLotteryResults.put(draftLotteryResult);
 
     // Sort by winp with reverse randVal for tiebreakers.
     teams.sort((a, b) => {

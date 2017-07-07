@@ -136,7 +136,7 @@ export type Conditions = {
     hostID?: number,
 };
 
-export type DraftLotteryResult = {
+export type DraftLotteryResultArray = {
     tid: number,
     originalTid: number,
     chances: number,
@@ -144,6 +144,11 @@ export type DraftLotteryResult = {
     won: number,
     lost: number,
 }[];
+
+export type DraftLotteryResult = {
+    season: number,
+    result: DraftLotteryResultArray,
+};
 
 export type DraftOrder = any;
 

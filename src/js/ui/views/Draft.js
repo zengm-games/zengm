@@ -160,6 +160,8 @@ class Draft extends React.Component {
         return <div>
             <h1>Draft <NewWindowLink /></h1>
 
+            <p>More: <a href={helpers.leagueUrl(['draft_scouting'])}>Future Draft Scouting</a> | <a href={helpers.leagueUrl(['draft_summary'])}>Draft Summary</a> | <a href={helpers.leagueUrl(['draft_lottery'])}>Draft Lottery</a></p>
+
             <p>When your turn in the draft comes up, select from the list of available players on the left.</p>
 
             {started ? null : <p><button className="btn btn-large btn-success" onClick={() => this.draftUntilUserOrEnd()}>Start Draft</button></p>}

@@ -1,9 +1,9 @@
 // @flow
 
 import {idb} from '../../db';
-import type {Awards} from '../../../common/types';
+import type {DraftLotteryResult} from '../../../common/types';
 
-const getCopy = async ({season}: {season: number}): Promise<Awards | void> => {
+const getCopy = async ({season}: {season: number}): Promise<DraftLotteryResult | void> => {
     const result = await idb.getCopies.draftLotteryResults({season});
     return result[0];
 };

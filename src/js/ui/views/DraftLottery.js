@@ -1,9 +1,10 @@
 // @flow
 
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'underscore';
-import {helpers} from '../../common';
+import {g, helpers} from '../../common';
 import {setTitle} from '../util';
 import {DraftAbbrev, Dropdown, JumpTo, NewWindowLink} from '../components';
 import type {DraftLotteryResult} from '../../common/types';
@@ -107,11 +108,11 @@ const DraftLottery = ({result, season}: {result: DraftLotteryResult | void, seas
                         const pickCols = _.range(14).map((j) => {
                             const prob = probs[i][j];
                             const pct = prob !== undefined ? `${(prob * 100).toFixed(1)}%` : undefined;
-                            return <td className={pick === j + 1 ? 'info' : undefined} key={j}>{pct}</td>;
+                            return <td className={classNames({success: pick === j + 1})} key={j}>{pct}</td>;
                         });
 
                         const row = <tr key={originalTid}>
-                            <td><DraftAbbrev tid={tid} originalTid={originalTid} season={season} /></td>
+                            <td className={classNames({info: tid === g.userTid})}><DraftAbbrev tid={tid} originalTid={originalTid} season={season} /></td>
                             <td><a href={helpers.leagueUrl(['standings', season])}>{won}-{lost}</a></td>
                             <td>{chances}</td>
                             {pickCols}

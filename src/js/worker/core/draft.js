@@ -5,7 +5,7 @@ import {PHASE, PLAYER, g, helpers} from '../../common';
 import {finances, league, phase, player} from '../core';
 import {idb} from '../db';
 import {local, logEvent, random, updatePlayMenu, updatePhase} from '../util';
-import type {Conditions, PickRealized, TeamFiltered} from '../../common/types';
+import type {Conditions, DraftLotteryResult, PickRealized, TeamFiltered} from '../../common/types';
 
 // Add a new set of draft picks
 async function genPicks(season: number) {
@@ -256,10 +256,12 @@ function lotterySort(teams: TeamFiltered[]) {
  *
  * This is currently based on an NBA-like lottery, where the first 3 picks can be any of the non-playoff teams (with weighted probabilities).
  *
+ * If mock is true, then nothing is actually saved to the database and no notifications are sent
+ *
  * @memberOf core.draft
  * @return {Promise}
  */
-async function genOrder(conditions: Conditions) {
+async function genOrder(mock?: boolean = false, conditions?: Conditions): Promise<DraftLotteryResult> {
     const teams = await idb.getCopies.teamsPlus({
         attrs: ["tid", "cid"],
         seasonAttrs: ["winp", "playoffRoundsWon", "won", "lost"],
@@ -312,7 +314,9 @@ async function genOrder(conditions: Conditions) {
         };
     }
 
-    logLotteryChances(chancePct, teams, draftPicksIndexed, conditions);
+    if (!mock) {
+        logLotteryChances(chancePct, teams, draftPicksIndexed, conditions);
+    }
 
     const draftOrder = [];
 
@@ -326,7 +330,9 @@ async function genOrder(conditions: Conditions) {
             originalTid: teams[firstThree[i]].tid,
         });
 
-        logLotteryWinners(chancePct, teams, tid, teams[firstThree[i]].tid, i + 1, conditions);
+        if (!mock) {
+            logLotteryWinners(chancePct, teams, tid, teams[firstThree[i]].tid, i + 1, conditions);
+        }
     }
 
     // First round - everyone else
@@ -341,7 +347,7 @@ async function genOrder(conditions: Conditions) {
                 originalTid: teams[i].tid,
             });
 
-            if (pick < 15) {
+            if (pick < 15 && !mock) {
                 logLotteryWinners(chancePct, teams, tid, teams[i].tid, pick, conditions);
             }
 
@@ -378,7 +384,9 @@ async function genOrder(conditions: Conditions) {
             })
             .sort((a, b) => b.chances - a.chances),
     };
-    await idb.cache.draftLotteryResults.put(draftLotteryResult);
+    if (!mock) {
+        await idb.cache.draftLotteryResults.put(draftLotteryResult);
+    }
 
     // Sort by winp with reverse randVal for tiebreakers.
     teams.sort((a, b) => {
@@ -397,12 +405,16 @@ async function genOrder(conditions: Conditions) {
         });
     }
 
-    // Delete from draftPicks object store so that they are completely untradeable
-    for (const dp of draftPicks) {
-        await idb.cache.draftPicks.delete(dp.dpid);
+    if (!mock) {
+        // Delete from draftPicks object store so that they are completely untradeable
+        for (const dp of draftPicks) {
+            await idb.cache.draftPicks.delete(dp.dpid);
+        }
+
+        await setOrder(draftOrder);
     }
 
-    await setOrder(draftOrder);
+    return draftLotteryResult;
 }
 
 /**

@@ -413,7 +413,7 @@ async function newPhaseDraft(conditions: Conditions) {
     });
     await Promise.all(promises);
 
-    await draft.genOrder(conditions);
+    await draft.genOrder(false, conditions);
 
     // This is a hack to handle weird cases where already-drafted players have draft.year set to the current season, which fucks up the draft UI
     const players = await idb.cache.players.getAll();

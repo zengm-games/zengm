@@ -1,6 +1,4 @@
 draft lottery UI
-- create UI to view past draft lotteries
-  - in season, projected (like playoffs)
 - reuse same UI for live draft lottery
   - button to Run Lottery, which instantly computes and saves lottery and sends results to UI for gradual updating
   - Until Before Draft -> Until Draft Lottery

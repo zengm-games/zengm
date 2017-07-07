@@ -69,7 +69,11 @@ const getProbs = (result: DraftLotteryResultArray): (number | void)[][] => {
     return probs;
 };
 
-const DraftLottery = ({result, season}: {result: DraftLotteryResultArray | void, season: number}) => {
+const DraftLottery = ({result, season, type}: {
+    result: DraftLotteryResultArray | void,
+    season: number,
+    type: 'completed' | 'projected',
+}) => {
     setTitle(`${season} Draft Lottery`);
 
     const probs = result !== undefined ? getProbs(result) : undefined;
@@ -133,6 +137,8 @@ const DraftLottery = ({result, season}: {result: DraftLotteryResultArray | void,
 
         <p>More: <a href={helpers.leagueUrl(['draft_scouting'])}>Future Draft Scouting</a> | <a href={helpers.leagueUrl(['draft_summary', season])}>Draft Summary</a></p>
 
+        {type === 'projected' ? <p>This is what the draft lottery probabilities would be if the lottery was held right now.</p> : null}
+
         {table}
     </div>;
 };
@@ -147,6 +153,7 @@ DraftLottery.propTypes = {
         lost: PropTypes.number.isRequired,
     })),
     season: PropTypes.number.isRequired,
+    type: PropTypes.string.isRequired,
 };
 
 export default DraftLottery;

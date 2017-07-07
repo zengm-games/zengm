@@ -3,18 +3,78 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'underscore';
-import {g, helpers} from '../../common';
-import {getCols, setTitle} from '../util';
-import {DataTable, DraftAbbrev, Dropdown, JumpTo, NewWindowLink} from '../components';
+import {helpers} from '../../common';
+import {setTitle} from '../util';
+import {DraftAbbrev, Dropdown, JumpTo, NewWindowLink} from '../components';
 import type {DraftLotteryResult} from '../../common/types';
+
+const getProbs = (result: DraftLotteryResult): (number | void)[][] => {
+    const probs = [];
+
+    const topThreeCombos = new Map();
+
+    // Top three picks
+    for (let i = 0; i < result.length; i++) {
+        probs[i] = [];
+        probs[i][0] = result[i].chances / 1000; // First pick
+        probs[i][1] = 0; // Second pick
+        probs[i][2] = 0; // Third pick
+        for (let k = 0; k < result.length; k++) {
+            if (k !== i) {
+                probs[i][1] += (result[k].chances / 1000) * result[i].chances / (1000 - result[k].chances);
+
+                for (let l = 0; l < result.length; l++) {
+                    if (l !== i && l !== k) {
+                        const combosTemp = (result[k].chances / 1000) * (result[l].chances / (1000 - result[k].chances)) * result[i].chances / (1000 - result[k].chances - result[l].chances);
+                        const topThreeKey = JSON.stringify([i, k, l].sort());
+                        if (!topThreeCombos.has(topThreeKey)) {
+                            topThreeCombos.set(topThreeKey, combosTemp);
+                        } else {
+                            topThreeCombos.set(topThreeKey, topThreeCombos.get(topThreeKey) + combosTemp);
+                        }
+
+                        probs[i][2] += combosTemp;
+                    }
+                }
+            }
+        }
+    }
+
+    // Fill in picks 4+
+    for (let i = 0; i < result.length; i++) {
+        const skipped = [0, 0, 0, 0]; // Probabilities of being "skipped" (lower prob team in top 3) 0/1/2/3 times
+
+        for (const [key, prob] of topThreeCombos.entries()) {
+            const inds = JSON.parse(key);
+            let skipCount = 0;
+            for (const ind of inds) {
+                if (ind > i) {
+                    skipCount += 1;
+                }
+            }
+            if (!inds.includes(i)) {
+                skipped[skipCount] += prob;
+            }
+        }
+
+        // Fill in table after first 3 picks
+        for (let j = 0; j < 4; j++) {
+            if (i + j > 2 && i + j < result.length) {
+                probs[i][i + j] = skipped[j];
+            }
+        }
+    }
+
+    return probs;
+};
 
 const DraftLottery = ({result, season}: {result: DraftLotteryResult | void, season: number}) => {
     setTitle(`${season} Draft Lottery`);
 
-console.log('b', result);
+    const probs = result !== undefined ? getProbs(result) : undefined;
 
     let table;
-    if (result) {
+    if (result && probs) { // Checking both is redundant, but flow wants it
         table = <div className="table-responsive">
             <table className="table table-striped table-bordered table-condensed table-hover">
                 <thead>
@@ -43,12 +103,14 @@ console.log('b', result);
                     </tr>
                 </thead>
                 <tbody>
-                    {result.map(({tid, originalTid, chances, pick, won, lost}) => {
-                        const pickCols = _.range(14).map((i) => {
-                            return <td className={pick - 1 === i ? 'info' : undefined}>{i}</td>;
+                    {result.map(({tid, originalTid, chances, pick, won, lost}, i) => {
+                        const pickCols = _.range(14).map((j) => {
+                            const prob = probs[i][j];
+                            const pct = prob !== undefined ? `${(prob * 100).toFixed(1)}%` : undefined;
+                            return <td className={pick === j + 1 ? 'info' : undefined} key={j}>{pct}</td>;
                         });
 
-                        const row = <tr>
+                        const row = <tr key={originalTid}>
                             <td><DraftAbbrev tid={tid} originalTid={originalTid} season={season} /></td>
                             <td><a href={helpers.leagueUrl(['standings', season])}>{won}-{lost}</a></td>
                             <td>{chances}</td>

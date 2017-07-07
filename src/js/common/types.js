@@ -140,7 +140,9 @@ export type DraftLotteryResult = {
     tid: number,
     originalTid: number,
     chances: number,
-    pick: number | void,
+    pick?: number,
+    won: number,
+    lost: number,
 }[];
 
 export type DraftOrder = any;

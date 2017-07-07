@@ -7,10 +7,10 @@ import type {DraftLotteryResult} from '../../common/types';
 
 async function updateDraftLottery(
     inputs: {season: number},
-): {
+): Promise<{
     result: DraftLotteryResult | void,
     season: number,
-} {
+}> {
     const result = [{
         tid: 1,
         originalTid: 0,

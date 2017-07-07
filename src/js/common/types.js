@@ -136,6 +136,13 @@ export type Conditions = {
     hostID?: number,
 };
 
+export type DraftLotteryResult = {
+    tid: number,
+    originalTid: number,
+    chances: number,
+    pick: number | void,
+}[];
+
 export type DraftOrder = any;
 
 export type DraftPick = {

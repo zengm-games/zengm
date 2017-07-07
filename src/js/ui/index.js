@@ -161,6 +161,8 @@ const genPage = (id, inLeague = true) => {
     page('/l/:lid/event_log/:abbrev', genPage('eventLog'));
     page('/l/:lid/event_log/:abbrev/:season', genPage('eventLog'));
     page('/l/:lid/delete_old_data', genPage('deleteOldData'));
+    page('/l/:lid/draft_lottery', genPage('draftLottery'));
+    page('/l/:lid/draft_lottery/:season', genPage('draftLottery'));
     page('/l/:lid/draft_scouting', genPage('draftScouting'));
     page('/l/:lid/draft_scouting/:season', genPage('draftScouting'));
     page('/l/:lid/watch_list', genPage('watchList'));

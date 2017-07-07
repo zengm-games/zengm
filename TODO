@@ -1,3 +1,17 @@
+draft lottery UI
+- create new object store containing draft lottery results
+  - {tid, originalTid, chances, pick}[]
+- create UI to view past draft lotteries
+  - show probability grid, highlight like https://en.wikipedia.org/wiki/2017_NBA_draft#Draft_lottery
+  - links to/from lottery page and other draft pages
+- reuse same UI for live draft lottery
+  - button to Run Lottery, which instantly computes and saves lottery and sends results to UI for gradual updating
+  - Until Before Draft -> Until Draft Lottery
+  - in before draft, options are View Lottery or Until Draft (like skipping lottery)
+  - run lottery either in skip mode (like now) or in View Lottery page
+    - results are instant either way, so no race condition possible?
+  - when running, show notification for every pick
+
 option to equalize cities when starting new league (equal spending and size)
 
 marker for feats from the playoffs/finals https://www.reddit.com/r/BasketballGM/comments/6gpf1f/suggestion_a_marker_of_some_sort_next_to_game/

@@ -39,6 +39,14 @@ const draft = () => {
     }
 };
 
+const draftLottery = (ctx) => {
+    const season = helpers.validateSeason(ctx.params.season);
+
+    return {
+        season,
+    };
+};
+
 const draftSummary = (ctx) => {
     let season = helpers.validateSeason(ctx.params.season);
 
@@ -318,6 +326,7 @@ export default {
     customizePlayer,
     deleteLeague,
     draft,
+    draftLottery,
     draftSummary,
     eventLog,
     fantasyDraft,

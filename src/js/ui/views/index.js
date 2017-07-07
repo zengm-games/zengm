@@ -9,6 +9,7 @@ export {default as Dashboard} from './Dashboard';
 export {default as DeleteLeague} from './DeleteLeague';
 export {default as DeleteOldData} from './DeleteOldData';
 export {default as Draft} from './Draft';
+export {default as DraftLottery} from './DraftLottery';
 export {default as DraftScouting} from './DraftScouting';
 export {default as DraftSummary} from './DraftSummary';
 export {default as EditTeamInfo} from './EditTeamInfo';

@@ -8,6 +8,7 @@ import {lock, local} from '../util';
 import type {
     Awards,
     BackboardTx,
+    DraftLotteryResult,
     DraftOrder,
     DraftPick,
     DraftPickWithoutDpid,
@@ -34,11 +35,11 @@ import type {
 type Status = 'empty' | 'error' | 'filling' | 'full';
 
 // Only these IDB object stores for now. Keep in memory only player info for non-retired players and team info for the current season.
-export type Store = 'awards' | 'draftOrder' | 'draftPicks' | 'events' | 'gameAttributes' | 'games' | 'messages' | 'negotiations' | 'playerFeats' | 'playerStats' | 'players' | 'playoffSeries' | 'releasedPlayers' | 'schedule' | 'teamSeasons' | 'teamStats' | 'teams' | 'trade';
+export type Store = 'awards' | 'draftLotteryResults' | 'draftOrder' | 'draftPicks' | 'events' | 'gameAttributes' | 'games' | 'messages' | 'negotiations' | 'playerFeats' | 'playerStats' | 'players' | 'playoffSeries' | 'releasedPlayers' | 'schedule' | 'teamSeasons' | 'teamStats' | 'teams' | 'trade';
 type Index = 'draftPicksBySeason' | 'draftPicksByTid' | 'playerStats' | 'playerStatsAllByPid' | 'playerStatsByPid' | 'playersByTid' | 'releasedPlayers' | 'releasedPlayersByTid' | 'teamSeasonsBySeasonTid' | 'teamSeasonsByTidSeason' | 'teamStatsByPlayoffsTid';
 
 // This variable is only needed because Object.keys(storeInfos) is not handled well in Flow
-export const STORES: Store[] = ['awards', 'draftOrder', 'draftPicks', 'events', 'gameAttributes', 'games', 'messages', 'negotiations', 'playerFeats', 'playerStats', 'players', 'playoffSeries', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams', 'trade'];
+export const STORES: Store[] = ['awards', 'draftLotteryResults', 'draftOrder', 'draftPicks', 'events', 'gameAttributes', 'games', 'messages', 'negotiations', 'playerFeats', 'playerStats', 'players', 'playoffSeries', 'releasedPlayers', 'schedule', 'teamSeasons', 'teamStats', 'teams', 'trade'];
 
 const AUTO_FLUSH_INTERVAL = 2000; // 2 seconds
 
@@ -123,6 +124,7 @@ class Cache {
     };
 
     awards: StoreAPI<Awards, Awards, number>;
+    draftLotteryResults: StoreAPI<DraftLotteryResult, DraftLotteryResult, number>;
     draftOrder: StoreAPI<DraftOrder, DraftOrder, number>;
     draftPicks: StoreAPI<(DraftPick | DraftPickWithoutDpid), DraftPick, number>;
     events: StoreAPI<EventBBGM, EventBBGM, number>;
@@ -158,6 +160,11 @@ class Cache {
 
         this.storeInfos = {
             awards: {
+                pk: 'season',
+                pkType: 'number',
+                autoIncrement: false,
+            },
+            draftLotteryResults: {
                 pk: 'season',
                 pkType: 'number',
                 autoIncrement: false,
@@ -343,6 +350,7 @@ class Cache {
         }
 
         this.awards = new StoreAPI(this, 'awards');
+        this.draftLotteryResults = new StoreAPI(this, 'draftLotteryResults');
         this.draftOrder = new StoreAPI(this, 'draftOrder');
         this.draftPicks = new StoreAPI(this, 'draftPicks');
         this.events = new StoreAPI(this, 'events');

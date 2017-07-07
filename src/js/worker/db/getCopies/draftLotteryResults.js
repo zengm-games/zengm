@@ -1,0 +1,26 @@
+// @flow
+
+import {idb} from '../../db';
+import {mergeByPk} from './helpers';
+import type {Awards} from '../../../common/types';
+
+const getCopies = async ({season}: {season?: number} = {}): Promise<Awards[]> => {
+    if (season !== undefined) {
+        const draftLotteryResults = mergeByPk(
+            await idb.league.draftLotteryResults.getAll(season),
+            (await idb.cache.draftLotteryResults.getAll()).filter((event) => {
+                return event.season === season;
+            }),
+            idb.cache.storeInfos.draftLotteryResults.pk,
+        );
+        return draftLotteryResults;
+    }
+
+    return mergeByPk(
+        await idb.league.draftLotteryResults.getAll(),
+        await idb.cache.draftLotteryResults.getAll(),
+        idb.cache.storeInfos.draftLotteryResults.pk,
+    );
+};
+
+export default getCopies;

@@ -1,6 +1,7 @@
 // @flow
 
 export {default as awards} from './awards';
+export {default as draftLotteryResults} from './draftLotteryResults';
 export {default as events} from './events';
 export {default as games} from './games';
 export {default as messages} from './messages';

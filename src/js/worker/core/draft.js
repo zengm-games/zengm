@@ -262,7 +262,7 @@ function lotterySort(teams: TeamFiltered[]) {
 async function genOrder(conditions: Conditions) {
     const teams = await idb.getCopies.teamsPlus({
         attrs: ["tid", "cid"],
-        seasonAttrs: ["winp", "playoffRoundsWon"],
+        seasonAttrs: ["winp", "playoffRoundsWon", "won", "lost"],
         season: g.season,
     });
 
@@ -275,14 +275,15 @@ async function genOrder(conditions: Conditions) {
     const chancePct = chances.map(c => (c / chanceTotal) * 100);
 
     // cumsum
-    for (let i = 1; i < chances.length; i++) {
-        chances[i] += chances[i - 1];
+    const chancesCumsum = chances.slice();
+    for (let i = 1; i < chancesCumsum.length; i++) {
+        chancesCumsum[i] += chancesCumsum[i - 1];
     }
-    // Pick first three picks based on chances
+    // Pick first three picks based on chancesCumsum
     const firstThree = [];
     while (firstThree.length < 3) {
         const draw = random.randInt(0, 999);
-        const i = chances.findIndex(chance => chance > draw);
+        const i = chancesCumsum.findIndex(chance => chance > draw);
         if (!firstThree.includes(i)) {
             // If one lottery winner, select after other tied teams;
             teams[i].randVal -= 30;
@@ -347,6 +348,36 @@ async function genOrder(conditions: Conditions) {
             pick += 1;
         }
     }
+
+    // Save draft lottery results separately
+    const draftLotteryResults = {
+        season: g.season,
+        result: draftOrder
+            .filter(({round, pick: pickNum}) => round === 1 && pickNum <= chances.length)
+            .map(({pick: pickNum, originalTid, tid}) => {
+                // For the team making the pick
+                const t = teams.find((t2) => t2.tid === tid);
+                let won = 0;
+                let lost = 0;
+                if (t) {
+                    won = t.seasonAttrs.won;
+                    lost = t.seasonAttrs.lost;
+                }
+
+                // For the original team
+                const i = teams.findIndex((t2) => t2.tid === originalTid);
+
+                return {
+                    tid,
+                    originalTid,
+                    chances: chances[i],
+                    pick: pickNum,
+                    won,
+                    lost,
+                };
+            }),
+    };
+    await idb.cache.draftLotteryResults.put(draftLotteryResults);
 
     // Sort by winp with reverse randVal for tiebreakers.
     teams.sort((a, b) => {

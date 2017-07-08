@@ -142,7 +142,7 @@ function lotteryLogTxt(tid: number, type: 'chance' | 'moveddown' | 'movedup' | '
     return txt;
 }
 
-function logAction(tid: number, text: string, conditions: Conditions) {
+function logAction(tid: number, text: string, conditions?: Conditions) {
     logEvent({
         type: "draft",
         text,
@@ -152,7 +152,7 @@ function logAction(tid: number, text: string, conditions: Conditions) {
     }, conditions);
 }
 
-function logLotteryChances(chances: number[], teams: TeamFiltered[], draftOrder, conditions: Conditions) {
+function logLotteryChances(chances: number[], teams: TeamFiltered[], draftOrder, conditions?: Conditions) {
     for (let i = 0; i < chances.length; i++) {
         if (i < teams.length) {
             const origTm = teams[i].tid;
@@ -163,7 +163,7 @@ function logLotteryChances(chances: number[], teams: TeamFiltered[], draftOrder,
     }
 }
 
-function logLotteryWinners(chances: number[], teams: TeamFiltered[], tm: number, origTm: number, pick: number, conditions: Conditions) {
+function logLotteryWinners(chances: number[], teams: TeamFiltered[], tm: number, origTm: number, pick: number, conditions?: Conditions) {
     const idx = teams.find(t => t.tid === origTm);
     if (idx !== undefined) {
         let txt;

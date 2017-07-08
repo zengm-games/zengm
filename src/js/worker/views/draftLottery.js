@@ -13,7 +13,7 @@ async function updateDraftLottery(
     result: DraftLotteryResultArray | void,
     season: number,
     type: 'completed' | 'projected',
-}> {
+} | void> {
     if (updateEvents.includes('firstRun') || season !== state.season || (season === g.season && updateEvents.includes('gameSim'))) {
         // View completed draft lottery
         if (season < g.season || season === g.season && g.phase >= PHASE.DRAFT) {

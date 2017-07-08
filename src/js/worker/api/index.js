@@ -88,7 +88,7 @@ const deleteOldData = async (options: {
     playerStatsUnnotable: boolean,
     playerStats: boolean,
 }) => {
-    await idb.league.tx(["games", "teams", "teamSeasons", "teamStats", "players", "playerStats"], "readwrite", (tx) => {
+    await idb.league.tx(["draftLotteryResults", "games", "teams", "teamSeasons", "teamStats", "players", "playerStats"], "readwrite", (tx) => {
         if (options.boxScores) {
             tx.games.clear();
         }
@@ -99,6 +99,7 @@ const deleteOldData = async (options: {
                     tx.teamSeasons.delete(teamSeason.rid);
                 }
             });
+            tx.draftLotteryResults.clear();
         }
 
         if (options.teamStats) {

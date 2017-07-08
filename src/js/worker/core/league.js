@@ -176,14 +176,20 @@ async function create(
 
     // Initialize draft order object store for later use
     if (leagueFile.hasOwnProperty("draftOrder")) {
-        for (let i = 0; i < leagueFile.draftOrder.length; i++) {
-            await idb.cache.draftOrder.add(leagueFile.draftOrder[i]);
+        for (const draftOrder of leagueFile.draftOrder) {
+            await idb.cache.draftOrder.add(draftOrder);
         }
     } else {
         await idb.cache.draftOrder.add({
             rid: 0,
             draftOrder: [],
         });
+    }
+
+    if (leagueFile.hasOwnProperty('draftLotteryResults')) {
+        for (const draftLotteryResult of leagueFile.draftLotteryResults) {
+            await idb.cache.draftLotteryResults.add(draftLotteryResult);
+        }
     }
 
     // teams already contains tid, cid, did, region, name, and abbrev. Let's add in the other keys we need for the league.

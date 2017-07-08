@@ -166,6 +166,19 @@ const deleteOldData = async (options: {
     });
 };
 
+const draftLottery = async () => {
+    const draftLotteryResult = await draft.genOrder();
+
+    const toReveal = [];
+    for (let i = 0; i < draftLotteryResult.result.length; i++) {
+        const pick = draftLotteryResult.result[i].pick;
+        toReveal[pick - 1] = i;
+    }
+    toReveal.reverse();
+
+    return toReveal;
+};
+
 const draftUntilUserOrEnd = async (conditions: Conditions) => {
     await updateStatus('Draft in progress...');
 
@@ -772,6 +785,7 @@ export default {
     createLeague,
     createTrade,
     deleteOldData,
+    draftLottery,
     draftUntilUserOrEnd,
     draftUser,
     exportLeague,

@@ -1,7 +1,4 @@
 draft lottery UI
-- implement live draft lottery
-- in phase change, only run lottery if not already eon
-- test db upgrade
 - include draftLotteryResults in delete old data, export
 
 option to equalize cities when starting new league (equal spending and size)

@@ -20,7 +20,7 @@ async function updateDraftLottery(
             const draftLotteryResult = await idb.getCopy.draftLotteryResults({season});
 
             // If season === g.season && g.phase === PHASE.DRAFT_LOTTERY, this will be undefined if the lottery is not done yet
-            if (draftLotteryResult) {
+            if (draftLotteryResult || g.phase > PHASE.DRAFT_LOTTERY) {
                 const result = draftLotteryResult !== undefined ? draftLotteryResult.result : undefined;
 
                 return {
@@ -38,7 +38,6 @@ async function updateDraftLottery(
             pick.pick = undefined;
         }
 
-console.log(season, g.season, g.phase, PHASE.DRAFT_LOTTERY);
         const type = season === g.season && g.phase === PHASE.DRAFT_LOTTERY ? 'readyToRun' : 'projected';
 
         return {

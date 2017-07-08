@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import _ from 'underscore';
 import {g, helpers} from '../../common';
-import {setTitle} from '../util';
+import {setTitle, toWorker} from '../util';
 import {DraftAbbrev, Dropdown, JumpTo, NewWindowLink} from '../components';
 import type {DraftLotteryResultArray} from '../../common/types';
 
@@ -77,9 +77,12 @@ type Props = {
 
 type State = {
     started: boolean,
+    toReveal: number[], // Values are indexes of this.props.result, starting with the 14th pick and ending with the 1st pick
+    indRevealed: number,
 };
 
 class DraftLottery extends React.Component {
+    componentIsMounted: boolean;
     props: Props;
     state: State;
 
@@ -88,17 +91,50 @@ class DraftLottery extends React.Component {
 
         this.state = {
             started: false,
+            toReveal: [],
+            indRevealed: -1,
         };
     }
 
-    startLottery() {
+    revealPick() {
+        const indRevealed = this.state.indRevealed + 1;
+
+        if (!this.componentIsMounted) {
+            return;
+        }
+
+        this.setState({
+            indRevealed,
+        }, () => {
+            if (this.state.indRevealed < this.state.toReveal.length - 1) {
+                setTimeout(() => {
+                    this.revealPick();
+                }, 1000);
+            }
+        });
+    }
+
+    async startLottery() {
         this.setState({
             started: true,
         });
 
-        // run lottery
-        // save picks to state
-        // reveal one by one
+        const toReveal = await toWorker('draftLottery');
+
+        this.setState({
+            toReveal,
+            indRevealed: -1,
+        }, () => {
+            this.revealPick();
+        });
+    }
+
+    componentDidMount() {
+        this.componentIsMounted = true;
+    }
+
+    componentWillUnmount() {
+        this.componentIsMounted = false;
     }
 
     render() {
@@ -107,6 +143,8 @@ class DraftLottery extends React.Component {
         setTitle(`${season} Draft Lottery`);
 
         const probs = result !== undefined ? getProbs(result) : undefined;
+
+        const NUM_PICKS = 14;
 
         let table;
         if (result && probs) { // Checking both is redundant, but flow wants it
@@ -139,10 +177,22 @@ class DraftLottery extends React.Component {
                     </thead>
                     <tbody>
                         {result.map(({tid, originalTid, chances, pick, won, lost}, i) => {
-                            const pickCols = _.range(14).map((j) => {
+                            const pickCols = _.range(NUM_PICKS).map((j) => {
                                 const prob = probs[i][j];
                                 const pct = prob !== undefined ? `${(prob * 100).toFixed(1)}%` : undefined;
-                                return <td className={classNames({success: pick === j + 1})} key={j}>{pct}</td>;
+
+                                let highlighted = false;
+                                if (pick !== undefined) {
+                                    highlighted = pick === j + 1;
+                                } else if (NUM_PICKS - 1 - j <= this.state.indRevealed) { // Has this round been revealed?
+                                    // Is this pick revealed?
+                                    const ind = this.state.toReveal.findIndex(ind2 => ind2 === i);
+                                    if (ind === NUM_PICKS - 1 - j) {
+                                        highlighted = true;
+                                    }
+                                }
+
+                                return <td className={classNames({success: highlighted})} key={j}>{pct}</td>;
                             });
 
                             const row = <tr key={originalTid}>

@@ -278,7 +278,7 @@ class DropdownLinks extends React.Component {
                 {lid !== undefined ? <li className="divider" /> : null}
                 <li role="presentation" className="dropdown-header">Use at your own risk!</li>
                 {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('skipToPlayoffs', e)}>Skip To Playoffs</MenuItem> : null}
-                {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('skipToBeforeDraft', e)}>Skip To Before Draft</MenuItem> : null}
+                {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('skipToBeforeDraft', e)}>Skip To Draft Lottery</MenuItem> : null}
                 {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('skipToAfterDraft', e)}>Skip To After Draft</MenuItem> : null}
                 {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('skipToPreseason', e)}>Skip To Preseason</MenuItem> : null}
                 {lid !== undefined ? <MenuItem onClick={e => handleToolsClick('forceResumeDraft', e)}>Force Resume Draft</MenuItem> : null}

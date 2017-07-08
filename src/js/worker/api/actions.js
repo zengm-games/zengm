@@ -156,7 +156,7 @@ const playMenu = {
     },
 
     untilDraft: async (conditions: Conditions) => {
-        if (g.phase === PHASE.BEFORE_DRAFT) {
+        if (g.phase === PHASE.DRAFT_LOTTERY) {
             await phase.newPhase(PHASE.DRAFT, conditions);
         }
     },
@@ -211,7 +211,7 @@ const toolsMenu = {
     },
 
     skipToBeforeDraft: async (conditions: Conditions) => {
-        await phase.newPhase(PHASE.BEFORE_DRAFT, conditions);
+        await phase.newPhase(PHASE.DRAFT_LOTTERY, conditions);
     },
 
     skipToAfterDraft: async (conditions: Conditions) => {

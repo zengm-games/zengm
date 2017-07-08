@@ -1,11 +1,6 @@
 draft lottery UI
-- reuse same UI for live draft lottery
-  - button to Run Lottery, which instantly computes and saves lottery and sends results to UI for gradual updating
-  - Until Before Draft -> Until Draft Lottery
-  - in before draft, options are View Lottery or Until Draft (like skipping lottery)
-  - run lottery either in skip mode (like now) or in View Lottery page
-    - results are instant either way, so no race condition possible?
-  - when running, show notification for every pick
+- implement live draft lottery
+- in phase change, only run lottery if not already eon
 - test db upgrade
 - include draftLotteryResults in delete old data, export
 

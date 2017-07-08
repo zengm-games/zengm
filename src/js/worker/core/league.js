@@ -429,7 +429,7 @@ async function create(
         }
     }
     // If the draft has already happened this season but next year's class hasn't been bumped up, don't create any PLAYER.UNDRAFTED
-    if (createUndrafted1 > 0 && (g.phase <= PHASE.BEFORE_DRAFT || g.phase >= PHASE.FREE_AGENCY)) {
+    if (createUndrafted1 > 0 && (g.phase <= PHASE.DRAFT_LOTTERY || g.phase >= PHASE.FREE_AGENCY)) {
         await draft.genPlayers(PLAYER.UNDRAFTED, scoutingRank, createUndrafted1, true);
     }
     if (createUndrafted2 > 0) {
@@ -575,7 +575,7 @@ async function autoPlay(conditions: Conditions) {
         await game.play(numDays, conditions);
     } else if (g.phase === PHASE.PLAYOFFS) {
         await game.play(100, conditions);
-    } else if (g.phase === PHASE.BEFORE_DRAFT) {
+    } else if (g.phase === PHASE.DRAFT_LOTTERY) {
         await phase.newPhase(PHASE.DRAFT, conditions);
     } else if (g.phase === PHASE.DRAFT) {
         await draft.untilUserOrEnd(conditions);

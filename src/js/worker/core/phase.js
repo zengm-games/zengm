@@ -580,7 +580,7 @@ async function newPhase(phase: Phase, conditions: Conditions, extra?: any) {
         [PHASE.PLAYOFFS]: {
             func: newPhasePlayoffs,
         },
-        [PHASE.BEFORE_DRAFT]: {
+        [PHASE.DRAFT_LOTTERY]: {
             func: newPhaseBeforeDraft,
         },
         [PHASE.DRAFT]: {

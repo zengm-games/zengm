@@ -12,20 +12,23 @@ async function updateDraftLottery(
 ): Promise<{
     result: DraftLotteryResultArray | void,
     season: number,
-    type: 'completed' | 'projected',
+    type: 'completed' | 'projected' | 'readyToRun',
 } | void> {
-    if (updateEvents.includes('firstRun') || season !== state.season || (season === g.season && updateEvents.includes('gameSim'))) {
+    if (updateEvents.includes('firstRun') || updateEvents.includes('newPhase') || season !== state.season || (season === g.season && updateEvents.includes('gameSim'))) {
         // View completed draft lottery
-        if (season < g.season || season === g.season && g.phase >= PHASE.DRAFT) {
+        if (season < g.season || season === g.season && g.phase >= PHASE.DRAFT_LOTTERY) {
             const draftLotteryResult = await idb.getCopy.draftLotteryResults({season});
 
-            const result = draftLotteryResult !== undefined ? draftLotteryResult.result : undefined;
+            // If season === g.season && g.phase === PHASE.DRAFT_LOTTERY, this will be undefined if the lottery is not done yet
+            if (draftLotteryResult) {
+                const result = draftLotteryResult !== undefined ? draftLotteryResult.result : undefined;
 
-            return {
-                result,
-                season,
-                type: 'completed',
-            };
+                return {
+                    result,
+                    season,
+                    type: 'completed',
+                };
+            }
         }
 
         // View projected draft lottery for this season
@@ -35,10 +38,13 @@ async function updateDraftLottery(
             pick.pick = undefined;
         }
 
+console.log(season, g.season, g.phase, PHASE.DRAFT_LOTTERY);
+        const type = season === g.season && g.phase === PHASE.DRAFT_LOTTERY ? 'readyToRun' : 'projected';
+
         return {
             result: draftLotteryResult.result,
             season: draftLotteryResult.season,
-            type: 'projected',
+            type,
         };
     }
 }

@@ -8,7 +8,7 @@ async function updatePlayers(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
 ): void | {[key: string]: any} {
-    if (updateEvents.includes('firstRun') || (updateEvents.includes('newPhase') && g.phase === PHASE.BEFORE_DRAFT)) {
+    if (updateEvents.includes('firstRun') || (updateEvents.includes('newPhase') && g.phase === PHASE.DRAFT_LOTTERY)) {
         let players = await idb.getCopies.players({retired: true});
         players = players.filter(p => p.hof);
         players = await idb.getCopies.playersPlus(players, {

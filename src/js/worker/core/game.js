@@ -710,7 +710,7 @@ async function play(numDays: number, conditions: Conditions, start?: boolean = t
         if (g.phase === PHASE.PLAYOFFS) {
             const playoffsOver = await season.newSchedulePlayoffsDay();
             if (playoffsOver) {
-                await phase.newPhase(PHASE.BEFORE_DRAFT, conditions, gidPlayByPlay !== undefined);
+                await phase.newPhase(PHASE.DRAFT_LOTTERY, conditions, gidPlayByPlay !== undefined);
             }
         } else if (Math.random() < 1 / (100 * 50)) {
             // Should a rare tragic event occur? ONLY IN REGULAR SEASON, playoffs would be tricky with roster limits and no free agents

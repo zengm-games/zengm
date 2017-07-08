@@ -13,6 +13,7 @@ number or not.
 - AI teams trade wtih each other
 - New Options screen
 - Sometimes young players (particularly from certain countries) will fake their ages
+- The draft lottery is viewable live
 
 ## Technical details
 

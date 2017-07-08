@@ -166,7 +166,7 @@ class DraftLottery extends React.Component {
                             <th>5th</th>
                             <th>6th</th>
                             <th>7th</th>
-                            <th>7th</th>
+                            <th>8th</th>
                             <th>9th</th>
                             <th>10th</th>
                             <th>11th</th>

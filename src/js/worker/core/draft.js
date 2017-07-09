@@ -361,8 +361,15 @@ async function genOrder(mock?: boolean = false, conditions?: Conditions): Promis
     // Save draft lottery results separately
     const draftLotteryResult = {
         season: g.season,
-        result: draftOrder
-            .filter(({round, pick: pickNum}) => round === 1 && pickNum <= chances.length)
+        result: teams // Start with teams in lottery order
+            .map(({tid}) => {
+                return draftOrder.find(({originalTid, pick: pickNum, round}) => {
+                    // Keep only lottery picks
+                    return originalTid === tid && round === 1 && pickNum <= chances.length;
+                });
+            })
+            .filter((row) => row !== undefined) // Keep only lottery picks
+            // $FlowFixMe
             .map(({pick: pickNum, originalTid, tid}) => {
                 // For the team making the pick
                 const t = teams.find((t2) => t2.tid === tid);
@@ -384,9 +391,7 @@ async function genOrder(mock?: boolean = false, conditions?: Conditions): Promis
                     won,
                     lost,
                 };
-            })
-            .sort((a, b) => b.chances - a.chances),
-            // ...would be better to sort by the order in teams (from lotterySort), but this is easier and will only minorly fail in ties
+            }),
     };
     if (!mock) {
         await idb.cache.draftLotteryResults.put(draftLotteryResult);

@@ -4,7 +4,7 @@ marker for feats from the playoffs/finals https://www.reddit.com/r/BasketballGM/
 
 ads don't show on safari, why?
 
-some way to see draft picks by team, now that there are AI trades. like preview the lottery?
+some way to see draft picks by team, now that there are AI trades
 
 AI trades
 - notification? only for big trades. quantify! maybe show that info in transactions page too
@@ -977,11 +977,6 @@ export/import roster
   easily edit in excel?
 core.freeAgents should be core.freeAgent or core.freeAgency?
 after last resigning negotiation, switch to next phase?
-draft lottery
-  do a dramatic presentation?
-  increase hype for teams that exceed expectations
-  tied records?
-  should happen in "before draft" phase to allow trading early
 increase hype for big free agent signings
 how to handle aggregating stats for players who played for more than one team in a season? add them all up in ps in db.getPlayers
   for roster, want just a player's stats with this team this season

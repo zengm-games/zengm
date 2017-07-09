@@ -386,6 +386,7 @@ async function genOrder(mock?: boolean = false, conditions?: Conditions): Promis
                 };
             })
             .sort((a, b) => b.chances - a.chances),
+            // ...would be better to sort by the order in teams (from lotterySort), but this is easier and will only minorly fail in ties
     };
     if (!mock) {
         await idb.cache.draftLotteryResults.put(draftLotteryResult);

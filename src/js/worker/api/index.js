@@ -29,7 +29,7 @@ const cancelContractNegotiation = async (pid: number) => {
     return contractNegotiation.cancel(pid);
 };
 
-const checkParticipationAchievement = async (force: boolean = false, conditions: Conditions) => {
+const checkParticipationAchievement = async (force: boolean, conditions: Conditions) => {
     if (force) {
         await account.addAchievements(['participation'], conditions);
     } else {

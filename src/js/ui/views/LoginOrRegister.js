@@ -45,7 +45,7 @@ class LoginOrRegister extends React.Component {
                 });
 
                 // Check for participation achievement, if this is the first time logging in to this sport
-                await toWorker('checkParticipationAchievement');
+                await toWorker('checkParticipationAchievement', false);
                 realtimeUpdate(["account"], "/account");
             } else {
                 this.setState({loginError: 'Invalid username or password.'});

@@ -557,6 +557,16 @@ async function newPhaseFantasyDraft(conditions: Conditions, position: number) {
 
     idb.cache.markDirtyIndexes('players');
 
+    // Return traded draft picks to original teams
+    const draftPicks = await idb.cache.draftPicks.getAll();
+    for (const dp of draftPicks) {
+        if (dp.tid !== dp.originalTid) {
+            dp.tid = dp.originalTid;
+            await idb.cache.draftPicks.put(dp);
+        }
+    }
+    idb.cache.markDirtyIndexes('draftPicks');
+
     return [helpers.leagueUrl(["draft"]), ["playerMovement"]];
 }
 

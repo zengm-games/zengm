@@ -41,6 +41,8 @@ class FantasyDraft extends React.Component {
 
             <p>In a "fantasy draft", all non-retired players are put into one big pool and teams take turns drafting players, similar to a fantasy basketball draft. At the beginning of the draft, the order of picks is randomized. During the draft, the order of picks snakes (reverses every other round). For example, the team that picks first in the first round picks last in the second round.</p>
 
+            <p>To make things as fair as possible, all traded draft picks will be returned to their original owners after the fantasy draft.</p>
+
             <div className="form-group">
                 <label htmlFor="position">What position do you want in the draft?</label>
                 <select name="position" className="form-control" style={{width: '110px'}} onChange={this.handlePositionChange} value={this.state.position}>

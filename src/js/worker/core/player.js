@@ -1506,6 +1506,7 @@ async function killOne(conditions: Conditions) {
         "was lost at sea and is presumed dead",
         "was run over by a car",
         "was run over by a car, and then was run over by a second car. Police believe only the first was intentional",
+        "cannot be found and is presumed dead. Neighbors reported strange lights in the sky above his house last night",
     ]);
 
     // Pick random team

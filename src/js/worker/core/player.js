@@ -675,10 +675,10 @@ function genRatings(
 ): PlayerRatings {
     let profileId;
     if (predeterminedHeight !== undefined) {
-		if  ((predeterminedHeight > 55) && random.randInt(0,100) < 99)
-			profileId = 3; // 99% of tall guys are "Big"
-		else if ((predeterminedHeight < 35) && random.randInt(0,100) < 99)
-			profileId = 1; // 99% of short guys are "Point"
+		if  ((predeterminedHeight > 55) && random.randInt(0,1000) < 999)
+			profileId = 3; // Nearly all tall guys are "Big"
+		else if ((predeterminedHeight < 35) && random.randInt(0,1000) < 999)
+			profileId = 1; // Nearly all short guys are "Point"
 		else if (random.randInt(0,100) < 50) 
 			profileId = 0; // Half of medium height players (or others that slip through) get "Base"
 		else
@@ -764,8 +764,8 @@ function genRatings(
 
     // Ugly hack: Tall people can't dribble/pass very well
     if (ratings.hgt > 40) {
-        ratings.drb = limitRating(ratings.drb - (ratings.hgt - 50));
-        ratings.pss = limitRating(ratings.pss - (ratings.hgt - 50));
+        ratings.drb = limitRating(ratings.drb - (ratings.hgt - 40));
+        ratings.pss = limitRating(ratings.pss - (ratings.hgt - 40));
     } else {
         ratings.drb = limitRating(ratings.drb + 10);
         ratings.pss = limitRating(ratings.pss + 10);
@@ -931,9 +931,9 @@ function generate(
 	realHeight = helpers.bound(PD.rgamma(1,472.0530111,5.981338), 48, 114);
 	
 	// Ugly hack: extreme outliers (7'6"+) are about right, but it's generating too many guys 7-3 to 7-5
-	// So lose an inch on half of them
-	if (realHeight >= 86 && realHeight <= 90 && random.randInt(1,100) < 50)
-		realHeight = realHeight - 1;
+	// So lose two inches on some of them
+	if (realHeight >= 86 && realHeight <= 90 && random.randInt(1,100) < 60)
+		realHeight = realHeight - 2;
 	
 	const minHgt = 66;  // 5'6"
     const maxHgt = 93;  // 7'9"

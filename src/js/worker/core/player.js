@@ -24,7 +24,7 @@ import type {
     RatingKey,
 } from '../../common/types';
 
-type Profile = '' | 'Big' | 'Point' | 'Wing';
+type Profile = '' | 'Big' | 'Point' | 'Wing' | 'Base';
 
 let playerNames;
 
@@ -260,7 +260,7 @@ function pos(ratings: PlayerRatings): string {
 		position = 'PF';
 	} else if (ratings.hgt >= 46) { // 6'6"
 		position = 'SF';
-	} else if (ratings.spd < 50 && ratings.drb < 70) {
+	} else if (ratings.spd < 45 && ratings.drb < 65) {
 		position = 'SG';
 	} else {   
         position = 'PG'; 
@@ -674,31 +674,43 @@ function genRatings(
 	predeterminedHeight: number,
 ): PlayerRatings {
     let profileId;
-    if (predeterminedHeight !== undefined) {		
-		if  ((predeterminedHeight > 55) && random.randInt(0,1000) < 999)
-			profileId = 3; // Nearly all tall guys are "Big"
-		else if ((predeterminedHeight < 35) && random.randInt(0,1000) < 999)
-			profileId = 1; // Nearly all short guys are "Point"
-		else {
-			// Medium height players (plus the very few tall/short players who slip through)
-			let selector = random.randInt(1,100);
-			if (selector <= 25) 
-				profileId = 0; // 25% get "Base"
-			else if (selector <= 50)
-				profileId = 2; // 25% get generic "Wing"
-			else if (selector <= 75)
-				profileId = 4; // 25% get "3-and-D Wing"
-			else
-				profileId = 5; // 25% get "Raw Athletic Wing"
-		}			
-    } else if (profile === "Point") {
+    profileId = -1;
+    
+    // Use the profile that is specified, if any
+    if (profile === "Point") {
         profileId = 1;
     } else if (profile === "Wing") {
         profileId = 2;
     } else if (profile === "Big") {
         profileId = 3;
-	} else {
+	} else if (profile === "Base") {
         profileId = 0;
+    }
+    
+    // Use base profile if neither profile nor predeterminedHeight are set
+    if (profileId == -1 && predeterminedHeight == 0) {
+        profileId = 0;
+    }
+    
+    // If no profile is specified, use randomly determined height to choose
+    if (profileId == -1) {		
+        if  ((predeterminedHeight > 55) && random.randInt(0,1000) < 999) {
+            profileId = 3; // Nearly all tall guys are "Big"
+        } else if ((predeterminedHeight < 35) && random.randInt(0,1000) < 999) {
+            profileId = 1; // Nearly all short guys are "Point"
+        } else {
+            // Medium height players (plus the very few tall/short players who slip through)
+            let selector = random.randInt(1,100);
+            if (selector <= 25) {
+                profileId = 0; // 25% get "Base"
+            } else if (selector <= 50) {
+                profileId = 2; // 25% get generic "Wing"
+            } else if (selector <= 75) {
+                profileId = 4; // 25% get "3-and-D Wing"
+            } else {
+                profileId = 5; // 25% get "Raw Athletic Wing"
+            }
+        }
     }
 
     // Each row should sum to ~150
@@ -727,6 +739,7 @@ function genRatings(
         }
     }
 
+    /*
 	// Calculated hgt will be overwritten with predeterminedHeight.  
 	// Difference will be credited or removed from speed, endurance, 3p, and drb.
 	if (predeterminedHeight !== undefined) {
@@ -743,7 +756,7 @@ function genRatings(
 			rawRatings[9] = limitRating(rawRatings[9] - (predeterminedHeight - rawRatings[0]) / 4);
 			rawRatings[12] = limitRating(rawRatings[12] - (predeterminedHeight - rawRatings[0]) / 4);
 		}	
-	}
+	}*/
 	
     const ratings = {
         hgt: rawRatings[0],

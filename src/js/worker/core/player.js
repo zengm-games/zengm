@@ -927,10 +927,11 @@ function generate(
     let realHeight;
     let predetHgt;
     
-    // RealHeight will never go lower than 4'0" or higher than 9'6".  (Very unlikely to ever see those anyway.)	
-    realHeight = Math.random() - 0.5;  // +/- a fraction of an inch
+    // RealHeight is drawn from a custom probability distribution and then offset by a fraction of an inch either way	
+    realHeight = Math.random() - 0.5;  // Fraction of an inch
     realHeight += random.heightDist();
 	
+    // Min/max for hgt rating.  Displayed height ranges from 4'6" to 9'0", though we might never see the true extremes
     const minHgt = 66;  // 5'6"
     const maxHgt = 93;  // 7'9"
 	

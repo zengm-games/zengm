@@ -149,10 +149,10 @@ class UserInfo extends React.Component {
     }
 
     render() {
-        const {goldUntilDateString, showGoldActive, showGoldCancelled, username} = this.props;
+        const {goldUntilDateString, loggedIn, showGoldActive, showGoldCancelled, username} = this.props;
 
         return <div>
-            {username === undefined || username === null || username === '' ? <p>
+            {!loggedIn ? <p>
                 You are not logged in! <a href="/account/login_or_register">Click here to log in or create an account.</a> If you have an account, your achievements will be stored in the cloud, combining achievements from leagues in different browsers and different computers.
             </p> : <p>
                 Logged in as: <b>{username}</b> (<a href="" id="logout" onClick={this.handleLogout}>Logout</a>)
@@ -166,6 +166,7 @@ class UserInfo extends React.Component {
 
 UserInfo.propTypes = {
     goldUntilDateString: PropTypes.string.isRequired,
+    loggedIn: PropTypes.bool.isRequired,
     showGoldActive: PropTypes.bool.isRequired,
     showGoldCancelled: PropTypes.bool.isRequired,
     username: PropTypes.string,
@@ -177,6 +178,7 @@ const Account = ({
     goldMessage,
     goldSuccess,
     goldUntilDateString,
+    loggedIn,
     showGoldActive,
     showGoldCancelled,
     showGoldPitch,
@@ -191,6 +193,7 @@ const Account = ({
     goldMessage?: string,
     goldSuccess?: boolean,
     goldUntilDateString: string,
+    loggedIn: boolean,
     showGoldActive: boolean,
     showGoldCancelled: boolean,
     showGoldPitch: boolean,
@@ -209,7 +212,7 @@ const Account = ({
 
                     <p>If you want to support Basketball GM continuing to be a non-sucky game, sign up for Basketball GM Gold! It's only <b>$5/month</b>. What do you get? More like, what don't you get? You get no new features, no new improvements, no new anything. Just <b>no more ads</b>. That's it. Why? For basically the same reason I won't make Basketball GM freemium. I don't want the free version to become a crippled advertisement for the pay version. If you agree that the world is a better place when anyone anywhere can play Basketball GM, sign up for Basketball GM Gold today!</p>
 
-                    {username === undefined || username === null || username === '' ? <p>
+                    {!loggedIn ? <p>
                         <a href="/account/login_or_register">Log in or create an account</a> to sign up for Basketball GM Gold.
                     </p> : <p><StripeButton email={email} /></p>}
                 </div>
@@ -224,6 +227,7 @@ const Account = ({
             <div className="col-lg-8 col-md-10 ">
                 <UserInfo
                     goldUntilDateString={goldUntilDateString}
+                    loggedIn={loggedIn}
                     showGoldActive={showGoldActive}
                     showGoldCancelled={showGoldCancelled}
                     username={username}
@@ -274,6 +278,7 @@ Account.propTypes = {
     goldMessage: PropTypes.string,
     goldSuccess: PropTypes.bool,
     goldUntilDateString: PropTypes.string.isRequired,
+    loggedIn: PropTypes.bool.isRequired,
     showGoldActive: PropTypes.bool.isRequired,
     showGoldCancelled: PropTypes.bool.isRequired,
     showGoldPitch: PropTypes.bool.isRequired,

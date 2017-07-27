@@ -12,19 +12,22 @@ async function updateAccount(
     if (updateEvents.includes('firstRun') || updateEvents.includes('account')) {
         const partialTopMenu = await account.check(conditions);
 
+        const loggedIn = partialTopMenu.username !== undefined && partialTopMenu.username !== null && partialTopMenu.username !== '';
+
         const goldUntilDate = new Date(partialTopMenu.goldUntil * 1000);
         const goldUntilDateString = goldUntilDate.toDateString();
 
         const currentTimestamp = Math.floor(Date.now() / 1000);
-        const showGoldActive = !partialTopMenu.goldCancelled && currentTimestamp <= partialTopMenu.goldUntil;
-        const showGoldCancelled = partialTopMenu.goldCancelled && currentTimestamp <= partialTopMenu.goldUntil;
-        const showGoldPitch = !showGoldActive;
+        const showGoldActive = loggedIn && !partialTopMenu.goldCancelled && currentTimestamp <= partialTopMenu.goldUntil;
+        const showGoldCancelled = loggedIn && partialTopMenu.goldCancelled && currentTimestamp <= partialTopMenu.goldUntil;
+        const showGoldPitch = !loggedIn || !showGoldActive;
 
         return {
             email: partialTopMenu.email,
             goldMessage: inputs.goldMessage,
             goldSuccess: inputs.goldSuccess,
             goldUntilDateString,
+            loggedIn,
             showGoldActive,
             showGoldCancelled,
             showGoldPitch,

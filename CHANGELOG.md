@@ -10,7 +10,7 @@ number or not.
 
 - Massive performance improvement, like an order of magnitude (see technical details for more)
 - Table filtering, like "show only players with >1 block per game and >1 steal per game"
-- AI teams trade wtih each other
+- AI teams trade with each other
 - New Options screen
 - Sometimes young players (particularly from certain countries) will fake their ages
 - The draft lottery is viewable live

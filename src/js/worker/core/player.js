@@ -24,7 +24,7 @@ import type {
     RatingKey,
 } from '../../common/types';
 
-type Profile = '' | 'Big' | 'Point' | 'Wing' | 'Base';
+type Profile = '' | 'Big' | 'Point' | 'Wing' | 'Base' | '3andD' | 'RawAthlete';
 
 let playerNames;
 
@@ -685,6 +685,10 @@ function genRatings(
         profileId = 3;
     } else if (profile === "Base") {
         profileId = 0;
+    } else if (profile === "3andD") {
+        profileId = 4;
+    } else if (profile === "RawAthlete") {
+        profileId = 5;
     }
     
     // Use base profile if neither profile nor predeterminedHeight are set
@@ -692,7 +696,7 @@ function genRatings(
         profileId = 0;
     }
     
-    // If no profile is specified, use randomly determined height to choose
+    // If no profile is specified, use the predetermined height to choose
     if (profileId == -1) {	
         if  ((predeterminedHeight > 55) && random.randInt(0,1000) < 999) {
             profileId = 3; // Nearly all tall guys are "Big"

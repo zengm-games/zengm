@@ -117,31 +117,31 @@ function heightDist(): number {
     let r = Math.random();
     if (r < 0.000000000051653) {
         return 54;
-    } else if (r < 0.000000000103306) {
+    } else if (r < 0.000000000258264) {
         return 55;
-    } else if (r < 0.000000000206612) {
+    } else if (r < 0.000000001084711) {
         return 56;
-    } else if (r < 0.000000000309917) {
+    } else if (r < 0.000000004390496) {
         return 57;
-    } else if (r < 0.000000000413223) {
+    } else if (r < 0.000000017561983) {
         return 58;
-    } else if (r < 0.000000000568182) {
+    } else if (r < 0.000000069214876) {
         return 59;
-    } else if (r < 0.000000000723140) {
+    } else if (r < 0.000000275826446) {
         return 60;
-	} else if (r < 0.000001033780992) {
+	} else if (r < 0.000001308884298) {
         return 61;
-    } else if (r < 0.000011364359504) {
+    } else if (r < 0.000011639462810) {
         return 62;
-    } else if (r < 0.000063017252066) {
+    } else if (r < 0.000063292355372) {
         return 63;
-    } else if (r < 0.000140496590909) {
+    } else if (r < 0.000218251033058) {
         return 64;
-    } else if (r < 0.000295455268595) {
+    } else if (r < 0.000476515495868) {
         return 65;
-    } else if (r < 0.000811984194215) {
+    } else if (r < 0.000838085743802) {
         return 66;
-    } else if (r < 0.001380166012397) {
+    } else if (r < 0.001302961776860) {
         return 67;
     } else if (r < 0.002066115702479) {
         return 68;
@@ -185,41 +185,41 @@ function heightDist(): number {
         return 87;
     } else if (r < 0.997417355371901) {
         return 88;
-    } else if (r < 0.998192148760331) {
+    } else if (r < 0.998243801652893) {
         return 89;
-    } else if (r < 0.998760330578513) {
+    } else if (r < 0.999018595041323) {
         return 90;
-    } else if (r < 0.999328512396695) {
+    } else if (r < 0.999741735537190) {
         return 91;
-    } else if (r < 0.999700413223141) {
+    } else if (r < 0.999870867097108) {
         return 92;
-    } else if (r < 0.999834710743802) {
+    } else if (r < 0.999917354700413) {
         return 93;
-    } else if (r < 0.999950929752066) {
+    } else if (r < 0.999950929080579) {
         return 94;
-    } else if (r < 0.999981921487604) {
+    } else if (r < 0.999976755526860) {
         return 95;
-    } else if (r < 0.999994318181818) {
+    } else if (r < 0.999988377427686) {
         return 96;
-    } else if (r < 0.999998347107438) {
+    } else if (r < 0.999996125361570) {
         return 97;
-    } else if (r < 0.999999457644628) {
+    } else if (r < 0.999999456973141) {
         return 98;
-    } else if (r < 0.999999819214876) {
+    } else if (r < 0.999999818543389) {
         return 99;
-    } else if (r < 0.999999961260331) {
+    } else if (r < 0.999999934762397) {
         return 100;
-    } else if (r < 0.999999980630165) {
+    } else if (r < 0.999999979958678) {
         return 101;
-    } else if (r < 0.999999997417356) {
+    } else if (r < 0.999999991580579) {
         return 102;
-    } else if (r < 0.999999999328513) {
+    } else if (r < 0.999999997572314) {
         return 103;
-    } else if (r < 0.999999999793389) {
+    } else if (r < 0.999999999225207) {
         return 104;
-    } else if (r < 0.999999999845042) {
+    } else if (r < 0.999999999638430) {
         return 105;
-    } else if (r < 0.999999999896694) {
+    } else if (r < 0.999999999845042) {
         return 106;
     } else if (r < 0.999999999948347) {
         return 107;

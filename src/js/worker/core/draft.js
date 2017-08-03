@@ -104,7 +104,7 @@ async function genPlayers(tid: number, scoutingRank?: ?number = null, numPlayers
     }
 
     // Easter egg!
-    if (Math.random() < 1 / 1000) {
+    if (Math.random() < 1 / 100000) {
         const p = player.generate(tid, 19, profiles[1], 90, 90, draftYear, false, scoutingRank);
         p.born.year = draftYear - 48;
         p.born.loc = 'Los Angeles, CA';

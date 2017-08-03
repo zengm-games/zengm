@@ -102,7 +102,7 @@ playoffs[4] = [
 // Money
 const money = [];
 money[0] = [
-    "Money is an issue. I'm going broke. This is ridiculous. I'm supposed to be rich, but I can barely afford my monacle polish these days.",
+    "Money is an issue. I'm going broke. This is ridiculous. I'm supposed to be rich, but I can barely afford my monocle polish these days.",
     "I can't afford a season in the red. Is it really that hard to turn a big profit in this business?",
 ];
 money[1] = [

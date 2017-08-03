@@ -257,7 +257,7 @@
 
           // Special error for Apple's mobile devices, as that's the only platform that is totally unsupported (no alternative browser to install)
           if (/(iPad|iPhone|iPod)/.test(navigator.userAgent)) {
-            errorMsg += '<p>If you\'re on an iPhone/iPad/iPod, there is currently no way to run Basketball GM. Please come back on a desktop/laptop or a non-Apple mobile device! And complain to Apple to fix IndexedDB if you want to play Basketball GM on your iDevice.</p>';
+            errorMsg += '<p>If you\'re on an iPhone/iPad, upgrade to iOS 10.3 or higher to play Basketball GM. If you can\'t do that, then please come back on a desktop/laptop or a non-Apple mobile device!</p>';
           }
 
           var loadingMsg = document.getElementById('loading-msg');

@@ -1101,9 +1101,10 @@ function value(p: any, ps: PlayerStats[], options: ValueOptions = {}): number {
     if (ps.length > 0) {
         if (ps.length === 1 || ps[0].min >= 2000) {
             // Only one year of stats
-            current = 3.75 * ps[0].per;
-            if (ps[0].min < 2000) {
-                current = current * ps[0].min / 2000 + pr.ovr * (1 - ps[0].min / 2000);
+            const ps1 = ps[ps.length - 1];
+            current = 3.75 * ps1.per;
+            if (ps1.min < 2000) {
+                current = current * ps1.min / 2000 + pr.ovr * (1 - ps1.min / 2000);
             }
         } else {
             // Two most recent seasons
@@ -1188,7 +1189,8 @@ async function updateValues(p: Player | PlayerWithoutPid, psOverride?: PlayerSta
 
     if (psOverride) {
         // Only when creating new league from file, since no cache yet then
-        playerStats = psOverride;
+        playerStats = psOverride
+            .filter((ps) => !ps.playoffs);
     } else if (typeof p.pid === 'number') {
         playerStats = (await idb.cache.playerStats.indexGetAll('playerStatsAllByPid', p.pid))
             .filter((ps) => !ps.playoffs);
@@ -1196,6 +1198,9 @@ async function updateValues(p: Player | PlayerWithoutPid, psOverride?: PlayerSta
         // New player objects don't have pids let alone stats, so just skip
         playerStats = [];
     }
+
+    // Sort ascending, just in case. This might be slightly wrong for traded players, but that's better than being horribly wrong if somehow the stats array is out of order.
+    playerStats.sort((a, b) => a.season - b.season);
 
     p.value = value(p, playerStats);
     p.valueNoPot = value(p, playerStats, {noPot: true});

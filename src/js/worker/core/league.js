@@ -319,7 +319,7 @@ async function create(
             const playerStats = p.stats;
             delete p.stats;
 
-            await player.updateValues(p, playerStats.reverse());
+            await player.updateValues(p, playerStats);
             await idb.cache.players.put(p);
 
             // If no stats in League File, create blank stats rows for active players if necessary

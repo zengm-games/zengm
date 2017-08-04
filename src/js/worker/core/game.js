@@ -353,6 +353,7 @@ async function writeGameStats(results: GameResults, att: number, conditions: Con
         logEvent({
             type: results.team[tw].id === g.userTid ? "gameWon" : "gameLost",
             text,
+            extraClass: results.team[tw].id === g.userTid ? "notification-won" : "notification-lost",
             saveToDb: false,
             tids: [results.team[0].id, results.team[1].id],
         }, conditions);

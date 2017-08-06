@@ -331,7 +331,7 @@ async function create(
             } else {
                 // If there are stats in the League File, add them to the database
                 const addStatsRows = async () => {
-                    const ps = playerStats.pop();
+                    const ps = playerStats.shift();
 
                     // Augment with pid, if it's not already there - can't be done in player.augmentPartialPlayer because pid is not known at that point
                     ps.pid = p.pid;

@@ -76,6 +76,7 @@ type Props = {
 };
 
 type State = {
+    result: DraftLotteryResultArray | void,
     started: boolean,
     toReveal: number[], // Values are indexes of this.props.result, starting with the 14th pick and ending with the 1st pick
     indRevealed: number,
@@ -90,6 +91,7 @@ class DraftLottery extends React.Component {
         super(props);
 
         this.state = {
+            result: undefined,
             started: false,
             toReveal: [],
             indRevealed: -1,
@@ -119,9 +121,18 @@ class DraftLottery extends React.Component {
             started: true,
         });
 
-        const toReveal = await toWorker('draftLottery');
+        const result = await toWorker('draftLottery');
+
+        const toReveal = [];
+        for (let i = 0; i < result.length; i++) {
+            const pick = result[i].pick;
+            toReveal[pick - 1] = i;
+            result[i].pick = undefined;
+        }
+        toReveal.reverse();
 
         this.setState({
+            result,
             toReveal,
             indRevealed: -1,
         }, () => {
@@ -138,7 +149,8 @@ class DraftLottery extends React.Component {
     }
 
     render() {
-        const {result, season, type} = this.props;
+        const {season, type} = this.props;
+        const result = this.state.result !== undefined ? this.state.result : this.props.result;
 
         setTitle(`${season} Draft Lottery`);
 

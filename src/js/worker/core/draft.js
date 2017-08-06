@@ -103,7 +103,7 @@ async function genPlayers(tid: number, scoutingRank?: ?number = null, numPlayers
         await idb.cache.players.add(p);
     }
 
-    // Easter egg!
+    // Easter eggs!
     if (Math.random() < 1 / 100000) {
         const p = player.generate(tid, 19, profiles[1], 90, 90, draftYear, false, scoutingRank);
         p.born.year = draftYear - 48;
@@ -120,6 +120,29 @@ async function genPlayers(tid: number, scoutingRank?: ?number = null, numPlayers
             await logEvent({
                 type: 'playerFeat',
                 text: `<a href="${helpers.leagueUrl(['player', pid])}">${p.firstName} ${p.lastName}</a> got sick of the haters and decided to show the world how a big baller plays.`,
+                showNotification: false,
+                pids: [pid],
+                tids: [g.userTid],
+            });
+        }
+    } else if (Math.random() < 1 / 100000) {
+        const p = player.generate(tid, 19, profiles[1], 90, 90, draftYear, false, scoutingRank);
+        p.born.year = draftYear - 71;
+        p.born.loc = 'Queens, NY';
+        p.college = 'Wharton';
+        p.firstName = 'Donald';
+        p.hgt = 75;
+        p.imgURL = '/img/trump.jpg';
+        p.lastName = 'Trump';
+        p.weight = 240;
+        p.ratings[0].pss = 0;
+        p.ratings[0].skills = ['Dp'];
+        await player.updateValues(p);
+        const pid = await idb.cache.players.add(p);
+        if (typeof pid === 'number') {
+            await logEvent({
+                type: 'playerFeat',
+                text: `<a href="${helpers.leagueUrl(['player', pid])}">${p.firstName} ${p.lastName}</a> decided to Make Basketball GM Great Again.`,
                 showNotification: false,
                 pids: [pid],
                 tids: [g.userTid],
@@ -272,9 +295,8 @@ async function genOrder(mock?: boolean = false, conditions?: Conditions): Promis
     });
 
     // Draft lottery
-    const numLotteryTeams = g.numTeams - 2 ** g.numPlayoffRounds;
     lotterySort(teams);
-    const chances = [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5].slice(0, numLotteryTeams);
+    const chances = [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5];
     updateChances(chances, teams, true);
 
     const chanceTotal = chances.reduce((a, b) => a + b);
@@ -285,12 +307,13 @@ async function genOrder(mock?: boolean = false, conditions?: Conditions): Promis
     for (let i = 1; i < chancesCumsum.length; i++) {
         chancesCumsum[i] += chancesCumsum[i - 1];
     }
+
     // Pick first three picks based on chancesCumsum
     const firstThree = [];
     while (firstThree.length < 3) {
         const draw = random.randInt(0, 999);
         const i = chancesCumsum.findIndex(chance => chance > draw);
-        if (!firstThree.includes(i)) {
+        if (!firstThree.includes(i) && i < teams.length) {
             // If one lottery winner, select after other tied teams;
             teams[i].randVal -= 30;
             firstThree.push(i);

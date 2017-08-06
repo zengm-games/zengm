@@ -375,6 +375,7 @@ use positions for roster building and rotations
     probably will need to increase synergyFactor
     might need to tweak some probabilities if this changes stats too much
     redo ovr formula
+    decrease importance of height: https://www.reddit.com/r/BasketballGM/comments/6rg7yr/height_is_too_impactful_in_bbgm/
 
 Make AI smarter when constructing teams. Then, if that works, make synergy more impactful
 

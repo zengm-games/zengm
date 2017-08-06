@@ -630,7 +630,7 @@ async function untilUserOrEnd(conditions: Conditions) {
                 return afterDoneAuto();
             }
 
-            const selection = Math.floor(Math.abs(random.gauss(0, 2))); // 0=best prospect, 1=next best prospect, etc.
+            const selection = Math.floor(Math.abs(random.realGauss(0, 1))); // 0=best prospect, 1=next best prospect, etc.
             const pid = playersAll[selection].pid;
             await selectPlayer(pick, pid);
             pids.push(pid);

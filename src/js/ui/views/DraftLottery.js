@@ -156,7 +156,7 @@ class DraftLottery extends React.Component {
 
         const probs = result !== undefined ? getProbs(result) : undefined;
 
-        const NUM_PICKS = result.length;
+        const NUM_PICKS = result !== undefined ? result.length : 14; // I don't think result can ever be undefined, but Flow does
 
         let table;
         if (result && probs) { // Checking both is redundant, but flow wants it

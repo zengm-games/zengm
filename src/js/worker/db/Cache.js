@@ -681,15 +681,13 @@ class Cache {
         if (['draftPicks', 'negotiations', 'players', 'releasedPlayers', 'schedule', 'teamSeasons'].includes(store)) {
             if (this._data[store].hasOwnProperty(id)) {
                 delete this._data[store][id];
-
-                // Need to have the correct type here for IndexedDB
-                const idParsed = this.storeInfos[store].pkType === 'number' ? parseInt(id, 10) : id;
-                this._deletes[store].add(idParsed);
-                this._dirty = true;
-                this.markDirtyIndexes(store);
-            } else {
-                throw new Error(`Invalid primary key to delete from store "${store}": ${id}`);
             }
+
+            // Need to have the correct type here for IndexedDB
+            const idParsed = this.storeInfos[store].pkType === 'number' ? parseInt(id, 10) : id;
+            this._deletes[store].add(idParsed);
+            this._dirty = true;
+            this.markDirtyIndexes(store);
         } else {
             throw new Error(`delete not implemented for store "${store}"`);
         }

@@ -434,6 +434,14 @@ async function newPhaseDraft(conditions: Conditions) {
 async function newPhaseAfterDraft() {
     await draft.genPicks(g.season + 4);
 
+    // Delete any old draft picks
+    const draftPicks = await idb.cache.draftPicks.getAll();
+    for (const dp of draftPicks) {
+        if (dp.season <= g.season) {
+            await idb.cache.draftPicks.delete(dp.dpid);
+        }
+    }
+
     return [undefined, ["playerMovement"]];
 }
 

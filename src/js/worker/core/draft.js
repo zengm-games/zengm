@@ -272,8 +272,9 @@ async function genOrder(mock?: boolean = false, conditions?: Conditions): Promis
     });
 
     // Draft lottery
+    const numLotteryTeams = g.numTeams - 2 ** g.numPlayoffRounds;
     lotterySort(teams);
-    const chances = [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5];
+    const chances = [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5].slice(0, numLotteryTeams);
     updateChances(chances, teams, true);
 
     const chanceTotal = chances.reduce((a, b) => a + b);

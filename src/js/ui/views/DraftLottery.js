@@ -156,7 +156,7 @@ class DraftLottery extends React.Component {
 
         const probs = result !== undefined ? getProbs(result) : undefined;
 
-        const NUM_PICKS = 14;
+        const NUM_PICKS = result.length;
 
         let table;
         if (result && probs) { // Checking both is redundant, but flow wants it
@@ -165,26 +165,13 @@ class DraftLottery extends React.Component {
                     <thead>
                         <tr>
                             <th colSpan="3" />
-                            <th colSpan="14" className="text-center">Pick Probabilities</th>
+                            <th colSpan={NUM_PICKS} className="text-center">Pick Probabilities</th>
                         </tr>
                         <tr>
                             <th>Team</th>
                             <th>Record</th>
                             <th>Chances</th>
-                            <th>1st</th>
-                            <th>2nd</th>
-                            <th>3rd</th>
-                            <th>4th</th>
-                            <th>5th</th>
-                            <th>6th</th>
-                            <th>7th</th>
-                            <th>8th</th>
-                            <th>9th</th>
-                            <th>10th</th>
-                            <th>11th</th>
-                            <th>12th</th>
-                            <th>13th</th>
-                            <th>14th</th>
+                            {result.map((row, i) => <th key={i}>{helpers.ordinal(i + 1)}</th>)}
                         </tr>
                     </thead>
                     <tbody>

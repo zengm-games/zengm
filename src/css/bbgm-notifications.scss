@@ -36,6 +36,14 @@
   }
 }
 
+.notification-won {
+  color: #00ff00;
+}
+
+.notification-lost {
+  color: #ff0000;
+}
+
 .notification-fadein {
   // This transition is for the hover, not original fade in
   transition: opacity .25s ease-in-out;

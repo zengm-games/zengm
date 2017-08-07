@@ -36,9 +36,6 @@ filtering
 
 cache unread messages, will make it faster and simpler
 
-Triggers: the sim stops if different situations happen. This may include injuries, bad streaks, reaching a certain amount of wins/losses... https://www.reddit.com/r/BasketballGM/comments/5zgrv9/basketball_gm_40_beta/dez5jn4/
-- "Play until..." menu item
-
 force single tab per league
 - when < 5 seconds, wait for another heartbeat before deciding
 - check for collission in setInterval, and somehow show error page if that happens

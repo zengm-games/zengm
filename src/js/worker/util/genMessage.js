@@ -41,7 +41,7 @@ const activities = [
     "perfecting my money laundering infrastructure (owning this team is very helpful)",
     "making sure my \"girlfriends\" aren't posting pictures with black people on Instagram (how many times do I have to tell them??)",
     "trying to run for President. I heard anyone can do it these days",
-    "convincing the commissioner to let me get another team so we can use one to get high draft picks and trade them to the other for nothing! (Its brilliant, isnt't it?)",
+    "convincing the commissioner to let me get another team so we can use one to get high draft picks and trade them to the other for nothing! (Its brilliant, isn't it?)",
     "experimenting with magnets so our shots go in more often. How do the work?",
     "playing BasketballGM online. I don't know why I'm paying you, this is easy!",
     "promoting my own shoe brand for the league to use instead",
@@ -67,7 +67,7 @@ const intro = [
 // Wins
 const wins = [];
 wins[0] = [
-    "This is an embarassment. We lose so much, I can't even show my face around town. Buying this team was supposed to make me a celebrity, but not one of those bad celebrities that everyone hates. Turn it around.",
+    "This is an embarrassment. We lose so much, I can't even show my face around town. Buying this team was supposed to make me a celebrity, but not one of those bad celebrities that everyone hates. Turn it around.",
     "I need some wins. Fans hate losers. Free agents hate losers. What's your strategy? Keep on losing until I fire you? You're making good progress, then.",
     "What are you even doing? You keep talking about a process but I don't think I trust it anymore. Win now!",
     "How hard is it to tell your players to score more points and stop the other team? It isn't rocket science!",
@@ -93,7 +93,7 @@ wins[3] = [
 wins[4] = [
     "I'm pleased with our regular season performance.",
     "I like the roster you've put together. We'll be at the top of our division for a long time.",
-    "The cieling is the roof with this team! Keep it up!",
+    "The ceiling is the roof with this team! Keep it up!",
     "The goal is 82-0 and we are on our way. And by that I mean do it. Next season. 82-0.",
 ];
 
@@ -115,7 +115,7 @@ playoffs[2] = [
     "Hey. I'm a champion. I don't know about you, but that's what my teams do. They win championships. Yeah, making the playoffs is okay I guess, but I'm not satisfied.",
     "We need to make some real noise in the playoffs. Soon.",
     "I bet a lot of money on us winning the championship next year, do you want to make me a liar? I didn't think so.",
-    "I can almost taste the success. I want it. I want that metallic taste of a thropy in my mouth! AHAHAHAHA!",
+    "I can almost taste the success. I want it. I want that metallic taste of a trophy in my mouth! AHAHAHAHA!",
 ];
 playoffs[3] = [
     "Consistent playoff success is the standard. Never forget that.",
@@ -126,8 +126,8 @@ playoffs[3] = [
 playoffs[4] = [
     "Winning titles can cover up a lot of flaws.",
     "I need some more jewelry. Go get me another ring.",
-    "I lost my last championship ring, can you get me another. Thanks.",
-    "I gave my ring to my girlfriend, (she thought I was proposing and couldn't think fast enough) so I need another one.",
+    "I lost my last championship ring, can you get me another? Thanks.",
+    "I gave my ring to my girlfriend, (she thought I was proposing and I couldn't think fast enough) so I need another one.",
 ];
 
 // Money
@@ -136,11 +136,11 @@ money[0] = [
     "Money is an issue. I'm going broke. This is ridiculous. I'm supposed to be rich, but I can barely afford my monocle polish these days.",
     "I can't afford a season in the red. Is it really that hard to turn a big profit in this business?",
     "My accountant keeps telling me that we're losing money. I've ony declared bankruptcy twice and I will not do it again!",
-    "Do you know where your salary comes from? The money you're supposedd to be making! So if you can't make money, you won't be getting paid!",
+    "Do you know where your salary comes from? The money you're supposed to be making! So if you can't make money, you won't be getting paid!",
 ];
 money[1] = [
     "I like the recent financial turnaround you engineered. But I can't afford any setback.",
-    "I took a hit in the market this year, who knew shorts had to be paid back? Anyway, keep improving so I can keep gambling... I mean, \"vesting aggressivly\".",
+    "I took a hit in the market this year, who knew shorts had to be paid back? Anyway, keep improving so I can keep gambling... I mean, \"ivesting aggressively\".",
 ];
 money[2] = [
     "Listen. I need another private jet. Cut back on spending, increase revenue, whatever. I'm not an accountant. I just know I need another jet.",
@@ -155,7 +155,7 @@ money[3] = [
 money[4] = [
     "I just bought a nuclear submarine from the Russians. You believe that? That's all thanks to you. Keep pinching those pennies!",
     "I just looked over the team finances. I like what I see. Keep up the good work there.",
-    "Man, thats a lot of commas. Keep it up and we'll have a long friendship.",
+    "Man, that's a lot of commas. Keep it up and we'll have a long friendship.",
 ];
 
 // 0: bad
@@ -174,9 +174,11 @@ ovr[1] = [
     "You bore me. Everything about you, it's just boring. Come talk to me when you've earned me more millions and won me some more championships.",
     "You know, general managers aren't hired to be mediocre. Do better next year.",
     "I've been meaning to tell you about this great idea I had. What if we only play 4 guys on defense, so the other guy can just wait for an easy score at the other end? Pure genius, isn't it?",
+    "Make more money, win more games, blah blah blah. I'm supposed to be in a meeting right now so I g2g.",
 ];
 ovr[2] = [
     "Anyway, overall I'm happy with the progress you've made, but I need to get back to {{activity}}.",
+    "Work will set you free amiright? Anyway, talk to you next season. Don't bother messaging me until then."'
 ];
 
 async function genMessage(deltas: OwnerMoodDeltas) {

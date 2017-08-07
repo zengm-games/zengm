@@ -40,6 +40,17 @@ const activities = [
     "coming up with a way to slightly shrink or expand the hoop, depending on which one we're shooting at",
     "perfecting my money laundering infrastructure (owning this team is very helpful)",
     "making sure my \"girlfriends\" aren't posting pictures with black people on Instagram (how many times do I have to tell them??)",
+    "trying to run for President. I heard anyone can do it these days",
+    "convincing the commissioner to let me get another team so we can use one to get high draft picks and trade them to the other for nothing! (Its brilliant, isnt't it?)",
+    "experimenting with magnets so our shots go in more often. How do the work?",
+    "playing BasketballGM online. I don't know why I'm paying you, this is easy!",
+    "promoting my own shoe brand for the league to use instead",
+    "ignoring all your messages",
+    "buying all the land on Mars before that car guy gets there",
+    "negotiating to lower the salary cap and max contracts. I mean, they only play a sport, why do they get to make so much anyway?",
+    "trying to open this safe I found a few years ago",
+    "trying to clone myself. I have a debt to society that needs to be paid soon. Wait, forget I said that...",
+    "trying to find my wife Becky, no, Sarah. Wait, which marriage is still ongoing?",
 ];
 
 // Intro of annual message
@@ -58,22 +69,32 @@ const wins = [];
 wins[0] = [
     "This is an embarassment. We lose so much, I can't even show my face around town. Buying this team was supposed to make me a celebrity, but not one of those bad celebrities that everyone hates. Turn it around.",
     "I need some wins. Fans hate losers. Free agents hate losers. What's your strategy? Keep on losing until I fire you? You're making good progress, then.",
+    "What are you even doing? You keep talking about a process but I don't think I trust it anymore. Win now!",
+    "How hard is it to tell your players to score more points and stop the other team? It isn't rocket science!",
 ];
 wins[1] = [
     "I recognize we're getting better and our team has some potential for growth, but don't fuck this up. You've already used up most of my patience.",
     "You keep telling me we have \"potential\", but potential doesn't win games.",
+    "I remember when we were terrible. Now we're just less terrible. I want wins more than you want this job apparently.",
+    "Where did you go to college again? This is why I get for not even looking at your resume before hiring you. Last season better not have been a fluke or you'll be in trouble.",
 ];
 wins[2] = [
     "So, I mean, it could be worse. But that's not good enough.",
     "In this league, mediocrity can be worse than losing. I hope you have some plan to get us to the next level.",
+    "What year is it again? This team looks the same as it did last season. I want to see change! I want more wins! Mediocre teams get nowhere fast!",
+    "The team was boring to watch this year. My girlfriend doesn't even know who we are! Now you're costing me more than just wins! Put up more wins so my girlfriend will put out more too!",
 ];
 wins[3] = [
     "Don't think you can coast on your past success for too long. I'm not planning on rebuilding for a decade.",
     "What have you done for me lately?",
+    "I'm not ready for the good ol' days to be over. You need to extend our reign in this league.",
+    "I don't care who we lost in free agency or who got hurt. I expect improvement every season and last season was a disappointment.",
 ];
 wins[4] = [
     "I'm pleased with our regular season performance.",
     "I like the roster you've put together. We'll be at the top of our division for a long time.",
+    "The cieling is the roof with this team! Keep it up!",
+    "The goal is 82-0 and we are on our way. And by that I mean do it. Next season. 82-0.",
 ];
 
 // Playoffs
@@ -81,22 +102,32 @@ const playoffs = [];
 playoffs[0] = [
     "This town is starving, absolutely starving, for some postseason success. But with the job you're doing, we're not even close to the playoffs. Unacceptable.",
     "Playoffs? Don't talk to me about playoffs. You kidding me? Playoffs? I just hope we can win a game!",
+    "Why are all of my friends' teams still playing in May while my team is at home getting fat on my dollar? I want playoffs!",
+    "Do you know how embarrassed I was when I took my girlfriend to a playoff game and the security told us there wasn't any? She's not my girlfriend anymore thanks to you!",
 ];
 playoffs[1] = [
     "In this town, you can't just be happy with making the playoffs. You have to get to the next level.",
     "A first round playoff exit is boring.",
+    "I need the playoff revenue to make this hobby worth it. That means a deeper run next year, understood?",
+    "Do you know what the goal of a team is? To win games. Try doing that more in the playoffs.",
 ];
 playoffs[2] = [
     "Hey. I'm a champion. I don't know about you, but that's what my teams do. They win championships. Yeah, making the playoffs is okay I guess, but I'm not satisfied.",
     "We need to make some real noise in the playoffs. Soon.",
+    "I bet a lot of money on us winning the championship next year, do you want to make me a liar? I didn't think so.",
+    "I can almost taste the success. I want it. I want that metallic taste of a thropy in my mouth! AHAHAHAHA!",
 ];
 playoffs[3] = [
     "Consistent playoff success is the standard. Never forget that.",
     "I hope you don't plan on missing the playoffs again.",
+    "Playoffs don't really matter unless we win it all. Otherwise we're just using energy to fail. And I don't fail.",
+    "Why do i keep seeing our championship shirts being worn in my factories? They should be wearing them here! Make it happen!",
 ];
 playoffs[4] = [
     "Winning titles can cover up a lot of flaws.",
     "I need some more jewelry. Go get me another ring.",
+    "I lost my last championship ring, can you get me another. Thanks.",
+    "I gave my ring to my girlfriend, (she thought I was proposing and couldn't think fast enough) so I need another one.",
 ];
 
 // Money
@@ -104,21 +135,27 @@ const money = [];
 money[0] = [
     "Money is an issue. I'm going broke. This is ridiculous. I'm supposed to be rich, but I can barely afford my monocle polish these days.",
     "I can't afford a season in the red. Is it really that hard to turn a big profit in this business?",
+    "My accountant keeps telling me that we're losing money. I've ony declared bankruptcy twice and I will not do it again!",
+    "Do you know where your salary comes from? The money you're supposedd to be making! So if you can't make money, you won't be getting paid!",
 ];
 money[1] = [
     "I like the recent financial turnaround you engineered. But I can't afford any setback.",
+    "I took a hit in the market this year, who knew shorts had to be paid back? Anyway, keep improving so I can keep gambling... I mean, \"vesting aggressivly\".",
 ];
 money[2] = [
     "Listen. I need another private jet. Cut back on spending, increase revenue, whatever. I'm not an accountant. I just know I need another jet.",
     "I didn't buy this team just for fun. We should be making a higher profit.",
+    "You'd be doing okay if those numbers where in BitCoin, but they're not. So fix the problems.",
 ];
 money[3] = [
     "Just because you made some money in the past doesn't mean you're allowed to lose money now.",
     "I liked what you were doing before this year, financially. This year, not so much.",
+    "How am I supposed to pay off my goons when you can't keep cashflows up? I might have to send them after you if you can't make more money.",
 ];
 money[4] = [
     "I just bought a nuclear submarine from the Russians. You believe that? That's all thanks to you. Keep pinching those pennies!",
     "I just looked over the team finances. I like what I see. Keep up the good work there.",
+    "Man, thats a lot of commas. Keep it up and we'll have a long friendship.",
 ];
 
 // 0: bad
@@ -131,6 +168,7 @@ ovr[0] = [
     "Bye.",
     "Please, don't bother me until you have some good news.",
     "I'm watching you. Seriously, one of your assistant coaches is a spy. Don't fuck up.",
+    "K",
 ];
 ovr[1] = [
     "You bore me. Everything about you, it's just boring. Come talk to me when you've earned me more millions and won me some more championships.",

@@ -345,9 +345,9 @@ async function writeGameStats(results: GameResults, att: number, conditions: Con
     if (results.team[0].id === g.userTid || results.team[1].id === g.userTid) {
         let text;
         if (results.team[tw].id === g.userTid) {
-            text = `Your team defeated the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[results.team[tl].id], g.season])}">${g.teamNamesCache[results.team[tl].id]}`;
+            text = `<span style="color: green; font-weight: bold; padding-right: 3px">W</span> Your team defeated the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[results.team[tl].id], g.season])}">${g.teamNamesCache[results.team[tl].id]}`;
         } else {
-            text = `Your team lost to the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[results.team[tw].id], g.season])}">${g.teamNamesCache[results.team[tw].id]}`;
+            text = `<span style="color: red; font-weight: bold; padding-right: 8px">L</span> Your team lost to the <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[results.team[tw].id], g.season])}">${g.teamNamesCache[results.team[tw].id]}`;
         }
         text += `</a> <a href="${helpers.leagueUrl(["game_log", g.teamAbbrevsCache[g.userTid], g.season, results.gid])}">${results.team[tw].stat.pts}-${results.team[tl].stat.pts}</a>.`;
         logEvent({

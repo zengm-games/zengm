@@ -13,49 +13,46 @@ const first = [
 
 // Random activities the owner claims to be doing
 const activities = [
-    "learning how to windsurf while carrying a naked girl on my back",
-    "working on my new \"mountaintop removal\" mining company (it's fascinating stuff)",
-    "having sex with half the freshman girls at the local university (it's hard work, believe me)",
-    "working on my charity, Sugar Daddies for Disadvantaged Hotties",
-    "lobbying the government to invade Peru (those bastards)",
-    "organizing orgies at the governor's mansion (he's a very particular gentleman)",
-    "working with my new PR agency on that whole \"child slave sweatshop\" scandal",
-    "lobbying the FDA to allow me to market ground horse meat as \"ground beeef\" (I already trademarked \"beeef\")",
-    "arguing with my fourth wife's lawyer",
-    "defending my real estate business from entirely frivolous lawsuits (can you believe they called me a \"slum lord\"?)",
-    "managing my Ponzi scheme... I mean hedge fund, hedge fund, it's a hedge fund",
-    "fighting that ridiculous sexual harassment lawsuit (it's not that bad, my lawyer is a total babe)",
-    "bribing the mayor to build a new lane on the highway just for me",
-    "running my baseball team (baseball is a religion, basketball is a game)",
-    "trying to patent the gene for height so I can sue our competition to pieces",
-    "bribing the commissioner to let me ref our games",
-    "bribing the commissioner to rig the draft for us",
-    "buying cars and jewelry for middle school basketball prospects so they'll sign here when they turn pro",
-    "flying to every country in the world on my private jet (except Peru)",
-    "promoting my chain of brothels in Cambodia",
-    "working on my golf game with Kim Jong Il (no, he's not dead)",
-    "lobbying the Senate to eliminate the minimum wage",
-    "lobbying the state government for more subsidies",
-    "figuring out how to fit in more courtside seats for celebrities",
-    "coming up with a way to slightly shrink or expand the hoop, depending on which one we're shooting at",
-    "perfecting my money laundering infrastructure (owning this team is very helpful)",
-    "making sure my \"girlfriends\" aren't posting pictures with black people on Instagram (how many times do I have to tell them??)",
-    "trying to run for President. I heard anyone can do it these days",
+    "learning how to windsurf while carrying a naked girl on my back.",
+    "working on my new \"mountaintop removal\" mining company (it's fascinating stuff).",
+    "having sex with half the freshman girls at the local university (it's hard work, believe me).",
+    "working on my charity, Sugar Daddies for Disadvantaged Hotties.",
+    "lobbying the government to invade Peru (those bastards).",
+    "organizing orgies at the governor's mansion (he's a very particular gentleman).",
+    "working with my new PR agency on that whole \"child slave sweatshop\" scandal.",
+    "lobbying the FDA to allow me to market ground horse meat as \"ground beeef\" (I already trademarked \"beeef\").",
+    "arguing with my fourth wife's lawyer.",
+    "defending my real estate business from entirely frivolous lawsuits (can you believe they called me a \"slum lord\"?).",
+    "managing my Ponzi scheme... I mean hedge fund, hedge fund, it's a hedge fund.",
+    "fighting that ridiculous sexual harassment lawsuit (it's not that bad, my lawyer is a total babe).",
+    "bribing the mayor to build a new lane on the highway just for me.",
+    "running my baseball team (baseball is a religion, basketball is a game).",
+    "trying to patent the gene for height so I can sue our competition to pieces.",
+    "bribing the commissioner to let me ref our games.",
+    "bribing the commissioner to rig the draft for us.",
+    "buying cars and jewelry for middle school basketball prospects so they'll sign here when they turn pro.",
+    "flying to every country in the world on my private jet (except Peru).",
+    "promoting my chain of brothels in Cambodia.",
+    "working on my golf game with Kim Jong Il (no, he's not dead).",
+    "lobbying the Senate to eliminate the minimum wage.",
+    "lobbying the state government for more subsidies.",
+    "figuring out how to fit in more courtside seats for celebrities.",
+    "coming up with a way to slightly shrink or expand the hoop, depending on which one we're shooting at.",
+    "perfecting my money laundering infrastructure (owning this team is very helpful).",
+    "making sure my \"girlfriends\" aren't posting pictures with black people on Instagram (how many times do I have to tell them??).",
+    "trying to run for President. I heard anyone can do it these days.",
     "convincing the commissioner to let me get another team so we can use one to get high draft picks and trade them to the other for nothing! (Its brilliant, isn't it?)",
-    "experimenting with magnets so our shots go in more often. How do the work?",
-    "playing BasketballGM online. I don't know why I'm paying you, this is easy!",
-    "promoting my own shoe brand for the league to use instead",
-    "ignoring all your messages",
-    "buying all the land on Mars before that car guy gets there",
+    "experimenting with magnets so our shots go in more often. But how do they work?",
+    "playing Basketball GM online. I don't know why I'm paying you, this is easy!",
+    "buying all the land on Mars before that car guy gets there.",
     "negotiating to lower the salary cap and max contracts. I mean, they only play a sport, why do they get to make so much anyway?",
-    "trying to open this safe I found a few years ago",
+    "trying to open this safe I found a few years ago.",
     "trying to clone myself. I have a debt to society that needs to be paid soon. Wait, forget I said that...",
-    "trying to find my wife Becky, no, Sarah. Wait, which marriage is still ongoing?",
 ];
 
 // Intro of annual message
 const intro = [
-    "Sorry we haven't chatted much this year, but I've been busy {{activity}}. ",
+    "Sorry we haven't chatted much this year, but I've been busy {{activity}} ",
 ];
 
 // 0: bad overall, getting worse
@@ -76,24 +73,21 @@ wins[1] = [
     "I recognize we're getting better and our team has some potential for growth, but don't fuck this up. You've already used up most of my patience.",
     "You keep telling me we have \"potential\", but potential doesn't win games.",
     "I remember when we were terrible. Now we're just less terrible. I want wins more than you want this job apparently.",
-    "Where did you go to college again? This is why I get for not even looking at your resume before hiring you. Last season better not have been a fluke or you'll be in trouble.",
+    "Where did you go to college again? This is what I get for not even looking at your resume before hiring you. Last season better not have been a fluke or you'll be in trouble.",
 ];
 wins[2] = [
     "So, I mean, it could be worse. But that's not good enough.",
     "In this league, mediocrity can be worse than losing. I hope you have some plan to get us to the next level.",
     "What year is it again? This team looks the same as it did last season. I want to see change! I want more wins! Mediocre teams get nowhere fast!",
-    "The team was boring to watch this year. My girlfriend doesn't even know who we are! Now you're costing me more than just wins! Put up more wins so my girlfriend will put out more too!",
 ];
 wins[3] = [
     "Don't think you can coast on your past success for too long. I'm not planning on rebuilding for a decade.",
     "What have you done for me lately?",
-    "I'm not ready for the good ol' days to be over. You need to extend our reign in this league.",
     "I don't care who we lost in free agency or who got hurt. I expect improvement every season and last season was a disappointment.",
 ];
 wins[4] = [
     "I'm pleased with our regular season performance.",
     "I like the roster you've put together. We'll be at the top of our division for a long time.",
-    "The ceiling is the roof with this team! Keep it up!",
     "The goal is 82-0 and we are on our way. And by that I mean do it. Next season. 82-0.",
 ];
 
@@ -103,7 +97,7 @@ playoffs[0] = [
     "This town is starving, absolutely starving, for some postseason success. But with the job you're doing, we're not even close to the playoffs. Unacceptable.",
     "Playoffs? Don't talk to me about playoffs. You kidding me? Playoffs? I just hope we can win a game!",
     "Why are all of my friends' teams still playing in May while my team is at home getting fat on my dollar? I want playoffs!",
-    "Do you know how embarrassed I was when I took my girlfriend to a playoff game and the security told us there wasn't any? She's not my girlfriend anymore thanks to you!",
+    "Do you know how embarrassed I was when I took my girlfriend to a playoff game and security told us there wasn't any?",
 ];
 playoffs[1] = [
     "In this town, you can't just be happy with making the playoffs. You have to get to the next level.",
@@ -121,13 +115,13 @@ playoffs[3] = [
     "Consistent playoff success is the standard. Never forget that.",
     "I hope you don't plan on missing the playoffs again.",
     "Playoffs don't really matter unless we win it all. Otherwise we're just using energy to fail. And I don't fail.",
-    "Why do i keep seeing our championship shirts being worn in my factories? They should be wearing them here! Make it happen!",
+    "Why do I keep seeing our championship shirts being worn in my factories? They should be wearing them here! Make it happen!",
 ];
 playoffs[4] = [
     "Winning titles can cover up a lot of flaws.",
     "I need some more jewelry. Go get me another ring.",
     "I lost my last championship ring, can you get me another? Thanks.",
-    "I gave my ring to my girlfriend, (she thought I was proposing and I couldn't think fast enough) so I need another one.",
+    "I gave my ring to my girlfriend so I need another one.",
 ];
 
 // Money
@@ -145,7 +139,7 @@ money[1] = [
 money[2] = [
     "Listen. I need another private jet. Cut back on spending, increase revenue, whatever. I'm not an accountant. I just know I need another jet.",
     "I didn't buy this team just for fun. We should be making a higher profit.",
-    "You'd be doing okay if those numbers where in BitCoin, but they're not. So fix the problems.",
+    "You'd be doing okay if those numbers were in Bitcoin, but they're not. So fix the problems.",
 ];
 money[3] = [
     "Just because you made some money in the past doesn't mean you're allowed to lose money now.",
@@ -168,17 +162,16 @@ ovr[0] = [
     "Bye.",
     "Please, don't bother me until you have some good news.",
     "I'm watching you. Seriously, one of your assistant coaches is a spy. Don't fuck up.",
-    "K",
 ];
 ovr[1] = [
     "You bore me. Everything about you, it's just boring. Come talk to me when you've earned me more millions and won me some more championships.",
     "You know, general managers aren't hired to be mediocre. Do better next year.",
     "I've been meaning to tell you about this great idea I had. What if we only play 4 guys on defense, so the other guy can just wait for an easy score at the other end? Pure genius, isn't it?",
     "Make more money, win more games, blah blah blah. I'm supposed to be in a meeting right now so I g2g.",
+    "Work will set you free! Anyway, talk to you next season. Don't bother messaging me until then.",
 ];
 ovr[2] = [
-    "Anyway, overall I'm happy with the progress you've made, but I need to get back to {{activity}}.",
-    "Work will set you free amiright? Anyway, talk to you next season. Don't bother messaging me until then."'
+    "Anyway, overall I'm happy with the progress you've made, but I need to get back to {{activity}}",
 ];
 
 async function genMessage(deltas: OwnerMoodDeltas) {

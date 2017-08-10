@@ -25,9 +25,9 @@ async function updateOwnerMood(): Promise<OwnerMoodDeltas> {
 
     const deltas = {};
     deltas.wins = 0.25 * (t.seasonAttrs.won - g.numGames / 2) / (g.numGames / 2);
-    if (t.playoffRoundsWon < 0) {
+    if (t.seasonAttrs.playoffRoundsWon < 0) {
         deltas.playoffs = -0.2;
-    } else if (t.playoffRoundsWon < 4) {
+    } else if (t.seasonAttrs.playoffRoundsWon < 4) {
         deltas.playoffs = 0.04 * t.seasonAttrs.playoffRoundsWon;
     } else {
         deltas.playoffs = 0.2;

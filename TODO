@@ -1,3 +1,8 @@
+HEIGHT SCALING - formula: https://github.com/dumbmatter/basketball-gm/pull/232#issuecomment-319265532
+- when creating league from file, check version parameter of league file and see if it's necessary
+  - implement version number! exporting a league saves IDB version to top level. document too.
+- in existing league upgrade, scale heights
+
 keep box scores with feats
 
 add franchise leaders (stats) to team history page

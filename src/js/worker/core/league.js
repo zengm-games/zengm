@@ -364,7 +364,7 @@ async function create(
         }
     } else {
         // No players in league file, so generate new players
-        const profiles = ["Point", "Wing", "Big", ""];
+        const profiles = ["Point", "Wing", "Big", "Base", ""];
         const baseRatings = [37, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 26, 26, 26];
         const pots = [75, 65, 55, 55, 60, 50, 70, 40, 55, 50, 60, 60, 45, 45];
 
@@ -375,12 +375,13 @@ async function create(
             const goodNeutralBad = random.randInt(-1, 1);  // determines if this will be a good team or not
             random.shuffle(pots);
             for (let n = 0; n < 14; n++) {
-                const profile = profiles[random.randInt(0, profiles.length - 1)];
+                const profile = profiles[4];
                 const agingYears = random.randInt(0, 16);
                 const draftYear = g.startingSeason - 1 - agingYears;
 
                 const p = player.generate(tid2, 19, profile, baseRatings[n], pots[n], draftYear, true, scoutingRank);
                 player.develop(p, agingYears, true);
+                                
                 if (n < 5) {
                     player.bonus(p, goodNeutralBad * random.randInt(0, 20));
                 } else {

@@ -24,7 +24,7 @@ import type {
     RatingKey,
 } from '../../common/types';
 
-type Profile = '' | 'Big' | 'Point' | 'Wing';
+type Profile = '' | 'Big' | 'Point' | 'Wing' | 'Base' | '3andD' | 'RawAthlete';
 
 let playerNames;
 
@@ -253,44 +253,47 @@ function pos(ratings: PlayerRatings): string {
 
     let position;
 
-    // With no real skills, default is a G, GF, or F
-    if (ratings.hgt < 35) {
+    // Without other skills, slot primarily by height
+    if (ratings.hgt >= 61) { // 6'10"
+        position = 'C';
+    } else if (ratings.hgt >= 54) { // 6'8"
+        position = 'PF';
+    } else if (ratings.hgt >= 45) { // 6'6"
+        position = 'SF';
+    } else if (ratings.spd < 70 && ratings.drb < 70 && ratings.pss < 70 && ratings.hgt >= 25) {
         position = 'SG';
-    } else if (ratings.drb > 30) {
-        position = 'GF';
-    } else {
-        position = 'F';
+    } else { 
+        position = 'PG'; 
     }
+		
 
-    // No height requirements for guards
+    // No height requirements for point guards
     // PG is a fast ball handler, or a super ball handler
-    if ((ratings.spd >= 60 && (ratings.pss + ratings.drb) >= 90) ||
-            ((ratings.pss + ratings.drb) >= 150)) {
+    if ((ratings.spd >= 70 && (ratings.pss + ratings.drb) >= 100) ||
+            (ratings.spd >= 30 && (ratings.pss + ratings.drb) >= 145)) {
         pg = true;
     }
 
-    // SG is secondary ball handler and at least one of: slasher, shooter, or a decent defender
-    if ((ratings.drb + ratings.pss) >= 100 &&
-            ((ratings.spd >= 70 && ratings.dnk >= 70 && ratings.drb > 40) ||
-            (ratings.fg >= 70 && ratings.tp >= 70) ||
-            (ratings.hgt >= 30 && ratings.spd >= 80 && ratings.stl >= 70))) {
+    // SG is secondary ball handler and at least one of: slasher or 3p shooter
+    if (ratings.spd >= 50 && ratings.drb >= 50 && ratings.hgt >= 35 &&
+            (ratings.dnk >= 65 || ratings.tp >= 75)) {
         sg = true;
     }
 
     // SF is similar to SG but must be taller and has lower dribble/speed requirements
-    if (ratings.hgt >= 35 && ((ratings.spd >= 30 && ratings.dnk >= 60 && ratings.drb > 10) ||
-            (ratings.fg >= 55 && ratings.tp >= 55) ||
-            (ratings.hgt >= 40 && ratings.spd >= 55 && (ratings.stl >= 60 || ratings.blk >= 60)))) {
+    if (ratings.spd >= 35 && ratings.drb > 25 && ratings.hgt >= 45 && 
+            (ratings.dnk >= 75 || ratings.tp >= 65)) {
         sf = true;
     }
 
     // PF must meet height/strength requirements.  If they are too tall then they are a Center only... unless they can shoot
-    if (ratings.hgt >= 50 && ((ratings.stre >= 50 && ratings.hgt <= 85) || ratings.tp >= 60)) {
+    if (ratings.hgt >= 45 && ratings.stre >= 60 && ratings.hgt + ratings.stre >= 115 &&
+            (ratings.hgt <= 65 || ratings.tp >= 70)) {
         pf = true;
     }
 
     // C must be extra tall or is strong/shotblocker but not quite as tall
-    if (ratings.hgt >= 80 || (ratings.hgt >= 65 && (ratings.stre >= 65 || ratings.blk >= 80))) {
+    if (ratings.hgt >= 65 || (ratings.hgt >= 55 && (ratings.hgt + ratings.stre >= 150 || ratings.blk >= 85))) {
         c = true;
     }
 
@@ -303,11 +306,11 @@ function pos(ratings: PlayerRatings): string {
     } else if (!pg && !sg && !sf && pf && !c) {
         position = 'PF';
     } else if (!pg && !sg && !sf && !pf && c) {
-        position = 'C';
+        position = 'C'; 
     }
 
     // Multiple positions
-    if ((pg || sg) && c) {
+    if ((pg || sg || sf) && c) {
         position = 'F';
     } else if ((pg || sg) && (sf || pf)) {
         position = 'GF';
@@ -473,9 +476,9 @@ function develop(
 
     if (p.hasOwnProperty('pos') && typeof p.pos === 'string') {
         // Must be a custom league player, let's not rock the boat
-        p.ratings[r].pos = p.pos;
+        p.ratings[r].pos = p.pos;        
     } else {
-        p.ratings[r].pos = pos(p.ratings[r]);
+        p.ratings[r].pos = pos(p.ratings[r]);        
     }
 }
 
@@ -668,23 +671,60 @@ function genRatings(
     season: number,
     scoutingRank: number,
     tid: number,
+    predeterminedHeight: number,
 ): PlayerRatings {
     let profileId;
+    profileId = -1;
+    
+    // Use the profile that is specified, if any
     if (profile === "Point") {
         profileId = 1;
     } else if (profile === "Wing") {
         profileId = 2;
     } else if (profile === "Big") {
         profileId = 3;
-    } else {
+    } else if (profile === "Base") {
         profileId = 0;
+    } else if (profile === "3andD") {
+        profileId = 4;
+    } else if (profile === "RawAthlete") {
+        profileId = 5;
+    }
+    
+    // Use base profile if neither profile nor predeterminedHeight are set
+    if (profileId == -1 && predeterminedHeight == 0) {
+        profileId = 0;
+    }
+    
+    // If no profile is specified, use the predetermined height to choose
+    if (profileId == -1) {	
+        if  ((predeterminedHeight > 55) && random.randInt(0,1000) < 999) {
+            profileId = 3; // Nearly all tall guys are "Big"
+        } else if ((predeterminedHeight < 35) && random.randInt(0,1000) < 999) {
+            profileId = 1; // Nearly all short guys are "Point"
+        } else {
+            // Medium height players (plus the very few tall/short players who slip through)
+            let selector = random.randInt(1,100);
+            if (selector <= 25) {
+                profileId = 0; // 25% get "Base"
+            } else if (selector <= 50) {
+                profileId = 2; // 25% get generic "Wing"
+            } else if (selector <= 75) {
+                profileId = 4; // 25% get "3andD Wing"
+            } else {
+                profileId = 5; // 25% get "Raw Athletic Wing"
+            }
+        }
     }
 
     // Each row should sum to ~150
     const profiles = [[10, 10, 10, 10, 10, 10, 10, 10, 10, 25, 10, 10, 10, 10, 10], // Base
                 [-30, -10, 40, 20, 15, 0, 0, 10, 15, 25, 0, 30, 20, 20, 0], // Point Guard
-                [10, 10, 15, 15, 0, 0, 25, 15, 15, 20, 0, 10, 15, 0, 15], // Wing
-                [45, 30, -15, -15, -5, 30, 30, -5, -15, -25, 30, -5, -20, -20, 30]]; // Big
+                [10, 10, 15, 15, 0, 0, 25, 15, 15, 20, 0, 10, 15, 0, 15], // Generic Wing
+                [45, 30, -15, -15, -5, 30, 30, -5, -15, -25, 30, -5, -20, -20, 30], // Big
+                [10, 10, 25, 10, 0, -10, -5, 10, 20, 30, 10, 20, 10, 0, 10], // 3andD wing
+                [10, 20, 30, 35, 20, 0, 25, 0, 0, 0, 10, 0, 0, 0, 0] // Raw Athletic Wing
+            ]; 
     const sigmas = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10];
     baseRating = random.gauss(baseRating, 5);
 
@@ -693,7 +733,7 @@ function genRatings(
         const rawRating = profiles[profileId][i] + baseRating;
         rawRatings[i] = limitRating(random.gauss(rawRating, sigmas[i]));
     }
-
+	
     // Small chance of freakish ability in 2 categories
     for (let i = 0; i < 2; i++) {
         if (Math.random() < 0.2) {
@@ -702,7 +742,7 @@ function genRatings(
             rawRatings[j] = limitRating(rawRatings[j] + 50);
         }
     }
-
+	
     const ratings = {
         hgt: rawRatings[0],
         stre: rawRatings[1],
@@ -727,16 +767,19 @@ function genRatings(
         season,
         skills: [],
     };
+	
+    if (predeterminedHeight !== undefined && predeterminedHeight != 0)
+        ratings.hgt = predeterminedHeight;
 
     // Ugly hack: Tall people can't dribble/pass very well
     if (ratings.hgt > 40) {
-        ratings.drb = limitRating(ratings.drb - (ratings.hgt - 50));
-        ratings.pss = limitRating(ratings.pss - (ratings.hgt - 50));
+        ratings.drb = limitRating(ratings.drb - (ratings.hgt - 40));
+        ratings.pss = limitRating(ratings.pss - (ratings.hgt - 40));
     } else {
         ratings.drb = limitRating(ratings.drb + 10);
         ratings.pss = limitRating(ratings.pss + 10);
     }
-
+	
     ratings.ovr = ovr(ratings);
 
     if (tid === PLAYER.UNDRAFTED_2) {
@@ -884,18 +927,37 @@ function generate(
     scoutingRank: number,
 ): PlayerWithoutPid {
     let ratings;
+	
+    let realHeight;
+    let predetHgt;
+    
+    // RealHeight is drawn from a custom probability distribution and then offset by a fraction of an inch either way	
+    realHeight = Math.random() - 0.5;  // Fraction of an inch
+    realHeight += random.heightDist();
+	
+    // Min/max for hgt rating.  Displayed height ranges from 4'6" to 9'0", though we might never see the true extremes
+    const minHgt = 66;  // 5'6"
+    const maxHgt = 93;  // 7'9"
+	
+    let wingspanAdjust = realHeight;
+    let wingSelector = random.randInt(1,100);
+    if (wingSelector <= 10)
+    	wingspanAdjust += random.realGauss(0,0.4);
+
+    // hgt 0-100 corresponds to height 5'6" to 7'9"	(Anything taller or shorter than the extremes will just get 100/0)
+    predetHgt = Math.round(helpers.bound(100*(wingspanAdjust - minHgt)/(maxHgt-minHgt),0,100));
+    realHeight = Math.round(realHeight);
+	
     if (newLeague) {
         // Create player for new league
-        ratings = genRatings(profile, baseRating, pot, g.startingSeason, scoutingRank, tid);
+        ratings = genRatings(profile, baseRating, pot, g.startingSeason, scoutingRank, tid, predetHgt);
     } else {
         // Create player to be drafted
-        ratings = genRatings(profile, baseRating, pot, draftYear, scoutingRank, tid);
+        ratings = genRatings(profile, baseRating, pot, draftYear, scoutingRank, tid, predetHgt);
     }
 
-    const minHgt = 71;  // 5'11"
-    const maxHgt = 85;  // 7'1"
-    const minWeight = 170;
-    const maxWeight = 290;
+    const minWeight = 155;
+    const maxWeight = 305;
 
     const nameInfo = name();
 
@@ -927,7 +989,7 @@ function generate(
         firstName: nameInfo.firstName,
         freeAgentMood: Array(g.numTeams).fill(0),
         gamesUntilTradable: 0,
-        hgt: Math.round(random.randInt(-1, 1) + ratings.hgt * (maxHgt - minHgt) / 100 + minHgt), // Height in inches (from minHgt to maxHgt)
+        hgt: realHeight,
         hof: false,
         imgURL: "", // Custom rosters can define player image URLs to be used rather than vector faces
         injury: {type: "Healthy", gamesRemaining: 0},
@@ -949,16 +1011,7 @@ function generate(
         valueFuzz: 0,
         valueNoPotFuzz: 0,
         valueWithContract: 0,
-    };
-
-    const rand = Math.random();
-    if (rand < 0.5) {
-        p.hgt += 1;
-    } else if (rand < 0.75) {
-        p.hgt += 2;
-    } else if (rand < 0.77) {
-        p.hgt += 3;
-    }
+    };	
 
     setContract(p, genContract(p), false);
 

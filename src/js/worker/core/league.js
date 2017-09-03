@@ -320,8 +320,10 @@ async function create(
             delete p.stats;
 
             // Height rescaling
-            for (const r of p.ratings) {
-                r.hgt = player.heightToRating(p.hgt);
+            if (leagueFile.version === undefined || leagueFile.version < 24) {
+                for (const r of p.ratings) {
+                    r.hgt = player.heightToRating(p.hgt);
+                }
             }
 
             await player.updateValues(p, playerStats);
@@ -479,7 +481,9 @@ async function exportLeague(stores: string[]) {
     // Always flush before export, so export is current!
     await idb.cache.flush();
 
-    const exportedLeague = {};
+    const exportedLeague = {
+        version: idb.league.version,
+    };
 
     // Row from leagueStore in meta db.
     // phaseText is needed if a phase is set in gameAttributes.

@@ -1,6 +1,7 @@
 // @flow
 
 import Backboard from 'backboard';
+import {player} from '../core';
 
 /**
  * Create a new league database with the latest structure.
@@ -133,11 +134,19 @@ const migrateLeague = (upgradeDB, lid) => {
     if (upgradeDB.oldVersion <= 22) {
         upgradeDB.createObjectStore('draftLotteryResults', {keyPath: 'season'});
     }
+    if (upgradeDB.oldVersion <= 23) {
+        upgradeDB.players.iterate((p) => {
+            for (const r of p.ratings) {
+                r.hgt = player.heightToRating(p.hgt);
+            }
+            upgradeDB.players.put(p);
+        });
+    }
 };
 
 const connectLeague = async (lid: number) => {
     // Would like to await on migrateLeague and inside there, but Firefox
-    const db = await Backboard.open(`league${lid}`, 23, (upgradeDB) => {
+    const db = await Backboard.open(`league${lid}`, 24, (upgradeDB) => {
         if (upgradeDB.oldVersion === 0) {
             createLeague(upgradeDB, lid);
         } else {

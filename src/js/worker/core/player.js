@@ -916,6 +916,13 @@ async function addStatsRow(p: Player, playoffs?: boolean = false) {
     await idb.cache.playerStats.add(statsRow);
 }
 
+const heightToRating = (heightInInches: number) => {
+    // Min/max for hgt rating.  Displayed height ranges from 4'6" to 9'0", though we might never see the true extremes
+    const minHgt = 66;  // 5'6"
+    const maxHgt = 93;  // 7'9"
+    return Math.round(helpers.bound(100 * (heightInInches - minHgt) / (maxHgt - minHgt), 0, 100));
+};
+
 function generate(
     tid: number,
     age: number,
@@ -926,28 +933,21 @@ function generate(
     newLeague: boolean,
     scoutingRank: number,
 ): PlayerWithoutPid {
-    let ratings;
-	
-    let realHeight;
-    let predetHgt;
-    
-    // RealHeight is drawn from a custom probability distribution and then offset by a fraction of an inch either way	
-    realHeight = Math.random() - 0.5;  // Fraction of an inch
+    // RealHeight is drawn from a custom probability distribution and then offset by a fraction of an inch either way
+    let realHeight = Math.random() - 0.5;  // Fraction of an inch
     realHeight += random.heightDist();
-	
-    // Min/max for hgt rating.  Displayed height ranges from 4'6" to 9'0", though we might never see the true extremes
-    const minHgt = 66;  // 5'6"
-    const maxHgt = 93;  // 7'9"
-	
-    let wingspanAdjust = realHeight;
-    let wingSelector = random.randInt(1,100);
-    if (wingSelector <= 10)
-    	wingspanAdjust += random.realGauss(0,0.4);
 
-    // hgt 0-100 corresponds to height 5'6" to 7'9"	(Anything taller or shorter than the extremes will just get 100/0)
-    predetHgt = Math.round(helpers.bound(100*(wingspanAdjust - minHgt)/(maxHgt-minHgt),0,100));
+    let wingspanAdjust = realHeight;
+    const wingSelector = random.randInt(1, 100);
+    if (wingSelector <= 10) {
+        wingspanAdjust += random.realGauss(0, 1);
+    }
+
+    // hgt 0-100 corresponds to height 5'6" to 7'9" (Anything taller or shorter than the extremes will just get 100/0)
+    const predetHgt = heightToRating(wingspanAdjust);
     realHeight = Math.round(realHeight);
-	
+
+    let ratings;
     if (newLeague) {
         // Create player for new league
         ratings = genRatings(profile, baseRating, pot, g.startingSeason, scoutingRank, tid, predetHgt);
@@ -1011,7 +1011,7 @@ function generate(
         valueFuzz: 0,
         valueNoPotFuzz: 0,
         valueWithContract: 0,
-    };	
+    };
 
     setContract(p, genContract(p), false);
 
@@ -1641,4 +1641,5 @@ export default {
     killOne,
     fuzzRating,
     getPlayerFakeAge,
+    heightToRating,
 };

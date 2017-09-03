@@ -319,6 +319,11 @@ async function create(
             const playerStats = p.stats;
             delete p.stats;
 
+            // Height rescaling
+            for (const r of p.ratings) {
+                r.hgt = player.heightToRating(p.hgt);
+            }
+
             await player.updateValues(p, playerStats);
             await idb.cache.players.put(p);
 

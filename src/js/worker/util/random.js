@@ -103,18 +103,18 @@ function choice<T>(x: T[]): T {
 
 /**
  * Custom probability distribution to determine player heights
- * 
+ *
  * Source: List of heights of all NBA players from 1966, 1976, 1986, 1996, 2006, and 2016
  * For 5'9" to 7'4", frequency counts are used to determine probability of seeing that height.
- * In a couple of places (6'4" and 6'8") the numbers were averaged with an adjacent height 
+ * In a couple of places (6'4" and 6'8") the numbers were averaged with an adjacent height
  * to produce a smoother curve.
- * For the extremes, this distribution uses approximately the 
+ * For the extremes, this distribution uses approximately the
  * same values as produced by a gamma distribution that would result
- * by fitting the same data.  5'3" and 7'9" are the shortest and tallest anyone should 
+ * by fitting the same data.  5'3" and 7'9" are the shortest and tallest anyone should
  * reasonably expect to see.  Anything beyond that comes around less than 1 in 700 draft classes.
  */
 function heightDist(): number {
-    let r = Math.random();
+    const r = Math.random();
     if (r < 0.000000000051653) {
         return 54;
     } else if (r < 0.000000000258264) {
@@ -129,7 +129,7 @@ function heightDist(): number {
         return 59;
     } else if (r < 0.000000275826446) {
         return 60;
-	} else if (r < 0.000001308884298) {
+    } else if (r < 0.000001308884298) {
         return 61;
     } else if (r < 0.000011639462810) {
         return 62;
@@ -223,11 +223,9 @@ function heightDist(): number {
         return 106;
     } else if (r < 0.999999999948347) {
         return 107;
-    } else {
-        return 108;
     }
+    return 108;
 }
- 
 
 export default {
     randInt,
@@ -236,5 +234,5 @@ export default {
     realGauss,
     uniform,
     choice,
-	heightDist,
+    heightDist,
 };

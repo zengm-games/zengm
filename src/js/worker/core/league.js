@@ -388,7 +388,7 @@ async function create(
 
                 const p = player.generate(tid2, 19, profile, baseRatings[n], pots[n], draftYear, true, scoutingRank);
                 player.develop(p, agingYears, true);
-                                
+
                 if (n < 5) {
                     player.bonus(p, goodNeutralBad * random.randInt(0, 20));
                 } else {
@@ -481,7 +481,7 @@ async function exportLeague(stores: string[]) {
     // Always flush before export, so export is current!
     await idb.cache.flush();
 
-    const exportedLeague = {
+    const exportedLeague: any = {
         version: idb.league.version,
     };
 

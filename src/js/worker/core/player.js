@@ -78,7 +78,13 @@ function hasSkill(ratings: PlayerRatings, components: RatingKey[], weights?: num
     let numerator = 0;
     let denominator = 0;
     for (let i = 0; i < components.length; i++) {
-        const rating = components[i] === 'hgt' ? ratings[components[i]] : fuzzRating(ratings[components[i]], ratings.fuzz); // don't fuzz height
+        let rating = components[i] === 'hgt' ? ratings[components[i]] : fuzzRating(ratings[components[i]], ratings.fuzz); // don't fuzz height
+
+        // Special case for height due to rescaling
+        if (components[i] === 'hgt') {
+            rating = (rating - 25) * 2;
+        }
+
         numerator += rating * weights[i];
         denominator += 100 * weights[i];
     }

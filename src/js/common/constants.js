@@ -70,7 +70,7 @@ const COMPOSITE_WEIGHTS = {
     },
     shootingThreePointer: {
         ratings: ['hgt', 'tp'],
-        weights: [0.2, 1],
+        weights: [0.1, 1],
     },
     shootingFT: {
         ratings: ['ft'],
@@ -101,7 +101,7 @@ const COMPOSITE_WEIGHTS = {
     },
     defensePerimeter: {
         ratings: ['hgt', 'stre', 'spd', 'jmp', 'stl'],
-        weights: [1, 1, 2, 0.5, 1],
+        weights: [0.5, 1, 2, 0.5, 1],
     },
     endurance: {
         ratings: [50, 'endu', 'hgt'],

@@ -473,7 +473,12 @@ function makeComposite(rating, components, weights) {
     let r = 0;
     let divideBy = 0;
     for (let i = 0; i < components.length; i++) {
-        const factor: number = typeof components[i] === 'string' ? rating[components[i]] : components[i];
+        let factor: number = typeof components[i] === 'string' ? rating[components[i]] : components[i];
+
+        // Special case for height due to rescaling
+        if (components[i] === 'hgt') {
+            factor = (factor - 25) * 2;
+        }
 
         // Sigmoidal transformation
         //y = (rating[component] - 70) / 10;

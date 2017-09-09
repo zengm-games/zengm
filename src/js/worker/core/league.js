@@ -324,6 +324,9 @@ async function create(
                 for (const r of p.ratings) {
                     r.hgt = player.heightToRating(p.hgt);
                     r.ovr = player.ovr(r);
+                    if (r.ovr > r.pot) {
+                        r.pot = r.ovr;
+                    }
                 }
             }
 

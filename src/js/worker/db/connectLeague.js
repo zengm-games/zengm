@@ -138,6 +138,7 @@ const migrateLeague = (upgradeDB, lid) => {
         upgradeDB.players.iterate((p) => {
             for (const r of p.ratings) {
                 r.hgt = player.heightToRating(p.hgt);
+                r.ovr = player.ovr(r);
             }
             upgradeDB.players.put(p);
         });

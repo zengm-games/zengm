@@ -1,8 +1,3 @@
-HEIGHT SCALING
-- document height rating, league file version, what happens with older versions (or in blog post)
-- rescale ovr when rescaling height
-- tell roster makers, multiplayer people
-
 keep box scores with feats
 
 add franchise leaders (stats) to team history page

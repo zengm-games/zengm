@@ -323,6 +323,7 @@ async function create(
             if (leagueFile.version === undefined || leagueFile.version < 24) {
                 for (const r of p.ratings) {
                     r.hgt = player.heightToRating(p.hgt);
+                    r.ovr = player.ovr(r);
                 }
             }
 

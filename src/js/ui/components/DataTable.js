@@ -296,6 +296,7 @@ class DataTable extends React.Component {
     handlePerPage: Function;
     handleSearch: Function;
     sortCacheKey: string;
+    filtersCacheKey: string;
 
     constructor(props: Props) {
         super(props);
@@ -323,10 +324,39 @@ class DataTable extends React.Component {
             sortBys = [this.props.defaultSort];
         }
 
+        this.filtersCacheKey = `DataTableFilters:${this.props.name}`;
+        const defaultFilters = props.cols.map(() => '');
+        let filters = localStorage.getItem(this.filtersCacheKey);
+        if (filters === null || filters === undefined) {
+            filters = defaultFilters;
+        } else {
+            try {
+                filters = JSON.parse(filters);
+
+                // Confirm valid filters
+                if (!Array.isArray(filters) || filters.length !== props.cols.length) {
+                    filters = defaultFilters;
+                } else {
+                    for (const filter of filters) {
+                        if (typeof filter !== 'string') {
+                            filters = defaultFilters;
+                            break;
+                        }
+                    }
+                }
+            } catch (err) {
+                filters = defaultFilters;
+            }
+        }
+        // Repeat for Flow
+        if (filters === null || filters === undefined || typeof filters === 'string') {
+            filters = defaultFilters;
+        }
+
         this.state = {
             currentPage: 1,
-            enableFilters: false,
-            filters: props.cols.map(() => ''),
+            enableFilters: filters !== defaultFilters,
+            filters,
             perPage,
             searchText: '',
             sortBys,
@@ -394,7 +424,6 @@ class DataTable extends React.Component {
             sortBys = [[i, col.sortSequence ? col.sortSequence[0] : 'asc']];
         }
 
-        // Save this sort for this table, so it can be used as default next time
         localStorage.setItem(this.sortCacheKey, JSON.stringify(sortBys));
 
         this.setState({
@@ -404,6 +433,13 @@ class DataTable extends React.Component {
     }
 
     handleEnableFilters() {
+        // Remove filter cache if hiding, add filter cache if displaying
+        if (this.state.enableFilters) {
+            localStorage.removeItem(this.filtersCacheKey);
+        } else {
+            localStorage.setItem(this.filtersCacheKey, JSON.stringify(this.state.filters));
+        }
+
         this.setState({
             enableFilters: !this.state.enableFilters,
         });
@@ -415,6 +451,8 @@ class DataTable extends React.Component {
         this.setState({
             filters,
         });
+
+        localStorage.setItem(this.filtersCacheKey, JSON.stringify(filters));
     }
 
     handlePaging(newPage: number) {

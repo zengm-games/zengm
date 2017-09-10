@@ -1,3 +1,7 @@
+new faces
+- http://biskup.biowiki.org/facesjs/
+- https://github.com/dumbmatter/facesjs/compare/master...ihh:master
+
 keep box scores with feats
 
 add franchise leaders (stats) to team history page
@@ -32,7 +36,6 @@ bugs in really big leagues
 
 filtering
 - disable in some columns, like "Negotiate" buttons. maybe config in getCols?
-- persist, same as sort order
 
 cache unread messages, will make it faster and simpler
 
@@ -232,7 +235,6 @@ DataTable
   Fancy features
     CSV export
     show/hide columns
-    filtering
 
 Trade
   could be cleaned up a lot

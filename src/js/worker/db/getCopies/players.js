@@ -104,6 +104,7 @@ const getCopies = async ({
             });
         });
 
+        // $FlowFixMe this seems like a bug in Flow, I don't know what's wrong here
         return mergeByPk(
             fromDB,
             // $FlowFixMe this seems like a bug in Flow, I don't know what's wrong here

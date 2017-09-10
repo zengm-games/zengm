@@ -376,7 +376,7 @@ class Cache {
         }
     }
 
-    _waitForStatus(...validStatuses: Status[]) {
+    _waitForStatus(...validStatuses: Status[]): Promise<void> | void {
         if (!validStatuses.includes(this._status)) {
             return new Promise((resolve, reject) => {
                 this._requestInd += 1;

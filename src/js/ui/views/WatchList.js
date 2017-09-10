@@ -1,10 +1,15 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import DropdownButton from 'react-bootstrap/lib/DropdownButton';
-import MenuItem from 'react-bootstrap/lib/MenuItem';
-import {PLAYER, helpers} from '../../common';
-import {getCols, realtimeUpdate, setTitle, toWorker} from '../util';
-import {DataTable, Dropdown, NewWindowLink, PlayerNameLabels} from '../components';
+import PropTypes from "prop-types";
+import React from "react";
+import DropdownButton from "react-bootstrap/lib/DropdownButton";
+import MenuItem from "react-bootstrap/lib/MenuItem";
+import { PLAYER, helpers } from "../../common";
+import { getCols, realtimeUpdate, setTitle, toWorker } from "../util";
+import {
+    DataTable,
+    Dropdown,
+    NewWindowLink,
+    PlayerNameLabels,
+} from "../components";
 
 class WatchList extends React.Component {
     constructor(props) {
@@ -20,7 +25,7 @@ class WatchList extends React.Component {
             clearing: true,
         });
 
-        await toWorker('clearWatchList');
+        await toWorker("clearWatchList");
         realtimeUpdate(["clearWatchList"]);
 
         this.setState({
@@ -29,11 +34,32 @@ class WatchList extends React.Component {
     }
 
     render() {
-        const {players, playoffs, statType} = this.props;
+        const { players, playoffs, statType } = this.props;
 
-        setTitle('Watch List');
+        setTitle("Watch List");
 
-        const cols = getCols('Name', 'Pos', 'Age', 'Team', 'Ovr', 'Pot', 'Contract', 'GP', 'Min', 'FG%', 'TP%', 'FT%', 'Reb', 'Ast', 'TO', 'Stl', 'Blk', 'Pts', 'PER', 'EWA');
+        const cols = getCols(
+            "Name",
+            "Pos",
+            "Age",
+            "Team",
+            "Ovr",
+            "Pot",
+            "Contract",
+            "GP",
+            "Min",
+            "FG%",
+            "TP%",
+            "FT%",
+            "Reb",
+            "Ast",
+            "TO",
+            "Stl",
+            "Blk",
+            "Pts",
+            "PER",
+            "EWA",
+        );
 
         // Number of decimals for many stats
         const d = statType === "totals" ? 0 : 1;
@@ -42,19 +68,35 @@ class WatchList extends React.Component {
             let contract;
             if (p.tid === PLAYER.RETIRED) {
                 contract = "Retired";
-            } else if (p.tid === PLAYER.UNDRAFTED || p.tid === PLAYER.UNDRAFTED_2 || p.tid === PLAYER.UNDRAFTED_3) {
+            } else if (
+                p.tid === PLAYER.UNDRAFTED ||
+                p.tid === PLAYER.UNDRAFTED_2 ||
+                p.tid === PLAYER.UNDRAFTED_3
+            ) {
                 contract = `${p.draft.year} Draft Prospect`;
             } else {
-                contract = `${helpers.formatCurrency(p.contract.amount, "M")} thru ${p.contract.exp}`;
+                contract = `${helpers.formatCurrency(
+                    p.contract.amount,
+                    "M",
+                )} thru ${p.contract.exp}`;
             }
 
             return {
                 key: p.pid,
                 data: [
-                    <PlayerNameLabels injury={p.injury} pid={p.pid} skills={p.ratings.skills} watch={p.watch}>{p.name}</PlayerNameLabels>,
+                    <PlayerNameLabels
+                        injury={p.injury}
+                        pid={p.pid}
+                        skills={p.ratings.skills}
+                        watch={p.watch}
+                    >
+                        {p.name}
+                    </PlayerNameLabels>,
                     p.ratings.pos,
                     p.age,
-                    <a href={helpers.leagueUrl(["roster", p.abbrev])}>{p.abbrev}</a>,
+                    <a href={helpers.leagueUrl(["roster", p.abbrev])}>
+                        {p.abbrev}
+                    </a>,
                     p.ratings.ovr,
                     p.ratings.pot,
                     contract,
@@ -75,37 +117,69 @@ class WatchList extends React.Component {
             };
         });
 
-        return <div>
-            <Dropdown view="watch_list" fields={['statTypes', 'playoffs']} values={[statType, playoffs]} />
-            <div className="pull-right">
-                <DropdownButton id="dropdown-other-reports" title="Other Reports">
-                    <MenuItem href={helpers.leagueUrl(['player_stats', 'watch'])}>Player Stats</MenuItem>
-                    <MenuItem href={helpers.leagueUrl(['player_ratings', 'watch'])}>Player Ratings</MenuItem>
-                </DropdownButton>
+        return (
+            <div>
+                <Dropdown
+                    view="watch_list"
+                    fields={["statTypes", "playoffs"]}
+                    values={[statType, playoffs]}
+                />
+                <div className="pull-right">
+                    <DropdownButton
+                        id="dropdown-other-reports"
+                        title="Other Reports"
+                    >
+                        <MenuItem
+                            href={helpers.leagueUrl(["player_stats", "watch"])}
+                        >
+                            Player Stats
+                        </MenuItem>
+                        <MenuItem
+                            href={helpers.leagueUrl([
+                                "player_ratings",
+                                "watch",
+                            ])}
+                        >
+                            Player Ratings
+                        </MenuItem>
+                    </DropdownButton>
+                </div>
+                <h1>
+                    Watch List <NewWindowLink />
+                </h1>
+
+                <p>
+                    Click the watch icon{" "}
+                    <span className="glyphicon glyphicon-flag" /> next to a
+                    player's name to add or remove him from this list.
+                </p>
+
+                <button
+                    className="btn btn-danger"
+                    disabled={this.state.clearing}
+                    onClick={this.clearWatchList}
+                >
+                    Clear Watch List
+                </button>
+
+                <p className="clearfix" />
+
+                <DataTable
+                    cols={cols}
+                    defaultSort={[0, "asc"]}
+                    name="WatchList"
+                    pagination
+                    rows={rows}
+                />
             </div>
-            <h1>Watch List <NewWindowLink /></h1>
-
-            <p>Click the watch icon <span className="glyphicon glyphicon-flag" /> next to a player's name to add or remove him from this list.</p>
-
-            <button className="btn btn-danger" disabled={this.state.clearing} onClick={this.clearWatchList}>Clear Watch List</button>
-
-            <p className="clearfix" />
-
-            <DataTable
-                cols={cols}
-                defaultSort={[0, 'asc']}
-                name="WatchList"
-                pagination
-                rows={rows}
-            />
-        </div>;
+        );
     }
 }
 
 WatchList.propTypes = {
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
-    playoffs: PropTypes.oneOf(['playoffs', 'regularSeason']).isRequired,
-    statType: PropTypes.oneOf(['per36', 'perGame', 'totals']).isRequired,
+    playoffs: PropTypes.oneOf(["playoffs", "regularSeason"]).isRequired,
+    statType: PropTypes.oneOf(["per36", "perGame", "totals"]).isRequired,
 };
 
 export default WatchList;

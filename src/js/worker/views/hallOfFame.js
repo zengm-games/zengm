@@ -1,20 +1,34 @@
 // @flow
 
-import {PHASE, g} from '../../common';
-import {idb} from '../db';
-import type {GetOutput, UpdateEvents} from '../../common/types';
+import { PHASE, g } from "../../common";
+import { idb } from "../db";
+import type { GetOutput, UpdateEvents } from "../../common/types";
 
 async function updatePlayers(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
-): void | {[key: string]: any} {
-    if (updateEvents.includes('firstRun') || (updateEvents.includes('newPhase') && g.phase === PHASE.DRAFT_LOTTERY)) {
-        let players = await idb.getCopies.players({retired: true});
+): void | { [key: string]: any } {
+    if (
+        updateEvents.includes("firstRun") ||
+        (updateEvents.includes("newPhase") && g.phase === PHASE.DRAFT_LOTTERY)
+    ) {
+        let players = await idb.getCopies.players({ retired: true });
         players = players.filter(p => p.hof);
         players = await idb.getCopies.playersPlus(players, {
             attrs: ["pid", "name", "draft", "retiredYear", "statsTids"],
             ratings: ["ovr", "pos"],
-            stats: ["season", "abbrev", "tid", "gp", "min", "trb", "ast", "pts", "per", "ewa"],
+            stats: [
+                "season",
+                "abbrev",
+                "tid",
+                "gp",
+                "min",
+                "trb",
+                "ast",
+                "pts",
+                "per",
+                "ewa",
+            ],
             fuzz: true,
         });
 
@@ -43,7 +57,13 @@ async function updatePlayers(
                     p.teamSums[tid] = EWA;
                 }
             }
-            p.legacyTid = parseInt(Object.keys(p.teamSums).reduce((teamA, teamB) => (p.teamSums[teamA] > p.teamSums[teamB] ? teamA : teamB)), 10);
+            p.legacyTid = parseInt(
+                Object.keys(p.teamSums).reduce(
+                    (teamA, teamB) =>
+                        p.teamSums[teamA] > p.teamSums[teamB] ? teamA : teamB,
+                ),
+                10,
+            );
         }
 
         return {

@@ -1,20 +1,22 @@
 // @flow
 
-import {idb} from '../../db';
-import {mergeByPk} from './helpers';
-import type {Message} from '../../../common/types';
+import { idb } from "../../db";
+import { mergeByPk } from "./helpers";
+import type { Message } from "../../../common/types";
 
 const getLastEntries = <T>(arr: T[], limit: number): T[] => {
     return arr.slice(arr.length - limit);
 };
 
-const getCopies = async ({
-    limit,
-    mid,
-}: {
-    limit?: number,
-    mid?: number,
-} = {}): Promise<Message[]> => {
+const getCopies = async (
+    {
+        limit,
+        mid,
+    }: {
+        limit?: number,
+        mid?: number,
+    } = {},
+): Promise<Message[]> => {
     if (mid !== undefined) {
         let message = await idb.cache.messages.get(mid);
         if (!message) {
@@ -27,12 +29,16 @@ const getCopies = async ({
     if (constLimit !== undefined) {
         const fromDb: Message[] = [];
 
-        await idb.league.messages.iterate(undefined, 'prev', (message: Message, shortCircuit) => {
-            fromDb.unshift(message);
-            if (fromDb.length >= constLimit) {
-                shortCircuit();
-            }
-        });
+        await idb.league.messages.iterate(
+            undefined,
+            "prev",
+            (message: Message, shortCircuit) => {
+                fromDb.unshift(message);
+                if (fromDb.length >= constLimit) {
+                    shortCircuit();
+                }
+            },
+        );
 
         const fromCache = await idb.cache.messages.getAll();
 

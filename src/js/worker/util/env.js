@@ -1,13 +1,13 @@
 // @flow
 
-import type {Env} from '../../common/types';
+import type { Env } from "../../common/types";
 
 // Default values, to be overwritten on initialization by global variables from ui
 const env: Env = {
     enableLogging: false,
-    heartbeatID: '',
+    heartbeatID: "",
     inCordova: false,
-    tld: 'com',
+    tld: "com",
     fromLocalStorage: {},
     useSharedWorker: false,
 };

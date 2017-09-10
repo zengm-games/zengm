@@ -1,8 +1,8 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import {g, helpers} from '../../common';
-import {setTitle} from '../util';
-import {BoxPlot, Dropdown, NewWindowLink} from '../components';
+import PropTypes from "prop-types";
+import React from "react";
+import { g, helpers } from "../../common";
+import { setTitle } from "../util";
+import { BoxPlot, Dropdown, NewWindowLink } from "../components";
 
 const nbaQuartiles = {
     gp: [1, 25, 52, 74, 82],
@@ -27,7 +27,7 @@ const nbaQuartiles = {
     pts: [0, 3.3333333333, 7.0507246377, 11.2698735321, 30.1463414634],
 };
 
-const PlayerStatDists = ({season, statsAll}) => {
+const PlayerStatDists = ({ season, statsAll }) => {
     setTitle(`Player Stat Distributions - ${season}`);
 
     // Scales for the box plots. This is not done dynamically so that the plots will be comparable across seasons.
@@ -57,31 +57,91 @@ const PlayerStatDists = ({season, statsAll}) => {
         per: [0, 35],
     };
 
-    return <div>
-        <Dropdown view="player_stat_dists" fields={["seasons"]} values={[season]} />
-        <h1>Player Stat Distributions <NewWindowLink /></h1>
+    return (
+        <div>
+            <Dropdown
+                view="player_stat_dists"
+                fields={["seasons"]}
+                values={[season]}
+            />
+            <h1>
+                Player Stat Distributions <NewWindowLink />
+            </h1>
 
-        <p>More: <a href={helpers.leagueUrl(['player_stats', season])}>Main Stats</a> | <a href={helpers.leagueUrl(['player_shot_locations', season])}>Shot Locations</a></p>
+            <p>
+                More:{" "}
+                <a href={helpers.leagueUrl(["player_stats", season])}>
+                    Main Stats
+                </a>{" "}
+                |{" "}
+                <a href={helpers.leagueUrl(["player_shot_locations", season])}>
+                    Shot Locations
+                </a>
+            </p>
 
-        <p>These <a href="http://en.wikipedia.org/wiki/Box_plot">box plots</a> show the league-wide distributions of player stats for all active players in the selected season. Black plots are for this league and blue plots are from the 2009-2010 NBA season, for comparison. NBA data was generously provided by <a href="http://www.databasebasketball.com/stats_download.htm">databaseBasketball.com</a>. The five vertical lines in each plot represent the minimum of the scale, the minimum, the first <a href="http://en.wikipedia.org/wiki/Quartile">quartile</a>, the median, the third quartile, the maximum, and the maximum of the scale.</p>
+            <p>
+                These{" "}
+                <a href="http://en.wikipedia.org/wiki/Box_plot">
+                    box plots
+                </a>{" "}
+                show the league-wide distributions of player stats for all
+                active players in the selected season. Black plots are for this
+                league and blue plots are from the 2009-2010 NBA season, for
+                comparison. NBA data was generously provided by{" "}
+                <a href="http://www.databasebasketball.com/stats_download.htm">
+                    databaseBasketball.com
+                </a>. The five vertical lines in each plot represent the minimum
+                of the scale, the minimum, the first{" "}
+                <a href="http://en.wikipedia.org/wiki/Quartile">quartile</a>,
+                the median, the third quartile, the maximum, and the maximum of
+                the scale.
+            </p>
 
-        <table>
-            <tbody>
-                {Object.keys(statsAll).map(stat => {
-                    const bbgmPlot = <tr><td style={{textAlign: 'right', paddingRight: '1em'}}>{stat}</td><td width="100%">
-                        <BoxPlot data={statsAll[stat]} scale={scale[stat]} />
-                    </td></tr>;
-                    let nbaPlot = null;
-                    if (nbaQuartiles.hasOwnProperty(stat)) {
-                        nbaPlot = <tr><td /><td width="100%"><div style={{marginTop: '-26px'}}>
-                            <BoxPlot color="#0088cc" labels={false} scale={scale[stat]} quartiles={nbaQuartiles[stat]} />
-                        </div></td></tr>;
-                    }
-                    return [bbgmPlot, nbaPlot];
-                })}
-            </tbody>
-        </table>
-    </div>;
+            <table>
+                <tbody>
+                    {Object.keys(statsAll).map(stat => {
+                        const bbgmPlot = (
+                            <tr>
+                                <td
+                                    style={{
+                                        textAlign: "right",
+                                        paddingRight: "1em",
+                                    }}
+                                >
+                                    {stat}
+                                </td>
+                                <td width="100%">
+                                    <BoxPlot
+                                        data={statsAll[stat]}
+                                        scale={scale[stat]}
+                                    />
+                                </td>
+                            </tr>
+                        );
+                        let nbaPlot = null;
+                        if (nbaQuartiles.hasOwnProperty(stat)) {
+                            nbaPlot = (
+                                <tr>
+                                    <td />
+                                    <td width="100%">
+                                        <div style={{ marginTop: "-26px" }}>
+                                            <BoxPlot
+                                                color="#0088cc"
+                                                labels={false}
+                                                scale={scale[stat]}
+                                                quartiles={nbaQuartiles[stat]}
+                                            />
+                                        </div>
+                                    </td>
+                                </tr>
+                            );
+                        }
+                        return [bbgmPlot, nbaPlot];
+                    })}
+                </tbody>
+            </table>
+        </div>
+    );
 };
 
 PlayerStatDists.propTypes = {

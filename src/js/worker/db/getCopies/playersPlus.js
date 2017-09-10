@@ -1,12 +1,16 @@
 // Typing is too hard due to https://github.com/facebook/flow/issues/183
 
-import backboard from 'backboard';
-import _ from 'underscore';
-import {PLAYER, g, helpers} from '../../../common';
-import {filterOrderStats, mergeByPk} from './helpers';
-import {player} from '../../core';
-import {idb} from '../../db';
-import type {Player, PlayerFiltered, PlayerStatType} from '../../../common/types';
+import backboard from "backboard";
+import _ from "underscore";
+import { PLAYER, g, helpers } from "../../../common";
+import { filterOrderStats, mergeByPk } from "./helpers";
+import { player } from "../../core";
+import { idb } from "../../db";
+import type {
+    Player,
+    PlayerFiltered,
+    PlayerStatType,
+} from "../../../common/types";
 
 type PlayerAttr = string;
 type PlayerRatingAttr = string;
@@ -68,61 +72,91 @@ const awardsOrder = [
     "All Rookie Team",
 ];
 
-const processAttrs = (output: PlayerFiltered, p: Player, {
-    attrs,
-    fuzz,
-    numGamesRemaining,
-    season,
-}: PlayerOptionsRequired) => {
+const processAttrs = (
+    output: PlayerFiltered,
+    p: Player,
+    { attrs, fuzz, numGamesRemaining, season }: PlayerOptionsRequired,
+) => {
     for (const attr of attrs) {
-        if (attr === 'age') {
+        if (attr === "age") {
             output.age = g.season - p.born.year;
-        } else if (attr === 'diedYear') {
+        } else if (attr === "diedYear") {
             // Non-dead players wil not have any diedYear property
-            output.diedYear = p.hasOwnProperty('diedYear') ? p.diedYear : null;
-        } else if (attr === 'draft') {
-            output.draft = Object.assign({}, p.draft, {age: p.draft.year - p.born.year});
+            output.diedYear = p.hasOwnProperty("diedYear") ? p.diedYear : null;
+        } else if (attr === "draft") {
+            output.draft = Object.assign({}, p.draft, {
+                age: p.draft.year - p.born.year,
+            });
             if (fuzz) {
-                output.draft.ovr = player.fuzzRating(output.draft.ovr, p.ratings[0].fuzz);
-                output.draft.pot = player.fuzzRating(output.draft.pot, p.ratings[0].fuzz);
+                output.draft.ovr = player.fuzzRating(
+                    output.draft.ovr,
+                    p.ratings[0].fuzz,
+                );
+                output.draft.pot = player.fuzzRating(
+                    output.draft.pot,
+                    p.ratings[0].fuzz,
+                );
             }
             // Inject abbrevs
             output.draft.abbrev = g.teamAbbrevsCache[output.draft.tid];
-            output.draft.originalAbbrev = g.teamAbbrevsCache[output.draft.originalTid];
-        } else if (attr === 'hgtFt') {
+            output.draft.originalAbbrev =
+                g.teamAbbrevsCache[output.draft.originalTid];
+        } else if (attr === "hgtFt") {
             output.hgtFt = Math.floor(p.hgt / 12);
-        } else if (attr === 'hgtIn') {
+        } else if (attr === "hgtIn") {
             output.hgtIn = p.hgt - 12 * Math.floor(p.hgt / 12);
-        } else if (attr === 'contract') {
-            output.contract = helpers.deepCopy(p.contract);  // [millions of dollars]
-            output.contract.amount /= 1000;  // [millions of dollars]
-        } else if (attr === 'cashOwed') {
-            output.cashOwed = player.contractSeasonsRemaining(p.contract.exp, numGamesRemaining) * p.contract.amount / 1000;  // [millions of dollars]
-        } else if (attr === 'abbrev') {
+        } else if (attr === "contract") {
+            output.contract = helpers.deepCopy(p.contract); // [millions of dollars]
+            output.contract.amount /= 1000; // [millions of dollars]
+        } else if (attr === "cashOwed") {
+            output.cashOwed =
+                player.contractSeasonsRemaining(
+                    p.contract.exp,
+                    numGamesRemaining,
+                ) *
+                p.contract.amount /
+                1000; // [millions of dollars]
+        } else if (attr === "abbrev") {
             output.abbrev = helpers.getAbbrev(p.tid);
-        } else if (attr === 'teamRegion') {
+        } else if (attr === "teamRegion") {
             if (p.tid >= 0) {
                 output.teamRegion = g.teamRegionsCache[p.tid];
             } else {
-                output.teamRegion = '';
+                output.teamRegion = "";
             }
-        } else if (attr === 'teamName') {
+        } else if (attr === "teamName") {
             if (p.tid >= 0) {
                 output.teamName = g.teamNamesCache[p.tid];
             } else if (p.tid === PLAYER.FREE_AGENT) {
-                output.teamName = 'Free Agent';
-            } else if (p.tid === PLAYER.UNDRAFTED || p.tid === PLAYER.UNDRAFTED_2 || p.tid === PLAYER.UNDRAFTED_3 || p.tid === PLAYER.UNDRAFTED_FANTASY_TEMP) {
-                output.teamName = 'Draft Prospect';
+                output.teamName = "Free Agent";
+            } else if (
+                p.tid === PLAYER.UNDRAFTED ||
+                p.tid === PLAYER.UNDRAFTED_2 ||
+                p.tid === PLAYER.UNDRAFTED_3 ||
+                p.tid === PLAYER.UNDRAFTED_FANTASY_TEMP
+            ) {
+                output.teamName = "Draft Prospect";
             } else if (p.tid === PLAYER.RETIRED) {
-                output.teamName = 'Retired';
+                output.teamName = "Retired";
             }
-        } else if (attr === 'injury' && season !== undefined && season < g.season) {
-            output.injury = {type: 'Healthy', gamesRemaining: 0};
-        } else if (attr === 'salaries') {
-            output.salaries = _.map(p.salaries, salary => { salary.amount /= 1000; return salary; });
-        } else if (attr === 'salariesTotal') {
-            output.salariesTotal = _.reduce(output.salaries, (memo, salary) => memo + salary.amount, 0);
-        } else if (attr === 'awardsGrouped') {
+        } else if (
+            attr === "injury" &&
+            season !== undefined &&
+            season < g.season
+        ) {
+            output.injury = { type: "Healthy", gamesRemaining: 0 };
+        } else if (attr === "salaries") {
+            output.salaries = _.map(p.salaries, salary => {
+                salary.amount /= 1000;
+                return salary;
+            });
+        } else if (attr === "salariesTotal") {
+            output.salariesTotal = _.reduce(
+                output.salaries,
+                (memo, salary) => memo + salary.amount,
+                0,
+            );
+        } else if (attr === "awardsGrouped") {
             output.awardsGrouped = [];
             const awardsGroupedTemp = _.groupBy(p.awards, award => award.type);
             for (const award of awardsOrder) {
@@ -130,11 +164,13 @@ const processAttrs = (output: PlayerFiltered, p: Player, {
                     output.awardsGrouped.push({
                         type: award,
                         count: awardsGroupedTemp[award].length,
-                        seasons: helpers.yearRanges(_.pluck(awardsGroupedTemp[award], 'season')),
+                        seasons: helpers.yearRanges(
+                            _.pluck(awardsGroupedTemp[award], "season"),
+                        ),
                     });
                 }
             }
-        } else if (attr === 'name') {
+        } else if (attr === "name") {
             output.name = `${p.firstName} ${p.lastName}`;
         } else {
             // Several other attrs are not primitive types, so deepCopy
@@ -143,58 +179,71 @@ const processAttrs = (output: PlayerFiltered, p: Player, {
     }
 };
 
-const processRatings = async (output: PlayerFiltered, p: Player, {
-    fuzz,
-    ratings,
-    stats,
-    season,
-}: PlayerOptionsRequired) => {
-    output.ratings = p.ratings.map((pr, i) => {
-        const row = {};
+const processRatings = async (
+    output: PlayerFiltered,
+    p: Player,
+    { fuzz, ratings, stats, season }: PlayerOptionsRequired,
+) => {
+    output.ratings = p.ratings
+        .map((pr, i) => {
+            const row = {};
 
-        if (season !== undefined && pr.season !== season) {
-            return undefined;
-        }
-
-        for (const attr of ratings) {
-            if (attr === 'skills') {
-                row.skills = helpers.deepCopy(pr.skills);
-            } else if (attr === 'dovr' || attr === 'dpot') {
-                // Handle dovr and dpot - if there are previous ratings, calculate the fuzzed difference
-                const cat = attr.slice(1); // either ovr or pot
-                if (i > 0) {
-                    row[attr] = player.fuzzRating(pr[cat], pr.fuzz) - player.fuzzRating(p.ratings[i - 1][cat], p.ratings[i - 1].fuzz);
-                } else {
-                    row[attr] = 0;
-                }
-            } else if (attr === 'age') {
-                row.age = pr.season - p.born.year;
-            } else if (attr === 'abbrev') {
-                // Find the last stats entry for that season, and use that to determine the team. Requires tid to be requested from stats (otherwise, need to refactor stats fetching to happen outside of processStats)
-                if (!stats.includes('tid')) {
-                    throw new Error('Crazy I know, but if you request "abbrev" from ratings, you must also request "tid" from stats');
-                }
-                let tidTemp;
-                for (const ps of output.stats) {
-                    if (ps.season === pr.season && ps.playoffs === false) {
-                        tidTemp = ps.tid;
-                    }
-                }
-                if (tidTemp !== undefined) {
-                    row.abbrev = helpers.getAbbrev(tidTemp);
-                } else {
-                    row.abbrev = undefined;
-                }
-            } else if (fuzz && attr !== 'fuzz' && attr !== 'season' && attr !== 'hgt' && attr !== 'pos') {
-                row[attr] = player.fuzzRating(pr[attr], pr.fuzz);
-            } else {
-                row[attr] = pr[attr];
+            if (season !== undefined && pr.season !== season) {
+                return undefined;
             }
-        }
 
-        return row;
-    }).filter((row) => row !== undefined); // Filter at the end because dovr/dpot needs to look back
+            for (const attr of ratings) {
+                if (attr === "skills") {
+                    row.skills = helpers.deepCopy(pr.skills);
+                } else if (attr === "dovr" || attr === "dpot") {
+                    // Handle dovr and dpot - if there are previous ratings, calculate the fuzzed difference
+                    const cat = attr.slice(1); // either ovr or pot
+                    if (i > 0) {
+                        row[attr] =
+                            player.fuzzRating(pr[cat], pr.fuzz) -
+                            player.fuzzRating(
+                                p.ratings[i - 1][cat],
+                                p.ratings[i - 1].fuzz,
+                            );
+                    } else {
+                        row[attr] = 0;
+                    }
+                } else if (attr === "age") {
+                    row.age = pr.season - p.born.year;
+                } else if (attr === "abbrev") {
+                    // Find the last stats entry for that season, and use that to determine the team. Requires tid to be requested from stats (otherwise, need to refactor stats fetching to happen outside of processStats)
+                    if (!stats.includes("tid")) {
+                        throw new Error(
+                            'Crazy I know, but if you request "abbrev" from ratings, you must also request "tid" from stats',
+                        );
+                    }
+                    let tidTemp;
+                    for (const ps of output.stats) {
+                        if (ps.season === pr.season && ps.playoffs === false) {
+                            tidTemp = ps.tid;
+                        }
+                    }
+                    if (tidTemp !== undefined) {
+                        row.abbrev = helpers.getAbbrev(tidTemp);
+                    } else {
+                        row.abbrev = undefined;
+                    }
+                } else if (
+                    fuzz &&
+                    attr !== "fuzz" &&
+                    attr !== "season" &&
+                    attr !== "hgt" &&
+                    attr !== "pos"
+                ) {
+                    row[attr] = player.fuzzRating(pr[attr], pr.fuzz);
+                } else {
+                    row[attr] = pr[attr];
+                }
+            }
 
+            return row;
+        })
+        .filter(row => row !== undefined); // Filter at the end because dovr/dpot needs to look back
 
     if (season !== undefined) {
         output.ratings = output.ratings[0];
@@ -205,80 +254,81 @@ const genStatsRow = (p, ps, stats, statType) => {
     const row = {};
 
     for (const attr of stats) {
-        if (attr === 'gp') {
+        if (attr === "gp") {
             row.gp = ps.gp;
-        } else if (attr === 'gs') {
+        } else if (attr === "gs") {
             row.gs = ps.gs;
-        } else if (attr === 'fgp') {
+        } else if (attr === "fgp") {
             if (ps.fga > 0) {
                 row.fgp = 100 * ps.fg / ps.fga;
             } else {
                 row.fgp = 0;
             }
-        } else if (attr === 'fgpAtRim') {
+        } else if (attr === "fgpAtRim") {
             if (ps.fgaAtRim > 0) {
                 row.fgpAtRim = 100 * ps.fgAtRim / ps.fgaAtRim;
             } else {
                 row.fgpAtRim = 0;
             }
-        } else if (attr === 'fgpLowPost') {
+        } else if (attr === "fgpLowPost") {
             if (ps.fgaLowPost > 0) {
                 row.fgpLowPost = 100 * ps.fgLowPost / ps.fgaLowPost;
             } else {
                 row.fgpLowPost = 0;
             }
-        } else if (attr === 'fgpMidRange') {
+        } else if (attr === "fgpMidRange") {
             if (ps.fgaMidRange > 0) {
                 row.fgpMidRange = 100 * ps.fgMidRange / ps.fgaMidRange;
             } else {
                 row.fgpMidRange = 0;
             }
-        } else if (attr === 'tpp') {
+        } else if (attr === "tpp") {
             if (ps.tpa > 0) {
                 row.tpp = 100 * ps.tp / ps.tpa;
             } else {
                 row.tpp = 0;
             }
-        } else if (attr === 'ftp') {
+        } else if (attr === "ftp") {
             if (ps.fta > 0) {
                 row.ftp = 100 * ps.ft / ps.fta;
             } else {
                 row.ftp = 0;
             }
-        } else if (attr === 'season') {
+        } else if (attr === "season") {
             row.season = ps.season;
-        } else if (attr === 'age') {
+        } else if (attr === "age") {
             row.age = ps.season - p.born.year;
-        } else if (attr === 'abbrev') {
+        } else if (attr === "abbrev") {
             if (ps.tid === undefined) {
                 row.abbrev = helpers.getAbbrev(PLAYER.FREE_AGENT);
             } else {
                 row.abbrev = helpers.getAbbrev(ps.tid);
             }
-        } else if (attr === 'tid') {
+        } else if (attr === "tid") {
             if (ps.tid === undefined) {
                 row.tid = PLAYER.FREE_AGENT;
             } else {
                 row.tid = ps.tid;
             }
-        } else if (attr === 'per') {
+        } else if (attr === "per") {
             row.per = ps.per;
-        } else if (attr === 'ewa') {
+        } else if (attr === "ewa") {
             row.ewa = ps.ewa;
-        } else if (attr === 'yearsWithTeam') {
+        } else if (attr === "yearsWithTeam") {
             row.yearsWithTeam = ps.yearsWithTeam;
-        } else if (attr === 'psid') {
+        } else if (attr === "psid") {
             row.psid = ps.psid;
-        } else if (statType === 'totals') {
+        } else if (statType === "totals") {
             row[attr] = ps[attr];
-        } else if (statType === 'per36' && attr !== 'min') { // Don't scale min by 36 minutes
+        } else if (statType === "per36" && attr !== "min") {
+            // Don't scale min by 36 minutes
             row[attr] = ps.min > 0 ? ps[attr] * 36 / ps.min : 0;
         } else {
             row[attr] = ps.gp > 0 ? ps[attr] / ps.gp : 0;
         }
 
         // For keepWithNoStats
-        if ((row[attr] === undefined || Number.isNaN(row[attr]))) {
+        if (row[attr] === undefined || Number.isNaN(row[attr])) {
             row[attr] = 0;
         }
     }
@@ -291,9 +341,9 @@ const genStatsRow = (p, ps, stats, statType) => {
 
 const reduceCareerStats = (careerStats, attr, playoffs) => {
     return careerStats
-        .filter((cs) => cs.playoffs === playoffs)
-        .map((cs) => {
-            if (attr === 'per') {
+        .filter(cs => cs.playoffs === playoffs)
+        .map(cs => {
+            if (attr === "per") {
                 // Special case for PER, weight by minutes
                 return cs.per * cs.min;
             }
@@ -302,27 +352,34 @@ const reduceCareerStats = (careerStats, attr, playoffs) => {
         .reduce((memo, num) => memo + num, 0);
 };
 
-const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: boolean, {
-    playoffs,
-    regularSeason,
-    season,
-    tid,
-    showNoStats,
-    oldStats,
-    statType,
-    stats,
-}: PlayerOptionsRequired) => {
+const processStats = async (
+    output: PlayerFiltered,
+    p: Player,
+    keepWithNoStats: boolean,
+    {
+        playoffs,
+        regularSeason,
+        season,
+        tid,
+        showNoStats,
+        oldStats,
+        statType,
+        stats,
+    }: PlayerOptionsRequired,
+) => {
     let playerStats;
 
     const playerStatsFromCache = () => {
         // Last 1-2 seasons, from cache
-        return idb.cache.playerStats.indexGetAll('playerStatsAllByPid', p.pid);
+        return idb.cache.playerStats.indexGetAll("playerStatsAllByPid", p.pid);
     };
 
     if (season === undefined || p.tid === PLAYER.RETIRED) {
         // All seasons, or retired player with stats not in cache
         playerStats = mergeByPk(
-            await idb.league.playerStats.index('pid, season, tid').getAll(backboard.bound([p.pid], [p.pid, ''])),
+            await idb.league.playerStats
+                .index("pid, season, tid")
+                .getAll(backboard.bound([p.pid], [p.pid, ""])),
             await playerStatsFromCache(),
             idb.cache.storeInfos.playerStats.pk,
         );
@@ -330,14 +387,16 @@ const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: 
         playerStats = await playerStatsFromCache();
     } else {
         // Single season, from database
-        playerStats = await idb.league.playerStats.index('pid, season, tid').getAll(backboard.bound([p.pid, season], [p.pid, season, '']));
+        playerStats = await idb.league.playerStats
+            .index("pid, season, tid")
+            .getAll(backboard.bound([p.pid, season], [p.pid, season, ""]));
     }
 
     // Handle playoffs/regularSeason
     playerStats = filterOrderStats(playerStats, playoffs, regularSeason);
 
     // Only season(s) and team in question
-    playerStats = playerStats.filter((ps) => {
+    playerStats = playerStats.filter(ps => {
         const seasonCheck = season === undefined || ps.season === season;
         const tidCheck = tid === undefined || ps.tid === tid;
         return seasonCheck && tidCheck;
@@ -352,10 +411,14 @@ const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: 
         if (oldSeason >= g.season - 1) {
             playerStats = await playerStatsFromCache();
         } else {
-            playerStats = await idb.league.playerStats.index('pid, season, tid').getAll(backboard.bound([p.pid, oldSeason], [p.pid, oldSeason, '']));
+            playerStats = await idb.league.playerStats
+                .index("pid, season, tid")
+                .getAll(
+                    backboard.bound([p.pid, oldSeason], [p.pid, oldSeason, ""]),
+                );
         }
         playerStats = filterOrderStats(playerStats, playoffs, regularSeason);
-        playerStats = playerStats.filter((ps) => {
+        playerStats = playerStats.filter(ps => {
             const seasonCheck = season === undefined || ps.season === oldSeason;
             const tidCheck = tid === undefined || ps.tid === tid;
             return seasonCheck && tidCheck;
@@ -368,7 +431,7 @@ const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: 
 
     const careerStats = [];
 
-    output.stats = playerStats.map((ps) => {
+    output.stats = playerStats.map(ps => {
         if (season === undefined) {
             careerStats.push(ps);
         }
@@ -376,18 +439,25 @@ const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: 
         return genStatsRow(p, ps, stats, statType);
     });
 
-    if (season !== undefined && ((playoffs && !regularSeason) || (!playoffs && regularSeason))) {
+    if (
+        season !== undefined &&
+        ((playoffs && !regularSeason) || (!playoffs && regularSeason))
+    ) {
         output.stats = output.stats[output.stats.length - 1]; // Take last value, in case player was traded/signed to team twice in a season
     } else if (season === undefined) {
         // Aggregate annual stats and ignore other things
-        const ignoredKeys = ['pid', 'season', 'tid', 'yearsWithTeam'];
+        const ignoredKeys = ["pid", "season", "tid", "yearsWithTeam"];
         const statSums = {};
         const statSumsPlayoffs = {};
         const attrs = careerStats.length > 0 ? Object.keys(careerStats[0]) : [];
         for (const attr of attrs) {
             if (!ignoredKeys.includes(attr)) {
                 statSums[attr] = reduceCareerStats(careerStats, attr, false);
-                statSumsPlayoffs[attr] = reduceCareerStats(careerStats, attr, true);
+                statSumsPlayoffs[attr] = reduceCareerStats(
+                    careerStats,
+                    attr,
+                    true,
+                );
             }
         }
 
@@ -399,7 +469,12 @@ const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: 
             output.careerStats = genStatsRow(p, statSums, stats, statType);
         }
         if (playoffs) {
-            output.careerStatsPlayoffs = genStatsRow(p, statSumsPlayoffs, stats, statType);
+            output.careerStatsPlayoffs = genStatsRow(
+                p,
+                statSumsPlayoffs,
+                stats,
+                statType,
+            );
         }
     }
 };
@@ -407,7 +482,12 @@ const processStats = async (output: PlayerFiltered, p: Player, keepWithNoStats: 
 const processPlayer = async (p: Player, options: PlayerOptions) => {
     const output = {};
 
-    const keepWithNoStats = (options.showRookies && p.draft.year >= g.season && (options.season === g.season || options.season === undefined)) || (options.showNoStats && (options.season === undefined || options.season > p.draft.year));
+    const keepWithNoStats =
+        (options.showRookies &&
+            p.draft.year >= g.season &&
+            (options.season === g.season || options.season === undefined)) ||
+        (options.showNoStats &&
+            (options.season === undefined || options.season > p.draft.year));
     if (options.stats.length > 0 || keepWithNoStats) {
         await processStats(output, p, keepWithNoStats, options);
 
@@ -463,22 +543,25 @@ const processPlayer = async (p: Player, options: PlayerOptions) => {
  * @param {string=} options.statType What type of stats to return, 'perGame', 'per36', or 'totals' (default is 'perGame).
  * @return {Object|Array.<Object>} Filtered player object or array of filtered player objects, depending on the first argument.
  */
-const getCopies = async (players: Player[], {
-    season,
-    tid,
-    attrs = [],
-    ratings = [],
-    stats = [],
-    playoffs = false,
-    regularSeason = true,
-    showNoStats = false,
-    showRookies = false,
-    showRetired = false,
-    fuzz = false,
-    oldStats = false,
-    numGamesRemaining = 0,
-    statType = 'perGame',
-}: PlayerOptions = {}): Promise<PlayerFiltered[]> => {
+const getCopies = async (
+    players: Player[],
+    {
+        season,
+        tid,
+        attrs = [],
+        ratings = [],
+        stats = [],
+        playoffs = false,
+        regularSeason = true,
+        showNoStats = false,
+        showRookies = false,
+        showRetired = false,
+        fuzz = false,
+        oldStats = false,
+        numGamesRemaining = 0,
+        statType = "perGame",
+    }: PlayerOptions = {},
+): Promise<PlayerFiltered[]> => {
     const options: PlayerOptionsRequired = {
         season,
         tid,
@@ -496,9 +579,11 @@ const getCopies = async (players: Player[], {
         statType,
     };
 
-    const playersFiltered = await Promise.all(players.map((p) => processPlayer(p, options)));
+    const playersFiltered = await Promise.all(
+        players.map(p => processPlayer(p, options)),
+    );
 
-    return playersFiltered.filter((p) => p !== undefined);
+    return playersFiltered.filter(p => p !== undefined);
 };
 
 export default getCopies;

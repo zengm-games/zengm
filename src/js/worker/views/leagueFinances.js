@@ -1,18 +1,29 @@
 // @flow
 
-import {g} from '../../common';
-import {idb} from '../db';
-import type {UpdateEvents} from '../../common/types';
+import { g } from "../../common";
+import { idb } from "../db";
+import type { UpdateEvents } from "../../common/types";
 
 async function updateLeagueFinances(
-    inputs: {season: number},
+    inputs: { season: number },
     updateEvents: UpdateEvents,
     state: any,
-): void | {[key: string]: any} {
-    if (updateEvents.includes('firstRun') || inputs.season !== state.season || inputs.season === g.season) {
+): void | { [key: string]: any } {
+    if (
+        updateEvents.includes("firstRun") ||
+        inputs.season !== state.season ||
+        inputs.season === g.season
+    ) {
         const teams = await idb.getCopies.teamsPlus({
             attrs: ["tid", "abbrev", "region", "name"],
-            seasonAttrs: ["att", "revenue", "profit", "cash", "payroll", "salaryPaid"],
+            seasonAttrs: [
+                "att",
+                "revenue",
+                "profit",
+                "cash",
+                "payroll",
+                "salaryPaid",
+            ],
             season: inputs.season,
         });
 

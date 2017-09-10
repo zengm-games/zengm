@@ -1,19 +1,38 @@
 // @flow
 
-import {g} from '../../common';
-import {idb} from '../db';
-import type {UpdateEvents} from '../../common/types';
+import { g } from "../../common";
+import { idb } from "../db";
+import type { UpdateEvents } from "../../common/types";
 
 async function updateTeams(
-    inputs: {season: number},
+    inputs: { season: number },
     updateEvents: UpdateEvents,
     state: any,
-): void | {[key: string]: any} {
-    if ((inputs.season === g.season && (updateEvents.includes('gameSim') || updateEvents.includes('playerMovement'))) || inputs.season !== state.season) {
+): void | { [key: string]: any } {
+    if (
+        (inputs.season === g.season &&
+            (updateEvents.includes("gameSim") ||
+                updateEvents.includes("playerMovement"))) ||
+        inputs.season !== state.season
+    ) {
         const teams = await idb.getCopies.teamsPlus({
             attrs: ["abbrev", "tid"],
             seasonAttrs: ["won", "lost"],
-            stats: ["gp", "fgAtRim", "fgaAtRim", "fgpAtRim", "fgLowPost", "fgaLowPost", "fgpLowPost", "fgMidRange", "fgaMidRange", "fgpMidRange", "tp", "tpa", "tpp"],
+            stats: [
+                "gp",
+                "fgAtRim",
+                "fgaAtRim",
+                "fgpAtRim",
+                "fgLowPost",
+                "fgaLowPost",
+                "fgpLowPost",
+                "fgMidRange",
+                "fgaMidRange",
+                "fgpMidRange",
+                "tp",
+                "tpa",
+                "tpp",
+            ],
             season: inputs.season,
         });
 

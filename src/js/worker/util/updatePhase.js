@@ -1,9 +1,9 @@
 // @flow
 
-import {g, PHASE_TEXT} from '../../common';
-import {idb} from '../db';
-import {local, toUI} from '../util';
-import type {Conditions} from '../../common/types';
+import { g, PHASE_TEXT } from "../../common";
+import { idb } from "../db";
+import { local, toUI } from "../util";
+import type { Conditions } from "../../common/types";
 
 /*Save phase text to database and push to client.
 
@@ -20,7 +20,7 @@ async function updatePhase(conditions?: Conditions) {
     const phaseText = `${g.season} ${PHASE_TEXT[g.phase]}`;
     if (phaseText !== local.phaseText) {
         local.phaseText = phaseText;
-        toUI(['emit', 'updateTopMenu', {phaseText}]);
+        toUI(["emit", "updateTopMenu", { phaseText }]);
 
         // Update phase in meta database. No need to have this block updating the UI or anything.
         (async () => {
@@ -31,7 +31,7 @@ async function updatePhase(conditions?: Conditions) {
             }
         })();
     } else if (conditions !== undefined) {
-        toUI(['emit', 'updateTopMenu', {phaseText}], conditions);
+        toUI(["emit", "updateTopMenu", { phaseText }], conditions);
     }
 }
 

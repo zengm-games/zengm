@@ -1,20 +1,23 @@
 // @flow
 
-import {PLAYER, g} from '../../common';
-import {idb} from '../db';
+import { PLAYER, g } from "../../common";
+import { idb } from "../db";
 
-async function updateDraftSummary(
-    inputs: {season: number},
-): void | {[key: string]: any} {
+async function updateDraftSummary(inputs: {
+    season: number,
+}): void | { [key: string]: any } {
     // Update every time because anything could change this (unless all players from class are retired)
     let playersAll;
     if (g.season === inputs.season) {
         // This is guaranteed to work (ignoring God Mode) because no player this season has had a chance to die or retire
-        playersAll = await idb.cache.players.indexGetAll('playersByTid', [0, Infinity]);
+        playersAll = await idb.cache.players.indexGetAll("playersByTid", [
+            0,
+            Infinity,
+        ]);
     } else {
-        playersAll = await idb.getCopies.players({draftYear: inputs.season});
+        playersAll = await idb.getCopies.players({ draftYear: inputs.season });
     }
-    playersAll = playersAll.filter((p) => p.draft.year === inputs.season);
+    playersAll = playersAll.filter(p => p.draft.year === inputs.season);
     playersAll = await idb.getCopies.playersPlus(playersAll, {
         attrs: ["tid", "abbrev", "draft", "pid", "name", "age", "hof"],
         ratings: ["ovr", "pot", "skills", "pos"],
@@ -43,7 +46,8 @@ async function updateDraftSummary(
                 // Ratings
                 currentOvr: pa.tid !== PLAYER.RETIRED ? currentPr.ovr : null,
                 currentPot: pa.tid !== PLAYER.RETIRED ? currentPr.pot : null,
-                currentSkills: pa.tid !== PLAYER.RETIRED ? currentPr.skills : [],
+                currentSkills:
+                    pa.tid !== PLAYER.RETIRED ? currentPr.skills : [],
                 pos: currentPr.pos,
 
                 // Stats

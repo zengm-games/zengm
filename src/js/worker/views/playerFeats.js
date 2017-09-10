@@ -1,15 +1,20 @@
 // @flow
 
-import {g} from '../../common';
-import {idb} from '../db';
-import type {GetOutput, UpdateEvents} from '../../common/types';
+import { g } from "../../common";
+import { idb } from "../db";
+import type { GetOutput, UpdateEvents } from "../../common/types";
 
 async function updatePlayers(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
     state: any,
-): void | {[key: string]: any} {
-    if (updateEvents.includes('gameSim') || inputs.abbrev !== state.abbrev || inputs.season !== state.season || inputs.playoffs !== state.playoffs) {
+): void | { [key: string]: any } {
+    if (
+        updateEvents.includes("gameSim") ||
+        inputs.abbrev !== state.abbrev ||
+        inputs.season !== state.season ||
+        inputs.playoffs !== state.playoffs
+    ) {
         let feats = await idb.getCopies.playerFeats();
 
         // Put fake fid on cached feats
@@ -26,7 +31,9 @@ async function updatePlayers(
         }
 
         if (inputs.abbrev !== "all") {
-            feats = feats.filter(feat => g.teamAbbrevsCache[feat.tid] === inputs.abbrev);
+            feats = feats.filter(
+                feat => g.teamAbbrevsCache[feat.tid] === inputs.abbrev,
+            );
         }
         if (inputs.season !== "all") {
             feats = feats.filter(feat => feat.season === inputs.season);
@@ -43,9 +50,12 @@ async function updatePlayers(
         feats.forEach(feat => {
             feat.stats.trb = feat.stats.orb + feat.stats.drb;
 
-            feat.stats.fgp = feat.stats.fga > 0 ? 100 * feat.stats.fg / feat.stats.fga : 0;
-            feat.stats.tpp = feat.stats.tpa > 0 ? 100 * feat.stats.tp / feat.stats.tpa : 0;
-            feat.stats.ftp = feat.stats.fta > 0 ? 100 * feat.stats.ft / feat.stats.fta : 0;
+            feat.stats.fgp =
+                feat.stats.fga > 0 ? 100 * feat.stats.fg / feat.stats.fga : 0;
+            feat.stats.tpp =
+                feat.stats.tpa > 0 ? 100 * feat.stats.tp / feat.stats.tpa : 0;
+            feat.stats.ftp =
+                feat.stats.fta > 0 ? 100 * feat.stats.ft / feat.stats.fta : 0;
 
             if (feat.overtimes === 1) {
                 feat.score += " (OT)";

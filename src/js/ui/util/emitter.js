@@ -1,6 +1,6 @@
 // @flow
 
-import EventEmitter from 'events';
+import EventEmitter from "events";
 
 const emitter = new EventEmitter();
 

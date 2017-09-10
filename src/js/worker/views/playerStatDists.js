@@ -1,30 +1,63 @@
 // @flow
 
-import {PHASE, PLAYER, g} from '../../common';
-import {idb} from '../db';
-import type {UpdateEvents} from '../../common/types';
+import { PHASE, PLAYER, g } from "../../common";
+import { idb } from "../db";
+import type { UpdateEvents } from "../../common/types";
 
 async function updatePlayers(
-    inputs: {season: number},
+    inputs: { season: number },
     updateEvents: UpdateEvents,
     state: any,
-): void | {[key: string]: any} {
-    if ((inputs.season === g.season && (updateEvents.includes('gameSim') || updateEvents.includes('playerMovement'))) || inputs.season !== state.season) {
+): void | { [key: string]: any } {
+    if (
+        (inputs.season === g.season &&
+            (updateEvents.includes("gameSim") ||
+                updateEvents.includes("playerMovement"))) ||
+        inputs.season !== state.season
+    ) {
         let players;
         if (g.season === inputs.season && g.phase <= PHASE.PLAYOFFS) {
-            players = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
+            players = await idb.cache.players.indexGetAll("playersByTid", [
+                PLAYER.FREE_AGENT,
+                Infinity,
+            ]);
         } else {
-            players = await idb.getCopies.players({activeSeason: inputs.season});
+            players = await idb.getCopies.players({
+                activeSeason: inputs.season,
+            });
         }
         players = await idb.getCopies.playersPlus(players, {
             ratings: ["skills"],
-            stats: ["gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "pf", "pts", "per"],
+            stats: [
+                "gp",
+                "gs",
+                "min",
+                "fg",
+                "fga",
+                "fgp",
+                "tp",
+                "tpa",
+                "tpp",
+                "ft",
+                "fta",
+                "ftp",
+                "orb",
+                "drb",
+                "trb",
+                "ast",
+                "tov",
+                "stl",
+                "blk",
+                "pf",
+                "pts",
+                "per",
+            ],
             season: inputs.season,
         });
 
         const statsAll = players.reduce((memo, p) => {
             for (const stat of Object.keys(p.stats)) {
-                if (stat === 'playoffs') {
+                if (stat === "playoffs") {
                     continue;
                 }
 

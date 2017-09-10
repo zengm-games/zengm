@@ -1,10 +1,10 @@
 // @flow
 
-import {idb} from '../../db';
-import type {Player} from '../../../common/types';
+import { idb } from "../../db";
+import type { Player } from "../../../common/types";
 
-const getCopy = async ({pid}: {pid: number}): Promise<Player | void> => {
-    const result = await idb.getCopies.players({pid});
+const getCopy = async ({ pid }: { pid: number }): Promise<Player | void> => {
+    const result = await idb.getCopies.players({ pid });
     return result[0];
 };
 

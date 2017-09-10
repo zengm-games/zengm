@@ -1,8 +1,8 @@
 // @flow
 
-import faces from 'facesjs';
-import PropTypes from 'prop-types';
-import * as React from 'react';
+import faces from "facesjs";
+import PropTypes from "prop-types";
+import * as React from "react";
 
 class PlayerPicture extends React.Component<{
     face: any,
@@ -25,19 +25,23 @@ class PlayerPicture extends React.Component<{
     render() {
         if (this.props.imgURL) {
             this.wrapper = null;
-            return <img
-                alt="Player"
-                src={this.props.imgURL}
-                style={{maxHeight: '100%', maxWidth: '100%'}}
-            />;
+            return (
+                <img
+                    alt="Player"
+                    src={this.props.imgURL}
+                    style={{ maxHeight: "100%", maxWidth: "100%" }}
+                />
+            );
         }
 
         if (this.props.face) {
-            return <div
-                ref={wrapper => {
-                    this.wrapper = wrapper;
-                }}
-            />;
+            return (
+                <div
+                    ref={wrapper => {
+                        this.wrapper = wrapper;
+                    }}
+                />
+            );
         }
 
         return <div />;

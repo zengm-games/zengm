@@ -1,18 +1,24 @@
 // @flow
 
-import {PHASE, PLAYER, g, helpers} from '../../common';
-import {idb} from '../db';
-import type {UpdateEvents} from '../../common/types';
+import { PHASE, PLAYER, g, helpers } from "../../common";
+import { idb } from "../db";
+import type { UpdateEvents } from "../../common/types";
 
 async function updateLeaders(
-    inputs: {season: number},
+    inputs: { season: number },
     updateEvents: UpdateEvents,
     state: any,
-): void | {[key: string]: any} {
+): void | { [key: string]: any } {
     // Respond to watchList in case players are listed twice in different categories
-    if (updateEvents.includes('watchList') || (inputs.season === g.season && updateEvents.includes('gameSim')) || inputs.season !== state.season) {
+    if (
+        updateEvents.includes("watchList") ||
+        (inputs.season === g.season && updateEvents.includes("gameSim")) ||
+        inputs.season !== state.season
+    ) {
         // Calculate the number of games played for each team, which is used later to test if a player qualifies as a league leader
-        const teamSeasons = await idb.getCopies.teamSeasons({season: inputs.season});
+        const teamSeasons = await idb.getCopies.teamSeasons({
+            season: inputs.season,
+        });
         const gps = teamSeasons.map(teamSeason => {
             // Don't count playoff games
             if (teamSeason.gp > g.numGames) {
@@ -23,34 +29,146 @@ async function updateLeaders(
 
         let players;
         if (g.season === inputs.season && g.phase <= PHASE.PLAYOFFS) {
-            players = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
+            players = await idb.cache.players.indexGetAll("playersByTid", [
+                PLAYER.FREE_AGENT,
+                Infinity,
+            ]);
         } else {
-            players = await idb.getCopies.players({activeSeason: inputs.season});
+            players = await idb.getCopies.players({
+                activeSeason: inputs.season,
+            });
         }
         players = await idb.getCopies.playersPlus(players, {
             attrs: ["pid", "name", "injury", "watch"],
             ratings: ["skills"],
-            stats: ["pts", "trb", "ast", "fgp", "tpp", "ftp", "blk", "stl", "min", "per", "ewa", "gp", "fg", "tp", "ft", "abbrev", "tid"],
+            stats: [
+                "pts",
+                "trb",
+                "ast",
+                "fgp",
+                "tpp",
+                "ftp",
+                "blk",
+                "stl",
+                "min",
+                "per",
+                "ewa",
+                "gp",
+                "fg",
+                "tp",
+                "ft",
+                "abbrev",
+                "tid",
+            ],
             season: inputs.season,
         });
 
         const userAbbrev = helpers.getAbbrev(g.userTid);
 
         // minStats and minValues are the NBA requirements to be a league leader for each stat http://www.nba.com/leader_requirements.html. If any requirement is met, the player can appear in the league leaders
-        const factor = (g.numGames / 82) * Math.sqrt(g.quarterLength / 12); // To handle changes in number of games and playing time
+        const factor = g.numGames / 82 * Math.sqrt(g.quarterLength / 12); // To handle changes in number of games and playing time
         const categories = [];
-        categories.push({name: "Points", stat: "Pts", title: "Points Per Game", data: [], minStats: ["gp", "pts"], minValue: [70, 1400]});
-        categories.push({name: "Rebounds", stat: "Reb", title: "Rebounds Per Game", data: [], minStats: ["gp", "trb"], minValue: [70, 800]});
-        categories.push({name: "Assists", stat: "Ast", title: "Assists Per Game", data: [], minStats: ["gp", "ast"], minValue: [70, 400]});
-        categories.push({name: "Field Goal Percentage", stat: "FG%", title: "Field Goal Percentage", data: [], minStats: ["fg"], minValue: [300]});
-        categories.push({name: "Three-Pointer Percentage", stat: "3PT%", title: "Three-Pointer Percentage", data: [], minStats: ["tp"], minValue: [55]});
-        categories.push({name: "Free Throw Percentage", stat: "FT%", title: "Free Throw Percentage", data: [], minStats: ["ft"], minValue: [125]});
-        categories.push({name: "Blocks", stat: "Blk", title: "Blocks Per Game", data: [], minStats: ["gp", "blk"], minValue: [70, 100]});
-        categories.push({name: "Steals", stat: "Stl", title: "Steals Per Game", data: [], minStats: ["gp", "stl"], minValue: [70, 125]});
-        categories.push({name: "Minutes", stat: "Min", title: "Minutes Per Game", data: [], minStats: ["gp", "min"], minValue: [70, 2000]});
-        categories.push({name: "Player Efficiency Rating", stat: "PER", title: "Player Efficiency Rating", data: [], minStats: ["min"], minValue: [2000]});
-        categories.push({name: "Estimated Wins Added", stat: "EWA", title: "Estimated Wins Added", data: [], minStats: ["min"], minValue: [2000]});
-        const stats = ["pts", "trb", "ast", "fgp", "tpp", "ftp", "blk", "stl", "min", "per", "ewa"];
+        categories.push({
+            name: "Points",
+            stat: "Pts",
+            title: "Points Per Game",
+            data: [],
+            minStats: ["gp", "pts"],
+            minValue: [70, 1400],
+        });
+        categories.push({
+            name: "Rebounds",
+            stat: "Reb",
+            title: "Rebounds Per Game",
+            data: [],
+            minStats: ["gp", "trb"],
+            minValue: [70, 800],
+        });
+        categories.push({
+            name: "Assists",
+            stat: "Ast",
+            title: "Assists Per Game",
+            data: [],
+            minStats: ["gp", "ast"],
+            minValue: [70, 400],
+        });
+        categories.push({
+            name: "Field Goal Percentage",
+            stat: "FG%",
+            title: "Field Goal Percentage",
+            data: [],
+            minStats: ["fg"],
+            minValue: [300],
+        });
+        categories.push({
+            name: "Three-Pointer Percentage",
+            stat: "3PT%",
+            title: "Three-Pointer Percentage",
+            data: [],
+            minStats: ["tp"],
+            minValue: [55],
+        });
+        categories.push({
+            name: "Free Throw Percentage",
+            stat: "FT%",
+            title: "Free Throw Percentage",
+            data: [],
+            minStats: ["ft"],
+            minValue: [125],
+        });
+        categories.push({
+            name: "Blocks",
+            stat: "Blk",
+            title: "Blocks Per Game",
+            data: [],
+            minStats: ["gp", "blk"],
+            minValue: [70, 100],
+        });
+        categories.push({
+            name: "Steals",
+            stat: "Stl",
+            title: "Steals Per Game",
+            data: [],
+            minStats: ["gp", "stl"],
+            minValue: [70, 125],
+        });
+        categories.push({
+            name: "Minutes",
+            stat: "Min",
+            title: "Minutes Per Game",
+            data: [],
+            minStats: ["gp", "min"],
+            minValue: [70, 2000],
+        });
+        categories.push({
+            name: "Player Efficiency Rating",
+            stat: "PER",
+            title: "Player Efficiency Rating",
+            data: [],
+            minStats: ["min"],
+            minValue: [2000],
+        });
+        categories.push({
+            name: "Estimated Wins Added",
+            stat: "EWA",
+            title: "Estimated Wins Added",
+            data: [],
+            minStats: ["min"],
+            minValue: [2000],
+        });
+        const stats = [
+            "pts",
+            "trb",
+            "ast",
+            "fgp",
+            "tpp",
+            "ftp",
+            "blk",
+            "stl",
+            "min",
+            "per",
+            "ewa",
+        ];
 
         for (let i = 0; i < categories.length; i++) {
             players.sort((a, b) => b.stats[stats[i]] - a.stats[stats[i]]);
@@ -61,15 +179,26 @@ async function updateLeaders(
                     // Everything except gp is a per-game average, so we need to scale them by games played
                     let playerValue;
                     if (categories[i].minStats[k] === "gp") {
-                        playerValue = players[j].stats[categories[i].minStats[k]];
+                        playerValue =
+                            players[j].stats[categories[i].minStats[k]];
                     } else {
-                        playerValue = players[j].stats[categories[i].minStats[k]] * players[j].stats.gp;
+                        playerValue =
+                            players[j].stats[categories[i].minStats[k]] *
+                            players[j].stats.gp;
                     }
 
                     // Compare against value normalized for team games played
-                    if (playerValue >= Math.ceil(categories[i].minValue[k] * factor * gps[players[j].stats.tid] / g.numGames)) {
+                    if (
+                        playerValue >=
+                        Math.ceil(
+                            categories[i].minValue[k] *
+                                factor *
+                                gps[players[j].stats.tid] /
+                                g.numGames,
+                        )
+                    ) {
                         pass = true;
-                        break;  // If one is true, don't need to check the others
+                        break; // If one is true, don't need to check the others
                     }
                 }
 

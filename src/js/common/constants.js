@@ -23,98 +23,98 @@ const PLAYER = {
 };
 
 const PHASE_TEXT = {
-    '-1': 'fantasy draft',
-    '0': 'preseason',
-    '1': 'regular season',
-    '2': 'regular season',
-    '3': 'playoffs',
-    '4': 'draft lottery',
-    '5': 'draft',
-    '6': 'after draft',
-    '7': 're-sign players',
-    '8': 'free agency',
+    "-1": "fantasy draft",
+    "0": "preseason",
+    "1": "regular season",
+    "2": "regular season",
+    "3": "playoffs",
+    "4": "draft lottery",
+    "5": "draft",
+    "6": "after draft",
+    "7": "re-sign players",
+    "8": "free agency",
 };
 
-const SPORT = 'basketball'; // For account ajax stuff
+const SPORT = "basketball"; // For account ajax stuff
 
 const COMPOSITE_WEIGHTS = {
     pace: {
-        ratings: ['spd', 'jmp', 'dnk', 'tp', 'stl', 'drb', 'pss'],
+        ratings: ["spd", "jmp", "dnk", "tp", "stl", "drb", "pss"],
     },
     usage: {
-        ratings: ['ins', 'dnk', 'fg', 'tp', 'spd', 'drb'],
+        ratings: ["ins", "dnk", "fg", "tp", "spd", "drb"],
         weights: [1.5, 1, 1, 1, 0.15, 0.15],
     },
     dribbling: {
-        ratings: ['drb', 'spd'],
+        ratings: ["drb", "spd"],
     },
     passing: {
-        ratings: ['drb', 'pss'],
+        ratings: ["drb", "pss"],
         weights: [0.4, 1],
     },
     turnovers: {
-        ratings: ['drb', 'pss', 'spd', 'hgt', 'ins'],
+        ratings: ["drb", "pss", "spd", "hgt", "ins"],
         weights: [1, 1, -1, 1, 1],
     },
     shootingAtRim: {
-        ratings: ['hgt', 'spd', 'jmp', 'dnk'],
+        ratings: ["hgt", "spd", "jmp", "dnk"],
         weights: [1, 0.2, 0.6, 0.4],
     },
     shootingLowPost: {
-        ratings: ['hgt', 'stre', 'spd', 'ins'],
+        ratings: ["hgt", "stre", "spd", "ins"],
         weights: [1, 0.6, 0.2, 1],
     },
     shootingMidRange: {
-        ratings: ['hgt', 'fg'],
+        ratings: ["hgt", "fg"],
         weights: [0.2, 1],
     },
     shootingThreePointer: {
-        ratings: ['hgt', 'tp'],
+        ratings: ["hgt", "tp"],
         weights: [0.1, 1],
     },
     shootingFT: {
-        ratings: ['ft'],
+        ratings: ["ft"],
     },
     rebounding: {
-        ratings: ['hgt', 'stre', 'jmp', 'reb'],
+        ratings: ["hgt", "stre", "jmp", "reb"],
         weights: [1.5, 0.1, 0.1, 0.7],
     },
     stealing: {
-        ratings: [50, 'spd', 'stl'],
+        ratings: [50, "spd", "stl"],
         weights: [1, 1, 1],
     },
     blocking: {
-        ratings: ['hgt', 'jmp', 'blk'],
+        ratings: ["hgt", "jmp", "blk"],
         weights: [1.5, 0.5, 0.5],
     },
     fouling: {
-        ratings: [50, 'hgt', 'blk', 'spd'],
+        ratings: [50, "hgt", "blk", "spd"],
         weights: [1.5, 1, 1, -1],
     },
     defense: {
-        ratings: ['hgt', 'stre', 'spd', 'jmp', 'blk', 'stl'],
+        ratings: ["hgt", "stre", "spd", "jmp", "blk", "stl"],
         weights: [1, 1, 1, 0.5, 1, 1],
     },
     defenseInterior: {
-        ratings: ['hgt', 'stre', 'spd', 'jmp', 'blk'],
+        ratings: ["hgt", "stre", "spd", "jmp", "blk"],
         weights: [2, 1, 0.5, 0.5, 1],
     },
     defensePerimeter: {
-        ratings: ['hgt', 'stre', 'spd', 'jmp', 'stl'],
+        ratings: ["hgt", "stre", "spd", "jmp", "stl"],
         weights: [0.5, 1, 2, 0.5, 1],
     },
     endurance: {
-        ratings: [50, 'endu', 'hgt'],
+        ratings: [50, "endu", "hgt"],
         weights: [1, 1, -0.1],
     },
     athleticism: {
-        ratings: ['stre', 'spd', 'jmp', 'hgt'],
+        ratings: ["stre", "spd", "jmp", "hgt"],
         weights: [1, 1, 1, 0.5],
     },
 };
 
 // Test: pk_test_gFqvUZCI8RgSl5KMIYTmZ5yI
-const STRIPE_PUBLISHABLE_KEY = 'pk_live_Dmo7Vs6uSaoYHrFngr4lM0sa';
+const STRIPE_PUBLISHABLE_KEY = "pk_live_Dmo7Vs6uSaoYHrFngr4lM0sa";
 
 export {
     COMPOSITE_WEIGHTS,

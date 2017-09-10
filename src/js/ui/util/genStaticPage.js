@@ -1,7 +1,12 @@
-import React from 'react';
-import {initView, setTitle} from '../util';
+import React from "react";
+import { initView, setTitle } from "../util";
 
-const genStaticPage = (name: string, title: string, content: React.Element<*>, inLeague: boolean) => {
+const genStaticPage = (
+    name: string,
+    title: string,
+    content: React.Element<*>,
+    inLeague: boolean,
+) => {
     return initView({
         id: name,
         inLeague,

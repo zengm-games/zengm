@@ -1,14 +1,17 @@
 // @flow
 
-import {PHASE, PLAYER, g} from '../../common';
-import {draft} from '../core';
-import {idb} from '../db';
+import { PHASE, PLAYER, g } from "../../common";
+import { draft } from "../core";
+import { idb } from "../db";
 
-async function updateDraft(): void | {[key: string]: any} {
+async function updateDraft(): void | { [key: string]: any } {
     // DIRTY QUICK FIX FOR v10 db upgrade bug - eventually remove
     // This isn't just for v10 db upgrade! Needed the same fix for http://www.reddit.com/r/BasketballGM/comments/2tf5ya/draft_bug/cnz58m2?context=3 - draft class not always generated with the correct seasons
     {
-        const players = await idb.cache.players.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
+        const players = await idb.cache.players.indexGetAll(
+            "playersByTid",
+            PLAYER.UNDRAFTED,
+        );
         for (const p of players) {
             const season = p.ratings[0].season;
             if (season !== g.season && g.phase === PHASE.DRAFT) {
@@ -21,7 +24,10 @@ async function updateDraft(): void | {[key: string]: any} {
         }
     }
 
-    let undrafted = await idb.cache.players.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
+    let undrafted = await idb.cache.players.indexGetAll(
+        "playersByTid",
+        PLAYER.UNDRAFTED,
+    );
     undrafted.sort((a, b) => b.valueFuzz - a.valueFuzz);
     undrafted = await idb.getCopies.playersPlus(undrafted, {
         attrs: ["pid", "name", "age", "injury", "contract", "watch"],
@@ -33,11 +39,28 @@ async function updateDraft(): void | {[key: string]: any} {
         fuzz: true,
     });
 
-    let drafted = await idb.cache.players.indexGetAll('playersByTid', [0, Infinity]);
-    drafted = drafted.filter((p) => p.draft.year === g.season);
-    drafted.sort((a, b) => (100 * a.draft.round + a.draft.pick) - (100 * b.draft.round + b.draft.pick));
+    let drafted = await idb.cache.players.indexGetAll("playersByTid", [
+        0,
+        Infinity,
+    ]);
+    drafted = drafted.filter(p => p.draft.year === g.season);
+    drafted.sort(
+        (a, b) =>
+            100 * a.draft.round +
+            a.draft.pick -
+            (100 * b.draft.round + b.draft.pick),
+    );
     drafted = await idb.getCopies.playersPlus(drafted, {
-        attrs: ["pid", "tid", "name", "age", "draft", "injury", "contract", "watch"],
+        attrs: [
+            "pid",
+            "tid",
+            "name",
+            "age",
+            "draft",
+            "injury",
+            "contract",
+            "watch",
+        ],
         ratings: ["ovr", "pot", "skills", "pos"],
         stats: ["per", "ewa"],
         season: g.season,
@@ -62,9 +85,11 @@ async function updateDraft(): void | {[key: string]: any} {
     }
 
     if (drafted.length === 0) {
-        console.log('drafted:', drafted);
-        console.log('draftOrder:', draftOrder);
-        throw new Error("drafted.length should always be 60, combo of drafted players and picks. But now it's 0. Why?");
+        console.log("drafted:", drafted);
+        console.log("draftOrder:", draftOrder);
+        throw new Error(
+            "drafted.length should always be 60, combo of drafted players and picks. But now it's 0. Why?",
+        );
     }
 
     // ...or start draft if the user has the first pick (in which case starting it has no effect, might as well do it automatically)

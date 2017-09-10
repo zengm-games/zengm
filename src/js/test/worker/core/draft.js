@@ -1,9 +1,9 @@
-import assert from 'assert';
-import {PLAYER, g} from '../../../common';
-import sampleTiebreakers from '../../fixtures/sampleTiebreakers';
-import helpers from '../../helpers';
-import {draft} from '../../../worker/core';
-import {idb} from '../../../worker/db';
+import assert from "assert";
+import { PLAYER, g } from "../../../common";
+import sampleTiebreakers from "../../fixtures/sampleTiebreakers";
+import helpers from "../../helpers";
+import { draft } from "../../../worker/core";
+import { idb } from "../../../worker/db";
 
 describe("core/draft", () => {
     before(async () => {
@@ -15,13 +15,16 @@ describe("core/draft", () => {
     const testDraftUntilUserOrEnd = async (numNow, numTotal) => {
         const pids = await draft.untilUserOrEnd();
         assert.equal(pids.length, numNow);
-        const players = await idb.cache.players.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
+        const players = await idb.cache.players.indexGetAll(
+            "playersByTid",
+            PLAYER.UNDRAFTED,
+        );
         assert.equal(players.length, 70 - numTotal);
     };
 
     let userPick1;
     let userPick2;
-    const testDraftUser = async (round) => {
+    const testDraftUser = async round => {
         const draftOrder = await draft.getOrder();
         const pick = draftOrder.shift();
         assert.equal(pick.round, round);
@@ -32,7 +35,10 @@ describe("core/draft", () => {
         }
         assert.equal(pick.tid, g.userTid);
 
-        const p = await idb.cache.players.indexGet('playersByTid', PLAYER.UNDRAFTED);
+        const p = await idb.cache.players.indexGet(
+            "playersByTid",
+            PLAYER.UNDRAFTED,
+        );
         await draft.selectPlayer(pick, p.pid);
         assert.equal(p.tid, g.userTid);
         await draft.setOrder(draftOrder);
@@ -41,7 +47,10 @@ describe("core/draft", () => {
     describe("#genPlayers()", () => {
         it("should generate 70 players for the draft", async () => {
             await draft.genPlayers(PLAYER.UNDRAFTED, 15.5);
-            const players = await idb.cache.players.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
+            const players = await idb.cache.players.indexGetAll(
+                "playersByTid",
+                PLAYER.UNDRAFTED,
+            );
             assert.equal(players.length, 70); // 70 players in a draft class
         });
     });
@@ -96,17 +105,19 @@ describe("core/draft", () => {
 
             // bad record playoff team
             for (let i = 0; i < pofteams.length; i++) {
-                assert(draftResults.indexOf(pofteams[i]) > draftResults.indexOf(17));
-                assert(draftResults.lastIndexOf(pofteams[i]) < draftResults.lastIndexOf(17));
+                assert(
+                    draftResults.indexOf(pofteams[i]) >
+                        draftResults.indexOf(17),
+                );
+                assert(
+                    draftResults.lastIndexOf(pofteams[i]) <
+                        draftResults.lastIndexOf(17),
+                );
             }
         });
 
         it("should give reverse round 2 order for teams with the same record", () => {
-            const sameRec = [
-                [3, 15, 25],
-                [10, 18],
-                [13, 26],
-            ];
+            const sameRec = [[3, 15, 25], [10, 18], [13, 26]];
 
             // First set of tids can fail because all 3 teams are in the lottery, although with low odds
             const lotteryTids = draftResults.slice(0, 3);
@@ -119,8 +130,12 @@ describe("core/draft", () => {
             }
 
             for (const tids of sameRec) {
-                const r1picks = draftResults.filter((tid, i) => tids.includes(tid) && i < 30);
-                const r2picks = draftResults.filter((tid, i) => tids.includes(tid) && i >= 30);
+                const r1picks = draftResults.filter(
+                    (tid, i) => tids.includes(tid) && i < 30,
+                );
+                const r2picks = draftResults.filter(
+                    (tid, i) => tids.includes(tid) && i >= 30,
+                );
                 assert.deepEqual(r1picks, r2picks.reverse());
             }
         });
@@ -133,12 +148,24 @@ describe("core/draft", () => {
                 seasonAttrs: ["winp", "playoffRoundsWon"],
                 season: g.season,
             });
-            const chances = [250, 199, 156, 119, 88, 63, 43, 28, 17, 11, 8, 7, 6, 5];
-            // index instead of tid
-            const sameRec = [
-                [6, 7, 8],
-                [10, 11, 12],
+            const chances = [
+                250,
+                199,
+                156,
+                119,
+                88,
+                63,
+                43,
+                28,
+                17,
+                11,
+                8,
+                7,
+                6,
+                5,
             ];
+            // index instead of tid
+            const sameRec = [[6, 7, 8], [10, 11, 12]];
             draft.lotterySort(teams);
             draft.updateChances(chances, teams, false);
             for (let i = 0; i < sameRec.length; i++) {
@@ -178,7 +205,10 @@ describe("core/draft", () => {
             return testDraftUser(1);
         });
         it("when called again after the user drafts, should draft players before the user's second round pick comes up", () => {
-            return testDraftUntilUserOrEnd(userPick2 - userPick1 - 1, userPick2 - 1);
+            return testDraftUntilUserOrEnd(
+                userPick2 - userPick1 - 1,
+                userPick2 - 1,
+            );
         });
         it("should then allow the user to draft in the second round", () => {
             return testDraftUser(2);
@@ -189,4 +219,3 @@ describe("core/draft", () => {
         });
     });
 });
-

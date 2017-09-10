@@ -1,7 +1,7 @@
-import _ from 'underscore';
-import {g} from '../../common';
-import {idb} from '../db';
-import type {UpdateEvents} from '../../common/types';
+import _ from "underscore";
+import { g } from "../../common";
+import { idb } from "../db";
+import type { UpdateEvents } from "../../common/types";
 
 function getTeamRecord(t, awards) {
     let totalWon = 0;
@@ -27,7 +27,8 @@ function getTeamRecord(t, awards) {
         }
     }
 
-    const totalWP = totalWon > 0 ? (totalWon / (totalWon + totalLost)).toFixed(3) : '0.000';
+    const totalWP =
+        totalWon > 0 ? (totalWon / (totalWon + totalLost)).toFixed(3) : "0.000";
 
     return {
         id: t.tid,
@@ -125,7 +126,15 @@ function tallyAwards(awards) {
 }
 
 function sumRecordsFor(group, id, name, records) {
-    const except = ['id', 'lastChampionship', 'lastPlayoffAppearance', 'team', 'cid', 'did', 'winp'];
+    const except = [
+        "id",
+        "lastChampionship",
+        "lastPlayoffAppearance",
+        "team",
+        "cid",
+        "did",
+        "winp",
+    ];
     const keys = Object.keys(records[0]);
     const out = {};
 
@@ -141,16 +150,21 @@ function sumRecordsFor(group, id, name, records) {
     out.id = id;
     out.team = name;
     out.winp = String(out.won / (out.won + out.lost));
-    out.winp = out.won > 0 ? (Number(out.won) / (Number(out.won) + Number(out.lost))).toFixed(3) : '0.000';
+    out.winp =
+        out.won > 0
+            ? (Number(out.won) / (Number(out.won) + Number(out.lost))).toFixed(
+                  3,
+              )
+            : "0.000";
     return out;
 }
 
 async function updateTeamRecords(
-    inputs: {byType: string},
+    inputs: { byType: string },
     updateEvents: UpdateEvents,
     state: any,
-): void | {[key: string]: any} {
-    if (updateEvents.includes('firstRun') || inputs.byType !== state.byType) {
+): void | { [key: string]: any } {
+    if (updateEvents.includes("firstRun") || inputs.byType !== state.byType) {
         const [teams, awards] = await Promise.all([
             idb.getCopies.teamsPlus({
                 attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
@@ -164,7 +178,9 @@ async function updateTeamRecords(
         for (let i = 0; i < teams.length; i++) {
             teamRecords.push(getTeamRecord(teams[i], awardsPerTeam));
         }
-        const seasonCount = teamRecords.map(tr => tr.championships).reduce((a, b) => Number(a) + Number(b));
+        const seasonCount = teamRecords
+            .map(tr => tr.championships)
+            .reduce((a, b) => Number(a) + Number(b));
 
         let display;
         let displayName;
@@ -172,10 +188,14 @@ async function updateTeamRecords(
             display = teamRecords;
             displayName = "Team";
         } else if (inputs.byType === "conf") {
-            display = g.confs.map(conf => sumRecordsFor('cid', conf.cid, conf.name, teamRecords));
+            display = g.confs.map(conf =>
+                sumRecordsFor("cid", conf.cid, conf.name, teamRecords),
+            );
             displayName = "Conference";
         } else {
-            display = g.divs.map(div => sumRecordsFor('did', div.did, div.name, teamRecords));
+            display = g.divs.map(div =>
+                sumRecordsFor("did", div.did, div.name, teamRecords),
+            );
             displayName = "Division";
         }
 

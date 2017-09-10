@@ -1,20 +1,20 @@
 // @flow
 
-import {g} from '../../common';
-import {idb} from '../db';
-import type {GetOutput, UpdateEvents} from '../../common/types';
+import { g } from "../../common";
+import { idb } from "../db";
+import type { GetOutput, UpdateEvents } from "../../common/types";
 
 async function updateHistory(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
     state: any,
-): void | {[key: string]: any} {
-    const {season} = inputs;
-    if (typeof season !== 'number') {
+): void | { [key: string]: any } {
+    const { season } = inputs;
+    if (typeof season !== "number") {
         return;
     }
 
-    if (updateEvents.includes('firstRun') || state.season !== season) {
+    if (updateEvents.includes("firstRun") || state.season !== season) {
         if (season < g.startingSeason) {
             return {
                 invalidSeason: true,
@@ -23,7 +23,7 @@ async function updateHistory(
         }
 
         const [awards, teams] = await Promise.all([
-            idb.getCopy.awards({season}),
+            idb.getCopy.awards({ season }),
             idb.getCopies.teamsPlus({
                 attrs: ["tid", "abbrev", "region", "name"],
                 seasonAttrs: ["playoffRoundsWon"],
@@ -37,7 +37,7 @@ async function updateHistory(
                 pid: 0,
                 name: "N/A",
                 tid: -1,
-                abbrev: '',
+                abbrev: "",
                 pts: 0,
                 trb: 0,
                 ast: 0,
@@ -56,8 +56,8 @@ async function updateHistory(
             awards.bestRecordConfs = [awards.bre, awards.brw];
         }
 
-        let retiredPlayers = await idb.getCopies.players({retired: true});
-        retiredPlayers = retiredPlayers.filter((p) => p.retiredYear === season);
+        let retiredPlayers = await idb.getCopies.players({ retired: true });
+        retiredPlayers = retiredPlayers.filter(p => p.retiredYear === season);
         retiredPlayers = await idb.getCopies.playersPlus(retiredPlayers, {
             attrs: ["pid", "name", "age", "hof"],
             season,
@@ -71,7 +71,9 @@ async function updateHistory(
         retiredPlayers.sort((a, b) => b.age - a.age);
 
         // Get champs
-        const champ = teams.find((t) => t.seasonAttrs.playoffRoundsWon === g.numPlayoffRounds);
+        const champ = teams.find(
+            t => t.seasonAttrs.playoffRoundsWon === g.numPlayoffRounds,
+        );
 
         return {
             awards,

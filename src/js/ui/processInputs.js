@@ -1,20 +1,26 @@
-import {PHASE, g, helpers} from '../common';
+import { PHASE, g, helpers } from "../common";
 
-const account = (ctx) => {
+const account = ctx => {
     return {
-        goldMessage: ctx.bbgm.goldResult !== undefined ? ctx.bbgm.goldResult.message : undefined,
-        goldSuccess: ctx.bbgm.goldResult !== undefined ? ctx.bbgm.goldResult.success : undefined,
+        goldMessage:
+            ctx.bbgm.goldResult !== undefined
+                ? ctx.bbgm.goldResult.message
+                : undefined,
+        goldSuccess:
+            ctx.bbgm.goldResult !== undefined
+                ? ctx.bbgm.goldResult.success
+                : undefined,
     };
 };
 
-const awardsRecords = (ctx) => {
+const awardsRecords = ctx => {
     return {
-        awardType: ctx.params.awardType || 'champion',
+        awardType: ctx.params.awardType || "champion",
     };
 };
 
-const customizePlayer = (ctx) => {
-    if (ctx.params.hasOwnProperty('pid')) {
+const customizePlayer = ctx => {
+    if (ctx.params.hasOwnProperty("pid")) {
         return {
             pid: parseInt(ctx.params.pid, 10),
         };
@@ -25,7 +31,7 @@ const customizePlayer = (ctx) => {
     };
 };
 
-const deleteLeague = (ctx) => {
+const deleteLeague = ctx => {
     return {
         lid: parseInt(ctx.params.lid, 10),
     };
@@ -34,12 +40,12 @@ const deleteLeague = (ctx) => {
 const draft = () => {
     if (g.phase !== PHASE.DRAFT && g.phase !== PHASE.FANTASY_DRAFT) {
         return {
-            redirectUrl: helpers.leagueUrl(['draft_summary']),
+            redirectUrl: helpers.leagueUrl(["draft_summary"]),
         };
     }
 };
 
-const draftLottery = (ctx) => {
+const draftLottery = ctx => {
     const season = helpers.validateSeason(ctx.params.season);
 
     return {
@@ -47,7 +53,7 @@ const draftLottery = (ctx) => {
     };
 };
 
-const draftSummary = (ctx) => {
+const draftSummary = ctx => {
     let season = helpers.validateSeason(ctx.params.season);
 
     // Draft hasn't happened yet this year
@@ -55,7 +61,7 @@ const draftSummary = (ctx) => {
         if (g.season === g.startingSeason) {
             // No draft history
             return {
-                redirectUrl: helpers.leagueUrl(['draft_scouting']),
+                redirectUrl: helpers.leagueUrl(["draft_scouting"]),
             };
         }
         if (season === g.season) {
@@ -69,7 +75,7 @@ const draftSummary = (ctx) => {
     };
 };
 
-const eventLog = (ctx) => {
+const eventLog = ctx => {
     const [tid, abbrev] = helpers.validateAbbrev(ctx.params.abbrev);
 
     return {
@@ -82,7 +88,7 @@ const eventLog = (ctx) => {
 const fantasyDraft = () => {
     if (g.phase === PHASE.FANTASY_DRAFT) {
         return {
-            redirectUrl: helpers.leagueUrl(['draft']),
+            redirectUrl: helpers.leagueUrl(["draft"]),
         };
     }
 };
@@ -90,12 +96,12 @@ const fantasyDraft = () => {
 const freeAgents = () => {
     if (g.phase === PHASE.RESIGN_PLAYERS) {
         return {
-            redirectUrl: helpers.leagueUrl(['negotiation']),
+            redirectUrl: helpers.leagueUrl(["negotiation"]),
         };
     }
 };
 
-const gameLog = (ctx) => {
+const gameLog = ctx => {
     return {
         abbrev: helpers.validateAbbrev(ctx.params.abbrev)[1],
         gid: ctx.params.gid !== undefined ? parseInt(ctx.params.gid, 10) : -1,
@@ -103,7 +109,7 @@ const gameLog = (ctx) => {
     };
 };
 
-const history = (ctx) => {
+const history = ctx => {
     let season = helpers.validateSeason(ctx.params.season);
 
     // If playoffs aren't over, season awards haven't been set
@@ -119,7 +125,7 @@ const history = (ctx) => {
     };
 };
 
-const liveGame = (ctx) => {
+const liveGame = ctx => {
     const obj = {
         fromAction: !!ctx.bbgm.fromAction,
     };
@@ -130,13 +136,13 @@ const liveGame = (ctx) => {
     return obj;
 };
 
-const message = (ctx) => {
+const message = ctx => {
     return {
         mid: ctx.params.mid ? parseInt(ctx.params.mid, 10) : undefined,
     };
 };
 
-const negotiation = (ctx) => {
+const negotiation = ctx => {
     const pid = parseInt(ctx.params.pid, 10);
 
     return {
@@ -147,47 +153,53 @@ const negotiation = (ctx) => {
 const negotiationList = () => {
     if (g.phase !== PHASE.RESIGN_PLAYERS) {
         return {
-            redirectUrl: helpers.leagueUrl(['negotiation', -1]),
+            redirectUrl: helpers.leagueUrl(["negotiation", -1]),
         };
     }
 };
 
-const player = (ctx) => {
+const player = ctx => {
     return {
-        pid: ctx.params.pid !== undefined ? parseInt(ctx.params.pid, 10) : undefined,
+        pid:
+            ctx.params.pid !== undefined
+                ? parseInt(ctx.params.pid, 10)
+                : undefined,
     };
 };
 
-const playerFeats = (ctx) => {
+const playerFeats = ctx => {
     let abbrev;
     if (g.teamAbbrevsCache.includes(ctx.params.abbrev)) {
         abbrev = ctx.params.abbrev;
     } else {
-        abbrev = 'all';
+        abbrev = "all";
     }
 
     let season;
-    if (ctx.params.season && ctx.params.season !== 'all') {
+    if (ctx.params.season && ctx.params.season !== "all") {
         season = helpers.validateSeason(ctx.params.season);
     } else {
-        season = 'all';
+        season = "all";
     }
 
     return {
         abbrev,
         season,
-        playoffs: ctx.params.playoffs !== undefined ? ctx.params.playoffs : 'regularSeason',
+        playoffs:
+            ctx.params.playoffs !== undefined
+                ? ctx.params.playoffs
+                : "regularSeason",
     };
 };
 
-const playerRatings = (ctx) => {
+const playerRatings = ctx => {
     let abbrev;
     if (g.teamAbbrevsCache.includes(ctx.params.abbrev)) {
         abbrev = ctx.params.abbrev;
-    } else if (ctx.params.abbrev && ctx.params.abbrev === 'watch') {
-        abbrev = 'watch';
+    } else if (ctx.params.abbrev && ctx.params.abbrev === "watch") {
+        abbrev = "watch";
     } else {
-        abbrev = 'all';
+        abbrev = "all";
     }
 
     return {
@@ -196,35 +208,42 @@ const playerRatings = (ctx) => {
     };
 };
 
-const playerStats = (ctx) => {
+const playerStats = ctx => {
     let abbrev;
     if (g.teamAbbrevsCache.includes(ctx.params.abbrev)) {
         abbrev = ctx.params.abbrev;
-    } else if (ctx.params.abbrev && ctx.params.abbrev === 'watch') {
-        abbrev = 'watch';
+    } else if (ctx.params.abbrev && ctx.params.abbrev === "watch") {
+        abbrev = "watch";
     } else {
-        abbrev = 'all';
+        abbrev = "all";
     }
 
     return {
         abbrev,
-        season: ctx.params.season === 'career' ? undefined : helpers.validateSeason(ctx.params.season),
-        statType: ctx.params.statType !== undefined ? ctx.params.statType : 'perGame',
-        playoffs: ctx.params.playoffs !== undefined ? ctx.params.playoffs : 'regularSeason',
+        season:
+            ctx.params.season === "career"
+                ? undefined
+                : helpers.validateSeason(ctx.params.season),
+        statType:
+            ctx.params.statType !== undefined ? ctx.params.statType : "perGame",
+        playoffs:
+            ctx.params.playoffs !== undefined
+                ? ctx.params.playoffs
+                : "regularSeason",
     };
 };
 
-const resetPassword = (ctx) => {
+const resetPassword = ctx => {
     return {
         token: ctx.params.token,
     };
 };
 
-const roster = (ctx) => {
+const roster = ctx => {
     // Fix broken links
-    if (ctx.params.abbrev === 'FA') {
+    if (ctx.params.abbrev === "FA") {
         return {
-            redirectUrl: helpers.leagueUrl(['free_agents']),
+            redirectUrl: helpers.leagueUrl(["free_agents"]),
         };
     }
 
@@ -235,50 +254,50 @@ const roster = (ctx) => {
     return inputs;
 };
 
-const schedule = (ctx) => {
+const schedule = ctx => {
     const inputs = {};
     [inputs.tid, inputs.abbrev] = helpers.validateAbbrev(ctx.params.abbrev);
     return inputs;
 };
 
-const teamFinances = (ctx) => {
+const teamFinances = ctx => {
     const inputs = {};
-    inputs.show = ctx.params.show !== undefined ? ctx.params.show : '10';
+    inputs.show = ctx.params.show !== undefined ? ctx.params.show : "10";
     [inputs.tid, inputs.abbrev] = helpers.validateAbbrev(ctx.params.abbrev);
     return inputs;
 };
 
-const teamHistory = (ctx) => {
+const teamHistory = ctx => {
     const inputs = {};
-    inputs.show = ctx.params.show !== undefined ? ctx.params.show : '10';
+    inputs.show = ctx.params.show !== undefined ? ctx.params.show : "10";
     [inputs.tid, inputs.abbrev] = helpers.validateAbbrev(ctx.params.abbrev);
     return inputs;
 };
 
-const teamRecords = (ctx) => {
+const teamRecords = ctx => {
     return {
-        byType: ctx.params.byType || 'team',
+        byType: ctx.params.byType || "team",
     };
 };
 
-const transactions = (ctx) => {
+const transactions = ctx => {
     let abbrev;
     let tid;
-    if (ctx.params.abbrev && ctx.params.abbrev !== 'all') {
+    if (ctx.params.abbrev && ctx.params.abbrev !== "all") {
         [tid, abbrev] = helpers.validateAbbrev(ctx.params.abbrev);
-    } else if (ctx.params.abbrev && ctx.params.abbrev === 'all') {
+    } else if (ctx.params.abbrev && ctx.params.abbrev === "all") {
         tid = -1;
-        abbrev = 'all';
+        abbrev = "all";
     } else {
         tid = g.userTid;
         abbrev = g.teamAbbrevsCache[tid];
     }
 
     let season;
-    if (ctx.params.season && ctx.params.season !== 'all') {
+    if (ctx.params.season && ctx.params.season !== "all") {
         season = helpers.validateSeason(ctx.params.season);
-    } else if (ctx.params.season && ctx.params.season === 'all') {
-        season = 'all';
+    } else if (ctx.params.season && ctx.params.season === "all") {
+        season = "all";
     } else {
         season = g.season;
     }
@@ -287,11 +306,11 @@ const transactions = (ctx) => {
         tid,
         abbrev,
         season,
-        eventType: ctx.params.eventType || 'all',
+        eventType: ctx.params.eventType || "all",
     };
 };
 
-const upcomingFreeAgents = (ctx) => {
+const upcomingFreeAgents = ctx => {
     let season = helpers.validateSeason(ctx.params.season);
 
     if (g.phase <= PHASE.RESIGN_PLAYERS) {
@@ -307,14 +326,18 @@ const upcomingFreeAgents = (ctx) => {
     };
 };
 
-const watchList = (ctx) => {
+const watchList = ctx => {
     return {
-        statType: ctx.params.statType !== undefined ? ctx.params.statType : 'perGame',
-        playoffs: ctx.params.playoffs !== undefined ? ctx.params.playoffs : 'regularSeason',
+        statType:
+            ctx.params.statType !== undefined ? ctx.params.statType : "perGame",
+        playoffs:
+            ctx.params.playoffs !== undefined
+                ? ctx.params.playoffs
+                : "regularSeason",
     };
 };
 
-const validateSeason = (ctx) => {
+const validateSeason = ctx => {
     return {
         season: helpers.validateSeason(ctx.params.season),
     };

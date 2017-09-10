@@ -1,36 +1,44 @@
 // @flow
 
-import {PHASE, g, helpers} from '../../common';
-import {team, trade} from '../core';
-import {idb} from '../db';
+import { PHASE, g, helpers } from "../../common";
+import { team, trade } from "../core";
+import { idb } from "../db";
 
 // This relies on vars being populated, so it can't be called in parallel with updateTrade
 async function updateSummary(vars) {
     const otherTid = await trade.getOtherTid();
-    const teams = [{
-        tid: g.userTid,
-        pids: vars.userPids,
-        dpids: vars.userDpids,
-    }, {
-        tid: otherTid,
-        pids: vars.otherPids,
-        dpids: vars.otherDpids,
-    }];
+    const teams = [
+        {
+            tid: g.userTid,
+            pids: vars.userPids,
+            dpids: vars.userDpids,
+        },
+        {
+            tid: otherTid,
+            pids: vars.otherPids,
+            dpids: vars.otherDpids,
+        },
+    ];
 
     const summary = await trade.summary(teams);
     vars.summary = {
-        enablePropose: !summary.warning && (teams[0].pids.length > 0 || teams[0].dpids.length > 0 || teams[1].pids.length > 0 || teams[1].dpids.length > 0),
+        enablePropose:
+            !summary.warning &&
+            (teams[0].pids.length > 0 ||
+                teams[0].dpids.length > 0 ||
+                teams[1].pids.length > 0 ||
+                teams[1].dpids.length > 0),
         warning: summary.warning,
     };
 
-    vars.summary.teams = [0, 1].map((i) => {
+    vars.summary.teams = [0, 1].map(i => {
         return {
             name: summary.teams[i].name,
             payrollAfterTrade: summary.teams[i].payrollAfterTrade,
             total: summary.teams[i].total,
             trade: summary.teams[i].trade,
             picks: summary.teams[i].picks,
-            other: i === 0 ? 1 : 0,  // Index of other team
+            other: i === 0 ? 1 : 0, // Index of other team
         };
     });
 
@@ -39,21 +47,43 @@ async function updateSummary(vars) {
 
 // Validate that the stored player IDs correspond with the active team ID
 async function validateSavedPids() {
-    const {teams} = await idb.cache.trade.get(0);
+    const { teams } = await idb.cache.trade.get(0);
 
     // This is just for debugging
-    team.valueChange(teams[1].tid, teams[0].pids, teams[1].pids, teams[0].dpids, teams[1].dpids).then(dv => {
-        console.log(dv);
-    });
+    team
+        .valueChange(
+            teams[1].tid,
+            teams[0].pids,
+            teams[1].pids,
+            teams[0].dpids,
+            teams[1].dpids,
+        )
+        .then(dv => {
+            console.log(dv);
+        });
     return trade.updatePlayers(teams);
 }
 
-async function updateTrade(): void | {[key: string]: any} {
+async function updateTrade(): void | { [key: string]: any } {
     const teams = await validateSavedPids();
-    let userRoster = await idb.cache.players.indexGetAll('playersByTid', g.userTid);
-    const userPicks: any = await idb.cache.draftPicks.indexGetAll('draftPicksByTid', g.userTid);
+    let userRoster = await idb.cache.players.indexGetAll(
+        "playersByTid",
+        g.userTid,
+    );
+    const userPicks: any = await idb.cache.draftPicks.indexGetAll(
+        "draftPicksByTid",
+        g.userTid,
+    );
 
-    const attrs = ["pid", "name", "age", "contract", "injury", "watch", "gamesUntilTradable"];
+    const attrs = [
+        "pid",
+        "name",
+        "age",
+        "contract",
+        "injury",
+        "watch",
+        "gamesUntilTradable",
+    ];
     const ratings = ["ovr", "pot", "skills", "pos"];
     const stats = ["min", "pts", "trb", "ast", "per"];
 
@@ -84,8 +114,14 @@ async function updateTrade(): void | {[key: string]: any} {
     const otherTid = teams[1].tid;
 
     // Need to do this after knowing otherTid
-    let otherRoster = await idb.cache.players.indexGetAll('playersByTid', otherTid);
-    const otherPicks: any = await idb.cache.draftPicks.indexGetAll('draftPicksByTid', otherTid);
+    let otherRoster = await idb.cache.players.indexGetAll(
+        "playersByTid",
+        otherTid,
+    );
+    const otherPicks: any = await idb.cache.draftPicks.indexGetAll(
+        "draftPicksByTid",
+        otherTid,
+    );
     const t = await idb.getCopy.teamsPlus({
         tid: otherTid,
         season: g.season,
@@ -152,10 +188,13 @@ async function updateTrade(): void | {[key: string]: any} {
         };
     }
     vars.teams.splice(g.userTid, 1); // Can't trade with yourself
-    vars.userTeamName = `${g.teamRegionsCache[g.userTid]} ${g.teamNamesCache[g.userTid]}`;
+    vars.userTeamName = `${g.teamRegionsCache[g.userTid]} ${g.teamNamesCache[
+        g.userTid
+    ]}`;
 
     // If the season is over, can't trade players whose contracts are expired
-    vars.showResigningMsg = g.phase > PHASE.PLAYOFFS && g.phase < PHASE.FREE_AGENCY;
+    vars.showResigningMsg =
+        g.phase > PHASE.PLAYOFFS && g.phase < PHASE.FREE_AGENCY;
 
     return vars;
 }

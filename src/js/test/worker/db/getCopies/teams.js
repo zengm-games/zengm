@@ -1,7 +1,7 @@
-import assert from 'assert';
-import {Cache, connectMeta, idb} from '../../../../worker/db';
-import {g} from '../../../../common';
-import {league, team} from '../../../../worker/core';
+import assert from "assert";
+import { Cache, connectMeta, idb } from "../../../../worker/db";
+import { g } from "../../../../common";
+import { league, team } from "../../../../worker/core";
 
 describe("db/getCopies", () => {
     describe("#teams()", () => {
@@ -11,7 +11,10 @@ describe("db/getCopies", () => {
             idb.cache = new Cache();
             await idb.cache.fill();
 
-            let teamStats = await idb.cache.teamSeasons.indexGet('teamStatsByPlayoffsTid', '0,4');
+            let teamStats = await idb.cache.teamSeasons.indexGet(
+                "teamStatsByPlayoffsTid",
+                "0,4",
+            );
             teamStats.gp = 10;
             teamStats.fg = 50;
             teamStats.fga = 100;
@@ -37,7 +40,7 @@ describe("db/getCopies", () => {
             assert(t.seasonAttrs.payroll > 0);
             assert.deepEqual(t, {
                 tid: 4,
-                abbrev: 'CIN',
+                abbrev: "CIN",
                 seasonAttrs: {
                     season: g.season,
                     won: 0,
@@ -63,7 +66,7 @@ describe("db/getCopies", () => {
             const t = teams[4];
             assert.deepEqual(t, {
                 tid: 4,
-                abbrev: 'CIN',
+                abbrev: "CIN",
                 seasonAttrs: {
                     season: g.season,
                     won: 0,
@@ -107,7 +110,7 @@ describe("db/getCopies", () => {
 
             assert.deepEqual(t, {
                 tid: 4,
-                abbrev: 'CIN',
+                abbrev: "CIN",
                 stats: {
                     gp: 10,
                     fg: 5,
@@ -126,7 +129,7 @@ describe("db/getCopies", () => {
 
             assert.deepEqual(t, {
                 tid: 4,
-                abbrev: 'CIN',
+                abbrev: "CIN",
                 seasonAttrs: {
                     season: g.season,
                     won: 0,
@@ -138,7 +141,7 @@ describe("db/getCopies", () => {
                 stats: ["gp", "fg", "fga", "fgp"],
                 tid: 4,
                 season: g.season,
-                statType: 'totals',
+                statType: "totals",
             });
 
             assert.deepEqual(t, {
@@ -179,13 +182,15 @@ describe("db/getCopies", () => {
             });
 
             assert.deepEqual(t, {
-                stats: [{
-                    gp: 4,
-                    fg: 3,
-                    fga: 30,
-                    fgp: 10,
-                    playoffs: true,
-                }],
+                stats: [
+                    {
+                        gp: 4,
+                        fg: 3,
+                        fga: 30,
+                        fgp: 10,
+                        playoffs: true,
+                    },
+                ],
             });
         });
         it("should return stats in an array if regular season and playoffs are specified", async () => {
@@ -196,19 +201,22 @@ describe("db/getCopies", () => {
             });
 
             assert.deepEqual(t, {
-                stats: [{
-                    gp: 10,
-                    fg: 5,
-                    fga: 10,
-                    fgp: 50,
-                    playoffs: false,
-                }, {
-                    gp: 4,
-                    fg: 3,
-                    fga: 30,
-                    fgp: 10,
-                    playoffs: true,
-                }],
+                stats: [
+                    {
+                        gp: 10,
+                        fg: 5,
+                        fga: 10,
+                        fgp: 50,
+                        playoffs: false,
+                    },
+                    {
+                        gp: 4,
+                        fg: 3,
+                        fga: 30,
+                        fgp: 10,
+                        playoffs: true,
+                    },
+                ],
             });
         });
     });

@@ -1,7 +1,7 @@
 // @flow
 
-import page from 'page';
-import type {UpdateEvents} from '../../common/types';
+import page from "page";
+import type { UpdateEvents } from "../../common/types";
 
 /**
  * Smartly update the currently loaded view or redirect to a new one.
@@ -13,8 +13,12 @@ import type {UpdateEvents} from '../../common/types';
  * @param {string=} url Optional URL to redirect to. The current URL is used if this is not defined. If this URL is either undefined or the same as location.pathname, it is considered to be an "refresh" and no entry in the history or stat tracker is made. Otherwise, it's considered to be a new pageview.
  * @param {Object=} raw Optional object passed through to the page.js request context's bbgm property.
  */
-async function realtimeUpdate(updateEvents: UpdateEvents = [], url?: string, raw?: Object = {}) {
-    return new Promise((resolve) => {
+async function realtimeUpdate(
+    updateEvents: UpdateEvents = [],
+    url?: string,
+    raw?: Object = {},
+) {
+    return new Promise(resolve => {
         url = url !== undefined ? url : location.pathname + location.search;
 
         const inLeague = url.substr(0, 3) === "/l/"; // Check the URL to be redirected to, not the current league (g.lid)

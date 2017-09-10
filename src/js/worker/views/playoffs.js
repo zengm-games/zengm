@@ -1,26 +1,32 @@
 // @flow
 
-import {PHASE, g, helpers} from '../../common';
-import {season} from '../core';
-import {idb} from '../db';
-import type {UpdateEvents} from '../../common/types';
+import { PHASE, g, helpers } from "../../common";
+import { season } from "../core";
+import { idb } from "../db";
+import type { UpdateEvents } from "../../common/types";
 
 async function updatePlayoffs(
-    inputs: {season: number},
+    inputs: { season: number },
     updateEvents: UpdateEvents,
     state: any,
-): void | {[key: string]: any} {
-    if (updateEvents.includes('firstRun') || inputs.season !== state.season || (inputs.season === g.season && updateEvents.includes('gameSim'))) {
+): void | { [key: string]: any } {
+    if (
+        updateEvents.includes("firstRun") ||
+        inputs.season !== state.season ||
+        (inputs.season === g.season && updateEvents.includes("gameSim"))
+    ) {
         let finalMatchups;
         let series;
 
         // If in the current season and before playoffs started, display projected matchups
         if (inputs.season === g.season && g.phase < PHASE.PLAYOFFS) {
-            const teams = helpers.orderByWinp(await idb.getCopies.teamsPlus({
-                attrs: ["tid", "cid", "abbrev", "name"],
-                seasonAttrs: ["winp", "won"],
-                season: inputs.season,
-            }));
+            const teams = helpers.orderByWinp(
+                await idb.getCopies.teamsPlus({
+                    attrs: ["tid", "cid", "abbrev", "name"],
+                    seasonAttrs: ["winp", "won"],
+                    season: inputs.season,
+                }),
+            );
 
             // Add entry for wins for each team, delete seasonAttrs just used for sorting
             for (let i = 0; i < teams.length; i++) {
@@ -34,7 +40,9 @@ async function updatePlayoffs(
 
             finalMatchups = false;
         } else {
-            const playoffSeries = await idb.getCopy.playoffSeries({season: inputs.season});
+            const playoffSeries = await idb.getCopy.playoffSeries({
+                season: inputs.season,
+            });
             series = playoffSeries.series;
 
             finalMatchups = true;

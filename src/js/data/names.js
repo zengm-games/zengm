@@ -2,7 +2,7 @@
 
 /* eslint quote-props: "off" */
 
-import {g} from '../common';
+import { g } from "../common";
 
 type PlayerNames = {
     countries: [string, number][],
@@ -19,7 +19,7 @@ type PlayerNames = {
 // If the list of countries changes, update the fake age code in phase.js!
 
 let first = {
-    "Angola": [
+    Angola: [
         ["Armando", 1],
         ["Divaldo", 2],
         ["Emanuel", 3],
@@ -29,7 +29,7 @@ let first = {
         ["Vander", 7],
         ["Yanick", 8],
     ],
-    "Argentina": [
+    Argentina: [
         ["Alejandro", 1],
         ["Andres", 4],
         ["Antonio", 5],
@@ -78,7 +78,7 @@ let first = {
         ["Silvio", 70],
         ["Walter", 71],
     ],
-    "Australia": [
+    Australia: [
         ["Aaron", 1],
         ["Abiola", 2],
         ["Adam", 6],
@@ -195,7 +195,7 @@ let first = {
         ["William", 173],
         ["Xavier", 174],
     ],
-    "Austria": [
+    Austria: [
         ["Alex", 1],
         ["Armin", 2],
         ["Benjamin", 3],
@@ -212,7 +212,7 @@ let first = {
         ["Samuel", 14],
         ["Thomas", 15],
     ],
-    "Bahamas": [
+    Bahamas: [
         ["Andre", 1],
         ["Anthony", 2],
         ["Anwar", 3],
@@ -261,7 +261,7 @@ let first = {
         ["Winslo", 47],
         ["Zane", 48],
     ],
-    "Belarus": [
+    Belarus: [
         ["Aleh", 1],
         ["Alex", 2],
         ["Alexander", 3],
@@ -274,7 +274,7 @@ let first = {
         ["Vladimir", 11],
         ["Yahor", 12],
     ],
-    "Belgium": [
+    Belgium: [
         ["Alexandre", 1],
         ["Amaury", 2],
         ["Anthony", 3],
@@ -319,7 +319,7 @@ let first = {
         ["Yannick", 43],
         ["Yves", 44],
     ],
-    "Benin": [
+    Benin: [
         ["Eric", 1],
         ["Herve", 2],
         ["Kevin", 3],
@@ -423,7 +423,7 @@ let first = {
         ["Vule", 137],
         ["Zoran", 140],
     ],
-    "Brazil": [
+    Brazil: [
         ["Abner", 1],
         ["Adriano", 2],
         ["Alex", 3],
@@ -487,7 +487,7 @@ let first = {
         ["Vitor", 80],
         ["Wesley", 82],
     ],
-    "Bulgaria": [
+    Bulgaria: [
         ["Boris", 1],
         ["Boyko", 2],
         ["Bozhidar", 3],
@@ -515,7 +515,7 @@ let first = {
         ["Yordan", 28],
         ["Yuliyan", 29],
     ],
-    "Cameroon": [
+    Cameroon: [
         ["Alain", 1],
         ["Aldo", 2],
         ["Alexis", 3],
@@ -580,7 +580,7 @@ let first = {
         ["Yannick", 68],
         ["Yves", 69],
     ],
-    "Canada": [
+    Canada: [
         ["Aaron", 2],
         ["Abednego", 3],
         ["Abu", 4],
@@ -894,14 +894,14 @@ let first = {
         ["Romain", 8],
         ["William", 9],
     ],
-    "Chad": [
+    Chad: [
         ["Abdel", 1],
         ["Christ", 2],
         ["Jacques", 3],
         ["Olivier", 4],
         ["Pina", 5],
     ],
-    "China": [
+    China: [
         ["Ailun", 1],
         ["Chen", 2],
         ["Chris", 3],
@@ -933,7 +933,7 @@ let first = {
         ["Ziming", 29],
         ["Zou", 30],
     ],
-    "Colombia": [
+    Colombia: [
         ["Adinson", 1],
         ["Alvaro", 2],
         ["Edgar", 3],
@@ -949,7 +949,7 @@ let first = {
         ["Stalin", 14],
         ["Tonny", 15],
     ],
-    "Congo": [
+    Congo: [
         ["Bismack", 1],
         ["Brice", 2],
         ["Charles", 4],
@@ -983,7 +983,7 @@ let first = {
         ["Wen", 33],
         ["Yannick", 34],
     ],
-    "Croatia": [
+    Croatia: [
         ["Alan", 1],
         ["Andrej", 2],
         ["Andrija", 3],
@@ -1131,7 +1131,7 @@ let first = {
         ["Tomas", 33],
         ["Viktor", 34],
     ],
-    "Denmark": [
+    Denmark: [
         ["Anton", 1],
         ["Chris", 2],
         ["Christian", 4],
@@ -1184,7 +1184,7 @@ let first = {
         ["Victor", 32],
         ["Weisner", 33],
     ],
-    "Egypt": [
+    Egypt: [
         ["Ahmed", 2],
         ["Alaa", 3],
         ["Aly", 4],
@@ -1199,7 +1199,7 @@ let first = {
         ["Omar", 14],
         ["Trevor", 15],
     ],
-    "England": [
+    England: [
         ["Aaron", 2],
         ["Admiral", 3],
         ["Alan", 4],
@@ -1291,7 +1291,7 @@ let first = {
         ["Yorrick", 111],
         ["Zarryon", 112],
     ],
-    "Estonia": [
+    Estonia: [
         ["Ardo", 1],
         ["Arnold", 2],
         ["Gert", 3],
@@ -1307,7 +1307,7 @@ let first = {
         ["Tanel", 13],
         ["Valmo", 14],
     ],
-    "Finland": [
+    Finland: [
         ["Elias", 1],
         ["Esa", 2],
         ["Gerald", 3],
@@ -1339,7 +1339,7 @@ let first = {
         ["Timo", 33],
         ["Tuukka", 34],
     ],
-    "France": [
+    France: [
         ["Aaron", 1],
         ["Abdallah", 2],
         ["Abdoulaye", 5],
@@ -1558,14 +1558,14 @@ let first = {
         ["Steeve", 6],
         ["Ywen", 7],
     ],
-    "Gabon": [
+    Gabon: [
         ["Chris", 1],
         ["Freddy", 2],
         ["Stephane", 3],
         ["Stevy", 4],
         ["Therence", 5],
     ],
-    "Georgia": [
+    Georgia: [
         ["Beka", 1],
         ["David", 2],
         ["Duda", 3],
@@ -1586,7 +1586,7 @@ let first = {
         ["Willy", 19],
         ["Zaza", 20],
     ],
-    "Germany": [
+    Germany: [
         ["Alex", 1],
         ["Alexander", 2],
         ["Amar", 3],
@@ -1729,7 +1729,7 @@ let first = {
         ["Yasin", 180],
         ["Zaire", 181],
     ],
-    "Ghana": [
+    Ghana: [
         ["Amida", 1],
         ["Asenso", 2],
         ["Bawa", 3],
@@ -1741,7 +1741,7 @@ let first = {
         ["Paul", 9],
         ["William", 10],
     ],
-    "Greece": [
+    Greece: [
         ["Alex", 3],
         ["Alexandros", 6],
         ["Alexis", 8],
@@ -1837,7 +1837,7 @@ let first = {
         ["Yiorgos", 213],
         ["Zisis", 214],
     ],
-    "Guadeloupe": [
+    Guadeloupe: [
         ["David", 1],
         ["Florent", 2],
         ["Gary", 3],
@@ -1851,7 +1851,7 @@ let first = {
         ["Mickael", 12],
         ["Rodrigue", 13],
     ],
-    "Guinea": [
+    Guinea: [
         ["Daouda", 1],
         ["Djibril", 2],
         ["Felix", 3],
@@ -1864,7 +1864,7 @@ let first = {
         ["Sede", 10],
         ["Sekou", 11],
     ],
-    "Haiti": [
+    Haiti: [
         ["Cady", 1],
         ["Djery", 2],
         ["Kervin", 3],
@@ -1878,7 +1878,7 @@ let first = {
         ["Yves", 11],
         ["Yvon", 12],
     ],
-    "Hungary": [
+    Hungary: [
         ["Adam", 1],
         ["Akos", 2],
         ["Balazs", 4],
@@ -1899,7 +1899,7 @@ let first = {
         ["Rosco", 21],
         ["Zoltan", 22],
     ],
-    "Iceland": [
+    Iceland: [
         ["Dagur", 1],
         ["Elvar", 2],
         ["Frank", 3],
@@ -1911,7 +1911,7 @@ let first = {
         ["Martin", 9],
         ["Petur", 10],
     ],
-    "Iran": [
+    Iran: [
         ["Arsalan", 1],
         ["Hamed", 2],
         ["Iman", 3],
@@ -1919,7 +1919,7 @@ let first = {
         ["Saleh", 5],
         ["Samad", 6],
     ],
-    "Ireland": [
+    Ireland: [
         ["Alan", 1],
         ["Alex", 2],
         ["Conor", 3],
@@ -1928,7 +1928,7 @@ let first = {
         ["Michael", 6],
         ["Paul", 7],
     ],
-    "Israel": [
+    Israel: [
         ["Afik", 1],
         ["Amit", 2],
         ["Avraham", 3],
@@ -1979,7 +1979,7 @@ let first = {
         ["Yovel", 49],
         ["Yuval", 50],
     ],
-    "Italy": [
+    Italy: [
         ["Achille", 1],
         ["Agostino", 2],
         ["Alessandro", 15],
@@ -2100,7 +2100,7 @@ let first = {
         ["Vassy", 25],
         ["Willy", 26],
     ],
-    "Jamaica": [
+    Jamaica: [
         ["Adrian", 1],
         ["Ajani", 2],
         ["Andre", 3],
@@ -2129,7 +2129,7 @@ let first = {
         ["Vashil", 27],
         ["Wayne", 28],
     ],
-    "Japan": [
+    Japan: [
         ["Andy", 1],
         ["Jamel", 2],
         ["K.J.", 3],
@@ -2137,7 +2137,7 @@ let first = {
         ["Yasutaka", 5],
         ["Yuta", 7],
     ],
-    "Kazakhstan": [
+    Kazakhstan: [
         ["Aleksey", 1],
         ["Alexandr", 2],
         ["Alexandre", 3],
@@ -2146,14 +2146,14 @@ let first = {
         ["Evgeny", 6],
         ["Ivan", 7],
     ],
-    "Kenya": [
+    Kenya: [
         ["Bush", 1],
         ["Ishmael", 2],
         ["Moses", 3],
         ["Ronnie", 4],
         ["Tylor", 5],
     ],
-    "Kosovo": [
+    Kosovo: [
         ["Bojan", 1],
         ["Boris", 2],
         ["Dardan", 3],
@@ -2168,7 +2168,7 @@ let first = {
         ["Muhamed", 12],
         ["Slobodan", 13],
     ],
-    "Latvia": [
+    Latvia: [
         ["Aigars", 2],
         ["Ainars", 3],
         ["Akselis", 4],
@@ -2213,7 +2213,7 @@ let first = {
         ["Uvis", 68],
         ["Verners", 69],
     ],
-    "Lithuania": [
+    Lithuania: [
         ["Adas", 1],
         ["Aivaras", 2],
         ["Alvaidas", 3],
@@ -2306,7 +2306,7 @@ let first = {
         ["Zygimantas", 194],
         ["Zygis", 195],
     ],
-    "Macedonia": [
+    Macedonia: [
         ["Adem", 1],
         ["Aleksandar", 3],
         ["Andrej", 5],
@@ -2332,7 +2332,7 @@ let first = {
         ["Vojdan", 27],
         ["Vrbica", 28],
     ],
-    "Mali": [
+    Mali: [
         ["Almamy", 1],
         ["Aly", 2],
         ["Baba", 3],
@@ -2351,7 +2351,7 @@ let first = {
         ["Ousmane", 19],
         ["Soumaila", 20],
     ],
-    "Mexico": [
+    Mexico: [
         ["Alex", 1],
         ["Coky", 2],
         ["Edgar", 3],
@@ -2369,7 +2369,7 @@ let first = {
         ["Ray", 16],
         ["Rene", 17],
     ],
-    "Montenegro": [
+    Montenegro: [
         ["Aleksa", 2],
         ["Aleksandar", 4],
         ["Alex", 5],
@@ -2420,14 +2420,14 @@ let first = {
         ["Zarko", 84],
         ["Zoran", 85],
     ],
-    "Morocco": [
+    Morocco: [
         ["Mike", 1],
         ["Mohamed", 2],
         ["Reda", 3],
         ["Yassin", 4],
         ["Younes", 5],
     ],
-    "Netherlands": [
+    Netherlands: [
         ["Berend", 1],
         ["Bryan", 2],
         ["Dan", 3],
@@ -2500,7 +2500,7 @@ let first = {
         ["Tom", 23],
         ["Zachary", 24],
     ],
-    "Nigeria": [
+    Nigeria: [
         ["Abayomi", 1],
         ["Abdullahi", 2],
         ["Ademola", 3],
@@ -2614,7 +2614,7 @@ let first = {
         ["Yinka", 135],
         ["Yommy", 136],
     ],
-    "Norway": [
+    Norway: [
         ["Calix", 1],
         ["Karamo", 2],
         ["Matz", 3],
@@ -2622,7 +2622,7 @@ let first = {
         ["Stian", 5],
         ["Torgrim", 6],
     ],
-    "Panama": [
+    Panama: [
         ["Abdul", 1],
         ["Daniel", 2],
         ["Dionisio", 3],
@@ -2641,7 +2641,7 @@ let first = {
         ["Ruben", 16],
         ["Stuart", 17],
     ],
-    "Poland": [
+    Poland: [
         ["Adam", 4],
         ["Alek", 5],
         ["Aleksander", 6],
@@ -2682,7 +2682,7 @@ let first = {
         ["Wojciech", 68],
         ["Zbigniew", 69],
     ],
-    "Portugal": [
+    Portugal: [
         ["Antonio", 1],
         ["Daniel", 2],
         ["Francisco", 3],
@@ -2743,7 +2743,7 @@ let first = {
         ["Tovi", 57],
         ["Victor", 58],
     ],
-    "Romania": [
+    Romania: [
         ["Adrian", 1],
         ["Alexandru", 2],
         ["Andrei", 4],
@@ -2764,7 +2764,7 @@ let first = {
         ["Virgil", 21],
         ["Vlad", 22],
     ],
-    "Russia": [
+    Russia: [
         ["Alan", 1],
         ["Aleksandr", 2],
         ["Alexander", 4],
@@ -2826,7 +2826,7 @@ let first = {
         ["Yuriy", 115],
         ["Zakhar", 116],
     ],
-    "Scotland": [
+    Scotland: [
         ["Alasdair", 1],
         ["Ali", 2],
         ["John", 3],
@@ -2834,7 +2834,7 @@ let first = {
         ["Nicholas", 5],
         ["Robert", 6],
     ],
-    "Senegal": [
+    Senegal: [
         ["Abdou", 2],
         ["Abdoulaye", 5],
         ["Ahmet", 6],
@@ -2912,7 +2912,7 @@ let first = {
         ["Youssou", 112],
         ["Youssoufa", 113],
     ],
-    "Serbia": [
+    Serbia: [
         ["Aleksa", 6],
         ["Aleksandar", 17],
         ["Aleksander", 19],
@@ -3023,7 +3023,7 @@ let first = {
         ["Zlatko", 340],
         ["Zoran", 341],
     ],
-    "Slovakia": [
+    Slovakia: [
         ["Anton", 1],
         ["Boris", 2],
         ["Daniel", 3],
@@ -3046,7 +3046,7 @@ let first = {
         ["Vince", 21],
         ["Vladimir", 22],
     ],
-    "Slovenia": [
+    Slovenia: [
         ["Aleksandar", 1],
         ["Aleksej", 2],
         ["Ales", 3],
@@ -3144,7 +3144,7 @@ let first = {
         ["Majok", 6],
         ["Peter", 7],
     ],
-    "Spain": [
+    Spain: [
         ["Acoydan", 1],
         ["Adnan", 2],
         ["Adria", 4],
@@ -3264,7 +3264,7 @@ let first = {
         ["Xavier", 250],
         ["Yankuba", 251],
     ],
-    "Sudan": [
+    Sudan: [
         ["Ajak", 1],
         ["Akolda", 2],
         ["Akoy", 3],
@@ -3288,7 +3288,7 @@ let first = {
         ["Teeng", 23],
         ["Thon", 24],
     ],
-    "Sweden": [
+    Sweden: [
         ["Adam", 1],
         ["Aksel", 2],
         ["Albert", 3],
@@ -3329,7 +3329,7 @@ let first = {
         ["Viktor", 45],
         ["William", 47],
     ],
-    "Switzerland": [
+    Switzerland: [
         ["Amir", 1],
         ["Benjamin", 2],
         ["Christophe", 3],
@@ -3359,7 +3359,7 @@ let first = {
         ["Sherman", 10],
         ["Wilfred", 11],
     ],
-    "Turkey": [
+    Turkey: [
         ["Adem", 1],
         ["Ahmet", 3],
         ["Akyel", 4],
@@ -3446,7 +3446,7 @@ let first = {
         ["Ugur", 109],
         ["Umur", 110],
     ],
-    "USA": [
+    USA: [
         ["A'Daeron", 1],
         ["A'uston", 2],
         ["A.C.", 5],
@@ -7743,7 +7743,7 @@ let first = {
         ["Zuri", 23462],
         ["Zylan", 23463],
     ],
-    "Ukraine": [
+    Ukraine: [
         ["Alex", 1],
         ["Alexander", 2],
         ["Anatoliy", 3],
@@ -7784,7 +7784,7 @@ let first = {
         ["Vyacheslav", 47],
         ["Yevgen", 48],
     ],
-    "Uruguay": [
+    Uruguay: [
         ["Esteban", 1],
         ["Gustavo", 2],
         ["Jayson", 3],
@@ -7793,7 +7793,7 @@ let first = {
         ["Martin", 6],
         ["Nicolas", 7],
     ],
-    "Venezuela": [
+    Venezuela: [
         ["Anthony", 1],
         ["David", 2],
         ["German", 3],
@@ -7822,7 +7822,7 @@ let first = {
 };
 
 let last = {
-    "Angola": [
+    Angola: [
         ["Costa", 1],
         ["De Sousa", 2],
         ["Gomes", 3],
@@ -7832,7 +7832,7 @@ let last = {
         ["Neto", 7],
         ["Victoriano", 8],
     ],
-    "Argentina": [
+    Argentina: [
         ["Bertone", 1],
         ["Bonzano", 2],
         ["Bortolin", 3],
@@ -7901,7 +7901,7 @@ let last = {
         ["Whelan", 70],
         ["Wolkowyski", 71],
     ],
-    "Australia": [
+    Australia: [
         ["Akinpetide", 1],
         ["Akintola", 2],
         ["Allen", 3],
@@ -8071,7 +8071,7 @@ let last = {
         ["Wroe", 173],
         ["Young", 174],
     ],
-    "Austria": [
+    Austria: [
         ["Douvier", 1],
         ["Hutter", 2],
         ["Knabl", 3],
@@ -8088,7 +8088,7 @@ let last = {
         ["Volcic", 14],
         ["Woschank", 15],
     ],
-    "Bahamas": [
+    Bahamas: [
         ["Ayton", 1],
         ["Bain", 3],
         ["Barr", 4],
@@ -8130,7 +8130,7 @@ let last = {
         ["Taylor", 47],
         ["Thompson", 48],
     ],
-    "Belarus": [
+    Belarus: [
         ["Kojenets", 1],
         ["Koul", 2],
         ["Lashkevich", 3],
@@ -8144,7 +8144,7 @@ let last = {
         ["Uljanko", 11],
         ["Veremeenko", 12],
     ],
-    "Belgium": [
+    Belgium: [
         ["Akyazili", 1],
         ["Allison", 2],
         ["Bako", 3],
@@ -8190,7 +8190,7 @@ let last = {
         ["Vanwijn", 43],
         ["Wade", 44],
     ],
-    "Benin": [
+    Benin: [
         ["Aholode", 1],
         ["Folahan", 2],
         ["Kangni", 3],
@@ -8329,7 +8329,7 @@ let last = {
         ["Zimic", 139],
         ["Zubac", 140],
     ],
-    "Brazil": [
+    Brazil: [
         ["", 1],
         ["Aguirre", 2],
         ["Alves", 3],
@@ -8409,7 +8409,7 @@ let last = {
         ["Viegas", 81],
         ["Waskiewicz", 82],
     ],
-    "Bulgaria": [
+    Bulgaria: [
         ["Agre", 1],
         ["Angelov", 2],
         ["Avramov", 3],
@@ -8437,7 +8437,7 @@ let last = {
         ["Videnov", 28],
         ["Zahariev", 29],
     ],
-    "Cameroon": [
+    Cameroon: [
         ["A'Nyam", 1],
         ["Aboya", 2],
         ["Adingono", 3],
@@ -8505,7 +8505,7 @@ let last = {
         ["Vounang", 68],
         ["Wangmene", 69],
     ],
-    "Canada": [
+    Canada: [
         ["Akot", 1],
         ["Alexander", 3],
         ["Alexander-Walker", 4],
@@ -8861,14 +8861,14 @@ let last = {
         ["Sato", 8],
         ["Souleymane", 9],
     ],
-    "Chad": [
+    Chad: [
         ["Alingue", 1],
         ["Guillaume", 2],
         ["Koumadje", 3],
         ["Mbaigoto", 4],
         ["Moussa", 5],
     ],
-    "China": [
+    China: [
         ["Chang", 1],
         ["Delong", 2],
         ["Fan", 3],
@@ -8899,7 +8899,7 @@ let last = {
         ["Zhelin", 29],
         ["Zhengdong", 30],
     ],
-    "Colombia": [
+    Colombia: [
         ["Aparicio", 1],
         ["Asprilla", 3],
         ["Atencia", 4],
@@ -8915,7 +8915,7 @@ let last = {
         ["Teheran", 14],
         ["Trocha-Morelos", 15],
     ],
-    "Congo": [
+    Congo: [
         ["Ba", 1],
         ["Bakumanya", 2],
         ["Belemene", 3],
@@ -8948,7 +8948,7 @@ let last = {
         ["Tabu", 33],
         ["Tumba", 34],
     ],
-    "Croatia": [
+    Croatia: [
         ["Alujevic", 1],
         ["Andric", 2],
         ["Anzulovic", 3],
@@ -9188,7 +9188,7 @@ let last = {
         ["Zidek", 33],
         ["Zuzak", 34],
     ],
-    "Denmark": [
+    Denmark: [
         ["Benzon", 1],
         ["Bergstedt", 2],
         ["Christoffersen", 3],
@@ -9237,7 +9237,7 @@ let last = {
         ["Suero", 31],
         ["Vargas", 33],
     ],
-    "Egypt": [
+    Egypt: [
         ["Abdelnaby", 1],
         ["Ahmed", 2],
         ["Amin", 3],
@@ -9254,7 +9254,7 @@ let last = {
         ["Oraby", 14],
         ["Tutu", 15],
     ],
-    "England": [
+    England: [
         ["Adegboye", 1],
         ["Adenekan", 2],
         ["Alade", 3],
@@ -9363,7 +9363,7 @@ let last = {
         ["Williams", 111],
         ["Wilson", 112],
     ],
-    "Estonia": [
+    Estonia: [
         ["Arbet", 1],
         ["Armpalu", 2],
         ["Kangur", 3],
@@ -9379,7 +9379,7 @@ let last = {
         ["Valge", 13],
         ["Vene", 14],
     ],
-    "Finland": [
+    Finland: [
         ["Ahonen", 1],
         ["Ahvenniemi", 2],
         ["Cato", 3],
@@ -9415,7 +9415,7 @@ let last = {
         ["Toivonen", 33],
         ["Valtonen", 34],
     ],
-    "France": [
+    France: [
         ["Abdul-Wahad", 2],
         ["Aboudou", 3],
         ["Adjiwanou", 4],
@@ -9698,14 +9698,14 @@ let last = {
         ["Seraphin", 6],
         ["Smock", 7],
     ],
-    "Gabon": [
+    Gabon: [
         ["Lasme", 1],
         ["Mayimba", 2],
         ["Obame", 3],
         ["Silva", 4],
         ["Worah-Ozimo", 5],
     ],
-    "Georgia": [
+    Georgia: [
         ["Bitadze", 1],
         ["Boisa", 2],
         ["Burjanadze", 3],
@@ -9727,7 +9727,7 @@ let last = {
         ["Tugushi", 19],
         ["Ugrekhelidze", 20],
     ],
-    "Germany": [
+    Germany: [
         ["Agva", 1],
         ["Akpinar", 2],
         ["Alte", 3],
@@ -9904,7 +9904,7 @@ let last = {
         ["Zoellner", 180],
         ["Zylka", 181],
     ],
-    "Ghana": [
+    Ghana: [
         ["Aflakpui", 1],
         ["Ampim", 2],
         ["Bentil", 3],
@@ -9916,7 +9916,7 @@ let last = {
         ["Ouattara", 9],
         ["Yuori", 10],
     ],
-    "Greece": [
+    Greece: [
         ["Agadakos", 1],
         ["Aggelakos", 2],
         ["Agravanis", 3],
@@ -10125,7 +10125,7 @@ let last = {
         ["Zaras", 213],
         ["Zisis", 214],
     ],
-    "Guadeloupe": [
+    Guadeloupe: [
         ["Beaubois", 1],
         ["Bengaber", 3],
         ["Chathuant", 4],
@@ -10138,7 +10138,7 @@ let last = {
         ["Sequele", 12],
         ["Vaty", 13],
     ],
-    "Guinea": [
+    Guinea: [
         ["Balamou", 1],
         ["Barry", 2],
         ["Berete", 3],
@@ -10151,7 +10151,7 @@ let last = {
         ["Keita", 10],
         ["Kone", 11],
     ],
-    "Haiti": [
+    Haiti: [
         ["Baptiste", 1],
         ["Bristol", 2],
         ["Dalembert", 4],
@@ -10163,7 +10163,7 @@ let last = {
         ["Polynice", 11],
         ["Pons", 12],
     ],
-    "Hungary": [
+    Hungary: [
         ["Allen", 1],
         ["Bader", 2],
         ["Boros", 3],
@@ -10187,7 +10187,7 @@ let last = {
         ["Vojvoda", 21],
         ["Wittmann", 22],
     ],
-    "Iceland": [
+    Iceland: [
         ["Acox", 1],
         ["Booker", 2],
         ["Fridriksson", 3],
@@ -10198,7 +10198,7 @@ let last = {
         ["Palsson", 9],
         ["Vilhjalmsson", 10],
     ],
-    "Iran": [
+    Iran: [
         ["Foroutannik", 1],
         ["Haddadi", 2],
         ["Kazemi", 3],
@@ -10206,7 +10206,7 @@ let last = {
         ["Shokouhizadeh", 5],
         ["Yousofvand", 6],
     ],
-    "Ireland": [
+    Ireland: [
         ["Bree", 1],
         ["Cairns", 2],
         ["Carroll", 3],
@@ -10215,7 +10215,7 @@ let last = {
         ["Lyden-Horn", 6],
         ["Tomidy", 7],
     ],
-    "Israel": [
+    Israel: [
         ["Altit", 1],
         ["Bouchman", 2],
         ["Buch", 3],
@@ -10267,7 +10267,7 @@ let last = {
         ["Zalmanson", 49],
         ["Zoosman", 50],
     ],
-    "Italy": [
+    Italy: [
         ["Abass", 1],
         ["Abbio", 2],
         ["Akele", 3],
@@ -10517,7 +10517,7 @@ let last = {
         ["Sanogo", 25],
         ["Traore", 26],
     ],
-    "Jamaica": [
+    Jamaica: [
         ["Allen", 1],
         ["Andrews", 2],
         ["Chin", 3],
@@ -10545,7 +10545,7 @@ let last = {
         ["Williams", 27],
         ["Young", 28],
     ],
-    "Japan": [
+    Japan: [
         ["Ito", 1],
         ["Matsui", 2],
         ["Okayama", 3],
@@ -10554,7 +10554,7 @@ let last = {
         ["Tabuse", 6],
         ["Watanabe", 7],
     ],
-    "Kazakhstan": [
+    Kazakhstan: [
         ["Kolesnikov", 2],
         ["Petrenko", 3],
         ["Ponomarev", 4],
@@ -10562,14 +10562,14 @@ let last = {
         ["Zhigulin", 6],
         ["Zozulin", 7],
     ],
-    "Kenya": [
+    Kenya: [
         ["Aguko", 1],
         ["Awange", 2],
         ["Gombe", 3],
         ["Ongwae", 4],
         ["Wamukota", 5],
     ],
-    "Kosovo": [
+    Kosovo: [
         ["Berisha", 1],
         ["Bogdanovic", 2],
         ["Djordjic", 3],
@@ -10584,7 +10584,7 @@ let last = {
         ["Sipahi", 12],
         ["Tosic", 13],
     ],
-    "Latvia": [
+    Latvia: [
         ["Abele", 1],
         ["Bagatskis", 2],
         ["Bertans", 4],
@@ -10648,7 +10648,7 @@ let last = {
         ["Zoriks", 68],
         ["Zvigurs", 69],
     ],
-    "Lithuania": [
+    Lithuania: [
         ["Adomaitis", 2],
         ["Alijevas", 3],
         ["Andriukaitis", 4],
@@ -10834,7 +10834,7 @@ let last = {
         ["Zemgulis", 193],
         ["Zukauskas", 195],
     ],
-    "Macedonia": [
+    Macedonia: [
         ["Antic", 1],
         ["Blazevski", 2],
         ["Bocevski", 3],
@@ -10862,7 +10862,7 @@ let last = {
         ["Ugrinoski", 27],
         ["Vasiljevic", 28],
     ],
-    "Mali": [
+    Mali: [
         ["Bah", 1],
         ["Ballo", 2],
         ["Bamba", 3],
@@ -10880,7 +10880,7 @@ let last = {
         ["Thiero", 19],
         ["Yakwe", 20],
     ],
-    "Mexico": [
+    Mexico: [
         ["Ayala", 1],
         ["Ayon", 2],
         ["Barreno", 3],
@@ -10899,7 +10899,7 @@ let last = {
         ["Rochin", 16],
         ["Venegas", 17],
     ],
-    "Montenegro": [
+    Montenegro: [
         ["Bacovic", 1],
         ["Bakic", 3],
         ["Besovic", 4],
@@ -10971,14 +10971,14 @@ let last = {
         ["Vujovic", 84],
         ["Zizic", 85],
     ],
-    "Morocco": [
+    Morocco: [
         ["Flynn", 1],
         ["Hachad", 2],
         ["Idbihi", 3],
         ["Idrissi", 4],
         ["Rhalimi", 5],
     ],
-    "Netherlands": [
+    Netherlands: [
         ["Aarts", 1],
         ["Akerboom", 2],
         ["Bleeker", 3],
@@ -11052,7 +11052,7 @@ let last = {
         ["Wynyard", 23],
         ["Young", 24],
     ],
-    "Nigeria": [
+    Nigeria: [
         ["Abiakam", 1],
         ["Achiuwa", 2],
         ["Adebayo", 3],
@@ -11181,7 +11181,7 @@ let last = {
         ["Yiljep", 134],
         ["Zanna", 136],
     ],
-    "Norway": [
+    Norway: [
         ["Berg", 1],
         ["Jawara", 2],
         ["N'diaye", 3],
@@ -11189,7 +11189,7 @@ let last = {
         ["Sommerfeldt", 5],
         ["Stockman", 6],
     ],
-    "Panama": [
+    Panama: [
         ["Ayarza", 1],
         ["Butler", 2],
         ["Chambers", 3],
@@ -11207,7 +11207,7 @@ let last = {
         ["Peralta", 16],
         ["Taylor", 17],
     ],
-    "Poland": [
+    Poland: [
         ["Bacik", 1],
         ["Barycz", 2],
         ["Bialek", 3],
@@ -11276,7 +11276,7 @@ let last = {
         ["Zielinski", 68],
         ["Zywert", 69],
     ],
-    "Portugal": [
+    Portugal: [
         ["Amiel", 1],
         ["Coelho", 2],
         ["Da Mota", 3],
@@ -11339,7 +11339,7 @@ let last = {
         ["Vega", 57],
         ["Villegas", 58],
     ],
-    "Romania": [
+    Romania: [
         ["Baciu", 1],
         ["Burlacu", 2],
         ["Capusan", 3],
@@ -11362,7 +11362,7 @@ let last = {
         ["Szijarto", 21],
         ["Uta", 22],
     ],
-    "Russia": [
+    Russia: [
         ["Antipov", 1],
         ["Antonov", 2],
         ["Avleev", 3],
@@ -11477,7 +11477,7 @@ let last = {
         ["Zaytsev", 115],
         ["Zubkov", 116],
     ],
-    "Scotland": [
+    Scotland: [
         ["Achara", 1],
         ["Allison", 2],
         ["Archibald", 3],
@@ -11485,7 +11485,7 @@ let last = {
         ["Mackay", 5],
         ["Pope", 6],
     ],
-    "Senegal": [
+    Senegal: [
         ["Abdoulaye", 1],
         ["Adams", 2],
         ["Amadou", 3],
@@ -11552,7 +11552,7 @@ let last = {
         ["Toure", 112],
         ["Wane", 113],
     ],
-    "Serbia": [
+    Serbia: [
         ["Aleksandrov", 1],
         ["Aleksic", 4],
         ["Andric", 5],
@@ -11839,7 +11839,7 @@ let last = {
         ["Zoroski", 340],
         ["Zujovic", 341],
     ],
-    "Slovakia": [
+    Slovakia: [
         ["Betko", 1],
         ["Bojanovsky", 2],
         ["Brodziansky", 3],
@@ -11862,7 +11862,7 @@ let last = {
         ["Tot", 21],
         ["Toya", 22],
     ],
-    "Slovenia": [
+    Slovenia: [
         ["Antonijevic", 1],
         ["Atanackovic", 2],
         ["Balazic", 3],
@@ -11985,7 +11985,7 @@ let last = {
         ["Riak", 6],
         ["Tang", 7],
     ],
-    "Spain": [
+    Spain: [
         ["Abalde", 1],
         ["Abrines", 2],
         ["Aguilar", 3],
@@ -12183,7 +12183,7 @@ let last = {
         ["Yebra", 250],
         ["Yusta", 251],
     ],
-    "Sudan": [
+    Sudan: [
         ["Acuil", 1],
         ["Agau", 2],
         ["Akol", 3],
@@ -12206,7 +12206,7 @@ let last = {
         ["Riek", 23],
         ["Tuach", 24],
     ],
-    "Sweden": [
+    Sweden: [
         ["Andersson", 1],
         ["Anrin", 2],
         ["Barton", 3],
@@ -12253,7 +12253,7 @@ let last = {
         ["Stenhede", 46],
         ["Taylor", 47],
     ],
-    "Switzerland": [
+    Switzerland: [
         ["Bachmann", 1],
         ["Buscaglia", 2],
         ["Capela", 3],
@@ -12283,7 +12283,7 @@ let last = {
         ["Rowley", 10],
         ["Trim", 11],
     ],
-    "Turkey": [
+    Turkey: [
         ["Abi", 1],
         ["Acik", 2],
         ["Akpinar", 3],
@@ -12387,7 +12387,7 @@ let last = {
         ["Yilmaz", 109],
         ["Yurttas", 110],
     ],
-    "USA": [
+    USA: [
         ["Aaberg", 1],
         ["Aaker", 2],
         ["Aaman", 3],
@@ -20979,7 +20979,7 @@ let last = {
         ["Zylinski", 23462],
         ["Zylstra", 23463],
     ],
-    "Ukraine": [
+    Ukraine: [
         ["Bliznyuk", 1],
         ["Bobrov", 2],
         ["Bolomboy", 3],
@@ -21028,7 +21028,7 @@ let last = {
         ["Yailo", 47],
         ["Zagreba", 48],
     ],
-    "Uruguay": [
+    Uruguay: [
         ["Barrera", 1],
         ["Batista", 2],
         ["Garcia-Morales", 3],
@@ -21037,7 +21037,7 @@ let last = {
         ["Moltedo", 6],
         ["Osimani", 7],
     ],
-    "Venezuela": [
+    Venezuela: [
         ["Carrera", 1],
         ["Coronado", 2],
         ["Cubillan", 3],
@@ -21069,23 +21069,25 @@ const genCumSums = (names: {
     [key: string]: [string, number][],
 }): [string, number][] => {
     let cumsum = 0;
-    return Object.keys(names).sort().map(country => {
-        cumsum += names[country][names[country].length - 1][1];
-        return [country, cumsum];
-    });
+    return Object.keys(names)
+        .sort()
+        .map(country => {
+            cumsum += names[country][names[country].length - 1][1];
+            return [country, cumsum];
+        });
 };
 
 const load = (): PlayerNames => {
     if (g.names && g.names.first) {
         if (Array.isArray(g.names.first)) {
-            first = {USA: g.names.first};
+            first = { USA: g.names.first };
         } else {
             first = g.names.first;
         }
     }
     if (g.names && g.names.last) {
         if (Array.isArray(g.names.last)) {
-            last = {USA: g.names.last};
+            last = { USA: g.names.last };
         } else {
             last = g.names.last;
         }
@@ -21100,7 +21102,7 @@ const load = (): PlayerNames => {
         prev = row[1];
     }*/
 
-    return {countries, first, last};
+    return { countries, first, last };
 };
 
 export {

@@ -1,11 +1,16 @@
 // @flow
 
-import _ from 'underscore';
-import {PHASE, PLAYER, g, helpers} from '../../common';
-import {finances, league, phase, player} from '../core';
-import {idb} from '../db';
-import {local, logEvent, random, updatePlayMenu, updatePhase} from '../util';
-import type {Conditions, DraftLotteryResult, PickRealized, TeamFiltered} from '../../common/types';
+import _ from "underscore";
+import { PHASE, PLAYER, g, helpers } from "../../common";
+import { finances, league, phase, player } from "../core";
+import { idb } from "../db";
+import { local, logEvent, random, updatePlayMenu, updatePhase } from "../util";
+import type {
+    Conditions,
+    DraftLotteryResult,
+    PickRealized,
+    TeamFiltered,
+} from "../../common/types";
 
 // Add a new set of draft picks
 async function genPicks(season: number) {
@@ -57,15 +62,27 @@ async function setOrder(draftOrder: PickRealized[]) {
  * @param {?number=} numPlayers The number of prospects to generate. Default value is 70.
  * @return {Promise}
  */
-async function genPlayers(tid: number, scoutingRank?: ?number = null, numPlayers?: number, newLeague?: boolean = false) {
+async function genPlayers(
+    tid: number,
+    scoutingRank?: ?number = null,
+    numPlayers?: number,
+    newLeague?: boolean = false,
+) {
     if (numPlayers === null || numPlayers === undefined) {
         numPlayers = Math.round(70 * g.numTeams / 30); // 70 scaled by number of teams
     }
 
     // If scoutingRank is not supplied, have to hit the DB to get it
     if (scoutingRank === undefined || scoutingRank === null) {
-        const teamSeasons = await idb.cache.teamSeasons.indexGetAll('teamSeasonsByTidSeason', [`${g.userTid},${g.season - 2}`, `${g.userTid},${g.season}`]);
-        scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
+        const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
+            "teamSeasonsByTidSeason",
+            [`${g.userTid},${g.season - 2}`, `${g.userTid},${g.season}`],
+        );
+        scoutingRank = finances.getRankLastThree(
+            teamSeasons,
+            "expenses",
+            "scouting",
+        );
     }
 
     let draftYear = g.season;
@@ -90,12 +107,23 @@ async function genPlayers(tid: number, scoutingRank?: ?number = null, numPlayers
 
     for (let i = 0; i < numPlayers; i++) {
         const baseRating = random.randInt(8, 31);
-        const pot = Math.round(helpers.bound(random.realGauss(48, 17), baseRating, 90));
+        const pot = Math.round(
+            helpers.bound(random.realGauss(48, 17), baseRating, 90),
+        );
 
         const profile = profiles[6];
         const agingYears = random.randInt(0, 3);
 
-        const p = player.generate(tid, baseAge, profile, baseRating, pot, draftYear, false, scoutingRank);
+        const p = player.generate(
+            tid,
+            baseAge,
+            profile,
+            baseRating,
+            pot,
+            draftYear,
+            false,
+            scoutingRank,
+        );
         player.develop(p, agingYears, true);
 
         // Update player values after ratings changes
@@ -105,44 +133,68 @@ async function genPlayers(tid: number, scoutingRank?: ?number = null, numPlayers
 
     // Easter eggs!
     if (Math.random() < 1 / 100000) {
-        const p = player.generate(tid, 19, profiles[1], 90, 90, draftYear, false, scoutingRank);
+        const p = player.generate(
+            tid,
+            19,
+            profiles[1],
+            90,
+            90,
+            draftYear,
+            false,
+            scoutingRank,
+        );
         p.born.year = draftYear - 48;
-        p.born.loc = 'Los Angeles, CA';
-        p.college = 'Washington State University';
-        p.firstName = 'LaVar';
+        p.born.loc = "Los Angeles, CA";
+        p.college = "Washington State University";
+        p.firstName = "LaVar";
         p.hgt = 78;
-        p.imgURL = '/img/lavar.jpg';
-        p.lastName = 'Ball';
+        p.imgURL = "/img/lavar.jpg";
+        p.lastName = "Ball";
         p.weight = 250;
         await player.updateValues(p);
         const pid = await idb.cache.players.add(p);
-        if (typeof pid === 'number') {
+        if (typeof pid === "number") {
             await logEvent({
-                type: 'playerFeat',
-                text: `<a href="${helpers.leagueUrl(['player', pid])}">${p.firstName} ${p.lastName}</a> got sick of the haters and decided to show the world how a big baller plays.`,
+                type: "playerFeat",
+                text: `<a href="${helpers.leagueUrl([
+                    "player",
+                    pid,
+                ])}">${p.firstName} ${p.lastName}</a> got sick of the haters and decided to show the world how a big baller plays.`,
                 showNotification: false,
                 pids: [pid],
                 tids: [g.userTid],
             });
         }
     } else if (Math.random() < 1 / 100000) {
-        const p = player.generate(tid, 19, profiles[1], 90, 90, draftYear, false, scoutingRank);
+        const p = player.generate(
+            tid,
+            19,
+            profiles[1],
+            90,
+            90,
+            draftYear,
+            false,
+            scoutingRank,
+        );
         p.born.year = draftYear - 71;
-        p.born.loc = 'Queens, NY';
-        p.college = 'Wharton';
-        p.firstName = 'Donald';
+        p.born.loc = "Queens, NY";
+        p.college = "Wharton";
+        p.firstName = "Donald";
         p.hgt = 75;
-        p.imgURL = '/img/trump.jpg';
-        p.lastName = 'Trump';
+        p.imgURL = "/img/trump.jpg";
+        p.lastName = "Trump";
         p.weight = 240;
         p.ratings[0].pss = 0;
-        p.ratings[0].skills = ['Dp'];
+        p.ratings[0].skills = ["Dp"];
         await player.updateValues(p);
         const pid = await idb.cache.players.add(p);
-        if (typeof pid === 'number') {
+        if (typeof pid === "number") {
             await logEvent({
-                type: 'playerFeat',
-                text: `<a href="${helpers.leagueUrl(['player', pid])}">${p.firstName} ${p.lastName}</a> decided to Make Basketball GM Great Again.`,
+                type: "playerFeat",
+                text: `<a href="${helpers.leagueUrl([
+                    "player",
+                    pid,
+                ])}">${p.firstName} ${p.lastName}</a> decided to Make Basketball GM Great Again.`,
                 showNotification: false,
                 pids: [pid],
                 tids: [g.userTid],
@@ -151,54 +203,86 @@ async function genPlayers(tid: number, scoutingRank?: ?number = null, numPlayers
     }
 }
 
-function lotteryLogTxt(tid: number, type: 'chance' | 'moveddown' | 'movedup' | 'normal', number: number) {
-    let txt = `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[tid], g.season])}">${g.teamNamesCache[tid]}</a>`;
-    if (type === 'chance') {
-        txt += ` have a ${number.toFixed(2)}% chance of getting the top overall pick of the ${g.season} draft.`;
-    } else if (type === 'movedup') {
-        txt += ` moved up in the lottery and will select ${helpers.ordinal(number)} overall in the ${g.season} draft.`;
-    } else if (type === 'moveddown') {
-        txt += ` moved down in the lottery and will select ${helpers.ordinal(number)} overall in the ${g.season} draft.`;
-    } else if (type === 'normal') {
-        txt += ` will select ${helpers.ordinal(number)} overall in the ${g.season} draft.`;
+function lotteryLogTxt(
+    tid: number,
+    type: "chance" | "moveddown" | "movedup" | "normal",
+    number: number,
+) {
+    let txt = `The <a href="${helpers.leagueUrl([
+        "roster",
+        g.teamAbbrevsCache[tid],
+        g.season,
+    ])}">${g.teamNamesCache[tid]}</a>`;
+    if (type === "chance") {
+        txt += ` have a ${number.toFixed(
+            2,
+        )}% chance of getting the top overall pick of the ${g.season} draft.`;
+    } else if (type === "movedup") {
+        txt += ` moved up in the lottery and will select ${helpers.ordinal(
+            number,
+        )} overall in the ${g.season} draft.`;
+    } else if (type === "moveddown") {
+        txt += ` moved down in the lottery and will select ${helpers.ordinal(
+            number,
+        )} overall in the ${g.season} draft.`;
+    } else if (type === "normal") {
+        txt += ` will select ${helpers.ordinal(
+            number,
+        )} overall in the ${g.season} draft.`;
     }
     return txt;
 }
 
 function logAction(tid: number, text: string, conditions?: Conditions) {
     // Don't show notification during lottery UI, it will spoil it!
-    const showNotification = tid === g.userTid && g.phase !== PHASE.DRAFT_LOTTERY;
+    const showNotification =
+        tid === g.userTid && g.phase !== PHASE.DRAFT_LOTTERY;
 
-    logEvent({
-        type: "draft",
-        text,
-        showNotification,
-        pids: [],
-        tids: [tid],
-    }, conditions);
+    logEvent(
+        {
+            type: "draft",
+            text,
+            showNotification,
+            pids: [],
+            tids: [tid],
+        },
+        conditions,
+    );
 }
 
-function logLotteryChances(chances: number[], teams: TeamFiltered[], draftOrder, conditions?: Conditions) {
+function logLotteryChances(
+    chances: number[],
+    teams: TeamFiltered[],
+    draftOrder,
+    conditions?: Conditions,
+) {
     for (let i = 0; i < chances.length; i++) {
         if (i < teams.length) {
             const origTm = teams[i].tid;
             const tm = draftOrder[origTm][1].tid;
-            const txt = lotteryLogTxt(tm, 'chance', chances[i]);
+            const txt = lotteryLogTxt(tm, "chance", chances[i]);
             logAction(tm, txt, conditions);
         }
     }
 }
 
-function logLotteryWinners(chances: number[], teams: TeamFiltered[], tm: number, origTm: number, pick: number, conditions?: Conditions) {
+function logLotteryWinners(
+    chances: number[],
+    teams: TeamFiltered[],
+    tm: number,
+    origTm: number,
+    pick: number,
+    conditions?: Conditions,
+) {
     const idx = teams.find(t => t.tid === origTm);
     if (idx !== undefined) {
         let txt;
         if (chances[idx] < chances[pick - 1]) {
-            txt = lotteryLogTxt(tm, 'movedup', pick);
+            txt = lotteryLogTxt(tm, "movedup", pick);
         } else if (chances[idx] > chances[pick - 1]) {
-            txt = lotteryLogTxt(tm, 'moveddown', pick);
+            txt = lotteryLogTxt(tm, "moveddown", pick);
         } else {
-            txt = lotteryLogTxt(tm, 'normal', pick);
+            txt = lotteryLogTxt(tm, "normal", pick);
         }
         logAction(tm, txt, conditions);
     }
@@ -210,8 +294,12 @@ function logLotteryWinners(chances: number[], teams: TeamFiltered[], tm: number,
  * If isFinal is true, the remainder value is distributed randomly instead
  * of being set as a decimal value on the result.
  */
-function updateChances(chances: number[], teams: TeamFiltered[], isFinal?: boolean = false) {
-    let wps = _.countBy(teams, (t) => t.seasonAttrs.winp);
+function updateChances(
+    chances: number[],
+    teams: TeamFiltered[],
+    isFinal?: boolean = false,
+) {
+    let wps = _.countBy(teams, t => t.seasonAttrs.winp);
     wps = _.pairs(wps);
     wps = _.sortBy(wps, x => Number(x[0]));
     let tc = 0;
@@ -220,11 +308,11 @@ function updateChances(chances: number[], teams: TeamFiltered[], isFinal?: boole
         let val = wps[k][1];
         if (val > 1) {
             if (tc + val >= chances.length) {
-                val -= (tc + val - chances.length);
+                val -= tc + val - chances.length;
                 // Do not exceed 14, as the chances are only for lottery teams.
             }
             const total = chances.slice(tc, tc + val).reduce((a, b) => a + b);
-            let remainder = (isFinal) ? total % val : 0;
+            let remainder = isFinal ? total % val : 0;
             const newVal = (total - remainder) / val;
 
             let i;
@@ -264,15 +352,21 @@ function lotterySort(teams: TeamFiltered[]) {
     teams.sort((a, b) => {
         let r;
         r = 0;
-        if ((a.seasonAttrs.playoffRoundsWon >= 0) && !(b.seasonAttrs.playoffRoundsWon >= 0)) {
+        if (
+            a.seasonAttrs.playoffRoundsWon >= 0 &&
+            !(b.seasonAttrs.playoffRoundsWon >= 0)
+        ) {
             r = 1;
         }
-        if (!(a.seasonAttrs.playoffRoundsWon >= 0) && (b.seasonAttrs.playoffRoundsWon >= 0)) {
+        if (
+            !(a.seasonAttrs.playoffRoundsWon >= 0) &&
+            b.seasonAttrs.playoffRoundsWon >= 0
+        ) {
             r = -1;
         }
 
-        r = (r === 0) ? a.seasonAttrs.winp - b.seasonAttrs.winp : r;
-        r = (r === 0) ? a.randVal - b.randVal : r;
+        r = r === 0 ? a.seasonAttrs.winp - b.seasonAttrs.winp : r;
+        r = r === 0 ? a.randVal - b.randVal : r;
         return r;
     });
 }
@@ -287,7 +381,10 @@ function lotterySort(teams: TeamFiltered[]) {
  * @memberOf core.draft
  * @return {Promise}
  */
-async function genOrder(mock?: boolean = false, conditions?: Conditions): Promise<DraftLotteryResult> {
+async function genOrder(
+    mock?: boolean = false,
+    conditions?: Conditions,
+): Promise<DraftLotteryResult> {
     const teams = await idb.getCopies.teamsPlus({
         attrs: ["tid", "cid"],
         seasonAttrs: ["winp", "playoffRoundsWon", "won", "lost"],
@@ -300,7 +397,7 @@ async function genOrder(mock?: boolean = false, conditions?: Conditions): Promis
     updateChances(chances, teams, true);
 
     const chanceTotal = chances.reduce((a, b) => a + b);
-    const chancePct = chances.map(c => (c / chanceTotal) * 100);
+    const chancePct = chances.map(c => c / chanceTotal * 100);
 
     // cumsum
     const chancesCumsum = chances.slice();
@@ -320,12 +417,18 @@ async function genOrder(mock?: boolean = false, conditions?: Conditions): Promis
         }
     }
 
-    let draftPicks = await idb.cache.draftPicks.indexGetAll('draftPicksBySeason', g.season);
+    let draftPicks = await idb.cache.draftPicks.indexGetAll(
+        "draftPicksBySeason",
+        g.season,
+    );
 
     // Sometimes picks just fail to generate, for reasons I don't understand
     if (draftPicks.length === 0) {
         await genPicks(g.season);
-        draftPicks = await idb.cache.draftPicks.indexGetAll('draftPicksBySeason', g.season);
+        draftPicks = await idb.cache.draftPicks.indexGetAll(
+            "draftPicksBySeason",
+            g.season,
+        );
     }
 
     // Reorganize this to an array indexed on originalTid and round
@@ -333,7 +436,10 @@ async function genOrder(mock?: boolean = false, conditions?: Conditions): Promis
     for (let i = 0; i < draftPicks.length; i++) {
         const tid = draftPicks[i].originalTid;
         // Initialize to an array
-        if (draftPicksIndexed.length < tid || draftPicksIndexed[tid] === undefined) {
+        if (
+            draftPicksIndexed.length < tid ||
+            draftPicksIndexed[tid] === undefined
+        ) {
             draftPicksIndexed[tid] = [];
         }
         draftPicksIndexed[tid][draftPicks[i].round] = {
@@ -358,7 +464,14 @@ async function genOrder(mock?: boolean = false, conditions?: Conditions): Promis
         });
 
         if (!mock) {
-            logLotteryWinners(chancePct, teams, tid, teams[firstThree[i]].tid, i + 1, conditions);
+            logLotteryWinners(
+                chancePct,
+                teams,
+                tid,
+                teams[firstThree[i]].tid,
+                i + 1,
+                conditions,
+            );
         }
     }
 
@@ -375,7 +488,14 @@ async function genOrder(mock?: boolean = false, conditions?: Conditions): Promis
             });
 
             if (pick < 15 && !mock) {
-                logLotteryWinners(chancePct, teams, tid, teams[i].tid, pick, conditions);
+                logLotteryWinners(
+                    chancePct,
+                    teams,
+                    tid,
+                    teams[i].tid,
+                    pick,
+                    conditions,
+                );
             }
 
             pick += 1;
@@ -386,17 +506,23 @@ async function genOrder(mock?: boolean = false, conditions?: Conditions): Promis
     const draftLotteryResult = {
         season: g.season,
         result: teams // Start with teams in lottery order
-            .map(({tid}) => {
-                return draftOrder.find(({originalTid, pick: pickNum, round}) => {
-                    // Keep only lottery picks
-                    return originalTid === tid && round === 1 && pickNum <= chances.length;
-                });
+            .map(({ tid }) => {
+                return draftOrder.find(
+                    ({ originalTid, pick: pickNum, round }) => {
+                        // Keep only lottery picks
+                        return (
+                            originalTid === tid &&
+                            round === 1 &&
+                            pickNum <= chances.length
+                        );
+                    },
+                );
             })
-            .filter((row) => row !== undefined) // Keep only lottery picks
+            .filter(row => row !== undefined) // Keep only lottery picks
             // $FlowFixMe
-            .map(({pick: pickNum, originalTid, tid}) => {
+            .map(({ pick: pickNum, originalTid, tid }) => {
                 // For the team making the pick
-                const t = teams.find((t2) => t2.tid === tid);
+                const t = teams.find(t2 => t2.tid === tid);
                 let won = 0;
                 let lost = 0;
                 if (t) {
@@ -405,7 +531,7 @@ async function genOrder(mock?: boolean = false, conditions?: Conditions): Promis
                 }
 
                 // For the original team
-                const i = teams.findIndex((t2) => t2.tid === originalTid);
+                const i = teams.findIndex(t2 => t2.tid === originalTid);
 
                 return {
                     tid,
@@ -424,7 +550,7 @@ async function genOrder(mock?: boolean = false, conditions?: Conditions): Promis
     // Sort by winp with reverse randVal for tiebreakers.
     teams.sort((a, b) => {
         const r = a.seasonAttrs.winp - b.seasonAttrs.winp;
-        return (r === 0) ? b.randVal - a.randVal : r;
+        return r === 0 ? b.randVal - a.randVal : r;
     });
 
     // Second round
@@ -498,7 +624,68 @@ async function genOrderFantasy(position: number) {
  */
 function getRookieSalaries(): number[] {
     // Default for 60 picks
-    const rookieSalaries = [5000, 4500, 4000, 3500, 3000, 2750, 2500, 2250, 2000, 1900, 1800, 1700, 1600, 1500, 1400, 1300, 1200, 1100, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500];
+    const rookieSalaries = [
+        5000,
+        4500,
+        4000,
+        3500,
+        3000,
+        2750,
+        2500,
+        2250,
+        2000,
+        1900,
+        1800,
+        1700,
+        1600,
+        1500,
+        1400,
+        1300,
+        1200,
+        1100,
+        1000,
+        1000,
+        1000,
+        1000,
+        1000,
+        1000,
+        1000,
+        1000,
+        1000,
+        1000,
+        1000,
+        1000,
+        500,
+        500,
+        500,
+        500,
+        500,
+        500,
+        500,
+        500,
+        500,
+        500,
+        500,
+        500,
+        500,
+        500,
+        500,
+        500,
+        500,
+        500,
+        500,
+        500,
+        500,
+        500,
+        500,
+        500,
+        500,
+        500,
+        500,
+        500,
+        500,
+        500,
+    ];
 
     while (g.numTeams * 2 > rookieSalaries.length) {
         // Add min contracts on to end
@@ -515,7 +702,7 @@ function getRookieSalaries(): number[] {
             rookieSalaries[i] -= 500;
 
             // Scale so max will be 1/4 the max contract
-            rookieSalaries[i] *= (0.25 * g.maxContract - g.minContract) / (4500);
+            rookieSalaries[i] *= (0.25 * g.maxContract - g.minContract) / 4500;
 
             // Add min back
             rookieSalaries[i] += g.minContract;
@@ -560,10 +747,14 @@ async function selectPlayer(pick: PickRealized, pid: number) {
         const rookieSalaries = getRookieSalaries();
         const i = pick.pick - 1 + g.numTeams * (pick.round - 1);
         const years = 4 - pick.round; // 2 years for 2nd round, 3 years for 1st round;
-        player.setContract(p, {
-            amount: rookieSalaries[i],
-            exp: g.season + years,
-        }, true);
+        player.setContract(
+            p,
+            {
+                amount: rookieSalaries[i],
+                exp: g.season + years,
+            },
+            true,
+        );
     }
 
     // Add stats row if necessary (fantasy draft in ongoing season)
@@ -573,12 +764,29 @@ async function selectPlayer(pick: PickRealized, pid: number) {
 
     await idb.cache.players.put(p);
 
-    idb.cache.markDirtyIndexes('players');
+    idb.cache.markDirtyIndexes("players");
 
-    const draftName = g.phase === PHASE.FANTASY_DRAFT ? `${g.season} fantasy draft` : `${g.season} draft`;
+    const draftName =
+        g.phase === PHASE.FANTASY_DRAFT
+            ? `${g.season} fantasy draft`
+            : `${g.season} draft`;
     logEvent({
         type: "draft",
-        text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[pick.tid], g.season])}">${g.teamNamesCache[pick.tid]}</a> selected <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> with the ${helpers.ordinal(pick.pick + (pick.round - 1) * 30)} pick in the <a href="${helpers.leagueUrl(["draft_summary", g.season])}">${draftName}</a>.`,
+        text: `The <a href="${helpers.leagueUrl([
+            "roster",
+            g.teamAbbrevsCache[pick.tid],
+            g.season,
+        ])}">${g.teamNamesCache[
+            pick.tid
+        ]}</a> selected <a href="${helpers.leagueUrl([
+            "player",
+            p.pid,
+        ])}">${p.firstName} ${p.lastName}</a> with the ${helpers.ordinal(
+            pick.pick + (pick.round - 1) * 30,
+        )} pick in the <a href="${helpers.leagueUrl([
+            "draft_summary",
+            g.season,
+        ])}">${draftName}</a>.`,
         showNotification: false,
         pids: [p.pid],
         tids: [p.tid],
@@ -597,7 +805,7 @@ async function untilUserOrEnd(conditions: Conditions) {
     const pids = [];
 
     const [playersAll, draftOrder] = await Promise.all([
-        idb.cache.players.indexGetAll('playersByTid', PLAYER.UNDRAFTED),
+        idb.cache.players.indexGetAll("playersByTid", PLAYER.UNDRAFTED),
         getOrder(),
     ]);
 
@@ -613,19 +821,29 @@ async function untilUserOrEnd(conditions: Conditions) {
             if (g.phase === PHASE.FANTASY_DRAFT) {
                 // Undrafted players become free agents
                 const baseMoods = await player.genBaseMoods();
-                const playersUndrafted = await idb.cache.players.indexGetAll('playersByTid', PLAYER.UNDRAFTED);
+                const playersUndrafted = await idb.cache.players.indexGetAll(
+                    "playersByTid",
+                    PLAYER.UNDRAFTED,
+                );
                 for (const p of playersUndrafted) {
-                    await player.addToFreeAgents(p, PHASE.FREE_AGENCY, baseMoods);
+                    await player.addToFreeAgents(
+                        p,
+                        PHASE.FREE_AGENCY,
+                        baseMoods,
+                    );
                 }
 
                 // Swap back in normal draft class
-                const players = await idb.cache.players.indexGetAll('playersByTid', PLAYER.UNDRAFTED_FANTASY_TEMP);
+                const players = await idb.cache.players.indexGetAll(
+                    "playersByTid",
+                    PLAYER.UNDRAFTED_FANTASY_TEMP,
+                );
                 for (const p of players) {
                     p.tid = PLAYER.UNDRAFTED;
                     await idb.cache.players.put(p);
                 }
 
-                idb.cache.markDirtyIndexes('players');
+                idb.cache.markDirtyIndexes("players");
 
                 await league.setGameAttributes({
                     phase: g.nextPhase,

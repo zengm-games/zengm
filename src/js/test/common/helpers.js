@@ -1,14 +1,107 @@
-import assert from 'assert';
-import {PLAYER, g, helpers} from '../../common';
+import assert from "assert";
+import { PLAYER, g, helpers } from "../../common";
 
 describe("common/helpers", () => {
     before(() => {
         g.userTid = 4;
         g.startingSeason = 2007;
         g.season = 2009;
-        g.teamAbbrevsCache = ["ATL", "BAL", "BOS", "CHI", "CIN", "CLE", "DAL", "DEN", "DET", "HOU", "LV", "LA", "MXC", "MIA", "MIN", "MON", "NYC", "PHI", "PHO", "PIT", "POR", "SAC", "SD", "SF", "SEA", "STL", "TPA", "TOR", "VAN", "WAS"];
-        g.teamRegionsCache = ["Atlanta", "Baltimore", "Boston", "Chicago", "Cincinnati", "Cleveland", "Dallas", "Denver", "Detroit", "Houston", "Las Vegas", "Los Angeles", "Mexico City", "Miami", "Minneapolis", "Montreal", "New York", "Philadelphia", "Phoenix", "Pittsburgh", "Portland", "Sacramento", "San Diego", "San Francisco", "Seattle", "St. Louis", "Tampa", "Toronto", "Vancouver", "Washington"];
-        g.teamNamesCache = ["Gold Club", "Crabs", "Massacre", "Whirlwinds", "Riots", "Curses", "Snipers", "High", "Muscle", "Apollos", "Blue Chips", "Earthquakes", "Aztecs", "Cyclones", "Blizzards", "Mounties", "Bankers", "Cheesesteaks", "Vultures", "Rivers", "Roses", "Gold Rush", "Pandas", "Venture Capitalists", "Symphony", "Spirits", "Turtles", "Beavers", "Whalers", "Monuments"];
+        g.teamAbbrevsCache = [
+            "ATL",
+            "BAL",
+            "BOS",
+            "CHI",
+            "CIN",
+            "CLE",
+            "DAL",
+            "DEN",
+            "DET",
+            "HOU",
+            "LV",
+            "LA",
+            "MXC",
+            "MIA",
+            "MIN",
+            "MON",
+            "NYC",
+            "PHI",
+            "PHO",
+            "PIT",
+            "POR",
+            "SAC",
+            "SD",
+            "SF",
+            "SEA",
+            "STL",
+            "TPA",
+            "TOR",
+            "VAN",
+            "WAS",
+        ];
+        g.teamRegionsCache = [
+            "Atlanta",
+            "Baltimore",
+            "Boston",
+            "Chicago",
+            "Cincinnati",
+            "Cleveland",
+            "Dallas",
+            "Denver",
+            "Detroit",
+            "Houston",
+            "Las Vegas",
+            "Los Angeles",
+            "Mexico City",
+            "Miami",
+            "Minneapolis",
+            "Montreal",
+            "New York",
+            "Philadelphia",
+            "Phoenix",
+            "Pittsburgh",
+            "Portland",
+            "Sacramento",
+            "San Diego",
+            "San Francisco",
+            "Seattle",
+            "St. Louis",
+            "Tampa",
+            "Toronto",
+            "Vancouver",
+            "Washington",
+        ];
+        g.teamNamesCache = [
+            "Gold Club",
+            "Crabs",
+            "Massacre",
+            "Whirlwinds",
+            "Riots",
+            "Curses",
+            "Snipers",
+            "High",
+            "Muscle",
+            "Apollos",
+            "Blue Chips",
+            "Earthquakes",
+            "Aztecs",
+            "Cyclones",
+            "Blizzards",
+            "Mounties",
+            "Bankers",
+            "Cheesesteaks",
+            "Vultures",
+            "Rivers",
+            "Roses",
+            "Gold Rush",
+            "Pandas",
+            "Venture Capitalists",
+            "Symphony",
+            "Spirits",
+            "Turtles",
+            "Beavers",
+            "Whalers",
+            "Monuments",
+        ];
     });
 
     // Relies on g.*Cache being populated
@@ -57,7 +150,7 @@ describe("common/helpers", () => {
             assert.equal(helpers.getAbbrev(6), "DAL");
             assert.equal(helpers.getAbbrev("6"), "DAL");
         });
-        it("should return \"FA\" for free agents", () => {
+        it('should return "FA" for free agents', () => {
             assert.equal(helpers.getAbbrev(PLAYER.FREE_AGENT), "FA");
         });
     });
@@ -80,7 +173,7 @@ describe("common/helpers", () => {
     });
 
     describe("#deepCopy()", () => {
-        const obj = {a: 5, b: "hi", c: [1, 2, 3]};
+        const obj = { a: 5, b: "hi", c: [1, 2, 3] };
         it("should return same object as input", () => {
             assert.deepEqual(helpers.deepCopy(obj), obj);
         });
@@ -106,7 +199,16 @@ describe("common/helpers", () => {
         });
         it("should pad with nulls up to requested length if too short", () => {
             assert.deepEqual(helpers.nullPad(array, 6), [1, 2, 3, 4, 5, null]);
-            assert.deepEqual(helpers.nullPad(array, 8), [1, 2, 3, 4, 5, null, null, null]);
+            assert.deepEqual(helpers.nullPad(array, 8), [
+                1,
+                2,
+                3,
+                4,
+                5,
+                null,
+                null,
+                null,
+            ]);
         });
     });
 
@@ -115,12 +217,24 @@ describe("common/helpers", () => {
             assert.equal(helpers.formatCurrency(52.766), "$52.77");
         });
         it("should append a string, if supplied", () => {
-            assert.equal(helpers.formatCurrency(64363.764376, "Q"), "$64363.76Q");
-            assert.equal(helpers.formatCurrency(0.794, "whatever"), "$0.79whatever");
+            assert.equal(
+                helpers.formatCurrency(64363.764376, "Q"),
+                "$64363.76Q",
+            );
+            assert.equal(
+                helpers.formatCurrency(0.794, "whatever"),
+                "$0.79whatever",
+            );
         });
         it("should round to any precision", () => {
-            assert.equal(helpers.formatCurrency(64363.764376, "Q", 5), "$64363.76438Q");
-            assert.equal(helpers.formatCurrency(0.794, "whatever", 0), "$1whatever");
+            assert.equal(
+                helpers.formatCurrency(64363.764376, "Q", 5),
+                "$64363.76438Q",
+            );
+            assert.equal(
+                helpers.formatCurrency(0.794, "whatever", 0),
+                "$1whatever",
+            );
         });
     });
 
@@ -128,7 +242,10 @@ describe("common/helpers", () => {
         it("should work", () => {
             assert.equal(helpers.numberWithCommas(5823795234), "5,823,795,234");
             assert.equal(helpers.numberWithCommas(582.3795234), "582");
-            assert.equal(helpers.numberWithCommas("5823795234"), "5,823,795,234");
+            assert.equal(
+                helpers.numberWithCommas("5823795234"),
+                "5,823,795,234",
+            );
             assert.equal(helpers.numberWithCommas("582.3795234"), "582");
         });
     });

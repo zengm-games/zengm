@@ -1,8 +1,8 @@
 // @flow
 
-import {idb} from '../db';
+import { idb } from "../db";
 
-async function updateNewLeague(): void | {[key: string]: any} {
+async function updateNewLeague(): void | { [key: string]: any } {
     let newLid = null;
 
     // Find most recent league and add one to the LID
@@ -15,7 +15,7 @@ async function updateNewLeague(): void | {[key: string]: any} {
         newLid = 1;
     }
 
-    let lastSelectedTid = await idb.meta.attributes.get('lastSelectedTid');
+    let lastSelectedTid = await idb.meta.attributes.get("lastSelectedTid");
     if (isNaN(lastSelectedTid)) {
         lastSelectedTid = -1;
     }

@@ -1,21 +1,21 @@
 // @flow
 
-import {PHASE, PLAYER, g} from '../../common';
-import {finances, player} from '../core';
-import {idb} from '../db';
-import type {GetOutput, UpdateEvents} from '../../common/types';
+import { PHASE, PLAYER, g } from "../../common";
+import { finances, player } from "../core";
+import { idb } from "../db";
+import type { GetOutput, UpdateEvents } from "../../common/types";
 
 async function updateCustomizePlayer(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
-): void | {[key: string]: any} {
+): void | { [key: string]: any } {
     if (!g.godMode) {
         return {
             godMode: g.godMode,
         };
     }
 
-    if (updateEvents.includes('firstRun')) {
+    if (updateEvents.includes("firstRun")) {
         const teams = await idb.getCopies.teamsPlus({
             attrs: ["tid", "region", "name"],
         });
@@ -53,13 +53,20 @@ async function updateCustomizePlayer(
 
         if (inputs.pid === null) {
             // Generate new player as basis
-            const teamSeasons = await idb.cache.teamSeasons.indexGetAll('teamSeasonsByTidSeason', [`${g.userTid},${g.season - 2}`, `${g.userTid},${g.season}`]);
-            const scoutingRank = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
+            const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
+                "teamSeasonsByTidSeason",
+                [`${g.userTid},${g.season - 2}`, `${g.userTid},${g.season}`],
+            );
+            const scoutingRank = finances.getRankLastThree(
+                teamSeasons,
+                "expenses",
+                "scouting",
+            );
 
             p = player.generate(
                 PLAYER.FREE_AGENT,
                 20,
-                '',
+                "",
                 50,
                 50,
                 g.season,
@@ -71,16 +78,18 @@ async function updateCustomizePlayer(
             p.face.eyes[0].angle = p.face.eyes[0].angle.toFixed(1);
             p.face.eyes[1].angle = p.face.eyes[1].angle.toFixed(1);
 
-            appearanceOption = 'Cartoon Face';
+            appearanceOption = "Cartoon Face";
             p.imgURL = "http://";
-        } else if (typeof inputs.pid === 'number') {
+        } else if (typeof inputs.pid === "number") {
             // Load a player to edit
-            p = await idb.getCopy.players({pid: inputs.pid});
-            if (!p) { throw new Error('Invalid player ID'); }
+            p = await idb.getCopy.players({ pid: inputs.pid });
+            if (!p) {
+                throw new Error("Invalid player ID");
+            }
             if (p.imgURL.length > 0) {
-                appearanceOption = 'Image URL';
+                appearanceOption = "Image URL";
             } else {
-                appearanceOption = 'Cartoon Face';
+                appearanceOption = "Cartoon Face";
                 p.imgURL = "http://";
             }
 

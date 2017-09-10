@@ -1,8 +1,8 @@
 // @flow
 
-import {changes} from '../util';
+import { changes } from "../util";
 
-async function updateChanges(): void | {[key: string]: any} {
+async function updateChanges(): void | { [key: string]: any } {
     return {
         changes: changes.all.slice(0).reverse(),
     };

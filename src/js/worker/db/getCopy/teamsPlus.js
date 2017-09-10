@@ -1,12 +1,12 @@
 // @flow
 
-import {idb} from '../../db';
-import type {TeamFiltered} from '../../../common/types';
+import { idb } from "../../db";
+import type { TeamFiltered } from "../../../common/types";
 //import type {TeamAttr, TeamFiltered, TeamSeasonAttr, TeamStatAttr, TeamStatType} from '../../../common/types';
 
 const getCopy = async (options: {
     tid: number,
-/*    season?: number,
+    /*    season?: number,
     attrs?: TeamAttr[],
     seasonAttrs?: TeamSeasonAttr[],
     stats?: TeamStatAttr[],

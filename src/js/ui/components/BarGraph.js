@@ -1,9 +1,9 @@
 // @flow
 
-import PropTypes from 'prop-types';
-import * as React from 'react';
-import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
-import Tooltip from 'react-bootstrap/lib/Tooltip';
+import PropTypes from "prop-types";
+import * as React from "react";
+import OverlayTrigger from "react-bootstrap/lib/OverlayTrigger";
+import Tooltip from "react-bootstrap/lib/Tooltip";
 
 /**
  * Bar plots, both stacked and normal.
@@ -124,10 +124,15 @@ type BarGraphOptions = {
     labels: string[],
     tooltipCb: (val: string) => string,
     ylim: [number, number],
-}
+};
 
-const BarGraph = ({data = [], labels, tooltipCb = val => val, ylim: ylimArg}: BarGraphOptions) => {
-    const gap = 2;  // Gap between bars, in pixels
+const BarGraph = ({
+    data = [],
+    labels,
+    tooltipCb = val => val,
+    ylim: ylimArg,
+}: BarGraphOptions) => {
+    const gap = 2; // Gap between bars, in pixels
 
     if (data.length === 0) {
         return null;
@@ -163,7 +168,7 @@ const BarGraph = ({data = [], labels, tooltipCb = val => val, ylim: ylimArg}: Ba
     if (!stacked) {
         // Not stacked
         bars = data.map((val, i) => {
-            let titleStart = '';
+            let titleStart = "";
             if (labels !== undefined) {
                 titleStart = `${labels[i]}: `;
             }
@@ -175,29 +180,40 @@ const BarGraph = ({data = [], labels, tooltipCb = val => val, ylim: ylimArg}: Ba
             if (val >= 0) {
                 bottom = scale(0, ylim);
                 height = scaled[i] - scale(0, ylim);
-                cssClass = 'bar-graph-1';
+                cssClass = "bar-graph-1";
             } else {
                 bottom = scaled[i];
                 height = scale(0, ylim) - scaled[i];
-                cssClass = 'bar-graph-3';
+                cssClass = "bar-graph-3";
             }
 
-            const bar = <div
-                className={cssClass}
-                key={i}
-                style={{
-                    marginLeft: `${gap}px`,
-                    position: 'absolute',
-                    bottom: `${bottom}%`,
-                    height: `${height}%`,
-                    left: `${i * widthPct}%`,
-                    width: `calc(${widthPct}% - ${gap}px)`,
-                }}
-            />;
+            const bar = (
+                <div
+                    className={cssClass}
+                    key={i}
+                    style={{
+                        marginLeft: `${gap}px`,
+                        position: "absolute",
+                        bottom: `${bottom}%`,
+                        height: `${height}%`,
+                        left: `${i * widthPct}%`,
+                        width: `calc(${widthPct}% - ${gap}px)`,
+                    }}
+                />
+            );
 
-            if (typeof val === 'number' && !isNaN(val)) {
-                const tooltip = <Tooltip id="tooltip">{titleStart}{tooltipCb(val)}</Tooltip>;
-                return <OverlayTrigger key={i} overlay={tooltip} placement="top">{bar}</OverlayTrigger>;
+            if (typeof val === "number" && !isNaN(val)) {
+                const tooltip = (
+                    <Tooltip id="tooltip">
+                        {titleStart}
+                        {tooltipCb(val)}
+                    </Tooltip>
+                );
+                return (
+                    <OverlayTrigger key={i} overlay={tooltip} placement="top">
+                        {bar}
+                    </OverlayTrigger>
+                );
             }
 
             return bar;
@@ -219,29 +235,48 @@ const BarGraph = ({data = [], labels, tooltipCb = val => val, ylim: ylimArg}: Ba
                         titleStart = `${labels[0][i]} ${labels[1][j]}: `;
                     }
 
-                    const tooltip = <Tooltip id="tooltip">{titleStart}{tooltipCb(data[j][i])}</Tooltip>;
+                    const tooltip = (
+                        <Tooltip id="tooltip">
+                            {titleStart}
+                            {tooltipCb(data[j][i])}
+                        </Tooltip>
+                    );
 
-                    bars.push(<OverlayTrigger key={`${i}.${j}`} overlay={tooltip} placement="top">
-                        <div
-                            className={`bar-graph-${j + 1}`}
-                            style={{
-                                marginLeft: `${gap}px`,
-                                position: 'absolute',
-                                bottom: `${offsets[i]}%`,
-                                height: `${scaled[j][i]}%`,
-                                left: `${i * widthPct}%`,
-                                width: `calc(${widthPct}% - ${gap}px)`,
-                            }}
-                        />
-                    </OverlayTrigger>);
+                    bars.push(
+                        <OverlayTrigger
+                            key={`${i}.${j}`}
+                            overlay={tooltip}
+                            placement="top"
+                        >
+                            <div
+                                className={`bar-graph-${j + 1}`}
+                                style={{
+                                    marginLeft: `${gap}px`,
+                                    position: "absolute",
+                                    bottom: `${offsets[i]}%`,
+                                    height: `${scaled[j][i]}%`,
+                                    left: `${i * widthPct}%`,
+                                    width: `calc(${widthPct}% - ${gap}px)`,
+                                }}
+                            />
+                        </OverlayTrigger>,
+                    );
                 }
             }
         }
     }
 
-    return <div style={{height: '100%', marginLeft: `-${gap}px`, position: 'relative'}}>
-        {bars}
-    </div>;
+    return (
+        <div
+            style={{
+                height: "100%",
+                marginLeft: `-${gap}px`,
+                position: "relative",
+            }}
+        >
+            {bars}
+        </div>
+    );
 };
 BarGraph.propTypes = {
     data: PropTypes.array,

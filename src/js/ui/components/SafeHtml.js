@@ -1,16 +1,16 @@
 // @flow
 
-import createDOMPurify from 'dompurify';
-import PropTypes from 'prop-types';
-import * as React from 'react';
+import createDOMPurify from "dompurify";
+import PropTypes from "prop-types";
+import * as React from "react";
 
 const DOMPurify = createDOMPurify(window);
 
-const SafeHtml = ({dirty}: {dirty: string}) => {
+const SafeHtml = ({ dirty }: { dirty: string }) => {
     const clean = DOMPurify.sanitize(dirty);
 
     // eslint-disable-next-line react/no-danger
-    return <span dangerouslySetInnerHTML={{__html: clean}} />;
+    return <span dangerouslySetInnerHTML={{ __html: clean }} />;
 };
 
 SafeHtml.propTypes = {

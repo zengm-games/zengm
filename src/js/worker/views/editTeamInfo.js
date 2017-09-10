@@ -1,9 +1,9 @@
 // @flow
 
-import {g} from '../../common';
-import {idb} from '../db';
+import { g } from "../../common";
+import { idb } from "../db";
 
-async function updateTeamInfo(): void | {[key: string]: any} {
+async function updateTeamInfo(): void | { [key: string]: any } {
     const teams = await idb.getCopies.teamsPlus({
         attrs: ["tid", "abbrev", "region", "name", "imgURL"],
         seasonAttrs: ["pop"],

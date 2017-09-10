@@ -1,20 +1,19 @@
 // @flow
 
-export type AchievementKey = (
-    'participation' |
-    'fo_fo_fo' |
-    'septuawinarian' |
-    '98_degrees' |
-    'dynasty' |
-    'dynasty_2' |
-    'dynasty_3' |
-    'moneyball' |
-    'moneyball_2' |
-    'hardware_store' |
-    'small_market' |
-    'sleeper_pick' |
-    'hacker'
-);
+export type AchievementKey =
+    | "participation"
+    | "fo_fo_fo"
+    | "septuawinarian"
+    | "98_degrees"
+    | "dynasty"
+    | "dynasty_2"
+    | "dynasty_3"
+    | "moneyball"
+    | "moneyball_2"
+    | "hardware_store"
+    | "small_market"
+    | "sleeper_pick"
+    | "hacker";
 
 type AwardTeam = {
     tid: number,
@@ -48,10 +47,7 @@ type AwardPlayerDefense = {
 export type Awards = {
     season: number,
     bestRecord: AwardTeam,
-    bestRecordConfs: [
-        AwardTeam,
-        AwardTeam,
-    ],
+    bestRecordConfs: [AwardTeam, AwardTeam],
     roy: AwardPlayer,
     allRookie: [
         AwardPlayer,
@@ -64,67 +60,67 @@ export type Awards = {
     smoy: AwardPlayer,
     allLeague: [
         {
-            title: 'First Team',
+            title: "First Team",
             players: [
                 AwardPlayer,
                 AwardPlayer,
                 AwardPlayer,
                 AwardPlayer,
                 AwardPlayer,
-            ]
+            ],
         },
         {
-            title: 'Second Team',
+            title: "Second Team",
             players: [
                 AwardPlayer,
                 AwardPlayer,
                 AwardPlayer,
                 AwardPlayer,
                 AwardPlayer,
-            ]
+            ],
         },
         {
-            title: 'Third Team',
+            title: "Third Team",
             players: [
                 AwardPlayer,
                 AwardPlayer,
                 AwardPlayer,
                 AwardPlayer,
                 AwardPlayer,
-            ]
+            ],
         },
     ],
     dpoy: AwardPlayerDefense,
     allDefensive: [
         {
-            title: 'First Team',
+            title: "First Team",
             players: [
                 AwardPlayerDefense,
                 AwardPlayerDefense,
                 AwardPlayerDefense,
                 AwardPlayerDefense,
                 AwardPlayerDefense,
-            ]
+            ],
         },
         {
-            title: 'Second Team',
+            title: "Second Team",
             players: [
                 AwardPlayerDefense,
                 AwardPlayerDefense,
                 AwardPlayerDefense,
                 AwardPlayerDefense,
                 AwardPlayerDefense,
-            ]
+            ],
         },
         {
-            title: 'Third Team',
+            title: "Third Team",
             players: [
                 AwardPlayerDefense,
                 AwardPlayerDefense,
                 AwardPlayerDefense,
                 AwardPlayerDefense,
                 AwardPlayerDefense,
-            ]
+            ],
         },
     ],
     finalsMvp: AwardPlayer,
@@ -177,69 +173,68 @@ export type Env = {
     useSharedWorker: boolean,
 
     // These are just legacy variables sent to the worker to be stored in idb.meta.attributes
-    fromLocalStorage: {[key: string]: ?string},
+    fromLocalStorage: { [key: string]: ?string },
 };
 
 export type Game = {
     att: number,
     gid: number,
-    lost: {tid: number, pts: number},
+    lost: { tid: number, pts: number },
     playoffs: boolean,
     season: number,
     teams: [Object, Object],
-    won: {tid: number, pts: number},
+    won: { tid: number, pts: number },
 };
 
 export type GamePlayer = any;
 
 export type GameResults = any;
 
-export type GameAttributeKey = (
-    'aiTrades' |
-    'autoDeleteOldBoxScores' |
-    'confs' |
-    'daysLeft' |
-    'disableInjuries' |
-    'divs' |
-    'gameOver' |
-    'godMode' |
-    'godModeInPast' |
-    'gracePeriodEnd' |
-    'leagueName' |
-    'lid' |
-    'luxuryPayroll' |
-    'luxuryTax' |
-    'maxContract' |
-    'minContract' |
-    'minPayroll' |
-    'minRosterSize' |
-    'names' |
-    'nextPhase' |
-    'numGames' |
-    'numPlayoffRounds' |
-    'numTeams' |
-    'ownerMood' |
-    'phase' |
-    'quarterLength' |
-    'salaryCap' |
-    'season' |
-    'showFirstOwnerMessage' |
-    'startingSeason' |
-    'stopOnInjury' |
-    'stopOnInjuryGames' |
-    'teamAbbrevsCache' |
-    'teamNamesCache' |
-    'teamRegionsCache' |
-    'userTid' |
-    'userTids'
-);
+export type GameAttributeKey =
+    | "aiTrades"
+    | "autoDeleteOldBoxScores"
+    | "confs"
+    | "daysLeft"
+    | "disableInjuries"
+    | "divs"
+    | "gameOver"
+    | "godMode"
+    | "godModeInPast"
+    | "gracePeriodEnd"
+    | "leagueName"
+    | "lid"
+    | "luxuryPayroll"
+    | "luxuryTax"
+    | "maxContract"
+    | "minContract"
+    | "minPayroll"
+    | "minRosterSize"
+    | "names"
+    | "nextPhase"
+    | "numGames"
+    | "numPlayoffRounds"
+    | "numTeams"
+    | "ownerMood"
+    | "phase"
+    | "quarterLength"
+    | "salaryCap"
+    | "season"
+    | "showFirstOwnerMessage"
+    | "startingSeason"
+    | "stopOnInjury"
+    | "stopOnInjuryGames"
+    | "teamAbbrevsCache"
+    | "teamNamesCache"
+    | "teamRegionsCache"
+    | "userTid"
+    | "userTids";
 
 export type GameAttribute = {
     key: GameAttributeKey,
     value: any,
 };
 
-export type GameAttributes = {[key: GameAttributeKey]: any};
+export type GameAttributes = { [key: GameAttributeKey]: any };
 
 export type GameProcessed = {
     gid: number,
@@ -261,7 +256,7 @@ export type GameProcessedCompleted = {
     won: boolean,
 };
 
-export type GetOutput = {[key: string]: ?(number | string)};
+export type GetOutput = { [key: string]: ?(number | string) };
 
 export type League = {
     lid: number,
@@ -284,33 +279,32 @@ export type Locks = {
     gameSim: boolean,
     newPhase: boolean,
     stopGameSim: boolean,
-}
+};
 
-export type LockName = 'newPhase' | 'gameSim' | 'stopGameSim';
+export type LockName = "newPhase" | "gameSim" | "stopGameSim";
 
-export type LogEventType = (
-    'achievement' |
-    'ageFraud' |
-    'award' |
-    'changes' |
-    'draft' |
-    'error' |
-    'freeAgent' |
-    'gameLost' |
-    'gameWon' |
-    'hallOfFame' |
-    'healed' |
-    'injured' |
-    'playerFeat' |
-    'playoffs' |
-    'reSigned' |
-    'refuseToSign' |
-    'release' |
-    'retired' |
-    'screenshot' |
-    'trade' |
-    'tragedy'
-);
+export type LogEventType =
+    | "achievement"
+    | "ageFraud"
+    | "award"
+    | "changes"
+    | "draft"
+    | "error"
+    | "freeAgent"
+    | "gameLost"
+    | "gameWon"
+    | "hallOfFame"
+    | "healed"
+    | "injured"
+    | "playerFeat"
+    | "playoffs"
+    | "reSigned"
+    | "refuseToSign"
+    | "release"
+    | "retired"
+    | "screenshot"
+    | "trade"
+    | "tragedy";
 
 export type LogEventSaveOptions = {
     type: LogEventType,
@@ -333,14 +327,14 @@ export type MessageWithoutMid = {
     year: number,
 };
 
-export type Message = MessageWithoutMid & {mid: number};
+export type Message = MessageWithoutMid & { mid: number };
 
 export type Negotiation = {
     pid: number,
     tid: number,
-    team: {amount: number, years: number},
-    player: {amount: number, years: number},
-    orig: {amount: number, years: number},
+    team: { amount: number, years: number },
+    player: { amount: number, years: number },
+    orig: { amount: number, years: number },
     resigning: boolean,
 };
 
@@ -356,7 +350,7 @@ export type OwnerMoodDeltas = {
     wins: number,
 };
 
-export type PageCtx = {[key: string]: any};
+export type PageCtx = { [key: string]: any };
 
 export type PartialTopMenu = {
     email: string,
@@ -403,7 +397,7 @@ export type PlayerFeat = {
     overtimes: number,
 };
 
-export type PlayerStatType = 'per36' | 'perGame' | 'totals';
+export type PlayerStatType = "per36" | "perGame" | "totals";
 
 export type PlayerFiltered = any;
 
@@ -412,7 +406,7 @@ export type PlayerInjury = {
     type: string,
 };
 
-export type PlayerSkill = '3' | 'A' | 'B' | 'Di' | 'Dp' | 'Po' | 'Ps' | 'R';
+export type PlayerSkill = "3" | "A" | "B" | "Di" | "Dp" | "Po" | "Ps" | "R";
 
 export type PlayerRatings = {
     blk: number,
@@ -494,9 +488,9 @@ export type PlayerWithoutPid = {
     yearsFreeAgent: number,
 };
 
-export type Player = PlayerWithoutPid & {pid: number};
+export type Player = PlayerWithoutPid & { pid: number };
 
-export type PlayerWithStats = Player & {stats: PlayerStats[]};
+export type PlayerWithStats = Player & { stats: PlayerStats[] };
 
 type PlayoffSeriesTeam = {
     cid: number,
@@ -526,23 +520,22 @@ export type ContractInfo = {
     released: boolean,
 };
 
-export type RatingKey = (
-    'blk' |
-    'dnk' |
-    'drb' |
-    'endu' |
-    'fg' |
-    'ft' |
-    'hgt' |
-    'ins' |
-    'jmp' |
-    'pss' |
-    'reb' |
-    'spd' |
-    'stl' |
-    'stre' |
-    'tp'
-);
+export type RatingKey =
+    | "blk"
+    | "dnk"
+    | "drb"
+    | "endu"
+    | "fg"
+    | "ft"
+    | "hgt"
+    | "ins"
+    | "jmp"
+    | "pss"
+    | "reb"
+    | "spd"
+    | "stl"
+    | "stre"
+    | "tp";
 
 export type ReleasedPlayer = {
     rid: number,
@@ -562,9 +555,9 @@ export type ScheduleGame = {
     homeTid: number,
 };
 
-export type SortOrder = 'asc' | 'desc';
+export type SortOrder = "asc" | "desc";
 
-export type SortType = 'currency' | 'draftPick' | 'lastTen' | 'name' | 'number';
+export type SortType = "currency" | "draftPick" | "lastTen" | "name" | "number";
 
 export type Team = {
     tid: number,
@@ -590,14 +583,13 @@ export type TeamBasic = {
     imgURL?: string,
 };
 
-
 export type TeamAttr = string;
 
 export type TeamSeasonAttr = string;
 
 export type TeamStatAttr = string;
 
-export type TeamStatType = 'perGame' | 'totals';
+export type TeamStatType = "perGame" | "totals";
 
 export type TeamFiltered = any;
 
@@ -625,7 +617,7 @@ export type TeamSeason = {
     lostConf: number,
     lastTen: (0 | 1)[],
     streak: number,
-    playoffRoundsWon: number,  // -1: didn't make playoffs. 0: lost in first round. ... N: won championship
+    playoffRoundsWon: number, // -1: didn't make playoffs. 0: lost in first round. ... N: won championship
     hype: number,
     pop: number,
     revenues: {
@@ -684,17 +676,16 @@ export type Trade = {
 };
 
 export type UpdateEvents = (
-    'account' |
-    'clearWatchList' |
-    'firstRun' |
-    'g.userTids' |
-    'gameSim' |
-    'lock.gameSim' |
-    'newPhase' |
-    'playerMovement' |
-    'toggleGodMode' |
-    'watchList'
-)[];
+    | "account"
+    | "clearWatchList"
+    | "firstRun"
+    | "g.userTids"
+    | "gameSim"
+    | "lock.gameSim"
+    | "newPhase"
+    | "playerMovement"
+    | "toggleGodMode"
+    | "watchList")[];
 
 export type RunFunction = (
     inputs: GetOutput,
@@ -702,4 +693,4 @@ export type RunFunction = (
     state: any,
     setState: (state: any) => void,
     topMenu: any,
-) => Promise<void | {[key: string]: any}>;
+) => Promise<void | { [key: string]: any }>;

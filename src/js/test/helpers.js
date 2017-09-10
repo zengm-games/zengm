@@ -1,10 +1,10 @@
 // @flow
 
-import {g, helpers} from '../common';
-import {idb, Cache} from '../worker/db';
-import {STORES} from '../worker/db/Cache';
-import {defaultGameAttributes} from '../worker/util';
-import type {Store} from '../worker/db/Cache';
+import { g, helpers } from "../common";
+import { idb, Cache } from "../worker/db";
+import { STORES } from "../worker/db/Cache";
+import { defaultGameAttributes } from "../worker/util";
+import type { Store } from "../worker/db/Cache";
 
 /**
  * Finds the number of times an element appears in an array.
@@ -24,7 +24,7 @@ function numInArrayEqualTo<T>(array: T[], x: T): number {
     return n;
 }
 
-const resetCache = async (data?: {[key: Store]: any[]}) => {
+const resetCache = async (data?: { [key: Store]: any[] }) => {
     idb.cache = new Cache();
 
     // We want these to do nothing while testing, usually
@@ -41,7 +41,7 @@ const resetCache = async (data?: {[key: Store]: any[]}) => {
 
         idb.cache.markDirtyIndexes(store);
     }
-    idb.cache._status = 'full';
+    idb.cache._status = "full";
 
     if (!data) {
         return;
@@ -72,7 +72,7 @@ const resetG = () => {
         userTids: [0],
         season,
         startingSeason: season,
-        leagueName: '',
+        leagueName: "",
         teamAbbrevsCache: teams.map(t => t.abbrev),
         teamRegionsCache: teams.map(t => t.region),
         teamNamesCache: teams.map(t => t.name),

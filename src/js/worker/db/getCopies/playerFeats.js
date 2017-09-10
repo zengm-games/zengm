@@ -1,8 +1,8 @@
 // @flow
 
-import {idb} from '../../db';
-import {mergeByPk} from './helpers';
-import type {PlayerFeat} from '../../../common/types';
+import { idb } from "../../db";
+import { mergeByPk } from "./helpers";
+import type { PlayerFeat } from "../../../common/types";
 
 const getCopies = async (): Promise<PlayerFeat[]> => {
     return mergeByPk(

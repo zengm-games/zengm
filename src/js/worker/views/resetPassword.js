@@ -1,10 +1,8 @@
 // @flow
 
-import type {GetOutput} from '../../common/types';
+import type { GetOutput } from "../../common/types";
 
-async function updateToken(
-    inputs: GetOutput,
-): void | {[key: string]: any} {
+async function updateToken(inputs: GetOutput): void | { [key: string]: any } {
     return {
         token: inputs.token,
     };

@@ -1,22 +1,41 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import {g, helpers} from '../../common';
-import {getCols, setTitle} from '../util';
-import {DataTable, Dropdown, JumpTo, NewWindowLink} from '../components';
+import PropTypes from "prop-types";
+import React from "react";
+import { g, helpers } from "../../common";
+import { getCols, setTitle } from "../util";
+import { DataTable, Dropdown, JumpTo, NewWindowLink } from "../components";
 
-const LeagueFinances = ({minPayroll, luxuryPayroll, luxuryTax, salaryCap, season, teams}) => {
+const LeagueFinances = ({
+    minPayroll,
+    luxuryPayroll,
+    luxuryTax,
+    salaryCap,
+    season,
+    teams,
+}) => {
     setTitle(`League Finances - ${season}`);
 
-    const cols = getCols('Team', 'Avg Attendance', 'Revenue (YTD)', 'Profit (YTD)', 'Cash', 'Payroll');
+    const cols = getCols(
+        "Team",
+        "Avg Attendance",
+        "Revenue (YTD)",
+        "Profit (YTD)",
+        "Cash",
+        "Payroll",
+    );
 
     const rows = teams.map(t => {
         // Display the current actual payroll for this season, or the salary actually paid out for prior seasons
-        const payroll = season === g.season ? t.seasonAttrs.payroll : t.seasonAttrs.salaryPaid;
+        const payroll =
+            season === g.season
+                ? t.seasonAttrs.payroll
+                : t.seasonAttrs.salaryPaid;
 
         return {
             key: t.tid,
             data: [
-                <a href={helpers.leagueUrl(["team_finances", t.abbrev])}>{t.region} {t.name}</a>,
+                <a href={helpers.leagueUrl(["team_finances", t.abbrev])}>
+                    {t.region} {t.name}
+                </a>,
                 helpers.numberWithCommas(Math.round(t.seasonAttrs.att)),
                 helpers.formatCurrency(t.seasonAttrs.revenue, "M"),
                 helpers.formatCurrency(t.seasonAttrs.profit, "M"),
@@ -29,24 +48,40 @@ const LeagueFinances = ({minPayroll, luxuryPayroll, luxuryTax, salaryCap, season
         };
     });
 
-    return <div>
-        <Dropdown view="league_finances" fields={["seasons"]} values={[season]} />
-        <JumpTo season={season} />
-        <h1>League Finances <NewWindowLink /></h1>
+    return (
+        <div>
+            <Dropdown
+                view="league_finances"
+                fields={["seasons"]}
+                values={[season]}
+            />
+            <JumpTo season={season} />
+            <h1>
+                League Finances <NewWindowLink />
+            </h1>
 
-        <p>
-            Salary cap: <b>{helpers.formatCurrency(salaryCap, 'M')}</b> (teams over this amount cannot sign free agents for more than the minimum contract)<br />
-            Minimum payroll limit: <b>{helpers.formatCurrency(minPayroll, 'M')}</b> (teams with payrolls below this limit will be assessed a fine equal to the difference at the end of the season)<br />
-            Luxury tax limit: <b>{helpers.formatCurrency(luxuryPayroll, 'M')}</b> (teams with payrolls above this limit will be assessed a fine equal to {luxuryTax} times the difference at the end of the season)
-        </p>
+            <p>
+                Salary cap: <b>{helpers.formatCurrency(salaryCap, "M")}</b>{" "}
+                (teams over this amount cannot sign free agents for more than
+                the minimum contract)<br />
+                Minimum payroll limit:{" "}
+                <b>{helpers.formatCurrency(minPayroll, "M")}</b> (teams with
+                payrolls below this limit will be assessed a fine equal to the
+                difference at the end of the season)<br />
+                Luxury tax limit:{" "}
+                <b>{helpers.formatCurrency(luxuryPayroll, "M")}</b> (teams with
+                payrolls above this limit will be assessed a fine equal to{" "}
+                {luxuryTax} times the difference at the end of the season)
+            </p>
 
-        <DataTable
-            cols={cols}
-            defaultSort={[5, 'desc']}
-            name="LeagueFinances"
-            rows={rows}
-        />
-    </div>;
+            <DataTable
+                cols={cols}
+                defaultSort={[5, "desc"]}
+                name="LeagueFinances"
+                rows={rows}
+            />
+        </div>
+    );
 };
 
 LeagueFinances.propTypes = {
@@ -55,20 +90,22 @@ LeagueFinances.propTypes = {
     luxuryTax: PropTypes.number.isRequired,
     salaryCap: PropTypes.number.isRequired,
     season: PropTypes.number.isRequired,
-    teams: PropTypes.arrayOf(PropTypes.shape({
-        abbrev: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired,
-        region: PropTypes.string.isRequired,
-        seasonAttrs: PropTypes.shape({
-            att: PropTypes.number.isRequired,
-            cash: PropTypes.number.isRequired,
-            payroll: PropTypes.number, // Not required for past seasons
-            profit: PropTypes.number.isRequired,
-            revenue: PropTypes.number.isRequired,
-            salaryPaid: PropTypes.number.isRequired,
-        }).isRequired,
-        tid: PropTypes.number.isRequired,
-    })).isRequired,
+    teams: PropTypes.arrayOf(
+        PropTypes.shape({
+            abbrev: PropTypes.string.isRequired,
+            name: PropTypes.string.isRequired,
+            region: PropTypes.string.isRequired,
+            seasonAttrs: PropTypes.shape({
+                att: PropTypes.number.isRequired,
+                cash: PropTypes.number.isRequired,
+                payroll: PropTypes.number, // Not required for past seasons
+                profit: PropTypes.number.isRequired,
+                revenue: PropTypes.number.isRequired,
+                salaryPaid: PropTypes.number.isRequired,
+            }).isRequired,
+            tid: PropTypes.number.isRequired,
+        }),
+    ).isRequired,
 };
 
 export default LeagueFinances;

@@ -1,33 +1,40 @@
 // @flow
 
-import {g, helpers} from '../../common';
-import {idb} from '../db';
-import {updatePlayMenu, updateStatus} from '../util';
-import type {Message, UpdateEvents} from '../../common/types';
+import { g, helpers } from "../../common";
+import { idb } from "../db";
+import { updatePlayMenu, updateStatus } from "../util";
+import type { Message, UpdateEvents } from "../../common/types";
 
 async function updateMessage(
-    inputs: {mid?: number},
+    inputs: { mid?: number },
     updateEvents: UpdateEvents,
     state: any,
-): Promise<void | {message?: Message}> {
+): Promise<void | { message?: Message }> {
     // Complexity of updating is to handle auto-read message, so inputs.mid is blank
-    if (updateEvents.includes('firstRun') || !state.message || state.message.mid !== inputs.mid) {
+    if (
+        updateEvents.includes("firstRun") ||
+        !state.message ||
+        state.message.mid !== inputs.mid
+    ) {
         let message;
         let readThisPageview = false;
 
         if (inputs.mid === undefined) {
-            const messages = await idb.getCopies.messages({limit: 10});
+            const messages = await idb.getCopies.messages({ limit: 10 });
             if (messages.length > 0) {
                 for (let i = messages.length - 1; i >= 0; i--) {
                     if (!messages[i].read) {
                         return {
-                            redirectUrl: helpers.leagueUrl(['message', messages[i].mid]),
+                            redirectUrl: helpers.leagueUrl([
+                                "message",
+                                messages[i].mid,
+                            ]),
                         };
                     }
                 }
             }
         } else {
-            message = await idb.getCopy.messages({mid: inputs.mid});
+            message = await idb.getCopy.messages({ mid: inputs.mid });
         }
 
         if (message && !message.read) {

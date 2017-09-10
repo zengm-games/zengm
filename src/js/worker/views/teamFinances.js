@@ -1,18 +1,24 @@
-import {PHASE, g, helpers} from '../../common';
-import {team} from '../core';
-import {idb} from '../db';
-import {lock} from '../util';
-import type {GetOutput, UpdateEvents} from '../../common/types';
+import { PHASE, g, helpers } from "../../common";
+import { team } from "../core";
+import { idb } from "../db";
+import { lock } from "../util";
+import type { GetOutput, UpdateEvents } from "../../common/types";
 
 async function updateTeamFinances(
-    inputs: {abbrev: string, show: number | 'all', tid: number},
+    inputs: { abbrev: string, show: number | "all", tid: number },
     updateEvents: UpdateEvents,
     state: any,
-): void | {[key: string]: any} {
-    if (updateEvents.includes('gameSim') || updateEvents.includes('playerMovement') || updateEvents.includes('teamFinances') || inputs.tid !== state.tid || inputs.show !== state.show) {
+): void | { [key: string]: any } {
+    if (
+        updateEvents.includes("gameSim") ||
+        updateEvents.includes("playerMovement") ||
+        updateEvents.includes("teamFinances") ||
+        inputs.tid !== state.tid ||
+        inputs.show !== state.show
+    ) {
         const vars: any = {
             abbrev: inputs.abbrev,
-            gamesInProgress: lock.get('gameSim'),
+            gamesInProgress: lock.get("gameSim"),
             numGames: g.numGames,
             tid: inputs.tid,
             show: inputs.show,
@@ -57,9 +63,17 @@ async function updateTeamFinances(
 
         vars.contracts = contracts;
         vars.contractTotals = contractTotals;
-        vars.salariesSeasons = [season, season + 1, season + 2, season + 3, season + 4];
+        vars.salariesSeasons = [
+            season,
+            season + 1,
+            season + 2,
+            season + 3,
+            season + 4,
+        ];
 
-        const teamSeasons = await idb.getCopies.teamSeasons({tid: inputs.tid});
+        const teamSeasons = await idb.getCopies.teamSeasons({
+            tid: inputs.tid,
+        });
 
         teamSeasons.reverse(); // Most recent season first
 
@@ -73,18 +87,32 @@ async function updateTeamFinances(
             }
         }
 
-        let keys = ["won", "hype", "pop", "att", "cash", "revenues", "expenses"];
+        let keys = [
+            "won",
+            "hype",
+            "pop",
+            "att",
+            "cash",
+            "revenues",
+            "expenses",
+        ];
         const barData = {};
         for (let i = 0; i < keys.length; i++) {
             /* eslint-disable no-loop-func */
             if (typeof teamSeasons[0][keys[i]] !== "object") {
-                barData[keys[i]] = helpers.nullPad(teamSeasons.map(ts => ts[keys[i]]), showInt);
+                barData[keys[i]] = helpers.nullPad(
+                    teamSeasons.map(ts => ts[keys[i]]),
+                    showInt,
+                );
             } else {
                 // Handle an object in the database
                 barData[keys[i]] = {};
                 const tempData = teamSeasons.map(ts => ts[keys[i]]);
                 Object.keys(tempData[0]).forEach(key => {
-                    barData[keys[i]][key] = helpers.nullPad(tempData.map(x => x[key]).map(x => x.amount), showInt);
+                    barData[keys[i]][key] = helpers.nullPad(
+                        tempData.map(x => x[key]).map(x => x.amount),
+                        showInt,
+                    );
                 });
             }
             /* eslint-enable no-loop-func */
@@ -93,7 +121,9 @@ async function updateTeamFinances(
         // Process some values
         barData.att = barData.att.map((num, i) => {
             if (teamSeasons[i] !== undefined) {
-                if (!teamSeasons[i].hasOwnProperty("gpHome")) { teamSeasons[i].gpHome = Math.round(teamSeasons[i].gp / 2); } // See also game.js and team.js
+                if (!teamSeasons[i].hasOwnProperty("gpHome")) {
+                    teamSeasons[i].gpHome = Math.round(teamSeasons[i].gp / 2);
+                } // See also game.js and team.js
                 if (teamSeasons[i].gpHome > 0) {
                     return num / teamSeasons[i].gpHome; // per game
                 }
@@ -128,10 +158,14 @@ function updateGamesInProgress(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
     state: any,
-): void | {[key: string]: any} {
-    if (updateEvents.includes('lock.gameSim') || inputs.tid !== state.tid || inputs.show !== state.show) {
+): void | { [key: string]: any } {
+    if (
+        updateEvents.includes("lock.gameSim") ||
+        inputs.tid !== state.tid ||
+        inputs.show !== state.show
+    ) {
         return {
-            gamesInProgress: lock.get('gameSim'),
+            gamesInProgress: lock.get("gameSim"),
         };
     }
 }

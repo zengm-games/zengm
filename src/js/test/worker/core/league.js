@@ -1,10 +1,10 @@
-import assert from 'assert';
-import backboard from 'backboard';
-import {g} from '../../../common';
-import {league} from '../../../worker/core';
-import {connectMeta, idb} from '../../../worker/db';
-import {local} from '../../../worker/util';
-import testHelpers from '../../helpers';
+import assert from "assert";
+import backboard from "backboard";
+import { g } from "../../../common";
+import { league } from "../../../worker/core";
+import { connectMeta, idb } from "../../../worker/db";
+import { local } from "../../../worker/util";
+import testHelpers from "../../helpers";
 
 describe("core/league", () => {
     before(async () => {
@@ -15,7 +15,7 @@ describe("core/league", () => {
         if (idb.meta !== undefined) {
             idb.meta.close();
         }
-        await backboard.delete('meta');
+        await backboard.delete("meta");
         idb.meta = undefined;
         // Last test removes league DB
     });
@@ -26,32 +26,71 @@ describe("core/league", () => {
             assert.equal(l.name, "Test");
             assert.equal(l.tid, 0);
             assert.equal(local.phaseText, `${g.startingSeason} preseason`);
-            assert.equal(local.statusText, 'Idle');
+            assert.equal(local.statusText, "Idle");
         });
         it("should create all necessary object stores", () => {
             assert.equal(idb.league.objectStoreNames.length, 19);
             assert.equal(idb.league.objectStoreNames.contains("awards"), true);
             assert.equal(idb.league.objectStoreNames.contains("events"), true);
-            assert.equal(idb.league.objectStoreNames.contains("draftLotteryResults"), true);
-            assert.equal(idb.league.objectStoreNames.contains("draftOrder"), true);
-            assert.equal(idb.league.objectStoreNames.contains("gameAttributes"), true);
+            assert.equal(
+                idb.league.objectStoreNames.contains("draftLotteryResults"),
+                true,
+            );
+            assert.equal(
+                idb.league.objectStoreNames.contains("draftOrder"),
+                true,
+            );
+            assert.equal(
+                idb.league.objectStoreNames.contains("gameAttributes"),
+                true,
+            );
             assert.equal(idb.league.objectStoreNames.contains("games"), true);
-            assert.equal(idb.league.objectStoreNames.contains("messages"), true);
-            assert.equal(idb.league.objectStoreNames.contains("negotiations"), true);
+            assert.equal(
+                idb.league.objectStoreNames.contains("messages"),
+                true,
+            );
+            assert.equal(
+                idb.league.objectStoreNames.contains("negotiations"),
+                true,
+            );
             assert.equal(idb.league.objectStoreNames.contains("players"), true);
-            assert.equal(idb.league.objectStoreNames.contains("playerFeats"), true);
-            assert.equal(idb.league.objectStoreNames.contains("playerStats"), true);
-            assert.equal(idb.league.objectStoreNames.contains("playoffSeries"), true);
-            assert.equal(idb.league.objectStoreNames.contains("releasedPlayers"), true);
-            assert.equal(idb.league.objectStoreNames.contains("schedule"), true);
+            assert.equal(
+                idb.league.objectStoreNames.contains("playerFeats"),
+                true,
+            );
+            assert.equal(
+                idb.league.objectStoreNames.contains("playerStats"),
+                true,
+            );
+            assert.equal(
+                idb.league.objectStoreNames.contains("playoffSeries"),
+                true,
+            );
+            assert.equal(
+                idb.league.objectStoreNames.contains("releasedPlayers"),
+                true,
+            );
+            assert.equal(
+                idb.league.objectStoreNames.contains("schedule"),
+                true,
+            );
             assert.equal(idb.league.objectStoreNames.contains("teams"), true);
-            assert.equal(idb.league.objectStoreNames.contains("teamSeasons"), true);
-            assert.equal(idb.league.objectStoreNames.contains("teamStats"), true);
+            assert.equal(
+                idb.league.objectStoreNames.contains("teamSeasons"),
+                true,
+            );
+            assert.equal(
+                idb.league.objectStoreNames.contains("teamStats"),
+                true,
+            );
             assert.equal(idb.league.objectStoreNames.contains("trade"), true);
         });
         it("should initialize gameAttributes object store", async () => {
             const gameAttributes = await idb.league.gameAttributes.getAll();
-            const gTest = gameAttributes.reduce((obj, row) => { obj[row.key] = row.value; return obj; }, {});
+            const gTest = gameAttributes.reduce((obj, row) => {
+                obj[row.key] = row.value;
+                return obj;
+            }, {});
 
             assert.equal(gTest.leagueName, "Test");
             assert.equal(gTest.phase, 0);

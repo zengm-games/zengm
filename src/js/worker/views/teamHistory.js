@@ -1,19 +1,25 @@
 // @flow
 
-import {g} from '../../common';
-import {idb} from '../db';
-import type {UpdateEvents} from '../../common/types';
+import { g } from "../../common";
+import { idb } from "../db";
+import type { UpdateEvents } from "../../common/types";
 
 async function updateTeamHistory(
-    inputs: {abbrev: string, tid: number},
+    inputs: { abbrev: string, tid: number },
     updateEvents: UpdateEvents,
     state: any,
-): void | {[key: string]: any} {
-    if (updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || inputs.abbrev !== state.abbrev) {
+): void | { [key: string]: any } {
+    if (
+        updateEvents.includes("firstRun") ||
+        updateEvents.includes("gameSim") ||
+        inputs.abbrev !== state.abbrev
+    ) {
         let bestRecord = null;
         let worstRecord = null;
 
-        const teamSeasons = await idb.getCopies.teamSeasons({tid: inputs.tid});
+        const teamSeasons = await idb.getCopies.teamSeasons({
+            tid: inputs.tid,
+        });
         const history = [];
         let totalWon = 0;
         let totalLost = 0;
@@ -35,20 +41,36 @@ async function updateTeamHistory(
                 championships += 1;
             }
 
-            if (bestRecord === null || bestRecord.won < history[history.length - 1].won) {
+            if (
+                bestRecord === null ||
+                bestRecord.won < history[history.length - 1].won
+            ) {
                 bestRecord = history[history.length - 1];
             }
-            if (worstRecord === null || worstRecord.lost < history[history.length - 1].lost) {
+            if (
+                worstRecord === null ||
+                worstRecord.lost < history[history.length - 1].lost
+            ) {
                 worstRecord = history[history.length - 1];
             }
         }
         history.reverse(); // Show most recent season first
 
-        let players = await idb.getCopies.players({statsTid: inputs.tid});
+        let players = await idb.getCopies.players({ statsTid: inputs.tid });
         players = await idb.getCopies.playersPlus(players, {
             attrs: ["pid", "name", "injury", "tid", "hof", "watch"],
             ratings: ["pos"],
-            stats: ["season", "abbrev", "gp", "min", "pts", "trb", "ast", "per", "ewa"],
+            stats: [
+                "season",
+                "abbrev",
+                "gp",
+                "min",
+                "pts",
+                "trb",
+                "ast",
+                "per",
+                "ewa",
+            ],
             tid: inputs.tid,
         });
 

@@ -1,8 +1,13 @@
 // @flow
 
-import orderBy from 'lodash.orderby';
-import {PLAYER, g} from '../common';
-import type {GameProcessed, GameProcessedCompleted, Pick, TeamBasic} from '../common/types';
+import orderBy from "lodash.orderby";
+import { PLAYER, g } from "../common";
+import type {
+    GameProcessed,
+    GameProcessedCompleted,
+    Pick,
+    TeamBasic,
+} from "../common/types";
 
 /**
  * Validate that a given abbreviation corresponds to a team.
@@ -116,36 +121,276 @@ function addPopRank(teams: any[]): any[] {
 
 function getTeamsDefault(): any[] {
     let teams: TeamBasic[] = [
-        {tid: 0, cid: 0, did: 2, region: "Atlanta", name: "Gold Club", abbrev: "ATL", pop: 4.3},
-        {tid: 1, cid: 0, did: 2, region: "Baltimore", name: "Crabs", abbrev: "BAL", pop: 2.2},
-        {tid: 2, cid: 0, did: 0, region: "Boston", name: "Massacre", abbrev: "BOS", pop: 4.4},
-        {tid: 3, cid: 0, did: 1, region: "Chicago", name: "Whirlwinds", abbrev: "CHI", pop: 8.8},
-        {tid: 4, cid: 0, did: 1, region: "Cincinnati", name: "Riots", abbrev: "CIN", pop: 1.6},
-        {tid: 5, cid: 0, did: 1, region: "Cleveland", name: "Curses", abbrev: "CLE", pop: 1.9},
-        {tid: 6, cid: 1, did: 3, region: "Dallas", name: "Snipers", abbrev: "DAL", pop: 4.7},
-        {tid: 7, cid: 1, did: 4, region: "Denver", name: "High", abbrev: "DEN", pop: 2.2},
-        {tid: 8, cid: 0, did: 1, region: "Detroit", name: "Muscle", abbrev: "DET", pop: 4.0},
-        {tid: 9, cid: 1, did: 3, region: "Houston", name: "Apollos", abbrev: "HOU", pop: 4.3},
-        {tid: 10, cid: 1, did: 5, region: "Las Vegas", name: "Blue Chips", abbrev: "LV", pop: 1.7},
-        {tid: 11, cid: 1, did: 5, region: "Los Angeles", name: "Earthquakes", abbrev: "LA", pop: 12.3},
-        {tid: 12, cid: 1, did: 3, region: "Mexico City", name: "Aztecs", abbrev: "MXC", pop: 19.4},
-        {tid: 13, cid: 0, did: 2, region: "Miami", name: "Cyclones", abbrev: "MIA", pop: 5.4},
-        {tid: 14, cid: 1, did: 4, region: "Minneapolis", name: "Blizzards", abbrev: "MIN", pop: 2.6},
-        {tid: 15, cid: 0, did: 0, region: "Montreal", name: "Mounties", abbrev: "MON", pop: 4.0},
-        {tid: 16, cid: 0, did: 0, region: "New York", name: "Bankers", abbrev: "NYC", pop: 18.7},
-        {tid: 17, cid: 0, did: 0, region: "Philadelphia", name: "Cheesesteaks", abbrev: "PHI", pop: 5.4},
-        {tid: 18, cid: 1, did: 3, region: "Phoenix", name: "Vultures", abbrev: "PHO", pop: 3.4},
-        {tid: 19, cid: 0, did: 1, region: "Pittsburgh", name: "Rivers", abbrev: "PIT", pop: 1.8},
-        {tid: 20, cid: 1, did: 4, region: "Portland", name: "Roses", abbrev: "POR", pop: 1.8},
-        {tid: 21, cid: 1, did: 5, region: "Sacramento", name: "Gold Rush", abbrev: "SAC", pop: 1.6},
-        {tid: 22, cid: 1, did: 5, region: "San Diego", name: "Pandas", abbrev: "SD", pop: 2.9},
-        {tid: 23, cid: 1, did: 5, region: "San Francisco", name: "Venture Capitalists", abbrev: "SF", pop: 3.4},
-        {tid: 24, cid: 1, did: 4, region: "Seattle", name: "Symphony", abbrev: "SEA", pop: 3.0},
-        {tid: 25, cid: 1, did: 3, region: "St. Louis", name: "Spirits", abbrev: "STL", pop: 2.2},
-        {tid: 26, cid: 0, did: 2, region: "Tampa", name: "Turtles", abbrev: "TPA", pop: 2.2},
-        {tid: 27, cid: 0, did: 0, region: "Toronto", name: "Beavers", abbrev: "TOR", pop: 6.3},
-        {tid: 28, cid: 1, did: 4, region: "Vancouver", name: "Whalers", abbrev: "VAN", pop: 2.3},
-        {tid: 29, cid: 0, did: 2, region: "Washington", name: "Monuments", abbrev: "WAS", pop: 4.2},
+        {
+            tid: 0,
+            cid: 0,
+            did: 2,
+            region: "Atlanta",
+            name: "Gold Club",
+            abbrev: "ATL",
+            pop: 4.3,
+        },
+        {
+            tid: 1,
+            cid: 0,
+            did: 2,
+            region: "Baltimore",
+            name: "Crabs",
+            abbrev: "BAL",
+            pop: 2.2,
+        },
+        {
+            tid: 2,
+            cid: 0,
+            did: 0,
+            region: "Boston",
+            name: "Massacre",
+            abbrev: "BOS",
+            pop: 4.4,
+        },
+        {
+            tid: 3,
+            cid: 0,
+            did: 1,
+            region: "Chicago",
+            name: "Whirlwinds",
+            abbrev: "CHI",
+            pop: 8.8,
+        },
+        {
+            tid: 4,
+            cid: 0,
+            did: 1,
+            region: "Cincinnati",
+            name: "Riots",
+            abbrev: "CIN",
+            pop: 1.6,
+        },
+        {
+            tid: 5,
+            cid: 0,
+            did: 1,
+            region: "Cleveland",
+            name: "Curses",
+            abbrev: "CLE",
+            pop: 1.9,
+        },
+        {
+            tid: 6,
+            cid: 1,
+            did: 3,
+            region: "Dallas",
+            name: "Snipers",
+            abbrev: "DAL",
+            pop: 4.7,
+        },
+        {
+            tid: 7,
+            cid: 1,
+            did: 4,
+            region: "Denver",
+            name: "High",
+            abbrev: "DEN",
+            pop: 2.2,
+        },
+        {
+            tid: 8,
+            cid: 0,
+            did: 1,
+            region: "Detroit",
+            name: "Muscle",
+            abbrev: "DET",
+            pop: 4.0,
+        },
+        {
+            tid: 9,
+            cid: 1,
+            did: 3,
+            region: "Houston",
+            name: "Apollos",
+            abbrev: "HOU",
+            pop: 4.3,
+        },
+        {
+            tid: 10,
+            cid: 1,
+            did: 5,
+            region: "Las Vegas",
+            name: "Blue Chips",
+            abbrev: "LV",
+            pop: 1.7,
+        },
+        {
+            tid: 11,
+            cid: 1,
+            did: 5,
+            region: "Los Angeles",
+            name: "Earthquakes",
+            abbrev: "LA",
+            pop: 12.3,
+        },
+        {
+            tid: 12,
+            cid: 1,
+            did: 3,
+            region: "Mexico City",
+            name: "Aztecs",
+            abbrev: "MXC",
+            pop: 19.4,
+        },
+        {
+            tid: 13,
+            cid: 0,
+            did: 2,
+            region: "Miami",
+            name: "Cyclones",
+            abbrev: "MIA",
+            pop: 5.4,
+        },
+        {
+            tid: 14,
+            cid: 1,
+            did: 4,
+            region: "Minneapolis",
+            name: "Blizzards",
+            abbrev: "MIN",
+            pop: 2.6,
+        },
+        {
+            tid: 15,
+            cid: 0,
+            did: 0,
+            region: "Montreal",
+            name: "Mounties",
+            abbrev: "MON",
+            pop: 4.0,
+        },
+        {
+            tid: 16,
+            cid: 0,
+            did: 0,
+            region: "New York",
+            name: "Bankers",
+            abbrev: "NYC",
+            pop: 18.7,
+        },
+        {
+            tid: 17,
+            cid: 0,
+            did: 0,
+            region: "Philadelphia",
+            name: "Cheesesteaks",
+            abbrev: "PHI",
+            pop: 5.4,
+        },
+        {
+            tid: 18,
+            cid: 1,
+            did: 3,
+            region: "Phoenix",
+            name: "Vultures",
+            abbrev: "PHO",
+            pop: 3.4,
+        },
+        {
+            tid: 19,
+            cid: 0,
+            did: 1,
+            region: "Pittsburgh",
+            name: "Rivers",
+            abbrev: "PIT",
+            pop: 1.8,
+        },
+        {
+            tid: 20,
+            cid: 1,
+            did: 4,
+            region: "Portland",
+            name: "Roses",
+            abbrev: "POR",
+            pop: 1.8,
+        },
+        {
+            tid: 21,
+            cid: 1,
+            did: 5,
+            region: "Sacramento",
+            name: "Gold Rush",
+            abbrev: "SAC",
+            pop: 1.6,
+        },
+        {
+            tid: 22,
+            cid: 1,
+            did: 5,
+            region: "San Diego",
+            name: "Pandas",
+            abbrev: "SD",
+            pop: 2.9,
+        },
+        {
+            tid: 23,
+            cid: 1,
+            did: 5,
+            region: "San Francisco",
+            name: "Venture Capitalists",
+            abbrev: "SF",
+            pop: 3.4,
+        },
+        {
+            tid: 24,
+            cid: 1,
+            did: 4,
+            region: "Seattle",
+            name: "Symphony",
+            abbrev: "SEA",
+            pop: 3.0,
+        },
+        {
+            tid: 25,
+            cid: 1,
+            did: 3,
+            region: "St. Louis",
+            name: "Spirits",
+            abbrev: "STL",
+            pop: 2.2,
+        },
+        {
+            tid: 26,
+            cid: 0,
+            did: 2,
+            region: "Tampa",
+            name: "Turtles",
+            abbrev: "TPA",
+            pop: 2.2,
+        },
+        {
+            tid: 27,
+            cid: 0,
+            did: 0,
+            region: "Toronto",
+            name: "Beavers",
+            abbrev: "TOR",
+            pop: 6.3,
+        },
+        {
+            tid: 28,
+            cid: 1,
+            did: 4,
+            region: "Vancouver",
+            name: "Whalers",
+            abbrev: "VAN",
+            pop: 2.3,
+        },
+        {
+            tid: 29,
+            cid: 0,
+            did: 2,
+            region: "Washington",
+            name: "Monuments",
+            abbrev: "WAS",
+            pop: 4.2,
+        },
     ];
 
     for (const t of teams) {
@@ -163,8 +408,12 @@ function getTeamsDefault(): any[] {
  * Taken from http://stackoverflow.com/a/3284324/786644
  */
 function deepCopy<T>(obj: T): T {
-    if (typeof obj !== "object" || obj === null) { return obj; }
-    if (obj.constructor === RegExp) { return obj; }
+    if (typeof obj !== "object" || obj === null) {
+        return obj;
+    }
+    if (obj.constructor === RegExp) {
+        return obj;
+    }
 
     const retVal = new obj.constructor();
     for (const key of Object.keys(obj)) {
@@ -187,7 +436,7 @@ function keys<T: string>(obj: any): Array<T> {
  */
 function resetG() {
     for (const key of keys(g)) {
-        if (key !== 'lid') {
+        if (key !== "lid") {
             delete g[key];
         }
     }
@@ -239,13 +488,17 @@ function nullPad<T>(array: (?T)[], length: number): (?T)[] {
  * @param {number|string|undefined} precision Number of decimal places. Default is 2 (like $17.62).
  * @return {string} Formatted currency string.
  */
-function formatCurrency(amount: number, append: string = '', precision: number = 2): string {
+function formatCurrency(
+    amount: number,
+    append: string = "",
+    precision: number = 2,
+): string {
     if (amount < 0) {
         return `-$${Math.abs(amount).toFixed(precision)}${append}`;
     }
-    if (append === 'M' && amount > 1000) {
+    if (append === "M" && amount > 1000) {
         amount /= 1000;
-        append = 'B';
+        append = "B";
     }
     return `$${amount.toFixed(precision)}${append}`;
 }
@@ -254,7 +507,9 @@ function formatCurrency(amount: number, append: string = '', precision: number =
  * Format a number as an integer with commas in the thousands places.
  */
 function numberWithCommas(x: number | string): string {
-    return parseFloat(x).toFixed().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return parseFloat(x)
+        .toFixed()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 /**
@@ -287,7 +542,7 @@ function pickDesc(pick: Pick): string {
 
 function ordinal(x?: ?number): string {
     if (x === undefined || x === null) {
-        return '';
+        return "";
     }
 
     let suffix;
@@ -311,50 +566,84 @@ function formatCompletedGame(game: GameProcessed): GameProcessedCompleted {
     game.tid = game.tid !== undefined ? game.tid : g.userTid;
 
     // team0 and team1 are different than they are above! Here it refers to user and opponent, not home and away
-    const team0 = {tid: game.tid, abbrev: g.teamAbbrevsCache[game.tid], region: g.teamRegionsCache[game.tid], name: g.teamNamesCache[game.tid], pts: game.pts};
-    const team1 = {tid: game.oppTid, abbrev: g.teamAbbrevsCache[game.oppTid], region: g.teamRegionsCache[game.oppTid], name: g.teamNamesCache[game.oppTid], pts: game.oppPts};
+    const team0 = {
+        tid: game.tid,
+        abbrev: g.teamAbbrevsCache[game.tid],
+        region: g.teamRegionsCache[game.tid],
+        name: g.teamNamesCache[game.tid],
+        pts: game.pts,
+    };
+    const team1 = {
+        tid: game.oppTid,
+        abbrev: g.teamAbbrevsCache[game.oppTid],
+        region: g.teamRegionsCache[game.oppTid],
+        name: g.teamNamesCache[game.oppTid],
+        pts: game.oppPts,
+    };
 
     return {
         gid: game.gid,
         overtime: game.overtime,
-        score: game.won ? `${team0.pts}-${team1.pts}` : `${team1.pts}-${team0.pts}`,
+        score: game.won
+            ? `${team0.pts}-${team1.pts}`
+            : `${team1.pts}-${team0.pts}`,
         teams: game.home ? [team1, team0] : [team0, team1],
         won: game.won,
     };
 }
 
-
 // Calculate the number of games that team is behind team0
-type teamWonLost = {lost: number, won: number};
+type teamWonLost = { lost: number, won: number };
 function gb(team0: teamWonLost, team: teamWonLost) {
-    return ((team0.won - team0.lost) - (team.won - team.lost)) / 2;
+    return (team0.won - team0.lost - (team.won - team.lost)) / 2;
 }
 
-function gameScore(arg: {[key: string]: number}): string {
-    return (arg.pts + 0.4 * arg.fg - 0.7 * arg.fga - 0.4 * (arg.fta - arg.ft) + 0.7 * arg.orb + 0.3 * (arg.trb - arg.orb) + arg.stl + 0.7 * arg.ast + 0.7 * arg.blk - 0.4 * arg.pf - arg.tov).toFixed(1);
+function gameScore(arg: { [key: string]: number }): string {
+    return (arg.pts +
+        0.4 * arg.fg -
+        0.7 * arg.fga -
+        0.4 * (arg.fta - arg.ft) +
+        0.7 * arg.orb +
+        0.3 * (arg.trb - arg.orb) +
+        arg.stl +
+        0.7 * arg.ast +
+        0.7 * arg.blk -
+        0.4 * arg.pf -
+        arg.tov).toFixed(1);
 }
 
 function plusMinus(arg: number, d: number): string {
-    if (isNaN(arg)) { return ""; }
+    if (isNaN(arg)) {
+        return "";
+    }
     return (arg > 0 ? "+" : "") + arg.toFixed(d);
 }
 
 // Used to fix links in the event log, which will be wrong if a league is exported and then imported
-function correctLinkLid(event: {text: string}) {
+function correctLinkLid(event: { text: string }) {
     event.text = event.text.replace(/\/l\/\d+\//g, `/l/${g.lid}/`);
 }
 
 function overtimeCounter(n: number): string {
     switch (n) {
-        case 1: return "";
-        case 2: return "double";
-        case 3: return "triple";
-        case 4: return "quadruple";
-        case 5: return "quintuple";
-        case 6: return "sextuple";
-        case 7: return "septuple";
-        case 8: return "octuple";
-        default: return `a ${ordinal(n)}`;
+        case 1:
+            return "";
+        case 2:
+            return "double";
+        case 3:
+            return "triple";
+        case 4:
+            return "quadruple";
+        case 5:
+            return "quintuple";
+        case 6:
+            return "sextuple";
+        case 7:
+            return "septuple";
+        case 8:
+            return "octuple";
+        default:
+            return `a ${ordinal(n)}`;
     }
 }
 
@@ -382,7 +671,9 @@ function yearRanges(arr: number[]): string[] {
             }
         } else {
             // runs of 3 or more are displayed as a range
-            runArr.push(`${tempArr[i][0]}-${tempArr[i][tempArr[i].length - 1]}`);
+            runArr.push(
+                `${tempArr[i][0]}-${tempArr[i][tempArr[i].length - 1]}`,
+            );
         }
     }
 
@@ -390,7 +681,7 @@ function yearRanges(arr: number[]): string[] {
 }
 
 function roundsWonText(playoffRoundsWon: number): string {
-    const playoffsByConference = g.confs.length === 2;// && !localStorage.getItem('top16playoffs');
+    const playoffsByConference = g.confs.length === 2; // && !localStorage.getItem('top16playoffs');
 
     if (playoffRoundsWon === g.numPlayoffRounds) {
         return "League champs";
@@ -399,7 +690,9 @@ function roundsWonText(playoffRoundsWon: number): string {
         return playoffsByConference ? "Conference champs" : "Made finals";
     }
     if (playoffRoundsWon === g.numPlayoffRounds - 2) {
-        return playoffsByConference ? "Made conference finals" : "Made semifinals";
+        return playoffsByConference
+            ? "Made conference finals"
+            : "Made semifinals";
     }
     if (playoffRoundsWon >= 1) {
         return `Made ${ordinal(playoffRoundsWon + 1)} round`;
@@ -424,11 +717,13 @@ function roundWinp(winp: number): string {
     return output;
 }
 
-const orderByWinp = <T: {seasonAttrs: {winp: number, won: number}}>(teams: T[]): T[] => {
+const orderByWinp = <T: { seasonAttrs: { winp: number, won: number } }>(
+    teams: T[],
+): T[] => {
     return orderBy(
         teams,
-        [(t) => t.seasonAttrs.winp, (t) => t.seasonAttrs.won],
-        ['desc', 'desc'],
+        [t => t.seasonAttrs.winp, t => t.seasonAttrs.won],
+        ["desc", "desc"],
     );
 };
 

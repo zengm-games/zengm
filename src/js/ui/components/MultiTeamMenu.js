@@ -1,17 +1,17 @@
 // @flow
 
-import PropTypes from 'prop-types';
-import * as React from 'react';
-import {g} from '../../common';
-import {emitter, realtimeUpdate, toWorker} from '../util';
+import PropTypes from "prop-types";
+import * as React from "react";
+import { g } from "../../common";
+import { emitter, realtimeUpdate, toWorker } from "../util";
 
 const handleChange = async (e: SyntheticInputEvent<>) => {
     const userTid = parseInt(e.target.value, 10);
-    await toWorker('updateGameAttributes', {userTid});
+    await toWorker("updateGameAttributes", { userTid });
 
     // firstRun is kind of a hack, but it should update everything
-    realtimeUpdate(['firstRun']);
-    emitter.emit('updateMultiTeam');
+    realtimeUpdate(["firstRun"]);
+    emitter.emit("updateMultiTeam");
 };
 
 type Props = {
@@ -21,25 +21,42 @@ type Props = {
 
 class MultiTeamMenu extends React.Component<Props> {
     shouldComponentUpdate(nextProps: Props) {
-        return this.props.userTid !== nextProps.userTid || JSON.stringify(this.props.userTids) !== JSON.stringify(nextProps.userTids);
+        return (
+            this.props.userTid !== nextProps.userTid ||
+            JSON.stringify(this.props.userTids) !==
+                JSON.stringify(nextProps.userTids)
+        );
     }
 
     render() {
-        const {userTid, userTids} = this.props;
+        const { userTid, userTids } = this.props;
 
         // Hide if not multi team or not loaded yet
         if (userTids.length <= 1) {
             return null;
         }
 
-        return <div className="multi-team-menu">
-            <label htmlFor="multi-team-select">Currently controlling:</label><br />
-            <select className="form-control" id="multi-team-select" onChange={handleChange} value={userTid}>
-                {userTids.map((tid, i) => <option key={tid} value={tid}>
-                    {g.teamRegionsCache[userTids[i]]} {g.teamNamesCache[userTids[i]]}
-                </option>)}
-            </select>
-        </div>;
+        return (
+            <div className="multi-team-menu">
+                <label htmlFor="multi-team-select">
+                    Currently controlling:
+                </label>
+                <br />
+                <select
+                    className="form-control"
+                    id="multi-team-select"
+                    onChange={handleChange}
+                    value={userTid}
+                >
+                    {userTids.map((tid, i) => (
+                        <option key={tid} value={tid}>
+                            {g.teamRegionsCache[userTids[i]]}{" "}
+                            {g.teamNamesCache[userTids[i]]}
+                        </option>
+                    ))}
+                </select>
+            </div>
+        );
     }
 }
 

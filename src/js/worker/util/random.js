@@ -23,7 +23,7 @@ function shuffle(list: any[]) {
     for (let i = 1; i < l; i++) {
         const j = randInt(0, i);
         if (j !== i) {
-            const t = list[i];  // swap list[i] and list[j]
+            const t = list[i]; // swap list[i] and list[j]
             list[i] = list[j];
             list[j] = t;
         }
@@ -43,7 +43,14 @@ function shuffle(list: any[]) {
  * @return {number} Random number from Gaussian distribution.
  */
 function gauss(mu?: number = 0, sigma?: number = 1): number {
-    return ((Math.random() * 2 - 1) + (Math.random() * 2 - 1) + (Math.random() * 2 - 1)) * sigma + mu;
+    return (
+        (Math.random() * 2 -
+            1 +
+            (Math.random() * 2 - 1) +
+            (Math.random() * 2 - 1)) *
+            sigma +
+        mu
+    );
 }
 
 /**
@@ -76,7 +83,7 @@ function realGauss(mu?: number = 0, sigma?: number = 1): number {
 
     const marsaglia = Math.sqrt(-2 * Math.log(radius) / radius);
 
-    return (z1 * marsaglia) * sigma + mu;
+    return z1 * marsaglia * sigma + mu;
 }
 
 /**
@@ -131,7 +138,7 @@ function heightDist(): number {
         return 60;
     } else if (r < 0.000001308884298) {
         return 61;
-    } else if (r < 0.000011639462810) {
+    } else if (r < 0.00001163946281) {
         return 62;
     } else if (r < 0.000063292355372) {
         return 63;
@@ -141,7 +148,7 @@ function heightDist(): number {
         return 65;
     } else if (r < 0.000838085743802) {
         return 66;
-    } else if (r < 0.001302961776860) {
+    } else if (r < 0.00130296177686) {
         return 67;
     } else if (r < 0.002066115702479) {
         return 68;
@@ -155,7 +162,7 @@ function heightDist(): number {
         return 72;
     } else if (r < 0.083161157024793) {
         return 73;
-    } else if (r < 0.126549586776860) {
+    } else if (r < 0.12654958677686) {
         return 74;
     } else if (r < 0.196797520661157) {
         return 75;
@@ -167,7 +174,7 @@ function heightDist(): number {
         return 78;
     } else if (r < 0.521694214876033) {
         return 79;
-    } else if (r < 0.623966942148760) {
+    } else if (r < 0.62396694214876) {
         return 80;
     } else if (r < 0.739669421487603) {
         return 81;
@@ -189,7 +196,7 @@ function heightDist(): number {
         return 89;
     } else if (r < 0.999018595041323) {
         return 90;
-    } else if (r < 0.999741735537190) {
+    } else if (r < 0.99974173553719) {
         return 91;
     } else if (r < 0.999870867097108) {
         return 92;
@@ -197,11 +204,11 @@ function heightDist(): number {
         return 93;
     } else if (r < 0.999950929080579) {
         return 94;
-    } else if (r < 0.999976755526860) {
+    } else if (r < 0.99997675552686) {
         return 95;
     } else if (r < 0.999988377427686) {
         return 96;
-    } else if (r < 0.999996125361570) {
+    } else if (r < 0.99999612536157) {
         return 97;
     } else if (r < 0.999999456973141) {
         return 98;
@@ -217,7 +224,7 @@ function heightDist(): number {
         return 103;
     } else if (r < 0.999999999225207) {
         return 104;
-    } else if (r < 0.999999999638430) {
+    } else if (r < 0.99999999963843) {
         return 105;
     } else if (r < 0.999999999845042) {
         return 106;

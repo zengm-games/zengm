@@ -1,7 +1,7 @@
-import assert from 'assert';
-import {g, helpers} from '../../../common';
-import {season} from '../../../worker/core';
-import testHelpers from '../../helpers';
+import assert from "assert";
+import { g, helpers } from "../../../common";
+import { season } from "../../../worker/core";
+import testHelpers from "../../helpers";
 
 const defaultTeams = helpers.getTeamsDefault();
 
@@ -17,8 +17,70 @@ describe("core/season", () => {
         it("should schedule 41 home games and 41 away games for each team", () => {
             const tids = season.newSchedule(defaultTeams);
 
-            const home = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // Number of home games for each team
-            const away = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // Number of away games for each team
+            const home = [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ]; // Number of home games for each team
+            const away = [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ]; // Number of away games for each team
 
             for (let i = 0; i < tids.length; i++) {
                 home[tids[i][0]] += 1;
@@ -35,7 +97,38 @@ describe("core/season", () => {
 
             const home = []; // Each element in this array is an array representing the number of home games against each other team (only the ones in the other conference will be populated)
             for (let i = 0; i < g.numTeams; i++) {
-                home.push([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+                home.push([
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                ]);
             }
 
             const teams = helpers.getTeamsDefault();
@@ -55,7 +148,38 @@ describe("core/season", () => {
 
             const home = []; // Each element in this array is an array representing the number of home games against each other team (only the ones in the other conference will be populated)
             for (let i = 0; i < g.numTeams; i++) {
-                home.push([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+                home.push([
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                ]);
             }
 
             const teams = helpers.getTeamsDefault();
@@ -75,12 +199,46 @@ describe("core/season", () => {
 
             const home = []; // Each element in this array is an array representing the number of home games against each other team (only the ones in the other conference will be populated)
             for (let i = 0; i < g.numTeams; i++) {
-                home.push([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+                home.push([
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                ]);
             }
 
             const teams = helpers.getTeamsDefault();
             for (let i = 0; i < tids.length; i++) {
-                if (teams[tids[i][0]].cid === teams[tids[i][1]].cid && teams[tids[i][0]].did !== teams[tids[i][1]].did) {
+                if (
+                    teams[tids[i][0]].cid === teams[tids[i][1]].cid &&
+                    teams[tids[i][0]].did !== teams[tids[i][1]].did
+                ) {
                     home[tids[i][1]][tids[i][0]] += 1;
                 }
             }
@@ -93,48 +251,47 @@ describe("core/season", () => {
         });
     });
 
-
     describe("#genPlayoffSeries()", () => {
         before(() => {
             g.numPlayoffRounds = 2;
         });
         it("should split teams by conference if there are two conferences", () => {
             const teams = [
-                {tid: 0, cid: 0},
-                {tid: 2, cid: 0},
-                {tid: 3, cid: 0},
-                {tid: 6, cid: 0},
-                {tid: 5, cid: 1},
-                {tid: 1, cid: 1},
-                {tid: 4, cid: 1},
+                { tid: 0, cid: 0 },
+                { tid: 2, cid: 0 },
+                { tid: 3, cid: 0 },
+                { tid: 6, cid: 0 },
+                { tid: 5, cid: 1 },
+                { tid: 1, cid: 1 },
+                { tid: 4, cid: 1 },
             ];
             g.confs = [
-                {cid: 0, name: "Eastern Conference"},
-                {cid: 1, name: "Western Conference"},
+                { cid: 0, name: "Eastern Conference" },
+                { cid: 1, name: "Western Conference" },
             ];
 
-            const {series, tidPlayoffs} = season.genPlayoffSeries(teams);
+            const { series, tidPlayoffs } = season.genPlayoffSeries(teams);
 
             assert.deepEqual(tidPlayoffs.sort(), [0, 1, 2, 5]);
             assert.equal(series[0].length, 2);
         });
         it("should pick teams regardless of conference if there are not two conferences", () => {
             const teams = [
-                {tid: 0, cid: 0},
-                {tid: 2, cid: 0},
-                {tid: 3, cid: 2},
-                {tid: 6, cid: 0},
-                {tid: 5, cid: 1},
-                {tid: 1, cid: 1},
-                {tid: 4, cid: 1},
+                { tid: 0, cid: 0 },
+                { tid: 2, cid: 0 },
+                { tid: 3, cid: 2 },
+                { tid: 6, cid: 0 },
+                { tid: 5, cid: 1 },
+                { tid: 1, cid: 1 },
+                { tid: 4, cid: 1 },
             ];
             g.confs = [
-                {cid: 0, name: "Eastern Conference"},
-                {cid: 1, name: "Western Conference"},
-                {cid: 2, name: "Whatever"},
+                { cid: 0, name: "Eastern Conference" },
+                { cid: 1, name: "Western Conference" },
+                { cid: 2, name: "Whatever" },
             ];
 
-            const {series, tidPlayoffs} = season.genPlayoffSeries(teams);
+            const { series, tidPlayoffs } = season.genPlayoffSeries(teams);
 
             assert.deepEqual(tidPlayoffs.sort(), [0, 2, 3, 6]);
             assert.equal(series[0].length, 2);

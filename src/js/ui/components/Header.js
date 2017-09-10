@@ -1,6 +1,6 @@
 // @flow
 
-import * as React from 'react';
+import * as React from "react";
 
 class Header extends React.Component<{}> {
     // eslint-disable-next-line class-methods-use-this

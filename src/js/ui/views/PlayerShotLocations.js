@@ -1,31 +1,61 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import {g, helpers} from '../../common';
-import {getCols, setTitle} from '../util';
-import {DataTable, Dropdown, NewWindowLink, PlayerNameLabels} from '../components';
+import PropTypes from "prop-types";
+import React from "react";
+import { g, helpers } from "../../common";
+import { getCols, setTitle } from "../util";
+import {
+    DataTable,
+    Dropdown,
+    NewWindowLink,
+    PlayerNameLabels,
+} from "../components";
 
-const PlayerShotLocations = ({players, season}) => {
+const PlayerShotLocations = ({ players, season }) => {
     setTitle(`Player Shot Locations - ${season}`);
 
-    const superCols = [{
-        title: '',
-        colspan: 6,
-    }, {
-        title: 'At Rim',
-        colspan: 3,
-    }, {
-        title: 'Low Post',
-        colspan: 3,
-    }, {
-        title: 'Mid-Range',
-        colspan: 3,
-    }, {
-        title: '3PT',
-        desc: 'Three-Pointers',
-        colspan: 3,
-    }];
+    const superCols = [
+        {
+            title: "",
+            colspan: 6,
+        },
+        {
+            title: "At Rim",
+            colspan: 3,
+        },
+        {
+            title: "Low Post",
+            colspan: 3,
+        },
+        {
+            title: "Mid-Range",
+            colspan: 3,
+        },
+        {
+            title: "3PT",
+            desc: "Three-Pointers",
+            colspan: 3,
+        },
+    ];
 
-    const cols = getCols('Name', 'Pos', 'Team', 'GP', 'GS', 'Min', 'M', 'A', '%', 'M', 'A', '%', 'M', 'A', '%', 'M', 'A', '%');
+    const cols = getCols(
+        "Name",
+        "Pos",
+        "Team",
+        "GP",
+        "GS",
+        "Min",
+        "M",
+        "A",
+        "%",
+        "M",
+        "A",
+        "%",
+        "M",
+        "A",
+        "%",
+        "M",
+        "A",
+        "%",
+    );
 
     const rows = players.map(p => {
         return {
@@ -36,9 +66,13 @@ const PlayerShotLocations = ({players, season}) => {
                     pid={p.pid}
                     skills={p.ratings.skills}
                     watch={p.watch}
-                >{p.name}</PlayerNameLabels>,
+                >
+                    {p.name}
+                </PlayerNameLabels>,
                 p.ratings.pos,
-                <a href={helpers.leagueUrl(["roster", p.stats.abbrev, season])}>{p.stats.abbrev}</a>,
+                <a href={helpers.leagueUrl(["roster", p.stats.abbrev, season])}>
+                    {p.stats.abbrev}
+                </a>,
                 p.stats.gp,
                 p.stats.gs,
                 p.stats.min.toFixed(1),
@@ -61,21 +95,38 @@ const PlayerShotLocations = ({players, season}) => {
         };
     });
 
-    return <div>
-        <Dropdown view="player_shot_locations" fields={["seasons"]} values={[season]} />
-        <h1>Player Shot Locations <NewWindowLink /></h1>
+    return (
+        <div>
+            <Dropdown
+                view="player_shot_locations"
+                fields={["seasons"]}
+                values={[season]}
+            />
+            <h1>
+                Player Shot Locations <NewWindowLink />
+            </h1>
 
-        <p>More: <a href={helpers.leagueUrl(['player_stats', season])}>Main Stats</a> | <a href={helpers.leagueUrl(['player_stat_dists', season])}>Stat Distributions</a></p>
+            <p>
+                More:{" "}
+                <a href={helpers.leagueUrl(["player_stats", season])}>
+                    Main Stats
+                </a>{" "}
+                |{" "}
+                <a href={helpers.leagueUrl(["player_stat_dists", season])}>
+                    Stat Distributions
+                </a>
+            </p>
 
-        <DataTable
-            cols={cols}
-            defaultSort={[5, 'desc']}
-            name="PlayerShotLocations"
-            rows={rows}
-            pagination
-            superCols={superCols}
-        />
-    </div>;
+            <DataTable
+                cols={cols}
+                defaultSort={[5, "desc"]}
+                name="PlayerShotLocations"
+                rows={rows}
+                pagination
+                superCols={superCols}
+            />
+        </div>
+    );
 };
 
 PlayerShotLocations.propTypes = {

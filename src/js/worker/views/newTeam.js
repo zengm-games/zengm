@@ -1,9 +1,9 @@
 // @flow
 
-import {g} from '../../common';
-import {idb} from '../db';
+import { g } from "../../common";
+import { idb } from "../db";
 
-async function updateTeamSelect(): void | {[key: string]: any} {
+async function updateTeamSelect(): void | { [key: string]: any } {
     let teams = await idb.getCopies.teamsPlus({
         attrs: ["tid", "region", "name"],
         seasonAttrs: ["winp"],

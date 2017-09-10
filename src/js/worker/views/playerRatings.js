@@ -1,33 +1,74 @@
 // @flow
 
-import {PHASE, PLAYER, g} from '../../common';
-import {idb} from '../db';
-import type {UpdateEvents} from '../../common/types';
+import { PHASE, PLAYER, g } from "../../common";
+import { idb } from "../db";
+import type { UpdateEvents } from "../../common/types";
 
 async function updatePlayers(
-    inputs: {abbrev: string, season: number},
+    inputs: { abbrev: string, season: number },
     updateEvents: UpdateEvents,
     state: any,
-): void | {[key: string]: any} {
-    if ((inputs.season === g.season && updateEvents.includes('playerMovement')) || (updateEvents.includes('newPhase') && g.phase === PHASE.PRESEASON) || inputs.season !== state.season || inputs.abbrev !== state.abbrev) {
+): void | { [key: string]: any } {
+    if (
+        (inputs.season === g.season &&
+            updateEvents.includes("playerMovement")) ||
+        (updateEvents.includes("newPhase") && g.phase === PHASE.PRESEASON) ||
+        inputs.season !== state.season ||
+        inputs.abbrev !== state.abbrev
+    ) {
         let players;
         if (g.season === inputs.season && g.phase <= PHASE.PLAYOFFS) {
             players = await idb.cache.players.getAll();
-            players = players.filter((p) => p.tid !== PLAYER.RETIRED); // Normally won't be in cache, but who knows...
+            players = players.filter(p => p.tid !== PLAYER.RETIRED); // Normally won't be in cache, but who knows...
         } else {
-            players = await idb.getCopies.players({activeSeason: inputs.season});
+            players = await idb.getCopies.players({
+                activeSeason: inputs.season,
+            });
         }
 
         let tid = g.teamAbbrevsCache.indexOf(inputs.abbrev);
-        if (tid < 0) { tid = undefined; } // Show all teams
+        if (tid < 0) {
+            tid = undefined;
+        } // Show all teams
 
         if (!tid && inputs.abbrev === "watch") {
-            players = players.filter(p => p.watch && typeof p.watch !== "function");
+            players = players.filter(
+                p => p.watch && typeof p.watch !== "function",
+            );
         }
 
         players = await idb.getCopies.playersPlus(players, {
-            attrs: ["pid", "name", "abbrev", "age", "born", "injury", "watch", "hof"],
-            ratings: ["ovr", "pot", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb", "skills", "pos"],
+            attrs: [
+                "pid",
+                "name",
+                "abbrev",
+                "age",
+                "born",
+                "injury",
+                "watch",
+                "hof",
+            ],
+            ratings: [
+                "ovr",
+                "pot",
+                "hgt",
+                "stre",
+                "spd",
+                "jmp",
+                "endu",
+                "ins",
+                "dnk",
+                "ft",
+                "fg",
+                "tp",
+                "blk",
+                "stl",
+                "drb",
+                "pss",
+                "reb",
+                "skills",
+                "pos",
+            ],
             stats: ["abbrev", "tid"],
             season: inputs.season,
             showNoStats: true, // If this is true, it makes the "tid" entry do nothing

@@ -1,8 +1,8 @@
 // @flow
 
-import PropTypes from 'prop-types';
-import * as React from 'react';
-import {realtimeUpdate, toWorker} from '../util';
+import PropTypes from "prop-types";
+import * as React from "react";
+import { realtimeUpdate, toWorker } from "../util";
 
 type Props = {
     pid: number,
@@ -14,7 +14,7 @@ type State = {
 };
 
 class WatchBlock extends React.Component<Props, State> {
-    handleClick: (Event) => void;
+    handleClick: Event => void;
 
     constructor(props: Props) {
         super(props);
@@ -37,7 +37,10 @@ class WatchBlock extends React.Component<Props, State> {
     }
 
     shouldComponentUpdate(nextProps: Props, nextState: State) {
-        return this.props.pid !== nextProps.pid || this.state.watch !== nextState.watch;
+        return (
+            this.props.pid !== nextProps.pid ||
+            this.state.watch !== nextState.watch
+        );
     }
 
     async handleClick(e: SyntheticEvent<>) {
@@ -48,21 +51,33 @@ class WatchBlock extends React.Component<Props, State> {
             watch,
         });
 
-        await toWorker('updatePlayerWatch', this.props.pid, watch);
-        realtimeUpdate(['playerMovement', 'watchList']);
+        await toWorker("updatePlayerWatch", this.props.pid, watch);
+        realtimeUpdate(["playerMovement", "watchList"]);
     }
 
     render() {
         // For Firefox's Object.watch
-        if (typeof this.props.watch === 'function') {
+        if (typeof this.props.watch === "function") {
             return null;
         }
 
         if (this.state.watch) {
-            return <a className="glyphicon glyphicon-flag watch watch-active" onClick={this.handleClick} title="Remove from Watch List" />;
+            return (
+                <a
+                    className="glyphicon glyphicon-flag watch watch-active"
+                    onClick={this.handleClick}
+                    title="Remove from Watch List"
+                />
+            );
         }
 
-        return <a className="glyphicon glyphicon-flag watch" onClick={this.handleClick} title="Add to Watch List" />;
+        return (
+            <a
+                className="glyphicon glyphicon-flag watch"
+                onClick={this.handleClick}
+                title="Add to Watch List"
+            />
+        );
     }
 }
 

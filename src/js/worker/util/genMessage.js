@@ -1,10 +1,10 @@
 // @flow
 
-import {g, helpers} from '../../common';
-import {league} from '../core';
-import {idb} from '../db';
-import {local, random} from '../util';
-import type {OwnerMoodDeltas} from '../../common/types';
+import { g, helpers } from "../../common";
+import { league } from "../core";
+import { idb } from "../db";
+import { local, random } from "../util";
+import type { OwnerMoodDeltas } from "../../common/types";
 
 // First message after new game
 const first = [
@@ -14,15 +14,15 @@ const first = [
 // Random activities the owner claims to be doing
 const activities = [
     "learning how to windsurf while carrying a naked girl on my back.",
-    "working on my new \"mountaintop removal\" mining company (it's fascinating stuff).",
+    'working on my new "mountaintop removal" mining company (it\'s fascinating stuff).',
     "having sex with half the freshman girls at the local university (it's hard work, believe me).",
     "working on my charity, Sugar Daddies for Disadvantaged Hotties.",
     "lobbying the government to invade Peru (those bastards).",
     "organizing orgies at the governor's mansion (he's a very particular gentleman).",
-    "working with my new PR agency on that whole \"child slave sweatshop\" scandal.",
-    "lobbying the FDA to allow me to market ground horse meat as \"ground beeef\" (I already trademarked \"beeef\").",
+    'working with my new PR agency on that whole "child slave sweatshop" scandal.',
+    'lobbying the FDA to allow me to market ground horse meat as "ground beeef" (I already trademarked "beeef").',
     "arguing with my fourth wife's lawyer.",
-    "defending my real estate business from entirely frivolous lawsuits (can you believe they called me a \"slum lord\"?).",
+    'defending my real estate business from entirely frivolous lawsuits (can you believe they called me a "slum lord"?).',
     "managing my Ponzi scheme... I mean hedge fund, hedge fund, it's a hedge fund.",
     "fighting that ridiculous sexual harassment lawsuit (it's not that bad, my lawyer is a total babe).",
     "bribing the mayor to build a new lane on the highway just for me.",
@@ -39,7 +39,7 @@ const activities = [
     "figuring out how to fit in more courtside seats for celebrities.",
     "coming up with a way to slightly shrink or expand the hoop, depending on which one we're shooting at.",
     "perfecting my money laundering infrastructure (owning this team is very helpful).",
-    "making sure my \"girlfriends\" aren't posting pictures with black people on Instagram (how many times do I have to tell them??).",
+    'making sure my "girlfriends" aren\'t posting pictures with black people on Instagram (how many times do I have to tell them??).',
     "trying to run for President. I heard anyone can do it these days.",
     "convincing the commissioner to let me get another team so we can use one to get high draft picks and trade them to the other for nothing! (Its brilliant, isn't it?)",
     "experimenting with magnets so our shots go in more often. But how do they work?",
@@ -62,7 +62,7 @@ const activities = [
     "fishing with dynamite.",
     "posting pictures of my private island on Facebook to make my high school friends jealous.",
     "making sure the hot water is turned off in the visitor's locker room.",
-    "telling everyone I know about my \"can't miss\" penny stock).",
+    'telling everyone I know about my "can\'t miss" penny stock).',
     "playing handball with the Prince of Mongolia and his wife.",
     "swimming in my basement of old coins like I'm Scrooge McDuck.",
     "getting an espresso machine put in my Ferrari.",
@@ -102,7 +102,7 @@ wins[0] = [
 ];
 wins[1] = [
     "I recognize we're getting better and our team has some potential for growth, but don't fuck this up. You've already used up most of my patience.",
-    "You keep telling me we have \"potential\", but potential doesn't win games.",
+    'You keep telling me we have "potential", but potential doesn\'t win games.',
     "I remember when we were terrible. Now we're just less terrible. I want wins more than you want this job apparently.",
     "Where did you go to college again? This is what I get for not even looking at your resume before hiring you. Last season better not have been a fluke or you'll be in trouble.",
     "I'm surprised fans aren't falling asleep in the stands. This team is still boring. Better, but still boring.",
@@ -113,7 +113,7 @@ wins[2] = [
     "In this league, mediocrity can be worse than losing. I hope you have some plan to get us to the next level.",
     "What year is it again? This team looks the same as it did last season. I want to see change! I want more wins! Mediocre teams get nowhere fast!",
     "This mediocrity is like being in a coma. Maybe you will wake up. Maybe you will die. Either way, figure it out.",
-    "Purgatory - \"a place or state of suffering inhabited by the souls of sinners who are expiating their sins before going to heaven.\" I'm losing patience.",
+    'Purgatory - "a place or state of suffering inhabited by the souls of sinners who are expiating their sins before going to heaven." I\'m losing patience.',
 ];
 wins[3] = [
     "Don't think you can coast on your past success for too long. I'm not planning on rebuilding for a decade.",
@@ -181,7 +181,7 @@ money[0] = [
 ];
 money[1] = [
     "I like the recent financial turnaround you engineered. But I can't afford any setback.",
-    "I took a hit in the market this year, who knew shorts had to be paid back? Anyway, keep improving so I can keep gambling... I mean, \"ivesting aggressively\".",
+    'I took a hit in the market this year, who knew shorts had to be paid back? Anyway, keep improving so I can keep gambling... I mean, "ivesting aggressively".',
     "I guess we aren't drowning in debt but that doesn't mean I am satisfied.",
     "Money makes the world go around. I want to be dizzy AF. Let's make that happen.",
 ];
@@ -226,7 +226,7 @@ ovr[1] = [
 ovr[2] = [
     "Anyway, overall I'm happy with the progress you've made, but I need to get back to {{activity}}",
     "I am hopeful that our success is sustainable but for now I need to get back to {{activity}}.",
-    "I love when we win. Remember its \"WE\" when we win and it's \"YOU\" when we lose. I gotta get back to {{activity}}.",
+    'I love when we win. Remember its "WE" when we win and it\'s "YOU" when we lose. I gotta get back to {{activity}}.',
 ];
 
 async function genMessage(deltas: OwnerMoodDeltas) {
@@ -235,12 +235,13 @@ async function genMessage(deltas: OwnerMoodDeltas) {
         return;
     }
 
-    const ownerMoodSum = g.ownerMood.wins + g.ownerMood.playoffs + g.ownerMood.money;
+    const ownerMoodSum =
+        g.ownerMood.wins + g.ownerMood.playoffs + g.ownerMood.money;
 
     let m;
     if (g.showFirstOwnerMessage) {
         m = random.choice(first);
-        await league.setGameAttributes({showFirstOwnerMessage: false});
+        await league.setGameAttributes({ showFirstOwnerMessage: false });
     } else {
         const activity1 = random.choice(activities);
         let activity2 = random.choice(activities);
@@ -294,31 +295,66 @@ async function genMessage(deltas: OwnerMoodDeltas) {
         }
 
         if (ownerMoodSum > -1) {
-            m = `<p>${random.choice(intro).replace("{{activity}}", activity1)}</p>
-                 <p>${random.choice(wins[indWins])} ${random.choice(playoffs[indPlayoffs])}</p>
+            m = `<p>${random
+                .choice(intro)
+                .replace("{{activity}}", activity1)}</p>
+                 <p>${random.choice(wins[indWins])} ${random.choice(
+                playoffs[indPlayoffs],
+            )}</p>
                  <p>${random.choice(money[indMoney])}</p>
-                 <p>${random.choice(ovr[indOvr]).replace("{{activity}}", activity2)}</p>`;
+                 <p>${random
+                     .choice(ovr[indOvr])
+                     .replace("{{activity}}", activity2)}</p>`;
         } else if (g.season < g.gracePeriodEnd || g.godMode) {
             if (deltas.wins < 0 && deltas.playoffs < 0 && deltas.money < 0) {
-                m = "<p>What the hell did you do to my franchise?! I'd fire you, but I can't find anyone who wants to clean up your mess.</p>";
-            } else if (deltas.money < 0 && deltas.wins >= 0 && deltas.playoffs >= 0) {
-                m = "<p>I don't care what our colors are. I need to see some green! I won't wait forever. MAKE ME MONEY.</p>";
-            } else if (deltas.money >= 0 && deltas.wins < 0 && deltas.playoffs < 0) {
-                m = "<p>Our fans are out for blood. Put a winning team together, or I'll let those animals have you.</p>";
+                m =
+                    "<p>What the hell did you do to my franchise?! I'd fire you, but I can't find anyone who wants to clean up your mess.</p>";
+            } else if (
+                deltas.money < 0 &&
+                deltas.wins >= 0 &&
+                deltas.playoffs >= 0
+            ) {
+                m =
+                    "<p>I don't care what our colors are. I need to see some green! I won't wait forever. MAKE ME MONEY.</p>";
+            } else if (
+                deltas.money >= 0 &&
+                deltas.wins < 0 &&
+                deltas.playoffs < 0
+            ) {
+                m =
+                    "<p>Our fans are out for blood. Put a winning team together, or I'll let those animals have you.</p>";
             } else {
-                m = "<p>The longer you keep your job, the more I question why I hired you. Do better or get out.</p>";
+                m =
+                    "<p>The longer you keep your job, the more I question why I hired you. Do better or get out.</p>";
             }
         } else {
-            if (g.ownerMood.wins < 0 && g.ownerMood.playoffs < 0 && g.ownerMood.money < 0) {
-                m = "<p>You've been an all-around disappointment. You're fired.</p>";
-            } else if (g.ownerMood.money < 0 && g.ownerMood.wins >= 0 && g.ownerMood.playoffs >= 0) {
-                m = "<p>You've won some games, but you're just not making me enough profit. It's not all about wins and losses, dollars matter too. You're fired.</p>";
-            } else if (g.ownerMood.money >= 0 && g.ownerMood.wins < 0 && g.ownerMood.playoffs < 0) {
-                m = "<p>I like that you've made a nice profit for me, but you're not putting a competitive team on the court. We need a new direction. You're fired.</p>";
+            if (
+                g.ownerMood.wins < 0 &&
+                g.ownerMood.playoffs < 0 &&
+                g.ownerMood.money < 0
+            ) {
+                m =
+                    "<p>You've been an all-around disappointment. You're fired.</p>";
+            } else if (
+                g.ownerMood.money < 0 &&
+                g.ownerMood.wins >= 0 &&
+                g.ownerMood.playoffs >= 0
+            ) {
+                m =
+                    "<p>You've won some games, but you're just not making me enough profit. It's not all about wins and losses, dollars matter too. You're fired.</p>";
+            } else if (
+                g.ownerMood.money >= 0 &&
+                g.ownerMood.wins < 0 &&
+                g.ownerMood.playoffs < 0
+            ) {
+                m =
+                    "<p>I like that you've made a nice profit for me, but you're not putting a competitive team on the court. We need a new direction. You're fired.</p>";
             } else {
                 m = "<p>You're fired.</p>";
             }
-            m += `<p>I hear a few other teams are looking for a new GM. <a href="${helpers.leagueUrl(["new_team"])}">Take a look.</a> Please, go run one of those teams into the ground.</p>`;
+            m += `<p>I hear a few other teams are looking for a new GM. <a href="${helpers.leagueUrl(
+                ["new_team"],
+            )}">Take a look.</a> Please, go run one of those teams into the ground.</p>`;
         }
     }
 

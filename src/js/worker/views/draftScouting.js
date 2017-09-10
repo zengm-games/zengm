@@ -1,11 +1,11 @@
 // @flow
 
-import {PHASE, PLAYER, g} from '../../common';
-import {idb} from '../db';
-import type {GetOutput, UpdateEvents} from '../../common/types';
+import { PHASE, PLAYER, g } from "../../common";
+import { idb } from "../db";
+import type { GetOutput, UpdateEvents } from "../../common/types";
 
 async function addSeason(season, tid) {
-    let playersAll = await idb.cache.players.indexGetAll('playersByTid', tid);
+    let playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);
 
     playersAll = await idb.getCopies.playersPlus(playersAll, {
         attrs: ["pid", "firstName", "lastName", "age", "watch", "valueFuzz"],
@@ -21,7 +21,10 @@ async function addSeason(season, tid) {
         const pa = playersAll[i];
 
         // Abbreviate first name to prevent overflows
-        pa.name = `${pa.firstName.split(" ").map(s => s[0]).join(".")}. ${pa.lastName}`;
+        pa.name = `${pa.firstName
+            .split(" ")
+            .map(s => s[0])
+            .join(".")}. ${pa.lastName}`;
 
         players.push({
             // Attributes
@@ -50,13 +53,19 @@ async function addSeason(season, tid) {
 async function updateDraftScouting(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
-): void | {[key: string]: any} {
-    if (updateEvents.includes('firstRun') || updateEvents.includes('playerMovement')) {
+): void | { [key: string]: any } {
+    if (
+        updateEvents.includes("firstRun") ||
+        updateEvents.includes("playerMovement")
+    ) {
         // Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
         const seasonOffset = g.phase < PHASE.FREE_AGENCY ? 0 : 1;
 
         // In fantasy draft, use temp tid
-        const firstUndraftedTid = g.phase === PHASE.FANTASY_DRAFT ? PLAYER.UNDRAFTED_FANTASY_TEMP : PLAYER.UNDRAFTED;
+        const firstUndraftedTid =
+            g.phase === PHASE.FANTASY_DRAFT
+                ? PLAYER.UNDRAFTED_FANTASY_TEMP
+                : PLAYER.UNDRAFTED;
 
         const seasons = await Promise.all([
             addSeason(g.season + seasonOffset, firstUndraftedTid),

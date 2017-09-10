@@ -2,8 +2,8 @@
 
 /* eslint quote-props: "off" */
 
-import {helpers} from '../../common';
-import type {SortOrder, SortType} from '../../common/types';
+import { helpers } from "../../common";
+import type { SortOrder, SortType } from "../../common/types";
 
 const cols: {
     [key: string]: {
@@ -11,434 +11,434 @@ const cols: {
         sortSequence?: SortOrder[],
         sortType?: SortType,
         title?: string, // Should actually be required, but is only added later
-    }
+    },
 } = {
-    '': {
-        sortSequence: ['desc', 'asc'],
+    "": {
+        sortSequence: ["desc", "asc"],
     },
-    '#': {},
-    '%': {
-        desc: 'Percentage',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    "#": {},
+    "%": {
+        desc: "Percentage",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    '+/-': {
-        desc: 'Plus/Minus',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    "+/-": {
+        desc: "Plus/Minus",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'A': {
-        desc: 'Attempted',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    A: {
+        desc: "Attempted",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'ADT': {
-        desc: 'All Defensive Team',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    ADT: {
+        desc: "All Defensive Team",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'ALT': {
-        desc: 'All League Team',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    ALT: {
+        desc: "All League Team",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'ART': {
-        desc: 'All Rookie Team',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    ART: {
+        desc: "All Rookie Team",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'Age': {
-        sortType: 'number',
+    Age: {
+        sortType: "number",
     },
-    'Amount': {
-        sortSequence: ['desc', 'asc'],
-        sortType: 'currency',
+    Amount: {
+        sortSequence: ["desc", "asc"],
+        sortType: "currency",
     },
-    'Asking For': {
-        sortSequence: ['desc', 'asc'],
-        sortType: 'currency',
+    "Asking For": {
+        sortSequence: ["desc", "asc"],
+        sortType: "currency",
     },
-    'Ast': {
-        desc: 'Assists Per Game',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    Ast: {
+        desc: "Assists Per Game",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'Avg Attendance': {
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    "Avg Attendance": {
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'BA': {
-        desc: 'Blocks Against',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    BA: {
+        desc: "Blocks Against",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'BR': {
-        desc: 'Best Record',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    BR: {
+        desc: "Best Record",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'BRC': {
-        desc: 'Best Conference Record',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    BRC: {
+        desc: "Best Conference Record",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'Blk': {
-        desc: 'Blocks',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    Blk: {
+        desc: "Blocks",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'Cash': {
-        sortSequence: ['desc', 'asc'],
-        sortType: 'currency',
+    Cash: {
+        sortSequence: ["desc", "asc"],
+        sortType: "currency",
     },
-    'Championships': {
-        desc: 'Championships Won',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    Championships: {
+        desc: "Championships Won",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'Conference': {},
-    'Contract': {
-        sortSequence: ['desc', 'asc'],
-        sortType: 'currency',
+    Conference: {},
+    Contract: {
+        sortSequence: ["desc", "asc"],
+        sortType: "currency",
     },
-    'Count': {
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    Count: {
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'Country': {},
-    'Current Contract': {
-        sortSequence: ['desc', 'asc'],
-        sortType: 'currency',
+    Country: {},
+    "Current Contract": {
+        sortSequence: ["desc", "asc"],
+        sortType: "currency",
     },
-    'DPOY': {
-        desc: 'Defensive Player of the Year',
-        sortType: 'name',
+    DPOY: {
+        desc: "Defensive Player of the Year",
+        sortType: "name",
     },
-    'Def': {
-        desc: 'Defensive',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    Def: {
+        desc: "Defensive",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'Desired Contract': {
-        sortSequence: ['desc', 'asc'],
-        sortType: 'currency',
+    "Desired Contract": {
+        sortSequence: ["desc", "asc"],
+        sortType: "currency",
     },
-    'Diff': {
-        desc: 'Point Differential',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    Diff: {
+        desc: "Point Differential",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'Division': {},
-    'Draft': {
+    Division: {},
+    Draft: {
         sortSequence: [],
     },
-    'Drafted': {},
-    'EWA': {
-        desc: 'Estimated Wins Added',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    Drafted: {},
+    EWA: {
+        desc: "Estimated Wins Added",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'FG%': {
-        desc: 'Field Goal Percentage',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    "FG%": {
+        desc: "Field Goal Percentage",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'FT%': {
-        desc: 'Free Throw Percentage',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    "FT%": {
+        desc: "Free Throw Percentage",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'Finals': {
-        desc: 'Finals Appearances',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    Finals: {
+        desc: "Finals Appearances",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'Finals MVP': {
-        desc: 'Finals Most Valuable Player',
-        sortType: 'name',
+    "Finals MVP": {
+        desc: "Finals Most Valuable Player",
+        sortType: "name",
     },
-    'GP': {
-        desc: 'Games Played',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    GP: {
+        desc: "Games Played",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'GS': {
-        desc: 'Games Started',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    GS: {
+        desc: "Games Started",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'GmSc': {
-        desc: 'Game Score',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    GmSc: {
+        desc: "Game Score",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'HOF': {
-        sortSequence: ['desc', 'asc'],
+    HOF: {
+        sortSequence: ["desc", "asc"],
     },
-    'L': {
-        desc: 'Games Lost',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    L: {
+        desc: "Games Lost",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'L10': {
-        desc: 'Last Ten Games',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'lastTen',
+    L10: {
+        desc: "Last Ten Games",
+        sortSequence: ["desc", "asc"],
+        sortType: "lastTen",
     },
-    'Last': {
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    Last: {
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'Last Playoffs': {
-        sortType: 'number',
+    "Last Playoffs": {
+        sortType: "number",
     },
-    'Last Season': {
-        desc: 'Last Season with Team',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    "Last Season": {
+        desc: "Last Season with Team",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'Last Title': {
-        sortType: 'number',
+    "Last Title": {
+        sortType: "number",
     },
-    'League Champion': {},
-    'M': {
-        desc: 'Made',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    "League Champion": {},
+    M: {
+        desc: "Made",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'MVP': {
-        desc: 'Most Valuable Player',
-        sortType: 'name',
+    MVP: {
+        desc: "Most Valuable Player",
+        sortType: "name",
     },
-    'Min': {
-        desc: 'Minutes Per Game',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    Min: {
+        desc: "Minutes Per Game",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'Mood': {},
-    'Name': {
-        sortType: 'name',
+    Mood: {},
+    Name: {
+        sortType: "name",
     },
-    'Negotiate': {},
-    'O': {
-        desc: 'Overall',
-        sortType: 'number',
+    Negotiate: {},
+    O: {
+        desc: "Overall",
+        sortType: "number",
     },
-    'OPts': {
+    OPts: {
         desc: "Opponent's Points",
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'Opp': {
-        desc: 'Opponent',
+    Opp: {
+        desc: "Opponent",
     },
-    'Off': {
-        desc: 'Offensive',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    Off: {
+        desc: "Offensive",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'Ovr': {
-        desc: 'Overall Rating',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    Ovr: {
+        desc: "Overall Rating",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'P': {
-        desc: 'Performance',
-        sortType: 'number',
+    P: {
+        desc: "Performance",
+        sortType: "number",
     },
-    'PER': {
-        desc: 'Player Efficiency Rating',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    PER: {
+        desc: "Player Efficiency Rating",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'PF': {
-        desc: 'Personal Fouls',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    PF: {
+        desc: "Personal Fouls",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'PPG': {
-        desc: 'Points Per Game',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    PPG: {
+        desc: "Points Per Game",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'Payroll': {
-        sortSequence: ['desc', 'asc'],
-        sortType: 'currency',
+    Payroll: {
+        sortSequence: ["desc", "asc"],
+        sortType: "currency",
     },
-    'Peak Ovr': {
-        desc: 'Peak Overall Rating',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    "Peak Ovr": {
+        desc: "Peak Overall Rating",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'Pick': {
-        desc: 'Draft Pick',
-        sortType: 'draftPick',
+    Pick: {
+        desc: "Draft Pick",
+        sortType: "draftPick",
     },
-    'Playoffs': {
-        desc: 'Playoff Appearances',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    Playoffs: {
+        desc: "Playoff Appearances",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'Pos': {
-        desc: 'Position',
+    Pos: {
+        desc: "Position",
     },
-    'Pot': {
-        desc: 'Potential Rating',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    Pot: {
+        desc: "Potential Rating",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'Profit (YTD)': {
-        sortSequence: ['desc', 'asc'],
-        sortType: 'currency',
+    "Profit (YTD)": {
+        sortSequence: ["desc", "asc"],
+        sortType: "currency",
     },
-    'Pts': {
-        desc: 'Points',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    Pts: {
+        desc: "Points",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'ROY': {
-        desc: 'Rookie of the Year',
-        sortType: 'name',
+    ROY: {
+        desc: "Rookie of the Year",
+        sortType: "name",
     },
-    'Reb': {
-        desc: 'Rebounds Per Game',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    Reb: {
+        desc: "Rebounds Per Game",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'Result': {},
-    'Retired': {
-        sortSequence: ['desc', 'asc'],
+    Result: {},
+    Retired: {
+        sortSequence: ["desc", "asc"],
     },
-    'Revenue (YTD)': {
-        sortSequence: ['desc', 'asc'],
-        sortType: 'currency',
+    "Revenue (YTD)": {
+        sortSequence: ["desc", "asc"],
+        sortType: "currency",
     },
-    'Runner Up': {},
-    'SMOY': {
-        desc: 'Sixth Man of the Year',
-        sortType: 'name',
+    "Runner Up": {},
+    SMOY: {
+        desc: "Sixth Man of the Year",
+        sortType: "name",
     },
-    'Season': {
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    Season: {
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'Skills': {},
-    'Stl': {
-        desc: 'Steals',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    Skills: {},
+    Stl: {
+        desc: "Steals",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'T': {
-        desc: 'Talent',
-        sortType: 'number',
+    T: {
+        desc: "Talent",
+        sortType: "number",
     },
-    'TO': {
-        desc: 'Turnovers',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    TO: {
+        desc: "Turnovers",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'TP%': {
-        desc: 'Three Point Percentage',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    "TP%": {
+        desc: "Three Point Percentage",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'Team': {},
-    'Tot': {
-        desc: 'Total',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    Team: {},
+    Tot: {
+        desc: "Total",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'W': {
-        desc: 'Games Won',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    W: {
+        desc: "Games Won",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'Year': {},
+    Year: {},
 
     // "rating:" prefix is to prevent collisions with stats
-    'rating:2Pt': {
-        desc: 'Two-Point Shooting',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    "rating:2Pt": {
+        desc: "Two-Point Shooting",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'rating:3Pt': {
-        desc: 'Three-Point Shooting',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    "rating:3Pt": {
+        desc: "Three-Point Shooting",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'rating:Blk': {
-        desc: 'Blocks',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    "rating:Blk": {
+        desc: "Blocks",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'rating:Dnk': {
-        desc: 'Dunks/Layups',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    "rating:Dnk": {
+        desc: "Dunks/Layups",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'rating:Drb': {
-        desc: 'Dribbling',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    "rating:Drb": {
+        desc: "Dribbling",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'rating:End': {
-        desc: 'Endurance',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    "rating:End": {
+        desc: "Endurance",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'rating:Hgt': {
-        desc: 'Height',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    "rating:Hgt": {
+        desc: "Height",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'rating:Ins': {
-        desc: 'Inside Scoring',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    "rating:Ins": {
+        desc: "Inside Scoring",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'rating:Jmp': {
-        desc: 'Jumping',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    "rating:Jmp": {
+        desc: "Jumping",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'rating:FT': {
-        desc: 'Free Throw Shooting',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    "rating:FT": {
+        desc: "Free Throw Shooting",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'rating:Pss': {
-        desc: 'Passing',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    "rating:Pss": {
+        desc: "Passing",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'rating:Reb': {
-        desc: 'Rebounding',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    "rating:Reb": {
+        desc: "Rebounding",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'rating:Spd': {
-        desc: 'Speed',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    "rating:Spd": {
+        desc: "Speed",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'rating:Stl': {
-        desc: 'Steals',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    "rating:Stl": {
+        desc: "Steals",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
-    'rating:Str': {
-        desc: 'Strength',
-        sortSequence: ['desc', 'asc'],
-        sortType: 'number',
+    "rating:Str": {
+        desc: "Strength",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
     },
 };
 
 for (const key of Object.keys(cols)) {
-    cols[key].title = key.replace('rating:', '');
+    cols[key].title = key.replace("rating:", "");
 }
 
 export default (...titles: string[]) => {
-    return titles.map((title) => {
+    return titles.map(title => {
         if (!cols.hasOwnProperty(title)) {
             throw new Error(`Unknown column: "${title}"`);
         }

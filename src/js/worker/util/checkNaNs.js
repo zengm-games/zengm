@@ -6,8 +6,9 @@ const checkObject = (obj, foundNaN, replace) => {
     replace = replace !== undefined ? replace : false;
 
     for (const prop of Object.keys(obj)) {
-        if (typeof obj[prop] === 'object' && obj[prop] !== null) {
+        if (typeof obj[prop] === "object" && obj[prop] !== null) {
             foundNaN = checkObject(obj[prop], foundNaN, replace);
+            // eslint-disable-next-line no-self-compare
         } else if (obj[prop] !== obj[prop]) {
             // NaN check from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/isNaN
             foundNaN = true;
@@ -25,9 +26,9 @@ const wrap = (parent: any, name, wrapper) => {
     parent[name] = wrapper(original);
 };
 
-const wrapperNaNChecker = (_super) => {
-    return function (obj, ...args) {
-/* Commented out becuse I'm not sure how to make this send just once from worker
+const wrapperNaNChecker = _super => {
+    return function(obj, ...args) {
+        /* Commented out becuse I'm not sure how to make this send just once from worker
         if (checkObject(obj)) {
             const err = new Error('NaN found before writing to IndexedDB');
 
@@ -54,9 +55,9 @@ const wrapperNaNChecker = (_super) => {
 };
 
 const checkNaNs = () => {
-    wrap(IDBObjectStore.prototype, 'add', wrapperNaNChecker);
-    wrap(IDBObjectStore.prototype, 'put', wrapperNaNChecker);
-    wrap(IDBCursor.prototype, 'update', wrapperNaNChecker);
+    wrap(IDBObjectStore.prototype, "add", wrapperNaNChecker);
+    wrap(IDBObjectStore.prototype, "put", wrapperNaNChecker);
+    wrap(IDBCursor.prototype, "update", wrapperNaNChecker);
 };
 
 export default checkNaNs;

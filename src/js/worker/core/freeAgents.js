@@ -1,12 +1,20 @@
 // @flow
 
-import orderBy from 'lodash.orderby';
-import _ from 'underscore';
-import {PHASE, PLAYER, g, helpers} from '../../common';
-import {league, phase, player, team, trade} from '../core';
-import {idb} from '../db';
-import {local, lock, logEvent, random, updatePlayMenu, updateStatus, toUI} from '../util';
-import type {Conditions} from '../../common/types';
+import orderBy from "lodash.orderby";
+import _ from "underscore";
+import { PHASE, PLAYER, g, helpers } from "../../common";
+import { league, phase, player, team, trade } from "../core";
+import { idb } from "../db";
+import {
+    local,
+    lock,
+    logEvent,
+    random,
+    updatePlayMenu,
+    updateStatus,
+    toUI,
+} from "../util";
+import type { Conditions } from "../../common/types";
 
 /**
  * AI teams sign free agents.
@@ -22,7 +30,7 @@ async function autoSign() {
             attrs: ["strategy"],
             season: g.season,
         }),
-        idb.cache.players.indexGetAll('playersByTid', PLAYER.FREE_AGENT),
+        idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT),
     ]);
 
     if (players.length === 0) {
@@ -32,7 +40,7 @@ async function autoSign() {
     const strategies = teams.map(t => t.strategy);
 
     // List of free agents, sorted by value
-    const playersSorted = orderBy(players, 'value', 'desc');
+    const playersSorted = orderBy(players, "value", "desc");
 
     // Randomly order teams
     const tids = _.range(g.numTeams);
@@ -45,7 +53,10 @@ async function autoSign() {
         }
 
         // Small chance of actually trying to sign someone in free agency, gets greater as time goes on
-        if (g.phase === PHASE.FREE_AGENCY && Math.random() < 0.99 * g.daysLeft / 30) {
+        if (
+            g.phase === PHASE.FREE_AGENCY &&
+            Math.random() < 0.99 * g.daysLeft / 30
+        ) {
             continue;
         }
 
@@ -54,7 +65,10 @@ async function autoSign() {
             continue;
         }
 
-        const playersOnRoster = await idb.cache.players.indexGetAll('playersByTid', tid);
+        const playersOnRoster = await idb.cache.players.indexGetAll(
+            "playersByTid",
+            tid,
+        );
         const payroll = (await team.getPayroll(tid))[0];
         const numPlayersOnRoster = playersOnRoster.length;
 
@@ -62,19 +76,36 @@ async function autoSign() {
             for (let i = 0; i < playersSorted.length; i++) {
                 const p = playersSorted[i];
                 // Don't sign minimum contract players to fill out the roster
-                if (p.contract.amount + payroll <= g.salaryCap || (p.contract.amount === g.minContract && numPlayersOnRoster < 13)) {
+                if (
+                    p.contract.amount + payroll <= g.salaryCap ||
+                    (p.contract.amount === g.minContract &&
+                        numPlayersOnRoster < 13)
+                ) {
                     p.tid = tid;
-                    if (g.phase <= PHASE.PLAYOFFS) { // Otherwise, not needed until next season
+                    if (g.phase <= PHASE.PLAYOFFS) {
+                        // Otherwise, not needed until next season
                         await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
                     }
                     player.setContract(p, p.contract, true);
                     p.gamesUntilTradable = 15;
-                    idb.cache.markDirtyIndexes('players');
+                    idb.cache.markDirtyIndexes("players");
 
                     // No conditions needed here because showNotification is false
                     logEvent({
                         type: "freeAgent",
-                        text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(p.contract.amount / 1000, "M")}/year through ${p.contract.exp}.`,
+                        text: `The <a href="${helpers.leagueUrl([
+                            "roster",
+                            g.teamAbbrevsCache[p.tid],
+                            g.season,
+                        ])}">${g.teamNamesCache[
+                            p.tid
+                        ]}</a> signed <a href="${helpers.leagueUrl([
+                            "player",
+                            p.pid,
+                        ])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(
+                            p.contract.amount / 1000,
+                            "M",
+                        )}/year through ${p.contract.exp}.`,
                         showNotification: false,
                         pids: [p.pid],
                         tids: [p.tid],
@@ -102,7 +133,10 @@ async function autoSign() {
  * @return {Promise}
  */
 async function decreaseDemands() {
-    const players = await idb.cache.players.indexGetAll('playersByTid', PLAYER.FREE_AGENT);
+    const players = await idb.cache.players.indexGetAll(
+        "playersByTid",
+        PLAYER.FREE_AGENT,
+    );
     for (const p of players) {
         // Decrease free agent demands
         p.contract.amount -= 50 * Math.sqrt(g.maxContract / 20000);
@@ -131,7 +165,7 @@ async function decreaseDemands() {
         if (p.injury.gamesRemaining > 0) {
             p.injury.gamesRemaining -= 1;
         } else {
-            p.injury = {type: "Healthy", gamesRemaining: 0};
+            p.injury = { type: "Healthy", gamesRemaining: 0 };
         }
 
         await idb.cache.players.put(p);
@@ -169,15 +203,19 @@ function amountWithMood(amount: number, mood: number = 0.5): number {
  * @param {number} numDays An integer representing the number of days to be simulated. If numDays is larger than the number of days remaining, then all of free agency will be simulated up until the preseason starts.
  * @param {boolean} start Is this a new request from the user to simulate days (true) or a recursive callback to simulate another day (false)? If true, then there is a check to make sure simulating games is allowed. Default true.
  */
-async function play(numDays: number, conditions: Conditions, start?: boolean = true) {
+async function play(
+    numDays: number,
+    conditions: Conditions,
+    start?: boolean = true,
+) {
     // This is called when there are no more days to play, either due to the user's request (e.g. 1 week) elapsing or at the end of free agency.
     const cbNoDays = async () => {
-        lock.set('gameSim', false);
+        lock.set("gameSim", false);
         await updatePlayMenu();
 
         // Check to see if free agency is over
         if (g.daysLeft === 0) {
-            await updateStatus('Idle');
+            await updateStatus("Idle");
             await phase.newPhase(PHASE.PRESEASON, conditions);
         }
     };
@@ -188,9 +226,9 @@ async function play(numDays: number, conditions: Conditions, start?: boolean = t
         const cbYetAnother = async () => {
             await decreaseDemands();
             await autoSign();
-            await league.setGameAttributes({daysLeft: g.daysLeft - 1});
+            await league.setGameAttributes({ daysLeft: g.daysLeft - 1 });
             if (g.daysLeft > 0 && numDays > 0) {
-                await toUI(['realtimeUpdate', ['playerMovement']]);
+                await toUI(["realtimeUpdate", ["playerMovement"]]);
                 await updateStatus(`${g.daysLeft} days left`);
                 await trade.betweenAiTeams();
                 play(numDays - 1, conditions, false);
@@ -201,10 +239,10 @@ async function play(numDays: number, conditions: Conditions, start?: boolean = t
 
         // If we didn't just stop games, let's play
         // Or, if we are starting games (and already passed the lock), continue even if stopGameSim was just seen
-        const stopGameSim = lock.get('stopGameSim');
+        const stopGameSim = lock.get("stopGameSim");
         if (numDays > 0 && (start || !stopGameSim)) {
             if (stopGameSim) {
-                lock.set('stopGameSim', false);
+                lock.set("stopGameSim", false);
             }
             await cbYetAnother();
         } else {

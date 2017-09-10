@@ -1,12 +1,14 @@
 // @flow
 
-import backboard from 'backboard';
-import {connectLeague, idb} from '../db';
-import type {GetOutput} from '../../common/types';
+import backboard from "backboard";
+import { connectLeague, idb } from "../db";
+import type { GetOutput } from "../../common/types";
 
-async function updateDeleteLeague({lid}: GetOutput): void | {[key: string]: any} {
-    if (typeof lid !== 'number') {
-        throw new Error('Invalid input for lid');
+async function updateDeleteLeague({
+    lid,
+}: GetOutput): void | { [key: string]: any } {
+    if (typeof lid !== "number") {
+        throw new Error("Invalid input for lid");
     }
 
     const db = await connectLeague(lid);
@@ -14,7 +16,9 @@ async function updateDeleteLeague({lid}: GetOutput): void | {[key: string]: any}
         const [numGames, numPlayers, teamSeasons, l] = await Promise.all([
             db.games.count(),
             db.players.count(),
-            db.teamSeasons.index("tid, season").getAll(backboard.bound([0], [0, ''])),
+            db.teamSeasons
+                .index("tid, season")
+                .getAll(backboard.bound([0], [0, ""])),
             idb.meta.leagues.get(lid),
         ]);
 

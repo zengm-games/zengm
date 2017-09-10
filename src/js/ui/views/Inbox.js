@@ -1,44 +1,95 @@
 // @flow
 
-import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import * as React from 'react';
-import {helpers} from '../../common';
-import {NewWindowLink} from '../components';
-import {setTitle} from '../util';
-import type {Message} from '../../common/types';
+import classNames from "classnames";
+import PropTypes from "prop-types";
+import * as React from "react";
+import { helpers } from "../../common";
+import { NewWindowLink } from "../components";
+import { setTitle } from "../util";
+import type { Message } from "../../common/types";
 
-const Inbox = ({anyUnread, messages}: {anyUnread: boolean, messages: Message[]}) => {
-    setTitle('Inbox');
+const Inbox = ({
+    anyUnread,
+    messages,
+}: {
+    anyUnread: boolean,
+    messages: Message[],
+}) => {
+    setTitle("Inbox");
 
-    return <div>
-        <h1>Inbox <NewWindowLink /></h1>
+    return (
+        <div>
+            <h1>
+                Inbox <NewWindowLink />
+            </h1>
 
-        {anyUnread ? <p className="text-danger">You have a new message. Read it before continuing.</p> : null}
+            {anyUnread ? (
+                <p className="text-danger">
+                    You have a new message. Read it before continuing.
+                </p>
+            ) : null}
 
-        <table className="table table-striped table-bordered table-condensed" id="messages-table">
-            <tbody>
-                {messages.map(({from, mid, read, text, year}) => {
-                    return <tr key={mid} className={classNames({unread: !read})}>
-                        <td className="year"><a href={helpers.leagueUrl(['message', mid])}>{year}</a></td>
-                        <td className="from"><a href={helpers.leagueUrl(['message', mid])}>{from}</a></td>
-                        <td className="text"><a href={helpers.leagueUrl(['message', mid])}>{text}</a></td>
-                    </tr>;
-                })}
-            </tbody>
-        </table>
-    </div>;
+            <table
+                className="table table-striped table-bordered table-condensed"
+                id="messages-table"
+            >
+                <tbody>
+                    {messages.map(({ from, mid, read, text, year }) => {
+                        return (
+                            <tr
+                                key={mid}
+                                className={classNames({ unread: !read })}
+                            >
+                                <td className="year">
+                                    <a
+                                        href={helpers.leagueUrl([
+                                            "message",
+                                            mid,
+                                        ])}
+                                    >
+                                        {year}
+                                    </a>
+                                </td>
+                                <td className="from">
+                                    <a
+                                        href={helpers.leagueUrl([
+                                            "message",
+                                            mid,
+                                        ])}
+                                    >
+                                        {from}
+                                    </a>
+                                </td>
+                                <td className="text">
+                                    <a
+                                        href={helpers.leagueUrl([
+                                            "message",
+                                            mid,
+                                        ])}
+                                    >
+                                        {text}
+                                    </a>
+                                </td>
+                            </tr>
+                        );
+                    })}
+                </tbody>
+            </table>
+        </div>
+    );
 };
 
 Inbox.propTypes = {
     anyUnread: PropTypes.bool.isRequired,
-    messages: PropTypes.arrayOf(PropTypes.shape({
-        from: PropTypes.string.isRequired,
-        mid: PropTypes.number.isRequired,
-        read: PropTypes.bool.isRequired,
-        text: PropTypes.string.isRequired,
-        year: PropTypes.number.isRequired,
-    })).isRequired,
+    messages: PropTypes.arrayOf(
+        PropTypes.shape({
+            from: PropTypes.string.isRequired,
+            mid: PropTypes.number.isRequired,
+            read: PropTypes.bool.isRequired,
+            text: PropTypes.string.isRequired,
+            year: PropTypes.number.isRequired,
+        }),
+    ).isRequired,
 };
 
 export default Inbox;

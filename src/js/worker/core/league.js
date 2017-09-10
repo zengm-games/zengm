@@ -1,11 +1,28 @@
 // @flow
 
-import backboard from 'backboard';
-import {Cache, connectLeague, idb} from '../db';
-import {PHASE, PLAYER, g, helpers} from '../../common';
-import {draft, finances, freeAgents, game, phase, player, season, team} from '../core';
-import {defaultGameAttributes, local, lock, random, toUI, updatePhase, updateStatus} from '../util';
-import type {Conditions, GameAttributes} from '../../common/types';
+import backboard from "backboard";
+import { Cache, connectLeague, idb } from "../db";
+import { PHASE, PLAYER, g, helpers } from "../../common";
+import {
+    draft,
+    finances,
+    freeAgents,
+    game,
+    phase,
+    player,
+    season,
+    team,
+} from "../core";
+import {
+    defaultGameAttributes,
+    local,
+    lock,
+    random,
+    toUI,
+    updatePhase,
+    updateStatus,
+} from "../util";
+import type { Conditions, GameAttributes } from "../../common/types";
 
 // x and y are both arrays of objects with the same length. For each object, any properties in y but not x will be copied over to x.
 function merge(x: Object[], y: Object[]): Object[] {
@@ -46,9 +63,9 @@ async function setGameAttributes(gameAttributes: GameAttributes) {
         g[key] = gameAttributes[key];
     }
 
-    await toUI(['setGameAttributes', gameAttributes]);
-    if (toUpdate.includes('userTid') || toUpdate.includes('userTids')) {
-        await toUI(['emit', 'updateMultiTeam']);
+    await toUI(["setGameAttributes", gameAttributes]);
+    if (toUpdate.includes("userTid") || toUpdate.includes("userTids")) {
+        await toUI(["emit", "updateMultiTeam"]);
     }
 }
 
@@ -67,7 +84,7 @@ async function create(
     randomizeRosters?: boolean = false,
     conditions: Conditions,
 ): Promise<number> {
-    await idb.meta.attributes.put(tid, 'lastSelectedTid');
+    await idb.meta.attributes.put(tid, "lastSelectedTid");
 
     const teamsDefault = helpers.getTeamsDefault();
 
@@ -91,7 +108,10 @@ async function create(
     }
 
     let phaseText;
-    if (leagueFile.hasOwnProperty("meta") && leagueFile.meta.hasOwnProperty("phaseText")) {
+    if (
+        leagueFile.hasOwnProperty("meta") &&
+        leagueFile.meta.hasOwnProperty("phaseText")
+    ) {
         phaseText = leagueFile.meta.phaseText;
     } else {
         phaseText = "";
@@ -126,8 +146,12 @@ async function create(
     if (leagueFile.hasOwnProperty("gameAttributes")) {
         for (let i = 0; i < leagueFile.gameAttributes.length; i++) {
             // Set default for anything except team ID and name, since they can be overwritten by form input.
-            if (leagueFile.gameAttributes[i].key !== "userTid" && leagueFile.gameAttributes[i].key !== "leagueName") {
-                gameAttributes[leagueFile.gameAttributes[i].key] = leagueFile.gameAttributes[i].value;
+            if (
+                leagueFile.gameAttributes[i].key !== "userTid" &&
+                leagueFile.gameAttributes[i].key !== "leagueName"
+            ) {
+                gameAttributes[leagueFile.gameAttributes[i].key] =
+                    leagueFile.gameAttributes[i].value;
             }
 
             if (leagueFile.gameAttributes[i].key === "phase") {
@@ -143,7 +167,7 @@ async function create(
 
     // Clear old game attributes from g, to make sure the new ones are saved to the db in setGameAttributes
     helpers.resetG();
-    await toUI(['resetG']);
+    await toUI(["resetG"]);
 
     idb.cache = new Cache();
     idb.cache.newLeague = true;
@@ -186,7 +210,7 @@ async function create(
         });
     }
 
-    if (leagueFile.hasOwnProperty('draftLotteryResults')) {
+    if (leagueFile.hasOwnProperty("draftLotteryResults")) {
         for (const draftLotteryResult of leagueFile.draftLotteryResults) {
             await idb.cache.draftLotteryResults.add(draftLotteryResult);
         }
@@ -225,12 +249,16 @@ async function create(
 
         // Save scoutingRank for later
         if (i === g.userTid) {
-            scoutingRankTemp = finances.getRankLastThree(teamSeasons, "expenses", "scouting");
+            scoutingRankTemp = finances.getRankLastThree(
+                teamSeasons,
+                "expenses",
+                "scouting",
+            );
         }
     }
     const scoutingRank = scoutingRankTemp;
     if (scoutingRank === undefined) {
-        throw new Error('scoutingRank should be defined');
+        throw new Error("scoutingRank should be defined");
     }
 
     if (leagueFile.hasOwnProperty("trade")) {
@@ -240,16 +268,18 @@ async function create(
     } else {
         await idb.cache.trade.add({
             rid: 0,
-            teams: [{
-                tid,
-                pids: [],
-                dpids: [],
-            },
-            {
-                tid: tid === 0 ? 1 : 0,  // Load initial trade view with the lowest-numbered non-user team (so, either 0 or 1).
-                pids: [],
-                dpids: [],
-            }],
+            teams: [
+                {
+                    tid,
+                    pids: [],
+                    dpids: [],
+                },
+                {
+                    tid: tid === 0 ? 1 : 0, // Load initial trade view with the lowest-numbered non-user team (so, either 0 or 1).
+                    pids: [],
+                    dpids: [],
+                },
+            ],
         });
     }
 
@@ -261,11 +291,23 @@ async function create(
                 leagueFile.games[i].teams[1].ba = 0;
             }
             for (let j = 0; j < leagueFile.games[i].teams.length; j++) {
-                for (let k = 0; k < leagueFile.games[i].teams[j].players.length; k++) {
-                    if (!leagueFile.games[i].teams[j].players[k].hasOwnProperty("ba")) {
+                for (
+                    let k = 0;
+                    k < leagueFile.games[i].teams[j].players.length;
+                    k++
+                ) {
+                    if (
+                        !leagueFile.games[i].teams[j].players[k].hasOwnProperty(
+                            "ba",
+                        )
+                    ) {
                         leagueFile.games[i].teams[j].players[k].ba = 0;
                     }
-                    if (!leagueFile.games[i].teams[j].players[k].hasOwnProperty("pm")) {
+                    if (
+                        !leagueFile.games[i].teams[j].players[k].hasOwnProperty(
+                            "pm",
+                        )
+                    ) {
                         leagueFile.games[i].teams[j].players[k].pm = 0;
                     }
                 }
@@ -274,11 +316,24 @@ async function create(
     }
 
     // These object stores are blank by default
-    const toMaybeAdd = ["releasedPlayers", "awards", "schedule", "playoffSeries", "negotiations", "messages", "games", "events", "playerFeats"];
+    const toMaybeAdd = [
+        "releasedPlayers",
+        "awards",
+        "schedule",
+        "playoffSeries",
+        "negotiations",
+        "messages",
+        "games",
+        "events",
+        "playerFeats",
+    ];
     for (let j = 0; j < toMaybeAdd.length; j++) {
         if (leagueFile.hasOwnProperty(toMaybeAdd[j])) {
             for (let i = 0; i < leagueFile[toMaybeAdd[j]].length; i++) {
-                await idb.cache._add(toMaybeAdd[j], leagueFile[toMaybeAdd[j]][i]);
+                await idb.cache._add(
+                    toMaybeAdd[j],
+                    leagueFile[toMaybeAdd[j]][i],
+                );
             }
         }
     }
@@ -293,7 +348,9 @@ async function create(
         if (randomizeRosters) {
             // Assign the team ID of all players to the 'playerTids' array.
             // Check tid to prevent draft prospects from being swapped with established players
-            const playerTids = players.filter(p => p.tid > PLAYER.FREE_AGENT).map(p => p.tid);
+            const playerTids = players
+                .filter(p => p.tid > PLAYER.FREE_AGENT)
+                .map(p => p.tid);
 
             // Shuffle the teams that players are assigned to.
             random.shuffle(playerTids);
@@ -313,7 +370,10 @@ async function create(
             const p: any = player.augmentPartialPlayer(p0, scoutingRank);
 
             // Don't let imported contracts be created for below the league minimum, and round to nearest $10,000.
-            p.contract.amount = Math.max(10 * Math.round(p.contract.amount / 10), g.minContract);
+            p.contract.amount = Math.max(
+                10 * Math.round(p.contract.amount / 10),
+                g.minContract,
+            );
 
             // Separate out stats
             const playerStats = p.stats;
@@ -376,21 +436,45 @@ async function create(
     } else {
         // No players in league file, so generate new players
         const profiles = ["Point", "Wing", "Big", "Base", ""];
-        const baseRatings = [37, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 26, 26, 26];
+        const baseRatings = [
+            37,
+            37,
+            36,
+            35,
+            34,
+            33,
+            32,
+            31,
+            30,
+            29,
+            28,
+            26,
+            26,
+            26,
+        ];
         const pots = [75, 65, 55, 55, 60, 50, 70, 40, 55, 50, 60, 60, 45, 45];
 
         for (let tidTemp = -3; tidTemp < teams.length; tidTemp++) {
             // Create multiple "teams" worth of players for the free agent pool
             const tid2 = tidTemp < 0 ? PLAYER.FREE_AGENT : tidTemp;
 
-            const goodNeutralBad = random.randInt(-1, 1);  // determines if this will be a good team or not
+            const goodNeutralBad = random.randInt(-1, 1); // determines if this will be a good team or not
             random.shuffle(pots);
             for (let n = 0; n < 14; n++) {
                 const profile = profiles[4];
                 const agingYears = random.randInt(0, 16);
                 const draftYear = g.startingSeason - 1 - agingYears;
 
-                const p = player.generate(tid2, 19, profile, baseRatings[n], pots[n], draftYear, true, scoutingRank);
+                const p = player.generate(
+                    tid2,
+                    19,
+                    profile,
+                    baseRatings[n],
+                    pots[n],
+                    draftYear,
+                    true,
+                    scoutingRank,
+                );
                 player.develop(p, agingYears, true);
 
                 if (n < 5) {
@@ -398,7 +482,8 @@ async function create(
                 } else {
                     player.bonus(p, 0);
                 }
-                if (tid2 === PLAYER.FREE_AGENT) {  // Free agents
+                if (tid2 === PLAYER.FREE_AGENT) {
+                    // Free agents
                     player.bonus(p, -15);
                 }
 
@@ -406,10 +491,14 @@ async function create(
                 await player.updateValues(p);
 
                 // Randomize contract expiration for players who aren't free agents, because otherwise contract expiration dates will all be synchronized
-                const randomizeExp = (p.tid !== PLAYER.FREE_AGENT);
+                const randomizeExp = p.tid !== PLAYER.FREE_AGENT;
 
                 // Update contract based on development. Only write contract to player log if not a free agent.
-                player.setContract(p, player.genContract(p, randomizeExp), p.tid >= 0);
+                player.setContract(
+                    p,
+                    player.genContract(p, randomizeExp),
+                    p.tid >= 0,
+                );
 
                 // Save to database, adding pid
                 await idb.cache.players.add(p);
@@ -447,21 +536,39 @@ async function create(
         }
     }
     // If the draft has already happened this season but next year's class hasn't been bumped up, don't create any PLAYER.UNDRAFTED
-    if (createUndrafted1 > 0 && (g.phase <= PHASE.DRAFT_LOTTERY || g.phase >= PHASE.FREE_AGENCY)) {
-        await draft.genPlayers(PLAYER.UNDRAFTED, scoutingRank, createUndrafted1, true);
+    if (
+        createUndrafted1 > 0 &&
+        (g.phase <= PHASE.DRAFT_LOTTERY || g.phase >= PHASE.FREE_AGENCY)
+    ) {
+        await draft.genPlayers(
+            PLAYER.UNDRAFTED,
+            scoutingRank,
+            createUndrafted1,
+            true,
+        );
     }
     if (createUndrafted2 > 0) {
-        await draft.genPlayers(PLAYER.UNDRAFTED_2, scoutingRank, createUndrafted2, true);
+        await draft.genPlayers(
+            PLAYER.UNDRAFTED_2,
+            scoutingRank,
+            createUndrafted2,
+            true,
+        );
     }
     if (createUndrafted3 > 0) {
-        await draft.genPlayers(PLAYER.UNDRAFTED_3, scoutingRank, createUndrafted3, true);
+        await draft.genPlayers(
+            PLAYER.UNDRAFTED_3,
+            scoutingRank,
+            createUndrafted3,
+            true,
+        );
     }
 
     const lid = g.lid; // Otherwise, g.lid can be overwritten before the URL redirects, and then we no longer know the league ID
 
     if (!skipNewPhase) {
         await updatePhase();
-        await updateStatus('Idle');
+        await updateStatus("Idle");
 
         // Auto sort rosters
         await Promise.all(teams.map(t => team.rosterAutoSort(t.tid)));
@@ -469,7 +576,7 @@ async function create(
 
     await idb.cache.flush();
 
-    toUI(['bbgmPing', 'league'], conditions);
+    toUI(["bbgmPing", "league"], conditions);
 
     return lid;
 }
@@ -492,14 +599,16 @@ async function exportLeague(stores: string[]) {
     // Row from leagueStore in meta db.
     // phaseText is needed if a phase is set in gameAttributes.
     // name is only used for the file name of the exported roster file.
-    exportedLeague.meta = {phaseText: local.phaseText, name: g.leagueName};
+    exportedLeague.meta = { phaseText: local.phaseText, name: g.leagueName };
 
-    await Promise.all(stores.map(async (store) => {
-        exportedLeague[store] = await idb.league[store].getAll();
-    }));
+    await Promise.all(
+        stores.map(async store => {
+            exportedLeague[store] = await idb.league[store].getAll();
+        }),
+    );
 
     // Move playerStats to players object, similar to old DB structure. Makes editing JSON output nicer.
-    if (stores.includes('playerStats')) {
+    if (stores.includes("playerStats")) {
         for (let i = 0; i < exportedLeague.playerStats.length; i++) {
             const pid = exportedLeague.playerStats[i].pid;
             for (let j = 0; j < exportedLeague.players.length; j++) {
@@ -507,7 +616,9 @@ async function exportLeague(stores: string[]) {
                     if (!exportedLeague.players[j].hasOwnProperty("stats")) {
                         exportedLeague.players[j].stats = [];
                     }
-                    exportedLeague.players[j].stats.push(exportedLeague.playerStats[i]);
+                    exportedLeague.players[j].stats.push(
+                        exportedLeague.playerStats[i],
+                    );
                     break;
                 }
             }
@@ -516,7 +627,7 @@ async function exportLeague(stores: string[]) {
         delete exportedLeague.playerStats;
     }
 
-    if (stores.includes('teams')) {
+    if (stores.includes("teams")) {
         for (let i = 0; i < exportedLeague.teamSeasons.length; i++) {
             const tid = exportedLeague.teamSeasons[i].tid;
             for (let j = 0; j < exportedLeague.teams.length; j++) {
@@ -524,7 +635,9 @@ async function exportLeague(stores: string[]) {
                     if (!exportedLeague.teams[j].hasOwnProperty("seasons")) {
                         exportedLeague.teams[j].seasons = [];
                     }
-                    exportedLeague.teams[j].seasons.push(exportedLeague.teamSeasons[i]);
+                    exportedLeague.teams[j].seasons.push(
+                        exportedLeague.teamSeasons[i],
+                    );
                     break;
                 }
             }
@@ -537,7 +650,9 @@ async function exportLeague(stores: string[]) {
                     if (!exportedLeague.teams[j].hasOwnProperty("stats")) {
                         exportedLeague.teams[j].stats = [];
                     }
-                    exportedLeague.teams[j].stats.push(exportedLeague.teamStats[i]);
+                    exportedLeague.teams[j].stats.push(
+                        exportedLeague.teamStats[i],
+                    );
                     break;
                 }
             }
@@ -570,7 +685,9 @@ async function loadGameAttributes() {
     }
 
     // Shouldn't be necessary, but some upgrades fail http://www.reddit.com/r/BasketballGM/comments/2zwg24/cant_see_any_rosters_on_any_teams_in_any_of_my/cpn0j6w
-    if (g.userTids === undefined) { g.userTids = [g.userTid]; }
+    if (g.userTids === undefined) {
+        g.userTids = [g.userTid];
+    }
 
     // Set defaults to avoid IndexedDB upgrade
     helpers.keys(defaultGameAttributes).forEach(key => {
@@ -579,11 +696,11 @@ async function loadGameAttributes() {
         }
     });
 
-    await toUI(['setGameAttributes', g]);
+    await toUI(["setGameAttributes", g]);
 
     // UI stuff
-    toUI(['emit', 'updateTopMenu', {godMode: g.godMode}]);
-    toUI(['emit', 'updateMultiTeam']);
+    toUI(["emit", "updateTopMenu", { godMode: g.godMode }]);
+    toUI(["emit", "updateMultiTeam"]);
 }
 
 // Depending on phase, initiate action that will lead to the next phase
@@ -611,7 +728,14 @@ async function autoPlay(conditions: Conditions) {
 }
 
 async function initAutoPlay(conditions: Conditions) {
-    const result = await toUI(['prompt', 'This will play through multiple seasons, using the AI to manage your team. How many seasons do you want to simulate?', '5'], conditions);
+    const result = await toUI(
+        [
+            "prompt",
+            "This will play through multiple seasons, using the AI to manage your team. How many seasons do you want to simulate?",
+            "5",
+        ],
+        conditions,
+    );
     const numSeasons = parseInt(result, 10);
 
     if (Number.isInteger(numSeasons)) {
@@ -622,15 +746,15 @@ async function initAutoPlay(conditions: Conditions) {
 
 // Flush cache, disconnect from league database, and unset g.lid
 const close = async (disconnect?: boolean) => {
-    const gameSim = lock.get('gameSim');
+    const gameSim = lock.get("gameSim");
 
     local.autoPlaySeasons = 0;
-    lock.set('stopGameSim', true);
-    lock.set('gameSim', false);
+    lock.set("stopGameSim", true);
+    lock.set("gameSim", false);
 
     // Wait in case stuff is still happening (ugh)
     if (gameSim) {
-        await new Promise((resolve) => {
+        await new Promise(resolve => {
             setTimeout(() => {
                 resolve();
             }, 1000);
@@ -638,9 +762,9 @@ const close = async (disconnect?: boolean) => {
     }
 
     if (g.lid !== undefined && idb.league !== undefined) {
-        await updateStatus('Saving...');
+        await updateStatus("Saving...");
         await idb.cache.flush();
-        await updateStatus('Idle');
+        await updateStatus("Idle");
 
         if (disconnect) {
             idb.cache.stopAutoFlush();

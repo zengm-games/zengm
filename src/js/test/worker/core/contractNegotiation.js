@@ -1,11 +1,11 @@
-import assert from 'assert';
-import {PLAYER, g} from '../../../common';
-import helpers from '../../helpers';
-import {contractNegotiation, player} from '../../../worker/core';
-import {idb} from '../../../worker/db';
+import assert from "assert";
+import { PLAYER, g } from "../../../common";
+import helpers from "../../helpers";
+import { contractNegotiation, player } from "../../../worker/core";
+import { idb } from "../../../worker/db";
 
 // Make player ask for a min contract, to ensure he'll never refuse to sign
-const givePlayerMinContract = async (pid) => {
+const givePlayerMinContract = async pid => {
     const p = await idb.cache.players.get(pid);
     p.contract.amount = g.minContract;
     await idb.cache.players.put(p);
@@ -18,27 +18,45 @@ describe("core/contractNegotiation", () => {
         await helpers.resetCache({
             players: [
                 // Free agents
-                player.generate(PLAYER.FREE_AGENT, 30, '', 50, 50, 2017, true, 15.5),
-                player.generate(PLAYER.FREE_AGENT, 30, '', 50, 50, 2017, true, 15.5),
+                player.generate(
+                    PLAYER.FREE_AGENT,
+                    30,
+                    "",
+                    50,
+                    50,
+                    2017,
+                    true,
+                    15.5,
+                ),
+                player.generate(
+                    PLAYER.FREE_AGENT,
+                    30,
+                    "",
+                    50,
+                    50,
+                    2017,
+                    true,
+                    15.5,
+                ),
 
                 // Non free agent
-                player.generate(12, 30, '', 50, 50, 2017, true, 15.5),
+                player.generate(12, 30, "", 50, 50, 2017, true, 15.5),
 
                 // User's team - 14 players
-                player.generate(g.userTid, 30, '', 50, 50, 2017, true, 15.5),
-                player.generate(g.userTid, 30, '', 50, 50, 2017, true, 15.5),
-                player.generate(g.userTid, 30, '', 50, 50, 2017, true, 15.5),
-                player.generate(g.userTid, 30, '', 50, 50, 2017, true, 15.5),
-                player.generate(g.userTid, 30, '', 50, 50, 2017, true, 15.5),
-                player.generate(g.userTid, 30, '', 50, 50, 2017, true, 15.5),
-                player.generate(g.userTid, 30, '', 50, 50, 2017, true, 15.5),
-                player.generate(g.userTid, 30, '', 50, 50, 2017, true, 15.5),
-                player.generate(g.userTid, 30, '', 50, 50, 2017, true, 15.5),
-                player.generate(g.userTid, 30, '', 50, 50, 2017, true, 15.5),
-                player.generate(g.userTid, 30, '', 50, 50, 2017, true, 15.5),
-                player.generate(g.userTid, 30, '', 50, 50, 2017, true, 15.5),
-                player.generate(g.userTid, 30, '', 50, 50, 2017, true, 15.5),
-                player.generate(g.userTid, 30, '', 50, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
             ],
         });
     });
@@ -51,7 +69,11 @@ describe("core/contractNegotiation", () => {
             await givePlayerMinContract(pid);
 
             const error = await contractNegotiation.create(pid, false);
-            assert.equal((typeof error), "undefined", `Unexpected error message from contractNegotiation.create: "${error}"`);
+            assert.equal(
+                typeof error,
+                "undefined",
+                `Unexpected error message from contractNegotiation.create: "${error}"`,
+            );
 
             const negotiations = await idb.cache.negotiations.getAll();
             assert.equal(negotiations.length, 1);
@@ -76,14 +98,21 @@ describe("core/contractNegotiation", () => {
             await givePlayerMinContract(pid2);
 
             let error = await contractNegotiation.create(pid1, false);
-            assert.equal((typeof error), "undefined", `Unexpected error message from contractNegotiation.create: "${error}"`);
+            assert.equal(
+                typeof error,
+                "undefined",
+                `Unexpected error message from contractNegotiation.create: "${error}"`,
+            );
 
             let negotiations = await idb.cache.negotiations.getAll();
             assert.equal(negotiations.length, 1);
             assert.equal(negotiations[0].pid, pid1);
 
             error = await contractNegotiation.create(pid2, false);
-            assert.equal(error, "You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process.");
+            assert.equal(
+                error,
+                "You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process.",
+            );
 
             negotiations = await idb.cache.negotiations.getAll();
             assert.equal(negotiations.length, 1);
@@ -97,14 +126,22 @@ describe("core/contractNegotiation", () => {
             await givePlayerMinContract(pid2);
 
             let error = await contractNegotiation.create(pid1, true);
-            assert.equal((typeof error), "undefined", `Unexpected error message from contractNegotiation.create: "${error}"`);
+            assert.equal(
+                typeof error,
+                "undefined",
+                `Unexpected error message from contractNegotiation.create: "${error}"`,
+            );
 
             let negotiations = await idb.cache.negotiations.getAll();
             assert.equal(negotiations.length, 1);
             assert.equal(negotiations[0].pid, pid1);
 
             error = await contractNegotiation.create(pid2, true);
-            assert.equal((typeof error), "undefined", `Unexpected error message from contractNegotiation.create: "${error}"`);
+            assert.equal(
+                typeof error,
+                "undefined",
+                `Unexpected error message from contractNegotiation.create: "${error}"`,
+            );
 
             negotiations = await idb.cache.negotiations.getAll();
             assert.equal(negotiations.length, 2);
@@ -122,16 +159,23 @@ describe("core/contractNegotiation", () => {
             const p = await idb.cache.players.get(pid1);
             p.tid = g.userTid;
             await idb.cache.players.put(p);
-            idb.cache.markDirtyIndexes('players');
+            idb.cache.markDirtyIndexes("players");
 
             let error = await contractNegotiation.create(pid2, false);
-            assert.equal(error, "Your roster is full. Before you can sign a free agent, you'll have to release or trade away one of your current players.");
+            assert.equal(
+                error,
+                "Your roster is full. Before you can sign a free agent, you'll have to release or trade away one of your current players.",
+            );
 
             let negotiations = await idb.cache.negotiations.getAll();
             assert.equal(negotiations.length, 0);
 
             error = await contractNegotiation.create(pid2, true);
-            assert.equal((typeof error), "undefined", `Unexpected error message from contractNegotiation.create: "${error}"`);
+            assert.equal(
+                typeof error,
+                "undefined",
+                `Unexpected error message from contractNegotiation.create: "${error}"`,
+            );
 
             negotiations = await idb.cache.negotiations.getAll();
             assert.equal(negotiations.length, 1);
@@ -139,7 +183,7 @@ describe("core/contractNegotiation", () => {
 
             p.tid = PLAYER.FREE_AGENT;
             await idb.cache.players.put(p);
-            idb.cache.markDirtyIndexes('players');
+            idb.cache.markDirtyIndexes("players");
         });
     });
 
@@ -150,10 +194,21 @@ describe("core/contractNegotiation", () => {
             await givePlayerMinContract(pid);
 
             const error = await contractNegotiation.create(pid, false);
-            assert.equal((typeof error), "undefined", `Unexpected error message from contractNegotiation.create: "${error}"`);
+            assert.equal(
+                typeof error,
+                "undefined",
+                `Unexpected error message from contractNegotiation.create: "${error}"`,
+            );
 
-            const error2 = await contractNegotiation.accept(pid, g.salaryCap, g.season + 1);
-            assert.equal(error2, "This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract or cancel the negotiation.");
+            const error2 = await contractNegotiation.accept(
+                pid,
+                g.salaryCap,
+                g.season + 1,
+            );
+            assert.equal(
+                error2,
+                "This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract or cancel the negotiation.",
+            );
         });
     });
 });

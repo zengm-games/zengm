@@ -1,13 +1,42 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import {g, helpers} from '../../common';
-import {getCols, setTitle} from '../util';
-import {DataTable, Dropdown, JumpTo, NewWindowLink, PlayerNameLabels} from '../components';
+import PropTypes from "prop-types";
+import React from "react";
+import { g, helpers } from "../../common";
+import { getCols, setTitle } from "../util";
+import {
+    DataTable,
+    Dropdown,
+    JumpTo,
+    NewWindowLink,
+    PlayerNameLabels,
+} from "../components";
 
-const PlayerRatings = ({abbrev, players, season}) => {
+const PlayerRatings = ({ abbrev, players, season }) => {
     setTitle(`Player Ratings - ${season}`);
 
-    const cols = getCols('Name', 'Pos', 'Team', 'Age', 'Country', 'Ovr', 'Pot', 'rating:Hgt', 'rating:Str', 'rating:Spd', 'rating:Jmp', 'rating:End', 'rating:Ins', 'rating:Dnk', 'rating:FT', 'rating:2Pt', 'rating:3Pt', 'rating:Blk', 'rating:Stl', 'rating:Drb', 'rating:Pss', 'rating:Reb');
+    const cols = getCols(
+        "Name",
+        "Pos",
+        "Team",
+        "Age",
+        "Country",
+        "Ovr",
+        "Pot",
+        "rating:Hgt",
+        "rating:Str",
+        "rating:Spd",
+        "rating:Jmp",
+        "rating:End",
+        "rating:Ins",
+        "rating:Dnk",
+        "rating:FT",
+        "rating:2Pt",
+        "rating:3Pt",
+        "rating:Blk",
+        "rating:Stl",
+        "rating:Drb",
+        "rating:Pss",
+        "rating:Reb",
+    );
 
     const rows = players.map(p => {
         return {
@@ -18,9 +47,13 @@ const PlayerRatings = ({abbrev, players, season}) => {
                     injury={p.injury}
                     skills={p.ratings.skills}
                     watch={p.watch}
-                >{p.name}</PlayerNameLabels>,
+                >
+                    {p.name}
+                </PlayerNameLabels>,
                 p.ratings.pos,
-                <a href={helpers.leagueUrl(["roster", p.stats.abbrev, season])}>{p.stats.abbrev}</a>,
+                <a href={helpers.leagueUrl(["roster", p.stats.abbrev, season])}>
+                    {p.stats.abbrev}
+                </a>,
                 p.age - (g.season - season),
                 p.born.loc,
                 p.ratings.ovr,
@@ -48,23 +81,41 @@ const PlayerRatings = ({abbrev, players, season}) => {
         };
     });
 
-    return <div>
-        <Dropdown view="player_ratings" fields={["teamsAndAllWatch", "seasons"]} values={[abbrev, season]} />
-        <JumpTo season={season} />
-        <h1>Player Ratings <NewWindowLink /></h1>
+    return (
+        <div>
+            <Dropdown
+                view="player_ratings"
+                fields={["teamsAndAllWatch", "seasons"]}
+                values={[abbrev, season]}
+            />
+            <JumpTo season={season} />
+            <h1>
+                Player Ratings <NewWindowLink />
+            </h1>
 
-        <p>More: <a href={helpers.leagueUrl(['player_rating_dists', season])}>Rating Distributions</a></p>
+            <p>
+                More:{" "}
+                <a href={helpers.leagueUrl(["player_rating_dists", season])}>
+                    Rating Distributions
+                </a>
+            </p>
 
-        <p>Players on your team are <span className="text-info">highlighted in blue</span>. Players in the Hall of Fame are <span className="text-danger">highlighted in red</span>.</p>
+            <p>
+                Players on your team are{" "}
+                <span className="text-info">highlighted in blue</span>. Players
+                in the Hall of Fame are{" "}
+                <span className="text-danger">highlighted in red</span>.
+            </p>
 
-        <DataTable
-            cols={cols}
-            defaultSort={[5, 'desc']}
-            name="PlayerRatings"
-            pagination
-            rows={rows}
-        />
-    </div>;
+            <DataTable
+                cols={cols}
+                defaultSort={[5, "desc"]}
+                name="PlayerRatings"
+                pagination
+                rows={rows}
+            />
+        </div>
+    );
 };
 
 PlayerRatings.propTypes = {
@@ -74,4 +125,3 @@ PlayerRatings.propTypes = {
 };
 
 export default PlayerRatings;
-

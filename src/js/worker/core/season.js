@@ -1,11 +1,17 @@
 // @flow
 
-import _ from 'underscore';
-import {PLAYER, g, helpers} from '../../common';
-import {league} from '../core';
-import {idb} from '../db';
-import {logEvent, random} from '../util';
-import type {Conditions, OwnerMoodDeltas, ScheduleGame, Team, TeamFiltered} from '../../common/types';
+import _ from "underscore";
+import { PLAYER, g, helpers } from "../../common";
+import { league } from "../core";
+import { idb } from "../db";
+import { logEvent, random } from "../util";
+import type {
+    Conditions,
+    OwnerMoodDeltas,
+    ScheduleGame,
+    Team,
+    TeamFiltered,
+} from "../../common/types";
 
 /**
  * Update g.ownerMood based on performance this season.
@@ -21,10 +27,13 @@ async function updateOwnerMood(): Promise<OwnerMoodDeltas> {
         season: g.season,
         tid: g.userTid,
     });
-    if (!t) { throw new Error('Invalid g.userTid'); }
+    if (!t) {
+        throw new Error("Invalid g.userTid");
+    }
 
     const deltas = {};
-    deltas.wins = 0.25 * (t.seasonAttrs.won - g.numGames / 2) / (g.numGames / 2);
+    deltas.wins =
+        0.25 * (t.seasonAttrs.won - g.numGames / 2) / (g.numGames / 2);
     if (t.seasonAttrs.playoffRoundsWon < 0) {
         deltas.playoffs = -0.2;
     } else if (t.seasonAttrs.playoffRoundsWon < 4) {
@@ -42,31 +51,41 @@ async function updateOwnerMood(): Promise<OwnerMoodDeltas> {
         ownerMood.money = g.ownerMood.money + deltas.money;
 
         // Bound only the top - can't win the game by doing only one thing, but you can lose it by neglecting one thing
-        if (ownerMood.wins > 1) { ownerMood.wins = 1; }
-        if (ownerMood.playoffs > 1) { ownerMood.playoffs = 1; }
-        if (ownerMood.money > 1) { ownerMood.money = 1; }
+        if (ownerMood.wins > 1) {
+            ownerMood.wins = 1;
+        }
+        if (ownerMood.playoffs > 1) {
+            ownerMood.playoffs = 1;
+        }
+        if (ownerMood.money > 1) {
+            ownerMood.money = 1;
+        }
 
-        await league.setGameAttributes({ownerMood});
+        await league.setGameAttributes({ ownerMood });
     }
 
     return deltas;
 }
 
-
 async function saveAwardsByPlayer(awardsByPlayer: any) {
     const pids = _.uniq(awardsByPlayer.map(award => award.pid));
 
-    await Promise.all(pids.map(async (pid) => {
-        const p = await idb.cache.players.get(pid);
+    await Promise.all(
+        pids.map(async pid => {
+            const p = await idb.cache.players.get(pid);
 
-        for (let i = 0; i < awardsByPlayer.length; i++) {
-            if (p.pid === awardsByPlayer[i].pid) {
-                p.awards.push({season: g.season, type: awardsByPlayer[i].type});
+            for (let i = 0; i < awardsByPlayer.length; i++) {
+                if (p.pid === awardsByPlayer[i].pid) {
+                    p.awards.push({
+                        season: g.season,
+                        type: awardsByPlayer[i].type,
+                    });
+                }
             }
-        }
 
-        await idb.cache.players.put(p);
-    }));
+            await idb.cache.players.put(p);
+        }),
+    );
 }
 
 /**
@@ -78,19 +97,28 @@ async function saveAwardsByPlayer(awardsByPlayer: any) {
  * @return {Promise}
  */
 async function doAwards(conditions: Conditions) {
-    const awards: any = {season: g.season};
+    const awards: any = { season: g.season };
 
     // [{pid, type}]
     const awardsByPlayer = [];
 
     // Get teams for won/loss record for awards, as well as finding the teams with the best records
-    const teams = helpers.orderByWinp(await idb.getCopies.teamsPlus({
-        attrs: ["tid", "abbrev", "region", "name", "cid"],
-        seasonAttrs: ["won", "lost", "winp", "playoffRoundsWon"],
-        season: g.season,
-    }));
+    const teams = helpers.orderByWinp(
+        await idb.getCopies.teamsPlus({
+            attrs: ["tid", "abbrev", "region", "name", "cid"],
+            seasonAttrs: ["won", "lost", "winp", "playoffRoundsWon"],
+            season: g.season,
+        }),
+    );
 
-    awards.bestRecord = {tid: teams[0].tid, abbrev: teams[0].abbrev, region: teams[0].region, name: teams[0].name, won: teams[0].seasonAttrs.won, lost: teams[0].seasonAttrs.lost};
+    awards.bestRecord = {
+        tid: teams[0].tid,
+        abbrev: teams[0].abbrev,
+        region: teams[0].region,
+        name: teams[0].name,
+        won: teams[0].seasonAttrs.won,
+        lost: teams[0].seasonAttrs.lost,
+    };
     awards.bestRecordConfs = g.confs.map(c => {
         const t = teams.find(t2 => t2.cid === c.cid);
 
@@ -113,7 +141,10 @@ async function doAwards(conditions: Conditions) {
     // Sort teams by tid so it can be easily used in awards formulas
     teams.sort((a, b) => a.tid - b.tid);
 
-    let players: any = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
+    let players: any = await idb.cache.players.indexGetAll("playersByTid", [
+        PLAYER.FREE_AGENT,
+        Infinity,
+    ]);
     players = await idb.getCopies.playersPlus(players, {
         attrs: ["pid", "name", "tid", "abbrev", "draft"],
         stats: ["gp", "gs", "min", "pts", "trb", "ast", "blk", "stl", "ewa"],
@@ -121,19 +152,27 @@ async function doAwards(conditions: Conditions) {
     });
 
     // League leaders - points, rebounds, assists, steals, blocks
-    const factor = (g.numGames / 82) * Math.sqrt(g.quarterLength / 12); // To handle changes in number of games and playing time
+    const factor = g.numGames / 82 * Math.sqrt(g.quarterLength / 12); // To handle changes in number of games and playing time
     const categories = [
-        {name: "League Scoring Leader", stat: "pts", minValue: 1400},
-        {name: "League Rebounding Leader", stat: "trb", minValue: 800},
-        {name: "League Assists Leader", stat: "ast", minValue: 400},
-        {name: "League Steals Leader", stat: "stl", minValue: 125},
-        {name: "League Blocks Leader", stat: "blk", minValue: 100},
+        { name: "League Scoring Leader", stat: "pts", minValue: 1400 },
+        { name: "League Rebounding Leader", stat: "trb", minValue: 800 },
+        { name: "League Assists Leader", stat: "ast", minValue: 400 },
+        { name: "League Steals Leader", stat: "stl", minValue: 125 },
+        { name: "League Blocks Leader", stat: "blk", minValue: 100 },
     ];
     for (const cat of categories) {
         players.sort((a, b) => b.stats[cat.stat] - a.stats[cat.stat]);
         for (const p of players) {
-            if (p.stats[cat.stat] * p.stats.gp >= cat.minValue * factor || p.stats.gp >= 70 * factor) {
-                awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: cat.name});
+            if (
+                p.stats[cat.stat] * p.stats.gp >= cat.minValue * factor ||
+                p.stats.gp >= 70 * factor
+            ) {
+                awardsByPlayer.push({
+                    pid: p.pid,
+                    tid: p.tid,
+                    name: p.name,
+                    type: cat.name,
+                });
                 break;
             }
         }
@@ -150,15 +189,31 @@ async function doAwards(conditions: Conditions) {
     }
 
     // Rookie of the Year
-    const rookies = players.filter(p => {
-        // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
-        return p.draft.year === g.season - 1;
-    }).sort((a, b) => b.stats.ewa - a.stats.ewa); // Same formula as MVP, but no wins because some years with bad rookie classes can have the wins term dominate EWA
+    const rookies = players
+        .filter(p => {
+            // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
+            return p.draft.year === g.season - 1;
+        })
+        .sort((a, b) => b.stats.ewa - a.stats.ewa); // Same formula as MVP, but no wins because some years with bad rookie classes can have the wins term dominate EWA
     {
         const p = rookies[0];
-        if (p !== undefined) { // I suppose there could be no rookies at all.. which actually does happen when skip the draft from the debug menu
-            awards.roy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
-            awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Rookie of the Year"});
+        if (p !== undefined) {
+            // I suppose there could be no rookies at all.. which actually does happen when skip the draft from the debug menu
+            awards.roy = {
+                pid: p.pid,
+                name: p.name,
+                tid: p.tid,
+                abbrev: p.abbrev,
+                pts: p.stats.pts,
+                trb: p.stats.trb,
+                ast: p.stats.ast,
+            };
+            awardsByPlayer.push({
+                pid: p.pid,
+                tid: p.tid,
+                name: p.name,
+                type: "Rookie of the Year",
+            });
         }
     }
 
@@ -167,77 +222,159 @@ async function doAwards(conditions: Conditions) {
     for (let i = 0; i < 5; i++) {
         const p = rookies[i];
         if (p) {
-            awards.allRookie.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast});
-            awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "All Rookie Team"});
+            awards.allRookie.push({
+                pid: p.pid,
+                name: p.name,
+                tid: p.tid,
+                abbrev: p.abbrev,
+                pts: p.stats.pts,
+                trb: p.stats.trb,
+                ast: p.stats.ast,
+            });
+            awardsByPlayer.push({
+                pid: p.pid,
+                tid: p.tid,
+                name: p.name,
+                type: "All Rookie Team",
+            });
         }
     }
 
     // Most Valuable Player
-    players.sort((a, b) => (b.stats.ewa + 0.1 * b.won) - (a.stats.ewa + 0.1 * a.won));
+    players.sort(
+        (a, b) => b.stats.ewa + 0.1 * b.won - (a.stats.ewa + 0.1 * a.won),
+    );
     {
         const p = players[0];
         if (p) {
-            awards.mvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
-            awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Most Valuable Player"});
+            awards.mvp = {
+                pid: p.pid,
+                name: p.name,
+                tid: p.tid,
+                abbrev: p.abbrev,
+                pts: p.stats.pts,
+                trb: p.stats.trb,
+                ast: p.stats.ast,
+            };
+            awardsByPlayer.push({
+                pid: p.pid,
+                tid: p.tid,
+                name: p.name,
+                type: "Most Valuable Player",
+            });
         }
     }
 
     // Sixth Man of the Year - same sort as MVP, must have come off the bench in most games
     {
-        const p = players.find(p2 => p2.stats.gs === 0 || p2.stats.gp / p2.stats.gs > 2);
+        const p = players.find(
+            p2 => p2.stats.gs === 0 || p2.stats.gp / p2.stats.gs > 2,
+        );
         if (p) {
-            awards.smoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
-            awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Sixth Man of the Year"});
+            awards.smoy = {
+                pid: p.pid,
+                name: p.name,
+                tid: p.tid,
+                abbrev: p.abbrev,
+                pts: p.stats.pts,
+                trb: p.stats.trb,
+                ast: p.stats.ast,
+            };
+            awardsByPlayer.push({
+                pid: p.pid,
+                tid: p.tid,
+                name: p.name,
+                type: "Sixth Man of the Year",
+            });
         }
     }
 
     // All League Team - same sort as MVP
-    awards.allLeague = [{title: "First Team", players: []}];
+    awards.allLeague = [{ title: "First Team", players: [] }];
     let type = "First Team All-League";
     for (let i = 0; i < 15; i++) {
         const p = players[i];
         if (i === 5) {
-            awards.allLeague.push({title: "Second Team", players: []});
+            awards.allLeague.push({ title: "Second Team", players: [] });
             type = "Second Team All-League";
         } else if (i === 10) {
-            awards.allLeague.push({title: "Third Team", players: []});
+            awards.allLeague.push({ title: "Third Team", players: [] });
             type = "Third Team All-League";
         }
-        _.last(awards.allLeague).players.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast});
-        awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type});
+        _.last(awards.allLeague).players.push({
+            pid: p.pid,
+            name: p.name,
+            tid: p.tid,
+            abbrev: p.abbrev,
+            pts: p.stats.pts,
+            trb: p.stats.trb,
+            ast: p.stats.ast,
+        });
+        awardsByPlayer.push({ pid: p.pid, tid: p.tid, name: p.name, type });
     }
 
     // Defensive Player of the Year
-    players.sort((a, b) => b.stats.gp * (b.stats.trb + 5 * b.stats.blk + 5 * b.stats.stl) - a.stats.gp * (a.stats.trb + 5 * a.stats.blk + 5 * a.stats.stl));
+    players.sort(
+        (a, b) =>
+            b.stats.gp * (b.stats.trb + 5 * b.stats.blk + 5 * b.stats.stl) -
+            a.stats.gp * (a.stats.trb + 5 * a.stats.blk + 5 * a.stats.stl),
+    );
     {
         const p = players[0];
-        awards.dpoy = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.stats.trb, blk: p.stats.blk, stl: p.stats.stl};
-        awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Defensive Player of the Year"});
+        awards.dpoy = {
+            pid: p.pid,
+            name: p.name,
+            tid: p.tid,
+            abbrev: p.abbrev,
+            trb: p.stats.trb,
+            blk: p.stats.blk,
+            stl: p.stats.stl,
+        };
+        awardsByPlayer.push({
+            pid: p.pid,
+            tid: p.tid,
+            name: p.name,
+            type: "Defensive Player of the Year",
+        });
     }
 
     // All Defensive Team - same sort as DPOY
-    awards.allDefensive = [{title: "First Team", players: []}];
+    awards.allDefensive = [{ title: "First Team", players: [] }];
     type = "First Team All-Defensive";
     for (let i = 0; i < 15; i++) {
         const p = players[i];
         if (i === 5) {
-            awards.allDefensive.push({title: "Second Team", players: []});
+            awards.allDefensive.push({ title: "Second Team", players: [] });
             type = "Second Team All-Defensive";
         } else if (i === 10) {
-            awards.allDefensive.push({title: "Third Team", players: []});
+            awards.allDefensive.push({ title: "Third Team", players: [] });
             type = "Third Team All-Defensive";
         }
-        _.last(awards.allDefensive).players.push({pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, trb: p.stats.trb, blk: p.stats.blk, stl: p.stats.stl});
-        awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type});
+        _.last(awards.allDefensive).players.push({
+            pid: p.pid,
+            name: p.name,
+            tid: p.tid,
+            abbrev: p.abbrev,
+            trb: p.stats.trb,
+            blk: p.stats.blk,
+            stl: p.stats.stl,
+        });
+        awardsByPlayer.push({ pid: p.pid, tid: p.tid, name: p.name, type });
     }
 
     // Finals MVP - most WS in playoffs
-    const champTeam = teams.find(t => t.seasonAttrs.playoffRoundsWon === g.numPlayoffRounds);
+    const champTeam = teams.find(
+        t => t.seasonAttrs.playoffRoundsWon === g.numPlayoffRounds,
+    );
     if (champTeam) {
         const champTid = champTeam.tid;
 
-        let champPlayers = await idb.cache.players.indexGetAll('playersByTid', champTid); // Alternatively, could filter players array by tid
-        champPlayers = await idb.getCopies.playersPlus(champPlayers, { // Only the champions, only playoff stats
+        let champPlayers = await idb.cache.players.indexGetAll(
+            "playersByTid",
+            champTid,
+        ); // Alternatively, could filter players array by tid
+        champPlayers = await idb.getCopies.playersPlus(champPlayers, {
+            // Only the champions, only playoff stats
             attrs: ["pid", "name", "tid", "abbrev"],
             stats: ["pts", "trb", "ast", "ewa"],
             season: g.season,
@@ -248,8 +385,21 @@ async function doAwards(conditions: Conditions) {
         champPlayers.sort((a, b) => b.stats.ewa - a.stats.ewa);
         {
             const p = champPlayers[0];
-            awards.finalsMvp = {pid: p.pid, name: p.name, tid: p.tid, abbrev: p.abbrev, pts: p.stats.pts, trb: p.stats.trb, ast: p.stats.ast};
-            awardsByPlayer.push({pid: p.pid, tid: p.tid, name: p.name, type: "Finals MVP"});
+            awards.finalsMvp = {
+                pid: p.pid,
+                name: p.name,
+                tid: p.tid,
+                abbrev: p.abbrev,
+                pts: p.stats.pts,
+                trb: p.stats.trb,
+                ast: p.stats.ast,
+            };
+            awardsByPlayer.push({
+                pid: p.pid,
+                tid: p.tid,
+                name: p.name,
+                type: "Finals MVP",
+            });
         }
     }
 
@@ -260,21 +410,35 @@ async function doAwards(conditions: Conditions) {
     // Notifications for awards for user's players
     for (let i = 0; i < awardsByPlayer.length; i++) {
         const p = awardsByPlayer[i];
-        let text = `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.name}</a> (<a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamAbbrevsCache[p.tid]}</a>) `;
-        if (p.type.includes('Team')) {
+        let text = `<a href="${helpers.leagueUrl([
+            "player",
+            p.pid,
+        ])}">${p.name}</a> (<a href="${helpers.leagueUrl([
+            "roster",
+            g.teamAbbrevsCache[p.tid],
+            g.season,
+        ])}">${g.teamAbbrevsCache[p.tid]}</a>) `;
+        if (p.type.includes("Team")) {
             text += `made the ${p.type}.`;
-        } else if (p.type.includes('Leader')) {
-            text += `led the league in ${p.type.replace("League ", "").replace(" Leader", "").toLowerCase()}.`;
+        } else if (p.type.includes("Leader")) {
+            text += `led the league in ${p.type
+                .replace("League ", "")
+                .replace(" Leader", "")
+                .toLowerCase()}.`;
         } else {
             text += `won the ${p.type} award.`;
         }
-        logEvent({
-            type: "award",
-            text,
-            showNotification: p.tid === g.userTid || p.type === "Most Valuable Player",
-            pids: [p.pid],
-            tids: [p.tid],
-        }, conditions);
+        logEvent(
+            {
+                type: "award",
+                text,
+                showNotification:
+                    p.tid === g.userTid || p.type === "Most Valuable Player",
+                pids: [p.pid],
+                tids: [p.tid],
+            },
+            conditions,
+        );
     }
 }
 
@@ -288,13 +452,16 @@ async function doAwards(conditions: Conditions) {
 async function getSchedule(oneDay?: boolean = false): Promise<ScheduleGame[]> {
     let schedule = await idb.cache.schedule.getAll();
     if (oneDay) {
-        schedule = schedule.slice(0, g.numTeams / 2);  // This is the maximum number of games possible in a day
+        schedule = schedule.slice(0, g.numTeams / 2); // This is the maximum number of games possible in a day
 
         // Only take the games up until right before a team plays for the second time that day
         const tids = [];
         let i;
         for (i = 0; i < schedule.length; i++) {
-            if (!tids.includes(schedule[i].homeTid) && !tids.includes(schedule[i].awayTid)) {
+            if (
+                !tids.includes(schedule[i].homeTid) &&
+                !tids.includes(schedule[i].awayTid)
+            ) {
                 tids.push(schedule[i].homeTid);
                 tids.push(schedule[i].awayTid);
             } else {
@@ -316,10 +483,14 @@ async function getSchedule(oneDay?: boolean = false): Promise<ScheduleGame[]> {
  */
 async function setSchedule(tids: [number, number][]) {
     await idb.cache.schedule.clear();
-    await Promise.all(tids.map(([homeTid, awayTid]) => idb.cache.schedule.add({
-        homeTid,
-        awayTid,
-    })));
+    await Promise.all(
+        tids.map(([homeTid, awayTid]) =>
+            idb.cache.schedule.add({
+                homeTid,
+                awayTid,
+            }),
+        ),
+    );
 }
 
 /**
@@ -362,7 +533,10 @@ function newScheduleDefault(teams): [number, number][] {
 
                 // Constraint: 1-2 home games vs. each team in same conference and different division
                 // Only do 1 now
-                if (teams[i].cid === teams[j].cid && teams[i].did !== teams[j].did) {
+                if (
+                    teams[i].cid === teams[j].cid &&
+                    teams[i].did !== teams[j].did
+                ) {
                     tids.push(game);
                     homeGames[i] += 1;
                     awayGames[j] += 1;
@@ -387,13 +561,17 @@ function newScheduleDefault(teams): [number, number][] {
         while (games < 8) {
             let newMatchup = [];
             let n = 0;
-            while (n <= 14) {  // 14 = num teams in conference - 1
+            while (n <= 14) {
+                // 14 = num teams in conference - 1
                 let iters = 0;
                 // eslint-disable-next-line no-constant-condition
                 while (true) {
                     const tryNum = random.randInt(0, 14);
                     // Pick tryNum such that it is in a different division than n and has not been picked before
-                    if (dids[cid][tryNum] !== dids[cid][n] && !newMatchup.includes(tryNum)) {
+                    if (
+                        dids[cid][tryNum] !== dids[cid][n] &&
+                        !newMatchup.includes(tryNum)
+                    ) {
                         let good = true;
                         // Check for duplicate games
                         for (let j = 0; j < matchups.length; j++) {
@@ -422,7 +600,7 @@ function newScheduleDefault(teams): [number, number][] {
             matchups.push(newMatchup);
             games += 1;
         }
-        matchups.shift();  // Remove the first row in matchups
+        matchups.shift(); // Remove the first row in matchups
         for (let j = 0; j < matchups.length; j++) {
             const matchup = matchups[j];
             for (let k = 0; k < matchup.length; k++) {
@@ -470,7 +648,9 @@ function newScheduleCrappy(): [number, number][] {
             if (tries > 10000) {
                 console.log(tids, tids.length);
                 console.log(numRemaining.length);
-                throw new Error(`Failed to generate schedule with ${g.numTeams} teams and ${g.numGames} games.`);
+                throw new Error(
+                    `Failed to generate schedule with ${g.numTeams} teams and ${g.numGames} games.`,
+                );
             }
         }
 
@@ -512,7 +692,12 @@ function newSchedule(teams: Team[]): [number, number][] {
             break;
         }
     }
-    if (g.numTeams === 30 && g.numGames === 82 && g.confs.length === 2 && threeDivsPerConf) {
+    if (
+        g.numTeams === 30 &&
+        g.numGames === 82 &&
+        g.confs.length === 2 &&
+        threeDivsPerConf
+    ) {
         tids = newScheduleDefault(teams);
     } else {
         tids = newScheduleCrappy();
@@ -526,7 +711,10 @@ function newSchedule(teams: Team[]): [number, number][] {
     for (let i = 0; i < tids.length; i++) {
         let used = false;
         for (let j = 0; j <= jMax; j++) {
-            if (!tidsInDays[j].includes(tids[i][0]) && !tidsInDays[j].includes(tids[i][1])) {
+            if (
+                !tidsInDays[j].includes(tids[i][0]) &&
+                !tidsInDays[j].includes(tids[i][1])
+            ) {
                 tidsInDays[j].push(tids[i][0]);
                 tidsInDays[j].push(tids[i][1]);
                 days[j].push(tids[i]);
@@ -565,7 +753,12 @@ async function newSchedulePlayoffsDay(): Promise<boolean> {
         if (series[rnd][i].home.won < 4 && series[rnd][i].away.won < 4) {
             // Make sure to set home/away teams correctly! Home for the lower seed is 1st, 2nd, 5th, and 7th games.
             const numGames = series[rnd][i].home.won + series[rnd][i].away.won;
-            if (numGames === 0 || numGames === 1 || numGames === 4 || numGames === 6) {
+            if (
+                numGames === 0 ||
+                numGames === 1 ||
+                numGames === 4 ||
+                numGames === 6
+            ) {
                 tids.push([series[rnd][i].home.tid, series[rnd][i].away.tid]);
             } else {
                 tids.push([series[rnd][i].away.tid, series[rnd][i].home.tid]);
@@ -588,7 +781,10 @@ async function newSchedulePlayoffsDay(): Promise<boolean> {
             key = series[rnd][0].away.tid;
         }
 
-        const teamSeason = await idb.cache.teamSeasons.indexGet('teamSeasonsBySeasonTid', `${g.season},${key}`);
+        const teamSeason = await idb.cache.teamSeasons.indexGet(
+            "teamSeasonsBySeasonTid",
+            `${g.season},${key}`,
+        );
         teamSeason.playoffRoundsWon = g.numPlayoffRounds;
         teamSeason.hype += 0.05;
         if (teamSeason.hype > 1) {
@@ -625,10 +821,13 @@ async function newSchedulePlayoffsDay(): Promise<boolean> {
 
         // Set home/away in the next round
         let matchup;
-        if (team1.seed < team2.seed || (team1.seed === team2.seed && team1.winp > team2.winp)) {
-            matchup = {home: team1, away: team2};
+        if (
+            team1.seed < team2.seed ||
+            (team1.seed === team2.seed && team1.winp > team2.winp)
+        ) {
+            matchup = { home: team1, away: team2 };
         } else {
-            matchup = {home: team2, away: team1};
+            matchup = { home: team2, away: team1 };
         }
 
         matchup.home.won = 0;
@@ -640,17 +839,22 @@ async function newSchedulePlayoffsDay(): Promise<boolean> {
     await idb.cache.playoffSeries.put(playoffSeries);
 
     // Update hype for winning a series
-    await Promise.all(tidsWon.map(async (tid) => {
-        const teamSeason = await idb.cache.teamSeasons.indexGet('teamSeasonsBySeasonTid', `${g.season},${tid}`);
+    await Promise.all(
+        tidsWon.map(async tid => {
+            const teamSeason = await idb.cache.teamSeasons.indexGet(
+                "teamSeasonsBySeasonTid",
+                `${g.season},${tid}`,
+            );
 
-        teamSeason.playoffRoundsWon = playoffSeries.currentRound;
-        teamSeason.hype += 0.05;
-        if (teamSeason.hype > 1) {
-            teamSeason.hype = 1;
-        }
+            teamSeason.playoffRoundsWon = playoffSeries.currentRound;
+            teamSeason.hype += 0.05;
+            if (teamSeason.hype > 1) {
+                teamSeason.hype = 1;
+            }
 
-        await idb.cache.teamSeasons.put(teamSeason);
-    }));
+            await idb.cache.teamSeasons.put(teamSeason);
+        }),
+    );
 
     // Next time, the schedule for the first day of the next round will be set
     return newSchedulePlayoffsDay();
@@ -672,7 +876,10 @@ async function getDaysLeftSchedule() {
         const tids = [];
         let i;
         for (i = 0; i < schedule.length; i++) {
-            if (!tids.includes(schedule[i].homeTid) && !tids.includes(schedule[i].awayTid)) {
+            if (
+                !tids.includes(schedule[i].homeTid) &&
+                !tids.includes(schedule[i].awayTid)
+            ) {
                 tids.push(schedule[i].homeTid);
                 tids.push(schedule[i].awayTid);
             } else {
@@ -688,7 +895,7 @@ async function getDaysLeftSchedule() {
 
 function genPlayoffSeries(teams: TeamFiltered[]) {
     // Playoffs are split into two branches by conference only if there are exactly 2 conferences and the special secret option top16playoffs is not set
-    const playoffsByConference = g.confs.length === 2;// && !localStorage.getItem('top16playoffs');
+    const playoffsByConference = g.confs.length === 2; // && !localStorage.getItem('top16playoffs');
 
     const tidPlayoffs = [];
     const numPlayoffTeams = 2 ** g.numPlayoffRounds;
@@ -709,9 +916,13 @@ function genPlayoffSeries(teams: TeamFiltered[]) {
             }
             for (let i = 0; i < numSeriesPerConference; i++) {
                 const j = i % 2 === 0 ? i : numSeriesPerConference - i;
-                series[0][j + cid * numSeriesPerConference] = {home: teamsConf[i], away: teamsConf[numPlayoffTeams / 2 - 1 - i]};
+                series[0][j + cid * numSeriesPerConference] = {
+                    home: teamsConf[i],
+                    away: teamsConf[numPlayoffTeams / 2 - 1 - i],
+                };
                 series[0][j + cid * numSeriesPerConference].home.seed = i + 1;
-                series[0][j + cid * numSeriesPerConference].away.seed = numPlayoffTeams / 2 - i;
+                series[0][j + cid * numSeriesPerConference].away.seed =
+                    numPlayoffTeams / 2 - i;
             }
         }
     } else {
@@ -726,13 +937,16 @@ function genPlayoffSeries(teams: TeamFiltered[]) {
         }
         for (let i = 0; i < numPlayoffTeams / 2; i++) {
             const j = i % 2 === 0 ? i : numPlayoffTeams / 2 - i;
-            series[0][j] = {home: teamsConf[i], away: teamsConf[numPlayoffTeams - 1 - i]};
+            series[0][j] = {
+                home: teamsConf[i],
+                away: teamsConf[numPlayoffTeams - 1 - i],
+            };
             series[0][j].home.seed = i + 1;
             series[0][j].away.seed = numPlayoffTeams - i;
         }
     }
 
-    return {series, tidPlayoffs};
+    return { series, tidPlayoffs };
 }
 
 export default {

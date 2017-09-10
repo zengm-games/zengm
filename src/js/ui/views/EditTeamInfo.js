@@ -1,7 +1,7 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import {g, helpers} from '../../common';
-import {logEvent, setTitle, toWorker} from '../util';
+import PropTypes from "prop-types";
+import React from "react";
+import { g, helpers } from "../../common";
+import { logEvent, setTitle, toWorker } from "../util";
 
 class EditTeamInfo extends React.Component {
     constructor(props) {
@@ -55,8 +55,12 @@ class EditTeamInfo extends React.Component {
                 }
 
                 // Check for pop in either the root or the most recent season
-                if (!newTeams[i].hasOwnProperty("pop") && newTeams[i].hasOwnProperty("seasons")) {
-                    newTeams[i].pop = newTeams[i].seasons[newTeams[i].seasons.length - 1].pop;
+                if (
+                    !newTeams[i].hasOwnProperty("pop") &&
+                    newTeams[i].hasOwnProperty("seasons")
+                ) {
+                    newTeams[i].pop =
+                        newTeams[i].seasons[newTeams[i].seasons.length - 1].pop;
                 }
 
                 if (typeof newTeams[i].pop !== "number") {
@@ -65,15 +69,15 @@ class EditTeamInfo extends React.Component {
                 }
             }
 
-            await toWorker('updateTeamInfo', newTeams);
+            await toWorker("updateTeamInfo", newTeams);
 
             this.setState({
                 teams: newTeams,
             });
 
             logEvent({
-                type: 'success',
-                text: 'New team info successfully loaded.',
+                type: "success",
+                text: "New team info successfully loaded.",
                 saveToDb: false,
             });
         };
@@ -94,11 +98,11 @@ class EditTeamInfo extends React.Component {
             saving: true,
         });
 
-        await toWorker('updateTeamInfo', this.state.teams);
+        await toWorker("updateTeamInfo", this.state.teams);
 
         logEvent({
-            type: 'success',
-            text: 'Saved team info.',
+            type: "success",
+            text: "Saved team info.",
             saveToDb: false,
         });
 
@@ -108,83 +112,175 @@ class EditTeamInfo extends React.Component {
     }
 
     render() {
-        setTitle('Edit Team Info');
+        setTitle("Edit Team Info");
 
         if (!this.props.godMode) {
-            return <div>
-                <h1>Error</h1>
-                <p>You can't edit teams unless you enable <a href={helpers.leagueUrl(["god_mode"])}>God Mode</a></p>
-            </div>;
+            return (
+                <div>
+                    <h1>Error</h1>
+                    <p>
+                        You can't edit teams unless you enable{" "}
+                        <a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>
+                    </p>
+                </div>
+            );
         }
 
-        const {saving, teams} = this.state;
+        const { saving, teams } = this.state;
 
-        return <div>
-            <h1>Edit Team Info</h1>
+        return (
+            <div>
+                <h1>Edit Team Info</h1>
 
-            <p>You can manually edit the teams below or you can upload a teams file to specify all of the team info at once.</p>
+                <p>
+                    You can manually edit the teams below or you can upload a
+                    teams file to specify all of the team info at once.
+                </p>
 
-            <h2>Upload Teams File</h2>
+                <h2>Upload Teams File</h2>
 
-            <p>The JSON file format is described in <a href="http://basketball-gm.com/manual/customization/teams/">the manual</a>. As an example, you can download <a href="http://basketball-gm.com/files/old_teams.json" download>a teams file containing the old (pre-2014) default teams</a> or <a href="http://basketball-gm.com/files/new_teams.json" download>one containing the current default teams</a>.</p>
+                <p>
+                    The JSON file format is described in{" "}
+                    <a href="http://basketball-gm.com/manual/customization/teams/">
+                        the manual
+                    </a>. As an example, you can download{" "}
+                    <a
+                        href="http://basketball-gm.com/files/old_teams.json"
+                        download
+                    >
+                        a teams file containing the old (pre-2014) default teams
+                    </a>{" "}
+                    or{" "}
+                    <a
+                        href="http://basketball-gm.com/files/new_teams.json"
+                        download
+                    >
+                        one containing the current default teams
+                    </a>.
+                </p>
 
-            <p className="text-danger">Warning: selecting a valid team file will instantly apply the new team info to your league.</p>
+                <p className="text-danger">
+                    Warning: selecting a valid team file will instantly apply
+                    the new team info to your league.
+                </p>
 
-            <p><input type="file" onChange={e => this.handleFile(e)} /></p>
+                <p>
+                    <input type="file" onChange={e => this.handleFile(e)} />
+                </p>
 
-            <h2>Manual Editing</h2>
+                <h2>Manual Editing</h2>
 
-            <div className="row hidden-xs" style={{fontWeight: 'bold', marginBottom: '0.5em'}}>
-                <div className="col-sm-2">
-                    <br />Region
+                <div
+                    className="row hidden-xs"
+                    style={{ fontWeight: "bold", marginBottom: "0.5em" }}
+                >
+                    <div className="col-sm-2">
+                        <br />Region
+                    </div>
+                    <div className="col-sm-2">
+                        <br />Name
+                    </div>
+                    <div className="col-sm-2 col-md-1">
+                        <br />Abbrev
+                    </div>
+                    <div className="col-sm-2">
+                        Population<br />(millions)
+                    </div>
+                    <div className="col-sm-4 col-md-5">
+                        <br />Logo URL
+                    </div>
                 </div>
-                <div className="col-sm-2">
-                    <br />Name
-                </div>
-                <div className="col-sm-2 col-md-1">
-                    <br />Abbrev
-                </div>
-                <div className="col-sm-2">
-                    Population<br />(millions)
-                </div>
-                <div className="col-sm-4 col-md-5">
-                    <br />Logo URL
-                </div>
+
+                <form onSubmit={this.handleSubmit}>
+                    <div className="row">
+                        {teams.map((t, i) => (
+                            <div key={t.tid}>
+                                <div className="col-xs-6 col-sm-2 form-group">
+                                    <label className="visible-xs">Region</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        onChange={e =>
+                                            this.handleInputChange(
+                                                i,
+                                                "region",
+                                                e,
+                                            )}
+                                        value={t.region}
+                                    />
+                                </div>
+                                <div className="col-xs-6 col-sm-2 form-group">
+                                    <label className="visible-xs">Name</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        onChange={e =>
+                                            this.handleInputChange(
+                                                i,
+                                                "name",
+                                                e,
+                                            )}
+                                        value={t.name}
+                                    />
+                                </div>
+                                <div className="col-xs-6 col-sm-2 col-md-1 form-group">
+                                    <label className="visible-xs">Abbrev</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        onChange={e =>
+                                            this.handleInputChange(
+                                                i,
+                                                "abbrev",
+                                                e,
+                                            )}
+                                        value={t.abbrev}
+                                    />
+                                </div>
+                                <div className="col-xs-6 col-sm-2 form-group">
+                                    <label className="visible-xs">
+                                        Population (millions)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        onChange={e =>
+                                            this.handleInputChange(i, "pop", e)}
+                                        value={t.pop}
+                                    />
+                                </div>
+                                <div className="col-sm-4 col-md-5 form-group">
+                                    <label className="visible-xs">
+                                        Logo URL
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        onChange={e =>
+                                            this.handleInputChange(
+                                                i,
+                                                "imgURL",
+                                                e,
+                                            )}
+                                        value={t.imgURL}
+                                    />
+                                </div>
+                                <hr className="visible-xs" />
+                            </div>
+                        ))}
+                    </div>
+                    <center>
+                        <button
+                            type="submit"
+                            className="btn btn-primary"
+                            disabled={saving}
+                        >
+                            Update Team Info
+                        </button>
+                    </center>
+                </form>
             </div>
-
-            <form onSubmit={this.handleSubmit}>
-                <div className="row">
-                    {teams.map((t, i) => <div key={t.tid}>
-                        <div className="col-xs-6 col-sm-2 form-group">
-                            <label className="visible-xs">Region</label>
-                            <input type="text" className="form-control" onChange={e => this.handleInputChange(i, 'region', e)} value={t.region} />
-                        </div>
-                        <div className="col-xs-6 col-sm-2 form-group">
-                            <label className="visible-xs">Name</label>
-                            <input type="text" className="form-control" onChange={e => this.handleInputChange(i, 'name', e)} value={t.name} />
-                        </div>
-                        <div className="col-xs-6 col-sm-2 col-md-1 form-group">
-                            <label className="visible-xs">Abbrev</label>
-                            <input type="text" className="form-control" onChange={e => this.handleInputChange(i, 'abbrev', e)} value={t.abbrev} />
-                        </div>
-                        <div className="col-xs-6 col-sm-2 form-group">
-                            <label className="visible-xs">Population (millions)</label>
-                            <input type="text" className="form-control" onChange={e => this.handleInputChange(i, 'pop', e)} value={t.pop} />
-                        </div>
-                        <div className="col-sm-4 col-md-5 form-group">
-                            <label className="visible-xs">Logo URL</label>
-                            <input type="text" className="form-control" onChange={e => this.handleInputChange(i, 'imgURL', e)} value={t.imgURL} />
-                        </div>
-                        <hr className="visible-xs" />
-                    </div>)}
-                </div>
-                <center>
-                    <button type="submit" className="btn btn-primary" disabled={saving}>
-                        Update Team Info
-                    </button>
-                </center>
-            </form>
-        </div>;
+        );
     }
 }
 

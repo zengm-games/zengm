@@ -1,7 +1,7 @@
 // @flow
 
-import type {GetOutput, PageCtx} from '../../common/types';
-import {emitter} from '../util';
+import type { GetOutput, PageCtx } from "../../common/types";
+import { emitter } from "../util";
 
 type InitArgs = {
     Component: any,
@@ -12,9 +12,16 @@ type InitArgs = {
 
 const initView = (args: InitArgs) => {
     args.inLeague = args.inLeague !== undefined ? args.inLeague : true;
-    args.get = args.get !== undefined ? args.get : () => { return {}; };
+    args.get =
+        args.get !== undefined
+            ? args.get
+            : () => {
+                  return {};
+              };
 
-    if (!args.Component) { throw new Error('Missing arg Component'); }
+    if (!args.Component) {
+        throw new Error("Missing arg Component");
+    }
 
     return (ctx: PageCtx, next: () => void) => {
         if (ctx.bbgm === undefined) {
@@ -30,7 +37,7 @@ const initView = (args: InitArgs) => {
             };
         }
         ctx.bbgm.handled = true;
-        emitter.emit('get', args, ctx);
+        emitter.emit("get", args, ctx);
     };
 };
 

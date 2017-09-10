@@ -1,8 +1,8 @@
 // @flow
 
-import {idb} from '../db';
-import {toUI} from '../util';
-import type {Locks} from '../../common/types';
+import { idb } from "../db";
+import { toUI } from "../util";
+import type { Locks } from "../../common/types";
 
 // These are transient variables that always reset to "false" on reload. See local.js for more.
 const locks: Locks = {
@@ -29,8 +29,8 @@ const set = (name: $Keys<Locks>, value: boolean) => {
 
     locks[name] = value;
 
-    if (name === 'gameSim') {
-        toUI(['realtimeUpdate', ['lock.gameSim']]);
+    if (name === "gameSim") {
+        toUI(["realtimeUpdate", ["lock.gameSim"]]);
     }
 };
 
@@ -110,7 +110,7 @@ async function canStartNegotiation(): Promise<boolean> {
  * @return {Promise.boolean}
  */
 async function unreadMessage(): Promise<boolean> {
-    const messages = await idb.getCopies.messages({limit: 10});
+    const messages = await idb.getCopies.messages({ limit: 10 });
     for (let i = 0; i < messages.length; i++) {
         if (!messages[i].read) {
             return true;

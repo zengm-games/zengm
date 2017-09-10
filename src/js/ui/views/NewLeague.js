@@ -1,10 +1,14 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import {helpers} from '../../common';
-import {realtimeUpdate, setTitle, toWorker} from '../util';
+import PropTypes from "prop-types";
+import React from "react";
+import { helpers } from "../../common";
+import { realtimeUpdate, setTitle, toWorker } from "../util";
 
-const PopText = ({teams, tid}) => {
-    let msg = <span>Region population: ?<br />Difficulty: ?</span>;
+const PopText = ({ teams, tid }) => {
+    let msg = (
+        <span>
+            Region population: ?<br />Difficulty: ?
+        </span>
+    );
     if (tid >= 0) {
         const t = teams.find(t2 => t2.tid === tid);
         if (t) {
@@ -21,7 +25,12 @@ const PopText = ({teams, tid}) => {
                 difficulty = "very hard";
             }
 
-            msg = <span>Region population: {t.pop} million, #{t.popRank} leaguewide<br />Difficulty: {difficulty}</span>;
+            msg = (
+                <span>
+                    Region population: {t.pop} million, #{t.popRank} leaguewide<br />Difficulty:{" "}
+                    {difficulty}
+                </span>
+            );
         }
     }
 
@@ -29,12 +38,14 @@ const PopText = ({teams, tid}) => {
 };
 
 PopText.propTypes = {
-    teams: PropTypes.arrayOf(PropTypes.shape({
-        // pop and popRank not required for Random Team
-        pop: PropTypes.number,
-        popRank: PropTypes.number,
-        tid: PropTypes.number.isRequired,
-    })).isRequired,
+    teams: PropTypes.arrayOf(
+        PropTypes.shape({
+            // pop and popRank not required for Random Team
+            pop: PropTypes.number,
+            popRank: PropTypes.number,
+            tid: PropTypes.number.isRequired,
+        }),
+    ).isRequired,
     tid: PropTypes.number.isRequired,
 };
 
@@ -51,7 +62,7 @@ class NewLeague extends React.Component {
 
         this.state = {
             creating: false,
-            customize: 'random',
+            customize: "random",
             invalidLeagueFile: false,
             leagueFile: null,
             name: props.name,
@@ -62,9 +73,9 @@ class NewLeague extends React.Component {
         };
 
         this.handleChanges = {
-            name: this.handleChange.bind(this, 'name'),
-            randomizeRosters: this.handleChange.bind(this, 'randomizeRosters'),
-            tid: this.handleChange.bind(this, 'tid'),
+            name: this.handleChange.bind(this, "name"),
+            randomizeRosters: this.handleChange.bind(this, "randomizeRosters"),
+            tid: this.handleChange.bind(this, "tid"),
         };
         this.handleCustomizeChange = this.handleCustomizeChange.bind(this);
         this.handleFile = this.handleFile.bind(this);
@@ -73,9 +84,9 @@ class NewLeague extends React.Component {
 
     handleChange(name, e) {
         let val = e.target.value;
-        if (name === 'tid') {
+        if (name === "tid") {
             val = parseInt(e.target.value, 10);
-        } else if (name === 'randomizeRosters') {
+        } else if (name === "randomizeRosters") {
             val = e.target.checked;
         }
         this.setState({
@@ -88,7 +99,7 @@ class NewLeague extends React.Component {
             customize: e.target.value,
             invalidLeagueFile: false,
         };
-        if (updatedState.customize === 'random') {
+        if (updatedState.customize === "random") {
             updatedState.teams = defaultTeams;
         }
 
@@ -132,12 +143,15 @@ class NewLeague extends React.Component {
             if (newTeams) {
                 for (const t of newTeams) {
                     // Is pop hidden in season, like in editTeamInfo import?
-                    if (!t.hasOwnProperty("pop") && t.hasOwnProperty("seasons")) {
+                    if (
+                        !t.hasOwnProperty("pop") &&
+                        t.hasOwnProperty("seasons")
+                    ) {
                         t.pop = t.seasons[t.seasons.length - 1].pop;
                     }
 
                     // God, I hate being permissive...
-                    if (typeof t.pop !== 'number') {
+                    if (typeof t.pop !== "number") {
                         t.pop = parseFloat(t.pop);
                     }
                     if (isNaN(t.pop)) {
@@ -175,92 +189,176 @@ class NewLeague extends React.Component {
 
     async handleSubmit(e) {
         e.preventDefault();
-        this.setState({creating: true});
+        this.setState({ creating: true });
 
         let startingSeason = 2017;
 
         let leagueFile;
         let randomizeRosters = false;
-        if (this.state.customize === 'custom-rosters') {
+        if (this.state.customize === "custom-rosters") {
             leagueFile = this.state.leagueFile;
             randomizeRosters = this.state.randomizeRosters;
-            startingSeason = leagueFile.startingSeason !== undefined ? leagueFile.startingSeason : startingSeason;
+            startingSeason =
+                leagueFile.startingSeason !== undefined
+                    ? leagueFile.startingSeason
+                    : startingSeason;
         }
 
-        const lid = await toWorker('createLeague', this.state.name, this.state.tid, leagueFile, startingSeason, randomizeRosters);
+        const lid = await toWorker(
+            "createLeague",
+            this.state.name,
+            this.state.tid,
+            leagueFile,
+            startingSeason,
+            randomizeRosters,
+        );
         realtimeUpdate([], `/l/${lid}`);
     }
 
     render() {
-        const {creating, customize, invalidLeagueFile, leagueFile, name, parsing, randomizeRosters, teams, tid} = this.state;
+        const {
+            creating,
+            customize,
+            invalidLeagueFile,
+            leagueFile,
+            name,
+            parsing,
+            randomizeRosters,
+            teams,
+            tid,
+        } = this.state;
 
-        setTitle('Create New League');
+        setTitle("Create New League");
 
-        return <div>
-            <h1>Create New League</h1>
+        return (
+            <div>
+                <h1>Create New League</h1>
 
-            <form onSubmit={this.handleSubmit}>
-                <div className="row">
-                    <div className="form-group col-md-4 col-sm-5">
-                        <label>League name</label>
-                        <input className="form-control" type="text" value={name} onChange={this.handleChanges.name} />
-                    </div>
+                <form onSubmit={this.handleSubmit}>
+                    <div className="row">
+                        <div className="form-group col-md-4 col-sm-5">
+                            <label>League name</label>
+                            <input
+                                className="form-control"
+                                type="text"
+                                value={name}
+                                onChange={this.handleChanges.name}
+                            />
+                        </div>
 
-                    <div className="clearfix visible-xs" />
+                        <div className="clearfix visible-xs" />
 
-                    <div className="form-group col-md-4 col-sm-5">
-                        <label>Which team do you want to manage?</label>
-                        <select className="form-control" value={tid} onChange={this.handleChanges.tid}>
-                            {teams.map(t => {
-                                return <option key={t.tid} value={t.tid}>
-                                    {t.region} {t.name}
-                                </option>;
-                            })}
-                        </select>
-                        <PopText tid={tid} teams={teams} />
-                    </div>
-
-                    <div className="clearfix visible-sm" />
-
-                    <div className="col-md-4 col-sm-5">
-                        <div className="form-group">
-                            <label>Customize</label>
+                        <div className="form-group col-md-4 col-sm-5">
+                            <label>Which team do you want to manage?</label>
                             <select
                                 className="form-control"
-                                onChange={this.handleCustomizeChange}
-                                value={customize}
+                                value={tid}
+                                onChange={this.handleChanges.tid}
                             >
-                                <option value="random">Random Players</option>
-                                <option value="custom-rosters">Upload League File</option>
+                                {teams.map(t => {
+                                    return (
+                                        <option key={t.tid} value={t.tid}>
+                                            {t.region} {t.name}
+                                        </option>
+                                    );
+                                })}
                             </select>
-                            <span className="help-block">Teams in your new league can either be filled by randomly-generated players or by players from a <a href="https://basketball-gm.com/manual/customization/">custom League File</a> you upload.</span>
+                            <PopText tid={tid} teams={teams} />
                         </div>
-                        {customize === 'custom-rosters' ? <div>
-                            <div>
-                                <input type="file" onChange={this.handleFile} />
-                                {invalidLeagueFile ? <p className="text-danger" style={{marginTop: '1em'}}>Error: Invalid League File</p> : null}
-                                {parsing ? <p className="text-info" style={{marginTop: '1em'}}>Parsing league file...</p> : null}
+
+                        <div className="clearfix visible-sm" />
+
+                        <div className="col-md-4 col-sm-5">
+                            <div className="form-group">
+                                <label>Customize</label>
+                                <select
+                                    className="form-control"
+                                    onChange={this.handleCustomizeChange}
+                                    value={customize}
+                                >
+                                    <option value="random">
+                                        Random Players
+                                    </option>
+                                    <option value="custom-rosters">
+                                        Upload League File
+                                    </option>
+                                </select>
+                                <span className="help-block">
+                                    Teams in your new league can either be
+                                    filled by randomly-generated players or by
+                                    players from a{" "}
+                                    <a href="https://basketball-gm.com/manual/customization/">
+                                        custom League File
+                                    </a>{" "}
+                                    you upload.
+                                </span>
                             </div>
-                            <div className="checkbox">
-                                <label>
-                                    <input onChange={this.handleChanges.randomizeRosters} type="checkbox" value={randomizeRosters} /> Shuffle Rosters
-                                </label>
+                            {customize === "custom-rosters" ? (
+                                <div>
+                                    <div>
+                                        <input
+                                            type="file"
+                                            onChange={this.handleFile}
+                                        />
+                                        {invalidLeagueFile ? (
+                                            <p
+                                                className="text-danger"
+                                                style={{ marginTop: "1em" }}
+                                            >
+                                                Error: Invalid League File
+                                            </p>
+                                        ) : null}
+                                        {parsing ? (
+                                            <p
+                                                className="text-info"
+                                                style={{ marginTop: "1em" }}
+                                            >
+                                                Parsing league file...
+                                            </p>
+                                        ) : null}
+                                    </div>
+                                    <div className="checkbox">
+                                        <label>
+                                            <input
+                                                onChange={
+                                                    this.handleChanges
+                                                        .randomizeRosters
+                                                }
+                                                type="checkbox"
+                                                value={randomizeRosters}
+                                            />{" "}
+                                            Shuffle Rosters
+                                        </label>
+                                    </div>
+                                </div>
+                            ) : null}
+                        </div>
+
+                        <div className="clearfix visible-xs" />
+
+                        <div className="col-md-12 col-sm-5 text-center">
+                            <div className="visible-sm invisible-xs">
+                                <br />
+                                <br />
                             </div>
-                        </div> : null}
-
+                            <button
+                                type="submit"
+                                className="btn btn-lg btn-primary"
+                                disabled={
+                                    creating ||
+                                    parsing ||
+                                    (customize === "custom-rosters" &&
+                                        (invalidLeagueFile ||
+                                            leagueFile === null))
+                                }
+                            >
+                                Create New League
+                            </button>
+                        </div>
                     </div>
-
-                    <div className="clearfix visible-xs" />
-
-                    <div className="col-md-12 col-sm-5 text-center">
-                        <div className="visible-sm invisible-xs"><br /><br /></div>
-                        <button type="submit" className="btn btn-lg btn-primary" disabled={creating || parsing || (customize === 'custom-rosters' && (invalidLeagueFile || leagueFile === null))}>
-                            Create New League
-                        </button>
-                    </div>
-                </div>
-            </form>
-        </div>;
+                </form>
+            </div>
+        );
     }
 }
 

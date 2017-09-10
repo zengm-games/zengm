@@ -1,10 +1,10 @@
 // @flow
 
-import {idb} from '../../db';
-import type {Message} from '../../../common/types';
+import { idb } from "../../db";
+import type { Message } from "../../../common/types";
 
-const getCopy = async ({mid}: {mid: number}): Promise<Message | void> => {
-    const result = await idb.getCopies.messages({mid});
+const getCopy = async ({ mid }: { mid: number }): Promise<Message | void> => {
+    const result = await idb.getCopies.messages({ mid });
     return result[0];
 };
 

@@ -1,8 +1,8 @@
-import assert from 'assert';
-import {g} from '../../../common';
-import helpers from '../../helpers';
-import {finances, player, team} from '../../../worker/core';
-import {idb} from '../../../worker/db';
+import assert from "assert";
+import { g } from "../../../common";
+import helpers from "../../helpers";
+import { finances, player, team } from "../../../worker/core";
+import { idb } from "../../../worker/db";
 
 describe("core/finances", () => {
     before(async () => {
@@ -13,9 +13,9 @@ describe("core/finances", () => {
 
         // One player per team is all that's needed for payroll calculation.
         const players = [
-            player.generate(0, 30, '', 50, 50, 2017, true, 15.5),
-            player.generate(1, 30, '', 50, 50, 2017, true, 15.5),
-            player.generate(2, 30, '', 50, 50, 2017, true, 15.5),
+            player.generate(0, 30, "", 50, 50, 2017, true, 15.5),
+            player.generate(1, 30, "", 50, 50, 2017, true, 15.5),
+            player.generate(2, 30, "", 50, 50, 2017, true, 15.5),
         ];
 
         players[0].contract.amount = g.luxuryPayroll + 1;
@@ -42,14 +42,25 @@ describe("core/finances", () => {
                 assert(teamSeasons[i].payrollEndOfSeason > 0);
 
                 if (teamSeasons[i].payrollEndOfSeason > g.luxuryPayroll) {
-                    assert.equal(teamSeasons[i].expenses.luxuryTax.amount, g.luxuryTax * (teamSeasons[i].payrollEndOfSeason - g.luxuryPayroll));
-                    assert.equal(teamSeasons[i].expenses.luxuryTax.amount, g.luxuryTax * 1);
+                    assert.equal(
+                        teamSeasons[i].expenses.luxuryTax.amount,
+                        g.luxuryTax *
+                            (teamSeasons[i].payrollEndOfSeason -
+                                g.luxuryPayroll),
+                    );
+                    assert.equal(
+                        teamSeasons[i].expenses.luxuryTax.amount,
+                        g.luxuryTax * 1,
+                    );
                 } else {
                     assert.equal(teamSeasons[i].expenses.luxuryTax.amount, 0);
                 }
 
                 if (teamSeasons[i].payrollEndOfSeason < g.minPayroll) {
-                    assert.equal(teamSeasons[i].expenses.minTax.amount, g.minPayroll - teamSeasons[i].payrollEndOfSeason);
+                    assert.equal(
+                        teamSeasons[i].expenses.minTax.amount,
+                        g.minPayroll - teamSeasons[i].payrollEndOfSeason,
+                    );
                     assert.equal(teamSeasons[i].expenses.minTax.amount, 1);
                 } else {
                     assert.equal(teamSeasons[i].expenses.minTax.amount, 0);

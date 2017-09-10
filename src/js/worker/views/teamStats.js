@@ -1,31 +1,85 @@
 // @flow
 
-import {g} from '../../common';
-import {idb} from '../db';
-import type {UpdateEvents} from '../../common/types';
+import { g } from "../../common";
+import { idb } from "../db";
+import type { UpdateEvents } from "../../common/types";
 
 async function updateTeams(
-    inputs: {season: number},
+    inputs: { season: number },
     updateEvents: UpdateEvents,
     state: any,
-): void | {[key: string]: any} {
-    if ((inputs.season === g.season && (updateEvents.includes('gameSim') || updateEvents.includes('playerMovement'))) || inputs.season !== state.season) {
+): void | { [key: string]: any } {
+    if (
+        (inputs.season === g.season &&
+            (updateEvents.includes("gameSim") ||
+                updateEvents.includes("playerMovement"))) ||
+        inputs.season !== state.season
+    ) {
         const teams = await idb.getCopies.teamsPlus({
             attrs: ["tid", "abbrev"],
             seasonAttrs: ["won", "lost"],
-            stats: ["gp", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "ba", "pf", "pts", "oppPts", "diff"],
+            stats: [
+                "gp",
+                "fg",
+                "fga",
+                "fgp",
+                "tp",
+                "tpa",
+                "tpp",
+                "ft",
+                "fta",
+                "ftp",
+                "orb",
+                "drb",
+                "trb",
+                "ast",
+                "tov",
+                "stl",
+                "blk",
+                "ba",
+                "pf",
+                "pts",
+                "oppPts",
+                "diff",
+            ],
             season: inputs.season,
         });
 
         // Sort stats so we can determine what percentile our team is in.
         const stats = {};
-        const statTypes = ['won', 'lost', 'fg', 'fga', 'fgp', 'tp', 'tpa', 'tpp', 'ft', 'fta', 'ftp', 'orb', 'drb', 'trb', 'ast', 'tov', 'stl', 'blk', 'ba', 'pf', 'pts', 'oppPts', 'diff'];
-        const lowerIsBetter = ['lost', 'tov', 'ba', 'pf', 'oppPts'];
+        const statTypes = [
+            "won",
+            "lost",
+            "fg",
+            "fga",
+            "fgp",
+            "tp",
+            "tpa",
+            "tpp",
+            "ft",
+            "fta",
+            "ftp",
+            "orb",
+            "drb",
+            "trb",
+            "ast",
+            "tov",
+            "stl",
+            "blk",
+            "ba",
+            "pf",
+            "pts",
+            "oppPts",
+            "diff",
+        ];
+        const lowerIsBetter = ["lost", "tov", "ba", "pf", "oppPts"];
 
         // Loop teams and stat types.
         for (const t of teams) {
             for (const statType of statTypes) {
-                const value = t.stats.hasOwnProperty(statType) ? t.stats[statType] : t.seasonAttrs[statType];
+                const value = t.stats.hasOwnProperty(statType)
+                    ? t.stats[statType]
+                    : t.seasonAttrs[statType];
 
                 if (!stats[statType]) {
                     stats[statType] = [value];

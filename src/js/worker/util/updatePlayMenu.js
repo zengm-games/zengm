@@ -1,7 +1,7 @@
 // @flow
 
-import {PHASE, g, helpers} from '../../common';
-import {local, lock, toUI} from '../util';
+import { PHASE, g, helpers } from "../../common";
+import { local, lock, toUI } from "../util";
 
 /**
 * Update play menu options based on game state.
@@ -11,35 +11,56 @@ import {local, lock, toUI} from '../util';
 */
 const updatePlayMenu = async () => {
     // $FlowFixMe
-    if (typeof it === 'function') { return; }
+    if (typeof it === "function") {
+        return;
+    }
 
     const allOptions: {
         [key: string]: {
             id?: string,
             label: string,
             url?: string,
-        }
+        },
     } = {
-        stop: {label: "Stop"},
-        day: {label: "One day"},
-        week: {label: "One week"},
-        month: {label: "One month"},
-        untilPlayoffs: {label: "Until playoffs"},
-        throughPlayoffs: {label: "Through playoffs"},
-        dayLive: {url: helpers.leagueUrl(["live"]), label: "One day (live)"},
-        viewDraftLottery: {url: helpers.leagueUrl(["draft_lottery"]), label: "View draft lottery"},
-        untilDraft: {label: "Until draft"},
-        viewDraft: {url: helpers.leagueUrl(["draft"]), label: "View draft"},
-        untilResignPlayers: {label: "Re-sign players with expiring contracts"},
-        untilFreeAgency: {label: "Until free agency"},
-        untilPreseason: {label: "Until preseason"},
-        untilRegularSeason: {label: "Until regular season"},
-        contractNegotiation: {url: helpers.leagueUrl(["negotiation"]), label: "Continue contract negotiation"},
-        contractNegotiationList: {url: helpers.leagueUrl(["negotiation"]), label: "Continue re-signing players"},
-        message: {url: helpers.leagueUrl(["message"]), label: "Read new message"},
-        newLeague: {url: "/new_league", label: "Try again in a new league"},
-        newTeam: {url: helpers.leagueUrl(["new_team"]), label: "Try again with a new team"},
-        stopAuto: {label: `Stop auto play (${local.autoPlaySeasons} seasons left)`},
+        stop: { label: "Stop" },
+        day: { label: "One day" },
+        week: { label: "One week" },
+        month: { label: "One month" },
+        untilPlayoffs: { label: "Until playoffs" },
+        throughPlayoffs: { label: "Through playoffs" },
+        dayLive: { url: helpers.leagueUrl(["live"]), label: "One day (live)" },
+        viewDraftLottery: {
+            url: helpers.leagueUrl(["draft_lottery"]),
+            label: "View draft lottery",
+        },
+        untilDraft: { label: "Until draft" },
+        viewDraft: { url: helpers.leagueUrl(["draft"]), label: "View draft" },
+        untilResignPlayers: {
+            label: "Re-sign players with expiring contracts",
+        },
+        untilFreeAgency: { label: "Until free agency" },
+        untilPreseason: { label: "Until preseason" },
+        untilRegularSeason: { label: "Until regular season" },
+        contractNegotiation: {
+            url: helpers.leagueUrl(["negotiation"]),
+            label: "Continue contract negotiation",
+        },
+        contractNegotiationList: {
+            url: helpers.leagueUrl(["negotiation"]),
+            label: "Continue re-signing players",
+        },
+        message: {
+            url: helpers.leagueUrl(["message"]),
+            label: "Read new message",
+        },
+        newLeague: { url: "/new_league", label: "Try again in a new league" },
+        newTeam: {
+            url: helpers.leagueUrl(["new_team"]),
+            label: "Try again with a new team",
+        },
+        stopAuto: {
+            label: `Stop auto play (${local.autoPlaySeasons} seasons left)`,
+        },
     };
 
     let keys = [];
@@ -78,13 +99,13 @@ const updatePlayMenu = async () => {
     if (unreadMessage) {
         keys = ["message"];
     }
-    if (lock.get('gameSim')) {
+    if (lock.get("gameSim")) {
         keys = ["stop"];
     }
     if (negotiationInProgress && g.phase !== PHASE.RESIGN_PLAYERS) {
         keys = ["contractNegotiation"];
     }
-    if (lock.get('newPhase')) {
+    if (lock.get("newPhase")) {
         keys = [];
     }
 
@@ -102,7 +123,7 @@ const updatePlayMenu = async () => {
         return allOptions[id];
     });
 
-    toUI(['emit', 'updateTopMenu', {options: someOptions}]);
+    toUI(["emit", "updateTopMenu", { options: someOptions }]);
 };
 
 export default updatePlayMenu;

@@ -1,12 +1,12 @@
 // @flow
 
-import faces from 'facesjs';
-import _ from 'underscore';
-import {COMPOSITE_WEIGHTS, PHASE, PLAYER, g, helpers} from '../../common';
-import {finances} from '../core';
-import {idb} from '../db';
-import * as names from '../../data/names';
-import {injuries, logEvent, random} from '../util';
+import faces from "facesjs";
+import _ from "underscore";
+import { COMPOSITE_WEIGHTS, PHASE, PLAYER, g, helpers } from "../../common";
+import { finances } from "../core";
+import { idb } from "../db";
+import * as names from "../../data/names";
+import { injuries, logEvent, random } from "../util";
 import type {
     Conditions,
     GamePlayer,
@@ -22,9 +22,9 @@ import type {
     PlayerWithStats,
     PlayerWithoutPid,
     RatingKey,
-} from '../../common/types';
+} from "../../common/types";
 
-type Profile = '' | 'Big' | 'Point' | 'Wing' | 'Base' | '3andD' | 'RawAthlete';
+type Profile = "" | "Big" | "Point" | "Wing" | "Base" | "3andD" | "RawAthlete";
 
 let playerNames;
 
@@ -54,7 +54,24 @@ function limitRating(rating: number): number {
  */
 function ovr(ratings: PlayerRatings): number {
     // This formula is loosely based on linear regression:
-    return Math.round((4 * ratings.hgt + ratings.stre + 4 * ratings.spd + 2 * ratings.jmp + 3 * ratings.endu + 3 * ratings.ins + 4 * ratings.dnk + ratings.ft + ratings.fg + 2 * ratings.tp + ratings.blk + ratings.stl + ratings.drb + 3 * ratings.pss + ratings.reb) / 32);
+    return Math.round(
+        (4 * ratings.hgt +
+            ratings.stre +
+            4 * ratings.spd +
+            2 * ratings.jmp +
+            3 * ratings.endu +
+            3 * ratings.ins +
+            4 * ratings.dnk +
+            ratings.ft +
+            ratings.fg +
+            2 * ratings.tp +
+            ratings.blk +
+            ratings.stl +
+            ratings.drb +
+            3 * ratings.pss +
+            ratings.reb) /
+            32,
+    );
 }
 
 function fuzzRating(rating: number, fuzz: number): number {
@@ -66,7 +83,11 @@ function fuzzRating(rating: number, fuzz: number): number {
     return Math.round(helpers.bound(rating + fuzz, 0, 100));
 }
 
-function hasSkill(ratings: PlayerRatings, components: RatingKey[], weights?: number[]): boolean {
+function hasSkill(
+    ratings: PlayerRatings,
+    components: RatingKey[],
+    weights?: number[],
+): boolean {
     if (weights === undefined) {
         // Default: array of ones with same size as components
         weights = [];
@@ -78,10 +99,13 @@ function hasSkill(ratings: PlayerRatings, components: RatingKey[], weights?: num
     let numerator = 0;
     let denominator = 0;
     for (let i = 0; i < components.length; i++) {
-        let rating = components[i] === 'hgt' ? ratings[components[i]] : fuzzRating(ratings[components[i]], ratings.fuzz); // don't fuzz height
+        let rating =
+            components[i] === "hgt"
+                ? ratings[components[i]]
+                : fuzzRating(ratings[components[i]], ratings.fuzz); // don't fuzz height
 
         // Special case for height due to rescaling
-        if (components[i] === 'hgt') {
+        if (components[i] === "hgt") {
             rating = (rating - 25) * 2;
         }
 
@@ -117,28 +141,70 @@ function skills(ratings: PlayerRatings): PlayerSkill[] {
     const sk = [];
 
     // These use the same formulas as the composite rating definitions in core.game!
-    if (hasSkill(ratings, COMPOSITE_WEIGHTS.shootingThreePointer.ratings, COMPOSITE_WEIGHTS.shootingThreePointer.weights)) {
+    if (
+        hasSkill(
+            ratings,
+            COMPOSITE_WEIGHTS.shootingThreePointer.ratings,
+            COMPOSITE_WEIGHTS.shootingThreePointer.weights,
+        )
+    ) {
         sk.push("3");
     }
-    if (hasSkill(ratings, COMPOSITE_WEIGHTS.athleticism.ratings, COMPOSITE_WEIGHTS.athleticism.weights)) {
+    if (
+        hasSkill(
+            ratings,
+            COMPOSITE_WEIGHTS.athleticism.ratings,
+            COMPOSITE_WEIGHTS.athleticism.weights,
+        )
+    ) {
         sk.push("A");
     }
     if (hasSkill(ratings, COMPOSITE_WEIGHTS.dribbling.ratings)) {
         sk.push("B");
     }
-    if (hasSkill(ratings, COMPOSITE_WEIGHTS.defenseInterior.ratings, COMPOSITE_WEIGHTS.defenseInterior.weights)) {
+    if (
+        hasSkill(
+            ratings,
+            COMPOSITE_WEIGHTS.defenseInterior.ratings,
+            COMPOSITE_WEIGHTS.defenseInterior.weights,
+        )
+    ) {
         sk.push("Di");
     }
-    if (hasSkill(ratings, COMPOSITE_WEIGHTS.defensePerimeter.ratings, COMPOSITE_WEIGHTS.defensePerimeter.weights)) {
+    if (
+        hasSkill(
+            ratings,
+            COMPOSITE_WEIGHTS.defensePerimeter.ratings,
+            COMPOSITE_WEIGHTS.defensePerimeter.weights,
+        )
+    ) {
         sk.push("Dp");
     }
-    if (hasSkill(ratings, COMPOSITE_WEIGHTS.shootingLowPost.ratings, COMPOSITE_WEIGHTS.shootingLowPost.weights)) {
+    if (
+        hasSkill(
+            ratings,
+            COMPOSITE_WEIGHTS.shootingLowPost.ratings,
+            COMPOSITE_WEIGHTS.shootingLowPost.weights,
+        )
+    ) {
         sk.push("Po");
     }
-    if (hasSkill(ratings, COMPOSITE_WEIGHTS.passing.ratings, COMPOSITE_WEIGHTS.passing.weights)) {
+    if (
+        hasSkill(
+            ratings,
+            COMPOSITE_WEIGHTS.passing.ratings,
+            COMPOSITE_WEIGHTS.passing.weights,
+        )
+    ) {
         sk.push("Ps");
     }
-    if (hasSkill(ratings, COMPOSITE_WEIGHTS.rebounding.ratings, COMPOSITE_WEIGHTS.rebounding.weights)) {
+    if (
+        hasSkill(
+            ratings,
+            COMPOSITE_WEIGHTS.rebounding.ratings,
+            COMPOSITE_WEIGHTS.rebounding.weights,
+        )
+    ) {
         sk.push("R");
     }
 
@@ -164,9 +230,11 @@ function genContract(
     // Scale proportional to (ovr*2 + pot)*0.5 120-210
     //amount = ((3 * p.value) * 0.85 - 110) / (210 - 120);  // Scale from 0 to 1 (approx)
     //amount = amount * (g.maxContract - g.minContract) + g.minContract;
-    let amount = ((p.value - 1) / 100 - 0.45) * 3.3 * (g.maxContract - g.minContract) + g.minContract;
+    let amount =
+        ((p.value - 1) / 100 - 0.45) * 3.3 * (g.maxContract - g.minContract) +
+        g.minContract;
     if (randomizeAmount) {
-        amount *= helpers.bound(random.realGauss(1, 0.1), 0, 2);  // Randomize
+        amount *= helpers.bound(random.realGauss(1, 0.1), 0, 2); // Randomize
     }
 
     // Expiration
@@ -210,7 +278,7 @@ function genContract(
 
     amount = 50 * Math.round(amount / 50); // Make it a multiple of 50k
 
-    return {amount, exp: expiration};
+    return { amount, exp: expiration };
 }
 
 /**
@@ -238,7 +306,7 @@ function setContract(
         }
 
         for (let i = start; i <= p.contract.exp; i++) {
-            p.salaries.push({season: i, amount: contract.amount});
+            p.salaries.push({ season: i, amount: contract.amount });
         }
     }
 }
@@ -260,71 +328,97 @@ function pos(ratings: PlayerRatings): string {
     let position;
 
     // Without other skills, slot primarily by height
-    if (ratings.hgt >= 61) { // 6'10"
-        position = 'C';
-    } else if (ratings.hgt >= 54) { // 6'8"
-        position = 'PF';
-    } else if (ratings.hgt >= 45) { // 6'6"
-        position = 'SF';
-    } else if (ratings.spd < 70 && ratings.drb < 70 && ratings.pss < 70 && ratings.hgt >= 25) {
-        position = 'SG';
+    if (ratings.hgt >= 61) {
+        // 6'10"
+        position = "C";
+    } else if (ratings.hgt >= 54) {
+        // 6'8"
+        position = "PF";
+    } else if (ratings.hgt >= 45) {
+        // 6'6"
+        position = "SF";
+    } else if (
+        ratings.spd < 70 &&
+        ratings.drb < 70 &&
+        ratings.pss < 70 &&
+        ratings.hgt >= 25
+    ) {
+        position = "SG";
     } else {
-        position = 'PG';
+        position = "PG";
     }
 
     // No height requirements for point guards
     // PG is a fast ball handler, or a super ball handler
-    if ((ratings.spd >= 70 && (ratings.pss + ratings.drb) >= 100) ||
-            (ratings.spd >= 30 && (ratings.pss + ratings.drb) >= 145)) {
+    if (
+        (ratings.spd >= 70 && ratings.pss + ratings.drb >= 100) ||
+        (ratings.spd >= 30 && ratings.pss + ratings.drb >= 145)
+    ) {
         pg = true;
     }
 
     // SG is secondary ball handler and at least one of: slasher or 3p shooter
-    if (ratings.spd >= 50 && ratings.drb >= 50 && ratings.hgt >= 35 &&
-            (ratings.dnk >= 65 || ratings.tp >= 75)) {
+    if (
+        ratings.spd >= 50 &&
+        ratings.drb >= 50 &&
+        ratings.hgt >= 35 &&
+        (ratings.dnk >= 65 || ratings.tp >= 75)
+    ) {
         sg = true;
     }
 
     // SF is similar to SG but must be taller and has lower dribble/speed requirements
-    if (ratings.spd >= 35 && ratings.drb > 25 && ratings.hgt >= 45 &&
-            (ratings.dnk >= 75 || ratings.tp >= 65)) {
+    if (
+        ratings.spd >= 35 &&
+        ratings.drb > 25 &&
+        ratings.hgt >= 45 &&
+        (ratings.dnk >= 75 || ratings.tp >= 65)
+    ) {
         sf = true;
     }
 
     // PF must meet height/strength requirements.  If they are too tall then they are a Center only... unless they can shoot
-    if (ratings.hgt >= 45 && ratings.stre >= 60 && ratings.hgt + ratings.stre >= 115 &&
-            (ratings.hgt <= 65 || ratings.tp >= 70)) {
+    if (
+        ratings.hgt >= 45 &&
+        ratings.stre >= 60 &&
+        ratings.hgt + ratings.stre >= 115 &&
+        (ratings.hgt <= 65 || ratings.tp >= 70)
+    ) {
         pf = true;
     }
 
     // C must be extra tall or is strong/shotblocker but not quite as tall
-    if (ratings.hgt >= 65 || (ratings.hgt >= 55 && (ratings.hgt + ratings.stre >= 150 || ratings.blk >= 85))) {
+    if (
+        ratings.hgt >= 65 ||
+        (ratings.hgt >= 55 &&
+            (ratings.hgt + ratings.stre >= 150 || ratings.blk >= 85))
+    ) {
         c = true;
     }
 
     if (pg && !sg && !sf && !pf && !c) {
-        position = 'PG';
+        position = "PG";
     } else if (!pg && sg && !sf && !pf && !c) {
-        position = 'SG';
+        position = "SG";
     } else if (!pg && !sg && sf && !pf && !c) {
-        position = 'SF';
+        position = "SF";
     } else if (!pg && !sg && !sf && pf && !c) {
-        position = 'PF';
+        position = "PF";
     } else if (!pg && !sg && !sf && !pf && c) {
-        position = 'C';
+        position = "C";
     }
 
     // Multiple positions
     if ((pg || sg || sf) && c) {
-        position = 'F';
+        position = "F";
     } else if ((pg || sg) && (sf || pf)) {
-        position = 'GF';
+        position = "GF";
     } else if (c && pf) {
-        position = 'FC';
+        position = "FC";
     } else if (pf && sf) {
-        position = 'F';
+        position = "F";
     } else if (pg && sg) {
-        position = 'G';
+        position = "G";
     }
 
     return position;
@@ -387,7 +481,11 @@ function calcBaseChange(age: number, potentialDifference: number): number {
  * @return {Object} Updated player object.
  */
 function develop(
-    p: {born: {loc: string, year: number}, pos?: string, ratings: PlayerRatings[]},
+    p: {
+        born: { loc: string, year: number },
+        pos?: string,
+        ratings: PlayerRatings[],
+    },
     years?: number = 1,
     newPlayer?: boolean = false,
     coachingRank?: number = 15.5,
@@ -409,13 +507,17 @@ function develop(
             p.ratings[r].pot -= random.uniform(5, 25);
         }
 
-        let baseChange = calcBaseChange(age, p.ratings[r].pot - p.ratings[r].ovr);
+        let baseChange = calcBaseChange(
+            age,
+            p.ratings[r].pot - p.ratings[r].ovr,
+        );
 
         // Modulate by coaching
-        if (baseChange >= 0) { // life is normal
-            baseChange *= ((coachingRank - 1) * (-0.5) / (g.numTeams - 1) + 1.25);
+        if (baseChange >= 0) {
+            // life is normal
+            baseChange *= (coachingRank - 1) * -0.5 / (g.numTeams - 1) + 1.25;
         } else {
-            baseChange *= ((coachingRank - 1) * (0.5) / (g.numTeams - 1) + 0.75);
+            baseChange *= (coachingRank - 1) * 0.5 / (g.numTeams - 1) + 0.75;
         }
 
         // Ratings that can only increase a little, and only when young. Decrease when old.
@@ -429,19 +531,36 @@ function develop(
             } else {
                 baseChangeLocal = baseChange - 2.5;
             }
-            p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(baseChangeLocal * random.uniform(0.5, 1.5), -20, 10));
+            p.ratings[r][ratingKeys[j]] = limitRating(
+                p.ratings[r][ratingKeys[j]] +
+                    helpers.bound(
+                        baseChangeLocal * random.uniform(0.5, 1.5),
+                        -20,
+                        10,
+                    ),
+            );
         }
 
         // Ratings that can only increase a little, and only when young. Decrease slowly when old.
         ratingKeys = ["drb", "pss", "reb"];
         for (let j = 0; j < ratingKeys.length; j++) {
-            p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + helpers.bound(baseChange * random.uniform(0.5, 1.5), -1, 10));
+            p.ratings[r][ratingKeys[j]] = limitRating(
+                p.ratings[r][ratingKeys[j]] +
+                    helpers.bound(
+                        baseChange * random.uniform(0.5, 1.5),
+                        -1,
+                        10,
+                    ),
+            );
         }
 
         // Ratings that can increase a lot, but only when young. Decrease when old.
         ratingKeys = ["stre", "dnk", "blk", "stl"];
         for (let j = 0; j < ratingKeys.length; j++) {
-            p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + baseChange * random.uniform(0.5, 1.5));
+            p.ratings[r][ratingKeys[j]] = limitRating(
+                p.ratings[r][ratingKeys[j]] +
+                    baseChange * random.uniform(0.5, 1.5),
+            );
         }
 
         // Ratings that increase most when young, but can continue increasing for a while and only decrease very slowly.
@@ -455,7 +574,10 @@ function develop(
             } else {
                 baseChangeLocal = baseChange + 2.5;
             }
-            p.ratings[r][ratingKeys[j]] = limitRating(p.ratings[r][ratingKeys[j]] + baseChangeLocal * random.uniform(0.5, 1.5));
+            p.ratings[r][ratingKeys[j]] = limitRating(
+                p.ratings[r][ratingKeys[j]] +
+                    baseChangeLocal * random.uniform(0.5, 1.5),
+            );
         }
 
         // Update overall and potential
@@ -479,7 +601,7 @@ function develop(
         p.born.year = g.season - age;
     }
 
-    if (p.hasOwnProperty('pos') && typeof p.pos === 'string') {
+    if (p.hasOwnProperty("pos") && typeof p.pos === "string") {
         // Must be a custom league player, let's not rock the boat
         p.ratings[r].pos = p.pos;
     } else {
@@ -503,7 +625,23 @@ function bonus(p: Player | PlayerWithoutPid, amount: number) {
 
     const r = p.ratings.length - 1;
 
-    const ratingKeys = ['stre', 'spd', 'jmp', 'endu', 'ins', 'dnk', 'ft', 'fg', 'tp', 'blk', 'stl', 'drb', 'pss', 'reb', 'pot'];
+    const ratingKeys = [
+        "stre",
+        "spd",
+        "jmp",
+        "endu",
+        "ins",
+        "dnk",
+        "ft",
+        "fg",
+        "tp",
+        "blk",
+        "stl",
+        "drb",
+        "pss",
+        "reb",
+        "pot",
+    ];
     for (let i = 0; i < ratingKeys.length; i++) {
         const key = ratingKeys[i];
         p.ratings[r][key] = limitRating(p.ratings[r][key] + amount);
@@ -526,11 +664,17 @@ function bonus(p: Player | PlayerWithoutPid, amount: number) {
  * @return {Promise} Array of base moods, one for each team.
  */
 async function genBaseMoods(): Promise<number[]> {
-    const teamSeasons = await idb.cache.teamSeasons.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
+    const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
+        "teamSeasonsBySeasonTid",
+        [`${g.season}`, `${g.season},Z`],
+    );
 
     return teamSeasons.map(teamSeason => {
         // Special case for winning a title - basically never refuse to re-sign unless a miracle occurs
-        if (teamSeason.playoffRoundsWon === g.numPlayoffRounds && Math.random() < 0.99) {
+        if (
+            teamSeason.playoffRoundsWon === g.numPlayoffRounds &&
+            Math.random() < 0.99
+        ) {
             return -0.25; // Should guarantee no refusing to re-sign
         }
 
@@ -540,14 +684,17 @@ async function genBaseMoods(): Promise<number[]> {
         baseMood += 0.5 * (1 - teamSeason.hype);
 
         // Facilities - fuck it, just use most recent rank
-        baseMood += 0.1 * (finances.getRankLastThree([teamSeason], "expenses", "facilities") - 1) / (g.numTeams - 1);
+        baseMood +=
+            0.1 *
+            (finances.getRankLastThree([teamSeason], "expenses", "facilities") -
+                1) /
+            (g.numTeams - 1);
 
         // Population
         baseMood += 0.2 * (1 - teamSeason.pop / 10);
 
         // Randomness
         baseMood += random.uniform(-0.2, 0.4);
-
 
         baseMood = helpers.bound(baseMood, 0, 1.2);
 
@@ -566,14 +713,18 @@ async function genBaseMoods(): Promise<number[]> {
  * @param {?number} phase An integer representing the game phase to consider this transaction under (defaults to g.phase if null).
  * @param {Array.<number>} baseMoods Vector of base moods for each team from 0 to 1, as generated by genBaseMoods.
  */
-async function addToFreeAgents(p: Player | PlayerWithoutPid, phase: Phase, baseMoods: number[]) {
+async function addToFreeAgents(
+    p: Player | PlayerWithoutPid,
+    phase: Phase,
+    baseMoods: number[],
+) {
     phase = phase !== null ? phase : g.phase;
 
     const pr = p.ratings[p.ratings.length - 1];
     setContract(p, genContract(p), false);
 
     // Set initial player mood towards each team
-    p.freeAgentMood = baseMoods.map((mood) => {
+    p.freeAgentMood = baseMoods.map(mood => {
         if (pr.ovr + pr.pot < 80) {
             // Bad players don't have the luxury to be choosy about teams
             return 0;
@@ -596,7 +747,7 @@ async function addToFreeAgents(p: Player | PlayerWithoutPid, phase: Phase, baseM
     p.ptModifier = 1; // Reset
 
     await idb.cache.players.put(p);
-    idb.cache.markDirtyIndexes('players');
+    idb.cache.markDirtyIndexes("players");
 }
 
 /**
@@ -625,7 +776,16 @@ async function release(p: Player, justDrafted: boolean) {
 
     logEvent({
         type: "release",
-        text: `The <a href="${helpers.leagueUrl(["roster", g.teamAbbrevsCache[p.tid], g.season])}">${g.teamNamesCache[p.tid]}</a> released <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a>.`,
+        text: `The <a href="${helpers.leagueUrl([
+            "roster",
+            g.teamAbbrevsCache[p.tid],
+            g.season,
+        ])}">${g.teamNamesCache[
+            p.tid
+        ]}</a> released <a href="${helpers.leagueUrl([
+            "player",
+            p.pid,
+        ])}">${p.firstName} ${p.lastName}</a>.`,
         showNotification: false,
         pids: [p.pid],
         tids: [p.tid],
@@ -645,8 +805,8 @@ async function release(p: Player, justDrafted: boolean) {
  * @return {number} Fuzz, between -5 and 5.
  */
 function genFuzz(scoutingRank: number): number {
-    const cutoff = 2 + 8 * (scoutingRank - 1) / (g.numTeams - 1);  // Max error is from 2 to 10, based on scouting rank
-    const sigma = 1 + 2 * (scoutingRank - 1) / (g.numTeams - 1);  // Stddev is from 1 to 3, based on scouting rank
+    const cutoff = 2 + 8 * (scoutingRank - 1) / (g.numTeams - 1); // Max error is from 2 to 10, based on scouting rank
+    const sigma = 1 + 2 * (scoutingRank - 1) / (g.numTeams - 1); // Stddev is from 1 to 3, based on scouting rank
 
     let fuzz = random.gauss(0, sigma);
     if (fuzz > cutoff) {
@@ -704,7 +864,7 @@ function genRatings(
     if (profileId === -1) {
         if (predeterminedHeight > 55 && random.randInt(0, 1000) < 999) {
             profileId = 3; // Nearly all tall guys are "Big"
-        } else if ((predeterminedHeight < 35) && random.randInt(0, 1000) < 999) {
+        } else if (predeterminedHeight < 35 && random.randInt(0, 1000) < 999) {
             profileId = 1; // Nearly all short guys are "Point"
         } else {
             // Medium height players (plus the very few tall/short players who slip through)
@@ -767,7 +927,7 @@ function genRatings(
 
         fuzz: genFuzz(scoutingRank),
         ovr: 0,
-        pos: '',
+        pos: "",
         pot,
         season,
         skills: [],
@@ -801,14 +961,17 @@ function genRatings(
     return ratings;
 }
 
-function name(): {country: string, firstName: string, lastName: string} {
+function name(): { country: string, firstName: string, lastName: string } {
     if (playerNames === undefined) {
         // This makes it wait until g is loaded before calling names.load, so user-defined names will be used if provided
         playerNames = names.load();
     }
 
     // Country
-    const cRand = random.uniform(0, playerNames.countries[playerNames.countries.length - 1][1]);
+    const cRand = random.uniform(
+        0,
+        playerNames.countries[playerNames.countries.length - 1][1],
+    );
     const countryRow = playerNames.countries.find(row => row[1] >= cRand);
     if (countryRow === undefined) {
         throw new Error(`Undefined countryRow (cRand=${cRand}`);
@@ -816,15 +979,23 @@ function name(): {country: string, firstName: string, lastName: string} {
     const country = countryRow[0];
 
     // First name
-    const fnRand = random.uniform(0, playerNames.first[country][playerNames.first[country].length - 1][1]);
-    const firstNameRow = playerNames.first[country].find(row => row[1] >= fnRand);
+    const fnRand = random.uniform(
+        0,
+        playerNames.first[country][playerNames.first[country].length - 1][1],
+    );
+    const firstNameRow = playerNames.first[country].find(
+        row => row[1] >= fnRand,
+    );
     if (firstNameRow === undefined) {
         throw new Error(`Undefined firstNameRow (fnRand=${fnRand}`);
     }
     const firstName = firstNameRow[0];
 
     // Last name
-    const lnRand = random.uniform(0, playerNames.last[country][playerNames.last[country].length - 1][1]);
+    const lnRand = random.uniform(
+        0,
+        playerNames.last[country][playerNames.last[country].length - 1][1],
+    );
     const lastNameRow = playerNames.last[country].find(row => row[1] >= lnRand);
     if (lastNameRow === undefined) {
         throw new Error(`Undefined lastNameRow (lnRand=${lnRand}`);
@@ -848,10 +1019,7 @@ function name(): {country: string, firstName: string, lastName: string} {
  * @param {number} scoutingRank Between 1 and g.numTeams (default 30), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
  * @return {Object} Updated player object.
  */
-function addRatingsRow(
-    p: Player | PlayerWithoutPid,
-    scoutingRank: number,
-) {
+function addRatingsRow(p: Player | PlayerWithoutPid, scoutingRank: number) {
     const newRatings = Object.assign({}, p.ratings[p.ratings.length - 1]);
     newRatings.season = g.season;
     newRatings.fuzz = (newRatings.fuzz + genFuzz(scoutingRank)) / 2;
@@ -910,11 +1078,16 @@ async function addStatsRow(p: Player, playoffs?: boolean = false) {
     p.statsTids = _.uniq(p.statsTids);
 
     // Calculate yearsWithTeam
-    const playerStats = (await idb.cache.playerStats.indexGetAll('playerStatsAllByPid', p.pid))
-        .filter((ps) => !ps.playoffs);
+    const playerStats = (await idb.cache.playerStats.indexGetAll(
+        "playerStatsAllByPid",
+        p.pid,
+    )).filter(ps => !ps.playoffs);
     if (playerStats.length > 0) {
         const i = playerStats.length - 1;
-        if (playerStats[i].season === g.season - 1 && playerStats[i].tid === p.tid) {
+        if (
+            playerStats[i].season === g.season - 1 &&
+            playerStats[i].tid === p.tid
+        ) {
             statsRow.yearsWithTeam = playerStats[i].yearsWithTeam + 1;
         }
     }
@@ -924,9 +1097,15 @@ async function addStatsRow(p: Player, playoffs?: boolean = false) {
 
 const heightToRating = (heightInInches: number) => {
     // Min/max for hgt rating.  Displayed height ranges from 4'6" to 9'0", though we might never see the true extremes
-    const minHgt = 66;  // 5'6"
-    const maxHgt = 93;  // 7'9"
-    return Math.round(helpers.bound(100 * (heightInInches - minHgt) / (maxHgt - minHgt), 0, 100));
+    const minHgt = 66; // 5'6"
+    const maxHgt = 93; // 7'9"
+    return Math.round(
+        helpers.bound(
+            100 * (heightInInches - minHgt) / (maxHgt - minHgt),
+            0,
+            100,
+        ),
+    );
 };
 
 function generate(
@@ -940,7 +1119,7 @@ function generate(
     scoutingRank: number,
 ): PlayerWithoutPid {
     // RealHeight is drawn from a custom probability distribution and then offset by a fraction of an inch either way
-    let realHeight = Math.random() - 0.5;  // Fraction of an inch
+    let realHeight = Math.random() - 0.5; // Fraction of an inch
     realHeight += random.heightDist();
 
     let wingspanAdjust = realHeight;
@@ -956,10 +1135,26 @@ function generate(
     let ratings;
     if (newLeague) {
         // Create player for new league
-        ratings = genRatings(profile, baseRating, pot, g.startingSeason, scoutingRank, tid, predetHgt);
+        ratings = genRatings(
+            profile,
+            baseRating,
+            pot,
+            g.startingSeason,
+            scoutingRank,
+            tid,
+            predetHgt,
+        );
     } else {
         // Create player to be drafted
-        ratings = genRatings(profile, baseRating, pot, draftYear, scoutingRank, tid, predetHgt);
+        ratings = genRatings(
+            profile,
+            baseRating,
+            pot,
+            draftYear,
+            scoutingRank,
+            tid,
+            predetHgt,
+        );
     }
 
     const minWeight = 155;
@@ -998,7 +1193,7 @@ function generate(
         hgt: realHeight,
         hof: false,
         imgURL: "", // Custom rosters can define player image URLs to be used rather than vector faces
-        injury: {type: "Healthy", gamesRemaining: 0},
+        injury: { type: "Healthy", gamesRemaining: 0 },
         lastName: nameInfo.lastName,
         ptModifier: 1,
         ratings: [ratings],
@@ -1008,7 +1203,13 @@ function generate(
         statsTids: [],
         tid,
         watch: false,
-        weight: Math.round(random.randInt(-20, 20) + (ratings.hgt + 0.5 * ratings.stre) * (maxWeight - minWeight) / 150 + minWeight), // Weight in pounds (from minWeight to maxWeight)
+        weight: Math.round(
+            random.randInt(-20, 20) +
+                (ratings.hgt + 0.5 * ratings.stre) *
+                    (maxWeight - minWeight) /
+                    150 +
+                minWeight,
+        ), // Weight in pounds (from minWeight to maxWeight)
         yearsFreeAgent: 0,
 
         // These should be set by player.updateValues after player is completely done (automatic in player.develop)
@@ -1038,7 +1239,11 @@ function injury(healthRank: number): PlayerInjury {
 
     return {
         type: injuries.types[i],
-        gamesRemaining: Math.round((0.7 * (healthRank - 1) / (g.numTeams - 1) + 0.65) * random.uniform(0.25, 1.75) * injuries.gamesRemainings[i]),
+        gamesRemaining: Math.round(
+            (0.7 * (healthRank - 1) / (g.numTeams - 1) + 0.65) *
+                random.uniform(0.25, 1.75) *
+                injuries.gamesRemainings[i],
+        ),
     };
 }
 
@@ -1049,10 +1254,15 @@ function injury(healthRank: number): PlayerInjury {
  * @param {Object} exp Contract expiration year.
  * @return {number} numGamesRemaining Number of games remaining in the current season (0 to g.numGames).
  */
-function contractSeasonsRemaining(exp: number, numGamesRemaining: number): number {
+function contractSeasonsRemaining(
+    exp: number,
+    numGamesRemaining: number,
+): number {
     let frac = numGamesRemaining / g.numGames;
-    if (frac > 1) { frac = 1; } // This only happens if the user changed g.numGames mid season
-    return (exp - g.season) + frac;
+    if (frac > 1) {
+        frac = 1;
+    } // This only happens if the user changed g.numGames mid season
+    return exp - g.season + frac;
 }
 
 /**
@@ -1163,17 +1373,23 @@ function value(p: any, ps: PlayerStats[], options: ValueOptions = {}): number {
             const ps1 = ps[ps.length - 1];
             current = 3.75 * ps1.per;
             if (ps1.min < 2000) {
-                current = current * ps1.min / 2000 + pr.ovr * (1 - ps1.min / 2000);
+                current =
+                    current * ps1.min / 2000 + pr.ovr * (1 - ps1.min / 2000);
             }
         } else {
             // Two most recent seasons
             const ps1 = ps[ps.length - 1];
             const ps2 = ps[ps.length - 2];
             if (ps1.min + ps2.min > 0) {
-                current = 3.75 * (ps1.per * ps1.min + ps2.per * ps2.min) / (ps1.min + ps2.min);
+                current =
+                    3.75 *
+                    (ps1.per * ps1.min + ps2.per * ps2.min) /
+                    (ps1.min + ps2.min);
             }
             if (ps1.min + ps2.min < 2000) {
-                current = current * (ps1.min + ps2.min) / 2000 + pr.ovr * (1 - (ps1.min + ps2.min) / 2000);
+                current =
+                    current * (ps1.min + ps2.min) / 2000 +
+                    pr.ovr * (1 - (ps1.min + ps2.min) / 2000);
             }
         }
         current = 0.1 * pr.ovr + 0.9 * current; // Include some part of the ratings
@@ -1243,16 +1459,20 @@ function value(p: any, ps: PlayerStats[], options: ValueOptions = {}): number {
     return 0.7 * current;
 }
 
-async function updateValues(p: Player | PlayerWithoutPid, psOverride?: PlayerStats[]) {
+async function updateValues(
+    p: Player | PlayerWithoutPid,
+    psOverride?: PlayerStats[],
+) {
     let playerStats;
 
     if (psOverride) {
         // Only when creating new league from file, since no cache yet then
-        playerStats = psOverride
-            .filter((ps) => !ps.playoffs);
-    } else if (typeof p.pid === 'number') {
-        playerStats = (await idb.cache.playerStats.indexGetAll('playerStatsAllByPid', p.pid))
-            .filter((ps) => !ps.playoffs);
+        playerStats = psOverride.filter(ps => !ps.playoffs);
+    } else if (typeof p.pid === "number") {
+        playerStats = (await idb.cache.playerStats.indexGetAll(
+            "playerStatsAllByPid",
+            p.pid,
+        )).filter(ps => !ps.playoffs);
     } else {
         // New player objects don't have pids let alone stats, so just skip
         playerStats = [];
@@ -1262,10 +1482,10 @@ async function updateValues(p: Player | PlayerWithoutPid, psOverride?: PlayerSta
     playerStats.sort((a, b) => a.season - b.season);
 
     p.value = value(p, playerStats);
-    p.valueNoPot = value(p, playerStats, {noPot: true});
-    p.valueFuzz = value(p, playerStats, {fuzz: true});
-    p.valueNoPotFuzz = value(p, playerStats, {noPot: true, fuzz: true});
-    p.valueWithContract = value(p, playerStats, {withContract: true});
+    p.valueNoPot = value(p, playerStats, { noPot: true });
+    p.valueFuzz = value(p, playerStats, { fuzz: true });
+    p.valueNoPotFuzz = value(p, playerStats, { noPot: true, fuzz: true });
+    p.valueWithContract = value(p, playerStats, { withContract: true });
 }
 
 /**
@@ -1278,15 +1498,26 @@ async function updateValues(p: Player | PlayerWithoutPid, psOverride?: PlayerSta
  * @param {Object} p Player object.
  * @return {Object} p Updated (retired) player object.
  */
-function retire(p: Player, playerStats: PlayerStats[], conditions: Conditions, retiredNotification?: boolean = true) {
+function retire(
+    p: Player,
+    playerStats: PlayerStats[],
+    conditions: Conditions,
+    retiredNotification?: boolean = true,
+) {
     if (retiredNotification) {
-        logEvent({
-            type: "retired",
-            text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> retired.`,
-            showNotification: p.tid === g.userTid,
-            pids: [p.pid],
-            tids: [p.tid],
-        }, conditions);
+        logEvent(
+            {
+                type: "retired",
+                text: `<a href="${helpers.leagueUrl([
+                    "player",
+                    p.pid,
+                ])}">${p.firstName} ${p.lastName}</a> retired.`,
+                showNotification: p.tid === g.userTid,
+                pids: [p.pid],
+                tids: [p.tid],
+            },
+            conditions,
+        );
     }
 
     p.tid = PLAYER.RETIRED;
@@ -1295,14 +1526,25 @@ function retire(p: Player, playerStats: PlayerStats[], conditions: Conditions, r
     // Add to Hall of Fame?
     if (madeHof(p, playerStats)) {
         p.hof = true;
-        p.awards.push({season: g.season, type: "Inducted into the Hall of Fame"});
-        logEvent({
-            type: "hallOfFame",
-            text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${p.lastName}</a> was inducted into the <a href="${helpers.leagueUrl(["hall_of_fame"])}">Hall of Fame</a>.`,
-            showNotification: p.statsTids.includes(g.userTid),
-            pids: [p.pid],
-            tids: p.statsTids,
-        }, conditions);
+        p.awards.push({
+            season: g.season,
+            type: "Inducted into the Hall of Fame",
+        });
+        logEvent(
+            {
+                type: "hallOfFame",
+                text: `<a href="${helpers.leagueUrl([
+                    "player",
+                    p.pid,
+                ])}">${p.firstName} ${p.lastName}</a> was inducted into the <a href="${helpers.leagueUrl(
+                    ["hall_of_fame"],
+                )}">Hall of Fame</a>.`,
+                showNotification: p.statsTids.includes(g.userTid),
+                pids: [p.pid],
+                tids: p.statsTids,
+            },
+            conditions,
+        );
     }
 }
 
@@ -1311,27 +1553,27 @@ function moodColorText(p: Player) {
     if (p.freeAgentMood[g.userTid] < 0.25) {
         return {
             color: "#5cb85c",
-            text: 'Eager to reach an agreement.',
+            text: "Eager to reach an agreement.",
         };
     }
 
     if (p.freeAgentMood[g.userTid] < 0.5) {
         return {
             color: "#ccc",
-            text: 'Willing to sign for the right price.',
+            text: "Willing to sign for the right price.",
         };
     }
 
     if (p.freeAgentMood[g.userTid] < 0.75) {
         return {
             color: "#f0ad4e",
-            text: 'Annoyed at you.',
+            text: "Annoyed at you.",
         };
     }
 
     return {
         color: "#d9534f",
-        text: 'Insulted by your presence.',
+        text: "Insulted by your presence.",
     };
 }
 
@@ -1353,10 +1595,38 @@ function augmentPartialPlayer(p: any, scoutingRank: number): PlayerWithStats {
     }
 
     // This is used to get at default values for various attributes
-    const pg = generate(p.tid, age, "", 0, 0, g.startingSeason - age, true, scoutingRank);
+    const pg = generate(
+        p.tid,
+        age,
+        "",
+        0,
+        0,
+        g.startingSeason - age,
+        true,
+        scoutingRank,
+    );
 
     // Optional things
-    const simpleDefaults = ["awards", "born", "college", "contract", "draft", "face", "freeAgentMood", "gamesUntilTradable", "hgt", "hof", "imgURL", "injury", "ptModifier", "retiredYear", "rosterOrder", "watch", "weight", "yearsFreeAgent"];
+    const simpleDefaults = [
+        "awards",
+        "born",
+        "college",
+        "contract",
+        "draft",
+        "face",
+        "freeAgentMood",
+        "gamesUntilTradable",
+        "hgt",
+        "hof",
+        "imgURL",
+        "injury",
+        "ptModifier",
+        "retiredYear",
+        "rosterOrder",
+        "watch",
+        "weight",
+        "yearsFreeAgent",
+    ];
     for (let i = 0; i < simpleDefaults.length; i++) {
         if (!p.hasOwnProperty(simpleDefaults[i])) {
             p[simpleDefaults[i]] = pg[simpleDefaults[i]];
@@ -1396,10 +1666,17 @@ function augmentPartialPlayer(p: any, scoutingRank: number): PlayerWithStats {
         p.ratings[0].pot = p.ratings[0].ovr;
     }
 
-    if (p.hasOwnProperty("name") && !(p.hasOwnProperty("firstName")) && !(p.hasOwnProperty("lastName"))) {
+    if (
+        p.hasOwnProperty("name") &&
+        !p.hasOwnProperty("firstName") &&
+        !p.hasOwnProperty("lastName")
+    ) {
         // parse and split names from roster file
         p.firstName = p.name.split(" ")[0];
-        p.lastName = p.name.split(" ").slice(1, p.name.split(" ").length).join(" ");
+        p.lastName = p.name
+            .split(" ")
+            .slice(1, p.name.split(" ").length)
+            .join(" ");
     }
 
     // Fix always-missing info
@@ -1413,7 +1690,11 @@ function augmentPartialPlayer(p: any, scoutingRank: number): PlayerWithStats {
         }
 
         // Fix improperly-set season in ratings
-        if (p.ratings.length === 1 && p.ratings[0].season < g.startingSeason && p.tid !== PLAYER.RETIRED) {
+        if (
+            p.ratings.length === 1 &&
+            p.ratings[0].season < g.startingSeason &&
+            p.tid !== PLAYER.RETIRED
+        ) {
             p.ratings[0].season = g.startingSeason;
         }
     }
@@ -1431,7 +1712,13 @@ function augmentPartialPlayer(p: any, scoutingRank: number): PlayerWithStats {
     return p;
 }
 
-function checkStatisticalFeat(pid: number, tid: number, p: GamePlayer, results: GameResults, conditions: Conditions) {
+function checkStatisticalFeat(
+    pid: number,
+    tid: number,
+    p: GamePlayer,
+    results: GameResults,
+    conditions: Conditions,
+) {
     const minFactor = Math.sqrt(g.quarterLength / 12); // sqrt is to account for fatigue in short/long games. Also https://news.ycombinator.com/item?id=11032596
     const TEN = minFactor * 10;
     const FIVE = minFactor * 5;
@@ -1442,13 +1729,16 @@ function checkStatisticalFeat(pid: number, tid: number, p: GamePlayer, results: 
     let saveFeat = false;
 
     const logFeat = text => {
-        logEvent({
-            type: "playerFeat",
-            text,
-            showNotification: tid === g.userTid,
-            pids: [pid],
-            tids: [tid],
-        }, conditions);
+        logEvent(
+            {
+                type: "playerFeat",
+                text,
+                showNotification: tid === g.userTid,
+                pids: [pid],
+                tids: [tid],
+            },
+            conditions,
+        );
     };
 
     let doubles = ["pts", "ast", "stl", "blk"].reduce((count, stat) => {
@@ -1462,7 +1752,13 @@ function checkStatisticalFeat(pid: number, tid: number, p: GamePlayer, results: 
     }
 
     const statArr = {};
-    if (p.stat.pts >= FIVE && p.stat.ast >= FIVE && p.stat.stl >= FIVE && p.stat.blk >= FIVE && (p.stat.orb + p.stat.drb) >= FIVE) {
+    if (
+        p.stat.pts >= FIVE &&
+        p.stat.ast >= FIVE &&
+        p.stat.stl >= FIVE &&
+        p.stat.blk >= FIVE &&
+        p.stat.orb + p.stat.drb >= FIVE
+    ) {
         statArr.points = p.stat.pts;
         statArr.rebounds = p.stat.orb + p.stat.drb;
         statArr.assists = p.stat.ast;
@@ -1471,11 +1767,21 @@ function checkStatisticalFeat(pid: number, tid: number, p: GamePlayer, results: 
         saveFeat = true;
     }
     if (doubles >= 3) {
-        if (p.stat.pts >= TEN) { statArr.points = p.stat.pts; }
-        if (p.stat.orb + p.stat.drb >= TEN) { statArr.rebounds = p.stat.orb + p.stat.drb; }
-        if (p.stat.ast >= TEN) { statArr.assists = p.stat.ast; }
-        if (p.stat.stl >= TEN) { statArr.steals = p.stat.stl; }
-        if (p.stat.blk >= TEN) { statArr.blocks = p.stat.blk; }
+        if (p.stat.pts >= TEN) {
+            statArr.points = p.stat.pts;
+        }
+        if (p.stat.orb + p.stat.drb >= TEN) {
+            statArr.rebounds = p.stat.orb + p.stat.drb;
+        }
+        if (p.stat.ast >= TEN) {
+            statArr.assists = p.stat.ast;
+        }
+        if (p.stat.stl >= TEN) {
+            statArr.steals = p.stat.stl;
+        }
+        if (p.stat.blk >= TEN) {
+            statArr.blocks = p.stat.blk;
+        }
         saveFeat = true;
     }
     if (p.stat.pts >= FIFTY) {
@@ -1506,9 +1812,19 @@ function checkStatisticalFeat(pid: number, tid: number, p: GamePlayer, results: 
     if (saveFeat) {
         const [i, j] = results.team[0].id === tid ? [0, 1] : [1, 0];
         const won = results.team[i].stat.pts > results.team[j].stat.pts;
-        const featTextArr = Object.keys(statArr).map(stat => `${statArr[stat]} ${stat}`);
+        const featTextArr = Object.keys(statArr).map(
+            stat => `${statArr[stat]} ${stat}`,
+        );
 
-        let featText = `<a href="${helpers.leagueUrl(["player", pid])}">${p.name}</a> had <a href="${helpers.leagueUrl(["game_log", g.teamAbbrevsCache[tid], g.season, results.gid])}">`;
+        let featText = `<a href="${helpers.leagueUrl([
+            "player",
+            pid,
+        ])}">${p.name}</a> had <a href="${helpers.leagueUrl([
+            "game_log",
+            g.teamAbbrevsCache[tid],
+            g.season,
+            results.gid,
+        ])}">`;
         for (let k = 0; k < featTextArr.length; k++) {
             if (featTextArr.length > 1 && k === featTextArr.length - 1) {
                 featText += " and ";
@@ -1520,7 +1836,12 @@ function checkStatisticalFeat(pid: number, tid: number, p: GamePlayer, results: 
                 featText += ", ";
             }
         }
-        featText += `</a> in ${results.team[i].stat.pts.toString().charAt(0) === '8' ? 'an' : 'a'} ${results.team[i].stat.pts}-${results.team[j].stat.pts} ${won ? 'win over the' : 'loss to the'} ${g.teamNamesCache[results.team[j].id]}.`;
+        featText += `</a> in ${results.team[i].stat.pts.toString().charAt(0) ===
+        "8"
+            ? "an"
+            : "a"} ${results.team[i].stat.pts}-${results.team[j].stat.pts} ${won
+            ? "win over the"
+            : "loss to the"} ${g.teamNamesCache[results.team[j].id]}.`;
 
         logFeat(featText);
 
@@ -1565,7 +1886,32 @@ async function killOne(conditions: Conditions) {
         "was found in a hotel room with a belt around his neck and his hand around his dick",
         "was pursued by a bear, and mauled", // poor Antigonus
         "was smothered by a throng of ravenous, autograph-seeking fans after exiting the team plane",
-        `was killed by ${random.choice(["Miss Scarlet", "Professor Plum", "Mrs. Peacock", "Reverend Green", "Colonel Mustard", "Mrs. White"])}, in the ${random.choice(["kitchen", "ballroom", "conservatory", "dining room", "cellar", "billiard room", "library", "lounge", "hall", "study"])}, with the ${random.choice(["candlestick", "dagger", "lead pipe", "revolver", "rope", "spanner"])}`,
+        `was killed by ${random.choice([
+            "Miss Scarlet",
+            "Professor Plum",
+            "Mrs. Peacock",
+            "Reverend Green",
+            "Colonel Mustard",
+            "Mrs. White",
+        ])}, in the ${random.choice([
+            "kitchen",
+            "ballroom",
+            "conservatory",
+            "dining room",
+            "cellar",
+            "billiard room",
+            "library",
+            "lounge",
+            "hall",
+            "study",
+        ])}, with the ${random.choice([
+            "candlestick",
+            "dagger",
+            "lead pipe",
+            "revolver",
+            "rope",
+            "spanner",
+        ])}`,
         "suffered a heart attack in the team training facility and died",
         "was lost at sea and is presumed dead",
         "was run over by a car",
@@ -1576,37 +1922,73 @@ async function killOne(conditions: Conditions) {
     // Pick random team
     const tid = random.randInt(0, g.numTeams - 1);
 
-    const players = await idb.cache.players.indexGetAll('playersByTid', tid);
+    const players = await idb.cache.players.indexGetAll("playersByTid", tid);
 
     // Pick a random player on that team
     const p = random.choice(players);
 
     // Get player stats, used for HOF calculation
-    const playerStats = await idb.getCopies.playerStats({pid: p.pid});
+    const playerStats = await idb.getCopies.playerStats({ pid: p.pid });
 
     retire(p, playerStats, conditions, false);
     p.diedYear = g.season;
 
     await idb.cache.players.put(p);
-    idb.cache.markDirtyIndexes('players');
+    idb.cache.markDirtyIndexes("players");
 
-    logEvent({
-        type: 'tragedy',
-        text: `<a href="${helpers.leagueUrl(['player', p.pid])}">${p.firstName} ${p.lastName}</a> ${reason}.`,
-        showNotification: tid === g.userTid,
-        pids: [p.pid],
-        tids: [tid],
-        persistent: true,
-    }, conditions);
+    logEvent(
+        {
+            type: "tragedy",
+            text: `<a href="${helpers.leagueUrl([
+                "player",
+                p.pid,
+            ])}">${p.firstName} ${p.lastName}</a> ${reason}.`,
+            showNotification: tid === g.userTid,
+            pids: [p.pid],
+            tids: [tid],
+            persistent: true,
+        },
+        conditions,
+    );
 }
 
 const getPlayerFakeAge = async (players: Player[]): Promise<Player | void> => {
     // This list is very arbitrary, but certain countries are deemed more likely to have a player with a fake age
-    const highRiskCountries = ['Angola', 'Belarus', 'Benin', 'Bulgaria', 'Cameroon', 'Cape Verde', 'Central African Republic', 'Chad', 'China', 'Congo', 'Egypt', 'Gabon', 'Georgia', 'Ghana', 'Guinea', 'Haiti', 'Iran', 'Ivory Coast', 'Kazakhstan', 'Kenya', 'Mali', 'Morocco', 'Nigeria', 'Senegal', 'South Africa', 'South Sudan', 'Sudan', 'Turkey', 'Ukraine'];
+    const highRiskCountries = [
+        "Angola",
+        "Belarus",
+        "Benin",
+        "Bulgaria",
+        "Cameroon",
+        "Cape Verde",
+        "Central African Republic",
+        "Chad",
+        "China",
+        "Congo",
+        "Egypt",
+        "Gabon",
+        "Georgia",
+        "Ghana",
+        "Guinea",
+        "Haiti",
+        "Iran",
+        "Ivory Coast",
+        "Kazakhstan",
+        "Kenya",
+        "Mali",
+        "Morocco",
+        "Nigeria",
+        "Senegal",
+        "South Africa",
+        "South Sudan",
+        "Sudan",
+        "Turkey",
+        "Ukraine",
+    ];
 
     // Only young players can have a fake age, and players from high risk countries have 40x risk
-    const youngPlayers = players.filter((p) => g.season - p.born.year <= 22);
-    const weights = youngPlayers.map((p) => {
+    const youngPlayers = players.filter(p => g.season - p.born.year <= 22);
+    const weights = youngPlayers.map(p => {
         return highRiskCountries.includes(p.born.loc) ? 40 : 1;
     });
 

@@ -1,38 +1,83 @@
 // @flow
 
-import {PHASE, PLAYER, g} from '../../common';
-import {idb} from '../db';
-import type {PlayerStatType, UpdateEvents} from '../../common/types';
+import { PHASE, PLAYER, g } from "../../common";
+import { idb } from "../db";
+import type { PlayerStatType, UpdateEvents } from "../../common/types";
 
 async function updatePlayers(
     inputs: {
         abbrev: string,
-        playoffs: 'playoffs' | 'regularSeason',
+        playoffs: "playoffs" | "regularSeason",
         season: number,
         statType: PlayerStatType,
     },
     updateEvents: UpdateEvents,
     state: any,
-): void | {[key: string]: any} {
-    if ((inputs.season === g.season && (updateEvents.includes('gameSim') || updateEvents.includes('playerMovement'))) || inputs.abbrev !== state.abbrev || inputs.season !== state.season || inputs.statType !== state.statType || inputs.playoffs !== state.playoffs) {
+): void | { [key: string]: any } {
+    if (
+        (inputs.season === g.season &&
+            (updateEvents.includes("gameSim") ||
+                updateEvents.includes("playerMovement"))) ||
+        inputs.abbrev !== state.abbrev ||
+        inputs.season !== state.season ||
+        inputs.statType !== state.statType ||
+        inputs.playoffs !== state.playoffs
+    ) {
         let players;
         if (g.season === inputs.season && g.phase <= PHASE.PLAYOFFS) {
-            players = await idb.cache.players.indexGetAll('playersByTid', [PLAYER.FREE_AGENT, Infinity]);
+            players = await idb.cache.players.indexGetAll("playersByTid", [
+                PLAYER.FREE_AGENT,
+                Infinity,
+            ]);
         } else {
-            players = await idb.getCopies.players({activeSeason: inputs.season});
+            players = await idb.getCopies.players({
+                activeSeason: inputs.season,
+            });
         }
 
         let tid = g.teamAbbrevsCache.indexOf(inputs.abbrev);
-        if (tid < 0) { tid = undefined; } // Show all teams
+        if (tid < 0) {
+            tid = undefined;
+        } // Show all teams
 
         if (!tid && inputs.abbrev === "watch") {
-            players = players.filter(p => p.watch && typeof p.watch !== "function");
+            players = players.filter(
+                p => p.watch && typeof p.watch !== "function",
+            );
         }
 
         players = await idb.getCopies.playersPlus(players, {
             attrs: ["pid", "name", "age", "injury", "tid", "hof", "watch"],
             ratings: ["skills", "pos"],
-            stats: ["abbrev", "tid", "gp", "gs", "min", "fg", "fga", "fgp", "tp", "tpa", "tpp", "ft", "fta", "ftp", "orb", "drb", "trb", "ast", "tov", "stl", "blk", "ba", "pf", "pts", "pm", "per", "ewa"],
+            stats: [
+                "abbrev",
+                "tid",
+                "gp",
+                "gs",
+                "min",
+                "fg",
+                "fga",
+                "fgp",
+                "tp",
+                "tpa",
+                "tpp",
+                "ft",
+                "fta",
+                "ftp",
+                "orb",
+                "drb",
+                "trb",
+                "ast",
+                "tov",
+                "stl",
+                "blk",
+                "ba",
+                "pf",
+                "pts",
+                "pm",
+                "per",
+                "ewa",
+            ],
             season: inputs.season, // If null, then show career stats!
             tid,
             statType: inputs.statType,
@@ -55,30 +100,30 @@ async function updatePlayers(
         }
 
         // Only keep players with more than 5 mpg in regular season, of any PT in playoffs
-        if (inputs.abbrev !== 'watch') {
+        if (inputs.abbrev !== "watch") {
             players = players.filter(p => {
                 // Minutes played
                 let min;
-                if (inputs.statType === 'totals') {
+                if (inputs.statType === "totals") {
                     if (inputs.season) {
                         min = p.stats.min;
-                    } else if (inputs.playoffs !== 'playoffs') {
+                    } else if (inputs.playoffs !== "playoffs") {
                         min = p.careerStats.min;
                     }
                 } else if (inputs.season) {
                     min = p.stats.gp * p.stats.min;
-                } else if (inputs.playoffs !== 'playoffs') {
+                } else if (inputs.playoffs !== "playoffs") {
                     min = p.careerStats.gp * p.careerStats.min;
                 }
 
-                if (inputs.playoffs !== 'playoffs') {
+                if (inputs.playoffs !== "playoffs") {
                     if (min !== undefined && min > gp * 5) {
                         return true;
                     }
                 }
 
                 // Or, keep players who played in playoffs
-                if (inputs.playoffs === 'playoffs') {
+                if (inputs.playoffs === "playoffs") {
                     if (inputs.season) {
                         if (p.stats.gp > 0) {
                             return true;

@@ -1,16 +1,22 @@
 // @flow
 
-import PropTypes from 'prop-types';
-import * as React from 'react';
-import type {PlayerSkill} from '../../common/types';
+import PropTypes from "prop-types";
+import * as React from "react";
+import type { PlayerSkill } from "../../common/types";
 
-const SkillsBlock = ({className, skills}: {className?: string, skills?: PlayerSkill[]}) => {
+const SkillsBlock = ({
+    className,
+    skills,
+}: {
+    className?: string,
+    skills?: PlayerSkill[],
+}) => {
     if (skills === undefined) {
         return null;
     }
 
     const tooltips = {
-        '3': "Three Point Shooter",
+        "3": "Three Point Shooter",
         A: "Athlete",
         B: "Ball Handler",
         Di: "Interior Defender",
@@ -20,9 +26,15 @@ const SkillsBlock = ({className, skills}: {className?: string, skills?: PlayerSk
         R: "Rebounder",
     };
 
-    return <span className={className}>
-        {skills.map(skill => <span key={skill} className="skill" title={tooltips[skill]}>{skill}</span>)}
-    </span>;
+    return (
+        <span className={className}>
+            {skills.map(skill => (
+                <span key={skill} className="skill" title={tooltips[skill]}>
+                    {skill}
+                </span>
+            ))}
+        </span>
+    );
 };
 SkillsBlock.propTypes = {
     className: PropTypes.string,

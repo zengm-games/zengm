@@ -1,9 +1,9 @@
 // @flow
 
-import {PHASE, g} from '../../common';
-import {contractNegotiation, freeAgents, team} from '../core';
-import {idb} from '../db';
-import type {GetOutput} from '../../common/types';
+import { PHASE, g } from "../../common";
+import { contractNegotiation, freeAgents, team } from "../core";
+import { idb } from "../db";
+import type { GetOutput } from "../../common/types";
 
 function generateContractOptions(contract, ovr) {
     let growthFactor = 0.15;
@@ -42,26 +42,29 @@ function generateContractOptions(contract, ovr) {
     for (let i = 0; i < 5; i++) {
         const factor = 1 + Math.abs(found - i) * growthFactor;
         contractOptions[i].amount = contractOptions[found].amount * factor;
-        contractOptions[i].amount = 0.05 * Math.round(contractOptions[i].amount / 0.05);  // Make it a multiple of 50k
+        contractOptions[i].amount =
+            0.05 * Math.round(contractOptions[i].amount / 0.05); // Make it a multiple of 50k
     }
 
-    return contractOptions.filter(contractOption => contractOption.amount * 1000 <= g.maxContract);
+    return contractOptions.filter(
+        contractOption => contractOption.amount * 1000 <= g.maxContract,
+    );
 }
 
 async function updateNegotiation(
     inputs: GetOutput,
-): void | {[key: string]: any} {
+): void | { [key: string]: any } {
     const negotiations: any = await idb.cache.negotiations.getAll();
     let negotiation;
     if (inputs.pid === undefined) {
         negotiation = negotiations[0];
     } else {
-        negotiation = negotiations.find((neg) => neg.pid === inputs.pid);
+        negotiation = negotiations.find(neg => neg.pid === inputs.pid);
     }
 
     if (!negotiation) {
         return {
-            errorMessage: 'No negotiation with player in progress.',
+            errorMessage: "No negotiation with player in progress.",
         };
     }
 
@@ -89,7 +92,10 @@ async function updateNegotiation(
         };
     }
 
-    p.contract.amount = freeAgents.amountWithMood(p.contract.amount, p.freeAgentMood[g.userTid]);
+    p.contract.amount = freeAgents.amountWithMood(
+        p.contract.amount,
+        p.freeAgentMood[g.userTid],
+    );
 
     // Generate contract options
     const contractOptions = generateContractOptions(p.contract, p.ratings.ovr);

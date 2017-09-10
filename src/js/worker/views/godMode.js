@@ -1,13 +1,16 @@
 // @flow
 
-import {g} from '../../common';
-import type {GetOutput, UpdateEvents} from '../../common/types';
+import { g } from "../../common";
+import type { GetOutput, UpdateEvents } from "../../common/types";
 
 async function updateGodMode(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
-): void | {[key: string]: any} {
-    if (updateEvents.includes('firstRun') || updateEvents.includes('toggleGodMode')) {
+): void | { [key: string]: any } {
+    if (
+        updateEvents.includes("firstRun") ||
+        updateEvents.includes("toggleGodMode")
+    ) {
         return {
             godMode: g.godMode,
             disableInjuries: g.disableInjuries,

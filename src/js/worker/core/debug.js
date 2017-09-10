@@ -2,11 +2,11 @@
 
 // Functions only used for debugging the game, particularly balance issues. This should not be included or loaded in the compiled version.
 
-import backboard from 'backboard';
-import {PLAYER} from '../../common';
-import {player} from '../core';
-import {idb} from '../db';
-import type {RatingKey} from '../../common/types';
+import backboard from "backboard";
+import { PLAYER } from "../../common";
+import { player } from "../core";
+import { idb } from "../db";
+import type { RatingKey } from "../../common/types";
 
 async function regressRatingsPer() {
     // http://rosettacode.org/wiki/Multiple_regression#JavaScript
@@ -26,7 +26,7 @@ async function regressRatingsPer() {
     };*/
 
     // returns a new matrix
-    Matrix.prototype.transpose = function () {
+    Matrix.prototype.transpose = function() {
         const transposed = [];
         for (let i = 0; i < this.width; i++) {
             transposed[i] = [];
@@ -38,9 +38,9 @@ async function regressRatingsPer() {
     };
 
     // returns a new matrix
-    Matrix.prototype.mult = function (other) {
+    Matrix.prototype.mult = function(other) {
         if (this.width !== other.height) {
-            throw new Error('incompatible sizes');
+            throw new Error("incompatible sizes");
         }
 
         const result = [];
@@ -58,7 +58,7 @@ async function regressRatingsPer() {
     };
 
     // modifies the matrix in-place
-    Matrix.prototype.toReducedRowEchelonForm = function () {
+    Matrix.prototype.toReducedRowEchelonForm = function() {
         let lead = 0;
         for (let r = 0; r < this.height; r++) {
             if (this.width <= lead) {
@@ -107,14 +107,14 @@ async function regressRatingsPer() {
         for (let i = 0; i < n; i++) {
             this.mtx[i] = [];
             for (let j = 0; j < n; j++) {
-                this.mtx[i][j] = (i === j ? 1 : 0);
+                this.mtx[i][j] = i === j ? 1 : 0;
             }
         }
     }
     IdentityMatrix.prototype = Matrix.prototype;
 
     // modifies the matrix "in place"
-    Matrix.prototype.inverse = function () {
+    Matrix.prototype.inverse = function() {
         if (this.height !== this.width) {
             throw new Error("can't invert a non-square matrix");
         }
@@ -140,17 +140,38 @@ async function regressRatingsPer() {
     }
     ColumnVector.prototype = Matrix.prototype;
 
-    Matrix.prototype.regressionCoefficients = function (x) {
+    Matrix.prototype.regressionCoefficients = function(x) {
         const xT = x.transpose();
 
-        return xT.mult(x).inverse().mult(xT).mult(this);
+        return xT
+            .mult(x)
+            .inverse()
+            .mult(xT)
+            .mult(this);
     };
 
-    let players = await idb.getCopies.players({activeAndRetired: true});
+    let players = await idb.getCopies.players({ activeAndRetired: true });
     players = await idb.getCopies.playersPlus(players, {
-        ratings: ["season", "hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"],
+        ratings: [
+            "season",
+            "hgt",
+            "stre",
+            "spd",
+            "jmp",
+            "endu",
+            "ins",
+            "dnk",
+            "ft",
+            "fg",
+            "tp",
+            "blk",
+            "stl",
+            "drb",
+            "pss",
+            "reb",
+        ],
         stats: ["season", "per", "min"],
-        statType: 'totals',
+        statType: "totals",
     });
 
     const pers = [];
@@ -165,7 +186,23 @@ async function regressRatingsPer() {
                     // Ignore anything under 500 minutes
                     if (ps.min > 500) {
                         pers.push(ps.per);
-                        ratings.push([pr.hgt, pr.stre, pr.spd, pr.jmp, pr.endu, pr.ins, pr.dnk, pr.ft, pr.fg, pr.tp, pr.blk, pr.stl, pr.drb, pr.pss, pr.reb]);
+                        ratings.push([
+                            pr.hgt,
+                            pr.stre,
+                            pr.spd,
+                            pr.jmp,
+                            pr.endu,
+                            pr.ins,
+                            pr.dnk,
+                            pr.ft,
+                            pr.fg,
+                            pr.tp,
+                            pr.blk,
+                            pr.stl,
+                            pr.drb,
+                            pr.pss,
+                            pr.reb,
+                        ]);
                     }
                 }
             }
@@ -177,7 +214,23 @@ async function regressRatingsPer() {
 
     const c = y.regressionCoefficients(x);
 
-    const ratingLabels = ["hgt", "stre", "spd", "jmp", "endu", "ins", "dnk", "ft", "fg", "tp", "blk", "stl", "drb", "pss", "reb"];
+    const ratingLabels = [
+        "hgt",
+        "stre",
+        "spd",
+        "jmp",
+        "endu",
+        "ins",
+        "dnk",
+        "ft",
+        "fg",
+        "tp",
+        "blk",
+        "stl",
+        "drb",
+        "pss",
+        "reb",
+    ];
     for (let i = 0; i < ratingLabels.length; i++) {
         console.log(`${ratingLabels[i]}: ${c.mtx[i][0] * 100}`);
     }
@@ -187,7 +240,9 @@ async function regressRatingsPer() {
 // Useful to run this while playing with the contract formula in core.player.genContract
 async function leagueAverageContract() {
     // All non-retired players
-    const players = await idb.league.players.index('tid').getAll(backboard.lowerBound(PLAYER.FREE_AGENT));
+    const players = await idb.league.players
+        .index("tid")
+        .getAll(backboard.lowerBound(PLAYER.FREE_AGENT));
 
     let total = 0;
 
@@ -200,7 +255,11 @@ async function leagueAverageContract() {
     console.log(total / players.length);
 }
 
-function averageCareerArc(baseOvr: number, basePot: number, ratingToSave: RatingKey) {
+function averageCareerArc(
+    baseOvr: number,
+    basePot: number,
+    ratingToSave: RatingKey,
+) {
     const numPlayers = 1000; // Number of players per profile
     const numSeasons = 20;
 
@@ -217,26 +276,43 @@ function averageCareerArc(baseOvr: number, basePot: number, ratingToSave: Rating
 
     for (let i = 0; i < numPlayers; i++) {
         for (let j = 0; j < profiles.length; j++) {
-            const p = player.generate(0, 19, profiles[j], baseOvr, basePot, 2013, true, 15);
+            const p = player.generate(
+                0,
+                19,
+                profiles[j],
+                baseOvr,
+                basePot,
+                2013,
+                true,
+                15,
+            );
             for (let k = 0; k < numSeasons; k++) {
                 averageOvr[k] += p.ratings[0].ovr;
                 averagePot[k] += p.ratings[0].pot;
-                if (ratingToSave) { averageRat[k] += p.ratings[0][ratingToSave]; }
+                if (ratingToSave) {
+                    averageRat[k] += p.ratings[0][ratingToSave];
+                }
                 player.develop(p, 1, true);
             }
         }
     }
 
-
     for (let i = 0; i < numSeasons; i++) {
         averageOvr[i] /= numPlayers * profiles.length;
         averagePot[i] /= numPlayers * profiles.length;
-        if (ratingToSave) { averageRat[i] /= numPlayers * profiles.length; }
+        if (ratingToSave) {
+            averageRat[i] /= numPlayers * profiles.length;
+        }
     }
 
-    console.log("ovr:"); console.log(averageOvr);
-    console.log("pot:"); console.log(averagePot);
-    if (ratingToSave) { console.log(`${ratingToSave}:`); console.log(averageRat); }
+    console.log("ovr:");
+    console.log(averageOvr);
+    console.log("pot:");
+    console.log(averagePot);
+    if (ratingToSave) {
+        console.log(`${ratingToSave}:`);
+        console.log(averageRat);
+    }
 }
 
 export default {

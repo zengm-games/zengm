@@ -1,8 +1,8 @@
 // @flow
 
-import PropTypes from 'prop-types';
-import * as React from 'react';
-import {helpers} from '../../common';
+import PropTypes from "prop-types";
+import * as React from "react";
+import { helpers } from "../../common";
 
 type Props = {
     parts: (number | string)[],
@@ -17,10 +17,16 @@ class NewWindowLink extends React.Component<Props> {
     }
 
     handleClick() {
-        const url = this.props.parts ? helpers.leagueUrl(this.props.parts) : document.URL;
+        const url = this.props.parts
+            ? helpers.leagueUrl(this.props.parts)
+            : document.URL;
 
         // Window name is set to the current time, so each window has a unique name and thus a new window is always opened
-        window.open(`${url}?w=popup`, Date.now(), "height=600,width=800,scrollbars=yes");
+        window.open(
+            `${url}?w=popup`,
+            Date.now(),
+            "height=600,width=800,scrollbars=yes",
+        );
     }
 
     render() {
@@ -39,10 +45,9 @@ class NewWindowLink extends React.Component<Props> {
 }
 
 NewWindowLink.propTypes = {
-    parts: PropTypes.arrayOf(PropTypes.oneOfType([
-        PropTypes.number,
-        PropTypes.string,
-    ])),
+    parts: PropTypes.arrayOf(
+        PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    ),
 };
 
 export default NewWindowLink;

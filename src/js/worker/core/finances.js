@@ -1,9 +1,9 @@
 // @flow
 
-import {g, helpers} from '../../common';
-import {team} from '../core';
-import {idb} from '../db';
-import type {TeamSeason} from '../../common/types';
+import { g, helpers } from "../../common";
+import { team } from "../core";
+import { idb } from "../db";
+import type { TeamSeason } from "../../common/types";
 
 /**
  * Assess the payroll and apply minimum and luxury taxes.
@@ -17,17 +17,22 @@ async function assessPayrollMinLuxury() {
 
     const payrolls = await team.getPayrolls();
 
-    const teamSeasons = await idb.cache.teamSeasons.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
+    const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
+        "teamSeasonsBySeasonTid",
+        [`${g.season}`, `${g.season},Z`],
+    );
     for (const teamSeason of teamSeasons) {
         // Store payroll
         teamSeason.payrollEndOfSeason = payrolls[teamSeason.tid];
 
         // Assess minimum payroll tax and luxury tax
         if (payrolls[teamSeason.tid] < g.minPayroll) {
-            teamSeason.expenses.minTax.amount = g.minPayroll - payrolls[teamSeason.tid];
+            teamSeason.expenses.minTax.amount =
+                g.minPayroll - payrolls[teamSeason.tid];
             teamSeason.cash -= teamSeason.expenses.minTax.amount;
         } else if (payrolls[teamSeason.tid] > g.luxuryPayroll) {
-            const amount = g.luxuryTax * (payrolls[teamSeason.tid] - g.luxuryPayroll);
+            const amount =
+                g.luxuryTax * (payrolls[teamSeason.tid] - g.luxuryPayroll);
             collectedTax += amount;
             teamSeason.expenses.luxuryTax.amount = amount;
             teamSeason.cash -= teamSeason.expenses.luxuryTax.amount;
@@ -36,7 +41,7 @@ async function assessPayrollMinLuxury() {
 
     const payteams = payrolls.filter(x => x <= g.salaryCap);
     if (payteams.length > 0 && collectedTax > 0) {
-        const distribute = (collectedTax * 0.5) / payteams.length;
+        const distribute = collectedTax * 0.5 / payteams.length;
         for (const teamSeason of teamSeasons) {
             if (payrolls[teamSeason.tid] <= g.salaryCap) {
                 teamSeason.revenues.luxuryTaxShare = {
@@ -58,7 +63,7 @@ async function assessPayrollMinLuxury() {
     }
 }
 
-type BudgetTypes = 'budget' | 'expenses' | 'revenues';
+type BudgetTypes = "budget" | "expenses" | "revenues";
 
 /**
  * Update the rankings of team budgets, expenses, and revenue sources.
@@ -74,7 +79,7 @@ type BudgetTypes = 'budget' | 'expenses' | 'revenues';
 async function updateRanks(types: BudgetTypes[]) {
     const sortFn = (a, b) => b.amount - a.amount;
 
-    const getByItem = (byTeam) => {
+    const getByItem = byTeam => {
         const byItem = {};
         for (const item of Object.keys(byTeam[0])) {
             byItem[item] = byTeam.map((x: any) => x[item]);
@@ -100,42 +105,48 @@ async function updateRanks(types: BudgetTypes[]) {
     };
 
     let teamSeasonsPromise;
-    if (types.includes('expenses') || types.includes('revenues')) {
-        teamSeasonsPromise = idb.cache.teamSeasons.indexGetAll('teamSeasonsBySeasonTid', [`${g.season}`, `${g.season},Z`]);
+    if (types.includes("expenses") || types.includes("revenues")) {
+        teamSeasonsPromise = idb.cache.teamSeasons.indexGetAll(
+            "teamSeasonsBySeasonTid",
+            [`${g.season}`, `${g.season},Z`],
+        );
     } else {
         teamSeasonsPromise = Promise.resolve();
     }
 
-    const [teams, teamSeasons] = await Promise.all([idb.cache.teams.getAll(), teamSeasonsPromise]);
+    const [teams, teamSeasons] = await Promise.all([
+        idb.cache.teams.getAll(),
+        teamSeasonsPromise,
+    ]);
 
     let budgetsByItem;
     let budgetsByTeam;
-    if (types.includes('budget')) {
+    if (types.includes("budget")) {
         budgetsByTeam = teams.map(t => t.budget);
         budgetsByItem = getByItem(budgetsByTeam);
     }
     let expensesByItem;
     let expensesByTeam;
-    if (types.includes('expenses') && teamSeasons !== undefined) {
+    if (types.includes("expenses") && teamSeasons !== undefined) {
         expensesByTeam = teamSeasons.map(ts => ts.expenses);
         expensesByItem = getByItem(expensesByTeam);
     }
     let revenuesByItem;
     let revenuesByTeam;
-    if (types.includes('revenues') && teamSeasons !== undefined) {
+    if (types.includes("revenues") && teamSeasons !== undefined) {
         revenuesByTeam = teamSeasons.map(ts => ts.revenues);
         revenuesByItem = getByItem(revenuesByTeam);
     }
 
     for (const t of teams) {
-        if (types.includes('budget')) {
+        if (types.includes("budget")) {
             updateObj(t.budget, budgetsByItem);
             await idb.cache.teams.put(t);
         }
-        if (types.includes('revenues') && teamSeasons !== undefined) {
+        if (types.includes("revenues") && teamSeasons !== undefined) {
             updateObj(teamSeasons[t.tid].expenses, expensesByItem);
         }
-        if (types.includes('expenses') && teamSeasons !== undefined) {
+        if (types.includes("expenses") && teamSeasons !== undefined) {
             updateObj(teamSeasons[t.tid].revenues, revenuesByItem);
         }
     }
@@ -158,15 +169,29 @@ async function updateRanks(types: BudgetTypes[]) {
  * @param {string} item Item inside the category
  * @return {number} Rank, from 1 to g.numTeams (default 30)
  */
-function getRankLastThree(teamSeasons: TeamSeason[], category: 'expenses' | 'revenues', item: string): number {
+function getRankLastThree(
+    teamSeasons: TeamSeason[],
+    category: "expenses" | "revenues",
+    item: string,
+): number {
     const s = teamSeasons.length - 1; // Most recent season index
     if (s > 1) {
         // Use three seasons if possible
-        return (teamSeasons[s][category][item].rank + teamSeasons[s - 1][category][item].rank + teamSeasons[s - 2][category][item].rank) / 3;
+        return (
+            (teamSeasons[s][category][item].rank +
+                teamSeasons[s - 1][category][item].rank +
+                teamSeasons[s - 2][category][item].rank) /
+            3
+        );
     }
     if (s > 0) {
         // Use two seasons if possible
-        return (teamSeasons[s][category][item].rank + teamSeasons[s - 1][category][item].rank + 15.5) / 3;
+        return (
+            (teamSeasons[s][category][item].rank +
+                teamSeasons[s - 1][category][item].rank +
+                15.5) /
+            3
+        );
     }
     if (s === 0) {
         return (teamSeasons[s][category][item].rank + 15.5 + 15.5) / 3;
@@ -180,4 +205,3 @@ export default {
     updateRanks,
     getRankLastThree,
 };
-

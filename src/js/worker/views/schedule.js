@@ -1,23 +1,28 @@
 // @flow
 
-import {g, helpers} from '../../common';
-import {season} from '../core';
-import {idb} from '../db';
-import {getProcessedGames} from '../util';
-import type {GetOutput, UpdateEvents} from '../../common/types';
+import { g, helpers } from "../../common";
+import { season } from "../core";
+import { idb } from "../db";
+import { getProcessedGames } from "../util";
+import type { GetOutput, UpdateEvents } from "../../common/types";
 
 async function updateUpcoming(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
     state: any,
-): void | {[key: string]: any} {
-    if (updateEvents.includes('firstRun') || updateEvents.includes('gameSim') || updateEvents.includes('newPhase') || inputs.abbrev !== state.abbrev) {
+): void | { [key: string]: any } {
+    if (
+        updateEvents.includes("firstRun") ||
+        updateEvents.includes("gameSim") ||
+        updateEvents.includes("newPhase") ||
+        inputs.abbrev !== state.abbrev
+    ) {
         // Get schedule and all teams.
         const [schedule, teams] = await Promise.all([
             season.getSchedule(),
             idb.getCopies.teamsPlus({
-                attrs: ['abbrev', 'name', 'region'],
-                seasonAttrs: ['won', 'lost'],
+                attrs: ["abbrev", "name", "region"],
+                seasonAttrs: ["won", "lost"],
                 season: g.season,
             }),
         ]);
@@ -28,10 +33,7 @@ async function updateUpcoming(
             if (inputs.tid === game.homeTid || inputs.tid === game.awayTid) {
                 upcoming.push({
                     gid: game.gid,
-                    teams: [
-                        teams[game.awayTid],
-                        teams[game.homeTid],
-                    ],
+                    teams: [teams[game.awayTid], teams[game.homeTid]],
                 });
             }
         }
@@ -46,11 +48,11 @@ async function updateUpcoming(
 
 // Based on views.gameLog.updateGamesList
 async function updateCompleted(
-    inputs: {abbrev: string},
+    inputs: { abbrev: string },
     updateEvents: UpdateEvents,
     state: any,
-): void | {[key: string]: any} {
-    if (updateEvents.includes('firstRun') || inputs.abbrev !== state.abbrev) {
+): void | { [key: string]: any } {
+    if (updateEvents.includes("firstRun") || inputs.abbrev !== state.abbrev) {
         /*// Reset list, so old completed games don't temporarily show when switching team
         if (state.completed) {
             setState({completed: undefined});
@@ -59,20 +61,23 @@ async function updateCompleted(
         // Load all games in list
         const games = await getProcessedGames(inputs.abbrev, g.season);
 
-        const completed = games
-            .map((game) => helpers.formatCompletedGame(game));
+        const completed = games.map(game => helpers.formatCompletedGame(game));
 
-        return {completed};
+        return { completed };
     }
-    if (updateEvents.includes('gameSim')) {
+    if (updateEvents.includes("gameSim")) {
         const completed = state.completed;
         // Partial update of only new games
-        const games = await getProcessedGames(inputs.abbrev, g.season, state.completed);
+        const games = await getProcessedGames(
+            inputs.abbrev,
+            g.season,
+            state.completed,
+        );
         for (let i = games.length - 1; i >= 0; i--) {
             completed.unshift(helpers.formatCompletedGame(games[i]));
         }
 
-        return {completed};
+        return { completed };
     }
 }
 

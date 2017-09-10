@@ -1,8 +1,8 @@
 // @flow
 
-import {g} from '../../common';
-import {idb} from '../db';
-import type {GameProcessed} from '../../common/types';
+import { g } from "../../common";
+import { idb } from "../db";
+import type { GameProcessed } from "../../common/types";
 
 /**
  * Generate a game log list.
@@ -14,7 +14,11 @@ import type {GameProcessed} from '../../common/types';
  * @param {Array.<Object>} gid Array of already-loaded games. If this is not empty, then only new games that are not already in this array will be passed to the callback.
  * @return {Promise.<Array.<Object>>} Resolves to a list of game objects.
  */
-async function getProcessedGameList(abbrev: string, season: number, loadedGames: GameProcessed[] = []): Promise<GameProcessed[]> {
+async function getProcessedGameList(
+    abbrev: string,
+    season: number,
+    loadedGames: GameProcessed[] = [],
+): Promise<GameProcessed[]> {
     const tid = g.teamAbbrevsCache.indexOf(abbrev);
     if (tid < 0) {
         throw new Error(`Invalid abbrev: "${abbrev}"`);
@@ -34,7 +38,7 @@ async function getProcessedGameList(abbrev: string, season: number, loadedGames:
         // $FlowFixMe
         games = await idb.cache.games.getAll();
     } else {
-        games = await idb.league.games.index('season').getAll(season);
+        games = await idb.league.games.index("season").getAll(season);
     }
 
     // Iterate backwards, was more useful back when current season wasn't cached

@@ -1,7 +1,7 @@
 // @flow
 
-import PropTypes from 'prop-types';
-import * as React from 'react';
+import PropTypes from "prop-types";
+import * as React from "react";
 
 const quartile = (data, quart) => {
     if (quart === 1 || quart === 2 || quart === 3) {
@@ -11,7 +11,7 @@ const quartile = (data, quart) => {
     return NaN;
 };
 
-const calculateValues = (data) => {
+const calculateValues = data => {
     // Sort in ascending order
     data.sort((a, b) => a - b);
 
@@ -26,7 +26,7 @@ const calculateValues = (data) => {
 };
 
 const scaleValue = (v, scale) => {
-    return Math.round(100 - (((v - scale[0]) / (scale[1] - scale[0])) * 100));
+    return Math.round(100 - (v - scale[0]) / (scale[1] - scale[0]) * 100);
 };
 
 const round = (value, precision) => {
@@ -35,15 +35,14 @@ const round = (value, precision) => {
     return parseFloat(value).toFixed(precision);
 };
 
-
 const boxPlotElementStyle = (color, style) => {
-    const baseStyle: {[key: string]: 0 | string} = {
-        background: '#fff',
-        position: 'absolute',
-        top: '22px',
+    const baseStyle: { [key: string]: 0 | string } = {
+        background: "#fff",
+        position: "absolute",
+        top: "22px",
         border: `thin solid ${color}`,
-        width: '0px',
-        height: '20px',
+        width: "0px",
+        height: "20px",
     };
     return Object.assign(baseStyle, style);
 };
@@ -61,7 +60,13 @@ const boxPlotElementStyle = (color, style) => {
  *     color: color of the lines in the boxplot (default black)
  *     labels: boolean for whether to show numeric labels (default true)
  */
-const BoxPlot = ({color = '#000000', data, labels = true, quartiles, scale}: {
+const BoxPlot = ({
+    color = "#000000",
+    data,
+    labels = true,
+    quartiles,
+    scale,
+}: {
     color?: string,
     data?: number[],
     labels?: boolean,
@@ -81,7 +86,7 @@ const BoxPlot = ({color = '#000000', data, labels = true, quartiles, scale}: {
             max: quartiles[4],
         };
     } else {
-        throw new Error('Must specify either data or quartiles');
+        throw new Error("Must specify either data or quartiles");
     }
 
     // Scale the markers on the plot to be relative to the size of the canvas. All these values are percentages.
@@ -93,126 +98,167 @@ const BoxPlot = ({color = '#000000', data, labels = true, quartiles, scale}: {
         max: scaleValue(val.max, scale),
     };
 
-    const midLineDiv = <div
-        style={boxPlotElementStyle(color, {
-            height: '10px',
-            width: '100%',
-            border: 'none',
-            borderBottom: `1px solid ${color}`,
-        })}
-    />;
+    const midLineDiv = (
+        <div
+            style={boxPlotElementStyle(color, {
+                height: "10px",
+                width: "100%",
+                border: "none",
+                borderBottom: `1px solid ${color}`,
+            })}
+        />
+    );
 
-    const upperBoxDiv = <div
-        style={boxPlotElementStyle(color, {
-            right: `${x.q3}%`,
-            width: `${x.median - x.q3}%`,
-        })}
-    />;
+    const upperBoxDiv = (
+        <div
+            style={boxPlotElementStyle(color, {
+                right: `${x.q3}%`,
+                width: `${x.median - x.q3}%`,
+            })}
+        />
+    );
 
-    const lowerBoxDiv = <div
-        style={boxPlotElementStyle(color, {
-            right: `${x.median}%`,
-            width: `${x.q1 - x.median}%`,
-        })}
-    />;
+    const lowerBoxDiv = (
+        <div
+            style={boxPlotElementStyle(color, {
+                right: `${x.median}%`,
+                width: `${x.q1 - x.median}%`,
+            })}
+        />
+    );
 
-    const lowerWhiskerDiv = <div
-        style={boxPlotElementStyle(color, {
-            right: `${x.min}%`,
-        })}
-    />;
+    const lowerWhiskerDiv = (
+        <div
+            style={boxPlotElementStyle(color, {
+                right: `${x.min}%`,
+            })}
+        />
+    );
 
-    const upperWhiskerDiv = <div
-        style={boxPlotElementStyle(color, {
-            right: `${x.max}%`,
-        })}
-    />;
+    const upperWhiskerDiv = (
+        <div
+            style={boxPlotElementStyle(color, {
+                right: `${x.max}%`,
+            })}
+        />
+    );
 
-    const minScaleDiv = <div
-        style={boxPlotElementStyle(color, {
-            left: 0,
-            borderRight: 0,
-        })}
-    />;
+    const minScaleDiv = (
+        <div
+            style={boxPlotElementStyle(color, {
+                left: 0,
+                borderRight: 0,
+            })}
+        />
+    );
 
-    const maxScaleDiv = <div
-        style={boxPlotElementStyle(color, {
-            right: 0,
-            borderLeft: 0,
-        })}
-    />;
-
+    const maxScaleDiv = (
+        <div
+            style={boxPlotElementStyle(color, {
+                right: 0,
+                borderLeft: 0,
+            })}
+        />
+    );
 
     // Labels
     let labelDivs = null;
     if (labels) {
-        const minScaleLabel = <div
-            key="minScaleLabel"
-            style={{
-                position: 'absolute',
-                left: 0,
-                top: '43px',
-            }}
-        >{scale[0]}</div>;
+        const minScaleLabel = (
+            <div
+                key="minScaleLabel"
+                style={{
+                    position: "absolute",
+                    left: 0,
+                    top: "43px",
+                }}
+            >
+                {scale[0]}
+            </div>
+        );
 
-        const lowerLabel = <div
-            key="lowerLabel"
-            style={{
-                position: 'absolute',
-                right: `${x.min}%`,
-                top: '3px',
-                marginRight: '-0.6em',
-            }}
-        >{round(val.min)}</div>;
+        const lowerLabel = (
+            <div
+                key="lowerLabel"
+                style={{
+                    position: "absolute",
+                    right: `${x.min}%`,
+                    top: "3px",
+                    marginRight: "-0.6em",
+                }}
+            >
+                {round(val.min)}
+            </div>
+        );
 
-        const q1Label = <div
-            key="q1Label"
-            style={{
-                position: 'absolute',
-                right: `${x.q1}%`,
-                top: '43px',
-                marginRight: '-0.6em',
-            }}
-        >{round(val.q1)}</div>;
+        const q1Label = (
+            <div
+                key="q1Label"
+                style={{
+                    position: "absolute",
+                    right: `${x.q1}%`,
+                    top: "43px",
+                    marginRight: "-0.6em",
+                }}
+            >
+                {round(val.q1)}
+            </div>
+        );
 
-        const medianLabel = <div
-            key="medianLabel"
-            style={{
-                position: 'absolute',
-                right: `${x.median}%`,
-                top: '3px',
-                marginRight: '-0.6em',
-            }}
-        >{round(val.median)}</div>;
+        const medianLabel = (
+            <div
+                key="medianLabel"
+                style={{
+                    position: "absolute",
+                    right: `${x.median}%`,
+                    top: "3px",
+                    marginRight: "-0.6em",
+                }}
+            >
+                {round(val.median)}
+            </div>
+        );
 
-        const q3Label = <div
-            key="q3Label"
-            style={{
-                position: 'absolute',
-                right: `${x.q3}%`,
-                top: '43px',
-                marginRight: '-0.6em',
-            }}
-        >{round(val.q3)}</div>;
+        const q3Label = (
+            <div
+                key="q3Label"
+                style={{
+                    position: "absolute",
+                    right: `${x.q3}%`,
+                    top: "43px",
+                    marginRight: "-0.6em",
+                }}
+            >
+                {round(val.q3)}
+            </div>
+        );
 
-        const upperLabel = <div
-            key="upperLabel"
-            style={{
-                position: 'absolute',
-                right: `${x.max}%`,
-                top: '3px',
-                marginRight: '-0.6em',
-            }}
-        >{round(val.max)}</div>;
+        const upperLabel = (
+            <div
+                key="upperLabel"
+                style={{
+                    position: "absolute",
+                    right: `${x.max}%`,
+                    top: "3px",
+                    marginRight: "-0.6em",
+                }}
+            >
+                {round(val.max)}
+            </div>
+        );
 
-        const maxScaleLabel = <div
-            key="maxScaleLabel"
-            style={{
-                position: 'absolute',
-                right: 0,
-                top: '43px',
-            }}
-        >{scale[1]}</div>;
+        const maxScaleLabel = (
+            <div
+                key="maxScaleLabel"
+                style={{
+                    position: "absolute",
+                    right: 0,
+                    top: "43px",
+                }}
+            >
+                {scale[1]}
+            </div>
+        );
 
         labelDivs = [
             minScaleLabel,
@@ -225,16 +271,24 @@ const BoxPlot = ({color = '#000000', data, labels = true, quartiles, scale}: {
         ];
     }
 
-    return <div style={{height: '64px', paddingBottom: '30px', position: 'relative'}}>
-        {midLineDiv}
-        {upperBoxDiv}
-        {lowerBoxDiv}
-        {lowerWhiskerDiv}
-        {upperWhiskerDiv}
-        {minScaleDiv}
-        {maxScaleDiv}
-        {labelDivs}
-    </div>;
+    return (
+        <div
+            style={{
+                height: "64px",
+                paddingBottom: "30px",
+                position: "relative",
+            }}
+        >
+            {midLineDiv}
+            {upperBoxDiv}
+            {lowerBoxDiv}
+            {lowerWhiskerDiv}
+            {upperWhiskerDiv}
+            {minScaleDiv}
+            {maxScaleDiv}
+            {labelDivs}
+        </div>
+    );
 };
 
 BoxPlot.propTypes = {

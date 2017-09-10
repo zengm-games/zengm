@@ -1,49 +1,71 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import {helpers} from '../../common';
-import {realtimeUpdate, setTitle, toWorker} from '../util';
+import PropTypes from "prop-types";
+import React from "react";
+import { helpers } from "../../common";
+import { realtimeUpdate, setTitle, toWorker } from "../util";
 
 class DeleteLeague extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {deleting: false};
+        this.state = { deleting: false };
     }
 
     async handleDeleteLeague(lid) {
-        this.setState({deleting: true});
-        await toWorker('removeLeague', lid);
+        this.setState({ deleting: true });
+        await toWorker("removeLeague", lid);
         realtimeUpdate([], "/");
     }
 
     render() {
-        const {lid, name, numGames, numPlayers, numSeasons} = this.props;
+        const { lid, name, numGames, numPlayers, numSeasons } = this.props;
 
         setTitle(`Delete League ${lid}?`);
 
         let message;
         if (name !== undefined) {
-            message = <p>Are you <i>absolutely</i> sure you want to delete {name} (League {lid})? You will <i>permanently</i> lose any record of all {helpers.numberWithCommas(numSeasons)} seasons, {helpers.numberWithCommas(numPlayers)} players, and {helpers.numberWithCommas(numGames)} games from this league (well... unless you have a backup somewhere).</p>;
+            message = (
+                <p>
+                    Are you <i>absolutely</i> sure you want to delete {name}{" "}
+                    (League {lid})? You will <i>permanently</i> lose any record
+                    of all {helpers.numberWithCommas(numSeasons)} seasons,{" "}
+                    {helpers.numberWithCommas(numPlayers)} players, and{" "}
+                    {helpers.numberWithCommas(numGames)} games from this league
+                    (well... unless you have a backup somewhere).
+                </p>
+            );
         } else {
-            message = <p>Are you <i>absolutely</i> sure you want to delete League {lid}? You will <i>permanently</i> lose any record of all seasons, players, and games from this league (well... unless you have a backup somewhere).</p>;
+            message = (
+                <p>
+                    Are you <i>absolutely</i> sure you want to delete League{" "}
+                    {lid}? You will <i>permanently</i> lose any record of all
+                    seasons, players, and games from this league (well... unless
+                    you have a backup somewhere).
+                </p>
+            );
         }
 
-        return <div>
-            <h1>Delete League {lid}?</h1>
+        return (
+            <div>
+                <h1>Delete League {lid}?</h1>
 
-            {message}
+                {message}
 
-            <button
-                className="btn btn-danger"
-                disabled={this.state.deleting}
-                onClick={() => this.handleDeleteLeague(lid)}
-                style={{float: 'left', marginRight: '1em'}}
-            >
-                Yes, I am sure. Delete it!
-            </button>
-            <a disabled={this.state.deleting} className="btn btn-default" href="/">
-                Cancel
-            </a>
-        </div>;
+                <button
+                    className="btn btn-danger"
+                    disabled={this.state.deleting}
+                    onClick={() => this.handleDeleteLeague(lid)}
+                    style={{ float: "left", marginRight: "1em" }}
+                >
+                    Yes, I am sure. Delete it!
+                </button>
+                <a
+                    disabled={this.state.deleting}
+                    className="btn btn-default"
+                    href="/"
+                >
+                    Cancel
+                </a>
+            </div>
+        );
     }
 }
 

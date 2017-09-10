@@ -1,32 +1,45 @@
 // @flow
 
-import {PHASE, g} from '../../common';
-import {draft} from '../core';
-import {idb} from '../db';
-import type {DraftLotteryResultArray, UpdateEvents} from '../../common/types';
+import { PHASE, g } from "../../common";
+import { draft } from "../core";
+import { idb } from "../db";
+import type { DraftLotteryResultArray, UpdateEvents } from "../../common/types";
 
 async function updateDraftLottery(
-    {season}: {season: number},
+    { season }: { season: number },
     updateEvents: UpdateEvents,
     state: any,
 ): Promise<{
     result: DraftLotteryResultArray | void,
     season: number,
-    type: 'completed' | 'projected' | 'readyToRun',
+    type: "completed" | "projected" | "readyToRun",
 } | void> {
-    if (updateEvents.includes('firstRun') || updateEvents.includes('newPhase') || season !== state.season || (season === g.season && updateEvents.includes('gameSim'))) {
+    if (
+        updateEvents.includes("firstRun") ||
+        updateEvents.includes("newPhase") ||
+        season !== state.season ||
+        (season === g.season && updateEvents.includes("gameSim"))
+    ) {
         // View completed draft lottery
-        if (season < g.season || season === g.season && g.phase >= PHASE.DRAFT_LOTTERY) {
-            const draftLotteryResult = await idb.getCopy.draftLotteryResults({season});
+        if (
+            season < g.season ||
+            (season === g.season && g.phase >= PHASE.DRAFT_LOTTERY)
+        ) {
+            const draftLotteryResult = await idb.getCopy.draftLotteryResults({
+                season,
+            });
 
             // If season === g.season && g.phase === PHASE.DRAFT_LOTTERY, this will be undefined if the lottery is not done yet
             if (draftLotteryResult || g.phase > PHASE.DRAFT_LOTTERY) {
-                const result = draftLotteryResult !== undefined ? draftLotteryResult.result : undefined;
+                const result =
+                    draftLotteryResult !== undefined
+                        ? draftLotteryResult.result
+                        : undefined;
 
                 return {
                     result,
                     season,
-                    type: 'completed',
+                    type: "completed",
                 };
             }
         }
@@ -38,7 +51,10 @@ async function updateDraftLottery(
             pick.pick = undefined;
         }
 
-        const type = season === g.season && g.phase === PHASE.DRAFT_LOTTERY ? 'readyToRun' : 'projected';
+        const type =
+            season === g.season && g.phase === PHASE.DRAFT_LOTTERY
+                ? "readyToRun"
+                : "projected";
 
         return {
             result: draftLotteryResult.result,

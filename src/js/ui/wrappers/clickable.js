@@ -1,14 +1,17 @@
 // @flow
 
-import * as React from 'react';
+import * as React from "react";
 
 // I have no idea what's going on here
 export default <Props, C: React.Component<Props, *>>(
     Component: Class<C>,
-): Class<React.Component<$Diff<Props, {toggleClicked: () => void}>, *>> => {
-    return class Clickable extends React.Component<any, {
-        clicked: boolean,
-    }> {
+): Class<React.Component<$Diff<Props, { toggleClicked: () => void }>, *>> => {
+    return class Clickable extends React.Component<
+        any,
+        {
+            clicked: boolean,
+        },
+    > {
         toggleClicked: Function;
 
         constructor(props) {
@@ -21,8 +24,11 @@ export default <Props, C: React.Component<Props, *>>(
 
         toggleClicked(event: SyntheticEvent<>) {
             // Don't toggle the row if a link was clicked.
-            const ignoredElements = ['A', 'BUTTON', 'INPUT', 'SELECT'];
-            if (event.target.nodeName && ignoredElements.includes(event.target.nodeName)) {
+            const ignoredElements = ["A", "BUTTON", "INPUT", "SELECT"];
+            if (
+                event.target.nodeName &&
+                ignoredElements.includes(event.target.nodeName)
+            ) {
                 return;
             }
             if (event.target.dataset && event.target.dataset.noRowHighlight) {
@@ -35,7 +41,13 @@ export default <Props, C: React.Component<Props, *>>(
         }
 
         render() {
-            return <Component {...this.props} {...this.state} toggleClicked={this.toggleClicked} />;
+            return (
+                <Component
+                    {...this.props}
+                    {...this.state}
+                    toggleClicked={this.toggleClicked}
+                />
+            );
         }
     };
 };

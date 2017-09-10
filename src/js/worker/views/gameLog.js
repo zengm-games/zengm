@@ -1,9 +1,9 @@
 // @flow
 
-import {g, helpers} from '../../common';
-import {idb} from '../db';
-import {getProcessedGames} from '../util';
-import type {GetOutput, UpdateEvents} from '../../common/types';
+import { g, helpers } from "../../common";
+import { idb } from "../db";
+import { getProcessedGames } from "../util";
+import type { GetOutput, UpdateEvents } from "../../common/types";
 
 /**
  * Generate a box score.
@@ -38,7 +38,7 @@ async function boxScore(gid: number) {
         t.name = g.teamNamesCache[t.tid];
 
         // four factors
-        t.efg = 100 * (t.fg + (t.tp / 2)) / t.fga;
+        t.efg = 100 * (t.fg + t.tp / 2) / t.fga;
         t.tovp = 100 * t.tov / (t.fga + 0.44 * t.fta + t.tov);
         t.orbp = 100 * t.orb / (t.orb + game.teams[1 - i].drb);
         t.ftpfga = t.ft / t.fga;
@@ -49,7 +49,12 @@ async function boxScore(gid: number) {
         // Put injured players at the bottom, then sort by GS and roster position
         t.players.sort((a, b) => {
             // This sorts by starters first and minutes second, since .min is always far less than 1000 and gs is either 1 or 0. Then injured players are listed at the end, if they didn't play.
-            return (b.gs * 100000 + b.min * 1000 - b.injury.gamesRemaining) - (a.gs * 100000 + a.min * 1000 - a.injury.gamesRemaining);
+            return (
+                b.gs * 100000 +
+                b.min * 1000 -
+                b.injury.gamesRemaining -
+                (a.gs * 100000 + a.min * 1000 - a.injury.gamesRemaining)
+            );
         });
     }
 
@@ -81,7 +86,7 @@ async function boxScore(gid: number) {
 
 async function updateTeamSeason(
     inputs: GetOutput,
-): void | {[key: string]: any} {
+): void | { [key: string]: any } {
     return {
         // Needed for dropdown
         abbrev: inputs.abbrev,
@@ -101,13 +106,13 @@ async function updateBoxScore(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
     state: any,
-): void | {[key: string]: any} {
-    const {gid} = inputs;
-    if (typeof gid !== 'number') {
+): void | { [key: string]: any } {
+    const { gid } = inputs;
+    if (typeof gid !== "number") {
         return;
     }
 
-    if (updateEvents.includes('firstRun') || gid !== state.boxScore.gid) {
+    if (updateEvents.includes("firstRun") || gid !== state.boxScore.gid) {
         const game = await boxScore(gid);
 
         const vars = {
@@ -139,15 +144,24 @@ async function updateGamesList(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
     state: any,
-): void | {[key: string]: any} {
-    const {abbrev, season} = inputs;
-    if (typeof abbrev !== 'string' || typeof season !== 'number') {
+): void | { [key: string]: any } {
+    const { abbrev, season } = inputs;
+    if (typeof abbrev !== "string" || typeof season !== "number") {
         return;
     }
 
-    if (updateEvents.includes('firstRun') || abbrev !== state.gamesList.abbrev || season !== state.gamesList.season || (updateEvents.includes('gameSim') && season === g.season)) {
+    if (
+        updateEvents.includes("firstRun") ||
+        abbrev !== state.gamesList.abbrev ||
+        season !== state.gamesList.season ||
+        (updateEvents.includes("gameSim") && season === g.season)
+    ) {
         let games;
-        if (state.gamesList && (abbrev !== state.gamesList.abbrev || season !== state.gamesList.season)) {
+        if (
+            state.gamesList &&
+            (abbrev !== state.gamesList.abbrev ||
+                season !== state.gamesList.season)
+        ) {
             // Switching to a new list
             games = [];
         } else {

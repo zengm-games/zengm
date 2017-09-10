@@ -8,13 +8,17 @@ const fetchWrapper = async ({
     credentials,
 }: {
     url: string,
-    method: 'GET' | 'POST',
-    headers?: {[key: string]: string},
+    method: "GET" | "POST",
+    headers?: { [key: string]: string },
     data: Object,
-    credentials?: 'include',
+    credentials?: "include",
 }): any => {
     let body;
-    if ((typeof FormData !== 'undefined' && data instanceof FormData) || (typeof URLSearchParams !== 'undefined' && data instanceof URLSearchParams)) {
+    if (
+        (typeof FormData !== "undefined" && data instanceof FormData) ||
+        (typeof URLSearchParams !== "undefined" &&
+            data instanceof URLSearchParams)
+    ) {
         body = data;
     } else if (data !== undefined) {
         body = new URLSearchParams();
@@ -24,7 +28,7 @@ const fetchWrapper = async ({
     }
 
     // For GET request, append data to query string, since fetch doesn't like GET and body
-    if (method === 'GET' && body !== undefined) {
+    if (method === "GET" && body !== undefined) {
         url += `?${body.toString()}`;
         body = undefined;
     }
@@ -41,7 +45,7 @@ const fetchWrapper = async ({
     });
 
     // HACK HACK HACK! Some of my APIs (logout) return no content, rather than JSON
-    if (url.includes('logout.php')) {
+    if (url.includes("logout.php")) {
         return undefined;
     }
     return response.json();

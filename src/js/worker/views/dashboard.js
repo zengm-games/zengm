@@ -1,8 +1,8 @@
 // @flow
 
-import {idb} from '../db';
+import { idb } from "../db";
 
-async function updateDashboard(): void | {[key: string]: any} {
+async function updateDashboard(): void | { [key: string]: any } {
     const leagues = await idb.meta.leagues.getAll();
 
     for (let i = 0; i < leagues.length; i++) {

@@ -1,7 +1,7 @@
 // @flow
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 import DropdownButton from 'react-bootstrap/lib/DropdownButton';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import {g, helpers} from '../../common';

@@ -1,7 +1,7 @@
 // @flow
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 import Modal from 'react-bootstrap/lib/Modal';
 
 type Props = {
@@ -9,9 +9,7 @@ type Props = {
     show: boolean,
 };
 
-class NagModal extends React.Component {
-    props: Props;
-
+class NagModal extends React.Component<Props> {
     shouldComponentUpdate(nextProps: Props) {
         return this.props.show !== nextProps.show;
     }

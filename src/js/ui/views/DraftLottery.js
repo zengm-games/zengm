@@ -2,7 +2,7 @@
 
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 import _ from 'underscore';
 import {g, helpers} from '../../common';
 import {setTitle, toWorker} from '../util';
@@ -82,10 +82,8 @@ type State = {
     indRevealed: number,
 };
 
-class DraftLottery extends React.Component {
+class DraftLottery extends React.Component<Props, State> {
     componentIsMounted: boolean;
-    props: Props;
-    state: State;
 
     constructor(props: Props) {
         super(props);

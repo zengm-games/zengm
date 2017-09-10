@@ -2,7 +2,7 @@
 
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 
 const RatingWithChange = ({change, children}: {change: number, children: number}) => {
     return <span>

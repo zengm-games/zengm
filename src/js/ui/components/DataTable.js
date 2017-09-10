@@ -3,7 +3,7 @@
 import classNames from 'classnames';
 import orderBy from 'lodash.orderby';
 import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 import textContent from 'react-addons-text-content';
 import {g, helpers} from '../../common';
 import {HelpPopover} from '../components';
@@ -286,9 +286,7 @@ type State = {
     sortBys: SortBy[],
 };
 
-class DataTable extends React.Component {
-    props: Props;
-    state: State;
+class DataTable extends React.Component<Props, State> {
     handleColClick: Function;
     handleEnableFilters: Function;
     handleFilterUpdate: Function;
@@ -370,7 +368,7 @@ class DataTable extends React.Component {
         this.handleSearch = this.handleSearch.bind(this);
     }
 
-    handleColClick(event: SyntheticKeyboardEvent, i: number) {
+    handleColClick(event: SyntheticKeyboardEvent<>, i: number) {
         const col = this.props.cols[i];
 
         // Ignore click on unsortable column
@@ -445,7 +443,7 @@ class DataTable extends React.Component {
         });
     }
 
-    handleFilterUpdate(event: SyntheticInputEvent, i: number) {
+    handleFilterUpdate(event: SyntheticInputEvent<>, i: number) {
         const filters = this.state.filters.slice();
         filters[i] = event.target.value;
         this.setState({
@@ -461,7 +459,7 @@ class DataTable extends React.Component {
         }
     }
 
-    handlePerPage(event: SyntheticInputEvent) {
+    handlePerPage(event: SyntheticInputEvent<>) {
         const perPage = parseInt(event.target.value, 10);
         if (!isNaN(perPage) && perPage !== this.state.perPage) {
             localStorage.setItem('perPage', String(perPage));
@@ -472,7 +470,7 @@ class DataTable extends React.Component {
         }
     }
 
-    handleSearch(event: SyntheticInputEvent) {
+    handleSearch(event: SyntheticInputEvent<>) {
         this.setState({
             currentPage: 1,
             searchText: event.target.value.toLowerCase(),

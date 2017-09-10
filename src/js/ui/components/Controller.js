@@ -1,13 +1,20 @@
 // @flow
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 import {g} from '../../common';
 import {ads, emitter, realtimeUpdate, toWorker} from '../util';
 import {Footer, Header, LeagueWrapper, MultiTeamMenu, NagModal, NavBar} from '../components';
 import type {GetOutput, Option, PageCtx, UpdateEvents} from '../../common/types';
 
-class LeagueContent extends React.Component {
+type Props = {
+    Component: any,
+    data: any,
+    topMenu: any,
+    updating: boolean,
+};
+
+class LeagueContent extends React.Component<Props> {
     // eslint-disable-next-line class-methods-use-this
     shouldComponentUpdate(nextProps) {
         return !nextProps.updating;
@@ -21,9 +28,10 @@ class LeagueContent extends React.Component {
 }
 
 LeagueContent.propTypes = {
-    Component: PropTypes.func,
-    data: PropTypes.object,
-    topMenu: PropTypes.object,
+    Component: PropTypes.func.isRequired,
+    data: PropTypes.object.isRequired,
+    topMenu: PropTypes.object.isRequired,
+    updating: PropTypes.boolean.isRequired,
 };
 
 type Args = {
@@ -59,8 +67,7 @@ type State = {
     },
 };
 
-class Controller extends React.Component {
-    state: State;
+class Controller extends React.Component<{}, State> {
     closeNagModal: Function;
     get: Function;
     setStateData: Function;

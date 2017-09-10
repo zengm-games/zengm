@@ -1,7 +1,7 @@
 // @flow
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 import {helpers} from '../../common';
 
 const RecordAndPlayoffs = ({abbrev, lost, option, playoffRoundsWon, season, style, won}: {

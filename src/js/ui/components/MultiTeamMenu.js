@@ -1,11 +1,11 @@
 // @flow
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 import {g} from '../../common';
 import {emitter, realtimeUpdate, toWorker} from '../util';
 
-const handleChange = async (e: SyntheticInputEvent) => {
+const handleChange = async (e: SyntheticInputEvent<>) => {
     const userTid = parseInt(e.target.value, 10);
     await toWorker('updateGameAttributes', {userTid});
 
@@ -19,9 +19,7 @@ type Props = {
     userTids: number[],
 };
 
-class MultiTeamMenu extends React.Component {
-    props: Props;
-
+class MultiTeamMenu extends React.Component<Props> {
     shouldComponentUpdate(nextProps: Props) {
         return this.props.userTid !== nextProps.userTid || JSON.stringify(this.props.userTids) !== JSON.stringify(nextProps.userTids);
     }

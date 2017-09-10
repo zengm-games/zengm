@@ -1,7 +1,7 @@
 // @flow
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 
 const quartile = (data, quart) => {
     if (quart === 1 || quart === 2 || quart === 3) {

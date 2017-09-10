@@ -1,10 +1,15 @@
 // @flow
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 import {helpers} from '../../common';
 
-class SideMenu extends React.Component {
+type Props = {
+    lid: number | void,
+    pageId: string,
+}
+
+class SideMenu extends React.Component<Props> {
     shouldComponentUpdate(nextProps) {
         return this.props.pageId !== nextProps.pageId || this.props.lid !== nextProps.lid;
     }
@@ -97,7 +102,7 @@ SideMenu.propTypes = {
     pageId: PropTypes.string.isRequired,
 };
 
-const LeagueWrapper = ({children, lid, pageId}: {children: React.Element<*>, lid: number | void, pageId: string}) => {
+const LeagueWrapper = ({children, lid, pageId}: {children: React.Element<any>, lid: number | void, pageId: string}) => {
     return <div className="row">
         <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
             <SideMenu lid={lid} pageId={pageId} />

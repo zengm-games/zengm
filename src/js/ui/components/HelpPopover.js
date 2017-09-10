@@ -1,12 +1,12 @@
 // @flow
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
 import Popover from 'react-bootstrap/lib/Popover';
 
 const HelpPopover = ({children, placement, style, title}: {
-    children: string | React.Element<*> | React.Element<*>[],
+    children: string | React.Element<any> | React.Element<any>[],
     placement?: 'bottom' | 'left' | 'right' | 'top',
     style: {[key: string]: number | string},
     title: string,

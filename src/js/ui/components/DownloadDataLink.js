@@ -1,24 +1,21 @@
 // @flow
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 
 type Props = {
     data?: string,
     downloadText: string,
     filename?: string,
     mimeType: string,
-    status: React.Element<*> | string,
+    status: React.Element<any> | string,
 };
 
 type State = {
     url?: string,
 };
 
-class DownloadDataLink extends React.Component {
-    props: Props;
-    state: State;
-
+class DownloadDataLink extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {

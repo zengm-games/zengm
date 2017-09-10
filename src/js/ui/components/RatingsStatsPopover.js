@@ -1,7 +1,7 @@
 // @flow
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 import OverlayTrigger from 'react-bootstrap/lib/OverlayTrigger';
 import Popover from 'react-bootstrap/lib/Popover';
 import {toWorker} from '../util';
@@ -58,9 +58,7 @@ type State = {
     } | void,
 };
 
-class RatingsStatsPopover extends React.Component {
-    props: Props;
-    state: State;
+class RatingsStatsPopover extends React.Component<Props, State> {
     loadData: () => void;
 
     constructor(props: Props) {

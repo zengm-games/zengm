@@ -1,7 +1,7 @@
 // @flow
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 import {PHASE, g, helpers} from '../../common';
 import {realtimeUpdate} from '../util';
 
@@ -215,12 +215,9 @@ type Props = {
     view: string,
 };
 
-class Dropdown extends React.Component {
-    props: Props;
-    state: {
-        values: (number | string)[],
-    };
-
+class Dropdown extends React.Component<Props, {
+    values: (number | string)[],
+}> {
     constructor(props: Props) {
         super(props);
 
@@ -238,7 +235,7 @@ class Dropdown extends React.Component {
         }
     }
 
-    handleChange(i: number, event: SyntheticInputEvent) {
+    handleChange(i: number, event: SyntheticInputEvent<>) {
         const values = this.props.values.slice();
         values[i] = event.target.value;
         this.setState({

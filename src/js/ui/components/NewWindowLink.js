@@ -1,16 +1,14 @@
 // @flow
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 import {helpers} from '../../common';
 
 type Props = {
     parts: (number | string)[],
 };
 
-class NewWindowLink extends React.Component {
-    props: Props;
-
+class NewWindowLink extends React.Component<Props> {
     handleClick: () => void;
 
     constructor(props: Props) {

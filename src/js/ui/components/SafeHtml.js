@@ -2,7 +2,7 @@
 
 import createDOMPurify from 'dompurify';
 import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 
 const DOMPurify = createDOMPurify(window);
 

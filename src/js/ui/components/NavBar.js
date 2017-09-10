@@ -3,7 +3,7 @@
 /* eslint react/no-find-dom-node: "off" */
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 import Dropdown from 'react-bootstrap/lib/Dropdown';
 import MenuItem from 'react-bootstrap/lib/MenuItem';
 import Nav from 'react-bootstrap/lib/Nav';
@@ -19,13 +19,12 @@ import type {Option} from '../../common/types';
 
 type TopMenuToggleProps = {
     long: string,
-    onClick?: (SyntheticEvent) => void, // From react-bootstrap Dropdown
+    onClick?: (SyntheticEvent<>) => void, // From react-bootstrap Dropdown
     openId?: string,
     short: string,
 };
 
-class TopMenuToggle extends React.Component {
-    props: TopMenuToggleProps;
+class TopMenuToggle extends React.Component<TopMenuToggleProps> {
     handleClick: Function;
     handleMouseEnter: Function;
 
@@ -195,12 +194,16 @@ const handleToolsClick = async (id, e) => {
     }
 };
 
+type DropdownLinksProps = {
+    godMode: boolean,
+    lid: number | void,
+};
+
 type DropdownLinksState = {
     openId?: string,
 };
 
-class DropdownLinks extends React.Component {
-    state: DropdownLinksState;
+class DropdownLinks extends React.Component<DropdownLinksProps, DropdownLinksState> {
     handleTopMenuToggle: Function;
 
     constructor(props) {
@@ -299,7 +302,12 @@ DropdownLinks.propTypes = {
     lid: PropTypes.number,
 };
 
-class LogoAndText extends React.Component {
+type LogoAndTextProps = {
+    lid: number | void,
+    updating: boolean,
+};
+
+class LogoAndText extends React.Component<LogoAndTextProps> {
     shouldComponentUpdate(nextProps) {
         return this.props.lid !== nextProps.lid || this.props.updating !== nextProps.updating;
     }
@@ -337,7 +345,16 @@ const handleOptionClick = (option, e) => {
     }
 };
 
-class PlayMenu extends React.Component {
+type PlayMenuProps = {
+    lid: number | void,
+    options: {
+        id: string,
+        label: string,
+        url?: string,
+    }[],
+};
+
+class PlayMenu extends React.Component<PlayMenuProps> {
     handleAltP: Function;
 
     constructor(props) {
@@ -353,7 +370,7 @@ class PlayMenu extends React.Component {
         document.removeEventListener('keyup', this.handleAltP);
     }
 
-    handleAltP(e: SyntheticKeyboardEvent) {
+    handleAltP(e: SyntheticKeyboardEvent<>) {
         // alt + p
         if (e.altKey && e.keyCode === 80) {
             const option = this.props.options[0];
@@ -424,10 +441,8 @@ type State = {
     hasViewedALeague: boolean,
 };
 
-class NavBar extends React.Component {
-    props: Props;
-    state: State;
-    playMenu: PlayMenu;
+class NavBar extends React.Component<Props, State> {
+    playMenu: ?PlayMenu;
 
     constructor(props: Props) {
         super(props);

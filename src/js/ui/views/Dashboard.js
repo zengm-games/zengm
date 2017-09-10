@@ -2,7 +2,7 @@
 
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 import {setTitle} from '../util';
 
 type Props = {
@@ -15,13 +15,9 @@ type Props = {
     }[]
 };
 
-class Dashboard extends React.Component {
-    props: Props;
-
-    state: {
-        activeLid: number | void,
-    };
-
+class Dashboard extends React.Component<Props, {
+    activeLid: number | void,
+}> {
     constructor(props: Props) {
         super(props);
         this.state = {

@@ -2,7 +2,7 @@
 
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 import {helpers} from '../../common';
 import {NewWindowLink} from '../components';
 import {setTitle} from '../util';

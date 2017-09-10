@@ -4,7 +4,7 @@
 import '../vendor/babel-external-helpers';
 import '../common/polyfills';
 import page from 'page';
-import React from 'react';
+import * as React from 'react';
 import ReactDOM from 'react-dom';
 import api from './api';
 import Controller from './components/Controller';

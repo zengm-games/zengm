@@ -1,7 +1,7 @@
 // @flow
 
 import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 import {realtimeUpdate, toWorker} from '../util';
 
 type Props = {
@@ -13,9 +13,7 @@ type State = {
     watch: boolean | Function, // For Firefox's Object.watch
 };
 
-class WatchBlock extends React.Component {
-    props: Props;
-    state: State;
+class WatchBlock extends React.Component<Props, State> {
     handleClick: (Event) => void;
 
     constructor(props: Props) {
@@ -42,7 +40,7 @@ class WatchBlock extends React.Component {
         return this.props.pid !== nextProps.pid || this.state.watch !== nextState.watch;
     }
 
-    async handleClick(e: SyntheticEvent) {
+    async handleClick(e: SyntheticEvent<>) {
         e.preventDefault();
 
         const watch = !this.state.watch;

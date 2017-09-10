@@ -2,18 +2,23 @@
 
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 import {SPORT, STRIPE_PUBLISHABLE_KEY, fetchWrapper} from '../../common';
 import {emitter, getScript, realtimeUpdate, setTitle} from '../util';
 
 const ajaxErrorMsg = "Error connecting to server. Check your Internet connection or try again later.";
 
-class StripeButton extends React.Component {
-    state: {
-        handler: ?{
-            open: Function,
-        },
-    };
+type StripeButtonProps = {
+    email: string,
+};
+
+type StripeButtonState = {
+    handler: ?{
+        open: Function,
+    },
+};
+
+class StripeButton extends React.Component<StripeButtonProps, StripeButtonState> {
     handleClick: Function;
 
     constructor(props) {
@@ -110,10 +115,19 @@ const handleCancel = async e => {
     }
 };
 
-class UserInfo extends React.Component {
-    state: {
-        logoutError: ?string,
-    };
+type UserInfoProps = {
+    goldUntilDateString: string,
+    loggedIn: boolean,
+    showGoldActive: boolean,
+    showGoldCancelled: boolean,
+    username?: string,
+};
+
+type UserInfoState = {
+    logoutError: ?string,
+};
+
+class UserInfo extends React.Component<UserInfoProps, UserInfoState> {
     handleLogout: Function;
 
     constructor(props) {
@@ -212,7 +226,7 @@ const Account = ({
 
                     <p>If you want to support Basketball GM continuing to be a non-sucky game, sign up for Basketball GM Gold! It's only <b>$5/month</b>. What do you get? More like, what don't you get? You get no new features, no new improvements, no new anything. Just <b>no more ads</b>. That's it. Why? For basically the same reason I won't make Basketball GM freemium. I don't want the free version to become a crippled advertisement for the pay version. If you agree that the world is a better place when anyone anywhere can play Basketball GM, sign up for Basketball GM Gold today!</p>
 
-                    {!loggedIn ? <p>
+                    {!loggedIn || !email ? <p>
                         <a href="/account/login_or_register">Log in or create an account</a> to sign up for Basketball GM Gold.
                     </p> : <p><StripeButton email={email} /></p>}
                 </div>

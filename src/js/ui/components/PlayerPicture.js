@@ -2,14 +2,12 @@
 
 import faces from 'facesjs';
 import PropTypes from 'prop-types';
-import React from 'react';
+import * as React from 'react';
 
-class PlayerPicture extends React.Component {
-    props: {
-        face: any,
-        imgURL: ?string,
-    };
-
+class PlayerPicture extends React.Component<{
+    face: any,
+    imgURL: ?string,
+}> {
     wrapper: ?HTMLDivElement;
 
     componentDidMount() {

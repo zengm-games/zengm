@@ -2160,9 +2160,9 @@
       "dev": true
     },
     "flow-bin": {
-      "version": "0.52.0",
-      "from": "flow-bin@0.52.0",
-      "resolved": "https://registry.npmjs.org/flow-bin/-/flow-bin-0.52.0.tgz",
+      "version": "0.53.1",
+      "from": "flow-bin@0.53.1",
+      "resolved": "https://registry.npmjs.org/flow-bin/-/flow-bin-0.53.1.tgz",
       "dev": true
     },
     "for-in": {

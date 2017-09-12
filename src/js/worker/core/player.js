@@ -1122,11 +1122,7 @@ function generate(
     let realHeight = Math.random() - 0.5; // Fraction of an inch
     realHeight += random.heightDist();
 
-    let wingspanAdjust = realHeight;
-    const wingSelector = random.randInt(1, 100);
-    if (wingSelector <= 10) {
-        wingspanAdjust += random.realGauss(0, 1);
-    }
+    const wingspanAdjust = realHeight + random.randInt(-3, 3);
 
     // hgt 0-100 corresponds to height 5'6" to 7'9" (Anything taller or shorter than the extremes will just get 100/0)
     const predetHgt = heightToRating(wingspanAdjust);

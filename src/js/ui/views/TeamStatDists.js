@@ -745,45 +745,47 @@ const TeamStatDists = ({ season, statsAll }) => {
 
             <table>
                 <tbody>
-                    {Object.keys(statsAll).map(stat => {
-                        const bbgmPlot = (
-                            <tr>
-                                <td
-                                    style={{
-                                        textAlign: "right",
-                                        paddingRight: "1em",
-                                    }}
-                                >
-                                    {stat}
-                                </td>
-                                <td width="100%">
-                                    <BoxPlot
-                                        data={statsAll[stat]}
-                                        scale={scale[stat]}
-                                    />
-                                </td>
-                            </tr>
-                        );
-                        let nbaPlot = null;
-                        if (nbaStatsAll.hasOwnProperty(stat)) {
-                            nbaPlot = (
+                    {Object.keys(statsAll)
+                        .filter(stat => stat !== "playoffs")
+                        .map(stat => {
+                            const bbgmPlot = (
                                 <tr>
-                                    <td />
+                                    <td
+                                        style={{
+                                            textAlign: "right",
+                                            paddingRight: "1em",
+                                        }}
+                                    >
+                                        {stat}
+                                    </td>
                                     <td width="100%">
-                                        <div style={{ marginTop: "-26px" }}>
-                                            <BoxPlot
-                                                color="#0088cc"
-                                                data={nbaStatsAll[stat]}
-                                                labels={false}
-                                                scale={scale[stat]}
-                                            />
-                                        </div>
+                                        <BoxPlot
+                                            data={statsAll[stat]}
+                                            scale={scale[stat]}
+                                        />
                                     </td>
                                 </tr>
                             );
-                        }
-                        return [bbgmPlot, nbaPlot];
-                    })}
+                            let nbaPlot = null;
+                            if (nbaStatsAll.hasOwnProperty(stat)) {
+                                nbaPlot = (
+                                    <tr>
+                                        <td />
+                                        <td width="100%">
+                                            <div style={{ marginTop: "-26px" }}>
+                                                <BoxPlot
+                                                    color="#0088cc"
+                                                    data={nbaStatsAll[stat]}
+                                                    labels={false}
+                                                    scale={scale[stat]}
+                                                />
+                                            </div>
+                                        </td>
+                                    </tr>
+                                );
+                            }
+                            return [bbgmPlot, nbaPlot];
+                        })}
                 </tbody>
             </table>
         </div>

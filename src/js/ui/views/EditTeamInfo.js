@@ -249,6 +249,7 @@ class EditTeamInfo extends React.Component {
                                         value={t.pop}
                                     />
                                 </div>
+                                <div className="visible-xs clearfix" />
                                 <div className="col-sm-4 col-md-5 form-group">
                                     <label className="visible-xs">
                                         Logo URL

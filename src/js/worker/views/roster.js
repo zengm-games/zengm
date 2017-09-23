@@ -98,7 +98,8 @@ async function updateRoster(
                 // Can release from user's team, except in playoffs because then no free agents can be signed to meet the minimum roster requirement
                 if (
                     inputs.tid === g.userTid &&
-                    (g.phase !== PHASE.PLAYOFFS || players.length > g.maxRosterSize) &&
+                    (g.phase !== PHASE.PLAYOFFS ||
+                        players.length > g.maxRosterSize) &&
                     !g.gameOver &&
                     players.length > 5
                 ) {

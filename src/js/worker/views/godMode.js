@@ -16,6 +16,7 @@ async function updateGodMode(
             disableInjuries: g.disableInjuries,
             numGames: g.numGames,
             quarterLength: g.quarterLength,
+            maxRosterSize: g.maxRosterSize,
             minRosterSize: g.minRosterSize,
             salaryCap: g.salaryCap / 1000,
             minPayroll: g.minPayroll / 1000,

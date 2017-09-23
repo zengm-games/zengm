@@ -17,6 +17,7 @@ class GodMode extends React.Component {
             minContract: props.minContract,
             minPayroll: props.minPayroll,
             minRosterSize: props.minRosterSize,
+            maxRosterSize: props.maxRosterSize,
             numGames: props.numGames,
             quarterLength: props.quarterLength,
             salaryCap: props.salaryCap,
@@ -30,6 +31,7 @@ class GodMode extends React.Component {
             minContract: this.handleChange.bind(this, "minContract"),
             minPayroll: this.handleChange.bind(this, "minPayroll"),
             minRosterSize: this.handleChange.bind(this, "minRosterSize"),
+            maxRosterSize: this.handleChange.bind(this, "maxRosterSize"),
             numGames: this.handleChange.bind(this, "numGames"),
             quarterLength: this.handleChange.bind(this, "quarterLength"),
             salaryCap: this.handleChange.bind(this, "salaryCap"),
@@ -49,6 +51,7 @@ class GodMode extends React.Component {
                 minContract: nextProps.minContract,
                 minPayroll: nextProps.minPayroll,
                 minRosterSize: nextProps.minRosterSize,
+                maxRosterSize: nextProps.maxRosterSize,
                 numGames: nextProps.numGames,
                 quarterLength: nextProps.quarterLength,
                 salaryCap: nextProps.salaryCap,
@@ -72,6 +75,7 @@ class GodMode extends React.Component {
             numGames: parseInt(this.state.numGames, 10),
             quarterLength: parseFloat(this.state.quarterLength),
             minRosterSize: parseInt(this.state.minRosterSize, 10),
+            maxRosterSize: parseInt(this.state.maxRosterSize, 10),
             salaryCap: parseInt(this.state.salaryCap * 1000, 10),
             minPayroll: parseInt(this.state.minPayroll * 1000, 10),
             luxuryPayroll: parseInt(this.state.luxuryPayroll * 1000, 10),
@@ -220,14 +224,16 @@ class GodMode extends React.Component {
                             />
                         </div>
                         <div className="col-sm-3 col-xs-6 form-group">
-                            <label>Min Roster Size</label>
-                            <input
-                                type="text"
+                            <label>Trades Between AI Teams</label>
+                            <select
                                 className="form-control"
                                 disabled={!godMode}
-                                onChange={this.handleChanges.minRosterSize}
-                                value={this.state.minRosterSize}
-                            />
+                                onChange={this.handleChanges.aiTrades}
+                                value={this.state.aiTrades}
+                            >
+                                <option value="true">Enabled</option>
+                                <option value="false">Disabled</option>
+                            </select>
                         </div>
                         <div className="col-sm-3 col-xs-6 form-group">
                             <label>Salary Cap</label>
@@ -321,16 +327,24 @@ class GodMode extends React.Component {
                             </div>
                         </div>
                         <div className="col-sm-3 col-xs-6 form-group">
-                            <label>Trades Between AI Teams</label>
-                            <select
+                            <label>Min Roster Size</label>
+                            <input
+                                type="text"
                                 className="form-control"
                                 disabled={!godMode}
-                                onChange={this.handleChanges.aiTrades}
-                                value={this.state.aiTrades}
-                            >
-                                <option value="true">Enabled</option>
-                                <option value="false">Disabled</option>
-                            </select>
+                                onChange={this.handleChanges.minRosterSize}
+                                value={this.state.minRosterSize}
+                            />
+                        </div>
+                        <div className="col-sm-3 col-xs-6 form-group">
+                            <label>Max Roster Size</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                disabled={!godMode}
+                                onChange={this.handleChanges.maxRosterSize}
+                                value={this.state.maxRosterSize}
+                            />
                         </div>
                     </div>
 
@@ -352,6 +366,7 @@ GodMode.propTypes = {
     minContract: PropTypes.number.isRequired,
     minPayroll: PropTypes.number.isRequired,
     minRosterSize: PropTypes.number.isRequired,
+    maxRosterSize: PropTypes.number.isRequired,
     numGames: PropTypes.number.isRequired,
     quarterLength: PropTypes.number.isRequired,
     salaryCap: PropTypes.number.isRequired,

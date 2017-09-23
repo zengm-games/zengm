@@ -22,6 +22,7 @@ const defaultGameAttributes: GameAttributes = {
     minContract: 750, // [thousands of dollars]
     maxContract: 30000, // [thousands of dollars]
     minRosterSize: 10,
+    maxRosterSize: 15,
     numGames: 82, // per season
     quarterLength: 12, // [minutes]
     disableInjuries: false,

@@ -45,7 +45,7 @@ async function updateFreeAgents(): void | { [key: string]: any } {
         capSpace,
         gamesInProgress: lock.get("gameSim"),
         minContract: g.minContract,
-        numRosterSpots: 15 - userPlayers.length,
+        numRosterSpots: g.maxRosterSize - userPlayers.length,
         phase: g.phase,
         players,
     };

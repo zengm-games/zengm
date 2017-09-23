@@ -737,11 +737,11 @@ async function valueChange(
     await getPicks();
 
     /*    // Handle situations where the team goes over the roster size limit
-    if (roster.length + remove.length > 15) {
+    if (roster.length + remove.length > g.maxRosterSize) {
         // Already over roster limit, so don't worry unless this trade actually makes it worse
         needToDrop = (roster.length + add.length) - (roster.length + remove.length);
     } else {
-        needToDrop = (roster.length + add.length) - 15;
+        needToDrop = (roster.length + add.length) - g.maxRosterSize;
     }
     roster.sort((a, b) => a.value - b.value); // Sort by value, ascending
     add.sort((a, b) => a.value - b.value); // Sort by value, ascending
@@ -1084,7 +1084,7 @@ async function checkRosterSizes(
             tid,
         );
         let numPlayersOnRoster = players.length;
-        if (numPlayersOnRoster > 15) {
+        if (numPlayersOnRoster > g.maxRosterSize) {
             if (g.userTids.includes(tid) && local.autoPlaySeasons === 0) {
                 if (g.userTids.length <= 1) {
                     userTeamSizeError = "Your team has ";
@@ -1092,16 +1092,16 @@ async function checkRosterSizes(
                     userTeamSizeError = `The ${g.teamRegionsCache[tid]} ${g
                         .teamNamesCache[tid]} have `;
                 }
-                userTeamSizeError += `more than the maximum number of players (15). You must remove players (by <a href="${helpers.leagueUrl(
+                userTeamSizeError += `more than the maximum number of players (${g.maxRosterSize}). You must remove players (by <a href="${helpers.leagueUrl(
                     ["roster"],
                 )}">releasing them from your roster</a> or through <a href="${helpers.leagueUrl(
                     ["trade"],
                 )}">trades</a>) before continuing.`;
             } else {
-                // Automatically drop lowest value players until we reach 15
+                // Automatically drop lowest value players until we reach g.maxRosterSize
                 players.sort((a, b) => a.value - b.value); // Lowest first
                 const promises = [];
-                for (let i = 0; i < numPlayersOnRoster - 15; i++) {
+                for (let i = 0; i < numPlayersOnRoster - g.maxRosterSize; i++) {
                     promises.push(player.release(players[i], false));
                 }
                 await Promise.all(promises);

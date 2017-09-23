@@ -72,14 +72,14 @@ async function autoSign() {
         const payroll = (await team.getPayroll(tid))[0];
         const numPlayersOnRoster = playersOnRoster.length;
 
-        if (numPlayersOnRoster < 15) {
+        if (numPlayersOnRoster < g.maxRosterSize) {
             for (let i = 0; i < playersSorted.length; i++) {
                 const p = playersSorted[i];
                 // Don't sign minimum contract players to fill out the roster
                 if (
                     p.contract.amount + payroll <= g.salaryCap ||
                     (p.contract.amount === g.minContract &&
-                        numPlayersOnRoster < 13)
+                        numPlayersOnRoster < g.maxRosterSize - 2)
                 ) {
                     p.tid = tid;
                     if (g.phase <= PHASE.PLAYOFFS) {

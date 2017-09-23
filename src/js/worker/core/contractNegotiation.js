@@ -36,7 +36,7 @@ async function create(
         "playersByTid",
         g.userTid,
     );
-    if (playersOnRoster.length >= 15 && !resigning) {
+    if (playersOnRoster.length >= g.maxRosterSize && !resigning) {
         return "Your roster is full. Before you can sign a free agent, you'll have to release or trade away one of your current players.";
     }
 

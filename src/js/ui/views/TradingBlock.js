@@ -369,11 +369,9 @@ class TradingBlock extends React.Component {
                         disabled={this.state.asking}
                         onClick={this.handleClickAsk}
                     >
-                        {!this.state.asking ? (
-                            "Ask For Trade Proposals"
-                        ) : (
-                            "Asking..."
-                        )}
+                        {!this.state.asking
+                            ? "Ask For Trade Proposals"
+                            : "Asking..."}
                     </button>
                 </center>
 

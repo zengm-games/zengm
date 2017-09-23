@@ -43,9 +43,9 @@ const History = ({
                                     <p>
                                         <span
                                             className={
-                                                champ.tid === userTid ? (
-                                                    "bg-info"
-                                                ) : null
+                                                champ.tid === userTid
+                                                    ? "bg-info"
+                                                    : null
                                             }
                                         >
                                             <b>
@@ -75,9 +75,9 @@ const History = ({
                                         <b>
                                             <a
                                                 className={
-                                                    champ.tid === userTid ? (
-                                                        "bg-info"
-                                                    ) : null
+                                                    champ.tid === userTid
+                                                        ? "bg-info"
+                                                        : null
                                                 }
                                                 href={helpers.leagueUrl([
                                                     "player",
@@ -125,9 +125,9 @@ const History = ({
                             <p>
                                 <span
                                     className={
-                                        awards.mvp.tid === userTid ? (
-                                            "bg-info"
-                                        ) : null
+                                        awards.mvp.tid === userTid
+                                            ? "bg-info"
+                                            : null
                                     }
                                 >
                                     <b>
@@ -161,9 +161,9 @@ const History = ({
                             <p>
                                 <span
                                     className={
-                                        awards.dpoy.tid === userTid ? (
-                                            "bg-info"
-                                        ) : null
+                                        awards.dpoy.tid === userTid
+                                            ? "bg-info"
+                                            : null
                                     }
                                 >
                                     <b>
@@ -195,9 +195,9 @@ const History = ({
                             <p>
                                 <span
                                     className={
-                                        awards.smoy.tid === userTid ? (
-                                            "bg-info"
-                                        ) : null
+                                        awards.smoy.tid === userTid
+                                            ? "bg-info"
+                                            : null
                                     }
                                 >
                                     <b>
@@ -230,9 +230,9 @@ const History = ({
                                 <p>
                                     <span
                                         className={
-                                            awards.roy.tid === userTid ? (
-                                                "bg-info"
-                                            ) : null
+                                            awards.roy.tid === userTid
+                                                ? "bg-info"
+                                                : null
                                         }
                                     >
                                         <b>

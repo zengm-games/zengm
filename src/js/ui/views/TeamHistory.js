@@ -33,9 +33,9 @@ const TeamHistory = ({
                 season={h.season}
                 // Bold championship seasons.
                 style={
-                    h.playoffRoundsWon === g.numPlayoffRounds ? (
-                        { fontWeight: "bold" }
-                    ) : null
+                    h.playoffRoundsWon === g.numPlayoffRounds
+                        ? { fontWeight: "bold" }
+                        : null
                 }
                 won={h.won}
             />

@@ -8,8 +8,8 @@
               }
             : function(obj) {
                   return obj &&
-                  typeof Symbol === "function" &&
-                  obj.constructor === Symbol
+                      typeof Symbol === "function" &&
+                      obj.constructor === Symbol
                       ? "symbol"
                       : typeof obj;
               };

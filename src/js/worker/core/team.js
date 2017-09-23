@@ -176,9 +176,8 @@ function generate(tm: any) {
                     ? tm.budget.ticketPrice.amount
                     : parseFloat(
                           (g.salaryCap / 90000 * 37 +
-                              25 *
-                                  (g.numTeams - tm.popRank) /
-                                  (g.numTeams - 1)).toFixed(2),
+                              25 * (g.numTeams - tm.popRank) / (g.numTeams - 1)
+                          ).toFixed(2),
                       ),
                 rank: tm.hasOwnProperty("budget")
                     ? tm.budget.ticketPrice.rank

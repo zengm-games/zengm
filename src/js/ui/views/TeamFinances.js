@@ -109,9 +109,9 @@ class FinancesForm extends React.Component {
 
         const warningMessage = (
             <p className="text-danger">
-                {gamesInProgress && tid === g.userTid ? (
-                    "Stop game simulation to edit."
-                ) : null}
+                {gamesInProgress && tid === g.userTid
+                    ? "Stop game simulation to edit."
+                    : null}
             </p>
         );
 

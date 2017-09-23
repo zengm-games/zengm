@@ -609,7 +609,8 @@ function gameScore(arg: { [key: string]: number }): string {
         0.7 * arg.ast +
         0.7 * arg.blk -
         0.4 * arg.pf -
-        arg.tov).toFixed(1);
+        arg.tov
+    ).toFixed(1);
 }
 
 function plusMinus(arg: number, d: number): string {

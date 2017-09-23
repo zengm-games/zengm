@@ -206,6 +206,7 @@ export type GameAttributeKey =
     | "luxuryPayroll"
     | "luxuryTax"
     | "maxContract"
+    | "maxRosterSize"
     | "minContract"
     | "minPayroll"
     | "minRosterSize"

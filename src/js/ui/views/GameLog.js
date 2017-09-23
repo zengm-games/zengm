@@ -226,9 +226,9 @@ class BoxScore extends React.Component {
                                                                 t.efg >=
                                                                 boxScore.teams[
                                                                     1 - i
-                                                                ].efg ? (
-                                                                    "success"
-                                                                ) : null
+                                                                ].efg
+                                                                    ? "success"
+                                                                    : null
                                                             }
                                                         >
                                                             {t.efg.toFixed(1)}
@@ -238,9 +238,9 @@ class BoxScore extends React.Component {
                                                                 t.tovp <=
                                                                 boxScore.teams[
                                                                     1 - i
-                                                                ].tovp ? (
-                                                                    "success"
-                                                                ) : null
+                                                                ].tovp
+                                                                    ? "success"
+                                                                    : null
                                                             }
                                                         >
                                                             {t.tovp.toFixed(1)}
@@ -250,9 +250,9 @@ class BoxScore extends React.Component {
                                                                 t.orbp >=
                                                                 boxScore.teams[
                                                                     1 - i
-                                                                ].orbp ? (
-                                                                    "success"
-                                                                ) : null
+                                                                ].orbp
+                                                                    ? "success"
+                                                                    : null
                                                             }
                                                         >
                                                             {t.orbp.toFixed(1)}
@@ -262,9 +262,9 @@ class BoxScore extends React.Component {
                                                                 t.ftpfga >=
                                                                 boxScore.teams[
                                                                     1 - i
-                                                                ].ftpfga ? (
-                                                                    "success"
-                                                                ) : null
+                                                                ].ftpfga
+                                                                    ? "success"
+                                                                    : null
                                                             }
                                                         >
                                                             {t.ftpfga.toFixed(
@@ -488,9 +488,9 @@ const GameLog = ({ abbrev, boxScore, gamesList = { games: [] }, season }) => {
                                         <tr
                                             key={gm.gid}
                                             className={
-                                                gm.gid === boxScore.gid ? (
-                                                    "info"
-                                                ) : null
+                                                gm.gid === boxScore.gid
+                                                    ? "info"
+                                                    : null
                                             }
                                         >
                                             <td className="game-log-cell">

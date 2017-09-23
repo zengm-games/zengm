@@ -455,11 +455,9 @@ class CustomizePlayer extends React.Component {
 
                 <p>
                     Here, you can{" "}
-                    {originalTid === undefined ? (
-                        "create a custom player with"
-                    ) : (
-                        "edit a player to have"
-                    )}{" "}
+                    {originalTid === undefined
+                        ? "create a custom player with"
+                        : "edit a player to have"}{" "}
                     whatever attributes and ratings you want. If you want to
                     make a whole league of custom players, you should probably
                     create a{" "}

@@ -48,9 +48,9 @@ class SideMenu extends React.Component<Props> {
                     </li>
                     <li
                         className={
-                            pageId === "history" || pageId === "historyAll" ? (
-                                "active"
-                            ) : null
+                            pageId === "history" || pageId === "historyAll"
+                                ? "active"
+                                : null
                         }
                     >
                         <a href={helpers.leagueUrl(["history_all"])}>History</a>

@@ -166,11 +166,9 @@ const Negotiation = ({
                                     >
                                         ${contract.amount.toFixed(2)}M per year<span className="hidden-xs">, through {contract.exp}</span>{" "}
                                         ({contract.years}{" "}
-                                        {contract.years === 1 ? (
-                                            "season"
-                                        ) : (
-                                            "seasons"
-                                        )})
+                                        {contract.years === 1
+                                            ? "season"
+                                            : "seasons"})
                                     </div>
 
                                     <button

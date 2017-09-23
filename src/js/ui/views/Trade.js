@@ -466,11 +466,9 @@ class Trade extends React.Component {
                                 onClick={this.handleClickAsk}
                                 style={{ margin: "5px 5px 5px 0" }}
                             >
-                                {this.state.asking ? (
-                                    "Waiting for answer..."
-                                ) : (
-                                    "What would make this deal work?"
-                                )}
+                                {this.state.asking
+                                    ? "Waiting for answer..."
+                                    : "What would make this deal work?"}
                             </button>
                             <button
                                 type="submit"

@@ -49,29 +49,27 @@
         ga('send', 'pageview');
       }
 
-      if (localStorage.debug !== "debug") {
-        var bs = document.createElement('script');
-        bs.type = 'text/javascript';
-        bs.src = '//d2wy8f7a9ursnm.cloudfront.net/bugsnag-3.min.js';
-        bs.addEventListener('load', function () {
-          if (window.Bugsnag) {
-            window.Bugsnag.apiKey = "c10b95290070cb8888a7a79cc5408555";
-            window.Bugsnag.appVersion = window.bbgmVersion;
-            if (location.host.indexOf("localhost") === 0) {
-              window.Bugsnag.releaseStage = "development";
-            } else if (location.host.indexOf("beta.basketball-gm.com") === 0) {
-              window.Bugsnag.releaseStage = "beta";
-            } else if (location.host.indexOf("play.basketball-gm.com") === 0) {
-              window.Bugsnag.releaseStage = "production";
-            } else {
-              window.Bugsnag.releaseStage = "unknown";
-            }
-            window.Bugsnag.notifyReleaseStages = ["beta", "production", "unknown"];
-            window.Bugsnag.enableNotifyUnhandledRejections();
+      var bs = document.createElement('script');
+      bs.type = 'text/javascript';
+      bs.src = '//d2wy8f7a9ursnm.cloudfront.net/bugsnag-3.min.js';
+      bs.addEventListener('load', function () {
+        if (window.Bugsnag) {
+          window.Bugsnag.apiKey = "c10b95290070cb8888a7a79cc5408555";
+          window.Bugsnag.appVersion = window.bbgmVersion;
+          if (location.host.indexOf("localhost") === 0) {
+            window.Bugsnag.releaseStage = "development";
+          } else if (location.host.indexOf("beta.basketball-gm.com") === 0) {
+            window.Bugsnag.releaseStage = "beta";
+          } else if (location.host.indexOf("play.basketball-gm.com") === 0) {
+            window.Bugsnag.releaseStage = "production";
+          } else {
+            window.Bugsnag.releaseStage = "unknown";
           }
-        });
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(bs, s);
-      }
+          window.Bugsnag.notifyReleaseStages = ["beta", "production", "unknown"];
+          window.Bugsnag.enableNotifyUnhandledRejections();
+        }
+      });
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(bs, s);
     </script>
 
     <script async="async" src="https://www.googletagservices.com/tag/js/gpt.js"></script>

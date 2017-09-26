@@ -142,10 +142,6 @@ document cache data format and API!
 - read from just the cache if you're sure everything is there (like an active player). otherwise, read from db and augment with cache (because anything could be in cache, even if it's not normally.. like retired player added to watch list). getCopy variables do this
 - promise microtask worker crap - for firefox support, if you start a backboard tx manually, you can't do any promise/asyncawait stuff inside the callback
 
-debug mode makes huge perf difference
-- warning bar
-- is this still true?
-
 benchmark using proxies to detect change in index stuff rather than dirtyIndexes
 
 can ui/util/logEvent be replaced by just notify? since it never writes to db?
@@ -170,8 +166,6 @@ HTML in play by play https://www.reddit.com/r/BasketballGM/comments/5963ym/playb
 https://www.reddit.com/r/BasketballGM/comments/57cux2/small_issue/
 
 redo contracts after free agency ends
-
-rewrite notify.js in React
 
 god mode should have no restrictions on adding players to trade (like 15 days after signing)
 
@@ -935,8 +929,6 @@ how to handle aggregating stats for players who played for more than one team in
 contracts
   maybe make them nonlinear.. role players lower, stars higher
     compare to NBA contract distribution
-luxury tax should be disbursed amongst non-taxpaying teams
-team.rosterAutoSort should automatically set dbChanged, and have an option to not if that's important
 test trades more
   multi-player valuation
     rank players by value. each additional value gets some multiplier to diminish its influence. this prevents adding a player to a trade from decreasing its value
@@ -1045,11 +1037,6 @@ stat views
   playoff/regular season toggle in team/player stats, league leaders
 input to helpers.formatCurrency (and all currency in variables everywhere) should be in 1000s of dollars and then only converted to millions when displayed
 AI teams should have to deal with fuzz too
-"dbChanged" updateEvent - more correct way
-  store a list of times and "update events". compare last updated time against that list, and then see the update events. pass as list in "update event" to realtime update
-  check everywhere dbChange or lastDbChange is set and see if it should be more refined
-    add playerMovement updateEvent, for when a player signs a contract, becomes a free agent, or is traded
-  or use something like broadcastchannel https://hacks.mozilla.org/2015/05/trainspotting-firefox-38/
 bbgmView
   can i do some check to abandon display if idLoading is mismatched with reality? like for clicking a slow link followed by a fast link, in rapid succession, the fast output should show and the slow should be short circuited.
     in practice, this doesn't seem to matter much

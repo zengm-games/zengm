@@ -21,4 +21,5 @@ export { default as RatingWithChange } from "./RatingWithChange";
 export { default as RecordAndPlayoffs } from "./RecordAndPlayoffs";
 export { default as SafeHtml } from "./SafeHtml";
 export { default as SkillsBlock } from "./SkillsBlock";
+export { default as UpcomingGame } from "./UpcomingGame";
 export { default as WatchBlock } from "./WatchBlock";

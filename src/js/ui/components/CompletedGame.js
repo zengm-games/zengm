@@ -16,7 +16,7 @@ const CompletedGame = ({
     won,
 }: {
     abbrev: string,
-    displayAbbrevs: boolean | undefined,
+    displayAbbrevs: boolean | void,
     gid: number,
     overtime: string,
     score: string,
@@ -32,7 +32,7 @@ const CompletedGame = ({
         "list-group-item-danger": !won,
     });
     return (
-        <li className={classes} key={gid}>
+        <li className={classes}>
             <div className="schedule-results">
                 <div className="schedule-wl">{won ? "W" : "L"}</div>
                 <div className="schedule-score">
@@ -62,7 +62,7 @@ const CompletedGame = ({
 
 CompletedGame.propTypes = {
     abbrev: PropTypes.string.isRequired,
-    displayAbbrevs: PropTypes.bool.isRequired,
+    displayAbbrevs: PropTypes.bool,
     gid: PropTypes.number.isRequired,
     overtime: PropTypes.string.isRequired,
     score: PropTypes.string.isRequired,

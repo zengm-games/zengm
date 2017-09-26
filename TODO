@@ -217,8 +217,6 @@ keep showing splash screen until first view hydrated
 
 reevaluate bbgmView API
 
-abstract games list in schedule and dashboard
-
 DataTable
   USE FOR OTHER TABLES TOO, not just sortable ones. will be nice for colnames, especially
   https://github.com/rwu823/react-addons-text-content/issues/1 prevents sorting by skills on draft summary

@@ -1,8 +1,12 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { helpers } from "../../common";
 import { setTitle } from "../util";
-import { CompletedGame, Dropdown, NewWindowLink } from "../components";
+import {
+    CompletedGame,
+    Dropdown,
+    NewWindowLink,
+    UpcomingGame,
+} from "../components";
 
 const Schedule = ({ abbrev, completed, season, upcoming }) => {
     setTitle("Schedule");
@@ -19,34 +23,7 @@ const Schedule = ({ abbrev, completed, season, upcoming }) => {
                     <h2>Upcoming Games</h2>
                     <ul className="list-group">
                         {upcoming.map(({ gid, teams }) => (
-                            <li
-                                className="list-group-item schedule-row"
-                                key={gid}
-                            >
-                                <a
-                                    href={helpers.leagueUrl([
-                                        "roster",
-                                        teams[0].abbrev,
-                                    ])}
-                                >
-                                    {teams[0].region}
-                                </a>{" "}
-                                <span className="schedule-extra">
-                                    ({teams[0].seasonAttrs.won}-{teams[0].seasonAttrs.lost})
-                                </span>
-                                <span className="schedule-at"> @ </span>
-                                <a
-                                    href={helpers.leagueUrl([
-                                        "roster",
-                                        teams[1].abbrev,
-                                    ])}
-                                >
-                                    {teams[1].region}
-                                </a>{" "}
-                                <span className="schedule-extra">
-                                    ({teams[1].seasonAttrs.won}-{teams[1].seasonAttrs.lost})
-                                </span>
-                            </li>
+                            <UpcomingGame key={gid} teams={teams} />
                         ))}
                     </ul>
                 </div>

@@ -9,6 +9,7 @@ import {
     PlayerNameLabels,
     PlayoffMatchup,
     RatingWithChange,
+    UpcomingGame,
 } from "../components";
 
 const LeagueDashboard = ({
@@ -371,32 +372,11 @@ const LeagueDashboard = ({
                                         className="list-group"
                                         style={{ marginBottom: "6px" }}
                                     >
-                                        {upcoming.map(game => (
-                                            <li
-                                                key={game.gid}
-                                                className="list-group-item schedule-row"
-                                            >
-                                                <a
-                                                    href={helpers.leagueUrl([
-                                                        "roster",
-                                                        game.teams[0].abbrev,
-                                                    ])}
-                                                >
-                                                    {game.teams[0].region}
-                                                </a>
-                                                <span className="schedule-at">
-                                                    {" "}
-                                                    @{" "}
-                                                </span>
-                                                <a
-                                                    href={helpers.leagueUrl([
-                                                        "roster",
-                                                        game.teams[1].abbrev,
-                                                    ])}
-                                                >
-                                                    {game.teams[1].region}
-                                                </a>
-                                            </li>
+                                        {upcoming.map(({ gid, teams }) => (
+                                            <UpcomingGame
+                                                key={gid}
+                                                teams={teams}
+                                            />
                                         ))}
                                     </ul>
                                     {upcoming.length === 0 ? <p>None</p> : null}

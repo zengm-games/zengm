@@ -1,9 +1,8 @@
-import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import { helpers } from "../../common";
 import { setTitle } from "../util";
-import { Dropdown, NewWindowLink } from "../components";
+import { CompletedGame, Dropdown, NewWindowLink } from "../components";
 
 const Schedule = ({ abbrev, completed, season, upcoming }) => {
     setTitle("Schedule");
@@ -58,57 +57,17 @@ const Schedule = ({ abbrev, completed, season, upcoming }) => {
                             ? "Loading..."
                             : completed.map(
                                   ({ gid, overtime, score, teams, won }) => {
-                                      const classes = classNames(
-                                          "list-group-item",
-                                          "schedule-row",
-                                          {
-                                              "list-group-item-success": won,
-                                              "list-group-item-danger": !won,
-                                          },
-                                      );
                                       return (
-                                          <li className={classes} key={gid}>
-                                              <div className="schedule-results">
-                                                  <div className="schedule-wl">
-                                                      {won ? "W" : "L"}
-                                                  </div>
-                                                  <div className="schedule-score">
-                                                      <a
-                                                          href={helpers.leagueUrl(
-                                                              [
-                                                                  "game_log",
-                                                                  abbrev,
-                                                                  season,
-                                                                  gid,
-                                                              ],
-                                                          )}
-                                                      >
-                                                          {score}
-                                                          {overtime}
-                                                      </a>
-                                                  </div>
-                                              </div>
-                                              <a
-                                                  href={helpers.leagueUrl([
-                                                      "roster",
-                                                      teams[0].abbrev,
-                                                  ])}
-                                              >
-                                                  {teams[0].region}
-                                              </a>
-                                              <span className="schedule-at">
-                                                  {" "}
-                                                  @{" "}
-                                              </span>
-                                              <a
-                                                  href={helpers.leagueUrl([
-                                                      "roster",
-                                                      teams[1].abbrev,
-                                                  ])}
-                                              >
-                                                  {teams[1].region}
-                                              </a>
-                                          </li>
+                                          <CompletedGame
+                                              key={gid}
+                                              abbrev={abbrev}
+                                              gid={gid}
+                                              overtime={overtime}
+                                              score={score}
+                                              season={season}
+                                              teams={teams}
+                                              won={won}
+                                          />
                                       );
                                   },
                               )}

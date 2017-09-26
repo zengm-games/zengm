@@ -4,6 +4,7 @@ import React from "react";
 import { PHASE, g, helpers } from "../../common";
 import { setTitle } from "../util";
 import {
+    CompletedGame,
     NewWindowLink,
     PlayerNameLabels,
     PlayoffMatchup,
@@ -411,56 +412,29 @@ const LeagueDashboard = ({
                                 className="list-group"
                                 style={{ marginBottom: "6px" }}
                             >
-                                {completed.map(game => (
-                                    <li
-                                        key={game.gid}
-                                        className={classNames(
-                                            "list-group-item",
-                                            "schedule-row",
-                                            {
-                                                "list-group-item-success":
-                                                    game.won,
-                                                "list-group-item-danger": !game.won,
-                                            },
-                                        )}
-                                    >
-                                        <div className="schedule-results">
-                                            <div className="schedule-wl">
-                                                {game.won ? "W" : "L"}
-                                            </div>
-                                            <div className="schedule-score">
-                                                <a
-                                                    href={helpers.leagueUrl([
-                                                        "game_log",
-                                                        abbrev,
-                                                        season,
-                                                        game.gid,
-                                                    ])}
-                                                >
-                                                    {game.score}
-                                                    {game.overtime}
-                                                </a>
-                                            </div>
-                                        </div>
-                                        <a
-                                            href={helpers.leagueUrl([
-                                                "roster",
-                                                game.teams[0].abbrev,
-                                            ])}
-                                        >
-                                            {game.teams[0].abbrev}
-                                        </a>
-                                        <span className="schedule-at"> @ </span>
-                                        <a
-                                            href={helpers.leagueUrl([
-                                                "roster",
-                                                game.teams[1].abbrev,
-                                            ])}
-                                        >
-                                            {game.teams[1].abbrev}
-                                        </a>
-                                    </li>
-                                ))}
+                                {completed.map(
+                                    ({
+                                        gid,
+                                        overtime,
+                                        score,
+                                        teams,
+                                        won: won2,
+                                    }) => {
+                                        return (
+                                            <CompletedGame
+                                                key={gid}
+                                                abbrev={abbrev}
+                                                displayAbbrevs
+                                                gid={gid}
+                                                overtime={overtime}
+                                                score={score}
+                                                season={season}
+                                                teams={teams}
+                                                won={won2}
+                                            />
+                                        );
+                                    },
+                                )}
                             </ul>
                             {completed.length === 0 ? <p>None</p> : null}
                             <a href={helpers.leagueUrl(["game_log"])}>

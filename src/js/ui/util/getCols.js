@@ -27,6 +27,11 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    "3PAr": {
+        desc: "Three Point Attempt Rate (3PA / FGA)",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     A: {
         desc: "Attempted",
         sortSequence: ["desc", "asc"],
@@ -145,6 +150,11 @@ const cols: {
     },
     "FT%": {
         desc: "Free Throw Percentage",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    FTr: {
+        desc: "Free Throw Attempt Rate (FTA / FGA)",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
@@ -337,8 +347,18 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    "TOV%": {
+        desc: "Turnover Percentage (TO per 100 plays)",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     "TP%": {
         desc: "Three Point Percentage",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "TS%": {
+        desc: "Total Shooting Percentage",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },

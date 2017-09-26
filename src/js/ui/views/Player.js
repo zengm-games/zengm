@@ -122,9 +122,6 @@ const StatsTable = ({ careerStats = {}, name, stats = [] }) => {
                 "BA",
                 "PF",
                 "Pts",
-                "+/-",
-                "PER",
-                "EWA",
             )}
             defaultSort={[0, "asc"]}
             footer={[
@@ -153,9 +150,6 @@ const StatsTable = ({ careerStats = {}, name, stats = [] }) => {
                 careerStats.ba.toFixed(1),
                 careerStats.pf.toFixed(1),
                 careerStats.pts.toFixed(1),
-                helpers.plusMinus(careerStats.pm, 1),
-                careerStats.per.toFixed(1),
-                careerStats.ewa.toFixed(1),
             ]}
             name={name}
             rows={stats.map(ps => {
@@ -195,9 +189,6 @@ const StatsTable = ({ careerStats = {}, name, stats = [] }) => {
                         ps.ba.toFixed(1),
                         ps.pf.toFixed(1),
                         ps.pts.toFixed(1),
-                        helpers.plusMinus(ps.pm, 1),
-                        ps.per.toFixed(1),
-                        ps.ewa.toFixed(1),
                     ],
                 };
             })}
@@ -228,7 +219,7 @@ const StatsTable = ({ careerStats = {}, name, stats = [] }) => {
                 },
                 {
                     title: "",
-                    colspan: 10,
+                    colspan: 7,
                 },
             ]}
         />
@@ -236,6 +227,76 @@ const StatsTable = ({ careerStats = {}, name, stats = [] }) => {
 };
 
 StatsTable.propTypes = {
+    careerStats: PropTypes.object,
+    name: PropTypes.string.isRequired,
+    stats: PropTypes.arrayOf(PropTypes.object),
+};
+
+const AdvStatsTable = ({ careerStats = {}, name, stats = [] }) => {
+    return (
+        <DataTable
+            cols={getCols(
+                "Year",
+                "Team",
+                "Age",
+                "GP",
+                "Min",
+                "TS%",
+                "3PAr",
+                "FTr",
+                "TOV%",
+                "+/-",
+                "PER",
+                "EWA",
+            )}
+            defaultSort={[0, "asc"]}
+            footer={[
+                "Career",
+                null,
+                null,
+                careerStats.gp,
+                Math.round(careerStats.gp * careerStats.min),
+                careerStats.tsp.toFixed(1),
+                careerStats.tpar.toFixed(1),
+                careerStats.ftr.toFixed(1),
+                careerStats.tovp.toFixed(1),
+                helpers.plusMinus(careerStats.pm, 1),
+                careerStats.per.toFixed(1),
+                careerStats.ewa.toFixed(1),
+            ]}
+            name={name}
+            rows={stats.map(ps => {
+                return {
+                    key: ps.psid,
+                    data: [
+                        ps.season,
+                        <a
+                            href={helpers.leagueUrl([
+                                "roster",
+                                ps.abbrev,
+                                ps.season,
+                            ])}
+                        >
+                            {ps.abbrev}
+                        </a>,
+                        ps.age,
+                        ps.gp,
+                        Math.round(ps.gp * ps.min),
+                        ps.tsp.toFixed(1),
+                        ps.tpar.toFixed(1),
+                        ps.ftr.toFixed(1),
+                        ps.tovp.toFixed(1),
+                        helpers.plusMinus(ps.pm, 1),
+                        ps.per.toFixed(1),
+                        ps.ewa.toFixed(1),
+                    ],
+                };
+            })}
+        />
+    );
+};
+
+AdvStatsTable.propTypes = {
     careerStats: PropTypes.object,
     name: PropTypes.string.isRequired,
     stats: PropTypes.arrayOf(PropTypes.object),
@@ -531,6 +592,13 @@ const Player = ({
                 stats={statsRegularSeason}
             />
 
+            <h3>Advanced</h3>
+            <AdvStatsTable
+                careerStats={player.careerStats}
+                name="Player:AdvStats"
+                stats={statsRegularSeason}
+            />
+
             <h3>Shot Locations</h3>
             <ShotLocationsTable
                 careerStats={player.careerStats}
@@ -543,6 +611,13 @@ const Player = ({
             <StatsTable
                 careerStats={player.careerStatsPlayoffs}
                 name="Player:PlayoffStats"
+                stats={statsPlayoffs}
+            />
+
+            <h3>Advanced</h3>
+            <AdvStatsTable
+                careerStats={player.careerStatsPlayoffs}
+                name="Player:PlayoffAdvStats"
                 stats={statsPlayoffs}
             />
 

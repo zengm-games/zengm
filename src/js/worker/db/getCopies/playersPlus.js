@@ -294,6 +294,30 @@ const genStatsRow = (p, ps, stats, statType) => {
             } else {
                 row.ftp = 0;
             }
+        } else if (attr === "tsp") {
+            if (ps.fga > 0 || ps.fta > 0) {
+                row.tsp = 100 * ps.pts / (2 * (ps.fga + 0.44 * ps.fta));
+            } else {
+                row.tsp = 0;
+            }
+        } else if (attr === "tpar") {
+            if (ps.fga > 0) {
+                row.tpar = 100 * ps.tpa / ps.fga;
+            } else {
+                row.tpar = 0;
+            }
+        } else if (attr === "ftr") {
+            if (ps.fga > 0) {
+                row.ftr = 100 * ps.fta / ps.fga;
+            } else {
+                row.ftr = 0;
+            }
+        } else if (attr === "tovp") {
+            if (ps.fga > 0 || ps.fta > 0) {
+                row.tovp = 100 * ps.tov / (2 * (ps.fga + 0.44 * ps.fta));
+            } else {
+                row.tovp = 0;
+            }
         } else if (attr === "season") {
             row.season = ps.season;
         } else if (attr === "age") {

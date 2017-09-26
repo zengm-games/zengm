@@ -1,3 +1,10 @@
+customizable columns in datatable
+- pass additional parameter containing which columns are visible, by name (if none, then assume all)
+- get rid of search
+- button to reset datatable
+- always return all stats and ratings?
+- more advanced stats
+
 new faces
 - http://biskup.biowiki.org/facesjs/
 - https://github.com/dumbmatter/facesjs/compare/master...ihh:master

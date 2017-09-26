@@ -208,12 +208,6 @@ https://marmelab.com/blog/2017/02/06/react-is-slow-react-is-fast.html
 
 close menu on responsive navbar https://github.com/react-bootstrap/react-bootstrap/issues/1301 resolved by https://github.com/react-bootstrap/react-bootstrap/pull/2280
 
-sorting
-  react dnd
-  rubaxa
-    maybe https://github.com/cheton/react-sortable
-  dragula
-
 Draft button on player pages https://www.reddit.com/r/BasketballGM/comments/53op85/feature_request/
 
 redux or similar for state
@@ -221,7 +215,6 @@ redux or similar for state
 
 keep showing splash screen until first view hydrated
 
-reevaluate views folder structure... maybe views -> ui, and views/*.js -> ui/data-loaders/*.js
 reevaluate bbgmView API
 
 abstract games list in schedule and dashboard
@@ -262,8 +255,6 @@ display numerical owner mood somehow
 AI trades
 
 all time leaders https://www.reddit.com/r/BasketballGM/comments/4qjkys/simple_feature_suggestion_all_time_season/
-
-seasons in header of team finances salaries table do not update when season changes
 
 refuse to sign in god mode https://www.reddit.com/r/BasketballGM/comments/4p2s1q/cant_sign_star_player/
 
@@ -406,41 +397,6 @@ revisit initial players http://www.reddit.com/r/BasketballGM/comments/35jb3w/why
 compact feats UI http://www.reddit.com/r/BasketballGM/comments/341k8e/can_we_have_statistical_achievements_sorted_by/
   add subtype or something to feats
 
-store some data in memory
-  goals
-    playerStats first
-    then non-retired players
-    then teams
-  method
-    generic layer over IDB?
-    wrapper function specific to how data is actually queried?
-    need to flush to db some time?
-    will inherently be more risky than using a "real" transaction, shit could get out of sync
-  transaction management
-    should be fine if the cache is synchronous
-  multi-window
-    service worker or shared worker
-      but how do they use transactions?
-
-in-memory cache
-  when starting to play games (>1 day), "get" and "getAll" add object stores to cache (if they aren't already there) and "put" updates cached values and set marker saying they were updated
-  When games are over, write to database any cached values that were updated
-  what about other types of operations?
-    iterate: maybe cache query and check for duplicate query? not sure. this is tricky
-    others: maybe not needed for this application
-  NEW PLAN - apply only to players
-    writes to db (add, put, cursor.update) also write to cache (do clone before write)
-    ObjectStore.get - read from cache first, only hit db if cache miss
-    ObjectStore.getAll - read from db
-    ObjectStore.openCursor - read from db
-    Index.get - read from db
-    Index.getAll - read from db (maybe special case for getting all based on single tid)
-    Index.openCursor - read from db
-  then teams cache - similar
-  really, 2 paths forward:
-    1. generic caching layer on top of IndexedDB (or my promises-based library) - maybe using fakeIndexedDB
-    2. write more specific dao (like sdw) and write caching (or other) layer specific to that
-
 refactor draft code
 
 expansion/contraction
@@ -460,11 +416,6 @@ screenshot
       also autocomplete hashtag
   add prompts to take screenshots at various points
   things can get cut off right, like wide tables in player pages
-
-event tracking
-  in addition to GA, have my own system that is more in depth
-    tricky part: users who aren't logged in
-  what else to track?
 
 BBGM Gold?
   add achievement
@@ -535,10 +486,6 @@ test!
 
 show "loading" indicator when uploading large file, otherwise seems to hang and not allow you to click
   should be some generic one, thin bar at top like youtube
-
-deleteOldData
-  is playerStats still most important? benchmark
-  break up deletion of old ratings and stats?
 
 player.updateValues.getStats doesn't really make sense. Should get all from past 2 seasons, sort by PSID, and take stats up to 2000 minutes
 
@@ -1036,9 +983,6 @@ AI modules that contain functions which are called to determine actions
     budget items (like from team finances view)
     releasing/buying out players when over limit
 AI teams should periodically reorder rosters throughout the season
-PER
-  slow, particularly after multiple seasons?
-    can i have it share a transaction with writing stats in core.game?
 some UI showing the state of the team's synergy. maybe like an advisors screen that suggests what kind of player is needed to improve synergy
   also can respond to budget changes
   more general: have "media" reporting things like 10 worst contracts, etc

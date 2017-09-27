@@ -1,5 +1,5 @@
 import React from "react";
-import { PHASE, PHASE_TEXT, g } from "../../common";
+import { PHASE, PHASE_TEXT, g, helpers } from "../../common";
 import { setTitle, toWorker } from "../util";
 import { DownloadDataLink } from "../components";
 
@@ -45,12 +45,7 @@ const categories = [
     {
         objectStores: "games",
         name: "Box Scores",
-        desc: (
-            <span className="text-danger">
-                If you've played more than a few seasons, this takes up a ton of
-                space!
-            </span>
-        ),
+        desc: "Box scores from multiple seasons take up tons of space, but by default only one season is saved.",
         checked: false,
     },
 ];
@@ -139,7 +134,21 @@ class ExportLeague extends React.Component {
         }
 
         const data = await toWorker("exportLeague", objectStores);
-        const json = JSON.stringify(data, undefined, 2);
+        let json;
+        try {
+            json = JSON.stringify(data, undefined, 2);
+        } catch (err) {
+            this.setState({
+                data: null,
+                filename: null,
+                status: (
+                    <span className="text-danger">
+                        Error converting league to JSON: "{err.message}". You might have to select less things to export or <a href={helpers.leagueUrl(["delete_old_data"])}>delete old data</a> before exporting.
+                    </span>
+                ),
+            });
+            return;
+        }
 
         const filename = genFilename(data);
 

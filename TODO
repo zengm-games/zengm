@@ -8,6 +8,10 @@ customizable columns in datatable
 remove babel plugins
 - babel-plugin-transform-es2015-block-scoping needed in current version of safari due to https://bugs.webkit.org/show_bug.cgi?id=171041 and possibly others
 
+remove polyfilles
+- get rid of getAll polyfill when safari 10.x usage goes to 0
+- others too!
+
 new faces
 - http://biskup.biowiki.org/facesjs/
 - https://github.com/dumbmatter/facesjs/compare/master...ihh:master

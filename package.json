@@ -57,7 +57,7 @@
     "whatwg-fetch": "2.0.3"
   },
   "devDependencies": {
-    "babel-eslint": "8.0.0",
+    "babel-eslint": "8.0.1",
     "babel-plugin-check-es2015-constants": "6.22.0",
     "babel-plugin-external-helpers": "6.22.0",
     "babel-plugin-transform-async-to-generator": "6.24.1",
@@ -84,7 +84,7 @@
     "eslint-config-prettier": "2.6.0",
     "eslint-plugin-import": "2.7.0",
     "eslint-plugin-jsx-a11y": "5.1.1",
-    "eslint-plugin-react": "7.3.0",
+    "eslint-plugin-react": "7.4.0",
     "flow-bin": "0.55.0",
     "fs-extra": "4.0.2",
     "karma": "1.7.1",
@@ -98,11 +98,11 @@
     "mocha": "3.5.3",
     "node-sass": "4.5.3",
     "prettier": "1.7.0",
-    "prop-types": "15.5.10",
+    "prop-types": "15.6.0",
     "replace": "0.3.0",
     "stylelint": "8.1.1",
     "stylelint-config-standard": "17.0.0",
-    "uglify-es": "3.1.1",
+    "uglify-es": "3.1.2",
     "watchify": "3.9.0"
   },
   "browserify": {

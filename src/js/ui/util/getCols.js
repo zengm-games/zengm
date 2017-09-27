@@ -27,6 +27,21 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    "3P%": {
+        desc: "Three Point Percentage",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "3P": {
+        desc: "Three Pointers Made",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "3PA": {
+        desc: "Three Pointers Attempted",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     "3PAr": {
         desc: "Three Point Attempt Rate (3PA / FGA)",
         sortSequence: ["desc", "asc"],
@@ -119,8 +134,8 @@ const cols: {
         desc: "Defensive Player of the Year",
         sortType: "name",
     },
-    Def: {
-        desc: "Defensive",
+    DRB: {
+        desc: "Defensive Rebounds",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
@@ -148,8 +163,28 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    FG: {
+        desc: "Field Goals Made",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    FGA: {
+        desc: "Field Goals Attempted",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     "FT%": {
         desc: "Free Throw Percentage",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    FT: {
+        desc: "Free Throws Made",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    FTA: {
+        desc: "Free Throws Attempted",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
@@ -167,7 +202,7 @@ const cols: {
         desc: "Finals Most Valuable Player",
         sortType: "name",
     },
-    GP: {
+    G: {
         desc: "Games Played",
         sortSequence: ["desc", "asc"],
         sortType: "number",
@@ -239,13 +274,13 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
-    Opp: {
-        desc: "Opponent",
-    },
-    Off: {
-        desc: "Offensive",
+    ORB: {
+        desc: "Offensive Rebounds",
         sortSequence: ["desc", "asc"],
         sortType: "number",
+    },
+    Opp: {
+        desc: "Opponent",
     },
     Ovr: {
         desc: "Overall Rating",
@@ -342,18 +377,13 @@ const cols: {
         desc: "Talent",
         sortType: "number",
     },
-    TO: {
-        desc: "Turnovers",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    "TOV%": {
-        desc: "Turnover Percentage (TO per 100 plays)",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
     "TP%": {
         desc: "Three Point Percentage",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    TRB: {
+        desc: "Total Rebounds",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
@@ -362,12 +392,17 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
-    Team: {},
-    Tot: {
-        desc: "Total",
+    Tov: {
+        desc: "Turnovers",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    "Tov%": {
+        desc: "Turnovers per 100 plays",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    Team: {},
     W: {
         desc: "Games Won",
         sortSequence: ["desc", "asc"],

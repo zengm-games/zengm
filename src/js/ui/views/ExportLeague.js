@@ -45,7 +45,8 @@ const categories = [
     {
         objectStores: "games",
         name: "Box Scores",
-        desc: "Box scores from multiple seasons take up tons of space, but by default only one season is saved.",
+        desc:
+            "Box scores from multiple seasons take up tons of space, but by default only one season is saved.",
         checked: false,
     },
 ];
@@ -143,7 +144,12 @@ class ExportLeague extends React.Component {
                 filename: null,
                 status: (
                     <span className="text-danger">
-                        Error converting league to JSON: "{err.message}". You might have to select less things to export or <a href={helpers.leagueUrl(["delete_old_data"])}>delete old data</a> before exporting.
+                        Error converting league to JSON: "{err.message}". You
+                        might have to select less things to export or{" "}
+                        <a href={helpers.leagueUrl(["delete_old_data"])}>
+                            delete old data
+                        </a>{" "}
+                        before exporting.
                     </span>
                 ),
             });

@@ -14,58 +14,27 @@ const PlayerStats = ({ abbrev, players, playoffs, season, statType }) => {
     const label = season !== undefined ? season : "Career Totals";
     setTitle(`Player Stats - ${label}`);
 
-    const superCols = [
-        {
-            title: "",
-            colspan: 6,
-        },
-        {
-            title: "FG",
-            desc: "Field Goals",
-            colspan: 3,
-        },
-        {
-            title: "3PT",
-            desc: "Three-Pointers",
-            colspan: 3,
-        },
-        {
-            title: "FT",
-            desc: "Free Throws",
-            colspan: 3,
-        },
-        {
-            title: "Reb",
-            desc: "Rebounds",
-            colspan: 3,
-        },
-        {
-            title: "",
-            colspan: 10,
-        },
-    ];
-
     const cols = getCols(
         "Name",
         "Pos",
         "Team",
-        "GP",
+        "G",
         "GS",
         "Min",
-        "M",
-        "A",
-        "%",
-        "M",
-        "A",
-        "%",
-        "M",
-        "A",
-        "%",
-        "Off",
-        "Def",
-        "Tot",
+        "FG",
+        "FGA",
+        "FG%",
+        "3P",
+        "3PA",
+        "3P%",
+        "FT",
+        "FTA",
+        "FT%",
+        "ORB",
+        "DRB",
+        "TRB",
         "Ast",
-        "TO",
+        "Tov",
         "Stl",
         "Blk",
         "BA",
@@ -198,7 +167,6 @@ const PlayerStats = ({ abbrev, players, playoffs, season, statType }) => {
                 name="PlayerStats"
                 rows={rows}
                 pagination
-                superCols={superCols}
             />
         </div>
     );

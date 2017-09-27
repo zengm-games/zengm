@@ -8,56 +8,25 @@ import { DataTable, Dropdown, JumpTo, NewWindowLink } from "../components";
 const TeamStats = ({ season, stats, teams }) => {
     setTitle(`Team Stats - ${season}`);
 
-    const superCols = [
-        {
-            title: "",
-            colspan: 4,
-        },
-        {
-            title: "FG",
-            desc: "Field Goals",
-            colspan: 3,
-        },
-        {
-            title: "3PT",
-            desc: "Three-Pointers",
-            colspan: 3,
-        },
-        {
-            title: "FT",
-            desc: "Free Throws",
-            colspan: 3,
-        },
-        {
-            title: "Reb",
-            desc: "Rebounds",
-            colspan: 3,
-        },
-        {
-            title: "",
-            colspan: 9,
-        },
-    ];
-
     const cols = getCols(
         "Team",
-        "GP",
+        "G",
         "W",
         "L",
-        "M",
-        "A",
-        "%",
-        "M",
-        "A",
-        "%",
-        "M",
-        "A",
-        "%",
-        "Off",
-        "Def",
-        "Tot",
+        "FG",
+        "FGA",
+        "FG%",
+        "3P",
+        "3PA",
+        "3P%",
+        "FT",
+        "FTA",
+        "FT%",
+        "ORB",
+        "DRB",
+        "TRB",
         "Ast",
-        "TO",
+        "Tov",
         "Stl",
         "Blk",
         "BA",
@@ -225,7 +194,6 @@ const TeamStats = ({ season, stats, teams }) => {
                 defaultSort={[2, "desc"]}
                 name="TeamStats"
                 rows={rows}
-                superCols={superCols}
             />
         </div>
     );

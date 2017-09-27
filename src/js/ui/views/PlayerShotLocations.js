@@ -40,7 +40,7 @@ const PlayerShotLocations = ({ players, season }) => {
         "Name",
         "Pos",
         "Team",
-        "GP",
+        "G",
         "GS",
         "Min",
         "M",

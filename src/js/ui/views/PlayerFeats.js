@@ -12,57 +12,26 @@ import {
 const PlayerFeats = ({ abbrev, feats, playoffs, season }) => {
     setTitle("Statistical Feats");
 
-    const superCols = [
-        {
-            title: "",
-            colspan: 5,
-        },
-        {
-            title: "FG",
-            desc: "Field Goals",
-            colspan: 3,
-        },
-        {
-            title: "3PT",
-            desc: "Three-Pointers",
-            colspan: 3,
-        },
-        {
-            title: "FT",
-            desc: "Free Throws",
-            colspan: 3,
-        },
-        {
-            title: "Reb",
-            desc: "Rebounds",
-            colspan: 3,
-        },
-        {
-            title: "",
-            colspan: 11,
-        },
-    ];
-
     const cols = getCols(
         "Name",
         "Pos",
         "Team",
         "GS",
         "Min",
-        "M",
-        "A",
-        "%",
-        "M",
-        "A",
-        "%",
-        "M",
-        "A",
-        "%",
-        "Off",
-        "Def",
-        "Tot",
+        "FG",
+        "FGA",
+        "FG%",
+        "3P",
+        "3PA",
+        "3P%",
+        "FT",
+        "FTA",
+        "FT%",
+        "ORB",
+        "DRB",
+        "TRB",
         "Ast",
-        "TO",
+        "Tov",
         "Stl",
         "Blk",
         "PF",
@@ -154,7 +123,6 @@ const PlayerFeats = ({ abbrev, feats, playoffs, season }) => {
                 name="PlayerFeats"
                 rows={rows}
                 pagination
-                superCols={superCols}
             />
         </div>
     );

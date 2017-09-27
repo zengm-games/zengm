@@ -52,7 +52,7 @@ const TeamHistory = ({
     const cols = getCols(
         "Name",
         "Pos",
-        "GP",
+        "G",
         "Min",
         "Pts",
         "Reb",

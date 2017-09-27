@@ -33,7 +33,7 @@ const TeamShotLocations = ({ season, teams }) => {
 
     const cols = getCols(
         "Team",
-        "GP",
+        "G",
         "W",
         "L",
         "M",

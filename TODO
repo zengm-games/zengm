@@ -1,9 +1,23 @@
 customizable columns in datatable
+- get rid of supercols where possible, like bbr
+- for supercols, instead of colspan, pass a list of column names (need to get rid of repeats like raw % first)
+  - won't work when there are duplicates. instead needs to be a hierarchy. maybe just pass hierarchy with names, and do getCols in DataTable? but then how to pass extra props like width, is that really needed?
+    - search through, find any weird ones, try to eliminate:
+      - Draft - setting width, and splicing for fantasy draft
+      - PowerRankings - setting width
+      - TeamFinances - dynamically use years
+      - TeamRecords - some overrides
+      - Trade, TradingBlock - override for "" column
+  - crazy idea: pass cols only as keys in data (change array -> object), and for supercols prefix like SuperCol|Col
 - pass additional parameter containing which columns are visible, by name (if none, then assume all)
 - get rid of search
+- sortBy by name, not index
 - button to reset datatable
+- store all datatable params in one localstorage object
 - always return all stats and ratings?
 - more advanced stats
+
+PPG -> Pts, probably
 
 remove babel plugins
 - babel-plugin-transform-es2015-block-scoping needed in current version of safari due to https://bugs.webkit.org/show_bug.cgi?id=171041 and possibly others

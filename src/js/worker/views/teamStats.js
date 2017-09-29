@@ -36,7 +36,7 @@ async function updateTeams(
                 "tov",
                 "stl",
                 "blk",
-                "ba",
+                "oppBlk",
                 "pf",
                 "pts",
                 "oppPts",
@@ -66,13 +66,13 @@ async function updateTeams(
             "tov",
             "stl",
             "blk",
-            "ba",
+            "oppBlk",
             "pf",
             "pts",
             "oppPts",
             "diff",
         ];
-        const lowerIsBetter = ["lost", "tov", "ba", "pf", "oppPts"];
+        const lowerIsBetter = ["lost", "tov", "oppBlk", "pf", "oppPts"];
 
         // Loop teams and stat types.
         for (const t of teams) {

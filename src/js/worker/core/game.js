@@ -214,13 +214,17 @@ async function writeTeamStats(results: GameResults) {
             "pf",
             "pts",
         ];
-        for (let i = 0; i < keys.length; i++) {
-            teamStats[keys[i]] += results.team[t1].stat[keys[i]];
+        for (const key of keys) {
+            teamStats[key] += results.team[t1].stat[key];
+
+            if (key !== "min") {
+                const oppKey = `opp${key[0].toUpperCase()}${key.slice(1)}`;
+                teamStats[oppKey] += results.team[t2].stat[key];
+            }
         }
         teamStats.gp += 1;
         teamStats.trb += results.team[t1].stat.orb + results.team[t1].stat.drb;
-        teamStats.oppPts += results.team[t2].stat.pts;
-        teamStats.ba += results.team[t2].stat.blk;
+        teamStats.oppTrb += results.team[t2].stat.orb + results.team[t2].stat.drb;
 
         if (teamSeason.lastTen.length === 10 && g.phase !== PHASE.PLAYOFFS) {
             teamSeason.lastTen.pop();
@@ -341,8 +345,8 @@ async function writePlayerStats(results: GameResults, conditions: Conditions) {
                         "pf",
                         "pts",
                     ];
-                    for (let i = 0; i < keys.length; i++) {
-                        ps[keys[i]] += p.stat[keys[i]];
+                    for (const key of keys) {
+                        ps[key] += p.stat[key];
                     }
                     ps.gp += 1; // Already checked for non-zero minutes played above
                     ps.trb += p.stat.orb + p.stat.drb;

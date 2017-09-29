@@ -1,12 +1,13 @@
 store opponent team stats
-- store like oppPts now
 - benchmark
 - migration - how to handle current season and past seasons?
   - maybe no migration, keep them undefined. then any derived stat should be aware that these values could be undefined
-- UI for display - toggle to switch?
-- per 100 possessions toggle on team stats page
+  - ba -> oppBlk, in team stats
+- UI for display - toggle to switch between team/opponent/diff
+- per 100 possessions and totals toggle on team stats page
 
 more advanced stats
+- compute and store, or do dynamically? hard to pass team stats dynamically
 - some require team stats
   - AST%, USG%
 - some require team stats and opponent team stats
@@ -34,6 +35,8 @@ customizable columns in datatable
 - always return all stats and ratings?
 
 PPG -> Pts, probably
+
+get rid of stored trb in player and team stats and game sim and box score
 
 remove babel plugins
 - babel-plugin-transform-es2015-block-scoping needed in current version of safari due to https://bugs.webkit.org/show_bug.cgi?id=171041 and possibly others

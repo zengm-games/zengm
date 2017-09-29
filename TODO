@@ -1,5 +1,5 @@
 store opponent team stats
-- benchmark
+- benchmark - no measurable difference!
 - migration - how to handle current season and past seasons?
   - maybe no migration, keep them undefined. then any derived stat should be aware that these values could be undefined
   - ba -> oppBlk, in team stats only

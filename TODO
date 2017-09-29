@@ -1,3 +1,11 @@
+more advanced stats
+- some require team stats
+  - AST%, USG%
+- some require team stats and opponent team stats
+  - ORB%, DRB%, TRB%, STL%, BLK%
+- after that, maybe win shares
+  - https://www.basketball-reference.com/about/ws.html and "basketball on paper"
+
 customizable columns in datatable
 - get rid of supercols where possible, like bbr
 - for supercols, instead of colspan, pass a list of column names (need to get rid of repeats like raw % first)
@@ -16,7 +24,6 @@ customizable columns in datatable
 - button to reset datatable
 - store all datatable params in one localstorage object
 - always return all stats and ratings?
-- more advanced stats
 
 PPG -> Pts, probably
 

@@ -241,9 +241,6 @@ async function create(
         }
         for (const teamStat of teamStats) {
             teamStat.tid = t.tid;
-            if (!teamStat.hasOwnProperty("ba")) {
-                teamStat.ba = 0;
-            }
             await idb.cache.teamStats.add(teamStat);
         }
 

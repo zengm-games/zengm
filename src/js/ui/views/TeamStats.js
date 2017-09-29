@@ -55,7 +55,7 @@ const TeamStats = ({ season, stats, teams }) => {
             "tov",
             "stl",
             "blk",
-            "ba",
+            "oppBlk",
             "pf",
             "pts",
             "oppPts",

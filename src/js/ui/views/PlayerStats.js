@@ -14,9 +14,10 @@ const PlayerStats = ({ abbrev, players, playoffs, season, statType }) => {
     const label = season !== undefined ? season : "Career Totals";
     setTitle(`Player Stats - ${label}`);
 
-    const cols = getCols(
+    const cols = statType !== "advanced" ? getCols(
         "Name",
         "Pos",
+        "Age",
         "Team",
         "G",
         "GS",
@@ -40,6 +41,17 @@ const PlayerStats = ({ abbrev, players, playoffs, season, statType }) => {
         "BA",
         "PF",
         "Pts",
+    ) : getCols(
+        "Name",
+        "Pos",
+        "Age",
+        "Team",
+        "G",
+        "Min",
+        "TS%",
+        "3PAr",
+        "FTr",
+        "Tov%",
         "+/-",
         "PER",
         "EWA",
@@ -73,6 +85,39 @@ const PlayerStats = ({ abbrev, players, playoffs, season, statType }) => {
             actualTid = p.stats.tid;
         }
 
+        const statsRow = statType !== "advanced" ? [
+            p.stats.gs,
+            p.stats.min.toFixed(d),
+            p.stats.fg.toFixed(d),
+            p.stats.fga.toFixed(d),
+            p.stats.fgp.toFixed(1),
+            p.stats.tp.toFixed(d),
+            p.stats.tpa.toFixed(d),
+            p.stats.tpp.toFixed(1),
+            p.stats.ft.toFixed(d),
+            p.stats.fta.toFixed(d),
+            p.stats.ftp.toFixed(1),
+            p.stats.orb.toFixed(d),
+            p.stats.drb.toFixed(d),
+            p.stats.trb.toFixed(d),
+            p.stats.ast.toFixed(d),
+            p.stats.tov.toFixed(d),
+            p.stats.stl.toFixed(d),
+            p.stats.blk.toFixed(d),
+            p.stats.ba.toFixed(d),
+            p.stats.pf.toFixed(d),
+            p.stats.pts.toFixed(d),
+        ] : [
+            Math.round(p.stats.min),
+            p.stats.tsp.toFixed(d),
+            p.stats.tpar.toFixed(d),
+            p.stats.ftr.toFixed(d),
+            p.stats.tovp.toFixed(d),
+            helpers.plusMinus(p.stats.pm, d),
+            p.stats.per.toFixed(d),
+            p.stats.ewa.toFixed(d),
+        ];
+
         return {
             key: p.pid,
             data: [
@@ -85,34 +130,12 @@ const PlayerStats = ({ abbrev, players, playoffs, season, statType }) => {
                     {p.name}
                 </PlayerNameLabels>,
                 pos,
+                p.age,
                 <a href={helpers.leagueUrl(["roster", actualAbbrev, season])}>
                     {actualAbbrev}
                 </a>,
                 p.stats.gp,
-                p.stats.gs,
-                p.stats.min.toFixed(d),
-                p.stats.fg.toFixed(d),
-                p.stats.fga.toFixed(d),
-                p.stats.fgp.toFixed(1),
-                p.stats.tp.toFixed(d),
-                p.stats.tpa.toFixed(d),
-                p.stats.tpp.toFixed(1),
-                p.stats.ft.toFixed(d),
-                p.stats.fta.toFixed(d),
-                p.stats.ftp.toFixed(1),
-                p.stats.orb.toFixed(d),
-                p.stats.drb.toFixed(d),
-                p.stats.trb.toFixed(d),
-                p.stats.ast.toFixed(d),
-                p.stats.tov.toFixed(d),
-                p.stats.stl.toFixed(d),
-                p.stats.blk.toFixed(d),
-                p.stats.ba.toFixed(d),
-                p.stats.pf.toFixed(d),
-                p.stats.pts.toFixed(d),
-                helpers.plusMinus(p.stats.pm, d),
-                p.stats.per.toFixed(1),
-                p.stats.ewa.toFixed(1),
+                ...statsRow,
             ],
             classNames: {
                 danger: p.hof,
@@ -128,7 +151,7 @@ const PlayerStats = ({ abbrev, players, playoffs, season, statType }) => {
                 fields={[
                     "teamsAndAllWatch",
                     "seasonsAndCareer",
-                    "statTypes",
+                    "statTypesAdv",
                     "playoffs",
                 ]}
                 values={[
@@ -163,8 +186,8 @@ const PlayerStats = ({ abbrev, players, playoffs, season, statType }) => {
 
             <DataTable
                 cols={cols}
-                defaultSort={[27, "desc"]}
-                name="PlayerStats"
+                defaultSort={[cols.length - 1, "desc"]}
+                name={`PlayerStats${statType === "advanced" ? "" : ""}`}
                 rows={rows}
                 pagination
             />
@@ -177,7 +200,7 @@ PlayerStats.propTypes = {
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     playoffs: PropTypes.oneOf(["playoffs", "regularSeason"]).isRequired,
     season: PropTypes.number, // Undefined for career totals
-    statType: PropTypes.oneOf(["per36", "perGame", "totals"]).isRequired,
+    statType: PropTypes.oneOf(["advanced", "per36", "perGame", "totals"]).isRequired,
 };
 
 export default PlayerStats;

@@ -1,3 +1,7 @@
+add advanced to "per game" menu
+- change id of datatable so settings persist separately
+  - need to change DataTable code so it recongizes this
+
 customizable columns in datatable
 - get rid of supercols where possible, like bbr
 - for supercols, instead of colspan, pass a list of column names (need to get rid of repeats like raw % first)
@@ -9,6 +13,7 @@ customizable columns in datatable
       - TeamRecords - some overrides
       - Trade, TradingBlock - override for "" column
   - crazy idea: pass cols only as keys in data (change array -> object), and for supercols prefix like SuperCol|Col
+  - or in cols array, add prop to denote supercols
 - pass additional parameter containing which columns are visible, by name (if none, then assume all)
 - get rid of search
 - sortBy by name, not index

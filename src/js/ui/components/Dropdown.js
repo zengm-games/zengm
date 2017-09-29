@@ -119,6 +119,25 @@ const Select = ({ field, handleChange, value }) => {
                 key: "totals",
             },
         ];
+    } else if (field === "statTypesAdv") {
+        options = [
+            {
+                val: "Per Game",
+                key: "perGame",
+            },
+            {
+                val: "Per 36 Mins",
+                key: "per36",
+            },
+            {
+                val: "Totals",
+                key: "totals",
+            },
+            {
+                val: "Advanced",
+                key: "advanced",
+            },
+        ];
     } else if (field === "awardType") {
         options = [
             {

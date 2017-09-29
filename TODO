@@ -1,3 +1,11 @@
+store opponent team stats
+- store like oppPts now
+- benchmark
+- migration - how to handle current season and past seasons?
+  - maybe no migration, keep them undefined. then any derived stat should be aware that these values could be undefined
+- UI for display - toggle to switch?
+- per 100 possessions toggle on team stats page
+
 more advanced stats
 - some require team stats
   - AST%, USG%

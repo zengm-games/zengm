@@ -370,30 +370,41 @@ class DataTable extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
+        this.state = this.loadStateFromCache(this.props);
+
+        this.handleColClick = this.handleColClick.bind(this);
+        this.handleEnableFilters = this.handleEnableFilters.bind(this);
+        this.handleFilterUpdate = this.handleFilterUpdate.bind(this);
+        this.handlePaging = this.handlePaging.bind(this);
+        this.handlePerPage = this.handlePerPage.bind(this);
+        this.handleSearch = this.handleSearch.bind(this);
+    }
+
+    loadStateFromCache(props: Props) {
         let perPage = parseInt(localStorage.getItem("perPage"), 10);
         if (isNaN(perPage)) {
             perPage = 10;
         }
 
-        this.sortCacheKey = `DataTableSort:${this.props.name}`;
+        this.sortCacheKey = `DataTableSort:${props.name}`;
         let sortBys = localStorage.getItem(this.sortCacheKey);
         if (sortBys === null || sortBys === undefined) {
-            sortBys = [this.props.defaultSort];
+            sortBys = [props.defaultSort];
         } else {
             try {
                 sortBys = JSON.parse(sortBys);
             } catch (err) {
-                sortBys = [this.props.defaultSort];
+                sortBys = [props.defaultSort];
             }
         }
 
         // Don't let sortBy reference invalid col
         sortBys = sortBys.filter(sortBy => sortBy[0] < props.cols.length);
         if (sortBys.length === 0) {
-            sortBys = [this.props.defaultSort];
+            sortBys = [props.defaultSort];
         }
 
-        this.filtersCacheKey = `DataTableFilters:${this.props.name}`;
+        this.filtersCacheKey = `DataTableFilters:${props.name}`;
         const defaultFilters = props.cols.map(() => "");
         let filters = localStorage.getItem(this.filtersCacheKey);
         if (filters === null || filters === undefined) {
@@ -429,7 +440,7 @@ class DataTable extends React.Component<Props, State> {
             filters = defaultFilters;
         }
 
-        this.state = {
+        return {
             currentPage: 1,
             enableFilters: filters !== defaultFilters,
             filters,
@@ -437,13 +448,6 @@ class DataTable extends React.Component<Props, State> {
             searchText: "",
             sortBys,
         };
-
-        this.handleColClick = this.handleColClick.bind(this);
-        this.handleEnableFilters = this.handleEnableFilters.bind(this);
-        this.handleFilterUpdate = this.handleFilterUpdate.bind(this);
-        this.handlePaging = this.handlePaging.bind(this);
-        this.handlePerPage = this.handlePerPage.bind(this);
-        this.handleSearch = this.handleSearch.bind(this);
     }
 
     handleColClick(event: SyntheticKeyboardEvent<>, i: number) {
@@ -559,6 +563,13 @@ class DataTable extends React.Component<Props, State> {
             currentPage: 1,
             searchText: event.target.value.toLowerCase(),
         });
+    }
+
+    componentWillReceiveProps(nextProps: Props) {
+        // If name changes, it means this is a whole new table and it has a different state (example: Player Stats switching between regular and advanced stats)
+        if (nextProps.name !== this.props.name) {
+            this.setState(this.loadStateFromCache(nextProps));
+        }
     }
 
     render() {

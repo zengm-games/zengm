@@ -359,8 +359,10 @@ const advStats = async () => {
                 p.pid,
             );
             for (const key of keys) {
-                ps[key] = updatedStats[key][i];
-                ps[key] = updatedStats[key][i];
+                // ***p stats could be NaN for upgraded leagues
+                if (!isNaN(updatedStats[key][i])) {
+                    ps[key] = updatedStats[key][i];
+                }
             }
             await idb.cache.playerStats.put(ps);
         }),

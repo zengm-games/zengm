@@ -1,9 +1,8 @@
-migration - how to handle current season and past seasons?
-- team stats
-  - ba -> oppBlk, in team stats only
-  - maybe no migration for other opp stats, keep them undefined. then any derived stat should be aware that these values could be undefined
-- player stats
-  - new adv stats may be undefined (would be nice to make 0, but don't compute first year because no opp* stats)
+migration
+- league import migration (same logic as idb upgrade)
+- would be nice...
+  - show blank instead of 0.0 (player stats) or NaN (team stats) for undefined adv stat or opp stat
+  - compute career totals accurately in the presence of these undefined values
 
 all caps columns, like b-r
 

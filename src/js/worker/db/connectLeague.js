@@ -213,11 +213,18 @@ const migrateLeague = (upgradeDB, lid) => {
             upgradeDB.players.put(p);
         });
     }
+    if (upgradeDB.oldVersion <= 24) {
+        upgradeDB.teamStats.iterate(ts => {
+            ts.oppBlk = ts.ba;
+            delete ts.ba;
+            upgradeDB.teamStats.put(ts);
+        });
+    }
 };
 
 const connectLeague = async (lid: number) => {
     // Would like to await on migrateLeague and inside there, but Firefox
-    const db = await Backboard.open(`league${lid}`, 24, upgradeDB => {
+    const db = await Backboard.open(`league${lid}`, 25, upgradeDB => {
         if (upgradeDB.oldVersion === 0) {
             createLeague(upgradeDB, lid);
         } else {

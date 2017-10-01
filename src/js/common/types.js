@@ -438,6 +438,7 @@ export type PlayerSalary = {
     season: number,
 };
 
+// ***p stats can be undefined
 export type PlayerStats = any;
 
 export type PlayerWithoutPid = {
@@ -641,6 +642,7 @@ export type TeamSeason = {
     payrollEndOfSeason: number,
 };
 
+// opp stats (except Blk) can be undefined
 export type TeamStats = any;
 
 export type TradePickValues = {

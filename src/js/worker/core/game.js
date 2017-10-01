@@ -219,13 +219,20 @@ async function writeTeamStats(results: GameResults) {
 
             if (key !== "min") {
                 const oppKey = `opp${key[0].toUpperCase()}${key.slice(1)}`;
-                teamStats[oppKey] += results.team[t2].stat[key];
+
+                // Deal with upgraded leagues
+                if (teamStats.hasOwnProperty(oppKey)) {
+                    teamStats[oppKey] += results.team[t2].stat[key];
+                }
             }
         }
         teamStats.gp += 1;
         teamStats.trb += results.team[t1].stat.orb + results.team[t1].stat.drb;
-        teamStats.oppTrb +=
-            results.team[t2].stat.orb + results.team[t2].stat.drb;
+        // Deal with upgraded leagues
+        if (teamStats.hasOwnProperty("oppTrb")) {
+            teamStats.oppTrb +=
+                results.team[t2].stat.orb + results.team[t2].stat.drb;
+        }
 
         if (teamSeason.lastTen.length === 10 && g.phase !== PHASE.PLAYOFFS) {
             teamSeason.lastTen.pop();

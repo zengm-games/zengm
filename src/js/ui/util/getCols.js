@@ -83,6 +83,12 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    "AST%": {
+        desc:
+            "Percentage of teammate field goals a player assisted while on the floor",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     "Avg Attendance": {
         sortSequence: ["desc", "asc"],
         sortType: "number",
@@ -104,6 +110,11 @@ const cols: {
     },
     Blk: {
         desc: "Blocks",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "BLK%": {
+        desc: "Percentage of opponent two-pointers blocked",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
@@ -136,6 +147,11 @@ const cols: {
     },
     DRB: {
         desc: "Defensive Rebounds",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "DRB%": {
+        desc: "Percentage of available defensive rebounds grabbed",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
@@ -279,6 +295,11 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    "ORB%": {
+        desc: "Percentage of available offensive rebounds grabbed",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     Opp: {
         desc: "Opponent",
     },
@@ -373,6 +394,11 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    "STL%": {
+        desc: "Percentage of opponent possessions ending in steals",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     T: {
         desc: "Talent",
         sortType: "number",
@@ -387,6 +413,11 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    "TRB%": {
+        desc: "Percentage of available rebounds grabbed",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     "TS%": {
         desc: "Total Shooting Percentage",
         sortSequence: ["desc", "asc"],
@@ -397,12 +428,17 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
-    "Tov%": {
+    "TOV%": {
         desc: "Turnovers per 100 plays",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
     Team: {},
+    "USG%": {
+        desc: "Percentage of team plays used",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     W: {
         desc: "Games Won",
         sortSequence: ["desc", "asc"],

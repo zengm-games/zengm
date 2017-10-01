@@ -14,7 +14,7 @@ import { idb } from "../db";
  * @memberOf util.advStats
  * @return {Promise}
  */
-const calculatePER = (teams, players) => {
+const calculatePER = (players, teams) => {
     // Total league stats (not per game averages) - gp, ft, pf, ast, fg, pts, fga, orb, tov, fta, trb
     const leagueStats = [
         "gp",
@@ -172,6 +172,88 @@ const calculatePER = (teams, players) => {
     };
 };
 
+// Formulas from https://www.basketball-reference.com/about/glossary.html
+const calculatePercentages = (players, teams) => {
+    const astp = [];
+    const blkp = [];
+    const drbp = [];
+    const orbp = [];
+    const stlp = [];
+    const trbp = [];
+    const usgp = [];
+
+    for (let i = 0; i < players.length; i++) {
+        const p = players[i];
+        const t = teams[p.tid];
+
+        if (t === undefined) {
+            astp[i] = 0;
+            blkp[i] = 0;
+            drbp[i] = 0;
+            orbp[i] = 0;
+            stlp[i] = 0;
+            trbp[i] = 0;
+            usgp[i] = 0;
+        } else {
+            const possessions =
+                0.5 *
+                (t.stats.fga +
+                    0.4 * t.stats.fta -
+                    1.07 *
+                        (t.stats.orb / (t.stats.orb + t.stats.oppDrb)) *
+                        (t.stats.fga - t.stats.fg) +
+                    t.stats.tov +
+                    (t.stats.oppFga +
+                        0.4 * t.stats.oppFta -
+                        1.07 *
+                            (t.stats.oppOrb / (t.stats.oppOrb + t.stats.drb)) *
+                            (t.stats.oppFga - t.stats.oppFg) +
+                        t.stats.oppTov));
+
+            astp[i] =
+                100 *
+                p.stats.ast /
+                (p.stats.min / (t.stats.min / 5) * t.stats.fg - p.stats.fg);
+            blkp[i] =
+                100 *
+                (p.stats.blk * (t.stats.min / 5)) /
+                (p.stats.min * (t.stats.oppFga - t.stats.oppTpa));
+            drbp[i] =
+                100 *
+                (p.stats.drb * (t.stats.min / 5)) /
+                (p.stats.min * (t.stats.drb + t.stats.oppOrb));
+            orbp[i] =
+                100 *
+                (p.stats.orb * (t.stats.min / 5)) /
+                (p.stats.min * (t.stats.orb + t.stats.oppDrb));
+            stlp[i] =
+                100 *
+                (p.stats.stl * (t.stats.min / 5)) /
+                (p.stats.min * possessions);
+            trbp[i] =
+                100 *
+                (p.stats.trb * (t.stats.min / 5)) /
+                (p.stats.min * (t.stats.trb + t.stats.oppTrb));
+            usgp[i] =
+                100 *
+                ((p.stats.fga + 0.44 * p.stats.fta + p.stats.tov) *
+                    (t.stats.min / 5)) /
+                (p.stats.min *
+                    (t.stats.fga + 0.44 * t.stats.fta + t.stats.tov));
+        }
+    }
+
+    return {
+        astp,
+        blkp,
+        drbp,
+        orbp,
+        stlp,
+        trbp,
+        usgp,
+    };
+};
+
 /**
  * Calcualte the advanced stats for each active player and write them to the database.
  *
@@ -181,32 +263,15 @@ const calculatePER = (teams, players) => {
  * @return {Promise}
  */
 const advStats = async () => {
-    // Total team stats (not per game averages)
-    // For PER: gp, ft, pf, ast, fg, pts, fga, orb, tov, fta, trb, oppPts
-    const teams = await idb.getCopies.teamsPlus({
-        attrs: ["tid"],
-        stats: [
-            "gp",
-            "ft",
-            "pf",
-            "ast",
-            "fg",
-            "pts",
-            "fga",
-            "orb",
-            "tov",
-            "fta",
-            "trb",
-            "oppPts",
-        ],
-        season: g.season,
-        playoffs: PHASE.PLAYOFFS === g.phase,
-        regularSeason: PHASE.PLAYOFFS !== g.phase,
-        statType: "totals",
-    });
-
     // Total player stats (not per game averages)
     // For PER: pos, min, tp, ast, fg, ft, tov, fga, fta, trb, orb, stl, blk, pf
+    // For AST%: min, fg
+    // For BLK%: min, blk
+    // For DRB%: min, drb
+    // For ORB%: min, orb
+    // For STL%: min, stl
+    // For TRB%: min, trb
+    // For USG%: min, fga, fta, tov
     let players = await idb.cache.players.indexGetAll("playersByTid", [
         0, // Active players have tid >= 0
         Infinity,
@@ -227,6 +292,7 @@ const advStats = async () => {
             "stl",
             "blk",
             "pf",
+            "drb",
         ],
         ratings: ["pos"],
         season: g.season,
@@ -235,9 +301,53 @@ const advStats = async () => {
         statType: "totals",
     });
 
-    const updatedStats = calculatePER(teams, players);
+    // Total team stats (not per game averages)
+    // For PER: gp, ft, pf, ast, fg, pts, fga, orb, tov, fta, trb, oppPts
+    // For AST%: min, fg
+    // For BLK%: min, oppFga, oppTpa
+    // For DRB%: min, drb, oppOrb
+    // For ORB%: min, orb, oppDrb
+    // For STL%: min, fga, fta, orb, drb, fg, tov, oppFga, oppFta, oppOrb, oppDrb, oppFg, oppTov
+    // For TRB%: min, trb, oppTrb
+    // For USG%: min, fga, fta, tov
+    const teams = await idb.getCopies.teamsPlus({
+        attrs: ["tid"],
+        stats: [
+            "gp",
+            "ft",
+            "pf",
+            "ast",
+            "fg",
+            "pts",
+            "fga",
+            "orb",
+            "tov",
+            "fta",
+            "trb",
+            "oppPts",
+            "min",
+            "oppFga",
+            "oppTpa",
+            "drb",
+            "oppOrb",
+            "oppDrb",
+            "oppFta",
+            "oppFg",
+            "oppTov",
+            "oppTrb",
+        ],
+        season: g.season,
+        playoffs: PHASE.PLAYOFFS === g.phase,
+        regularSeason: PHASE.PLAYOFFS !== g.phase,
+        statType: "totals",
+    });
+
+    const updatedStats = {};
+    Object.assign(updatedStats, calculatePER(players, teams));
+    Object.assign(updatedStats, calculatePercentages(players, teams));
 
     // Save to database
+    const keys = Object.keys(updatedStats);
     await Promise.all(
         players.map(async (p, i) => {
             if (!p.active) {
@@ -248,8 +358,10 @@ const advStats = async () => {
                 "playerStatsByPid",
                 p.pid,
             );
-            ps.per = updatedStats.per[i];
-            ps.ewa = updatedStats.ewa[i];
+            for (const key of keys) {
+                ps[key] = updatedStats[key][i];
+                ps[key] = updatedStats[key][i];
+            }
             await idb.cache.playerStats.put(ps);
         }),
     );

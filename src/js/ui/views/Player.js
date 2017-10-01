@@ -214,7 +214,7 @@ const AdvStatsTable = ({ careerStats = {}, name, stats = [] }) => {
                 "TS%",
                 "3PAr",
                 "FTr",
-                "Tov%",
+                "TOV%",
                 "+/-",
                 "PER",
                 "EWA",

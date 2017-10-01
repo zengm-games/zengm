@@ -1,10 +1,14 @@
-store opponent team stats
-- migration - how to handle current season and past seasons?
-  - maybe no migration, keep them undefined. then any derived stat should be aware that these values could be undefined
+migration - how to handle current season and past seasons?
+- team stats
   - ba -> oppBlk, in team stats only
+  - maybe no migration for other opp stats, keep them undefined. then any derived stat should be aware that these values could be undefined
+- player stats
+  - only if storing %s. not sure if needed though
 
 more advanced stats
-- compute and store, or do dynamically? hard to pass team stats dynamically
+- compute and store, or do dynamically?
+  - passing is messy, but maybe can call teams cache from playersPlus
+  - if store, benchmark
 - some require team stats
   - AST%, USG%
 - some require team stats and opponent team stats

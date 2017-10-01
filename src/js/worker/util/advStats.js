@@ -14,30 +14,7 @@ import { idb } from "../db";
  * @memberOf util.advStats
  * @return {Promise}
  */
-async function calculatePER() {
-    // Total team stats (not per game averages) - gp, pts, ast, fg, plus all the others needed for league totals
-    const teams = await idb.getCopies.teamsPlus({
-        attrs: ["tid"],
-        stats: [
-            "gp",
-            "ft",
-            "pf",
-            "ast",
-            "fg",
-            "pts",
-            "fga",
-            "orb",
-            "tov",
-            "fta",
-            "trb",
-            "oppPts",
-        ],
-        season: g.season,
-        playoffs: PHASE.PLAYOFFS === g.phase,
-        regularSeason: PHASE.PLAYOFFS !== g.phase,
-        statType: "totals",
-    });
-
+const calculatePER = (teams, players) => {
     // Total league stats (not per game averages) - gp, ft, pf, ast, fg, pts, fga, orb, tov, fta, trb
     const leagueStats = [
         "gp",
@@ -81,36 +58,6 @@ async function calculatePER() {
             t.pace = 1;
         }
     }
-
-    // Total player stats (not per game averages) - min, tp, ast, fg, ft, tov, fga, fta, trb, orb, stl, blk, pf
-    // Active players have tid >= 0
-    let players = await idb.cache.players.indexGetAll("playersByTid", [
-        0,
-        Infinity,
-    ]);
-    players = await idb.getCopies.playersPlus(players, {
-        attrs: ["pid", "tid"],
-        stats: [
-            "min",
-            "tp",
-            "ast",
-            "fg",
-            "ft",
-            "tov",
-            "fga",
-            "fta",
-            "trb",
-            "orb",
-            "stl",
-            "blk",
-            "pf",
-        ],
-        ratings: ["pos"],
-        season: g.season,
-        playoffs: PHASE.PLAYOFFS === g.phase,
-        regularSeason: PHASE.PLAYOFFS !== g.phase,
-        statType: "totals",
-    });
 
     const aPER = [];
     const mins = [];
@@ -219,6 +166,77 @@ async function calculatePER() {
         }
     }
 
+    return {
+        per: PER,
+        ewa: EWA,
+    };
+};
+
+/**
+ * Calcualte the advanced stats for each active player and write them to the database.
+ *
+ * Currently this is just PER.
+ *
+ * @memberOf util.advStats
+ * @return {Promise}
+ */
+const advStats = async () => {
+    // Total team stats (not per game averages)
+    // For PER: gp, ft, pf, ast, fg, pts, fga, orb, tov, fta, trb, oppPts
+    const teams = await idb.getCopies.teamsPlus({
+        attrs: ["tid"],
+        stats: [
+            "gp",
+            "ft",
+            "pf",
+            "ast",
+            "fg",
+            "pts",
+            "fga",
+            "orb",
+            "tov",
+            "fta",
+            "trb",
+            "oppPts",
+        ],
+        season: g.season,
+        playoffs: PHASE.PLAYOFFS === g.phase,
+        regularSeason: PHASE.PLAYOFFS !== g.phase,
+        statType: "totals",
+    });
+
+    // Total player stats (not per game averages)
+    // For PER: pos, min, tp, ast, fg, ft, tov, fga, fta, trb, orb, stl, blk, pf
+    let players = await idb.cache.players.indexGetAll("playersByTid", [
+        0, // Active players have tid >= 0
+        Infinity,
+    ]);
+    players = await idb.getCopies.playersPlus(players, {
+        attrs: ["pid", "tid"],
+        stats: [
+            "min",
+            "tp",
+            "ast",
+            "fg",
+            "ft",
+            "tov",
+            "fga",
+            "fta",
+            "trb",
+            "orb",
+            "stl",
+            "blk",
+            "pf",
+        ],
+        ratings: ["pos"],
+        season: g.season,
+        playoffs: PHASE.PLAYOFFS === g.phase,
+        regularSeason: PHASE.PLAYOFFS !== g.phase,
+        statType: "totals",
+    });
+
+    const updatedStats = calculatePER(teams, players);
+
     // Save to database
     await Promise.all(
         players.map(async (p, i) => {
@@ -230,23 +248,11 @@ async function calculatePER() {
                 "playerStatsByPid",
                 p.pid,
             );
-            ps.per = PER[i];
-            ps.ewa = EWA[i];
+            ps.per = updatedStats.per[i];
+            ps.ewa = updatedStats.ewa[i];
             await idb.cache.playerStats.put(ps);
         }),
     );
-}
-
-/**
- * Calcualte the advanced stats for each active player and write them to the database.
- *
- * Currently this is just PER.
- *
- * @memberOf util.advStats
- * @return {Promise}
- */
-const advStats = async () => {
-    await calculatePER();
 };
 
 export default advStats;

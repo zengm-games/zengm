@@ -8,7 +8,10 @@ migration - how to handle current season and past seasons?
 more advanced stats
 - compute and store, or do dynamically?
   - passing is messy, but maybe can call teams cache from playersPlus
-  - if store, benchmark
+    - tricky, cause needs to deal with career stats and multiple seasons
+  - if store
+    - share code with PER (reading/writing) as much as possible
+    - benchmark
 - some require team stats
   - AST%, USG%
 - some require team stats and opponent team stats

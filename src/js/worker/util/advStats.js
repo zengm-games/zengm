@@ -69,18 +69,17 @@ async function calculatePER() {
     }
 
     // Calculate pace for each team, using the "estimated pace adjustment" formula rather than the "pace adjustment" formula because it's simpler and ends up at nearly the same result. To do this the real way, I'd probably have to store the number of possessions from core.gameSim.
-    for (let i = 0; i < teams.length; i++) {
+    for (const t of teams) {
         //estimated pace adjustment = 2 * lg_PPG / (team_PPG + opp_PPG)
-        teams[i].pace =
+        t.pace =
             2 *
             (league.pts / league.gp) /
-            (teams[i].stats.pts / teams[i].stats.gp +
-                teams[i].stats.oppPts / teams[i].stats.gp);
+            (t.stats.pts / t.stats.gp +
+                t.stats.oppPts / t.stats.gp);
 
-        // Handle divide by 0 error - check for NaN
-        // eslint-disable-next-line no-self-compare
-        if (teams[i].pace !== teams[i].pace) {
-            teams[i].pace = 1;
+        // Handle divide by 0 error
+        if (isNaN(t.pace)) {
+            t.pace = 1;
         }
     }
 

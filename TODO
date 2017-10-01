@@ -3,9 +3,8 @@ store opponent team stats
   - maybe no migration, keep them undefined. then any derived stat should be aware that these values could be undefined
   - ba -> oppBlk, in team stats only
 - UI for display - toggle to switch between team/opponent/diff
-- playoffs/regularSeason toggle
-  - fix W/L for playoffs
-  - color coding ok?
+  - negative diff
+  - opposite direction for colors?
 
 more advanced stats
 - compute and store, or do dynamically? hard to pass team stats dynamically

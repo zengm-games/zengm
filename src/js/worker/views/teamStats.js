@@ -49,10 +49,40 @@ async function updateTeams(
             season: inputs.season,
             playoffs: inputs.playoffs === "playoffs",
             regularSeason: inputs.playoffs !== "playoffs",
-        })).filter((t) => {
+        })).filter(t => {
             // For playoffs, only show teams who actually made playoffs (gp > 0)
             return inputs.playoffs !== "playoffs" || t.stats.gp > 0;
         });
+
+        // For playoffs, fix W/L to be playoff W/L not regular season
+        if (inputs.playoffs === "playoffs") {
+            const playoffSeries = await idb.getCopy.playoffSeries({
+                season: inputs.season,
+            });
+            if (playoffSeries !== undefined) {
+                // Reset W/L
+                for (const t of teams) {
+                    t.seasonAttrs.won = 0;
+                    t.seasonAttrs.lost = 0;
+                }
+
+                console.log("playoffSeries", playoffSeries);
+                for (const round of playoffSeries.series) {
+                    for (const series of round) {
+                        for (const ah of ["away", "home"]) {
+                            const ha = ah === "away" ? "home" : "away";
+                            const t = teams.find(
+                                t2 => t2.tid === series[ah].tid,
+                            );
+                            if (t) {
+                                t.seasonAttrs.won += series[ah].won;
+                                t.seasonAttrs.lost += series[ha].won;
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         // Sort stats so we can determine what percentile our team is in.
         const stats = {};
@@ -79,7 +109,7 @@ async function updateTeams(
             "pts",
             "diff",
         ];
-        const lowerIsBetter = ["lost", "tov", "oppBlk", "pf", "oppPts"];
+        const lowerIsBetter = ["lost", "tov", "pf"];
 
         // Loop teams and stat types.
         for (const t of teams) {

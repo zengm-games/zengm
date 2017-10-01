@@ -21,7 +21,7 @@ async function updateTeams(
         inputs.season !== state.season ||
         inputs.teamOpponent !== state.teamOpponent
     ) {
-        const teams = await idb.getCopies.teamsPlus({
+        const teams = (await idb.getCopies.teamsPlus({
             attrs: ["tid", "abbrev"],
             seasonAttrs: ["won", "lost"],
             stats: [
@@ -49,6 +49,9 @@ async function updateTeams(
             season: inputs.season,
             playoffs: inputs.playoffs === "playoffs",
             regularSeason: inputs.playoffs !== "playoffs",
+        })).filter((t) => {
+            // For playoffs, only show teams who actually made playoffs (gp > 0)
+            return inputs.playoffs !== "playoffs" || t.stats.gp > 0;
         });
 
         // Sort stats so we can determine what percentile our team is in.

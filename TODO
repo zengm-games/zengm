@@ -5,7 +5,6 @@ store opponent team stats
 - UI for display - toggle to switch between team/opponent/diff
 - playoffs/regularSeason toggle
   - fix W/L for playoffs
-  - only show teams that made playoffs (have g > 0)
   - color coding ok?
 
 more advanced stats

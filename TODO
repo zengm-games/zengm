@@ -2,9 +2,6 @@ store opponent team stats
 - migration - how to handle current season and past seasons?
   - maybe no migration, keep them undefined. then any derived stat should be aware that these values could be undefined
   - ba -> oppBlk, in team stats only
-- UI for display - toggle to switch between team/opponent/diff
-  - negative diff
-  - opposite direction for colors?
 
 more advanced stats
 - compute and store, or do dynamically? hard to pass team stats dynamically

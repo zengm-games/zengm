@@ -5,6 +5,13 @@ import { g, helpers } from "../../common";
 import { getCols, setTitle } from "../util";
 import { DataTable, Dropdown, JumpTo, NewWindowLink } from "../components";
 
+const regOrOpp = (teamOpponent, key: string) => {
+    if (teamOpponent === "opponent") {
+        return `opp${key[0].toUpperCase()}${key.slice(1)}`;
+    }
+    return key;
+};
+
 const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
     setTitle(`Team Stats - ${season}`);
 
@@ -56,7 +63,7 @@ const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
             "pf",
             "pts",
             "diff",
-        ];
+        ].map(key => regOrOpp(teamOpponent, key));
         const otherStatColumns = ["won", "lost"];
 
         // Create the cells for this row.
@@ -78,9 +85,14 @@ const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
             data[statType] = value.toFixed(1);
         }
 
-        data.diff = (
-            <span className={t.stats.diff > 0 ? "text-success" : "text-danger"}>
-                {t.stats.diff.toFixed(1)}
+        const diffCol = regOrOpp(teamOpponent, "diff");
+        data[diffCol] = (
+            <span
+                className={
+                    t.stats[diffCol] > 0 ? "text-success" : "text-danger"
+                }
+            >
+                {t.stats[diffCol].toFixed(1)}
             </span>
         );
 

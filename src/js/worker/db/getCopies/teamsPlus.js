@@ -221,6 +221,12 @@ const processStats = async (
                     } else {
                         row.fgp = 0;
                     }
+                } else if (stat === "oppFgp") {
+                    if (ts.oppFga > 0) {
+                        row.oppFgp = 100 * ts.oppFg / ts.oppFga;
+                    } else {
+                        row.oppFgp = 0;
+                    }
                 } else if (stat === "fgpAtRim") {
                     if (ts.fgaAtRim > 0) {
                         row.fgpAtRim = 100 * ts.fgAtRim / ts.fgaAtRim;
@@ -245,17 +251,39 @@ const processStats = async (
                     } else {
                         row.tpp = 0;
                     }
+                } else if (stat === "oppTpp") {
+                    if (ts.oppTpa > 0) {
+                        row.oppTpp = 100 * ts.oppTp / ts.oppTpa;
+                    } else {
+                        row.oppTpp = 0;
+                    }
                 } else if (stat === "ftp") {
                     if (ts.fta > 0) {
                         row.ftp = 100 * ts.ft / ts.fta;
                     } else {
                         row.ftp = 0;
                     }
+                } else if (stat === "oppFtp") {
+                    if (ts.oppFta > 0) {
+                        row.oppFtp = 100 * ts.oppFt / ts.oppFta;
+                    } else {
+                        row.oppFtp = 0;
+                    }
                 } else if (stat === "diff") {
                     if (statType === "totals") {
                         row.diff = ts.pts - ts.oppPts;
-                    } else {
+                    } else if (ts.gp > 0) {
                         row.diff = (ts.pts - ts.oppPts) / ts.gp;
+                    } else {
+                        row.diff = 0;
+                    }
+                } else if (stat === "oppDiff") {
+                    if (statType === "totals") {
+                        row.oppDiff = ts.oppPts - ts.pts;
+                    } else if (ts.gp > 0) {
+                        row.oppDiff = (ts.oppPts - ts.pts) / ts.gp;
+                    } else {
+                        row.oppDiff = 0;
                     }
                 } else if (stat === "season" || stat === "playoffs") {
                     row[stat] = ts[stat];

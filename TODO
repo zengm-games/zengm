@@ -3,23 +3,7 @@ migration - how to handle current season and past seasons?
   - ba -> oppBlk, in team stats only
   - maybe no migration for other opp stats, keep them undefined. then any derived stat should be aware that these values could be undefined
 - player stats
-  - only if storing %s. not sure if needed though
-
-more advanced stats
-- compute and store, or do dynamically?
-  - passing is messy, but maybe can call teams cache from playersPlus
-    - tricky, cause needs to deal with career stats and multiple seasons
-  - if store
-    - share code with PER (reading/writing) as much as possible
-    - benchmark
-- some require team stats
-  - USG%
-- some require team stats and opponent team stats
-  - STL%, BLK%
-- add new ones to player page
-- make sure player stats page work with career totals, per36, etc for %s
-- after that, maybe win shares
-  - https://www.basketball-reference.com/about/ws.html and "basketball on paper"
+  - new adv stats may be undefined (would be nice to make 0, but don't compute first year because no opp* stats)
 
 all caps columns, like b-r
 
@@ -27,6 +11,9 @@ blog about changes
 - player advanced stats, in player page and player stats page
 - team opponent stats and playoff stats, in team stats page
 - %s are all estimates, not reality. same as b-r
+
+win shares
+- https://www.basketball-reference.com/about/ws.html and "basketball on paper"
 
 customizable columns in datatable
 - get rid of supercols where possible, like bbr

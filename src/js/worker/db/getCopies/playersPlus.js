@@ -342,6 +342,20 @@ const genStatsRow = (p, ps, stats, statType) => {
             row.yearsWithTeam = ps.yearsWithTeam;
         } else if (attr === "psid") {
             row.psid = ps.psid;
+        } else if (attr === "astp") {
+            row.astp = ps.astp;
+        } else if (attr === "blkp") {
+            row.blkp = ps.blkp;
+        } else if (attr === "drbp") {
+            row.drbp = ps.drbp;
+        } else if (attr === "orbp") {
+            row.orbp = ps.orbp;
+        } else if (attr === "stlp") {
+            row.stlp = ps.stlp;
+        } else if (attr === "trbp") {
+            row.trbp = ps.trbp;
+        } else if (attr === "usgp") {
+            row.usgp = ps.usgp;
         } else if (statType === "totals") {
             row[attr] = ps[attr];
         } else if (statType === "per36" && attr !== "min") {
@@ -363,13 +377,22 @@ const genStatsRow = (p, ps, stats, statType) => {
     return row;
 };
 
+const weightByMinutes = [
+    "per",
+    "astp",
+    "blkp",
+    "drbp",
+    "orbp",
+    "stlp",
+    "trbp",
+    "usgp",
+];
 const reduceCareerStats = (careerStats, attr, playoffs) => {
     return careerStats
         .filter(cs => cs.playoffs === playoffs)
         .map(cs => {
-            if (attr === "per") {
-                // Special case for PER, weight by minutes
-                return cs.per * cs.min;
+            if (weightByMinutes.includes(attr)) {
+                return cs[attr] * cs.min;
             }
             return cs[attr];
         })
@@ -485,9 +508,15 @@ const processStats = async (
             }
         }
 
-        // Special case for PER, weight by minutes
-        statSums.per /= statSums.min;
-        statSumsPlayoffs.per /= statSumsPlayoffs.min;
+        // Special case for some variables, weight by minutes
+        for (const attr of weightByMinutes) {
+            if (statSums.hasOwnProperty(attr)) {
+                statSums[attr] /= statSums.min;
+            }
+            if (statSumsPlayoffs.hasOwnProperty(attr)) {
+                statSumsPlayoffs[attr] /= statSumsPlayoffs.min;
+            }
+        }
 
         if (regularSeason) {
             output.careerStats = genStatsRow(p, statSums, stats, statType);

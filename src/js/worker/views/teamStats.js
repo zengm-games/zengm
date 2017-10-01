@@ -5,7 +5,11 @@ import { idb } from "../db";
 import type { UpdateEvents } from "../../common/types";
 
 async function updateTeams(
-    inputs: { season: number },
+    inputs: {
+        playoffs: "playoffs" | "regularSeason",
+        season: number,
+        teamOpponent: "opponent" | "team",
+    },
     updateEvents: UpdateEvents,
     state: any,
 ): void | { [key: string]: any } {
@@ -13,7 +17,9 @@ async function updateTeams(
         (inputs.season === g.season &&
             (updateEvents.includes("gameSim") ||
                 updateEvents.includes("playerMovement"))) ||
-        inputs.season !== state.season
+        inputs.playoffs !== state.playoffs ||
+        inputs.season !== state.season ||
+        inputs.teamOpponent !== state.teamOpponent
     ) {
         const teams = await idb.getCopies.teamsPlus({
             attrs: ["tid", "abbrev"],
@@ -36,13 +42,13 @@ async function updateTeams(
                 "tov",
                 "stl",
                 "blk",
-                "oppBlk",
                 "pf",
                 "pts",
-                "oppPts",
                 "diff",
             ],
             season: inputs.season,
+            playoffs: inputs.playoffs === "playoffs",
+            regularSeason: inputs.playoffs !== "playoffs",
         });
 
         // Sort stats so we can determine what percentile our team is in.
@@ -66,10 +72,8 @@ async function updateTeams(
             "tov",
             "stl",
             "blk",
-            "oppBlk",
             "pf",
             "pts",
-            "oppPts",
             "diff",
         ];
         const lowerIsBetter = ["lost", "tov", "oppBlk", "pf", "oppPts"];
@@ -115,8 +119,10 @@ async function updateTeams(
         }
 
         return {
+            playoffs: inputs.playoffs,
             season: inputs.season,
             stats,
+            teamOpponent: inputs.teamOpponent,
             teams,
         };
     }

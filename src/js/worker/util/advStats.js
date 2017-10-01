@@ -74,8 +74,7 @@ async function calculatePER() {
         t.pace =
             2 *
             (league.pts / league.gp) /
-            (t.stats.pts / t.stats.gp +
-                t.stats.oppPts / t.stats.gp);
+            (t.stats.pts / t.stats.gp + t.stats.oppPts / t.stats.gp);
 
         // Handle divide by 0 error
         if (isNaN(t.pace)) {

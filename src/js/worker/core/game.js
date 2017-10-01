@@ -224,7 +224,8 @@ async function writeTeamStats(results: GameResults) {
         }
         teamStats.gp += 1;
         teamStats.trb += results.team[t1].stat.orb + results.team[t1].stat.drb;
-        teamStats.oppTrb += results.team[t2].stat.orb + results.team[t2].stat.drb;
+        teamStats.oppTrb +=
+            results.team[t2].stat.orb + results.team[t2].stat.drb;
 
         if (teamSeason.lastTen.length === 10 && g.phase !== PHASE.PLAYOFFS) {
             teamSeason.lastTen.pop();

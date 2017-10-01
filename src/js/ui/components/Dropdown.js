@@ -244,6 +244,17 @@ const Select = ({ field, handleChange, value }) => {
                 key: "trade",
             },
         ];
+    } else if (field === "teamOpponent") {
+        options = [
+            {
+                val: "Team",
+                key: "team",
+            },
+            {
+                val: "Opponent",
+                key: "opponent",
+            },
+        ];
     } else if (field === "teamRecordType") {
         options = [
             {

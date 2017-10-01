@@ -84,7 +84,8 @@ async function updatePlayers(
             ],
             season: inputs.season, // If null, then show career stats!
             tid,
-            statType: inputs.statType === "advanced" ? "totals" : inputs.statType,
+            statType:
+                inputs.statType === "advanced" ? "totals" : inputs.statType,
             playoffs: inputs.playoffs === "playoffs",
             regularSeason: inputs.playoffs !== "playoffs",
         });

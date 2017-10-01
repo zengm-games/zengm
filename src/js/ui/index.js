@@ -162,6 +162,11 @@ const genPage = (id, inLeague = true) => {
     );
     page("/l/:lid/team_stats", genPage("teamStats"));
     page("/l/:lid/team_stats/:season", genPage("teamStats"));
+    page("/l/:lid/team_stats/:season/:teamOpponents", genPage("teamStats"));
+    page(
+        "/l/:lid/team_stats/:season/:teamOpponent/:playoffs",
+        genPage("teamStats"),
+    );
     page("/l/:lid/player/:pid", genPage("player"));
     page("/l/:lid/negotiation", genPage("negotiationList"));
     page("/l/:lid/negotiation/:pid", genPage("negotiation"));

@@ -5,7 +5,7 @@ import { g, helpers } from "../../common";
 import { getCols, setTitle } from "../util";
 import { DataTable, Dropdown, JumpTo, NewWindowLink } from "../components";
 
-const TeamStats = ({ season, stats, teams }) => {
+const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
     setTitle(`Team Stats - ${season}`);
 
     const cols = getCols(
@@ -29,10 +29,8 @@ const TeamStats = ({ season, stats, teams }) => {
         "Tov",
         "Stl",
         "Blk",
-        "BA",
         "PF",
         "Pts",
-        "OPts",
         "Diff",
     );
 
@@ -55,10 +53,8 @@ const TeamStats = ({ season, stats, teams }) => {
             "tov",
             "stl",
             "blk",
-            "oppBlk",
             "pf",
             "pts",
-            "oppPts",
             "diff",
         ];
         const otherStatColumns = ["won", "lost"];
@@ -151,8 +147,8 @@ const TeamStats = ({ season, stats, teams }) => {
         <div>
             <Dropdown
                 view="team_stats"
-                fields={["seasons"]}
-                values={[season]}
+                fields={["seasons", "teamOpponent", "playoffs"]}
+                values={[season, teamOpponent, playoffs]}
             />
             <JumpTo season={season} />
             <h1>
@@ -200,8 +196,10 @@ const TeamStats = ({ season, stats, teams }) => {
 };
 
 TeamStats.propTypes = {
+    playoffs: PropTypes.oneOf(["playoffs", "regularSeason"]).isRequired,
     season: PropTypes.number.isRequired,
     stats: PropTypes.object.isRequired,
+    teamOpponent: PropTypes.oneOf(["opponent", "team"]).isRequired,
     teams: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 

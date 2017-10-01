@@ -280,6 +280,20 @@ const teamRecords = ctx => {
     };
 };
 
+const teamStats = ctx => {
+    return {
+        season: helpers.validateSeason(ctx.params.season),
+        teamOpponent:
+            ctx.params.teamOpponent !== undefined
+                ? ctx.params.teamOpponent
+                : "team",
+        playoffs:
+            ctx.params.playoffs !== undefined
+                ? ctx.params.playoffs
+                : "regularSeason",
+    };
+};
+
 const transactions = ctx => {
     let abbrev;
     let tid;
@@ -379,7 +393,7 @@ export default {
     teamRecords,
     teamShotLocations: validateSeason,
     teamStatDists: validateSeason,
-    teamStats: validateSeason,
+    teamStats,
     transactions,
     upcomingFreeAgents,
     watchList,

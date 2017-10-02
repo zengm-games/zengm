@@ -1,16 +1,3 @@
-migration
-- league import migration (same logic as idb upgrade)
-- would be nice...
-  - show blank instead of 0.0 (player stats) or NaN (team stats) for undefined adv stat or opp stat
-  - compute career totals accurately in the presence of these undefined values
-
-all caps columns, like b-r
-
-blog about changes
-- player advanced stats, in player page and player stats page
-- team opponent stats and playoff stats, in team stats page
-- %s are all estimates, not reality. same as b-r
-
 win shares
 - https://www.basketball-reference.com/about/ws.html and "basketball on paper"
 
@@ -33,7 +20,8 @@ customizable columns in datatable
 - store all datatable params in one localstorage object
 - always return all stats and ratings?
 
-PPG -> Pts, probably
+all caps columns, like b-r
+- PPG -> Pts, probably
 
 get rid of stored trb in player and team stats and game sim and box score
 

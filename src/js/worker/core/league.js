@@ -239,9 +239,19 @@ async function create(
         } else {
             teamStats = [team.genStatsRow(t.tid)];
         }
-        for (const teamStat of teamStats) {
-            teamStat.tid = t.tid;
-            await idb.cache.teamStats.add(teamStat);
+        for (const ts of teamStats) {
+            ts.tid = t.tid;
+
+            if (ts.hasOwnProperty("ba")) {
+                ts.oppBlk = ts.ba;
+                delete ts.ba;
+            }
+            if (isNaN(ts.oppBlk)) {
+                ts.oppBlk = 0;
+            }
+console.log(ts);
+
+            await idb.cache.teamStats.add(ts);
         }
 
         // Save scoutingRank for later

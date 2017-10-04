@@ -42,7 +42,7 @@ const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
                   "Pts",
                   "MOV",
               )
-            : getCols("Team", "G", "W", "L", "PW", "PL", "MOV", "ORtg", "DRtg", "NRtg", "Pace", "3PAr", "FTr");
+            : getCols("Team", "W", "L", "PW", "PL", "MOV", "ORtg", "DRtg", "NRtg", "Pace", "3PAr", "FTr");
 
     const teamCount = teams.length;
     const rows = teams.map(t => {
@@ -79,10 +79,12 @@ const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
                     {t.abbrev}
                 </a>
             ),
-            gp: t.stats.gp,
             won: t.seasonAttrs.won,
             lost: t.seasonAttrs.lost,
         };
+        if (teamOpponent !== "advanced") {
+            data.gp = t.stats.gp;
+        }
 
         for (const statType of statTypeColumns) {
             const value = t.stats.hasOwnProperty(statType)

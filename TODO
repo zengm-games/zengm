@@ -1,9 +1,5 @@
 safari 11 login - maybe need FormData polyfill
 
-advanced team stats
-- like "Team Misc" section of https://www.basketball-reference.com/teams/CHI/2009.html
-  - ortg and drtg https://en.wikipedia.org/wiki/Offensive_rating
-
 win shares
 - https://www.basketball-reference.com/about/ws.html and "basketball on paper"
   - or https://www.basketball-reference.com/about/ratings.html

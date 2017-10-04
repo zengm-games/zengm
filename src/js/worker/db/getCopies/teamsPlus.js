@@ -326,6 +326,13 @@ const processStats = async (
                     } else {
                         row.drtg = 0;
                     }
+                } else if (stat === "nrtg") {
+                    const possessions = poss(ts);
+                    if (possessions > 0) {
+                        row.nrtg = 100 * (ts.pts - ts.oppPts) / possessions;
+                    } else {
+                        row.nrtg = 0;
+                    }
                 } else if (stat === "pace") {
                     if (ts.min > 0) {
                         row.pace = g.quarterLength * 4 * poss(ts) / (ts.min / 5);

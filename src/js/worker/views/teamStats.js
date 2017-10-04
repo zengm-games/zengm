@@ -68,6 +68,7 @@ async function updateTeams(
                 "pl",
                 "ortg",
                 "drtg",
+                "nrtg",
                 "pace",
             ],
             season: inputs.season,
@@ -155,6 +156,7 @@ async function updateTeams(
             "pl",
             "ortg",
             "drtg",
+            "nrtg",
             "pace",
         ];
         const lowerIsBetter = [

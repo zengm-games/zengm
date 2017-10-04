@@ -42,7 +42,7 @@ const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
                   "Pts",
                   "MOV",
               )
-            : getCols("Team", "G", "W", "L", "PW", "PL", "MOV", "ORtg", "DRtg", "Pace");
+            : getCols("Team", "G", "W", "L", "PW", "PL", "MOV", "ORtg", "DRtg", "NRtg", "Pace");
 
     const teamCount = teams.length;
     const rows = teams.map(t => {
@@ -69,7 +69,7 @@ const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
                       "pts",
                       "mov",
                   ].map(key => regOrOpp(teamOpponent, key))
-                : ["pw", "pl", "mov", "ortg", "drtg", "pace"];
+                : ["pw", "pl", "mov", "ortg", "drtg", "nrtg", "pace"];
         const otherStatColumns = ["won", "lost"];
 
         // Create the cells for this row.
@@ -91,17 +91,19 @@ const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
             data[statType] = value.toFixed(1);
         }
 
-        const movCol = regOrOpp(teamOpponent, "mov");
-        if (data.hasOwnProperty(movCol)) {
-            data[movCol] = (
-                <span
-                    className={
-                        t.stats[movCol] > 0 ? "text-success" : "text-danger"
-                    }
-                >
-                    {t.stats[movCol].toFixed(1)}
-                </span>
-            );
+        const plusMinusCols = [regOrOpp(teamOpponent, "mov"), "nrtg"];
+        for (const plusMinusCol of plusMinusCols) {
+            if (data.hasOwnProperty(plusMinusCol)) {
+                data[plusMinusCol] = (
+                    <span
+                        className={
+                            t.stats[plusMinusCol] > 0 ? "text-success" : "text-danger"
+                        }
+                    >
+                        {t.stats[plusMinusCol].toFixed(1)}
+                    </span>
+                );
+            }
         }
 
         // This is our team.

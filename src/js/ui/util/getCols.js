@@ -285,6 +285,11 @@ const cols: {
     Name: {
         sortType: "name",
     },
+    NRtg: {
+        desc: "Net Rating (point differential per 100 possessions)",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     Negotiate: {},
     O: {
         desc: "Overall",

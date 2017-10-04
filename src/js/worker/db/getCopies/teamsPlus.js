@@ -269,21 +269,21 @@ const processStats = async (
                     } else {
                         row.oppFtp = 0;
                     }
-                } else if (stat === "diff") {
+                } else if (stat === "mov") {
                     if (statType === "totals") {
-                        row.diff = ts.pts - ts.oppPts;
+                        row.mov = ts.pts - ts.oppPts;
                     } else if (ts.gp > 0) {
-                        row.diff = (ts.pts - ts.oppPts) / ts.gp;
+                        row.mov = (ts.pts - ts.oppPts) / ts.gp;
                     } else {
-                        row.diff = 0;
+                        row.mov = 0;
                     }
-                } else if (stat === "oppDiff") {
+                } else if (stat === "oppMov") {
                     if (statType === "totals") {
-                        row.oppDiff = ts.oppPts - ts.pts;
+                        row.oppMov = ts.oppPts - ts.pts;
                     } else if (ts.gp > 0) {
-                        row.oppDiff = (ts.oppPts - ts.pts) / ts.gp;
+                        row.oppMov = (ts.oppPts - ts.pts) / ts.gp;
                     } else {
-                        row.oppDiff = 0;
+                        row.oppMov = 0;
                     }
                 } else if (stat === "pw") {
                     if (row.pts > 0 || row.oppPts > 0) {

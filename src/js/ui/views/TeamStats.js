@@ -40,9 +40,9 @@ const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
                   "Blk",
                   "PF",
                   "Pts",
-                  "Diff",
+                  "MOV",
               )
-            : getCols("Team", "G", "W", "L", "PW", "PL");
+            : getCols("Team", "G", "W", "L", "PW", "PL", "MOV");
 
     const teamCount = teams.length;
     const rows = teams.map(t => {
@@ -67,9 +67,9 @@ const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
                       "blk",
                       "pf",
                       "pts",
-                      "diff",
+                      "mov",
                   ].map(key => regOrOpp(teamOpponent, key))
-                : ["pw", "pl"];
+                : ["pw", "pl", "mov"];
         const otherStatColumns = ["won", "lost"];
 
         // Create the cells for this row.
@@ -91,15 +91,15 @@ const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
             data[statType] = value.toFixed(1);
         }
 
-        if (teamOpponent !== "advanced") {
-            const diffCol = regOrOpp(teamOpponent, "diff");
-            data[diffCol] = (
+        const movCol = regOrOpp(teamOpponent, "mov");
+        if (data.hasOwnProperty(movCol)) {
+            data[movCol] = (
                 <span
                     className={
-                        t.stats[diffCol] > 0 ? "text-success" : "text-danger"
+                        t.stats[movCol] > 0 ? "text-success" : "text-danger"
                     }
                 >
-                    {t.stats[diffCol].toFixed(1)}
+                    {t.stats[movCol].toFixed(1)}
                 </span>
             );
         }

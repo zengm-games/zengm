@@ -159,11 +159,6 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "currency",
     },
-    Diff: {
-        desc: "Point Differential",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
     Division: {},
     Draft: {
         sortSequence: [],
@@ -277,6 +272,11 @@ const cols: {
         sortType: "number",
     },
     Mood: {},
+    MOV: {
+        desc: "Margin of Victory",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     Name: {
         sortType: "name",
     },

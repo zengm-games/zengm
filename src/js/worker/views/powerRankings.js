@@ -13,7 +13,7 @@ async function updatePowerRankings(
             idb.getCopies.teamsPlus({
                 attrs: ["tid", "abbrev", "region", "name"],
                 seasonAttrs: ["won", "lost", "lastTen"],
-                stats: ["gp", "diff"],
+                stats: ["gp", "mov"],
                 season: g.season,
             }),
             idb.cache.players.indexGetAll("playersByTid", [0, Infinity]),
@@ -62,7 +62,7 @@ async function updatePowerRankings(
             playerValuesByTid[i] = [];
             // Modulate point differential by recent record: +5 for 10-0 in last 10 and -5 for 0-10
             teams[i].performance =
-                teams[i].stats.diff -
+                teams[i].stats.mov -
                 5 +
                 5 *
                     parseInt(teams[i].seasonAttrs.lastTen.split("-")[0], 10) /

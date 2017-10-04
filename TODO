@@ -13,6 +13,8 @@ box plus/minus
   - already have everything from "Raw BPM" formula (ReMPG is MP/(G+4))
   - for "BPM_Team_Adjustment", need team net rating (off rating - def rating). The sum term needs all players who played on a team this season, even if they are no longer on the team (annoying to implement, but doable)
 
+after screenshot, have links to post to twitter/reddit/discord
+
 customizable columns in datatable
 - get rid of supercols where possible, like bbr
 - for supercols, instead of colspan, pass a list of column names (need to get rid of repeats like raw % first)

@@ -7,7 +7,7 @@ import { DataTable, NewWindowLink } from "../components";
 const PowerRankings = ({ teams }) => {
     setTitle("Power Rankings");
 
-    const cols = getCols("O", "P", "T", "Team", "W", "L", "L10", "Diff");
+    const cols = getCols("O", "P", "T", "Team", "W", "L", "L10", "MOV");
     cols[3].width = "100%";
 
     const rows = teams.map(t => {
@@ -27,10 +27,10 @@ const PowerRankings = ({ teams }) => {
                 t.seasonAttrs.lastTen,
                 <span
                     className={
-                        t.stats.diff > 0 ? "text-success" : "text-danger"
+                        t.stats.mov > 0 ? "text-success" : "text-danger"
                     }
                 >
-                    {t.stats.diff.toFixed(1)}
+                    {t.stats.mov.toFixed(1)}
                 </span>,
             ],
             classNames: {
@@ -77,7 +77,7 @@ PowerRankings.propTypes = {
                 won: PropTypes.number.isRequired,
             }),
             stats: PropTypes.shape({
-                diff: PropTypes.number.isRequired,
+                mov: PropTypes.number.isRequired,
             }),
         }),
     ).isRequired,

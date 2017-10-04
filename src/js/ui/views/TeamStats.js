@@ -42,7 +42,7 @@ const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
                   "Pts",
                   "MOV",
               )
-            : getCols("Team", "G", "W", "L", "PW", "PL", "MOV", "ORtg", "DRtg", "NRtg", "Pace");
+            : getCols("Team", "G", "W", "L", "PW", "PL", "MOV", "ORtg", "DRtg", "NRtg", "Pace", "3PAr", "FTr");
 
     const teamCount = teams.length;
     const rows = teams.map(t => {
@@ -69,7 +69,7 @@ const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
                       "pts",
                       "mov",
                   ].map(key => regOrOpp(teamOpponent, key))
-                : ["pw", "pl", "mov", "ortg", "drtg", "nrtg", "pace"];
+                : ["pw", "pl", "mov", "ortg", "drtg", "nrtg", "pace", "tpar", "ftr"];
         const otherStatColumns = ["won", "lost"];
 
         // Create the cells for this row.

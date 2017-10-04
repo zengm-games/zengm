@@ -339,6 +339,18 @@ const processStats = async (
                     } else {
                         row.pace = 0;
                     }
+                } else if (stat === "tpar") {
+                    if (ts.fga > 0) {
+                        row.tpar = 100 * ts.tpa / ts.fga;
+                    } else {
+                        row.tpar = 0;
+                    }
+                } else if (stat === "ftr") {
+                    if (ts.fga > 0) {
+                        row.ftr = 100 * ts.fta / ts.fga;
+                    } else {
+                        row.ftr = 0;
+                    }
                 } else if (stat === "season" || stat === "playoffs") {
                     row[stat] = ts[stat];
                 } else if (statType === "totals") {

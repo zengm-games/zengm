@@ -70,6 +70,8 @@ async function updateTeams(
                 "drtg",
                 "nrtg",
                 "pace",
+                "tpar",
+                "ftr",
             ],
             season: inputs.season,
             playoffs: inputs.playoffs === "playoffs",
@@ -158,6 +160,8 @@ async function updateTeams(
             "drtg",
             "nrtg",
             "pace",
+            "tpar",
+            "ftr",
         ];
         const lowerIsBetter = [
             "lost",

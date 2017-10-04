@@ -151,6 +151,14 @@ const processSeasonAttrs = async (
     }
 };
 
+// Possessions estimate, from https://www.basketball-reference.com/about/glossary.html#poss
+const poss = (ts) => {
+    if (ts.orb + ts.oppDrb > 0 && ts.oppOrb + ts.drb > 0) {
+        return 0.5 * ((ts.fga + 0.4 * ts.fta - 1.07 * (ts.orb / (ts.orb + ts.oppDrb)) * (ts.fga - ts.fg) + ts.tov) + (ts.oppFga + 0.4 * ts.oppFta - 1.07 * (ts.oppOrb / (ts.oppOrb + ts.drb)) * (ts.oppFga - ts.oppFg) + ts.oppTov));
+    }
+    return 0;
+}
+
 const processStats = async (
     output: TeamFiltered,
     t: Team,
@@ -286,23 +294,43 @@ const processStats = async (
                         row.oppMov = 0;
                     }
                 } else if (stat === "pw") {
-                    if (row.pts > 0 || row.oppPts > 0) {
+                    if (ts.pts > 0 || ts.oppPts > 0) {
                         row.pw =
-                            row.gp *
-                            (row.pts ** 14 /
-                                (row.pts ** 14 + row.oppPts ** 14));
+                            ts.gp *
+                            (ts.pts ** 14 /
+                                (ts.pts ** 14 + ts.oppPts ** 14));
                     } else {
                         row.pw = 0;
                     }
                 } else if (stat === "pl") {
-                    if (row.pts > 0 || row.oppPts > 0) {
+                    if (ts.pts > 0 || ts.oppPts > 0) {
                         row.pl =
-                            row.gp -
-                            row.gp *
-                                (row.pts ** 14 /
-                                    (row.pts ** 14 + row.oppPts ** 14));
+                            ts.gp -
+                            ts.gp *
+                                (ts.pts ** 14 /
+                                    (ts.pts ** 14 + ts.oppPts ** 14));
                     } else {
                         row.pl = 0;
+                    }
+                } else if (stat === "ortg") {
+                    const possessions = poss(ts);
+                    if (possessions > 0) {
+                        row.ortg = 100 * ts.pts / possessions;
+                    } else {
+                        row.ortg = 0;
+                    }
+                } else if (stat === "drtg") {
+                    const possessions = poss(ts);
+                    if (possessions > 0) {
+                        row.drtg = 100 * ts.oppPts / possessions;
+                    } else {
+                        row.drtg = 0;
+                    }
+                } else if (stat === "pace") {
+                    if (ts.min > 0) {
+                        row.pace = g.quarterLength * 4 * poss(ts) / (ts.min / 5);
+                    } else {
+                        row.pace = 0;
                     }
                 } else if (stat === "season" || stat === "playoffs") {
                     row[stat] = ts[stat];

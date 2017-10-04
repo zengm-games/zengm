@@ -155,6 +155,11 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    DRtg: {
+        desc: "Defensive Rating (points allowed per 100 possessions)",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     "Desired Contract": {
         sortSequence: ["desc", "asc"],
         sortType: "currency",
@@ -300,6 +305,11 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    ORtg: {
+        desc: "Offensive Rating (points per 100 possessions)",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     Opp: {
         desc: "Opponent",
     },
@@ -336,6 +346,12 @@ const cols: {
     PW: {
         desc:
             "Pythagorean Wins (expected wins based on points scored and allowed)",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    Pace: {
+        desc:
+            "Possessions Per Game",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },

@@ -15,7 +15,7 @@ const regOrOpp = (teamOpponent, key: string) => {
 const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
     setTitle(`Team Stats - ${season}`);
 
-    const cols = getCols(
+    const cols = teamOpponent !== "advanced" ? getCols(
         "Team",
         "G",
         "W",
@@ -39,11 +39,16 @@ const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
         "PF",
         "Pts",
         "Diff",
+    ) : getCols(
+        "Team",
+        "G",
+        "W",
+        "L",
     );
 
     const teamCount = teams.length;
     const rows = teams.map(t => {
-        const statTypeColumns = [
+        const statTypeColumns = teamOpponent !== "advanced" ? [
             "fg",
             "fga",
             "fgp",
@@ -63,7 +68,7 @@ const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
             "pf",
             "pts",
             "diff",
-        ].map(key => regOrOpp(teamOpponent, key));
+        ].map(key => regOrOpp(teamOpponent, key)) : [];
         const otherStatColumns = ["won", "lost"];
 
         // Create the cells for this row.
@@ -85,16 +90,18 @@ const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
             data[statType] = value.toFixed(1);
         }
 
-        const diffCol = regOrOpp(teamOpponent, "diff");
-        data[diffCol] = (
-            <span
-                className={
-                    t.stats[diffCol] > 0 ? "text-success" : "text-danger"
-                }
-            >
-                {t.stats[diffCol].toFixed(1)}
-            </span>
-        );
+        if (teamOpponent !== "advanced") {
+            const diffCol = regOrOpp(teamOpponent, "diff");
+            data[diffCol] = (
+                <span
+                    className={
+                        t.stats[diffCol] > 0 ? "text-success" : "text-danger"
+                    }
+                >
+                    {t.stats[diffCol].toFixed(1)}
+                </span>
+            );
+        }
 
         // This is our team.
         if (g.userTid === t.tid) {
@@ -200,7 +207,7 @@ const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
             <DataTable
                 cols={cols}
                 defaultSort={[2, "desc"]}
-                name="TeamStats"
+                name={`TeamStats${teamOpponent === "advanced" ? "Adv" : ""}`}
                 rows={rows}
             />
         </div>
@@ -211,7 +218,7 @@ TeamStats.propTypes = {
     playoffs: PropTypes.oneOf(["playoffs", "regularSeason"]).isRequired,
     season: PropTypes.number.isRequired,
     stats: PropTypes.object.isRequired,
-    teamOpponent: PropTypes.oneOf(["opponent", "team"]).isRequired,
+    teamOpponent: PropTypes.oneOf(["advanced", "opponent", "team"]).isRequired,
     teams: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 

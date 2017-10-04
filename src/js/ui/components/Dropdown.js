@@ -254,6 +254,10 @@ const Select = ({ field, handleChange, value }) => {
                 val: "Opponent",
                 key: "opponent",
             },
+            {
+                val: "Advanced",
+                key: "advanced",
+            },
         ];
     } else if (field === "teamRecordType") {
         options = [

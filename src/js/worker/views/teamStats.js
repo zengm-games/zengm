@@ -8,7 +8,7 @@ async function updateTeams(
     inputs: {
         playoffs: "playoffs" | "regularSeason",
         season: number,
-        teamOpponent: "opponent" | "team",
+        teamOpponent: "advanced" | "opponent" | "team",
     },
     updateEvents: UpdateEvents,
     state: any,

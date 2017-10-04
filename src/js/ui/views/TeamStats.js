@@ -15,60 +15,61 @@ const regOrOpp = (teamOpponent, key: string) => {
 const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
     setTitle(`Team Stats - ${season}`);
 
-    const cols = teamOpponent !== "advanced" ? getCols(
-        "Team",
-        "G",
-        "W",
-        "L",
-        "FG",
-        "FGA",
-        "FG%",
-        "3P",
-        "3PA",
-        "3P%",
-        "FT",
-        "FTA",
-        "FT%",
-        "ORB",
-        "DRB",
-        "TRB",
-        "Ast",
-        "Tov",
-        "Stl",
-        "Blk",
-        "PF",
-        "Pts",
-        "Diff",
-    ) : getCols(
-        "Team",
-        "G",
-        "W",
-        "L",
-    );
+    const cols =
+        teamOpponent !== "advanced"
+            ? getCols(
+                  "Team",
+                  "G",
+                  "W",
+                  "L",
+                  "FG",
+                  "FGA",
+                  "FG%",
+                  "3P",
+                  "3PA",
+                  "3P%",
+                  "FT",
+                  "FTA",
+                  "FT%",
+                  "ORB",
+                  "DRB",
+                  "TRB",
+                  "Ast",
+                  "Tov",
+                  "Stl",
+                  "Blk",
+                  "PF",
+                  "Pts",
+                  "Diff",
+              )
+            : getCols("Team", "G", "W", "L", "PW", "PL");
 
     const teamCount = teams.length;
     const rows = teams.map(t => {
-        const statTypeColumns = teamOpponent !== "advanced" ? [
-            "fg",
-            "fga",
-            "fgp",
-            "tp",
-            "tpa",
-            "tpp",
-            "ft",
-            "fta",
-            "ftp",
-            "orb",
-            "drb",
-            "trb",
-            "ast",
-            "tov",
-            "stl",
-            "blk",
-            "pf",
-            "pts",
-            "diff",
-        ].map(key => regOrOpp(teamOpponent, key)) : [];
+        const statTypeColumns =
+            teamOpponent !== "advanced"
+                ? [
+                      "fg",
+                      "fga",
+                      "fgp",
+                      "tp",
+                      "tpa",
+                      "tpp",
+                      "ft",
+                      "fta",
+                      "ftp",
+                      "orb",
+                      "drb",
+                      "trb",
+                      "ast",
+                      "tov",
+                      "stl",
+                      "blk",
+                      "pf",
+                      "pts",
+                      "diff",
+                  ].map(key => regOrOpp(teamOpponent, key))
+                : ["pw", "pl"];
         const otherStatColumns = ["won", "lost"];
 
         // Create the cells for this row.

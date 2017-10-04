@@ -285,6 +285,25 @@ const processStats = async (
                     } else {
                         row.oppDiff = 0;
                     }
+                } else if (stat === "pw") {
+                    if (row.pts > 0 || row.oppPts > 0) {
+                        row.pw =
+                            row.gp *
+                            (row.pts ** 14 /
+                                (row.pts ** 14 + row.oppPts ** 14));
+                    } else {
+                        row.pw = 0;
+                    }
+                } else if (stat === "pl") {
+                    if (row.pts > 0 || row.oppPts > 0) {
+                        row.pl =
+                            row.gp -
+                            row.gp *
+                                (row.pts ** 14 /
+                                    (row.pts ** 14 + row.oppPts ** 14));
+                    } else {
+                        row.pl = 0;
+                    }
                 } else if (stat === "season" || stat === "playoffs") {
                     row[stat] = ts[stat];
                 } else if (statType === "totals") {

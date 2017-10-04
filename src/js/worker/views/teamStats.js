@@ -64,6 +64,8 @@ async function updateTeams(
                 "oppPf",
                 "oppPts",
                 "oppDiff",
+                "pw",
+                "pl",
             ],
             season: inputs.season,
             playoffs: inputs.playoffs === "playoffs",
@@ -146,6 +148,8 @@ async function updateTeams(
             "oppPf",
             "oppPts",
             "oppDiff",
+            "pw",
+            "pl",
         ];
         const lowerIsBetter = [
             "lost",
@@ -168,6 +172,7 @@ async function updateTeams(
             "oppBlk",
             "oppPts",
             "oppDiff",
+            "pl",
         ];
 
         // Loop teams and stat types.

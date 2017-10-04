@@ -249,7 +249,7 @@ async function create(
             if (isNaN(ts.oppBlk)) {
                 ts.oppBlk = 0;
             }
-console.log(ts);
+            console.log(ts);
 
             await idb.cache.teamStats.add(ts);
         }

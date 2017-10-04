@@ -237,7 +237,7 @@ const cols: {
         sortSequence: ["desc", "asc"],
     },
     L: {
-        desc: "Games Lost",
+        desc: "Losses",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
@@ -322,8 +322,20 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    PL: {
+        desc:
+            "Pythagorean Losses (expected losses based on points scored and allowed)",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     PPG: {
         desc: "Points Per Game",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    PW: {
+        desc:
+            "Pythagorean Wins (expected wins based on points scored and allowed)",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
@@ -440,7 +452,7 @@ const cols: {
         sortType: "number",
     },
     W: {
-        desc: "Games Won",
+        desc: "Wins",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },

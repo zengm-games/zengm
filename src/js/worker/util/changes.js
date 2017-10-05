@@ -199,6 +199,11 @@ const all = [
         msg:
             "By default, box scores from past seasons will be deleted to save hard drive space. To diasble this new behavior, go to Tools > Options.",
     },
+    {
+        date: "2017-10-04",
+        msg:
+            "Additional advanced stats can be viewed on the Team Stats, Player Stats, and individual player pages.",
+    },
 ];
 
 const check = async (conditions: Conditions) => {

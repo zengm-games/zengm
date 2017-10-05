@@ -42,7 +42,20 @@ const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
                   "Pts",
                   "MOV",
               )
-            : getCols("Team", "W", "L", "PW", "PL", "MOV", "ORtg", "DRtg", "NRtg", "Pace", "3PAr", "FTr");
+            : getCols(
+                  "Team",
+                  "W",
+                  "L",
+                  "PW",
+                  "PL",
+                  "MOV",
+                  "ORtg",
+                  "DRtg",
+                  "NRtg",
+                  "Pace",
+                  "3PAr",
+                  "FTr",
+              );
 
     const teamCount = teams.length;
     const rows = teams.map(t => {
@@ -69,7 +82,17 @@ const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
                       "pts",
                       "mov",
                   ].map(key => regOrOpp(teamOpponent, key))
-                : ["pw", "pl", "mov", "ortg", "drtg", "nrtg", "pace", "tpar", "ftr"];
+                : [
+                      "pw",
+                      "pl",
+                      "mov",
+                      "ortg",
+                      "drtg",
+                      "nrtg",
+                      "pace",
+                      "tpar",
+                      "ftr",
+                  ];
         const otherStatColumns = ["won", "lost"];
 
         // Create the cells for this row.
@@ -99,7 +122,9 @@ const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
                 data[plusMinusCol] = (
                     <span
                         className={
-                            t.stats[plusMinusCol] > 0 ? "text-success" : "text-danger"
+                            t.stats[plusMinusCol] > 0
+                                ? "text-success"
+                                : "text-danger"
                         }
                     >
                         {t.stats[plusMinusCol].toFixed(1)}

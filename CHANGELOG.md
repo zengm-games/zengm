@@ -14,6 +14,7 @@ number or not.
 - New Options screen
 - Sometimes young players (particularly from certain countries) will fake their ages
 - The draft lottery is viewable live
+- A lot more advanced stats, viewable from Team Stats, Player Stats, and Player pages
 
 ## Technical details
 

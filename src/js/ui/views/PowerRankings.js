@@ -26,9 +26,7 @@ const PowerRankings = ({ teams }) => {
                 t.seasonAttrs.lost,
                 t.seasonAttrs.lastTen,
                 <span
-                    className={
-                        t.stats.mov > 0 ? "text-success" : "text-danger"
-                    }
+                    className={t.stats.mov > 0 ? "text-success" : "text-danger"}
                 >
                     {t.stats.mov.toFixed(1)}
                 </span>,

@@ -152,12 +152,24 @@ const processSeasonAttrs = async (
 };
 
 // Possessions estimate, from https://www.basketball-reference.com/about/glossary.html#poss
-const poss = (ts) => {
+const poss = ts => {
     if (ts.orb + ts.oppDrb > 0 && ts.oppOrb + ts.drb > 0) {
-        return 0.5 * ((ts.fga + 0.4 * ts.fta - 1.07 * (ts.orb / (ts.orb + ts.oppDrb)) * (ts.fga - ts.fg) + ts.tov) + (ts.oppFga + 0.4 * ts.oppFta - 1.07 * (ts.oppOrb / (ts.oppOrb + ts.drb)) * (ts.oppFga - ts.oppFg) + ts.oppTov));
+        return (
+            0.5 *
+            (ts.fga +
+                0.4 * ts.fta -
+                1.07 * (ts.orb / (ts.orb + ts.oppDrb)) * (ts.fga - ts.fg) +
+                ts.tov +
+                (ts.oppFga +
+                    0.4 * ts.oppFta -
+                    1.07 *
+                        (ts.oppOrb / (ts.oppOrb + ts.drb)) *
+                        (ts.oppFga - ts.oppFg) +
+                    ts.oppTov))
+        );
     }
     return 0;
-}
+};
 
 const processStats = async (
     output: TeamFiltered,
@@ -297,8 +309,7 @@ const processStats = async (
                     if (ts.pts > 0 || ts.oppPts > 0) {
                         row.pw =
                             ts.gp *
-                            (ts.pts ** 14 /
-                                (ts.pts ** 14 + ts.oppPts ** 14));
+                            (ts.pts ** 14 / (ts.pts ** 14 + ts.oppPts ** 14));
                     } else {
                         row.pw = 0;
                     }
@@ -335,7 +346,8 @@ const processStats = async (
                     }
                 } else if (stat === "pace") {
                     if (ts.min > 0) {
-                        row.pace = g.quarterLength * 4 * poss(ts) / (ts.min / 5);
+                        row.pace =
+                            g.quarterLength * 4 * poss(ts) / (ts.min / 5);
                     } else {
                         row.pace = 0;
                     }

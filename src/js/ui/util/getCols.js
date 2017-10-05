@@ -355,8 +355,7 @@ const cols: {
         sortType: "number",
     },
     Pace: {
-        desc:
-            "Possessions Per Game",
+        desc: "Possessions Per Game",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },

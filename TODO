@@ -1,13 +1,22 @@
 safari 11 login - maybe need FormData polyfill
 
+player offensive and defensive ratings
+- https://www.basketball-reference.com/about/ratings.html
+
 win shares
 - https://www.basketball-reference.com/about/ws.html and "basketball on paper"
-  - or https://www.basketball-reference.com/about/ratings.html
+
+advanced team stats
+- strength of schedule: https://www.pro-football-reference.com/blog/index9e6d.html?p=37&cpage=1
+  - to set up this system of equations, need to know the schedule, but that is not stored anywhere currently. need to persist original schedule. maybe only soft delete games as they are played, or copy to another table?
+  - use https://www.npmjs.com/package/linear-solve to solve
+- team ortg/drtg/nrtg adjusted for strength of schedule
 
 box plus/minus
 - https://www.basketball-reference.com/about/bpm.html
   - already have everything from "Raw BPM" formula (ReMPG is MP/(G+4))
   - for "BPM_Team_Adjustment", need team net rating (off rating - def rating). The sum term needs all players who played on a team this season, even if they are no longer on the team (annoying to implement, but doable)
+    - net rating needs to be adjusted for SOS!
 
 after screenshot, have links to post to twitter/reddit/discord
 

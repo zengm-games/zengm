@@ -356,6 +356,10 @@ const genStatsRow = (p, ps, stats, statType) => {
             row.trbp = ps.trbp;
         } else if (attr === "usgp") {
             row.usgp = ps.usgp;
+        } else if (attr === "drtg") {
+            row.drtg = ps.drtg;
+        } else if (attr === "ortg") {
+            row.ortg = ps.ortg;
         } else if (statType === "totals") {
             row[attr] = ps[attr];
         } else if (statType === "per36" && attr !== "min") {
@@ -386,6 +390,8 @@ const weightByMinutes = [
     "stlp",
     "trbp",
     "usgp",
+    "drtg",
+    "ortg",
 ];
 const reduceCareerStats = (careerStats, attr, playoffs) => {
     return careerStats

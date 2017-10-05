@@ -172,7 +172,7 @@ const calculatePER = (players, teams) => {
     };
 };
 
-// Formulas from https://www.basketball-reference.com/about/glossary.html
+// https://www.basketball-reference.com/about/glossary.html
 const calculatePercentages = (players, teams) => {
     const astp = [];
     const blkp = [];
@@ -254,6 +254,88 @@ const calculatePercentages = (players, teams) => {
     };
 };
 
+// https://www.basketball-reference.com/about/ratings.html
+const calculateRatings = (players, teams) => {
+    const drtg = [];
+    const ortg = [];
+
+    for (let i = 0; i < players.length; i++) {
+        const p = players[i];
+        const t = teams[p.tid];
+
+        if (t === undefined) {
+            drtg[i] = 0;
+            ortg[i] = 0;
+        } else {
+            const possessions =
+                0.5 *
+                (t.stats.fga +
+                    0.4 * t.stats.fta -
+                    1.07 *
+                        (t.stats.orb / (t.stats.orb + t.stats.oppDrb)) *
+                        (t.stats.fga - t.stats.fg) +
+                    t.stats.tov +
+                    (t.stats.oppFga +
+                        0.4 * t.stats.oppFta -
+                        1.07 *
+                            (t.stats.oppOrb / (t.stats.oppOrb + t.stats.drb)) *
+                            (t.stats.oppFga - t.stats.oppFg) +
+                        t.stats.oppTov));
+
+            // Defensive rating
+
+            const dorPct = t.stats.oppOrb / (t.stats.oppOrb + t.stats.drb);
+            const dfgPct = t.stats.oppFg / t.stats.oppFga;
+            const fmwt =
+                dfgPct *
+                (1 - dorPct) /
+                (dfgPct * (1 - dorPct) + (1 - dfgPct) * dorPct);
+            const stops1 =
+                p.stats.stl +
+                p.stats.blk * fmwt * (1 - 1.07 * dorPct) +
+                p.stats.drb * (1 - fmwt);
+            const stops2 =
+                ((t.stats.oppFga - t.stats.oppFg - t.stats.blk) /
+                    t.stats.min *
+                    fmwt *
+                    (1 - 1.07 * dorPct) +
+                    (t.stats.oppTov - t.stats.stl) / t.stats.min) *
+                    p.stats.min +
+                p.stats.pf /
+                    t.stats.pf *
+                    0.4 *
+                    t.stats.oppFta *
+                    (1 - t.stats.oppFt / t.stats.oppFta) ** 2;
+            const stops = stops1 + stops2;
+
+            const stopPct = stops * t.stats.min / (possessions * p.stats.min);
+            const dPtsPerScPoss =
+                t.stats.oppPts /
+                (t.stats.oppFg +
+                    (1 - (1 - t.stats.oppFt / t.stats.oppFta) ** 2) *
+                        t.stats.oppFta *
+                        0.4);
+
+            drtg[i] =
+                t.stats.drtg +
+                0.2 * (100 * dPtsPerScPoss * (1 - stopPct) - t.stats.drtg);
+
+            if (isNaN(drtg[i])) {
+                drtg[i] = 0;
+            }
+
+            // Offensive rating
+
+            ortg[i] = 50;
+        }
+    }
+
+    return {
+        drtg,
+        ortg,
+    };
+};
+
 /**
  * Calcualte the advanced stats for each active player and write them to the database.
  *
@@ -272,6 +354,7 @@ const advStats = async () => {
     // For STL%: min, stl
     // For TRB%: min, trb
     // For USG%: min, fga, fta, tov
+    // For DRtg: min, pf, blk, stl, drb
     let players = await idb.cache.players.indexGetAll("playersByTid", [
         0, // Active players have tid >= 0
         Infinity,
@@ -310,6 +393,7 @@ const advStats = async () => {
     // For STL%: min, fga, fta, orb, drb, fg, tov, oppFga, oppFta, oppOrb, oppDrb, oppFg, oppTov
     // For TRB%: min, trb, oppTrb
     // For USG%: min, fga, fta, tov
+    // For DRtg: blk, drb, drtg, min, oppFga, oppFg, oppFta, oppFt, oppOrb, oppPts, oppTov, stl
     const teams = await idb.getCopies.teamsPlus({
         attrs: ["tid"],
         stats: [
@@ -335,6 +419,11 @@ const advStats = async () => {
             "oppFg",
             "oppTov",
             "oppTrb",
+            "blk",
+            "drtg",
+            "oppFg",
+            "oppFt",
+            "stl",
         ],
         season: g.season,
         playoffs: PHASE.PLAYOFFS === g.phase,
@@ -345,6 +434,7 @@ const advStats = async () => {
     const updatedStats = {};
     Object.assign(updatedStats, calculatePER(players, teams));
     Object.assign(updatedStats, calculatePercentages(players, teams));
+    Object.assign(updatedStats, calculateRatings(players, teams));
 
     // Save to database
     const keys = Object.keys(updatedStats);

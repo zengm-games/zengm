@@ -311,7 +311,7 @@ const cols: {
         sortType: "number",
     },
     ORtg: {
-        desc: "Offensive Rating (points per 100 possessions)",
+        desc: "Offensive Rating (points produced/scored per 100 possessions)",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },

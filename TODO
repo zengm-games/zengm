@@ -1,7 +1,5 @@
 safari 11 login - maybe need FormData polyfill
 
-why so many players with ortg=0, especially early in season? probably bug
-
 advanced team stats
 - strength of schedule: https://www.pro-football-reference.com/blog/index9e6d.html?p=37&cpage=1
   - to set up this system of equations, need to know the schedule, but that is not stored anywhere currently. need to persist original schedule. maybe only soft delete games as they are played, or copy to another table?

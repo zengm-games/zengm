@@ -152,7 +152,7 @@ const calculatePercentages = (players, teams) => {
             stlp[i] =
                 100 *
                 (p.stats.stl * (t.stats.min / 5)) /
-                (p.stats.min * t.stats.pos);
+                (p.stats.min * t.stats.poss);
             trbp[i] =
                 100 *
                 (p.stats.trb * (t.stats.min / 5)) /
@@ -163,6 +163,28 @@ const calculatePercentages = (players, teams) => {
                     (t.stats.min / 5)) /
                 (p.stats.min *
                     (t.stats.fga + 0.44 * t.stats.fta + t.stats.tov));
+
+            if (isNaN(astp[i])) {
+                astp[i] = 0;
+            }
+            if (isNaN(blkp[i])) {
+                blkp[i] = 0;
+            }
+            if (isNaN(drbp[i])) {
+                drbp[i] = 0;
+            }
+            if (isNaN(orbp[i])) {
+                orbp[i] = 0;
+            }
+            if (isNaN(stlp[i])) {
+                stlp[i] = 0;
+            }
+            if (isNaN(trbp[i])) {
+                trbp[i] = 0;
+            }
+            if (isNaN(usgp[i])) {
+                usgp[i] = 0;
+            }
         }
     }
 

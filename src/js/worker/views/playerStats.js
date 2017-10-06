@@ -90,6 +90,10 @@ async function updatePlayers(
                 "usgp",
                 "drtg",
                 "ortg",
+                "dws",
+                "ows",
+                "ws",
+                "ws48",
             ],
             season: inputs.season, // If null, then show career stats!
             tid,

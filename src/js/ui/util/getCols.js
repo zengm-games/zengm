@@ -160,6 +160,11 @@ const cols: {
         sortSequence: ["asc", "desc"],
         sortType: "number",
     },
+    DWS: {
+        desc: "Defensive Win Shares",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     "Desired Contract": {
         sortSequence: ["desc", "asc"],
         sortType: "currency",
@@ -312,6 +317,11 @@ const cols: {
     },
     ORtg: {
         desc: "Offensive Rating (points produced/scored per 100 possessions)",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    OWS: {
+        desc: "Offensive Win Shares",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
@@ -473,6 +483,16 @@ const cols: {
     },
     W: {
         desc: "Wins",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    WS: {
+        desc: "Win Shares",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "WS/48": {
+        desc: "Win Shares Per 48 Minutes",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },

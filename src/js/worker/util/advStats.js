@@ -36,23 +36,17 @@ const calculatePER = (players, teams, league) => {
                 (players[i].stats.tp +
                     2 / 3 * players[i].stats.ast +
                     (2 -
-                        factor *
-                            (teams[tid].stats.ast / teams[tid].stats.fg)) *
+                        factor * (teams[tid].stats.ast / teams[tid].stats.fg)) *
                         players[i].stats.fg +
                     players[i].stats.ft *
                         0.5 *
                         (1 +
-                            (1 -
-                                teams[tid].stats.ast /
-                                    teams[tid].stats.fg) +
+                            (1 - teams[tid].stats.ast / teams[tid].stats.fg) +
                             2 /
                                 3 *
-                                (teams[tid].stats.ast /
-                                    teams[tid].stats.fg)) -
+                                (teams[tid].stats.ast / teams[tid].stats.fg)) -
                     vop * players[i].stats.tov -
-                    vop *
-                        drbp *
-                        (players[i].stats.fga - players[i].stats.fg) -
+                    vop * drbp * (players[i].stats.fga - players[i].stats.fg) -
                     vop *
                         0.44 *
                         (0.44 + 0.56 * drbp) *
@@ -97,19 +91,17 @@ const calculatePER = (players, teams, league) => {
     };
 
     for (let i = 0; i < players.length; i++) {
-        if (players[i].active) {
-            let prl;
-            if (prls.hasOwnProperty(players[i].ratings.pos)) {
-                prl = prls[players[i].ratings.pos];
-            } else {
-                // This should never happen unless someone manually enters the wrong position, which can happen in custom roster files
-                prl = 10.75;
-            }
-
-            const va = players[i].stats.min * (PER[i] - prl) / 67;
-
-            EWA[i] = va / 30 * 0.8; // 0.8 is a fudge factor to approximate the difference between (BBGM) EWA and (real) win shares
+        let prl;
+        if (prls.hasOwnProperty(players[i].ratings.pos)) {
+            prl = prls[players[i].ratings.pos];
+        } else {
+            // This should never happen unless someone manually enters the wrong position, which can happen in custom roster files
+            prl = 10.75;
         }
+
+        const va = players[i].stats.min * (PER[i] - prl) / 67;
+
+        EWA[i] = va / 30 * 0.8; // 0.8 is a fudge factor to approximate the difference between (BBGM) EWA and (real) win shares
     }
 
     return {
@@ -186,9 +178,11 @@ const calculatePercentages = (players, teams) => {
 };
 
 // https://www.basketball-reference.com/about/ratings.html
-const calculateRatings = (players, teams) => {
+const calculateRatings = (players, teams, league) => {
     const drtg = [];
+    const dws = [];
     const ortg = [];
+    const ows = [];
 
     for (let i = 0; i < players.length; i++) {
         const p = players[i];
@@ -236,9 +230,15 @@ const calculateRatings = (players, teams) => {
                 t.stats.drtg +
                 0.2 * (100 * dPtsPerscPoss * (1 - stopPct) - t.stats.drtg);
 
-            if (isNaN(drtg[i])) {
-                drtg[i] = 0;
-            }
+            // Defensive win shares
+            const marginalDefense =
+                p.stats.min /
+                t.stats.min *
+                t.stats.poss *
+                (1.08 * (league.pts / league.poss) - drtg[i] / 100);
+            const marginalPtsPerWin =
+                0.32 * (league.pts / league.gp) * (t.stats.pace / league.pace);
+            dws[i] = marginalDefense / marginalPtsPerWin;
 
             // Offensive rating
 
@@ -325,15 +325,31 @@ const calculateRatings = (players, teams) => {
 
             ortg[i] = 100 * (pProd / totPoss);
 
+            // Offensive win shares
+            const marginalOffense =
+                pProd - 0.92 * (league.pts / league.poss) * totPoss;
+            ows[i] = marginalOffense / marginalPtsPerWin;
+
+            if (isNaN(drtg[i])) {
+                drtg[i] = 0;
+            }
+            if (isNaN(dws[i])) {
+                dws[i] = 0;
+            }
             if (isNaN(ortg[i])) {
                 ortg[i] = 0;
+            }
+            if (isNaN(ows[i])) {
+                ows[i] = 0;
             }
         }
     }
 
     return {
         drtg,
+        dws,
         ortg,
+        ows,
     };
 };
 
@@ -453,6 +469,7 @@ const advStats = async () => {
         "fta",
         "trb",
         "pace",
+        "poss",
     ];
     const league = teams.reduce((memo, t) => {
         for (const key of leagueStats) {
@@ -473,10 +490,12 @@ const advStats = async () => {
         return;
     }
 
-    const updatedStats = {};
-    Object.assign(updatedStats, calculatePER(players, teams, league));
-    Object.assign(updatedStats, calculatePercentages(players, teams));
-    Object.assign(updatedStats, calculateRatings(players, teams));
+    const updatedStats = Object.assign(
+        {},
+        calculatePER(players, teams, league),
+        calculatePercentages(players, teams),
+        calculateRatings(players, teams, league),
+    );
 
     // Save to database
     const keys = Object.keys(updatedStats);

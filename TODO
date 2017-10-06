@@ -1,14 +1,6 @@
 safari 11 login - maybe need FormData polyfill
 
-win shares
-- https://www.basketball-reference.com/about/ws.html and "basketball on paper"
-- ows
-  - points produced for each player: already done in ortg, so do WS inside that function too ()
-  - offensive possessions for each player: already done in ortg (maybe centralize to teamsPlus)
-  - marginal offense for each player: league points per possession could be calculated easily from league.pts currently only in the PER function
-- dws - easy, after ows
-- ws
-- ws48
+why so many players with ortg=0, especially early in season? probably bug
 
 advanced team stats
 - strength of schedule: https://www.pro-football-reference.com/blog/index9e6d.html?p=37&cpage=1
@@ -22,7 +14,11 @@ box plus/minus
   - for "BPM_Team_Adjustment", need team net rating (off rating - def rating). The sum term needs all players who played on a team this season, even if they are no longer on the team (annoying to implement, but doable)
     - net rating needs to be adjusted for SOS!
 
-use something besides PER in player value formula?
+advanced stat table too confusing? needs vertical dividers/spacing?
+
+use something besides PER in player value formula, awards?
+
+more adv stats in league leaders, roster page?
 
 after screenshot, have links to post to twitter/reddit/discord
 

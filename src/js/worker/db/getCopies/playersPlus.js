@@ -360,6 +360,14 @@ const genStatsRow = (p, ps, stats, statType) => {
             row.drtg = ps.drtg;
         } else if (attr === "ortg") {
             row.ortg = ps.ortg;
+        } else if (attr === "dws") {
+            row.dws = ps.dws;
+        } else if (attr === "ows") {
+            row.ows = ps.ows;
+        } else if (attr === "ws") {
+            row.ws = ps.dws + ps.ows;
+        } else if (attr === "ws48") {
+            row.ws48 = (ps.dws + ps.ows) * 48 / ps.min;
         } else if (statType === "totals") {
             row[attr] = ps[attr];
         } else if (statType === "per36" && attr !== "min") {

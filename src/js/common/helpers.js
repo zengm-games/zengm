@@ -710,8 +710,8 @@ function roundWinp(winp: number): string {
     if (output[0] === "0") {
         // Delete leading 0
         output = output.slice(1, output.length);
-    } else {
-        // Delete trailing digit if no leading 0
+    } else if (output[0] !== "-") {
+        // Delete trailing digit if positive and no leading 0
         output = output.slice(0, output.length - 1);
     }
 

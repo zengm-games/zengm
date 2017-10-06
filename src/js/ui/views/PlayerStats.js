@@ -51,6 +51,14 @@ const PlayerStats = ({ abbrev, players, playoffs, season, statType }) => {
                   "Team",
                   "G",
                   "Min",
+                  "PER",
+                  "EWA",
+                  "ORtg",
+                  "DRtg",
+                  "OWS",
+                  "DWS",
+                  "WS",
+                  "WS/48",
                   "TS%",
                   "3PAr",
                   "FTr",
@@ -62,11 +70,7 @@ const PlayerStats = ({ abbrev, players, playoffs, season, statType }) => {
                   "BLK%",
                   "TOV%",
                   "USG%",
-                  "ORtg",
-                  "DRtg",
                   "+/-",
-                  "PER",
-                  "EWA",
               );
 
     // Number of decimals for many stats
@@ -124,6 +128,14 @@ const PlayerStats = ({ abbrev, players, playoffs, season, statType }) => {
                   ]
                 : [
                       Math.round(p.stats.gp * p.stats.min),
+                      p.stats.per.toFixed(d),
+                      p.stats.ewa.toFixed(d),
+                      p.stats.ortg.toFixed(d),
+                      p.stats.drtg.toFixed(d),
+                      p.stats.ows.toFixed(d),
+                      p.stats.dws.toFixed(d),
+                      p.stats.ws.toFixed(d),
+                      helpers.roundWinp(p.stats.ws48),
                       p.stats.tsp.toFixed(d),
                       p.stats.tpar.toFixed(d),
                       p.stats.ftr.toFixed(d),
@@ -135,11 +147,7 @@ const PlayerStats = ({ abbrev, players, playoffs, season, statType }) => {
                       p.stats.blkp.toFixed(d),
                       p.stats.tovp.toFixed(d),
                       p.stats.usgp.toFixed(d),
-                      p.stats.ortg.toFixed(d),
-                      p.stats.drtg.toFixed(d),
                       helpers.plusMinus(p.stats.pm, d),
-                      p.stats.per.toFixed(d),
-                      p.stats.ewa.toFixed(d),
                   ];
 
         return {

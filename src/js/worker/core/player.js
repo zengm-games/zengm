@@ -1079,6 +1079,8 @@ async function addStatsRow(p: Player, playoffs?: boolean = false) {
         stlp: 0,
         trbp: 0,
         usgp: 0,
+        drtg: 0,
+        ortg: 0,
     };
 
     p.statsTids.push(p.tid);

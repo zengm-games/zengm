@@ -309,7 +309,7 @@ const calculateRatings = (players, teams) => {
             const stops = stops1 + stops2;
 
             const stopPct = stops * t.stats.min / (possessions * p.stats.min);
-            const dPtsPerScPoss =
+            const dPtsPerscPoss =
                 t.stats.oppPts /
                 (t.stats.oppFg +
                     (1 - (1 - t.stats.oppFt / t.stats.oppFta) ** 2) *
@@ -318,7 +318,7 @@ const calculateRatings = (players, teams) => {
 
             drtg[i] =
                 t.stats.drtg +
-                0.2 * (100 * dPtsPerScPoss * (1 - stopPct) - t.stats.drtg);
+                0.2 * (100 * dPtsPerscPoss * (1 - stopPct) - t.stats.drtg);
 
             if (isNaN(drtg[i])) {
                 drtg[i] = 0;
@@ -326,7 +326,92 @@ const calculateRatings = (players, teams) => {
 
             // Offensive rating
 
-            ortg[i] = 50;
+            const qAst =
+                p.stats.min /
+                    (t.stats.min / 5) *
+                    (1.14 * ((t.stats.ast - p.stats.ast) / t.stats.fg)) +
+                (t.stats.ast / t.stats.min * p.stats.min * 5 - p.stats.ast) /
+                    (t.stats.fg / t.stats.min * p.stats.min * 5 - p.stats.fg) *
+                    (1 - p.stats.min / (t.stats.min / 5));
+            const fgPart =
+                p.stats.fg *
+                (1 -
+                    0.5 *
+                        ((p.stats.pts - p.stats.ft) / (2 * p.stats.fga)) *
+                        qAst);
+            const astPart =
+                0.5 *
+                ((t.stats.pts - t.stats.ft - (p.stats.pts - p.stats.ft)) /
+                    (2 * (t.stats.fga - p.stats.fga))) *
+                p.stats.ast;
+            const ftPart =
+                (1 - (1 - p.stats.ft / p.stats.fta) ** 2) * 0.4 * p.stats.fta;
+            const teamScoringPoss =
+                t.stats.fg +
+                (1 - (1 - t.stats.ft / t.stats.fta) ** 2) * t.stats.fta * 0.4;
+            const teamOrbPct = t.stats.orb / (t.stats.orb + t.stats.oppDrb);
+            const teamPlayPct =
+                teamScoringPoss /
+                (t.stats.fga + t.stats.fta * 0.4 + t.stats.tov);
+            const teamOrbWeight =
+                (1 - teamOrbPct) *
+                teamPlayPct /
+                ((1 - teamOrbPct) * teamPlayPct +
+                    teamOrbPct * (1 - teamPlayPct));
+            const orbPart = p.stats.orb * teamOrbWeight * teamPlayPct;
+            const scPoss =
+                (fgPart + astPart + ftPart) *
+                    (1 -
+                        t.stats.orb /
+                            teamScoringPoss *
+                            teamOrbWeight *
+                            teamPlayPct) +
+                orbPart;
+
+            const fgxPoss =
+                (p.stats.fga - p.stats.fg) * (1 - 1.07 * teamOrbPct);
+            const ftxPoss =
+                (1 - p.stats.ft / p.stats.fta) ** 2 * 0.4 * p.stats.fta;
+            const totPoss = scPoss + fgxPoss + ftxPoss + p.stats.tov;
+
+            const pProdFgPart =
+                2 *
+                (p.stats.fg + 0.5 * p.stats.tp) *
+                (1 -
+                    0.5 *
+                        ((p.stats.pts - p.stats.ft) / (2 * p.stats.fga)) *
+                        qAst);
+            const pProdAstPart =
+                2 *
+                ((t.stats.fg - p.stats.fg + 0.5 * (t.stats.tp - p.stats.tp)) /
+                    (t.stats.fg - p.stats.fg)) *
+                0.5 *
+                ((t.stats.pts - t.stats.ft - (p.stats.pts - p.stats.ft)) /
+                    (2 * (t.stats.fga - p.stats.fga))) *
+                p.stats.ast;
+            const pProdOrbPart =
+                p.stats.orb *
+                teamOrbWeight *
+                teamPlayPct *
+                (t.stats.pts /
+                    (t.stats.fg +
+                        (1 - (1 - t.stats.ft / t.stats.fta) ** 2) *
+                            0.4 *
+                            t.stats.fta));
+            const pProd =
+                (pProdFgPart + pProdAstPart + p.stats.ft) *
+                    (1 -
+                        t.stats.orb /
+                            teamScoringPoss *
+                            teamOrbWeight *
+                            teamPlayPct) +
+                pProdOrbPart;
+
+            ortg[i] = 100 * (pProd / totPoss);
+
+            if (isNaN(ortg[i])) {
+                ortg[i] = 0;
+            }
         }
     }
 
@@ -355,6 +440,7 @@ const advStats = async () => {
     // For TRB%: min, trb
     // For USG%: min, fga, fta, tov
     // For DRtg: min, pf, blk, stl, drb
+    // For Ortg: min, tp, ast, fg, pts, ft, fga, fta, orb
     let players = await idb.cache.players.indexGetAll("playersByTid", [
         0, // Active players have tid >= 0
         Infinity,
@@ -376,6 +462,7 @@ const advStats = async () => {
             "blk",
             "pf",
             "drb",
+            "pts",
         ],
         ratings: ["pos"],
         season: g.season,
@@ -394,6 +481,7 @@ const advStats = async () => {
     // For TRB%: min, trb, oppTrb
     // For USG%: min, fga, fta, tov
     // For DRtg: blk, drb, drtg, min, oppFga, oppFg, oppFta, oppFt, oppOrb, oppPts, oppTov, stl
+    // For Ortg: min, pts, ft, fg, fga, fta, ast, oppDrb, orb, tp, tov
     const teams = await idb.getCopies.teamsPlus({
         attrs: ["tid"],
         stats: [
@@ -424,6 +512,7 @@ const advStats = async () => {
             "oppFg",
             "oppFt",
             "stl",
+            "tp",
         ],
         season: g.season,
         playoffs: PHASE.PLAYOFFS === g.phase,

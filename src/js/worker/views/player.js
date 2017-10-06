@@ -122,6 +122,8 @@ async function updatePlayer(
                 "stlp",
                 "tovp",
                 "usgp",
+                "drtg",
+                "ortg",
             ],
             playoffs: true,
             showRookies: true,

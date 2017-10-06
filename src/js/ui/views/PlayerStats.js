@@ -123,7 +123,7 @@ const PlayerStats = ({ abbrev, players, playoffs, season, statType }) => {
                       p.stats.pts.toFixed(d),
                   ]
                 : [
-                      Math.round(p.stats.min),
+                      Math.round(p.stats.gp * p.stats.min),
                       p.stats.tsp.toFixed(d),
                       p.stats.tpar.toFixed(d),
                       p.stats.ftr.toFixed(d),

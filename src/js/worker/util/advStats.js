@@ -4,28 +4,14 @@ import _ from "underscore";
 import { PHASE, g } from "../../common";
 import { idb } from "../db";
 
-/**
- * Calcualte the current season's Player Efficiency Rating (PER) for each active player and write it to the database.
- *
- * This is based on http://www.basketball-reference.com/about/per.html
- *
- * In the playoffs, only playoff stats are used.
- *
- * @memberOf util.advStats
- * @return {Promise}
- */
+// http://www.basketball-reference.com/about/per.html
 const calculatePER = (players, teams, league) => {
-    // Calculate pace for each team, using the "estimated pace adjustment" formula rather than the "pace adjustment" formula because it's simpler and ends up at nearly the same result. To do this the real way, I'd probably have to store the number of possessions from core.gameSim.
     for (const t of teams) {
-        //estimated pace adjustment = 2 * lg_PPG / (team_PPG + opp_PPG)
-        t.pace =
-            2 *
-            (league.pts / league.gp) /
-            (t.stats.pts / t.stats.gp + t.stats.oppPts / t.stats.gp);
+        t.stats.paceAdj = league.pace / t.stats.pace;
 
         // Handle divide by 0 error
-        if (isNaN(t.pace)) {
-            t.pace = 1;
+        if (isNaN(t.stats.paceAdj)) {
+            t.stats.paceAdj = 1;
         }
     }
 
@@ -92,15 +78,14 @@ const calculatePER = (players, teams, league) => {
                 uPER = 0;
             }
 
-            aPER[i] = teams[tid].pace * uPER;
+            aPER[i] = teams[tid].stats.paceAdj * uPER;
             league.aPER += aPER[i] * players[i].stats.min;
 
             mins[i] = players[i].stats.min; // Save for EWA calculation
         }
     }
 
-    const minFactor = g.quarterLength / 12;
-    league.aPER /= league.gp * 5 * 48 * minFactor;
+    league.aPER /= league.gp * 5 * 4 * g.quarterLength;
 
     const PER = aPER.map(num => num * (15 / league.aPER));
 
@@ -412,7 +397,7 @@ const advStats = async () => {
     });
 
     // Total team stats (not per game averages)
-    // For PER: gp, ft, pf, ast, fg, pts, fga, orb, tov, fta, trb, oppPts
+    // For PER: gp, ft, pf, ast, fg, pts, fga, orb, tov, fta, trb, oppPts, pace
     // For AST%: min, fg
     // For BLK%: min, oppFga, oppTpa
     // For DRB%: min, drb, oppOrb
@@ -437,6 +422,7 @@ const advStats = async () => {
             "fta",
             "trb",
             "oppPts",
+            "pace",
             "min",
             "oppFga",
             "oppTpa",
@@ -475,6 +461,7 @@ const advStats = async () => {
         "tov",
         "fta",
         "trb",
+        "pace",
     ];
     const league = teams.reduce((memo, t) => {
         for (const key of leagueStats) {
@@ -486,6 +473,9 @@ const advStats = async () => {
         }
         return memo;
     }, {});
+
+    // Special case for pace - average of all teams. This is slightly wrong due to overtime and different numbers of games played, but by the end of the season the difference should be really small.
+    league.pace /= g.numTeams;
 
     // If no games have been played, somehow, don't continue. But why would no games be played? I don't know, but it happens some times.
     if (league.gp === 0) {

@@ -6,7 +6,6 @@ win shares
   - points produced for each player: already done in ortg, so do WS inside that function too ()
   - offensive possessions for each player: already done in ortg (maybe centralize to teamsPlus)
   - marginal offense for each player: league points per possession could be calculated easily from league.pts currently only in the PER function
-  - marginal points per win: team pace is faked in PER - switch to real pace from teamsPlus!
 - dws - easy, after ows
 - ws
 - ws48

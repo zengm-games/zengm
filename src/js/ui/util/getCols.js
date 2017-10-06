@@ -157,7 +157,7 @@ const cols: {
     },
     DRtg: {
         desc: "Defensive Rating (points allowed per 100 possessions)",
-        sortSequence: ["desc", "asc"],
+        sortSequence: ["asc", "desc"],
         sortType: "number",
     },
     "Desired Contract": {

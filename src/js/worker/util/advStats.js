@@ -1,6 +1,5 @@
 // @flow
 
-import _ from "underscore";
 import { PHASE, g } from "../../common";
 import { idb } from "../db";
 
@@ -21,68 +20,60 @@ const calculatePER = (players, teams, league) => {
     for (let i = 0; i < players.length; i++) {
         const tid = players[i].tid;
 
-        // In the playoffs, only look at active players (aka players with stats)
-        players[i].active =
-            PHASE.PLAYOFFS !== g.phase ||
-            (PHASE.PLAYOFFS === g.phase && !_.isEmpty(players[i].stats));
+        const factor =
+            2 / 3 -
+            0.5 * (league.ast / league.fg) / (2 * (league.fg / league.ft));
+        const vop =
+            league.pts /
+            (league.fga - league.orb + league.tov + 0.44 * league.fta);
+        const drbp = (league.trb - league.orb) / league.trb; // DRB%
 
-        if (players[i].active) {
-            // No need to calculate for non-active players
-            const factor =
-                2 / 3 -
-                0.5 * (league.ast / league.fg) / (2 * (league.fg / league.ft));
-            const vop =
-                league.pts /
-                (league.fga - league.orb + league.tov + 0.44 * league.fta);
-            const drbp = (league.trb - league.orb) / league.trb; // DRB%
-
-            let uPER;
-            if (players[i].stats.min > 0) {
-                uPER =
-                    1 /
-                    players[i].stats.min *
-                    (players[i].stats.tp +
-                        2 / 3 * players[i].stats.ast +
-                        (2 -
-                            factor *
-                                (teams[tid].stats.ast / teams[tid].stats.fg)) *
-                            players[i].stats.fg +
-                        players[i].stats.ft *
-                            0.5 *
-                            (1 +
-                                (1 -
-                                    teams[tid].stats.ast /
-                                        teams[tid].stats.fg) +
-                                2 /
-                                    3 *
-                                    (teams[tid].stats.ast /
-                                        teams[tid].stats.fg)) -
-                        vop * players[i].stats.tov -
-                        vop *
-                            drbp *
-                            (players[i].stats.fga - players[i].stats.fg) -
-                        vop *
-                            0.44 *
-                            (0.44 + 0.56 * drbp) *
-                            (players[i].stats.fta - players[i].stats.ft) +
-                        vop *
-                            (1 - drbp) *
-                            (players[i].stats.trb - players[i].stats.orb) +
-                        vop * drbp * players[i].stats.orb +
-                        vop * players[i].stats.stl +
-                        vop * drbp * players[i].stats.blk -
-                        players[i].stats.pf *
-                            (league.ft / league.pf -
-                                0.44 * (league.fta / league.pf) * vop));
-            } else {
-                uPER = 0;
-            }
-
-            aPER[i] = teams[tid].stats.paceAdj * uPER;
-            league.aPER += aPER[i] * players[i].stats.min;
-
-            mins[i] = players[i].stats.min; // Save for EWA calculation
+        let uPER;
+        if (players[i].stats.min > 0) {
+            uPER =
+                1 /
+                players[i].stats.min *
+                (players[i].stats.tp +
+                    2 / 3 * players[i].stats.ast +
+                    (2 -
+                        factor *
+                            (teams[tid].stats.ast / teams[tid].stats.fg)) *
+                        players[i].stats.fg +
+                    players[i].stats.ft *
+                        0.5 *
+                        (1 +
+                            (1 -
+                                teams[tid].stats.ast /
+                                    teams[tid].stats.fg) +
+                            2 /
+                                3 *
+                                (teams[tid].stats.ast /
+                                    teams[tid].stats.fg)) -
+                    vop * players[i].stats.tov -
+                    vop *
+                        drbp *
+                        (players[i].stats.fga - players[i].stats.fg) -
+                    vop *
+                        0.44 *
+                        (0.44 + 0.56 * drbp) *
+                        (players[i].stats.fta - players[i].stats.ft) +
+                    vop *
+                        (1 - drbp) *
+                        (players[i].stats.trb - players[i].stats.orb) +
+                    vop * drbp * players[i].stats.orb +
+                    vop * players[i].stats.stl +
+                    vop * drbp * players[i].stats.blk -
+                    players[i].stats.pf *
+                        (league.ft / league.pf -
+                            0.44 * (league.fta / league.pf) * vop));
+        } else {
+            uPER = 0;
         }
+
+        aPER[i] = teams[tid].stats.paceAdj * uPER;
+        league.aPER += aPER[i] * players[i].stats.min;
+
+        mins[i] = players[i].stats.min; // Save for EWA calculation
     }
 
     league.aPER /= league.gp * 5 * 4 * g.quarterLength;
@@ -491,10 +482,6 @@ const advStats = async () => {
     const keys = Object.keys(updatedStats);
     await Promise.all(
         players.map(async (p, i) => {
-            if (!p.active) {
-                return;
-            }
-
             const ps = await idb.cache.playerStats.indexGet(
                 "playerStatsByPid",
                 p.pid,

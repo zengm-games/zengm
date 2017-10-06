@@ -165,21 +165,6 @@ const calculatePercentages = (players, teams) => {
             trbp[i] = 0;
             usgp[i] = 0;
         } else {
-            const possessions =
-                0.5 *
-                (t.stats.fga +
-                    0.4 * t.stats.fta -
-                    1.07 *
-                        (t.stats.orb / (t.stats.orb + t.stats.oppDrb)) *
-                        (t.stats.fga - t.stats.fg) +
-                    t.stats.tov +
-                    (t.stats.oppFga +
-                        0.4 * t.stats.oppFta -
-                        1.07 *
-                            (t.stats.oppOrb / (t.stats.oppOrb + t.stats.drb)) *
-                            (t.stats.oppFga - t.stats.oppFg) +
-                        t.stats.oppTov));
-
             astp[i] =
                 100 *
                 p.stats.ast /
@@ -199,7 +184,7 @@ const calculatePercentages = (players, teams) => {
             stlp[i] =
                 100 *
                 (p.stats.stl * (t.stats.min / 5)) /
-                (p.stats.min * possessions);
+                (p.stats.min * t.stats.pos);
             trbp[i] =
                 100 *
                 (p.stats.trb * (t.stats.min / 5)) /
@@ -237,21 +222,6 @@ const calculateRatings = (players, teams) => {
             drtg[i] = 0;
             ortg[i] = 0;
         } else {
-            const possessions =
-                0.5 *
-                (t.stats.fga +
-                    0.4 * t.stats.fta -
-                    1.07 *
-                        (t.stats.orb / (t.stats.orb + t.stats.oppDrb)) *
-                        (t.stats.fga - t.stats.fg) +
-                    t.stats.tov +
-                    (t.stats.oppFga +
-                        0.4 * t.stats.oppFta -
-                        1.07 *
-                            (t.stats.oppOrb / (t.stats.oppOrb + t.stats.drb)) *
-                            (t.stats.oppFga - t.stats.oppFg) +
-                        t.stats.oppTov));
-
             // Defensive rating
 
             const dorPct = t.stats.oppOrb / (t.stats.oppOrb + t.stats.drb);
@@ -278,7 +248,7 @@ const calculateRatings = (players, teams) => {
                     (1 - t.stats.oppFt / t.stats.oppFta) ** 2;
             const stops = stops1 + stops2;
 
-            const stopPct = stops * t.stats.min / (possessions * p.stats.min);
+            const stopPct = stops * t.stats.min / (t.stats.poss * p.stats.min);
             const dPtsPerscPoss =
                 t.stats.oppPts /
                 (t.stats.oppFg +
@@ -447,11 +417,11 @@ const advStats = async () => {
     // For BLK%: min, oppFga, oppTpa
     // For DRB%: min, drb, oppOrb
     // For ORB%: min, orb, oppDrb
-    // For STL%: min, fga, fta, orb, drb, fg, tov, oppFga, oppFta, oppOrb, oppDrb, oppFg, oppTov
+    // For STL%: min, stl, poss
     // For TRB%: min, trb, oppTrb
     // For USG%: min, fga, fta, tov
-    // For DRtg: blk, drb, drtg, min, oppFga, oppFg, oppFta, oppFt, oppOrb, oppPts, oppTov, stl
-    // For Ortg: min, pts, ft, fg, fga, fta, ast, oppDrb, orb, tp, tov
+    // For DRtg: blk, drb, drtg, min, oppFga, oppFg, oppFta, oppFt, oppOrb, oppPts, oppTov, stl, poss
+    // For Ortg: min, pts, ft, fg, fga, fta, ast, oppDrb, orb, tp, tov, poss
     const teams = await idb.getCopies.teamsPlus({
         attrs: ["tid"],
         stats: [
@@ -483,6 +453,7 @@ const advStats = async () => {
             "oppFt",
             "stl",
             "tp",
+            "poss",
         ],
         season: g.season,
         playoffs: PHASE.PLAYOFFS === g.phase,

@@ -351,6 +351,8 @@ const processStats = async (
                     } else {
                         row.pace = 0;
                     }
+                } else if (stat === "poss") {
+                    row.poss = poss(ts);
                 } else if (stat === "tpar") {
                     if (ts.fga > 0) {
                         row.tpar = 100 * ts.tpa / ts.fga;

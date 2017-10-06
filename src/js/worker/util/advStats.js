@@ -14,37 +14,7 @@ import { idb } from "../db";
  * @memberOf util.advStats
  * @return {Promise}
  */
-const calculatePER = (players, teams) => {
-    // Total league stats (not per game averages) - gp, ft, pf, ast, fg, pts, fga, orb, tov, fta, trb
-    const leagueStats = [
-        "gp",
-        "ft",
-        "pf",
-        "ast",
-        "fg",
-        "pts",
-        "fga",
-        "orb",
-        "tov",
-        "fta",
-        "trb",
-    ];
-    const league = teams.reduce((memo, t) => {
-        for (let i = 0; i < leagueStats.length; i++) {
-            if (memo.hasOwnProperty(leagueStats[i])) {
-                memo[leagueStats[i]] += t.stats[leagueStats[i]];
-            } else {
-                memo[leagueStats[i]] = t.stats[leagueStats[i]];
-            }
-        }
-        return memo;
-    }, {});
-
-    // If no games have been played, somehow, don't continue. But why would no games be played? I don't know, but it happens some times.
-    if (league.gp === 0) {
-        return;
-    }
-
+const calculatePER = (players, teams, league) => {
     // Calculate pace for each team, using the "estimated pace adjustment" formula rather than the "pace adjustment" formula because it's simpler and ends up at nearly the same result. To do this the real way, I'd probably have to store the number of possessions from core.gameSim.
     for (const t of teams) {
         //estimated pace adjustment = 2 * lg_PPG / (team_PPG + opp_PPG)
@@ -520,8 +490,39 @@ const advStats = async () => {
         statType: "totals",
     });
 
+    // Total league stats (not per game averages)
+    // For PER: gp, ft, pf, ast, fg, pts, fga, orb, tov, fta, trb
+    const leagueStats = [
+        "gp",
+        "ft",
+        "pf",
+        "ast",
+        "fg",
+        "pts",
+        "fga",
+        "orb",
+        "tov",
+        "fta",
+        "trb",
+    ];
+    const league = teams.reduce((memo, t) => {
+        for (const key of leagueStats) {
+            if (memo.hasOwnProperty(key)) {
+                memo[key] += t.stats[key];
+            } else {
+                memo[key] = t.stats[key];
+            }
+        }
+        return memo;
+    }, {});
+
+    // If no games have been played, somehow, don't continue. But why would no games be played? I don't know, but it happens some times.
+    if (league.gp === 0) {
+        return;
+    }
+
     const updatedStats = {};
-    Object.assign(updatedStats, calculatePER(players, teams));
+    Object.assign(updatedStats, calculatePER(players, teams, league));
     Object.assign(updatedStats, calculatePercentages(players, teams));
     Object.assign(updatedStats, calculateRatings(players, teams));
 

@@ -102,11 +102,12 @@ const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
                     {t.abbrev}
                 </a>
             ),
+            gp: t.stats.gp,
             won: t.seasonAttrs.won,
             lost: t.seasonAttrs.lost,
         };
-        if (teamOpponent !== "advanced") {
-            data.gp = t.stats.gp;
+        if (teamOpponent === "advanced") {
+            delete data.gp;
         }
 
         for (const statType of statTypeColumns) {

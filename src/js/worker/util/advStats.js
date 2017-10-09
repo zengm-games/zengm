@@ -164,25 +164,25 @@ const calculatePercentages = (players, teams) => {
                 (p.stats.min *
                     (t.stats.fga + 0.44 * t.stats.fta + t.stats.tov));
 
-            if (isNaN(astp[i])) {
+            if (isNaN(astp[i]) || astp[i] === Infinity) {
                 astp[i] = 0;
             }
-            if (isNaN(blkp[i])) {
+            if (isNaN(blkp[i]) || blkp[i] === Infinity) {
                 blkp[i] = 0;
             }
-            if (isNaN(drbp[i])) {
+            if (isNaN(drbp[i]) || drbp[i] === Infinity) {
                 drbp[i] = 0;
             }
-            if (isNaN(orbp[i])) {
+            if (isNaN(orbp[i]) || orbp[i] === Infinity) {
                 orbp[i] = 0;
             }
-            if (isNaN(stlp[i])) {
+            if (isNaN(stlp[i]) || stlp[i] === Infinity) {
                 stlp[i] = 0;
             }
-            if (isNaN(trbp[i])) {
+            if (isNaN(trbp[i]) || trbp[i] === Infinity) {
                 trbp[i] = 0;
             }
-            if (isNaN(usgp[i])) {
+            if (isNaN(usgp[i]) || usgp[i] === Infinity) {
                 usgp[i] = 0;
             }
         }
@@ -352,16 +352,16 @@ const calculateRatings = (players, teams, league) => {
                 pProd - 0.92 * (league.pts / league.poss) * totPoss;
             ows[i] = marginalOffense / marginalPtsPerWin;
 
-            if (isNaN(drtg[i])) {
+            if (isNaN(drtg[i]) || drtg === Infinity) {
                 drtg[i] = 0;
             }
-            if (isNaN(dws[i])) {
+            if (isNaN(dws[i]) || dws === Infinity) {
                 dws[i] = 0;
             }
-            if (isNaN(ortg[i])) {
+            if (isNaN(ortg[i]) || ortg === Infinity) {
                 ortg[i] = 0;
             }
-            if (isNaN(ows[i])) {
+            if (isNaN(ows[i]) || ows === Infinity) {
                 ows[i] = 0;
             }
         }

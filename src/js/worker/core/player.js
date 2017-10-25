@@ -495,7 +495,7 @@ function develop(
     let age = g.season - p.born.year;
 
     for (let i = 0; i < years; i++) {
-        age += 1;
+        
 
         // Randomly make a big jump
         if (Math.random() > 0.985 && age <= 23) {
@@ -586,7 +586,11 @@ function develop(
         if (p.ratings[r].ovr > p.ratings[r].pot || age > 28) {
             p.ratings[r].pot = p.ratings[r].ovr;
         }
+        //Update player age
+        age += 1;
     }
+    //Age is currently 1 higher than the player's actual age, so decrement age outside the loop
+    age -= 1;
 
     // If this isn't here outside the loop, then 19 year old players could still have ovr > pot
     if (p.ratings[r].ovr > p.ratings[r].pot || age > 28) {

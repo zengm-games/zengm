@@ -93,11 +93,11 @@ IF THE DISCLAIMER AND DAMAGE WAIVER MENTIONED IN SECTION 5 AND SECTION 6 CANNOT 
 
 ## You
 
-Date: 10/24/2017
-Name: Spencer Sharp
-GitHub Username: SpencerSharp
-Email: ultimatesc2@gmail.com
-Address: 12612 Rush Creek Ln
+Date: 
+Name: 
+GitHub Username: 
+Email: 
+Address: 
 
 ## Us 
 

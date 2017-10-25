@@ -93,11 +93,11 @@ IF THE DISCLAIMER AND DAMAGE WAIVER MENTIONED IN SECTION 5 AND SECTION 6 CANNOT 
 
 ## You
 
-Date: **DateHere**  
-Name: **YourNameHere**  
-GitHub Username: **GitHubUsernameHere**  
-Email: **YourEmailAddressHere**  
-Address: **YourAddressHere**
+Date: 10/24/2017
+Name: Spencer Sharp
+GitHub Username: SpencerSharp
+Email: ultimatesc2@gmail.com
+Address: 12612 Rush Creek Ln
 
 ## Us 
 

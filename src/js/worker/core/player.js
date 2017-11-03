@@ -495,7 +495,10 @@ function develop(
     let age = g.season - p.born.year;
 
     for (let i = 0; i < years; i++) {
-        age += 1;
+        // (CONFUSING!) Don't increment age for existing players developing one season (i.e. newPhasePreseason) because the season is already incremented before this function is called. But in other scenarios (new league and draft picks), the season is not changing, so age should be incremented every iteration of this loop.
+        if (newPlayer || years > 1) {
+            age += 1;
+        }
 
         // Randomly make a big jump
         if (Math.random() > 0.985 && age <= 23) {
@@ -597,7 +600,6 @@ function develop(
     p.ratings[r].skills = skills(p.ratings[r]);
 
     if (newPlayer) {
-        age = g.season - p.born.year + years;
         p.born.year = g.season - age;
     }
 

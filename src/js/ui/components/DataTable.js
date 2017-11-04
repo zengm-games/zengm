@@ -232,7 +232,20 @@ const getSortVal = (value = null, sortType) => {
                 return null;
             }
             const parts = sortVal.split(" (")[0].split(" ");
-            return parts[parts.length - 1];
+
+            const lastName = parts[parts.length - 1];
+
+            // For "Bob Smith Jr." and similar names, return "Smith" not "Jr."
+            const suffixes = ["Jr", "Jr.", "Sr", "Sr."];
+            if (
+                parts.length > 2 &&
+                (suffixes.includes(lastName) ||
+                    lastName === lastName.toUpperCase())
+            ) {
+                return parts[parts.length - 2];
+            }
+
+            return lastName;
         }
         if (sortType === "currency") {
             if (sortVal === null) {

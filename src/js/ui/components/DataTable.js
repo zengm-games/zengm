@@ -236,6 +236,7 @@ const getSortVal = (value = null, sortType) => {
             const lastName = parts[parts.length - 1];
 
             // For "Bob Smith Jr." and similar names, return "Smith" not "Jr."
+            // Eventually should probably unify this with the code in tools/names.js
             const suffixes = ["Jr", "Jr.", "Sr", "Sr."];
             if (
                 parts.length > 2 &&

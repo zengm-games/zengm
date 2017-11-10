@@ -79,7 +79,11 @@ const genPage = (id, inLeague = true) => {
 
     await toWorker("init", env);
 
-    ReactDOM.render(<Controller />, document.getElementById("content"));
+    const contentEl = document.getElementById("content");
+    if (!contentEl) {
+        throw new Error('Could not find element with id "content"');
+    }
+    ReactDOM.render(<Controller />, contentEl);
 
     /*this.before((ctx) => {
             // Normal Cordova pages

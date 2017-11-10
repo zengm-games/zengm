@@ -85,7 +85,7 @@ const initAds = (goldUntil: number | void) => {
 
 // Should only be called from Shared Worker, to move other tabs to new league because only one can be open at a time
 const newLid = async (lid: number) => {
-    const parts = location.pathname.split("/");
+    const parts = window.location.pathname.split("/");
     if (parseInt(parts[2], 10) !== lid) {
         parts[2] = String(lid);
         const newPathname = parts.join("/");

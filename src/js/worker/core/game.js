@@ -138,10 +138,10 @@ async function writeTeamStats(results: GameResults) {
             }
 
             // It should never happen, but winp and winpOld sometimes turn up as NaN due to a duplicate season entry or the user skipping seasons
-            if (isNaN(winp)) {
+            if (Number.isNaN(winp)) {
                 winp = 0;
             }
-            if (isNaN(winpOld)) {
+            if (Number.isNaN(winpOld)) {
                 winpOld = 0;
             }
 

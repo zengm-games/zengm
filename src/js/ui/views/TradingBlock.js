@@ -183,7 +183,6 @@ class TradingBlock extends React.Component {
         this.state = {
             asking: false,
             offers: [],
-            progress: 0,
             pids: [],
             dpids: [],
         };

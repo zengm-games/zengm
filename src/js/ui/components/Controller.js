@@ -174,7 +174,7 @@ class Controller extends React.Component<{}, State> {
                     ? ctx.bbgm.updateEvents
                     : [];
             const newLidInt = parseInt(ctx.params.lid, 10);
-            const newLid = isNaN(newLidInt) ? undefined : newLidInt;
+            const newLid = Number.isNaN(newLidInt) ? undefined : newLidInt;
 
             await (args.inLeague
                 ? toWorker("beforeViewLeague", newLid, this.state.topMenu.lid)

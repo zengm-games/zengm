@@ -9,7 +9,7 @@ const calculatePER = (players, teams, league) => {
         t.stats.paceAdj = league.pace / t.stats.pace;
 
         // Handle divide by 0 error
-        if (isNaN(t.stats.paceAdj)) {
+        if (Number.isNaN(t.stats.paceAdj)) {
             t.stats.paceAdj = 1;
         }
     }
@@ -164,25 +164,25 @@ const calculatePercentages = (players, teams) => {
                 (p.stats.min *
                     (t.stats.fga + 0.44 * t.stats.fta + t.stats.tov));
 
-            if (isNaN(astp[i]) || astp[i] === Infinity) {
+            if (Number.isNaN(astp[i]) || astp[i] === Infinity) {
                 astp[i] = 0;
             }
-            if (isNaN(blkp[i]) || blkp[i] === Infinity) {
+            if (Number.isNaN(blkp[i]) || blkp[i] === Infinity) {
                 blkp[i] = 0;
             }
-            if (isNaN(drbp[i]) || drbp[i] === Infinity) {
+            if (Number.isNaN(drbp[i]) || drbp[i] === Infinity) {
                 drbp[i] = 0;
             }
-            if (isNaN(orbp[i]) || orbp[i] === Infinity) {
+            if (Number.isNaN(orbp[i]) || orbp[i] === Infinity) {
                 orbp[i] = 0;
             }
-            if (isNaN(stlp[i]) || stlp[i] === Infinity) {
+            if (Number.isNaN(stlp[i]) || stlp[i] === Infinity) {
                 stlp[i] = 0;
             }
-            if (isNaN(trbp[i]) || trbp[i] === Infinity) {
+            if (Number.isNaN(trbp[i]) || trbp[i] === Infinity) {
                 trbp[i] = 0;
             }
-            if (isNaN(usgp[i]) || usgp[i] === Infinity) {
+            if (Number.isNaN(usgp[i]) || usgp[i] === Infinity) {
                 usgp[i] = 0;
             }
         }
@@ -352,16 +352,16 @@ const calculateRatings = (players, teams, league) => {
                 pProd - 0.92 * (league.pts / league.poss) * totPoss;
             ows[i] = marginalOffense / marginalPtsPerWin;
 
-            if (isNaN(drtg[i]) || drtg === Infinity) {
+            if (Number.isNaN(drtg[i]) || drtg === Infinity) {
                 drtg[i] = 0;
             }
-            if (isNaN(dws[i]) || dws === Infinity) {
+            if (Number.isNaN(dws[i]) || dws === Infinity) {
                 dws[i] = 0;
             }
-            if (isNaN(ortg[i]) || ortg === Infinity) {
+            if (Number.isNaN(ortg[i]) || ortg === Infinity) {
                 ortg[i] = 0;
             }
-            if (isNaN(ows[i]) || ows === Infinity) {
+            if (Number.isNaN(ows[i]) || ows === Infinity) {
                 ows[i] = 0;
             }
         }
@@ -529,7 +529,7 @@ const advStats = async () => {
             );
             for (const key of keys) {
                 // ***p stats could be NaN for upgraded leagues
-                if (!isNaN(updatedStats[key][i])) {
+                if (!Number.isNaN(updatedStats[key][i])) {
                     ps[key] = updatedStats[key][i];
                 }
             }

@@ -50,7 +50,6 @@ class Trade extends React.Component {
         this.state = {
             accepted: false,
             asking: false,
-            askMessage: null,
             forceTrade: false,
             message: null,
         };

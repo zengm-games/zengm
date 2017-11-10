@@ -41,7 +41,7 @@ function validateAbbrev(abbrev: string): [number, string] {
 function validateTid(tid: number | string): [number, string] {
     tid = parseInt(tid, 10);
 
-    if (tid < 0 || tid >= g.teamAbbrevsCache.length || isNaN(tid)) {
+    if (tid < 0 || tid >= g.teamAbbrevsCache.length || Number.isNaN(tid)) {
         tid = g.userTid;
     }
     const abbrev = g.teamAbbrevsCache[tid];
@@ -64,7 +64,7 @@ function getAbbrev(tid: number | string): string {
     if (tid === PLAYER.FREE_AGENT) {
         return "FA";
     }
-    if (tid < 0 || isNaN(tid)) {
+    if (tid < 0 || Number.isNaN(tid)) {
         // Draft prospect or retired
         return "";
     }
@@ -90,7 +90,7 @@ function validateSeason(season?: number | string): number {
 
     season = parseInt(season, 10);
 
-    if (isNaN(season)) {
+    if (Number.isNaN(season)) {
         return g.season;
     }
 
@@ -614,7 +614,7 @@ function gameScore(arg: { [key: string]: number }): string {
 }
 
 function plusMinus(arg: number, d: number): string {
-    if (isNaN(arg)) {
+    if (Number.isNaN(arg)) {
         return "";
     }
     return (arg > 0 ? "+" : "") + arg.toFixed(d);

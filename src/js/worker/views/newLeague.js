@@ -16,7 +16,7 @@ async function updateNewLeague(): void | { [key: string]: any } {
     }
 
     let lastSelectedTid = await idb.meta.attributes.get("lastSelectedTid");
-    if (isNaN(lastSelectedTid)) {
+    if (typeof lastSelectedTid !== "number" || Number.isNaN(lastSelectedTid)) {
         lastSelectedTid = -1;
     }
 

@@ -202,7 +202,7 @@ const BarGraph = ({
                 />
             );
 
-            if (typeof val === "number" && !isNaN(val)) {
+            if (typeof val === "number" && !Number.isNaN(val)) {
                 const tooltip = (
                     <Tooltip id="tooltip">
                         {titleStart}

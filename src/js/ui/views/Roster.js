@@ -82,7 +82,7 @@ const handleRelease = async p => {
 const handlePtChange = async (p, event) => {
     const ptModifier = parseFloat(event.target.value);
 
-    if (isNaN(ptModifier)) {
+    if (Number.isNaN(ptModifier)) {
         return;
     }
 

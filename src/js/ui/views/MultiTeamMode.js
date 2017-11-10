@@ -14,7 +14,7 @@ class MultiTeamMode extends React.Component {
         const newUserTids = [...e.target.options]
             .filter(o => o.selected)
             .map(o => parseInt(o.value, 10))
-            .filter(n => !isNaN(n));
+            .filter(n => !Number.isNaN(n));
 
         if (newUserTids.length < 1) {
             return;

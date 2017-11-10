@@ -246,7 +246,7 @@ async function create(
                 ts.oppBlk = ts.ba;
                 delete ts.ba;
             }
-            if (isNaN(ts.oppBlk)) {
+            if (typeof ts.oppBlk !== "number" || Number.isNaN(ts.oppBlk)) {
                 ts.oppBlk = 0;
             }
 

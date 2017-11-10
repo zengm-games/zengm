@@ -212,6 +212,7 @@ async function regressRatingsPer() {
     const x = new Matrix(ratings);
     const y = new ColumnVector(pers);
 
+    // $FlowFixMe
     const c = y.regressionCoefficients(x);
 
     const ratingLabels = [

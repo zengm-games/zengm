@@ -154,7 +154,7 @@ class NewLeague extends React.Component {
                     if (typeof t.pop !== "number") {
                         t.pop = parseFloat(t.pop);
                     }
-                    if (isNaN(t.pop)) {
+                    if (Number.isNaN(t.pop)) {
                         t.pop = 1;
                     }
 

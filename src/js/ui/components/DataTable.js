@@ -396,7 +396,7 @@ class DataTable extends React.Component<Props, State> {
 
     loadStateFromCache(props: Props) {
         let perPage = parseInt(localStorage.getItem("perPage"), 10);
-        if (isNaN(perPage)) {
+        if (Number.isNaN(perPage)) {
             perPage = 10;
         }
 
@@ -563,7 +563,7 @@ class DataTable extends React.Component<Props, State> {
 
     handlePerPage(event: SyntheticInputEvent<>) {
         const perPage = parseInt(event.target.value, 10);
-        if (!isNaN(perPage) && perPage !== this.state.perPage) {
+        if (!Number.isNaN(perPage) && perPage !== this.state.perPage) {
             localStorage.setItem("perPage", String(perPage));
             this.setState({
                 currentPage: 1,
@@ -664,7 +664,7 @@ class DataTable extends React.Component<Props, State> {
                               const numericVal = parseFloat(
                                   getSortVal(row.data[i], cols[i].sortType),
                               );
-                              if (isNaN(numericVal)) {
+                              if (Number.isNaN(numericVal)) {
                                   continue;
                               }
 

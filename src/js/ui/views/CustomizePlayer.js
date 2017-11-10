@@ -18,7 +18,7 @@ const faceOptions = {
 const copyValidValues = (source, target, season) => {
     for (const attr of ["hgt", "tid", "weight"]) {
         const val = parseInt(source[attr], 10);
-        if (!isNaN(val)) {
+        if (!Number.isNaN(val)) {
             target[attr] = val;
         }
     }
@@ -29,7 +29,7 @@ const copyValidValues = (source, target, season) => {
 
     {
         const age = parseInt(source.age, 10);
-        if (!isNaN(age)) {
+        if (!Number.isNaN(age)) {
             target.born.year = g.season - age;
         }
     }
@@ -40,7 +40,7 @@ const copyValidValues = (source, target, season) => {
 
     {
         const diedYear = parseInt(source.diedYear, 10);
-        if (!isNaN(diedYear)) {
+        if (!Number.isNaN(diedYear)) {
             target.diedYear = diedYear;
         } else {
             target.diedYear = null;
@@ -50,7 +50,7 @@ const copyValidValues = (source, target, season) => {
     {
         // Allow any value, even above or below normal limits, but round to $10k and convert from M to k
         let amount = Math.round(100 * parseFloat(source.contract.amount)) * 10;
-        if (isNaN(amount)) {
+        if (Number.isNaN(amount)) {
             amount = g.minContract;
         }
         target.contract.amount = amount;
@@ -58,7 +58,7 @@ const copyValidValues = (source, target, season) => {
 
     {
         let exp = parseInt(source.contract.exp, 10);
-        if (!isNaN(exp)) {
+        if (!Number.isNaN(exp)) {
             // No contracts expiring in the past
             if (exp < season) {
                 exp = season;
@@ -75,7 +75,7 @@ const copyValidValues = (source, target, season) => {
 
     {
         let gamesRemaining = parseInt(source.injury.gamesRemaining, 10);
-        if (isNaN(gamesRemaining) || gamesRemaining < 0) {
+        if (Number.isNaN(gamesRemaining) || gamesRemaining < 0) {
             gamesRemaining = 0;
         }
         target.injury.gamesRemaining = gamesRemaining;
@@ -113,7 +113,7 @@ const copyValidValues = (source, target, season) => {
                     0,
                     100,
                 );
-                if (!isNaN(val)) {
+                if (!Number.isNaN(val)) {
                     target.ratings[r][rating] = val;
                 }
             }
@@ -127,7 +127,7 @@ const copyValidValues = (source, target, season) => {
 
     for (const attr of ["eye-angle", "fatness"]) {
         const val = parseFloat(source.face[attr]);
-        if (!isNaN(val)) {
+        if (!Number.isNaN(val)) {
             if (attr === "eye-angle") {
                 target.face.eyes[0].angle = val;
                 target.face.eyes[1].angle = val;
@@ -200,7 +200,7 @@ class CustomizePlayer extends React.Component {
         } else if (type === "face") {
             if (["eyes", "hair", "mouth", "nose"].includes(field)) {
                 val = parseInt(val, 10);
-                if (isNaN(val)) {
+                if (Number.isNaN(val)) {
                     return;
                 }
 

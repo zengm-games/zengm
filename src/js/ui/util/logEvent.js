@@ -26,7 +26,7 @@ const showEvent = ({
     }
 
     // Don't show non-critical notification if we're viewing a live game now
-    if (!location.pathname.includes("/live") || persistent) {
+    if (!window.location.pathname.includes("/live") || persistent) {
         notify(text, title, {
             extraClass,
             persistent,

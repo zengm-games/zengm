@@ -13,6 +13,7 @@ import * as util from "./util";
 // source-map-support doesn't seem to do anything here. Source maps work great in Chrome with native promises, and
 // shitty in Firefox with polyfill. Either way, sourceMapSupport doesn't change anything.
 
+// eslint-disable-next-line no-restricted-globals
 self.bbgm = Object.assign({}, common, core, db, util);
 
 // God damn this function is ugly, clean up! Can probably share with ui.

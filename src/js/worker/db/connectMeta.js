@@ -50,7 +50,7 @@ const migrateMeta = (upgradeDB, fromLocalStorage) => {
 
         for (const key of Object.keys(fromLocalStorage)) {
             const int = parseInt(fromLocalStorage[key], 10);
-            if (!isNaN(int)) {
+            if (!Number.isNaN(int)) {
                 attributeStore.put(int, key);
             }
         }

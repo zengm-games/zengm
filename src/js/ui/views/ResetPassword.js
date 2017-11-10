@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import { SPORT, fetchWrapper } from "../../common";
@@ -108,6 +109,8 @@ class ResetPassword extends React.Component {
                         updatedState.resetpwPassword2Error = data.errors[error];
                     }
                 }
+
+                this.setState(updatedState);
             }
         } catch (err) {
             this.setState({
@@ -131,7 +134,13 @@ class ResetPassword extends React.Component {
                         name="token"
                         value={this.props.token}
                     />
-                    <div className="form-group">
+                    <div
+                        className={classNames("form-group", {
+                            "has-error":
+                                this.state.resetpwPasswordError !==
+                                null,
+                        })}
+                    >
                         <label
                             className="control-label"
                             htmlFor="resetpw-password"
@@ -145,12 +154,17 @@ class ResetPassword extends React.Component {
                             name="password"
                             required="required"
                         />
-                        <span
-                            className="help-block"
-                            id="resetpw-password-error"
-                        />
+                        <span className="help-block">
+                            {this.state.resetpwPassword2Error}
+                        </span>
                     </div>
-                    <div className="form-group">
+                    <div
+                        className={classNames("form-group", {
+                            "has-error":
+                                this.state.resetpwPassword2Error !==
+                                null,
+                        })}
+                    >
                         <label
                             className="control-label"
                             htmlFor="resetpw-password2"
@@ -164,10 +178,9 @@ class ResetPassword extends React.Component {
                             name="password2"
                             required="required"
                         />
-                        <span
-                            className="help-block"
-                            id="resetpw-password2-error"
-                        />
+                        <span className="help-block">
+                            {this.state.resetpwPassword2Error}
+                        </span>
                     </div>
                     <button
                         type="submit"

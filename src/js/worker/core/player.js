@@ -1595,7 +1595,7 @@ function moodColorText(p: Player) {
  * @param {Object} p Partial player object.
  * @return {Object} p Full player object.
  */
-function augmentPartialPlayer(p: any, scoutingRank: number): PlayerWithStats {
+function augmentPartialPlayer(p: any, scoutingRank: number, version: number | void): PlayerWithStats {
     let age;
     if (!p.hasOwnProperty("born")) {
         age = random.randInt(19, 35);
@@ -1705,6 +1705,17 @@ function augmentPartialPlayer(p: any, scoutingRank: number): PlayerWithStats {
             p.tid !== PLAYER.RETIRED
         ) {
             p.ratings[0].season = g.startingSeason;
+        }
+    }
+
+    // Height rescaling
+    if (version === undefined || version < 24) {
+        for (const r of p.ratings) {
+            r.hgt = heightToRating(p.hgt);
+            r.ovr = ovr(r);
+            if (r.ovr > r.pot) {
+                r.pot = r.ovr;
+            }
         }
     }
 

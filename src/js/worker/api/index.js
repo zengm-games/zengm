@@ -623,7 +623,7 @@ const handleUploadedDraftClass = async (
     await Promise.all(
         players.map(async p => {
             // Make sure player object is fully defined
-            p = player.augmentPartialPlayer(p, scoutingRank);
+            p = player.augmentPartialPlayer(p, scoutingRank, uploadedFile.version);
 
             // Manually set TID, since at this point it is always PLAYER.UNDRAFTED
             p.tid = draftClassTid;

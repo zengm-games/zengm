@@ -1,3 +1,5 @@
+export without game state - include startingSeason global (probably) otherwise loaded files don't work
+
 safari 11 login - maybe need FormData polyfill
 
 advanced team stats

@@ -373,7 +373,7 @@ async function create(
 
         for (const p0 of players) {
             // Has to be any because I cna't figure out how to change PlayerWithoutPidWithStats to Player
-            const p: any = player.augmentPartialPlayer(p0, scoutingRank);
+            const p: any = player.augmentPartialPlayer(p0, scoutingRank, leagueFile.version);
 
             // Don't let imported contracts be created for below the league minimum, and round to nearest $10,000.
             p.contract.amount = Math.max(
@@ -384,17 +384,6 @@ async function create(
             // Separate out stats
             const playerStats = p.stats;
             delete p.stats;
-
-            // Height rescaling
-            if (leagueFile.version === undefined || leagueFile.version < 24) {
-                for (const r of p.ratings) {
-                    r.hgt = player.heightToRating(p.hgt);
-                    r.ovr = player.ovr(r);
-                    if (r.ovr > r.pot) {
-                        r.pot = r.ovr;
-                    }
-                }
-            }
 
             await player.updateValues(p, playerStats);
             await idb.cache.players.put(p);

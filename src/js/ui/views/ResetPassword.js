@@ -75,7 +75,6 @@ class ResetPassword extends React.Component {
         });
 
         const formData = new FormData(document.getElementById("resetpw"));
-        formData.set("sport", SPORT);
 
         try {
             const data = await fetchWrapper({
@@ -128,6 +127,7 @@ class ResetPassword extends React.Component {
             <div>
                 <p>Enter a new password for your account below.</p>
                 <form id="resetpw" onSubmit={this.handleSubmit}>
+                    <input type="hidden" name="sport" value={SPORT} />
                     <input type="hidden" name="action" value="reset_password" />
                     <input
                         type="hidden"

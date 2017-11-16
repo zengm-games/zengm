@@ -27,7 +27,6 @@ class LoginOrRegister extends React.Component {
         this.setState({ loginError: null });
 
         const formData = new FormData(document.getElementById("login"));
-        formData.set("sport", SPORT);
 
         try {
             const data = await fetchWrapper({
@@ -68,7 +67,6 @@ class LoginOrRegister extends React.Component {
         });
 
         const formData = new FormData(document.getElementById("register"));
-        formData.set("sport", SPORT);
 
         try {
             const data = await fetchWrapper({
@@ -161,6 +159,7 @@ class LoginOrRegister extends React.Component {
                     <div className="col-lg-3 col-md-4 col-sm-5">
                         <h1>Login</h1>
                         <form onSubmit={this.handleLogin} id="login">
+                            <input type="hidden" name="sport" value={SPORT} />
                             <div className="form-group">
                                 <label
                                     className="control-label"
@@ -211,6 +210,7 @@ class LoginOrRegister extends React.Component {
                     <div className="col-lg-3 col-md-4 col-sm-5">
                         <h1>Register</h1>
                         <form onSubmit={this.handleRegister} id="register">
+                            <input type="hidden" name="sport" value={SPORT} />
                             <div
                                 className={classNames("form-group", {
                                     "has-error":

@@ -19,7 +19,6 @@ class LostPassword extends React.Component {
         e.preventDefault();
 
         const formData = new FormData(document.getElementById("lostpw"));
-        formData.set("sport", SPORT);
 
         this.setState({
             lostpwError: null,
@@ -60,6 +59,7 @@ class LostPassword extends React.Component {
                             recover your login information.
                         </p>
                         <form onSubmit={this.handleSubmit} id="lostpw">
+                            <input type="hidden" name="sport" value={SPORT} />
                             <div className="form-group">
                                 <label
                                     className="control-label"

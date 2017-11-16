@@ -657,6 +657,11 @@ async function exportLeague(stores: string[]) {
         delete exportedLeague.teamStats;
     }
 
+    // Set startingSeason if gameAttributes is not selected, otherwise it's going to fail loading unless startingSeason is coincidentally the same as the default
+    if (!stores.includes("gameAttributes")) {
+        exportedLeague.startingSeason = g.startingSeason;
+    }
+
     return exportedLeague;
 }
 

@@ -26,7 +26,9 @@ const PlayerNameLabels = ({
     let injuryIcon = null;
     if (injury !== undefined) {
         if (injury.gamesRemaining > 0) {
-            const title = `${injury.type} (out ${injury.gamesRemaining} more games)`;
+            const title = `${injury.type} (out ${
+                injury.gamesRemaining
+            } more games)`;
             injuryIcon = (
                 <span className="label label-danger label-injury" title={title}>
                     {injury.gamesRemaining}

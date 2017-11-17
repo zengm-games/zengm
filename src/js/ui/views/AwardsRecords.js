@@ -64,9 +64,7 @@ const AwardsRecords = ({
 
             <p>
                 More:{" "}
-                <a href={helpers.leagueUrl(["history_all"])}>
-                    League History
-                </a>{" "}
+                <a href={helpers.leagueUrl(["history_all"])}>League History</a>{" "}
                 | <a href={helpers.leagueUrl(["team_records"])}>Team Records</a>
             </p>
 

@@ -292,7 +292,8 @@ class Trade extends React.Component {
                                                             this.handleChangeAsset(
                                                                 "other-dpids",
                                                                 pick.dpid,
-                                                            )}
+                                                            )
+                                                        }
                                                     />
                                                 </td>
                                                 <td>{pick.desc}</td>
@@ -332,7 +333,8 @@ class Trade extends React.Component {
                                                             this.handleChangeAsset(
                                                                 "user-dpids",
                                                                 pick.dpid,
-                                                            )}
+                                                            )
+                                                        }
                                                     />
                                                 </td>
                                                 <td>{pick.desc}</td>
@@ -361,14 +363,20 @@ class Trade extends React.Component {
                                                 >
                                                     {p.name}
                                                 </a>{" "}
-                                                ({helpers.formatCurrency(p.contract.amount, "M")})
+                                                ({helpers.formatCurrency(
+                                                    p.contract.amount,
+                                                    "M",
+                                                )})
                                             </li>
                                         ))}
                                         {t.picks.map(pick => (
                                             <li key={pick.dpid}>{pick.desc}</li>
                                         ))}
                                         <li>
-                                            {helpers.formatCurrency(t.total, "M")}{" "}
+                                            {helpers.formatCurrency(
+                                                t.total,
+                                                "M",
+                                            )}{" "}
                                             Total
                                         </li>
                                     </ul>
@@ -384,14 +392,19 @@ class Trade extends React.Component {
                                                 >
                                                     {p.name}
                                                 </a>{" "}
-                                                ({helpers.formatCurrency(p.contract.amount, "M")})
+                                                ({helpers.formatCurrency(
+                                                    p.contract.amount,
+                                                    "M",
+                                                )})
                                             </li>
                                         ))}
-                                        {summary.teams[
-                                            t.other
-                                        ].picks.map(pick => (
-                                            <li key={pick.dpid}>{pick.desc}</li>
-                                        ))}
+                                        {summary.teams[t.other].picks.map(
+                                            pick => (
+                                                <li key={pick.dpid}>
+                                                    {pick.desc}
+                                                </li>
+                                            ),
+                                        )}
                                         <li>
                                             {helpers.formatCurrency(
                                                 summary.teams[t.other].total,

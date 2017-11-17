@@ -81,9 +81,7 @@ const PlayerStatDists = ({ season, statsAll }) => {
 
             <p>
                 These{" "}
-                <a href="http://en.wikipedia.org/wiki/Box_plot">
-                    box plots
-                </a>{" "}
+                <a href="http://en.wikipedia.org/wiki/Box_plot">box plots</a>{" "}
                 show the league-wide distributions of player stats for all
                 active players in the selected season. Black plots are for this
                 league and blue plots are from the 2009-2010 NBA season, for

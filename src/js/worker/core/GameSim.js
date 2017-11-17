@@ -1298,19 +1298,18 @@ class GameSim {
                             ? " with no time on the clock"
                             : " at the buzzer";
                 }
-                eventText += ` in ${this.team[winner].stat.pts
-                    .toString()
-                    .charAt(0) === "8"
-                    ? "an"
-                    : "a"} <a href="${helpers.leagueUrl([
+                eventText += ` in ${
+                    this.team[winner].stat.pts.toString().charAt(0) === "8"
+                        ? "an"
+                        : "a"
+                } <a href="${helpers.leagueUrl([
                     "game_log",
                     g.teamAbbrevsCache[team.id],
                     g.season,
                     this.id,
-                ])}">${this.team[winner].stat.pts}-${this.team[loser].stat
-                    .pts}</a> win over the ${g.teamNamesCache[
-                    this.team[loser].id
-                ]}.`;
+                ])}">${this.team[winner].stat.pts}-${
+                    this.team[loser].stat.pts
+                }</a> win over the ${g.teamNamesCache[this.team[loser].id]}.`;
 
                 this.clutchPlays.push({
                     type: "playerFeat",

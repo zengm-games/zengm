@@ -188,9 +188,9 @@ async function updateTrade(): void | { [key: string]: any } {
         };
     }
     vars.teams.splice(g.userTid, 1); // Can't trade with yourself
-    vars.userTeamName = `${g.teamRegionsCache[g.userTid]} ${g.teamNamesCache[
-        g.userTid
-    ]}`;
+    vars.userTeamName = `${g.teamRegionsCache[g.userTid]} ${
+        g.teamNamesCache[g.userTid]
+    }`;
 
     // If the season is over, can't trade players whose contracts are expired
     vars.showResigningMsg =

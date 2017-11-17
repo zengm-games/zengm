@@ -99,7 +99,9 @@ const createLeague = (upgradeDB, lid: number) => {
  */
 const migrateLeague = (upgradeDB, lid) => {
     console.log(
-        `Upgrading league${lid} database from version ${upgradeDB.oldVersion} to version ${upgradeDB.version}`,
+        `Upgrading league${lid} database from version ${
+            upgradeDB.oldVersion
+        } to version ${upgradeDB.version}`,
     );
 
     if (upgradeDB.oldVersion <= 15) {

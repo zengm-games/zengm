@@ -350,7 +350,8 @@ class TradingBlock extends React.Component {
                                                     this.handleChangeAsset(
                                                         "dpids",
                                                         pick.dpid,
-                                                    )}
+                                                    )
+                                                }
                                             />
                                         </td>
                                         <td>{pick.desc}</td>

@@ -30,9 +30,9 @@ util.promiseWorker.register(([name, ...params], hostID) => {
 
             if (!api.actions.playMenu.hasOwnProperty(subname)) {
                 throw new Error(
-                    `API call to nonexistant worker function "${name}" with params ${JSON.stringify(
-                        params,
-                    )}`,
+                    `API call to nonexistant worker function "${
+                        name
+                    }" with params ${JSON.stringify(params)}`,
                 );
             }
 
@@ -42,9 +42,9 @@ util.promiseWorker.register(([name, ...params], hostID) => {
 
             if (!api.actions.toolsMenu.hasOwnProperty(subname)) {
                 throw new Error(
-                    `API call to nonexistant worker function "${name}" with params ${JSON.stringify(
-                        params,
-                    )}`,
+                    `API call to nonexistant worker function "${
+                        name
+                    }" with params ${JSON.stringify(params)}`,
                 );
             }
 
@@ -53,9 +53,9 @@ util.promiseWorker.register(([name, ...params], hostID) => {
 
         if (!api.actions.hasOwnProperty(subname)) {
             throw new Error(
-                `API call to nonexistant worker function "${name}" with params ${JSON.stringify(
-                    params,
-                )}`,
+                `API call to nonexistant worker function "${
+                    name
+                }" with params ${JSON.stringify(params)}`,
             );
         }
 
@@ -64,9 +64,9 @@ util.promiseWorker.register(([name, ...params], hostID) => {
 
     if (!api.hasOwnProperty(name)) {
         throw new Error(
-            `API call to nonexistant worker function "${name}" with params ${JSON.stringify(
-                params,
-            )}`,
+            `API call to nonexistant worker function "${
+                name
+            }" with params ${JSON.stringify(params)}`,
         );
     }
 

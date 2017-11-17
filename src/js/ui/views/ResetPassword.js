@@ -137,8 +137,7 @@ class ResetPassword extends React.Component {
                     <div
                         className={classNames("form-group", {
                             "has-error":
-                                this.state.resetpwPasswordError !==
-                                null,
+                                this.state.resetpwPasswordError !== null,
                         })}
                     >
                         <label
@@ -161,8 +160,7 @@ class ResetPassword extends React.Component {
                     <div
                         className={classNames("form-group", {
                             "has-error":
-                                this.state.resetpwPassword2Error !==
-                                null,
+                                this.state.resetpwPassword2Error !== null,
                         })}
                     >
                         <label

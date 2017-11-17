@@ -19,7 +19,10 @@ async function realtimeUpdate(
     raw?: Object = {},
 ) {
     return new Promise(resolve => {
-        url = url !== undefined ? url : window.location.pathname + window.location.search;
+        url =
+            url !== undefined
+                ? url
+                : window.location.pathname + window.location.search;
 
         const inLeague = url.substr(0, 3) === "/l/"; // Check the URL to be redirected to, not the current league (g.lid)
         const refresh = url === window.location.pathname && inLeague;

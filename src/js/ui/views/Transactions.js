@@ -10,9 +10,7 @@ const Transactions = ({ abbrev, eventType, events, season }) => {
     const moreLinks =
         abbrev !== "all" ? (
             <p>
-                More: <a href={helpers.leagueUrl(["roster", abbrev])}>
-                    Roster
-                </a>{" "}
+                More: <a href={helpers.leagueUrl(["roster", abbrev])}>Roster</a>{" "}
                 |{" "}
                 <a href={helpers.leagueUrl(["team_finances", abbrev])}>
                     Finances

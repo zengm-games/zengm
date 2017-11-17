@@ -192,8 +192,9 @@ const handleScreenshotClick = e => {
 
                 logEvent({
                     type: "screenshot",
-                    text: `<a href="http://imgur.com/${data.data
-                        .id}" target="_blank">Click here to view your screenshot.</a>`,
+                    text: `<a href="http://imgur.com/${
+                        data.data.id
+                    }" target="_blank">Click here to view your screenshot.</a>`,
                     saveToDb: false,
                     showNotification: true,
                     persistent: true,
@@ -208,10 +209,13 @@ const handleScreenshotClick = e => {
                     err.responseJSON.error &&
                     err.responseJSON.error.message
                 ) {
-                    errorMsg = `Error saving screenshot. Error message from Imgur: "${err
-                        .responseJSON.error.message}"`;
+                    errorMsg = `Error saving screenshot. Error message from Imgur: "${
+                        err.responseJSON.error.message
+                    }"`;
                 } else if (err.message) {
-                    errorMsg = `Error saving screenshot. Error message from Imgur: "${err.message}"`;
+                    errorMsg = `Error saving screenshot. Error message from Imgur: "${
+                        err.message
+                    }"`;
                 } else {
                     errorMsg = "Error saving screenshot.";
                 }
@@ -405,7 +409,8 @@ class DropdownLinks extends React.Component<
                     {lid !== undefined ? (
                         <MenuItem
                             onClick={e =>
-                                handleToolsClick("autoPlaySeasons", e)}
+                                handleToolsClick("autoPlaySeasons", e)
+                            }
                         >
                             Auto Play Seasons
                         </MenuItem>
@@ -495,7 +500,8 @@ class DropdownLinks extends React.Component<
                     {lid !== undefined ? (
                         <MenuItem
                             onClick={e =>
-                                handleToolsClick("skipToBeforeDraft", e)}
+                                handleToolsClick("skipToBeforeDraft", e)
+                            }
                         >
                             Skip To Draft Lottery
                         </MenuItem>
@@ -503,7 +509,8 @@ class DropdownLinks extends React.Component<
                     {lid !== undefined ? (
                         <MenuItem
                             onClick={e =>
-                                handleToolsClick("skipToAfterDraft", e)}
+                                handleToolsClick("skipToAfterDraft", e)
+                            }
                         >
                             Skip To After Draft
                         </MenuItem>
@@ -511,7 +518,8 @@ class DropdownLinks extends React.Component<
                     {lid !== undefined ? (
                         <MenuItem
                             onClick={e =>
-                                handleToolsClick("skipToPreseason", e)}
+                                handleToolsClick("skipToPreseason", e)
+                            }
                         >
                             Skip To Preseason
                         </MenuItem>
@@ -519,7 +527,8 @@ class DropdownLinks extends React.Component<
                     {lid !== undefined ? (
                         <MenuItem
                             onClick={e =>
-                                handleToolsClick("forceResumeDraft", e)}
+                                handleToolsClick("forceResumeDraft", e)
+                            }
                         >
                             Force Resume Draft
                         </MenuItem>

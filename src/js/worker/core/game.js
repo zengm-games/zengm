@@ -389,9 +389,13 @@ async function writePlayerStats(results: GameResults, conditions: Conditions) {
                                     text: `<a href="${helpers.leagueUrl([
                                         "player",
                                         p2.pid,
-                                    ])}">${p2.firstName} ${p2.lastName}</a> was injured! (${p2
-                                        .injury.type}, out for ${p2.injury
-                                        .gamesRemaining} games)`,
+                                    ])}">${p2.firstName} ${
+                                        p2.lastName
+                                    }</a> was injured! (${
+                                        p2.injury.type
+                                    }, out for ${
+                                        p2.injury.gamesRemaining
+                                    } games)`,
                                     showNotification: g.userTid === p2.tid,
                                     persistent: stopPlay,
                                     pids: [p2.pid],
@@ -585,37 +589,35 @@ async function writeGameStats(
             if (results.clutchPlays[i].hasOwnProperty("tempText")) {
                 results.clutchPlays[i].text = results.clutchPlays[i].tempText;
                 if (results.clutchPlays[i].tids[0] === results.team[tw].id) {
-                    results.clutchPlays[i].text += ` in ${results.team[
-                        tw
-                    ].stat.pts
-                        .toString()
-                        .charAt(0) === "8"
-                        ? "an"
-                        : "a"} <a href="${helpers.leagueUrl([
+                    results.clutchPlays[i].text += ` in ${
+                        results.team[tw].stat.pts.toString().charAt(0) === "8"
+                            ? "an"
+                            : "a"
+                    } <a href="${helpers.leagueUrl([
                         "game_log",
                         g.teamAbbrevsCache[results.team[tw].id],
                         g.season,
                         results.gid,
-                    ])}">${results.team[tw].stat.pts}-${results.team[tl].stat
-                        .pts}</a> win over the ${g.teamNamesCache[
-                        results.team[tl].id
-                    ]}.`;
+                    ])}">${results.team[tw].stat.pts}-${
+                        results.team[tl].stat.pts
+                    }</a> win over the ${
+                        g.teamNamesCache[results.team[tl].id]
+                    }.`;
                 } else {
-                    results.clutchPlays[i].text += ` in ${results.team[
-                        tl
-                    ].stat.pts
-                        .toString()
-                        .charAt(0) === "8"
-                        ? "an"
-                        : "a"} <a href="${helpers.leagueUrl([
+                    results.clutchPlays[i].text += ` in ${
+                        results.team[tl].stat.pts.toString().charAt(0) === "8"
+                            ? "an"
+                            : "a"
+                    } <a href="${helpers.leagueUrl([
                         "game_log",
                         g.teamAbbrevsCache[results.team[tl].id],
                         g.season,
                         results.gid,
-                    ])}">${results.team[tl].stat.pts}-${results.team[tw].stat
-                        .pts}</a> loss to the ${g.teamNamesCache[
-                        results.team[tw].id
-                    ]}.`;
+                    ])}">${results.team[tl].stat.pts}-${
+                        results.team[tw].stat.pts
+                    }</a> loss to the ${
+                        g.teamNamesCache[results.team[tw].id]
+                    }.`;
                 }
                 delete results.clutchPlays[i].tempText;
             }
@@ -701,15 +703,15 @@ async function updatePlayoffSeries(
                         "roster",
                         g.teamAbbrevsCache[winnerTid],
                         g.season,
-                    ])}">${g.teamNamesCache[
-                        winnerTid
-                    ]}</a> defeated the <a href="${helpers.leagueUrl([
+                    ])}">${
+                        g.teamNamesCache[winnerTid]
+                    }</a> defeated the <a href="${helpers.leagueUrl([
                         "roster",
                         g.teamAbbrevsCache[loserTid],
                         g.season,
-                    ])}">${g.teamNamesCache[
-                        loserTid
-                    ]}</a> in the ${currentRoundText}, 4-${loserWon}.`,
+                    ])}">${g.teamNamesCache[loserTid]}</a> in the ${
+                        currentRoundText
+                    }, 4-${loserWon}.`,
                     showNotification,
                     tids: [winnerTid, loserTid],
                 },
@@ -1021,7 +1023,9 @@ async function play(
                         text: `<a href="${helpers.leagueUrl([
                             "player",
                             p.pid,
-                        ])}">${p.firstName} ${p.lastName}</a> has recovered from his injury.`,
+                        ])}">${p.firstName} ${
+                            p.lastName
+                        }</a> has recovered from his injury.`,
                         showNotification: p.tid === g.userTid,
                         pids: [p.pid],
                         tids: [p.tid],

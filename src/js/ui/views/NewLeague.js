@@ -27,8 +27,8 @@ const PopText = ({ teams, tid }) => {
 
             msg = (
                 <span>
-                    Region population: {t.pop} million, #{t.popRank} leaguewide<br />Difficulty:{" "}
-                    {difficulty}
+                    Region population: {t.pop} million, #{t.popRank} leaguewide<br
+                    />Difficulty: {difficulty}
                 </span>
             );
         }

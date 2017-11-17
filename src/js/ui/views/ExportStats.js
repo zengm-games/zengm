@@ -5,13 +5,11 @@ import { setTitle, toWorker } from "../util";
 import { DownloadDataLink } from "../components";
 
 function genFilename(leagueName, season, grouping) {
-    const filename = `BBGM_${leagueName.replace(
-        /[^a-z0-9]/gi,
-        "_",
-    )}_${season}_${season === "all" ? "seasons" : "season"}_${grouping ===
-    "averages"
-        ? "Average_Stats"
-        : "Game_Stats"}`;
+    const filename = `BBGM_${leagueName.replace(/[^a-z0-9]/gi, "_")}_${
+        season
+    }_${season === "all" ? "seasons" : "season"}_${
+        grouping === "averages" ? "Average_Stats" : "Game_Stats"
+    }`;
 
     return `${filename}.csv`;
 }

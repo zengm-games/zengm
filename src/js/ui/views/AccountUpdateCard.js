@@ -72,7 +72,9 @@ class AccountUpdateCard extends React.Component {
 
                     try {
                         const data = await fetchWrapper({
-                            url: `//account.basketball-gm.${window.tld}/gold_card_update.php`,
+                            url: `//account.basketball-gm.${
+                                window.tld
+                            }/gold_card_update.php`,
                             method: "POST",
                             data: {
                                 sport: "basketball",

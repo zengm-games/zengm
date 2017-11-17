@@ -599,7 +599,8 @@ function gb(team0: teamWonLost, team: teamWonLost) {
 }
 
 function gameScore(arg: { [key: string]: number }): string {
-    return (arg.pts +
+    return (
+        arg.pts +
         0.4 * arg.fg -
         0.7 * arg.fga -
         0.4 * (arg.fta - arg.ft) +

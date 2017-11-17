@@ -46,7 +46,9 @@ class StripeButton extends React.Component<
                         token: async token => {
                             try {
                                 const data = await fetchWrapper({
-                                    url: `//account.basketball-gm.${window.tld}/gold_start.php`,
+                                    url: `//account.basketball-gm.${
+                                        window.tld
+                                    }/gold_start.php`,
                                     method: "POST",
                                     data: {
                                         sport: "basketball",
@@ -216,7 +218,9 @@ class UserInfo extends React.Component<UserInfoProps, UserInfoState> {
                 {showGoldActive ? (
                     <p>
                         Basketball GM Gold: Active, renews for $5 on{" "}
-                        {goldUntilDateString} (<a href="/account/update_card">Update card</a>{" "}
+                        {goldUntilDateString} (<a href="/account/update_card">
+                            Update card
+                        </a>{" "}
                         or{" "}
                         <a href="" id="gold-cancel" onClick={handleCancel}>
                             cancel
@@ -368,7 +372,10 @@ const Account = ({
             <ul className="achievements list-group">
                 {achievements.map((achievement, i) => {
                     const lis = [
-                        <li className="list-group-item col-xs-12 col-sm-6 col-md-4 col-lg-3 pull-left" key={achievement.slug}>
+                        <li
+                            className="list-group-item col-xs-12 col-sm-6 col-md-4 col-lg-3 pull-left"
+                            key={achievement.slug}
+                        >
                             <div
                                 className={classNames({
                                     "list-group-item-success":
@@ -391,13 +398,28 @@ const Account = ({
                         </li>,
                     ];
                     if (i % 4 === 3) {
-                        lis.push(<li className="clearfix visible-lg" key={`sep${i}-4`} />);
+                        lis.push(
+                            <li
+                                className="clearfix visible-lg"
+                                key={`sep${i}-4`}
+                            />,
+                        );
                     }
                     if (i % 3 === 2) {
-                        lis.push(<li className="clearfix visible-md" key={`sep${i}-3`} />);
+                        lis.push(
+                            <li
+                                className="clearfix visible-md"
+                                key={`sep${i}-3`}
+                            />,
+                        );
                     }
                     if (i % 2 === 1) {
-                        lis.push(<li className="clearfix visible-sm" key={`sep${i}-2`} />);
+                        lis.push(
+                            <li
+                                className="clearfix visible-sm"
+                                key={`sep${i}-2`}
+                            />,
+                        );
                     }
                     return lis;
                 })}

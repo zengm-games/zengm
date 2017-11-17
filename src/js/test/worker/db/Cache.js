@@ -29,7 +29,9 @@ describe("db/Cache", () => {
         });
 
         for (const status of ["filling", "flushing"]) {
-            it(`should wait until ${status} complete before resolving query`, async () => {
+            it(`should wait until ${
+                status
+            } complete before resolving query`, async () => {
                 idb.cache._status = status;
                 let setTimeoutCalled = false;
                 setTimeout(() => {

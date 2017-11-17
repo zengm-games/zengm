@@ -130,7 +130,8 @@ class DraftScouting extends React.Component {
                                                 type="file"
                                                 className="custom-draft-class"
                                                 onChange={e =>
-                                                    this.handleDraftClass(i, e)}
+                                                    this.handleDraftClass(i, e)
+                                                }
                                             />
                                         </p>
                                     </div>
@@ -139,7 +140,8 @@ class DraftScouting extends React.Component {
                                         <button
                                             className="btn btn-default btn-xs"
                                             onClick={() =>
-                                                this.handleCustomize(i)}
+                                                this.handleCustomize(i)
+                                            }
                                         >
                                             Customize
                                         </button>

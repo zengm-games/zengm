@@ -4,11 +4,11 @@ import { PHASE, g, helpers } from "../../common";
 import { local, lock, toUI } from "../util";
 
 /**
-* Update play menu options based on game state.
-*
-* @memberOf ui
-* @return {Promise}
-*/
+ * Update play menu options based on game state.
+ *
+ * @memberOf ui
+ * @return {Promise}
+ */
 const updatePlayMenu = async () => {
     // $FlowFixMe
     if (typeof it === "function") {

@@ -98,16 +98,12 @@ const TeamHistory = ({
                 {team.region} {team.name} History <NewWindowLink />
             </h1>
             <p>
-                More: <a href={helpers.leagueUrl(["roster", abbrev])}>
-                    Roster
-                </a>{" "}
+                More: <a href={helpers.leagueUrl(["roster", abbrev])}>Roster</a>{" "}
                 |{" "}
                 <a href={helpers.leagueUrl(["team_finances", abbrev])}>
                     Finances
                 </a>{" "}
-                | <a href={helpers.leagueUrl(["game_log", abbrev])}>
-                    Game Log
-                </a>{" "}
+                | <a href={helpers.leagueUrl(["game_log", abbrev])}>Game Log</a>{" "}
                 |{" "}
                 <a href={helpers.leagueUrl(["transactions", abbrev])}>
                     Transactions

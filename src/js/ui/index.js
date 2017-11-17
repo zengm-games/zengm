@@ -18,9 +18,9 @@ import type { Env } from "../common/types";
 promiseWorker.register(([name, ...params]) => {
     if (!api.hasOwnProperty(name)) {
         throw new Error(
-            `API call to nonexistant UI function "${name}" with params ${JSON.stringify(
-                params,
-            )}`,
+            `API call to nonexistant UI function "${
+                name
+            }" with params ${JSON.stringify(params)}`,
         );
     }
 

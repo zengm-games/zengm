@@ -55,10 +55,9 @@ function genFilename(data) {
     const leagueName =
         data.meta !== undefined ? data.meta.name : `League ${g.lid}`;
 
-    let filename = `BBGM_${leagueName.replace(
-        /[^a-z0-9]/gi,
-        "_",
-    )}_${g.season}_${PHASE_TEXT[g.phase].replace(/[^a-z0-9]/gi, "_")}`;
+    let filename = `BBGM_${leagueName.replace(/[^a-z0-9]/gi, "_")}_${
+        g.season
+    }_${PHASE_TEXT[g.phase].replace(/[^a-z0-9]/gi, "_")}`;
 
     if (g.phase === PHASE.REGULAR_SEASON && data.hasOwnProperty("teams")) {
         const season =
@@ -78,11 +77,13 @@ function genFilename(data) {
         const series = playoffSeries.series;
         for (let i = 0; i < series[rnd].length; i++) {
             if (series[rnd][i].home.tid === g.userTid) {
-                filename += `_${series[rnd][i].home.won}-${series[rnd][i].away
-                    .won}`;
+                filename += `_${series[rnd][i].home.won}-${
+                    series[rnd][i].away.won
+                }`;
             } else if (series[rnd][i].away.tid === g.userTid) {
-                filename += `_${series[rnd][i].away.won}-${series[rnd][i].home
-                    .won}`;
+                filename += `_${series[rnd][i].away.won}-${
+                    series[rnd][i].home.won
+                }`;
             }
         }
     }

@@ -140,8 +140,9 @@ class Draft extends React.Component {
                 data.splice(
                     5,
                     0,
-                    `${helpers.formatCurrency(p.contract.amount, "M")} thru ${p
-                        .contract.exp}`,
+                    `${helpers.formatCurrency(p.contract.amount, "M")} thru ${
+                        p.contract.exp
+                    }`,
                     p.stats.per.toFixed(1),
                     p.stats.ewa.toFixed(1),
                 );

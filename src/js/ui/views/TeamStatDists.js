@@ -730,9 +730,7 @@ const TeamStatDists = ({ season, statsAll }) => {
 
             <p>
                 These{" "}
-                <a href="http://en.wikipedia.org/wiki/Box_plot">
-                    box plots
-                </a>{" "}
+                <a href="http://en.wikipedia.org/wiki/Box_plot">box plots</a>{" "}
                 show the league-wide distributions of team stats for the
                 selected season. Black plots are for this league and blue plots
                 are from the 2010-2011 NBA season, for comparison. The five

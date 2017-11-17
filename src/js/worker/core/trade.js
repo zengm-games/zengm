@@ -89,7 +89,9 @@ function filterUntradable(
             // Can't trade players who recently were signed or traded
             return Object.assign({}, p, {
                 untradable: true,
-                untradableMsg: `Cannot trade recently-acquired player for ${p.gamesUntilTradable} more games`,
+                untradableMsg: `Cannot trade recently-acquired player for ${
+                    p.gamesUntilTradable
+                } more games`,
             });
         }
 
@@ -241,11 +243,11 @@ async function summary(teams: TradeTeams): Promise<TradeSummary> {
                         if (dpids[i].includes(picks[j].dpid)) {
                             s.teams[i].picks.push({
                                 dpid: picks[j].dpid,
-                                desc: `${picks[j].season} ${picks[j].round === 1
-                                    ? "1st"
-                                    : "2nd"} round pick (${g.teamAbbrevsCache[
-                                    picks[j].originalTid
-                                ]})`,
+                                desc: `${picks[j].season} ${
+                                    picks[j].round === 1 ? "1st" : "2nd"
+                                } round pick (${
+                                    g.teamAbbrevsCache[picks[j].originalTid]
+                                })`,
                             });
                         }
                     }
@@ -262,8 +264,9 @@ async function summary(teams: TradeTeams): Promise<TradeSummary> {
         [0, 1].map(async j => {
             const k = j === 0 ? 1 : 0;
 
-            s.teams[j].name = `${g.teamRegionsCache[tids[j]]} ${g
-                .teamNamesCache[tids[j]]}`;
+            s.teams[j].name = `${g.teamRegionsCache[tids[j]]} ${
+                g.teamNamesCache[tids[j]]
+            }`;
 
             if (s.teams[j].total > 0) {
                 ratios[j] = Math.floor(
@@ -290,10 +293,11 @@ async function summary(teams: TradeTeams): Promise<TradeSummary> {
     ) {
         // Which team is at fault?;
         const j = ratios[0] > 125 ? 0 : 1;
-        s.warning = `The ${s.teams[j]
-            .name} are over the salary cap, so the players it receives must have a combined salary of less than 125% of the salaries of the players it trades away.  Currently, that value is ${ratios[
-            j
-        ]}%.`;
+        s.warning = `The ${
+            s.teams[j].name
+        } are over the salary cap, so the players it receives must have a combined salary of less than 125% of the salaries of the players it trades away.  Currently, that value is ${
+            ratios[j]
+        }%.`;
     }
 
     return s;
@@ -781,9 +785,9 @@ async function makeItWorkTrade() {
     const teams = await makeItWork(helpers.deepCopy(teams0), false, estValues);
 
     if (teams === undefined) {
-        return `${g.teamRegionsCache[
-            teams0[1].tid
-        ]} GM: "I can't afford to give up so much."`;
+        return `${
+            g.teamRegionsCache[teams0[1].tid]
+        } GM: "I can't afford to give up so much."`;
     }
 
     const s = await summary(teams);
@@ -813,9 +817,9 @@ async function makeItWorkTrade() {
     }
 
     if (s.warning) {
-        return `${g.teamRegionsCache[
-            teams[1].tid
-        ]} GM: "Something like this would work if you can figure out how to get it done without breaking the salary cap rules."`;
+        return `${
+            g.teamRegionsCache[teams[1].tid]
+        } GM: "Something like this would work if you can figure out how to get it done without breaking the salary cap rules."`;
     }
 
     return `${g.teamRegionsCache[teams[1].tid]} GM: "How does this sound?"`;

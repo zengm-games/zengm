@@ -194,7 +194,8 @@ function generate(tm: any) {
                 amount: tm.hasOwnProperty("budget")
                     ? tm.budget.ticketPrice.amount
                     : parseFloat(
-                          (g.salaryCap / 90000 * 37 +
+                          (
+                              g.salaryCap / 90000 * 37 +
                               25 * (g.numTeams - tm.popRank) / (g.numTeams - 1)
                           ).toFixed(2),
                       ),
@@ -372,14 +373,14 @@ async function rosterAutoSort(tid: number) {
 }
 
 /**
-* Gets all the contracts a team owes.
-*
-* This includes contracts for players who have been released but are still owed money.
-*
-* @memberOf core.team
-* @param {number} tid Team ID.
-* @returns {Promise.Array} Array of objects containing contract information.
-*/
+ * Gets all the contracts a team owes.
+ *
+ * This includes contracts for players who have been released but are still owed money.
+ *
+ * @memberOf core.team
+ * @param {number} tid Team ID.
+ * @returns {Promise.Array} Array of objects containing contract information.
+ */
 async function getContracts(tid: number): Promise<ContractInfo[]> {
     // First, get players currently on the roster
     const players = await idb.cache.players.indexGetAll("playersByTid", tid);
@@ -1107,12 +1108,15 @@ async function checkRosterSizes(
                 if (g.userTids.length <= 1) {
                     userTeamSizeError = "Your team has ";
                 } else {
-                    userTeamSizeError = `The ${g.teamRegionsCache[tid]} ${g
-                        .teamNamesCache[tid]} have `;
+                    userTeamSizeError = `The ${g.teamRegionsCache[tid]} ${
+                        g.teamNamesCache[tid]
+                    } have `;
                 }
-                userTeamSizeError += `more than the maximum number of players (${g.maxRosterSize}). You must remove players (by <a href="${helpers.leagueUrl(
-                    ["roster"],
-                )}">releasing them from your roster</a> or through <a href="${helpers.leagueUrl(
+                userTeamSizeError += `more than the maximum number of players (${
+                    g.maxRosterSize
+                }). You must remove players (by <a href="${helpers.leagueUrl([
+                    "roster",
+                ])}">releasing them from your roster</a> or through <a href="${helpers.leagueUrl(
                     ["trade"],
                 )}">trades</a>) before continuing.`;
             } else {
@@ -1129,12 +1133,15 @@ async function checkRosterSizes(
                 if (g.userTids.length <= 1) {
                     userTeamSizeError = "Your team has ";
                 } else {
-                    userTeamSizeError = `The ${g.teamRegionsCache[tid]} ${g
-                        .teamNamesCache[tid]} have `;
+                    userTeamSizeError = `The ${g.teamRegionsCache[tid]} ${
+                        g.teamNamesCache[tid]
+                    } have `;
                 }
-                userTeamSizeError += `less than the minimum number of players (${g.minRosterSize}). You must add players (through <a href="${helpers.leagueUrl(
-                    ["free_agents"],
-                )}">free agency</a> or <a href="${helpers.leagueUrl([
+                userTeamSizeError += `less than the minimum number of players (${
+                    g.minRosterSize
+                }). You must add players (through <a href="${helpers.leagueUrl([
+                    "free_agents",
+                ])}">free agency</a> or <a href="${helpers.leagueUrl([
                     "trade",
                 ])}">trades</a>) before continuing.<br><br>Reminder: you can always sign free agents to ${helpers.formatCurrency(
                     g.minContract / 1000,
@@ -1147,9 +1154,9 @@ async function checkRosterSizes(
                     // See also core.phase
                     const p = minFreeAgents.shift();
                     if (!p) {
-                        userTeamSizeError = `AI team ${g.teamAbbrevsCache[
-                            tid
-                        ]} needs to add a player to meet the minimum roster requirements, but there are not enough free agents asking for a minimum salary. Easiest way to fix this is God Mode, give them extra players.`;
+                        userTeamSizeError = `AI team ${
+                            g.teamAbbrevsCache[tid]
+                        } needs to add a player to meet the minimum roster requirements, but there are not enough free agents asking for a minimum salary. Easiest way to fix this is God Mode, give them extra players.`;
                         break;
                     }
                     p.tid = tid;
@@ -1165,12 +1172,14 @@ async function checkRosterSizes(
                                 "roster",
                                 g.teamAbbrevsCache[p.tid],
                                 g.season,
-                            ])}">${g.teamNamesCache[
-                                p.tid
-                            ]}</a> signed <a href="${helpers.leagueUrl([
+                            ])}">${
+                                g.teamNamesCache[p.tid]
+                            }</a> signed <a href="${helpers.leagueUrl([
                                 "player",
                                 p.pid,
-                            ])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(
+                            ])}">${p.firstName} ${
+                                p.lastName
+                            }</a> for ${helpers.formatCurrency(
                                 p.contract.amount / 1000,
                                 "M",
                             )}/year through ${p.contract.exp}.`,

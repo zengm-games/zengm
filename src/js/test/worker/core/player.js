@@ -10,23 +10,20 @@ g.userTids = [0];
 
 describe("core/player", () => {
     describe("#generate()", () => {
-        it.skip(
-            "should add stats row only for players generated on teams, not free agents or undrafted players",
-            () => {
-                // Needs DB to check since stats are not in player object anymore
-                let p = player.generate(-2, 19, "", 25, 55, 2012, false, 15.5);
-                assert.equal(p.stats.length, 0);
+        it.skip("should add stats row only for players generated on teams, not free agents or undrafted players", () => {
+            // Needs DB to check since stats are not in player object anymore
+            let p = player.generate(-2, 19, "", 25, 55, 2012, false, 15.5);
+            assert.equal(p.stats.length, 0);
 
-                p = player.generate(-1, 19, "", 25, 55, 2012, false, 15.5);
-                assert.equal(p.stats.length, 0);
+            p = player.generate(-1, 19, "", 25, 55, 2012, false, 15.5);
+            assert.equal(p.stats.length, 0);
 
-                p = player.generate(0, 19, "", 25, 55, 2012, false, 15.5);
-                assert.equal(p.stats.length, 1);
+            p = player.generate(0, 19, "", 25, 55, 2012, false, 15.5);
+            assert.equal(p.stats.length, 1);
 
-                p = player.generate(15, 19, "", 25, 55, 2012, false, 15.5);
-                assert.equal(p.stats.length, 1);
-            },
-        );
+            p = player.generate(15, 19, "", 25, 55, 2012, false, 15.5);
+            assert.equal(p.stats.length, 1);
+        });
     });
 
     describe("#madeHof()", () => {
@@ -156,19 +153,25 @@ describe("core/player", () => {
             // 40/81
             assert(
                 pidCounts[0] >= 100,
-                `Player 0 picked ${pidCounts[0]} times, should be more than 100`,
+                `Player 0 picked ${
+                    pidCounts[0]
+                } times, should be more than 100`,
             );
             // 1/81
             assert.equal(pidCounts[1], 0);
             // 0/81
             assert(
                 pidCounts[2] > 0 && pidCounts[2] < 100,
-                `Player 2 picked ${pidCounts[2]} times, should be between 0 and 100`,
+                `Player 2 picked ${
+                    pidCounts[2]
+                } times, should be between 0 and 100`,
             );
             // 40/81
             assert(
                 pidCounts[3] >= 100,
-                `Player 3 picked ${pidCounts[3]} times, should be more than 100`,
+                `Player 3 picked ${
+                    pidCounts[3]
+                } times, should be more than 100`,
             );
         });
     });

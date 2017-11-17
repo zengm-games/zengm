@@ -335,59 +335,53 @@ describe("db/getCopies", async () => {
         });
 
         // Skipped tests require IndexedDB
-        it.skip(
-            "should return stats and ratings from all seasons and teams if no season or team is specified",
-            async () => {
-                const pf = await idb.getCopy.playersPlus(p, {
-                    attrs: ["tid", "awards"],
-                    ratings: ["season", "ovr"],
-                    stats: ["season", "abbrev", "fg"],
-                    statType: "totals",
-                });
+        it.skip("should return stats and ratings from all seasons and teams if no season or team is specified", async () => {
+            const pf = await idb.getCopy.playersPlus(p, {
+                attrs: ["tid", "awards"],
+                ratings: ["season", "ovr"],
+                stats: ["season", "abbrev", "fg"],
+                statType: "totals",
+            });
 
-                assert.equal(pf.tid, 4);
-                assert.equal(pf.awards.length, 0);
-                assert.equal(pf.ratings[0].season, 2011);
-                assert.equal(typeof pf.ratings[0].ovr, "number");
-                assert.equal(pf.ratings[1].season, 2012);
-                assert.equal(typeof pf.ratings[1].ovr, "number");
-                assert.equal(pf.ratings[2].season, 2013);
-                assert.equal(typeof pf.ratings[2].ovr, "number");
-                assert.equal(pf.stats[0].season, 2012);
-                assert.equal(pf.stats[0].abbrev, "CIN");
-                assert.equal(pf.stats[0].fg, 20);
-                assert.equal(pf.stats[1].season, 2013);
-                assert.equal(pf.stats[1].abbrev, "ATL");
-                assert.equal(pf.stats[1].fg, 56);
-                assert.equal(pf.careerStats.fg, 76);
+            assert.equal(pf.tid, 4);
+            assert.equal(pf.awards.length, 0);
+            assert.equal(pf.ratings[0].season, 2011);
+            assert.equal(typeof pf.ratings[0].ovr, "number");
+            assert.equal(pf.ratings[1].season, 2012);
+            assert.equal(typeof pf.ratings[1].ovr, "number");
+            assert.equal(pf.ratings[2].season, 2013);
+            assert.equal(typeof pf.ratings[2].ovr, "number");
+            assert.equal(pf.stats[0].season, 2012);
+            assert.equal(pf.stats[0].abbrev, "CIN");
+            assert.equal(pf.stats[0].fg, 20);
+            assert.equal(pf.stats[1].season, 2013);
+            assert.equal(pf.stats[1].abbrev, "ATL");
+            assert.equal(pf.stats[1].fg, 56);
+            assert.equal(pf.careerStats.fg, 76);
 
-                assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
-            },
-        );
-        it.skip(
-            "should return stats and ratings from all seasons with a specific team if no season is specified but a team is",
-            async () => {
-                const pf = await idb.getCopy.playersPlus(p, {
-                    attrs: ["tid", "awards"],
-                    ratings: ["season", "ovr"],
-                    stats: ["season", "abbrev", "fg"],
-                    tid: 4,
-                    statType: "totals",
-                });
+            assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
+        });
+        it.skip("should return stats and ratings from all seasons with a specific team if no season is specified but a team is", async () => {
+            const pf = await idb.getCopy.playersPlus(p, {
+                attrs: ["tid", "awards"],
+                ratings: ["season", "ovr"],
+                stats: ["season", "abbrev", "fg"],
+                tid: 4,
+                statType: "totals",
+            });
 
-                assert.equal(pf.tid, 4);
-                assert.equal(pf.awards.length, 0);
-                assert.equal(pf.ratings[0].season, 2012);
-                assert.equal(typeof pf.ratings[0].ovr, "number");
-                assert.equal(pf.ratings.length, 1);
-                assert.equal(pf.stats[0].season, 2012);
-                assert.equal(pf.stats[0].abbrev, "CIN");
-                assert.equal(pf.stats[0].fg, 20);
-                assert.equal(pf.stats.length, 1);
-                assert.equal(pf.careerStats.fg, 20);
+            assert.equal(pf.tid, 4);
+            assert.equal(pf.awards.length, 0);
+            assert.equal(pf.ratings[0].season, 2012);
+            assert.equal(typeof pf.ratings[0].ovr, "number");
+            assert.equal(pf.ratings.length, 1);
+            assert.equal(pf.stats[0].season, 2012);
+            assert.equal(pf.stats[0].abbrev, "CIN");
+            assert.equal(pf.stats[0].fg, 20);
+            assert.equal(pf.stats.length, 1);
+            assert.equal(pf.careerStats.fg, 20);
 
-                assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
-            },
-        );
+            assert(!pf.hasOwnProperty("careerStatsPlayoffs"));
+        });
     });
 });

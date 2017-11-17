@@ -80,9 +80,7 @@ const TeamRecords = ({ byType, displayName, seasonCount, teamRecords }) => {
 
             <p>
                 More:{" "}
-                <a href={helpers.leagueUrl(["history_all"])}>
-                    League History
-                </a>{" "}
+                <a href={helpers.leagueUrl(["history_all"])}>League History</a>{" "}
                 |{" "}
                 <a href={helpers.leagueUrl(["awards_records"])}>
                     Awards Records

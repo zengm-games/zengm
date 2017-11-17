@@ -59,10 +59,15 @@ const handleRelease = async p => {
 
     let releaseMessage;
     if (justDrafted) {
-        releaseMessage = `Are you sure you want to release ${p.name}?  He will become a free agent and no longer take up a roster spot on your team. Because you just drafted him and the regular season has not started yet, you will not have to pay his contract.`;
+        releaseMessage = `Are you sure you want to release ${
+            p.name
+        }?  He will become a free agent and no longer take up a roster spot on your team. Because you just drafted him and the regular season has not started yet, you will not have to pay his contract.`;
     } else {
-        releaseMessage = `Are you sure you want to release ${p.name}?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in ${p
-            .contract.exp}.`;
+        releaseMessage = `Are you sure you want to release ${
+            p.name
+        }?  He will become a free agent and no longer take up a roster spot on your team, but you will still have to pay his salary (and have it count against the salary cap) until his contract expires in ${
+            p.contract.exp
+        }.`;
     }
 
     if (window.confirm(releaseMessage)) {
@@ -233,7 +238,8 @@ const RosterRow = SortableElement(
                             className="btn btn-default btn-xs"
                             disabled={p.untradable}
                             onClick={() =>
-                                toWorker("actions.tradeFor", { pid: p.pid })}
+                                toWorker("actions.tradeFor", { pid: p.pid })
+                            }
                         >
                             Trade For
                         </button>
@@ -427,7 +433,8 @@ class Roster extends React.Component {
 
                     {season === g.season ? (
                         <p>
-                            {g.maxRosterSize - players.length} open roster spots<br />
+                            {g.maxRosterSize - players.length} open roster spots<br
+                            />
                             Payroll: {helpers.formatCurrency(payroll, "M")}
                             <br />
                             Salary cap: {helpers.formatCurrency(salaryCap, "M")}

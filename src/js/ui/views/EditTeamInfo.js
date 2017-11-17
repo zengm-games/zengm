@@ -205,7 +205,8 @@ class EditTeamInfo extends React.Component {
                                                 i,
                                                 "region",
                                                 e,
-                                            )}
+                                            )
+                                        }
                                         value={t.region}
                                     />
                                 </div>
@@ -215,11 +216,8 @@ class EditTeamInfo extends React.Component {
                                         type="text"
                                         className="form-control"
                                         onChange={e =>
-                                            this.handleInputChange(
-                                                i,
-                                                "name",
-                                                e,
-                                            )}
+                                            this.handleInputChange(i, "name", e)
+                                        }
                                         value={t.name}
                                     />
                                 </div>
@@ -233,7 +231,8 @@ class EditTeamInfo extends React.Component {
                                                 i,
                                                 "abbrev",
                                                 e,
-                                            )}
+                                            )
+                                        }
                                         value={t.abbrev}
                                     />
                                 </div>
@@ -245,7 +244,8 @@ class EditTeamInfo extends React.Component {
                                         type="text"
                                         className="form-control"
                                         onChange={e =>
-                                            this.handleInputChange(i, "pop", e)}
+                                            this.handleInputChange(i, "pop", e)
+                                        }
                                         value={t.pop}
                                     />
                                 </div>
@@ -262,7 +262,8 @@ class EditTeamInfo extends React.Component {
                                                 i,
                                                 "imgURL",
                                                 e,
-                                            )}
+                                            )
+                                        }
                                         value={t.imgURL}
                                     />
                                 </div>

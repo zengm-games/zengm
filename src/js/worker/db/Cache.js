@@ -564,14 +564,16 @@ class Cache {
                 // Special case for games is due to interaction with schedule (see hack below)
                 if (storeInfo.autoIncrement || store === "games") {
                     this._maxIds[store] = -1;
-                    await tx[
-                        store
-                    ].iterate(null, "prev", (row, shortCircuit) => {
-                        if (row) {
-                            this._maxIds[store] = row[storeInfo.pk];
-                        }
-                        shortCircuit();
-                    });
+                    await tx[store].iterate(
+                        null,
+                        "prev",
+                        (row, shortCircuit) => {
+                            if (row) {
+                                this._maxIds[store] = row[storeInfo.pk];
+                            }
+                            shortCircuit();
+                        },
+                    );
                 }
             })(),
         ]);
@@ -781,7 +783,9 @@ class Cache {
         } else {
             if (!this.storeInfos[store].autoIncrement) {
                 throw new Error(
-                    `Primary key field "${pk}" is required for non-autoincrementing store "${store}"`,
+                    `Primary key field "${
+                        pk
+                    }" is required for non-autoincrementing store "${store}"`,
                 );
             }
 

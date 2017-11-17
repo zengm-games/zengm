@@ -187,7 +187,9 @@ class FinancesForm extends React.Component {
                     </div>
                     <div className="pull-left finances-settings-text-small">
                         Current spending rate: #{t.budget.scouting.rank}
-                        <br />Spent this season: #{t.seasonAttrs.expenses.scouting.rank}
+                        <br />Spent this season: #{
+                            t.seasonAttrs.expenses.scouting.rank
+                        }
                     </div>
                 </div>
                 <div className="row">
@@ -207,7 +209,9 @@ class FinancesForm extends React.Component {
                     </div>
                     <div className="pull-left finances-settings-text-small">
                         Current spending rate: #{t.budget.coaching.rank}
-                        <br />Spent this season: #{t.seasonAttrs.expenses.coaching.rank}
+                        <br />Spent this season: #{
+                            t.seasonAttrs.expenses.coaching.rank
+                        }
                     </div>
                 </div>
                 <div className="row">
@@ -227,7 +231,9 @@ class FinancesForm extends React.Component {
                     </div>
                     <div className="pull-left finances-settings-text-small">
                         Current spending rate: #{t.budget.health.rank}
-                        <br />Spent this season: #{t.seasonAttrs.expenses.health.rank}
+                        <br />Spent this season: #{
+                            t.seasonAttrs.expenses.health.rank
+                        }
                     </div>
                 </div>
                 <div className="row">
@@ -247,7 +253,9 @@ class FinancesForm extends React.Component {
                     </div>
                     <div className="pull-left finances-settings-text-small">
                         Current spending rate: #{t.budget.facilities.rank}
-                        <br />Spent this season: #{t.seasonAttrs.expenses.facilities.rank}
+                        <br />Spent this season: #{
+                            t.seasonAttrs.expenses.facilities.rank
+                        }
                     </div>
                 </div>
                 <br />
@@ -384,12 +392,8 @@ const TeamFinances = ({
             </h1>
 
             <p>
-                More: <a href={helpers.leagueUrl(["roster", abbrev])}>
-                    Roster
-                </a>{" "}
-                | <a href={helpers.leagueUrl(["game_log", abbrev])}>
-                    Game Log
-                </a>{" "}
+                More: <a href={helpers.leagueUrl(["roster", abbrev])}>Roster</a>{" "}
+                | <a href={helpers.leagueUrl(["game_log", abbrev])}>Game Log</a>{" "}
                 |{" "}
                 <a href={helpers.leagueUrl(["team_history", abbrev])}>
                     History
@@ -404,12 +408,13 @@ const TeamFinances = ({
                 The current payroll (<b>
                     {helpers.formatCurrency(payroll, "M")}
                 </b>) is {payroll > minPayroll ? "above" : "below"} the minimum
-                payroll limit (<b>
-                    {helpers.formatCurrency(minPayroll, "M")}
-                </b>), {payroll > salaryCap ? "above" : "below"} the salary cap
-                (<b>{helpers.formatCurrency(salaryCap, "M")}</b>), and{" "}
-                {payroll > luxuryPayroll ? "above" : "below"} the luxury tax
-                limit (<b>{helpers.formatCurrency(luxuryPayroll, "M")}</b>).{" "}
+                payroll limit (<b>{helpers.formatCurrency(minPayroll, "M")}</b>),{" "}
+                {payroll > salaryCap ? "above" : "below"} the salary cap (<b>
+                    {helpers.formatCurrency(salaryCap, "M")}
+                </b>), and {payroll > luxuryPayroll ? "above" : "below"} the
+                luxury tax limit (<b>
+                    {helpers.formatCurrency(luxuryPayroll, "M")}
+                </b>).{" "}
                 <HelpPopover placement="bottom" title="Payroll Limits">
                     The salary cap is a soft cap, meaning that you can exceed it
                     to re-sign your own players or to sign free agents to
@@ -473,7 +478,8 @@ const TeamFinances = ({
                             data={barData.att}
                             labels={barSeasons}
                             tooltipCb={val =>
-                                helpers.numberWithCommas(Math.round(val))}
+                                helpers.numberWithCommas(Math.round(val))
+                            }
                             ylim={[0, 25000]}
                         />
                     </div>
@@ -502,7 +508,8 @@ const TeamFinances = ({
                                 ],
                             ]}
                             tooltipCb={val =>
-                                helpers.formatCurrency(val / 1000, "M", 1)}
+                                helpers.formatCurrency(val / 1000, "M", 1)
+                            }
                         />
                     </div>
                     <br />
@@ -532,7 +539,8 @@ const TeamFinances = ({
                                 ],
                             ]}
                             tooltipCb={val =>
-                                helpers.formatCurrency(val / 1000, "M", 1)}
+                                helpers.formatCurrency(val / 1000, "M", 1)
+                            }
                         />
                     </div>
                     <br />
@@ -543,7 +551,8 @@ const TeamFinances = ({
                             data={barData.cash}
                             labels={barSeasons}
                             tooltipCb={val =>
-                                helpers.formatCurrency(val, "M", 1)}
+                                helpers.formatCurrency(val, "M", 1)
+                            }
                         />
                     </div>
                 </div>

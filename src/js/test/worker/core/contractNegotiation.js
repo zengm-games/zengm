@@ -72,7 +72,9 @@ describe("core/contractNegotiation", () => {
             assert.equal(
                 typeof error,
                 "undefined",
-                `Unexpected error message from contractNegotiation.create: "${error}"`,
+                `Unexpected error message from contractNegotiation.create: "${
+                    error
+                }"`,
             );
 
             const negotiations = await idb.cache.negotiations.getAll();
@@ -101,7 +103,9 @@ describe("core/contractNegotiation", () => {
             assert.equal(
                 typeof error,
                 "undefined",
-                `Unexpected error message from contractNegotiation.create: "${error}"`,
+                `Unexpected error message from contractNegotiation.create: "${
+                    error
+                }"`,
             );
 
             let negotiations = await idb.cache.negotiations.getAll();
@@ -129,7 +133,9 @@ describe("core/contractNegotiation", () => {
             assert.equal(
                 typeof error,
                 "undefined",
-                `Unexpected error message from contractNegotiation.create: "${error}"`,
+                `Unexpected error message from contractNegotiation.create: "${
+                    error
+                }"`,
             );
 
             let negotiations = await idb.cache.negotiations.getAll();
@@ -140,7 +146,9 @@ describe("core/contractNegotiation", () => {
             assert.equal(
                 typeof error,
                 "undefined",
-                `Unexpected error message from contractNegotiation.create: "${error}"`,
+                `Unexpected error message from contractNegotiation.create: "${
+                    error
+                }"`,
             );
 
             negotiations = await idb.cache.negotiations.getAll();
@@ -174,7 +182,9 @@ describe("core/contractNegotiation", () => {
             assert.equal(
                 typeof error,
                 "undefined",
-                `Unexpected error message from contractNegotiation.create: "${error}"`,
+                `Unexpected error message from contractNegotiation.create: "${
+                    error
+                }"`,
             );
 
             negotiations = await idb.cache.negotiations.getAll();
@@ -197,7 +207,9 @@ describe("core/contractNegotiation", () => {
             assert.equal(
                 typeof error,
                 "undefined",
-                `Unexpected error message from contractNegotiation.create: "${error}"`,
+                `Unexpected error message from contractNegotiation.create: "${
+                    error
+                }"`,
             );
 
             const error2 = await contractNegotiation.accept(

@@ -57,10 +57,11 @@ async function create(
     }
 
     if (helpers.refuseToNegotiate(playerAmount, p.freeAgentMood[g.userTid])) {
-        return `<a href="${helpers.leagueUrl([
-            "player",
-            p.pid,
-        ])}">${p.firstName} ${p.lastName}</a> refuses to sign with you, no matter what you offer.`;
+        return `<a href="${helpers.leagueUrl(["player", p.pid])}">${
+            p.firstName
+        } ${
+            p.lastName
+        }</a> refuses to sign with you, no matter what you offer.`;
     }
 
     const negotiation = {
@@ -139,12 +140,13 @@ async function accept(
 
     // This error is for sanity checking in multi team mode. Need to check for existence of negotiation.tid because it wasn't there originally and I didn't write upgrade code. Can safely get rid of it later.
     if (negotiation.tid !== undefined && negotiation.tid !== g.userTid) {
-        return `This negotiation was started by the ${g.teamRegionsCache[
-            negotiation.tid
-        ]} ${g.teamNamesCache[negotiation.tid]} but you are the ${g
-            .teamRegionsCache[g.userTid]} ${g.teamNamesCache[
-            g.userTid
-        ]}. Either switch teams or cancel this negotiation.`;
+        return `This negotiation was started by the ${
+            g.teamRegionsCache[negotiation.tid]
+        } ${g.teamNamesCache[negotiation.tid]} but you are the ${
+            g.teamRegionsCache[g.userTid]
+        } ${
+            g.teamNamesCache[g.userTid]
+        }. Either switch teams or cancel this negotiation.`;
     }
 
     const p = await idb.cache.players.get(pid);
@@ -174,12 +176,11 @@ async function accept(
                 "roster",
                 g.teamAbbrevsCache[g.userTid],
                 g.season,
-            ])}">${g.teamNamesCache[
-                g.userTid
-            ]}</a> re-signed <a href="${helpers.leagueUrl([
-                "player",
-                p.pid,
-            ])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(
+            ])}">${
+                g.teamNamesCache[g.userTid]
+            }</a> re-signed <a href="${helpers.leagueUrl(["player", p.pid])}">${
+                p.firstName
+            } ${p.lastName}</a> for ${helpers.formatCurrency(
                 p.contract.amount / 1000,
                 "M",
             )}/year through ${p.contract.exp}.`,
@@ -194,12 +195,11 @@ async function accept(
                 "roster",
                 g.teamAbbrevsCache[g.userTid],
                 g.season,
-            ])}">${g.teamNamesCache[
-                g.userTid
-            ]}</a> signed <a href="${helpers.leagueUrl([
-                "player",
-                p.pid,
-            ])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(
+            ])}">${
+                g.teamNamesCache[g.userTid]
+            }</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${
+                p.firstName
+            } ${p.lastName}</a> for ${helpers.formatCurrency(
                 p.contract.amount / 1000,
                 "M",
             )}/year through ${p.contract.exp}.`,

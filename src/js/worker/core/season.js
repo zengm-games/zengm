@@ -410,10 +410,9 @@ async function doAwards(conditions: Conditions) {
     // Notifications for awards for user's players
     for (let i = 0; i < awardsByPlayer.length; i++) {
         const p = awardsByPlayer[i];
-        let text = `<a href="${helpers.leagueUrl([
-            "player",
-            p.pid,
-        ])}">${p.name}</a> (<a href="${helpers.leagueUrl([
+        let text = `<a href="${helpers.leagueUrl(["player", p.pid])}">${
+            p.name
+        }</a> (<a href="${helpers.leagueUrl([
             "roster",
             g.teamAbbrevsCache[p.tid],
             g.season,
@@ -649,7 +648,9 @@ function newScheduleCrappy(): [number, number][] {
                 console.log(tids, tids.length);
                 console.log(numRemaining.length);
                 throw new Error(
-                    `Failed to generate schedule with ${g.numTeams} teams and ${g.numGames} games.`,
+                    `Failed to generate schedule with ${g.numTeams} teams and ${
+                        g.numGames
+                    } games.`,
                 );
             }
         }

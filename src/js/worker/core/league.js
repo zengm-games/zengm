@@ -373,7 +373,11 @@ async function create(
 
         for (const p0 of players) {
             // Has to be any because I cna't figure out how to change PlayerWithoutPidWithStats to Player
-            const p: any = player.augmentPartialPlayer(p0, scoutingRank, leagueFile.version);
+            const p: any = player.augmentPartialPlayer(
+                p0,
+                scoutingRank,
+                leagueFile.version,
+            );
 
             // Don't let imported contracts be created for below the league minimum, and round to nearest $10,000.
             p.contract.amount = Math.max(

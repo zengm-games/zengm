@@ -782,12 +782,11 @@ async function release(p: Player, justDrafted: boolean) {
             "roster",
             g.teamAbbrevsCache[p.tid],
             g.season,
-        ])}">${g.teamNamesCache[
-            p.tid
-        ]}</a> released <a href="${helpers.leagueUrl([
-            "player",
-            p.pid,
-        ])}">${p.firstName} ${p.lastName}</a>.`,
+        ])}">${
+            g.teamNamesCache[p.tid]
+        }</a> released <a href="${helpers.leagueUrl(["player", p.pid])}">${
+            p.firstName
+        } ${p.lastName}</a>.`,
         showNotification: false,
         pids: [p.pid],
         tids: [p.tid],
@@ -1517,10 +1516,9 @@ function retire(
         logEvent(
             {
                 type: "retired",
-                text: `<a href="${helpers.leagueUrl([
-                    "player",
-                    p.pid,
-                ])}">${p.firstName} ${p.lastName}</a> retired.`,
+                text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${
+                    p.firstName
+                } ${p.lastName}</a> retired.`,
                 showNotification: p.tid === g.userTid,
                 pids: [p.pid],
                 tids: [p.tid],
@@ -1542,12 +1540,13 @@ function retire(
         logEvent(
             {
                 type: "hallOfFame",
-                text: `<a href="${helpers.leagueUrl([
-                    "player",
-                    p.pid,
-                ])}">${p.firstName} ${p.lastName}</a> was inducted into the <a href="${helpers.leagueUrl(
-                    ["hall_of_fame"],
-                )}">Hall of Fame</a>.`,
+                text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${
+                    p.firstName
+                } ${
+                    p.lastName
+                }</a> was inducted into the <a href="${helpers.leagueUrl([
+                    "hall_of_fame",
+                ])}">Hall of Fame</a>.`,
                 showNotification: p.statsTids.includes(g.userTid),
                 pids: [p.pid],
                 tids: p.statsTids,
@@ -1595,7 +1594,11 @@ function moodColorText(p: Player) {
  * @param {Object} p Partial player object.
  * @return {Object} p Full player object.
  */
-function augmentPartialPlayer(p: any, scoutingRank: number, version: number | void): PlayerWithStats {
+function augmentPartialPlayer(
+    p: any,
+    scoutingRank: number,
+    version: number | void,
+): PlayerWithStats {
     let age;
     if (!p.hasOwnProperty("born")) {
         age = random.randInt(19, 35);
@@ -1836,10 +1839,9 @@ function checkStatisticalFeat(
             stat => `${statArr[stat]} ${stat}`,
         );
 
-        let featText = `<a href="${helpers.leagueUrl([
-            "player",
-            pid,
-        ])}">${p.name}</a> had <a href="${helpers.leagueUrl([
+        let featText = `<a href="${helpers.leagueUrl(["player", pid])}">${
+            p.name
+        }</a> had <a href="${helpers.leagueUrl([
             "game_log",
             g.teamAbbrevsCache[tid],
             g.season,
@@ -1856,12 +1858,11 @@ function checkStatisticalFeat(
                 featText += ", ";
             }
         }
-        featText += `</a> in ${results.team[i].stat.pts.toString().charAt(0) ===
-        "8"
-            ? "an"
-            : "a"} ${results.team[i].stat.pts}-${results.team[j].stat.pts} ${won
-            ? "win over the"
-            : "loss to the"} ${g.teamNamesCache[results.team[j].id]}.`;
+        featText += `</a> in ${
+            results.team[i].stat.pts.toString().charAt(0) === "8" ? "an" : "a"
+        } ${results.team[i].stat.pts}-${results.team[j].stat.pts} ${
+            won ? "win over the" : "loss to the"
+        } ${g.teamNamesCache[results.team[j].id]}.`;
 
         logFeat(featText);
 
@@ -1959,10 +1960,9 @@ async function killOne(conditions: Conditions) {
     logEvent(
         {
             type: "tragedy",
-            text: `<a href="${helpers.leagueUrl([
-                "player",
-                p.pid,
-            ])}">${p.firstName} ${p.lastName}</a> ${reason}.`,
+            text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${
+                p.firstName
+            } ${p.lastName}</a> ${reason}.`,
             showNotification: tid === g.userTid,
             pids: [p.pid],
             tids: [tid],

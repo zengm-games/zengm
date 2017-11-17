@@ -25,9 +25,7 @@ const DraftAbbrev = ({
 
     return (
         <span>
-            <a href={helpers.leagueUrl(["roster", abbrev, season])}>
-                {abbrev}
-            </a>{" "}
+            <a href={helpers.leagueUrl(["roster", abbrev, season])}>{abbrev}</a>{" "}
             (from{" "}
             <a href={helpers.leagueUrl(["roster", originalAbbrev, season])}>
                 {originalAbbrev}

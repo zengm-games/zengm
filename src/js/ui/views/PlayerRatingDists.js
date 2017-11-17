@@ -27,9 +27,7 @@ const PlayerRatingDists = ({ ratingsAll, season }) => {
 
             <p>
                 These{" "}
-                <a href="http://en.wikipedia.org/wiki/Box_plot">
-                    box plots
-                </a>{" "}
+                <a href="http://en.wikipedia.org/wiki/Box_plot">box plots</a>{" "}
                 show the league-wide distributions of player ratings for all
                 active players in the selected season. The five vertical lines
                 in each plot represent the minimum of the scale (0), the

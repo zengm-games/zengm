@@ -268,16 +268,18 @@ class LiveGame extends React.Component {
 
                 if (e.type === "text") {
                     if (e.t === 0 || e.t === 1) {
-                        text = `${e.time} - ${boxScore.teams[e.t]
-                            .abbrev} - ${e.text}`;
+                        text = `${e.time} - ${boxScore.teams[e.t].abbrev} - ${
+                            e.text
+                        }`;
                     } else {
                         text = e.text;
                     }
 
                     // Show score after scoring plays
                     if (text.includes("made")) {
-                        text += ` (${boxScore.teams[0].pts}-${boxScore.teams[1]
-                            .pts})`;
+                        text += ` (${boxScore.teams[0].pts}-${
+                            boxScore.teams[1].pts
+                        })`;
                     }
 
                     boxScore.time = e.time;

@@ -482,8 +482,9 @@ const Player = ({
                     <span
                         className="label label-danger label-injury"
                         style={{ marginLeft: 0 }}
-                        title={`${player.injury.type} (out ${player.injury
-                            .gamesRemaining} more games)`}
+                        title={`${player.injury.type} (out ${
+                            player.injury.gamesRemaining
+                        } more games)`}
                     >
                         {player.injury.gamesRemaining}
                     </span>
@@ -578,7 +579,8 @@ const Player = ({
                         className="btn btn-default"
                         disabled={player.untradable}
                         onClick={() =>
-                            toWorker("actions.tradeFor", { pid: player.pid })}
+                            toWorker("actions.tradeFor", { pid: player.pid })
+                        }
                     >
                         Trade For
                     </button>
@@ -719,7 +721,9 @@ const Player = ({
                                     return (
                                         <tr key={i}>
                                             <td>
-                                                {a.count > 1 ? <span>{a.count}x </span> : null}
+                                                {a.count > 1 ? (
+                                                    <span>{a.count}x </span>
+                                                ) : null}
                                                 {a.type} ({a.seasons.join(", ")})
                                             </td>
                                         </tr>

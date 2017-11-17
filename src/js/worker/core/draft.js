@@ -156,10 +156,11 @@ async function genPlayers(
         if (typeof pid === "number") {
             await logEvent({
                 type: "playerFeat",
-                text: `<a href="${helpers.leagueUrl([
-                    "player",
-                    pid,
-                ])}">${p.firstName} ${p.lastName}</a> got sick of the haters and decided to show the world how a big baller plays.`,
+                text: `<a href="${helpers.leagueUrl(["player", pid])}">${
+                    p.firstName
+                } ${
+                    p.lastName
+                }</a> got sick of the haters and decided to show the world how a big baller plays.`,
                 showNotification: false,
                 pids: [pid],
                 tids: [g.userTid],
@@ -191,10 +192,9 @@ async function genPlayers(
         if (typeof pid === "number") {
             await logEvent({
                 type: "playerFeat",
-                text: `<a href="${helpers.leagueUrl([
-                    "player",
-                    pid,
-                ])}">${p.firstName} ${p.lastName}</a> decided to Make Basketball GM Great Again.`,
+                text: `<a href="${helpers.leagueUrl(["player", pid])}">${
+                    p.firstName
+                } ${p.lastName}</a> decided to Make Basketball GM Great Again.`,
                 showNotification: false,
                 pids: [pid],
                 tids: [g.userTid],
@@ -226,9 +226,9 @@ function lotteryLogTxt(
             number,
         )} overall in the ${g.season} draft.`;
     } else if (type === "normal") {
-        txt += ` will select ${helpers.ordinal(
-            number,
-        )} overall in the ${g.season} draft.`;
+        txt += ` will select ${helpers.ordinal(number)} overall in the ${
+            g.season
+        } draft.`;
     }
     return txt;
 }
@@ -776,12 +776,11 @@ async function selectPlayer(pick: PickRealized, pid: number) {
             "roster",
             g.teamAbbrevsCache[pick.tid],
             g.season,
-        ])}">${g.teamNamesCache[
-            pick.tid
-        ]}</a> selected <a href="${helpers.leagueUrl([
-            "player",
-            p.pid,
-        ])}">${p.firstName} ${p.lastName}</a> with the ${helpers.ordinal(
+        ])}">${
+            g.teamNamesCache[pick.tid]
+        }</a> selected <a href="${helpers.leagueUrl(["player", p.pid])}">${
+            p.firstName
+        } ${p.lastName}</a> with the ${helpers.ordinal(
             pick.pick + (pick.round - 1) * 30,
         )} pick in the <a href="${helpers.leagueUrl([
             "draft_summary",

@@ -1535,14 +1535,14 @@ _html2canvas.Parse = function(images, options) {
                 text = _html2canvas.Generate.ListRoman(currentIndex);
                 break;
             case "lower-roman":
-                text = _html2canvas.Generate
-                    .ListRoman(currentIndex)
-                    .toLowerCase();
+                text = _html2canvas.Generate.ListRoman(
+                    currentIndex,
+                ).toLowerCase();
                 break;
             case "lower-alpha":
-                text = _html2canvas.Generate
-                    .ListAlpha(currentIndex)
-                    .toLowerCase();
+                text = _html2canvas.Generate.ListAlpha(
+                    currentIndex,
+                ).toLowerCase();
                 break;
             case "upper-alpha":
                 text = _html2canvas.Generate.ListAlpha(currentIndex);
@@ -1661,14 +1661,11 @@ _html2canvas.Parse = function(images, options) {
     }
 
     function getBorderRadiusData(element) {
-        return [
-            "TopLeft",
-            "TopRight",
-            "BottomRight",
-            "BottomLeft",
-        ].map(function(side) {
-            return getCSS(element, "border" + side + "Radius");
-        });
+        return ["TopLeft", "TopRight", "BottomRight", "BottomLeft"].map(
+            function(side) {
+                return getCSS(element, "border" + side + "Radius");
+            },
+        );
     }
 
     var getCurvePoints = (function(kappa) {
@@ -2885,8 +2882,7 @@ _html2canvas.Preload = function(options) {
     function loadBackgroundImages(background_image, el) {
         var bounds;
 
-        _html2canvas.Util
-            .parseBackgroundImage(background_image)
+        _html2canvas.Util.parseBackgroundImage(background_image)
             .filter(invalidBackgrounds)
             .forEach(function(background_image) {
                 if (background_image.method === "url") {

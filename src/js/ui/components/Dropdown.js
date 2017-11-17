@@ -354,7 +354,8 @@ class Dropdown extends React.Component<
                                 field={field}
                                 value={this.state.values[i]}
                                 handleChange={event =>
-                                    this.handleChange(i, event)}
+                                    this.handleChange(i, event)
+                                }
                             />
                         </div>
                     );

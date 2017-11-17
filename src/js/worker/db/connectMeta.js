@@ -32,7 +32,9 @@ const createMeta = upgradeDB => {
  */
 const migrateMeta = (upgradeDB, fromLocalStorage) => {
     console.log(
-        `Upgrading meta database from version ${upgradeDB.oldVersion} to version ${upgradeDB.version}`,
+        `Upgrading meta database from version ${
+            upgradeDB.oldVersion
+        } to version ${upgradeDB.version}`,
     );
 
     if (upgradeDB.oldVersion <= 6) {

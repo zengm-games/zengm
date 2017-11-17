@@ -164,7 +164,9 @@ const Negotiation = ({
                                         className="pull-left"
                                         style={{ paddingTop: "8px" }}
                                     >
-                                        ${contract.amount.toFixed(2)}M per year<span className="hidden-xs">, through {contract.exp}</span>{" "}
+                                        ${contract.amount.toFixed(2)}M per year<span className="hidden-xs">
+                                            , through {contract.exp}
+                                        </span>{" "}
                                         ({contract.years}{" "}
                                         {contract.years === 1
                                             ? "season"
@@ -178,9 +180,13 @@ const Negotiation = ({
                                                 player.pid,
                                                 contract.amount,
                                                 contract.exp,
-                                            )}
+                                            )
+                                        }
                                     >
-                                        Sign<span className="hidden-xs"> Contract</span>
+                                        Sign<span className="hidden-xs">
+                                            {" "}
+                                            Contract
+                                        </span>
                                     </button>
                                 </div>
                             );

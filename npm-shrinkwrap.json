@@ -1412,11 +1412,6 @@
       "resolved": "https://registry.npmjs.org/create-hmac/-/create-hmac-1.1.6.tgz",
       "dev": true
     },
-    "create-react-class": {
-      "version": "15.6.2",
-      "from": "create-react-class@>=15.6.0 <16.0.0",
-      "resolved": "https://registry.npmjs.org/create-react-class/-/create-react-class-15.6.2.tgz"
-    },
     "cross-spawn": {
       "version": "5.1.0",
       "from": "cross-spawn@>=5.1.0 <6.0.0",
@@ -2186,7 +2181,7 @@
     },
     "fbjs": {
       "version": "0.8.16",
-      "from": "fbjs@>=0.8.9 <0.9.0",
+      "from": "fbjs@>=0.8.16 <0.9.0",
       "resolved": "https://registry.npmjs.org/fbjs/-/fbjs-0.8.16.tgz"
     },
     "figures": {
@@ -3746,7 +3741,7 @@
     },
     "object-assign": {
       "version": "4.1.1",
-      "from": "object-assign@>=4.1.0 <5.0.0",
+      "from": "object-assign@>=4.1.1 <5.0.0",
       "resolved": "https://registry.npmjs.org/object-assign/-/object-assign-4.1.1.tgz"
     },
     "object-component": {
@@ -4209,7 +4204,7 @@
     },
     "prop-types": {
       "version": "15.6.0",
-      "from": "prop-types@>=15.5.10 <16.0.0",
+      "from": "prop-types@>=15.6.0 <16.0.0",
       "resolved": "https://registry.npmjs.org/prop-types/-/prop-types-15.6.0.tgz"
     },
     "prop-types-extra": {
@@ -4324,9 +4319,9 @@
       "dev": true
     },
     "react": {
-      "version": "15.6.1",
-      "from": "react@15.6.1",
-      "resolved": "https://registry.npmjs.org/react/-/react-15.6.1.tgz"
+      "version": "16.1.1",
+      "from": "react@16.1.1",
+      "resolved": "https://registry.npmjs.org/react/-/react-16.1.1.tgz"
     },
     "react-addons-text-content": {
       "version": "0.0.4",
@@ -4346,9 +4341,9 @@
       }
     },
     "react-dom": {
-      "version": "15.6.1",
-      "from": "react-dom@15.6.1",
-      "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-15.6.1.tgz"
+      "version": "16.1.1",
+      "from": "react-dom@16.1.1",
+      "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-16.1.1.tgz"
     },
     "react-overlays": {
       "version": "0.8.3",
@@ -4356,9 +4351,9 @@
       "resolved": "https://registry.npmjs.org/react-overlays/-/react-overlays-0.8.3.tgz"
     },
     "react-sortable-hoc": {
-      "version": "0.6.3",
+      "version": "0.6.8",
       "from": "dumbmatter/react-sortable-hoc#clonedNode-in-onSortStart",
-      "resolved": "git://github.com/dumbmatter/react-sortable-hoc.git#fd02b1a472456ab5a2a332e06f71ad2b4df6cf94"
+      "resolved": "git://github.com/dumbmatter/react-sortable-hoc.git#a38783cfbfdc2c3e4aed40314aa113d52052bc36"
     },
     "react-transition-group": {
       "version": "2.2.1",

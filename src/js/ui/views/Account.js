@@ -258,6 +258,7 @@ const Account = ({
         count: number,
         desc: string,
         name: string,
+        slug: string,
     }[],
     email?: string,
     goldMessage?: string,
@@ -367,7 +368,7 @@ const Account = ({
             <ul className="achievements list-group">
                 {achievements.map((achievement, i) => {
                     const lis = [
-                        <li className="list-group-item col-xs-12 col-sm-6 col-md-4 col-lg-3 pull-left">
+                        <li className="list-group-item col-xs-12 col-sm-6 col-md-4 col-lg-3 pull-left" key={achievement.slug}>
                             <div
                                 className={classNames({
                                     "list-group-item-success":
@@ -390,13 +391,13 @@ const Account = ({
                         </li>,
                     ];
                     if (i % 4 === 3) {
-                        lis.push(<li className="clearfix visible-lg" />);
+                        lis.push(<li className="clearfix visible-lg" key={`sep${i}-4`} />);
                     }
                     if (i % 3 === 2) {
-                        lis.push(<li className="clearfix visible-md" />);
+                        lis.push(<li className="clearfix visible-md" key={`sep${i}-3`} />);
                     }
                     if (i % 2 === 1) {
-                        lis.push(<li className="clearfix visible-sm" />);
+                        lis.push(<li className="clearfix visible-sm" key={`sep${i}-2`} />);
                     }
                     return lis;
                 })}
@@ -411,6 +412,7 @@ Account.propTypes = {
             count: PropTypes.number.isRequired,
             desc: PropTypes.string.isRequired,
             name: PropTypes.string.isRequired,
+            slug: PropTypes.string.isRequired,
         }),
     ).isRequired,
     email: PropTypes.string,

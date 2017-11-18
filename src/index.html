@@ -249,9 +249,20 @@
         };
       };
 
-      goodIDB(function (result) {
-        if (!result) {
-          var errorMsg = '<p><b>Error!</b> Your browser is not modern enough to run Basketball GM. <a href="https://www.firefox.com/">Mozilla Firefox</a> and <a href="https://www.google.com/chrome/">Google Chrome</a> work best.</p>';
+      var arrowFunctions = function () {
+        try {
+          eval('var f = x => 1');
+          return true;
+        } catch (err) {
+          return false;
+        }
+      };
+
+      goodIDB(function (hasIDB) {
+        var hasArrowFunctions = arrowFunctions();
+
+        if (!hasIDB || !hasArrowFunctions) {
+          var errorMsg = '<p><b>Error!</b> Your browser is not modern enough to run Basketball GM. The latest versions of <a href="https://www.firefox.com/">Mozilla Firefox</a> and <a href="https://www.google.com/chrome/">Google Chrome</a> work best.</p>';
 
           // Special error for Apple's mobile devices, as that's the only platform that is totally unsupported (no alternative browser to install)
           if (/(iPad|iPhone|iPod)/.test(navigator.userAgent)) {

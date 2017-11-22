@@ -190,11 +190,20 @@ const handleScreenshotClick = e => {
                     throw new Error(data.data.error.message);
                 }
 
+                const url = `http://imgur.com/${data.data.id}`;
+                const encodedURL = window.encodeURIComponent(url);
+
                 logEvent({
                     type: "screenshot",
-                    text: `<a href="http://imgur.com/${
-                        data.data.id
-                    }" target="_blank">Click here to view your screenshot.</a>`,
+                    text: `<p><a href="${
+                        url
+                    }" target="_blank">Click here to view your screenshot.</a></p>
+<a href="https://www.reddit.com/r/BasketballGM/submit?url=${
+                        encodedURL
+                    }">Share on Reddit</a><br>
+<a href="https://twitter.com/intent/tweet?url=${
+                        encodedURL
+                    }&via=basketball_gm">Share on Twitter</a>`,
                     saveToDb: false,
                     showNotification: true,
                     persistent: true,

@@ -20,8 +20,6 @@ use something besides PER in player value formula, awards?
 
 more adv stats in league leaders, roster page?
 
-after screenshot, have links to post to twitter/reddit/discord
-
 customizable columns in datatable
 - get rid of supercols where possible, like bbr
 - for supercols, instead of colspan, pass a list of column names (need to get rid of repeats like raw % first)

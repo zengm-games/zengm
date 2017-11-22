@@ -537,16 +537,6 @@ player.updateValues.getStats doesn't really make sense. Should get all from past
 
 more database normalization? player ratings
 
-PHASE TWO: store retired players in a different object store
-
-PHASE THREE: store non-retired players and playerStats in memory
-  PROBLEM: to do anything fancy with this, like avoiding writing to DB, it'd make multi-window play impossible
-    https://groups.google.com/forum/#!topic/lovefield-users/Xs97HL4tDfk
-  on page load, read all into g.playersCache and g.playerStatsCache
-  dao.players.getAll can check the index and key properties to see if players are in memory. if so, skip IDB
-  is it possible to abstract all IDB updating functions to copy to memory too? would just need wrappers around put (already have it) and cursor.update.
-  g.playerStatsCache can be used to get stats to compute player.value, replacing current method
-
 PLAYER DEVELOPMENT REVAMP
 -------------------------
 
@@ -616,11 +606,6 @@ Eventually:
     does this allow removal of fudge factor?
   population (i.e. richness) should influence opinion of contracts
 
-PERFORMANCE CRAP
-----------------
-
-separate active and retired players into separate object stores
-
 CURRENT
 -------
 
@@ -654,14 +639,8 @@ power rankings
   only show live during regular season
 trade UI
   "Don't include in trade" checkbox column for asking AI to propose trade
-  email
   http://datatables.net/extensions/fixedcolumns/
-  http://www.reddit.com/r/BasketballGM/comments/28tzek/trade_ui_redesign_concept_what_do_you_all_think/
-cordova
-  in portrait, games in dashboard looks like shit
-  hide export link
 upcoming free agents
-  off by one contract year?
   should be visible all the time, not blocked by FA limit page
 account
   somehow periodically run util.account.check, which will check for login and for local achievements to send to cloud
@@ -707,8 +686,6 @@ per36, totals, playoffs options elsewhere
   team history
   roster
 per 36 stats in player pages http://www.reddit.com/r/BasketballGM/comments/1ofz6s/per36_stats/
-  already implemented for stats page, but should it be a separate entry from player.filter like playoffs? totals isn't. maybe should just be a dropdown to change this all on the player page?
-when left menu is shown (lg), don't show the same top menus (only tools and help). but adding hidden-lg to top menu items makes them persist when going from league to non-league dashboard
 http://www.reddit.com/r/BasketballGM/comments/1sarll/open_source/cdxx3ql
 free agents going unsigned?
   salary cap exception? too complicated?

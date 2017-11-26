@@ -1,9 +1,4 @@
-ratings popup broken on draft scouting page
-- https://mail.google.com/mail/u/0/#inbox/15fd6494fc5525c3
-
 in free agents page, button to add filter for < cap space (or < minimum if that's larger than cap space)
-
-does adding uglifyify back reduce file size?
 
 sync achievements from IDB to account
 
@@ -53,6 +48,7 @@ per 100 possessions and totals toggle on team stats page
 
 remove babel plugins
 - babel-plugin-transform-es2015-block-scoping needed in current version of safari due to https://bugs.webkit.org/show_bug.cgi?id=171041 and possibly others
+  - could use safari10 option https://github.com/mishoo/UglifyJS2/tree/harmony#mangle-options
 
 remove polyfilles
 - get rid of getAll polyfill when safari 10.x usage goes to 0

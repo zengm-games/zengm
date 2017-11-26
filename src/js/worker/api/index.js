@@ -688,6 +688,10 @@ const ratingsStatsPopoverInfo = async (pid: number) => {
     if (p === undefined) {
         throw new Error(`Invalid player ID ${pid}`);
     }
+
+    // For draft prospects, show their draft season, otherwise they will be skipped due to not having ratings in g.season
+    const season = p.draft.year > g.season ? p.draft.year : g.season;
+
     return idb.getCopy.playersPlus(p, {
         ratings: [
             "ovr",
@@ -709,7 +713,7 @@ const ratingsStatsPopoverInfo = async (pid: number) => {
             "reb",
         ],
         stats: ["pts", "trb", "ast", "blk", "stl", "tov", "min", "per", "ewa"],
-        season: g.season,
+        season,
         showNoStats: true,
         oldStats: true,
         fuzz: true,

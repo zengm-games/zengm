@@ -360,6 +360,7 @@ type Props = {
         desc?: string,
         title: string,
     }[],
+    addFilters?: (string | void)[],
 };
 
 type State = {
@@ -583,6 +584,30 @@ class DataTable extends React.Component<Props, State> {
         // If name changes, it means this is a whole new table and it has a different state (example: Player Stats switching between regular and advanced stats)
         if (nextProps.name !== this.props.name) {
             this.setState(this.loadStateFromCache(nextProps));
+        }
+
+        // If addFilters is passed and contains a value (only after initial render, for now - if that needs to change, add similar code to constructor), merge with this.state.filters and enable filters
+        const filters = this.state.filters.slice();
+        let changed = false;
+        if (
+            nextProps.addFilters !== undefined &&
+            nextProps.addFilters.length === this.state.filters.length
+        ) {
+            for (let i = 0; i < nextProps.addFilters.length; i++) {
+                if (nextProps.addFilters[i] !== undefined) {
+                    filters[i] = nextProps.addFilters[i];
+                    changed = true;
+                } else if (!this.state.enableFilters) {
+                    // If there is a saved but hidden filter, remove it
+                    filters[i] = "";
+                }
+            }
+        }
+        if (changed) {
+            this.setState({
+                enableFilters: true,
+                filters,
+            });
         }
     }
 

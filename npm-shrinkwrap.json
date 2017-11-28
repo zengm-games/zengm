@@ -5468,15 +5468,15 @@
       "resolved": "https://registry.npmjs.org/ua-parser-js/-/ua-parser-js-0.7.17.tgz"
     },
     "uglify-es": {
-      "version": "3.2.0",
-      "from": "uglify-es@3.2.0",
-      "resolved": "https://registry.npmjs.org/uglify-es/-/uglify-es-3.2.0.tgz",
+      "version": "3.1.9",
+      "from": "uglify-es@3.1.9",
+      "resolved": "https://registry.npmjs.org/uglify-es/-/uglify-es-3.1.9.tgz",
       "dev": true,
       "dependencies": {
         "commander": {
-          "version": "2.12.1",
-          "from": "commander@>=2.12.1 <2.13.0",
-          "resolved": "https://registry.npmjs.org/commander/-/commander-2.12.1.tgz",
+          "version": "2.11.0",
+          "from": "commander@>=2.11.0 <2.12.0",
+          "resolved": "https://registry.npmjs.org/commander/-/commander-2.11.0.tgz",
           "dev": true
         },
         "source-map": {

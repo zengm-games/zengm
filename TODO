@@ -1,4 +1,4 @@
-customizable death rate
+somehow display synergy, maybe on roster page
 
 sync achievements from IDB to account
 
@@ -211,8 +211,6 @@ service worker
 - sw-offline-google-analytics
 - https://github.com/GoogleChrome/lighthouse
 - https://github.com/GoogleChrome/workbox
-
-put death rate in god mode options
 
 HTML in play by play https://www.reddit.com/r/BasketballGM/comments/5963ym/playbyplay_bug/
 

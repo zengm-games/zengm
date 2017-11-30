@@ -43,6 +43,9 @@ const defaultGameAttributes: GameAttributes = {
     autoDeleteOldBoxScores: true,
     stopOnInjury: false,
     stopOnInjuryGames: 20,
+
+    // The tragic death rate is the probability that a player will die a tragic death on a given regular season day. Yes, this only happens in the regular season. With roughly 100 days in a season, the default is about one death every 50 years.
+    tragicDeathRate: 1 / (100 * 50),
 };
 
 export default defaultGameAttributes;

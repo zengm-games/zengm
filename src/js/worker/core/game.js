@@ -1082,9 +1082,8 @@ async function play(
                     gidPlayByPlay !== undefined,
                 );
             }
-        } else if (Math.random() < 1 / (100 * 50)) {
-            // Should a rare tragic event occur? ONLY IN REGULAR SEASON, playoffs would be tricky with roster limits and no free agents
-            // 100 days in a season (roughly), and we want a death every 50 years on average
+        } else if (Math.random() < g.tragicDeathRate) {
+            // Tragic deaths only happen during the regular season!
             await player.killOne(conditions);
             if (g.stopOnInjury) {
                 lock.set("stopGameSim", true);

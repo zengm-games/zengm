@@ -22,6 +22,7 @@ class GodMode extends React.Component {
             quarterLength: props.quarterLength,
             salaryCap: props.salaryCap,
             aiTrades: props.aiTrades,
+            tragicDeathRate: props.tragicDeathRate,
         };
         this.handleChanges = {
             disableInjuries: this.handleChange.bind(this, "disableInjuries"),
@@ -36,6 +37,7 @@ class GodMode extends React.Component {
             quarterLength: this.handleChange.bind(this, "quarterLength"),
             salaryCap: this.handleChange.bind(this, "salaryCap"),
             aiTrades: this.handleChange.bind(this, "aiTrades"),
+            tragicDeathRate: this.handleChange.bind(this, "tragicDeathRate"),
         };
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
         this.handleGodModeToggle = this.handleGodModeToggle.bind(this);
@@ -56,6 +58,7 @@ class GodMode extends React.Component {
                 quarterLength: nextProps.quarterLength,
                 salaryCap: nextProps.salaryCap,
                 aiTrades: String(nextProps.aiTrades),
+                tragicDeathRate: nextProps.tragicDeathRate,
             });
         }
     }
@@ -83,6 +86,7 @@ class GodMode extends React.Component {
             minContract: parseInt(this.state.minContract * 1000, 10),
             maxContract: parseInt(this.state.maxContract * 1000, 10),
             aiTrades: this.state.aiTrades === "true",
+            tragicDeathRate: parseFloat(this.state.tragicDeathRate),
         });
 
         this.setState({
@@ -344,6 +348,33 @@ class GodMode extends React.Component {
                                 value={this.state.maxRosterSize}
                             />
                         </div>
+                        <div className="col-sm-3 col-xs-6 form-group">
+                            <label>
+                                Tragic Death Rate{" "}
+                                <HelpPopover
+                                    placement="right"
+                                    title="Tragic Death Rate"
+                                >
+                                    The tragic death rate is the probability
+                                    that a player will die a tragic death on a
+                                    given regular season day. Yes, this only
+                                    happens in the regular season. With roughly
+                                    100 days in a season, the default is about
+                                    one death every 50 years, or 1/(50*100) =
+                                    0.0002. If you set it too high and run out
+                                    of players, then you'll have to use God Mode
+                                    to either create more or bring some back
+                                    from the dead.
+                                </HelpPopover>
+                            </label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                disabled={!godMode}
+                                onChange={this.handleChanges.tragicDeathRate}
+                                value={this.state.tragicDeathRate}
+                            />
+                        </div>
                     </div>
 
                     <button className="btn btn-primary" disabled={!godMode}>
@@ -369,6 +400,7 @@ GodMode.propTypes = {
     quarterLength: PropTypes.number.isRequired,
     salaryCap: PropTypes.number.isRequired,
     aiTrades: PropTypes.bool.isRequired,
+    tragicDeathRate: PropTypes.number.isRequired,
 };
 
 export default GodMode;

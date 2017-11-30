@@ -227,6 +227,7 @@ export type GameAttributeKey =
     | "teamAbbrevsCache"
     | "teamNamesCache"
     | "teamRegionsCache"
+    | "tragicDeathRate"
     | "userTid"
     | "userTids";
 

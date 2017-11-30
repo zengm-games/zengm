@@ -66,7 +66,12 @@ class Footer extends React.Component<{}> {
                         </a>
                         <br />
                     </p>
-                    <p className="rev">v4.0 · {window.bbgmVersion}</p>
+                    <p className="rev">
+                        Component versions:<br />
+                        {window.bbgmVersion} (HTML)<br />
+                        {window.bbgmVersionUI} (UI)<br />
+                        {window.bbgmVersionWorker} (Worker)
+                    </p>
                 </footer>
             </div>
         );

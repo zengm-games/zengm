@@ -556,6 +556,10 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
     return augmentOffers(offers);
 };
 
+const getVersionWorker = async () => {
+    return "REV_GOES_HERE";
+};
+
 const handleUploadedDraftClass = async (
     uploadedFile: any,
     seasonOffset: 0 | 1 | 2,
@@ -1083,6 +1087,7 @@ export default {
     getLeagueName,
     getLocal,
     getTradingBlockOffers,
+    getVersionWorker,
     handleUploadedDraftClass,
     init,
     lockSet,

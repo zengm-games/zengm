@@ -2,6 +2,9 @@
 
 const fs = require('fs');
 const UglifyJS = require('uglify-es');
+const build = require('./buildFuncs');
+
+build.setTimestamps();
 
 console.log('Minifying JS bundle...\nWARNING: This is likely to cause bugs');
 

@@ -54,6 +54,21 @@ const genPage = (id, inLeague = true) => {
 };
 
 (async () => {
+    // Put in DOM element and global variable because the former is used before React takes over and the latter is used after
+    const bbgmVersionUI = "REV_GOES_HERE";
+    window.bbgmVersionUI = bbgmVersionUI;
+    const elVersionUI = document.getElementById("version-ui");
+    if (elVersionUI) {
+        elVersionUI.innerHTML = bbgmVersionUI;
+    }
+    toWorker("getVersionWorker").then(bbgmVersionWorker => {
+        window.bbgmVersionWorker = bbgmVersionWorker;
+        const elVersionWorker = document.getElementById("version-worker");
+        if (elVersionWorker) {
+            elVersionWorker.innerHTML = bbgmVersionWorker;
+        }
+    });
+
     let heartbeatID = sessionStorage.getItem("heartbeatID");
     if (heartbeatID === null || heartbeatID === undefined) {
         heartbeatID = Math.random()

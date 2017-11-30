@@ -94,7 +94,7 @@ const setTimestamps = () => {
     replace({
         regex: "REV_GOES_HERE",
         replacement: rev,
-        paths: ["build/index.html"],
+        paths: ["build/index.html", "build/gen/ui.js", "build/gen/worker.js"],
         silent: true,
     });
 };

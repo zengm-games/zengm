@@ -1,3 +1,8 @@
+ui/worker sync issues
+- display versions alongside the index.html one
+- send a signal to close worker and reload page
+  - but without a service worker (or cache busting) they could still be out of sync after that
+
 somehow display synergy, maybe on roster page
 
 sync achievements from IDB to account

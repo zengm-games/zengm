@@ -66,7 +66,26 @@ const initAds = (goldUntil: number | void) => {
             el.innerHTML =
                 '<div style="height: 250px; margin: 5px 310px 0 310px; display:flex; align-items: center; justify-content: center;"><img src="https://basketball-gm.com/files/logo.png" style="max-height: 100%; max-width: 100%"></div>';
         }
-        ads.showBanner();
+
+        // Async loading of Optimal Media ad script, after divs added above
+
+        let loaded = false;
+        const afterScriptLoad = function () {
+            if (!loaded && (!this.readyState || this.readyState === "complete")) {
+                loaded = true;
+                ads.showBanner();
+            }
+        };
+
+        const script = document.createElement('script');
+        script.async = true;
+        script.type = 'text/javascript';
+        script.src = 'https://nicherev.io/pub/basketballgm/pb.js';
+        script.onload = afterScriptLoad;
+        script.onreadystatechange = afterScriptLoad;
+
+        const node = document.getElementsByTagName('script')[0];
+        node.parentNode.insertBefore(script, node);
     } else {
         const wrappers = [
             "banner-ad-top-wrapper",

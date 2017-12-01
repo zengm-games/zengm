@@ -681,14 +681,14 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
         // Account and changes checks can be async
         changes.check(conditions);
         account.check(conditions).then(() => {
-            return toUI(["initAds", local.goldUntil]);
+            return toUI(["initAds", local.goldUntil], conditions);
         });
     } else {
         // Even if it's not the first host tab, show ads (still async). Why
         // setTimeout? Cause horrible race condition with actually rendering the
         // ad divs. Need to move them more fully into React to solve this.
         setTimeout(() => {
-            toUI(["initAds", local.goldUntil]);
+            toUI(["initAds", local.goldUntil], conditions);
         }, 0);
     }
 };

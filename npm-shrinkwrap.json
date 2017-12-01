@@ -4288,9 +4288,9 @@
       "resolved": "https://registry.npmjs.org/promise/-/promise-7.3.1.tgz"
     },
     "promise-worker-bi": {
-      "version": "2.2.0",
-      "from": "promise-worker-bi@2.2.0",
-      "resolved": "https://registry.npmjs.org/promise-worker-bi/-/promise-worker-bi-2.2.0.tgz"
+      "version": "2.2.1",
+      "from": "promise-worker-bi@2.2.1",
+      "resolved": "https://registry.npmjs.org/promise-worker-bi/-/promise-worker-bi-2.2.1.tgz"
     },
     "prop-types": {
       "version": "15.6.0",

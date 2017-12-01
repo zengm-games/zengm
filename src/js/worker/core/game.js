@@ -227,12 +227,6 @@ async function writeTeamStats(results: GameResults) {
             }
         }
         teamStats.gp += 1;
-        teamStats.trb += results.team[t1].stat.orb + results.team[t1].stat.drb;
-        // Deal with upgraded leagues
-        if (teamStats.hasOwnProperty("oppTrb")) {
-            teamStats.oppTrb +=
-                results.team[t2].stat.orb + results.team[t2].stat.drb;
-        }
 
         if (teamSeason.lastTen.length === 10 && g.phase !== PHASE.PLAYOFFS) {
             teamSeason.lastTen.pop();
@@ -357,7 +351,6 @@ async function writePlayerStats(results: GameResults, conditions: Conditions) {
                         ps[key] += p.stat[key];
                     }
                     ps.gp += 1; // Already checked for non-zero minutes played above
-                    ps.trb += p.stat.orb + p.stat.drb;
 
                     await idb.cache.playerStats.put(ps);
 
@@ -519,8 +512,6 @@ async function writeGameStats(
         for (let i = 0; i < keys.length; i++) {
             gameStats.teams[t][keys[i]] = results.team[t].stat[keys[i]];
         }
-        gameStats.teams[t].trb =
-            results.team[t].stat.orb + results.team[t].stat.drb;
 
         keys.unshift("gs"); // Also record starters, in addition to other stats
         keys.push("pm");
@@ -532,9 +523,6 @@ async function writeGameStats(
             }
             gameStats.teams[t].players[p].name = results.team[t].player[p].name;
             gameStats.teams[t].players[p].pos = results.team[t].player[p].pos;
-            gameStats.teams[t].players[p].trb =
-                results.team[t].player[p].stat.orb +
-                results.team[t].player[p].stat.drb;
             gameStats.teams[t].players[p].pid = results.team[t].player[p].id;
             gameStats.teams[t].players[p].skills = helpers.deepCopy(
                 results.team[t].player[p].skills,

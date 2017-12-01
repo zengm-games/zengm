@@ -1062,7 +1062,6 @@ async function addStatsRow(p: Player, playoffs?: boolean = false) {
         pm: 0,
         orb: 0,
         drb: 0,
-        trb: 0,
         ast: 0,
         tov: 0,
         stl: 0,

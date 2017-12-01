@@ -133,6 +133,7 @@ async function updatePlayer(
             showRookies: true,
             fuzz: true,
         });
+        console.log(p);
         if (p === undefined) {
             throw new Error("Invalid player ID");
         }

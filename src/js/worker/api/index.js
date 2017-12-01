@@ -412,7 +412,7 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
                     p.ftp,
                     p.orb,
                     p.drb,
-                    p.trb,
+                    p.drb + p.orb,
                     p.ast,
                     p.tov,
                     p.stl,

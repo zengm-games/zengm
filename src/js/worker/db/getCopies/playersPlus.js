@@ -369,12 +369,18 @@ const genStatsRow = (p, ps, stats, statType) => {
         } else if (attr === "ws48") {
             row.ws48 = (ps.dws + ps.ows) * 48 / ps.min;
         } else if (statType === "totals") {
-            row[attr] = ps[attr];
+            if (attr === "trb") {
+                row.trb = ps.drb + ps.orb;
+            } else {
+                row[attr] = ps[attr];
+            }
         } else if (statType === "per36" && attr !== "min") {
             // Don't scale min by 36 minutes
-            row[attr] = ps.min > 0 ? ps[attr] * 36 / ps.min : 0;
+            const val = attr === "trb" ? ps.drb + ps.orb : ps[attr];
+            row[attr] = ps.min > 0 ? val * 36 / ps.min : 0;
         } else {
-            row[attr] = ps.gp > 0 ? ps[attr] / ps.gp : 0;
+            const val = attr === "trb" ? ps.drb + ps.orb : ps[attr];
+            row[attr] = ps.gp > 0 ? val / ps.gp : 0;
         }
 
         // For keepWithNoStats

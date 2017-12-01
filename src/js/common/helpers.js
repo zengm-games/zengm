@@ -605,7 +605,7 @@ function gameScore(arg: { [key: string]: number }): string {
         0.7 * arg.fga -
         0.4 * (arg.fta - arg.ft) +
         0.7 * arg.orb +
-        0.3 * (arg.trb - arg.orb) +
+        0.3 * arg.drb +
         arg.stl +
         0.7 * arg.ast +
         0.7 * arg.blk -

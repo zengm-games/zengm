@@ -368,9 +368,22 @@ const processStats = async (
                 } else if (stat === "season" || stat === "playoffs") {
                     row[stat] = ts[stat];
                 } else if (statType === "totals") {
-                    row[stat] = ts[stat];
+                    if (stat === "trb") {
+                        row.trb = ts.drb + ts.orb;
+                    } else if (stat === "oppTrb") {
+                        row.oppTrb = ts.oppDrb + ts.oppOrb;
+                    } else {
+                        row[stat] = ts[stat];
+                    }
                 } else {
-                    row[stat] = ts[stat] / ts.gp;
+                    if (stat === "trb") {
+                        // eslint-disable-line no-lonely-if
+                        row.trb = (ts.drb + ts.orb) / ts.gp;
+                    } else if (stat === "oppTrb") {
+                        row.oppTrb = (ts.oppDrb + ts.oppOrb) / ts.gp;
+                    } else {
+                        row[stat] = ts[stat] / ts.gp;
+                    }
                 }
             }
         } else {

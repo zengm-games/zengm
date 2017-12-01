@@ -34,7 +34,7 @@ const StatsRow = clickable(({ clicked, i, numPlayers, p, toggleClicked }) => {
                 {p.ft}-{p.fta}
             </td>
             <td>{p.orb}</td>
-            <td>{p.trb}</td>
+            <td>{p.drb + p.orb}</td>
             <td>{p.ast}</td>
             <td>{p.tov}</td>
             <td>{p.stl}</td>
@@ -363,7 +363,7 @@ class BoxScore extends React.Component {
                                             {t.ft}-{t.fta}
                                         </td>
                                         <td>{t.orb}</td>
-                                        <td>{t.trb}</td>
+                                        <td>{t.drb + t.orb}</td>
                                         <td>{t.ast}</td>
                                         <td>{t.tov}</td>
                                         <td>{t.stl}</td>

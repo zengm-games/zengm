@@ -1904,7 +1904,7 @@ async function killOne(conditions: Conditions) {
         "died of exertion while trying to set the record for largerst number of sex partners in one day",
         "rode his Segway off a cliff",
         "fell into the gorilla pit at the zoo and was dismembered as the staff decided not to shoot the gorilla",
-        "was found in a hotel room with a belt around his neck and his hand around his dick",
+        "was found dead in a hotel room with a belt around his neck and his hand around his dick",
         "was pursued by a bear, and mauled", // poor Antigonus
         "was smothered by a throng of ravenous, autograph-seeking fans after exiting the team plane",
         `was killed by ${random.choice([

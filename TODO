@@ -1,6 +1,6 @@
 ui/worker sync issues
 - send a signal to close worker and reload page
-  - but without a service worker (or cache busting) they could still be out of sync after that
+  - but without a service worker (or cache busting - but what if multiple versions run at once?) they could still be out of sync after that
 - or, send a signal when versions don't match to close all tabs and re-open, and then link to faq if it continues
 
 somehow display synergy, maybe on roster page

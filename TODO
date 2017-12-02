@@ -23,10 +23,11 @@ box plus/minus
   - already have everything from "Raw BPM" formula (ReMPG is MP/(G+4))
   - for "BPM_Team_Adjustment", need team net rating (off rating - def rating). The sum term needs all players who played on a team this season, even if they are no longer on the team (annoying to implement, but doable)
     - net rating needs to be adjusted for SOS!
+- VORP
 
 advanced stat table too confusing? needs vertical dividers/spacing?
 
-use something besides PER in player value formula, awards?
+use something besides PER in player value formula
 
 new adv stats in roster page?
 

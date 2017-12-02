@@ -147,7 +147,7 @@ async function doAwards(conditions: Conditions) {
     ]);
     players = await idb.getCopies.playersPlus(players, {
         attrs: ["pid", "name", "tid", "abbrev", "draft"],
-        stats: ["gp", "gs", "min", "pts", "trb", "ast", "blk", "stl", "ewa"],
+        stats: ["gp", "gs", "min", "pts", "trb", "ast", "blk", "stl", "ws", "dws"],
         season: g.season,
     });
 
@@ -194,7 +194,7 @@ async function doAwards(conditions: Conditions) {
             // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
             return p.draft.year === g.season - 1;
         })
-        .sort((a, b) => b.stats.ewa - a.stats.ewa); // Same formula as MVP, but no wins because some years with bad rookie classes can have the wins term dominate EWA
+        .sort((a, b) => b.stats.ws - a.stats.ws); // Same formula as MVP, but no wins because some years with bad rookie classes can have the wins term dominate WS
     {
         const p = rookies[0];
         if (p !== undefined) {
@@ -242,7 +242,7 @@ async function doAwards(conditions: Conditions) {
 
     // Most Valuable Player
     players.sort(
-        (a, b) => b.stats.ewa + 0.1 * b.won - (a.stats.ewa + 0.1 * a.won),
+        (a, b) => b.stats.ws + 0.075 * b.won - (a.stats.ws + 0.075 * a.won),
     );
     {
         const p = players[0];
@@ -314,11 +314,7 @@ async function doAwards(conditions: Conditions) {
     }
 
     // Defensive Player of the Year
-    players.sort(
-        (a, b) =>
-            b.stats.gp * (b.stats.trb + 5 * b.stats.blk + 5 * b.stats.stl) -
-            a.stats.gp * (a.stats.trb + 5 * a.stats.blk + 5 * a.stats.stl),
-    );
+    players.sort((a, b) => b.stats.dws - a.stats.dws);
     {
         const p = players[0];
         awards.dpoy = {
@@ -376,13 +372,13 @@ async function doAwards(conditions: Conditions) {
         champPlayers = await idb.getCopies.playersPlus(champPlayers, {
             // Only the champions, only playoff stats
             attrs: ["pid", "name", "tid", "abbrev"],
-            stats: ["pts", "trb", "ast", "ewa"],
+            stats: ["pts", "trb", "ast", "ws"],
             season: g.season,
             playoffs: true,
             regularSeason: false,
             tid: champTid,
         });
-        champPlayers.sort((a, b) => b.stats.ewa - a.stats.ewa);
+        champPlayers.sort((a, b) => b.stats.ws - a.stats.ws);
         {
             const p = champPlayers[0];
             awards.finalsMvp = {

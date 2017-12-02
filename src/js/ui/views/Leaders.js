@@ -32,11 +32,9 @@ const Leaders = ({ categories, season }) => {
                             <div className="table-responsive">
                                 <table className="table table-striped table-bordered table-condensed leaders">
                                     <thead>
-                                        <tr>
+                                        <tr title={cat.title}>
                                             <th>{cat.name}</th>
-                                            <th title={cat.title}>
-                                                {cat.stat}
-                                            </th>
+                                            <th>{cat.stat}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -71,7 +69,13 @@ const Leaders = ({ categories, season }) => {
                                                         {p.abbrev}
                                                     </a>
                                                 </td>
-                                                <td>{p.stat.toFixed(1)}</td>
+                                                <td>
+                                                    {cat.stat === "WS/48"
+                                                        ? helpers.roundWinp(
+                                                              p.stat,
+                                                          )
+                                                        : p.stat.toFixed(1)}
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>

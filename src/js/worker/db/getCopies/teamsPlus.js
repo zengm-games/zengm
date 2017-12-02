@@ -376,8 +376,8 @@ const processStats = async (
                         row[stat] = ts[stat];
                     }
                 } else {
+                    // eslint-disable-next-line no-lonely-if
                     if (stat === "trb") {
-                        // eslint-disable-line no-lonely-if
                         row.trb = (ts.drb + ts.orb) / ts.gp;
                     } else if (stat === "oppTrb") {
                         row.oppTrb = (ts.oppDrb + ts.oppOrb) / ts.gp;

@@ -59,6 +59,10 @@ async function updateLeaders(
                 "ft",
                 "abbrev",
                 "tid",
+                "dws",
+                "ows",
+                "ws",
+                "ws48",
             ],
             season: inputs.season,
         });
@@ -71,6 +75,7 @@ async function updateLeaders(
         categories.push({
             name: "Points",
             stat: "Pts",
+            statProp: "pts",
             title: "Points Per Game",
             data: [],
             minStats: ["gp", "pts"],
@@ -79,6 +84,7 @@ async function updateLeaders(
         categories.push({
             name: "Rebounds",
             stat: "Reb",
+            statProp: "trb",
             title: "Rebounds Per Game",
             data: [],
             minStats: ["gp", "trb"],
@@ -87,6 +93,7 @@ async function updateLeaders(
         categories.push({
             name: "Assists",
             stat: "Ast",
+            statProp: "ast",
             title: "Assists Per Game",
             data: [],
             minStats: ["gp", "ast"],
@@ -95,6 +102,7 @@ async function updateLeaders(
         categories.push({
             name: "Field Goal Percentage",
             stat: "FG%",
+            statProp: "fgp",
             title: "Field Goal Percentage",
             data: [],
             minStats: ["fg"],
@@ -103,6 +111,7 @@ async function updateLeaders(
         categories.push({
             name: "Three-Pointer Percentage",
             stat: "3PT%",
+            statProp: "tpp",
             title: "Three-Pointer Percentage",
             data: [],
             minStats: ["tp"],
@@ -111,6 +120,7 @@ async function updateLeaders(
         categories.push({
             name: "Free Throw Percentage",
             stat: "FT%",
+            statProp: "ftp",
             title: "Free Throw Percentage",
             data: [],
             minStats: ["ft"],
@@ -119,6 +129,7 @@ async function updateLeaders(
         categories.push({
             name: "Blocks",
             stat: "Blk",
+            statProp: "blk",
             title: "Blocks Per Game",
             data: [],
             minStats: ["gp", "blk"],
@@ -127,6 +138,7 @@ async function updateLeaders(
         categories.push({
             name: "Steals",
             stat: "Stl",
+            statProp: "stl",
             title: "Steals Per Game",
             data: [],
             minStats: ["gp", "stl"],
@@ -135,6 +147,7 @@ async function updateLeaders(
         categories.push({
             name: "Minutes",
             stat: "Min",
+            statProp: "min",
             title: "Minutes Per Game",
             data: [],
             minStats: ["gp", "min"],
@@ -143,6 +156,7 @@ async function updateLeaders(
         categories.push({
             name: "Player Efficiency Rating",
             stat: "PER",
+            statProp: "per",
             title: "Player Efficiency Rating",
             data: [],
             minStats: ["min"],
@@ -151,39 +165,64 @@ async function updateLeaders(
         categories.push({
             name: "Estimated Wins Added",
             stat: "EWA",
+            statProp: "ewa",
             title: "Estimated Wins Added",
             data: [],
             minStats: ["min"],
             minValue: [2000],
         });
-        const stats = [
-            "pts",
-            "trb",
-            "ast",
-            "fgp",
-            "tpp",
-            "ftp",
-            "blk",
-            "stl",
-            "min",
-            "per",
-            "ewa",
-        ];
+        categories.push({
+            name: "Win Shares / 48 Mins",
+            stat: "WS/48",
+            statProp: "ws48",
+            title: "Win Shares Per 48 Minutes",
+            data: [],
+            minStats: ["min"],
+            minValue: [2000],
+        });
+        categories.push({
+            name: "Offensive Win Shares",
+            stat: "OWS",
+            statProp: "ows",
+            title: "Offensive Win Shares",
+            data: [],
+            minStats: ["min"],
+            minValue: [2000],
+        });
+        categories.push({
+            name: "Defensive Win Shares",
+            stat: "DWS",
+            statProp: "dws",
+            title: "Defensive Win Shares",
+            data: [],
+            minStats: ["min"],
+            minValue: [2000],
+        });
+        categories.push({
+            name: "Win Shares",
+            stat: "WS",
+            statProp: "ws",
+            title: "Win Shares",
+            data: [],
+            minStats: ["min"],
+            minValue: [2000],
+        });
 
-        for (let i = 0; i < categories.length; i++) {
-            players.sort((a, b) => b.stats[stats[i]] - a.stats[stats[i]]);
+        for (const cat of categories) {
+            players.sort(
+                (a, b) => b.stats[cat.statProp] - a.stats[cat.statProp],
+            );
             for (let j = 0; j < players.length; j++) {
                 // Test if the player meets the minimum statistical requirements for this category
                 let pass = false;
-                for (let k = 0; k < categories[i].minStats.length; k++) {
+                for (let k = 0; k < cat.minStats.length; k++) {
                     // Everything except gp is a per-game average, so we need to scale them by games played
                     let playerValue;
-                    if (categories[i].minStats[k] === "gp") {
-                        playerValue =
-                            players[j].stats[categories[i].minStats[k]];
+                    if (cat.minStats[k] === "gp") {
+                        playerValue = players[j].stats[cat.minStats[k]];
                     } else {
                         playerValue =
-                            players[j].stats[categories[i].minStats[k]] *
+                            players[j].stats[cat.minStats[k]] *
                             players[j].stats.gp;
                     }
 
@@ -191,7 +230,7 @@ async function updateLeaders(
                     if (
                         playerValue >=
                         Math.ceil(
-                            categories[i].minValue[k] *
+                            cat.minValue[k] *
                                 factor *
                                 gps[players[j].stats.tid] /
                                 g.numGames,
@@ -204,25 +243,22 @@ async function updateLeaders(
 
                 if (pass) {
                     const leader = helpers.deepCopy(players[j]);
-                    leader.stat = leader.stats[stats[i]];
+                    leader.stat = leader.stats[cat.statProp];
                     leader.abbrev = leader.stats.abbrev;
                     delete leader.stats;
-                    if (userAbbrev === leader.abbrev) {
-                        leader.userTeam = true;
-                    } else {
-                        leader.userTeam = false;
-                    }
-                    categories[i].data.push(leader);
+                    leader.userTeam = userAbbrev === leader.abbrev;
+                    cat.data.push(leader);
                 }
 
                 // Stop when we found 10
-                if (categories[i].data.length === 10) {
+                if (cat.data.length === 10) {
                     break;
                 }
             }
 
-            delete categories[i].minStats;
-            delete categories[i].minValue;
+            delete cat.minStats;
+            delete cat.minValue;
+            delete cat.statProp;
         }
 
         return {

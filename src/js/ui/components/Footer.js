@@ -58,6 +58,14 @@ class Footer extends React.Component<{}> {
                         </a>{" "}
                         ·{" "}
                         <a
+                            href="https://basketball-gm.com/privacy-policy/"
+                            rel="noopener noreferrer"
+                            target="_blank"
+                        >
+                            Privacy Policy
+                        </a>{" "}
+                        ·{" "}
+                        <a
                             href="https://basketball-gm.com/share/"
                             rel="noopener noreferrer"
                             target="_blank"

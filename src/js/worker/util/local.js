@@ -6,21 +6,22 @@ import type { Local } from "../../common/types";
 
 const defaultLocal: Local = {
     autoPlaySeasons: 0,
-    goldUntil: 0,
+    goldUntil: Infinity, // Default is to assume Gold, until told otherwise by server
     phaseText: "",
     statusText: "Idle",
 };
 
 const local: Local & { reset: () => void } = {
     autoPlaySeasons: 0,
-    goldUntil: 0,
+    goldUntil: Infinity,
     phaseText: "",
     statusText: "Idle",
     reset: () => {
         local.autoPlaySeasons = defaultLocal.autoPlaySeasons;
-        local.goldUntil = defaultLocal.goldUntil;
         local.phaseText = defaultLocal.phaseText;
         local.statusText = defaultLocal.statusText;
+
+        // Don't reset goldUntil because that persists across leagues
     },
 };
 

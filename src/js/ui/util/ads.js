@@ -77,7 +77,10 @@ async function showBanner() {
 
     // After banners are initially loaded, use this to refresh
     const refreshBanners = () => {
-        if (window.optimalmedia === undefined || window.OptimalMediaAPI === undefined) {
+        if (
+            window.optimalmedia === undefined ||
+            window.OptimalMediaAPI === undefined
+        ) {
             // This could happen if it's still loading the async ad script
             return;
         }
@@ -102,15 +105,9 @@ async function showBanner() {
             }
         }
     } else {
-        const bannerAdTop = document.getElementById(
-            optimalMediaDivs[0],
-        );
-        const bannerAdBottom1 = document.getElementById(
-            optimalMediaDivs[1],
-        );
-        const bannerAdBottom2 = document.getElementById(
-            optimalMediaDivs[2],
-        );
+        const bannerAdTop = document.getElementById(optimalMediaDivs[0]);
+        const bannerAdBottom1 = document.getElementById(optimalMediaDivs[1]);
+        const bannerAdBottom2 = document.getElementById(optimalMediaDivs[2]);
 
         // For people using BBGM Gold, these would have been deleted in initAds
         if (bannerAdTop && bannerAdBottom1 && bannerAdBottom2) {

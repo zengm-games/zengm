@@ -70,21 +70,24 @@ const initAds = (goldUntil: number | void) => {
         // Async loading of Optimal Media ad script, after divs added above
 
         let loaded = false;
-        const afterScriptLoad = function () {
-            if (!loaded && (!this.readyState || this.readyState === "complete")) {
+        const afterScriptLoad = function() {
+            if (
+                !loaded &&
+                (!this.readyState || this.readyState === "complete")
+            ) {
                 loaded = true;
                 ads.showBanner();
             }
         };
 
-        const script = document.createElement('script');
+        const script = document.createElement("script");
         script.async = true;
-        script.type = 'text/javascript';
-        script.src = 'https://nicherev.io/pub/basketballgm/pb.js';
+        script.type = "text/javascript";
+        script.src = "https://nicherev.io/pub/basketballgm/pb.js";
         script.onload = afterScriptLoad;
         script.onreadystatechange = afterScriptLoad;
 
-        const node = document.getElementsByTagName('script')[0];
+        const node = document.getElementsByTagName("script")[0];
         if (node && node.parentNode) {
             node.parentNode.insertBefore(script, node);
         }

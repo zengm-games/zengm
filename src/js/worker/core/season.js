@@ -147,7 +147,18 @@ async function doAwards(conditions: Conditions) {
     ]);
     players = await idb.getCopies.playersPlus(players, {
         attrs: ["pid", "name", "tid", "abbrev", "draft"],
-        stats: ["gp", "gs", "min", "pts", "trb", "ast", "blk", "stl", "ws", "dws"],
+        stats: [
+            "gp",
+            "gs",
+            "min",
+            "pts",
+            "trb",
+            "ast",
+            "blk",
+            "stl",
+            "ws",
+            "dws",
+        ],
         season: g.season,
     });
 

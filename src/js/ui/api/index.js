@@ -85,7 +85,9 @@ const initAds = (goldUntil: number | void) => {
         script.onreadystatechange = afterScriptLoad;
 
         const node = document.getElementsByTagName('script')[0];
-        node.parentNode.insertBefore(script, node);
+        if (node && node.parentNode) {
+            node.parentNode.insertBefore(script, node);
+        }
     } else {
         const wrappers = [
             "banner-ad-top-wrapper",

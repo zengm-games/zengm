@@ -30,6 +30,7 @@ advanced stat table too confusing? needs vertical dividers/spacing?
 use something besides PER in player value formula
 
 new adv stats in roster page?
+- switch PER to WS/48 - roster.js now pulling both, then eventually switch Roster.js
 
 customizable columns in datatable
 - get rid of supercols where possible, like bbr

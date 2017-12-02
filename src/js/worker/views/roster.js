@@ -56,6 +56,7 @@ async function updateRoster(
             "trb",
             "ast",
             "per",
+            "ws48",
             "yearsWithTeam",
         ];
 

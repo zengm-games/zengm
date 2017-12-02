@@ -137,6 +137,7 @@ async function showBanner() {
             "div-gpt-ad-1491369323599-2",
         );
 
+        // For people using BBGM Gold, these would have been deleted in initAds
         if (bannerAdTop && bannerAdBottom1 && bannerAdBottom2) {
             if (!gptLoading && !gptLoaded) {
                 gptLoading = true;

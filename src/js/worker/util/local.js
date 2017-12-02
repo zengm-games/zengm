@@ -6,16 +6,19 @@ import type { Local } from "../../common/types";
 
 const defaultLocal: Local = {
     autoPlaySeasons: 0,
+    goldUntil: 0,
     phaseText: "",
     statusText: "Idle",
 };
 
 const local: Local & { reset: () => void } = {
     autoPlaySeasons: 0,
+    goldUntil: 0,
     phaseText: "",
     statusText: "Idle",
     reset: () => {
         local.autoPlaySeasons = defaultLocal.autoPlaySeasons;
+        local.goldUntil = defaultLocal.goldUntil;
         local.phaseText = defaultLocal.phaseText;
         local.statusText = defaultLocal.statusText;
     },

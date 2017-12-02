@@ -25,6 +25,7 @@ import {
     random,
     updatePlayMenu,
     updateStatus,
+    toUI,
 } from "../util";
 import * as views from "../views";
 import type {
@@ -679,7 +680,16 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 
         // Account and changes checks can be async
         changes.check(conditions);
-        account.check(conditions);
+        account.check(conditions).then(() => {
+            return toUI(["initAds", local.goldUntil]);
+        });
+    } else {
+        // Even if it's not the first host tab, show ads (still async). Why
+        // setTimeout? Cause horrible race condition with actually rendering the
+        // ad divs. Need to move them more fully into React to solve this.
+        setTimeout(() => {
+            toUI(["initAds", local.goldUntil]);
+        }, 0);
     }
 };
 

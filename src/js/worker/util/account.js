@@ -3,7 +3,7 @@
 /*eslint camelcase: 0*/
 import { SPORT, fetchWrapper, g } from "../../common";
 import { idb } from "../db";
-import { env, logEvent, toUI } from "../util";
+import { env, local, logEvent, toUI } from "../util";
 import type {
     AchievementKey,
     Conditions,
@@ -161,6 +161,9 @@ async function check(conditions: Conditions): Promise<PartialTopMenu> {
             credentials: "include",
         });
 
+        // Keep track of latest here, for ads
+        local.goldUntil = data.gold_until;
+
         const partialTopMenu: PartialTopMenu = {
             email: data.email,
             goldCancelled: !!data.gold_cancelled,
@@ -168,8 +171,6 @@ async function check(conditions: Conditions): Promise<PartialTopMenu> {
             username: data.username,
         };
         await toUI(["emit", "updateTopMenu", partialTopMenu]);
-
-        await toUI(["initAds", data.gold_until]);
 
         // If user is logged in, upload any locally saved achievements
         if (data.username !== "" && idb.league !== undefined) {

@@ -273,6 +273,7 @@ export type League = {
 
 export type Local = {
     autoPlaySeasons: number,
+    goldUntil: number,
     phaseText: string,
     statusText: string,
 };

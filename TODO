@@ -6,6 +6,7 @@ ui/worker sync issues
 somehow display synergy, maybe on roster page
 
 sync achievements from IDB to account
+- should be happening in account.check, but is it?
 
 advanced team stats
 - strength of schedule: https://www.pro-football-reference.com/blog/index9e6d.html?p=37&cpage=1

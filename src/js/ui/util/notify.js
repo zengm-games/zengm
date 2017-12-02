@@ -68,6 +68,10 @@ const notify = (
     let numToDelete = container.childNodes.length - 4; // 4 instead of 5 because the check happens before the new notification is shown
     if (numToDelete > 0) {
         for (let i = 0; i <= container.childNodes.length; i++) {
+            if (!container.childNodes[i]) {
+                continue;
+            }
+
             if (
                 container.childNodes[i].classList.contains(
                     "notification-delete",
@@ -76,7 +80,6 @@ const notify = (
                 // Already being deleted
                 numToDelete -= 1;
             } else if (
-                container.childNodes[i] &&
                 !container.childNodes[i].classList.contains(
                     "notification-persistent",
                 )

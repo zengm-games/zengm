@@ -82,7 +82,6 @@ type State = {
 class Controller extends React.Component<{}, State> {
     closeNagModal: Function;
     get: Function;
-    setStateData: Function;
     showAd: Function;
     updatePage: Function;
     updateMultiTeam: Function;
@@ -118,7 +117,6 @@ class Controller extends React.Component<{}, State> {
         };
         this.closeNagModal = this.closeNagModal.bind(this);
         this.get = this.get.bind(this);
-        this.setStateData = this.setStateData.bind(this);
         this.showAd = this.showAd.bind(this);
         this.updatePage = this.updatePage.bind(this);
         this.updateMultiTeam = this.updateMultiTeam.bind(this);
@@ -153,12 +151,6 @@ class Controller extends React.Component<{}, State> {
         emitter.removeListener("updateMultiTeam", this.updateMultiTeam);
         emitter.removeListener("updateState", this.updateState);
         emitter.removeListener("updateTopMenu", this.updateTopMenu);
-    }
-
-    setStateData(data: { [key: string]: any }) {
-        this.setState({
-            data: Object.assign(this.state.data, data),
-        });
     }
 
     closeNagModal() {
@@ -281,16 +273,6 @@ class Controller extends React.Component<{}, State> {
             updateEvents,
             prevData,
         );
-
-        // Run promises in parallel, update when each one is ready
-        // This runs no matter what
-        /*        const promisesWhenever = args.runWhenever.map(async (fn) => {
-            // This is a race condition - it assumes this.state.data has been updated by promisesBefore, which will only happen when promisesWhenever are much slower than promisesBefore
-            const vars = await Promise.resolve(fn(inputs, updateEvents, this.state.data, this.setStateData, this.state.topMenu));
-            if (vars !== undefined) {
-                this.setStateData(vars);
-            }
-        });*/
 
         const results = await promiseBefore;
 

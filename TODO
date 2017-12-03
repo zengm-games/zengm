@@ -167,10 +167,6 @@ does beforeView stuff always need to go back to worker? only if switching league
 
 should checks to update data in worker/views be in worker, or could they be in UI somehow and avoid call to worker if update not needed?
 
-restore runWhenever ability (really necessary? was only used in gameLog)
-
-setState was used in schedule so old completed games don't temporarily show when switching team. still an issue? if not, get rid of setStateData completely
-
 test all instances of fetchWrapper
 - login/logout/register work, but persisting login over reloads doesn't
 - others?
@@ -268,6 +264,7 @@ https://marmelab.com/blog/2017/02/06/react-is-slow-react-is-fast.html
 close menu on responsive navbar https://github.com/react-bootstrap/react-bootstrap/issues/1301 resolved by https://github.com/react-bootstrap/react-bootstrap/pull/2280
 
 Draft button on player pages https://www.reddit.com/r/BasketballGM/comments/53op85/feature_request/
+Trade Away button on your own players
 
 redux or similar for state
   https://www.reddit.com/r/javascript/comments/53ja6l/redux_patterns_and_antipatterns/

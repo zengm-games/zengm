@@ -1,4 +1,12 @@
 most improved player award
+- criteria
+  - >50% of team minutes played each season (no award for recovering from injury)
+  - ws/48 > .1 (has to be at least average now)
+  - >2 seasons played (rookies expected to improve)
+  - maybe penalty for 3-4 seasons played (young players expected to improve)
+  - ws/48 improved since last season (actually improved, not just more playing time)
+  - sort by difference in ws and pick the top one
+- try on nba data, see if reasonable
 
 ui/worker sync issues
 - try cache busting

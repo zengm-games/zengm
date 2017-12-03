@@ -1282,49 +1282,28 @@ function contractSeasonsRemaining(
  * @return {boolean} Hall of Fame worthy?
  */
 function madeHof(p: Player, playerStats: PlayerStats[]): boolean {
-    const mins = playerStats.map(ps => ps.min);
-    const pers = playerStats.map(ps => ps.per);
-
-    // Position Replacement Levels http://insider.espn.go.com/nba/hollinger/statistics
-    const prls = {
-        PG: 11,
-        G: 10.75,
-        SG: 10.5,
-        GF: 10.5,
-        SF: 10.5,
-        F: 11,
-        PF: 11.5,
-        FC: 11.05,
-        C: 10.6,
-    };
-
-    // Estimated wins added for each season http://insider.espn.go.com/nba/hollinger/statistics
-    const ewas = [];
-    const position = p.ratings[p.ratings.length - 1].pos;
-    for (let i = 0; i < mins.length; i++) {
-        const va = mins[i] * (pers[i] - prls[position]) / 67;
-        ewas.push(va / 30 * 0.8); // 0.8 is a fudge factor to approximate the difference between (in-game) EWA and (real) win shares
-    }
+    const winShares = playerStats.map(ps => ps.dws + ps.ows);
 
     // Calculate career EWA and "dominance factor" DF (top 5 years EWA - 50)
-    ewas.sort((a, b) => b - a); // Descending order
-    let ewa = 0;
+    winShares.sort((a, b) => b - a); // Descending order
+    let total = 0;
     let df = -50;
-    for (let i = 0; i < ewas.length; i++) {
-        ewa += ewas[i];
+    for (let i = 0; i < winShares.length; i++) {
+        total += winShares[i];
         if (i < 5) {
-            df += ewas[i];
+            df += winShares[i];
         }
     }
 
     // Fudge factor for players generated when the league started
     const fudgeSeasons = g.startingSeason - p.draft.year - 5;
     if (fudgeSeasons > 0) {
-        ewa += ewas[0] * fudgeSeasons;
+        total += winShares[0] * fudgeSeasons;
     }
+console.log(p, total, df, total + df);
 
     // Final formula
-    return ewa + df > 100;
+    return total + df > 100;
 }
 
 type ValueOptions = {

@@ -1,3 +1,5 @@
+most improved player award
+
 ui/worker sync issues
 - try cache busting
   - generate versioned css/js
@@ -31,6 +33,8 @@ use something besides PER in player value formula
 
 new adv stats in roster page?
 - switch PER to WS/48 - roster.js now pulling both, then eventually switch Roster.js
+- same for HoF
+- OR, wait for BPM?
 
 customizable columns in datatable
 - get rid of supercols where possible, like bbr
@@ -424,8 +428,6 @@ Too many 8 seeds winning over 1 seeds
   point differential stuff - BBGM teams seem better than NBA teams, but still lose in 8-1 (and have worse records)
     some of this could be running up the score against bad teams
 
-most improved player award
-
 player development growth curve projection
 
 balance http://www.reddit.com/r/BasketballGM/comments/3759dw/guide_to_winning_70_games_consistently/crls9b1?context=3
@@ -684,7 +686,6 @@ career stats
   "All Seasons" option - add each unique player/season combo as a row, include column for year
   column/table widths?
   EWA in averages should be average
-    if i change how it comes from player.filter, make sure it doesn't fuck up HoF
     same with per36
 per36, totals, playoffs options elsewhere
   currently in playerStats and watchList, but too much copy/paste. refactor before expanding

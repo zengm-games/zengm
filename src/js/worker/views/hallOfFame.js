@@ -28,6 +28,8 @@ async function updatePlayers(
                 "pts",
                 "per",
                 "ewa",
+                "ws",
+                "ws48",
             ],
             fuzz: true,
         });

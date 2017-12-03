@@ -66,8 +66,17 @@ class FreeAgents extends React.Component {
         ) {
             return (
                 <div>
-                    <h1>Error</h1>
+                    <h1>
+                        Free Agents <NewWindowLink />
+                    </h1>
+                    <p>
+                        More:{" "}
+                        <a href={helpers.leagueUrl(["upcoming_free_agents"])}>
+                            Upcoming Free Agents
+                        </a>
+                    </p>
                     <p>You're not allowed to sign free agents now.</p>
+                    <p>Free agents can only be signed before the playoffs or after players are re-signed.</p>
                 </div>
             );
         }

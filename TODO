@@ -647,8 +647,6 @@ power rankings
 trade UI
   "Don't include in trade" checkbox column for asking AI to propose trade
   http://datatables.net/extensions/fixedcolumns/
-upcoming free agents
-  should be visible all the time, not blocked by FA limit page
 account
   somehow periodically run util.account.check, which will check for login and for local achievements to send to cloud
     is this necessary?

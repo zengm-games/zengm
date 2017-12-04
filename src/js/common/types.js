@@ -56,6 +56,7 @@ export type Awards = {
         AwardPlayer,
         AwardPlayer,
     ],
+    mip: AwardPlayer,
     mvp: AwardPlayer,
     smoy: AwardPlayer,
     allLeague: [

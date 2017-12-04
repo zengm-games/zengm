@@ -76,7 +76,10 @@ class FreeAgents extends React.Component {
                         </a>
                     </p>
                     <p>You're not allowed to sign free agents now.</p>
-                    <p>Free agents can only be signed before the playoffs or after players are re-signed.</p>
+                    <p>
+                        Free agents can only be signed before the playoffs or
+                        after players are re-signed.
+                    </p>
                 </div>
             );
         }

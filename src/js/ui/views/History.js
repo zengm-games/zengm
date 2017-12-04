@@ -225,6 +225,44 @@ const History = ({
                                 {awards.smoy.trb.toFixed(1)} reb,{" "}
                                 {awards.smoy.ast.toFixed(1)} ast
                             </p>
+                            <h4>Most Improved Player</h4>
+                            {awards.mip ? (
+                                <p>
+                                    <span
+                                        className={
+                                            awards.mip.tid === userTid
+                                                ? "bg-info"
+                                                : null
+                                        }
+                                    >
+                                        <b>
+                                            <a
+                                                href={helpers.leagueUrl([
+                                                    "player",
+                                                    awards.mip.pid,
+                                                ])}
+                                            >
+                                                {awards.mip.name}
+                                            </a>
+                                        </b>{" "}
+                                        (<a
+                                            href={helpers.leagueUrl([
+                                                "roster",
+                                                awards.mip.abbrev,
+                                                season,
+                                            ])}
+                                        >
+                                            {awards.mip.abbrev}
+                                        </a>)
+                                    </span>
+                                    <br />
+                                    {awards.mip.pts.toFixed(1)} pts,{" "}
+                                    {awards.mip.trb.toFixed(1)} reb,{" "}
+                                    {awards.mip.ast.toFixed(1)} ast
+                                </p>
+                            ) : (
+                                <p>???</p>
+                            )}
                             <h4>Rookie of the Year</h4>
                             {awards.roy ? (
                                 <p>

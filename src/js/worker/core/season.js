@@ -159,6 +159,7 @@ async function doAwards(conditions: Conditions) {
             "ws",
             "dws",
             "ws48",
+            "season",
         ],
     });
 
@@ -177,10 +178,13 @@ async function doAwards(conditions: Conditions) {
         { name: "League Blocks Leader", stat: "blk", minValue: 100 },
     ];
     for (const cat of categories) {
-        players.sort((a, b) => b.currentStats[cat.stat] - a.currentStats[cat.stat]);
+        players.sort(
+            (a, b) => b.currentStats[cat.stat] - a.currentStats[cat.stat],
+        );
         for (const p of players) {
             if (
-                p.currentStats[cat.stat] * p.currentStats.gp >= cat.minValue * factor ||
+                p.currentStats[cat.stat] * p.currentStats.gp >=
+                    cat.minValue * factor ||
                 p.currentStats.gp >= 70 * factor
             ) {
                 awardsByPlayer.push({
@@ -256,9 +260,96 @@ async function doAwards(conditions: Conditions) {
         }
     }
 
+    // Most Improved Player
+    const mipInfos = [];
+    for (const p of players) {
+        const oldStatsAll = p.stats.filter(ps => ps.season === g.season - 1);
+        if (oldStatsAll.length === 0) {
+            continue;
+        }
+        const oldStats = oldStatsAll[oldStatsAll.length - 1];
+
+        const wsAllPrev = p.stats.slice(0, -1).map(ps => ps.ws);
+
+        const mipInfo = {
+            pid: p.pid,
+            min: p.currentStats.min * p.currentStats.gp,
+            minOld: oldStats.min * oldStats.gp,
+            ws: p.currentStats.ws,
+            wsOld: oldStats.ws,
+            wsMax: Math.max(...wsAllPrev),
+            ws48: p.currentStats.ws48,
+            ws48Old: oldStats.ws48,
+            score: 0,
+        };
+
+        // Increasing WS by 5 is equal weight to increasing WS/48 by 0.1
+        mipInfo.score =
+            0.02 * (mipInfo.ws - mipInfo.wsOld) +
+            (mipInfo.ws48 - mipInfo.ws48Old);
+
+        // Penalty - lose 0.05 for every mpg last season under 15 (assuming 82 games)
+        if (mipInfo.minOld < 82 * 15) {
+            mipInfo.score -= 0.05 * (15 - mipInfo.minOld / 82);
+        }
+
+        // Penalty - lose additional 0.05 for every mpg last season under 10 (assuming 82 games)
+        if (mipInfo.minOld < 82 * 15) {
+            mipInfo.score -= 0.05 * (15 - mipInfo.minOld / 82);
+        }
+
+        // Penalty - lose 0.01 for every mpg this season under 30 (assuming 82 games)
+        if (mipInfo.min < 82 * 30) {
+            mipInfo.score -= 0.01 * (30 - mipInfo.min / 82);
+        }
+
+        // Penalty - baseline required is 125% of previous best season. Lose 0.01 for every 1% below that.
+        if (mipInfo.ws < 1.25 * mipInfo.wsMax) {
+            let ratio = 1;
+            if (mipInfo.wsMax !== 0) {
+                ratio = mipInfo.ws / mipInfo.wsMax;
+            }
+
+            // Sanity check... don't want two negative numbers blowing up the ratio
+            if (ratio < 0 || (mipInfo.ws < 0 && mipInfo.wsMax < 0)) {
+                ratio = 0;
+            }
+
+            mipInfo.score -= 1.25 - ratio;
+        }
+
+        mipInfos.push(mipInfo);
+    }
+    if (mipInfos.length > 0) {
+        // Might be no MIP, such as in first season
+        mipInfos.sort((a, b) => b.score - a.score);
+
+        const p = players.find(p2 => p2.pid === mipInfos[0].pid);
+        if (p !== undefined) {
+            awards.mip = {
+                pid: p.pid,
+                name: p.name,
+                tid: p.tid,
+                abbrev: p.abbrev,
+                pts: p.currentStats.pts,
+                trb: p.currentStats.trb,
+                ast: p.currentStats.ast,
+            };
+            awardsByPlayer.push({
+                pid: p.pid,
+                tid: p.tid,
+                name: p.name,
+                type: "Most Improved Player",
+            });
+        }
+    }
+
     // Most Valuable Player
     players.sort(
-        (a, b) => b.currentStats.ws + 0.075 * b.won - (a.currentStats.ws + 0.075 * a.won),
+        (a, b) =>
+            b.currentStats.ws +
+            0.075 * b.won -
+            (a.currentStats.ws + 0.075 * a.won),
     );
     {
         const p = players[0];
@@ -284,7 +375,9 @@ async function doAwards(conditions: Conditions) {
     // Sixth Man of the Year - same sort as MVP, must have come off the bench in most games
     {
         const p = players.find(
-            p2 => p2.currentStats.gs === 0 || p2.currentStats.gp / p2.currentStats.gs > 2,
+            p2 =>
+                p2.currentStats.gs === 0 ||
+                p2.currentStats.gp / p2.currentStats.gs > 2,
         );
         if (p) {
             awards.smoy = {

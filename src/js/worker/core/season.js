@@ -158,9 +158,14 @@ async function doAwards(conditions: Conditions) {
             "stl",
             "ws",
             "dws",
+            "ws48",
         ],
-        season: g.season,
     });
+
+    players = players.filter(p => p.stats.length > 0);
+    for (const p of players) {
+        p.currentStats = p.stats[p.stats.length - 1];
+    }
 
     // League leaders - points, rebounds, assists, steals, blocks
     const factor = g.numGames / 82 * Math.sqrt(g.quarterLength / 12); // To handle changes in number of games and playing time
@@ -172,11 +177,11 @@ async function doAwards(conditions: Conditions) {
         { name: "League Blocks Leader", stat: "blk", minValue: 100 },
     ];
     for (const cat of categories) {
-        players.sort((a, b) => b.stats[cat.stat] - a.stats[cat.stat]);
+        players.sort((a, b) => b.currentStats[cat.stat] - a.currentStats[cat.stat]);
         for (const p of players) {
             if (
-                p.stats[cat.stat] * p.stats.gp >= cat.minValue * factor ||
-                p.stats.gp >= 70 * factor
+                p.currentStats[cat.stat] * p.currentStats.gp >= cat.minValue * factor ||
+                p.currentStats.gp >= 70 * factor
             ) {
                 awardsByPlayer.push({
                     pid: p.pid,
@@ -205,7 +210,7 @@ async function doAwards(conditions: Conditions) {
             // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
             return p.draft.year === g.season - 1;
         })
-        .sort((a, b) => b.stats.ws - a.stats.ws); // Same formula as MVP, but no wins because some years with bad rookie classes can have the wins term dominate WS
+        .sort((a, b) => b.currentStats.ws - a.currentStats.ws); // Same formula as MVP, but no wins because some years with bad rookie classes can have the wins term dominate WS
     {
         const p = rookies[0];
         if (p !== undefined) {
@@ -215,9 +220,9 @@ async function doAwards(conditions: Conditions) {
                 name: p.name,
                 tid: p.tid,
                 abbrev: p.abbrev,
-                pts: p.stats.pts,
-                trb: p.stats.trb,
-                ast: p.stats.ast,
+                pts: p.currentStats.pts,
+                trb: p.currentStats.trb,
+                ast: p.currentStats.ast,
             };
             awardsByPlayer.push({
                 pid: p.pid,
@@ -238,9 +243,9 @@ async function doAwards(conditions: Conditions) {
                 name: p.name,
                 tid: p.tid,
                 abbrev: p.abbrev,
-                pts: p.stats.pts,
-                trb: p.stats.trb,
-                ast: p.stats.ast,
+                pts: p.currentStats.pts,
+                trb: p.currentStats.trb,
+                ast: p.currentStats.ast,
             });
             awardsByPlayer.push({
                 pid: p.pid,
@@ -253,7 +258,7 @@ async function doAwards(conditions: Conditions) {
 
     // Most Valuable Player
     players.sort(
-        (a, b) => b.stats.ws + 0.075 * b.won - (a.stats.ws + 0.075 * a.won),
+        (a, b) => b.currentStats.ws + 0.075 * b.won - (a.currentStats.ws + 0.075 * a.won),
     );
     {
         const p = players[0];
@@ -263,9 +268,9 @@ async function doAwards(conditions: Conditions) {
                 name: p.name,
                 tid: p.tid,
                 abbrev: p.abbrev,
-                pts: p.stats.pts,
-                trb: p.stats.trb,
-                ast: p.stats.ast,
+                pts: p.currentStats.pts,
+                trb: p.currentStats.trb,
+                ast: p.currentStats.ast,
             };
             awardsByPlayer.push({
                 pid: p.pid,
@@ -279,7 +284,7 @@ async function doAwards(conditions: Conditions) {
     // Sixth Man of the Year - same sort as MVP, must have come off the bench in most games
     {
         const p = players.find(
-            p2 => p2.stats.gs === 0 || p2.stats.gp / p2.stats.gs > 2,
+            p2 => p2.currentStats.gs === 0 || p2.currentStats.gp / p2.currentStats.gs > 2,
         );
         if (p) {
             awards.smoy = {
@@ -287,9 +292,9 @@ async function doAwards(conditions: Conditions) {
                 name: p.name,
                 tid: p.tid,
                 abbrev: p.abbrev,
-                pts: p.stats.pts,
-                trb: p.stats.trb,
-                ast: p.stats.ast,
+                pts: p.currentStats.pts,
+                trb: p.currentStats.trb,
+                ast: p.currentStats.ast,
             };
             awardsByPlayer.push({
                 pid: p.pid,
@@ -317,15 +322,15 @@ async function doAwards(conditions: Conditions) {
             name: p.name,
             tid: p.tid,
             abbrev: p.abbrev,
-            pts: p.stats.pts,
-            trb: p.stats.trb,
-            ast: p.stats.ast,
+            pts: p.currentStats.pts,
+            trb: p.currentStats.trb,
+            ast: p.currentStats.ast,
         });
         awardsByPlayer.push({ pid: p.pid, tid: p.tid, name: p.name, type });
     }
 
     // Defensive Player of the Year
-    players.sort((a, b) => b.stats.dws - a.stats.dws);
+    players.sort((a, b) => b.currentStats.dws - a.currentStats.dws);
     {
         const p = players[0];
         awards.dpoy = {
@@ -333,9 +338,9 @@ async function doAwards(conditions: Conditions) {
             name: p.name,
             tid: p.tid,
             abbrev: p.abbrev,
-            trb: p.stats.trb,
-            blk: p.stats.blk,
-            stl: p.stats.stl,
+            trb: p.currentStats.trb,
+            blk: p.currentStats.blk,
+            stl: p.currentStats.stl,
         };
         awardsByPlayer.push({
             pid: p.pid,
@@ -362,9 +367,9 @@ async function doAwards(conditions: Conditions) {
             name: p.name,
             tid: p.tid,
             abbrev: p.abbrev,
-            trb: p.stats.trb,
-            blk: p.stats.blk,
-            stl: p.stats.stl,
+            trb: p.currentStats.trb,
+            blk: p.currentStats.blk,
+            stl: p.currentStats.stl,
         });
         awardsByPlayer.push({ pid: p.pid, tid: p.tid, name: p.name, type });
     }
@@ -379,7 +384,7 @@ async function doAwards(conditions: Conditions) {
         let champPlayers = await idb.cache.players.indexGetAll(
             "playersByTid",
             champTid,
-        ); // Alternatively, could filter players array by tid
+        ); // Alternatively, could filter original players array by tid, but still need playersPlus to fill in playoff stats
         champPlayers = await idb.getCopies.playersPlus(champPlayers, {
             // Only the champions, only playoff stats
             attrs: ["pid", "name", "tid", "abbrev"],

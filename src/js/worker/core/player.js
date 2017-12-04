@@ -1275,7 +1275,7 @@ function contractSeasonsRemaining(
 /**
  * Is a player worthy of the Hall of Fame?
  *
- * This calculation is based on http://espn.go.com/nba/story/_/id/8736873/nba-experts-rebuild-springfield-hall-fame-espn-magazine except it uses PER-based estimates of wins added http://insider.espn.go.com/nba/hollinger/statistics (since PER is already calculated for each season) and it includes each playoff run as a separate season.
+ * This calculation is based on http://espn.go.com/nba/story/_/id/8736873/nba-experts-rebuild-springfield-hall-fame-espn-magazine except it includes each playoff run as a separate season.
  *
  * @memberOf core.player
  * @param {Object} p Player object.
@@ -1300,7 +1300,6 @@ function madeHof(p: Player, playerStats: PlayerStats[]): boolean {
     if (fudgeSeasons > 0) {
         total += winShares[0] * fudgeSeasons;
     }
-console.log(p, total, df, total + df);
 
     // Final formula
     return total + df > 100;

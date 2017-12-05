@@ -25,6 +25,10 @@ const optionsTmp = [
         key: "smoy",
     },
     {
+        val: "Most Improved Player",
+        key: "mip",
+    },
+    {
         val: "Rookie of the Year",
         key: "roy",
     },

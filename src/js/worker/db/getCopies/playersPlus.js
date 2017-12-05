@@ -57,6 +57,7 @@ const awardsOrder = [
     "Finals MVP",
     "Defensive Player of the Year",
     "Sixth Man of the Year",
+    "Most Improved Player",
     "Rookie of the Year",
     "League Scoring Leader",
     "League Rebounding Leader",

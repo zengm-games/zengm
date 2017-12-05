@@ -161,6 +161,10 @@ const Select = ({ field, handleChange, value }) => {
                 key: "smoy",
             },
             {
+                val: "Most Improved Player",
+                key: "mip",
+            },
+            {
                 val: "Rookie of the Year",
                 key: "roy",
             },

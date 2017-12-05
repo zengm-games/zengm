@@ -9,6 +9,9 @@ ui/worker sync issues
 
 somehow display synergy, maybe on roster page
 
+watch list players should result in notifications when things happen (FA salary drops, trades, signings, release, retire)
+- https://www.reddit.com/r/BasketballGM/comments/7h3eqy/simple_feature_request/
+
 sync achievements from IDB to account
 - should be happening in account.check, but is it?
 

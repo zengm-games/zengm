@@ -90,6 +90,7 @@ AwardsRecords.propTypes = {
         "finals_mvp",
         "dpoy",
         "smoy",
+        "mip",
         "roy",
         "first_team",
         "second_team",

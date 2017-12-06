@@ -4,11 +4,11 @@ const fs = require('fs');
 const UglifyJS = require('uglify-es');
 const build = require('./buildFuncs');
 
-build.setTimestamps();
+const rev = build.setTimestamps();
 
 console.log('Minifying JS bundle...\nWARNING: This is likely to cause bugs');
 
-for (const name of ['ui', 'worker']) {
+for (const name of [`ui-${rev}`, `worker-${rev}`]) {
     fs.readFile(`build/gen/${name}.js`, 'utf8', (err, data) => {
         if (err) {
             throw err;

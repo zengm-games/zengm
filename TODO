@@ -1,10 +1,9 @@
 ui/worker sync issues
-- try cache busting
-  - generate versioned css/js
-    - and write to appcache
-      - test appcache
-  - error case: two different workers are running
-    - need to recognize this in the older worker, and have it shut down and send a message to display in all its tabs to refresh
+  - npm run watch
+    - use NODE_ENV to conditionally set it to versioned worker
+    - edit index.html to point at plain ui.js
+
+after being confident that version sync is good, remove bbgmVersionWorker and bbgmVersionUI and restore footer text
 
 move react up, before worker is initialized, so compareVersions error can be displayed there
 

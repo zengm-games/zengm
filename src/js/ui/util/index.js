@@ -2,8 +2,8 @@
 
 import PromiseWorker from "promise-worker-bi";
 const worker = window.useSharedWorker
-    ? new SharedWorker("/gen/worker.js")
-    : new Worker("/gen/worker.js");
+    ? new SharedWorker(`/gen/worker-${window.bbgmVersion}.js`)
+    : new Worker(`/gen/worker-${window.bbgmVersion}.js`);
 export const promiseWorker = new PromiseWorker(worker);
 promiseWorker.registerError(e => {
     if (window.Bugsnag) {

@@ -1283,7 +1283,9 @@ function contractSeasonsRemaining(
  */
 function madeHof(p: Player, playerStats: PlayerStats[]): boolean {
     const winShares = playerStats.map(ps => {
-        return typeof ps.dws ==="number"  && typeof ps.ows === "number" ? ps.dws + ps.ows : 0
+        return typeof ps.dws === "number" && typeof ps.ows === "number"
+            ? ps.dws + ps.ows
+            : 0;
     });
 
     // Calculate career EWA and "dominance factor" DF (top 5 years EWA - 50)

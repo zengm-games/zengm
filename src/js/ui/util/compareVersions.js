@@ -11,10 +11,10 @@ const compareVersions = (v1: string, v2: string): -1 | 0 | 1 => {
     const parts2 = v2.split(".");
 
     if (parts1.length !== 4) {
-        throw new Error(`Invalid version: ${v1}`)
+        throw new Error(`Invalid version: ${v1}`);
     }
     if (parts2.length !== 4) {
-        throw new Error(`Invalid version: ${v2}`)
+        throw new Error(`Invalid version: ${v2}`);
     }
 
     for (let i = 0; i < 4; i++) {

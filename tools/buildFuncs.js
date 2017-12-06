@@ -77,26 +77,31 @@ const minifyCss = () => {
     fs.writeFileSync("build/gen/bbgm.css", result.styles);
 };
 
-const setTimestamps = () => {
-    console.log("Setting timestamps...");
-
+const genRev = () => {
     const d = new Date();
     const date = d.toISOString().split('T')[0].replace(/-/g, '.');
     const rev = `${date}.${d.getUTCMinutes() + 60 * d.getUTCHours()}`;
     console.log(`rev ${rev}`);
 
-    replace({
-        regex: "TIMESTAMP_GOES_HERE",
-        replacement: d.toString(),
-        paths: ["build/bbgm.appcache"],
-        silent: true,
-    });
+    return rev;
+}
+
+const setTimestamps = () => {
+    console.log("Setting timestamps...");
+
+    const rev = genRev();
+
     replace({
         regex: "REV_GOES_HERE",
         replacement: rev,
-        paths: ["build/index.html", "build/gen/ui.js", "build/gen/worker.js"],
+        paths: ["build/bbgm.appcache", "build/index.html", "build/gen/ui.js", "build/gen/worker.js"],
         silent: true,
     });
+
+    fs.rename("build/gen/ui.js", `build/gen/ui-${rev}.js`);
+    fs.rename("build/gen/worker.js", `build/gen/worker-${rev}.js`);
+
+    return rev;
 };
 
 module.exports = {

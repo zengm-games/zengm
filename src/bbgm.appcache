@@ -1,8 +1,8 @@
 CACHE MANIFEST
 
 gen/bbgm.css
-gen/ui.js
-gen/worker.js
+gen/ui-REV_GOES_HERE.js
+gen/worker-REV_GOES_HERE.js
 fonts/glyphicons-halflings-regular.woff
 ico/logo.png
 
@@ -12,4 +12,4 @@ NETWORK:
 FALLBACK:
 / /
 
-# LAST UPDATED: TIMESTAMP_GOES_HERE
+# LAST UPDATED: REV_GOES_HERE

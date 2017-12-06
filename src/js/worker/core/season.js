@@ -208,13 +208,34 @@ async function doAwards(conditions: Conditions) {
         }
     }
 
-    // Rookie of the Year
-    const rookies = players
-        .filter(p => {
-            // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
-            return p.draft.year === g.season - 1;
-        })
-        .sort((a, b) => b.currentStats.ws - a.currentStats.ws); // Same formula as MVP, but no wins because some years with bad rookie classes can have the wins term dominate WS
+    // Most Valuable Player
+    players.sort((a, b) => b.currentStats.ws - a.currentStats.ws);
+    {
+        const p = players[0];
+        if (p) {
+            awards.mvp = {
+                pid: p.pid,
+                name: p.name,
+                tid: p.tid,
+                abbrev: p.abbrev,
+                pts: p.currentStats.pts,
+                trb: p.currentStats.trb,
+                ast: p.currentStats.ast,
+            };
+            awardsByPlayer.push({
+                pid: p.pid,
+                tid: p.tid,
+                name: p.name,
+                type: "Most Valuable Player",
+            });
+        }
+    }
+
+    // Rookie of the Year - same sort as MVP
+    const rookies = players.filter(p => {
+        // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
+        return p.draft.year === g.season - 1;
+    });
     {
         const p = rookies[0];
         if (p !== undefined) {
@@ -237,7 +258,7 @@ async function doAwards(conditions: Conditions) {
         }
     }
 
-    // All Rookie Team - same sort as ROY
+    // All Rookie Team - same sort as MVP
     awards.allRookie = [];
     for (let i = 0; i < 5; i++) {
         const p = rookies[i];
@@ -256,118 +277,6 @@ async function doAwards(conditions: Conditions) {
                 tid: p.tid,
                 name: p.name,
                 type: "All Rookie Team",
-            });
-        }
-    }
-
-    // Most Improved Player
-    const mipInfos = [];
-    for (const p of players) {
-        const oldStatsAll = p.stats.filter(ps => ps.season === g.season - 1);
-        if (oldStatsAll.length === 0) {
-            continue;
-        }
-        const oldStats = oldStatsAll[oldStatsAll.length - 1];
-
-        const wsAllPrev = p.stats.slice(0, -1).map(ps => ps.ws);
-
-        const mipInfo = {
-            pid: p.pid,
-            min: p.currentStats.min * p.currentStats.gp,
-            minOld: oldStats.min * oldStats.gp,
-            ws: p.currentStats.ws,
-            wsOld: oldStats.ws,
-            wsMax: Math.max(...wsAllPrev),
-            ws48: p.currentStats.ws48,
-            ws48Old: oldStats.ws48,
-            score: 0,
-        };
-
-        // Increasing WS by 5 is equal weight to increasing WS/48 by 0.1
-        mipInfo.score =
-            0.02 * (mipInfo.ws - mipInfo.wsOld) +
-            (mipInfo.ws48 - mipInfo.ws48Old);
-
-        // Penalty - lose 0.05 for every mpg last season under 15 (assuming 82 games)
-        if (mipInfo.minOld < 82 * 15) {
-            mipInfo.score -= 0.05 * (15 - mipInfo.minOld / 82);
-        }
-
-        // Penalty - lose additional 0.05 for every mpg last season under 10 (assuming 82 games)
-        if (mipInfo.minOld < 82 * 15) {
-            mipInfo.score -= 0.05 * (15 - mipInfo.minOld / 82);
-        }
-
-        // Penalty - lose 0.01 for every mpg this season under 30 (assuming 82 games)
-        if (mipInfo.min < 82 * 30) {
-            mipInfo.score -= 0.01 * (30 - mipInfo.min / 82);
-        }
-
-        // Penalty - baseline required is 125% of previous best season. Lose 0.01 for every 1% below that.
-        if (mipInfo.ws < 1.25 * mipInfo.wsMax) {
-            let ratio = 1;
-            if (mipInfo.wsMax !== 0) {
-                ratio = mipInfo.ws / mipInfo.wsMax;
-            }
-
-            // Sanity check... don't want two negative numbers blowing up the ratio
-            if (ratio < 0 || (mipInfo.ws < 0 && mipInfo.wsMax < 0)) {
-                ratio = 0;
-            }
-
-            mipInfo.score -= 1.25 - ratio;
-        }
-
-        mipInfos.push(mipInfo);
-    }
-    if (mipInfos.length > 0) {
-        // Might be no MIP, such as in first season
-        mipInfos.sort((a, b) => b.score - a.score);
-
-        const p = players.find(p2 => p2.pid === mipInfos[0].pid);
-        if (p !== undefined) {
-            awards.mip = {
-                pid: p.pid,
-                name: p.name,
-                tid: p.tid,
-                abbrev: p.abbrev,
-                pts: p.currentStats.pts,
-                trb: p.currentStats.trb,
-                ast: p.currentStats.ast,
-            };
-            awardsByPlayer.push({
-                pid: p.pid,
-                tid: p.tid,
-                name: p.name,
-                type: "Most Improved Player",
-            });
-        }
-    }
-
-    // Most Valuable Player
-    players.sort(
-        (a, b) =>
-            b.currentStats.ws +
-            0.075 * b.won -
-            (a.currentStats.ws + 0.075 * a.won),
-    );
-    {
-        const p = players[0];
-        if (p) {
-            awards.mvp = {
-                pid: p.pid,
-                name: p.name,
-                tid: p.tid,
-                abbrev: p.abbrev,
-                pts: p.currentStats.pts,
-                trb: p.currentStats.trb,
-                ast: p.currentStats.ast,
-            };
-            awardsByPlayer.push({
-                pid: p.pid,
-                tid: p.tid,
-                name: p.name,
-                type: "Most Valuable Player",
             });
         }
     }
@@ -465,6 +374,90 @@ async function doAwards(conditions: Conditions) {
             stl: p.currentStats.stl,
         });
         awardsByPlayer.push({ pid: p.pid, tid: p.tid, name: p.name, type });
+    }
+
+    // Most Improved Player
+    const mipInfos = [];
+    for (const p of players) {
+        const oldStatsAll = p.stats.filter(ps => ps.season === g.season - 1);
+        if (oldStatsAll.length === 0) {
+            continue;
+        }
+        const oldStats = oldStatsAll[oldStatsAll.length - 1];
+
+        const wsAllPrev = p.stats.slice(0, -1).map(ps => ps.ws);
+
+        const mipInfo = {
+            pid: p.pid,
+            min: p.currentStats.min * p.currentStats.gp,
+            minOld: oldStats.min * oldStats.gp,
+            ws: p.currentStats.ws,
+            wsOld: oldStats.ws,
+            wsMax: Math.max(...wsAllPrev),
+            ws48: p.currentStats.ws48,
+            ws48Old: oldStats.ws48,
+            score: 0,
+        };
+
+        // Increasing WS by 5 is equal weight to increasing WS/48 by 0.1
+        mipInfo.score =
+            0.02 * (mipInfo.ws - mipInfo.wsOld) +
+            (mipInfo.ws48 - mipInfo.ws48Old);
+
+        // Penalty - lose 0.05 for every mpg last season under 15 (assuming 82 games)
+        if (mipInfo.minOld < 82 * 15) {
+            mipInfo.score -= 0.05 * (15 - mipInfo.minOld / 82);
+        }
+
+        // Penalty - lose additional 0.05 for every mpg last season under 10 (assuming 82 games)
+        if (mipInfo.minOld < 82 * 15) {
+            mipInfo.score -= 0.05 * (15 - mipInfo.minOld / 82);
+        }
+
+        // Penalty - lose 0.01 for every mpg this season under 30 (assuming 82 games)
+        if (mipInfo.min < 82 * 30) {
+            mipInfo.score -= 0.01 * (30 - mipInfo.min / 82);
+        }
+
+        // Penalty - baseline required is 125% of previous best season. Lose 0.01 for every 1% below that.
+        if (mipInfo.ws < 1.25 * mipInfo.wsMax) {
+            let ratio = 1;
+            if (mipInfo.wsMax !== 0) {
+                ratio = mipInfo.ws / mipInfo.wsMax;
+            }
+
+            // Sanity check... don't want two negative numbers blowing up the ratio
+            if (ratio < 0 || (mipInfo.ws < 0 && mipInfo.wsMax < 0)) {
+                ratio = 0;
+            }
+
+            mipInfo.score -= 1.25 - ratio;
+        }
+
+        mipInfos.push(mipInfo);
+    }
+    if (mipInfos.length > 0) {
+        // Might be no MIP, such as in first season
+        mipInfos.sort((a, b) => b.score - a.score);
+
+        const p = players.find(p2 => p2.pid === mipInfos[0].pid);
+        if (p !== undefined) {
+            awards.mip = {
+                pid: p.pid,
+                name: p.name,
+                tid: p.tid,
+                abbrev: p.abbrev,
+                pts: p.currentStats.pts,
+                trb: p.currentStats.trb,
+                ast: p.currentStats.ast,
+            };
+            awardsByPlayer.push({
+                pid: p.pid,
+                tid: p.tid,
+                name: p.name,
+                type: "Most Improved Player",
+            });
+        }
     }
 
     // Finals MVP - most WS in playoffs

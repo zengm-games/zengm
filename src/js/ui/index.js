@@ -9,7 +9,7 @@ import ReactDOM from "react-dom";
 import api from "./api";
 import Controller from "./components/Controller";
 import processInputs from "./processInputs";
-import { ads, genStaticPage, initView, promiseWorker, toWorker } from "./util";
+import { ads, compareVersions, genStaticPage, initView, logEvent, promiseWorker, toWorker } from "./util";
 import * as views from "./views";
 import type { Env } from "../common/types";
 
@@ -25,6 +25,22 @@ promiseWorker.register(([name, ...params]) => {
     }
 
     return api[name](...params);
+});
+
+window.addEventListener("storage", (e) => {
+    console.log("storage event!", e);
+    if (e.key === "bbgmVersionConflict") {
+        if (compareVersions(localStorage.getItem("bbgmVersion"), window.bbgmVersion) === 1) {
+            logEvent(
+                {
+                    type: "error",
+                    text: "A newer version of Basketball GM was just opened in another tab. Please reload this tab to load the same version here.",
+                    saveToDb: false,
+                    persistent: true,
+                },
+            );
+        }
+    }
 });
 
 const Manual = (
@@ -69,6 +85,30 @@ const genPage = (id, inLeague = true) => {
         }
     });
 
+    // Check if there are other tabs open with a different version
+    const bbgmVersionStored = localStorage.getItem("bbgmVersion");
+    if (bbgmVersionStored) {
+        const cmpResult = compareVersions(window.bbgmVersion, bbgmVersionStored);
+        if (cmpResult === 1) {
+            // This version is newer than another tab's - send a signal to the other tabs
+            let conflictNum = parseInt(localStorage.getItem("bbgmVersionConflict"), 10);
+            if (Number.isNaN(conflictNum)) {
+                conflictNum = 1;
+            } else {
+                conflictNum += 1;
+            }
+
+            localStorage.setItem("bbgmVersion", window.bbgmVersion);
+            localStorage.setItem("bbgmVersionConflict", conflictNum);
+        } else if (cmpResult === -1) {
+            // This version is older than another tab's
+            console.log(window.bbgmVersion, bbgmVersionStored);
+            console.log("This version of Basketball GM is older than one you already played. This should never happen, so please email commissioner@basketball-gm.com with any info about how this error occurred.");
+        }
+    }
+
+    // Heartbeat, used to keep only one tab open at a time for browsers where we have to use a Web
+    // Worker due to lack of Shared Worker support (currently just Safari)
     let heartbeatID = sessionStorage.getItem("heartbeatID");
     if (heartbeatID === null || heartbeatID === undefined) {
         heartbeatID = Math.random()

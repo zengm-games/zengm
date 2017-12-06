@@ -5,7 +5,8 @@ ui/worker sync issues
       - test appcache
   - error case: two different workers are running
     - need to recognize this in the older worker, and have it shut down and send a message to display in all its tabs to refresh
-    - use indexeddb to communicate, i guess, similar to heartbeat
+
+move react up, before worker is initialized, so compareVersions error can be displayed there
 
 somehow display synergy, maybe on roster page
 

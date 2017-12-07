@@ -1,3 +1,6 @@
+for versioned files, set cache to expire in a long time
+- https://developer.yahoo.com/performance/rules.html#expires
+
 all defensive team by position?
 
 after being confident that version sync is good, remove bbgmVersionWorker and bbgmVersionUI and restore footer text

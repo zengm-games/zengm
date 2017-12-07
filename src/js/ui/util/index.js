@@ -1,9 +1,12 @@
 // @flow
+/* global process */
 
 import PromiseWorker from "promise-worker-bi";
 
-// eslint-disable-next-line no-undef
-const workerPath = process.env.NODE_ENV === "production" ? `/gen/worker-${window.bbgmVersion}.js` : "/gen/worker.js";
+const workerPath =
+    process.env.NODE_ENV === "production"
+        ? `/gen/worker-${window.bbgmVersion}.js`
+        : "/gen/worker.js";
 const worker = window.useSharedWorker
     ? new SharedWorker(workerPath)
     : new Worker(workerPath);

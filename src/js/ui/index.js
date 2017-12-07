@@ -37,20 +37,20 @@ promiseWorker.register(([name, ...params]) => {
 
 window.addEventListener("storage", e => {
     console.log("storage event!", e);
-    if (
-        e.key === "bbgmVersionConflict" &&
-        compareVersions(
-            localStorage.getItem("bbgmVersion"),
-            window.bbgmVersion,
-        ) === 1
-    ) {
-        logEvent({
-            type: "error",
-            text:
-                "A newer version of Basketball GM was just opened in another tab. Please reload this tab to load the same version here.",
-            saveToDb: false,
-            persistent: true,
-        });
+    if (e.key === "bbgmVersionConflict") {
+        const bbgmVersionStored = localStorage.getItem("bbgmVersion");
+        if (
+            bbgmVersionStored &&
+            compareVersions(bbgmVersionStored, window.bbgmVersion) === 1
+        ) {
+            logEvent({
+                type: "error",
+                text:
+                    "A newer version of Basketball GM was just opened in another tab. Please reload this tab to load the same version here.",
+                saveToDb: false,
+                persistent: true,
+            });
+        }
     }
 });
 
@@ -116,7 +116,7 @@ const genPage = (id, inLeague = true) => {
             }
 
             localStorage.setItem("bbgmVersion", window.bbgmVersion);
-            localStorage.setItem("bbgmVersionConflict", conflictNum);
+            localStorage.setItem("bbgmVersionConflict", String(conflictNum));
         } else if (cmpResult === -1) {
             // This version is older than another tab's
             console.log(window.bbgmVersion, bbgmVersionStored);

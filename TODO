@@ -1,7 +1,4 @@
-ui/worker sync issues
-  - npm run watch
-    - use NODE_ENV to conditionally set it to versioned worker
-    - edit index.html to point at plain ui.js
+all defensive team by position?
 
 after being confident that version sync is good, remove bbgmVersionWorker and bbgmVersionUI and restore footer text
 

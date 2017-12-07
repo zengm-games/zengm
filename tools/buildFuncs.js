@@ -108,5 +108,6 @@ module.exports = {
     reset,
     copyFiles,
     minifyCss,
+    genRev,
     setTimestamps,
 };

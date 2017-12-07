@@ -1,9 +1,13 @@
 // @flow
 
 import PromiseWorker from "promise-worker-bi";
+
+// eslint-disable-next-line no-undef
+const workerPath = process.env.NODE_ENV === "production" ? `/gen/worker-${window.bbgmVersion}.js` : "/gen/worker.js";
 const worker = window.useSharedWorker
-    ? new SharedWorker(`/gen/worker-${window.bbgmVersion}.js`)
-    : new Worker(`/gen/worker-${window.bbgmVersion}.js`);
+    ? new SharedWorker(workerPath)
+    : new Worker(workerPath);
+
 export const promiseWorker = new PromiseWorker(worker);
 promiseWorker.registerError(e => {
     if (window.Bugsnag) {

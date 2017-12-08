@@ -162,8 +162,7 @@ async function doAwards(conditions: Conditions) {
             "season",
         ],
     });
-
-    players = players.filter(p => p.stats.length > 0);
+    players = players.filter(p => p.stats.length > 0 && p.stats[p.stats.length - 1].season === g.season);
     for (const p of players) {
         p.currentStats = p.stats[p.stats.length - 1];
     }

@@ -29,6 +29,14 @@ const bbgmPing = (type: "league" | "season") => {
                 "Completed season",
                 String(g.season),
             );
+        } else if (type === "version") {
+            window.ga(
+                "send",
+                "event",
+                "BBGM",
+                "Version",
+                window.bbgmVersion,
+            );
         }
     }
 };

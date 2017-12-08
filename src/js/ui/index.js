@@ -21,8 +21,6 @@ import {
 import * as views from "./views";
 import type { Env } from "../common/types";
 
-// source-map-support is no longer needed here because no Promise polyfill in the UI, only sometimes in the worker.
-
 promiseWorker.register(([name, ...params]) => {
     if (!api.hasOwnProperty(name)) {
         throw new Error(
@@ -53,6 +51,8 @@ window.addEventListener("storage", e => {
         }
     }
 });
+
+api.bbgmPing("version");
 
 const Manual = (
     <div>

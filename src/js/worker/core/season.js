@@ -397,7 +397,7 @@ async function doAwards(conditions: Conditions) {
     const mipInfos = [];
     for (const p of players) {
         // Too many second year players get picked, when it's expected for them to improve (undrafted and second round picks can still win)
-        if (p.draft.year + 1 >= g.season && p.draft.round === 1) {
+        if (p.draft.year + 2 >= g.season && p.draft.round === 1) {
             continue;
         }
 

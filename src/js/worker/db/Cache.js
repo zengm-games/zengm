@@ -91,7 +91,7 @@ export const STORES: Store[] = [
     "trade",
 ];
 
-const AUTO_FLUSH_INTERVAL = 2000; // 2 seconds
+const AUTO_FLUSH_INTERVAL = 4000; // 4 seconds
 
 class StoreAPI<Input, Output, ID> {
     cache: Cache;

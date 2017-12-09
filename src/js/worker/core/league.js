@@ -169,6 +169,9 @@ async function create(
     helpers.resetG();
     await toUI(["resetG"]);
 
+    if (idb.cache) {
+        idb.cache.stopAutoFlush();
+    }
     idb.cache = new Cache();
     idb.cache.newLeague = true;
     await idb.cache.fill(gameAttributes.season);
@@ -574,6 +577,7 @@ async function create(
     }
 
     await idb.cache.flush();
+    idb.cache.startAutoFlush();
 
     toUI(["bbgmPing", "league"], conditions);
 

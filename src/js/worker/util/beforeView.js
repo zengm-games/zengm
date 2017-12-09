@@ -111,10 +111,15 @@ const beforeLeague = async (
                 return;
             }
 
-            // Reuse existing cache, if it was just created for a new league
+            // Reuse existing cache, if it was just created while generating a new league
             if (!idb.cache || !idb.cache.newLeague || switchingDatabaseLid) {
+                if (idb.cache) {
+                    idb.cache.stopAutoFlush();
+                }
                 idb.cache = new Cache();
                 await idb.cache.fill();
+                idb.cache.startAutoFlush();
+
                 if (loadingNewLid !== newLid) {
                     return;
                 }
@@ -140,14 +145,6 @@ const beforeLeague = async (
         await updatePlayMenu();
         if (loadingNewLid !== newLid) {
             return;
-        }
-
-        if (switchingDatabaseLid) {
-            // This is the only place we need to do this, since every league connection passes through here
-            await idb.cache.startAutoFlush();
-            if (loadingNewLid !== newLid) {
-                return;
-            }
         }
 
         await toUI(["emit", "updateTopMenu", { lid: g.lid }], conditions);

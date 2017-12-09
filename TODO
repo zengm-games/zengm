@@ -1,4 +1,4 @@
-is periodic cache saving actually working?
+<b> in game sim results
 
 for versioned files, set cache to expire in a long time
 - https://developer.yahoo.com/performance/rules.html#expires
@@ -86,8 +86,6 @@ some way to see draft picks by team, now that there are AI trades
 AI trades
 - notification? only for big trades. quantify! maybe show that info in transactions page too
 
-revisit auto flush code, make more robust
-
 AI propose trade to user
 - need way to show popup with link to trade page
 
@@ -136,8 +134,6 @@ index updating
 - smarter option: know what fields the index is on, and test if they changed. if so, re-index
 - smartest option: as above, but incrementally update index
 - goal: get rid of markDirtyIndexes calls in application code
-
-Last update time could be computed in flush if necessary
 
 uncomment things using localstorage in worker, after moving to either env+api or idb (meta)
 - top16playoffs - used in both, would be better in gameAttributes as a God Mode option

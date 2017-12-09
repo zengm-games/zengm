@@ -195,15 +195,9 @@ const handleScreenshotClick = e => {
 
                 logEvent({
                     type: "screenshot",
-                    text: `<p><a href="${
-                        url
-                    }" target="_blank">Click here to view your screenshot.</a></p>
-<a href="https://www.reddit.com/r/BasketballGM/submit?url=${
-                        encodedURL
-                    }">Share on Reddit</a><br>
-<a href="https://twitter.com/intent/tweet?url=${
-                        encodedURL
-                    }&via=basketball_gm">Share on Twitter</a>`,
+                    text: `<p><a href="${url}" target="_blank">Click here to view your screenshot.</a></p>
+<a href="https://www.reddit.com/r/BasketballGM/submit?url=${encodedURL}">Share on Reddit</a><br>
+<a href="https://twitter.com/intent/tweet?url=${encodedURL}&via=basketball_gm">Share on Twitter</a>`,
                     saveToDb: false,
                     showNotification: true,
                     persistent: true,

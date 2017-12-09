@@ -30,13 +30,7 @@ const bbgmPing = (type: "league" | "season" | "version") => {
                 String(g.season),
             );
         } else if (type === "version") {
-            window.ga(
-                "send",
-                "event",
-                "BBGM",
-                "Version",
-                window.bbgmVersion,
-            );
+            window.ga("send", "event", "BBGM", "Version", window.bbgmVersion);
         }
     }
 };

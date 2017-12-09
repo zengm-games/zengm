@@ -433,8 +433,7 @@ class Roster extends React.Component {
 
                     {season === g.season ? (
                         <p>
-                            {g.maxRosterSize - players.length} open roster spots<br
-                            />
+                            {g.maxRosterSize - players.length} open roster spots<br />
                             Payroll: {helpers.formatCurrency(payroll, "M")}
                             <br />
                             Salary cap: {helpers.formatCurrency(salaryCap, "M")}

@@ -783,9 +783,7 @@ class Cache {
         } else {
             if (!this.storeInfos[store].autoIncrement) {
                 throw new Error(
-                    `Primary key field "${
-                        pk
-                    }" is required for non-autoincrementing store "${store}"`,
+                    `Primary key field "${pk}" is required for non-autoincrementing store "${store}"`,
                 );
             }
 

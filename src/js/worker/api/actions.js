@@ -224,9 +224,7 @@ const playMenu = {
                 proceed = await toUI(
                     [
                         "confirm",
-                        `Are you sure you want to proceed to free agency while ${
-                            numRemaining
-                        } of your players remain unsigned? If you do not re-sign them before free agency begins, they will be free to sign with any team, and you won't be able to go over the salary cap to sign them.`,
+                        `Are you sure you want to proceed to free agency while ${numRemaining} of your players remain unsigned? If you do not re-sign them before free agency begins, they will be free to sign with any team, and you won't be able to go over the salary cap to sign them.`,
                     ],
                     conditions,
                 );

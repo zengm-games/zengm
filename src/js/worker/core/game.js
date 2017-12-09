@@ -697,9 +697,9 @@ async function updatePlayoffSeries(
                         "roster",
                         g.teamAbbrevsCache[loserTid],
                         g.season,
-                    ])}">${g.teamNamesCache[loserTid]}</a> in the ${
-                        currentRoundText
-                    }, 4-${loserWon}.`,
+                    ])}">${
+                        g.teamNamesCache[loserTid]
+                    }</a> in the ${currentRoundText}, 4-${loserWon}.`,
                     showNotification,
                     tids: [winnerTid, loserTid],
                 },

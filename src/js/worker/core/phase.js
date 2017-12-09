@@ -139,20 +139,12 @@ async function newPhasePreseason(conditions: Conditions) {
             } ${p.lastName}</a>`;
 
             const reason = random.choice([
-                `A newly discovered Kenyan birth certificate suggests that ${
-                    name
-                }`,
-                `In a televised press conference, the parents of ${
-                    name
-                } explained how they faked his age as a child to make him perform better against younger competition. He`,
+                `A newly discovered Kenyan birth certificate suggests that ${name}`,
+                `In a televised press conference, the parents of ${name} explained how they faked his age as a child to make him perform better against younger competition. He`,
                 `Internet sleuths on /r/nba uncovered evidence that ${name}`,
                 `Internet sleuths on Twitter uncovered evidence that ${name}`,
-                `In an emotional interview on 60 Minutes, ${
-                    name
-                } admitted that he`,
-                `During a preaseason locker room interview, ${
-                    name
-                } accidentally revealed that he`,
+                `In an emotional interview on 60 Minutes, ${name} admitted that he`,
+                `During a preaseason locker room interview, ${name} accidentally revealed that he`,
                 `In a Reddit AMA, ${name} confirmed that he`,
                 `A recent Wikileaks report revealed that ${name}`,
                 `A foreign ID from the stolen luggage of ${name} revealed he`,
@@ -161,9 +153,7 @@ async function newPhasePreseason(conditions: Conditions) {
             logEvent(
                 {
                     type: "ageFraud",
-                    text: `${reason} is actually ${age1} years old, not ${
-                        age0
-                    } as was previously thought.`,
+                    text: `${reason} is actually ${age1} years old, not ${age0} as was previously thought.`,
                     showNotification: p.tid === g.userTid,
                     pids: [p.pid],
                     tids: [p.tid],

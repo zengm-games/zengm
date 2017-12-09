@@ -197,8 +197,7 @@ const LeagueDashboard = ({
                                         >
                                             {leagueLeaders.pts.abbrev}
                                         </a>:{" "}
-                                        {leagueLeaders.pts.stat.toFixed(1)} pts<br
-                                        />
+                                        {leagueLeaders.pts.stat.toFixed(1)} pts<br />
                                         <a
                                             href={helpers.leagueUrl([
                                                 "player",
@@ -215,8 +214,7 @@ const LeagueDashboard = ({
                                         >
                                             {leagueLeaders.trb.abbrev}
                                         </a>:{" "}
-                                        {leagueLeaders.trb.stat.toFixed(1)} reb<br
-                                        />
+                                        {leagueLeaders.trb.stat.toFixed(1)} reb<br />
                                         <a
                                             href={helpers.leagueUrl([
                                                 "player",
@@ -233,8 +231,7 @@ const LeagueDashboard = ({
                                         >
                                             {leagueLeaders.ast.abbrev}
                                         </a>:{" "}
-                                        {leagueLeaders.ast.stat.toFixed(1)} ast<br
-                                        />
+                                        {leagueLeaders.ast.stat.toFixed(1)} ast<br />
                                         <a
                                             href={helpers.leagueUrl([
                                                 "leaders",

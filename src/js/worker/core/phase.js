@@ -64,14 +64,16 @@ async function finalize(
     await updateStatus("Idle");
 
     updateEvents.push("newPhase");
-    toUI(["realtimeUpdate", updateEvents, url], conditions);
 
-    // If auto-simulating, initiate next action
+    // If auto-simulating, initiate next action but don't redirect to a new URL
     if (local.autoPlaySeasons > 0) {
+        toUI(["realtimeUpdate", updateEvents], conditions);
         // Not totally sure why setTimeout is needed, but why not?
         setTimeout(() => {
             league.autoPlay(conditions);
         }, 100);
+    } else {
+        toUI(["realtimeUpdate", updateEvents, url], conditions);
     }
 }
 

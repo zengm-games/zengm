@@ -347,7 +347,7 @@ async function doAwards(conditions: Conditions) {
             b.currentStats.dws +
             b.currentStats.blk +
             b.currentStats.stl -
-            (a.currentStats.dws + b.currentStats.blk + b.currentStats.stl),
+            (a.currentStats.dws + a.currentStats.blk + a.currentStats.stl),
     );
     {
         const p = players[0];

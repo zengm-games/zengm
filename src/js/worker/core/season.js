@@ -156,6 +156,8 @@ async function doAwards(conditions: Conditions) {
             "ast",
             "blk",
             "stl",
+            "per",
+            "ewa",
             "ws",
             "dws",
             "ws48",
@@ -212,7 +214,12 @@ async function doAwards(conditions: Conditions) {
     }
 
     // Most Valuable Player
-    players.sort((a, b) => b.currentStats.ws - a.currentStats.ws);
+    players.sort(
+        (a, b) =>
+            b.currentStats.ewa +
+            b.currentStats.ws -
+            (a.currentStats.ewa + a.currentStats.ws),
+    );
     {
         const p = players[0];
         if (p) {
@@ -335,7 +342,13 @@ async function doAwards(conditions: Conditions) {
     }
 
     // Defensive Player of the Year
-    players.sort((a, b) => b.currentStats.dws - a.currentStats.dws);
+    players.sort(
+        (a, b) =>
+            b.currentStats.dws +
+            b.currentStats.blk +
+            b.currentStats.stl -
+            (a.currentStats.dws + b.currentStats.blk + b.currentStats.stl),
+    );
     {
         const p = players[0];
         awards.dpoy = {
@@ -380,57 +393,69 @@ async function doAwards(conditions: Conditions) {
     }
 
     // Most Improved Player
+    // No WS component because it factored in moving from a bad -> good team too much
     const mipInfos = [];
     for (const p of players) {
+        // Too many second year players get picked, when it's expected for them to improve (undrafted and second round picks can still win)
+        if (p.draft.year + 1 >= g.season && p.draft.round === 1) {
+            continue;
+        }
+
         const oldStatsAll = p.stats.filter(ps => ps.season === g.season - 1);
         if (oldStatsAll.length === 0) {
             continue;
         }
         const oldStats = oldStatsAll[oldStatsAll.length - 1];
 
-        const wsAllPrev = p.stats.slice(0, -1).map(ps => ps.ws);
+        const ewaAllPrev = p.stats.slice(0, -1).map(ps => ps.ewa);
 
         const mipInfo = {
             pid: p.pid,
             min: p.currentStats.min * p.currentStats.gp,
             minOld: oldStats.min * oldStats.gp,
-            ws: p.currentStats.ws,
-            wsOld: oldStats.ws,
-            wsMax: Math.max(...wsAllPrev),
-            ws48: p.currentStats.ws48,
-            ws48Old: oldStats.ws48,
+            ewa: p.currentStats.ewa,
+            ewaOld: oldStats.ewa,
+            ewaMax: Math.max(...ewaAllPrev),
+            per: p.currentStats.per,
+            perOld: oldStats.per,
             score: 0,
         };
 
+        // Sanity check, needed with PER
+        if (mipInfo.min < 5 * g.numGames || mipInfo.minOld < 5 * g.numGames) {
+            continue;
+        }
+
         // Increasing WS by 5 is equal weight to increasing WS/48 by 0.1
+        // Transltaed to PER/EWA by guessing
         mipInfo.score =
-            0.02 * (mipInfo.ws - mipInfo.wsOld) +
-            (mipInfo.ws48 - mipInfo.ws48Old);
+            0.02 * (mipInfo.ewa - mipInfo.ewaOld) +
+            0.03 * (mipInfo.per - mipInfo.perOld);
 
-        // Penalty - lose 0.05 for every mpg last season under 15 (assuming 82 games)
-        if (mipInfo.minOld < 82 * 15) {
-            mipInfo.score -= 0.05 * (15 - mipInfo.minOld / 82);
+        // Penalty - lose 0.05 for every mpg last season under 15
+        if (mipInfo.minOld < g.numGames * 15) {
+            mipInfo.score -= 0.05 * (15 - mipInfo.minOld / g.numGames);
         }
 
-        // Penalty - lose additional 0.05 for every mpg last season under 10 (assuming 82 games)
-        if (mipInfo.minOld < 82 * 15) {
-            mipInfo.score -= 0.05 * (15 - mipInfo.minOld / 82);
+        // Penalty - lose additional 0.05 for every mpg last season under 10
+        if (mipInfo.minOld < g.numGames * 15) {
+            mipInfo.score -= 0.05 * (15 - mipInfo.minOld / g.numGames);
         }
 
-        // Penalty - lose 0.01 for every mpg this season under 30 (assuming 82 games)
-        if (mipInfo.min < 82 * 30) {
-            mipInfo.score -= 0.01 * (30 - mipInfo.min / 82);
+        // Penalty - lose 0.01 for every mpg this season under 30
+        if (mipInfo.min < g.numGames * 30) {
+            mipInfo.score -= 0.01 * (30 - mipInfo.min / g.numGames);
         }
 
         // Penalty - baseline required is 125% of previous best season. Lose 0.01 for every 1% below that.
-        if (mipInfo.ws < 1.25 * mipInfo.wsMax) {
+        if (mipInfo.ewa < 1.25 * mipInfo.ewaMax) {
             let ratio = 1;
-            if (mipInfo.wsMax !== 0) {
-                ratio = mipInfo.ws / mipInfo.wsMax;
+            if (mipInfo.ewaMax !== 0) {
+                ratio = mipInfo.ewa / mipInfo.ewaMax;
             }
 
             // Sanity check... don't want two negative numbers blowing up the ratio
-            if (ratio < 0 || (mipInfo.ws < 0 && mipInfo.wsMax < 0)) {
+            if (ratio < 0 || (mipInfo.ewa < 0 && mipInfo.ewaMax < 0)) {
                 ratio = 0;
             }
 
@@ -477,13 +502,15 @@ async function doAwards(conditions: Conditions) {
         champPlayers = await idb.getCopies.playersPlus(champPlayers, {
             // Only the champions, only playoff stats
             attrs: ["pid", "name", "tid", "abbrev"],
-            stats: ["pts", "trb", "ast", "ws"],
+            stats: ["pts", "trb", "ast", "ws", "ewa"],
             season: g.season,
             playoffs: true,
             regularSeason: false,
             tid: champTid,
         });
-        champPlayers.sort((a, b) => b.stats.ws - a.stats.ws);
+        champPlayers.sort(
+            (a, b) => b.stats.ewa + b.stats.ws - (a.stats.ewa + a.stats.ws),
+        );
         {
             const p = champPlayers[0];
             awards.finalsMvp = {

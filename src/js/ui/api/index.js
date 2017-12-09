@@ -17,7 +17,7 @@ import type {
  * @memberOf util.helpers
  * @param {string} type Either "league" for a new league, or "season" for a completed season
  */
-const bbgmPing = (type: "league" | "season") => {
+const bbgmPing = (type: "league" | "season" | "version") => {
     if (window.enableLogging && window.ga) {
         if (type === "league") {
             window.ga("send", "event", "BBGM", "New league", String(g.lid));

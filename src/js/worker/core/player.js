@@ -1,7 +1,6 @@
 // @flow
 
 import faces from "facesjs";
-import _ from "underscore";
 import { COMPOSITE_WEIGHTS, PHASE, PLAYER, g, helpers } from "../../common";
 import { finances } from "../core";
 import { idb } from "../db";
@@ -1086,7 +1085,7 @@ async function addStatsRow(p: Player, playoffs?: boolean = false) {
     };
 
     p.statsTids.push(p.tid);
-    p.statsTids = _.uniq(p.statsTids);
+    p.statsTids = Array.from(new Set(p.statsTids));
 
     // Calculate yearsWithTeam
     const playerStats = (await idb.cache.playerStats.indexGetAll(

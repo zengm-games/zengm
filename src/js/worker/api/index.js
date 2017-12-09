@@ -286,9 +286,9 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
     // Array of seasons in stats, either just one or all of them
     let seasons;
     if (season === "all") {
-        seasons = _.uniq(
+        seasons = Array.from(new Set(
             _.flatten(players.map(p => p.ratings)).map(pr => pr.season),
-        );
+        ));
     } else {
         seasons = [season];
     }

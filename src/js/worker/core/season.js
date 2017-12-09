@@ -68,7 +68,7 @@ async function updateOwnerMood(): Promise<OwnerMoodDeltas> {
 }
 
 async function saveAwardsByPlayer(awardsByPlayer: any) {
-    const pids = _.uniq(awardsByPlayer.map(award => award.pid));
+    const pids = Array.from(new Set(awardsByPlayer.map(award => award.pid)));
 
     await Promise.all(
         pids.map(async pid => {

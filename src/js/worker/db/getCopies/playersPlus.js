@@ -147,13 +147,12 @@ const processAttrs = (
         ) {
             output.injury = { type: "Healthy", gamesRemaining: 0 };
         } else if (attr === "salaries") {
-            output.salaries = _.map(p.salaries, salary => {
+            output.salaries = helpers.deepCopy(p.salaries).map(salary => {
                 salary.amount /= 1000;
                 return salary;
             });
         } else if (attr === "salariesTotal") {
-            output.salariesTotal = _.reduce(
-                output.salaries,
+            output.salariesTotal = output.salaries.reduce(
                 (memo, salary) => memo + salary.amount,
                 0,
             );
@@ -166,7 +165,7 @@ const processAttrs = (
                         type: award,
                         count: awardsGroupedTemp[award].length,
                         seasons: helpers.yearRanges(
-                            _.pluck(awardsGroupedTemp[award], "season"),
+                            awardsGroupedTemp[award].map(a => a.season),
                         ),
                     });
                 }

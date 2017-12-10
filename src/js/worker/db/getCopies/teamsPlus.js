@@ -1,7 +1,6 @@
 // @flow
 
 import backboard from "backboard";
-import _ from "underscore";
 import { g, helpers } from "../../../common";
 import { filterOrderStats, mergeByPk } from "./helpers";
 import { team } from "../../core";
@@ -82,14 +81,12 @@ const processSeasonAttrs = async (
             const row = {};
 
             // Revenue and expenses calculation
-            const revenue = _.reduce(
-                helpers.deepCopy(ts.revenues),
-                (memo, rev) => memo + rev.amount,
+            const revenue = Object.keys(ts.revenues).reduce(
+                (memo, rev) => memo + ts.revenues[rev].amount,
                 0,
             );
-            const expense = _.reduce(
-                helpers.deepCopy(ts.expenses),
-                (memo, exp) => memo + exp.amount,
+            const expense = Object.keys(ts.expenses).reduce(
+                (memo, rev) => memo + ts.expenses[rev].amount,
                 0,
             );
 

@@ -300,8 +300,9 @@ function updateChances(
     isFinal?: boolean = false,
 ) {
     let wps = _.countBy(teams, t => t.seasonAttrs.winp);
-    wps = _.pairs(wps);
-    wps = _.sortBy(wps, x => Number(x[0]));
+    wps = Object.entries(wps)
+        .map((x) => [Number(x[0]), Number(x[1])])
+        .sort((a, b) => a[0] - b[0]);
     let tc = 0;
 
     for (let k = 0; k < wps.length; k++) {

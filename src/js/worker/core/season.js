@@ -329,7 +329,7 @@ async function doAwards(conditions: Conditions) {
             awards.allLeague.push({ title: "Third Team", players: [] });
             type = "Third Team All-League";
         }
-        _.last(awards.allLeague).players.push({
+        awards.allLeague[awards.allLeague.length - 1].players.push({
             pid: p.pid,
             name: p.name,
             tid: p.tid,
@@ -380,7 +380,7 @@ async function doAwards(conditions: Conditions) {
             awards.allDefensive.push({ title: "Third Team", players: [] });
             type = "Third Team All-Defensive";
         }
-        _.last(awards.allDefensive).players.push({
+        awards.allDefensive[awards.allDefensive.length - 1].players.push({
             pid: p.pid,
             name: p.name,
             tid: p.tid,

@@ -522,7 +522,7 @@ async function valueChange(
             if (!pidsRemove.includes(p.pid)) {
                 roster.push({
                     value: p.value,
-                    skills: _.last(p.ratings).skills,
+                    skills: p.ratings[p.ratings.length - 1].skills,
                     contract: p.contract,
                     worth: player.genContract(p, false, false, true),
                     injury: p.injury,
@@ -531,7 +531,7 @@ async function valueChange(
             } else {
                 remove.push({
                     value: p.value * fudgeFactor,
-                    skills: _.last(p.ratings).skills,
+                    skills: p.ratings[p.ratings.length - 1].skills,
                     contract: p.contract,
                     worth: player.genContract(p, false, false, true),
                     injury: p.injury,
@@ -545,7 +545,7 @@ async function valueChange(
             const p = await idb.cache.players.get(pid);
             add.push({
                 value: p.valueWithContract,
-                skills: _.last(p.ratings).skills,
+                skills: p.ratings[p.ratings.length - 1].skills,
                 contract: p.contract,
                 worth: player.genContract(p, false, false, true),
                 injury: p.injury,
@@ -800,10 +800,9 @@ async function valueChange(
         let rosterSkills = [];
         for (let i = 0; i < rosterLocal.length; i++) {
             if (rosterLocal[i].value >= 45) {
-                rosterSkills.push(rosterLocal[i].skills);
+                rosterSkills = rosterSkills.concat(rosterLocal[i].skills);
             }
         }
-        rosterSkills = _.flatten(rosterSkills);
         const rosterSkillsCount = _.countBy(rosterSkills);
 
         // Sort test by value, so that the highest value players get bonuses applied first

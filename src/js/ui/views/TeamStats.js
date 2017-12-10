@@ -1,6 +1,5 @@
 import PropTypes from "prop-types";
 import React from "react";
-import _ from "underscore";
 import { g, helpers } from "../../common";
 import { getCols, setTitle } from "../util";
 import { DataTable, Dropdown, JumpTo, NewWindowLink } from "../components";
@@ -137,7 +136,7 @@ const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
         // This is our team.
         if (g.userTid === t.tid) {
             // Color stat values accordingly.
-            for (const [statType, value] of _.pairs(data)) {
+            for (const [statType, value] of Object.entries(data)) {
                 if (
                     !statTypeColumns.includes(statType) &&
                     !otherStatColumns.includes(statType)
@@ -170,13 +169,13 @@ const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
 
             return {
                 key: t.tid,
-                data: _.values(data),
+                data: Object.values(data),
             };
         }
 
         return {
             key: t.tid,
-            data: _.values(data),
+            data: Object.values(data),
         };
     });
 

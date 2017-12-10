@@ -1,7 +1,7 @@
 // Typing is too hard due to https://github.com/facebook/flow/issues/183
 
 import backboard from "backboard";
-import _ from "underscore";
+import groupBy from "lodash/groupBy";
 import { PLAYER, g, helpers } from "../../../common";
 import { filterOrderStats, mergeByPk } from "./helpers";
 import { player } from "../../core";
@@ -158,7 +158,7 @@ const processAttrs = (
             );
         } else if (attr === "awardsGrouped") {
             output.awardsGrouped = [];
-            const awardsGroupedTemp = _.groupBy(p.awards, award => award.type);
+            const awardsGroupedTemp = groupBy(p.awards, award => award.type);
             for (const award of awardsOrder) {
                 if (awardsGroupedTemp.hasOwnProperty(award)) {
                     output.awardsGrouped.push({

@@ -3264,7 +3264,7 @@
     },
     "lodash": {
       "version": "4.17.4",
-      "from": "lodash@>=4.12.0 <5.0.0",
+      "from": "lodash@4.17.4",
       "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.4.tgz"
     },
     "lodash.assign": {
@@ -3296,11 +3296,6 @@
       "from": "lodash.mergewith@>=4.6.0 <5.0.0",
       "resolved": "https://registry.npmjs.org/lodash.mergewith/-/lodash.mergewith-4.6.0.tgz",
       "dev": true
-    },
-    "lodash.orderby": {
-      "version": "4.6.0",
-      "from": "lodash.orderby@4.6.0",
-      "resolved": "https://registry.npmjs.org/lodash.orderby/-/lodash.orderby-4.6.0.tgz"
     },
     "log-symbols": {
       "version": "2.1.0",
@@ -3746,12 +3741,6 @@
           "version": "0.5.1",
           "from": "colors@>=0.5.0 <0.6.0",
           "resolved": "https://registry.npmjs.org/colors/-/colors-0.5.1.tgz",
-          "dev": true
-        },
-        "underscore": {
-          "version": "1.4.4",
-          "from": "underscore@>=1.4.4 <1.5.0",
-          "resolved": "https://registry.npmjs.org/underscore/-/underscore-1.4.4.tgz",
           "dev": true
         }
       }
@@ -5505,9 +5494,10 @@
       "resolved": "https://registry.npmjs.org/uncontrollable/-/uncontrollable-4.1.0.tgz"
     },
     "underscore": {
-      "version": "1.8.3",
-      "from": "underscore@1.8.3",
-      "resolved": "https://registry.npmjs.org/underscore/-/underscore-1.8.3.tgz"
+      "version": "1.4.4",
+      "from": "underscore@>=1.4.4 <1.5.0",
+      "resolved": "https://registry.npmjs.org/underscore/-/underscore-1.4.4.tgz",
+      "dev": true
     },
     "uniq": {
       "version": "1.0.1",

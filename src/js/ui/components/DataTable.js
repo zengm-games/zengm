@@ -1,7 +1,7 @@
 // @flow
 
 import classNames from "classnames";
-import orderBy from "lodash.orderby";
+import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
 import * as React from "react";
 import textContent from "react-addons-text-content";

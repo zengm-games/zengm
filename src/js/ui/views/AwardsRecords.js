@@ -1,6 +1,6 @@
+import groupBy from "lodash/groupBy";
 import PropTypes from "prop-types";
 import React from "react";
-import _ from "underscore";
 import { helpers } from "../../common";
 import { getCols, setTitle } from "../util";
 import { DataTable, Dropdown, NewWindowLink } from "../components";
@@ -43,7 +43,7 @@ const AwardsRecords = ({
             data: [
                 <a href={helpers.leagueUrl(["player", a.pid])}>{a.name}</a>,
                 a.count,
-                formatYear(_.groupBy(a.years, "team")),
+                formatYear(groupBy(a.years, "team")),
                 a.lastYear,
                 <CheckmarkOrCross>{a.retired ? 1 : 0}</CheckmarkOrCross>,
                 <CheckmarkOrCross>{a.hof ? 1 : 0}</CheckmarkOrCross>,

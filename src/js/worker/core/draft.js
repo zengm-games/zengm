@@ -1,6 +1,7 @@
 // @flow
 
-import _ from "underscore";
+import countBy from "lodash/countBy";
+import range from "lodash/range";
 import { PHASE, PLAYER, g, helpers } from "../../common";
 import { finances, league, phase, player } from "../core";
 import { idb } from "../db";
@@ -299,7 +300,7 @@ function updateChances(
     teams: TeamFiltered[],
     isFinal?: boolean = false,
 ) {
-    let wps = _.countBy(teams, t => t.seasonAttrs.winp);
+    let wps = countBy(teams, t => t.seasonAttrs.winp);
     wps = Object.entries(wps)
         .map((x) => [Number(x[0]), Number(x[1])])
         .sort((a, b) => a[0] - b[0]);
@@ -344,7 +345,7 @@ function lotterySort(teams: TeamFiltered[]) {
      *
      * The tiebreaker used after the lottery is random. Which is then reversed for the 2nd round.
      */
-    const randValues = _.range(g.numTeams);
+    const randValues = range(g.numTeams);
     random.shuffle(randValues);
     for (let i = 0; i < teams.length; i++) {
         teams[i].randVal = randValues[i];
@@ -587,7 +588,7 @@ async function genOrder(
  */
 async function genOrderFantasy(position: number) {
     // Randomly-ordered list of tids
-    const tids = _.range(g.numTeams);
+    const tids = range(g.numTeams);
     random.shuffle(tids);
     if (position !== undefined && position >= 1 && position <= g.numTeams) {
         let i = 0;

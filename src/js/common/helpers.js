@@ -1,6 +1,6 @@
 // @flow
 
-import orderBy from "lodash.orderby";
+import orderBy from "lodash/orderBy";
 import { PLAYER, g } from "../common";
 import type {
     GameProcessed,

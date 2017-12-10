@@ -1,7 +1,7 @@
 // @flow
 
 import backboard from "backboard";
-import orderBy from "lodash.orderby";
+import orderBy from "lodash/orderBy";
 import { PLAYER, g } from "../../common";
 import { idb } from "../db";
 import { lock, local } from "../util";

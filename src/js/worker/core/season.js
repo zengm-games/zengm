@@ -1,6 +1,7 @@
 // @flow
 
-import _ from "underscore";
+import flatten from "lodash/flatten";
+import range from "lodash/range";
 import { PLAYER, g, helpers } from "../../common";
 import { league } from "../core";
 import { idb } from "../db";
@@ -858,7 +859,7 @@ function newSchedule(teams: Team[]): [number, number][] {
         }
     }
     random.shuffle(days); // Otherwise the most dense days will be at the beginning and the least dense days will be at the end
-    tids = _.flatten(days, true);
+    tids = flatten(days, true);
 
     return tids;
 }
@@ -1028,7 +1029,7 @@ function genPlayoffSeries(teams: TeamFiltered[]) {
 
     const tidPlayoffs = [];
     const numPlayoffTeams = 2 ** g.numPlayoffRounds;
-    const series = _.range(g.numPlayoffRounds).map(() => []);
+    const series = range(g.numPlayoffRounds).map(() => []);
     if (playoffsByConference) {
         // Default: top 50% of teams in each of the two conferences
         const numSeriesPerConference = numPlayoffTeams / 4;

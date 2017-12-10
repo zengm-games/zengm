@@ -1,6 +1,6 @@
 // @flow
 
-import _ from "underscore";
+import range from "lodash/range";
 import { PHASE, PLAYER, g, helpers } from "../../common";
 import { player, team } from "../core";
 import { idb } from "../db";
@@ -830,7 +830,7 @@ const betweenAiTeams = async () => {
         return;
     }
 
-    const aiTids = _.range(g.numTeams).filter(i => {
+    const aiTids = range(g.numTeams).filter(i => {
         return !g.userTids.includes(i);
     });
     if (aiTids.length === 0) {
@@ -838,7 +838,7 @@ const betweenAiTeams = async () => {
     }
     const tid = random.choice(aiTids);
 
-    const otherTids = _.range(g.numTeams).filter(i => {
+    const otherTids = range(g.numTeams).filter(i => {
         return i !== tid && !g.userTids.includes(i);
     });
     if (otherTids.length === 0) {

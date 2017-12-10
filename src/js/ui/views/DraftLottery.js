@@ -1,9 +1,9 @@
 // @flow
 
 import classNames from "classnames";
+import range from "lodash/range";
 import PropTypes from "prop-types";
 import * as React from "react";
-import _ from "underscore";
 import { g, helpers } from "../../common";
 import { setTitle, toWorker } from "../util";
 import { DraftAbbrev, Dropdown, JumpTo, NewWindowLink } from "../components";
@@ -212,7 +212,7 @@ class DraftLottery extends React.Component<Props, State> {
                                     },
                                     i,
                                 ) => {
-                                    const pickCols = _.range(NUM_PICKS).map(
+                                    const pickCols = range(NUM_PICKS).map(
                                         j => {
                                             const prob = probs[i][j];
                                             const pct =

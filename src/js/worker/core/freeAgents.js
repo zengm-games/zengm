@@ -1,7 +1,7 @@
 // @flow
 
-import orderBy from "lodash.orderby";
-import _ from "underscore";
+import orderBy from "lodash/orderBy";
+import range from "lodash/range";
 import { PHASE, PLAYER, g, helpers } from "../../common";
 import { league, phase, player, team, trade } from "../core";
 import { idb } from "../db";
@@ -43,7 +43,7 @@ async function autoSign() {
     const playersSorted = orderBy(players, "value", "desc");
 
     // Randomly order teams
-    const tids = _.range(g.numTeams);
+    const tids = range(g.numTeams);
     random.shuffle(tids);
 
     for (const tid of tids) {

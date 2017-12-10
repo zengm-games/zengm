@@ -1,6 +1,7 @@
 // @flow
 
-import _ from "underscore";
+import flatten from "lodash/flatten";
+import range from "lodash/range";
 import { PHASE, PLAYER, g, helpers } from "../../common";
 import actions from "./actions";
 import {
@@ -287,7 +288,7 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
     let seasons;
     if (season === "all") {
         seasons = Array.from(new Set(
-            _.flatten(players.map(p => p.ratings)).map(pr => pr.season),
+            flatten(players.map(p => p.ratings)).map(pr => pr.season),
         ));
     } else {
         seasons = [season];
@@ -446,7 +447,7 @@ const getLocal = async (name: $Keys<Local>): any => {
 const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
     const getOffers = async (userPids, userDpids) => {
         // Pick 10 random teams to try (or all teams, if g.numTeams < 10)
-        const tids = _.range(g.numTeams);
+        const tids = range(g.numTeams);
         random.shuffle(tids);
         tids.splice(10);
 

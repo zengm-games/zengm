@@ -1,4 +1,4 @@
-import _ from "underscore";
+import range from "lodash/range";
 import { g } from "../../common";
 import { idb } from "../db";
 import type { UpdateEvents } from "../../common/types";
@@ -60,7 +60,7 @@ function getTeamRecord(t, awards) {
 }
 
 function tallyAwards(awards) {
-    const teams = _.range(g.numTeams).map(() => {
+    const teams = range(g.numTeams).map(() => {
         return {
             mvp: 0,
             dpoy: 0,

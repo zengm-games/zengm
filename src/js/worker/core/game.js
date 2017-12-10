@@ -1,6 +1,6 @@
 // @flow
 
-import _ from "underscore";
+import range from "lodash/range";
 import { COMPOSITE_WEIGHTS, PHASE, PLAYER, g, helpers } from "../../common";
 import {
     GameSim,
@@ -776,7 +776,7 @@ function makeComposite(rating, components, weights) {
  */
 async function loadTeams() {
     return Promise.all(
-        _.range(g.numTeams).map(async tid => {
+        range(g.numTeams).map(async tid => {
             const [players, { cid, did }, teamSeason] = await Promise.all([
                 idb.cache.players.indexGetAll("playersByTid", tid),
                 idb.cache.teams.get(tid),

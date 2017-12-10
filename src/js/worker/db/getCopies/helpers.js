@@ -1,6 +1,6 @@
 // @flow
 
-import orderBy from "lodash.orderby";
+import orderBy from "lodash/orderBy";
 import { helpers } from "../../../common";
 import type { PlayerStats, TeamStats } from "../../../common/types"; // eslint-disable-line no-unused-vars
 

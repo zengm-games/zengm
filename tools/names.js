@@ -1,4 +1,4 @@
-const _ = require('underscore');
+const _ = require('lodash');
 const cheerio = require('cheerio');
 const fs = require('fs');
 const path = require('path');

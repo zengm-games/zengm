@@ -1,6 +1,7 @@
 // @flow
 
-import _ from "underscore";
+import countBy from "lodash/countBy";
+import range from "lodash/range";
 import { PHASE, PLAYER, g, helpers } from "../../common";
 import { draft, player, trade } from "../core";
 import { idb } from "../db";
@@ -462,7 +463,7 @@ async function getPayroll(tid: number): Promise<[number, ContractInfo[]]> {
  */
 function getPayrolls(): Promise<number[]> {
     return Promise.all(
-        _.range(g.numTeams).map(async tid => {
+        range(g.numTeams).map(async tid => {
             return (await getPayroll(tid))[0];
         }),
     );
@@ -803,7 +804,7 @@ async function valueChange(
                 rosterSkills = rosterSkills.concat(rosterLocal[i].skills);
             }
         }
-        const rosterSkillsCount = _.countBy(rosterSkills);
+        const rosterSkillsCount = countBy(rosterSkills);
 
         // Sort test by value, so that the highest value players get bonuses applied first
         test.sort((a, b) => b.value - a.value);

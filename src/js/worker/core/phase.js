@@ -1,6 +1,6 @@
 // @flow
 
-import _ from "underscore";
+import range from "lodash/range";
 import { PHASE, PLAYER, g, helpers } from "../../common";
 import {
     contractNegotiation,
@@ -81,7 +81,7 @@ async function newPhasePreseason(conditions: Conditions) {
     await freeAgents.autoSign();
     await league.setGameAttributes({ season: g.season + 1 });
 
-    const tids: number[] = _.range(g.numTeams);
+    const tids: number[] = range(g.numTeams);
 
     let scoutingRankTemp;
     await Promise.all(

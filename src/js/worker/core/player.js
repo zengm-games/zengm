@@ -327,20 +327,20 @@ function pos(ratings: PlayerRatings): string {
     let position;
 
     // Without other skills, slot primarily by height
-    if (ratings.hgt >= 61) {
+    if (ratings.hgt >= 59) {
         // 6'10"
         position = "C";
-    } else if (ratings.hgt >= 54) {
+    } else if (ratings.hgt >= 52) {
         // 6'8"
         position = "PF";
-    } else if (ratings.hgt >= 45) {
+    } else if (ratings.hgt >= 44) {
         // 6'6"
         position = "SF";
     } else if (
         ratings.spd < 70 &&
         ratings.drb < 70 &&
         ratings.pss < 70 &&
-        ratings.hgt >= 25
+        ratings.hgt >= 35
     ) {
         position = "SG";
     } else {
@@ -360,7 +360,7 @@ function pos(ratings: PlayerRatings): string {
     if (
         ratings.spd >= 50 &&
         ratings.drb >= 50 &&
-        ratings.hgt >= 35 &&
+        ratings.hgt >= 37 &&
         (ratings.dnk >= 65 || ratings.tp >= 75)
     ) {
         sg = true;
@@ -370,7 +370,7 @@ function pos(ratings: PlayerRatings): string {
     if (
         ratings.spd >= 35 &&
         ratings.drb > 25 &&
-        ratings.hgt >= 45 &&
+        ratings.hgt >= 44 &&
         (ratings.dnk >= 75 || ratings.tp >= 65)
     ) {
         sf = true;
@@ -378,19 +378,19 @@ function pos(ratings: PlayerRatings): string {
 
     // PF must meet height/strength requirements.  If they are too tall then they are a Center only... unless they can shoot
     if (
-        ratings.hgt >= 45 &&
+        ratings.hgt >= 44 &&
         ratings.stre >= 60 &&
-        ratings.hgt + ratings.stre >= 115 &&
-        (ratings.hgt <= 65 || ratings.tp >= 70)
+        ratings.hgt + ratings.stre >= 113 &&
+        (ratings.hgt <= 63 || ratings.tp >= 70)
     ) {
         pf = true;
     }
 
     // C must be extra tall or is strong/shotblocker but not quite as tall
     if (
-        ratings.hgt >= 65 ||
-        (ratings.hgt >= 55 &&
-            (ratings.hgt + ratings.stre >= 150 || ratings.blk >= 85))
+        ratings.hgt >= 63 ||
+        (ratings.hgt >= 54 &&
+            (ratings.hgt + ratings.stre >= 147 || ratings.blk >= 85))
     ) {
         c = true;
     }

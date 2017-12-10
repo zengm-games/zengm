@@ -323,14 +323,6 @@ international names
   accurate faces (race)
   in player ratings table, show country abbrevs not full names
 
-required babel transforms
-  transform-es2015-block-scoping
-    needed for firefox https://bugzilla.mozilla.org/show_bug.cgi?id=449811
-  transform-async-to-generator
-    needed until there is better native support for promises and indexeddb interaction
-  all others
-    http://stackoverflow.com/a/36824024/786644
-
 backboard
   investigate backboard tx canceling error propagation, see tx in newPhase. maybe interaction between promise manually being 
   player.withStats native support

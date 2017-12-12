@@ -765,8 +765,7 @@ class GameSim {
             for (let p = 0; p < this.team[t].player.length; p++) {
                 // Only players on the court can be injured
                 if (this.playersOnCourt[t].includes(p)) {
-                    // According to data/injuries.ods, 0.25 injuries occur every game. Divided over 10 players and ~200 possessions, that means each player on the court has P = 0.25 / 10 / 200 = 0.000125 probability of being injured this play.
-                    if (Math.random() < 0.000125) {
+                    if (Math.random() < g.injuryRate) {
                         this.team[t].player[p].injured = true;
                         newInjury = true;
                         this.recordPlay("injury", t, [

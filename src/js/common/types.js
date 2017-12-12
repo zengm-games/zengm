@@ -202,6 +202,7 @@ export type GameAttributeKey =
     | "godMode"
     | "godModeInPast"
     | "gracePeriodEnd"
+    | "injuryRate"
     | "leagueName"
     | "lid"
     | "luxuryPayroll"

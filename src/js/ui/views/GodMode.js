@@ -22,6 +22,7 @@ class GodMode extends React.Component {
             quarterLength: props.quarterLength,
             salaryCap: props.salaryCap,
             aiTrades: props.aiTrades,
+            injuryRate: props.injuryRate,
             tragicDeathRate: props.tragicDeathRate,
         };
         this.handleChanges = {
@@ -37,6 +38,7 @@ class GodMode extends React.Component {
             quarterLength: this.handleChange.bind(this, "quarterLength"),
             salaryCap: this.handleChange.bind(this, "salaryCap"),
             aiTrades: this.handleChange.bind(this, "aiTrades"),
+            injuryRate: this.handleChange.bind(this, "injuryRate"),
             tragicDeathRate: this.handleChange.bind(this, "tragicDeathRate"),
         };
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
@@ -58,6 +60,7 @@ class GodMode extends React.Component {
                 quarterLength: nextProps.quarterLength,
                 salaryCap: nextProps.salaryCap,
                 aiTrades: String(nextProps.aiTrades),
+                injuryRate: nextProps.injuryRate,
                 tragicDeathRate: nextProps.tragicDeathRate,
             });
         }
@@ -86,6 +89,7 @@ class GodMode extends React.Component {
             minContract: parseInt(this.state.minContract * 1000, 10),
             maxContract: parseInt(this.state.maxContract * 1000, 10),
             aiTrades: this.state.aiTrades === "true",
+            injuryRate: parseFloat(this.state.injuryRate),
             tragicDeathRate: parseFloat(this.state.tragicDeathRate),
         });
 
@@ -350,6 +354,36 @@ class GodMode extends React.Component {
                         </div>
                         <div className="col-sm-3 col-xs-6 form-group">
                             <label>
+                                Injury Rate{" "}
+                                <HelpPopover
+                                    placement="right"
+                                    title="Injury Rate"
+                                >
+                                    The injury rate is the probability that a
+                                    player is injured per possession. Based on{" "}
+                                    <a
+                                        href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3445097/"
+                                        rel="noopener noreferrer"
+                                        target="_blank"
+                                    >
+                                        this article
+                                    </a>{" "}
+                                    there are about 0.25 injuries per team per
+                                    game, and with 10 players on the court and
+                                    ~200 possessions per game, that works out to
+                                    0.25/10/200 = 0.000125 by default.
+                                </HelpPopover>
+                            </label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                disabled={!godMode}
+                                onChange={this.handleChanges.injuryRate}
+                                value={this.state.injuryRate}
+                            />
+                        </div>
+                        <div className="col-sm-3 col-xs-6 form-group">
+                            <label>
                                 Tragic Death Rate{" "}
                                 <HelpPopover
                                     placement="right"
@@ -400,6 +434,7 @@ GodMode.propTypes = {
     quarterLength: PropTypes.number.isRequired,
     salaryCap: PropTypes.number.isRequired,
     aiTrades: PropTypes.bool.isRequired,
+    injuryRate: PropTypes.number.isRequired,
     tragicDeathRate: PropTypes.number.isRequired,
 };
 

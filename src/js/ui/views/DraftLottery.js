@@ -212,45 +212,41 @@ class DraftLottery extends React.Component<Props, State> {
                                     },
                                     i,
                                 ) => {
-                                    const pickCols = range(NUM_PICKS).map(
-                                        j => {
-                                            const prob = probs[i][j];
-                                            const pct =
-                                                prob !== undefined
-                                                    ? `${(prob * 100).toFixed(
-                                                          1,
-                                                      )}%`
-                                                    : undefined;
+                                    const pickCols = range(NUM_PICKS).map(j => {
+                                        const prob = probs[i][j];
+                                        const pct =
+                                            prob !== undefined
+                                                ? `${(prob * 100).toFixed(1)}%`
+                                                : undefined;
 
-                                            let highlighted = false;
-                                            if (pick !== undefined) {
-                                                highlighted = pick === j + 1;
-                                            } else if (
-                                                NUM_PICKS - 1 - j <=
-                                                this.state.indRevealed
-                                            ) {
-                                                // Has this round been revealed?
-                                                // Is this pick revealed?
-                                                const ind = this.state.toReveal.findIndex(
-                                                    ind2 => ind2 === i,
-                                                );
-                                                if (ind === NUM_PICKS - 1 - j) {
-                                                    highlighted = true;
-                                                }
-                                            }
-
-                                            return (
-                                                <td
-                                                    className={classNames({
-                                                        success: highlighted,
-                                                    })}
-                                                    key={j}
-                                                >
-                                                    {pct}
-                                                </td>
+                                        let highlighted = false;
+                                        if (pick !== undefined) {
+                                            highlighted = pick === j + 1;
+                                        } else if (
+                                            NUM_PICKS - 1 - j <=
+                                            this.state.indRevealed
+                                        ) {
+                                            // Has this round been revealed?
+                                            // Is this pick revealed?
+                                            const ind = this.state.toReveal.findIndex(
+                                                ind2 => ind2 === i,
                                             );
-                                        },
-                                    );
+                                            if (ind === NUM_PICKS - 1 - j) {
+                                                highlighted = true;
+                                            }
+                                        }
+
+                                        return (
+                                            <td
+                                                className={classNames({
+                                                    success: highlighted,
+                                                })}
+                                                key={j}
+                                            >
+                                                {pct}
+                                            </td>
+                                        );
+                                    });
 
                                     const row = (
                                         <tr key={originalTid}>

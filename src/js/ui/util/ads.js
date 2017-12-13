@@ -90,8 +90,8 @@ async function showBanner() {
         });
     };
 
-    if (window.screen && window.screen.width < 768) {
-        // Hide ads on mobile, mobile is shitty enough already
+    if ((window.screen && window.screen.width < 768) || window.inIframe) {
+        // Hide ads on mobile, mobile is shitty enough already. Embedded iframes too, like on Sports.ws
         const wrappers = [
             "banner-ad-top-wrapper",
             "banner-ad-bottom-wrapper-1",

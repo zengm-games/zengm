@@ -201,6 +201,10 @@ class Controller extends React.Component<{}, State> {
                 return;
             }
 
+            if (window.inIframe) {
+                return;
+            }
+
             // No ads during multi season auto sim
             if (autoPlaySeasons > 0) {
                 return;

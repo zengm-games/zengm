@@ -282,6 +282,19 @@ class DropdownLinks extends React.Component<
 
         return (
             <Nav pullRight style={{ marginRight: "0px" }}>
+                {window.inIframe && lid !== undefined ? (
+                    <NavItem href={helpers.leagueUrl([])}>
+                        <span className="hidden-xs">
+                            <span className="glyphicon glyphicon-menu-left" />
+                        </span>
+                        <span className="visible-xs toggle-responsive-menu">
+                            <span
+                                className="glyphicon glyphicon-menu-left"
+                                style={{ marginRight: "5px" }}
+                            />Switch League
+                        </span>
+                    </NavItem>
+                ) : null}
                 {lid !== undefined ? (
                     <NavItem href={helpers.leagueUrl([])}>
                         <span className="hidden-xs">
@@ -596,7 +609,14 @@ class LogoAndText extends React.Component<LogoAndTextProps> {
         const { lid, updating } = this.props;
 
         return (
-            <a className="navbar-brand" href="/">
+            <a
+                className={
+                    window.inIframe && lid !== undefined
+                        ? "navbar-brand hidden-md hidden-sm hidden-xs"
+                        : "navbar-brand"
+                }
+                href="/"
+            >
                 <img
                     alt=""
                     className="spin"
@@ -809,24 +829,43 @@ class NavBar extends React.Component<Props, State> {
             return <div />;
         }
 
+        let userBlock = username ? (
+            <a className="navbar-link user-menu" href="/account">
+                <span className="glyphicon glyphicon-user" />{" "}
+                <span className="visible-lg">{username}</span>
+            </a>
+        ) : (
+            <a
+                className="navbar-link user-menu"
+                href="/account/login_or_register"
+            >
+                <span className="glyphicon glyphicon-user" />{" "}
+                <span className="visible-lg">Login/Register</span>
+            </a>
+        );
+
+        if (window.inIframe) {
+            userBlock = (
+                <a
+                    className="navbar-link user-menu"
+                    href={window.location.href}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                >
+                    <img
+                        alt="Open In New Window"
+                        title="Open In New Window"
+                        height="16"
+                        width="16"
+                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAA0AAAANABeWPPlAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAFOSURBVDiNlZS9isJAFIU/F6s0m0VYYiOrhVukWQsbK4t9CDtbexGs8xY+ghY+QRBsbKcTAjZaqKyGXX2Bs00S1AwBD1yYOXPvmXvv/CAJSQAuoGetzAPCMKRSqTzSOURRRK/Xo1wqldyEewXwfR/P8zLHIAhYr9fZ3BjDeDym1WoBUAZ+i3ZaLBYsl8s7zhiTCbwk3DfwaROYz+fsdjs6nU7GOY6TjVOBGPixCbiuy2g0YrVa0Ww2c+svlpg7DAYDptMp3W6XyWRi9RHwRXKMh8NBKYbDoQC1221dr1dtNhv1+33NZjMZY9KjtAsEQSBAvu/rfD7rEYUC2+1WjuOo0Whov9/ngm8FchcJoFarEYYhnudRrVYLe5QTOJ1OANTrdQCOx6M1MI5jexOftdsMLsBbYb7wDkTAR+KflWC9hRakr+wi6e+2hGfNTb+Bf9965Lxmndc1AAAAAElFTkSuQmCC"
+                    />{" "}
+                </a>
+            );
+        }
+
         return (
             <Navbar fixedTop>
-                <div className="pull-right">
-                    {username ? (
-                        <a className="navbar-link user-menu" href="/account">
-                            <span className="glyphicon glyphicon-user" />{" "}
-                            <span className="visible-lg">{username}</span>
-                        </a>
-                    ) : (
-                        <a
-                            className="navbar-link user-menu"
-                            href="/account/login_or_register"
-                        >
-                            <span className="glyphicon glyphicon-user" />{" "}
-                            <span className="visible-lg">Login/Register</span>
-                        </a>
-                    )}
-                </div>
+                <div className="pull-right">{userBlock}</div>
                 <Navbar.Header>
                     <LogoAndText lid={lid} updating={updating} />
                     <PlayMenu

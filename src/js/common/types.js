@@ -24,7 +24,7 @@ type AwardTeam = {
     lost: number,
 };
 
-type AwardPlayer = {
+export type AwardPlayer = {
     pid: number,
     name: string,
     tid: number,
@@ -34,7 +34,7 @@ type AwardPlayer = {
     ast: number,
 };
 
-type AwardPlayerDefense = {
+export type AwardPlayerDefense = {
     pid: number,
     name: string,
     tid: number,
@@ -47,7 +47,7 @@ type AwardPlayerDefense = {
 export type Awards = {
     season: number,
     bestRecord: AwardTeam,
-    bestRecordConfs: [AwardTeam, AwardTeam],
+    bestRecordConfs: AwardTeam[],
     roy: AwardPlayer,
     allRookie: [
         AwardPlayer,
@@ -56,7 +56,7 @@ export type Awards = {
         AwardPlayer,
         AwardPlayer,
     ],
-    mip: AwardPlayer,
+    mip: AwardPlayer | void,
     mvp: AwardPlayer,
     smoy: AwardPlayer,
     allLeague: [
@@ -124,7 +124,7 @@ export type Awards = {
             ],
         },
     ],
-    finalsMvp: AwardPlayer,
+    finalsMvp: AwardPlayer | void,
 };
 
 export type BackboardTx = any;

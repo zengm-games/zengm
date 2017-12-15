@@ -3,7 +3,14 @@
 import { PLAYER, g, helpers } from "../../../common";
 import { idb } from "../../db";
 import { logEvent } from "../../util";
-import type { Conditions, PlayerFiltered, TeamFiltered } from "../../../common/types";
+import type {
+    AwardPlayer,
+    AwardPlayerDefense,
+    Awards,
+    Conditions,
+    PlayerFiltered,
+    TeamFiltered,
+} from "../../../common/types";
 
 type AwardsByPlayer = {
     pid: number,
@@ -90,7 +97,10 @@ const teamAwards = (teamsUnsorted: TeamFiltered[]) => {
     return { bestRecord, bestRecordConfs };
 };
 
-const leagueLeaders = (players: PlayerFiltered[], awardsByPlayer: AwardsByPlayer) => {
+const leagueLeaders = (
+    players: PlayerFiltered[],
+    awardsByPlayer: AwardsByPlayer,
+) => {
     const factor = g.numGames / 82 * Math.sqrt(g.quarterLength / 12); // To handle changes in number of games and playing time
     const categories = [
         { name: "League Scoring Leader", stat: "pts", minValue: 1400 },
@@ -100,403 +110,157 @@ const leagueLeaders = (players: PlayerFiltered[], awardsByPlayer: AwardsByPlayer
         { name: "League Blocks Leader", stat: "blk", minValue: 100 },
     ];
     for (const cat of categories) {
-        players.sort(
-            (a, b) => b.currentStats[cat.stat] - a.currentStats[cat.stat],
-        );
-        for (const p of players) {
-            if (
-                p.currentStats[cat.stat] * p.currentStats.gp >=
-                    cat.minValue * factor ||
-                p.currentStats.gp >= 70 * factor
-            ) {
-                awardsByPlayer.push({
-                    pid: p.pid,
-                    tid: p.tid,
-                    name: p.name,
-                    type: cat.name,
-                });
-                break;
-            }
+        const p = players
+            .filter(p2 => {
+                return (
+                    p2.currentStats[cat.stat] * p2.currentStats.gp >=
+                        cat.minValue * factor ||
+                    p2.currentStats.gp >= 70 * factor
+                );
+            })
+            .reduce((maxPlayer, currentPlayer) => {
+                return currentPlayer.currentStats[cat.stat] >
+                    maxPlayer.currentStats[cat.stat]
+                    ? currentPlayer
+                    : maxPlayer;
+            }, players[0]);
+        if (p) {
+            awardsByPlayer.push({
+                pid: p.pid,
+                tid: p.tid,
+                name: p.name,
+                type: cat.name,
+            });
         }
     }
 };
 
-const saveAwardsByPlayer = async (awardsByPlayer: AwardsByPlayer) => {
-    const pids = Array.from(new Set(awardsByPlayer.map(award => award.pid)));
-
-    await Promise.all(
-        pids.map(async pid => {
-            const p = await idb.cache.players.get(pid);
-
-            for (let i = 0; i < awardsByPlayer.length; i++) {
-                if (p.pid === awardsByPlayer[i].pid) {
-                    p.awards.push({
-                        season: g.season,
-                        type: awardsByPlayer[i].type,
-                    });
-                }
-            }
-
-            await idb.cache.players.put(p);
-        }),
-    );
-};
-
-/**
- * Compute the awards (MVP, etc) after a season finishes.
- *
- * The awards are saved to the "awards" object store.
- *
- * @memberOf core.season
- * @return {Promise}
- */
-const doAwards = async (conditions: Conditions) => {
-    // Careful - this array is mutated in various functions called below
-    const awardsByPlayer: AwardsByPlayer  = [];
-
-    const teams = await idb.getCopies.teamsPlus({
-        attrs: ["tid", "abbrev", "region", "name", "cid"],
-        seasonAttrs: ["won", "lost", "winp", "playoffRoundsWon"],
-        season: g.season,
-    });
-    const players = await getPlayers();
-
-    const { bestRecord, bestRecordConfs } = teamAwards(teams);
-
-    const awards: any = {
-        bestRecord,
-        bestRecordConfs,
-        season: g.season,
+const getPlayerInfoOffense = (p: PlayerFiltered): AwardPlayer => {
+    return {
+        pid: p.pid,
+        name: p.name,
+        tid: p.tid,
+        abbrev: p.abbrev,
+        pts: p.currentStats.pts,
+        trb: p.currentStats.trb,
+        ast: p.currentStats.ast,
     };
+};
 
-    leagueLeaders(players, awardsByPlayer);
+const getPlayerInfoDefense = (p: PlayerFiltered): AwardPlayerDefense => {
+    return {
+        pid: p.pid,
+        name: p.name,
+        tid: p.tid,
+        abbrev: p.abbrev,
+        trb: p.currentStats.trb,
+        blk: p.currentStats.blk,
+        stl: p.currentStats.stl,
+    };
+};
 
-    // Most Valuable Player
-    players.sort(
-        (a, b) =>
-            b.currentStats.ewa +
-            b.currentStats.ws -
-            (a.currentStats.ewa + a.currentStats.ws),
-    );
-    {
-        const p = players[0];
-        if (p) {
-            awards.mvp = {
-                pid: p.pid,
-                name: p.name,
-                tid: p.tid,
-                abbrev: p.abbrev,
-                pts: p.currentStats.pts,
-                trb: p.currentStats.trb,
-                ast: p.currentStats.ast,
-            };
-            awardsByPlayer.push({
-                pid: p.pid,
-                tid: p.tid,
-                name: p.name,
-                type: "Most Valuable Player",
-            });
-        }
+type GetTopPlayersOptions = {
+    amount?: number,
+    filter?: PlayerFiltered => boolean,
+    score: PlayerFiltered => number,
+};
+
+const getTopPlayers = (
+    { amount, filter, score }: GetTopPlayersOptions,
+    playersUnsorted: PlayerFiltered[],
+): PlayerFiltered[] => {
+    if (playersUnsorted.length === 0) {
+        throw new Error("No players");
     }
+    const actualFilter = filter !== undefined ? filter : () => true;
+    const actualAmount = amount !== undefined ? amount : 1;
 
-    // Rookie of the Year - same sort as MVP
-    const rookies = players.filter(p => {
-        // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
-        return p.draft.year === g.season - 1;
+    const cache: Map<number, number> = new Map();
+    const players = playersUnsorted.filter(actualFilter).sort((a, b) => {
+        let aScore = cache.get(a.pid);
+        if (aScore === undefined) {
+            aScore = score(a);
+            cache.set(a.pid, aScore);
+        }
+
+        let bScore = cache.get(b.pid);
+        if (bScore === undefined) {
+            bScore = score(b);
+            cache.set(b.pid, bScore);
+        }
+
+        return bScore - aScore;
     });
-    {
-        const p = rookies[0];
-        if (p !== undefined) {
-            // I suppose there could be no rookies at all.. which actually does happen when skip the draft from the debug menu
-            awards.roy = {
-                pid: p.pid,
-                name: p.name,
-                tid: p.tid,
-                abbrev: p.abbrev,
-                pts: p.currentStats.pts,
-                trb: p.currentStats.trb,
-                ast: p.currentStats.ast,
-            };
-            awardsByPlayer.push({
-                pid: p.pid,
-                tid: p.tid,
-                name: p.name,
-                type: "Rookie of the Year",
-            });
-        }
+
+    // For the ones returning multiple players (for all league teams), enforce length
+    if (actualAmount > 1 && players.length < actualAmount) {
+        throw new Error("Not enough players");
     }
 
-    // All Rookie Team - same sort as MVP
-    awards.allRookie = [];
-    for (let i = 0; i < 5; i++) {
-        const p = rookies[i];
-        if (p) {
-            awards.allRookie.push({
-                pid: p.pid,
-                name: p.name,
-                tid: p.tid,
-                abbrev: p.abbrev,
-                pts: p.currentStats.pts,
-                trb: p.currentStats.trb,
-                ast: p.currentStats.ast,
-            });
-            awardsByPlayer.push({
-                pid: p.pid,
-                tid: p.tid,
-                name: p.name,
-                type: "All Rookie Team",
-            });
-        }
-    }
+    // If all players are filtered out above (like MIP initial year), then this will return an empty array
+    return players.slice(0, actualAmount);
+};
 
-    // Sixth Man of the Year - same sort as MVP, must have come off the bench in most games
-    {
-        const p = players.find(
-            p2 =>
-                p2.currentStats.gs === 0 ||
-                p2.currentStats.gp / p2.currentStats.gs > 2,
-        );
-        if (p) {
-            awards.smoy = {
-                pid: p.pid,
-                name: p.name,
-                tid: p.tid,
-                abbrev: p.abbrev,
-                pts: p.currentStats.pts,
-                trb: p.currentStats.trb,
-                ast: p.currentStats.ast,
-            };
-            awardsByPlayer.push({
-                pid: p.pid,
-                tid: p.tid,
-                name: p.name,
-                type: "Sixth Man of the Year",
-            });
-        }
-    }
+const getTopPlayersOffense = (
+    options: GetTopPlayersOptions,
+    playersUnsorted: PlayerFiltered[],
+): AwardPlayer[] => {
+    return getTopPlayers(options, playersUnsorted).map(getPlayerInfoOffense);
+};
+const getTopPlayersDefense = (
+    options: GetTopPlayersOptions,
+    playersUnsorted: PlayerFiltered[],
+): AwardPlayerDefense[] => {
+    return getTopPlayers(options, playersUnsorted).map(getPlayerInfoDefense);
+};
 
-    // All League Team - same sort as MVP
-    awards.allLeague = [{ title: "First Team", players: [] }];
-    let type = "First Team All-League";
-    for (let i = 0; i < 15; i++) {
-        const p = players[i];
-        if (i === 5) {
-            awards.allLeague.push({ title: "Second Team", players: [] });
-            type = "Second Team All-League";
-        } else if (i === 10) {
-            awards.allLeague.push({ title: "Third Team", players: [] });
-            type = "Third Team All-League";
-        }
-        awards.allLeague[awards.allLeague.length - 1].players.push({
-            pid: p.pid,
-            name: p.name,
-            tid: p.tid,
-            abbrev: p.abbrev,
-            pts: p.currentStats.pts,
-            trb: p.currentStats.trb,
-            ast: p.currentStats.ast,
-        });
-        awardsByPlayer.push({ pid: p.pid, tid: p.tid, name: p.name, type });
-    }
-
-    // Defensive Player of the Year
-    players.sort(
-        (a, b) =>
-            b.currentStats.dws +
-            b.currentStats.blk +
-            b.currentStats.stl -
-            (a.currentStats.dws + a.currentStats.blk + a.currentStats.stl),
-    );
-    {
-        const p = players[0];
-        awards.dpoy = {
-            pid: p.pid,
-            name: p.name,
-            tid: p.tid,
-            abbrev: p.abbrev,
-            trb: p.currentStats.trb,
-            blk: p.currentStats.blk,
-            stl: p.currentStats.stl,
-        };
-        awardsByPlayer.push({
-            pid: p.pid,
-            tid: p.tid,
-            name: p.name,
-            type: "Defensive Player of the Year",
-        });
-    }
-
-    // All Defensive Team - same sort as DPOY
-    awards.allDefensive = [{ title: "First Team", players: [] }];
-    type = "First Team All-Defensive";
-    for (let i = 0; i < 15; i++) {
-        const p = players[i];
-        if (i === 5) {
-            awards.allDefensive.push({ title: "Second Team", players: [] });
-            type = "Second Team All-Defensive";
-        } else if (i === 10) {
-            awards.allDefensive.push({ title: "Third Team", players: [] });
-            type = "Third Team All-Defensive";
-        }
-        awards.allDefensive[awards.allDefensive.length - 1].players.push({
-            pid: p.pid,
-            name: p.name,
-            tid: p.tid,
-            abbrev: p.abbrev,
-            trb: p.currentStats.trb,
-            blk: p.currentStats.blk,
-            stl: p.currentStats.stl,
-        });
-        awardsByPlayer.push({ pid: p.pid, tid: p.tid, name: p.name, type });
-    }
-
-    // Most Improved Player
-    // No WS component because it factored in moving from a bad -> good team too much
-    const mipInfos = [];
-    const mipFactor = g.numGames * Math.sqrt(g.quarterLength / 12);
-    for (const p of players) {
-        // Too many second year players get picked, when it's expected for them to improve (undrafted and second round picks can still win)
-        if (p.draft.year + 2 >= g.season && p.draft.round === 1) {
-            continue;
-        }
-
-        const oldStatsAll = p.stats.filter(ps => ps.season === g.season - 1);
-        if (oldStatsAll.length === 0) {
-            continue;
-        }
-        const oldStats = oldStatsAll[oldStatsAll.length - 1];
-
-        const ewaAllPrev = p.stats.slice(0, -1).map(ps => ps.ewa);
-
-        const mipInfo = {
-            pid: p.pid,
-            min: p.currentStats.min * p.currentStats.gp,
-            minOld: oldStats.min * oldStats.gp,
-            ewa: p.currentStats.ewa,
-            ewaOld: oldStats.ewa,
-            ewaMax: Math.max(...ewaAllPrev),
-            per: p.currentStats.per,
-            perOld: oldStats.per,
-            score: 0,
-        };
-
-        // Sanity check, needed with PER
-        if (mipInfo.min < 5 * mipFactor || mipInfo.minOld < 5 * mipFactor) {
-            continue;
-        }
-
-        // Increasing WS by 5 is equal weight to increasing WS/48 by 0.1
-        // Transltaed to PER/EWA by guessing
-        mipInfo.score =
-            0.02 * (mipInfo.ewa - mipInfo.ewaOld) +
-            0.03 * (mipInfo.per - mipInfo.perOld);
-
-        // Penalty - lose 0.05 for every mpg last season under 15
-        if (mipInfo.minOld < 15 * mipFactor) {
-            mipInfo.score -=
-                0.05 * (15 * mipFactor - mipInfo.minOld / g.numGames);
-        }
-
-        // Penalty - lose additional 0.05 for every mpg last season under 10
-        if (mipInfo.minOld < 15 * mipFactor) {
-            mipInfo.score -=
-                0.05 * (15 * mipFactor - mipInfo.minOld / g.numGames);
-        }
-
-        // Penalty - lose 0.01 for every mpg this season under 30
-        if (mipInfo.min < 30 * mipFactor) {
-            mipInfo.score -= 0.01 * (30 * mipFactor - mipInfo.min / g.numGames);
-        }
-
-        // Penalty - baseline required is 125% of previous best season. Lose 0.01 for every 1% below that.
-        if (mipInfo.ewa < 1.25 * mipInfo.ewaMax) {
-            let ratio = 1;
-            if (mipInfo.ewaMax !== 0) {
-                ratio = mipInfo.ewa / mipInfo.ewaMax;
-            }
-
-            // Sanity check... don't want two negative numbers blowing up the ratio
-            if (ratio < 0 || (mipInfo.ewa < 0 && mipInfo.ewaMax < 0)) {
-                ratio = 0;
-            }
-
-            mipInfo.score -= 1.25 - ratio;
-        }
-
-        mipInfos.push(mipInfo);
-    }
-    if (mipInfos.length > 0) {
-        // Might be no MIP, such as in first season
-        mipInfos.sort((a, b) => b.score - a.score);
-
-        const p = players.find(p2 => p2.pid === mipInfos[0].pid);
-        if (p !== undefined) {
-            awards.mip = {
-                pid: p.pid,
-                name: p.name,
-                tid: p.tid,
-                abbrev: p.abbrev,
-                pts: p.currentStats.pts,
-                trb: p.currentStats.trb,
-                ast: p.currentStats.ast,
-            };
-            awardsByPlayer.push({
-                pid: p.pid,
-                tid: p.tid,
-                name: p.name,
-                type: "Most Improved Player",
-            });
-        }
-    }
-
-    // Finals MVP - most WS in playoffs
-    const champTeam = teams.find(
-        t => t.seasonAttrs.playoffRoundsWon === g.numPlayoffRounds,
-    );
-    if (champTeam) {
-        const champTid = champTeam.tid;
-
-        let champPlayers = await idb.cache.players.indexGetAll(
-            "playersByTid",
-            champTid,
-        ); // Alternatively, could filter original players array by tid, but still need playersPlus to fill in playoff stats
-        champPlayers = await idb.getCopies.playersPlus(champPlayers, {
-            // Only the champions, only playoff stats
-            attrs: ["pid", "name", "tid", "abbrev"],
-            stats: ["pts", "trb", "ast", "ws", "ewa"],
-            season: g.season,
-            playoffs: true,
-            regularSeason: false,
-            tid: champTid,
-        });
-        champPlayers.sort(
-            (a, b) => b.stats.ewa + b.stats.ws - (a.stats.ewa + a.stats.ws),
-        );
+const makeTeams = <T>(
+    players: T[],
+): [
+    { title: "First Team", players: [T, T, T, T, T] },
+    { title: "Second Team", players: [T, T, T, T, T] },
+    { title: "Third Team", players: [T, T, T, T, T] },
+] => {
+    return [
         {
-            const p = champPlayers[0];
-            awards.finalsMvp = {
-                pid: p.pid,
-                name: p.name,
-                tid: p.tid,
-                abbrev: p.abbrev,
-                pts: p.stats.pts,
-                trb: p.stats.trb,
-                ast: p.stats.ast,
-            };
-            awardsByPlayer.push({
-                pid: p.pid,
-                tid: p.tid,
-                name: p.name,
-                type: "Finals MVP",
-            });
-        }
-    }
+            title: "First Team",
+            players: [
+                // Can't use Array.slice because of Flow https://flow.org/en/docs/types/tuples/#toc-tuples-don-t-match-array-types
+                players[0],
+                players[1],
+                players[2],
+                players[3],
+                players[4],
+            ],
+        },
+        {
+            title: "Second Team",
+            players: [
+                players[5],
+                players[6],
+                players[7],
+                players[8],
+                players[9],
+            ],
+        },
+        {
+            title: "Third Team",
+            players: [
+                players[10],
+                players[11],
+                players[12],
+                players[13],
+                players[14],
+            ],
+        },
+    ];
+};
 
-    await idb.cache.awards.put(awards);
-    await saveAwardsByPlayer(awardsByPlayer);
-
-    // None of this stuff needs to block, it's just notifications of crap
-    // Notifications for awards for user's players
+const saveAwardsByPlayer = async (
+    awardsByPlayer: AwardsByPlayer,
+    conditions: Conditions,
+) => {
+    // None of this stuff needs to block, it's just notifications
     for (const p of awardsByPlayer) {
         let text = `<a href="${helpers.leagueUrl(["player", p.pid])}">${
             p.name
@@ -519,14 +283,304 @@ const doAwards = async (conditions: Conditions) => {
             {
                 type: "award",
                 text,
-                showNotification:
-                    p.tid === g.userTid || p.type === "Most Valuable Player",
+                showNotification: false,
                 pids: [p.pid],
                 tids: [p.tid],
             },
             conditions,
         );
     }
+
+    const pids = Array.from(new Set(awardsByPlayer.map(award => award.pid)));
+
+    await Promise.all(
+        pids.map(async pid => {
+            const p = await idb.cache.players.get(pid);
+            for (const awardByPlayer of awardsByPlayer) {
+                if (awardByPlayer.pid === pid) {
+                    p.awards.push({
+                        season: g.season,
+                        type: awardByPlayer.type,
+                    });
+                }
+            }
+            await idb.cache.players.put(p);
+        }),
+    );
+};
+
+/**
+ * Compute the awards (MVP, etc) after a season finishes.
+ *
+ * The awards are saved to the "awards" object store.
+ *
+ * @memberOf core.season
+ * @return {Promise}
+ */
+const doAwards = async (conditions: Conditions) => {
+    // Careful - this array is mutated in various functions called below
+    const awardsByPlayer: AwardsByPlayer = [];
+
+    const teams = await idb.getCopies.teamsPlus({
+        attrs: ["tid", "abbrev", "region", "name", "cid"],
+        seasonAttrs: ["won", "lost", "winp", "playoffRoundsWon"],
+        season: g.season,
+    });
+    const players = await getPlayers();
+
+    const { bestRecord, bestRecordConfs } = teamAwards(teams);
+    leagueLeaders(players, awardsByPlayer);
+
+    const mvpScore = (p: PlayerFiltered) =>
+        p.currentStats.ewa + p.currentStats.ws;
+
+    // Things below are cast to any because I'm not sure how to tell Flow that the types are different (AwardPlayer or
+    // AwardPlayerDefense) but known based on the "stats" parameter.
+
+    const mvpPlayers = getTopPlayersOffense(
+        {
+            amount: 15,
+            score: mvpScore,
+        },
+        players,
+    );
+    const mvp = mvpPlayers[0];
+    const allLeague = makeTeams(mvpPlayers);
+
+    const [smoy] = getTopPlayersOffense(
+        {
+            filter: p =>
+                p.currentStats.gs === 0 ||
+                p.currentStats.gp / p.currentStats.gs > 2,
+            score: mvpScore,
+        },
+        players,
+    );
+
+    const royPlayers = getTopPlayersOffense(
+        {
+            amount: 5,
+            filter: p => {
+                // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
+                return p.draft.year === g.season - 1;
+            },
+            score: mvpScore,
+        },
+        players,
+    );
+    const roy = royPlayers[0];
+    const allRookie = [
+        royPlayers[0],
+        royPlayers[1],
+        royPlayers[2],
+        royPlayers[3],
+        royPlayers[4],
+    ];
+
+    const dpoyPlayers: AwardPlayerDefense[] = getTopPlayersDefense(
+        {
+            amount: 15,
+            score: (p: PlayerFiltered) =>
+                p.currentStats.dws + p.currentStats.blk + p.currentStats.stl,
+        },
+        players,
+    );
+    const dpoy = dpoyPlayers[0];
+    // Cast to any because not sure how to tell flow that the types are different but known for allLeague and allDefensive
+    const allDefensive = makeTeams(dpoyPlayers);
+
+    const mipFactor = g.numGames * Math.sqrt(g.quarterLength / 12);
+    const [mip] = getTopPlayersOffense(
+        {
+            filter: p => {
+                // Too many second year players get picked, when it's expected for them to improve (undrafted and second round picks can still win)
+                if (p.draft.year + 2 >= g.season && p.draft.round === 1) {
+                    return false;
+                }
+
+                // Must have stats last year!
+                const oldStatsAll = p.stats.filter(
+                    ps => ps.season === g.season - 1,
+                );
+                if (oldStatsAll.length === 0) {
+                    return false;
+                }
+
+                // Sanity check, needed with PER, and easier to do here rather than in filter
+                const oldStats = oldStatsAll[oldStatsAll.length - 1];
+                if (
+                    p.currentStats.min * p.currentStats.gp < 5 * mipFactor ||
+                    oldStats.min * oldStats.gp < 5 * mipFactor
+                ) {
+                    return false;
+                }
+
+                return true;
+            },
+            score: p => {
+                const oldStatsAll = p.stats.filter(
+                    ps => ps.season === g.season - 1,
+                );
+                const oldStats = oldStatsAll[oldStatsAll.length - 1];
+
+                const ewaAllPrev = p.stats.slice(0, -1).map(ps => ps.ewa);
+
+                const min = p.currentStats.min * p.currentStats.gp;
+                const minOld = oldStats.min * oldStats.gp;
+                const ewa = p.currentStats.ewa;
+                const ewaOld = oldStats.ewa;
+                const ewaMax = Math.max(...ewaAllPrev);
+                const per = p.currentStats.per;
+                const perOld = oldStats.per;
+
+                // Increasing WS by 5 is equal weight to increasing WS/48 by 0.1
+                // Transltaed to PER/EWA by guessing
+                let score = 0.02 * (ewa - ewaOld) + 0.03 * (per - perOld);
+
+                // Penalty - lose 0.05 for every mpg last season under 15
+                if (minOld < 15 * mipFactor) {
+                    score -= 0.05 * (15 * mipFactor - minOld / g.numGames);
+                }
+
+                // Penalty - lose additional 0.05 for every mpg last season under 10
+                if (minOld < 15 * mipFactor) {
+                    score -= 0.05 * (15 * mipFactor - minOld / g.numGames);
+                }
+
+                // Penalty - lose 0.01 for every mpg this season under 30
+                if (min < 30 * mipFactor) {
+                    score -= 0.01 * (30 * mipFactor - min / g.numGames);
+                }
+
+                // Penalty - baseline required is 125% of previous best season. Lose 0.01 for every 1% below that.
+                if (ewa < 1.25 * ewaMax) {
+                    let ratio = 1;
+                    if (ewaMax !== 0) {
+                        ratio = ewa / ewaMax;
+                    }
+
+                    // Sanity check... don't want two negative numbers blowing up the ratio
+                    if (ratio < 0 || (ewa < 0 && ewaMax < 0)) {
+                        ratio = 0;
+                    }
+
+                    score -= 1.25 - ratio;
+                }
+
+                return score;
+            },
+        },
+        players,
+    );
+
+    let finalsMvp;
+    const champTeam = teams.find(
+        t => t.seasonAttrs.playoffRoundsWon === g.numPlayoffRounds,
+    );
+    if (champTeam) {
+        const champTid = champTeam.tid;
+
+        let champPlayers = await idb.cache.players.indexGetAll(
+            "playersByTid",
+            champTid,
+        ); // Alternatively, could filter original players array by tid, but still need playersPlus to fill in playoff stats
+        champPlayers = await idb.getCopies.playersPlus(champPlayers, {
+            // Only the champions, only playoff stats
+            attrs: ["pid", "name", "tid", "abbrev"],
+            stats: ["pts", "trb", "ast", "ws", "ewa"],
+            season: g.season,
+            playoffs: true,
+            regularSeason: false,
+            tid: champTid,
+        });
+
+        // For symmetry with players array
+        for (const p of champPlayers) {
+            p.currentStats = p.stats;
+        }
+
+        [finalsMvp] = getTopPlayersOffense(
+            {
+                score: mvpScore,
+            },
+            champPlayers,
+        );
+    }
+
+    const awards: Awards = {
+        bestRecord,
+        bestRecordConfs,
+        mvp,
+        dpoy,
+        smoy,
+        mip,
+        roy,
+        finalsMvp,
+        allLeague,
+        allDefensive,
+        allRookie,
+        season: g.season,
+    };
+
+    const awardNames = {
+        mvp: "Most Valuable Player",
+        roy: "Rookie of the Year",
+        smoy: "Sixth Man of the Year",
+        dpoy: "Defensive Player of the Year",
+        mip: "Most Improved Player",
+        finalsMvp: "Finals MVP",
+        allLeague: "All-League",
+        allDefensive: "All-Defensive",
+        allRookie: "All Rookie Team",
+    };
+
+    const simpleAwards = ["mvp", "roy", "smoy", "dpoy", "mip", "finalsMvp"];
+    for (const key of simpleAwards) {
+        const type = awardNames[key];
+        const award = awards[key];
+
+        if (award === undefined) {
+            // e.g. MIP in first season
+            continue;
+        }
+
+        const { pid, tid, name } = award;
+        awardsByPlayer.push({
+            pid,
+            tid,
+            name,
+            type,
+        });
+    }
+
+    // Special cases for teams
+    for (const key of ["allRookie", "allLeague", "allDefensive"]) {
+        const type = awardNames[key];
+        if (key === "allRookie") {
+            for (const { pid, tid, name } of awards.allRookie) {
+                awardsByPlayer.push({
+                    pid,
+                    tid,
+                    name,
+                    type,
+                });
+            }
+        } else {
+            for (const level of awards[key]) {
+                for (const { pid, tid, name } of level.players) {
+                    awardsByPlayer.push({
+                        pid,
+                        tid,
+                        name,
+                        type: `${level.title} ${type}`,
+                    });
+                }
+            }
+        }
+    }
+
+    await idb.cache.awards.put(awards);
+    await saveAwardsByPlayer(awardsByPlayer, conditions);
 };
 
 export default doAwards;

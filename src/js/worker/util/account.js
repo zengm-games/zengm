@@ -453,7 +453,12 @@ checkAchievement.hardware_store = async (
     const awards = await idb.getCopy.awards({ season: g.season });
 
     if (
-        awards !== undefined &&
+        awards &&
+        awards.mvp &&
+        awards.dpoy &&
+        awards.smoy &&
+        awards.roy &&
+        awards.finalsMvp &&
         awards.mvp.tid === g.userTid &&
         awards.dpoy.tid === g.userTid &&
         awards.smoy.tid === g.userTid &&

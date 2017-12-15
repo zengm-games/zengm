@@ -20,7 +20,7 @@ type AwardsByPlayer = {
 }[];
 
 const getPlayers = async () => {
-    let players: any = await idb.cache.players.indexGetAll("playersByTid", [
+    let players = await idb.cache.players.indexGetAll("playersByTid", [
         PLAYER.FREE_AGENT,
         Infinity,
     ]);
@@ -334,9 +334,6 @@ const doAwards = async (conditions: Conditions) => {
     const mvpScore = (p: PlayerFiltered) =>
         p.currentStats.ewa + p.currentStats.ws;
 
-    // Things below are cast to any because I'm not sure how to tell Flow that the types are different (AwardPlayer or
-    // AwardPlayerDefense) but known based on the "stats" parameter.
-
     const mvpPlayers = getTopPlayersOffense(
         {
             amount: 15,
@@ -386,7 +383,6 @@ const doAwards = async (conditions: Conditions) => {
         players,
     );
     const dpoy = dpoyPlayers[0];
-    // Cast to any because not sure how to tell flow that the types are different but known for allLeague and allDefensive
     const allDefensive = makeTeams(dpoyPlayers);
 
     const mipFactor = g.numGames * Math.sqrt(g.quarterLength / 12);

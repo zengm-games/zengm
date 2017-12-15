@@ -234,8 +234,8 @@ const handleScreenshotClick = e => {
 
 const handleToolsClick = async (id, e) => {
     e.preventDefault();
-    await toWorker(`actions.toolsMenu.${id}`);
-    if (id === "resetDb") {
+    const response = await toWorker(`actions.toolsMenu.${id}`);
+    if (id === "resetDb" && response) {
         window.location.reload();
     }
 };

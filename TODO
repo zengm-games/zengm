@@ -1,3 +1,7 @@
+roster page should have "Trade With" button, maybe in More Info dropdown
+
+clicking "show players you can afford" does not persist across page loads
+
 league history should update when season ends in auto play mode
 
 <b> in game sim results

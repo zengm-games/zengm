@@ -289,6 +289,7 @@ const toolsMenu = {
         if (response) {
             await reset();
         }
+        return response;
     },
 };
 

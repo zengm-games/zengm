@@ -461,7 +461,7 @@ const cols: {
         sortType: "number",
     },
     "TS%": {
-        desc: "Total Shooting Percentage",
+        desc: "True Shooting Percentage",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },

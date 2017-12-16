@@ -1,6 +1,6 @@
 // @flow
 
-import { g } from "../../common";
+import { PHASE, g } from "../../common";
 import { idb } from "../db";
 import type { GetOutput, UpdateEvents } from "../../common/types";
 
@@ -8,7 +8,10 @@ async function updateHistory(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
 ): void | { [key: string]: any } {
-    if (updateEvents.includes("firstRun")) {
+    if (
+        updateEvents.includes("firstRun") ||
+        (updateEvents.includes("newPhase") && g.phase === PHASE.DRAFT_LOTTERY)
+    ) {
         const [awards, teams] = await Promise.all([
             idb.getCopies.awards(),
             idb.getCopies.teamsPlus({

@@ -604,6 +604,7 @@ class DataTable extends React.Component<Props, State> {
             }
         }
         if (changed) {
+            localStorage.setItem(this.filtersCacheKey, JSON.stringify(filters));
             this.setState({
                 enableFilters: true,
                 filters,

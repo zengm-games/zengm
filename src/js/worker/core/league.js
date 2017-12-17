@@ -103,7 +103,7 @@ async function create(
     }
 
     // Handle random team
-    if (tid === -1 || tid > teams.length) {
+    if (tid === -1 || tid >= teams.length) {
         tid = random.randInt(0, teams.length - 1);
     }
 

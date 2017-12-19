@@ -10,6 +10,8 @@
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="/ico/apple-touch-icon-57-precomposed.png">
 
+    <script src="//d2wy8f7a9ursnm.cloudfront.net/v4/bugsnag.js"></script>
+
     <script type="text/javascript">
       window.inCordova = document.URL.indexOf('file://') === 0;
       window.bbgmPrefix = window.inCordova ? "" : "/"; // Relative URLs for Cordova
@@ -17,6 +19,26 @@
       window.bbgmVersionUI = "???";
       window.bbgmVersionWorker = "???";
       window.useSharedWorker = typeof SharedWorker !== 'undefined';
+
+      if (window.bugsnag) {
+        var releaseStage;
+        if (location.host.indexOf("localhost") === 0 || location.host.indexOf("play.basketball-gm.dev") === 0) {
+          releaseStage = "development";
+        } else if (location.host.indexOf("beta.basketball-gm.com") === 0) {
+          releaseStage = "beta";
+        } else if (location.host.indexOf("play.basketball-gm.com") === 0) {
+          releaseStage = "production";
+        } else {
+          releaseStage = "unknown";
+        }
+
+        window.bugsnagClient = window.bugsnag({
+          apiKey: 'c10b95290070cb8888a7a79cc5408555',
+          appVersion: window.bbgmVersion,
+          notifyReleaseStages: ["production", "unknown"],
+          releaseStage: releaseStage
+        });
+      }
 
       // .com or .dev TLD
       if (!window.inCordova) {
@@ -50,28 +72,6 @@
         });
         ga('send', 'pageview');
       }
-
-      var bs = document.createElement('script');
-      bs.type = 'text/javascript';
-      bs.src = '//d2wy8f7a9ursnm.cloudfront.net/bugsnag-3.min.js';
-      bs.addEventListener('load', function () {
-        if (window.Bugsnag) {
-          window.Bugsnag.apiKey = "c10b95290070cb8888a7a79cc5408555";
-          window.Bugsnag.appVersion = window.bbgmVersion;
-          if (location.host.indexOf("localhost") === 0) {
-            window.Bugsnag.releaseStage = "development";
-          } else if (location.host.indexOf("beta.basketball-gm.com") === 0) {
-            window.Bugsnag.releaseStage = "beta";
-          } else if (location.host.indexOf("play.basketball-gm.com") === 0) {
-            window.Bugsnag.releaseStage = "production";
-          } else {
-            window.Bugsnag.releaseStage = "unknown";
-          }
-          window.Bugsnag.notifyReleaseStages = ["beta", "production", "unknown"];
-          window.Bugsnag.enableNotifyUnhandledRejections();
-        }
-      });
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(bs, s);
     </script>
   </head>
 

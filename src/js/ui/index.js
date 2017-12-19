@@ -3,6 +3,7 @@
 /* eslint-disable import/first */
 import "../vendor/babel-external-helpers";
 import "../common/polyfills";
+import createPlugin from "bugsnag-react";
 import page from "page";
 import * as React from "react";
 import ReactDOM from "react-dom";
@@ -166,7 +167,15 @@ const genPage = (id, inLeague = true) => {
     if (!contentEl) {
         throw new Error('Could not find element with id "content"');
     }
-    ReactDOM.render(<Controller />, contentEl);
+
+    const ErrorBoundary = window.bugsnagClient.use(createPlugin(React));
+
+    ReactDOM.render(
+        <ErrorBoundary>
+            <Controller />
+        </ErrorBoundary>,
+        contentEl,
+    );
 
     /*this.before((ctx) => {
             // Normal Cordova pages
@@ -331,6 +340,8 @@ const genPage = (id, inLeague = true) => {
                             <a href="/">load an existing league</a> to play!
                         </span>
                     );
+                } else if (window.bugsnagClient) {
+                    window.bugsnagClient.notify(ctx.bbgm.err);
                 }
             }
 

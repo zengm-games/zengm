@@ -120,12 +120,6 @@ const newLid = async (lid: number) => {
     }
 };
 
-/*const notifyException = (err: Error, name: string, metadata: any) => {
-    if (window.Bugsnag) {
-        window.Bugsnag.notifyException(err, name, metadata);
-    }
-};*/
-
 const prompt = (message: string, defaultVal?: string) => {
     return window.prompt(message, defaultVal);
 };

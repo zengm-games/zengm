@@ -53,7 +53,10 @@ class FreeAgents extends React.Component {
     // applied every refresh (like when playing games) even if the user had disabled or edited the filter. Really, it'd
     // be better if sent as some kind of signal or event rather than as a prop, because it is transient.
     componentWillUpdate(nextProps, nextState) {
-        if (nextState.addFilters !== undefined && nextState.addFilters === this.state.addFilters) {
+        if (
+            nextState.addFilters !== undefined &&
+            nextState.addFilters === this.state.addFilters
+        ) {
             this.state.addFilters = undefined;
         }
     }

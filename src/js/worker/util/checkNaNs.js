@@ -32,6 +32,7 @@ const wrapperNaNChecker = _super => {
         if (checkObject(obj)) {
             const err = new Error('NaN found before writing to IndexedDB');
 
+            notifiException in toUI does not currently exist, but it could
             toUI(['notifyException', err, 'NaNFound', {
                 details: {
                     objectWithNaN: JSON.stringify(obj, (key, value) => {

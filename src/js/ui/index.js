@@ -341,7 +341,11 @@ const genPage = (id, inLeague = true) => {
                         </span>
                     );
                 } else if (window.bugsnagClient) {
-                    window.bugsnagClient.notify(ctx.bbgm.err);
+                    window.bugsnagClient.notify(ctx.bbgm.err, {
+                        metaData: {
+                            groupingHash: ctx.bbgm.err.message,
+                        },
+                    });
                 }
             }
 

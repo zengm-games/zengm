@@ -724,7 +724,10 @@ const orderByWinp = <T: { seasonAttrs: { winp: number, won: number } }>(
 ): T[] => {
     return orderBy(
         teams,
-        [t => t.seasonAttrs.winp, t => t.seasonAttrs.won],
+        [
+            t => (t.seasonAttrs ? t.seasonAttrs.winp : 0),
+            t => (t.seasonAttrs ? t.seasonAttrs.won : 0),
+        ],
         ["desc", "desc"],
     );
 };

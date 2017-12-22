@@ -81,28 +81,50 @@ function tallyAwards(awards) {
             continue;
         }
 
-        if (teams[a.mvp.tid]) { teams[a.mvp.tid].mvp++; }
-        if (teams[a.dpoy.tid]) { teams[a.dpoy.tid].dpoy++; }
-        if (teams[a.smoy.tid]) { teams[a.smoy.tid].smoy++; }
-        if (teams[a.roy.tid]) { teams[a.roy.tid].roy++; }
+        if (teams[a.mvp.tid]) {
+            teams[a.mvp.tid].mvp++;
+        }
+        if (teams[a.dpoy.tid]) {
+            teams[a.dpoy.tid].dpoy++;
+        }
+        if (teams[a.smoy.tid]) {
+            teams[a.smoy.tid].smoy++;
+        }
+        if (teams[a.roy.tid]) {
+            teams[a.roy.tid].roy++;
+        }
         if (a.bre && a.brw) {
             // For old league files, this format is obsolete now
-            if (teams[a.bre.tid]) { teams[a.bre.tid].bestRecordConf++; }
-            if (teams[a.brw.tid]) { teams[a.brw.tid].bestRecordConf++; }
+            if (teams[a.bre.tid]) {
+                teams[a.bre.tid].bestRecordConf++;
+            }
+            if (teams[a.brw.tid]) {
+                teams[a.brw.tid].bestRecordConf++;
+            }
             if (a.bre.won >= a.brw.won) {
-                if (teams[a.bre.tid]) { teams[a.bre.tid].bestRecord++; }
+                if (teams[a.bre.tid]) {
+                    teams[a.bre.tid].bestRecord++;
+                }
             } else {
                 // eslint-disable-next-line no-lonely-if
-                if (teams[a.brw.tid]) { teams[a.brw.tid].bestRecord++; }
+                if (teams[a.brw.tid]) {
+                    teams[a.brw.tid].bestRecord++;
+                }
             }
         } else {
             for (const t of a.bestRecordConfs) {
-                if (teams[t.tid]) { teams[t.tid].bestRecordConf++; }
+                if (teams[t.tid]) {
+                    teams[t.tid].bestRecordConf++;
+                }
             }
-            if (teams[a.bestRecord.tid]) { teams[a.bestRecord.tid].bestRecord++; }
+            if (teams[a.bestRecord.tid]) {
+                teams[a.bestRecord.tid].bestRecord++;
+            }
 
             for (let i = 0; i < a.allRookie.length; i++) {
-                if (teams[a.allRookie[i].tid]) { teams[a.allRookie[i].tid].allRookie++; }
+                if (teams[a.allRookie[i].tid]) {
+                    teams[a.allRookie[i].tid].allRookie++;
+                }
             }
         }
 
@@ -110,8 +132,8 @@ function tallyAwards(awards) {
             for (const p of a.allLeague[i].players) {
                 // https://www.reddit.com/r/BasketballGM/comments/6i80ph/weird_error_message_while_viewing_certain_pages/
                 if (teams[p.tid]) {
-                    if (teams[p.tid]) { teams[p.tid].allLeague[i]++; }
-                    if (teams[p.tid]) { teams[p.tid].allLeagueTotal++; }
+                    teams[p.tid].allLeague[i]++;
+                    teams[p.tid].allLeagueTotal++;
                 }
             }
         }
@@ -120,8 +142,8 @@ function tallyAwards(awards) {
             for (const p of a.allDefensive[i].players) {
                 // https://www.reddit.com/r/BasketballGM/comments/6i80ph/weird_error_message_while_viewing_certain_pages/
                 if (teams[p.tid]) {
-                    if (teams[p.tid]) { teams[p.tid].allDefense[i]++; }
-                    if (teams[p.tid]) { teams[p.tid].allDefenseTotal++; }
+                    teams[p.tid].allDefense[i]++;
+                    teams[p.tid].allDefenseTotal++;
                 }
             }
         }

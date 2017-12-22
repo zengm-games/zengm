@@ -150,7 +150,7 @@ async function updateGames(
         return { completed };
     }
     if (updateEvents.includes("gameSim")) {
-        const completed = state.completed;
+        const completed = Array.isArray(state.completed) ? state.completed : [];
         // Partial update of only new games
         const games = await getProcessedGames(
             g.teamAbbrevsCache[g.userTid],

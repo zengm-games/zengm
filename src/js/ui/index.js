@@ -80,16 +80,15 @@ const genPage = (id, inLeague = true) => {
     });
 };
 
-
 // Switch to https://github.com/bugsnag/bugsnag-react/ when upgrading to Bugsnag v4
-class ErrorBoundary extends React.Component<{children: any}> {
+class ErrorBoundary extends React.Component<{ children: any }> {
     // eslint-disable-next-line class-methods-use-this
-    componentDidCatch (error, info) {
+    componentDidCatch(error, info) {
         if (window.Bugsnag) {
-            window.Bugsnag.notifyException(error, { react: info })
+            window.Bugsnag.notifyException(error, { react: info });
         }
     }
-    render () {
+    render() {
         return this.props.children;
     }
 }
@@ -352,9 +351,13 @@ class ErrorBoundary extends React.Component<{children: any}> {
                         </span>
                     );
                 } else if (window.Bugsnag) {
-                    window.Bugsnag.notifyException(ctx.bbgm.err, "ErrorInWorkerView", {
-                        groupingHash: ctx.bbgm.err.message,
-                    });
+                    window.Bugsnag.notifyException(
+                        ctx.bbgm.err,
+                        "ErrorInWorkerView",
+                        {
+                            groupingHash: ctx.bbgm.err.message,
+                        },
+                    );
                 }
             }
 

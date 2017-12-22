@@ -13,11 +13,11 @@ const worker = window.useSharedWorker
 
 export const promiseWorker = new PromiseWorker(worker);
 promiseWorker.registerError(e => {
-    if (window.bugsnagClient) {
-        window.bugsnagClient.notify(e, {
-            metaData: {
-                groupingHash: e.message,
-            },
+    if (window.Bugsnag) {
+        window.Bugsnag.notifyException(new Error(e.message), "ErrorInWorker", {
+            colno: e.colno,
+            lineno: e.lineno,
+            groupingHash: JSON.stringify([e.message, e.colno, e.lineno]),
         });
     }
     console.error("Error from worker:");

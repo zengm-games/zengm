@@ -3,7 +3,6 @@
 /* eslint-disable import/first */
 import "../vendor/babel-external-helpers";
 import "../common/polyfills";
-import createPlugin from "bugsnag-react";
 import page from "page";
 import * as React from "react";
 import ReactDOM from "react-dom";
@@ -80,6 +79,20 @@ const genPage = (id, inLeague = true) => {
         Component: views[componentName],
     });
 };
+
+
+// Switch to https://github.com/bugsnag/bugsnag-react/ when upgrading to Bugsnag v4
+class ErrorBoundary extends React.Component<{children: any}> {
+    // eslint-disable-next-line class-methods-use-this
+    componentDidCatch (error, info) {
+        if (window.Bugsnag) {
+            window.Bugsnag.notifyException(error, { react: info })
+        }
+    }
+    render () {
+        return this.props.children;
+    }
+}
 
 (async () => {
     // Put in DOM element and global variable because the former is used before React takes over and the latter is used after
@@ -167,8 +180,6 @@ const genPage = (id, inLeague = true) => {
     if (!contentEl) {
         throw new Error('Could not find element with id "content"');
     }
-
-    const ErrorBoundary = window.bugsnagClient.use(createPlugin(React));
 
     ReactDOM.render(
         <ErrorBoundary>
@@ -340,11 +351,9 @@ const genPage = (id, inLeague = true) => {
                             <a href="/">load an existing league</a> to play!
                         </span>
                     );
-                } else if (window.bugsnagClient) {
-                    window.bugsnagClient.notify(ctx.bbgm.err, {
-                        metaData: {
-                            groupingHash: ctx.bbgm.err.message,
-                        },
+                } else if (window.Bugsnag) {
+                    window.Bugsnag.notifyException(ctx.bbgm.err, "ErrorInWorkerView", {
+                        groupingHash: ctx.bbgm.err.message,
                     });
                 }
             }

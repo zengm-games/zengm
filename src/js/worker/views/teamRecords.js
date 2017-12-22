@@ -47,15 +47,15 @@ function getTeamRecord(t, awards) {
         championships,
         lastChampionship,
         finals,
-        mvp: awards[t.tid].mvp,
-        dpoy: awards[t.tid].dpoy,
-        smoy: awards[t.tid].smoy,
-        roy: awards[t.tid].roy,
-        bestRecord: awards[t.tid].bestRecord,
-        bestRecordConf: awards[t.tid].bestRecordConf,
-        allRookie: awards[t.tid].allRookie,
-        allLeague: awards[t.tid].allLeagueTotal,
-        allDefense: awards[t.tid].allDefenseTotal,
+        mvp: awards[t.tid] ? awards[t.tid].mvp : 0,
+        dpoy: awards[t.tid] ? awards[t.tid].dpoy : 0,
+        smoy: awards[t.tid] ? awards[t.tid].smoy : 0,
+        roy: awards[t.tid] ? awards[t.tid].roy : 0,
+        bestRecord: awards[t.tid] ? awards[t.tid].bestRecord : 0,
+        bestRecordConf: awards[t.tid] ? awards[t.tid].bestRecordConf : 0,
+        allRookie: awards[t.tid] ? awards[t.tid].allRookie : 0,
+        allLeague: awards[t.tid] ? awards[t.tid].allLeagueTotal : 0,
+        allDefense: awards[t.tid] ? awards[t.tid].allDefenseTotal : 0,
     };
 }
 
@@ -76,28 +76,33 @@ function tallyAwards(awards) {
         };
     });
 
-    awards.forEach(a => {
-        teams[a.mvp.tid].mvp++;
-        teams[a.dpoy.tid].dpoy++;
-        teams[a.smoy.tid].smoy++;
-        teams[a.roy.tid].roy++;
+    for (const a of awards) {
+        if (!a) {
+            continue;
+        }
+
+        if (teams[a.mvp.tid]) { teams[a.mvp.tid].mvp++; }
+        if (teams[a.dpoy.tid]) { teams[a.dpoy.tid].dpoy++; }
+        if (teams[a.smoy.tid]) { teams[a.smoy.tid].smoy++; }
+        if (teams[a.roy.tid]) { teams[a.roy.tid].roy++; }
         if (a.bre && a.brw) {
             // For old league files, this format is obsolete now
-            teams[a.bre.tid].bestRecordConf++;
-            teams[a.brw.tid].bestRecordConf++;
+            if (teams[a.bre.tid]) { teams[a.bre.tid].bestRecordConf++; }
+            if (teams[a.brw.tid]) { teams[a.brw.tid].bestRecordConf++; }
             if (a.bre.won >= a.brw.won) {
-                teams[a.bre.tid].bestRecord++;
+                if (teams[a.bre.tid]) { teams[a.bre.tid].bestRecord++; }
             } else {
-                teams[a.brw.tid].bestRecord++;
+                // eslint-disable-next-line no-lonely-if
+                if (teams[a.brw.tid]) { teams[a.brw.tid].bestRecord++; }
             }
         } else {
             for (const t of a.bestRecordConfs) {
-                teams[t.tid].bestRecordConf++;
+                if (teams[t.tid]) { teams[t.tid].bestRecordConf++; }
             }
-            teams[a.bestRecord.tid].bestRecord++;
+            if (teams[a.bestRecord.tid]) { teams[a.bestRecord.tid].bestRecord++; }
 
             for (let i = 0; i < a.allRookie.length; i++) {
-                teams[a.allRookie[i].tid].allRookie++;
+                if (teams[a.allRookie[i].tid]) { teams[a.allRookie[i].tid].allRookie++; }
             }
         }
 
@@ -105,8 +110,8 @@ function tallyAwards(awards) {
             for (const p of a.allLeague[i].players) {
                 // https://www.reddit.com/r/BasketballGM/comments/6i80ph/weird_error_message_while_viewing_certain_pages/
                 if (teams[p.tid]) {
-                    teams[p.tid].allLeague[i]++;
-                    teams[p.tid].allLeagueTotal++;
+                    if (teams[p.tid]) { teams[p.tid].allLeague[i]++; }
+                    if (teams[p.tid]) { teams[p.tid].allLeagueTotal++; }
                 }
             }
         }
@@ -115,12 +120,12 @@ function tallyAwards(awards) {
             for (const p of a.allDefensive[i].players) {
                 // https://www.reddit.com/r/BasketballGM/comments/6i80ph/weird_error_message_while_viewing_certain_pages/
                 if (teams[p.tid]) {
-                    teams[p.tid].allDefense[i]++;
-                    teams[p.tid].allDefenseTotal++;
+                    if (teams[p.tid]) { teams[p.tid].allDefense[i]++; }
+                    if (teams[p.tid]) { teams[p.tid].allDefenseTotal++; }
                 }
             }
         }
-    });
+    }
 
     return teams;
 }

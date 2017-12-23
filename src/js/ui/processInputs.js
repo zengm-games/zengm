@@ -75,6 +75,15 @@ const draftSummary = ctx => {
     };
 };
 
+const draftTeamHistory = ctx => {
+    const [tid, abbrev] = helpers.validateAbbrev(ctx.params.abbrev);
+
+    return {
+        tid,
+        abbrev,
+    };
+};
+
 const eventLog = ctx => {
     const [tid, abbrev] = helpers.validateAbbrev(ctx.params.abbrev);
 
@@ -365,6 +374,7 @@ export default {
     draft,
     draftLottery,
     draftSummary,
+    draftTeamHistory,
     eventLog,
     fantasyDraft,
     freeAgents,

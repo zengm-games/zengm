@@ -6,18 +6,21 @@ import {
     DataTable,
     DraftAbbrev,
     Dropdown,
-    JumpTo,
     NewWindowLink,
     SkillsBlock,
 } from "../components";
 
-const DraftSummary = ({ players, season }) => {
-    setTitle(`${season} Draft Summary`);
+const DraftTeamHistory = ({ abbrev, players }) => {
+    const tid = g.teamAbbrevsCache.indexOf(abbrev);
+    const region = g.teamRegionsCache[tid];
+    const name = g.teamNamesCache[tid];
+
+    setTitle(`${region} ${name} Draft History`);
 
     const superCols = [
         {
             title: "",
-            colspan: 3,
+            colspan: 4,
         },
         {
             title: "At Draft",
@@ -34,6 +37,7 @@ const DraftSummary = ({ players, season }) => {
     ];
 
     const cols = getCols(
+        "Season",
         "Pick",
         "Name",
         "Pos",
@@ -56,16 +60,19 @@ const DraftSummary = ({ players, season }) => {
         "EWA",
     );
 
+    const userAbbrev = g.teamAbbrevsCache[g.userTid];
+
     const rows = players.map(p => {
         return {
             key: p.pid,
             data: [
+                p.draft.year,
                 `${p.draft.round}-${p.draft.pick}`,
                 <a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>,
                 p.pos,
                 <DraftAbbrev
                     originalTid={p.draft.originalTid}
-                    season={season}
+                    season={p.draft.year}
                     tid={p.draft.tid}
                 >
                     {p.draft.tid} {p.draft.originalTid}
@@ -95,7 +102,7 @@ const DraftSummary = ({ players, season }) => {
             ],
             classNames: {
                 danger: p.hof,
-                info: p.draft.tid === g.userTid,
+                info: p.currentAbbrev === userAbbrev,
             },
         };
     });
@@ -103,13 +110,12 @@ const DraftSummary = ({ players, season }) => {
     return (
         <div>
             <Dropdown
-                view="draft_summary"
-                fields={["seasons"]}
-                values={[season]}
+                view="draft_team_history"
+                fields={["teams"]}
+                values={[abbrev]}
             />
-            <JumpTo season={season} />
             <h1>
-                {season} Draft Summary <NewWindowLink />
+                {region} {name} Draft History <NewWindowLink />
             </h1>
 
             <p>
@@ -118,17 +124,13 @@ const DraftSummary = ({ players, season }) => {
                     Future Draft Scouting
                 </a>{" "}
                 |{" "}
-                <a href={helpers.leagueUrl(["draft_lottery", season])}>
-                    Draft Lottery
-                </a>{" "}
+                <a href={helpers.leagueUrl(["draft_lottery"])}>Draft Lottery</a>{" "}
                 |{" "}
-                <a href={helpers.leagueUrl(["draft_team_history"])}>
-                    Team History
-                </a>
+                <a href={helpers.leagueUrl(["draft_summary"])}>Draft Summary</a>
             </p>
 
             <p>
-                Players drafted by your team are{" "}
+                Players currently on your team are{" "}
                 <span className="text-info">highlighted in blue</span>. Players
                 in the Hall of Fame are{" "}
                 <span className="text-danger">highlighted in red</span>.
@@ -136,18 +138,19 @@ const DraftSummary = ({ players, season }) => {
 
             <DataTable
                 cols={cols}
-                defaultSort={[0, "asc"]}
-                name="DraftSummary"
+                defaultSort={[0, "desc"]}
+                name="DraftTeamHistory"
                 rows={rows}
                 superCols={superCols}
+                pagination
             />
         </div>
     );
 };
 
-DraftSummary.propTypes = {
+DraftTeamHistory.propTypes = {
+    abbrev: PropTypes.string.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
-    season: PropTypes.number.isRequired,
 };
 
-export default DraftSummary;
+export default DraftTeamHistory;

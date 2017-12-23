@@ -12,6 +12,7 @@ export { default as draft } from "./draft";
 export { default as draftLottery } from "./draftLottery";
 export { default as draftScouting } from "./draftScouting";
 export { default as draftSummary } from "./draftSummary";
+export { default as draftTeamHistory } from "./draftTeamHistory";
 export { default as editTeamInfo } from "./editTeamInfo";
 export { default as eventLog } from "./eventLog";
 export { default as exportLeague } from "./exportLeague";

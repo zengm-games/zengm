@@ -70,12 +70,16 @@ class DraftScouting extends React.Component {
 
                 <p>
                     More:{" "}
+                    <a href={helpers.leagueUrl(["draft_lottery"])}>
+                        Draft Lottery
+                    </a>{" "}
+                    |{" "}
                     <a href={helpers.leagueUrl(["draft_summary"])}>
                         Draft Summary
                     </a>{" "}
                     |{" "}
-                    <a href={helpers.leagueUrl(["draft_lottery"])}>
-                        Draft Lottery
+                    <a href={helpers.leagueUrl(["draft_team_history"])}>
+                        Team History
                     </a>
                 </p>
 

@@ -306,6 +306,10 @@ class DraftLottery extends React.Component<Props, State> {
                     |{" "}
                     <a href={helpers.leagueUrl(["draft_summary", season])}>
                         Draft Summary
+                    </a>{" "}
+                    |{" "}
+                    <a href={helpers.leagueUrl(["draft_team_history"])}>
+                        Team History
                     </a>
                 </p>
 

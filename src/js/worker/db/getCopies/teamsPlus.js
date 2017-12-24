@@ -76,6 +76,13 @@ const processSeasonAttrs = async (
             .getAll([season, t.tid]);
     }
 
+    // If a season is requested but not in the database, make a fake season so at least some dummy values are returned
+    if (season !== undefined && seasons.length === 0) {
+        const dummySeason = team.genSeasonRow(t.tid);
+        dummySeason.season = season;
+        seasons = [dummySeason];
+    }
+
     output.seasonAttrs = await Promise.all(
         seasons.map(async ts => {
             const row = {};

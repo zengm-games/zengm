@@ -85,7 +85,7 @@ const initAds = (goldUntil: number | void) => {
         const script = document.createElement("script");
         script.async = true;
         script.type = "text/javascript";
-        script.src = "https://pub.optimalmedia.io/pub/basketballgm/pb.js";
+        script.src = "https://www.googletagservices.com/tag/js/gpt.js";
         script.onload = afterScriptLoad;
         script.onreadystatechange = afterScriptLoad;
 

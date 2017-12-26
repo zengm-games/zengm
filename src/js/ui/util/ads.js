@@ -41,52 +41,71 @@ function showModal() {
 
 let gptLoading = false;
 let gptLoaded = false;
-const optimalMediaDivs = [
-    "div-gpt-ad-1491369323599-3",
-    "div-gpt-ad-1491369323599-1",
-    "div-gpt-ad-1491369323599-2",
-];
+const gptAdSlots = [];
 
 async function showBanner() {
     const initBanners = () => {
         return new Promise(resolve => {
-            let count = 0;
             window.googletag.cmd.push(() => {
-                window.googletag.display(optimalMediaDivs[0]);
-                count += 1;
-                if (count >= 3) {
-                    resolve();
-                }
-            });
-            window.googletag.cmd.push(() => {
-                window.googletag.display(optimalMediaDivs[1]);
-                count += 1;
-                if (count >= 3) {
-                    resolve();
-                }
-            });
-            window.googletag.cmd.push(() => {
-                window.googletag.display(optimalMediaDivs[2]);
-                count += 1;
-                if (count >= 3) {
-                    resolve();
-                }
+                gptAdSlots[0] = window.googletag
+                    .defineSlot(
+                        "/42283434/BBGM_Top",
+                        [[970, 90], [728, 90], [970, 250]],
+                        "div-gpt-ad-1491369323599-3",
+                    )
+                    .addService(window.googletag.pubads());
+                gptAdSlots[1] = window.googletag
+                    .defineSlot(
+                        "/42283434/BBGM_Square_Left",
+                        [[300, 250], [336, 280]],
+                        "div-gpt-ad-1491369323599-1",
+                    )
+                    .addService(window.googletag.pubads());
+                gptAdSlots[2] = window.googletag
+                    .defineSlot(
+                        "/42283434/BBGM_Square_Right",
+                        [[300, 250], [336, 280]],
+                        "div-gpt-ad-1491369323599-2",
+                    )
+                    .addService(window.googletag.pubads());
+                window.googletag.pubads().enableSingleRequest();
+                window.googletag.enableServices();
+                let count = 0;
+                window.googletag.cmd.push(() => {
+                    window.googletag.display("div-gpt-ad-1491369323599-3");
+                    count += 1;
+                    if (count >= 3) {
+                        resolve();
+                    }
+                });
+                window.googletag.cmd.push(() => {
+                    window.googletag.display("div-gpt-ad-1491369323599-1");
+                    count += 1;
+                    if (count >= 3) {
+                        resolve();
+                    }
+                });
+                window.googletag.cmd.push(() => {
+                    window.googletag.display("div-gpt-ad-1491369323599-2");
+                    count += 1;
+                    if (count >= 3) {
+                        resolve();
+                    }
+                });
             });
         });
     };
 
     // After banners are initially loaded, use this to refresh
     const refreshBanners = () => {
-        if (
-            window.optimalmedia === undefined ||
-            window.OptimalMediaAPI === undefined
-        ) {
-            // This could happen if it's still loading the async ad script
-            return;
-        }
-
-        window.optimalmedia.que.push(() => {
-            window.OptimalMediaAPI.refreshDivs(optimalMediaDivs);
+        window.googletag.cmd.push(() => {
+            window.googletag.pubads().refresh([gptAdSlots[0]]);
+        });
+        window.googletag.cmd.push(() => {
+            window.googletag.pubads().refresh([gptAdSlots[1]]);
+        });
+        window.googletag.cmd.push(() => {
+            window.googletag.pubads().refresh([gptAdSlots[2]]);
         });
     };
 
@@ -105,9 +124,9 @@ async function showBanner() {
             }
         }
     } else {
-        const bannerAdTop = document.getElementById(optimalMediaDivs[0]);
-        const bannerAdBottom1 = document.getElementById(optimalMediaDivs[1]);
-        const bannerAdBottom2 = document.getElementById(optimalMediaDivs[2]);
+        const bannerAdTop = document.getElementById("div-gpt-ad-1491369323599-3");
+        const bannerAdBottom1 = document.getElementById("div-gpt-ad-1491369323599-1");
+        const bannerAdBottom2 = document.getElementById("div-gpt-ad-1491369323599-2");
 
         // For people using BBGM Gold, these would have been deleted in initAds
         if (bannerAdTop && bannerAdBottom1 && bannerAdBottom2) {

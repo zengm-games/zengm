@@ -153,7 +153,6 @@ class Cache {
     _dirtyRecords: { [key: Store]: Set<number | string> };
     _index2store: { [key: Index]: Store };
     _indexes: { [key: Index]: any };
-    _lid: number;
     _maxIds: { [key: Store]: number };
     newLeague: boolean;
     _requestInd: number;

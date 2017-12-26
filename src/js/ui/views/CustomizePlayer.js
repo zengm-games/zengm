@@ -871,29 +871,29 @@ class CustomizePlayer extends React.Component {
                                 <div className="col-xs-4">
                                     <h3>Skill</h3>
                                     <div className="form-group">
-                                        <label>Blocks</label>
+                                        <label>Offensive IQ</label>
                                         <input
                                             type="text"
                                             className="form-control"
                                             onChange={this.handleChange.bind(
                                                 this,
                                                 "rating",
-                                                "blk",
+                                                "oiq",
                                             )}
-                                            value={p.ratings[r].blk}
+                                            value={p.ratings[r].oiq}
                                         />
                                     </div>
                                     <div className="form-group">
-                                        <label>Steals</label>
+                                        <label>Defensive IQ</label>
                                         <input
                                             type="text"
                                             className="form-control"
                                             onChange={this.handleChange.bind(
                                                 this,
                                                 "rating",
-                                                "stl",
+                                                "diq",
                                             )}
-                                            value={p.ratings[r].stl}
+                                            value={p.ratings[r].diq}
                                         />
                                     </div>
                                     <div className="form-group">

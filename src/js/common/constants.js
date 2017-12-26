@@ -39,7 +39,7 @@ const SPORT = "basketball"; // For account ajax stuff
 
 const COMPOSITE_WEIGHTS = {
     pace: {
-        ratings: ["spd", "jmp", "dnk", "tp", "stl", "drb", "pss"],
+        ratings: ["spd", "jmp", "dnk", "tp", "drb", "pss"],
     },
     usage: {
         ratings: ["ins", "dnk", "fg", "tp", "spd", "drb"],
@@ -80,27 +80,27 @@ const COMPOSITE_WEIGHTS = {
         weights: [1.5, 0.1, 0.1, 0.7],
     },
     stealing: {
-        ratings: [50, "spd", "stl"],
+        ratings: [50, "spd", "diq"],
         weights: [1, 1, 1],
     },
     blocking: {
-        ratings: ["hgt", "jmp", "blk"],
+        ratings: ["hgt", "jmp", "diq"],
         weights: [1.5, 0.5, 0.5],
     },
     fouling: {
-        ratings: [50, "hgt", "blk", "spd"],
-        weights: [1.5, 1, 1, -1],
+        ratings: [50, "hgt", "diq", "spd"],
+        weights: [1.5, 1, -1, -1],
     },
     defense: {
-        ratings: ["hgt", "stre", "spd", "jmp", "blk", "stl"],
-        weights: [1, 1, 1, 0.5, 1, 1],
+        ratings: ["hgt", "stre", "spd", "jmp", "diq"],
+        weights: [1, 1, 1, 0.5, 1, 2],
     },
     defenseInterior: {
-        ratings: ["hgt", "stre", "spd", "jmp", "blk"],
-        weights: [2, 1, 0.5, 0.5, 1],
+        ratings: ["hgt", "stre", "spd", "jmp", "diq"],
+        weights: [2, 1, 0.5, 0.5, 2],
     },
     defensePerimeter: {
-        ratings: ["hgt", "stre", "spd", "jmp", "stl"],
+        ratings: ["hgt", "stre", "spd", "jmp", "diq"],
         weights: [0.5, 1, 2, 0.5, 1],
     },
     endurance: {

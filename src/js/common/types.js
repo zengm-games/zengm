@@ -414,7 +414,7 @@ export type PlayerInjury = {
 export type PlayerSkill = "3" | "A" | "B" | "Di" | "Dp" | "Po" | "Ps" | "R";
 
 export type PlayerRatings = {
-    blk: number,
+    diq: number,
     dnk: number,
     drb: number,
     endu: number,
@@ -424,6 +424,7 @@ export type PlayerRatings = {
     hgt: number,
     ins: number,
     jmp: number,
+    oiq: number,
     ovr: number,
     pos: string,
     pot: number,
@@ -432,7 +433,6 @@ export type PlayerRatings = {
     season: number,
     spd: number,
     skills: PlayerSkill[],
-    stl: number,
     stre: number,
     tp: number,
 };
@@ -527,7 +527,7 @@ export type ContractInfo = {
 };
 
 export type RatingKey =
-    | "blk"
+    | "diq"
     | "dnk"
     | "drb"
     | "endu"
@@ -536,10 +536,10 @@ export type RatingKey =
     | "hgt"
     | "ins"
     | "jmp"
+    | "oiq"
     | "pss"
     | "reb"
     | "spd"
-    | "stl"
     | "stre"
     | "tp";
 

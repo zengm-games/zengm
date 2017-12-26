@@ -1,3 +1,28 @@
+PLAYER DEVELOPMENT REVAMP
+
+blk/stl -> oiq/diq
+
+rewrite player development
+- https://www.reddit.com/r/BasketballGM/comments/7frlq6/how_do_pro_basketball_players_develop/
+
+shrink range of normal, allow rare outliers
+
+much less likely to have skilled tall players
+- either make rare guards tall, or rare bigs skilled
+- player gen - pick a height, generate ratings for that height. continuous.
+
+no unrealistic pot (based on height and ratings that improve a lot like IQ)
+- bootstrap pot - run 10 simulations of career arc and avg the highest value. then don't use pot in player development formulas at all!
+- how to handle fuzz?
+
+use oiq and diq in game sim
+
+new ovr formula
+
+upgrade code for pot, diq, oiq
+
+---
+
 open multiple leagues from dashboard at the same time - Invalid cache status "filling"
 - looks like flush is being called while status is "filling", can that be short circuited since idb.cache has been redefined? lid is different, or the hostID is different?
   - happens because it calls "flush" when closing an existing open database. should be more explicit about state of loading (no league loaded or loading, league X loaded and no league loading, league X loaded and league Y loading, no league loaded and league Y loading)

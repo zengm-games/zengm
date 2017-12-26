@@ -37,8 +37,8 @@ type State = {
         ft: number,
         fg: number,
         tp: number,
-        blk: number,
-        stl: number,
+        oiq: number,
+        diq: number,
         drb: number,
         pss: number,
         reb: number,
@@ -143,12 +143,12 @@ class RatingsStatsPopover extends React.Component<Props, State> {
                             Pot: {Math.round(ratings.pot)}
                         </span>
                         <br />
-                        <span className={colorRating(ratings.blk)}>
-                            Blk: {ratings.blk}
+                        <span className={colorRating(ratings.oiq)}>
+                            oIQ: {ratings.oiq}
                         </span>
                         <br />
-                        <span className={colorRating(ratings.stl)}>
-                            Stl: {ratings.stl}
+                        <span className={colorRating(ratings.diq)}>
+                            dIQ: {ratings.diq}
                         </span>
                         <br />
                         <span className={colorRating(ratings.drb)}>

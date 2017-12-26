@@ -54,9 +54,9 @@ const RatingsOverview = ({ ratings }) => {
                 <div className="col-xs-4">
                     <b>Skill</b>
                     <br />
-                    Blocks: {ratings[r].blk}
+                    Offensive IQ: {ratings[r].oiq}
                     <br />
-                    Steals: {ratings[r].stl}
+                    Defensive IQ: {ratings[r].diq}
                     <br />
                     Dribbling: {ratings[r].drb}
                     <br />
@@ -658,8 +658,8 @@ const Player = ({
                     "rating:FT",
                     "rating:2Pt",
                     "rating:3Pt",
-                    "rating:Blk",
-                    "rating:Stl",
+                    "rating:oIQ",
+                    "rating:dIQ",
                     "rating:Drb",
                     "rating:Pss",
                     "rating:Reb",
@@ -697,8 +697,8 @@ const Player = ({
                             r.ft,
                             r.fg,
                             r.tp,
-                            r.blk,
-                            r.stl,
+                            r.oiq,
+                            r.diq,
                             r.drb,
                             r.pss,
                             r.reb,

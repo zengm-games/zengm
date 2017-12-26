@@ -64,8 +64,8 @@ function ovr(ratings: PlayerRatings): number {
             ratings.ft +
             ratings.fg +
             2 * ratings.tp +
-            ratings.blk +
-            ratings.stl +
+            ratings.oiq +
+            ratings.diq +
             ratings.drb +
             3 * ratings.pss +
             ratings.reb) /
@@ -389,8 +389,7 @@ function pos(ratings: PlayerRatings): string {
     // C must be extra tall or is strong/shotblocker but not quite as tall
     if (
         ratings.hgt >= 63 ||
-        (ratings.hgt >= 54 &&
-            (ratings.hgt + ratings.stre >= 147 || ratings.blk >= 85))
+        (ratings.hgt >= 54 && ratings.stre >= 80)
     ) {
         c = true;
     }
@@ -557,7 +556,7 @@ function develop(
         }
 
         // Ratings that can increase a lot, but only when young. Decrease when old.
-        ratingKeys = ["stre", "dnk", "blk", "stl"];
+        ratingKeys = ["stre", "dnk", "oiq", "diq"];
         for (let j = 0; j < ratingKeys.length; j++) {
             p.ratings[r][ratingKeys[j]] = limitRating(
                 p.ratings[r][ratingKeys[j]] +
@@ -636,8 +635,8 @@ function bonus(p: Player | PlayerWithoutPid, amount: number) {
         "ft",
         "fg",
         "tp",
-        "blk",
-        "stl",
+        "oiq",
+        "diq",
         "drb",
         "pss",
         "reb",
@@ -919,8 +918,8 @@ function genRatings(
         ft: rawRatings[7],
         fg: rawRatings[8],
         tp: rawRatings[9],
-        blk: rawRatings[10],
-        stl: rawRatings[11],
+        oiq: rawRatings[10],
+        diq: rawRatings[11],
         drb: rawRatings[12],
         pss: rawRatings[13],
         reb: rawRatings[14],

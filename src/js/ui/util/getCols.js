@@ -509,8 +509,8 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
-    "rating:Blk": {
-        desc: "Blocks",
+    "rating:oIQ": {
+        desc: "Offensive IQ",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
@@ -564,8 +564,8 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
-    "rating:Stl": {
-        desc: "Steals",
+    "rating:dIQ": {
+        desc: "Defensive IQ",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },

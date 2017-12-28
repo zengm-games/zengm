@@ -124,9 +124,15 @@ async function showBanner() {
             }
         }
     } else {
-        const bannerAdTop = document.getElementById("div-gpt-ad-1491369323599-3");
-        const bannerAdBottom1 = document.getElementById("div-gpt-ad-1491369323599-1");
-        const bannerAdBottom2 = document.getElementById("div-gpt-ad-1491369323599-2");
+        const bannerAdTop = document.getElementById(
+            "div-gpt-ad-1491369323599-3",
+        );
+        const bannerAdBottom1 = document.getElementById(
+            "div-gpt-ad-1491369323599-1",
+        );
+        const bannerAdBottom2 = document.getElementById(
+            "div-gpt-ad-1491369323599-2",
+        );
 
         // For people using BBGM Gold, these would have been deleted in initAds
         if (bannerAdTop && bannerAdBottom1 && bannerAdBottom2) {

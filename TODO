@@ -7,19 +7,40 @@ rewrite player development
 
 shrink range of normal, allow rare outliers
 
+ensure statistical outliers exist!
+
 much less likely to have skilled tall players
 - either make rare guards tall, or rare bigs skilled
 - player gen - pick a height, generate ratings for that height. continuous.
 
 no unrealistic pot (based on height and ratings that improve a lot like IQ)
 - bootstrap pot - run 10 simulations of career arc and avg the highest value. then don't use pot in player development formulas at all!
+  - or, have a deterministic flag that runs it without any of the random big jumps
 - how to handle fuzz?
+
+compare career arcs (peak length)
 
 use oiq and diq in game sim
 
 new ovr formula
 
+players at beginning of league - generate in draft classes and sim forward, to make it more balanced
+- get rid of core.player.bonus
+
+higher fuzz for draft prospects?
+
+more 2nd round picks turn out good, especially late. can't just be fuzz, won't affect AI enough
+
+AI draft algo revisit
+
 upgrade code for pot, diq, oiq
+
+changes
+- Height can increase in young players, although it's quite rare.
+
+extra blog points
+- oiq/diq does not capture players who gamble to get blk/stl while hurting defense, but old one didn't either. could be simulated by U shaped effect of diq.
+- similarly, other things missinng, like shoot too much or too little can't both be represented by low oiq
 
 ---
 

@@ -1,11 +1,13 @@
 // @flow
 
-import faces from "facesjs";
-import { COMPOSITE_WEIGHTS, PHASE, PLAYER, g, helpers } from "../../common";
-import { finances } from "../core";
-import { idb } from "../db";
-import * as names from "../../data/names";
-import { injuries, logEvent, random } from "../util";
+import { COMPOSITE_WEIGHTS, PHASE, PLAYER, g, helpers } from "../../../common";
+import { finances } from "../../core";
+import develop from "./develop";
+import genFuzz from "./genFuzz";
+import generate from "./generate";
+import { idb } from "../../db";
+import * as names from "../../../data/names";
+import { injuries, logEvent, random } from "../../util";
 import type {
     Conditions,
     GamePlayer,
@@ -21,9 +23,7 @@ import type {
     PlayerWithStats,
     PlayerWithoutPid,
     RatingKey,
-} from "../../common/types";
-
-type Profile = "" | "Big" | "Point" | "Wing" | "Base" | "3andD" | "RawAthlete";
+} from "../../../common/types";
 
 let playerNames;
 
@@ -387,10 +387,7 @@ function pos(ratings: PlayerRatings): string {
     }
 
     // C must be extra tall or is strong/shotblocker but not quite as tall
-    if (
-        ratings.hgt >= 63 ||
-        (ratings.hgt >= 54 && ratings.stre >= 80)
-    ) {
+    if (ratings.hgt >= 63 || (ratings.hgt >= 54 && ratings.stre >= 80)) {
         c = true;
     }
 
@@ -420,193 +417,6 @@ function pos(ratings: PlayerRatings): string {
     }
 
     return position;
-}
-
-function calcBaseChange(age: number, potentialDifference: number): number {
-    let val;
-
-    // Average rating change if there is no potential difference
-    if (age <= 21) {
-        val = 0;
-    } else if (age <= 25) {
-        val = 0;
-    } else if (age <= 29) {
-        val = -1;
-    } else if (age <= 31) {
-        val = -2;
-    } else {
-        val = -3;
-    }
-
-    // Factor in potential difference
-    // This only matters for young players who have potentialDifference != 0
-    if (age <= 21) {
-        if (Math.random() < 0.75) {
-            val += potentialDifference * random.uniform(0.2, 0.9);
-        } else {
-            val += potentialDifference * random.uniform(0.1, 0.3);
-        }
-    } else if (age <= 25) {
-        if (Math.random() < 0.25) {
-            val += potentialDifference * random.uniform(0.2, 0.9);
-        } else {
-            val += potentialDifference * random.uniform(0.1, 0.3);
-        }
-    } else {
-        val += potentialDifference * random.uniform(0, 0.1);
-    }
-
-    // Noise
-    if (age <= 25) {
-        val += helpers.bound(random.realGauss(0, 5), -4, 10);
-    } else {
-        val += helpers.bound(random.realGauss(0, 3), -2, 10);
-    }
-
-    return val;
-}
-
-/**
- * Develop (increase/decrease) player's ratings. This operates on whatever the last row of p.ratings is.
- *
- * Make sure to call player.updateValues after this! Otherwise, player values will be out of sync.
- *
- * @memberOf core.player
- * @param {Object} p Player object.
- * @param {number=} years Number of years to develop (default 1).
- * @param {boolean=} newPlayer Generating a new player? (default false). If true, then the player's age is also updated based on years.
- * @param {number=} coachingRank From 1 to g.numTeams (default 30), where 1 is best coaching staff and g.numTeams is worst. Default is 15.5
- * @return {Object} Updated player object.
- */
-function develop(
-    p: {
-        born: { loc: string, year: number },
-        pos?: string,
-        ratings: PlayerRatings[],
-    },
-    years?: number = 1,
-    newPlayer?: boolean = false,
-    coachingRank?: number = 15.5,
-) {
-    const r = p.ratings.length - 1;
-
-    let age = g.season - p.born.year;
-
-    for (let i = 0; i < years; i++) {
-        // (CONFUSING!) Don't increment age for existing players developing one season (i.e. newPhasePreseason) because the season is already incremented before this function is called. But in other scenarios (new league and draft picks), the season is not changing, so age should be incremented every iteration of this loop.
-        if (newPlayer || years > 1) {
-            age += 1;
-        }
-
-        // Randomly make a big jump
-        if (Math.random() > 0.985 && age <= 23) {
-            p.ratings[r].pot += random.uniform(5, 25);
-        }
-
-        // Randomly regress
-        if (Math.random() > 0.995 && age <= 23) {
-            p.ratings[r].pot -= random.uniform(5, 25);
-        }
-
-        let baseChange = calcBaseChange(
-            age,
-            p.ratings[r].pot - p.ratings[r].ovr,
-        );
-
-        // Modulate by coaching
-        if (baseChange >= 0) {
-            // life is normal
-            baseChange *= (coachingRank - 1) * -0.5 / (g.numTeams - 1) + 1.25;
-        } else {
-            baseChange *= (coachingRank - 1) * 0.5 / (g.numTeams - 1) + 0.75;
-        }
-
-        // Ratings that can only increase a little, and only when young. Decrease when old.
-        let ratingKeys = ["spd", "jmp", "endu"];
-        for (let j = 0; j < ratingKeys.length; j++) {
-            let baseChangeLocal;
-            if (age <= 24) {
-                baseChangeLocal = baseChange;
-            } else if (age <= 30) {
-                baseChangeLocal = baseChange - 1;
-            } else {
-                baseChangeLocal = baseChange - 2.5;
-            }
-            p.ratings[r][ratingKeys[j]] = limitRating(
-                p.ratings[r][ratingKeys[j]] +
-                    helpers.bound(
-                        baseChangeLocal * random.uniform(0.5, 1.5),
-                        -20,
-                        10,
-                    ),
-            );
-        }
-
-        // Ratings that can only increase a little, and only when young. Decrease slowly when old.
-        ratingKeys = ["drb", "pss", "reb"];
-        for (let j = 0; j < ratingKeys.length; j++) {
-            p.ratings[r][ratingKeys[j]] = limitRating(
-                p.ratings[r][ratingKeys[j]] +
-                    helpers.bound(
-                        baseChange * random.uniform(0.5, 1.5),
-                        -1,
-                        10,
-                    ),
-            );
-        }
-
-        // Ratings that can increase a lot, but only when young. Decrease when old.
-        ratingKeys = ["stre", "dnk", "oiq", "diq"];
-        for (let j = 0; j < ratingKeys.length; j++) {
-            p.ratings[r][ratingKeys[j]] = limitRating(
-                p.ratings[r][ratingKeys[j]] +
-                    baseChange * random.uniform(0.5, 1.5),
-            );
-        }
-
-        // Ratings that increase most when young, but can continue increasing for a while and only decrease very slowly.
-        ratingKeys = ["ins", "ft", "fg", "tp"];
-        for (let j = 0; j < ratingKeys.length; j++) {
-            let baseChangeLocal;
-            if (age <= 24) {
-                baseChangeLocal = baseChange;
-            } else if (age <= 30) {
-                baseChangeLocal = baseChange + 1;
-            } else {
-                baseChangeLocal = baseChange + 2.5;
-            }
-            p.ratings[r][ratingKeys[j]] = limitRating(
-                p.ratings[r][ratingKeys[j]] +
-                    baseChangeLocal * random.uniform(0.5, 1.5),
-            );
-        }
-
-        // Update overall and potential
-        p.ratings[r].ovr = ovr(p.ratings[r]);
-        p.ratings[r].pot += -2 + Math.round(random.realGauss(0, 2));
-        if (p.ratings[r].ovr > p.ratings[r].pot || age > 28) {
-            p.ratings[r].pot = p.ratings[r].ovr;
-        }
-    }
-
-    // If this isn't here outside the loop, then 19 year old players could still have ovr > pot
-    if (p.ratings[r].ovr > p.ratings[r].pot || age > 28) {
-        p.ratings[r].pot = p.ratings[r].ovr;
-    }
-
-    // Likewise, If this isn't outside the loop, then 19 year old players don't get skills
-    p.ratings[r].skills = skills(p.ratings[r]);
-
-    if (newPlayer) {
-        p.born.year = g.season - age;
-    }
-
-    if (p.hasOwnProperty("pos") && typeof p.pos === "string") {
-        // Must be a custom league player, let's not rock the boat
-        p.ratings[r].pos = p.pos;
-    } else {
-        p.ratings[r].pos = pos(p.ratings[r]);
-    }
 }
 
 /**
@@ -794,172 +604,6 @@ async function release(p: Player, justDrafted: boolean) {
     await addToFreeAgents(p, g.phase, baseMoods);
 }
 
-/**
- * Generate fuzz.
- *
- * Fuzz is random noise that is added to a player's displayed ratings, depending on the scouting budget.
- *
- * @memberOf core.player
- * @param {number} scoutingRank Between 1 and 30, the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
- * @return {number} Fuzz, between -5 and 5.
- */
-function genFuzz(scoutingRank: number): number {
-    const cutoff = 2 + 8 * (scoutingRank - 1) / (g.numTeams - 1); // Max error is from 2 to 10, based on scouting rank
-    const sigma = 1 + 2 * (scoutingRank - 1) / (g.numTeams - 1); // Stddev is from 1 to 3, based on scouting rank
-
-    let fuzz = random.gauss(0, sigma);
-    if (fuzz > cutoff) {
-        fuzz = cutoff;
-    } else if (fuzz < -cutoff) {
-        fuzz = -cutoff;
-    }
-
-    return fuzz;
-}
-
-/**
- * Generate initial ratings for a newly-created player.
- *
- * @param {string} profile [description]
- * @param {number} baseRating [description]
- * @param {number} pot [description]
- * @param {number} season [description]
- * @param {number} scoutingRank Between 1 and g.numTeams (default 30), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
- * @param {number} tid [description]
- * @return {Object} Ratings object
- */
-function genRatings(
-    profile: Profile,
-    baseRating: number,
-    pot: number,
-    season: number,
-    scoutingRank: number,
-    tid: number,
-    predeterminedHeight: number,
-): PlayerRatings {
-    let profileId = -1;
-
-    // Use the profile that is specified, if any
-    if (profile === "Point") {
-        profileId = 1;
-    } else if (profile === "Wing") {
-        profileId = 2;
-    } else if (profile === "Big") {
-        profileId = 3;
-    } else if (profile === "Base") {
-        profileId = 0;
-    } else if (profile === "3andD") {
-        profileId = 4;
-    } else if (profile === "RawAthlete") {
-        profileId = 5;
-    }
-
-    // Use base profile if neither profile nor predeterminedHeight are set
-    if (profileId === -1 && predeterminedHeight === 0) {
-        profileId = 0;
-    }
-
-    // If no profile is specified, use the predetermined height to choose
-    if (profileId === -1) {
-        if (predeterminedHeight > 55 && random.randInt(0, 1000) < 999) {
-            profileId = 3; // Nearly all tall guys are "Big"
-        } else if (predeterminedHeight < 35 && random.randInt(0, 1000) < 999) {
-            profileId = 1; // Nearly all short guys are "Point"
-        } else {
-            // Medium height players (plus the very few tall/short players who slip through)
-            const selector = random.randInt(1, 100);
-            if (selector <= 25) {
-                profileId = 0; // 25% get "Base"
-            } else if (selector <= 50) {
-                profileId = 2; // 25% get generic "Wing"
-            } else if (selector <= 75) {
-                profileId = 4; // 25% get "3andD Wing"
-            } else {
-                profileId = 5; // 25% get "Raw Athletic Wing"
-            }
-        }
-    }
-
-    // Each row should sum to ~150
-    const profiles = [
-        [10, 10, 10, 10, 10, 10, 10, 10, 10, 25, 10, 10, 10, 10, 10], // Base
-        [-30, -10, 40, 20, 15, 0, 0, 10, 15, 25, 0, 30, 20, 20, 0], // Point Guard
-        [10, 10, 15, 15, 0, 0, 25, 15, 15, 20, 0, 10, 15, 0, 15], // Generic Wing
-        [45, 30, -15, -15, -5, 30, 30, -5, -15, -25, 30, -5, -20, -20, 30], // Big
-        [10, 10, 25, 10, 0, -10, -5, 10, 20, 30, 10, 20, 10, 0, 10], // 3andD wing
-        [10, 20, 30, 35, 20, 0, 25, 0, 0, 0, 10, 0, 0, 0, 0], // Raw Athletic Wing
-    ];
-    const sigmas = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10];
-    baseRating = random.gauss(baseRating, 5);
-
-    const rawRatings = [];
-    for (let i = 0; i < sigmas.length; i++) {
-        const rawRating = profiles[profileId][i] + baseRating;
-        rawRatings[i] = limitRating(random.gauss(rawRating, sigmas[i]));
-    }
-
-    // Small chance of freakish ability in 2 categories
-    for (let i = 0; i < 2; i++) {
-        if (Math.random() < 0.2) {
-            // Randomly pick a non-height rating to improve
-            const j = random.randInt(1, 14);
-            rawRatings[j] = limitRating(rawRatings[j] + 50);
-        }
-    }
-
-    const ratings = {
-        hgt: rawRatings[0],
-        stre: rawRatings[1],
-        spd: rawRatings[2],
-        jmp: rawRatings[3],
-        endu: rawRatings[4],
-        ins: rawRatings[5],
-        dnk: rawRatings[6],
-        ft: rawRatings[7],
-        fg: rawRatings[8],
-        tp: rawRatings[9],
-        oiq: rawRatings[10],
-        diq: rawRatings[11],
-        drb: rawRatings[12],
-        pss: rawRatings[13],
-        reb: rawRatings[14],
-
-        fuzz: genFuzz(scoutingRank),
-        ovr: 0,
-        pos: "",
-        pot,
-        season,
-        skills: [],
-    };
-
-    if (predeterminedHeight !== undefined && predeterminedHeight !== 0) {
-        ratings.hgt = predeterminedHeight;
-    }
-
-    // Ugly hack: Tall people can't dribble/pass very well
-    if (ratings.hgt > 40) {
-        ratings.drb = limitRating(ratings.drb - (ratings.hgt - 40));
-        ratings.pss = limitRating(ratings.pss - (ratings.hgt - 40));
-    } else {
-        ratings.drb = limitRating(ratings.drb + 10);
-        ratings.pss = limitRating(ratings.pss + 10);
-    }
-
-    ratings.ovr = ovr(ratings);
-
-    if (tid === PLAYER.UNDRAFTED_2) {
-        ratings.fuzz *= 2;
-    } else if (tid === PLAYER.UNDRAFTED_3) {
-        ratings.fuzz *= 4;
-    }
-
-    ratings.skills = skills(ratings);
-
-    ratings.pos = pos(ratings);
-
-    return ratings;
-}
-
 function name(): { country: string, firstName: string, lastName: string } {
     if (playerNames === undefined) {
         // This makes it wait until g is loaded before calling names.load, so user-defined names will be used if provided
@@ -1116,119 +760,6 @@ const heightToRating = (heightInInches: number) => {
         ),
     );
 };
-
-function generate(
-    tid: number,
-    age: number,
-    profile: Profile,
-    baseRating: number,
-    pot: number,
-    draftYear: number,
-    newLeague: boolean,
-    scoutingRank: number,
-): PlayerWithoutPid {
-    // RealHeight is drawn from a custom probability distribution and then offset by a fraction of an inch either way
-    let realHeight = Math.random() - 0.5; // Fraction of an inch
-    realHeight += random.heightDist();
-
-    const wingspanAdjust = realHeight + random.randInt(-3, 3);
-
-    // hgt 0-100 corresponds to height 5'6" to 7'9" (Anything taller or shorter than the extremes will just get 100/0)
-    const predetHgt = heightToRating(wingspanAdjust);
-    realHeight = Math.round(realHeight);
-
-    let ratings;
-    if (newLeague) {
-        // Create player for new league
-        ratings = genRatings(
-            profile,
-            baseRating,
-            pot,
-            g.startingSeason,
-            scoutingRank,
-            tid,
-            predetHgt,
-        );
-    } else {
-        // Create player to be drafted
-        ratings = genRatings(
-            profile,
-            baseRating,
-            pot,
-            draftYear,
-            scoutingRank,
-            tid,
-            predetHgt,
-        );
-    }
-
-    const minWeight = 155;
-    const maxWeight = 305;
-
-    const nameInfo = name();
-
-    const p = {
-        awards: [],
-        born: {
-            year: g.season - age,
-            loc: nameInfo.country,
-        },
-        college: "",
-        contract: {
-            // Will be set by setContract below
-            amount: 0,
-            exp: 0,
-        },
-        draft: {
-            round: 0,
-            pick: 0,
-            tid: -1,
-            originalTid: -1,
-            year: draftYear,
-            teamName: null,
-            teamRegion: null,
-            pot,
-            ovr: ratings.ovr,
-            skills: ratings.skills,
-        },
-        face: faces.generate(),
-        firstName: nameInfo.firstName,
-        freeAgentMood: Array(g.numTeams).fill(0),
-        gamesUntilTradable: 0,
-        hgt: realHeight,
-        hof: false,
-        imgURL: "", // Custom rosters can define player image URLs to be used rather than vector faces
-        injury: { type: "Healthy", gamesRemaining: 0 },
-        lastName: nameInfo.lastName,
-        ptModifier: 1,
-        ratings: [ratings],
-        retiredYear: Infinity,
-        rosterOrder: 666, // Will be set later
-        salaries: [],
-        statsTids: [],
-        tid,
-        watch: false,
-        weight: Math.round(
-            random.randInt(-20, 20) +
-                (ratings.hgt + 0.5 * ratings.stre) *
-                    (maxWeight - minWeight) /
-                    150 +
-                minWeight,
-        ), // Weight in pounds (from minWeight to maxWeight)
-        yearsFreeAgent: 0,
-
-        // These should be set by player.updateValues after player is completely done (automatic in player.develop)
-        value: 0,
-        valueNoPot: 0,
-        valueFuzz: 0,
-        valueNoPotFuzz: 0,
-        valueWithContract: 0,
-    };
-
-    setContract(p, genContract(p), false);
-
-    return p;
-}
 
 /**
  * Pick injury type and duration.
@@ -2029,4 +1560,8 @@ export default {
     fuzzRating,
     getPlayerFakeAge,
     heightToRating,
+
+    // When fully modular, delete these exports cause they are only used by other player functions
+    limitRating,
+    pos,
 };

@@ -20,16 +20,19 @@ describe("db/Cache", () => {
 
     describe("#get()", () => {
         it("should retrieve an object", async () => {
-            const p = await idb.cache.players.get(0);
-            assert.equal(p.pid, 0);
+            const p = (await idb.cache.players.getAll())[0];
+            const p2 = await idb.cache.players.get(p.pid);
+            assert.equal(p.pid, p2.pid);
         });
         it("should return undefined for invalid ID", async () => {
-            const p = (await idb.cache.players.getAll())[0];
+            const p = await idb.cache.players.get(-1);
             assert.equal(typeof p, "undefined");
         });
 
         for (const status of ["filling", "flushing"]) {
             it(`should wait until ${status} complete before resolving query`, async () => {
+                const p = (await idb.cache.players.getAll())[0];
+
                 idb.cache._status = status;
                 let setTimeoutCalled = false;
                 setTimeout(() => {
@@ -37,10 +40,10 @@ describe("db/Cache", () => {
                     idb.cache._setStatus("full");
                 }, 1000);
 
-                const p = await idb.cache.players.get(0);
+                const p2 = await idb.cache.players.get(p.pid);
                 assert(setTimeoutCalled);
                 assert.equal(idb.cache._status, "full");
-                assert.equal(p.pid, 0);
+                assert.equal(p.pid, p2.pid);
             });
         }
     });

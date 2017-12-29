@@ -1852,13 +1852,13 @@ describe("util/account", () => {
             const awards = {
                 season: 2013,
                 roy: {
-                    pid: 1,
-                    name: "Timothy Gonzalez",
-                    tid: 7,
+                    pid: p.pid,
+                    name: p.name,
+                    tid: p.tid,
                     abbrev: "ATL",
-                    pts: 30.135135135135137,
-                    trb: 9.18918918918919,
-                    ast: 0.7972972972972973,
+                    pts: 30,
+                    trb: 9,
+                    ast: 9,
                 },
             };
 
@@ -1919,11 +1919,13 @@ describe("util/account", () => {
             assert.equal(awarded, false);
         });
         it("should not award achievement not ROY", async () => {
-            // Switch to pid 2
+            // Switch to another player
+            const p = (await idb.cache.players.getAll())[1];
+
             const awards = {
                 season: 2013,
                 roy: {
-                    pid: 2,
+                    pid: p.pid,
                     name: "Timothy Gonzalez",
                     tid: 7,
                     abbrev: "ATL",
@@ -1934,7 +1936,6 @@ describe("util/account", () => {
             };
             await idb.cache.awards.put(awards);
 
-            const p = (await idb.cache.players.getAll())[0];
             p.draft.year = g.season - 1;
             await idb.cache.players.put(p);
             idb.cache.markDirtyIndexes("players");

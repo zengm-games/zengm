@@ -44,11 +44,18 @@ describe("db/getCopies", async () => {
             stats[2].gp = 8;
             stats[2].fg = 56;
 
+            player.develop(p, 0);
+
             player.addRatingsRow(p, 15);
+            player.develop(p, 0);
+
             player.addRatingsRow(p, 15);
             p.ratings[2].season = 2013;
+            player.develop(p, 0);
+
             player.addRatingsRow(p, 15);
             p.ratings[3].season = 2014;
+            player.develop(p, 0);
         });
 
         it("should return requested info if tid/season match", async () => {

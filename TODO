@@ -1,7 +1,6 @@
 PLAYER DEVELOPMENT REVAMP
 
-simplify player.generate API, since it's not needed directly from league.create anymore
-- 'profile' option not importantly used, default passed everywhere that matters
+remove pot from player.generate API
 
 blk/stl -> oiq/diq
 

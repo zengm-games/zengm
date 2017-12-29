@@ -10,7 +10,7 @@ describe("db/Cache", () => {
 
         await helpers.resetCache({
             players: [
-                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, 50, 50, 2017, true, 15.5),
             ],
         });
     });

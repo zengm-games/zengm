@@ -213,7 +213,6 @@ describe("core/team", () => {
                     const p = player.generate(
                         tid,
                         30,
-                        "",
                         50,
                         50,
                         2017,

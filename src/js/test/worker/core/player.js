@@ -12,16 +12,16 @@ describe("core/player", () => {
     describe("#generate()", () => {
         it.skip("should add stats row only for players generated on teams, not free agents or undrafted players", () => {
             // Needs DB to check since stats are not in player object anymore
-            let p = player.generate(-2, 19, "", 25, 55, 2012, false, 15.5);
+            let p = player.generate(-2, 19, 25, 55, 2012, false, 15.5);
             assert.equal(p.stats.length, 0);
 
-            p = player.generate(-1, 19, "", 25, 55, 2012, false, 15.5);
+            p = player.generate(-1, 19, 25, 55, 2012, false, 15.5);
             assert.equal(p.stats.length, 0);
 
-            p = player.generate(0, 19, "", 25, 55, 2012, false, 15.5);
+            p = player.generate(0, 19, 25, 55, 2012, false, 15.5);
             assert.equal(p.stats.length, 1);
 
-            p = player.generate(15, 19, "", 25, 55, 2012, false, 15.5);
+            p = player.generate(15, 19, 25, 55, 2012, false, 15.5);
             assert.equal(p.stats.length, 1);
         });
     });
@@ -29,7 +29,7 @@ describe("core/player", () => {
     describe("#madeHof()", () => {
         it("should correctly assign players to the Hall of Fame", () => {
             // Like player from http://www.reddit.com/r/BasketballGM/comments/222k8b/so_a_10x_dpoy_apparently_doesnt_have_what_it/
-            const p = player.generate(0, 19, "", 25, 55, 2012, false, 15.5);
+            const p = player.generate(0, 19, 25, 55, 2012, false, 15.5);
             const playerStats = [
                 {
                     min: 1 * 2.6,
@@ -122,10 +122,10 @@ describe("core/player", () => {
             helpers.resetG();
 
             const players = [
-                player.generate(0, 19, "", 25, 55, g.season, false, 15.5),
-                player.generate(0, 25, "", 25, 55, g.season, false, 15.5), // Should get filtered out, too old
-                player.generate(0, 22, "", 25, 55, g.season, false, 15.5),
-                player.generate(0, 20, "", 25, 55, g.season, false, 15.5),
+                player.generate(0, 19, 25, 55, g.season, false, 15.5),
+                player.generate(0, 25, 25, 55, g.season, false, 15.5), // Should get filtered out, too old
+                player.generate(0, 22, 25, 55, g.season, false, 15.5),
+                player.generate(0, 20, 25, 55, g.season, false, 15.5),
             ];
             players[0].pid = 0;
             players[0].born.loc = "Ghana";

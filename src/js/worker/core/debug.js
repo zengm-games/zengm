@@ -273,14 +273,13 @@ function averageCareerArc(
         averageRat[i] = 0;
     }
 
-    const profiles = ["Point", "Wing", "Big", "Big", "Big", ""];
+    const numWhatever = 6;
 
     for (let i = 0; i < numPlayers; i++) {
-        for (let j = 0; j < profiles.length; j++) {
+        for (let j = 0; j < numWhatever; j++) {
             const p = player.generate(
                 0,
                 19,
-                profiles[j],
                 baseOvr,
                 basePot,
                 2013,
@@ -299,10 +298,10 @@ function averageCareerArc(
     }
 
     for (let i = 0; i < numSeasons; i++) {
-        averageOvr[i] /= numPlayers * profiles.length;
-        averagePot[i] /= numPlayers * profiles.length;
+        averageOvr[i] /= numPlayers * numWhatever;
+        averagePot[i] /= numPlayers * numWhatever;
         if (ratingToSave) {
-            averageRat[i] /= numPlayers * profiles.length;
+            averageRat[i] /= numPlayers * numWhatever;
         }
     }
 

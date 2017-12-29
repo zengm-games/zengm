@@ -104,21 +104,17 @@ async function genPlayers(
         draftYear += 3;
     }
 
-    const profiles = ["Point", "Wing", "Big", "Big", "Big", "Base", ""];
-
     for (let i = 0; i < numPlayers; i++) {
         const baseRating = random.randInt(8, 31);
         const pot = Math.round(
             helpers.bound(random.realGauss(48, 17), baseRating, 90),
         );
 
-        const profile = profiles[6];
         const agingYears = random.randInt(0, 3);
 
         const p = player.generate(
             tid,
             baseAge,
-            profile,
             baseRating,
             pot,
             draftYear,
@@ -137,7 +133,6 @@ async function genPlayers(
         const p = player.generate(
             tid,
             19,
-            profiles[1],
             90,
             90,
             draftYear,
@@ -171,7 +166,6 @@ async function genPlayers(
         const p = player.generate(
             tid,
             19,
-            profiles[1],
             90,
             90,
             draftYear,

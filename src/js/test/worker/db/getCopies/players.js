@@ -14,7 +14,6 @@ describe("db/getCopies", async () => {
             p = player.generate(
                 PLAYER.UNDRAFTED,
                 19,
-                "",
                 50,
                 60,
                 2011,

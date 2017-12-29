@@ -7,8 +7,6 @@ import genFuzz from "./genFuzz";
 import { random } from "../../util";
 import type { PlayerRatings, PlayerWithoutPid } from "../../../common/types";
 
-type Profile = "" | "Big" | "Point" | "Wing" | "Base" | "3andD" | "RawAthlete";
-
 // Each row should sum to ~150
 const profiles = [
     [10, 10, 10, 10, 10, 10, 10, 10, 10, 25, 10, 10, 10, 10, 10], // Base
@@ -23,7 +21,6 @@ const sigmas = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10];
 /**
  * Generate initial ratings for a newly-created player.
  *
- * @param {string} profile [description]
  * @param {number} baseRating [description]
  * @param {number} pot [description]
  * @param {number} season [description]
@@ -32,7 +29,6 @@ const sigmas = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10];
  * @return {Object} Ratings object
  */
 const genRatings = (
-    profile: Profile,
     baseRating: number,
     pot: number,
     season: number,
@@ -40,46 +36,23 @@ const genRatings = (
     tid: number,
     predeterminedHeight: number,
 ): PlayerRatings => {
-    let profileId = -1;
-
-    // Use the profile that is specified, if any
-    if (profile === "Point") {
-        profileId = 1;
-    } else if (profile === "Wing") {
-        profileId = 2;
-    } else if (profile === "Big") {
-        profileId = 3;
-    } else if (profile === "Base") {
-        profileId = 0;
-    } else if (profile === "3andD") {
-        profileId = 4;
-    } else if (profile === "RawAthlete") {
-        profileId = 5;
-    }
-
-    // Use base profile if neither profile nor predeterminedHeight are set
-    if (profileId === -1 && predeterminedHeight === 0) {
-        profileId = 0;
-    }
-
-    // If no profile is specified, use the predetermined height to choose
-    if (profileId === -1) {
-        if (predeterminedHeight > 55 && random.randInt(0, 1000) < 999) {
-            profileId = 3; // Nearly all tall guys are "Big"
-        } else if (predeterminedHeight < 35 && random.randInt(0, 1000) < 999) {
-            profileId = 1; // Nearly all short guys are "Point"
+    // Use the predetermined height to choose the profile
+    let profileId;
+    if (predeterminedHeight > 55 && random.randInt(0, 1000) < 999) {
+        profileId = 3; // Nearly all tall guys are "Big"
+    } else if (predeterminedHeight < 35 && random.randInt(0, 1000) < 999) {
+        profileId = 1; // Nearly all short guys are "Point"
+    } else {
+        // Medium height players (plus the very few tall/short players who slip through)
+        const selector = random.randInt(1, 100);
+        if (selector <= 25) {
+            profileId = 0; // 25% get "Base"
+        } else if (selector <= 50) {
+            profileId = 2; // 25% get generic "Wing"
+        } else if (selector <= 75) {
+            profileId = 4; // 25% get "3andD Wing"
         } else {
-            // Medium height players (plus the very few tall/short players who slip through)
-            const selector = random.randInt(1, 100);
-            if (selector <= 25) {
-                profileId = 0; // 25% get "Base"
-            } else if (selector <= 50) {
-                profileId = 2; // 25% get generic "Wing"
-            } else if (selector <= 75) {
-                profileId = 4; // 25% get "3andD Wing"
-            } else {
-                profileId = 5; // 25% get "Raw Athletic Wing"
-            }
+            profileId = 5; // 25% get "Raw Athletic Wing"
         }
     }
 
@@ -159,7 +132,6 @@ const MAX_WEIGHT = 305;
 const generate = (
     tid: number,
     age: number,
-    profile: Profile,
     baseRating: number,
     pot: number,
     draftYear: number,
@@ -180,7 +152,6 @@ const generate = (
     if (newLeague) {
         // Create player for new league
         ratings = genRatings(
-            profile,
             baseRating,
             pot,
             g.startingSeason,
@@ -191,7 +162,6 @@ const generate = (
     } else {
         // Create player to be drafted
         ratings = genRatings(
-            profile,
             baseRating,
             pot,
             draftYear,

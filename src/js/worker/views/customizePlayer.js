@@ -66,7 +66,6 @@ async function updateCustomizePlayer(
             p = player.generate(
                 PLAYER.FREE_AGENT,
                 20,
-                "",
                 50,
                 50,
                 g.season,

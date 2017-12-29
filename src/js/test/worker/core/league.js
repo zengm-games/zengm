@@ -143,7 +143,7 @@ describe("core/league", () => {
         });
         it("should initialize players object store", async () => {
             const players = await idb.league.players.getAll();
-            assert.equal(players.length, 33 * 14 + 70 * 3);
+            assert.equal(players.length, 30 * 13 + 100 + 70 * 3);
         });
     });
 

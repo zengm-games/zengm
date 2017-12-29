@@ -397,10 +397,6 @@ async function newPhaseBeforeDraft(
 
     // Do annual tasks for each player, like checking for retirement
 
-    // Players meeting one of these cutoffs might retire
-    const maxAge = 34;
-    const minPot = 40;
-
     const players = await idb.cache.players.indexGetAll("playersByTid", [
         PLAYER.FREE_AGENT,
         Infinity,
@@ -411,22 +407,9 @@ async function newPhaseBeforeDraft(
         // Get player stats, used for HOF calculation
         const playerStats = await idb.getCopies.playerStats({ pid: p.pid });
 
-        const age = g.season - p.born.year;
-        const pot = p.ratings[p.ratings.length - 1].pot;
-
-        if (age > maxAge || pot < minPot) {
-            if (age > 34 || p.tid === PLAYER.FREE_AGENT) {
-                // Only players older than 34 or without a contract will retire
-                let excessAge = 0;
-                if (age > 34) {
-                    excessAge = (age - 34) / 20; // 0.05 for each year beyond 34
-                }
-                const excessPot = (40 - pot) / 50; // 0.02 for each potential rating below 40 (this can be negative)
-                if (excessAge + excessPot + random.gauss(0, 1) > 0) {
-                    player.retire(p, playerStats, conditions);
-                    update = true;
-                }
-            }
+        if (player.shouldRetire(p)) {
+            player.retire(p, playerStats, conditions);
+            update = true;
         }
 
         // Update "free agent years" counter and retire players who have been free agents for more than one years

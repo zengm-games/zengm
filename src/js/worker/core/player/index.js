@@ -5,6 +5,7 @@ import { finances } from "../../core";
 import develop from "./develop";
 import genFuzz from "./genFuzz";
 import generate from "./generate";
+import shouldRetire from "./shouldRetire";
 import { idb } from "../../db";
 import * as names from "../../../data/names";
 import { injuries, logEvent, random } from "../../util";
@@ -417,53 +418,6 @@ function pos(ratings: PlayerRatings): string {
     }
 
     return position;
-}
-
-/**
- * Add or subtract amount from all current ratings and update the player's contract appropriately.
- *
- * This should only be called when generating players for a new league. Otherwise, develop should be used. Also, make sure you call player.updateValues and player.setContract after this, because ratings are changed!
- *
- * @memberOf core.player
- * @param {Object} p Player object.
- * @param {number} amount Number to be added to each rating (can be negative).
- * @return {Object} Updated player object.
- */
-function bonus(p: Player | PlayerWithoutPid, amount: number) {
-    // Make sure age is always defined
-    const age = g.season - p.born.year;
-
-    const r = p.ratings.length - 1;
-
-    const ratingKeys = [
-        "stre",
-        "spd",
-        "jmp",
-        "endu",
-        "ins",
-        "dnk",
-        "ft",
-        "fg",
-        "tp",
-        "oiq",
-        "diq",
-        "drb",
-        "pss",
-        "reb",
-        "pot",
-    ];
-    for (let i = 0; i < ratingKeys.length; i++) {
-        const key = ratingKeys[i];
-        p.ratings[r][key] = limitRating(p.ratings[r][key] + amount);
-    }
-
-    // Update overall and potential
-    p.ratings[r].ovr = ovr(p.ratings[r]);
-    if (p.ratings[r].ovr > p.ratings[r].pot || age > 28) {
-        p.ratings[r].pot = p.ratings[r].ovr;
-    }
-
-    p.ratings[r].skills = skills(p.ratings[r]);
 }
 
 /**
@@ -1019,10 +973,10 @@ async function updateValues(
 function retire(
     p: Player,
     playerStats: PlayerStats[],
-    conditions: Conditions,
+    conditions?: Conditions,
     retiredNotification?: boolean = true,
 ) {
-    if (retiredNotification) {
+    if (conditions && retiredNotification) {
         logEvent(
             {
                 type: "retired",
@@ -1041,7 +995,7 @@ function retire(
     p.retiredYear = g.season;
 
     // Add to Hall of Fame?
-    if (madeHof(p, playerStats)) {
+    if (conditions && madeHof(p, playerStats)) {
         p.hof = true;
         p.awards.push({
             season: g.season,
@@ -1539,7 +1493,6 @@ export default {
     addStatsRow,
     genBaseMoods,
     addToFreeAgents,
-    bonus,
     genContract,
     setContract,
     develop,
@@ -1560,6 +1513,7 @@ export default {
     fuzzRating,
     getPlayerFakeAge,
     heightToRating,
+    shouldRetire,
 
     // When fully modular, delete these exports cause they are only used by other player functions
     limitRating,

@@ -221,8 +221,6 @@ const generate = (
             tid: -1,
             originalTid: -1,
             year: draftYear,
-            teamName: null,
-            teamRegion: null,
             pot,
             ovr: ratings.ovr,
             skills: ratings.skills,

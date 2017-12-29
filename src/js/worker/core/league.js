@@ -436,88 +436,68 @@ async function create(
             }
         }
     } else {
-        // No players in league file, so generate new players
-        const profiles = ["Point", "Wing", "Big", "Base", ""];
-        const baseRatings = [
-            37,
-            37,
-            36,
-            35,
-            34,
-            33,
-            32,
-            31,
-            30,
-            29,
-            28,
-            26,
-            26,
-            26,
-        ];
-        const pots = [75, 65, 55, 55, 60, 50, 70, 40, 55, 50, 60, 60, 45, 45];
+        // Generate past 16 years of draft classes
+        await draft.genPlayers(
+            PLAYER.UNDRAFTED,
+            scoutingRank,
+            16 * Math.round(70 * g.numTeams / 30), //16 years of draft classes
+        );
 
-        for (let tidTemp = -3; tidTemp < teams.length; tidTemp++) {
-            // Create multiple "teams" worth of players for the free agent pool
-            const tid2 = tidTemp < 0 ? PLAYER.FREE_AGENT : tidTemp;
+        // Develop players, check retire
+        const newPlayers = await idb.cache.players.getAll();
+        const keptPlayers = [];
+        let agingYears = 0;
+        for (let i = 0; i < newPlayers.length; i++) {
+            if (i % 70 === 0) {
+                agingYears += 1;
+            }
+            const p = newPlayers[i];
+            player.develop(p, agingYears, true);
+            p.draft.year -= agingYears;
+            await player.updateValues(p);
 
-            const goodNeutralBad = random.randInt(-1, 1); // determines if this will be a good team or not
-            random.shuffle(pots);
-            for (let n = 0; n < 14; n++) {
-                const profile = profiles[4];
-                const agingYears = random.randInt(0, 16);
-                const draftYear = g.startingSeason - 1 - agingYears;
+            if (player.shouldRetire(p)) {
+                await idb.cache.players.delete(p.pid);
+            } else {
+                keptPlayers.push(p);
+            }
+        }
 
-                const p = player.generate(
-                    tid2,
-                    19,
-                    profile,
-                    baseRatings[n],
-                    pots[n],
-                    draftYear,
-                    true,
-                    scoutingRank,
-                );
-                player.develop(p, agingYears, true);
+        // 16 instead of 13 for wiggle room (need min contract FAs sometimes)
+        if (keptPlayers.length < 16 * g.numTeams) {
+            throw new Error('Not enough players!');
+        }
 
-                if (n < 5) {
-                    player.bonus(p, goodNeutralBad * random.randInt(0, 20));
-                } else {
-                    player.bonus(p, 0);
-                }
-                if (tid2 === PLAYER.FREE_AGENT) {
-                    // Free agents
-                    player.bonus(p, -15);
-                }
-
-                // Update player values after ratings changes
-                await player.updateValues(p);
-
-                // Randomize contract expiration for players who aren't free agents, because otherwise contract expiration dates will all be synchronized
-                const randomizeExp = p.tid !== PLAYER.FREE_AGENT;
-
-                // Update contract based on development. Only write contract to player log if not a free agent.
+        // Add players to teams or free agency
+        keptPlayers.sort((a, b) => b.ratings[0].pot - a.ratings[0].pot);
+        const teamPlayers = keptPlayers.slice(0, 13 * g.numTeams);
+        const freeAgentPlayers = keptPlayers.slice(13 * g.numTeams);
+        random.shuffle(teamPlayers);
+        let newTid = -1; // So first iteration will be 0
+        for (let i = 0; i < teamPlayers.length; i++) {
+            if (i % 13 === 0) {
+                newTid += 1;
+            }
+            const p = teamPlayers[i];
+            p.tid = newTid;
+            player.setContract(
+                p,
+                player.genContract(p, true),
+                true,
+            );
+            await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
+        }
+        for (let i = 0; i < freeAgentPlayers.length; i++) {
+            const p = freeAgentPlayers[i];
+            if (i >= 100) {
+                await idb.cache.players.delete(p.pid);
+            } else {
                 player.setContract(
                     p,
-                    player.genContract(p, randomizeExp),
-                    p.tid >= 0,
+                    player.genContract(p, false),
+                    false,
                 );
-
-                // Save to database, adding pid
-                await idb.cache.players.add(p);
-
-                // Needs pid, so must be called after add
-                if (p.tid === PLAYER.FREE_AGENT) {
-                    await player.addToFreeAgents(p, g.phase, baseMoods);
-                } else {
-                    await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
-                }
-            }
-
-            // Initialize rebuilding/contending, when possible
-            if (tid2 >= 0) {
-                const t = await idb.cache.teams.get(tid2);
-                t.strategy = goodNeutralBad === 1 ? "contending" : "rebuilding";
-                await idb.cache.teams.put(t);
+                await player.addToFreeAgents(p, g.phase, baseMoods);
             }
         }
     }

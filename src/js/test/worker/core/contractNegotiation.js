@@ -21,8 +21,6 @@ describe("core/contractNegotiation", () => {
                 player.generate(
                     PLAYER.FREE_AGENT,
                     30,
-                    "",
-                    50,
                     50,
                     2017,
                     true,
@@ -31,8 +29,6 @@ describe("core/contractNegotiation", () => {
                 player.generate(
                     PLAYER.FREE_AGENT,
                     30,
-                    "",
-                    50,
                     50,
                     2017,
                     true,
@@ -40,23 +36,23 @@ describe("core/contractNegotiation", () => {
                 ),
 
                 // Non free agent
-                player.generate(12, 30, "", 50, 50, 2017, true, 15.5),
+                player.generate(12, 30, 50, 2017, true, 15.5),
 
                 // User's team - 14 players
-                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
-                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
-                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
-                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
-                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
-                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
-                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
-                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
-                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
-                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
-                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
-                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
-                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
-                player.generate(g.userTid, 30, "", 50, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, 50, 2017, true, 15.5),
             ],
         });
     });

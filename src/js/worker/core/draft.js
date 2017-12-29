@@ -106,9 +106,6 @@ async function genPlayers(
 
     for (let i = 0; i < numPlayers; i++) {
         const baseRating = random.randInt(8, 31);
-        const pot = Math.round(
-            helpers.bound(random.realGauss(48, 17), baseRating, 90),
-        );
 
         const agingYears = random.randInt(0, 3);
 
@@ -116,7 +113,6 @@ async function genPlayers(
             tid,
             baseAge,
             baseRating,
-            pot,
             draftYear,
             false,
             scoutingRank,
@@ -133,7 +129,6 @@ async function genPlayers(
         const p = player.generate(
             tid,
             19,
-            90,
             90,
             draftYear,
             false,
@@ -166,7 +161,6 @@ async function genPlayers(
         const p = player.generate(
             tid,
             19,
-            90,
             90,
             draftYear,
             false,

@@ -1839,7 +1839,7 @@ describe("util/account", () => {
             );
             assert.equal(awarded, false);
 
-            const p = await idb.cache.players.get(1);
+            const p = (await idb.cache.players.getAll())[0];
             p.tid = g.userTid;
             p.draft.tid = g.userTid;
             p.draft.round = 1;
@@ -1868,7 +1868,7 @@ describe("util/account", () => {
             assert.equal(awarded, true);
         });
         it("should not award achievement if not currently on user's team", async () => {
-            const p = await idb.cache.players.get(1);
+            const p = (await idb.cache.players.getAll())[0];
             p.tid = 15;
             await idb.cache.players.put(p);
             idb.cache.markDirtyIndexes("players");
@@ -1880,7 +1880,7 @@ describe("util/account", () => {
             assert.equal(awarded, false);
         });
         it("should not award achievement if not drafted by user", async () => {
-            const p = await idb.cache.players.get(1);
+            const p = (await idb.cache.players.getAll())[0];
             p.tid = g.userTid;
             p.draft.tid = 15;
             await idb.cache.players.put(p);
@@ -1893,7 +1893,7 @@ describe("util/account", () => {
             assert.equal(awarded, false);
         });
         it("should not award achievement if lottery pick", async () => {
-            const p = await idb.cache.players.get(1);
+            const p = (await idb.cache.players.getAll())[0];
             p.draft.tid = g.userTid;
             p.draft.pick = 7;
             await idb.cache.players.put(p);
@@ -1906,7 +1906,7 @@ describe("util/account", () => {
             assert.equal(awarded, false);
         });
         it("should not award achievement if old pick", async () => {
-            const p = await idb.cache.players.get(1);
+            const p = (await idb.cache.players.getAll())[0];
             p.draft.pick = 15;
             p.draft.year = g.season - 2;
             await idb.cache.players.put(p);
@@ -1934,7 +1934,7 @@ describe("util/account", () => {
             };
             await idb.cache.awards.put(awards);
 
-            const p = await idb.cache.players.get(1);
+            const p = (await idb.cache.players.getAll())[0];
             p.draft.year = g.season - 1;
             await idb.cache.players.put(p);
             idb.cache.markDirtyIndexes("players");

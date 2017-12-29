@@ -1,7 +1,5 @@
 PLAYER DEVELOPMENT REVAMP
 
-remove pot from player.generate API
-
 blk/stl -> oiq/diq
 
 rewrite player development
@@ -29,6 +27,8 @@ new ovr formula
 higher fuzz for draft prospects?
 
 more 2nd round picks turn out good, especially late. can't just be fuzz, won't affect AI enough
+
+handle pot correctly in customize player
 
 AI draft algo revisit
 

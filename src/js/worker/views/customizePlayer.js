@@ -67,7 +67,6 @@ async function updateCustomizePlayer(
                 PLAYER.FREE_AGENT,
                 20,
                 50,
-                50,
                 g.season,
                 false,
                 scoutingRank,

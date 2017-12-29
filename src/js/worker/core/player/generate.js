@@ -30,7 +30,6 @@ const sigmas = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10];
  */
 const genRatings = (
     baseRating: number,
-    pot: number,
     season: number,
     scoutingRank: number,
     tid: number,
@@ -93,7 +92,7 @@ const genRatings = (
         fuzz: genFuzz(scoutingRank),
         ovr: 0,
         pos: "",
-        pot,
+        pot: 0,
         season,
         skills: [],
     };
@@ -111,15 +110,11 @@ const genRatings = (
         ratings.pss = player.limitRating(ratings.pss + 10);
     }
 
-    ratings.ovr = player.ovr(ratings);
-
     if (tid === PLAYER.UNDRAFTED_2) {
         ratings.fuzz *= 2;
     } else if (tid === PLAYER.UNDRAFTED_3) {
         ratings.fuzz *= 4;
     }
-
-    ratings.skills = player.skills(ratings);
 
     ratings.pos = player.pos(ratings);
 
@@ -133,7 +128,6 @@ const generate = (
     tid: number,
     age: number,
     baseRating: number,
-    pot: number,
     draftYear: number,
     newLeague: boolean,
     scoutingRank: number,
@@ -153,7 +147,6 @@ const generate = (
         // Create player for new league
         ratings = genRatings(
             baseRating,
-            pot,
             g.startingSeason,
             scoutingRank,
             tid,
@@ -163,7 +156,6 @@ const generate = (
         // Create player to be drafted
         ratings = genRatings(
             baseRating,
-            pot,
             draftYear,
             scoutingRank,
             tid,
@@ -191,9 +183,9 @@ const generate = (
             tid: -1,
             originalTid: -1,
             year: draftYear,
-            pot,
-            ovr: ratings.ovr,
-            skills: ratings.skills,
+            pot: 0,
+            ovr: 0,
+            skills: [],
         },
         face: faces.generate(),
         firstName: nameInfo.firstName,

@@ -13,12 +13,12 @@ describe("core/trade", () => {
         await helpers.resetCache({
             players: [
                 // Two players per team
-                player.generate(0, 30, 50, 50, 2017, true, 15.5),
-                player.generate(0, 30, 50, 50, 2017, true, 15.5),
-                player.generate(1, 30, 50, 50, 2017, true, 15.5),
-                player.generate(1, 30, 50, 50, 2017, true, 15.5),
-                player.generate(2, 30, 50, 50, 2017, true, 15.5),
-                player.generate(2, 30, 50, 50, 2017, true, 15.5),
+                player.generate(0, 30, 50, 2017, true, 15.5),
+                player.generate(0, 30, 50, 2017, true, 15.5),
+                player.generate(1, 30, 50, 2017, true, 15.5),
+                player.generate(1, 30, 50, 2017, true, 15.5),
+                player.generate(2, 30, 50, 2017, true, 15.5),
+                player.generate(2, 30, 50, 2017, true, 15.5),
             ],
 
             trade: [

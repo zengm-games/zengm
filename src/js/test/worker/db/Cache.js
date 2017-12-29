@@ -10,7 +10,7 @@ describe("db/Cache", () => {
 
         await helpers.resetCache({
             players: [
-                player.generate(g.userTid, 30, 50, 50, 2017, true, 15.5),
+                player.generate(g.userTid, 30, 50, 2017, true, 15.5),
             ],
         });
     });
@@ -24,7 +24,7 @@ describe("db/Cache", () => {
             assert.equal(p.pid, 0);
         });
         it("should return undefined for invalid ID", async () => {
-            const p = await idb.cache.players.get(1);
+            const p = (await idb.cache.players.getAll())[0];
             assert.equal(typeof p, "undefined");
         });
 

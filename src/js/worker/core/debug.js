@@ -258,7 +258,6 @@ async function leagueAverageContract() {
 
 function averageCareerArc(
     baseOvr: number,
-    basePot: number,
     ratingToSave: RatingKey,
 ) {
     const numPlayers = 1000; // Number of players per profile
@@ -281,7 +280,6 @@ function averageCareerArc(
                 0,
                 19,
                 baseOvr,
-                basePot,
                 2013,
                 true,
                 15,

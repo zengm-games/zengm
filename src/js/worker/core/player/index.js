@@ -1075,7 +1075,6 @@ function augmentPartialPlayer(
         p.tid,
         age,
         0,
-        0,
         g.startingSeason - age,
         true,
         scoutingRank,

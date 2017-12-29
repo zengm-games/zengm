@@ -15,7 +15,6 @@ describe("db/getCopies", async () => {
                 PLAYER.UNDRAFTED,
                 19,
                 50,
-                60,
                 2011,
                 false,
                 28,

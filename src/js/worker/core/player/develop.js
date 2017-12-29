@@ -5,7 +5,7 @@ import range from "lodash/range";
 import { g, helpers } from "../../../common";
 import { player } from "../../core";
 import { random } from "../../util";
-import type { PlayerRatings, RatingKey } from "../../../common/types";
+import type { PlayerRatings, PlayerSkill, RatingKey } from "../../../common/types";
 
 const shootingFormula = {
     ageModifier: (age: number) => {
@@ -163,8 +163,6 @@ const developSeason = (
                 ),
         );
     }
-
-    ratings.ovr = player.ovr(ratings);
 };
 
 // 100 times, simulate aging up to 29, and pick the 75th percentile max
@@ -207,6 +205,7 @@ const bootstrapPot = (ratings: PlayerRatings, age: number): number => {
 const develop = (
     p: {
         born: { loc: string, year: number },
+        draft: { ovr: number, pot: number, skills: PlayerSkill[] },
         pos?: string,
         ratings: PlayerRatings[],
     },
@@ -227,8 +226,16 @@ const develop = (
         developSeason(ratings, age, coachingRank);
     }
 
+    // Run these even for players developing 0 seasons
+    ratings.ovr = player.ovr(ratings);
     ratings.pot = bootstrapPot(ratings, age);
     ratings.skills = player.skills(ratings);
+
+    if (newPlayer) {
+        p.draft.ovr = ratings.ovr;
+        p.draft.pot = ratings.pot;
+        p.draft.skills = ratings.skills;
+    }
 
     if (newPlayer) {
         p.born.year = g.season - age;

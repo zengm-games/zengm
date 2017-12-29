@@ -214,7 +214,6 @@ describe("core/team", () => {
                         tid,
                         30,
                         50,
-                        50,
                         2017,
                         true,
                         15.5,

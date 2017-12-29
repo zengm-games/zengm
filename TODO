@@ -32,15 +32,20 @@ handle pot correctly in customize player
 
 AI draft algo revisit
 
+evaluate performance of creating a new league - is it writing players to database an extra time? can that be avoided?
+
 upgrade code for pot, diq, oiq
+
+do players actually exceed their initial pot 25% of the time?
 
 changes
 - Height can increase in young players, although it's quite rare.
 - Players in a new league are much more similar to players you draft in an existing league. Before there were different code paths to generating them.
+- Potential is real.
 
 extra blog points
 - oiq/diq does not capture players who gamble to get blk/stl while hurting defense, but old one didn't either. could be simulated by U shaped effect of diq.
-- similarly, other things missinng, like shoot too much or too little can't both be represented by low oiq
+- similarly, other things missinng, like shoot too much or too little can't both be represented by low oiq. probably should be coaching
 
 later
 - in new league: set rookie contracts appropriately

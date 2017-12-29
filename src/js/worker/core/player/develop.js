@@ -24,6 +24,27 @@ const shootingFormula = {
     changeLimits: [-2, 15],
 };
 
+const iqFormula = {
+    ageModifier: (age: number) => {
+        if (age <= 22) {
+            return random.uniform(0, 10);
+        }
+
+        // Reverse most of the age-related decline in calcBaseChange
+        if (age <= 27) {
+            return 0;
+        }
+        if (age <= 29) {
+            return 1;
+        }
+        if (age <= 31) {
+            return 2;
+        }
+        return 2.5;
+    },
+    changeLimits: [-2, 20],
+};
+
 const ratingsFormulas: {
     [key: RatingKey]: {
         ageModifier?: number => number,
@@ -72,14 +93,8 @@ const ratingsFormulas: {
     ft: shootingFormula,
     fg: shootingFormula,
     tp: shootingFormula,
-    oiq: {
-        ageModifier: shootingFormula.ageModifier,
-        changeLimits: [-2, 20],
-    },
-    diq: {
-        ageModifier: shootingFormula.ageModifier,
-        changeLimits: [-2, 20],
-    },
+    oiq: iqFormula,
+    diq: iqFormula,
     drb: {
         ageModifier: shootingFormula.ageModifier,
         changeLimits: [-2, 5],
@@ -179,8 +194,9 @@ const bootstrapPot = (ratings: PlayerRatings, age: number): number => {
         let maxOvr = ratings.ovr;
         for (let i = age + 1; i < 30; i++) {
             developSeason(copiedRatings, i); // Purposely no coachingRank
-            if (copiedRatings.ovr > maxOvr) {
-                maxOvr = copiedRatings.ovr;
+            const ovr = player.ovr(copiedRatings);
+            if (ovr > maxOvr) {
+                maxOvr = ovr;
             }
         }
 

@@ -4,6 +4,13 @@ blk/stl -> oiq/diq
 
 rewrite player development
 - https://www.reddit.com/r/BasketballGM/comments/7frlq6/how_do_pro_basketball_players_develop/
+- no baserating?
+- correlations between ratings (shooting, iq)
+  - both in generate and develop
+- height linked to initial ratings (generate)
+- height linked to growth too?
+- make sure positions are balanced (although ovr formula might be needed first)
+- make sure ratings distributions are all similar
 
 shrink range of normal, allow rare outliers
 - where do the 100s come from, which component of generate?
@@ -38,6 +45,8 @@ evaluate performance of creating a new league - is it writing players to databas
 upgrade code for pot, diq, oiq
 
 do players actually exceed their initial pot 25% of the time?
+
+reevaluate skill labels
 
 changes
 - Height can increase in young players, although it's quite rare.

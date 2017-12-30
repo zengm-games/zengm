@@ -14,12 +14,12 @@ const shootingFormula = {
             return 0;
         }
         if (age <= 29) {
-            return 1;
+            return 0.5;
         }
         if (age <= 31) {
-            return 2;
+            return 1.5;
         }
-        return 2.5;
+        return 2;
     },
     changeLimits: [-2, 15],
 };
@@ -35,12 +35,12 @@ const iqFormula = {
             return 0;
         }
         if (age <= 29) {
-            return 1;
+            return 0.5;
         }
         if (age <= 31) {
-            return 2;
+            return 1.5;
         }
-        return 2.5;
+        return 2;
     },
     changeLimits: [-2, 20],
 };
@@ -127,10 +127,12 @@ const calcBaseChange = (age: number, coachingRank: number): number => {
     }
 
     // Noise
-    if (age <= 25) {
+    if (age <= 23) {
         val += helpers.bound(random.realGauss(0, 5), -4, 30);
+    } else if (age <= 25) {
+        val += helpers.bound(random.realGauss(0, 5), -4, 15);
     } else {
-        val += helpers.bound(random.realGauss(0, 3), -2, 10);
+        val += helpers.bound(random.realGauss(0, 3), -2, 5);
     }
 
     // Modulate by coaching

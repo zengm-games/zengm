@@ -1,119 +1,16 @@
 // @flow
 
 import faces from "facesjs";
-import { PLAYER, g } from "../../../common";
+import { PLAYER, g, helpers } from "../../../common";
 import { player } from "../../core";
 import genFuzz from "./genFuzz";
 import { random } from "../../util";
 import type { PlayerRatings, PlayerWithoutPid } from "../../../common/types";
 
-// Each profile should sum to ~150
-const profiles = {
-    base: {
-        stre: 10,
-        spd: 10,
-        jmp: 10,
-        endu: 10,
-        ins: 10,
-        dnk: 10,
-        ft: 10,
-        fg: 10,
-        tp: 25,
-        oiq: 10,
-        diq: 10,
-        drb: 10,
-        pss: 10,
-        reb: 10,
-    },
-    pointGuard: {
-        stre: -10,
-        spd: 40,
-        jmp: 20,
-        endu: 15,
-        ins: 0,
-        dnk: 0,
-        ft: 10,
-        fg: 15,
-        tp: 25,
-        oiq: 30,
-        diq: 0,
-        drb: 20,
-        pss: 20,
-        reb: 0,
-    },
-    wing: {
-        stre: 10,
-        spd: 15,
-        jmp: 15,
-        endu: 0,
-        ins: 0,
-        dnk: 25,
-        ft: 15,
-        fg: 15,
-        tp: 20,
-        oiq: 10,
-        diq: 10,
-        drb: 15,
-        pss: 0,
-        reb: 15,
-    },
-    big: {
-        stre: 30,
-        spd: -15,
-        jmp: -15,
-        endu: -5,
-        ins: 30,
-        dnk: 30,
-        ft: -5,
-        fg: -15,
-        tp: -25,
-        oiq: 10,
-        diq: 10,
-        drb: -20,
-        pss: -20,
-        reb: 30,
-    },
-    threeAndD: {
-        stre: 10,
-        spd: 25,
-        jmp: 10,
-        endu: 0,
-        ins: -10,
-        dnk: -5,
-        ft: 10,
-        fg: 20,
-        tp: 30,
-        oiq: 20,
-        diq: 20,
-        drb: 10,
-        pss: 0,
-        reb: 10,
-    },
-    athlete: {
-        stre: 20,
-        spd: 30,
-        jmp: 35,
-        endu: 20,
-        ins: 10,
-        dnk: 25,
-        ft: 0,
-        fg: 0,
-        tp: 0,
-        oiq: 0,
-        diq: 0,
-        drb: 0,
-        pss: 0,
-        reb: 0,
-    },
-};
-
-const profileKeys = Object.keys(profiles.base);
-
 /**
  * Generate initial ratings for a newly-created player.
  *
  * @param {number} baseRating [description]
- * @param {number} pot [description]
  * @param {number} season [description]
  * @param {number} scoutingRank Between 1 and g.numTeams (default 30), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
  * @param {number} tid [description]
@@ -124,45 +21,42 @@ const genRatings = (
     season: number,
     scoutingRank: number,
     tid: number,
-    predeterminedHeight: number,
+    hgt: number,
 ): PlayerRatings => {
-    // Use the predetermined height to choose the profile
-    let profile;
-    if (predeterminedHeight > 55 && random.randInt(0, 1000) < 999) {
-        profile = profiles.big; // Nearly all tall guys are "Big"
-    } else if (predeterminedHeight < 35 && random.randInt(0, 1000) < 999) {
-        profile = profiles.pointGuard; // Nearly all short guys are "Point"
-    } else {
-        // Medium height players (plus the very few tall/short players who slip through)
-        const selector = random.randInt(1, 100);
-        if (selector <= 25) {
-            profile = profiles.base; // 25% get "Base"
-        } else if (selector <= 50) {
-            profile = profiles.wing; // 25% get generic "Wing"
-        } else if (selector <= 75) {
-            profile = profiles.threeAndD; // 25% get "3andD Wing"
-        } else {
-            profile = profiles.athlete; // 25% get "Raw Athletic Wing"
-        }
-    }
+    baseRating = random.realGauss(baseRating / 2, 5);
 
-    baseRating = random.realGauss(baseRating, 5);
+    // Tall players are less talented, and all tend towards dumb and can't shoot because they are rookies
+    const rawRatings = {
+        stre: helpers.bound(hgt, 0, 60),
+        spd: helpers.bound(100 - hgt, 0, 60),
+        jmp: helpers.bound(100 - hgt, 0, 60),
+        endu: helpers.bound(100 - hgt, 0, 40),
+        ins: helpers.bound(hgt, 0, 40),
+        dnk: helpers.bound(hgt, 0, 40),
+        ft: helpers.bound(100 - hgt, 0, 40),
+        fg: helpers.bound(100 - hgt, 0, 40),
+        tp: helpers.bound(100 - hgt, 0, 40),
+        oiq: helpers.bound(100 - hgt, 0, 20),
+        diq: 20,
+        drb: helpers.bound(100 - hgt, 0, 60),
+        pss: helpers.bound(100 - hgt, 0, 60),
+        reb: helpers.bound(hgt, 0, 60),
+    };
 
-    const rawRatings = Object.assign({}, profile);
-    for (const key of profileKeys) {
-        rawRatings[key] = player.limitRating(random.realGauss(rawRatings[key] + baseRating, 5));
+    for (const key of Object.keys(rawRatings)) {
+        rawRatings[key] = player.limitRating(random.realGauss(rawRatings[key], 3));
     }
 
     // Small chance of freakish ability in 2 categories
-    for (let i = 0; i < 2; i++) {
+    /*for (let i = 0; i < 2; i++) {
         if (Math.random() < 0.2) {
-            const key = random.choice(profileKeys);
+            const key = random.choice(Object.keys(rawRatings));
             rawRatings[key] = player.limitRating(rawRatings[key] + random.realGauss(20, 5));
         }
-    }
+    }*/
 
     const ratings = Object.assign(rawRatings, {
-        hgt: predeterminedHeight,
+        hgt,
         fuzz: genFuzz(scoutingRank),
         ovr: 0,
         pos: "F",
@@ -172,13 +66,13 @@ const genRatings = (
     });
 
     // Ugly hack: Tall people can't dribble/pass very well
-    if (ratings.hgt > 40) {
+    /*if (ratings.hgt > 40) {
         ratings.drb = player.limitRating(ratings.drb - (ratings.hgt - 40));
         ratings.pss = player.limitRating(ratings.pss - (ratings.hgt - 40));
     } else {
         ratings.drb = player.limitRating(ratings.drb + 10);
         ratings.pss = player.limitRating(ratings.pss + 10);
-    }
+    }*/
 
     if (tid === PLAYER.UNDRAFTED_2) {
         ratings.fuzz *= 2;

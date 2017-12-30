@@ -72,7 +72,7 @@ const RatingsOverview = ({ ratings }) => {
 RatingsOverview.propTypes = {
     ratings: PropTypes.arrayOf(
         PropTypes.shape({
-            blk: PropTypes.number.isRequired,
+            diq: PropTypes.number.isRequired,
             dnk: PropTypes.number.isRequired,
             drb: PropTypes.number.isRequired,
             endu: PropTypes.number.isRequired,
@@ -81,12 +81,12 @@ RatingsOverview.propTypes = {
             hgt: PropTypes.number.isRequired,
             ins: PropTypes.number.isRequired,
             jmp: PropTypes.number.isRequired,
+            oiq: PropTypes.number.isRequired,
             ovr: PropTypes.number.isRequired,
             pot: PropTypes.number.isRequired,
             pss: PropTypes.number.isRequired,
             reb: PropTypes.number.isRequired,
             spd: PropTypes.number.isRequired,
-            stl: PropTypes.number.isRequired,
             stre: PropTypes.number.isRequired,
             tp: PropTypes.number.isRequired,
         }),

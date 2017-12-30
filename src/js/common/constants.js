@@ -42,50 +42,50 @@ const COMPOSITE_WEIGHTS = {
         ratings: ["spd", "jmp", "dnk", "tp", "drb", "pss"],
     },
     usage: {
-        ratings: ["ins", "dnk", "fg", "tp", "spd", "drb"],
-        weights: [1.5, 1, 1, 1, 0.15, 0.15],
+        ratings: ["ins", "dnk", "fg", "tp", "spd", "drb", "oiq"],
+        weights: [1.5, 1, 1, 1, 0.15, 0.15, 0.5],
     },
     dribbling: {
         ratings: ["drb", "spd"],
     },
     passing: {
-        ratings: ["drb", "pss"],
-        weights: [0.4, 1],
+        ratings: ["drb", "pss", "oiq"],
+        weights: [0.4, 1, 0.5],
     },
     turnovers: {
-        ratings: ["drb", "pss", "spd", "hgt", "ins"],
-        weights: [1, 1, -1, 1, 1],
+        ratings: ["drb", "pss", "spd", "hgt", "ins", "oiq"],
+        weights: [1, 1, -1, 1, 1, -1],
     },
     shootingAtRim: {
-        ratings: ["hgt", "spd", "jmp", "dnk"],
-        weights: [1, 0.2, 0.6, 0.4],
+        ratings: ["hgt", "spd", "jmp", "dnk", "oiq"],
+        weights: [1.5, 0.2, 0.6, 0.4, 0.2],
     },
     shootingLowPost: {
-        ratings: ["hgt", "stre", "spd", "ins"],
-        weights: [1, 0.6, 0.2, 1],
+        ratings: ["hgt", "stre", "spd", "ins", "oiq"],
+        weights: [2, 0.6, 0.2, 1, 0.2],
     },
     shootingMidRange: {
-        ratings: ["hgt", "fg"],
+        ratings: ["oiq", "fg"],
         weights: [0.2, 1],
     },
     shootingThreePointer: {
-        ratings: ["hgt", "tp"],
+        ratings: ["oiq", "tp"],
         weights: [0.1, 1],
     },
     shootingFT: {
         ratings: ["ft"],
     },
     rebounding: {
-        ratings: ["hgt", "stre", "jmp", "reb"],
-        weights: [1.5, 0.1, 0.1, 0.7],
+        ratings: ["hgt", "stre", "jmp", "reb", "oiq", "diq"],
+        weights: [3, 0.1, 0.1, 0.7, 0.5, 0.5],
     },
     stealing: {
         ratings: [50, "spd", "diq"],
-        weights: [1, 1, 1],
+        weights: [1, 1, 2],
     },
     blocking: {
         ratings: ["hgt", "jmp", "diq"],
-        weights: [1.5, 0.5, 0.5],
+        weights: [2, 1.5, 0.5],
     },
     fouling: {
         ratings: [50, "hgt", "diq", "spd"],
@@ -104,8 +104,8 @@ const COMPOSITE_WEIGHTS = {
         weights: [0.5, 1, 2, 0.5, 1],
     },
     endurance: {
-        ratings: [50, "endu", "hgt"],
-        weights: [1, 1, -0.1],
+        ratings: [50, "endu"],
+        weights: [1, 1],
     },
     athleticism: {
         ratings: ["stre", "spd", "jmp", "hgt"],

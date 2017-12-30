@@ -164,8 +164,8 @@ async function regressRatingsPer() {
             "ft",
             "fg",
             "tp",
-            "blk",
-            "stl",
+            "oiq",
+            "diq",
             "drb",
             "pss",
             "reb",
@@ -197,8 +197,8 @@ async function regressRatingsPer() {
                             pr.ft,
                             pr.fg,
                             pr.tp,
-                            pr.blk,
-                            pr.stl,
+                            pr.oiq,
+                            pr.diq,
                             pr.drb,
                             pr.pss,
                             pr.reb,
@@ -209,7 +209,9 @@ async function regressRatingsPer() {
         }
     }
 
+console.log(ratings);
     const x = new Matrix(ratings);
+console.log(pers);
     const y = new ColumnVector(pers);
 
     // $FlowFixMe
@@ -226,8 +228,8 @@ async function regressRatingsPer() {
         "ft",
         "fg",
         "tp",
-        "blk",
-        "stl",
+        "oiq",
+        "diq",
         "drb",
         "pss",
         "reb",

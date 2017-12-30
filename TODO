@@ -4,16 +4,15 @@ blk/stl -> oiq/diq
 
 rewrite player development
 - https://www.reddit.com/r/BasketballGM/comments/7frlq6/how_do_pro_basketball_players_develop/
-- no baserating?
 - correlations between ratings (shooting, iq)
   - both in generate and develop
+  - maybe generate and develop can share code?
 - height linked to initial ratings (generate)
 - height linked to growth too?
 - make sure positions are balanced (although ovr formula might be needed first)
 - make sure ratings distributions are all similar
 
 shrink range of normal, allow rare outliers
-- where do the 100s come from, which component of generate?
 
 ensure statistical outliers exist!
 
@@ -21,14 +20,14 @@ much less likely to have skilled tall players
 - either make rare guards tall, or rare bigs skilled
 - player gen - pick a height, generate ratings for that height. continuous.
 
-no unrealistic pot (based on height and ratings that improve a lot like IQ)
-- bootstrap pot - run 10 simulations of career arc and avg the highest value. then don't use pot in player development formulas at all!
-  - or, have a deterministic flag that runs it without any of the random big jumps
+bootstrap pot
 - how to handle fuzz?
 
-compare career arcs (peak length)
+do players actually exceed their initial pot 25% of the time?
 
-use oiq and diq in game sim
+reevaluate position algorithm
+
+reevaluate skill labels
 
 new ovr formula
 
@@ -38,15 +37,13 @@ more 2nd round picks turn out good, especially late. can't just be fuzz, won't a
 
 handle pot correctly in customize player
 
-AI draft algo revisit
-
 evaluate performance of creating a new league - is it writing players to database an extra time? can that be avoided?
 
 upgrade code for pot, diq, oiq
 
-do players actually exceed their initial pot 25% of the time?
+AI draft algo revisit
 
-reevaluate skill labels
+compare career arcs (peak length)
 
 changes
 - Height can increase in young players, although it's quite rare.

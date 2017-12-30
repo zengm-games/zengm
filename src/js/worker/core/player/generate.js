@@ -17,22 +17,19 @@ import type { PlayerRatings, PlayerWithoutPid } from "../../../common/types";
  * @return {Object} Ratings object
  */
 const genRatings = (
-    baseRating: number,
     season: number,
     scoutingRank: number,
     tid: number,
     hgt: number,
 ): PlayerRatings => {
-    baseRating = random.realGauss(baseRating / 2, 5);
-
     // Tall players are less talented, and all tend towards dumb and can't shoot because they are rookies
     const rawRatings = {
-        stre: helpers.bound(hgt, 0, 60),
-        spd: helpers.bound(100 - hgt, 0, 60),
-        jmp: helpers.bound(100 - hgt, 0, 60),
+        stre: helpers.bound(hgt - 20, 0, 60),
+        spd: 10 + helpers.bound(100 - hgt, 0, 60),
+        jmp: 10 + helpers.bound(100 - hgt, 0, 60),
         endu: helpers.bound(100 - hgt, 0, 40),
-        ins: helpers.bound(hgt, 0, 40),
-        dnk: helpers.bound(hgt, 0, 40),
+        ins: helpers.bound(hgt - 20, 0, 40),
+        dnk: helpers.bound(hgt - 20, 0, 40),
         ft: helpers.bound(100 - hgt, 0, 40),
         fg: helpers.bound(100 - hgt, 0, 40),
         tp: helpers.bound(100 - hgt, 0, 40),
@@ -40,7 +37,7 @@ const genRatings = (
         diq: 20,
         drb: helpers.bound(100 - hgt, 0, 60),
         pss: helpers.bound(100 - hgt, 0, 60),
-        reb: helpers.bound(hgt, 0, 60),
+        reb: helpers.bound(hgt - 20, 0, 60),
     };
 
     for (const key of Object.keys(rawRatings)) {
@@ -110,7 +107,6 @@ const generate = (
     if (newLeague) {
         // Create player for new league
         ratings = genRatings(
-            baseRating,
             g.startingSeason,
             scoutingRank,
             tid,
@@ -119,7 +115,6 @@ const generate = (
     } else {
         // Create player to be drafted
         ratings = genRatings(
-            baseRating,
             draftYear,
             scoutingRank,
             tid,

@@ -822,7 +822,7 @@ class GameSim {
      * @return {string} Either "tov" or "stl" depending on whether the turnover was caused by a steal or not.
      */
     doTov() {
-        const ratios = this.ratingArray("turnovers", this.o, 0.5);
+        const ratios = this.ratingArray("turnovers", this.o, 2);
         const p = this.playersOnCourt[this.o][pickPlayer(ratios)];
         this.recordStat(this.o, p, "tov");
         if (this.probStl() > Math.random()) {
@@ -855,7 +855,7 @@ class GameSim {
      * @return {string} Currently always returns "stl".
      */
     doStl(pStoleFrom: number) {
-        const ratios = this.ratingArray("stealing", this.d);
+        const ratios = this.ratingArray("stealing", this.d, 5);
         const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
         this.recordStat(this.d, p, "stl");
         this.recordPlay("stl", this.d, [
@@ -880,7 +880,7 @@ class GameSim {
         // Is this an "assisted" attempt (i.e. an assist will be recorded if it's made)
         let passer;
         if (this.probAst() > Math.random()) {
-            const ratios = this.ratingArray("passing", this.o, 2);
+            const ratios = this.ratingArray("passing", this.o, 10);
             passer = pickPlayer(ratios, shooter);
         }
 
@@ -891,7 +891,7 @@ class GameSim {
         let type;
         if (
             this.team[this.o].player[p].compositeRating.shootingThreePointer >
-                0.5 &&
+                0.45 &&
             Math.random() <
                 0.35 *
                     this.team[this.o].player[p].compositeRating
@@ -903,7 +903,7 @@ class GameSim {
             probMake =
                 this.team[this.o].player[p].compositeRating
                     .shootingThreePointer *
-                    0.35 +
+                    0.45 +
                 0.24;
             probAndOne = 0.01;
         } else {
@@ -929,7 +929,7 @@ class GameSim {
                 probMake =
                     this.team[this.o].player[p].compositeRating
                         .shootingMidRange *
-                        0.3 +
+                        0.32 +
                     0.29;
                 probAndOne = 0.05;
             } else if (r2 > r3) {
@@ -938,7 +938,7 @@ class GameSim {
                 probMissAndFoul = 0.37;
                 probMake =
                     this.team[this.o].player[p].compositeRating.shootingAtRim *
-                        0.3 +
+                        0.32 +
                     0.52;
                 probAndOne = 0.25;
             } else {
@@ -948,7 +948,7 @@ class GameSim {
                 probMake =
                     this.team[this.o].player[p].compositeRating
                         .shootingLowPost *
-                        0.3 +
+                        0.32 +
                     0.37;
                 probAndOne = 0.15;
             }
@@ -1043,7 +1043,7 @@ class GameSim {
             this.recordStat(this.o, p, "tpa");
         }
 
-        const ratios = this.ratingArray("blocking", this.d, 4);
+        const ratios = this.ratingArray("blocking", this.d, 10);
         const p2 = this.playersOnCourt[this.d][pickPlayer(ratios)];
         this.recordStat(this.d, p2, "blk");
 
@@ -1407,7 +1407,7 @@ class GameSim {
      * @param {number} t Team (0 or 1, this.o or this.d).
      */
     doPf(t: TeamNum) {
-        const ratios = this.ratingArray("fouling", t);
+        const ratios = this.ratingArray("fouling", t, 2);
         const p = this.playersOnCourt[t][pickPlayer(ratios)];
         this.recordStat(this.d, p, "pf");
         this.recordPlay("pf", this.d, [this.team[this.d].player[p].name]);
@@ -1427,6 +1427,7 @@ class GameSim {
      *
      * Simulates a rebound opportunity (e.g. after a missed shot).
      *
+
      * @return {string} "drb" for a defensive rebound, "orb" for an offensive rebound, null for no rebound (like if the ball goes out of bounds).
      */
     doReb() {
@@ -1443,7 +1444,7 @@ class GameSim {
                 (2 + this.team[this.o].compositeRating.rebounding) >
             Math.random()
         ) {
-            ratios = this.ratingArray("rebounding", this.d);
+            ratios = this.ratingArray("rebounding", this.d, 3);
             p = this.playersOnCourt[this.d][pickPlayer(ratios)];
             this.recordStat(this.d, p, "drb");
             this.recordPlay("drb", this.d, [this.team[this.d].player[p].name]);
@@ -1451,7 +1452,7 @@ class GameSim {
             return "drb";
         }
 
-        ratios = this.ratingArray("rebounding", this.o);
+        ratios = this.ratingArray("rebounding", this.o, 3);
         p = this.playersOnCourt[this.o][pickPlayer(ratios)];
         this.recordStat(this.o, p, "orb");
         this.recordPlay("orb", this.o, [this.team[this.o].player[p].name]);

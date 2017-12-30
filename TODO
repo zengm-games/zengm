@@ -11,10 +11,13 @@ rewrite player development
 - height linked to growth too?
 - make sure positions are balanced (although ovr formula might be needed first)
 - make sure ratings distributions are all similar
+- draft pick development is too variable, second round picks almost as good as first?
 
 shrink range of normal, allow rare outliers
 
 ensure statistical outliers exist!
+- set to 100 see what happens
+- see how many players need to be generated for a 100
 
 much less likely to have skilled tall players
 - either make rare guards tall, or rare bigs skilled
@@ -24,6 +27,11 @@ bootstrap pot
 - how to handle fuzz?
 
 do players actually exceed their initial pot 25% of the time?
+
+nobody should get literally 0 of a stat like rebounds
+- nonlinearity should be at high end, not low end?
+- for rebounding (and maybe others too) could be a bonus applied to just the top player, not affecting the others? to simulate that there is one guy assigned to that task primarily.
+- or, maybe add a constant to each term? but isn't it already like that since 0 is rare?
 
 reevaluate position algorithm
 

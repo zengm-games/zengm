@@ -113,7 +113,7 @@ function hasSkill(
         denominator += 100 * weights[i];
     }
 
-    if (numerator / denominator > 0.75) {
+    if (numerator / denominator > 0.68) {
         return true;
     }
     return false;
@@ -338,9 +338,9 @@ function pos(ratings: PlayerRatings): string {
         // 6'6"
         position = "SF";
     } else if (
-        ratings.spd < 70 &&
-        ratings.drb < 70 &&
-        ratings.pss < 70 &&
+        ratings.spd < 60 &&
+        ratings.drb < 60 &&
+        ratings.pss < 60 &&
         ratings.hgt >= 35
     ) {
         position = "SG";
@@ -351,8 +351,8 @@ function pos(ratings: PlayerRatings): string {
     // No height requirements for point guards
     // PG is a fast ball handler, or a super ball handler
     if (
-        (ratings.spd >= 70 && ratings.pss + ratings.drb >= 100) ||
-        (ratings.spd >= 30 && ratings.pss + ratings.drb >= 145)
+        (ratings.spd >= 60 && ratings.pss + ratings.drb >= 90) ||
+        (ratings.spd >= 40 && ratings.pss + ratings.drb >= 130)
     ) {
         pg = true;
     }
@@ -362,17 +362,17 @@ function pos(ratings: PlayerRatings): string {
         ratings.spd >= 50 &&
         ratings.drb >= 50 &&
         ratings.hgt >= 37 &&
-        (ratings.dnk >= 65 || ratings.tp >= 75)
+        (ratings.dnk >= 58 || ratings.tp >= 63)
     ) {
         sg = true;
     }
 
     // SF is similar to SG but must be taller and has lower dribble/speed requirements
     if (
-        ratings.spd >= 35 &&
-        ratings.drb > 25 &&
+        ratings.spd >= 40 &&
+        ratings.drb > 30 &&
         ratings.hgt >= 44 &&
-        (ratings.dnk >= 75 || ratings.tp >= 65)
+        (ratings.dnk >= 58 || ratings.tp >= 63)
     ) {
         sf = true;
     }
@@ -380,15 +380,15 @@ function pos(ratings: PlayerRatings): string {
     // PF must meet height/strength requirements.  If they are too tall then they are a Center only... unless they can shoot
     if (
         ratings.hgt >= 44 &&
-        ratings.stre >= 60 &&
-        ratings.hgt + ratings.stre >= 113 &&
-        (ratings.hgt <= 63 || ratings.tp >= 70)
+        ratings.stre >= 55 &&
+        ratings.hgt + ratings.stre >= 110 &&
+        (ratings.hgt <= 63 || ratings.tp >= 60)
     ) {
         pf = true;
     }
 
     // C must be extra tall or is strong/shotblocker but not quite as tall
-    if (ratings.hgt >= 63 || (ratings.hgt >= 54 && ratings.stre >= 80)) {
+    if (ratings.hgt >= 63 || (ratings.hgt >= 54 && ratings.stre >= 75)) {
         c = true;
     }
 

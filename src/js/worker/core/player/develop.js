@@ -2,7 +2,7 @@
 
 import orderBy from "lodash/orderBy";
 import range from "lodash/range";
-import { g, helpers } from "../../../common";
+import { PLAYER, g, helpers } from "../../../common";
 import { player } from "../../core";
 import { random } from "../../util";
 import type { PlayerRatings, PlayerSkill, RatingKey } from "../../../common/types";
@@ -226,6 +226,7 @@ const develop = (
         draft: { ovr: number, pot: number, skills: PlayerSkill[] },
         pos?: string,
         ratings: PlayerRatings[],
+        tid: number,
     },
     years?: number = 1,
     newPlayer?: boolean = false,
@@ -249,7 +250,7 @@ const develop = (
     ratings.pot = bootstrapPot(ratings, age);
     ratings.skills = player.skills(ratings);
 
-    if (newPlayer) {
+    if (p.tid === PLAYER.UNDRAFTED || p.tid === PLAYER.UNDRAFTED_2 || p.tid === PLAYER.UNDRAFTED_3) {
         p.draft.ovr = ratings.ovr;
         p.draft.pot = ratings.pot;
         p.draft.skills = ratings.skills;

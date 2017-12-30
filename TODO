@@ -12,6 +12,8 @@ rewrite player development
 - make sure positions are balanced (although ovr formula might be needed first)
 - make sure ratings distributions are all similar
 - draft pick development is too variable, second round picks almost as good as first?
+  - increase IQ more drastically in first season
+    - but have initial IQ be a big factor, maybe 0-20 is much less likely to grow than 20-40. that will lead to some higher pot players
 
 shrink range of normal, allow rare outliers
 
@@ -24,7 +26,7 @@ much less likely to have skilled tall players
 - player gen - pick a height, generate ratings for that height. continuous.
 
 bootstrap pot
-- how to handle fuzz?
+- how to handle fuzz? ideally it would bootstrap based on the fuzzed ratings, but does that work with AI?
 
 do players actually exceed their initial pot 25% of the time?
 

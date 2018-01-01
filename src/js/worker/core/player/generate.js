@@ -52,7 +52,21 @@ const genRatings = (
         }
     }*/
 
-    const ratings = Object.assign(rawRatings, {
+    const ratings = {
+        stre: rawRatings.stre,
+        spd: rawRatings.spd,
+        jmp: rawRatings.jmp,
+        endu: rawRatings.endu,
+        ins: rawRatings.ins,
+        dnk: rawRatings.dnk,
+        ft: rawRatings.ft,
+        fg: rawRatings.fg,
+        tp: rawRatings.tp,
+        oiq: rawRatings.oiq,
+        diq: rawRatings.diq,
+        drb: rawRatings.drb,
+        pss: rawRatings.pss,
+        reb: rawRatings.reb,
         hgt,
         fuzz: genFuzz(scoutingRank),
         ovr: 0,
@@ -60,7 +74,7 @@ const genRatings = (
         pot: 0,
         season,
         skills: [],
-    });
+    };
 
     // Ugly hack: Tall people can't dribble/pass very well
     /*if (ratings.hgt > 40) {

@@ -1,8 +1,6 @@
 import { PLAYER, g } from "../../../common";
 import { random } from "../../util";
-import type {
-    Player,
-} from "../../../common/types";
+import type { Player } from "../../../common/types";
 
 // Players meeting one of these cutoffs might retire
 const maxAge = 34;

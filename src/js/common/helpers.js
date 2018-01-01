@@ -743,6 +743,11 @@ const refuseToNegotiate = (amount: number, mood: number): boolean => {
     return amount * mood > 9500;
 };
 
+// x is value, a controls sharpness, b controls center
+const sigmoid = (x: number, a: number, b: number): number => {
+    return 1 / (1 + Math.exp(-(a * (x - b))));
+};
+
 export default {
     validateAbbrev,
     getAbbrev,
@@ -771,4 +776,5 @@ export default {
     roundWinp,
     orderByWinp,
     refuseToNegotiate,
+    sigmoid,
 };

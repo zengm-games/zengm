@@ -21,34 +21,53 @@ const shootingFormula = {
         }
         return 2;
     },
-    changeLimits: [-2, 15],
+    changeLimits: () => [-2, 15],
 };
 
-const iqFormula = {
-    ageModifier: (age: number) => {
-        if (age <= 22) {
-            return random.uniform(0, 10);
-        }
+const iqFormula = (type: 'oiq' | 'diq') => {
+    return {
+        ageModifier: (age: number, oiq: number, diq: number) => {
+            // Goal here: young players improve a lot, but players starting very low are much less likely to ever improve
+            if (age <= 23) {
+                const iq = type === 'oiq' ? oiq : diq;
 
-        // Reverse most of the age-related decline in calcBaseChange
-        if (age <= 27) {
-            return 0;
-        }
-        if (age <= 29) {
-            return 0.5;
-        }
-        if (age <= 31) {
-            return 1.5;
-        }
-        return 2;
-    },
-    changeLimits: [-2, 20],
+                // Don't make it too easy to get 100!
+                if (iq < 50) {
+                    const max = 35 * helpers.sigmoid(iq, 0.02, 15)
+                    return random.uniform(0, max);
+                }
+
+                return random.uniform(0, 5);
+            }
+
+            // Reverse most of the age-related decline in calcBaseChange
+            if (age <= 27) {
+                return 0;
+            }
+            if (age <= 29) {
+                return 0.5;
+            }
+            if (age <= 31) {
+                return 1.5;
+            }
+            return 2;
+        },
+        changeLimits: (age) => {
+            if (age > 24) {
+                return [-2, 10];
+            }
+
+            // For 19: [-2, 35]
+            // For 23: [-2, 15]
+            return [-2, 10 + 5 * (24 - age)];
+        },
+    };
 };
 
 const ratingsFormulas: {
     [key: RatingKey]: {
-        ageModifier?: number => number,
-        changeLimits?: [number, number],
+        ageModifier?: (number, number, number) => number,
+        changeLimits?: number => [number, number],
     },
 } = {
     stre: {},
@@ -62,7 +81,7 @@ const ratingsFormulas: {
             }
             return -4;
         },
-        changeLimits: [-10, 2],
+        changeLimits: () => [-10, 2],
     },
     jmp: {
         ageModifier: (age: number) => {
@@ -74,7 +93,7 @@ const ratingsFormulas: {
             }
             return -5;
         },
-        changeLimits: [-10, 2],
+        changeLimits: () => [-10, 2],
     },
     endu: {
         ageModifier: (age: number) => {
@@ -86,26 +105,26 @@ const ratingsFormulas: {
             }
             return -4;
         },
-        changeLimits: [-10, 10],
+        changeLimits: () => [-10, 10],
     },
     dnk: shootingFormula,
     ins: shootingFormula,
     ft: shootingFormula,
     fg: shootingFormula,
     tp: shootingFormula,
-    oiq: iqFormula,
-    diq: iqFormula,
+    oiq: iqFormula('oiq'),
+    diq: iqFormula('diq'),
     drb: {
         ageModifier: shootingFormula.ageModifier,
-        changeLimits: [-2, 5],
+        changeLimits: () => [-2, 5],
     },
     pss: {
         ageModifier: shootingFormula.ageModifier,
-        changeLimits: [-2, 5],
+        changeLimits: () => [-2, 5],
     },
     reb: {
         ageModifier: shootingFormula.ageModifier,
-        changeLimits: [-2, 5],
+        changeLimits: () => [-2, 5],
     },
 };
 
@@ -165,10 +184,10 @@ const developSeason = (
 
     for (const key of Object.keys(ratingsFormulas)) {
         const ageModifier = ratingsFormulas[key].ageModifier
-            ? ratingsFormulas[key].ageModifier(age)
+            ? ratingsFormulas[key].ageModifier(age, ratings.oiq, ratings.diq)
             : 0;
         const changeLimits = ratingsFormulas[key].changeLimits
-            ? ratingsFormulas[key].changeLimits
+            ? ratingsFormulas[key].changeLimits(age)
             : [-Infinity, Infinity];
 
         ratings[key] = player.limitRating(

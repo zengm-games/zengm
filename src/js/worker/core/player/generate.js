@@ -41,7 +41,9 @@ const genRatings = (
     };
 
     for (const key of Object.keys(rawRatings)) {
-        rawRatings[key] = player.limitRating(random.realGauss(rawRatings[key], 3));
+        rawRatings[key] = player.limitRating(
+            random.realGauss(rawRatings[key], 3),
+        );
     }
 
     // Small chance of freakish ability in 2 categories
@@ -86,9 +88,9 @@ const genRatings = (
     }*/
 
     if (tid === PLAYER.UNDRAFTED_2) {
-        ratings.fuzz *= 2;
+        ratings.fuzz *= Math.sqrt(2);
     } else if (tid === PLAYER.UNDRAFTED_3) {
-        ratings.fuzz *= 4;
+        ratings.fuzz *= 2;
     }
 
     ratings.pos = player.pos(ratings);
@@ -120,20 +122,10 @@ const generate = (
     let ratings;
     if (newLeague) {
         // Create player for new league
-        ratings = genRatings(
-            g.startingSeason,
-            scoutingRank,
-            tid,
-            predetHgt,
-        );
+        ratings = genRatings(g.startingSeason, scoutingRank, tid, predetHgt);
     } else {
         // Create player to be drafted
-        ratings = genRatings(
-            draftYear,
-            scoutingRank,
-            tid,
-            predetHgt,
-        );
+        ratings = genRatings(draftYear, scoutingRank, tid, predetHgt);
     }
 
     const nameInfo = player.name();

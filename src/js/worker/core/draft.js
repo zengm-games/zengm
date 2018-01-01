@@ -104,19 +104,41 @@ async function genPlayers(
         draftYear += 3;
     }
 
-    for (let i = 0; i < numPlayers; i++) {
-        const baseRating = random.randInt(8, 31);
+    const players = range(numPlayers)
+        .map(() => {
+            const baseRating = random.randInt(8, 31);
+            const p = player.generate(
+                tid,
+                baseAge,
+                baseRating,
+                draftYear,
+                false,
+                scoutingRank,
+            );
 
-        const agingYears = random.randInt(0, 3);
+            // Just for ovr/pot
+            player.develop(p, 0);
 
-        const p = player.generate(
-            tid,
-            baseAge,
-            baseRating,
-            draftYear,
-            false,
-            scoutingRank,
-        );
+            return p;
+        })
+        .sort((a, b) => b.ovr + b.pot - (a.ovr + a.pot));
+
+    for (let i = 0; i < players.length; i++) {
+        const p = players[i];
+
+        // Players are sorted by ovr+pot, so have the best ones come out early
+        // Would be better to do one year at a time and pick the top ones each year
+        let agingYears;
+        if (i < Math.round(0.65 * numPlayers)) {
+            agingYears = 0;
+        } else if (i < Math.round(0.85 * numPlayers)) {
+            agingYears = 1;
+        } else if (i < Math.round(0.9 * numPlayers)) {
+            agingYears = 2;
+        } else {
+            agingYears = 3;
+        }
+
         player.develop(p, agingYears, true);
 
         // Update player values after ratings changes
@@ -126,14 +148,7 @@ async function genPlayers(
 
     // Easter eggs!
     if (Math.random() < 1 / 100000) {
-        const p = player.generate(
-            tid,
-            19,
-            90,
-            draftYear,
-            false,
-            scoutingRank,
-        );
+        const p = player.generate(tid, 19, 90, draftYear, false, scoutingRank);
         p.born.year = draftYear - 48;
         p.born.loc = "Los Angeles, CA";
         p.college = "Washington State University";
@@ -158,14 +173,7 @@ async function genPlayers(
             });
         }
     } else if (Math.random() < 1 / 100000) {
-        const p = player.generate(
-            tid,
-            19,
-            90,
-            draftYear,
-            false,
-            scoutingRank,
-        );
+        const p = player.generate(tid, 19, 90, draftYear, false, scoutingRank);
         p.born.year = draftYear - 71;
         p.born.loc = "Queens, NY";
         p.college = "Wharton";

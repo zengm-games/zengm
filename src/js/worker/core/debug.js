@@ -209,9 +209,9 @@ async function regressRatingsPer() {
         }
     }
 
-console.log(ratings);
+    console.log(ratings);
     const x = new Matrix(ratings);
-console.log(pers);
+    console.log(pers);
     const y = new ColumnVector(pers);
 
     // $FlowFixMe
@@ -258,10 +258,7 @@ async function leagueAverageContract() {
     console.log(total / players.length);
 }
 
-function averageCareerArc(
-    baseOvr: number,
-    ratingToSave: RatingKey,
-) {
+function averageCareerArc(baseOvr: number, ratingToSave: RatingKey) {
     const numPlayers = 1000; // Number of players per profile
     const numSeasons = 20;
 
@@ -278,14 +275,7 @@ function averageCareerArc(
 
     for (let i = 0; i < numPlayers; i++) {
         for (let j = 0; j < numWhatever; j++) {
-            const p = player.generate(
-                0,
-                19,
-                baseOvr,
-                2013,
-                true,
-                15,
-            );
+            const p = player.generate(0, 19, baseOvr, 2013, true, 15);
             for (let k = 0; k < numSeasons; k++) {
                 averageOvr[k] += p.ratings[0].ovr;
                 averagePot[k] += p.ratings[0].pot;

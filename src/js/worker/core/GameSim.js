@@ -99,11 +99,6 @@ type TeamGameSim = {
     },
 };
 
-// x is value, a controls sharpness, b controls center
-const sigmoid = (x: number, a: number, b: number): number => {
-    return 1 / (1 + Math.exp(-(a * (x - b))));
-};
-
 /**
  * Pick a player to do something.
  *
@@ -579,42 +574,42 @@ class GameSim {
                 const p = this.playersOnCourt[t][i];
 
                 // 1 / (1 + e^-(15 * (x - 0.7))) from 0 to 1
-                skillsCount["3"] += sigmoid(
+                skillsCount["3"] += helpers.sigmoid(
                     this.team[t].player[p].compositeRating.shootingThreePointer,
                     15,
                     0.7,
                 );
-                skillsCount.A += sigmoid(
+                skillsCount.A += helpers.sigmoid(
                     this.team[t].player[p].compositeRating.athleticism,
                     15,
                     0.7,
                 );
-                skillsCount.B += sigmoid(
+                skillsCount.B += helpers.sigmoid(
                     this.team[t].player[p].compositeRating.dribbling,
                     15,
                     0.7,
                 );
-                skillsCount.Di += sigmoid(
+                skillsCount.Di += helpers.sigmoid(
                     this.team[t].player[p].compositeRating.defenseInterior,
                     15,
                     0.7,
                 );
-                skillsCount.Dp += sigmoid(
+                skillsCount.Dp += helpers.sigmoid(
                     this.team[t].player[p].compositeRating.defensePerimeter,
                     15,
                     0.7,
                 );
-                skillsCount.Po += sigmoid(
+                skillsCount.Po += helpers.sigmoid(
                     this.team[t].player[p].compositeRating.shootingLowPost,
                     15,
                     0.7,
                 );
-                skillsCount.Ps += sigmoid(
+                skillsCount.Ps += helpers.sigmoid(
                     this.team[t].player[p].compositeRating.passing,
                     15,
                     0.7,
                 );
-                skillsCount.R += sigmoid(
+                skillsCount.R += helpers.sigmoid(
                     this.team[t].player[p].compositeRating.rebounding,
                     15,
                     0.7,
@@ -623,18 +618,23 @@ class GameSim {
 
             // Base offensive synergy
             this.team[t].synergy.off = 0;
-            this.team[t].synergy.off += 5 * sigmoid(skillsCount["3"], 3, 2); // 5 / (1 + e^-(3 * (x - 2))) from 0 to 5
             this.team[t].synergy.off +=
-                3 * sigmoid(skillsCount.B, 15, 0.75) +
-                sigmoid(skillsCount.B, 5, 1.75); // 3 / (1 + e^-(15 * (x - 0.75))) + 1 / (1 + e^-(5 * (x - 1.75))) from 0 to 5
+                5 * helpers.sigmoid(skillsCount["3"], 3, 2); // 5 / (1 + e^-(3 * (x - 2))) from 0 to 5
             this.team[t].synergy.off +=
-                3 * sigmoid(skillsCount.Ps, 15, 0.75) +
-                sigmoid(skillsCount.Ps, 5, 1.75) +
-                sigmoid(skillsCount.Ps, 5, 2.75); // 3 / (1 + e^-(15 * (x - 0.75))) + 1 / (1 + e^-(5 * (x - 1.75))) + 1 / (1 + e^-(5 * (x - 2.75))) from 0 to 5
-            this.team[t].synergy.off += sigmoid(skillsCount.Po, 15, 0.75); // 1 / (1 + e^-(15 * (x - 0.75))) from 0 to 5
+                3 * helpers.sigmoid(skillsCount.B, 15, 0.75) +
+                helpers.sigmoid(skillsCount.B, 5, 1.75); // 3 / (1 + e^-(15 * (x - 0.75))) + 1 / (1 + e^-(5 * (x - 1.75))) from 0 to 5
             this.team[t].synergy.off +=
-                sigmoid(skillsCount.A, 15, 1.75) +
-                sigmoid(skillsCount.A, 5, 2.75); // 1 / (1 + e^-(15 * (x - 1.75))) + 1 / (1 + e^-(5 * (x - 2.75))) from 0 to 5
+                3 * helpers.sigmoid(skillsCount.Ps, 15, 0.75) +
+                helpers.sigmoid(skillsCount.Ps, 5, 1.75) +
+                helpers.sigmoid(skillsCount.Ps, 5, 2.75); // 3 / (1 + e^-(15 * (x - 0.75))) + 1 / (1 + e^-(5 * (x - 1.75))) + 1 / (1 + e^-(5 * (x - 2.75))) from 0 to 5
+            this.team[t].synergy.off += helpers.sigmoid(
+                skillsCount.Po,
+                15,
+                0.75,
+            ); // 1 / (1 + e^-(15 * (x - 0.75))) from 0 to 5
+            this.team[t].synergy.off +=
+                helpers.sigmoid(skillsCount.A, 15, 1.75) +
+                helpers.sigmoid(skillsCount.A, 5, 2.75); // 1 / (1 + e^-(15 * (x - 1.75))) + 1 / (1 + e^-(5 * (x - 2.75))) from 0 to 5
             this.team[t].synergy.off /= 17;
 
             // Punish teams for not having multiple perimeter skills
@@ -650,17 +650,23 @@ class GameSim {
 
             // Defensive synergy
             this.team[t].synergy.def = 0;
-            this.team[t].synergy.def += sigmoid(skillsCount.Dp, 15, 0.75); // 1 / (1 + e^-(15 * (x - 0.75))) from 0 to 5
-            this.team[t].synergy.def += 2 * sigmoid(skillsCount.Di, 15, 0.75); // 2 / (1 + e^-(15 * (x - 0.75))) from 0 to 5
+            this.team[t].synergy.def += helpers.sigmoid(
+                skillsCount.Dp,
+                15,
+                0.75,
+            ); // 1 / (1 + e^-(15 * (x - 0.75))) from 0 to 5
             this.team[t].synergy.def +=
-                sigmoid(skillsCount.A, 5, 2) + sigmoid(skillsCount.A, 5, 3.25); // 1 / (1 + e^-(5 * (x - 2))) + 1 / (1 + e^-(5 * (x - 3.25))) from 0 to 5
+                2 * helpers.sigmoid(skillsCount.Di, 15, 0.75); // 2 / (1 + e^-(15 * (x - 0.75))) from 0 to 5
+            this.team[t].synergy.def +=
+                helpers.sigmoid(skillsCount.A, 5, 2) +
+                helpers.sigmoid(skillsCount.A, 5, 3.25); // 1 / (1 + e^-(5 * (x - 2))) + 1 / (1 + e^-(5 * (x - 3.25))) from 0 to 5
             this.team[t].synergy.def /= 6;
 
             // Rebounding synergy
             this.team[t].synergy.reb = 0;
             this.team[t].synergy.reb +=
-                sigmoid(skillsCount.R, 15, 0.75) +
-                sigmoid(skillsCount.R, 5, 1.75); // 1 / (1 + e^-(15 * (x - 0.75))) + 1 / (1 + e^-(5 * (x - 1.75))) from 0 to 5
+                helpers.sigmoid(skillsCount.R, 15, 0.75) +
+                helpers.sigmoid(skillsCount.R, 5, 1.75); // 1 / (1 + e^-(15 * (x - 0.75))) + 1 / (1 + e^-(5 * (x - 1.75))) from 0 to 5
             this.team[t].synergy.reb /= 4;
         }
     }
@@ -1444,7 +1450,7 @@ class GameSim {
                 (2 + this.team[this.o].compositeRating.rebounding) >
             Math.random()
         ) {
-            ratios = this.ratingArray("rebounding", this.d, 3);
+            ratios = this.ratingArray("rebounding", this.d, 2);
             p = this.playersOnCourt[this.d][pickPlayer(ratios)];
             this.recordStat(this.d, p, "drb");
             this.recordPlay("drb", this.d, [this.team[this.d].player[p].name]);

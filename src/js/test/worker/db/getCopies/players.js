@@ -11,14 +11,7 @@ describe("db/getCopies", async () => {
             helpers.resetG();
 
             g.season = 2011;
-            p = player.generate(
-                PLAYER.UNDRAFTED,
-                19,
-                50,
-                2011,
-                false,
-                28,
-            );
+            p = player.generate(PLAYER.UNDRAFTED, 19, 50, 2011, false, 28);
             p.tid = 4;
             g.season = 2012;
 

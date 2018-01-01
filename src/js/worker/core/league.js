@@ -465,7 +465,7 @@ async function create(
 
         // 16 instead of 13 for wiggle room (need min contract FAs sometimes)
         if (keptPlayers.length < 16 * g.numTeams) {
-            throw new Error('Not enough players!');
+            throw new Error("Not enough players!");
         }
 
         // Add players to teams or free agency
@@ -480,11 +480,7 @@ async function create(
             }
             const p = teamPlayers[i];
             p.tid = newTid;
-            player.setContract(
-                p,
-                player.genContract(p, true),
-                true,
-            );
+            player.setContract(p, player.genContract(p, true), true);
             await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
         }
         for (let i = 0; i < freeAgentPlayers.length; i++) {
@@ -492,11 +488,7 @@ async function create(
             if (i >= 100) {
                 await idb.cache.players.delete(p.pid);
             } else {
-                player.setContract(
-                    p,
-                    player.genContract(p, false),
-                    false,
-                );
+                player.setContract(p, player.genContract(p, false), false);
                 await player.addToFreeAgents(p, g.phase, baseMoods);
             }
         }

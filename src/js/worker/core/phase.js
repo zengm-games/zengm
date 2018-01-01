@@ -652,8 +652,9 @@ async function newPhaseFreeAgency(conditions: Conditions) {
     );
     for (const p of players3) {
         p.tid = PLAYER.UNDRAFTED;
-        p.ratings[0].fuzz /= 2;
+        p.ratings[0].fuzz /= Math.sqrt(2);
         player.develop(p, 0); // Update skills/pot based on fuzz
+        await player.updateValues(p);
         await idb.cache.players.put(p);
     }
     const players4 = await idb.cache.players.indexGetAll(
@@ -662,8 +663,9 @@ async function newPhaseFreeAgency(conditions: Conditions) {
     );
     for (const p of players4) {
         p.tid = PLAYER.UNDRAFTED_2;
-        p.ratings[0].fuzz /= 2;
+        p.ratings[0].fuzz /= Math.sqrt(2);
         player.develop(p, 0); // Update skills/pot based on fuzz
+        await player.updateValues(p);
         await idb.cache.players.put(p);
     }
     idb.cache.markDirtyIndexes("players");

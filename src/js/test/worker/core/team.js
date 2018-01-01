@@ -210,14 +210,7 @@ describe("core/team", () => {
             for (let tid of Object.keys(info)) {
                 tid = parseInt(tid, 10);
                 for (let i = 0; i < info[tid]; i++) {
-                    const p = player.generate(
-                        tid,
-                        30,
-                        50,
-                        2017,
-                        true,
-                        15.5,
-                    );
+                    const p = player.generate(tid, 30, 50, 2017, true, 15.5);
                     if (tid === PLAYER.FREE_AGENT) {
                         p.contract.amount = g.minContract;
                     }

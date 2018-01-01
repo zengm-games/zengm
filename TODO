@@ -11,9 +11,15 @@ rewrite player development
 - height linked to growth too?
 - make sure positions are balanced (although ovr formula might be needed first)
 - make sure ratings distributions are all similar
+  - iq ones too high now
 - draft pick development is too variable, second round picks almost as good as first?
   - increase IQ more drastically in first season
     - but have initial IQ be a big factor, maybe 0-20 is much less likely to grow than 20-40. that will lead to some higher pot players
+
+draft classes
+- more difference between elite and the rest
+  - maybe pick 0-3 players to give a bonus to? the top of the 19 year olds
+  - or just have higher variance in general
 
 shrink range of normal, allow rare outliers
 
@@ -54,6 +60,10 @@ upgrade code for pot, diq, oiq
 AI draft algo revisit
 
 compare career arcs (peak length)
+
+reevaluate player value alg, in light of changes to pot
+
+reevaluate contract and free agent balanced
 
 changes
 - Height can increase in young players, although it's quite rare.

@@ -40,9 +40,10 @@ const genRatings = (
         reb: helpers.bound(hgt - 20, 0, 60),
     };
 
+    const factor = helpers.bound(random.realGauss(1, 0.2), 0.5, 2); // For correlation across ratings, to ensure some awesome players
     for (const key of Object.keys(rawRatings)) {
         rawRatings[key] = player.limitRating(
-            random.realGauss(rawRatings[key], 3),
+            factor * random.realGauss(rawRatings[key], 3),
         );
     }
 

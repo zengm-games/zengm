@@ -405,11 +405,11 @@ function pos(ratings: PlayerRatings): string {
     }
 
     // Multiple positions
-    if ((pg || sg || sf) && c) {
+    if ((pg || sg) && c) {
         position = "F";
     } else if ((pg || sg) && (sf || pf)) {
         position = "GF";
-    } else if (c && pf) {
+    } else if (c && (pf || sf)) {
         position = "FC";
     } else if (pf && sf) {
         position = "F";

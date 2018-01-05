@@ -7,6 +7,11 @@ import genFuzz from "./genFuzz";
 import { random } from "../../util";
 import type { PlayerRatings, PlayerWithoutPid } from "../../../common/types";
 
+const initialSigmoid = (type: 'pos' | 'neg', max: number, hgt: number) => {
+    const x = type === 'pos' ? hgt - 20 : 100 - hgt;
+    return max * helpers.sigmoid(x, 0.2, max / 2);
+}
+
 /**
  * Generate initial ratings for a newly-created player.
  *
@@ -24,20 +29,20 @@ const genRatings = (
 ): PlayerRatings => {
     // Tall players are less talented, and all tend towards dumb and can't shoot because they are rookies
     const rawRatings = {
-        stre: helpers.bound(hgt - 20, 0, 60),
-        spd: 10 + helpers.bound(100 - hgt, 0, 60),
-        jmp: 10 + helpers.bound(100 - hgt, 0, 60),
-        endu: helpers.bound(100 - hgt, 0, 40),
-        ins: helpers.bound(hgt - 20, 0, 40),
-        dnk: helpers.bound(hgt - 20, 0, 40),
-        ft: helpers.bound(100 - hgt, 0, 40),
-        fg: helpers.bound(100 - hgt, 0, 40),
-        tp: helpers.bound(100 - hgt, 0, 40),
-        oiq: helpers.bound(100 - hgt, 0, 20),
-        diq: 20,
-        drb: helpers.bound(100 - hgt, 0, 60),
-        pss: helpers.bound(100 - hgt, 0, 60),
-        reb: helpers.bound(hgt - 20, 0, 60),
+        stre: initialSigmoid('pos', 60, hgt),
+        spd: initialSigmoid('neg', 60, hgt),
+        jmp: initialSigmoid('neg', 60, hgt),
+        endu: initialSigmoid('neg', 40, hgt),
+        ins: initialSigmoid('pos', 40, hgt),
+        dnk: initialSigmoid('pos', 40, hgt),
+        ft: initialSigmoid('neg', 40, hgt),
+        fg: initialSigmoid('neg', 40, hgt),
+        tp: initialSigmoid('neg', 40, hgt),
+        oiq: initialSigmoid('neg', 20, hgt),
+        diq: initialSigmoid('neg', 20, hgt),
+        drb: initialSigmoid('neg', 60, hgt),
+        pss: initialSigmoid('neg', 60, hgt),
+        reb: initialSigmoid('pos', 60, hgt),
     };
 
     const factor = helpers.bound(random.realGauss(1, 0.2), 0.5, 2); // For correlation across ratings, to ensure some awesome players
@@ -114,7 +119,7 @@ const generate = (
     let realHeight = Math.random() - 0.5; // Fraction of an inch
     realHeight += random.heightDist();
 
-    const wingspanAdjust = realHeight + random.randInt(-3, 3);
+    const wingspanAdjust = realHeight + random.randInt(-1, 1);
 
     // hgt 0-100 corresponds to height 5'6" to 7'9" (Anything taller or shorter than the extremes will just get 100/0)
     const predetHgt = player.heightToRating(wingspanAdjust);

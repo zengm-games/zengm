@@ -3,9 +3,13 @@ PLAYER DEVELOPMENT REVAMP
 blk/stl -> oiq/diq
 
 rewrite player development 2
+- correlations between ratings (shooting, iq)
+  - use this to help define positions/archetypes
+- sigmoids for initial ratings in generate
 - start lower on scale
 - something that makes improvements harder as the rating goes up
 - more variance in non-changing ones (athleticism)?
+- look at endurance too
 
 rewrite player development
 - https://www.reddit.com/r/BasketballGM/comments/7frlq6/how_do_pro_basketball_players_develop/
@@ -45,6 +49,7 @@ nobody should get literally 0 of a stat like rebounds
 - nonlinearity should be at high end, not low end?
 - for rebounding (and maybe others too) could be a bonus applied to just the top player, not affecting the others? to simulate that there is one guy assigned to that task primarily.
 - or, maybe add a constant to each term? but isn't it already like that since 0 is rare?
+- or, lower bound of any odds of anything (probably activity specific)
 
 reevaluate position algorithm
 

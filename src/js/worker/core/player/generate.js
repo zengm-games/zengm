@@ -17,9 +17,15 @@ const typeFactors: {
         spd: 1.5,
         drb: 1.5,
         pss: 1.5,
+        ft: 1.25,
+        fg: 1.25,
+        tp: 1.25,
     },
     wing: {
+        drb: 1.25,
+        dnk: 1.25,
         jmp: 1.25,
+        ft: 1.25,
         fg: 1.25,
         tp: 1.25,
     },
@@ -27,6 +33,7 @@ const typeFactors: {
         ins: 1.5,
         dnk: 1.5,
         reb: 1.5,
+        ft: 0.75,
         fg: 0.75,
         tp: 0.75,
     },
@@ -95,7 +102,7 @@ const genRatings = (
         reb: 30,
     };
 
-    const factor = helpers.bound(random.realGauss(1, 0.2), 0.5, 2); // For correlation across ratings, to ensure some awesome players
+    const factor = helpers.bound(random.realGauss(1, 0.22), 0.5, 2); // For correlation across ratings, to ensure some awesome players
     for (const key of Object.keys(rawRatings)) {
         const typeFactor = typeFactors[type].hasOwnProperty(key) ? typeFactors[type][key] : 1;
         rawRatings[key] = player.limitRating(

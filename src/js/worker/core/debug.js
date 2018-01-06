@@ -271,27 +271,23 @@ function averageCareerArc(baseOvr: number, ratingToSave: RatingKey) {
         averageRat[i] = 0;
     }
 
-    const numWhatever = 6;
-
     for (let i = 0; i < numPlayers; i++) {
-        for (let j = 0; j < numWhatever; j++) {
-            const p = player.generate(0, 19, baseOvr, 2013, true, 15);
-            for (let k = 0; k < numSeasons; k++) {
-                averageOvr[k] += p.ratings[0].ovr;
-                averagePot[k] += p.ratings[0].pot;
-                if (ratingToSave) {
-                    averageRat[k] += p.ratings[0][ratingToSave];
-                }
-                player.develop(p, 1, true);
+        const p = player.generate(0, 19, baseOvr, 2013, true, 15);
+        for (let k = 0; k < numSeasons; k++) {
+            averageOvr[k] += p.ratings[0].ovr;
+            averagePot[k] += p.ratings[0].pot;
+            if (ratingToSave) {
+                averageRat[k] += p.ratings[0][ratingToSave];
             }
+            player.develop(p, 1, true);
         }
     }
 
     for (let i = 0; i < numSeasons; i++) {
-        averageOvr[i] /= numPlayers * numWhatever;
-        averagePot[i] /= numPlayers * numWhatever;
+        averageOvr[i] /= numPlayers;
+        averagePot[i] /= numPlayers;
         if (ratingToSave) {
-            averageRat[i] /= numPlayers * numWhatever;
+            averageRat[i] /= numPlayers;
         }
     }
 

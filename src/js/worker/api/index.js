@@ -1007,6 +1007,7 @@ const upsertCustomizedPlayer = async (
     }
 
     // Recalculate player values, since ratings may have changed
+    player.develop(p, 0);
     await player.updateValues(p);
 
     // Save to database, adding pid if it doesn't already exist

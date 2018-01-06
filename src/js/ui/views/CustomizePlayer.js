@@ -99,7 +99,6 @@ const copyValidValues = (source, target, season) => {
                     "hgt",
                     "ins",
                     "jmp",
-                    "pot",
                     "pss",
                     "reb",
                     "spd",
@@ -713,24 +712,6 @@ class CustomizePlayer extends React.Component {
 
                             <p>All ratings are on a scale of 0 to 100.</p>
 
-                            <div className="row">
-                                <div className="col-xs-4">
-                                    <div className="form-group">
-                                        <label>Potential</label>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            onChange={this.handleChange.bind(
-                                                this,
-                                                "rating",
-                                                "pot",
-                                            )}
-                                            value={p.ratings[r].pot}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="col-xs-8" />
-                            </div>
                             <div className="row">
                                 <div className="col-xs-4">
                                     <h3>Physical</h3>

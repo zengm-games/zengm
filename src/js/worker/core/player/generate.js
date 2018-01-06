@@ -7,10 +7,30 @@ import genFuzz from "./genFuzz";
 import { random } from "../../util";
 import type { PlayerRatings, PlayerWithoutPid } from "../../../common/types";
 
-const initialSigmoid = (type: 'pos' | 'neg', max: number, hgt: number) => {
-    const x = type === 'pos' ? hgt - 20 : 100 - hgt;
-    return max * helpers.sigmoid(x, 0.2, max / 2);
-}
+const typeFactors: {
+    ['point' | 'wing' | 'big']: {
+        [key: string]: number,
+    },
+} = {
+    point: {
+        jmp: 1.5,
+        spd: 1.5,
+        drb: 1.5,
+        pss: 1.5,
+    },
+    wing: {
+        jmp: 1.25,
+        fg: 1.25,
+        tp: 1.25,
+    },
+    big: {
+        ins: 1.5,
+        dnk: 1.5,
+        reb: 1.5,
+        fg: 0.75,
+        tp: 0.75,
+    },
+};
 
 /**
  * Generate initial ratings for a newly-created player.
@@ -27,28 +47,59 @@ const genRatings = (
     tid: number,
     hgt: number,
 ): PlayerRatings => {
+    // Pick type of player (point, wing, or big) based on height
+    const randType = Math.random();
+    let type;
+    if (hgt >= 59) {
+        // 6'10" or taller
+        if (randType < 0.01) {
+            type = 'point';
+        } else if (randType < 0.05) {
+            type = 'wing';
+        } else {
+            type = 'big';
+        }
+    } else if (hgt <= 33) {
+        // 6'3" or shorter
+        if (randType < 0.1) {
+            type = 'wing';
+        } else {
+            type = 'point';
+        }
+    } else {
+        // eslint-disable-next-line no-lonely-if
+        if (randType < 0.03) {
+            type = 'point';
+        } else if (randType < 0.3) {
+            type = 'big';
+        } else {
+            type = 'wing';
+        }
+    }
+
     // Tall players are less talented, and all tend towards dumb and can't shoot because they are rookies
     const rawRatings = {
-        stre: initialSigmoid('pos', 60, hgt),
-        spd: initialSigmoid('neg', 60, hgt),
-        jmp: initialSigmoid('neg', 60, hgt),
-        endu: initialSigmoid('neg', 40, hgt),
-        ins: initialSigmoid('pos', 40, hgt),
-        dnk: initialSigmoid('pos', 40, hgt),
-        ft: initialSigmoid('neg', 40, hgt),
-        fg: initialSigmoid('neg', 40, hgt),
-        tp: initialSigmoid('neg', 40, hgt),
-        oiq: initialSigmoid('neg', 20, hgt),
-        diq: initialSigmoid('neg', 20, hgt),
-        drb: initialSigmoid('neg', 60, hgt),
-        pss: initialSigmoid('neg', 60, hgt),
-        reb: initialSigmoid('pos', 60, hgt),
+        stre: 30,
+        spd: 30,
+        jmp: 30,
+        endu: 20,
+        ins: 20,
+        dnk: 20,
+        ft: 20,
+        fg: 20,
+        tp: 20,
+        oiq: 10,
+        diq: 10,
+        drb: 30,
+        pss: 30,
+        reb: 30,
     };
 
     const factor = helpers.bound(random.realGauss(1, 0.2), 0.5, 2); // For correlation across ratings, to ensure some awesome players
     for (const key of Object.keys(rawRatings)) {
+        const typeFactor = typeFactors[type].hasOwnProperty(key) ? typeFactors[type][key] : 1;
         rawRatings[key] = player.limitRating(
-            factor * random.realGauss(rawRatings[key], 3),
+            factor * typeFactor * random.realGauss(rawRatings[key], 3),
         );
     }
 

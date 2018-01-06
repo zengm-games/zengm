@@ -61,6 +61,8 @@ higher fuzz for draft prospects?
 
 more 2nd round picks turn out good, especially late. can't just be fuzz, won't affect AI enough
 
+call player.develop(p, 0); everywhere updateValues is called, or put it inside updateValues
+
 handle pot correctly in customize player
 
 evaluate performance of creating a new league - is it writing players to database an extra time? can that be avoided?

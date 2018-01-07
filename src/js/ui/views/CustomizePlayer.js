@@ -90,7 +90,7 @@ const copyValidValues = (source, target, season) => {
                 target.ratings[r].pos = source.ratings[r].pos;
             } else if (
                 [
-                    "blk",
+                    "diq",
                     "dnk",
                     "drb",
                     "endu",
@@ -102,7 +102,7 @@ const copyValidValues = (source, target, season) => {
                     "pss",
                     "reb",
                     "spd",
-                    "stl",
+                    "oiq",
                     "stre",
                     "tp",
                 ].includes(rating)

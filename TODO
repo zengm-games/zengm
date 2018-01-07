@@ -3,8 +3,6 @@ PLAYER DEVELOPMENT REVAMP
 blk/stl -> oiq/diq
 
 rewrite player development 2
-- correlations between ratings (shooting, iq)
-  - use this to help define positions/archetypes
 - start lower on scale
 - something that makes improvements harder as the rating goes up
 - more variance in non-changing ones (athleticism)?
@@ -24,6 +22,9 @@ rewrite player development
   - increase IQ more drastically in first season
     - but have initial IQ be a big factor, maybe 0-20 is much less likely to grow than 20-40. that will lead to some higher pot players
 
+use oiq and diq in synergy more directly in gamesim
+- multiply off/def synergy, like perimFactor
+
 draft classes
 - more difference between elite and the rest
   - maybe pick 0-3 players to give a bonus to? the top of the 19 year olds
@@ -33,7 +34,6 @@ shrink range of normal, allow rare outliers
 
 ensure statistical outliers exist!
 - set to 100 see what happens
-- see how many players need to be generated for a 100
 
 much less likely to have skilled tall players
 - either make rare guards tall, or rare bigs skilled
@@ -41,8 +41,7 @@ much less likely to have skilled tall players
 
 bootstrap pot
 - how to handle fuzz? ideally it would bootstrap based on the fuzzed ratings, but does that work with AI?
-
-do players actually exceed their initial pot 25% of the time?
+- pot calculation is slow. how much accuracy do i lose by decreasing sample size?
 
 nobody should get literally 0 of a stat like rebounds
 - nonlinearity should be at high end, not low end?
@@ -204,8 +203,6 @@ filtering
 - disable in some columns, like "Negotiate" buttons. maybe config in getCols?
 
 cache unread messages, will make it faster and simpler
-
-pot calculation is slow. how much accuracy do i lose by decreasing sample size?
 
 force single tab per league
 - when < 5 seconds, wait for another heartbeat before deciding

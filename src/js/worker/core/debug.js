@@ -3,7 +3,7 @@
 // Functions only used for debugging the game, particularly balance issues. This should not be included or loaded in the compiled version.
 
 import backboard from "backboard";
-import { PLAYER } from "../../common";
+import { PLAYER, g, helpers } from "../../common";
 import { player } from "../core";
 import { idb } from "../db";
 import type { RatingKey } from "../../common/types";
@@ -272,7 +272,7 @@ function averageCareerArc(ratingToSave: RatingKey) {
     }
 
     for (let i = 0; i < numPlayers; i++) {
-        const p = player.generate(0, 19, 2013, true, 15);
+        const p = player.generate(0, 19, g.season, true, 15);
         for (let k = 0; k < numSeasons; k++) {
             averageOvr[k] += p.ratings[0].ovr;
             averagePot[k] += p.ratings[0].pot;
@@ -320,6 +320,8 @@ const ratingDists = (numPlayers: number = 100) => {
         pss: [],
         reb: [],
     };
+    const ages = helpers.deepCopy(ratings);
+
 
     for (let i = 0; i < numPlayers; i++) {
         // Log every 5%
@@ -330,26 +332,32 @@ const ratingDists = (numPlayers: number = 100) => {
         const p = player.generate(
             PLAYER.FREE_AGENT,
             19,
-            2017, // Shouldn't matter
+            g.season,
             false,
             15.5,
         );
 
         const maxRatings = Object.assign({}, p.ratings[0]);
+        const maxAges = Object.assign({}, ages);
+        for (const key of Object.keys(maxAges)) {
+            maxAges[key] = 19;
+        }
+
         for (let j = 0; j < 20; j++) {
             player.develop(p, 1, false, 15.5, true);
+            p.born.year -= 1; // Aging after develop
 
             for (const key of Object.keys(ratings)) {
                 if (p.ratings[0][key] > maxRatings[key]) {
                     maxRatings[key] = p.ratings[0][key];
+                    maxAges[key] = g.season - p.born.year;
                 }
             }
-
-            p.born.year -= 1; // Aging
         }
 
         for (const key of Object.keys(ratings)) {
             ratings[key].push(maxRatings[key]);
+            ages[key].push(maxAges[key]);
         }
     }
 
@@ -360,7 +368,10 @@ const ratingDists = (numPlayers: number = 100) => {
     console.log("Ranges are min/q1/median/q3/max");
 
     for (const key of Object.keys(ratings)) {
+        // $FlowFixMe
         ratings[key].sort((a, b) => a - b);
+        // $FlowFixMe
+        ages[key].sort((a, b) => a - b);
 
         const ranges = [
             ratings[key][0],
@@ -369,13 +380,28 @@ const ratingDists = (numPlayers: number = 100) => {
             ratings[key][q3],
             ratings[key][ratings[key].length - 1],
         ];
+        const ageRanges = [
+            ages[key][0],
+            ages[key][q1],
+            ages[key][q2],
+            ages[key][q3],
+            ages[key][ratings[key].length - 1],
+        ];
         const num100s = ratings[key].filter(x => x === 100).length;
 
+        console.log(`${key}:`);
         console.log(
-            `${key} ranges: ${JSON.stringify(
+            `Max ratings: ${JSON.stringify(
                 ranges,
-            )}; Number of 100s: ${num100s}\n`,
+            )}`,
         );
+        console.log(
+            `Ages of max ratings: ${JSON.stringify(
+                ageRanges,
+            )}`,
+        );
+        console.log(`Number of 100s: ${num100s}`);
+        console.log('');
     }
 };
 

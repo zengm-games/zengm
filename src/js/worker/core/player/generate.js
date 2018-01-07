@@ -42,7 +42,6 @@ const typeFactors: {
 /**
  * Generate initial ratings for a newly-created player.
  *
- * @param {number} baseRating [description]
  * @param {number} season [description]
  * @param {number} scoutingRank Between 1 and g.numTeams (default 30), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
  * @param {number} tid [description]
@@ -168,7 +167,6 @@ const MAX_WEIGHT = 305;
 const generate = (
     tid: number,
     age: number,
-    baseRating: number,
     draftYear: number,
     newLeague: boolean,
     scoutingRank: number,

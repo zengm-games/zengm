@@ -106,11 +106,9 @@ async function genPlayers(
 
     const players = range(numPlayers)
         .map(() => {
-            const baseRating = random.randInt(8, 31);
             const p = player.generate(
                 tid,
                 baseAge,
-                baseRating,
                 draftYear,
                 false,
                 scoutingRank,
@@ -148,7 +146,7 @@ async function genPlayers(
 
     // Easter eggs!
     if (Math.random() < 1 / 100000) {
-        const p = player.generate(tid, 19, 90, draftYear, false, scoutingRank);
+        const p = player.generate(tid, 19, draftYear, false, scoutingRank);
         p.born.year = draftYear - 48;
         p.born.loc = "Los Angeles, CA";
         p.college = "Washington State University";
@@ -173,7 +171,7 @@ async function genPlayers(
             });
         }
     } else if (Math.random() < 1 / 100000) {
-        const p = player.generate(tid, 19, 90, draftYear, false, scoutingRank);
+        const p = player.generate(tid, 19, draftYear, false, scoutingRank);
         p.born.year = draftYear - 71;
         p.born.loc = "Queens, NY";
         p.college = "Wharton";

@@ -242,6 +242,7 @@ const develop = (
     years?: number = 1,
     newPlayer?: boolean = false,
     coachingRank?: number = 15.5,
+    skipPot?: boolean = false, // Only for making testing or core/debug faster
 ) => {
     const ratings = p.ratings[p.ratings.length - 1];
 
@@ -258,12 +259,12 @@ const develop = (
 
     // Run these even for players developing 0 seasons
     ratings.ovr = player.ovr(ratings);
-    ratings.pot = bootstrapPot(ratings, age);
+    if (!skipPot) { ratings.pot = bootstrapPot(ratings, age); }
     ratings.skills = player.skills(ratings);
 
     if (p.tid === PLAYER.UNDRAFTED || p.tid === PLAYER.UNDRAFTED_2 || p.tid === PLAYER.UNDRAFTED_3) {
         p.draft.ovr = ratings.ovr;
-        p.draft.pot = ratings.pot;
+        if (!skipPot) { p.draft.pot = ratings.pot; }
         p.draft.skills = ratings.skills;
     }
 

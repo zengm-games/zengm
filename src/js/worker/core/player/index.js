@@ -1074,7 +1074,6 @@ function augmentPartialPlayer(
     const pg = generate(
         p.tid,
         age,
-        0,
         g.startingSeason - age,
         true,
         scoutingRank,

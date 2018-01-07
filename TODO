@@ -5,7 +5,6 @@ blk/stl -> oiq/diq
 rewrite player development 2
 - correlations between ratings (shooting, iq)
   - use this to help define positions/archetypes
-- sigmoids for initial ratings in generate
 - start lower on scale
 - something that makes improvements harder as the rating goes up
 - more variance in non-changing ones (athleticism)?
@@ -20,7 +19,7 @@ rewrite player development
 - height linked to growth too?
 - make sure positions are balanced (although ovr formula might be needed first)
 - make sure ratings distributions are all similar
-  - iq ones too high now
+  - debug.ratingDists
 - draft pick development is too variable, second round picks almost as good as first?
   - increase IQ more drastically in first season
     - but have initial IQ be a big factor, maybe 0-20 is much less likely to grow than 20-40. that will lead to some higher pot players
@@ -56,6 +55,8 @@ reevaluate position algorithm
 reevaluate skill labels
 
 new ovr formula
+
+fix easter eggs, cause baseRating can no longer be passed to generate, they might suck
 
 higher fuzz for draft prospects?
 
@@ -203,6 +204,8 @@ filtering
 - disable in some columns, like "Negotiate" buttons. maybe config in getCols?
 
 cache unread messages, will make it faster and simpler
+
+pot calculation is slow. how much accuracy do i lose by decreasing sample size?
 
 force single tab per league
 - when < 5 seconds, wait for another heartbeat before deciding

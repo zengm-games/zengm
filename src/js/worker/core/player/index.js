@@ -1071,13 +1071,7 @@ function augmentPartialPlayer(
     }
 
     // This is used to get at default values for various attributes
-    const pg = generate(
-        p.tid,
-        age,
-        g.startingSeason - age,
-        true,
-        scoutingRank,
-    );
+    const pg = generate(p.tid, age, g.startingSeason - age, true, scoutingRank);
 
     // Optional things
     const simpleDefaults = [

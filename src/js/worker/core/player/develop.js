@@ -5,7 +5,11 @@ import range from "lodash/range";
 import { PLAYER, g, helpers } from "../../../common";
 import { player } from "../../core";
 import { random } from "../../util";
-import type { PlayerRatings, PlayerSkill, RatingKey } from "../../../common/types";
+import type {
+    PlayerRatings,
+    PlayerSkill,
+    RatingKey,
+} from "../../../common/types";
 
 const shootingFormula = {
     ageModifier: (age: number) => {
@@ -45,7 +49,7 @@ const iqFormula = {
         }
         return 2;
     },
-    changeLimits: (age) => {
+    changeLimits: age => {
         if (age > 24) {
             return [-2, 10];
         }
@@ -259,12 +263,20 @@ const develop = (
 
     // Run these even for players developing 0 seasons
     ratings.ovr = player.ovr(ratings);
-    if (!skipPot) { ratings.pot = bootstrapPot(ratings, age); }
+    if (!skipPot) {
+        ratings.pot = bootstrapPot(ratings, age);
+    }
     ratings.skills = player.skills(ratings);
 
-    if (p.tid === PLAYER.UNDRAFTED || p.tid === PLAYER.UNDRAFTED_2 || p.tid === PLAYER.UNDRAFTED_3) {
+    if (
+        p.tid === PLAYER.UNDRAFTED ||
+        p.tid === PLAYER.UNDRAFTED_2 ||
+        p.tid === PLAYER.UNDRAFTED_3
+    ) {
         p.draft.ovr = ratings.ovr;
-        if (!skipPot) { p.draft.pot = ratings.pot; }
+        if (!skipPot) {
+            p.draft.pot = ratings.pot;
+        }
         p.draft.skills = ratings.skills;
     }
 

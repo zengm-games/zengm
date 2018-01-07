@@ -8,7 +8,7 @@ import { random } from "../../util";
 import type { PlayerRatings, PlayerWithoutPid } from "../../../common/types";
 
 const typeFactors: {
-    ['point' | 'wing' | 'big']: {
+    ["point" | "wing" | "big"]: {
         [key: string]: number,
     },
 } = {
@@ -59,27 +59,27 @@ const genRatings = (
     if (hgt >= 59) {
         // 6'10" or taller
         if (randType < 0.01) {
-            type = 'point';
+            type = "point";
         } else if (randType < 0.05) {
-            type = 'wing';
+            type = "wing";
         } else {
-            type = 'big';
+            type = "big";
         }
     } else if (hgt <= 33) {
         // 6'3" or shorter
         if (randType < 0.1) {
-            type = 'wing';
+            type = "wing";
         } else {
-            type = 'point';
+            type = "point";
         }
     } else {
         // eslint-disable-next-line no-lonely-if
         if (randType < 0.03) {
-            type = 'point';
+            type = "point";
         } else if (randType < 0.3) {
-            type = 'big';
+            type = "big";
         } else {
-            type = 'wing';
+            type = "wing";
         }
     }
 
@@ -103,7 +103,9 @@ const genRatings = (
 
     const factor = helpers.bound(random.realGauss(1, 0.22), 0.5, 2); // For correlation across ratings, to ensure some awesome players
     for (const key of Object.keys(rawRatings)) {
-        const typeFactor = typeFactors[type].hasOwnProperty(key) ? typeFactors[type][key] : 1;
+        const typeFactor = typeFactors[type].hasOwnProperty(key)
+            ? typeFactors[type][key]
+            : 1;
         rawRatings[key] = player.limitRating(
             factor * typeFactor * random.realGauss(rawRatings[key], 3),
         );

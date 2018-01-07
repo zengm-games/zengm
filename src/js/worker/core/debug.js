@@ -322,7 +322,11 @@ const ratingDists = (numPlayers: number = 100) => {
     };
 
     for (let i = 0; i < numPlayers; i++) {
-        console.log(`${i}/${numPlayers}...`);
+        // Log every 5%
+        if (i % Math.round(numPlayers / 20) === 0) {
+            console.log(`${Math.round(100 * i / numPlayers)}%`);
+        }
+
         const p = player.generate(
             PLAYER.FREE_AGENT,
             19,
@@ -349,21 +353,29 @@ const ratingDists = (numPlayers: number = 100) => {
         }
     }
 
-    console.log(ratings);
-
     const q1 = Math.floor(0.25 * numPlayers);
     const q2 = Math.floor(0.5 * numPlayers);
     const q3 = Math.floor(0.75 * numPlayers);
 
-    console.log('Ranges are min/q1/median/q3/max')
+    console.log("Ranges are min/q1/median/q3/max");
 
     for (const key of Object.keys(ratings)) {
         ratings[key].sort((a, b) => a - b);
 
-        const ranges = [ratings[key][0], ratings[key][q1], ratings[key][q2], ratings[key][q3], ratings[key][ratings[key].length - 1]];
+        const ranges = [
+            ratings[key][0],
+            ratings[key][q1],
+            ratings[key][q2],
+            ratings[key][q3],
+            ratings[key][ratings[key].length - 1],
+        ];
         const num100s = ratings[key].filter(x => x === 100).length;
 
-        console.log(`${key} ranges: ${JSON.stringify(ranges)}; Number of 100s: ${num100s}\n`);
+        console.log(
+            `${key} ranges: ${JSON.stringify(
+                ranges,
+            )}; Number of 100s: ${num100s}\n`,
+        );
     }
 };
 

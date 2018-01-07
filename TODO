@@ -2,6 +2,8 @@ PLAYER DEVELOPMENT REVAMP
 
 blk/stl -> oiq/diq
 
+use debug.ratingDists to normalize (not sure about targets)
+
 rewrite player development 2
 - start lower on scale
 - something that makes improvements harder as the rating goes up
@@ -25,6 +27,14 @@ rewrite player development
 use oiq and diq in synergy more directly in gamesim
 - multiply off/def synergy, like perimFactor
 
+aging curve
+- too many good old players?
+
+short players
+- should be possible to shoot high FG%
+  - too many mid range?
+- 2nd round picks who are good - all bigs? why?
+
 draft classes
 - more difference between elite and the rest
   - maybe pick 0-3 players to give a bonus to? the top of the 19 year olds
@@ -33,11 +43,10 @@ draft classes
 shrink range of normal, allow rare outliers
 
 ensure statistical outliers exist!
+- it's not just about the rating existing, it's about it having an outsized effect on the game
 - set to 100 see what happens
-
-much less likely to have skilled tall players
-- either make rare guards tall, or rare bigs skilled
-- player gen - pick a height, generate ratings for that height. continuous.
+  - 3 point shooting - max ratings produce something like steph curry, but in reality should be even better
+- scale based on new ratings min/maxes
 
 bootstrap pot
 - how to handle fuzz? ideally it would bootstrap based on the fuzzed ratings, but does that work with AI?
@@ -57,13 +66,9 @@ new ovr formula
 
 fix easter eggs, cause baseRating can no longer be passed to generate, they might suck
 
-higher fuzz for draft prospects?
-
 more 2nd round picks turn out good, especially late. can't just be fuzz, won't affect AI enough
 
 call player.develop(p, 0); everywhere updateValues is called, or put it inside updateValues
-
-handle pot correctly in customize player
 
 evaluate performance of creating a new league - is it writing players to database an extra time? can that be avoided?
 

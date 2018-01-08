@@ -58,7 +58,7 @@ const COMPOSITE_WEIGHTS = {
     },
     shootingAtRim: {
         ratings: ["hgt", "spd", "jmp", "dnk", "oiq"],
-        weights: [1.5, 0.2, 0.6, 0.4, 0.2],
+        weights: [0.5, 0.2, 0.6, 0.4, 0.2],
     },
     shootingLowPost: {
         ratings: ["hgt", "stre", "spd", "ins", "oiq"],
@@ -66,7 +66,7 @@ const COMPOSITE_WEIGHTS = {
     },
     shootingMidRange: {
         ratings: ["oiq", "fg"],
-        weights: [0.2, 1],
+        weights: [-0.5, 1],
     },
     shootingThreePointer: {
         ratings: ["oiq", "tp"],

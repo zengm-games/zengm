@@ -936,7 +936,7 @@ class GameSim {
                     this.team[this.o].player[p].compositeRating
                         .shootingMidRange *
                         0.32 +
-                    0.29;
+                    0.32;
                 probAndOne = 0.05;
             } else if (r2 > r3) {
                 // Dunk, fast break or half court

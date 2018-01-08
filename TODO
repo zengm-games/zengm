@@ -30,11 +30,6 @@ use oiq and diq in synergy more directly in gamesim
 aging curve
 - too many good old players?
 
-short players
-- should be possible to shoot high FG%
-  - too many mid range?
-- 2nd round picks who are good - all bigs? why?
-
 draft classes
 - more difference between elite and the rest
   - maybe pick 0-3 players to give a bonus to? the top of the 19 year olds
@@ -90,6 +85,8 @@ changes
 extra blog points
 - oiq/diq does not capture players who gamble to get blk/stl while hurting defense, but old one didn't either. could be simulated by U shaped effect of diq.
 - similarly, other things missinng, like shoot too much or too little can't both be represented by low oiq. probably should be coaching
+- short players can be efficient scorers
+- odds of 100 (from debug.ratingDists)
 
 later
 - in new league: set rookie contracts appropriately

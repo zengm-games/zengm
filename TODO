@@ -49,17 +49,11 @@ bootstrap pot
 - how to handle fuzz? ideally it would bootstrap based on the fuzzed ratings, but does that work with AI?
 - pot calculation is slow. how much accuracy do i lose by decreasing sample size?
 
-nobody should get literally 0 of a stat like rebounds
-- nonlinearity should be at high end, not low end?
-- for rebounding (and maybe others too) could be a bonus applied to just the top player, not affecting the others? to simulate that there is one guy assigned to that task primarily.
-- or, maybe add a constant to each term? but isn't it already like that since 0 is rare?
-- or, lower bound of any odds of anything (probably activity specific)
-
 reevaluate position algorithm
 
 reevaluate skill labels
 
-new ovr formula
+nonlinear ovr formula
 
 fix easter eggs, cause baseRating can no longer be passed to generate, they might suck
 
@@ -86,12 +80,14 @@ changes
 - Height can increase in young players, although it's quite rare.
 - Players in a new league are much more similar to players you draft in an existing league. Before there were different code paths to generating them.
 - Potential is real.
+- A 100 rating in any category is now a rarity, allowing for more unique stars if you play many seasons.
 
 extra blog points
 - oiq/diq does not capture players who gamble to get blk/stl while hurting defense, but old one didn't either. could be simulated by U shaped effect of diq.
 - similarly, other things missinng, like shoot too much or too little can't both be represented by low oiq. probably should be coaching
 - short players can be efficient scorers
 - odds of 100 (from debug.ratingDists)
+- Players will no longer record literally 0 rebounds or assists or whatever for their entire career just because they have very low ratings. You will get some just by being on the floor. It's still possible to have 0 three point attempts, but that is a separate problem: there is no concept of a last second heave in the game simulation engine, so bad three point shooters will just not ever attempt any.
 
 later
 - in new league: set rookie contracts appropriately

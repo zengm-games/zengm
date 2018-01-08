@@ -1476,12 +1476,24 @@ class GameSim {
      */
     ratingArray(rating: CompositeRating, t: TeamNum, power?: number = 1) {
         const array = [0, 0, 0, 0, 0];
+        let total = 0;
+
+        // Scale composite ratings
         for (let i = 0; i < 5; i++) {
             const p = this.playersOnCourt[t][i];
             array[i] =
                 (this.team[t].player[p].compositeRating[rating] *
                     fatigue(this.team[t].player[p].stat.energy)) **
                 power;
+            total += array[i];
+        }
+
+        // Set floor (5% of total)
+        const floor = 0.05 * total;
+        for (let i = 0; i < 5; i++) {
+            if (array[i] < floor) {
+                array[i] = floor;
+            }
         }
 
         return array;

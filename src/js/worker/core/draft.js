@@ -104,41 +104,32 @@ async function genPlayers(
         draftYear += 3;
     }
 
-    const players = range(numPlayers)
-        .map(() => {
-            const p = player.generate(
-                tid,
-                baseAge,
-                draftYear,
-                false,
-                scoutingRank,
-            );
+    let remaining = range(numPlayers).map(() => {
+        const p = player.generate(tid, baseAge, draftYear, false, scoutingRank);
 
-            // Just for ovr/pot
-            player.develop(p, 0);
+        // Just for ovr/pot
+        player.develop(p, 0);
 
-            return p;
-        })
-        .sort((a, b) => b.ovr + b.pot - (a.ovr + a.pot));
+        return p;
+    });
 
-    for (let i = 0; i < players.length; i++) {
-        const p = players[i];
+    // Do one season at a time, keeping the lowest pot players in college for another season
+    let enteringDraft = [];
+    for (let i = 0; i < 4; i++) {
+        // Top 50% of players remaining enter draft, except in last year when all do
+        const cutoff = i === 3 ? remaining.length : Math.round(0.5 * remaining.length);
 
-        // Players are sorted by ovr+pot, so have the best ones come out early
-        // Would be better to do one year at a time and pick the top ones each year
-        let agingYears;
-        if (i < Math.round(0.65 * numPlayers)) {
-            agingYears = 0;
-        } else if (i < Math.round(0.85 * numPlayers)) {
-            agingYears = 1;
-        } else if (i < Math.round(0.9 * numPlayers)) {
-            agingYears = 2;
-        } else {
-            agingYears = 3;
+        remaining.sort((a, b) => b.pot - a.pot);
+        enteringDraft = enteringDraft.concat(remaining.slice(0, cutoff));
+        remaining = remaining.slice(cutoff);
+
+        // Each player staying in college, develop 1 year more
+        for (const p of remaining) {
+            player.develop(p, 1, true);
         }
+    }
 
-        player.develop(p, agingYears, true);
-
+    for (const p of enteringDraft) {
         // Update player values after ratings changes
         await player.updateValues(p);
         await idb.cache.players.add(p);

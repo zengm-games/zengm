@@ -73,12 +73,9 @@ reevaluate player value alg, in light of changes to pot
 
 reevaluate contract and free agent balanced
 
-do draft classes better - instead of picking number of years in college at beginning, reevaluate every season
-- also use same combo of ovr+pot for picking players for number years in college, and for sorting draft scouting, and for AI picks
-
 changes
 - Height can increase in young players, although it's quite rare.
-- Players in a new league are much more similar to players you draft in an existing league. Before there were different code paths to generating them.
+- Players in a new league are much more similar to players you draft in an existing league. Previously there were different code paths to generating them, but now the initial players are from actual past draft classes.
 - Potential is real.
 - A 100 rating in any category is now a rarity, allowing for more unique stars if you play many seasons.
 
@@ -88,6 +85,7 @@ extra blog points
 - short players can be efficient scorers
 - odds of 100 (from debug.ratingDists)
 - Players will no longer record literally 0 rebounds or assists or whatever for their entire career just because they have very low ratings. You will get some just by being on the floor. It's still possible to have 0 three point attempts, but that is a separate problem: there is no concept of a last second heave in the game simulation engine, so bad three point shooters will just not ever attempt any.
+- draft prospects actually decide when to declare for draft (only downside is that it shows you the ratings too early)
 
 later
 - in new league: set rookie contracts appropriately

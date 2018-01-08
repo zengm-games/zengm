@@ -54,23 +54,28 @@ function limitRating(rating: number): number {
  */
 function ovr(ratings: PlayerRatings): number {
     // This formula is loosely based on linear regression:
-    return Math.round(
-        (4 * ratings.hgt +
-            ratings.stre +
-            4 * ratings.spd +
-            2 * ratings.jmp +
-            3 * ratings.endu +
-            3 * ratings.ins +
-            4 * ratings.dnk +
-            ratings.ft +
-            ratings.fg +
-            2 * ratings.tp +
-            ratings.oiq +
-            ratings.diq +
-            ratings.drb +
-            3 * ratings.pss +
-            ratings.reb) /
-            32,
+    return helpers.bound(
+        Math.round(
+            1.2 *
+                (4 * ratings.hgt +
+                    2 * ratings.stre +
+                    4 * ratings.spd +
+                    2 * ratings.jmp +
+                    3 * ratings.endu +
+                    3 * ratings.ins +
+                    4 * ratings.dnk +
+                    ratings.ft +
+                    ratings.fg +
+                    2 * ratings.tp +
+                    5 * ratings.oiq +
+                    5 * ratings.diq +
+                    ratings.drb +
+                    5 * ratings.pss +
+                    ratings.reb) /
+                43,
+        ),
+        0,
+        100,
     );
 }
 

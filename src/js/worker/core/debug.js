@@ -322,20 +322,13 @@ const ratingDists = (numPlayers: number = 100) => {
     };
     const ages = helpers.deepCopy(ratings);
 
-
     for (let i = 0; i < numPlayers; i++) {
         // Log every 5%
         if (i % Math.round(numPlayers / 20) === 0) {
             console.log(`${Math.round(100 * i / numPlayers)}%`);
         }
 
-        const p = player.generate(
-            PLAYER.FREE_AGENT,
-            19,
-            g.season,
-            false,
-            15.5,
-        );
+        const p = player.generate(PLAYER.FREE_AGENT, 19, g.season, false, 15.5);
 
         const maxRatings = Object.assign({}, p.ratings[0]);
         const maxAges = Object.assign({}, ages);
@@ -390,18 +383,10 @@ const ratingDists = (numPlayers: number = 100) => {
         const num100s = ratings[key].filter(x => x === 100).length;
 
         console.log(`${key}:`);
-        console.log(
-            `Max ratings: ${JSON.stringify(
-                ranges,
-            )}`,
-        );
-        console.log(
-            `Ages of max ratings: ${JSON.stringify(
-                ageRanges,
-            )}`,
-        );
+        console.log(`Max ratings: ${JSON.stringify(ranges)}`);
+        console.log(`Ages of max ratings: ${JSON.stringify(ageRanges)}`);
         console.log(`Number of 100s: ${num100s}`);
-        console.log('');
+        console.log("");
     }
 };
 

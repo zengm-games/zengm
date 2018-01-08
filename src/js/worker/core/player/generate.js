@@ -5,7 +5,11 @@ import { PLAYER, g, helpers } from "../../../common";
 import { player } from "../../core";
 import genFuzz from "./genFuzz";
 import { random } from "../../util";
-import type { PlayerRatings, PlayerWithoutPid, RatingKey } from "../../../common/types";
+import type {
+    PlayerRatings,
+    PlayerWithoutPid,
+    RatingKey,
+} from "../../../common/types";
 
 const typeFactors: {
     ["point" | "wing" | "big"]: {

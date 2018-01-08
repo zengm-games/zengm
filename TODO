@@ -43,6 +43,8 @@ ensure statistical outliers exist!
   - 3 point shooting - max ratings produce something like steph curry, but in reality should be even better
 - scale based on new ratings min/maxes
 
+enough players shooting 3s? cutoff might be off due to ratings rescaling
+
 bootstrap pot
 - how to handle fuzz? ideally it would bootstrap based on the fuzzed ratings, but does that work with AI?
 - pot calculation is slow. how much accuracy do i lose by decreasing sample size?
@@ -76,6 +78,9 @@ compare career arcs (peak length)
 reevaluate player value alg, in light of changes to pot
 
 reevaluate contract and free agent balanced
+
+do draft classes better - instead of picking number of years in college at beginning, reevaluate every season
+- also use same combo of ovr+pot for picking players for number years in college, and for sorting draft scouting, and for AI picks
 
 changes
 - Height can increase in young players, although it's quite rare.

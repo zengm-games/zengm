@@ -5,37 +5,41 @@ import { PLAYER, g, helpers } from "../../../common";
 import { player } from "../../core";
 import genFuzz from "./genFuzz";
 import { random } from "../../util";
-import type { PlayerRatings, PlayerWithoutPid } from "../../../common/types";
+import type { PlayerRatings, PlayerWithoutPid, RatingKey } from "../../../common/types";
 
 const typeFactors: {
     ["point" | "wing" | "big"]: {
-        [key: string]: number,
+        [key: RatingKey]: number,
     },
 } = {
     point: {
-        jmp: 1.5,
-        spd: 1.5,
+        jmp: 1.75,
+        spd: 1.75,
         drb: 1.5,
         pss: 1.5,
-        ft: 1.25,
-        fg: 1.25,
-        tp: 1.25,
+        ft: 1.5,
+        fg: 1.5,
+        tp: 1.5,
+        oiq: 1.25,
+        endu: 1.5,
     },
     wing: {
         drb: 1.25,
-        dnk: 1.25,
-        jmp: 1.25,
+        dnk: 1.5,
+        jmp: 1.5,
         ft: 1.25,
         fg: 1.25,
         tp: 1.25,
     },
     big: {
-        ins: 1.5,
+        stre: 1.25,
+        ins: 1.75,
         dnk: 1.5,
         reb: 1.5,
         ft: 0.75,
         fg: 0.75,
         tp: 0.75,
+        diq: 1.25,
     },
 };
 
@@ -85,20 +89,20 @@ const genRatings = (
 
     // Tall players are less talented, and all tend towards dumb and can't shoot because they are rookies
     const rawRatings = {
-        stre: 30,
-        spd: 30,
-        jmp: 30,
-        endu: 20,
-        ins: 20,
-        dnk: 20,
-        ft: 20,
-        fg: 20,
-        tp: 20,
-        oiq: 10,
-        diq: 10,
-        drb: 30,
-        pss: 30,
-        reb: 30,
+        stre: 27,
+        spd: 27,
+        jmp: 27,
+        endu: 17,
+        ins: 17,
+        dnk: 17,
+        ft: 22,
+        fg: 22,
+        tp: 22,
+        oiq: 12,
+        diq: 12,
+        drb: 27,
+        pss: 27,
+        reb: 27,
     };
 
     const factor = helpers.bound(random.realGauss(1, 0.22), 0.5, 2); // For correlation across ratings, to ensure some awesome players

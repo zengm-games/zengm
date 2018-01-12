@@ -146,6 +146,7 @@ async function genPlayers(
         p.imgURL = "/img/lavar.jpg";
         p.lastName = "Ball";
         p.weight = 250;
+        player.develop(p, 0);
         await player.updateValues(p);
         const pid = await idb.cache.players.add(p);
         if (typeof pid === "number") {
@@ -173,6 +174,7 @@ async function genPlayers(
         p.weight = 240;
         p.ratings[0].pss = 0;
         p.ratings[0].skills = ["Dp"];
+        player.develop(p, 0);
         await player.updateValues(p);
         const pid = await idb.cache.players.add(p);
         if (typeof pid === "number") {

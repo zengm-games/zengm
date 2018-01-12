@@ -44,11 +44,10 @@ nonlinear ovr formula
 
 fix easter eggs, cause baseRating can no longer be passed to generate, they might suck
 
-call player.develop(p, 0); everywhere updateValues is called, or put it inside updateValues
-
 evaluate performance of creating a new league - is it writing players to database an extra time? can that be avoided?
 
 upgrade code for ovr, pot, diq, oiq
+- call player.develop(p, 0) in augmentPartialPlayer?
 
 AI draft algo revisit
 

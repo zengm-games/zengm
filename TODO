@@ -1,25 +1,26 @@
 PLAYER DEVELOPMENT REVAMP
 
-blk/stl -> oiq/diq
+reevaluate cutoffs
+- skill labels
+- odds in GameSim
+  - enough players shooting 3s?
 
-use debug.ratingDists to normalize (not sure about targets)
+ensure statistical outliers exist!
+- it's not just about the rating existing, it's about it having an outsized effect on the game
+- set to 100 see what happens
+  - 3 point shooting - max ratings produce something like steph curry, but in reality should be even better
+- scale based on new ratings min/maxes
+- FT shooting - should max out relatively low, but have wide range at bottom
+  - fatigue shouldn't affect FT shooting https://doi.org/10.2478/v10078-010-0019-0
 
-rewrite player development 2
-- start lower on scale
-- something that makes improvements harder as the rating goes up
-- more variance in non-changing ones (athleticism)?
-- look at endurance too
+debug.maxRatingDists
+- make sure normalized
+
+debug.avgRatingDists
+- make sure reasonable
 
 rewrite player development
-- https://www.reddit.com/r/BasketballGM/comments/7frlq6/how_do_pro_basketball_players_develop/
-- correlations between ratings (shooting, iq)
-  - both in generate and develop
-  - maybe generate and develop can share code?
-- height linked to initial ratings (generate)
-- height linked to growth too?
 - make sure positions are balanced (although ovr formula might be needed first)
-- make sure ratings distributions are all similar
-  - debug.ratingDists
 - draft pick development is too variable, second round picks almost as good as first?
   - increase IQ more drastically in first season
     - but have initial IQ be a big factor, maybe 0-20 is much less likely to grow than 20-40. that will lead to some higher pot players
@@ -35,43 +36,25 @@ draft classes
   - maybe pick 0-3 players to give a bonus to? the top of the 19 year olds
   - or just have higher variance in general
 
-shrink range of normal, allow rare outliers
-
-ensure statistical outliers exist!
-- it's not just about the rating existing, it's about it having an outsized effect on the game
-- set to 100 see what happens
-  - 3 point shooting - max ratings produce something like steph curry, but in reality should be even better
-- scale based on new ratings min/maxes
-
-enough players shooting 3s? cutoff might be off due to ratings rescaling
-
 bootstrap pot
 - how to handle fuzz? ideally it would bootstrap based on the fuzzed ratings, but does that work with AI?
 - pot calculation is slow. how much accuracy do i lose by decreasing sample size?
-
-reevaluate position algorithm
-
-reevaluate skill labels
 
 nonlinear ovr formula
 
 fix easter eggs, cause baseRating can no longer be passed to generate, they might suck
 
-more 2nd round picks turn out good, especially late. can't just be fuzz, won't affect AI enough
-
 call player.develop(p, 0); everywhere updateValues is called, or put it inside updateValues
 
 evaluate performance of creating a new league - is it writing players to database an extra time? can that be avoided?
 
-upgrade code for pot, diq, oiq
+upgrade code for ovr, pot, diq, oiq
 
 AI draft algo revisit
 
-compare career arcs (peak length)
-
 reevaluate player value alg, in light of changes to pot
 
-reevaluate contract and free agent balanced
+reevaluate contract and free agent balance
 
 changes
 - Height can increase in young players, although it's quite rare.
@@ -86,10 +69,12 @@ extra blog points
 - odds of 100 (from debug.ratingDists)
 - Players will no longer record literally 0 rebounds or assists or whatever for their entire career just because they have very low ratings. You will get some just by being on the floor. It's still possible to have 0 three point attempts, but that is a separate problem: there is no concept of a last second heave in the game simulation engine, so bad three point shooters will just not ever attempt any.
 - draft prospects actually decide when to declare for draft (only downside is that it shows you the ratings too early)
+- fixed bug where draft prospects would sometimes have skill labels they shouldn't, only to then lose them in their first season
 
 later
 - in new league: set rookie contracts appropriately
 - in new league: initialize rebuilding/contending to non-random values
+- don't include core.debug in prod builds
 
 ---
 

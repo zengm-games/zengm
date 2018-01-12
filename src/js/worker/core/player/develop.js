@@ -197,15 +197,14 @@ const developSeason = (
     }
 };
 
-// 100 times, simulate aging up to 29, and pick the 75th percentile max
+// Repeatedly simulate aging up to 29, and pick the 75th percentile max
+const NUM_SIMULATIONS = 100;
 const bootstrapPot = (ratings: PlayerRatings, age: number): number => {
     if (age >= 29) {
         return ratings.ovr;
     }
 
-    const numSimulations = 100;
-
-    const maxOvrs = range(numSimulations).map(() => {
+    const maxOvrs = range(NUM_SIMULATIONS).map(() => {
         const copiedRatings = Object.assign({}, ratings);
 
         let maxOvr = ratings.ovr;
@@ -220,7 +219,7 @@ const bootstrapPot = (ratings: PlayerRatings, age: number): number => {
         return maxOvr;
     });
 
-    return orderBy(maxOvrs)[Math.floor(0.75 * numSimulations)];
+    return orderBy(maxOvrs)[Math.floor(0.75 * NUM_SIMULATIONS)];
 };
 
 /**

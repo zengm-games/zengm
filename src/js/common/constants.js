@@ -101,7 +101,7 @@ const COMPOSITE_WEIGHTS = {
     },
     defensePerimeter: {
         ratings: ["hgt", "stre", "spd", "jmp", "diq"],
-        weights: [0.5, 1, 2, 0.5, 1],
+        weights: [0.5, 0.5, 2, 0.5, 1],
     },
     endurance: {
         ratings: [50, "endu"],

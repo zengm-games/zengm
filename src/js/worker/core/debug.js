@@ -412,7 +412,7 @@ const avgRatingDists = (numPlayers: number = 100) => {
             pss: [],
             reb: [],
         };
-    })
+    });
 
     for (let i = 0; i < numPlayers; i++) {
         // Log every 5%
@@ -425,7 +425,6 @@ const avgRatingDists = (numPlayers: number = 100) => {
         for (let j = 0; j < NUM_SEASONS; j++) {
             player.develop(p, 1, false, 15.5, true);
             p.born.year -= 1; // Aging after develop
-
 
             for (const key of Object.keys(ratings[j])) {
                 ratings[j][key].push(p.ratings[0][key]);
@@ -457,10 +456,42 @@ const avgRatingDists = (numPlayers: number = 100) => {
     }
 };
 
+const countSkills = async () => {
+    // All non-retired players
+    const players = await idb.league.players
+        .index("tid")
+        .getAll(backboard.lowerBound(PLAYER.FREE_AGENT));
+
+    const counts = {
+        "3": 0,
+        A: 0,
+        B: 0,
+        Di: 0,
+        Dp: 0,
+        Po: 0,
+        Ps: 0,
+        R: 0,
+    };
+
+    for (const p of players) {
+        const r = p.ratings[p.ratings.length - 1];
+
+        // Dynamically recompute, to make dev easier when changing skills formula
+        const skills = player.skills(r);
+
+        for (const skill of skills) {
+            counts[skill] += 1;
+        }
+    }
+
+    console.table(counts);
+};
+
 export default {
     regressRatingsPer,
     leagueAverageContract,
     averageCareerArc,
     maxRatingDists,
     avgRatingDists,
+    countSkills,
 };

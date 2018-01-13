@@ -117,7 +117,8 @@ async function genPlayers(
     let enteringDraft = [];
     for (let i = 0; i < 4; i++) {
         // Top 50% of players remaining enter draft, except in last year when all do
-        const cutoff = i === 3 ? remaining.length : Math.round(0.5 * remaining.length);
+        const cutoff =
+            i === 3 ? remaining.length : Math.round(0.5 * remaining.length);
 
         remaining.sort((a, b) => b.pot - a.pot);
         enteringDraft = enteringDraft.concat(remaining.slice(0, cutoff));

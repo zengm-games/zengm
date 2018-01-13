@@ -1,7 +1,19 @@
 PLAYER DEVELOPMENT REVAMP
 
+get rid of common "factor" in generate, replace with multiple ones (at least two - one skill one athleticism)
+
+debug.maxRatingDists
+- make sure normalized
+
+debug.avgRatingDists
+- make sure reasonable
+
+debug.countSkills
+- make sure balanced - might need to adjust for defense/athleticism/rebounding ones
+
 reevaluate cutoffs
-- skill labels
+- synergy bonuses
+  - reevaluate based on skill label cutoff
 - odds in GameSim
   - enough players shooting 3s?
 
@@ -12,12 +24,6 @@ ensure statistical outliers exist!
 - scale based on new ratings min/maxes
 - FT shooting - should max out relatively low, but have wide range at bottom
   - fatigue shouldn't affect FT shooting https://doi.org/10.2478/v10078-010-0019-0
-
-debug.maxRatingDists
-- make sure normalized
-
-debug.avgRatingDists
-- make sure reasonable
 
 rewrite player development
 - make sure positions are balanced (although ovr formula might be needed first)

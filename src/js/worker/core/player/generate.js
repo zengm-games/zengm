@@ -31,6 +31,7 @@ const typeFactors: {
         drb: 1.25,
         dnk: 1.5,
         jmp: 1.5,
+        spd: 1.5,
         ft: 1.25,
         fg: 1.25,
         tp: 1.25,
@@ -94,8 +95,8 @@ const genRatings = (
     // Tall players are less talented, and all tend towards dumb and can't shoot because they are rookies
     const rawRatings = {
         stre: 27,
-        spd: 27,
-        jmp: 27,
+        spd: 30,
+        jmp: 30,
         endu: 17,
         ins: 17,
         dnk: 17,

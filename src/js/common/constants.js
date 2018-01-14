@@ -47,6 +47,7 @@ const COMPOSITE_WEIGHTS = {
     },
     dribbling: {
         ratings: ["drb", "spd"],
+        weights: [1, 1],
     },
     passing: {
         ratings: ["drb", "pss", "oiq"],

@@ -121,7 +121,9 @@ const genRatings = (
             ? typeFactors[type][key]
             : 1;
 
-        const factor = athleticRatings.includes(key) ? factorAthleticism : factorSkill;
+        const factor = athleticRatings.includes(key)
+            ? factorAthleticism
+            : factorSkill;
 
         rawRatings[key] = player.limitRating(
             factor * typeFactor * random.realGauss(rawRatings[key], 3),

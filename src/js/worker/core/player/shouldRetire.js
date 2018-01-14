@@ -1,3 +1,5 @@
+// @flow
+
 import { PLAYER, g } from "../../../common";
 import { random } from "../../util";
 import type { Player } from "../../../common/types";

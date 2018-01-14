@@ -110,11 +110,19 @@ const genRatings = (
         reb: 27,
     };
 
-    const factor = helpers.bound(random.realGauss(1, 0.22), 0.5, 2); // For correlation across ratings, to ensure some awesome players
+    // For correlation across ratings, to ensure some awesome players, but athleticism and skill are independent to
+    // ensure there are some who are elite in one but not the other
+    const factorAthleticism = helpers.bound(random.realGauss(1, 0.22), 0.5, 2);
+    const factorSkill = helpers.bound(random.realGauss(1, 0.22), 0.5, 2);
+    const athleticRatings = ["stre", "spd", "jmp", "endu", "dnk"];
+
     for (const key of Object.keys(rawRatings)) {
         const typeFactor = typeFactors[type].hasOwnProperty(key)
             ? typeFactors[type][key]
             : 1;
+
+        const factor = athleticRatings.includes(key) ? factorAthleticism : factorSkill;
+
         rawRatings[key] = player.limitRating(
             factor * typeFactor * random.realGauss(rawRatings[key], 3),
         );

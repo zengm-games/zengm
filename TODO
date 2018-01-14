@@ -1,13 +1,5 @@
 PLAYER DEVELOPMENT REVAMP
 
-get rid of common "factor" in generate, replace with multiple ones (at least two - one skill one athleticism)
-
-debug.maxRatingDists
-- make sure normalized
-
-debug.avgRatingDists
-- make sure reasonable
-
 debug.countSkills
 - make sure balanced - might need to adjust for defense/athleticism/rebounding ones
 
@@ -16,6 +8,12 @@ reevaluate cutoffs
   - reevaluate based on skill label cutoff
 - odds in GameSim
   - enough players shooting 3s?
+
+debug.maxRatingDists
+- make sure normalized
+
+debug.avgRatingDists
+- make sure reasonable
 
 ensure statistical outliers exist!
 - it's not just about the rating existing, it's about it having an outsized effect on the game

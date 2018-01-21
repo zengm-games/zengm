@@ -747,7 +747,7 @@ const TeamStatDists = ({ season, statsAll }) => {
                         .filter(stat => stat !== "playoffs")
                         .map(stat => {
                             const bbgmPlot = (
-                                <tr>
+                                <tr key={`${stat}-bbgm`}>
                                     <td
                                         style={{
                                             textAlign: "right",
@@ -767,7 +767,7 @@ const TeamStatDists = ({ season, statsAll }) => {
                             let nbaPlot = null;
                             if (nbaStatsAll.hasOwnProperty(stat)) {
                                 nbaPlot = (
-                                    <tr>
+                                    <tr key={`${stat}-nba`}>
                                         <td />
                                         <td width="100%">
                                             <div style={{ marginTop: "-26px" }}>

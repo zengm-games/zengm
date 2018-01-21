@@ -2,7 +2,6 @@
 
 import { COMPOSITE_WEIGHTS } from "../../../common";
 import { player } from "../../core";
-import { random } from "../../util";
 import type {
     PlayerRatings,
     PlayerSkill,

@@ -1,22 +1,6 @@
 PLAYER DEVELOPMENT REVAMP
 
-reevaluate cutoffs
-- synergy bonuses
-  - reevaluate based on skill label cutoff
-- odds in GameSim
-  - enough players shooting 3s?
-
-debug.maxRatingDists
-- make sure normalized
-
-debug.avgRatingDists
-- make sure reasonable
-
 ensure statistical outliers exist!
-- it's not just about the rating existing, it's about it having an outsized effect on the game
-- set to 100 see what happens
-  - 3 point shooting - max ratings produce something like steph curry, but in reality should be even better
-- scale based on new ratings min/maxes
 - FT shooting - should max out relatively low, but have wide range at bottom
   - fatigue shouldn't affect FT shooting https://doi.org/10.2478/v10078-010-0019-0
 
@@ -25,6 +9,9 @@ rewrite player development
 - draft pick development is too variable, second round picks almost as good as first?
   - increase IQ more drastically in first season
     - but have initial IQ be a big factor, maybe 0-20 is much less likely to grow than 20-40. that will lead to some higher pot players
+  - more difference between elite and the rest
+    - maybe pick 0-3 players to give a bonus to? the top of the 19 year olds
+    - or just have higher variance in general
 
 use oiq and diq in synergy more directly in gamesim
 - multiply off/def synergy, like perimFactor
@@ -32,13 +19,9 @@ use oiq and diq in synergy more directly in gamesim
 aging curve
 - too many good old players?
 
-draft classes
-- more difference between elite and the rest
-  - maybe pick 0-3 players to give a bonus to? the top of the 19 year olds
-  - or just have higher variance in general
+steeper penalties for unbalanced lineups
 
 bootstrap pot
-- how to handle fuzz? ideally it would bootstrap based on the fuzzed ratings, but does that work with AI?
 - pot calculation is slow. how much accuracy do i lose by decreasing sample size?
 
 nonlinear ovr formula

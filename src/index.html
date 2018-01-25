@@ -113,80 +113,17 @@
             w[v].publisher = "ca71e3e4-0cc9-464d-aa0e-38e8d5d700f3";
         }(window, document, 'script', 'Survata'));
       }
-    </script>
 
-    <script type="text/javascript">
-     var PREBID_TIMEOUT = 700;
-
-     var adUnits = [{
-       code: 'div-gpt-ad-1460505661639-0',
-       sizes: [[728, 90], [970, 90]],
-       bids: [{
-         bidder: 'appnexus',
-         params: { placementId: '10433394' }
-       }, {
-         bidder: 'pubmatic',
-         params: {
-           publisherId: 'TO ADD',
-           adSlot: 'TO ADD'
-         }
-       }]
-     }, {
-       code: 'div-gpt-ad-1438287399331-0',
-       sizes: [[300, 250], [300, 600]],
-       bids: [{
-        bidder: 'appnexus',
-        params: {
-           placementId: '10433394'
-        }
-       }]
-     }, {
-       code: 'div-gpt-ad-1460505748561-0',
-       sizes: [[300, 250], [300, 600]],
-       bids: [{
-        bidder: 'appnexus',
-        params: {
-           placementId: '10433394'
-        }
-       }]
-     }];
-     
-     var pbjs = pbjs || {};
-     pbjs.que = pbjs.que || [];
-
-    </script>
-    <script type="text/javascript" src="//acdn.adnxs.com/prebid/not-for-prod/prebid.js" async></script>
-    <script type="text/javascript">
+      // Prebid.js ads
+      var pbjs = pbjs || {};
+      pbjs.que = pbjs.que || [];
       var googletag = googletag || {};
       googletag.cmd = googletag.cmd || [];
       googletag.cmd.push(function() {
         googletag.pubads().disableInitialLoad();
       });
-
-      pbjs.que.push(function() {
-console.log('initial requestbids call')
-        pbjs.addAdUnits(adUnits);
-        pbjs.requestBids({
-          bidsBackHandler: sendAdserverRequest
-        });
-      });
-
-      function sendAdserverRequest() {
-console.log('sendAdserverRequest');
-        if (pbjs.adserverRequestSent) return;
-        pbjs.adserverRequestSent = true;
-        googletag.cmd.push(function() {
-          pbjs.que.push(function() {
-            pbjs.setTargetingForGPTAsync();
-            googletag.pubads().refresh();
-          });
-        });
-      }
-
-      setTimeout(function() {
-        sendAdserverRequest();
-      }, PREBID_TIMEOUT);
     </script>
+    <script type="text/javascript" src="//acdn.adnxs.com/prebid/not-for-prod/prebid.js" async></script>
 
     <div id="content">
       <div id="loading-msg">

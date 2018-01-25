@@ -2,6 +2,58 @@
 
 import { emitter } from "../util";
 
+const PREBID_TIMEOUT = 700;
+
+const adUnits = [
+    {
+        code: "div-gpt-ad-1460505661639-0",
+        sizes: [[728, 90], [970, 90]],
+        bids: [
+            {
+                bidder: "appnexus",
+                params: { placementId: "10433394" },
+            },
+            {
+                bidder: "pubmatic",
+                params: {
+                    publisherId: "TO ADD",
+                    adSlot: "TO ADD",
+                },
+            },
+        ],
+    },
+    {
+        code: "div-gpt-ad-1438287399331-0",
+        sizes: [[300, 250], [300, 600]],
+        bids: [
+            {
+                bidder: "appnexus",
+                params: {
+                    placementId: "10433394",
+                },
+            },
+        ],
+    },
+    {
+        code: "div-gpt-ad-1460505748561-0",
+        sizes: [[300, 250], [300, 600]],
+        bids: [
+            {
+                bidder: "appnexus",
+                params: {
+                    placementId: "10433394",
+                },
+            },
+        ],
+    },
+];
+
+const adUnitPaths = [
+    "/19968336/header-bid-tag1",
+    "/19968336/header-bid-tag-0",
+    "/19968336/header-bid-tag-0",
+];
+
 function showGcs() {
     window.TriggerPrompt("http://www.basketball-gm.com/", new Date().getTime());
 }
@@ -41,77 +93,75 @@ function showModal() {
 
 let gptLoading = false;
 let gptLoaded = false;
-const gptAdSlots = [];
+let gptAdSlots = [];
+
+const adUnitCodes = adUnits.map(adUnit => adUnit.code);
+
+const sendAdserverRequest = () => {
+    console.log("sendAdserverRequest");
+    if (window.pbjs.adserverRequestSent) return;
+    window.pbjs.adserverRequestSent = true;
+    window.googletag.cmd.push(() => {
+        window.pbjs.que.push(() => {
+            window.pbjs.setTargetingForGPTAsync();
+            window.googletag.pubads().refresh();
+        });
+    });
+};
 
 async function showBanner() {
     const initBanners = () => {
-console.log('initBanners')
+        console.log("initBanners");
         return new Promise(resolve => {
+            window.pbjs.que.push(() => {
+                console.log("initial requestbids call");
+                window.pbjs.addAdUnits(adUnits);
+                window.pbjs.requestBids({
+                    bidsBackHandler: sendAdserverRequest,
+                });
+            });
+
+            setTimeout(() => {
+                sendAdserverRequest();
+            }, PREBID_TIMEOUT);
+
             window.googletag.cmd.push(() => {
-                gptAdSlots[0] = window.googletag
-                    .defineSlot(
-                        "/19968336/header-bid-tag1",
-                        [[728, 90], [970, 90]],
-                        "div-gpt-ad-1460505661639-0",
-                    )
-                    .addService(window.googletag.pubads());
-                gptAdSlots[1] = window.googletag
-                    .defineSlot(
-                        "/19968336/header-bid-tag-0",
-                        [[300, 250], [300, 600]],
-                        "div-gpt-ad-1438287399331-0",
-                    )
-                    .addService(window.googletag.pubads());
-                gptAdSlots[2] = window.googletag
-                    .defineSlot(
-                        "/19968336/header-bid-tag-0",
-                        [[300, 250], [300, 600]],
-                        "div-gpt-ad-1460505748561-0",
-                    )
-                    .addService(window.googletag.pubads());
+                gptAdSlots = adUnits.map((adUnit, i) => {
+                    return window.googletag
+                        .defineSlot(adUnitPaths[i], adUnit.sizes, adUnit.code)
+                        .addService(window.googletag.pubads());
+                });
                 window.googletag.pubads().enableSingleRequest();
                 window.googletag.enableServices();
+
                 let count = 0;
-                window.googletag.cmd.push(() => {
-console.log('initbanners display1')
-                    window.googletag.display("div-gpt-ad-1460505661639-0");
-                    count += 1;
-                    if (count >= 3) {
-                        resolve();
-                    }
-                });
-                window.googletag.cmd.push(() => {
-console.log('initbanners display2')
-                    window.googletag.display("div-gpt-ad-1438287399331-0");
-                    count += 1;
-                    if (count >= 3) {
-                        resolve();
-                    }
-                });
-                window.googletag.cmd.push(() => {
-console.log('initbanners display3')
-                    window.googletag.display("div-gpt-ad-1460505748561-0");
-                    count += 1;
-                    if (count >= 3) {
-                        resolve();
-                    }
-                });
+                for (const adUnitCode of adUnitCodes) {
+                    // eslint-disable-next-line no-loop-func
+                    window.googletag.cmd.push(() => {
+                        console.log("initbanners display");
+                        window.googletag.display(adUnitCode);
+                        count += 1;
+                        if (count >= adUnitCodes.length) {
+                            resolve();
+                        }
+                    });
+                }
             });
         });
     };
 
     // After banners are initially loaded, use this to refresh
     const refreshBanners = () => {
-console.log('refreshBanners')
-        window.pbjs.que.push(function () {
+        console.log("refreshBanners");
+        window.pbjs.que.push(() => {
             window.pbjs.requestBids({
-                timeout: window.PREBID_TIMEOUT,
-                adUnitCodes: ['div-gpt-ad-1460505661639-0', 'div-gpt-ad-1438287399331-0', 'div-gpt-ad-1460505748561-0'],
-                bidsBackHandler: function() {
-console.log('bidsbackhandler', this)
-                    window.pbjs.setTargetingForGPTAsync(['div-gpt-ad-1460505661639-0', 'div-gpt-ad-1438287399331-0', 'div-gpt-ad-1460505748561-0']);
+                timeout: PREBID_TIMEOUT,
+                adUnitCodes,
+                bidsBackHandler: () => {
+                    console.log("bidsbackhandler", this);
+                    window.pbjs.setTargetingForGPTAsync(adUnitCodes);
                     window.googletag.pubads().refresh(gptAdSlots);
-                }
+                },
             });
         });
     };
@@ -131,9 +181,9 @@ console.log('bidsbackhandler', this)
             }
         }
     } else {
-        const bannerAdTop = document.getElementById("div-gpt-ad-1460505661639-0");
-        const bannerAdBottom1 = document.getElementById("div-gpt-ad-1438287399331-0");
-        const bannerAdBottom2 = document.getElementById("div-gpt-ad-1460505748561-0");
+        const bannerAdTop = document.getElementById(adUnitCodes[0]);
+        const bannerAdBottom1 = document.getElementById(adUnitCodes[1]);
+        const bannerAdBottom2 = document.getElementById(adUnitCodes[2]);
 
         // For people using BBGM Gold, these would have been deleted in initAds
         if (bannerAdTop && bannerAdBottom1 && bannerAdBottom2) {
@@ -150,6 +200,7 @@ console.log('bidsbackhandler', this)
 }
 
 export default {
+    adUnitCodes,
     showBanner,
     showModal,
     showSurvata,

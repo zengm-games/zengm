@@ -54,6 +54,8 @@ const adUnitPaths = [
     "/19968336/header-bid-tag-0",
 ];
 
+const adUnitCodes = adUnits.map(adUnit => adUnit.code);
+
 function showGcs() {
     window.TriggerPrompt("http://www.basketball-gm.com/", new Date().getTime());
 }
@@ -93,9 +95,6 @@ function showModal() {
 
 let gptLoading = false;
 let gptLoaded = false;
-let gptAdSlots = [];
-
-const adUnitCodes = adUnits.map(adUnit => adUnit.code);
 
 const sendAdserverRequest = () => {
     console.log("sendAdserverRequest");
@@ -111,6 +110,9 @@ const sendAdserverRequest = () => {
 
 async function showBanner() {
     const initBanners = () => {
+        // eslint-disable-next-line
+        require("../../vendor/prebid");
+
         console.log("initBanners");
         return new Promise(resolve => {
             window.pbjs.que.push(() => {
@@ -126,11 +128,11 @@ async function showBanner() {
             }, PREBID_TIMEOUT);
 
             window.googletag.cmd.push(() => {
-                gptAdSlots = adUnits.map((adUnit, i) => {
-                    return window.googletag
-                        .defineSlot(adUnitPaths[i], adUnit.sizes, adUnit.code)
+                for (let i = 0; i < adUnits.length; i++) {
+                    window.googletag
+                        .defineSlot(adUnitPaths[i], adUnits[i].sizes, adUnitCodes[i])
                         .addService(window.googletag.pubads());
-                });
+                }
                 window.googletag.pubads().enableSingleRequest();
                 window.googletag.enableServices();
 
@@ -160,7 +162,7 @@ async function showBanner() {
                 bidsBackHandler: () => {
                     console.log("bidsbackhandler", this);
                     window.pbjs.setTargetingForGPTAsync(adUnitCodes);
-                    window.googletag.pubads().refresh(gptAdSlots);
+                    window.googletag.pubads().refresh();
                 },
             });
         });

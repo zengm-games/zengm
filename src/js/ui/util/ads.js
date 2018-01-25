@@ -6,42 +6,43 @@ const PREBID_TIMEOUT = 700;
 
 const adUnits = [
     {
-        code: "div-gpt-ad-1460505661639-0",
-        sizes: [[728, 90], [970, 90]],
+        code: "div-gpt-ad-1516837104728-0",
+        sizes: [[728, 90]],
         bids: [
             {
-                bidder: "appnexus",
-                params: { placementId: "10433394" },
-            },
-            {
-                bidder: "pubmatic",
+                bidder: "pulsepoint",
                 params: {
-                    publisherId: "TO ADD",
-                    adSlot: "TO ADD",
+                    cf: "728X90",
+                    cp: 558539,
+                    ct: 633385,
                 },
             },
         ],
     },
     {
-        code: "div-gpt-ad-1438287399331-0",
-        sizes: [[300, 250], [300, 600]],
+        code: "div-gpt-ad-1516837104728-1",
+        sizes: [[300, 250]],
         bids: [
             {
-                bidder: "appnexus",
+                bidder: "pulsepoint",
                 params: {
-                    placementId: "10433394",
+                    cf: "300X250",
+                    cp: 558539,
+                    ct: 633386,
                 },
             },
         ],
     },
     {
-        code: "div-gpt-ad-1460505748561-0",
-        sizes: [[300, 250], [300, 600]],
+        code: "div-gpt-ad-1516837104728-2",
+        sizes: [[300, 250]],
         bids: [
             {
-                bidder: "appnexus",
+                bidder: "pulsepoint",
                 params: {
-                    placementId: "10433394",
+                    cf: "300X250",
+                    cp: 558539,
+                    ct: 633387,
                 },
             },
         ],
@@ -49,9 +50,9 @@ const adUnits = [
 ];
 
 const adUnitPaths = [
-    "/19968336/header-bid-tag1",
-    "/19968336/header-bid-tag-0",
-    "/19968336/header-bid-tag-0",
+    "/42283434/2018-BBGM-Billboard1",
+    "/42283434/2018-BBGM-Rectangle1",
+    "/42283434/2018-BBGM-Rectangle2",
 ];
 
 const adUnitCodes = adUnits.map(adUnit => adUnit.code);
@@ -97,9 +98,9 @@ let gptLoading = false;
 let gptLoaded = false;
 
 const sendAdserverRequest = () => {
-    console.log("sendAdserverRequest");
     if (window.pbjs.adserverRequestSent) return;
     window.pbjs.adserverRequestSent = true;
+    console.log("sendAdserverRequest");
     window.googletag.cmd.push(() => {
         window.pbjs.que.push(() => {
             window.pbjs.setTargetingForGPTAsync();
@@ -110,13 +111,14 @@ const sendAdserverRequest = () => {
 
 async function showBanner() {
     const initBanners = () => {
-        // eslint-disable-next-line
-        require("../../vendor/prebid");
-
         console.log("initBanners");
         return new Promise(resolve => {
+            // eslint-disable-next-line
+            require("../../vendor/prebid");
+
             window.pbjs.que.push(() => {
                 console.log("initial requestbids call");
+                window.pbjs.setConfig({ priceGranularity: "medium" });
                 window.pbjs.addAdUnits(adUnits);
                 window.pbjs.requestBids({
                     bidsBackHandler: sendAdserverRequest,
@@ -130,7 +132,11 @@ async function showBanner() {
             window.googletag.cmd.push(() => {
                 for (let i = 0; i < adUnits.length; i++) {
                     window.googletag
-                        .defineSlot(adUnitPaths[i], adUnits[i].sizes, adUnitCodes[i])
+                        .defineSlot(
+                            adUnitPaths[i],
+                            adUnits[i].sizes,
+                            adUnitCodes[i],
+                        )
                         .addService(window.googletag.pubads());
                 }
                 window.googletag.pubads().enableSingleRequest();

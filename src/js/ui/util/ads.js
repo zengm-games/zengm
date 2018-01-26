@@ -10,6 +10,13 @@ const adUnits = [
         sizes: [[728, 90]],
         bids: [
             {
+                bidder: "conversant",
+                params: {
+                    site_id: "116931",
+                    secure: 1,
+                },
+            },
+            {
                 bidder: "pulsepoint",
                 params: {
                     cf: "728X90",
@@ -24,6 +31,13 @@ const adUnits = [
         sizes: [[300, 250]],
         bids: [
             {
+                bidder: "conversant",
+                params: {
+                    site_id: "116931",
+                    secure: 1,
+                },
+            },
+            {
                 bidder: "pulsepoint",
                 params: {
                     cf: "300X250",
@@ -37,6 +51,13 @@ const adUnits = [
         code: "div-gpt-ad-1516837104728-2",
         sizes: [[300, 250]],
         bids: [
+            {
+                bidder: "conversant",
+                params: {
+                    site_id: "116931",
+                    secure: 1,
+                },
+            },
             {
                 bidder: "pulsepoint",
                 params: {

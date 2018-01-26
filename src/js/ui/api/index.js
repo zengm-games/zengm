@@ -46,7 +46,9 @@ const emit = (name: string, content: any) => {
 const initAds = (goldUntil: number | void) => {
     // No ads for Gold members
     const currentTimestamp = Math.floor(Date.now() / 1000);
-    if (goldUntil === undefined || currentTimestamp > goldUntil) {
+
+    // Infinity one means that it will show ads even if account server is unreachable!
+    if (goldUntil === Infinity || goldUntil === undefined || currentTimestamp > goldUntil) {
         let el;
         el = document.getElementById("banner-ad-top-wrapper");
         if (el) {

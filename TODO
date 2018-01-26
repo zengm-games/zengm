@@ -2,7 +2,6 @@ PLAYER DEVELOPMENT REVAMP
 
 ensure statistical outliers exist!
 - FT shooting - should max out relatively low, but have wide range at bottom
-  - fatigue shouldn't affect FT shooting https://doi.org/10.2478/v10078-010-0019-0
 
 rewrite player development
 - make sure positions are balanced (although ovr formula might be needed first)

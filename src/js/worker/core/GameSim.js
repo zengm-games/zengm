@@ -1370,6 +1370,8 @@ class GameSim {
     /**
      * Free throw.
      *
+     * Fatigue has no affect: https://doi.org/10.2478/v10078-010-0019-0
+     *
      * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
      * @param {number} amount Integer representing the number of free throws to shoot
      * @return {string} "fg" if the last free throw is made; otherwise, this.doReb is called and its output is returned.

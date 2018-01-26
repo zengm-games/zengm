@@ -25,7 +25,7 @@ const shootingFormula = {
         }
         return 2;
     },
-    changeLimits: () => [-2, 15],
+    changeLimits: () => [-3, 13],
 };
 
 const iqFormula = {
@@ -51,12 +51,12 @@ const iqFormula = {
     },
     changeLimits: age => {
         if (age > 24) {
-            return [-2, 10];
+            return [-3, 9];
         }
 
-        // For 19: [-2, 35]
-        // For 23: [-2, 15]
-        return [-2, 10 + 5 * (24 - age)];
+        // For 19: [-3, 32]
+        // For 23: [-3, 12]
+        return [-3, 7 + 5 * (24 - age)];
     },
 };
 
@@ -77,7 +77,7 @@ const ratingsFormulas: {
             }
             return -4;
         },
-        changeLimits: () => [-10, 2],
+        changeLimits: () => [-12, 2],
     },
     jmp: {
         ageModifier: (age: number) => {
@@ -89,19 +89,19 @@ const ratingsFormulas: {
             }
             return -5;
         },
-        changeLimits: () => [-10, 2],
+        changeLimits: () => [-12, 2],
     },
     endu: {
         ageModifier: (age: number) => {
             if (age <= 23) {
-                return random.uniform(0, 10);
+                return random.uniform(0, 9);
             }
             if (age <= 30) {
                 return 0;
             }
             return -4;
         },
-        changeLimits: () => [-10, 10],
+        changeLimits: () => [-11, 19],
     },
     dnk: shootingFormula,
     ins: shootingFormula,
@@ -143,11 +143,11 @@ const calcBaseChange = (age: number, coachingRank: number): number => {
 
     // Noise
     if (age <= 23) {
-        val += helpers.bound(random.realGauss(0, 5), -4, 30);
+        val += helpers.bound(random.realGauss(0, 5), -4, 20);
     } else if (age <= 25) {
-        val += helpers.bound(random.realGauss(0, 5), -4, 15);
+        val += helpers.bound(random.realGauss(0, 5), -4, 10);
     } else {
-        val += helpers.bound(random.realGauss(0, 3), -2, 5);
+        val += helpers.bound(random.realGauss(0, 3), -2, 4);
     }
 
     // Modulate by coaching
@@ -189,7 +189,7 @@ const developSeason = (
         ratings[key] = player.limitRating(
             ratings[key] +
                 helpers.bound(
-                    (baseChange + ageModifier) * random.uniform(0.5, 1.5),
+                    (baseChange + ageModifier) * random.uniform(0.4, 1.4),
                     changeLimits[0],
                     changeLimits[1],
                 ),

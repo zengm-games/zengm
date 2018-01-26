@@ -17,34 +17,34 @@ const typeFactors: {
     },
 } = {
     point: {
-        jmp: 1.75,
-        spd: 1.75,
+        jmp: 1.65,
+        spd: 1.65,
         drb: 1.5,
         pss: 1.5,
-        ft: 1.5,
-        fg: 1.5,
-        tp: 1.5,
-        oiq: 1.25,
-        endu: 1.5,
+        ft: 1.4,
+        fg: 1.4,
+        tp: 1.4,
+        oiq: 1.2,
+        endu: 1.4,
     },
     wing: {
-        drb: 1.25,
+        drb: 1.2,
         dnk: 1.5,
-        jmp: 1.5,
-        spd: 1.5,
-        ft: 1.25,
-        fg: 1.25,
-        tp: 1.25,
+        jmp: 1.4,
+        spd: 1.4,
+        ft: 1.2,
+        fg: 1.2,
+        tp: 1.2,
     },
     big: {
-        stre: 1.25,
-        ins: 1.75,
+        stre: 1.2,
+        ins: 1.6,
         dnk: 1.5,
-        reb: 1.5,
-        ft: 0.75,
-        fg: 0.75,
-        tp: 0.75,
-        diq: 1.25,
+        reb: 1.4,
+        ft: 0.8,
+        fg: 0.8,
+        tp: 0.8,
+        diq: 1.2,
     },
 };
 
@@ -94,36 +94,46 @@ const genRatings = (
 
     // Tall players are less talented, and all tend towards dumb and can't shoot because they are rookies
     const rawRatings = {
-        stre: 27,
-        spd: 30,
-        jmp: 30,
+        stre: 37,
+        spd: 40,
+        jmp: 40,
         endu: 17,
-        ins: 17,
-        dnk: 17,
-        ft: 22,
-        fg: 22,
-        tp: 22,
-        oiq: 12,
-        diq: 12,
-        drb: 27,
-        pss: 27,
-        reb: 27,
+        ins: 27,
+        dnk: 27,
+        ft: 32,
+        fg: 32,
+        tp: 32,
+        oiq: 22,
+        diq: 22,
+        drb: 37,
+        pss: 37,
+        reb: 37,
     };
 
     // For correlation across ratings, to ensure some awesome players, but athleticism and skill are independent to
     // ensure there are some who are elite in one but not the other
-    const factorAthleticism = helpers.bound(random.realGauss(1, 0.22), 0.5, 2);
-    const factorSkill = helpers.bound(random.realGauss(1, 0.22), 0.5, 2);
-    const athleticRatings = ["stre", "spd", "jmp", "endu", "dnk"];
+    const factorAthleticism = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
+    const factorShooting = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
+    const factorSkill = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
+    const factorIns = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
+    const athleticismRatings = ["stre", "spd", "jmp", "endu", "dnk"];
+    const shootingRatings = ["ft", "fg", "tp"];
+    const skillRatings = ["oiq", "diq", "drb", "pss", "reb"];
+    // ins purposely left out
 
     for (const key of Object.keys(rawRatings)) {
         const typeFactor = typeFactors[type].hasOwnProperty(key)
             ? typeFactors[type][key]
             : 1;
 
-        const factor = athleticRatings.includes(key)
-            ? factorAthleticism
-            : factorSkill;
+        let factor = factorIns;
+        if (athleticismRatings.includes(key)) {
+            factor = factorAthleticism;
+        } else if (shootingRatings.includes(key)) {
+            factor = factorShooting;
+        } else if (skillRatings.includes(key)) {
+            factor = factorSkill;
+        }
 
         rawRatings[key] = player.limitRating(
             factor * typeFactor * random.realGauss(rawRatings[key], 3),

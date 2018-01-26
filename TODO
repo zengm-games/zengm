@@ -1,5 +1,11 @@
 PLAYER DEVELOPMENT REVAMP
 
+center ratings on 50 within league
+- ensure ratings balance (debug stuff)
+- tweak skill labels and gamesim cutoffs, again!
+- tweak positions
+  - ensure balance, both in quantity and quality
+
 ensure statistical outliers exist!
 - FT shooting - should max out relatively low, but have wide range at bottom
 

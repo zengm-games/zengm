@@ -12,7 +12,7 @@ const hasSkill = (
     ratings: PlayerRatings,
     components: RatingKey[],
     weights: number[],
-    cutoff?: number = 0.57,
+    cutoff?: number = 0.61,
 ): boolean => {
     if (weights === undefined) {
         // Default: array of ones with same size as components
@@ -58,6 +58,8 @@ const hasSkill = (
  * * Rebounder (R)
  *
  * There should be about 30 (number of teams) players with each skill, except 3 point shooting which should have 60.
+ *
+ * Keep cutoffs in sync with GameSim.js!
  */
 const skills = (ratings: PlayerRatings): PlayerSkill[] => {
     const sk = [];
@@ -68,6 +70,7 @@ const skills = (ratings: PlayerRatings): PlayerSkill[] => {
             ratings,
             COMPOSITE_WEIGHTS.shootingThreePointer.ratings,
             COMPOSITE_WEIGHTS.shootingThreePointer.weights,
+            0.59,
         )
     ) {
         // Purposely let more 3 point shooters have this skill, it just feels right
@@ -78,7 +81,7 @@ const skills = (ratings: PlayerRatings): PlayerSkill[] => {
             ratings,
             COMPOSITE_WEIGHTS.athleticism.ratings,
             COMPOSITE_WEIGHTS.athleticism.weights,
-            0.55,
+            0.63,
         )
     ) {
         sk.push("A");
@@ -88,6 +91,7 @@ const skills = (ratings: PlayerRatings): PlayerSkill[] => {
             ratings,
             COMPOSITE_WEIGHTS.dribbling.ratings,
             COMPOSITE_WEIGHTS.dribbling.weights,
+            0.68,
         )
     ) {
         sk.push("B");
@@ -97,7 +101,7 @@ const skills = (ratings: PlayerRatings): PlayerSkill[] => {
             ratings,
             COMPOSITE_WEIGHTS.defenseInterior.ratings,
             COMPOSITE_WEIGHTS.defenseInterior.weights,
-            0.53,
+            0.57,
         )
     ) {
         sk.push("Di");
@@ -107,7 +111,6 @@ const skills = (ratings: PlayerRatings): PlayerSkill[] => {
             ratings,
             COMPOSITE_WEIGHTS.defensePerimeter.ratings,
             COMPOSITE_WEIGHTS.defensePerimeter.weights,
-            0.53,
         )
     ) {
         sk.push("Dp");
@@ -126,6 +129,7 @@ const skills = (ratings: PlayerRatings): PlayerSkill[] => {
             ratings,
             COMPOSITE_WEIGHTS.passing.ratings,
             COMPOSITE_WEIGHTS.passing.weights,
+            0.63,
         )
     ) {
         sk.push("Ps");
@@ -135,7 +139,6 @@ const skills = (ratings: PlayerRatings): PlayerSkill[] => {
             ratings,
             COMPOSITE_WEIGHTS.rebounding.ratings,
             COMPOSITE_WEIGHTS.rebounding.weights,
-            0.6,
         )
     ) {
         sk.push("R");

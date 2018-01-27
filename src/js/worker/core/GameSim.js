@@ -574,46 +574,46 @@ class GameSim {
                 const p = this.playersOnCourt[t][i];
 
                 // 1 / (1 + e^-(15 * (x - 0.57))) from 0 to 1
-                // 0.57 is not always used - keep in sync with skills.js!
+                // 0.61 is not always used - keep in sync with skills.js!
                 skillsCount["3"] += helpers.sigmoid(
                     this.team[t].player[p].compositeRating.shootingThreePointer,
                     15,
-                    0.57,
+                    0.59,
                 );
                 skillsCount.A += helpers.sigmoid(
                     this.team[t].player[p].compositeRating.athleticism,
                     15,
-                    0.55,
+                    0.63,
                 );
                 skillsCount.B += helpers.sigmoid(
                     this.team[t].player[p].compositeRating.dribbling,
                     15,
-                    0.57,
+                    0.68,
                 );
                 skillsCount.Di += helpers.sigmoid(
                     this.team[t].player[p].compositeRating.defenseInterior,
                     15,
-                    0.53,
+                    0.57,
                 );
                 skillsCount.Dp += helpers.sigmoid(
                     this.team[t].player[p].compositeRating.defensePerimeter,
                     15,
-                    0.53,
+                    0.61,
                 );
                 skillsCount.Po += helpers.sigmoid(
                     this.team[t].player[p].compositeRating.shootingLowPost,
                     15,
-                    0.57,
+                    0.61,
                 );
                 skillsCount.Ps += helpers.sigmoid(
                     this.team[t].player[p].compositeRating.passing,
                     15,
-                    0.57,
+                    0.63,
                 );
                 skillsCount.R += helpers.sigmoid(
                     this.team[t].player[p].compositeRating.rebounding,
                     15,
-                    0.6,
+                    0.61,
                 );
             }
 

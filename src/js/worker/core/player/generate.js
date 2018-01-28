@@ -111,12 +111,20 @@ const genRatings = (
         reb: 37,
     };
 
+    // Small chance of doubling the upper bound of "factor" variables - can allow very special players. Also double the variance, which can lead to players who are really good and/or bad at certain things, which makes sense because a prodigy in one area can suck at something else but still make it.
+    let upperLimit = 1.2;
+    let stddev = 0.2;
+    if (Math.random() < 0.1) {
+        upperLimit *= 2;
+        stddev *= 2;
+    }
+
     // For correlation across ratings, to ensure some awesome players, but athleticism and skill are independent to
     // ensure there are some who are elite in one but not the other
-    const factorAthleticism = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
-    const factorShooting = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
-    const factorSkill = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
-    const factorIns = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
+    const factorAthleticism = helpers.bound(random.realGauss(1, stddev), 0.2, upperLimit);
+    const factorShooting = helpers.bound(random.realGauss(1, stddev), 0.2, upperLimit);
+    const factorSkill = helpers.bound(random.realGauss(1, stddev), 0.2, upperLimit);
+    const factorIns = helpers.bound(random.realGauss(1, stddev), 0.2, upperLimit);
     const athleticismRatings = ["stre", "spd", "jmp", "endu", "dnk"];
     const shootingRatings = ["ft", "fg", "tp"];
     const skillRatings = ["oiq", "diq", "drb", "pss", "reb"];

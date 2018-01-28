@@ -9,14 +9,7 @@ ensure statistical outliers exist!
 - all ratings (try putting to 100, see what happens)
 - FT shooting - should max out relatively low, but have wide range at bottom
 
-rewrite player development
-- make sure positions are balanced (although ovr formula might be needed first)
-- draft pick development is too variable, second round picks almost as good as first?
-  - increase IQ more drastically in first season
-    - but have initial IQ be a big factor, maybe 0-20 is much less likely to grow than 20-40. that will lead to some higher pot players
-  - more difference between elite and the rest
-    - maybe pick 0-3 players to give a bonus to? the top of the 19 year olds
-    - or just have higher variance in general
+check all debug balance things again
 
 use oiq and diq in synergy more directly in gamesim
 - multiply off/def synergy, like perimFactor

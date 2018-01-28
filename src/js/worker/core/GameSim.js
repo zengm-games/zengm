@@ -573,7 +573,7 @@ class GameSim {
             for (let i = 0; i < 5; i++) {
                 const p = this.playersOnCourt[t][i];
 
-                // 1 / (1 + e^-(15 * (x - 0.57))) from 0 to 1
+                // 1 / (1 + e^-(15 * (x - 0.61))) from 0 to 1
                 // 0.61 is not always used - keep in sync with skills.js!
                 skillsCount["3"] += helpers.sigmoid(
                     this.team[t].player[p].compositeRating.shootingThreePointer,
@@ -900,7 +900,7 @@ class GameSim {
             this.team[this.o].player[p].compositeRating.shootingThreePointer >
                 0.33 &&
             Math.random() <
-                0.6 *
+                0.65 *
                     this.team[this.o].player[p].compositeRating
                         .shootingThreePointer
         ) {
@@ -911,7 +911,7 @@ class GameSim {
                 this.team[this.o].player[p].compositeRating
                     .shootingThreePointer *
                     0.4 +
-                0.33;
+                0.34;
             probAndOne = 0.01;
         } else {
             const r1 =

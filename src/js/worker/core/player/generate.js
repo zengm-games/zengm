@@ -4,6 +4,7 @@ import faces from "facesjs";
 import { PLAYER, g, helpers } from "../../../common";
 import { player } from "../../core";
 import genFuzz from "./genFuzz";
+import pos from "./pos";
 import { random } from "../../util";
 import type {
     PlayerRatings,
@@ -187,7 +188,7 @@ const genRatings = (
         ratings.fuzz *= 2;
     }
 
-    ratings.pos = player.pos(ratings);
+    ratings.pos = pos(ratings);
 
     return ratings;
 };

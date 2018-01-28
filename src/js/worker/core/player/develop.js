@@ -4,6 +4,7 @@ import orderBy from "lodash/orderBy";
 import range from "lodash/range";
 import { PLAYER, g, helpers } from "../../../common";
 import { player } from "../../core";
+import pos from "./pos";
 import { random } from "../../util";
 import type {
     PlayerRatings,
@@ -287,7 +288,7 @@ const develop = (
         // Must be a custom league player, let's not rock the boat
         ratings.pos = p.pos;
     } else {
-        ratings.pos = player.pos(ratings);
+        ratings.pos = pos(ratings);
     }
 };
 

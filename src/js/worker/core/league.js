@@ -437,11 +437,9 @@ async function create(
         }
     } else {
         // Generate past 16 years of draft classes
-        await draft.genPlayers(
-            PLAYER.UNDRAFTED,
-            scoutingRank,
-            16 * Math.round(70 * g.numTeams / 30), //16 years of draft classes
-        );
+        for (let i = 0; i < 16; i++) {
+            await draft.genPlayers(PLAYER.UNDRAFTED, scoutingRank);
+        }
 
         // Develop players, check retire
         const newPlayers = await idb.cache.players.getAll();

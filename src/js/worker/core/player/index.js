@@ -2,6 +2,7 @@
 
 import { PHASE, PLAYER, g, helpers } from "../../../common";
 import { finances } from "../../core";
+import bonus from "./bonus";
 import develop from "./develop";
 import genFuzz from "./genFuzz";
 import generate from "./generate";
@@ -1253,6 +1254,7 @@ export default {
     addToFreeAgents,
     genContract,
     setContract,
+    bonus,
     develop,
     injury,
     generate,

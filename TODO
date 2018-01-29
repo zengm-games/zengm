@@ -6,6 +6,10 @@ some 19 year olds need to be better, stars of the draft
 - growth at 19 scales with ovr at 19
 - TRY THIS FIRST: pick 1-3 players for bonus in draft class
   - will need to edit debug functions to use draft class generator
+    - done, but slow due to pot calculation. however special players are based on pot...
+  - needs to be even higher?
+
+create league - use genPlayersWithoutSaving
 
 center ratings on 50 within league
 - ensure position balance in quality
@@ -28,6 +32,8 @@ rewrite player development
 
 use oiq and diq in synergy more directly in gamesim
 - multiply off/def synergy, like perimFactor
+
+add a little more randomness in which players declare for the draft
 
 aging curve
 - too many good old players?

@@ -5,7 +5,7 @@
 import backboard from "backboard";
 import range from "lodash/range";
 import { PLAYER, g, helpers } from "../../common";
-import { player } from "../core";
+import { draft, player } from "../core";
 import { idb } from "../db";
 import type { RatingKey } from "../../common/types";
 
@@ -260,6 +260,10 @@ async function leagueAverageContract() {
 }
 
 function averageCareerArc(ratingToSave: RatingKey) {
+    console.log(
+        'Warning: This does not include "special" draft prospects created in draft.genPlayers',
+    );
+
     const numPlayers = 1000; // Number of players per profile
     const numSeasons = 20;
 
@@ -323,18 +327,28 @@ const maxRatingDists = (numPlayers: number = 100) => {
     };
     const ages = helpers.deepCopy(ratings);
 
+    let playersToProcess = [];
     for (let i = 0; i < numPlayers; i++) {
+        if (playersToProcess.length === 0) {
+            const { players } = draft.genPlayersWithoutSaving(
+                PLAYER.UNDRAFTED,
+                15.5,
+                70,
+                false,
+            );
+            playersToProcess = players;
+        }
+        const p = playersToProcess.pop();
+
         // Log every 5%
         if (i % Math.round(numPlayers / 20) === 0) {
             console.log(`${Math.round(100 * i / numPlayers)}%`);
         }
 
-        const p = player.generate(PLAYER.FREE_AGENT, 19, g.season, false, 15.5);
-
         const maxRatings = Object.assign({}, p.ratings[0]);
         const maxAges = Object.assign({}, ages);
         for (const key of Object.keys(maxAges)) {
-            maxAges[key] = 19;
+            maxAges[key] = g.season - p.draft.year;
         }
 
         for (let j = 0; j < 20; j++) {
@@ -414,13 +428,23 @@ const avgRatingDists = (numPlayers: number = 100) => {
         };
     });
 
+    let playersToProcess = [];
     for (let i = 0; i < numPlayers; i++) {
+        if (playersToProcess.length === 0) {
+            const { players } = draft.genPlayersWithoutSaving(
+                PLAYER.UNDRAFTED,
+                15.5,
+                70,
+                false,
+            );
+            playersToProcess = players;
+        }
+        const p = playersToProcess.pop();
+
         // Log every 5%
         if (i % Math.round(numPlayers / 20) === 0) {
             console.log(`${Math.round(100 * i / numPlayers)}%`);
         }
-
-        const p = player.generate(PLAYER.FREE_AGENT, 19, g.season, false, 15.5);
 
         for (let j = 0; j < NUM_SEASONS; j++) {
             player.develop(p, 1, false, 15.5, true);

@@ -10,6 +10,7 @@ import type {
     Conditions,
     DraftLotteryResult,
     PickRealized,
+    PlayerWithoutPid,
     TeamFiltered,
 } from "../../common/types";
 
@@ -52,40 +53,15 @@ async function setOrder(draftOrder: PickRealized[]) {
     });
 }
 
-/**
- * Generate a set of draft prospects.
- *
- * This is called after draft classes are moved up a year, to create the new UNDRAFTED_3 class. It's also called 3 times when a new league starts, to create all 3 draft classes.
- *
- * @memberOf core.draft
- * @param {number} tid Team ID number for the generated draft class. Should be PLAYER.UNDRAFTED, PLAYER.UNDRAFTED_2, or PLAYER.UNDRAFTED_3.
- * @param {?number=} scoutingRank Between 1 and g.numTeams, the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree. If null, then it's automatically found.
- * @param {?number=} numPlayers The number of prospects to generate. Default value is 70.
- * @return {Promise}
- */
-async function genPlayers(
+function genPlayersWithoutSaving(
     tid: number,
-    scoutingRank?: ?number = null,
-    numPlayers?: number,
-    newLeague?: boolean = false,
-) {
-    if (numPlayers === null || numPlayers === undefined) {
-        numPlayers = Math.round(70 * g.numTeams / 30); // 70 scaled by number of teams
-    }
-
-    // If scoutingRank is not supplied, have to hit the DB to get it
-    if (scoutingRank === undefined || scoutingRank === null) {
-        const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
-            "teamSeasonsByTidSeason",
-            [`${g.userTid},${g.season - 2}`, `${g.userTid},${g.season}`],
-        );
-        scoutingRank = finances.getRankLastThree(
-            teamSeasons,
-            "expenses",
-            "scouting",
-        );
-    }
-
+    scoutingRank: number,
+    numPlayers: number,
+    newLeague: boolean,
+): {
+    draftYear: number,
+    players: PlayerWithoutPid[],
+} {
     let draftYear = g.season;
 
     let baseAge = 19;
@@ -120,7 +96,7 @@ async function genPlayers(
         const cutoff =
             i === 3 ? remaining.length : Math.round(0.5 * remaining.length);
 
-        remaining.sort((a, b) => b.pot - a.pot);
+        remaining.sort((a, b) => b.ratings[0].pot - a.ratings[0].pot);
         enteringDraft = enteringDraft.concat(remaining.slice(0, cutoff));
         remaining = remaining.slice(cutoff);
 
@@ -130,7 +106,64 @@ async function genPlayers(
         }
     }
 
-    for (const p of enteringDraft) {
+    // Small chance of making top 4 players (in 70 player draft) special - on average, one per draft class
+    const numSpecialPlayerChances = Math.round(4 / 70 * numPlayers);
+    for (let i = 0; i < numSpecialPlayerChances; i++) {
+        if (Math.random() < 1 / numSpecialPlayerChances) {
+            const p = enteringDraft[i];
+            player.bonus(p);
+            player.develop(p, 0); // Recalculate ovr/pot
+        }
+    }
+
+    return {
+        draftYear,
+        players: enteringDraft,
+    };
+}
+
+/**
+ * Generate a set of draft prospects.
+ *
+ * This is called after draft classes are moved up a year, to create the new UNDRAFTED_3 class. It's also called 3 times when a new league starts, to create all 3 draft classes.
+ *
+ * @memberOf core.draft
+ * @param {number} tid Team ID number for the generated draft class. Should be PLAYER.UNDRAFTED, PLAYER.UNDRAFTED_2, or PLAYER.UNDRAFTED_3.
+ * @param {?number=} scoutingRank Between 1 and g.numTeams, the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree. If null, then it's automatically found.
+ * @param {?number=} numPlayers The number of prospects to generate. Default value is 70.
+ * @return {Promise}
+ */
+async function genPlayers(
+    tid: number,
+    scoutingRank?: ?number = null,
+    numPlayers?: number,
+    newLeague?: boolean = false,
+) {
+    if (numPlayers === null || numPlayers === undefined) {
+        numPlayers = Math.round(70 * g.numTeams / 30); // 70 scaled by number of teams
+    }
+
+    // If scoutingRank is not supplied, have to hit the DB to get it
+    if (scoutingRank === undefined || scoutingRank === null) {
+        const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
+            "teamSeasonsByTidSeason",
+            [`${g.userTid},${g.season - 2}`, `${g.userTid},${g.season}`],
+        );
+        scoutingRank = finances.getRankLastThree(
+            teamSeasons,
+            "expenses",
+            "scouting",
+        );
+    }
+
+    const { draftYear, players } = genPlayersWithoutSaving(
+        tid,
+        scoutingRank,
+        numPlayers,
+        newLeague,
+    );
+
+    for (const p of players) {
         // Update player values after ratings changes
         await player.updateValues(p);
         await idb.cache.players.add(p);
@@ -880,6 +913,7 @@ export default {
     genPicks,
     getOrder,
     setOrder,
+    genPlayersWithoutSaving,
     genPlayers,
     genOrder,
     genOrderFantasy,

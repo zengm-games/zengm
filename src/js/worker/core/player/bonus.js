@@ -27,7 +27,7 @@ const bonus = (p: PlayerWithoutPid) => {
     ];
 
     for (const key of keys) {
-        ratings[key] = player.limitRating(ratings[key] + random.randInt(0, 10));
+        ratings[key] = player.limitRating(ratings[key] + random.randInt(5, 15));
     }
 };
 

@@ -48,7 +48,11 @@ const initAds = (goldUntil: number | void) => {
     const currentTimestamp = Math.floor(Date.now() / 1000);
 
     // Infinity one means that it will show ads even if account server is unreachable!
-    if (goldUntil === Infinity || goldUntil === undefined || currentTimestamp > goldUntil) {
+    if (
+        goldUntil === Infinity ||
+        goldUntil === undefined ||
+        currentTimestamp > goldUntil
+    ) {
         let el;
         el = document.getElementById("banner-ad-top-wrapper");
         if (el) {

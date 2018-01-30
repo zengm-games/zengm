@@ -12,7 +12,7 @@ const adUnits = [
             {
                 bidder: "conversant",
                 params: {
-                    site_id: "116931",
+                    site_id: "116969",
                     secure: 1,
                 },
             },
@@ -24,6 +24,10 @@ const adUnits = [
                     ct: 633385,
                 },
             },
+            {
+                bidder: "sovrn",
+                params: { tagid: "547545" },
+            },
         ],
     },
     {
@@ -33,7 +37,7 @@ const adUnits = [
             {
                 bidder: "conversant",
                 params: {
-                    site_id: "116931",
+                    site_id: "116969",
                     secure: 1,
                 },
             },
@@ -45,6 +49,10 @@ const adUnits = [
                     ct: 633386,
                 },
             },
+            {
+                bidder: "sovrn",
+                params: { tagid: "547546" },
+            },
         ],
     },
     {
@@ -54,7 +62,7 @@ const adUnits = [
             {
                 bidder: "conversant",
                 params: {
-                    site_id: "116931",
+                    site_id: "116969",
                     secure: 1,
                 },
             },
@@ -65,6 +73,10 @@ const adUnits = [
                     cp: 558539,
                     ct: 633387,
                 },
+            },
+            {
+                bidder: "sovrn",
+                params: { tagid: "547547" },
             },
         ],
     },

@@ -199,7 +199,7 @@ const developSeason = (
 };
 
 // Repeatedly simulate aging up to 29, and pick the 75th percentile max
-const NUM_SIMULATIONS = 100;
+const NUM_SIMULATIONS = 20;
 const bootstrapPot = (ratings: PlayerRatings, age: number): number => {
     if (age >= 29) {
         return ratings.ovr;

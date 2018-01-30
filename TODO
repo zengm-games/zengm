@@ -3,11 +3,6 @@ PLAYER DEVELOPMENT REVAMP
 create league - use genPlayersWithoutSaving
 
 center ratings on 50 within league
-- ensure position balance in quality
-  - write debug function to calculate this
-    - quartiles for PER and WS by position
-  - maybe make height a bit more important
-  - check ratings balance again!
 - salary balance
 
 ensure statistical outliers exist!

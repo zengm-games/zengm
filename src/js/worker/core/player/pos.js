@@ -74,6 +74,10 @@ const pos = (ratings: PlayerRatings): string => {
     // C must be extra tall or is strong/shotblocker but not quite as tall
     if (ratings.hgt >= 63 || (ratings.hgt >= 54 && ratings.stre >= 75)) {
         c = true;
+
+        // To make sure player will always be C or FC
+        pg = false;
+        sg = false;
     }
 
     if (pg && !sg && !sf && !pf && !c) {

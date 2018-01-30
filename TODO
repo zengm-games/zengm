@@ -1,20 +1,13 @@
 PLAYER DEVELOPMENT REVAMP
 
-some 19 year olds need to be better, stars of the draft
-- something like reverted commit, and/or
-- just make it harder to improve at higher ratings, to maintain balance easier
-- growth at 19 scales with ovr at 19
-- TRY THIS FIRST: pick 1-3 players for bonus in draft class
-  - will need to edit debug functions to use draft class generator
-    - done, but slow due to pot calculation. however special players are based on pot...
-  - needs to be even higher?
-
 create league - use genPlayersWithoutSaving
 
 center ratings on 50 within league
 - ensure position balance in quality
   - write debug function to calculate this
+    - quartiles for PER and WS by position
   - maybe make height a bit more important
+  - check ratings balance again!
 - salary balance
 
 ensure statistical outliers exist!

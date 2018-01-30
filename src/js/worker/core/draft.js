@@ -112,9 +112,9 @@ function genPlayersWithoutSaving(
         if (Math.random() < 1 / numSpecialPlayerChances) {
             const p = enteringDraft[i];
             player.bonus(p);
-console.log(p.firstName, p.lastName, 'before', p.ratings[0].ovr, p.ratings[0].pot);
+// console.log(p.firstName, p.lastName, 'before', p.ratings[0].ovr, p.ratings[0].pot);
             player.develop(p, 0); // Recalculate ovr/pot
-console.log(p.firstName, p.lastName, 'after', p.ratings[0].ovr, p.ratings[0].pot);
+// console.log(p.firstName, p.lastName, 'after', p.ratings[0].ovr, p.ratings[0].pot);
         }
     }
 

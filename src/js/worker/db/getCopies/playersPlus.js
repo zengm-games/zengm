@@ -80,7 +80,8 @@ const processAttrs = (
 ) => {
     for (const attr of attrs) {
         if (attr === "age") {
-            output.age = season - p.born.year;
+            const s = season === undefined ? g.season : season;
+            output.age = s - p.born.year;
         } else if (attr === "diedYear") {
             // Non-dead players wil not have any diedYear property
             output.diedYear = p.hasOwnProperty("diedYear") ? p.diedYear : null;

@@ -1,24 +1,7 @@
 PLAYER DEVELOPMENT REVAMP
 
-center ratings on 50 within league
-- salary balance
-  - debug.leagueAverageContract
-
 ensure statistical outliers exist!
-- all ratings (try putting to 100, see what happens)
 - FT shooting - should max out relatively low, but have wide range at bottom
-
-rewrite player development
-- make sure positions are balanced (although ovr formula might be needed first)
-- draft pick development is too variable, second round picks almost as good as first?
-  - increase IQ more drastically in first season
-    - but have initial IQ be a big factor, maybe 0-20 is much less likely to grow than 20-40. that will lead to some higher pot players
-  - more difference between elite and the rest
-    - maybe pick 0-3 players to give a bonus to? the top of the 19 year olds
-    - or just have higher variance in general
-
-use oiq and diq in synergy more directly in gamesim
-- multiply off/def synergy, like perimFactor
 
 add a little more randomness in which players declare for the draft
 
@@ -31,6 +14,10 @@ bootstrap pot
 - pot calculation is slow. how much accuracy do i lose by decreasing sample size?
 
 nonlinear ovr formula
+
+salary balance
+- mostly for players without stats, like at beginning of season
+- really, better value formula, based on better ovr formula above
 
 fix easter eggs, cause baseRating can no longer be passed to generate, they might suck
 

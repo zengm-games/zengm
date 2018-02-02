@@ -962,6 +962,12 @@ class GameSim {
             }
         }
 
+        const foulFactor =
+            (this.team[this.o].player[p].compositeRating.drawingFouls / 0.5) **
+            2;
+        probMissAndFoul *= foulFactor;
+        probAndOne *= foulFactor;
+
         probMake =
             (probMake -
                 0.25 * this.team[this.d].compositeRating.defense +

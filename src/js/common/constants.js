@@ -92,6 +92,10 @@ const COMPOSITE_WEIGHTS = {
         ratings: [50, "hgt", "diq", "spd"],
         weights: [1.5, 1, -1, -1],
     },
+    drawingFouls: {
+        ratings: ["hgt", "spd", "drb", "dnk", "oiq"],
+        weights: [1, 1, 1, 1, 1],
+    },
     defense: {
         ratings: ["hgt", "stre", "spd", "jmp", "diq"],
         weights: [1, 1, 1, 0.5, 1, 2],

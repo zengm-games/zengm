@@ -42,8 +42,8 @@ const COMPOSITE_WEIGHTS = {
         ratings: ["spd", "jmp", "dnk", "tp", "drb", "pss"],
     },
     usage: {
-        ratings: ["ins", "dnk", "fg", "tp", "spd", "drb", "oiq"],
-        weights: [1.5, 1, 1, 1, 0.15, 0.15, 0.5],
+        ratings: ["ins", "dnk", "fg", "tp", "spd", "hgt", "drb", "oiq"],
+        weights: [1.5, 1, 1, 1, 0.5, 0.5, 0.5, 0.5],
     },
     dribbling: {
         ratings: ["drb", "spd"],

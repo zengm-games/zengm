@@ -2,6 +2,7 @@ PLAYER DEVELOPMENT REVAMP
 
 center ratings on 50 within league
 - salary balance
+  - debug.leagueAverageContract
 
 ensure statistical outliers exist!
 - all ratings (try putting to 100, see what happens)

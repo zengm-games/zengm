@@ -90,6 +90,10 @@ function genPlayersWithoutSaving(
         // Just for ovr/pot
         player.develop(p, 0);
 
+        // Add a fudge factor, used when sorting below to add a little randomness to players entering draft. This may
+        // seem quite large, but empirically it seems to work well.
+        p.fudgeFactor = random.randInt(-50, 50);
+
         return p;
     });
 
@@ -100,7 +104,12 @@ function genPlayersWithoutSaving(
         const cutoff =
             i === 3 ? remaining.length : Math.round(0.5 * remaining.length);
 
-        remaining.sort((a, b) => b.ratings[0].pot - a.ratings[0].pot);
+        remaining.sort(
+            (a, b) =>
+                b.ratings[0].pot +
+                b.fudgeFactor -
+                (a.ratings[0].pot + a.fudgeFactor),
+        );
         enteringDraft = enteringDraft.concat(remaining.slice(0, cutoff));
         remaining = remaining.slice(cutoff);
 
@@ -116,10 +125,12 @@ function genPlayersWithoutSaving(
         if (Math.random() < 1 / numSpecialPlayerChances) {
             const p = enteringDraft[i];
             player.bonus(p);
-            // console.log(p.firstName, p.lastName, 'before', p.ratings[0].ovr, p.ratings[0].pot);
             player.develop(p, 0); // Recalculate ovr/pot
-            // console.log(p.firstName, p.lastName, 'after', p.ratings[0].ovr, p.ratings[0].pot);
         }
+    }
+
+    for (const p of enteringDraft) {
+        delete p.fudgeFactor;
     }
 
     return {

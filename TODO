@@ -1,6 +1,7 @@
 PLAYER DEVELOPMENT REVAMP
 
 some players should shoot more FTs, maybe based on OIQ and DRB?
+- total number of FTs is ok, just need more heterogeneity across players. already it's different %s by shot type, but some should be more or less likely even with the same shot type. maybe just base on athleticism, or shootingAtRim
 
 add a little more randomness in which players declare for the draft
 
@@ -19,8 +20,6 @@ salary balance
 - really, better value formula, based on better ovr formula above
 
 fix easter eggs, cause baseRating can no longer be passed to generate, they might suck
-
-evaluate performance of creating a new league - is it writing players to database an extra time? can that be avoided?
 
 upgrade code for ovr, pot, diq, oiq
 - call player.develop(p, 0) in augmentPartialPlayer?

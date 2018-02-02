@@ -1,3 +1,4 @@
 [ignore]
 .*/node_modules/fbjs/.*
+.*/node_modules/prebid.js/.*
 .*/node_modules/stylelint/.*

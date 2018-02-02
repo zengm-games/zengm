@@ -56,12 +56,16 @@ async function setOrder(draftOrder: PickRealized[]) {
 function genPlayersWithoutSaving(
     tid: number,
     scoutingRank: number,
-    numPlayers: number,
-    newLeague: boolean,
+    numPlayers?: number,
+    newLeague?: boolean,
 ): {
     draftYear: number,
     players: PlayerWithoutPid[],
 } {
+    if (numPlayers === null || numPlayers === undefined) {
+        numPlayers = Math.round(70 * g.numTeams / 30); // 70 scaled by number of teams
+    }
+
     let draftYear = g.season;
 
     let baseAge = 19;
@@ -112,9 +116,9 @@ function genPlayersWithoutSaving(
         if (Math.random() < 1 / numSpecialPlayerChances) {
             const p = enteringDraft[i];
             player.bonus(p);
-// console.log(p.firstName, p.lastName, 'before', p.ratings[0].ovr, p.ratings[0].pot);
+            // console.log(p.firstName, p.lastName, 'before', p.ratings[0].ovr, p.ratings[0].pot);
             player.develop(p, 0); // Recalculate ovr/pot
-// console.log(p.firstName, p.lastName, 'after', p.ratings[0].ovr, p.ratings[0].pot);
+            // console.log(p.firstName, p.lastName, 'after', p.ratings[0].ovr, p.ratings[0].pot);
         }
     }
 
@@ -141,10 +145,6 @@ async function genPlayers(
     numPlayers?: number,
     newLeague?: boolean = false,
 ) {
-    if (numPlayers === null || numPlayers === undefined) {
-        numPlayers = Math.round(70 * g.numTeams / 30); // 70 scaled by number of teams
-    }
-
     // If scoutingRank is not supplied, have to hit the DB to get it
     if (scoutingRank === undefined || scoutingRank === null) {
         const teamSeasons = await idb.cache.teamSeasons.indexGetAll(

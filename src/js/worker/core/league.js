@@ -437,16 +437,25 @@ async function create(
         }
     } else {
         // Generate past 16 years of draft classes
-        for (let i = 0; i < 16; i++) {
-            await draft.genPlayers(PLAYER.UNDRAFTED, scoutingRank);
+        const NUM_PAST_SEASONS = 16;
+
+        let newPlayers = [];
+        for (let i = 0; i < NUM_PAST_SEASONS; i++) {
+            const draftClass = await draft.genPlayersWithoutSaving(
+                PLAYER.UNDRAFTED,
+                scoutingRank,
+            );
+            newPlayers = newPlayers.concat(draftClass.players);
         }
+        const numPlayersPerSeason = Math.round(
+            newPlayers.length / NUM_PAST_SEASONS,
+        );
 
         // Develop players, check retire
-        const newPlayers = await idb.cache.players.getAll();
         const keptPlayers = [];
         let agingYears = 0;
         for (let i = 0; i < newPlayers.length; i++) {
-            if (i % 70 === 0) {
+            if (i % numPlayersPerSeason === 0) {
                 agingYears += 1;
             }
             const p = newPlayers[i];
@@ -454,9 +463,7 @@ async function create(
             p.draft.year -= agingYears;
             await player.updateValues(p);
 
-            if (player.shouldRetire(p)) {
-                await idb.cache.players.delete(p.pid);
-            } else {
+            if (!player.shouldRetire(p)) {
                 keptPlayers.push(p);
             }
         }
@@ -469,7 +476,10 @@ async function create(
         // Add players to teams or free agency
         keptPlayers.sort((a, b) => b.ratings[0].pot - a.ratings[0].pot);
         const teamPlayers = keptPlayers.slice(0, 13 * g.numTeams);
-        const freeAgentPlayers = keptPlayers.slice(13 * g.numTeams);
+        const freeAgentPlayers = keptPlayers.slice(
+            13 * g.numTeams,
+            100 + 13 * g.numTeams,
+        ); // Up to 100 free agents
         random.shuffle(teamPlayers);
         let newTid = -1; // So first iteration will be 0
         for (let i = 0; i < teamPlayers.length; i++) {
@@ -479,16 +489,14 @@ async function create(
             const p = teamPlayers[i];
             p.tid = newTid;
             player.setContract(p, player.genContract(p, true), true);
+            await idb.cache.players.add(p); // Needed before addStatsRow
             await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
         }
         for (let i = 0; i < freeAgentPlayers.length; i++) {
             const p = freeAgentPlayers[i];
-            if (i >= 100) {
-                await idb.cache.players.delete(p.pid);
-            } else {
-                player.setContract(p, player.genContract(p, false), false);
-                await player.addToFreeAgents(p, g.phase, baseMoods);
-            }
+            player.setContract(p, player.genContract(p, false), false);
+            // No add needed in this branch because addToFreeAgents has put
+            await player.addToFreeAgents(p, g.phase, baseMoods);
         }
     }
 
@@ -497,12 +505,12 @@ async function create(
     let createUndrafted2 = Math.round(70 * g.numTeams / 30);
     let createUndrafted3 = Math.round(70 * g.numTeams / 30);
     if (players !== undefined) {
-        for (let i = 0; i < players.length; i++) {
-            if (players[i].tid === PLAYER.UNDRAFTED) {
+        for (const p of players) {
+            if (p.tid === PLAYER.UNDRAFTED) {
                 createUndrafted1 -= 1;
-            } else if (players[i].tid === PLAYER.UNDRAFTED_2) {
+            } else if (p.tid === PLAYER.UNDRAFTED_2) {
                 createUndrafted2 -= 1;
-            } else if (players[i].tid === PLAYER.UNDRAFTED_3) {
+            } else if (p.tid === PLAYER.UNDRAFTED_3) {
                 createUndrafted3 -= 1;
             }
         }

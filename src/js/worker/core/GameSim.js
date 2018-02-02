@@ -1380,13 +1380,16 @@ class GameSim {
         this.doPf(this.d);
         const p = this.playersOnCourt[this.o][shooter];
 
+        // 95% max, a 75 FT rating gets you 90%, and a 25 FT rating gets you 60%
+        const ftp = helpers.bound(this.team[this.o].player[p].compositeRating.shootingFT * .6 +
+                    0.45, 0, 0.95);
+
         let outcome;
         for (let i = 0; i < amount; i++) {
             this.recordStat(this.o, p, "fta");
             if (
                 Math.random() <
-                this.team[this.o].player[p].compositeRating.shootingFT * 0.3 +
-                    0.6
+                ftp
             ) {
                 // Between 60% and 90%
                 this.recordStat(this.o, p, "ft");

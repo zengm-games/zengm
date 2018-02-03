@@ -1,15 +1,14 @@
 PLAYER DEVELOPMENT REVAMP
 
-steeper penalties for unbalanced lineups
+nonlinear ovr formula
 
 bootstrap pot
 - pot calculation is slow. how much accuracy do i lose by decreasing sample size?
 
-nonlinear ovr formula
+reevaluate player value alg, in light of changes to pot
 
 salary balance
-- mostly for players without stats, like at beginning of season
-- really, better value formula, based on better ovr formula above
+- mostly for players without stats, like at beginning of season. new ovr and value formulas could fix this
 
 fix easter eggs, cause baseRating can no longer be passed to generate, they might suck
 
@@ -17,8 +16,6 @@ upgrade code for ovr, pot, diq, oiq
 - call player.develop(p, 0) in augmentPartialPlayer?
 
 AI draft algo revisit
-
-reevaluate player value alg, in light of changes to pot
 
 reevaluate contract and free agent balance
 
@@ -43,7 +40,10 @@ extra blog points
 later
 - in new league: set rookie contracts appropriately
 - in new league: initialize rebuilding/contending to non-random values
-- don't include core.debug in prod builds
+- don't include core.debug in prod builds?
+- steeper penalties for unbalanced lineups
+  - increasing perimfactor not enough - need to reevaluate formula. see all_bigs.json
+    - perimfactor shouldn't be needed. just use the synergy stuff. should be offense and defense. check values for normal and extreme teams
 
 ---
 

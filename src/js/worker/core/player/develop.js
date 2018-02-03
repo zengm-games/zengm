@@ -138,8 +138,10 @@ const calcBaseChange = (age: number, coachingRank: number): number => {
         val = -1;
     } else if (age <= 31) {
         val = -2;
-    } else {
+    } else if (age <= 34) {
         val = -3;
+    } else {
+        val = -4;
     }
 
     // Noise

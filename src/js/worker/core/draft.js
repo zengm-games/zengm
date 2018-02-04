@@ -193,6 +193,23 @@ async function genPlayers(
         p.imgURL = "/img/lavar.jpg";
         p.lastName = "Ball";
         p.weight = 250;
+        Object.assign(p.ratings[0], {
+            hgt: 43,
+            stre: 80,
+            spd: 80,
+            jmp: 80,
+            endu: 80,
+            ins: 80,
+            dnk: 80,
+            ft: 80,
+            fg: 80,
+            tp: 80,
+            oiq: 80,
+            diq: 80,
+            drb: 80,
+            pss: 80,
+            reb: 80,
+        });
         player.develop(p, 0);
         await player.updateValues(p);
         const pid = await idb.cache.players.add(p);
@@ -219,10 +236,26 @@ async function genPlayers(
         p.imgURL = "/img/trump.jpg";
         p.lastName = "Trump";
         p.weight = 240;
-        p.ratings[0].pss = 0;
-        p.ratings[0].skills = ["Dp"];
+        Object.assign(p.ratings[0], {
+            hgt: 40,
+            stre: 80,
+            spd: 80,
+            jmp: 80,
+            endu: 80,
+            ins: 80,
+            dnk: 80,
+            ft: 80,
+            fg: 80,
+            tp: 80,
+            oiq: 80,
+            diq: 100,
+            drb: 80,
+            pss: 0,
+            reb: 80,
+        });
         player.develop(p, 0);
         await player.updateValues(p);
+        p.ratings[0].skills = ["Dp"];
         const pid = await idb.cache.players.add(p);
         if (typeof pid === "number") {
             await logEvent({

@@ -8,9 +8,6 @@ upgrade code for ovr, pot, diq, oiq
 - same thing in augmentPartialPlayer
 - make sure it applies for new files and draft classes
 
-fix easter eggs, cause baseRating can no longer be passed to generate, they might suck
-- manually apply all ratings, including height (make sure it makes sense)
-
 changes
 - Height can increase in young players, although it's quite rare.
 - Players in a new league are much more similar to players you draft in an existing league. Previously there were different code paths to generating them, but now the initial players are from actual past draft classes.
@@ -28,6 +25,8 @@ extra blog points
 - Players will no longer record literally 0 rebounds or assists or whatever for their entire career just because they have very low ratings. You will get some just by being on the floor. It's still possible to have 0 three point attempts, but that is a separate problem: there is no concept of a last second heave in the game simulation engine, so bad three point shooters will just not ever attempt any.
 - draft prospects actually decide when to declare for draft (only downside is that it shows you the ratings too early)
 - fixed bug where draft prospects would sometimes have skill labels they shouldn't, only to then lose them in their first season
+- difficulty of tuning (mean, variance, multiple variables)
+- how this affects league files (version, same as height change)
 
 later
 - in new league: set rookie contracts appropriately

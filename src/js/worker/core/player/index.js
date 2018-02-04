@@ -57,22 +57,22 @@ function ovr(ratings: PlayerRatings): number {
     // This formula is loosely based on linear regression:
     return helpers.bound(
         Math.round(
-            (4 * ratings.hgt +
-                2 * ratings.stre +
-                4 * ratings.spd +
+            (6 * ratings.hgt +
+                1 * ratings.stre +
+                5 * ratings.spd +
                 2 * ratings.jmp +
-                3 * ratings.endu +
-                3 * ratings.ins +
-                4 * ratings.dnk +
-                ratings.ft +
-                ratings.fg +
-                2 * ratings.tp +
-                5 * ratings.oiq +
-                5 * ratings.diq +
-                ratings.drb +
-                5 * ratings.pss +
-                ratings.reb) /
-                43,
+                1 * ratings.endu +
+                1 * ratings.ins +
+                2 * ratings.dnk +
+                1 * ratings.ft +
+                1 * ratings.fg +
+                3 * ratings.tp +
+                7 * ratings.oiq +
+                2 * ratings.diq +
+                2 * ratings.drb +
+                4 * ratings.pss +
+                1 * ratings.reb) /
+                39,
         ),
         0,
         100,

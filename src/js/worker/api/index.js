@@ -295,12 +295,31 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
     }
 
     let output =
-        "pid,Name,Pos,Age,Team,Season,GP,GS,Min,FGM,FGA,FG%,3PM,3PA,3P%,FTM,FTA,FT%,OReb,DReb,Reb,Ast,TO,Stl,Blk,BA,PF,Pts,+/-,PER,EWA\n";
+        "pid,Name,Pos,Age,Team,Season,GP,GS,Min,FGM,FGA,FG%,3PM,3PA,3P%,FTM,FTA,FT%,OReb,DReb,Reb,Ast,TO,Stl,Blk,BA,PF,Pts,+/-,PER,EWA,WS48,WS,OVR,POT,HGT,STRE,SPD,JMP,ENDU,INS,DNK,FT,FG,TP,OIQ,DIQ,DRB,PSS,REB\n";
 
     for (const s of seasons) {
         const players2 = await idb.getCopies.playersPlus(players, {
             attrs: ["pid", "name", "age"],
-            ratings: ["pos"],
+            ratings: [
+                "pos",
+                "ovr",
+                "pot",
+                "hgt",
+                "stre",
+                "spd",
+                "jmp",
+                "endu",
+                "ins",
+                "dnk",
+                "ft",
+                "fg",
+                "tp",
+                "oiq",
+                "diq",
+                "drb",
+                "pss",
+                "reb",
+            ],
             stats: [
                 "abbrev",
                 "gp",
@@ -328,6 +347,8 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
                 "pm",
                 "per",
                 "ewa",
+                "ws48",
+                "ws",
             ],
             season: s,
         });
@@ -365,6 +386,25 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
                 p.stats.pm,
                 p.stats.per,
                 p.stats.ewa,
+                p.stats.ws48,
+                p.stats.ws,
+                p.ratings.ovr,
+                p.ratings.pot,
+                p.ratings.hgt,
+                p.ratings.stre,
+                p.ratings.spd,
+                p.ratings.jmp,
+                p.ratings.endu,
+                p.ratings.ins,
+                p.ratings.dnk,
+                p.ratings.ft,
+                p.ratings.fg,
+                p.ratings.tp,
+                p.ratings.oiq,
+                p.ratings.diq,
+                p.ratings.drb,
+                p.ratings.pss,
+                p.ratings.reb,
             ].join(",")}\n`;
         }
     }

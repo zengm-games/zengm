@@ -1,11 +1,11 @@
 PLAYER DEVELOPMENT REVAMP
 
-nonlinear ovr formula
-
 bootstrap pot
 - pot calculation is slow. how much accuracy do i lose by decreasing sample size?
 
 reevaluate player value alg, in light of changes to pot
+- maybe zscore(PER) and zscore(ws/48 like in ovr regression)
+  - find correspondance between score and rating, through data
 
 salary balance
 - mostly for players without stats, like at beginning of season. new ovr and value formulas could fix this

@@ -1,8 +1,5 @@
 PLAYER DEVELOPMENT REVAMP
 
-bootstrap pot
-- pot calculation is slow. how much accuracy do i lose by decreasing sample size?
-
 reevaluate player value alg, in light of changes to pot
 - maybe zscore(PER) and zscore(ws/48 like in ovr regression)
   - find correspondance between score and rating, through data

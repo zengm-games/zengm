@@ -2,7 +2,8 @@ PLAYER DEVELOPMENT REVAMP
 
 reevaluate player value alg, in light of changes to pot
 - maybe zscore(PER) and zscore(ws/48 like in ovr regression)
-  - find correspondance between score and rating, through data
+  - find correspondance between score and rating, through NEW data
+- weight pot much higher
 
 salary balance
 - mostly for players without stats, like at beginning of season. new ovr and value formulas could fix this

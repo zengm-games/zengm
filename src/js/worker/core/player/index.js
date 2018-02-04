@@ -54,29 +54,44 @@ function limitRating(rating: number): number {
  * @return {number} Overall rating.
  */
 function ovr(ratings: PlayerRatings): number {
-    // This formula is loosely based on linear regression:
-    return helpers.bound(
-        Math.round(
-            (6 * ratings.hgt +
-                1 * ratings.stre +
-                5 * ratings.spd +
-                2 * ratings.jmp +
-                1 * ratings.endu +
-                1 * ratings.ins +
-                2 * ratings.dnk +
-                1 * ratings.ft +
-                1 * ratings.fg +
-                3 * ratings.tp +
-                7 * ratings.oiq +
-                2 * ratings.diq +
-                2 * ratings.drb +
-                4 * ratings.pss +
-                1 * ratings.reb) /
-                39,
-        ),
-        0,
-        100,
-    );
+    // This formula is loosely based on linear regression of ratings to zscore(ws48)+zscore(per):
+    const r =
+        (6 * ratings.hgt +
+            1 * ratings.stre +
+            5 * ratings.spd +
+            2 * ratings.jmp +
+            1 * ratings.endu +
+            1 * ratings.ins +
+            2 * ratings.dnk +
+            1 * ratings.ft +
+            1 * ratings.fg +
+            3 * ratings.tp +
+            7 * ratings.oiq +
+            2 * ratings.diq +
+            2 * ratings.drb +
+            4 * ratings.pss +
+            1 * ratings.reb) /
+        39;
+
+    // Fudge factor to keep ovr ratings the same as they used to be (back before 2018 ratings rescaling)
+    // +8 at 68
+    // +4 at 50
+    // -5 at 42
+    // -10 at 31
+    let fudgeFactor = 0;
+    if (r >= 68) {
+        fudgeFactor = 8;
+    } else if (r >= 50) {
+        fudgeFactor = 4 + (r - 50) * (4 / 18);
+    } else if (r >= 42) {
+        fudgeFactor = -5 + (r - 42) * (10 / 8);
+    } else if (r >= 31) {
+        fudgeFactor = -5 - (42 - r) * (5 / 11);
+    } else {
+        fudgeFactor = -10;
+    }
+
+    return helpers.bound(Math.round(r + fudgeFactor), 0, 100);
 }
 
 function fuzzRating(rating: number, fuzz: number): number {

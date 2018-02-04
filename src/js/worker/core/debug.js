@@ -6,6 +6,7 @@ import backboard from "backboard";
 import range from "lodash/range";
 import { PLAYER, g, helpers } from "../../common";
 import { draft, player } from "../core";
+import value from "../core/player/value";
 import { idb } from "../db";
 import type { RatingKey } from "../../common/types";
 
@@ -310,6 +311,24 @@ const countPositions = async () => {
     console.table(counts);
 };
 
+// For debugging changes in the player value formula
+const valueDiff = async () => {
+    // All non-retired players
+    const players = await idb.league.players
+        .index("tid")
+        .getAll(backboard.lowerBound(PLAYER.FREE_AGENT));
+
+    for (const p of players) {
+        const playerStats = (await idb.cache.playerStats.indexGetAll(
+            "playerStatsAllByPid",
+            p.pid,
+        )).filter(ps => !ps.playoffs);
+        playerStats.sort((a, b) => a.season - b.season);
+
+        console.log(p.value, value(p, playerStats));
+    }
+};
+
 export default {
     leagueAverageContract,
     averageCareerArc,
@@ -317,4 +336,5 @@ export default {
     avgRatingDists,
     countSkills,
     countPositions,
+    valueDiff,
 };

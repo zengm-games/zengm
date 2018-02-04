@@ -1,12 +1,8 @@
 PLAYER DEVELOPMENT REVAMP
 
-reevaluate player value alg, in light of changes to pot
-- maybe zscore(PER) and zscore(ws/48 like in ovr regression)
-  - find correspondance between score and rating, through NEW data
-- weight pot much higher
-
 salary balance
 - mostly for players without stats, like at beginning of season. new ovr and value formulas could fix this
+  - since pot is more important now, are rookie contracts too large and skewing it at the beginning of new leagues?
 
 fix easter eggs, cause baseRating can no longer be passed to generate, they might suck
 
@@ -42,6 +38,8 @@ later
 - steeper penalties for unbalanced lineups
   - increasing perimfactor not enough - need to reevaluate formula. see all_bigs.json
     - perimfactor shouldn't be needed. just use the synergy stuff. should be offense and defense. check values for normal and extreme teams
+
+p.valueWithContract is exactly equal to p.value currently!
 
 ---
 

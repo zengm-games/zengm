@@ -25,11 +25,15 @@ import type { PlayerStats } from "../../../common/types";
  * @return {number} Value of the player, usually between 50 and 100 like overall and potential
  *     ratings.
  */
-const value = (p: any, ps: PlayerStats[], options: {
-    fuzz?: boolean,
-    noPot?: boolean,
-    withContract?: boolean,
-} = {}): number => {
+const value = (
+    p: any,
+    ps: PlayerStats[],
+    options: {
+        fuzz?: boolean,
+        noPot?: boolean,
+        withContract?: boolean,
+    } = {},
+): number => {
     options.noPot = !!options.noPot;
     options.fuzz = !!options.fuzz;
     options.withContract = !!options.withContract;
@@ -47,31 +51,37 @@ const value = (p: any, ps: PlayerStats[], options: {
         pr.pot = p.ratings[s].pot;
     }
 
+    // From linear regression OVR ~ PER
+    const slope = 1.531;
+    const intercept = 31.693;
+
     // 1. Account for stats (and current ratings if not enough stats)
     let current = pr.ovr; // No stats at all? Just look at ratings more, then.
     if (ps.length > 0) {
+        const ps1 = ps[ps.length - 1]; // Most recent stats
+
         if (ps.length === 1 || ps[0].min >= 2000) {
             // Only one year of stats
-            const ps1 = ps[ps.length - 1];
-            current = 3.75 * ps1.per;
+            current = intercept + slope * ps1.per;
             if (ps1.min < 2000) {
                 current =
                     current * ps1.min / 2000 + pr.ovr * (1 - ps1.min / 2000);
             }
         } else {
             // Two most recent seasons
-            const ps1 = ps[ps.length - 1];
             const ps2 = ps[ps.length - 2];
             if (ps1.min + ps2.min > 0) {
                 current =
-                    3.75 *
-                    (ps1.per * ps1.min + ps2.per * ps2.min) /
-                    (ps1.min + ps2.min);
-            }
-            if (ps1.min + ps2.min < 2000) {
-                current =
-                    current * (ps1.min + ps2.min) / 2000 +
-                    pr.ovr * (1 - (ps1.min + ps2.min) / 2000);
+                    intercept +
+                    slope *
+                        (ps1.per * ps1.min + ps2.per * ps2.min) /
+                        (ps1.min + ps2.min);
+
+                if (ps1.min + ps2.min < 2000) {
+                    current =
+                        current * (ps1.min + ps2.min) / 2000 +
+                        pr.ovr * (1 - (ps1.min + ps2.min) / 2000);
+                }
             }
         }
         current = 0.1 * pr.ovr + 0.9 * current; // Include some part of the ratings
@@ -100,27 +110,33 @@ const value = (p: any, ps: PlayerStats[], options: {
 
     // Otherwise, combine based on age
     if (age <= 19) {
-        return 0.8 * potential + 0.2 * current;
+        return 0.9 * potential + 0.1 * current;
     }
     if (age === 20) {
-        return 0.7 * potential + 0.3 * current;
+        return 0.8 * potential + 0.2 * current;
     }
     if (age === 21) {
-        return 0.5 * potential + 0.5 * current;
+        return 0.7 * potential + 0.3 * current;
     }
     if (age === 22) {
-        return 0.3 * potential + 0.7 * current;
+        return 0.6 * potential + 0.4 * current;
     }
     if (age === 23) {
-        return 0.15 * potential + 0.85 * current;
+        return 0.5 * potential + 0.5 * current;
     }
     if (age === 24) {
-        return 0.1 * potential + 0.9 * current;
+        return 0.4 * potential + 0.6 * current;
     }
     if (age === 25) {
-        return 0.05 * potential + 0.95 * current;
+        return 0.3 * potential + 0.7 * current;
     }
-    if (age > 25 && age < 29) {
+    if (age === 26) {
+        return 0.2 * potential + 0.8 * current;
+    }
+    if (age === 27) {
+        return 0.1 * potential + 0.9 * current;
+    }
+    if (age === 28) {
         return current;
     }
     if (age === 29) {

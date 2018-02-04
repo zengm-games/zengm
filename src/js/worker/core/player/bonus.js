@@ -2,7 +2,6 @@
 
 import { player } from "../../core";
 import { random } from "../../util";
-
 import type { RatingKey, PlayerWithoutPid } from "../../../common/types";
 
 const bonus = (p: PlayerWithoutPid) => {

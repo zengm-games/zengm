@@ -1,7 +1,7 @@
 PLAYER DEVELOPMENT REVAMP
 
-augmentPartialPlayer for ovr, pot, diq, oiq
-- same thing in IDB upgrade
+IDB upgrade
+- all draft prospects have pot = ovr - why?
 
 changes
 - Height can increase in young players, although it's quite rare.

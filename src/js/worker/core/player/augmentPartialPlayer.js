@@ -146,7 +146,7 @@ const augmentPartialPlayer = (
 
             // Add oiq
             if (typeof r.oiq !== "number") {
-                r.oiq = Math.round((r.drb +r.pss + r.tp + r.ins) / 4);
+                r.oiq = Math.round((r.drb + r.pss + r.tp + r.ins) / 4);
                 if (typeof r.oiq !== "number") {
                     r.oiq = 50;
                 }
@@ -182,7 +182,7 @@ const augmentPartialPlayer = (
         }
 
         // Fix ovr and pot
-        player.develop(p, 0)
+        player.develop(p, 0);
     }
 
     // Handle old format position
@@ -196,6 +196,6 @@ const augmentPartialPlayer = (
     // Don't delete p.pos because it is used as a marker that this is from a league file and we shouldn't automatically change pos over time
 
     return p;
-}
+};
 
 export default augmentPartialPlayer;

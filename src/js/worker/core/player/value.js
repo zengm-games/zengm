@@ -2,7 +2,11 @@
 
 import { PLAYER, g, helpers } from "../../../common";
 import { player } from "../../core";
-import type { Player, PlayerStats, PlayerWithoutPid } from "../../../common/types";
+import type {
+    Player,
+    PlayerStats,
+    PlayerWithoutPid,
+} from "../../../common/types";
 
 /**
  * Returns a numeric value for a given player, representing is general worth to a typical team

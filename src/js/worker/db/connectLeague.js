@@ -1,7 +1,9 @@
 // @flow
 
 import Backboard from "backboard";
+import { g } from "../../common";
 import { player } from "../core";
+import type { RatingKey } from "../../common/types";
 
 /**
  * Create a new league database with the latest structure.
@@ -238,11 +240,71 @@ const migrateLeague = (upgradeDB, lid) => {
             upgradeDB.teamStats.put(ts);
         });
     }
+    if (upgradeDB.oldVersion <= 26) {
+        upgradeDB.players.iterate(p => {
+            for (const r of p.ratings) {
+                // Replace blk/stl with diq
+                if (typeof r.diq !== "number") {
+                    if (
+                        typeof r.blk === "number" &&
+                        typeof r.stl === "number"
+                    ) {
+                        r.diq = Math.round((r.blk + r.stl) / 2);
+                        delete r.blk;
+                        delete r.stl;
+                    } else {
+                        r.diq = 50;
+                    }
+                }
+
+                // Add oiq
+                if (typeof r.oiq !== "number") {
+                    r.oiq = Math.round((r.drb + r.pss + r.tp + r.ins) / 4);
+                    if (typeof r.oiq !== "number") {
+                        r.oiq = 50;
+                    }
+                }
+
+                const ratingKeys: RatingKey[] = [
+                    "stre",
+                    "spd",
+                    "jmp",
+                    "endu",
+                    "ins",
+                    "dnk",
+                    "ft",
+                    "fg",
+                    "tp",
+                    "oiq",
+                    "diq",
+                    "drb",
+                    "pss",
+                    "reb",
+                ];
+                for (const key of ratingKeys) {
+                    if (typeof r[key] === "number") {
+                        // 100 -> 80
+                        // 0 -> 20
+                        // Linear in between
+                        r[key] -= 20 * (r[key] - 50) / 50;
+                    } else {
+                        console.log(p);
+                        throw new Error(`Missing rating: ${key}`);
+                    }
+                }
+            }
+
+            // Fix ovr and pot
+            player.develop(p, 0);
+
+            upgradeDB.players.put(p);
+        });
+    }
 };
 
 const connectLeague = async (lid: number) => {
     // Would like to await on migrateLeague and inside there, but Firefox
-    const db = await Backboard.open(`league${lid}`, 26, upgradeDB => {
+    const db = await Backboard.open(`league${lid}`, 27, upgradeDB => {
         if (upgradeDB.oldVersion === 0) {
             createLeague(upgradeDB, lid);
         } else {

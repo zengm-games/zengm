@@ -1,3 +1,5 @@
+// @flow
+
 import type { PlayerRatings } from "../../../common/types";
 
 /**

@@ -1,12 +1,7 @@
 PLAYER DEVELOPMENT REVAMP
 
 augmentPartialPlayer for ovr, pot, diq, oiq
-- first attempt
-  - scale ratings similar to ovr scaling but reversed and maybe a bit more extreme at the high end
-  - replace blk/stl with oiq/diq, somehow
-  - player.develop(p, 0)
 - same thing in IDB upgrade
-- make sure it applies for new files and draft classes
 
 changes
 - Height can increase in young players, although it's quite rare.

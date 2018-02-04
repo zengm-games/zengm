@@ -4,7 +4,7 @@ import { PHASE, PLAYER, g } from "../../../common";
 import { player } from "../../core";
 import generate from "./generate";
 import { random } from "../../util";
-import type { PlayerWithStats } from "../../../common/types";
+import type { RatingKey, PlayerWithStats } from "../../../common/types";
 
 /**
  * Take a partial player object, such as from an uploaded JSON file, and add everything it needs to be a real player object.
@@ -124,14 +124,65 @@ const augmentPartialPlayer = (
     }
 
     // Height rescaling
-    if (version === undefined || version < 24) {
+    if (version === undefined || version <= 23) {
         for (const r of p.ratings) {
             r.hgt = player.heightToRating(p.hgt);
-            r.ovr = player.ovr(r);
-            if (r.ovr > r.pot) {
-                r.pot = r.ovr;
+        }
+    }
+
+    // Rating rescaling
+    if (version === undefined || version <= 26) {
+        for (const r of p.ratings) {
+            // Replace blk/stl with diq
+            if (typeof r.diq !== "number") {
+                if (typeof r.blk === "number" && typeof r.stl === "number") {
+                    r.diq = Math.round((r.blk + r.stl) / 2);
+                    delete r.blk;
+                    delete r.stl;
+                } else {
+                    r.diq = 50;
+                }
+            }
+
+            // Add oiq
+            if (typeof r.oiq !== "number") {
+                r.oiq = Math.round((r.drb +r.pss + r.tp + r.ins) / 4);
+                if (typeof r.oiq !== "number") {
+                    r.oiq = 50;
+                }
+            }
+
+            const ratingKeys: RatingKey[] = [
+                "stre",
+                "spd",
+                "jmp",
+                "endu",
+                "ins",
+                "dnk",
+                "ft",
+                "fg",
+                "tp",
+                "oiq",
+                "diq",
+                "drb",
+                "pss",
+                "reb",
+            ];
+            for (const key of ratingKeys) {
+                if (typeof r[key] === "number") {
+                    // 100 -> 80
+                    // 0 -> 20
+                    // Linear in between
+                    r[key] -= 20 * (r[key] - 50) / 50;
+                } else {
+                    console.log(p);
+                    throw new Error(`Missing rating: ${key}`);
+                }
             }
         }
+
+        // Fix ovr and pot
+        player.develop(p, 0)
     }
 
     // Handle old format position

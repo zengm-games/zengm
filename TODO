@@ -1,7 +1,12 @@
 PLAYER DEVELOPMENT REVAMP
 
 upgrade code for ovr, pot, diq, oiq
-- call player.develop(p, 0) in augmentPartialPlayer?
+- first attempt
+  - scale ratings similar to ovr scaling but reversed and maybe a bit more extreme at the high end
+  - replace blk/stl with oiq/diq, somehow
+  - player.develop(p, 0)
+- same thing in augmentPartialPlayer
+- make sure it applies for new files and draft classes
 
 fix easter eggs, cause baseRating can no longer be passed to generate, they might suck
 - manually apply all ratings, including height (make sure it makes sense)

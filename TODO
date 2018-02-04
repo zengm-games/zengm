@@ -1,17 +1,10 @@
 PLAYER DEVELOPMENT REVAMP
 
-salary balance
-- mostly for players without stats, like at beginning of season. new ovr and value formulas could fix this
-  - since pot is more important now, are rookie contracts too large and skewing it at the beginning of new leagues?
-
-fix easter eggs, cause baseRating can no longer be passed to generate, they might suck
-
 upgrade code for ovr, pot, diq, oiq
 - call player.develop(p, 0) in augmentPartialPlayer?
 
-AI draft algo revisit
-
-reevaluate contract and free agent balance
+fix easter eggs, cause baseRating can no longer be passed to generate, they might suck
+- manually apply all ratings, including height (make sure it makes sense)
 
 changes
 - Height can increase in young players, although it's quite rare.
@@ -38,6 +31,7 @@ later
 - steeper penalties for unbalanced lineups
   - increasing perimfactor not enough - need to reevaluate formula. see all_bigs.json
     - perimfactor shouldn't be needed. just use the synergy stuff. should be offense and defense. check values for normal and extreme teams
+- simulate draft from past seasons, to correctly assign contracts (don't need to populate actual draft info)
 
 p.valueWithContract is exactly equal to p.value currently!
 

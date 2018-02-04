@@ -124,7 +124,7 @@ function genContract(
     //amount = ((3 * p.value) * 0.85 - 110) / (210 - 120);  // Scale from 0 to 1 (approx)
     //amount = amount * (g.maxContract - g.minContract) + g.minContract;
     let amount =
-        ((p.value - 1) / 100 - 0.45) * 3.3 * (g.maxContract - g.minContract) +
+        (p.value / 100 - 0.47) * 3.3 * (g.maxContract - g.minContract) +
         g.minContract;
     if (randomizeAmount) {
         amount *= helpers.bound(random.realGauss(1, 0.1), 0, 2); // Randomize

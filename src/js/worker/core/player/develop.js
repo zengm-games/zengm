@@ -153,11 +153,13 @@ const calcBaseChange = (age: number, coachingRank: number): number => {
         val += helpers.bound(random.realGauss(0, 3), -2, 4);
     }
 
-    // Modulate by coaching
-    if (val >= 0) {
-        val *= (coachingRank - 1) * -0.5 / (g.numTeams - 1) + 1.25;
-    } else {
-        val *= (coachingRank - 1) * 0.5 / (g.numTeams - 1) + 0.75;
+    // Modulate by coaching. g.numTeams doesn't exist when upgrading DB, but that doesn't matter
+    if (g.hasOwnProperty("numTeams")) {
+        if (val >= 0) {
+            val *= (coachingRank - 1) * -0.5 / (g.numTeams - 1) + 1.25;
+        } else {
+            val *= (coachingRank - 1) * 0.5 / (g.numTeams - 1) + 0.75;
+        }
     }
 
     return val;
@@ -203,7 +205,6 @@ const developSeason = (
 // Repeatedly simulate aging up to 29, and pick the 75th percentile max
 const NUM_SIMULATIONS = 20; // Higher is more accurate, but slower. Low accuracy is fine, though!
 export const bootstrapPot = (ratings: PlayerRatings, age: number): number => {
-console.log('bootstrapPot', age, ratings);
     if (age >= 29) {
         return ratings.ovr;
     }
@@ -212,8 +213,8 @@ console.log('bootstrapPot', age, ratings);
         const copiedRatings = Object.assign({}, ratings);
 
         let maxOvr = ratings.ovr;
-        for (let i = age + 1; i < 30; i++) {
-            developSeason(copiedRatings, i); // Purposely no coachingRank
+        for (let ageTemp = age + 1; ageTemp < 30; ageTemp++) {
+            developSeason(copiedRatings, ageTemp); // Purposely no coachingRank
             const ovr = player.ovr(copiedRatings);
             if (ovr > maxOvr) {
                 maxOvr = ovr;

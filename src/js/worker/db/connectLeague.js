@@ -294,12 +294,9 @@ const migrateLeague = (upgradeDB, lid) => {
                     }
                 }
 
-
-console.log('before change', r.ovr, r.pot)
                 r.ovr = player.ovr(r);
                 r.skills = player.skills(r);
                 r.pot = bootstrapPot(r, r.season - p.born.year);
-console.log('after change', r.ovr, r.pot)
             }
 
             upgradeDB.players.put(p);

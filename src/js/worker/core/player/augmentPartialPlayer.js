@@ -2,6 +2,7 @@
 
 import { PHASE, PLAYER, g } from "../../../common";
 import { player } from "../../core";
+import { bootstrapPot } from "./develop";
 import generate from "./generate";
 import { random } from "../../util";
 import type { RatingKey, PlayerWithStats } from "../../../common/types";
@@ -152,6 +153,7 @@ const augmentPartialPlayer = (
                 }
             }
 
+            // Scale ratings
             const ratingKeys: RatingKey[] = [
                 "stre",
                 "spd",
@@ -179,10 +181,11 @@ const augmentPartialPlayer = (
                     throw new Error(`Missing rating: ${key}`);
                 }
             }
-        }
 
-        // Fix ovr and pot
-        player.develop(p, 0);
+            r.ovr = player.ovr(r);
+            r.skills = player.skills(r);
+            r.pot = bootstrapPot(r, r.season - p.born.year);
+        }
     }
 
     // Handle old format position

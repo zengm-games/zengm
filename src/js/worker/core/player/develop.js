@@ -202,7 +202,8 @@ const developSeason = (
 
 // Repeatedly simulate aging up to 29, and pick the 75th percentile max
 const NUM_SIMULATIONS = 20; // Higher is more accurate, but slower. Low accuracy is fine, though!
-const bootstrapPot = (ratings: PlayerRatings, age: number): number => {
+export const bootstrapPot = (ratings: PlayerRatings, age: number): number => {
+console.log('bootstrapPot', age, ratings);
     if (age >= 29) {
         return ratings.ovr;
     }

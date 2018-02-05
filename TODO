@@ -1,7 +1,10 @@
 PLAYER DEVELOPMENT REVAMP
 
 IDB upgrade
-- all draft prospects have pot = ovr - why?
+- player.develop fails to compute pot because age is NaN because g.season doesn't exist
+- need to recompute ovr and pot every season, not just last season. same with augmentPartialPlayer
+  - ovr fine that can be recomputed easily every season, but recomputing pot every season would be too slow in old leagues. generate some data and predict based on (age, ovr, pot) except for the current season, do that for real
+    - would it really be too slow? test and see.
 
 changes
 - Height can increase in young players, although it's quite rare.

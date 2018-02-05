@@ -1,8 +1,8 @@
 // @flow
 
 import Backboard from "backboard";
-import { g } from "../../common";
 import { player } from "../core";
+import { bootstrapPot } from "../core/player/develop";
 import type { RatingKey } from "../../common/types";
 
 /**
@@ -265,6 +265,7 @@ const migrateLeague = (upgradeDB, lid) => {
                     }
                 }
 
+                // Scale ratings
                 const ratingKeys: RatingKey[] = [
                     "stre",
                     "spd",
@@ -292,10 +293,14 @@ const migrateLeague = (upgradeDB, lid) => {
                         throw new Error(`Missing rating: ${key}`);
                     }
                 }
-            }
 
-            // Fix ovr and pot
-            player.develop(p, 0);
+
+console.log('before change', r.ovr, r.pot)
+                r.ovr = player.ovr(r);
+                r.skills = player.skills(r);
+                r.pot = bootstrapPot(r, r.season - p.born.year);
+console.log('after change', r.ovr, r.pot)
+            }
 
             upgradeDB.players.put(p);
         });

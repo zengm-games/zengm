@@ -1,6 +1,7 @@
 PLAYER DEVELOPMENT REVAMP
 
 test upgrade performance on large league (500 seasons+)
+- not great. maybe send notification that an upgrade is happening and could take a few minutes
 
 changes
 - Height can increase in young players, although it's quite rare.

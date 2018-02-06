@@ -1,6 +1,7 @@
 // @flow
 
-import Backboard from "backboard";
+import backboard from "backboard";
+import { PLAYER } from "../../common";
 import { player } from "../core";
 import { bootstrapPot } from "../core/player/develop";
 import type { RatingKey } from "../../common/types";
@@ -241,7 +242,9 @@ const migrateLeague = (upgradeDB, lid) => {
         });
     }
     if (upgradeDB.oldVersion <= 26) {
+        // Only non-retired players, for efficiency
         upgradeDB.players.iterate(p => {
+            console.log(p.pid);
             for (const r of p.ratings) {
                 // Replace blk/stl with diq
                 if (typeof r.diq !== "number") {
@@ -296,7 +299,14 @@ const migrateLeague = (upgradeDB, lid) => {
 
                 r.ovr = player.ovr(r);
                 r.skills = player.skills(r);
-                r.pot = bootstrapPot(r, r.season - p.born.year);
+
+                // For performance, only calculate pot for non-retired players
+                if (p.tid === PLAYER.RETIRED) {
+                    r.pot = r.ovr;
+                } else {
+                    r.pot = bootstrapPot(r, r.season - p.born.year);
+                }
+
                 if (p.draft.year === r.season) {
                     p.draft.ovr = r.ovr;
                     p.draft.skills = r.skills;
@@ -311,7 +321,7 @@ const migrateLeague = (upgradeDB, lid) => {
 
 const connectLeague = async (lid: number) => {
     // Would like to await on migrateLeague and inside there, but Firefox
-    const db = await Backboard.open(`league${lid}`, 27, upgradeDB => {
+    const db = await backboard.open(`league${lid}`, 27, upgradeDB => {
         if (upgradeDB.oldVersion === 0) {
             createLeague(upgradeDB, lid);
         } else {

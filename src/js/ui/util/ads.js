@@ -10,6 +10,17 @@ const adUnits = [
         sizes: [[728, 90]],
         bids: [
             {
+                bidder: "indexExchange",
+                params: {
+                   siteID: "248523",
+                   id: "01",
+                },
+            },
+            {
+                bidder: "sovrn",
+                params: { tagid: "547545" },
+            },
+            {
                 bidder: "conversant",
                 params: {
                     site_id: "116969",
@@ -24,16 +35,23 @@ const adUnits = [
                     ct: 633385,
                 },
             },
-            {
-                bidder: "sovrn",
-                params: { tagid: "547545" },
-            },
         ],
     },
     {
         code: "div-gpt-ad-1516837104728-1",
         sizes: [[300, 250]],
         bids: [
+            {
+                bidder: "indexExchange",
+                params: {
+                   siteID: "248524",
+                   id: "02",
+                },
+            },
+            {
+                bidder: "sovrn",
+                params: { tagid: "547546" },
+            },
             {
                 bidder: "conversant",
                 params: {
@@ -49,16 +67,23 @@ const adUnits = [
                     ct: 633386,
                 },
             },
-            {
-                bidder: "sovrn",
-                params: { tagid: "547546" },
-            },
         ],
     },
     {
         code: "div-gpt-ad-1516837104728-2",
         sizes: [[300, 250]],
         bids: [
+            {
+                bidder: "indexExchange",
+                params: {
+                   siteID: "248525",
+                   id: "03",
+                },
+            },
+            {
+                bidder: "sovrn",
+                params: { tagid: "547547" },
+            },
             {
                 bidder: "conversant",
                 params: {
@@ -73,10 +98,6 @@ const adUnits = [
                     cp: 558539,
                     ct: 633387,
                 },
-            },
-            {
-                bidder: "sovrn",
-                params: { tagid: "547547" },
             },
         ],
     },

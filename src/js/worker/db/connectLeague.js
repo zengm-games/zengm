@@ -4,6 +4,7 @@ import backboard from "backboard";
 import { PLAYER } from "../../common";
 import { player } from "../core";
 import { bootstrapPot } from "../core/player/develop";
+import { logEvent } from "../util";
 import type { RatingKey } from "../../common/types";
 
 /**
@@ -101,11 +102,10 @@ const createLeague = (upgradeDB, lid: number) => {
  * @param {number} lid Integer league ID number.
  */
 const migrateLeague = (upgradeDB, lid) => {
-    console.log(
+    let upgradeMsg =
         `Upgrading league${lid} database from version ${
             upgradeDB.oldVersion
-        } to version ${upgradeDB.version}`,
-    );
+        } to version ${upgradeDB.version}.`;
 
     if (upgradeDB.oldVersion <= 15) {
         throw new Error(
@@ -242,9 +242,10 @@ const migrateLeague = (upgradeDB, lid) => {
         });
     }
     if (upgradeDB.oldVersion <= 26) {
+        upgradeMsg += " For large leagues, this can take several minutes or more.";
+
         // Only non-retired players, for efficiency
         upgradeDB.players.iterate(p => {
-            console.log(p.pid);
             for (const r of p.ratings) {
                 // Replace blk/stl with diq
                 if (typeof r.diq !== "number") {
@@ -316,6 +317,15 @@ const migrateLeague = (upgradeDB, lid) => {
 
             upgradeDB.players.put(p);
         });
+
+        console.log(upgradeMsg);
+        logEvent(
+            {
+                type: "upgrade",
+                text: upgradeMsg,
+                saveToDb: false,
+            },
+        );
     }
 };
 

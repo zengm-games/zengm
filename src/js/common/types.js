@@ -309,7 +309,8 @@ export type LogEventType =
     | "retired"
     | "screenshot"
     | "trade"
-    | "tragedy";
+    | "tragedy"
+    | "upgrade";
 
 export type LogEventSaveOptions = {
     type: LogEventType,

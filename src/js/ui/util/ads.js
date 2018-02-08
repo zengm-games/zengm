@@ -228,8 +228,25 @@ async function showBanner() {
         });
     };
 
-    if ((window.screen && window.screen.width < 768) || window.inIframe) {
-        // Hide ads on mobile, mobile is shitty enough already. Embedded iframes too, like on Sports.ws
+    let hideAds = false;
+
+    // Hide ads on mobile, mobile is shitty enough already
+    if (window.screen && window.screen.width < 768) { 
+        hideAds = true;
+    }
+
+    // Embedded iframes too, like on Sports.ws
+    if (window.inIframe) {
+        hideAds = true;
+    }
+
+    // Hide ads on iOS, at least until https://www.wired.com/story/pop-up-mobile-ads-surge-as-sites-scramble-to-stop-them/ is resolved
+    // https://stackoverflow.com/a/9039885/786644
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+        hideAds = true;
+    }
+
+    if (hideAds) {
         const wrappers = [
             "banner-ad-top-wrapper",
             "banner-ad-bottom-wrapper-1",

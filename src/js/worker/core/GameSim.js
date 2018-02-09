@@ -898,9 +898,9 @@ class GameSim {
         let type;
         if (
             this.team[this.o].player[p].compositeRating.shootingThreePointer >
-                0.33 &&
+                0.35 &&
             Math.random() <
-                0.65 *
+                0.67 *
                     this.team[this.o].player[p].compositeRating
                         .shootingThreePointer
         ) {
@@ -910,8 +910,8 @@ class GameSim {
             probMake =
                 this.team[this.o].player[p].compositeRating
                     .shootingThreePointer *
-                    0.4 +
-                0.34;
+                    0.30 +
+                0.36;
             probAndOne = 0.01;
         } else {
             const r1 =
@@ -963,8 +963,9 @@ class GameSim {
         }
 
         const foulFactor =
+            0.8 *
             (this.team[this.o].player[p].compositeRating.drawingFouls / 0.5) **
-            2;
+                2;
         probMissAndFoul *= foulFactor;
         probAndOne *= foulFactor;
 

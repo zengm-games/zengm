@@ -78,7 +78,7 @@ const COMPOSITE_WEIGHTS = {
     },
     rebounding: {
         ratings: ["hgt", "stre", "jmp", "reb", "oiq", "diq"],
-        weights: [2, 0.1, 0.1, 1, 0.5, 0.5],
+        weights: [1.5, 0.1, 0.1, 2, 0.5, 0.5],
     },
     stealing: {
         ratings: [50, "spd", "diq"],

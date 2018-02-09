@@ -87,7 +87,10 @@ const copyValidValues = (source, target, season) => {
         const r = source.ratings.length - 1;
         for (const rating of Object.keys(source.ratings[r])) {
             if (rating === "pos") {
-                target.ratings[r].pos = source.ratings[r].pos;
+                if (target.ratings[r].pos !== source.ratings[r].pos) {
+                    target.ratings[r].pos = source.ratings[r].pos;
+                    target.pos = source.ratings[r].pos; // Keep this way forever because fun
+                }
             } else if (
                 [
                     "diq",

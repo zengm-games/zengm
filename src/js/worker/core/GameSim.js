@@ -910,7 +910,7 @@ class GameSim {
             probMake =
                 this.team[this.o].player[p].compositeRating
                     .shootingThreePointer *
-                    0.30 +
+                    0.3 +
                 0.36;
             probAndOne = 0.01;
         } else {

@@ -814,12 +814,11 @@ class GameSim {
      */
     probTov() {
         return (
-            0.13 *
-            (1 + this.team[this.d].compositeRating.defense) /
-            (1 +
-                0.5 *
-                    (this.team[this.o].compositeRating.dribbling +
-                        this.team[this.o].compositeRating.passing))
+            0.14 *
+            this.team[this.d].compositeRating.defense /
+            (0.5 *
+                (this.team[this.o].compositeRating.dribbling +
+                    this.team[this.o].compositeRating.passing))
         );
     }
 

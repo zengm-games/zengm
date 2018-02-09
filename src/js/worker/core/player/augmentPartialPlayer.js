@@ -131,6 +131,19 @@ const augmentPartialPlayer = (
         }
     }
 
+    // See if we need to fix a fucked up ratings season for draft prospect
+    if (
+        p.ratings.length === 1 &&
+        [PLAYER.UNDRAFTED, PLAYER.UNDRAFTED_2, PLAYER.UNDRAFTED_3].includes(
+            p.tid,
+        )
+    ) {
+        const r = p.ratings[0];
+        if (typeof p.draft.year === "number" && p.draft.year !== r.season) {
+            r.season = p.draft.year;
+        }
+    }
+
     // Rating rescaling
     if (version === undefined || version <= 26) {
         for (const r of p.ratings) {

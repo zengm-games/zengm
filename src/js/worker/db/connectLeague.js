@@ -102,10 +102,9 @@ const createLeague = (upgradeDB, lid: number) => {
  * @param {number} lid Integer league ID number.
  */
 const migrateLeague = (upgradeDB, lid) => {
-    let upgradeMsg =
-        `Upgrading league${lid} database from version ${
-            upgradeDB.oldVersion
-        } to version ${upgradeDB.version}.`;
+    let upgradeMsg = `Upgrading league${lid} database from version ${
+        upgradeDB.oldVersion
+    } to version ${upgradeDB.version}.`;
 
     if (upgradeDB.oldVersion <= 15) {
         throw new Error(
@@ -242,7 +241,8 @@ const migrateLeague = (upgradeDB, lid) => {
         });
     }
     if (upgradeDB.oldVersion <= 26) {
-        upgradeMsg += " For large leagues, this can take several minutes or more.";
+        upgradeMsg +=
+            " For large leagues, this can take several minutes or more.";
 
         // Only non-retired players, for efficiency
         upgradeDB.players.iterate(p => {
@@ -319,13 +319,11 @@ const migrateLeague = (upgradeDB, lid) => {
         });
 
         console.log(upgradeMsg);
-        logEvent(
-            {
-                type: "upgrade",
-                text: upgradeMsg,
-                saveToDb: false,
-            },
-        );
+        logEvent({
+            type: "upgrade",
+            text: upgradeMsg,
+            saveToDb: false,
+        });
     }
 };
 

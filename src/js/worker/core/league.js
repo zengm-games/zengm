@@ -436,8 +436,8 @@ async function create(
             }
         }
     } else {
-        // Generate past 16 years of draft classes
-        const NUM_PAST_SEASONS = 16;
+        // Generate past 20 years of draft classes
+        const NUM_PAST_SEASONS = 20;
 
         let newPlayers = [];
         for (let i = 0; i < NUM_PAST_SEASONS; i++) {
@@ -478,8 +478,8 @@ async function create(
         const teamPlayers = keptPlayers.slice(0, 13 * g.numTeams);
         const freeAgentPlayers = keptPlayers.slice(
             13 * g.numTeams,
-            100 + 13 * g.numTeams,
-        ); // Up to 100 free agents
+            150 + 13 * g.numTeams,
+        ); // Up to 150 free agents
         random.shuffle(teamPlayers);
         let newTid = -1; // So first iteration will be 0
         for (let i = 0; i < teamPlayers.length; i++) {
@@ -494,6 +494,7 @@ async function create(
         }
         for (let i = 0; i < freeAgentPlayers.length; i++) {
             const p = freeAgentPlayers[i];
+            p.yearsFreeAgent = Math.random() > 0.5 ? 1 : 0; // So half will be eligible to retire after the first season
             player.setContract(p, player.genContract(p, false), false);
             // No add needed in this branch because addToFreeAgents has put
             await player.addToFreeAgents(p, g.phase, baseMoods);

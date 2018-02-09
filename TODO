@@ -1,12 +1,8 @@
 PLAYER DEVELOPMENT REVAMP
 
-god mode doesn't save player positions when edited
-
 https://www.reddit.com/r/BasketballGM/comments/7vzzqt/new_beta_released_today_please_help_me_test_it/dtyessz/?context=3
 
 too many with both Di and Dp https://www.reddit.com/r/BasketballGM/comments/7vzzqt/new_beta_released_today_please_help_me_test_it/dtwov0b/?context=3
-
-teams scoring too much
 
 All these issues https://www.reddit.com/r/BasketballGM/comments/7vzzqt/new_beta_released_today_please_help_me_test_it/dtwp4b9/
 
@@ -28,6 +24,8 @@ later
   - increasing perimfactor not enough - need to reevaluate formula. see all_bigs.json
     - perimfactor shouldn't be needed. just use the synergy stuff. should be offense and defense. check values for normal and extreme teams
 - simulate draft from past seasons, to correctly assign contracts (don't need to populate actual draft info)
+
+no POT mode, to make it harder
 
 p.valueWithContract is exactly equal to p.value currently!
 

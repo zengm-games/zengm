@@ -135,7 +135,6 @@ async function updateRoster(
             players = trade.filterUntradable(players);
 
             for (let i = 0; i < players.length; i++) {
-                players[i].age -= g.season - inputs.season;
                 players[i].canRelease = false;
             }
 

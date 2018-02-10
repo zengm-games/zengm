@@ -5,6 +5,27 @@ import { season } from "../core";
 import { idb } from "../db";
 import type { UpdateEvents } from "../../common/types";
 
+const getProjectedSeries = async (inputSeason: number) => {
+    const teams = helpers.orderByWinp(
+        await idb.getCopies.teamsPlus({
+            attrs: ["tid", "cid", "abbrev", "name"],
+            seasonAttrs: ["winp", "won"],
+            season: inputSeason,
+        }),
+    );
+
+    // Add entry for wins for each team, delete seasonAttrs just used for sorting
+    for (let i = 0; i < teams.length; i++) {
+        teams[i].won = 0;
+        teams[i].winp = teams[i].seasonAttrs.winp;
+        delete teams[i].seasonAttrs;
+    }
+
+    const result = season.genPlayoffSeries(teams);
+
+    return result.series;
+};
+
 async function updatePlayoffs(
     inputs: { season: number },
     updateEvents: UpdateEvents,
@@ -15,37 +36,24 @@ async function updatePlayoffs(
         inputs.season !== state.season ||
         (inputs.season === g.season && updateEvents.includes("gameSim"))
     ) {
-        let finalMatchups;
+        let finalMatchups = false;
         let series;
 
         // If in the current season and before playoffs started, display projected matchups
         if (inputs.season === g.season && g.phase < PHASE.PLAYOFFS) {
-            const teams = helpers.orderByWinp(
-                await idb.getCopies.teamsPlus({
-                    attrs: ["tid", "cid", "abbrev", "name"],
-                    seasonAttrs: ["winp", "won"],
-                    season: inputs.season,
-                }),
-            );
-
-            // Add entry for wins for each team, delete seasonAttrs just used for sorting
-            for (let i = 0; i < teams.length; i++) {
-                teams[i].won = 0;
-                teams[i].winp = teams[i].seasonAttrs.winp;
-                delete teams[i].seasonAttrs;
-            }
-
-            const result = season.genPlayoffSeries(teams);
-            series = result.series;
-
-            finalMatchups = false;
+            series = await getProjectedSeries(inputs.season);
         } else {
             const playoffSeries = await idb.getCopy.playoffSeries({
                 season: inputs.season,
             });
-            series = playoffSeries.series;
 
-            finalMatchups = true;
+            if (playoffSeries) {
+                series = playoffSeries.series;
+                finalMatchups = true;
+            } else {
+                // Not sure why, but sometimes playoffSeries is undefined here
+                series = await getProjectedSeries(inputs.season);
+            }
         }
 
         // Formatting for the table in playoffs.html

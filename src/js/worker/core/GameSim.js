@@ -1034,7 +1034,7 @@ class GameSim {
      * @return {number} Probability from 0 to 1.
      */
     probBlk() {
-        return 0.1 * this.team[this.d].compositeRating.blocking;
+        return 0.2 * this.team[this.d].compositeRating.blocking ** 2;
     }
 
     /**

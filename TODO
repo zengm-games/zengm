@@ -1,16 +1,8 @@
 PLAYER DEVELOPMENT REVAMP
 
-Positioning note: players <50 height and <50 rebound, that would normally play big, could be made into GFs - saw some classified as Fs but their stats don't really match up. Tallish, 45-55 height players that could dribble were also being classified as PG when GF would probably fit better, espcially when they had little passing ability. Right now there's quite a few players who average under 2 assists in 20-35 MPG classified as PGs.
-
-too many with both Di and Dp https://www.reddit.com/r/BasketballGM/comments/7vzzqt/new_beta_released_today_please_help_me_test_it/dtwov0b/?context=3
-
-check team ortg/drtg and pts
-
 after tweaks...
-- all debug things
-- position balance
-- salary balance
 - value formula
+- salary balance
 
 documentation
 

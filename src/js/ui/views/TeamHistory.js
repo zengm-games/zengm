@@ -155,7 +155,7 @@ const TeamHistory = ({
                         Players currently on this team are{" "}
                         <span className="text-success">
                             highlighted in green
-                        </span>. Active players on other teams are{" "}
+                        </span>. Other active players are{" "}
                         <span className="text-info">highlighted in blue</span>.
                         Players in the Hall of Fame are{" "}
                         <span className="text-danger">highlighted in red</span>.

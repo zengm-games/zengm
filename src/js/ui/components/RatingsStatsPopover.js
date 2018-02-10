@@ -6,14 +6,9 @@ import OverlayTrigger from "react-bootstrap/lib/OverlayTrigger";
 import Popover from "react-bootstrap/lib/Popover";
 import { toWorker } from "../util";
 
-const colorRating = (rating: number, type?: "ovr") => {
+const colorRating = (rating: number) => {
     const classes = ["text-danger", "text-warning", null, "text-success"];
-
-    // Different cutoffs for ovr and other ratings, cause it's not fair to expect excellence in all areas!
-    let cutoffs = [30, 60, 80, Infinity];
-    if (type === "ovr") {
-        cutoffs = [30, 45, 60, Infinity];
-    }
+    const cutoffs = [30, 45, 60, Infinity];
 
     const ind = cutoffs.findIndex(cutoff => rating < cutoff);
     return classes[ind];
@@ -114,7 +109,7 @@ class RatingsStatsPopover extends React.Component<Props, State> {
                         </span>
                     </div>
                     <div className="col-xs-4">
-                        <span className={colorRating(ratings.ovr, "ovr")}>
+                        <span className={colorRating(ratings.ovr)}>
                             Ovr: {ratings.ovr}
                         </span>
                         <br />
@@ -139,7 +134,7 @@ class RatingsStatsPopover extends React.Component<Props, State> {
                         </span>
                     </div>
                     <div className="col-xs-4">
-                        <span className={colorRating(ratings.pot, "ovr")}>
+                        <span className={colorRating(ratings.pot)}>
                             Pot: {Math.round(ratings.pot)}
                         </span>
                         <br />

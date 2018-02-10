@@ -122,9 +122,6 @@ function genContract(
 ): PlayerContract {
     const ratings = p.ratings[p.ratings.length - 1];
 
-    // Scale proportional to (ovr*2 + pot)*0.5 120-210
-    //amount = ((3 * p.value) * 0.85 - 110) / (210 - 120);  // Scale from 0 to 1 (approx)
-    //amount = amount * (g.maxContract - g.minContract) + g.minContract;
     let amount =
         (p.value / 100 - 0.47) * 3.3 * (g.maxContract - g.minContract) +
         g.minContract;

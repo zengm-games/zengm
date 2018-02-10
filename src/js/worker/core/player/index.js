@@ -57,7 +57,7 @@ function limitRating(rating: number): number {
 function ovr(ratings: PlayerRatings): number {
     // This formula is loosely based on linear regression of ratings to zscore(ws48)+zscore(per):
     const r =
-        (6 * ratings.hgt +
+        (5 * ratings.hgt +
             1 * ratings.stre +
             5 * ratings.spd +
             2 * ratings.jmp +
@@ -68,7 +68,7 @@ function ovr(ratings: PlayerRatings): number {
             1 * ratings.fg +
             3 * ratings.tp +
             7 * ratings.oiq +
-            2 * ratings.diq +
+            3 * ratings.diq +
             2 * ratings.drb +
             4 * ratings.pss +
             1 * ratings.reb) /

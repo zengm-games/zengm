@@ -21,7 +21,8 @@ const local: Local & { reset: () => void } = {
         local.phaseText = defaultLocal.phaseText;
         local.statusText = defaultLocal.statusText;
 
-        // Don't reset goldUntil because that persists across leagues
+        // Don't reset goldUntil because that persists across leagues. Probably it shouldn't be in this file, but should
+        // be somewhere else (like how g used to have some variables not persisted to database).
     },
 };
 

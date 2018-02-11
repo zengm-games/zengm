@@ -128,6 +128,10 @@ async function create(
     });
     idb.league = await connectLeague(g.lid);
 
+    // These wouldn't be needed here, except the beforeView logic is fucked up
+    lock.reset();
+    local.reset();
+
     const gameAttributes = Object.assign({}, defaultGameAttributes, {
         userTid: tid,
         userTids: [tid],

@@ -43,8 +43,8 @@ async function boxScore(gid: number) {
         t.orbp = 100 * t.orb / (t.orb + game.teams[1 - i].drb);
         t.ftpfga = t.ft / t.fga;
 
-        // Fix the total minutes calculation, which is usually fucked up for some unknown reason
-        t.min = 240 + 25 * game.overtimes;
+        // Floating point errors make this off a bit
+        t.min = Math.round(t.min);
 
         // Put injured players at the bottom, then sort by GS and roster position
         t.players.sort((a, b) => {

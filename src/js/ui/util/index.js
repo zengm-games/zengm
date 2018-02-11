@@ -33,6 +33,7 @@ export { default as getScript } from "./getScript";
 export { default as initView } from "./initView";
 export { default as logEvent } from "./logEvent";
 export { default as notify } from "./notify";
+export { default as prefixStatOpp } from "./prefixStatOpp";
 export { default as realtimeUpdate } from "./realtimeUpdate";
 export { default as setTitle } from "./setTitle";
 export { default as toWorker } from "./toWorker";

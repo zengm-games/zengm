@@ -401,7 +401,7 @@ export default {
     teamFinances,
     teamHistory,
     teamRecords,
-    teamShotLocations: validateSeason,
+    teamShotLocations: teamStats,
     teamStatDists: validateSeason,
     teamStats,
     transactions,

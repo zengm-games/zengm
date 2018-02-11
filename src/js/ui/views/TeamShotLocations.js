@@ -1,10 +1,10 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { g, helpers } from "../../common";
-import { getCols, setTitle } from "../util";
+import { getCols, prefixStatOpp, setTitle } from "../util";
 import { DataTable, Dropdown, NewWindowLink } from "../components";
 
-const TeamShotLocations = ({ season, teams }) => {
+const TeamShotLocations = ({ playoffs, season, teams, teamOpponent }) => {
     setTitle(`Team Shot Locations - ${season}`);
 
     const superCols = [
@@ -51,6 +51,21 @@ const TeamShotLocations = ({ season, teams }) => {
     );
 
     const rows = teams.map(t => {
+        const statCols = [
+            "fgAtRim",
+            "fgaAtRim",
+            "fgpAtRim",
+            "fgLowPost",
+            "fgaLowPost",
+            "fgpLowPost",
+            "fgMidRange",
+            "fgaMidRange",
+            "fgpMidRange",
+            "tp",
+            "tpa",
+            "tpp",
+        ].map(key => prefixStatOpp(teamOpponent, key));
+
         return {
             key: t.tid,
             data: [
@@ -60,18 +75,7 @@ const TeamShotLocations = ({ season, teams }) => {
                 t.stats.gp,
                 t.seasonAttrs.won,
                 t.seasonAttrs.lost,
-                t.stats.fgAtRim.toFixed(1),
-                t.stats.fgaAtRim.toFixed(1),
-                t.stats.fgpAtRim.toFixed(1),
-                t.stats.fgLowPost.toFixed(1),
-                t.stats.fgaLowPost.toFixed(1),
-                t.stats.fgpLowPost.toFixed(1),
-                t.stats.fgMidRange.toFixed(1),
-                t.stats.fgaMidRange.toFixed(1),
-                t.stats.fgpMidRange.toFixed(1),
-                t.stats.tp.toFixed(1),
-                t.stats.tpa.toFixed(1),
-                t.stats.tpp.toFixed(1),
+                ...statCols.map(col => t.stats[col].toFixed(1)),
             ],
             classNames: {
                 info: t.tid === g.userTid,
@@ -83,8 +87,8 @@ const TeamShotLocations = ({ season, teams }) => {
         <div>
             <Dropdown
                 view="team_shot_locations"
-                fields={["seasons"]}
-                values={[season]}
+                fields={["seasons", "teamOpponent", "playoffs"]}
+                values={[season, teamOpponent, playoffs]}
             />
             <h1>
                 Team Shot Locations <NewWindowLink />
@@ -113,7 +117,9 @@ const TeamShotLocations = ({ season, teams }) => {
 };
 
 TeamShotLocations.propTypes = {
+    playoffs: PropTypes.oneOf(["playoffs", "regularSeason"]).isRequired,
     season: PropTypes.number.isRequired,
+    teamOpponent: PropTypes.oneOf(["opponent", "team"]).isRequired,
     teams: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 

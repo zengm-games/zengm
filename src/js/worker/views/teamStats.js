@@ -93,7 +93,6 @@ async function updateTeams(
                     t.seasonAttrs.lost = 0;
                 }
 
-                console.log("playoffSeries", playoffSeries);
                 for (const round of playoffSeries.series) {
                     for (const series of round) {
                         for (const ah of ["away", "home"]) {

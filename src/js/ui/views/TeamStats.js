@@ -1,15 +1,8 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { g, helpers } from "../../common";
-import { getCols, setTitle } from "../util";
+import { getCols, prefixStatOpp, setTitle } from "../util";
 import { DataTable, Dropdown, JumpTo, NewWindowLink } from "../components";
-
-const regOrOpp = (teamOpponent, key: string) => {
-    if (teamOpponent === "opponent") {
-        return `opp${key[0].toUpperCase()}${key.slice(1)}`;
-    }
-    return key;
-};
 
 const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
     setTitle(`Team Stats - ${season}`);
@@ -80,7 +73,7 @@ const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
                       "pf",
                       "pts",
                       "mov",
-                  ].map(key => regOrOpp(teamOpponent, key))
+                  ].map(key => prefixStatOpp(teamOpponent, key))
                 : [
                       "pw",
                       "pl",
@@ -116,7 +109,7 @@ const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
             data[statType] = value.toFixed(1);
         }
 
-        const plusMinusCols = [regOrOpp(teamOpponent, "mov"), "nrtg"];
+        const plusMinusCols = [prefixStatOpp(teamOpponent, "mov"), "nrtg"];
         for (const plusMinusCol of plusMinusCols) {
             if (data.hasOwnProperty(plusMinusCol)) {
                 data[plusMinusCol] = (
@@ -196,7 +189,7 @@ const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
         <div>
             <Dropdown
                 view="team_stats"
-                fields={["seasons", "teamOpponent", "playoffs"]}
+                fields={["seasons", "teamOpponentAdvanced", "playoffs"]}
                 values={[season, teamOpponent, playoffs]}
             />
             <JumpTo season={season} />

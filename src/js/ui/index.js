@@ -291,6 +291,14 @@ class ErrorBoundary extends React.Component<{ children: any }> {
     );
     page("/l/:lid/team_shot_locations", genPage("teamShotLocations"));
     page("/l/:lid/team_shot_locations/:season", genPage("teamShotLocations"));
+    page(
+        "/l/:lid/team_shot_locations/:season/:teamOpponents",
+        genPage("teamShotLocations"),
+    );
+    page(
+        "/l/:lid/team_shot_locations/:season/:teamOpponent/:playoffs",
+        genPage("teamShotLocations"),
+    );
     page("/l/:lid/export_league", genPage("exportLeague"));
     page("/l/:lid/fantasy_draft", genPage("fantasyDraft"));
     page("/l/:lid/live", genPage("live"));

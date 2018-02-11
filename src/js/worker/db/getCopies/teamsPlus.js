@@ -257,17 +257,37 @@ const processStats = async (
                     } else {
                         row.fgpAtRim = 0;
                     }
+                } else if (stat === "oppFgpAtRim") {
+                    if (ts.oppFgaAtRim > 0) {
+                        row.oppFgpAtRim = 100 * ts.oppFgAtRim / ts.oppFgaAtRim;
+                    } else {
+                        row.oppFgpAtRim = 0;
+                    }
                 } else if (stat === "fgpLowPost") {
                     if (ts.fgaLowPost > 0) {
                         row.fgpLowPost = 100 * ts.fgLowPost / ts.fgaLowPost;
                     } else {
                         row.fgpLowPost = 0;
                     }
+                } else if (stat === "oppFgpLowPost") {
+                    if (ts.oppFgaLowPost > 0) {
+                        row.oppFgpLowPost =
+                            100 * ts.oppFgLowPost / ts.oppFgaLowPost;
+                    } else {
+                        row.oppFgpLowPost = 0;
+                    }
                 } else if (stat === "fgpMidRange") {
                     if (ts.fgaMidRange > 0) {
                         row.fgpMidRange = 100 * ts.fgMidRange / ts.fgaMidRange;
                     } else {
                         row.fgpMidRange = 0;
+                    }
+                } else if (stat === "oppFgpMidRange") {
+                    if (ts.oppFgaMidRange > 0) {
+                        row.oppFgpMidRange =
+                            100 * ts.oppFgMidRange / ts.oppFgaMidRange;
+                    } else {
+                        row.oppFgpMidRange = 0;
                     }
                 } else if (stat === "tpp") {
                     if (ts.tpa > 0) {

@@ -548,13 +548,24 @@ function contractSeasonsRemaining(
  * @return {boolean} Hall of Fame worthy?
  */
 function madeHof(p: Player, playerStats: PlayerStats[]): boolean {
+    // Average together WS and EWA
     const winShares = playerStats.map(ps => {
-        return typeof ps.dws === "number" && typeof ps.ows === "number"
-            ? ps.dws + ps.ows
-            : 0;
+        let sum = 0;
+
+        if (typeof ps.dws === "number") {
+            sum += ps.dws;
+        }
+        if (typeof ps.ows === "number") {
+            sum += ps.ows;
+        }
+        if (typeof ps.ewa === "number") {
+            sum += ps.ewa;
+        }
+
+        return sum / 2;
     });
 
-    // Calculate career EWA and "dominance factor" DF (top 5 years EWA - 50)
+    // Calculate career WS and "dominance factor" DF (top 5 years WS - 50)
     winShares.sort((a, b) => b - a); // Descending order
     let total = 0;
     let df = -50;

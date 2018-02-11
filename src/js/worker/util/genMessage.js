@@ -181,7 +181,7 @@ money[0] = [
 ];
 money[1] = [
     "I like the recent financial turnaround you engineered. But I can't afford any setback.",
-    'I took a hit in the market this year, who knew shorts had to be paid back? Anyway, keep improving so I can keep gambling... I mean, "ivesting aggressively".',
+    'I took a hit in the market this year, who knew shorts had to be paid back? Anyway, keep improving so I can keep gambling... I mean, "investing aggressively".',
     "I guess we aren't drowning in debt but that doesn't mean I am satisfied.",
     "Money makes the world go around. I want to be dizzy AF. Let's make that happen.",
 ];

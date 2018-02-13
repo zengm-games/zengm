@@ -90,7 +90,7 @@ const COMPOSITE_WEIGHTS = {
     },
     fouling: {
         ratings: [50, "hgt", "diq", "spd"],
-        weights: [1.5, 1, -1, -1],
+        weights: [3, 1, -1, -1],
     },
     drawingFouls: {
         ratings: ["hgt", "spd", "drb", "dnk", "oiq"],

@@ -54,8 +54,8 @@ const COMPOSITE_WEIGHTS = {
         weights: [0.4, 1, 0.5],
     },
     turnovers: {
-        ratings: ["drb", "pss", "spd", "hgt", "ins", "oiq"],
-        weights: [1, 1, -1, 1, 1, -1],
+        ratings: [50, "ins", "pss", "oiq"],
+        weights: [0.5, 1, 1, -1],
     },
     shootingAtRim: {
         ratings: ["hgt", "spd", "jmp", "dnk", "oiq"],

@@ -1,5 +1,5 @@
 import range from "lodash/range";
-import { g } from "../../common";
+import { g, helpers } from "../../common";
 import { idb } from "../db";
 import type { UpdateEvents } from "../../common/types";
 
@@ -176,13 +176,17 @@ function sumRecordsFor(group, id, name, records) {
     }
     out.id = id;
     out.team = name;
-    out.winp = String(out.won / (out.won + out.lost));
     out.winp =
         out.won > 0
-            ? (Number(out.won) / (Number(out.won) + Number(out.lost))).toFixed(
-                  3,
-              )
+            ? helpers.roundWinp(out.won / (out.won + out.lost))
             : "0.000";
+
+    for (const key of ["lastChampionship", "lastPlayoffAppearance"]) {
+        const years = xRecords
+            .map(r => r[key])
+            .filter(year => typeof year === "number");
+        out[key] = years.length === 0 ? null : Math.max(...years);
+    }
     return out;
 }
 
@@ -210,25 +214,20 @@ async function updateTeamRecords(
             .reduce((a, b) => Number(a) + Number(b));
 
         let display;
-        let displayName;
         if (inputs.byType === "team") {
             display = teamRecords;
-            displayName = "Team";
         } else if (inputs.byType === "conf") {
             display = g.confs.map(conf =>
                 sumRecordsFor("cid", conf.cid, conf.name, teamRecords),
             );
-            displayName = "Conference";
         } else {
             display = g.divs.map(div =>
                 sumRecordsFor("did", div.did, div.name, teamRecords),
             );
-            displayName = "Division";
         }
 
         return {
             teamRecords: display,
-            displayName,
             seasonCount,
             byType: inputs.byType,
         };

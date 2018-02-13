@@ -12,8 +12,17 @@ const teamLink = t => {
     );
 };
 
-const TeamRecords = ({ byType, displayName, seasonCount, teamRecords }) => {
+const TeamRecords = ({ byType, seasonCount, teamRecords }) => {
     setTitle("Team Records");
+
+    let displayName;
+    if (byType === "conf") {
+        displayName = "Conference";
+    } else if (byType === "div") {
+        displayName = "Division";
+    } else {
+        displayName = "Team";
+    }
 
     const cols = getCols(
         displayName,
@@ -45,7 +54,7 @@ const TeamRecords = ({ byType, displayName, seasonCount, teamRecords }) => {
         return {
             key: tr.id,
             data: [
-                teamLink(tr.team),
+                byType === "team" ? teamLink(tr.team) : tr.team,
                 tr.won,
                 tr.lost,
                 tr.winp,
@@ -101,7 +110,6 @@ const TeamRecords = ({ byType, displayName, seasonCount, teamRecords }) => {
 
 TeamRecords.propTypes = {
     byType: PropTypes.oneOf(["conf", "div", "team"]).isRequired,
-    displayName: PropTypes.string.isRequired,
     seasonCount: PropTypes.number.isRequired,
     teamRecords: PropTypes.arrayOf(PropTypes.object).isRequired,
 };

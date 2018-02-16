@@ -77,10 +77,6 @@
 
   <body>
     <script type="text/javascript">
-      // Banner ads
-      var googletag = googletag || {};
-      googletag.cmd = googletag.cmd || [];
-
       if (window.enableLogging) {
         // Google Consumer Surveys
         var TriggerPrompt = function(articleUrl, contentId) {
@@ -117,6 +113,15 @@
             w[v].publisher = "ca71e3e4-0cc9-464d-aa0e-38e8d5d700f3";
         }(window, document, 'script', 'Survata'));
       }
+
+      // Prebid.js ads
+      var pbjs = pbjs || {};
+      pbjs.que = pbjs.que || [];
+      var googletag = googletag || {};
+      googletag.cmd = googletag.cmd || [];
+      googletag.cmd.push(function() {
+        googletag.pubads().disableInitialLoad();
+      });
     </script>
 
     <div id="content">

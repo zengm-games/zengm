@@ -46,22 +46,29 @@ const emit = (name: string, content: any) => {
 const initAds = (goldUntil: number | void) => {
     // No ads for Gold members
     const currentTimestamp = Math.floor(Date.now() / 1000);
-    if (goldUntil === undefined || currentTimestamp > goldUntil) {
+
+    if (
+        goldUntil === undefined ||
+        currentTimestamp > goldUntil
+    ) {
         let el;
         el = document.getElementById("banner-ad-top-wrapper");
         if (el) {
-            el.innerHTML =
-                '<div id="div-gpt-ad-1491369323599-3" style="text-align: center; min-height: 95px; margin-top: 1em"></div>';
+            el.innerHTML = `<div id="${
+                ads.adUnitCodes[0]
+            }" style="text-align: center; min-height: 95px; margin-top: 1em"></div>`;
         }
         el = document.getElementById("banner-ad-bottom-wrapper-1");
         if (el) {
-            el.innerHTML =
-                '<div id="div-gpt-ad-1491369323599-1" style="text-align: center; height: 250px; position: absolute; top: 5px; left: 0"></div>';
+            el.innerHTML = `<div id="${
+                ads.adUnitCodes[1]
+            }" style="text-align: center; height: 250px; position: absolute; top: 5px; left: 0"></div>`;
         }
         el = document.getElementById("banner-ad-bottom-wrapper-2");
         if (el) {
-            el.innerHTML =
-                '<div id="div-gpt-ad-1491369323599-2" style="text-align: center; height: 250px; position: absolute; top: 5px; right: 0"></div>';
+            el.innerHTML = `<div id="${
+                ads.adUnitCodes[2]
+            }" style="text-align: center; height: 250px; position: absolute; top: 5px; right: 0"></div>`;
         }
         el = document.getElementById("banner-ad-bottom-wrapper-logo");
         if (el) {
@@ -69,7 +76,7 @@ const initAds = (goldUntil: number | void) => {
                 '<div style="height: 250px; margin: 5px 310px 0 310px; display:flex; align-items: center; justify-content: center;"><img src="https://basketball-gm.com/files/logo.png" style="max-height: 100%; max-width: 100%"></div>';
         }
 
-        // Async loading of Optimal Media ad script, after divs added above
+        // Async loading of ad script, after divs added above
 
         let loaded = false;
         const afterScriptLoad = function() {

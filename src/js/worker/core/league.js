@@ -561,6 +561,7 @@ async function create(
 
     await idb.cache.flush();
     idb.cache.startAutoFlush();
+    local.leagueLoaded = true;
 
     toUI(["bbgmPing", "league"], conditions);
 
@@ -753,9 +754,11 @@ const close = async (disconnect?: boolean) => {
     }
 
     if (g.lid !== undefined && idb.league !== undefined) {
-        await updateStatus("Saving...");
-        await idb.cache.flush();
-        await updateStatus("Idle");
+        if (local.leagueLoaded) {
+            await updateStatus("Saving...");
+            await idb.cache.flush();
+            await updateStatus("Idle");
+        }
 
         if (disconnect) {
             idb.cache.stopAutoFlush();

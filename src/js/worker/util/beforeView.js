@@ -3,7 +3,14 @@
 import { Cache, connectLeague, idb } from "../db";
 import { g, helpers } from "../../common";
 import { league } from "../core";
-import { env, toUI, updatePhase, updatePlayMenu, updateStatus } from "../util";
+import {
+    env,
+    local,
+    toUI,
+    updatePhase,
+    updatePlayMenu,
+    updateStatus,
+} from "../util";
 import type { Conditions, League } from "../../common/types";
 
 let heartbeatIntervalID: IntervalID;
@@ -132,6 +139,7 @@ const beforeLeague = async (
         if (loadingNewLid !== newLid) {
             return;
         }
+        local.leagueLoaded = true;
 
         // Update play menu
         await updateStatus(undefined);

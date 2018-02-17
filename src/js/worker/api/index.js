@@ -816,7 +816,11 @@ const runBefore = async (
     updateEvents: UpdateEvents,
     prevData: any,
     conditions: Conditions,
-): Promise<(void | { [key: string]: any })[]> => {
+): Promise<void | (void | { [key: string]: any })[]> => {
+    if (typeof g.lid === "number" && !local.leagueLoaded) {
+        return;
+    }
+
     if (
         views.hasOwnProperty(viewId) &&
         views[viewId].hasOwnProperty("runBefore")

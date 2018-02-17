@@ -255,7 +255,9 @@ class Controller extends React.Component<{}, State> {
                 this.state.idLoading !== args.id &&
                 this.state.idLoading !== undefined)
         ) {
-            updateEvents.push("firstRun");
+            if (!updateEvents.includes("firstRun")) {
+                updateEvents.push("firstRun");
+            }
 
             prevData = {};
         } else if (this.state.idLoading === args.id) {
@@ -270,7 +272,7 @@ class Controller extends React.Component<{}, State> {
         });
 
         // Resolve all the promises before updating the UI to minimize flicker
-        const promiseBefore = toWorker(
+        const results = await toWorker(
             "runBefore",
             args.id,
             inputs,
@@ -278,7 +280,13 @@ class Controller extends React.Component<{}, State> {
             prevData,
         );
 
-        const results = await promiseBefore;
+        // If results is undefined, it means the league wasn't loaded yet at the time of the request, likely because another league was opening in another tab at the same time. So stop now and wait until we get a signal that there is a new league.
+        if (results === undefined) {
+            this.setState({
+                idLoading: undefined,
+            });
+            return;
+        }
 
         const vars = {
             Component: args.Component,
@@ -297,8 +305,6 @@ class Controller extends React.Component<{}, State> {
         }
 
         this.setState(vars);
-
-        //        await Promise.all(promisesWhenever);
 
         if (this.state.idLoading === args.id) {
             this.setState(

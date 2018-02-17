@@ -152,9 +152,11 @@ let gptLoading = false;
 let gptLoaded = false;
 
 const sendAdserverRequest = () => {
-    if (window.pbjs.adserverRequestSent) return;
+    if (window.pbjs.adserverRequestSent) {
+        return;
+    }
     window.pbjs.adserverRequestSent = true;
-    console.log("sendAdserverRequest");
+
     window.googletag.cmd.push(() => {
         window.pbjs.que.push(() => {
             window.pbjs.setTargetingForGPTAsync();
@@ -165,13 +167,11 @@ const sendAdserverRequest = () => {
 
 async function showBanner() {
     const initBanners = () => {
-        console.log("initBanners");
         return new Promise(resolve => {
             // eslint-disable-next-line
             require("../../vendor/prebid");
 
             window.pbjs.que.push(() => {
-                console.log("initial requestbids call");
                 window.pbjs.setConfig({ priceGranularity: "medium" });
                 window.pbjs.addAdUnits(adUnits);
                 window.pbjs.requestBids({
@@ -179,9 +179,7 @@ async function showBanner() {
                 });
             });
 
-            setTimeout(() => {
-                sendAdserverRequest();
-            }, PREBID_TIMEOUT);
+            setTimeout(sendAdserverRequest, PREBID_TIMEOUT);
 
             window.googletag.cmd.push(() => {
                 for (let i = 0; i < adUnits.length; i++) {
@@ -200,7 +198,6 @@ async function showBanner() {
                 for (const adUnitCode of adUnitCodes) {
                     // eslint-disable-next-line no-loop-func
                     window.googletag.cmd.push(() => {
-                        console.log("initbanners display");
                         window.googletag.display(adUnitCode);
                         count += 1;
                         if (count >= adUnitCodes.length) {
@@ -214,13 +211,11 @@ async function showBanner() {
 
     // After banners are initially loaded, use this to refresh
     const refreshBanners = () => {
-        console.log("refreshBanners");
         window.pbjs.que.push(() => {
             window.pbjs.requestBids({
                 timeout: PREBID_TIMEOUT,
                 adUnitCodes,
                 bidsBackHandler: () => {
-                    console.log("bidsbackhandler", this);
                     window.pbjs.setTargetingForGPTAsync(adUnitCodes);
                     window.googletag.pubads().refresh();
                 },

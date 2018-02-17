@@ -46,7 +46,6 @@ const emit = (name: string, content: any) => {
 const initAds = (goldUntil: number | void) => {
     // No ads for Gold members
     const currentTimestamp = Math.floor(Date.now() / 1000);
-
     if (goldUntil === undefined || currentTimestamp > goldUntil) {
         let el;
         el = document.getElementById("banner-ad-top-wrapper");
@@ -73,30 +72,8 @@ const initAds = (goldUntil: number | void) => {
                 '<div style="height: 250px; margin: 5px 310px 0 310px; display:flex; align-items: center; justify-content: center;"><img src="https://basketball-gm.com/files/logo.png" style="max-height: 100%; max-width: 100%"></div>';
         }
 
-        // Async loading of ad script, after divs added above
-
-        let loaded = false;
-        const afterScriptLoad = function() {
-            if (
-                !loaded &&
-                (!this.readyState || this.readyState === "complete")
-            ) {
-                loaded = true;
-                ads.showBanner();
-            }
-        };
-
-        const script = document.createElement("script");
-        script.async = true;
-        script.type = "text/javascript";
-        script.src = "https://www.googletagservices.com/tag/js/gpt.js";
-        script.onload = afterScriptLoad;
-        script.onreadystatechange = afterScriptLoad;
-
-        const node = document.getElementsByTagName("script")[0];
-        if (node && node.parentNode) {
-            node.parentNode.insertBefore(script, node);
-        }
+        // Run this after GPT is ready
+        window.googletag.cmd.push(ads.showBanner);
     } else {
         const wrappers = [
             "banner-ad-top-wrapper",

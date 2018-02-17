@@ -70,7 +70,7 @@
     "babel-preset-react": "6.24.1",
     "babelify": "8.0.0",
     "blacklistify": "0.0.3",
-    "browserify": "16.1.0",
+    "browserify": "^15.2.0",
     "cheerio": "0.20.0",
     "chokidar": "2.0.2",
     "clean-css": "4.1.9",

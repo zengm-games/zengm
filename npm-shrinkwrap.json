@@ -6927,15 +6927,15 @@
       }
     },
     "stylelint-config-recommended": {
-      "version": "2.0.1",
-      "from": "stylelint-config-recommended@>=2.0.0 <3.0.0",
-      "resolved": "https://registry.npmjs.org/stylelint-config-recommended/-/stylelint-config-recommended-2.0.1.tgz",
+      "version": "1.0.0",
+      "from": "stylelint-config-recommended@>=1.0.0 <2.0.0",
+      "resolved": "https://registry.npmjs.org/stylelint-config-recommended/-/stylelint-config-recommended-1.0.0.tgz",
       "dev": true
     },
     "stylelint-config-standard": {
-      "version": "18.0.0",
-      "from": "stylelint-config-standard@18.0.0",
-      "resolved": "https://registry.npmjs.org/stylelint-config-standard/-/stylelint-config-standard-18.0.0.tgz",
+      "version": "17.0.0",
+      "from": "stylelint-config-standard@>=17.0.0 <18.0.0",
+      "resolved": "https://registry.npmjs.org/stylelint-config-standard/-/stylelint-config-standard-17.0.0.tgz",
       "dev": true
     },
     "subarg": {

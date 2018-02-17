@@ -98,7 +98,7 @@
     "prop-types": "15.6.0",
     "replace": "0.3.0",
     "stylelint": "8.4.0",
-    "stylelint-config-standard": "18.0.0",
+    "stylelint-config-standard": "^17.0.0",
     "uglify-es": "3.3.9",
     "watchify": "3.10.0"
   },

@@ -6,7 +6,7 @@ import { league } from "../core";
 import { env, toUI, updatePhase, updatePlayMenu, updateStatus } from "../util";
 import type { Conditions, League } from "../../common/types";
 
-let heartbeatIntervalID: number | void;
+let heartbeatIntervalID: IntervalID;
 
 // Heartbeat stuff would be better inside a single transaction, but Firefox doesn't like that.
 

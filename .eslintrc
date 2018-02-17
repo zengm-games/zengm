@@ -51,6 +51,7 @@
         "$Diff": false,
         "$Keys": false,
         "Class": false,
+        "IntervalID": false,
         "SyntheticEvent": false,
         "SyntheticKeyboardEvent": false,
         "SyntheticInputEvent": false,

@@ -2,17 +2,18 @@
 
 import * as React from "react";
 
-// I have no idea what's going on here
-export default <Props, C: React.Component<Props, *>>(
-    Component: Class<C>,
-): Class<React.Component<$Diff<Props, { toggleClicked: () => void }>, *>> => {
+type ToggleClicked = (event: SyntheticEvent<>) => void;
+
+const clickable = <Props: {}>(
+    Component: React.ComponentType<{ clicked: boolean, toggleClicked: ToggleClicked } & Props>,
+): React.ComponentType<Props> => {
     return class Clickable extends React.Component<
         any,
         {
             clicked: boolean,
         },
     > {
-        toggleClicked: Function;
+        toggleClicked: ToggleClicked;
 
         constructor(props) {
             super(props);
@@ -44,10 +45,12 @@ export default <Props, C: React.Component<Props, *>>(
             return (
                 <Component
                     {...this.props}
-                    {...this.state}
+                    clicked={this.state.clicked}
                     toggleClicked={this.toggleClicked}
                 />
             );
         }
     };
 };
+
+export default clickable;

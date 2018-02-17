@@ -162,12 +162,12 @@ const Row = clickable(({ clicked, row, toggleClicked }) => {
     );
 });
 
-/*Row.propTypes = {
+Row.propTypes = {
     row: PropTypes.shape({
         classNames: PropTypes.object,
         data: PropTypes.array.isRequired,
     }).isRequired,
-};*/
+};
 
 const getSearchVal = val => {
     try {

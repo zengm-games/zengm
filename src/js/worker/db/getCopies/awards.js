@@ -4,9 +4,9 @@ import { idb } from "../../db";
 import { mergeByPk } from "./helpers";
 import type { Awards } from "../../../common/types";
 
-const getCopies = async (
-    { season }: { season?: number } = {},
-): Promise<Awards[]> => {
+const getCopies = async ({ season }: { season?: number } = {}): Promise<
+    Awards[],
+> => {
     if (season !== undefined) {
         const awards = mergeByPk(
             await idb.league.awards.getAll(season),

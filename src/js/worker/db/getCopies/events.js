@@ -4,15 +4,13 @@ import { idb } from "../../db";
 import { mergeByPk } from "./helpers";
 import type { EventBBGM } from "../../../common/types";
 
-const getCopies = async (
-    {
-        pid,
-        season,
-    }: {
-        pid?: number,
-        season?: number,
-    } = {},
-): Promise<EventBBGM[]> => {
+const getCopies = async ({
+    pid,
+    season,
+}: {
+    pid?: number,
+    season?: number,
+} = {}): Promise<EventBBGM[]> => {
     if (season !== undefined && pid !== undefined) {
         throw new Error("Can't currently filter by season and pid");
     }

@@ -495,27 +495,25 @@ const processTeam = async (
  * @param {string=} options.statType What type of stats to return, 'perGame' or 'totals' (default is 'perGame).
  * @return {Promise.(Object|Array.<Object>)} Filtered team object or array of filtered team objects, depending on the inputs.
  */
-const getCopies = async (
-    {
-        tid,
-        season,
-        attrs = [],
-        seasonAttrs = [],
-        stats = [],
-        playoffs = false,
-        regularSeason = true,
-        statType = "perGame",
-    }: {
-        tid?: number,
-        season?: number,
-        attrs?: TeamAttr[],
-        seasonAttrs?: TeamSeasonAttr[],
-        stats?: TeamStatAttr[],
-        playoffs?: boolean,
-        regularSeason?: boolean,
-        statType?: TeamStatType,
-    } = {},
-): Promise<TeamFiltered[]> => {
+const getCopies = async ({
+    tid,
+    season,
+    attrs = [],
+    seasonAttrs = [],
+    stats = [],
+    playoffs = false,
+    regularSeason = true,
+    statType = "perGame",
+}: {
+    tid?: number,
+    season?: number,
+    attrs?: TeamAttr[],
+    seasonAttrs?: TeamSeasonAttr[],
+    stats?: TeamStatAttr[],
+    playoffs?: boolean,
+    regularSeason?: boolean,
+    statType?: TeamStatType,
+} = {}): Promise<TeamFiltered[]> => {
     const options = {
         season,
         attrs,

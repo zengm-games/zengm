@@ -6,13 +6,13 @@ import { idb } from "../../db";
 import { mergeByPk } from "./helpers";
 import type { TeamSeason } from "../../../common/types";
 
-const getCopies = async (
-    {
-        tid,
-        season,
-        seasons,
-    }: { tid?: number, season?: number, seasons?: [number, number] } = {},
-): Promise<TeamSeason[]> => {
+const getCopies = async ({
+    tid,
+    season,
+    seasons,
+}: { tid?: number, season?: number, seasons?: [number, number] } = {}): Promise<
+    TeamSeason[],
+> => {
     if (tid === undefined) {
         if (season !== undefined) {
             if (season >= g.season - 2) {

@@ -693,7 +693,8 @@ export type UpdateEvents = (
     | "newPhase"
     | "playerMovement"
     | "toggleGodMode"
-    | "watchList")[];
+    | "watchList"
+)[];
 
 export type RunFunction = (
     inputs: GetOutput,

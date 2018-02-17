@@ -6,25 +6,23 @@ import { idb } from "../../db";
 import { mergeByPk } from "./helpers";
 import type { Player } from "../../../common/types";
 
-const getCopies = async (
-    {
-        pid,
-        retired,
-        activeAndRetired,
-        activeSeason,
-        draftYear,
-        statsTid,
-        tid,
-    }: {
-        pid?: number,
-        retired?: boolean,
-        activeAndRetired?: boolean,
-        activeSeason?: number,
-        draftYear?: number,
-        statsTid?: number,
-        tid?: [number, number] | number,
-    } = {},
-): Promise<Player[]> => {
+const getCopies = async ({
+    pid,
+    retired,
+    activeAndRetired,
+    activeSeason,
+    draftYear,
+    statsTid,
+    tid,
+}: {
+    pid?: number,
+    retired?: boolean,
+    activeAndRetired?: boolean,
+    activeSeason?: number,
+    draftYear?: number,
+    statsTid?: number,
+    tid?: [number, number] | number,
+} = {}): Promise<Player[]> => {
     if (pid !== undefined) {
         const cachedPlayer = await idb.cache.players.get(pid);
         if (cachedPlayer) {

@@ -5,7 +5,9 @@ import * as React from "react";
 type ToggleClicked = (event: SyntheticEvent<>) => void;
 
 const clickable = <Props: {}>(
-    Component: React.ComponentType<{ clicked: boolean, toggleClicked: ToggleClicked } & Props>,
+    Component: React.ComponentType<
+        { clicked: boolean, toggleClicked: ToggleClicked } & Props,
+    >,
 ): React.ComponentType<Props> => {
     return class Clickable extends React.Component<
         any,

@@ -8,15 +8,13 @@ const getLastEntries = <T>(arr: T[], limit: number): T[] => {
     return arr.slice(arr.length - limit);
 };
 
-const getCopies = async (
-    {
-        limit,
-        mid,
-    }: {
-        limit?: number,
-        mid?: number,
-    } = {},
-): Promise<Message[]> => {
+const getCopies = async ({
+    limit,
+    mid,
+}: {
+    limit?: number,
+    mid?: number,
+} = {}): Promise<Message[]> => {
     if (mid !== undefined) {
         let message = await idb.cache.messages.get(mid);
         if (!message) {

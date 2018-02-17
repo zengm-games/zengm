@@ -4,9 +4,9 @@ import { idb } from "../../db";
 import { mergeByPk } from "./helpers";
 import type { DraftLotteryResult } from "../../../common/types";
 
-const getCopies = async (
-    { season }: { season?: number } = {},
-): Promise<DraftLotteryResult[]> => {
+const getCopies = async ({ season }: { season?: number } = {}): Promise<
+    DraftLotteryResult[],
+> => {
     if (season !== undefined) {
         const draftLotteryResults = mergeByPk(
             await idb.league.draftLotteryResults.getAll(season),

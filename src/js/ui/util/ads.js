@@ -12,8 +12,8 @@ const adUnits = [
             {
                 bidder: "indexExchange",
                 params: {
-                   siteID: "248523",
-                   id: "01",
+                    siteID: "248523",
+                    id: "01",
                 },
             },
             {
@@ -44,8 +44,8 @@ const adUnits = [
             {
                 bidder: "indexExchange",
                 params: {
-                   siteID: "248524",
-                   id: "02",
+                    siteID: "248524",
+                    id: "02",
                 },
             },
             {
@@ -76,8 +76,8 @@ const adUnits = [
             {
                 bidder: "indexExchange",
                 params: {
-                   siteID: "248525",
-                   id: "03",
+                    siteID: "248525",
+                    id: "03",
                 },
             },
             {
@@ -231,7 +231,7 @@ async function showBanner() {
     let hideAds = false;
 
     // Hide ads on mobile, mobile is shitty enough already
-    if (window.screen && window.screen.width < 768) { 
+    if (window.screen && window.screen.width < 768) {
         hideAds = true;
     }
 

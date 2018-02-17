@@ -181,7 +181,8 @@ class GameSim {
               showNotification: boolean,
               pids: [number],
               tids: [number],
-          })[];
+          }
+    )[];
     o: TeamNum;
     d: TeamNum;
     playByPlay: Object[];

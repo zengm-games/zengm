@@ -112,6 +112,9 @@ const beforeLeague = async (
                 return;
             }
 
+            // Confirm league exists before proceeding
+            await getLeague(newLid);
+
             g.lid = newLid;
             idb.league = await connectLeague(g.lid);
             if (loadingNewLid !== newLid) {

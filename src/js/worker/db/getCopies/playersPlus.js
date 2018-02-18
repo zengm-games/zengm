@@ -556,26 +556,28 @@ const processStats = async (
 const processPlayer = async (p: Player, options: PlayerOptions) => {
     const output = {};
 
+    // Do this before stats for a faster short circuit
+    if (options.ratings.length > 0) {
+        processRatings(output, p, options);
+
+        // Only add a player if he was active for this season and thus has ratings for this season
+        if (output.ratings === undefined) {
+            return undefined;
+        }
+    }
+
     const keepWithNoStats =
         (options.showRookies &&
             p.draft.year >= g.season &&
             (options.season === g.season || options.season === undefined)) ||
         (options.showNoStats &&
             (options.season === undefined || options.season > p.draft.year));
+
     if (options.stats.length > 0 || keepWithNoStats) {
         await processStats(output, p, keepWithNoStats, options);
 
         // Only add a player if filterStats finds something (either stats that season, or options overriding that check)
         if (output.stats === undefined && !keepWithNoStats) {
-            return undefined;
-        }
-    }
-
-    if (options.ratings.length > 0) {
-        processRatings(output, p, options);
-
-        // Only add a player if he was active for this season and thus has ratings for this season
-        if (output.ratings === undefined) {
             return undefined;
         }
     }

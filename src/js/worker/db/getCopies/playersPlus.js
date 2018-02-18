@@ -442,8 +442,8 @@ const processStats = async (
         return idb.cache.playerStats.indexGetAll("playerStatsAllByPid", p.pid);
     };
 
-    if (season === undefined || p.tid === PLAYER.RETIRED) {
-        // All seasons, or retired player with stats not in cache
+    if (season === undefined) {
+        // All seasons, merge cache and database
         playerStats = mergeByPk(
             await idb.league.playerStats
                 .index("pid, season, tid")
@@ -451,10 +451,11 @@ const processStats = async (
             await playerStatsFromCache(),
             idb.cache.storeInfos.playerStats.pk,
         );
-    } else if (season >= g.season - 1) {
+    } else if (season >= g.season - 1 && p.tid !== PLAYER.RETIRED) {
+        // Recent season for non-retired player, from cache
         playerStats = await playerStatsFromCache();
     } else {
-        // Single season, from database
+        // Old season or retired, from database
         playerStats = await idb.league.playerStats
             .index("pid, season, tid")
             .getAll(backboard.bound([p.pid, season], [p.pid, season, ""]));
@@ -556,7 +557,7 @@ const processStats = async (
 const processPlayer = async (p: Player, options: PlayerOptions) => {
     const output = {};
 
-    // Do this before stats for a faster short circuit
+    // Do ratings before stats for a faster short circuit (no DB access)
     if (options.ratings.length > 0) {
         processRatings(output, p, options);
 

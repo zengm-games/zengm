@@ -1,5 +1,7 @@
 PLAYER DEVELOPMENT REVAMP
 
+regression for player value again
+
 documentation
 
 changes (in game notification)
@@ -21,6 +23,8 @@ team shot locations playoffs
 - share code with team stats for highlighting and playoff W/L
 
 ---
+
+when playing many seasons in one session, it slows down. why? ctrl+r restores performance
 
 open multiple leagues from dashboard at the same time - Invalid cache status "filling"
 - looks like flush is being called while status is "filling", can that be short circuited since idb.cache has been redefined? lid is different, or the hostID is different?

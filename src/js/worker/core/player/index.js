@@ -59,7 +59,7 @@ function ovr(ratings: PlayerRatings): number {
     const r =
         (5 * ratings.hgt +
             1 * ratings.stre +
-            5 * ratings.spd +
+            4 * ratings.spd +
             2 * ratings.jmp +
             1 * ratings.endu +
             1 * ratings.ins +
@@ -69,10 +69,10 @@ function ovr(ratings: PlayerRatings): number {
             3 * ratings.tp +
             7 * ratings.oiq +
             3 * ratings.diq +
-            2 * ratings.drb +
-            4 * ratings.pss +
+            3 * ratings.drb +
+            3 * ratings.pss +
             1 * ratings.reb) /
-        39;
+        38;
 
     // Fudge factor to keep ovr ratings the same as they used to be (back before 2018 ratings rescaling)
     // +8 at 68
@@ -123,7 +123,7 @@ function genContract(
     const ratings = p.ratings[p.ratings.length - 1];
 
     let amount =
-        (p.value / 100 - 0.47) * 3.3 * (g.maxContract - g.minContract) +
+        (p.value / 100 - 0.47) * 3.5 * (g.maxContract - g.minContract) +
         g.minContract;
     if (randomizeAmount) {
         amount *= helpers.bound(random.realGauss(1, 0.1), 0, 2); // Randomize

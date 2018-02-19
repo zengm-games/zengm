@@ -557,12 +557,12 @@ const processStats = async (
 const processPlayer = async (p: Player, options: PlayerOptions) => {
     const output = {};
 
-    // Do ratings before stats for a faster short circuit (no DB access)
-    if (options.ratings.length > 0) {
-        processRatings(output, p, options);
-
-        // Only add a player if he was active for this season and thus has ratings for this season
-        if (output.ratings === undefined) {
+    // Do this check before stats for a faster short circuit (no DB access)
+    if (options.ratings.length > 0 && options.season !== undefined) {
+        const hasRatingsSeason = p.ratings.some(
+            r => r.season === options.season,
+        );
+        if (!hasRatingsSeason) {
             return undefined;
         }
     }
@@ -579,6 +579,16 @@ const processPlayer = async (p: Player, options: PlayerOptions) => {
 
         // Only add a player if filterStats finds something (either stats that season, or options overriding that check)
         if (output.stats === undefined && !keepWithNoStats) {
+            return undefined;
+        }
+    }
+
+    // processRatings must be after processStats for abbrev hack
+    if (options.ratings.length > 0) {
+        processRatings(output, p, options);
+
+        // This should be mostly redundant with hasRatingsSeason above
+        if (output.ratings === undefined) {
             return undefined;
         }
     }

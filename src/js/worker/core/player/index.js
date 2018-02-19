@@ -123,7 +123,7 @@ function genContract(
     const ratings = p.ratings[p.ratings.length - 1];
 
     let amount =
-        (p.value / 100 - 0.47) * 3.5 * (g.maxContract - g.minContract) +
+        (p.value / 100 - 0.47) * 3.4 * (g.maxContract - g.minContract) +
         g.minContract;
     if (randomizeAmount) {
         amount *= helpers.bound(random.realGauss(1, 0.1), 0, 2); // Randomize

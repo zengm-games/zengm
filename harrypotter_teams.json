@@ -307,6 +307,25 @@
   ],
     "gameAttributes": [
     {
+            "key": "confs",
+            "value": [
+                {"cid": 0, "name": "Scholastic League"},
+                {"cid": 1, "name": "Rec League"},
+				{"cid": 2, "name": "Pro League"}
+            ]
+	},
+	{
+            "key": "divs",
+            "value": [
+                {"did": 0, "cid": 0, "name": "Hogwarts"},
+                {"did": 1, "cid": 0, "name": "Wizard Schools A"},
+                {"did": 2, "cid": 0, "name": "Wizard Schools B"},
+                {"did": 3, "cid": 1, "name": "Ministry"},
+                {"did": 4, "cid": 1, "name": "Species"},
+                {"did": 5, "cid": 2, "name": "British Premier League"}
+            ]
+	},
+	{
 		"key": "names",
 		"value": {
 			"first": {

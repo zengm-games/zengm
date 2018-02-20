@@ -14,32 +14,7 @@ Golden Snitch - Seekers try to get it. Possession = Goal
 Bludger - weapon ball to try to hit / hurt / distract opponents.
 
 
-### Grouping / Brainstorming Attributes
-
-	
-Base Attributes
-
-	Broomstick Handling - Natural Talent, slight upward trend with age until peak age, then decline
-	Wealth - Family Talent, slight upward trend with age without a peak
-	Durability - Peaks at a fairly young age (mid 20s)
-	Deception - Can be learned and increased up to a peak in early 30s
-	Shooting - Peaks at a Mid - High 20s
-	Passing - Can be learned and increased up to a peak in early 30s
-	Catching - Peaks at a Mid 20s
-	Capturing - Peaks very early : 18 - 22
-	Bludger Handling - Peaks at a Mid 20s
-	Goalkeeping - Peaks in the early 30s
-	
-Composite Attributes -
-
-	Broomstick Quality - 1/4th of (Wealth (0-100) + Last 3 Yrs Team Equipment Spending Ranking (10-300) : 1st 300, 2nd 290, 30th - 10 (avg this ranking score across 3 years))
-
-	Speed - 1/3 of (2 Broomstick Quality + Broomstick Handling)
-	Manuevering - 1/3 of (Broomstick Quality + 2 Broomstick Handling)	
-	Goal Defense - 1/3 of (Durability + 2 Goalkeeping)
-	Active Defense - 1/4 of (Durability + Deception + 2 Bludger Handling)
-		
-	How many of these are independent, how many could be reduced to a lower number of dimensions?
+### Brainstorming
 	
 How do Quidditch players score (Quaffle)
 
@@ -60,4 +35,17 @@ and recruiting from Scholastic into Pro division. Retirements from Pro / Recruit
 ### Naming / Slight League Tweaks
 
 Generate naming from British name lists (80%), German name lists (10%), French name lists (10%)
+
+1. Implemented British Name lists with a 1000 Male First Names, 1000 Female First Names, 1000 ish Last Names, all England / Wales sourced.
+   Processed from Web source, through Excel formulas into the JSON format and copied in to harrypotter_teams.json.
+2. Implemented Scholastic, Rec and Pro Conferences. Unfortunately, I have Irish and Bulgarian national teams within the British Premier League.
+   TODO: Add British / Irish and Bulgarian leagues as divisions within pro. Add some British Premier League team names, Irish soccer teams, Bulgarian teams if possible?
+   TODO: Make Logo art for these new teams.
+   MAYBE: International Competition Conference, with England, Wales, Ireland, Bulgaria and other National Teams?
+   OR: Cut out the Irish and Bulgarian national teams entirely, and find a team for the well-known players like Viktor Krum.
+   
+Note: Started a regular BBGM playthrough as the Chudley Cannons with this version of the JSON
+The names are MUCH better than before. Still want to add German and French name bases (irish and bulgarian too?)
+   
+### New Super-Base Ratings
 

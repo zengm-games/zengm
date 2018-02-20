@@ -59,3 +59,5 @@ and recruiting from Scholastic into Pro division. Retirements from Pro / Recruit
 
 ### Naming / Slight League Tweaks
 
+Generate naming from British name lists (80%), German name lists (10%), French name lists (10%)
+

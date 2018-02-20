@@ -21,6 +21,12 @@ const adUnits = [
                 params: { tagid: "547545" },
             },
             {
+                bidder: "districtmDMX",
+                params: {
+                    id: 198708,
+                },
+            },
+            {
                 bidder: "conversant",
                 params: {
                     site_id: "116969",
@@ -53,6 +59,12 @@ const adUnits = [
                 params: { tagid: "547546" },
             },
             {
+                bidder: "districtmDMX",
+                params: {
+                    id: 198706,
+                },
+            },
+            {
                 bidder: "conversant",
                 params: {
                     site_id: "116969",
@@ -83,6 +95,12 @@ const adUnits = [
             {
                 bidder: "sovrn",
                 params: { tagid: "547547" },
+            },
+            {
+                bidder: "districtmDMX",
+                params: {
+                    id: 198707,
+                },
             },
             {
                 bidder: "conversant",

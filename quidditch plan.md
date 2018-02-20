@@ -28,6 +28,7 @@ Base Attributes
 	Catching - Peaks at a Mid 20s
 	Capturing - Peaks very early : 18 - 22
 	Bludger Handling - Peaks at a Mid 20s
+	Goalkeeping - Peaks in the early 30s
 	
 Composite Attributes -
 
@@ -35,7 +36,26 @@ Composite Attributes -
 
 	Speed - 1/3 of (2 Broomstick Quality + Broomstick Handling)
 	Manuevering - 1/3 of (Broomstick Quality + 2 Broomstick Handling)	
-	
-	How many of these are independent, how many could be reduced to a lower number of dimensions?
+	Goal Defense - 1/3 of (Durability + 2 Goalkeeping)
+	Active Defense - 1/4 of (Durability + Deception + 2 Bludger Handling)
 		
+	How many of these are independent, how many could be reduced to a lower number of dimensions?
 	
+How do Quidditch players score (Quaffle)
+
+
+Fast manuevers, like a good dribbling ISO game.
+Good Passing & Shooting, like a good Spread the Floor 3p shooting game.
+Power Maneuvers, like Low Post, taking a Bludger
+
+### Quidditch Transformation Steps
+
+1. Naming / Slight League Tweaks
+2. New Super-Base Ratings fit into the Core BBGM ratings. With Low Post, 2 pts, 3 pts. Make Seekers super-amazing 3pt shooters. 
+3. Revamp Game Sim to have new ratings / modeling / still roughly basketball inspired. Seekers seperated into a seperate winning track.
+4. Revamp League, make Scholastic Divisions have their own limitations, 
+and recruiting from Scholastic into Pro division. Retirements from Pro / Recruitment from Scholastic into Ministries / Department casual leagues.
+5. Revamp Game Sim more. Game Ends by Snitch or Mutual Agreement. Adjustment Snitch difficulty by Division.
+
+### Naming / Slight League Tweaks
+

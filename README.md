@@ -1,5 +1,16 @@
 # Basketball GM 4.0.0
 
+
+## Quidditch GM 0.0.1
+apeterson-BFI fork.
+
+An overhaul to write Quidditch-GM, a continuation of work from hpteam, but now with Quidditch positions, attributes, etc.
+
+Very much in beginning stages.
+
+
+## Normal Readme Starts
+
 A single-player basketball simulation game. Make trades, set rosters, draft
 players, and try to build the next dynasty, all from within your web browser.
 The game is implemented entirely in client-side JavaScript, backed by IndexedDB.

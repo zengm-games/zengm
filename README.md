@@ -43,9 +43,9 @@ License Agreement from YOUR_NAME_HERE (GITHUB_USERNAME_HERE)".
 
 First, make sure you're using [Node.js](https://nodejs.org/) v6 or higher, older
 versions probably won't work. Then, all of the tooling used in development can
-be set up by simply installing [npm](https://www.npmjs.com/) and running
+be set up by simply installing [yarn](https://yarnpkg.com/) and running
 
-    npm install
+    yarn
 
 from within this folder.
 
@@ -54,14 +54,14 @@ from within this folder.
 Basketball GM uses Browserify for JS minification and clean-css for
 CSS minification. To build the app along with all its assets, run
 
-    npm run build
+    yarn run build
 
 However during development, you probably would rather do
 
-    npm run start-watch
+    yarn run start-watch
 
 which will start the server and watch JS and CSS files for changes and
-recompile. This simply runs both `npm start` and `npm run watch` together, which
+recompile. This simply runs both `yarn run start` and `yarn run watch` together, which
 alternatively can be run separately if you wish.
 
 Open `package.json` to see all available scripts.
@@ -76,10 +76,10 @@ you use as long as you can get it to run on your computer.
 
 Run
 
-    npm start
+    yarn run start
 
 and point your browser to <http://localhost:3000/>. If you use the command
-`npm run start-watch` from above, then running the command `npm start` is not
+`yarn run start-watch` from above, then running the command `yarn run start` is not
 necessary.
 
 #### 2. Apache
@@ -93,19 +93,19 @@ mod_rewrite enabled. That's how it's done on play.basketball-gm.com.
 ESLint, Flow, and, stylelint are used to enforce some coding standards. To run
 them on the entire codebase, run
 
-    npm run lint
+    yarn run lint
 
 Integration and unit tests are bunched together in the `js/test` folder.
 Coverage is not great. They can be run from the command line in Karma with
 
-    npm test
+    yarn test
 
 or
 
-    npm run test-watch
+    yarn run test-watch
 
-or manually within a web browser by running `npm run build-test` (or
-`npm run watch-test`) and going to <http://localhost:3000/test> (this might be
+or manually within a web browser by running `yarn run build-test` (or
+`yarn run watch-test`) and going to <http://localhost:3000/test> (this might be
 broken currently).
 
 ### Code Overview

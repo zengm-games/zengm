@@ -744,13 +744,7 @@ function makeComposite(rating, components, weights) {
             factor = (factor - 25) * 2;
         }
 
-        // Sigmoidal transformation
-        //y = (rating[component] - 70) / 10;
-        //rcomp = y / Math.sqrt(1 + y ** 2);
-        //rcomp = (rcomp + 1) * 50;
-        const rcomp = weights[i] * factor;
-
-        r += rcomp;
+        r += weights[i] * factor;
 
         divideBy += 100 * weights[i];
     }

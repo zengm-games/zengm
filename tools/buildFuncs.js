@@ -98,8 +98,8 @@ const setTimestamps = () => {
         silent: true,
     });
 
-    fs.rename("build/gen/ui.js", `build/gen/ui-${rev}.js`);
-    fs.rename("build/gen/worker.js", `build/gen/worker-${rev}.js`);
+    fs.renameSync("build/gen/ui.js", `build/gen/ui-${rev}.js`);
+    fs.renameSync("build/gen/worker.js", `build/gen/worker-${rev}.js`);
 
     return rev;
 };

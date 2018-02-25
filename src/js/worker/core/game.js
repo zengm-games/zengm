@@ -712,54 +712,6 @@ async function updatePlayoffSeries(
 }
 
 /**
- * Build a composite rating.
- *
- * Composite ratings are combinations of player ratings meant to represent one facet of the game, like the ability to make a jump shot. All composite ratings are scaled from 0 to 1.
- *
- * @memberOf core.game
- * @param {Object.<string, number>} ratings Player's ratings object.
- * @param {Array.<string>} components List of player ratings to include in the composite ratings. In addition to the normal ones, "constant" is a constant value of 50 for every player, which can be used to add a baseline value for a stat.
- * @param {Array.<number>=} weights Optional array of weights used in the linear combination of components. If undefined, then all weights are assumed to be 1. If defined, this must be the same size as components.
- * @return {number} Composite rating, a number between 0 and 1.
- */
-function makeComposite(rating, components, weights) {
-    if (weights === undefined) {
-        // Default: array of ones with same size as components
-        weights = [];
-        for (let i = 0; i < components.length; i++) {
-            weights.push(1);
-        }
-    }
-
-    let r = 0;
-    let divideBy = 0;
-    for (let i = 0; i < components.length; i++) {
-        let factor: number =
-            typeof components[i] === "string"
-                ? rating[components[i]]
-                : components[i];
-
-        // Special case for height due to rescaling
-        if (components[i] === "hgt") {
-            factor = (factor - 25) * 2;
-        }
-
-        r += weights[i] * factor;
-
-        divideBy += 100 * weights[i];
-    }
-
-    r /= divideBy; // Scale from 0 to 1
-    if (r > 1) {
-        r = 1;
-    } else if (r < 0) {
-        r = 0;
-    }
-
-    return r;
-}
-
-/**
  * Load all teams into an array of team objects.
  *
  * The team objects contain all the information needed to simulate games. It would be more efficient if it only loaded team data for teams that are actually playing, particularly in the playoffs.
@@ -832,10 +784,11 @@ async function loadTeams() {
 
                 // These use the same formulas as the skill definitions in player.skills!
                 for (const k of helpers.keys(COMPOSITE_WEIGHTS)) {
-                    p.compositeRating[k] = makeComposite(
+                    p.compositeRating[k] = player.compositeRating(
                         rating,
                         COMPOSITE_WEIGHTS[k].ratings,
                         COMPOSITE_WEIGHTS[k].weights,
+                        false,
                     );
                 }
                 // eslint-disable-next-line operator-assignment

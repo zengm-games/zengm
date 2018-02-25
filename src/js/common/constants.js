@@ -59,7 +59,7 @@ const COMPOSITE_WEIGHTS = {
     },
     shootingAtRim: {
         ratings: ["hgt", "spd", "jmp", "dnk", "oiq"],
-        weights: [0.5, 0.2, 0.6, 0.4, 0.2],
+        weights: [0.75, 0.2, 0.6, 0.4, 0.2],
     },
     shootingLowPost: {
         ratings: ["hgt", "stre", "spd", "ins", "oiq"],
@@ -78,7 +78,7 @@ const COMPOSITE_WEIGHTS = {
     },
     rebounding: {
         ratings: ["hgt", "stre", "jmp", "reb", "oiq", "diq"],
-        weights: [1.5, 0.1, 0.1, 2, 0.5, 0.5],
+        weights: [2, 0.1, 0.1, 2, 0.5, 0.5],
     },
     stealing: {
         ratings: [50, "spd", "diq"],
@@ -86,7 +86,7 @@ const COMPOSITE_WEIGHTS = {
     },
     blocking: {
         ratings: ["hgt", "jmp", "diq"],
-        weights: [2, 1.5, 0.5],
+        weights: [2.5, 1.5, 0.5],
     },
     fouling: {
         ratings: [50, "hgt", "diq", "spd"],
@@ -98,11 +98,11 @@ const COMPOSITE_WEIGHTS = {
     },
     defense: {
         ratings: ["hgt", "stre", "spd", "jmp", "diq"],
-        weights: [1, 1, 1, 0.5, 1, 2],
+        weights: [1, 1, 1, 0.5, 2],
     },
     defenseInterior: {
         ratings: ["hgt", "stre", "spd", "jmp", "diq"],
-        weights: [2, 1, 0.5, 0.5, 2],
+        weights: [2.5, 1, 0.5, 0.5, 2],
     },
     defensePerimeter: {
         ratings: ["hgt", "stre", "spd", "jmp", "diq"],
@@ -114,7 +114,7 @@ const COMPOSITE_WEIGHTS = {
     },
     athleticism: {
         ratings: ["stre", "spd", "jmp", "hgt"],
-        weights: [1, 1, 1, 0.5],
+        weights: [1, 1, 1, 0.75],
     },
 };
 

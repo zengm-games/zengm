@@ -3,9 +3,13 @@ PLAYER DEVELOPMENT REVAMP
 maybe tone down 3 point shooting a bit at the high end
 - scale down shot frequency at high end
 
-too many good passing bigs
+too many good passing bigs?
 
-constants.js for weight have mismatched array lengths
+retest on 100 years
+
+check regressions
+
+retest salaries
 
 documentation
 

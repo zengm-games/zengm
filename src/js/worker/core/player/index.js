@@ -4,6 +4,7 @@ import { PHASE, PLAYER, g, helpers } from "../../../common";
 import { finances } from "../../core";
 import augmentPartialPlayer from "./augmentPartialPlayer";
 import bonus from "./bonus";
+import compositeRating from "./compositeRating";
 import develop from "./develop";
 import genFuzz from "./genFuzz";
 import generate from "./generate";
@@ -1020,6 +1021,7 @@ export default {
     getPlayerFakeAge,
     heightToRating,
     shouldRetire,
+    compositeRating,
 
     // When fully modular, delete these exports cause they are only used by other player functions
     limitRating,

@@ -1,7 +1,7 @@
 // @flow
 
 import { COMPOSITE_WEIGHTS } from "../../../common";
-import { player } from "../../core";
+import compositeRating from "./compositeRating";
 import type {
     PlayerRatings,
     PlayerSkill,
@@ -10,37 +10,11 @@ import type {
 
 const hasSkill = (
     ratings: PlayerRatings,
-    components: RatingKey[],
+    components: (RatingKey | number)[],
     weights: number[],
     cutoff?: number = 0.61,
 ): boolean => {
-    if (weights === undefined) {
-        // Default: array of ones with same size as components
-        weights = [];
-        for (let i = 0; i < components.length; i++) {
-            weights.push(1);
-        }
-    }
-
-    let numerator = 0;
-    let denominator = 0;
-    for (let i = 0; i < components.length; i++) {
-        let factor: number;
-        if (typeof components[i] === "number") {
-            factor = components[i];
-        } else {
-            // Don't fuzz height
-            factor =
-                components[i] === "hgt"
-                    ? ratings[components[i]]
-                    : player.fuzzRating(ratings[components[i]], ratings.fuzz); // don't fuzz height
-        }
-
-        numerator += factor * weights[i];
-        denominator += 100 * weights[i];
-    }
-
-    return numerator / denominator > cutoff;
+    return compositeRating(ratings, components, weights, true) > cutoff;
 };
 
 /**

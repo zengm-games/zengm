@@ -335,14 +335,16 @@ const compositeRatingDists = async () => {
         .index("tid")
         .getAll(backboard.lowerBound(PLAYER.FREE_AGENT));
 
-    const compositeRatings = players.map(p => {
-        return player.compositeRating(
-            p.ratings[p.ratings.length - 1],
-            COMPOSITE_WEIGHTS.shootingThreePointer.ratings,
-            COMPOSITE_WEIGHTS.shootingThreePointer.weights,
-            false,
-        );
-    }).sort((a, b) => b - a);
+    const compositeRatings = players
+        .map(p => {
+            return player.compositeRating(
+                p.ratings[p.ratings.length - 1],
+                COMPOSITE_WEIGHTS.shootingThreePointer.ratings,
+                COMPOSITE_WEIGHTS.shootingThreePointer.weights,
+                false,
+            );
+        })
+        .sort((a, b) => b - a);
 
     console.log(compositeRatings);
 };

@@ -17,6 +17,12 @@ const adUnits = [
                 },
             },
             {
+                bidder: "appnexus",
+                params: {
+                    placementId: "5823281",
+                },
+            },
+            {
                 bidder: "sovrn",
                 params: { tagid: "547545" },
             },
@@ -33,14 +39,6 @@ const adUnits = [
                     secure: 1,
                 },
             },
-            {
-                bidder: "pulsepoint",
-                params: {
-                    cf: "728X90",
-                    cp: 558539,
-                    ct: 633385,
-                },
-            },
         ],
     },
     {
@@ -52,6 +50,12 @@ const adUnits = [
                 params: {
                     siteID: "248524",
                     id: "02",
+                },
+            },
+            {
+                bidder: "appnexus",
+                params: {
+                    placementId: "5823309",
                 },
             },
             {
@@ -71,14 +75,6 @@ const adUnits = [
                     secure: 1,
                 },
             },
-            {
-                bidder: "pulsepoint",
-                params: {
-                    cf: "300X250",
-                    cp: 558539,
-                    ct: 633386,
-                },
-            },
         ],
     },
     {
@@ -90,6 +86,12 @@ const adUnits = [
                 params: {
                     siteID: "248525",
                     id: "03",
+                },
+            },
+            {
+                bidder: "appnexus",
+                params: {
+                    placementId: "5823300",
                 },
             },
             {
@@ -107,14 +109,6 @@ const adUnits = [
                 params: {
                     site_id: "116969",
                     secure: 1,
-                },
-            },
-            {
-                bidder: "pulsepoint",
-                params: {
-                    cf: "300X250",
-                    cp: 558539,
-                    ct: 633387,
                 },
             },
         ],

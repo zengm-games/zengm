@@ -892,9 +892,11 @@ class GameSim {
         }
 
         // Too many players shooting 3s at the high end - scale 0.55-1.0 to 0.55-0.8
-        let shootingThreePointerScaled = this.team[this.o].player[p].compositeRating.shootingThreePointer;
+        let shootingThreePointerScaled = this.team[this.o].player[p]
+            .compositeRating.shootingThreePointer;
         if (shootingThreePointerScaled > 0.55) {
-            shootingThreePointerScaled = 0.55 + (shootingThreePointerScaled - 0.55) * (0.25 / 0.45);
+            shootingThreePointerScaled =
+                0.55 + (shootingThreePointerScaled - 0.55) * (0.25 / 0.45);
         }
 
         // Pick the type of shot and store the success rate (with no defense) in probMake and the probability of an and one in probAndOne
@@ -905,8 +907,7 @@ class GameSim {
         if (
             this.team[this.o].player[p].compositeRating.shootingThreePointer >
                 0.35 &&
-            Math.random() <
-                0.67 * shootingThreePointerScaled
+            Math.random() < 0.67 * shootingThreePointerScaled
         ) {
             // Three pointer
             type = "threePointer";

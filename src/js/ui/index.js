@@ -392,6 +392,11 @@ class ErrorBoundary extends React.Component<{ children: any }> {
                 if (!initialLoad) {
                     window.ga("set", "page", ctx.path);
                     window.ga("send", "pageview");
+
+                    window._qevents.push({
+                        qacct: "p-M1Q1fpfqa7Vk4",
+                        event: "click"
+                    });
                 }
             }
 

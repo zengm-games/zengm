@@ -395,7 +395,7 @@ class ErrorBoundary extends React.Component<{ children: any }> {
 
                     window._qevents.push({
                         qacct: "p-M1Q1fpfqa7Vk4",
-                        event: "click"
+                        event: "click",
                     });
                 }
             }

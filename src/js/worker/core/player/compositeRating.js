@@ -1,10 +1,9 @@
 // @flow
 
-import { COMPOSITE_WEIGHTS, helpers } from "../../../common";
+import { helpers } from "../../../common";
 import { player } from "../../core";
 import type {
     PlayerRatings,
-    PlayerSkill,
     RatingKey,
 } from "../../../common/types";
 

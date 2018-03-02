@@ -1,4 +1,5 @@
 [ignore]
 .*/node_modules/fbjs/.*
+.*/node_modules/module-deps/test/invalid_pkg/package.json
 .*/node_modules/prebid.js/.*
 .*/node_modules/stylelint/.*

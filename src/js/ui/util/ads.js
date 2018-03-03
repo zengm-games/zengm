@@ -184,7 +184,7 @@ async function showBanner() {
             require("../../vendor/prebid");
 
             window.pbjs.que.push(() => {
-                window.pbjs.setConfig({ priceGranularity: "medium" });
+                window.pbjs.setConfig({ priceGranularity: "high" });
                 window.pbjs.addAdUnits(adUnits);
                 window.pbjs.requestBids({
                     bidsBackHandler: sendAdserverRequest,

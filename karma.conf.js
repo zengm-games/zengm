@@ -29,6 +29,6 @@ module.exports = function (config) {
 
         reporters: ['mocha'],
 
-        browsers: ['Chrome', 'Firefox'],
+        browsers: ['ChromeHeadless', 'FirefoxHeadless'],
     });
 };

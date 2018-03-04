@@ -2,10 +2,7 @@
 
 import { helpers } from "../../../common";
 import { player } from "../../core";
-import type {
-    PlayerRatings,
-    RatingKey,
-} from "../../../common/types";
+import type { PlayerRatings, RatingKey } from "../../../common/types";
 
 const composoteRating = (
     ratings: PlayerRatings,

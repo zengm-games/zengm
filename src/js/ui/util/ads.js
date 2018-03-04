@@ -186,6 +186,12 @@ async function showBanner() {
             window.pbjs.que.push(() => {
                 window.pbjs.setConfig({ priceGranularity: "high" });
                 window.pbjs.addAdUnits(adUnits);
+                window.pbjs.bidderSettings = {
+                  standard: {
+                    // USD to CAD, because Austin's DFP (including AdSense fallback) uses CAD but all bids are in USD
+                    bidCpmAdjustment: (bidCpm) => bidCpm * 1.29,
+                  },
+                };
                 window.pbjs.requestBids({
                     bidsBackHandler: sendAdserverRequest,
                 });

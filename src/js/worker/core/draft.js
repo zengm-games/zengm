@@ -8,6 +8,7 @@ import { idb } from "../db";
 import { local, logEvent, random, updatePlayMenu, updatePhase } from "../util";
 import type {
     Conditions,
+    DraftPick,
     DraftLotteryResult,
     PickRealized,
     PlayerWithoutPid,
@@ -15,15 +16,22 @@ import type {
 } from "../../common/types";
 
 // Add a new set of draft picks
-async function genPicks(season: number) {
+// existingDraftPicks should not be normally used, but sometimes a partial set of draft picks is saved to the database, in which case we want to merge those in with the newly generated ones.
+async function genPicks(season: number, existingDraftPicks?: DraftPick[] = []) {
     for (let tid = 0; tid < g.numTeams; tid++) {
         for (let round = 1; round <= 2; round++) {
-            await idb.cache.draftPicks.add({
-                tid,
-                originalTid: tid,
-                round,
-                season,
+            // If a pick already exists in the database, no need to create it
+            const existingDraftPick = existingDraftPicks.find((draftPick) => {
+                return tid === draftPick.originalTid && round === draftPick.round && season === draftPick.season;
             });
+            if (!existingDraftPick) {
+                await idb.cache.draftPicks.add({
+                    tid,
+                    originalTid: tid,
+                    round,
+                    season,
+                });
+            }
         }
     }
 }
@@ -491,9 +499,9 @@ async function genOrder(
         g.season,
     );
 
-    // Sometimes picks just fail to generate, for reasons I don't understand
-    if (draftPicks.length === 0) {
-        await genPicks(g.season);
+    // Sometimes picks just fail to generate or get lost, for reasons I don't understand
+    if (draftPicks.length < 2 * g.numTeams) {
+        await genPicks(g.season, draftPicks);
         draftPicks = await idb.cache.draftPicks.indexGetAll(
             "draftPicksBySeason",
             g.season,

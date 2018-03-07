@@ -8,8 +8,8 @@ import { idb } from "../db";
 import { local, logEvent, random, updatePlayMenu, updatePhase } from "../util";
 import type {
     Conditions,
-    DraftPick,
     DraftLotteryResult,
+    DraftPick,
     PickRealized,
     PlayerWithoutPid,
     TeamFiltered,
@@ -21,8 +21,12 @@ async function genPicks(season: number, existingDraftPicks?: DraftPick[] = []) {
     for (let tid = 0; tid < g.numTeams; tid++) {
         for (let round = 1; round <= 2; round++) {
             // If a pick already exists in the database, no need to create it
-            const existingDraftPick = existingDraftPicks.find((draftPick) => {
-                return tid === draftPick.originalTid && round === draftPick.round && season === draftPick.season;
+            const existingDraftPick = existingDraftPicks.find(draftPick => {
+                return (
+                    tid === draftPick.originalTid &&
+                    round === draftPick.round &&
+                    season === draftPick.season
+                );
             });
             if (!existingDraftPick) {
                 await idb.cache.draftPicks.add({

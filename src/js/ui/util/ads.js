@@ -19,7 +19,7 @@ const adUnits = [
             {
                 bidder: "appnexus",
                 params: {
-                    placementId: "5823281",
+                    placementId: "12941329",
                 },
             },
             {
@@ -39,6 +39,14 @@ const adUnits = [
                     secure: 1,
                 },
             },
+            {
+                bidder: "pulsepoint",
+                params: {
+                    cf: "728X90",
+                    cp: 558539,
+                    ct: 633385,
+                },
+            },
         ],
     },
     {
@@ -55,7 +63,7 @@ const adUnits = [
             {
                 bidder: "appnexus",
                 params: {
-                    placementId: "5823309",
+                    placementId: "12941330",
                 },
             },
             {
@@ -75,6 +83,14 @@ const adUnits = [
                     secure: 1,
                 },
             },
+            {
+                bidder: "pulsepoint",
+                params: {
+                    cf: "300X250",
+                    cp: 558539,
+                    ct: 633386,
+                },
+            },
         ],
     },
     {
@@ -91,7 +107,7 @@ const adUnits = [
             {
                 bidder: "appnexus",
                 params: {
-                    placementId: "5823300",
+                    placementId: "12941331",
                 },
             },
             {
@@ -109,6 +125,14 @@ const adUnits = [
                 params: {
                     site_id: "116969",
                     secure: 1,
+                },
+            },
+            {
+                bidder: "pulsepoint",
+                params: {
+                    cf: "300X250",
+                    cp: 558539,
+                    ct: 633387,
                 },
             },
         ],
@@ -187,10 +211,10 @@ async function showBanner() {
                 window.pbjs.setConfig({ priceGranularity: "high" });
                 window.pbjs.addAdUnits(adUnits);
                 window.pbjs.bidderSettings = {
-                  standard: {
-                    // USD to CAD, because Austin's DFP (including AdSense fallback) uses CAD but all bids are in USD
-                    bidCpmAdjustment: (bidCpm) => bidCpm * 1.29,
-                  },
+                    standard: {
+                        // USD to CAD, because Austin's DFP (including AdSense fallback) uses CAD but all bids are in USD
+                        bidCpmAdjustment: bidCpm => bidCpm * 1.29,
+                    },
                 };
                 window.pbjs.requestBids({
                     bidsBackHandler: sendAdserverRequest,

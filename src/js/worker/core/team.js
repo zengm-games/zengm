@@ -704,9 +704,9 @@ async function valueChange(
                 // Set fudge factor with more confidence if it's the current season
                 let fudgeFactor;
                 if (seasons === 0 && gp >= g.numGames / 2) {
-                    fudgeFactor = (1 - gp / g.numGames) * 5;
+                    fudgeFactor = (1 - gp / g.numGames) * 10;
                 } else {
-                    fudgeFactor = 5;
+                    fudgeFactor = 10;
                 }
 
                 // Use fudge factor: AI teams like their own picks
@@ -877,8 +877,11 @@ async function valueChange(
                 }
             }
 
-            // Anything below 45 is pretty worthless
-            playerValue -= 45;
+            // After the player development changes in early 2018, player.value is in a more compressed range (linear starting from ~30 rather than 0), so nonlinearity needs to be introduced here to make things "feel" similar to before.
+            playerValue -= 52;
+            if (playerValue > 0) {
+                playerValue **= 2;
+            }
 
             // Normalize for injuries
             if (includeInjuries && tid !== g.userTid) {

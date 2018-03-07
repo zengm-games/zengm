@@ -3,9 +3,6 @@ PLAYER DEVELOPMENT REVAMP
 NEED TO FIX TRADE AI
 - make tests of trades that should/shouldn't happen
 
-synergies not calculated until substitution?
-- https://www.reddit.com/r/BasketballGM/comments/7ya1yu/any_more_thoughts_on_the_beta/dv9nni8/?context=3
-
 bbgm-ads
 - bbgm gold
   - never call init, display:none never removed

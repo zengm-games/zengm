@@ -215,6 +215,7 @@ class GameSim {
         this.playersOnCourt = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]];
         this.startersRecorded = false; // Used to track whether the *real* starters have been recorded or not.
         this.updatePlayersOnCourt();
+        this.updateSynergy();
 
         this.subsEveryN = 6; // How many possessions to wait before doing substitutions
 

@@ -70,16 +70,17 @@ const initAds = (goldUntil: number | void) => {
 
     if (!hideAds) {
         window.bbgmAds.cmd.push(() => {
-          // This initializes the ads and displays the initial banners. It returns a promise
-          // which resolves when it's done.
-          window.bbgmAds.init(["bbgm-ads-top", "bbgm-ads-bottom1", "bbgm-ads-bottom2"])
-            .then(() => {
-              // Show the logo too (it's not an ad so it's not managed by bbgmAds)
-              const logo = document.getElementById("bbgm-ads-logo");
-              if (logo) {
-                  logo.style.display = "flex";
-              }
-            });
+            // This initializes the ads and displays the initial banners. It returns a promise
+            // which resolves when it's done.
+            window.bbgmAds
+                .init(["bbgm-ads-top", "bbgm-ads-bottom1", "bbgm-ads-bottom2"])
+                .then(() => {
+                    // Show the logo too (it's not an ad so it's not managed by bbgmAds)
+                    const logo = document.getElementById("bbgm-ads-logo");
+                    if (logo) {
+                        logo.style.display = "flex";
+                    }
+                });
         });
     }
 };

@@ -34,12 +34,15 @@ class Header extends React.Component<{}> {
 
         return (
             <div>
-                <div id="bbgm-ads-top" style={{
-                    display: "none",
-                    textAlign: "center",
-                    minHeight: "95px",
-                    marginTop: "1em",
-                }} />
+                <div
+                    id="bbgm-ads-top"
+                    style={{
+                        display: "none",
+                        textAlign: "center",
+                        minHeight: "95px",
+                        marginTop: "1em",
+                    }}
+                />
                 {embedInfo}
             </div>
         );

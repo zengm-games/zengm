@@ -204,6 +204,11 @@ const all = [
         msg:
             "Additional advanced stats can be viewed on the Team Stats, Player Stats, and individual player pages.",
     },
+    {
+        date: "2018-03-08",
+        msg:
+            'Major changes to player ratings and development! <a href="https://basketball-gm.com/blog/2018/02/player-ratings-and-development-beta/">Read about it here.</a>',
+    },
 ];
 
 const check = async (conditions: Conditions) => {

@@ -207,7 +207,7 @@ const all = [
     {
         date: "2018-03-08",
         msg:
-            'Major changes to player ratings and development! <a href="https://basketball-gm.com/blog/2018/02/player-ratings-and-development-beta/">Read about it here.</a>',
+            'Major changes to player ratings and development! <a href="https://basketball-gm.com/blog/2018/03/player-ratings-and-development-changes-are-live/">Read about it here.</a>',
     },
 ];
 

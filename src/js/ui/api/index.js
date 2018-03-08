@@ -44,49 +44,43 @@ const emit = (name: string, content: any) => {
 };
 
 const initAds = (goldUntil: number | void) => {
+    let hideAds = false;
+
     // No ads for Gold members
     const currentTimestamp = Math.floor(Date.now() / 1000);
-    if (goldUntil === undefined || currentTimestamp > goldUntil) {
-        let el;
-        el = document.getElementById("banner-ad-top-wrapper");
-        if (el) {
-            el.innerHTML = `<div id="${
-                ads.adUnitCodes[0]
-            }" style="text-align: center; min-height: 95px; margin-top: 1em"></div>`;
-        }
-        el = document.getElementById("banner-ad-bottom-wrapper-1");
-        if (el) {
-            el.innerHTML = `<div id="${
-                ads.adUnitCodes[1]
-            }" style="text-align: center; height: 250px; position: absolute; top: 5px; left: 0"></div>`;
-        }
-        el = document.getElementById("banner-ad-bottom-wrapper-2");
-        if (el) {
-            el.innerHTML = `<div id="${
-                ads.adUnitCodes[2]
-            }" style="text-align: center; height: 250px; position: absolute; top: 5px; right: 0"></div>`;
-        }
-        el = document.getElementById("banner-ad-bottom-wrapper-logo");
-        if (el) {
-            el.innerHTML =
-                '<div style="height: 250px; margin: 5px 310px 0 310px; display:flex; align-items: center; justify-content: center;"><img src="https://basketball-gm.com/files/logo.png" style="max-height: 100%; max-width: 100%"></div>';
-        }
+    if (goldUntil === undefined || currentTimestamp < goldUntil) {
+        hideAds = true;
+    }
 
-        // Run this after GPT is ready
-        window.googletag.cmd.push(ads.showBanner);
-    } else {
-        const wrappers = [
-            "banner-ad-top-wrapper",
-            "banner-ad-bottom-wrapper-1",
-            "banner-ad-bottom-wrapper-logo",
-            "banner-ad-bottom-wrapper-2",
-        ];
-        for (const wrapper of wrappers) {
-            const el = document.getElementById(wrapper);
-            if (el) {
-                el.innerHTML = "";
-            }
-        }
+    // Hide ads on mobile, mobile is shitty enough already
+    if (window.screen && window.screen.width < 768) {
+        hideAds = true;
+    }
+
+    // Embedded iframes too, like on Sports.ws
+    if (window.inIframe) {
+        hideAds = true;
+    }
+
+    // Hide ads on iOS, at least until https://www.wired.com/story/pop-up-mobile-ads-surge-as-sites-scramble-to-stop-them/ is resolved
+    // https://stackoverflow.com/a/9039885/786644
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+        hideAds = true;
+    }
+
+    if (!hideAds) {
+        window.bbgmAds.cmd.push(() => {
+          // This initializes the ads and displays the initial banners. It returns a promise
+          // which resolves when it's done.
+          window.bbgmAds.init(["bbgm-ads-top", "bbgm-ads-bottom1", "bbgm-ads-bottom2"])
+            .then(() => {
+              // Show the logo too (it's not an ad so it's not managed by bbgmAds)
+              const logo = document.getElementById("bbgm-ads-logo");
+              if (logo) {
+                  logo.style.display = "flex";
+              }
+            });
+        });
     }
 };
 

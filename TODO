@@ -1,15 +1,5 @@
 PLAYER DEVELOPMENT REVAMP
 
-NEED TO FIX TRADE AI
-- make tests of trades that should/shouldn't happen
-
-bbgm-ads
-- bbgm gold
-  - never call init, display:none never removed
-  - same with ipad, etc
-- any subsequent changes to BBGM ad code, backport
-  - 60 second refresh
-
 documentation
 
 changes (in game notification)
@@ -22,6 +12,9 @@ later
   - increasing perimfactor not enough - need to reevaluate formula. see all_bigs.json
     - perimfactor shouldn't be needed. just use the synergy stuff. should be offense and defense. check values for normal and extreme teams
 - simulate draft from past seasons, to correctly assign contracts (don't need to populate actual draft info)
+
+NEED TO FIX TRADE AI
+- make tests of trades that should/shouldn't happen
 
 no POT mode, to make it harder
 

@@ -400,7 +400,9 @@ class ErrorBoundary extends React.Component<{ children: any }> {
             }
 
             if (!initialLoad) {
-                window.bbgmAds.refresh();
+                window.bbgmAds.cmd.push(() => {
+                    window.bbgmAds.refresh();
+                });
             } else {
                 initialLoad = false;
             }

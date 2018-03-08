@@ -1,7 +1,7 @@
 // @flow
 
 import { g, helpers } from "../../common";
-import { ads, emitter, realtimeUpdate } from "../util";
+import { emitter, realtimeUpdate } from "../util";
 import { showEvent } from "../util/logEvent";
 import type {
     GameAttributes,

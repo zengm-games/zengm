@@ -10,7 +10,6 @@ import api from "./api";
 import Controller from "./components/Controller";
 import processInputs from "./processInputs";
 import {
-    ads,
     compareVersions,
     genStaticPage,
     initView,

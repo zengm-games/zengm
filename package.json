@@ -1,6 +1,6 @@
 {
   "name": "basketball-gm",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "A single-player basketball simulation game. Make trades, set rosters, draft players, and try to build the next dynasty, all from within your web browser. The game is implemented entirely in client-side JavaScript, backed by IndexedDB.",
   "homepage": "https://basketball-gm.com/",
   "bugs": {

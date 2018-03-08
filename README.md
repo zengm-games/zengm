@@ -1,4 +1,4 @@
-# Basketball GM 4.0.0
+# Basketball GM 4.1.0
 
 A single-player basketball simulation game. Make trades, set rosters, draft
 players, and try to build the next dynasty, all from within your web browser.

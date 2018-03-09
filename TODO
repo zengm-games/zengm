@@ -1,5 +1,8 @@
 TheZAndMan reported that for a large league (500+ seasons), many pages (such as HoF, draft team history, and watch list) show Chrome "Maximum IPC message size exceeded." error
 - shows up in BugSnag too
+- identify where it is exactly
+- why not in master? try
+- if idb, make getAllFiltered
 
 later
 - in new league: set rookie contracts appropriately

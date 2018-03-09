@@ -1,9 +1,3 @@
-TheZAndMan reported that for a large league (500+ seasons), many pages (such as HoF, draft team history, and watch list) show Chrome "Maximum IPC message size exceeded." error
-- shows up in BugSnag too
-- identify where it is exactly
-- why not in master? try
-- if idb, make getAllFiltered
-
 later
 - in new league: set rookie contracts appropriately
 - in new league: initialize rebuilding/contending to non-random values
@@ -22,6 +16,9 @@ p.valueWithContract is exactly equal to p.value currently!
 
 team shot locations playoffs
 - share code with team stats for highlighting and playoff W/L
+
+bring back indexeddb-getall-shim, not shitty vendor version
+- see src/js/vendor/README.md for what needs to be done
 
 ---
 

@@ -217,23 +217,10 @@ class Controller extends React.Component<{}, State> {
             }
 
             const r = Math.random();
-            if (r < 0.68) {
+            if (r < 0.96) {
                 ads.showGcs();
-            } else if (r < 0.75) {
-                ads.showModal();
             } else {
-                // This is all in milliseconds!
-                const adTimer =
-                    localStorage.getItem("adTimer") !== undefined
-                        ? parseInt(localStorage.getItem("adTimer"), 10)
-                        : 0;
-                const now = Date.now();
-
-                // Only show ad once per 60 minutes, at most
-                if (now - adTimer > 1000 * 60 * 60) {
-                    ads.showSurvata();
-                    localStorage.setItem("adTimer", String(now));
-                }
+                ads.showModal();
             }
         }
     }

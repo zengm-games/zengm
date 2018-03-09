@@ -54,7 +54,7 @@ const PlayerRatings = ({ abbrev, players, season }) => {
                 <a href={helpers.leagueUrl(["roster", p.stats.abbrev, season])}>
                     {p.stats.abbrev}
                 </a>,
-                p.age - (g.season - season),
+                p.age,
                 p.born.loc,
                 p.ratings.ovr,
                 p.ratings.pot,

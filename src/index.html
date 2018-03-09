@@ -61,6 +61,22 @@
           legacyCookieDomain: 'basketball-gm.com'
         });
         ga('send', 'pageview');
+
+        // Google Consumer Surveys
+        var TriggerPrompt = function(articleUrl, contentId) {
+          var ARTICLE_URL = articleUrl;
+          var CONTENT_ID = contentId || '';
+          var el = document.createElement('script');
+          var url = '//survey.g.doubleclick.net/survey?site=5945171946504192' +
+                    '&url=' + encodeURIComponent(ARTICLE_URL) +
+                    (CONTENT_ID ? '&cid=' + encodeURIComponent(CONTENT_ID) : '') +
+                    '&random=' + (new Date).getTime() +
+                    '&after=1';
+          el.setAttribute('src', url);
+          var head = document.getElementsByTagName('head')[0] ||
+              document.getElementsByTagName('body')[0];
+          head.appendChild(el);
+        };
       }
 
       var bs = document.createElement('script');
@@ -83,30 +99,10 @@
           window.Bugsnag.enableNotifyUnhandledRejections();
         }
       });
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(bs, s);
     </script>
   </head>
 
   <body>
-    <script type="text/javascript">
-      if (window.enableLogging) {
-        // Google Consumer Surveys
-        var TriggerPrompt = function(articleUrl, contentId) {
-          var ARTICLE_URL = articleUrl;
-          var CONTENT_ID = contentId || '';
-          var el = document.createElement('script');
-          var url = '//survey.g.doubleclick.net/survey?site=5945171946504192' +
-                    '&url=' + encodeURIComponent(ARTICLE_URL) +
-                    (CONTENT_ID ? '&cid=' + encodeURIComponent(CONTENT_ID) : '') +
-                    '&random=' + (new Date).getTime() +
-                    '&after=1';
-          el.setAttribute('src', url);
-          var head = document.getElementsByTagName('head')[0] ||
-              document.getElementsByTagName('body')[0];
-          head.appendChild(el);
-        };
-      }
-    </script>
 
     <div id="content">
       <div id="loading-msg">

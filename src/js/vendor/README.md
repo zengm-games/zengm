@@ -10,12 +10,12 @@ current version of IndexedDB-getAll-shim detects that and handles it. However
 after upgrading IndexedDB-getAll-shim, another problem appeared: "Maximum IPC
 message size exceeded" errors in Chrome on getAll calls that return too much
 data: idb.getCopies.players(), idb.getCopies.players({ activeAndRetired: true
-}), idb.getCopies.players({ retired: true }), and possibly others as well. The
-eventual solution to this would be to stream in results, either using
-objectStore.iterate from Backboard. Might be a good idea to wrap that into
-something like getAllFiltered that would accept a boolean-returning callback
-like Array.filter. Doesn't have to be part of Backboard, could be an internal
-function.
+}), idb.getCopies.players({ retired: true }), league.exportLeague, and possibly
+others as well. The eventual solution to this would be to stream in results,
+either using objectStore.iterate from Backboard. Might be a good idea to wrap
+that into something like getAllFiltered that would accept a boolean-returning
+callback like Array.filter. Doesn't have to be part of Backboard, could be an
+internal function.
 
 Manually modified for CommonJS:
 html2canvas.js

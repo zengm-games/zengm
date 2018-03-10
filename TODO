@@ -1,3 +1,11 @@
+fix long names running over boundaries
+- https://stackoverflow.com/questions/49205488/hide-overflow-of-column-with-ellipsis-shrink-other-cols-to-fit-content-dont-s
+- https://www.bootply.com/TqGRXc8GGt
+  - basically just need some CSS and a wrapper element, and specifying max-width
+  - responsive max-width?
+  - mobile? might be better to use overflow: auto
+  - clicking things inside it works? popover, watch, skill/injury hovers..
+
 later
 - in new league: set rookie contracts appropriately
 - in new league: initialize rebuilding/contending to non-random values

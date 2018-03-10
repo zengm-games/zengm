@@ -171,6 +171,19 @@ const processAttrs = (
                     });
                 }
             }
+
+            // Handle non-default awards, just for fun if someone wants to add more
+            for (const award of Object.keys(awardsGroupedTemp).sort()) {
+                if (!awardsOrder.includes(awardsGroupedTemp[award])) {
+                    output.awardsGrouped.push({
+                        type: award,
+                        count: awardsGroupedTemp[award].length,
+                        seasons: helpers.yearRanges(
+                            awardsGroupedTemp[award].map(a => a.season),
+                        ),
+                    });
+                }
+            }
         } else if (attr === "name") {
             output.name = `${p.firstName} ${p.lastName}`;
         } else {

@@ -174,7 +174,7 @@ const processAttrs = (
 
             // Handle non-default awards, just for fun if someone wants to add more
             for (const award of Object.keys(awardsGroupedTemp).sort()) {
-                if (!awardsOrder.includes(awardsGroupedTemp[award])) {
+                if (!awardsOrder.includes(award)) {
                     output.awardsGrouped.push({
                         type: award,
                         count: awardsGroupedTemp[award].length,

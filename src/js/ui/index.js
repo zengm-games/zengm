@@ -13,6 +13,7 @@ import {
     compareVersions,
     genStaticPage,
     initView,
+    leagueNotFoundMessage,
     logEvent,
     promiseWorker,
     toWorker,
@@ -352,13 +353,7 @@ class ErrorBoundary extends React.Component<{ children: any }> {
             if (ctx.bbgm.err) {
                 errMsg = ctx.bbgm.err.message;
                 if (errMsg === "League not found.") {
-                    errMsg = (
-                        <span>
-                            League not found.{" "}
-                            <a href="/new_league">Create a new league</a> or{" "}
-                            <a href="/">load an existing league</a> to play!
-                        </span>
-                    );
+                    errMsg = leagueNotFoundMessage;
                 } else if (window.Bugsnag) {
                     window.Bugsnag.notifyException(
                         ctx.bbgm.err,
@@ -373,7 +368,7 @@ class ErrorBoundary extends React.Component<{ children: any }> {
             const ErrorPage = (
                 <div>
                     <h1>Error</h1>
-                    <h2>{errMsg}</h2>
+                    {typeof errMsg === "string" ? <h2>{errMsg}</h2> : errMsg}
                 </div>
             );
             const errorPage = genStaticPage("error", "Error", ErrorPage, false);

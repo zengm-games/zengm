@@ -10,11 +10,12 @@ class Footer extends React.Component<{}> {
 
     // eslint-disable-next-line class-methods-use-this
     render() {
+        // banner-ad class is so ad blcokers remove it cleanly. I'm so nice!
         return (
             <div>
                 <p className="clearfix" />
 
-                <div style={{ position: "relative" }}>
+                <div className="banner-ad" style={{ position: "relative" }}>
                     <div
                         id="bbgm-ads-bottom1"
                         style={{

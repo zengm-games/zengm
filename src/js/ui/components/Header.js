@@ -33,8 +33,10 @@ class Header extends React.Component<{}> {
         ) : null;
 
         return (
+            // banner-ad class is so ad blcokers remove it cleanly. I'm so nice!
             <div>
                 <div
+                    className="banner-ad"
                     id="bbgm-ads-top"
                     style={{
                         display: "none",

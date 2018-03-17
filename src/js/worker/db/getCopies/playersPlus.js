@@ -196,7 +196,7 @@ const processAttrs = (
 const processRatings = async (
     output: PlayerFiltered,
     p: Player,
-    { fuzz, ratings, stats, season }: PlayerOptionsRequired,
+    { fuzz, ratings, showRetired, stats, season }: PlayerOptionsRequired,
 ) => {
     output.ratings = p.ratings
         .map((pr, i) => {
@@ -240,7 +240,7 @@ const processRatings = async (
                     if (tidTemp !== undefined) {
                         row.abbrev = helpers.getAbbrev(tidTemp);
                     } else {
-                        row.abbrev = undefined;
+                        row.abbrev = "";
                     }
                 } else if (
                     fuzz &&
@@ -261,6 +261,22 @@ const processRatings = async (
 
     if (season !== undefined) {
         output.ratings = output.ratings[0];
+
+        if (output.ratings === undefined && showRetired) {
+            const row = {};
+            for (const attr of ratings) {
+                if (attr === "skills") {
+                    row.skills = [];
+                } else if (attr === "age") {
+                    row.age = season - p.born.year;
+                } else if (attr === "abbrev") {
+                    row.abbrev = "";
+                } else {
+                    row[attr] = 0;
+                }
+            }
+            output.ratings = row;
+        }
     }
 };
 
@@ -575,7 +591,7 @@ const processPlayer = async (p: Player, options: PlayerOptions) => {
         const hasRatingsSeason = p.ratings.some(
             r => r.season === options.season,
         );
-        if (!hasRatingsSeason) {
+        if (!hasRatingsSeason && !options.showRetired) {
             return undefined;
         }
     }

@@ -51,15 +51,7 @@ async function updateDraft(): void | { [key: string]: any } {
             (100 * b.draft.round + b.draft.pick),
     );
     drafted = await idb.getCopies.playersPlus(drafted, {
-        attrs: [
-            "pid",
-            "tid",
-            "name",
-            "age",
-            "draft",
-            "injury",
-            "contract",
-        ],
+        attrs: ["pid", "tid", "name", "age", "draft", "injury", "contract"],
         ratings: ["ovr", "pot", "skills", "pos"],
         stats: ["per", "ewa"],
         season: g.season,

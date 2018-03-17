@@ -343,6 +343,7 @@ Paging.propTypes = {
 type SortBy = [number, SortOrder];
 
 type Props = {
+    className?: string,
     cols: {
         desc?: string,
         sortSequence?: SortOrder[],

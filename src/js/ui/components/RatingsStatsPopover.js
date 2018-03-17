@@ -52,7 +52,7 @@ type State = {
         per: number,
         ewa: number,
     } | void,
-    watch: boolean | void,
+    watch: boolean,
 };
 
 class RatingsStatsPopover extends React.Component<Props, State> {
@@ -65,7 +65,7 @@ class RatingsStatsPopover extends React.Component<Props, State> {
             name: undefined,
             ratings: undefined,
             stats: undefined,
-            watch: undefined,
+            watch: false,
         };
 
         this.loadData = this.loadData.bind(this);
@@ -74,15 +74,12 @@ class RatingsStatsPopover extends React.Component<Props, State> {
     async loadData() {
         const p = await toWorker("ratingsStatsPopoverInfo", this.props.pid);
 
-        // This means retired players will show placeholder, which is probably not ideal
-        if (p !== undefined) {
-            this.setState({
-                name: p.name,
-                ratings: p.ratings,
-                stats: p.stats,
-                watch: p.watch,
-            });
-        }
+        this.setState({
+            name: p.name,
+            ratings: p.ratings,
+            stats: p.stats,
+            watch: p.watch,
+        });
     }
 
     render() {
@@ -90,10 +87,14 @@ class RatingsStatsPopover extends React.Component<Props, State> {
 
         let nameBlock;
         if (name) {
-            nameBlock = <p>
-                <a href={helpers.leagueUrl(["player", this.props.pid])}><b>{name}</b></a>
-                <WatchBlock pid={this.props.pid} watch={watch} />
-            </p>;
+            nameBlock = (
+                <p>
+                    <a href={helpers.leagueUrl(["player", this.props.pid])}>
+                        <b>{name}</b>
+                    </a>
+                    <WatchBlock pid={this.props.pid} watch={watch} />
+                </p>
+            );
         } else {
             nameBlock = <p />;
         }

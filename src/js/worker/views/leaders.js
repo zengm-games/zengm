@@ -9,9 +9,7 @@ async function updateLeaders(
     updateEvents: UpdateEvents,
     state: any,
 ): void | { [key: string]: any } {
-    // Respond to watchList in case players are listed twice in different categories
     if (
-        updateEvents.includes("watchList") ||
         (inputs.season === g.season && updateEvents.includes("gameSim")) ||
         inputs.season !== state.season
     ) {

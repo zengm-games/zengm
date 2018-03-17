@@ -21,6 +21,7 @@ type Props = {
 };
 
 type State = {
+    name: string | void,
     ratings: {
         ovr: number,
         pot: number,
@@ -51,6 +52,7 @@ type State = {
         per: number,
         ewa: number,
     } | void,
+    watch: boolean | void,
 };
 
 class RatingsStatsPopover extends React.Component<Props, State> {
@@ -60,8 +62,10 @@ class RatingsStatsPopover extends React.Component<Props, State> {
         super(props);
 
         this.state = {
+            name: undefined,
             ratings: undefined,
             stats: undefined,
+            watch: undefined,
         };
 
         this.loadData = this.loadData.bind(this);
@@ -70,7 +74,6 @@ class RatingsStatsPopover extends React.Component<Props, State> {
     async loadData() {
         const p = await toWorker("ratingsStatsPopoverInfo", this.props.pid);
 
-console.log('loadData', p);
         // This means retired players will show placeholder, which is probably not ideal
         if (p !== undefined) {
             this.setState({

@@ -11,7 +11,6 @@ async function updateRoster(
     state: any,
 ): void | { [key: string]: any } {
     if (
-        updateEvents.includes("watchList") ||
         (inputs.season === g.season &&
             (updateEvents.includes("gameSim") ||
                 updateEvents.includes("playerMovement"))) ||

@@ -2,7 +2,7 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import { realtimeUpdate, toWorker } from "../util";
+import { toWorker } from "../util";
 
 type Props = {
     pid: number,
@@ -28,41 +28,27 @@ class WatchBlock extends React.Component<Props, State> {
     }
 
     componentWillReceiveProps(nextProps: Props) {
-        // This assumes that the view is listening for playerMovement or watchList, otherwise it'll send the same old (wrong) prop
+        // This assumes that the parent is correctly getting values from the database
         if (nextProps.watch !== this.state.watch) {
-console.log('componentWillReceiveProps setstate', nextProps.watch);
             this.setState({
                 watch: nextProps.watch,
             });
         }
     }
 
-    shouldComponentUpdate(nextProps: Props, nextState: State) {
-        return (
-            this.props.pid !== nextProps.pid ||
-            this.state.watch !== nextState.watch
-        );
-    }
-
     async handleClick(e: SyntheticEvent<>) {
         e.preventDefault();
 
+        // This means is not responsive to global state, just local state. That should be fine. Fix eventually.
         const watch = !this.state.watch;
-console.log('handleClick setstate', watch);
         this.setState({
             watch,
         });
 
         await toWorker("updatePlayerWatch", this.props.pid, watch);
-        realtimeUpdate(["playerMovement", "watchList"]);
     }
 
     render() {
-        // For Firefox's Object.watch
-        if (typeof this.props.watch === "function") {
-            return null;
-        }
-
         if (this.state.watch) {
             return (
                 <a

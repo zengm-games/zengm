@@ -2,7 +2,7 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import { toWorker } from "../util";
+import { realtimeUpdate, toWorker } from "../util";
 
 type Props = {
     pid: number,
@@ -46,6 +46,7 @@ class WatchBlock extends React.Component<Props, State> {
         });
 
         await toWorker("updatePlayerWatch", this.props.pid, watch);
+        realtimeUpdate(["watchList"]);
     }
 
     render() {

@@ -686,7 +686,6 @@ export type Trade = {
 
 export type UpdateEvents = (
     | "account"
-    | "clearWatchList"
     | "firstRun"
     | "g.userTids"
     | "gameSim"
@@ -694,6 +693,7 @@ export type UpdateEvents = (
     | "newPhase"
     | "playerMovement"
     | "toggleGodMode"
+    | "watchList"
 )[];
 
 export type RunFunction = (

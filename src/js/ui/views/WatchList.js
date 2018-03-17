@@ -9,6 +9,7 @@ import {
     Dropdown,
     NewWindowLink,
     PlayerNameLabels,
+    WatchBlock,
 } from "../components";
 
 class WatchList extends React.Component {
@@ -26,7 +27,7 @@ class WatchList extends React.Component {
         });
 
         await toWorker("clearWatchList");
-        realtimeUpdate(["clearWatchList"]);
+        await realtimeUpdate(["watchList"]);
 
         this.setState({
             clearing: false,
@@ -39,6 +40,7 @@ class WatchList extends React.Component {
         setTitle("Watch List");
 
         const cols = getCols(
+            "",
             "Name",
             "Pos",
             "Age",
@@ -84,6 +86,7 @@ class WatchList extends React.Component {
             return {
                 key: p.pid,
                 data: [
+                    <WatchBlock pid={p.pid} watch={p.watch} />,
                     <PlayerNameLabels
                         injury={p.injury}
                         pid={p.pid}
@@ -165,7 +168,7 @@ class WatchList extends React.Component {
 
                 <DataTable
                     cols={cols}
-                    defaultSort={[0, "asc"]}
+                    defaultSort={[5, "desc"]}
                     name="WatchList"
                     pagination
                     rows={rows}

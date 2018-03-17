@@ -14,7 +14,7 @@ async function updatePlayers(
     state: any,
 ): void | { [key: string]: any } {
     if (
-        updateEvents.includes("clearWatchList") ||
+        updateEvents.includes("watchList") ||
         updateEvents.includes("gameSim") ||
         updateEvents.includes("playerMovement") ||
         inputs.statType !== state.statType ||

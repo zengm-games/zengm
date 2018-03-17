@@ -45,7 +45,6 @@ async function updatePlayers(
                 "age",
                 "born",
                 "injury",
-                "watch",
                 "hof",
             ],
             ratings: [

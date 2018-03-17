@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import { helpers } from "../../common";
 import SkillsBlock from "./SkillsBlock";
-import WatchBlock from "./WatchBlock";
 import RatingsStatsPopover from "./RatingsStatsPopover";
 import type { PlayerInjury, PlayerSkill } from "../../common/types";
 
@@ -14,14 +13,12 @@ const PlayerNameLabels = ({
     pid,
     skills,
     style,
-    watch,
 }: {
     children: string,
     injury?: PlayerInjury,
     pid: number,
     skills?: PlayerSkill[],
     style?: { [key: string]: string },
-    watch?: boolean | Function, // For Firefox's Object.watch
 }) => {
     let injuryIcon = null;
     if (injury !== undefined) {
@@ -53,9 +50,6 @@ const PlayerNameLabels = ({
             {injuryIcon}
             <SkillsBlock skills={skills} />
             <RatingsStatsPopover pid={pid} />
-            {typeof watch === "boolean" ? (
-                <WatchBlock pid={pid} watch={watch} />
-            ) : null}
         </span>
     );
 };
@@ -68,10 +62,6 @@ PlayerNameLabels.propTypes = {
     pid: PropTypes.number.isRequired,
     skills: PropTypes.arrayOf(PropTypes.string),
     style: PropTypes.object,
-    watch: PropTypes.oneOfType([
-        PropTypes.bool,
-        PropTypes.func, // For Firefox's Object.watch
-    ]),
 };
 
 export default PlayerNameLabels;

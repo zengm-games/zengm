@@ -46,7 +46,6 @@ const PlayerRatings = ({ abbrev, players, season }) => {
                     pid={p.pid}
                     injury={p.injury}
                     skills={p.ratings.skills}
-                    watch={p.watch}
                 >
                     {p.name}
                 </PlayerNameLabels>,

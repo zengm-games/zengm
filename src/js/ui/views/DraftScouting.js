@@ -101,7 +101,6 @@ class DraftScouting extends React.Component {
                                         <PlayerNameLabels
                                             pid={p.pid}
                                             skills={p.skills}
-                                            watch={p.watch}
                                         >
                                             {p.lastName}
                                         </PlayerNameLabels>

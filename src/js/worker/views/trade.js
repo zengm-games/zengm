@@ -81,7 +81,6 @@ async function updateTrade(): void | { [key: string]: any } {
         "age",
         "contract",
         "injury",
-        "watch",
         "gamesUntilTradable",
     ];
     const ratings = ["ovr", "pot", "skills", "pos"];

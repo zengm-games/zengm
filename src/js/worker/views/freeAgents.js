@@ -22,7 +22,6 @@ async function updateFreeAgents(): void | { [key: string]: any } {
             "contract",
             "freeAgentMood",
             "injury",
-            "watch",
         ],
         ratings: ["ovr", "pot", "skills", "pos"],
         stats: ["min", "pts", "trb", "ast", "per"],

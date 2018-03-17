@@ -326,7 +326,6 @@ const TeamFinances = ({
                 pid={p.pid}
                 skills={p.skills}
                 style={{ fontStyle: p.released ? "italic" : "normal" }}
-                watch={p.watch}
             >
                 {p.firstName} {p.lastName}
             </PlayerNameLabels>,

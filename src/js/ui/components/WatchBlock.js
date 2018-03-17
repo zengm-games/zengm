@@ -6,11 +6,11 @@ import { realtimeUpdate, toWorker } from "../util";
 
 type Props = {
     pid: number,
-    watch: boolean | Function, // For Firefox's Object.watch
+    watch: boolean,
 };
 
 type State = {
-    watch: boolean | Function, // For Firefox's Object.watch
+    watch: boolean,
 };
 
 class WatchBlock extends React.Component<Props, State> {
@@ -30,6 +30,7 @@ class WatchBlock extends React.Component<Props, State> {
     componentWillReceiveProps(nextProps: Props) {
         // This assumes that the view is listening for playerMovement or watchList, otherwise it'll send the same old (wrong) prop
         if (nextProps.watch !== this.state.watch) {
+console.log('componentWillReceiveProps setstate', nextProps.watch);
             this.setState({
                 watch: nextProps.watch,
             });
@@ -47,6 +48,7 @@ class WatchBlock extends React.Component<Props, State> {
         e.preventDefault();
 
         const watch = !this.state.watch;
+console.log('handleClick setstate', watch);
         this.setState({
             watch,
         });
@@ -83,10 +85,7 @@ class WatchBlock extends React.Component<Props, State> {
 
 WatchBlock.propTypes = {
     pid: PropTypes.number.isRequired,
-    watch: PropTypes.oneOfType([
-        PropTypes.bool,
-        PropTypes.func, // For Firefox's Object.watch
-    ]).isRequired,
+    watch: PropTypes.bool.isRequired,
 };
 
 export default WatchBlock;

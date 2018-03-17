@@ -4,6 +4,8 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import OverlayTrigger from "react-bootstrap/lib/OverlayTrigger";
 import Popover from "react-bootstrap/lib/Popover";
+import { helpers } from "../../common";
+import WatchBlock from "./WatchBlock";
 import { toWorker } from "../util";
 
 const colorRating = (rating: number) => {
@@ -68,18 +70,30 @@ class RatingsStatsPopover extends React.Component<Props, State> {
     async loadData() {
         const p = await toWorker("ratingsStatsPopoverInfo", this.props.pid);
 
+console.log('loadData', p);
         // This means retired players will show placeholder, which is probably not ideal
         if (p !== undefined) {
-            const { ratings, stats } = p;
             this.setState({
-                ratings,
-                stats,
+                name: p.name,
+                ratings: p.ratings,
+                stats: p.stats,
+                watch: p.watch,
             });
         }
     }
 
     render() {
-        const { ratings, stats } = this.state;
+        const { name, ratings, stats, watch } = this.state;
+
+        let nameBlock;
+        if (name) {
+            nameBlock = <p>
+                <a href={helpers.leagueUrl(["player", this.props.pid])}><b>{name}</b></a>
+                <WatchBlock pid={this.props.pid} watch={watch} />
+            </p>;
+        } else {
+            nameBlock = <p />;
+        }
 
         let ratingsBlock;
         if (ratings) {
@@ -224,6 +238,7 @@ class RatingsStatsPopover extends React.Component<Props, State> {
         const popoverPlayerRatings = (
             <Popover id={`ratings-pop-${this.props.pid}`}>
                 <div style={{ minWidth: "250px", whiteSpace: "nowrap" }}>
+                    {nameBlock}
                     {ratingsBlock}
                     {statsBlock}
                 </div>

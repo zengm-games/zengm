@@ -580,7 +580,6 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
                         "age",
                         "contract",
                         "injury",
-                        "watch",
                     ],
                     ratings: ["ovr", "pot", "skills", "pos"],
                     stats: ["min", "pts", "trb", "ast", "per"],
@@ -778,6 +777,7 @@ const ratingsStatsPopoverInfo = async (pid: number) => {
     const season = p.draft.year > g.season ? p.draft.year : g.season;
 
     return idb.getCopy.playersPlus(p, {
+        attrs: ["name", "watch"],
         ratings: [
             "ovr",
             "pot",

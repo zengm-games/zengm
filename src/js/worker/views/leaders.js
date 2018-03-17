@@ -39,7 +39,7 @@ async function updateLeaders(
             });
         }
         players = await idb.getCopies.playersPlus(players, {
-            attrs: ["pid", "firstName", "lastName", "injury", "watch"],
+            attrs: ["pid", "firstName", "lastName", "injury"],
             ratings: ["skills"],
             stats: [
                 "pts",

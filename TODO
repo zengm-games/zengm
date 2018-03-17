@@ -6,6 +6,9 @@ fix long names running over boundaries
   - mobile? might be better to use overflow: auto
   - clicking things inside it works? popover, watch, skill/injury hovers..
 - move flag to popover
+  - not working right because before it was passed down from component listening for playerMovement or watchList, but now it doesn't get that. maybe have it listen to those events?
+  - add flag back to watchlist
+  - test on retired players
 
 later
 - in new league: set rookie contracts appropriately

@@ -152,11 +152,11 @@ const Row = clickable(({ clicked, row, toggleClicked }) => {
                 if (value !== null && value.hasOwnProperty("value")) {
                     return (
                         <td className={classNames(value.classNames)} key={i}>
-                            {value.value}
+                            {i === 1 ? <div className="first-col"><div className="first-col-child">{value.value}</div></div> : value.value}
                         </td>
                     );
                 }
-                return <td key={i}>{value}</td>;
+                return <td key={i}>{i === 1 ? <div className="first-col"><div className="first-col-child">{value}</div></div> : value}</td>;
             })}
         </tr>
     );
@@ -872,7 +872,7 @@ class DataTable extends React.Component<Props, State> {
         return (
             <div className="table-responsive">
                 {aboveTable}
-                <table className="table table-striped table-bordered table-condensed table-hover">
+                <table className="table table-striped table-bordered table-condensed table-hover shorten-first-col">
                     <Header
                         cols={cols}
                         enableFilters={this.state.enableFilters}

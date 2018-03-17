@@ -881,3 +881,29 @@ label input {
 .dropdown-toggle {
   cursor: pointer;
 }
+
+/* https://stackoverflow.com/a/49247706/786644 */
+.shorten-first-col {
+  width: 100%;
+
+  td, th {
+    position: relative;
+  }
+
+  tr td:not(:nth-child(2)), tr th:not(:nth-child(2)){
+      width: 1%;
+      white-space: nowrap;
+  }
+
+  .first-col {
+    background-color: yellow;
+    overflow: hidden;
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 5px;
+    width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}

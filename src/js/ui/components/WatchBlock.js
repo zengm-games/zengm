@@ -2,9 +2,10 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import { realtimeUpdate, toWorker } from "../util";
+import { toWorker } from "../util";
 
 type Props = {
+    onUpdatePlayerWatch: Function | void;
     pid: number,
     watch: boolean,
 };
@@ -28,7 +29,7 @@ class WatchBlock extends React.Component<Props, State> {
     }
 
     componentWillReceiveProps(nextProps: Props) {
-        // This assumes that the parent is correctly getting values from the database
+        // This assumes that the parent is correctly getting values from the database, not passing in cached ones
         if (nextProps.watch !== this.state.watch) {
             this.setState({
                 watch: nextProps.watch,
@@ -46,7 +47,9 @@ class WatchBlock extends React.Component<Props, State> {
         });
 
         await toWorker("updatePlayerWatch", this.props.pid, watch);
-        realtimeUpdate(["watchList"]);
+        if (this.props.onUpdatePlayerWatch) {
+            this.props.onUpdatePlayerWatch();
+        }
     }
 
     render() {
@@ -71,6 +74,7 @@ class WatchBlock extends React.Component<Props, State> {
 }
 
 WatchBlock.propTypes = {
+    onUpdatePlayerWatch: PropTypes.func,
     pid: PropTypes.number.isRequired,
     watch: PropTypes.bool.isRequired,
 };

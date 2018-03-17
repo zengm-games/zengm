@@ -86,7 +86,9 @@ class WatchList extends React.Component {
             return {
                 key: p.pid,
                 data: [
-                    <WatchBlock pid={p.pid} watch={p.watch} />,
+                    <WatchBlock onUpdatePlayerWatch={() => {
+                        realtimeUpdate(["watchList"]);
+                    }} pid={p.pid} watch={p.watch} />,
                     <PlayerNameLabels
                         injury={p.injury}
                         pid={p.pid}

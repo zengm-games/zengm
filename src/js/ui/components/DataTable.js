@@ -152,11 +152,11 @@ const Row = clickable(({ clicked, row, toggleClicked }) => {
                 if (value !== null && value.hasOwnProperty("value")) {
                     return (
                         <td className={classNames(value.classNames)} key={i}>
-                            {i === 1 ? <div className="first-col"><div className="first-col-child">{value.value}</div></div> : value.value}
+                            {value.value}
                         </td>
                     );
                 }
-                return <td key={i}>{i === 1 ? <div className="first-col"><div className="first-col-child">{value}</div></div> : value}</td>;
+                return <td key={i}>{value}</td>;
             })}
         </tr>
     );
@@ -613,7 +613,14 @@ class DataTable extends React.Component<Props, State> {
     }
 
     render() {
-        const { cols, footer, pagination, rows, superCols } = this.props;
+        const {
+            className,
+            cols,
+            footer,
+            pagination,
+            rows,
+            superCols,
+        } = this.props;
 
         const filters = this.state.enableFilters
             ? this.state.filters.map((filter, i) => {
@@ -869,10 +876,16 @@ class DataTable extends React.Component<Props, State> {
             );
         }
 
+        let classes =
+            "table table-striped table-bordered table-condensed table-hover";
+        if (className !== undefined) {
+            classes += ` ${className}`;
+        }
+
         return (
             <div className="table-responsive">
                 {aboveTable}
-                <table className="table table-striped table-bordered table-condensed table-hover shorten-first-col">
+                <table className={classes}>
                     <Header
                         cols={cols}
                         enableFilters={this.state.enableFilters}
@@ -894,6 +907,7 @@ class DataTable extends React.Component<Props, State> {
 }
 
 DataTable.propTypes = {
+    className: PropTypes.string,
     cols: PropTypes.array.isRequired,
     defaultSort: PropTypes.arrayOf(
         PropTypes.oneOfType([PropTypes.number, PropTypes.string]),

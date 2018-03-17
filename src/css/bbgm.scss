@@ -883,19 +883,14 @@ label input {
 }
 
 /* https://stackoverflow.com/a/49247706/786644 */
-.shorten-first-col {
+%shorten-col {
   width: 100%;
 
   td, th {
     position: relative;
   }
 
-  tr td:not(:nth-child(2)), tr th:not(:nth-child(2)){
-      width: 1%;
-      white-space: nowrap;
-  }
-
-  .first-col {
+  .shortened-col {
     background-color: yellow;
     overflow: hidden;
     position: absolute;
@@ -905,5 +900,21 @@ label input {
     width: 100%;
     white-space: nowrap;
     text-overflow: ellipsis;
+  }
+}
+.shorten-col-0 {
+  @extend %shorten-col;
+
+  tr td:not(:nth-child(1)), tr th:not(:nth-child(1)){
+      width: 1%;
+      white-space: nowrap;
+  }
+}
+.shorten-col-1 {
+  @extend %shorten-col;
+
+  tr td:not(:nth-child(2)), tr th:not(:nth-child(2)){
+      width: 1%;
+      white-space: nowrap;
   }
 }

@@ -97,13 +97,15 @@ class DraftScouting extends React.Component {
                                 key: p.pid,
                                 data: [
                                     p.rank,
-                                    <PlayerNameLabels
-                                        pid={p.pid}
-                                        skills={p.skills}
-                                        watch={p.watch}
-                                    >
-                                        {p.name}
-                                    </PlayerNameLabels>,
+                                    <div className="shortened-col">
+                                        <PlayerNameLabels
+                                            pid={p.pid}
+                                            skills={p.skills}
+                                            watch={p.watch}
+                                        >
+                                            {p.name}
+                                        </PlayerNameLabels>
+                                    </div>,
                                     p.pos,
                                     p.age,
                                     p.ovr,
@@ -153,6 +155,7 @@ class DraftScouting extends React.Component {
                                 )}
 
                                 <DataTable
+                                    className="shorten-col-1"
                                     cols={cols}
                                     defaultSort={[0, "asc"]}
                                     name={`DraftScouting:${i}`}

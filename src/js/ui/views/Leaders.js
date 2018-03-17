@@ -30,7 +30,7 @@ const Leaders = ({ categories, season }) => {
                     <div key={cat.name}>
                         <div className="col-md-4 col-sm-6">
                             <div className="table-responsive">
-                                <table className="table table-striped table-bordered table-condensed leaders">
+                                <table className="table table-striped table-bordered table-condensed shorten-col-0 leaders">
                                     <thead>
                                         <tr title={cat.title}>
                                             <th>{cat.name}</th>
@@ -46,28 +46,30 @@ const Leaders = ({ categories, season }) => {
                                                 }
                                             >
                                                 <td>
-                                                    {j + 1}.{" "}
-                                                    <PlayerNameLabels
-                                                        pid={p.pid}
-                                                        injury={p.injury}
-                                                        skills={
-                                                            p.ratings.skills
-                                                        }
-                                                        watch={p.watch}
-                                                    >
-                                                        {p.name}
-                                                    </PlayerNameLabels>,{" "}
-                                                    <a
-                                                        href={helpers.leagueUrl(
-                                                            [
-                                                                "roster",
-                                                                p.abbrev,
-                                                                season,
-                                                            ],
-                                                        )}
-                                                    >
-                                                        {p.abbrev}
-                                                    </a>
+                                                    <div className="shortened-col">
+                                                        {j + 1}.{" "}
+                                                        <PlayerNameLabels
+                                                            pid={p.pid}
+                                                            injury={p.injury}
+                                                            skills={
+                                                                p.ratings.skills
+                                                            }
+                                                            watch={p.watch}
+                                                        >
+                                                            {p.name}
+                                                        </PlayerNameLabels>,{" "}
+                                                        <a
+                                                            href={helpers.leagueUrl(
+                                                                [
+                                                                    "roster",
+                                                                    p.abbrev,
+                                                                    season,
+                                                                ],
+                                                            )}
+                                                        >
+                                                            {p.abbrev}
+                                                        </a>
+                                                    </div>
                                                 </td>
                                                 <td>
                                                     {cat.stat === "WS/48"

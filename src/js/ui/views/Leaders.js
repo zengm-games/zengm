@@ -55,8 +55,8 @@ const Leaders = ({ categories, season }) => {
                                                                 p.ratings.skills
                                                             }
                                                         >
-                                                            {p.name}
-                                                        </PlayerNameLabels>,{" "}
+                                                            {p.nameAbbrev}
+                                                        </PlayerNameLabels>
                                                         <a
                                                             href={helpers.leagueUrl(
                                                                 [
@@ -65,6 +65,7 @@ const Leaders = ({ categories, season }) => {
                                                                     season,
                                                                 ],
                                                             )}
+                                                            style={{marginLeft: "6px"}}
                                                         >
                                                             {p.abbrev}
                                                         </a>

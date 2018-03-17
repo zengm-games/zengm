@@ -8,7 +8,7 @@ async function addSeason(season, tid) {
     let playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);
 
     playersAll = await idb.getCopies.playersPlus(playersAll, {
-        attrs: ["pid", "lastName", "age", "valueFuzz"],
+        attrs: ["pid", "nameAbbrev", "age", "valueFuzz"],
         ratings: ["ovr", "pot", "skills", "fuzz", "pos"],
         showNoStats: true,
         showRookies: true,
@@ -23,7 +23,7 @@ async function addSeason(season, tid) {
         players.push({
             // Attributes
             pid: pa.pid,
-            lastName: pa.lastName,
+            nameAbbrev: pa.nameAbbrev,
             age: pa.age,
             valueFuzz: pa.valueFuzz,
 

@@ -186,6 +186,11 @@ const processAttrs = (
             }
         } else if (attr === "name") {
             output.name = `${p.firstName} ${p.lastName}`;
+        } else if (attr === "nameAbbrev") {
+            output.nameAbbrev = `${p.firstName
+                .split(" ")
+                .map(s => s[0])
+                .join(".")}. ${p.lastName}`;
         } else {
             // Several other attrs are not primitive types, so deepCopy
             output[attr] = helpers.deepCopy(p[attr]);

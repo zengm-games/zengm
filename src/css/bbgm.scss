@@ -884,14 +884,11 @@ label input {
 
 /* https://stackoverflow.com/a/49247706/786644 */
 %shorten-col {
-  width: 100%;
-
   td, th {
     position: relative;
   }
 
   .shortened-col {
-    background-color: yellow;
     overflow: hidden;
     position: absolute;
     left: 0;

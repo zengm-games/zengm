@@ -5,8 +5,7 @@ fix long names running over boundaries
   - responsive max-width?
   - mobile? might be better to use overflow: auto
   - clicking things inside it works? popover, watch, skill/injury hovers..
-- move flag/abbrev to popover
-- leaders -> datatable or use manually?
+- move flag to popover
 
 later
 - in new league: set rookie contracts appropriately

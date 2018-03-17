@@ -103,7 +103,7 @@ class DraftScouting extends React.Component {
                                             skills={p.skills}
                                             watch={p.watch}
                                         >
-                                            {p.name}
+                                            {p.lastName}
                                         </PlayerNameLabels>
                                     </div>,
                                     p.pos,

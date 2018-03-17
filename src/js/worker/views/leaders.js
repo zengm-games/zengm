@@ -39,7 +39,7 @@ async function updateLeaders(
             });
         }
         players = await idb.getCopies.playersPlus(players, {
-            attrs: ["pid", "name", "injury", "watch"],
+            attrs: ["pid", "firstName", "lastName", "injury", "watch"],
             ratings: ["skills"],
             stats: [
                 "pts",
@@ -66,6 +66,14 @@ async function updateLeaders(
             ],
             season: inputs.season,
         });
+
+        // Abbreviate first name to prevent overflows
+        for (const p of players) {
+            p.name = `${p.firstName
+                .split(" ")
+                .map(s => s[0])
+                .join(".")}. ${p.lastName}`;
+        }
 
         const userAbbrev = helpers.getAbbrev(g.userTid);
 

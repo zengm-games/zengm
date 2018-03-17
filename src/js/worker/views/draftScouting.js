@@ -8,7 +8,7 @@ async function addSeason(season, tid) {
     let playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);
 
     playersAll = await idb.getCopies.playersPlus(playersAll, {
-        attrs: ["pid", "firstName", "lastName", "age", "watch", "valueFuzz"],
+        attrs: ["pid", "lastName", "age", "watch", "valueFuzz"],
         ratings: ["ovr", "pot", "skills", "fuzz", "pos"],
         showNoStats: true,
         showRookies: true,
@@ -20,16 +20,10 @@ async function addSeason(season, tid) {
     for (let i = 0; i < playersAll.length; i++) {
         const pa = playersAll[i];
 
-        // Abbreviate first name to prevent overflows
-        pa.name = `${pa.firstName
-            .split(" ")
-            .map(s => s[0])
-            .join(".")}. ${pa.lastName}`;
-
         players.push({
             // Attributes
             pid: pa.pid,
-            name: pa.name,
+            lastName: pa.lastName,
             age: pa.age,
             watch: pa.watch,
             valueFuzz: pa.valueFuzz,

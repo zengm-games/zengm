@@ -65,7 +65,10 @@ const Leaders = ({ categories, season }) => {
                                                                     season,
                                                                 ],
                                                             )}
-                                                            style={{marginLeft: "6px"}}
+                                                            style={{
+                                                                marginLeft:
+                                                                    "6px",
+                                                            }}
                                                         >
                                                             {p.abbrev}
                                                         </a>

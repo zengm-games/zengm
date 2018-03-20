@@ -86,9 +86,13 @@ class WatchList extends React.Component {
             return {
                 key: p.pid,
                 data: [
-                    <WatchBlock onUpdatePlayerWatch={() => {
-                        realtimeUpdate(["watchList"]);
-                    }} pid={p.pid} watch={p.watch} />,
+                    <WatchBlock
+                        onUpdatePlayerWatch={() => {
+                            realtimeUpdate(["watchList"]);
+                        }}
+                        pid={p.pid}
+                        watch={p.watch}
+                    />,
                     <PlayerNameLabels
                         injury={p.injury}
                         pid={p.pid}
@@ -154,8 +158,13 @@ class WatchList extends React.Component {
 
                 <p>
                     Click the watch icon{" "}
-                    <span className="glyphicon glyphicon-flag" /> next to a
-                    player's name to add or remove him from this list.
+                    <span className="glyphicon glyphicon-flag" /> to add or
+                    remove a player from this list.
+                </p>
+                <p>
+                    On other pages, you can find the watch icon by clicking the
+                    info button <span className="glyphicon glyphicon-stats" />{" "}
+                    next to a player's name.
                 </p>
 
                 <button

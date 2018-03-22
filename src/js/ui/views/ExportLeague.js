@@ -112,7 +112,7 @@ class ExportLeague extends React.Component {
         });
 
         // Get array of object stores to export
-        const objectStores = [...e.target.getElementsByTagName("input")]
+        const objectStores = Array.from(e.target.getElementsByTagName("input"))
             .filter(input => input.checked)
             .map(input => input.value)
             .join(",")

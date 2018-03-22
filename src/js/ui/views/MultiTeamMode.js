@@ -11,7 +11,7 @@ class MultiTeamMode extends React.Component {
     }
 
     async handleChange(e) {
-        const newUserTids = [...e.target.options]
+        const newUserTids = Array.from(e.target.options)
             .filter(o => o.selected)
             .map(o => parseInt(o.value, 10))
             .filter(n => !Number.isNaN(n));

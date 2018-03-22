@@ -234,16 +234,16 @@
 
       var supportsArrowFunctions = function () {
         try {
-          eval('var f = x => 1');
+          eval('let f = x => 1');
           return true;
         } catch (err) {
           return false;
         }
       };
 
-      var supportsLetConst = function () {
+      var supportsSymbol = function () {
         try {
-          eval("let x;");
+          eval("const s = Symbol();");
           return true;
         } catch (err) {
           return false;
@@ -251,7 +251,7 @@
       };
 
       goodIDB(function (hasIDB) {
-        if (!hasIDB || !supportsArrowFunctions() || !supportsLetConst()) {
+        if (!hasIDB || !supportsArrowFunctions() || !supportsSymbol()) {
           var errorMsg = '<p><b>Error!</b> Your browser is not modern enough to run Basketball GM. The latest versions of <a href="https://www.firefox.com/">Mozilla Firefox</a> and <a href="https://www.google.com/chrome/">Google Chrome</a> work best.</p>';
           var errorMsg = '<p><b>Error!</b> Your browser is not modern enough to run Basketball GM. The latest versions of <a href="https://www.firefox.com/">Mozilla Firefox</a> and <a href="https://www.google.com/chrome/">Google Chrome</a> work best.</p>';
 

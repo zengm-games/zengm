@@ -23,9 +23,9 @@ class FantasyDraft extends React.Component {
 
     handlePositionChange(event) {
         const position =
-            event.target.value === "random"
+            event.currentTarget.value === "random"
                 ? "random"
-                : parseInt(event.target.value, 10);
+                : parseInt(event.currentTarget.value, 10);
         this.setState({ position });
     }
 

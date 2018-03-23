@@ -547,9 +547,12 @@ class DataTable extends React.Component<Props, State> {
         });
     }
 
-    handleFilterUpdate(event: SyntheticInputEvent<>, i: number) {
+    handleFilterUpdate(
+        event: SyntheticInputEvent<HTMLInputElement>,
+        i: number,
+    ) {
         const filters = this.state.filters.slice();
-        filters[i] = event.target.value;
+        filters[i] = event.currentTarget.value;
         this.setState({
             filters,
         });
@@ -563,8 +566,8 @@ class DataTable extends React.Component<Props, State> {
         }
     }
 
-    handlePerPage(event: SyntheticInputEvent<>) {
-        const perPage = parseInt(event.target.value, 10);
+    handlePerPage(event: SyntheticInputEvent<HTMLSelectElement>) {
+        const perPage = parseInt(event.currentTarget.value, 10);
         if (!Number.isNaN(perPage) && perPage !== this.state.perPage) {
             localStorage.setItem("perPage", String(perPage));
             this.setState({
@@ -574,10 +577,10 @@ class DataTable extends React.Component<Props, State> {
         }
     }
 
-    handleSearch(event: SyntheticInputEvent<>) {
+    handleSearch(event: SyntheticInputEvent<HTMLInputElement>) {
         this.setState({
             currentPage: 1,
-            searchText: event.target.value.toLowerCase(),
+            searchText: event.currentTarget.value.toLowerCase(),
         });
     }
 

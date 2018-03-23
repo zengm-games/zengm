@@ -15,12 +15,12 @@ class EditTeamInfo extends React.Component {
     }
 
     handleFile(e) {
-        const file = e.target.files[0];
+        const file = e.currentTarget.files[0];
 
         const reader = new window.FileReader();
         reader.readAsText(file);
         reader.onload = async event => {
-            const rosters = JSON.parse(event.target.result);
+            const rosters = JSON.parse(event.currentTarget.result);
             const newTeams = rosters.teams;
 
             // Validate teams

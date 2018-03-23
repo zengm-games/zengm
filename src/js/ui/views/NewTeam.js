@@ -31,7 +31,7 @@ class NewTeam extends React.Component {
 
     handleTidChange(event) {
         this.setState({
-            tid: parseInt(event.target.value, 10),
+            tid: parseInt(event.currentTarget.value, 10),
         });
     }
 

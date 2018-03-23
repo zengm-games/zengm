@@ -103,7 +103,9 @@ class MultiTeamMode extends React.Component {
                 </p>
 
                 <p>
-                    {statusText} Use shift+click to select adjacent teams, or ctrl+click (command+click on Mac) to select individual teams.
+                    {statusText} Use shift+click to select adjacent teams, or
+                    ctrl+click (command+click on Mac) to select individual
+                    teams.
                 </p>
 
                 <div className="row">

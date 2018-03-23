@@ -100,7 +100,7 @@ class Trade extends React.Component {
             message: null,
         });
 
-        const otherTid = g.teamAbbrevsCache.indexOf(event.target.value);
+        const otherTid = g.teamAbbrevsCache.indexOf(event.currentTarget.value);
 
         const teams = [
             {

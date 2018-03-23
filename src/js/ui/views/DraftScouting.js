@@ -19,14 +19,14 @@ class DraftScouting extends React.Component {
     }
 
     handleDraftClass(seasonOffset, e) {
-        const file = e.target.files[0];
+        const file = e.currentTarget.files[0];
 
         const reader = new window.FileReader();
         reader.readAsText(file);
         reader.onload = async event => {
             let uploadedFile;
             try {
-                uploadedFile = JSON.parse(event.target.result);
+                uploadedFile = JSON.parse(event.currentTarget.result);
             } catch (err) {
                 logEvent({
                     type: "error",

@@ -1,5 +1,3 @@
-event.target -> event.currentTarget where possible (not clickable)
-
 exact object types in types.js (see Player and Message)
 
 later

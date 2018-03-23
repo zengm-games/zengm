@@ -340,9 +340,9 @@ class Dropdown extends React.Component<
         }
     }
 
-    handleChange(i: number, event: SyntheticInputEvent<>) {
+    handleChange(i: number, event: SyntheticInputEvent<HTMLSelectElement>) {
         const values = this.props.values.slice();
-        values[i] = event.target.value;
+        values[i] = event.currentTarget.value;
         this.setState({
             values,
         });

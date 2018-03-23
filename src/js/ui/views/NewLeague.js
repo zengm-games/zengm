@@ -112,7 +112,7 @@ class NewLeague extends React.Component {
             leagueFile: null,
             parsing: true,
         });
-        const file = e.target.files[0];
+        const file = e.currentTarget.files[0];
 
         if (!file) {
             return;
@@ -123,7 +123,7 @@ class NewLeague extends React.Component {
         reader.onload = event => {
             let leagueFile;
             try {
-                leagueFile = JSON.parse(event.target.result);
+                leagueFile = JSON.parse(event.currentTarget.result);
             } catch (err) {
                 console.log(err);
                 this.setState({

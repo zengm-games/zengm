@@ -125,9 +125,7 @@ const handleScreenshotClick = e => {
     // Add watermark
     const watermark = document.createElement("div");
     const navbarBrands = document.getElementsByClassName("navbar-brand");
-    if (
-        navbarBrands.length === 0
-    ) {
+    if (navbarBrands.length === 0) {
         return;
     }
     const navbarBrandParent = navbarBrands[0].parentElement;

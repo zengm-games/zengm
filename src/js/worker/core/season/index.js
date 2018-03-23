@@ -32,9 +32,11 @@ async function updateOwnerMood(): Promise<OwnerMoodDeltas> {
         throw new Error("Invalid g.userTid");
     }
 
-    const deltas = {};
-    deltas.wins =
-        0.25 * (t.seasonAttrs.won - g.numGames / 2) / (g.numGames / 2);
+    const deltas = {
+        wins: 0.25 * (t.seasonAttrs.won - g.numGames / 2) / (g.numGames / 2),
+        playoffs: 0,
+        money: (t.seasonAttrs.profit - 15) / 100,
+    };
     if (t.seasonAttrs.playoffRoundsWon < 0) {
         deltas.playoffs = -0.2;
     } else if (t.seasonAttrs.playoffRoundsWon < 4) {
@@ -42,14 +44,14 @@ async function updateOwnerMood(): Promise<OwnerMoodDeltas> {
     } else {
         deltas.playoffs = 0.2;
     }
-    deltas.money = (t.seasonAttrs.profit - 15) / 100;
 
     // Only update owner mood if grace period is over
     if (g.season >= g.gracePeriodEnd) {
-        const ownerMood = {};
-        ownerMood.wins = g.ownerMood.wins + deltas.wins;
-        ownerMood.playoffs = g.ownerMood.playoffs + deltas.playoffs;
-        ownerMood.money = g.ownerMood.money + deltas.money;
+        const ownerMood = {
+            wins: g.ownerMood.wins + deltas.wins,
+            playoffs: g.ownerMood.playoffs + deltas.playoffs,
+            money: g.ownerMood.money + deltas.money,
+        };
 
         // Bound only the top - can't win the game by doing only one thing, but you can lose it by neglecting one thing
         if (ownerMood.wins > 1) {

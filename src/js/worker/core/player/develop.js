@@ -210,7 +210,7 @@ export const bootstrapPot = (ratings: PlayerRatings, age: number): number => {
     }
 
     const maxOvrs = range(NUM_SIMULATIONS).map(() => {
-        const copiedRatings = Object.assign({}, ratings);
+        const copiedRatings = helpers.deepCopy(ratings);
 
         let maxOvr = ratings.ovr;
         for (let ageTemp = age + 1; ageTemp < 30; ageTemp++) {

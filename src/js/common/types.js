@@ -48,6 +48,11 @@ export type Awards = {
     season: number,
     bestRecord: AwardTeam,
     bestRecordConfs: AwardTeam[],
+
+    // Only in old leagues
+    bre?: AwardTeam,
+    brw?: AwardTeam,
+
     roy: AwardPlayer,
     allRookie: [
         AwardPlayer,
@@ -182,6 +187,7 @@ export type Game = {
     gid: number,
     lost: { tid: number, pts: number },
     playoffs: boolean,
+    overtimes: number,
     season: number,
     teams: [Object, Object],
     won: { tid: number, pts: number },
@@ -327,14 +333,17 @@ export type LogEventShowOptions = {
     type: string,
 };
 
-export type MessageWithoutMid = {
+export type MessageWithoutMid = {|
     from: string,
     read: boolean,
     text: string,
     year: number,
-};
+|};
 
-export type Message = MessageWithoutMid & { mid: number };
+export type Message = {|
+    ...MessageWithoutMid,
+    mid: number,
+|};
 
 export type Negotiation = {
     pid: number,
@@ -447,7 +456,7 @@ export type PlayerSalary = {
 // ***p stats can be undefined
 export type PlayerStats = any;
 
-export type PlayerWithoutPid = {
+export type PlayerWithoutPid = {|
     awards: {
         season: number,
         type: string,
@@ -494,11 +503,20 @@ export type PlayerWithoutPid = {
     watch: boolean,
     weight: number,
     yearsFreeAgent: number,
-};
+|};
 
-export type Player = PlayerWithoutPid & { pid: number };
+// Spread rather than intersection because we need it to be recognized as exact.
+// https://flow.org/en/docs/types/unions/#toc-disjoint-unions-with-exact-types
+// https://github.com/facebook/flow/issues/4946
+export type Player = {|
+    ...PlayerWithoutPid,
+    pid: number,
+|};
 
-export type PlayerWithStats = Player & { stats: PlayerStats[] };
+export type PlayerWithStats = {|
+    ...Player,
+    stats: PlayerStats[],
+|};
 
 type PlayoffSeriesTeam = {
     cid: number,

@@ -1,3 +1,7 @@
+event.target -> event.currentTarget where possible (not clickable)
+
+exact object types in types.js (see Player and Message)
+
 later
 - in new league: set rookie contracts appropriately
 - in new league: initialize rebuilding/contending to non-random values

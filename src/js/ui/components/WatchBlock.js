@@ -5,7 +5,7 @@ import * as React from "react";
 import { toWorker } from "../util";
 
 type Props = {
-    onUpdatePlayerWatch: Function | void,
+    onUpdatePlayerWatch?: Function,
     pid: number,
     watch: boolean,
 };

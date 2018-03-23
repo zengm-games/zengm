@@ -38,7 +38,7 @@ class StripeButton extends React.Component<
             if (!window.StripeCheckout) {
                 await getScript("https://checkout.stripe.com/checkout.js");
             }
-            if (!this.handler) {
+            if (!this.state.handler) {
                 this.setState({
                     handler: window.StripeCheckout.configure({
                         key: STRIPE_PUBLISHABLE_KEY,

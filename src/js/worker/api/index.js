@@ -695,6 +695,29 @@ const handleUploadedDraftClass = async (
     // Add new players to database
     await Promise.all(
         players.map(async p => {
+            // Adjust age
+            if (uploadedSeason !== undefined) {
+                p.born.year += g.season - uploadedSeason + seasonOffset2;
+            }
+
+            // Adjust seasons
+            p.ratings[0].season = draftYear;
+            if (!p.draft) {
+                // For college basketball imports
+                p.draft = {
+                    round: 0,
+                    pick: 0,
+                    tid: -1,
+                    originalTid: -1,
+                    year: draftYear,
+                    pot: 0,
+                    ovr: 0,
+                    skills: [],
+                };
+            } else {
+                p.draft.year = draftYear;
+            }
+
             // Make sure player object is fully defined
             p = player.augmentPartialPlayer(
                 p,
@@ -709,15 +732,6 @@ const handleUploadedDraftClass = async (
             if (p.hasOwnProperty("pid")) {
                 delete p.pid;
             }
-
-            // Adjust age
-            if (uploadedSeason !== undefined) {
-                p.born.year += g.season - uploadedSeason + seasonOffset2;
-            }
-
-            // Adjust seasons
-            p.ratings[0].season = draftYear;
-            p.draft.year = draftYear;
 
             // Don't want lingering stats vector in player objects, and draft prospects don't have any stats
             delete p.stats;

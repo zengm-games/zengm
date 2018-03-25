@@ -308,10 +308,35 @@ async function writePlayerStats(results: GameResults, conditions: Conditions) {
                         ),
                     );
 
-                    const ps = await idb.cache.playerStats.indexGet(
+                    let ps = await idb.cache.playerStats.indexGet(
                         "playerStatsByPid",
                         p.id,
                     );
+
+                    // This should never happen, but sometimes does
+                    if (!ps) {
+                        const p2 = await idb.cache.players.get(p.id);
+                        if (!p2) {
+                            throw new Error(
+                                `Missing player for player ${p.id}`,
+                            );
+                        }
+                        await player.addStatsRow(
+                            p2,
+                            g.phase === PHASE.PLAYOFFS,
+                        );
+
+                        ps = await idb.cache.playerStats.indexGet(
+                            "playerStatsByPid",
+                            p.id,
+                        );
+
+                        if (!ps) {
+                            throw new Error(
+                                `Persistent missing stats for player ${p.id}`,
+                            );
+                        }
+                    }
 
                     // Since index is not on playoffs, manually check
                     if (ps.playoffs !== (g.phase === PHASE.PLAYOFFS)) {

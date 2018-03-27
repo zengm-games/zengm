@@ -9,8 +9,8 @@ const getScript = (url: string): Promise<void> => {
         script.async = true;
         script.type = "text/javascript";
 
-        script.onerror = () => {
-            reject(new Error(`Error getting script ${url}`));
+        script.onerror = (err) => {
+            reject(err);
         };
 
         script.onload = () => {

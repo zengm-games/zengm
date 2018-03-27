@@ -28,7 +28,7 @@ class AccountUpdateCard extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         (async () => {
             if (!window.Stripe) {
                 await getScript("https://js.stripe.com/v2/");

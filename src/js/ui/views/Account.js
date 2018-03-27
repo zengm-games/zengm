@@ -33,7 +33,7 @@ class StripeButton extends React.Component<
         this.handleClick = this.handleClick.bind(this);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         (async () => {
             if (!window.StripeCheckout) {
                 await getScript("https://checkout.stripe.com/checkout.js");

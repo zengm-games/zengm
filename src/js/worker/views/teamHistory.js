@@ -58,7 +58,7 @@ async function updateTeamHistory(
 
         let players = await idb.getCopies.players({ statsTid: inputs.tid });
         players = await idb.getCopies.playersPlus(players, {
-            attrs: ["pid", "name", "injury", "tid", "hof"],
+            attrs: ["pid", "name", "injury", "tid", "hof", "watch"],
             ratings: ["pos"],
             stats: [
                 "season",

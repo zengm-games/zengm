@@ -13,12 +13,14 @@ const PlayerNameLabels = ({
     pid,
     skills,
     style,
+    watch,
 }: {
     children: string,
     injury?: PlayerInjury,
     pid: number,
     skills?: PlayerSkill[],
     style?: { [key: string]: string },
+    watch?: boolean,
 }) => {
     let injuryIcon = null;
     if (injury !== undefined) {
@@ -49,7 +51,7 @@ const PlayerNameLabels = ({
             <a href={helpers.leagueUrl(["player", pid])}>{children}</a>
             {injuryIcon}
             <SkillsBlock skills={skills} />
-            <RatingsStatsPopover pid={pid} />
+            <RatingsStatsPopover pid={pid} watch={watch} />
         </span>
     );
 };
@@ -62,6 +64,7 @@ PlayerNameLabels.propTypes = {
     pid: PropTypes.number.isRequired,
     skills: PropTypes.arrayOf(PropTypes.string),
     style: PropTypes.object,
+    watch: PropTypes.bool,
 };
 
 export default PlayerNameLabels;

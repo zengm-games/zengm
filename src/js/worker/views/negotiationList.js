@@ -19,7 +19,7 @@ async function updateNegotiationList(): void | { [key: string]: any } {
     );
     players = players.filter(p => negotiationPids.includes(p.pid));
     players = await idb.getCopies.playersPlus(players, {
-        attrs: ["pid", "name", "age", "freeAgentMood", "injury"],
+        attrs: ["pid", "name", "age", "freeAgentMood", "injury", "watch"],
         ratings: ["ovr", "pot", "skills", "pos"],
         stats: ["min", "pts", "trb", "ast", "per"],
         season: g.season,

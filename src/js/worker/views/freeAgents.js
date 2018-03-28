@@ -15,7 +15,15 @@ async function updateFreeAgents(): void | { [key: string]: any } {
     const capSpace = g.salaryCap > payroll ? (g.salaryCap - payroll) / 1000 : 0;
 
     players = await idb.getCopies.playersPlus(players, {
-        attrs: ["pid", "name", "age", "contract", "freeAgentMood", "injury"],
+        attrs: [
+            "pid",
+            "name",
+            "age",
+            "contract",
+            "freeAgentMood",
+            "injury",
+            "watch",
+        ],
         ratings: ["ovr", "pot", "skills", "pos"],
         stats: ["min", "pts", "trb", "ast", "per"],
         season: g.season,

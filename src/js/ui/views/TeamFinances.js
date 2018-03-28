@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { g, helpers } from "../../common";
-import { getCols, logEvent, realtimeUpdate, setTitle, toWorker } from "../util";
+import { getCols, logEvent, setTitle, toWorker } from "../util";
 import {
     BarGraph,
     DataTable,
@@ -100,8 +100,6 @@ class FinancesForm extends React.Component {
             dirty: false,
             saving: false,
         });
-
-        realtimeUpdate(["teamFinances"]);
     }
 
     render() {
@@ -326,6 +324,7 @@ const TeamFinances = ({
                 pid={p.pid}
                 skills={p.skills}
                 style={{ fontStyle: p.released ? "italic" : "normal" }}
+                watch={p.watch}
             >
                 {p.firstName} {p.lastName}
             </PlayerNameLabels>,

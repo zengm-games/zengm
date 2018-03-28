@@ -233,6 +233,7 @@ async function updatePlayers(
                 "contract",
                 "rosterOrder",
                 "injury",
+                "watch",
             ],
             ratings: ["ovr", "pot", "dovr", "dpot", "skills", "pos"],
             stats: ["gp", "min", "pts", "trb", "ast", "per", "yearsWithTeam"],

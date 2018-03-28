@@ -1,5 +1,6 @@
 // @flow
 
+import classNames from "classnames";
 import PropTypes from "prop-types";
 import * as React from "react";
 import OverlayTrigger from "react-bootstrap/lib/OverlayTrigger";
@@ -18,6 +19,7 @@ const colorRating = (rating: number) => {
 
 type Props = {
     pid: number,
+    watch?: boolean,
 };
 
 type State = {
@@ -52,7 +54,6 @@ type State = {
         per: number,
         ewa: number,
     } | void,
-    watch: boolean,
 };
 
 class RatingsStatsPopover extends React.Component<Props, State> {
@@ -65,7 +66,6 @@ class RatingsStatsPopover extends React.Component<Props, State> {
             name: undefined,
             ratings: undefined,
             stats: undefined,
-            watch: false,
         };
 
         this.loadData = this.loadData.bind(this);
@@ -78,12 +78,11 @@ class RatingsStatsPopover extends React.Component<Props, State> {
             name: p.name,
             ratings: p.ratings,
             stats: p.stats,
-            watch: p.watch,
         });
     }
 
     render() {
-        const { name, ratings, stats, watch } = this.state;
+        const { name, ratings, stats } = this.state;
 
         let nameBlock;
         if (name) {
@@ -92,7 +91,12 @@ class RatingsStatsPopover extends React.Component<Props, State> {
                     <a href={helpers.leagueUrl(["player", this.props.pid])}>
                         <b>{name}</b>
                     </a>
-                    <WatchBlock pid={this.props.pid} watch={watch} />
+                    {this.props.watch !== undefined ? (
+                        <WatchBlock
+                            pid={this.props.pid}
+                            watch={this.props.watch}
+                        />
+                    ) : null}
                 </p>
             );
         } else {
@@ -258,7 +262,9 @@ class RatingsStatsPopover extends React.Component<Props, State> {
                 trigger="click"
             >
                 <span
-                    className="glyphicon glyphicon-stats watch"
+                    className={classNames("glyphicon glyphicon-stats watch", {
+                        "watch-active": this.props.watch,
+                    })}
                     data-no-row-highlight="true"
                     title="View ratings and stats"
                 />
@@ -269,6 +275,7 @@ class RatingsStatsPopover extends React.Component<Props, State> {
 
 RatingsStatsPopover.propTypes = {
     pid: PropTypes.number.isRequired,
+    watch: PropTypes.bool,
 };
 
 export default RatingsStatsPopover;

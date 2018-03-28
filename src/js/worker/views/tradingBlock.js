@@ -27,6 +27,7 @@ async function updateUserRoster(
                 "contract",
                 "injury",
                 "gamesUntilTradable",
+                "watch",
             ],
             ratings: ["ovr", "pot", "skills", "pos"],
             stats: ["min", "pts", "trb", "ast", "per"],

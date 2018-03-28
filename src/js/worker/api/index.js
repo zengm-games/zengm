@@ -51,6 +51,7 @@ const acceptContractNegotiation = async (
 
 const autoSortRoster = async () => {
     await team.rosterAutoSort(g.userTid);
+    await toUI(["realtimeUpdate", ["playerMovement"]]);
 };
 
 const beforeViewLeague = async (
@@ -107,6 +108,8 @@ const clearWatchList = async () => {
         }
     });
     await Promise.all(promises);
+
+    await toUI(["realtimeUpdate", ["playerMovement", "watchList"]]);
 };
 
 const countNegotiations = async () => {
@@ -578,7 +581,14 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
                 );
                 players = players.filter(p => offers[i].pids.includes(p.pid));
                 players = await idb.getCopies.playersPlus(players, {
-                    attrs: ["pid", "name", "age", "contract", "injury"],
+                    attrs: [
+                        "pid",
+                        "name",
+                        "age",
+                        "contract",
+                        "injury",
+                        "watch",
+                    ],
                     ratings: ["ovr", "pot", "skills", "pos"],
                     stats: ["min", "pts", "trb", "ast", "per"],
                     season: g.season,
@@ -789,7 +799,7 @@ const ratingsStatsPopoverInfo = async (pid: number) => {
     const season = p.draft.year > g.season ? p.draft.year : g.season;
 
     return idb.getCopy.playersPlus(p, {
-        attrs: ["name", "watch"],
+        attrs: ["name"],
         ratings: [
             "ovr",
             "pot",
@@ -835,6 +845,7 @@ const releasePlayer = async (pid: number, justDrafted: boolean) => {
     }
 
     await player.release(p, justDrafted);
+    await toUI(["realtimeUpdate", ["playerMovement"]]);
 };
 
 const removeLeague = async (lid: number) => {
@@ -851,6 +862,7 @@ const reorderRosterDrag = async (sortedPids: number[]) => {
             }
         }),
     );
+    await toUI(["realtimeUpdate", ["playerMovement"]]);
 };
 
 const runBefore = async (
@@ -926,6 +938,7 @@ const updateBudget = async (budgetAmounts: {
     await idb.cache.teams.put(t);
 
     await finances.updateRanks(["budget"]);
+    await toUI(["realtimeUpdate", ["teamFinances"]]);
 };
 
 const updateGameAttributes = async (gameAttributes: GameAttributes) => {
@@ -958,12 +971,15 @@ const updatePlayerWatch = async (pid: number, watch: boolean) => {
         p.watch = watch;
         await idb.cache.players.add(p);
     }
+
+    await toUI(["realtimeUpdate", ["playerMovement", "watchList"]]);
 };
 
 const updatePlayingTime = async (pid: number, ptModifier: number) => {
     const p = await idb.cache.players.get(pid);
     p.ptModifier = ptModifier;
     await idb.cache.players.put(p);
+    await toUI(["realtimeUpdate", ["playerMovement"]]);
 };
 
 const updateTeamInfo = async (

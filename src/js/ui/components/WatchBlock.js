@@ -5,7 +5,6 @@ import * as React from "react";
 import { toWorker } from "../util";
 
 type Props = {
-    onUpdatePlayerWatch?: Function,
     pid: number,
     watch: boolean,
 };
@@ -29,12 +28,19 @@ class WatchBlock extends React.Component<Props, State> {
     }
 
     componentWillReceiveProps(nextProps: Props) {
-        // This assumes that the parent is correctly getting values from the database, not passing in cached ones
+        // This assumes that the view is listening for playerMovement or watchList, otherwise it'll send the same old (wrong) prop
         if (nextProps.watch !== this.state.watch) {
             this.setState({
                 watch: nextProps.watch,
             });
         }
+    }
+
+    shouldComponentUpdate(nextProps: Props, nextState: State) {
+        return (
+            this.props.pid !== nextProps.pid ||
+            this.state.watch !== nextState.watch
+        );
     }
 
     async handleClick(e: SyntheticEvent<>) {
@@ -47,9 +53,6 @@ class WatchBlock extends React.Component<Props, State> {
         });
 
         await toWorker("updatePlayerWatch", this.props.pid, watch);
-        if (this.props.onUpdatePlayerWatch) {
-            this.props.onUpdatePlayerWatch();
-        }
     }
 
     render() {
@@ -74,7 +77,6 @@ class WatchBlock extends React.Component<Props, State> {
 }
 
 WatchBlock.propTypes = {
-    onUpdatePlayerWatch: PropTypes.func,
     pid: PropTypes.number.isRequired,
     watch: PropTypes.bool.isRequired,
 };

@@ -34,6 +34,7 @@ async function updateUpcomingFreeAgents(inputs: {
             "freeAgentMood",
             "injury",
             "contractDesired",
+            "watch",
         ],
         ratings: ["ovr", "pot", "skills", "pos"],
         stats: ["min", "pts", "trb", "ast", "per"],

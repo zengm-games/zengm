@@ -1,3 +1,5 @@
+Trade.js shouldn't have realtimeupdate, should be listening to a specific updateevent (like "trade") and that should be emitted in all the worker api functions
+
 later
 - in new league: set rookie contracts appropriately
 - in new league: initialize rebuilding/contending to non-random values

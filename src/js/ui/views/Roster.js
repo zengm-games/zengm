@@ -10,7 +10,7 @@ import {
     arrayMove,
 } from "react-sortable-hoc";
 import { PHASE, g, helpers } from "../../common";
-import { logEvent, realtimeUpdate, setTitle, toWorker } from "../util";
+import { logEvent, setTitle, toWorker } from "../util";
 import {
     Dropdown,
     HelpPopover,
@@ -46,8 +46,6 @@ const ptStyles = {
 
 const handleAutoSort = async () => {
     await toWorker("autoSortRoster");
-
-    realtimeUpdate(["playerMovement"]);
 };
 
 const handleRelease = async p => {
@@ -78,8 +76,6 @@ const handleRelease = async p => {
                 text: errorMsg,
                 saveToDb: false,
             });
-        } else {
-            realtimeUpdate(["playerMovement"]);
         }
     }
 };
@@ -98,8 +94,6 @@ const handlePtChange = async (p, event) => {
     }
 
     await toWorker("updatePlayingTime", p.pid, ptModifier);
-
-    realtimeUpdate(["playerMovement"]);
 };
 
 const PlayingTime = ({ p }) => {
@@ -168,6 +162,7 @@ const RosterRow = SortableElement(
             showTradeFor,
             toggleClicked,
         } = props;
+
         return (
             <tr
                 key={p.pid}
@@ -186,6 +181,7 @@ const RosterRow = SortableElement(
                         pid={p.pid}
                         injury={p.injury}
                         skills={p.ratings.skills}
+                        watch={p.watch}
                     >
                         {p.name}
                     </PlayerNameLabels>
@@ -317,7 +313,6 @@ class Roster extends React.Component {
             sortedPids,
         });
         await toWorker("reorderRosterDrag", sortedPids);
-        realtimeUpdate(["playerMovement"]);
     }
 
     componentWillReceiveProps() {

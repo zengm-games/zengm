@@ -3,7 +3,7 @@ import React from "react";
 import DropdownButton from "react-bootstrap/lib/DropdownButton";
 import MenuItem from "react-bootstrap/lib/MenuItem";
 import { PLAYER, helpers } from "../../common";
-import { getCols, realtimeUpdate, setTitle, toWorker } from "../util";
+import { getCols, setTitle, toWorker } from "../util";
 import {
     DataTable,
     Dropdown,
@@ -27,7 +27,6 @@ class WatchList extends React.Component {
         });
 
         await toWorker("clearWatchList");
-        await realtimeUpdate(["watchList"]);
 
         this.setState({
             clearing: false,
@@ -86,17 +85,12 @@ class WatchList extends React.Component {
             return {
                 key: p.pid,
                 data: [
-                    <WatchBlock
-                        onUpdatePlayerWatch={() => {
-                            realtimeUpdate(["watchList"]);
-                        }}
-                        pid={p.pid}
-                        watch={p.watch}
-                    />,
+                    <WatchBlock pid={p.pid} watch={p.watch} />,
                     <PlayerNameLabels
                         injury={p.injury}
                         pid={p.pid}
                         skills={p.ratings.skills}
+                        watch={p.watch}
                     >
                         {p.name}
                     </PlayerNameLabels>,

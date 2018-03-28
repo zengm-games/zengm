@@ -54,6 +54,7 @@ const Leaders = ({ categories, season }) => {
                                                             skills={
                                                                 p.ratings.skills
                                                             }
+                                                            watch={p.watch}
                                                         >
                                                             {p.nameAbbrev}
                                                         </PlayerNameLabels>

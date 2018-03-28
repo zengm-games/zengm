@@ -11,6 +11,7 @@ async function updateRoster(
     state: any,
 ): void | { [key: string]: any } {
     if (
+        updateEvents.includes("watchList") ||
         (inputs.season === g.season &&
             (updateEvents.includes("gameSim") ||
                 updateEvents.includes("playerMovement"))) ||
@@ -45,6 +46,7 @@ async function updateRoster(
             "injury",
             "ptModifier",
             "gamesUntilTradable",
+            "watch",
         ]; // tid and draft are used for checking if a player can be released without paying his salary
         const ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos"];
         const stats = [

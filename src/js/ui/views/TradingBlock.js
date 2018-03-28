@@ -13,6 +13,7 @@ const OfferPlayerRow = clickable(({ clicked, p, toggleClicked }) => {
                     injury={p.injury}
                     pid={p.pid}
                     skills={p.ratings.skills}
+                    watch={p.watch}
                 >
                     {p.name}
                 </PlayerNameLabels>
@@ -284,6 +285,7 @@ class TradingBlock extends React.Component {
                         injury={p.injury}
                         pid={p.pid}
                         skills={p.ratings.skills}
+                        watch={p.watch}
                     >
                         {p.name}
                     </PlayerNameLabels>,

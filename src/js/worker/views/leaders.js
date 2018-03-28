@@ -9,7 +9,9 @@ async function updateLeaders(
     updateEvents: UpdateEvents,
     state: any,
 ): void | { [key: string]: any } {
+    // Respond to watchList in case players are listed twice in different categories
     if (
+        updateEvents.includes("watchList") ||
         (inputs.season === g.season && updateEvents.includes("gameSim")) ||
         inputs.season !== state.season
     ) {
@@ -37,7 +39,7 @@ async function updateLeaders(
             });
         }
         players = await idb.getCopies.playersPlus(players, {
-            attrs: ["pid", "nameAbbrev", "injury"],
+            attrs: ["pid", "nameAbbrev", "injury", "watch"],
             ratings: ["skills"],
             stats: [
                 "pts",

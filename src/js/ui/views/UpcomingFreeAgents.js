@@ -36,6 +36,7 @@ const UpcomingFreeAgents = ({ players, season }) => {
                     injury={p.injury}
                     pid={p.pid}
                     skills={p.ratings.skills}
+                    watch={p.watch}
                 >
                     {p.name}
                 </PlayerNameLabels>,

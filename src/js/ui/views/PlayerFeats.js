@@ -49,7 +49,7 @@ const PlayerFeats = ({ abbrev, feats, playoffs, season }) => {
         return {
             key: p.fid,
             data: [
-                <PlayerNameLabels injury={p.injury} pid={p.pid}>
+                <PlayerNameLabels injury={p.injury} pid={p.pid} watch={p.watch}>
                     {p.name}
                 </PlayerNameLabels>,
                 p.pos,

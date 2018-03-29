@@ -58,6 +58,7 @@ class Footer extends React.Component<{}> {
                         }}
                     />
                 </div>
+                <div id="bbgm-ads-oop" style={{height: "1px", width: "1px"}} />
 
                 <div className="clearfix" />
                 <hr />

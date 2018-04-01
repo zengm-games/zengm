@@ -16,7 +16,7 @@ class DeleteLeague extends React.Component {
     }
 
     render() {
-        const { lid, name, numGames, numPlayers, numSeasons } = this.props;
+        const { lid, name, numPlayers, numSeasons } = this.props;
 
         setTitle(`Delete League ${lid}?`);
 
@@ -26,9 +26,8 @@ class DeleteLeague extends React.Component {
                 <p>
                     Are you <i>absolutely</i> sure you want to delete {name}{" "}
                     (League {lid})? You will <i>permanently</i> lose any record
-                    of all {helpers.numberWithCommas(numSeasons)} seasons,{" "}
-                    {helpers.numberWithCommas(numPlayers)} players, and{" "}
-                    {helpers.numberWithCommas(numGames)} games from this league
+                    of all {helpers.numberWithCommas(numSeasons)} seasons and{" "}
+                    {helpers.numberWithCommas(numPlayers)} players from this league
                     (well... unless you have a backup somewhere).
                 </p>
             );

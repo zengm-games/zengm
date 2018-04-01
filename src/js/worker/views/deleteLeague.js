@@ -13,8 +13,7 @@ async function updateDeleteLeague({
 
     const db = await connectLeague(lid);
     try {
-        const [numGames, numPlayers, teamSeasons, l] = await Promise.all([
-            db.games.count(),
+        const [numPlayers, teamSeasons, l] = await Promise.all([
             db.players.count(),
             db.teamSeasons
                 .index("tid, season")
@@ -25,7 +24,6 @@ async function updateDeleteLeague({
         return {
             lid,
             name: l.name,
-            numGames,
             numPlayers,
             numSeasons: teamSeasons.length,
         };
@@ -33,7 +31,6 @@ async function updateDeleteLeague({
         return {
             lid,
             name: undefined,
-            numGames: undefined,
             numPlayers: undefined,
             numSeasons: undefined,
         };

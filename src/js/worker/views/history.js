@@ -64,10 +64,6 @@ async function updateHistory(
             stats: ["tid", "abbrev"],
             showNoStats: true,
         });
-        for (let i = 0; i < retiredPlayers.length; i++) {
-            // Show age at retirement, not current age
-            retiredPlayers[i].age -= g.season - season;
-        }
         retiredPlayers.sort((a, b) => b.age - a.age);
 
         // Get champs

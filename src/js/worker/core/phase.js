@@ -69,9 +69,7 @@ async function finalize(
     if (local.autoPlaySeasons > 0) {
         toUI(["realtimeUpdate", updateEvents], conditions);
         // Not totally sure why setTimeout is needed, but why not?
-        setTimeout(() => {
-            league.autoPlay(conditions);
-        }, 100);
+        await league.autoPlay(conditions);
     } else {
         toUI(["realtimeUpdate", updateEvents, url], conditions);
     }
@@ -770,9 +768,9 @@ async function newPhase(phase: Phase, conditions: Conditions, extra?: any) {
         );
     } else {
         try {
-            await updateStatus("Processing...");
-
             lock.set("newPhase", true);
+
+            await updateStatus("Processing...");
             await updatePlayMenu();
 
             if (phaseChangeInfo.hasOwnProperty(phase)) {

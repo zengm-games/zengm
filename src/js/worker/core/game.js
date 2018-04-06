@@ -914,7 +914,13 @@ async function play(
     gidPlayByPlay?: number,
 ) {
     // This is called when there are no more games to play, either due to the user's request (e.g. 1 week) elapsing or at the end of the regular season
-    const cbNoGames = async () => {
+    const cbNoGames = async (playoffsOver?: boolean = false) => {
+        await updateStatus("Saving...");
+        await idb.cache.flush();
+
+        await updateStatus("Idle");
+        lock.set("gameSim", false);
+
         // Check to see if the season is over
         if (g.phase < PHASE.PLAYOFFS) {
             const schedule = await season.getSchedule();
@@ -925,13 +931,14 @@ async function play(
                     gidPlayByPlay !== undefined,
                 );
             }
+        } else if (playoffsOver) {
+            await phase.newPhase(
+                PHASE.DRAFT_LOTTERY,
+                conditions,
+                gidPlayByPlay !== undefined,
+            );
         }
 
-        await updateStatus("Saving...");
-        await idb.cache.flush();
-
-        await updateStatus("Idle");
-        lock.set("gameSim", false);
         await updatePlayMenu();
     };
 
@@ -1033,28 +1040,23 @@ async function play(
             await toUI(["realtimeUpdate", ["gameSim"]]);
         }
 
-        if (g.phase === PHASE.PLAYOFFS) {
-            const playoffsOver = await season.newSchedulePlayoffsDay();
-            if (playoffsOver) {
-                await phase.newPhase(
-                    PHASE.DRAFT_LOTTERY,
-                    conditions,
-                    gidPlayByPlay !== undefined,
-                );
-            }
-        } else if (Math.random() < g.tragicDeathRate) {
-            // Tragic deaths only happen during the regular season!
+        // Tragic deaths only happen during the regular season!
+        if (g.phase !== PHASE.PLAYOFFS && Math.random() < g.tragicDeathRate) {
             await player.killOne(conditions);
             if (g.stopOnInjury) {
                 lock.set("stopGameSim", true);
             }
-            toUI(["realtimeUpdate", ["playerMovement"]]);
+            await toUI(["realtimeUpdate", ["playerMovement"]]);
         }
 
-        if (numDays - 1 <= 0) {
-            await cbNoGames();
+        const playoffsOver =
+            g.phase === PHASE.PLAYOFFS &&
+            (await season.newSchedulePlayoffsDay());
+
+        if (numDays - 1 <= 0 || playoffsOver) {
+            await cbNoGames(playoffsOver);
         } else {
-            play(numDays - 1, conditions, false);
+            await play(numDays - 1, conditions, false);
         }
     };
 

@@ -3,7 +3,7 @@
 import backboard from "backboard";
 import { PLAYER, helpers } from "../../../common";
 import { idb } from "../../db";
-import { mergeByPk } from "./helpers";
+import { getAll, mergeByPk } from "./helpers";
 import type { Player } from "../../../common/types";
 
 const getCopies = async ({
@@ -14,6 +14,7 @@ const getCopies = async ({
     draftYear,
     statsTid,
     tid,
+    filter = () => true,
 }: {
     pid?: number,
     retired?: boolean,
@@ -22,6 +23,7 @@ const getCopies = async ({
     draftYear?: number,
     statsTid?: number,
     tid?: [number, number] | number,
+    filter?: Function,
 } = {}): Promise<Player[]> => {
     if (pid !== undefined) {
         const cachedPlayer = await idb.cache.players.get(pid);
@@ -33,11 +35,16 @@ const getCopies = async ({
     }
 
     if (retired === true) {
+        // Get all from cache, and filter later, in case cache differs from database
         return mergeByPk(
-            await idb.league.players.index("tid").getAll(PLAYER.RETIRED),
+            await getAll(
+                idb.league.players.index("tid"),
+                PLAYER.RETIRED,
+                filter,
+            ),
             await idb.cache.players.indexGetAll("playersByTid", PLAYER.RETIRED),
             idb.cache.storeInfos.players.pk,
-        );
+        ).filter(filter);
     }
 
     if (tid !== undefined) {
@@ -64,7 +71,11 @@ const getCopies = async ({
         // All except draft prospects
         return mergeByPk(
             [].concat(
-                await idb.league.players.index("tid").getAll(PLAYER.RETIRED),
+                await getAll(
+                    idb.league.players.index("tid"),
+                    PLAYER.RETIRED,
+                    filter,
+                ),
                 await idb.league.players
                     .index("tid")
                     .getAll(backboard.lowerBound(PLAYER.FREE_AGENT)),
@@ -80,7 +91,7 @@ const getCopies = async ({
                 ]),
             ),
             idb.cache.storeInfos.players.pk,
-        );
+        ).filter(filter);
     }
 
     if (activeSeason !== undefined) {
@@ -187,10 +198,10 @@ const getCopies = async ({
     }
 
     return mergeByPk(
-        await idb.league.players.getAll(),
+        await getAll(idb.league.players, undefined, filter),
         await idb.cache.players.getAll(),
         idb.cache.storeInfos.players.pk,
-    );
+    ).filter(filter);
 };
 
 export default getCopies;

@@ -1,5 +1,7 @@
 firefox 57 (and older) - player info icon is always read unless watch boolean explicitly passed. check if it's a function and return false
 
+performance in large leagues
+
 Trade.js shouldn't have realtimeupdate, should be listening to a specific updateevent (like "trade") and that should be emitted in all the worker api functions
 
 later

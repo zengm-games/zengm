@@ -56,8 +56,10 @@ async function updateHistory(
             awards.bestRecordConfs = [awards.bre, awards.brw];
         }
 
-        let retiredPlayers = await idb.getCopies.players({ retired: true });
-        retiredPlayers = retiredPlayers.filter(p => p.retiredYear === season);
+        let retiredPlayers = await idb.getCopies.players({
+            retired: true,
+            filter: p => p.retiredYear === season,
+        });
         retiredPlayers = await idb.getCopies.playersPlus(retiredPlayers, {
             attrs: ["pid", "name", "age", "hof"],
             season,

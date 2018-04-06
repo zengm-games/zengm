@@ -12,8 +12,10 @@ async function updatePlayers(
         updateEvents.includes("firstRun") ||
         (updateEvents.includes("newPhase") && g.phase === PHASE.DRAFT_LOTTERY)
     ) {
-        let players = await idb.getCopies.players({ retired: true });
-        players = players.filter(p => p.hof);
+        let players = await idb.getCopies.players({
+            retired: true,
+            filter: p => p.hof,
+        });
         players = await idb.getCopies.playersPlus(players, {
             attrs: ["pid", "name", "draft", "retiredYear", "statsTids"],
             ratings: ["ovr", "pos"],

@@ -7,8 +7,9 @@ async function updateDraftTeamHistory(inputs: {
     abbrev: string,
     tid: number,
 }): void | { [key: string]: any } {
-    let playersAll = await idb.getCopies.players();
-    playersAll = playersAll.filter(p => p.draft.tid === inputs.tid);
+    let playersAll = await idb.getCopies.players({
+        filter: p => p.draft.tid === inputs.tid,
+    });
     playersAll = await idb.getCopies.playersPlus(playersAll, {
         attrs: ["tid", "abbrev", "draft", "pid", "name", "age", "hof"],
         ratings: ["ovr", "pot", "skills", "pos"],

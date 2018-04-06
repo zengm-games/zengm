@@ -20,8 +20,10 @@ async function updatePlayers(
         inputs.statType !== state.statType ||
         inputs.playoffs !== state.playoffs
     ) {
-        let players = await idb.getCopies.players();
-        players = players.filter(p => p.watch && typeof p.watch !== "function"); // In Firefox, objects have a "watch" function
+        let players = await idb.getCopies.players({
+            // In Firefox, objects have a "watch" function
+            filter: p => p.watch && typeof p.watch !== "function",
+        });
         players = await idb.getCopies.playersPlus(players, {
             attrs: [
                 "pid",

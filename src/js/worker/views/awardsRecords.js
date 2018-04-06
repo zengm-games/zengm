@@ -151,7 +151,10 @@ async function updateAwardsRecords(
         updateEvents.includes("firstRun") ||
         inputs.awardType !== state.awardType
     ) {
-        let players = await idb.getCopies.players({ activeAndRetired: true });
+        let players = await idb.getCopies.players({
+            activeAndRetired: true,
+            filter: p => p.awards.length > 0,
+        });
         players = await idb.getCopies.playersPlus(players, {
             attrs: [
                 "awards",
@@ -163,7 +166,6 @@ async function updateAwardsRecords(
             ],
             stats: ["abbrev", "season"],
         });
-        players = players.filter(p => p.awards.length > 0);
 
         const awardType = inputs.awardType;
         if (typeof awardType !== "string") {

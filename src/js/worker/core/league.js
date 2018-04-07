@@ -1,7 +1,7 @@
 // @flow
 
 import backboard from "backboard";
-import { Cache, connectLeague, idb } from "../db";
+import { Cache, connectLeague, getAll, idb } from "../db";
 import { PHASE, PLAYER, g, helpers } from "../../common";
 import {
     draft,
@@ -590,7 +590,7 @@ async function exportLeague(stores: string[]) {
 
     await Promise.all(
         stores.map(async store => {
-            exportedLeague[store] = await idb.league[store].getAll();
+            exportedLeague[store] = await getAll(idb.league[store]);
         }),
     );
 

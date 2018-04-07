@@ -63,7 +63,9 @@ const getCopies = async ({
 
         // This works if tid is a number or [min, max]
         return helpers.deepCopy(
-            await idb.cache.players.indexGetAll("playersByTid", tid),
+            (await idb.cache.players.indexGetAll("playersByTid", tid)).filter(
+                filter,
+            ),
         );
     }
 
@@ -180,7 +182,7 @@ const getCopies = async ({
     const constStatsTid = statsTid;
     if (constStatsTid !== undefined) {
         return mergeByPk(
-            await idb.league.players.index("statsTids").getAll(constStatsTid),
+            await getAll(idb.league.players.index("statsTids"), constStatsTid),
             []
                 .concat(
                     await idb.cache.players.indexGetAll(

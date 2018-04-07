@@ -1,6 +1,6 @@
 // @flow
 
-import { idb } from "../../db";
+import { getAll, idb } from "../../db";
 import { mergeByPk } from "./helpers";
 import type { Game } from "../../../common/types";
 
@@ -20,7 +20,7 @@ const getCopies = async ({
     }
 
     return mergeByPk(
-        await idb.league.games.getAll(),
+        await getAll(idb.league.games),
         await idb.cache.games.getAll(),
         idb.cache.storeInfos.games.pk,
     );

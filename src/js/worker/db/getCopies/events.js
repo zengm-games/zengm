@@ -1,6 +1,6 @@
 // @flow
 
-import { idb } from "../../db";
+import { getAll, idb } from "../../db";
 import { mergeByPk } from "./helpers";
 import type { EventBBGM } from "../../../common/types";
 
@@ -36,7 +36,7 @@ const getCopies = async ({
     }
 
     return mergeByPk(
-        await idb.league.events.getAll(),
+        await getAll(idb.league.events),
         await idb.cache.events.getAll(),
         idb.cache.storeInfos.events.pk,
     );

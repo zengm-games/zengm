@@ -2,8 +2,8 @@
 
 import backboard from "backboard";
 import { PLAYER, helpers } from "../../../common";
-import { idb } from "../../db";
-import { getAll, mergeByPk } from "./helpers";
+import { getAll, idb } from "../../db";
+import { mergeByPk } from "./helpers";
 import type { Player } from "../../../common/types";
 
 const getCopies = async ({

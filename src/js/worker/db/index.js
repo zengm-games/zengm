@@ -2,6 +2,7 @@
 
 import Backboard from "backboard";
 import Cache from "./Cache";
+import getAll from "./getAll";
 import * as getCopies from "./getCopies";
 import * as getCopy from "./getCopy";
 import { logEvent } from "../util";
@@ -38,7 +39,7 @@ const idb: {
     meta: undefined,
 };
 
-export { Cache, idb };
+export { Cache, getAll, idb };
 export { default as connectMeta } from "./connectMeta";
 export { default as connectLeague } from "./connectLeague";
 export { default as reset } from "./reset";

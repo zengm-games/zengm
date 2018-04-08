@@ -110,8 +110,8 @@ async function writeTeamStats(results: GameResults) {
                             "facilities",
                         )) /
                     (g.numTeams - 1); // Attendance depends on facilities. Not sure if this formula is reasonable.
-            if (att > 25000) {
-                att = 25000;
+            if (att > teamSeason.stadiumCapacity) {
+                att = teamSeason.stadiumCapacity;
             } else if (att < 0) {
                 att = 0;
             }

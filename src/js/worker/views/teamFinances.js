@@ -150,6 +150,13 @@ async function updateTeamFinances(
             tid: inputs.tid,
         });
 
+        vars.maxStadiumCapacity = teamSeasons.reduce((max, teamSeason) => {
+            if (teamSeason.stadiumCapacity > max) {
+                return teamSeason.stadiumCapacity;
+            }
+            return max;
+        }, 0);
+
         return vars;
     }
 }

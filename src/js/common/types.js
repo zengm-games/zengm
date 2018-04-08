@@ -649,6 +649,7 @@ export type TeamSeason = {|
     playoffRoundsWon: number, // -1: didn't make playoffs. 0: lost in first round. ... N: won championship
     hype: number,
     pop: number,
+    stadiumCapacity: number,
     revenues: {|
         luxuryTaxShare: BudgetItem,
         merch: BudgetItem,

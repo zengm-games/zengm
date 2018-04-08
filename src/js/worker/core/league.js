@@ -234,9 +234,13 @@ async function create(
         } else {
             teamSeasons = [team.genSeasonRow(t.tid)];
             teamSeasons[0].pop = teams[i].pop;
+            teamSeasons[0].stadiumCapacity = teams[i].stadiumCapacity;
         }
         for (const teamSeason of teamSeasons) {
             teamSeason.tid = t.tid;
+            if (typeof teamSeason.stadiumCapacity !== "number") {
+                teamSeason.stadiumCapacity = 25000;
+            }
             await idb.cache.teamSeasons.add(teamSeason);
         }
 

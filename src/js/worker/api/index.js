@@ -991,6 +991,7 @@ const updateTeamInfo = async (
         abbrev: string,
         imgURL?: string,
         pop: number,
+        stadiumCapacity: number,
     }[],
 ) => {
     let userName;
@@ -1029,6 +1030,18 @@ const updateTeamInfo = async (
             `${t.tid},${g.season}`,
         );
         teamSeason.pop = parseFloat(newTeams[t.tid].pop);
+        teamSeason.stadiumCapacity = parseInt(
+            newTeams[t.tid].stadiumCapacity,
+            10,
+        );
+
+        if (Number.isNaN(teamSeason.pop)) {
+            throw new Error("Invalid pop");
+        }
+        if (Number.isNaN(teamSeason.stadiumCapacity)) {
+            throw new Error("Invalid stadiumCapacity");
+        }
+
         await idb.cache.teamSeasons.put(teamSeason);
     }
 

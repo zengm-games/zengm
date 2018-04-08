@@ -295,6 +295,7 @@ const TeamFinances = ({
     gamesInProgress,
     luxuryPayroll,
     luxuryTax,
+    maxStadiumCapacity,
     minContract,
     minPayroll,
     numGames,
@@ -478,7 +479,7 @@ const TeamFinances = ({
                             tooltipCb={val =>
                                 helpers.numberWithCommas(Math.round(val))
                             }
-                            ylim={[0, 25000]}
+                            ylim={[0, maxStadiumCapacity]}
                         />
                     </div>
                 </div>
@@ -593,6 +594,7 @@ TeamFinances.propTypes = {
     gamesInProgress: PropTypes.bool.isRequired,
     luxuryPayroll: PropTypes.number.isRequired,
     luxuryTax: PropTypes.number.isRequired,
+    maxStadiumCapacity: PropTypes.number.isRequired,
     minContract: PropTypes.number.isRequired,
     minPayroll: PropTypes.number.isRequired,
     numGames: PropTypes.number.isRequired,

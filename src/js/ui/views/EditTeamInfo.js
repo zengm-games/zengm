@@ -54,18 +54,28 @@ class EditTeamInfo extends React.Component {
                     return;
                 }
 
-                // Check for pop in either the root or the most recent season
-                if (
-                    !newTeams[i].hasOwnProperty("pop") &&
-                    newTeams[i].hasOwnProperty("seasons")
-                ) {
-                    newTeams[i].pop =
-                        newTeams[i].seasons[newTeams[i].seasons.length - 1].pop;
-                }
+                // Check for pop/stadiumCapacity in either the root or the most recent season
+                for (const field of ["pop", "stadiumCapacity"]) {
+                    if (
+                        !newTeams[i].hasOwnProperty(field) &&
+                        newTeams[i].hasOwnProperty("seasons")
+                    ) {
+                        newTeams[i][field] =
+                            newTeams[i].seasons[newTeams[i].seasons.length - 1][
+                                field
+                            ];
+                    }
 
-                if (typeof newTeams[i].pop !== "number") {
-                    console.log(`ROSTER ERROR: Invalid pop, team ${i}`);
-                    return;
+                    if (typeof newTeams[i][field] !== "number") {
+                        if (field === "pop") {
+                            console.log(
+                                `ROSTER ERROR: Invalid ${field}, team ${i}`,
+                            );
+                            return;
+                        } else if (field === "stadiumCapacity") {
+                            newTeams[i][field] = 25000;
+                        }
+                    }
                 }
             }
 
@@ -186,7 +196,10 @@ class EditTeamInfo extends React.Component {
                     <div className="col-sm-2">
                         Population<br />(millions)
                     </div>
-                    <div className="col-sm-4 col-md-5">
+                    <div className="col-sm-2">
+                        Stadium<br />Capacity
+                    </div>
+                    <div className="col-sm-2 col-md-3">
                         <br />Logo URL
                     </div>
                 </div>
@@ -249,8 +262,25 @@ class EditTeamInfo extends React.Component {
                                         value={t.pop}
                                     />
                                 </div>
+                                <div className="col-xs-6 col-sm-2 form-group">
+                                    <label className="visible-xs">
+                                        Stadium Capacity
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        onChange={e =>
+                                            this.handleInputChange(
+                                                i,
+                                                "stadiumCapacity",
+                                                e,
+                                            )
+                                        }
+                                        value={t.stadiumCapacity}
+                                    />
+                                </div>
                                 <div className="visible-xs clearfix" />
-                                <div className="col-sm-4 col-md-5 form-group">
+                                <div className="col-sm-2 col-md-3 form-group">
                                     <label className="visible-xs">
                                         Logo URL
                                     </label>

@@ -1,4 +1,5 @@
 performance in large leagues
+- stats back in player objects?
 
 Trade.js shouldn't have realtimeupdate, should be listening to a specific updateevent (like "trade") and that should be emitted in all the worker api functions
 
@@ -20,9 +21,6 @@ p.valueWithContract is exactly equal to p.value currently!
 
 team shot locations playoffs
 - share code with team stats for highlighting and playoff W/L
-
-bring back indexeddb-getall-shim, not shitty vendor version
-- see src/js/vendor/README.md for what needs to be done
 
 ---
 

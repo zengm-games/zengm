@@ -596,6 +596,16 @@ class Cache {
             }
         }
         if (this._season === undefined) {
+            console.log("Passed season", season);
+            console.log("g.season", season);
+            console.log(
+                "game attributes",
+                JSON.stringify(
+                    await idb.league.gameAttributes.getAll(),
+                    undefined,
+                    2,
+                ),
+            );
             throw new Error("Undefined season");
         }
 

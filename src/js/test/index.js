@@ -1,6 +1,5 @@
 /* eslint-disable import/first */
 import "../vendor/babel-external-helpers";
-import "indexeddb-getall-shim";
 import "../common/polyfills";
 
 // Hack because promise-worker-bi 2.2.1 always sends back hostID, but the worker tests don't run in an actual worker, so

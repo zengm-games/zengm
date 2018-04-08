@@ -86,12 +86,13 @@ class RatingsStatsPopover extends React.Component<Props, State> {
 
         let nameBlock;
         if (name) {
+            // Explicit boolean check is for Firefox 57 and older
             nameBlock = (
                 <p>
                     <a href={helpers.leagueUrl(["player", this.props.pid])}>
                         <b>{name}</b>
                     </a>
-                    {this.props.watch !== undefined ? (
+                    {typeof this.props.watch === "boolean" ? (
                         <WatchBlock
                             pid={this.props.pid}
                             watch={this.props.watch}
@@ -263,7 +264,7 @@ class RatingsStatsPopover extends React.Component<Props, State> {
             >
                 <span
                     className={classNames("glyphicon glyphicon-stats watch", {
-                        "watch-active": this.props.watch,
+                        "watch-active": this.props.watch === true, // Explicit true check is for Firefox 57 and older
                     })}
                     data-no-row-highlight="true"
                     title="View ratings and stats"

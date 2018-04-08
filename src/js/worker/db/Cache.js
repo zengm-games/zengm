@@ -596,6 +596,7 @@ class Cache {
             }
         }
         if (this._season === undefined) {
+            // Seems that gameAttributes is empty when this happens, possibly due to Chrome inappropriately deleting things?
             console.log("Passed season", season);
             console.log("g.season", season);
             console.log(

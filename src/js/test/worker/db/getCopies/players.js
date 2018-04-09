@@ -21,10 +21,10 @@ describe("db/getCopies", async () => {
 
             p.contract.exp = g.season + 1;
 
-            await player.addStatsRow(p);
-            await player.addStatsRow(p, true);
-            await player.addStatsRow(p);
-            const stats = await idb.cache.playerStats.getAll();
+            player.addStatsRow(p);
+            player.addStatsRow(p, true);
+            player.addStatsRow(p);
+            const stats = p.stats;
 
             stats[0].gp = 5;
             stats[0].fg = 20;

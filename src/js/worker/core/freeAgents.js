@@ -84,7 +84,7 @@ async function autoSign() {
                     p.tid = tid;
                     if (g.phase <= PHASE.PLAYOFFS) {
                         // Otherwise, not needed until next season
-                        await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
+                        player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
                     }
                     player.setContract(p, p.contract, true);
                     p.gamesUntilTradable = 15;

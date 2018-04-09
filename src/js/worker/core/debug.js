@@ -319,13 +319,7 @@ const valueDiff = async () => {
         .getAll(backboard.lowerBound(PLAYER.FREE_AGENT));
 
     for (const p of players) {
-        const playerStats = (await idb.cache.playerStats.indexGetAll(
-            "playerStatsAllByPid",
-            p.pid,
-        )).filter(ps => !ps.playoffs);
-        playerStats.sort((a, b) => a.season - b.season);
-
-        console.log(p.value, value(p, playerStats));
+        console.log(p.value, value(p));
     }
 };
 

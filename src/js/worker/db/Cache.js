@@ -1,7 +1,6 @@
 // @flow
 
 import backboard from "backboard";
-import orderBy from "lodash/orderBy";
 import { PLAYER, g } from "../../common";
 import { idb } from "../db";
 import { lock, local } from "../util";
@@ -20,7 +19,6 @@ import type {
     Negotiation,
     Player,
     PlayerFeat,
-    PlayerStats,
     PlayerWithoutPid,
     PlayoffSeries,
     ReleasedPlayer,
@@ -46,7 +44,6 @@ export type Store =
     | "messages"
     | "negotiations"
     | "playerFeats"
-    | "playerStats"
     | "players"
     | "playoffSeries"
     | "releasedPlayers"
@@ -58,9 +55,6 @@ export type Store =
 type Index =
     | "draftPicksBySeason"
     | "draftPicksByTid"
-    | "playerStats"
-    | "playerStatsAllByPid"
-    | "playerStatsByPid"
     | "playersByTid"
     | "releasedPlayers"
     | "releasedPlayersByTid"
@@ -80,7 +74,6 @@ export const STORES: Store[] = [
     "messages",
     "negotiations",
     "playerFeats",
-    "playerStats",
     "players",
     "playoffSeries",
     "releasedPlayers",
@@ -168,7 +161,7 @@ class Cache {
             pk: string,
             pkType: "number" | "string",
             autoIncrement: boolean,
-            getData?: (BackboardTx, Player[]) => Promise<any[]> | any[],
+            getData?: BackboardTx => Promise<any[]> | any[],
             indexes?: {
                 name: Index,
                 filter?: any => boolean,
@@ -192,7 +185,6 @@ class Cache {
     messages: StoreAPI<Message | MessageWithoutMid, Message, number>;
     negotiations: StoreAPI<Negotiation, Negotiation, number>;
     playerFeats: StoreAPI<PlayerFeat, PlayerFeat, number>;
-    playerStats: StoreAPI<PlayerStats, PlayerStats, number>;
     players: StoreAPI<Player | PlayerWithoutPid, Player, number>;
     playoffSeries: StoreAPI<PlayoffSeries, PlayoffSeries, number>;
     releasedPlayers: StoreAPI<
@@ -290,50 +282,28 @@ class Cache {
                 pkType: "number",
                 autoIncrement: true,
             },
-            playerStats: {
-                pk: "psid",
-                pkType: "number",
-                autoIncrement: true,
-
-                getData: async (tx: BackboardTx, players: Player[]) => {
-                    const psNested = await Promise.all(
-                        players.map(p => {
-                            return tx.playerStats
-                                .index("pid, season, tid")
-                                .getAll(
-                                    backboard.bound(
-                                        [p.pid, this._season - 1],
-                                        [p.pid, this._season, ""],
-                                    ),
-                                );
-                        }),
-                    );
-
-                    // Flatten
-                    const psRows = [].concat(...psNested);
-
-                    return orderBy(psRows, "psid");
-                },
-
-                indexes: [
-                    {
-                        // Only save latest stats row for each player (so playoff stats if available, and latest team if traded mid-season)
-                        name: "playerStatsByPid",
-                        filter: row => row.season === this._season,
-                        key: row => String(row.pid),
-                        unique: true,
-                    },
-                    {
-                        name: "playerStatsAllByPid",
-                        key: row => String(row.pid),
-                    },
-                ],
-            },
             players: {
                 pk: "pid",
                 pkType: "number",
                 autoIncrement: true,
-                getData: (tx: BackboardTx, players: Player[]) => players,
+                getData: async (tx: BackboardTx) => {
+                    // Non-retired players
+                    const [players1, players2] = await Promise.all([
+                        tx.players
+                            .index("tid")
+                            .getAll(backboard.lowerBound(PLAYER.UNDRAFTED)),
+                        tx.players
+                            .index("tid")
+                            .getAll(
+                                backboard.bound(
+                                    PLAYER.UNDRAFTED_FANTASY_TEMP,
+                                    PLAYER.UNDRAFTED_2,
+                                ),
+                            ),
+                    ]);
+
+                    return players1.concat(players2);
+                },
                 indexes: [
                     {
                         name: "playersByTid",
@@ -453,7 +423,6 @@ class Cache {
         this.messages = new StoreAPI(this, "messages");
         this.negotiations = new StoreAPI(this, "negotiations");
         this.playerFeats = new StoreAPI(this, "playerFeats");
-        this.playerStats = new StoreAPI(this, "playerStats");
         this.players = new StoreAPI(this, "players");
         this.playoffSeries = new StoreAPI(this, "playoffSeries");
         this.releasedPlayers = new StoreAPI(this, "releasedPlayers");
@@ -537,7 +506,7 @@ class Cache {
         }
     }
 
-    async _loadStore(store: Store, tx: BackboardTx, players: Player[]) {
+    async _loadStore(store: Store, tx: BackboardTx) {
         const storeInfo = this.storeInfos[store];
 
         this._deletes[store] = new Set();
@@ -548,7 +517,7 @@ class Cache {
             (async () => {
                 // No getData implies no need to store any records in cache except new ones
                 const data = storeInfo.getData
-                    ? await storeInfo.getData(tx, players)
+                    ? await storeInfo.getData(tx)
                     : [];
 
                 this._data[store] = {};
@@ -610,26 +579,9 @@ class Cache {
             throw new Error("Undefined season");
         }
 
-        // Non-retired players - this is special because it's used for players and playerStats
-        const [players1, players2] = await Promise.all([
-            idb.league.players
-                .index("tid")
-                .getAll(backboard.lowerBound(PLAYER.UNDRAFTED)),
-            idb.league.players
-                .index("tid")
-                .getAll(
-                    backboard.bound(
-                        PLAYER.UNDRAFTED_FANTASY_TEMP,
-                        PLAYER.UNDRAFTED_2,
-                    ),
-                ),
-        ]);
-
-        const players = players1.concat(players2);
-
         await Promise.all(
             STORES.map(store => {
-                return this._loadStore(store, idb.league, players);
+                return this._loadStore(store, idb.league);
             }),
         );
 

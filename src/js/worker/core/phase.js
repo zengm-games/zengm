@@ -173,11 +173,11 @@ async function newPhasePreseason(conditions: Conditions) {
         player.develop(p, 1, false, coachingRanks[p.tid]);
 
         // Update player values after ratings changes
-        await player.updateValues(p);
+        player.updateValues(p);
 
         // Add row to player stats if they are on a team
         if (p.tid >= 0) {
-            await player.addStatsRow(p, false);
+            player.addStatsRow(p, false);
         }
 
         await idb.cache.players.put(p);
@@ -336,7 +336,7 @@ async function newPhasePlayoffs(
                 tid,
             );
             for (const p of players) {
-                await player.addStatsRow(p, true);
+                player.addStatsRow(p, true);
                 await idb.cache.players.put(p);
             }
         }),
@@ -402,18 +402,15 @@ async function newPhaseBeforeDraft(
     for (const p of players) {
         let update = false;
 
-        // Get player stats, used for HOF calculation
-        const playerStats = await idb.getCopies.playerStats({ pid: p.pid });
-
         if (player.shouldRetire(p)) {
-            player.retire(p, playerStats, conditions);
+            player.retire(p, conditions);
             update = true;
         }
 
         // Update "free agent years" counter and retire players who have been free agents for more than one years
         if (p.tid === PLAYER.FREE_AGENT) {
             if (p.yearsFreeAgent >= 1) {
-                player.retire(p, playerStats, conditions);
+                player.retire(p, conditions);
                 update = true;
             } else {
                 p.yearsFreeAgent += 1;
@@ -652,7 +649,7 @@ async function newPhaseFreeAgency(conditions: Conditions) {
         p.tid = PLAYER.UNDRAFTED;
         p.ratings[0].fuzz /= Math.sqrt(2);
         player.develop(p, 0); // Update skills/pot based on fuzz
-        await player.updateValues(p);
+        player.updateValues(p);
         await idb.cache.players.put(p);
     }
     const players4 = await idb.cache.players.indexGetAll(
@@ -663,7 +660,7 @@ async function newPhaseFreeAgency(conditions: Conditions) {
         p.tid = PLAYER.UNDRAFTED_2;
         p.ratings[0].fuzz /= Math.sqrt(2);
         player.develop(p, 0); // Update skills/pot based on fuzz
-        await player.updateValues(p);
+        player.updateValues(p);
         await idb.cache.players.put(p);
     }
     idb.cache.markDirtyIndexes("players");

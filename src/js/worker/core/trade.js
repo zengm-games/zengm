@@ -362,7 +362,7 @@ const processTrade = async (tradeSummary, tids, pids, dpids) => {
             //p.gamesUntilTradable = 15;
             p.ptModifier = 1; // Reset
             if (g.phase <= PHASE.PLAYOFFS) {
-                await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
+                player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
             }
             await idb.cache.players.put(p);
         }

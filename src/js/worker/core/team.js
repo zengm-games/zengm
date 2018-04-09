@@ -1164,7 +1164,7 @@ async function checkRosterSizes(
                         break;
                     }
                     p.tid = tid;
-                    await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
+                    player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
                     player.setContract(p, p.contract, true);
                     p.gamesUntilTradable = 15;
                     idb.cache.markDirtyIndexes("players");

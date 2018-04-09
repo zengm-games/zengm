@@ -190,7 +190,7 @@ async function genPlayers(
 
     for (const p of players) {
         // Update player values after ratings changes
-        await player.updateValues(p);
+        player.updateValues(p);
         await idb.cache.players.add(p);
     }
 
@@ -223,7 +223,7 @@ async function genPlayers(
             reb: 80,
         });
         player.develop(p, 0);
-        await player.updateValues(p);
+        player.updateValues(p);
         const pid = await idb.cache.players.add(p);
         if (typeof pid === "number") {
             await logEvent({
@@ -266,7 +266,7 @@ async function genPlayers(
             reb: 80,
         });
         player.develop(p, 0);
-        await player.updateValues(p);
+        player.updateValues(p);
         p.ratings[0].skills = ["Dp"];
         const pid = await idb.cache.players.add(p);
         if (typeof pid === "number") {
@@ -840,7 +840,7 @@ async function selectPlayer(pick: PickRealized, pid: number) {
 
     // Add stats row if necessary (fantasy draft in ongoing season)
     if (g.phase === PHASE.FANTASY_DRAFT && g.nextPhase <= PHASE.PLAYOFFS) {
-        await player.addStatsRow(p, g.nextPhase === PHASE.PLAYOFFS);
+        player.addStatsRow(p, g.nextPhase === PHASE.PLAYOFFS);
     }
 
     await idb.cache.players.put(p);

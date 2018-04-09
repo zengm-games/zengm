@@ -396,27 +396,17 @@ async function create(
                 g.minContract,
             );
 
-            // Separate out stats
-            const playerStats = p.stats;
-            delete p.stats;
-
-            await player.updateValues(p, playerStats);
-            await idb.cache.players.put(p);
-
             // If no stats in League File, create blank stats rows for active players if necessary
-            if (playerStats.length === 0) {
+            if (!p.stats) {
+                p.stats = [];
+            }
+            if (p.stats.length === 0) {
                 if (p.tid >= 0 && g.phase <= PHASE.PLAYOFFS) {
-                    // Needs pid, so must be called after put. It's okay, statsTid was already set in player.augmentPartialPlayer
-                    await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
+                    player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
                 }
             } else {
                 // If there are stats in the League File, add them to the database
-                const addStatsRows = async () => {
-                    const ps = playerStats.shift();
-
-                    // Augment with pid, if it's not already there - can't be done in player.augmentPartialPlayer because pid is not known at that point
-                    ps.pid = p.pid;
-
+                for (const ps of p.stats) {
                     // Could be calculated correctly if I wasn't lazy
                     if (!ps.hasOwnProperty("yearsWithTeam")) {
                         ps.yearsWithTeam = 1;
@@ -429,19 +419,11 @@ async function create(
                     if (!ps.hasOwnProperty("pm")) {
                         ps.pm = 0;
                     }
-
-                    // Delete psid because it can cause problems due to interaction addStatsRow above
-                    delete ps.psid;
-
-                    await idb.cache.playerStats.add(ps);
-
-                    // On to the next one
-                    if (playerStats.length > 0) {
-                        await addStatsRows();
-                    }
-                };
-                await addStatsRows();
+                }
             }
+
+            player.updateValues(p);
+            await idb.cache.players.put(p);
         }
     } else {
         // Generate past 20 years of draft classes
@@ -469,7 +451,7 @@ async function create(
             const p = newPlayers[i];
             player.develop(p, agingYears, true);
             p.draft.year -= agingYears;
-            await player.updateValues(p);
+            player.updateValues(p);
 
             if (!player.shouldRetire(p)) {
                 keptPlayers.push(p);
@@ -497,8 +479,8 @@ async function create(
             const p = teamPlayers[i];
             p.tid = newTid;
             player.setContract(p, player.genContract(p, true), true);
-            await idb.cache.players.add(p); // Needed before addStatsRow
-            await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
+            player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
+            await idb.cache.players.add(p);
         }
         for (let i = 0; i < freeAgentPlayers.length; i++) {
             const p = freeAgentPlayers[i];
@@ -597,26 +579,6 @@ async function exportLeague(stores: string[]) {
             exportedLeague[store] = await getAll(idb.league[store]);
         }),
     );
-
-    // Move playerStats to players object, similar to old DB structure. Makes editing JSON output nicer.
-    if (stores.includes("playerStats")) {
-        for (let i = 0; i < exportedLeague.playerStats.length; i++) {
-            const pid = exportedLeague.playerStats[i].pid;
-            for (let j = 0; j < exportedLeague.players.length; j++) {
-                if (exportedLeague.players[j].pid === pid) {
-                    if (!exportedLeague.players[j].hasOwnProperty("stats")) {
-                        exportedLeague.players[j].stats = [];
-                    }
-                    exportedLeague.players[j].stats.push(
-                        exportedLeague.playerStats[i],
-                    );
-                    break;
-                }
-            }
-        }
-
-        delete exportedLeague.playerStats;
-    }
 
     if (stores.includes("teams")) {
         for (let i = 0; i < exportedLeague.teamSeasons.length; i++) {

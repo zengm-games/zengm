@@ -1,11 +1,8 @@
 // Typing is too hard due to https://github.com/facebook/flow/issues/183
 
-import backboard from "backboard";
 import groupBy from "lodash/groupBy";
 import { PLAYER, g, helpers } from "../../../common";
-import { filterOrderStats, mergeByPk } from "./helpers";
 import { player } from "../../core";
-import { idb } from "../../db";
 import type {
     Player,
     PlayerFiltered,
@@ -198,7 +195,7 @@ const processAttrs = (
     }
 };
 
-const processRatings = async (
+const processRatings = (
     output: PlayerFiltered,
     p: Player,
     { fuzz, ratings, showRetired, stats, season }: PlayerOptionsRequired,
@@ -454,7 +451,20 @@ const reduceCareerStats = (careerStats, attr, playoffs) => {
         .reduce((memo, num) => memo + num, 0);
 };
 
-const processStats = async (
+const getPlayerStats = (playerStats, season, tid, playoffs, regularSeason) => {
+    return helpers.deepCopy(
+        playerStats.filter(ps => {
+            const seasonCheck = season === undefined || ps.season === season;
+            const tidCheck = tid === undefined || ps.tid === tid;
+            const playoffsCheck =
+                (playoffs && ps.playoffs) || (regularSeason && !ps.playoffs);
+
+            return seasonCheck && tidCheck && playoffsCheck;
+        }),
+    );
+};
+
+const processStats = (
     output: PlayerFiltered,
     p: Player,
     keepWithNoStats: boolean,
@@ -469,63 +479,25 @@ const processStats = async (
         stats,
     }: PlayerOptionsRequired,
 ) => {
-    let playerStats;
-
-    const playerStatsFromCache = () => {
-        // Last 1-2 seasons, from cache
-        return idb.cache.playerStats.indexGetAll("playerStatsAllByPid", p.pid);
-    };
-
-    if (season === undefined) {
-        // All seasons, merge cache and database
-        playerStats = mergeByPk(
-            await idb.league.playerStats
-                .index("pid, season, tid")
-                .getAll(backboard.bound([p.pid], [p.pid, ""])),
-            await playerStatsFromCache(),
-            idb.cache.storeInfos.playerStats.pk,
-        );
-    } else if (season >= g.season - 1 && p.tid !== PLAYER.RETIRED) {
-        // Recent season for non-retired player, from cache
-        playerStats = await playerStatsFromCache();
-    } else {
-        // Old season or retired, from database
-        playerStats = await idb.league.playerStats
-            .index("pid, season, tid")
-            .getAll(backboard.bound([p.pid, season], [p.pid, season, ""]));
-    }
-
-    // Handle playoffs/regularSeason
-    playerStats = filterOrderStats(playerStats, playoffs, regularSeason);
-
     // Only season(s) and team in question
-    playerStats = playerStats.filter(ps => {
-        const seasonCheck = season === undefined || ps.season === season;
-        const tidCheck = tid === undefined || ps.tid === tid;
-        return seasonCheck && tidCheck;
-    });
+    let playerStats = getPlayerStats(
+        p.stats,
+        season,
+        tid,
+        playoffs,
+        regularSeason,
+    );
 
     // oldStats crap
     if (oldStats && season !== undefined && playerStats.length === 0) {
         const oldSeason = season - 1;
-
-        // This isn't very DRY with above code, but oh well
-
-        if (oldSeason >= g.season - 1) {
-            playerStats = await playerStatsFromCache();
-        } else {
-            playerStats = await idb.league.playerStats
-                .index("pid, season, tid")
-                .getAll(
-                    backboard.bound([p.pid, oldSeason], [p.pid, oldSeason, ""]),
-                );
-        }
-        playerStats = filterOrderStats(playerStats, playoffs, regularSeason);
-        playerStats = playerStats.filter(ps => {
-            const seasonCheck = season === undefined || ps.season === oldSeason;
-            const tidCheck = tid === undefined || ps.tid === tid;
-            return seasonCheck && tidCheck;
-        });
+        playerStats = getPlayerStats(
+            p.stats,
+            oldSeason,
+            tid,
+            playoffs,
+            regularSeason,
+        );
     }
 
     if (playerStats.length === 0 && showNoStats) {
@@ -588,7 +560,7 @@ const processStats = async (
     }
 };
 
-const processPlayer = async (p: Player, options: PlayerOptions) => {
+const processPlayer = (p: Player, options: PlayerOptions) => {
     const output = {};
 
     // Do this check before stats for a faster short circuit (no DB access)
@@ -609,7 +581,7 @@ const processPlayer = async (p: Player, options: PlayerOptions) => {
             (options.season === undefined || options.season > p.draft.year));
 
     if (options.stats.length > 0 || keepWithNoStats) {
-        await processStats(output, p, keepWithNoStats, options);
+        processStats(output, p, keepWithNoStats, options);
 
         // Only add a player if filterStats finds something (either stats that season, or options overriding that check)
         if (output.stats === undefined && !keepWithNoStats) {
@@ -700,11 +672,9 @@ const getCopies = async (
         statType,
     };
 
-    const playersFiltered = await Promise.all(
-        players.map(p => processPlayer(p, options)),
-    );
-
-    return playersFiltered.filter(p => p !== undefined);
+    return players
+        .map(p => processPlayer(p, options))
+        .filter(p => p !== undefined);
 };
 
 export default getCopies;

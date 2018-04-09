@@ -156,7 +156,7 @@ async function accept(
     // Handle stats if the season is in progress
     if (g.phase <= PHASE.PLAYOFFS) {
         // Otherwise, not needed until next season
-        await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
+        player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
     }
 
     player.setContract(

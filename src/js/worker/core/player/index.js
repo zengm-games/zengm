@@ -25,7 +25,6 @@ import type {
     PlayerInjury,
     PlayerRatings,
     PlayerSalary, // eslint-disable-line no-unused-vars
-    PlayerStats,
     PlayerWithoutPid,
 } from "../../../common/types";
 
@@ -412,7 +411,7 @@ function addRatingsRow(p: Player | PlayerWithoutPid, scoutingRank: number) {
  *
  * A row contains stats for unique values of (pid, team, season, playoffs). So new rows need to be added when a player joins a new team, when a new season starts, or when a player's team makes the playoffs. The team ID in p.tid and player ID in p.pid will be used in the stats row, so if a player is changing teams, update p.tid before calling this.
  *
- * Additionally, `p.statsTids` is mutated to reflect the new row, but `p` is NOT saved to the database! So make sure you do that after calling this function. (Or before would be fine too probably, it'd still get marked dirty and flush from cache).
+ * `p.stats` and `p.statsTids` are mutated to reflect the new row, but `p` is NOT saved to the database! So make sure you do that after calling this function. (Or before would be fine too probably, it'd still get marked dirty and flush from cache).
  *
  * @memberOf core.player
  * @param {Object} p Player object.
@@ -420,7 +419,6 @@ function addRatingsRow(p: Player | PlayerWithoutPid, scoutingRank: number) {
  */
 async function addStatsRow(p: Player, playoffs?: boolean = false) {
     const statsRow = {
-        pid: p.pid,
         season: g.season,
         tid: p.tid,
         playoffs,
@@ -469,10 +467,7 @@ async function addStatsRow(p: Player, playoffs?: boolean = false) {
     p.statsTids = Array.from(new Set(p.statsTids));
 
     // Calculate yearsWithTeam
-    const playerStats = (await idb.cache.playerStats.indexGetAll(
-        "playerStatsAllByPid",
-        p.pid,
-    )).filter(ps => !ps.playoffs);
+    const playerStats = p.stats.filter(ps => !ps.playoffs);
     if (playerStats.length > 0) {
         const i = playerStats.length - 1;
         if (
@@ -483,7 +478,7 @@ async function addStatsRow(p: Player, playoffs?: boolean = false) {
         }
     }
 
-    await idb.cache.playerStats.add(statsRow);
+    p.stats.push(statsRow);
 }
 
 const heightToRating = (heightInInches: number) => {
@@ -548,9 +543,9 @@ function contractSeasonsRemaining(
  * @param {Object} p Player object.
  * @return {boolean} Hall of Fame worthy?
  */
-function madeHof(p: Player, playerStats: PlayerStats[]): boolean {
+function madeHof(p: Player): boolean {
     // Average together WS and EWA
-    const winShares = playerStats.map(ps => {
+    const winShares = p.stats.map(ps => {
         let sum = 0;
 
         if (typeof ps.dws === "number") {
@@ -587,33 +582,12 @@ function madeHof(p: Player, playerStats: PlayerStats[]): boolean {
     return total + df > 100;
 }
 
-async function updateValues(
-    p: Player | PlayerWithoutPid,
-    psOverride?: PlayerStats[],
-) {
-    let playerStats;
-
-    if (psOverride) {
-        // Only when creating new league from file, since no cache yet then
-        playerStats = psOverride.filter(ps => !ps.playoffs);
-    } else if (typeof p.pid === "number") {
-        playerStats = (await idb.cache.playerStats.indexGetAll(
-            "playerStatsAllByPid",
-            p.pid,
-        )).filter(ps => !ps.playoffs);
-    } else {
-        // New player objects don't have pids let alone stats, so just skip
-        playerStats = [];
-    }
-
-    // Sort ascending, just in case. This might be slightly wrong for traded players, but that's better than being horribly wrong if somehow the stats array is out of order.
-    playerStats.sort((a, b) => a.season - b.season);
-
-    p.value = value(p, playerStats);
-    p.valueNoPot = value(p, playerStats, { noPot: true });
-    p.valueFuzz = value(p, playerStats, { fuzz: true });
-    p.valueNoPotFuzz = value(p, playerStats, { noPot: true, fuzz: true });
-    p.valueWithContract = value(p, playerStats, { withContract: true });
+function updateValues(p: Player | PlayerWithoutPid) {
+    p.value = value(p);
+    p.valueNoPot = value(p, { noPot: true });
+    p.valueFuzz = value(p, { fuzz: true });
+    p.valueNoPotFuzz = value(p, { noPot: true, fuzz: true });
+    p.valueWithContract = value(p, { withContract: true });
 }
 
 /**
@@ -628,7 +602,6 @@ async function updateValues(
  */
 function retire(
     p: Player,
-    playerStats: PlayerStats[],
     conditions?: Conditions,
     retiredNotification?: boolean = true,
 ) {
@@ -651,7 +624,7 @@ function retire(
     p.retiredYear = g.season;
 
     // Add to Hall of Fame?
-    if (conditions && madeHof(p, playerStats)) {
+    if (conditions && madeHof(p)) {
         p.hof = true;
         p.awards.push({
             season: g.season,
@@ -918,10 +891,7 @@ async function killOne(conditions: Conditions) {
     // Pick a random player on that team
     const p = random.choice(players);
 
-    // Get player stats, used for HOF calculation
-    const playerStats = await idb.getCopies.playerStats({ pid: p.pid });
-
-    retire(p, playerStats, conditions, false);
+    retire(p, conditions, false);
     p.diedYear = g.season;
 
     await idb.cache.players.put(p);

@@ -260,6 +260,7 @@ const generate = (
         retiredYear: Infinity,
         rosterOrder: 666, // Will be set later
         salaries: [],
+        stats: [],
         statsTids: [],
         tid,
         watch: false,

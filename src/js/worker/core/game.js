@@ -308,34 +308,15 @@ async function writePlayerStats(results: GameResults, conditions: Conditions) {
                         ),
                     );
 
-                    let ps = await idb.cache.playerStats.indexGet(
-                        "playerStatsByPid",
-                        p.id,
-                    );
+                    const p2 = await idb.cache.players.get(p.id);
+                    let ps = p2.stats[p2.stats.length - 1];
 
-                    // This should never happen, but sometimes does
-                    if (!ps) {
-                        const p2 = await idb.cache.players.get(p.id);
-                        if (!p2) {
-                            throw new Error(
-                                `Missing player for player ${p.id}`,
-                            );
-                        }
-                        await player.addStatsRow(
-                            p2,
-                            g.phase === PHASE.PLAYOFFS,
-                        );
+                    // This should never happen, but sometimes does (actually it might not, after putting stats back in player object)
+                    const playoffs = g.phase === PHASE.PLAYOFFS;
+                    if (!ps || ps.tid !== t.id || ps.playoffs !== playoffs) {
+                        player.addStatsRow(p2, playoffs);
 
-                        ps = await idb.cache.playerStats.indexGet(
-                            "playerStatsByPid",
-                            p.id,
-                        );
-
-                        if (!ps) {
-                            throw new Error(
-                                `Persistent missing stats for player ${p.id}`,
-                            );
-                        }
+                        ps = p2.stats[p2.stats.length - 1];
                     }
 
                     // Since index is not on playoffs, manually check
@@ -377,109 +358,93 @@ async function writePlayerStats(results: GameResults, conditions: Conditions) {
                     }
                     ps.gp += 1; // Already checked for non-zero minutes played above
 
-                    await idb.cache.playerStats.put(ps);
-
                     const injuredThisGame =
                         p.injured && p.injury.type === "Healthy";
 
-                    // Only update player object (values and injuries) every 10 regular season games or on injury
-                    if (
-                        (ps.gp % 10 === 0 && g.phase !== PHASE.PLAYOFFS) ||
-                        injuredThisGame
-                    ) {
-                        const p2 = await idb.cache.players.get(p.id);
+                    // Injury crap - assign injury type if player does not already have an injury in the database
+                    let biggestRatingsLoss;
+                    if (injuredThisGame) {
+                        p2.injury = player.injury(t.healthRank);
+                        p.injury = helpers.deepCopy(p2.injury); // So it gets written to box score
 
-                        // Injury crap - assign injury type if player does not already have an injury in the database
-                        let biggestRatingsLoss;
-                        if (injuredThisGame) {
-                            p2.injury = player.injury(t.healthRank);
-                            p.injury = helpers.deepCopy(p2.injury); // So it gets written to box score
+                        const stopPlay =
+                            g.stopOnInjury &&
+                            p2.injury.gamesRemaining > g.stopOnInjuryGames &&
+                            local.autoPlaySeasons === 0 &&
+                            g.userTid === p2.tid;
+                        logEvent(
+                            {
+                                type: "injured",
+                                text: `<a href="${helpers.leagueUrl([
+                                    "player",
+                                    p2.pid,
+                                ])}">${p2.firstName} ${
+                                    p2.lastName
+                                }</a> was injured! (${
+                                    p2.injury.type
+                                }, out for ${p2.injury.gamesRemaining} games)`,
+                                showNotification: g.userTid === p2.tid,
+                                persistent: stopPlay,
+                                pids: [p2.pid],
+                                tids: [p2.tid],
+                            },
+                            conditions,
+                        );
 
-                            const stopPlay =
-                                g.stopOnInjury &&
-                                p2.injury.gamesRemaining >
-                                    g.stopOnInjuryGames &&
-                                local.autoPlaySeasons === 0 &&
-                                g.userTid === p2.tid;
-                            logEvent(
-                                {
-                                    type: "injured",
-                                    text: `<a href="${helpers.leagueUrl([
-                                        "player",
-                                        p2.pid,
-                                    ])}">${p2.firstName} ${
-                                        p2.lastName
-                                    }</a> was injured! (${
-                                        p2.injury.type
-                                    }, out for ${
-                                        p2.injury.gamesRemaining
-                                    } games)`,
-                                    showNotification: g.userTid === p2.tid,
-                                    persistent: stopPlay,
-                                    pids: [p2.pid],
-                                    tids: [p2.tid],
-                                },
-                                conditions,
+                        // Some chance of a loss of athleticism from serious injuries
+                        // 100 game injury: 67% chance of losing between 0 and 10 of spd, jmp, endu
+                        // 50 game injury: 33% chance of losing between 0 and 5 of spd, jmp, endu
+                        if (
+                            p2.injury.gamesRemaining > 25 &&
+                            Math.random() < p2.injury.gamesRemaining / 150
+                        ) {
+                            biggestRatingsLoss = Math.round(
+                                p2.injury.gamesRemaining / 10,
                             );
+                            if (biggestRatingsLoss > 10) {
+                                biggestRatingsLoss = 10;
+                            }
 
-                            // Some chance of a loss of athleticism from serious injuries
-                            // 100 game injury: 67% chance of losing between 0 and 10 of spd, jmp, endu
-                            // 50 game injury: 33% chance of losing between 0 and 5 of spd, jmp, endu
+                            // Small chance of horrible things
                             if (
-                                p2.injury.gamesRemaining > 25 &&
-                                Math.random() < p2.injury.gamesRemaining / 150
+                                biggestRatingsLoss === 10 &&
+                                Math.random() < 0.01
                             ) {
-                                biggestRatingsLoss = Math.round(
-                                    p2.injury.gamesRemaining / 10,
-                                );
-                                if (biggestRatingsLoss > 10) {
-                                    biggestRatingsLoss = 10;
-                                }
-
-                                // Small chance of horrible things
-                                if (
-                                    biggestRatingsLoss === 10 &&
-                                    Math.random() < 0.01
-                                ) {
-                                    biggestRatingsLoss = 30;
-                                }
-
-                                const r = p2.ratings.length - 1;
-                                p2.ratings[r].spd = helpers.bound(
-                                    p2.ratings[r].spd -
-                                        random.randInt(0, biggestRatingsLoss),
-                                    0,
-                                    100,
-                                );
-                                p2.ratings[r].jmp = helpers.bound(
-                                    p2.ratings[r].jmp -
-                                        random.randInt(0, biggestRatingsLoss),
-                                    0,
-                                    100,
-                                );
-                                p2.ratings[r].endu = helpers.bound(
-                                    p2.ratings[r].endu -
-                                        random.randInt(0, biggestRatingsLoss),
-                                    0,
-                                    100,
-                                );
+                                biggestRatingsLoss = 30;
                             }
 
-                            if (stopPlay) {
-                                lock.set("stopGameSim", true);
-                            }
+                            const r = p2.ratings.length - 1;
+                            p2.ratings[r].spd = helpers.bound(
+                                p2.ratings[r].spd -
+                                    random.randInt(0, biggestRatingsLoss),
+                                0,
+                                100,
+                            );
+                            p2.ratings[r].jmp = helpers.bound(
+                                p2.ratings[r].jmp -
+                                    random.randInt(0, biggestRatingsLoss),
+                                0,
+                                100,
+                            );
+                            p2.ratings[r].endu = helpers.bound(
+                                p2.ratings[r].endu -
+                                    random.randInt(0, biggestRatingsLoss),
+                                0,
+                                100,
+                            );
                         }
 
-                        // Player value depends on ratings and regular season stats, neither of which can change in the playoffs (except for severe injuries)
-                        if (g.phase !== PHASE.PLAYOFFS) {
-                            await player.updateValues(p2);
+                        if (stopPlay) {
+                            lock.set("stopGameSim", true);
                         }
-                        if (biggestRatingsLoss) {
-                            await player.updateValues(p2);
-                        }
-
-                        await idb.cache.players.put(p2);
                     }
+
+                    // Player value depends on ratings and regular season stats, neither of which can change in the playoffs (except for severe injuries)
+                    if (g.phase !== PHASE.PLAYOFFS || biggestRatingsLoss) {
+                        player.updateValues(p2);
+                    }
+
+                    promises.push(idb.cache.players.put(p2));
 
                     return Promise.all(promises);
                 }),

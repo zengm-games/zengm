@@ -457,7 +457,7 @@ export type PlayerSalary = {|
 |};
 
 // ***p stats can be undefined
-export type PlayerStats = any;
+type PlayerStats = any;
 
 export type PlayerWithoutPid = {|
     awards: {|
@@ -496,6 +496,7 @@ export type PlayerWithoutPid = {|
     retiredYear: number,
     rosterOrder: number,
     salaries: PlayerSalary[],
+    stats: PlayerStats[],
     statsTids: number[],
     tid: number,
     value: number,
@@ -514,11 +515,6 @@ export type PlayerWithoutPid = {|
 export type Player = {|
     ...PlayerWithoutPid,
     pid: number,
-|};
-
-export type PlayerWithStats = {|
-    ...Player,
-    stats: PlayerStats[],
 |};
 
 type PlayoffSeriesTeam = {|

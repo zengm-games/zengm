@@ -2,11 +2,7 @@
 
 import { g } from "../../../common";
 import { player } from "../../core";
-import type {
-    Player,
-    PlayerStats,
-    PlayerWithoutPid,
-} from "../../../common/types";
+import type { Player, PlayerWithoutPid } from "../../../common/types";
 
 /**
  * Returns a numeric value for a given player, representing is general worth to a typical team
@@ -20,7 +16,6 @@ import type {
  *
  * @memberOf core.player
  * @param {Object} p Player object.
- * @param {Array.<Object>} Array of playerStats objects, regular season only, starting with oldest. Only the first 1 or 2 will be used.
  * @param {Object=} options Object containing several optional options:
  *     noPot: When true, don't include potential in the value calcuation (useful for roster
  *         ordering and game simulation). Default false.
@@ -31,7 +26,6 @@ import type {
  */
 const value = (
     p: Player | PlayerWithoutPid,
-    ps: PlayerStats[],
     options: {
         fuzz?: boolean,
         noPot?: boolean,
@@ -60,6 +54,7 @@ const value = (
     const intercept = 31.693;
 
     // 1. Account for stats (and current ratings if not enough stats)
+    const ps = p.stats.filter(playerStats => !playerStats.playoffs);
     let current = pr.ovr; // No stats at all? Just look at ratings more, then.
     if (ps.length > 0) {
         const ps1 = ps[ps.length - 1]; // Most recent stats

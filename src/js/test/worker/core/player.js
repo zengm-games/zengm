@@ -10,7 +10,7 @@ g.userTids = [0];
 
 describe("core/player", () => {
     describe("#generate()", () => {
-        it.skip("should add stats row only for players generated on teams, not free agents or undrafted players", () => {
+        it("should add stats row only for players generated on teams, not free agents or undrafted players", () => {
             // Needs DB to check since stats are not in player object anymore
             let p = player.generate(-2, 19, 2012, false, 15.5);
             assert.equal(p.stats.length, 0);
@@ -30,7 +30,7 @@ describe("core/player", () => {
         it("should correctly assign players to the Hall of Fame", () => {
             // Like player from http://www.reddit.com/r/BasketballGM/comments/222k8b/so_a_10x_dpoy_apparently_doesnt_have_what_it/
             const p = player.generate(0, 19, 2012, false, 15.5);
-            const playerStats = [
+            p.stats = [
                 {
                     min: 1 * 2.6,
                     per: 18.7,
@@ -113,7 +113,7 @@ describe("core/player", () => {
                 },
             ];
 
-            assert.equal(player.madeHof(p, playerStats), false);
+            assert.equal(player.madeHof(p), false);
         });
     });
 

@@ -395,11 +395,11 @@ const advStats = async () => {
     // For USG%: min, fga, fta, tov
     // For DRtg: min, pf, blk, stl, drb
     // For Ortg: min, tp, ast, fg, pts, ft, fga, fta, orb
-    let players = await idb.cache.players.indexGetAll("playersByTid", [
+    const playersRaw = await idb.cache.players.indexGetAll("playersByTid", [
         0, // Active players have tid >= 0
         Infinity,
     ]);
-    players = await idb.getCopies.playersPlus(players, {
+    const players = await idb.getCopies.playersPlus(playersRaw, {
         attrs: ["pid", "tid"],
         stats: [
             "min",
@@ -522,18 +522,19 @@ const advStats = async () => {
     // Save to database
     const keys = Object.keys(updatedStats);
     await Promise.all(
-        players.map(async (p, i) => {
-            const ps = await idb.cache.playerStats.indexGet(
-                "playerStatsByPid",
-                p.pid,
-            );
-            for (const key of keys) {
-                // ***p stats could be NaN for upgraded leagues
-                if (!Number.isNaN(updatedStats[key][i])) {
-                    ps[key] = updatedStats[key][i];
+        players.map(async ({ pid }, i) => {
+            const p = playersRaw.find(p2 => p2.pid === pid);
+            if (p) {
+                const ps = p.stats[p.stats.length - 1];
+                if (ps) {
+                    for (const key of keys) {
+                        if (!Number.isNaN(updatedStats[key][i])) {
+                            ps[key] = updatedStats[key][i];
+                        }
+                    }
+                    await idb.cache.players.put(p);
                 }
             }
-            await idb.cache.playerStats.put(ps);
         }),
     );
 };

@@ -59,10 +59,6 @@ describe("core/league", () => {
                 true,
             );
             assert.equal(
-                idb.league.objectStoreNames.contains("playerStats"),
-                true,
-            );
-            assert.equal(
                 idb.league.objectStoreNames.contains("playoffSeries"),
                 true,
             );

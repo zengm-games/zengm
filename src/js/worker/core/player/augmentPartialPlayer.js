@@ -5,7 +5,7 @@ import { player } from "../../core";
 import { bootstrapPot } from "./develop";
 import generate from "./generate";
 import { random } from "../../util";
-import type { RatingKey, PlayerWithStats } from "../../../common/types";
+import type { RatingKey, Player } from "../../../common/types";
 
 /**
  * Take a partial player object, such as from an uploaded JSON file, and add everything it needs to be a real player object.
@@ -20,7 +20,7 @@ const augmentPartialPlayer = (
     p: any,
     scoutingRank: number,
     version: number | void,
-): PlayerWithStats => {
+): Player => {
     let age;
     if (!p.hasOwnProperty("born")) {
         age = random.randInt(19, 35);

@@ -38,10 +38,6 @@ const createLeague = (upgradeDB, lid: number) => {
         keyPath: "fid",
         autoIncrement: true,
     });
-    const playerStatsStore = upgradeDB.createObjectStore("playerStats", {
-        keyPath: "psid",
-        autoIncrement: true,
-    });
     const playerStore = upgradeDB.createObjectStore("players", {
         keyPath: "pid",
         autoIncrement: true,
@@ -70,9 +66,6 @@ const createLeague = (upgradeDB, lid: number) => {
     eventStore.createIndex("season", "season", { unique: false });
     eventStore.createIndex("pids", "pids", { unique: false, multiEntry: true });
     gameStore.createIndex("season", "season", { unique: false });
-    playerStatsStore.createIndex("pid, season, tid", ["pid", "season", "tid"], {
-        unique: false,
-    }); // Can't be unique because player could get traded back to same team in one season (and because playoffs is boolean)
     playerStore.createIndex(
         "draft.year, retiredYear",
         ["draft.year", "retiredYear"],
@@ -326,7 +319,6 @@ const migrateLeague = (upgradeDB, lid) => {
         });
     }
     if (upgradeDB.oldVersion <= 27) {
-        // Split old single string p.name into two names
         upgradeDB.teamSeasons.iterate(teamSeason => {
             if (typeof teamSeason.stadiumCapacity !== "number") {
                 teamSeason.stadiumCapacity = 25000;

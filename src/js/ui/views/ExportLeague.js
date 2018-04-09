@@ -7,13 +7,7 @@ const categories = [
     {
         objectStores: "players,releasedPlayers,awards",
         name: "Players",
-        desc: "All player info, ratings, and awards - but not stats!",
-        checked: true,
-    },
-    {
-        objectStores: "playerStats",
-        name: "Player Stats",
-        desc: "All player stats.",
+        desc: "All player info, ratings, stats, and awards",
         checked: true,
     },
     {
@@ -117,23 +111,6 @@ class ExportLeague extends React.Component {
             .map(input => input.value)
             .join(",")
             .split(",");
-
-        // Can't export player stats without players
-        if (
-            objectStores.includes("playerStats") &&
-            !objectStores.includes("players")
-        ) {
-            this.setState({
-                data: null,
-                filename: null,
-                status: (
-                    <span className="text-danger">
-                        You can't export player stats without exporting players!
-                    </span>
-                ),
-            });
-            return;
-        }
 
         const data = await toWorker("exportLeague", objectStores);
         let json;

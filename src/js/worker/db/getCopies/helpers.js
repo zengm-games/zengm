@@ -2,24 +2,26 @@
 
 import orderBy from "lodash/orderBy";
 import { helpers } from "../../../common";
-import type { PlayerStats, TeamStats } from "../../../common/types"; // eslint-disable-line no-unused-vars
+import type { TeamStats } from "../../../common/types"; // eslint-disable-line no-unused-vars
 
 // Indexes can't handle playoffs/regularSeason and different ones can come back inconsistently sorted
-const filterOrderStats = <T: PlayerStats | TeamStats>(
-    stats: T[],
+const filterOrderStats = (
+    stats: TeamStats[],
     playoffs: boolean,
     regularSeason: boolean,
-): T[] => {
+): TeamStats[] => {
     return orderBy(
-        stats.filter(ps => {
-            if (playoffs && ps.playoffs) {
-                return true;
-            }
-            if (regularSeason && !ps.playoffs) {
-                return true;
-            }
-            return false;
-        }),
+        helpers.deepCopy(
+            stats.filter(ps => {
+                if (playoffs && ps.playoffs) {
+                    return true;
+                }
+                if (regularSeason && !ps.playoffs) {
+                    return true;
+                }
+                return false;
+            }),
+        ),
         ["season", "playoffs", "psid", "rid"],
     );
 };

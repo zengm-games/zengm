@@ -743,10 +743,7 @@ const handleUploadedDraftClass = async (
                 delete p.pid;
             }
 
-            // Don't want lingering stats vector in player objects, and draft prospects don't have any stats
-            delete p.stats;
-
-            await player.updateValues(p);
+            player.updateValues(p);
             await idb.cache.players.add(p);
         }),
     );
@@ -1124,16 +1121,16 @@ const upsertCustomizedPlayer = async (
 
     // Recalculate player values, since ratings may have changed
     player.develop(p, 0);
-    await player.updateValues(p);
-
-    // Save to database, adding pid if it doesn't already exist
-    await idb.cache.players.put(p);
+    player.updateValues(p);
 
     // Add regular season or playoffs stat row, if necessary
     if (p.tid >= 0 && p.tid !== originalTid && g.phase <= PHASE.PLAYOFFS) {
         // If it is the playoffs, this is only necessary if p.tid actually made the playoffs, but causes only cosmetic harm otherwise.
-        await player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
+        player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
     }
+
+    // Save to database, adding pid if it doesn't already exist
+    await idb.cache.players.put(p);
 
     if (typeof p.pid !== "number") {
         throw new Error("Unknown pid");

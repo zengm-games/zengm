@@ -1,17 +1,3 @@
-performance in large leagues
-- stats back in player objects?
-  - IDB upgrade
-    - orderBy(
-      playerStats,
-      ["season", "playoffs", "psid"],
-    );
-    - how to do it with no promises (ffx)? need to write it with raw IDB API
-      - iterate over players, getAll on index to get stats, sort stats (if necessary), save player, cursor.continue() on player iteration
-  - benchmark!
-    - load time of pages in 1000+ year league
-    - game sim performance, in new league
-    - game sim performance, in 1000+ year league
-
 click on (not drag to) max speed in game sim first time doesn't work
 - https://www.reddit.com/r/BasketballGM/comments/8az5xx/game_speed_setting_bug/
 

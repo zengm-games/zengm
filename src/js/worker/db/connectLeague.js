@@ -1,11 +1,37 @@
 // @flow
 
 import backboard from "backboard";
+import orderBy from "lodash/orderBy";
 import { PLAYER } from "../../common";
 import { player } from "../core";
 import { bootstrapPot } from "../core/player/develop";
 import { logEvent } from "../util";
 import type { RatingKey } from "../../common/types";
+
+// I did it this way (with the raw IDB API) because I was afraid it would read all players into memory before getting
+// the stats and writing them back to the database. Promises/async/await would help, but Firefox before 60 does not like
+// that.
+const upgrade29 = (tx) => {
+    // Iterate over players
+    tx.objectStore("players").openCursor().onsuccess = (event) => {
+        const cursor = event.target.result;
+        if (cursor) {
+            const p = cursor.value;
+            tx.objectStore("playerStats").index("pid, season, tid").getAll(IDBKeyRange.bound([p.pid], [p.pid, ""])).onsuccess = (event2) => {
+                // Index brings them back maybe out of order
+                p.stats = orderBy(
+                    event2.target.result,
+                    ["season", "playoffs", "psid"],
+                );
+                cursor.update(p).onsuccess = () => {
+                    cursor.continue();
+                };
+            };
+        } else {
+            tx.db.deleteObjectStore("playerStats");
+        }
+    };
+};
 
 /**
  * Create a new league database with the latest structure.
@@ -98,6 +124,23 @@ const migrateLeague = (upgradeDB, lid) => {
     let upgradeMsg = `Upgrading league${lid} database from version ${
         upgradeDB.oldVersion
     } to version ${upgradeDB.version}.`;
+
+    let slowUpgradeCalled = false;
+    const slowUpgrade = () => {
+        if (slowUpgradeCalled) {
+            return;
+        }
+        slowUpgradeCalled = true;
+
+        upgradeMsg +=
+            " For large leagues, this can take several minutes or more.";
+        console.log(upgradeMsg);
+        logEvent({
+            type: "upgrade",
+            text: upgradeMsg,
+            saveToDb: false,
+        });
+    }
 
     if (upgradeDB.oldVersion <= 15) {
         throw new Error(
@@ -234,8 +277,7 @@ const migrateLeague = (upgradeDB, lid) => {
         });
     }
     if (upgradeDB.oldVersion <= 26) {
-        upgradeMsg +=
-            " For large leagues, this can take several minutes or more.";
+        slowUpgrade();
 
         // Only non-retired players, for efficiency
         upgradeDB.players.iterate(p => {
@@ -310,13 +352,6 @@ const migrateLeague = (upgradeDB, lid) => {
 
             upgradeDB.players.put(p);
         });
-
-        console.log(upgradeMsg);
-        logEvent({
-            type: "upgrade",
-            text: upgradeMsg,
-            saveToDb: false,
-        });
     }
     if (upgradeDB.oldVersion <= 27) {
         upgradeDB.teamSeasons.iterate(teamSeason => {
@@ -326,11 +361,15 @@ const migrateLeague = (upgradeDB, lid) => {
             upgradeDB.teamSeasons.put(teamSeason);
         });
     }
+    if (upgradeDB.oldVersion <= 28) {
+        slowUpgrade();
+        upgrade29(upgradeDB._dbOrTx._rawTransaction);
+    }
 };
 
 const connectLeague = async (lid: number) => {
     // Would like to await on migrateLeague and inside there, but Firefox
-    const db = await backboard.open(`league${lid}`, 28, upgradeDB => {
+    const db = await backboard.open(`league${lid}`, 29, upgradeDB => {
         if (upgradeDB.oldVersion === 0) {
             createLeague(upgradeDB, lid);
         } else {

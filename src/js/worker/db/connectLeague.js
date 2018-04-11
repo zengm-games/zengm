@@ -12,23 +12,39 @@ import type { RatingKey } from "../../common/types";
 // the stats and writing them back to the database. Promises/async/await would help, but Firefox before 60 does not like
 // that.
 const upgrade29 = (tx) => {
+    let lastCentury = 0;
     // Iterate over players
     tx.objectStore("players").openCursor().onsuccess = (event) => {
         const cursor = event.target.result;
         if (cursor) {
             const p = cursor.value;
+
+            // This can be really slow, so need some UI for progress
+            const century = Math.floor(p.draft.year / 100);
+            if (century > lastCentury) {
+                const text = `Upgrading players drafted in the ${century}00s...`;
+                logEvent({
+                    type: "upgrade",
+                    text,
+                    saveToDb: false,
+                });
+                console.log(text);
+
+                lastCentury = century;
+            }
+
             tx.objectStore("playerStats").index("pid, season, tid").getAll(IDBKeyRange.bound([p.pid], [p.pid, ""])).onsuccess = (event2) => {
                 // Index brings them back maybe out of order
                 p.stats = orderBy(
                     event2.target.result,
                     ["season", "playoffs", "psid"],
                 );
-                cursor.update(p).onsuccess = () => {
-                    cursor.continue();
-                };
+                cursor.update(p);
+                cursor.continue();
             };
         } else {
-            tx.db.deleteObjectStore("playerStats");
+            // This seems to trigger a memory leak in Chrome, so leave playerStats behind...
+            // tx.db.deleteObjectStore("playerStats");
         }
     };
 };

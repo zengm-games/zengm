@@ -11,10 +11,10 @@ import type { RatingKey } from "../../common/types";
 // I did it this way (with the raw IDB API) because I was afraid it would read all players into memory before getting
 // the stats and writing them back to the database. Promises/async/await would help, but Firefox before 60 does not like
 // that.
-const upgrade29 = (tx) => {
+const upgrade29 = tx => {
     let lastCentury = 0;
     // Iterate over players
-    tx.objectStore("players").openCursor().onsuccess = (event) => {
+    tx.objectStore("players").openCursor().onsuccess = event => {
         const cursor = event.target.result;
         if (cursor) {
             const p = cursor.value;
@@ -33,12 +33,19 @@ const upgrade29 = (tx) => {
                 lastCentury = century;
             }
 
-            tx.objectStore("playerStats").index("pid, season, tid").getAll(IDBKeyRange.bound([p.pid], [p.pid, ""])).onsuccess = (event2) => {
+            tx
+                .objectStore("playerStats")
+                .index("pid, season, tid")
+                .getAll(
+                    // $FlowFixMe
+                    IDBKeyRange.bound([p.pid], [p.pid, ""]),
+                ).onsuccess = event2 => {
                 // Index brings them back maybe out of order
-                p.stats = orderBy(
-                    event2.target.result,
-                    ["season", "playoffs", "psid"],
-                );
+                p.stats = orderBy(event2.target.result, [
+                    "season",
+                    "playoffs",
+                    "psid",
+                ]);
                 cursor.update(p);
                 cursor.continue();
             };
@@ -156,7 +163,7 @@ const migrateLeague = (upgradeDB, lid) => {
             text: upgradeMsg,
             saveToDb: false,
         });
-    }
+    };
 
     if (upgradeDB.oldVersion <= 15) {
         throw new Error(

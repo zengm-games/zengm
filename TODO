@@ -7,8 +7,6 @@ performance in large leagues
     );
     - how to do it with no promises (ffx)? need to write it with raw IDB API
       - iterate over players, getAll on index to get stats, sort stats (if necessary), save player, cursor.continue() on player iteration
-  - deleteOldData
-  - advStats might not need playersPlus
   - benchmark!
     - load time of pages in 1000+ year league
     - game sim performance, in new league

@@ -152,7 +152,6 @@ const deleteOldData = async (options: {
             "teamSeasons",
             "teamStats",
             "players",
-            "playerStats",
         ],
         "readwrite",
         tx => {
@@ -178,32 +177,16 @@ const deleteOldData = async (options: {
             }
 
             if (options.retiredPlayers) {
-                const toDelete = [];
-
                 tx.players.index("tid").iterate(PLAYER.RETIRED, p => {
-                    toDelete.push(p.pid);
                     tx.players.delete(p.pid);
                 });
-                tx.playerStats.iterate(ps => {
-                    if (toDelete.includes(ps.pid)) {
-                        tx.playerStats.delete(ps.psid);
-                    }
-                });
             } else if (options.retiredPlayersUnnotable) {
-                const toDelete = [];
-
                 tx.players.index("tid").iterate(PLAYER.RETIRED, p => {
                     if (
                         p.awards.length === 0 &&
                         !p.statsTids.includes(g.userTid)
                     ) {
-                        toDelete.push(p.pid);
                         tx.players.delete(p.pid);
-                    }
-                });
-                tx.playerStats.iterate(ps => {
-                    if (toDelete.includes(ps.pid)) {
-                        tx.playerStats.delete(ps.psid);
                     }
                 });
             }
@@ -211,34 +194,26 @@ const deleteOldData = async (options: {
             if (options.playerStats) {
                 tx.players.iterate(p => {
                     p.ratings = [p.ratings[p.ratings.length - 1]];
+                    p.stats = [p.stats[p.stats.length - 1]];
                     return p;
                 });
-                tx.playerStats.iterate(ps => {
-                    if (ps.season < g.season) {
-                        tx.playerStats.delete(ps.psid);
-                    }
-                });
             } else if (options.playerStatsUnnotable) {
-                const toDelete = [];
-
                 tx.players.iterate(p => {
                     if (
                         p.awards.length === 0 &&
                         !p.statsTids.includes(g.userTid)
                     ) {
                         p.ratings = [p.ratings[p.ratings.length - 1]];
-                        toDelete.push(p.pid);
+                        p.stats = [p.stats[p.stats.length - 1]];
                     }
                     return p;
-                });
-                tx.playerStats.iterate(ps => {
-                    if (ps.season < g.season && toDelete.includes(ps.pid)) {
-                        tx.playerStats.delete(ps.psid);
-                    }
                 });
             }
         },
     );
+
+    // Without this, cached values will still exist
+    await idb.cache.fill();
 };
 
 const draftLottery = async () => {

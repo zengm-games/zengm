@@ -364,7 +364,6 @@ function newSchedule(teams: Team[]): [number, number][] {
     return tids;
 }
 
-/**/
 /**
  * Create a single day's schedule for an in-progress playoffs.
  *

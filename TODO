@@ -1,6 +1,4 @@
 performance in large leagues
-- draft lottery processing time
-  - if it's killing players, use "draft.year, retiredYear" index. just force death at some cutoff, and move the window
 - stats back in player objects?
   - player.generate should initialize (unskipped test)
   - move player stats checks in core/league create to augmentPartialPlayer

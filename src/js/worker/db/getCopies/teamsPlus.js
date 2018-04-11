@@ -1,8 +1,9 @@
 // @flow
 
 import backboard from "backboard";
+import orderBy from "lodash/orderBy";
 import { g, helpers } from "../../../common";
-import { filterOrderStats, mergeByPk } from "./helpers";
+import { mergeByPk } from "./helpers";
 import { team } from "../../core";
 import { idb } from "../../db";
 import type {
@@ -12,6 +13,7 @@ import type {
     TeamSeasonAttr,
     TeamStatAttr,
     TeamStatType,
+    TeamStats,
 } from "../../../common/types";
 
 type TeamOptions = {
@@ -173,6 +175,28 @@ const poss = ts => {
         );
     }
     return 0;
+};
+
+// Indexes can't handle playoffs/regularSeason and different ones can come back inconsistently sorted
+const filterOrderStats = (
+    stats: TeamStats[],
+    playoffs: boolean,
+    regularSeason: boolean,
+): TeamStats[] => {
+    return orderBy(
+        helpers.deepCopy(
+            stats.filter(ts => {
+                if (playoffs && ts.playoffs) {
+                    return true;
+                }
+                if (regularSeason && !ts.playoffs) {
+                    return true;
+                }
+                return false;
+            }),
+        ),
+        ["season", "playoffs", "rid"],
+    );
 };
 
 const processStats = async (

@@ -1,8 +1,5 @@
 performance in large leagues
 - stats back in player objects?
-  - player.generate should initialize (unskipped test)
-  - move player stats checks in core/league create to augmentPartialPlayer
-  - playersPlus doesn't need to be async
   - IDB upgrade
     - orderBy(
       playerStats,
@@ -10,13 +7,15 @@ performance in large leagues
     );
     - how to do it with no promises (ffx)? need to write it with raw IDB API
       - iterate over players, getAll on index to get stats, sort stats (if necessary), save player, cursor.continue() on player iteration
-  - filterOrderStats refactor
   - deleteOldData
   - advStats might not need playersPlus
   - benchmark!
     - load time of pages in 1000+ year league
     - game sim performance, in new league
     - game sim performance, in 1000+ year league
+
+click on (not drag to) max speed in game sim first time doesn't work
+- https://www.reddit.com/r/BasketballGM/comments/8az5xx/game_speed_setting_bug/
 
 stop sending nag messages in auto sim
 - also, less frequent "sorry to bother you again"

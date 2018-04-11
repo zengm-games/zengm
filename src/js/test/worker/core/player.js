@@ -10,19 +10,9 @@ g.userTids = [0];
 
 describe("core/player", () => {
     describe("#generate()", () => {
-        it("should add stats row only for players generated on teams, not free agents or undrafted players", () => {
-            // Needs DB to check since stats are not in player object anymore
-            let p = player.generate(-2, 19, 2012, false, 15.5);
+        it("should create player with no stats", () => {
+            const p = player.generate(-2, 19, 2012, false, 15.5);
             assert.equal(p.stats.length, 0);
-
-            p = player.generate(-1, 19, 2012, false, 15.5);
-            assert.equal(p.stats.length, 0);
-
-            p = player.generate(0, 19, 2012, false, 15.5);
-            assert.equal(p.stats.length, 1);
-
-            p = player.generate(15, 19, 2012, false, 15.5);
-            assert.equal(p.stats.length, 1);
         });
     });
 

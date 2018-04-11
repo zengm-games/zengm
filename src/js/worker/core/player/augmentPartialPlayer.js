@@ -216,6 +216,37 @@ const augmentPartialPlayer = (
     }
     // Don't delete p.pos because it is used as a marker that this is from a league file and we shouldn't automatically change pos over time
 
+    // Don't let imported contracts be created for below the league minimum, and round to nearest $10,000.
+    p.contract.amount = Math.max(
+        10 * Math.round(p.contract.amount / 10),
+        g.minContract,
+    );
+
+    // If no stats in League File, create blank stats rows for active players if necessary
+    if (!Array.isArray(p.stats)) {
+        p.stats = [];
+    }
+    if (p.stats.length === 0) {
+        if (p.tid >= 0 && g.phase <= PHASE.PLAYOFFS) {
+            player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
+        }
+    } else {
+        for (const ps of p.stats) {
+            // Could be calculated correctly if I wasn't lazy
+            if (!ps.hasOwnProperty("yearsWithTeam")) {
+                ps.yearsWithTeam = 1;
+            }
+
+            // If needed, set missing +/-, blocks against to 0
+            if (!ps.hasOwnProperty("ba")) {
+                ps.ba = 0;
+            }
+            if (!ps.hasOwnProperty("pm")) {
+                ps.pm = 0;
+            }
+        }
+    }
+
     return p;
 };
 

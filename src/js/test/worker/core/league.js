@@ -29,7 +29,7 @@ describe("core/league", () => {
             assert.equal(local.statusText, "Idle");
         });
         it("should create all necessary object stores", () => {
-            assert.equal(idb.league.objectStoreNames.length, 19);
+            assert.equal(idb.league.objectStoreNames.length, 18);
             assert.equal(idb.league.objectStoreNames.contains("awards"), true);
             assert.equal(idb.league.objectStoreNames.contains("events"), true);
             assert.equal(

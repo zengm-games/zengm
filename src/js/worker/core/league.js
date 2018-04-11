@@ -383,44 +383,12 @@ async function create(
         }
 
         for (const p0 of players) {
-            // Has to be any because I cna't figure out how to change PlayerWithoutPidWithStats to Player
+            // Has to be any because I can't figure out how to change PlayerWithoutPidWithStats to Player
             const p: any = player.augmentPartialPlayer(
                 p0,
                 scoutingRank,
                 leagueFile.version,
             );
-
-            // Don't let imported contracts be created for below the league minimum, and round to nearest $10,000.
-            p.contract.amount = Math.max(
-                10 * Math.round(p.contract.amount / 10),
-                g.minContract,
-            );
-
-            // If no stats in League File, create blank stats rows for active players if necessary
-            if (!p.stats) {
-                p.stats = [];
-            }
-            if (p.stats.length === 0) {
-                if (p.tid >= 0 && g.phase <= PHASE.PLAYOFFS) {
-                    player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
-                }
-            } else {
-                // If there are stats in the League File, add them to the database
-                for (const ps of p.stats) {
-                    // Could be calculated correctly if I wasn't lazy
-                    if (!ps.hasOwnProperty("yearsWithTeam")) {
-                        ps.yearsWithTeam = 1;
-                    }
-
-                    // If needed, set missing +/-, blocks against to 0
-                    if (!ps.hasOwnProperty("ba")) {
-                        ps.ba = 0;
-                    }
-                    if (!ps.hasOwnProperty("pm")) {
-                        ps.pm = 0;
-                    }
-                }
-            }
 
             player.updateValues(p);
             await idb.cache.players.put(p);

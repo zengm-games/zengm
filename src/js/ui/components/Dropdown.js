@@ -317,11 +317,13 @@ type Props = {
     view: string,
 };
 
+type State = {
+    values: (number | string)[],
+};
+
 class Dropdown extends React.Component<
     Props,
-    {
-        values: (number | string)[],
-    },
+    State,
 > {
     constructor(props: Props) {
         super(props);
@@ -332,12 +334,15 @@ class Dropdown extends React.Component<
         };
     }
 
-    componentWillReceiveProps(nextProps: Props) {
-        if (nextProps.values !== this.state.values) {
-            this.setState({
+    // Keep state synced with authoritative value from props
+    static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+        if (JSON.stringify(nextProps.values) !== JSON.stringify(prevState.values)) {
+            return {
                 values: nextProps.values,
-            });
+            };
         }
+
+        return null;
     }
 
     handleChange(i: number, event: SyntheticInputEvent<HTMLSelectElement>) {

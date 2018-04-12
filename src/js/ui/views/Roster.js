@@ -315,10 +315,10 @@ class Roster extends React.Component {
         await toWorker("reorderRosterDrag", sortedPids);
     }
 
-    componentWillReceiveProps() {
-        this.setState({
+    static getDerivedStateFromProps() {
+        return {
             sortedPids: undefined,
-        });
+        };
     }
 
     render() {

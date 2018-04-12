@@ -17,16 +17,18 @@ class NewTeam extends React.Component {
         this.handleNewTeam = this.handleNewTeam.bind(this);
     }
 
-    componentWillReceiveProps(nextProps) {
+    static getDerivedStateFromProps(nextProps, prevState) {
         if (
-            this.state.tid === undefined &&
+            prevState.tid === undefined &&
             nextProps.teams &&
             nextProps.teams.length > 0
         ) {
-            this.setState({
+            return {
                 tid: nextProps.teams[0].tid,
-            });
+            };
         }
+
+        return null;
     }
 
     handleTidChange(event) {

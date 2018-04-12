@@ -96,6 +96,7 @@
           window.Bugsnag.enableNotifyUnhandledRejections();
         }
       });
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(bs, s);
     </script>
   </head>
 

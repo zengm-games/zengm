@@ -208,7 +208,7 @@ async function newPhaseRegularSeason() {
     // First message from owner
     if (g.showFirstOwnerMessage) {
         await genMessage({ wins: 0, playoffs: 0, money: 0 });
-    } else {
+    } else if (local.autoPlaySeasons === 0) {
         const nagged = await idb.meta.attributes.get("nagged");
 
         if (g.season === g.startingSeason + 3 && g.lid > 3 && nagged === 0) {
@@ -221,8 +221,8 @@ async function newPhaseRegularSeason() {
                     '<p>Hi. Sorry to bother you, but I noticed that you\'ve been playing this game a bit. Hopefully that means you like it. Either way, we would really appreciate some feedback so we can make this game better. <a href="mailto:commissioner@basketball-gm.com">Send an email</a> (commissioner@basketball-gm.com) or <a href="http://www.reddit.com/r/BasketballGM/">join the discussion on Reddit</a>.</p>',
             });
         } else if (
-            (nagged === 1 && Math.random() < 0.25) ||
-            (nagged >= 2 && Math.random() < 0.025)
+            (nagged === 1 && Math.random() < 0.125) ||
+            (nagged >= 2 && Math.random() < 0.0125)
         ) {
             await idb.meta.attributes.put(2, "nagged");
             await idb.cache.messages.add({

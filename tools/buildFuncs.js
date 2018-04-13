@@ -80,7 +80,7 @@ const minifyCss = () => {
 const genRev = () => {
     const d = new Date();
     const date = d.toISOString().split('T')[0].replace(/-/g, '.');
-    const minutes = String(d.getUTCMinutes() + 60 * d.getUTCHours()).padStart(4, 0);
+    const minutes = String(d.getUTCMinutes() + 60 * d.getUTCHours()).padStart(4, "0");
     const rev = `${date}.${minutes}`;
     console.log(`rev ${rev}`);
 

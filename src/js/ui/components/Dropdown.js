@@ -321,10 +321,7 @@ type State = {
     values: (number | string)[],
 };
 
-class Dropdown extends React.Component<
-    Props,
-    State,
-> {
+class Dropdown extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
@@ -336,7 +333,10 @@ class Dropdown extends React.Component<
 
     // Keep state synced with authoritative value from props
     static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-        if (JSON.stringify(nextProps.values) !== JSON.stringify(prevState.values)) {
+        if (
+            JSON.stringify(nextProps.values) !==
+            JSON.stringify(prevState.values)
+        ) {
             return {
                 values: nextProps.values,
             };

@@ -454,6 +454,11 @@ const reduceCareerStats = (careerStats, attr, playoffs) => {
 const getPlayerStats = (playerStats, season, tid, playoffs, regularSeason) => {
     return helpers.deepCopy(
         playerStats.filter(ps => {
+            // Not sure why this is needed, but might fix an error someone reported
+            if (!ps) {
+                return false;
+            }
+
             const seasonCheck = season === undefined || ps.season === season;
             const tidCheck = tid === undefined || ps.tid === tid;
             const playoffsCheck =

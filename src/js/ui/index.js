@@ -87,6 +87,8 @@ class ErrorBoundary extends React.Component<{ children: any }> {
         if (window.Bugsnag) {
             window.Bugsnag.notifyException(error, { react: info });
         }
+        console.error("Error from React:");
+        console.error(error);
     }
     render() {
         return this.props.children;
@@ -354,14 +356,12 @@ class ErrorBoundary extends React.Component<{ children: any }> {
                 errMsg = ctx.bbgm.err.message;
                 if (errMsg === "League not found.") {
                     errMsg = leagueNotFoundMessage;
-                } else if (window.Bugsnag) {
-                    window.Bugsnag.notifyException(
-                        ctx.bbgm.err,
-                        "ErrorInWorkerView",
-                        {
-                            groupingHash: ctx.bbgm.err.message,
-                        },
-                    );
+                } else {
+                    if (window.Bugsnag) {
+                        window.Bugsnag.notifyException(ctx.bbgm.err);
+                    }
+                    console.error("Error from worker view:");
+                    console.error(ctx.bbgm.err);
                 }
             }
 

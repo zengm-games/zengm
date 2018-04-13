@@ -42,7 +42,7 @@
     "object.entries": "1.0.4",
     "object.values": "1.0.4",
     "page": "1.8.6",
-    "promise-worker-bi": "2.2.1",
+    "promise-worker-bi": "dumbmatter/promise-worker-bi#v3",
     "react": "16.3.1",
     "react-addons-text-content": "0.0.4",
     "react-bootstrap": "0.32.1",

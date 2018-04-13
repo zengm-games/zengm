@@ -1,4 +1,5 @@
 ErrorInWorkerView (like inside playersPlus or something) - can i get stack somehow, or at least something?
+- console.error any time send to bugsnag
 
 customize playoff series length
 - https://www.reddit.com/r/BasketballGM/comments/8b23uh/request_customizable_playoff_series_length/dx3bxd3/?context=3

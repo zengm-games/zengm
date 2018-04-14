@@ -1,7 +1,7 @@
 // @flow
 
 import { g } from "../../../common";
-import { player } from "../../core";
+import fuzzRating from "./fuzzRating";
 import type { Player, PlayerWithoutPid } from "../../../common/types";
 
 /**
@@ -42,8 +42,8 @@ const value = (
 
     // Fuzz?
     if (options.fuzz) {
-        pr.ovr = player.fuzzRating(p.ratings[s].ovr, p.ratings[s].fuzz);
-        pr.pot = player.fuzzRating(p.ratings[s].pot, p.ratings[s].fuzz);
+        pr.ovr = fuzzRating(p.ratings[s].ovr, p.ratings[s].fuzz);
+        pr.pot = fuzzRating(p.ratings[s].pot, p.ratings[s].fuzz);
     } else {
         pr.ovr = p.ratings[s].ovr;
         pr.pot = p.ratings[s].pot;

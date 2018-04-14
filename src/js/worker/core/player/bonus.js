@@ -1,6 +1,6 @@
 // @flow
 
-import { player } from "../../core";
+import limitRating from "./limitRating";
 import { random } from "../../util";
 import type { RatingKey, PlayerWithoutPid } from "../../../common/types";
 
@@ -26,7 +26,7 @@ const bonus = (p: PlayerWithoutPid) => {
     ];
 
     for (const key of keys) {
-        ratings[key] = player.limitRating(ratings[key] + random.randInt(0, 10));
+        ratings[key] = limitRating(ratings[key] + random.randInt(0, 10));
     }
 };
 

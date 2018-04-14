@@ -1,7 +1,7 @@
 // @flow
 
 import { helpers } from "../../../common";
-import { player } from "../../core";
+import fuzzRating from "./fuzzRating";
 import type { PlayerRatings, RatingKey } from "../../../common/types";
 
 const composoteRating = (
@@ -26,7 +26,7 @@ const composoteRating = (
             factor =
                 components[i] === "hgt"
                     ? ratings[components[i]]
-                    : player.fuzzRating(ratings[components[i]], ratings.fuzz); // don't fuzz height
+                    : fuzzRating(ratings[components[i]], ratings.fuzz); // don't fuzz height
         } else {
             factor = ratings[components[i]];
         }

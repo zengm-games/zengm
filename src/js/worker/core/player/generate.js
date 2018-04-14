@@ -2,9 +2,13 @@
 
 import faces from "facesjs";
 import { PLAYER, g, helpers } from "../../../common";
-import { player } from "../../core";
 import genFuzz from "./genFuzz";
+import genContract from "./genContract";
+import heightToRating from "./heightToRating";
+import limitRating from "./limitRating";
+import name from "./name";
 import pos from "./pos";
+import setContract from "./setContract";
 import { random } from "../../util";
 import type {
     PlayerRatings,
@@ -136,7 +140,7 @@ const genRatings = (
             factor = factorSkill;
         }
 
-        rawRatings[key] = player.limitRating(
+        rawRatings[key] = limitRating(
             factor * typeFactor * random.realGauss(rawRatings[key], 3),
         );
     }
@@ -145,7 +149,7 @@ const genRatings = (
     /*for (let i = 0; i < 2; i++) {
         if (Math.random() < 0.2) {
             const key = random.choice(Object.keys(rawRatings));
-            rawRatings[key] = player.limitRating(rawRatings[key] + random.realGauss(20, 5));
+            rawRatings[key] = limitRating(rawRatings[key] + random.realGauss(20, 5));
         }
     }*/
 
@@ -175,11 +179,11 @@ const genRatings = (
 
     // Ugly hack: Tall people can't dribble/pass very well
     /*if (ratings.hgt > 40) {
-        ratings.drb = player.limitRating(ratings.drb - (ratings.hgt - 40));
-        ratings.pss = player.limitRating(ratings.pss - (ratings.hgt - 40));
+        ratings.drb = limitRating(ratings.drb - (ratings.hgt - 40));
+        ratings.pss = limitRating(ratings.pss - (ratings.hgt - 40));
     } else {
-        ratings.drb = player.limitRating(ratings.drb + 10);
-        ratings.pss = player.limitRating(ratings.pss + 10);
+        ratings.drb = limitRating(ratings.drb + 10);
+        ratings.pss = limitRating(ratings.pss + 10);
     }*/
 
     if (tid === PLAYER.UNDRAFTED_2) {
@@ -210,7 +214,7 @@ const generate = (
     const wingspanAdjust = realHeight + random.randInt(-1, 1);
 
     // hgt 0-100 corresponds to height 5'6" to 7'9" (Anything taller or shorter than the extremes will just get 100/0)
-    const predetHgt = player.heightToRating(wingspanAdjust);
+    const predetHgt = heightToRating(wingspanAdjust);
     realHeight = Math.round(realHeight);
 
     let ratings;
@@ -222,7 +226,7 @@ const generate = (
         ratings = genRatings(draftYear, scoutingRank, tid, predetHgt);
     }
 
-    const nameInfo = player.name();
+    const nameInfo = name();
 
     const p = {
         awards: [],
@@ -273,7 +277,7 @@ const generate = (
         ), // Weight in pounds (from minWeight to maxWeight)
         yearsFreeAgent: 0,
 
-        // These should be set by player.updateValues after player is completely done (automatic in player.develop)
+        // These should be set by updateValues after player is completely done (automatic in develop)
         value: 0,
         valueNoPot: 0,
         valueFuzz: 0,
@@ -281,7 +285,7 @@ const generate = (
         valueWithContract: 0,
     };
 
-    player.setContract(p, player.genContract(p), false);
+    setContract(p, genContract(p), false);
 
     return p;
 };

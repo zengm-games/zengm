@@ -451,7 +451,7 @@ export type PlayerRatings = {|
     tp: number,
 |};
 
-export type PlayerSalary = {|
+type PlayerSalary = {|
     amount: number,
     season: number,
 |};

@@ -4,7 +4,6 @@ import { PHASE, g } from "../../../common";
 import type {
     Player,
     PlayerContract,
-    PlayerSalary, // eslint-disable-line no-unused-vars
     PlayerWithoutPid,
 } from "../../../common/types";
 

@@ -10,7 +10,7 @@ import type { Player } from "../../../common/types";
 /**
  * Release player.
  *
- * This keeps track of what the player's current team owes him, and then calls player.addToFreeAgents.
+ * This keeps track of what the player's current team owes him, and then calls addToFreeAgents.
  *
  * @memberOf core.player
  * @param {Object} p Player object.

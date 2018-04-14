@@ -1,16 +1,20 @@
 // @flow
 
 import { PHASE, PLAYER, g } from "../../../common";
-import { player } from "../../core";
+import addStatsRow from "./addStatsRow";
 import { bootstrapPot } from "./develop";
 import generate from "./generate";
+import heightToRating from "./heightToRating";
+import ovr from "./ovr";
+import setContract from "./setContract";
+import skills from "./skills";
 import { random } from "../../util";
 import type { RatingKey, Player } from "../../../common/types";
 
 /**
  * Take a partial player object, such as from an uploaded JSON file, and add everything it needs to be a real player object.
  *
- * This doesn't add the things from player.updateValues!
+ * This doesn't add the things from updateValues!
  *
  * @memberOf core.player
  * @param {Object} p Partial player object.
@@ -66,7 +70,7 @@ const augmentPartialPlayer = (
             p.contract.exp = g.startingSeason;
         }
         if (p.tid >= 0) {
-            player.setContract(p, p.contract, true);
+            setContract(p, p.contract, true);
         }
     }
     if (!p.hasOwnProperty("stats")) {
@@ -82,10 +86,10 @@ const augmentPartialPlayer = (
         p.ratings[0].fuzz = pg.ratings[0].fuzz;
     }
     if (!p.ratings[0].hasOwnProperty("skills")) {
-        p.ratings[0].skills = player.skills(p.ratings[0]);
+        p.ratings[0].skills = skills(p.ratings[0]);
     }
     if (!p.ratings[0].hasOwnProperty("ovr")) {
-        p.ratings[0].ovr = player.ovr(p.ratings[0]);
+        p.ratings[0].ovr = ovr(p.ratings[0]);
     }
     if (p.ratings[0].pot < p.ratings[0].ovr) {
         p.ratings[0].pot = p.ratings[0].ovr;
@@ -127,7 +131,7 @@ const augmentPartialPlayer = (
     // Height rescaling
     if (version === undefined || version <= 23) {
         for (const r of p.ratings) {
-            r.hgt = player.heightToRating(p.hgt);
+            r.hgt = heightToRating(p.hgt);
         }
     }
 
@@ -195,8 +199,8 @@ const augmentPartialPlayer = (
                 }
             }
 
-            r.ovr = player.ovr(r);
-            r.skills = player.skills(r);
+            r.ovr = ovr(r);
+            r.skills = skills(r);
             r.pot = bootstrapPot(r, r.season - p.born.year);
             if (p.draft.year === r.season) {
                 p.draft.ovr = r.ovr;
@@ -228,7 +232,7 @@ const augmentPartialPlayer = (
     }
     if (p.stats.length === 0) {
         if (p.tid >= 0 && g.phase <= PHASE.PLAYOFFS) {
-            player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
+            addStatsRow(p, g.phase === PHASE.PLAYOFFS);
         }
     } else {
         for (const ps of p.stats) {

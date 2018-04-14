@@ -2,6 +2,7 @@ import assert from "assert";
 import { g, helpers as commonHelpers } from "../../../common";
 import helpers from "../../helpers";
 import { player } from "../../../worker/core";
+import madeHof from "../../../worker/core/player/madeHof";
 
 // Default values needed
 g.teamAbbrevsCache = commonHelpers.getTeamsDefault().map(t => t.abbrev);
@@ -103,7 +104,7 @@ describe("core/player", () => {
                 },
             ];
 
-            assert.equal(player.madeHof(p), false);
+            assert.equal(madeHof(p), false);
         });
     });
 

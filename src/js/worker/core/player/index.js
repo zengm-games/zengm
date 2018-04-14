@@ -6,9 +6,16 @@ import augmentPartialPlayer from "./augmentPartialPlayer";
 import bonus from "./bonus";
 import compositeRating from "./compositeRating";
 import develop from "./develop";
+import fuzzRating from "./fuzzRating";
 import genFuzz from "./genFuzz";
 import generate from "./generate";
+import getPlayerFakeAge from "./getPlayerFakeAge";
+import killOne from "./killOne";
+import limitRating from "./limitRating";
+import madeHof from "./madeHof";
+import ovr from "./ovr";
 import pos from "./pos";
+import retire from "./retire";
 import shouldRetire from "./shouldRetire";
 import skills from "./skills";
 import value from "./value";
@@ -23,88 +30,11 @@ import type {
     Player,
     PlayerContract,
     PlayerInjury,
-    PlayerRatings,
     PlayerSalary, // eslint-disable-line no-unused-vars
     PlayerWithoutPid,
 } from "../../../common/types";
 
 let playerNames;
-
-/**
- * Limit a rating to between 0 and 100.
- *
- * @memberOf core.player
- * @param {number} rating Input rating.
- * @return {number} If rating is below 0, 0. If rating is above 100, 100. Otherwise, rating.
- */
-function limitRating(rating: number): number {
-    if (rating > 100) {
-        return 100;
-    }
-    if (rating < 0) {
-        return 0;
-    }
-    return Math.floor(rating);
-}
-
-/**
- * Calculates the overall rating by averaging together all the other ratings.
- *
- * @memberOf core.player
- * @param {Object.<string, number>} ratings Player's ratings object.
- * @return {number} Overall rating.
- */
-function ovr(ratings: PlayerRatings): number {
-    // This formula is loosely based on linear regression of ratings to zscore(ws48)+zscore(per):
-    const r =
-        (5 * ratings.hgt +
-            1 * ratings.stre +
-            4 * ratings.spd +
-            2 * ratings.jmp +
-            1 * ratings.endu +
-            1 * ratings.ins +
-            2 * ratings.dnk +
-            1 * ratings.ft +
-            1 * ratings.fg +
-            3 * ratings.tp +
-            7 * ratings.oiq +
-            3 * ratings.diq +
-            3 * ratings.drb +
-            3 * ratings.pss +
-            1 * ratings.reb) /
-        38;
-
-    // Fudge factor to keep ovr ratings the same as they used to be (back before 2018 ratings rescaling)
-    // +8 at 68
-    // +4 at 50
-    // -5 at 42
-    // -10 at 31
-    let fudgeFactor = 0;
-    if (r >= 68) {
-        fudgeFactor = 8;
-    } else if (r >= 50) {
-        fudgeFactor = 4 + (r - 50) * (4 / 18);
-    } else if (r >= 42) {
-        fudgeFactor = -5 + (r - 42) * (10 / 8);
-    } else if (r >= 31) {
-        fudgeFactor = -5 - (42 - r) * (5 / 11);
-    } else {
-        fudgeFactor = -10;
-    }
-
-    return helpers.bound(Math.round(r + fudgeFactor), 0, 100);
-}
-
-function fuzzRating(rating: number, fuzz: number): number {
-    // Turn off fuzz in multi team mode, because it doesn't have any meaning there in its current form. The check for
-    // existence of variables is because this is sometimes called in league upgrade code when g is not available and
-    // would be difficult to make available due to Firefox promise/IDB/worker issues.
-    if ((g.hasOwnProperty("userTids") && g.userTids.length > 1) || g.godMode) {
-        fuzz = 0;
-    }
-
-    return Math.round(helpers.bound(rating + fuzz, 0, 100));
-}
 
 /**
  * Generate a contract for a player.
@@ -534,119 +464,12 @@ function contractSeasonsRemaining(
     return exp - g.season + frac;
 }
 
-/**
- * Is a player worthy of the Hall of Fame?
- *
- * This calculation is based on http://espn.go.com/nba/story/_/id/8736873/nba-experts-rebuild-springfield-hall-fame-espn-magazine except it includes each playoff run as a separate season.
- *
- * @memberOf core.player
- * @param {Object} p Player object.
- * @return {boolean} Hall of Fame worthy?
- */
-function madeHof(p: Player): boolean {
-    // Average together WS and EWA
-    const winShares = p.stats.map(ps => {
-        let sum = 0;
-
-        if (typeof ps.dws === "number") {
-            sum += ps.dws;
-        }
-        if (typeof ps.ows === "number") {
-            sum += ps.ows;
-        }
-        if (typeof ps.ewa === "number") {
-            sum += ps.ewa;
-        }
-
-        return sum / 2;
-    });
-
-    // Calculate career WS and "dominance factor" DF (top 5 years WS - 50)
-    winShares.sort((a, b) => b - a); // Descending order
-    let total = 0;
-    let df = -50;
-    for (let i = 0; i < winShares.length; i++) {
-        total += winShares[i];
-        if (i < 5) {
-            df += winShares[i];
-        }
-    }
-
-    // Fudge factor for players generated when the league started
-    const fudgeSeasons = g.startingSeason - p.draft.year - 5;
-    if (fudgeSeasons > 0) {
-        total += winShares[0] * fudgeSeasons;
-    }
-
-    // Final formula
-    return total + df > 100;
-}
-
 function updateValues(p: Player | PlayerWithoutPid) {
     p.value = value(p);
     p.valueNoPot = value(p, { noPot: true });
     p.valueFuzz = value(p, { fuzz: true });
     p.valueNoPotFuzz = value(p, { noPot: true, fuzz: true });
     p.valueWithContract = value(p, { withContract: true });
-}
-
-/**
- * Have a player retire, including all event and HOF bookkeeping.
- *
- * This just updates a player object. You need to write it to the database after.
- *
- * @memberOf core.player
- * @param {IDBTransaction} ot An IndexedDB transaction on events.
- * @param {Object} p Player object.
- * @return {Object} p Updated (retired) player object.
- */
-function retire(
-    p: Player,
-    conditions?: Conditions,
-    retiredNotification?: boolean = true,
-) {
-    if (conditions && retiredNotification) {
-        logEvent(
-            {
-                type: "retired",
-                text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${
-                    p.firstName
-                } ${p.lastName}</a> retired.`,
-                showNotification: p.tid === g.userTid,
-                pids: [p.pid],
-                tids: [p.tid],
-            },
-            conditions,
-        );
-    }
-
-    p.tid = PLAYER.RETIRED;
-    p.retiredYear = g.season;
-
-    // Add to Hall of Fame?
-    if (conditions && madeHof(p)) {
-        p.hof = true;
-        p.awards.push({
-            season: g.season,
-            type: "Inducted into the Hall of Fame",
-        });
-        logEvent(
-            {
-                type: "hallOfFame",
-                text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${
-                    p.firstName
-                } ${
-                    p.lastName
-                }</a> was inducted into the <a href="${helpers.leagueUrl([
-                    "hall_of_fame",
-                ])}">Hall of Fame</a>.`,
-                showNotification: p.statsTids.includes(g.userTid),
-                pids: [p.pid],
-                tids: p.statsTids,
-            },
-            conditions,
-        );
-    }
 }
 
 // See views.negotiation for moods as well
@@ -825,144 +648,6 @@ function checkStatisticalFeat(
         });
     }
 }
-
-async function killOne(conditions: Conditions) {
-    const reason = random.choice([
-        "died from a drug overdose",
-        "was killed by a gunshot during an altercation at a night club",
-        "was eaten by wolves",
-        "died in a car crash",
-        "was stabbed to death by a jealous ex-girlfriend",
-        "committed suicide",
-        "died from a rapidly progressing case of ebola",
-        "was killed in a bar fight",
-        "died after falling out of his 13th floor hotel room",
-        "was shredded to bits by the team plane's propeller",
-        "was hit by a stray meteor",
-        "accidentally shot himself in the head while cleaning his gun",
-        "was beheaded by ISIS",
-        "spontaneously combusted",
-        "had a stroke after reading about the owner's plans to trade him",
-        "laughed himself to death while watching Modern Family",
-        "died of exertion while trying to set the record for largerst number of sex partners in one day",
-        "rode his Segway off a cliff",
-        "fell into the gorilla pit at the zoo and was dismembered as the staff decided not to shoot the gorilla",
-        "was found dead in a hotel room with a belt around his neck and his hand around his dick",
-        "was pursued by a bear, and mauled", // poor Antigonus
-        "was smothered by a throng of ravenous, autograph-seeking fans after exiting the team plane",
-        `was killed by ${random.choice([
-            "Miss Scarlet",
-            "Professor Plum",
-            "Mrs. Peacock",
-            "Reverend Green",
-            "Colonel Mustard",
-            "Mrs. White",
-        ])}, in the ${random.choice([
-            "kitchen",
-            "ballroom",
-            "conservatory",
-            "dining room",
-            "cellar",
-            "billiard room",
-            "library",
-            "lounge",
-            "hall",
-            "study",
-        ])}, with the ${random.choice([
-            "candlestick",
-            "dagger",
-            "lead pipe",
-            "revolver",
-            "rope",
-            "spanner",
-        ])}`,
-        "suffered a heart attack in the team training facility and died",
-        "was lost at sea and is presumed dead",
-        "was run over by a car",
-        "was run over by a car, and then was run over by a second car. Police believe only the first was intentional",
-        "cannot be found and is presumed dead. Neighbors reported strange lights in the sky above his house last night",
-    ]);
-
-    // Pick random team
-    const tid = random.randInt(0, g.numTeams - 1);
-
-    const players = await idb.cache.players.indexGetAll("playersByTid", tid);
-
-    // Pick a random player on that team
-    const p = random.choice(players);
-
-    retire(p, conditions, false);
-    p.diedYear = g.season;
-
-    await idb.cache.players.put(p);
-    idb.cache.markDirtyIndexes("players");
-
-    logEvent(
-        {
-            type: "tragedy",
-            text: `<a href="${helpers.leagueUrl(["player", p.pid])}">${
-                p.firstName
-            } ${p.lastName}</a> ${reason}.`,
-            showNotification: tid === g.userTid,
-            pids: [p.pid],
-            tids: [tid],
-            persistent: true,
-        },
-        conditions,
-    );
-}
-
-const getPlayerFakeAge = async (players: Player[]): Promise<Player | void> => {
-    // This list is very arbitrary, but certain countries are deemed more likely to have a player with a fake age
-    const highRiskCountries = [
-        "Angola",
-        "Belarus",
-        "Benin",
-        "Bulgaria",
-        "Cameroon",
-        "Cape Verde",
-        "Central African Republic",
-        "Chad",
-        "China",
-        "Congo",
-        "Egypt",
-        "Gabon",
-        "Georgia",
-        "Ghana",
-        "Guinea",
-        "Haiti",
-        "Iran",
-        "Ivory Coast",
-        "Kazakhstan",
-        "Kenya",
-        "Mali",
-        "Morocco",
-        "Nigeria",
-        "Senegal",
-        "South Africa",
-        "South Sudan",
-        "Sudan",
-        "Turkey",
-        "Ukraine",
-    ];
-
-    // Only young players can have a fake age, and players from high risk countries have 40x risk
-    const youngPlayers = players.filter(p => g.season - p.born.year <= 22);
-    const weights = youngPlayers.map(p => {
-        return highRiskCountries.includes(p.born.loc) ? 40 : 1;
-    });
-
-    const sum = weights.reduce((total, current) => current + total, 0);
-    const randVal = random.randInt(0, sum - 1);
-
-    let runningSum = 0;
-    for (let i = 0; i < weights.length; i++) {
-        runningSum += weights[i];
-        if (randVal < runningSum) {
-            return youngPlayers[i];
-        }
-    }
-};
 
 export default {
     addRatingsRow,

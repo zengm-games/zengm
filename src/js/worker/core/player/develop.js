@@ -3,8 +3,10 @@
 import orderBy from "lodash/orderBy";
 import range from "lodash/range";
 import { PLAYER, g, helpers } from "../../../common";
-import { player } from "../../core";
+import limitRating from "./limitRating";
+import ovr from "./ovr";
 import pos from "./pos";
+import skills from "./skills";
 import { random } from "../../util";
 import type {
     PlayerRatings,
@@ -191,7 +193,7 @@ const developSeason = (
             ? ratingsFormulas[key].changeLimits(age)
             : [-Infinity, Infinity];
 
-        ratings[key] = player.limitRating(
+        ratings[key] = limitRating(
             ratings[key] +
                 helpers.bound(
                     (baseChange + ageModifier) * random.uniform(0.4, 1.4),
@@ -215,9 +217,9 @@ export const bootstrapPot = (ratings: PlayerRatings, age: number): number => {
         let maxOvr = ratings.ovr;
         for (let ageTemp = age + 1; ageTemp < 30; ageTemp++) {
             developSeason(copiedRatings, ageTemp); // Purposely no coachingRank
-            const ovr = player.ovr(copiedRatings);
-            if (ovr > maxOvr) {
-                maxOvr = ovr;
+            const currentOvr = ovr(copiedRatings);
+            if (currentOvr > maxOvr) {
+                maxOvr = currentOvr;
             }
         }
 
@@ -230,7 +232,7 @@ export const bootstrapPot = (ratings: PlayerRatings, age: number): number => {
 /**
  * Develop (increase/decrease) player's ratings. This operates on whatever the last row of p.ratings is.
  *
- * Make sure to call player.updateValues after this! Otherwise, player values will be out of sync.
+ * Make sure to call updateValues after this! Otherwise, player values will be out of sync.
  *
  * @memberOf core.player
  * @param {Object} p Player object.
@@ -266,11 +268,11 @@ const develop = (
     }
 
     // Run these even for players developing 0 seasons
-    ratings.ovr = player.ovr(ratings);
+    ratings.ovr = ovr(ratings);
     if (!skipPot) {
         ratings.pot = bootstrapPot(ratings, age);
     }
-    ratings.skills = player.skills(ratings);
+    ratings.skills = skills(ratings);
 
     if (
         p.tid === PLAYER.UNDRAFTED ||

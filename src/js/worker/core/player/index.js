@@ -1,12 +1,14 @@
 // @flow
 
-import { PHASE, PLAYER, g, helpers } from "../../../common";
-import { finances } from "../../core";
+import { PHASE, g, helpers } from "../../../common";
+import addToFreeAgents from "./addToFreeAgents";
 import augmentPartialPlayer from "./augmentPartialPlayer";
 import bonus from "./bonus";
 import compositeRating from "./compositeRating";
 import develop from "./develop";
 import fuzzRating from "./fuzzRating";
+import genBaseMoods from "./genBaseMoods";
+import genContract from "./genContract";
 import genFuzz from "./genFuzz";
 import generate from "./generate";
 import getPlayerFakeAge from "./getPlayerFakeAge";
@@ -15,7 +17,9 @@ import limitRating from "./limitRating";
 import madeHof from "./madeHof";
 import ovr from "./ovr";
 import pos from "./pos";
+import release from "./release";
 import retire from "./retire";
+import setContract from "./setContract";
 import shouldRetire from "./shouldRetire";
 import skills from "./skills";
 import value from "./value";
@@ -26,250 +30,13 @@ import type {
     Conditions,
     GamePlayer,
     GameResults,
-    Phase,
     Player,
-    PlayerContract,
     PlayerInjury,
     PlayerSalary, // eslint-disable-line no-unused-vars
     PlayerWithoutPid,
 } from "../../../common/types";
 
 let playerNames;
-
-/**
- * Generate a contract for a player.
- *
- * @memberOf core.player
- * @param {Object} ratings Player object. At a minimum, this must have one entry in the ratings array.
- * @param {boolean} randomizeExp If true, then it is assumed that some random amount of years has elapsed since the contract was signed, thus decreasing the expiration date. This is used when generating players in a new league.
- * @return {Object.<string, number>} Object containing two properties with integer values, "amount" with the contract amount in thousands of dollars and "exp" with the contract expiration year.
- */
-function genContract(
-    p: Player | PlayerWithoutPid,
-    randomizeExp: boolean = false,
-    randomizeAmount: boolean = true,
-    noLimit: boolean = false,
-): PlayerContract {
-    const ratings = p.ratings[p.ratings.length - 1];
-
-    let amount =
-        (p.value / 100 - 0.47) * 3.4 * (g.maxContract - g.minContract) +
-        g.minContract;
-    if (randomizeAmount) {
-        amount *= helpers.bound(random.realGauss(1, 0.1), 0, 2); // Randomize
-    }
-
-    // Expiration
-    // Players with high potentials want short contracts
-    const potentialDifference = Math.round((ratings.pot - ratings.ovr) / 4.0);
-    let years = 5 - potentialDifference;
-    if (years < 2) {
-        years = 2;
-    }
-    // Bad players can only ask for short deals
-    if (ratings.pot < 40) {
-        years = 1;
-    } else if (ratings.pot < 50) {
-        years = 2;
-    } else if (ratings.pot < 60) {
-        years = 3;
-    }
-
-    // Randomize expiration for contracts generated at beginning of new game
-    if (randomizeExp) {
-        years = random.randInt(1, years);
-
-        // Make rookie contracts more reasonable
-        if (g.season - p.born.year <= 21) {
-            amount /= 3;
-        }
-    }
-
-    const expiration = g.season + years - 1;
-
-    if (!noLimit) {
-        if (amount < g.minContract * 1.1) {
-            amount = g.minContract;
-        } else if (amount > g.maxContract) {
-            amount = g.maxContract;
-        }
-    } else if (amount < 0) {
-        // Well, at least keep it positive
-        amount = 0;
-    }
-
-    amount = 50 * Math.round(amount / 50); // Make it a multiple of 50k
-
-    return { amount, exp: expiration };
-}
-
-/**
- * Store a contract in a player object.
- *
- * @memberOf core.player
- * @param {Object} p Player object.
- * @param {Object} contract Contract object with two properties,    exp (year) and amount (thousands of dollars).
- * @param {boolean} signed Is this an official signed contract (true), or just part of a negotiation (false)?
- * @return {Object} Updated player object.
- */
-function setContract(
-    p: Player | PlayerWithoutPid,
-    contract: PlayerContract,
-    signed: boolean,
-) {
-    p.contract = contract;
-
-    // Only write to salary log if the player is actually signed. Otherwise, we're just generating a value for a negotiation.
-    if (signed) {
-        // Is this contract beginning with an in-progress season, or next season?
-        let start = g.season;
-        if (g.phase > PHASE.AFTER_TRADE_DEADLINE) {
-            start += 1;
-        }
-
-        for (let i = start; i <= p.contract.exp; i++) {
-            p.salaries.push({ season: i, amount: contract.amount });
-        }
-    }
-}
-
-/**
- * Calculates the base "mood" factor for any free agent towards a team.
- *
- * This base mood is then modulated for an individual player in addToFreeAgents.
- *
- * @return {Promise} Array of base moods, one for each team.
- */
-async function genBaseMoods(): Promise<number[]> {
-    const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
-        "teamSeasonsBySeasonTid",
-        [`${g.season}`, `${g.season},Z`],
-    );
-
-    return teamSeasons.map(teamSeason => {
-        // Special case for winning a title - basically never refuse to re-sign unless a miracle occurs
-        if (
-            teamSeason.playoffRoundsWon === g.numPlayoffRounds &&
-            Math.random() < 0.99
-        ) {
-            return -0.25; // Should guarantee no refusing to re-sign
-        }
-
-        let baseMood = 0;
-
-        // Hype
-        baseMood += 0.5 * (1 - teamSeason.hype);
-
-        // Facilities - fuck it, just use most recent rank
-        baseMood +=
-            0.1 *
-            (finances.getRankLastThree([teamSeason], "expenses", "facilities") -
-                1) /
-            (g.numTeams - 1);
-
-        // Population
-        baseMood += 0.2 * (1 - teamSeason.pop / 10);
-
-        // Randomness
-        baseMood += random.uniform(-0.2, 0.4);
-
-        baseMood = helpers.bound(baseMood, 0, 1.2);
-
-        return baseMood;
-    });
-}
-
-/**
- * Adds player to the free agents list.
- *
- * This should be THE ONLY way that players are added to the free agents
- * list, because this will also calculate their demanded contract and mood.
- *
- * @memberOf core.player
- * @param {Object} p Player object.
- * @param {?number} phase An integer representing the game phase to consider this transaction under (defaults to g.phase if null).
- * @param {Array.<number>} baseMoods Vector of base moods for each team from 0 to 1, as generated by genBaseMoods.
- */
-async function addToFreeAgents(
-    p: Player | PlayerWithoutPid,
-    phase: Phase,
-    baseMoods: number[],
-) {
-    phase = phase !== null ? phase : g.phase;
-
-    const pr = p.ratings[p.ratings.length - 1];
-    setContract(p, genContract(p), false);
-
-    // Set initial player mood towards each team
-    p.freeAgentMood = baseMoods.map(mood => {
-        if (pr.ovr + pr.pot < 80) {
-            // Bad players don't have the luxury to be choosy about teams
-            return 0;
-        }
-        if (phase === PHASE.RESIGN_PLAYERS) {
-            // More likely to re-sign your own players
-            return helpers.bound(mood + random.uniform(-1, 0.5), 0, 1000);
-        }
-        return helpers.bound(mood + random.uniform(-1, 1.5), 0, 1000);
-    });
-
-    // During regular season, or before season starts, allow contracts for
-    // just this year.
-    if (phase > PHASE.AFTER_TRADE_DEADLINE) {
-        p.contract.exp += 1;
-    }
-
-    p.tid = PLAYER.FREE_AGENT;
-
-    p.ptModifier = 1; // Reset
-
-    await idb.cache.players.put(p);
-    idb.cache.markDirtyIndexes("players");
-}
-
-/**
- * Release player.
- *
- * This keeps track of what the player's current team owes him, and then calls player.addToFreeAgents.
- *
- * @memberOf core.player
- * @param {Object} p Player object.
- * @param {boolean} justDrafted True if the player was just drafted by his current team and the regular season hasn't started yet. False otherwise. If True, then the player can be released without paying his salary.
- * @return {Promise}
- */
-async function release(p: Player, justDrafted: boolean) {
-    // Keep track of player salary even when he's off the team, but make an exception for players who were just drafted
-    // Was the player just drafted?
-    if (!justDrafted) {
-        await idb.cache.releasedPlayers.add({
-            pid: p.pid,
-            tid: p.tid,
-            contract: helpers.deepCopy(p.contract),
-        });
-    } else {
-        // Clear player salary log if just drafted, because this won't be paid.
-        p.salaries = [];
-    }
-
-    logEvent({
-        type: "release",
-        text: `The <a href="${helpers.leagueUrl([
-            "roster",
-            g.teamAbbrevsCache[p.tid],
-            g.season,
-        ])}">${
-            g.teamNamesCache[p.tid]
-        }</a> released <a href="${helpers.leagueUrl(["player", p.pid])}">${
-            p.firstName
-        } ${p.lastName}</a>.`,
-        showNotification: false,
-        pids: [p.pid],
-        tids: [p.tid],
-    });
-
-    const baseMoods = await genBaseMoods();
-    await addToFreeAgents(p, g.phase, baseMoods);
-}
 
 function name(): { country: string, firstName: string, lastName: string } {
     if (playerNames === undefined) {

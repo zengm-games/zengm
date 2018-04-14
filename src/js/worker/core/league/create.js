@@ -1,18 +1,9 @@
 // @flow
 
-import backboard from "backboard";
-import { Cache, connectLeague, getAll, idb } from "../db";
-import { PHASE, PLAYER, g, helpers } from "../../common";
-import {
-    draft,
-    finances,
-    freeAgents,
-    game,
-    phase,
-    player,
-    season,
-    team,
-} from "../core";
+import { Cache, connectLeague, idb } from "../../db";
+import { PHASE, PLAYER, g, helpers } from "../../../common";
+import { draft, finances, player, team } from "../../core";
+import setGameAttributes from "./setGameAttributes";
 import {
     defaultGameAttributes,
     local,
@@ -21,11 +12,11 @@ import {
     toUI,
     updatePhase,
     updateStatus,
-} from "../util";
-import type { Conditions, GameAttributes } from "../../common/types";
+} from "../../util";
+import type { Conditions } from "../../../common/types";
 
 // x and y are both arrays of objects with the same length. For each object, any properties in y but not x will be copied over to x.
-function merge(x: Object[], y: Object[]): Object[] {
+const merge = (x: Object[], y: Object[]): Object[] => {
     for (let i = 0; i < x.length; i++) {
         // Fill in default values as needed
         for (const prop of Object.keys(y[i])) {
@@ -36,38 +27,7 @@ function merge(x: Object[], y: Object[]): Object[] {
     }
 
     return x;
-}
-
-/**
- * Set values in the gameAttributes objectStore and update the global variable g.
- *
- * Items stored in gameAttributes are globally available through the global variable g. If a value is a constant across all leagues/games/whatever, it should just be set in globals.js instead.
- *
- * @param {Object} gameAttributes Each property in the object will be inserted/updated in the database with the key of the object representing the key in the database.
- * @returns {Promise} Promise for when it finishes.
- */
-async function setGameAttributes(gameAttributes: GameAttributes) {
-    const toUpdate = [];
-    for (const key of helpers.keys(gameAttributes)) {
-        if (g[key] !== gameAttributes[key]) {
-            toUpdate.push(key);
-        }
-    }
-
-    for (const key of toUpdate) {
-        await idb.cache.gameAttributes.put({
-            key,
-            value: gameAttributes[key],
-        });
-
-        g[key] = gameAttributes[key];
-    }
-
-    await toUI(["setGameAttributes", gameAttributes]);
-    if (toUpdate.includes("userTid") || toUpdate.includes("userTids")) {
-        await toUI(["emit", "updateMultiTeam"]);
-    }
-}
+};
 
 /**
  * Create a new league.
@@ -76,14 +36,14 @@ async function setGameAttributes(gameAttributes: GameAttributes) {
  * @param {string} name The name of the league.
  * @param {number} tid The team ID for the team the user wants to manage (or -1 for random).
  */
-async function create(
+const create = async (
     name: string,
     tid: number,
     leagueFile: Object = {},
     startingSeason: number,
     randomizeRosters?: boolean = false,
     conditions: Conditions,
-): Promise<number> {
+): Promise<number> => {
     await idb.meta.attributes.put(tid, "lastSelectedTid");
 
     const teamsDefault = helpers.getTeamsDefault();
@@ -520,220 +480,6 @@ async function create(
     toUI(["bbgmPing", "league"], conditions);
 
     return lid;
-}
-
-/**
- * Export existing active league.
- *
- * @memberOf core.league
- * @param {string[]} stores Array of names of objectStores to include in export
- * @return {Promise} Resolve to all the exported league data.
- */
-async function exportLeague(stores: string[]) {
-    // Always flush before export, so export is current!
-    await idb.cache.flush();
-
-    const exportedLeague: any = {
-        version: idb.league.version,
-    };
-
-    // Row from leagueStore in meta db.
-    // phaseText is needed if a phase is set in gameAttributes.
-    // name is only used for the file name of the exported roster file.
-    exportedLeague.meta = { phaseText: local.phaseText, name: g.leagueName };
-
-    await Promise.all(
-        stores.map(async store => {
-            exportedLeague[store] = await getAll(idb.league[store]);
-        }),
-    );
-
-    if (stores.includes("teams")) {
-        for (let i = 0; i < exportedLeague.teamSeasons.length; i++) {
-            const tid = exportedLeague.teamSeasons[i].tid;
-            for (let j = 0; j < exportedLeague.teams.length; j++) {
-                if (exportedLeague.teams[j].tid === tid) {
-                    if (!exportedLeague.teams[j].hasOwnProperty("seasons")) {
-                        exportedLeague.teams[j].seasons = [];
-                    }
-                    exportedLeague.teams[j].seasons.push(
-                        exportedLeague.teamSeasons[i],
-                    );
-                    break;
-                }
-            }
-        }
-
-        for (let i = 0; i < exportedLeague.teamStats.length; i++) {
-            const tid = exportedLeague.teamStats[i].tid;
-            for (let j = 0; j < exportedLeague.teams.length; j++) {
-                if (exportedLeague.teams[j].tid === tid) {
-                    if (!exportedLeague.teams[j].hasOwnProperty("stats")) {
-                        exportedLeague.teams[j].stats = [];
-                    }
-                    exportedLeague.teams[j].stats.push(
-                        exportedLeague.teamStats[i],
-                    );
-                    break;
-                }
-            }
-        }
-
-        delete exportedLeague.teamSeasons;
-        delete exportedLeague.teamStats;
-    }
-
-    // Set startingSeason if gameAttributes is not selected, otherwise it's going to fail loading unless startingSeason is coincidentally the same as the default
-    if (!stores.includes("gameAttributes")) {
-        exportedLeague.startingSeason = g.startingSeason;
-    }
-
-    return exportedLeague;
-}
-
-async function updateMetaNameRegion(name: string, region: string) {
-    const l = await idb.meta.leagues.get(g.lid);
-    l.teamName = name;
-    l.teamRegion = region;
-    await idb.meta.leagues.put(l);
-}
-
-/**
- * Load game attributes from the database and update the global variable g.
- *
- * @return {Promise}
- */
-async function loadGameAttributes() {
-    const gameAttributes = await idb.cache.gameAttributes.getAll();
-
-    for (let i = 0; i < gameAttributes.length; i++) {
-        g[gameAttributes[i].key] = gameAttributes[i].value;
-    }
-
-    // Shouldn't be necessary, but some upgrades fail http://www.reddit.com/r/BasketballGM/comments/2zwg24/cant_see_any_rosters_on_any_teams_in_any_of_my/cpn0j6w
-    if (g.userTids === undefined) {
-        g.userTids = [g.userTid];
-    }
-
-    // Set defaults to avoid IndexedDB upgrade
-    helpers.keys(defaultGameAttributes).forEach(key => {
-        if (g[key] === undefined) {
-            g[key] = defaultGameAttributes[key];
-        }
-    });
-
-    await toUI(["setGameAttributes", g]);
-
-    // UI stuff
-    toUI(["emit", "updateTopMenu", { godMode: g.godMode }]);
-    toUI(["emit", "updateMultiTeam"]);
-}
-
-// Depending on phase, initiate action that will lead to the next phase
-async function autoPlay(conditions: Conditions) {
-    if (g.phase === PHASE.PRESEASON) {
-        await phase.newPhase(PHASE.REGULAR_SEASON, conditions);
-    } else if (g.phase === PHASE.REGULAR_SEASON) {
-        const numDays = await season.getDaysLeftSchedule();
-        await game.play(numDays, conditions);
-    } else if (g.phase === PHASE.PLAYOFFS) {
-        await game.play(100, conditions);
-    } else if (g.phase === PHASE.DRAFT_LOTTERY) {
-        await phase.newPhase(PHASE.DRAFT, conditions);
-    } else if (g.phase === PHASE.DRAFT) {
-        await draft.untilUserOrEnd(conditions);
-    } else if (g.phase === PHASE.AFTER_DRAFT) {
-        await phase.newPhase(PHASE.RESIGN_PLAYERS, conditions);
-    } else if (g.phase === PHASE.RESIGN_PLAYERS) {
-        await phase.newPhase(PHASE.FREE_AGENCY, conditions);
-    } else if (g.phase === PHASE.FREE_AGENCY) {
-        await freeAgents.play(g.daysLeft, conditions);
-    } else {
-        throw new Error(`Unknown phase: ${g.phase}`);
-    }
-}
-
-async function initAutoPlay(conditions: Conditions) {
-    const result = await toUI(
-        [
-            "prompt",
-            "This will play through multiple seasons, using the AI to manage your team. How many seasons do you want to simulate?",
-            "5",
-        ],
-        conditions,
-    );
-    const numSeasons = parseInt(result, 10);
-
-    if (Number.isInteger(numSeasons)) {
-        local.autoPlaySeasons = numSeasons;
-        autoPlay(conditions);
-    }
-}
-
-// Flush cache, disconnect from league database, and unset g.lid
-const close = async (disconnect?: boolean) => {
-    const gameSim = lock.get("gameSim");
-
-    local.autoPlaySeasons = 0;
-    lock.set("stopGameSim", true);
-    lock.set("gameSim", false);
-
-    // Wait in case stuff is still happening (ugh)
-    if (gameSim) {
-        await new Promise(resolve => {
-            setTimeout(() => {
-                resolve();
-            }, 1000);
-        });
-    }
-
-    if (g.lid !== undefined && idb.league !== undefined) {
-        if (local.leagueLoaded) {
-            await updateStatus("Saving...");
-            await idb.cache.flush();
-            await updateStatus("Idle");
-        }
-
-        if (disconnect) {
-            idb.cache.stopAutoFlush();
-
-            // Should probably "close" cache here too, but no way to do that now
-
-            idb.league.close();
-        }
-    }
-
-    if (disconnect) {
-        lock.reset();
-        local.reset();
-
-        g.lid = undefined;
-    }
 };
 
-/**
- * Delete an existing league.
- *
- * @memberOf core.league
- * @param {number} lid League ID.
- * @param {function()=} cb Optional callback.
- */
-async function remove(lid: number) {
-    if (g.lid === lid) {
-        close(true);
-    }
-    idb.meta.leagues.delete(lid);
-    await backboard.delete(`league${lid}`);
-}
-
-export default {
-    create,
-    exportLeague,
-    remove,
-    setGameAttributes,
-    updateMetaNameRegion,
-    loadGameAttributes,
-    autoPlay,
-    initAutoPlay,
-    close,
-};
+export default create;

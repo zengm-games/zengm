@@ -273,7 +273,7 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
     }
 
     let output =
-        "pid,Name,Pos,DraftPick,Age,Team,Season,GP,GS,Min,FGM,FGA,FG%,3PM,3PA,3P%,FTM,FTA,FT%,OReb,DReb,Reb,Ast,TO,Stl,Blk,BA,PF,Pts,PER,EWA,ORtg,DRtg,OWS,DWS,WS,WS/48,TS%,3PAr,FTr,ORB%,DRB%,TRB%,AST%,STL%,BLK%,TOV%,USG%,+/-,OVR,POT,HGT,STRE,SPD,JMP,ENDU,INS,DNK,FT,FG,TP,OIQ,DIQ,DRB,PSS,REB\n";
+        "pid,Name,Pos,DraftPick,Age,Team,Season,GP,GS,Min,FGM,FGA,FG%,3PM,3PA,3P%,FTM,FTA,FT%,OReb,DReb,Reb,Ast,TO,Stl,Blk,BA,PF,Pts,AtRimFG,AtRimFGA,AtRimFGP,LowPostFG,LowPostFGA,LowPostFGP,MidRangeFG,MidRangeFGA,MidRangeFGP,PER,EWA,ORtg,DRtg,OWS,DWS,WS,WS/48,TS%,3PAr,FTr,ORB%,DRB%,TRB%,AST%,STL%,BLK%,TOV%,USG%,+/-,OVR,POT,HGT,STRE,SPD,JMP,ENDU,INS,DNK,FT,FG,TP,OIQ,DIQ,DRB,PSS,REB\n";
 
     for (const s of seasons) {
         console.log(s, new Date());
@@ -323,6 +323,15 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
                 "ba",
                 "pf",
                 "pts",
+                "fgAtRim",
+                "fgaAtRim",
+                "fgpAtRim",
+                "fgLowPost",
+                "fgaLowPost",
+                "fgpLowPost",
+                "fgMidRange",
+                "fgaMidRange",
+                "fgpMidRange",
                 "per",
                 "ortg",
                 "drtg",
@@ -380,6 +389,15 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
                 p.stats.ba,
                 p.stats.pf,
                 p.stats.pts,
+                p.stats.fgAtRim,
+                p.stats.fgaAtRim,
+                p.stats.fgpAtRim,
+                p.stats.fgLowPost,
+                p.stats.fgaLowPost,
+                p.stats.fgpLowPost,
+                p.stats.fgMidRange,
+                p.stats.fgaMidRange,
+                p.stats.fgpMidRange,
                 p.stats.per,
                 p.stats.ewa,
                 p.stats.ortg,

@@ -3,6 +3,8 @@ import { PLAYER, g } from "../../../common";
 import sampleTiebreakers from "../../fixtures/sampleTiebreakers";
 import helpers from "../../helpers";
 import { draft } from "../../../worker/core";
+import lotterySort from "../../../worker/core/draft/lotterySort";
+import updateChances from "../../../worker/core/draft/updateChances";
 import { idb } from "../../../worker/db";
 
 describe("core/draft", () => {
@@ -166,8 +168,8 @@ describe("core/draft", () => {
             ];
             // index instead of tid
             const sameRec = [[6, 7, 8], [10, 11, 12]];
-            draft.lotterySort(teams);
-            draft.updateChances(chances, teams, false);
+            lotterySort(teams);
+            updateChances(chances, teams, false);
             for (let i = 0; i < sameRec.length; i++) {
                 const tids = sameRec[i];
                 let value = 0;
@@ -181,7 +183,7 @@ describe("core/draft", () => {
             }
 
             // test if isFinal is true
-            draft.updateChances(chances, teams, true);
+            updateChances(chances, teams, true);
             for (let i = 0; i < sameRec.length; i++) {
                 const tids = sameRec[i];
                 let value = 0;

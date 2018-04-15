@@ -385,7 +385,7 @@ class Cache {
                 indexes: [
                     {
                         name: "teamStatsByPlayoffsTid",
-                        key: row => `${row.playoffs ? 1 : 0},${row.tid}`,
+                        key: row => `${row.playoffs},${row.tid}`,
                         unique: true,
                     },
                 ],

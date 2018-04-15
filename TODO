@@ -1,6 +1,7 @@
 index updating
 - currenty: after any put/add/delete/clear, all indexes for that object store are marked "dirty"
 - would be better: actually check if the indexed property has changed, and only update a specific index then
+  - need to define index key more explicitly, not with some opaque function. either that or keep a list of fields used in the opaque function, although that is error prone
 - even better: incrementally update index
 
 customize playoff series length

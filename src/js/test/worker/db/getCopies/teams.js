@@ -13,7 +13,7 @@ describe("db/getCopies", () => {
 
             let teamStats = await idb.cache.teamSeasons.indexGet(
                 "teamStatsByPlayoffsTid",
-                "0,4",
+                "false,4",
             );
             teamStats.gp = 10;
             teamStats.fg = 50;

@@ -217,7 +217,7 @@ const processStats = async (
             teamStats2 = teamStats2.concat(
                 await idb.cache.teamStats.indexGetAll(
                     "teamStatsByPlayoffsTid",
-                    `0,${t.tid}`,
+                    `false,${t.tid}`,
                 ),
             );
         }
@@ -225,7 +225,7 @@ const processStats = async (
             teamStats2 = teamStats2.concat(
                 await idb.cache.teamStats.indexGetAll(
                     "teamStatsByPlayoffsTid",
-                    `1,${t.tid}`,
+                    `true,${t.tid}`,
                 ),
             );
         }

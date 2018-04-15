@@ -27,10 +27,7 @@
     "prettier": "prettier --write 'src/js/**/*.js'",
     "test": "karma start karma.conf.js",
     "test-watch": "karma start karma.conf.js --auto-watch --no-single-run",
-    "test-browserstack": "karma start karma-browserstack.conf.js",
-    "copy-mocha": "cp node_modules/mocha/mocha.css build/gen/mocha.css && cp node_modules/mocha/mocha.js build/gen/mocha.js",
-    "build-test": "yarn run copy-mocha && browserify -d src/js/test/index.js -o build/gen/test.js",
-    "watch-test": "yarn run copy-mocha && watchify -d src/js/test/index.js -o build/gen/test.js"
+    "test-browserstack": "karma start karma-browserstack.conf.js"
   },
   "dependencies": {
     "backboard": "1.0.7",

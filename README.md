@@ -104,10 +104,6 @@ or
 
     yarn run test-watch
 
-or manually within a web browser by running `yarn run build-test` (or
-`yarn run watch-test`) and going to <http://localhost:3000/test> (this might be
-broken currently).
-
 ### Code Overview
 
 Basketball GM is a single-page app that runs almost entirely client-side by

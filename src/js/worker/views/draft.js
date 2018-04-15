@@ -5,29 +5,24 @@ import { draft } from "../core";
 import { idb } from "../db";
 
 async function updateDraft(): void | { [key: string]: any } {
-    // DIRTY QUICK FIX FOR v10 db upgrade bug - eventually remove
-    // This isn't just for v10 db upgrade! Needed the same fix for http://www.reddit.com/r/BasketballGM/comments/2tf5ya/draft_bug/cnz58m2?context=3 - draft class not always generated with the correct seasons
-    {
-        const players = await idb.cache.players.indexGetAll(
-            "playersByTid",
-            PLAYER.UNDRAFTED,
-        );
-        for (const p of players) {
-            const season = p.ratings[0].season;
-            if (season !== g.season && g.phase === PHASE.DRAFT) {
-                console.log("FIXING FUCKED UP DRAFT CLASS");
-                console.log(season);
-                p.ratings[0].season = g.season;
-                p.draft.year = g.season;
-                await idb.cache.players.put(p);
-            }
-        }
-    }
-
     let undrafted = await idb.cache.players.indexGetAll(
         "playersByTid",
         PLAYER.UNDRAFTED,
     );
+
+    // DIRTY QUICK FIX FOR v10 db upgrade bug - eventually remove
+    // This isn't just for v10 db upgrade! Needed the same fix for http://www.reddit.com/r/BasketballGM/comments/2tf5ya/draft_bug/cnz58m2?context=3 - draft class not always generated with the correct seasons
+    for (const p of undrafted) {
+        const season = p.ratings[0].season;
+        if (season !== g.season && g.phase === PHASE.DRAFT) {
+            console.log("FIXING FUCKED UP DRAFT CLASS");
+            console.log(season);
+            p.ratings[0].season = g.season;
+            p.draft.year = g.season;
+            await idb.cache.players.put(p);
+        }
+    }
+
     undrafted.sort((a, b) => b.valueFuzz - a.valueFuzz);
     undrafted = await idb.getCopies.playersPlus(undrafted, {
         attrs: ["pid", "name", "age", "injury", "contract", "watch"],
@@ -71,7 +66,15 @@ async function updateDraft(): void | { [key: string]: any } {
     // Start draft if a pick has already been made (then it's already started)
     let started = drafted.length > 0;
 
-    const draftOrder = await draft.getOrder();
+    let draftOrder = await draft.getOrder();
+
+    // DIRTY QUICK FIX FOR https://github.com/dumbmatter/basketball-gm/issues/246
+    // Not sure why this is needed! Maybe related to lottery running before the phase change?
+    if (drafted.length === 0 && draftOrder.length === 0) {
+        await draft.genOrder();
+        draftOrder = await draft.getOrder();
+    }
+
     for (const pick of draftOrder) {
         drafted.push({
             draft: {

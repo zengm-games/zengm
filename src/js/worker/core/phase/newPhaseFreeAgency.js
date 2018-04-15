@@ -110,7 +110,6 @@ const newPhaseFreeAgency = async (conditions: Conditions) => {
         player.updateValues(p);
         await idb.cache.players.put(p);
     }
-    idb.cache.markDirtyIndexes("players");
     await draft.genPlayers(PLAYER.UNDRAFTED_3);
 
     return [helpers.leagueUrl(["free_agents"]), ["playerMovement"]];

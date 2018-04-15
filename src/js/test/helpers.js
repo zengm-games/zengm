@@ -34,12 +34,12 @@ const resetCache = async (data?: { [key: Store]: any[] }) => {
     idb.cache.flush = async () => {};
 
     for (const store of STORES) {
+        // This stuff is all needed because a real Cache.fill is not called.
         idb.cache._data[store] = {};
         idb.cache._deletes[store] = new Set();
         idb.cache._dirtyRecords[store] = new Set();
         idb.cache._maxIds[store] = -1;
-
-        idb.cache.markDirtyIndexes(store);
+        idb.cache._markDirtyIndexes(store);
     }
     idb.cache._status = "full";
 

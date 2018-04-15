@@ -64,12 +64,6 @@ const processTrade = async (
             await idb.cache.draftPicks.put(dp);
         }
     }
-    if (dpids[0].length > 0 || dpids[1].length > 0) {
-        idb.cache.markDirtyIndexes("draftPicks");
-    }
-    if (pids[0].length > 0 || pids[1].length > 0) {
-        idb.cache.markDirtyIndexes("players");
-    }
 
     logEvent({
         type: "trade",

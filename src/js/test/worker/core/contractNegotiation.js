@@ -141,7 +141,6 @@ describe("core/contractNegotiation", () => {
             const p = await idb.cache.players.get(pid1);
             p.tid = g.userTid;
             await idb.cache.players.put(p);
-            idb.cache.markDirtyIndexes("players");
 
             let error = await contractNegotiation.create(pid2, false);
             assert.equal(
@@ -165,7 +164,6 @@ describe("core/contractNegotiation", () => {
 
             p.tid = PLAYER.FREE_AGENT;
             await idb.cache.players.put(p);
-            idb.cache.markDirtyIndexes("players");
         });
     });
 

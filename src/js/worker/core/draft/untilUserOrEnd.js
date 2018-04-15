@@ -59,8 +59,6 @@ const untilUserOrEnd = async (conditions: Conditions) => {
                     await idb.cache.players.put(p);
                 }
 
-                idb.cache.markDirtyIndexes("players");
-
                 await league.setGameAttributes({
                     phase: g.nextPhase,
                     nextPhase: null,

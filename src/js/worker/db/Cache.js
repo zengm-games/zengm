@@ -471,7 +471,7 @@ class Cache {
         }
     }
 
-    markDirtyIndexes(store: Store) {
+    _markDirtyIndexes(store: Store) {
         if (this.storeInfos[store].indexes) {
             this._dirtyIndexes.add(store);
         }
@@ -762,7 +762,7 @@ class Cache {
                 : obj[pk];
         this._dirtyRecords[store].add(idParsed);
         this._dirty = true;
-        this.markDirtyIndexes(store);
+        this._markDirtyIndexes(store);
 
         return obj[pk];
     }
@@ -799,7 +799,7 @@ class Cache {
                     : id;
             this._deletes[store].add(idParsed);
             this._dirty = true;
-            this.markDirtyIndexes(store);
+            this._markDirtyIndexes(store);
         } else {
             throw new Error(`delete not implemented for store "${store}"`);
         }
@@ -827,7 +827,7 @@ class Cache {
                 this._deletes[store].add(idParsed);
             }
             this._dirty = true;
-            this.markDirtyIndexes(store);
+            this._markDirtyIndexes(store);
         } else {
             throw new Error(`clear not implemented for store "${store}"`);
         }

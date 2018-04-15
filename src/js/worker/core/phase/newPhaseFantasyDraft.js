@@ -34,8 +34,6 @@ const newPhaseFantasyDraft = async (
         await idb.cache.players.put(p);
     }
 
-    idb.cache.markDirtyIndexes("players");
-
     // Return traded draft picks to original teams
     const draftPicks = await idb.cache.draftPicks.getAll();
     for (const dp of draftPicks) {
@@ -44,7 +42,6 @@ const newPhaseFantasyDraft = async (
             await idb.cache.draftPicks.put(dp);
         }
     }
-    idb.cache.markDirtyIndexes("draftPicks");
 
     return [helpers.leagueUrl(["draft"]), ["playerMovement"]];
 };

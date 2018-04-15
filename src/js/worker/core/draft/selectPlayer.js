@@ -57,8 +57,6 @@ const selectPlayer = async (pick: PickRealized, pid: number) => {
 
     await idb.cache.players.put(p);
 
-    idb.cache.markDirtyIndexes("players");
-
     const draftName =
         g.phase === PHASE.FANTASY_DRAFT
             ? `${g.season} fantasy draft`

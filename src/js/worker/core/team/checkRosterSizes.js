@@ -90,7 +90,6 @@ const checkRosterSizes = async (
                     player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
                     player.setContract(p, p.contract, true);
                     p.gamesUntilTradable = 15;
-                    idb.cache.markDirtyIndexes("players");
 
                     logEvent(
                         {

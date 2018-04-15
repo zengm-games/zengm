@@ -1846,7 +1846,6 @@ describe("util/account", () => {
             p.draft.pick = 20;
             p.draft.year = g.season - 1;
             await idb.cache.players.put(p);
-            idb.cache.markDirtyIndexes("players");
 
             // ROY is pid 1 on tid 7
             const awards = {
@@ -1871,7 +1870,6 @@ describe("util/account", () => {
             const p = (await idb.cache.players.getAll())[0];
             p.tid = 15;
             await idb.cache.players.put(p);
-            idb.cache.markDirtyIndexes("players");
 
             const awarded = await account.checkAchievement.sleeper_pick(
                 {},
@@ -1884,7 +1882,6 @@ describe("util/account", () => {
             p.tid = g.userTid;
             p.draft.tid = 15;
             await idb.cache.players.put(p);
-            idb.cache.markDirtyIndexes("players");
 
             const awarded = await account.checkAchievement.sleeper_pick(
                 {},
@@ -1897,7 +1894,6 @@ describe("util/account", () => {
             p.draft.tid = g.userTid;
             p.draft.pick = 7;
             await idb.cache.players.put(p);
-            idb.cache.markDirtyIndexes("players");
 
             const awarded = await account.checkAchievement.sleeper_pick(
                 {},
@@ -1910,7 +1906,6 @@ describe("util/account", () => {
             p.draft.pick = 15;
             p.draft.year = g.season - 2;
             await idb.cache.players.put(p);
-            idb.cache.markDirtyIndexes("players");
 
             const awarded = await account.checkAchievement.sleeper_pick(
                 {},
@@ -1938,7 +1933,6 @@ describe("util/account", () => {
 
             p.draft.year = g.season - 1;
             await idb.cache.players.put(p);
-            idb.cache.markDirtyIndexes("players");
 
             const awarded = await account.checkAchievement.sleeper_pick(
                 {},

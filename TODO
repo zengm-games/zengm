@@ -1,3 +1,8 @@
+index updating
+- currenty: after any put/add/delete/clear, all indexes for that object store are marked "dirty"
+- would be better: actually check if the indexed property has changed, and only update a specific index then
+- even better: incrementally update index
+
 customize playoff series length
 - https://www.reddit.com/r/BasketballGM/comments/8b23uh/request_customizable_playoff_series_length/dx3bxd3/?context=3
 
@@ -170,13 +175,6 @@ when dirty on close, show warning window, and initiate flush (if not already in 
 - hard to coordinate across UI and worker...
 
 better loading screen, after React takes control but before initial page is rendered - because it can be slow for loading a league
-
-index updating
-- stupid option: parameter in put saying "skip index update"
-- smarter option: test if object === prev object on put, and if so, skip write and indexing (only if we leave markDirtyIndexes behind), just mark record as dirty
-- smarter option: know what fields the index is on, and test if they changed. if so, re-index
-- smartest option: as above, but incrementally update index
-- goal: get rid of markDirtyIndexes calls in application code
 
 uncomment things using localstorage in worker, after moving to either env+api or idb (meta)
 - top16playoffs - used in both, would be better in gameAttributes as a God Mode option

@@ -52,7 +52,6 @@ const addToFreeAgents = async (
     p.ptModifier = 1; // Reset
 
     await idb.cache.players.put(p);
-    idb.cache.markDirtyIndexes("players");
 };
 
 export default addToFreeAgents;

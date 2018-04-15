@@ -79,7 +79,6 @@ const autoSign = async () => {
                     }
                     player.setContract(p, p.contract, true);
                     p.gamesUntilTradable = 15;
-                    idb.cache.markDirtyIndexes("players");
 
                     // No conditions needed here because showNotification is false
                     logEvent({

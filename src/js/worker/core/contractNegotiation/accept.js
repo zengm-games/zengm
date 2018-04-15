@@ -108,7 +108,6 @@ const accept = async (
     }
 
     await idb.cache.players.put(p);
-    idb.cache.markDirtyIndexes("players");
 
     await cancel(pid);
 };

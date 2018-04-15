@@ -75,7 +75,6 @@ const killOne = async (conditions: Conditions) => {
     p.diedYear = g.season;
 
     await idb.cache.players.put(p);
-    idb.cache.markDirtyIndexes("players");
 
     logEvent(
         {

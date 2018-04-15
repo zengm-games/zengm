@@ -86,6 +86,15 @@ export const STORES: Store[] = [
 
 const AUTO_FLUSH_INTERVAL = 4000; // 4 seconds
 
+const getIndexKey = (index, row) => {
+    return (
+        index.key
+            // $FlowFixMe
+            .map(field => String(row[field]))
+            .join(",")
+    );
+};
+
 class StoreAPI<Input, Output, ID> {
     cache: Cache;
     store: Store;
@@ -471,8 +480,29 @@ class Cache {
         }
     }
 
-    _markDirtyIndexes(store: Store) {
-        if (this.storeInfos[store].indexes) {
+    _markDirtyIndexes(store: Store, row: any) {
+        if (!this.storeInfos[store].indexes || this._dirtyIndexes.has(store)) {
+            return;
+        }
+
+        if (row) {
+            for (const index of this.storeInfos[store].indexes) {
+                const key = getIndexKey(index, row);
+
+                if (!index.unique) {
+                    if (
+                        !this._indexes[index.name].hasOwnProperty(key) ||
+                        !this._indexes[index.name][key].includes(row)
+                    ) {
+                        this._dirtyIndexes.add(store);
+                        break;
+                    }
+                } else if (this._indexes[index.name][key] !== row) {
+                    this._dirtyIndexes.add(store);
+                    break;
+                }
+            }
+        } else {
             this._dirtyIndexes.add(store);
         }
     }
@@ -488,10 +518,7 @@ class Cache {
                         continue;
                     }
 
-                    const key = index.key
-                        // $FlowFixMe
-                        .map(field => String(row[field]))
-                        .join(",");
+                    const key = getIndexKey(index, row);
 
                     if (!index.unique) {
                         if (!this._indexes[index.name].hasOwnProperty(key)) {
@@ -765,7 +792,7 @@ class Cache {
                 : obj[pk];
         this._dirtyRecords[store].add(idParsed);
         this._dirty = true;
-        this._markDirtyIndexes(store);
+        this._markDirtyIndexes(store, obj);
 
         return obj[pk];
     }

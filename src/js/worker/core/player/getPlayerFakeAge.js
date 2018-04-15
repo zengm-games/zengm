@@ -4,7 +4,7 @@ import { g } from "../../../common";
 import { random } from "../../util";
 import type { Player } from "../../../common/types";
 
-const getPlayerFakeAge = async (players: Player[]): Promise<Player | void> => {
+const getPlayerFakeAge = (players: Player[]): Player | void => {
     // This list is very arbitrary, but certain countries are deemed more likely to have a player with a fake age
     const highRiskCountries = [
         "Angola",

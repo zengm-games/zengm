@@ -109,7 +109,7 @@ describe("core/player", () => {
     });
 
     describe("#getPlayerFakeAge()", () => {
-        it("should pick appropriate player to have a fake age", async () => {
+        it("should pick appropriate player to have a fake age", () => {
             helpers.resetG();
 
             const players = [
@@ -122,9 +122,10 @@ describe("core/player", () => {
             players[0].born.loc = "Ghana";
 
             players[1].pid = 1;
+            players[1].born.loc = "Ghana";
 
             players[2].pid = 2;
-            players[1].born.loc = "USA";
+            players[2].born.loc = "USA";
 
             players[3].pid = 3;
             players[3].born.loc = "Egypt";
@@ -136,7 +137,7 @@ describe("core/player", () => {
                 3: 0,
             };
             for (let i = 0; i < 1000; i++) {
-                const p = await player.getPlayerFakeAge(players);
+                const p = player.getPlayerFakeAge(players);
                 assert(p !== undefined);
                 pidCounts[p.pid] += 1;
             }

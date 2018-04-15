@@ -59,7 +59,7 @@ const newPhasePreseason = async (conditions: Conditions) => {
 
     // Small chance that a player was lying about his age!
     if (Math.random() < 0.01) {
-        const p = await player.getPlayerFakeAge(players);
+        const p = player.getPlayerFakeAge(players);
         if (p !== undefined) {
             const years = random.randInt(1, 4);
             const age0 = g.season - p.born.year;

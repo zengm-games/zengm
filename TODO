@@ -3,8 +3,6 @@ customize playoff series length
 
 madeHof test fix (probably inappropriately passing now)
 
-move functions from core to individual files
-
 for notifications, somehow avoid flash of a billion notifications when the tab was switched away on auto play. maybe reuse divs?
 
 Trade.js shouldn't have realtimeupdate, should be listening to a specific updateevent (like "trade") and that should be emitted in all the worker api functions

@@ -22,7 +22,7 @@ const writeTeamStats = async (results: GameResults) => {
             ]),
             idb.cache.teamStats.indexGet(
                 "teamStatsByPlayoffsTid",
-                `${g.phase === PHASE.PLAYOFFS},${results.team[t1].id}`,
+                `${String(g.phase === PHASE.PLAYOFFS)},${results.team[t1].id}`,
             ),
         ]);
 

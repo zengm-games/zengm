@@ -165,7 +165,7 @@ class Cache {
             indexes?: {
                 name: Index,
                 filter?: any => boolean,
-                key: any => string,
+                key: string[],
                 unique?: boolean,
             }[],
         },
@@ -238,11 +238,11 @@ class Cache {
                 indexes: [
                     {
                         name: "draftPicksBySeason",
-                        key: row => String(row.season),
+                        key: ["season"],
                     },
                     {
                         name: "draftPicksByTid",
-                        key: row => String(row.tid),
+                        key: ["tid"],
                     },
                 ],
             },
@@ -307,7 +307,7 @@ class Cache {
                 indexes: [
                     {
                         name: "playersByTid",
-                        key: row => String(row.tid),
+                        key: ["tid"],
                     },
                 ],
             },
@@ -328,7 +328,7 @@ class Cache {
                 indexes: [
                     {
                         name: "releasedPlayersByTid",
-                        key: row => String(row.tid),
+                        key: ["tid"],
                     },
                 ],
             },
@@ -358,12 +358,12 @@ class Cache {
                 indexes: [
                     {
                         name: "teamSeasonsBySeasonTid",
-                        key: row => `${row.season},${row.tid}`,
+                        key: ["season", "tid"],
                         unique: true,
                     },
                     {
                         name: "teamSeasonsByTidSeason",
-                        key: row => `${row.tid},${row.season}`,
+                        key: ["tid", "season"],
                         unique: true,
                     },
                 ],
@@ -385,7 +385,7 @@ class Cache {
                 indexes: [
                     {
                         name: "teamStatsByPlayoffsTid",
-                        key: row => `${row.playoffs},${row.tid}`,
+                        key: ["playoffs", "tid"],
                         unique: true,
                     },
                 ],
@@ -488,7 +488,10 @@ class Cache {
                         continue;
                     }
 
-                    const key = index.key(row);
+                    const key = index.key
+                        // $FlowFixMe
+                        .map(field => String(row[field]))
+                        .join(",");
 
                     if (!index.unique) {
                         if (!this._indexes[index.name].hasOwnProperty(key)) {

@@ -66,7 +66,7 @@ async function updateRoster(
                 season.getSchedule(),
                 idb.cache.players.indexGetAll("playersByTid", inputs.tid),
             ]);
-            const payroll = (await team.getPayroll(inputs.tid))[0];
+            const payroll = await team.getPayroll(inputs.tid);
 
             // numGamesRemaining doesn't need to be calculated except for g.userTid, but it is.
             let numGamesRemaining = 0;

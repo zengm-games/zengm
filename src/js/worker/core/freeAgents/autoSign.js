@@ -60,7 +60,7 @@ const autoSign = async () => {
             "playersByTid",
             tid,
         );
-        const payroll = (await team.getPayroll(tid))[0];
+        const payroll = await team.getPayroll(tid);
         const numPlayersOnRoster = playersOnRoster.length;
 
         if (numPlayersOnRoster < g.maxRosterSize) {

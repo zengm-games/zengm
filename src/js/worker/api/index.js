@@ -602,7 +602,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
                     pick.desc = helpers.pickDesc(pick);
                 }
 
-                const payroll = (await team.getPayroll(tid))[0];
+                const payroll = await team.getPayroll(tid);
 
                 return {
                     tid,

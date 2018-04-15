@@ -2,12 +2,13 @@ import assert from "assert";
 import { g, PLAYER } from "../../../common";
 import helpers from "../../helpers";
 import { league, player, team } from "../../../worker/core";
+import { findStarters } from "../../../worker/core/team/rosterAutoSort";
 import { Cache, connectMeta, idb } from "../../../worker/db";
 
 describe("core/team", () => {
     describe("#findStarters()", () => {
         it("should handle easy roster sorts", () => {
-            let starters = team.findStarters([
+            let starters = findStarters([
                 "PG",
                 "SG",
                 "SF",
@@ -21,7 +22,7 @@ describe("core/team", () => {
             ]);
             assert.deepEqual(starters, [0, 1, 2, 3, 4]);
 
-            starters = team.findStarters([
+            starters = findStarters([
                 "PG",
                 "SG",
                 "G",
@@ -35,7 +36,7 @@ describe("core/team", () => {
             ]);
             assert.deepEqual(starters, [0, 1, 2, 3, 4]);
 
-            starters = team.findStarters([
+            starters = findStarters([
                 "F",
                 "SG",
                 "SF",
@@ -49,7 +50,7 @@ describe("core/team", () => {
             ]);
             assert.deepEqual(starters, [0, 1, 2, 3, 4]);
 
-            starters = team.findStarters([
+            starters = findStarters([
                 "F",
                 "SG",
                 "SF",
@@ -64,7 +65,7 @@ describe("core/team", () => {
             assert.deepEqual(starters, [0, 1, 2, 3, 4]);
         });
         it("should put two Gs in starting lineup", () => {
-            let starters = team.findStarters([
+            let starters = findStarters([
                 "PG",
                 "F",
                 "SF",
@@ -78,7 +79,7 @@ describe("core/team", () => {
             ]);
             assert.deepEqual(starters, [0, 1, 2, 3, 5]);
 
-            starters = team.findStarters([
+            starters = findStarters([
                 "F",
                 "PF",
                 "G",
@@ -92,7 +93,7 @@ describe("core/team", () => {
             ]);
             assert.deepEqual(starters, [0, 1, 2, 3, 5]);
 
-            starters = team.findStarters([
+            starters = findStarters([
                 "F",
                 "PF",
                 "SF",
@@ -105,7 +106,7 @@ describe("core/team", () => {
             ]);
             assert.deepEqual(starters, [0, 1, 2, 3, 8]);
 
-            starters = team.findStarters([
+            starters = findStarters([
                 "F",
                 "PF",
                 "SF",
@@ -120,7 +121,7 @@ describe("core/team", () => {
             assert.deepEqual(starters, [0, 1, 2, 8, 9]);
         });
         it("should put two Fs (or one F and one C) in starting lineup", () => {
-            let starters = team.findStarters([
+            let starters = findStarters([
                 "PG",
                 "SG",
                 "G",
@@ -134,7 +135,7 @@ describe("core/team", () => {
             ]);
             assert.deepEqual(starters, [0, 1, 2, 3, 6]);
 
-            starters = team.findStarters([
+            starters = findStarters([
                 "PG",
                 "SG",
                 "SG",
@@ -148,7 +149,7 @@ describe("core/team", () => {
             ]);
             assert.deepEqual(starters, [0, 1, 2, 6, 7]);
 
-            starters = team.findStarters([
+            starters = findStarters([
                 "PG",
                 "SG",
                 "SG",
@@ -163,7 +164,7 @@ describe("core/team", () => {
             assert.deepEqual(starters, [0, 1, 2, 4, 6]);
         });
         it("should never put two pure Cs in starting lineup", () => {
-            let starters = team.findStarters([
+            let starters = findStarters([
                 "PG",
                 "SG",
                 "G",
@@ -177,7 +178,7 @@ describe("core/team", () => {
             ]);
             assert.deepEqual(starters, [0, 1, 2, 3, 6]);
 
-            starters = team.findStarters([
+            starters = findStarters([
                 "PG",
                 "SG",
                 "G",

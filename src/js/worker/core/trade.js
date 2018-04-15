@@ -278,7 +278,7 @@ async function summary(teams: TradeTeams): Promise<TradeSummary> {
                 ratios[j] = 100;
             }
 
-            const payroll = (await team.getPayroll(tids[j]))[0];
+            const payroll = await team.getPayroll(tids[j]);
             s.teams[j].payrollAfterTrade =
                 payroll / 1000 + s.teams[k].total - s.teams[j].total;
             if (s.teams[j].payrollAfterTrade > g.salaryCap / 1000) {

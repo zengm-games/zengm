@@ -64,7 +64,7 @@ async function updatePayroll(
         updateEvents.includes("firstRun") ||
         updateEvents.includes("playerMovement")
     ) {
-        const payroll = (await team.getPayroll(g.userTid))[0];
+        const payroll = await team.getPayroll(g.userTid);
         return {
             payroll: payroll / 1000, // [millions of dollars]
         };

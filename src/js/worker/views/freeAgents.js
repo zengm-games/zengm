@@ -6,7 +6,7 @@ import { idb } from "../db";
 import { lock } from "../util";
 
 async function updateFreeAgents(): void | { [key: string]: any } {
-    const payroll = (await team.getPayroll(g.userTid))[0];
+    const payroll = await team.getPayroll(g.userTid);
     let [userPlayers, players] = await Promise.all([
         idb.cache.players.indexGetAll("playersByTid", g.userTid),
         idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT),

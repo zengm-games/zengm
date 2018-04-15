@@ -25,7 +25,7 @@ const accept = async (
         return `No negotiation with player ${pid} found.`;
     }
 
-    const payroll = (await team.getPayroll(g.userTid))[0];
+    const payroll = await team.getPayroll(g.userTid);
 
     // If this contract brings team over the salary cap (minus a fudge factor), it's not a minimum;
     // contract, and it's not re-signing a current player, ERROR!

@@ -5,13 +5,15 @@
 import { helpers } from "../../common";
 import type { SortOrder, SortType } from "../../common/types";
 
+type Col = {
+    desc?: string,
+    sortSequence?: SortOrder[],
+    sortType?: SortType,
+    title?: string, // Should actually be required, but is only added later
+};
+
 const cols: {
-    [key: string]: {
-        desc?: string,
-        sortSequence?: SortOrder[],
-        sortType?: SortType,
-        title?: string, // Should actually be required, but is only added later
-    },
+    [key: string]: Col,
 } = {
     "": {
         sortSequence: ["desc", "asc"],
@@ -580,7 +582,7 @@ for (const key of Object.keys(cols)) {
     cols[key].title = key.replace("rating:", "");
 }
 
-export default (...titles: string[]) => {
+export default (...titles: string[]): Col[] => {
     return titles.map(title => {
         if (!cols.hasOwnProperty(title)) {
             throw new Error(`Unknown column: "${title}"`);

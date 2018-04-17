@@ -403,25 +403,28 @@ class DataTable extends React.Component<Props, State> {
         }
 
         this.sortCacheKey = `DataTableSort:${props.name}`;
-        let sortBys = localStorage.getItem(this.sortCacheKey);
-        if (sortBys === null || sortBys === undefined) {
+        const sortBysJSON = localStorage.getItem(this.sortCacheKey);
+        let sortBys: SortBy[];
+        if (sortBysJSON === null || sortBysJSON === undefined) {
             sortBys = [props.defaultSort];
         } else {
             try {
-                sortBys = JSON.parse(sortBys);
+                sortBys = JSON.parse(sortBysJSON);
             } catch (err) {
                 sortBys = [props.defaultSort];
             }
         }
 
         // Don't let sortBy reference invalid col
-        sortBys = sortBys.filter(sortBy => sortBy[0] < props.cols.length);
+        sortBys = sortBys.filter(
+            (sortBy: SortBy) => sortBy[0] < props.cols.length,
+        );
         if (sortBys.length === 0) {
             sortBys = [props.defaultSort];
         }
 
         this.filtersCacheKey = `DataTableFilters:${props.name}`;
-        const defaultFilters = props.cols.map(() => "");
+        const defaultFilters: string[] = props.cols.map(() => "");
         let filters = localStorage.getItem(this.filtersCacheKey);
         if (filters === null || filters === undefined) {
             filters = defaultFilters;

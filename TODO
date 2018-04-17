@@ -10,8 +10,6 @@ customize playoff series length
 
 madeHof test fix (probably inappropriately passing now)
 
-for notifications, somehow avoid flash of a billion notifications when the tab was switched away on auto play. maybe reuse divs?
-
 Trade.js shouldn't have realtimeupdate, should be listening to a specific updateevent (like "trade") and that should be emitted in all the worker api functions
 
 later
@@ -772,7 +770,6 @@ team switching after being fired
   keep track of what team the user controlled, so stats for the user (not the team) can be shown
 random events
   like.. player gets suspended, out X games. or player gets into fight, fan support drops. etc.
-  need a notification system first
 more detailed draft - slower picks, trades, etc.
   slower picks http://www.reddit.com/r/BasketballGM/comments/1r70dv/trade_picks_during_draft
   sort by generic value (current) or team-specific value

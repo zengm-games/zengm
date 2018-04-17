@@ -26,15 +26,27 @@ const notify = (
     textElement.innerHTML = text;
     notificationElement.appendChild(textElement);
 
+    const remove = () => {
+        if (notificationElement) {
+            container.removeChild(notificationElement);
+            notificationElement = null;
+        }
+    };
+
     if (!persistent) {
         let timeoutId;
         let timeoutStart;
 
         // Hide notification after timeout
         const notificationTimeout = () => {
-            timeoutId = window.setTimeout(() => {
+            timeoutId = setTimeout(() => {
                 if (container.contains(notificationElement)) {
                     notificationElement.classList.add("notification-delete");
+
+                    // notification-delete is 750ms via a CSS animation, but if this tab is not active, the animation
+                    // won't run. setTimeout will be throttled too, but it'll be good enough to avoid having tons of
+                    // notifications flash+delete on your screen when you switch back to this tab.
+                    setTimeout(remove, 1000);
                 }
             }, timeoutRemaining);
             timeoutStart = new Date();
@@ -96,8 +108,7 @@ const notify = (
 
     const removeOnFadeOut = event => {
         if (event.animationName === "fadeOut") {
-            container.removeChild(notificationElement);
-            notificationElement = null;
+            remove();
         }
     };
     notificationElement.addEventListener("webkitAnimationEnd", removeOnFadeOut);

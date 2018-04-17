@@ -62,6 +62,7 @@
 }
 
 .notification-delete {
+  /* Keep in sync with notify.js setTimeout */
   -webkit-animation: fadeOut .75s;
   animation: fadeOut .75s;
 }

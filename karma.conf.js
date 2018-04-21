@@ -4,7 +4,7 @@ module.exports = function (config) {
     config.set({
         frameworks: ['mocha', 'browserify', 'source-map-support'],
 
-        files: ['src/js/test/index.js', 'src/js/test/**/*.js'],
+        files: ['src/js/test/index.js', 'src/js/**/*.test.js', 'src/js/test/**/*.js'],
 
         preprocessors: {
             'src/js/**/*.js': ['browserify'],

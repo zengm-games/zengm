@@ -1,4 +1,3 @@
-/* eslint-disable import/first */
 import "../vendor/babel-external-helpers";
 import "../common/polyfills";
 

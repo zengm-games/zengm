@@ -56,4 +56,10 @@
         "SyntheticKeyboardEvent": false,
         "SyntheticInputEvent": false,
     },
+    overrides: [{
+        files: "**/*.test.js",
+        env: {
+            mocha: true
+        },
+    }],
 }

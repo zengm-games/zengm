@@ -1,3 +1,9 @@
+unit tests
+- inline with code, *.test.js
+  - how to nest describe/it? maybe just one describe, like worker/core/player/madeHof
+- more tests!
+- leave integration tests in the main tests folder (and maybe rename to integration-tests or e2e)
+
 index updating
 - currenty: check if the indexed property has changed, and only update a specific index then
 - would be better: make _dirtyIndexes per index, not per store  
@@ -5,8 +11,6 @@ index updating
 
 customize playoff series length
 - https://www.reddit.com/r/BasketballGM/comments/8b23uh/request_customizable_playoff_series_length/dx3bxd3/?context=3
-
-madeHof test fix (probably inappropriately passing now)
 
 Trade.js shouldn't have realtimeupdate, should be listening to a specific updateevent (like "trade") and that should be emitted in all the worker api functions
 

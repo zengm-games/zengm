@@ -750,6 +750,7 @@ type Props = {
     lid?: number,
     godMode: boolean,
     options: Option[],
+    pageId?: string,
     phaseText: string,
     popup: boolean,
     statusText: string,
@@ -819,6 +820,7 @@ class NavBar extends React.Component<Props, State> {
             lid,
             godMode,
             options,
+            pageId,
             phaseText,
             popup,
             statusText,
@@ -863,6 +865,21 @@ class NavBar extends React.Component<Props, State> {
             );
         }
 
+        // Hide phase and status, to prevent revealing that the playoffs has ended, thus spoiling a 3-0/3-1/3-2 finals
+        // game. This is needed because game sim happens before the results are displayed in liveGame.
+        const phaseStatusBlock =
+            pageId === "liveGame" ? (
+                <p className="navbar-text-two-line-no-collapse">
+                    Live game<br />in progress
+                </p>
+            ) : (
+                <p className="navbar-text-two-line-no-collapse">
+                    {phaseText}
+                    <br />
+                    {statusText}
+                </p>
+            );
+
         return (
             <Navbar fixedTop>
                 <div className="pull-right">{userBlock}</div>
@@ -894,13 +911,7 @@ class NavBar extends React.Component<Props, State> {
                             the current state of the game.
                         </Popover>
                     </Overlay>
-                    {lid !== undefined ? (
-                        <p className="navbar-text-two-line-no-collapse">
-                            {phaseText}
-                            <br />
-                            {statusText}
-                        </p>
-                    ) : null}
+                    {lid !== undefined ? phaseStatusBlock : null}
                     <Navbar.Toggle />
                 </Navbar.Header>
                 <Navbar.Collapse>
@@ -916,6 +927,7 @@ NavBar.propTypes = {
     lid: PropTypes.number,
     godMode: PropTypes.bool.isRequired,
     options: PropTypes.array.isRequired,
+    pageId: PropTypes.string,
     phaseText: PropTypes.string.isRequired,
     popup: PropTypes.bool.isRequired,
     statusText: PropTypes.string.isRequired,

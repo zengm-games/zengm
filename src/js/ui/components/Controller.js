@@ -355,12 +355,13 @@ class Controller extends React.Component<{}, State> {
         const updating = idLoading !== undefined;
 
         let contents;
+        let pageId;
         if (!Component) {
             contents = <h1 style={{ textAlign: "center" }}>Loading...</h1>; // Nice, aligned with splash screen
         } else if (!inLeague) {
             contents = <Component {...data} topMenu={topMenu} />;
         } else {
-            const pageId = idLoading !== undefined ? idLoading : idLoaded;
+            pageId = idLoading !== undefined ? idLoading : idLoaded;
 
             contents = (
                 <div>
@@ -379,7 +380,7 @@ class Controller extends React.Component<{}, State> {
 
         return (
             <div className="container">
-                <NavBar {...topMenu} updating={updating} />
+                <NavBar {...topMenu} pageId={pageId} updating={updating} />
                 <Header />
                 <div id="screenshot-nonleague" style={{ minHeight: "300px" }}>
                     {contents}

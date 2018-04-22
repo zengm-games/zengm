@@ -17,70 +17,8 @@ describe("core/season", () => {
         it("should schedule 41 home games and 41 away games for each team", () => {
             const tids = season.newSchedule(defaultTeams);
 
-            const home = [
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-            ]; // Number of home games for each team
-            const away = [
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-            ]; // Number of away games for each team
+            const home = Array(g.numTeams).fill(0); // Number of home games for each team
+            const away = Array(g.numTeams).fill(0); // Number of away games for each team
 
             for (let i = 0; i < tids.length; i++) {
                 home[tids[i][0]] += 1;
@@ -97,38 +35,7 @@ describe("core/season", () => {
 
             const home = []; // Each element in this array is an array representing the number of home games against each other team (only the ones in the other conference will be populated)
             for (let i = 0; i < g.numTeams; i++) {
-                home.push([
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                ]);
+                home.push(Array(g.numTeams).fill(0));
             }
 
             const teams = helpers.getTeamsDefault();
@@ -148,38 +55,7 @@ describe("core/season", () => {
 
             const home = []; // Each element in this array is an array representing the number of home games against each other team (only the ones in the other conference will be populated)
             for (let i = 0; i < g.numTeams; i++) {
-                home.push([
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                ]);
+                home.push(Array(g.numTeams).fill(0));
             }
 
             const teams = helpers.getTeamsDefault();
@@ -199,38 +75,7 @@ describe("core/season", () => {
 
             const home = []; // Each element in this array is an array representing the number of home games against each other team (only the ones in the other conference will be populated)
             for (let i = 0; i < g.numTeams; i++) {
-                home.push([
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                ]);
+                home.push(Array(g.numTeams).fill(0));
             }
 
             const teams = helpers.getTeamsDefault();

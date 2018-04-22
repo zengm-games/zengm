@@ -72,7 +72,6 @@ async function updatePlayer(
                 "pos",
             ],
             stats: [
-                "psid",
                 "season",
                 "tid",
                 "abbrev",

@@ -372,8 +372,6 @@ const genStatsRow = (p, ps, stats, statType) => {
             row.ewa = ps.ewa;
         } else if (attr === "yearsWithTeam") {
             row.yearsWithTeam = ps.yearsWithTeam;
-        } else if (attr === "psid") {
-            row.psid = ps.psid;
         } else if (attr === "astp") {
             row.astp = ps.astp;
         } else if (attr === "blkp") {

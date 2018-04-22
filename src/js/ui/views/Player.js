@@ -152,9 +152,9 @@ const StatsTable = ({ careerStats = {}, name, stats = [] }) => {
                 careerStats.pts.toFixed(1),
             ]}
             name={name}
-            rows={stats.map(ps => {
+            rows={stats.map((ps, i) => {
                 return {
-                    key: ps.psid,
+                    key: i,
                     data: [
                         ps.season,
                         <a
@@ -261,9 +261,9 @@ const AdvStatsTable = ({ careerStats = {}, name, stats = [] }) => {
                 helpers.plusMinus(careerStats.pm, 1),
             ]}
             name={name}
-            rows={stats.map(ps => {
+            rows={stats.map((ps, i) => {
                 return {
-                    key: ps.psid,
+                    key: i,
                     data: [
                         ps.season,
                         <a
@@ -356,9 +356,9 @@ const ShotLocationsTable = ({ careerStats = {}, name, stats = [] }) => {
                 careerStats.tpp.toFixed(1),
             ]}
             name={name}
-            rows={stats.map(ps => {
+            rows={stats.map((ps, i) => {
                 return {
-                    key: ps.psid,
+                    key: i,
                     data: [
                         ps.season,
                         <a

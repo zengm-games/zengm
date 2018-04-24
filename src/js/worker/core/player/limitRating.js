@@ -14,7 +14,7 @@ const limitRating = (rating: number): number => {
     if (rating < 0) {
         return 0;
     }
-    return Math.round(rating);
+    return Math.floor(rating);
 };
 
 export default limitRating;

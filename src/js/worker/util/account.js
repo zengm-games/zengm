@@ -261,23 +261,21 @@ checkAchievement.fo_fo_fo = async (
         return false;
     }
 
-    const series = playoffSeries.series;
-
-    for (let round = 0; round < series.length; round++) {
+    for (const round of playoffSeries.series) {
         let found = false;
-        for (let i = 0; i < series[round].length; i++) {
+        for (const series of round) {
             if (
-                series[round][i].away.won === 4 &&
-                series[round][i].home.won === 0 &&
-                series[round][i].away.tid === g.userTid
+                series.away.won === 4 &&
+                series.home.won === 0 &&
+                series.away.tid === g.userTid
             ) {
                 found = true;
                 break;
             }
             if (
-                series[round][i].home.won === 4 &&
-                series[round][i].away.won === 0 &&
-                series[round][i].home.tid === g.userTid
+                series.home.won === 4 &&
+                series.away.won === 0 &&
+                series.home.tid === g.userTid
             ) {
                 found = true;
                 break;

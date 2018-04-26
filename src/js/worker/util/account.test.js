@@ -1,19 +1,47 @@
 import assert from "assert";
 import { after, before, describe, it } from "mocha";
-import { g } from "../../common";
-import { league } from "../core";
-import { Cache, connectMeta, idb } from "../db";
+import { g, helpers } from "../../common";
+import testHelpers from "../../test/helpers";
+import { player, team } from "../core";
+import { idb } from "../db";
 import { account } from ".";
 
 describe("worker/util/account/checkAchievement", () => {
     before(async () => {
-        await league.close();
-        idb.meta = await connectMeta({});
-        await league.create("Test", 7, undefined, 2013, false);
-        idb.cache = new Cache();
-        await idb.cache.fill();
+        testHelpers.resetG();
+        g.season = 2013;
+        g.userTid = 7;
+
+        const teamsDefault = helpers.getTeamsDefault();
+        await testHelpers.resetCache({
+            players: [
+                player.generate(0, 30, 2010, true, 15.5),
+                player.generate(0, 30, 2010, true, 15.5),
+            ],
+            teams: teamsDefault.map(team.generate),
+            teamSeasons: teamsDefault.map(t => team.genSeasonRow(t.tid)),
+        });
+
+        idb.league = {
+            awards: {
+                getAll() {
+                    return [];
+                },
+            },
+            teamSeasons: {
+                index() {
+                    return {
+                        getAll() {
+                            return [];
+                        },
+                    };
+                },
+            },
+        };
     });
-    after(() => league.remove(g.lid));
+    after(() => {
+        idb.league = undefined;
+    });
 
     describe("fo_fo_fo", () => {
         it("award achievement for 16-0 playoff record for user's team", async () => {
@@ -1914,7 +1942,7 @@ describe("worker/util/account/checkAchievement", () => {
             );
             assert.equal(awarded, false);
         });
-        it("don't award achievement not ROY", async () => {
+        it("don't award achievement if not ROY", async () => {
             // Switch to another player
             const p = (await idb.cache.players.getAll())[1];
 
@@ -1923,7 +1951,7 @@ describe("worker/util/account/checkAchievement", () => {
                 roy: {
                     pid: p.pid,
                     name: "Timothy Gonzalez",
-                    tid: 7,
+                    tid: 15,
                     abbrev: "ATL",
                     pts: 30.135135135135137,
                     trb: 9.18918918918919,

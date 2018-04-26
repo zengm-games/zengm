@@ -13,7 +13,6 @@ describe("worker/db/getCopies/teamsPlus", () => {
         g.season = 2013;
 
         const teamsDefault = helpers.getTeamsDefault();
-
         await testHelpers.resetCache({
             players: [player.generate(4, 30, 2010, true, 15.5)],
             teams: teamsDefault.map(team.generate),

@@ -1,17 +1,25 @@
 // @flow
 
 import assert from "assert";
-import { after, before, describe, it } from "mocha";
-import { g } from "../../../common";
-import { league, team } from "../../core";
-import { Cache, connectMeta, idb } from "..";
+import { before, describe, it } from "mocha";
+import { g, helpers } from "../../../common";
+import testHelpers from "../../../test/helpers";
+import { player, team } from "../../core";
+import { idb } from "..";
 
 describe("worker/db/getCopies/teamsPlus", () => {
     before(async () => {
-        idb.meta = await connectMeta({});
-        await league.create("Test", 0, undefined, 2013, false);
-        idb.cache = new Cache();
-        await idb.cache.fill();
+        testHelpers.resetG();
+        g.season = 2013;
+
+        const teamsDefault = helpers.getTeamsDefault();
+
+        await testHelpers.resetCache({
+            players: [player.generate(4, 30, 2010, true, 15.5)],
+            teams: teamsDefault.map(team.generate),
+            teamSeasons: teamsDefault.map(t => team.genSeasonRow(t.tid)),
+            teamStats: teamsDefault.map(t => team.genStatsRow(t.tid)),
+        });
 
         // $FlowFixMe
         const teamStats = await idb.cache.teamSeasons.indexGet(
@@ -32,7 +40,6 @@ describe("worker/db/getCopies/teamsPlus", () => {
         teamStats2.fga = 120;
         await idb.cache.teamStats.add(teamStats2);
     });
-    after(() => league.remove(g.lid));
 
     it("return requested info if tid/season match", async () => {
         const t = await idb.getCopy.teamsPlus({
@@ -189,7 +196,8 @@ describe("worker/db/getCopies/teamsPlus", () => {
         });
     });
 
-    it("return stats in an array if no season is specified", async () => {
+    // Skip test that requires IndexedDB (to get all stats)
+    it.skip("return stats in an array if no season is specified", async () => {
         const t = await idb.getCopy.teamsPlus({
             stats: ["gp", "fg", "fga", "fgp"],
             tid: 4,
@@ -210,7 +218,8 @@ describe("worker/db/getCopies/teamsPlus", () => {
         });
     });
 
-    it("return stats in an array if regular season and playoffs are specified", async () => {
+    // Skip test that requires IndexedDB (to get all stats)
+    it.skip("return stats in an array if regular season and playoffs are specified", async () => {
         const t = await idb.getCopy.teamsPlus({
             stats: ["gp", "fg", "fga", "fgp"],
             tid: 4,

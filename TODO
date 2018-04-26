@@ -4,7 +4,6 @@ minimize number of tests that use real database, except integration test
 
 triage slow tests
 - worker/core/league/create
-- worker/db/getCopies/teamsPlus
 - worker/util/account/checkAchievement
 - Smoke Test (obviously)
 

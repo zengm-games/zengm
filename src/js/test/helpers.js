@@ -51,9 +51,19 @@ const resetCache = async (data?: { [key: Store]: any[] }) => {
             await idb.cache.players.add(obj);
         }
     }
+    if (data.teams) {
+        for (const obj of data.teams) {
+            await idb.cache.teams.add(obj);
+        }
+    }
     if (data.teamSeasons) {
         for (const obj of data.teamSeasons) {
             await idb.cache.teamSeasons.add(obj);
+        }
+    }
+    if (data.teamStats) {
+        for (const obj of data.teamStats) {
+            await idb.cache.teamStats.add(obj);
         }
     }
     if (data.trade) {

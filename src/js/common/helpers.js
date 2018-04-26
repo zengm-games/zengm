@@ -18,10 +18,10 @@ import type {
  * @param  {string} abbrev Three-letter team abbreviation, like "ATL".
  * @return {Array} Array with two elements, the team ID and the validated abbreviation.
  */
-function validateAbbrev(abbrev: string): [number, string] {
+function validateAbbrev(abbrev?: string): [number, string] {
     let tid = g.teamAbbrevsCache.indexOf(abbrev);
 
-    if (tid < 0) {
+    if (tid < 0 || abbrev === undefined) {
         tid = g.userTid;
         abbrev = g.teamAbbrevsCache[tid];
     }
@@ -38,7 +38,7 @@ function validateAbbrev(abbrev: string): [number, string] {
  * @param {number|string} tid Integer team ID.
  * @return {Array} Array with two elements, the validated team ID and the corresponding abbreviation.
  */
-function validateTid(tid: number | string): [number, string] {
+function validateTid(tid?: number | string): [number, string] {
     tid = parseInt(tid, 10);
 
     if (tid < 0 || tid >= g.teamAbbrevsCache.length || Number.isNaN(tid)) {

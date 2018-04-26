@@ -6,6 +6,8 @@ unit tests
 
 make league.create return JSON, not write directly to DB
 
+minimize number of tests that use real database, except integration test
+
 index updating
 - currenty: check if the indexed property has changed, and only update a specific index then
 - would be better: make _dirtyIndexes per index, not per store  

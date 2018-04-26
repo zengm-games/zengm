@@ -198,9 +198,22 @@ const processAttrs = (
 const processRatings = (
     output: PlayerFiltered,
     p: Player,
-    { fuzz, ratings, showRetired, stats, season }: PlayerOptionsRequired,
+    { fuzz, ratings, showRetired, stats, season, tid }: PlayerOptionsRequired,
 ) => {
-    output.ratings = p.ratings
+    let playerRatings = p.ratings;
+
+    // If we're returning all seasons for a specific team, filter ratings to match stats
+    if (season === undefined && tid !== undefined) {
+        const statsSeasons = p.stats
+            .filter(ps => ps.tid === tid)
+            .map(ps => ps.season);
+
+        playerRatings = playerRatings.filter(pr =>
+            statsSeasons.includes(pr.season),
+        );
+    }
+
+    output.ratings = playerRatings
         .map((pr, i) => {
             const row = {};
 

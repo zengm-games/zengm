@@ -7,7 +7,7 @@ import { account } from "../../../worker/util";
 
 describe("util/account", () => {
     before(async () => {
-        idb.meta = await connectMeta();
+        idb.meta = await connectMeta({});
         await league.create("Test", 7, undefined, 2013, false);
         idb.cache = new Cache();
         await idb.cache.fill();

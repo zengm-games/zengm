@@ -2,12 +2,8 @@ make league.create return JSON, not write directly to DB
 
 minimize number of tests that use real database, except integration test
 
-unskip tests
-- see idb.league mock in account.test, maybe abstract into testHelpers
-
 triage slow tests
 - worker/core/league/create
-- worker/util/account/checkAchievement
 - Smoke Test (obviously)
 
 index updating

@@ -22,22 +22,7 @@ describe("worker/util/account/checkAchievement", () => {
             teamSeasons: teamsDefault.map(t => team.genSeasonRow(t.tid)),
         });
 
-        idb.league = {
-            awards: {
-                getAll() {
-                    return [];
-                },
-            },
-            teamSeasons: {
-                index() {
-                    return {
-                        getAll() {
-                            return [];
-                        },
-                    };
-                },
-            },
-        };
+        idb.league = testHelpers.mockIDBLeague();
     });
     after(() => {
         idb.league = undefined;

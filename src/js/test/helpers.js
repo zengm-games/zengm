@@ -6,6 +6,26 @@ import { STORES } from "../worker/db/Cache";
 import { defaultGameAttributes } from "../worker/util";
 import type { Store } from "../worker/db/Cache";
 
+const mockIDBLeague = (): any => {
+    const league = {};
+    for (const store of STORES) {
+        league[store] = {
+            getAll() {
+                return [];
+            },
+            index() {
+                return {
+                    getAll() {
+                        return [];
+                    },
+                };
+            },
+        };
+    }
+
+    return league;
+};
+
 /**
  * Finds the number of times an element appears in an array.
  *
@@ -92,6 +112,7 @@ const resetG = () => {
 };
 
 export default {
+    mockIDBLeague,
     numInArrayEqualTo,
     resetCache,
     resetG,

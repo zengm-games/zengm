@@ -195,14 +195,15 @@ describe("worker/db/getCopies/teamsPlus", () => {
         });
     });
 
-    // Skip test that requires IndexedDB (to get all stats)
-    it.skip("return stats in an array if no season is specified", async () => {
+    it("return stats in an array if no season is specified", async () => {
+        idb.league = testHelpers.mockIDBLeague();
         const t = await idb.getCopy.teamsPlus({
             stats: ["gp", "fg", "fga", "fgp"],
             tid: 4,
             playoffs: true,
             regularSeason: false,
         });
+        idb.league = undefined;
 
         assert.deepEqual(t, {
             stats: [
@@ -217,13 +218,14 @@ describe("worker/db/getCopies/teamsPlus", () => {
         });
     });
 
-    // Skip test that requires IndexedDB (to get all stats)
-    it.skip("return stats in an array if regular season and playoffs are specified", async () => {
+    it("return stats in an array if regular season and playoffs are specified", async () => {
+        idb.league = testHelpers.mockIDBLeague();
         const t = await idb.getCopy.teamsPlus({
             stats: ["gp", "fg", "fga", "fgp"],
             tid: 4,
             playoffs: true,
         });
+        idb.league = undefined;
 
         assert.deepEqual(t, {
             stats: [

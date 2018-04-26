@@ -1,9 +1,3 @@
-unit tests
-- inline with code, *.test.js
-  - how to nest describe/it? maybe just one describe, like worker/core/player/madeHof
-- more tests!
-- leave integration tests in the main tests folder (and maybe rename to integration-tests or e2e)
-
 make league.create return JSON, not write directly to DB
 
 minimize number of tests that use real database, except integration test

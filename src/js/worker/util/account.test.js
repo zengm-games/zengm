@@ -1,12 +1,13 @@
-/* eslint comma-spacing: "off", key-spacing: "off", no-unused-expressions: "off", quote-props: "off" */
 import assert from "assert";
-import { Cache, connectMeta, idb } from "../../../worker/db";
-import { g } from "../../../common";
-import { league } from "../../../worker/core";
-import { account } from "../../../worker/util";
+import { after, before, describe, it } from "mocha";
+import { g } from "../../common";
+import { league } from "../core";
+import { Cache, connectMeta, idb } from "../db";
+import { account } from ".";
 
-describe("util/account", () => {
+describe("worker/util/account/checkAchievement", () => {
     before(async () => {
+        await league.close();
         idb.meta = await connectMeta({});
         await league.create("Test", 7, undefined, 2013, false);
         idb.cache = new Cache();
@@ -14,8 +15,8 @@ describe("util/account", () => {
     });
     after(() => league.remove(g.lid));
 
-    describe("#checkAchievement.fo_fo_fo()", () => {
-        it("should award achievement for 16-0 playoff record for user's team", async () => {
+    describe("fo_fo_fo", () => {
+        it("award achievement for 16-0 playoff record for user's team", async () => {
             // tid 7 wins 4-0 every series
             const ps = {
                 season: 2013,
@@ -276,7 +277,7 @@ describe("util/account", () => {
             const awarded = await account.checkAchievement.fo_fo_fo({}, false);
             assert.equal(awarded, true);
         });
-        it("should not award achievement for 16-? playoff record for user's team", async () => {
+        it("don't award achievement for 16-? playoff record for user's team", async () => {
             // tid 7 loses a game!
             const ps = {
                 season: 2013,
@@ -537,7 +538,7 @@ describe("util/account", () => {
             const awarded = await account.checkAchievement.fo_fo_fo({}, false);
             assert.equal(awarded, false);
         });
-        it("should not award achievement for 16-0 playoff record for other team", async () => {
+        it("don't award achievement for 16-0 playoff record for other team", async () => {
             // tid 7 is changed to 8
             const ps = {
                 season: 2013,
@@ -800,8 +801,8 @@ describe("util/account", () => {
         });
     });
 
-    describe("#checkAchievement.septuawinarian()", () => {
-        it("should award achievement only if user's team has more than 70 wins", async () => {
+    describe("septuawinarian", () => {
+        it("award achievement only if user's team has more than 70 wins", async () => {
             let awarded = await account.checkAchievement.septuawinarian(
                 {},
                 false,
@@ -820,8 +821,8 @@ describe("util/account", () => {
         });
     });
 
-    describe("#checkAchievement.98_degrees()", () => {
-        it("should award achievement for 82-0 regular season record and 16-0 playoff record for user's team", async () => {
+    describe("98_degrees", () => {
+        it("award achievement for 82-0 regular season record and 16-0 playoff record for user's team", async () => {
             // tid 7 wins 4-0 every series
             const ps = {
                 season: 2013,
@@ -1093,7 +1094,7 @@ describe("util/account", () => {
             );
             assert.equal(awarded, true);
         });
-        it("should not award achievement without 82-0 regular season", async () => {
+        it("don't award achievement without 82-0 regular season", async () => {
             const teamSeason = await idb.cache.teamSeasons.indexGet(
                 "teamSeasonsByTidSeason",
                 `${g.userTid},${g.season}`,
@@ -1115,7 +1116,7 @@ describe("util/account", () => {
             awarded = await account.checkAchievement["98_degrees"]({}, false);
             assert.equal(awarded, false);
         });
-        it("should not be awarded without 16-0 playoffs", async () => {
+        it("don't be awarded without 16-0 playoffs", async () => {
             // tid 7 lost a game
             const ps = {
                 season: 2013,
@@ -1398,7 +1399,7 @@ describe("util/account", () => {
         }
     };
 
-    describe("#checkAchievement.dynasty*()", () => {
+    describe("dynasty*", () => {
         after(async () => {
             const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
                 "teamSeasonsByTidSeason",
@@ -1411,7 +1412,7 @@ describe("util/account", () => {
             }
         });
 
-        it("should gracefully handle case where not enough seasons are present", async () => {
+        it("gracefully handle case where not enough seasons are present", async () => {
             let awarded = await account.checkAchievement.dynasty({}, false);
             assert.equal(awarded, false);
 
@@ -1421,7 +1422,7 @@ describe("util/account", () => {
             awarded = await account.checkAchievement.dynasty_3({}, false);
             assert.equal(awarded, false);
         });
-        it("should award dynasty for 6 titles in 8 seasons, but not dynasty_2 or dynasty_3", async () => {
+        it("award dynasty for 6 titles in 8 seasons, but not dynasty_2 or dynasty_3", async () => {
             const extraSeasons = [
                 { playoffRoundsWon: 4 },
                 { playoffRoundsWon: 4 },
@@ -1457,7 +1458,7 @@ describe("util/account", () => {
             awarded = await account.checkAchievement.dynasty_3({}, false);
             assert.equal(awarded, false);
         });
-        it("should award dynasty and dynasty_2 for 8 titles in 8 seasons, but not dynasty_3", async () => {
+        it("award dynasty and dynasty_2 for 8 titles in 8 seasons, but not dynasty_3", async () => {
             // Update non-winning years from last test
             let teamSeason = await idb.cache.teamSeasons.indexGet(
                 "teamSeasonsByTidSeason",
@@ -1482,7 +1483,7 @@ describe("util/account", () => {
             awarded = await account.checkAchievement.dynasty_3({}, false);
             assert.equal(awarded, false);
         });
-        it("should award dynasty, dynasty_2, and dynasty_3 for 11 titles in 13 seasons if there are 8 contiguous", async () => {
+        it("award dynasty, dynasty_2, and dynasty_3 for 11 titles in 13 seasons if there are 8 contiguous", async () => {
             const extraSeasons = [
                 { playoffRoundsWon: 4 },
                 { playoffRoundsWon: 4 },
@@ -1517,7 +1518,7 @@ describe("util/account", () => {
             awarded = await account.checkAchievement.dynasty_3({}, false);
             assert.equal(awarded, true);
         });
-        it("should award dynasty and dynasty_3 for 11 titles in 13 seasons, but not dynasty_2 if there are not 8 contiguous", async () => {
+        it("award dynasty and dynasty_3 for 11 titles in 13 seasons, but not dynasty_2 if there are not 8 contiguous", async () => {
             // Swap a couple titles to make no 8 in a row
             let teamSeason = await idb.cache.teamSeasons.indexGet(
                 "teamSeasonsByTidSeason",
@@ -1544,8 +1545,8 @@ describe("util/account", () => {
         });
     });
 
-    describe("#checkAchievement.moneyball*()", () => {
-        it("should award moneyball and moneyball_2 for title with payroll <= $45M", async () => {
+    describe("moneyball*", () => {
+        it("award moneyball and moneyball_2 for title with payroll <= $45M", async () => {
             const teamSeason = await idb.cache.teamSeasons.indexGet(
                 "teamSeasonsByTidSeason",
                 `${g.userTid},${g.season}`,
@@ -1560,7 +1561,7 @@ describe("util/account", () => {
             awarded = await account.checkAchievement.moneyball_2({}, false);
             assert.equal(awarded, true);
         });
-        it("should not award either if didn't win title", async () => {
+        it("don't award either if didn't win title", async () => {
             const teamSeason = await idb.cache.teamSeasons.indexGet(
                 "teamSeasonsByTidSeason",
                 `${g.userTid},${g.season}`,
@@ -1574,7 +1575,7 @@ describe("util/account", () => {
             awarded = await account.checkAchievement.moneyball_2({}, false);
             assert.equal(awarded, false);
         });
-        it("should award moneyball but not moneyball_2 for title with payroll > $45M and <= $60M", async () => {
+        it("award moneyball but not moneyball_2 for title with payroll > $45M and <= $60M", async () => {
             const teamSeason = await idb.cache.teamSeasons.indexGet(
                 "teamSeasonsByTidSeason",
                 `${g.userTid},${g.season}`,
@@ -1589,7 +1590,7 @@ describe("util/account", () => {
             awarded = await account.checkAchievement.moneyball_2({}, false);
             assert.equal(awarded, false);
         });
-        it("should not award either if payroll > $40M", async () => {
+        it("don't award either if payroll > $40M", async () => {
             const teamSeason = await idb.cache.teamSeasons.indexGet(
                 "teamSeasonsByTidSeason",
                 `${g.userTid},${g.season}`,
@@ -1606,8 +1607,8 @@ describe("util/account", () => {
         });
     });
 
-    describe("#checkAchievement.hardware_store()", () => {
-        it("should award achievement if user's team sweeps awards", async () => {
+    describe("hardware_store", () => {
+        it("award achievement if user's team sweeps awards", async () => {
             // tid 7 wins all awards
             const awards = {
                 season: 2013,
@@ -1665,7 +1666,7 @@ describe("util/account", () => {
             );
             assert.equal(awarded, true);
         });
-        it("should not award achievement if user's team loses an award", async () => {
+        it("don't award achievement if user's team loses an award", async () => {
             // tid 7 wins loses an award!
             const awards = {
                 season: 2013,
@@ -1723,7 +1724,7 @@ describe("util/account", () => {
             );
             assert.equal(awarded, false);
         });
-        it("should not award achievement if another team sweeps the awards", async () => {
+        it("don't award achievement if another team sweeps the awards", async () => {
             // tid 7 is changed to 8
             const awards = {
                 season: 2013,
@@ -1783,8 +1784,8 @@ describe("util/account", () => {
         });
     });
 
-    describe("#checkAchievement.small_market()", () => {
-        it("should award achievement if user's team wins title in a small market", async () => {
+    describe("small_market", () => {
+        it("award achievement if user's team wins title in a small market", async () => {
             const teamSeason = await idb.cache.teamSeasons.indexGet(
                 "teamSeasonsByTidSeason",
                 `${g.userTid},${g.season}`,
@@ -1799,7 +1800,7 @@ describe("util/account", () => {
             );
             assert.equal(awarded, true);
         });
-        it("should not award achievement if user's team is not in a small market", async () => {
+        it("don't award achievement if user's team is not in a small market", async () => {
             const teamSeason = await idb.cache.teamSeasons.indexGet(
                 "teamSeasonsByTidSeason",
                 `${g.userTid},${g.season}`,
@@ -1814,7 +1815,7 @@ describe("util/account", () => {
             );
             assert.equal(awarded, false);
         });
-        it("should not award achievement if user's team does not win the title", async () => {
+        it("don't award achievement if user's team does not win the title", async () => {
             const teamSeason = await idb.cache.teamSeasons.indexGet(
                 "teamSeasonsByTidSeason",
                 `${g.userTid},${g.season}`,
@@ -1831,8 +1832,8 @@ describe("util/account", () => {
         });
     });
 
-    describe("#checkAchievement.sleeper_pick()", () => {
-        it("should award achievement if user's non-lottery pick wins ROY while on user's team", async () => {
+    describe("sleeper_pick", () => {
+        it("award achievement if user's non-lottery pick wins ROY while on user's team", async () => {
             let awarded = await account.checkAchievement.sleeper_pick(
                 {},
                 false,
@@ -1866,7 +1867,7 @@ describe("util/account", () => {
             awarded = await account.checkAchievement.sleeper_pick({}, false);
             assert.equal(awarded, true);
         });
-        it("should not award achievement if not currently on user's team", async () => {
+        it("don't award achievement if not currently on user's team", async () => {
             const p = (await idb.cache.players.getAll())[0];
             p.tid = 15;
             await idb.cache.players.put(p);
@@ -1877,7 +1878,7 @@ describe("util/account", () => {
             );
             assert.equal(awarded, false);
         });
-        it("should not award achievement if not drafted by user", async () => {
+        it("don't award achievement if not drafted by user", async () => {
             const p = (await idb.cache.players.getAll())[0];
             p.tid = g.userTid;
             p.draft.tid = 15;
@@ -1889,7 +1890,7 @@ describe("util/account", () => {
             );
             assert.equal(awarded, false);
         });
-        it("should not award achievement if lottery pick", async () => {
+        it("don't award achievement if lottery pick", async () => {
             const p = (await idb.cache.players.getAll())[0];
             p.draft.tid = g.userTid;
             p.draft.pick = 7;
@@ -1901,7 +1902,7 @@ describe("util/account", () => {
             );
             assert.equal(awarded, false);
         });
-        it("should not award achievement if old pick", async () => {
+        it("don't award achievement if old pick", async () => {
             const p = (await idb.cache.players.getAll())[0];
             p.draft.pick = 15;
             p.draft.year = g.season - 2;
@@ -1913,7 +1914,7 @@ describe("util/account", () => {
             );
             assert.equal(awarded, false);
         });
-        it("should not award achievement not ROY", async () => {
+        it("don't award achievement not ROY", async () => {
             // Switch to another player
             const p = (await idb.cache.players.getAll())[1];
 

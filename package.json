@@ -21,7 +21,7 @@
     "minify-js": "node tools/minify-js.js",
     "watch-js": "concurrently --raw 'watchify -d src/js/ui/index.js -o build/gen/ui.js -v' 'watchify -d src/js/worker/index.js -o build/gen/worker.js -v'",
     "lint": "concurrently --raw 'yarn run flow' 'yarn run lint-js'",
-    "flow": "flow; test $? -eq 0 -o $? -eq 2",
+    "flow": "flow",
     "lint-js": "eslint '*.js' 'src/js/**/*.js' 'tools/**/*.js'",
     "lint-js-fix": "yarn run lint-js -- --fix",
     "prettier": "prettier --write 'src/js/**/*.js'",

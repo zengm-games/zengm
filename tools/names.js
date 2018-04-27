@@ -385,14 +385,22 @@ for (const filename of fs.readdirSync(folder)) {
         fnsByCountry[country] = {};
         lnsByCountry[country] = {};
     }
-    if (!fnsByCountry[country].hasOwnProperty(fn)) {
-        fnsByCountry[country][fn] = 0;
+
+    const skipFN = ["Just-in'love", "Sir'Dominic"];
+    if (!skipFN.includes(fn)) {
+        if (!fnsByCountry[country].hasOwnProperty(fn)) {
+            fnsByCountry[country][fn] = 0;
+        }
+        fnsByCountry[country][fn] += 1;
     }
-    if (!lnsByCountry[country].hasOwnProperty(ln)) {
-        lnsByCountry[country][ln] = 0;
+
+    const skipLN = ["Kickingstallionsims"];
+    if (!skipLN.includes(ln)) {
+        if (!lnsByCountry[country].hasOwnProperty(ln)) {
+            lnsByCountry[country][ln] = 0;
+        }
+        lnsByCountry[country][ln] += 1;
     }
-    fnsByCountry[country][fn] += 1;
-    lnsByCountry[country][ln] += 1;
 }
 
 // Minimum of (unique fns, unique lns) by country

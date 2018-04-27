@@ -24,7 +24,8 @@ describe("Smoke Tests", () => {
             intervalID = setInterval(() => {
                 if (local.autoPlaySeasons === 0) {
                     clearInterval(intervalID);
-                    resolve();
+                    // Wait to let it finish whatever DB activity might still be ongoing (like flushing cache)
+                    setTimeout(resolve, 5000);
                 }
             }, 500);
         });

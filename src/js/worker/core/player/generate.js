@@ -260,6 +260,7 @@ const generate = (
         injury: { type: "Healthy", gamesRemaining: 0 },
         lastName: nameInfo.lastName,
         ptModifier: 1,
+        relatives: [],
         ratings: [ratings],
         retiredYear: Infinity,
         rosterOrder: 666, // Will be set later

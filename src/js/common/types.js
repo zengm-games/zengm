@@ -493,6 +493,7 @@ export type PlayerWithoutPid = {|
     pos?: string, // Only in players from custom league files
     ptModifier: number,
     ratings: PlayerRatings[],
+    relatives: { type: 'father' | 'son' | 'brother', pid: number }[],
     retiredYear: number,
     rosterOrder: number,
     salaries: PlayerSalary[],

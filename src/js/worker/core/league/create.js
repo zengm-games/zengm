@@ -359,7 +359,7 @@ const create = async (
 
         let newPlayers = [];
         for (let i = 0; i < NUM_PAST_SEASONS; i++) {
-            const draftClass = await draft.genPlayersWithoutSaving(
+            const draftClass = draft.genPlayersWithoutSaving(
                 PLAYER.UNDRAFTED,
                 scoutingRank,
             );

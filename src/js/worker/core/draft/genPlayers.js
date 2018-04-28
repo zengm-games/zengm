@@ -1,10 +1,86 @@
 // @flow
 
+import romanNumerals from "roman-numerals";
 import { g, helpers } from "../../../common";
 import { finances, player } from "../../core";
 import genPlayersWithoutSaving from "./genPlayersWithoutSaving";
 import { idb } from "../../db";
-import { logEvent } from "../../util";
+import { logEvent, random } from "../../util";
+import type {
+    PlayerWithoutPid,
+} from "../../../common/types";
+
+const probSon = 0.5;
+const probBrother = 0.5;
+
+const getSuffixNumber = (lastName: string): number | undefined => {
+    const parts = lastName.split(" ");
+    if (parts.length === 1) {
+        return;
+    }
+    const suffix = parts[parts.length - 1];
+
+    if (suffix === "Sr.") {
+        return 1;
+    }
+
+    if (suffix === "Jr.") {
+        return 2;
+    }
+
+    try {
+        return romanNumerals.toArabic(suffix);
+    } catch (err) {
+        console.log("roman numeral error", suffix, err);
+    }
+};
+
+const getSuffix = (suffixNumber: number): string => {
+    if (suffixNumber === 2) {
+        return "Jr.";
+    }
+    if (suffixNumber > 2) {
+        return romanNumerals.toRoman(suffixNumber);
+    }
+    throw new Error(`Unexpected suffixNumber: "${suffixNumber}"`);
+};
+
+const makeSon = async (p: PlayerWithoutPid) => {
+    // Find a player from a draft 17-27 years ago to make the father
+    const draftYear = g.season - random.randInt(17, 27);
+
+    const possibleFathers = await idb.getCopies.players({
+        draftYear,
+    });
+    if (possibleFathers.length === 0) {
+        // League must be too new, draft class doesn't exist
+        return;
+    }
+
+    const father = random.choice(possibleFathers);
+
+    const fatherSuffixNumber = getSuffixNumber(father.lastName);
+    const sonSuffixNumber = fatherSuffixNumber === undefined ? 2 : fatherSuffixNumber + 1;
+
+    const sonSuffix = getSuffix(sonSuffixNumber);
+    p.lastName += ` ${sonSuffix}`;
+    if (fatherSuffixNumber === undefined) {
+        father.lastName += ` Sr.`;
+    }
+
+    p.relatives.push({
+        type: "father",
+        pid: father.pid,
+    });
+    father.relatives.push({
+        type: "son",
+        pid: p.pid,
+    });
+};
+
+const makeBrother = async (p: PlayerWithoutPid) => {
+
+};
 
 /**
  * Generate a set of draft prospects.
@@ -44,6 +120,12 @@ const genPlayers = async (
     );
 
     for (const p of players) {
+        if (Math.random() < probSon) {
+            await makeSon(p);
+        }
+        if (Math.random() < probBrother) {
+            await makeBrother(p);
+        }
         await idb.cache.players.add(p);
     }
 

@@ -46,6 +46,7 @@
     "react-dom": "^16.3.2",
     "react-overlays": "^0.8.3",
     "react-sortable-hoc": "dumbmatter/react-sortable-hoc#clonedNode-in-onSortStart",
+    "roman-numerals": "^0.3.2",
     "url-search-params-polyfill": "^3.0.0",
     "whatwg-fetch": "^2.0.4"
   },

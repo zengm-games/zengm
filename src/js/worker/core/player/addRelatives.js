@@ -64,7 +64,7 @@ const getRelatives = async (
     return players.filter(p2 => p2 !== undefined);
 };
 
-const makeSon = async (p: Player) => {
+export const makeSon = async (p: Player) => {
     // Sanity check - player must not already have father
     if (hasRelative(p, "father")) {
         return;

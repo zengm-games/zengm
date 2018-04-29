@@ -46,7 +46,16 @@ const getSuffix = (suffixNumber: number): string => {
     throw new Error(`Unexpected suffixNumber: "${suffixNumber}"`);
 };
 
+const hasRelative = (p: Player, type: "son" | "brother" | "father") => {
+    return !!p.relatives.find(relative => relative.type === type);
+}
+
 const makeSon = async (p: Player) => {
+    // Sanity check - player must not already have father
+    if (hasRelative(p, "father")) {
+        return;
+    }
+
     // Find a player from a draft 17-40 years ago to make the father
     const draftYear = p.draft.year - random.randInt(17, 40);
 
@@ -66,7 +75,7 @@ const makeSon = async (p: Player) => {
     const sonSuffix = getSuffix(sonSuffixNumber);
 
     // Only rename to be a Jr if the father has no son yet (first is always Jr)
-    if (!father.relatives.find(relative => relative.type === "son")) {
+    if (!hasRelative(father, "son")) {
         p.firstName = father.firstName;
         p.lastName = `${fatherLastName} ${sonSuffix}`;
 

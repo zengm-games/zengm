@@ -9,7 +9,6 @@ jr/iii/iv/etc
   - makeSon
     - if father already has other sons, add this new guy to their relatives array as a brother and vice versa
     - if son already has brothers, add father to their relatives array and vice versa
-    - if son already has father, abort!
   - makeBrother
     - if source already has a father or brothers, add them to target's relatives and vice versa
     - if target already has a father or brothers, add them to source's relatives and vice versa

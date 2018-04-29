@@ -13,25 +13,28 @@ import type {
 const probSon = 0.5;
 const probBrother = 0.5;
 
-const getSuffixNumber = (lastName: string): number | undefined => {
+const parseLastName = (lastName: string): [string, number | undefined] => {
     const parts = lastName.split(" ");
     if (parts.length === 1) {
-        return;
+        return [lastName, undefined];
     }
+
     const suffix = parts[parts.length - 1];
+    const parsedName = parts.slice(0, -1).join(" ");
 
     if (suffix === "Sr.") {
-        return 1;
+        return [parsedName, 1];
     }
 
     if (suffix === "Jr.") {
-        return 2;
+        return [parsedName, 2];
     }
 
     try {
-        return romanNumerals.toArabic(suffix);
+        const suffixNumber = romanNumerals.toArabic(suffix);
+        return [parsedName, suffixNumber];
     } catch (err) {
-        console.log("roman numeral error", suffix, err);
+        return [lastName, undefined];
     }
 };
 
@@ -47,7 +50,7 @@ const getSuffix = (suffixNumber: number): string => {
 
 const makeSon = async (p: PlayerWithoutPid) => {
     // Find a player from a draft 17-27 years ago to make the father
-    const draftYear = g.season - random.randInt(17, 27);
+    const draftYear = p.draft.year - random.randInt(17, 27);
 
     const possibleFathers = await idb.getCopies.players({
         draftYear,
@@ -59,11 +62,12 @@ const makeSon = async (p: PlayerWithoutPid) => {
 
     const father = random.choice(possibleFathers);
 
-    const fatherSuffixNumber = getSuffixNumber(father.lastName);
+    const [fatherLastName, fatherSuffixNumber] = parseLastName(father.lastName);
     const sonSuffixNumber = fatherSuffixNumber === undefined ? 2 : fatherSuffixNumber + 1;
-
     const sonSuffix = getSuffix(sonSuffixNumber);
-    p.lastName += ` ${sonSuffix}`;
+
+    p.firstName = father.firstName;
+    p.lastName = `${fatherLastName} ${sonSuffix}`;
     if (fatherSuffixNumber === undefined) {
         father.lastName += ` Sr.`;
     }
@@ -76,6 +80,9 @@ const makeSon = async (p: PlayerWithoutPid) => {
         type: "son",
         pid: p.pid,
     });
+
+    await idb.cache.players.put(father);
+    // No need to put p, that will be done in genPlayers
 };
 
 const makeBrother = async (p: PlayerWithoutPid) => {

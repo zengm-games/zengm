@@ -15,6 +15,7 @@ jr/iii/iv/etc
   - generalize to siblings, other relatives?
   - p.relatives: { type: 'father' | 'son' | 'brother', pid: number }[]
     - IDB upgrade code
+- confirm sr works, set jr first name
 
 make league.create return JSON, not write directly to DB
 

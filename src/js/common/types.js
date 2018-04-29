@@ -459,6 +459,8 @@ type PlayerSalary = {|
 // ***p stats can be undefined
 type PlayerStats = any;
 
+export type RelativeType = "brother" | "father" | "son";
+
 export type PlayerWithoutPid = {|
     awards: {|
         season: number,
@@ -494,7 +496,7 @@ export type PlayerWithoutPid = {|
     ptModifier: number,
     ratings: PlayerRatings[],
     relatives: {
-        type: "father" | "son" | "brother",
+        type: RelativeType,
         pid: number,
         name: string,
     }[],

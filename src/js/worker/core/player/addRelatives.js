@@ -3,7 +3,7 @@
 import romanNumerals from "roman-numerals";
 import { idb } from "../../db";
 import { random } from "../../util";
-import type { Player } from "../../../common/types";
+import type { Player, RelativeType } from "../../../common/types";
 
 const probSon = 0.5;
 const probBrother = 0.5;
@@ -46,13 +46,13 @@ const getSuffix = (suffixNumber: number): string => {
     throw new Error(`Unexpected suffixNumber: "${suffixNumber}"`);
 };
 
-const hasRelative = (p: Player, type: "son" | "brother" | "father") => {
+const hasRelative = (p: Player, type: RelativeType) => {
     return !!p.relatives.find(relative => relative.type === type);
 };
 
 const getRelatives = async (
     p: Player,
-    type: "son" | "brother" | "father",
+    type: RelativeType,
 ): Promise<Player[]> => {
     const players = await Promise.all(
         p.relatives

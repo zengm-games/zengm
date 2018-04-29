@@ -1,8 +1,9 @@
 // @flow
 
 import assert from "assert";
-import { before, describe, it } from "mocha";
+import { after, before, describe, it } from "mocha";
 import { PLAYER, g } from "../../../common";
+import testHelpers from "../../../test/helpers";
 import { idb } from "../../db";
 import { draft } from "..";
 import { getDraftTids, loadTeamSeasons } from "./common.test";
@@ -42,6 +43,7 @@ const testDraftUser = async round => {
 describe("worker/core/draft/untilUserOrEnd", () => {
     before(async () => {
         await loadTeamSeasons();
+        idb.league = testHelpers.mockIDBLeague();
 
         await draft.genPlayers(PLAYER.UNDRAFTED, 15.5);
 
@@ -49,24 +51,31 @@ describe("worker/core/draft/untilUserOrEnd", () => {
         userPick1 = draftTids.indexOf(g.userTid) + 1;
         userPick2 = draftTids.lastIndexOf(g.userTid) + 1;
     });
+    after(() => {
+        idb.league = undefined;
+    });
 
     it("draft players before the user's team first round pick", () => {
         return testDraftUntilUserOrEnd(userPick1 - 1, userPick1 - 1);
     });
+
     it("then allow the user to draft in the first round", () => {
         return testDraftUser(1);
     });
+
     it("when called again after the user drafts, should draft players before the user's second round pick comes up", () => {
         return testDraftUntilUserOrEnd(
             userPick2 - userPick1 - 1,
             userPick2 - 1,
         );
     });
+
     it("then allow the user to draft in the second round", () => {
         return testDraftUser(2);
     });
+
     it("when called again after the user drafts, should draft more players to finish the draft", () => {
-        const after = 60 - userPick2;
-        return testDraftUntilUserOrEnd(after, userPick2 + after);
+        const numAfter = 60 - userPick2;
+        return testDraftUntilUserOrEnd(numAfter, userPick2 + numAfter);
     });
 });

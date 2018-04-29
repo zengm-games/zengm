@@ -127,11 +127,13 @@ const genPlayers = async (
 
     for (const p of players) {
         await idb.cache.players.add(p);
+
+        // Weird Flow type casing is because idb.cache.players.add will create the "pid" property, transforming PlayerWithoutPid to Player
         if (Math.random() < probSon) {
-            await makeSon(p);
+            await makeSon(((p: any): Player));
         }
         if (Math.random() < probBrother) {
-            await makeBrother(p);
+            await makeBrother(((p: any): Player));
         }
     }
 

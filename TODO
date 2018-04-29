@@ -6,6 +6,7 @@ jr/iii/iv/etc
 - brothers
   - pick from previous draft class, or pick from this draft class for twins
   - walk family tree to assign relatives (if one of the brothers has a father or other brothers)
+    - actually, same is needed when adding a son (father could already have another) - generalize!
 - bias towards the jr being a good prospect
 - blog waugh universal
 - code organization - all just functions in genPlayers?

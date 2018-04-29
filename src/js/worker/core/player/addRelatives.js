@@ -65,10 +65,16 @@ const makeSon = async (p: Player) => {
         fatherSuffixNumber === undefined ? 2 : fatherSuffixNumber + 1;
     const sonSuffix = getSuffix(sonSuffixNumber);
 
-    p.firstName = father.firstName;
-    p.lastName = `${fatherLastName} ${sonSuffix}`;
-    if (fatherSuffixNumber === undefined) {
-        father.lastName += ` Sr.`;
+    // Only rename to be a Jr if the father has no son yet (first is always Jr)
+    if (!father.relatives.find(relative => relative.type === "son")) {
+        p.firstName = father.firstName;
+        p.lastName = `${fatherLastName} ${sonSuffix}`;
+
+        if (fatherSuffixNumber === undefined) {
+            father.lastName += ` Sr.`;
+        }
+    } else {
+        p.lastName = fatherLastName;
     }
 
     p.relatives.push({

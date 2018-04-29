@@ -1,6 +1,7 @@
 // @flow
 
 import addRatingsRow from "./addRatingsRow";
+import addRelatives from "./addRelatives";
 import addStatsRow from "./addStatsRow";
 import addToFreeAgents from "./addToFreeAgents";
 import augmentPartialPlayer from "./augmentPartialPlayer";
@@ -28,6 +29,7 @@ import updateValues from "./updateValues";
 
 export default {
     addRatingsRow,
+    addRelatives,
     addStatsRow,
     addToFreeAgents,
     augmentPartialPlayer,

@@ -9,8 +9,6 @@ jr/iii/iv/etc
     - actually, same is needed when adding a son (father could already have another) - generalize!
 - bias towards the jr being a good prospect
 - blog waugh universal
-- code organization - all just functions in genPlayers?
-  - player.addRelatives()
 - unit tests
 - p.relatives IDB upgrade code
 - confirm link from sr to jr works

@@ -1,7 +1,6 @@
 jr/iii/iv/etc
 - when generating a draft class, some % of a jr appearing
-- if a jr is to appear, look at players from a draft 17-27 years ago (purposely towards the young side, to make it more fun)
-  - check if 17-27 makes sense in code now, based on draft year
+- fathers
   - bias towards players that are jrs themselves
   - bias towards good players being more likely to have a jr
 - brothers
@@ -9,16 +8,13 @@ jr/iii/iv/etc
   - walk family tree to assign relatives (if one of the brothers has a father or other brothers)
 - bias towards the jr being a good prospect
 - blog waugh universal
-- put in genPlayers, after genPlayersWithoutSaving
 - code organization - all just functions in genPlayers?
+  - player.addRelatives()
 - unit tests
-- link to family on player pages
-  - generalize to siblings, other relatives?
-  - p.relatives: { type: 'father' | 'son' | 'brother', pid: number, name: string }[]
-    - IDB upgrade code
+- p.relatives IDB upgrade code
 - confirm link from sr to jr works
 - if a guy already has a son, pick a different first name
-  - should sons always have same first name?
+  - should sons always have same first name? yes, at least first one. more fun!
 
 make league.create return JSON, not write directly to DB
 

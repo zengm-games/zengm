@@ -47,8 +47,8 @@ const getSuffix = (suffixNumber: number): string => {
 };
 
 const makeSon = async (p: Player) => {
-    // Find a player from a draft 17-27 years ago to make the father
-    const draftYear = p.draft.year - random.randInt(17, 27);
+    // Find a player from a draft 17-40 years ago to make the father
+    const draftYear = p.draft.year - random.randInt(17, 40);
 
     const possibleFathers = await idb.getCopies.players({
         draftYear,

@@ -6,9 +6,7 @@ import { finances, player } from "../../core";
 import genPlayersWithoutSaving from "./genPlayersWithoutSaving";
 import { idb } from "../../db";
 import { logEvent, random } from "../../util";
-import type {
-    PlayerWithoutPid,
-} from "../../../common/types";
+import type { Player } from "../../../common/types";
 
 const probSon = 0.5;
 const probBrother = 0.5;
@@ -48,7 +46,7 @@ const getSuffix = (suffixNumber: number): string => {
     throw new Error(`Unexpected suffixNumber: "${suffixNumber}"`);
 };
 
-const makeSon = async (p: PlayerWithoutPid) => {
+const makeSon = async (p: Player) => {
     // Find a player from a draft 17-27 years ago to make the father
     const draftYear = p.draft.year - random.randInt(17, 27);
 
@@ -63,7 +61,8 @@ const makeSon = async (p: PlayerWithoutPid) => {
     const father = random.choice(possibleFathers);
 
     const [fatherLastName, fatherSuffixNumber] = parseLastName(father.lastName);
-    const sonSuffixNumber = fatherSuffixNumber === undefined ? 2 : fatherSuffixNumber + 1;
+    const sonSuffixNumber =
+        fatherSuffixNumber === undefined ? 2 : fatherSuffixNumber + 1;
     const sonSuffix = getSuffix(sonSuffixNumber);
 
     p.firstName = father.firstName;
@@ -75,19 +74,19 @@ const makeSon = async (p: PlayerWithoutPid) => {
     p.relatives.push({
         type: "father",
         pid: father.pid,
+        name: `${father.firstName} ${father.lastName}`,
     });
     father.relatives.push({
         type: "son",
         pid: p.pid,
+        name: `${p.firstName} ${p.lastName}`,
     });
 
+    await idb.cache.players.put(p);
     await idb.cache.players.put(father);
-    // No need to put p, that will be done in genPlayers
 };
 
-const makeBrother = async (p: PlayerWithoutPid) => {
-
-};
+const makeBrother = async (p: Player) => {};
 
 /**
  * Generate a set of draft prospects.
@@ -127,13 +126,13 @@ const genPlayers = async (
     );
 
     for (const p of players) {
+        await idb.cache.players.add(p);
         if (Math.random() < probSon) {
             await makeSon(p);
         }
         if (Math.random() < probBrother) {
             await makeBrother(p);
         }
-        await idb.cache.players.add(p);
     }
 
     // Easter eggs!

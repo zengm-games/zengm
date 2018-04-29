@@ -46,6 +46,7 @@ async function updatePlayer(
                 "watch",
                 "gamesUntilTradable",
                 "college",
+                "relatives",
             ],
             ratings: [
                 "season",

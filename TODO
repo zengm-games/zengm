@@ -6,6 +6,7 @@ jr/iii/iv/etc
   - bias towards good players being more likely to have a jr
 - brothers
   - pick from previous draft class, or pick from this draft class for twins
+  - walk family tree to assign relatives (if one of the brothers has a father or other brothers)
 - bias towards the jr being a good prospect
 - blog waugh universal
 - put in genPlayers, after genPlayersWithoutSaving
@@ -13,9 +14,11 @@ jr/iii/iv/etc
 - unit tests
 - link to family on player pages
   - generalize to siblings, other relatives?
-  - p.relatives: { type: 'father' | 'son' | 'brother', pid: number }[]
+  - p.relatives: { type: 'father' | 'son' | 'brother', pid: number, name: string }[]
     - IDB upgrade code
-- confirm sr works, set jr first name
+- confirm link from sr to jr works
+- if a guy already has a son, pick a different first name
+  - should sons always have same first name?
 
 make league.create return JSON, not write directly to DB
 

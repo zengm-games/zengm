@@ -11,6 +11,35 @@ import {
 } from "../components";
 import { getCols, setTitle, toWorker } from "../util";
 
+const upperCaseFirstLetter = (string: string): string => {
+    return `${string.charAt(0).toUpperCase()}${string.slice(1)}`;
+};
+
+const Relatives = ({ relatives }) => {
+    console.log(relatives);
+    if (relatives.length === 0) {
+        return null;
+    }
+
+    return (
+        <span>
+            {relatives.map(({ type, pid, name }) => {
+                return (
+                    <span key={pid}>
+                        {upperCaseFirstLetter(type)}:{" "}
+                        <a href={helpers.leagueUrl(["player", pid])}>{name}</a>
+                        <br />
+                    </span>
+                );
+            })}
+        </span>
+    );
+};
+
+Relatives.propTypes = {
+    relatives: PropTypes.arrayOf(PropTypes.object).isRequired,
+};
+
 const RatingsOverview = ({ ratings }) => {
     const r = ratings.length - 1;
 
@@ -536,6 +565,7 @@ const Player = ({
                                 <br />
                             </div>
                         )}
+                        <Relatives relatives={player.relatives} />
                         {draftInfo}
                         {player.college && player.college !== "" ? (
                             <div>

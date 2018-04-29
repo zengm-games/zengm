@@ -48,7 +48,21 @@ const getSuffix = (suffixNumber: number): string => {
 
 const hasRelative = (p: Player, type: "son" | "brother" | "father") => {
     return !!p.relatives.find(relative => relative.type === type);
-}
+};
+
+const getRelatives = async (
+    p: Player,
+    type: "son" | "brother" | "father",
+): Promise<Player[]> => {
+    const players = await Promise.all(
+        p.relatives
+            .filter(rel => rel.type === type)
+            // $FlowFixMe
+            .map(({ pid }) => idb.getCopy.players({ pid })),
+    );
+
+    return players.filter(p2 => p2 !== undefined);
+};
 
 const makeSon = async (p: Player) => {
     // Sanity check - player must not already have father
@@ -86,11 +100,54 @@ const makeSon = async (p: Player) => {
         p.lastName = fatherLastName;
     }
 
-    p.relatives.push({
+    // Handle case where father has other sons
+    if (hasRelative(father, "son")) {
+        const existingSons = await getRelatives(father, "son");
+        for (const existingSon of existingSons) {
+            // Add new brother to each of the existing sons
+            existingSon.relatives.push({
+                type: "brother",
+                pid: p.pid,
+                name: `${p.firstName} ${p.lastName}`,
+            });
+            await idb.cache.players.put(existingSon);
+
+            // Add existing brothers to new son
+            p.relatives.push({
+                type: "brother",
+                pid: existingSon.pid,
+                name: `${existingSon.firstName} ${existingSon.lastName}`,
+            });
+        }
+    }
+
+    const relFather = {
         type: "father",
         pid: father.pid,
         name: `${father.firstName} ${father.lastName}`,
-    });
+    };
+
+    // Handle case where son already has other brothers
+    if (hasRelative(p, "brother")) {
+        const brothers = await getRelatives(p, "brother");
+
+        for (const brother of brothers) {
+            if (!hasRelative(brother, "father")) {
+                // Add father to each brother (assuming they don't somehow already have another father)
+                brother.relatives.unshift(relFather);
+                await idb.cache.players.put(brother);
+
+                // Add existing brothers as sons to father
+                father.relatives.push({
+                    type: "son",
+                    pid: brother.pid,
+                    name: `${brother.firstName} ${brother.lastName}`,
+                });
+            }
+        }
+    }
+
+    p.relatives.unshift(relFather);
     father.relatives.push({
         type: "son",
         pid: p.pid,

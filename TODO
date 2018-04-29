@@ -6,13 +6,12 @@ jr/iii/iv/etc
 - makeBrother
   - pick from previous draft class, or pick from this draft class for twins
 - walk family tree to assign relatives
-  - makeSon
-    - if father already has other sons, add this new guy to their relatives array as a brother and vice versa
-    - if son already has brothers, add father to their relatives array and vice versa
   - makeBrother
     - if source already has a father or brothers, add them to target's relatives and vice versa
     - if target already has a father or brothers, add them to source's relatives and vice versa
     - if both already have fathers, abort!
+  - for each relatives.push, is there a chance this is creating a double entry? if so, abstract relatives.push and include check
+  - will this miss anything? test weird situations
 - bias towards the jr being a good prospect
 - blog waugh universal
 - unit tests

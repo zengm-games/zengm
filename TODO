@@ -15,6 +15,7 @@ jr/iii/iv/etc
 - bias towards the jr being a good prospect
 - blog waugh universal
 - unit tests
+  - makeSon and makeBrother in individual files, then?
 - p.relatives IDB upgrade code
 - confirm link from sr to jr works
 - if a guy already has a son, pick a different first name

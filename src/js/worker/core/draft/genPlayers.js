@@ -11,7 +11,7 @@ import type { Player } from "../../../common/types";
 const probSon = 0.5;
 const probBrother = 0.5;
 
-const parseLastName = (lastName: string): [string, number | undefined] => {
+const parseLastName = (lastName: string): [string, number | void] => {
     const parts = lastName.split(" ");
     if (parts.length === 1) {
         return [lastName, undefined];

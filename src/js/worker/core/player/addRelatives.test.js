@@ -27,7 +27,7 @@ describe("worker/core/player/addRelatives", () => {
         idb.league = undefined;
     });
 
-    describe.only("makeSon", () => {
+    describe("makeSon", () => {
         it("make player the son of another player", async () => {
             await testHelpers.resetCache({
                 players: [
@@ -105,9 +105,165 @@ describe("worker/core/player/addRelatives", () => {
             assert.deepEqual(son.relatives[0], relFather);
         });
 
-        it("handle case where player already has a brother");
+        it("handle case where player already has a brother", async () => {
+            await testHelpers.resetCache({
+                players: [
+                    // Son
+                    player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5),
 
-        it("handle case where father already has a son");
+                    // Brother
+                    player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5),
+
+                    // Fathers
+                    ...genFathers(),
+                ],
+            });
+
+            const son = await idb.cache.players.get(0);
+            son.relatives = [
+                {
+                    type: "brother",
+                    pid: 1,
+                    name: "Foo Bar",
+                },
+            ];
+            await idb.cache.players.put(son);
+
+            const brother = await idb.cache.players.get(1);
+            brother.relatives = [
+                {
+                    type: "brother",
+                    pid: 0,
+                    name: "Foo Bar",
+                },
+            ];
+            await idb.cache.players.put(brother);
+
+            await makeSon(son);
+
+            const fathers = await idb.cache.players.indexGetAll(
+                "playersByTid",
+                PLAYER.RETIRED,
+            );
+            const father = fathers.find(p => p.relatives.length > 0);
+            if (!father) {
+                throw new Error("No father found");
+            }
+
+            const son2 = await idb.cache.players.get(0);
+            const brother2 = await idb.cache.players.get(1);
+
+            assert.equal(son2.relatives.length, 2);
+            assert.equal(son2.relatives[0].type, "father");
+            assert.equal(son2.relatives[0].pid, father.pid);
+            assert.equal(son2.relatives[1].type, "brother");
+            assert.equal(son2.relatives[1].pid, brother2.pid);
+
+            assert.equal(brother2.relatives.length, 2);
+            assert.equal(brother2.relatives[0].type, "father");
+            assert.equal(brother2.relatives[0].pid, father.pid);
+            assert.equal(brother2.relatives[1].type, "brother");
+            assert.equal(brother2.relatives[1].pid, son2.pid);
+
+            assert.equal(father.relatives.length, 2);
+            assert.equal(father.relatives[0].type, "son");
+            assert.equal(father.relatives[1].type, "son");
+            assert.deepEqual(
+                father.relatives.map(relative => relative.pid).sort(),
+                [0, 1],
+            );
+        });
+
+        it("handle case where father already has a son", async () => {
+            const initialFathers = genFathers();
+            const initialOtherSons = initialFathers.map(() =>
+                player.generate(0, 25, season, true, 15.5),
+            );
+
+            await testHelpers.resetCache({
+                players: [
+                    // Son
+                    player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5),
+
+                    // Other sons (one for each potential father)
+                    ...initialOtherSons,
+
+                    // Fathers
+                    ...initialFathers,
+                ],
+            });
+
+            const fathers = await idb.cache.players.indexGetAll(
+                "playersByTid",
+                PLAYER.RETIRED,
+            );
+            const otherSons = await idb.cache.players.indexGetAll(
+                "playersByTid",
+                0,
+            );
+            assert.equal(fathers.length, otherSons.length);
+            for (let i = 0; i < fathers.length; i++) {
+                const father = fathers[i];
+                const otherSon = otherSons[i];
+
+                father.relatives.push({
+                    type: "son",
+                    pid: otherSon.pid,
+                    name: `${otherSon.firstName} ${otherSon.lastName}`,
+                });
+                otherSon.relatives.push({
+                    type: "father",
+                    pid: father.pid,
+                    name: `${father.firstName} ${father.lastName}`,
+                });
+
+                await idb.cache.players.put(father);
+                await idb.cache.players.put(otherSon);
+            }
+
+            const son = await idb.cache.players.get(0);
+            await makeSon(son);
+
+            const fathers2 = await idb.cache.players.indexGetAll(
+                "playersByTid",
+                PLAYER.RETIRED,
+            );
+            const father = fathers2.find(p => p.relatives.length > 1);
+            if (!father) {
+                throw new Error("No father found");
+            }
+
+            const otherSons2 = await idb.cache.players.indexGetAll(
+                "playersByTid",
+                0,
+            );
+            const otherSon = otherSons2.find(p => p.relatives.length > 1);
+            if (!otherSon) {
+                throw new Error("No other son found");
+            }
+
+            const son2 = await idb.cache.players.get(0);
+
+            assert.equal(son2.relatives.length, 2);
+            assert.equal(son2.relatives[0].type, "father");
+            assert.equal(son2.relatives[0].pid, father.pid);
+            assert.equal(son2.relatives[1].type, "brother");
+            assert.equal(son2.relatives[1].pid, otherSon.pid);
+
+            assert.equal(otherSon.relatives.length, 2);
+            assert.equal(otherSon.relatives[0].type, "father");
+            assert.equal(otherSon.relatives[0].pid, father.pid);
+            assert.equal(otherSon.relatives[1].type, "brother");
+            assert.equal(otherSon.relatives[1].pid, son2.pid);
+
+            assert.equal(father.relatives.length, 2);
+            assert.equal(father.relatives[0].type, "son");
+            assert.equal(father.relatives[1].type, "son");
+            assert.deepEqual(
+                father.relatives.map(relative => relative.pid).sort(),
+                [son2.pid, otherSon.pid],
+            );
+        });
     });
 
     describe("makeBrother", () => {

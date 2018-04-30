@@ -161,7 +161,58 @@ export const makeSon = async (p: Player) => {
     await idb.cache.players.put(father);
 };
 
-const makeBrother = async (p: Player) => {};
+export const makeBrother = async (p: Player) => {
+    // Find a player from a draft 0-3 years ago to make the brother
+    const draftYear = p.draft.year; // - random.randInt(0, 3);
+
+    const existingRelativePids = p.relatives.map(rel => rel.pid);
+
+    const possibleBrothers = (await idb.getCopies.players({
+        draftYear,
+    })).filter(p2 => {
+        if (p2.pid === p.pid) {
+            return false;
+        }
+
+        if (existingRelativePids.includes(p2.pid)) {
+            return false;
+        }
+
+        return true;
+    });
+
+    if (possibleBrothers.length === 0) {
+        // League must be too new, draft class doesn't exist
+        return;
+    }
+
+    const brother = random.choice(possibleBrothers);
+
+    // Two brothers can't have different fathers
+    if (hasRelative(p, "father") && hasRelative(brother, "father")) {
+        return;
+    }
+
+    // In case the brother is a Jr...
+    const [brotherLastName] = parseLastName(brother.lastName);
+
+    p.lastName = brotherLastName;
+    p.born.loc = brother.born.loc;
+
+    p.relatives.push({
+        type: "brother",
+        pid: brother.pid,
+        name: `${brother.firstName} ${brother.lastName}`,
+    });
+    brother.relatives.push({
+        type: "brother",
+        pid: p.pid,
+        name: `${p.firstName} ${p.lastName}`,
+    });
+
+    await idb.cache.players.put(p);
+    await idb.cache.players.put(brother);
+};
 
 const addRelatives = async (p: Player) => {
     if (Math.random() < probSon) {

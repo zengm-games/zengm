@@ -6,7 +6,7 @@ import { after, before, describe, it } from "mocha";
 import { PLAYER } from "../../../common";
 import testHelpers from "../../../test/helpers";
 import { player } from "..";
-import { makeSon } from "./addRelatives";
+import { makeBrother, makeSon } from "./addRelatives";
 import { idb } from "../../db";
 
 const season = 2017;
@@ -14,6 +14,12 @@ const season = 2017;
 const genFathers = () => {
     return range(season - 40, season - 16).map(season2 =>
         player.generate(PLAYER.RETIRED, 50, season2, true, 15.5),
+    );
+};
+
+const genBrothers = () => {
+    return range(season - 3, season + 1).map(season2 =>
+        player.generate(0, 50, season2, true, 15.5),
     );
 };
 
@@ -25,6 +31,91 @@ describe("worker/core/player/addRelatives", () => {
 
     after(() => {
         idb.league = undefined;
+    });
+
+    describe.only("makeBrother", () => {
+        it("make player the brother of another player", async () => {
+            await testHelpers.resetCache({
+                players: [
+                    player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5),
+                    ...genBrothers(),
+                ],
+            });
+
+            const p = await idb.cache.players.get(0);
+            p.born.loc = "Fake Country";
+            await makeBrother(p);
+
+            const brothers = await idb.cache.players.indexGetAll(
+                "playersByTid",
+                0,
+            );
+            const brother = brothers.find(b => b.relatives.length > 0);
+            if (!brother) {
+                throw new Error("No brother found");
+            }
+
+            assert.equal(p.relatives.length, 1);
+            assert.equal(p.relatives[0].type, "brother");
+            assert.equal(p.relatives[0].pid, brother.pid);
+
+            assert.equal(brother.relatives.length, 1);
+            assert.equal(brother.relatives[0].type, "brother");
+            assert.equal(brother.relatives[0].pid, p.pid);
+
+            assert.equal(p.lastName, brother.lastName);
+            assert.equal(p.born.loc, brother.born.loc);
+        });
+
+        it("skip player if no possible brother exists", async () => {
+            await testHelpers.resetCache({
+                players: [
+                    player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5),
+                ],
+            });
+
+            const p = await idb.cache.players.get(0);
+            await makeBrother(p);
+
+            assert.equal(p.relatives.length, 0);
+        });
+
+        it("handle case where target has a father");
+
+        it("handle case where source has a father");
+
+        it("handle case where both have fathers", async () => {
+            const players = [
+                player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5),
+                ...genBrothers(),
+            ];
+
+            for (const p of players) {
+                p.relatives.push({
+                    type: "father",
+                    pid: 666,
+                    name: "Foo Bar",
+                });
+            }
+
+            await testHelpers.resetCache({
+                players,
+            });
+
+            const p = await idb.cache.players.get(0);
+            await makeBrother(p);
+
+            const brothers = await idb.cache.players.indexGetAll(
+                "playersByTid",
+                0,
+            );
+            const brother = brothers.find(b => b.relatives.length > 1);
+            assert.equal(brother, undefined);
+        });
+
+        it("handle case where target has a brother");
+
+        it("handle case where source has a brother");
     });
 
     describe("makeSon", () => {
@@ -270,21 +361,5 @@ describe("worker/core/player/addRelatives", () => {
                 [son2.pid, otherSon.pid],
             );
         });
-    });
-
-    describe("makeBrother", () => {
-        it("make player the brother of another player");
-
-        it("skip player if no possible brother exists");
-
-        it("handle case where target has a father");
-
-        it("handle case where source has a father");
-
-        it("handle case where both have fathers");
-
-        it("handle case where target has a brother");
-
-        it("handle case where source has a brother");
     });
 });

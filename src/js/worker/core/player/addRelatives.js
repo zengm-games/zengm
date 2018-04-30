@@ -199,6 +199,53 @@ export const makeBrother = async (p: Player) => {
     p.lastName = brotherLastName;
     p.born.loc = brother.born.loc;
 
+    // Handle case where one brother already has a brother
+    if (hasRelative(brother, "brother")) {
+        const brothers = await getRelatives(brother, "brother");
+
+        for (const otherBrother of brothers) {
+            // Add player to other brother
+            otherBrother.relatives.push({
+                type: "brother",
+                pid: p.pid,
+                name: `${p.firstName} ${p.lastName}`,
+            });
+
+            // Add other brother to player
+            p.relatives.push({
+                type: "brother",
+                pid: otherBrother.pid,
+                name: `${otherBrother.firstName} ${otherBrother.lastName}`,
+            });
+        }
+    }
+
+    // Handle case where one brother already has a father
+    if (hasRelative(brother, "father")) {
+        const fathers = await getRelatives(brother, "father");
+        if (fathers.length > 0) {
+            const father = fathers[0];
+
+            // Add player to father
+            father.relatives.push({
+                type: "son",
+                pid: p.pid,
+                name: `${p.firstName} ${p.lastName}`,
+            });
+
+            // Add father to player
+            p.relatives.unshift({
+                type: "father",
+                pid: father.pid,
+                name: `${father.firstName} ${father.lastName}`,
+            });
+        }
+    }
+
+    // Handle case where player already has a brother
+
+    // Handle case where player already has a father
+
     p.relatives.push({
         type: "brother",
         pid: brother.pid,

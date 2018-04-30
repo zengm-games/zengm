@@ -80,16 +80,95 @@ describe("worker/core/player/addRelatives", () => {
             assert.equal(p.relatives.length, 0);
         });
 
-        it("handle case where target has a father");
+        it("handle case where target has a father", async () => {
+            const initialBrothers = genBrothers();
+            for (const p of initialBrothers) {
+                p.relatives.push({
+                    type: "father",
+                    pid: 1,
+                    name: "Foo Bar",
+                });
+            }
 
-        it("handle case where source has a father");
+            await testHelpers.resetCache({
+                players: [
+                    player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5),
+                    player.generate(PLAYER.RETIRED, 50, season - 30, true, 15.5), // Father
+                    ...initialBrothers,
+                ],
+            });
+
+            const p = await idb.cache.players.get(0);
+            await makeBrother(p);
+
+            const brothers = await idb.cache.players.indexGetAll(
+                "playersByTid",
+                0,
+            );
+            const brother = brothers.find(b => b.relatives.length > 1);
+            if (!brother) {
+                throw new Error("No brother found");
+            }
+
+            assert.equal(p.relatives.length, 2);
+            assert.equal(p.relatives[0].type, "father");
+            assert.equal(p.relatives[0].pid, 1);
+            assert.equal(p.relatives[1].type, "brother");
+            assert.equal(p.relatives[1].pid, brother.pid);
+
+            assert.equal(brother.relatives.length, 2);
+            assert.equal(brother.relatives[0].type, "father");
+            assert.equal(brother.relatives[0].pid, 1);
+            assert.equal(brother.relatives[1].type, "brother");
+            assert.equal(brother.relatives[1].pid, p.pid);
+        });
+
+        it("handle case where source has a father", async () => {
+            const initialPlayer = player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5);
+            initialPlayer.relatives.push({
+                type: "father",
+                pid: 1,
+                name: "Foo Bar",
+            });
+
+            await testHelpers.resetCache({
+                players: [
+                    initialPlayer,
+                    player.generate(PLAYER.RETIRED, 50, season - 30, true, 15.5), // Father
+                    ...genBrothers(),
+                ],
+            });
+
+            const p = await idb.cache.players.get(0);
+            await makeBrother(p);
+
+            const brothers = await idb.cache.players.indexGetAll(
+                "playersByTid",
+                0,
+            );
+            const brother = brothers.find(b => b.relatives.length > 1);
+            if (!brother) {
+                throw new Error("No brother found");
+            }
+
+            assert.equal(p.relatives.length, 2);
+            assert.equal(p.relatives[0].type, "father");
+            assert.equal(p.relatives[0].pid, 1);
+            assert.equal(p.relatives[1].type, "brother");
+            assert.equal(p.relatives[1].pid, brother.pid);
+
+            assert.equal(brother.relatives.length, 2);
+            assert.equal(brother.relatives[0].type, "father");
+            assert.equal(brother.relatives[0].pid, 1);
+            assert.equal(brother.relatives[1].type, "brother");
+            assert.equal(brother.relatives[1].pid, p.pid);
+        });
 
         it("handle case where both have fathers", async () => {
             const players = [
                 player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5),
                 ...genBrothers(),
             ];
-
             for (const p of players) {
                 p.relatives.push({
                     type: "father",
@@ -116,6 +195,8 @@ describe("worker/core/player/addRelatives", () => {
         it("handle case where target has a brother");
 
         it("handle case where source has a brother");
+
+        it("handle case where both brothers already have a brother")
     });
 
     describe("makeSon", () => {

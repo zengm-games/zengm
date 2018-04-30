@@ -40,6 +40,7 @@ describe("worker/core/player/addRelatives", () => {
             });
 
             const son = await idb.cache.players.get(0);
+            son.born.loc = "Fake Country";
             await makeSon(son);
 
             const fathers = await idb.cache.players.indexGetAll(
@@ -58,6 +59,8 @@ describe("worker/core/player/addRelatives", () => {
             assert.equal(father.relatives.length, 1);
             assert.equal(father.relatives[0].type, "son");
             assert.equal(father.relatives[0].pid, son.pid);
+
+            assert.equal(son.born.loc, father.born.loc);
         });
 
         it("skip player if no possible father exists", async () => {
@@ -130,6 +133,7 @@ describe("worker/core/player/addRelatives", () => {
             await idb.cache.players.put(son);
 
             const brother = await idb.cache.players.get(1);
+            brother.born.loc = "Fake Country";
             brother.relatives = [
                 {
                     type: "brother",
@@ -172,6 +176,8 @@ describe("worker/core/player/addRelatives", () => {
                 father.relatives.map(relative => relative.pid).sort(),
                 [0, 1],
             );
+
+            assert.equal(brother2.born.loc, father.born.loc);
         });
 
         it("handle case where father already has a son", async () => {

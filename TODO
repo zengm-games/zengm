@@ -5,6 +5,7 @@ jr/iii/iv/etc
   - bias towards good players being more likely to have a jr
 - makeBrother
   - pick from previous draft class, or pick from this draft class for twins
+  - country - make the same as the existing brother
 - walk family tree to assign relatives
   - makeBrother
     - if source already has a father or brothers, add them to target's relatives and vice versa

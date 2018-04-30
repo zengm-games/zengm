@@ -100,6 +100,8 @@ export const makeSon = async (p: Player) => {
         p.lastName = fatherLastName;
     }
 
+    p.born.loc = father.born.loc;
+
     // Handle case where father has other sons
     if (hasRelative(father, "son")) {
         const existingSons = await getRelatives(father, "son");
@@ -134,6 +136,7 @@ export const makeSon = async (p: Player) => {
         for (const brother of brothers) {
             if (!hasRelative(brother, "father")) {
                 // Add father to each brother (assuming they don't somehow already have another father)
+                brother.born.loc = father.born.loc;
                 brother.relatives.unshift(relFather);
                 await idb.cache.players.put(brother);
 

@@ -11,7 +11,6 @@ jr/iii/iv/etc
     - if source already has a father or brothers, add them to target's relatives and vice versa
     - if target already has a father or brothers, add them to source's relatives and vice versa
     - if both already have fathers, abort!
-  - for each relatives.push, is there a chance this is creating a double entry? if so, abstract relatives.push and include check
   - will this miss anything? test weird situations
 - blog waugh universal
 - unit tests

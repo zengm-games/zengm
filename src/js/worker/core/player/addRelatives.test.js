@@ -93,7 +93,13 @@ describe("worker/core/player/addRelatives", () => {
             await testHelpers.resetCache({
                 players: [
                     player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5),
-                    player.generate(PLAYER.RETIRED, 50, season - 30, true, 15.5), // Father
+                    player.generate(
+                        PLAYER.RETIRED,
+                        50,
+                        season - 30,
+                        true,
+                        15.5,
+                    ), // Father
                     ...initialBrothers,
                 ],
             });
@@ -124,7 +130,13 @@ describe("worker/core/player/addRelatives", () => {
         });
 
         it("handle case where source has a father", async () => {
-            const initialPlayer = player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5);
+            const initialPlayer = player.generate(
+                PLAYER.UNDRAFTED,
+                20,
+                season,
+                true,
+                15.5,
+            );
             initialPlayer.relatives.push({
                 type: "father",
                 pid: 1,
@@ -134,7 +146,13 @@ describe("worker/core/player/addRelatives", () => {
             await testHelpers.resetCache({
                 players: [
                     initialPlayer,
-                    player.generate(PLAYER.RETIRED, 50, season - 30, true, 15.5), // Father
+                    player.generate(
+                        PLAYER.RETIRED,
+                        50,
+                        season - 30,
+                        true,
+                        15.5,
+                    ), // Father
                     ...genBrothers(),
                 ],
             });
@@ -196,7 +214,7 @@ describe("worker/core/player/addRelatives", () => {
 
         it("handle case where source has a brother");
 
-        it("handle case where both brothers already have a brother")
+        it("handle case where both brothers already have a brother");
     });
 
     describe("makeSon", () => {

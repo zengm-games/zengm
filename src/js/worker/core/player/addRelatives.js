@@ -64,6 +64,30 @@ const getRelatives = async (
     return players.filter(p2 => p2 !== undefined);
 };
 
+const addRelative = (
+    p: Player,
+    relative: {
+        type: RelativeType,
+        pid: number,
+        name: string,
+    },
+) => {
+    // Don't add duplicate
+    if (
+        p.relatives.some(
+            ({ type, pid }) => type === relative.type && pid === relative.pid,
+        )
+    ) {
+        return;
+    }
+
+    if (relative.type === "father") {
+        p.relatives.unshift(relative);
+    } else {
+        p.relatives.push(relative);
+    }
+};
+
 export const makeSon = async (p: Player) => {
     // Sanity check - player must not already have father
     if (hasRelative(p, "father")) {
@@ -107,7 +131,7 @@ export const makeSon = async (p: Player) => {
         const existingSons = await getRelatives(father, "son");
         for (const existingSon of existingSons) {
             // Add new brother to each of the existing sons
-            existingSon.relatives.push({
+            addRelative(existingSon, {
                 type: "brother",
                 pid: p.pid,
                 name: `${p.firstName} ${p.lastName}`,
@@ -115,7 +139,7 @@ export const makeSon = async (p: Player) => {
             await idb.cache.players.put(existingSon);
 
             // Add existing brothers to new son
-            p.relatives.push({
+            addRelative(p, {
                 type: "brother",
                 pid: existingSon.pid,
                 name: `${existingSon.firstName} ${existingSon.lastName}`,
@@ -137,11 +161,11 @@ export const makeSon = async (p: Player) => {
             if (!hasRelative(brother, "father")) {
                 // Add father to each brother (assuming they don't somehow already have another father)
                 brother.born.loc = father.born.loc;
-                brother.relatives.unshift(relFather);
+                addRelative(brother, relFather);
                 await idb.cache.players.put(brother);
 
                 // Add existing brothers as sons to father
-                father.relatives.push({
+                addRelative(father, {
                     type: "son",
                     pid: brother.pid,
                     name: `${brother.firstName} ${brother.lastName}`,
@@ -150,8 +174,8 @@ export const makeSon = async (p: Player) => {
         }
     }
 
-    p.relatives.unshift(relFather);
-    father.relatives.push({
+    addRelative(p, relFather);
+    addRelative(father, {
         type: "son",
         pid: p.pid,
         name: `${p.firstName} ${p.lastName}`,
@@ -199,59 +223,64 @@ export const makeBrother = async (p: Player) => {
     p.lastName = brotherLastName;
     p.born.loc = brother.born.loc;
 
-    // Handle case where one brother already has a brother
-    if (hasRelative(brother, "brother")) {
-        const brothers = await getRelatives(brother, "brother");
+    const edgeCases = async (brother1, brother2) => {
+        // Handle case where one brother already has a brother
+        if (hasRelative(brother1, "brother")) {
+            const brothers = await getRelatives(brother1, "brother");
 
-        for (const otherBrother of brothers) {
-            // Add player to other brother
-            otherBrother.relatives.push({
-                type: "brother",
-                pid: p.pid,
-                name: `${p.firstName} ${p.lastName}`,
-            });
+            for (const otherBrother of brothers) {
+                // Add brother to other brother
+                addRelative(otherBrother, {
+                    type: "brother",
+                    pid: brother2.pid,
+                    name: `${brother2.firstName} ${brother2.lastName}`,
+                });
 
-            // Add other brother to player
-            p.relatives.push({
-                type: "brother",
-                pid: otherBrother.pid,
-                name: `${otherBrother.firstName} ${otherBrother.lastName}`,
-            });
+                // Add other brother to brother
+                addRelative(brother2, {
+                    type: "brother",
+                    pid: otherBrother.pid,
+                    name: `${otherBrother.firstName} ${otherBrother.lastName}`,
+                });
+            }
         }
-    }
 
-    // Handle case where one brother already has a father
-    if (hasRelative(brother, "father")) {
-        const fathers = await getRelatives(brother, "father");
-        if (fathers.length > 0) {
-            const father = fathers[0];
+        // Handle case where one brother already has a father
+        if (hasRelative(brother1, "father")) {
+            const fathers = await getRelatives(brother1, "father");
+            if (fathers.length > 0) {
+                const father = fathers[0];
 
-            // Add player to father
-            father.relatives.push({
-                type: "son",
-                pid: p.pid,
-                name: `${p.firstName} ${p.lastName}`,
-            });
+                // Add brother to father
+                addRelative(father, {
+                    type: "son",
+                    pid: brother2.pid,
+                    name: `${brother2.firstName} ${brother2.lastName}`,
+                });
 
-            // Add father to player
-            p.relatives.unshift({
-                type: "father",
-                pid: father.pid,
-                name: `${father.firstName} ${father.lastName}`,
-            });
+                // Add father to brother
+                addRelative(brother2, {
+                    type: "father",
+                    pid: father.pid,
+                    name: `${father.firstName} ${father.lastName}`,
+                });
+            }
         }
-    }
+    };
+
+    await edgeCases(p, brother);
+    await edgeCases(brother, p);
 
     // Handle case where player already has a brother
 
     // Handle case where player already has a father
 
-    p.relatives.push({
+    addRelative(p, {
         type: "brother",
         pid: brother.pid,
         name: `${brother.firstName} ${brother.lastName}`,
     });
-    brother.relatives.push({
+    addRelative(brother, {
         type: "brother",
         pid: p.pid,
         name: `${p.firstName} ${p.lastName}`,

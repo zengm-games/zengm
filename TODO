@@ -3,8 +3,6 @@ jr/iii/iv/etc
 - bias towards good players being more likely to have a jr/brother
 - blog waugh universal
 - p.relatives IDB upgrade code
-- if a guy already has a son, pick a different first name
-  - should sons always have same first name? yes, at least first one. more fun!
 - probabilities?
 
 make league.create return JSON, not write directly to DB

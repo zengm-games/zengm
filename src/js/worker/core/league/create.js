@@ -409,6 +409,9 @@ const create = async (
             player.setContract(p, player.genContract(p, true), true);
             player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
             await idb.cache.players.add(p);
+
+            // Weird Flow type casing is because idb.cache.players.add will create the "pid" property, transforming PlayerWithoutPid to Player
+            await player.addRelatives(((p: any): Player));
         }
         for (let i = 0; i < freeAgentPlayers.length; i++) {
             const p = freeAgentPlayers[i];

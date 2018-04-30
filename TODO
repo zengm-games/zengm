@@ -2,8 +2,9 @@ jr/iii/iv/etc
 - bias towards players that are jrs/brothers themselves
 - bias towards good players being more likely to have a jr/brother
 - blog waugh universal
-- p.relatives IDB upgrade code
 - probabilities?
+  - 2%?
+  - god mode edit
 
 make league.create return JSON, not write directly to DB
 

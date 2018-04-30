@@ -251,6 +251,10 @@ const augmentPartialPlayer = (
         }
     }
 
+    if (!Array.isArray(p.relatives)) {
+        p.relatives = [];
+    }
+
     return p;
 };
 

@@ -13,7 +13,7 @@ import {
     updatePhase,
     updateStatus,
 } from "../../util";
-import type { Conditions } from "../../../common/types";
+import type { Conditions, Player } from "../../../common/types";
 
 // x and y are both arrays of objects with the same length. For each object, any properties in y but not x will be copied over to x.
 const merge = (x: Object[], y: Object[]): Object[] => {

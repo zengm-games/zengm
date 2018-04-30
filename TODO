@@ -4,14 +4,8 @@ jr/iii/iv/etc
   - bias towards players that are jrs themselves
   - bias towards good players being more likely to have a jr
 - makeBrother
-  - pick from previous draft class, or pick from this draft class for twins
-  - country - make the same as the existing brother
-- walk family tree to assign relatives
-  - makeBrother
-    - if source already has a father or brothers, add them to target's relatives and vice versa
-    - if target already has a father or brothers, add them to source's relatives and vice versa
-    - if both already have fathers, abort!
-  - will this miss anything? test weird situations
+  - doesn't seem to be working quite right, e.g. http://localhost/l/9/player/540 vs http://localhost/l/9/player/541 have different brother lists
+    - make a more complex unit test?
 - blog waugh universal
 - unit tests
   - makeSon and makeBrother in individual files, then?

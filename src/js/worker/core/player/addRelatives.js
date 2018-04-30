@@ -235,6 +235,7 @@ export const makeBrother = async (p: Player) => {
                     pid: brother2.pid,
                     name: `${brother2.firstName} ${brother2.lastName}`,
                 });
+                await idb.cache.players.put(otherBrother);
 
                 // Add other brother to brother
                 addRelative(brother2, {
@@ -257,6 +258,7 @@ export const makeBrother = async (p: Player) => {
                     pid: brother2.pid,
                     name: `${brother2.firstName} ${brother2.lastName}`,
                 });
+                await idb.cache.players.put(father);
 
                 // Add father to brother
                 addRelative(brother2, {

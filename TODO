@@ -1,18 +1,11 @@
 jr/iii/iv/etc
-- when generating a draft class, some % of a jr appearing
-- makeSon
-  - bias towards players that are jrs themselves
-  - bias towards good players being more likely to have a jr
-- makeBrother
-  - doesn't seem to be working quite right, e.g. http://localhost/l/9/player/540 vs http://localhost/l/9/player/541 have different brother lists
-    - make a more complex unit test?
+- bias towards players that are jrs/brothers themselves
+- bias towards good players being more likely to have a jr/brother
 - blog waugh universal
-- unit tests
-  - makeSon and makeBrother in individual files, then?
 - p.relatives IDB upgrade code
-- confirm link from sr to jr works
 - if a guy already has a son, pick a different first name
   - should sons always have same first name? yes, at least first one. more fun!
+- probabilities?
 
 make league.create return JSON, not write directly to DB
 

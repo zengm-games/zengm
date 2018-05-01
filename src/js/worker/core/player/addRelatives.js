@@ -1,12 +1,10 @@
 // @flow
 
 import romanNumerals from "roman-numerals";
+import { g, helpers } from "../../../common";
 import { idb } from "../../db";
 import { random } from "../../util";
 import type { Player, RelativeType } from "../../../common/types";
-
-const probSon = 0.5;
-const probBrother = 0.5;
 
 const parseLastName = (lastName: string): [string, number | void] => {
     const parts = lastName.split(" ");
@@ -95,7 +93,13 @@ export const makeSon = async (p: Player) => {
     }
 
     // Find a player from a draft 17-40 years ago to make the father
-    const draftYear = p.draft.year - random.randInt(17, 40);
+    const NUM_SEASONS_IN_NEW_LEAGUE_DEFAULT = 20;
+    const maxYearsAgo = helpers.bound(
+        p.draft.year - (g.startingSeason - NUM_SEASONS_IN_NEW_LEAGUE_DEFAULT),
+        17,
+        40,
+    );
+    const draftYear = p.draft.year - random.randInt(17, maxYearsAgo);
 
     const possibleFathers = await idb.getCopies.players({
         draftYear,
@@ -298,10 +302,10 @@ export const makeBrother = async (p: Player) => {
 };
 
 const addRelatives = async (p: Player) => {
-    if (Math.random() < probSon) {
+    if (Math.random() < g.sonRate) {
         await makeSon(p);
     }
-    if (Math.random() < probBrother) {
+    if (Math.random() < g.brotherRate) {
         await makeBrother(p);
     }
 };

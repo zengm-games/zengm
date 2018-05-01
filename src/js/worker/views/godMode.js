@@ -27,6 +27,8 @@ async function updateGodMode(
             aiTrades: g.aiTrades,
             injuryRate: g.injuryRate,
             tragicDeathRate: g.tragicDeathRate,
+            brotherRate: g.brotherRate,
+            sonRate: g.sonRate,
         };
     }
 }

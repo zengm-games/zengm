@@ -49,6 +49,10 @@ const defaultGameAttributes: GameAttributes = {
 
     // The tragic death rate is the probability that a player will die a tragic death on a given regular season day. Yes, this only happens in the regular season. With roughly 100 days in a season, the default is about one death every 50 years.
     tragicDeathRate: 1 / (100 * 50),
+
+    // The probability that a new player will be the son or brother of an existing player. In practice, the observed number may be smaller than this because sometimes a valid match will not be found.
+    sonRate: 0.02,
+    brotherRate: 0.02,
 };
 
 export default defaultGameAttributes;

@@ -201,6 +201,7 @@ export type GameResults = any;
 export type GameAttributeKey =
     | "aiTrades"
     | "autoDeleteOldBoxScores"
+    | "brotherRate"
     | "confs"
     | "daysLeft"
     | "disableInjuries"
@@ -230,6 +231,7 @@ export type GameAttributeKey =
     | "salaryCap"
     | "season"
     | "showFirstOwnerMessage"
+    | "sonRate"
     | "startingSeason"
     | "stopOnInjury"
     | "stopOnInjuryGames"

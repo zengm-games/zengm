@@ -24,6 +24,8 @@ class GodMode extends React.Component {
             aiTrades: props.aiTrades,
             injuryRate: props.injuryRate,
             tragicDeathRate: props.tragicDeathRate,
+            brotherRate: props.brotherRate,
+            sonRate: props.sonRate,
         };
         this.handleChanges = {
             disableInjuries: this.handleChange.bind(this, "disableInjuries"),
@@ -40,6 +42,8 @@ class GodMode extends React.Component {
             aiTrades: this.handleChange.bind(this, "aiTrades"),
             injuryRate: this.handleChange.bind(this, "injuryRate"),
             tragicDeathRate: this.handleChange.bind(this, "tragicDeathRate"),
+            brotherRate: this.handleChange.bind(this, "brotherRate"),
+            sonRate: this.handleChange.bind(this, "sonRate"),
         };
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
         this.handleGodModeToggle = this.handleGodModeToggle.bind(this);
@@ -62,6 +66,8 @@ class GodMode extends React.Component {
                 aiTrades: String(nextProps.aiTrades),
                 injuryRate: nextProps.injuryRate,
                 tragicDeathRate: nextProps.tragicDeathRate,
+                brotherRate: nextProps.brotherRate,
+                sonRate: nextProps.sonRate,
             });
         }
     }
@@ -91,6 +97,8 @@ class GodMode extends React.Component {
             aiTrades: this.state.aiTrades === "true",
             injuryRate: parseFloat(this.state.injuryRate),
             tragicDeathRate: parseFloat(this.state.tragicDeathRate),
+            brotherRate: parseFloat(this.state.brotherRate),
+            sonRate: parseFloat(this.state.sonRate),
         });
 
         this.setState({
@@ -407,6 +415,41 @@ class GodMode extends React.Component {
                                 disabled={!godMode}
                                 onChange={this.handleChanges.tragicDeathRate}
                                 value={this.state.tragicDeathRate}
+                            />
+                        </div>
+                        <div className="col-sm-3 col-xs-6 form-group">
+                            <label>
+                                Brother Rate{" "}
+                                <HelpPopover
+                                    placement="right"
+                                    title="Brother Rate"
+                                >
+                                    The probability that a new player will be
+                                    the brother of an existing player.
+                                </HelpPopover>
+                            </label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                disabled={!godMode}
+                                onChange={this.handleChanges.brotherRate}
+                                value={this.state.brotherRate}
+                            />
+                        </div>
+                        <div className="col-sm-3 col-xs-6 form-group">
+                            <label>
+                                Son Rate{" "}
+                                <HelpPopover placement="right" title="Son Rate">
+                                    The probability that a new player will be
+                                    the son of an existing player.
+                                </HelpPopover>
+                            </label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                disabled={!godMode}
+                                onChange={this.handleChanges.sonRate}
+                                value={this.state.sonRate}
                             />
                         </div>
                     </div>

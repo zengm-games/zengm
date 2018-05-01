@@ -1,10 +1,13 @@
 jr/iii/iv/etc
 - bias towards players that are jrs/brothers themselves
 - bias towards good players being more likely to have a jr/brother
-- blog waugh universal
+- blog
+  - waugh universal
+  - god mode
 - probabilities?
   - 2%?
-  - god mode edit
+
+"lineage" page to view all of a player's relatives
 
 make league.create return JSON, not write directly to DB
 

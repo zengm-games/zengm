@@ -104,8 +104,24 @@ function uniform(a: number, b: number): number {
  * @memberOf util.random
  * @param {number} x Array to choose a random value from.
  */
-function choice<T>(x: T[]): T {
-    return x[Math.floor(Math.random() * x.length)];
+function choice<T>(x: T[], weightFunc?: T => number): T {
+    if (weightFunc === undefined) {
+        return x[Math.floor(Math.random() * x.length)];
+    }
+
+    const weights = x.map(weightFunc);
+    const cumsums = weights.reduce((array, weight, i) => {
+        if (i === 0) {
+            array[0] = weight;
+        } else {
+            array[i] = array[i - 1] + weight;
+        }
+        return array;
+    }, []);
+    const max = cumsums[cumsums.length - 1];
+    const rand = Math.random() * max;
+    const ind = cumsums.findIndex(cumsum => cumsum > rand);
+    return x[ind];
 }
 
 /**

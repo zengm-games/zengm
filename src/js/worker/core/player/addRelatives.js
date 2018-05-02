@@ -109,7 +109,14 @@ export const makeSon = async (p: Player) => {
         return;
     }
 
-    const father = random.choice(possibleFathers);
+    const father = random.choice(possibleFathers, ({ lastName }) => {
+        const out = parseLastName(lastName);
+        if (out[1] !== undefined) {
+            // 10 for Sr, 15 for Jr, etc - make it more likely for older lineages to continue
+            return helpers.bound(5 + 10 * out[1], 0, 40);
+        }
+        return 1;
+    });
 
     const [fatherLastName, fatherSuffixNumber] = parseLastName(father.lastName);
     const sonSuffixNumber =

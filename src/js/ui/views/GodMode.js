@@ -479,6 +479,8 @@ GodMode.propTypes = {
     aiTrades: PropTypes.bool.isRequired,
     injuryRate: PropTypes.number.isRequired,
     tragicDeathRate: PropTypes.number.isRequired,
+    brotherRate: PropTypes.number.isRequired,
+    sonRate: PropTypes.number.isRequired,
 };
 
 export default GodMode;

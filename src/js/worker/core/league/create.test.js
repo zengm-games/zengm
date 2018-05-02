@@ -84,7 +84,7 @@ describe("worker/core/league/create", () => {
         assert.equal(gTest.daysLeft, 0);
         assert.equal(gTest.showFirstOwnerMessage, true);
 
-        assert.equal(Object.keys(gTest).length, 38);
+        assert.equal(Object.keys(gTest).length, 40);
     });
 
     it("initialize draftOrder object store", async () => {

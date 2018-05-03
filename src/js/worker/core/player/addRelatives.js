@@ -289,10 +289,6 @@ export const makeBrother = async (p: Player) => {
     await edgeCases(p, brother);
     await edgeCases(brother, p);
 
-    // Handle case where player already has a brother
-
-    // Handle case where player already has a father
-
     addRelative(p, {
         type: "brother",
         pid: brother.pid,

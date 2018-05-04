@@ -18,7 +18,7 @@ const genFathers = () => {
 };
 
 const genBrothers = () => {
-    return range(season - 3, season + 1).map(season2 =>
+    return range(season - 5, season + 1).map(season2 =>
         player.generate(0, 50, season2, true, 15.5),
     );
 };

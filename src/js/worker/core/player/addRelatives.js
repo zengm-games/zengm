@@ -202,8 +202,8 @@ export const makeBrother = async (p: Player) => {
         return;
     }
 
-    // Find a player from a draft 0-3 years ago to make the brother
-    const draftYear = p.draft.year; // - random.randInt(0, 3);
+    // Find a player from a draft 0-5 years ago to make the brother
+    const draftYear = p.draft.year - random.randInt(0, 5);
 
     const existingRelativePids = p.relatives.map(rel => rel.pid);
 

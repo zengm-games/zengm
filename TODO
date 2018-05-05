@@ -1,5 +1,6 @@
 strict mode
 - componentWillReceiveProps
+  - forms with dirty - confirm cross-tab updates work (so functionality is doing something), then reimplement and confirm still works
 - https://reactjs.org/blog/2018/03/27/update-on-async-rendering.html
 
 in fantasy draft, "Start Draft" button appears between picks
@@ -233,8 +234,6 @@ document cache data format and API!
 - read from just the cache if you're sure everything is there (like an active player). otherwise, read from db and augment with cache (because anything could be in cache, even if it's not normally.. like retired player added to watch list). getCopy variables do this
 - promise microtask worker crap - for firefox support, if you start a backboard tx manually, you can't do any promise/asyncawait stuff inside the callback
 
-benchmark using proxies to detect change in index stuff rather than dirtyIndexes
-
 can ui/util/logEvent be replaced by just notify? since it never writes to db?
 
 event log refactor
@@ -334,8 +333,6 @@ make FAs less eager to sign with bad teams
 
 display numerical owner mood somehow
 
-AI trades
-
 all time leaders https://www.reddit.com/r/BasketballGM/comments/4qjkys/simple_feature_suggestion_all_time_season/
 
 refuse to sign in god mode https://www.reddit.com/r/BasketballGM/comments/4p2s1q/cant_sign_star_player/
@@ -381,9 +378,6 @@ service worker to repalce appcache
   harder than it would appear, see branch
 
 CI, dep version checking, etc
-
-CURRENT
--------
 
 bold highest values in career on player stats tables like wikipedia https://www.reddit.com/r/BasketballGM/comments/4rgn0p/two_statrelated_suggestions/
 
@@ -442,8 +436,6 @@ Too many 8 seeds winning over 1 seeds
   point differential stuff - BBGM teams seem better than NBA teams, but still lose in 8-1 (and have worse records)
     some of this could be running up the score against bad teams
 
-player development growth curve projection
-
 balance http://www.reddit.com/r/BasketballGM/comments/3759dw/guide_to_winning_70_games_consistently/crls9b1?context=3
 
 playoff and regular season playing time and injury differences http://www.reddit.com/r/BasketballGM/comments/38f7dj/playoff_variance_seems_a_little_high/crxh643
@@ -456,8 +448,6 @@ Exclude assets from AI trade offers http://www.reddit.com/r/BasketballGM/comment
 delete old data bug http://www.reddit.com/r/BasketballGM/comments/39mi4p/bug_pers_roughly_double_after_deleting_unnotables/cs8difx?context=3
 
 roster should more clearly show who has a non-guaranteed contract https://www.reddit.com/r/BasketballGM/comments/3d194k/non_guarantee_contracts/
-
-Chrome delete data http://www.reddit.com/r/BasketballGM/comments/35eyq6/cant_store_anymore_data_on_chromebook/cr46zch?context=3
 
 no/fuzzier ratings mode http://www.reddit.com/r/BasketballGM/comments/35qftt/statsonly_modeless_accurate_stats/
 
@@ -542,21 +532,7 @@ phase changes in atomic transactions
 github
   bitbucket issues
 
-PERFORMANCE CRAP
-----------------
-
-test!
-  write unit tests for dao.players.getAll
-    if you request a stats season that doesn't exist, does the callback still get executed?
-    if no players are returned by query, does the callback still get executed?
-    if filter removes all players, does the callback still get executed?
-
-show "loading" indicator when uploading large file, otherwise seems to hang and not allow you to click
-  should be some generic one, thin bar at top like youtube
-
 player.updateValues.getStats doesn't really make sense. Should get all from past 2 seasons, sort by PSID, and take stats up to 2000 minutes
-
-more database normalization? player ratings
 
 PLAYER DEVELOPMENT REVAMP
 -------------------------

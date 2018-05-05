@@ -44,21 +44,19 @@ class FreeAgents extends React.Component {
             addFilters[10] = `<${g.minContract / 1000}`;
         }
 
-        this.setState({
-            addFilters,
-        });
-    }
-
-    // This is a hack to make the addFilters passed to DataTable only happen once, otherwise it will keep getting
-    // applied every refresh (like when playing games) even if the user had disabled or edited the filter. Really, it'd
-    // be better if sent as some kind of signal or event rather than as a prop, because it is transient.
-    componentWillUpdate(nextProps, nextState) {
-        if (
-            nextState.addFilters !== undefined &&
-            nextState.addFilters === this.state.addFilters
-        ) {
-            this.state.addFilters = undefined;
-        }
+        this.setState(
+            {
+                addFilters,
+            },
+            () => {
+                // This is a hack to make the addFilters passed to DataTable only happen once, otherwise it will keep getting
+                // applied every refresh (like when playing games) even if the user had disabled or edited the filter. Really, it'd
+                // be better if sent as some kind of signal or event rather than as a prop, because it is transient.
+                this.setState({
+                    addFilters: undefined,
+                });
+            },
+        );
     }
 
     render() {

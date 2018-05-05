@@ -368,9 +368,80 @@ type State = {
     currentPage: number,
     enableFilters: boolean,
     filters: string[],
+    prevName: string | void,
     perPage: number,
     searchText: string,
     sortBys: SortBy[],
+};
+
+const loadStateFromCache = (props: Props) => {
+    let perPage = parseInt(localStorage.getItem("perPage"), 10);
+    if (Number.isNaN(perPage)) {
+        perPage = 10;
+    }
+
+    const sortBysJSON = localStorage.getItem(`DataTableSort:${props.name}`);
+    let sortBys: SortBy[];
+    if (sortBysJSON === null || sortBysJSON === undefined) {
+        sortBys = [props.defaultSort];
+    } else {
+        try {
+            sortBys = JSON.parse(sortBysJSON);
+        } catch (err) {
+            sortBys = [props.defaultSort];
+        }
+    }
+
+    // Don't let sortBy reference invalid col
+    sortBys = sortBys.filter((sortBy: SortBy) => sortBy[0] < props.cols.length);
+    if (sortBys.length === 0) {
+        sortBys = [props.defaultSort];
+    }
+
+    const defaultFilters: string[] = props.cols.map(() => "");
+    let filters = localStorage.getItem(`DataTableFilters:${props.name}`);
+    if (filters === null || filters === undefined) {
+        filters = defaultFilters;
+    } else {
+        try {
+            filters = JSON.parse(filters);
+
+            // Confirm valid filters
+            if (
+                !Array.isArray(filters) ||
+                filters.length !== props.cols.length
+            ) {
+                filters = defaultFilters;
+            } else {
+                for (const filter of filters) {
+                    if (typeof filter !== "string") {
+                        filters = defaultFilters;
+                        break;
+                    }
+                }
+            }
+        } catch (err) {
+            filters = defaultFilters;
+        }
+    }
+    // Repeat for Flow
+    if (
+        filters === null ||
+        filters === undefined ||
+        typeof filters === "string"
+    ) {
+        filters = defaultFilters;
+    }
+
+    return {
+        currentPage: 1,
+        enableFilters: filters !== defaultFilters,
+        filters,
+        perPage,
+        prevName: props.name,
+        searchText: "",
+        sortBys,
+    };
 };
 
 class DataTable extends React.Component<Props, State> {
@@ -380,13 +451,20 @@ class DataTable extends React.Component<Props, State> {
     handlePaging: Function;
     handlePerPage: Function;
     handleSearch: Function;
-    sortCacheKey: string;
-    filtersCacheKey: string;
 
     constructor(props: Props) {
         super(props);
 
-        this.state = this.loadStateFromCache(this.props);
+        // https://github.com/facebook/react/issues/12523#issuecomment-378282856
+        this.state = {
+            currentPage: 0,
+            enableFilters: false,
+            filters: [],
+            prevName: undefined,
+            perPage: 10,
+            searchText: "",
+            sortBys: [],
+        };
 
         this.handleColClick = this.handleColClick.bind(this);
         this.handleEnableFilters = this.handleEnableFilters.bind(this);
@@ -394,79 +472,6 @@ class DataTable extends React.Component<Props, State> {
         this.handlePaging = this.handlePaging.bind(this);
         this.handlePerPage = this.handlePerPage.bind(this);
         this.handleSearch = this.handleSearch.bind(this);
-    }
-
-    loadStateFromCache(props: Props) {
-        let perPage = parseInt(localStorage.getItem("perPage"), 10);
-        if (Number.isNaN(perPage)) {
-            perPage = 10;
-        }
-
-        this.sortCacheKey = `DataTableSort:${props.name}`;
-        const sortBysJSON = localStorage.getItem(this.sortCacheKey);
-        let sortBys: SortBy[];
-        if (sortBysJSON === null || sortBysJSON === undefined) {
-            sortBys = [props.defaultSort];
-        } else {
-            try {
-                sortBys = JSON.parse(sortBysJSON);
-            } catch (err) {
-                sortBys = [props.defaultSort];
-            }
-        }
-
-        // Don't let sortBy reference invalid col
-        sortBys = sortBys.filter(
-            (sortBy: SortBy) => sortBy[0] < props.cols.length,
-        );
-        if (sortBys.length === 0) {
-            sortBys = [props.defaultSort];
-        }
-
-        this.filtersCacheKey = `DataTableFilters:${props.name}`;
-        const defaultFilters: string[] = props.cols.map(() => "");
-        let filters = localStorage.getItem(this.filtersCacheKey);
-        if (filters === null || filters === undefined) {
-            filters = defaultFilters;
-        } else {
-            try {
-                filters = JSON.parse(filters);
-
-                // Confirm valid filters
-                if (
-                    !Array.isArray(filters) ||
-                    filters.length !== props.cols.length
-                ) {
-                    filters = defaultFilters;
-                } else {
-                    for (const filter of filters) {
-                        if (typeof filter !== "string") {
-                            filters = defaultFilters;
-                            break;
-                        }
-                    }
-                }
-            } catch (err) {
-                filters = defaultFilters;
-            }
-        }
-        // Repeat for Flow
-        if (
-            filters === null ||
-            filters === undefined ||
-            typeof filters === "string"
-        ) {
-            filters = defaultFilters;
-        }
-
-        return {
-            currentPage: 1,
-            enableFilters: filters !== defaultFilters,
-            filters,
-            perPage,
-            searchText: "",
-            sortBys,
-        };
     }
 
     handleColClick(event: SyntheticKeyboardEvent<>, i: number) {
@@ -526,7 +531,10 @@ class DataTable extends React.Component<Props, State> {
             sortBys = [[i, col.sortSequence ? col.sortSequence[0] : "asc"]];
         }
 
-        localStorage.setItem(this.sortCacheKey, JSON.stringify(sortBys));
+        localStorage.setItem(
+            `DataTableSort:${this.props.name}`,
+            JSON.stringify(sortBys),
+        );
 
         this.setState({
             currentPage: 1,
@@ -537,10 +545,10 @@ class DataTable extends React.Component<Props, State> {
     handleEnableFilters() {
         // Remove filter cache if hiding, add filter cache if displaying
         if (this.state.enableFilters) {
-            localStorage.removeItem(this.filtersCacheKey);
+            localStorage.removeItem(`DataTableFilters:${this.props.name}`);
         } else {
             localStorage.setItem(
-                this.filtersCacheKey,
+                `DataTableFilters:${this.props.name}`,
                 JSON.stringify(this.state.filters),
             );
         }
@@ -554,13 +562,16 @@ class DataTable extends React.Component<Props, State> {
         event: SyntheticInputEvent<HTMLInputElement>,
         i: number,
     ) {
-        const filters = this.state.filters.slice();
+        const filters = helpers.deepCopy(this.state.filters);
         filters[i] = event.currentTarget.value;
         this.setState({
             filters,
         });
 
-        localStorage.setItem(this.filtersCacheKey, JSON.stringify(filters));
+        localStorage.setItem(
+            `DataTableFilters:${this.props.name}`,
+            JSON.stringify(filters),
+        );
     }
 
     handlePaging(newPage: number) {
@@ -587,36 +598,43 @@ class DataTable extends React.Component<Props, State> {
         });
     }
 
-    componentWillReceiveProps(nextProps: Props) {
+    static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+        const updatedState = {};
+
         // If name changes, it means this is a whole new table and it has a different state (example: Player Stats switching between regular and advanced stats)
-        if (nextProps.name !== this.props.name) {
-            this.setState(this.loadStateFromCache(nextProps));
+        if (nextProps.name !== prevState.prevName) {
+            Object.assign(updatedState, loadStateFromCache(nextProps));
         }
 
-        // If addFilters is passed and contains a value (only after initial render, for now - if that needs to change, add similar code to constructor), merge with this.state.filters and enable filters
-        const filters = this.state.filters.slice();
+        // If addFilters is passed and contains a value (only after initial render, for now - if that needs to change, add similar code to constructor), merge with prevState.filters and enable filters
+        const filters = helpers.deepCopy(prevState.filters);
         let changed = false;
         if (
             nextProps.addFilters !== undefined &&
-            nextProps.addFilters.length === this.state.filters.length
+            nextProps.addFilters.length === prevState.filters.length
         ) {
             for (let i = 0; i < nextProps.addFilters.length; i++) {
                 if (nextProps.addFilters[i] !== undefined) {
                     filters[i] = nextProps.addFilters[i];
                     changed = true;
-                } else if (!this.state.enableFilters) {
+                } else if (!prevState.enableFilters) {
                     // If there is a saved but hidden filter, remove it
                     filters[i] = "";
                 }
             }
         }
         if (changed) {
-            localStorage.setItem(this.filtersCacheKey, JSON.stringify(filters));
-            this.setState({
+            localStorage.setItem(
+                `DataTableFilters:${nextProps.name}`,
+                JSON.stringify(filters),
+            );
+            Object.assign(updatedState, {
                 enableFilters: true,
                 filters,
             });
         }
+
+        return updatedState;
     }
 
     render() {

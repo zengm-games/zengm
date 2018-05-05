@@ -933,6 +933,7 @@ const updateBudget = async (budgetAmounts: {
 
 const updateGameAttributes = async (gameAttributes: GameAttributes) => {
     await league.setGameAttributes(gameAttributes);
+    await toUI(["realtimeUpdate", ["gameAttributes"]]);
 };
 
 const updateMultiTeamMode = async (gameAttributes: {

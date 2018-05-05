@@ -1,15 +1,14 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { helpers } from "../../common";
-import { emitter, logEvent, realtimeUpdate, setTitle, toWorker } from "../util";
+import { emitter, logEvent, setTitle, toWorker } from "../util";
 import { HelpPopover, NewWindowLink } from "../components";
 
 class GodMode extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            dirty: false,
+            dirty: false, // eslint-disable-line react/no-unused-state
             disableInjuries: String(props.disableInjuries),
             luxuryPayroll: props.luxuryPayroll,
             luxuryTax: props.luxuryTax,
@@ -49,9 +48,9 @@ class GodMode extends React.Component {
         this.handleGodModeToggle = this.handleGodModeToggle.bind(this);
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (!this.state.dirty) {
-            this.setState({
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (!prevState.dirty) {
+            return {
                 disableInjuries: String(nextProps.disableInjuries),
                 luxuryPayroll: nextProps.luxuryPayroll,
                 luxuryTax: nextProps.luxuryTax,
@@ -68,13 +67,15 @@ class GodMode extends React.Component {
                 tragicDeathRate: nextProps.tragicDeathRate,
                 brotherRate: nextProps.brotherRate,
                 sonRate: nextProps.sonRate,
-            });
+            };
         }
+
+        return null;
     }
 
     handleChange(name, e) {
         this.setState({
-            dirty: true,
+            dirty: true, // eslint-disable-line react/no-unused-state
             [name]: e.target.value,
         });
     }
@@ -102,7 +103,7 @@ class GodMode extends React.Component {
         });
 
         this.setState({
-            dirty: false,
+            dirty: false, // eslint-disable-line react/no-unused-state
         });
 
         logEvent({
@@ -110,8 +111,6 @@ class GodMode extends React.Component {
             text: "God Mode options successfully updated.",
             saveToDb: false,
         });
-
-        realtimeUpdate(["toggleGodMode"], helpers.leagueUrl(["god_mode"]));
     }
 
     async handleGodModeToggle() {
@@ -123,7 +122,6 @@ class GodMode extends React.Component {
 
         await toWorker("updateGameAttributes", attrs);
         emitter.emit("updateTopMenu", { godMode: attrs.godMode });
-        realtimeUpdate(["toggleGodMode"]);
     }
 
     render() {

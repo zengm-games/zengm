@@ -715,11 +715,11 @@ export type UpdateEvents = (
     | "account"
     | "firstRun"
     | "g.userTids"
+    | "gameAttributes"
     | "gameSim"
     | "lock.gameSim"
     | "newPhase"
     | "playerMovement"
-    | "toggleGodMode"
     | "watchList"
 )[];
 

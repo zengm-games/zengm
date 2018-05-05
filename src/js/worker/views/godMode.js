@@ -9,7 +9,7 @@ async function updateGodMode(
 ): void | { [key: string]: any } {
     if (
         updateEvents.includes("firstRun") ||
-        updateEvents.includes("toggleGodMode")
+        updateEvents.includes("gameAttributes")
     ) {
         return {
             godMode: g.godMode,

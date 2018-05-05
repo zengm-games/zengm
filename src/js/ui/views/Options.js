@@ -8,7 +8,7 @@ class GodMode extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            dirty: false,
+            dirty: false, // eslint-disable-line react/no-unused-state
             autoDeleteOldBoxScores: props.autoDeleteOldBoxScores,
             stopOnInjury: props.stopOnInjury,
             stopOnInjuryGames: props.stopOnInjuryGames,
@@ -27,19 +27,21 @@ class GodMode extends React.Component {
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (!this.state.dirty) {
-            this.setState({
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (!prevState.dirty) {
+            return {
                 autoDeleteOldBoxScores: nextProps.autoDeleteOldBoxScores,
                 stopOnInjury: nextProps.stopOnInjury,
                 stopOnInjuryGames: nextProps.stopOnInjuryGames,
-            });
+            };
         }
+
+        return null;
     }
 
     handleChange(name, e) {
         this.setState({
-            dirty: true,
+            dirty: true, // eslint-disable-line react/no-unused-state
             [name]: e.target.value,
         });
     }
@@ -55,7 +57,7 @@ class GodMode extends React.Component {
         });
 
         this.setState({
-            dirty: false,
+            dirty: false, // eslint-disable-line react/no-unused-state
         });
 
         logEvent({

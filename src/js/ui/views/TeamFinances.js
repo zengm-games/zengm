@@ -15,7 +15,7 @@ class FinancesForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            dirty: false,
+            dirty: false, // eslint-disable-line react/no-unused-state
             coaching: props.t.budget.coaching.amount,
             facilities: props.t.budget.facilities.amount,
             health: props.t.budget.health.amount,
@@ -33,21 +33,21 @@ class FinancesForm extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (!this.state.dirty) {
-            this.setState({
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (!prevState.dirty) {
+            return {
                 coaching: nextProps.t.budget.coaching.amount,
                 facilities: nextProps.t.budget.facilities.amount,
                 health: nextProps.t.budget.health.amount,
                 scouting: nextProps.t.budget.scouting.amount,
                 ticketPrice: nextProps.t.budget.ticketPrice.amount,
-            });
+            };
         }
     }
 
     handleChange(name, e) {
         this.setState({
-            dirty: true,
+            dirty: true, // eslint-disable-line react/no-unused-state
             [name]: e.target.value,
         });
     }
@@ -97,7 +97,7 @@ class FinancesForm extends React.Component {
         });
 
         this.setState({
-            dirty: false,
+            dirty: false, // eslint-disable-line react/no-unused-state
             saving: false,
         });
     }

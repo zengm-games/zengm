@@ -27,13 +27,15 @@ class WatchBlock extends React.Component<Props, State> {
         this.handleClick = this.handleClick.bind(this);
     }
 
-    componentWillReceiveProps(nextProps: Props) {
+    static getDerivedStateFromProps(nextProps: Props, prevState: State) {
         // This assumes that the view is listening for playerMovement or watchList, otherwise it'll send the same old (wrong) prop
-        if (nextProps.watch !== this.state.watch) {
-            this.setState({
+        if (nextProps.watch !== prevState.watch) {
+            return {
                 watch: nextProps.watch,
-            });
+            };
         }
+
+        return null;
     }
 
     shouldComponentUpdate(nextProps: Props, nextState: State) {

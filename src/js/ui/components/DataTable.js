@@ -460,7 +460,7 @@ class DataTable extends React.Component<Props, State> {
             currentPage: 0,
             enableFilters: false,
             filters: [],
-            prevName: undefined,
+            prevName: undefined, // eslint-disable-line react/no-unused-state
             perPage: 10,
             searchText: "",
             sortBys: [],

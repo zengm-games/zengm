@@ -12,6 +12,7 @@ type Props = {
 };
 
 type State = {
+    prevData?: string,
     url?: string,
 };
 
@@ -19,15 +20,16 @@ class DownloadDataLink extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
+            prevData: undefined, // eslint-disable-line react/no-unused-state
             url: undefined,
         };
     }
 
-    componentWillReceiveProps(nextProps: Props) {
-        if (this.props.data !== nextProps.data) {
+    static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+        if (nextProps.data !== prevState.prevData) {
             // Expire any current URL from the old data
-            if (this.state.url) {
-                window.URL.revokeObjectURL(this.state.url);
+            if (prevState.url) {
+                window.URL.revokeObjectURL(prevState.url);
             }
 
             if (nextProps.data) {
@@ -37,15 +39,19 @@ class DownloadDataLink extends React.Component<Props, State> {
                 });
                 const url = window.URL.createObjectURL(blob);
 
-                this.setState({
+                return {
+                    prevData: nextProps.data,
                     url,
-                });
-            } else {
-                this.setState({
-                    url: undefined,
-                });
+                };
             }
+
+            return {
+                prevData: undefined,
+                url: undefined,
+            };
         }
+
+        return null;
     }
 
     componentWillUnmount() {

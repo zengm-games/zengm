@@ -38,24 +38,28 @@ class Draft extends React.Component {
             drafting: false,
             fantasyDrafted: [],
             fantasyDraftedNewPids: [],
+            prevDrafted: props.drafted, // eslint-disable-line react/no-unused-state
+            prevUndrafted: props.undrafted, // eslint-disable-line react/no-unused-state
         };
     }
 
-    componentWillReceiveProps() {
-        if (this.props.fantasyDraft) {
-            const newDrafted = this.state.fantasyDraftedNewPids.map(
-                (pid, i) => {
-                    const p = this.props.undrafted.find(p2 => p2.pid === pid);
-                    p.draft = this.props.drafted[i].draft;
-                    return p;
-                },
-            );
-
-            this.setState({
-                fantasyDrafted: this.state.fantasyDrafted.concat(newDrafted),
-                fantasyDraftedNewPids: [],
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (nextProps.fantasyDraft) {
+            const newDrafted = prevState.fantasyDraftedNewPids.map((pid, i) => {
+                const p = prevState.prevUndrafted.find(p2 => p2.pid === pid);
+                p.draft = prevState.prevDrafted[i].draft;
+                return p;
             });
+
+            return {
+                fantasyDrafted: prevState.fantasyDrafted.concat(newDrafted),
+                fantasyDraftedNewPids: [],
+                prevDrafted: nextProps.drafted,
+                prevUndrafted: nextProps.undrafted,
+            };
         }
+
+        return null;
     }
 
     savePids(pids) {

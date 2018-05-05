@@ -184,7 +184,9 @@ class ErrorBoundary extends React.Component<{ children: any }> {
 
     ReactDOM.render(
         <ErrorBoundary>
-            <Controller />
+            <React.StrictMode>
+                <Controller />
+            </React.StrictMode>
         </ErrorBoundary>,
         contentEl,
     );

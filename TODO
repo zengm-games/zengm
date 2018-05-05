@@ -1,3 +1,6 @@
+strict mode
+- https://reactjs.org/blog/2018/03/27/update-on-async-rendering.html
+
 "lineage" page to view all of a player's relatives
 
 make league.create return JSON, not write directly to DB

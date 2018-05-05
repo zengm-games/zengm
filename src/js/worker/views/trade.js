@@ -130,7 +130,9 @@ async function updateTrade(): void | { [key: string]: any } {
     });
 
     if (t === undefined) {
-        throw new Error(`Invalid team ID ${otherTid}`);
+        return {
+            errorMessage: `Invalid team ID "${otherTid}".`,
+        };
     }
 
     otherRoster = await idb.getCopies.playersPlus(otherRoster, {

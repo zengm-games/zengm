@@ -18,7 +18,7 @@ async function updatePlayer(
         let p = await idb.getCopy.players({ pid: inputs.pid });
         if (p === undefined) {
             return {
-                errorMessage: "Player not found",
+                errorMessage: "Player not found.",
             };
         }
         p = await idb.getCopy.playersPlus(p, {
@@ -136,7 +136,9 @@ async function updatePlayer(
             fuzz: true,
         });
         if (p === undefined) {
-            throw new Error("Invalid player ID");
+            return {
+                errorMessage: "Player not found.",
+            };
         }
 
         // Account for extra free agent demands

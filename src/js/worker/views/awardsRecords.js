@@ -169,7 +169,9 @@ async function updateAwardsRecords(
 
         const awardType = inputs.awardType;
         if (typeof awardType !== "string") {
-            throw new Error("Invalid input for awardType");
+            return {
+                errorMessage: "Invalid input for awardType.",
+            };
         }
 
         const awardsRecords = players

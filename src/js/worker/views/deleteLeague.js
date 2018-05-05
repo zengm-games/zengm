@@ -7,8 +7,10 @@ import type { GetOutput } from "../../common/types";
 async function updateDeleteLeague({
     lid,
 }: GetOutput): void | { [key: string]: any } {
-    if (typeof lid !== "number") {
-        throw new Error("Invalid input for lid");
+    if (typeof lid !== "number" || Number.isNaN(lid)) {
+        return {
+            errorMessage: "Invalid league ID.",
+        };
     }
 
     const db = await connectLeague(lid);

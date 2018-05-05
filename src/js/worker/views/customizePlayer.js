@@ -81,7 +81,9 @@ async function updateCustomizePlayer(
             // Load a player to edit
             p = await idb.getCopy.players({ pid: inputs.pid });
             if (!p) {
-                throw new Error("Invalid player ID");
+                return {
+                    errorMessage: "Player not found.",
+                };
             }
             if (p.imgURL.length > 0) {
                 appearanceOption = "Image URL";

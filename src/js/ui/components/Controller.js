@@ -3,7 +3,7 @@
 import PropTypes from "prop-types";
 import * as React from "react";
 import { g } from "../../common";
-import { ads, emitter, realtimeUpdate, toWorker } from "../util";
+import { ads, emitter, realtimeUpdate, setTitle, toWorker } from "../util";
 import {
     Footer,
     Header,
@@ -282,12 +282,15 @@ class Controller extends React.Component<{}, State> {
                 Object.keys(result).length === 1 &&
                 result.hasOwnProperty("errorMessage")
             ) {
-                Component = ({ errorMessage }: { errorMessage: string }) => (
-                    <div>
-                        <h1>Error</h1>
-                        <p>{errorMessage}</p>
-                    </div>
-                );
+                Component = ({ errorMessage }: { errorMessage: string }) => {
+                    setTitle("Error");
+                    return (
+                        <div>
+                            <h1>Error</h1>
+                            <h2>{errorMessage}</h2>
+                        </div>
+                    );
+                };
             }
         }
 

@@ -1,6 +1,3 @@
-Exceptions should be exceptional. Are my user facing ones?
-- replace thrown errors with errorMessage
-
 "lineage" page to view all of a player's relatives
 
 make league.create return JSON, not write directly to DB

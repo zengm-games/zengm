@@ -17,7 +17,9 @@ async function updatePlayer(
     ) {
         let p = await idb.getCopy.players({ pid: inputs.pid });
         if (p === undefined) {
-            throw new Error("Invalid player ID");
+            return {
+                errorMessage: "Player not found",
+            };
         }
         p = await idb.getCopy.playersPlus(p, {
             attrs: [

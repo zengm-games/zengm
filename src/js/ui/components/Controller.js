@@ -275,8 +275,24 @@ class Controller extends React.Component<{}, State> {
             return;
         }
 
+        let Component = args.Component;
+        for (const result of results) {
+            if (
+                result &&
+                Object.keys(result).length === 1 &&
+                result.hasOwnProperty("errorMessage")
+            ) {
+                Component = ({ errorMessage }: { errorMessage: string }) => (
+                    <div>
+                        <h1>Error</h1>
+                        <p>{errorMessage}</p>
+                    </div>
+                );
+            }
+        }
+
         const vars = {
-            Component: args.Component,
+            Component,
             inLeague: args.inLeague,
             data: Object.assign(prevData, ...results),
         };

@@ -41,7 +41,6 @@ const sign = async (pid, amount, exp) => {
 
 const Negotiation = ({
     contractOptions,
-    errorMessage,
     payroll,
     player = {},
     resigning,
@@ -49,15 +48,6 @@ const Negotiation = ({
     userTid,
 }) => {
     setTitle(`Contract Negotiation - ${player.name}`);
-
-    if (errorMessage) {
-        return (
-            <div>
-                <h1>Error</h1>
-                <p>{errorMessage}</p>
-            </div>
-        );
-    }
 
     // See views.freeAgents for moods as well
     let mood;
@@ -213,13 +203,12 @@ Negotiation.propTypes = {
             years: PropTypes.number.isRequired,
             exp: PropTypes.number.isRequired,
         }),
-    ),
-    errorMessage: PropTypes.string,
-    payroll: PropTypes.number,
-    player: PropTypes.object,
-    resigning: PropTypes.bool,
-    salaryCap: PropTypes.number,
-    userTid: PropTypes.number,
+    ).isRequired,
+    payroll: PropTypes.number.isRequired,
+    player: PropTypes.object.isRequired,
+    resigning: PropTypes.bool.isRequired,
+    salaryCap: PropTypes.number.isRequired,
+    userTid: PropTypes.number.isRequired,
 };
 
 export default Negotiation;

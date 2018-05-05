@@ -1,3 +1,6 @@
+Exceptions should be exceptional. Are my user facing ones?
+- replace thrown errors with errorMessage
+
 "lineage" page to view all of a player's relatives
 
 make league.create return JSON, not write directly to DB
@@ -41,7 +44,7 @@ click on (not drag to) max speed in game sim first time doesn't work
 
 career totals on player pages https://www.reddit.com/r/BasketballGM/comments/7ya1yu/any_more_thoughts_on_the_beta/duptp08/?context=3
 
-when playing many seasons in one session, it slows down. why? ctrl+r restores performance
+when playing many seasons in one session, it slows down. why? ctrl+r restores   performance
 
 open multiple leagues from dashboard at the same time - Invalid cache status "filling"
 - looks like flush is being called while status is "filling", can that be short circuited since idb.cache has been redefined? lid is different, or the hostID is different?
@@ -53,10 +56,6 @@ reevaluate FA system - too easy to rebuild
 - first pick at most players
 
 <b> in game sim results
-
-all defensive team by position?
-
-after being confident that version sync is good, remove bbgmVersionWorker and bbgmVersionUI and restore footer text
 
 move react up, before worker is initialized, so compareVersions error can be displayed there
 
@@ -147,13 +146,8 @@ colors
 - color ratings on ratings page (and tables), just like ratings popup
 - color stats in ratings popover
 
-bugs in really big leagues
-- https://www.reddit.com/r/BasketballGM/comments/63dwny/error_maximum_ipc_message_size_exceeded/
-
 filtering
 - disable in some columns, like "Negotiate" buttons. maybe config in getCols?
-
-cache unread messages, will make it faster and simpler
 
 force single tab per league
 - when < 5 seconds, wait for another heartbeat before deciding
@@ -194,15 +188,9 @@ this shit is UGLY UGLY UGLY, fix ASAP!!!
 
 unify build and watch scripts - use watchify programmatically
 
-lint tests
-
-flow tests
-
 rethink cache API, with goal of having it typed
 - rename indexes, store prefixed with storename
 - get rid of new any types in types.js
-
-Exceptions should be exceptional. Are my user facing ones?
 
 error page (like invalid pid) should show league UI if in league
 
@@ -515,8 +503,6 @@ BBGM Gold?
     redirect domain http to https: http://docs.webfaction.com/software/static.html#static-redirecting-from-http-to-https
       DONE for root
       remaining: beta, play, and account
-
-league settings http://www.reddit.com/r/BasketballGM/comments/2xlqnp/request_allow_editing_of_salary_cap_numbers_in/
 
 composite ratings / scouting report
   "Shooting", "PG Skills", "Paint Scoring", rebounding

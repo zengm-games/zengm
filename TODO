@@ -3,6 +3,7 @@ draft refactor
   - add a "pick" property to the draft pick in the lottery
 - in another phase change (maybe right after draft), delete all remaining picks that should have been gone already (just to be sure)
 - trading picks during draft
+  - update draft on playerMovement
   - make sure AI can value them properly
   - need UI to resume draft, after user trades away pick
   - need UI for pick-by-pick draft progression

@@ -3,16 +3,15 @@ draft refactor
   - add a "pick" property to the draft pick in the lottery
 - in another phase change (maybe right after draft), delete all remaining picks that should have been gone already (just to be sure)
 - trading picks during draft
-  - update draft on playerMovement
   - make sure AI can value them properly
+    - base on actual pick, not projected pick
+    - base on players+picks remaining, so adjust throughout draft
   - need UI to resume draft, after user trades away pick
   - need UI for pick-by-pick draft progression
-    - Play > One Pick, Until My Next Pick
-      - untilUserOrEnd - accept a parameter for one pick or all picks, and rename
-    - get rid of Start button, with a note
     - disabled draft button UI still wokring?
-    - fantasy draft - store results somewhere else than Draft state
+    - race condition for running draft multiple times - need lock?
 - make sure fantasy draft still works
+  - store results somewhere else than Draft state
 - IDB upgrade
   - works mid draft?
   - works mid fantasy draft?

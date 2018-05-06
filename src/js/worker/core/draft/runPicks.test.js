@@ -8,8 +8,8 @@ import { idb } from "../../db";
 import { draft } from "..";
 import { getDraftTids, loadTeamSeasons } from "./common.test";
 
-const testDraftUntilUserOrEnd = async (numNow, numTotal) => {
-    const pids = await draft.untilUserOrEnd();
+const testRunPicks = async (numNow, numTotal) => {
+    const pids = await draft.runPicks();
     assert.equal(pids.length, numNow);
     const players = await idb.cache.players.indexGetAll(
         "playersByTid",
@@ -39,7 +39,7 @@ const testDraftUser = async round => {
     assert.equal(p.tid, g.userTid);
 };
 
-describe("worker/core/draft/untilUserOrEnd", () => {
+describe("worker/core/draft/runPicks", () => {
     before(async () => {
         await loadTeamSeasons();
         idb.league = testHelpers.mockIDBLeague();
@@ -55,7 +55,7 @@ describe("worker/core/draft/untilUserOrEnd", () => {
     });
 
     it("draft players before the user's team first round pick", () => {
-        return testDraftUntilUserOrEnd(userPick1 - 1, userPick1 - 1);
+        return testRunPicks(userPick1 - 1, userPick1 - 1);
     });
 
     it("then allow the user to draft in the first round", () => {
@@ -63,10 +63,7 @@ describe("worker/core/draft/untilUserOrEnd", () => {
     });
 
     it("when called again after the user drafts, should draft players before the user's second round pick comes up", () => {
-        return testDraftUntilUserOrEnd(
-            userPick2 - userPick1 - 1,
-            userPick2 - 1,
-        );
+        return testRunPicks(userPick2 - userPick1 - 1, userPick2 - 1);
     });
 
     it("then allow the user to draft in the second round", () => {
@@ -75,6 +72,6 @@ describe("worker/core/draft/untilUserOrEnd", () => {
 
     it("when called again after the user drafts, should draft more players to finish the draft", () => {
         const numAfter = 60 - userPick2;
-        return testDraftUntilUserOrEnd(numAfter, userPick2 + numAfter);
+        return testRunPicks(numAfter, userPick2 + numAfter);
     });
 });

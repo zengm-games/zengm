@@ -158,6 +158,19 @@ const playStop = async () => {
     await updatePlayMenu();
 };
 
+const runDraft = (onlyOne: boolean) => {
+    return async (conditions: Conditions) => {
+        await updateStatus("Draft in progress...");
+
+        await draft.runPicks(onlyOne, conditions);
+        const draftPicks = await draft.getOrder();
+
+        if (draftPicks.length === 0) {
+            await updateStatus("Idle");
+        }
+    };
+};
+
 const playMenu = {
     stop: async () => {
         await playStop();
@@ -207,27 +220,9 @@ const playMenu = {
         }
     },
 
-    onePick: async (conditions: Conditions) => {
-        await updateStatus("Draft in progress...");
+    onePick: runDraft(true),
 
-        console.log("Somehow do one pick");
-        const draftPicks = await draft.getOrder();
-
-        if (draftPicks.length === 0) {
-            await updateStatus("Idle");
-        }
-    },
-
-    untilMyNextPick: async (conditions: Conditions) => {
-        await updateStatus("Draft in progress...");
-
-        await draft.untilUserOrEnd(conditions);
-        const draftPicks = await draft.getOrder();
-
-        if (draftPicks.length === 0) {
-            await updateStatus("Idle");
-        }
-    },
+    untilMyNextPick: runDraft(false),
 
     untilResignPlayers: async (conditions: Conditions) => {
         if (g.phase === PHASE.AFTER_DRAFT) {

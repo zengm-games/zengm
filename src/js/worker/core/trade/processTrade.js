@@ -3,7 +3,7 @@
 import { PHASE, g, helpers } from "../../../common";
 import { player } from "../../core";
 import { idb } from "../../db";
-import { logEvent } from "../../util";
+import { logEvent, toUI } from "../../util";
 import type { TradeSummary } from "../../../common/types";
 
 const formatAssetsEventLog = t => {
@@ -64,6 +64,8 @@ const processTrade = async (
             await idb.cache.draftPicks.put(dp);
         }
     }
+
+    await toUI(["realtimeUpdate", ["playerMovement"]]);
 
     logEvent({
         type: "trade",

@@ -5,7 +5,7 @@ import { league, phase, player } from "../../core";
 import getOrder from "./getOrder";
 import selectPlayer from "./selectPlayer";
 import { idb } from "../../db";
-import { local, random, updatePlayMenu, updatePhase } from "../../util";
+import { local, random, toUI, updatePlayMenu, updatePhase } from "../../util";
 import type { Conditions } from "../../../common/types";
 
 /**
@@ -14,9 +14,10 @@ import type { Conditions } from "../../../common/types";
  * This could be made faster by passing a transaction around, so all the writes for all the picks are done in one transaction. But when calling selectPlayer elsewhere (i.e. in testing or in response to the user's pick), it needs to be sure that the transaction is complete before continuing. So I would need to create a special case there to account for it. Given that this isn't really *that* slow now, that probably isn't worth the complexity. Although... team.rosterAutoSort does precisely this... so maybe it would be a good idea...
  *
  * @memberOf core.draft
+ * @param {boolean} onlyOne If true, only do one pick. If false, do all picks until the user's next pick. Default false.
  * @return {Promise.[Array.<Object>, Array.<number>]} Resolves to array. First argument is the list of draft picks (from getOrder). Second argument is a list of player IDs who were drafted during this function call, in order.
  */
-const untilUserOrEnd = async (conditions: Conditions) => {
+const runPicks = async (onlyOne?: boolean = false, conditions?: Conditions) => {
     const pids = [];
 
     const [playersAll, draftPicks] = await Promise.all([
@@ -63,10 +64,13 @@ const untilUserOrEnd = async (conditions: Conditions) => {
 
                 await updatePhase();
                 await updatePlayMenu();
+                await toUI(["realtimeUpdate", ["playerMovement"]]);
             } else {
                 // Non-fantasy draft
                 await phase.newPhase(PHASE.AFTER_DRAFT, conditions);
             }
+        } else {
+            await toUI(["realtimeUpdate", ["playerMovement"]]);
         }
 
         // Draft is not over, so continue
@@ -88,7 +92,9 @@ const untilUserOrEnd = async (conditions: Conditions) => {
             pids.push(pid);
             playersAll.splice(selection, 1); // Delete from the list of undrafted players
 
-            return autoSelectPlayer();
+            if (!onlyOne) {
+                return autoSelectPlayer();
+            }
         }
 
         return afterDoneAuto();
@@ -97,4 +103,4 @@ const untilUserOrEnd = async (conditions: Conditions) => {
     return autoSelectPlayer();
 };
 
-export default untilUserOrEnd;
+export default runPicks;

@@ -7,8 +7,8 @@ import genPlayers from "./genPlayers";
 import genPlayersWithoutSaving from "./genPlayersWithoutSaving";
 import getOrder from "./getOrder";
 import getRookieSalaries from "./getRookieSalaries";
+import runPicks from "./runPicks";
 import selectPlayer from "./selectPlayer";
-import untilUserOrEnd from "./untilUserOrEnd";
 
 export default {
     genOrder,
@@ -18,6 +18,6 @@ export default {
     genPlayersWithoutSaving,
     getOrder,
     getRookieSalaries,
+    runPicks,
     selectPlayer,
-    untilUserOrEnd,
 };

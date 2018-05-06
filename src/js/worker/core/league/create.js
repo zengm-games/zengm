@@ -158,6 +158,7 @@ const create = async (
                         tid: t,
                         originalTid: t,
                         round,
+                        pick: 0,
                         season: g.startingSeason + i,
                     });
                 }

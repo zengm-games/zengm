@@ -91,6 +91,9 @@ const genOrder = async (
     // First round - lottery winners
     for (let i = 0; i < firstThree.length; i++) {
         const dp = draftPicksIndexed[teams[firstThree[i]].tid][1];
+        if (dp === undefined) {
+            throw new Error("No draft pick found for lottery winner");
+        }
         dp.pick = i + 1;
 
         if (!mock) {
@@ -110,6 +113,9 @@ const genOrder = async (
     for (let i = 0; i < teams.length; i++) {
         if (!firstThree.includes(i)) {
             const dp = draftPicksIndexed[teams[i].tid][1];
+            if (dp === undefined) {
+                throw new Error("No draft pick found for first round");
+            }
             dp.pick = pick;
 
             if (pick < 15 && !mock) {
@@ -142,9 +148,11 @@ const genOrder = async (
                     );
                 });
             })
-            .filter(row => row !== undefined) // Keep only lottery picks
-            // $FlowFixMe
+            .filter(dp => dp !== undefined) // Keep only lottery picks
             .map(dp => {
+                if (dp === undefined) {
+                    throw new Error("Should never happen");
+                }
                 // For the team making the pick
                 const t = teams.find(t2 => t2.tid === dp.tid);
                 let won = 0;
@@ -180,6 +188,9 @@ const genOrder = async (
     // Second round
     for (let i = 0; i < teams.length; i++) {
         const dp = draftPicksIndexed[teams[i].tid][2];
+        if (dp === undefined) {
+            throw new Error("No draft pick found for second round");
+        }
         dp.pick = i + 1;
     }
 

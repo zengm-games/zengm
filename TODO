@@ -16,6 +16,7 @@ draft refactor
     - see if that pick exists in draftPicks. if so, add pick number. if not, create it
   - works mid draft?
   - works mid fantasy draft?
+  - league mid draft with no picks in file
 
 in fantasy draft, "Start Draft" button appears between picks
 

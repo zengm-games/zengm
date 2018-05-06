@@ -34,7 +34,8 @@ const updatePlayMenu = async () => {
             label: "View draft lottery",
         },
         untilDraft: { label: "Until draft" },
-        viewDraft: { url: helpers.leagueUrl(["draft"]), label: "View draft" },
+        onePick: { label: "One pick" },
+        untilMyNextPick: { label: "Until my next pick" },
         untilResignPlayers: {
             label: "Re-sign players with expiring contracts",
         },
@@ -81,7 +82,7 @@ const updatePlayMenu = async () => {
         keys = ["viewDraftLottery", "untilDraft"];
     } else if (g.phase === PHASE.DRAFT || g.phase === PHASE.FANTASY_DRAFT) {
         // Draft
-        keys = ["viewDraft"];
+        keys = ["onePick", "untilMyNextPick"];
     } else if (g.phase === PHASE.AFTER_DRAFT) {
         // Offseason - post draft
         keys = ["untilResignPlayers"];

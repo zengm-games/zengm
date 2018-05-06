@@ -540,15 +540,6 @@ class DropdownLinks extends React.Component<
                             Skip To Preseason
                         </MenuItem>
                     ) : null}
-                    {lid !== undefined ? (
-                        <MenuItem
-                            onClick={e =>
-                                handleToolsClick("forceResumeDraft", e)
-                            }
-                        >
-                            Force Resume Draft
-                        </MenuItem>
-                    ) : null}
                     <MenuItem onClick={e => handleToolsClick("resetDb", e)}>
                         Reset DB
                     </MenuItem>

@@ -72,31 +72,16 @@ class Draft extends React.Component {
         }
     }
 
-    async draftUntilUserOrEnd() {
-        this.setState({ drafting: true });
-        const pids = await toWorker("draftUntilUserOrEnd");
-        this.savePids(pids);
-        await realtimeUpdate(["playerMovement"]);
-        this.setState({ drafting: false });
-    }
-
     async draftUser(pid) {
         this.setState({ drafting: true });
         await toWorker("draftUser", pid);
         this.savePids([pid]);
         await realtimeUpdate(["playerMovement"]);
-        await this.draftUntilUserOrEnd(); // Needed for when user has #1 pick in fantasy draft, otherwise no
         this.setState({ drafting: false });
     }
 
     render() {
-        const {
-            drafted,
-            fantasyDraft,
-            started,
-            undrafted,
-            userTids,
-        } = this.props;
+        const { drafted, fantasyDraft, undrafted, userTids } = this.props;
 
         setTitle("Draft");
 
@@ -268,16 +253,14 @@ class Draft extends React.Component {
                     of available players on the left.
                 </p>
 
-                {started ? null : (
-                    <p>
-                        <button
-                            className="btn btn-large btn-success"
-                            onClick={() => this.draftUntilUserOrEnd()}
-                        >
-                            Start Draft
-                        </button>
-                    </p>
-                )}
+                <div className="alert alert-success">
+                    Previously, you pressed the <b>Start</b> button here to
+                    start the draft. Now, use the normal Play menu above to
+                    start the draft, where you can either advance to your pick
+                    like the old days, or go one pick at a time. Why would you
+                    want to go one pick at a time? Because now you can trade
+                    picks during the draft!
+                </div>
 
                 <div className={wrapperClasses}>
                     <div className={undraftedColClasses}>
@@ -331,7 +314,6 @@ class Draft extends React.Component {
 Draft.propTypes = {
     drafted: PropTypes.arrayOf(PropTypes.object).isRequired,
     fantasyDraft: PropTypes.bool.isRequired,
-    started: PropTypes.bool.isRequired,
     undrafted: PropTypes.arrayOf(PropTypes.object).isRequired,
     userTids: PropTypes.arrayOf(PropTypes.number).isRequired,
 };

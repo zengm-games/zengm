@@ -207,6 +207,28 @@ const playMenu = {
         }
     },
 
+    onePick: async (conditions: Conditions) => {
+        await updateStatus("Draft in progress...");
+
+        console.log("Somehow do one pick");
+        const draftPicks = await draft.getOrder();
+
+        if (draftPicks.length === 0) {
+            await updateStatus("Idle");
+        }
+    },
+
+    untilMyNextPick: async (conditions: Conditions) => {
+        await updateStatus("Draft in progress...");
+
+        await draft.untilUserOrEnd(conditions);
+        const draftPicks = await draft.getOrder();
+
+        if (draftPicks.length === 0) {
+            await updateStatus("Idle");
+        }
+    },
+
     untilResignPlayers: async (conditions: Conditions) => {
         if (g.phase === PHASE.AFTER_DRAFT) {
             await phase.newPhase(PHASE.RESIGN_PLAYERS, conditions);
@@ -272,10 +294,6 @@ const toolsMenu = {
 
     skipToPreseason: async (conditions: Conditions) => {
         await phase.newPhase(PHASE.PRESEASON, conditions);
-    },
-
-    forceResumeDraft: async (conditions: Conditions) => {
-        await draft.untilUserOrEnd(conditions);
     },
 
     resetDb: async (conditions: Conditions) => {

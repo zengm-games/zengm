@@ -63,9 +63,6 @@ async function updateDraft(): void | { [key: string]: any } {
         fuzz: true,
     });
 
-    // Start draft if a pick has already been made (then it's already started)
-    let started = drafted.length > 0;
-
     let draftPicks = await draft.getOrder();
 
     // DIRTY QUICK FIX FOR https://github.com/dumbmatter/basketball-gm/issues/246
@@ -95,13 +92,9 @@ async function updateDraft(): void | { [key: string]: any } {
         );
     }
 
-    // ...or start draft if the user has the first pick (in which case starting it has no effect, might as well do it automatically)
-    started = started || g.userTids.includes(drafted[0].draft.tid);
-
     return {
         undrafted,
         drafted,
-        started,
         fantasyDraft: g.phase === PHASE.FANTASY_DRAFT,
         userTids: g.userTids,
     };

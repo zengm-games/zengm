@@ -222,19 +222,6 @@ const draftLottery = async () => {
     return draftLotteryResult.result;
 };
 
-const draftUntilUserOrEnd = async (conditions: Conditions) => {
-    await updateStatus("Draft in progress...");
-
-    const pids = await draft.untilUserOrEnd(conditions);
-    const draftPicks = await draft.getOrder();
-
-    if (draftPicks.length === 0) {
-        await updateStatus("Idle");
-    }
-
-    return pids;
-};
-
 const draftUser = async (pid: number) => {
     const draftPicks = await draft.getOrder();
     const dp = draftPicks[0];
@@ -1197,7 +1184,6 @@ export default {
     createTrade,
     deleteOldData,
     draftLottery,
-    draftUntilUserOrEnd,
     draftUser,
     exportLeague,
     exportPlayerAveragesCsv,

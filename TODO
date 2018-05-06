@@ -7,6 +7,11 @@ draft refactor
   - make sure AI can value them properly
   - need UI to resume draft, after user trades away pick
   - need UI for pick-by-pick draft progression
+    - Play > One Pick, Until My Next Pick
+      - untilUserOrEnd - accept a parameter for one pick or all picks, and rename
+    - get rid of Start button, with a note
+    - disabled draft button UI still wokring?
+    - fantasy draft - store results somewhere else than Draft state
 - make sure fantasy draft still works
 - IDB upgrade
   - works mid draft?

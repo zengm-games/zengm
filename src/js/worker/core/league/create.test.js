@@ -41,7 +41,6 @@ describe("worker/core/league/create", () => {
             idb.league.objectStoreNames.contains("draftLotteryResults"),
             true,
         );
-        assert.equal(idb.league.objectStoreNames.contains("draftOrder"), true);
         assert.equal(
             idb.league.objectStoreNames.contains("gameAttributes"),
             true,
@@ -85,13 +84,6 @@ describe("worker/core/league/create", () => {
         assert.equal(gTest.showFirstOwnerMessage, true);
 
         assert.equal(Object.keys(gTest).length, 40);
-    });
-
-    it("initialize draftOrder object store", async () => {
-        const draftOrder = await idb.league.draftOrder.getAll();
-        assert.equal(draftOrder.length, 1);
-        assert.equal(draftOrder[0].rid, 0);
-        assert.equal(draftOrder[0].draftOrder.length, 0);
     });
 
     it("initialize teams object store", async () => {

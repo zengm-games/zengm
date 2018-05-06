@@ -21,23 +21,22 @@ const testDraftUntilUserOrEnd = async (numNow, numTotal) => {
 let userPick1;
 let userPick2;
 const testDraftUser = async round => {
-    const draftOrder = await draft.getOrder();
-    const pick = draftOrder.shift();
-    assert.equal(pick.round, round);
+    const draftPicks = await draft.getOrder();
+    const dp = draftPicks.shift();
+    assert.equal(dp.round, round);
     if (round === 1) {
-        assert.equal(pick.pick, userPick1);
+        assert.equal(dp.pick, userPick1);
     } else {
-        assert.equal(pick.pick, userPick2 - 30);
+        assert.equal(dp.pick, userPick2 - 30);
     }
-    assert.equal(pick.tid, g.userTid);
+    assert.equal(dp.tid, g.userTid);
 
     const p = await idb.cache.players.indexGet(
         "playersByTid",
         PLAYER.UNDRAFTED,
     );
-    await draft.selectPlayer(pick, p.pid);
+    await draft.selectPlayer(dp, p.pid);
     assert.equal(p.tid, g.userTid);
-    await draft.setOrder(draftOrder);
 };
 
 describe("worker/core/draft/untilUserOrEnd", () => {

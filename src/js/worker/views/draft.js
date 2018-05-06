@@ -66,22 +66,22 @@ async function updateDraft(): void | { [key: string]: any } {
     // Start draft if a pick has already been made (then it's already started)
     let started = drafted.length > 0;
 
-    let draftOrder = await draft.getOrder();
+    let draftPicks = await draft.getOrder();
 
     // DIRTY QUICK FIX FOR https://github.com/dumbmatter/basketball-gm/issues/246
     // Not sure why this is needed! Maybe related to lottery running before the phase change?
-    if (drafted.length === 0 && draftOrder.length === 0) {
+    if (draftPicks.some(dp => dp.pick === undefined)) {
         await draft.genOrder();
-        draftOrder = await draft.getOrder();
+        draftPicks = await draft.getOrder();
     }
 
-    for (const pick of draftOrder) {
+    for (const dp of draftPicks) {
         drafted.push({
             draft: {
-                tid: pick.tid,
-                originalTid: pick.originalTid,
-                round: pick.round,
-                pick: pick.pick,
+                tid: dp.tid,
+                originalTid: dp.originalTid,
+                round: dp.round,
+                pick: dp.pick,
             },
             pid: -1,
         });
@@ -89,7 +89,7 @@ async function updateDraft(): void | { [key: string]: any } {
 
     if (drafted.length === 0) {
         console.log("drafted:", drafted);
-        console.log("draftOrder:", draftOrder);
+        console.log("draftPicks:", draftPicks);
         throw new Error(
             "drafted.length should always be 60, combo of drafted players and picks. But now it's 0. Why?",
         );

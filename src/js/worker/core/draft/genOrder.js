@@ -5,14 +5,13 @@ import genPicks from "./genPicks";
 import logLotteryChances from "./logLotteryChances";
 import logLotteryWinners from "./logLotteryWinners";
 import lotterySort from "./lotterySort";
-import setOrder from "./setOrder";
 import updateChances from "./updateChances";
 import { idb } from "../../db";
 import { random } from "../../util";
 import type { Conditions, DraftLotteryResult } from "../../../common/types";
 
 /**
- * Sets draft order and save it to the draftOrder object store.
+ * Sets draft order and save it to the draftPicks object store.
  *
  * This is currently based on an NBA-like lottery, where the first 3 picks can be any of the non-playoff teams (with weighted probabilities).
  *
@@ -73,8 +72,8 @@ const genOrder = async (
 
     // Reorganize this to an array indexed on originalTid and round
     const draftPicksIndexed = [];
-    for (let i = 0; i < draftPicks.length; i++) {
-        const tid = draftPicks[i].originalTid;
+    for (const dp of draftPicks) {
+        const tid = dp.originalTid;
         // Initialize to an array
         if (
             draftPicksIndexed.length < tid ||
@@ -82,32 +81,23 @@ const genOrder = async (
         ) {
             draftPicksIndexed[tid] = [];
         }
-        draftPicksIndexed[tid][draftPicks[i].round] = {
-            tid: draftPicks[i].tid,
-        };
+        draftPicksIndexed[tid][dp.round] = dp;
     }
 
     if (!mock) {
         logLotteryChances(chancePct, teams, draftPicksIndexed, conditions);
     }
 
-    const draftOrder = [];
-
     // First round - lottery winners
     for (let i = 0; i < firstThree.length; i++) {
-        const tid = draftPicksIndexed[teams[firstThree[i]].tid][1].tid;
-        draftOrder.push({
-            round: 1,
-            pick: i + 1,
-            tid,
-            originalTid: teams[firstThree[i]].tid,
-        });
+        const dp = draftPicksIndexed[teams[firstThree[i]].tid][1];
+        dp.pick = i + 1;
 
         if (!mock) {
             logLotteryWinners(
                 chancePct,
                 teams,
-                tid,
+                dp.tid,
                 teams[firstThree[i]].tid,
                 i + 1,
                 conditions,
@@ -119,19 +109,14 @@ const genOrder = async (
     let pick = 4;
     for (let i = 0; i < teams.length; i++) {
         if (!firstThree.includes(i)) {
-            const tid = draftPicksIndexed[teams[i].tid][1].tid;
-            draftOrder.push({
-                round: 1,
-                pick,
-                tid,
-                originalTid: teams[i].tid,
-            });
+            const dp = draftPicksIndexed[teams[i].tid][1];
+            dp.pick = pick;
 
             if (pick < 15 && !mock) {
                 logLotteryWinners(
                     chancePct,
                     teams,
-                    tid,
+                    dp.tid,
                     teams[i].tid,
                     pick,
                     conditions,
@@ -147,22 +132,20 @@ const genOrder = async (
         season: g.season,
         result: teams // Start with teams in lottery order
             .map(({ tid }) => {
-                return draftOrder.find(
-                    ({ originalTid, pick: pickNum, round }) => {
-                        // Keep only lottery picks
-                        return (
-                            originalTid === tid &&
-                            round === 1 &&
-                            pickNum <= chances.length
-                        );
-                    },
-                );
+                return draftPicks.find(dp => {
+                    // Keep only lottery picks
+                    return (
+                        dp.originalTid === tid &&
+                        dp.round === 1 &&
+                        dp.pick <= chances.length
+                    );
+                });
             })
             .filter(row => row !== undefined) // Keep only lottery picks
             // $FlowFixMe
-            .map(({ pick: pickNum, originalTid, tid }) => {
+            .map(dp => {
                 // For the team making the pick
-                const t = teams.find(t2 => t2.tid === tid);
+                const t = teams.find(t2 => t2.tid === dp.tid);
                 let won = 0;
                 let lost = 0;
                 if (t) {
@@ -171,13 +154,13 @@ const genOrder = async (
                 }
 
                 // For the original team
-                const i = teams.findIndex(t2 => t2.tid === originalTid);
+                const i = teams.findIndex(t2 => t2.tid === dp.originalTid);
 
                 return {
-                    tid,
-                    originalTid,
+                    tid: dp.tid,
+                    originalTid: dp.originalTid,
                     chances: chances[i],
-                    pick: pickNum,
+                    pick: dp.pick,
                     won,
                     lost,
                 };
@@ -195,22 +178,15 @@ const genOrder = async (
 
     // Second round
     for (let i = 0; i < teams.length; i++) {
-        const tid = draftPicksIndexed[teams[i].tid][2].tid;
-        draftOrder.push({
-            round: 2,
-            pick: i + 1,
-            tid,
-            originalTid: teams[i].tid,
-        });
+        const dp = draftPicksIndexed[teams[i].tid][2];
+        dp.pick = i + 1;
     }
 
     if (!mock) {
         // Delete from draftPicks object store so that they are completely untradeable
         for (const dp of draftPicks) {
-            await idb.cache.draftPicks.delete(dp.dpid);
+            await idb.cache.draftPicks.put(dp);
         }
-
-        await setOrder(draftOrder);
     }
 
     return draftLotteryResult;

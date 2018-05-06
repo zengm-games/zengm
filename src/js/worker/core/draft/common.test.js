@@ -9,10 +9,10 @@ import { idb } from "../../db";
 
 const getDraftTids = async () => {
     await draft.genOrder();
-    const draftOrder = await draft.getOrder();
-    assert.equal(draftOrder.length, 60);
+    const draftPicks = await draft.getOrder();
+    assert.equal(draftPicks.length, 60);
 
-    return draftOrder.map(d => d.originalTid);
+    return draftPicks.map(d => d.originalTid);
 };
 
 const loadTeamSeasons = async () => {

@@ -7,17 +7,17 @@ import type { Conditions, TeamFiltered } from "../../../common/types";
 const logLotteryChances = (
     chances: number[],
     teams: TeamFiltered[],
-    draftOrder: {
+    draftPicksIndexed: {
         tid: number,
     }[][],
     conditions?: Conditions,
 ) => {
     for (let i = 0; i < chances.length; i++) {
         if (i < teams.length) {
-            const origTm = teams[i].tid;
-            const tm = draftOrder[origTm][1].tid;
-            const txt = logLotteryTxt(tm, "chance", chances[i]);
-            logAction(tm, txt, conditions);
+            const originalTid = teams[i].tid;
+            const tid = draftPicksIndexed[originalTid][1].tid;
+            const txt = logLotteryTxt(tid, "chance", chances[i]);
+            logAction(tid, txt, conditions);
         }
     }
 };

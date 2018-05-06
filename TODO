@@ -1,7 +1,20 @@
-strict mode
-- componentWillReceiveProps
-  - forms with dirty - confirm cross-tab updates work (so functionality is doing something), then reimplement and confirm still works
-- https://reactjs.org/blog/2018/03/27/update-on-async-rendering.html
+draft refactor
+- get rid of draftOrder, keep picks in draftPicks and delete from there after each pick
+  - add a "pick" property to the draft pick in the lottery
+- in another phase change (maybe right after draft), delete all remaining picks that should have been gone already (just to be sure)
+- trading picks during draft
+  - make sure AI can value them properly
+  - need UI to resume draft, after user trades away pick
+  - need UI for pick-by-pick draft progression
+- make sure fantasy draft still works
+- IDB upgrade
+  - works mid draft?
+  - works mid fantasy draft?
+- league file
+  - leagueFile.hasOwnProperty("draftOrder") in create.js
+    - see if that pick exists in draftPicks. if so, add pick number. if not, create it
+  - works mid draft?
+  - works mid fantasy draft?
 
 in fantasy draft, "Start Draft" button appears between picks
 

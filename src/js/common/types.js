@@ -153,13 +153,12 @@ export type DraftLotteryResult = {|
     result: DraftLotteryResultArray,
 |};
 
-export type DraftOrder = any;
-
 export type DraftPick = {|
     dpid: number,
     tid: number,
     originalTid: number,
     round: number,
+    pick?: number, // Only set after the lottery
     season: number,
 |};
 
@@ -387,13 +386,6 @@ export type Pick = {|
     originalTid: number,
     round: number,
     season: number,
-    tid: number,
-|};
-
-export type PickRealized = {|
-    originalTid: number,
-    pick: number,
-    round: number,
     tid: number,
 |};
 

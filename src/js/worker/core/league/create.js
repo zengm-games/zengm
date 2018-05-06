@@ -166,7 +166,7 @@ const create = async (
     }
 
     // Initialize draft order object store for later use
-    if (leagueFile.hasOwnProperty("draftOrder")) {
+    /*if (leagueFile.hasOwnProperty("draftOrder")) {
         for (const draftOrder of leagueFile.draftOrder) {
             await idb.cache.draftOrder.add(draftOrder);
         }
@@ -175,7 +175,7 @@ const create = async (
             rid: 0,
             draftOrder: [],
         });
-    }
+    }*/
 
     if (leagueFile.hasOwnProperty("draftLotteryResults")) {
         for (const draftLotteryResult of leagueFile.draftLotteryResults) {

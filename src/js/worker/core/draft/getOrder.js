@@ -1,5 +1,7 @@
 // @flow
 
+import orderBy from "lodash/orderBy";
+import { g } from "../../../common";
 import { idb } from "../../db";
 
 /**
@@ -9,8 +11,12 @@ import { idb } from "../../db";
  * @return {Promise} Resolves to an ordered array of pick objects.
  */
 const getOrder = async () => {
-    const row = await idb.cache.draftOrder.get(0);
-    return row.draftOrder;
+    const draftPicks = await idb.cache.draftPicks.indexGetAll(
+        "draftPicksBySeason",
+        g.season,
+    );
+
+    return orderBy(draftPicks, ["round", "pick"]);
 };
 
 export default getOrder;

@@ -2,7 +2,6 @@
 
 import range from "lodash/range";
 import { g } from "../../../common";
-import setOrder from "./setOrder";
 import { random } from "../../util";
 
 /**
@@ -40,7 +39,9 @@ const genOrderFantasy = async (position: number) => {
         tids.reverse(); // Snake
     }
 
-    await setOrder(draftOrder);
+    throw new Error(
+        "This should create draft picks and save to draftPicks, not draftOrder!",
+    );
 };
 
 export default genOrderFantasy;

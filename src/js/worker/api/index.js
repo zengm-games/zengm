@@ -226,9 +226,9 @@ const draftUntilUserOrEnd = async (conditions: Conditions) => {
     await updateStatus("Draft in progress...");
 
     const pids = await draft.untilUserOrEnd(conditions);
-    const draftOrder = await draft.getOrder();
+    const draftPicks = await draft.getOrder();
 
-    if (draftOrder.length === 0) {
+    if (draftPicks.length === 0) {
         await updateStatus("Idle");
     }
 
@@ -236,12 +236,11 @@ const draftUntilUserOrEnd = async (conditions: Conditions) => {
 };
 
 const draftUser = async (pid: number) => {
-    const draftOrder = await draft.getOrder();
-    const pick = draftOrder[0];
-    if (pick && g.userTids.includes(pick.tid)) {
-        draftOrder.shift();
-        await draft.selectPlayer(pick, pid);
-        await draft.setOrder(draftOrder);
+    const draftPicks = await draft.getOrder();
+    const dp = draftPicks[0];
+    if (dp && g.userTids.includes(dp.tid)) {
+        draftPicks.shift();
+        await draft.selectPlayer(dp, pid);
     } else {
         throw new Error("User trying to draft out of turn.");
     }

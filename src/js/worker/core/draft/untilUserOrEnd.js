@@ -4,7 +4,6 @@ import { PHASE, PLAYER, g } from "../../../common";
 import { league, phase, player } from "../../core";
 import getOrder from "./getOrder";
 import selectPlayer from "./selectPlayer";
-import setOrder from "./setOrder";
 import { idb } from "../../db";
 import { local, random, updatePlayMenu, updatePhase } from "../../util";
 import type { Conditions } from "../../../common/types";
@@ -20,7 +19,7 @@ import type { Conditions } from "../../../common/types";
 const untilUserOrEnd = async (conditions: Conditions) => {
     const pids = [];
 
-    const [playersAll, draftOrder] = await Promise.all([
+    const [playersAll, draftPicks] = await Promise.all([
         idb.cache.players.indexGetAll("playersByTid", PLAYER.UNDRAFTED),
         getOrder(),
     ]);
@@ -29,10 +28,8 @@ const untilUserOrEnd = async (conditions: Conditions) => {
 
     // Called after either the draft is over or it's the user's pick
     const afterDoneAuto = async () => {
-        await setOrder(draftOrder);
-
         // Is draft over?
-        if (draftOrder.length === 0) {
+        if (draftPicks.length === 0) {
             // Fantasy draft special case!
             if (g.phase === PHASE.FANTASY_DRAFT) {
                 // Undrafted players become free agents
@@ -78,17 +75,16 @@ const untilUserOrEnd = async (conditions: Conditions) => {
 
     // This will actually draft "untilUserOrEnd"
     const autoSelectPlayer = async () => {
-        if (draftOrder.length > 0) {
-            const pick = draftOrder.shift();
+        if (draftPicks.length > 0) {
+            const dp = draftPicks.shift();
 
-            if (g.userTids.includes(pick.tid) && local.autoPlaySeasons === 0) {
-                draftOrder.unshift(pick);
+            if (g.userTids.includes(dp.tid) && local.autoPlaySeasons === 0) {
                 return afterDoneAuto();
             }
 
             const selection = Math.floor(Math.abs(random.realGauss(0, 1))); // 0=best prospect, 1=next best prospect, etc.
             const pid = playersAll[selection].pid;
-            await selectPlayer(pick, pid);
+            await selectPlayer(dp, pid);
             pids.push(pid);
             playersAll.splice(selection, 1); // Delete from the list of undrafted players
 

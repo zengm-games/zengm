@@ -8,7 +8,6 @@ import type {
     Awards,
     BackboardTx,
     DraftLotteryResult,
-    DraftOrder,
     DraftPick,
     DraftPickWithoutDpid,
     EventBBGM,
@@ -36,7 +35,6 @@ type Status = "empty" | "error" | "filling" | "full";
 export type Store =
     | "awards"
     | "draftLotteryResults"
-    | "draftOrder"
     | "draftPicks"
     | "events"
     | "gameAttributes"
@@ -66,7 +64,6 @@ type Index =
 export const STORES: Store[] = [
     "awards",
     "draftLotteryResults",
-    "draftOrder",
     "draftPicks",
     "events",
     "gameAttributes",
@@ -186,7 +183,6 @@ class Cache {
         DraftLotteryResult,
         number,
     >;
-    draftOrder: StoreAPI<DraftOrder, DraftOrder, number>;
     draftPicks: StoreAPI<DraftPick | DraftPickWithoutDpid, DraftPick, number>;
     events: StoreAPI<EventBBGM, EventBBGM, number>;
     gameAttributes: StoreAPI<GameAttribute, GameAttribute, string>;
@@ -232,12 +228,6 @@ class Cache {
                 pk: "season",
                 pkType: "number",
                 autoIncrement: false,
-            },
-            draftOrder: {
-                pk: "rid",
-                pkType: "number",
-                autoIncrement: false,
-                getData: (tx: BackboardTx) => tx.draftOrder.getAll(),
             },
             draftPicks: {
                 pk: "dpid",
@@ -424,7 +414,6 @@ class Cache {
 
         this.awards = new StoreAPI(this, "awards");
         this.draftLotteryResults = new StoreAPI(this, "draftLotteryResults");
-        this.draftOrder = new StoreAPI(this, "draftOrder");
         this.draftPicks = new StoreAPI(this, "draftPicks");
         this.events = new StoreAPI(this, "events");
         this.gameAttributes = new StoreAPI(this, "gameAttributes");

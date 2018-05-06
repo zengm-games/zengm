@@ -137,7 +137,7 @@ const genOrder = async (
                     return (
                         dp.originalTid === tid &&
                         dp.round === 1 &&
-                        typeof dp.pick === "number" &&
+                        dp.pick > 0 &&
                         dp.pick <= chances.length
                     );
                 });

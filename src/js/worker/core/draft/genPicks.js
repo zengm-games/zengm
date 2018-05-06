@@ -25,6 +25,7 @@ const genPicks = async (
                     tid,
                     originalTid: tid,
                     round,
+                    pick: 0,
                     season,
                 });
             }

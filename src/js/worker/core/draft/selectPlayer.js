@@ -18,6 +18,10 @@ import type { DraftPick } from "../../../common/types";
  * @return {Promise}
  */
 const selectPlayer = async (dp: DraftPick, pid: number) => {
+    if (dp.pick <= 0) {
+        throw new Error(`Invalid draft pick number "${dp.pick}"`);
+    }
+
     const p = await idb.cache.players.get(pid);
 
     // Draft player
@@ -38,9 +42,6 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
     // Contract
     if (g.phase !== PHASE.FANTASY_DRAFT) {
         const rookieSalaries = getRookieSalaries();
-        if (typeof dp.pick !== "number") {
-            throw new Error("Invalid draft pick (missing pick number)");
-        }
         const i = dp.pick - 1 + g.numTeams * (dp.round - 1);
         const years = 4 - dp.round; // 2 years for 2nd round, 3 years for 1st round;
         player.setContract(

@@ -6,17 +6,12 @@ draft refactor
   - make sure AI can value them properly
     - base on actual pick, not projected pick
     - base on players+picks remaining, so adjust throughout draft
-  - need UI to resume draft, after user trades away pick
-  - need UI for pick-by-pick draft progression
-    - disabled draft button UI still wokring?
-    - race condition for running draft multiple times - need lock?
+  - race condition for running draft multiple times - need lock?
 - make sure fantasy draft still works
   - store results somewhere else than Draft state
     - in worker, somehow. basically just need to persist draft results and use that to assemble players.
       - could persist in memory, maybe in local?
       - or, make fantasy draft first class. persist in player info (maybe just as event, or in array within player), persist results in new IDB table, make results viewable
-  - trading picks in fantasy draft needs to be different, in terms of value
-    - really?
   - why is it so slow?
 - IDB upgrade
   - works mid draft?

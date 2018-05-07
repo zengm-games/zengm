@@ -192,6 +192,7 @@ class Trade extends React.Component {
 
         if (
             (phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.PLAYOFFS) ||
+            phase === PHASE.FANTASY_DRAFT ||
             gameOver
         ) {
             return (

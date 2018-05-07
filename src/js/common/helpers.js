@@ -531,15 +531,6 @@ function bound(x: number, min: number, max: number): number {
     return x;
 }
 
-function pickDesc(pick: Pick): string {
-    let desc = `${pick.season} ${pick.round === 1 ? "1st" : "2nd"} round pick`;
-    if (pick.tid !== pick.originalTid) {
-        desc += ` (from ${g.teamAbbrevsCache[pick.originalTid]})`;
-    }
-
-    return desc;
-}
-
 function ordinal(x?: ?number): string {
     if (x === undefined || x === null) {
         return "";
@@ -559,6 +550,16 @@ function ordinal(x?: ?number): string {
     }
 
     return x.toString() + suffix;
+}
+
+function pickDesc(dp: Pick): string {
+    const season = dp.season === "fantasy" ? "Fantasy draft" : dp.season;
+    let desc = `${season} ${ordinal(dp.round)} round pick`;
+    if (dp.tid !== dp.originalTid) {
+        desc += ` (from ${g.teamAbbrevsCache[dp.originalTid]})`;
+    }
+
+    return desc;
 }
 
 function formatCompletedGame(game: GameProcessed): GameProcessedCompleted {

@@ -10,7 +10,7 @@ const newPhaseAfterDraft = async () => {
     // Delete any old draft picks
     const draftPicks = await idb.cache.draftPicks.getAll();
     for (const dp of draftPicks) {
-        if (dp.season <= g.season) {
+        if (typeof dp.season !== "number" || dp.season <= g.season) {
             await idb.cache.draftPicks.delete(dp.dpid);
         }
     }

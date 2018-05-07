@@ -2,6 +2,7 @@
 
 import range from "lodash/range";
 import { g } from "../../../common";
+import { idb } from "../../db";
 import { random } from "../../util";
 
 /**
@@ -25,23 +26,19 @@ const genOrderFantasy = async (position: number) => {
     }
 
     // Set total draft order: 12 rounds, snake
-    const draftOrder = [];
     for (let round = 1; round <= 12; round++) {
         for (let i = 0; i < tids.length; i++) {
-            draftOrder.push({
-                round,
-                pick: i + 1,
+            await idb.cache.draftPicks.add({
                 tid: tids[i],
                 originalTid: tids[i],
+                round,
+                pick: i + 1,
+                season: "fantasy",
             });
         }
 
         tids.reverse(); // Snake
     }
-
-    throw new Error(
-        "This should create draft picks and save to draftPicks, not draftOrder!",
-    );
 };
 
 export default genOrderFantasy;

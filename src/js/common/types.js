@@ -158,7 +158,7 @@ export type DraftPickWithoutDpid = {|
     originalTid: number,
     round: number,
     pick: number, // 0 if not set
-    season: number,
+    season: number | "fantasy",
 |};
 
 export type DraftPick = {|

@@ -2,7 +2,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import { g, helpers } from "../../common";
-import { getCols, realtimeUpdate, setTitle, toWorker } from "../util";
+import { getCols, setTitle, toWorker } from "../util";
 import {
     DataTable,
     DraftAbbrev,
@@ -36,47 +36,12 @@ class Draft extends React.Component {
 
         this.state = {
             drafting: false,
-            fantasyDrafted: [],
-            fantasyDraftedNewPids: [],
-            prevDrafted: props.drafted, // eslint-disable-line react/no-unused-state
-            prevUndrafted: props.undrafted, // eslint-disable-line react/no-unused-state
         };
-    }
-
-    static getDerivedStateFromProps(nextProps, prevState) {
-        if (nextProps.fantasyDraft) {
-            const newDrafted = prevState.fantasyDraftedNewPids.map((pid, i) => {
-                const p = prevState.prevUndrafted.find(p2 => p2.pid === pid);
-                p.draft = prevState.prevDrafted[i].draft;
-                return p;
-            });
-
-            return {
-                fantasyDrafted: prevState.fantasyDrafted.concat(newDrafted),
-                fantasyDraftedNewPids: [],
-                prevDrafted: nextProps.drafted,
-                prevUndrafted: nextProps.undrafted,
-            };
-        }
-
-        return null;
-    }
-
-    savePids(pids) {
-        if (this.props.fantasyDraft) {
-            this.setState({
-                fantasyDraftedNewPids: this.state.fantasyDraftedNewPids.concat(
-                    pids,
-                ),
-            });
-        }
     }
 
     async draftUser(pid) {
         this.setState({ drafting: true });
         await toWorker("draftUser", pid);
-        this.savePids([pid]);
-        await realtimeUpdate(["playerMovement"]);
         this.setState({ drafting: false });
     }
 
@@ -147,10 +112,7 @@ class Draft extends React.Component {
             colsUndrafted.slice(0, -1),
         );
 
-        const draftedMerged = fantasyDraft
-            ? this.state.fantasyDrafted.concat(drafted)
-            : drafted;
-        const rowsDrafted = draftedMerged.map((p, i) => {
+        const rowsDrafted = drafted.map((p, i) => {
             const data = [
                 `${p.draft.round}-${p.draft.pick}`,
                 <DraftAbbrev

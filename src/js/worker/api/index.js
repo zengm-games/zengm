@@ -228,6 +228,7 @@ const draftUser = async (pid: number) => {
     if (dp && g.userTids.includes(dp.tid)) {
         draftPicks.shift();
         await draft.selectPlayer(dp, pid);
+        await toUI(["realtimeUpdate", ["playerMovement"]]);
     } else {
         throw new Error("User trying to draft out of turn.");
     }

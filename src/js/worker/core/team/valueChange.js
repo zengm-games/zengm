@@ -186,16 +186,17 @@ const valueChange = async (
                 let estPick = estPicks[dp.originalTid];
 
                 // For future draft picks, add some uncertainty
-                const seasons = dp.season - g.season;
+                const season = dp.season === "fantasy" ? g.season : dp.season;
+                const seasons = season - g.season;
                 estPick = Math.round(
                     estPick * (5 - seasons) / 5 + 15 * seasons / 5,
                 );
 
                 // No fudge factor, since this is coming from the user's team (or eventually, another AI)
                 let value;
-                if (estValues[String(dp.season)]) {
+                if (estValues[String(season)]) {
                     value =
-                        estValues[String(dp.season)][
+                        estValues[String(season)][
                             estPick - 1 + g.numTeams * (dp.round - 1)
                         ];
                 }
@@ -214,14 +215,14 @@ const valueChange = async (
                             rookieSalaries[
                                 estPick - 1 + g.numTeams * (dp.round - 1)
                             ],
-                        exp: dp.season + 2 + (2 - dp.round), // 3 for first round, 2 for second
+                        exp: season + 2 + (2 - dp.round), // 3 for first round, 2 for second
                     },
                     worth: {
                         amount:
                             rookieSalaries[
                                 estPick - 1 + g.numTeams * (dp.round - 1)
                             ],
-                        exp: dp.season + 2 + (2 - dp.round), // 3 for first round, 2 for second
+                        exp: season + 2 + (2 - dp.round), // 3 for first round, 2 for second
                     },
                     injury: { type: "Healthy", gamesRemaining: 0 },
                     age: 19,
@@ -234,7 +235,8 @@ const valueChange = async (
                 let estPick = estPicks[dp.originalTid];
 
                 // For future draft picks, add some uncertainty
-                const seasons = dp.season - g.season;
+                const season = dp.season === "fantasy" ? g.season : dp.season;
+                const seasons = season - g.season;
                 estPick = Math.round(
                     estPick * (5 - seasons) / 5 + 15 * seasons / 5,
                 );
@@ -249,9 +251,9 @@ const valueChange = async (
 
                 // Use fudge factor: AI teams like their own picks
                 let value;
-                if (estValues[String(dp.season)]) {
+                if (estValues[String(season)]) {
                     value =
-                        estValues[String(dp.season)][
+                        estValues[String(season)][
                             estPick - 1 + g.numTeams * (dp.round - 1)
                         ] +
                         (tid !== g.userTid ? 1 : 0) * fudgeFactor;
@@ -272,14 +274,14 @@ const valueChange = async (
                             rookieSalaries[
                                 estPick - 1 + g.numTeams * (dp.round - 1)
                             ] / 1000,
-                        exp: dp.season + 2 + (2 - dp.round), // 3 for first round, 2 for second
+                        exp: season + 2 + (2 - dp.round), // 3 for first round, 2 for second
                     },
                     worth: {
                         amount:
                             rookieSalaries[
                                 estPick - 1 + g.numTeams * (dp.round - 1)
                             ] / 1000,
-                        exp: dp.season + 2 + (2 - dp.round), // 3 for first round, 2 for second
+                        exp: season + 2 + (2 - dp.round), // 3 for first round, 2 for second
                     },
                     injury: { type: "Healthy", gamesRemaining: 0 },
                     age: 19,

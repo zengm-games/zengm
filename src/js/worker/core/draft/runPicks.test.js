@@ -9,7 +9,7 @@ import { draft } from "..";
 import { getDraftTids, loadTeamSeasons } from "./common.test";
 
 const testRunPicks = async (numNow, numTotal) => {
-    const pids = await draft.runPicks();
+    const pids = await draft.runPicks(false);
     assert.equal(pids.length, numNow);
     const players = await idb.cache.players.indexGetAll(
         "playersByTid",

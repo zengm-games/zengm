@@ -34,7 +34,7 @@ describe("worker/core/league/create", () => {
     });
 
     it("create all necessary object stores", () => {
-        assert.equal(idb.league.objectStoreNames.length, 18);
+        assert.equal(idb.league.objectStoreNames.length, 17);
         assert.equal(idb.league.objectStoreNames.contains("awards"), true);
         assert.equal(idb.league.objectStoreNames.contains("events"), true);
         assert.equal(

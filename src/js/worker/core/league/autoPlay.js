@@ -16,7 +16,7 @@ const autoPlay = async (conditions: Conditions) => {
     } else if (g.phase === PHASE.DRAFT_LOTTERY) {
         await phase.newPhase(PHASE.DRAFT, conditions);
     } else if (g.phase === PHASE.DRAFT) {
-        await draft.untilUserOrEnd(conditions);
+        await draft.runPicks(false, conditions);
     } else if (g.phase === PHASE.AFTER_DRAFT) {
         await phase.newPhase(PHASE.RESIGN_PLAYERS, conditions);
     } else if (g.phase === PHASE.RESIGN_PLAYERS) {

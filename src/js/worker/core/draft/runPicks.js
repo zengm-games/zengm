@@ -17,7 +17,7 @@ import type { Conditions } from "../../../common/types";
  * @param {boolean} onlyOne If true, only do one pick. If false, do all picks until the user's next pick. Default false.
  * @return {Promise.[Array.<Object>, Array.<number>]} Resolves to array. First argument is the list of draft picks (from getOrder). Second argument is a list of player IDs who were drafted during this function call, in order.
  */
-const runPicks = async (onlyOne?: boolean = false, conditions?: Conditions) => {
+const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
     const pids = [];
 
     const [playersAll, draftPicks] = await Promise.all([

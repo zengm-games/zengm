@@ -222,13 +222,13 @@ const draftLottery = async () => {
     return draftLotteryResult.result;
 };
 
-const draftUser = async (pid: number) => {
+const draftUser = async (pid: number, conditions: Conditions) => {
     const draftPicks = await draft.getOrder();
     const dp = draftPicks[0];
     if (dp && g.userTids.includes(dp.tid)) {
         draftPicks.shift();
         await draft.selectPlayer(dp, pid);
-        await toUI(["realtimeUpdate", ["playerMovement"]]);
+        await draft.afterPicks(draftPicks.length === 0, conditions);
     } else {
         throw new Error("User trying to draft out of turn.");
     }

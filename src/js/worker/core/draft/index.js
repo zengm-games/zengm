@@ -1,5 +1,6 @@
 // @flow
 
+import afterPicks from "./afterPicks";
 import genOrder from "./genOrder";
 import genOrderFantasy from "./genOrderFantasy";
 import genPicks from "./genPicks";
@@ -11,6 +12,7 @@ import runPicks from "./runPicks";
 import selectPlayer from "./selectPlayer";
 
 export default {
+    afterPicks,
     genOrder,
     genOrderFantasy,
     genPicks,

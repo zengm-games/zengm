@@ -1,11 +1,11 @@
 // @flow
 
-import { PHASE, PLAYER, g } from "../../../common";
-import { league, phase, player } from "../../core";
+import { PLAYER, g } from "../../../common";
+import afterPicks from "./afterPicks";
 import getOrder from "./getOrder";
 import selectPlayer from "./selectPlayer";
 import { idb } from "../../db";
-import { local, random, toUI, updatePlayMenu, updatePhase } from "../../util";
+import { local, random } from "../../util";
 import type { Conditions } from "../../../common/types";
 
 /**
@@ -30,61 +30,19 @@ const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
     // Called after either the draft is over or it's the user's pick
     const afterDoneAuto = async () => {
         // Is draft over?
-        if (draftPicks.length === 0) {
-            // Fantasy draft special case!
-            if (g.phase === PHASE.FANTASY_DRAFT) {
-                // Undrafted players become free agents
-                const baseMoods = await player.genBaseMoods();
-                const playersUndrafted = await idb.cache.players.indexGetAll(
-                    "playersByTid",
-                    PLAYER.UNDRAFTED,
-                );
-                for (const p of playersUndrafted) {
-                    await player.addToFreeAgents(
-                        p,
-                        PHASE.FREE_AGENCY,
-                        baseMoods,
-                    );
-                }
+        await afterPicks(draftPicks.length === 0, conditions);
 
-                // Swap back in normal draft class
-                const players = await idb.cache.players.indexGetAll(
-                    "playersByTid",
-                    PLAYER.UNDRAFTED_FANTASY_TEMP,
-                );
-                for (const p of players) {
-                    p.tid = PLAYER.UNDRAFTED;
-                    await idb.cache.players.put(p);
-                }
-
-                await league.setGameAttributes({
-                    phase: g.nextPhase,
-                    nextPhase: null,
-                });
-
-                await updatePhase();
-                await updatePlayMenu();
-                await toUI(["realtimeUpdate", ["playerMovement"]]);
-            } else {
-                // Non-fantasy draft
-                await phase.newPhase(PHASE.AFTER_DRAFT, conditions);
-            }
-        } else {
-            await toUI(["realtimeUpdate", ["playerMovement"]]);
-        }
-
-        // Draft is not over, so continue
         return pids;
     };
 
     // This will actually draft "untilUserOrEnd"
     const autoSelectPlayer = async () => {
         if (draftPicks.length > 0) {
-            const dp = draftPicks.shift();
-
+            const dp = draftPicks[0];
             if (g.userTids.includes(dp.tid) && local.autoPlaySeasons === 0) {
                 return afterDoneAuto();
             }
+            draftPicks.shift();
 
             const selection = Math.floor(Math.abs(random.realGauss(0, 1))); // 0=best prospect, 1=next best prospect, etc.
             const pid = playersAll[selection].pid;

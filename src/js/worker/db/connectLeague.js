@@ -2,7 +2,7 @@
 
 import backboard from "backboard";
 import orderBy from "lodash/orderBy";
-import { PLAYER } from "../../common";
+import { PHASE, PLAYER } from "../../common";
 import { player } from "../core";
 import { bootstrapPot } from "../core/player/develop";
 import { logEvent } from "../util";
@@ -63,25 +63,38 @@ const upgrade31 = tx => {
             throw new Error("Invalid season in upgrade");
         }
 
-        tx.objectStore("draftOrder").get(0).onsuccess = event2 => {
-            const draftOrder = event2.target.result.draftOrder;
-            if (!Array.isArray(draftOrder)) {
-                throw new Error("Invalid draftOrder in upgrade");
+        tx.objectStore("gameAttributes").get("phase").onsuccess = event2 => {
+            const phase = event2.target.result.value;
+            if (typeof phase !== "number") {
+                throw new Error("Invalid phase in upgrade");
             }
 
-            tx.objectStore("draftPicks").openCursor().onsuccess = event3 => {
-                const cursor = event3.target.result;
-                if (cursor) {
-                    const dp = cursor.value;
-                    dp.pick = 0;
-                    cursor.update(dp);
-                    cursor.continue();
-                } else {
-                    for (const dp2 of draftOrder) {
-                        dp2.season = season;
-                        tx.objectStore("draftPicks").put(dp2);
-                    }
+            tx.objectStore("draftOrder").get(0).onsuccess = event3 => {
+                const draftOrder = event3.target.result.draftOrder;
+                if (!Array.isArray(draftOrder)) {
+                    throw new Error("Invalid draftOrder in upgrade");
                 }
+
+                tx
+                    .objectStore("draftPicks")
+                    .openCursor().onsuccess = event4 => {
+                    const cursor = event4.target.result;
+                    if (cursor) {
+                        const dp = cursor.value;
+                        dp.pick = 0;
+                        cursor.update(dp);
+                        cursor.continue();
+                    } else {
+                        for (const dp2 of draftOrder) {
+                            if (phase === PHASE.FANTASY_DRAFT) {
+                                dp2.season = "fantasy";
+                            } else {
+                                dp2.season = season;
+                            }
+                            tx.objectStore("draftPicks").put(dp2);
+                        }
+                    }
+                };
             };
         };
     };

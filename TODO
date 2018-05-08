@@ -13,12 +13,6 @@ draft refactor
       - could persist in memory, maybe in local?
       - or, make fantasy draft first class. persist in player info (maybe just as event, or in array within player), persist results in new IDB table, make results viewable
   - why is it so slow?
-- IDB upgrade
-  - works mid fantasy draft?
-- league file
-  - works mid draft?
-  - works mid fantasy draft?
-  - league mid draft with no picks in file
 - changes
 
 "lineage" page to view all of a player's relatives

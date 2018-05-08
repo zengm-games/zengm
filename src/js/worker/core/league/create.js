@@ -177,7 +177,11 @@ const create = async (
         (g.phase === PHASE.DRAFT_LOTTERY || g.phase === PHASE.DRAFT)
     ) {
         for (const dp of leagueFile.draftOrder[0].draftOrder) {
-            dp.season = g.season;
+            if (g.phase === PHASE.FANTASY_DRAFT) {
+                dp.season = "fantasy";
+            } else {
+                dp.season = g.season;
+            }
             await idb.cache.draftPicks.add(dp);
         }
     }

@@ -4,7 +4,7 @@ import { PHASE, g, helpers } from "../../../common";
 import { player } from "../../core";
 import getRookieSalaries from "./getRookieSalaries";
 import { idb } from "../../db";
-import { logEvent } from "../../util";
+import { local, logEvent } from "../../util";
 import type { DraftPick } from "../../../common/types";
 
 /**
@@ -26,7 +26,20 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 
     // Draft player
     p.tid = dp.tid;
-    if (g.phase !== PHASE.FANTASY_DRAFT) {
+    if (g.phase === PHASE.FANTASY_DRAFT) {
+        const fakeP = helpers.deepCopy(p);
+        fakeP.draft = {
+            round: dp.round,
+            pick: dp.pick,
+            tid: dp.tid,
+            year: g.season,
+            originalTid: dp.originalTid,
+            pot: p.ratings[p.ratings.length - 1].pot,
+            ovr: p.ratings[p.ratings.length - 1].ovr,
+            skills: p.ratings[p.ratings.length - 1].skills,
+        };
+        local.fantasyDraftResults.push(fakeP);
+    } else {
         p.draft = {
             round: dp.round,
             pick: dp.pick,

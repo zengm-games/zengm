@@ -6,6 +6,7 @@ import type { Local } from "../../common/types";
 
 const defaultLocal: Local = {
     autoPlaySeasons: 0,
+    fantasyDraftResults: [],
     goldUntil: Infinity, // Default is to assume Gold, until told otherwise by server
     leagueLoaded: false,
     phaseText: "",
@@ -13,13 +14,15 @@ const defaultLocal: Local = {
 };
 
 const local: Local & { reset: () => void } = {
-    autoPlaySeasons: 0,
-    goldUntil: Infinity,
-    leagueLoaded: false,
-    phaseText: "",
-    statusText: "Idle",
+    autoPlaySeasons: defaultLocal.autoPlaySeasons,
+    fantasyDraftResults: defaultLocal.fantasyDraftResults,
+    goldUntil: defaultLocal.goldUntil,
+    leagueLoaded: defaultLocal.leagueLoaded,
+    phaseText: defaultLocal.phaseText,
+    statusText: defaultLocal.statusText,
     reset: () => {
         local.autoPlaySeasons = defaultLocal.autoPlaySeasons;
+        local.fantasyDraftResults = defaultLocal.fantasyDraftResults;
         local.leagueLoaded = defaultLocal.leagueLoaded;
         local.phaseText = defaultLocal.phaseText;
         local.statusText = defaultLocal.statusText;

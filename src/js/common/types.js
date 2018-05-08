@@ -278,16 +278,6 @@ export type League = {|
     heartbeatTimestamp?: number,
 |};
 
-export type Local = {|
-    autoPlaySeasons: number,
-    goldUntil: number,
-    leagueLoaded: boolean,
-    phaseText: string,
-    statusText: string,
-
-    reset?: () => void,
-|};
-
 export type Locks = {|
     gameSim: boolean,
     newPhase: boolean,
@@ -513,6 +503,17 @@ export type PlayerWithoutPid = {|
 export type Player = {|
     ...PlayerWithoutPid,
     pid: number,
+|};
+
+export type Local = {|
+    autoPlaySeasons: number,
+    fantasyDraftResults: Player[],
+    goldUntil: number,
+    leagueLoaded: boolean,
+    phaseText: string,
+    statusText: string,
+
+    reset?: () => void,
 |};
 
 type PlayoffSeriesTeam = {|

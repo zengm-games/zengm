@@ -1,18 +1,11 @@
 draft refactor
 - get rid of draftOrder, keep picks in draftPicks and delete from there after each pick
   - add a "pick" property to the draft pick in the lottery
-- in another phase change (maybe right after draft), delete all remaining picks that should have been gone already (just to be sure)
 - trading picks during draft
   - make sure AI can value them properly
     - base on actual pick, not projected pick
     - base on players+picks remaining, so adjust throughout draft
   - race condition for running draft multiple times - need lock?
-- make sure fantasy draft still works
-  - store results somewhere else than Draft state
-    - in worker, somehow. basically just need to persist draft results and use that to assemble players.
-      - could persist in memory, maybe in local?
-      - or, make fantasy draft first class. persist in player info (maybe just as event, or in array within player), persist results in new IDB table, make results viewable
-  - why is it so slow?
 - changes
 
 "lineage" page to view all of a player's relatives
@@ -50,6 +43,10 @@ p.valueWithContract is exactly equal to p.value currently!
 
 team shot locations playoffs
 - share code with team stats for highlighting and playoff W/L
+
+persist fantasy draft results
+- make an array of draft results
+- viewable somehow - need to track when fantasy drafts happened and add them to draft results menu
 
 ---
 

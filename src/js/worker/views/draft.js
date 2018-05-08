@@ -4,6 +4,7 @@ import { PHASE, PLAYER, g } from "../../common";
 import type { GetOutput, UpdateEvents } from "../../common/types";
 import { draft } from "../core";
 import { idb } from "../db";
+import { local } from "../util";
 
 async function updateDraft(
     inputs: GetOutput,
@@ -13,6 +14,8 @@ async function updateDraft(
         updateEvents.includes("firstRun") ||
         updateEvents.includes("playerMovement")
     ) {
+        const fantasyDraft = g.phase === PHASE.FANTASY_DRAFT;
+
         let undrafted = await idb.cache.players.indexGetAll(
             "playersByTid",
             PLAYER.UNDRAFTED,
@@ -42,17 +45,22 @@ async function updateDraft(
             fuzz: true,
         });
 
-        let drafted = await idb.cache.players.indexGetAll("playersByTid", [
-            0,
-            Infinity,
-        ]);
-        drafted = drafted.filter(p => p.draft.year === g.season);
-        drafted.sort(
-            (a, b) =>
-                100 * a.draft.round +
-                a.draft.pick -
-                (100 * b.draft.round + b.draft.pick),
-        );
+        let drafted;
+        if (fantasyDraft) {
+            drafted = local.fantasyDraftResults;
+        } else {
+            drafted = await idb.cache.players.indexGetAll("playersByTid", [
+                0,
+                Infinity,
+            ]);
+            drafted = drafted.filter(p => p.draft.year === g.season);
+            drafted.sort(
+                (a, b) =>
+                    100 * a.draft.round +
+                    a.draft.pick -
+                    (100 * b.draft.round + b.draft.pick),
+            );
+        }
         drafted = await idb.getCopies.playersPlus(drafted, {
             attrs: [
                 "pid",
@@ -103,7 +111,7 @@ async function updateDraft(
         return {
             undrafted,
             drafted,
-            fantasyDraft: g.phase === PHASE.FANTASY_DRAFT,
+            fantasyDraft,
             userTids: g.userTids,
         };
     }

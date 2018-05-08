@@ -3,12 +3,15 @@
 import { PLAYER, g, helpers } from "../../../common";
 import { contractNegotiation, draft, league } from "../../core";
 import { idb } from "../../db";
+import { local } from "../../util";
 import type { Conditions } from "../../../common/types";
 
 const newPhaseFantasyDraft = async (
     conditions: Conditions,
     position: number,
 ) => {
+    local.fantasyDraftResults = [];
+
     await contractNegotiation.cancelAll();
     await draft.genOrderFantasy(position);
     await league.setGameAttributes({ nextPhase: g.phase });

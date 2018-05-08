@@ -56,6 +56,37 @@ const upgrade29 = tx => {
     };
 };
 
+const upgrade31 = tx => {
+    tx.objectStore("gameAttributes").get("season").onsuccess = event => {
+        const season = event.target.result.value;
+        if (typeof season !== "number") {
+            throw new Error("Invalid season in upgrade");
+        }
+
+        tx.objectStore("draftOrder").get(0).onsuccess = event2 => {
+            const draftOrder = event2.target.result.draftOrder;
+            if (!Array.isArray(draftOrder)) {
+                throw new Error("Invalid draftOrder in upgrade");
+            }
+
+            tx.objectStore("draftPicks").openCursor().onsuccess = event3 => {
+                const cursor = event3.target.result;
+                if (cursor) {
+                    const dp = cursor.value;
+                    dp.pick = 0;
+                    cursor.update(dp);
+                    cursor.continue();
+                } else {
+                    for (const dp2 of draftOrder) {
+                        dp2.season = season;
+                        tx.objectStore("draftPicks").put(dp2);
+                    }
+                }
+            };
+        };
+    };
+};
+
 /**
  * Create a new league database with the latest structure.
  *
@@ -396,11 +427,15 @@ const migrateLeague = (upgradeDB, lid) => {
             }
         });
     }
+    if (upgradeDB.oldVersion <= 30) {
+        // Split old single string p.name into two names
+        upgrade31(upgradeDB._dbOrTx._rawTransaction);
+    }
 };
 
 const connectLeague = async (lid: number) => {
     // Would like to await on migrateLeague and inside there, but Firefox
-    const db = await backboard.open(`league${lid}`, 30, upgradeDB => {
+    const db = await backboard.open(`league${lid}`, 31, upgradeDB => {
         if (upgradeDB.oldVersion === 0) {
             createLeague(upgradeDB, lid);
         } else {

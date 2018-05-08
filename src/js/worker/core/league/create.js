@@ -147,8 +147,11 @@ const create = async (
 
     // Draft picks for the first 4 years, as those are the ones can be traded initially
     if (leagueFile.hasOwnProperty("draftPicks")) {
-        for (let i = 0; i < leagueFile.draftPicks.length; i++) {
-            await idb.cache.draftPicks.add(leagueFile.draftPicks[i]);
+        for (const dp of leagueFile.draftPicks) {
+            if (typeof dp.pick !== "number") {
+                dp.pick = 0;
+            }
+            await idb.cache.draftPicks.add(dp);
         }
     } else {
         for (let i = 0; i < 4; i++) {
@@ -167,16 +170,17 @@ const create = async (
     }
 
     // Initialize draft order object store for later use
-    /*if (leagueFile.hasOwnProperty("draftOrder")) {
-        for (const draftOrder of leagueFile.draftOrder) {
-            await idb.cache.draftOrder.add(draftOrder);
+    if (
+        Array.isArray(leagueFile.draftOrder) &&
+        leagueFile.draftOrder.length > 0 &&
+        Array.isArray(leagueFile.draftOrder[0].draftOrder) &&
+        (g.phase === PHASE.DRAFT_LOTTERY || g.phase === PHASE.DRAFT)
+    ) {
+        for (const dp of leagueFile.draftOrder[0].draftOrder) {
+            dp.season = g.season;
+            await idb.cache.draftPicks.add(dp);
         }
-    } else {
-        await idb.cache.draftOrder.add({
-            rid: 0,
-            draftOrder: [],
-        });
-    }*/
+    }
 
     if (leagueFile.hasOwnProperty("draftLotteryResults")) {
         for (const draftLotteryResult of leagueFile.draftLotteryResults) {

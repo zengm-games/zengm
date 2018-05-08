@@ -13,18 +13,15 @@ draft refactor
       - could persist in memory, maybe in local?
       - or, make fantasy draft first class. persist in player info (maybe just as event, or in array within player), persist results in new IDB table, make results viewable
   - why is it so slow?
+- when user is last pick in the draft, run "end of draft" code after his pick
+- when user is last pick in draft, why does "until next pick" after first pick result in draft over?
 - IDB upgrade
-  - works mid draft?
   - works mid fantasy draft?
 - league file
-  - leagueFile.hasOwnProperty("draftOrder") in create.js
-    - see if that pick exists in draftPicks. if so, add pick number. if not, create it
   - works mid draft?
   - works mid fantasy draft?
   - league mid draft with no picks in file
 - changes
-
-in fantasy draft, "Start Draft" button appears between picks
 
 "lineage" page to view all of a player's relatives
 

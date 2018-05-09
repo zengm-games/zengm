@@ -432,7 +432,6 @@ const migrateLeague = (upgradeDB, lid) => {
         upgrade29(upgradeDB._dbOrTx._rawTransaction);
     }
     if (upgradeDB.oldVersion <= 29) {
-        // Split old single string p.name into two names
         upgradeDB.players.iterate(p => {
             if (!Array.isArray(p.relatives)) {
                 p.relatives = [];
@@ -441,7 +440,6 @@ const migrateLeague = (upgradeDB, lid) => {
         });
     }
     if (upgradeDB.oldVersion <= 30) {
-        // Split old single string p.name into two names
         upgrade31(upgradeDB._dbOrTx._rawTransaction);
     }
 };

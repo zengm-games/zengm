@@ -226,6 +226,10 @@ const playMenu = {
         await runDraft(false, conditions);
     },
 
+    untilEnd: async (conditions: Conditions) => {
+        await runDraft(false, conditions);
+    },
+
     untilResignPlayers: async (conditions: Conditions) => {
         if (g.phase === PHASE.AFTER_DRAFT) {
             await phase.newPhase(PHASE.RESIGN_PLAYERS, conditions);

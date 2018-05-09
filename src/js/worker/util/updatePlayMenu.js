@@ -37,6 +37,7 @@ const updatePlayMenu = async () => {
         untilDraft: { label: "Until draft" },
         onePick: { label: "One pick" },
         untilMyNextPick: { label: "Until my next pick" },
+        untilEnd: { label: "Until end of draft" },
         viewDraft: { url: helpers.leagueUrl(["draft"]), label: "View draft" },
         untilResignPlayers: {
             label: "Re-sign players with expiring contracts",
@@ -85,11 +86,13 @@ const updatePlayMenu = async () => {
     } else if (g.phase === PHASE.DRAFT || g.phase === PHASE.FANTASY_DRAFT) {
         // Draft
         const draftPicks = await draft.getOrder();
-        const dp = draftPicks[0];
-        if (dp && g.userTids.includes(dp.tid)) {
+        const nextPick = draftPicks[0];
+        if (nextPick && g.userTids.includes(nextPick.tid)) {
             keys = ["viewDraft"];
-        } else {
+        } else if (draftPicks.some(dp => g.userTids.includes(dp.tid))) {
             keys = ["onePick", "untilMyNextPick", "viewDraft"];
+        } else {
+            keys = ["onePick", "untilEnd", "viewDraft"];
         }
     } else if (g.phase === PHASE.AFTER_DRAFT) {
         // Offseason - post draft

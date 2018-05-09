@@ -3,7 +3,7 @@
 import { PHASE, PLAYER, g } from "../../../common";
 import { league, phase, player } from "../../core";
 import { idb } from "../../db";
-import { toUI, updatePlayMenu, updatePhase } from "../../util";
+import { local, toUI, updatePlayMenu, updatePhase } from "../../util";
 import type { Conditions } from "../../../common/types";
 
 const afterPicks = async (draftOver: boolean, conditions?: Conditions) => {
@@ -38,6 +38,8 @@ const afterPicks = async (draftOver: boolean, conditions?: Conditions) => {
             await updatePhase();
             await updatePlayMenu();
             await toUI(["realtimeUpdate", ["playerMovement"]]);
+
+            local.fantasyDraftResults = [];
         } else {
             // Non-fantasy draft
             await phase.newPhase(PHASE.AFTER_DRAFT, conditions);

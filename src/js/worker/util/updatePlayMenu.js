@@ -36,7 +36,7 @@ const updatePlayMenu = async () => {
         },
         untilDraft: { label: "Until draft" },
         onePick: { label: "One pick" },
-        untilMyNextPick: { label: "Until my next pick" },
+        untilYourNextPick: { label: "Until your next pick" },
         untilEnd: { label: "Until end of draft" },
         viewDraft: { url: helpers.leagueUrl(["draft"]), label: "View draft" },
         untilResignPlayers: {
@@ -90,7 +90,7 @@ const updatePlayMenu = async () => {
         if (nextPick && g.userTids.includes(nextPick.tid)) {
             keys = ["viewDraft"];
         } else if (draftPicks.some(dp => g.userTids.includes(dp.tid))) {
-            keys = ["onePick", "untilMyNextPick", "viewDraft"];
+            keys = ["onePick", "untilYourNextPick", "viewDraft"];
         } else {
             keys = ["onePick", "untilEnd", "viewDraft"];
         }

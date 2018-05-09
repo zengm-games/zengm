@@ -10,7 +10,41 @@ import {
     PlayerNameLabels,
 } from "../components";
 
-function scrollLeft(pos: number) {
+const DraftButtons = ({
+    userRemaining,
+    usersTurn,
+}) => {
+    const untilText = userRemaining ? "your next pick" : "end of draft";
+    return (
+        <div className="btn-group">
+            <button
+                className="btn btn-default"
+                disabled={usersTurn}
+                onClick={async () => {
+                    await toWorker("actions.playMenu.onePick");
+                }}
+            >
+                Sim one pick
+            </button>
+            <button
+                className="btn btn-default"
+                disabled={usersTurn}
+                onClick={async () => {
+                    await toWorker("actions.playMenu.untilMyNextPick");
+                }}
+            >
+                Sim until {untilText}
+            </button>
+        </div>
+    );
+};
+
+DraftButtons.propTypes = {
+    userRemaining: PropTypes.bool.isRequired,
+    usersTurn: PropTypes.bool.isRequired,
+};
+
+const scrollLeft = (pos: number) => {
     // https://blog.hospodarets.com/native_smooth_scrolling
     if ("scrollBehavior" in document.documentElement.style) {
         window.scrollTo({
@@ -21,7 +55,7 @@ function scrollLeft(pos: number) {
     } else {
         window.scrollTo(pos, document.body.scrollTop);
     }
-}
+};
 
 const viewDrafted = () => {
     scrollLeft(document.body.scrollWidth - document.body.clientWidth);
@@ -50,8 +84,12 @@ class Draft extends React.Component {
 
         setTitle("Draft");
 
-        const nextPick = drafted.find(p => p.pid < 0);
+        const remainingPicks = drafted.filter(p => p.pid < 0);
+        const nextPick = remainingPicks[0];
         const usersTurn = nextPick && userTids.includes(nextPick.draft.tid);
+        const userRemaining = remainingPicks.some(p =>
+            userTids.includes(p.draft.tid),
+        );
 
         const colsUndrafted = getCols(
             "Name",
@@ -215,14 +253,10 @@ class Draft extends React.Component {
                     of available players on the left.
                 </p>
 
-                <div className="alert alert-success">
-                    Previously, you pressed the <b>Start</b> button here to
-                    start the draft. Now, use the normal Play menu above to
-                    start the draft, where you can either advance to your pick
-                    like the old days, or go one pick at a time. Why would you
-                    want to go one pick at a time? Because now you can trade
-                    picks during the draft!
-                </div>
+                <DraftButtons
+                    userRemaining={userRemaining}
+                    usersTurn={usersTurn}
+                />
 
                 <div className={wrapperClasses}>
                     <div className={undraftedColClasses}>

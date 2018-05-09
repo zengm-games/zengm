@@ -3,9 +3,9 @@
 import orderBy from "lodash/orderBy";
 import { PLAYER, g } from "../common";
 import type {
+    DraftPick,
     GameProcessed,
     GameProcessedCompleted,
-    Pick,
     TeamBasic,
 } from "../common/types";
 
@@ -552,11 +552,20 @@ function ordinal(x?: ?number): string {
     return x.toString() + suffix;
 }
 
-function pickDesc(dp: Pick): string {
+function pickDesc(dp: DraftPick): string {
     const season = dp.season === "fantasy" ? "Fantasy draft" : dp.season;
     let desc = `${season} ${ordinal(dp.round)} round pick`;
+
+    const extras = [];
+    if (dp.pick > 0) {
+        extras.push(ordinal((dp.round - 1) * g.numTeams + dp.pick));
+    }
     if (dp.tid !== dp.originalTid) {
-        desc += ` (from ${g.teamAbbrevsCache[dp.originalTid]})`;
+        extras.push(`from ${g.teamAbbrevsCache[dp.originalTid]}`);
+    }
+
+    if (extras.length > 0) {
+        desc += ` (${extras.join(", ")})`;
     }
 
     return desc;

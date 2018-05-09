@@ -74,6 +74,9 @@ async function updateTeamHistory(
             tid: inputs.tid,
         });
 
+        // Not sure why this is necessary, but sometimes statsTids gets an entry but ratings doesn't
+        players = players.filter(p => p.careerStats.gp > 0);
+
         for (const p of players) {
             p.stats.reverse();
 

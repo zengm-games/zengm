@@ -179,18 +179,24 @@ const valueChange = async (
             } else {
                 estValues = await trade.getPickValues();
             }
+console.log('estValues', estValues);
 
             for (const dpid of dpidsAdd) {
                 const dp = await idb.cache.draftPicks.get(dpid);
-
-                let estPick = estPicks[dp.originalTid];
-
-                // For future draft picks, add some uncertainty
                 const season = dp.season === "fantasy" ? g.season : dp.season;
-                const seasons = season - g.season;
-                estPick = Math.round(
-                    estPick * (5 - seasons) / 5 + 15 * seasons / 5,
-                );
+                let estPick;
+                if (dp.pick > 0) {
+                    estPick = dp.pick;
+                } else {
+                    estPick = estPicks[dp.originalTid];
+
+                    // For future draft picks, add some uncertainty
+                    const seasons = season - g.season;
+                    estPick = Math.round(
+                        estPick * (5 - seasons) / 5 + 15 * seasons / 5,
+                    );
+                }
+console.log('add', dp, estPick);
 
                 // No fudge factor, since this is coming from the user's team (or eventually, another AI)
                 let value;
@@ -200,7 +206,7 @@ const valueChange = async (
                             estPick - 1 + g.numTeams * (dp.round - 1)
                         ];
                 }
-                if (!value) {
+                if (value === undefined) {
                     value =
                         estValues.default[
                             estPick - 1 + g.numTeams * (dp.round - 1)
@@ -232,14 +238,20 @@ const valueChange = async (
 
             for (const dpid of dpidsRemove) {
                 const dp = await idb.cache.draftPicks.get(dpid);
-                let estPick = estPicks[dp.originalTid];
-
-                // For future draft picks, add some uncertainty
                 const season = dp.season === "fantasy" ? g.season : dp.season;
                 const seasons = season - g.season;
-                estPick = Math.round(
-                    estPick * (5 - seasons) / 5 + 15 * seasons / 5,
-                );
+                let estPick;
+                if (dp.pick > 0) {
+                    estPick = dp.pick;
+                } else {
+                    estPick = estPicks[dp.originalTid];
+
+                    // For future draft picks, add some uncertainty
+                    estPick = Math.round(
+                        estPick * (5 - seasons) / 5 + 15 * seasons / 5,
+                    );
+                }
+console.log('remove', dp, estPick);
 
                 // Set fudge factor with more confidence if it's the current season
                 let fudgeFactor;
@@ -258,7 +270,7 @@ const valueChange = async (
                         ] +
                         (tid !== g.userTid ? 1 : 0) * fudgeFactor;
                 }
-                if (!value) {
+                if (value === undefined) {
                     value =
                         estValues.default[
                             estPick - 1 + g.numTeams * (dp.round - 1)
@@ -379,6 +391,7 @@ const valueChange = async (
     const rosterAndAdd = roster.concat(add);
     add = doSkillBonuses(add, rosterAndRemove);
     remove = doSkillBonuses(remove, rosterAndAdd);
+console.log(add, remove);
 
     // This actually doesn't do anything because I'm an idiot
     const base = 1.25;

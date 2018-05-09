@@ -21,6 +21,12 @@ import {
 import * as views from "./views";
 import type { Env } from "../common/types";
 
+window.fixOvrPot00 = async () => {
+    console.log("Fixing 0 ovr and pot ratings...");
+    await toWorker("fixOvrPot00");
+    console.log("Done!");
+};
+
 promiseWorker.register(([name, ...params]) => {
     if (!api.hasOwnProperty(name)) {
         throw new Error(

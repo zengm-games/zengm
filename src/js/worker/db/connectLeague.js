@@ -19,6 +19,10 @@ const upgrade29 = tx => {
         if (cursor) {
             const p = cursor.value;
 
+            if (!Array.isArray(p.relatives)) {
+                p.relatives = [];
+            }
+
             // This can be really slow, so need some UI for progress
             const century = Math.floor(p.draft.year / 100);
             if (century > lastCentury) {
@@ -416,6 +420,10 @@ const migrateLeague = (upgradeDB, lid) => {
                 }
             }
 
+            if (!Array.isArray(p.relatives)) {
+                p.relatives = [];
+            }
+
             upgradeDB.players.put(p);
         });
     }
@@ -431,7 +439,8 @@ const migrateLeague = (upgradeDB, lid) => {
         slowUpgrade();
         upgrade29(upgradeDB._dbOrTx._rawTransaction);
     }
-    if (upgradeDB.oldVersion <= 29) {
+    if (upgradeDB.oldVersion === 29) {
+        // === rather than <= is to prevent the 30 and 27/29 upgrades from having a race condition on updating players
         upgradeDB.players.iterate(p => {
             if (!Array.isArray(p.relatives)) {
                 p.relatives = [];

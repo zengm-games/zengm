@@ -1,11 +1,7 @@
 draft refactor
 - get rid of draftOrder, keep picks in draftPicks and delete from there after each pick
   - add a "pick" property to the draft pick in the lottery
-- trading picks during draft
-  - make sure AI can value them properly
-    - base on actual pick, not projected pick
-    - base on players+picks remaining, so adjust throughout draft
-  - race condition for running draft multiple times - need lock?
+- race condition for running draft multiple times - need lock?
 - changes
 
 "lineage" page to view all of a player's relatives

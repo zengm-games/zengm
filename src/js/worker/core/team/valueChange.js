@@ -179,10 +179,12 @@ const valueChange = async (
             } else {
                 estValues = await trade.getPickValues();
             }
-console.log('estValues', estValues);
 
             for (const dpid of dpidsAdd) {
                 const dp = await idb.cache.draftPicks.get(dpid);
+                if (!dp) {
+                    continue;
+                }
                 const season = dp.season === "fantasy" ? g.season : dp.season;
                 let estPick;
                 if (dp.pick > 0) {
@@ -196,7 +198,6 @@ console.log('estValues', estValues);
                         estPick * (5 - seasons) / 5 + 15 * seasons / 5,
                     );
                 }
-console.log('add', dp, estPick);
 
                 // No fudge factor, since this is coming from the user's team (or eventually, another AI)
                 let value;
@@ -238,6 +239,9 @@ console.log('add', dp, estPick);
 
             for (const dpid of dpidsRemove) {
                 const dp = await idb.cache.draftPicks.get(dpid);
+                if (!dp) {
+                    continue;
+                }
                 const season = dp.season === "fantasy" ? g.season : dp.season;
                 const seasons = season - g.season;
                 let estPick;
@@ -251,7 +255,6 @@ console.log('add', dp, estPick);
                         estPick * (5 - seasons) / 5 + 15 * seasons / 5,
                     );
                 }
-console.log('remove', dp, estPick);
 
                 // Set fudge factor with more confidence if it's the current season
                 let fudgeFactor;
@@ -391,7 +394,6 @@ console.log('remove', dp, estPick);
     const rosterAndAdd = roster.concat(add);
     add = doSkillBonuses(add, rosterAndRemove);
     remove = doSkillBonuses(remove, rosterAndAdd);
-console.log(add, remove);
 
     // This actually doesn't do anything because I'm an idiot
     const base = 1.25;

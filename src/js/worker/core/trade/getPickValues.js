@@ -1,6 +1,6 @@
 // @flow
 
-import { PLAYER } from "../../../common";
+import { PHASE, PLAYER, g } from "../../../common";
 import { idb } from "../../db";
 import type { TradePickValues } from "../../../common/types";
 
@@ -90,6 +90,21 @@ const getPickValues = async (): Promise<TradePickValues> => {
         if (players.length > 0) {
             players.sort((a, b) => b.value - a.value);
             estValues[players[0].draft.year] = players.map(p => p.value + 4); // +4 is to generally make picks more valued
+        }
+    }
+
+    // Handle case where draft is in progress
+    if (g.phase === PHASE.DRAFT) {
+        // See what the lowest remaining pick is
+        const numPicks = 2 * g.numTeams;
+        const draftPicks = (await idb.cache.draftPicks.getAll()).filter(
+            dp => dp.season === g.season,
+        );
+        const diff = numPicks - draftPicks.length;
+        if (diff > 0) {
+            // Value of 50 is arbitrary since these entries should never appear in a trade since the picks don't exist anymore
+            const fakeValues = Array(diff).fill(50);
+            estValues[g.season] = fakeValues.concat(estValues[g.season]);
         }
     }
 

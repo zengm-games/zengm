@@ -45,6 +45,7 @@ const afterPicks = async (draftOver: boolean, conditions?: Conditions) => {
             await phase.newPhase(PHASE.AFTER_DRAFT, conditions);
         }
     } else {
+        await updatePlayMenu();
         await toUI(["realtimeUpdate", ["playerMovement"]]);
     }
 };

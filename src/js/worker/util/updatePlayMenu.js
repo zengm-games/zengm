@@ -1,6 +1,7 @@
 // @flow
 
 import { PHASE, g, helpers } from "../../common";
+import { draft } from "../core";
 import { local, lock, toUI } from "../util";
 
 /**
@@ -83,7 +84,13 @@ const updatePlayMenu = async () => {
         keys = ["viewDraftLottery", "untilDraft"];
     } else if (g.phase === PHASE.DRAFT || g.phase === PHASE.FANTASY_DRAFT) {
         // Draft
-        keys = ["onePick", "untilMyNextPick", "viewDraft"];
+        const draftPicks = await draft.getOrder();
+        const dp = draftPicks[0];
+        if (dp && g.userTids.includes(dp.tid)) {
+            keys = ["viewDraft"];
+        } else {
+            keys = ["onePick", "untilMyNextPick", "viewDraft"];
+        }
     } else if (g.phase === PHASE.AFTER_DRAFT) {
         // Offseason - post draft
         keys = ["untilResignPlayers"];

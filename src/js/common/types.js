@@ -279,6 +279,7 @@ export type League = {|
 |};
 
 export type Locks = {|
+    drafting: boolean,
     gameSim: boolean,
     newPhase: boolean,
     stopGameSim: boolean,

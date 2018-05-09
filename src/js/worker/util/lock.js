@@ -6,6 +6,7 @@ import type { Locks } from "../../common/types";
 
 // These are transient variables that always reset to "false" on reload. See local.js for more.
 const locks: Locks = {
+    drafting: false,
     gameSim: false,
     newPhase: false,
     stopGameSim: false,

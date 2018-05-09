@@ -1,7 +1,4 @@
 draft refactor
-- get rid of draftOrder, keep picks in draftPicks and delete from there after each pick
-  - add a "pick" property to the draft pick in the lottery
-- race condition for running draft multiple times - need lock?
 - changes
 
 "lineage" page to view all of a player's relatives

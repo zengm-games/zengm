@@ -5,7 +5,7 @@ import afterPicks from "./afterPicks";
 import getOrder from "./getOrder";
 import selectPlayer from "./selectPlayer";
 import { idb } from "../../db";
-import { local, random } from "../../util";
+import { local, lock, random } from "../../util";
 import type { Conditions } from "../../../common/types";
 
 /**
@@ -15,9 +15,15 @@ import type { Conditions } from "../../../common/types";
  *
  * @memberOf core.draft
  * @param {boolean} onlyOne If true, only do one pick. If false, do all picks until the user's next pick. Default false.
- * @return {Promise.[Array.<Object>, Array.<number>]} Resolves to array. First argument is the list of draft picks (from getOrder). Second argument is a list of player IDs who were drafted during this function call, in order.
+ * @return {Promise.[Array.<Object>, Array.<number>]} Resolves to an array of player IDs who were drafted during this function call, in order.
  */
 const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
+    if (lock.get("drafting")) {
+        return [];
+    }
+
+    lock.set("drafting", true);
+
     const pids = [];
 
     const [playersAll, draftPicks] = await Promise.all([
@@ -31,6 +37,8 @@ const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
     const afterDoneAuto = async () => {
         // Is draft over?
         await afterPicks(draftPicks.length === 0, conditions);
+
+        lock.set("drafting", false);
 
         return pids;
     };

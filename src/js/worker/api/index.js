@@ -223,6 +223,10 @@ const draftLottery = async () => {
 };
 
 const draftUser = async (pid: number, conditions: Conditions) => {
+    if (lock.get("drafting")) {
+        return;
+    }
+
     const draftPicks = await draft.getOrder();
     const dp = draftPicks[0];
     if (dp && g.userTids.includes(dp.tid)) {

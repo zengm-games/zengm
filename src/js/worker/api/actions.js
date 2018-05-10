@@ -222,7 +222,7 @@ const playMenu = {
         await runDraft(true, conditions);
     },
 
-    untilMyNextPick: async (conditions: Conditions) => {
+    untilYourNextPick: async (conditions: Conditions) => {
         await runDraft(false, conditions);
     },
 

@@ -30,7 +30,7 @@ const DraftButtons = ({
                 className="btn btn-default"
                 disabled={usersTurn}
                 onClick={async () => {
-                    await toWorker("actions.playMenu.untilMyNextPick");
+                    await toWorker("actions.playMenu.untilYourNextPick");
                 }}
             >
                 Sim until {untilText}

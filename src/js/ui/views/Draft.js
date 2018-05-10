@@ -10,10 +10,7 @@ import {
     PlayerNameLabels,
 } from "../components";
 
-const DraftButtons = ({
-    userRemaining,
-    usersTurn,
-}) => {
+const DraftButtons = ({ userRemaining, usersTurn }) => {
     const untilText = userRemaining ? "your next pick" : "end of draft";
     return (
         <div className="btn-group">
@@ -42,6 +39,20 @@ const DraftButtons = ({
 DraftButtons.propTypes = {
     userRemaining: PropTypes.bool.isRequired,
     usersTurn: PropTypes.bool.isRequired,
+};
+
+const TradeButton = ({ disabled, dpid, tid, visible }) => {
+    return visible ? (
+        <button
+            className="btn btn-xs btn-default"
+            disabled={disabled}
+            onClick={async () => {
+                await toWorker("actions.tradeFor", { dpid, tid });
+            }}
+        >
+            Trade For Pick
+        </button>
+    ) : null;
 };
 
 const scrollLeft = (pos: number) => {
@@ -169,7 +180,16 @@ class Draft extends React.Component {
                     >
                         {p.name}
                     </PlayerNameLabels>
-                ) : null,
+                ) : (
+                    <TradeButton
+                        dpid={p.draft.dpid}
+                        disabled={this.state.drafting}
+                        tid={p.draft.tid}
+                        visible={
+                            !fantasyDraft && !userTids.includes(p.draft.tid)
+                        }
+                    />
+                ),
                 p.pid >= 0 ? p.ratings.pos : null,
                 p.pid >= 0 ? p.age : null,
                 p.pid >= 0 ? p.ratings.ovr : null,

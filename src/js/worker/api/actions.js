@@ -64,22 +64,20 @@ const negotiate = async (pid: number, conditions: Conditions) => {
 };
 
 type TradeForOptions = {
-    otherDpids: number[],
-    otherPids: number[],
-    pid: number,
-    tid: number,
-    userDpids: number[],
-    userPids: number[],
+    dpid?: number,
+    pid?: number,
+    otherDpids?: number[],
+    otherPids?: number[],
+    tid?: number,
+    userDpids?: number[],
+    userPids?: number[],
 };
 
-const tradeFor = async (
-    { otherDpids, otherPids, pid, tid, userDpids, userPids }: TradeForOptions,
-    conditions: Conditions,
-) => {
+const tradeFor = async (arg: TradeForOptions, conditions: Conditions) => {
     let teams;
 
-    if (pid !== undefined) {
-        const p = await idb.cache.players.get(pid);
+    if (arg.pid !== undefined) {
+        const p = await idb.cache.players.get(arg.pid);
 
         if (!p || p.tid < 0) {
             return;
@@ -94,8 +92,28 @@ const tradeFor = async (
             },
             {
                 tid: p.tid,
-                pids: [pid],
+                pids: [arg.pid],
                 dpids: [],
+            },
+        ];
+    } else if (arg.dpid !== undefined) {
+        const dp = await idb.cache.draftPicks.get(arg.dpid);
+
+        if (!dp) {
+            return;
+        }
+
+        // Start new trade for a single player, like a Trade For button
+        teams = [
+            {
+                tid: g.userTid,
+                pids: [],
+                dpids: [],
+            },
+            {
+                tid: dp.tid,
+                pids: [],
+                dpids: [arg.dpid],
             },
         ];
     } else {
@@ -103,13 +121,13 @@ const tradeFor = async (
         teams = [
             {
                 tid: g.userTid,
-                pids: userPids,
-                dpids: userDpids,
+                pids: arg.userPids,
+                dpids: arg.userDpids,
             },
             {
-                tid,
-                pids: otherPids,
-                dpids: otherDpids,
+                tid: arg.tid,
+                pids: arg.otherPids,
+                dpids: arg.otherDpids,
             },
         ];
     }

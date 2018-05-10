@@ -90,12 +90,7 @@ async function updateDraft(
 
         for (const dp of draftPicks) {
             drafted.push({
-                draft: {
-                    tid: dp.tid,
-                    originalTid: dp.originalTid,
-                    round: dp.round,
-                    pick: dp.pick,
-                },
+                draft: dp,
                 pid: -1,
             });
         }

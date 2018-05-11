@@ -9,6 +9,7 @@ number or not.
 - [Major changes to player ratings and development](https://basketball-gm.com/blog/2018/02/player-ratings-and-development-beta/)
 - [Performance improvements in large leagues](https://basketball-gm.com/blog/2018/04/performance-improvements-in-large-leagues/)
 - [Relatives - fathers, sons, and brothers](https://basketball-gm.com/blog/2018/05/relatives-fathers-sons-and-brothers/)
+- [Draft day trades](https://basketball-gm.com/blog/2018/05/draft-day-trades/)
 
 # 4.0.0 (2018-03-07)
 

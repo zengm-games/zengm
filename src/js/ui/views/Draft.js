@@ -55,6 +55,13 @@ const TradeButton = ({ disabled, dpid, tid, visible }) => {
     ) : null;
 };
 
+TradeButton.propTypes = {
+    disabled: PropTypes.bool.isRequired,
+    dpid: PropTypes.number.isRequired,
+    tid: PropTypes.number.isRequired,
+    visible: PropTypes.bool.isRequired,
+};
+
 const scrollLeft = (pos: number) => {
     // https://blog.hospodarets.com/native_smooth_scrolling
     if ("scrollBehavior" in document.documentElement.style) {

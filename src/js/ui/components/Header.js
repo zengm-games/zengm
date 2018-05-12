@@ -18,6 +18,19 @@ const updateSkyscraperDisplay = () => {
     }
 };
 
+// https://developer.mozilla.org/en-US/docs/Web/Events/resize
+let running = false;
+const resizeListener = () => {
+    if (running) {
+        return;
+    }
+    running = true;
+    window.requestAnimationFrame(() => {
+        window.dispatchEvent(new CustomEvent("optimizedResize"));
+        running = false;
+    });
+};
+
 class Header extends React.Component<{}> {
     // eslint-disable-next-line class-methods-use-this
     shouldComponentUpdate() {
@@ -26,11 +39,14 @@ class Header extends React.Component<{}> {
 
     componentDidMount() {
         updateSkyscraperDisplay();
-        window.addEventListener("resize", updateSkyscraperDisplay);
+
+        window.addEventListener("resize", resizeListener);
+        window.addEventListener("optimizedResize", updateSkyscraperDisplay);
     }
 
     componentWillUnmount() {
-        window.removeEventListener("resize", updateSkyscraperDisplay);
+        window.removeEventListener("resize", resizeListener);
+        window.removeEventListener("optimizedResize", updateSkyscraperDisplay);
     }
 
     // eslint-disable-next-line class-methods-use-this
@@ -71,7 +87,12 @@ class Header extends React.Component<{}> {
                     }}
                 />
                 <div className="banner-ad skyscraper-wrapper">
-                    <div id="bbgm-ads-skyscraper" />
+                    <div
+                        id="bbgm-ads-skyscraper"
+                        style={{
+                            display: "none",
+                        }}
+                    />
                 </div>
                 {embedInfo}
             </div>

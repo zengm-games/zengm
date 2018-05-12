@@ -1,3 +1,7 @@
+prettier automatic
+
+does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
+
 "lineage" page to view all of a player's relatives
 
 make league.create return JSON, not write directly to DB
@@ -14,6 +18,7 @@ Trade.js shouldn't have realtimeupdate, should be listening to a specific update
 
 get rid of g in UI
 - required properties should be passed in from worker, or synced via some other mechanism and stored globally
+  - decide which should be stored globally, and how to pass down to components (context? maybe just props from controller?)
 
 later
 - in new league: set rookie contracts appropriately
@@ -140,9 +145,6 @@ AI trades
 AI propose trade to user
 - need way to show popup with link to trade page
 
-slow down playoffs
-- somehow add delay to game sim, N - (actual time)
-
 colors
 - color ratings on ratings page (and tables), just like ratings popup
 - color stats in ratings popover
@@ -177,11 +179,7 @@ better loading screen, after React takes control but before initial page is rend
 uncomment things using localstorage in worker, after moving to either env+api or idb (meta)
 - top16playoffs - used in both, would be better in gameAttributes as a God Mode option
 
-run tests from cache
-- getCopies.teams
-- util.account
-- unskip player.generate test
-- delete meta database after league tests (and others that create it)
+delete meta database after league tests (and others that create it)
 
 this shit is UGLY UGLY UGLY, fix ASAP!!!
     if (typeof it === 'function') { return; }
@@ -195,17 +193,7 @@ rethink cache API, with goal of having it typed
 
 error page (like invalid pid) should show league UI if in league
 
-does beforeView stuff always need to go back to worker? only if switching leagues, maybe?
-
 should checks to update data in worker/views be in worker, or could they be in UI somehow and avoid call to worker if update not needed?
-
-test all instances of fetchWrapper
-- login/logout/register work, but persisting login over reloads doesn't
-- others?
-
-bbgm.g.cache.flush().then(() => console.log('done'));
-fucked = false; Object.values(bbgm.g.cache.indexes.teamSeasonsBySeasonTid).forEach((ts) => { if (ts.hasOwnProperty('ast')) { console.log(ts); fucked = true } }); if (fucked) { throw new Error('FUCK'); }
-bbgm.league.setGameAttributes({phaseChangeInProgress: false})
 
 if i can gracefully handle absence of g.season etc, put cache creation inside connectLeague
 - not graceful now, see fill(season)
@@ -215,7 +203,6 @@ get tests working
   - operate on individual functions? can export them just for tests
   - confirm operations that don't require IDB
   - confirm getAll updates from cache
-- a lot of tests could run just from cache, no IDB
 
 player.sign, like player.addToFreeAgents to encapsulate tid changes
 
@@ -273,11 +260,6 @@ flow
 replace owner message text with numbers/chart
 
 upgrade GA https://developers.google.com/analytics/devguides/collection/upgrade/
-  bbgm web too
-    jekyll - too complicated
-    hexo - too opinionated/idiosyncratic
-    metalsmith - ??
-    phenomic - kind of nice, but maybe unstable and tricky deployment
 
 ---
 
@@ -294,8 +276,6 @@ redux or similar for state
   https://www.reddit.com/r/javascript/comments/53ja6l/redux_patterns_and_antipatterns/
 
 keep showing splash screen until first view hydrated
-
-reevaluate bbgmView API
 
 DataTable
   USE FOR OTHER TABLES TOO, not just sortable ones. will be nice for colnames, especially
@@ -612,7 +592,6 @@ career ending "injuries" http://www.reddit.com/r/BasketballGM/comments/2oo32x/ar
 if playoffSeries already exists, don't try to create again http://www.reddit.com/r/BasketballGM/comments/2on0ij/a_bug_will_not_advance_to_playoffs_errors_in_log/
   use put, not add
 when uploading league file, no need to read whole thing in just to show teams menu. only need to read up to teams. but how?
-simulate in multiple tabs -> NaN
 should be impossible to have a player average 0 assists in big minutes
 "My Career" page with GM stats across teams http://www.reddit.com/r/BasketballGM/comments/2gc4sf/gm_page/
 +/- http://www.reddit.com/r/BasketballGM/comments/2cpdxg/both_individual_and_5man_units/
@@ -647,9 +626,6 @@ Achievements to add
   https://www.reddit.com/r/BasketballGM/comments/81g1tz/achievement_ideas/
 mobile UI
   slide in full height menu from right, like facebook or android's DrawerLayout
-move manual to wordpress
-  " < Basketball GM Manual" in title
-  search for any manual links
 "Watch list" of players the user is interested in, mainly for free agency
   add "actions" where appropriate, probably as output in player.filter so it can be used elsewhere
     negotiate

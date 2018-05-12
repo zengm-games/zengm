@@ -1,10 +1,8 @@
 ads on side of page
-  uncenter
-    override container props
-    if ad on right, it will go over overflowing tables :(
-      player stats
-      player page
-      can ads be z-indexed under content?
+  if ad on right, it will go over overflowing tables :(
+    player stats
+    player page
+    can ads be z-indexed under content?
   write function to determine if enough room for ad
     where does it live, in bbgm-ads or basketball-gm
   display fixed ad

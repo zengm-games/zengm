@@ -25,7 +25,6 @@ async function updateHistory(
                 season: a.season,
                 finalsMvp: a.finalsMvp,
                 mvp: a.mvp,
-                dpoy: a.dpoy,
                 roy: a.roy,
                 runnerUp: undefined,
                 champ: undefined,

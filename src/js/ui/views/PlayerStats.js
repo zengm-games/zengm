@@ -22,7 +22,6 @@ const PlayerStats = ({ abbrev, players, playoffs, season, statType }) => {
                   "Age",
                   "Team",
                   "G",
-                  "GS",
                   "Min",
                   "FG",
                   "FGA",
@@ -104,7 +103,6 @@ const PlayerStats = ({ abbrev, players, playoffs, season, statType }) => {
         const statsRow =
             statType !== "advanced"
                 ? [
-                      p.stats.gs,
                       p.stats.min.toFixed(d),
                       p.stats.fg.toFixed(d),
                       p.stats.fga.toFixed(d),
@@ -159,7 +157,7 @@ const PlayerStats = ({ abbrev, players, playoffs, season, statType }) => {
                     skills={p.ratings.skills}
                     watch={p.watch}
                 >
-                    {p.name}
+                    {p.nameAbbrev}
                 </PlayerNameLabels>,
                 pos,
                 p.age,

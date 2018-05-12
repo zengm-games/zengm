@@ -59,7 +59,6 @@ const HistoryAll = ({ seasons }) => {
         "Runner Up",
         "Finals MVP",
         "MVP",
-        "DPOY",
         "ROY",
     );
 
@@ -108,7 +107,6 @@ const HistoryAll = ({ seasons }) => {
                 runnerUpEl,
                 awardName(s.finalsMvp, s.season),
                 awardName(s.mvp, s.season),
-                awardName(s.dpoy, s.season),
                 awardName(s.roy, s.season),
             ],
         };

@@ -48,7 +48,7 @@ const PlayerRatings = ({ abbrev, players, season }) => {
                     skills={p.ratings.skills}
                     watch={p.watch}
                 >
-                    {p.name}
+                    {p.nameAbbrev}
                 </PlayerNameLabels>,
                 p.ratings.pos,
                 <a href={helpers.leagueUrl(["roster", p.stats.abbrev, season])}>

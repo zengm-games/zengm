@@ -47,13 +47,20 @@ async function updatePlayers(
         }
 
         players = await idb.getCopies.playersPlus(players, {
-            attrs: ["pid", "name", "age", "injury", "tid", "hof", "watch"],
+            attrs: [
+                "pid",
+                "nameAbbrev",
+                "age",
+                "injury",
+                "tid",
+                "hof",
+                "watch",
+            ],
             ratings: ["skills", "pos"],
             stats: [
                 "abbrev",
                 "tid",
                 "gp",
-                "gs",
                 "min",
                 "fg",
                 "fga",

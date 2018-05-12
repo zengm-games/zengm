@@ -10,7 +10,7 @@ class Footer extends React.Component<{}> {
 
     // eslint-disable-next-line class-methods-use-this
     render() {
-        // banner-ad class is so ad blcokers remove it cleanly. I'm so nice!
+        // banner-ad class is so ad blockers remove it cleanly. I'm so nice!
         return (
             <div>
                 <p className="clearfix" />

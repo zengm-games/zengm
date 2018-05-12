@@ -33,7 +33,7 @@ class Header extends React.Component<{}> {
         ) : null;
 
         return (
-            // banner-ad class is so ad blcokers remove it cleanly. I'm so nice!
+            // banner-ad class is so ad blockers remove it cleanly. I'm so nice!
             <div>
                 <div
                     className="banner-ad"
@@ -45,6 +45,9 @@ class Header extends React.Component<{}> {
                         marginTop: "1em",
                     }}
                 />
+                <div className="banner-ad skyscraper-wrapper">
+                    <div id="bbgm-ads-skyscraper" />
+                </div>
                 {embedInfo}
             </div>
         );

@@ -1,120 +1,128 @@
 {
-  "name": "basketball-gm",
-  "version": "4.1.0",
-  "description": "A single-player basketball simulation game. Make trades, set rosters, draft players, and try to build the next dynasty, all from within your web browser. The game is implemented entirely in client-side JavaScript, backed by IndexedDB.",
-  "homepage": "https://basketball-gm.com/",
-  "bugs": {
-    "url": "https://github.com/dumbmatter/basketball-gm/issues"
-  },
-  "author": "Jeremy Scheff <jdscheff@gmail.com>",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/dumbmatter/basketball-gm.git"
-  },
-  "scripts": {
-    "start": "node tools/server.js",
-    "build": "node tools/build.js && yarn run build-js && yarn run minify-js",
-    "start-watch": "concurrently --kill-others 'yarn run start' 'yarn run watch'",
-    "watch": "node tools/pre-watch.js && concurrently --kill-others 'yarn run watch-css' 'yarn run watch-js'",
-    "watch-css": "node tools/watch-css.js",
-    "build-js": "node tools/build-js.js",
-    "minify-js": "node tools/minify-js.js",
-    "watch-js": "concurrently --raw 'watchify -d src/js/ui/index.js -o build/gen/ui.js -v' 'watchify -d src/js/worker/index.js -o build/gen/worker.js -v'",
-    "lint": "concurrently --raw 'yarn run flow' 'yarn run lint-js'",
-    "flow": "flow",
-    "lint-js": "eslint '*.js' 'src/js/**/*.js' 'tools/**/*.js'",
-    "lint-js-fix": "yarn run lint-js -- --fix",
-    "prettier": "prettier --write 'src/js/**/*.js'",
-    "test": "karma start karma.conf.js",
-    "test-watch": "karma start karma.conf.js --auto-watch --no-single-run",
-    "test-browserstack": "karma start karma-browserstack.conf.js"
-  },
-  "dependencies": {
-    "backboard": "^1.0.7",
-    "classnames": "^2.2.5",
-    "dompurify": "^1.0.4",
-    "facesjs": "^1.0.1",
-    "indexeddb-getall-shim": "^1.3.3",
-    "lodash": "^4.17.10",
-    "object.entries": "^1.0.4",
-    "object.values": "^1.0.4",
-    "page": "^1.8.6",
-    "promise-worker-bi": "^3.0.0",
-    "react": "^16.3.2",
-    "react-addons-text-content": "^0.0.4",
-    "react-bootstrap": "^0.32.1",
-    "react-dom": "^16.3.2",
-    "react-overlays": "^0.8.3",
-    "react-sortable-hoc": "dumbmatter/react-sortable-hoc#clonedNode-in-onSortStart",
-    "roman-numerals": "^0.3.2",
-    "url-search-params-polyfill": "^4.0.0",
-    "whatwg-fetch": "^2.0.4"
-  },
-  "devDependencies": {
-    "babel-core": "6.26.0",
-    "babel-eslint": "^8.2.3",
-    "babel-plugin-check-es2015-constants": "^6.22.0",
-    "babel-plugin-external-helpers": "^6.22.0",
-    "babel-plugin-transform-async-to-generator": "^6.24.1",
-    "babel-plugin-transform-es2015-destructuring": "^6.23.0",
-    "babel-plugin-transform-es2015-for-of": "^6.23.0",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
-    "babel-plugin-transform-es2015-parameters": "^6.24.1",
-    "babel-plugin-transform-exponentiation-operator": "^6.24.1",
-    "babel-plugin-transform-flow-strip-types": "^6.22.0",
-    "babel-preset-react": "^6.24.1",
-    "babelify": "^8.0.0",
-    "blacklistify": "^0.0.3",
-    "browserify": "^16.2.2",
-    "cheerio": "^1.0.0-rc.2",
-    "chokidar": "^2.0.3",
-    "clean-css": "^4.1.11",
-    "concurrently": "^3.5.1",
-    "envify": "^4.1.0",
-    "eslint": "^4.19.1",
-    "eslint-config-airbnb": "^16.1.0",
-    "eslint-config-prettier": "^2.9.0",
-    "eslint-plugin-import": "^2.11.0",
-    "eslint-plugin-jsx-a11y": "^6.0.3",
-    "eslint-plugin-react": "^7.7.0",
-    "flow-bin": "^0.72.0",
-    "fs-extra": "^6.0.1",
-    "karma": "^2.0.2",
-    "karma-browserify": "^5.2.0",
-    "karma-browserstack-launcher": "^1.3.0",
-    "karma-chrome-launcher": "^2.2.0",
-    "karma-firefox-launcher": "^1.1.0",
-    "karma-mocha": "^1.3.0",
-    "karma-mocha-reporter": "^2.2.5",
-    "karma-source-map-support": "^1.3.0",
-    "mocha": "^5.1.1",
-    "node-sass": "^4.9.0",
-    "prettier": "^1.12.1",
-    "prop-types": "^15.6.1",
-    "replace": "^1.0.0",
-    "uglify-es": "^3.3.9",
-    "watchify": "^3.11.0"
-  },
-  "browserify": {
-    "transform": [
-      "babelify"
-    ]
-  },
-  "babel": {
-    "presets": [
-      "react"
-    ],
-    "plugins": [
-      "external-helpers",
-      "transform-flow-strip-types",
-      "transform-es2015-for-of",
-      "check-es2015-constants",
-      "transform-es2015-parameters",
-      "transform-es2015-destructuring",
-      "transform-es2015-modules-commonjs",
-      "transform-exponentiation-operator",
-      "transform-async-to-generator"
-    ]
-  },
-  "private": true
+    "name": "basketball-gm",
+    "version": "4.1.0",
+    "description":
+        "A single-player basketball simulation game. Make trades, set rosters, draft players, and try to build the next dynasty, all from within your web browser. The game is implemented entirely in client-side JavaScript, backed by IndexedDB.",
+    "homepage": "https://basketball-gm.com/",
+    "bugs": {
+        "url": "https://github.com/dumbmatter/basketball-gm/issues"
+    },
+    "author": "Jeremy Scheff <jdscheff@gmail.com>",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/dumbmatter/basketball-gm.git"
+    },
+    "scripts": {
+        "start": "node tools/server.js",
+        "build":
+            "node tools/build.js && yarn run build-js && yarn run minify-js",
+        "start-watch":
+            "concurrently --kill-others 'yarn run start' 'yarn run watch'",
+        "watch":
+            "node tools/pre-watch.js && concurrently --kill-others 'yarn run watch-css' 'yarn run watch-js'",
+        "watch-css": "node tools/watch-css.js",
+        "build-js": "node tools/build-js.js",
+        "minify-js": "node tools/minify-js.js",
+        "watch-js":
+            "concurrently --raw 'watchify -d src/js/ui/index.js -o build/gen/ui.js -v' 'watchify -d src/js/worker/index.js -o build/gen/worker.js -v'",
+        "lint": "concurrently --raw 'yarn run flow' 'yarn run lint-js'",
+        "flow": "flow",
+        "lint-js": "eslint '*.js' 'src/js/**/*.js' 'tools/**/*.js'",
+        "lint-js-fix": "yarn run lint-js -- --fix",
+        "prettier": "prettier --write 'src/js/**/*.js'",
+        "precommit": "lint-staged",
+        "test": "karma start karma.conf.js",
+        "test-watch": "karma start karma.conf.js --auto-watch --no-single-run",
+        "test-browserstack": "karma start karma-browserstack.conf.js"
+    },
+    "lint-staged": {
+        "*.{js,json}": ["prettier --write", "git add"]
+    },
+    "dependencies": {
+        "backboard": "^1.0.7",
+        "classnames": "^2.2.5",
+        "dompurify": "^1.0.4",
+        "facesjs": "^1.0.1",
+        "indexeddb-getall-shim": "^1.3.3",
+        "lodash": "^4.17.10",
+        "object.entries": "^1.0.4",
+        "object.values": "^1.0.4",
+        "page": "^1.8.6",
+        "promise-worker-bi": "^3.0.0",
+        "react": "^16.3.2",
+        "react-addons-text-content": "^0.0.4",
+        "react-bootstrap": "^0.32.1",
+        "react-dom": "^16.3.2",
+        "react-overlays": "^0.8.3",
+        "react-sortable-hoc":
+            "dumbmatter/react-sortable-hoc#clonedNode-in-onSortStart",
+        "roman-numerals": "^0.3.2",
+        "url-search-params-polyfill": "^4.0.0",
+        "whatwg-fetch": "^2.0.4"
+    },
+    "devDependencies": {
+        "babel-core": "6.26.0",
+        "babel-eslint": "^8.2.3",
+        "babel-plugin-check-es2015-constants": "^6.22.0",
+        "babel-plugin-external-helpers": "^6.22.0",
+        "babel-plugin-transform-async-to-generator": "^6.24.1",
+        "babel-plugin-transform-es2015-destructuring": "^6.23.0",
+        "babel-plugin-transform-es2015-for-of": "^6.23.0",
+        "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+        "babel-plugin-transform-es2015-parameters": "^6.24.1",
+        "babel-plugin-transform-exponentiation-operator": "^6.24.1",
+        "babel-plugin-transform-flow-strip-types": "^6.22.0",
+        "babel-preset-react": "^6.24.1",
+        "babelify": "^8.0.0",
+        "blacklistify": "^0.0.3",
+        "browserify": "^16.2.2",
+        "cheerio": "^1.0.0-rc.2",
+        "chokidar": "^2.0.3",
+        "clean-css": "^4.1.11",
+        "concurrently": "^3.5.1",
+        "envify": "^4.1.0",
+        "eslint": "^4.19.1",
+        "eslint-config-airbnb": "^16.1.0",
+        "eslint-config-prettier": "^2.9.0",
+        "eslint-plugin-import": "^2.11.0",
+        "eslint-plugin-jsx-a11y": "^6.0.3",
+        "eslint-plugin-react": "^7.7.0",
+        "flow-bin": "^0.72.0",
+        "fs-extra": "^6.0.1",
+        "husky": "^0.14.3",
+        "karma": "^2.0.2",
+        "karma-browserify": "^5.2.0",
+        "karma-browserstack-launcher": "^1.3.0",
+        "karma-chrome-launcher": "^2.2.0",
+        "karma-firefox-launcher": "^1.1.0",
+        "karma-mocha": "^1.3.0",
+        "karma-mocha-reporter": "^2.2.5",
+        "karma-source-map-support": "^1.3.0",
+        "lint-staged": "^7.1.0",
+        "mocha": "^5.1.1",
+        "node-sass": "^4.9.0",
+        "prettier": "^1.12.1",
+        "prop-types": "^15.6.1",
+        "replace": "^1.0.0",
+        "uglify-es": "^3.3.9",
+        "watchify": "^3.11.0"
+    },
+    "browserify": {
+        "transform": ["babelify"]
+    },
+    "babel": {
+        "presets": ["react"],
+        "plugins": [
+            "external-helpers",
+            "transform-flow-strip-types",
+            "transform-es2015-for-of",
+            "check-es2015-constants",
+            "transform-es2015-parameters",
+            "transform-es2015-destructuring",
+            "transform-es2015-modules-commonjs",
+            "transform-exponentiation-operator",
+            "transform-async-to-generator"
+        ]
+    },
+    "private": true
 }

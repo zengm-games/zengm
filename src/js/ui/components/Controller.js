@@ -168,14 +168,25 @@ class Controller extends React.Component<{}, State> {
             const newLidInt = parseInt(ctx.params.lid, 10);
             const newLid = Number.isNaN(newLidInt) ? undefined : newLidInt;
 
-            await (args.inLeague
-                ? toWorker("beforeViewLeague", newLid, this.state.topMenu.lid)
-                : toWorker("beforeViewNonLeague", this.state.topMenu.lid));
-
-            let inputs = args.get(ctx);
-            if (!inputs) {
-                inputs = {};
+            if (args.inLeague) {
+                if (newLid !== this.state.topMenu.lid) {
+                    await toWorker(
+                        "beforeViewLeague",
+                        newLid,
+                        this.state.topMenu.lid,
+                    );
+                }
+            } else {
+                // eslint-disable-next-line no-lonely-if
+                if (this.state.topMenu.lid !== undefined) {
+                    await toWorker("beforeViewNonLeague");
+                    this.updateTopMenu({
+                        lid: undefined,
+                    });
+                }
             }
+
+            const inputs = args.get(ctx) || {};
 
             if (typeof inputs.redirectUrl === "string") {
                 await realtimeUpdate([], inputs.redirectUrl);

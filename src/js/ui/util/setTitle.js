@@ -4,7 +4,7 @@ import { g } from "../../common";
 
 let currentTitle = "Basketball GM";
 const setTitle = (newTitle: string) => {
-    if (g.lid !== undefined) {
+    if (window.location.pathname.startsWith("/l/")) {
         newTitle += ` - ${g.leagueName}`;
     }
     newTitle = `${newTitle} - Basketball GM`;

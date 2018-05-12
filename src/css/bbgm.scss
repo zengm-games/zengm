@@ -922,22 +922,17 @@ label input {
 }
 
 .skyscraper-wrapper {
-  display: none;
+  position: fixed;
+  top: 68px;
+  right: 0px;
+  height: 600px;
+  left: 1170px;
+  background-color: yellow;
 }
-@media (min-width: 1345px) {
-  .skyscraper-wrapper {
-    display: unset;
-    position: fixed;
-    top: 68px;
-    right: 0px;
-    height: 600px;
-    left: 1170px;
-    background-color: yellow;
-  }
-  #bbgm-ads-skyscraper {
-    width: 160px;
-    height: 600px;
-    background-color: green;
-    margin: 0 auto;
-  }
+#bbgm-ads-skyscraper {
+  display: none;
+  width: 160px;
+  height: 600px;
+  background-color: green;
+  margin: 0 auto;
 }

@@ -70,10 +70,17 @@ const initAds = (goldUntil: number | void) => {
 
     if (!hideAds) {
         window.bbgmAds.cmd.push(() => {
-            // This initializes the ads and displays the initial banners. It returns a promise
-            // which resolves when it's done.
+            // Show hidden div for bbgm-ads-top. skyscraper has its own code elsewhere to manage display.
+            const showDivs = ["bbgm-ads-top"];
+            for (const id of showDivs) {
+                const div = document.getElementById(id);
+                if (div) {
+                    div.style.display = "block";
+                }
+            }
+
             window.bbgmAds
-                .init(["bbgm-ads-top", "bbgm-ads-skyscraper", "bbgm-ads-oop"])
+                .init(["bbgm-ads-top", "bbgm-ads-skyscraper"])
                 .then(() => {
                     // Show the logo too (it's not an ad so it's not managed by bbgmAds)
                     const logo = document.getElementById("bbgm-ads-logo");

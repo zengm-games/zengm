@@ -3,18 +3,11 @@ ads on side of page
     player stats
     player page
     can ads be z-indexed under content?
-  write function to determine if enough room for ad
-    where does it live, in bbgm-ads or basketball-gm
-  display fixed ad
-  show/hide on resize
-    listener for resize event to create/destroy
-      within listener, call bbgm-ads to refresh this ad when it goes from hidden to displayed, and call to remove from list of active adsa when it goes from displayed to hidden
-  how to ensure ad is not loaded or refreshed if hidden
-    in refreshSlots, check if div exists
-      divs should be stored as id, not dom element
-  eventually
-    resonsive - within gpt, or custom code switching units?
-      https://support.google.com/dfp_premium/answer/3423562?hl=en "GPT responsive ads do not resize on change in the size of the browser. You can add your own custom code to refresh the ad slots on resize."
+  plan:
+    set skyscraper div to display: none when screen is too narrow
+    isInViewport check display: none (confirm works)
+    throttle https://developer.mozilla.org/en-US/docs/Web/Events/resize
+  if i switch back to other ads, make sure i manually set display: block!!!
 
 "lineage" page to view all of a player's relatives
 

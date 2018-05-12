@@ -2,10 +2,35 @@
 
 import * as React from "react";
 
+// Ensure there is enough room to display 160px wide ad next to 1170px wide container
+const widthCutoff = 1330;
+
+const updateSkyscraperDisplay = () => {
+    const div = document.getElementById("bbgm-ads-skyscraper");
+    if (div) {
+        const documentElement = document.documentElement;
+        if (documentElement) {
+            const width = documentElement.clientWidth;
+            div.style.display = width < widthCutoff ? "none" : "block";
+        } else {
+            div.style.display = "none";
+        }
+    }
+};
+
 class Header extends React.Component<{}> {
     // eslint-disable-next-line class-methods-use-this
     shouldComponentUpdate() {
         return false;
+    }
+
+    componentDidMount() {
+        updateSkyscraperDisplay();
+        window.addEventListener("resize", updateSkyscraperDisplay);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("resize", updateSkyscraperDisplay);
     }
 
     // eslint-disable-next-line class-methods-use-this

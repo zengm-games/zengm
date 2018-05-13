@@ -1,24 +1,24 @@
 // @flow
 
 const fs = require("fs");
-const CleanCSS = require('clean-css');
+const CleanCSS = require("clean-css");
 const replace = require("replace");
-const fse = require('fs-extra');
-const sass = require('node-sass');
+const fse = require("fs-extra");
+const sass = require("node-sass");
 
 const reset = () => {
     console.log('Resetting "build" directory...');
 
-    fse.removeSync('build');
-    fs.mkdirSync('build');
-    fs.mkdirSync('build/gen');
+    fse.removeSync("build");
+    fs.mkdirSync("build");
+    fs.mkdirSync("build/gen");
 };
 
 const copyFiles = () => {
     console.log('Copying files from "src" directory to "build" directory...');
-    const foldersToIgnore = ['css', 'js', 'templates'];
+    const foldersToIgnore = ["css", "js", "templates"];
 
-    fse.copySync('src', 'build', {
+    fse.copySync("src", "build", {
         filter: filename => {
             // Loop through folders to ignore.
             for (const folder of foldersToIgnore) {
@@ -39,7 +39,7 @@ const copyFiles = () => {
 
 const minifyCss = () => {
     console.log("Minifying CSS...");
-    let source = '';
+    let source = "";
 
     /*
      * CSS files
@@ -58,7 +58,7 @@ const minifyCss = () => {
 
     // If more Sass files are needed, then create them and @import them into
     // this main Sass file.
-    const sassFilePath = 'src/css/bbgm.scss';
+    const sassFilePath = "src/css/bbgm.scss";
     const sassResult = sass.renderSync({
         file: sassFilePath,
     });
@@ -67,25 +67,31 @@ const minifyCss = () => {
     /*
      * Use CleanCSS to minify CSS and Sass sources.
      */
-    const result = (new CleanCSS()).minify(source);
+    const result = new CleanCSS().minify(source);
     if (result.errors.length > 0) {
-        console.log('clean-css errors', result.errors);
+        console.log("clean-css errors", result.errors);
     }
     if (result.warnings.length > 0) {
-        console.log('clean-css warnings', result.warnings);
+        console.log("clean-css warnings", result.warnings);
     }
-    fs.writeFileSync("build/gen/bbgm.css", result.styles);
+    fs.writeFileSync("build/gen/bbgm2.css", result.styles);
 };
 
 const genRev = () => {
     const d = new Date();
-    const date = d.toISOString().split('T')[0].replace(/-/g, '.');
-    const minutes = String(d.getUTCMinutes() + 60 * d.getUTCHours()).padStart(4, "0");
+    const date = d
+        .toISOString()
+        .split("T")[0]
+        .replace(/-/g, ".");
+    const minutes = String(d.getUTCMinutes() + 60 * d.getUTCHours()).padStart(
+        4,
+        "0",
+    );
     const rev = `${date}.${minutes}`;
     console.log(`rev ${rev}`);
 
     return rev;
-}
+};
 
 const setTimestamps = () => {
     console.log("Setting timestamps...");
@@ -95,7 +101,12 @@ const setTimestamps = () => {
     replace({
         regex: "REV_GOES_HERE",
         replacement: rev,
-        paths: ["build/bbgm.appcache", "build/index.html", "build/gen/ui.js", "build/gen/worker.js"],
+        paths: [
+            "build/bbgm.appcache",
+            "build/index.html",
+            "build/gen/ui.js",
+            "build/gen/worker.js",
+        ],
         silent: true,
     });
 

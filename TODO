@@ -7,7 +7,6 @@ ads on side of page
     set skyscraper div to display: none when screen is too narrow
     check display: none before refreshing ad
       tell austin
-  if i switch back to other ads, make sure i manually set display: block!!!
 
 "lineage" page to view all of a player's relatives
 

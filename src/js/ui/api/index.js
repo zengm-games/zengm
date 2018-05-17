@@ -70,8 +70,12 @@ const initAds = (goldUntil: number | void) => {
 
     if (!hideAds) {
         window.bbgmAds.cmd.push(() => {
-            // Show hidden div for bbgm-ads-top. skyscraper has its own code elsewhere to manage display.
-            const showDivs = ["bbgm-ads-top"];
+            // Show hidden divs. skyscraper has its own code elsewhere to manage display.
+            const showDivs = [
+                "bbgm-ads-top",
+                "bbgm-ads-bottom1",
+                "bbgm-ads-bottom2",
+            ];
             for (const id of showDivs) {
                 const div = document.getElementById(id);
                 if (div) {
@@ -80,9 +84,14 @@ const initAds = (goldUntil: number | void) => {
             }
 
             window.bbgmAds
-                .init(["bbgm-ads-top", "bbgm-ads-skyscraper"])
+                .init([
+                    "bbgm-ads-top",
+                    "bbgm-ads-bottom1",
+                    "bbgm-ads-bottom2",
+                    "bbgm-ads-skyscraper",
+                ])
                 .then(() => {
-                    // Show the logo too (it's not an ad so it's not managed by bbgmAds)
+                    // Show the logo too
                     const logo = document.getElementById("bbgm-ads-logo");
                     if (logo) {
                         logo.style.display = "flex";

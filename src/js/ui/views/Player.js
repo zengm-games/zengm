@@ -554,7 +554,7 @@ const Player = ({
                         Weight: {player.weight} lbs<br />
                         Born: {player.born.year} - {player.born.loc}
                         <br />
-                        {!player.diedYear ? (
+                        {typeof player.diedYear !== "number" ? (
                             <div>
                                 Age: {player.age}
                                 <br />

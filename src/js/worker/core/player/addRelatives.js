@@ -101,9 +101,13 @@ export const makeSon = async (p: Player) => {
     );
     const draftYear = p.draft.year - random.randInt(17, maxYearsAgo);
 
-    const possibleFathers = await idb.getCopies.players({
+    const possibleFathers = (await idb.getCopies.players({
         draftYear,
-    });
+    })).filter(
+        father =>
+            typeof father.diedYear !== "number" ||
+            father.diedYear >= p.born.year,
+    );
     if (possibleFathers.length === 0) {
         // League must be too new, draft class doesn't exist
         return;

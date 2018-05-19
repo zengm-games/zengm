@@ -388,10 +388,12 @@ class ErrorBoundary extends React.Component<{ children: any }> {
     let initialLoad = true;
     page("*", ctx => {
         if (ctx.bbgm && !ctx.bbgm.noTrack) {
-            if (window.enableLogging && window.ga) {
+            if (window.enableLogging && window.gtag) {
                 if (!initialLoad) {
-                    window.ga("set", "page", ctx.path);
-                    window.ga("send", "pageview");
+                    window.gtag("config", "UA-38759330-1", {
+                        // Normalize league URLs to all look the same
+                        page_path: ctx.path.replace(/^\/l\/[0-9]+?\//, "/l/0/"),
+                    });
 
                     window._qevents.push({
                         qacct: "p-M1Q1fpfqa7Vk4",

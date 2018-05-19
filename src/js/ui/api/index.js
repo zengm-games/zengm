@@ -18,19 +18,22 @@ import type {
  * @param {string} type Either "league" for a new league, or "season" for a completed season
  */
 const bbgmPing = (type: "league" | "season" | "version") => {
-    if (window.enableLogging && window.ga) {
+    if (window.enableLogging && window.gtag) {
         if (type === "league") {
-            window.ga("send", "event", "BBGM", "New league", String(g.lid));
+            window.gtag("event", "New league", {
+                event_category: "BBGM",
+                event_label: String(g.lid),
+            });
         } else if (type === "season") {
-            window.ga(
-                "send",
-                "event",
-                "BBGM",
-                "Completed season",
-                String(g.season),
-            );
+            window.gtag("event", "Completed season", {
+                event_category: "BBGM",
+                event_label: String(g.season),
+            });
         } else if (type === "version") {
-            window.ga("send", "event", "BBGM", "Version", window.bbgmVersion);
+            window.gtag("event", "Version", {
+                event_category: "BBGM",
+                event_label: window.bbgmVersion,
+            });
         }
     }
 };

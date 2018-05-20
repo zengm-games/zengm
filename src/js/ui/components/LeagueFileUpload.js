@@ -12,6 +12,7 @@ type Props = {
 };
 
 type State = {
+    error: Error | null,
     status: "initial" | "loading" | "parsing" | "error" | "done",
 };
 
@@ -22,6 +23,7 @@ class LeagueFileUpload extends React.Component<Props, State> {
         super(props);
 
         this.state = {
+            error: null,
             status: "initial",
         };
 
@@ -30,6 +32,7 @@ class LeagueFileUpload extends React.Component<Props, State> {
 
     handleFile(event: SyntheticInputEvent<HTMLInputElement>) {
         this.setState({
+            error: null,
             status: "loading",
         });
         if (this.props.onLoading) {
@@ -38,16 +41,19 @@ class LeagueFileUpload extends React.Component<Props, State> {
 
         const file = event.currentTarget.files[0];
         if (!file) {
+            const err = new Error("No file found");
             this.setState({
+                error: err,
                 status: "error",
             });
-            this.props.onDone(new Error("No file found"));
+            this.props.onDone(err);
         }
 
         const reader = new window.FileReader();
         reader.readAsText(file);
         reader.onload = event2 => {
             this.setState({
+                error: null,
                 status: "parsing",
             });
 
@@ -56,6 +62,7 @@ class LeagueFileUpload extends React.Component<Props, State> {
                 leagueFile = JSON.parse(event2.currentTarget.result);
             } catch (err) {
                 this.setState({
+                    error: err,
                     status: "error",
                 });
                 this.props.onDone(err);
@@ -64,6 +71,7 @@ class LeagueFileUpload extends React.Component<Props, State> {
 
             this.props.onDone(null, leagueFile);
             this.setState({
+                error: null,
                 status: "done",
             });
         };
@@ -71,14 +79,34 @@ class LeagueFileUpload extends React.Component<Props, State> {
 
     render() {
         return (
-            <input
-                type="file"
-                onChange={this.handleFile}
-                disabled={
-                    this.state.status === "loading" ||
-                    this.state.status === "parsing"
-                }
-            />
+            <div>
+                <input
+                    type="file"
+                    onChange={this.handleFile}
+                    disabled={
+                        this.state.status === "loading" ||
+                        this.state.status === "parsing"
+                    }
+                />
+                {this.state.status === "error" ? (
+                    <p className="text-danger" style={{ marginTop: "1em" }}>
+                        Error:{" "}
+                        {this.state.error
+                            ? this.state.error.message
+                            : "Unknown error"}
+                    </p>
+                ) : null}
+                {this.state.status === "loading" ? (
+                    <p className="text-info" style={{ marginTop: "1em" }}>
+                        Loading league file...
+                    </p>
+                ) : null}
+                {this.state.status === "parsing" ? (
+                    <p className="text-info" style={{ marginTop: "1em" }}>
+                        Parsing league file...
+                    </p>
+                ) : null}
+            </div>
         );
     }
 }

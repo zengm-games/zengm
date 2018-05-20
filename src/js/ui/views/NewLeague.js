@@ -64,10 +64,8 @@ class NewLeague extends React.Component {
         this.state = {
             creating: false,
             customize: "random",
-            invalidLeagueFile: false,
             leagueFile: null,
             name: props.name,
-            parsing: false,
             randomizeRosters: false,
             teams: defaultTeams,
             tid: props.lastSelectedTid,
@@ -97,7 +95,6 @@ class NewLeague extends React.Component {
     handleCustomizeChange(e) {
         const updatedState = {
             customize: e.target.value,
-            invalidLeagueFile: false,
         };
         if (updatedState.customize === "random") {
             updatedState.teams = defaultTeams;
@@ -138,10 +135,8 @@ class NewLeague extends React.Component {
         const {
             creating,
             customize,
-            invalidLeagueFile,
             leagueFile,
             name,
-            parsing,
             randomizeRosters,
             teams,
             tid,
@@ -218,25 +213,19 @@ class NewLeague extends React.Component {
                                         <LeagueFileUpload
                                             onLoading={() => {
                                                 this.setState({
-                                                    invalidLeagueFile: false,
                                                     leagueFile: null,
-                                                    parsing: true,
                                                 });
                                             }}
                                             onDone={(err, leagueFile2) => {
                                                 if (err) {
                                                     this.setState({
-                                                        invalidLeagueFile: true,
                                                         leagueFile: null,
-                                                        parsing: false,
                                                     });
                                                     return;
                                                 }
 
                                                 const updatedState = {
-                                                    invalidLeagueFile: false,
                                                     leagueFile: leagueFile2,
-                                                    parsing: false,
                                                 };
 
                                                 let newTeams = helpers.deepCopy(
@@ -318,22 +307,6 @@ class NewLeague extends React.Component {
                                                 this.setState(updatedState);
                                             }}
                                         />
-                                        {invalidLeagueFile ? (
-                                            <p
-                                                className="text-danger"
-                                                style={{ marginTop: "1em" }}
-                                            >
-                                                Error: Invalid League File
-                                            </p>
-                                        ) : null}
-                                        {parsing ? (
-                                            <p
-                                                className="text-info"
-                                                style={{ marginTop: "1em" }}
-                                            >
-                                                Parsing league file...
-                                            </p>
-                                        ) : null}
                                     </div>
                                     <div className="checkbox">
                                         <label>
@@ -364,10 +337,8 @@ class NewLeague extends React.Component {
                                 className="btn btn-lg btn-primary"
                                 disabled={
                                     creating ||
-                                    parsing ||
                                     (customize === "custom-rosters" &&
-                                        (invalidLeagueFile ||
-                                            leagueFile === null))
+                                        leagueFile === null)
                                 }
                             >
                                 Create New League

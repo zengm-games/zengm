@@ -3,9 +3,7 @@ json schema
 - LeagueFileUpload
   - draft class
   - team info
-  - consistent way of displaying error messages and status?
-    - would need to pass in custom validator in addition to the default (valid JSON and ajv), because draft class and team info require specific things
-    - use onLoading only to e.g. prevent submit of new league form
+  - need to pass in custom validator in addition to the default (valid JSON and ajv), because draft class and team info require specific things
   - use ajv inside LeagueFileUpload
 - tool on basketball-gm.com to validate? or just link to schema?
   - note that it does not cover all detailed aspects (mostly relationships between settings)

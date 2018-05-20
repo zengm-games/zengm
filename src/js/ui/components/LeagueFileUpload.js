@@ -41,12 +41,11 @@ class LeagueFileUpload extends React.Component<Props, State> {
 
         const file = event.currentTarget.files[0];
         if (!file) {
-            const err = new Error("No file found");
             this.setState({
-                error: err,
-                status: "error",
+                error: null,
+                status: "initial",
             });
-            this.props.onDone(err);
+            return;
         }
 
         const reader = new window.FileReader();

@@ -1,8 +1,13 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { helpers } from "../../common";
-import { DataTable, NewWindowLink, PlayerNameLabels } from "../components";
-import { getCols, logEvent, realtimeUpdate, setTitle, toWorker } from "../util";
+import {
+    DataTable,
+    LeagueFileUpload,
+    NewWindowLink,
+    PlayerNameLabels,
+} from "../components";
+import { getCols, realtimeUpdate, setTitle, toWorker } from "../util";
 
 class DraftScouting extends React.Component {
     constructor(props) {
@@ -16,43 +21,6 @@ class DraftScouting extends React.Component {
         this.setState({
             customize: i,
         });
-    }
-
-    handleDraftClass(seasonOffset, e) {
-        const file = e.currentTarget.files[0];
-
-        const reader = new window.FileReader();
-        reader.readAsText(file);
-        reader.onload = async event => {
-            let uploadedFile;
-            try {
-                uploadedFile = JSON.parse(event.currentTarget.result);
-            } catch (err) {
-                logEvent({
-                    type: "error",
-                    text: `Error parsing file: ${err.message}`,
-                    saveToDb: false,
-                });
-
-                this.setState({
-                    customize: undefined,
-                });
-
-                return;
-            }
-
-            await toWorker(
-                "handleUploadedDraftClass",
-                uploadedFile,
-                seasonOffset,
-            );
-
-            this.setState({
-                customize: undefined,
-            });
-
-            await realtimeUpdate(["playerMovement"]);
-        };
     }
 
     render() {
@@ -91,7 +59,7 @@ class DraftScouting extends React.Component {
                 </p>
 
                 <div className="row">
-                    {seasons.map((s, i) => {
+                    {seasons.map((s, seasonOffset) => {
                         const rows = s.players.map(p => {
                             return {
                                 key: p.pid,
@@ -118,7 +86,7 @@ class DraftScouting extends React.Component {
                             <div key={s.season} className="col-md-4 col-sm-6">
                                 <h2>{s.season}</h2>
 
-                                {this.state.customize === i ? (
+                                {this.state.customize === seasonOffset ? (
                                     <div>
                                         <p>
                                             To replace this draft class with
@@ -131,22 +99,37 @@ class DraftScouting extends React.Component {
                                                 custom draft class file
                                             </a>, select the file below.
                                         </p>
-                                        <p>
-                                            <input
-                                                type="file"
-                                                className="custom-draft-class"
-                                                onChange={e =>
-                                                    this.handleDraftClass(i, e)
+                                        <LeagueFileUpload
+                                            onDone={async (err, leagueFile) => {
+                                                if (err) {
+                                                    return;
                                                 }
-                                            />
-                                        </p>
+
+                                                await toWorker(
+                                                    "handleUploadedDraftClass",
+                                                    leagueFile,
+                                                    seasonOffset,
+                                                );
+
+                                                this.setState({
+                                                    customize: undefined,
+                                                });
+
+                                                await realtimeUpdate([
+                                                    "playerMovement",
+                                                ]);
+                                            }}
+                                        />
+                                        <p />
                                     </div>
                                 ) : (
                                     <p>
                                         <button
                                             className="btn btn-default btn-xs"
                                             onClick={() =>
-                                                this.handleCustomize(i)
+                                                this.handleCustomize(
+                                                    seasonOffset,
+                                                )
                                             }
                                         >
                                             Customize
@@ -158,7 +141,7 @@ class DraftScouting extends React.Component {
                                     className="shorten-col-1"
                                     cols={cols}
                                     defaultSort={[0, "asc"]}
-                                    name={`DraftScouting:${i}`}
+                                    name={`DraftScouting:${seasonOffset}`}
                                     rows={rows}
                                 />
                             </div>

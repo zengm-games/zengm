@@ -3,8 +3,8 @@ json schema
 - LeagueFileUpload
   - draft class
   - team info
-  - need to pass in custom validator in addition to the default (valid JSON and ajv), because draft class and team info require specific things
   - use ajv inside LeagueFileUpload
+    - return as third argument of onDone, only check it if you want
 - tool on basketball-gm.com to validate? or just link to schema?
   - note that it does not cover all detailed aspects (mostly relationships between settings)
 

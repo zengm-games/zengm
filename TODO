@@ -1,12 +1,12 @@
-ads on side of page
-  if ad on right, it will go over overflowing tables :(
-    player stats
-    player page
-    can ads be z-indexed under content?
-  plan:
-    set skyscraper div to display: none when screen is too narrow
-    check display: none before refreshing ad
-      tell austin
+json schema
+- https://github.com/epoberezkin/ajv
+- show meaningful message if invalid JSON
+- validate on all loading (draft class, team info, new league)
+  - make it generic
+- tool on basketball-gm.com to validate? or just link to schema?
+  - note that it does not cover all detailed aspects (mostly relationships between settings)
+
+gracefully handle case where there are no rookies, and other award crap
 
 "lineage" page to view all of a player's relatives
 

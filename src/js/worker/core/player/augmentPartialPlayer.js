@@ -82,18 +82,6 @@ const augmentPartialPlayer = (
             p.statsTids.push(p.tid);
         }
     }
-    if (!p.ratings[0].hasOwnProperty("fuzz")) {
-        p.ratings[0].fuzz = pg.ratings[0].fuzz;
-    }
-    if (!p.ratings[0].hasOwnProperty("skills")) {
-        p.ratings[0].skills = skills(p.ratings[0]);
-    }
-    if (!p.ratings[0].hasOwnProperty("ovr")) {
-        p.ratings[0].ovr = ovr(p.ratings[0]);
-    }
-    if (p.ratings[0].pot < p.ratings[0].ovr) {
-        p.ratings[0].pot = p.ratings[0].ovr;
-    }
 
     if (
         p.hasOwnProperty("name") &&
@@ -128,6 +116,19 @@ const augmentPartialPlayer = (
         }
     }
 
+    if (typeof p.draft.originalTid !== "number") {
+        p.draft.originalTid = p.draft.tid;
+    }
+    if (typeof p.draft.pot !== "number") {
+        p.draft.pot = 0;
+    }
+    if (typeof p.draft.ovr !== "number") {
+        p.draft.ovr = 0;
+    }
+    if (!Array.isArray(p.draft.skills)) {
+        p.draft.skills = [];
+    }
+
     // Height rescaling
     if (version === undefined || version <= 23) {
         for (const r of p.ratings) {
@@ -145,6 +146,21 @@ const augmentPartialPlayer = (
         const r = p.ratings[0];
         if (typeof p.draft.year === "number" && p.draft.year !== r.season) {
             r.season = p.draft.year;
+        }
+    }
+
+    for (const r of p.ratings) {
+        if (!r.hasOwnProperty("fuzz")) {
+            r.fuzz = pg.ratings[0].fuzz;
+        }
+        if (!r.hasOwnProperty("skills")) {
+            r.skills = skills(p.ratings[0]);
+        }
+        if (!r.hasOwnProperty("ovr")) {
+            r.ovr = ovr(p.ratings[0]);
+        }
+        if (!r.hasOwnProperty("pot") || r.pot < r.ovr) {
+            r.pot = bootstrapPot(r, r.season - p.born.year);
         }
     }
 

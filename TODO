@@ -1,8 +1,8 @@
 json schema
 - https://github.com/epoberezkin/ajv
-- show meaningful message if invalid JSON
 - validate on all loading (draft class, team info, new league)
-  - make it generic
+  - write a component to handle it - accept cbs for what to do on error and on success
+    - show meaningful message if invalid JSON
 - tool on basketball-gm.com to validate? or just link to schema?
   - note that it does not cover all detailed aspects (mostly relationships between settings)
 

@@ -39,6 +39,7 @@
         "*.{js,json}": ["prettier --write", "git add"]
     },
     "dependencies": {
+        "ajv": "^6.5.0",
         "backboard": "^1.0.7",
         "classnames": "^2.2.5",
         "dompurify": "^1.0.4",

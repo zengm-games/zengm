@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { helpers } from "../../common";
+import { LeagueFileUpload } from "../components";
 import { realtimeUpdate, setTitle, toWorker } from "../util";
 
 const PopText = ({ teams, tid }) => {
@@ -78,7 +79,6 @@ class NewLeague extends React.Component {
             tid: this.handleChange.bind(this, "tid"),
         };
         this.handleCustomizeChange = this.handleCustomizeChange.bind(this);
-        this.handleFile = this.handleFile.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
@@ -104,87 +104,6 @@ class NewLeague extends React.Component {
         }
 
         this.setState(updatedState);
-    }
-
-    handleFile(e) {
-        this.setState({
-            invalidLeagueFile: false,
-            leagueFile: null,
-            parsing: true,
-        });
-        const file = e.currentTarget.files[0];
-
-        if (!file) {
-            return;
-        }
-
-        const reader = new window.FileReader();
-        reader.readAsText(file);
-        reader.onload = event => {
-            let leagueFile;
-            try {
-                leagueFile = JSON.parse(event.currentTarget.result);
-            } catch (err) {
-                console.log(err);
-                this.setState({
-                    invalidLeagueFile: true,
-                    parsing: false,
-                });
-                return;
-            }
-
-            const updatedState = {
-                invalidLeagueFile: false,
-                leagueFile,
-                parsing: false,
-            };
-
-            let newTeams = helpers.deepCopy(leagueFile.teams);
-            if (newTeams) {
-                for (const t of newTeams) {
-                    // Is pop hidden in season, like in editTeamInfo import?
-                    if (
-                        !t.hasOwnProperty("pop") &&
-                        t.hasOwnProperty("seasons")
-                    ) {
-                        t.pop = t.seasons[t.seasons.length - 1].pop;
-                    }
-
-                    // God, I hate being permissive...
-                    if (typeof t.pop !== "number") {
-                        t.pop = parseFloat(t.pop);
-                    }
-                    if (Number.isNaN(t.pop)) {
-                        t.pop = 1;
-                    }
-
-                    t.pop = parseFloat(t.pop.toFixed(2));
-                }
-
-                newTeams = helpers.addPopRank(newTeams);
-
-                // Add random team
-                newTeams.unshift({
-                    tid: -1,
-                    region: "Random",
-                    name: "Team",
-                });
-
-                updatedState.teams = newTeams;
-            }
-
-            // Is a userTid specified?
-            if (leagueFile.hasOwnProperty("gameAttributes")) {
-                leagueFile.gameAttributes.some(attribute => {
-                    if (attribute.key === "userTid") {
-                        // Set it to select the userTid entry
-                        updatedState.tid = attribute.value;
-                    }
-                });
-            }
-
-            this.setState(updatedState);
-        };
     }
 
     async handleSubmit(e) {
@@ -296,9 +215,108 @@ class NewLeague extends React.Component {
                             {customize === "custom-rosters" ? (
                                 <div>
                                     <div>
-                                        <input
-                                            type="file"
-                                            onChange={this.handleFile}
+                                        <LeagueFileUpload
+                                            onLoading={() => {
+                                                this.setState({
+                                                    invalidLeagueFile: false,
+                                                    leagueFile: null,
+                                                    parsing: true,
+                                                });
+                                            }}
+                                            onDone={(err, leagueFile2) => {
+                                                if (err) {
+                                                    this.setState({
+                                                        invalidLeagueFile: true,
+                                                        leagueFile: null,
+                                                        parsing: false,
+                                                    });
+                                                    return;
+                                                }
+
+                                                const updatedState = {
+                                                    invalidLeagueFile: false,
+                                                    leagueFile: leagueFile2,
+                                                    parsing: false,
+                                                };
+
+                                                let newTeams = helpers.deepCopy(
+                                                    leagueFile2.teams,
+                                                );
+                                                if (newTeams) {
+                                                    for (const t of newTeams) {
+                                                        // Is pop hidden in season, like in editTeamInfo import?
+                                                        if (
+                                                            !t.hasOwnProperty(
+                                                                "pop",
+                                                            ) &&
+                                                            t.hasOwnProperty(
+                                                                "seasons",
+                                                            )
+                                                        ) {
+                                                            t.pop =
+                                                                t.seasons[
+                                                                    t.seasons
+                                                                        .length -
+                                                                        1
+                                                                ].pop;
+                                                        }
+
+                                                        // God, I hate being permissive...
+                                                        if (
+                                                            typeof t.pop !==
+                                                            "number"
+                                                        ) {
+                                                            t.pop = parseFloat(
+                                                                t.pop,
+                                                            );
+                                                        }
+                                                        if (
+                                                            Number.isNaN(t.pop)
+                                                        ) {
+                                                            t.pop = 1;
+                                                        }
+
+                                                        t.pop = parseFloat(
+                                                            t.pop.toFixed(2),
+                                                        );
+                                                    }
+
+                                                    newTeams = helpers.addPopRank(
+                                                        newTeams,
+                                                    );
+
+                                                    // Add random team
+                                                    newTeams.unshift({
+                                                        tid: -1,
+                                                        region: "Random",
+                                                        name: "Team",
+                                                    });
+
+                                                    updatedState.teams = newTeams;
+                                                }
+
+                                                // Is a userTid specified?
+                                                if (
+                                                    leagueFile2.hasOwnProperty(
+                                                        "gameAttributes",
+                                                    )
+                                                ) {
+                                                    leagueFile2.gameAttributes.some(
+                                                        attribute => {
+                                                            if (
+                                                                attribute.key ===
+                                                                "userTid"
+                                                            ) {
+                                                                // Set it to select the userTid entry
+                                                                updatedState.tid =
+                                                                    attribute.value;
+                                                            }
+                                                        },
+                                                    );
+                                                }
+
+                                                this.setState(updatedState);
+                                            }}
                                         />
                                         {invalidLeagueFile ? (
                                             <p

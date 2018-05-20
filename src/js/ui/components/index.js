@@ -10,6 +10,7 @@ export { default as Header } from "./Header";
 export { default as HelpPopover } from "./HelpPopover";
 export { default as JumpTo } from "./JumpTo";
 export { default as LeagueWrapper } from "./LeagueWrapper";
+export { default as LeagueFileUpload } from "./LeagueFileUpload";
 export { default as MultiTeamMenu } from "./MultiTeamMenu";
 export { default as NagModal } from "./NagModal";
 export { default as NavBar } from "./NavBar";

@@ -27,6 +27,12 @@ type State = {
     status: "initial" | "loading" | "parsing" | "error" | "done",
 };
 
+const resetFileInput = (event: SyntheticInputEvent<HTMLInputElement>) => {
+    // Without this, then selecting the same file twice will do nothing because the browser dedupes by filename.
+    // That is very annoying when repeatedly editing/checking a file.
+    event.target.value = null;
+};
+
 class LeagueFileUpload extends React.Component<Props, State> {
     handleFile: Function;
     unmounted: boolean;
@@ -124,6 +130,7 @@ class LeagueFileUpload extends React.Component<Props, State> {
             <div>
                 <input
                     type="file"
+                    onClick={resetFileInput}
                     onChange={this.handleFile}
                     disabled={
                         this.state.status === "loading" ||
@@ -141,9 +148,13 @@ class LeagueFileUpload extends React.Component<Props, State> {
                 {this.state.jsonSchemaErrors.length > 0 ? (
                     <p className="text-warning" style={{ marginTop: "1em" }}>
                         Warning: {this.state.jsonSchemaErrors.length} JSON
-                        schema validation errors. See the JavaScript console for
-                        more. You can still use this file, but these errors may
-                        cause bugs.
+                        schema validation errors. More detail is available in
+                        the JavaScript console. Also, see{" "}
+                        <a href="https://basketball-gm.com/manual/customization/json-schema/">
+                            the manual
+                        </a>{" "}
+                        for more information. You can still use this file, but
+                        these errors may cause bugs.
                     </p>
                 ) : null}
                 {this.state.status === "loading" ? (

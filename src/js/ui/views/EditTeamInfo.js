@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { g, helpers } from "../../common";
+import { LeagueFileUpload } from "../components";
 import { logEvent, setTitle, toWorker } from "../util";
 
 class EditTeamInfo extends React.Component {
@@ -10,87 +11,7 @@ class EditTeamInfo extends React.Component {
             saving: false,
             teams: this.props.teams,
         };
-        this.handleFile = this.handleFile.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    handleFile(e) {
-        const file = e.currentTarget.files[0];
-
-        const reader = new window.FileReader();
-        reader.readAsText(file);
-        reader.onload = async event => {
-            const rosters = JSON.parse(event.currentTarget.result);
-            const newTeams = rosters.teams;
-
-            // Validate teams
-            if (newTeams.length < g.numTeams) {
-                console.log("ROSTER ERROR: Wrong number of teams");
-                return;
-            }
-            for (let i = 0; i < newTeams.length; i++) {
-                if (i !== newTeams[i].tid) {
-                    console.log(`ROSTER ERROR: Wrong tid, team ${i}`);
-                    return;
-                }
-                if (newTeams[i].cid < 0 || newTeams[i].cid > 1) {
-                    console.log(`ROSTER ERROR: Invalid cid, team ${i}`);
-                    return;
-                }
-                if (newTeams[i].did < 0 || newTeams[i].did > 5) {
-                    console.log(`ROSTER ERROR: Invalid did, team ${i}`);
-                    return;
-                }
-                if (typeof newTeams[i].region !== "string") {
-                    console.log(`ROSTER ERROR: Invalid region, team ${i}`);
-                    return;
-                }
-                if (typeof newTeams[i].name !== "string") {
-                    console.log(`ROSTER ERROR: Invalid name, team ${i}`);
-                    return;
-                }
-                if (typeof newTeams[i].abbrev !== "string") {
-                    console.log(`ROSTER ERROR: Invalid abbrev, team ${i}`);
-                    return;
-                }
-
-                // Check for pop/stadiumCapacity in either the root or the most recent season
-                for (const field of ["pop", "stadiumCapacity"]) {
-                    if (
-                        !newTeams[i].hasOwnProperty(field) &&
-                        newTeams[i].hasOwnProperty("seasons")
-                    ) {
-                        newTeams[i][field] =
-                            newTeams[i].seasons[newTeams[i].seasons.length - 1][
-                                field
-                            ];
-                    }
-
-                    if (typeof newTeams[i][field] !== "number") {
-                        if (field === "pop") {
-                            console.log(
-                                `ROSTER ERROR: Invalid ${field}, team ${i}`,
-                            );
-                            return;
-                        } else if (field === "stadiumCapacity") {
-                            newTeams[i][field] = 25000;
-                        }
-                    }
-                }
-            }
-
-            await toWorker("updateTeamInfo", newTeams);
-
-            this.setState({
-                teams: newTeams,
-            });
-
-            logEvent({
-                type: "success",
-                text: "New team info successfully loaded.",
-                saveToDb: false,
-            });
-        };
     }
 
     handleInputChange(i, name, e) {
@@ -174,9 +95,76 @@ class EditTeamInfo extends React.Component {
                     the new team info to your league.
                 </p>
 
-                <p>
-                    <input type="file" onChange={e => this.handleFile(e)} />
-                </p>
+                <LeagueFileUpload
+                    onDone={async (err, leagueFile) => {
+                        if (err) {
+                            return;
+                        }
+
+                        const newTeams = leagueFile.teams;
+
+                        // Validate teams
+                        if (newTeams.length < g.numTeams) {
+                            throw new Error("Wrong number of teams");
+                        }
+                        for (let i = 0; i < newTeams.length; i++) {
+                            if (i !== newTeams[i].tid) {
+                                throw new Error(`Wrong tid, team ${i}`);
+                            }
+                            if (newTeams[i].cid < 0 || newTeams[i].cid > 1) {
+                                throw new Error(`Invalid cid, team ${i}`);
+                            }
+                            if (newTeams[i].did < 0 || newTeams[i].did > 5) {
+                                throw new Error(`Invalid did, team ${i}`);
+                            }
+                            if (typeof newTeams[i].region !== "string") {
+                                throw new Error(`Invalid region, team ${i}`);
+                            }
+                            if (typeof newTeams[i].name !== "string") {
+                                throw new Error(`Invalid name, team ${i}`);
+                            }
+                            if (typeof newTeams[i].abbrev !== "string") {
+                                throw new Error(`Invalid abbrev, team ${i}`);
+                            }
+
+                            // Check for pop/stadiumCapacity in either the root or the most recent season
+                            for (const field of ["pop", "stadiumCapacity"]) {
+                                if (
+                                    !newTeams[i].hasOwnProperty(field) &&
+                                    newTeams[i].hasOwnProperty("seasons")
+                                ) {
+                                    newTeams[i][field] =
+                                        newTeams[i].seasons[
+                                            newTeams[i].seasons.length - 1
+                                        ][field];
+                                }
+
+                                if (typeof newTeams[i][field] !== "number") {
+                                    if (field === "pop") {
+                                        throw new Error(
+                                            `Invalid ${field}, team ${i}`,
+                                        );
+                                    } else if (field === "stadiumCapacity") {
+                                        newTeams[i][field] = 25000;
+                                    }
+                                }
+                            }
+                        }
+
+                        await toWorker("updateTeamInfo", newTeams);
+
+                        this.setState({
+                            teams: newTeams,
+                        });
+
+                        logEvent({
+                            type: "success",
+                            text: "New team info successfully loaded.",
+                            saveToDb: false,
+                        });
+                    }}
+                />
+                <p />
 
                 <h2>Manual Editing</h2>
 

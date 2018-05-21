@@ -50,7 +50,7 @@ class LeagueFileUpload extends React.Component<Props, State> {
 
         const reader = new window.FileReader();
         reader.readAsText(file);
-        reader.onload = event2 => {
+        reader.onload = async event2 => {
             this.setState({
                 error: null,
                 status: "parsing",
@@ -68,7 +68,16 @@ class LeagueFileUpload extends React.Component<Props, State> {
                 return;
             }
 
-            this.props.onDone(null, leagueFile);
+            try {
+                await this.props.onDone(null, leagueFile);
+            } catch (err) {
+                this.setState({
+                    error: err,
+                    status: "error",
+                });
+                return;
+            }
+
             this.setState({
                 error: null,
                 status: "done",

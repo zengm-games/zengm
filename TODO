@@ -1,8 +1,6 @@
 json schema
 - https://github.com/epoberezkin/ajv
 - LeagueFileUpload
-  - draft class
-  - team info
   - use ajv inside LeagueFileUpload
     - return as third argument of onDone, only check it if you want
 - tool on basketball-gm.com to validate? or just link to schema?

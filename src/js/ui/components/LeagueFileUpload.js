@@ -1,7 +1,17 @@
 // @flow
 
+import Ajv from "ajv";
 import PropTypes from "prop-types";
 import * as React from "react";
+
+// eslint-disable-next-line
+const schema = require("../../../files/league-schema.json");
+
+const ajv = new Ajv({
+    allErrors: true,
+    verbose: true,
+});
+const validate = ajv.compile(schema);
 
 type Props = {
     // onLoading is called when it starts reading the file into memory
@@ -13,26 +23,34 @@ type Props = {
 
 type State = {
     error: Error | null,
+    jsonSchemaErrors: any[],
     status: "initial" | "loading" | "parsing" | "error" | "done",
 };
 
 class LeagueFileUpload extends React.Component<Props, State> {
     handleFile: Function;
+    unmounted: boolean;
 
     constructor(props: Props) {
         super(props);
 
         this.state = {
             error: null,
+            jsonSchemaErrors: [],
             status: "initial",
         };
 
         this.handleFile = this.handleFile.bind(this);
     }
 
+    componentWillUnmount() {
+        this.unmounted = true;
+    }
+
     handleFile(event: SyntheticInputEvent<HTMLInputElement>) {
         this.setState({
             error: null,
+            jsonSchemaErrors: [],
             status: "loading",
         });
         if (this.props.onLoading) {
@@ -43,6 +61,7 @@ class LeagueFileUpload extends React.Component<Props, State> {
         if (!file) {
             this.setState({
                 error: null,
+                jsonSchemaErrors: [],
                 status: "initial",
             });
             return;
@@ -53,6 +72,7 @@ class LeagueFileUpload extends React.Component<Props, State> {
         reader.onload = async event2 => {
             this.setState({
                 error: null,
+                jsonSchemaErrors: [],
                 status: "parsing",
             });
 
@@ -62,26 +82,40 @@ class LeagueFileUpload extends React.Component<Props, State> {
             } catch (err) {
                 this.setState({
                     error: err,
+                    jsonSchemaErrors: [],
                     status: "error",
                 });
                 this.props.onDone(err);
                 return;
             }
 
+            const valid = validate(leagueFile);
+            if (!valid && Array.isArray(validate.errors)) {
+                console.log("JSON Schema validation errors:");
+                console.log(validate.errors);
+                this.setState({
+                    jsonSchemaErrors: validate.errors.slice(),
+                });
+            }
+
             try {
                 await this.props.onDone(null, leagueFile);
             } catch (err) {
-                this.setState({
-                    error: err,
-                    status: "error",
-                });
+                if (!this.unmounted) {
+                    this.setState({
+                        error: err,
+                        status: "error",
+                    });
+                }
                 return;
             }
 
-            this.setState({
-                error: null,
-                status: "done",
-            });
+            if (!this.unmounted) {
+                this.setState({
+                    error: null,
+                    status: "done",
+                });
+            }
         };
     }
 
@@ -102,6 +136,14 @@ class LeagueFileUpload extends React.Component<Props, State> {
                         {this.state.error
                             ? this.state.error.message
                             : "Unknown error"}
+                    </p>
+                ) : null}
+                {this.state.jsonSchemaErrors.length > 0 ? (
+                    <p className="text-warning" style={{ marginTop: "1em" }}>
+                        Warning: {this.state.jsonSchemaErrors.length} JSON
+                        schema validation errors. See the JavaScript console for
+                        more. You can still use this file, but these errors may
+                        cause bugs.
                     </p>
                 ) : null}
                 {this.state.status === "loading" ? (

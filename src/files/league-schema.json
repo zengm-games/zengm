@@ -1,5 +1,6 @@
 {
-    "$schema": "http://json-schema.org/draft-06/schema#",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://play.basketball-gm.com/files/league-schema.json",
     "title": "Basketball GM League File Schema",
     "description": "For use at https://play.basketball-gm.com/",
 

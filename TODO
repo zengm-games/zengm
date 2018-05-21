@@ -1,10 +1,8 @@
 json schema
-- https://github.com/epoberezkin/ajv
-- LeagueFileUpload
-  - use ajv inside LeagueFileUpload
-    - return as third argument of onDone, only check it if you want
-- tool on basketball-gm.com to validate? or just link to schema?
+- tool on basketball-gm.com to validate? or just link to schema? probably just link, make bbgm itself good debugger
   - note that it does not cover all detailed aspects (mostly relationships between settings)
+  - in warning message, link to manual about it
+- blog
 
 gracefully handle case where there are no rookies, and other award crap
 

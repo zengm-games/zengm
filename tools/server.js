@@ -1,31 +1,30 @@
-const fs = require('fs');
+const fs = require("fs");
 const http = require("http");
 const path = require("path");
 
 const port = 3000;
 
 const mimeTypes = {
-    '.bmp': 'image/bmp',
-    '.css': 'text/css',
-    '.gif': 'image/gif',
-    '.html': 'text/html',
-    '.ico': 'image/x-icon',
-    '.jpeg': 'image/jpeg',
-    '.js': 'text/javascript',
-    '.map': 'application/json',
-    '.png': 'image/png',
-    '.woff': 'application/font-woff',
+    ".bmp": "image/bmp",
+    ".css": "text/css",
+    ".gif": "image/gif",
+    ".html": "text/html",
+    ".ico": "image/x-icon",
+    ".jpeg": "image/jpeg",
+    ".js": "text/javascript",
+    ".map": "application/json",
+    ".png": "image/png",
+    ".woff": "application/font-woff",
 };
 const sendFile = (res, filename) => {
     const ext = path.extname(filename);
     if (mimeTypes.hasOwnProperty(ext)) {
-        res.writeHead(200, {'Content-Type': mimeTypes[ext]});
+        res.writeHead(200, { "Content-Type": mimeTypes[ext] });
     } else {
         console.log(`Unknown mime type for extension ${ext}`);
     }
 
-    fs.createReadStream(path.join(__dirname, "../build", filename))
-        .pipe(res);
+    fs.createReadStream(path.join(__dirname, "../build", filename)).pipe(res);
 };
 
 const showStatic = (req, res) => {
@@ -48,8 +47,20 @@ const startsWith = (url, prefixes) => {
 };
 
 const server = http.createServer((req, res) => {
-    const prefixesStaticWithHtml = ['/export_3.3', '/manifest_hack', '/test', '/test_case'];
-    const prefixesStatic = ['/css/', '/fonts/', '/gen/', '/ico/', '/img/'];
+    const prefixesStaticWithHtml = [
+        "/export_3.3",
+        "/manifest_hack",
+        "/test",
+        "/test_case",
+    ];
+    const prefixesStatic = [
+        "/css/",
+        "/files/",
+        "/fonts/",
+        "/gen/",
+        "/ico/",
+        "/img/",
+    ];
 
     if (startsWith(req.url, prefixesStaticWithHtml)) {
         showStaticWithHtml(req, res);
@@ -60,4 +71,6 @@ const server = http.createServer((req, res) => {
     }
 });
 
-server.listen(port, 'localhost', () => console.log(`View Basketball GM at http://localhost:${port}`));
+server.listen(port, "localhost", () => {
+    console.log(`View Basketball GM at http://localhost:${port}`);
+});

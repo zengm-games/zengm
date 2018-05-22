@@ -190,8 +190,12 @@ const deleteOldData = async (options: {
 
             if (options.playerStats) {
                 tx.players.iterate(p => {
-                    p.ratings = [p.ratings[p.ratings.length - 1]];
-                    p.stats = [p.stats[p.stats.length - 1]];
+                    if (p.ratings.length > 0) {
+                        p.ratings = [p.ratings[p.ratings.length - 1]];
+                    }
+                    if (p.stats.length > 0) {
+                        p.stats = [p.stats[p.stats.length - 1]];
+                    }
                     return p;
                 });
             } else if (options.playerStatsUnnotable) {
@@ -200,8 +204,12 @@ const deleteOldData = async (options: {
                         p.awards.length === 0 &&
                         !p.statsTids.includes(g.userTid)
                     ) {
-                        p.ratings = [p.ratings[p.ratings.length - 1]];
-                        p.stats = [p.stats[p.stats.length - 1]];
+                        if (p.ratings.length > 0) {
+                            p.ratings = [p.ratings[p.ratings.length - 1]];
+                        }
+                        if (p.stats.length > 0) {
+                            p.stats = [p.stats[p.stats.length - 1]];
+                        }
                     }
                     return p;
                 });

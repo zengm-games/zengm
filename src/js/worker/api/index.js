@@ -1179,23 +1179,21 @@ const updateTrade = async (
     await trade.updatePlayers(teams);
 };
 
-const fixOvrPot00 = async () => {
+const fixDatabase = async () => {
     await idb.league.tx("players", "readwrite", tx =>
         tx.players.iterate(p => {
             let update = false;
-            for (const ratings of p.ratings) {
-                if (
-                    typeof ratings.oiq !== "number" ||
-                    Number.isNaN(ratings.oiq) ||
-                    typeof ratings.diq !== "number" ||
-                    Number.isNaN(ratings.diq)
-                ) {
+            for (const prop of ["stats", "ratings"]) {
+                const startLength = p[prop].length;
+                p[prop] = p[prop].filter(
+                    row => row !== undefined && row !== null,
+                );
+                if (p[prop].length !== startLength) {
                     update = true;
-                    break;
                 }
             }
             if (update) {
-                return player.augmentPartialPlayer(p, 15.5, 26);
+                return p;
             }
         }),
     );
@@ -1245,5 +1243,5 @@ export default {
     updateTeamInfo,
     updateTrade,
     upsertCustomizedPlayer,
-    fixOvrPot00,
+    fixDatabase,
 };

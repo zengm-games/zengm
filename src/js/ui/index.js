@@ -21,9 +21,9 @@ import {
 import * as views from "./views";
 import type { Env } from "../common/types";
 
-window.fixOvrPot00 = async () => {
-    console.log("Fixing 0 ovr and pot ratings...");
-    await toWorker("fixOvrPot00");
+window.fixDatabase = async () => {
+    console.log("Fixing stuff, hopefully...");
+    await toWorker("fixDatabase");
     console.log("Done!");
 };
 

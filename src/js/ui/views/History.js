@@ -341,6 +341,7 @@ const History = ({
                     ))}
                     <br />
                     <h4>All-Rookie Team</h4>
+                    {awards.allRookie.length === 0 ? <p>None</p> : null}
                     {awards.allRookie.map(p => (
                         <div key={p.pid}>
                             <span

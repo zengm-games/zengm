@@ -53,14 +53,8 @@ export type Awards = {|
     bre?: AwardTeam,
     brw?: AwardTeam,
 
-    roy: AwardPlayer,
-    allRookie: [
-        AwardPlayer,
-        AwardPlayer,
-        AwardPlayer,
-        AwardPlayer,
-        AwardPlayer,
-    ],
+    roy: AwardPlayer | void,
+    allRookie: AwardPlayer[], // If there are <5 rookies in a league file
     mip: AwardPlayer | void,
     mvp: AwardPlayer,
     smoy: AwardPlayer,

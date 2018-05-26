@@ -160,16 +160,20 @@ const getPlayerInfoDefense = (p: PlayerFiltered): AwardPlayerDefense => {
 };
 
 type GetTopPlayersOptions = {
+    allowNone?: boolean,
     amount?: number,
     filter?: PlayerFiltered => boolean,
     score: PlayerFiltered => number,
 };
 
 const getTopPlayers = (
-    { amount, filter, score }: GetTopPlayersOptions,
+    { allowNone, amount, filter, score }: GetTopPlayersOptions,
     playersUnsorted: PlayerFiltered[],
 ): PlayerFiltered[] => {
     if (playersUnsorted.length === 0) {
+        if (allowNone) {
+            return [];
+        }
         throw new Error("No players");
     }
     const actualFilter = filter !== undefined ? filter : () => true;
@@ -193,7 +197,7 @@ const getTopPlayers = (
     });
 
     // For the ones returning multiple players (for all league teams), enforce length
-    if (actualAmount > 1 && players.length < actualAmount) {
+    if (!allowNone && actualAmount > 1 && players.length < actualAmount) {
         throw new Error("Not enough players");
     }
 
@@ -356,6 +360,7 @@ const doAwards = async (conditions: Conditions) => {
 
     const royPlayers = getTopPlayersOffense(
         {
+            allowNone: true,
             amount: 5,
             filter: p => {
                 // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
@@ -365,14 +370,9 @@ const doAwards = async (conditions: Conditions) => {
         },
         players,
     );
+    // Unlike mvp and allLeague, roy can be undefined and allRookie can be any length <= 5
     const roy = royPlayers[0];
-    const allRookie = [
-        royPlayers[0],
-        royPlayers[1],
-        royPlayers[2],
-        royPlayers[3],
-        royPlayers[4],
-    ];
+    const allRookie = royPlayers.slice(0, 5);
 
     const dpoyPlayers: AwardPlayerDefense[] = getTopPlayersDefense(
         {

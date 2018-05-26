@@ -30,7 +30,7 @@ type State = {
 const resetFileInput = (event: SyntheticInputEvent<HTMLInputElement>) => {
     // Without this, then selecting the same file twice will do nothing because the browser dedupes by filename.
     // That is very annoying when repeatedly editing/checking a file.
-    event.target.value = null;
+    event.target.value = "";
 };
 
 class LeagueFileUpload extends React.Component<Props, State> {

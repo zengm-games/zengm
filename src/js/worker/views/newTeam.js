@@ -25,6 +25,7 @@ async function updateTeamSelect(): void | { [key: string]: any } {
     return {
         gameOver: g.gameOver,
         godMode: g.godMode,
+        phase: g.phase,
         teams,
     };
 }

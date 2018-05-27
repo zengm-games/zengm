@@ -3,10 +3,10 @@
 import { promiseWorker } from "../util";
 import type { Conditions } from "../../common/types";
 
-const toUI = (args: any[], conditions?: Conditions = {}) => {
+const toUI = (args: any[], conditions?: Conditions = {}): Promise<any> => {
     // $FlowFixMe
     if (typeof it === "function") {
-        return;
+        return Promise.resolve();
     }
     return promiseWorker.postMessage(args, conditions.hostID);
 };

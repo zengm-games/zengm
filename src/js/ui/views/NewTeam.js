@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { helpers } from "../../common";
+import { PHASE, helpers } from "../../common";
 import { NewWindowLink } from "../components";
 import { realtimeUpdate, setTitle, toWorker } from "../util";
 
@@ -43,7 +43,7 @@ class NewTeam extends React.Component {
     }
 
     render() {
-        const { gameOver, godMode, teams } = this.props;
+        const { gameOver, godMode, phase, teams } = this.props;
 
         setTitle("New Team");
 
@@ -55,6 +55,19 @@ class NewTeam extends React.Component {
                         You may only switch to another team after you're fired
                         or when you're in{" "}
                         <a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>
+                    </p>
+                </div>
+            );
+        }
+
+        if (phase === PHASE.RESIGN_PLAYERS) {
+            return (
+                <div>
+                    <h1>Error</h1>
+                    <p>
+                        Changing your team while re-signing players currently
+                        breaks things. Please play until free agency and then
+                        you can switch teams.
                     </p>
                 </div>
             );
@@ -119,6 +132,7 @@ class NewTeam extends React.Component {
 NewTeam.propTypes = {
     gameOver: PropTypes.bool.isRequired,
     godMode: PropTypes.bool.isRequired,
+    phase: PropTypes.number.isRequired,
     teams: PropTypes.arrayOf(
         PropTypes.shape({
             name: PropTypes.string.isRequired,

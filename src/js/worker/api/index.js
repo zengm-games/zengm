@@ -946,6 +946,8 @@ const updateMultiTeamMode = async (gameAttributes: {
     } else {
         league.updateMetaNameRegion("Multi Team Mode", "");
     }
+
+    await toUI(["realtimeUpdate", ["g.userTids"]]);
 };
 
 const updatePlayerWatch = async (pid: number, watch: boolean) => {

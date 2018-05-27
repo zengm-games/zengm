@@ -9,7 +9,8 @@ async function updateMultiTeamMode(
 ): void | { [key: string]: any } {
     if (
         updateEvents.includes("firstRun") ||
-        updateEvents.includes("g.userTids")
+        updateEvents.includes("g.userTids") ||
+        updateEvents.includes("newPhase")
     ) {
         const teams = [];
         for (let i = 0; i < g.numTeams; i++) {
@@ -20,8 +21,10 @@ async function updateMultiTeamMode(
         }
 
         return {
-            userTids: g.userTids,
+            phase: g.phase,
             teams,
+            userTid: g.userTid,
+            userTids: g.userTids,
         };
     }
 }

@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { g } from "../../common";
-import { realtimeUpdate, setTitle, toWorker } from "../util";
+import { PHASE } from "../../common";
+import { setTitle, toWorker } from "../util";
 import { NewWindowLink } from "../components";
 
 class MultiTeamMode extends React.Component {
@@ -24,20 +24,31 @@ class MultiTeamMode extends React.Component {
             JSON.stringify(newUserTids) !== JSON.stringify(this.props.userTids)
         ) {
             const gameAttributes = { userTids: newUserTids };
-            if (!newUserTids.includes(g.userTid)) {
+            if (!newUserTids.includes(this.props.userTid)) {
                 gameAttributes.userTid = newUserTids[0];
             }
 
             await toWorker("updateMultiTeamMode", gameAttributes);
-
-            realtimeUpdate(["g.userTids"]);
         }
     }
 
     render() {
-        const { teams, userTids } = this.props;
+        const { phase, teams, userTids } = this.props;
 
         setTitle("Multi Team Mode");
+
+        if (phase === PHASE.RESIGN_PLAYERS) {
+            return (
+                <div>
+                    <h1>Error</h1>
+                    <p>
+                        Changing your teams while re-signing players currently
+                        breaks things. Please play until free agency and then
+                        you can switch teams.
+                    </p>
+                </div>
+            );
+        }
 
         let statusText;
         if (userTids.length === 1) {
@@ -131,12 +142,14 @@ class MultiTeamMode extends React.Component {
 }
 
 MultiTeamMode.propTypes = {
+    phase: PropTypes.number.isRequired,
     teams: PropTypes.arrayOf(
         PropTypes.shape({
             name: PropTypes.string.isRequired,
             tid: PropTypes.number.isRequired,
         }),
     ).isRequired,
+    userTid: PropTypes.number.isRequired,
     userTids: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
 

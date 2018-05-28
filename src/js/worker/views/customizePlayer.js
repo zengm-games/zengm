@@ -98,6 +98,7 @@ async function updateCustomizePlayer(
         return {
             appearanceOption,
             godMode: g.godMode,
+            minContract: g.minContract,
             originalTid,
             p,
             season: g.season,

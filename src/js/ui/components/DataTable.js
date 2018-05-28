@@ -5,7 +5,7 @@ import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
 import * as React from "react";
 import textContent from "react-addons-text-content";
-import { g, helpers } from "../../common";
+import { helpers } from "../../common";
 import { HelpPopover } from "../components";
 import clickable from "../wrappers/clickable";
 import type { SortOrder, SortType } from "../../common/types";
@@ -225,7 +225,9 @@ const getSortVal = (value = null, sortType) => {
                 return null;
             }
             const [round, pick] = sortVal.split("-");
-            return parseInt(round, 10) * g.numTeams + parseInt(pick, 10);
+
+            // This assumes no league has more than a million teams lol
+            return parseInt(round, 10) * 1000000 + parseInt(pick, 10);
         }
         if (sortType === "name") {
             if (sortVal === null) {

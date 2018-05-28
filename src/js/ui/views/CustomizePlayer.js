@@ -15,7 +15,7 @@ const faceOptions = {
     hair: [0, 1, 2, 3, 4],
 };
 
-const copyValidValues = (source, target, season) => {
+const copyValidValues = (source, target, minContract, season) => {
     for (const attr of ["hgt", "tid", "weight"]) {
         const val = parseInt(source[attr], 10);
         if (!Number.isNaN(val)) {
@@ -51,7 +51,7 @@ const copyValidValues = (source, target, season) => {
         // Allow any value, even above or below normal limits, but round to $10k and convert from M to k
         let amount = Math.round(100 * parseFloat(source.contract.amount)) * 10;
         if (Number.isNaN(amount)) {
-            amount = g.minContract;
+            amount = minContract;
         }
         target.contract.amount = amount;
     }
@@ -172,7 +172,12 @@ class CustomizePlayer extends React.Component {
         const p = this.props.p;
 
         // Copy over values from state, if they're valid
-        copyValidValues(this.state.p, p, this.props.season);
+        copyValidValues(
+            this.state.p,
+            p,
+            this.props.minContract,
+            this.props.season,
+        );
 
         // Only save image URL if it's selected
         if (this.state.appearanceOption !== "Image URL") {
@@ -944,6 +949,7 @@ CustomizePlayer.propTypes = {
     appearanceOption: PropTypes.oneOf(["Cartoon Face", "Image URL"]),
     godMode: PropTypes.bool.isRequired,
     originalTid: PropTypes.number,
+    minContract: PropTypes.number,
     p: PropTypes.object,
     season: PropTypes.number,
     teams: PropTypes.arrayOf(

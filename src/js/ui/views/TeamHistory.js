@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { PLAYER, g, helpers } from "../../common";
+import { PLAYER, helpers } from "../../common";
 import { getCols, setTitle } from "../util";
 import {
     DataTable,
@@ -15,6 +15,7 @@ const TeamHistory = ({
     bestRecord,
     championships,
     history,
+    numPlayoffRounds,
     players,
     playoffAppearances,
     team,
@@ -33,7 +34,7 @@ const TeamHistory = ({
                 season={h.season}
                 // Bold championship seasons.
                 style={
-                    h.playoffRoundsWon === g.numPlayoffRounds
+                    h.playoffRoundsWon === numPlayoffRounds
                         ? { fontWeight: "bold" }
                         : null
                 }
@@ -182,6 +183,7 @@ TeamHistory.propTypes = {
     }).isRequired,
     championships: PropTypes.number.isRequired,
     history: PropTypes.arrayOf(PropTypes.object).isRequired,
+    numPlayoffRounds: PropTypes.number.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     playoffAppearances: PropTypes.number.isRequired,
     team: PropTypes.shape({

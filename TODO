@@ -1,17 +1,23 @@
 get rid of g in UI
+- [^a-zA-Z]g\.
+- required properties
+  - g.userTid and g.userTids, for multiTeamMenu
+  - maybe: lid (could replace inLeague?), phase, season
 - required properties should be passed in from worker, or synced via some other mechanism and stored globally
   - decide which should be stored globally, and how to pass down to components (context? maybe just props from controller?)
   - unstated? or context API directly, maybe? redux, even?
     - straight context API doesn't look too hard
       - but it re-renders every subscriber on every change
-      - would still need emitter
+      - avoid emitter by putting in own class with actions as methods
     - unstated
       - nicer api, has actions
       - tests, support?
     - redux
       - maybe worth the boilerplate... could put everything there
     - just pass variables through to Component?
-      - will cause re-render too
+      - could subscribe to emitter and use that
+    - write my own, let you subscribe to individual variables from state
+    - should all this be stored only in the worker?
 - figure out how to get rid of weird ad-related code (center when right ad not displayed or gold, etc) and emitter?
 
 too easy to trade for current season picks

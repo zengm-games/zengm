@@ -33,16 +33,15 @@ class LeagueContent extends React.Component<Props> {
     }
 
     render() {
-        const { Component, data, topMenu } = this.props;
+        const { Component, data } = this.props;
 
-        return <Component {...data} topMenu={topMenu} />;
+        return <Component {...data} />;
     }
 }
 
 LeagueContent.propTypes = {
     Component: PropTypes.func.isRequired,
     data: PropTypes.object.isRequired,
-    topMenu: PropTypes.object.isRequired,
     updating: PropTypes.bool.isRequired,
 };
 
@@ -389,7 +388,7 @@ class Controller extends React.Component<{}, State> {
         if (!Component) {
             contents = <h1 style={{ textAlign: "center" }}>Loading...</h1>; // Nice, aligned with splash screen
         } else if (!inLeague) {
-            contents = <Component {...data} topMenu={topMenu} />;
+            contents = <Component {...data} />;
         } else {
             pageId = idLoading !== undefined ? idLoading : idLoaded;
 
@@ -399,7 +398,6 @@ class Controller extends React.Component<{}, State> {
                         <LeagueContent
                             Component={Component}
                             data={data}
-                            topMenu={topMenu}
                             updating={updating}
                         />
                     </LeagueWrapper>

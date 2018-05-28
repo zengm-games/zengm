@@ -10,6 +10,8 @@ get rid of g in UI
       - tests, support?
     - redux
       - maybe worth the boilerplate... could put everything there
+    - just pass variables through to Component?
+      - will cause re-render too
 - figure out how to get rid of weird ad-related code (center when right ad not displayed or gold, etc) and emitter?
 
 too easy to trade for current season picks

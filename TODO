@@ -2,7 +2,20 @@ get rid of g in UI
 - [^a-zA-Z]g\.
 - required properties
   - g.userTid and g.userTids, for multiTeamMenu
-  - maybe: lid (could replace inLeague?), phase, season
+  - topMenu ones needed?
+    email - no
+    godMode - yes
+    goldUntil - replace with "gold"
+    goldCancelled - replace with "gold"
+    hasViewedALeague - yes
+    lid - yes
+    options - rename playMenuOptions
+    phaseText - yes
+    popup - yes
+    statusText - yes
+    username - yes
+  - maybe: phase, season
+  - team*caches?
 - required properties should be passed in from worker, or synced via some other mechanism and stored globally
   - decide which should be stored globally, and how to pass down to components (context? maybe just props from controller?)
   - unstated? or context API directly, maybe? redux, even?

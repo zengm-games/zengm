@@ -5,17 +5,7 @@ import { idb } from "../db";
 import { local, toUI } from "../util";
 import type { Conditions } from "../../common/types";
 
-/*Save phase text to database and push to client.
-
-If no phase text is given, load the last phase text from the database and
-push that to the client.
-
-Pass conditions only if you want to force update a single tab (like beforeView).
-
-Args:
-    phaseText: A string containing the current phase text to be pushed to
-        the client.
-*/
+// Calculate phase text in worker rather than UI, because here we can easily cache it in the meta database
 async function updatePhase(conditions?: Conditions) {
     const phaseText = `${g.season} ${PHASE_TEXT[g.phase]}`;
     if (phaseText !== local.phaseText) {

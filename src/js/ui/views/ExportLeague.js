@@ -1,5 +1,5 @@
 import React from "react";
-import { PHASE, PHASE_TEXT, g, helpers } from "../../common";
+import { helpers } from "../../common";
 import { setTitle, toWorker } from "../util";
 import { DownloadDataLink } from "../components";
 
@@ -45,46 +45,6 @@ const categories = [
     },
 ];
 
-function genFilename(data) {
-    const leagueName =
-        data.meta !== undefined ? data.meta.name : `League ${g.lid}`;
-
-    let filename = `BBGM_${leagueName.replace(/[^a-z0-9]/gi, "_")}_${
-        g.season
-    }_${PHASE_TEXT[g.phase].replace(/[^a-z0-9]/gi, "_")}`;
-
-    if (g.phase === PHASE.REGULAR_SEASON && data.hasOwnProperty("teams")) {
-        const season =
-            data.teams[g.userTid].seasons[
-                data.teams[g.userTid].seasons.length - 1
-            ];
-        filename += `_${season.won}-${season.lost}`;
-    }
-
-    if (g.phase === PHASE.PLAYOFFS && data.hasOwnProperty("playoffSeries")) {
-        // Most recent series info
-        const playoffSeries = data.playoffSeries[data.playoffSeries.length - 1];
-        const rnd = playoffSeries.currentRound;
-        filename += `_Round_${playoffSeries.currentRound + 1}`;
-
-        // Find the latest playoff series with the user's team in it
-        const series = playoffSeries.series;
-        for (let i = 0; i < series[rnd].length; i++) {
-            if (series[rnd][i].home.tid === g.userTid) {
-                filename += `_${series[rnd][i].home.won}-${
-                    series[rnd][i].away.won
-                }`;
-            } else if (series[rnd][i].away.tid === g.userTid) {
-                filename += `_${series[rnd][i].away.won}-${
-                    series[rnd][i].home.won
-                }`;
-            }
-        }
-    }
-
-    return `${filename}.json`;
-}
-
 class ExportLeague extends React.Component {
     constructor(props) {
         super(props);
@@ -112,7 +72,7 @@ class ExportLeague extends React.Component {
             .join(",")
             .split(",");
 
-        const data = await toWorker("exportLeague", objectStores);
+        const { data, filename } = await toWorker("exportLeague", objectStores);
         let json;
         try {
             json = JSON.stringify(data, undefined, 2);
@@ -133,8 +93,6 @@ class ExportLeague extends React.Component {
             });
             return;
         }
-
-        const filename = genFilename(data);
 
         this.setState({
             data: json,

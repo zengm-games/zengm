@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { g, helpers } from "../../common";
+import { helpers } from "../../common";
 import { getCols, logEvent, setTitle, toWorker } from "../util";
 import {
     BarGraph,
@@ -103,17 +103,17 @@ class FinancesForm extends React.Component {
     }
 
     render() {
-        const { gamesInProgress, t, tid } = this.props;
+        const { gamesInProgress, t, tid, userTid } = this.props;
 
         const warningMessage = (
             <p className="text-danger">
-                {gamesInProgress && tid === g.userTid
+                {gamesInProgress && tid === userTid
                     ? "Stop game simulation to edit."
                     : null}
             </p>
         );
 
-        const formDisabled = gamesInProgress || tid !== g.userTid;
+        const formDisabled = gamesInProgress || tid !== userTid;
 
         return (
             <form onSubmit={this.handleSubmit}>
@@ -257,7 +257,7 @@ class FinancesForm extends React.Component {
                     </div>
                 </div>
                 <br />
-                {tid === g.userTid ? (
+                {tid === userTid ? (
                     <div className="row">
                         <div className="pull-left finances-settings-label">
                             &nbsp;
@@ -284,6 +284,7 @@ FinancesForm.propTypes = {
     gamesInProgress: PropTypes.bool.isRequired,
     t: PropTypes.object.isRequired,
     tid: PropTypes.number.isRequired,
+    userTid: PropTypes.number.isRequired,
 };
 
 const TeamFinances = ({
@@ -305,6 +306,7 @@ const TeamFinances = ({
     show,
     t,
     tid,
+    userTid,
 }) => {
     setTitle(`${t.region} ${t.name} Finances`);
 
@@ -560,6 +562,7 @@ const TeamFinances = ({
                         gamesInProgress={gamesInProgress}
                         t={t}
                         tid={tid}
+                        userTid={userTid}
                     />
                 </div>
             </div>
@@ -604,6 +607,7 @@ TeamFinances.propTypes = {
     show: PropTypes.oneOf(["10", "all"]).isRequired,
     t: PropTypes.object.isRequired,
     tid: PropTypes.number.isRequired,
+    userTid: PropTypes.number.isRequired,
 };
 
 export default TeamFinances;

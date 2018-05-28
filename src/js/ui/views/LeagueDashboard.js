@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { PHASE, g, helpers } from "../../common";
+import { PHASE, helpers } from "../../common";
 import { setTitle } from "../util";
 import {
     CompletedGame,
@@ -24,9 +24,11 @@ const LeagueDashboard = ({
     lost,
     messages,
     name,
+    numGames,
     oppPts,
     oppPtsRank,
     payroll,
+    phase,
     playoffRoundsWon,
     playoffsByConference,
     profit,
@@ -45,17 +47,18 @@ const LeagueDashboard = ({
     trb,
     trbRank,
     upcoming,
+    userTid,
     won,
 }) => {
     setTitle("Dashboard");
 
     // Show the remaining number of games, only for the regular season.
     const gamesPlayed = won + lost;
-    const gamesRemaining = g.numGames - gamesPlayed;
-    const percentComplete = gamesPlayed / g.numGames;
+    const gamesRemaining = numGames - gamesPlayed;
+    const percentComplete = gamesPlayed / numGames;
 
     let gamesRemainingTag = null;
-    if (g.phase === PHASE.REGULAR_SEASON) {
+    if (phase === PHASE.REGULAR_SEASON) {
         gamesRemainingTag = (
             <p>
                 {gamesRemaining} games remaining ({(
@@ -94,7 +97,7 @@ const LeagueDashboard = ({
                                                     separator:
                                                         i === 7 &&
                                                         playoffsByConference,
-                                                    info: t.tid === g.userTid,
+                                                    info: t.tid === userTid,
                                                 })}
                                             >
                                                 <td>
@@ -515,9 +518,11 @@ LeagueDashboard.propTypes = {
     lost: PropTypes.number.isRequired,
     messages: PropTypes.arrayOf(PropTypes.object).isRequired,
     name: PropTypes.string.isRequired,
+    numGames: PropTypes.number.isRequired,
     oppPts: PropTypes.number.isRequired,
     oppPtsRank: PropTypes.number.isRequired,
     payroll: PropTypes.number.isRequired,
+    phase: PropTypes.number.isRequired,
     playoffRoundsWon: PropTypes.number.isRequired,
     playoffsByConference: PropTypes.bool.isRequired,
     profit: PropTypes.number.isRequired,
@@ -536,6 +541,7 @@ LeagueDashboard.propTypes = {
     trb: PropTypes.number.isRequired,
     trbRank: PropTypes.number.isRequired,
     upcoming: PropTypes.arrayOf(PropTypes.object).isRequired,
+    userTid: PropTypes.number.isRequired,
     won: PropTypes.number.isRequired,
 };
 

@@ -20,11 +20,15 @@ async function updateRoster(
     ) {
         const vars: any = {
             abbrev: inputs.abbrev,
-            season: inputs.season,
+            currentSeason: g.season,
             editable: inputs.season === g.season && inputs.tid === g.userTid,
+            maxRosterSize: g.maxRosterSize,
+            phase: g.phase,
             salaryCap: g.salaryCap / 1000,
+            season: inputs.season,
             showTradeFor:
                 inputs.season === g.season && inputs.tid !== g.userTid,
+            userTid: g.userTid,
         };
 
         vars.t = await idb.getCopy.teamsPlus({

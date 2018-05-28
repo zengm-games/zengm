@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { g, helpers } from "../../common";
+import { helpers } from "../../common";
 import { getCols, setTitle } from "../util";
 import {
     DataTable,
@@ -10,7 +10,7 @@ import {
     PlayerNameLabels,
 } from "../components";
 
-const PlayerRatings = ({ abbrev, players, season }) => {
+const PlayerRatings = ({ abbrev, players, season, userTid }) => {
     setTitle(`Player Ratings - ${season}`);
 
     const cols = getCols(
@@ -76,7 +76,7 @@ const PlayerRatings = ({ abbrev, players, season }) => {
             ],
             classNames: {
                 danger: p.hof,
-                info: p.stats.tid === g.userTid,
+                info: p.stats.tid === userTid,
             },
         };
     });
@@ -122,6 +122,7 @@ PlayerRatings.propTypes = {
     abbrev: PropTypes.string.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     season: PropTypes.number.isRequired,
+    userTid: PropTypes.number.isRequired,
 };
 
 export default PlayerRatings;

@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { PHASE, g, helpers } from "../../common";
+import { PHASE, helpers } from "../../common";
 import {
     DataTable,
     HelpPopover,
@@ -67,6 +67,7 @@ class FreeAgents extends React.Component {
             numRosterSpots,
             phase,
             players,
+            userTid,
         } = this.props;
         setTitle("Free Agents");
 
@@ -99,7 +100,7 @@ class FreeAgents extends React.Component {
             if (
                 helpers.refuseToNegotiate(
                     p.contract.amount * 1000,
-                    p.freeAgentMood[g.userTid],
+                    p.freeAgentMood[userTid],
                 )
             ) {
                 negotiateButton = "Refuses!";
@@ -147,7 +148,7 @@ class FreeAgents extends React.Component {
                         }}
                     >
                         <span style={{ display: "none" }}>
-                            {p.freeAgentMood[g.userTid]}
+                            {p.freeAgentMood[userTid]}
                         </span>
                     </div>,
                     negotiateButton,
@@ -220,6 +221,7 @@ FreeAgents.propTypes = {
     numRosterSpots: PropTypes.number.isRequired,
     phase: PropTypes.number.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
+    userTid: PropTypes.number.isRequired,
 };
 
 export default FreeAgents;

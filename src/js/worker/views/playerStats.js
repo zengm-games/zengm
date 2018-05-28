@@ -168,6 +168,7 @@ async function updatePlayers(
             season: inputs.season,
             statType: inputs.statType,
             playoffs: inputs.playoffs,
+            userTid: g.userTid,
         };
     }
 }

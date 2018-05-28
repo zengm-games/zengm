@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { g, helpers } from "../../common";
+import { helpers } from "../../common";
 import { getCols, setTitle } from "../util";
 import {
     DataTable,
@@ -9,7 +9,7 @@ import {
     PlayerNameLabels,
 } from "../components";
 
-const PlayerFeats = ({ abbrev, feats, playoffs, season }) => {
+const PlayerFeats = ({ abbrev, feats, playoffs, season, userTid }) => {
     setTitle("Statistical Feats");
 
     const cols = getCols(
@@ -43,9 +43,6 @@ const PlayerFeats = ({ abbrev, feats, playoffs, season }) => {
     );
 
     const rows = feats.map(p => {
-        const rowAbbrev = g.teamAbbrevsCache[p.tid];
-        const oppAbbrev = g.teamAbbrevsCache[p.oppTid];
-
         return {
             key: p.fid,
             data: [
@@ -53,8 +50,8 @@ const PlayerFeats = ({ abbrev, feats, playoffs, season }) => {
                     {p.name}
                 </PlayerNameLabels>,
                 p.pos,
-                <a href={helpers.leagueUrl(["roster", rowAbbrev, p.season])}>
-                    {rowAbbrev}
+                <a href={helpers.leagueUrl(["roster", p.abbrev, p.season])}>
+                    {p.abbrev}
                 </a>,
                 p.stats.gs,
                 p.stats.min.toFixed(1),
@@ -77,13 +74,13 @@ const PlayerFeats = ({ abbrev, feats, playoffs, season }) => {
                 p.stats.pf,
                 p.stats.pts,
                 helpers.gameScore(p.stats),
-                <a href={helpers.leagueUrl(["roster", oppAbbrev, p.season])}>
-                    {oppAbbrev}
+                <a href={helpers.leagueUrl(["roster", p.oppAbbrev, p.season])}>
+                    {p.oppAbbrev}
                 </a>,
                 <a
                     href={helpers.leagueUrl([
                         "game_log",
-                        rowAbbrev,
+                        p.abbrev,
                         p.season,
                         p.gid,
                     ])}
@@ -93,7 +90,7 @@ const PlayerFeats = ({ abbrev, feats, playoffs, season }) => {
                 p.season,
             ],
             classNames: {
-                info: p.tid === g.userTid,
+                info: p.tid === userTid,
             },
         };
     });
@@ -134,6 +131,7 @@ PlayerFeats.propTypes = {
     playoffs: PropTypes.oneOf(["playoffs", "regularSeason"]).isRequired,
     season: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
         .isRequired,
+    userTid: PropTypes.number.isRequired,
 };
 
 export default PlayerFeats;

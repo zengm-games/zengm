@@ -45,6 +45,7 @@ async function updateNegotiationList(): void | { [key: string]: any } {
 
     return {
         players,
+        userTid: g.userTid,
     };
 }
 

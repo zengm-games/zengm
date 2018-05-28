@@ -80,7 +80,7 @@ class Trade extends React.Component {
 
         const teams = [
             {
-                tid: g.userTid,
+                tid: this.props.userTid,
                 pids: ids["user-pids"],
                 dpids: ids["user-dpids"],
             },
@@ -105,7 +105,7 @@ class Trade extends React.Component {
 
         const teams = [
             {
-                tid: g.userTid,
+                tid: this.props.userTid,
                 pids: this.props.userPids,
                 dpids: this.props.userDpids,
             },
@@ -517,6 +517,7 @@ Trade.propTypes = {
     userPicks: PropTypes.array.isRequired,
     userPids: PropTypes.arrayOf(PropTypes.number).isRequired,
     userRoster: PropTypes.array.isRequired,
+    userTid: PropTypes.number.isRequired,
     userTeamName: PropTypes.string.isRequired,
     won: PropTypes.number.isRequired,
 };

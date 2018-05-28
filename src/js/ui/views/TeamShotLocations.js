@@ -1,10 +1,16 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { g, helpers } from "../../common";
+import { helpers } from "../../common";
 import { getCols, prefixStatOpp, setTitle } from "../util";
 import { DataTable, Dropdown, NewWindowLink } from "../components";
 
-const TeamShotLocations = ({ playoffs, season, teams, teamOpponent }) => {
+const TeamShotLocations = ({
+    playoffs,
+    season,
+    teams,
+    teamOpponent,
+    userTid,
+}) => {
     setTitle(`Team Shot Locations - ${season}`);
 
     const superCols = [
@@ -78,7 +84,7 @@ const TeamShotLocations = ({ playoffs, season, teams, teamOpponent }) => {
                 ...statCols.map(col => t.stats[col].toFixed(1)),
             ],
             classNames: {
-                info: t.tid === g.userTid,
+                info: t.tid === userTid,
             },
         };
     });
@@ -121,6 +127,7 @@ TeamShotLocations.propTypes = {
     season: PropTypes.number.isRequired,
     teamOpponent: PropTypes.oneOf(["opponent", "team"]).isRequired,
     teams: PropTypes.arrayOf(PropTypes.object).isRequired,
+    userTid: PropTypes.number.isRequired,
 };
 
 export default TeamShotLocations;

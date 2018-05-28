@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import DropdownButton from "react-bootstrap/lib/DropdownButton";
 import MenuItem from "react-bootstrap/lib/MenuItem";
-import { g, helpers } from "../../common";
+import { helpers } from "../../common";
 
 const genUrl = (parts, season) => {
     if (season !== undefined) {
@@ -16,12 +16,8 @@ const genUrl = (parts, season) => {
 
 const JumpTo = ({ season }: { season: number | "all" }) => {
     // Sometimes the season will be some nonsense like "all", in which case we can't generally use
-    // it (although maybe it would be good to in some cases). And if the season is g.season, there's
-    // no need to pollute the URL with that, since it's the default on all pages.
-    const s =
-        typeof season === "number" && season !== g.season
-            ? String(season)
-            : undefined;
+    // it (although maybe it would be good to in some cases).
+    const s = typeof season === "number" ? String(season) : undefined;
 
     return (
         <div className="pull-right">

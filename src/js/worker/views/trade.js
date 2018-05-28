@@ -177,6 +177,7 @@ async function updateTrade(): void | { [key: string]: any } {
         godMode: g.godMode,
         forceTrade: false,
         phase: g.phase,
+        userTid: g.userTid,
     };
     vars = await updateSummary(vars);
 

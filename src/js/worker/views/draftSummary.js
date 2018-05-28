@@ -58,6 +58,7 @@ async function updateDraftSummary(inputs: {
     return {
         players,
         season: inputs.season,
+        userTid: g.userTid,
     };
 }
 

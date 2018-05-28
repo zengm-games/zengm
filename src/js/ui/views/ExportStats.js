@@ -1,6 +1,5 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { g } from "../../common";
 import { setTitle, toWorker } from "../util";
 import { DownloadDataLink } from "../components";
 
@@ -60,7 +59,7 @@ class ExportStats extends React.Component {
 
         const [data, leagueName] = await Promise.all([
             csvPromise,
-            toWorker("getLeagueName", g.lid),
+            toWorker("getLeagueName"),
         ]);
 
         const filename = genFilename(leagueName, season, grouping);

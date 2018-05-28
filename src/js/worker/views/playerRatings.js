@@ -95,6 +95,7 @@ async function updatePlayers(
             abbrev: inputs.abbrev,
             season: inputs.season,
             players,
+            userTid: g.userTid,
         };
     }
 }

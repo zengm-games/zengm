@@ -1,7 +1,8 @@
 get rid of g in UI
-- [^a-zA-Z]g\.
+- [^a-zA-Z]g\.[a-zA-Z]
 - required properties
-  - g.userTid and g.userTids, for multiTeamMenu
+  - g.userTid and g.userTids, for multiTeamMenu and logEvent
+  - leagueName, for setTitle
   - topMenu ones needed?
     email - no
     godMode - yes
@@ -32,6 +33,7 @@ get rid of g in UI
     - write my own, let you subscribe to individual variables from state
     - should all this be stored only in the worker?
 - figure out how to get rid of weird ad-related code (center when right ad not displayed or gold, etc) and emitter?
+  - add/remove a class to center whenever gold is updated
 
 too easy to trade for current season picks
 - i think it's uncertainty+fudge factor decreasing too much when the outcome is certain

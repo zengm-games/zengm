@@ -2,7 +2,7 @@
 
 import flatten from "lodash/flatten";
 import range from "lodash/range";
-import { PHASE, PLAYER, g, helpers } from "../../common";
+import { PHASE, PHASE_TEXT, PLAYER, g, helpers } from "../../common";
 import actions from "./actions";
 import {
     contractNegotiation,
@@ -497,11 +497,53 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
     return output;
 };
 
-const exportLeague = async (stores: string[]) => {
-    return league.exportLeague(stores);
+const genFilename = (data: any) => {
+    const leagueName =
+        data.meta !== undefined ? data.meta.name : `League ${g.lid}`;
+
+    let filename = `BBGM_${leagueName.replace(/[^a-z0-9]/gi, "_")}_${
+        g.season
+    }_${PHASE_TEXT[g.phase].replace(/[^a-z0-9]/gi, "_")}`;
+
+    if (g.phase === PHASE.REGULAR_SEASON && data.hasOwnProperty("teams")) {
+        const season =
+            data.teams[g.userTid].seasons[
+                data.teams[g.userTid].seasons.length - 1
+            ];
+        filename += `_${season.won}-${season.lost}`;
+    }
+
+    if (g.phase === PHASE.PLAYOFFS && data.hasOwnProperty("playoffSeries")) {
+        // Most recent series info
+        const playoffSeries = data.playoffSeries[data.playoffSeries.length - 1];
+        const rnd = playoffSeries.currentRound;
+        filename += `_Round_${playoffSeries.currentRound + 1}`;
+
+        // Find the latest playoff series with the user's team in it
+        const series = playoffSeries.series;
+        for (let i = 0; i < series[rnd].length; i++) {
+            if (series[rnd][i].home.tid === g.userTid) {
+                filename += `_${series[rnd][i].home.won}-${
+                    series[rnd][i].away.won
+                }`;
+            } else if (series[rnd][i].away.tid === g.userTid) {
+                filename += `_${series[rnd][i].away.won}-${
+                    series[rnd][i].home.won
+                }`;
+            }
+        }
+    }
+
+    return `${filename}.json`;
 };
 
-const getLeagueName = async (lid: number) => {
+const exportLeague = async (stores: string[]) => {
+    const data = await league.exportLeague(stores);
+    const filename = genFilename(data);
+    return { data, filename };
+};
+
+const getLeagueName = async (lid?: number = g.lid) => {
     const l = await idb.meta.leagues.get(lid);
     return l.name;
 };

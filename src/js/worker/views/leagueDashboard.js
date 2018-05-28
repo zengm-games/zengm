@@ -52,6 +52,9 @@ async function updateTeam(
             salaryCap: g.salaryCap / 1000, // [millions of dollars]
             season: g.season,
             playoffRoundsWon: latestSeason.playoffRoundsWon,
+            numGames: g.numGames,
+            phase: g.phase,
+            userTid: g.userTid,
         };
     }
 }

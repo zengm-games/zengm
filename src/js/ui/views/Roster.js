@@ -9,7 +9,7 @@ import {
     SortableHandle,
     arrayMove,
 } from "react-sortable-hoc";
-import { PHASE, g, helpers } from "../../common";
+import { PHASE, helpers } from "../../common";
 import { logEvent, setTitle, toWorker } from "../util";
 import {
     Dropdown,
@@ -48,12 +48,12 @@ const handleAutoSort = async () => {
     await toWorker("autoSortRoster");
 };
 
-const handleRelease = async p => {
+const handleRelease = async (p, phase, season) => {
     // If a player was just drafted by his current team and the regular season hasn't started, then he can be released without paying anything
     const justDrafted =
         p.tid === p.draft.tid &&
-        ((p.draft.year === g.season && g.phase >= PHASE.DRAFT) ||
-            (p.draft.year === g.season - 1 && g.phase < PHASE.REGULAR_SEASON));
+        ((p.draft.year === season && phase >= PHASE.DRAFT) ||
+            (p.draft.year === season - 1 && phase < PHASE.REGULAR_SEASON));
 
     let releaseMessage;
     if (justDrafted) {
@@ -80,7 +80,7 @@ const handleRelease = async p => {
     }
 };
 
-const handlePtChange = async (p, event) => {
+const handlePtChange = async (p, userTid, event) => {
     const ptModifier = parseFloat(event.currentTarget.value);
 
     if (Number.isNaN(ptModifier)) {
@@ -89,14 +89,14 @@ const handlePtChange = async (p, event) => {
 
     // NEVER UPDATE AI TEAMS
     // This shouldn't be necessary, but just in case...
-    if (p.tid !== g.userTid) {
+    if (p.tid !== userTid) {
         return;
     }
 
     await toWorker("updatePlayingTime", p.pid, ptModifier);
 };
 
-const PlayingTime = ({ p }) => {
+const PlayingTime = ({ p, userTid }) => {
     const ptModifiers = [
         { text: "0", ptModifier: "0" },
         { text: "-", ptModifier: "0.75" },
@@ -109,7 +109,7 @@ const PlayingTime = ({ p }) => {
         <select
             className="form-control pt-modifier-select"
             value={p.ptModifier}
-            onChange={event => handlePtChange(p, event)}
+            onChange={event => handlePtChange(p, userTid, event)}
             style={ptStyles[String(p.ptModifier)]}
         >
             {ptModifiers.map(({ text, ptModifier }) => {
@@ -125,6 +125,7 @@ const PlayingTime = ({ p }) => {
 
 PlayingTime.propTypes = {
     p: PropTypes.object.isRequired,
+    userTid: PropTypes.number.isRequired,
 };
 
 const ReorderHandle = SortableHandle(({ i, pid, selectedPid }) => {
@@ -154,13 +155,16 @@ const RosterRow = SortableElement(
     clickable(props => {
         const {
             clicked,
+            currentSeason,
             editable,
             i,
             p,
+            phase,
             season,
             selectedPid,
             showTradeFor,
             toggleClicked,
+            userTid,
         } = props;
 
         return (
@@ -199,7 +203,7 @@ const RosterRow = SortableElement(
                         {p.ratings.pot}
                     </RatingWithChange>
                 </td>
-                {season === g.season ? (
+                {season === currentSeason ? (
                     <td>
                         {helpers.formatCurrency(p.contract.amount, "M")} thru{" "}
                         {p.contract.exp}
@@ -213,7 +217,7 @@ const RosterRow = SortableElement(
                 <td onClick={toggleClicked}>{p.stats.per.toFixed(1)}</td>
                 {editable ? (
                     <td onClick={toggleClicked}>
-                        <PlayingTime p={p} />
+                        <PlayingTime p={p} userTid={userTid} />
                     </td>
                 ) : null}
                 {editable ? (
@@ -221,7 +225,9 @@ const RosterRow = SortableElement(
                         <button
                             className="btn btn-default btn-xs"
                             disabled={!p.canRelease}
-                            onClick={() => handleRelease(p)}
+                            onClick={() =>
+                                handleRelease(p, phase, currentSeason)
+                            }
                         >
                             Release
                         </button>
@@ -246,29 +252,44 @@ const RosterRow = SortableElement(
 );
 
 RosterRow.propTypes = {
+    currentSeason: PropTypes.number.isRequired,
     editable: PropTypes.bool.isRequired,
     i: PropTypes.number.isRequired,
     p: PropTypes.object.isRequired,
+    phase: PropTypes.number.isRequired,
     season: PropTypes.number.isRequired,
     selectedPid: PropTypes.number,
     showTradeFor: PropTypes.bool.isRequired,
+    userTid: PropTypes.number.isRequired,
 };
 
 const TBody = SortableContainer(
-    ({ editable, players, season, selectedPid, showTradeFor }) => {
+    ({
+        currentSeason,
+        editable,
+        phase,
+        players,
+        season,
+        selectedPid,
+        showTradeFor,
+        userTid,
+    }) => {
         return (
             <tbody id="roster-tbody">
                 {players.map((p, i) => {
                     return (
                         <RosterRow
                             key={p.pid}
+                            currentSeason={currentSeason}
                             editable={editable}
                             i={i}
                             index={i}
                             p={p}
+                            phase={phase}
                             season={season}
                             selectedPid={selectedPid}
                             showTradeFor={showTradeFor}
+                            userTid={userTid}
                         />
                     );
                 })}
@@ -278,11 +299,14 @@ const TBody = SortableContainer(
 );
 
 TBody.propTypes = {
+    currentSeason: PropTypes.number.isRequired,
     editable: PropTypes.bool.isRequired,
+    phase: PropTypes.number.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     season: PropTypes.number.isRequired,
     selectedPid: PropTypes.number,
     showTradeFor: PropTypes.bool.isRequired,
+    userTid: PropTypes.number.isRequired,
 };
 
 // Ideally, this function wouldn't be necessary https://github.com/clauderic/react-sortable-hoc/issues/175
@@ -324,13 +348,17 @@ class Roster extends React.Component {
     render() {
         const {
             abbrev,
+            currentSeason,
             editable,
+            maxRosterSize,
             payroll,
+            phase,
             players,
             salaryCap,
             season,
             showTradeFor,
             t,
+            userTid,
         } = this.props;
 
         setTitle(`${t.region} ${t.name} Roster - ${season}`);
@@ -425,9 +453,9 @@ class Roster extends React.Component {
                 <div>
                     <h3>{recordAndPlayoffs}</h3>
 
-                    {season === g.season ? (
+                    {season === currentSeason ? (
                         <p>
-                            {g.maxRosterSize - players.length} open roster spots<br />
+                            {maxRosterSize - players.length} open roster spots<br />
                             Payroll: {helpers.formatCurrency(payroll, "M")}
                             <br />
                             Salary cap: {helpers.formatCurrency(salaryCap, "M")}
@@ -469,7 +497,9 @@ class Roster extends React.Component {
                                 <th title="Years With Team">YWT</th>
                                 <th title="Overall Rating">Ovr</th>
                                 <th title="Potential Rating">Pot</th>
-                                {season === g.season ? <th>Contract</th> : null}
+                                {season === currentSeason ? (
+                                    <th>Contract</th>
+                                ) : null}
                                 <th title="Games Played">GP</th>
                                 <th title="Minutes Per Game">Min</th>
                                 <th title="Points Per Game">Pts</th>
@@ -554,14 +584,17 @@ class Roster extends React.Component {
                         </thead>
                         <TBody
                             players={playersSorted}
+                            currentSeason={currentSeason}
                             editable={editable}
                             onSortEnd={this.handleReorderDrag}
                             onSortStart={onSortStart}
+                            phase={phase}
                             season={season}
                             selectedPid={this.state.selectedPid}
                             showTradeFor={showTradeFor}
                             transitionDuration={0}
                             useDragHandle
+                            userTid={userTid}
                         />
                     </table>
                 </div>
@@ -572,13 +605,17 @@ class Roster extends React.Component {
 
 Roster.propTypes = {
     abbrev: PropTypes.string.isRequired,
+    currentSeason: PropTypes.number.isRequired,
     editable: PropTypes.bool.isRequired,
+    maxRosterSize: PropTypes.number.isRequired,
     payroll: PropTypes.number,
+    phase: PropTypes.number.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     salaryCap: PropTypes.number.isRequired,
     season: PropTypes.number.isRequired,
     showTradeFor: PropTypes.bool.isRequired,
     t: PropTypes.object.isRequired,
+    userTid: PropTypes.number.isRequired,
 };
 
 export default Roster;

@@ -16,7 +16,6 @@ const upperCaseFirstLetter = (string: string): string => {
 };
 
 const Relatives = ({ relatives }) => {
-    console.log(relatives);
     if (relatives.length === 0) {
         return null;
     }

@@ -233,6 +233,7 @@ async function updateTeams(
             stats,
             teamOpponent: inputs.teamOpponent,
             teams,
+            userTid: g.userTid,
         };
     }
 }

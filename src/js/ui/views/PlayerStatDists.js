@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { g, helpers } from "../../common";
+import { helpers } from "../../common";
 import { setTitle } from "../util";
 import { BoxPlot, Dropdown, NewWindowLink } from "../components";
 
@@ -27,14 +27,13 @@ const nbaQuartiles = {
     pts: [0, 3.3333333333, 7.0507246377, 11.2698735321, 30.1463414634],
 };
 
-const PlayerStatDists = ({ season, statsAll }) => {
+const PlayerStatDists = ({ numGames, season, statsAll }) => {
     setTitle(`Player Stat Distributions - ${season}`);
 
     // Scales for the box plots. This is not done dynamically so that the plots will be comparable across seasons.
-    // Needs to be in render for g, for some reason
     const scale = {
-        gp: [0, g.numGames],
-        gs: [0, g.numGames],
+        gp: [0, numGames],
+        gs: [0, numGames],
         min: [0, 50],
         fg: [0, 20],
         fga: [0, 40],
@@ -143,6 +142,7 @@ const PlayerStatDists = ({ season, statsAll }) => {
 };
 
 PlayerStatDists.propTypes = {
+    numGames: PropTypes.number.isRequired,
     season: PropTypes.number.isRequired,
     statsAll: PropTypes.object.isRequired,
 };

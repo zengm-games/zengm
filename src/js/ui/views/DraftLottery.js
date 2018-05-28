@@ -4,7 +4,7 @@ import classNames from "classnames";
 import range from "lodash/range";
 import PropTypes from "prop-types";
 import * as React from "react";
-import { g, helpers } from "../../common";
+import { helpers } from "../../common";
 import { setTitle, toWorker } from "../util";
 import { DraftAbbrev, Dropdown, JumpTo, NewWindowLink } from "../components";
 import type { DraftLotteryResultArray } from "../../common/types";
@@ -85,6 +85,7 @@ type Props = {
     result: DraftLotteryResultArray | void,
     season: number,
     type: "completed" | "projected" | "readyToRun",
+    userTid: number,
 };
 
 type State = {
@@ -165,7 +166,7 @@ class DraftLottery extends React.Component<Props, State> {
     }
 
     render() {
-        const { season, type } = this.props;
+        const { season, type, userTid } = this.props;
         const result =
             this.state.result !== undefined
                 ? this.state.result
@@ -252,7 +253,7 @@ class DraftLottery extends React.Component<Props, State> {
                                         <tr key={originalTid}>
                                             <td
                                                 className={classNames({
-                                                    info: tid === g.userTid,
+                                                    info: tid === userTid,
                                                 })}
                                             >
                                                 <DraftAbbrev
@@ -350,6 +351,7 @@ DraftLottery.propTypes = {
     ),
     season: PropTypes.number.isRequired,
     type: PropTypes.string.isRequired,
+    userTid: PropTypes.number.isRequired,
 };
 
 export default DraftLottery;

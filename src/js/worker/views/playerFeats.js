@@ -47,7 +47,7 @@ async function updatePlayers(
             }
         });
 
-        feats.forEach(feat => {
+        for (const feat of feats) {
             feat.stats.trb = feat.stats.orb + feat.stats.drb;
 
             feat.stats.fgp =
@@ -62,13 +62,17 @@ async function updatePlayers(
             } else if (feat.overtimes > 1) {
                 feat.score += ` (${feat.overtimes}OT)`;
             }
-        });
+
+            feat.abbrev = g.teamAbbrevsCache[feat.tid];
+            feat.oppAbbrev = g.teamAbbrevsCache[feat.oppTid];
+        }
 
         return {
             feats,
             abbrev: inputs.abbrev,
             season: inputs.season,
             playoffs: inputs.playoffs,
+            userTid: g.userTid,
         };
     }
 }

@@ -4,7 +4,7 @@ import { g, helpers } from "../../common";
 import { DataTable, NewWindowLink, PlayerNameLabels } from "../components";
 import { getCols, setTitle } from "../util";
 
-const awardName = (award, season) => {
+const awardName = (award, season, userTid) => {
     if (!award) {
         // For old seasons with no Finals MVP
         return "N/A";
@@ -25,7 +25,7 @@ const awardName = (award, season) => {
     );
 
     // This is our team.
-    if (award.tid === g.userTid) {
+    if (award.tid === userTid) {
         return {
             classNames: "info",
             value: ret,
@@ -50,7 +50,7 @@ const teamName = (t, season) => {
     return "N/A";
 };
 
-const HistoryAll = ({ seasons }) => {
+const HistoryAll = ({ seasons, userTid }) => {
     setTitle("League History");
 
     const cols = getCols(
@@ -85,7 +85,7 @@ const HistoryAll = ({ seasons }) => {
                 {countText}
             </span>
         );
-        if (s.champ && s.champ.tid === g.userTid) {
+        if (s.champ && s.champ.tid === userTid) {
             champEl = {
                 classNames: "info",
                 value: champEl,
@@ -93,7 +93,7 @@ const HistoryAll = ({ seasons }) => {
         }
 
         let runnerUpEl = teamName(s.runnerUp, s.season);
-        if (s.runnerUp && s.runnerUp.tid === g.userTid) {
+        if (s.runnerUp && s.runnerUp.tid === userTid) {
             runnerUpEl = {
                 classNames: "info",
                 value: runnerUpEl,
@@ -106,10 +106,10 @@ const HistoryAll = ({ seasons }) => {
                 seasonLink,
                 champEl,
                 runnerUpEl,
-                awardName(s.finalsMvp, s.season),
-                awardName(s.mvp, s.season),
-                awardName(s.dpoy, s.season),
-                awardName(s.roy, s.season),
+                awardName(s.finalsMvp, s.season, userTid),
+                awardName(s.mvp, s.season, userTid),
+                awardName(s.dpoy, s.season, userTid),
+                awardName(s.roy, s.season, userTid),
             ],
         };
     });
@@ -140,6 +140,7 @@ const HistoryAll = ({ seasons }) => {
 
 HistoryAll.propTypes = {
     seasons: PropTypes.arrayOf(PropTypes.object).isRequired,
+    userTid: PropTypes.number.isRequired,
 };
 
 export default HistoryAll;

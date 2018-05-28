@@ -98,6 +98,7 @@ async function updatePowerRankings(
 
         return {
             teams,
+            userTid: g.userTid,
         };
     }
 }

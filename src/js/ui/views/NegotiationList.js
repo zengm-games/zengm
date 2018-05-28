@@ -1,10 +1,10 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { g, helpers } from "../../common";
+import { helpers } from "../../common";
 import { DataTable, NewWindowLink, PlayerNameLabels } from "../components";
 import { getCols, setTitle, toWorker } from "../util";
 
-const NegotiationList = ({ players }) => {
+const NegotiationList = ({ players, userTid }) => {
     setTitle("Re-sign Players");
 
     const cols = getCols(
@@ -28,7 +28,7 @@ const NegotiationList = ({ players }) => {
         if (
             helpers.refuseToNegotiate(
                 p.contract.amount * 1000,
-                p.freeAgentMood[g.userTid],
+                p.freeAgentMood[userTid],
             )
         ) {
             negotiateButton = "Refuses!";
@@ -75,7 +75,7 @@ const NegotiationList = ({ players }) => {
                     }}
                 >
                     <span style={{ display: "none" }}>
-                        {p.freeAgentMood[g.userTid]}
+                        {p.freeAgentMood[userTid]}
                     </span>
                 </div>,
                 negotiateButton,
@@ -115,6 +115,7 @@ const NegotiationList = ({ players }) => {
 
 NegotiationList.propTypes = {
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
+    userTid: PropTypes.number.isRequired,
 };
 
 export default NegotiationList;

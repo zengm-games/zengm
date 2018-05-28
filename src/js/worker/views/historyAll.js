@@ -89,6 +89,7 @@ async function updateHistory(
 
         return {
             seasons,
+            userTid: g.userTid,
         };
     }
 }

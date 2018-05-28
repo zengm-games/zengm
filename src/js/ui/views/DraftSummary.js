@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { g, helpers } from "../../common";
+import { helpers } from "../../common";
 import { getCols, setTitle } from "../util";
 import {
     DataTable,
@@ -11,7 +11,7 @@ import {
     SkillsBlock,
 } from "../components";
 
-const DraftSummary = ({ players, season }) => {
+const DraftSummary = ({ players, season, userTid }) => {
     setTitle(`${season} Draft Summary`);
 
     const superCols = [
@@ -95,7 +95,7 @@ const DraftSummary = ({ players, season }) => {
             ],
             classNames: {
                 danger: p.hof,
-                info: p.draft.tid === g.userTid,
+                info: p.draft.tid === userTid,
             },
         };
     });
@@ -148,6 +148,7 @@ const DraftSummary = ({ players, season }) => {
 DraftSummary.propTypes = {
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     season: PropTypes.number.isRequired,
+    userTid: PropTypes.number.isRequired,
 };
 
 export default DraftSummary;

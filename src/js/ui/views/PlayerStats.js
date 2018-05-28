@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { g, helpers } from "../../common";
+import { helpers } from "../../common";
 import {
     DataTable,
     Dropdown,
@@ -10,7 +10,14 @@ import {
 } from "../components";
 import { getCols, setTitle } from "../util";
 
-const PlayerStats = ({ abbrev, players, playoffs, season, statType }) => {
+const PlayerStats = ({
+    abbrev,
+    players,
+    playoffs,
+    season,
+    statType,
+    userTid,
+}) => {
     const label = season !== undefined ? season : "Career Totals";
     setTitle(`Player Stats - ${label}`);
 
@@ -169,7 +176,7 @@ const PlayerStats = ({ abbrev, players, playoffs, season, statType }) => {
             ],
             classNames: {
                 danger: p.hof,
-                info: actualTid === g.userTid,
+                info: actualTid === userTid,
             },
         };
     });
@@ -232,6 +239,7 @@ PlayerStats.propTypes = {
     season: PropTypes.number, // Undefined for career totals
     statType: PropTypes.oneOf(["advanced", "per36", "perGame", "totals"])
         .isRequired,
+    userTid: PropTypes.number,
 };
 
 export default PlayerStats;

@@ -28,12 +28,14 @@ async function updateLeagueFinances(
         });
 
         return {
+            currentSeason: g.season,
             season: inputs.season,
             salaryCap: g.salaryCap / 1000,
             minPayroll: g.minPayroll / 1000,
             luxuryPayroll: g.luxuryPayroll / 1000,
             luxuryTax: g.luxuryTax,
             teams,
+            userTid: g.userTid,
         };
     }
 }

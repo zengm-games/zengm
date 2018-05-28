@@ -3,7 +3,7 @@
 import faces from "facesjs";
 import PropTypes from "prop-types";
 import React from "react";
-import { PHASE, g, helpers } from "../../common";
+import { PHASE, helpers } from "../../common";
 import { realtimeUpdate, setTitle, toWorker } from "../util";
 import { NewWindowLink, PlayerPicture } from "../components";
 
@@ -15,7 +15,7 @@ const faceOptions = {
     hair: [0, 1, 2, 3, 4],
 };
 
-const copyValidValues = (source, target, minContract, season) => {
+const copyValidValues = (source, target, minContract, phase, season) => {
     for (const attr of ["hgt", "tid", "weight"]) {
         const val = parseInt(source[attr], 10);
         if (!Number.isNaN(val)) {
@@ -30,7 +30,7 @@ const copyValidValues = (source, target, minContract, season) => {
     {
         const age = parseInt(source.age, 10);
         if (!Number.isNaN(age)) {
-            target.born.year = g.season - age;
+            target.born.year = season - age;
         }
     }
 
@@ -65,7 +65,7 @@ const copyValidValues = (source, target, minContract, season) => {
             }
 
             // If current season contracts already expired, then current season can't be allowed for new contract
-            if (exp === season && g.phase >= PHASE.RESIGN_PLAYERS) {
+            if (exp === season && phase >= PHASE.RESIGN_PLAYERS) {
                 exp += 1;
             }
 
@@ -176,6 +176,7 @@ class CustomizePlayer extends React.Component {
             this.state.p,
             p,
             this.props.minContract,
+            this.props.phase,
             this.props.season,
         );
 
@@ -950,6 +951,7 @@ CustomizePlayer.propTypes = {
     godMode: PropTypes.bool.isRequired,
     originalTid: PropTypes.number,
     minContract: PropTypes.number,
+    phase: PropTypes.number,
     p: PropTypes.object,
     season: PropTypes.number,
     teams: PropTypes.arrayOf(

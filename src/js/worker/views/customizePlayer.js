@@ -101,6 +101,7 @@ async function updateCustomizePlayer(
             minContract: g.minContract,
             originalTid,
             p,
+            phase: g.phase,
             season: g.season,
             teams,
         };

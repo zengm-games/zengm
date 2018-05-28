@@ -71,6 +71,7 @@ async function updatePlayers(
         }, {});
 
         return {
+            numGames: g.numGames,
             season: inputs.season,
             statsAll,
         };

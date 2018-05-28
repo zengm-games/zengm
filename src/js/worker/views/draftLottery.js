@@ -40,6 +40,7 @@ async function updateDraftLottery(
                     result,
                     season,
                     type: "completed",
+                    userTid: g.userTid,
                 };
             }
         }
@@ -60,6 +61,7 @@ async function updateDraftLottery(
             result: draftLotteryResult.result,
             season: draftLotteryResult.season,
             type,
+            userTid: g.userTid,
         };
     }
 }

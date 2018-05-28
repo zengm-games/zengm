@@ -64,6 +64,7 @@ async function updateTeams(
             season: inputs.season,
             teamOpponent: inputs.teamOpponent,
             teams,
+            userTid: g.userTid,
         };
     }
 }

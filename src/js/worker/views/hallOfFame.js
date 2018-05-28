@@ -72,6 +72,7 @@ async function updatePlayers(
 
         return {
             players,
+            userTid: g.userTid,
         };
     }
 }

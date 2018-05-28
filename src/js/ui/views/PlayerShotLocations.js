@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { g, helpers } from "../../common";
+import { helpers } from "../../common";
 import { getCols, setTitle } from "../util";
 import {
     DataTable,
@@ -9,7 +9,7 @@ import {
     PlayerNameLabels,
 } from "../components";
 
-const PlayerShotLocations = ({ players, season }) => {
+const PlayerShotLocations = ({ players, season, userTid }) => {
     setTitle(`Player Shot Locations - ${season}`);
 
     const superCols = [
@@ -90,7 +90,7 @@ const PlayerShotLocations = ({ players, season }) => {
                 p.stats.tpp.toFixed(1),
             ],
             classNames: {
-                info: p.tid === g.userTid,
+                info: p.stats.tid === userTid,
             },
         };
     });
@@ -132,6 +132,7 @@ const PlayerShotLocations = ({ players, season }) => {
 PlayerShotLocations.propTypes = {
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     season: PropTypes.number.isRequired,
+    userTid: PropTypes.number.isRequired,
 };
 
 export default PlayerShotLocations;

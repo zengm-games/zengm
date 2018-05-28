@@ -1,10 +1,17 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { g, helpers } from "../../common";
+import { helpers } from "../../common";
 import { getCols, prefixStatOpp, setTitle } from "../util";
 import { DataTable, Dropdown, JumpTo, NewWindowLink } from "../components";
 
-const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
+const TeamStats = ({
+    playoffs,
+    season,
+    stats,
+    teamOpponent,
+    teams,
+    userTid,
+}) => {
     setTitle(`Team Stats - ${season}`);
 
     const cols =
@@ -127,7 +134,7 @@ const TeamStats = ({ playoffs, season, stats, teamOpponent, teams }) => {
         }
 
         // This is our team.
-        if (g.userTid === t.tid) {
+        if (userTid === t.tid) {
             // Color stat values accordingly.
             for (const [statType, value] of Object.entries(data)) {
                 if (
@@ -243,6 +250,7 @@ TeamStats.propTypes = {
     stats: PropTypes.object.isRequired,
     teamOpponent: PropTypes.oneOf(["advanced", "opponent", "team"]).isRequired,
     teams: PropTypes.arrayOf(PropTypes.object).isRequired,
+    userTid: PropTypes.number.isRequired,
 };
 
 export default TeamStats;

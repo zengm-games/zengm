@@ -22,7 +22,6 @@ import type {
 type Props = {
     Component: any,
     data: any,
-    topMenu: any,
     updating: boolean,
 };
 

@@ -1,10 +1,10 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { g, helpers } from "../../common";
+import { helpers } from "../../common";
 import { getCols, setTitle } from "../util";
 import { DataTable, NewWindowLink } from "../components";
 
-const PowerRankings = ({ teams }) => {
+const PowerRankings = ({ teams, userTid }) => {
     setTitle("Power Rankings");
 
     const cols = getCols("O", "P", "T", "Team", "W", "L", "L10", "MOV");
@@ -32,7 +32,7 @@ const PowerRankings = ({ teams }) => {
                 </span>,
             ],
             classNames: {
-                info: t.tid === g.userTid,
+                info: t.tid === userTid,
             },
         };
     });
@@ -79,6 +79,7 @@ PowerRankings.propTypes = {
             }),
         }),
     ).isRequired,
+    userTid: PropTypes.number.isRequired,
 };
 
 export default PowerRankings;

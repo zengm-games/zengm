@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { g, helpers } from "../../common";
+import { helpers } from "../../common";
 import { LeagueFileUpload } from "../components";
 import { logEvent, setTitle, toWorker } from "../util";
 
@@ -104,7 +104,7 @@ class EditTeamInfo extends React.Component {
                         const newTeams = leagueFile.teams;
 
                         // Validate teams
-                        if (newTeams.length < g.numTeams) {
+                        if (newTeams.length < this.props.numTeams) {
                             throw new Error("Wrong number of teams");
                         }
                         for (let i = 0; i < newTeams.length; i++) {
@@ -306,6 +306,7 @@ class EditTeamInfo extends React.Component {
 
 EditTeamInfo.propTypes = {
     godMode: PropTypes.bool.isRequired,
+    numTeams: PropTypes.number.isRequired,
     teams: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 

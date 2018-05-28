@@ -1,16 +1,18 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { g, helpers } from "../../common";
+import { helpers } from "../../common";
 import { getCols, setTitle } from "../util";
 import { DataTable, Dropdown, JumpTo, NewWindowLink } from "../components";
 
 const LeagueFinances = ({
+    currentSeason,
     minPayroll,
     luxuryPayroll,
     luxuryTax,
     salaryCap,
     season,
     teams,
+    userTid,
 }) => {
     setTitle(`League Finances - ${season}`);
 
@@ -26,7 +28,7 @@ const LeagueFinances = ({
     const rows = teams.map(t => {
         // Display the current actual payroll for this season, or the salary actually paid out for prior seasons
         const payroll =
-            season === g.season
+            season === currentSeason
                 ? t.seasonAttrs.payroll
                 : t.seasonAttrs.salaryPaid;
 
@@ -43,7 +45,7 @@ const LeagueFinances = ({
                 helpers.formatCurrency(payroll, "M"),
             ],
             classNames: {
-                info: t.tid === g.userTid,
+                info: t.tid === userTid,
             },
         };
     });
@@ -85,6 +87,7 @@ const LeagueFinances = ({
 };
 
 LeagueFinances.propTypes = {
+    currentSeason: PropTypes.number.isRequired,
     minPayroll: PropTypes.number.isRequired,
     luxuryPayroll: PropTypes.number.isRequired,
     luxuryTax: PropTypes.number.isRequired,
@@ -106,6 +109,7 @@ LeagueFinances.propTypes = {
             tid: PropTypes.number.isRequired,
         }),
     ).isRequired,
+    userTid: PropTypes.number.isRequired,
 };
 
 export default LeagueFinances;

@@ -1,10 +1,10 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { g, helpers } from "../../common";
+import { helpers } from "../../common";
 import { getCols, setTitle } from "../util";
 import { DataTable, NewWindowLink } from "../components";
 
-const HallOfFame = ({ players }) => {
+const HallOfFame = ({ players, userTid }) => {
     setTitle("Hall of Fame");
 
     const superCols = [
@@ -81,14 +81,14 @@ const HallOfFame = ({ players }) => {
                 p.careerStats.ewa.toFixed(1),
             ],
             classNames: {
-                danger: p.legacyTid === g.userTid,
+                danger: p.legacyTid === userTid,
                 info:
                     p.statsTids
                         .slice(0, p.statsTids.length - 1)
-                        .includes(g.userTid) && p.legacyTid !== g.userTid,
+                        .includes(userTid) && p.legacyTid !== userTid,
                 success:
-                    p.statsTids[p.statsTids.length - 1] === g.userTid &&
-                    p.legacyTid !== g.userTid,
+                    p.statsTids[p.statsTids.length - 1] === userTid &&
+                    p.legacyTid !== userTid,
             },
         };
     });
@@ -126,6 +126,7 @@ const HallOfFame = ({ players }) => {
 
 HallOfFame.propTypes = {
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
+    userTid: PropTypes.number.isRequired,
 };
 
 export default HallOfFame;

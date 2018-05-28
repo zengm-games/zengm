@@ -43,6 +43,7 @@ async function updatePlayers(
                 "fgMidRange",
                 "fgaMidRange",
                 "fgpMidRange",
+                "tid",
                 "tp",
                 "tpa",
                 "tpp",
@@ -53,6 +54,7 @@ async function updatePlayers(
         return {
             season: inputs.season,
             players,
+            userTid: g.userTid,
         };
     }
 }

@@ -1,6 +1,6 @@
 // @flow
 
-import { g } from "../../../common";
+import { g, helpers } from "../../../common";
 import genPicks from "./genPicks";
 import logLotteryChances from "./logLotteryChances";
 import logLotteryWinners from "./logLotteryWinners";
@@ -69,6 +69,9 @@ const genOrder = async (
             g.season,
         );
     }
+
+    // Because we're editing this later, and sometimes this is called with mock=true
+    draftPicks = helpers.deepCopy(draftPicks);
 
     // Reorganize this to an array indexed on originalTid and round
     const draftPicksIndexed = [];

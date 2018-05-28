@@ -12,24 +12,27 @@ const DraftAbbrev = ({
 }: {
     originalTid: number,
     tid: number,
-    season: number,
+    season?: number,
 }) => {
     const abbrev = g.teamAbbrevsCache[tid];
     const originalAbbrev = g.teamAbbrevsCache[originalTid];
 
+    const args1 =
+        season === undefined ? ["roster", abbrev] : ["roster", abbrev, season];
+
     if (abbrev === originalAbbrev) {
-        return (
-            <a href={helpers.leagueUrl(["roster", abbrev, season])}>{abbrev}</a>
-        );
+        return <a href={helpers.leagueUrl(args1)}>{abbrev}</a>;
     }
+
+    const args2 =
+        season === undefined
+            ? ["roster", originalAbbrev]
+            : ["roster", originalAbbrev, season];
 
     return (
         <span>
-            <a href={helpers.leagueUrl(["roster", abbrev, season])}>{abbrev}</a>{" "}
-            (from{" "}
-            <a href={helpers.leagueUrl(["roster", originalAbbrev, season])}>
-                {originalAbbrev}
-            </a>)
+            <a href={helpers.leagueUrl(args1)}>{abbrev}</a> (from{" "}
+            <a href={helpers.leagueUrl(args2)}>{originalAbbrev}</a>)
         </span>
     );
 };

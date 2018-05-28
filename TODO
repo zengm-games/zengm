@@ -1,3 +1,17 @@
+get rid of g in UI
+- required properties should be passed in from worker, or synced via some other mechanism and stored globally
+  - decide which should be stored globally, and how to pass down to components (context? maybe just props from controller?)
+  - unstated? or context API directly, maybe? redux, even?
+    - straight context API doesn't look too hard
+      - but it re-renders every subscriber on every change
+      - would still need emitter
+    - unstated
+      - nicer api, has actions
+      - tests, support?
+    - redux
+      - maybe worth the boilerplate... could put everything there
+- figure out how to get rid of weird ad-related code (center when right ad not displayed or gold, etc) and emitter?
+
 too easy to trade for current season picks
 - i think it's uncertainty+fudge factor decreasing too much when the outcome is certain
 
@@ -19,10 +33,7 @@ customize playoff series length
 - https://www.reddit.com/r/BasketballGM/comments/8b23uh/request_customizable_playoff_series_length/dx3bxd3/?context=3
 
 Trade.js shouldn't have realtimeupdate, should be listening to a specific updateevent (like "trade") and that should be emitted in all the worker api functions
-
-get rid of g in UI
-- required properties should be passed in from worker, or synced via some other mechanism and stored globally
-  - decide which should be stored globally, and how to pass down to components (context? maybe just props from controller?)
+- same with the rest of UI, otherwise updates will only happen in one tab
 
 later
 - in new league: set rookie contracts appropriately

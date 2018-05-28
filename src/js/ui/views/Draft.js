@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { g, helpers } from "../../common";
+import { helpers } from "../../common";
 import { getCols, setTitle, toWorker } from "../util";
 import {
     DataTable,
@@ -173,7 +173,6 @@ class Draft extends React.Component {
                 `${p.draft.round}-${p.draft.pick}`,
                 <DraftAbbrev
                     originalTid={p.draft.originalTid}
-                    season={g.season}
                     tid={p.draft.tid}
                 >
                     {p.draft.tid} {p.draft.originalTid}

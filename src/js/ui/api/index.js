@@ -17,17 +17,20 @@ import type {
  * @memberOf util.helpers
  * @param {string} type Either "league" for a new league, or "season" for a completed season
  */
-const bbgmPing = (type: "league" | "season" | "version") => {
+const bbgmPing = (
+    type: "league" | "season" | "version",
+    arg: number | void,
+) => {
     if (window.enableLogging && window.gtag) {
         if (type === "league") {
             window.gtag("event", "New league", {
                 event_category: "BBGM",
-                event_label: String(g.lid),
+                event_label: String(arg),
             });
         } else if (type === "season") {
             window.gtag("event", "Completed season", {
                 event_category: "BBGM",
-                event_label: String(g.season),
+                event_label: String(arg),
             });
         } else if (type === "version") {
             window.gtag("event", "Version", {

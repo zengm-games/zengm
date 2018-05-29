@@ -110,7 +110,7 @@ const newPhaseBeforeDraft = async (
         url = helpers.leagueUrl(["history"]);
     }
 
-    toUI(["bbgmPing", "season"], conditions);
+    toUI(["bbgmPing", "season", g.season], conditions);
 
     return [url, ["playerMovement"]];
 };

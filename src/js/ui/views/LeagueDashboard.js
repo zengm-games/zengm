@@ -371,6 +371,7 @@ const LeagueDashboard = ({
                                     <PlayoffMatchup
                                         season={season}
                                         series={series}
+                                        userTid={userTid}
                                     />
                                     <a href={helpers.leagueUrl(["playoffs"])}>
                                         » Playoffs

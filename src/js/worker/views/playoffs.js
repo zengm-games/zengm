@@ -93,6 +93,7 @@ async function updatePlayoffs(
             confNames,
             season: inputs.season,
             series,
+            userTid: g.userTid,
         };
     }
 }

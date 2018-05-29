@@ -1,6 +1,6 @@
 // @flow
 
-import { PLAYER } from "../../common";
+import { PLAYER, g } from "../../common";
 import { idb } from "../db";
 
 async function updateDraftTeamHistory(inputs: {
@@ -42,9 +42,18 @@ async function updateDraftTeamHistory(inputs: {
         };
     });
 
+    const abbrev = inputs.abbrev;
+    const tid = g.teamAbbrevsCache.indexOf(abbrev);
+    const region = g.teamRegionsCache[tid];
+    const name = g.teamNamesCache[tid];
+    const userAbbrev = g.teamAbbrevsCache[g.userTid];
+
     return {
-        abbrev: inputs.abbrev,
+        abbrev,
+        name,
         players,
+        region,
+        userAbbrev,
     };
 }
 

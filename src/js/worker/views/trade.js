@@ -183,11 +183,11 @@ async function updateTrade(): void | { [key: string]: any } {
 
     // Always run this, for multi team mode
     vars.teams = [];
-    for (let i = 0; i < g.numTeams; i++) {
-        vars.teams[i] = {
-            abbrev: g.teamAbbrevsCache[i],
-            region: g.teamRegionsCache[i],
-            name: g.teamNamesCache[i],
+    for (let tid = 0; tid < g.numTeams; tid++) {
+        vars.teams[tid] = {
+            name: g.teamNamesCache[tid],
+            region: g.teamRegionsCache[tid],
+            tid,
         };
     }
     vars.teams.splice(g.userTid, 1); // Can't trade with yourself

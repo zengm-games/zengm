@@ -16,7 +16,7 @@ get rid of g in UI
     statusText - yes
     username - yes
   - maybe: phase, season
-  - team*caches?
+  - team*caches? draftabbrev might need it, maybe others too
 - required properties should be passed in from worker, or synced via some other mechanism and stored globally
   - decide which should be stored globally, and how to pass down to components (context? maybe just props from controller?)
   - unstated? or context API directly, maybe? redux, even?
@@ -32,6 +32,7 @@ get rid of g in UI
       - could subscribe to emitter and use that
     - write my own, let you subscribe to individual variables from state
     - should all this be stored only in the worker?
+      - write mechanism to sync, similar to how views work
 - figure out how to get rid of weird ad-related code (center when right ad not displayed or gold, etc) and emitter?
   - add/remove a class to center whenever gold is updated
 

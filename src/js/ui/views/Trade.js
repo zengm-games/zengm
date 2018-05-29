@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { PHASE, g, helpers } from "../../common";
+import { PHASE, helpers } from "../../common";
 import { getCols, realtimeUpdate, setTitle, toWorker } from "../util";
 import { DataTable, NewWindowLink, PlayerNameLabels } from "../components";
 
@@ -101,7 +101,7 @@ class Trade extends React.Component {
             message: null,
         });
 
-        const otherTid = g.teamAbbrevsCache.indexOf(event.currentTarget.value);
+        const otherTid = parseInt(event.currentTarget.value, 10);
 
         const teams = [
             {
@@ -251,11 +251,11 @@ class Trade extends React.Component {
                             <select
                                 className="form-control select-team"
                                 style={{ marginBottom: "6px" }}
-                                value={g.teamAbbrevsCache[otherTid]}
+                                value={otherTid}
                                 onChange={this.handleChangeTeam}
                             >
                                 {teams.map(t => (
-                                    <option key={t.abbrev} value={t.abbrev}>
+                                    <option key={t.tid} value={t.tid}>
                                         {t.region} {t.name}
                                     </option>
                                 ))}
@@ -512,7 +512,13 @@ Trade.propTypes = {
     summary: PropTypes.object.isRequired,
     showResigningMsg: PropTypes.bool.isRequired,
     strategy: PropTypes.string.isRequired,
-    teams: PropTypes.array.isRequired,
+    teams: PropTypes.arrayOf(
+        PropTypes.shape({
+            name: PropTypes.string.isRequired,
+            region: PropTypes.string.isRequired,
+            tid: PropTypes.number.isRequired,
+        }),
+    ).isRequired,
     userDpids: PropTypes.arrayOf(PropTypes.number).isRequired,
     userPicks: PropTypes.array.isRequired,
     userPids: PropTypes.arrayOf(PropTypes.number).isRequired,

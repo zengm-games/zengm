@@ -15,7 +15,7 @@ async function updatePlayers(
         inputs.season !== state.season ||
         inputs.playoffs !== state.playoffs
     ) {
-        let feats = await idb.getCopies.playerFeats();
+        let feats: any = await idb.getCopies.playerFeats();
 
         // Put fake fid on cached feats
         let maxFid = 0;

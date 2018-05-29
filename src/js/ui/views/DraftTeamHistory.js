@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { g, helpers } from "../../common";
+import { helpers } from "../../common";
 import { getCols, setTitle } from "../util";
 import {
     DataTable,
@@ -10,11 +10,7 @@ import {
     SkillsBlock,
 } from "../components";
 
-const DraftTeamHistory = ({ abbrev, players }) => {
-    const tid = g.teamAbbrevsCache.indexOf(abbrev);
-    const region = g.teamRegionsCache[tid];
-    const name = g.teamNamesCache[tid];
-
+const DraftTeamHistory = ({ abbrev, name, players, region, userAbbrev }) => {
     setTitle(`${region} ${name} Draft History`);
 
     const superCols = [
@@ -59,8 +55,6 @@ const DraftTeamHistory = ({ abbrev, players }) => {
         "PER",
         "EWA",
     );
-
-    const userAbbrev = g.teamAbbrevsCache[g.userTid];
 
     const rows = players.map(p => {
         return {
@@ -150,7 +144,10 @@ const DraftTeamHistory = ({ abbrev, players }) => {
 
 DraftTeamHistory.propTypes = {
     abbrev: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
+    region: PropTypes.string.isRequired,
+    userAbbrev: PropTypes.string.isRequired,
 };
 
 export default DraftTeamHistory;

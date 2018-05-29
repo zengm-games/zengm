@@ -489,7 +489,7 @@ const create = async (
     idb.cache.startAutoFlush();
     local.leagueLoaded = true;
 
-    toUI(["bbgmPing", "league"], conditions);
+    toUI(["bbgmPing", "league", lid], conditions);
 
     return lid;
 };

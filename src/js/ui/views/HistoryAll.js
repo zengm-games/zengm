@@ -1,10 +1,10 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { g, helpers } from "../../common";
+import { helpers } from "../../common";
 import { DataTable, NewWindowLink, PlayerNameLabels } from "../components";
 import { getCols, setTitle } from "../util";
 
-const awardName = (award, season, userTid) => {
+const awardName = (award, season, teamAbbrevsCache, userTid) => {
     if (!award) {
         // For old seasons with no Finals MVP
         return "N/A";
@@ -15,11 +15,11 @@ const awardName = (award, season, userTid) => {
             <PlayerNameLabels pid={award.pid}>{award.name}</PlayerNameLabels> (<a
                 href={helpers.leagueUrl([
                     "roster",
-                    g.teamAbbrevsCache[award.tid],
+                    teamAbbrevsCache[award.tid],
                     season,
                 ])}
             >
-                {g.teamAbbrevsCache[award.tid]}
+                {teamAbbrevsCache[award.tid]}
             </a>)
         </span>
     );
@@ -50,7 +50,7 @@ const teamName = (t, season) => {
     return "N/A";
 };
 
-const HistoryAll = ({ seasons, userTid }) => {
+const HistoryAll = ({ seasons, teamAbbrevsCache, userTid }) => {
     setTitle("League History");
 
     const cols = getCols(
@@ -106,10 +106,10 @@ const HistoryAll = ({ seasons, userTid }) => {
                 seasonLink,
                 champEl,
                 runnerUpEl,
-                awardName(s.finalsMvp, s.season, userTid),
-                awardName(s.mvp, s.season, userTid),
-                awardName(s.dpoy, s.season, userTid),
-                awardName(s.roy, s.season, userTid),
+                awardName(s.finalsMvp, s.season, teamAbbrevsCache, userTid),
+                awardName(s.mvp, s.season, teamAbbrevsCache, userTid),
+                awardName(s.dpoy, s.season, teamAbbrevsCache, userTid),
+                awardName(s.roy, s.season, teamAbbrevsCache, userTid),
             ],
         };
     });
@@ -140,6 +140,7 @@ const HistoryAll = ({ seasons, userTid }) => {
 
 HistoryAll.propTypes = {
     seasons: PropTypes.arrayOf(PropTypes.object).isRequired,
+    teamAbbrevsCache: PropTypes.arrayOf(PropTypes.string).isRequired,
     userTid: PropTypes.number.isRequired,
 };
 

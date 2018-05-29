@@ -89,6 +89,7 @@ async function updateHistory(
 
         return {
             seasons,
+            teamAbbrevsCache: g.teamAbbrevsCache,
             userTid: g.userTid,
         };
     }

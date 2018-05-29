@@ -13,12 +13,14 @@ type SeriesTeam = {
 const PlayoffMatchup = ({
     season,
     series,
+    userTid,
 }: {
     season: number,
     series?: {
         away: SeriesTeam,
         home: SeriesTeam,
     },
+    userTid: number,
 }) => {
     if (
         series === undefined ||
@@ -34,7 +36,7 @@ const PlayoffMatchup = ({
     return (
         <div>
             <span
-                className={series.home.tid === g.userTid ? "bg-info" : ""}
+                className={series.home.tid === userTid ? "bg-info" : ""}
                 style={{ fontWeight: homeWon ? "bold" : "normal" }}
             >
                 {series.home.seed}.{" "}
@@ -54,7 +56,7 @@ const PlayoffMatchup = ({
             <br />
 
             <span
-                className={series.away.tid === g.userTid ? "bg-info" : ""}
+                className={series.away.tid === userTid ? "bg-info" : ""}
                 style={{ fontWeight: awayWon ? "bold" : "normal" }}
             >
                 {series.away.seed}.{" "}
@@ -89,6 +91,7 @@ PlayoffMatchup.propTypes = {
             won: PropTypes.number,
         }),
     }),
+    userTid: PropTypes.number.isRequired,
 };
 
 export default PlayoffMatchup;

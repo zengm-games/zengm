@@ -12,6 +12,7 @@ const Playoffs = ({
     numPlayoffRounds,
     season,
     series,
+    userTid,
 }: {
     confNames: string[],
     finalMatchups: boolean,
@@ -28,6 +29,7 @@ const Playoffs = ({
         winp: number,
         won?: number,
     },
+    userTid: number,
 }) => {
     setTitle(`Playoffs - ${season}`);
 
@@ -73,6 +75,7 @@ const Playoffs = ({
                                                         m.matchup[1]
                                                     ]
                                                 }
+                                                userTid={userTid}
                                             />
                                         </td>
                                     );
@@ -93,6 +96,7 @@ Playoffs.propTypes = {
     numPlayoffRounds: PropTypes.number.isRequired,
     season: PropTypes.number.isRequired,
     series: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.object)).isRequired,
+    userTid: PropTypes.number.isRequired,
 };
 
 export default Playoffs;

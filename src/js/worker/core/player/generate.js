@@ -271,8 +271,8 @@ const generate = (
         watch: false,
         weight: Math.round(
             random.randInt(-20, 20) +
-                (ratings.hgt + 0.5 * ratings.stre) *
-                    (MAX_WEIGHT - MIN_WEIGHT) /
+                ((ratings.hgt + 0.5 * ratings.stre) *
+                    (MAX_WEIGHT - MIN_WEIGHT)) /
                     150 +
                 MIN_WEIGHT,
         ), // Weight in pounds (from minWeight to maxWeight)

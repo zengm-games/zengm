@@ -81,7 +81,7 @@ function realGauss(mu?: number = 0, sigma?: number = 1): number {
         radius = z1 * z1 + z2 * z2;
     } while (radius >= 1 || radius === 0); // only use inside the unit circle
 
-    const marsaglia = Math.sqrt(-2 * Math.log(radius) / radius);
+    const marsaglia = Math.sqrt((-2 * Math.log(radius)) / radius);
 
     return z1 * marsaglia * sigma + mu;
 }

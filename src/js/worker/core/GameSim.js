@@ -205,8 +205,7 @@ class GameSim {
         this.id = gid;
         this.team = [team1, team2]; // If a team plays twice in a day, this needs to be a deep copy
         const numPossessions = Math.round(
-            (this.team[0].pace + this.team[1].pace) /
-                2 *
+            ((this.team[0].pace + this.team[1].pace) / 2) *
                 random.uniform(0.9, 1.1),
         );
         this.dt = 48 / (2 * numPossessions); // Time elapsed per possession
@@ -816,8 +815,7 @@ class GameSim {
      */
     probTov() {
         return (
-            0.14 *
-            this.team[this.d].compositeRating.defense /
+            (0.14 * this.team[this.d].compositeRating.defense) /
             (0.5 *
                 (this.team[this.o].compositeRating.dribbling +
                     this.team[this.o].compositeRating.passing))
@@ -849,8 +847,7 @@ class GameSim {
      */
     probStl() {
         return (
-            0.55 *
-            this.team[this.d].compositeRating.defensePerimeter /
+            (0.55 * this.team[this.d].compositeRating.defensePerimeter) /
             (0.5 *
                 (this.team[this.o].compositeRating.dribbling +
                     this.team[this.o].compositeRating.passing))
@@ -1158,8 +1155,7 @@ class GameSim {
      */
     probAst() {
         return (
-            0.6 *
-            (2 + this.team[this.o].compositeRating.passing) /
+            (0.6 * (2 + this.team[this.o].compositeRating.passing)) /
             (2 + this.team[this.d].compositeRating.defense)
         );
     }
@@ -1461,8 +1457,7 @@ class GameSim {
         }
 
         if (
-            0.75 *
-                (2 + this.team[this.d].compositeRating.rebounding) /
+            (0.75 * (2 + this.team[this.d].compositeRating.rebounding)) /
                 (2 + this.team[this.o].compositeRating.rebounding) >
             Math.random()
         ) {

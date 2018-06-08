@@ -16,7 +16,7 @@ const genPlayersWithoutSaving = (
     players: PlayerWithoutPid[],
 } => {
     if (numPlayers === null || numPlayers === undefined) {
-        numPlayers = Math.round(70 * g.numTeams / 30); // 70 scaled by number of teams
+        numPlayers = Math.round((70 * g.numTeams) / 30); // 70 scaled by number of teams
     }
 
     let draftYear = g.season;
@@ -73,7 +73,7 @@ const genPlayersWithoutSaving = (
     }
 
     // Small chance of making top 4 players (in 70 player draft) special - on average, one per draft class
-    const numSpecialPlayerChances = Math.round(4 / 70 * numPlayers);
+    const numSpecialPlayerChances = Math.round((4 / 70) * numPlayers);
     for (let i = 0; i < numSpecialPlayerChances; i++) {
         if (Math.random() < 1 / numSpecialPlayerChances) {
             const p = enteringDraft[i];

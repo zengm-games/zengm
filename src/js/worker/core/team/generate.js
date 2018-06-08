@@ -31,8 +31,9 @@ const generate = (tm: any) => {
                     ? tm.budget.ticketPrice.amount
                     : parseFloat(
                           (
-                              g.salaryCap / 90000 * 37 +
-                              25 * (g.numTeams - tm.popRank) / (g.numTeams - 1)
+                              (g.salaryCap / 90000) * 37 +
+                              (25 * (g.numTeams - tm.popRank)) /
+                                  (g.numTeams - 1)
                           ).toFixed(2),
                       ),
                 rank: tm.hasOwnProperty("budget")
@@ -43,9 +44,8 @@ const generate = (tm: any) => {
                 amount: tm.hasOwnProperty("budget")
                     ? tm.budget.scouting.amount
                     : Math.round(
-                          g.salaryCap / 90000 * 1350 +
-                              900 *
-                                  (g.numTeams - tm.popRank) /
+                          (g.salaryCap / 90000) * 1350 +
+                              (900 * (g.numTeams - tm.popRank)) /
                                   (g.numTeams - 1),
                       ) * 10,
                 rank: tm.hasOwnProperty("budget")
@@ -56,9 +56,8 @@ const generate = (tm: any) => {
                 amount: tm.hasOwnProperty("budget")
                     ? tm.budget.coaching.amount
                     : Math.round(
-                          g.salaryCap / 90000 * 1350 +
-                              900 *
-                                  (g.numTeams - tm.popRank) /
+                          (g.salaryCap / 90000) * 1350 +
+                              (900 * (g.numTeams - tm.popRank)) /
                                   (g.numTeams - 1),
                       ) * 10,
                 rank: tm.hasOwnProperty("budget")
@@ -69,9 +68,8 @@ const generate = (tm: any) => {
                 amount: tm.hasOwnProperty("budget")
                     ? tm.budget.health.amount
                     : Math.round(
-                          g.salaryCap / 90000 * 1350 +
-                              900 *
-                                  (g.numTeams - tm.popRank) /
+                          (g.salaryCap / 90000) * 1350 +
+                              (900 * (g.numTeams - tm.popRank)) /
                                   (g.numTeams - 1),
                       ) * 10,
                 rank: tm.hasOwnProperty("budget")
@@ -82,9 +80,8 @@ const generate = (tm: any) => {
                 amount: tm.hasOwnProperty("budget")
                     ? tm.budget.facilities.amount
                     : Math.round(
-                          g.salaryCap / 90000 * 1350 +
-                              900 *
-                                  (g.numTeams - tm.popRank) /
+                          (g.salaryCap / 90000) * 1350 +
+                              (900 * (g.numTeams - tm.popRank)) /
                                   (g.numTeams - 1),
                       ) * 10,
                 rank: tm.hasOwnProperty("budget")

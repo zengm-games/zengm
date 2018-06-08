@@ -61,16 +61,16 @@ const writeTeamStats = async (results: GameResults) => {
             coachingPaid = t.budget.coaching.amount / g.numGames;
             healthPaid = t.budget.health.amount / g.numGames;
             facilitiesPaid = t.budget.facilities.amount / g.numGames;
-            merchRevenue = g.salaryCap / 90000 * 4.5 * att / 1000;
+            merchRevenue = ((g.salaryCap / 90000) * 4.5 * att) / 1000;
             if (merchRevenue > 250) {
                 merchRevenue = 250;
             }
-            sponsorRevenue = g.salaryCap / 90000 * 15 * att / 1000;
+            sponsorRevenue = ((g.salaryCap / 90000) * 15 * att) / 1000;
             if (sponsorRevenue > 600) {
                 sponsorRevenue = 600;
             }
-            nationalTvRevenue = g.salaryCap / 90000 * 375;
-            localTvRevenue = g.salaryCap / 90000 * 15 * att / 1000;
+            nationalTvRevenue = (g.salaryCap / 90000) * 375;
+            localTvRevenue = ((g.salaryCap / 90000) * 15 * att) / 1000;
             if (localTvRevenue > 1200) {
                 localTvRevenue = 1200;
             }
@@ -80,16 +80,16 @@ const writeTeamStats = async (results: GameResults) => {
         if (t1 === 0) {
             // Base on home team
             att = random.gauss(att, 1000);
-            att *= 45 / (g.salaryCap / 90000 * ticketPrice); // Attendance depends on ticket price. Not sure if this formula is reasonable.
+            att *= 45 / ((g.salaryCap / 90000) * ticketPrice); // Attendance depends on ticket price. Not sure if this formula is reasonable.
             att *=
                 1 +
-                0.075 *
+                (0.075 *
                     (g.numTeams -
                         finances.getRankLastThree(
                             teamSeasons,
                             "expenses",
                             "facilities",
-                        )) /
+                        ))) /
                     (g.numTeams - 1); // Attendance depends on facilities. Not sure if this formula is reasonable.
             if (att > teamSeason.stadiumCapacity) {
                 att = teamSeason.stadiumCapacity;
@@ -99,7 +99,7 @@ const writeTeamStats = async (results: GameResults) => {
             att = Math.round(att);
         }
         // This doesn't really make sense
-        const ticketRevenue = ticketPrice * att / 1000; // [thousands of dollars]
+        const ticketRevenue = (ticketPrice * att) / 1000; // [thousands of dollars]
 
         // Hype - relative to the expectations of prior seasons
         if (teamSeason.gp > 5 && g.phase !== PHASE.PLAYOFFS) {

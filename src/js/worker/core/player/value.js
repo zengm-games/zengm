@@ -64,7 +64,7 @@ const value = (
             current = intercept + slope * ps1.per;
             if (ps1.min < 2000) {
                 current =
-                    current * ps1.min / 2000 + pr.ovr * (1 - ps1.min / 2000);
+                    (current * ps1.min) / 2000 + pr.ovr * (1 - ps1.min / 2000);
             }
         } else {
             // Two most recent seasons
@@ -72,13 +72,12 @@ const value = (
             if (ps1.min + ps2.min > 0) {
                 current =
                     intercept +
-                    slope *
-                        (ps1.per * ps1.min + ps2.per * ps2.min) /
+                    (slope * (ps1.per * ps1.min + ps2.per * ps2.min)) /
                         (ps1.min + ps2.min);
 
                 if (ps1.min + ps2.min < 2000) {
                     current =
-                        current * (ps1.min + ps2.min) / 2000 +
+                        (current * (ps1.min + ps2.min)) / 2000 +
                         pr.ovr * (1 - (ps1.min + ps2.min) / 2000);
                 }
             }

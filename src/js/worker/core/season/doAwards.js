@@ -101,7 +101,7 @@ const leagueLeaders = (
     players: PlayerFiltered[],
     awardsByPlayer: AwardsByPlayer,
 ) => {
-    const factor = g.numGames / 82 * Math.sqrt(g.quarterLength / 12); // To handle changes in number of games and playing time
+    const factor = (g.numGames / 82) * Math.sqrt(g.quarterLength / 12); // To handle changes in number of games and playing time
     const categories = [
         { name: "League Scoring Leader", stat: "pts", minValue: 1400 },
         { name: "League Rebounding Leader", stat: "trb", minValue: 800 },

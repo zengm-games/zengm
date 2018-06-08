@@ -432,9 +432,9 @@ const create = async (
     }
 
     // See if imported roster has draft picks included. If so, create less than 70 (scaled for number of teams)
-    let createUndrafted1 = Math.round(70 * g.numTeams / 30);
-    let createUndrafted2 = Math.round(70 * g.numTeams / 30);
-    let createUndrafted3 = Math.round(70 * g.numTeams / 30);
+    let createUndrafted1 = Math.round((70 * g.numTeams) / 30);
+    let createUndrafted2 = Math.round((70 * g.numTeams) / 30);
+    let createUndrafted3 = Math.round((70 * g.numTeams) / 30);
     if (players !== undefined) {
         for (const p of players) {
             if (p.tid === PLAYER.UNDRAFTED) {

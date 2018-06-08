@@ -155,10 +155,8 @@ const valueChange = async (
                     wps.push(rCurrent[0] / gp);
                 } else if (gp > 0) {
                     wps.push(
-                        gp / halfSeason * rCurrent[0] / gp +
-                            (halfSeason - gp) /
-                                halfSeason *
-                                rLast[0] /
+                        ((gp / halfSeason) * rCurrent[0]) / gp +
+                            (((halfSeason - gp) / halfSeason) * rLast[0]) /
                                 g.numGames,
                     );
                 } else {
@@ -195,7 +193,7 @@ const valueChange = async (
                     // For future draft picks, add some uncertainty
                     const seasons = season - g.season;
                     estPick = Math.round(
-                        estPick * (5 - seasons) / 5 + 15 * seasons / 5,
+                        (estPick * (5 - seasons)) / 5 + (15 * seasons) / 5,
                     );
                 }
 
@@ -252,7 +250,7 @@ const valueChange = async (
 
                     // For future draft picks, add some uncertainty
                     estPick = Math.round(
-                        estPick * (5 - seasons) / 5 + 15 * seasons / 5,
+                        (estPick * (5 - seasons)) / 5 + (15 * seasons) / 5,
                     );
                 }
 
@@ -443,7 +441,8 @@ const valueChange = async (
                 if (p.injury.gamesRemaining > 75) {
                     playerValue -= playerValue * 0.75;
                 } else {
-                    playerValue -= playerValue * p.injury.gamesRemaining / 100;
+                    playerValue -=
+                        (playerValue * p.injury.gamesRemaining) / 100;
                 }
             }
 
@@ -473,15 +472,14 @@ const valueChange = async (
             if (value === 0) {
                 return memo;
             }
-            return memo + Math.abs(value) ** base * Math.abs(value) / value;
+            return memo + (Math.abs(value) ** base * Math.abs(value)) / value;
         }, 0);
 
         if (exponential === 0) {
             return exponential;
         }
         return (
-            Math.abs(exponential) ** (1 / base) *
-            Math.abs(exponential) /
+            (Math.abs(exponential) ** (1 / base) * Math.abs(exponential)) /
             exponential
         );
     };
@@ -502,8 +500,7 @@ const valueChange = async (
 
             return (
                 memo +
-                p.contract.amount /
-                    1000 *
+                (p.contract.amount / 1000) *
                     player.contractSeasonsRemaining(
                         p.contract.exp,
                         g.numGames - gpAvg,
@@ -536,7 +533,7 @@ console.log("Total contract amount: " + contractsFactor + " * " + salaryRemoved)
             // Only care if cap space is being used
             if (salaryAddedThisSeason > 0) {
                 //console.log("Free agency penalty: -" + (0.2 + 0.8 * g.daysLeft / 30) * salaryAddedThisSeason);
-                dv -= (0.2 + 0.8 * g.daysLeft / 30) * salaryAddedThisSeason; // 0.2 to 1 times the amount, depending on stage of free agency
+                dv -= (0.2 + (0.8 * g.daysLeft) / 30) * salaryAddedThisSeason; // 0.2 to 1 times the amount, depending on stage of free agency
             }
         }
     }

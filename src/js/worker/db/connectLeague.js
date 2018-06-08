@@ -396,7 +396,7 @@ const migrateLeague = (upgradeDB, lid) => {
                         // 100 -> 80
                         // 0 -> 20
                         // Linear in between
-                        r[key] -= 20 * (r[key] - 50) / 50;
+                        r[key] -= (20 * (r[key] - 50)) / 50;
                     } else {
                         console.log(p);
                         throw new Error(`Missing rating: ${key}`);

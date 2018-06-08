@@ -70,7 +70,7 @@ async function updateLeaders(
         const userAbbrev = helpers.getAbbrev(g.userTid);
 
         // minStats and minValues are the NBA requirements to be a league leader for each stat http://www.nba.com/leader_requirements.html. If any requirement is met, the player can appear in the league leaders
-        const factor = g.numGames / 82 * Math.sqrt(g.quarterLength / 12); // To handle changes in number of games and playing time
+        const factor = (g.numGames / 82) * Math.sqrt(g.quarterLength / 12); // To handle changes in number of games and playing time
         const categories = [];
         categories.push({
             name: "Points",
@@ -230,9 +230,9 @@ async function updateLeaders(
                     if (
                         playerValue >=
                         Math.ceil(
-                            cat.minValue[k] *
+                            (cat.minValue[k] *
                                 factor *
-                                gps[players[j].stats.tid] /
+                                gps[players[j].stats.tid]) /
                                 g.numGames,
                         )
                     ) {

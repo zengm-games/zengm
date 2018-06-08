@@ -50,17 +50,15 @@ async function validateSavedPids() {
     const { teams } = await idb.cache.trade.get(0);
 
     // This is just for debugging
-    team
-        .valueChange(
-            teams[1].tid,
-            teams[0].pids,
-            teams[1].pids,
-            teams[0].dpids,
-            teams[1].dpids,
-        )
-        .then(dv => {
-            console.log(dv);
-        });
+    team.valueChange(
+        teams[1].tid,
+        teams[0].pids,
+        teams[1].pids,
+        teams[0].dpids,
+        teams[1].dpids,
+    ).then(dv => {
+        console.log(dv);
+    });
     return trade.updatePlayers(teams);
 }
 

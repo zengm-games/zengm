@@ -24,7 +24,7 @@ const updateOwnerMood = async (): Promise<OwnerMoodDeltas> => {
     }
 
     const deltas = {
-        wins: 0.25 * (t.seasonAttrs.won - g.numGames / 2) / (g.numGames / 2),
+        wins: (0.25 * (t.seasonAttrs.won - g.numGames / 2)) / (g.numGames / 2),
         playoffs: 0,
         money: (t.seasonAttrs.profit - 15) / 100,
     };

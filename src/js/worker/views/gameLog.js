@@ -38,9 +38,9 @@ async function boxScore(gid: number) {
         t.name = g.teamNamesCache[t.tid];
 
         // four factors
-        t.efg = 100 * (t.fg + t.tp / 2) / t.fga;
-        t.tovp = 100 * t.tov / (t.fga + 0.44 * t.fta + t.tov);
-        t.orbp = 100 * t.orb / (t.orb + game.teams[1 - i].drb);
+        t.efg = (100 * (t.fg + t.tp / 2)) / t.fga;
+        t.tovp = (100 * t.tov) / (t.fga + 0.44 * t.fta + t.tov);
+        t.orbp = (100 * t.orb) / (t.orb + game.teams[1 - i].drb);
         t.ftpfga = t.ft / t.fga;
 
         // Floating point errors make this off a bit

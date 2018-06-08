@@ -39,7 +39,7 @@ const maxRatingDists = (numPlayers: number = 100) => {
 
         // Log every 5%
         if (i % Math.round(numPlayers / 20) === 0) {
-            console.log(`${Math.round(100 * i / numPlayers)}%`);
+            console.log(`${Math.round((100 * i) / numPlayers)}%`);
         }
 
         const maxRatings = Object.assign({}, p.ratings[0]);

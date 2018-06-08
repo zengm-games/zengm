@@ -148,7 +148,7 @@ const newScheduleCrappy = (): [number, number][] => {
 
     const tids = [];
 
-    while (tids.length < g.numGames * g.numTeams / 2) {
+    while (tids.length < (g.numGames * g.numTeams) / 2) {
         let i = -1; // Home tid
         let j = -1; // Away tid
 

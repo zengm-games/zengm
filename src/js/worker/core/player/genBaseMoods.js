@@ -34,9 +34,13 @@ const genBaseMoods = async (): Promise<number[]> => {
 
         // Facilities - fuck it, just use most recent rank
         baseMood +=
-            0.1 *
-            (finances.getRankLastThree([teamSeason], "expenses", "facilities") -
-                1) /
+            (0.1 *
+                (finances.getRankLastThree(
+                    [teamSeason],
+                    "expenses",
+                    "facilities",
+                ) -
+                    1)) /
             (g.numTeams - 1);
 
         // Population

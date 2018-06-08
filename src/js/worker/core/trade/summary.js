@@ -97,7 +97,7 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 
             if (s.teams[j].total > 0) {
                 ratios[j] = Math.floor(
-                    100 * s.teams[k].total / s.teams[j].total,
+                    (100 * s.teams[k].total) / s.teams[j].total,
                 );
             } else if (s.teams[k].total > 0) {
                 ratios[j] = Infinity;

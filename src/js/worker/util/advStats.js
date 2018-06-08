@@ -22,7 +22,7 @@ const calculatePER = (players, teams, league) => {
 
         const factor =
             2 / 3 -
-            0.5 * (league.ast / league.fg) / (2 * (league.fg / league.ft));
+            (0.5 * (league.ast / league.fg)) / (2 * (league.fg / league.ft));
         const vop =
             league.pts /
             (league.fga - league.orb + league.tov + 0.44 * league.fta);
@@ -31,10 +31,9 @@ const calculatePER = (players, teams, league) => {
         let uPER;
         if (players[i].stats.min > 0) {
             uPER =
-                1 /
-                players[i].stats.min *
+                (1 / players[i].stats.min) *
                 (players[i].stats.tp +
-                    2 / 3 * players[i].stats.ast +
+                    (2 / 3) * players[i].stats.ast +
                     (2 -
                         factor * (teams[tid].stats.ast / teams[tid].stats.fg)) *
                         players[i].stats.fg +
@@ -42,8 +41,7 @@ const calculatePER = (players, teams, league) => {
                         0.5 *
                         (1 +
                             (1 - teams[tid].stats.ast / teams[tid].stats.fg) +
-                            2 /
-                                3 *
+                            (2 / 3) *
                                 (teams[tid].stats.ast / teams[tid].stats.fg)) -
                     vop * players[i].stats.tov -
                     vop * drbp * (players[i].stats.fga - players[i].stats.fg) -
@@ -99,9 +97,9 @@ const calculatePER = (players, teams, league) => {
             prl = 10.75;
         }
 
-        const va = players[i].stats.min * (PER[i] - prl) / 67;
+        const va = (players[i].stats.min * (PER[i] - prl)) / 67;
 
-        EWA[i] = va / 30 * 0.8; // 0.8 is a fudge factor to approximate the difference between (BBGM) EWA and (real) win shares
+        EWA[i] = (va / 30) * 0.8; // 0.8 is a fudge factor to approximate the difference between (BBGM) EWA and (real) win shares
     }
 
     return {
@@ -134,33 +132,27 @@ const calculatePercentages = (players, teams) => {
             usgp[i] = 0;
         } else {
             astp[i] =
-                100 *
-                p.stats.ast /
-                (p.stats.min / (t.stats.min / 5) * t.stats.fg - p.stats.fg);
+                (100 * p.stats.ast) /
+                ((p.stats.min / (t.stats.min / 5)) * t.stats.fg - p.stats.fg);
             blkp[i] =
-                100 *
-                (p.stats.blk * (t.stats.min / 5)) /
+                (100 * (p.stats.blk * (t.stats.min / 5))) /
                 (p.stats.min * (t.stats.oppFga - t.stats.oppTpa));
             drbp[i] =
-                100 *
-                (p.stats.drb * (t.stats.min / 5)) /
+                (100 * (p.stats.drb * (t.stats.min / 5))) /
                 (p.stats.min * (t.stats.drb + t.stats.oppOrb));
             orbp[i] =
-                100 *
-                (p.stats.orb * (t.stats.min / 5)) /
+                (100 * (p.stats.orb * (t.stats.min / 5))) /
                 (p.stats.min * (t.stats.orb + t.stats.oppDrb));
             stlp[i] =
-                100 *
-                (p.stats.stl * (t.stats.min / 5)) /
+                (100 * (p.stats.stl * (t.stats.min / 5))) /
                 (p.stats.min * t.stats.poss);
             trbp[i] =
-                100 *
-                (p.stats.trb * (t.stats.min / 5)) /
+                (100 * (p.stats.trb * (t.stats.min / 5))) /
                 (p.stats.min * (t.stats.trb + t.stats.oppTrb));
             usgp[i] =
-                100 *
-                ((p.stats.fga + 0.44 * p.stats.fta + p.stats.tov) *
-                    (t.stats.min / 5)) /
+                (100 *
+                    ((p.stats.fga + 0.44 * p.stats.fta + p.stats.tov) *
+                        (t.stats.min / 5))) /
                 (p.stats.min *
                     (t.stats.fga + 0.44 * t.stats.fta + t.stats.tov));
 
@@ -219,28 +211,27 @@ const calculateRatings = (players, teams, league) => {
             const dorPct = t.stats.oppOrb / (t.stats.oppOrb + t.stats.drb);
             const dfgPct = t.stats.oppFg / t.stats.oppFga;
             const fmwt =
-                dfgPct *
-                (1 - dorPct) /
+                (dfgPct * (1 - dorPct)) /
                 (dfgPct * (1 - dorPct) + (1 - dfgPct) * dorPct);
             const stops1 =
                 p.stats.stl +
                 p.stats.blk * fmwt * (1 - 1.07 * dorPct) +
                 p.stats.drb * (1 - fmwt);
             const stops2 =
-                ((t.stats.oppFga - t.stats.oppFg - t.stats.blk) /
-                    t.stats.min *
+                (((t.stats.oppFga - t.stats.oppFg - t.stats.blk) /
+                    t.stats.min) *
                     fmwt *
                     (1 - 1.07 * dorPct) +
                     (t.stats.oppTov - t.stats.stl) / t.stats.min) *
                     p.stats.min +
-                p.stats.pf /
-                    t.stats.pf *
+                (p.stats.pf / t.stats.pf) *
                     0.4 *
                     t.stats.oppFta *
                     (1 - t.stats.oppFt / t.stats.oppFta) ** 2;
             const stops = stops1 + stops2;
 
-            const stopPct = stops * t.stats.min / (t.stats.poss * p.stats.min);
+            const stopPct =
+                (stops * t.stats.min) / (t.stats.poss * p.stats.min);
             const dPtsPerscPoss =
                 t.stats.oppPts /
                 (t.stats.oppFg +
@@ -254,8 +245,7 @@ const calculateRatings = (players, teams, league) => {
 
             // Defensive win shares
             const marginalDefense =
-                p.stats.min /
-                t.stats.min *
+                (p.stats.min / t.stats.min) *
                 t.stats.poss *
                 (1.08 * (league.pts / league.poss) - drtg[i] / 100);
             const marginalPtsPerWin =
@@ -265,11 +255,11 @@ const calculateRatings = (players, teams, league) => {
             // Offensive rating
 
             const qAst =
-                p.stats.min /
-                    (t.stats.min / 5) *
+                (p.stats.min / (t.stats.min / 5)) *
                     (1.14 * ((t.stats.ast - p.stats.ast) / t.stats.fg)) +
-                (t.stats.ast / t.stats.min * p.stats.min * 5 - p.stats.ast) /
-                    (t.stats.fg / t.stats.min * p.stats.min * 5 - p.stats.fg) *
+                (((t.stats.ast / t.stats.min) * p.stats.min * 5 - p.stats.ast) /
+                    ((t.stats.fg / t.stats.min) * p.stats.min * 5 -
+                        p.stats.fg)) *
                     (1 - p.stats.min / (t.stats.min / 5));
             const fgPart =
                 p.stats.fg *
@@ -292,16 +282,14 @@ const calculateRatings = (players, teams, league) => {
                 teamScoringPoss /
                 (t.stats.fga + t.stats.fta * 0.4 + t.stats.tov);
             const teamOrbWeight =
-                (1 - teamOrbPct) *
-                teamPlayPct /
+                ((1 - teamOrbPct) * teamPlayPct) /
                 ((1 - teamOrbPct) * teamPlayPct +
                     teamOrbPct * (1 - teamPlayPct));
             const orbPart = p.stats.orb * teamOrbWeight * teamPlayPct;
             const scPoss =
                 (fgPart + astPart + ftPart) *
                     (1 -
-                        t.stats.orb /
-                            teamScoringPoss *
+                        (t.stats.orb / teamScoringPoss) *
                             teamOrbWeight *
                             teamPlayPct) +
                 orbPart;
@@ -339,8 +327,7 @@ const calculateRatings = (players, teams, league) => {
             const pProd =
                 (pProdFgPart + pProdAstPart + p.stats.ft) *
                     (1 -
-                        t.stats.orb /
-                            teamScoringPoss *
+                        (t.stats.orb / teamScoringPoss) *
                             teamOrbWeight *
                             teamPlayPct) +
                 pProdOrbPart;

@@ -46,7 +46,7 @@ const autoSign = async () => {
         // Small chance of actually trying to sign someone in free agency, gets greater as time goes on
         if (
             g.phase === PHASE.FREE_AGENCY &&
-            Math.random() < 0.99 * g.daysLeft / 30
+            Math.random() < (0.99 * g.daysLeft) / 30
         ) {
             continue;
         }

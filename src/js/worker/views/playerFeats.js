@@ -51,11 +51,11 @@ async function updatePlayers(
             feat.stats.trb = feat.stats.orb + feat.stats.drb;
 
             feat.stats.fgp =
-                feat.stats.fga > 0 ? 100 * feat.stats.fg / feat.stats.fga : 0;
+                feat.stats.fga > 0 ? (100 * feat.stats.fg) / feat.stats.fga : 0;
             feat.stats.tpp =
-                feat.stats.tpa > 0 ? 100 * feat.stats.tp / feat.stats.tpa : 0;
+                feat.stats.tpa > 0 ? (100 * feat.stats.tp) / feat.stats.tpa : 0;
             feat.stats.ftp =
-                feat.stats.fta > 0 ? 100 * feat.stats.ft / feat.stats.fta : 0;
+                feat.stats.fta > 0 ? (100 * feat.stats.ft) / feat.stats.fta : 0;
 
             if (feat.overtimes === 1) {
                 feat.score += " (OT)";

@@ -23,18 +23,16 @@ const getProbs = (result: DraftLotteryResultArray): (number | void)[][] => {
         for (let k = 0; k < result.length; k++) {
             if (k !== i) {
                 probs[i][1] +=
-                    result[k].chances /
-                    1000 *
-                    result[i].chances /
+                    ((result[k].chances / 1000) * result[i].chances) /
                     (1000 - result[k].chances);
 
                 for (let l = 0; l < result.length; l++) {
                     if (l !== i && l !== k) {
                         const combosTemp =
-                            result[k].chances /
-                            1000 *
-                            (result[l].chances / (1000 - result[k].chances)) *
-                            result[i].chances /
+                            ((result[k].chances / 1000) *
+                                (result[l].chances /
+                                    (1000 - result[k].chances)) *
+                                result[i].chances) /
                             (1000 - result[k].chances - result[l].chances);
                         const topThreeKey = JSON.stringify([i, k, l].sort());
                         if (!topThreeCombos.has(topThreeKey)) {

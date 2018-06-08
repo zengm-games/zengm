@@ -42,7 +42,7 @@ const avgRatingDists = (numPlayers: number = 100) => {
 
         // Log every 5%
         if (i % Math.round(numPlayers / 20) === 0) {
-            console.log(`${Math.round(100 * i / numPlayers)}%`);
+            console.log(`${Math.round((100 * i) / numPlayers)}%`);
         }
 
         for (let j = 0; j < NUM_SEASONS; j++) {

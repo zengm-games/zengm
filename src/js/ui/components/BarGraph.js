@@ -116,7 +116,7 @@ const scale = (val, ylim) => {
     if (val < ylim[0]) {
         return 0;
     }
-    return (val - ylim[0]) / (ylim[1] - ylim[0]) * 100;
+    return ((val - ylim[0]) / (ylim[1] - ylim[0])) * 100;
 };
 
 type BarGraphOptions = {

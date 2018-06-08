@@ -5,7 +5,7 @@ import * as React from "react";
 
 const quartile = (data, quart) => {
     if (quart === 1 || quart === 2 || quart === 3) {
-        return data[Math.round(data.length * quart / 4)];
+        return data[Math.round((data.length * quart) / 4)];
     }
 
     return NaN;
@@ -26,7 +26,7 @@ const calculateValues = data => {
 };
 
 const scaleValue = (v, scale) => {
-    return Math.round(100 - (v - scale[0]) / (scale[1] - scale[0]) * 100);
+    return Math.round(100 - ((v - scale[0]) / (scale[1] - scale[0])) * 100);
 };
 
 const round = (value, precision) => {

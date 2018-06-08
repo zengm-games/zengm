@@ -36,7 +36,7 @@ const genOrder = async (
     updateChances(chances, teams, true);
 
     const chanceTotal = chances.reduce((a, b) => a + b);
-    const chancePct = chances.map(c => c / chanceTotal * 100);
+    const chancePct = chances.map(c => (c / chanceTotal) * 100);
 
     // cumsum
     const chancesCumsum = chances.slice();

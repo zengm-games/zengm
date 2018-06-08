@@ -40,7 +40,7 @@ const assessPayrollMinLuxury = async () => {
 
     const payteams = payrolls.filter(x => x <= g.salaryCap);
     if (payteams.length > 0 && collectedTax > 0) {
-        const distribute = collectedTax * 0.5 / payteams.length;
+        const distribute = (collectedTax * 0.5) / payteams.length;
         for (const teamSeason of teamSeasons) {
             if (payrolls[teamSeason.tid] <= g.salaryCap) {
                 teamSeason.revenues.luxuryTaxShare = {

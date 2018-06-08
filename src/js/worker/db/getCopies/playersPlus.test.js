@@ -366,7 +366,7 @@ describe("worker/db/getCopies/playersPlus", () => {
             throw new Error("Missing player");
         }
 
-        assert.equal(pf.cashOwed, p.contract.amount * 2 / 1000);
+        assert.equal(pf.cashOwed, (p.contract.amount * 2) / 1000);
 
         pf = await idb.getCopy.playersPlus(p, {
             attrs: ["cashOwed"],
@@ -377,7 +377,7 @@ describe("worker/db/getCopies/playersPlus", () => {
         if (!pf) {
             throw new Error("Missing player");
         }
-        assert.equal(pf.cashOwed, p.contract.amount * 1.5 / 1000);
+        assert.equal(pf.cashOwed, (p.contract.amount * 1.5) / 1000);
 
         pf = await idb.getCopy.playersPlus(p, {
             attrs: ["cashOwed"],

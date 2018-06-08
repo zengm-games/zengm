@@ -53,12 +53,12 @@ describe("worker/util/random", () => {
             for (const letter of x) {
                 if (letter === "e") {
                     // Should be 10/14 * N
-                    assert(counts[letter] > 9.5 / 14 * N);
-                    assert(counts[letter] < 10.5 / 14 * N);
+                    assert(counts[letter] > (9.5 / 14) * N);
+                    assert(counts[letter] < (10.5 / 14) * N);
                 } else {
                     // Should be 1/14 * N
-                    assert(counts[letter] > 0.9 / 14 * N);
-                    assert(counts[letter] < 1.1 / 14 * N);
+                    assert(counts[letter] > (0.9 / 14) * N);
+                    assert(counts[letter] < (1.1 / 14) * N);
                 }
             }
         });

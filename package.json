@@ -1,8 +1,7 @@
 {
     "name": "basketball-gm",
     "version": "4.1.0",
-    "description":
-        "A single-player basketball simulation game. Make trades, set rosters, draft players, and try to build the next dynasty, all from within your web browser. The game is implemented entirely in client-side JavaScript, backed by IndexedDB.",
+    "description": "A single-player basketball simulation game. Make trades, set rosters, draft players, and try to build the next dynasty, all from within your web browser. The game is implemented entirely in client-side JavaScript, backed by IndexedDB.",
     "homepage": "https://basketball-gm.com/",
     "bugs": {
         "url": "https://github.com/dumbmatter/basketball-gm/issues"
@@ -14,17 +13,13 @@
     },
     "scripts": {
         "start": "node tools/server.js",
-        "build":
-            "node tools/build.js && yarn run build-js && yarn run minify-js",
-        "start-watch":
-            "concurrently --kill-others 'yarn run start' 'yarn run watch'",
-        "watch":
-            "node tools/pre-watch.js && concurrently --kill-others 'yarn run watch-css' 'yarn run watch-js'",
+        "build": "node tools/build.js && yarn run build-js && yarn run minify-js",
+        "start-watch": "concurrently --kill-others 'yarn run start' 'yarn run watch'",
+        "watch": "node tools/pre-watch.js && concurrently --kill-others 'yarn run watch-css' 'yarn run watch-js'",
         "watch-css": "node tools/watch-css.js",
         "build-js": "node tools/build-js.js",
         "minify-js": "node tools/minify-js.js",
-        "watch-js":
-            "concurrently --raw 'watchify -d src/js/ui/index.js -o build/gen/ui.js -v' 'watchify -d src/js/worker/index.js -o build/gen/worker.js -v'",
+        "watch-js": "concurrently --raw 'watchify -d src/js/ui/index.js -o build/gen/ui.js -v' 'watchify -d src/js/worker/index.js -o build/gen/worker.js -v'",
         "lint": "concurrently --raw 'yarn run flow' 'yarn run lint-js'",
         "flow": "flow",
         "lint-js": "eslint '*.js' 'src/js/**/*.js' 'tools/**/*.js'",
@@ -36,12 +31,15 @@
         "test-browserstack": "karma start karma-browserstack.conf.js"
     },
     "lint-staged": {
-        "*.{js,json}": ["prettier --write", "git add"]
+        "*.{js,json}": [
+            "prettier --write",
+            "git add"
+        ]
     },
     "dependencies": {
         "ajv": "^6.5.0",
         "backboard": "^1.0.7",
-        "classnames": "^2.2.5",
+        "classnames": "^2.2.6",
         "dompurify": "^1.0.4",
         "facesjs": "^1.0.1",
         "indexeddb-getall-shim": "^1.3.3",
@@ -55,8 +53,7 @@
         "react-bootstrap": "^0.32.1",
         "react-dom": "^16.4.0",
         "react-overlays": "^0.8.3",
-        "react-sortable-hoc":
-            "dumbmatter/react-sortable-hoc#clonedNode-in-onSortStart",
+        "react-sortable-hoc": "dumbmatter/react-sortable-hoc#clonedNode-in-onSortStart",
         "roman-numerals": "^0.3.2",
         "url-search-params-polyfill": "^4.0.0",
         "whatwg-fetch": "^2.0.4"
@@ -87,8 +84,8 @@
         "eslint-config-prettier": "^2.9.0",
         "eslint-plugin-import": "^2.12.0",
         "eslint-plugin-jsx-a11y": "^6.0.3",
-        "eslint-plugin-react": "^7.8.2",
-        "flow-bin": "^0.73.0",
+        "eslint-plugin-react": "^7.9.1",
+        "flow-bin": "^0.74.0",
         "fs-extra": "^6.0.1",
         "husky": "^0.14.3",
         "karma": "^2.0.2",
@@ -99,20 +96,24 @@
         "karma-mocha": "^1.3.0",
         "karma-mocha-reporter": "^2.2.5",
         "karma-source-map-support": "^1.3.0",
-        "lint-staged": "^7.1.2",
+        "lint-staged": "^7.1.3",
         "mocha": "^5.2.0",
         "node-sass": "^4.9.0",
-        "prettier": "^1.12.1",
+        "prettier": "^1.13.4",
         "prop-types": "^15.6.1",
         "replace": "^1.0.0",
         "uglify-es": "^3.3.9",
         "watchify": "^3.11.0"
     },
     "browserify": {
-        "transform": ["babelify"]
+        "transform": [
+            "babelify"
+        ]
     },
     "babel": {
-        "presets": ["react"],
+        "presets": [
+            "react"
+        ],
         "plugins": [
             "external-helpers",
             "transform-flow-strip-types",

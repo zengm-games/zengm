@@ -64,8 +64,7 @@ async function updatePowerRankings(
             teams[i].performance =
                 teams[i].stats.mov -
                 5 +
-                5 *
-                    parseInt(teams[i].seasonAttrs.lastTen.split("-")[0], 10) /
+                (5 * parseInt(teams[i].seasonAttrs.lastTen.split("-")[0], 10)) /
                     10;
         }
 
@@ -84,8 +83,8 @@ async function updatePowerRankings(
         const overallRankMetric = t => {
             if (t.stats.gp < 10) {
                 return (
-                    t.performanceRank * 4 * t.stats.gp / 10 +
-                    t.talentRank * (30 - t.stats.gp) / 10
+                    (t.performanceRank * 4 * t.stats.gp) / 10 +
+                    (t.talentRank * (30 - t.stats.gp)) / 10
                 );
             }
 

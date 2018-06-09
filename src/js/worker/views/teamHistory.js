@@ -108,6 +108,7 @@ async function updateTeamHistory(
             championships,
             bestRecord,
             worstRecord,
+            numConfs: g.confs.length,
             numPlayoffRounds: g.numPlayoffRounds,
         };
     }

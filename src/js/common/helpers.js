@@ -692,16 +692,20 @@ function yearRanges(arr: number[]): string[] {
     return runArr;
 }
 
-function roundsWonText(playoffRoundsWon: number): string {
-    const playoffsByConference = g.confs.length === 2; // && !localStorage.getItem('top16playoffs');
+function roundsWonText(
+    playoffRoundsWon: number,
+    numPlayoffRounds: number,
+    numConfs: number,
+): string {
+    const playoffsByConference = numConfs === 2; // && !localStorage.getItem('top16playoffs');
 
-    if (playoffRoundsWon === g.numPlayoffRounds) {
+    if (playoffRoundsWon === numPlayoffRounds) {
         return "League champs";
     }
-    if (playoffRoundsWon === g.numPlayoffRounds - 1) {
+    if (playoffRoundsWon === numPlayoffRounds - 1) {
         return playoffsByConference ? "Conference champs" : "Made finals";
     }
-    if (playoffRoundsWon === g.numPlayoffRounds - 2) {
+    if (playoffRoundsWon === numPlayoffRounds - 2) {
         return playoffsByConference
             ? "Made conference finals"
             : "Made semifinals";

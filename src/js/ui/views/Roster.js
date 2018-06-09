@@ -351,6 +351,8 @@ class Roster extends React.Component {
             currentSeason,
             editable,
             maxRosterSize,
+            numConfs,
+            numPlayoffRounds,
             payroll,
             phase,
             players,
@@ -392,6 +394,8 @@ class Roster extends React.Component {
                         lost={t.seasonAttrs.lost}
                         playoffRoundsWon={t.seasonAttrs.playoffRoundsWon}
                         option="noSeason"
+                        numConfs={numConfs}
+                        numPlayoffRounds={numPlayoffRounds}
                     />
                 </span>
             ) : (
@@ -608,6 +612,8 @@ Roster.propTypes = {
     currentSeason: PropTypes.number.isRequired,
     editable: PropTypes.bool.isRequired,
     maxRosterSize: PropTypes.number.isRequired,
+    numConfs: PropTypes.number.isRequired,
+    numPlayoffRounds: PropTypes.number.isRequired,
     payroll: PropTypes.number,
     phase: PropTypes.number.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,

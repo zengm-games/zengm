@@ -339,6 +339,8 @@ async function updatePlayoffs(
         }
 
         return {
+            numConfs: g.confs.length,
+            numPlayoffRounds: g.numPlayoffRounds,
             series: foundSeries,
             seriesTitle,
             showPlayoffSeries,

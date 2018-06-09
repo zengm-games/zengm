@@ -7,6 +7,8 @@ import { helpers } from "../../common";
 const RecordAndPlayoffs = ({
     abbrev,
     lost,
+    numConfs,
+    numPlayoffRounds,
     option,
     playoffRoundsWon,
     season,
@@ -15,6 +17,8 @@ const RecordAndPlayoffs = ({
 }: {
     abbrev: string,
     lost: number,
+    numConfs?: number,
+    numPlayoffRounds?: number,
     option?: "noSeason",
     playoffRoundsWon?: number,
     season: number,
@@ -35,11 +39,20 @@ const RecordAndPlayoffs = ({
         </a>
     );
     const extraText =
-        playoffRoundsWon !== undefined && playoffRoundsWon >= 0 ? (
+        numConfs !== undefined &&
+        numPlayoffRounds !== undefined &&
+        playoffRoundsWon !== undefined &&
+        playoffRoundsWon >= 0 ? (
             <span>
                 ,{" "}
                 <a href={helpers.leagueUrl(["playoffs", season])}>
-                    {helpers.roundsWonText(playoffRoundsWon).toLowerCase()}
+                    {helpers
+                        .roundsWonText(
+                            playoffRoundsWon,
+                            numPlayoffRounds,
+                            numConfs,
+                        )
+                        .toLowerCase()}
                 </a>
             </span>
         ) : null;
@@ -56,6 +69,8 @@ const RecordAndPlayoffs = ({
 RecordAndPlayoffs.propTypes = {
     abbrev: PropTypes.string.isRequired,
     lost: PropTypes.number.isRequired,
+    numConfs: PropTypes.number,
+    numPlayoffRounds: PropTypes.number,
     option: PropTypes.oneOf(["noSeason"]),
     playoffRoundsWon: PropTypes.number,
     season: PropTypes.number.isRequired,

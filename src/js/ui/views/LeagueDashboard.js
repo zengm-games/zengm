@@ -24,7 +24,9 @@ const LeagueDashboard = ({
     lost,
     messages,
     name,
+    numConfs,
     numGames,
+    numPlayoffRounds,
     oppPts,
     oppPtsRank,
     payroll,
@@ -142,7 +144,11 @@ const LeagueDashboard = ({
                                             conference
                                         </span>
                                     ) : (
-                                        helpers.roundsWonText(playoffRoundsWon)
+                                        helpers.roundsWonText(
+                                            playoffRoundsWon,
+                                            numPlayoffRounds,
+                                            numConfs,
+                                        )
                                     )}
                                 </span>
                             </div>
@@ -519,7 +525,9 @@ LeagueDashboard.propTypes = {
     lost: PropTypes.number.isRequired,
     messages: PropTypes.arrayOf(PropTypes.object).isRequired,
     name: PropTypes.string.isRequired,
+    numConfs: PropTypes.number.isRequired,
     numGames: PropTypes.number.isRequired,
+    numPlayoffRounds: PropTypes.number.isRequired,
     oppPts: PropTypes.number.isRequired,
     oppPtsRank: PropTypes.number.isRequired,
     payroll: PropTypes.number.isRequired,

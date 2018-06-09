@@ -23,6 +23,8 @@ async function updateRoster(
             currentSeason: g.season,
             editable: inputs.season === g.season && inputs.tid === g.userTid,
             maxRosterSize: g.maxRosterSize,
+            numConfs: g.confs.length,
+            numPlayoffRounds: g.numPlayoffRounds,
             phase: g.phase,
             salaryCap: g.salaryCap / 1000,
             season: inputs.season,

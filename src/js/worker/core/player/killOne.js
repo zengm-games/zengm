@@ -61,6 +61,13 @@ const killOne = async (conditions: Conditions) => {
         "was run over by a car",
         "was run over by a car, and then was run over by a second car. Police believe only the first was intentional",
         "cannot be found and is presumed dead. Neighbors reported strange lights in the sky above his house last night",
+        "fell off the edge of the flat earth",
+        "died a normal death. Move on, find a new slant",
+        "was shot by police while shoplifting in China",
+        "fell to his death after slapping the backboard of a hoop inexplicably placed in front of a flimsy window on the 3rd floor of a building",
+        "died from an adult onset peanut allergy while eating his pre-game PB&J sandwich",
+        "fell into a wood chipper",
+        "died from a skull fracture after hitting his head on the rim while practicing for a dunk contest",
     ]);
 
     // Pick random team

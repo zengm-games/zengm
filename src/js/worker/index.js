@@ -61,6 +61,17 @@ util.promiseWorker.register(([name, ...params], hostID) => {
         return api.actions[subname](...params, conditions);
     }
 
+    if (name.indexOf("processInputs.") === 0) {
+        const subname = name.replace("processInputs.", "");
+
+        if (!api.processInputs.hasOwnProperty(subname)) {
+            // processInputs is not needed for every page
+            return {};
+        }
+
+        return api.processInputs[subname](...params, conditions);
+    }
+
     if (!api.hasOwnProperty(name)) {
         throw new Error(
             `API call to nonexistant worker function "${name}" with params ${JSON.stringify(

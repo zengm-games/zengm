@@ -24,7 +24,7 @@ async function realtimeUpdate(
                 ? url
                 : window.location.pathname + window.location.search;
 
-        const inLeague = url.substr(0, 3) === "/l/"; // Check the URL to be redirected to, not the current league (g.lid)
+        const inLeague = url.substr(0, 3) === "/l/";
         const refresh = url === window.location.pathname && inLeague;
 
         const ctx = new page.Context(url);

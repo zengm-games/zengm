@@ -184,7 +184,15 @@ class Controller extends React.Component<{}, State> {
                 }
             }
 
-            const inputs = args.get(ctx) || {};
+            // No good reason for this to be brought back to the UI, since inputs are sent back to the worker below.
+            // ctxBBGM is hacky!
+            const ctxBBGM = Object.assign({}, ctx.bbgm);
+            delete ctxBBGM.cb; // Can't send function to worker
+            const inputs = await toWorker(
+                `processInputs.${args.id}`,
+                ctx.params,
+                ctxBBGM,
+            );
 
             if (typeof inputs.redirectUrl === "string") {
                 await realtimeUpdate([], inputs.redirectUrl);

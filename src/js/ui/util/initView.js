@@ -1,23 +1,16 @@
 // @flow
 
-import type { GetOutput, PageCtx } from "../../common/types";
+import type { PageCtx } from "../../common/types";
 import { emitter } from "../util";
 
 type InitArgs = {
     Component: any,
     id: string,
     inLeague?: boolean,
-    get?: (ctx: PageCtx) => ?GetOutput,
 };
 
 const initView = (args: InitArgs) => {
     args.inLeague = args.inLeague !== undefined ? args.inLeague : true;
-    args.get =
-        args.get !== undefined
-            ? args.get
-            : () => {
-                  return {};
-              };
 
     if (!args.Component) {
         throw new Error("Missing arg Component");

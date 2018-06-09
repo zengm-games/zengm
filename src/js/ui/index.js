@@ -8,7 +8,6 @@ import * as React from "react";
 import ReactDOM from "react-dom";
 import api from "./api";
 import Controller from "./components/Controller";
-import processInputs from "./processInputs";
 import {
     compareVersions,
     genStaticPage,
@@ -81,7 +80,6 @@ const genPage = (id, inLeague = true) => {
     return initView({
         id,
         inLeague,
-        get: processInputs.hasOwnProperty(id) ? processInputs[id] : undefined,
         Component: views[componentName],
     });
 };

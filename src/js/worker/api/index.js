@@ -4,6 +4,7 @@ import flatten from "lodash/flatten";
 import range from "lodash/range";
 import { PHASE, PHASE_TEXT, PLAYER, g, helpers } from "../../common";
 import actions from "./actions";
+import processInputs from "./processInputs";
 import {
     contractNegotiation,
     draft,
@@ -1270,6 +1271,7 @@ export default {
     handleUploadedDraftClass,
     init,
     lockSet,
+    processInputs,
     proposeTrade,
     ratingsStatsPopoverInfo,
     releasePlayer,

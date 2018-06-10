@@ -182,8 +182,8 @@ async function updatePlayer(
 
         // Add untradable property
         p = trade.filterUntradable([p])[0];
-        events.forEach(helpers.correctLinkLid);
-        feats.forEach(helpers.correctLinkLid);
+        events.forEach(helpers.correctLinkLid.bind(null, g.lid));
+        feats.forEach(helpers.correctLinkLid.bind(null, g.lid));
 
         return {
             player: p,

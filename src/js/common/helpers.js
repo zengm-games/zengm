@@ -631,9 +631,9 @@ function plusMinus(arg: number, d: number): string {
     return (arg > 0 ? "+" : "") + arg.toFixed(d);
 }
 
-// Used to fix links in the event log, which will be wrong if a league is exported and then imported
-function correctLinkLid(event: { text: string }) {
-    event.text = event.text.replace(/\/l\/\d+\//g, `/l/${g.lid}/`);
+// Used to fix links in the event log, which will be wrong if a league is exported and then imported. Would be better to do this on import!
+function correctLinkLid(lid: number, event: { text: string }) {
+    event.text = event.text.replace(/\/l\/\d+\//g, `/l/${lid}/`);
 }
 
 function overtimeCounter(n: number): string {

@@ -34,7 +34,7 @@ async function updateEventLog(
                     event.tids !== undefined && event.tids.includes(inputs.tid),
             );
 
-            events.forEach(helpers.correctLinkLid);
+            events.forEach(helpers.correctLinkLid.bind(null, g.lid));
 
             return {
                 abbrev: inputs.abbrev,

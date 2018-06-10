@@ -1,6 +1,6 @@
 // @flow
 
-import { helpers } from "../../common";
+import { g, helpers } from "../../common";
 import { idb } from "../db";
 import type { UpdateEvents } from "../../common/types";
 
@@ -47,7 +47,7 @@ async function updateEventLog(
             events = events.filter(event => event.type === inputs.eventType);
         }
 
-        events.forEach(helpers.correctLinkLid);
+        events.forEach(helpers.correctLinkLid.bind(null, g.lid));
 
         return {
             abbrev: inputs.abbrev,

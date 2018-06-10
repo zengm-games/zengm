@@ -3,7 +3,7 @@
 import { PHASE, PLAYER, g, helpers } from "../../common";
 import { season, team } from "../core";
 import { idb } from "../db";
-import { getProcessedGames } from "../util";
+import { getProcessedGames, helpers as workerHelpers } from "../util";
 import type { GetOutput, UpdateEvents } from "../../common/types";
 
 async function updateInbox(
@@ -148,7 +148,7 @@ async function updateGames(
 
         const completed = games
             .slice(0, NUM_SHOW_COMPLETED)
-            .map(game => helpers.formatCompletedGame(game));
+            .map(game => workerHelpers.formatCompletedGame(game));
 
         return { completed };
     }
@@ -161,7 +161,7 @@ async function updateGames(
             state.completed,
         );
         for (let i = games.length - 1; i >= 0; i--) {
-            completed.unshift(helpers.formatCompletedGame(games[i]));
+            completed.unshift(workerHelpers.formatCompletedGame(games[i]));
             if (completed.length > NUM_SHOW_COMPLETED) {
                 completed.pop();
             }

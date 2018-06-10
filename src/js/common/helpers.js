@@ -1,39 +1,8 @@
 // @flow
 
 import orderBy from "lodash/orderBy";
-import { PLAYER, g } from "../common";
-import type {
-    DraftPick,
-    GameProcessed,
-    GameProcessedCompleted,
-    TeamBasic,
-} from "../common/types";
-
-/**
- * Get the team abbreviation for a team ID.
- *
- * For instance, team ID 0 is Atlanta, which has an abbreviation of ATL.
- *
- * @memberOf util.helpers
- * @param {number|string} tid Integer team ID.
- * @return {string} Abbreviation
- */
-function getAbbrev(tid: number | string): string {
-    tid = parseInt(tid, 10);
-
-    if (tid === PLAYER.FREE_AGENT) {
-        return "FA";
-    }
-    if (tid < 0 || Number.isNaN(tid)) {
-        // Draft prospect or retired
-        return "";
-    }
-    if (tid >= g.teamAbbrevsCache.length) {
-        tid = g.userTid;
-    }
-
-    return g.teamAbbrevsCache[tid];
-}
+import { g } from "../common";
+import type { TeamBasic } from "../common/types";
 
 /**
  * Take a list of teams (similar to the output of getTeamsDefault) and add popRank properties, where 1 is the largest population and teams.length is the smallest.
@@ -490,56 +459,6 @@ function ordinal(x?: ?number): string {
     return x.toString() + suffix;
 }
 
-function pickDesc(dp: DraftPick): string {
-    const season = dp.season === "fantasy" ? "Fantasy draft" : dp.season;
-    let desc = `${season} ${ordinal(dp.round)} round pick`;
-
-    const extras = [];
-    if (dp.pick > 0) {
-        extras.push(ordinal((dp.round - 1) * g.numTeams + dp.pick));
-    }
-    if (dp.tid !== dp.originalTid) {
-        extras.push(`from ${g.teamAbbrevsCache[dp.originalTid]}`);
-    }
-
-    if (extras.length > 0) {
-        desc += ` (${extras.join(", ")})`;
-    }
-
-    return desc;
-}
-
-function formatCompletedGame(game: GameProcessed): GameProcessedCompleted {
-    // If not specified, assume user's team is playing
-    game.tid = game.tid !== undefined ? game.tid : g.userTid;
-
-    // team0 and team1 are different than they are above! Here it refers to user and opponent, not home and away
-    const team0 = {
-        tid: game.tid,
-        abbrev: g.teamAbbrevsCache[game.tid],
-        region: g.teamRegionsCache[game.tid],
-        name: g.teamNamesCache[game.tid],
-        pts: game.pts,
-    };
-    const team1 = {
-        tid: game.oppTid,
-        abbrev: g.teamAbbrevsCache[game.oppTid],
-        region: g.teamRegionsCache[game.oppTid],
-        name: g.teamNamesCache[game.oppTid],
-        pts: game.oppPts,
-    };
-
-    return {
-        gid: game.gid,
-        overtime: game.overtime,
-        score: game.won
-            ? `${team0.pts}-${team1.pts}`
-            : `${team1.pts}-${team0.pts}`,
-        teams: game.home ? [team1, team0] : [team0, team1],
-        won: game.won,
-    };
-}
-
 // Calculate the number of games that team is behind team0
 type teamWonLost = { lost: number, won: number };
 function gb(team0: teamWonLost, team: teamWonLost) {
@@ -701,7 +620,6 @@ const sigmoid = (x: number, a: number, b: number): number => {
 };
 
 export default {
-    getAbbrev,
     addPopRank,
     getTeamsDefault,
     deepCopy,
@@ -712,9 +630,7 @@ export default {
     numberWithCommas,
     bound,
     leagueUrl,
-    pickDesc,
     ordinal,
-    formatCompletedGame,
     gb,
     gameScore,
     plusMinus,

@@ -97,7 +97,7 @@ const PlayerStats = ({
         let actualTid;
         if (season === undefined) {
             p.stats = p.careerStats;
-            actualAbbrev = helpers.getAbbrev(p.tid);
+            actualAbbrev = p.abbrev;
             actualTid = p.tid;
             if (playoffs === "playoffs") {
                 p.stats = p.careerStatsPlayoffs;

@@ -3,6 +3,7 @@
 import { g, helpers } from "../../common";
 import { trade } from "../core";
 import { idb } from "../db";
+import { helpers as workerHelpers } from "../util";
 import type { GetOutput, UpdateEvents } from "../../common/types";
 
 async function updateUserRoster(
@@ -41,7 +42,7 @@ async function updateUserRoster(
 
         const userPicksWithDescs = userPicks.map(pick => {
             const pickWithDesc: any = helpers.deepCopy(pick);
-            pickWithDesc.desc = helpers.pickDesc(pickWithDesc);
+            pickWithDesc.desc = workerHelpers.pickDesc(pickWithDesc);
             return pickWithDesc;
         });
 

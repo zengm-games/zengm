@@ -1,9 +1,9 @@
 // @flow
 
-import { g, helpers } from "../../common";
+import { g } from "../../common";
 import { season } from "../core";
 import { idb } from "../db";
-import { getProcessedGames } from "../util";
+import { getProcessedGames, helpers } from "../util";
 import type { GetOutput, UpdateEvents } from "../../common/types";
 
 async function updateUpcoming(

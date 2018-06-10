@@ -1,8 +1,9 @@
 // @flow
 
-import { PHASE, g, helpers } from "../../common";
+import { PHASE, g } from "../../common";
 import { team, trade } from "../core";
 import { idb } from "../db";
+import { helpers } from "../util";
 
 // This relies on vars being populated, so it can't be called in parallel with updateTrade
 async function updateSummary(vars) {

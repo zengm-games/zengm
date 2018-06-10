@@ -53,6 +53,7 @@ async function updatePlayers(
                 "age",
                 "injury",
                 "tid",
+                "abbrev",
                 "hof",
                 "watch",
             ],

@@ -22,6 +22,7 @@ import {
     changes,
     checkNaNs,
     env,
+    helpers as workerHelpers,
     local,
     lock,
     random,
@@ -638,7 +639,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
                     picks.filter(dp => offers[i].dpids.includes(dp.dpid)),
                 );
                 for (const pick of picks) {
-                    pick.desc = helpers.pickDesc(pick);
+                    pick.desc = workerHelpers.pickDesc(pick);
                 }
 
                 const payroll = await team.getPayroll(tid);

@@ -106,29 +106,6 @@ describe("common/helpers", () => {
     });
 
     // Relies on g.*Cache being populated
-    describe("validateTid", () => {
-        it("return team ID and abbrev when given valid team ID", () => {
-            let out = helpers.validateTid(6);
-            assert.equal(out[0], 6);
-            assert.equal(out[1], "DAL");
-            out = helpers.validateTid("6");
-            assert.equal(out[0], 6);
-            assert.equal(out[1], "DAL");
-        });
-        it("return user team ID and abbrev on invalid input", () => {
-            let out = helpers.validateTid("63");
-            assert.equal(out[0], 4);
-            assert.equal(out[1], "CIN");
-            out = helpers.validateTid("fuck");
-            assert.equal(out[0], 4);
-            assert.equal(out[1], "CIN");
-            out = helpers.validateTid();
-            assert.equal(out[0], 4);
-            assert.equal(out[1], "CIN");
-        });
-    });
-
-    // Relies on g.*Cache being populated
     describe("getAbbrev", () => {
         it("return abbrev when given valid team ID", () => {
             assert.equal(helpers.getAbbrev(6), "DAL");

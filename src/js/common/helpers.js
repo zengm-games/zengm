@@ -10,29 +10,9 @@ import type {
 } from "../common/types";
 
 /**
- * Validate that a given team ID corresponds to a team.
- *
- * If the team ID is not valid, then g.userTid and its correspodning abbreviation will be returned.
- *
- * @memberOf util.helpers
- * @param {number|string} tid Integer team ID.
- * @return {Array} Array with two elements, the validated team ID and the corresponding abbreviation.
- */
-function validateTid(tid?: number | string): [number, string] {
-    tid = parseInt(tid, 10);
-
-    if (tid < 0 || tid >= g.teamAbbrevsCache.length || Number.isNaN(tid)) {
-        tid = g.userTid;
-    }
-    const abbrev = g.teamAbbrevsCache[tid];
-
-    return [tid, abbrev];
-}
-
-/**
  * Get the team abbreviation for a team ID.
  *
- * For instance, team ID 0 is Atlanta, which has an abbreviation of ATL. This is a convenience wrapper around validateTid, excpet it will return "FA" if you pass PLAYER.FREE_AGENT.
+ * For instance, team ID 0 is Atlanta, which has an abbreviation of ATL.
  *
  * @memberOf util.helpers
  * @param {number|string} tid Integer team ID.
@@ -48,10 +28,11 @@ function getAbbrev(tid: number | string): string {
         // Draft prospect or retired
         return "";
     }
-    const result = validateTid(tid);
-    const abbrev = result[1];
+    if (tid >= g.teamAbbrevsCache.length) {
+        tid = g.userTid;
+    }
 
-    return abbrev;
+    return g.teamAbbrevsCache[tid];
 }
 
 /**
@@ -721,7 +702,6 @@ const sigmoid = (x: number, a: number, b: number): number => {
 
 export default {
     getAbbrev,
-    validateTid,
     addPopRank,
     getTeamsDefault,
     deepCopy,

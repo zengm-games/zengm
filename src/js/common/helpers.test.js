@@ -7,8 +7,6 @@ import { PLAYER, g, helpers } from ".";
 describe("common/helpers", () => {
     before(() => {
         g.userTid = 4;
-        g.startingSeason = 2007;
-        g.season = 2009;
         g.teamAbbrevsCache = [
             "ATL",
             "BAL",
@@ -108,23 +106,6 @@ describe("common/helpers", () => {
     });
 
     // Relies on g.*Cache being populated
-    describe("validateAbbrev", () => {
-        it("return team ID and abbrev when given valid abbrev", () => {
-            const out = helpers.validateAbbrev("DAL");
-            assert.equal(out[0], 6);
-            assert.equal(out[1], "DAL");
-        });
-        it("return user team ID and abbrev on invalid input", () => {
-            let out = helpers.validateAbbrev("fuck");
-            assert.equal(out[0], 4);
-            assert.equal(out[1], "CIN");
-            out = helpers.validateAbbrev();
-            assert.equal(out[0], 4);
-            assert.equal(out[1], "CIN");
-        });
-    });
-
-    // Relies on g.*Cache being populated
     describe("validateTid", () => {
         it("return team ID and abbrev when given valid team ID", () => {
             let out = helpers.validateTid(6);
@@ -155,17 +136,6 @@ describe("common/helpers", () => {
         });
         it('return "FA" for free agents', () => {
             assert.equal(helpers.getAbbrev(PLAYER.FREE_AGENT), "FA");
-        });
-    });
-
-    describe("validateSeason", () => {
-        it("return input season when given a valid season", () => {
-            assert.equal(helpers.validateSeason(2008), 2008);
-            assert.equal(helpers.validateSeason("2008"), 2008);
-        });
-        it("return current season on invalid input", () => {
-            assert.equal(helpers.validateSeason("fuck"), 2009);
-            assert.equal(helpers.validateSeason(), 2009);
         });
     });
 

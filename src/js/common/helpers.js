@@ -10,26 +10,6 @@ import type {
 } from "../common/types";
 
 /**
- * Validate that a given abbreviation corresponds to a team.
- *
- * If the abbreviation is not valid, then g.userTid and its correspodning abbreviation will be returned.
- *
- * @memberOf util.helpers
- * @param  {string} abbrev Three-letter team abbreviation, like "ATL".
- * @return {Array} Array with two elements, the team ID and the validated abbreviation.
- */
-function validateAbbrev(abbrev?: string): [number, string] {
-    let tid = g.teamAbbrevsCache.indexOf(abbrev);
-
-    if (tid < 0 || abbrev === undefined) {
-        tid = g.userTid;
-        abbrev = g.teamAbbrevsCache[tid];
-    }
-
-    return [tid, abbrev];
-}
-
-/**
  * Validate that a given team ID corresponds to a team.
  *
  * If the team ID is not valid, then g.userTid and its correspodning abbreviation will be returned.
@@ -72,29 +52,6 @@ function getAbbrev(tid: number | string): string {
     const abbrev = result[1];
 
     return abbrev;
-}
-
-/**
- * Validate the given season.
- *
- * Currently this doesn't really do anything except replace "undefined" with g.season.
- *
- * @memberOf util.helpers
- * @param {number|string|undefined} season The year of the season to validate. If undefined, then g.season is used.
- * @return {number} Validated season (same as input unless input is undefined, currently).
- */
-function validateSeason(season?: number | string): number {
-    if (season === undefined) {
-        return g.season;
-    }
-
-    season = parseInt(season, 10);
-
-    if (Number.isNaN(season)) {
-        return g.season;
-    }
-
-    return season;
 }
 
 /**
@@ -763,10 +720,8 @@ const sigmoid = (x: number, a: number, b: number): number => {
 };
 
 export default {
-    validateAbbrev,
     getAbbrev,
     validateTid,
-    validateSeason,
     addPopRank,
     getTeamsDefault,
     deepCopy,

@@ -1,5 +1,48 @@
 import { PHASE, g, helpers } from "../../common";
 
+/**
+ * Validate that a given abbreviation corresponds to a team.
+ *
+ * If the abbreviation is not valid, then g.userTid and its correspodning abbreviation will be returned.
+ *
+ * @memberOf util.helpers
+ * @param  {string} abbrev Three-letter team abbreviation, like "ATL".
+ * @return {Array} Array with two elements, the team ID and the validated abbreviation.
+ */
+export const validateAbbrev = (abbrev?: string): [number, string] => {
+    let tid = g.teamAbbrevsCache.indexOf(abbrev);
+
+    if (tid < 0 || abbrev === undefined) {
+        tid = g.userTid;
+        abbrev = g.teamAbbrevsCache[tid];
+    }
+
+    return [tid, abbrev];
+};
+
+/**
+ * Validate the given season.
+ *
+ * Currently this doesn't really do anything except replace "undefined" with g.season.
+ *
+ * @memberOf util.helpers
+ * @param {number|string|undefined} season The year of the season to validate. If undefined, then g.season is used.
+ * @return {number} Validated season (same as input unless input is undefined, currently).
+ */
+export const validateSeason = (season?: number | string): number => {
+    if (season === undefined) {
+        return g.season;
+    }
+
+    season = parseInt(season, 10);
+
+    if (Number.isNaN(season)) {
+        return g.season;
+    }
+
+    return season;
+};
+
 const account = (params, ctxBBGM) => {
     return {
         goldMessage:
@@ -46,7 +89,7 @@ const draft = () => {
 };
 
 const draftLottery = params => {
-    const season = helpers.validateSeason(params.season);
+    const season = validateSeason(params.season);
 
     return {
         season,
@@ -54,7 +97,7 @@ const draftLottery = params => {
 };
 
 const draftSummary = params => {
-    let season = helpers.validateSeason(params.season);
+    let season = validateSeason(params.season);
 
     // Draft hasn't happened yet this year
     if (g.phase < PHASE.DRAFT) {
@@ -76,7 +119,7 @@ const draftSummary = params => {
 };
 
 const draftTeamHistory = params => {
-    const [tid, abbrev] = helpers.validateAbbrev(params.abbrev);
+    const [tid, abbrev] = validateAbbrev(params.abbrev);
 
     return {
         tid,
@@ -85,12 +128,12 @@ const draftTeamHistory = params => {
 };
 
 const eventLog = params => {
-    const [tid, abbrev] = helpers.validateAbbrev(params.abbrev);
+    const [tid, abbrev] = validateAbbrev(params.abbrev);
 
     return {
         tid,
         abbrev,
-        season: helpers.validateSeason(params.season),
+        season: validateSeason(params.season),
     };
 };
 
@@ -112,14 +155,14 @@ const freeAgents = () => {
 
 const gameLog = params => {
     return {
-        abbrev: helpers.validateAbbrev(params.abbrev)[1],
+        abbrev: validateAbbrev(params.abbrev)[1],
         gid: params.gid !== undefined ? parseInt(params.gid, 10) : -1,
-        season: helpers.validateSeason(params.season),
+        season: validateSeason(params.season),
     };
 };
 
 const history = params => {
-    let season = helpers.validateSeason(params.season);
+    let season = validateSeason(params.season);
 
     // If playoffs aren't over, season awards haven't been set
     if (g.phase <= PHASE.PLAYOFFS) {
@@ -183,7 +226,7 @@ const playerFeats = params => {
 
     let season;
     if (params.season && params.season !== "all") {
-        season = helpers.validateSeason(params.season);
+        season = validateSeason(params.season);
     } else {
         season = "all";
     }
@@ -208,7 +251,7 @@ const playerRatings = params => {
 
     return {
         abbrev,
-        season: helpers.validateSeason(params.season),
+        season: validateSeason(params.season),
     };
 };
 
@@ -227,7 +270,7 @@ const playerStats = params => {
         season:
             params.season === "career"
                 ? undefined
-                : helpers.validateSeason(params.season),
+                : validateSeason(params.season),
         statType: params.statType !== undefined ? params.statType : "perGame",
         playoffs:
             params.playoffs !== undefined ? params.playoffs : "regularSeason",
@@ -249,29 +292,29 @@ const roster = params => {
     }
 
     const inputs = {};
-    [inputs.tid, inputs.abbrev] = helpers.validateAbbrev(params.abbrev);
-    inputs.season = helpers.validateSeason(params.season);
+    [inputs.tid, inputs.abbrev] = validateAbbrev(params.abbrev);
+    inputs.season = validateSeason(params.season);
 
     return inputs;
 };
 
 const schedule = params => {
     const inputs = {};
-    [inputs.tid, inputs.abbrev] = helpers.validateAbbrev(params.abbrev);
+    [inputs.tid, inputs.abbrev] = validateAbbrev(params.abbrev);
     return inputs;
 };
 
 const teamFinances = params => {
     const inputs = {};
     inputs.show = params.show !== undefined ? params.show : "10";
-    [inputs.tid, inputs.abbrev] = helpers.validateAbbrev(params.abbrev);
+    [inputs.tid, inputs.abbrev] = validateAbbrev(params.abbrev);
     return inputs;
 };
 
 const teamHistory = params => {
     const inputs = {};
     inputs.show = params.show !== undefined ? params.show : "10";
-    [inputs.tid, inputs.abbrev] = helpers.validateAbbrev(params.abbrev);
+    [inputs.tid, inputs.abbrev] = validateAbbrev(params.abbrev);
     return inputs;
 };
 
@@ -283,7 +326,7 @@ const teamRecords = params => {
 
 const teamStats = params => {
     return {
-        season: helpers.validateSeason(params.season),
+        season: validateSeason(params.season),
         teamOpponent:
             params.teamOpponent !== undefined ? params.teamOpponent : "team",
         playoffs:
@@ -295,7 +338,7 @@ const transactions = params => {
     let abbrev;
     let tid;
     if (params.abbrev && params.abbrev !== "all") {
-        [tid, abbrev] = helpers.validateAbbrev(params.abbrev);
+        [tid, abbrev] = validateAbbrev(params.abbrev);
     } else if (params.abbrev && params.abbrev === "all") {
         tid = -1;
         abbrev = "all";
@@ -306,7 +349,7 @@ const transactions = params => {
 
     let season;
     if (params.season && params.season !== "all") {
-        season = helpers.validateSeason(params.season);
+        season = validateSeason(params.season);
     } else if (params.season && params.season === "all") {
         season = "all";
     } else {
@@ -322,7 +365,7 @@ const transactions = params => {
 };
 
 const upcomingFreeAgents = params => {
-    let season = helpers.validateSeason(params.season);
+    let season = validateSeason(params.season);
 
     if (g.phase <= PHASE.RESIGN_PLAYERS) {
         if (season < g.season) {
@@ -345,9 +388,9 @@ const watchList = params => {
     };
 };
 
-const validateSeason = params => {
+const validateSeasonOnly = params => {
     return {
-        season: helpers.validateSeason(params.season),
+        season: validateSeason(params.season),
     };
 };
 
@@ -365,29 +408,29 @@ export default {
     freeAgents,
     gameLog,
     history,
-    leaders: validateSeason,
-    leagueFinances: validateSeason,
+    leaders: validateSeasonOnly,
+    leagueFinances: validateSeasonOnly,
     liveGame,
     message,
     negotiation,
     negotiationList,
     player,
     playerFeats,
-    playerRatingDists: validateSeason,
+    playerRatingDists: validateSeasonOnly,
     playerRatings,
-    playerShotLocations: validateSeason,
-    playerStatDists: validateSeason,
+    playerShotLocations: validateSeasonOnly,
+    playerStatDists: validateSeasonOnly,
     playerStats,
-    playoffs: validateSeason,
+    playoffs: validateSeasonOnly,
     resetPassword,
     roster,
     schedule,
-    standings: validateSeason,
+    standings: validateSeasonOnly,
     teamFinances,
     teamHistory,
     teamRecords,
     teamShotLocations: teamStats,
-    teamStatDists: validateSeason,
+    teamStatDists: validateSeasonOnly,
     teamStats,
     transactions,
     upcomingFreeAgents,

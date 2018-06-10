@@ -2,12 +2,12 @@
 
 import orderBy from "lodash/orderBy";
 import range from "lodash/range";
-import { PLAYER, g, helpers } from "../../../common";
+import { PLAYER, g } from "../../../common";
 import limitRating from "./limitRating";
 import ovr from "./ovr";
 import pos from "./pos";
 import skills from "./skills";
-import { random } from "../../util";
+import { helpers, random } from "../../util";
 import type {
     PlayerRatings,
     PlayerSkill,

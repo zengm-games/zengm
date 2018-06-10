@@ -1,8 +1,8 @@
 // @flow
 
-import { g, helpers } from "../../common";
+import { g } from "../../common";
 import { idb } from "../db";
-import { updatePlayMenu, updateStatus } from "../util";
+import { helpers, updatePlayMenu, updateStatus } from "../util";
 import type { Message, UpdateEvents } from "../../common/types";
 
 async function updateMessage(

@@ -1,9 +1,9 @@
 // Typing is too hard due to https://github.com/facebook/flow/issues/183
 
 import groupBy from "lodash/groupBy";
-import { PLAYER, g, helpers } from "../../../common";
+import { PLAYER, g } from "../../../common";
 import { player } from "../../core";
-import { helpers as workerHelpers } from "../../util";
+import { helpers } from "../../util";
 import type {
     Player,
     PlayerFiltered,
@@ -117,7 +117,7 @@ const processAttrs = (
                     p.contract.amount) /
                 1000; // [millions of dollars]
         } else if (attr === "abbrev") {
-            output.abbrev = workerHelpers.getAbbrev(p.tid);
+            output.abbrev = helpers.getAbbrev(p.tid);
         } else if (attr === "teamRegion") {
             if (p.tid >= 0) {
                 output.teamRegion = g.teamRegionsCache[p.tid];
@@ -254,7 +254,7 @@ const processRatings = (
                         }
                     }
                     if (tidTemp !== undefined) {
-                        row.abbrev = workerHelpers.getAbbrev(tidTemp);
+                        row.abbrev = helpers.getAbbrev(tidTemp);
                     } else {
                         row.abbrev = "";
                     }
@@ -370,9 +370,9 @@ const genStatsRow = (p, ps, stats, statType) => {
             row.age = ps.season - p.born.year;
         } else if (attr === "abbrev") {
             if (ps.tid === undefined) {
-                row.abbrev = workerHelpers.getAbbrev(PLAYER.FREE_AGENT);
+                row.abbrev = helpers.getAbbrev(PLAYER.FREE_AGENT);
             } else {
-                row.abbrev = workerHelpers.getAbbrev(ps.tid);
+                row.abbrev = helpers.getAbbrev(ps.tid);
             }
         } else if (attr === "tid") {
             if (ps.tid === undefined) {

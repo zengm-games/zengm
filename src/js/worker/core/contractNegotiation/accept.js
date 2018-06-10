@@ -1,10 +1,10 @@
 // @flow
 
-import { PHASE, g, helpers } from "../../../common";
+import { PHASE, g } from "../../../common";
 import { player, team } from "../../core";
 import cancel from "./cancel";
 import { idb } from "../../db";
-import { logEvent } from "../../util";
+import { helpers, logEvent } from "../../util";
 
 /**
  * Accept the player's offer.

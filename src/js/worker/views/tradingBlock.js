@@ -1,9 +1,9 @@
 // @flow
 
-import { g, helpers } from "../../common";
+import { g } from "../../common";
 import { trade } from "../core";
 import { idb } from "../db";
-import { helpers as workerHelpers } from "../util";
+import { helpers } from "../util";
 import type { GetOutput, UpdateEvents } from "../../common/types";
 
 async function updateUserRoster(
@@ -42,7 +42,7 @@ async function updateUserRoster(
 
         const userPicksWithDescs = userPicks.map(pick => {
             const pickWithDesc: any = helpers.deepCopy(pick);
-            pickWithDesc.desc = workerHelpers.pickDesc(pickWithDesc);
+            pickWithDesc.desc = helpers.pickDesc(pickWithDesc);
             return pickWithDesc;
         });
 

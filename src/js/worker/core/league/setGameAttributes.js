@@ -1,8 +1,8 @@
 // @flow
 
 import { idb } from "../../db";
-import { g, helpers } from "../../../common";
-import { toUI } from "../../util";
+import { g } from "../../../common";
+import { helpers, toUI } from "../../util";
 import type { GameAttributes } from "../../../common/types";
 
 /**

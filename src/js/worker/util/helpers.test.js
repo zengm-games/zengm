@@ -116,4 +116,27 @@ describe("worker/util/helpers", () => {
             assert.equal(helpers.getAbbrev(PLAYER.FREE_AGENT), "FA");
         });
     });
+
+    describe("nullPad", () => {
+        const array = [1, 2, 3, 4, 5];
+        it("do nothing if already long enough", () => {
+            assert.deepEqual(helpers.nullPad(array, 5), array);
+        });
+        it("slice if too long", () => {
+            assert.deepEqual(helpers.nullPad(array, 3), [1, 2, 3]);
+        });
+        it("pad with nulls up to requested length if too short", () => {
+            assert.deepEqual(helpers.nullPad(array, 6), [1, 2, 3, 4, 5, null]);
+            assert.deepEqual(helpers.nullPad(array, 8), [
+                1,
+                2,
+                3,
+                4,
+                5,
+                null,
+                null,
+                null,
+            ]);
+        });
+    });
 });

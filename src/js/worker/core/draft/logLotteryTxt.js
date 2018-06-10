@@ -1,6 +1,7 @@
 // @flow
 
-import { g, helpers } from "../../../common";
+import { g } from "../../../common";
+import { helpers } from "../../util";
 
 const logLotteryTxt = (
     tid: number,

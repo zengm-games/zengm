@@ -1,9 +1,9 @@
 // @flow
 
-import { PHASE, PLAYER, g, helpers } from "../../../common";
+import { PHASE, PLAYER, g } from "../../../common";
 import { contractNegotiation, draft, player } from "../../core";
 import { idb } from "../../db";
-import { local, logEvent } from "../../util";
+import { helpers, local, logEvent } from "../../util";
 import type { Conditions } from "../../../common/types";
 
 const newPhaseFreeAgency = async (conditions: Conditions) => {

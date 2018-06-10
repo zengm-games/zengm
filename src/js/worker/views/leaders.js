@@ -1,8 +1,8 @@
 // @flow
 
-import { PHASE, PLAYER, g, helpers } from "../../common";
+import { PHASE, PLAYER, g } from "../../common";
 import { idb } from "../db";
-import { helpers as workerHelpers } from "../util";
+import { helpers } from "../util";
 import type { UpdateEvents } from "../../common/types";
 
 async function updateLeaders(
@@ -68,7 +68,7 @@ async function updateLeaders(
             season: inputs.season,
         });
 
-        const userAbbrev = workerHelpers.getAbbrev(g.userTid);
+        const userAbbrev = helpers.getAbbrev(g.userTid);
 
         // minStats and minValues are the NBA requirements to be a league leader for each stat http://www.nba.com/leader_requirements.html. If any requirement is met, the player can appear in the league leaders
         const factor = (g.numGames / 82) * Math.sqrt(g.quarterLength / 12); // To handle changes in number of games and playing time

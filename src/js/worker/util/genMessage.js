@@ -1,9 +1,9 @@
 // @flow
 
-import { g, helpers } from "../../common";
+import { g } from "../../common";
 import { league } from "../core";
 import { idb } from "../db";
-import { local, random } from "../util";
+import { helpers, local, random } from "../util";
 import type { OwnerMoodDeltas } from "../../common/types";
 
 // First message after new game

@@ -1,10 +1,10 @@
 // @flow
 
-import { g, helpers } from "../../../common";
+import { g } from "../../../common";
 import { finances, player } from "../../core";
 import genPlayersWithoutSaving from "./genPlayersWithoutSaving";
 import { idb } from "../../db";
-import { logEvent } from "../../util";
+import { helpers, logEvent } from "../../util";
 import type { Player } from "../../../common/types";
 
 /**

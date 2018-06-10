@@ -1,8 +1,9 @@
 // @flow
 
-import { PHASE, g, helpers } from "../../common";
+import { PHASE, g } from "../../common";
 import { season } from "../core";
 import { idb } from "../db";
+import { helpers } from "../util";
 import type { UpdateEvents } from "../../common/types";
 
 const getProjectedSeries = async (inputSeason: number) => {

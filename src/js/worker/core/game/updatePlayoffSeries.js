@@ -1,8 +1,8 @@
 // @flow
 
-import { g, helpers } from "../../../common";
+import { g } from "../../../common";
 import { idb } from "../../db";
-import { logEvent } from "../../util";
+import { helpers, logEvent } from "../../util";
 import type { Conditions, GameResults } from "../../../common/types";
 
 const updatePlayoffSeries = async (

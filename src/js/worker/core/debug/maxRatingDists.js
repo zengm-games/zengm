@@ -1,7 +1,8 @@
 // @flow
 
-import { PLAYER, g, helpers } from "../../../common";
+import { PLAYER, g } from "../../../common";
 import { draft, player } from "../../core";
+import { helpers } from "../../util";
 
 const maxRatingDists = (numPlayers: number = 100) => {
     // Each player gets one entry per array: their career max in a rating

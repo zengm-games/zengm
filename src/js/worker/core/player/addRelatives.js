@@ -1,9 +1,9 @@
 // @flow
 
 import romanNumerals from "roman-numerals";
-import { g, helpers } from "../../../common";
+import { g } from "../../../common";
 import { idb } from "../../db";
-import { random } from "../../util";
+import { helpers, random } from "../../util";
 import type { Player, RelativeType } from "../../../common/types";
 
 const parseLastName = (lastName: string): [string, number | void] => {

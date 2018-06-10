@@ -1,9 +1,9 @@
 // @flow
 
-import { PLAYER, g, helpers } from "../../../common";
+import { PLAYER, g } from "../../../common";
 import { contractNegotiation, draft, league } from "../../core";
 import { idb } from "../../db";
-import { local } from "../../util";
+import { helpers, local } from "../../util";
 import type { Conditions } from "../../../common/types";
 
 const newPhaseFantasyDraft = async (

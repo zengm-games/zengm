@@ -1,6 +1,5 @@
 // @flow
 
-import orderBy from "lodash/orderBy";
 import { g } from "../common";
 import type { TeamBasic } from "../common/types";
 
@@ -367,26 +366,6 @@ function leagueUrl(components: (number | string)[]): string {
 }
 
 /**
- * Pad an array with nulls or truncate it so that it has a fixed length.
- *
- * @memberOf util.helpers
- * @param {Array} array Input array.
- * @param {number} length Desired length.
- * @return {Array} Original array padded with null or truncated so that it has the required length.
- */
-function nullPad<T>(array: (?T)[], length: number): (?T)[] {
-    if (array.length > length) {
-        return array.slice(0, length);
-    }
-
-    while (array.length < length) {
-        array.push(null);
-    }
-
-    return array;
-}
-
-/**
  * Format a number as currency, correctly handling negative values.
  *
  * @memberOf util.helpers
@@ -459,12 +438,6 @@ function ordinal(x?: ?number): string {
     return x.toString() + suffix;
 }
 
-// Calculate the number of games that team is behind team0
-type teamWonLost = { lost: number, won: number };
-function gb(team0: teamWonLost, team: teamWonLost) {
-    return (team0.won - team0.lost - (team.won - team.lost)) / 2;
-}
-
 function gameScore(arg: { [key: string]: number }): string {
     return (
         arg.pts +
@@ -486,34 +459,6 @@ function plusMinus(arg: number, d: number): string {
         return "";
     }
     return (arg > 0 ? "+" : "") + arg.toFixed(d);
-}
-
-// Used to fix links in the event log, which will be wrong if a league is exported and then imported. Would be better to do this on import!
-function correctLinkLid(lid: number, event: { text: string }) {
-    event.text = event.text.replace(/\/l\/\d+\//g, `/l/${lid}/`);
-}
-
-function overtimeCounter(n: number): string {
-    switch (n) {
-        case 1:
-            return "";
-        case 2:
-            return "double";
-        case 3:
-            return "triple";
-        case 4:
-            return "quadruple";
-        case 5:
-            return "quintuple";
-        case 6:
-            return "sextuple";
-        case 7:
-            return "septuple";
-        case 8:
-            return "octuple";
-        default:
-            return `a ${ordinal(n)}`;
-    }
 }
 
 function yearRanges(arr: number[]): string[] {
@@ -590,19 +535,6 @@ function roundWinp(winp: number): string {
     return output;
 }
 
-const orderByWinp = <T: { seasonAttrs: { winp: number, won: number } }>(
-    teams: T[],
-): T[] => {
-    return orderBy(
-        teams,
-        [
-            t => (t.seasonAttrs ? t.seasonAttrs.winp : 0),
-            t => (t.seasonAttrs ? t.seasonAttrs.won : 0),
-        ],
-        ["desc", "desc"],
-    );
-};
-
 /**
  * Will a player negotiate with a team, or not?
  *
@@ -614,32 +546,21 @@ const refuseToNegotiate = (amount: number, mood: number): boolean => {
     return amount * mood > 9500;
 };
 
-// x is value, a controls sharpness, b controls center
-const sigmoid = (x: number, a: number, b: number): number => {
-    return 1 / (1 + Math.exp(-(a * (x - b))));
-};
-
 export default {
     addPopRank,
     getTeamsDefault,
     deepCopy,
     keys,
     resetG,
-    nullPad,
     formatCurrency,
     numberWithCommas,
     bound,
     leagueUrl,
     ordinal,
-    gb,
     gameScore,
     plusMinus,
-    correctLinkLid,
-    overtimeCounter,
     yearRanges,
     roundsWonText,
     roundWinp,
-    orderByWinp,
     refuseToNegotiate,
-    sigmoid,
 };

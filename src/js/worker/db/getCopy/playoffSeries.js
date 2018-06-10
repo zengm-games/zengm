@@ -1,7 +1,8 @@
 // @flow
 
-import { g, helpers } from "../../../common";
+import { g } from "../../../common";
 import { idb } from "../../db";
+import { helpers } from "../../util";
 import type { PlayoffSeries } from "../../../common/types";
 
 const getCopy = async ({ season }: { season: number } = {}): Promise<

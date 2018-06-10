@@ -1,9 +1,9 @@
 // @flow
 
-import { g, helpers } from "../../../common";
+import { g } from "../../../common";
 import retire from "./retire";
 import { idb } from "../../db";
-import { logEvent, random } from "../../util";
+import { helpers, logEvent, random } from "../../util";
 import type { Conditions } from "../../../common/types";
 
 const killOne = async (conditions: Conditions) => {
@@ -68,7 +68,7 @@ const killOne = async (conditions: Conditions) => {
         "died from an adult onset peanut allergy while eating his pre-game PB&J sandwich",
         "fell into a wood chipper",
         "died from a skull fracture after hitting his head on the rim while practicing for a dunk contest",
-        "was killed in swatting attack during a heated game of Fortine",
+        "was killed in swatting attack during a heated game of Fortnite",
         "choked to death on a pretzel",
         "was murdered by a time traveler so he would not become the world's evil overlord following his playing days",
         'removed the "Do Not Remove" tag from a newly purchased mattress and was promptly devoured by mattress gnomes',

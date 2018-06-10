@@ -1,13 +1,13 @@
 // @flow
 
-import { g, helpers } from "../../../common";
+import { g } from "../../../common";
 import genPicks from "./genPicks";
 import logLotteryChances from "./logLotteryChances";
 import logLotteryWinners from "./logLotteryWinners";
 import lotterySort from "./lotterySort";
 import updateChances from "./updateChances";
 import { idb } from "../../db";
-import { random } from "../../util";
+import { helpers, random } from "../../util";
 import type { Conditions, DraftLotteryResult } from "../../../common/types";
 
 /**

@@ -1,9 +1,10 @@
 // @flow
 
 import backboard from "backboard";
-import { g, helpers } from "../../../common";
+import { g } from "../../../common";
 import { idb } from "../../db";
 import { mergeByPk } from "./helpers";
+import { helpers } from "../../util";
 import type { TeamSeason } from "../../../common/types";
 
 const getCopies = async ({

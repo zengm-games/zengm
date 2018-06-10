@@ -1,6 +1,6 @@
 // @flow
 
-import { PHASE, g, helpers } from "../../common";
+import { PHASE, g } from "../../common";
 import {
     contractNegotiation,
     draft,
@@ -13,6 +13,7 @@ import {
 } from "../core";
 import { idb, reset } from "../db";
 import {
+    helpers,
     local,
     lock,
     logEvent,

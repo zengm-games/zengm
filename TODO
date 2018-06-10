@@ -4,6 +4,9 @@ get rid of g in UI
   - helpers using g
     - leagueUrl - use g when called from worker, use whatever UI local state in UI. how??
       - maybe separate into uiHelpers and workerHelpers, importing from common helpers when necessary, and then binding leagueUrl to appropriate variable
+      - what other functions are UI or worker only?
+        - ui only - gameScore, numberWithCommas, plusMinus, roundsWonText
+      - ui/util/helpers
 - required properties
   - g.userTid and g.userTids, for multiTeamMenu and logEvent
   - leagueName, for setTitle

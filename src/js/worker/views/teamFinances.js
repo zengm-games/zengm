@@ -1,7 +1,7 @@
-import { PHASE, g, helpers } from "../../common";
+import { PHASE, g } from "../../common";
 import { team } from "../core";
 import { idb } from "../db";
-import { lock } from "../util";
+import { helpers, lock } from "../util";
 import type { GetOutput, UpdateEvents } from "../../common/types";
 
 async function updateTeamFinances(

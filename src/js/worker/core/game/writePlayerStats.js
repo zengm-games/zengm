@@ -1,9 +1,9 @@
 // @flow
 
-import { PHASE, g, helpers } from "../../../common";
+import { PHASE, g } from "../../../common";
 import { player } from "../../core";
 import { idb } from "../../db";
-import { local, lock, logEvent, random } from "../../util";
+import { helpers, local, lock, logEvent, random } from "../../util";
 import type { Conditions, GameResults } from "../../../common/types";
 
 const writePlayerStats = async (

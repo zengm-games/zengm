@@ -2,7 +2,7 @@
 
 import flatten from "lodash/flatten";
 import range from "lodash/range";
-import { PHASE, PHASE_TEXT, PLAYER, g, helpers } from "../../common";
+import { PHASE, PHASE_TEXT, PLAYER, g } from "../../common";
 import actions from "./actions";
 import processInputs from "./processInputs";
 import {
@@ -22,7 +22,7 @@ import {
     changes,
     checkNaNs,
     env,
-    helpers as workerHelpers,
+    helpers,
     local,
     lock,
     random,
@@ -639,7 +639,7 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
                     picks.filter(dp => offers[i].dpids.includes(dp.dpid)),
                 );
                 for (const pick of picks) {
-                    pick.desc = workerHelpers.pickDesc(pick);
+                    pick.desc = helpers.pickDesc(pick);
                 }
 
                 const payroll = await team.getPayroll(tid);

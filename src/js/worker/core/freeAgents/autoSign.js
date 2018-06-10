@@ -2,10 +2,10 @@
 
 import orderBy from "lodash/orderBy";
 import range from "lodash/range";
-import { PHASE, PLAYER, g, helpers } from "../../../common";
+import { PHASE, PLAYER, g } from "../../../common";
 import { player, team } from "../../core";
 import { idb } from "../../db";
-import { local, logEvent, random } from "../../util";
+import { helpers, local, logEvent, random } from "../../util";
 
 /**
  * AI teams sign free agents.

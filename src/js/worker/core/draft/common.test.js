@@ -1,11 +1,11 @@
 // @flow
 
 import assert from "assert";
-import { helpers } from "../../../common";
 import sampleTiebreakers from "../../../test/fixtures/sampleTiebreakers";
 import testHelpers from "../../../test/helpers";
 import { draft } from "..";
 import { idb } from "../../db";
+import { helpers } from "../../util";
 
 const getDraftTids = async () => {
     await draft.genOrder();

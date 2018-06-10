@@ -1,8 +1,8 @@
 // @flow
 
-import { PHASE, g, helpers } from "../../common";
+import { PHASE, g } from "../../common";
 import { draft } from "../core";
-import { local, lock, toUI } from "../util";
+import { helpers, local, lock, toUI } from "../util";
 
 /**
  * Update play menu options based on game state.

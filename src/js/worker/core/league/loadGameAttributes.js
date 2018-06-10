@@ -1,8 +1,8 @@
 // @flow
 
 import { idb } from "../../db";
-import { g, helpers } from "../../../common";
-import { defaultGameAttributes, toUI } from "../../util";
+import { g } from "../../../common";
+import { defaultGameAttributes, helpers, toUI } from "../../util";
 
 /**
  * Load game attributes from the database and update the global variable g.

@@ -1,8 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { helpers } from "../../common";
 import { HelpPopover, NewWindowLink } from "../components";
-import { logEvent, setTitle, toWorker } from "../util";
+import { helpers, logEvent, setTitle, toWorker } from "../util";
 
 class GodMode extends React.Component {
     constructor(props) {

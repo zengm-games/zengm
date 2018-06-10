@@ -4,8 +4,7 @@ import classNames from "classnames";
 import range from "lodash/range";
 import PropTypes from "prop-types";
 import * as React from "react";
-import { helpers } from "../../common";
-import { setTitle, toWorker } from "../util";
+import { helpers, setTitle, toWorker } from "../util";
 import { DraftAbbrev, Dropdown, JumpTo, NewWindowLink } from "../components";
 import type { DraftLotteryResultArray } from "../../common/types";
 

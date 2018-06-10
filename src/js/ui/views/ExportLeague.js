@@ -1,6 +1,5 @@
 import React from "react";
-import { helpers } from "../../common";
-import { setTitle, toWorker } from "../util";
+import { helpers, setTitle, toWorker } from "../util";
 import { DownloadDataLink } from "../components";
 
 const categories = [

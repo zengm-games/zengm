@@ -1,8 +1,8 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { PHASE, helpers } from "../../common";
+import { PHASE } from "../../common";
 import { NewWindowLink } from "../components";
-import { realtimeUpdate, setTitle, toWorker } from "../util";
+import { helpers, realtimeUpdate, setTitle, toWorker } from "../util";
 
 class NewTeam extends React.Component {
     constructor(props) {

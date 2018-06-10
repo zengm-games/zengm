@@ -9,8 +9,8 @@ import {
     SortableHandle,
     arrayMove,
 } from "react-sortable-hoc";
-import { PHASE, helpers } from "../../common";
-import { logEvent, setTitle, toWorker } from "../util";
+import { PHASE } from "../../common";
+import { helpers, logEvent, setTitle, toWorker } from "../util";
 import {
     Dropdown,
     HelpPopover,

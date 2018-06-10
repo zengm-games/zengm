@@ -5,9 +5,8 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import OverlayTrigger from "react-bootstrap/lib/OverlayTrigger";
 import Popover from "react-bootstrap/lib/Popover";
-import { helpers } from "../../common";
 import WatchBlock from "./WatchBlock";
-import { toWorker } from "../util";
+import { helpers, toWorker } from "../util";
 
 const colorRating = (rating: number) => {
     const classes = ["text-danger", "text-warning", null, "text-success"];

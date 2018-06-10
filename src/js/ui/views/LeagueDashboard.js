@@ -1,8 +1,8 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { PHASE, helpers } from "../../common";
-import { setTitle } from "../util";
+import { PHASE } from "../../common";
+import { helpers, setTitle } from "../util";
 import {
     CompletedGame,
     NewWindowLink,

@@ -2,7 +2,8 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import { g, helpers } from "../../common";
+import { g } from "../../common";
+import { helpers } from "../util";
 
 // Link to an abbrev either as "ATL" or "ATL (from BOS)" if a pick was traded.
 const DraftAbbrev = ({

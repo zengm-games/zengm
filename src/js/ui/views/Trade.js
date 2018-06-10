@@ -1,8 +1,8 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { PHASE, helpers } from "../../common";
-import { getCols, realtimeUpdate, setTitle, toWorker } from "../util";
+import { PHASE } from "../../common";
+import { getCols, helpers, realtimeUpdate, setTitle, toWorker } from "../util";
 import { DataTable, NewWindowLink, PlayerNameLabels } from "../components";
 
 const genRows = (players, handleChangeAsset) => {

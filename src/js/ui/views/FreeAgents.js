@@ -1,13 +1,13 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { PHASE, helpers } from "../../common";
+import { PHASE } from "../../common";
 import {
     DataTable,
     HelpPopover,
     NewWindowLink,
     PlayerNameLabels,
 } from "../components";
-import { getCols, setTitle, toWorker } from "../util";
+import { getCols, helpers, setTitle, toWorker } from "../util";
 
 const cols = getCols(
     "Name",

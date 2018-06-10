@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { PLAYER, helpers } from "../../common";
-import { getCols, setTitle } from "../util";
+import { PLAYER } from "../../common";
+import { helpers, getCols, setTitle } from "../util";
 import {
     DataTable,
     Dropdown,

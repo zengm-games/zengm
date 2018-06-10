@@ -2,9 +2,8 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import { helpers } from "../../common";
 import { NewWindowLink, SafeHtml } from "../components";
-import { setTitle } from "../util";
+import { helpers, setTitle } from "../util";
 import type { Message as Message_ } from "../../common/types";
 
 type MessageProps = {

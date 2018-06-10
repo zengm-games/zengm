@@ -12,8 +12,8 @@ import Navbar from "react-bootstrap/lib/Navbar";
 import Overlay from "react-bootstrap/lib/Overlay";
 import Popover from "react-bootstrap/lib/Popover";
 import ReactDOM from "react-dom";
-import { fetchWrapper, helpers } from "../../common";
-import { logEvent, realtimeUpdate, toWorker } from "../util";
+import { fetchWrapper } from "../../common";
+import { helpers, logEvent, realtimeUpdate, toWorker } from "../util";
 import html2canvas from "../../vendor/html2canvas";
 import type { Option } from "../../common/types";
 

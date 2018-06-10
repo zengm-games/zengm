@@ -1,6 +1,5 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { helpers } from "../../common";
 import {
     DataTable,
     NewWindowLink,
@@ -9,7 +8,7 @@ import {
     SkillsBlock,
     WatchBlock,
 } from "../components";
-import { getCols, setTitle, toWorker } from "../util";
+import { getCols, helpers, setTitle, toWorker } from "../util";
 
 const upperCaseFirstLetter = (string: string): string => {
     return `${string.charAt(0).toUpperCase()}${string.slice(1)}`;

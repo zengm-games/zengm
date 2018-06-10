@@ -1,8 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { helpers } from "../../common";
 import { DataTable, NewWindowLink, PlayerNameLabels } from "../components";
-import { getCols, setTitle } from "../util";
+import { getCols, helpers, setTitle } from "../util";
 
 const awardName = (award, season, teamAbbrevsCache, userTid) => {
     if (!award) {

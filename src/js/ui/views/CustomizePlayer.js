@@ -3,8 +3,8 @@
 import faces from "facesjs";
 import PropTypes from "prop-types";
 import React from "react";
-import { PHASE, helpers } from "../../common";
-import { realtimeUpdate, setTitle, toWorker } from "../util";
+import { PHASE } from "../../common";
+import { helpers, realtimeUpdate, setTitle, toWorker } from "../util";
 import { NewWindowLink, PlayerPicture } from "../components";
 
 const positions = ["PG", "SG", "SF", "PF", "C", "G", "GF", "F", "FC"];

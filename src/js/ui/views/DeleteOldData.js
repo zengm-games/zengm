@@ -1,7 +1,6 @@
 import React from "react";
-import { helpers } from "../../common";
 import { NewWindowLink } from "../components";
-import { logEvent, setTitle, toWorker } from "../util";
+import { helpers, logEvent, setTitle, toWorker } from "../util";
 
 class DeleteOldData extends React.Component {
     constructor(props) {

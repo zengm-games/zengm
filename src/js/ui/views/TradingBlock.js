@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { PHASE, helpers } from "../../common";
-import { getCols, setTitle, toWorker } from "../util";
+import { PHASE } from "../../common";
+import { getCols, helpers, setTitle, toWorker } from "../util";
 import clickable from "../wrappers/clickable";
 import { DataTable, NewWindowLink, PlayerNameLabels } from "../components";
 

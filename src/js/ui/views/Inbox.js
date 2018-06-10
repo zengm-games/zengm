@@ -3,9 +3,8 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import * as React from "react";
-import { helpers } from "../../common";
 import { NewWindowLink } from "../components";
-import { setTitle } from "../util";
+import { helpers, setTitle } from "../util";
 import type { Message } from "../../common/types";
 
 const Inbox = ({

@@ -1,8 +1,6 @@
 // @flow
 
-/* eslint quote-props: "off" */
-
-import { helpers } from "../../common";
+import { helpers } from "../util";
 import type { SortOrder, SortType } from "../../common/types";
 
 type Col = {

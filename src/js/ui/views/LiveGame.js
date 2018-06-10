@@ -2,8 +2,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import AutoAffix from "react-overlays/lib/AutoAffix";
-import { helpers } from "../../common";
-import { setTitle } from "../util";
+import { helpers, setTitle } from "../util";
 import { PlayerNameLabels } from "../components";
 
 class PlayerRow extends React.Component {

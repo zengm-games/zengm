@@ -1,8 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { helpers } from "../../common";
-import { getCols, setTitle, toWorker } from "../util";
+import { getCols, helpers, setTitle, toWorker } from "../util";
 import {
     DataTable,
     DraftAbbrev,

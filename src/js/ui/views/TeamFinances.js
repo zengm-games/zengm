@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { helpers } from "../../common";
-import { getCols, logEvent, setTitle, toWorker } from "../util";
+import { getCols, helpers, logEvent, setTitle, toWorker } from "../util";
 import {
     BarGraph,
     DataTable,

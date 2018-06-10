@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import DropdownButton from "react-bootstrap/lib/DropdownButton";
 import MenuItem from "react-bootstrap/lib/MenuItem";
-import { helpers } from "../../common";
+import { helpers } from "../util";
 
 const genUrl = (parts, season) => {
     if (season !== undefined) {

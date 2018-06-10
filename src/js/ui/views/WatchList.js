@@ -2,8 +2,8 @@ import PropTypes from "prop-types";
 import React from "react";
 import DropdownButton from "react-bootstrap/lib/DropdownButton";
 import MenuItem from "react-bootstrap/lib/MenuItem";
-import { PLAYER, helpers } from "../../common";
-import { getCols, setTitle, toWorker } from "../util";
+import { PLAYER } from "../../common";
+import { getCols, helpers, setTitle, toWorker } from "../util";
 import {
     DataTable,
     Dropdown,

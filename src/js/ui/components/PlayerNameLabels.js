@@ -2,9 +2,9 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import { helpers } from "../../common";
 import SkillsBlock from "./SkillsBlock";
 import RatingsStatsPopover from "./RatingsStatsPopover";
+import { helpers } from "../util";
 import type { PlayerInjury, PlayerSkill } from "../../common/types";
 
 const PlayerNameLabels = ({

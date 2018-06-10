@@ -2,7 +2,7 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import { helpers } from "../../common";
+import { helpers } from "../util";
 
 type Props = {
     lid: number | void,

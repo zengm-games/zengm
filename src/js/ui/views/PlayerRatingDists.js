@@ -1,8 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { helpers } from "../../common";
 import { BoxPlot, Dropdown, NewWindowLink } from "../components";
-import { setTitle } from "../util";
+import { helpers, setTitle } from "../util";
 
 const PlayerRatingDists = ({ ratingsAll, season }) => {
     setTitle(`Player Rating Distributions - ${season}`);

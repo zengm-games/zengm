@@ -1,8 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { helpers } from "../../common";
 import { LeagueFileUpload } from "../components";
-import { realtimeUpdate, setTitle, toWorker } from "../util";
+import { helpers, realtimeUpdate, setTitle, toWorker } from "../util";
 
 const PopText = ({ teams, tid }) => {
     let msg = (

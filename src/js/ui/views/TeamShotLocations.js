@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { helpers } from "../../common";
-import { getCols, prefixStatOpp, setTitle } from "../util";
+import { getCols, helpers, prefixStatOpp, setTitle } from "../util";
 import { DataTable, Dropdown, NewWindowLink } from "../components";
 
 const TeamShotLocations = ({

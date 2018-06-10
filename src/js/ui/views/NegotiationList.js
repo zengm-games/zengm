@@ -1,8 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { helpers } from "../../common";
 import { DataTable, NewWindowLink, PlayerNameLabels } from "../components";
-import { getCols, setTitle, toWorker } from "../util";
+import { getCols, helpers, setTitle, toWorker } from "../util";
 
 const NegotiationList = ({ players, userTid }) => {
     setTitle("Re-sign Players");

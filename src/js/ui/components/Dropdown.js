@@ -2,8 +2,8 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import { PHASE, g, helpers } from "../../common";
-import { realtimeUpdate } from "../util";
+import { PHASE, g } from "../../common";
+import { helpers, realtimeUpdate } from "../util";
 
 const Select = ({ field, handleChange, value }) => {
     let options: {

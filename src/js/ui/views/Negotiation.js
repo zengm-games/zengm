@@ -1,9 +1,8 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { helpers } from "../../common";
 import { NewWindowLink } from "../components";
-import { logEvent, realtimeUpdate, setTitle, toWorker } from "../util";
+import { helpers, logEvent, realtimeUpdate, setTitle, toWorker } from "../util";
 
 // Show the negotiations list if there are more ongoing negotiations
 async function redirectNegotiationOrRoster(cancelled) {

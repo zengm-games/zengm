@@ -5,8 +5,8 @@ import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
 import * as React from "react";
 import textContent from "react-addons-text-content";
-import { helpers } from "../../common";
 import { HelpPopover } from "../components";
+import { helpers } from "../util";
 import clickable from "../wrappers/clickable";
 import type { SortOrder, SortType } from "../../common/types";
 

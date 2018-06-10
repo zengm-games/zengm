@@ -1,8 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { helpers } from "../../common";
-import { setTitle } from "../util";
+import { helpers, setTitle } from "../util";
 import { Dropdown, JumpTo, NewWindowLink } from "../components";
 import clickable from "../wrappers/clickable";
 

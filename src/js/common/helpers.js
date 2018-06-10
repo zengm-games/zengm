@@ -1,5 +1,7 @@
 // @flow
 
+// This should never be directly imported. Instead, ui/util/helpers and ui/worker/helpers should be used.
+
 import { g } from "../common";
 import type { TeamBasic } from "../common/types";
 

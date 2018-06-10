@@ -74,6 +74,7 @@ const killOne = async (conditions: Conditions) => {
         'removed the "Do Not Remove" tag from a newly purchased mattress and was promptly devoured by mattress gnomes',
         "died of dysentery",
         "was strangled to death by a teammate for not knowing the score",
+        "died in a freak gasoline fight accident",
     ]);
 
     // Pick random team

@@ -1,28 +1,32 @@
 get rid of g in UI
 - [^a-zA-Z]g\.[a-zA-Z]
+- PlayoffMatchup augment in worker
+  - others to do that with?
 - required properties
-  - g.userTid and g.userTids, for multiTeamMenu and logEvent
-  - leagueName, for setTitle
-  - topMenu ones needed?
-    email - no
-    godMode - yes
-    goldUntil - replace with "gold"
-    goldCancelled - replace with "gold"
-    hasViewedALeague - yes
-    lid - yes
-    options - rename playMenuOptions
-    phaseText - yes
-    popup - yes
-    statusText - yes
-    username - yes
-  - maybe: phase, season
-  - team*caches? draftabbrev might need it, maybe others too
+  - gold (synthesis of goldUntil and goldCancelled)
+  - godMode
+  - hasViewedALeague
+  - lid
+  - leagueName
+  - phaseText
+  - playMenuOptions (renamed from "options")
+  - popup
+  - statusText
+  - teamAbbrevsCache
+  - teamNamesCache
+  - teamRegionsCache
+  - userTid
+  - userTids
+  - username
+  - used only in Dropdown.js: phase, season, startingSeason
 - required properties should be passed in from worker, or synced via some other mechanism and stored globally
   - decide which should be stored globally, and how to pass down to components (context? maybe just props from controller?)
   - unstated? or context API directly, maybe? redux, even?
     - straight context API doesn't look too hard
       - but it re-renders every subscriber on every change
+        - not many subscribers now!
       - avoid emitter by putting in own class with actions as methods
+      - does this allow easy use in Controller without rerendering?
     - unstated
       - nicer api, has actions
       - tests, support?
@@ -33,6 +37,8 @@ get rid of g in UI
     - write my own, let you subscribe to individual variables from state
     - should all this be stored only in the worker?
       - write mechanism to sync, similar to how views work. OR, similar to how g works now, but call it "local"
+        - problem: here i want to unify "g" and Controller state. so if it's all in "g", how does controller know to update? manually refresh any component that uses g? error prone. export the JS object that is in the state? is that normal?
+          <Controller ref={(ourComponent) => {window.ourComponent = ourComponent}} />
 - figure out how to get rid of weird ad-related code (center when right ad not displayed or gold, etc) and emitter?
   - add/remove a class to center whenever gold is updated
 - move g out of common

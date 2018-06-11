@@ -308,9 +308,10 @@ async function updatePlayoffs(
 
         if (playoffSeries !== undefined) {
             const series = playoffSeries.series;
-            let found = false;
+            helpers.augmentSeries(series);
 
             // Find the latest playoff series with the user's team in it
+            let found = false;
             for (let rnd = playoffSeries.currentRound; rnd >= 0; rnd--) {
                 for (let i = 0; i < series[rnd].length; i++) {
                     if (

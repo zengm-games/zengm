@@ -1,8 +1,7 @@
 get rid of g in UI
 - [^a-zA-Z]g\.[a-zA-Z]
-- PlayoffMatchup augment in worker
-  - others to do that with?
 - required properties
+  - FIRST, confirm i can't get rid of any more usages of g
   - gold (synthesis of goldUntil and goldCancelled)
   - godMode
   - hasViewedALeague

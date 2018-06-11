@@ -57,6 +57,8 @@ async function updatePlayoffs(
             }
         }
 
+        helpers.augmentSeries(series);
+
         // Formatting for the table in playoffs.html
         const matchups = [];
         for (let i = 0; i < 2 ** (g.numPlayoffRounds - 2); i++) {

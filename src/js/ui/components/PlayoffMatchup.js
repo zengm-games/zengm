@@ -2,7 +2,6 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import { g } from "../../common";
 import { helpers } from "../util";
 
 type SeriesTeam = {
@@ -44,11 +43,11 @@ const PlayoffMatchup = ({
                 <a
                     href={helpers.leagueUrl([
                         "roster",
-                        g.teamAbbrevsCache[series.home.tid],
+                        series.home.abbrev,
                         season,
                     ])}
                 >
-                    {g.teamRegionsCache[series.home.tid]}
+                    {series.home.region}
                 </a>
                 {series.home.hasOwnProperty("won") ? (
                     <span> {series.home.won}</span>
@@ -64,11 +63,11 @@ const PlayoffMatchup = ({
                 <a
                     href={helpers.leagueUrl([
                         "roster",
-                        g.teamAbbrevsCache[series.away.tid],
+                        series.away.abbrev,
                         season,
                     ])}
                 >
-                    {g.teamRegionsCache[series.away.tid]}
+                    {series.away.region}
                 </a>
                 {series.away.hasOwnProperty("won") ? (
                     <span> {series.away.won}</span>

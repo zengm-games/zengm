@@ -503,13 +503,13 @@ export type Local = {|
     reset?: () => void,
 |};
 
-type PlayoffSeriesTeam = {|
+type PlayoffSeriesTeam = {
     cid: number,
     seed: number,
     tid: number,
     winp: number,
     won: number,
-|};
+};
 
 export type PlayoffSeries = {|
     season: number,

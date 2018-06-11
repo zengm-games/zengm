@@ -76,6 +76,9 @@ const getAbbrev = (tid: number | string): string => {
     return g.teamAbbrevsCache[tid];
 };
 
+const leagueUrl = (components: (number | string)[]): string =>
+    commonHelpers.leagueUrlFactory(g.lid, components);
+
 /**
  * Pad an array with nulls or truncate it so that it has a fixed length.
  *
@@ -153,6 +156,21 @@ const pickDesc = (dp: DraftPick): string => {
     return desc;
 };
 
+/**
+ * Delete all the things from the global variable g that are not stored in league databases.
+ *
+ * This is used to clear out values from other leagues, to ensure that the appropriate values are updated in the database when calling league.setGameAttributes.
+ *
+ * @memberOf util.helpers
+ */
+const resetG = () => {
+    for (const key of commonHelpers.keys(g)) {
+        if (key !== "lid") {
+            delete g[key];
+        }
+    }
+};
+
 // x is value, a controls sharpness, b controls center
 const sigmoid = (x: number, a: number, b: number): number => {
     return 1 / (1 + Math.exp(-(a * (x - b))));
@@ -163,10 +181,12 @@ const helpers = Object.assign({}, commonHelpers, {
     formatCompletedGame,
     gb,
     getAbbrev,
+    leagueUrl,
     nullPad,
     orderByWinp,
     overtimeCounter,
     pickDesc,
+    resetG,
     sigmoid,
 });
 

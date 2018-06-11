@@ -2,7 +2,6 @@
 
 // This should never be directly imported. Instead, ui/util/helpers and ui/worker/helpers should be used.
 
-import { g } from "../common";
 import type { TeamBasic } from "../common/types";
 
 /**
@@ -336,28 +335,16 @@ function keys<T: string>(obj: any): Array<T> {
 }
 
 /**
- * Delete all the things from the global variable g that are not stored in league databases.
- *
- * This is used to clear out values from other leagues, to ensure that the appropriate values are updated in the database when calling league.setGameAttributes.
- *
- * @memberOf util.helpers
- */
-function resetG() {
-    for (const key of keys(g)) {
-        if (key !== "lid") {
-            delete g[key];
-        }
-    }
-}
-
-/**
  * Create a URL for a page within a league.
  *
  * @param {Array.<string|number>} components Array of components for the URL after the league ID, which will be combined with / in between.
  * @return {string} URL
  */
-function leagueUrl(components: (number | string)[]): string {
-    let url = `/l/${g.lid}`;
+function leagueUrlFactory(
+    lid: number,
+    components: (number | string)[],
+): string {
+    let url = `/l/${lid}`;
     for (let i = 0; i < components.length; i++) {
         if (components[i] !== undefined) {
             url += `/${components[i]}`;
@@ -493,11 +480,10 @@ export default {
     addPopRank,
     getTeamsDefault,
     deepCopy,
-    keys,
-    resetG,
     formatCurrency,
     bound,
-    leagueUrl,
+    keys,
+    leagueUrlFactory,
     ordinal,
     yearRanges,
     roundWinp,

@@ -1,8 +1,5 @@
 get rid of g in UI
 - [^a-zA-Z]g\.[a-zA-Z]
-- what about common files...
-  - helpers using g
-    - leagueUrl - use g when called from worker, use whatever UI local state in UI. curry in ui helpers and worker helpers
 - required properties
   - g.userTid and g.userTids, for multiTeamMenu and logEvent
   - leagueName, for setTitle

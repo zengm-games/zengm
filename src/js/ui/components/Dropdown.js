@@ -12,7 +12,7 @@ const Select = ({ field, handleChange, value }) => {
     }[];
     if (field === "teams") {
         options = [];
-        for (let j = 0; j < g.numTeams; j++) {
+        for (let j = 0; j < g.teamAbbrevsCache.length; j++) {
             options[j] = {
                 key: g.teamAbbrevsCache[j],
                 val: `${g.teamRegionsCache[j]} ${g.teamNamesCache[j]}`,
@@ -25,7 +25,7 @@ const Select = ({ field, handleChange, value }) => {
                 val: "All Teams",
             },
         ];
-        for (let j = 0; j < g.numTeams; j++) {
+        for (let j = 0; j < g.teamAbbrevsCache.length; j++) {
             options[j + 1] = {
                 key: g.teamAbbrevsCache[j],
                 val: `${g.teamRegionsCache[j]} ${g.teamNamesCache[j]}`,
@@ -42,7 +42,7 @@ const Select = ({ field, handleChange, value }) => {
                 val: "Watch List",
             },
         ];
-        for (let j = 0; j < g.numTeams; j++) {
+        for (let j = 0; j < g.teamAbbrevsCache.length; j++) {
             options[j + 2] = {
                 key: g.teamAbbrevsCache[j],
                 val: `${g.teamRegionsCache[j]} ${g.teamNamesCache[j]}`,

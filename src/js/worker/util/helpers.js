@@ -6,10 +6,12 @@ import type {
     DraftPick,
     GameProcessed,
     GameProcessedCompleted,
-    PlayoffSeries,
+    PlayoffSeriesTeam,
 } from "../../common/types";
 
-const augmentSeries = (series: PlayoffSeries[][]) => {
+const augmentSeries = (
+    series: {| away: PlayoffSeriesTeam, home: PlayoffSeriesTeam |}[][],
+) => {
     for (const round of series) {
         for (const matchup of round) {
             matchup.away.abbrev = g.teamAbbrevsCache[matchup.away.tid];

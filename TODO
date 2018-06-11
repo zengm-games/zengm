@@ -26,6 +26,8 @@ get rid of g in UI
         - not many subscribers now!
       - avoid emitter by putting in own class with actions as methods
       - does this allow easy use in Controller without rerendering?
+      - how would i get the values for non-components like logEvent?
+        - g really needed there? no, that code should lie somewhere else and respond to userTids
     - unstated
       - nicer api, has actions
       - tests, support?

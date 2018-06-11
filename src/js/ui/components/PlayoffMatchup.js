@@ -5,6 +5,8 @@ import * as React from "react";
 import { helpers } from "../util";
 
 type SeriesTeam = {
+    abbrev: string,
+    region: string,
     seed: number,
     tid: number,
     won?: number,
@@ -81,11 +83,15 @@ PlayoffMatchup.propTypes = {
     season: PropTypes.number.isRequired,
     series: PropTypes.shape({
         away: PropTypes.shape({
+            abbrev: PropTypes.string.isRequired,
+            region: PropTypes.string.isRequired,
             seed: PropTypes.number.isRequired,
             tid: PropTypes.number.isRequired,
             won: PropTypes.number,
         }),
         home: PropTypes.shape({
+            abbrev: PropTypes.string.isRequired,
+            region: PropTypes.string.isRequired,
             seed: PropTypes.number.isRequired,
             tid: PropTypes.number.isRequired,
             won: PropTypes.number,

@@ -128,7 +128,7 @@ async function realtimeUpdate2(
     await realtimeUpdate(updateEvents, url, raw);
 }
 
-const resetG = () => {
+const resetLeague = () => {
     local.resetLeague();
 };
 
@@ -153,7 +153,7 @@ export default {
     newLid,
     prompt,
     realtimeUpdate: realtimeUpdate2,
-    resetG,
+    resetLeague,
     setGameAttributes,
     showEvent: showEvent2,
     updateLocal,

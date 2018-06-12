@@ -6,11 +6,7 @@ get rid of g in UI
   - similar code replaces local usage in logEvent
 - move g out of common
 - test account still works, especially goldResult
-- resetG rename
 - initAds passed goldUntil, why?
-- toUI emit needed?
-- emitter needed at all?
-- "g.userTids" realtimeupdate needed?
 
 "handle case where target has a brother" test is flaky, sometimes says "No brother found"
 

@@ -132,7 +132,7 @@ const create = async (
 
     // Clear old game attributes from g, to make sure the new ones are saved to the db in setGameAttributes
     helpers.resetG();
-    await toUI(["resetG"]);
+    await toUI(["resetLeague"]);
 
     if (idb.cache) {
         idb.cache.stopAutoFlush();

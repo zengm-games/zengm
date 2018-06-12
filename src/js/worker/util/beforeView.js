@@ -108,7 +108,7 @@ const beforeLeague = async (
     if (switchingDatabaseLid) {
         // Clear old game attributes from g, just to be sure
         helpers.resetG();
-        await toUI(["resetG"]);
+        await toUI(["resetLeague"]);
         if (loadingNewLid !== newLid) {
             return;
         }
@@ -172,7 +172,7 @@ const beforeNonLeague = async (conditions: Conditions) => {
         try {
             beforeNonLeagueRunning = true;
             await league.close(false);
-            await toUI(["resetG"], conditions);
+            await toUI(["resetLeague"], conditions);
             if (!env.useSharedWorker) {
                 clearInterval(heartbeatIntervalID);
             }

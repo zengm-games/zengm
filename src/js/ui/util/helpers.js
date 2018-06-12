@@ -1,6 +1,7 @@
 // @flow
 
-import { g, helpers as commonHelpers } from "../../common";
+import { helpers as commonHelpers } from "../../common";
+import { local } from ".";
 
 const gameScore = (arg: { [key: string]: number }): string => {
     return (
@@ -18,8 +19,14 @@ const gameScore = (arg: { [key: string]: number }): string => {
     ).toFixed(1);
 };
 
-const leagueUrl = (components: (number | string)[]): string =>
-    commonHelpers.leagueUrlFactory(g.lid, components);
+const leagueUrl = (components: (number | string)[]): string => {
+    const lid = local.state.lid;
+    if (typeof lid !== "number") {
+        throw new Error("Non-numeric or undefined lid");
+    }
+
+    return commonHelpers.leagueUrlFactory(lid, components);
+};
 
 /**
  * Format a number as an integer with commas in the thousands places.
@@ -35,21 +42,6 @@ const plusMinus = (arg: number, d: number): string => {
         return "";
     }
     return (arg > 0 ? "+" : "") + arg.toFixed(d);
-};
-
-/**
- * Delete all the things from the global variable g that are not stored in league databases.
- *
- * This is used to clear out values from other leagues, to ensure that the appropriate values are updated in the database when calling league.setGameAttributes.
- *
- * @memberOf util.helpers
- */
-const resetG = () => {
-    for (const key of commonHelpers.keys(g)) {
-        if (key !== "lid") {
-            delete g[key];
-        }
-    }
 };
 
 const roundsWonText = (
@@ -84,7 +76,6 @@ const helpers = Object.assign({}, commonHelpers, {
     leagueUrl,
     numberWithCommas,
     plusMinus,
-    resetG,
     roundsWonText,
 });
 

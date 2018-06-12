@@ -2,8 +2,15 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import { g } from "../../common";
-import { ads, emitter, realtimeUpdate, setTitle, toWorker } from "../util";
+import { Provider } from "unstated";
+import {
+    ads,
+    emitter,
+    local,
+    realtimeUpdate,
+    setTitle,
+    toWorker,
+} from "../util";
 import {
     Footer,
     Header,
@@ -95,13 +102,13 @@ class Controller extends React.Component<{}, State> {
             inLeague: false,
             data: {},
             multiTeam: {
-                userTid: g.userTid,
-                userTids: g.userTids,
+                userTid: local.state.userTid,
+                userTids: local.state.userTids,
             },
             showNagModal: false,
             topMenu: {
                 email: undefined,
-                godMode: !!g.godMode,
+                godMode: !!local.state.godMode,
                 goldUntil: 0,
                 goldCancelled: false,
                 hasViewedALeague: !!localStorage.getItem("hasViewedALeague"),
@@ -351,8 +358,8 @@ class Controller extends React.Component<{}, State> {
     updateMultiTeam() {
         this.setState({
             multiTeam: {
-                userTid: g.userTid,
-                userTids: g.userTids,
+                userTid: local.state.userTid,
+                userTids: local.state.userTids,
             },
         });
     }
@@ -415,16 +422,21 @@ class Controller extends React.Component<{}, State> {
 
         return (
             <div className="container">
-                <NavBar {...topMenu} pageId={pageId} updating={updating} />
-                <Header />
-                <div id="screenshot-nonleague" style={{ minHeight: "300px" }}>
-                    {contents}
-                </div>
-                <Footer />
-                <NagModal
-                    close={this.closeNagModal}
-                    show={this.state.showNagModal}
-                />
+                <Provider>
+                    <NavBar {...topMenu} pageId={pageId} updating={updating} />
+                    <Header />
+                    <div
+                        id="screenshot-nonleague"
+                        style={{ minHeight: "300px" }}
+                    >
+                        {contents}
+                    </div>
+                    <Footer />
+                    <NagModal
+                        close={this.closeNagModal}
+                        show={this.state.showNagModal}
+                    />
+                </Provider>
             </div>
         );
     }

@@ -55,6 +55,7 @@
         "react-overlays": "^0.8.3",
         "react-sortable-hoc": "dumbmatter/react-sortable-hoc#clonedNode-in-onSortStart",
         "roman-numerals": "^0.3.2",
+        "unstated": "^2.1.1",
         "url-search-params-polyfill": "^4.0.0",
         "whatwg-fetch": "^2.0.4"
     },

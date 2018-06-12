@@ -2,8 +2,7 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import { g } from "../../common";
-import { emitter, realtimeUpdate, toWorker } from "../util";
+import { emitter, realtimeUpdate, subscribeLocal, toWorker } from "../util";
 
 const handleChange = async (e: SyntheticInputEvent<>) => {
     const userTid = parseInt(e.target.value, 10);
@@ -36,27 +35,29 @@ class MultiTeamMenu extends React.Component<Props> {
             return null;
         }
 
-        return (
-            <div className="multi-team-menu">
-                <label htmlFor="multi-team-select">
-                    Currently controlling:
-                </label>
-                <br />
-                <select
-                    className="form-control"
-                    id="multi-team-select"
-                    onChange={handleChange}
-                    value={userTid}
-                >
-                    {userTids.map((tid, i) => (
-                        <option key={tid} value={tid}>
-                            {g.teamRegionsCache[userTids[i]]}{" "}
-                            {g.teamNamesCache[userTids[i]]}
-                        </option>
-                    ))}
-                </select>
-            </div>
-        );
+        return subscribeLocal(local => {
+            return (
+                <div className="multi-team-menu">
+                    <label htmlFor="multi-team-select">
+                        Currently controlling:
+                    </label>
+                    <br />
+                    <select
+                        className="form-control"
+                        id="multi-team-select"
+                        onChange={handleChange}
+                        value={userTid}
+                    >
+                        {userTids.map((tid, i) => (
+                            <option key={tid} value={tid}>
+                                {local.state.teamRegionsCache[userTids[i]]}{" "}
+                                {local.state.teamNamesCache[userTids[i]]}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            );
+        });
     }
 }
 

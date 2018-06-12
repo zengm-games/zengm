@@ -1,7 +1,5 @@
 get rid of g in UI
-- [^a-zA-Z]g\.[a-zA-Z]
 - required properties
-  - FIRST, confirm i can't get rid of any more usages of g
   - gold (synthesis of goldUntil and goldCancelled)
   - godMode
   - hasViewedALeague
@@ -22,11 +20,16 @@ get rid of g in UI
   - decide which should be stored globally, and how to pass down to components (context? maybe just props from controller?)
   - unstated? or context API directly, maybe? redux, even?
     - Use unstated. Don't wrap controller or maybe component, only use in small terminal components. Cache lid (and anything else controller needs) in controller state, if no way to get it from unstated container
+    - then, get rid of multiTeam
+    - then, topMenu
+- ui/api/setGameAttributes logic should be in worker, not ui. minimize transfer
 - figure out how to get rid of weird ad-related code (center when right ad not displayed or gold, etc) and emitter?
   - add/remove a class to center whenever gold is updated
+  - similar code replaces local usage in logEvent
+- comment in ui/util/local explaining it
 - move g out of common
 - test account still works, especially goldResult
-- resetG
+- resetG rename
 
 "handle case where target has a brother" test is flaky, sometimes says "No brother found"
 

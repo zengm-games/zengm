@@ -1,7 +1,7 @@
 // @flow
 
-import { createLogger, g } from "../../common";
-import { notify, toWorker } from "../util";
+import { createLogger } from "../../common";
+import { local, notify, toWorker } from "../util";
 import type { LogEventShowOptions } from "../../common/types";
 
 const saveEvent = () => {
@@ -47,8 +47,8 @@ const showEvent = ({
         "notification-container",
     );
     if (
-        g.userTids !== undefined &&
-        g.userTids.length > 1 &&
+        local.state.userTids !== undefined &&
+        local.state.userTids.length > 1 &&
         notificationContainer &&
         !notificationContainer.classList.contains(
             "notification-container-extra-margin-bottom",
@@ -58,8 +58,8 @@ const showEvent = ({
             "notification-container-extra-margin-bottom",
         );
     } else if (
-        g.userTids !== undefined &&
-        g.userTids.length === 1 &&
+        local.state.userTids !== undefined &&
+        local.state.userTids.length === 1 &&
         notificationContainer &&
         notificationContainer.classList.contains(
             "notification-container-extra-margin-bottom",

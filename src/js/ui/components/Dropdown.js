@@ -2,306 +2,322 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import { PHASE, g } from "../../common";
-import { helpers, realtimeUpdate } from "../util";
+import { PHASE } from "../../common";
+import { helpers, realtimeUpdate, subscribeLocal } from "../util";
 
 const Select = ({ field, handleChange, value }) => {
-    let options: {
-        key: number | string,
-        val: number | string,
-    }[];
-    if (field === "teams") {
-        options = [];
-        for (let j = 0; j < g.teamAbbrevsCache.length; j++) {
-            options[j] = {
-                key: g.teamAbbrevsCache[j],
-                val: `${g.teamRegionsCache[j]} ${g.teamNamesCache[j]}`,
-            };
+    return subscribeLocal(local => {
+        let options: {
+            key: number | string,
+            val: number | string,
+        }[];
+        if (field === "teams") {
+            options = [];
+            for (let j = 0; j < local.state.teamAbbrevsCache.length; j++) {
+                options[j] = {
+                    key: local.state.teamAbbrevsCache[j],
+                    val: `${local.state.teamRegionsCache[j]} ${
+                        local.state.teamNamesCache[j]
+                    }`,
+                };
+            }
+        } else if (field === "teamsAndAll") {
+            options = [
+                {
+                    key: "all",
+                    val: "All Teams",
+                },
+            ];
+            for (let j = 0; j < local.state.teamAbbrevsCache.length; j++) {
+                options[j + 1] = {
+                    key: local.state.teamAbbrevsCache[j],
+                    val: `${local.state.teamRegionsCache[j]} ${
+                        local.state.teamNamesCache[j]
+                    }`,
+                };
+            }
+        } else if (field === "teamsAndAllWatch") {
+            options = [
+                {
+                    key: "all",
+                    val: "All Teams",
+                },
+                {
+                    key: "watch",
+                    val: "Watch List",
+                },
+            ];
+            for (let j = 0; j < local.state.teamAbbrevsCache.length; j++) {
+                options[j + 2] = {
+                    key: local.state.teamAbbrevsCache[j],
+                    val: `${local.state.teamRegionsCache[j]} ${
+                        local.state.teamNamesCache[j]
+                    }`,
+                };
+            }
+        } else if (
+            field === "seasons" ||
+            field === "seasonsAndCareer" ||
+            field === "seasonsAndAll"
+        ) {
+            options = [];
+            for (
+                let season = local.state.startingSeason;
+                season <= local.state.season;
+                season++
+            ) {
+                options.push({
+                    key: season,
+                    val: `${season} Season`,
+                });
+            }
+            if (field === "seasonsAndCareer") {
+                options.unshift({
+                    key: "career",
+                    val: "Career Totals",
+                });
+            }
+            if (field === "seasonsAndAll") {
+                options.unshift({
+                    key: "all",
+                    val: "All Seasons",
+                });
+            }
+        } else if (field === "seasonsUpcoming") {
+            options = [];
+            // For upcomingFreeAgents, bump up 1 if we're past the season
+            const offset = local.state.phase <= PHASE.RESIGN_PLAYERS ? 0 : 1;
+            for (let j = 0 + offset; j < 5 + offset; j++) {
+                options.push({
+                    key: local.state.season + j,
+                    val: `${local.state.season + j} season`,
+                });
+            }
+        } else if (field === "playoffs") {
+            options = [
+                {
+                    val: "Regular Season",
+                    key: "regularSeason",
+                },
+                {
+                    val: "Playoffs",
+                    key: "playoffs",
+                },
+            ];
+        } else if (field === "shows") {
+            options = [
+                {
+                    val: "Past 10 Seasons",
+                    key: "10",
+                },
+                {
+                    val: "All Seasons",
+                    key: "all",
+                },
+            ];
+        } else if (field === "statTypes") {
+            options = [
+                {
+                    val: "Per Game",
+                    key: "perGame",
+                },
+                {
+                    val: "Per 36 Mins",
+                    key: "per36",
+                },
+                {
+                    val: "Totals",
+                    key: "totals",
+                },
+            ];
+        } else if (field === "statTypesAdv") {
+            options = [
+                {
+                    val: "Per Game",
+                    key: "perGame",
+                },
+                {
+                    val: "Per 36 Mins",
+                    key: "per36",
+                },
+                {
+                    val: "Totals",
+                    key: "totals",
+                },
+                {
+                    val: "Advanced",
+                    key: "advanced",
+                },
+            ];
+        } else if (field === "awardType") {
+            options = [
+                {
+                    val: "Won Championship",
+                    key: "champion",
+                },
+                {
+                    val: "Most Valuable Player",
+                    key: "mvp",
+                },
+                {
+                    val: "Finals MVP",
+                    key: "finals_mvp",
+                },
+                {
+                    val: "Defensive Player of the Year",
+                    key: "dpoy",
+                },
+                {
+                    val: "Sixth Man of the Year",
+                    key: "smoy",
+                },
+                {
+                    val: "Most Improved Player",
+                    key: "mip",
+                },
+                {
+                    val: "Rookie of the Year",
+                    key: "roy",
+                },
+                {
+                    val: "First Team All-League",
+                    key: "first_team",
+                },
+                {
+                    val: "Second Team All-League",
+                    key: "second_team",
+                },
+                {
+                    val: "Third Team All-League",
+                    key: "third_team",
+                },
+                {
+                    val: "All-League",
+                    key: "all_league",
+                },
+                {
+                    val: "First Team All-Defensive",
+                    key: "first_def",
+                },
+                {
+                    val: "Second Team All-Defensive",
+                    key: "second_def",
+                },
+                {
+                    val: "Third Team All-Defensive",
+                    key: "third_def",
+                },
+                {
+                    val: "All-Defensive",
+                    key: "all_def",
+                },
+                {
+                    val: "League Scoring Leader",
+                    key: "ppg_leader",
+                },
+                {
+                    val: "League Rebounding Leader",
+                    key: "rpg_leader",
+                },
+                {
+                    val: "League Assists Leader",
+                    key: "apg_leader",
+                },
+                {
+                    val: "League Steals Leader",
+                    key: "spg_leader",
+                },
+                {
+                    val: "League Blocks Leader",
+                    key: "bpg_leader",
+                },
+            ];
+        } else if (field === "eventType") {
+            options = [
+                {
+                    val: "All Types",
+                    key: "all",
+                },
+                {
+                    val: "Draft",
+                    key: "draft",
+                },
+                {
+                    val: "FA Signed",
+                    key: "freeAgent",
+                },
+                {
+                    val: "Resigned",
+                    key: "reSigned",
+                },
+                {
+                    val: "Released",
+                    key: "release",
+                },
+                {
+                    val: "Trades",
+                    key: "trade",
+                },
+            ];
+        } else if (field === "teamOpponent") {
+            options = [
+                {
+                    val: "Team",
+                    key: "team",
+                },
+                {
+                    val: "Opponent",
+                    key: "opponent",
+                },
+            ];
+        } else if (field === "teamOpponentAdvanced") {
+            options = [
+                {
+                    val: "Team",
+                    key: "team",
+                },
+                {
+                    val: "Opponent",
+                    key: "opponent",
+                },
+                {
+                    val: "Advanced",
+                    key: "advanced",
+                },
+            ];
+        } else if (field === "teamRecordType") {
+            options = [
+                {
+                    val: "By Team",
+                    key: "team",
+                },
+                {
+                    val: "By Conference",
+                    key: "conf",
+                },
+                {
+                    val: "By Division",
+                    key: "div",
+                },
+            ];
+        } else {
+            throw new Error(`Unknown Dropdown field: ${field}`);
         }
-    } else if (field === "teamsAndAll") {
-        options = [
-            {
-                key: "all",
-                val: "All Teams",
-            },
-        ];
-        for (let j = 0; j < g.teamAbbrevsCache.length; j++) {
-            options[j + 1] = {
-                key: g.teamAbbrevsCache[j],
-                val: `${g.teamRegionsCache[j]} ${g.teamNamesCache[j]}`,
-            };
-        }
-    } else if (field === "teamsAndAllWatch") {
-        options = [
-            {
-                key: "all",
-                val: "All Teams",
-            },
-            {
-                key: "watch",
-                val: "Watch List",
-            },
-        ];
-        for (let j = 0; j < g.teamAbbrevsCache.length; j++) {
-            options[j + 2] = {
-                key: g.teamAbbrevsCache[j],
-                val: `${g.teamRegionsCache[j]} ${g.teamNamesCache[j]}`,
-            };
-        }
-    } else if (
-        field === "seasons" ||
-        field === "seasonsAndCareer" ||
-        field === "seasonsAndAll"
-    ) {
-        options = [];
-        for (let season = g.startingSeason; season <= g.season; season++) {
-            options.push({
-                key: season,
-                val: `${season} Season`,
-            });
-        }
-        if (field === "seasonsAndCareer") {
-            options.unshift({
-                key: "career",
-                val: "Career Totals",
-            });
-        }
-        if (field === "seasonsAndAll") {
-            options.unshift({
-                key: "all",
-                val: "All Seasons",
-            });
-        }
-    } else if (field === "seasonsUpcoming") {
-        options = [];
-        // For upcomingFreeAgents, bump up 1 if we're past the season
-        const offset = g.phase <= PHASE.RESIGN_PLAYERS ? 0 : 1;
-        for (let j = 0 + offset; j < 5 + offset; j++) {
-            options.push({
-                key: g.season + j,
-                val: `${g.season + j} season`,
-            });
-        }
-    } else if (field === "playoffs") {
-        options = [
-            {
-                val: "Regular Season",
-                key: "regularSeason",
-            },
-            {
-                val: "Playoffs",
-                key: "playoffs",
-            },
-        ];
-    } else if (field === "shows") {
-        options = [
-            {
-                val: "Past 10 Seasons",
-                key: "10",
-            },
-            {
-                val: "All Seasons",
-                key: "all",
-            },
-        ];
-    } else if (field === "statTypes") {
-        options = [
-            {
-                val: "Per Game",
-                key: "perGame",
-            },
-            {
-                val: "Per 36 Mins",
-                key: "per36",
-            },
-            {
-                val: "Totals",
-                key: "totals",
-            },
-        ];
-    } else if (field === "statTypesAdv") {
-        options = [
-            {
-                val: "Per Game",
-                key: "perGame",
-            },
-            {
-                val: "Per 36 Mins",
-                key: "per36",
-            },
-            {
-                val: "Totals",
-                key: "totals",
-            },
-            {
-                val: "Advanced",
-                key: "advanced",
-            },
-        ];
-    } else if (field === "awardType") {
-        options = [
-            {
-                val: "Won Championship",
-                key: "champion",
-            },
-            {
-                val: "Most Valuable Player",
-                key: "mvp",
-            },
-            {
-                val: "Finals MVP",
-                key: "finals_mvp",
-            },
-            {
-                val: "Defensive Player of the Year",
-                key: "dpoy",
-            },
-            {
-                val: "Sixth Man of the Year",
-                key: "smoy",
-            },
-            {
-                val: "Most Improved Player",
-                key: "mip",
-            },
-            {
-                val: "Rookie of the Year",
-                key: "roy",
-            },
-            {
-                val: "First Team All-League",
-                key: "first_team",
-            },
-            {
-                val: "Second Team All-League",
-                key: "second_team",
-            },
-            {
-                val: "Third Team All-League",
-                key: "third_team",
-            },
-            {
-                val: "All-League",
-                key: "all_league",
-            },
-            {
-                val: "First Team All-Defensive",
-                key: "first_def",
-            },
-            {
-                val: "Second Team All-Defensive",
-                key: "second_def",
-            },
-            {
-                val: "Third Team All-Defensive",
-                key: "third_def",
-            },
-            {
-                val: "All-Defensive",
-                key: "all_def",
-            },
-            {
-                val: "League Scoring Leader",
-                key: "ppg_leader",
-            },
-            {
-                val: "League Rebounding Leader",
-                key: "rpg_leader",
-            },
-            {
-                val: "League Assists Leader",
-                key: "apg_leader",
-            },
-            {
-                val: "League Steals Leader",
-                key: "spg_leader",
-            },
-            {
-                val: "League Blocks Leader",
-                key: "bpg_leader",
-            },
-        ];
-    } else if (field === "eventType") {
-        options = [
-            {
-                val: "All Types",
-                key: "all",
-            },
-            {
-                val: "Draft",
-                key: "draft",
-            },
-            {
-                val: "FA Signed",
-                key: "freeAgent",
-            },
-            {
-                val: "Resigned",
-                key: "reSigned",
-            },
-            {
-                val: "Released",
-                key: "release",
-            },
-            {
-                val: "Trades",
-                key: "trade",
-            },
-        ];
-    } else if (field === "teamOpponent") {
-        options = [
-            {
-                val: "Team",
-                key: "team",
-            },
-            {
-                val: "Opponent",
-                key: "opponent",
-            },
-        ];
-    } else if (field === "teamOpponentAdvanced") {
-        options = [
-            {
-                val: "Team",
-                key: "team",
-            },
-            {
-                val: "Opponent",
-                key: "opponent",
-            },
-            {
-                val: "Advanced",
-                key: "advanced",
-            },
-        ];
-    } else if (field === "teamRecordType") {
-        options = [
-            {
-                val: "By Team",
-                key: "team",
-            },
-            {
-                val: "By Conference",
-                key: "conf",
-            },
-            {
-                val: "By Division",
-                key: "div",
-            },
-        ];
-    } else {
-        throw new Error(`Unknown Dropdown field: ${field}`);
-    }
 
-    return (
-        <select value={value} className="form-control" onChange={handleChange}>
-            {options.map(opt => (
-                <option key={opt.key} value={opt.key}>
-                    {opt.val}
-                </option>
-            ))}
-        </select>
-    );
+        return (
+            <select
+                value={value}
+                className="form-control"
+                onChange={handleChange}
+            >
+                {options.map(opt => (
+                    <option key={opt.key} value={opt.key}>
+                        {opt.val}
+                    </option>
+                ))}
+            </select>
+        );
+    });
 };
 
 Select.propTypes = {

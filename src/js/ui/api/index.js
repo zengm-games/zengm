@@ -1,7 +1,7 @@
 // @flow
 
 import { g } from "../../common";
-import { emitter, helpers, realtimeUpdate } from "../util";
+import { emitter, local, realtimeUpdate } from "../util";
 import { showEvent } from "../util/logEvent";
 import type {
     GameAttributes,
@@ -13,9 +13,6 @@ import type {
  * Ping a counter at basketball-gm.com.
  *
  * This should only do something if it isn't being run from a unit test and it's actually on basketball-gm.com.
- *
- * @memberOf util.helpers
- * @param {string} type Either "league" for a new league, or "season" for a completed season
  */
 const bbgmPing = (
     type: "league" | "season" | "version",
@@ -131,14 +128,11 @@ async function realtimeUpdate2(
 }
 
 const resetG = () => {
-    helpers.resetG();
-
-    // Additionally, here we want to ignore the old lid just to be sure, since the real one will be sent to the UI
-    // later. But in the worker, g.lid is already correctly set, so this can't be in helpers.resetG.
-    g.lid = undefined;
+    local.resetLeague();
 };
 
 const setGameAttributes = (gameAttributes: GameAttributes) => {
+    local.updateGameAttributes(gameAttributes);
     Object.assign(g, gameAttributes);
 };
 

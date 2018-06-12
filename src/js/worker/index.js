@@ -69,7 +69,10 @@ util.promiseWorker.register(([name, ...params], hostID) => {
             return {};
         }
 
-        return api.processInputs[subname](...params, conditions);
+        const obj = api.processInputs[subname](...params, conditions);
+
+        // Return empty object rather than undefined
+        return obj === undefined ? {} : obj;
     }
 
     if (!api.hasOwnProperty(name)) {

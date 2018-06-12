@@ -1,5 +1,4 @@
 get rid of g in UI
-- doesn't seem to remove play menu + phase + status when going from league to dashboard
 - race conditions using local.state.lid in controller?
 - ui/api/setGameAttributes logic should be in worker, not ui. minimize transfer
 - figure out how to get rid of weird ad-related code (center when right ad not displayed or gold, etc) and emitter?

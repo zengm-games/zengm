@@ -167,11 +167,12 @@ const beforeLeague = async (
 
 // beforeNonLeague runs when the user clicks a link back to the dashboard while in a league. beforeNonLeagueRunning is to handle extra realtimeUpdate request triggered by stopping gameSim in league.disconnect
 let beforeNonLeagueRunning = false;
-const beforeNonLeague = async () => {
+const beforeNonLeague = async (conditions: Conditions) => {
     if (!beforeNonLeagueRunning) {
         try {
             beforeNonLeagueRunning = true;
             await league.close(false);
+            await toUI(["resetG"], conditions);
             if (!env.useSharedWorker) {
                 clearInterval(heartbeatIntervalID);
             }

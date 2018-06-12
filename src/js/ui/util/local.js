@@ -29,7 +29,6 @@ class LocalContainer extends Container<LocalStateUI> {
     }
 
     resetLeague() {
-        console.log("resetLeague");
         // Reset any values specific to a league
         this.setState({
             godMode: false,

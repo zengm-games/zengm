@@ -22,7 +22,7 @@ const gameScore = (arg: { [key: string]: number }): string => {
 const leagueUrl = (components: (number | string)[]): string => {
     const lid = local.state.lid;
     if (typeof lid !== "number") {
-        throw new Error("Non-numeric or undefined lid");
+        return "/";
     }
 
     return commonHelpers.leagueUrlFactory(lid, components);

@@ -64,8 +64,8 @@ const beforeViewLeague = async (
     return beforeView.league(newLid, loadedLid, conditions);
 };
 
-const beforeViewNonLeague = async () => {
-    return beforeView.nonLeague();
+const beforeViewNonLeague = async (conditions: Conditions) => {
+    return beforeView.nonLeague(conditions);
 };
 
 const cancelContractNegotiation = async (pid: number) => {

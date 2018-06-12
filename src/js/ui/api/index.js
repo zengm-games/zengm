@@ -129,7 +129,6 @@ async function realtimeUpdate2(
 }
 
 const resetG = () => {
-    console.log("resetG");
     local.resetLeague();
 };
 

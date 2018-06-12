@@ -2,7 +2,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import { SPORT, fetchWrapper } from "../../common";
-import { emitter, realtimeUpdate, setTitle } from "../util";
+import { local, realtimeUpdate, setTitle } from "../util";
 
 const ajaxErrorMsg =
     "Error connecting to server. Check your Internet connection or try again later.";
@@ -85,7 +85,7 @@ class ResetPassword extends React.Component {
             });
 
             if (data.success) {
-                emitter.emit("updateTopMenu", { username: data.username });
+                local.update({ username: data.username });
 
                 realtimeUpdate([], "/account");
             } else {

@@ -159,11 +159,6 @@ const beforeLeague = async (
         return;
     }
 
-    await toUI(["emit", "updateTopMenu", { lid: g.lid }], conditions);
-    if (loadingNewLid !== newLid) {
-        return;
-    }
-
     // If this is a Shared Worker, only one league can be open at a time
     if (env.useSharedWorker) {
         await toUI(["newLid", g.lid]);

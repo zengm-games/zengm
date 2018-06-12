@@ -4,7 +4,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import * as React from "react";
 import { SPORT, STRIPE_PUBLISHABLE_KEY, fetchWrapper } from "../../common";
-import { emitter, getScript, realtimeUpdate, setTitle } from "../util";
+import { getScript, local, realtimeUpdate, setTitle } from "../util";
 
 const ajaxErrorMsg =
     "Error connecting to server. Check your Internet connection or try again later.";
@@ -173,7 +173,7 @@ class UserInfo extends React.Component<UserInfoProps, UserInfoState> {
                 credentials: "include",
             });
 
-            emitter.emit("updateTopMenu", { username: "" });
+            local.update({ username: "" });
             realtimeUpdate(["account"], "/");
         } catch (err) {
             this.setState({

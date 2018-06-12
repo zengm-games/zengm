@@ -5,6 +5,7 @@ import { emitter, local, realtimeUpdate } from "../util";
 import { showEvent } from "../util/logEvent";
 import type {
     GameAttributes,
+    LocalStateUI,
     LogEventShowOptions,
     UpdateEvents,
 } from "../../common/types";
@@ -111,7 +112,7 @@ const newLid = async (lid: number) => {
         parts[2] = String(lid);
         const newPathname = parts.join("/");
         await realtimeUpdate(["firstRun"], newPathname);
-        emitter.emit("updateTopMenu", { lid });
+        local.update({ lid });
     }
 };
 
@@ -128,6 +129,7 @@ async function realtimeUpdate2(
 }
 
 const resetG = () => {
+    console.log("resetG");
     local.resetLeague();
 };
 
@@ -138,6 +140,10 @@ const setGameAttributes = (gameAttributes: GameAttributes) => {
 
 const showEvent2 = (options: LogEventShowOptions) => {
     showEvent(options);
+};
+
+const updateLocal = (obj: $Shape<LocalStateUI>) => {
+    local.update(obj);
 };
 
 export default {
@@ -151,4 +157,5 @@ export default {
     resetG,
     setGameAttributes,
     showEvent: showEvent2,
+    updateLocal,
 };

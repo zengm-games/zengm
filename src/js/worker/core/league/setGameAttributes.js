@@ -31,9 +31,6 @@ const setGameAttributes = async (gameAttributes: GameAttributes) => {
     }
 
     await toUI(["setGameAttributes", gameAttributes]);
-    if (toUpdate.includes("userTid") || toUpdate.includes("userTids")) {
-        await toUI(["emit", "updateMultiTeam"]);
-    }
 };
 
 export default setGameAttributes;

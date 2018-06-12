@@ -34,12 +34,12 @@ async function updateStatus(statusText?: string, conditions?: Conditions) {
             }
         }
 
-        toUI(["emit", "updateTopMenu", { statusText: defaultStatusText }]);
+        toUI(["updateLocal", { statusText: defaultStatusText }]);
     } else if (statusText !== local.statusText) {
         local.statusText = statusText;
-        toUI(["emit", "updateTopMenu", { statusText }]);
+        toUI(["updateLocal", { statusText }]);
     } else if (conditions !== undefined) {
-        toUI(["emit", "updateTopMenu", { statusText }], conditions);
+        toUI(["updateLocal", { statusText }], conditions);
     }
 }
 

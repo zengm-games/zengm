@@ -164,13 +164,14 @@ async function check(conditions: Conditions): Promise<PartialTopMenu> {
         // Keep track of latest here, for ads
         local.goldUntil = data.gold_until;
 
-        const partialTopMenu: PartialTopMenu = {
-            email: data.email,
-            goldCancelled: !!data.gold_cancelled,
-            goldUntil: data.gold_until,
-            username: data.username,
-        };
-        await toUI(["emit", "updateTopMenu", partialTopMenu]);
+        const currentTimestamp = Math.floor(Date.now() / 1000);
+        await toUI([
+            "updateLocal",
+            {
+                gold: currentTimestamp <= data.gold_until,
+                username: data.username,
+            },
+        ]);
 
         // If user is logged in, upload any locally saved achievements
         if (data.username !== "" && idb.league !== undefined) {
@@ -186,7 +187,12 @@ async function check(conditions: Conditions): Promise<PartialTopMenu> {
             }
         }
 
-        return partialTopMenu;
+        return {
+            email: data.email,
+            goldCancelled: !!data.gold_cancelled,
+            goldUntil: data.gold_until,
+            username: data.username,
+        };
     } catch (err) {
         // Don't freak out if an AJAX request fails or whatever
         console.log(err);

@@ -29,10 +29,6 @@ const loadGameAttributes = async () => {
     });
 
     await toUI(["setGameAttributes", g]);
-
-    // UI stuff
-    toUI(["emit", "updateTopMenu", { godMode: g.godMode }]);
-    toUI(["emit", "updateMultiTeam"]);
 };
 
 export default loadGameAttributes;

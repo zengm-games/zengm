@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { emitter, logEvent, setTitle, toWorker } from "../util";
+import { local, logEvent, setTitle, toWorker } from "../util";
 import { HelpPopover, NewWindowLink } from "../components";
 
 class GodMode extends React.Component {
@@ -121,7 +121,7 @@ class GodMode extends React.Component {
         }
 
         await toWorker("updateGameAttributes", attrs);
-        emitter.emit("updateTopMenu", { godMode: attrs.godMode });
+        local.update({ godMode: attrs.godMode });
     }
 
     render() {

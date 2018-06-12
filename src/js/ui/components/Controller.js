@@ -19,12 +19,7 @@ import {
     NagModal,
     NavBar,
 } from "../components";
-import type {
-    GetOutput,
-    Option,
-    PageCtx,
-    UpdateEvents,
-} from "../../common/types";
+import type { GetOutput, PageCtx, UpdateEvents } from "../../common/types";
 
 type Props = {
     Component: any,
@@ -51,6 +46,35 @@ LeagueContent.propTypes = {
     updating: PropTypes.bool.isRequired,
 };
 
+const showAd = (type: "modal", autoPlaySeasons: number) => {
+    if (type === "modal") {
+        if (!window.enableLogging) {
+            return;
+        }
+
+        if (window.inIframe) {
+            return;
+        }
+
+        // No ads during multi season auto sim
+        if (autoPlaySeasons > 0) {
+            return;
+        }
+
+        // No ads for Gold members
+        if (local.state.gold) {
+            return;
+        }
+
+        const r = Math.random();
+        if (r < 0.96) {
+            ads.showGcs();
+        } else {
+            ads.showModal();
+        }
+    }
+};
+
 type Args = {
     Component: any,
     id: string,
@@ -65,28 +89,13 @@ type State = {
     inLeague: boolean,
     data: { [key: string]: any },
     showNagModal: boolean,
-    topMenu: {
-        email?: string,
-        godMode: boolean,
-        goldUntil: number,
-        goldCancelled: boolean,
-        hasViewedALeague: boolean,
-        lid?: number,
-        options: Option[],
-        phaseText: string,
-        popup: boolean,
-        statusText: string,
-        username?: string,
-    },
 };
 
 class Controller extends React.Component<{}, State> {
     closeNagModal: Function;
     get: Function;
-    showAd: Function;
     updatePage: Function;
     updateState: Function;
-    updateTopMenu: Function;
 
     constructor(props: {}) {
         super(props);
@@ -97,35 +106,19 @@ class Controller extends React.Component<{}, State> {
             inLeague: false,
             data: {},
             showNagModal: false,
-            topMenu: {
-                email: undefined,
-                godMode: !!local.state.godMode,
-                goldUntil: 0,
-                goldCancelled: false,
-                hasViewedALeague: !!localStorage.getItem("hasViewedALeague"),
-                lid: undefined,
-                options: [],
-                phaseText: "",
-                popup: window.location.search === "?w=popup",
-                statusText: "",
-                username: undefined,
-            },
         };
         this.closeNagModal = this.closeNagModal.bind(this);
         this.get = this.get.bind(this);
-        this.showAd = this.showAd.bind(this);
         this.updatePage = this.updatePage.bind(this);
         this.updateState = this.updateState.bind(this);
-        this.updateTopMenu = this.updateTopMenu.bind(this);
     }
 
     componentDidMount() {
         emitter.on("get", this.get);
-        emitter.on("showAd", this.showAd);
+        emitter.on("showAd", showAd);
         emitter.on("updateState", this.updateState);
-        emitter.on("updateTopMenu", this.updateTopMenu);
 
-        if (this.state.topMenu.popup && document.body) {
+        if (local.state.popup && document.body) {
             if (document.body) {
                 document.body.style.paddingTop = "0";
             }
@@ -141,9 +134,8 @@ class Controller extends React.Component<{}, State> {
 
     componentWillUnmount() {
         emitter.removeListener("get", this.get);
-        emitter.removeListener("showAd", this.showAd);
+        emitter.removeListener("showAd", showAd);
         emitter.removeListener("updateState", this.updateState);
-        emitter.removeListener("updateTopMenu", this.updateTopMenu);
     }
 
     closeNagModal() {
@@ -162,18 +154,14 @@ class Controller extends React.Component<{}, State> {
             const newLid = Number.isNaN(newLidInt) ? undefined : newLidInt;
 
             if (args.inLeague) {
-                if (newLid !== this.state.topMenu.lid) {
-                    await toWorker(
-                        "beforeViewLeague",
-                        newLid,
-                        this.state.topMenu.lid,
-                    );
+                if (newLid !== local.state.lid) {
+                    await toWorker("beforeViewLeague", newLid, local.state.lid);
                 }
             } else {
                 // eslint-disable-next-line no-lonely-if
-                if (this.state.topMenu.lid !== undefined) {
+                if (local.state.lid !== undefined) {
                     await toWorker("beforeViewNonLeague");
-                    this.updateTopMenu({
+                    local.updateGameAttributes({
                         lid: undefined,
                     });
                 }
@@ -204,36 +192,6 @@ class Controller extends React.Component<{}, State> {
             ctx.bbgm.cb !== undefined
         ) {
             ctx.bbgm.cb();
-        }
-    }
-
-    showAd(type: "modal", autoPlaySeasons: number) {
-        if (type === "modal") {
-            if (!window.enableLogging) {
-                return;
-            }
-
-            if (window.inIframe) {
-                return;
-            }
-
-            // No ads during multi season auto sim
-            if (autoPlaySeasons > 0) {
-                return;
-            }
-
-            // No ads for Gold members
-            const currentTimestamp = Math.floor(Date.now() / 1000);
-            if (currentTimestamp <= this.state.topMenu.goldUntil) {
-                return;
-            }
-
-            const r = Math.random();
-            if (r < 0.96) {
-                ads.showGcs();
-            } else {
-                ads.showModal();
-            }
         }
     }
 
@@ -347,31 +305,8 @@ class Controller extends React.Component<{}, State> {
         this.setState(obj);
     }
 
-    updateTopMenu(obj: {
-        email?: string,
-        godMode?: boolean,
-        goldCancelled?: boolean,
-        goldUntil?: number,
-        lid?: number,
-        options?: Option[],
-        phaseText?: string,
-        statusText?: string,
-        username?: string,
-    }) {
-        this.setState({
-            topMenu: Object.assign(this.state.topMenu, obj),
-        });
-    }
-
     render() {
-        const {
-            Component,
-            data,
-            idLoaded,
-            idLoading,
-            inLeague,
-            topMenu,
-        } = this.state;
+        const { Component, data, idLoaded, idLoading, inLeague } = this.state;
 
         const updating = idLoading !== undefined;
 
@@ -386,7 +321,7 @@ class Controller extends React.Component<{}, State> {
 
             contents = (
                 <div>
-                    <LeagueWrapper lid={topMenu.lid} pageId={pageId}>
+                    <LeagueWrapper lid={local.state.lid} pageId={pageId}>
                         <LeagueContent
                             Component={Component}
                             data={data}
@@ -401,7 +336,7 @@ class Controller extends React.Component<{}, State> {
         return (
             <div className="container">
                 <Provider>
-                    <NavBar {...topMenu} pageId={pageId} updating={updating} />
+                    <NavBar pageId={pageId} updating={updating} />
                     <Header />
                     <div
                         id="screenshot-nonleague"

@@ -50,6 +50,7 @@
     globals: {
         "$Diff": false,
         "$Keys": false,
+        "$Shape": false,
         "Class": false,
         "IntervalID": false,
         "SyntheticEvent": false,

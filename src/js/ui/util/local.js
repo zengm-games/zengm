@@ -1,42 +1,21 @@
 // @flow
 
 import { Container } from "unstated";
-import type { GameAttributes, Option } from "../../common/types";
+import type { GameAttributes, LocalStateUI } from "../../common/types";
 
-type LocalState = {
-    gold: boolean,
-    godMode: boolean,
-    hasViewedALeague: boolean,
-    lid: number | void,
-    leagueName: string,
-    phase: number,
-    phaseText: string,
-    playMenuOptions: Option[],
-    popup: boolean,
-    season: number,
-    startingSeason: number,
-    statusText: string,
-    teamAbbrevsCache: string[],
-    teamNamesCache: string[],
-    teamRegionsCache: string[],
-    userTid: number,
-    userTids: number[],
-    username: string | void,
-};
-
-class LocalContainer extends Container<LocalState> {
+class LocalContainer extends Container<LocalStateUI> {
     constructor() {
         super();
         this.state = {
             gold: true,
             godMode: false,
-            hasViewedALeague: false,
+            hasViewedALeague: !!localStorage.getItem("hasViewedALeague"),
             lid: undefined,
             leagueName: "",
             phase: 0,
             phaseText: "",
             playMenuOptions: [],
-            popup: false,
+            popup: window.location.search === "?w=popup",
             season: 0,
             startingSeason: 0,
             statusText: "",
@@ -50,6 +29,7 @@ class LocalContainer extends Container<LocalState> {
     }
 
     resetLeague() {
+        console.log("resetLeague");
         // Reset any values specific to a league
         this.setState({
             godMode: false,
@@ -67,6 +47,10 @@ class LocalContainer extends Container<LocalState> {
             userTid: 0,
             userTids: [],
         });
+    }
+
+    update(obj: $Shape<LocalStateUI>) {
+        this.setState(obj);
     }
 
     updateGameAttributes(gameAttributes: GameAttributes) {

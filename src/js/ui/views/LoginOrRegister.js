@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import React from "react";
 import { SPORT, fetchWrapper } from "../../common";
-import { emitter, realtimeUpdate, setTitle, toWorker } from "../util";
+import { local, realtimeUpdate, setTitle, toWorker } from "../util";
 
 const ajaxErrorMsg =
     "Error connecting to server. Check your Internet connection or try again later.";
@@ -37,10 +37,9 @@ class LoginOrRegister extends React.Component {
             });
 
             if (data.success) {
-                emitter.emit("updateTopMenu", {
-                    email: data.email,
-                    goldCancelled: !!data.gold_cancelled,
-                    goldUntil: data.gold_until,
+                const currentTimestamp = Math.floor(Date.now() / 1000);
+                local.update({
+                    gold: currentTimestamp <= data.gold_until,
                     username: data.username,
                 });
 
@@ -77,7 +76,7 @@ class LoginOrRegister extends React.Component {
             });
 
             if (data.success) {
-                emitter.emit("updateTopMenu", { username: data.username });
+                local.update({ username: data.username });
 
                 await toWorker("checkParticipationAchievement", true);
                 realtimeUpdate([], "/account");

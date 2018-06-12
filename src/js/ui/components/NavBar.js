@@ -13,9 +13,14 @@ import Overlay from "react-bootstrap/lib/Overlay";
 import Popover from "react-bootstrap/lib/Popover";
 import ReactDOM from "react-dom";
 import { fetchWrapper } from "../../common";
-import { helpers, logEvent, realtimeUpdate, toWorker } from "../util";
+import {
+    helpers,
+    logEvent,
+    realtimeUpdate,
+    subscribeLocal,
+    toWorker,
+} from "../util";
 import html2canvas from "../../vendor/html2canvas";
-import type { Option } from "../../common/types";
 
 type TopMenuToggleProps = {
     long: string,
@@ -737,31 +742,12 @@ PlayMenu.propTypes = {
 };
 
 type Props = {
-    hasViewedALeague: boolean,
-    lid?: number,
-    godMode: boolean,
-    options: Option[],
     pageId?: string,
-    phaseText: string,
-    popup: boolean,
-    statusText: string,
     updating: boolean,
-    username?: string,
 };
 
-type State = {
-    hasViewedALeague: boolean,
-};
-
-class NavBar extends React.Component<Props, State> {
+class NavBar extends React.Component<Props> {
     playMenu: ?PlayMenu;
-
-    constructor(props: Props) {
-        super(props);
-        this.state = {
-            hasViewedALeague: props.hasViewedALeague,
-        };
-    }
 
     // Workaround for https://github.com/react-bootstrap/react-bootstrap/issues/1301 based on https://github.com/react-bootstrap/react-router-bootstrap/issues/112#issuecomment-142599003
     componentDidMount() {
@@ -807,123 +793,122 @@ class NavBar extends React.Component<Props, State> {
     }
 
     render() {
-        const {
-            lid,
-            godMode,
-            options,
-            pageId,
-            phaseText,
-            popup,
-            statusText,
-            updating,
-            username,
-        } = this.props;
-        if (popup) {
-            return <div />;
-        }
+        return subscribeLocal(local => {
+            const { pageId, updating } = this.props;
 
-        let userBlock = username ? (
-            <a className="navbar-link user-menu" href="/account">
-                <span className="glyphicon glyphicon-user" />{" "}
-                <span className="visible-lg">{username}</span>
-            </a>
-        ) : (
-            <a
-                className="navbar-link user-menu"
-                href="/account/login_or_register"
-            >
-                <span className="glyphicon glyphicon-user" />{" "}
-                <span className="visible-lg">Login/Register</span>
-            </a>
-        );
+            const {
+                lid,
+                godMode,
+                hasViewedALeague,
+                phaseText,
+                playMenuOptions,
+                popup,
+                statusText,
+                username,
+            } = local.state;
 
-        if (window.inIframe) {
-            userBlock = (
+            if (popup) {
+                return <div />;
+            }
+
+            let userBlock = username ? (
+                <a className="navbar-link user-menu" href="/account">
+                    <span className="glyphicon glyphicon-user" />{" "}
+                    <span className="visible-lg">{username}</span>
+                </a>
+            ) : (
                 <a
                     className="navbar-link user-menu"
-                    href={window.location.href}
-                    rel="noopener noreferrer"
-                    target="_blank"
+                    href="/account/login_or_register"
                 >
-                    <img
-                        alt="Open In New Window"
-                        title="Open In New Window"
-                        height="16"
-                        width="16"
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAA0AAAANABeWPPlAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAFOSURBVDiNlZS9isJAFIU/F6s0m0VYYiOrhVukWQsbK4t9CDtbexGs8xY+ghY+QRBsbKcTAjZaqKyGXX2Bs00S1AwBD1yYOXPvmXvv/CAJSQAuoGetzAPCMKRSqTzSOURRRK/Xo1wqldyEewXwfR/P8zLHIAhYr9fZ3BjDeDym1WoBUAZ+i3ZaLBYsl8s7zhiTCbwk3DfwaROYz+fsdjs6nU7GOY6TjVOBGPixCbiuy2g0YrVa0Ww2c+svlpg7DAYDptMp3W6XyWRi9RHwRXKMh8NBKYbDoQC1221dr1dtNhv1+33NZjMZY9KjtAsEQSBAvu/rfD7rEYUC2+1WjuOo0Whov9/ngm8FchcJoFarEYYhnudRrVYLe5QTOJ1OANTrdQCOx6M1MI5jexOftdsMLsBbYb7wDkTAR+KflWC9hRakr+wi6e+2hGfNTb+Bf9965Lxmndc1AAAAAElFTkSuQmCC"
-                    />{" "}
+                    <span className="glyphicon glyphicon-user" />{" "}
+                    <span className="visible-lg">Login/Register</span>
                 </a>
             );
-        }
 
-        // Hide phase and status, to prevent revealing that the playoffs has ended, thus spoiling a 3-0/3-1/3-2 finals
-        // game. This is needed because game sim happens before the results are displayed in liveGame.
-        const phaseStatusBlock =
-            pageId === "liveGame" ? (
-                <p className="navbar-text-two-line-no-collapse">
-                    Live game<br />in progress
-                </p>
-            ) : (
-                <p className="navbar-text-two-line-no-collapse">
-                    {phaseText}
-                    <br />
-                    {statusText}
-                </p>
-            );
-
-        return (
-            <Navbar fixedTop>
-                <div className="pull-right">{userBlock}</div>
-                <Navbar.Header>
-                    <LogoAndText lid={lid} updating={updating} />
-                    <PlayMenu
-                        lid={lid}
-                        options={options}
-                        ref={c => {
-                            this.playMenu = c;
-                        }}
-                    />
-                    <Overlay
-                        onHide={() => {
-                            this.setState({ hasViewedALeague: true });
-                            localStorage.setItem("hasViewedALeague", "true");
-                        }}
-                        placement="bottom"
-                        rootClose
-                        show={!this.state.hasViewedALeague && lid === 1}
-                        target={() => ReactDOM.findDOMNode(this.playMenu)}
+            if (window.inIframe) {
+                userBlock = (
+                    <a
+                        className="navbar-link user-menu"
+                        href={window.location.href}
+                        rel="noopener noreferrer"
+                        target="_blank"
                     >
-                        <Popover
-                            id="popover-welcome"
-                            title="Welcome to Basketball GM!"
+                        <img
+                            alt="Open In New Window"
+                            title="Open In New Window"
+                            height="16"
+                            width="16"
+                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAA0AAAANABeWPPlAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAFOSURBVDiNlZS9isJAFIU/F6s0m0VYYiOrhVukWQsbK4t9CDtbexGs8xY+ghY+QRBsbKcTAjZaqKyGXX2Bs00S1AwBD1yYOXPvmXvv/CAJSQAuoGetzAPCMKRSqTzSOURRRK/Xo1wqldyEewXwfR/P8zLHIAhYr9fZ3BjDeDym1WoBUAZ+i3ZaLBYsl8s7zhiTCbwk3DfwaROYz+fsdjs6nU7GOY6TjVOBGPixCbiuy2g0YrVa0Ww2c+svlpg7DAYDptMp3W6XyWRi9RHwRXKMh8NBKYbDoQC1221dr1dtNhv1+33NZjMZY9KjtAsEQSBAvu/rfD7rEYUC2+1WjuOo0Whov9/ngm8FchcJoFarEYYhnudRrVYLe5QTOJ1OANTrdQCOx6M1MI5jexOftdsMLsBbYb7wDkTAR+KflWC9hRakr+wi6e+2hGfNTb+Bf9965Lxmndc1AAAAAElFTkSuQmCC"
+                        />{" "}
+                    </a>
+                );
+            }
+
+            // Hide phase and status, to prevent revealing that the playoffs has ended, thus spoiling a 3-0/3-1/3-2 finals
+            // game. This is needed because game sim happens before the results are displayed in liveGame.
+            const phaseStatusBlock =
+                pageId === "liveGame" ? (
+                    <p className="navbar-text-two-line-no-collapse">
+                        Live game<br />in progress
+                    </p>
+                ) : (
+                    <p className="navbar-text-two-line-no-collapse">
+                        {phaseText}
+                        <br />
+                        {statusText}
+                    </p>
+                );
+
+            return (
+                <Navbar fixedTop>
+                    <div className="pull-right">{userBlock}</div>
+                    <Navbar.Header>
+                        <LogoAndText lid={lid} updating={updating} />
+                        <PlayMenu
+                            lid={lid}
+                            options={playMenuOptions}
+                            ref={c => {
+                                this.playMenu = c;
+                            }}
+                        />
+                        <Overlay
+                            onHide={() => {
+                                local.update({ hasViewedALeague: true });
+                                localStorage.setItem(
+                                    "hasViewedALeague",
+                                    "true",
+                                );
+                            }}
+                            placement="bottom"
+                            rootClose
+                            show={!hasViewedALeague && lid === 1}
+                            target={() => ReactDOM.findDOMNode(this.playMenu)}
                         >
-                            To advance through the game, use the Play button at
-                            the top. The options shown will change depending on
-                            the current state of the game.
-                        </Popover>
-                    </Overlay>
-                    {lid !== undefined ? phaseStatusBlock : null}
-                    <Navbar.Toggle />
-                </Navbar.Header>
-                <Navbar.Collapse>
-                    <DropdownLinks godMode={godMode} lid={lid} />
-                </Navbar.Collapse>
-            </Navbar>
-        );
+                            <Popover
+                                id="popover-welcome"
+                                title="Welcome to Basketball GM!"
+                            >
+                                To advance through the game, use the Play button
+                                at the top. The options shown will change
+                                depending on the current state of the game.
+                            </Popover>
+                        </Overlay>
+                        {lid !== undefined ? phaseStatusBlock : null}
+                        <Navbar.Toggle />
+                    </Navbar.Header>
+                    <Navbar.Collapse>
+                        <DropdownLinks godMode={godMode} lid={lid} />
+                    </Navbar.Collapse>
+                </Navbar>
+            );
+        });
     }
 }
 
 NavBar.propTypes = {
-    hasViewedALeague: PropTypes.bool.isRequired,
-    lid: PropTypes.number,
-    godMode: PropTypes.bool.isRequired,
-    options: PropTypes.array.isRequired,
     pageId: PropTypes.string,
-    phaseText: PropTypes.string.isRequired,
-    popup: PropTypes.bool.isRequired,
-    statusText: PropTypes.string.isRequired,
     updating: PropTypes.bool.isRequired,
-    username: PropTypes.string,
 };
 
 export default NavBar;

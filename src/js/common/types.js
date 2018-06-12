@@ -346,6 +346,27 @@ export type Option = {
     url?: string,
 };
 
+export type LocalStateUI = {|
+    gold: boolean,
+    godMode: boolean,
+    hasViewedALeague: boolean,
+    lid: number | void,
+    leagueName: string,
+    phase: number,
+    phaseText: string,
+    playMenuOptions: Option[],
+    popup: boolean,
+    season: number,
+    startingSeason: number,
+    statusText: string,
+    teamAbbrevsCache: string[],
+    teamNamesCache: string[],
+    teamRegionsCache: string[],
+    userTid: number,
+    userTids: number[],
+    username: string | void,
+|};
+
 export type OwnerMoodDeltas = {|
     money: number,
     playoffs: number,
@@ -707,5 +728,4 @@ export type RunFunction = (
     updateEvents: UpdateEvents,
     state: any,
     setState: (state: any) => void,
-    topMenu: any,
 ) => Promise<void | { [key: string]: any }>;

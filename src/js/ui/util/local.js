@@ -3,6 +3,9 @@
 import { Container } from "unstated";
 import type { GameAttributes, LocalStateUI } from "../../common/types";
 
+// These are variables that are needed to display parts of the UI not driven explicitly by worker/views/*.js files. Like
+// the top navbar, the multi team menu, etc. They come from gameAttributes, the account system, and elsewhere.
+
 class LocalContainer extends Container<LocalStateUI> {
     constructor() {
         super();

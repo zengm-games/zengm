@@ -64,10 +64,6 @@ type State = {
     idLoading?: string,
     inLeague: boolean,
     data: { [key: string]: any },
-    multiTeam: {
-        userTid: number,
-        userTids: number[],
-    },
     showNagModal: boolean,
     topMenu: {
         email?: string,
@@ -89,7 +85,6 @@ class Controller extends React.Component<{}, State> {
     get: Function;
     showAd: Function;
     updatePage: Function;
-    updateMultiTeam: Function;
     updateState: Function;
     updateTopMenu: Function;
 
@@ -101,10 +96,6 @@ class Controller extends React.Component<{}, State> {
             idLoading: undefined,
             inLeague: false,
             data: {},
-            multiTeam: {
-                userTid: local.state.userTid,
-                userTids: local.state.userTids,
-            },
             showNagModal: false,
             topMenu: {
                 email: undefined,
@@ -124,7 +115,6 @@ class Controller extends React.Component<{}, State> {
         this.get = this.get.bind(this);
         this.showAd = this.showAd.bind(this);
         this.updatePage = this.updatePage.bind(this);
-        this.updateMultiTeam = this.updateMultiTeam.bind(this);
         this.updateState = this.updateState.bind(this);
         this.updateTopMenu = this.updateTopMenu.bind(this);
     }
@@ -132,7 +122,6 @@ class Controller extends React.Component<{}, State> {
     componentDidMount() {
         emitter.on("get", this.get);
         emitter.on("showAd", this.showAd);
-        emitter.on("updateMultiTeam", this.updateMultiTeam);
         emitter.on("updateState", this.updateState);
         emitter.on("updateTopMenu", this.updateTopMenu);
 
@@ -153,7 +142,6 @@ class Controller extends React.Component<{}, State> {
     componentWillUnmount() {
         emitter.removeListener("get", this.get);
         emitter.removeListener("showAd", this.showAd);
-        emitter.removeListener("updateMultiTeam", this.updateMultiTeam);
         emitter.removeListener("updateState", this.updateState);
         emitter.removeListener("updateTopMenu", this.updateTopMenu);
     }
@@ -355,15 +343,6 @@ class Controller extends React.Component<{}, State> {
         }
     }
 
-    updateMultiTeam() {
-        this.setState({
-            multiTeam: {
-                userTid: local.state.userTid,
-                userTids: local.state.userTids,
-            },
-        });
-    }
-
     updateState(obj: State) {
         this.setState(obj);
     }
@@ -391,7 +370,6 @@ class Controller extends React.Component<{}, State> {
             idLoaded,
             idLoading,
             inLeague,
-            multiTeam,
             topMenu,
         } = this.state;
 
@@ -415,7 +393,7 @@ class Controller extends React.Component<{}, State> {
                             updating={updating}
                         />
                     </LeagueWrapper>
-                    <MultiTeamMenu {...multiTeam} />
+                    <MultiTeamMenu />
                 </div>
             );
         }

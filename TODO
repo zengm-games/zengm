@@ -20,7 +20,6 @@ get rid of g in UI
   - decide which should be stored globally, and how to pass down to components (context? maybe just props from controller?)
   - unstated? or context API directly, maybe? redux, even?
     - Use unstated. Don't wrap controller or maybe component, only use in small terminal components. Cache lid (and anything else controller needs) in controller state, if no way to get it from unstated container
-    - then, get rid of multiTeam
     - then, topMenu
 - ui/api/setGameAttributes logic should be in worker, not ui. minimize transfer
 - figure out how to get rid of weird ad-related code (center when right ad not displayed or gold, etc) and emitter?
@@ -30,6 +29,8 @@ get rid of g in UI
 - move g out of common
 - test account still works, especially goldResult
 - resetG rename
+- emitter needed at all?
+- "g.userTids" realtimeupdate needed?
 
 "handle case where target has a brother" test is flaky, sometimes says "No brother found"
 

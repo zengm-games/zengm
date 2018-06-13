@@ -1,8 +1,8 @@
 // @flow
 
-import { g } from "../../../common";
 import { league } from "../../core";
 import { idb } from "../../db";
+import { g } from "../../util";
 import type { OwnerMoodDeltas } from "../../../common/types";
 
 /**

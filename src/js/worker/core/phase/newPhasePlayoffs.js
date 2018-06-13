@@ -1,9 +1,8 @@
 // @flow
 
-import { g } from "../../../common";
 import { finances, player, season, team } from "../../core";
 import { idb } from "../../db";
-import { account, helpers, logEvent } from "../../util";
+import { account, g, helpers, logEvent } from "../../util";
 import type { Conditions } from "../../../common/types";
 
 const newPhasePlayoffs = async (

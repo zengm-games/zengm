@@ -1,9 +1,8 @@
 // @flow
 
-import { g } from "../../common";
 import { trade } from "../core";
 import { idb } from "../db";
-import { helpers } from "../util";
+import { g, helpers } from "../util";
 import type { GetOutput, UpdateEvents } from "../../common/types";
 
 async function updateUserRoster(

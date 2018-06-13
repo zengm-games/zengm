@@ -1,7 +1,7 @@
 // @flow
 
 import range from "lodash/range";
-import { g } from "../../../common";
+import { g } from "../../util";
 import type { TeamFiltered } from "../../../common/types";
 
 const genPlayoffSeries = (teams: TeamFiltered[]) => {

@@ -1,6 +1,6 @@
 // @flow
 
-import { PHASE, PLAYER, g } from "../../../common";
+import { PHASE, PLAYER } from "../../../common";
 import addStatsRow from "./addStatsRow";
 import { bootstrapPot } from "./develop";
 import generate from "./generate";
@@ -8,7 +8,7 @@ import heightToRating from "./heightToRating";
 import ovr from "./ovr";
 import setContract from "./setContract";
 import skills from "./skills";
-import { random } from "../../util";
+import { g, random } from "../../util";
 import type { RatingKey, Player } from "../../../common/types";
 
 /**

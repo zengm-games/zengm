@@ -1,9 +1,9 @@
 // @flow
 
-import { PLAYER, g } from "../../common";
+import { PLAYER } from "../../common";
 import { freeAgents, player, team } from "../core";
 import { idb } from "../db";
-import { lock } from "../util";
+import { g, lock } from "../util";
 
 async function updateFreeAgents(): void | { [key: string]: any } {
     const payroll = await team.getPayroll(g.userTid);

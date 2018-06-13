@@ -1,7 +1,7 @@
 // @flow
 
-import { g } from "../../common";
 import { idb } from "../db";
+import { g } from "../util";
 import type { GetOutput, UpdateEvents } from "../../common/types";
 
 async function updatePowerRankings(

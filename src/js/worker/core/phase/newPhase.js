@@ -1,6 +1,6 @@
 // @flow
 
-import { PHASE, g } from "../../../common";
+import { PHASE } from "../../../common";
 import finalize from "./finalize";
 import newPhasePreseason from "./newPhasePreseason";
 import newPhaseRegularSeason from "./newPhaseRegularSeason";
@@ -11,7 +11,7 @@ import newPhaseAfterDraft from "./newPhaseAfterDraft";
 import newPhaseResignPlayers from "./newPhaseResignPlayers";
 import newPhaseFreeAgency from "./newPhaseFreeAgency";
 import newPhaseFantasyDraft from "./newPhaseFantasyDraft";
-import { lock, logEvent, updatePlayMenu, updateStatus } from "../../util";
+import { g, lock, logEvent, updatePlayMenu, updateStatus } from "../../util";
 import type { Conditions, Phase } from "../../../common/types";
 
 /**

@@ -1,7 +1,8 @@
-import { PLAYER, g } from "../../../common";
+import { PLAYER } from "../../../common";
 import testHelpers from "../../../test/helpers";
-import { idb } from "../../db";
 import { player } from "..";
+import { idb } from "../../db";
+import { g } from "../../util";
 
 // Make player ask for a min contract, to ensure he'll never refuse to sign
 const givePlayerMinContract = async pid => {

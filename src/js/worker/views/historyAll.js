@@ -1,7 +1,8 @@
 // @flow
 
-import { PHASE, g } from "../../common";
+import { PHASE } from "../../common";
 import { idb } from "../db";
+import { g } from "../util";
 import type { GetOutput, UpdateEvents } from "../../common/types";
 
 async function updateHistory(

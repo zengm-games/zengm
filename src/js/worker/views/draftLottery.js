@@ -1,8 +1,9 @@
 // @flow
 
-import { PHASE, g } from "../../common";
+import { PHASE } from "../../common";
 import { draft } from "../core";
 import { idb } from "../db";
+import { g } from "../util";
 import type { DraftLotteryResultArray, UpdateEvents } from "../../common/types";
 
 async function updateDraftLottery(

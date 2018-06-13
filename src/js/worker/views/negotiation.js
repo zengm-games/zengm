@@ -1,8 +1,9 @@
 // @flow
 
-import { PHASE, g } from "../../common";
+import { PHASE } from "../../common";
 import { contractNegotiation, freeAgents, team } from "../core";
 import { idb } from "../db";
+import { g } from "../util";
 import type { GetOutput } from "../../common/types";
 
 function generateContractOptions(contract, ovr) {

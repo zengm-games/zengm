@@ -1,9 +1,8 @@
 // @flow
 
-import { g } from "../../../common";
 import retire from "./retire";
 import { idb } from "../../db";
-import { helpers, logEvent, random } from "../../util";
+import { g, helpers, logEvent, random } from "../../util";
 import type { Conditions } from "../../../common/types";
 
 const killOne = async (conditions: Conditions) => {

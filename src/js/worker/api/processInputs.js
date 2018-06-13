@@ -1,5 +1,5 @@
-import { PHASE, g } from "../../common";
-import { helpers } from "../util";
+import { PHASE } from "../../common";
+import { g, helpers } from "../util";
 
 /**
  * Validate that a given abbreviation corresponds to a team.

@@ -1,8 +1,8 @@
 // @flow
 
-import { PHASE, g } from "../../../common";
+import { PHASE } from "../../../common";
 import { idb } from "../../db";
-import { lock, updatePlayMenu, updateStatus } from "../../util";
+import { g, lock, updatePlayMenu, updateStatus } from "../../util";
 
 /**
  * Cancel contract negotiations with a player.

@@ -2,8 +2,8 @@
 
 import assert from "assert";
 import { before, describe, it } from "mocha";
-import { PLAYER, g } from "../../common";
-import { helpers } from ".";
+import { PLAYER } from "../../common";
+import { g, helpers } from ".";
 
 describe("worker/util/helpers", () => {
     before(() => {

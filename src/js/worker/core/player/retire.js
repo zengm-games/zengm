@@ -1,8 +1,8 @@
 // @flow
 
-import { PLAYER, g } from "../../../common";
+import { PLAYER } from "../../../common";
 import madeHof from "./madeHof";
-import { helpers, logEvent } from "../../util";
+import { g, helpers, logEvent } from "../../util";
 import type { Conditions, Player } from "../../../common/types";
 
 /**

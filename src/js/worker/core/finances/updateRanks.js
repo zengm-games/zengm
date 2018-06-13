@@ -1,8 +1,7 @@
 // @flow
 
-import { g } from "../../../common";
 import { idb } from "../../db";
-import { helpers } from "../../util";
+import { g, helpers } from "../../util";
 
 type BudgetTypes = "budget" | "expenses" | "revenues";
 

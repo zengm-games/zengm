@@ -1,9 +1,9 @@
 // Typing is too hard due to https://github.com/facebook/flow/issues/183
 
 import groupBy from "lodash/groupBy";
-import { PLAYER, g } from "../../../common";
+import { PLAYER } from "../../../common";
 import { player } from "../../core";
-import { helpers } from "../../util";
+import { g, helpers } from "../../util";
 import type {
     Player,
     PlayerFiltered,

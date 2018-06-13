@@ -2,10 +2,9 @@
 
 import assert from "assert";
 import { before, describe, it } from "mocha";
-import { g } from "../../../common";
 import testHelpers from "../../../test/helpers";
 import season from "./index";
-import { helpers } from "../../util";
+import { g, helpers } from "../../util";
 
 const defaultTeams = helpers.getTeamsDefault();
 

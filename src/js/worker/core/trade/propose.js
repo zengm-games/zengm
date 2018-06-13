@@ -1,8 +1,9 @@
 // @flow
 
-import { PHASE, g } from "../../../common";
+import { PHASE } from "../../../common";
 import { team } from "../../core";
 import { idb } from "../../db";
+import { g } from "../../util";
 import clear from "./clear";
 import processTrade from "./processTrade";
 import summary from "./summary";

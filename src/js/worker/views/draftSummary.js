@@ -1,7 +1,8 @@
 // @flow
 
-import { PLAYER, g } from "../../common";
+import { PLAYER } from "../../common";
 import { idb } from "../db";
+import { g } from "../util";
 
 async function updateDraftSummary(inputs: {
     season: number,

@@ -1,8 +1,9 @@
 // @flow
 
-import { PHASE, g } from "../../common";
+import { PHASE } from "../../common";
 import { season, team, trade } from "../core";
 import { idb } from "../db";
+import { g } from "../util";
 import type { UpdateEvents } from "../../common/types";
 
 async function updateRoster(

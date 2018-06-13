@@ -1,8 +1,8 @@
 // @flow
 
-import { PHASE, g } from "../../../common";
+import { PHASE } from "../../../common";
 import { idb } from "../../db";
-import { helpers, logEvent } from "../../util";
+import { g, helpers, logEvent } from "../../util";
 import type {
     Conditions,
     GamePlayer,

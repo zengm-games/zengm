@@ -1,10 +1,10 @@
 // @flow
 
 import { Cache, connectLeague, idb } from "../db";
-import { g } from "../../common";
 import { league } from "../core";
 import {
     env,
+    g,
     helpers,
     local,
     toUI,

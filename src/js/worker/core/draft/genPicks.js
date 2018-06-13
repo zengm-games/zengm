@@ -1,7 +1,7 @@
 // @flow
 
-import { g } from "../../../common";
 import { idb } from "../../db";
+import { g } from "../../util";
 import type { DraftPick } from "../../../common/types";
 
 // Add a new set of draft picks

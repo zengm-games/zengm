@@ -1,8 +1,8 @@
 // @flow
 
-import { createLogger, g } from "../../common";
+import { createLogger } from "../../common";
 import { idb } from "../db";
-import { toUI } from "../util";
+import { g, toUI } from "../util";
 import type {
     Conditions,
     LogEventSaveOptions,

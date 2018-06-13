@@ -1,7 +1,6 @@
 // @flow
 
-import { g } from "../../../common";
-import { random } from "../../util";
+import { g, random } from "../../util";
 import type { TeamSeason } from "../../../common/types";
 
 const genSeasonRow = (tid: number, prevSeason?: TeamSeason): TeamSeason => {

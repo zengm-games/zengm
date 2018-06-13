@@ -1,10 +1,9 @@
 import assert from "assert";
 import { after, before, describe, it } from "mocha";
-import { g } from "../../common";
 import testHelpers from "../../test/helpers";
 import { player, team } from "../core";
 import { idb } from "../db";
-import { account, helpers } from ".";
+import { account, g, helpers } from ".";
 
 describe("worker/util/account/checkAchievement", () => {
     before(async () => {

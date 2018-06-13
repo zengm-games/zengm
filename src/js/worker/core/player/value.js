@@ -1,7 +1,7 @@
 // @flow
 
-import { g } from "../../../common";
 import fuzzRating from "./fuzzRating";
+import { g } from "../../util";
 import type { Player, PlayerWithoutPid } from "../../../common/types";
 
 /**

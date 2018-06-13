@@ -2,9 +2,9 @@
 
 import assert from "assert";
 import { afterEach, before, describe, it } from "mocha";
-import { g } from "../../../common";
-import { idb } from "../../db";
 import { contractNegotiation } from "..";
+import { idb } from "../../db";
+import { g } from "../../util";
 import { beforeTests, givePlayerMinContract } from "./common.test";
 
 describe("worker/core/contractNegotiation/accept", () => {

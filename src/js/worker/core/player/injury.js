@@ -1,7 +1,6 @@
 // @flow
 
-import { g } from "../../../common";
-import { injuries, random } from "../../util";
+import { g, injuries, random } from "../../util";
 import type { PlayerInjury } from "../../../common/types";
 
 /**

@@ -1,7 +1,7 @@
 // @flow
 
-import { g } from "../../common";
 import { idb } from "../db";
+import { g } from "../util";
 
 async function updateTeamSelect(): void | { [key: string]: any } {
     let teams = await idb.getCopies.teamsPlus({

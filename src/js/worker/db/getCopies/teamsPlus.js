@@ -2,11 +2,10 @@
 
 import backboard from "backboard";
 import orderBy from "lodash/orderBy";
-import { g } from "../../../common";
 import { mergeByPk } from "./helpers";
 import { team } from "../../core";
 import { idb } from "../../db";
-import { helpers } from "../../util";
+import { g, helpers } from "../../util";
 import type {
     Team,
     TeamAttr,

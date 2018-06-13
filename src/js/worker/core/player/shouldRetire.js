@@ -1,7 +1,7 @@
 // @flow
 
-import { PLAYER, g } from "../../../common";
-import { random } from "../../util";
+import { PLAYER } from "../../../common";
+import { g, random } from "../../util";
 import type { Player } from "../../../common/types";
 
 // Players meeting one of these cutoffs might retire

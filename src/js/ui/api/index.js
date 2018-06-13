@@ -1,6 +1,5 @@
 // @flow
 
-import { g } from "../../common";
 import { emitter, local, realtimeUpdate } from "../util";
 import { showEvent } from "../util/logEvent";
 import type {
@@ -134,7 +133,6 @@ const resetLeague = () => {
 
 const setGameAttributes = (gameAttributes: GameAttributes) => {
     local.updateGameAttributes(gameAttributes);
-    Object.assign(g, gameAttributes);
 };
 
 const showEvent2 = (options: LogEventShowOptions) => {

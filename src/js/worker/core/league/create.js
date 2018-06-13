@@ -1,11 +1,12 @@
 // @flow
 
 import { Cache, connectLeague, idb } from "../../db";
-import { PHASE, PLAYER, g } from "../../../common";
+import { PHASE, PLAYER } from "../../../common";
 import { draft, finances, player, team } from "../../core";
 import setGameAttributes from "./setGameAttributes";
 import {
     defaultGameAttributes,
+    g,
     helpers,
     local,
     lock,

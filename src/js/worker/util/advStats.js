@@ -1,7 +1,8 @@
 // @flow
 
-import { PHASE, g } from "../../common";
+import { PHASE } from "../../common";
 import { idb } from "../db";
+import { g } from "../util";
 
 // http://www.basketball-reference.com/about/per.html
 const calculatePER = (players, teams, league) => {

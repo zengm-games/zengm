@@ -1,6 +1,7 @@
 // @flow
 
-import { PHASE, g } from "../../../common";
+import { PHASE } from "../../../common";
+import { g } from "../../util";
 import type {
     Player,
     PlayerContract,

@@ -1,7 +1,6 @@
 import range from "lodash/range";
-import { g } from "../../common";
 import { idb } from "../db";
-import { helpers } from "../util";
+import { g, helpers } from "../util";
 import type { UpdateEvents } from "../../common/types";
 
 function getTeamRecord(t, awards) {

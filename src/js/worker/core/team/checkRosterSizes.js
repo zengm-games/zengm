@@ -1,9 +1,9 @@
 // @flow
 
-import { PHASE, PLAYER, g } from "../../../common";
+import { PHASE, PLAYER } from "../../../common";
 import { player } from "../../core";
 import { idb } from "../../db";
-import { helpers, local, logEvent } from "../../util";
+import { g, helpers, local, logEvent } from "../../util";
 import type { Conditions } from "../../../common/types";
 import rosterAutoSort from "./rosterAutoSort";
 

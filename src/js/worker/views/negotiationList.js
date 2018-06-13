@@ -1,8 +1,9 @@
 // @flow
 
-import { PLAYER, g } from "../../common";
+import { PLAYER } from "../../common";
 import { player } from "../core";
 import { idb } from "../db";
+import { g } from "../util";
 
 async function updateNegotiationList(): void | { [key: string]: any } {
     let negotiations = await idb.cache.negotiations.getAll();

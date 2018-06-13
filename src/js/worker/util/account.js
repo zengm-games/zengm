@@ -1,9 +1,9 @@
 // @flow
 
 /*eslint camelcase: 0*/
-import { SPORT, fetchWrapper, g } from "../../common";
+import { SPORT, fetchWrapper } from "../../common";
 import { idb } from "../db";
-import { env, local, logEvent, toUI } from "../util";
+import { env, g, local, logEvent, toUI } from "../util";
 import type {
     AchievementKey,
     Conditions,

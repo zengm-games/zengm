@@ -1,9 +1,9 @@
 // @flow
 
-import { PHASE, PLAYER, g } from "../../../common";
+import { PHASE, PLAYER } from "../../../common";
 import { freeAgents } from "../../core";
 import { idb } from "../../db";
-import { helpers, lock, updatePlayMenu, updateStatus } from "../../util";
+import { g, helpers, lock, updatePlayMenu, updateStatus } from "../../util";
 
 /**
  * Start a new contract negotiation with a player.

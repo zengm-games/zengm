@@ -1,9 +1,9 @@
 // @flow
 
-import { PHASE, PLAYER, g } from "../../../common";
+import { PHASE, PLAYER } from "../../../common";
 import { contractNegotiation, league, player } from "../../core";
 import { idb } from "../../db";
-import { helpers, local, logEvent } from "../../util";
+import { g, helpers, local, logEvent } from "../../util";
 import type { Conditions } from "../../../common/types";
 
 const newPhaseResignPlayers = async (conditions: Conditions) => {

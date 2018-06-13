@@ -1,8 +1,8 @@
 // @flow
 
 import range from "lodash/range";
-import { g } from "../../../common";
 import getPayroll from "./getPayroll";
+import { g } from "../../util";
 
 /**
  * Get the total current payroll for every team team.

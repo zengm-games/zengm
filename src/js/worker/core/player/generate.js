@@ -1,7 +1,7 @@
 // @flow
 
 import faces from "facesjs";
-import { PLAYER, g } from "../../../common";
+import { PLAYER } from "../../../common";
 import genFuzz from "./genFuzz";
 import genContract from "./genContract";
 import heightToRating from "./heightToRating";
@@ -9,7 +9,7 @@ import limitRating from "./limitRating";
 import name from "./name";
 import pos from "./pos";
 import setContract from "./setContract";
-import { helpers, random } from "../../util";
+import { g, helpers, random } from "../../util";
 import type {
     PlayerRatings,
     PlayerWithoutPid,

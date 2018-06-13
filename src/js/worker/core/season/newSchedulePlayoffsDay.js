@@ -1,9 +1,8 @@
 // @flow
 
-import { g } from "../../../common";
 import setSchedule from "./setSchedule";
 import { idb } from "../../db";
-import { helpers } from "../../util";
+import { g, helpers } from "../../util";
 
 /**
  * Create a single day's schedule for an in-progress playoffs.

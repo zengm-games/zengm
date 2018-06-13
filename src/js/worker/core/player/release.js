@@ -1,10 +1,9 @@
 // @flow
 
-import { g } from "../../../common";
 import addToFreeAgents from "./addToFreeAgents";
 import genBaseMoods from "./genBaseMoods";
 import { idb } from "../../db";
-import { helpers, logEvent } from "../../util";
+import { g, helpers, logEvent } from "../../util";
 import type { Player } from "../../../common/types";
 
 /**

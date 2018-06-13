@@ -1,7 +1,7 @@
 // @flow
 
-import { PHASE, g } from "../../../common";
-import { logEvent } from "../../util";
+import { PHASE } from "../../../common";
+import { g, logEvent } from "../../util";
 import type { Conditions } from "../../../common/types";
 
 const logAction = (tid: number, text: string, conditions?: Conditions) => {

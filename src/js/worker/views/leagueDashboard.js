@@ -1,9 +1,9 @@
 // @flow
 
-import { PHASE, PLAYER, g } from "../../common";
+import { PHASE, PLAYER } from "../../common";
 import { season, team } from "../core";
 import { idb } from "../db";
-import { getProcessedGames, helpers } from "../util";
+import { g, getProcessedGames, helpers } from "../util";
 import type { GetOutput, UpdateEvents } from "../../common/types";
 
 async function updateInbox(

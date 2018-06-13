@@ -1,7 +1,7 @@
 // @flow
 
 import { idb } from "../../db";
-import { g } from "../../../common";
+import { g } from "../../util";
 
 const updateMetaNameRegion = async (name: string, region: string) => {
     const l = await idb.meta.leagues.get(g.lid);

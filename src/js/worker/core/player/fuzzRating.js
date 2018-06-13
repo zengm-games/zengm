@@ -1,7 +1,6 @@
 // @flow
 
-import { g } from "../../../common";
-import { helpers } from "../../util";
+import { g, helpers } from "../../util";
 
 const fuzzRating = (rating: number, fuzz: number): number => {
     // Turn off fuzz in multi team mode, because it doesn't have any meaning there in its current form. The check for

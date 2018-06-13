@@ -1,7 +1,8 @@
 // @flow
 
-import { PHASE, g } from "../../../common";
+import { PHASE } from "../../../common";
 import { draft, freeAgents, game, phase, season } from "../../core";
+import { g } from "../../util";
 import type { Conditions } from "../../../common/types";
 
 // Depending on phase, initiate action that will lead to the next phase

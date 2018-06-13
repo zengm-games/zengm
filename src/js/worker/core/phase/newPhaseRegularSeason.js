@@ -1,9 +1,8 @@
 // @flow
 
-import { g } from "../../../common";
 import { season } from "../../core";
 import { idb } from "../../db";
-import { genMessage, local } from "../../util";
+import { g, genMessage, local } from "../../util";
 
 const newPhaseRegularSeason = async () => {
     const teams = await idb.cache.teams.getAll();

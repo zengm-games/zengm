@@ -3,10 +3,9 @@
 import assert from "assert";
 import backboard from "backboard";
 import { after, before, describe, it } from "mocha";
-import { g } from "../../../common";
 import testHelpers from "../../../test/helpers";
 import { connectMeta, idb } from "../../db";
-import { local } from "../../util";
+import { g, local } from "../../util";
 import league from "./index";
 
 describe("worker/core/league/create", () => {

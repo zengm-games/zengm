@@ -1,10 +1,10 @@
 // @flow
 
 import backboard from "backboard";
-import { PLAYER, g } from "../../../common";
+import { PLAYER } from "../../../common";
 import { draft } from "../../core";
 import { idb } from "../../db";
-import { helpers } from "../../util";
+import { g, helpers } from "../../util";
 import type { Conditions } from "../../../common/types";
 
 const newPhaseDraft = async (conditions: Conditions) => {

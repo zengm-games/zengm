@@ -1,6 +1,6 @@
 // @flow
 
-import { PHASE, PLAYER, g } from "../../../common";
+import { PHASE, PLAYER } from "../../../common";
 import {
     GameSim,
     finances,
@@ -19,6 +19,7 @@ import writeTeamStats from "./writeTeamStats";
 import { idb } from "../../db";
 import {
     advStats,
+    g,
     helpers,
     lock,
     logEvent,

@@ -1,6 +1,6 @@
 // @flow
 
-import { g } from "../../../common";
+import { g } from "../../util";
 
 /**
  * Get contract amount adjusted for mood.

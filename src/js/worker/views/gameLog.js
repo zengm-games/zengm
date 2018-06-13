@@ -1,8 +1,7 @@
 // @flow
 
-import { g } from "../../common";
 import { idb } from "../db";
-import { getProcessedGames, helpers } from "../util";
+import { g, getProcessedGames, helpers } from "../util";
 import type { GetOutput, UpdateEvents } from "../../common/types";
 
 /**

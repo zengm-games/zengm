@@ -1,9 +1,9 @@
 // @flow
 
-import { PHASE, g } from "../../../common";
+import { PHASE } from "../../../common";
 import { player } from "../../core";
 import { idb } from "../../db";
-import { helpers, logEvent, toUI, updatePlayMenu } from "../../util";
+import { g, helpers, logEvent, toUI, updatePlayMenu } from "../../util";
 import type { TradeSummary } from "../../../common/types";
 
 const formatAssetsEventLog = t => {

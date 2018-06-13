@@ -1,8 +1,7 @@
 // @flow
 
 import flatten from "lodash/flatten";
-import { g } from "../../../common";
-import { random } from "../../util";
+import { g, random } from "../../util";
 import type { Team } from "../../../common/types";
 
 /**

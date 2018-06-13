@@ -2,9 +2,9 @@
 
 import assert from "assert";
 import { describe, it } from "mocha";
-import { g } from "../../../common";
 import testHelpers from "../../../test/helpers";
 import player from "./index";
+import { g } from "../../util";
 
 describe("worker/core/player/getPlayerFakeAge", () => {
     it("pick appropriate player to have a fake age", () => {

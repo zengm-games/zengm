@@ -1,10 +1,10 @@
 // @flow
 
-import { PHASE, PLAYER, g } from "../../common";
+import { PHASE, PLAYER } from "../../common";
 import type { GetOutput, UpdateEvents } from "../../common/types";
 import { draft } from "../core";
 import { idb } from "../db";
-import { local } from "../util";
+import { g, local } from "../util";
 
 async function updateDraft(
     inputs: GetOutput,

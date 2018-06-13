@@ -1,9 +1,9 @@
 // @flow
 
 import backboard from "backboard";
-import { idb } from "../../db";
-import { g } from "../../../common";
 import close from "./close";
+import { idb } from "../../db";
+import { g } from "../../util";
 
 /**
  * Delete an existing league.

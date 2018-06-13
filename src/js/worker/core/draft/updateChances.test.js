@@ -2,11 +2,11 @@
 
 import assert from "assert";
 import { before, describe, it } from "mocha";
-import { g } from "../../../common";
-import { idb } from "../../db";
 import { loadTeamSeasons } from "./common.test";
 import lotterySort from "./lotterySort";
 import updateChances from "./updateChances";
+import { idb } from "../../db";
+import { g } from "../../util";
 
 describe("worker/core/draft/updateChances", () => {
     before(loadTeamSeasons);

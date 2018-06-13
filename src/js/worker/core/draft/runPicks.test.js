@@ -2,10 +2,11 @@
 
 import assert from "assert";
 import { after, before, describe, it } from "mocha";
-import { PLAYER, g } from "../../../common";
+import { PLAYER } from "../../../common";
 import testHelpers from "../../../test/helpers";
-import { idb } from "../../db";
 import { draft } from "..";
+import { idb } from "../../db";
+import { g } from "../../util";
 import { getDraftTids, loadTeamSeasons } from "./common.test";
 
 const testRunPicks = async (numNow, numTotal) => {

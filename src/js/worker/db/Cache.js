@@ -1,9 +1,9 @@
 // @flow
 
 import backboard from "backboard";
-import { PLAYER, g } from "../../common";
+import { PLAYER } from "../../common";
 import { idb } from "../db";
-import { lock, local } from "../util";
+import { g, lock, local } from "../util";
 import type {
     Awards,
     BackboardTx,

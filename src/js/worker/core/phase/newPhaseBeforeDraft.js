@@ -1,9 +1,9 @@
 // @flow
 
-import { PLAYER, g } from "../../../common";
+import { PLAYER } from "../../../common";
 import { player, season, team } from "../../core";
 import { idb } from "../../db";
-import { account, genMessage, helpers, toUI } from "../../util";
+import { account, g, genMessage, helpers, toUI } from "../../util";
 import type { Conditions } from "../../../common/types";
 
 const newPhaseBeforeDraft = async (

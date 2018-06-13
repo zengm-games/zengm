@@ -1,8 +1,8 @@
 // @flow
 
-import { g } from "../../common";
 import { player } from "../core";
 import { idb } from "../db";
+import { g } from "../util";
 
 async function updateUpcomingFreeAgents(inputs: {
     season: number,

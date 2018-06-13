@@ -2,10 +2,11 @@
 
 import assert from "assert";
 import { before, describe, it } from "mocha";
-import { PLAYER, g } from "../../../common";
+import { PLAYER } from "../../../common";
 import testHelpers from "../../../test/helpers";
 import { player } from "../../core";
 import { idb } from "..";
+import { g } from "../../util";
 
 describe("worker/db/getCopies/playersPlus", () => {
     let p;

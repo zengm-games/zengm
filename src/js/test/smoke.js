@@ -3,10 +3,9 @@
 import assert from "assert";
 import backboard from "backboard";
 import { after, describe, it } from "mocha";
-import { g } from "../common";
 import { league } from "../worker/core";
 import { connectMeta, idb } from "../worker/db";
-import { local } from "../worker/util";
+import { g, local } from "../worker/util";
 
 describe("Smoke Tests", () => {
     let intervalID;

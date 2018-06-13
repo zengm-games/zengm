@@ -1,8 +1,8 @@
 // @flow
 
-import { g, PHASE_TEXT } from "../../common";
+import { PHASE_TEXT } from "../../common";
 import { idb } from "../db";
-import { local, toUI } from "../util";
+import { g, local, toUI } from "../util";
 import type { Conditions } from "../../common/types";
 
 // Calculate phase text in worker rather than UI, because here we can easily cache it in the meta database

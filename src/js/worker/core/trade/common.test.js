@@ -1,4 +1,4 @@
-import { g } from "../../../common";
+import { g } from "../../util";
 import testHelpers from "../../../test/helpers";
 import { player, trade } from "..";
 

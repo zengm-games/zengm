@@ -1,6 +1,6 @@
 // @flow
 
-import { g } from "../common";
+import { g } from "../worker/util";
 
 type PlayerNames = {
     countries: [string, number][],

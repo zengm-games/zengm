@@ -1,9 +1,9 @@
 // @flow
 
-import { PLAYER, g } from "../../common";
+import { PLAYER } from "../../common";
 import { freeAgents, trade } from "../core";
 import { idb } from "../db";
-import { helpers } from "../util";
+import { g, helpers } from "../util";
 import type { UpdateEvents } from "../../common/types";
 
 async function updatePlayer(

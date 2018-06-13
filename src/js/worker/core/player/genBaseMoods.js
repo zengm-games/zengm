@@ -1,9 +1,8 @@
 // @flow
 
-import { g } from "../../../common";
 import { finances } from "../../core";
 import { idb } from "../../db";
-import { helpers, random } from "../../util";
+import { g, helpers, random } from "../../util";
 
 /**
  * Calculates the base "mood" factor for any free agent towards a team.

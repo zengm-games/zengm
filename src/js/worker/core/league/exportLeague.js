@@ -1,8 +1,7 @@
 // @flow
 
 import { getAll, idb } from "../../db";
-import { g } from "../../../common";
-import { local } from "../../util";
+import { g, local } from "../../util";
 
 /**
  * Export existing active league.

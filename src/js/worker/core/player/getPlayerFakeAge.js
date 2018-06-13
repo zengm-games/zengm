@@ -1,7 +1,6 @@
 // @flow
 
-import { g } from "../../../common";
-import { random } from "../../util";
+import { g, random } from "../../util";
 import type { Player } from "../../../common/types";
 
 const getPlayerFakeAge = (players: Player[]): Player | void => {

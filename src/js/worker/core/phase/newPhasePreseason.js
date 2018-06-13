@@ -1,10 +1,10 @@
 // @flow
 
 import range from "lodash/range";
-import { PLAYER, g } from "../../../common";
+import { PLAYER } from "../../../common";
 import { finances, freeAgents, league, player, team } from "../../core";
 import { idb } from "../../db";
-import { env, helpers, local, logEvent, random, toUI } from "../../util";
+import { env, g, helpers, local, logEvent, random, toUI } from "../../util";
 import type { Conditions } from "../../../common/types";
 
 const newPhasePreseason = async (conditions: Conditions) => {

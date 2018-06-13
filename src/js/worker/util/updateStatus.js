@@ -1,8 +1,8 @@
 // @flow
 
-import { g, PHASE } from "../../common";
+import { PHASE } from "../../common";
 import { idb } from "../db";
-import { local, toUI } from "../util";
+import { g, local, toUI } from "../util";
 import type { Conditions } from "../../common/types";
 
 /*Save status to database and push to client.

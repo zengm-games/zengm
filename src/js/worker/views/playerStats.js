@@ -1,7 +1,8 @@
 // @flow
 
-import { PHASE, PLAYER, g } from "../../common";
+import { PHASE, PLAYER } from "../../common";
 import { idb } from "../db";
+import { g } from "../util";
 import type { PlayerStatType, UpdateEvents } from "../../common/types";
 
 async function updatePlayers(

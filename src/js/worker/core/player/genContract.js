@@ -1,7 +1,6 @@
 // @flow
 
-import { g } from "../../../common";
-import { helpers, random } from "../../util";
+import { g, helpers, random } from "../../util";
 import type {
     Player,
     PlayerContract,

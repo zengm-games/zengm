@@ -1,12 +1,9 @@
 get rid of g in UI
-- race conditions using local.state.lid in controller?
 - ui/api/setGameAttributes logic should be in worker, not ui. minimize transfer
 - figure out how to get rid of weird ad-related code (center when right ad not displayed or gold, etc) and emitter?
   - add/remove a class to center whenever gold is updated
   - similar code replaces local usage in logEvent
-- move g out of common
 - test account still works, especially goldResult
-- initAds passed goldUntil, why?
 
 "handle case where target has a brother" test is flaky, sometimes says "No brother found"
 

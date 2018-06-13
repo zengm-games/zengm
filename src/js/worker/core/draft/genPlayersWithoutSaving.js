@@ -1,9 +1,9 @@
 // @flow
 
 import range from "lodash/range";
-import { PLAYER, g } from "../../../common";
+import { PLAYER } from "../../../common";
 import { player } from "../../core";
-import { random } from "../../util";
+import { g, random } from "../../util";
 import type { PlayerWithoutPid } from "../../../common/types";
 
 const genPlayersWithoutSaving = (

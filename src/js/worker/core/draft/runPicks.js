@@ -1,11 +1,11 @@
 // @flow
 
-import { PLAYER, g } from "../../../common";
+import { PLAYER } from "../../../common";
 import afterPicks from "./afterPicks";
 import getOrder from "./getOrder";
 import selectPlayer from "./selectPlayer";
 import { idb } from "../../db";
-import { local, lock, random } from "../../util";
+import { g, local, lock, random } from "../../util";
 import type { Conditions } from "../../../common/types";
 
 /**

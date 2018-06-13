@@ -1,8 +1,7 @@
 // @flow
 
 import range from "lodash/range";
-import { g } from "../../../common";
-import { random } from "../../util";
+import { g, random } from "../../util";
 import type { TeamFiltered } from "../../../common/types";
 
 /**

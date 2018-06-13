@@ -1,8 +1,8 @@
 // @flow
 
-import { g } from "../../../common";
 import { draft } from "../../core";
 import { idb } from "../../db";
+import { g } from "../../util";
 
 const newPhaseAfterDraft = async () => {
     await draft.genPicks(g.season + 4);

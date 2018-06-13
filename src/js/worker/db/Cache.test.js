@@ -1,7 +1,7 @@
 import assert from "assert";
-import { g } from "../../common";
 import testHelpers from "../../test/helpers";
 import { player } from "../core";
+import { g } from "../util";
 import { idb } from ".";
 
 describe("worker/db/Cache", () => {

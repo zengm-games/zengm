@@ -1,7 +1,7 @@
 // @flow
 
-import { g } from "../../../common";
 import { player } from "../../core";
+import { g } from "../../util";
 import type { RatingKey } from "../../../common/types";
 
 const averageCareerArc = (ratingToSave: RatingKey) => {

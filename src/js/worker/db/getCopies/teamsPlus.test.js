@@ -2,11 +2,10 @@
 
 import assert from "assert";
 import { before, describe, it } from "mocha";
-import { g } from "../../../common";
 import testHelpers from "../../../test/helpers";
 import { player, team } from "../../core";
 import { idb } from "..";
-import { helpers } from "../../util";
+import { g, helpers } from "../../util";
 
 describe("worker/db/getCopies/teamsPlus", () => {
     before(async () => {

@@ -1,8 +1,9 @@
 // @flow
 
 import orderBy from "lodash/orderBy";
-import { PHASE, g } from "../../../common";
+import { PHASE } from "../../../common";
 import { idb } from "../../db";
+import { g } from "../../util";
 
 /**
  * Retrieve the current remaining draft order.

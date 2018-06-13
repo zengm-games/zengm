@@ -2,7 +2,7 @@
 
 import flatten from "lodash/flatten";
 import range from "lodash/range";
-import { PHASE, PHASE_TEXT, PLAYER, g } from "../../common";
+import { PHASE, PHASE_TEXT, PLAYER } from "../../common";
 import actions from "./actions";
 import processInputs from "./processInputs";
 import {
@@ -22,6 +22,7 @@ import {
     changes,
     checkNaNs,
     env,
+    g,
     helpers,
     local,
     lock,

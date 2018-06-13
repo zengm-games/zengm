@@ -1,10 +1,10 @@
 // @flow
 
 import countBy from "lodash/countBy";
-import { PHASE, g } from "../../../common";
+import { PHASE } from "../../../common";
 import { draft, player, trade } from "../../core";
 import { idb } from "../../db";
-import { helpers } from "../../util";
+import { g, helpers } from "../../util";
 import type { TradePickValues } from "../../../common/types";
 import getPayroll from "./getPayroll";
 

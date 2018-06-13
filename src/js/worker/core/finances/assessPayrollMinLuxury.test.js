@@ -2,10 +2,10 @@
 
 import assert from "assert";
 import { describe, it } from "mocha";
-import { g } from "../../../common";
 import testHelpers from "../../../test/helpers";
-import { finances, player, team } from "../../../worker/core";
-import { idb } from "../../../worker/db";
+import { finances, player, team } from "../../core";
+import { idb } from "../../db";
+import { g } from "../../util";
 
 describe("worker/core/finances/assessPayrollMinLuxury", () => {
     it("store payroll and appropriately assess luxury and minimum payroll taxes for each team", async () => {

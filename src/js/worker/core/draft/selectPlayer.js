@@ -1,10 +1,10 @@
 // @flow
 
-import { PHASE, g } from "../../../common";
+import { PHASE } from "../../../common";
 import { player } from "../../core";
 import getRookieSalaries from "./getRookieSalaries";
 import { idb } from "../../db";
-import { helpers, local, logEvent } from "../../util";
+import { g, helpers, local, logEvent } from "../../util";
 import type { DraftPick } from "../../../common/types";
 
 /**

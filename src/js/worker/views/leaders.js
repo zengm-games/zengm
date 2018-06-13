@@ -1,8 +1,8 @@
 // @flow
 
-import { PHASE, PLAYER, g } from "../../common";
+import { PHASE, PLAYER } from "../../common";
 import { idb } from "../db";
-import { helpers } from "../util";
+import { g, helpers } from "../util";
 import type { UpdateEvents } from "../../common/types";
 
 async function updateLeaders(

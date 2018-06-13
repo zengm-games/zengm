@@ -1,9 +1,9 @@
 // @flow
 
-import { PHASE, PLAYER, g } from "../../../common";
+import { PHASE, PLAYER } from "../../../common";
 import { league, phase, player } from "../../core";
 import { idb } from "../../db";
-import { local, toUI, updatePlayMenu, updatePhase } from "../../util";
+import { g, local, toUI, updatePlayMenu, updatePhase } from "../../util";
 import type { Conditions } from "../../../common/types";
 
 const afterPicks = async (draftOver: boolean, conditions?: Conditions) => {

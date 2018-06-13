@@ -2,7 +2,7 @@
 
 import assert from "assert";
 import { before, describe, it } from "mocha";
-import { g } from "../../common";
+import { g } from "../util";
 import { validateAbbrev, validateSeason } from "./processInputs";
 
 describe("worker/api/processInputs", () => {

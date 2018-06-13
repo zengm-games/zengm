@@ -1,9 +1,8 @@
 // @flow
 
 import range from "lodash/range";
-import { g } from "../../../common";
 import { idb } from "../../db";
-import { random } from "../../util";
+import { g, random } from "../../util";
 
 /**
  * Sets fantasy draft order and save it to the draftOrder object store.

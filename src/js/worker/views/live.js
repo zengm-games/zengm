@@ -1,8 +1,7 @@
 // @flow
 
-import { g } from "../../common";
 import { season } from "../core";
-import { helpers, lock } from "../util";
+import { g, helpers, lock } from "../util";
 import type { GetOutput, UpdateEvents } from "../../common/types";
 
 async function updateGamesList(): void | { [key: string]: any } {

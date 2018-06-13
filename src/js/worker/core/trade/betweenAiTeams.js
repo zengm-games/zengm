@@ -1,10 +1,9 @@
 // @flow
 
 import range from "lodash/range";
-import { g } from "../../../common";
 import { team } from "../../core";
 import { idb } from "../../db";
-import { random } from "../../util";
+import { g, random } from "../../util";
 import isUntradable from "./isUntradable";
 import makeItWork from "./makeItWork";
 import processTrade from "./processTrade";

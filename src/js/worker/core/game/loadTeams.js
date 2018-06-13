@@ -1,10 +1,10 @@
 // @flow
 
 import range from "lodash/range";
-import { COMPOSITE_WEIGHTS, g } from "../../../common";
+import { COMPOSITE_WEIGHTS } from "../../../common";
 import { player } from "../../core";
 import { idb } from "../../db";
-import { helpers } from "../../util";
+import { g, helpers } from "../../util";
 
 /**
  * Load all teams into an array of team objects.

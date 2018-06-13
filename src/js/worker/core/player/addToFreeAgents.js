@@ -1,10 +1,10 @@
 // @flow
 
-import { PHASE, PLAYER, g } from "../../../common";
+import { PHASE, PLAYER } from "../../../common";
 import genContract from "./genContract";
 import setContract from "./setContract";
 import { idb } from "../../db";
-import { helpers, random } from "../../util";
+import { g, helpers, random } from "../../util";
 import type { Phase, Player, PlayerWithoutPid } from "../../../common/types";
 
 /**

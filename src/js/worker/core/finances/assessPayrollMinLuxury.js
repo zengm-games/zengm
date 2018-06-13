@@ -1,8 +1,8 @@
 // @flow
 
-import { g } from "../../../common";
 import { team } from "../../core";
 import { idb } from "../../db";
+import { g } from "../../util";
 
 /**
  * Assess the payroll and apply minimum and luxury taxes.

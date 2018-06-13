@@ -2,10 +2,11 @@
 
 import assert from "assert";
 import { before, describe, it } from "mocha";
-import { PLAYER, g } from "../../../common";
+import { PLAYER } from "../../../common";
 import testHelpers from "../../../test/helpers";
-import { idb } from "../../db";
 import { player, team } from "..";
+import { idb } from "../../db";
+import { g } from "../../util";
 
 describe("worker/core/team/rosterAutoSort/findStarters", () => {
     before(() => {

@@ -6,7 +6,9 @@ import * as React from "react";
 const widthCutoff = 1330;
 
 const updateSkyscraperDisplay = () => {
-    const div = document.getElementById("bbgm-ads-skyscraper");
+    const div = document.getElementById(
+        "basketballgm_300x250_160x600_300x600_Right",
+    );
     if (div) {
         const documentElement = document.documentElement;
         if (documentElement) {
@@ -78,7 +80,7 @@ class Header extends React.Component<{}> {
             <div>
                 <div
                     className="banner-ad"
-                    id="bbgm-ads-top"
+                    id="basketballgm_728x90_320x50_ATF"
                     style={{
                         display: "none",
                         textAlign: "center",
@@ -88,7 +90,7 @@ class Header extends React.Component<{}> {
                 />
                 <div className="banner-ad skyscraper-wrapper">
                     <div
-                        id="bbgm-ads-skyscraper"
+                        id="basketballgm_300x250_160x600_300x600_Right"
                         style={{
                             display: "none",
                         }}

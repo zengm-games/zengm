@@ -75,9 +75,9 @@ const initAds = (goldUntil: number | void) => {
         window.bbgmAds.cmd.push(() => {
             // Show hidden divs. skyscraper has its own code elsewhere to manage display.
             const showDivs = [
-                "bbgm-ads-top",
-                "bbgm-ads-bottom1",
-                "bbgm-ads-bottom2",
+                "basketballgm_728x90_320x50_ATF",
+                "basketballgm_300x250_BTF_Left",
+                "basketballgm_300x250_BTF_Right",
             ];
             for (const id of showDivs) {
                 const div = document.getElementById(id);
@@ -88,10 +88,10 @@ const initAds = (goldUntil: number | void) => {
 
             window.bbgmAds
                 .init([
-                    "bbgm-ads-top",
-                    "bbgm-ads-bottom1",
-                    "bbgm-ads-bottom2",
-                    "bbgm-ads-skyscraper",
+                    "basketballgm_728x90_320x50_ATF",
+                    "basketballgm_300x250_BTF_Left",
+                    "basketballgm_300x250_BTF_Right",
+                    "basketballgm_300x250_160x600_300x600_Right",
                 ])
                 .then(() => {
                     // Show the logo too

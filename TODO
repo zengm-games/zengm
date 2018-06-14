@@ -5,8 +5,6 @@ get rid of g in UI
   - similar code replaces local usage in logEvent
 - test account still works, especially goldResult
 
-"handle case where target has a brother" test is flaky, sometimes says "No brother found"
-
 too easy to trade for current season picks
 - i think it's uncertainty+fudge factor decreasing too much when the outcome is certain
 

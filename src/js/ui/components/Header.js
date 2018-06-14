@@ -2,8 +2,8 @@
 
 import * as React from "react";
 
-// Ensure there is enough room to display 160px wide ad next to 1170px wide container
-const widthCutoff = 1330;
+// Ensure there is enough room to display 300px wide ad next to 1170px wide container
+const widthCutoff = 1170 + 300;
 
 const updateSkyscraperDisplay = () => {
     const div = document.getElementById(

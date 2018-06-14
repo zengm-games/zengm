@@ -26,6 +26,7 @@ class Footer extends React.Component<{}> {
                             top: "5px",
                             left: 0,
                         }}
+                        data-refresh-time="-1"
                     />
                     <div
                         id="bbgm-ads-logo"
@@ -56,6 +57,7 @@ class Footer extends React.Component<{}> {
                             top: "5px",
                             right: 0,
                         }}
+                        data-refresh-time="-1"
                     />
                 </div>
 

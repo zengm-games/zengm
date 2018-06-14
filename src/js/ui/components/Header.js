@@ -87,6 +87,7 @@ class Header extends React.Component<{}> {
                         minHeight: "95px",
                         marginTop: "1em",
                     }}
+                    data-refresh-time="-1"
                 />
                 <div className="banner-ad skyscraper-wrapper">
                     <div
@@ -94,6 +95,7 @@ class Header extends React.Component<{}> {
                         style={{
                             display: "none",
                         }}
+                        data-refresh-time="-1"
                     />
                 </div>
                 {embedInfo}

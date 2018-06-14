@@ -211,6 +211,23 @@ describe("worker/core/player/addRelatives", () => {
         });
 
         it("handle case where target has a brother", async () => {
+            // This is weirdly incestuous, but make initialP the son of extraBrother so that extraBrother is never
+            // picked as the brother for initialP, it is always one of initialBrothers. But then extraBrother will be
+            // added to initialP's relatives as a brother, via already being a brother of one of initialBrothers. Ugh,
+            // this is too confusing.
+            const initialP = player.generate(
+                PLAYER.UNDRAFTED,
+                20,
+                season,
+                true,
+                15.5,
+            );
+            initialP.relatives.push({
+                type: "father",
+                pid: 1,
+                name: "Foo Bar",
+            });
+
             const initialBrothers = genBrothers();
             for (const p of initialBrothers) {
                 p.relatives.push({
@@ -222,7 +239,7 @@ describe("worker/core/player/addRelatives", () => {
 
             await testHelpers.resetCache({
                 players: [
-                    player.generate(PLAYER.UNDRAFTED, 20, season, true, 15.5),
+                    initialP,
                     player.generate(PLAYER.RETIRED, 25, season - 5, true, 15.5), // Extra brother
                     ...initialBrothers,
                 ],
@@ -240,17 +257,19 @@ describe("worker/core/player/addRelatives", () => {
                 throw new Error("No brother found");
             }
 
-            assert.equal(p.relatives.length, 2);
-            assert.equal(p.relatives[0].type, "brother");
-            assert.equal(p.relatives[0].pid, 1);
-            assert.equal(p.relatives[1].type, "brother");
-            assert.equal(p.relatives[1].pid, brother.pid);
+            // The 0th entry of both p.relatives and brother.relatives is the father, extraBrother. See comment above.
 
-            assert.equal(brother.relatives.length, 2);
-            assert.equal(brother.relatives[0].type, "brother");
-            assert.equal(brother.relatives[0].pid, 1);
+            assert.equal(p.relatives.length, 3);
+            assert.equal(p.relatives[1].type, "brother");
+            assert.equal(p.relatives[1].pid, 1);
+            assert.equal(p.relatives[2].type, "brother");
+            assert.equal(p.relatives[2].pid, brother.pid);
+
+            assert.equal(brother.relatives.length, 3);
             assert.equal(brother.relatives[1].type, "brother");
-            assert.equal(brother.relatives[1].pid, p.pid);
+            assert.equal(brother.relatives[1].pid, 1);
+            assert.equal(brother.relatives[2].type, "brother");
+            assert.equal(brother.relatives[2].pid, p.pid);
         });
 
         it("handle case where source has a brother", async () => {

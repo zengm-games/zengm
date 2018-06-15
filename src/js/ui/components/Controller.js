@@ -171,6 +171,7 @@ class Controller extends React.Component<{}, State> {
             // ctxBBGM is hacky!
             const ctxBBGM = Object.assign({}, ctx.bbgm);
             delete ctxBBGM.cb; // Can't send function to worker
+            delete ctxBBGM.err; // Can't send error to worker
             const inputs = await toWorker(
                 `processInputs.${args.id}`,
                 ctx.params,

@@ -1095,7 +1095,7 @@ const upsertCustomizedPlayer = async (
 ): Promise<number> => {
     const r = p.ratings.length - 1;
 
-    // Fix draft season
+    // Fix draft and ratings season
     if (
         p.tid === PLAYER.UNDRAFTED ||
         p.tid === PLAYER.UNDRAFTED_2 ||
@@ -1115,6 +1115,9 @@ const upsertCustomizedPlayer = async (
         }
 
         p.ratings[r].season = p.draft.year;
+    } else {
+        // If a player was a draft prospect (or some other weird shit happened), ratings season might be wrong
+        p.ratings[r].season = g.season;
     }
 
     // Set ovr, skills, and bound pot by ovr

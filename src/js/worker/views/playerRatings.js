@@ -41,7 +41,7 @@ async function updatePlayers(
         players = await idb.getCopies.playersPlus(players, {
             attrs: [
                 "pid",
-                "nameAbbrev",
+                "name",
                 "abbrev",
                 "age",
                 "born",

@@ -90,10 +90,14 @@ class Draft extends React.Component {
         };
     }
 
-    async draftUser(pid) {
+    async draftUser(pid, simToNextUserPick = false) {
         this.setState({ drafting: true });
         await toWorker("draftUser", pid);
         this.setState({ drafting: false });
+
+        if (simToNextUserPick) {
+            await toWorker("actions.playMenu.untilYourNextPick");
+        }
     }
 
     render() {
@@ -136,13 +140,24 @@ class Draft extends React.Component {
                 p.age,
                 p.ratings.ovr,
                 p.ratings.pot,
-                <button
-                    className="btn btn-xs btn-primary"
-                    disabled={!usersTurn || this.state.drafting}
-                    onClick={() => this.draftUser(p.pid)}
-                >
-                    Draft
-                </button>,
+                <div className="btn-group" style={{ display: "flex" }}>
+                    <button
+                        className="btn btn-xs btn-primary"
+                        disabled={!usersTurn || this.state.drafting}
+                        onClick={() => this.draftUser(p.pid)}
+                        title="Draft player"
+                    >
+                        Draft
+                    </button>
+                    <button
+                        className="btn btn-xs btn-default"
+                        disabled={!usersTurn || this.state.drafting}
+                        onClick={() => this.draftUser(p.pid, true)}
+                        title="Draft player and sim to your next pick or end of draft"
+                    >
+                        And Sim
+                    </button>
+                </div>,
             ];
 
             if (fantasyDraft) {

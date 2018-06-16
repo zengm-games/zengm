@@ -1,9 +1,11 @@
-get rid of g in UI
-- ui/api/setGameAttributes logic should be in worker, not ui. minimize transfer
-- figure out how to get rid of weird ad-related code (center when right ad not displayed or gold, etc) and emitter?
-  - add/remove a class to center whenever gold is updated
-  - similar code replaces local usage in logEvent
-- test account still works, especially goldResult
+ui/api/setGameAttributes logic should be in worker, not ui. minimize transfer
+
+center UI when possible
+- when?
+  - if banner ads are hidden (hideAds in initAds)
+  - if ad blocker is in use (divs missing or something)
+  - if not wide enough for skyscraper
+- problem: NavBar doesn't like when a class is added alongside .container to do this. Revisit later, maybe.
 
 too easy to trade for current season picks
 - i think it's uncertainty+fudge factor decreasing too much when the outcome is certain

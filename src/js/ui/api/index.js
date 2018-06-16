@@ -46,6 +46,7 @@ const emit = (name: string, content: any) => {
     emitter.emit(name, content);
 };
 
+// Read from goldUntil rather than local because this is called before local is updated
 const initAds = (goldUntil: number | void) => {
     let hideAds = false;
 

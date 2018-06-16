@@ -1,3 +1,5 @@
+when editing a player from draft prospect to roster, make sure to update ratings season
+
 get rid of g in UI
 - ui/api/setGameAttributes logic should be in worker, not ui. minimize transfer
 - figure out how to get rid of weird ad-related code (center when right ad not displayed or gold, etc) and emitter?

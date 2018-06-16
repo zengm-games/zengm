@@ -77,6 +77,11 @@ async function updateTeamHistory(
         // Not sure why this is necessary, but sometimes statsTids gets an entry but ratings doesn't
         players = players.filter(p => p.careerStats.gp > 0);
 
+        // If stats were deleted, ratings won't come through, so don't show player
+        players = players.filter(
+            p => p.ratings.length > 0 && p.stats.length > 0,
+        );
+
         for (const p of players) {
             p.stats.reverse();
 

@@ -25,6 +25,7 @@ class GodMode extends React.Component {
             tragicDeathRate: props.tragicDeathRate,
             brotherRate: props.brotherRate,
             sonRate: props.sonRate,
+            difficulty: props.difficulty,
         };
         this.handleChanges = {
             disableInjuries: this.handleChange.bind(this, "disableInjuries"),
@@ -43,6 +44,7 @@ class GodMode extends React.Component {
             tragicDeathRate: this.handleChange.bind(this, "tragicDeathRate"),
             brotherRate: this.handleChange.bind(this, "brotherRate"),
             sonRate: this.handleChange.bind(this, "sonRate"),
+            difficulty: this.handleChange.bind(this, "difficulty"),
         };
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
         this.handleGodModeToggle = this.handleGodModeToggle.bind(this);
@@ -67,6 +69,7 @@ class GodMode extends React.Component {
                 tragicDeathRate: nextProps.tragicDeathRate,
                 brotherRate: nextProps.brotherRate,
                 sonRate: nextProps.sonRate,
+                difficulty: nextProps.difficulty,
             };
         }
 
@@ -100,6 +103,7 @@ class GodMode extends React.Component {
             tragicDeathRate: parseFloat(this.state.tragicDeathRate),
             brotherRate: parseFloat(this.state.brotherRate),
             sonRate: parseFloat(this.state.sonRate),
+            difficulty: parseFloat(this.state.difficulty),
         });
 
         this.setState({
@@ -450,6 +454,25 @@ class GodMode extends React.Component {
                                 value={this.state.sonRate}
                             />
                         </div>
+                        <div className="col-sm-3 col-xs-6 form-group">
+                            <label>
+                                Difficulty{" "}
+                                <HelpPopover
+                                    placement="right"
+                                    title="Difficulty"
+                                >
+                                    0.25 = easy, 0.5 = normal, 0.75 = hard, 1 =
+                                    insane
+                                </HelpPopover>
+                            </label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                disabled={!godMode}
+                                onChange={this.handleChanges.difficulty}
+                                value={this.state.difficulty}
+                            />
+                        </div>
                     </div>
 
                     <button className="btn btn-primary" disabled={!godMode}>
@@ -479,6 +502,7 @@ GodMode.propTypes = {
     tragicDeathRate: PropTypes.number.isRequired,
     brotherRate: PropTypes.number.isRequired,
     sonRate: PropTypes.number.isRequired,
+    difficulty: PropTypes.number.isRequired,
 };
 
 export default GodMode;

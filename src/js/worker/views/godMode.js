@@ -29,6 +29,7 @@ async function updateGodMode(
             tragicDeathRate: g.tragicDeathRate,
             brotherRate: g.brotherRate,
             sonRate: g.sonRate,
+            difficulty: g.difficulty,
         };
     }
 }

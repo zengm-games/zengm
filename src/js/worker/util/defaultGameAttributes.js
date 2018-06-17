@@ -53,6 +53,9 @@ const defaultGameAttributes: GameAttributes = {
     // The probability that a new player will be the son or brother of an existing player. In practice, the observed number may be smaller than this because sometimes a valid match will not be found.
     sonRate: 0.02,
     brotherRate: 0.02,
+
+    // 0.25 = easy, 0.5 = normal, 0.75 = hard, 1 = insane
+    difficulty: 0.5,
 };
 
 export default defaultGameAttributes;

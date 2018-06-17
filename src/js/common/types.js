@@ -195,6 +195,7 @@ export type GameAttributeKey =
     | "confs"
     | "daysLeft"
     | "disableInjuries"
+    | "difficulty"
     | "divs"
     | "gameOver"
     | "godMode"

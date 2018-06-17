@@ -1,7 +1,14 @@
+roster and salary info on re-sign screen https://www.reddit.com/r/BasketballGM/comments/8rv2ya/itd_be_nice_to_see_the_current_payroll_on_the/
+- abstract from roster and free agents?
+
+in multi team mode, is there any issue with players refusing to sign with the title winner?
+
 get rid of owner messages, replace with owner status page showing mood directly (bar chart)
 
 Difficulty level
 - display difficulty in UI somewhere
+  - in dashboard, display "Difficulty: Easy/Normal/Hard/Insane/Custom", cache value in idb.meta.leagues, default Normal
+  - change difficulty display under team selection, instead do something like small/medium/large for population size
 - blog
   - http://thegamedesigner.blogspot.com/2017/03/baseball-mogul-cheats.html
 

@@ -20,6 +20,7 @@ const decreaseDemands = async () => {
     for (const p of players) {
         // Decrease free agent demands
         p.contract.amount -= 50 * Math.sqrt(g.maxContract / 20000);
+        p.contract.amount = 10 * Math.round(p.contract.amount / 10); // Round to nearest 10k
         if (p.contract.amount < g.minContract) {
             p.contract.amount = g.minContract;
         }

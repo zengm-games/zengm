@@ -11,7 +11,10 @@ import { g } from "../../util";
  * @return {number} Contract amoung adjusted for mood.
  */
 const amountWithMood = (amount: number, mood: number = 0.5): number => {
-    amount *= 1 + 0.2 * mood;
+    // Apply difficulty formula here, on the assumption that this only gets called for the user's team. If that ever changes, change this!
+    const fudgeFactor = 0.2 * (g.difficulty - 0.5);
+
+    amount *= 1 + fudgeFactor + 0.2 * mood;
 
     if (amount >= g.minContract) {
         if (amount > g.maxContract) {

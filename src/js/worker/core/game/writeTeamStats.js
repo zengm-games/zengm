@@ -149,7 +149,9 @@ const writeTeamStats = async (results: GameResults) => {
             coachingPaid +
             healthPaid +
             facilitiesPaid;
-        teamSeason.cash += revenue - expenses;
+
+        const fudgeFactor = 1 + 0.2 * (0.5 - g.difficulty); // 5% bonus for easy, 5% penalty for hard, 10% penalty for insane
+        teamSeason.cash += fudgeFactor * revenue - expenses;
         if (t1 === 0) {
             // Only home team gets attendance...
             teamSeason.att += att;

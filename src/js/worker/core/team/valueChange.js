@@ -48,10 +48,13 @@ const valueChange = async (
 
     const payroll = await getPayroll(tid);
 
+    const difficultyFudgeFactor = 1 + 0.1 * (g.difficulty - 0.5); // 2.5% bonus for easy, 2.5% penalty for hard, 5% penalty for insane
+
     // Get players
     const getPlayers = async () => {
         // Fudge factor for AI overvaluing its own players
-        const fudgeFactor = tid !== g.userTid ? 1.05 : 1;
+        const fudgeFactor =
+            (tid !== g.userTid ? 1.05 : 1) * difficultyFudgeFactor;
 
         // Get roster and players to remove
         const players = await idb.cache.players.indexGetAll(
@@ -270,14 +273,18 @@ const valueChange = async (
                         estValues[String(season)][
                             estPick - 1 + g.numTeams * (dp.round - 1)
                         ] +
-                        (tid !== g.userTid ? 1 : 0) * fudgeFactor;
+                        (tid !== g.userTid ? 1 : 0) *
+                            fudgeFactor *
+                            difficultyFudgeFactor;
                 }
                 if (value === undefined) {
                     value =
                         estValues.default[
                             estPick - 1 + g.numTeams * (dp.round - 1)
                         ] +
-                        (tid !== g.userTid ? 1 : 0) * fudgeFactor;
+                        (tid !== g.userTid ? 1 : 0) *
+                            fudgeFactor *
+                            difficultyFudgeFactor;
                 }
 
                 remove.push({

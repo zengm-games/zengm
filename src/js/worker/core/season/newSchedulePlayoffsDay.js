@@ -55,10 +55,13 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
             `${g.season},${key}`,
         );
         teamSeason.playoffRoundsWon = g.numPlayoffRounds;
-        teamSeason.hype += 0.05;
+
+        const fudgeFactor = 0.04 * (0.5 - g.difficulty);
+        teamSeason.hype += fudgeFactor + 0.05;
         if (teamSeason.hype > 1) {
             teamSeason.hype = 1;
         }
+
         await idb.cache.teamSeasons.put(teamSeason);
 
         // Playoffs are over! Return true!
@@ -116,7 +119,9 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
             );
 
             teamSeason.playoffRoundsWon = playoffSeries.currentRound;
-            teamSeason.hype += 0.05;
+
+            const fudgeFactor = 0.04 * (0.5 - g.difficulty);
+            teamSeason.hype += fudgeFactor + 0.05;
             if (teamSeason.hype > 1) {
                 teamSeason.hype = 1;
             }

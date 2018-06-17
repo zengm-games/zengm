@@ -71,8 +71,7 @@ const newPhasePlayoffs = async (
             teamSeason.playoffRoundsWon = 0;
 
             // More hype for making the playoffs
-            const fudgeFactor = 0.04 * (0.5 - g.difficulty);
-            teamSeason.hype += fudgeFactor + 0.05;
+            teamSeason.hype += 0.05;
             if (teamSeason.hype > 1) {
                 teamSeason.hype = 1;
             }

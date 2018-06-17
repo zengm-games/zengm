@@ -48,6 +48,9 @@ const genBaseMoods = async (): Promise<number[]> => {
         // Randomness
         baseMood += random.uniform(-0.2, 0.4);
 
+        // Difficulty
+        baseMood += g.difficulty - 0.5;
+
         baseMood = helpers.bound(baseMood, 0, 1.2);
 
         return baseMood;

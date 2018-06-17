@@ -1,12 +1,11 @@
 get rid of owner messages, replace with owner status page showing mood directly (bar chart)
 
 Difficulty level
-- http://thegamedesigner.blogspot.com/2017/03/baseball-mogul-cheats.html
-- free agents
 - hype
   - is this really needed, since it basically affects the same things as other categories (revenue, free agents)
-- revenue
-- trades
+- display difficulty in UI somewhere
+- blog
+  - http://thegamedesigner.blogspot.com/2017/03/baseball-mogul-cheats.html
 
 make AI smarter about contracts
 - then do cool shit, like a tunable "randomness" factor or something that lets you tune player development, and also overall talent level, and also distribution of different ratings (to sim different eras)

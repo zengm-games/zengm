@@ -1,8 +1,6 @@
 get rid of owner messages, replace with owner status page showing mood directly (bar chart)
 
 Difficulty level
-- test genBaseMoods difficulty
-  - write function that does "addToFreeAgents" on all free agents, to recompute after difficulty change
 - display difficulty in UI somewhere
 - blog
   - http://thegamedesigner.blogspot.com/2017/03/baseball-mogul-cheats.html

@@ -1,7 +1,7 @@
 // @flow
 
 import { PLAYER } from "../../common";
-import { player } from "../core";
+import { player, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 
@@ -14,10 +14,10 @@ async function updateNegotiationList(): void | { [key: string]: any } {
     );
     const negotiationPids = negotiations.map(negotiation => negotiation.pid);
 
-    let players = await idb.cache.players.indexGetAll(
-        "playersByTid",
-        PLAYER.FREE_AGENT,
-    );
+    let [userPlayers, players] = await Promise.all([
+        idb.cache.players.indexGetAll("playersByTid", g.userTid),
+        idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT),
+    ]);
     players = players.filter(p => negotiationPids.includes(p.pid));
     players = await idb.getCopies.playersPlus(players, {
         attrs: ["pid", "name", "age", "freeAgentMood", "injury", "watch"],
@@ -44,7 +44,13 @@ async function updateNegotiationList(): void | { [key: string]: any } {
         players[i].mood = player.moodColorText(players[i]);
     }
 
+    const payroll = await team.getPayroll(g.userTid);
+    const capSpace = g.salaryCap > payroll ? (g.salaryCap - payroll) / 1000 : 0;
+
     return {
+        capSpace,
+        minContract: g.minContract,
+        numRosterSpots: g.maxRosterSize - userPlayers.length,
         players,
         userTid: g.userTid,
     };

@@ -1,9 +1,20 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { DataTable, NewWindowLink, PlayerNameLabels } from "../components";
+import {
+    DataTable,
+    NewWindowLink,
+    PlayerNameLabels,
+    RosterSalarySummary,
+} from "../components";
 import { getCols, helpers, setTitle, toWorker } from "../util";
 
-const NegotiationList = ({ players, userTid }) => {
+const NegotiationList = ({
+    capSpace,
+    minContract,
+    numRosterSpots,
+    players,
+    userTid,
+}) => {
     setTitle("Re-sign Players");
 
     const cols = getCols(
@@ -102,6 +113,12 @@ const NegotiationList = ({ players, userTid }) => {
                 sign them.
             </p>
 
+            <RosterSalarySummary
+                capSpace={capSpace}
+                minContract={minContract}
+                numRosterSpots={numRosterSpots}
+            />
+
             <DataTable
                 cols={cols}
                 defaultSort={[10, "desc"]}
@@ -113,6 +130,9 @@ const NegotiationList = ({ players, userTid }) => {
 };
 
 NegotiationList.propTypes = {
+    capSpace: PropTypes.number.isRequired,
+    minContract: PropTypes.number.isRequired,
+    numRosterSpots: PropTypes.number.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     userTid: PropTypes.number.isRequired,
 };

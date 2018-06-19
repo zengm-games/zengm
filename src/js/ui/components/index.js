@@ -20,6 +20,7 @@ export { default as PlayerPicture } from "./PlayerPicture";
 export { default as PlayoffMatchup } from "./PlayoffMatchup";
 export { default as RatingWithChange } from "./RatingWithChange";
 export { default as RecordAndPlayoffs } from "./RecordAndPlayoffs";
+export { default as RosterSalarySummary } from "./RosterSalarySummary";
 export { default as SafeHtml } from "./SafeHtml";
 export { default as SkillsBlock } from "./SkillsBlock";
 export { default as UpcomingGame } from "./UpcomingGame";

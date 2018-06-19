@@ -3,9 +3,9 @@ import React from "react";
 import { PHASE } from "../../common";
 import {
     DataTable,
-    HelpPopover,
     NewWindowLink,
     PlayerNameLabels,
+    RosterSalarySummary,
 } from "../components";
 import { getCols, helpers, setTitle, toWorker } from "../util";
 
@@ -168,23 +168,11 @@ class FreeAgents extends React.Component {
                     </a>
                 </p>
 
-                <p>
-                    You currently have <b>{numRosterSpots}</b> open roster spots
-                    and <b>{helpers.formatCurrency(capSpace, "M")}</b> in cap
-                    space.{" "}
-                    <HelpPopover placement="bottom" title="Cap Space">
-                        <p>
-                            "Cap space" is the difference between your current
-                            payroll and the salary cap. You can sign a free
-                            agent to any valid contract as long as you don't go
-                            over the cap.
-                        </p>
-                        <p>
-                            You can only exceed the salary cap to sign free
-                            agents to minimum contracts (${minContract}k/year).
-                        </p>
-                    </HelpPopover>
-                </p>
+                <RosterSalarySummary
+                    capSpace={capSpace}
+                    minContract={minContract}
+                    numRosterSpots={numRosterSpots}
+                />
 
                 <p>
                     <button

@@ -2,6 +2,7 @@
 
 /* eslint react/no-find-dom-node: "off" */
 
+import html2canvas from "html2canvas";
 import PropTypes from "prop-types";
 import * as React from "react";
 import Dropdown from "react-bootstrap/lib/Dropdown";
@@ -20,7 +21,6 @@ import {
     subscribeLocal,
     toWorker,
 } from "../util";
-import html2canvas from "../../vendor/html2canvas";
 
 type TopMenuToggleProps = {
     long: string,
@@ -113,7 +113,7 @@ TopMenuDropdown.propTypes = {
     short: PropTypes.string.isRequired,
 };
 
-const handleScreenshotClick = e => {
+const handleScreenshotClick = async e => {
     e.preventDefault();
 
     let contentElTemp = document.getElementById("screenshot-league");
@@ -157,84 +157,83 @@ const handleScreenshotClick = e => {
     }
     contentEl.appendChild(notifications);
 
-    html2canvas(contentEl, {
+    const canvas = await html2canvas(contentEl, {
         background: "#fff",
-        async onrendered(canvas) {
-            // Remove watermark
-            contentEl.removeChild(watermark);
-            contentEl.style.padding = "";
+    });
 
-            // Remove notifications
-            contentEl.removeChild(notifications);
+    // Remove watermark
+    contentEl.removeChild(watermark);
+    contentEl.style.padding = "";
 
-            logEvent({
-                type: "screenshot",
-                text: `Uploading your screenshot to Imgur...`,
-                saveToDb: false,
-                showNotification: true,
-                persistent: false,
-                extraClass: "notification-primary",
-            });
+    // Remove notifications
+    contentEl.removeChild(notifications);
 
-            try {
-                const data = await fetchWrapper({
-                    url: "https://imgur-apiv3.p.mashape.com/3/image",
-                    method: "POST",
-                    headers: {
-                        Authorization: "Client-ID c2593243d3ea679",
-                        "X-Mashape-Key":
-                            "H6XlGK0RRnmshCkkElumAWvWjiBLp1ItTOBjsncst1BaYKMS8H",
-                    },
-                    data: {
-                        image: canvas.toDataURL().split(",")[1],
-                    },
-                });
+    logEvent({
+        type: "screenshot",
+        text: `Uploading your screenshot to Imgur...`,
+        saveToDb: false,
+        showNotification: true,
+        persistent: false,
+        extraClass: "notification-primary",
+    });
 
-                if (data.data.error) {
-                    console.log(data.data.error);
-                    throw new Error(data.data.error.message);
-                }
+    try {
+        const data = await fetchWrapper({
+            url: "https://imgur-apiv3.p.mashape.com/3/image",
+            method: "POST",
+            headers: {
+                Authorization: "Client-ID c2593243d3ea679",
+                "X-Mashape-Key":
+                    "H6XlGK0RRnmshCkkElumAWvWjiBLp1ItTOBjsncst1BaYKMS8H",
+            },
+            data: {
+                image: canvas.toDataURL().split(",")[1],
+            },
+        });
 
-                const url = `http://imgur.com/${data.data.id}`;
-                const encodedURL = window.encodeURIComponent(url);
+        if (data.data.error) {
+            console.log(data.data.error);
+            throw new Error(data.data.error.message);
+        }
 
-                logEvent({
-                    type: "screenshot",
-                    text: `<p><a href="${url}" target="_blank">Click here to view your screenshot.</a></p>
+        const url = `http://imgur.com/${data.data.id}`;
+        const encodedURL = window.encodeURIComponent(url);
+
+        logEvent({
+            type: "screenshot",
+            text: `<p><a href="${url}" target="_blank">Click here to view your screenshot.</a></p>
 <a href="https://www.reddit.com/r/BasketballGM/submit?url=${encodedURL}">Share on Reddit</a><br>
 <a href="https://twitter.com/intent/tweet?url=${encodedURL}&via=basketball_gm">Share on Twitter</a>`,
-                    saveToDb: false,
-                    showNotification: true,
-                    persistent: true,
-                    extraClass: "notification-primary",
-                });
-            } catch (err) {
-                console.log(err);
-                let errorMsg;
-                if (
-                    err &&
-                    err.responseJSON &&
-                    err.responseJSON.error &&
-                    err.responseJSON.error.message
-                ) {
-                    errorMsg = `Error saving screenshot. Error message from Imgur: "${
-                        err.responseJSON.error.message
-                    }"`;
-                } else if (err.message) {
-                    errorMsg = `Error saving screenshot. Error message from Imgur: "${
-                        err.message
-                    }"`;
-                } else {
-                    errorMsg = "Error saving screenshot.";
-                }
-                logEvent({
-                    type: "error",
-                    text: errorMsg,
-                    saveToDb: false,
-                });
-            }
-        },
-    });
+            saveToDb: false,
+            showNotification: true,
+            persistent: true,
+            extraClass: "notification-primary",
+        });
+    } catch (err) {
+        console.log(err);
+        let errorMsg;
+        if (
+            err &&
+            err.responseJSON &&
+            err.responseJSON.error &&
+            err.responseJSON.error.message
+        ) {
+            errorMsg = `Error saving screenshot. Error message from Imgur: "${
+                err.responseJSON.error.message
+            }"`;
+        } else if (err.message) {
+            errorMsg = `Error saving screenshot. Error message from Imgur: "${
+                err.message
+            }"`;
+        } else {
+            errorMsg = "Error saving screenshot.";
+        }
+        logEvent({
+            type: "error",
+            text: errorMsg,
+            saveToDb: false,
+        });
+    }
 };
 
 const handleToolsClick = async (id, e) => {

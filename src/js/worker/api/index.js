@@ -546,8 +546,8 @@ const exportLeague = async (stores: string[]) => {
     return { data, filename };
 };
 
-const getLeagueName = async (lid?: number = g.lid) => {
-    const l = await idb.meta.leagues.get(lid);
+const getLeagueName = async () => {
+    const l = await idb.meta.leagues.get(g.lid);
     return l.name;
 };
 

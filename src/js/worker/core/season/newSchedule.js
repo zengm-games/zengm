@@ -1,6 +1,7 @@
 // @flow
 
 import flatten from "lodash/flatten";
+import range from "lodash/range";
 import { g, random } from "../../util";
 import type { Team } from "../../../common/types";
 
@@ -129,6 +130,34 @@ const newScheduleDefault = (teams): [number, number][] => {
     return tids;
 };
 
+// Takes all teams and returns all unique matchups between teams. This means 2 games per matchup, to deal with
+// home/away. See https://en.wikipedia.org/wiki/Round-robin_tournament#Scheduling_algorithm
+const roundRobin = (tidsInput: number[]): [number, number][] => {
+    // $FlowFixMe
+    const tids: (number | "DUMMY")[] = tidsInput.slice();
+    if (tids.length % 2 === 1) {
+        tids.push("DUMMY");
+    }
+
+    const matchups = [];
+
+    // Take teams from first half (i) and second half (j)
+    for (let j = 0; j < tids.length - 1; j += 1) {
+        for (let i = 0; i < tids.length / 2; i += 1) {
+            const tid0 = tids[i];
+            const tid1 = tids[tids.length - 1 - i];
+            if (tid0 !== "DUMMY" && tid1 !== "DUMMY") {
+                matchups.push([tid0, tid1]);
+            }
+        }
+
+        // Permute tids for next round - take the last one and move it up to 2nd, leaving 1st in place
+        tids.splice(1, 0, tids.pop());
+    }
+
+    return matchups;
+};
+
 /**
  * Creates a new regular season schedule for an arbitrary number of teams.
  *
@@ -137,7 +166,10 @@ const newScheduleDefault = (teams): [number, number][] => {
  * @memberOf core.season
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
  */
-const newScheduleCrappy = (): [number, number][] => {
+export const newScheduleCrappy = (): [number, number][] => {
+    const tids = range(g.numTeams);
+    random.shuffle(tids);
+
     // Number of games left to reschedule for each team
     const numRemaining = [];
     for (let i = 0; i < g.numTeams; i++) {
@@ -145,53 +177,40 @@ const newScheduleCrappy = (): [number, number][] => {
     }
     let numWithRemaining = g.numTeams; // Number of teams with numRemaining > 0
 
-    const tids = [];
+    const matchups = [];
 
-    while (tids.length < (g.numGames * g.numTeams) / 2) {
-        let i = -1; // Home tid
-        let j = -1; // Away tid
+    // 1 not 0, because if numTeams*numGames is odd, somebody will be left a game short
+    const potentialMatchups = roundRobin(tids);
+    while (numWithRemaining > 1) {
+        for (const matchup of potentialMatchups) {
+            const [i, j] = matchup;
+            if (numRemaining[i] > 0 && numRemaining[j] > 0) {
+                numRemaining[i] -= 1;
+                numRemaining[j] -= 1;
+                if (numRemaining[i] === 0) {
+                    numWithRemaining -= 1;
+                }
+                if (numRemaining[j] === 0) {
+                    numWithRemaining -= 1;
+                }
 
-        let tries = 0;
-        while (i === j || numRemaining[i] === 0 || numRemaining[j] === 0) {
-            i = random.randInt(0, g.numTeams - 1);
-            j = random.randInt(0, g.numTeams - 1);
-            tries += 1;
-            if (tries > 10000) {
-                console.log(tids, tids.length);
-                console.log(numRemaining.length);
-                throw new Error(
-                    `Failed to generate schedule with ${g.numTeams} teams and ${
-                        g.numGames
-                    } games.`,
-                );
+                // Randomize which team is home or away. This is done because otherwise the first team could have all home games if numGames > numTeams
+                if (Math.random() > 0.5) {
+                    matchups.push(matchup);
+                } else {
+                    matchups.push([matchup[1], matchup[0]]);
+                }
             }
-        }
-
-        tids.push([i, j]);
-
-        numRemaining[i] -= 1;
-        numRemaining[j] -= 1;
-
-        // Make sure we're not left with just one team to play itself
-        if (numRemaining[i] === 0) {
-            numWithRemaining -= 1;
-        }
-        if (numRemaining[j] === 0) {
-            numWithRemaining -= 1;
-        }
-        if (numWithRemaining === 1) {
-            // If this happens, we didn't find g.numGames for each team and one team will play a few less games
-            break;
         }
     }
 
-    return tids;
+    return matchups;
 };
 
 /**
  * Wrapper function to generate a new schedule with the appropriate algorithm based on the number of teams in the league.
  *
- * For 30 teams, use newScheduleDefault (NBA-like).
+ * For leagues with NBA-like structure, use newScheduleDefault. Otherwise, newScheduleCrappy.
  *
  * @memberOf core.season
  * @return {Array.<Array.<number>>} All the season's games. Each element in the array is an array of the home team ID and the away team ID, respectively.
@@ -242,7 +261,7 @@ const newSchedule = (teams: Team[]): [number, number][] => {
         }
     }
     random.shuffle(days); // Otherwise the most dense days will be at the beginning and the least dense days will be at the end
-    tids = flatten(days, true);
+    tids = flatten(days);
 
     return tids;
 };

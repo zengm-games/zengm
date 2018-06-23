@@ -15,7 +15,10 @@ import type { GameAttributes } from "../../../common/types";
 const setGameAttributes = async (gameAttributes: GameAttributes) => {
     const toUpdate = [];
     for (const key of helpers.keys(gameAttributes)) {
-        if (g[key] !== gameAttributes[key]) {
+        if (
+            g[key] !== gameAttributes[key] &&
+            !Number.isNaN(gameAttributes[key])
+        ) {
             toUpdate.push(key);
         }
     }

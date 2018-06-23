@@ -99,7 +99,7 @@ const writeTeamStats = async (results: GameResults) => {
             att = Math.round(att);
         }
         // This doesn't really make sense
-        const ticketRevenue = (ticketPrice * att) / 1000; // [thousands of dollars]
+        let ticketRevenue = (ticketPrice * att) / 1000; // [thousands of dollars]
 
         // Hype - relative to the expectations of prior seasons
         if (teamSeason.gp > 5 && g.phase !== PHASE.PLAYOFFS) {
@@ -137,6 +137,14 @@ const writeTeamStats = async (results: GameResults) => {
             }
         }
 
+        // 5% bonus for easy, 5% penalty for hard, 10% penalty for insane
+        const fudgeFactor = 1 + 0.2 * (0.5 - g.difficulty);
+        merchRevenue *= fudgeFactor;
+        sponsorRevenue *= fudgeFactor;
+        nationalTvRevenue *= fudgeFactor;
+        localTvRevenue *= fudgeFactor;
+        ticketRevenue *= fudgeFactor;
+
         const revenue =
             merchRevenue +
             sponsorRevenue +
@@ -150,8 +158,7 @@ const writeTeamStats = async (results: GameResults) => {
             healthPaid +
             facilitiesPaid;
 
-        const fudgeFactor = 1 + 0.2 * (0.5 - g.difficulty); // 5% bonus for easy, 5% penalty for hard, 10% penalty for insane
-        teamSeason.cash += fudgeFactor * revenue - expenses;
+        teamSeason.cash += revenue - expenses;
         if (t1 === 0) {
             // Only home team gets attendance...
             teamSeason.att += att;

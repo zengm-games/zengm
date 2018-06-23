@@ -44,6 +44,7 @@ const create = async (
     leagueFile: Object = {},
     startingSeason: number,
     randomizeRosters?: boolean = false,
+    difficulty: number,
     conditions: Conditions,
 ): Promise<number> => {
     await idb.meta.attributes.put(tid, "lastSelectedTid");
@@ -105,6 +106,7 @@ const create = async (
         teamNamesCache: teams.map(t => t.name),
         gracePeriodEnd: startingSeason + 2, // Can't get fired for the first two seasons
         numTeams: teams.length, // Will be 30 if the user doesn't supply custom rosters
+        difficulty,
     });
 
     // gameAttributes from input

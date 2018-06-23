@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
+import { DIFFICULTY } from "../../common";
 import { LeagueFileUpload } from "../components";
 import { helpers, realtimeUpdate, setTitle, toWorker } from "../util";
 
@@ -12,23 +13,23 @@ const PopText = ({ teams, tid }) => {
     if (tid >= 0) {
         const t = teams.find(t2 => t2.tid === tid);
         if (t) {
-            let difficulty;
+            let size;
             if (t.popRank <= 3) {
-                difficulty = "very easy";
+                size = "very small";
             } else if (t.popRank <= 8) {
-                difficulty = "easy";
+                size = "small";
             } else if (t.popRank <= 16) {
-                difficulty = "normal";
+                size = "normal";
             } else if (t.popRank <= 24) {
-                difficulty = "hard";
+                size = "large";
             } else {
-                difficulty = "very hard";
+                size = "very large";
             }
 
             msg = (
                 <span>
-                    Region population: {t.pop} million, #{t.popRank} leaguewide<br />Difficulty:{" "}
-                    {difficulty}
+                    Region population: {t.pop} million (#{t.popRank})<br />Size:{" "}
+                    {size}
                 </span>
             );
         }
@@ -63,6 +64,7 @@ class NewLeague extends React.Component {
         this.state = {
             creating: false,
             customize: "random",
+            difficulty: DIFFICULTY.Normal,
             leagueFile: null,
             name: props.name,
             randomizeRosters: false,
@@ -71,6 +73,7 @@ class NewLeague extends React.Component {
         };
 
         this.handleChanges = {
+            difficulty: this.handleChange.bind(this, "difficulty"),
             name: this.handleChange.bind(this, "name"),
             randomizeRosters: this.handleChange.bind(this, "randomizeRosters"),
             tid: this.handleChange.bind(this, "tid"),
@@ -85,6 +88,8 @@ class NewLeague extends React.Component {
             val = parseInt(e.target.value, 10);
         } else if (name === "randomizeRosters") {
             val = e.target.checked;
+        } else if (name === "difficulty") {
+            val = parseFloat(e.target.value);
         }
         this.setState({
             [name]: val,
@@ -119,6 +124,12 @@ class NewLeague extends React.Component {
                     : startingSeason;
         }
 
+        const difficulty = Object.values(DIFFICULTY).includes(
+            this.state.difficulty,
+        )
+            ? this.state.difficulty
+            : DIFFICULTY.Normal;
+
         const lid = await toWorker(
             "createLeague",
             this.state.name,
@@ -126,6 +137,7 @@ class NewLeague extends React.Component {
             leagueFile,
             startingSeason,
             randomizeRosters,
+            difficulty,
         );
         realtimeUpdate([], `/l/${lid}`);
     }
@@ -134,6 +146,7 @@ class NewLeague extends React.Component {
         const {
             creating,
             customize,
+            difficulty,
             leagueFile,
             name,
             randomizeRosters,
@@ -149,7 +162,7 @@ class NewLeague extends React.Component {
 
                 <form onSubmit={this.handleSubmit}>
                     <div className="row">
-                        <div className="form-group col-md-4 col-sm-5">
+                        <div className="form-group col-md-3 col-sm-6">
                             <label>League name</label>
                             <input
                                 className="form-control"
@@ -161,8 +174,8 @@ class NewLeague extends React.Component {
 
                         <div className="clearfix visible-xs" />
 
-                        <div className="form-group col-md-4 col-sm-5">
-                            <label>Which team do you want to manage?</label>
+                        <div className="form-group col-md-3 col-sm-6">
+                            <label>Pick your team</label>
                             <select
                                 className="form-control"
                                 value={tid}
@@ -179,9 +192,30 @@ class NewLeague extends React.Component {
                             <PopText tid={tid} teams={teams} />
                         </div>
 
-                        <div className="clearfix visible-sm" />
+                        <div className="form-group col-md-3 col-sm-6">
+                            <label>Difficulty</label>
+                            <select
+                                className="form-control"
+                                onChange={this.handleChanges.difficulty}
+                                value={difficulty}
+                            >
+                                {Object.entries(DIFFICULTY).map(
+                                    ([text, numeric]) => (
+                                        <option key={numeric} value={numeric}>
+                                            {text}
+                                        </option>
+                                    ),
+                                )}
+                            </select>
+                            <span className="help-block">
+                                Increasing difficulty makes AI teams more
+                                reluctant to trade with you, makes players less
+                                likely to sign with you, and makes it harder to
+                                turn a profit.
+                            </span>
+                        </div>
 
-                        <div className="col-md-4 col-sm-5">
+                        <div className="col-md-3 col-sm-6">
                             <div className="form-group">
                                 <label>Customize</label>
                                 <select
@@ -323,26 +357,20 @@ class NewLeague extends React.Component {
                                 </div>
                             ) : null}
                         </div>
+                    </div>
 
-                        <div className="clearfix visible-xs" />
-
-                        <div className="col-md-12 col-sm-5 text-center">
-                            <div className="visible-sm invisible-xs">
-                                <br />
-                                <br />
-                            </div>
-                            <button
-                                type="submit"
-                                className="btn btn-lg btn-primary"
-                                disabled={
-                                    creating ||
-                                    (customize === "custom-rosters" &&
-                                        leagueFile === null)
-                                }
-                            >
-                                Create New League
-                            </button>
-                        </div>
+                    <div className="text-center">
+                        <button
+                            type="submit"
+                            className="btn btn-lg btn-primary"
+                            disabled={
+                                creating ||
+                                (customize === "custom-rosters" &&
+                                    leagueFile === null)
+                            }
+                        >
+                            Create New League
+                        </button>
                     </div>
                 </form>
             </div>

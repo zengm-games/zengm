@@ -174,7 +174,18 @@ class GodMode extends React.Component {
                             </div>
                         </div>
                         <div className="col-sm-3 col-xs-6 form-group">
-                            <label>Difficulty</label>
+                            <label>
+                                Difficulty{" "}
+                                <HelpPopover
+                                    placement="right"
+                                    title="Difficulty"
+                                >
+                                    Increasing difficulty makes AI teams more
+                                    reluctant to trade with you, makes players
+                                    less likely to sign with you, and makes it
+                                    harder to turn a profit.
+                                </HelpPopover>
+                            </label>
                             <select
                                 className="form-control"
                                 onChange={this.handleChanges.difficultySelect}

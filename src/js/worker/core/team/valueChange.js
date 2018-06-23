@@ -48,7 +48,7 @@ const valueChange = async (
 
     const payroll = await getPayroll(tid);
 
-    const difficultyFudgeFactor = 1 + 0.1 * (g.difficulty - 0.5); // 2.5% bonus for easy, 2.5% penalty for hard, 5% penalty for insane
+    const difficultyFudgeFactor = 1 + 0.1 * g.difficulty; // 2.5% bonus for easy, 2.5% penalty for hard, 10% penalty for insane
 
     // Get players
     const getPlayers = async () => {

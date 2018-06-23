@@ -1,10 +1,10 @@
 // @flow
 
 const DIFFICULTY = {
-    Easy: 0.25,
-    Normal: 0.5,
-    Hard: 0.75,
-    Insane: 1.5,
+    Easy: -0.25,
+    Normal: 0,
+    Hard: 0.25,
+    Insane: 1,
 };
 
 const PHASE = {

@@ -54,8 +54,8 @@ const defaultGameAttributes: GameAttributes = {
     sonRate: 0.02,
     brotherRate: 0.02,
 
-    // 0.25 = easy, 0.5 = normal, 0.75 = hard, 1 = insane
-    difficulty: 0.5,
+    // See constants.DIFFICULTY for values
+    difficulty: 0,
 };
 
 export default defaultGameAttributes;

@@ -2,7 +2,7 @@
 
 import { Cache, connectLeague, idb } from "../../db";
 import { PHASE, PLAYER } from "../../../common";
-import { draft, finances, player, team } from "../../core";
+import { draft, finances, player, team } from "..";
 import setGameAttributes from "./setGameAttributes";
 import {
     defaultGameAttributes,

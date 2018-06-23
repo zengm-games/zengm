@@ -2,7 +2,7 @@
 
 // This should never be directly imported. Instead, ui/util/helpers and ui/worker/helpers should be used.
 
-import type { TeamBasic } from "../common/types";
+import type { TeamBasic } from "./types";
 
 /**
  * Take a list of teams (similar to the output of getTeamsDefault) and add popRank properties, where 1 is the largest population and teams.length is the smallest.

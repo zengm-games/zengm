@@ -147,9 +147,7 @@ class Trade extends React.Component {
     }
 
     handleClickForceTrade() {
-        this.setState({
-            forceTrade: !this.state.forceTrade,
-        });
+        this.setState(prevState => ({ forceTrade: !prevState.forceTrade }));
     }
 
     async handleClickPropose() {

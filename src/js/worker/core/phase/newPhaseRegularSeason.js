@@ -1,6 +1,6 @@
 // @flow
 
-import { season } from "../../core";
+import { season } from "..";
 import { idb } from "../../db";
 import { g, genMessage, local } from "../../util";
 

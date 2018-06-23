@@ -4,7 +4,7 @@ import backboard from "backboard";
 import orderBy from "lodash/orderBy";
 import { mergeByPk } from "./helpers";
 import { team } from "../../core";
-import { idb } from "../../db";
+import { idb } from "..";
 import { g, helpers } from "../../util";
 import type {
     Team,

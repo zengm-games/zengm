@@ -5,7 +5,7 @@ import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
 import * as React from "react";
 import textContent from "react-addons-text-content";
-import { HelpPopover } from "../components";
+import { HelpPopover } from ".";
 import { helpers } from "../util";
 import clickable from "../wrappers/clickable";
 import type { SortOrder, SortType } from "../../common/types";
@@ -209,7 +209,8 @@ const getSortVal = (value = null, sortType) => {
         if (sortType === "number") {
             if (sortVal === null) {
                 return -Infinity;
-            } else if (typeof sortVal !== "number") {
+            }
+            if (typeof sortVal !== "number") {
                 return parseFloat(sortVal);
             }
             return val;
@@ -448,10 +449,15 @@ const loadStateFromCache = (props: Props) => {
 
 class DataTable extends React.Component<Props, State> {
     handleColClick: Function;
+
     handleEnableFilters: Function;
+
     handleFilterUpdate: Function;
+
     handlePaging: Function;
+
     handlePerPage: Function;
+
     handleSearch: Function;
 
     constructor(props: Props) {
@@ -485,7 +491,7 @@ class DataTable extends React.Component<Props, State> {
         }
 
         let found = false;
-        let sortBys = helpers.deepCopy(this.state.sortBys);
+        let sortBys = helpers.deepCopy(this.state.sortBys); // eslint-disable-line react/no-access-state-in-setstate
 
         const nextOrder = (col2, sortBy) => {
             const sortSequence = col2.sortSequence;
@@ -555,16 +561,16 @@ class DataTable extends React.Component<Props, State> {
             );
         }
 
-        this.setState({
-            enableFilters: !this.state.enableFilters,
-        });
+        this.setState(prevState => ({
+            enableFilters: !prevState.enableFilters,
+        }));
     }
 
     handleFilterUpdate(
         event: SyntheticInputEvent<HTMLInputElement>,
         i: number,
     ) {
-        const filters = helpers.deepCopy(this.state.filters);
+        const filters = helpers.deepCopy(this.state.filters); // eslint-disable-line react/no-access-state-in-setstate
         filters[i] = event.currentTarget.value;
         this.setState({
             filters,
@@ -733,17 +739,20 @@ class DataTable extends React.Component<Props, State> {
                                   numericVal < filter.number
                               ) {
                                   return false;
-                              } else if (
+                              }
+                              if (
                                   filter.direction === "<" &&
                                   numericVal > filter.number
                               ) {
                                   return false;
-                              } else if (
+                              }
+                              if (
                                   filter.direction === "=" &&
                                   numericVal !== filter.number
                               ) {
                                   return false;
-                              } else if (
+                              }
+                              if (
                                   filter.direction === undefined &&
                                   !getSearchVal(row.data[i]).includes(
                                       filter.original,

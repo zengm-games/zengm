@@ -94,6 +94,7 @@ class ErrorBoundary extends React.Component<{ children: any }> {
         console.error("Error from React:");
         console.error(error);
     }
+
     render() {
         return this.props.children;
     }

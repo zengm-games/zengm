@@ -2,7 +2,7 @@
 
 import range from "lodash/range";
 import { PLAYER } from "../../../common";
-import { draft, player } from "../../core";
+import { draft, player } from "..";
 
 const avgRatingDists = (numPlayers: number = 100) => {
     const NUM_SEASONS = 20;

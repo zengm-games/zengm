@@ -1,7 +1,7 @@
 // @flow
 
 import { idb } from "../db";
-import { logEvent } from "../util";
+import { logEvent } from ".";
 import type { Conditions } from "../../common/types";
 
 const all = [

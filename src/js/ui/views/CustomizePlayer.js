@@ -196,44 +196,46 @@ class CustomizePlayer extends React.Component {
     }
 
     handleChange(type, field, e) {
-        let val = e.target.value;
-        const p = this.state.p;
+        this.setState(prevState => {
+            let val = e.target.value;
+            const p = prevState.p;
 
-        if (type === "root") {
-            p[field] = val;
-        } else if (["born", "contract", "injury"].includes(type)) {
-            p[type][field] = val;
-        } else if (type === "rating") {
-            p.ratings[p.ratings.length - 1][field] = val;
-        } else if (type === "face") {
-            if (["eyes", "hair", "mouth", "nose"].includes(field)) {
-                val = parseInt(val, 10);
-                if (Number.isNaN(val)) {
-                    return;
-                }
-
-                if (field === "eyes") {
-                    p[type][field][0].id = val;
-                    p[type][field][1].id = val;
-                } else {
-                    p[type][field].id = val;
-                }
-            } else if (["eye-angle", "fatness"].includes(field)) {
-                if (field === "eye-angle") {
-                    p[type].eyes[0].angle = val;
-                    p[type].eyes[1].angle = val;
-                } else {
-                    p[type][field] = val;
-                }
-            } else if (field === "color") {
+            if (type === "root") {
+                p[field] = val;
+            } else if (["born", "contract", "injury"].includes(type)) {
                 p[type][field] = val;
-            } else if (field === "nose-flip") {
-                p[type].nose.flip = e.target.checked;
-            }
-        }
+            } else if (type === "rating") {
+                p.ratings[p.ratings.length - 1][field] = val;
+            } else if (type === "face") {
+                if (["eyes", "hair", "mouth", "nose"].includes(field)) {
+                    val = parseInt(val, 10);
+                    if (Number.isNaN(val)) {
+                        return;
+                    }
 
-        this.setState({
-            p,
+                    if (field === "eyes") {
+                        p[type][field][0].id = val;
+                        p[type][field][1].id = val;
+                    } else {
+                        p[type][field].id = val;
+                    }
+                } else if (["eye-angle", "fatness"].includes(field)) {
+                    if (field === "eye-angle") {
+                        p[type].eyes[0].angle = val;
+                        p[type].eyes[1].angle = val;
+                    } else {
+                        p[type][field] = val;
+                    }
+                } else if (field === "color") {
+                    p[type][field] = val;
+                } else if (field === "nose-flip") {
+                    p[type].nose.flip = e.target.checked;
+                }
+            }
+
+            return {
+                p,
+            };
         });
     }
 
@@ -253,9 +255,11 @@ class CustomizePlayer extends React.Component {
         face.eyes[0].angle = face.eyes[0].angle.toFixed(1);
         face.eyes[1].angle = face.eyes[1].angle.toFixed(1);
 
-        this.state.p.face = face;
-        this.setState({
-            p: this.state.p,
+        this.setState(prevState => {
+            prevState.p.face = face;
+            return {
+                p: prevState.p,
+            };
         });
     }
 

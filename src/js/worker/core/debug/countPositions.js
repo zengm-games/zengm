@@ -2,7 +2,7 @@
 
 import backboard from "backboard";
 import { PLAYER } from "../../../common";
-import { player } from "../../core";
+import { player } from "..";
 import { idb } from "../../db";
 
 const countPositions = async () => {

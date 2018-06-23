@@ -2,7 +2,7 @@
 
 import backboard from "backboard";
 import { PLAYER } from "../../../common";
-import { draft } from "../../core";
+import { draft } from "..";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
 import type { Conditions } from "../../../common/types";

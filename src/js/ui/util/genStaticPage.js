@@ -1,5 +1,5 @@
 import React from "react";
-import { initView, setTitle } from "../util";
+import { initView, setTitle } from ".";
 
 const genStaticPage = (
     name: string,

@@ -3,7 +3,7 @@
 import assert from "assert";
 import { describe, it } from "mocha";
 import testHelpers from "../../../test/helpers";
-import { finances, player, team } from "../../core";
+import { finances, player, team } from "..";
 import { idb } from "../../db";
 import { g } from "../../util";
 

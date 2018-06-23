@@ -3,7 +3,7 @@
 /*eslint camelcase: 0*/
 import { SPORT, fetchWrapper } from "../../common";
 import { idb } from "../db";
-import { env, g, local, logEvent, toUI } from "../util";
+import { env, g, local, logEvent, toUI } from ".";
 import type {
     AchievementKey,
     Conditions,

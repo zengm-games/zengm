@@ -1,6 +1,6 @@
 // @flow
 
-import { idb } from "../../db";
+import { idb } from "..";
 import type { Message } from "../../../common/types";
 
 const getCopy = async ({ mid }: { mid: number }): Promise<Message | void> => {

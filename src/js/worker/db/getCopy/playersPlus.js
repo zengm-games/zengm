@@ -1,6 +1,6 @@
 // @flow
 
-import { idb } from "../../db";
+import { idb } from "..";
 import type { Player, PlayerFiltered } from "../../../common/types";
 import type { PlayerOptions } from "../getCopies/playersPlus";
 

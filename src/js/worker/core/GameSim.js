@@ -149,23 +149,33 @@ const fatigue = (energy: number): number => {
 
 class GameSim {
     id: number;
+
     team: [TeamGameSim, TeamGameSim];
+
     dt: number;
+
     playersOnCourt: [
         [number, number, number, number, number],
         [number, number, number, number, number],
     ];
+
     startersRecorded: boolean;
+
     subsEveryN: number;
+
     overtimes: number;
+
     t: number;
+
     synergyFactor: number;
+
     lastScoringPlay: {
         team: number,
         player: number,
         type: ShotType,
         time: number,
     }[];
+
     clutchPlays: (
         | {
               type: "playerFeat",
@@ -182,8 +192,11 @@ class GameSim {
               tids: [number],
           }
     )[];
+
     o: TeamNum;
+
     d: TeamNum;
+
     playByPlay: Object[];
 
     /**

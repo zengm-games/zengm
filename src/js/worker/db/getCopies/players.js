@@ -2,7 +2,7 @@
 
 import backboard from "backboard";
 import { PLAYER } from "../../../common";
-import { getAll, idb } from "../../db";
+import { getAll, idb } from "..";
 import { mergeByPk } from "./helpers";
 import { helpers } from "../../util";
 import type { Player } from "../../../common/types";

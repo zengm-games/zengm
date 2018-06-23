@@ -1,7 +1,7 @@
 // @flow
 
 import type { PageCtx } from "../../common/types";
-import { emitter } from "../util";
+import { emitter } from ".";
 
 type InitArgs = {
     Component: any,

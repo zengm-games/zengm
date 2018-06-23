@@ -40,9 +40,7 @@ const clickable = <Props: {}>(
                 return;
             }
 
-            this.setState({
-                clicked: !this.state.clicked,
-            });
+            this.setState(prevState => ({ clicked: !prevState.clicked }));
         }
 
         render() {

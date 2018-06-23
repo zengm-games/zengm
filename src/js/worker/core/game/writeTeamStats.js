@@ -1,7 +1,7 @@
 // @flow
 
 import { PHASE } from "../../../common";
-import { finances, team } from "../../core";
+import { finances, team } from "..";
 import { idb } from "../../db";
 import { g, random } from "../../util";
 import type { GameResults } from "../../../common/types";

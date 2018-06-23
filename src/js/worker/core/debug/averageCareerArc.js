@@ -1,6 +1,6 @@
 // @flow
 
-import { player } from "../../core";
+import { player } from "..";
 import { g } from "../../util";
 import type { RatingKey } from "../../../common/types";
 

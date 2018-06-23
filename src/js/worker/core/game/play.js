@@ -10,7 +10,7 @@ import {
     season,
     team,
     trade,
-} from "../../core";
+} from "..";
 import loadTeams from "./loadTeams";
 import updatePlayoffSeries from "./updatePlayoffSeries";
 import writeGameStats from "./writeGameStats";

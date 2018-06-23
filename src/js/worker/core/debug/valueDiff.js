@@ -2,7 +2,7 @@
 
 import backboard from "backboard";
 import { PLAYER } from "../../../common";
-import value from "../../core/player/value";
+import value from "../player/value";
 import { idb } from "../../db";
 
 // For debugging changes in the player value formula

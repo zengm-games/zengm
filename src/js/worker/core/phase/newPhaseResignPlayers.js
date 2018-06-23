@@ -1,7 +1,7 @@
 // @flow
 
 import { PHASE, PLAYER } from "../../../common";
-import { contractNegotiation, league, player } from "../../core";
+import { contractNegotiation, league, player } from "..";
 import { idb } from "../../db";
 import { g, helpers, local, logEvent } from "../../util";
 import type { Conditions } from "../../../common/types";

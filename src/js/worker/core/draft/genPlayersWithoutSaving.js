@@ -2,7 +2,7 @@
 
 import range from "lodash/range";
 import { PLAYER } from "../../../common";
-import { player } from "../../core";
+import { player } from "..";
 import { g, random } from "../../util";
 import type { PlayerWithoutPid } from "../../../common/types";
 

@@ -14,11 +14,11 @@ class EditTeamInfo extends React.Component {
     }
 
     handleInputChange(i, name, e) {
-        // Mutating state, bad
-        this.state.teams[i][name] = e.target.value;
-
-        this.setState({
-            teams: this.state.teams,
+        this.setState(prevState => {
+            prevState.teams[i][name] = e.target.value;
+            return {
+                teams: prevState.teams,
+            };
         });
     }
 

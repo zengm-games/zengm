@@ -1,6 +1,6 @@
 // @flow
 
-import { finances, player } from "../../core";
+import { finances, player } from "..";
 import genPlayersWithoutSaving from "./genPlayersWithoutSaving";
 import { idb } from "../../db";
 import { g, helpers, logEvent } from "../../util";

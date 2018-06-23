@@ -2,7 +2,7 @@
 
 import backboard from "backboard";
 import { COMPOSITE_WEIGHTS, PLAYER } from "../../../common";
-import { player } from "../../core";
+import { player } from "..";
 import { idb } from "../../db";
 
 const compositeRatingDists = async () => {

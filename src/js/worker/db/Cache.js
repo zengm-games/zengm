@@ -2,7 +2,7 @@
 
 import backboard from "backboard";
 import { PLAYER } from "../../common";
-import { idb } from "../db";
+import { idb } from ".";
 import { g, lock, local } from "../util";
 import type {
     Awards,
@@ -94,6 +94,7 @@ const getIndexKey = (index, row) => {
 
 class StoreAPI<Input, Output, ID> {
     cache: Cache;
+
     store: Store;
 
     constructor(cache: Cache, store: Store) {
@@ -146,22 +147,38 @@ class StoreAPI<Input, Output, ID> {
 
 class Cache {
     _data: { [key: Store]: any };
+
     _deletes: { [key: Store]: Set<number> };
-    _dirty: boolean; // Refers only to _deletes and _dirtyRecords (stuff that needs to be synced to IDB), not _dirtyIndexes!
-    _dirtyIndexes: Set<Store>; // Does not distinguish individual indexes, just which stores have dirty indexes. Currently this distinction is not meaningful, but if it is at some point, this should be changed.
+
+    _dirty: boolean;
+
+    // Refers only to _deletes and _dirtyRecords (stuff that needs to be synced to IDB), not _dirtyIndexes!
+    _dirtyIndexes: Set<Store>;
+
+    // Does not distinguish individual indexes, just which stores have dirty indexes. Currently this distinction is not meaningful, but if it is at some point, this should be changed.
     _dirtyRecords: { [key: Store]: Set<number | string> };
+
     _index2store: { [key: Index]: Store };
+
     _indexes: { [key: Index]: any };
+
     _maxIds: { [key: Store]: number };
+
     newLeague: boolean;
+
     _requestInd: number;
+
     _requestQueue: Map<
         number,
         { resolve: () => void, validStatuses: Status[] },
     >;
+
     _status: Status;
+
     _season: number;
+
     _stopAutoFlush: boolean;
+
     storeInfos: {
         [key: Store]: {
             pk: string,
@@ -178,29 +195,45 @@ class Cache {
     };
 
     awards: StoreAPI<Awards, Awards, number>;
+
     draftLotteryResults: StoreAPI<
         DraftLotteryResult,
         DraftLotteryResult,
         number,
     >;
+
     draftPicks: StoreAPI<DraftPick | DraftPickWithoutDpid, DraftPick, number>;
+
     events: StoreAPI<EventBBGM, EventBBGM, number>;
+
     gameAttributes: StoreAPI<GameAttribute, GameAttribute, string>;
+
     games: StoreAPI<Game, Game, number>;
+
     messages: StoreAPI<Message | MessageWithoutMid, Message, number>;
+
     negotiations: StoreAPI<Negotiation, Negotiation, number>;
+
     playerFeats: StoreAPI<PlayerFeat, PlayerFeat, number>;
+
     players: StoreAPI<Player | PlayerWithoutPid, Player, number>;
+
     playoffSeries: StoreAPI<PlayoffSeries, PlayoffSeries, number>;
+
     releasedPlayers: StoreAPI<
         ReleasedPlayer | ReleasedPlayerWithoutRid,
         ReleasedPlayer,
         number,
     >;
+
     schedule: StoreAPI<ScheduleGame, ScheduleGame, number>;
+
     teamSeasons: StoreAPI<TeamSeason, TeamSeason, number>;
+
     teamStats: StoreAPI<TeamStats, TeamStats, number>;
+
     teams: StoreAPI<Team, Team, number>;
+
     trade: StoreAPI<Trade, Trade, number>;
 
     constructor() {

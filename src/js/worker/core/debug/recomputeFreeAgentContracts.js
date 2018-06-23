@@ -1,7 +1,7 @@
 // @flow
 
 import { PHASE, PLAYER } from "../../../common";
-import { player } from "../../core";
+import { player } from "..";
 import { idb } from "../../db";
 import { toUI } from "../../util";
 

@@ -1,7 +1,7 @@
 // @flow
 
 import { PLAYER } from "../../../common";
-import { draft, player } from "../../core";
+import { draft, player } from "..";
 import { g, helpers } from "../../util";
 
 const maxRatingDists = (numPlayers: number = 100) => {

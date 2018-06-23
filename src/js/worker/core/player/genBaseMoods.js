@@ -1,6 +1,6 @@
 // @flow
 
-import { finances } from "../../core";
+import { finances } from "..";
 import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
 

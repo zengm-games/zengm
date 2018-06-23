@@ -1,7 +1,7 @@
 // @flow
 
 import { PHASE } from "../../../common";
-import { player, team } from "../../core";
+import { player, team } from "..";
 import cancel from "./cancel";
 import { idb } from "../../db";
 import { g, helpers, logEvent } from "../../util";

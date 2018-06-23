@@ -1,6 +1,6 @@
 // @flow
 
-import { idb } from "../../db";
+import { idb } from "..";
 import { g, helpers } from "../../util";
 import type { PlayoffSeries } from "../../../common/types";
 

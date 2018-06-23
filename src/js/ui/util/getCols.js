@@ -1,6 +1,6 @@
 // @flow
 
-import { helpers } from "../util";
+import { helpers } from ".";
 import type { SortOrder, SortType } from "../../common/types";
 
 type Col = {

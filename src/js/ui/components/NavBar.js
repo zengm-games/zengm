@@ -31,6 +31,7 @@ type TopMenuToggleProps = {
 
 class TopMenuToggle extends React.Component<TopMenuToggleProps> {
     handleClick: Function;
+
     handleMouseEnter: Function;
 
     constructor(props: TopMenuToggleProps, context) {
@@ -276,9 +277,9 @@ class DropdownLinks extends React.Component<
     }
 
     handleTopMenuToggle(id) {
-        this.setState({
-            openId: id === this.state.openId ? undefined : id,
-        });
+        this.setState(prevState => ({
+            openId: id === prevState.openId ? undefined : id,
+        }));
     }
 
     render() {

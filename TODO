@@ -1,13 +1,23 @@
 in multi team mode, is there any issue with players refusing to sign with the title winner?
-
-get rid of owner messages, replace with owner status page showing mood directly (bar chart)
+- https://www.reddit.com/message/messages/c9mcl2
 
 Difficulty level
 - display difficulty in UI somewhere
   - in dashboard, display "Difficulty: Easy/Normal/Hard/Insane/Custom", cache value in idb.meta.leagues, default Normal
   - change difficulty display under team selection, instead do something like small/medium/large for population size
+  - move option from god mode to regular options
+  - no achievements in easy mode
+- profit messed up?
+  - from chat with difficulty 1 "I made 18.6 million in profit but my cash went from -60.3 million to -62.5 million."
 - blog
   - http://thegamedesigner.blogspot.com/2017/03/baseball-mogul-cheats.html
+- changes
+
+re-evaluate contracts
+- somehow market based
+- update after ratings change in preseason
+
+get rid of owner messages, replace with owner status page showing mood directly (bar chart)
 
 make AI smarter about contracts
 - then do cool shit, like a tunable "randomness" factor or something that lets you tune player development, and also overall talent level, and also distribution of different ratings (to sim different eras)

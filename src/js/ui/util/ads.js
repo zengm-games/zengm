@@ -1,6 +1,6 @@
 // @flow
 
-import { emitter } from "../util";
+import { emitter } from ".";
 
 function showGcs() {
     window.TriggerPrompt("http://www.basketball-gm.com/", new Date().getTime());

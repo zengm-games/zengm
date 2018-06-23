@@ -1,7 +1,7 @@
 // @flow
 
 import { PHASE } from "../../../common";
-import { player } from "../../core";
+import { player } from "..";
 import { idb } from "../../db";
 import { g, helpers, logEvent, toUI, updatePlayMenu } from "../../util";
 import type { TradeSummary } from "../../../common/types";

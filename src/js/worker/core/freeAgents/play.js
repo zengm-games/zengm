@@ -1,7 +1,7 @@
 // @flow
 
 import { PHASE } from "../../../common";
-import { league, phase, trade } from "../../core";
+import { league, phase, trade } from "..";
 import autoSign from "./autoSign";
 import decreaseDemands from "./decreaseDemands";
 import { g, lock, updatePlayMenu, updateStatus, toUI } from "../../util";

@@ -209,7 +209,8 @@ async function updateTeams(
                 if (lowerIsBetter.includes(statType)) {
                     if (a < b) {
                         return -1;
-                    } else if (a > b) {
+                    }
+                    if (a > b) {
                         return 1;
                     }
 
@@ -219,7 +220,8 @@ async function updateTeams(
                 // Sort highest first.
                 if (a < b) {
                     return 1;
-                } else if (a > b) {
+                }
+                if (a > b) {
                     return -1;
                 }
 

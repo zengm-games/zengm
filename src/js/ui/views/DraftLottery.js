@@ -107,16 +107,12 @@ class DraftLottery extends React.Component<Props, State> {
     }
 
     revealPick() {
-        const indRevealed = this.state.indRevealed + 1;
-
         if (!this.componentIsMounted) {
             return;
         }
 
         this.setState(
-            {
-                indRevealed,
-            },
+            prevState => ({ indRevealed: prevState.indRevealed + 1 }),
             () => {
                 if (this.state.indRevealed < this.state.toReveal.length - 1) {
                     setTimeout(() => {

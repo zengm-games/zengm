@@ -1,6 +1,6 @@
 // @flow
 
-import { team } from "../../core";
+import { team } from "..";
 import { idb } from "../../db";
 import { g } from "../../util";
 import type { TradeSummary, TradeTeams } from "../../../common/types";

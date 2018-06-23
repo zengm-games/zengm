@@ -18,7 +18,7 @@ import {
     MultiTeamMenu,
     NagModal,
     NavBar,
-} from "../components";
+} from ".";
 import type { GetOutput, PageCtx, UpdateEvents } from "../../common/types";
 
 type Props = {
@@ -93,8 +93,11 @@ type State = {
 
 class Controller extends React.Component<{}, State> {
     closeNagModal: Function;
+
     get: Function;
+
     updatePage: Function;
+
     updateState: Function;
 
     constructor(props: {}) {

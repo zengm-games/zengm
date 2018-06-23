@@ -2,7 +2,7 @@
 
 import countBy from "lodash/countBy";
 import { PHASE } from "../../../common";
-import { draft, player, trade } from "../../core";
+import { draft, player, trade } from "..";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
 import type { TradePickValues } from "../../../common/types";

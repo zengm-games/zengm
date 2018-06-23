@@ -36,7 +36,8 @@ util.promiseWorker.register(([name, ...params], hostID) => {
             }
 
             return api.actions.playMenu[subname](...params, conditions);
-        } else if (subname.indexOf("toolsMenu.") === 0) {
+        }
+        if (subname.indexOf("toolsMenu.") === 0) {
             subname = subname.replace("toolsMenu.", "");
 
             if (!api.actions.toolsMenu.hasOwnProperty(subname)) {

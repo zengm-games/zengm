@@ -1,7 +1,7 @@
 // @flow
 
 import { PHASE } from "../../../common";
-import { draft, freeAgents, game, phase, season } from "../../core";
+import { draft, freeAgents, game, phase, season } from "..";
 import { g } from "../../util";
 import type { Conditions } from "../../../common/types";
 

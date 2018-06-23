@@ -1,7 +1,7 @@
 // @flow
 
 import range from "lodash/range";
-import { team } from "../../core";
+import { team } from "..";
 import { idb } from "../../db";
 import { g, random } from "../../util";
 import isUntradable from "./isUntradable";

@@ -49,12 +49,9 @@ class WatchBlock extends React.Component<Props, State> {
         e.preventDefault();
 
         // This means is not responsive to global state, just local state. That should be fine. Fix eventually.
-        const watch = !this.state.watch;
-        this.setState({
-            watch,
-        });
+        this.setState(prevState => ({ watch: !prevState.watch }));
 
-        await toWorker("updatePlayerWatch", this.props.pid, watch);
+        await toWorker("updatePlayerWatch", this.props.pid, !this.state.watch);
     }
 
     render() {

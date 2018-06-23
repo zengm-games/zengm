@@ -3,7 +3,7 @@
 import orderBy from "lodash/orderBy";
 import range from "lodash/range";
 import { PHASE, PLAYER } from "../../../common";
-import { player, team } from "../../core";
+import { player, team } from "..";
 import { idb } from "../../db";
 import { g, helpers, local, logEvent, random } from "../../util";
 

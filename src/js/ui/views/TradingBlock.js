@@ -192,19 +192,21 @@ class TradingBlock extends React.Component {
     }
 
     async handleChangeAsset(type, id) {
-        const ids = {
-            pids: helpers.deepCopy(this.state.pids),
-            dpids: helpers.deepCopy(this.state.dpids),
-        };
+        this.setState(prevState => {
+            const ids = {
+                pids: helpers.deepCopy(prevState.pids),
+                dpids: helpers.deepCopy(prevState.dpids),
+            };
 
-        if (ids[type].includes(id)) {
-            ids[type] = ids[type].filter(currId => currId !== id);
-        } else {
-            ids[type].push(id);
-        }
+            if (ids[type].includes(id)) {
+                ids[type] = ids[type].filter(currId => currId !== id);
+            } else {
+                ids[type].push(id);
+            }
 
-        this.setState({
-            [type]: ids[type],
+            return {
+                [type]: ids[type],
+            };
         });
     }
 
@@ -216,8 +218,8 @@ class TradingBlock extends React.Component {
 
         const offers = await toWorker(
             "getTradingBlockOffers",
-            this.state.pids,
-            this.state.dpids,
+            this.state.pids, // eslint-disable-line react/no-access-state-in-setstate
+            this.state.dpids, // eslint-disable-line react/no-access-state-in-setstate
         );
 
         this.setState({

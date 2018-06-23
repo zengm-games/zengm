@@ -1,7 +1,7 @@
 // @flow
 
 import { createLogger } from "../../common";
-import { local, notify, toWorker } from "../util";
+import { local, notify, toWorker } from ".";
 import type { LogEventShowOptions } from "../../common/types";
 
 const saveEvent = () => {

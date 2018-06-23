@@ -11,7 +11,7 @@ import {
     updatePhase,
     updatePlayMenu,
     updateStatus,
-} from "../util";
+} from ".";
 import type { Conditions, League } from "../../common/types";
 
 let heartbeatIntervalID: IntervalID;

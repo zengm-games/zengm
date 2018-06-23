@@ -1,6 +1,6 @@
 // @flow
 
-import { getAll, idb } from "../../db";
+import { getAll, idb } from "..";
 import { mergeByPk } from "./helpers";
 import type { Message } from "../../../common/types";
 

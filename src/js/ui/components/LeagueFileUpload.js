@@ -35,6 +35,7 @@ const resetFileInput = (event: SyntheticInputEvent<HTMLInputElement>) => {
 
 class LeagueFileUpload extends React.Component<Props, State> {
     handleFile: Function;
+
     unmounted: boolean;
 
     constructor(props: Props) {

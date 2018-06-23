@@ -258,6 +258,7 @@ class LiveGame extends React.Component {
                 return;
             }
 
+            // eslint-disable-next-line react/no-access-state-in-setstate
             const boxScore = this.state.boxScore; // This means we're mutating state, which is a little faster, but bad
 
             let stop = false;

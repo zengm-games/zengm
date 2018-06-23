@@ -1,6 +1,6 @@
 // @flow
 
-import { draft } from "../../core";
+import { draft } from "..";
 import { idb } from "../../db";
 import { g } from "../../util";
 

@@ -17,6 +17,7 @@
         "consistent-return": "off",
         "func-names": "off",
         "import/newline-after-import": "off",
+        "import/no-cycle": "off",
         "import/no-extraneous-dependencies": ["error", {"devDependencies": true, "optionalDependencies": false, "peerDependencies": false}],
         "jsx-a11y/anchor-has-content": "off",
         "jsx-a11y/anchor-is-valid": "off",
@@ -37,6 +38,8 @@
         "no-underscore-dangle": "off",
         "prefer-const": ["error", {"destructuring": "all"}],
         "prefer-destructuring": "off", // Would be nice, but buggy
+        "react/button-has-type": "off",
+        "react/destructuring-assignment": "off",
         "react/forbid-prop-types": "off",
         "react/jsx-filename-extension": ["error", {"extensions": [".js"]}],
         "react/no-array-index-key": "off",

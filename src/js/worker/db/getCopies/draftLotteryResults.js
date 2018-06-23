@@ -1,6 +1,6 @@
 // @flow
 
-import { idb } from "../../db";
+import { idb } from "..";
 import { mergeByPk } from "./helpers";
 import type { DraftLotteryResult } from "../../../common/types";
 

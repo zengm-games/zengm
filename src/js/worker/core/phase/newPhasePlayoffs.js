@@ -1,6 +1,6 @@
 // @flow
 
-import { finances, player, season, team } from "../../core";
+import { finances, player, season, team } from "..";
 import { idb } from "../../db";
 import { account, g, helpers, logEvent } from "../../util";
 import type { Conditions } from "../../../common/types";

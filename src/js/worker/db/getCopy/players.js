@@ -1,6 +1,6 @@
 // @flow
 
-import { idb } from "../../db";
+import { idb } from "..";
 import type { Player } from "../../../common/types";
 
 const getCopy = async ({ pid }: { pid: number }): Promise<Player | void> => {

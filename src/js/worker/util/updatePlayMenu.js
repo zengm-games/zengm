@@ -2,7 +2,7 @@
 
 import { PHASE } from "../../common";
 import { draft } from "../core";
-import { g, helpers, local, lock, toUI } from "../util";
+import { g, helpers, local, lock, toUI } from ".";
 
 /**
  * Update play menu options based on game state.

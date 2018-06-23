@@ -1,7 +1,7 @@
 // @flow
 
 import backboard from "backboard";
-import { idb } from "../../db";
+import { idb } from "..";
 import { mergeByPk } from "./helpers";
 import { g, helpers } from "../../util";
 import type { TeamSeason } from "../../../common/types";

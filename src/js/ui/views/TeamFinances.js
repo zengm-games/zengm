@@ -14,7 +14,7 @@ class FinancesForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            dirty: false, // eslint-disable-line react/no-unused-state
+            dirty: false,
             coaching: props.t.budget.coaching.amount,
             facilities: props.t.budget.facilities.amount,
             health: props.t.budget.health.amount,
@@ -46,7 +46,7 @@ class FinancesForm extends React.Component {
 
     handleChange(name, e) {
         this.setState({
-            dirty: true, // eslint-disable-line react/no-unused-state
+            dirty: true,
             [name]: e.target.value,
         });
     }
@@ -96,7 +96,7 @@ class FinancesForm extends React.Component {
         });
 
         this.setState({
-            dirty: false, // eslint-disable-line react/no-unused-state
+            dirty: false,
             saving: false,
         });
     }

@@ -9,7 +9,7 @@ class GodMode extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            dirty: false, // eslint-disable-line react/no-unused-state
+            dirty: false,
             autoDeleteOldBoxScores: props.autoDeleteOldBoxScores,
             difficulty: props.difficulty,
             difficultySelect: normalDifficulties.includes(props.difficulty)

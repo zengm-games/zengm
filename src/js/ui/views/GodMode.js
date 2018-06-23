@@ -8,7 +8,7 @@ class GodMode extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            dirty: false, // eslint-disable-line react/no-unused-state
+            dirty: false,
             disableInjuries: String(props.disableInjuries),
             luxuryPayroll: props.luxuryPayroll,
             luxuryTax: props.luxuryTax,

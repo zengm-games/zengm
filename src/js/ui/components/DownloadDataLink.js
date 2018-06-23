@@ -20,7 +20,7 @@ class DownloadDataLink extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            prevData: undefined, // eslint-disable-line react/no-unused-state
+            prevData: undefined,
             url: undefined,
         };
     }

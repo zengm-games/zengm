@@ -5,9 +5,8 @@ Difficulty level
 - display difficulty in UI somewhere
   - in dashboard, display "Difficulty: Easy/Normal/Hard/Insane/Custom", cache value in idb.meta.leagues, default Normal
   - change difficulty display under team selection, instead do something like small/medium/large for population size
-  - move option from god mode to regular options
   - no achievements in easy mode
-- bump up insane to 1.5
+- abstract difficulty levels to common or something - currently used in Options, will also be used in New League and Dashboard
 - blog
   - http://thegamedesigner.blogspot.com/2017/03/baseball-mogul-cheats.html
 - changes

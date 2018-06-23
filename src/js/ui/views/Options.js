@@ -3,12 +3,18 @@ import React from "react";
 import { HelpPopover, NewWindowLink } from "../components";
 import { helpers, logEvent, setTitle, toWorker } from "../util";
 
+const normalDifficulties = [0.25, 0.5, 0.75, 1.5];
+
 class GodMode extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             dirty: false, // eslint-disable-line react/no-unused-state
             autoDeleteOldBoxScores: props.autoDeleteOldBoxScores,
+            difficulty: props.difficulty,
+            difficultySelect: normalDifficulties.includes(props.difficulty)
+                ? props.difficulty
+                : "custom",
             stopOnInjury: props.stopOnInjury,
             stopOnInjuryGames: props.stopOnInjuryGames,
         };
@@ -17,6 +23,13 @@ class GodMode extends React.Component {
                 this,
                 "autoDeleteOldBoxScores",
             ),
+            difficulty: this.handleChange.bind(this, "difficulty"),
+            difficultySelect: e => {
+                this.handleChange("difficultySelect", e);
+                if (e.target.value !== "custom") {
+                    this.handleChange("difficulty", e);
+                }
+            },
             stopOnInjury: this.handleChange.bind(this, "stopOnInjury"),
             stopOnInjuryGames: this.handleChange.bind(
                 this,
@@ -30,6 +43,12 @@ class GodMode extends React.Component {
         if (!prevState.dirty) {
             return {
                 autoDeleteOldBoxScores: nextProps.autoDeleteOldBoxScores,
+                difficulty: nextProps.difficulty,
+                difficultySelect:
+                    normalDifficulties.includes(nextProps.difficulty) &&
+                    prevState.difficultySelect !== "custom"
+                        ? nextProps.difficulty
+                        : "custom",
                 stopOnInjury: nextProps.stopOnInjury,
                 stopOnInjuryGames: nextProps.stopOnInjuryGames,
             };
@@ -40,7 +59,7 @@ class GodMode extends React.Component {
 
     handleChange(name, e) {
         this.setState({
-            dirty: true, // eslint-disable-line react/no-unused-state
+            dirty: true,
             [name]: e.target.value,
         });
     }
@@ -51,12 +70,13 @@ class GodMode extends React.Component {
         await toWorker("updateGameAttributes", {
             autoDeleteOldBoxScores:
                 this.state.autoDeleteOldBoxScores === "true",
+            difficulty: parseFloat(this.state.difficulty),
             stopOnInjury: this.state.stopOnInjury === "true",
             stopOnInjuryGames: parseInt(this.state.stopOnInjuryGames, 10),
         });
 
         this.setState({
-            dirty: false, // eslint-disable-line react/no-unused-state
+            dirty: false,
         });
 
         logEvent({
@@ -68,6 +88,10 @@ class GodMode extends React.Component {
 
     render() {
         setTitle("Options");
+
+        const disableDifficultyInput =
+            this.state.difficultySelect !== "custom" &&
+            normalDifficulties.includes(parseFloat(this.state.difficulty));
 
         return (
             <div>
@@ -148,6 +172,32 @@ class GodMode extends React.Component {
                                 <span className="input-group-addon">Games</span>
                             </div>
                         </div>
+                        <div className="col-sm-3 col-xs-6 form-group">
+                            <label>Difficulty</label>
+                            <select
+                                className="form-control"
+                                onChange={this.handleChanges.difficultySelect}
+                                value={this.state.difficultySelect}
+                            >
+                                <option value="0.25">Easy</option>
+                                <option value="0.5">Normal</option>
+                                <option value="0.75">Hard</option>
+                                <option value="1.5">Insane</option>
+                                <option value="custom">Custom</option>
+                            </select>
+                            <div
+                                className="input-group"
+                                style={{ marginTop: "0.5em" }}
+                            >
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    disabled={disableDifficultyInput}
+                                    onChange={this.handleChanges.difficulty}
+                                    value={this.state.difficulty}
+                                />
+                            </div>
+                        </div>
                     </div>
 
                     <button className="btn btn-primary">Save Options</button>
@@ -159,6 +209,7 @@ class GodMode extends React.Component {
 
 GodMode.propTypes = {
     autoDeleteOldBoxScores: PropTypes.bool.isRequired,
+    difficulty: PropTypes.number.isRequired,
     stopOnInjury: PropTypes.bool.isRequired,
     stopOnInjuryGames: PropTypes.number.isRequired,
 };

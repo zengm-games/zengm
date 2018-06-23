@@ -1,9 +1,10 @@
 import PropTypes from "prop-types";
 import React from "react";
+import { DIFFICULTY } from "../../common";
 import { HelpPopover, NewWindowLink } from "../components";
 import { helpers, logEvent, setTitle, toWorker } from "../util";
 
-const normalDifficulties = [0.25, 0.5, 0.75, 1.5];
+const difficultyValues = Object.values(DIFFICULTY);
 
 class GodMode extends React.Component {
     constructor(props) {
@@ -12,7 +13,7 @@ class GodMode extends React.Component {
             dirty: false,
             autoDeleteOldBoxScores: props.autoDeleteOldBoxScores,
             difficulty: props.difficulty,
-            difficultySelect: normalDifficulties.includes(props.difficulty)
+            difficultySelect: difficultyValues.includes(props.difficulty)
                 ? props.difficulty
                 : "custom",
             stopOnInjury: props.stopOnInjury,
@@ -45,7 +46,7 @@ class GodMode extends React.Component {
                 autoDeleteOldBoxScores: nextProps.autoDeleteOldBoxScores,
                 difficulty: nextProps.difficulty,
                 difficultySelect:
-                    normalDifficulties.includes(nextProps.difficulty) &&
+                    difficultyValues.includes(nextProps.difficulty) &&
                     prevState.difficultySelect !== "custom"
                         ? nextProps.difficulty
                         : "custom",
@@ -91,7 +92,7 @@ class GodMode extends React.Component {
 
         const disableDifficultyInput =
             this.state.difficultySelect !== "custom" &&
-            normalDifficulties.includes(parseFloat(this.state.difficulty));
+            difficultyValues.includes(parseFloat(this.state.difficulty));
 
         return (
             <div>
@@ -179,10 +180,13 @@ class GodMode extends React.Component {
                                 onChange={this.handleChanges.difficultySelect}
                                 value={this.state.difficultySelect}
                             >
-                                <option value="0.25">Easy</option>
-                                <option value="0.5">Normal</option>
-                                <option value="0.75">Hard</option>
-                                <option value="1.5">Insane</option>
+                                {Object.entries(DIFFICULTY).map(
+                                    ([text, numeric]) => (
+                                        <option key={numeric} value={numeric}>
+                                            {text}
+                                        </option>
+                                    ),
+                                )}
                                 <option value="custom">Custom</option>
                             </select>
                             <div

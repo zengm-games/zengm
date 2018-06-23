@@ -1,5 +1,12 @@
 // @flow
 
+const DIFFICULTY = {
+    Easy: 0.25,
+    Normal: 0.5,
+    Hard: 0.75,
+    Insane: 1.5,
+};
+
 const PHASE = {
     FANTASY_DRAFT: -1,
     PRESEASON: 0,
@@ -123,6 +130,7 @@ const STRIPE_PUBLISHABLE_KEY = "pk_live_Dmo7Vs6uSaoYHrFngr4lM0sa";
 
 export {
     COMPOSITE_WEIGHTS,
+    DIFFICULTY,
     PHASE,
     PLAYER,
     PHASE_TEXT,

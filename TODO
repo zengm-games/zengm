@@ -3,9 +3,7 @@ in multi team mode, is there any issue with players refusing to sign with the ti
 
 Difficulty level
 - upgrade to re-scale difficulty (subtract 0.5, if exists) and cache in meta (is this possible from upgrade code?)
-- no achievements in easy mode
-  - easyDifficultyInPast check along with godModeInPast
-  - warning on options page, achievements page
+- no achievements in easy mode - warning on options page, achievements page
 - blog
   - http://thegamedesigner.blogspot.com/2017/03/baseball-mogul-cheats.html
 - changes

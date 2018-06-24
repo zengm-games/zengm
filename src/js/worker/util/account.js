@@ -257,7 +257,7 @@ checkAchievement.fo_fo_fo = async (
     conditions: Conditions,
     saveAchievement: boolean = true,
 ) => {
-    if (g.godModeInPast) {
+    if (g.easyDifficultyInPast || g.godModeInPast) {
         return false;
     }
 
@@ -302,7 +302,7 @@ checkAchievement.septuawinarian = async (
     conditions: Conditions,
     saveAchievement: boolean = true,
 ) => {
-    if (g.godModeInPast) {
+    if (g.easyDifficultyInPast || g.godModeInPast) {
         return false;
     }
 
@@ -326,7 +326,7 @@ checkAchievement["98_degrees"] = async (
     conditions: Conditions,
     saveAchievement: boolean = true,
 ) => {
-    if (g.godModeInPast) {
+    if (g.easyDifficultyInPast || g.godModeInPast) {
         return false;
     }
 
@@ -360,7 +360,7 @@ async function checkDynasty(
     conditions: Conditions,
     saveAchievement: boolean,
 ): Promise<boolean> {
-    if (g.godModeInPast) {
+    if (g.easyDifficultyInPast || g.godModeInPast) {
         return false;
     }
 
@@ -412,7 +412,7 @@ async function checkMoneyball(
     conditions: Conditions,
     saveAchievement,
 ) {
-    if (g.godModeInPast) {
+    if (g.easyDifficultyInPast || g.godModeInPast) {
         return false;
     }
     const t = await idb.getCopy.teamsPlus({
@@ -450,7 +450,7 @@ checkAchievement.hardware_store = async (
     conditions: Conditions,
     saveAchievement: boolean = true,
 ) => {
-    if (g.godModeInPast) {
+    if (g.easyDifficultyInPast || g.godModeInPast) {
         return false;
     }
 
@@ -482,7 +482,7 @@ checkAchievement.small_market = async (
     conditions: Conditions,
     saveAchievement: boolean = true,
 ) => {
-    if (g.godModeInPast) {
+    if (g.easyDifficultyInPast || g.godModeInPast) {
         return false;
     }
 
@@ -511,7 +511,7 @@ checkAchievement.sleeper_pick = async (
     conditions: Conditions,
     saveAchievement: boolean = true,
 ) => {
-    if (g.godModeInPast) {
+    if (g.easyDifficultyInPast || g.godModeInPast) {
         return false;
     }
 

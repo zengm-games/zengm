@@ -200,7 +200,6 @@ class NewLeague extends React.Component {
                     typeof ga.value === "number" &&
                     !Number.isNaN(ga.value)
                 ) {
-                    console.log("diff", ga);
                     updatedState.difficulty = ga.value;
                 }
             }

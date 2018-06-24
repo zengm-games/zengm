@@ -108,7 +108,6 @@ const create = async (
         gracePeriodEnd: startingSeason + 2, // Can't get fired for the first two seasons
         numTeams: teams.length, // Will be 30 if the user doesn't supply custom rosters
         difficulty,
-        easyDifficultyInPast: difficulty <= DIFFICULTY.Easy,
     });
 
     // gameAttributes from input
@@ -118,7 +117,8 @@ const create = async (
             // Set default for anything except team ID and name, since they can be overwritten by form input.
             if (
                 leagueFile.gameAttributes[i].key !== "userTid" &&
-                leagueFile.gameAttributes[i].key !== "leagueName"
+                leagueFile.gameAttributes[i].key !== "leagueName" &&
+                leagueFile.gameAttributes[i].key !== "difficulty"
             ) {
                 gameAttributes[leagueFile.gameAttributes[i].key] =
                     leagueFile.gameAttributes[i].value;
@@ -133,6 +133,12 @@ const create = async (
         if (!gameAttributes.userTids.includes(gameAttributes.userTid)) {
             gameAttributes.userTids = [gameAttributes.userTid];
         }
+    }
+
+    // Extra check for easyDifficultyInPast, so that it won't be overwritten by a league file if the user selects Easy
+    // when creating a new league.
+    if (difficulty <= DIFFICULTY.Easy) {
+        gameAttributes.easyDifficultyInPast = true;
     }
 
     // Clear old game attributes from g, to make sure the new ones are saved to the db in setGameAttributes

@@ -14,8 +14,10 @@ class EditTeamInfo extends React.Component {
     }
 
     handleInputChange(i, name, e) {
+        const value = e.target.value;
+
         this.setState(prevState => {
-            prevState.teams[i][name] = e.target.value;
+            prevState.teams[i][name] = value;
             return {
                 teams: prevState.teams,
             };

@@ -196,8 +196,10 @@ class CustomizePlayer extends React.Component {
     }
 
     handleChange(type, field, e) {
+        let val = e.target.value;
+        const checked = e.target.checked;
+
         this.setState(prevState => {
-            let val = e.target.value;
             const p = prevState.p;
 
             if (type === "root") {
@@ -229,7 +231,7 @@ class CustomizePlayer extends React.Component {
                 } else if (field === "color") {
                     p[type][field] = val;
                 } else if (field === "nose-flip") {
-                    p[type].nose.flip = e.target.checked;
+                    p[type].nose.flip = checked;
                 }
             }
 

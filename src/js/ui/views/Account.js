@@ -369,6 +369,11 @@ const Account = ({
 
             <h2>Achievements</h2>
 
+            <p>
+                You will only be awarded achievements in leagues where you have
+                never used God Mode or set the difficulty to Easy.
+            </p>
+
             <ul className="achievements list-group">
                 {achievements.map((achievement, i) => {
                     const lis = [

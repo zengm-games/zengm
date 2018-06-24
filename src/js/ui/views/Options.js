@@ -111,10 +111,7 @@ class GodMode extends React.Component {
                         <div className="col-sm-3 col-xs-6 form-group">
                             <label>
                                 Auto Delete Old Box Scores{" "}
-                                <HelpPopover
-                                    placement="right"
-                                    title="Auto Delete Old Box Scores"
-                                >
+                                <HelpPopover title="Auto Delete Old Box Scores">
                                     This will automatically delete box scores
                                     from previous seasons because box scores use
                                     a lot of disk space. See{" "}
@@ -142,10 +139,7 @@ class GodMode extends React.Component {
                         <div className="col-sm-3 col-xs-6 form-group">
                             <label>
                                 Stop On Injury Longer Than{" "}
-                                <HelpPopover
-                                    placement="right"
-                                    title="Stop On Injury Longer Than"
-                                >
+                                <HelpPopover title="Stop On Injury Longer Than">
                                     This will stop game simulation if one of
                                     your players is injured for more than N
                                     games. In auto play mode (Tools > Auto Play
@@ -183,13 +177,22 @@ class GodMode extends React.Component {
                             <label>
                                 Difficulty{" "}
                                 <HelpPopover
-                                    placement="right"
+                                    placement="bottom"
                                     title="Difficulty"
                                 >
-                                    Increasing difficulty makes AI teams more
-                                    reluctant to trade with you, makes players
-                                    less likely to sign with you, and makes it
-                                    harder to turn a profit.
+                                    <p>
+                                        Increasing difficulty makes AI teams
+                                        more reluctant to trade with you, makes
+                                        players less likely to sign with you,
+                                        and makes it harder to turn a profit.
+                                    </p>
+                                    <p>
+                                        If you set the difficulty to Easy, you
+                                        will not get credit for any{" "}
+                                        <a href="/account">Achievements</a>.
+                                        This persists even if you switch to a
+                                        harder difficulty.
+                                    </p>
                                 </HelpPopover>
                             </label>
                             <select

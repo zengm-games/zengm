@@ -271,6 +271,7 @@ export type League = {|
     teamRegion: string,
     heartbeatID?: string,
     heartbeatTimestamp?: number,
+    difficulty?: number,
 |};
 
 export type Locks = {|

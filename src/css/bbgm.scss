@@ -269,7 +269,7 @@ ul.dashboard-boxes {
 
     a.league {
       display: block;
-      height: 60px;
+      height: 77px;
       padding: 2px 8px 6px;
       text-align: left;
       width: 151px;
@@ -305,10 +305,19 @@ ul.dashboard-boxes {
       h2 {
         font-size: 20px;
         line-height: 26px;
-        margin-top: 1px;
+        margin-top: 9px;
       }
     }
   }
+}
+
+.dashboard-box-loading {
+  font-weight: bold;
+  margin-top: 26px;
+}
+
+.difficulty-insane-plus {
+  font-weight: bold;
 }
 
 @-moz-keyframes oscillate-bg {

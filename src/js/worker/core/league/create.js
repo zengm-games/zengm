@@ -88,6 +88,7 @@ const create = async (
         teamRegion: teams[tid].region,
         heartbeatID: undefined,
         heartbeatTimestamp: undefined,
+        difficulty,
     });
     idb.league = await connectLeague(g.lid);
 

@@ -4,6 +4,12 @@ import { idb } from "../../db";
 import { g, helpers, toUI } from "../../util";
 import type { GameAttributes } from "../../../common/types";
 
+const updateMetaDifficulty = async (difficulty: number) => {
+    const l = await idb.meta.leagues.get(g.lid);
+    l.difficulty = difficulty;
+    await idb.meta.leagues.put(l);
+};
+
 /**
  * Set values in the gameAttributes objectStore and update the global variable g.
  *
@@ -30,6 +36,10 @@ const setGameAttributes = async (gameAttributes: GameAttributes) => {
         });
 
         g[key] = gameAttributes[key];
+
+        if (key === "difficulty") {
+            await updateMetaDifficulty(gameAttributes[key]);
+        }
     }
 
     await toUI(["setGameAttributes", gameAttributes]);

@@ -11,7 +11,7 @@ import league from "./index";
 describe("worker/core/league/create", () => {
     before(async () => {
         idb.meta = await connectMeta({});
-        await league.create("Test", 0, undefined, 2013, false, {});
+        await league.create("Test", 0, undefined, 2013, false, 0, {});
     });
 
     after(async () => {

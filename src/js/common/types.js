@@ -193,6 +193,7 @@ export type GameAttributeKey =
     | "autoDeleteOldBoxScores"
     | "brotherRate"
     | "confs"
+    | "easyDifficultyInPast"
     | "daysLeft"
     | "disableInjuries"
     | "difficulty"

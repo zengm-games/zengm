@@ -82,7 +82,7 @@ describe("worker/core/league/create", () => {
         assert.equal(gTest.daysLeft, 0);
         assert.equal(gTest.showFirstOwnerMessage, true);
 
-        assert.equal(Object.keys(gTest).length, 41);
+        assert.equal(Object.keys(gTest).length, 42);
     });
 
     it("initialize teams object store", async () => {

@@ -68,13 +68,19 @@ class GodMode extends React.Component {
     async handleFormSubmit(e) {
         e.preventDefault();
 
-        await toWorker("updateGameAttributes", {
+        const attrs = {
             autoDeleteOldBoxScores:
                 this.state.autoDeleteOldBoxScores === "true",
             difficulty: parseFloat(this.state.difficulty),
             stopOnInjury: this.state.stopOnInjury === "true",
             stopOnInjuryGames: parseInt(this.state.stopOnInjuryGames, 10),
-        });
+        };
+
+        if (attrs.difficulty <= DIFFICULTY.Easy) {
+            attrs.easyDifficultyInPast = true;
+        }
+
+        await toWorker("updateGameAttributes", attrs);
 
         this.setState({
             dirty: false,

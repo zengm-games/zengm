@@ -1,7 +1,7 @@
 // @flow
 
 import { Cache, connectLeague, idb } from "../../db";
-import { PHASE, PLAYER } from "../../../common";
+import { DIFFICULTY, PHASE, PLAYER } from "../../../common";
 import { draft, finances, player, team } from "..";
 import setGameAttributes from "./setGameAttributes";
 import {
@@ -108,6 +108,7 @@ const create = async (
         gracePeriodEnd: startingSeason + 2, // Can't get fired for the first two seasons
         numTeams: teams.length, // Will be 30 if the user doesn't supply custom rosters
         difficulty,
+        easyDifficultyInPast: difficulty <= DIFFICULTY.Easy,
     });
 
     // gameAttributes from input

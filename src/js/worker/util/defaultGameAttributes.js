@@ -56,6 +56,7 @@ const defaultGameAttributes: GameAttributes = {
 
     // See constants.DIFFICULTY for values
     difficulty: 0,
+    easyDifficultyInPast: false,
 };
 
 export default defaultGameAttributes;

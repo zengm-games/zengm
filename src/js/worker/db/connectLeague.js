@@ -5,6 +5,7 @@ import orderBy from "lodash/orderBy";
 import { PHASE, PLAYER } from "../../common";
 import { player } from "../core";
 import { bootstrapPot } from "../core/player/develop";
+import { idb } from ".";
 import { logEvent } from "../util";
 import type { RatingKey } from "../../common/types";
 
@@ -451,11 +452,43 @@ const migrateLeague = (upgradeDB, lid) => {
     if (upgradeDB.oldVersion <= 30) {
         upgrade31(upgradeDB._dbOrTx._rawTransaction);
     }
+    if (upgradeDB.oldVersion <= 31) {
+        // Gets need to use raw IDB API because Firefox < 60
+        const tx = upgradeDB._dbOrTx._rawTransaction;
+        tx
+            .objectStore("gameAttributes")
+            .get("difficulty").onsuccess = event => {
+            let difficulty =
+                event.target.result !== undefined
+                    ? event.target.result.value
+                    : undefined;
+            if (typeof difficulty === "number") {
+                // Migrating from initial test implementation
+                difficulty -= 0.5;
+            } else {
+                difficulty = 0;
+            }
+
+            upgradeDB.gameAttributes.put({
+                key: "difficulty",
+                value: difficulty,
+            });
+
+            idb.meta._rawDb
+                .transaction("leagues")
+                .objectStore("leagues")
+                .get(lid).onsuccess = event2 => {
+                const l = event2.target.result;
+                l.difficulty = difficulty;
+                idb.meta.leagues.put(l);
+            };
+        };
+    }
 };
 
 const connectLeague = async (lid: number) => {
     // Would like to await on migrateLeague and inside there, but Firefox
-    const db = await backboard.open(`league${lid}`, 31, upgradeDB => {
+    const db = await backboard.open(`league${lid}`, 32, upgradeDB => {
         if (upgradeDB.oldVersion === 0) {
             createLeague(upgradeDB, lid);
         } else {

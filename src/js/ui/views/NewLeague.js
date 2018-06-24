@@ -80,6 +80,7 @@ class NewLeague extends React.Component {
         };
         this.handleCustomizeChange = this.handleCustomizeChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.onNewLeagueFile = this.onNewLeagueFile.bind(this);
     }
 
     handleChange(name, e) {
@@ -140,6 +141,72 @@ class NewLeague extends React.Component {
             difficulty,
         );
         realtimeUpdate([], `/l/${lid}`);
+    }
+
+    onNewLeagueFile(err, leagueFile) {
+        if (err) {
+            this.setState({
+                leagueFile: null,
+            });
+            return;
+        }
+
+        const updatedState = {
+            leagueFile,
+        };
+
+        let newTeams = helpers.deepCopy(leagueFile.teams);
+        if (newTeams) {
+            for (const t of newTeams) {
+                // Is pop hidden in season, like in editTeamInfo import?
+                if (!t.hasOwnProperty("pop") && t.hasOwnProperty("seasons")) {
+                    t.pop = t.seasons[t.seasons.length - 1].pop;
+                }
+
+                // God, I hate being permissive...
+                if (typeof t.pop !== "number") {
+                    t.pop = parseFloat(t.pop);
+                }
+                if (Number.isNaN(t.pop)) {
+                    t.pop = 1;
+                }
+
+                t.pop = parseFloat(t.pop.toFixed(2));
+            }
+
+            newTeams = helpers.addPopRank(newTeams);
+
+            // Add random team
+            newTeams.unshift({
+                tid: -1,
+                region: "Random",
+                name: "Team",
+            });
+
+            updatedState.teams = newTeams;
+        }
+
+        // Need to update team and difficulty dropdowns?
+        if (leagueFile.hasOwnProperty("gameAttributes")) {
+            for (const ga of leagueFile.gameAttributes) {
+                if (
+                    ga.key === "userTid" &&
+                    typeof ga.value === "number" &&
+                    !Number.isNaN(ga.value)
+                ) {
+                    updatedState.tid = ga.value;
+                } else if (
+                    ga.key === "difficulty" &&
+                    typeof ga.value === "number" &&
+                    !Number.isNaN(ga.value)
+                ) {
+                    console.log("diff", ga);
+                    updatedState.difficulty = ga.value;
+                }
+            }
+        }
+
+        this.setState(updatedState);
     }
 
     render() {
@@ -206,6 +273,13 @@ class NewLeague extends React.Component {
                                         </option>
                                     ),
                                 )}
+                                {!Object.values(DIFFICULTY).includes(
+                                    difficulty,
+                                ) ? (
+                                    <option value={difficulty}>
+                                        Custom (from league file)
+                                    </option>
+                                ) : null}
                             </select>
                             <span className="help-block">
                                 Increasing difficulty makes AI teams more
@@ -249,96 +323,7 @@ class NewLeague extends React.Component {
                                                     leagueFile: null,
                                                 });
                                             }}
-                                            onDone={(err, leagueFile2) => {
-                                                if (err) {
-                                                    this.setState({
-                                                        leagueFile: null,
-                                                    });
-                                                    return;
-                                                }
-
-                                                const updatedState = {
-                                                    leagueFile: leagueFile2,
-                                                };
-
-                                                let newTeams = helpers.deepCopy(
-                                                    leagueFile2.teams,
-                                                );
-                                                if (newTeams) {
-                                                    for (const t of newTeams) {
-                                                        // Is pop hidden in season, like in editTeamInfo import?
-                                                        if (
-                                                            !t.hasOwnProperty(
-                                                                "pop",
-                                                            ) &&
-                                                            t.hasOwnProperty(
-                                                                "seasons",
-                                                            )
-                                                        ) {
-                                                            t.pop =
-                                                                t.seasons[
-                                                                    t.seasons
-                                                                        .length -
-                                                                        1
-                                                                ].pop;
-                                                        }
-
-                                                        // God, I hate being permissive...
-                                                        if (
-                                                            typeof t.pop !==
-                                                            "number"
-                                                        ) {
-                                                            t.pop = parseFloat(
-                                                                t.pop,
-                                                            );
-                                                        }
-                                                        if (
-                                                            Number.isNaN(t.pop)
-                                                        ) {
-                                                            t.pop = 1;
-                                                        }
-
-                                                        t.pop = parseFloat(
-                                                            t.pop.toFixed(2),
-                                                        );
-                                                    }
-
-                                                    newTeams = helpers.addPopRank(
-                                                        newTeams,
-                                                    );
-
-                                                    // Add random team
-                                                    newTeams.unshift({
-                                                        tid: -1,
-                                                        region: "Random",
-                                                        name: "Team",
-                                                    });
-
-                                                    updatedState.teams = newTeams;
-                                                }
-
-                                                // Is a userTid specified?
-                                                if (
-                                                    leagueFile2.hasOwnProperty(
-                                                        "gameAttributes",
-                                                    )
-                                                ) {
-                                                    leagueFile2.gameAttributes.some(
-                                                        attribute => {
-                                                            if (
-                                                                attribute.key ===
-                                                                "userTid"
-                                                            ) {
-                                                                // Set it to select the userTid entry
-                                                                updatedState.tid =
-                                                                    attribute.value;
-                                                            }
-                                                        },
-                                                    );
-                                                }
-
-                                                this.setState(updatedState);
-                                            }}
+                                            onDone={this.onNewLeagueFile}
                                         />
                                     </div>
                                     <div className="checkbox">

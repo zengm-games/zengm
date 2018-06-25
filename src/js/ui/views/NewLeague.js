@@ -15,15 +15,15 @@ const PopText = ({ teams, tid }) => {
         if (t) {
             let size;
             if (t.popRank <= 3) {
-                size = "very small";
+                size = "very large";
             } else if (t.popRank <= 8) {
-                size = "small";
+                size = "large";
             } else if (t.popRank <= 16) {
                 size = "normal";
             } else if (t.popRank <= 24) {
-                size = "large";
+                size = "small";
             } else {
-                size = "very large";
+                size = "very small";
             }
 
             msg = (

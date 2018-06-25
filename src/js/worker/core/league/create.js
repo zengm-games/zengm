@@ -19,7 +19,7 @@ import {
 import type { Conditions, GameAttributes } from "../../../common/types";
 
 // Creates a league, writing nothing to the database.
-const createWithoutSaving = (
+export const createWithoutSaving = (
     leagueName: string,
     tid: number,
     leagueFile: Object,

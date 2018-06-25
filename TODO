@@ -1,5 +1,4 @@
-make league.create return JSON, not write directly to DB
-- after making sure things seem to be working, rewrite create.test.js to not use DB
+"works with weight function" test is flaky
 
 in multi team mode, is there any issue with players refusing to sign with the title winner?
 - https://www.reddit.com/message/messages/c9mcl2

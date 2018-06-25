@@ -3,7 +3,7 @@
 import { PHASE } from "../../../common";
 import { finances, team } from "..";
 import { idb } from "../../db";
-import { g, random } from "../../util";
+import { g, helpers, random } from "../../util";
 import type { GameResults } from "../../../common/types";
 
 const writeTeamStats = async (results: GameResults) => {
@@ -138,7 +138,7 @@ const writeTeamStats = async (results: GameResults) => {
         }
 
         // 5% bonus for easy, 5% penalty for hard, 20% penalty for insane
-        const fudgeFactor = 1 - 0.2 * g.difficulty;
+        const fudgeFactor = helpers.bound(1 - 0.2 * g.difficulty, 0, Infinity);
         merchRevenue *= fudgeFactor;
         sponsorRevenue *= fudgeFactor;
         nationalTvRevenue *= fudgeFactor;

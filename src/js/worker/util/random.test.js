@@ -41,7 +41,7 @@ describe("worker/util/random", () => {
                 e: 0,
             };
 
-            const N = 10000;
+            const N = 100000;
 
             const weightFunc = letter => (letter === "e" ? 10 : 1);
 
@@ -57,8 +57,8 @@ describe("worker/util/random", () => {
                     assert(counts[letter] < (10.5 / 14) * N);
                 } else {
                     // Should be 1/14 * N
-                    assert(counts[letter] > (0.9 / 14) * N);
-                    assert(counts[letter] < (1.1 / 14) * N);
+                    assert(counts[letter] > (0.8 / 14) * N);
+                    assert(counts[letter] < (1.2 / 14) * N);
                 }
             }
         });

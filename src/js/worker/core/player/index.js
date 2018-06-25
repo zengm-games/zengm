@@ -11,6 +11,7 @@ import compositeRating from "./compositeRating";
 import contractSeasonsRemaining from "./contractSeasonsRemaining";
 import develop from "./develop";
 import fuzzRating from "./fuzzRating";
+import genBaseMood from "./genBaseMood";
 import genBaseMoods from "./genBaseMoods";
 import genContract from "./genContract";
 import generate from "./generate";
@@ -39,6 +40,7 @@ export default {
     contractSeasonsRemaining,
     develop,
     fuzzRating,
+    genBaseMood,
     genBaseMoods,
     genContract,
     generate,

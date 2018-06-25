@@ -25,7 +25,8 @@ const newPhaseFreeAgency = async (conditions: Conditions) => {
         PLAYER.FREE_AGENT,
     ]);
     for (const p of players) {
-        await player.addToFreeAgents(p, PHASE.FREE_AGENCY, baseMoods);
+        player.addToFreeAgents(p, PHASE.FREE_AGENCY, baseMoods);
+        await idb.cache.players.put(p);
     }
 
     // AI teams re-sign players or they become free agents
@@ -74,16 +75,11 @@ const newPhaseFreeAgency = async (conditions: Conditions) => {
                     },
                     conditions,
                 );
-
-                // Else branch include call to addToFreeAgents, which handles updating the database
-                await idb.cache.players.put(p);
             } else {
-                await player.addToFreeAgents(
-                    p,
-                    PHASE.RESIGN_PLAYERS,
-                    baseMoods,
-                );
+                player.addToFreeAgents(p, PHASE.RESIGN_PLAYERS, baseMoods);
             }
+
+            await idb.cache.players.put(p);
         }
     }
 

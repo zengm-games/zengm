@@ -23,7 +23,9 @@ const newPhaseResignPlayers = async (conditions: Conditions) => {
             const tid = p.tid;
 
             // Add to free agents first, to generate a contract demand, then open negotiations with player
-            await player.addToFreeAgents(p, PHASE.RESIGN_PLAYERS, baseMoods);
+            player.addToFreeAgents(p, PHASE.RESIGN_PLAYERS, baseMoods);
+            await idb.cache.players.put(p);
+
             const error = await contractNegotiation.create(p.pid, true, tid);
             if (error !== undefined && error) {
                 logEvent(

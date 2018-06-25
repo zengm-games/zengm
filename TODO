@@ -1,5 +1,10 @@
+make league.create return JSON, not write directly to DB
+- after making sure things seem to be working, rewrite create.test.js to not use DB
+
 in multi team mode, is there any issue with players refusing to sign with the title winner?
 - https://www.reddit.com/message/messages/c9mcl2
+
+make screen with 100% minus ad
 
 re-evaluate contracts
 - somehow market based
@@ -30,8 +35,6 @@ increase PG cutoff
 option to edit AI trade rate https://www.reddit.com/r/BasketballGM/comments/8kqzl9/trade_frequency/
 
 "lineage" page to view all of a player's relatives
-
-make league.create return JSON, not write directly to DB
 
 index updating
 - currenty: check if the indexed property has changed, and only update a specific index then

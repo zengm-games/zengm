@@ -47,7 +47,8 @@ const release = async (p: Player, justDrafted: boolean) => {
     });
 
     const baseMoods = await genBaseMoods();
-    await addToFreeAgents(p, g.phase, baseMoods);
+    addToFreeAgents(p, g.phase, baseMoods);
+    await idb.cache.players.put(p);
 };
 
 export default release;

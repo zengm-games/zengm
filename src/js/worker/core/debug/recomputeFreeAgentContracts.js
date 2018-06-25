@@ -13,7 +13,8 @@ const recomputeFreeAgentContracts = async () => {
 
     const baseMoods = await player.genBaseMoods();
     for (const p of players) {
-        await player.addToFreeAgents(p, PHASE.FREE_AGENCY, baseMoods);
+        player.addToFreeAgents(p, PHASE.FREE_AGENCY, baseMoods);
+        await idb.cache.players.put(p);
     }
 
     await toUI(["realtimeUpdate", ["playerMovement"]]);

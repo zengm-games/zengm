@@ -60,10 +60,15 @@ describe("worker/core/league/create", () => {
         for (let i = 0; i < 6; i++) {
             assert.equal(testHelpers.numInArrayEqualTo(dids, i), 5);
         }
-        for (let i = 0; i < g.numTeams; i++) {
-            assert.equal(typeof leagueData.teams[i].name, "string");
-            assert.equal(typeof leagueData.teams[i].region, "string");
-            assert.equal(typeof leagueData.teams[i].tid, "number");
+
+        for (const t of leagueData.teams) {
+            assert.equal(typeof t.name, "string");
+            assert.equal(typeof t.region, "string");
+            assert.equal(typeof t.tid, "number");
+
+            for (const key of Object.keys(t.budget)) {
+                assert(t.budget[key].amount > 0);
+            }
         }
     });
 

@@ -55,12 +55,11 @@ export const createWithoutSaving = (
     } else {
         teamInfos = teamsDefault;
     }
-    const teams = teamInfos.map(t => team.generate(t));
 
     // Handle random team
     let userTid = tid;
-    if (tid === -1 || tid >= teams.length) {
-        userTid = random.randInt(0, teams.length - 1);
+    if (tid === -1 || tid >= team.length) {
+        userTid = random.randInt(0, team.length - 1);
     }
 
     const gameAttributes: GameAttributes = Object.assign(
@@ -72,11 +71,11 @@ export const createWithoutSaving = (
             season: startingSeason,
             startingSeason,
             leagueName,
-            teamAbbrevsCache: teams.map(t => t.abbrev),
-            teamRegionsCache: teams.map(t => t.region),
-            teamNamesCache: teams.map(t => t.name),
+            teamAbbrevsCache: teamInfos.map(t => t.abbrev),
+            teamRegionsCache: teamInfos.map(t => t.region),
+            teamNamesCache: teamInfos.map(t => t.name),
             gracePeriodEnd: startingSeason + 2, // Can't get fired for the first two seasons
-            numTeams: teams.length, // Will be 30 if the user doesn't supply custom rosters
+            numTeams: teamInfos.length, // Will be 30 if the user doesn't supply custom rosters
             difficulty,
         },
     );
@@ -109,6 +108,9 @@ export const createWithoutSaving = (
     // Hacky - put gameAttributes in g so they can be seen by functions called from this function. Later will be properly done with setGameAttributes
     helpers.resetG();
     Object.assign(g, gameAttributes);
+
+    // Needs to be done after g is set
+    const teams = teamInfos.map(t => team.generate(t));
 
     // Draft picks for the first 4 years, as those are the ones can be traded initially
     let draftPicks: any;

@@ -208,7 +208,7 @@ export const createWithoutSaving = (
         // Save scoutingRank for later
         if (i === userTid) {
             scoutingRankTemp = finances.getRankLastThree(
-                teamSeasons,
+                teamSeasonsLocal,
                 "expenses",
                 "scouting",
             );
@@ -216,6 +216,8 @@ export const createWithoutSaving = (
     }
     const scoutingRank = scoutingRankTemp;
     if (scoutingRank === undefined) {
+        console.log("teams", teams);
+        console.log("userTid", userTid);
         throw new Error("scoutingRank should be defined");
     }
 

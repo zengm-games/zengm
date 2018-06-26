@@ -188,7 +188,10 @@ class TradingBlock extends React.Component {
         };
         this.handleChangeAsset = this.handleChangeAsset.bind(this);
         this.handleClickAsk = this.handleClickAsk.bind(this);
+        this.handleClickAskBottom = this.handleClickAskBottom.bind(this);
         this.handleClickNegotiate = this.handleClickNegotiate.bind(this);
+
+        this.beforeOffersRef = React.createRef();
     }
 
     async handleChangeAsset(type, id) {
@@ -226,6 +229,13 @@ class TradingBlock extends React.Component {
             asking: false,
             offers,
         });
+    }
+
+    async handleClickAskBottom() {
+        await this.handleClickAsk();
+
+        // This actually scrolls to above the button, because I don't want to worry about the fixed header offset
+        this.beforeOffersRef.current.scrollIntoView();
     }
 
     async handleClickNegotiate(tid, otherPids, otherDpids) {
@@ -364,6 +374,8 @@ class TradingBlock extends React.Component {
                     </div>
                 </div>
 
+                <div ref={this.beforeOffersRef} />
+
                 <p />
                 <center>
                     <button
@@ -387,6 +399,27 @@ class TradingBlock extends React.Component {
                         />
                     );
                 })}
+
+                {this.state.offers.length > 0 ? (
+                    <div>
+                        <center>
+                            <p />
+                            <p>
+                                Don't like those offers? Well maybe you'll get
+                                lucky if you...
+                            </p>
+                            <button
+                                className="btn btn-lg btn-primary"
+                                disabled={this.state.asking}
+                                onClick={this.handleClickAskBottom}
+                            >
+                                {!this.state.asking
+                                    ? "Ask For Trade Proposals Again"
+                                    : "Asking..."}
+                            </button>
+                        </center>
+                    </div>
+                ) : null}
             </div>
         );
     }

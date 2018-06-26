@@ -6,8 +6,10 @@ import type { GameAttributes } from "../../../common/types";
 
 const updateMetaDifficulty = async (difficulty: number) => {
     const l = await idb.meta.leagues.get(g.lid);
-    l.difficulty = difficulty;
-    await idb.meta.leagues.put(l);
+    if (l) {
+        l.difficulty = difficulty;
+        await idb.meta.leagues.put(l);
+    }
 };
 
 /**

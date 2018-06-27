@@ -3,6 +3,7 @@
 /* eslint-disable import/first */
 import "../vendor/babel-external-helpers";
 import "../common/polyfills";
+import createBugsnagErrorBoundary from "bugsnag-react";
 import page from "page";
 import * as React from "react";
 import ReactDOM from "react-dom";
@@ -83,22 +84,6 @@ const genPage = (id, inLeague = true) => {
         Component: views[componentName],
     });
 };
-
-// Switch to https://github.com/bugsnag/bugsnag-react/ when upgrading to Bugsnag v4
-class ErrorBoundary extends React.Component<{ children: any }> {
-    // eslint-disable-next-line class-methods-use-this
-    componentDidCatch(error, info) {
-        if (window.Bugsnag) {
-            window.Bugsnag.notifyException(error, { react: info });
-        }
-        console.error("Error from React:");
-        console.error(error);
-    }
-
-    render() {
-        return this.props.children;
-    }
-}
 
 (async () => {
     // Put in DOM element and global variable because the former is used before React takes over and the latter is used after
@@ -187,12 +172,19 @@ class ErrorBoundary extends React.Component<{ children: any }> {
         throw new Error('Could not find element with id "content"');
     }
 
-    ReactDOM.render(
-        <ErrorBoundary>
-            <Controller />
-        </ErrorBoundary>,
-        contentEl,
-    );
+    if (window.bugsnagClient) {
+        const ErrorBoundary = window.bugsnagClient.use(
+            createBugsnagErrorBoundary(React),
+        );
+        ReactDOM.render(
+            <ErrorBoundary>
+                <Controller />
+            </ErrorBoundary>,
+            contentEl,
+        );
+    } else {
+        ReactDOM.render(<Controller />, contentEl);
+    }
 
     /*this.before((ctx) => {
             // Normal Cordova pages
@@ -362,8 +354,8 @@ class ErrorBoundary extends React.Component<{ children: any }> {
                 if (errMsg === "League not found.") {
                     errMsg = leagueNotFoundMessage;
                 } else {
-                    if (window.Bugsnag) {
-                        window.Bugsnag.notifyException(ctx.bbgm.err);
+                    if (window.bugsnagClient) {
+                        window.bugsnagClient.notify(ctx.bbgm.err);
                     }
                     console.error("Error from worker view:");
                     console.error(ctx.bbgm.err);

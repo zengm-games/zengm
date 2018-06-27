@@ -39,6 +39,7 @@
     "dependencies": {
         "ajv": "^6.5.1",
         "backboard": "^1.0.7",
+        "bugsnag-react": "^1.1.1",
         "classnames": "^2.2.6",
         "dompurify": "^1.0.5",
         "facesjs": "^1.0.1",

@@ -59,7 +59,7 @@ export const createWithoutSaving = (
     // Handle random team
     let userTid = tid;
     if (tid === -1 || tid >= team.length) {
-        userTid = random.randInt(0, team.length - 1);
+        userTid = random.randInt(0, teamInfos.length - 1);
     }
 
     const gameAttributes: GameAttributes = Object.assign(
@@ -216,8 +216,6 @@ export const createWithoutSaving = (
     }
     const scoutingRank = scoutingRankTemp;
     if (scoutingRank === undefined) {
-        console.log("teams", teams);
-        console.log("userTid", userTid);
         throw new Error("scoutingRank should be defined");
     }
 

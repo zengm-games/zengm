@@ -111,7 +111,11 @@ async function updateBoxScore(
         return;
     }
 
-    if (updateEvents.includes("firstRun") || gid !== state.boxScore.gid) {
+    if (
+        updateEvents.includes("firstRun") ||
+        !state.boxScore ||
+        gid !== state.boxScore.gid
+    ) {
         const game = await boxScore(gid);
 
         const vars = {

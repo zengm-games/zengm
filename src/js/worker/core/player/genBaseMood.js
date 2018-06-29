@@ -32,7 +32,9 @@ const genBaseMood = (teamSeason: TeamSeason): number => {
     baseMood += random.uniform(-0.2, 0.4);
 
     // Difficulty
-    baseMood += g.difficulty;
+    if (g.userTids.includes(teamSeason.tid)) {
+        baseMood += g.difficulty;
+    }
 
     baseMood = helpers.bound(baseMood, 0, 1.2);
 

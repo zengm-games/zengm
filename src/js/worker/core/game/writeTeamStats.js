@@ -138,7 +138,9 @@ const writeTeamStats = async (results: GameResults) => {
         }
 
         // 5% bonus for easy, 5% penalty for hard, 20% penalty for insane
-        const fudgeFactor = helpers.bound(1 - 0.2 * g.difficulty, 0, Infinity);
+        const fudgeFactor = g.userTids.includes(results.team[t1].id)
+            ? helpers.bound(1 - 0.2 * g.difficulty, 0, Infinity)
+            : 1;
         merchRevenue *= fudgeFactor;
         sponsorRevenue *= fudgeFactor;
         nationalTvRevenue *= fudgeFactor;

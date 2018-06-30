@@ -85,9 +85,16 @@
         releaseStage = "production";
       }
 
-      window.bugsnagClient = bugsnag({
+      window.bugsnagClient = window.bugsnag({
         apiKey: "c10b95290070cb8888a7a79cc5408555",
         appVersion: window.bbgmVersion,
+        autoCaptureSessions: false,
+        beforeSend: function (report) {
+          // Normalize league URLs to all look the same
+          if (report && typeof report.context === "string") {
+            report.context = report.context.replace(/^\/l\/[0-9]+?\//, "/l/0/");
+          }
+        },
         notifyReleaseStages: ["beta", "production"],
         releaseStage: releaseStage
       });

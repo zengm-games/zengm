@@ -1,12 +1,6 @@
 feature detection for shared workers actually working
 - https://bugzilla.mozilla.org/show_bug.cgi?id=1438945
 
-bugsnag
-- go over options
-- session
-- rewrite context with url like GA
-  -  https://docs.bugsnag.com/platforms/browsers/js/customizing-error-reports/#the-report-object
-
 Difficulty fudge factor should only be for user team (finances, trades)
 - for trades this is hard because valueChange does not know if it's the user's team or not, need to accept another parameter
 

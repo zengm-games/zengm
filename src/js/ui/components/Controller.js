@@ -338,9 +338,9 @@ class Controller extends React.Component<{}, State> {
         }
 
         return (
-            <div className="container">
-                <Provider>
-                    <NavBar pageId={pageId} updating={updating} />
+            <Provider>
+                <NavBar pageId={pageId} updating={updating} />
+                <div className="container">
                     <Header />
                     <div
                         id="screenshot-nonleague"
@@ -353,8 +353,8 @@ class Controller extends React.Component<{}, State> {
                         close={this.closeNagModal}
                         show={this.state.showNagModal}
                     />
-                </Provider>
-            </div>
+                </div>
+            </Provider>
         );
     }
 }

@@ -155,6 +155,7 @@ async function updateGamesList(
 
     if (
         updateEvents.includes("firstRun") ||
+        !state.gamesList ||
         abbrev !== state.gamesList.abbrev ||
         season !== state.gamesList.season ||
         (updateEvents.includes("gameSim") && season === g.season)

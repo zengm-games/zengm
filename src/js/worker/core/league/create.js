@@ -319,6 +319,10 @@ export const createWithoutSaving = (
             );
             player.updateValues(p);
 
+            if (p.tid >= g.numTeams) {
+                p.tid = PLAYER.FREE_AGENT;
+            }
+
             return p;
         });
     } else {

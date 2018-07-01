@@ -100,6 +100,10 @@ class Controller extends React.Component<{}, State> {
 
     updateState: Function;
 
+    idLoaded: string | void;
+
+    idLoading: string | void;
+
     constructor(props: {}) {
         super(props);
         this.state = {
@@ -110,6 +114,9 @@ class Controller extends React.Component<{}, State> {
             data: {},
             showNagModal: false,
         };
+        this.idLoaded = undefined;
+        this.idLoading = undefined;
+
         this.closeNagModal = this.closeNagModal.bind(this);
         this.get = this.get.bind(this);
         this.updatePage = this.updatePage.bind(this);
@@ -206,6 +213,27 @@ class Controller extends React.Component<{}, State> {
     ) {
         let prevData;
 
+        if (window.bugsnagClient) {
+            if (this.idLoading !== this.state.idLoading) {
+                const err = new Error(
+                    `idLoading: ${String(
+                        this.idLoading,
+                    )}, state.idLoading: ${String(this.state.idLoading)}`,
+                );
+                err.name = "UpdatePageRaceError1";
+                window.bugsnagClient.notify(err);
+            }
+            if (this.idLoaded !== this.state.idLoaded) {
+                const err = new Error(
+                    `idLoaded: ${String(
+                        this.idLoaded,
+                    )}, state.idLoaded: ${String(this.state.idLoaded)}`,
+                );
+                err.name = "UpdatePageRaceError2";
+                window.bugsnagClient.notify(err);
+            }
+        }
+
         // Reset league content and view model only if it's:
         // (1) if it's not loaded and not loading yet
         // (2) loaded, but loading something else
@@ -231,6 +259,7 @@ class Controller extends React.Component<{}, State> {
         this.setState({
             idLoading: args.id,
         });
+        this.idLoading = args.id;
 
         // Resolve all the promises before updating the UI to minimize flicker
         const results = await toWorker(
@@ -246,6 +275,7 @@ class Controller extends React.Component<{}, State> {
             this.setState({
                 idLoading: undefined,
             });
+            this.idLoading = undefined;
             return;
         }
 
@@ -279,6 +309,7 @@ class Controller extends React.Component<{}, State> {
             this.setState({
                 idLoading: undefined,
             });
+            this.idLoading = undefined;
 
             await realtimeUpdate([], vars.data.redirectUrl);
             return;
@@ -302,6 +333,8 @@ class Controller extends React.Component<{}, State> {
                     }
                 },
             );
+            this.idLoaded = args.id;
+            this.idLoading = undefined;
         }
     }
 

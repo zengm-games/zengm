@@ -1,3 +1,8 @@
+weird bugsnag errors, like race conditions in view loading
+- could be because of using setState to set idLoading and iLoaded, since it can be async
+  - see bugsnag code in updatePage, should diagnose if this is true
+  - if it is, don't use setState for this!
+
 feature detection for shared workers actually working
 - https://bugzilla.mozilla.org/show_bug.cgi?id=1438945
 

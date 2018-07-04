@@ -84,8 +84,7 @@ type Args = {
 
 type State = {
     Component: any,
-    idLoaded?: string,
-    idLoading?: string,
+    loading: boolean,
     inLeague: boolean,
     data: { [key: string]: any },
     showNagModal: boolean,
@@ -108,8 +107,7 @@ class Controller extends React.Component<{}, State> {
         super(props);
         this.state = {
             Component: undefined,
-            idLoaded: undefined,
-            idLoading: undefined,
+            loading: false,
             inLeague: false,
             data: {},
             showNagModal: false,
@@ -213,43 +211,21 @@ class Controller extends React.Component<{}, State> {
     ) {
         let prevData;
 
-        if (window.bugsnagClient) {
-            if (this.idLoading !== this.state.idLoading) {
-                const err = new Error(
-                    `idLoading: ${String(
-                        this.idLoading,
-                    )}, state.idLoading: ${String(this.state.idLoading)}`,
-                );
-                err.name = "UpdatePageRaceError1";
-                window.bugsnagClient.notify(err);
-            }
-            if (this.idLoaded !== this.state.idLoaded) {
-                const err = new Error(
-                    `idLoaded: ${String(
-                        this.idLoaded,
-                    )}, state.idLoaded: ${String(this.state.idLoaded)}`,
-                );
-                err.name = "UpdatePageRaceError2";
-                window.bugsnagClient.notify(err);
-            }
-        }
-
         // Reset league content and view model only if it's:
         // (1) if it's not loaded and not loading yet
         // (2) loaded, but loading something else
         if (
-            (this.state.idLoaded !== args.id &&
-                this.state.idLoading !== args.id) ||
-            (this.state.idLoaded === args.id &&
-                this.state.idLoading !== args.id &&
-                this.state.idLoading !== undefined)
+            (this.idLoaded !== args.id && this.idLoading !== args.id) ||
+            (this.idLoaded === args.id &&
+                this.idLoading !== args.id &&
+                this.idLoading !== undefined)
         ) {
             if (!updateEvents.includes("firstRun")) {
                 updateEvents.push("firstRun");
             }
 
             prevData = {};
-        } else if (this.state.idLoading === args.id) {
+        } else if (this.idLoading === args.id) {
             // If this view is already loading, no need to update (in fact, updating can cause errors because the firstRun updateEvent is not set and thus some first-run-defined view model properties might be accessed).
             return;
         } else {
@@ -257,7 +233,7 @@ class Controller extends React.Component<{}, State> {
         }
 
         this.setState({
-            idLoading: args.id,
+            loading: true,
         });
         this.idLoading = args.id;
 
@@ -273,7 +249,7 @@ class Controller extends React.Component<{}, State> {
         // If results is undefined, it means the league wasn't loaded yet at the time of the request, likely because another league was opening in another tab at the same time. So stop now and wait until we get a signal that there is a new league.
         if (results === undefined) {
             this.setState({
-                idLoading: undefined,
+                loading: false,
             });
             this.idLoading = undefined;
             return;
@@ -300,14 +276,15 @@ class Controller extends React.Component<{}, State> {
 
         const vars = {
             Component,
-            inLeague: args.inLeague,
             data: Object.assign(prevData, ...results),
+            loading: false,
+            inLeague: args.inLeague,
         };
 
         if (vars.data && vars.data.redirectUrl !== undefined) {
             // Reset idLoading, otherwise it will think loading is already in progress on redirect
             this.setState({
-                idLoading: undefined,
+                loading: false,
             });
             this.idLoading = undefined;
 
@@ -315,26 +292,17 @@ class Controller extends React.Component<{}, State> {
             return;
         }
 
-        this.setState(vars);
+        // Make sure user didn't navigate to another page while async stuff was happening
+        if (this.idLoading === args.id) {
+            this.setState(vars);
 
-        if (this.state.idLoading === args.id) {
-            this.setState(
-                {
-                    idLoaded: args.id,
-                    idLoading: undefined,
-                },
-                () => {
-                    // Scroll to top
-                    if (
-                        updateEvents.length === 1 &&
-                        updateEvents[0] === "firstRun"
-                    ) {
-                        window.scrollTo(window.pageXOffset, 0);
-                    }
-                },
-            );
             this.idLoaded = args.id;
             this.idLoading = undefined;
+
+            // Scroll to top if this load came from user clicking a link
+            if (updateEvents.length === 1 && updateEvents[0] === "firstRun") {
+                window.scrollTo(window.pageXOffset, 0);
+            }
         }
     }
 
@@ -343,9 +311,7 @@ class Controller extends React.Component<{}, State> {
     }
 
     render() {
-        const { Component, data, idLoaded, idLoading, inLeague } = this.state;
-
-        const updating = idLoading !== undefined;
+        const { Component, data, loading, inLeague } = this.state;
 
         let contents;
         let pageId;
@@ -354,7 +320,8 @@ class Controller extends React.Component<{}, State> {
         } else if (!inLeague) {
             contents = <Component {...data} />;
         } else {
-            pageId = idLoading !== undefined ? idLoading : idLoaded;
+            pageId =
+                this.idLoading !== undefined ? this.idLoading : this.idLoaded;
 
             contents = (
                 <div>
@@ -362,7 +329,7 @@ class Controller extends React.Component<{}, State> {
                         <LeagueContent
                             Component={Component}
                             data={data}
-                            updating={updating}
+                            updating={loading}
                         />
                     </LeagueWrapper>
                     <MultiTeamMenu />
@@ -372,7 +339,7 @@ class Controller extends React.Component<{}, State> {
 
         return (
             <Provider>
-                <NavBar pageId={pageId} updating={updating} />
+                <NavBar pageId={pageId} updating={loading} />
                 <div className="container">
                     <Header />
                     <div

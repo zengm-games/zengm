@@ -81,6 +81,19 @@ async function updateDraft(
 
         let draftPicks = await draft.getOrder();
 
+        // DIRTY QUICK FIX FOR sometimes there are twice as many draft picks as needed, and one set has all pick 0
+        if (!fantasyDraft && draftPicks.length > 2 * g.numTeams) {
+            const draftPicks2 = draftPicks.filter(dp => dp.pick > 0);
+            if (draftPicks2.length === 2 * g.numTeams) {
+                draftPicks = draftPicks2;
+
+                const toDelete = draftPicks.filter(dp => dp.pick === 0);
+                for (const dp of toDelete) {
+                    await idb.cache.draftPicks.delete(dp.dpid);
+                }
+            }
+        }
+
         // DIRTY QUICK FIX FOR https://github.com/dumbmatter/basketball-gm/issues/246
         // Not sure why this is needed! Maybe related to lottery running before the phase change?
         if (draftPicks.some(dp => dp.pick === 0)) {

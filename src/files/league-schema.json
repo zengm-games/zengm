@@ -442,10 +442,9 @@
                     },
                     "teams": {
                         "type": "array",
-                        "items": {
-                            "type": "array",
-                            "items": [{}, {}]
-                        }
+                        "items": {},
+                        "minItems": 2,
+                        "maxItems": 2
                     },
                     "won": {
                         "type": "object",

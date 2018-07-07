@@ -1,6 +1,3 @@
-desc seems to be added to traded draft picks and saved to database, maybe others too
-- need getCopies.draftPicks, use everywhere pickDesc is called
-
 show mood all the time, not just for free agents
 
 Difficulty fudge factor should only be for user team (finances, trades)

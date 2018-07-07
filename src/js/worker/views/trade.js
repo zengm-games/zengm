@@ -69,10 +69,7 @@ async function updateTrade(): void | { [key: string]: any } {
         "playersByTid",
         g.userTid,
     );
-    const userPicks: any = await idb.cache.draftPicks.indexGetAll(
-        "draftPicksByTid",
-        g.userTid,
-    );
+    const userPicks: any = await idb.getCopies.draftPicks({ tid: g.userTid });
 
     const attrs = [
         "pid",
@@ -106,8 +103,8 @@ async function updateTrade(): void | { [key: string]: any } {
         }
     }
 
-    for (let i = 0; i < userPicks.length; i++) {
-        userPicks[i].desc = helpers.pickDesc(userPicks[i]);
+    for (const dp of userPicks) {
+        dp.desc = helpers.pickDesc(dp);
     }
 
     const otherTid = teams[1].tid;
@@ -117,10 +114,7 @@ async function updateTrade(): void | { [key: string]: any } {
         "playersByTid",
         otherTid,
     );
-    const otherPicks: any = await idb.cache.draftPicks.indexGetAll(
-        "draftPicksByTid",
-        otherTid,
-    );
+    const otherPicks: any = await idb.getCopies.draftPicks({ tid: otherTid });
     const t = await idb.getCopy.teamsPlus({
         tid: otherTid,
         season: g.season,
@@ -154,8 +148,8 @@ async function updateTrade(): void | { [key: string]: any } {
         }
     }
 
-    for (let i = 0; i < otherPicks.length; i++) {
-        otherPicks[i].desc = helpers.pickDesc(otherPicks[i]);
+    for (const dp of otherPicks) {
+        dp.desc = helpers.pickDesc(dp);
     }
 
     let vars: any = {

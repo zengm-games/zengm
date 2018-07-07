@@ -16,7 +16,7 @@ async function updateUserRoster(
     ) {
         let [userRoster, userPicks] = await Promise.all([
             idb.cache.players.indexGetAll("playersByTid", g.userTid),
-            idb.cache.draftPicks.indexGetAll("draftPicksByTid", g.userTid),
+            await idb.getCopies.draftPicks({ tid: g.userTid }),
         ]);
 
         userRoster = await idb.getCopies.playersPlus(userRoster, {
@@ -39,16 +39,14 @@ async function updateUserRoster(
         });
         userRoster = trade.filterUntradable(userRoster);
 
-        const userPicksWithDescs = userPicks.map(pick => {
-            const pickWithDesc: any = helpers.deepCopy(pick);
-            pickWithDesc.desc = helpers.pickDesc(pickWithDesc);
-            return pickWithDesc;
-        });
+        for (const dp of userPicks) {
+            dp.desc = helpers.pickDesc(dp);
+        }
 
         return {
             gameOver: g.gameOver,
             phase: g.phase,
-            userPicks: userPicksWithDescs,
+            userPicks,
             userRoster,
         };
     }

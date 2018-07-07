@@ -48,6 +48,10 @@ const handleAutoSort = async () => {
     await toWorker("autoSortRoster");
 };
 
+const handleResetPT = async (tid: number) => {
+    await toWorker("resetPlayingTime", tid);
+};
+
 const handleRelease = async (p, phase, season) => {
     // If a player was just drafted by his current team and the regular season hasn't started, then he can be released without paying anything
     const justDrafted =
@@ -480,14 +484,20 @@ class Roster extends React.Component {
                     </p>
                 ) : null}
                 {editable ? (
-                    <p>
+                    <div className="btn-group" style={{ marginBottom: "1em" }}>
                         <button
                             className="btn btn-default"
                             onClick={handleAutoSort}
                         >
                             Auto sort roster
                         </button>
-                    </p>
+                        <button
+                            className="btn btn-default"
+                            onClick={() => handleResetPT(t.tid)}
+                        >
+                            Reset playing time
+                        </button>
+                    </div>
                 ) : null}
 
                 <div className="table-responsive">

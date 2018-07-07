@@ -1,12 +1,4 @@
-button to reset PT modifiers
-
 show mood all the time, not just for free agents
-
-weird bugsnag errors, like race conditions in view loading
-- fixed after july 3?
-
-feature detection for shared workers actually working
-- https://bugzilla.mozilla.org/show_bug.cgi?id=1438945
 
 Difficulty fudge factor should only be for user team (finances, trades)
 - for trades this is hard because valueChange does not know if it's the user's team or not, need to accept another parameter

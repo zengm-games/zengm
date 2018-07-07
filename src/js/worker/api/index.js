@@ -898,6 +898,15 @@ const reorderRosterDrag = async (sortedPids: number[]) => {
     await toUI(["realtimeUpdate", ["playerMovement"]]);
 };
 
+const resetPlayingTime = async (tid: number) => {
+    const players = await idb.cache.players.indexGetAll("playersByTid", tid);
+    for (const p of players) {
+        p.ptModifier = 1;
+        await idb.cache.players.put(p);
+    }
+    await toUI(["realtimeUpdate", ["playerMovement"]]);
+};
+
 const runBefore = async (
     viewId: string,
     inputs: GetOutput,
@@ -1284,6 +1293,7 @@ export default {
     releasePlayer,
     removeLeague,
     reorderRosterDrag,
+    resetPlayingTime,
     runBefore,
     startFantasyDraft,
     switchTeam,

@@ -46,12 +46,13 @@ async function updateTeam(
             region: t.region,
             name: t.name,
             abbrev: t.abbrev,
-            won: latestSeason.won,
-            lost: latestSeason.lost,
-            cash: latestSeason.cash / 1000, // [millions of dollars]
+            won: latestSeason !== undefined ? latestSeason.won : 0,
+            lost: latestSeason !== undefined ? latestSeason.lost : 0,
+            cash: latestSeason !== undefined ? latestSeason.cash / 1000 : 0, // [millions of dollars]
             salaryCap: g.salaryCap / 1000, // [millions of dollars]
             season: g.season,
-            playoffRoundsWon: latestSeason.playoffRoundsWon,
+            playoffRoundsWon:
+                latestSeason !== undefined ? latestSeason.playoffRoundsWon : 0,
             numGames: g.numGames,
             phase: g.phase,
             userTid: g.userTid,

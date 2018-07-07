@@ -137,12 +137,15 @@ const augmentPartialPlayer = (
     }
 
     // See if we need to fix a fucked up ratings season for draft prospect
-    if (
-        p.ratings.length === 1 &&
-        [PLAYER.UNDRAFTED, PLAYER.UNDRAFTED_2, PLAYER.UNDRAFTED_3].includes(
-            p.tid,
-        )
-    ) {
+    const isUndrafted = [
+        PLAYER.UNDRAFTED,
+        PLAYER.UNDRAFTED_2,
+        PLAYER.UNDRAFTED_3,
+        PLAYER.UNDRAFTED_FANTASY_TEMP,
+    ].includes(p.tid);
+    const fantasyDraft =
+        g.phase === PHASE.FANTASY_DRAFT && p.tid === PLAYER.UNDRAFTED;
+    if (p.ratings.length === 1 && isUndrafted && !fantasyDraft) {
         const r = p.ratings[0];
         if (typeof p.draft.year === "number" && p.draft.year !== r.season) {
             r.season = p.draft.year;

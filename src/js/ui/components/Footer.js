@@ -17,7 +17,7 @@ class Footer extends React.Component<{}> {
 
                 <div className="banner-ad" style={{ position: "relative" }}>
                     <div
-                        id="basketballgm_300x250_BTF_Left"
+                        id="bbgm-ads-bottom1"
                         style={{
                             display: "none",
                             textAlign: "center",
@@ -48,7 +48,7 @@ class Footer extends React.Component<{}> {
                         />
                     </div>
                     <div
-                        id="basketballgm_300x250_BTF_Right"
+                        id="bbgm-ads-bottom2"
                         style={{
                             display: "none",
                             textAlign: "center",

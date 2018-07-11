@@ -6,9 +6,7 @@ import * as React from "react";
 const widthCutoff = 1170 + 160;
 
 const updateSkyscraperDisplay = () => {
-    const div = document.getElementById(
-        "basketballgm_300x250_160x600_300x600_Right",
-    );
+    const div = document.getElementById("bbgm-ads-skyscraper");
     if (div) {
         const documentElement = document.documentElement;
         if (documentElement) {
@@ -80,22 +78,20 @@ class Header extends React.Component<{}> {
             <div>
                 <div
                     className="banner-ad"
-                    id="basketballgm_728x90_320x50_ATF"
+                    id="bbgm-ads-top"
                     style={{
                         display: "none",
                         textAlign: "center",
                         minHeight: "95px",
                         marginTop: "1em",
                     }}
-                    data-refresh-time="-1"
                 />
                 <div className="banner-ad skyscraper-wrapper">
                     <div
-                        id="basketballgm_300x250_160x600_300x600_Right"
+                        id="bbgm-ads-skyscraper"
                         style={{
                             display: "none",
                         }}
-                        data-refresh-time="-1"
                     />
                 </div>
                 {embedInfo}

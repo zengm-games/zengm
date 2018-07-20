@@ -385,11 +385,6 @@ const genPage = (id, inLeague = true) => {
                         // Normalize league URLs to all look the same
                         page_path: ctx.path.replace(/^\/l\/[0-9]+?\//, "/l/0/"),
                     });
-
-                    window._qevents.push({
-                        qacct: "p-M1Q1fpfqa7Vk4",
-                        event: "click",
-                    });
                 }
             }
 

@@ -97,6 +97,7 @@ class StoreAPI<Input, Output, ID> {
 
     store: Store;
 
+    // eslint-disable-next-line no-use-before-define
     constructor(cache: Cache, store: Store) {
         this.cache = cache;
         this.store = store;

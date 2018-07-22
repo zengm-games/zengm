@@ -27,10 +27,15 @@ const copyValidValues = (source, target, minContract, phase, season) => {
     target.lastName = source.lastName;
     target.imgURL = source.imgURL;
 
+    let updatedRatingsOrAge = false;
     {
         const age = parseInt(source.age, 10);
         if (!Number.isNaN(age)) {
-            target.born.year = season - age;
+            const bornYear = season - age;
+            if (bornYear !== target.born.year) {
+                target.born.year = bornYear;
+                updatedRatingsOrAge = true;
+            }
         }
     }
 
@@ -116,7 +121,10 @@ const copyValidValues = (source, target, minContract, phase, season) => {
                     100,
                 );
                 if (!Number.isNaN(val)) {
-                    target.ratings[r][rating] = val;
+                    if (target.ratings[r][rating] !== val) {
+                        target.ratings[r][rating] = val;
+                        updatedRatingsOrAge = true;
+                    }
                 }
             }
         }
@@ -140,6 +148,8 @@ const copyValidValues = (source, target, minContract, phase, season) => {
     }
 
     target.face.color = source.face.color;
+
+    return updatedRatingsOrAge;
 };
 
 class CustomizePlayer extends React.Component {
@@ -172,7 +182,7 @@ class CustomizePlayer extends React.Component {
         const p = this.props.p;
 
         // Copy over values from state, if they're valid
-        copyValidValues(
+        const updatedRatingsOrAge = copyValidValues(
             this.state.p,
             p,
             this.props.minContract,
@@ -190,6 +200,7 @@ class CustomizePlayer extends React.Component {
             p,
             this.props.originalTid,
             this.props.season,
+            updatedRatingsOrAge,
         );
 
         realtimeUpdate([], helpers.leagueUrl(["player", pid]));

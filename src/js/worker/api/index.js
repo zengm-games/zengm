@@ -1098,6 +1098,7 @@ const upsertCustomizedPlayer = async (
     p: Player | PlayerWithoutPid,
     originalTid: number,
     season: number,
+    updatedRatingsOrAge: boolean,
 ): Promise<number> => {
     const r = p.ratings.length - 1;
 
@@ -1165,9 +1166,11 @@ const upsertCustomizedPlayer = async (
         p.draft.year = g.season - 1;
     }
 
-    // Recalculate player values, since ratings may have changed
-    player.develop(p, 0);
-    player.updateValues(p);
+    // Recalculate player values if necessary
+    if (updatedRatingsOrAge) {
+        player.develop(p, 0);
+        player.updateValues(p);
+    }
 
     // Add regular season or playoffs stat row, if necessary
     if (p.tid >= 0 && p.tid !== originalTid && g.phase <= PHASE.PLAYOFFS) {

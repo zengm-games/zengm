@@ -2,6 +2,7 @@
 
 import { finances } from "..";
 import { g, helpers, random } from "../../util";
+import { PHASE } from "../../../common";
 import type { TeamSeason } from "../../../common/types";
 
 const genBaseMood = (teamSeason: TeamSeason): number => {
@@ -31,12 +32,19 @@ const genBaseMood = (teamSeason: TeamSeason): number => {
     // Randomness
     baseMood += random.uniform(-0.2, 0.4);
 
+    baseMood = helpers.bound(baseMood, 0, 1.2);
+
     // Difficulty
     if (g.userTids.includes(teamSeason.tid)) {
         baseMood += g.difficulty;
     }
 
-    baseMood = helpers.bound(baseMood, 0, 1.2);
+    // Don't let difficulty have too crazy of an impact, for re-signing at least
+    if (g.phase === PHASE.AFTER_DRAFT) {
+        baseMood = helpers.bound(baseMood, 0, 1.5);
+    } else if (g.difficulty > 0) {
+        baseMood = helpers.bound(baseMood, 0, 1.5 + g.difficulty);
+    }
 
     return baseMood;
 };

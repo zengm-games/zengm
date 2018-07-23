@@ -48,7 +48,7 @@ const copyValidValues = (source, target, minContract, phase, season) => {
         if (!Number.isNaN(diedYear)) {
             target.diedYear = diedYear;
         } else {
-            target.diedYear = null;
+            target.diedYear = undefined;
         }
     }
 

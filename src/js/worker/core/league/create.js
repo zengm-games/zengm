@@ -18,6 +18,25 @@ import {
 } from "../../util";
 import type { Conditions, GameAttributes } from "../../../common/types";
 
+const getNumPlayoffRounds = (numPlayoffRounds, numTeams) => {
+    if (
+        typeof numPlayoffRounds !== "number" ||
+        Number.isNaN(numPlayoffRounds) ||
+        numPlayoffRounds <= 0
+    ) {
+        return 1;
+    }
+
+    for (let num = numPlayoffRounds; num > 0; num--) {
+        const numPlayoffTeams = 2 ** num;
+        if (numPlayoffTeams < numTeams) {
+            return num;
+        }
+    }
+
+    throw new Error("Cannot find numPlayoffTeams less than numTeams");
+};
+
 // Creates a league, writing nothing to the database.
 export const createWithoutSaving = (
     leagueName: string,
@@ -104,6 +123,12 @@ export const createWithoutSaving = (
     if (difficulty <= DIFFICULTY.Easy) {
         gameAttributes.easyDifficultyInPast = true;
     }
+
+    // Ensure numPlayoffRounds doesn't have an invalid value, relative to numTeams
+    gameAttributes.numPlayoffRounds = getNumPlayoffRounds(
+        gameAttributes.numPlayoffRounds,
+        gameAttributes.numTeams,
+    );
 
     // Hacky - put gameAttributes in g so they can be seen by functions called from this function. Later will be properly done with setGameAttributes
     helpers.resetG();

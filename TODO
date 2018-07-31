@@ -1,6 +1,15 @@
+firefox private window - need to listen to onerror in goodIDB and show useful error message
+- https://bugzilla.mozilla.org/show_bug.cgi?id=781982#c62
+
+resign vs re-sign
+
+fix contracts old players too cheap
+
 super high positive fuzz is bad, because it makes future draft prospects look unrealistically good. somehow attenuate it
 
 show mood all the time, not just for free agents
+
+flex-design https://www.reddit.com/r/nba/comments/93e9xt/i_made_basketball_gm_a_basketball_management_sim/e3crs54/?context=3
 
 Difficulty fudge factor should only be for user team (finances, trades)
 - for trades this is hard because valueChange does not know if it's the user's team or not, need to accept another parameter

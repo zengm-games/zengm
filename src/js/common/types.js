@@ -635,6 +635,12 @@ type BudgetItem = {|
     rank: number,
 |};
 
+type TaxItem = {|
+    amount: number,
+    rank: number,
+    repeaterMultiplier: number,
+|};
+
 export type TeamSeason = {|
     tid: number,
     season: number,
@@ -668,8 +674,8 @@ export type TeamSeason = {|
     |},
     expenses: {|
         salary: BudgetItem,
-        luxuryTax: BudgetItem,
-        minTax: BudgetItem,
+        luxuryTax: TaxItem,
+        minTax: TaxItem,
         scouting: BudgetItem,
         coaching: BudgetItem,
         health: BudgetItem,

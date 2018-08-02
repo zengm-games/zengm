@@ -20,21 +20,40 @@ const assessPayrollMinLuxury = async () => {
         "teamSeasonsBySeasonTid",
         [`${g.season}`, `${g.season},Z`],
     );
+
     for (const teamSeason of teamSeasons) {
         // Store payroll
         teamSeason.payrollEndOfSeason = payrolls[teamSeason.tid];
 
         // Assess minimum payroll tax and luxury tax
         if (payrolls[teamSeason.tid] < g.minPayroll) {
-            teamSeason.expenses.minTax.amount =
-                g.minPayroll - payrolls[teamSeason.tid];
-            teamSeason.cash -= teamSeason.expenses.minTax.amount;
-        } else if (payrolls[teamSeason.tid] > g.luxuryPayroll) {
             const amount =
-                g.luxuryTax * (payrolls[teamSeason.tid] - g.luxuryPayroll);
+                (g.minPayroll - payrolls[teamSeason.tid]) *
+                teamSeason.expenses.minTax.repeaterMultiplier;
+            teamSeason.expenses.minTax.amount = amount;
+            teamSeason.cash -= teamSeason.expenses.minTax.amount;
+            teamSeason.expenses.minTax.repeaterMultiplier = Math.min(
+                teamSeason.expenses.minTax.repeaterMultiplier + 1.0,
+                5.0,
+            );
+        } else {
+            teamSeason.expenses.minTax.repeaterMultiplier = 1.0;
+        }
+
+        if (payrolls[teamSeason.tid] > g.luxuryPayroll) {
+            const amount =
+                g.luxuryTax *
+                (payrolls[teamSeason.tid] - g.luxuryPayroll) *
+                teamSeason.expenses.luxuryTax.repeaterMultiplier;
             collectedTax += amount;
             teamSeason.expenses.luxuryTax.amount = amount;
             teamSeason.cash -= teamSeason.expenses.luxuryTax.amount;
+            teamSeason.expenses.luxuryTax.repeaterMultiplier = Math.min(
+                teamSeason.expenses.luxuryTax.repeaterMultiplier + 1.0,
+                5.0,
+            );
+        } else {
+            teamSeason.expenses.luxuryTax.repeaterMultiplier = 1.0;
         }
     }
 

@@ -61,10 +61,12 @@ const genSeasonRow = (tid: number, prevSeason?: TeamSeason): TeamSeason => {
             luxuryTax: {
                 amount: 0,
                 rank: 15.5,
+                repeaterMultiplier: 1.0,
             },
             minTax: {
                 amount: 0,
                 rank: 15.5,
+                repeaterMultiplier: 1.0,
             },
             scouting: {
                 amount: 0,
@@ -92,6 +94,10 @@ const genSeasonRow = (tid: number, prevSeason?: TeamSeason): TeamSeason => {
         newSeason.stadiumCapacity = prevSeason.stadiumCapacity;
         newSeason.hype = prevSeason.hype;
         newSeason.cash = prevSeason.cash;
+        newSeason.expenses.luxuryTax.repeaterMultiplier =
+            prevSeason.expenses.luxuryTax.repeaterMultiplier;
+        newSeason.expenses.minTax.repeaterMultiplier =
+            prevSeason.expenses.minTax.repeaterMultiplier;
     }
 
     return newSeason;

@@ -176,7 +176,7 @@
       // Browser compatibility checks! https://gist.github.com/jensarps/15f270874889e1717b3d
       var goodIDB = function (cb) {
         if (typeof window.indexedDB === "undefined") {
-          cb(false);
+          cb("bad");
           return;
         }
 
@@ -186,11 +186,16 @@
         try {
           keyRange.only([1]);
         } catch (e) {
-          cb(false);
+          cb("bad");
           return;
         }
 
         var openRequest = idb.open('__detectIDB_test2', 1);
+
+        openRequest.onerror = function (evt) {
+          console.error(evt.target.error);
+          cb("firefox-private");
+        }
 
         openRequest.onupgradeneeded = function (evt) {
           var db = evt.target.result;
@@ -214,7 +219,7 @@
           try {
             transaction = db.transaction(['one', 'two'], 'readwrite');
           } catch (e) {
-            cb(false);
+            cb("bad");
             return;
           }
 
@@ -229,7 +234,7 @@
 
           transaction.oncomplete = function () {
             db.close();
-            cb(count === 1); // Will be 2 in Safari 10 https://bugs.webkit.org/show_bug.cgi?id=158833
+            cb(count === 1 ? "good" : "bad"); // Will be 2 in Safari 10 https://bugs.webkit.org/show_bug.cgi?id=158833
           };
         };
       };
@@ -252,10 +257,14 @@
         }
       };
 
-      goodIDB(function (hasIDB) {
-        if (!hasIDB || !supportsArrowFunctions() || !supportsSymbol()) {
-          var errorMsg = '<p><b>Error!</b> Your browser is not modern enough to run Basketball GM. The latest versions of <a href="https://www.firefox.com/">Mozilla Firefox</a> and <a href="https://www.google.com/chrome/">Google Chrome</a> work best.</p>';
-          var errorMsg = '<p><b>Error!</b> Your browser is not modern enough to run Basketball GM. The latest versions of <a href="https://www.firefox.com/">Mozilla Firefox</a> and <a href="https://www.google.com/chrome/">Google Chrome</a> work best.</p>';
+      goodIDB(function (idbResult) {
+        if (idbResult !== "good" || !supportsArrowFunctions() || !supportsSymbol()) {
+          var errorMsg;
+          if (idbResult === "firefox-private") {
+            errorMsg = '<p><b>Error!</b> Are you using Firefox in Private Browsing mode? There is currently a bug in Firefox preventing that from working with Basketball GM. Either load this outside of Private Browsing mode, or try using <a href="https://www.google.com/chrome/">Google Chrome</a> instead.</p>';
+          } else {
+            errorMsg = '<p><b>Error!</b> Your browser is not modern enough to run Basketball GM. The latest version of <a href="https://www.google.com/chrome/">Google Chrome</a> work best.</p>';
+          }
 
           // Special error for Apple's mobile devices, as that's the only platform that is totally unsupported (no alternative browser to install)
           if (/(iPad|iPhone|iPod)/.test(navigator.userAgent)) {

@@ -224,11 +224,19 @@ const newSchedule = (teams: Team[]): [number, number][] => {
             break;
         }
     }
+    let twoConfsEvenTeams = g.confs.length === 2;
+    for (const conf of g.confs) {
+        if (teams.filter(t => t.cid === conf.cid).length !== teams.length / 2) {
+            twoConfsEvenTeams = false;
+            break;
+        }
+    }
     if (
         g.numTeams === 30 &&
         g.numGames === 82 &&
         g.confs.length === 2 &&
-        threeDivsPerConf
+        threeDivsPerConf &&
+        twoConfsEvenTeams
     ) {
         tids = newScheduleDefault(teams);
     } else {

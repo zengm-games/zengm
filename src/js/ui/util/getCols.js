@@ -445,11 +445,6 @@ const cols: {
         desc: "Talent",
         sortType: "number",
     },
-    "TP%": {
-        desc: "Three Point Percentage",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
     TRB: {
         desc: "Total Rebounds",
         sortSequence: ["desc", "asc"],

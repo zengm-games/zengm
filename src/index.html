@@ -21,8 +21,6 @@
       bbgmAds.cmd = bbgmAds.cmd || [];
     </script>
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-38759330-1"></script>
-
     <script type="text/javascript">
       window.inCordova = document.URL.indexOf('file://') === 0;
       window.bbgmPrefix = window.inCordova ? "" : "/"; // Relative URLs for Cordova
@@ -52,6 +50,11 @@
       window.enableLogging = location.host.indexOf("basketball-gm.com") >= 0 && location.pathname.indexOf("/test") === -1;
 
       if (window.enableLogging) {
+        var s = document.createElement("script");
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=UA-38759330-1";
+        s.type = "text/javascript";
+        document.head.appendChild(s);
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());

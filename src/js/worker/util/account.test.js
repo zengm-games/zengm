@@ -823,7 +823,7 @@ describe("worker/util/account/checkAchievement", () => {
 
             const teamSeason = await idb.cache.teamSeasons.indexGet(
                 "teamSeasonsByTidSeason",
-                `${g.userTid},${g.season}`,
+                [g.userTid, g.season],
             );
             teamSeason.won = 70;
             await idb.cache.teamSeasons.put(teamSeason);
@@ -1094,7 +1094,7 @@ describe("worker/util/account/checkAchievement", () => {
             await idb.cache.playoffSeries.put(ps);
             const teamSeason = await idb.cache.teamSeasons.indexGet(
                 "teamSeasonsByTidSeason",
-                `${g.userTid},${g.season}`,
+                [g.userTid, g.season],
             );
             teamSeason.won = 82;
             teamSeason.lost = 0;
@@ -1109,7 +1109,7 @@ describe("worker/util/account/checkAchievement", () => {
         it("don't award achievement without 82-0 regular season", async () => {
             const teamSeason = await idb.cache.teamSeasons.indexGet(
                 "teamSeasonsByTidSeason",
-                `${g.userTid},${g.season}`,
+                [g.userTid, g.season],
             );
             teamSeason.won = 82;
             teamSeason.lost = 1;
@@ -1388,7 +1388,7 @@ describe("worker/util/account/checkAchievement", () => {
             await idb.cache.playoffSeries.put(ps);
             const teamSeason = await idb.cache.teamSeasons.indexGet(
                 "teamSeasonsByTidSeason",
-                `${g.userTid},${g.season}`,
+                [g.userTid, g.season],
             );
             teamSeason.won = 82;
             teamSeason.lost = 0;
@@ -1415,7 +1415,7 @@ describe("worker/util/account/checkAchievement", () => {
         after(async () => {
             const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
                 "teamSeasonsByTidSeason",
-                [`${g.userTid}`, `${g.userTid},Z`],
+                [[g.userTid], [g.userTid, "Z"]],
             );
             for (const teamSeason of teamSeasons) {
                 if (teamSeason.season > g.season) {
@@ -1474,14 +1474,14 @@ describe("worker/util/account/checkAchievement", () => {
             // Update non-winning years from last test
             let teamSeason = await idb.cache.teamSeasons.indexGet(
                 "teamSeasonsByTidSeason",
-                `${g.userTid},${g.season}`,
+                [g.userTid, g.season],
             );
             teamSeason.playoffRoundsWon = 4;
             await idb.cache.teamSeasons.put(teamSeason);
 
             teamSeason = await idb.cache.teamSeasons.indexGet(
                 "teamSeasonsByTidSeason",
-                `${g.userTid},${g.season + 7}`,
+                [g.userTid, g.season + 7],
             );
             teamSeason.playoffRoundsWon = 4;
             await idb.cache.teamSeasons.put(teamSeason);
@@ -1509,14 +1509,14 @@ describe("worker/util/account/checkAchievement", () => {
 
             let teamSeason = await idb.cache.teamSeasons.indexGet(
                 "teamSeasonsByTidSeason",
-                `${g.userTid},${g.season}`,
+                [g.userTid, g.season],
             );
             teamSeason.playoffRoundsWon = 0;
             await idb.cache.teamSeasons.put(teamSeason);
 
             teamSeason = await idb.cache.teamSeasons.indexGet(
                 "teamSeasonsByTidSeason",
-                `${g.userTid},${g.season + 1}`,
+                [g.userTid, g.season + 1],
             );
             teamSeason.playoffRoundsWon = 0;
             await idb.cache.teamSeasons.put(teamSeason);
@@ -1534,14 +1534,14 @@ describe("worker/util/account/checkAchievement", () => {
             // Swap a couple titles to make no 8 in a row
             let teamSeason = await idb.cache.teamSeasons.indexGet(
                 "teamSeasonsByTidSeason",
-                `${g.userTid},${g.season}`,
+                [g.userTid, g.season],
             );
             teamSeason.playoffRoundsWon = 4;
             await idb.cache.teamSeasons.put(teamSeason);
 
             teamSeason = await idb.cache.teamSeasons.indexGet(
                 "teamSeasonsByTidSeason",
-                `${g.userTid},${g.season + 9}`,
+                [g.userTid, g.season + 9],
             );
             teamSeason.playoffRoundsWon = 0;
             await idb.cache.teamSeasons.put(teamSeason);
@@ -1561,7 +1561,7 @@ describe("worker/util/account/checkAchievement", () => {
         it("award moneyball and moneyball_2 for title with payroll <= $45M", async () => {
             const teamSeason = await idb.cache.teamSeasons.indexGet(
                 "teamSeasonsByTidSeason",
-                `${g.userTid},${g.season}`,
+                [g.userTid, g.season],
             );
             teamSeason.playoffRoundsWon = 4;
             teamSeason.expenses.salary.amount = 45000;
@@ -1576,7 +1576,7 @@ describe("worker/util/account/checkAchievement", () => {
         it("don't award either if didn't win title", async () => {
             const teamSeason = await idb.cache.teamSeasons.indexGet(
                 "teamSeasonsByTidSeason",
-                `${g.userTid},${g.season}`,
+                [g.userTid, g.season],
             );
             teamSeason.playoffRoundsWon = 3;
             await idb.cache.teamSeasons.put(teamSeason);
@@ -1590,7 +1590,7 @@ describe("worker/util/account/checkAchievement", () => {
         it("award moneyball but not moneyball_2 for title with payroll > $45M and <= $60M", async () => {
             const teamSeason = await idb.cache.teamSeasons.indexGet(
                 "teamSeasonsByTidSeason",
-                `${g.userTid},${g.season}`,
+                [g.userTid, g.season],
             );
             teamSeason.playoffRoundsWon = 4;
             teamSeason.expenses.salary.amount = 60000;
@@ -1605,7 +1605,7 @@ describe("worker/util/account/checkAchievement", () => {
         it("don't award either if payroll > $40M", async () => {
             const teamSeason = await idb.cache.teamSeasons.indexGet(
                 "teamSeasonsByTidSeason",
-                `${g.userTid},${g.season}`,
+                [g.userTid, g.season],
             );
             teamSeason.playoffRoundsWon = 4;
             teamSeason.expenses.salary.amount = 60001;
@@ -1800,7 +1800,7 @@ describe("worker/util/account/checkAchievement", () => {
         it("award achievement if user's team wins title in a small market", async () => {
             const teamSeason = await idb.cache.teamSeasons.indexGet(
                 "teamSeasonsByTidSeason",
-                `${g.userTid},${g.season}`,
+                [g.userTid, g.season],
             );
             teamSeason.playoffRoundsWon = 4;
             teamSeason.pop = 1.5;
@@ -1815,7 +1815,7 @@ describe("worker/util/account/checkAchievement", () => {
         it("don't award achievement if user's team is not in a small market", async () => {
             const teamSeason = await idb.cache.teamSeasons.indexGet(
                 "teamSeasonsByTidSeason",
-                `${g.userTid},${g.season}`,
+                [g.userTid, g.season],
             );
             teamSeason.playoffRoundsWon = 4;
             teamSeason.pop = 3;
@@ -1830,7 +1830,7 @@ describe("worker/util/account/checkAchievement", () => {
         it("don't award achievement if user's team does not win the title", async () => {
             const teamSeason = await idb.cache.teamSeasons.indexGet(
                 "teamSeasonsByTidSeason",
-                `${g.userTid},${g.season}`,
+                [g.userTid, g.season],
             );
             teamSeason.playoffRoundsWon = 3;
             teamSeason.pop = 1.5;

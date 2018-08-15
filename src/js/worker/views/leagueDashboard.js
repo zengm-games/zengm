@@ -36,10 +36,10 @@ async function updateTeam(
     ) {
         const [t, latestSeason] = await Promise.all([
             idb.cache.teams.get(g.userTid),
-            idb.cache.teamSeasons.indexGet(
-                "teamSeasonsBySeasonTid",
-                `${g.season},${g.userTid}`,
-            ),
+            idb.cache.teamSeasons.indexGet("teamSeasonsBySeasonTid", [
+                g.season,
+                g.userTid,
+            ]),
         ]);
 
         return {

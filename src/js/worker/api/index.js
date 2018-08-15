@@ -695,7 +695,7 @@ const handleUploadedDraftClass = async (
     // Get scouting rank, which is used in a couple places below
     const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
         "teamSeasonsByTidSeason",
-        [`${g.userTid},${g.season - 2}`, `${g.userTid},${g.season}`],
+        [[g.userTid, g.season - 2], [g.userTid, g.season]],
     );
     const scoutingRank = finances.getRankLastThree(
         teamSeasons,
@@ -1067,7 +1067,7 @@ const updateTeamInfo = async (
 
         const teamSeason = await idb.cache.teamSeasons.indexGet(
             "teamSeasonsByTidSeason",
-            `${t.tid},${g.season}`,
+            [t.tid, g.season],
         );
         teamSeason.pop = parseFloat(newTeams[t.tid].pop);
         teamSeason.stadiumCapacity = parseInt(

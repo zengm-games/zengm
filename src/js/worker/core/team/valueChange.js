@@ -107,7 +107,7 @@ const valueChange = async (
             // Estimate the order of the picks by team
             const allTeamSeasons = await idb.cache.teamSeasons.indexGetAll(
                 "teamSeasonsBySeasonTid",
-                [`${g.season - 1}`, `${g.season},Z`],
+                [[g.season - 1], [g.season, "Z"]],
             );
 
             // This part needs to be run every time so that gpAvg is available

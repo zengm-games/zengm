@@ -60,8 +60,8 @@ const processSeasonAttrs = async (
                 .index("tid, season")
                 .getAll(backboard.bound([t.tid], [t.tid, ""])),
             await idb.cache.teamSeasons.indexGetAll("teamSeasonsByTidSeason", [
-                `${t.tid}`,
-                `${t.tid},Z`,
+                [t.tid],
+                [t.tid, "Z"],
             ]),
             idb.cache.storeInfos.teamSeasons.pk,
         );
@@ -69,7 +69,7 @@ const processSeasonAttrs = async (
         // Single season, from cache
         seasons = await idb.cache.teamSeasons.indexGetAll(
             "teamSeasonsBySeasonTid",
-            `${season},${t.tid}`,
+            [[season, t.tid], [season, t.tid]],
         );
     } else {
         // Single season, from database
@@ -217,7 +217,7 @@ const processStats = async (
             teamStats2 = teamStats2.concat(
                 await idb.cache.teamStats.indexGetAll(
                     "teamStatsByPlayoffsTid",
-                    `false,${t.tid}`,
+                    [[false, t.tid], [false, t.tid]],
                 ),
             );
         }
@@ -225,7 +225,7 @@ const processStats = async (
             teamStats2 = teamStats2.concat(
                 await idb.cache.teamStats.indexGetAll(
                     "teamStatsByPlayoffsTid",
-                    `true,${t.tid}`,
+                    [[true, t.tid], [true, t.tid]],
                 ),
             );
         }

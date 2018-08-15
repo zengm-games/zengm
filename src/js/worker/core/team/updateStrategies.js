@@ -22,11 +22,11 @@ const updateStrategies = async () => {
         // Change in wins
         const teamSeason = await idb.cache.teamSeasons.indexGet(
             "teamSeasonsBySeasonTid",
-            `${g.season},${t.tid}`,
+            [g.season, t.tid],
         );
         const teamSeasonOld = await idb.cache.teamSeasons.indexGet(
             "teamSeasonsBySeasonTid",
-            `${g.season - 1},${t.tid}`,
+            [g.season - 1, t.tid],
         );
 
         const won = teamSeason.won;

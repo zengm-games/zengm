@@ -46,7 +46,7 @@ const newPhasePreseason = async (conditions: Conditions) => {
 
     const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
         "teamSeasonsBySeasonTid",
-        [`${g.season - 1}`, `${g.season}`],
+        [[g.season - 1], [g.season]],
     );
     const coachingRanks = teamSeasons.map(
         teamSeason => teamSeason.expenses.coaching.rank,

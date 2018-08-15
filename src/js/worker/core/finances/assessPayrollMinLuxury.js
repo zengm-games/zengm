@@ -18,7 +18,7 @@ const assessPayrollMinLuxury = async () => {
 
     const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
         "teamSeasonsBySeasonTid",
-        [`${g.season}`, `${g.season},Z`],
+        [[g.season], [g.season, "Z"]],
     );
     for (const teamSeason of teamSeasons) {
         // Store payroll

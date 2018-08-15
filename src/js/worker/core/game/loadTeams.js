@@ -21,10 +21,10 @@ const loadTeams = async () => {
             const [players, { cid, did }, teamSeason] = await Promise.all([
                 idb.cache.players.indexGetAll("playersByTid", tid),
                 idb.cache.teams.get(tid),
-                idb.cache.teamSeasons.indexGet(
-                    "teamSeasonsByTidSeason",
-                    `${tid},${g.season}`,
-                ),
+                idb.cache.teamSeasons.indexGet("teamSeasonsByTidSeason", [
+                    tid,
+                    g.season,
+                ]),
             ]);
 
             players.sort((a, b) => a.rosterOrder - b.rosterOrder);

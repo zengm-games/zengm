@@ -3,6 +3,7 @@
 import backboard from "backboard";
 import { PLAYER } from "../../common";
 import { idb } from ".";
+import cmp from "./cmp";
 import { g, lock, local } from "../util";
 import type {
     Awards,
@@ -84,11 +85,16 @@ export const STORES: Store[] = [
 const AUTO_FLUSH_INTERVAL = 4000; // 4 seconds
 
 const getIndexKey = (index, row) => {
-    return (
+    if (index.key.length === 1) {
+        // $FlowFixMe
+        return row[index.key[0]];
+    }
+
+    // Array keys are special, because they need to be stored in a JS object and then recovered
+    return JSON.stringify(
         index.key
             // $FlowFixMe
-            .map(field => String(row[field]))
-            .join(",")
+            .map(field => row[field]),
     );
 };
 
@@ -114,17 +120,17 @@ class StoreAPI<Input, Output, ID> {
         return this.cache._getAll(this.store);
     }
 
-    indexGet(index: Index, key: ID | string): Promise<Output> {
-        if (typeof key !== "number" && typeof key !== "string") {
-            throw new Error("Invalid input type");
-        }
+    // Not sure how to type key as ID in some methods below
+    indexGet(
+        index: Index,
+        key: number | string | (number | string | boolean)[],
+    ): Promise<Output> {
         return this.cache._indexGet(index, key);
     }
 
-    // Not sure how to type key as ID in some methods below
     indexGetAll(
         index: Index,
-        key: number | string | [number, number] | [string, string],
+        key: number | string | [any, any] | any[],
     ): Promise<Output[]> {
         return this.cache._indexGetAll(index, key);
     }
@@ -734,11 +740,17 @@ class Cache {
         }
     }
 
-    async _indexGet(index: Index, key: number | string): Promise<any> {
+    async _indexGet(
+        index: Index,
+        key: number | string | (number | string | boolean)[],
+    ): Promise<any> {
         await this._waitForStatus("full");
         this._checkIndexFreshness(index);
 
-        const val = this._indexes[index][key];
+        // Array keys are special, because they need to be stored in a JS object and then recovered
+        const actualKey = Array.isArray(key) ? JSON.stringify(key) : key;
+
+        const val = this._indexes[index][actualKey];
 
         if (Array.isArray(val)) {
             return val[0];
@@ -746,9 +758,10 @@ class Cache {
         return val;
     }
 
+    // Key is kind of like IDB key range, except there is no "only" support for compound keys so in that case you have to query like [[2018, 1], [2018, 1]] instead of [2018, 1], otherwise it can't tell if it's an "only" compound key or a min/max range for a numeric key
     async _indexGetAll(
         index: Index,
-        key: number | string | [number, number] | [string, string],
+        key: number | string | [any, any] | any[],
     ): Promise<any[]> {
         await this._waitForStatus("full");
         this._checkIndexFreshness(index);
@@ -766,9 +779,23 @@ class Cache {
 
         const [min, max] = key;
         let output = [];
-        for (const i of Object.keys(this._indexes[index])) {
-            if (i >= min && i <= max) {
-                output = output.concat(this._indexes[index][i]);
+        for (const keyString of Object.keys(this._indexes[index])) {
+            let keyParsed;
+            // Array keys are special, because they need to be stored in a JS object and then recovered
+            if (Array.isArray(min)) {
+                keyParsed = JSON.parse(keyString);
+            } else if (typeof min === "number") {
+                keyParsed = parseFloat(keyString);
+                if (Number.isNaN(keyParsed)) {
+                    throw new Error(
+                        `Was expecting numeric key for index "${index}" but got "${keyString}"`,
+                    );
+                }
+            } else {
+                keyParsed = keyString;
+            }
+            if (cmp(keyParsed, min) >= 0 && cmp(keyParsed, max) <= 0) {
+                output = output.concat(this._indexes[index][keyString]);
             }
         }
         return output;

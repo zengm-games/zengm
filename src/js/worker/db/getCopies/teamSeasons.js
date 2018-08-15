@@ -20,7 +20,7 @@ const getCopies = async ({
                 return helpers.deepCopy(
                     await idb.cache.teamSeasons.indexGetAll(
                         "teamSeasonsBySeasonTid",
-                        [`${season}`, `${season},Z`],
+                        [[season], [season, "Z"]],
                     ),
                 );
             }
@@ -41,8 +41,8 @@ const getCopies = async ({
                 .index("tid, season")
                 .getAll(backboard.bound([tid, seasons[0]], [tid, seasons[1]])),
             await idb.cache.teamSeasons.indexGetAll("teamSeasonsByTidSeason", [
-                `${tid},${seasons[0]}`,
-                `${tid},${seasons[1]}`,
+                [tid, seasons[0]],
+                [tid, seasons[1]],
             ]),
             idb.cache.storeInfos.teamSeasons.pk,
         );
@@ -53,8 +53,8 @@ const getCopies = async ({
             .index("tid, season")
             .getAll(backboard.bound([tid], [tid, ""])),
         await idb.cache.teamSeasons.indexGetAll("teamSeasonsByTidSeason", [
-            `${tid}`,
-            `${tid},Z`,
+            [tid],
+            [tid, "Z"],
         ]),
         idb.cache.storeInfos.teamSeasons.pk,
     );

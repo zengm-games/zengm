@@ -23,7 +23,7 @@ describe("worker/db/getCopies/teamsPlus", () => {
         // $FlowFixMe
         const teamStats = await idb.cache.teamSeasons.indexGet(
             "teamStatsByPlayoffsTid",
-            "false,4",
+            [false, 4],
         );
         if (!teamStats) {
             throw new Error("Missing teamStats");

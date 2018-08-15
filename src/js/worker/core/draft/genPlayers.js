@@ -27,7 +27,7 @@ const genPlayers = async (
     if (scoutingRank === undefined || scoutingRank === null) {
         const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
             "teamSeasonsByTidSeason",
-            [`${g.userTid},${g.season - 2}`, `${g.userTid},${g.season}`],
+            [[g.userTid, g.season - 2], [g.userTid, g.season]],
         );
         scoutingRank = finances.getRankLastThree(
             teamSeasons,

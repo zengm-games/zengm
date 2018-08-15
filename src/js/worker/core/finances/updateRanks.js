@@ -48,7 +48,7 @@ const updateRanks = async (types: BudgetTypes[]) => {
     if (types.includes("expenses") || types.includes("revenues")) {
         teamSeasonsPromise = idb.cache.teamSeasons.indexGetAll(
             "teamSeasonsBySeasonTid",
-            [`${g.season}`, `${g.season},Z`],
+            [[g.season], [g.season, "Z"]],
         );
     } else {
         teamSeasonsPromise = Promise.resolve();

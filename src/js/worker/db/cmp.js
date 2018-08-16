@@ -77,6 +77,5 @@ const cmp = (first: any, second: any): -1 | 0 | 1 => {
 
     return first > second ? 1 : -1;
 };
-self.cmp = cmp;
 
 export default cmp;

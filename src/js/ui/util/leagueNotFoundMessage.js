@@ -43,8 +43,8 @@ const leagueNotFoundMessage = (
                         </p>
                         <ol>
                             <li>
-                                Should you resign a veteran player, or leave cap
-                                space open to sign a free agent?
+                                Should you re-sign a veteran player, or leave
+                                cap space open to sign a free agent?
                             </li>
                             <li>
                                 Should you draft a raw player who could be a

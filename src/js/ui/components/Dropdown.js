@@ -247,7 +247,7 @@ const Select = ({ field, handleChange, value }) => {
                     key: "freeAgent",
                 },
                 {
-                    val: "Resigned",
+                    val: "Re-signed",
                     key: "reSigned",
                 },
                 {

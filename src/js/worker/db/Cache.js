@@ -99,6 +99,7 @@ const getIndexKey = (index, row) => {
 };
 
 class StoreAPI<Input, Output, ID> {
+    // eslint-disable-next-line no-use-before-define
     cache: Cache;
 
     store: Store;

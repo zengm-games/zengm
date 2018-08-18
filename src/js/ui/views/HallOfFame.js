@@ -103,7 +103,8 @@ const HallOfFame = ({ players, userTid }) => {
                 they retire. The formula for inclusion is very similar to{" "}
                 <a href="http://espn.go.com/nba/story/_/id/8736873/nba-experts-rebuild-springfield-hall-fame-espn-magazine">
                     the method described in this article
-                </a>. Hall of Famers who played for your team are{" "}
+                </a>
+                . Hall of Famers who played for your team are{" "}
                 <span className="text-info">highlighted in blue</span>. Hall of
                 Famers who retired with your team are{" "}
                 <span className="text-success">highlighted in green</span>. Hall

@@ -30,7 +30,8 @@ const RecordAndPlayoffs = ({
             <span>
                 <a href={helpers.leagueUrl(["roster", abbrev, season])}>
                     {season}
-                </a>:{" "}
+                </a>
+                :{" "}
             </span>
         ) : null;
     const recordText = (

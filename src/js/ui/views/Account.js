@@ -205,26 +205,23 @@ class UserInfo extends React.Component<UserInfoProps, UserInfoState> {
                     </p>
                 ) : (
                     <p>
-                        Logged in as: <b>{username}</b> (<a
-                            href=""
-                            id="logout"
-                            onClick={this.handleLogout}
-                        >
+                        Logged in as: <b>{username}</b> (
+                        <a href="" id="logout" onClick={this.handleLogout}>
                             Logout
-                        </a>)
+                        </a>
+                        )
                     </p>
                 )}
                 <p className="text-danger">{this.state.logoutError}</p>
                 {showGoldActive ? (
                     <p>
                         Basketball GM Gold: Active, renews for $5 on{" "}
-                        {goldUntilDateString} (<a href="/account/update_card">
-                            Update card
-                        </a>{" "}
-                        or{" "}
+                        {goldUntilDateString} (
+                        <a href="/account/update_card">Update card</a> or{" "}
                         <a href="" id="gold-cancel" onClick={handleCancel}>
                             cancel
-                        </a>)
+                        </a>
+                        )
                     </p>
                 ) : null}
                 {showGoldCancelled ? (

@@ -296,7 +296,8 @@ class DropdownLinks extends React.Component<
                             <span
                                 className="glyphicon glyphicon-menu-left"
                                 style={{ marginRight: "5px" }}
-                            />Switch League
+                            />
+                            Switch League
                         </span>
                     </NavItem>
                 ) : null}
@@ -309,7 +310,8 @@ class DropdownLinks extends React.Component<
                             <span
                                 className="glyphicon glyphicon-home"
                                 style={{ marginRight: "5px" }}
-                            />League Dashboard
+                            />
+                            League Dashboard
                         </span>
                     </NavItem>
                 ) : null}
@@ -850,7 +852,9 @@ class NavBar extends React.Component<Props> {
             const phaseStatusBlock =
                 pageId === "liveGame" ? (
                     <p className="navbar-text-two-line-no-collapse">
-                        Live game<br />in progress
+                        Live game
+                        <br />
+                        in progress
                     </p>
                 ) : (
                     <p className="navbar-text-two-line-no-collapse">

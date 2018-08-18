@@ -11,7 +11,8 @@ const awardName = (award, season, teamAbbrevsCache, userTid) => {
 
     const ret = (
         <span>
-            <PlayerNameLabels pid={award.pid}>{award.name}</PlayerNameLabels> (<a
+            <PlayerNameLabels pid={award.pid}>{award.name}</PlayerNameLabels> (
+            <a
                 href={helpers.leagueUrl([
                     "roster",
                     teamAbbrevsCache[award.tid],
@@ -19,7 +20,8 @@ const awardName = (award, season, teamAbbrevsCache, userTid) => {
                 ])}
             >
                 {teamAbbrevsCache[award.tid]}
-            </a>)
+            </a>
+            )
         </span>
     );
 

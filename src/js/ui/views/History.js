@@ -139,7 +139,8 @@ const History = ({
                                             {awards.mvp.name}
                                         </a>
                                     </b>{" "}
-                                    (<a
+                                    (
+                                    <a
                                         href={helpers.leagueUrl([
                                             "roster",
                                             awards.mvp.abbrev,
@@ -147,7 +148,8 @@ const History = ({
                                         ])}
                                     >
                                         {awards.mvp.abbrev}
-                                    </a>)
+                                    </a>
+                                    )
                                 </span>
                                 <br />
                                 {awards.mvp.pts.toFixed(1)} pts,{" "}
@@ -175,7 +177,8 @@ const History = ({
                                             {awards.dpoy.name}
                                         </a>
                                     </b>{" "}
-                                    (<a
+                                    (
+                                    <a
                                         href={helpers.leagueUrl([
                                             "roster",
                                             awards.dpoy.abbrev,
@@ -183,7 +186,8 @@ const History = ({
                                         ])}
                                     >
                                         {awards.dpoy.abbrev}
-                                    </a>)
+                                    </a>
+                                    )
                                 </span>
                                 <br />
                                 {awards.dpoy.trb.toFixed(1)} reb,{" "}
@@ -209,7 +213,8 @@ const History = ({
                                             {awards.smoy.name}
                                         </a>
                                     </b>{" "}
-                                    (<a
+                                    (
+                                    <a
                                         href={helpers.leagueUrl([
                                             "roster",
                                             awards.smoy.abbrev,
@@ -217,7 +222,8 @@ const History = ({
                                         ])}
                                     >
                                         {awards.smoy.abbrev}
-                                    </a>)
+                                    </a>
+                                    )
                                 </span>
                                 <br />
                                 {awards.smoy.pts.toFixed(1)} pts,{" "}
@@ -244,7 +250,8 @@ const History = ({
                                                 {awards.mip.name}
                                             </a>
                                         </b>{" "}
-                                        (<a
+                                        (
+                                        <a
                                             href={helpers.leagueUrl([
                                                 "roster",
                                                 awards.mip.abbrev,
@@ -252,7 +259,8 @@ const History = ({
                                             ])}
                                         >
                                             {awards.mip.abbrev}
-                                        </a>)
+                                        </a>
+                                        )
                                     </span>
                                     <br />
                                     {awards.mip.pts.toFixed(1)} pts,{" "}
@@ -282,7 +290,8 @@ const History = ({
                                                 {awards.roy.name}
                                             </a>
                                         </b>{" "}
-                                        (<a
+                                        (
+                                        <a
                                             href={helpers.leagueUrl([
                                                 "roster",
                                                 awards.roy.abbrev,
@@ -290,7 +299,8 @@ const History = ({
                                             ])}
                                         >
                                             {awards.roy.abbrev}
-                                        </a>)
+                                        </a>
+                                        )
                                     </span>
                                     <br />
                                     {awards.roy.pts.toFixed(1)} pts,{" "}
@@ -323,7 +333,8 @@ const History = ({
                                         >
                                             {p.name}
                                         </a>{" "}
-                                        (<a
+                                        (
+                                        <a
                                             href={helpers.leagueUrl([
                                                 "roster",
                                                 p.abbrev,
@@ -331,7 +342,8 @@ const History = ({
                                             ])}
                                         >
                                             {p.abbrev}
-                                        </a>)
+                                        </a>
+                                        )
                                     </span>
                                     <br />
                                 </div>
@@ -349,7 +361,8 @@ const History = ({
                                 <a href={helpers.leagueUrl(["player", p.pid])}>
                                     {p.name}
                                 </a>{" "}
-                                (<a
+                                (
+                                <a
                                     href={helpers.leagueUrl([
                                         "roster",
                                         p.abbrev,
@@ -357,7 +370,8 @@ const History = ({
                                     ])}
                                 >
                                     {p.abbrev}
-                                </a>)
+                                </a>
+                                )
                             </span>
                             <br />
                         </div>
@@ -384,7 +398,8 @@ const History = ({
                                         >
                                             {p.name}
                                         </a>{" "}
-                                        (<a
+                                        (
+                                        <a
                                             href={helpers.leagueUrl([
                                                 "roster",
                                                 p.abbrev,
@@ -392,7 +407,8 @@ const History = ({
                                             ])}
                                         >
                                             {p.abbrev}
-                                        </a>)
+                                        </a>
+                                        )
                                     </span>
                                     <br />
                                 </div>
@@ -422,7 +438,8 @@ const History = ({
                                 <a href={helpers.leagueUrl(["player", p.pid])}>
                                     {p.name}
                                 </a>{" "}
-                                ({p.stats.tid >= 0 ? (
+                                (
+                                {p.stats.tid >= 0 ? (
                                     <span>
                                         <a
                                             href={helpers.leagueUrl([
@@ -432,9 +449,11 @@ const History = ({
                                             ])}
                                         >
                                             {p.stats.abbrev}
-                                        </a>,{" "}
+                                        </a>
+                                        ,{" "}
                                     </span>
-                                ) : null}age: {p.age}
+                                ) : null}
+                                age: {p.age}
                                 {p.hof ? (
                                     <span>
                                         ;{" "}
@@ -446,7 +465,8 @@ const History = ({
                                             <b>HoF</b>
                                         </a>
                                     </span>
-                                ) : null})<br />
+                                ) : null}
+                                )<br />
                             </span>
                         ))}
                     </p>

@@ -488,7 +488,8 @@ class CustomizePlayer extends React.Component {
                     create a{" "}
                     <a href="https://basketball-gm.com/manual/customization/">
                         custom League File
-                    </a>.
+                    </a>
+                    .
                 </p>
 
                 <form onSubmit={this.handleSubmit}>

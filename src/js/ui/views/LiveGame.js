@@ -107,7 +107,9 @@ const BoxScore = ({ boxScore }) => (
                                     {t.abbrev}
                                 </a>
                             </th>
-                            {t.ptsQtrs.map((pts, i) => <td key={i}>{pts}</td>)}
+                            {t.ptsQtrs.map((pts, i) => (
+                                <td key={i}>{pts}</td>
+                            ))}
                             <th>{t.pts}</th>
                         </tr>
                     ))}

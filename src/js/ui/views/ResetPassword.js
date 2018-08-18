@@ -207,7 +207,8 @@ class ResetPassword extends React.Component {
                             If you are having trouble with this, please{" "}
                             <a href="mailto:commissioner@basketball-gm.com">
                                 email commissioner@basketball-gm.com
-                            </a>.
+                            </a>
+                            .
                         </p>
                     </div>
                 </div>

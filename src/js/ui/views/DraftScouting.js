@@ -96,7 +96,8 @@ class DraftScouting extends React.Component {
                                                 target="_blank"
                                             >
                                                 custom draft class file
-                                            </a>, select the file below.
+                                            </a>
+                                            , select the file below.
                                         </p>
                                         <LeagueFileUpload
                                             onDone={async (err, leagueFile) => {

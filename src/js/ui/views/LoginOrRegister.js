@@ -139,7 +139,8 @@ class LoginOrRegister extends React.Component {
                                 <a href="/account">
                                     view your achievements from leagues in this
                                     browser
-                                </a>.
+                                </a>
+                                .
                             </li>
                             <li>
                                 You can sign up for Basketball GM Gold, which

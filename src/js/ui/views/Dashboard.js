@@ -142,7 +142,9 @@ class Dashboard extends React.Component<
                             className="btn btn-primary league"
                         >
                             <h2>
-                                Create new<br />league
+                                Create new
+                                <br />
+                                league
                             </h2>
                         </a>
                     </li>

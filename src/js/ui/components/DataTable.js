@@ -932,7 +932,9 @@ class DataTable extends React.Component<Props, State> {
                         superCols={superCols}
                     />
                     <tbody>
-                        {sortedRows.map(row => <Row key={row.key} row={row} />)}
+                        {sortedRows.map(row => (
+                            <Row key={row.key} row={row} />
+                        ))}
                     </tbody>
                     {tfoot}
                 </table>

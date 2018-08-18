@@ -107,10 +107,12 @@ class MultiTeamMode extends React.Component {
                     For more details,{" "}
                     <a href="https://basketball-gm.com/blog/2015/03/new-feature-multi-team-mode/">
                         read this blog post
-                    </a>. But basically,{" "}
+                    </a>
+                    . But basically,{" "}
                     <a href="https://www.youtube.com/watch?v=4kly-bxCBZg">
                         multi til the motherfucking sun die
-                    </a>.
+                    </a>
+                    .
                 </p>
 
                 <p>

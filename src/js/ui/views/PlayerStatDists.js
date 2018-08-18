@@ -86,8 +86,9 @@ const PlayerStatDists = ({ numGames, season, statsAll }) => {
                 comparison. NBA data was generously provided by{" "}
                 <a href="http://www.databasebasketball.com/stats_download.htm">
                     databaseBasketball.com
-                </a>. The five vertical lines in each plot represent the minimum
-                of the scale, the minimum, the first{" "}
+                </a>
+                . The five vertical lines in each plot represent the minimum of
+                the scale, the minimum, the first{" "}
                 <a href="http://en.wikipedia.org/wiki/Quartile">quartile</a>,
                 the median, the third quartile, the maximum, and the maximum of
                 the scale.

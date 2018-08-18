@@ -140,7 +140,8 @@ class GodMode extends React.Component {
                     allow you to kind of do whatever you want. If you enable God
                     Mode, you get access to the following features (which show
                     up in the game as{" "}
-                    <span className="god-mode god-mode-text">purple text</span>):
+                    <span className="god-mode god-mode-text">purple text</span>
+                    ):
                 </p>
 
                 <ul>

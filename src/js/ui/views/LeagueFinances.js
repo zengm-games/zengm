@@ -64,11 +64,13 @@ const LeagueFinances = ({
             <p>
                 Salary cap: <b>{helpers.formatCurrency(salaryCap, "M")}</b>{" "}
                 (teams over this amount cannot sign free agents for more than
-                the minimum contract)<br />
+                the minimum contract)
+                <br />
                 Minimum payroll limit:{" "}
                 <b>{helpers.formatCurrency(minPayroll, "M")}</b> (teams with
                 payrolls below this limit will be assessed a fine equal to the
-                difference at the end of the season)<br />
+                difference at the end of the season)
+                <br />
                 Luxury tax limit:{" "}
                 <b>{helpers.formatCurrency(luxuryPayroll, "M")}</b> (teams with
                 payrolls above this limit will be assessed a fine equal to{" "}

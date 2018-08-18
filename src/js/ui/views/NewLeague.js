@@ -7,7 +7,8 @@ import { helpers, realtimeUpdate, setTitle, toWorker } from "../util";
 const PopText = ({ teams, tid }) => {
     let msg = (
         <span>
-            Region population: ?<br />Difficulty: ?
+            Region population: ?<br />
+            Difficulty: ?
         </span>
     );
     if (tid >= 0) {
@@ -28,8 +29,9 @@ const PopText = ({ teams, tid }) => {
 
             msg = (
                 <span>
-                    Region population: {t.pop} million (#{t.popRank})<br />Size:{" "}
-                    {size}
+                    Region population: {t.pop} million (#
+                    {t.popRank})<br />
+                    Size: {size}
                 </span>
             );
         }

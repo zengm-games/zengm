@@ -75,7 +75,8 @@ class EditTeamInfo extends React.Component {
                     The JSON file format is described in{" "}
                     <a href="http://basketball-gm.com/manual/customization/teams/">
                         the manual
-                    </a>. As an example, you can download{" "}
+                    </a>
+                    . As an example, you can download{" "}
                     <a
                         href="http://basketball-gm.com/files/old_teams.json"
                         download
@@ -88,7 +89,8 @@ class EditTeamInfo extends React.Component {
                         download
                     >
                         one containing the current default teams
-                    </a>.
+                    </a>
+                    .
                 </p>
 
                 <p className="text-danger">
@@ -174,22 +176,30 @@ class EditTeamInfo extends React.Component {
                     style={{ fontWeight: "bold", marginBottom: "0.5em" }}
                 >
                     <div className="col-sm-2">
-                        <br />Region
+                        <br />
+                        Region
                     </div>
                     <div className="col-sm-2">
-                        <br />Name
+                        <br />
+                        Name
                     </div>
                     <div className="col-sm-2 col-md-1">
-                        <br />Abbrev
+                        <br />
+                        Abbrev
                     </div>
                     <div className="col-sm-2">
-                        Population<br />(millions)
+                        Population
+                        <br />
+                        (millions)
                     </div>
                     <div className="col-sm-2">
-                        Stadium<br />Capacity
+                        Stadium
+                        <br />
+                        Capacity
                     </div>
                     <div className="col-sm-2 col-md-3">
-                        <br />Logo URL
+                        <br />
+                        Logo URL
                     </div>
                 </div>
 

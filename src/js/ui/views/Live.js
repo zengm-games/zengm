@@ -36,7 +36,8 @@ const Live = ({ games, gamesInProgress }) => {
                         onClick={() => toWorker("actions.liveGame", gm.gid)}
                         style={{ float: "left", margin: "0 1em 1em 0" }}
                     >
-                        {gm.awayRegion} {gm.awayName} at<br />
+                        {gm.awayRegion} {gm.awayName} at
+                        <br />
                         {gm.homeRegion} {gm.homeName}
                     </button>
                 );

@@ -361,10 +361,12 @@ class Trade extends React.Component {
                                                 >
                                                     {p.name}
                                                 </a>{" "}
-                                                ({helpers.formatCurrency(
+                                                (
+                                                {helpers.formatCurrency(
                                                     p.contract.amount,
                                                     "M",
-                                                )})
+                                                )}
+                                                )
                                             </li>
                                         ))}
                                         {t.picks.map(pick => (
@@ -390,10 +392,12 @@ class Trade extends React.Component {
                                                 >
                                                     {p.name}
                                                 </a>{" "}
-                                                ({helpers.formatCurrency(
+                                                (
+                                                {helpers.formatCurrency(
                                                     p.contract.amount,
                                                     "M",
-                                                )})
+                                                )}
+                                                )
                                             </li>
                                         ))}
                                         {summary.teams[t.other].picks.map(
@@ -453,7 +457,8 @@ class Trade extends React.Component {
                                         type="checkbox"
                                         onClick={this.handleClickForceTrade}
                                         value={this.state.forceTrade}
-                                    />Force Trade
+                                    />
+                                    Force Trade
                                 </label>
                             ) : null}
                             <br />

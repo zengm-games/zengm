@@ -58,7 +58,8 @@ const AwardsRecords = ({
                 values={[awardType]}
             />
             <h1>
-                Awards<NewWindowLink />
+                Awards
+                <NewWindowLink />
             </h1>
 
             <p>

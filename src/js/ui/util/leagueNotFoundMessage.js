@@ -97,7 +97,8 @@ const leagueNotFoundMessage = (
                     <b>
                         make sure you're using the same browser on the same
                         computer
-                    </b>.
+                    </b>
+                    .
                 </p>
                 <p>
                     If you are using the same browser on the same computer and

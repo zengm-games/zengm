@@ -463,7 +463,8 @@ class Roster extends React.Component {
 
                     {season === currentSeason ? (
                         <p>
-                            {maxRosterSize - players.length} open roster spots<br />
+                            {maxRosterSize - players.length} open roster spots
+                            <br />
                             Payroll: {helpers.formatCurrency(payroll, "M")}
                             <br />
                             Salary cap: {helpers.formatCurrency(salaryCap, "M")}
@@ -478,9 +479,9 @@ class Roster extends React.Component {
                     <p>
                         Drag row handles to move players between the starting
                         lineup (<span className="roster-starter">&#9632;</span>)
-                        and the bench (<span className="roster-bench">
-                            &#9632;
-                        </span>).
+                        and the bench (
+                        <span className="roster-bench">&#9632;</span>
+                        ).
                     </p>
                 ) : null}
                 {editable ? (
@@ -581,7 +582,8 @@ class Roster extends React.Component {
                                                     ])}
                                                 >
                                                     Team Finances
-                                                </a>).
+                                                </a>
+                                                ).
                                             </p>
                                             <p>
                                                 However, if you just drafted a

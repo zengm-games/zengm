@@ -494,8 +494,8 @@ const Player = ({
         contractInfo = (
             <div>
                 {freeAgent ? "Asking for" : "Contract"}:{" "}
-                {helpers.formatCurrency(player.contract.amount, "M")}/yr thru{" "}
-                {player.contract.exp}
+                {helpers.formatCurrency(player.contract.amount, "M")}
+                /yr thru {player.contract.exp}
                 <br />
             </div>
         );
@@ -549,7 +549,8 @@ const Player = ({
                         </strong>
                         <br />
                         Height: {player.hgtFt}'{player.hgtIn}"<br />
-                        Weight: {player.weight} lbs<br />
+                        Weight: {player.weight} lbs
+                        <br />
                         Born: {player.born.year} - {player.born.loc}
                         <br />
                         {typeof player.diedYear !== "number" ? (
@@ -752,7 +753,8 @@ const Player = ({
                                                 {a.count > 1 ? (
                                                     <span>{a.count}x </span>
                                                 ) : null}
-                                                {a.type} ({a.seasons.join(", ")})
+                                                {a.type} ({a.seasons.join(", ")}
+                                                )
                                             </td>
                                         </tr>
                                     );

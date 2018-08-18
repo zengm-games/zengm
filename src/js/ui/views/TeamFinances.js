@@ -184,9 +184,9 @@ class FinancesForm extends React.Component {
                     </div>
                     <div className="pull-left finances-settings-text-small">
                         Current spending rate: #{t.budget.scouting.rank}
-                        <br />Spent this season: #{
-                            t.seasonAttrs.expenses.scouting.rank
-                        }
+                        <br />
+                        Spent this season: #
+                        {t.seasonAttrs.expenses.scouting.rank}
                     </div>
                 </div>
                 <div className="row">
@@ -206,9 +206,9 @@ class FinancesForm extends React.Component {
                     </div>
                     <div className="pull-left finances-settings-text-small">
                         Current spending rate: #{t.budget.coaching.rank}
-                        <br />Spent this season: #{
-                            t.seasonAttrs.expenses.coaching.rank
-                        }
+                        <br />
+                        Spent this season: #
+                        {t.seasonAttrs.expenses.coaching.rank}
                     </div>
                 </div>
                 <div className="row">
@@ -228,9 +228,8 @@ class FinancesForm extends React.Component {
                     </div>
                     <div className="pull-left finances-settings-text-small">
                         Current spending rate: #{t.budget.health.rank}
-                        <br />Spent this season: #{
-                            t.seasonAttrs.expenses.health.rank
-                        }
+                        <br />
+                        Spent this season: #{t.seasonAttrs.expenses.health.rank}
                     </div>
                 </div>
                 <div className="row">
@@ -250,9 +249,9 @@ class FinancesForm extends React.Component {
                     </div>
                     <div className="pull-left finances-settings-text-small">
                         Current spending rate: #{t.budget.facilities.rank}
-                        <br />Spent this season: #{
-                            t.seasonAttrs.expenses.facilities.rank
-                        }
+                        <br />
+                        Spent this season: #
+                        {t.seasonAttrs.expenses.facilities.rank}
                     </div>
                 </div>
                 <br />
@@ -268,7 +267,9 @@ class FinancesForm extends React.Component {
                                 style={{ lineHeight: "1.5em" }}
                             >
                                 <span>
-                                    Save Revenue and<br />Expense Settings
+                                    Save Revenue and
+                                    <br />
+                                    Expense Settings
                                 </span>
                             </button>
                         </div>
@@ -405,26 +406,27 @@ const TeamFinances = ({
             </p>
 
             <p className="clearfix">
-                The current payroll (<b>
-                    {helpers.formatCurrency(payroll, "M")}
-                </b>) is {payroll > minPayroll ? "above" : "below"} the minimum
-                payroll limit (<b>{helpers.formatCurrency(minPayroll, "M")}</b>),{" "}
-                {payroll > salaryCap ? "above" : "below"} the salary cap (<b>
-                    {helpers.formatCurrency(salaryCap, "M")}
-                </b>), and {payroll > luxuryPayroll ? "above" : "below"} the
-                luxury tax limit (<b>
-                    {helpers.formatCurrency(luxuryPayroll, "M")}
-                </b>).{" "}
+                The current payroll (
+                <b>{helpers.formatCurrency(payroll, "M")}</b>) is{" "}
+                {payroll > minPayroll ? "above" : "below"} the minimum payroll
+                limit (<b>{helpers.formatCurrency(minPayroll, "M")}</b>
+                ), {payroll > salaryCap ? "above" : "below"} the salary cap (
+                <b>{helpers.formatCurrency(salaryCap, "M")}</b>
+                ), and {payroll > luxuryPayroll ? "above" : "below"} the luxury
+                tax limit (<b>{helpers.formatCurrency(luxuryPayroll, "M")}</b>
+                ).{" "}
                 <HelpPopover placement="bottom" title="Payroll Limits">
                     The salary cap is a soft cap, meaning that you can exceed it
                     to re-sign your own players or to sign free agents to
-                    minimum contracts (${minContract}k/year); however, you
-                    cannot exceed the salary cap to sign a free agent for more
-                    than the minimum. Teams with payrolls below the minimum
-                    payroll limit will be assessed a fine equal to the
-                    difference at the end of the season. Teams with payrolls
-                    above the luxury tax limit will be assessed a fine equal to{" "}
-                    {luxuryTax} times the difference at the end of the season.
+                    minimum contracts ($
+                    {minContract}
+                    k/year); however, you cannot exceed the salary cap to sign a
+                    free agent for more than the minimum. Teams with payrolls
+                    below the minimum payroll limit will be assessed a fine
+                    equal to the difference at the end of the season. Teams with
+                    payrolls above the luxury tax limit will be assessed a fine
+                    equal to {luxuryTax} times the difference at the end of the
+                    season.
                 </HelpPopover>
             </p>
 

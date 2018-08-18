@@ -24,8 +24,9 @@ class DeleteLeague extends React.Component {
             message = (
                 <p>
                     Are you <i>absolutely</i> sure you want to delete {name}{" "}
-                    (League {lid})? You will <i>permanently</i> lose any record
-                    of all {helpers.numberWithCommas(numSeasons)} seasons and{" "}
+                    (League {lid}
+                    )? You will <i>permanently</i> lose any record of all{" "}
+                    {helpers.numberWithCommas(numSeasons)} seasons and{" "}
                     {helpers.numberWithCommas(numPlayers)} players from this
                     league (well... unless you have a backup somewhere).
                 </p>

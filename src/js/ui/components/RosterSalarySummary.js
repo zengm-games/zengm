@@ -26,9 +26,9 @@ const RosterSalarySummary = ({
                 <p>
                     After the season you can go over the salary cap to re-sign
                     your own players. Besides that, you can only exceed the
-                    salary cap to sign free agents to minimum contracts (${
-                        minContract
-                    }k/year).
+                    salary cap to sign free agents to minimum contracts ($
+                    {minContract}
+                    k/year).
                 </p>
             </HelpPopover>
         </p>

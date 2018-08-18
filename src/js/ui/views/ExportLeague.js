@@ -81,8 +81,8 @@ class ExportLeague extends React.Component {
                 filename: null,
                 status: (
                     <span className="text-danger">
-                        Error converting league to JSON: "{err.message}". You
-                        might have to select less things to export or{" "}
+                        Error converting league to JSON: "{err.message}
+                        ". You might have to select less things to export or{" "}
                         <a href={helpers.leagueUrl(["delete_old_data"])}>
                             delete old data
                         </a>{" "}

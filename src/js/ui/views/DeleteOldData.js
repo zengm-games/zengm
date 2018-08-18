@@ -118,7 +118,8 @@ class DeleteOldData extends React.Component {
                                 type="checkbox"
                                 checked={this.state.retiredPlayersUnnotable}
                             />{" "}
-                            Delete Unnotable Retired Players<br />
+                            Delete Unnotable Retired Players
+                            <br />
                             <i>
                                 Won't delete your past players or players who
                                 have won awards
@@ -144,7 +145,8 @@ class DeleteOldData extends React.Component {
                                 type="checkbox"
                                 checked={this.state.playerStatsUnnotable}
                             />{" "}
-                            Delete Unnotable Player Stats and Ratings<br />
+                            Delete Unnotable Player Stats and Ratings
+                            <br />
                             <i>
                                 Won't delete your past players or players who
                                 have won awards

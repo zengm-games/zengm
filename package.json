@@ -52,7 +52,7 @@
         "promise-worker-bi": "^3.0.2",
         "react": "^16.4.2",
         "react-addons-text-content": "^0.0.4",
-        "react-bootstrap": "^0.32.2",
+        "react-bootstrap": "^0.32.3",
         "react-dom": "^16.4.2",
         "react-overlays": "^0.8.3",
         "react-sortable-hoc": "dumbmatter/react-sortable-hoc#clonedNode-in-onSortStart",

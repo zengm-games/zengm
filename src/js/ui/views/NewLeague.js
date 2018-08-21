@@ -178,6 +178,11 @@ class NewLeague extends React.Component {
 
             newTeams = helpers.addPopRank(newTeams);
 
+            // Might get overwritten from gameAttributes of uploaded file, but that's ok
+            if (this.state.tid >= newTeams.length) {
+                updatedState.tid = -1;
+            }
+
             // Add random team
             newTeams.unshift({
                 tid: -1,

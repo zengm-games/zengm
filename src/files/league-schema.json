@@ -515,7 +515,7 @@
                                 "type": "integer"
                             }
                         },
-                        "required": ["season", "type"]
+                        "required": ["amount", "years"]
                     },
                     "player": {
                         "type": "object",
@@ -527,7 +527,7 @@
                                 "type": "integer"
                             }
                         },
-                        "required": ["season", "type"]
+                        "required": ["amount", "years"]
                     },
                     "orig": {
                         "type": "object",
@@ -539,7 +539,7 @@
                                 "type": "integer"
                             }
                         },
-                        "required": ["season", "type"]
+                        "required": ["amount", "years"]
                     },
                     "resigning": {
                         "type": "boolean"

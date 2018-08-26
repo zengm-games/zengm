@@ -22,12 +22,38 @@
     </script>
 
     <script type="text/javascript">
+      // https://bugzilla.mozilla.org/show_bug.cgi?id=1438945 - Firefox 57+ has buggy shared workers
+      function isBuggyFirefox() {
+        var ua = navigator.userAgent;
+        if (!ua) {
+          return false;
+        }
+        if (!ua.includes("Firefox")) {
+          return false;
+        }
+        if (!ua.includes("Gecko")) {
+          return false;
+        }
+
+        var matches = ua.match(/rv:(\d+)/);
+        if (matches.length !== 2) {
+          return false;
+        }
+
+        var version = parseInt(matches[1]);
+        if (isNaN(version)) {
+          return false;
+        }
+
+        return version > 57;
+      }
+
       window.inCordova = document.URL.indexOf('file://') === 0;
       window.bbgmPrefix = window.inCordova ? "" : "/"; // Relative URLs for Cordova
       window.bbgmVersion = "REV_GOES_HERE";
       window.bbgmVersionUI = "???";
       window.bbgmVersionWorker = "???";
-      window.useSharedWorker = typeof SharedWorker !== 'undefined';
+      window.useSharedWorker = typeof SharedWorker !== 'undefined' && !isBuggyFirefox();
 
       // .com or .dev TLD
       if (!window.inCordova) {

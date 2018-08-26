@@ -73,9 +73,13 @@ const checkHeartbeat = async (lid: number) => {
         return;
     }
 
-    throw new Error(
-        "A league can only be open in one tab at a time. If this league is not open in another tab, please wait a few seconds and reload. Or switch to Chrome or Firefox, they don't have this limitation.",
-    );
+    let errorMessage =
+        "A league can only be open in one tab at a time. If this league is not open in another tab, please wait a few seconds and reload. Or switch to Chrome, which doesn't have this limitation.";
+    if (navigator.userAgent.includes("Firefox")) {
+        errorMessage +=
+            " (Firefox used to let you open a league in multiple tabs, but a bug introduced in Firefox 57 forced me to disable that feature.)";
+    }
+    throw new Error(errorMessage);
 };
 
 // beforeLeague runs when the user switches leagues (including the initial league selection).

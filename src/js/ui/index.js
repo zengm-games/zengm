@@ -353,7 +353,12 @@ const genPage = (id, inLeague = true) => {
                 errMsg = ctx.bbgm.err.message;
                 if (errMsg === "League not found.") {
                     errMsg = leagueNotFoundMessage;
-                } else {
+                } else if (
+                    typeof errMsg !== "string" ||
+                    !errMsg.includes(
+                        "A league can only be open in one tab at a time",
+                    )
+                ) {
                     if (window.bugsnagClient) {
                         window.bugsnagClient.notify(ctx.bbgm.err);
                     }
@@ -365,7 +370,7 @@ const genPage = (id, inLeague = true) => {
             const ErrorPage = (
                 <div>
                     <h1>Error</h1>
-                    {typeof errMsg === "string" ? <h2>{errMsg}</h2> : errMsg}
+                    {typeof errMsg === "string" ? <h3>{errMsg}</h3> : errMsg}
                 </div>
             );
             const errorPage = genStaticPage("error", "Error", ErrorPage, false);

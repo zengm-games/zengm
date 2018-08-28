@@ -55,9 +55,9 @@ export type Awards = {|
 
     roy: AwardPlayer | void,
     allRookie: AwardPlayer[], // If there are <5 rookies in a league file
-    mip: AwardPlayer | void,
+    mip: AwardPlayer | void, // First season has no MIP
     mvp: AwardPlayer,
-    smoy: AwardPlayer,
+    smoy: AwardPlayer | void, // Some weird leagues could have only starters
     allLeague: [
         {
             title: "First Team",

@@ -195,41 +195,45 @@ const History = ({
                                 {awards.dpoy.stl.toFixed(1)} stl
                             </p>
                             <h4>Sixth Man of the Year</h4>
-                            <p>
-                                <span
-                                    className={
-                                        awards.smoy.tid === userTid
-                                            ? "bg-info"
-                                            : null
-                                    }
-                                >
-                                    <b>
+                            {awards.smoy ? (
+                                <p>
+                                    <span
+                                        className={
+                                            awards.smoy.tid === userTid
+                                                ? "bg-info"
+                                                : null
+                                        }
+                                    >
+                                        <b>
+                                            <a
+                                                href={helpers.leagueUrl([
+                                                    "player",
+                                                    awards.smoy.pid,
+                                                ])}
+                                            >
+                                                {awards.smoy.name}
+                                            </a>
+                                        </b>{" "}
+                                        (
                                         <a
                                             href={helpers.leagueUrl([
-                                                "player",
-                                                awards.smoy.pid,
+                                                "roster",
+                                                awards.smoy.abbrev,
+                                                season,
                                             ])}
                                         >
-                                            {awards.smoy.name}
+                                            {awards.smoy.abbrev}
                                         </a>
-                                    </b>{" "}
-                                    (
-                                    <a
-                                        href={helpers.leagueUrl([
-                                            "roster",
-                                            awards.smoy.abbrev,
-                                            season,
-                                        ])}
-                                    >
-                                        {awards.smoy.abbrev}
-                                    </a>
-                                    )
-                                </span>
-                                <br />
-                                {awards.smoy.pts.toFixed(1)} pts,{" "}
-                                {awards.smoy.trb.toFixed(1)} reb,{" "}
-                                {awards.smoy.ast.toFixed(1)} ast
-                            </p>
+                                        )
+                                    </span>
+                                    <br />
+                                    {awards.smoy.pts.toFixed(1)} pts,{" "}
+                                    {awards.smoy.trb.toFixed(1)} reb,{" "}
+                                    {awards.smoy.ast.toFixed(1)} ast
+                                </p>
+                            ) : (
+                                <p>???</p>
+                            )}
                             <h4>Most Improved Player</h4>
                             {awards.mip ? (
                                 <p>

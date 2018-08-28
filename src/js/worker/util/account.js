@@ -261,6 +261,10 @@ checkAchievement.fo_fo_fo = async (
         return false;
     }
 
+    if (g.numPlayoffRounds < 3) {
+        return false;
+    }
+
     const playoffSeries = await idb.getCopy.playoffSeries({ season: g.season });
     if (playoffSeries === undefined) {
         // Should only happen if playoffs are skipped

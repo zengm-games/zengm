@@ -12,29 +12,61 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
     const numPlayoffTeams = 2 ** g.numPlayoffRounds;
     const series = range(g.numPlayoffRounds).map(() => []);
     if (playoffsByConference) {
-        // Default: top 50% of teams in each of the two conferences
-        const numSeriesPerConference = numPlayoffTeams / 4;
-        for (let cid = 0; cid < g.confs.length; cid++) {
+        if (g.numPlayoffRounds > 1) {
+            // Default: top 50% of teams in each of the two conferences
+            const numSeriesPerConference = numPlayoffTeams / 4;
+            for (let cid = 0; cid < g.confs.length; cid++) {
+                const teamsConf = [];
+                for (let i = 0; i < teams.length; i++) {
+                    if (teams[i].cid === cid) {
+                        teamsConf.push(teams[i]);
+                        tidPlayoffs.push(teams[i].tid);
+                        if (teamsConf.length >= numPlayoffTeams / 2) {
+                            break;
+                        }
+                    }
+                }
+                for (let i = 0; i < numSeriesPerConference; i++) {
+                    const j = i % 2 === 0 ? i : numSeriesPerConference - i;
+                    series[0][j + cid * numSeriesPerConference] = {
+                        home: teamsConf[i],
+                        away: teamsConf[numPlayoffTeams / 2 - 1 - i],
+                    };
+                    series[0][j + cid * numSeriesPerConference].home.seed =
+                        i + 1;
+                    series[0][j + cid * numSeriesPerConference].away.seed =
+                        numPlayoffTeams / 2 - i;
+                }
+            }
+        } else {
+            // Special case - if there is only one round, pick the best team in each conference to play
             const teamsConf = [];
-            for (let i = 0; i < teams.length; i++) {
-                if (teams[i].cid === cid) {
-                    teamsConf.push(teams[i]);
-                    tidPlayoffs.push(teams[i].tid);
-                    if (teamsConf.length >= numPlayoffTeams / 2) {
+            for (let cid = 0; cid < g.confs.length; cid++) {
+                for (let i = 0; i < teams.length; i++) {
+                    if (teams[i].cid === cid) {
+                        teamsConf.push(teams[i]);
+                        tidPlayoffs.push(teams[i].tid);
                         break;
                     }
                 }
             }
-            for (let i = 0; i < numSeriesPerConference; i++) {
-                const j = i % 2 === 0 ? i : numSeriesPerConference - i;
-                series[0][j + cid * numSeriesPerConference] = {
-                    home: teamsConf[i],
-                    away: teamsConf[numPlayoffTeams / 2 - 1 - i],
-                };
-                series[0][j + cid * numSeriesPerConference].home.seed = i + 1;
-                series[0][j + cid * numSeriesPerConference].away.seed =
-                    numPlayoffTeams / 2 - i;
+
+            if (teamsConf.length !== 2) {
+                throw new Error("Could not find two conference champs");
             }
+
+            series[0][0] = {
+                home:
+                    teamsConf[0].winp > teamsConf[1].winp
+                        ? teamsConf[0]
+                        : teamsConf[1],
+                away:
+                    teamsConf[0].winp > teamsConf[1].winp
+                        ? teamsConf[1]
+                        : teamsConf[0],
+            };
+            series[0][0].home.seed = 1;
+            series[0][0].away.seed = 1;
         }
     } else {
         // Alternative: top 50% of teams overall

@@ -48,7 +48,7 @@ const Playoffs = ({
                 </p>
             ) : null}
 
-            {confNames.length === 2 ? (
+            {confNames.length === 2 && numPlayoffRounds > 1 ? (
                 <h3 className="hidden-xs">
                     {confNames[1]}{" "}
                     <span className="pull-right">{confNames[0]}</span>

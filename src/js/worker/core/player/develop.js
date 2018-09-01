@@ -256,7 +256,7 @@ const develop = (
 ) => {
     const ratings = p.ratings[p.ratings.length - 1];
 
-    let age = g.season - p.born.year;
+    let age = ratings.season - p.born.year;
 
     for (let i = 0; i < years; i++) {
         // (CONFUSING!) Don't increment age for existing players developing one season (i.e. newPhasePreseason) because the season is already incremented before this function is called. But in other scenarios (new league and draft picks), the season is not changing, so age should be incremented every iteration of this loop.
@@ -287,7 +287,7 @@ const develop = (
     }
 
     if (newPlayer) {
-        p.born.year = g.season - age;
+        p.born.year -= years;
     }
 
     if (p.hasOwnProperty("pos") && typeof p.pos === "string") {

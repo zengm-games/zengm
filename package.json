@@ -24,7 +24,7 @@
         "flow": "flow",
         "lint-js": "eslint '*.js' 'src/js/**/*.js' 'tools/**/*.js'",
         "lint-js-fix": "yarn run lint-js --fix",
-        "prettier": "prettier --write 'src/js/**/*.js'",
+        "prettier": "prettier --write 'src/js/**/*.{js,json}'",
         "precommit": "lint-staged",
         "test": "karma start karma.conf.js",
         "test-watch": "karma start karma.conf.js --auto-watch --no-single-run",

@@ -37,6 +37,7 @@
         ]
     },
     "dependencies": {
+        "@babel/runtime": "^7.0.0",
         "ajv": "^6.5.3",
         "backboard": "^1.0.7",
         "bugsnag-react": "^1.1.1",
@@ -62,25 +63,24 @@
         "whatwg-fetch": "^2.0.4"
     },
     "devDependencies": {
-        "babel-core": "6.26.0",
-        "babel-eslint": "^8.2.6",
-        "babel-plugin-check-es2015-constants": "^6.22.0",
-        "babel-plugin-external-helpers": "^6.22.0",
-        "babel-plugin-transform-async-to-generator": "^6.24.1",
-        "babel-plugin-transform-es2015-destructuring": "^6.23.0",
-        "babel-plugin-transform-es2015-for-of": "^6.23.0",
-        "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
-        "babel-plugin-transform-es2015-parameters": "^6.24.1",
-        "babel-plugin-transform-exponentiation-operator": "^6.24.1",
-        "babel-plugin-transform-flow-strip-types": "^6.22.0",
-        "babel-preset-react": "^6.24.1",
-        "babelify": "^8.0.0",
+        "@babel/core": "^7.0.0",
+        "@babel/plugin-transform-async-to-generator": "^7.0.0",
+        "@babel/plugin-transform-destructuring": "^7.0.0",
+        "@babel/plugin-transform-exponentiation-operator": "^7.0.0",
+        "@babel/plugin-transform-for-of": "^7.0.0",
+        "@babel/plugin-transform-modules-commonjs": "^7.0.0",
+        "@babel/plugin-transform-parameters": "^7.0.0",
+        "@babel/plugin-transform-runtime": "^7.0.0",
+        "@babel/preset-flow": "^7.0.0",
+        "@babel/preset-react": "^7.0.0",
+        "babel-eslint": "^9.0.0",
+        "babelify": "^9.0.0",
         "blacklistify": "^0.0.3",
         "browserify": "^16.2.2",
         "cheerio": "^1.0.0-rc.2",
         "chokidar": "^2.0.4",
         "clean-css": "^4.2.1",
-        "concurrently": "^3.6.1",
+        "concurrently": "^4.0.1",
         "envify": "^4.1.0",
         "eslint": "^5.4.0",
         "eslint-config-airbnb": "^17.1.0",
@@ -88,7 +88,7 @@
         "eslint-plugin-import": "^2.14.0",
         "eslint-plugin-jsx-a11y": "^6.1.1",
         "eslint-plugin-react": "^7.11.1",
-        "flow-bin": "^0.79.1",
+        "flow-bin": "^0.80.0",
         "fs-extra": "^7.0.0",
         "husky": "^0.14.3",
         "karma": "^2.0.4",
@@ -115,18 +115,17 @@
     },
     "babel": {
         "presets": [
-            "react"
+            "@babel/preset-react",
+            "@babel/preset-flow"
         ],
         "plugins": [
-            "external-helpers",
-            "transform-flow-strip-types",
-            "transform-es2015-for-of",
-            "check-es2015-constants",
-            "transform-es2015-parameters",
-            "transform-es2015-destructuring",
-            "transform-es2015-modules-commonjs",
-            "transform-exponentiation-operator",
-            "transform-async-to-generator"
+            "@babel/plugin-transform-runtime",
+            "@babel/plugin-transform-for-of",
+            "@babel/plugin-transform-parameters",
+            "@babel/plugin-transform-destructuring",
+            "@babel/plugin-transform-modules-commonjs",
+            "@babel/plugin-transform-exponentiation-operator",
+            "@babel/plugin-transform-async-to-generator"
         ]
     },
     "private": true

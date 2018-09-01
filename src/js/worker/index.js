@@ -1,7 +1,6 @@
 // @flow
 
 /* eslint-disable import/first */
-import "../vendor/babel-external-helpers";
 import "../common/polyfills";
 import api from "./api";
 import * as common from "../common";

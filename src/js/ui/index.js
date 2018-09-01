@@ -1,7 +1,6 @@
 // @flow
 
 /* eslint-disable import/first */
-import "../vendor/babel-external-helpers";
 import "../common/polyfills";
 import createBugsnagErrorBoundary from "bugsnag-react";
 import page from "page";

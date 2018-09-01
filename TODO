@@ -1,5 +1,12 @@
 babel 7
 - why "yarn test" crashes??
+  - disable source maps doesn't help
+  - if i delete most stuff from names.js, it works
+  - if i give it more memory (max-old-space-size) it gets really slow
+  - maybe make names configurable, and pass a smaller file in for tests?
+    - move names to JSON file
+    - require() like schema
+    - load different one based on NODE_ENV
 
 redo mood system
 - make available throughout the year

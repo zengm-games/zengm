@@ -187,7 +187,7 @@ class Controller extends React.Component<{}, State> {
             );
 
             if (typeof inputs.redirectUrl === "string") {
-                await realtimeUpdate([], inputs.redirectUrl);
+                await realtimeUpdate([], inputs.redirectUrl, {}, true);
             } else {
                 await this.updatePage(args, inputs, updateEvents);
             }
@@ -288,7 +288,7 @@ class Controller extends React.Component<{}, State> {
             });
             this.idLoading = undefined;
 
-            await realtimeUpdate([], vars.data.redirectUrl);
+            await realtimeUpdate([], vars.data.redirectUrl, {}, true);
             return;
         }
 

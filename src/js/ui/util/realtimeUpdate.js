@@ -17,6 +17,7 @@ async function realtimeUpdate(
     updateEvents: UpdateEvents = [],
     url?: string,
     raw?: Object = {},
+    replace?: boolean = false,
 ) {
     return new Promise(resolve => {
         url =
@@ -40,7 +41,7 @@ async function realtimeUpdate(
         page.current = ctx.path;
 
         // This prevents the Create New League form from inappropriately refreshing after it is submitted
-        if (refresh) {
+        if (refresh || replace) {
             page.dispatch(ctx);
         } else if (inLeague || url === "/" || url.indexOf("/account") === 0) {
             page.dispatch(ctx);

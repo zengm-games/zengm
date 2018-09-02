@@ -76,11 +76,10 @@ const writeTeamStats = async (results: GameResults) => {
             }
         }
 
-        // Attendance - final estimate
+        // Attendance: base on home team
         if (t1 === 0) {
-            // Base on home team
             att = random.gauss(att, 1000);
-            att *= 45 / ((g.salaryCap / 90000) * ticketPrice); // Attendance depends on ticket price. Not sure if this formula is reasonable.
+            att *= (45 * 50) / ((g.salaryCap / 90000) * ticketPrice ** 2); // Attendance depends on ticket price. Not sure if this formula is reasonable.
             att *=
                 1 +
                 (0.075 *
@@ -91,11 +90,7 @@ const writeTeamStats = async (results: GameResults) => {
                             "facilities",
                         ))) /
                     (g.numTeams - 1); // Attendance depends on facilities. Not sure if this formula is reasonable.
-            if (att > teamSeason.stadiumCapacity) {
-                att = teamSeason.stadiumCapacity;
-            } else if (att < 0) {
-                att = 0;
-            }
+            att = helpers.bound(att, 0, teamSeason.stadiumCapacity);
             att = Math.round(att);
         }
         // This doesn't really make sense

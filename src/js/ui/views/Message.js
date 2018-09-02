@@ -3,7 +3,7 @@
 import PropTypes from "prop-types";
 import * as React from "react";
 import { NewWindowLink, SafeHtml } from "../components";
-import { setTitle } from "../util";
+import { helpers, setTitle } from "../util";
 import type { Message as Message_ } from "../../common/types";
 
 type MessageProps = {
@@ -37,8 +37,9 @@ const Message = ({ message }: MessageProps) => {
                     onClick={() => window.history.back()}
                     style={{ cursor: "pointer" }}
                 >
-                    Return To Previous Page
-                </a>
+                    Previous Page
+                </a>{" "}
+                · <a href={helpers.leagueUrl(["inbox"])}>Inbox</a>
             </p>
         </div>
     );

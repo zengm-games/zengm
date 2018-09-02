@@ -19,18 +19,27 @@ async function updateMessage(
         let readThisPageview = false;
 
         if (inputs.mid === undefined) {
-            const messages = await idb.getCopies.messages({ limit: 10 });
-            if (messages.length > 0) {
-                for (let i = messages.length - 1; i >= 0; i--) {
-                    if (!messages[i].read) {
-                        return {
-                            redirectUrl: helpers.leagueUrl([
-                                "message",
-                                messages[i].mid,
-                            ]),
-                        };
-                    }
+            const messages = (await idb.getCopies.messages({
+                limit: 10,
+            })).reverse();
+
+            // First look for an unread message
+            for (const m of messages) {
+                if (!m.read) {
+                    return {
+                        redirectUrl: helpers.leagueUrl(["message", m.mid]),
+                    };
                 }
+            }
+
+            // Then look for any message
+            if (messages.length > 0) {
+                return {
+                    redirectUrl: helpers.leagueUrl([
+                        "message",
+                        messages[0].mid,
+                    ]),
+                };
             }
         } else {
             message = await idb.getCopy.messages({ mid: inputs.mid });

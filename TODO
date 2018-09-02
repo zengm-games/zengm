@@ -851,8 +851,6 @@ awards
   show awards count in hall of fame
 add numbers for players
   ability to retire numbers
-some players should make bad plays - not everyone should have same basketball IQ in gameSim
-  add a rating for basketball IQ?
 fantasy draft
   when fantasy draft is over, go to summary of the draft
     do this in core.draft.untilUserOrEnd

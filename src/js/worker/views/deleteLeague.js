@@ -13,13 +13,14 @@ async function updateDeleteLeague({
         };
     }
 
-    const db = await connectLeague(lid);
+    console.log("aaa");
     try {
-        const [numPlayers, teamSeasons, l] = await Promise.all([
+        const db = await connectLeague(lid);
+        const [numPlayers, numSeasons, l] = await Promise.all([
             db.players.count(),
             db.teamSeasons
                 .index("tid, season")
-                .getAll(backboard.bound([0], [0, ""])),
+                .count(backboard.bound([0], [0, ""])),
             idb.meta.leagues.get(lid),
         ]);
 
@@ -27,7 +28,7 @@ async function updateDeleteLeague({
             lid,
             name: l.name,
             numPlayers,
-            numSeasons: teamSeasons.length,
+            numSeasons,
         };
     } catch (err) {
         return {

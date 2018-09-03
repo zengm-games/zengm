@@ -29,7 +29,7 @@ const getNumPlayoffRounds = (numPlayoffRounds, numTeams) => {
 
     for (let num = numPlayoffRounds; num > 0; num--) {
         const numPlayoffTeams = 2 ** num;
-        if (numPlayoffTeams < numTeams) {
+        if (numPlayoffTeams <= numTeams) {
             return num;
         }
     }

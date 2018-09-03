@@ -3,22 +3,6 @@
 import { helpers as commonHelpers } from "../../common";
 import { local } from ".";
 
-const gameScore = (arg: { [key: string]: number }): string => {
-    return (
-        arg.pts +
-        0.4 * arg.fg -
-        0.7 * arg.fga -
-        0.4 * (arg.fta - arg.ft) +
-        0.7 * arg.orb +
-        0.3 * arg.drb +
-        arg.stl +
-        0.7 * arg.ast +
-        0.7 * arg.blk -
-        0.4 * arg.pf -
-        arg.tov
-    ).toFixed(1);
-};
-
 const leagueUrl = (components: (number | string)[]): string => {
     const lid = local.state.lid;
     if (typeof lid !== "number") {
@@ -72,7 +56,6 @@ const roundsWonText = (
 };
 
 const helpers = Object.assign({}, commonHelpers, {
-    gameScore,
     leagueUrl,
     numberWithCommas,
     plusMinus,

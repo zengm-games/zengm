@@ -1,5 +1,6 @@
 // @flow
 
+import orderBy from "lodash/orderBy";
 import { PLAYER } from "../../../common";
 import { idb } from "../../db";
 import { g, helpers, logEvent } from "../../util";
@@ -313,6 +314,87 @@ const saveAwardsByPlayer = async (
     );
 };
 
+const getRealFinalsMvp = async (
+    players: PlayerFiltered[],
+    champTid: number,
+): Promise<AwardPlayer | void> => {
+    const games = await idb.cache.games.getAll();
+
+    // Last game of the season will have the two finals teams
+    const finalsTids = games[games.length - 1].teams.map(t => t.tid);
+
+    // Get all playoff games between those two teams - that will be all finals games
+    const finalsGames = games.filter(
+        game =>
+            game.playoffs &&
+            finalsTids.includes(game.teams[0].tid) &&
+            finalsTids.includes(game.teams[1].tid),
+    );
+    if (finalsGames.length === 0) {
+        return;
+    }
+
+    // Calculate sum of game scores for each player
+    const playerInfos: Map<
+        number,
+        {
+            pid: number,
+            score: number,
+            tid: number,
+            pts: number,
+            trb: number,
+            ast: number,
+        },
+    > = new Map();
+    for (const game of finalsGames) {
+        for (const t of game.teams) {
+            for (const p of t.players) {
+                const info = playerInfos.get(p.pid) || {
+                    pid: p.pid,
+                    score: 0,
+                    tid: t.tid,
+                    pts: 0,
+                    trb: 0,
+                    ast: 0,
+                };
+
+                // 50% bonus for the winning team
+                const factor = t.tid === champTid ? 1.5 : 1;
+                info.score += factor * helpers.gameScore(p);
+
+                info.pts += p.pts;
+                info.trb += p.drb + p.orb;
+                info.ast += p.ast;
+
+                playerInfos.set(p.pid, info);
+            }
+        }
+    }
+    const playerArray = orderBy(
+        Array.from(playerInfos.values()),
+        "score",
+        "desc",
+    );
+    if (playerArray.length === 0) {
+        return;
+    }
+
+    const { pid } = playerArray[0];
+
+    const p = players.find(p2 => p2.pid === pid);
+    if (p) {
+        return {
+            pid: p.pid,
+            name: p.name,
+            tid: p.tid,
+            abbrev: p.abbrev,
+            pts: playerArray[0].pts / finalsGames.length,
+            trb: playerArray[0].trb / finalsGames.length,
+            ast: playerArray[0].ast / finalsGames.length,
+        };
+    }
+};
+
 /**
  * Compute the awards (MVP, etc) after a season finishes.
  *
@@ -495,12 +577,17 @@ const doAwards = async (conditions: Conditions) => {
             p.currentStats = p.stats;
         }
 
-        [finalsMvp] = getTopPlayersOffense(
-            {
-                score: mvpScore,
-            },
-            champPlayers,
-        );
+        finalsMvp = await getRealFinalsMvp(players, champTid);
+
+        // If for some reason there is no Finals MVP (like if the finals box scores were not found), use total playoff stats
+        if (finalsMvp === undefined) {
+            [finalsMvp] = getTopPlayersOffense(
+                {
+                    score: mvpScore,
+                },
+                champPlayers,
+            );
+        }
     }
 
     const awards: Awards = {

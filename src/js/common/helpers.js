@@ -26,6 +26,22 @@ function addPopRank(teams: any[]): any[] {
     return teams;
 }
 
+const gameScore = (arg: { [key: string]: number }): number => {
+    return (
+        arg.pts +
+        0.4 * arg.fg -
+        0.7 * arg.fga -
+        0.4 * (arg.fta - arg.ft) +
+        0.7 * arg.orb +
+        0.3 * arg.drb +
+        arg.stl +
+        0.7 * arg.ast +
+        0.7 * arg.blk -
+        0.4 * arg.pf -
+        arg.tov
+    );
+};
+
 function getTeamsDefault(): any[] {
     let teams: TeamBasic[] = [
         {
@@ -478,6 +494,7 @@ const refuseToNegotiate = (amount: number, mood: number): boolean => {
 
 export default {
     addPopRank,
+    gameScore,
     getTeamsDefault,
     deepCopy,
     formatCurrency,

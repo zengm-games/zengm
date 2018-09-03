@@ -72,7 +72,7 @@ const PlayerFeats = ({ abbrev, feats, playoffs, season, userTid }) => {
                 p.stats.blk,
                 p.stats.pf,
                 p.stats.pts,
-                helpers.gameScore(p.stats),
+                helpers.gameScore(p.stats).toFixed(1),
                 <a href={helpers.leagueUrl(["roster", p.oppAbbrev, p.season])}>
                     {p.oppAbbrev}
                 </a>,

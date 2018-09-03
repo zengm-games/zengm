@@ -42,7 +42,7 @@ const StatsRow = clickable(({ clicked, i, numPlayers, p, toggleClicked }) => {
             <td>{p.pf}</td>
             <td>{p.pts}</td>
             <td>{helpers.plusMinus(p.pm, 0)}</td>
-            <td>{helpers.gameScore(p)}</td>
+            <td>{helpers.gameScore(p).toFixed(1)}</td>
         </tr>
     );
 });

@@ -1,3 +1,8 @@
+Don't allow play if versions in tabs don't match
+- close worker?
+
+---
+
 redo mood system
 - make available throughout the year
   - have deterministic noise, so it can be recomputed constantly as the situation changes

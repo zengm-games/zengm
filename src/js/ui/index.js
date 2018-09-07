@@ -39,7 +39,6 @@ promiseWorker.register(([name, ...params]) => {
 });
 
 window.addEventListener("storage", e => {
-    console.log("storage event!", e);
     if (e.key === "bbgmVersionConflict") {
         const bbgmVersionStored = localStorage.getItem("bbgmVersion");
         if (
@@ -124,10 +123,18 @@ const genPage = (id, inLeague = true) => {
         } else if (cmpResult === -1) {
             // This version is older than another tab's
             console.log(window.bbgmVersion, bbgmVersionStored);
-            console.log(
-                "This version of Basketball GM is older than one you already played. This should never happen, so please email commissioner@basketball-gm.com with any info about how this error occurred.",
-            );
+            logEvent({
+                type: "error",
+                text: `This version of Basketball GM (${
+                    window.bbgmVersion
+                }) is older than one you already played (${bbgmVersionStored}). This should never happen, so please email commissioner@basketball-gm.com with any info about how this error occurred.`,
+                saveToDb: false,
+                persistent: true,
+            });
         }
+    } else {
+        // Initial load, store version for future comparisons
+        localStorage.setItem("bbgmVersion", window.bbgmVersion);
     }
 
     // Heartbeat, used to keep only one tab open at a time for browsers where we have to use a Web

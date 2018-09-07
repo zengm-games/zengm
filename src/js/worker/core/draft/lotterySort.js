@@ -1,7 +1,9 @@
 // @flow
 
 import range from "lodash/range";
-import { g, random } from "../../util";
+import { PHASE } from "../../../common";
+import { season } from "..";
+import { g, helpers, random } from "../../util";
 import type { TeamFiltered } from "../../../common/types";
 
 /**
@@ -19,6 +21,18 @@ const lotterySort = (teams: TeamFiltered[]) => {
     random.shuffle(randValues);
     for (let i = 0; i < teams.length; i++) {
         teams[i].randVal = randValues[i];
+    }
+
+    // If the playoffs haven't started yet, need to project who would be in the playoffs
+    if (g.phase < PHASE.PLAYOFFS) {
+        const { tidPlayoffs } = season.genPlayoffSeries(
+            helpers.orderByWinp(teams),
+        );
+        for (const t of teams) {
+            if (tidPlayoffs.includes(t.tid)) {
+                t.seasonAttrs.playoffRoundsWon = 0;
+            }
+        }
     }
 
     teams.sort((a, b) => {

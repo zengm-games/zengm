@@ -110,12 +110,12 @@ async function updateTeamFinances(
                 // Handle an object in the database
                 barData[keys[i]] = {};
                 const tempData = teamSeasons.map(ts => ts[keys[i]]);
-                Object.keys(tempData[0]).forEach(key => {
+                for (const key of Object.keys(tempData[0])) {
                     barData[keys[i]][key] = helpers.nullPad(
                         tempData.map(x => x[key]).map(x => x.amount),
                         showInt,
                     );
-                });
+                }
             }
             /* eslint-enable no-loop-func */
         }

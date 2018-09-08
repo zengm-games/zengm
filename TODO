@@ -1,3 +1,8 @@
+in playoffs, replace "play week" with "play until end of round"
+
+after preseason, after player development, recalculate player value
+- use ovr vs PER formula, but with offset based on prior value
+
 Don't allow play if versions in tabs don't match
 - close worker?
 
@@ -12,10 +17,6 @@ release a player and sign him again, team finances becomes weird
 - https://www.reddit.com/r/BasketballGM/comments/99z27u/weird_glitch_when_waiving_and_resigning_a_player/
 
 fix contracts old players too cheap
-
-super high positive fuzz is bad, because it makes future draft prospects look unrealistically good. somehow attenuate it
-
-show mood all the time, not just for free agents
 
 flex-design https://www.reddit.com/r/nba/comments/93e9xt/i_made_basketball_gm_a_basketball_management_sim/e3crs54/?context=3
 
@@ -590,16 +591,6 @@ http://www.reddit.com/r/BasketballGM/comments/2v26p1/how_are_you_exploiting_the_
 http://www.reddit.com/r/BasketballGM/comments/255sta/i_think_we_need_longer_dynasty_achievements/che050a?context=3
 IMPORTANT http://www.reddit.com/r/BasketballGM/comments/20i6v3/still_too_easy_to_trade_for_drafted_players/
   just drafted players are undervalued, possibly related to the following issue
-PER scaling in player.value is wrong http://www.reddit.com/r/BasketballGM/comments/1y2lci/some_thoughts/cfgz8yk
-  change scaling in ovr formula? too confusing?
-  this impacts rookie values, leating to an EXPLOIT: http://www.reddit.com/r/BasketballGM/comments/1y2lci/some_thoughts/cfhkvnv
-ovr changes should impact player.value, somehow
-  probably by scaling PER from the previous season
-    but what about old players? is this already factored in to the age decline in player.value?
-    but are past years ratings always available from player.value? or is it sometimes done with fake player objects? need to check
-  http://www.reddit.com/r/BasketballGM/comments/1ydtpd/seems_much_more_random_now/cfjxhj6
-    teams do overvalue their own players in trades, generally
-  http://www.reddit.com/r/BasketballGM/comments/2iuc4l/kind_of_a_glitch_that_i_noticed_during_my_last/
 second round draft picks are undervalued. also, giving away a pick should never make a trade worse, but sometimes it does now. http://www.reddit.com/r/BasketballGM/comments/2bg3zx/simple_feature_mark_players_as_offlimits_when_we/cj5ap89
   similarly, trading block for nothing can net you second round picks
 trade for tons of cheap second round picks, then use that to trade for good asset: www.reddit.com/r/BasketballGM/comments/27wjnp/33_pennies_for_a_dollar/
@@ -825,7 +816,6 @@ replace random.gauss with random.realGauss
 current season shouldn't show in league history page dropdown
 make trade counter-offer faster by checking if no trade is possible first http://www.reddit.com/r/BasketballGM/comments/1jumc9/is_it_just_me_or_does_it_take_wayyyy_too_long_for/
 document things that affect player mood
-in playoffs, replace "play week" with "play until end of round"
 don't need to check every team's roster limits every time games are played - could auto keep AI teams in line after any trade (with user or between AI teams), and then only the user's team needs to be checked
 in playoffs, replace Week/Month in Play menu with Round http://www.reddit.com/r/BasketballGM/comments/1w55sb/suggestionplayoffs_simulate_by_round_instead_of/
 gamesim shot distribution - less people shooting 3s really poorly, especially tall players
@@ -838,7 +828,6 @@ LOW PRIORITY
 
 awards races throughout the season
 track longest W/L streaks
-option to stop sim when player is injured http://www.reddit.com/r/BasketballGM/comments/2s265y/suggestion_option_to_automatically_stop/
 tooling
   istanbul https://github.com/karma-runner/karma-coverage
 team chemistry http://www.reddit.com/r/BasketballGM/comments/2oco2a/simple_suggestion_team_chemistry/cmrpap6?context=3
@@ -858,7 +847,6 @@ add numbers for players
 fantasy draft
   when fantasy draft is over, go to summary of the draft
     do this in core.draft.untilUserOrEnd
-  make tables sortable
   add entry for fantasy draft summary to draft history dropdown?
 league settings
   enable buy out button or not
@@ -881,18 +869,10 @@ better core.player.ovr formula
   regression: player = require('core/player'); player.regressRatingsPer();
     weight by minutes played
   THIS NEEDS TO BE UPDATED WHEN PLAYER GENERATION/DEVELOPMENT OR GAMESIM CHANGES!
-different owner personalities, with different priorities
-trades
-  "undo" button for accidental trades
-    transaction log first. put "Undo" button after message from other GM only right after a trade finishes. make sure it doesn't show up at other time
-      only allow undo if dbChange hasn't changed since the transaction was logged
-  "When signing free agents, if you offer then a contract 2 years longer/shorter than the one they want, they'll counter offer one with 1 more/less year. If you offer the same amount of money you previously offered, and change the year to what they want, they'll automatically offer the lowest $ for that amount of years."
 more detailed player moods - http://www.reddit.com/r/BasketballGM/comments/1k4val/players_refusing_to_sign_bug/cbln1oo?context=3
   player personality, team chemistry
   http://www.reddit.com/r/BasketballGM/comments/1tkw3e/idea_player_traits/
 dashboard info should be on a widget accessible from any screen
-some UI indicating how players developed over the offseason
-  integrated into roster, or separate page?
 player search page
   show stats, ratings, contract, etc. (customizable); allow filters to be applied. also filter by skill icon
   search by stats, ratings, or attributes
@@ -936,14 +916,9 @@ god mode
     disable ratings display
     playoff round length
   edit other player attributes (draft, etc)
-profits too large, too easy
-  add corporate tax?
-  luxury tax increases for repeat offenders?
 export/import roster
   some way to specify startingSeason
   easily edit in excel?
-core.freeAgents should be core.freeAgent or core.freeAgency?
-after last resigning negotiation, switch to next phase?
 increase hype for big free agent signings
 how to handle aggregating stats for players who played for more than one team in a season? add them all up in ps in db.getPlayers
   for roster, want just a player's stats with this team this season
@@ -955,25 +930,14 @@ how to handle aggregating stats for players who played for more than one team in
 contracts
   maybe make them nonlinear.. role players lower, stars higher
     compare to NBA contract distribution
-test trades more
-  multi-player valuation
-    rank players by value. each additional value gets some multiplier to diminish its influence. this prevents adding a player to a trade from decreasing its value
-    but this should have something to do with the difference between numbers of players on each side?
 if fouling out drops team below 5 active players, play fouled out players but add a FT each foul (technical)
 show old contracts on old roster view
 core.trade refactoring
   validateSavedTids crap should be in trade.js.
   trade.summary stuff should be automatic and stored in tradeStore
   trade and clear buttons should be disabled during gameSim, with message like in team finances
-too easy to do the "be bad, get draft picks, keep payroll low, sign free agents, be good" pattern
-  free agents are even less willing to sign with the user, even if it's a good team
 final score, hall of fame
   influenced by size of city (see: difficulty in views.newLeague)
-database changes
-  add activeYears multientry like statsTids use for:
-    league leaders
-    stats
-    ratings
 gameSim
   use real clock (this.t) rather than number of possessions
   teams should play quicker as the clock runs out
@@ -988,8 +952,6 @@ gameSim
     do i need all the team composite ratings?
     how does performance change/degrade as the years go on?
   bench players should get minutes in blowouts
-in lock functions, update g from database before using any potentially sensitive values
-  or should these g.whatever variables be set at all if they're sensitive? lid doesn't change obviously, but the others?
 AI modules that contain functions which are called to determine actions
   things to regulate...
     draft picks
@@ -1023,11 +985,8 @@ FUTURE
 event log UI
   allow filtering type with checkboxes
   what about events with no tid? they are currently not viewable
-draftOrder should just be in globals, not a real table
 shot charts showing hot spots (red/yellow/green) based on shot location data
 If you are simulating through the whole season and execute a trade while simulating, it will continue simulating even if you are over the roster limit. http://www.reddit.com/r/BasketballGM/comments/1xch01/trades_after_season/cfamo73
-IE/Edge support
-  compound indexes
 hire/fire different coaches with different strategies
 boxplots for shot location stats, plus comparison to NBA data
 import/export stuff
@@ -1055,13 +1014,7 @@ stat views
   playoff/regular season toggle in team/player stats, league leaders
 input to helpers.formatCurrency (and all currency in variables everywhere) should be in 1000s of dollars and then only converted to millions when displayed
 AI teams should have to deal with fuzz too
-bbgmView
-  can i do some check to abandon display if idLoading is mismatched with reality? like for clicking a slow link followed by a fast link, in rapid succession, the fast output should show and the slow should be short circuited.
-    in practice, this doesn't seem to matter much
-  shouldn't have newPhase updateEvent doing much. instead, have an array of what changed in that phase
-    (updateEvents.indexOf("newPhase") >= 0 && g.phase === g.PHASE.PRESEASON) should be newSeason
 views.teamFinances should merge db call with team.filter to get seasonAttrs, but that will require rewriting seasonAttrs handling in team.filter to handle multiple seasons.
-git log -- js/core/gameSimNew.js
 live play-by-play simulation
   slow it down http://www.reddit.com/r/BasketballGM/comments/1pu92x/new_feature_live_playbyplay_simulation/cd6xq54?context=3
   change of possession with no rebound/turnover?

@@ -371,7 +371,7 @@ const genPage = (id, inLeague = true) => {
             errorPage(event.detail.context);
         }
 
-        if (!event.detail.context.noTrack) {
+        if (!event.detail.context.state.noTrack) {
             if (window.enableLogging && window.gtag) {
                 if (!initialLoad) {
                     window.gtag("config", "UA-38759330-1", {

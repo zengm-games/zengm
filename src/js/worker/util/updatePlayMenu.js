@@ -28,6 +28,7 @@ const updatePlayMenu = async () => {
         week: { label: "One week" },
         month: { label: "One month" },
         untilPlayoffs: { label: "Until playoffs" },
+        untilEndOfRound: { label: "Until end of round" },
         throughPlayoffs: { label: "Through playoffs" },
         dayLive: { url: helpers.leagueUrl(["live"]), label: "One day (live)" },
         viewDraftLottery: {
@@ -79,7 +80,7 @@ const updatePlayMenu = async () => {
         keys = ["day", "dayLive", "week", "month", "untilPlayoffs"];
     } else if (g.phase === PHASE.PLAYOFFS) {
         // Playoffs
-        keys = ["day", "dayLive", "week", "month", "throughPlayoffs"];
+        keys = ["day", "dayLive", "untilEndOfRound", "throughPlayoffs"];
     } else if (g.phase === PHASE.DRAFT_LOTTERY) {
         // Offseason - pre draft
         keys = ["viewDraftLottery", "untilDraft"];

@@ -10,6 +10,7 @@ const defaultLocal: Local = {
     goldUntil: Infinity, // Default is to assume Gold, until told otherwise by server
     leagueLoaded: false,
     phaseText: "",
+    playingUntilEndOfRound: false,
     statusText: "Idle",
 };
 
@@ -19,12 +20,14 @@ const local: Local & { reset: () => void } = {
     goldUntil: defaultLocal.goldUntil,
     leagueLoaded: defaultLocal.leagueLoaded,
     phaseText: defaultLocal.phaseText,
+    playingUntilEndOfRound: defaultLocal.playingUntilEndOfRound,
     statusText: defaultLocal.statusText,
     reset: () => {
         local.autoPlaySeasons = defaultLocal.autoPlaySeasons;
         local.fantasyDraftResults = defaultLocal.fantasyDraftResults;
         local.leagueLoaded = defaultLocal.leagueLoaded;
         local.phaseText = defaultLocal.phaseText;
+        local.playingUntilEndOfRound = defaultLocal.playingUntilEndOfRound;
         local.statusText = defaultLocal.statusText;
 
         // Don't reset goldUntil because that persists across leagues. Probably it shouldn't be in this file, but should

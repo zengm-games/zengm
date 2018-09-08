@@ -522,6 +522,7 @@ export type Local = {|
     goldUntil: number,
     leagueLoaded: boolean,
     phaseText: string,
+    playingUntilEndOfRound: boolean,
     statusText: string,
 
     reset?: () => void,

@@ -214,6 +214,20 @@ const playMenu = {
         }
     },
 
+    untilEndOfRound: async (conditions: Conditions) => {
+        if (g.phase === PHASE.PLAYOFFS) {
+            await updateStatus("Playing..."); // For quick UI updating, before await
+            const playoffSeries = await idb.cache.playoffSeries.get(g.season);
+            local.playingUntilEndOfRound = true;
+
+            // See how many days are left in this round
+            const series = playoffSeries.series[playoffSeries.currentRound][0];
+            const numDaysThisSeries = 7 - series.home.won - series.away.won;
+
+            game.play(numDaysThisSeries, conditions);
+        }
+    },
+
     throughPlayoffs: async (conditions: Conditions) => {
         if (g.phase === PHASE.PLAYOFFS) {
             await updateStatus("Playing..."); // For quick UI updating, before await

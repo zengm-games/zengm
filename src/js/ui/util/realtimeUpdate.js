@@ -41,7 +41,8 @@ async function realtimeUpdate(
         page.current = ctx.path;
 
         // This prevents the Create New League form from inappropriately refreshing after it is submitted
-        if (refresh || replace) {
+        // Would also like to check "replace" here, to avoid adding an entry to browser history. Oh well.
+        if (refresh) {
             page.dispatch(ctx);
         } else if (inLeague || url === "/" || url.indexOf("/account") === 0) {
             page.dispatch(ctx);

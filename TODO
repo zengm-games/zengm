@@ -1,4 +1,8 @@
-in playoffs, replace "play week" with "play until end of round"
+page.js is buggy, move to something else
+- router5 - annoying you can't navigate imperatively based on url
+- reach router - Link component, ugh
+- router.js - seems dated
+- page.js fix bugs - reproduce 1.10 /message bug
 
 after preseason, after player development, recalculate player value
 - use ovr vs PER formula, but with offset based on prior value

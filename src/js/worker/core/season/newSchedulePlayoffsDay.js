@@ -2,7 +2,7 @@
 
 import setSchedule from "./setSchedule";
 import { idb } from "../../db";
-import { g, helpers } from "../../util";
+import { g, helpers, local, lock } from "../../util";
 
 /**
  * Create a single day's schedule for an in-progress playoffs.
@@ -67,6 +67,12 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
     }
 
     // Playoffs are not over! Make another round
+
+    // Handle "Play until end of round"
+    if (local.playingUntilEndOfRound) {
+        lock.set("stopGameSim", true);
+        local.playingUntilEndOfRound = false;
+    }
 
     // Set matchups for next round
     const tidsWon = [];

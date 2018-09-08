@@ -4113,9 +4113,9 @@ p-try@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/p-try/-/p-try-2.0.0.tgz#85080bb87c64688fa47996fe8f7dfbe8211760b1"
 
-page@^1.10.0:
-  version "1.10.0"
-  resolved "https://registry.yarnpkg.com/page/-/page-1.10.0.tgz#eea9c94d287c2cb82bf4c61deeb3612eaae012d1"
+page@1.9.0:
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/page/-/page-1.9.0.tgz#37d7f90e5713eca8d3744938adba78741a1c2782"
   dependencies:
     path-to-regexp "~1.2.1"
 

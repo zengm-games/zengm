@@ -2,7 +2,7 @@
 
 import { finances, player, season, team } from "..";
 import { idb } from "../../db";
-import { account, g, helpers, logEvent } from "../../util";
+import { account, g, helpers, local, logEvent } from "../../util";
 import type { Conditions } from "../../../common/types";
 
 const newPhasePlayoffs = async (
@@ -11,6 +11,9 @@ const newPhasePlayoffs = async (
 ) => {
     // Achievements after regular season
     account.checkAchievement.septuawinarian(conditions);
+
+    // In case this was somehow set already
+    local.playingUntilEndOfRound = false;
 
     // Set playoff matchups
     const teams = helpers.orderByWinp(

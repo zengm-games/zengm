@@ -376,8 +376,6 @@ export type OwnerMoodDeltas = {|
     wins: number,
 |};
 
-export type PageCtx = { [key: string]: any };
-
 export type PartialTopMenu = {|
     email: string,
     goldCancelled: boolean,
@@ -586,6 +584,16 @@ export type ReleasedPlayerWithoutRid = {|
     pid: number,
     tid: number,
     contract: PlayerContract,
+|};
+
+export type RouterContext = {|
+    params: {
+        [key: string]: any,
+    },
+    path: string,
+    state: {
+        [key: string]: any,
+    },
 |};
 
 export type ScheduleGame = {|

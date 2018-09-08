@@ -1,6 +1,6 @@
 // @flow
 
-import page from "page";
+import { router } from ".";
 import type { UpdateEvents } from "../../common/types";
 
 /**
@@ -19,37 +19,25 @@ async function realtimeUpdate(
     raw?: Object = {},
     replace?: boolean = false,
 ) {
-    return new Promise(resolve => {
-        url =
-            url !== undefined
-                ? url
-                : window.location.pathname + window.location.search;
+    url =
+        url !== undefined
+            ? url
+            : window.location.pathname + window.location.search;
 
-        const inLeague = url.substr(0, 3) === "/l/";
-        const refresh = url === window.location.pathname && inLeague;
+    const inLeague = url.substr(0, 3) === "/l/";
+    const refresh = url === window.location.pathname && inLeague;
 
-        const ctx = new page.Context(url);
-        ctx.bbgm = {};
-        for (const key of Object.keys(raw)) {
-            ctx.bbgm[key] = raw[key];
-        }
-        ctx.bbgm.updateEvents = updateEvents;
-        ctx.bbgm.cb = () => resolve();
-        if (refresh) {
-            ctx.bbgm.noTrack = true;
-        }
-        page.current = ctx.path;
+    const state = Object.assign(
+        {
+            noTrack: refresh || replace,
+            updateEvents,
+        },
+        raw,
+    );
 
-        // This prevents the Create New League form from inappropriately refreshing after it is submitted
-        // Would also like to check "replace" here, to avoid adding an entry to browser history. Oh well.
-        if (refresh) {
-            page.dispatch(ctx);
-        } else if (inLeague || url === "/" || url.indexOf("/account") === 0) {
-            page.dispatch(ctx);
-            ctx.pushState();
-        } else {
-            resolve();
-        }
+    await router.navigate(url, {
+        state,
+        replace: refresh || replace,
     });
 }
 

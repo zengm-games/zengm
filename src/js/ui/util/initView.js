@@ -1,7 +1,7 @@
 // @flow
 
-import type { PageCtx } from "../../common/types";
 import { emitter } from ".";
+import type { RouterContext } from "../../common/types";
 
 type InitArgs = {
     Component: any,
@@ -16,21 +16,10 @@ const initView = (args: InitArgs) => {
         throw new Error("Missing arg Component");
     }
 
-    return (ctx: PageCtx, next: () => void) => {
-        if (ctx.bbgm === undefined) {
-            ctx.bbgm = {};
-        }
-        if (ctx.bbgm.cb === undefined) {
-            ctx.bbgm.cb = next;
-        } else {
-            const prevCb = ctx.bbgm.cb;
-            ctx.bbgm.cb = () => {
-                prevCb();
-                next();
-            };
-        }
-        ctx.bbgm.handled = true;
-        emitter.emit("get", args, ctx);
+    return (context: RouterContext) => {
+        return new Promise((resolve, reject) => {
+            emitter.emit("get", args, context, resolve, reject);
+        });
     };
 };
 

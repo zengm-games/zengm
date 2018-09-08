@@ -1,8 +1,11 @@
 page.js is buggy, move to something else
 - router5 - annoying you can't navigate imperatively based on url
-- reach router - Link component, ugh
+- reach router - Link component, ugh. how to do async data loading before rendering component?
 - router.js - seems dated
 - page.js fix bugs - reproduce 1.10 /message bug
+- write my own
+  - ranking multiple matches like reach https://reach.tech/router/ranking - can do later
+  - break into own project
 
 after preseason, after player development, recalculate player value
 - use ovr vs PER formula, but with offset based on prior value

@@ -19,7 +19,11 @@ import {
     NagModal,
     NavBar,
 } from ".";
-import type { GetOutput, PageCtx, UpdateEvents } from "../../common/types";
+import type {
+    GetOutput,
+    RouterContext,
+    UpdateEvents,
+} from "../../common/types";
 
 type Props = {
     Component: any,
@@ -79,7 +83,7 @@ type Args = {
     Component: any,
     id: string,
     inLeague: boolean,
-    get: (ctx: PageCtx) => ?GetOutput,
+    get: (ctx: RouterContext) => ?GetOutput,
 };
 
 type State = {
@@ -152,11 +156,11 @@ class Controller extends React.Component<{}, State> {
         });
     }
 
-    async get(args: Args, ctx: PageCtx) {
+    async get(args: Args, ctx: RouterContext, resolve, reject) {
         try {
             const updateEvents =
-                ctx !== undefined && ctx.bbgm.updateEvents !== undefined
-                    ? ctx.bbgm.updateEvents
+                ctx.state.updateEvents !== undefined
+                    ? ctx.state.updateEvents
                     : [];
             const newLidInt = parseInt(ctx.params.lid, 10);
             const newLid = Number.isNaN(newLidInt) ? undefined : newLidInt;
@@ -177,8 +181,7 @@ class Controller extends React.Component<{}, State> {
 
             // No good reason for this to be brought back to the UI, since inputs are sent back to the worker below.
             // ctxBBGM is hacky!
-            const ctxBBGM = Object.assign({}, ctx.bbgm);
-            delete ctxBBGM.cb; // Can't send function to worker
+            const ctxBBGM = Object.assign({}, ctx.state);
             delete ctxBBGM.err; // Can't send error to worker
             const inputs = await toWorker(
                 `processInputs.${args.id}`,
@@ -192,16 +195,10 @@ class Controller extends React.Component<{}, State> {
                 await this.updatePage(args, inputs, updateEvents);
             }
         } catch (err) {
-            ctx.bbgm.err = err;
+            reject(err);
         }
 
-        if (
-            ctx !== undefined &&
-            ctx.bbgm !== undefined &&
-            ctx.bbgm.cb !== undefined
-        ) {
-            ctx.bbgm.cb();
-        }
+        resolve();
     }
 
     async updatePage(

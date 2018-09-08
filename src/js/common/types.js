@@ -588,7 +588,7 @@ export type ReleasedPlayerWithoutRid = {|
 
 export type RouterContext = {|
     params: {
-        [key: string]: any,
+        [key: string]: string,
     },
     path: string,
     state: {

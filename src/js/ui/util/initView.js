@@ -16,7 +16,7 @@ const initView = (args: InitArgs) => {
         throw new Error("Missing arg Component");
     }
 
-    return (context: RouterContext) => {
+    return (context: RouterContext): Promise<void> => {
         return new Promise((resolve, reject) => {
             emitter.emit("get", args, context, resolve, reject);
         });

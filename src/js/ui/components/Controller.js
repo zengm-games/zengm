@@ -156,7 +156,12 @@ class Controller extends React.Component<{}, State> {
         });
     }
 
-    async get(args: Args, ctx: RouterContext, resolve, reject) {
+    async get(
+        args: Args,
+        ctx: RouterContext,
+        resolve: () => void,
+        reject: Error => void,
+    ) {
         try {
             const updateEvents =
                 ctx.state.updateEvents !== undefined

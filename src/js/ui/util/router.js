@@ -2,9 +2,12 @@
 
 import EventTarget from "event-target-shim";
 import pathToRegexp from "path-to-regexp";
+import type { RouterContext } from "../../common/types";
+
+type RouteCallback = (context: RouterContext) => Promise<void>;
 
 type Route = {
-    cb: Function,
+    cb: RouteCallback,
     keys: string[],
     regex: RegExp,
 };
@@ -49,7 +52,7 @@ const sameOrigin = (href: string) => {
     );
 };
 
-const samePath = (url: string) => {
+const samePath = (url: HTMLAnchorElement) => {
     return (
         url.pathname === window.location.pathname &&
         url.search === window.location.search
@@ -65,13 +68,10 @@ class Router extends EventTarget {
         super();
 
         this.routes = [];
-
-        this._onclick = this._onclick.bind(this);
-        this._onpopstate = this._onpopstate.bind(this);
     }
 
     // Mostly taken from page.js
-    _onclick(e) {
+    _onclick(e: MouseEvent) {
         if (
             e.button !== 0 ||
             e.metaKey ||
@@ -83,7 +83,9 @@ class Router extends EventTarget {
         }
 
         // Find link element
-        let el = e.target;
+        // $FlowFixMe
+        let el: HTMLAnchorElement = e.target;
+        // $FlowFixMe
         const eventPath = e.path || (e.composedPath ? e.composedPath() : null);
         if (eventPath) {
             for (const eventTarget of eventPath) {
@@ -98,6 +100,7 @@ class Router extends EventTarget {
 
         // Fallback if the eventPath stuff didn't do anything (cross browser)
         while (el && el.nodeName.toUpperCase() !== "A") {
+            // $FlowFixMe
             el = el.parentNode;
         }
         if (!el || el.nodeName.toUpperCase() !== "A") {
@@ -121,14 +124,14 @@ class Router extends EventTarget {
 
         // ensure non-hash for the same path
         const link = el.getAttribute("href");
-        if (!this._hashbang && samePath(el) && (el.hash || link === "#"))
-            return;
+        if (samePath(el) && (el.hash || link === "#")) return;
 
         // Check for mailto: in the href
         if (link && link.indexOf("mailto:") > -1) return;
 
         // check target
         // svg target is an object and its desired value is in .baseVal property
+        // $FlowFixMe
         if (svg ? el.target.baseVal : el.target) return;
 
         // x-origin
@@ -140,7 +143,8 @@ class Router extends EventTarget {
         // There aren't .pathname and .search properties in svg links, so we use href
         // Also, svg href is an object and its desired value is in .baseVal property
         let path = svg
-            ? el.href.baseVal
+            ? // $FlowFixMe
+              el.href.baseVal
             : el.pathname + el.search + (el.hash || "");
 
         path = path[0] !== "/" ? `/${path}` : path;
@@ -150,12 +154,12 @@ class Router extends EventTarget {
         this.navigate(path);
     }
 
-    _onpopstate(event) {
+    _onpopstate(event: Event & { state: any }) {
         if (window.document.readyState !== "complete") {
             return;
         }
 
-        if (event.state) {
+        if (event.state && typeof event.state.path === "string") {
             const path = event.state.path;
             this.navigate(path, { replace: true });
         } else {
@@ -163,7 +167,13 @@ class Router extends EventTarget {
         }
     }
 
-    async navigate(path, { replace = false, state = {} } = {}) {
+    async navigate(
+        path: string,
+        {
+            replace = false,
+            state = {},
+        }: { replace?: boolean, state?: { [key: string]: any } } = {},
+    ) {
         if (replace) {
             window.history.replaceState(
                 {
@@ -188,7 +198,10 @@ class Router extends EventTarget {
             state,
         };
 
-        const detail = {
+        const detail: {
+            context: RouterContext,
+            error: Error | null,
+        } = {
             context,
             error: null,
         };
@@ -221,19 +234,24 @@ class Router extends EventTarget {
         );
     }
 
-    start(routes) {
+    start(routes: { [key: string]: RouteCallback }) {
         for (const [path, cb] of Object.entries(routes)) {
             const keys = [];
             const regex = pathToRegexp(path, keys);
             this.routes.push({
+                // $FlowFixMe
                 cb,
                 keys: keys.map(key => key.name),
                 regex,
             });
         }
 
-        window.document.addEventListener(clickEvent, this._onclick);
-        window.addEventListener("popstate", this._onpopstate);
+        window.document.addEventListener(clickEvent, e => {
+            this._onclick(e);
+        });
+        window.addEventListener("popstate", e => {
+            this._onpopstate(e);
+        });
 
         this.navigate(
             window.location.pathname +

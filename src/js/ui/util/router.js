@@ -174,22 +174,17 @@ class Router extends EventTarget {
             state = {},
         }: { replace?: boolean, state?: { [key: string]: any } } = {},
     ) {
+        const historyArgs = [
+            {
+                path,
+            },
+            window.document.title,
+            path,
+        ];
         if (replace) {
-            window.history.replaceState(
-                {
-                    path,
-                },
-                window.document.title,
-                path,
-            );
+            window.history.replaceState(...historyArgs);
         } else {
-            window.history.pushState(
-                {
-                    path,
-                },
-                window.document.title,
-                path,
-            );
+            window.history.pushState(...historyArgs);
         }
 
         const context = {
@@ -197,25 +192,30 @@ class Router extends EventTarget {
             path,
             state,
         };
+        let error = null;
 
-        const detail: {
-            context: RouterContext,
-            error: Error | null,
-        } = {
-            context,
-            error: null,
+        const dispatchEvent = (type: string) => {
+            this.dispatchEvent(
+                new CustomEvent(type, {
+                    detail: {
+                        context,
+                        error,
+                    },
+                }),
+            );
         };
 
         let handled = false;
-
         for (const route of this.routes) {
             const { matches, params } = match(route, path);
             if (matches) {
                 context.params = params;
                 try {
+                    dispatchEvent("routematched");
+
                     await route.cb(context);
-                } catch (error) {
-                    detail.error = error;
+                } catch (errorLocal) {
+                    error = errorLocal;
                 }
 
                 handled = true;
@@ -224,14 +224,10 @@ class Router extends EventTarget {
         }
 
         if (!handled) {
-            detail.error = new Error("Matching route not found");
+            error = new Error("Matching route not found");
         }
 
-        this.dispatchEvent(
-            new CustomEvent("navigationend", {
-                detail,
-            }),
-        );
+        dispatchEvent("navigationend");
     }
 
     start(routes: { [key: string]: RouteCallback }) {
@@ -265,6 +261,5 @@ class Router extends EventTarget {
 }
 
 const router = new Router();
-window.router = router;
 
 export default router;

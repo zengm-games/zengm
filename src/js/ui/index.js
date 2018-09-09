@@ -341,6 +341,30 @@ const genPage = (id, inLeague = true) => {
     };
 
     let initialLoad = true;
+    router.addEventListener("routematched", (event: any) => {
+        if (!event.detail.context.state.noTrack) {
+            if (window.enableLogging && window.gtag) {
+                if (!initialLoad) {
+                    window.gtag("config", "UA-38759330-1", {
+                        // Normalize league URLs to all look the same
+                        page_path: event.detail.context.path.replace(
+                            /^\/l\/[0-9]+?\//,
+                            "/l/0/",
+                        ),
+                    });
+                }
+            }
+
+            if (!initialLoad) {
+                window.bbgmAds.cmd.push(() => {
+                    window.bbgmAds.refresh();
+                });
+            } else {
+                initialLoad = false;
+            }
+        }
+    });
+
     router.addEventListener("navigationend", (event: any) => {
         if (event.detail.error) {
             let errMsg = event.detail.error.message;
@@ -369,28 +393,6 @@ const genPage = (id, inLeague = true) => {
             );
             const errorPage = genStaticPage("error", "Error", ErrorPage, false);
             errorPage(event.detail.context);
-        }
-
-        if (!event.detail.context.state.noTrack) {
-            if (window.enableLogging && window.gtag) {
-                if (!initialLoad) {
-                    window.gtag("config", "UA-38759330-1", {
-                        // Normalize league URLs to all look the same
-                        page_path: event.detail.context.path.replace(
-                            /^\/l\/[0-9]+?\//,
-                            "/l/0/",
-                        ),
-                    });
-                }
-            }
-
-            if (!initialLoad) {
-                window.bbgmAds.cmd.push(() => {
-                    window.bbgmAds.refresh();
-                });
-            } else {
-                initialLoad = false;
-            }
         }
     });
 

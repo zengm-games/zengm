@@ -6,7 +6,6 @@ page.js is buggy, move to something else
 - write my own
   - ranking multiple matches like reach https://reach.tech/router/ranking - can do later
   - break into own project
-  - https://github.com/pillarjs/path-match
 
 after preseason, after player development, recalculate player value
 - use ovr vs PER formula, but with offset based on prior value

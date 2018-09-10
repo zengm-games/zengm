@@ -415,8 +415,6 @@ bold highest values in career on player stats tables like wikipedia https://www.
 
 pages for each playoff series https://www.reddit.com/r/BasketballGM/comments/4qjahi/minor_suggestion_generate_separate_pages_for_each/
 
-old draft picks should be purged https://www.reddit.com/r/BasketballGM/comments/4nfesy/guys_staying_past_their_deadline_bugs/d43wbpc?context=3
-
 Add 'Free Agents' to 'Teams' dropdown menu on 'Player Ratings' page. https://www.reddit.com/r/BasketballGM/comments/3t4kl6/suggestion_add_free_agents_to_teams_dropdown_menu/
 
 "resign all" button https://www.reddit.com/r/BasketballGM/comments/40q8rc/help_beta_test_new_contract_negotiation_feature/cywki5q
@@ -432,8 +430,6 @@ https://www.reddit.com/r/BasketballGM/comments/3gjqgd/lets_brainstorm_a_bit_abou
 fantasy draft summary https://www.reddit.com/r/BasketballGM/comments/3g4p5a/issues_with_fantasy_draft_records/ (link is in player transactions)
 
 crime https://www.reddit.com/r/BasketballGM/comments/3g1ngn/its_2015/ctudznu
-
-potential over 100 https://www.reddit.com/r/BasketballGM/comments/3ft6q8/player_with_potential_over_100/
 
 different jump to menus for season and team specific pages?
   or unify
@@ -512,20 +508,6 @@ BBGM Gold?
     if user's account exists but has not been paid, should show warning and link to card update rather than stripe button
       if not cancelled but timestamp too low
   change basketball to gold coin
-  http vs https URLs plan
-    http version
-      DONE New League button goes always to https
-      DONE button linking to https after New League
-      DONE account links always go to new version (make sure login persists, it seems to)
-      DONE auto redirect to https if no leagues
-      http version gets no more updates? would require splitting to another site on webfaction
-      eventually could delete old version (would need GA-based evidence it's not used)
-        could delete old upgrade code, 12 and older
-    https version
-      DONE button linking to http after New League
-    redirect domain http to https: http://docs.webfaction.com/software/static.html#static-redirecting-from-http-to-https
-      DONE for root
-      remaining: beta, play, and account
 
 composite ratings / scouting report
   "Shooting", "PG Skills", "Paint Scoring", rebounding
@@ -571,28 +553,6 @@ shouldn't have literally every aging player turn into a great shooter
 
 old players are currently undervalued
 
-player development revamp http://www.reddit.com/r/BasketballGM/comments/2cz7r6/player_development_code_has_kinda_ridiculous/
-  too random, like players with pot=ovr are too likely to improve, makes low ovr high pot players less appealing http://www.reddit.com/r/BasketballGM/comments/36402p/how_does_potential_for_players_work_in_basketball/cravpqu?context=3
-  something needs to be done. still too many 3 point shooting centers
-  are ovr/pot combos reasonable, since ovr is weighted now?
-  old stars should exist
-  reports that there are too many PGs with high pot - probably because they can't improve hgt, and hgt is highly weighted in ovr
-  too many rookies come in as instant stars. should be more gradual.
-  career arcs for ratings - like low endurance/athleticism for old players, but skills remain
-  smaller improvement per year, but more consistent
-  if ovr==pot for young player, debug.averageCareerArc(50, 50) should be flat but it's a bit bumpy
-options:
-  compute "pot" for each rating, use that to generate displayed pot
-  somehow do it organically, with different rates of growth in different categories
-current beta issues:
-  different types of players should develop differently
-    maybe make it multiplicative? should be much more likely to go from 50-100 than 0-100
-    or cutoff-based, like if you're below 20 you're never going to improve there?
-    or position-based? height-based?
-    ideal: skill-based, train them as a real coach would
-  newly-generated players don't have right skill labels
-  tune with debug.averageCareerArc(30, 80)
-
 Too many good free agents available at the minimum: http://www.reddit.com/r/BasketballGM/comments/2sxs4l/love_the_game_suggestion_for_free_agency/
 
 TEAM.VALUECHANGE REVAMP
@@ -632,10 +592,6 @@ game log for individual player
   in each box score, include an array of players in the game. index on that.
 great ideas: http://www.reddit.com/r/BasketballGM/comments/2q9yn8/ideas_questions_and_feedback_feel_free_to_add/
 career ending "injuries" http://www.reddit.com/r/BasketballGM/comments/2oo32x/are_there_career_ending_injuries/
-if playoffSeries already exists, don't try to create again http://www.reddit.com/r/BasketballGM/comments/2on0ij/a_bug_will_not_advance_to_playoffs_errors_in_log/
-  use put, not add
-when uploading league file, no need to read whole thing in just to show teams menu. only need to read up to teams. but how?
-should be impossible to have a player average 0 assists in big minutes
 "My Career" page with GM stats across teams http://www.reddit.com/r/BasketballGM/comments/2gc4sf/gm_page/
 +/- http://www.reddit.com/r/BasketballGM/comments/2cpdxg/both_individual_and_5man_units/
 total control mode
@@ -791,7 +747,6 @@ gameSim
   situational awareness http://www.reddit.com/r/BasketballGM/comments/1yg6wi/end_of_game_simulation/
   mediocre players on bad teams should be less efficient (shouldn't put up such a high PER, which falls if they join a good team)
 add free agent to the end of roster
-fuzz should affect potential more than other variables, when pot is different than ovr
 mode with ratings hidden
   implement like fuzz?
   maybe use very rough letter grades like A/B/C/D/F to replace the ratings
@@ -804,12 +759,9 @@ show team records in box score http://www.reddit.com/r/BasketballGM/comments/2dk
 retired players should be eligible for season awards
 documentation
   http://www.reddit.com/r/BasketballGM/comments/2agxoe/questions_and_suggestions_from_a_new_player/
-assist leaders too low
-Number of years in college should depend on talent level
 Add MVP and Titles columns to HoF table
 Make good young players much less likely to become FAs
 Make rookie contracts 1 year longer
-top menu tooltips for md
 show team records in playoffs, conference standings
 don't need to store abbrev with awards, just tids
   fix display in season summary (correct in historyAll)
@@ -830,8 +782,6 @@ current season shouldn't show in league history page dropdown
 make trade counter-offer faster by checking if no trade is possible first http://www.reddit.com/r/BasketballGM/comments/1jumc9/is_it_just_me_or_does_it_take_wayyyy_too_long_for/
 document things that affect player mood
 don't need to check every team's roster limits every time games are played - could auto keep AI teams in line after any trade (with user or between AI teams), and then only the user's team needs to be checked
-in playoffs, replace Week/Month in Play menu with Round http://www.reddit.com/r/BasketballGM/comments/1w55sb/suggestionplayoffs_simulate_by_round_instead_of/
-gamesim shot distribution - less people shooting 3s really poorly, especially tall players
 UI to easily switch between conference and division standings on small screens and dashboard http://www.reddit.com/r/BasketballGM/comments/2d4o9r/feature_requests_of_the_week_august_10_2014/cjqrwtf?context=3
 schedule page (and dashboard and maybe gamelog) should show opponent records
 add "play until end of quarter" in live gamesim
@@ -906,7 +856,6 @@ more refined control of playing time
   just set minutes directly? any minutes not included, leave up to coach's discretion
 draft
   randomness in picks should factor in relative ratings http://www.reddit.com/r/BasketballGM/comments/1l1713/the_draft_still_needs_some_work_it_seems_my/cbutw7v?context=1
-  somehow allow uploading of custom draft classes
 trades between AI teams
   each day, pick two random teams. if a trade can be found that both teams like, do it
     generalize core.trade.makeItWork and other parts of core.trade

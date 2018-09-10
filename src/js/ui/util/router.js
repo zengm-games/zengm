@@ -159,12 +159,14 @@ class Router extends EventTarget {
             return;
         }
 
-        if (event.state && typeof event.state.path === "string") {
-            const path = event.state.path;
-            this.navigate(path, { replace: true });
-        } else {
-            throw new Error("No state found in onpopstate event");
-        }
+        const path =
+            event.state && typeof event.state.path === "string"
+                ? event.state.path
+                : window.location.pathname +
+                  window.location.search +
+                  window.location.hash;
+
+        this.navigate(path, { replace: true });
     }
 
     async navigate(

@@ -123,6 +123,12 @@
           if (report && typeof report.context === "string") {
             report.context = report.context.replace(/^\/l\/[0-9]+?\//, "/l/0/");
           }
+
+          if (report && typeof report.errorMessage === "string") {
+            if (report.errorMessage.includes("w[requestAnimationFrame]") || report.errorMessage.includes("V79O.data")) {
+              report.ignore();
+            }
+          }
         },
         notifyReleaseStages: ["beta", "production"],
         releaseStage: releaseStage

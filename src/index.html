@@ -125,8 +125,11 @@
           }
 
           if (report && typeof report.errorMessage === "string") {
-            if (report.errorMessage.includes("w[requestAnimationFrame]") || report.errorMessage.includes("V79O.data")) {
-              report.ignore();
+            var skip = ["w[requestAnimationFrame]", "V79O.data", "BetterJsPop"];
+            for (var i = 0; i < skip.length; i++) {
+              if (report.errorMessage.includes(skip[i])) {
+                report.ignore();
+              }
             }
           }
         },

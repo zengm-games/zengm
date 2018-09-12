@@ -63,21 +63,38 @@ const upgrade29 = tx => {
 
 const upgrade31 = tx => {
     tx.objectStore("gameAttributes").get("season").onsuccess = event => {
+        if (event.target.result === undefined) {
+            throw new Error("Missing season in gameAttributes during upgrade");
+        }
         const season = event.target.result.value;
         if (typeof season !== "number") {
-            throw new Error("Invalid season in upgrade");
+            throw new Error("Invalid season in gameAttributes during upgrade");
         }
 
         tx.objectStore("gameAttributes").get("phase").onsuccess = event2 => {
+            if (event2.target.result === undefined) {
+                throw new Error(
+                    "Missing phase in gameAttributes during upgrade",
+                );
+            }
             const phase = event2.target.result.value;
             if (typeof phase !== "number") {
-                throw new Error("Invalid phase in upgrade");
+                throw new Error(
+                    "Invalid phase in gameAttributes during upgrade",
+                );
             }
 
             tx.objectStore("draftOrder").get(0).onsuccess = event3 => {
+                if (event3.target.result === undefined) {
+                    throw new Error(
+                        "Missing draftOrder in gameAttributes during upgrade",
+                    );
+                }
                 const draftOrder = event3.target.result.draftOrder;
                 if (!Array.isArray(draftOrder)) {
-                    throw new Error("Invalid draftOrder in upgrade");
+                    throw new Error(
+                        "Invalid draftOrder in gameAttributes during upgrade",
+                    );
                 }
 
                 tx

@@ -1,3 +1,10 @@
+service worker - workbox
+- precache assets https://developers.google.com/web/tools/workbox/guides/precache-files/workbox-build
+- runtime caching for non-essential ones https://developers.google.com/web/tools/workbox/guides/generate-service-worker/workbox-build
+- analytics https://developers.google.com/web/tools/workbox/guides/enable-offline-analytics
+- somehow tell it what to redirect to index.html
+  - https://developers.google.com/web/tools/workbox/modules/workbox-routing#how_to_register_a_navigation_route
+
 page.js is buggy, move to something else
 - router5 - annoying you can't navigate imperatively based on url
 - reach router - Link component, ugh. how to do async data loading before rendering component?
@@ -9,12 +16,6 @@ page.js is buggy, move to something else
 
 after preseason, after player development, recalculate player value
 - use ovr vs PER formula, but with offset based on prior value
-
-service worker - workbox
-- precache assets https://developers.google.com/web/tools/workbox/guides/precache-files/workbox-build
-- runtime caching for non-essential ones https://developers.google.com/web/tools/workbox/guides/generate-service-worker/workbox-build
-- analytics https://developers.google.com/web/tools/workbox/guides/enable-offline-analytics
-- somehow tell it what to redirect to index.html
 
 Don't allow play if versions in tabs don't match
 - close worker?

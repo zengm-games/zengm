@@ -125,7 +125,7 @@
           }
 
           if (report && typeof report.errorMessage === "string") {
-            var skip = ["w[requestAnimationFrame]", "V79O.data", "BetterJsPop", "contentDocument", "Celtra"];
+            var skip = ["w[requestAnimationFrame]", "V79O.data", "BetterJsPop", "contentDocument", "Celtra", "AdBlock"];
             for (var i = 0; i < skip.length; i++) {
               if (report.errorMessage.includes(skip[i])) {
                 report.ignore();

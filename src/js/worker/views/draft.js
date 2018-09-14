@@ -85,12 +85,11 @@ async function updateDraft(
         if (!fantasyDraft && draftPicks.length > 2 * g.numTeams) {
             const draftPicks2 = draftPicks.filter(dp => dp.pick > 0);
             if (draftPicks2.length === 2 * g.numTeams) {
-                draftPicks = draftPicks2;
-
                 const toDelete = draftPicks.filter(dp => dp.pick === 0);
                 for (const dp of toDelete) {
                     await idb.cache.draftPicks.delete(dp.dpid);
                 }
+                draftPicks = draftPicks2;
             }
         }
 

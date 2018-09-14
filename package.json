@@ -13,7 +13,7 @@
     },
     "scripts": {
         "start": "node tools/server.js",
-        "build": "node tools/build.js && yarn run build-js && yarn run minify-js",
+        "build": "node tools/build.js && yarn run build-js && yarn run minify-js && node tools/build-sw.js",
         "start-watch": "concurrently --kill-others 'yarn run start' 'yarn run watch'",
         "watch": "node tools/pre-watch.js && concurrently --kill-others 'yarn run watch-css' 'yarn run watch-js'",
         "watch-css": "node tools/watch-css.js",
@@ -107,7 +107,8 @@
         "prop-types": "^15.6.2",
         "replace": "^1.0.0",
         "uglify-es": "^3.3.9",
-        "watchify": "^3.11.0"
+        "watchify": "^3.11.0",
+        "workbox-build": "^3.5.0"
     },
     "browserify": {
         "transform": [

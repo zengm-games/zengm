@@ -191,8 +191,6 @@
       </div>
     </div>
 
-    <iframe style="display: none;" src="/manifest_hack"></iframe>
-
     <script>
       function shuffle(array) {
         var counter = array.length;
@@ -323,6 +321,13 @@
           script.type = 'text/javascript';
           script.src = bbgmPrefix + "gen/ui-" + bbgmVersion + ".js";
           body.appendChild(script);
+
+          if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+              console.log('registering');
+              navigator.serviceWorker.register('/sw.js');
+            });
+          }
         }
       });
     </script>

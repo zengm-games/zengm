@@ -5,6 +5,7 @@ service worker - workbox
 - analytics https://developers.google.com/web/tools/workbox/guides/enable-offline-analytics
 - somehow tell it what to redirect to index.html
   - https://developers.google.com/web/tools/workbox/modules/workbox-routing#how_to_register_a_navigation_route
+- cache-control https://developers.google.com/web/tools/workbox/guides/service-worker-checklist
 - bundle workbox rather than reference URL
 - minify
 - current status

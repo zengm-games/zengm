@@ -55,7 +55,6 @@ const server = http.createServer((req, res) => {
         "/gen/",
         "/ico/",
         "/img/",
-        "/sw.js",
     ];
 
     if (startsWith(req.url, prefixesStaticWithHtml)) {

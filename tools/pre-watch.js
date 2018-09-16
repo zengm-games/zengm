@@ -1,7 +1,7 @@
 // @flow
 
 const replace = require("replace");
-const build = require('./buildFuncs');
+const build = require("./buildFuncs");
 
 build.reset();
 build.copyFiles();

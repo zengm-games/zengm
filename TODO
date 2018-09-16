@@ -2,6 +2,7 @@ service worker - workbox
 - cache-control https://developers.google.com/web/tools/workbox/guides/service-worker-checklist
   - check after deploy
 - dontCacheBustUrlsMatching https://developers.google.com/web/tools/workbox/modules/workbox-build#full_injectmanifest_config
+- lint
 - update faq about how to update to latest version (need to close all tabs, then go to it again)
 
 page.js is buggy, move to something else

@@ -12,9 +12,7 @@ const buildSW = async () => {
         swDest: "build/sw.js",
         globDirectory: "build",
         globPatterns: ["**/*.{js,css,html}", "fonts/*.woff", "img/logos/*.png"],
-
-        // Not the real limit, cause this is run before minifying
-        maximumFileSizeToCacheInBytes: 1024 * 1024 * 20,
+        dontCacheBustUrlsMatching: new RegExp("gen/(ui|worker)-.*.js"),
     });
 
     warnings.forEach(console.warn);

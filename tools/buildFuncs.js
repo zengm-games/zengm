@@ -1,10 +1,11 @@
 // @flow
 
-const fs = require("fs");
 const CleanCSS = require("clean-css");
-const replace = require("replace");
+const fs = require("fs");
 const fse = require("fs-extra");
 const sass = require("node-sass");
+const replace = require("replace");
+const UglifyJS = require("uglify-es");
 
 const reset = () => {
     console.log('Resetting "build" directory...');
@@ -77,6 +78,37 @@ const minifyCss = () => {
     fs.writeFileSync("build/gen/bbgm2.css", result.styles);
 };
 
+const minifyJS = (name /*: string */) => {
+    fs.readFile(`build/${name}`, "utf8", (err, data) => {
+        if (err) {
+            throw err;
+        }
+
+        const result = UglifyJS.minify(data, {
+            mangle: {
+                // Needed until https://bugs.webkit.org/show_bug.cgi?id=171041 is fixed
+                safari10: true,
+            },
+            sourceMap: {
+                content: "inline",
+                filename: `build/${name}`,
+                url: `${name}.map`,
+            },
+        });
+
+        fs.writeFile(`build/${name}`, result.code, err2 => {
+            if (err2) {
+                throw err2;
+            }
+        });
+        fs.writeFile(`build/${name}.map`, result.map, err2 => {
+            if (err2) {
+                throw err2;
+            }
+        });
+    });
+};
+
 const genRev = () => {
     const d = new Date();
     const date = d
@@ -115,6 +147,7 @@ module.exports = {
     reset,
     copyFiles,
     minifyCss,
+    minifyJS,
     genRev,
     setTimestamps,
 };

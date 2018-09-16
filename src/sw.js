@@ -1,3 +1,6 @@
+/* eslint-env serviceworker */
+/* global workbox:false */
+
 importScripts(
     "https://storage.googleapis.com/workbox-cdn/releases/3.5.0/workbox-sw.js",
 );

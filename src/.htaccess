@@ -11,6 +11,12 @@
   </IfModule>
 </FilesMatch>
 
+<FilesMatch "^sw.js$">
+  <IfModule mod_headers.c>
+    Header set Cache-Control "no-cache"
+  </IfModule>
+</FilesMatch>
+
 Options +FollowSymLinks
 RewriteEngine On
 RewriteBase /

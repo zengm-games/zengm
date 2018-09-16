@@ -8,7 +8,7 @@ const buildSW = async () => {
         swSrc: "src/sw.js",
         swDest: "build/sw.js",
         globDirectory: "build",
-        globPatterns: ["**/*.{js,css,html}", "fonts/*", "img/logos/*.png"],
+        globPatterns: ["**/*.{js,css,html}", "fonts/*.woff", "img/logos/*.png"],
     });
 
     warnings.forEach(console.warn);

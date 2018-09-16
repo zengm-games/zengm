@@ -1,16 +1,8 @@
 service worker - workbox
-- precache assets https://developers.google.com/web/tools/workbox/guides/precache-files/workbox-build
-  - fonts?
-- runtime caching for non-essential ones https://developers.google.com/web/tools/workbox/guides/generate-service-worker/workbox-build
-- analytics https://developers.google.com/web/tools/workbox/guides/enable-offline-analytics
-- somehow tell it what to redirect to index.html
-  - https://developers.google.com/web/tools/workbox/modules/workbox-routing#how_to_register_a_navigation_route
 - cache-control https://developers.google.com/web/tools/workbox/guides/service-worker-checklist
-- bundle workbox rather than reference URL
+  - check after deploy
 - minify
-- current status
-  - caching seems to work. updating the cache seems to work. but after cache is updated, seems a new index.html is never loaded until a hard refresh (ctrl+shift+r)
-  - https://stackoverflow.com/questions/52324425/how-do-i-actually-display-my-updated-index-html-from-workbox
+- update faq about how to update to latest version (need to close all tabs, then go to it again)
 
 page.js is buggy, move to something else
 - router5 - annoying you can't navigate imperatively based on url

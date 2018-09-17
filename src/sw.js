@@ -23,4 +23,5 @@ workbox.routing.registerNavigationRoute("/index.html", {
     ],
 });
 
-workbox.googleAnalytics.initialize();
+// https://github.com/GoogleChrome/workbox/issues/1186#issuecomment-421888789
+// workbox.googleAnalytics.initialize();

@@ -326,7 +326,6 @@
 
           if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-              console.log('registering');
               navigator.serviceWorker.register('/sw.js');
             });
           }

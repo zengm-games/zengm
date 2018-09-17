@@ -234,8 +234,10 @@ class TradingBlock extends React.Component {
     async handleClickAskBottom() {
         await this.handleClickAsk();
 
-        // This actually scrolls to above the button, because I don't want to worry about the fixed header offset
-        this.beforeOffersRef.current.scrollIntoView();
+        if (this.beforeOffersRef && this.beforeOffersRef.current) {
+            // This actually scrolls to above the button, because I don't want to worry about the fixed header offset
+            this.beforeOffersRef.current.scrollIntoView();
+        }
     }
 
     async handleClickNegotiate(tid, otherPids, otherDpids) {

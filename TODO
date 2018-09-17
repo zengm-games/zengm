@@ -1,9 +1,4 @@
-moneyball should be fraction of salary cap
-
 service worker - workbox
-- cache-control https://developers.google.com/web/tools/workbox/guides/service-worker-checklist
-  - check after deploy
-- update faq about how to update to latest version (need to close all tabs, then go to it again)
 - more explicit upgrades https://deanhume.com/displaying-a-new-version-available-progressive-web-app/
 - eventually delete appcache, but for now leave it there as an upgrade path
 

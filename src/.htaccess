@@ -30,6 +30,7 @@ RewriteRule ^manifest_hack$ manifest_hack.html
 RewriteRule ^test$ test.html
 RewriteRule ^test_case$ test_case.html
 
+RewriteCond %{REQUEST_URI} !^/bbgm.appcache
 RewriteCond %{REQUEST_URI} !^/robots.txt
 RewriteCond %{REQUEST_URI} !^/css
 RewriteCond %{REQUEST_URI} !^/files
@@ -38,6 +39,7 @@ RewriteCond %{REQUEST_URI} !^/gen
 RewriteCond %{REQUEST_URI} !^/ico
 RewriteCond %{REQUEST_URI} !^/img
 RewriteCond %{REQUEST_URI} !^/manifest.webapp
+RewriteCond %{REQUEST_URI} !^/manifest_hack
 RewriteCond %{REQUEST_URI} !^/sw.js
 RewriteCond %{REQUEST_URI} !^/test
 RewriteRule ^.*$ index.html

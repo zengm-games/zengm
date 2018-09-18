@@ -12,6 +12,10 @@ number or not.
 - [Draft day trades](https://basketball-gm.com/blog/2018/05/draft-day-trades/)
 - [Option to change difficulty level](https://basketball-gm.com/blog/2018/06/difficulty-levels/)
 
+## Technical details
+
+- Finally switched from AppCache to a service worker for offline support
+
 # 4.0.0 (2018-03-07)
 
 ## Gameplay and UI

@@ -1,6 +1,9 @@
+roster reordering highlights text
+
 service worker - workbox
 - more explicit upgrades https://deanhume.com/displaying-a-new-version-available-progressive-web-app/
 - eventually delete appcache, but for now leave it there as an upgrade path
+- watch
 
 lighthouse
 

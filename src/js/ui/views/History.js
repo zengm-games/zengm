@@ -74,7 +74,8 @@ const History = ({
                                         <b>
                                             <a
                                                 className={
-                                                    champ.tid === userTid
+                                                    awards.finalsMvp.tid ===
+                                                    userTid
                                                         ? "bg-info"
                                                         : null
                                                 }

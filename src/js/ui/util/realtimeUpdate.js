@@ -1,6 +1,6 @@
 // @flow
 
-import { router } from ".";
+import router from "bbgm-router";
 import type { UpdateEvents } from "../../common/types";
 
 /**

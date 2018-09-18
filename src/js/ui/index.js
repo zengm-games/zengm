@@ -2,6 +2,7 @@
 
 /* eslint-disable import/first */
 import "../common/polyfills";
+import router from "bbgm-router";
 import createBugsnagErrorBoundary from "bugsnag-react";
 import * as React from "react";
 import ReactDOM from "react-dom";
@@ -14,7 +15,6 @@ import {
     leagueNotFoundMessage,
     logEvent,
     promiseWorker,
-    router,
     toWorker,
 } from "./util";
 import * as views from "./views";

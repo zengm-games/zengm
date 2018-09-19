@@ -12,7 +12,7 @@
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="/ico/apple-touch-icon-57-precomposed.png">
 
-    <meta name="Description" content="Basketball GM, the premier single-player basketball management simulation game. Play online for free!">
+    <meta name="Description" content="A single-player basketball simulation game. Make trades, set rosters, draft players, and try to build the next dynasty.">
 
     <script src="//d2wy8f7a9ursnm.cloudfront.net/v4/bugsnag.min.js"></script>
 
@@ -29,13 +29,7 @@
       // https://bugzilla.mozilla.org/show_bug.cgi?id=1438945 - Firefox 57+ has buggy shared workers
       function isBuggyFirefox() {
         var ua = navigator.userAgent;
-        if (!ua) {
-          return false;
-        }
-        if (!ua.includes("Firefox")) {
-          return false;
-        }
-        if (!ua.includes("Gecko")) {
+        if (!ua || !ua.includes("Firefox") || !ua.includes("Gecko")) {
           return false;
         }
 

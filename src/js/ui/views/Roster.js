@@ -132,7 +132,7 @@ PlayingTime.propTypes = {
     userTid: PropTypes.number.isRequired,
 };
 
-const ReorderHandle = SortableHandle(({ i, pid, selectedPid }) => {
+const ReorderHandle = SortableHandle(({ i, isSorting, pid, selectedPid }) => {
     let backgroundColor = "rgb(91, 192, 222)";
     if (selectedPid === pid) {
         backgroundColor = "#d9534f";
@@ -146,11 +146,19 @@ const ReorderHandle = SortableHandle(({ i, pid, selectedPid }) => {
         backgroundColor = "rgb(66, 139, 202)";
     }
 
-    return <td className="roster-handle" style={{ backgroundColor }} />;
+    return (
+        <td
+            className={classNames("roster-handle", {
+                "user-select-none": isSorting,
+            })}
+            style={{ backgroundColor }}
+        />
+    );
 });
 
 ReorderHandle.propTypes = {
     i: PropTypes.number.isRequired,
+    isSorting: PropTypes.bool.isRequired,
     pid: PropTypes.number.isRequired,
     selectedPid: PropTypes.number,
 };
@@ -162,6 +170,7 @@ const RosterRow = SortableElement(
             currentSeason,
             editable,
             i,
+            isSorting,
             p,
             phase,
             season,
@@ -180,6 +189,7 @@ const RosterRow = SortableElement(
                 {editable ? (
                     <ReorderHandle
                         i={i}
+                        isSorting={isSorting}
                         pid={p.pid}
                         selectedPid={selectedPid}
                     />
@@ -259,6 +269,7 @@ RosterRow.propTypes = {
     currentSeason: PropTypes.number.isRequired,
     editable: PropTypes.bool.isRequired,
     i: PropTypes.number.isRequired,
+    isSorting: PropTypes.bool.isRequired,
     p: PropTypes.object.isRequired,
     phase: PropTypes.number.isRequired,
     season: PropTypes.number.isRequired,
@@ -271,6 +282,7 @@ const TBody = SortableContainer(
     ({
         currentSeason,
         editable,
+        isSorting,
         phase,
         players,
         season,
@@ -288,6 +300,7 @@ const TBody = SortableContainer(
                             editable={editable}
                             i={i}
                             index={i}
+                            isSorting={isSorting}
                             p={p}
                             phase={phase}
                             season={season}
@@ -305,6 +318,7 @@ const TBody = SortableContainer(
 TBody.propTypes = {
     currentSeason: PropTypes.number.isRequired,
     editable: PropTypes.bool.isRequired,
+    isSorting: PropTypes.bool.isRequired,
     phase: PropTypes.number.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     season: PropTypes.number.isRequired,
@@ -313,34 +327,39 @@ TBody.propTypes = {
     userTid: PropTypes.number.isRequired,
 };
 
-// Ideally, this function wouldn't be necessary https://github.com/clauderic/react-sortable-hoc/issues/175
-const onSortStart = ({ clonedNode, node }) => {
-    const clonedChildren = clonedNode.childNodes;
-    const children = node.childNodes;
-    for (let i = 0; i < children.length; i++) {
-        clonedChildren[i].style.padding = "5px";
-        clonedChildren[i].style.width = `${children[i].offsetWidth}px`;
-    }
-};
-
 class Roster extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            isSorting: false,
             selectedPid: undefined,
             sortedPids: undefined,
         };
 
-        this.handleReorderDrag = this.handleReorderDrag.bind(this);
+        this.handleOnSortEnd = this.handleOnSortEnd.bind(this);
+        this.handleOnSortStart = this.handleOnSortStart.bind(this);
     }
 
-    async handleReorderDrag({ oldIndex, newIndex }) {
+    async handleOnSortEnd({ oldIndex, newIndex }) {
         const pids = this.props.players.map(p => p.pid);
         const sortedPids = arrayMove(pids, oldIndex, newIndex);
         this.setState({
+            isSorting: false,
             sortedPids,
         });
         await toWorker("reorderRosterDrag", sortedPids);
+    }
+
+    handleOnSortStart({ clonedNode, node }) {
+        this.setState({ isSorting: true });
+
+        // Ideally, this wouldn't be necessary https://github.com/clauderic/react-sortable-hoc/issues/175
+        const clonedChildren = clonedNode.childNodes;
+        const children = node.childNodes;
+        for (let i = 0; i < children.length; i++) {
+            clonedChildren[i].style.padding = "5px";
+            clonedChildren[i].style.width = `${children[i].offsetWidth}px`;
+        }
     }
 
     static getDerivedStateFromProps() {
@@ -602,8 +621,9 @@ class Roster extends React.Component {
                             players={playersSorted}
                             currentSeason={currentSeason}
                             editable={editable}
-                            onSortEnd={this.handleReorderDrag}
-                            onSortStart={onSortStart}
+                            isSorting={this.state.isSorting}
+                            onSortEnd={this.handleOnSortEnd}
+                            onSortStart={this.handleOnSortStart}
                             phase={phase}
                             season={season}
                             selectedPid={this.state.selectedPid}

@@ -3,6 +3,11 @@
     "name": "Basketball GM",
     "icons": [
         {
+            "src": "/ico/icon128.png",
+            "type": "image/png",
+            "sizes": "128x128"
+        },
+        {
             "src": "/ico/icon192.png",
             "type": "image/png",
             "sizes": "192x192"
@@ -17,5 +22,6 @@
     "background_color": "#FFFFFF",
     "display": "standalone",
     "scope": "/",
-    "theme_color": "#FF7F2A"
+    "theme_color": "#FF7F2A",
+    "description": "A single-player basketball simulation game. Make trades, set rosters, draft players, and try to build the next dynasty."
 }

@@ -4,6 +4,7 @@ service worker - workbox
 - watch
 
 lighthouse
+- https://developers.google.com/web/fundamentals/app-install-banners/
 
 after preseason, after player development, recalculate player value
 - use ovr vs PER formula, but with offset based on prior value

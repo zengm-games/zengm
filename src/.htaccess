@@ -38,8 +38,7 @@ RewriteCond %{REQUEST_URI} !^/fonts
 RewriteCond %{REQUEST_URI} !^/gen
 RewriteCond %{REQUEST_URI} !^/ico
 RewriteCond %{REQUEST_URI} !^/img
-RewriteCond %{REQUEST_URI} !^/manifest.webapp
-RewriteCond %{REQUEST_URI} !^/manifest_hack
+RewriteCond %{REQUEST_URI} !^/manifest
 RewriteCond %{REQUEST_URI} !^/sw.js
 RewriteCond %{REQUEST_URI} !^/test
 RewriteRule ^.*$ index.html

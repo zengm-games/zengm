@@ -1,0 +1,21 @@
+{
+    "short_name": "BBGM",
+    "name": "Basketball GM",
+    "icons": [
+        {
+            "src": "/ico/icon192.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "/ico/icon512.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ],
+    "start_url": "/?utm_source=a2hs",
+    "background_color": "#FFFFFF",
+    "display": "standalone",
+    "scope": "/",
+    "theme_color": "#FF7F2A"
+}

@@ -123,13 +123,45 @@ const genPage = (id, inLeague = true) => {
         } else if (cmpResult === -1) {
             // This version is older than another tab's
             console.log(window.bbgmVersion, bbgmVersionStored);
-            logEvent({
-                type: "error",
-                text: `This version of Basketball GM (${
+            console.log(
+                `This version of Basketball GM (${
                     window.bbgmVersion
                 }) is older than one you already played (${bbgmVersionStored}). This should never happen, so please email commissioner@basketball-gm.com with any info about how this error occurred.`,
-                saveToDb: false,
-                persistent: true,
+            );
+            let registrations = [];
+            if (window.navigator.serviceWorker) {
+                registrations = await window.navigator.serviceWorker.getRegistrations();
+            }
+            window.bugsnagClient.notify(new Error("BBGM version mismatch"), {
+                metaData: {
+                    bbgmVersion: window.bbgmVersion,
+                    bbgmVersionStored,
+                    hasNavigatorServiceWorker:
+                        window.navigator.serviceWorker !== undefined,
+                    registrations: registrations.map(r => {
+                        return {
+                            scope: r.scope,
+                            active: r.active
+                                ? {
+                                      scriptURL: r.active.scriptURL,
+                                      state: r.active.state,
+                                  }
+                                : null,
+                            installing: r.installing
+                                ? {
+                                      scriptURL: r.installing.scriptURL,
+                                      state: r.installing.state,
+                                  }
+                                : null,
+                            waiting: r.waiting
+                                ? {
+                                      scriptURL: r.waiting.scriptURL,
+                                      state: r.waiting.state,
+                                  }
+                                : null,
+                        };
+                    }),
+                },
             });
         }
     } else {

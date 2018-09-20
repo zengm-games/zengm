@@ -4,6 +4,7 @@ const CleanCSS = require("clean-css");
 const fs = require("fs");
 const fse = require("fs-extra");
 const sass = require("node-sass");
+const path = require("path");
 const replace = require("replace");
 const UglifyJS = require("uglify-es");
 
@@ -92,7 +93,7 @@ const minifyJS = (name /*: string */) => {
             sourceMap: {
                 content: "inline",
                 filename: `build/${name}`,
-                url: `${name}.map`,
+                url: `${path.basename(name)}.map`,
             },
         });
 

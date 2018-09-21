@@ -87,10 +87,10 @@ function tallyAwards(awards) {
         if (teams[a.dpoy.tid]) {
             teams[a.dpoy.tid].dpoy++;
         }
-        if (teams[a.smoy.tid]) {
+        if (a.smoy && teams[a.smoy.tid]) {
             teams[a.smoy.tid].smoy++;
         }
-        if (teams[a.roy.tid]) {
+        if (a.roy && teams[a.roy.tid]) {
             teams[a.roy.tid].roy++;
         }
         if (a.bre && a.brw) {

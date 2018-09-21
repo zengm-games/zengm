@@ -6,8 +6,7 @@ service worker - workbox
 - eventually delete appcache, but for now leave it there as an upgrade path
 - watch
 
-lighthouse
-- https://developers.google.com/web/fundamentals/app-install-banners/\
+https://developers.google.com/web/fundamentals/app-install-banners/
 
 after preseason, after player development, recalculate player value
 - use ovr vs PER formula, but with offset based on prior value
@@ -284,18 +283,9 @@ event log refactor
 
 https://github.com/pinojs/pino
 
-service worker
-- sw-offline-google-analytics
-- https://github.com/GoogleChrome/lighthouse
-- https://github.com/GoogleChrome/workbox
-
 HTML in play by play https://www.reddit.com/r/BasketballGM/comments/5963ym/playbyplay_bug/
 
 https://www.reddit.com/r/BasketballGM/comments/57cux2/small_issue/
-
-redo contracts after free agency ends
-
-god mode should have no restrictions on adding players to trade (like 15 days after signing)
 
 Trade/Signing Negotiation Difficulty - Have from a scale of 1-100. 1 = Signing players will be easy and salary dump trades. 100 = Most players ask for max contracts, and trading and salary dumps will be harder. 50 = Normal
 
@@ -401,9 +391,6 @@ delete most negotiation code
     make sure re-signing is handled okay still
     make sure multi team mode is handled okay still
     get rid of negotiations object store
-
-service worker to repalce appcache
-  harder than it would appear, see branch
 
 CI, dep version checking, etc
 

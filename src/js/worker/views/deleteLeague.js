@@ -13,7 +13,6 @@ async function updateDeleteLeague({
         };
     }
 
-    console.log("aaa");
     try {
         const db = await connectLeague(lid);
         const [numPlayers, numSeasons, l] = await Promise.all([

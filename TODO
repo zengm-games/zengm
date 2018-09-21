@@ -304,8 +304,6 @@ flow
 
 replace owner message text with numbers/chart
 
-upgrade GA https://developers.google.com/analytics/devguides/collection/upgrade/
-
 ---
 
 REACT later
@@ -316,9 +314,6 @@ close menu on responsive navbar https://github.com/react-bootstrap/react-bootstr
 
 Draft button on player pages https://www.reddit.com/r/BasketballGM/comments/53op85/feature_request/
 Trade Away button on your own players
-
-redux or similar for state
-  https://www.reddit.com/r/javascript/comments/53ja6l/redux_patterns_and_antipatterns/
 
 keep showing splash screen until first view hydrated
 
@@ -498,9 +493,6 @@ composite ratings / scouting report
   height trait http://www.reddit.com/r/BasketballGM/comments/2uccrl/viewable_composite_ratings_what_do_you_think/co7a4gr
     make it position-dependent.. but then should all this be position dependent?
   "The Shooting, Defense, and Style groups are the ones I'm finding Im paying most attention to"
-
-draft classes being generated with the wrong season, leading to empty draft classes
-  added back old hack to views/draft.js, but that is not satisfying
 
 team and league records (highest scoring game, etc)
   http://www.reddit.com/r/BasketballGM/comments/2sl13h/many_people_have_requested_some_kind_of_all_time/

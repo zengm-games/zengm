@@ -1,10 +1,11 @@
 typescript
 - https://github.com/bcherny/flow-to-typescript
 
+watch, readme in light of service worker
+
 service worker - workbox
 - more explicit upgrades https://deanhume.com/displaying-a-new-version-available-progressive-web-app/
 - eventually delete appcache, but for now leave it there as an upgrade path
-- watch
 
 https://developers.google.com/web/fundamentals/app-install-banners/
 

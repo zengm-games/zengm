@@ -251,13 +251,22 @@ async function updatePlayers(
         vars.leagueLeaders = {};
         const stats = ["pts", "trb", "ast"]; // Categories for leaders
         for (const stat of stats) {
-            players.sort((a, b) => b.stats[stat] - a.stats[stat]);
-            vars.leagueLeaders[stat] = {
-                pid: players[0].pid,
-                name: players[0].name,
-                abbrev: players[0].abbrev,
-                stat: players[0].stats[stat],
-            };
+            if (players.length > 0) {
+                players.sort((a, b) => b.stats[stat] - a.stats[stat]);
+                vars.leagueLeaders[stat] = {
+                    pid: players[0].pid,
+                    name: players[0].name,
+                    abbrev: players[0].abbrev,
+                    stat: players[0].stats[stat],
+                };
+            } else {
+                vars.leagueLeaders[stat] = {
+                    pid: 0,
+                    name: "",
+                    abbrev: g.teamAbbrevsCache[g.userTid],
+                    stat: 0,
+                };
+            }
         }
 
         // Team leaders

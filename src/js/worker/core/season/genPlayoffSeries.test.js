@@ -9,7 +9,7 @@ import season from "./index";
 describe("worker/core/season/genPlayoffSeries", () => {
     before(() => {
         testHelpers.resetG();
-        g.numPlayoffRounds = 2;
+        g.numGamesPlayoffSeries = [7, 7];
     });
 
     after(() => {

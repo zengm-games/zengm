@@ -9,10 +9,10 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
     const playoffsByConference = g.confs.length === 2; // && !localStorage.getItem('top16playoffs');
 
     const tidPlayoffs = [];
-    const numPlayoffTeams = 2 ** g.numPlayoffRounds;
-    const series = range(g.numPlayoffRounds).map(() => []);
+    const numPlayoffTeams = 2 ** g.numGamesPlayoffSeries.length;
+    const series = range(g.numGamesPlayoffSeries.length).map(() => []);
     if (playoffsByConference) {
-        if (g.numPlayoffRounds > 1) {
+        if (g.numGamesPlayoffSeries.length > 1) {
             // Default: top 50% of teams in each of the two conferences
             const numSeriesPerConference = numPlayoffTeams / 4;
             for (let cid = 0; cid < g.confs.length; cid++) {

@@ -317,9 +317,12 @@
                         "type": "integer",
                         "minimum": 0
                     },
-                    "numPlayoffRounds": {
-                        "type": "integer",
-                        "minimum": 0
+                    "numGamesPlayoffSeries": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        },
+                        "minItems": 1
                     },
                     "numTeams": {
                         "type": "integer",

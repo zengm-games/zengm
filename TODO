@@ -1,15 +1,14 @@
 typescript
 - https://github.com/bcherny/flow-to-typescript
+- FlowFixMe
 
 watch, readme in light of service worker
 
 customize playoff series length
-- when updating numPlayoffRounds, update length of numGamesPlayoffSeries
-  - league creation too
-  - league upgrade (so applying default when fetching game attributes)
+- existing leagues - derive from numPlayoffRounds - IDB upgrade or hack? IDB upgrade risky..
 - home/away patterns in newSchedulePlayoffsDay.js?
 - god mode options
-- get rid of numPlayoffRounds (just take length)
+- manual
 
 service worker - workbox
 - more explicit upgrades https://deanhume.com/displaying-a-new-version-available-progressive-web-app/

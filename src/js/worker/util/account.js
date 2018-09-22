@@ -261,7 +261,7 @@ checkAchievement.fo_fo_fo = async (
         return false;
     }
 
-    if (g.numPlayoffRounds < 3) {
+    if (g.numGamesPlayoffSeries.length < 3) {
         return false;
     }
 
@@ -381,7 +381,7 @@ async function checkDynasty(
         // Won title?
         if (
             teamSeasons[teamSeasons.length - 1 - i].playoffRoundsWon ===
-            g.numPlayoffRounds
+            g.numGamesPlayoffSeries.length
         ) {
             titlesFound += 1;
         }
@@ -428,7 +428,7 @@ async function checkMoneyball(
     if (
         t &&
         t.seasonAttrs &&
-        t.seasonAttrs.playoffRoundsWon === g.numPlayoffRounds &&
+        t.seasonAttrs.playoffRoundsWon === g.numGamesPlayoffSeries.length &&
         t.seasonAttrs.expenses.salary.amount <= maxPayroll
     ) {
         if (saveAchievement) {
@@ -511,7 +511,7 @@ checkAchievement.small_market = async (
     if (
         t &&
         t.seasonAttrs &&
-        t.seasonAttrs.playoffRoundsWon === g.numPlayoffRounds &&
+        t.seasonAttrs.playoffRoundsWon === g.numGamesPlayoffSeries.length &&
         t.seasonAttrs.pop <= 2
     ) {
         if (saveAchievement) {

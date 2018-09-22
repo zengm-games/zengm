@@ -37,7 +37,9 @@ async function updateTeamHistory(
             if (teamSeason.playoffRoundsWon >= 0) {
                 playoffAppearances += 1;
             }
-            if (teamSeason.playoffRoundsWon === g.numPlayoffRounds) {
+            if (
+                teamSeason.playoffRoundsWon === g.numGamesPlayoffSeries.length
+            ) {
                 championships += 1;
             }
 
@@ -114,7 +116,7 @@ async function updateTeamHistory(
             bestRecord,
             worstRecord,
             numConfs: g.confs.length,
-            numPlayoffRounds: g.numPlayoffRounds,
+            numPlayoffRounds: g.numGamesPlayoffSeries.length,
         };
     }
 }

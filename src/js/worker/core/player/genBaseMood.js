@@ -8,7 +8,7 @@ import type { TeamSeason } from "../../../common/types";
 const genBaseMood = (teamSeason: TeamSeason): number => {
     // Special case for winning a title - basically never refuse to re-sign unless a miracle occurs
     if (
-        teamSeason.playoffRoundsWon === g.numPlayoffRounds &&
+        teamSeason.playoffRoundsWon === g.numGamesPlayoffSeries.length &&
         Math.random() < 0.99
     ) {
         return -0.25; // Should guarantee no refusing to re-sign

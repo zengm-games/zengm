@@ -553,7 +553,7 @@ const doAwards = async (conditions: Conditions) => {
 
     let finalsMvp;
     const champTeam = teams.find(
-        t => t.seasonAttrs.playoffRoundsWon === g.numPlayoffRounds,
+        t => t.seasonAttrs.playoffRoundsWon === g.numGamesPlayoffSeries.length,
     );
     if (champTeam) {
         const champTid = champTeam.tid;

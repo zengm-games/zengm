@@ -70,7 +70,9 @@ async function updateHistory(
 
         // Get champs
         const champ = teams.find(
-            t => t.seasonAttrs.playoffRoundsWon === g.numPlayoffRounds,
+            t =>
+                t.seasonAttrs.playoffRoundsWon ===
+                g.numGamesPlayoffSeries.length,
         );
 
         return {

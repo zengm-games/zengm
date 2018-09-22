@@ -48,7 +48,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
     }
 
     // If playoffs are over, update winner and go to next phase
-    if (rnd === g.numPlayoffRounds - 1) {
+    if (rnd === g.numGamesPlayoffSeries.length - 1) {
         let key;
         if (series[rnd][0].home.won >= numGamesToWin) {
             key = series[rnd][0].home.tid;
@@ -60,7 +60,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
             "teamSeasonsBySeasonTid",
             [g.season, key],
         );
-        teamSeason.playoffRoundsWon = g.numPlayoffRounds;
+        teamSeason.playoffRoundsWon = g.numGamesPlayoffSeries.length;
         teamSeason.hype += 0.05;
         if (teamSeason.hype > 1) {
             teamSeason.hype = 1;

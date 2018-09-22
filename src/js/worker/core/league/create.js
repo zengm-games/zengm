@@ -4,6 +4,7 @@ import orderBy from "lodash/orderBy";
 import { Cache, connectLeague, idb } from "../../db";
 import { DIFFICULTY, PHASE, PLAYER } from "../../../common";
 import { draft, finances, player, team } from "..";
+import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries";
 import setGameAttributes from "./setGameAttributes";
 import {
     defaultGameAttributes,
@@ -17,25 +18,6 @@ import {
     updateStatus,
 } from "../../util";
 import type { Conditions, GameAttributes } from "../../../common/types";
-
-const getNumPlayoffRounds = (numPlayoffRounds, numTeams) => {
-    if (
-        typeof numPlayoffRounds !== "number" ||
-        Number.isNaN(numPlayoffRounds) ||
-        numPlayoffRounds <= 0
-    ) {
-        return 1;
-    }
-
-    for (let num = numPlayoffRounds; num > 0; num--) {
-        const numPlayoffTeams = 2 ** num;
-        if (numPlayoffTeams <= numTeams) {
-            return num;
-        }
-    }
-
-    throw new Error("Cannot find numPlayoffTeams less than numTeams");
-};
 
 // Creates a league, writing nothing to the database.
 export const createWithoutSaving = (
@@ -124,11 +106,13 @@ export const createWithoutSaving = (
         gameAttributes.easyDifficultyInPast = true;
     }
 
-    // Ensure numPlayoffRounds doesn't have an invalid value, relative to numTeams
-    gameAttributes.numPlayoffRounds = getNumPlayoffRounds(
+    // Ensure numGamesPlayoffSeries doesn't have an invalid value, relative to numTeams
+    gameAttributes.numGamesPlayoffSeries = getValidNumGamesPlayoffSeries(
+        gameAttributes.numGamesPlayoffSeries,
         gameAttributes.numPlayoffRounds,
         gameAttributes.numTeams,
     );
+    delete gameAttributes.numPlayoffRounds;
 
     // Hacky - put gameAttributes in g so they can be seen by functions called from this function. Later will be properly done with setGameAttributes
     helpers.resetG();

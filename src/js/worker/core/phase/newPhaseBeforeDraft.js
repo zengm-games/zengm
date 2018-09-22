@@ -30,7 +30,8 @@ const newPhaseBeforeDraft = async (
 
     // Give award to all players on the championship team
     const t = teams.find(
-        t2 => t2.seasonAttrs.playoffRoundsWon === g.numPlayoffRounds,
+        t2 =>
+            t2.seasonAttrs.playoffRoundsWon === g.numGamesPlayoffSeries.length,
     );
     if (t !== undefined) {
         const players = await idb.cache.players.indexGetAll(

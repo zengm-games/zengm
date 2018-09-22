@@ -49,7 +49,10 @@ async function updateHistory(
                     continue;
                 }
 
-                if (t.seasonAttrs[j].playoffRoundsWon === g.numPlayoffRounds) {
+                if (
+                    t.seasonAttrs[j].playoffRoundsWon ===
+                    g.numGamesPlayoffSeries.length
+                ) {
                     seasons[i].champ = {
                         tid: t.tid,
                         abbrev: t.abbrev,
@@ -61,7 +64,7 @@ async function updateHistory(
                     };
                 } else if (
                     t.seasonAttrs[j].playoffRoundsWon ===
-                    g.numPlayoffRounds - 1
+                    g.numGamesPlayoffSeries.length - 1
                 ) {
                     seasons[i].runnerUp = {
                         tid: t.tid,

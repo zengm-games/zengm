@@ -18,10 +18,15 @@ function getTeamRecord(t, awards) {
             playoffAppearances++;
             lastPlayoffAppearance = t.seasonAttrs[i].season;
         }
-        if (t.seasonAttrs[i].playoffRoundsWon >= g.numPlayoffRounds - 1) {
+        if (
+            t.seasonAttrs[i].playoffRoundsWon >=
+            g.numGamesPlayoffSeries.length - 1
+        ) {
             finals++;
         }
-        if (t.seasonAttrs[i].playoffRoundsWon === g.numPlayoffRounds) {
+        if (
+            t.seasonAttrs[i].playoffRoundsWon === g.numGamesPlayoffSeries.length
+        ) {
             championships++;
             lastChampionship = t.seasonAttrs[i].season;
         }

@@ -9,7 +9,7 @@ import { g } from "../../util";
 describe("worker/core/draft/lotterySort", () => {
     it("projects playoff appearances when sorting for a projected lottery", async () => {
         testHelpers.resetG();
-        g.numPlayoffRounds = 1;
+        g.numGamesPlayoffSeries = [7];
 
         // Two top teams are in the same conference. Only one will make the playoffs.
         const teams = [

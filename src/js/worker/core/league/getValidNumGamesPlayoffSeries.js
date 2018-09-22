@@ -22,7 +22,7 @@ const getValidNumPlayoffRounds = (numPlayoffRounds, numTeams) => {
 };
 
 // Ensure numGamesPlayoffSeries doesn't have an invalid value, relative to numTeams. And if numPlayoffRounds is
-// specified when numGamesPlayoffSeries is not (old leagues), use that to set numGamesPlayoffSeries.
+// specified (old leagues), use that to set numGamesPlayoffSeries.
 const getValidNumGamesPlayoffSeries = (
     numGamesPlayoffSeries: number[],
     initialNumPlayoffRounds: number | void,
@@ -47,7 +47,11 @@ const getValidNumGamesPlayoffSeries = (
 
     numGamesPlayoffSeries = [...numGamesPlayoffSeries];
     while (numGamesPlayoffSeries.length < numPlayoffRounds) {
-        numGamesPlayoffSeries.push(7);
+        const numGames =
+            numGamesPlayoffSeries.length > 0
+                ? numGamesPlayoffSeries[numGamesPlayoffSeries.length - 1]
+                : 7;
+        numGamesPlayoffSeries.push(numGames);
     }
     return numGamesPlayoffSeries;
 };

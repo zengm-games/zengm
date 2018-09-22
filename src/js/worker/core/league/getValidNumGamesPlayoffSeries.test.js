@@ -16,11 +16,11 @@ describe("worker/core/league/getValidNumGamesPlayoffSeries", () => {
 
     it("handles lengthening playoffs when numPlayoffRounds is set", async () => {
         const numGamesPlayoffSeries = getValidNumGamesPlayoffSeries(
-            [5, 7],
+            [3, 5],
             3,
             30,
         );
-        assert.deepEqual(numGamesPlayoffSeries, [5, 7, 7]);
+        assert.deepEqual(numGamesPlayoffSeries, [3, 5, 5]);
     });
 
     it("handles truncating playoffs when numPlayoffRounds is set", async () => {

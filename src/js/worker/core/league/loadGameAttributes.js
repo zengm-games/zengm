@@ -1,5 +1,6 @@
 // @flow
 
+import { league } from "..";
 import { idb } from "../../db";
 import { defaultGameAttributes, g, helpers, toUI } from "../../util";
 
@@ -21,11 +22,26 @@ const loadGameAttributes = async () => {
     }
 
     // Set defaults to avoid IndexedDB upgrade
-    helpers.keys(defaultGameAttributes).forEach(key => {
+    for (const key of helpers.keys(defaultGameAttributes)) {
         if (g[key] === undefined) {
-            g[key] = defaultGameAttributes[key];
+            if (
+                key === "numGamesPlayoffSeries" &&
+                g.hasOwnProperty("numPlayoffRounds")
+            ) {
+                // If numPlayoffRounds was set back before numGamesPlayoffSeries existed, use that
+                await league.setGameAttributes({
+                    numGamesPlayoffSeries: league.getValidNumGamesPlayoffSeries(
+                        defaultGameAttributes.numGamesPlayoffSeries,
+                        g.numPlayoffRounds,
+                        g.numTeams,
+                    ),
+                });
+                delete g.numPlayoffRounds;
+            } else {
+                g[key] = defaultGameAttributes[key];
+            }
         }
-    });
+    }
 
     await toUI(["setGameAttributes", g]);
 };

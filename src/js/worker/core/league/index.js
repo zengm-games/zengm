@@ -4,6 +4,7 @@ import autoPlay from "./autoPlay";
 import close from "./close";
 import create from "./create";
 import exportLeague from "./exportLeague";
+import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries";
 import initAutoPlay from "./initAutoPlay";
 import loadGameAttributes from "./loadGameAttributes";
 import remove from "./remove";
@@ -15,6 +16,7 @@ export default {
     close,
     create,
     exportLeague,
+    getValidNumGamesPlayoffSeries,
     initAutoPlay,
     loadGameAttributes,
     remove,

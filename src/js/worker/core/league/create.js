@@ -3,9 +3,7 @@
 import orderBy from "lodash/orderBy";
 import { Cache, connectLeague, idb } from "../../db";
 import { DIFFICULTY, PHASE, PLAYER } from "../../../common";
-import { draft, finances, player, team } from "..";
-import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries";
-import setGameAttributes from "./setGameAttributes";
+import { draft, finances, league, player, team } from "..";
 import {
     defaultGameAttributes,
     g,
@@ -107,7 +105,7 @@ export const createWithoutSaving = (
     }
 
     // Ensure numGamesPlayoffSeries doesn't have an invalid value, relative to numTeams
-    gameAttributes.numGamesPlayoffSeries = getValidNumGamesPlayoffSeries(
+    gameAttributes.numGamesPlayoffSeries = league.getValidNumGamesPlayoffSeries(
         gameAttributes.numGamesPlayoffSeries,
         gameAttributes.numPlayoffRounds,
         gameAttributes.numTeams,
@@ -528,7 +526,7 @@ const create = async (
 
     // Handle gameAttributes special, to get extra functionality from setGameAttributes and because it's not in
     // the database native format in leagueData (object, not array like others).
-    await setGameAttributes(leagueData.gameAttributes);
+    await league.setGameAttributes(leagueData.gameAttributes);
 
     for (const [store, records] of Object.entries(leagueData)) {
         if (store === "gameAttributes" || !Array.isArray(records)) {

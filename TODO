@@ -5,7 +5,6 @@ typescript
 watch, readme in light of service worker
 
 customize playoff series length
-- existing leagues - derive from numPlayoffRounds - IDB upgrade or hack? IDB upgrade risky..
 - home/away patterns in newSchedulePlayoffsDay.js?
 - god mode options
 - manual

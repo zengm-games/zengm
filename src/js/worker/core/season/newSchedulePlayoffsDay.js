@@ -4,6 +4,24 @@ import setSchedule from "./setSchedule";
 import { idb } from "../../db";
 import { g, helpers, local, lock } from "../../util";
 
+// Play 2 home (true) then 2 away (false) and repeat, but ensure that the better team always gets the last game.
+const betterSeedHome = (numGamesPlayoffSeries: number, gameNum: number) => {
+    // For series lengths like 3, 7, 11, 15, etc., special case last 3 games to ensure the home team always gets the last game
+    const needsSpecialEnding = (numGamesPlayoffSeries + 1) % 4 === 0;
+    if (needsSpecialEnding) {
+        // Special case for last 3 games
+        if (gameNum >= numGamesPlayoffSeries - 3) {
+            return (
+                gameNum === numGamesPlayoffSeries - 3 ||
+                gameNum === numGamesPlayoffSeries - 1
+            );
+        }
+    }
+
+    const num = Math.floor(gameNum / 2);
+    return num % 2 === 0;
+};
+
 /**
  * Create a single day's schedule for an in-progress playoffs.
  *
@@ -27,13 +45,8 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
             series[rnd][i].away.won < numGamesToWin
         ) {
             // Make sure to set home/away teams correctly! Home for the lower seed is 1st, 2nd, 5th, and 7th games.
-            const numGames = series[rnd][i].home.won + series[rnd][i].away.won;
-            if (
-                numGames === 0 ||
-                numGames === 1 ||
-                numGames === 4 ||
-                numGames === 6
-            ) {
+            const gameNum = series[rnd][i].home.won + series[rnd][i].away.won;
+            if (betterSeedHome(g.numGamesPlayoffSeries[rnd], gameNum)) {
                 tids.push([series[rnd][i].home.tid, series[rnd][i].away.tid]);
             } else {
                 tids.push([series[rnd][i].away.tid, series[rnd][i].home.tid]);

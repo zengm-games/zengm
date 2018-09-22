@@ -5,9 +5,7 @@ typescript
 watch, readme in light of service worker
 
 customize playoff series length
-- home/away patterns in newSchedulePlayoffsDay.js?
 - god mode options
-- manual
 
 service worker - workbox
 - more explicit upgrades https://deanhume.com/displaying-a-new-version-available-progressive-web-app/
@@ -373,8 +371,6 @@ backboard
 new achievement for winning as 8 seed https://www.reddit.com/r/BasketballGM/comments/4l2arh/new_achievement_suggestion/
 
 on new league, when play to regular season, message appears in inbox but does not show up on dashboard
-
-god mode option for playoff rounds https://www.reddit.com/r/BasketballGM/comments/44hdzs/new_options_in_god_mode/czrxv2w?context=3
 
 substitutions fucked up in long games https://www.reddit.com/r/BasketballGM/comments/44nv0s/100000_minute_quarters/
 

@@ -114,6 +114,16 @@ function nullPad<T>(array: (?T)[], length: number): (?T)[] {
     return array;
 }
 
+const numGamesToWinSeries = (numGamesPlayoffSeries: number | void) => {
+    if (
+        typeof numGamesPlayoffSeries !== "number" ||
+        Number.isNaN(numGamesPlayoffSeries)
+    ) {
+        return 4;
+    }
+    return Math.ceil(numGamesPlayoffSeries / 2);
+};
+
 const orderByWinp = <T: { seasonAttrs: { winp: number, won: number } }>(
     teams: T[],
 ): T[] => {
@@ -199,6 +209,7 @@ const helpers = Object.assign({}, commonHelpers, {
     getAbbrev,
     leagueUrl,
     nullPad,
+    numGamesToWinSeries,
     orderByWinp,
     overtimeCounter,
     pickDesc,

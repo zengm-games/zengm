@@ -39,6 +39,7 @@ const defaultGameAttributes: GameAttributes = {
         { did: 5, cid: 1, name: "Pacific" },
     ],
     numPlayoffRounds: 4,
+    numGamesPlayoffSeries: [7, 7, 7, 7],
     aiTrades: true,
     autoDeleteOldBoxScores: true,
     stopOnInjury: false,

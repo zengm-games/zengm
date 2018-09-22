@@ -275,7 +275,7 @@ checkAchievement.fo_fo_fo = async (
         let found = false;
         for (const series of round) {
             if (
-                series.away.won === 4 &&
+                series.away.won >= 4 &&
                 series.home.won === 0 &&
                 series.away.tid === g.userTid
             ) {
@@ -283,7 +283,7 @@ checkAchievement.fo_fo_fo = async (
                 break;
             }
             if (
-                series.home.won === 4 &&
+                series.home.won >= 4 &&
                 series.away.won === 0 &&
                 series.home.tid === g.userTid
             ) {

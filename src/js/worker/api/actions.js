@@ -222,7 +222,10 @@ const playMenu = {
 
             // See how many days are left in this round
             const series = playoffSeries.series[playoffSeries.currentRound][0];
-            const numDaysThisSeries = 7 - series.home.won - series.away.won;
+            const numDaysThisSeries =
+                g.numGamesPlayoffSeries[playoffSeries.currentRound] -
+                series.home.won -
+                series.away.won;
 
             game.play(numDaysThisSeries, conditions);
         }
@@ -234,12 +237,21 @@ const playMenu = {
             const playoffSeries = await idb.cache.playoffSeries.get(g.season);
 
             // Max 7 days per round that hasn't started yet
-            const numDaysFutureRounds =
-                (g.numPlayoffRounds - 1 - playoffSeries.currentRound) * 7;
+            let numDaysFutureRounds = 0;
+            for (
+                let i = playoffSeries.currentRound + 1;
+                i < g.numGamesPlayoffSeries.length;
+                i++
+            ) {
+                numDaysFutureRounds += g.numGamesPlayoffSeries[i];
+            }
 
             // All current series are in sync, so just check one and see how many games are left
             const series = playoffSeries.series[playoffSeries.currentRound][0];
-            const numDaysThisSeries = 7 - series.home.won - series.away.won;
+            const numDaysThisSeries =
+                g.numGamesPlayoffSeries[playoffSeries.currentRound] -
+                series.home.won -
+                series.away.won;
 
             const numDays = numDaysFutureRounds + numDaysThisSeries;
             game.play(numDays, conditions);

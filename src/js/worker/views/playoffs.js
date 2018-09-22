@@ -92,7 +92,9 @@ async function updatePlayoffs(
         return {
             finalMatchups,
             matchups,
-            numPlayoffRounds: g.numPlayoffRounds,
+            numGamesToWinSeries: g.numGamesPlayoffSeries.map(
+                helpers.numGamesToWinSeries,
+            ),
             confNames,
             season: inputs.season,
             series,

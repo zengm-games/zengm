@@ -26,6 +26,7 @@ const LeagueDashboard = ({
     name,
     numConfs,
     numGames,
+    numGamesToWinSeries,
     numPlayoffRounds,
     oppPts,
     oppPtsRank,
@@ -382,6 +383,9 @@ const LeagueDashboard = ({
                                     <b>{seriesTitle}</b>
                                     <br />
                                     <PlayoffMatchup
+                                        numGamesToWinSeries={
+                                            numGamesToWinSeries
+                                        }
                                         season={season}
                                         series={series}
                                         userTid={userTid}
@@ -534,6 +538,7 @@ LeagueDashboard.propTypes = {
     name: PropTypes.string.isRequired,
     numConfs: PropTypes.number.isRequired,
     numGames: PropTypes.number.isRequired,
+    numGamesToWinSeries: PropTypes.number.isRequired,
     numPlayoffRounds: PropTypes.number.isRequired,
     oppPts: PropTypes.number.isRequired,
     oppPtsRank: PropTypes.number.isRequired,
@@ -550,7 +555,7 @@ LeagueDashboard.propTypes = {
     salaryCap: PropTypes.number.isRequired,
     season: PropTypes.number.isRequired,
     series: PropTypes.object,
-    seriesTitle: PropTypes.string,
+    seriesTitle: PropTypes.string.isRequired,
     showPlayoffSeries: PropTypes.bool.isRequired,
     starters: PropTypes.arrayOf(PropTypes.object).isRequired,
     teamLeaders: PropTypes.object.isRequired,

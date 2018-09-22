@@ -9,7 +9,7 @@ const Playoffs = ({
     confNames,
     finalMatchups,
     matchups,
-    numPlayoffRounds,
+    numGamesToWinSeries,
     season,
     series,
     userTid,
@@ -20,7 +20,7 @@ const Playoffs = ({
         matchup: [number, number],
         rowspan: number,
     }[][],
-    numPlayoffRounds: number,
+    numGamesToWinSeries: number[],
     season: number,
     series: {
         cid: number,
@@ -32,6 +32,8 @@ const Playoffs = ({
     userTid: number,
 }) => {
     setTitle(`Playoffs - ${season}`);
+
+    const numRounds = numGamesToWinSeries.length;
 
     return (
         <div>
@@ -48,7 +50,7 @@ const Playoffs = ({
                 </p>
             ) : null}
 
-            {confNames.length === 2 && numPlayoffRounds > 1 ? (
+            {confNames.length === 2 && numRounds > 1 ? (
                 <h3 className="hidden-xs">
                     {confNames[1]}{" "}
                     <span className="pull-right">{confNames[0]}</span>
@@ -66,9 +68,14 @@ const Playoffs = ({
                                             key={j}
                                             rowSpan={m.rowspan}
                                             width={`${100 /
-                                                (numPlayoffRounds * 2 - 1)}%`}
+                                                (numRounds * 2 - 1)}%`}
                                         >
                                             <PlayoffMatchup
+                                                numGamesToWinSeries={
+                                                    numGamesToWinSeries[
+                                                        m.matchup[0]
+                                                    ]
+                                                }
                                                 season={season}
                                                 series={
                                                     series[m.matchup[0]][
@@ -93,7 +100,7 @@ Playoffs.propTypes = {
     confNames: PropTypes.arrayOf(PropTypes.string).isRequired,
     finalMatchups: PropTypes.bool.isRequired,
     matchups: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.object)).isRequired,
-    numPlayoffRounds: PropTypes.number.isRequired,
+    numGamesToWinSeries: PropTypes.arrayOf(PropTypes.number).isRequired,
     season: PropTypes.number.isRequired,
     series: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.object)).isRequired,
     userTid: PropTypes.number.isRequired,

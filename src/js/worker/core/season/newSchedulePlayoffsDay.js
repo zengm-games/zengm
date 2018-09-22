@@ -16,10 +16,16 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
     const series = playoffSeries.series;
     const rnd = playoffSeries.currentRound;
     const tids = [];
+    const numGamesToWin = helpers.numGamesToWinSeries(
+        g.numGamesPlayoffSeries[rnd],
+    );
 
     // Try to schedule games if there are active series
     for (let i = 0; i < series[rnd].length; i++) {
-        if (series[rnd][i].home.won < 4 && series[rnd][i].away.won < 4) {
+        if (
+            series[rnd][i].home.won < numGamesToWin &&
+            series[rnd][i].away.won < numGamesToWin
+        ) {
             // Make sure to set home/away teams correctly! Home for the lower seed is 1st, 2nd, 5th, and 7th games.
             const numGames = series[rnd][i].home.won + series[rnd][i].away.won;
             if (
@@ -44,7 +50,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
     // If playoffs are over, update winner and go to next phase
     if (rnd === g.numPlayoffRounds - 1) {
         let key;
-        if (series[rnd][0].home.won >= 4) {
+        if (series[rnd][0].home.won >= numGamesToWin) {
             key = series[rnd][0].home.tid;
         } else {
             key = series[rnd][0].away.tid;
@@ -80,14 +86,14 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
         // Find the two winning teams
         let team1;
         let team2;
-        if (series[rnd][i].home.won >= 4) {
+        if (series[rnd][i].home.won >= numGamesToWin) {
             team1 = helpers.deepCopy(series[rnd][i].home);
             tidsWon.push(series[rnd][i].home.tid);
         } else {
             team1 = helpers.deepCopy(series[rnd][i].away);
             tidsWon.push(series[rnd][i].away.tid);
         }
-        if (series[rnd][i + 1].home.won >= 4) {
+        if (series[rnd][i + 1].home.won >= numGamesToWin) {
             team2 = helpers.deepCopy(series[rnd][i + 1].home);
             tidsWon.push(series[rnd][i + 1].home.tid);
         } else {

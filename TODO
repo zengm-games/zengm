@@ -3,6 +3,14 @@ typescript
 
 watch, readme in light of service worker
 
+customize playoff series length
+- when updating numPlayoffRounds, update length of numGamesPlayoffSeries
+  - league creation too
+  - league upgrade (so applying default when fetching game attributes)
+- home/away patterns in newSchedulePlayoffsDay.js?
+- god mode options
+- get rid of numPlayoffRounds (just take length)
+
 service worker - workbox
 - more explicit upgrades https://deanhume.com/displaying-a-new-version-available-progressive-web-app/
 - eventually delete appcache, but for now leave it there as an upgrade path
@@ -52,9 +60,6 @@ center UI when possible
   - if not wide enough for skyscraper
 - problem: NavBar doesn't like when a class is added alongside .container to do this. Revisit later, maybe.
 
-too easy to trade for current season picks
-- i think it's uncertainty+fudge factor decreasing too much when the outcome is certain
-
 somewhere, show average age of team
 
 increase PG cutoff
@@ -68,9 +73,6 @@ index updating
 - currenty: check if the indexed property has changed, and only update a specific index then
 - would be better: make _dirtyIndexes per index, not per store  
 - even better: incrementally update index
-
-customize playoff series length
-- https://www.reddit.com/r/BasketballGM/comments/8b23uh/request_customizable_playoff_series_length/dx3bxd3/?context=3
 
 Trade.js shouldn't have realtimeupdate, should be listening to a specific updateevent (like "trade") and that should be emitted in all the worker api functions
 - same with the rest of UI, otherwise updates will only happen in one tab

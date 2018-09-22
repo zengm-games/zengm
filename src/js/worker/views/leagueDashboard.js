@@ -315,6 +315,7 @@ async function updatePlayoffs(
         let foundSeries;
         let seriesTitle = "";
         let showPlayoffSeries = false;
+        let numGamesToWinSeries = 4;
 
         if (playoffSeries !== undefined) {
             const series = playoffSeries.series;
@@ -340,6 +341,9 @@ async function updatePlayoffs(
                         } else if (rnd === 3) {
                             seriesTitle = "League Finals";
                         }
+                        numGamesToWinSeries = helpers.numGamesToWinSeries(
+                            g.numGamesPlayoffSeries[rnd],
+                        );
                         break;
                     }
                 }
@@ -351,7 +355,8 @@ async function updatePlayoffs(
 
         return {
             numConfs: g.confs.length,
-            numPlayoffRounds: g.numPlayoffRounds,
+            numGamesToWinSeries,
+            numPlayoffRounds: g.numGamesPlayoffSeries.length,
             series: foundSeries,
             seriesTitle,
             showPlayoffSeries,

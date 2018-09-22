@@ -215,7 +215,8 @@ export type GameAttributeKey =
     | "names"
     | "nextPhase"
     | "numGames"
-    | "numPlayoffRounds"
+    | "numGamesPlayoffSeries"
+    | "numPlayoffRounds" // Obsolete, just here for upgrade code
     | "numTeams"
     | "ownerMood"
     | "phase"

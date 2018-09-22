@@ -13,10 +13,12 @@ type SeriesTeam = {
 };
 
 const PlayoffMatchup = ({
+    numGamesToWinSeries,
     season,
     series,
     userTid,
 }: {
+    numGamesToWinSeries: number,
     season: number,
     series?: {
         away: SeriesTeam,
@@ -32,8 +34,12 @@ const PlayoffMatchup = ({
         return null;
     }
 
-    const homeWon = series.home.hasOwnProperty("won") && series.home.won === 4;
-    const awayWon = series.away.hasOwnProperty("won") && series.away.won === 4;
+    const homeWon =
+        series.home.hasOwnProperty("won") &&
+        series.home.won === numGamesToWinSeries;
+    const awayWon =
+        series.away.hasOwnProperty("won") &&
+        series.away.won === numGamesToWinSeries;
 
     return (
         <div>
@@ -80,6 +86,7 @@ const PlayoffMatchup = ({
 };
 
 PlayoffMatchup.propTypes = {
+    numGamesToWinSeries: PropTypes.number.isRequired,
     season: PropTypes.number.isRequired,
     series: PropTypes.shape({
         away: PropTypes.shape({

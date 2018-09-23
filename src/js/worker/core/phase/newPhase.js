@@ -108,7 +108,7 @@ const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
                 conditions,
             );
 
-            console.error(err);
+            throw err;
         }
     }
 };

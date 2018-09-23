@@ -3,6 +3,7 @@ typescript
 - FlowFixMe
 
 watch, readme in light of service worker
+- maybe watch should rebuild service worker, then add documentation for devtools settings
 
 customize playoff series length
 - god mode options
@@ -234,8 +235,6 @@ delete meta database after league tests (and others that create it)
 this shit is UGLY UGLY UGLY, fix ASAP!!!
     if (typeof it === 'function') { return; }
   http://railsware.com/blog/2017/01/10/mocking-es6-module-import-without-dependency-injection/
-
-unify build and watch scripts - use watchify programmatically
 
 rethink cache API, with goal of having it typed
 - rename indexes, store prefixed with storename

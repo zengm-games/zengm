@@ -17,7 +17,7 @@
         "start-watch": "concurrently --kill-others 'yarn run start' 'yarn run watch'",
         "watch": "node tools/pre-watch.js && concurrently --kill-others 'yarn run watch-css' 'yarn run watch-js'",
         "watch-css": "node tools/watch-css.js",
-        "watch-js": "concurrently --raw 'watchify -d src/js/ui/index.js -o build/gen/ui.js -v' 'watchify -d src/js/worker/index.js -o build/gen/worker.js -v'",
+        "watch-js": "node tools/watch-js.js",
         "lint": "concurrently --raw 'yarn run flow' 'yarn run lint-js'",
         "flow": "flow",
         "lint-js": "eslint '*.js' 'src/**/*.js' 'tools/**/*.js'",

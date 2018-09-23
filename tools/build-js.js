@@ -18,6 +18,7 @@ const BLACKLIST = {
 
 for (const name of ["ui", "worker"]) {
     browserify(`src/js/${name}/index.js`, { debug: true })
+        .on("error", console.error)
         .transform(blacklistify(BLACKLIST[name]))
         .transform(envify({ NODE_ENV: "production" }), { global: true })
         .bundle()

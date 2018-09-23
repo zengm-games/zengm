@@ -92,11 +92,11 @@ mod_rewrite enabled. That's how it's done on play.basketball-gm.com.
 
 Basketball GM uses a service worker for offline caching. This can make
 development tricky, because if you load the game in your browser, make a change,
-wait for the build/watch to finish, and then reload... you will not see your
-change because it will cache the original version and then not update it on a
-reload. This is the normal behavior for service workers (they only switch to a
-new version when you actually close the website and reopen it, not just
-reloading), but it makes development annoying.
+wait for build/watch to finish, and then reload... you will not see your change
+because it will cache the original version and then not update it on a reload.
+This is the normal behavior for service workers (they only switch to a new
+version when you actually close the website and reopen it, not on a reload), but
+it makes development annoying.
 
 To work around that, in Chrome you can
 [use the "Update on reload" option][1] and keep your devtools open. Then

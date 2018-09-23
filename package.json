@@ -23,7 +23,6 @@
         "lint-js": "eslint '*.js' 'src/**/*.js' 'tools/**/*.js'",
         "lint-js-fix": "yarn run lint-js --fix",
         "prettier": "prettier --write '*.{js,json}' 'src/**/*.{js,json}' 'tools/**/*.{js,json}'",
-        "precommit": "lint-staged",
         "test": "karma start karma.conf.js",
         "test-watch": "karma start karma.conf.js --auto-watch --no-single-run",
         "test-browserstack": "karma start karma-browserstack.conf.js"
@@ -127,5 +126,10 @@
             "@babel/plugin-transform-async-to-generator"
         ]
     },
-    "private": true
+    "private": true,
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    }
 }

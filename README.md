@@ -88,6 +88,22 @@ The mod_rewrite rules in `.htaccess` can be used to make Apache run Basketball
 GM. Everything should work if you point it at the `build` folder with
 mod_rewrite enabled. That's how it's done on play.basketball-gm.com.
 
+#### Service worker
+
+Basketball GM uses a service worker for offline caching. This can make
+development tricky, because if you load the game in your browser, make a change,
+wait for the build/watch to finish, and then reload... you will not see your
+change because it will cache the original version and then not update it on a
+reload. This is the normal behavior for service workers (they only switch to a
+new version when you actually close the website and reopen it, not just
+reloading), but it makes development annoying.
+
+To work around that, in Chrome you can
+[use the "Update on reload" option][1] and keep your devtools open. Then
+reloading will always get you the latest version.
+
+[1]: https://developers.google.com/web/fundamentals/primers/service-workers/lifecycle#update_on_reload
+
 ### Step 4 - Testing
 
 ESLint, Flow, and, stylelint are used to enforce some coding standards. To run

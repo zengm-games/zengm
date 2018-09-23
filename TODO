@@ -2,9 +2,6 @@ typescript
 - https://github.com/bcherny/flow-to-typescript
 - FlowFixMe
 
-watch, readme in light of service worker
-- maybe watch should rebuild service worker, then add documentation for devtools settings
-
 customize playoff series length
 - god mode options
 

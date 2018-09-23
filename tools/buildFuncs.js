@@ -1,5 +1,6 @@
 // @flow
 
+const workboxBuild = require("workbox-build");
 const CleanCSS = require("clean-css");
 const fs = require("fs");
 const fse = require("fs-extra");
@@ -8,12 +9,21 @@ const path = require("path");
 const replace = require("replace");
 const Terser = require("terser");
 
-const reset = () => {
-    console.log('Resetting "build" directory...');
+// NOTE: This should be run *AFTER* all assets are built
+const buildSW = async () => {
+    const { count, size, warnings } = await workboxBuild.injectManifest({
+        swSrc: "src/sw.js",
+        swDest: "build/sw.js",
+        globDirectory: "build",
+        globPatterns: ["**/*.{js,css,html}", "fonts/*.woff", "img/logos/*.png"],
+        dontCacheBustUrlsMatching: new RegExp("gen/(ui|worker)-.*.js"),
 
-    fse.removeSync("build");
-    fs.mkdirSync("build");
-    fs.mkdirSync("build/gen");
+        // Changing default is only needed for unminified versions from watch-js
+        maximumFileSizeToCacheInBytes: 100 * 1024 * 1024,
+    });
+
+    warnings.forEach(console.warn);
+    console.log(`${count} files will be precached, totaling ${size} bytes.`);
 };
 
 const copyFiles = () => {
@@ -37,6 +47,22 @@ const copyFiles = () => {
     for (const folder of foldersToIgnore) {
         fse.removeSync(`build/${folder}`);
     }
+};
+
+const genRev = () => {
+    const d = new Date();
+    const date = d
+        .toISOString()
+        .split("T")[0]
+        .replace(/-/g, ".");
+    const minutes = String(d.getUTCMinutes() + 60 * d.getUTCHours()).padStart(
+        4,
+        "0",
+    );
+    const rev = `${date}.${minutes}`;
+    console.log(`rev ${rev}`);
+
+    return rev;
 };
 
 const minifyCss = () => {
@@ -80,50 +106,32 @@ const minifyCss = () => {
 };
 
 const minifyJS = (name /*: string */) => {
-    fs.readFile(`build/${name}`, "utf8", (err, data) => {
-        if (err) {
-            throw err;
-        }
+    console.log("minify", name);
+    const data = fs.readFileSync(`build/${name}`, "utf8");
 
-        const result = Terser.minify(data, {
-            mangle: {
-                // Needed until https://bugs.webkit.org/show_bug.cgi?id=171041 is fixed
-                safari10: true,
-            },
-            sourceMap: {
-                content: "inline",
-                filename: `build/${name}`,
-                url: `${path.basename(name)}.map`,
-            },
-        });
-
-        fs.writeFile(`build/${name}`, result.code, err2 => {
-            if (err2) {
-                throw err2;
-            }
-        });
-        fs.writeFile(`build/${name}.map`, result.map, err2 => {
-            if (err2) {
-                throw err2;
-            }
-        });
+    const result = Terser.minify(data, {
+        mangle: {
+            // Needed until https://bugs.webkit.org/show_bug.cgi?id=171041 is fixed
+            safari10: true,
+        },
+        sourceMap: {
+            content: "inline",
+            filename: `build/${name}`,
+            url: `${path.basename(name)}.map`,
+        },
     });
+
+    fs.writeFileSync(`build/${name}`, result.code);
+    fs.writeFileSync(`build/${name}.map`, result.map);
+    console.log("done", name);
 };
 
-const genRev = () => {
-    const d = new Date();
-    const date = d
-        .toISOString()
-        .split("T")[0]
-        .replace(/-/g, ".");
-    const minutes = String(d.getUTCMinutes() + 60 * d.getUTCHours()).padStart(
-        4,
-        "0",
-    );
-    const rev = `${date}.${minutes}`;
-    console.log(`rev ${rev}`);
+const reset = () => {
+    console.log('Resetting "build" directory...');
 
-    return rev;
+    fse.removeSync("build");
+    fs.mkdirSync("build");
+    fs.mkdirSync("build/gen");
 };
 
 const setTimestamps = () => {
@@ -145,10 +153,11 @@ const setTimestamps = () => {
 };
 
 module.exports = {
-    reset,
+    buildSW,
     copyFiles,
+    genRev,
     minifyCss,
     minifyJS,
-    genRev,
+    reset,
     setTimestamps,
 };

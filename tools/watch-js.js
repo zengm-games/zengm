@@ -4,6 +4,7 @@ const browserify = require("browserify");
 const envify = require("envify/custom");
 const fs = require("fs");
 const watchify = require("watchify");
+const build = require("./buildFuncs");
 
 console.log("Watching JavaScript files...");
 
@@ -49,8 +50,10 @@ for (const name of ["ui", "worker"]) {
             })
             .pipe(writeStream);
 
-        writeStream.on("finish", () => {
+        writeStream.on("finish", async () => {
             if (!didError) {
+                await build.buildSW();
+
                 console.log(
                     `${(bytes / 1024 / 1024).toFixed(
                         2,

@@ -6,7 +6,7 @@ const fse = require("fs-extra");
 const sass = require("node-sass");
 const path = require("path");
 const replace = require("replace");
-const UglifyJS = require("uglify-es");
+const Terser = require("terser");
 
 const reset = () => {
     console.log('Resetting "build" directory...');
@@ -85,7 +85,7 @@ const minifyJS = (name /*: string */) => {
             throw err;
         }
 
-        const result = UglifyJS.minify(data, {
+        const result = Terser.minify(data, {
             mangle: {
                 // Needed until https://bugs.webkit.org/show_bug.cgi?id=171041 is fixed
                 safari10: true,

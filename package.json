@@ -103,7 +103,7 @@
         "prettier": "^1.14.2",
         "prop-types": "^15.6.2",
         "replace": "^1.0.0",
-        "uglify-es": "^3.3.9",
+        "terser": "^3.8.2",
         "watchify": "^3.11.0",
         "workbox-build": "^3.5.0"
     },

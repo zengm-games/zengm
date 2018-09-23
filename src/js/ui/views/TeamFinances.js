@@ -320,7 +320,7 @@ const TeamFinances = ({
         }),
     );
 
-    const rows = contracts.map(p => {
+    const rows = contracts.map((p, i) => {
         const data = [
             <PlayerNameLabels
                 injury={p.injury}
@@ -334,10 +334,10 @@ const TeamFinances = ({
         ];
 
         // Loop through the salaries for the next five years for this player.
-        for (let i = 0; i < 5; i++) {
-            if (p.amounts[i]) {
+        for (let j = 0; j < 5; j++) {
+            if (p.amounts[j]) {
                 const formattedAmount = helpers.formatCurrency(
-                    p.amounts[i],
+                    p.amounts[j],
                     "M",
                 );
 
@@ -352,7 +352,7 @@ const TeamFinances = ({
         }
 
         return {
-            key: p.pid,
+            key: i, // Can't be pid because a player will appear twice if he is cut and re-signed
             data,
         };
     });

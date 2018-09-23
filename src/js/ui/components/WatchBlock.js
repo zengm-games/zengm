@@ -14,7 +14,7 @@ type State = {
 };
 
 class WatchBlock extends React.Component<Props, State> {
-    handleClick: Event => void;
+    handleClick: (SyntheticEvent<>) => void;
 
     constructor(props: Props) {
         super(props);

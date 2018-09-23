@@ -138,6 +138,7 @@ const genPage = (id, inLeague = true) => {
                     bbgmVersionStored,
                     hasNavigatorServiceWorker:
                         window.navigator.serviceWorker !== undefined,
+                    registrationsLength: registrations.length,
                     registrations: registrations.map(r => {
                         return {
                             scope: r.scope,

@@ -98,8 +98,6 @@ click on (not drag to) max speed in game sim first time doesn't work
 
 career totals on player pages https://www.reddit.com/r/BasketballGM/comments/7ya1yu/any_more_thoughts_on_the_beta/duptp08/?context=3
 
-when playing many seasons in one session, it slows down. why? ctrl+r restores   performance
-
 open multiple leagues from dashboard at the same time - Invalid cache status "filling"
 - looks like flush is being called while status is "filling", can that be short circuited since idb.cache has been redefined? lid is different, or the hostID is different?
   - happens because it calls "flush" when closing an existing open database. should be more explicit about state of loading (no league loaded or loading, league X loaded and no league loading, league X loaded and league Y loading, no league loaded and league Y loading)

@@ -106,7 +106,6 @@ const minifyCss = () => {
 };
 
 const minifyJS = (name /*: string */) => {
-    console.log("minify", name);
     const data = fs.readFileSync(`build/${name}`, "utf8");
 
     const result = Terser.minify(data, {
@@ -123,7 +122,6 @@ const minifyJS = (name /*: string */) => {
 
     fs.writeFileSync(`build/${name}`, result.code);
     fs.writeFileSync(`build/${name}.map`, result.map);
-    console.log("done", name);
 };
 
 const reset = () => {

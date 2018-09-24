@@ -9,14 +9,14 @@ Copyright (C) Jeremy Scheff. All rights reserved.
 * Email: commissioner@basketball-gm.com
 * Website: <https://basketball-gm.com/>
 * Development: <https://github.com/dumbmatter/basketball-gm>
-* Discussion: <http://www.reddit.com/r/BasketballGM/>
+* Discussion: <https://www.reddit.com/r/BasketballGM/> or <https://discord.gg/E9HUwbq>
 
 **Basketball GM is NOT open source, but it is also not completely closed. Please
 see LICENSE.md for details.**
 
 ## Development Info
 
-If you just want to play the game, go to <http://basketball-gm.com/>.
+If you just want to play the game, go to <https://basketball-gm.com/>.
 Instructions below are for developers who want to run a copy locally so they can
 make changes to the code.
 

@@ -52,15 +52,18 @@ const handleResetPT = async (tid: number) => {
     await toWorker("resetPlayingTime", tid);
 };
 
-const handleRelease = async (p, phase, season) => {
-    // If a player was just drafted by his current team and the regular season hasn't started, then he can be released without paying anything
-    const justDrafted =
+// If a player was just drafted by his current team and the regular season hasn't started, then he can be released without paying anything
+const justDrafted = (p, phase, season) => {
+    return (
         p.tid === p.draft.tid &&
         ((p.draft.year === season && phase >= PHASE.DRAFT) ||
-            (p.draft.year === season - 1 && phase < PHASE.REGULAR_SEASON));
+            (p.draft.year === season - 1 && phase < PHASE.REGULAR_SEASON))
+    );
+};
 
+const handleRelease = async (p, phase, season) => {
     let releaseMessage;
-    if (justDrafted) {
+    if (justDrafted(p, phase, season)) {
         releaseMessage = `Are you sure you want to release ${
             p.name
         }?  He will become a free agent and no longer take up a roster spot on your team. Because you just drafted him and the regular season has not started yet, you will not have to pay his contract.`;
@@ -218,7 +221,18 @@ const RosterRow = SortableElement(
                     </RatingWithChange>
                 </td>
                 {season === currentSeason ? (
-                    <td>
+                    <td
+                        style={{
+                            fontStyle: justDrafted(p, phase, currentSeason)
+                                ? "italic"
+                                : "normal",
+                        }}
+                        title={
+                            justDrafted(p, phase, currentSeason)
+                                ? "Contracts for drafted players are not guaranteed until the regular season. If you release a drafted player before then, you pay nothing."
+                                : null
+                        }
+                    >
                         {helpers.formatCurrency(p.contract.amount, "M")} thru{" "}
                         {p.contract.exp}
                     </td>

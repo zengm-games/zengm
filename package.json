@@ -35,7 +35,7 @@
     },
     "dependencies": {
         "@babel/runtime": "^7.0.0",
-        "ajv": "^6.5.3",
+        "ajv": "^6.5.4",
         "backboard": "^1.0.7",
         "bbgm-router": "^1.0.0",
         "bugsnag-react": "^1.1.1",
@@ -73,7 +73,7 @@
         "babel-eslint": "^9.0.0",
         "babelify": "^10.0.0",
         "blacklistify": "^0.0.3",
-        "browserify": "^16.2.2",
+        "browserify": "^16.2.3",
         "cheerio": "^1.0.0-rc.2",
         "chokidar": "^2.0.4",
         "clean-css": "^4.2.1",

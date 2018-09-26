@@ -11,13 +11,13 @@ class GodMode extends React.Component {
         super(props);
         this.state = {
             dirty: false,
-            autoDeleteOldBoxScores: props.autoDeleteOldBoxScores,
-            difficulty: props.difficulty,
+            autoDeleteOldBoxScores: String(props.autoDeleteOldBoxScores),
+            difficulty: String(props.difficulty),
             difficultySelect: difficultyValues.includes(props.difficulty)
-                ? props.difficulty
+                ? String(props.difficulty)
                 : "custom",
-            stopOnInjury: props.stopOnInjury,
-            stopOnInjuryGames: props.stopOnInjuryGames,
+            stopOnInjury: String(props.stopOnInjury),
+            stopOnInjuryGames: String(props.stopOnInjuryGames),
         };
         this.handleChanges = {
             autoDeleteOldBoxScores: this.handleChange.bind(
@@ -43,15 +43,17 @@ class GodMode extends React.Component {
     static getDerivedStateFromProps(nextProps, prevState) {
         if (!prevState.dirty) {
             return {
-                autoDeleteOldBoxScores: nextProps.autoDeleteOldBoxScores,
-                difficulty: nextProps.difficulty,
+                autoDeleteOldBoxScores: String(
+                    nextProps.autoDeleteOldBoxScores,
+                ),
+                difficulty: String(nextProps.difficulty),
                 difficultySelect:
                     difficultyValues.includes(nextProps.difficulty) &&
                     prevState.difficultySelect !== "custom"
-                        ? nextProps.difficulty
+                        ? String(nextProps.difficulty)
                         : "custom",
-                stopOnInjury: nextProps.stopOnInjury,
-                stopOnInjuryGames: nextProps.stopOnInjuryGames,
+                stopOnInjury: String(nextProps.stopOnInjury),
+                stopOnInjuryGames: String(nextProps.stopOnInjuryGames),
             };
         }
 

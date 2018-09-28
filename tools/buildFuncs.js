@@ -66,7 +66,7 @@ const genRev = () => {
 };
 
 const minifyCss = () => {
-    console.log("Minifying CSS...");
+    console.log("Building CSS...");
     let source = "";
 
     /*
@@ -103,6 +103,8 @@ const minifyCss = () => {
         console.log("clean-css warnings", result.warnings);
     }
     fs.writeFileSync("build/gen/bbgm2.css", result.styles);
+
+    console.log("Done building CSS!");
 };
 
 const minifyJS = (name /*: string */) => {

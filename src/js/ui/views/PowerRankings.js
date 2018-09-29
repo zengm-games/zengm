@@ -50,6 +50,7 @@ const PowerRankings = ({ teams, userTid }) => {
             </p>
 
             <DataTable
+                className="table-nonfluid"
                 cols={cols}
                 defaultSort={[0, "asc"]}
                 name="PowerRankings"

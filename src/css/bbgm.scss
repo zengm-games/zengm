@@ -287,11 +287,7 @@ table {
 
 .table-bordered {
     tbody tr.separator td {
-        border-bottom: 1px solid #888;
-    }
-
-    thead tr:last-child th {
-        border-bottom: 1px solid #888;
+        border-bottom: 1px solid $gray-700;
     }
 }
 
@@ -385,8 +381,9 @@ table {
     font-size: 14px;
 }
 
+// Make table not stretch to 100% width automatically
 .table-nonfluid {
-    width: auto;
+    width: 1px;
 }
 
 .trade-summary {

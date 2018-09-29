@@ -150,7 +150,7 @@ const Negotiation = ({
                                     style={{ height: "54px" }}
                                 >
                                     <div
-                                        className="pull-left"
+                                        className="float-left"
                                         style={{ paddingTop: "8px" }}
                                     >
                                         ${contract.amount.toFixed(2)}M per year
@@ -165,7 +165,7 @@ const Negotiation = ({
                                     </div>
 
                                     <button
-                                        className="btn btn-success pull-right"
+                                        className="btn btn-success float-right"
                                         onClick={() =>
                                             sign(
                                                 player.pid,

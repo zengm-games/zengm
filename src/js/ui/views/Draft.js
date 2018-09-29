@@ -302,7 +302,7 @@ class Draft extends React.Component {
                     <div className={undraftedColClasses}>
                         <h2>
                             Undrafted Players
-                            <span className="pull-right">
+                            <span className="float-right">
                                 <button
                                     type="button"
                                     className={buttonClasses}
@@ -323,7 +323,7 @@ class Draft extends React.Component {
                     <div className={draftedColClasses}>
                         <h2>
                             Draft Results
-                            <span className="pull-right">
+                            <span className="float-right">
                                 <button
                                     type="button"
                                     className={buttonClasses}

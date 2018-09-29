@@ -126,10 +126,10 @@ class FinancesForm extends React.Component {
                 </h4>
                 {warningMessage}
                 <div className="row">
-                    <div className="pull-left finances-settings-label">
+                    <div className="float-left finances-settings-label">
                         Ticket Price
                     </div>
-                    <div className="input-group input-group-sm pull-left finances-settings-field">
+                    <div className="input-group input-group-sm float-left finances-settings-field">
                         <span className="input-group-addon">$</span>
                         <input
                             type="text"
@@ -139,7 +139,7 @@ class FinancesForm extends React.Component {
                             value={this.state.ticketPrice}
                         />
                     </div>
-                    <div className="pull-left finances-settings-text">
+                    <div className="float-left finances-settings-text">
                         Leaguewide rank: #{t.budget.ticketPrice.rank}
                     </div>
                 </div>
@@ -168,10 +168,10 @@ class FinancesForm extends React.Component {
                 </h4>
                 {warningMessage}
                 <div className="row">
-                    <div className="pull-left finances-settings-label">
+                    <div className="float-left finances-settings-label">
                         Scouting
                     </div>
-                    <div className="input-group input-group-sm pull-left finances-settings-field">
+                    <div className="input-group input-group-sm float-left finances-settings-field">
                         <span className="input-group-addon">$</span>
                         <input
                             type="text"
@@ -182,7 +182,7 @@ class FinancesForm extends React.Component {
                         />
                         <span className="input-group-addon">M</span>
                     </div>
-                    <div className="pull-left finances-settings-text-small">
+                    <div className="float-left finances-settings-text-small">
                         Current spending rate: #{t.budget.scouting.rank}
                         <br />
                         Spent this season: #
@@ -190,10 +190,10 @@ class FinancesForm extends React.Component {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="pull-left finances-settings-label">
+                    <div className="float-left finances-settings-label">
                         Coaching
                     </div>
-                    <div className="input-group input-group-sm pull-left finances-settings-field">
+                    <div className="input-group input-group-sm float-left finances-settings-field">
                         <span className="input-group-addon">$</span>
                         <input
                             type="text"
@@ -204,7 +204,7 @@ class FinancesForm extends React.Component {
                         />
                         <span className="input-group-addon">M</span>
                     </div>
-                    <div className="pull-left finances-settings-text-small">
+                    <div className="float-left finances-settings-text-small">
                         Current spending rate: #{t.budget.coaching.rank}
                         <br />
                         Spent this season: #
@@ -212,10 +212,10 @@ class FinancesForm extends React.Component {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="pull-left finances-settings-label">
+                    <div className="float-left finances-settings-label">
                         Health
                     </div>
-                    <div className="input-group input-group-sm pull-left finances-settings-field">
+                    <div className="input-group input-group-sm float-left finances-settings-field">
                         <span className="input-group-addon">$</span>
                         <input
                             type="text"
@@ -226,17 +226,17 @@ class FinancesForm extends React.Component {
                         />
                         <span className="input-group-addon">M</span>
                     </div>
-                    <div className="pull-left finances-settings-text-small">
+                    <div className="float-left finances-settings-text-small">
                         Current spending rate: #{t.budget.health.rank}
                         <br />
                         Spent this season: #{t.seasonAttrs.expenses.health.rank}
                     </div>
                 </div>
                 <div className="row">
-                    <div className="pull-left finances-settings-label">
+                    <div className="float-left finances-settings-label">
                         Facilities
                     </div>
-                    <div className="input-group input-group-sm pull-left finances-settings-field">
+                    <div className="input-group input-group-sm float-left finances-settings-field">
                         <span className="input-group-addon">$</span>
                         <input
                             type="text"
@@ -247,7 +247,7 @@ class FinancesForm extends React.Component {
                         />
                         <span className="input-group-addon">M</span>
                     </div>
-                    <div className="pull-left finances-settings-text-small">
+                    <div className="float-left finances-settings-text-small">
                         Current spending rate: #{t.budget.facilities.rank}
                         <br />
                         Spent this season: #
@@ -257,10 +257,10 @@ class FinancesForm extends React.Component {
                 <br />
                 {tid === userTid ? (
                     <div className="row">
-                        <div className="pull-left finances-settings-label">
+                        <div className="float-left finances-settings-label">
                             &nbsp;
                         </div>
-                        <div className="input-group input-group-sm pull-left finances-settings-field">
+                        <div className="input-group input-group-sm float-left finances-settings-field">
                             <button
                                 className="btn btn-large btn-primary"
                                 disabled={formDisabled || this.state.saving}

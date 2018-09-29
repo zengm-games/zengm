@@ -48,7 +48,7 @@ const RatingsOverview = ({ ratings }) => {
                     <h2>Overall: {ratings[r].ovr}</h2>
                 </div>
                 <div className="col-6">
-                    <h2 className="pull-right">Potential: {ratings[r].pot}</h2>
+                    <h2 className="float-right">Potential: {ratings[r].pot}</h2>
                 </div>
             </div>
             <div className="row">
@@ -789,7 +789,7 @@ const Player = ({
                     })}
                     {events.length === 0 ? <p>None</p> : null}
                 </div>
-                <div className="col-md-2 col-md-pull-10 col-sm-3 col-sm-pull-9">
+                <div className="col-md-2 col-md-float-10 col-sm-3 col-sm-float-9">
                     <h2>Salaries</h2>
                     <DataTable
                         cols={getCols("Year", "Amount")}

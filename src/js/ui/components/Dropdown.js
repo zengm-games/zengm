@@ -378,14 +378,10 @@ class Dropdown extends React.Component<Props, State> {
 
     render() {
         return (
-            <form className="form-inline pull-right">
+            <form className="form-inline float-right">
                 {this.props.fields.map((field, i) => {
                     return (
-                        <div
-                            key={field}
-                            className="form-group"
-                            style={{ marginLeft: "4px", marginBottom: "4px" }}
-                        >
+                        <div key={field} className="form-group mb-1 ml-1">
                             <Select
                                 field={field}
                                 value={this.state.values[i]}

@@ -20,7 +20,7 @@ const JumpTo = ({ season }: { season: number | "all" }) => {
     const s = typeof season === "number" ? String(season) : undefined;
 
     return (
-        <div className="pull-right">
+        <div className="float-right">
             <DropdownButton id="jump-to-dropdown" title="Jump To">
                 <MenuItem href={genUrl(["standings"], s)}>Standings</MenuItem>
                 <MenuItem href={genUrl(["playoffs"], s)}>Playoffs</MenuItem>

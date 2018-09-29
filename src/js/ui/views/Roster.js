@@ -446,7 +446,7 @@ class Roster extends React.Component {
                     fields={["teams", "seasons"]}
                     values={[abbrev, season]}
                 />
-                <div className="pull-right">
+                <div className="float-right">
                     <DropdownButton id="dropdown-more-info" title="More Info">
                         <MenuItem
                             href={helpers.leagueUrl([

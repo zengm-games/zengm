@@ -126,7 +126,7 @@ class WatchList extends React.Component {
                     fields={["statTypes", "playoffs"]}
                     values={[statType, playoffs]}
                 />
-                <div className="pull-right">
+                <div className="float-right">
                     <DropdownButton
                         id="dropdown-other-reports"
                         title="Other Reports"

@@ -9,9 +9,9 @@ import Overlay from "react-bootstrap/lib/Overlay";
 import Popover from "react-bootstrap/lib/Popover";
 import {
     Collapse,
+    Dropdown,
     Navbar,
     NavbarToggler,
-    NavbarBrand,
     Nav,
     NavItem,
     NavLink,
@@ -32,84 +32,67 @@ import {
 
 type TopMenuToggleProps = {
     long: string,
-    onClick?: (SyntheticEvent<>) => void, // From react-bootstrap Dropdown
     openId?: string,
     short: string,
+    toggle?: (SyntheticEvent<>) => void, // From react-bootstrap Dropdown
 };
 
 class TopMenuToggle extends React.Component<TopMenuToggleProps> {
-    handleClick: Function;
-
     handleMouseEnter: Function;
 
     constructor(props: TopMenuToggleProps, context) {
         super(props, context);
-        this.handleClick = this.handleClick.bind(this);
         this.handleMouseEnter = this.handleMouseEnter.bind(this);
-    }
-
-    handleClick(e) {
-        e.preventDefault();
-        if (this.props.onClick) {
-            this.props.onClick(e);
-        }
     }
 
     handleMouseEnter(e) {
         if (
             this.props.openId !== undefined &&
             this.props.openId !== this.props.long &&
-            this.props.onClick
+            this.props.toggle
         ) {
-            this.props.onClick(e);
+            this.props.toggle(e);
         }
     }
 
     render() {
         return (
-            <a
-                className="dropdown-toggle"
-                onClick={this.handleClick}
-                onMouseEnter={this.handleMouseEnter}
-            >
-                <span className="hidden-sm">
-                    {this.props.long} <b className="caret" />
+            <DropdownToggle caret nav onMouseEnter={this.handleMouseEnter}>
+                <span className="d-xs-inline d-sm-none d-md-inline">
+                    {this.props.long}
                 </span>
-                <span className="visible-sm">
-                    {this.props.short} <b className="caret" />
+                <span className="d-none d-sm-inline d-md-none">
+                    {this.props.short}
                 </span>
-            </a>
+            </DropdownToggle>
         );
     }
 }
 
 TopMenuToggle.propTypes = {
     long: PropTypes.string.isRequired,
-    onClick: PropTypes.func, // From react-bootstrap Dropdown
     openId: PropTypes.string,
     short: PropTypes.string.isRequired,
+    toggle: PropTypes.func, // From react-bootstrap Dropdown
 };
 
 const TopMenuDropdown = ({ children, long, short, openId, onToggle }) => {
+    const toggle = () => onToggle(long);
     return (
-        <Dropdown
-            componentClass="li"
-            id={`top-menu-${long.toLowerCase()}`}
-            open={openId === long}
-            onToggle={() => onToggle(long)}
-        >
+        <Dropdown isOpen={openId === long} nav inNavbar toggle={toggle}>
             <TopMenuToggle
                 bsRole="toggle"
                 long={long}
                 short={short}
                 openId={openId}
+                toggle={toggle}
             />
-            <Dropdown.Menu>
-                <MenuItem className="visible-sm" header>
+            <DropdownMenu>
+                <DropdownItem className="d-none d-sm-block d-md-none" header>
                     {long}
-                </MenuItem>
+                </DropdownItem>
                 {children}
-            </Dropdown.Menu>
+            </DropdownMenu>
         </Dropdown>
     );
 };
@@ -327,6 +310,297 @@ class DropdownLinks extends React.Component<
                         </NavLink>
                     </NavItem>
                 ) : null}
+                {lid !== undefined ? (
+                    <TopMenuDropdown
+                        long="League"
+                        short="L"
+                        openId={this.state.openId}
+                        onToggle={this.handleTopMenuToggle}
+                    >
+                        <DropdownItem href={helpers.leagueUrl(["standings"])}>
+                            Standings
+                        </DropdownItem>
+                        <DropdownItem href={helpers.leagueUrl(["playoffs"])}>
+                            Playoffs
+                        </DropdownItem>
+                        <DropdownItem
+                            href={helpers.leagueUrl(["league_finances"])}
+                        >
+                            Finances
+                        </DropdownItem>
+                        <DropdownItem href={helpers.leagueUrl(["history_all"])}>
+                            History
+                        </DropdownItem>
+                        <DropdownItem
+                            href={helpers.leagueUrl(["power_rankings"])}
+                        >
+                            Power Rankings
+                        </DropdownItem>
+                        <DropdownItem
+                            href={helpers.leagueUrl(["transactions", "all"])}
+                        >
+                            Transactions
+                        </DropdownItem>
+                    </TopMenuDropdown>
+                ) : null}
+                {lid !== undefined ? (
+                    <TopMenuDropdown
+                        long="Team"
+                        short="T"
+                        openId={this.state.openId}
+                        onToggle={this.handleTopMenuToggle}
+                    >
+                        <DropdownItem href={helpers.leagueUrl(["roster"])}>
+                            Roster
+                        </DropdownItem>
+                        <DropdownItem href={helpers.leagueUrl(["schedule"])}>
+                            Schedule
+                        </DropdownItem>
+                        <DropdownItem
+                            href={helpers.leagueUrl(["team_finances"])}
+                        >
+                            Finances
+                        </DropdownItem>
+                        <DropdownItem
+                            href={helpers.leagueUrl(["team_history"])}
+                        >
+                            History
+                        </DropdownItem>
+                        <DropdownItem
+                            href={helpers.leagueUrl(["transactions"])}
+                        >
+                            Transactions
+                        </DropdownItem>
+                    </TopMenuDropdown>
+                ) : null}
+                {lid !== undefined ? (
+                    <TopMenuDropdown
+                        long="Players"
+                        short="P"
+                        openId={this.state.openId}
+                        onToggle={this.handleTopMenuToggle}
+                    >
+                        <DropdownItem href={helpers.leagueUrl(["free_agents"])}>
+                            Free Agents
+                        </DropdownItem>
+                        <DropdownItem href={helpers.leagueUrl(["trade"])}>
+                            Trade
+                        </DropdownItem>
+                        <DropdownItem
+                            href={helpers.leagueUrl(["trading_block"])}
+                        >
+                            Trading Block
+                        </DropdownItem>
+                        <DropdownItem href={helpers.leagueUrl(["draft"])}>
+                            Draft
+                        </DropdownItem>
+                        <DropdownItem href={helpers.leagueUrl(["watch_list"])}>
+                            Watch List
+                        </DropdownItem>
+                        <DropdownItem
+                            href={helpers.leagueUrl(["hall_of_fame"])}
+                        >
+                            Hall of Fame
+                        </DropdownItem>
+                    </TopMenuDropdown>
+                ) : null}
+                {lid !== undefined ? (
+                    <TopMenuDropdown
+                        long="Stats"
+                        short="S"
+                        openId={this.state.openId}
+                        onToggle={this.handleTopMenuToggle}
+                    >
+                        <DropdownItem href={helpers.leagueUrl(["game_log"])}>
+                            Game Log
+                        </DropdownItem>
+                        <DropdownItem href={helpers.leagueUrl(["leaders"])}>
+                            League Leaders
+                        </DropdownItem>
+                        <DropdownItem
+                            href={helpers.leagueUrl(["player_ratings"])}
+                        >
+                            Player Ratings
+                        </DropdownItem>
+                        <DropdownItem
+                            href={helpers.leagueUrl(["player_stats"])}
+                        >
+                            Player Stats
+                        </DropdownItem>
+                        <DropdownItem href={helpers.leagueUrl(["team_stats"])}>
+                            Team Stats
+                        </DropdownItem>
+                        <DropdownItem
+                            href={helpers.leagueUrl(["player_feats"])}
+                        >
+                            Statistical Feats
+                        </DropdownItem>
+                    </TopMenuDropdown>
+                ) : null}
+                <TopMenuDropdown
+                    long="Tools"
+                    short="X"
+                    openId={this.state.openId}
+                    onToggle={this.handleTopMenuToggle}
+                >
+                    <DropdownItem href="/account">Achievements</DropdownItem>
+                    {lid !== undefined ? (
+                        <DropdownItem
+                            onClick={e =>
+                                handleToolsClick("autoPlaySeasons", e)
+                            }
+                        >
+                            Auto Play Seasons
+                        </DropdownItem>
+                    ) : null}
+                    {lid !== undefined && godMode ? (
+                        <DropdownItem
+                            href={helpers.leagueUrl(["customize_player"])}
+                            className="god-mode-menu"
+                        >
+                            Create A Player
+                        </DropdownItem>
+                    ) : null}
+                    {lid !== undefined ? (
+                        <DropdownItem
+                            href={helpers.leagueUrl(["delete_old_data"])}
+                        >
+                            Delete Old Data
+                        </DropdownItem>
+                    ) : null}
+                    {lid !== undefined && godMode ? (
+                        <DropdownItem
+                            href={helpers.leagueUrl(["edit_team_info"])}
+                            className="god-mode-menu"
+                        >
+                            Edit Team Info
+                        </DropdownItem>
+                    ) : null}
+                    {lid !== undefined ? (
+                        <DropdownItem href={helpers.leagueUrl(["event_log"])}>
+                            Event Log
+                        </DropdownItem>
+                    ) : null}
+                    {lid !== undefined ? (
+                        <DropdownItem
+                            href={helpers.leagueUrl(["export_league"])}
+                        >
+                            Export League
+                        </DropdownItem>
+                    ) : null}
+                    {lid !== undefined ? (
+                        <DropdownItem
+                            href={helpers.leagueUrl(["export_stats"])}
+                        >
+                            Export Stats
+                        </DropdownItem>
+                    ) : null}
+                    {lid !== undefined ? (
+                        <DropdownItem
+                            href={helpers.leagueUrl(["fantasy_draft"])}
+                        >
+                            Fantasy Draft
+                        </DropdownItem>
+                    ) : null}
+                    {lid !== undefined ? (
+                        <DropdownItem href={helpers.leagueUrl(["god_mode"])}>
+                            God Mode
+                        </DropdownItem>
+                    ) : null}
+                    {lid !== undefined && godMode ? (
+                        <DropdownItem
+                            href={helpers.leagueUrl(["multi_team_mode"])}
+                            className="god-mode-menu"
+                        >
+                            Multi Team Mode
+                        </DropdownItem>
+                    ) : null}
+                    {lid !== undefined && godMode ? (
+                        <DropdownItem
+                            href={helpers.leagueUrl(["new_team"])}
+                            className="god-mode-menu"
+                        >
+                            Switch Team
+                        </DropdownItem>
+                    ) : null}
+                    {lid !== undefined ? (
+                        <DropdownItem href={helpers.leagueUrl(["options"])}>
+                            Options
+                        </DropdownItem>
+                    ) : null}
+                    <DropdownItem onClick={handleScreenshotClick}>
+                        <span className="glyphicon glyphicon-camera" />{" "}
+                        Screenshot
+                    </DropdownItem>
+                    <DropdownItem divider />
+                    <DropdownItem header>Use at your own risk!</DropdownItem>
+                    {lid !== undefined ? (
+                        <DropdownItem
+                            onClick={e => handleToolsClick("skipToPlayoffs", e)}
+                        >
+                            Skip To Playoffs
+                        </DropdownItem>
+                    ) : null}
+                    {lid !== undefined ? (
+                        <DropdownItem
+                            onClick={e =>
+                                handleToolsClick("skipToBeforeDraft", e)
+                            }
+                        >
+                            Skip To Draft Lottery
+                        </DropdownItem>
+                    ) : null}
+                    {lid !== undefined ? (
+                        <DropdownItem
+                            onClick={e =>
+                                handleToolsClick("skipToAfterDraft", e)
+                            }
+                        >
+                            Skip To After Draft
+                        </DropdownItem>
+                    ) : null}
+                    {lid !== undefined ? (
+                        <DropdownItem
+                            onClick={e =>
+                                handleToolsClick("skipToPreseason", e)
+                            }
+                        >
+                            Skip To Preseason
+                        </DropdownItem>
+                    ) : null}
+                    <DropdownItem onClick={e => handleToolsClick("resetDb", e)}>
+                        Reset DB
+                    </DropdownItem>
+                </TopMenuDropdown>
+                <TopMenuDropdown
+                    long="Help"
+                    short="?"
+                    openId={this.state.openId}
+                    onToggle={this.handleTopMenuToggle}
+                >
+                    <DropdownItem
+                        href="https://basketball-gm.com/manual/"
+                        rel="noopener noreferrer"
+                        target="_blank"
+                    >
+                        Overview
+                    </DropdownItem>
+                    <DropdownItem href="/changes">Changes</DropdownItem>
+                    <DropdownItem
+                        href="https://basketball-gm.com/manual/customization/"
+                        rel="noopener noreferrer"
+                        target="_blank"
+                    >
+                        Custom Rosters
+                    </DropdownItem>
+                    <DropdownItem
+                        href="https://basketball-gm.com/manual/debugging/"
+                        rel="noopener noreferrer"
+                        target="_blank"
+                    >
+                        Debugging
+                    </DropdownItem>
+                </TopMenuDropdown>
             </Nav>
         );
     }

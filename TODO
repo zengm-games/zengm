@@ -10,7 +10,6 @@ bootstrap 4
 - play menu (and all navbar) menu positioning
 - inIframe
 - responsive menu on side
-- toggle-responsive-menu
 
 typescript
 - https://github.com/bcherny/flow-to-typescript

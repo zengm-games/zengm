@@ -60,112 +60,6 @@ footer {
   }
 }
 
-// This is a copy of the navbar-nav styles, with no responsive stuff.
-.navbar-collapse {
-  .navbar-nav-no-collapse.navbar-left:first-child {
-    margin-left: -15px;
-  }
-
-  .navbar-nav-no-collapse.navbar-right:last-child {
-    margin-right: -15px;
-  }
-}
-
-.navbar-nav-no-collapse {
-  margin: 8px -15px;
-
-  > li {
-    > a {
-      padding-top: 10px;
-      padding-bottom: 10px;
-      line-height: 18px;
-    }
-
-    > .dropdown-menu {
-      margin-top: 0;
-      border-top-right-radius: 0;
-      border-top-left-radius: 0;
-    }
-  }
-}
-
-.navbar-nav-no-collapse {
-  float: left;
-  margin: 0;
-
-  > li {
-    float: left;
-  }
-
-  > li > a {
-    padding-top: 16px;
-    padding-bottom: 16px;
-  }
-}
-
-.navbar-default {
-  .navbar-nav-no-collapse {
-    > li > a {
-      color: #777;
-
-      &:hover,
-      &:focus {
-        color: #333;
-        background-color: transparent;
-      }
-    }
-
-    > .active > a {
-      &,
-      &:hover,
-      &:focus {
-        color: #555;
-        background-color: #e7e7e7;
-      }
-    }
-
-    > .disabled > a {
-      &,
-      &:hover,
-      &:focus {
-        color: #ccc;
-        background-color: transparent;
-      }
-    }
-
-    > .dropdown > a {
-      &:hover .caret,
-      &:focus .caret {
-        border-top-color: #333;
-        border-bottom-color: #333;
-      }
-
-      .caret {
-        border-top-color: #777;
-        border-bottom-color: #777;
-      }
-    }
-
-    > .open > a {
-      &,
-      &:hover,
-      &:focus {
-        background-color: #e7e7e7;
-        color: #555;
-      }
-    }
-
-    > .open > a {
-      .caret,
-      &:hover .caret,
-      &:focus .caret {
-        border-top-color: #555;
-        border-bottom-color: #555;
-      }
-    }
-  }
-}
-
 .god-mode,
 .god-mode-menu a {
   background-color: #563d7c !important;
@@ -179,17 +73,6 @@ footer {
 
 .god-mode-text {
   padding: 0 3px;
-}
-
-// http://stackoverflow.com/a/20839087/786644
-.navbar-link .visible-lg {
-  display: none !important;
-}
-
-@media (min-width: 1200px) {
-  .navbar-link .visible-lg {
-    display: inline-block !important;
-  }
 }
 
 @media (max-width: 767px) {

@@ -333,6 +333,7 @@ class Controller extends React.Component<{}, State> {
                             data={data}
                             updating={loading}
                         />
+                        <Footer />
                     </LeagueWrapper>
                     <MultiTeamMenu />
                 </div>
@@ -350,7 +351,7 @@ class Controller extends React.Component<{}, State> {
                     >
                         {contents}
                     </div>
-                    <Footer />
+                    {!Component || !inLeague ? <Footer /> : null}
                     <NagModal
                         close={this.closeNagModal}
                         show={this.state.showNagModal}

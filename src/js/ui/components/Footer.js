@@ -12,7 +12,7 @@ class Footer extends React.Component<{}> {
     render() {
         // banner-ad class is so ad blockers remove it cleanly. I'm so nice!
         return (
-            <div>
+            <div className="footer-wrapper">
                 <p className="clearfix" />
 
                 <div className="banner-ad" style={{ position: "relative" }}>
@@ -115,15 +115,7 @@ class Footer extends React.Component<{}> {
                         </a>
                         <br />
                     </p>
-                    <p className="rev">
-                        Component versions:
-                        <br />
-                        {window.bbgmVersion} (HTML)
-                        <br />
-                        {window.bbgmVersionUI} (UI)
-                        <br />
-                        {window.bbgmVersionWorker} (Worker)
-                    </p>
+                    <p className="rev">BBGM v{window.bbgmVersion}</p>
                 </footer>
             </div>
         );

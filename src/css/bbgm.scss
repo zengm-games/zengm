@@ -698,6 +698,7 @@ tr.warning > td {
 
 // https://getbootstrap.com/docs/4.1/examples/dashboard/
 .sidebar {
+  display: none;
   position: fixed;
   top: 0;
   bottom: 0;
@@ -705,6 +706,7 @@ tr.warning > td {
   z-index: 100; /* Behind the navbar */
   padding: 48px 0 0; /* Height of navbar */
   box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+  width: 130px;
 }
 .sidebar-sticky {
   position: relative;
@@ -738,6 +740,14 @@ tr.warning > td {
   @extend .mt-3;
   @extend .mb-1;
   @extend .text-muted;
+}
+@include media-breakpoint-up(lg) {
+  .sidebar {
+    display: block;
+  }
+  .league-content {
+    margin-left: 130px;
+  }
 }
 
 label input {

@@ -294,14 +294,9 @@ const LeagueWrapper = ({
     pageId: string,
 }) => {
     return (
-        <div className="row">
-            <div className="col-xl-2 d-none d-xl-block">
-                <SideMenu lid={lid} pageId={pageId} />
-            </div>
-            <div
-                className="col-xl-10 col-12 p402_premium"
-                id="screenshot-league"
-            >
+        <div>
+            <SideMenu lid={lid} pageId={pageId} />
+            <div className="league-content p402_premium" id="screenshot-league">
                 {children}
             </div>
         </div>

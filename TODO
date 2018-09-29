@@ -3,6 +3,7 @@ bootstrap 4
 - full width, minus ad
 - replace react-bootstrap
 - splash screen
+  - indicate when UI/worker is loaded, not using the "component versions" though
 - bootstrap 3 classes (hidden, visible, text-)
 - reactsrap import individual classes
 - screenshot

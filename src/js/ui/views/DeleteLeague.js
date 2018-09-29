@@ -58,7 +58,7 @@ class DeleteLeague extends React.Component {
                 </button>
                 <a
                     disabled={this.state.deleting}
-                    className="btn btn-default"
+                    className="btn btn-light-bordered"
                     href="/"
                 >
                     Cancel

@@ -25,7 +25,7 @@ const JumpTo = ({ season }: { season: number | "all" }) => {
 
     return (
         <UncontrolledDropdown className="float-right">
-            <DropdownToggle caret className="btn-light">
+            <DropdownToggle caret className="btn-light-bordered">
                 Jump To
             </DropdownToggle>
             <DropdownMenu>

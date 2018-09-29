@@ -138,7 +138,7 @@ class BoxScore extends React.Component {
                                     <a
                                         className={classNames(
                                             "btn",
-                                            "btn-default",
+                                            "btn-light-bordered",
                                             { disabled: prevGid === null },
                                         )}
                                         style={{ marginRight: "30px" }}
@@ -280,7 +280,7 @@ class BoxScore extends React.Component {
                                     <a
                                         className={classNames(
                                             "btn",
-                                            "btn-default",
+                                            "btn-light-bordered",
                                             { disabled: nextGid === null },
                                         )}
                                         style={{ marginLeft: "30px" }}

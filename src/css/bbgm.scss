@@ -864,3 +864,16 @@ label input {
   content: "\e008";
 }
 
+.btn-xs {
+    padding  : .25rem .4rem;
+    font-size  : .75rem;
+    line-height  : .9;
+    border-radius : .2rem;
+}
+
+.btn-light-bordered {
+  @extend .btn-light;
+  background-color: #fff;
+  border: 1px solid $gray-400;
+  color: $gray-700;
+}

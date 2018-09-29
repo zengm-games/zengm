@@ -125,7 +125,7 @@ class DraftScouting extends React.Component {
                                 ) : (
                                     <p>
                                         <button
-                                            className="btn btn-default btn-xs"
+                                            className="btn btn-light-bordered btn-xs"
                                             onClick={() =>
                                                 this.handleCustomize(
                                                     seasonOffset,

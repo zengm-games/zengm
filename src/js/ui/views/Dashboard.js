@@ -98,7 +98,7 @@ class Dashboard extends React.Component<
                         <li key={l.lid}>
                             <a
                                 className={classNames(
-                                    "btn btn-default league",
+                                    "btn btn-light-bordered league",
                                     {
                                         "league-active":
                                             l.lid === this.state.activeLid,

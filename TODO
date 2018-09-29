@@ -1,6 +1,7 @@
 watch-css graceful error, timestamp
 
 bootstrap 4
+- add border to btn-light?
 - dark mode
   - some stuff built in, like table-dark
 - replace react-bootstrap
@@ -20,13 +21,9 @@ bootstrap 4
   - dropdowns - more l/r padding where possible
   - play menu
     - if can't figure it out, somehow turn it into a modal
-- navbar color
 - firefox
 - safari
 - screen reader
-- main container
-  - adjust for left menu and skyscraper ad
-    - at some point - max-width of bbgm-container, let area on right expand until it can fit ad, then another breakpoint where it becomes fluid again
 
 typescript
 - https://github.com/bcherny/flow-to-typescript

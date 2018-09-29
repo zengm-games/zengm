@@ -14,7 +14,7 @@ const DraftButtons = ({ userRemaining, usersTurn }) => {
     return (
         <div className="btn-group">
             <button
-                className="btn btn-default"
+                className="btn btn-light-bordered"
                 disabled={usersTurn}
                 onClick={async () => {
                     await toWorker("actions.playMenu.onePick");
@@ -23,7 +23,7 @@ const DraftButtons = ({ userRemaining, usersTurn }) => {
                 Sim one pick
             </button>
             <button
-                className="btn btn-default"
+                className="btn btn-light-bordered"
                 disabled={usersTurn}
                 onClick={async () => {
                     await toWorker("actions.playMenu.untilYourNextPick");
@@ -43,7 +43,7 @@ DraftButtons.propTypes = {
 const TradeButton = ({ disabled, dpid, tid, visible }) => {
     return visible ? (
         <button
-            className="btn btn-xs btn-default"
+            className="btn btn-xs btn-light-bordered"
             disabled={disabled}
             onClick={async () => {
                 await toWorker("actions.tradeFor", { dpid, tid });
@@ -150,7 +150,7 @@ class Draft extends React.Component {
                         Draft
                     </button>
                     <button
-                        className="btn btn-xs btn-default"
+                        className="btn btn-xs btn-light-bordered"
                         disabled={!usersTurn || this.state.drafting}
                         onClick={() => this.draftUser(p.pid, true)}
                         title="Draft player and sim to your next pick or end of draft"

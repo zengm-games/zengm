@@ -107,7 +107,7 @@ class FreeAgents extends React.Component {
             } else {
                 negotiateButton = (
                     <button
-                        className="btn btn-default btn-xs"
+                        className="btn btn-light-bordered btn-xs"
                         disabled={gamesInProgress}
                         onClick={() => toWorker("actions.negotiate", p.pid)}
                     >
@@ -176,7 +176,7 @@ class FreeAgents extends React.Component {
 
                 <p>
                     <button
-                        className="btn btn-default"
+                        className="btn btn-light-bordered"
                         onClick={this.showAfforablePlayers}
                     >
                         Show players you can afford now

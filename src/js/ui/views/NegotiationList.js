@@ -45,7 +45,7 @@ const NegotiationList = ({
         } else {
             negotiateButton = (
                 <button
-                    className="btn btn-default btn-xs"
+                    className="btn btn-light-bordered btn-xs"
                     onClick={() => toWorker("actions.negotiate", p.pid)}
                 >
                     Negotiate

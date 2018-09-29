@@ -1,8 +1,12 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import DropdownButton from "react-bootstrap/lib/DropdownButton";
-import MenuItem from "react-bootstrap/lib/MenuItem";
+import {
+    UncontrolledDropdown,
+    DropdownToggle,
+    DropdownMenu,
+    DropdownItem,
+} from "reactstrap";
 import {
     SortableContainer,
     SortableElement,
@@ -251,7 +255,7 @@ const RosterRow = SortableElement(
                 {editable ? (
                     <td onClick={toggleClicked}>
                         <button
-                            className="btn btn-default btn-xs"
+                            className="btn btn-light-bordered btn-xs"
                             disabled={!p.canRelease}
                             onClick={() =>
                                 handleRelease(p, phase, currentSeason)
@@ -264,7 +268,7 @@ const RosterRow = SortableElement(
                 {showTradeFor ? (
                     <td onClick={toggleClicked} title={p.untradableMsg}>
                         <button
-                            className="btn btn-default btn-xs"
+                            className="btn btn-light-bordered btn-xs"
                             disabled={p.untradable}
                             onClick={() =>
                                 toWorker("actions.tradeFor", { pid: p.pid })
@@ -446,9 +450,12 @@ class Roster extends React.Component {
                     fields={["teams", "seasons"]}
                     values={[abbrev, season]}
                 />
-                <div className="float-right">
-                    <DropdownButton id="dropdown-more-info" title="More Info">
-                        <MenuItem
+                <UncontrolledDropdown className="float-right">
+                    <DropdownToggle caret className="btn-light-bordered">
+                        More Info
+                    </DropdownToggle>
+                    <DropdownMenu>
+                        <DropdownItem
                             href={helpers.leagueUrl([
                                 "player_stats",
                                 abbrev,
@@ -456,8 +463,8 @@ class Roster extends React.Component {
                             ])}
                         >
                             Player Stats
-                        </MenuItem>
-                        <MenuItem
+                        </DropdownItem>
+                        <DropdownItem
                             href={helpers.leagueUrl([
                                 "player_ratings",
                                 abbrev,
@@ -465,9 +472,9 @@ class Roster extends React.Component {
                             ])}
                         >
                             Player Ratings
-                        </MenuItem>
-                    </DropdownButton>
-                </div>
+                        </DropdownItem>
+                    </DropdownMenu>
+                </UncontrolledDropdown>
 
                 <h1>
                     {t.region} {t.name} Roster <NewWindowLink />
@@ -520,13 +527,13 @@ class Roster extends React.Component {
                 {editable ? (
                     <div className="btn-group" style={{ marginBottom: "1em" }}>
                         <button
-                            className="btn btn-default"
+                            className="btn btn-light-bordered"
                             onClick={handleAutoSort}
                         >
                             Auto sort roster
                         </button>
                         <button
-                            className="btn btn-default"
+                            className="btn btn-light-bordered"
                             onClick={() => handleResetPT(t.tid)}
                         >
                             Reset playing time

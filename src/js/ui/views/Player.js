@@ -605,7 +605,7 @@ const Player = ({
             {showTradeFor ? (
                 <span title={player.untradableMsg}>
                     <button
-                        className="btn btn-default"
+                        className="btn btn-light-bordered"
                         disabled={player.untradable}
                         onClick={() =>
                             toWorker("actions.tradeFor", { pid: player.pid })
@@ -617,7 +617,7 @@ const Player = ({
             ) : null}
             {freeAgent ? (
                 <button
-                    className="btn btn-default"
+                    className="btn btn-light-bordered"
                     onClick={() => toWorker("actions.negotiate", player.pid)}
                 >
                     Sign Free Agent

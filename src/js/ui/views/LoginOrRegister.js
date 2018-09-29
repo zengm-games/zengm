@@ -192,7 +192,7 @@ class LoginOrRegister extends React.Component {
                             </div>
                             <button
                                 type="submit"
-                                className="btn btn-default btn-primary"
+                                className="btn btn-light-bordered btn-primary"
                             >
                                 Login
                             </button>
@@ -330,7 +330,7 @@ class LoginOrRegister extends React.Component {
                             </div>
                             <button
                                 type="submit"
-                                className="btn btn-default btn-primary"
+                                className="btn btn-light-bordered btn-primary"
                             >
                                 Create New Account
                             </button>

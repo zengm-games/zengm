@@ -131,7 +131,7 @@ class WatchList extends React.Component {
                     values={[statType, playoffs]}
                 />
                 <UncontrolledDropdown className="float-right">
-                    <DropdownToggle caret className="btn-light">
+                    <DropdownToggle caret className="btn-light-bordered">
                         Other Reports
                     </DropdownToggle>
                     <DropdownMenu>

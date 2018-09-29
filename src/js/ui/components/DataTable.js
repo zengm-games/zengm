@@ -830,7 +830,7 @@ class DataTable extends React.Component<Props, State> {
                             </p>
                         </HelpPopover>
                         <a
-                            className={classNames("btn btn-default", {
+                            className={classNames("btn btn-light-bordered", {
                                 active: this.state.enableFilters,
                             })}
                             onClick={this.handleEnableFilters}

@@ -182,7 +182,7 @@ class ResetPassword extends React.Component {
                     </div>
                     <button
                         type="submit"
-                        className="btn btn-default btn-primary"
+                        className="btn btn-light-bordered btn-primary"
                     >
                         Reset Password
                     </button>

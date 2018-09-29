@@ -34,8 +34,8 @@ const Message = ({ message }: MessageProps) => {
 
             <p>
                 <a
+                    href="javascript:void()"
                     onClick={() => window.history.back()}
-                    style={{ cursor: "pointer" }}
                 >
                     Previous Page
                 </a>{" "}

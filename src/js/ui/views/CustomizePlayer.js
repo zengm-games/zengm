@@ -310,7 +310,7 @@ class CustomizePlayer extends React.Component {
                         <center>
                             <button
                                 type="button"
-                                className="btn btn-default"
+                                className="btn btn-light-bordered"
                                 onClick={this.randomizeFace}
                             >
                                 Randomize

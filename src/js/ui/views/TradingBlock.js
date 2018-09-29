@@ -135,7 +135,7 @@ const Offer = props => {
 
             <button
                 type="submit"
-                className="btn btn-default"
+                className="btn btn-light-bordered"
                 onClick={() => handleClickNegotiate(tid, pids, dpids)}
             >
                 Negotiate

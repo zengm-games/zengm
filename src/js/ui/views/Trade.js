@@ -245,109 +245,105 @@ class Trade extends React.Component {
 
                 <div className="row">
                     <div className="col-md-9">
-                        <form id="rosters" className="form-inline">
-                            <select
-                                className="form-control select-team"
-                                style={{ marginBottom: "6px" }}
-                                value={otherTid}
-                                onChange={this.handleChangeTeam}
-                            >
-                                {teams.map(t => (
-                                    <option key={t.tid} value={t.tid}>
-                                        {t.region} {t.name}
-                                    </option>
-                                ))}
-                            </select>
-                            <p>
-                                {won}-{lost}, {strategy}
-                            </p>
-                            <DataTable
-                                cols={cols}
-                                defaultSort={[5, "desc"]}
-                                name="Trade:Other"
-                                rows={otherRows}
-                            />
-                            <div className="table-responsive">
-                                <table className="table table-striped table-bordered table-sm">
-                                    <thead>
-                                        <tr>
-                                            <th />
-                                            <th width="100%">Draft Picks</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {otherPicks.map(pick => (
-                                            <tr key={pick.dpid}>
-                                                <td>
-                                                    <input
-                                                        name="other-dpids"
-                                                        type="checkbox"
-                                                        value={pick.dpid}
-                                                        checked={otherDpids.includes(
+                        <select
+                            className="float-left form-control select-team mb-2 mr-2"
+                            value={otherTid}
+                            onChange={this.handleChangeTeam}
+                        >
+                            {teams.map(t => (
+                                <option key={t.tid} value={t.tid}>
+                                    {t.region} {t.name}
+                                </option>
+                            ))}
+                        </select>
+                        <div style={{ paddingTop: 7 }}>
+                            {won}-{lost}, {strategy}
+                        </div>
+                        <DataTable
+                            cols={cols}
+                            defaultSort={[5, "desc"]}
+                            name="Trade:Other"
+                            rows={otherRows}
+                        />
+                        <div className="table-responsive">
+                            <table className="table table-striped table-bordered table-sm">
+                                <thead>
+                                    <tr>
+                                        <th />
+                                        <th width="100%">Draft Picks</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {otherPicks.map(pick => (
+                                        <tr key={pick.dpid}>
+                                            <td>
+                                                <input
+                                                    name="other-dpids"
+                                                    type="checkbox"
+                                                    value={pick.dpid}
+                                                    checked={otherDpids.includes(
+                                                        pick.dpid,
+                                                    )}
+                                                    onChange={() =>
+                                                        this.handleChangeAsset(
+                                                            "other-dpids",
                                                             pick.dpid,
-                                                        )}
-                                                        onChange={() =>
-                                                            this.handleChangeAsset(
-                                                                "other-dpids",
-                                                                pick.dpid,
-                                                            )
-                                                        }
-                                                    />
-                                                </td>
-                                                <td>{pick.desc}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                                                        )
+                                                    }
+                                                />
+                                            </td>
+                                            <td>{pick.desc}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
 
-                            <h2>{userTeamName}</h2>
-                            <DataTable
-                                cols={cols}
-                                defaultSort={[5, "desc"]}
-                                name="Trade:User"
-                                rows={userRows}
-                            />
-                            <div className="table-responsive">
-                                <table className="table table-striped table-bordered table-sm">
-                                    <thead>
-                                        <tr>
-                                            <th />
-                                            <th width="100%">Draft Picks</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {userPicks.map(pick => (
-                                            <tr key={pick.dpid}>
-                                                <td>
-                                                    <input
-                                                        name="user-dpids"
-                                                        type="checkbox"
-                                                        value={pick.dpid}
-                                                        checked={userDpids.includes(
+                        <h2 className="mt-3">{userTeamName}</h2>
+                        <DataTable
+                            cols={cols}
+                            defaultSort={[5, "desc"]}
+                            name="Trade:User"
+                            rows={userRows}
+                        />
+                        <div className="table-responsive">
+                            <table className="table table-striped table-bordered table-sm">
+                                <thead>
+                                    <tr>
+                                        <th />
+                                        <th width="100%">Draft Picks</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {userPicks.map(pick => (
+                                        <tr key={pick.dpid}>
+                                            <td>
+                                                <input
+                                                    name="user-dpids"
+                                                    type="checkbox"
+                                                    value={pick.dpid}
+                                                    checked={userDpids.includes(
+                                                        pick.dpid,
+                                                    )}
+                                                    onChange={() =>
+                                                        this.handleChangeAsset(
+                                                            "user-dpids",
                                                             pick.dpid,
-                                                        )}
-                                                        onChange={() =>
-                                                            this.handleChangeAsset(
-                                                                "user-dpids",
-                                                                pick.dpid,
-                                                            )
-                                                        }
-                                                    />
-                                                </td>
-                                                <td>{pick.desc}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </form>
+                                                        )
+                                                    }
+                                                />
+                                            </td>
+                                            <td>{pick.desc}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                     <div className="col-md-3 trade-summary">
-                        <h3>Trade Summary</h3>
                         <div className="row">
                             {summary.teams.map((t, i) => (
-                                <div key={i} className="col-md-12 col-6">
+                                <div key={i} className="col-md-12 col-6 mb-4">
                                     <h4>{t.name}</h4>
                                     <h5>Trade Away:</h5>
                                     <ul className="list-unstyled">
@@ -430,8 +426,6 @@ class Trade extends React.Component {
                             ))}
                         </div>
 
-                        <br />
-
                         {summary.warning ? (
                             <p className="alert alert-danger">
                                 <strong>Warning!</strong> {summary.warning}
@@ -464,7 +458,7 @@ class Trade extends React.Component {
                             <br />
                             <button
                                 type="submit"
-                                className="btn btn-large btn-primary"
+                                className="btn btn-primary"
                                 disabled={
                                     !summary.enablePropose &&
                                     !this.state.forceTrade
@@ -474,9 +468,10 @@ class Trade extends React.Component {
                             >
                                 Propose Trade
                             </button>
+                            <br />
                             <button
                                 type="submit"
-                                className="btn"
+                                className="btn btn-secondary"
                                 disabled={this.state.asking}
                                 onClick={this.handleClickAsk}
                                 style={{ margin: "5px 5px 5px 0" }}
@@ -485,9 +480,10 @@ class Trade extends React.Component {
                                     ? "Waiting for answer..."
                                     : "What would make this deal work?"}
                             </button>
+                            <br />
                             <button
                                 type="submit"
-                                className="btn"
+                                className="btn btn-secondary"
                                 onClick={this.handleClickClear}
                                 style={{ margin: "5px 5px 5px 0" }}
                             >

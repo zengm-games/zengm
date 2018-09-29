@@ -160,13 +160,6 @@ working on something to keep me in the loop.
 
 ## Less Important Development Info
 
-### Bootstrap
-
-Basketball GM's layout is currently based on Bootstrap 3.1.1 with the following
-options:
-
-* @font-size-base set to 13px
-
 ### Basketball stuff
 
 Abbreviations of stats should be done like basketball-reference.com stat pages.

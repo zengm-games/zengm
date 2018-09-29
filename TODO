@@ -11,7 +11,8 @@ bootstrap 4
 - inIframe
 - responsive menu on side
 - navbar left/right margins for basketball/user icons
-- navbar dropdowns on right (like Help) cut off screen on right
+- navbar dropdowns when moving between with mouse, original clicked one is still somewhat highlighted
+- navbar dropdowns more clear active state, like bs3 version
 - navbar collapsed state
   - dropdowns - more l/r padding where possible
   - alignment

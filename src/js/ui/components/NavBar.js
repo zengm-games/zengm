@@ -87,7 +87,7 @@ const TopMenuDropdown = ({ children, long, short, openId, onToggle }) => {
                 openId={openId}
                 toggle={toggle}
             />
-            <DropdownMenu>
+            <DropdownMenu right>
                 <DropdownItem className="d-none d-sm-block d-md-none" header>
                     {long}
                 </DropdownItem>

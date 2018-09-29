@@ -10,12 +10,14 @@ bootstrap 4
 - play menu (and all navbar) menu positioning
 - inIframe
 - responsive menu on side
+  - use side menu from xl? missing tools/help/account
 - navbar dropdowns when moving between with mouse, original clicked one is still somewhat highlighted
 - navbar dropdowns more clear active state, like bs3 version
 - navbar collapsed state
   - dropdowns - more l/r padding where possible
   - play menu
     - if can't figure it out, somehow turn it into a modal
+- navbar color
 - firefox
 - safari
 

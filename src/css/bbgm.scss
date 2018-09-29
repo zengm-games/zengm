@@ -696,56 +696,48 @@ tr.warning > td {
   }
 }
 
-// Large screen sidebar, adapted from Bootstrap docs
-.bs-sidenav {
-  margin-top: 24px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  background-color: #f8f8f8;
-  border-radius: 5px;
-  border: 1px solid #e7e7e7;
+// https://getbootstrap.com/docs/4.1/examples/dashboard/
+.sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100; /* Behind the navbar */
+  padding: 48px 0 0; /* Height of navbar */
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
 }
-
-.bs-navheader {
-  color: #777;
-  font-size: 11px;
-  font-weight: bold;
-  margin-top: 14px;
-  padding: 5px 20px;
-  text-transform: uppercase;
+.sidebar-sticky {
+  position: relative;
+  top: 0;
+  height: calc(100vh - 48px);
+  padding-top: .5rem;
+  overflow-x: hidden;
+  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
 }
-
-.bs-sidebar {
-  .nav {
-    > li > a {
-      display: block;
-      color: #333;
-      padding: 5px 20px;
-
-      &:hover,
-      &:focus {
-        text-decoration: none;
-        background-color: #e0e0e0;
-        color: #333;
-      }
-    }
-
-    > .active > a,
-    > .active:hover > a,
-    > .active:focus > a {
-      background-color: transparent;
-      border-right: 4px solid #428bca;
-      color: #333;
-      font-weight: bold;
-    }
+@supports ((position: -webkit-sticky) or (position: sticky)) {
+  .sidebar-sticky {
+    position: -webkit-sticky;
+    position: sticky;
   }
 }
-
-.multi-team-menu {
-  background-color: #fff;
-  position: fixed;
-  right: 6px;
-  bottom: 6px;
+.sidebar .nav-link {
+  font-weight: 500;
+  color: #333;
+  padding: 4px 16px;
+}
+.sidebar .nav-link.active {
+  color: $blue;
+}
+.sidebar .nav-link:hover {
+  background-color: $gray-200;
+}
+.sidebar-heading {
+  font-size: .75rem;
+  text-transform: uppercase;
+  @extend .px-3;
+  @extend .mt-3;
+  @extend .mb-1;
+  @extend .text-muted;
 }
 
 label input {

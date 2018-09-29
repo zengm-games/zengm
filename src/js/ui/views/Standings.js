@@ -47,28 +47,30 @@ DivStandingsRow.propTypes = {
 
 const DivStandings = ({ div, season }) => {
     return (
-        <table className="table table-striped table-bordered table-sm table-hover">
-            <thead>
-                <tr>
-                    <th width="100%">{div.name}</th>
-                    <th>W</th>
-                    <th>L</th>
-                    <th>%</th>
-                    <th>GB</th>
-                    <th>Home</th>
-                    <th>Road</th>
-                    <th>Div</th>
-                    <th>Conf</th>
-                    <th>Streak</th>
-                    <th>L10</th>
-                </tr>
-            </thead>
-            <tbody>
-                {div.teams.map(t => (
-                    <DivStandingsRow key={t.tid} t={t} season={season} />
-                ))}
-            </tbody>
-        </table>
+        <div className="table-responsive">
+            <table className="table table-striped table-bordered table-sm table-hover">
+                <thead>
+                    <tr>
+                        <th width="100%">{div.name}</th>
+                        <th>W</th>
+                        <th>L</th>
+                        <th>%</th>
+                        <th>GB</th>
+                        <th>Home</th>
+                        <th>Road</th>
+                        <th>Div</th>
+                        <th>Conf</th>
+                        <th>Streak</th>
+                        <th>L10</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {div.teams.map(t => (
+                        <DivStandingsRow key={t.tid} t={t} season={season} />
+                    ))}
+                </tbody>
+            </table>
+        </div>
     );
 };
 
@@ -144,7 +146,7 @@ const Standings = ({ confs, playoffsByConference, season }) => {
                 <div key={conf.cid}>
                     <h2>{conf.name}</h2>
                     <div className="row">
-                        <div className="col-sm-9">
+                        <div className="col-md-9">
                             {conf.divs.map(div => (
                                 <DivStandings
                                     key={div.did}
@@ -154,7 +156,7 @@ const Standings = ({ confs, playoffsByConference, season }) => {
                             ))}
                         </div>
 
-                        <div className="col-sm-3 hidden-xs">
+                        <div className="col-md-3 d-none d-md-block">
                             <ConfStandings
                                 playoffsByConference={playoffsByConference}
                                 season={season}

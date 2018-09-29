@@ -25,8 +25,6 @@ bootstrap 4
 - screen reader
 - main container
   - adjust for left menu and skyscraper ad
-- tables
-  - get rid of table-responsive
 
 typescript
 - https://github.com/bcherny/flow-to-typescript

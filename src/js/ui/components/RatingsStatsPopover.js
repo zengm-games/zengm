@@ -3,9 +3,8 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import * as React from "react";
-import OverlayTrigger from "react-bootstrap/lib/OverlayTrigger";
-import Popover from "react-bootstrap/lib/Popover";
-import WatchBlock from "./WatchBlock";
+import PopoverBody from "reactstrap/lib/PopoverBody";
+import { UncontrolledPopover, WatchBlock } from ".";
 import { helpers, toWorker } from "../util";
 
 const colorRating = (rating: number) => {
@@ -243,32 +242,33 @@ class RatingsStatsPopover extends React.Component<Props, State> {
             );
         }
 
-        const popoverPlayerRatings = (
-            <Popover id={`ratings-pop-${this.props.pid}`}>
-                <div style={{ minWidth: "250px", whiteSpace: "nowrap" }}>
-                    {nameBlock}
-                    {ratingsBlock}
-                    {statsBlock}
-                </div>
-            </Popover>
-        );
-
         return (
-            <OverlayTrigger
+            <UncontrolledPopover
+                id={`ratings-pop-${this.props.pid}`}
                 onEnter={this.loadData}
-                overlay={popoverPlayerRatings}
                 placement="bottom"
-                rootClose
-                trigger="click"
+                target={props => (
+                    <span
+                        className={classNames(
+                            "glyphicon glyphicon-stats watch",
+                            {
+                                "watch-active": this.props.watch === true, // Explicit true check is for Firefox 57 and older
+                            },
+                        )}
+                        data-no-row-highlight="true"
+                        title="View ratings and stats"
+                        {...props}
+                    />
+                )}
             >
-                <span
-                    className={classNames("glyphicon glyphicon-stats watch", {
-                        "watch-active": this.props.watch === true, // Explicit true check is for Firefox 57 and older
-                    })}
-                    data-no-row-highlight="true"
-                    title="View ratings and stats"
-                />
-            </OverlayTrigger>
+                <PopoverBody>
+                    <div style={{ minWidth: "250px", whiteSpace: "nowrap" }}>
+                        {nameBlock}
+                        {ratingsBlock}
+                        {statsBlock}
+                    </div>
+                </PopoverBody>
+            </UncontrolledPopover>
         );
     }
 }

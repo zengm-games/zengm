@@ -5,7 +5,7 @@ import { omit } from "reactstrap/lib/utils";
 
 // This is shit
 
-const omitKeys = ["defaultOpen", "id", "target"];
+const omitKeys = ["defaultOpen", "id", "onEnter", "target"];
 
 export default class UncontrolledPopover extends React.Component {
     constructor(props) {
@@ -17,7 +17,11 @@ export default class UncontrolledPopover extends React.Component {
 
     toggle() {
         this.setState(state => {
-            return { isOpen: !state.isOpen };
+            const isOpen = !state.isOpen;
+            if (isOpen && this.props.onEnter) {
+                this.props.onEnter();
+            }
+            return { isOpen };
         });
     }
 
@@ -39,5 +43,8 @@ export default class UncontrolledPopover extends React.Component {
 
 UncontrolledPopover.propTypes = {
     defaultOpen: PropTypes.bool,
+    id: PropTypes.string.isRequired,
+    onEnter: PropTypes.func,
+    target: PropTypes.any,
     ...Popover.propTypes,
 };

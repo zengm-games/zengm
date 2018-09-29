@@ -14,6 +14,34 @@ body {
   padding: 0 15px;
   width: 100%;
 }
+.skyscraper-wrapper {
+  display: none;
+}
+
+@include media-breakpoint-up(xl) {
+  .bbgm-container {
+    max-width: map-get($grid-breakpoints, xl);
+  }
+}
+@media screen and (min-width: map-get($grid-breakpoints, xl) + 190px) {
+  .bbgm-container {
+    max-width: unset;
+    padding-right: 190px;
+  }
+  .skyscraper-wrapper {
+    display: block;
+    position: fixed;
+    top: 58px;
+    right: 0px;
+    height: 600px;
+    width: 190px;
+  }
+  #bbgm-ads-skyscraper {
+    width: 160px;
+    height: 600px;
+    margin: 0 auto;
+  }
+}
 
 .rev {
   @extend .text-muted;
@@ -70,12 +98,6 @@ body {
 
 .god-mode-text {
   padding: 0 3px;
-}
-
-@media (max-width: 767px) {
-  .user-menu {
-    margin-left: -15px; // Move closer to hamburger menu
-  }
 }
 
 // These colors are copied from the default "success" button.
@@ -736,7 +758,7 @@ tr.warning > td {
   @extend .mb-1;
   @extend .text-muted;
 }
-@include media-breakpoint-up(lg) {
+@include media-breakpoint-up(xl) {
   .sidebar {
     display: block;
   }
@@ -785,19 +807,6 @@ label input {
       width: 1%;
       white-space: nowrap;
   }
-}
-
-.skyscraper-wrapper {
-  position: fixed;
-  top: 68px;
-  right: 0px;
-  height: 600px;
-  left: 1170px;
-}
-#bbgm-ads-skyscraper {
-  width: 160px;
-  height: 600px;
-  margin: 0 auto;
 }
 
 .user-select-none {

@@ -1,7 +1,8 @@
+watch-css graceful error, timestamp
+
 bootstrap 4
 - dark mode
   - some stuff built in, like table-dark
-- full width, minus ad
 - replace react-bootstrap
 - splash screen
   - indicate when UI/worker is loaded, not using the "component versions" though
@@ -25,6 +26,7 @@ bootstrap 4
 - screen reader
 - main container
   - adjust for left menu and skyscraper ad
+    - at some point - max-width of bbgm-container, let area on right expand until it can fit ad, then another breakpoint where it becomes fluid again
 
 typescript
 - https://github.com/bcherny/flow-to-typescript

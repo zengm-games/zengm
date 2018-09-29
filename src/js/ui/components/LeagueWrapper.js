@@ -164,11 +164,11 @@ const LeagueWrapper = ({
 }) => {
     return (
         <div className="row">
-            <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
+            <div className="col-xl-2 d-none d-xl-block">
                 <SideMenu lid={lid} pageId={pageId} />
             </div>
             <div
-                className="col-lg-10 col-xs-12 p402_premium"
+                className="col-xl-10 col-12 p402_premium"
                 id="screenshot-league"
             >
                 {children}

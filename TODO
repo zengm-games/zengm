@@ -5,7 +5,7 @@ bootstrap 4
 - splash screen
   - indicate when UI/worker is loaded, not using the "component versions" though
 - bootstrap 3 classes (hidden, visible, text-)
-- reactsrap import individual classes
+- reactsrap import individual classes (see UncontrolledPopover)
 - screenshot
 - ads
 - play menu (and all navbar) menu positioning
@@ -22,8 +22,9 @@ bootstrap 4
 - firefox
 - safari
 - screen reader
-- ratings popover
 - react-overlays
+
+Object.assign to @babel/plugin-proposal-object-rest-spread
 
 typescript
 - https://github.com/bcherny/flow-to-typescript

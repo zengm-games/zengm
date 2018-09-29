@@ -2,8 +2,9 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import OverlayTrigger from "react-bootstrap/lib/OverlayTrigger";
-import Popover from "react-bootstrap/lib/Popover";
+import PopoverBody from "reactstrap/lib/PopoverBody";
+import PopoverHeader from "reactstrap/lib/PopoverHeader";
+import { UncontrolledPopover } from ".";
 
 const HelpPopover = ({
     children,
@@ -16,24 +17,21 @@ const HelpPopover = ({
     style: { [key: string]: number | string },
     title: string,
 }) => {
-    const popover = (
-        <Popover id={title} title={title}>
-            {children}
-        </Popover>
-    );
-
     return (
-        <OverlayTrigger
-            trigger="click"
-            rootClose
+        <UncontrolledPopover
+            id={title}
             placement={placement}
-            overlay={popover}
+            target={props => (
+                <span
+                    className="glyphicon glyphicon-question-sign help-icon"
+                    style={style}
+                    {...props}
+                />
+            )}
         >
-            <span
-                className="glyphicon glyphicon-question-sign help-icon"
-                style={style}
-            />
-        </OverlayTrigger>
+            <PopoverHeader>{title}</PopoverHeader>
+            <PopoverBody>{children}</PopoverBody>
+        </UncontrolledPopover>
     );
 };
 

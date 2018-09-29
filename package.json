@@ -63,6 +63,7 @@
     },
     "devDependencies": {
         "@babel/core": "^7.1.0",
+        "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
         "@babel/plugin-transform-async-to-generator": "^7.1.0",
         "@babel/plugin-transform-destructuring": "^7.0.0",
         "@babel/plugin-transform-exponentiation-operator": "^7.1.0",
@@ -125,7 +126,8 @@
             "@babel/plugin-transform-destructuring",
             "@babel/plugin-transform-modules-commonjs",
             "@babel/plugin-transform-exponentiation-operator",
-            "@babel/plugin-transform-async-to-generator"
+            "@babel/plugin-transform-async-to-generator",
+            "@babel/plugin-proposal-object-rest-spread"
         ]
     },
     "private": true,

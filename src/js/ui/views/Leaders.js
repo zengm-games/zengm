@@ -24,75 +24,68 @@ const Leaders = ({ categories, season }) => {
                 for 2 on the season is not eligible for the league lead in FG%).
             </p>
 
-            <div className="row">
-                {categories.map((cat, i) => (
-                    <div key={cat.name}>
-                        <div className="col-md-4 col-sm-6">
-                            <div className="table-responsive">
-                                <table className="table table-striped table-bordered table-sm shorten-col-0 leaders">
-                                    <thead>
-                                        <tr title={cat.title}>
-                                            <th>{cat.name}</th>
-                                            <th>{cat.stat}</th>
+            <div className="row" style={{ marginTop: -20 }}>
+                {categories.map(cat => (
+                    <div
+                        key={cat.name}
+                        className="col-12 col-sm-6 col-md-4"
+                        style={{ marginTop: 20 }}
+                    >
+                        <div className="table-responsive">
+                            <table className="table table-striped table-bordered table-sm shorten-col-0 leaders">
+                                <thead>
+                                    <tr title={cat.title}>
+                                        <th>{cat.name}</th>
+                                        <th>{cat.stat}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {cat.data.map((p, j) => (
+                                        <tr
+                                            key={p.pid}
+                                            className={
+                                                p.userTeam ? "info" : null
+                                            }
+                                        >
+                                            <td>
+                                                <div className="shortened-col">
+                                                    {j + 1}.{" "}
+                                                    <PlayerNameLabels
+                                                        pid={p.pid}
+                                                        injury={p.injury}
+                                                        skills={
+                                                            p.ratings.skills
+                                                        }
+                                                        watch={p.watch}
+                                                    >
+                                                        {p.nameAbbrev}
+                                                    </PlayerNameLabels>
+                                                    <a
+                                                        href={helpers.leagueUrl(
+                                                            [
+                                                                "roster",
+                                                                p.abbrev,
+                                                                season,
+                                                            ],
+                                                        )}
+                                                        style={{
+                                                            marginLeft: "6px",
+                                                        }}
+                                                    >
+                                                        {p.abbrev}
+                                                    </a>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {cat.stat === "WS/48"
+                                                    ? helpers.roundWinp(p.stat)
+                                                    : p.stat.toFixed(1)}
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        {cat.data.map((p, j) => (
-                                            <tr
-                                                key={p.pid}
-                                                className={
-                                                    p.userTeam ? "info" : null
-                                                }
-                                            >
-                                                <td>
-                                                    <div className="shortened-col">
-                                                        {j + 1}.{" "}
-                                                        <PlayerNameLabels
-                                                            pid={p.pid}
-                                                            injury={p.injury}
-                                                            skills={
-                                                                p.ratings.skills
-                                                            }
-                                                            watch={p.watch}
-                                                        >
-                                                            {p.nameAbbrev}
-                                                        </PlayerNameLabels>
-                                                        <a
-                                                            href={helpers.leagueUrl(
-                                                                [
-                                                                    "roster",
-                                                                    p.abbrev,
-                                                                    season,
-                                                                ],
-                                                            )}
-                                                            style={{
-                                                                marginLeft:
-                                                                    "6px",
-                                                            }}
-                                                        >
-                                                            {p.abbrev}
-                                                        </a>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    {cat.stat === "WS/48"
-                                                        ? helpers.roundWinp(
-                                                              p.stat,
-                                                          )
-                                                        : p.stat.toFixed(1)}
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
-                        {i % 3 === 2 ? (
-                            <div className="clearfix visible-md visible-lg" />
-                        ) : null}
-                        {i % 2 === 1 ? (
-                            <div className="clearfix visible-sm" />
-                        ) : null}
                     </div>
                 ))}
             </div>

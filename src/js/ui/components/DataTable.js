@@ -318,7 +318,7 @@ const Paging = ({ currentPage, numRows, onClick, perPage }) => {
     }
 
     return (
-        <div className="dataTables_paginate paging_bootstrap">
+        <div className="dataTables_paginate">
             <ul className="pagination">
                 <li className={classNames("prev", { disabled: !showPrev })}>
                     <a onClick={() => showPrev && onClick(currentPage - 1)}>

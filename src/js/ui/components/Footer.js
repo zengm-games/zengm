@@ -65,7 +65,7 @@ class Footer extends React.Component<{}> {
                 <hr />
 
                 <footer>
-                    <p>
+                    <p className="float-sm-left">
                         <a
                             href="https://basketball-gm.com/about/"
                             rel="noopener noreferrer"
@@ -115,7 +115,9 @@ class Footer extends React.Component<{}> {
                         </a>
                         <br />
                     </p>
-                    <p className="rev">BBGM v{window.bbgmVersion}</p>
+                    <p className="float-sm-right text-muted">
+                        BBGM v{window.bbgmVersion}
+                    </p>
                 </footer>
             </div>
         );

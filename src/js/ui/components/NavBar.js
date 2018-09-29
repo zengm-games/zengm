@@ -88,7 +88,7 @@ const TopMenuDropdown = ({ children, long, short, openId, onToggle }) => {
                 toggle={toggle}
             />
             <DropdownMenu>
-                <DropdownItem className="d-none d-md-block d-lg-none" header>
+                <DropdownItem className="d-none d-sm-block d-md-none" header>
                     {long}
                 </DropdownItem>
                 {children}
@@ -936,6 +936,7 @@ class NavBar extends React.Component<Props, State> {
                         </Overlay>
                     </Nav>
                     {lid !== undefined ? phaseStatusBlock : null}
+                    <div className="flex-grow-1" />
                     <NavbarToggler onClick={this.toggleCollapsed} />
                     <Collapse
                         className="justify-content-end"

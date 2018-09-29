@@ -11,7 +11,9 @@ bootstrap 4
 - inIframe
 - responsive menu on side
 - navbar left/right margins for basketball/user icons
+- navbar dropdowns on right (like Help) cut off screen on right
 - navbar collapsed state
+  - dropdowns - more l/r padding where possible
   - alignment
   - play menu
 

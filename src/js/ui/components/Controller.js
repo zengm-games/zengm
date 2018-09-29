@@ -343,7 +343,7 @@ class Controller extends React.Component<{}, State> {
         return (
             <Provider>
                 <NavBar pageId={pageId} updating={loading} />
-                <div className="container">
+                <div className="bbgm-container">
                     <Header />
                     <div
                         id="screenshot-nonleague"

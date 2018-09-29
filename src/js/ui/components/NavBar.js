@@ -625,8 +625,8 @@ class LogoAndText extends React.Component<LogoAndTextProps> {
             <a
                 className={
                     window.inIframe && lid !== undefined
-                        ? "navbar-brand d-none d-lg-inline"
-                        : "navbar-brand"
+                        ? "navbar-brand text-muted d-none d-lg-inline"
+                        : "navbar-brand text-muted"
                 }
                 href="/"
             >
@@ -716,7 +716,9 @@ class PlayMenu extends React.Component<PlayMenuProps> {
         return (
             <UncontrolledDropdown nav inNavbar>
                 <DropdownToggle nav caret className="play-button">
-                    <span className="d-none d-md-inline">Play</span>
+                    <span className="d-xs-inline d-sm-none d-md-inline">
+                        Play
+                    </span>
                 </DropdownToggle>
                 <DropdownMenu>
                     {options.map((option, i) => {
@@ -848,12 +850,16 @@ class NavBar extends React.Component<Props, State> {
             let userBlock = username ? (
                 <NavLink href="/account">
                     <span className="glyphicon glyphicon-user" />{" "}
-                    <span className="d-none d-lg-inline">{username}</span>
+                    <span className="d-xs-inline d-sm-none d-lg-inline">
+                        {username}
+                    </span>
                 </NavLink>
             ) : (
                 <NavLink href="/account/login_or_register">
                     <span className="glyphicon glyphicon-user" />{" "}
-                    <span className="d-none d-lg-inline">Login/Register</span>
+                    <span className="d-xs-inline d-sm-none d-lg-inline">
+                        Login/Register
+                    </span>
                 </NavLink>
             );
 
@@ -942,10 +948,10 @@ class NavBar extends React.Component<Props, State> {
                         navbar
                     >
                         <DropdownLinks godMode={godMode} lid={lid} />
+                        <Nav navbar>
+                            <NavItem>{userBlock}</NavItem>
+                        </Nav>
                     </Collapse>
-                    <Nav navbar>
-                        <NavItem>{userBlock}</NavItem>
-                    </Nav>
                 </Navbar>
             );
         });

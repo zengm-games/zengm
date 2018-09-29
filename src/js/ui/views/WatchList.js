@@ -1,7 +1,11 @@
 import PropTypes from "prop-types";
 import React from "react";
-import DropdownButton from "react-bootstrap/lib/DropdownButton";
-import MenuItem from "react-bootstrap/lib/MenuItem";
+import {
+    UncontrolledDropdown,
+    DropdownToggle,
+    DropdownMenu,
+    DropdownItem,
+} from "reactstrap";
 import { PLAYER } from "../../common";
 import { getCols, helpers, setTitle, toWorker } from "../util";
 import {
@@ -126,26 +130,26 @@ class WatchList extends React.Component {
                     fields={["statTypes", "playoffs"]}
                     values={[statType, playoffs]}
                 />
-                <div className="float-right">
-                    <DropdownButton
-                        id="dropdown-other-reports"
-                        title="Other Reports"
-                    >
-                        <MenuItem
+                <UncontrolledDropdown className="float-right">
+                    <DropdownToggle caret className="btn-light">
+                        Other Reports
+                    </DropdownToggle>
+                    <DropdownMenu>
+                        <DropdownItem
                             href={helpers.leagueUrl(["player_stats", "watch"])}
                         >
                             Player Stats
-                        </MenuItem>
-                        <MenuItem
+                        </DropdownItem>
+                        <DropdownItem
                             href={helpers.leagueUrl([
                                 "player_ratings",
                                 "watch",
                             ])}
                         >
                             Player Ratings
-                        </MenuItem>
-                    </DropdownButton>
-                </div>
+                        </DropdownItem>
+                    </DropdownMenu>
+                </UncontrolledDropdown>
                 <h1>
                     Watch List <NewWindowLink />
                 </h1>

@@ -2,8 +2,12 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import DropdownButton from "react-bootstrap/lib/DropdownButton";
-import MenuItem from "react-bootstrap/lib/MenuItem";
+import {
+    UncontrolledDropdown,
+    DropdownToggle,
+    DropdownMenu,
+    DropdownItem,
+} from "reactstrap";
 import { helpers } from "../util";
 
 const genUrl = (parts, season) => {
@@ -20,30 +24,43 @@ const JumpTo = ({ season }: { season: number | "all" }) => {
     const s = typeof season === "number" ? String(season) : undefined;
 
     return (
-        <div className="float-right">
-            <DropdownButton id="jump-to-dropdown" title="Jump To">
-                <MenuItem href={genUrl(["standings"], s)}>Standings</MenuItem>
-                <MenuItem href={genUrl(["playoffs"], s)}>Playoffs</MenuItem>
-                <MenuItem href={genUrl(["history"], s)}>
+        <UncontrolledDropdown className="float-right">
+            <DropdownToggle caret className="btn-light">
+                Jump To
+            </DropdownToggle>
+            <DropdownMenu>
+                <DropdownItem href={genUrl(["standings"], s)}>
+                    Standings
+                </DropdownItem>
+                <DropdownItem href={genUrl(["playoffs"], s)}>
+                    Playoffs
+                </DropdownItem>
+                <DropdownItem href={genUrl(["history"], s)}>
                     Season Summary
-                </MenuItem>
-                <MenuItem href={genUrl(["league_finances"], s)}>
+                </DropdownItem>
+                <DropdownItem href={genUrl(["league_finances"], s)}>
                     Finances
-                </MenuItem>
-                <MenuItem href={genUrl(["transactions", "all"], s)}>
+                </DropdownItem>
+                <DropdownItem href={genUrl(["transactions", "all"], s)}>
                     Transactions
-                </MenuItem>
-                <MenuItem href={genUrl(["draft_summary"], s)}>Draft</MenuItem>
-                <MenuItem href={genUrl(["leaders"], s)}>Leaders</MenuItem>
-                <MenuItem href={genUrl(["team_stats"], s)}>Team Stats</MenuItem>
-                <MenuItem href={genUrl(["player_stats", "all"], s)}>
+                </DropdownItem>
+                <DropdownItem href={genUrl(["draft_summary"], s)}>
+                    Draft
+                </DropdownItem>
+                <DropdownItem href={genUrl(["leaders"], s)}>
+                    Leaders
+                </DropdownItem>
+                <DropdownItem href={genUrl(["team_stats"], s)}>
+                    Team Stats
+                </DropdownItem>
+                <DropdownItem href={genUrl(["player_stats", "all"], s)}>
                     Player Stats
-                </MenuItem>
-                <MenuItem href={genUrl(["player_ratings", "all"], s)}>
+                </DropdownItem>
+                <DropdownItem href={genUrl(["player_ratings", "all"], s)}>
                     Player Ratings
-                </MenuItem>
-            </DropdownButton>
-        </div>
+                </DropdownItem>
+            </DropdownMenu>
+        </UncontrolledDropdown>
     );
 };
 

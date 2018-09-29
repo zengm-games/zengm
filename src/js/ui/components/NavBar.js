@@ -5,13 +5,21 @@
 import html2canvas from "html2canvas";
 import PropTypes from "prop-types";
 import * as React from "react";
-import Dropdown from "react-bootstrap/lib/Dropdown";
-import MenuItem from "react-bootstrap/lib/MenuItem";
-import Nav from "react-bootstrap/lib/Nav";
-import NavItem from "react-bootstrap/lib/NavItem";
-import Navbar from "react-bootstrap/lib/Navbar";
 import Overlay from "react-bootstrap/lib/Overlay";
 import Popover from "react-bootstrap/lib/Popover";
+import {
+    Collapse,
+    Navbar,
+    NavbarToggler,
+    NavbarBrand,
+    Nav,
+    NavItem,
+    NavLink,
+    UncontrolledDropdown,
+    DropdownToggle,
+    DropdownMenu,
+    DropdownItem,
+} from "reactstrap";
 import ReactDOM from "react-dom";
 import { fetchWrapper } from "../../common";
 import {
@@ -610,7 +618,7 @@ class LogoAndText extends React.Component<LogoAndTextProps> {
             <a
                 className={
                     window.inIframe && lid !== undefined
-                        ? "navbar-brand hidden-md hidden-sm hidden-xs"
+                        ? "navbar-brand d-none d-lg-block"
                         : "navbar-brand"
                 }
                 href="/"
@@ -628,13 +636,9 @@ class LogoAndText extends React.Component<LogoAndTextProps> {
                             : "paused",
                     }}
                 />
-                <span className="hidden-md hidden-sm hidden-xs">
-                    Basketball GM
-                </span>
+                <span className="d-none d-lg-block">Basketball GM</span>
                 {lid === undefined ? (
-                    <span className="visible-md visible-sm visible-xs">
-                        Basketball GM
-                    </span>
+                    <span className="d-lg-none">Basketball GM</span>
                 ) : null}
             </a>
         );
@@ -703,31 +707,32 @@ class PlayMenu extends React.Component<PlayMenuProps> {
         }
 
         return (
-            <ul className="nav navbar-nav-no-collapse">
-                <Dropdown componentClass="li" id="play-menu">
-                    <Dropdown.Toggle className="play-button" useAnchor>
-                        <span className="hidden-xs">Play</span>
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu>
-                        {options.map((option, i) => {
-                            return (
-                                <MenuItem
-                                    key={i}
-                                    href={option.url}
-                                    onClick={e => handleOptionClick(option, e)}
-                                >
-                                    {option.label}
-                                    {i === 0 ? (
-                                        <span className="text-muted kbd">
-                                            Alt+P
-                                        </span>
-                                    ) : null}
-                                </MenuItem>
-                            );
-                        })}
-                    </Dropdown.Menu>
-                </Dropdown>
-            </ul>
+            <UncontrolledDropdown nav inNavbar>
+                <DropdownToggle nav caret className="play-button">
+                    <span className="hidden-xs">Play</span>
+                </DropdownToggle>
+                <DropdownMenu>
+                    {options.map((option, i) => {
+                        return (
+                            <DropdownItem
+                                key={i}
+                                href={option.url}
+                                onClick={e => handleOptionClick(option, e)}
+                            >
+                                {option.label}
+                                {i === 0 ? (
+                                    <span
+                                        className="text-muted"
+                                        style={{ float: "right" }}
+                                    >
+                                        Alt+P
+                                    </span>
+                                ) : null}
+                            </DropdownItem>
+                        );
+                    })}
+                </DropdownMenu>
+            </UncontrolledDropdown>
         );
     }
 }
@@ -748,8 +753,30 @@ type Props = {
     updating: boolean,
 };
 
-class NavBar extends React.Component<Props> {
+type State = {
+    collapsed: boolean,
+};
+
+class NavBar extends React.Component<Props, State> {
     playMenu: ?PlayMenu;
+
+    constructor(props: Props) {
+        super(props);
+
+        this.state = {
+            collapsed: true,
+        };
+
+        this.toggleCollapsed = this.toggleCollapsed.bind(this);
+    }
+
+    toggleCollapsed() {
+        this.setState(state => {
+            return {
+                collapsed: !state.collapsed,
+            };
+        });
+    }
 
     // Workaround for https://github.com/react-bootstrap/react-bootstrap/issues/1301 based on https://github.com/react-bootstrap/react-router-bootstrap/issues/112#issuecomment-142599003
     componentDidMount() {
@@ -814,18 +841,15 @@ class NavBar extends React.Component<Props> {
             }
 
             let userBlock = username ? (
-                <a className="navbar-link user-menu" href="/account">
+                <NavLink href="/account">
                     <span className="glyphicon glyphicon-user" />{" "}
-                    <span className="visible-lg">{username}</span>
-                </a>
+                    <span className="d-none d-lg-inline">{username}</span>
+                </NavLink>
             ) : (
-                <a
-                    className="navbar-link user-menu"
-                    href="/account/login_or_register"
-                >
+                <NavLink href="/account/login_or_register">
                     <span className="glyphicon glyphicon-user" />{" "}
-                    <span className="visible-lg">Login/Register</span>
-                </a>
+                    <span className="d-none d-lg-inline">Login/Register</span>
+                </NavLink>
             );
 
             if (window.inIframe) {
@@ -851,24 +875,29 @@ class NavBar extends React.Component<Props> {
             // game. This is needed because game sim happens before the results are displayed in liveGame.
             const phaseStatusBlock =
                 pageId === "liveGame" ? (
-                    <p className="navbar-text-two-line-no-collapse">
+                    <span
+                        className="navbar-text"
+                        style={{ lineHeight: 1.35, marginLeft: 16, padding: 0 }}
+                    >
                         Live game
                         <br />
                         in progress
-                    </p>
+                    </span>
                 ) : (
-                    <p className="navbar-text-two-line-no-collapse">
+                    <span
+                        className="navbar-text"
+                        style={{ lineHeight: 1.35, marginLeft: 16, padding: 0 }}
+                    >
                         {phaseText}
                         <br />
                         {statusText}
-                    </p>
+                    </span>
                 );
 
             return (
-                <Navbar fixedTop>
-                    <div className="pull-right">{userBlock}</div>
-                    <Navbar.Header>
-                        <LogoAndText lid={lid} updating={updating} />
+                <Navbar color="light" light expand="md" fixed="top">
+                    <LogoAndText lid={lid} updating={updating} />
+                    <Nav navbar>
                         <PlayMenu
                             lid={lid}
                             options={playMenuOptions}
@@ -898,12 +927,17 @@ class NavBar extends React.Component<Props> {
                                 depending on the current state of the game.
                             </Popover>
                         </Overlay>
-                        {lid !== undefined ? phaseStatusBlock : null}
-                        <Navbar.Toggle />
-                    </Navbar.Header>
-                    <Navbar.Collapse>
-                        <DropdownLinks godMode={godMode} lid={lid} />
-                    </Navbar.Collapse>
+                    </Nav>
+                    {lid !== undefined ? phaseStatusBlock : null}
+                    <div className="mr-auto" />
+                    <NavbarToggler
+                        onClick={this.toggleCollapsed}
+                        className="mr-2"
+                    />
+                    <Collapse isOpen={!this.state.collapsed} navbar />
+                    <Nav navbar>
+                        <NavItem>{userBlock}</NavItem>
+                    </Nav>
                 </Navbar>
             );
         });

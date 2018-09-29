@@ -1,3 +1,15 @@
+bootstrap 4
+- dark mode
+- full width, minus ad
+- replace react-bootstrap
+- splash screen
+- bootstrap 3 classes (hidden, visible, text-)
+- reactsrap import individual classes
+- screenshot
+- play button color
+- play menu (and all navbar) menu positioning
+- inIframe
+
 typescript
 - https://github.com/bcherny/flow-to-typescript
 - FlowFixMe

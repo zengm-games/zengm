@@ -1,4 +1,6 @@
-@import 'bootstrap';
+$font-size-base: 0.8125rem;
+
+@import 'node_modules/bootstrap/scss/bootstrap';
 @import 'DT_bootstrap';
 @import 'bbgm-notifications';
 
@@ -23,7 +25,7 @@ footer {
 
 .navbar-brand {
   img {
-    vertical-align: top;
+    vertical-align: -3px;
   }
 
   span {
@@ -56,14 +58,6 @@ footer {
     -webkit-transform: rotate(360deg);
     transform: rotate(360deg);
   }
-}
-
-// This is like navbar-text, but with different margins so two lines of text can
-// fit, and with no responsive stuff so it always shows in the navbar.
-.navbar-text-two-line-no-collapse {
-  color: #777;
-  float: left;
-  margin: 6px 15px 7px;
 }
 
 // This is a copy of the navbar-nav styles, with no responsive stuff.
@@ -187,17 +181,6 @@ footer {
   padding: 0 3px;
 }
 
-// For the user/login widget
-.user-menu {
-  display: block;
-  padding: 16px 15px;
-  margin-right: -15px; // No right margin, like navbar-brand's left margin
-
-  &:hover {
-    text-decoration: none;
-  }
-}
-
 // http://stackoverflow.com/a/20839087/786644
 .navbar-link .visible-lg {
   display: none !important;
@@ -217,39 +200,21 @@ footer {
 
 // These colors are copied from the default "success" button.
 .play-button {
+  font-size: 1.01562rem;
+  margin: -8px 0;
+  height: 51px;
+  padding: 14px !important;
+
   color: #fff !important;
-  background-color: #5cb85c !important;
+  background-color: #5cb85c;
 
   &:hover {
-    background-color: #47a447 !important;
-  }
-
-  .caret {
-    color: #fff !important;
-    border-top-color: #fff !important;
+    background-color: #47a447;
   }
 }
 
-.dropdown-menu {
-  a {
-    cursor: pointer;
-  }
-}
-
-// This is for keyboard shortcuts in dropdowns
-.dropdown-menu > li > a {
-  position: relative;
-  padding-right: 70px;
-
-  > span.kbd {
-    position: absolute;
-    right: 20px;
-    top: 3px;
-  }
-
-  &:hover > .text-muted {
-    color: #ccc;
-  }
+.dropdown-item {
+  cursor: pointer;
 }
 
 ul.dashboard-boxes {
@@ -951,3 +916,51 @@ label input {
        -ms-user-select: none;
            user-select: none;
 }
+
+@font-face {
+  font-family: 'Glyphicons Halflings';
+  src: url('../fonts/glyphicons-halflings-regular.eot');
+  src: url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons-halflings-regular.woff') format('woff'), url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+}
+.glyphicon {
+  position: relative;
+  top: 1px;
+  display: inline-block;
+  font-family: 'Glyphicons Halflings';
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.glyphicon-camera:before {
+  content: "\e046";
+}
+.glyphicon-filter:before {
+  content: "\e138";
+}
+.glyphicon-flag:before {
+  content: "\e034";
+}
+.glyphicon-home:before {
+  content: "\e021";
+}
+.glyphicon-ok:before {
+  content: "\e013";
+}
+.glyphicon-menu-left:before {
+  content: "\e257";
+}
+.glyphicon-question-sign:before {
+  content: "\e085";
+}
+.glyphicon-remove:before {
+  content: "\e014";
+}
+.glyphicon-stats:before {
+  content: "\e185";
+}
+.glyphicon-user:before {
+  content: "\e008";
+}
+

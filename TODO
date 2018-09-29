@@ -21,6 +21,9 @@ bootstrap 4
 - navbar color
 - firefox
 - safari
+- screen reader
+- main container
+  - adjust for left menu and skyscraper ad
 
 typescript
 - https://github.com/bcherny/flow-to-typescript

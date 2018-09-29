@@ -9,6 +9,57 @@ const path = require("path");
 const replace = require("replace");
 const Terser = require("terser");
 
+const buildCSS = (watch /*: boolean*/ = false) => {
+    try {
+        const start = process.hrtime();
+
+        // If more Sass files are needed, then create them and @import them into this main Sass file.
+        const sassFilePath = "src/css/bbgm.scss";
+        const sassResult = sass.renderSync({
+            file: sassFilePath,
+        });
+        const source = sassResult.css.toString();
+
+        const outFilename = "build/gen/bbgm3.css";
+
+        let output;
+        if (!watch) {
+            const result = new CleanCSS().minify(source);
+            if (result.errors.length > 0) {
+                console.log("clean-css errors", result.errors);
+            }
+            if (result.warnings.length > 0) {
+                console.log("clean-css warnings", result.warnings);
+            }
+            output = result.styles;
+        } else {
+            output = source;
+        }
+
+        fs.writeFileSync(outFilename, output);
+
+        const bytes = Buffer.byteLength(output, "utf8");
+
+        const diff = process.hrtime(start);
+        const NS_PER_SECOND = 10 ** 9;
+        const timeInS = diff[0] + diff[1] / NS_PER_SECOND;
+
+        console.log(
+            `${(bytes / 1024 / 1024).toFixed(
+                2,
+            )} MB written to ${outFilename} (${timeInS.toFixed(
+                2,
+            )} seconds) at ${new Date().toLocaleTimeString()}`,
+        );
+    } catch (err) {
+        if (watch) {
+            console.error("Error building CSS:", err);
+        } else {
+            throw err;
+        }
+    }
+};
+
 // NOTE: This should be run *AFTER* all assets are built
 const buildSW = async () => {
     const { count, size, warnings } = await workboxBuild.injectManifest({
@@ -65,48 +116,6 @@ const genRev = () => {
     return rev;
 };
 
-const minifyCss = () => {
-    console.log("Building CSS...");
-    let source = "";
-
-    /*
-     * CSS files
-     */
-
-    const cssFilenames = [];
-
-    // Read each CSS file into a string.
-    for (const filename of cssFilenames) {
-        source += fs.readFileSync(`src/css/${filename}`).toString();
-    }
-
-    /*
-     * Sass files
-     */
-
-    // If more Sass files are needed, then create them and @import them into
-    // this main Sass file.
-    const sassFilePath = "src/css/bbgm.scss";
-    const sassResult = sass.renderSync({
-        file: sassFilePath,
-    });
-    source += sassResult.css.toString();
-
-    /*
-     * Use CleanCSS to minify CSS and Sass sources.
-     */
-    const result = new CleanCSS().minify(source);
-    if (result.errors.length > 0) {
-        console.log("clean-css errors", result.errors);
-    }
-    if (result.warnings.length > 0) {
-        console.log("clean-css warnings", result.warnings);
-    }
-    fs.writeFileSync("build/gen/bbgm2.css", result.styles);
-
-    console.log("Done building CSS!");
-};
-
 const minifyJS = (name /*: string */) => {
     const data = fs.readFileSync(`build/${name}`, "utf8");
 
@@ -153,10 +162,10 @@ const setTimestamps = () => {
 };
 
 module.exports = {
+    buildCSS,
     buildSW,
     copyFiles,
     genRev,
-    minifyCss,
     minifyJS,
     reset,
     setTimestamps,

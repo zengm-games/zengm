@@ -1,7 +1,4 @@
-watch-css graceful error, timestamp
-
 bootstrap 4
-- add border to btn-light?
 - dark mode
   - some stuff built in, like table-dark
 - replace react-bootstrap
@@ -15,6 +12,7 @@ bootstrap 4
 - inIframe
 - responsive menu on side
   - use side menu from xl? missing tools/help/account
+- navbar bottom border, like sidebar?
 - navbar dropdowns when moving between with mouse, original clicked one is still somewhat highlighted
 - navbar dropdowns more clear active state, like bs3 version
 - navbar collapsed state
@@ -24,6 +22,7 @@ bootstrap 4
 - firefox
 - safari
 - screen reader
+- ratings popover
 
 typescript
 - https://github.com/bcherny/flow-to-typescript

@@ -6,6 +6,6 @@ console.log("Starting build.js...");
 
 build.reset();
 build.copyFiles();
-build.minifyCss();
+build.buildCSS();
 
 console.log("DONE! (except for JS)");

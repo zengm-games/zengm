@@ -2,396 +2,396 @@ $font-size-base: 0.8125rem;
 $dropdown-link-active-color: #16181b; /* Matches hover: darken($gray-900, 5%) */
 $dropdown-link-active-bg: #f8f9fa; /* Matches hover: $gray-100 */
 
-@import 'node_modules/bootstrap/scss/bootstrap';
-@import 'DT_bootstrap';
-@import 'bbgm-notifications';
+@import "node_modules/bootstrap/scss/bootstrap";
+@import "DT_bootstrap";
+@import "bbgm-notifications";
 
 body {
-  padding-top: 58px;
+    padding-top: 58px;
 }
 
 .bbgm-container {
-  padding: 0 15px;
-  width: 100%;
+    padding: 0 15px;
+    width: 100%;
 }
 .skyscraper-wrapper {
-  display: none;
+    display: none;
 }
 
 @include media-breakpoint-up(xl) {
-  .bbgm-container {
-    max-width: map-get($grid-breakpoints, xl);
-  }
+    .bbgm-container {
+        max-width: map-get($grid-breakpoints, xl);
+    }
 }
 @media screen and (min-width: map-get($grid-breakpoints, xl) + 190px) {
-  .bbgm-container {
-    max-width: unset;
-    padding-right: 190px;
-  }
-  .skyscraper-wrapper {
-    display: block;
-    position: fixed;
-    top: 58px;
-    right: 0px;
-    height: 600px;
-    width: 190px;
-  }
-  #bbgm-ads-skyscraper {
-    width: 160px;
-    height: 600px;
-    margin: 0 auto;
-  }
+    .bbgm-container {
+        max-width: unset;
+        padding-right: 190px;
+    }
+    .skyscraper-wrapper {
+        display: block;
+        position: fixed;
+        top: 58px;
+        right: 0px;
+        height: 600px;
+        width: 190px;
+    }
+    #bbgm-ads-skyscraper {
+        width: 160px;
+        height: 600px;
+        margin: 0 auto;
+    }
 }
 
 .rev {
-  @extend .text-muted;
-  margin-top: -7px;
+    @extend .text-muted;
+    margin-top: -7px;
 }
 
 .navbar-brand {
-  img {
-    vertical-align: -3px;
-  }
+    img {
+        vertical-align: -3px;
+    }
 
-  span {
-    padding-left: 5px;
-    float: right;
-  }
+    span {
+        padding-left: 5px;
+        float: right;
+    }
 }
 
 .spin {
-  -webkit-animation: spin 4s linear infinite;
-  -moz-animation: spin 4s linear infinite;
-  animation: spin 4s linear infinite;
-  -webkit-animation-play-state: paused;
+    -webkit-animation: spin 4s linear infinite;
+    -moz-animation: spin 4s linear infinite;
+    animation: spin 4s linear infinite;
+    -webkit-animation-play-state: paused;
 }
 
 @-moz-keyframes spin {
-  100% {
-    -moz-transform: rotate(360deg);
-  }
+    100% {
+        -moz-transform: rotate(360deg);
+    }
 }
 
 @-webkit-keyframes spin {
-  100% {
-    -webkit-transform: rotate(360deg);
-  }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
 }
 
 @keyframes spin {
-  100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
 }
 
 .god-mode,
 .god-mode-menu a {
-  background-color: #563d7c !important;
-  color: #fff !important;
+    background-color: #563d7c !important;
+    color: #fff !important;
 
-  &:hover,
-  &:focus {
-    background-color: #4a356b !important;
-  }
+    &:hover,
+    &:focus {
+        background-color: #4a356b !important;
+    }
 }
 
 .god-mode-text {
-  padding: 0 3px;
+    padding: 0 3px;
 }
 
 // These colors are copied from the default "success" button.
 .play-button {
-  font-size: 1.01562rem;
-  margin: -8px 0;
-  height: 51px;
-  padding: 14px !important;
+    font-size: 1.01562rem;
+    margin: -8px 0;
+    height: 51px;
+    padding: 14px !important;
 
-  color: #fff !important;
-  background-color: #5cb85c;
+    color: #fff !important;
+    background-color: #5cb85c;
 
-  &:hover {
-    background-color: #47a447;
-  }
+    &:hover {
+        background-color: #47a447;
+    }
 }
 
 .dropdown-item {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .kbd-parent {
-  position: relative;
-  padding-right: 70px;
+    position: relative;
+    padding-right: 70px;
 }
 .kbd {
-  position: absolute;
-  right: 20px;
-  top: 4px;
+    position: absolute;
+    right: 20px;
+    top: 4px;
 }
 
 ul.dashboard-boxes {
-  list-style: none;
-  margin: 0 -1em 0 0;
-  padding: 0;
+    list-style: none;
+    margin: 0 -1em 0 0;
+    padding: 0;
 
-  li {
-    float: left;
-    margin: 1em 1em 0 0;
-    position: relative;
-    overflow: hidden;
+    li {
+        float: left;
+        margin: 1em 1em 0 0;
+        position: relative;
+        overflow: hidden;
 
-    strong {
-      white-space: nowrap;
-    }
-
-    a.league {
-      display: block;
-      height: 77px;
-      padding: 2px 8px 6px;
-      text-align: left;
-      width: 151px;
-
-      &:hover {
-        color: #000;
-      }
-    }
-
-    a.league-active {
-      background: black;
-      -webkit-animation: oscillate-bg 1.5s infinite;
-      -moz-animation: oscillate-bg 1.5s infinite;
-      animation: oscillate-bg 1.5s infinite;
-    }
-
-    .close {
-      border-radius: 0 4px;
-      position: absolute;
-      right: 5px;
-      top: 0;
-    }
-
-    &.dashboard-box-new {
-      a {
-        color: #fff;
-
-        &:hover {
-          color: #fff;
+        strong {
+            white-space: nowrap;
         }
-      }
 
-      h2 {
-        font-size: 20px;
-        line-height: 26px;
-        margin-top: 9px;
-      }
+        a.league {
+            display: block;
+            height: 77px;
+            padding: 2px 8px 6px;
+            text-align: left;
+            width: 151px;
+
+            &:hover {
+                color: #000;
+            }
+        }
+
+        a.league-active {
+            background: black;
+            -webkit-animation: oscillate-bg 1.5s infinite;
+            -moz-animation: oscillate-bg 1.5s infinite;
+            animation: oscillate-bg 1.5s infinite;
+        }
+
+        .close {
+            border-radius: 0 4px;
+            position: absolute;
+            right: 5px;
+            top: 0;
+        }
+
+        &.dashboard-box-new {
+            a {
+                color: #fff;
+
+                &:hover {
+                    color: #fff;
+                }
+            }
+
+            h2 {
+                font-size: 20px;
+                line-height: 26px;
+                margin-top: 9px;
+            }
+        }
     }
-  }
 }
 
 .dashboard-box-loading {
-  font-weight: bold;
-  margin-top: 26px;
+    font-weight: bold;
+    margin-top: 26px;
 }
 
 .difficulty-insane-plus {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 @-moz-keyframes oscillate-bg {
-  0% {
-    background: #afd9ee;
-  }
+    0% {
+        background: #afd9ee;
+    }
 
-  50% {
-    background: #d9edf7;
-  }
+    50% {
+        background: #d9edf7;
+    }
 
-  100% {
-    background: #afd9ee;
-  }
+    100% {
+        background: #afd9ee;
+    }
 }
 
 @-webkit-keyframes oscillate-bg {
-  0% {
-    background: #afd9ee;
-  }
+    0% {
+        background: #afd9ee;
+    }
 
-  50% {
-    background: #d9edf7;
-  }
+    50% {
+        background: #d9edf7;
+    }
 
-  100% {
-    background: #afd9ee;
-  }
+    100% {
+        background: #afd9ee;
+    }
 }
 
 @keyframes oscillate-bg {
-  0% {
-    background: #afd9ee;
-  }
+    0% {
+        background: #afd9ee;
+    }
 
-  50% {
-    background: #d9edf7;
-  }
+    50% {
+        background: #d9edf7;
+    }
 
-  100% {
-    background: #afd9ee;
-  }
+    100% {
+        background: #afd9ee;
+    }
 }
 
 .negotiation-team-years {
-  width: 110px;
+    width: 110px;
 }
 
 .negotiation-team-amount {
-  width: 180px;
+    width: 180px;
 }
 
 // From the Bootstrap offcanvas example
 // http://getbootstrap.com/examples/offcanvas/
 @media screen and (max-width: 768px) {
-  .row-offcanvas {
-    position: relative;
-  }
+    .row-offcanvas {
+        position: relative;
+    }
 
-  .row-offcanvas-right .sidebar-offcanvas {
-    right: -100%;
-  }
+    .row-offcanvas-right .sidebar-offcanvas {
+        right: -100%;
+    }
 
-  .sidebar-offcanvas {
-    position: absolute;
-    top: 0;
-    width: 100%;
-  }
+    .sidebar-offcanvas {
+        position: absolute;
+        top: 0;
+        width: 100%;
+    }
 }
 
 @media screen and (min-width: 769px) {
-  .row-offcanvas-force {
-    position: relative;
-  }
+    .row-offcanvas-force {
+        position: relative;
+    }
 
-  .row-offcanvas-right-force .sidebar-offcanvas-force {
-    right: -100%;
-  }
+    .row-offcanvas-right-force .sidebar-offcanvas-force {
+        right: -100%;
+    }
 
-  .sidebar-offcanvas-force {
-    position: absolute;
-    top: 0;
-    width: 100%;
-  }
+    .sidebar-offcanvas-force {
+        position: absolute;
+        top: 0;
+        width: 100%;
+    }
 }
 
 .help-icon {
-  cursor: pointer;
-  font-size: 13px;
+    cursor: pointer;
+    font-size: 13px;
 }
 
 table {
-  white-space: nowrap;
+    white-space: nowrap;
 }
 
 .table-bordered {
-  tbody tr.separator td {
-    border-bottom: 1px solid #888;
-  }
+    tbody tr.separator td {
+        border-bottom: 1px solid #888;
+    }
 
-  thead tr:last-child th {
-    border-bottom: 1px solid #888;
-  }
+    thead tr:last-child th {
+        border-bottom: 1px solid #888;
+    }
 }
 
 .roster-handle {
-  cursor: pointer;
-  max-width: 36px;
-  min-width: 36px;
-  width: 36px;
+    cursor: pointer;
+    max-width: 36px;
+    min-width: 36px;
+    width: 36px;
 }
 
 .roster-starter {
-  color: #428bca;
+    color: #428bca;
 }
 
 .roster-bench {
-  color: #5bc0de;
+    color: #5bc0de;
 }
 
 .game-log-list {
-  tbody td.game-log-cell {
-    padding: 0;
-  }
+    tbody td.game-log-cell {
+        padding: 0;
+    }
 
-  td.game-log-cell a {
-    color: #3a87ad;
-    display: block;
-    // Expand to encompass normal td padding, which was set to 0 here above.
-    padding: 4px 5px;
-    text-decoration: none;
-  }
+    td.game-log-cell a {
+        color: #3a87ad;
+        display: block;
+        // Expand to encompass normal td padding, which was set to 0 here above.
+        padding: 4px 5px;
+        text-decoration: none;
+    }
 }
 
 .game-log-list tbody tr:hover td.game-log-cell,
 .messages-table tbody tr:hover td {
-  background-color: #d9edf7;
-  border-color: #bce8f1;
-  text-decoration: none;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+    text-decoration: none;
 }
 
 .game-log-score table {
-  margin-top: 15px;
-  width: auto;
+    margin-top: 15px;
+    width: auto;
 }
 
 .game-log-four-factors table {
-  margin-top: 15px;
-  width: auto;
+    margin-top: 15px;
+    width: auto;
 }
 
 @media (min-width: 768px) {
-  .game-log-score {
-    float: left;
-    margin-right: 30px;
-  }
+    .game-log-score {
+        float: left;
+        margin-right: 30px;
+    }
 
-  .game-log-four-factors {
-    float: left;
-  }
+    .game-log-four-factors {
+        float: left;
+    }
 }
 
 .schedule-row {
-  @extend .d-flex;
-  color: #000;
-  font-size: 16px;
+    @extend .d-flex;
+    color: #000;
+    font-size: 16px;
 }
 
 .schedule-results {
-  width: 135px;
-  text-align: center;
+    width: 135px;
+    text-align: center;
 }
 
 .schedule-wl {
-  font-size: 22px;
-  text-decoration: underline;
-  width: 26px;
-  text-align: center;
+    font-size: 22px;
+    text-decoration: underline;
+    width: 26px;
+    text-align: center;
 }
 
 .schedule-score {
-  @extend .flex-grow-1;
-  font-size: 14px;
-  margin-left: 16px;
-  margin-top: 8px;
+    @extend .flex-grow-1;
+    font-size: 14px;
+    margin-left: 16px;
+    margin-top: 8px;
 }
 
 .schedule-at {
-  font-size: 22px;
+    font-size: 22px;
 }
 
 .schedule-extra {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 .table-nonfluid {
-  width: auto;
+    width: auto;
 }
 
 // Auto width seems to work well..
@@ -410,278 +410,294 @@ table {
 // }
 
 .trade-summary {
-  background-color: #fff;
+    background-color: #fff;
 
-  form {
-    margin-bottom: 5px;
-  }
+    form {
+        margin-bottom: 5px;
+    }
 }
 
 .select-team {
-  width: 203px;
+    width: 203px;
 }
 
 .player-picture {
-  height: 150px;
-  float: left;
-  margin-right: 10px;
-  width: 100px;
+    height: 150px;
+    float: left;
+    margin-right: 10px;
+    width: 100px;
 }
 
 .player-awards {
-  white-space: normal;
+    white-space: normal;
 }
 
 .team-picture {
-  display: none; // Hide by default, shown in views/roster.js
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: contain;
-  margin-right: 10px;
-  margin-top: 12px;
-  width: 120px;
-  height: 120px;
-  float: left;
+    display: none; // Hide by default, shown in views/roster.js
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    margin-right: 10px;
+    margin-top: 12px;
+    width: 120px;
+    height: 120px;
+    float: left;
 }
 
 .team-picture-splash {
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: contain;
-  width: 90px;
-  height: 90px;
-  float: left;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 90px;
+    height: 90px;
+    float: left;
 }
 
 .skill {
-  cursor: default;
-  font-size: 10px;
-  line-height: 18px;
-  margin-left: 5px;
-  vertical-align: 2%;
+    cursor: default;
+    font-size: 10px;
+    line-height: 18px;
+    margin-left: 5px;
+    vertical-align: 2%;
 }
 
 .skills-alone {
-  margin-left: -5px;
-  vertical-align: 2%;
+    margin-left: -5px;
+    vertical-align: 2%;
 }
 
 .watch,
 .watch:hover {
-  color: #aaa;
-  cursor: pointer;
-  margin-left: 5px;
-  text-decoration: none;
+    color: #aaa;
+    cursor: pointer;
+    margin-left: 5px;
+    text-decoration: none;
 }
 
 .watch-active,
 .watch-active:hover {
-  color: #d9534f;
+    color: #d9534f;
 }
 
 .pt-modifier-select {
-  margin: 0;
-  width: auto;
-  padding: 0;
-  height: 20px;
+    margin: 0;
+    width: auto;
+    padding: 0;
+    height: 20px;
 }
 
 // These colors are duplicated from Roster.js
 .pt-modifier-select {
-  option[value="1"] {
-    background-color: #ccc;
-  }
+    option[value="1"] {
+        background-color: #ccc;
+    }
 
-  option[value="1.75"] {
-    background-color: #070;
-    color: #fff;
-  }
+    option[value="1.75"] {
+        background-color: #070;
+        color: #fff;
+    }
 
-  option[value="1.25"] {
-    background-color: #0f0;
-  }
+    option[value="1.25"] {
+        background-color: #0f0;
+    }
 
-  option[value="0.75"] {
-    background-color: #ff0;
-  }
+    option[value="0.75"] {
+        background-color: #ff0;
+    }
 
-  option[value="0"] {
-    background-color: #a00;
-    color: #fff;
-  }
+    option[value="0"] {
+        background-color: #a00;
+        color: #fff;
+    }
 }
 
 .achievements {
-  margin: -4px;
+    margin: -4px;
 
-  .list-group-item {
-    border-radius: 0;
-    border: 0;
-    padding: 0;
+    .list-group-item {
+        border-radius: 0;
+        border: 0;
+        padding: 0;
 
-    div {
-      border-radius: 4px;
-      margin: 4px;
-      padding: 10px 15px;
+        div {
+            border-radius: 4px;
+            margin: 4px;
+            padding: 10px 15px;
+        }
     }
-  }
 }
 
 .bar-graph-small {
-  height: 40px;
+    height: 40px;
 }
 
 .bar-graph-medium {
-  height: 60px;
+    height: 60px;
 }
 
 .bar-graph-large {
-  height: 100px;
+    height: 100px;
 }
 
 // From bootstrap
-.bar-graph-1 { background-color: #049cdb; }
-.bar-graph-2 { background-color: #f89406; }
-.bar-graph-3 { background-color: #9d261d; }
-.bar-graph-4 { background-color: #ffc40d; }
-.bar-graph-5 { background-color: #7a43b6; }
-.bar-graph-6 { background-color: #46a546; }
-.bar-graph-7 { background-color: #c3325f; }
-.bar-graph-8 { background-color: #444; }
+.bar-graph-1 {
+    background-color: #049cdb;
+}
+.bar-graph-2 {
+    background-color: #f89406;
+}
+.bar-graph-3 {
+    background-color: #9d261d;
+}
+.bar-graph-4 {
+    background-color: #ffc40d;
+}
+.bar-graph-5 {
+    background-color: #7a43b6;
+}
+.bar-graph-6 {
+    background-color: #46a546;
+}
+.bar-graph-7 {
+    background-color: #c3325f;
+}
+.bar-graph-8 {
+    background-color: #444;
+}
 
 .icon-question-sign {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 // Stupid fix for popover in h4
 .popover-content {
-  font-size: 13px;
-  font-weight: normal;
+    font-size: 13px;
+    font-weight: normal;
 
-  p:last-child {
-    margin-bottom: 0;
-  }
+    p:last-child {
+        margin-bottom: 0;
+    }
 }
 
 .finances-settings-label {
-  line-height: 32px;
-  padding-right: 1em;
-  text-align: right;
-  width: 100px;
+    line-height: 32px;
+    padding-right: 1em;
+    text-align: right;
+    width: 100px;
 }
 
 .finances-settings-text {
-  line-height: 32px;
-  padding-left: 1em;
+    line-height: 32px;
+    padding-left: 1em;
 }
 
 .finances-settings-text-small {
-  font-size: 12px;
-  line-height: 15px;
-  padding-left: 1em;
+    font-size: 12px;
+    line-height: 15px;
+    padding-left: 1em;
 }
 
 .finances-settings-field {
-  width: 115px;
+    width: 115px;
 }
 
 .finances-settings button {
-  display: none;
+    display: none;
 }
 
 .label-injury {
-  cursor: default;
-  margin-left: 5px;
-  vertical-align: 20%;
+    cursor: default;
+    margin-left: 5px;
+    vertical-align: 20%;
 }
 
 .trading-block-offer {
-  margin-top: 2em;
+    margin-top: 2em;
 
-  h2 {
-    float: left;
-    margin-right: .5em;
-  }
+    h2 {
+        float: left;
+        margin-right: 0.5em;
+    }
 }
 
 #messages-table {
-  table-layout: fixed;
-  width: 100%;
+    table-layout: fixed;
+    width: 100%;
 
-  td {
-    padding: 0;
+    td {
+        padding: 0;
 
-    a {
-      color: #333;
-      display: block;
-      padding: 4px 5px;
-      text-decoration: none;
+        a {
+            color: #333;
+            display: block;
+            padding: 4px 5px;
+            text-decoration: none;
+        }
     }
-  }
 
-  .year {
-    width: 40px;
-  }
+    .year {
+        width: 40px;
+    }
 
-  .from {
-    width: 130px;
-  }
+    .from {
+        width: 130px;
+    }
 
-  .text {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: auto;
-  }
+    .text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: auto;
+    }
 }
 
 .unread {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 .new_window {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 @media (max-width: 768px) {
-  .new_window {
-    display: none;
-  }
+    .new_window {
+        display: none;
+    }
 }
 
 .alert p:last-child {
-  margin-bottom: 0;
+    margin-bottom: 0;
 }
 
 .alert-top {
-  margin-top: 20px;
-  padding-bottom: 2px;
-  padding-top: 12px;
+    margin-top: 20px;
+    padding-bottom: 2px;
+    padding-top: 12px;
 
-  button {
-    margin-top: -4px;
-  }
+    button {
+        margin-top: -4px;
+    }
 }
 
 .alert-changes {
-  h4 {
-    margin-top: 0;
-  }
+    h4 {
+        margin-top: 0;
+    }
 
-  ul {
-    margin-bottom: 9px;
-    padding-left: 18px;
-  }
+    ul {
+        margin-bottom: 9px;
+        padding-left: 18px;
+    }
 }
 
 .strong {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 // HACK so that the td.info class can be overriden in teamHistory (and possibly
 // elsewhere).
 tr.warning > td {
-  background-color: #fcf8e3;
-  border-color: #fbeed5;
+    background-color: #fcf8e3;
+    border-color: #fbeed5;
 }
 
 // Affix stuff taken from Bootstrap docs and used for the play-by-play in live
@@ -689,191 +705,199 @@ tr.warning > td {
 //
 // By default it's not affixed in mobile views, so undo that.
 .affix {
-  position: static;
+    position: static;
 }
 
 // Show and affix the side nav when space allows it
 @media (min-width: 992px) {
-  // Widen the fixed sidebar
-  .affix,
-  .affix-bottom {
-    width: 213px;
-  }
+    // Widen the fixed sidebar
+    .affix,
+    .affix-bottom {
+        width: 213px;
+    }
 
-  .affix {
-    // Undo the static from mobile first approach
-    position: fixed;
-    top: 60px;
-  }
+    .affix {
+        // Undo the static from mobile first approach
+        position: fixed;
+        top: 60px;
+    }
 
-  .affix-bottom {
-    // Undo the static from mobile first approach
-    position: absolute;
-  }
+    .affix-bottom {
+        // Undo the static from mobile first approach
+        position: absolute;
+    }
 }
 
 // https://getbootstrap.com/docs/4.1/examples/dashboard/
 .sidebar {
-  display: none;
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 100; /* Behind the navbar */
-  padding: 48px 0 0; /* Height of navbar */
-  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
-  width: 130px;
+    display: none;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100; /* Behind the navbar */
+    padding: 48px 0 0; /* Height of navbar */
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.1);
+    width: 130px;
 }
 .sidebar-sticky {
-  position: relative;
-  top: 0;
-  height: calc(100vh - 48px);
-  padding-top: .5rem;
-  overflow-x: hidden;
-  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+    position: relative;
+    top: 0;
+    height: calc(100vh - 48px);
+    padding-top: 0.5rem;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
 }
 @supports ((position: -webkit-sticky) or (position: sticky)) {
-  .sidebar-sticky {
-    position: -webkit-sticky;
-    position: sticky;
-  }
+    .sidebar-sticky {
+        position: -webkit-sticky;
+        position: sticky;
+    }
 }
 .sidebar .nav-link {
-  font-weight: 500;
-  color: #333;
-  padding: 4px 16px;
+    font-weight: 500;
+    color: #333;
+    padding: 4px 16px;
 }
 .sidebar .nav-link.active {
-  color: $blue;
+    color: $blue;
 }
 .sidebar .nav-link:hover {
-  background-color: $gray-200;
+    background-color: $gray-200;
 }
 .sidebar-heading {
-  font-size: .75rem;
-  text-transform: uppercase;
-  @extend .px-3;
-  @extend .mt-3;
-  @extend .mb-1;
-  @extend .text-muted;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    @extend .px-3;
+    @extend .mt-3;
+    @extend .mb-1;
+    @extend .text-muted;
 }
 @include media-breakpoint-up(xl) {
-  .sidebar {
-    display: block;
-  }
-  .league-content {
-    margin-left: 130px;
-  }
+    .sidebar {
+        display: block;
+    }
+    .league-content {
+        margin-left: 130px;
+    }
 }
 
 label input {
-  font-weight: normal;
+    font-weight: normal;
 }
 
 .dropdown-toggle {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 /* https://stackoverflow.com/a/49247706/786644 */
 %shorten-col {
-  td, th {
-    position: relative;
-  }
+    td,
+    th {
+        position: relative;
+    }
 
-  .shortened-col {
-    overflow: hidden;
-    position: absolute;
-    left: 0;
-    top: 0;
-    padding: 5px;
-    width: 100%;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
+    .shortened-col {
+        overflow: hidden;
+        position: absolute;
+        left: 0;
+        top: 0;
+        padding: 5px;
+        width: 100%;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
 }
 .shorten-col-0 {
-  @extend %shorten-col;
+    @extend %shorten-col;
 
-  tr td:not(:nth-child(1)), tr th:not(:nth-child(1)){
-      width: 1%;
-      white-space: nowrap;
-  }
+    tr td:not(:nth-child(1)),
+    tr th:not(:nth-child(1)) {
+        width: 1%;
+        white-space: nowrap;
+    }
 }
 .shorten-col-1 {
-  @extend %shorten-col;
+    @extend %shorten-col;
 
-  tr td:not(:nth-child(2)), tr th:not(:nth-child(2)){
-      width: 1%;
-      white-space: nowrap;
-  }
+    tr td:not(:nth-child(2)),
+    tr th:not(:nth-child(2)) {
+        width: 1%;
+        white-space: nowrap;
+    }
 }
 
 .user-select-none {
- -webkit-touch-callout: none;
-   -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
     -khtml-user-select: none;
-      -moz-user-select: none;
-       -ms-user-select: none;
-           user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 @font-face {
-  font-family: 'Glyphicons Halflings';
-  src: url('../fonts/glyphicons-halflings-regular.eot');
-  src: url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons-halflings-regular.woff') format('woff'), url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+    font-family: "Glyphicons Halflings";
+    src: url("../fonts/glyphicons-halflings-regular.eot");
+    src: url("../fonts/glyphicons-halflings-regular.eot?#iefix")
+            format("embedded-opentype"),
+        url("../fonts/glyphicons-halflings-regular.woff") format("woff"),
+        url("../fonts/glyphicons-halflings-regular.ttf") format("truetype"),
+        url("../fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular")
+            format("svg");
 }
 .glyphicon {
-  position: relative;
-  top: 1px;
-  display: inline-block;
-  font-family: 'Glyphicons Halflings';
-  font-style: normal;
-  font-weight: normal;
-  line-height: 1;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-family: "Glyphicons Halflings";
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 .glyphicon-camera:before {
-  content: "\e046";
+    content: "\e046";
 }
 .glyphicon-filter:before {
-  content: "\e138";
+    content: "\e138";
 }
 .glyphicon-flag:before {
-  content: "\e034";
+    content: "\e034";
 }
 .glyphicon-home:before {
-  content: "\e021";
+    content: "\e021";
 }
 .glyphicon-ok:before {
-  content: "\e013";
+    content: "\e013";
 }
 .glyphicon-menu-left:before {
-  content: "\e257";
+    content: "\e257";
 }
 .glyphicon-question-sign:before {
-  content: "\e085";
+    content: "\e085";
 }
 .glyphicon-remove:before {
-  content: "\e014";
+    content: "\e014";
 }
 .glyphicon-stats:before {
-  content: "\e185";
+    content: "\e185";
 }
 .glyphicon-user:before {
-  content: "\e008";
+    content: "\e008";
 }
 
 .btn-xs {
-    padding  : .25rem .4rem;
-    font-size  : .75rem;
-    line-height  : .9;
-    border-radius : .2rem;
+    padding: 0.25rem 0.4rem;
+    font-size: 0.75rem;
+    line-height: 0.9;
+    border-radius: 0.2rem;
 }
 
 .btn-light-bordered {
-  @extend .btn-light;
-  background-color: #fff;
-  border: 1px solid $gray-400;
-  color: $gray-700;
+    @extend .btn-light;
+    background-color: #fff;
+    border: 1px solid $gray-400;
+    color: $gray-700;
 }

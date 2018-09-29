@@ -22,13 +22,13 @@
         "flow": "flow",
         "lint-js": "eslint '*.js' 'src/**/*.js' 'tools/**/*.js'",
         "lint-js-fix": "yarn run lint-js --fix",
-        "prettier": "prettier --write '*.{js,json}' 'src/**/*.{js,json}' 'tools/**/*.{js,json}'",
+        "prettier": "prettier --write '*.{js,json,scss}' 'src/**/*.{js,json,scss}' 'tools/**/*.{js,json,scss}'",
         "test": "karma start karma.conf.js",
         "test-watch": "karma start karma.conf.js --auto-watch --no-single-run",
         "test-browserstack": "karma start karma-browserstack.conf.js"
     },
     "lint-staged": {
-        "*.{js,json}": [
+        "*.{js,json,scss}": [
             "prettier --write",
             "git add"
         ]

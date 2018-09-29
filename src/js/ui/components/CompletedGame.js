@@ -33,29 +33,22 @@ const CompletedGame = ({
     });
     return (
         <li className={classes}>
-            <div className="schedule-results">
-                <div className="schedule-wl">{won ? "W" : "L"}</div>
-                <div className="schedule-score">
-                    <a
-                        href={helpers.leagueUrl([
-                            "game_log",
-                            abbrev,
-                            season,
-                            gid,
-                        ])}
-                    >
-                        {score}
-                        {overtime}
-                    </a>
-                </div>
+            <div className="schedule-wl">{won ? "W" : "L"}</div>
+            <div className="schedule-score">
+                <a href={helpers.leagueUrl(["game_log", abbrev, season, gid])}>
+                    {score}
+                    {overtime}
+                </a>
             </div>
-            <a href={helpers.leagueUrl(["roster", teams[0].abbrev])}>
-                {displayAbbrevs ? teams[0].abbrev : teams[0].region}
-            </a>
-            <span className="schedule-at"> @ </span>
-            <a href={helpers.leagueUrl(["roster", teams[1].abbrev])}>
-                {displayAbbrevs ? teams[1].abbrev : teams[1].region}
-            </a>
+            <div>
+                <a href={helpers.leagueUrl(["roster", teams[0].abbrev])}>
+                    {displayAbbrevs ? teams[0].abbrev : teams[0].region}
+                </a>
+                <span className="schedule-at"> @ </span>
+                <a href={helpers.leagueUrl(["roster", teams[1].abbrev])}>
+                    {displayAbbrevs ? teams[1].abbrev : teams[1].region}
+                </a>
+            </div>
         </li>
     );
 };

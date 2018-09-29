@@ -358,12 +358,12 @@ table {
 }
 
 .schedule-row {
+  @extend .d-flex;
   color: #000;
   font-size: 16px;
 }
 
 .schedule-results {
-  float: left;
   width: 135px;
   text-align: center;
 }
@@ -372,15 +372,14 @@ table {
   font-size: 22px;
   text-decoration: underline;
   width: 26px;
-  float: left;
   text-align: center;
 }
 
 .schedule-score {
-  margin-left: 6px;
+  @extend .flex-grow-1;
   font-size: 14px;
-  // so bottom aligns despite float
-  line-height: 36px;
+  margin-left: 16px;
+  margin-top: 8px;
 }
 
 .schedule-at {

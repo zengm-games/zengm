@@ -5,8 +5,6 @@
 import html2canvas from "html2canvas";
 import PropTypes from "prop-types";
 import * as React from "react";
-import Overlay from "react-bootstrap/lib/Overlay";
-import Popover from "react-bootstrap/lib/Popover";
 import {
     Collapse,
     Dropdown,
@@ -19,6 +17,9 @@ import {
     DropdownToggle,
     DropdownMenu,
     DropdownItem,
+    Popover,
+    PopoverBody,
+    PopoverHeader,
 } from "reactstrap";
 import ReactDOM from "react-dom";
 import { fetchWrapper } from "../../common";
@@ -765,8 +766,6 @@ type State = {
 };
 
 class NavBar extends React.Component<Props, State> {
-    playMenu: ?PlayMenu;
-
     constructor(props: Props) {
         super(props);
 
@@ -915,35 +914,31 @@ class NavBar extends React.Component<Props, State> {
                 >
                     <LogoAndText lid={lid} updating={updating} />
                     <Nav navbar>
-                        <PlayMenu
-                            lid={lid}
-                            options={playMenuOptions}
-                            ref={c => {
-                                this.playMenu = c;
-                            }}
-                        />
-                        <Overlay
-                            onHide={() => {
+                        <div id="play-menu">
+                            <PlayMenu lid={lid} options={playMenuOptions} />
+                        </div>
+                        <Popover
+                            placement="bottom"
+                            isOpen={!hasViewedALeague && lid === 1}
+                            target="play-menu"
+                            toggle={() => {
+                                // This will run when it closes, so next time it will be hidden
                                 local.update({ hasViewedALeague: true });
                                 localStorage.setItem(
                                     "hasViewedALeague",
                                     "true",
                                 );
                             }}
-                            placement="bottom"
-                            rootClose
-                            show={!hasViewedALeague && lid === 1}
-                            target={() => ReactDOM.findDOMNode(this.playMenu)}
                         >
-                            <Popover
-                                id="popover-welcome"
-                                title="Welcome to Basketball GM!"
-                            >
+                            <PopoverHeader>
+                                Welcome to Basketball GM!
+                            </PopoverHeader>
+                            <PopoverBody>
                                 To advance through the game, use the Play button
                                 at the top. The options shown will change
                                 depending on the current state of the game.
-                            </Popover>
-                        </Overlay>
+                            </PopoverBody>
+                        </Popover>
                     </Nav>
                     {lid !== undefined ? phaseStatusBlock : null}
                     <div className="flex-grow-1" />

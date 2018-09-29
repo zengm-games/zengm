@@ -23,6 +23,7 @@ bootstrap 4
 - safari
 - screen reader
 - ratings popover
+- react-overlays
 
 typescript
 - https://github.com/bcherny/flow-to-typescript

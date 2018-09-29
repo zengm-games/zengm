@@ -2,8 +2,7 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import OverlayTrigger from "react-bootstrap/lib/OverlayTrigger";
-import Tooltip from "react-bootstrap/lib/Tooltip";
+import { UncontrolledTooltip } from "reactstrap";
 
 /**
  * Bar plots, both stacked and normal.
@@ -187,9 +186,11 @@ const BarGraph = ({
                 cssClass = "bar-graph-3";
             }
 
+            const id = String(Math.random()).replace("0.", "a");
             const bar = (
                 <div
                     className={cssClass}
+                    id={id}
                     key={i}
                     style={{
                         marginLeft: `${gap}px`,
@@ -203,16 +204,18 @@ const BarGraph = ({
             );
 
             if (typeof val === "number" && !Number.isNaN(val)) {
-                const tooltip = (
-                    <Tooltip id="tooltip">
-                        {titleStart}
-                        {tooltipCb(val)}
-                    </Tooltip>
-                );
                 return (
-                    <OverlayTrigger key={i} overlay={tooltip} placement="top">
+                    <div key={i}>
                         {bar}
-                    </OverlayTrigger>
+                        <UncontrolledTooltip
+                            delay={0}
+                            placement="top"
+                            target={id}
+                        >
+                            {titleStart}
+                            {tooltipCb(val)}
+                        </UncontrolledTooltip>
+                    </div>
                 );
             }
 
@@ -235,31 +238,34 @@ const BarGraph = ({
                         titleStart = `${labels[0][i]} ${labels[1][j]}: `;
                     }
 
-                    const tooltip = (
-                        <Tooltip id="tooltip">
-                            {titleStart}
-                            {tooltipCb(data[j][i])}
-                        </Tooltip>
+                    const id = String(Math.random()).replace("0.", "a");
+                    const bar = (
+                        <div
+                            className={`bar-graph-${j + 1}`}
+                            id={id}
+                            style={{
+                                marginLeft: `${gap}px`,
+                                position: "absolute",
+                                bottom: `${offsets[i]}%`,
+                                height: `${scaled[j][i]}%`,
+                                left: `${i * widthPct}%`,
+                                width: `calc(${widthPct}% - ${gap}px)`,
+                            }}
+                        />
                     );
 
                     bars.push(
-                        <OverlayTrigger
-                            key={`${i}.${j}`}
-                            overlay={tooltip}
-                            placement="top"
-                        >
-                            <div
-                                className={`bar-graph-${j + 1}`}
-                                style={{
-                                    marginLeft: `${gap}px`,
-                                    position: "absolute",
-                                    bottom: `${offsets[i]}%`,
-                                    height: `${scaled[j][i]}%`,
-                                    left: `${i * widthPct}%`,
-                                    width: `calc(${widthPct}% - ${gap}px)`,
-                                }}
-                            />
-                        </OverlayTrigger>,
+                        <div key={`${i}.${j}`}>
+                            {bar}
+                            <UncontrolledTooltip
+                                delay={0}
+                                placement="top"
+                                target={id}
+                            >
+                                {titleStart}
+                                {tooltipCb(data[j][i])}
+                            </UncontrolledTooltip>
+                        </div>,
                     );
                 }
             }

@@ -17,6 +17,7 @@ bootstrap 4
   - play menu
     - if can't figure it out, somehow turn it into a modal
 - firefox
+- safari
 
 typescript
 - https://github.com/bcherny/flow-to-typescript

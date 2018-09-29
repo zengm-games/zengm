@@ -207,7 +207,7 @@ class EditTeamInfo extends React.Component {
                     <div className="row">
                         {teams.map((t, i) => (
                             <div key={t.tid}>
-                                <div className="col-xs-6 col-sm-2 form-group">
+                                <div className="col-6 col-sm-2 form-group">
                                     <label className="visible-xs">Region</label>
                                     <input
                                         type="text"
@@ -222,7 +222,7 @@ class EditTeamInfo extends React.Component {
                                         value={t.region}
                                     />
                                 </div>
-                                <div className="col-xs-6 col-sm-2 form-group">
+                                <div className="col-6 col-sm-2 form-group">
                                     <label className="visible-xs">Name</label>
                                     <input
                                         type="text"
@@ -233,7 +233,7 @@ class EditTeamInfo extends React.Component {
                                         value={t.name}
                                     />
                                 </div>
-                                <div className="col-xs-6 col-sm-2 col-md-1 form-group">
+                                <div className="col-6 col-sm-2 col-md-1 form-group">
                                     <label className="visible-xs">Abbrev</label>
                                     <input
                                         type="text"
@@ -248,7 +248,7 @@ class EditTeamInfo extends React.Component {
                                         value={t.abbrev}
                                     />
                                 </div>
-                                <div className="col-xs-6 col-sm-2 form-group">
+                                <div className="col-6 col-sm-2 form-group">
                                     <label className="visible-xs">
                                         Population (millions)
                                     </label>
@@ -261,7 +261,7 @@ class EditTeamInfo extends React.Component {
                                         value={t.pop}
                                     />
                                 </div>
-                                <div className="col-xs-6 col-sm-2 form-group">
+                                <div className="col-6 col-sm-2 form-group">
                                     <label className="visible-xs">
                                         Stadium Capacity
                                     </label>

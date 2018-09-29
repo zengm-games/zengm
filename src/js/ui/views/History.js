@@ -33,9 +33,9 @@ const History = ({
 
             <p />
             <div className="row">
-                <div className="col-md-3 col-sm-4 col-xs-12">
+                <div className="col-md-3 col-sm-4 col-12">
                     <div className="row">
-                        <div className="col-sm-12 col-xs-6">
+                        <div className="col-sm-12 col-6">
                             <h4>League Champions</h4>
                             {champ ? (
                                 <div>
@@ -158,7 +158,7 @@ const History = ({
                                 {awards.mvp.ast.toFixed(1)} ast
                             </p>
                         </div>
-                        <div className="col-sm-12 col-xs-6">
+                        <div className="col-sm-12 col-6">
                             <h4>Defensive Player of the Year</h4>
                             <p>
                                 <span
@@ -318,7 +318,7 @@ const History = ({
                         </div>
                     </div>
                 </div>
-                <div className="col-md-3 col-sm-4 col-xs-6">
+                <div className="col-md-3 col-sm-4 col-6">
                     <h4>All-League Teams</h4>
                     {awards.allLeague.map(t => (
                         <div key={t.title}>
@@ -383,7 +383,7 @@ const History = ({
                     ))}
                     <br />
                 </div>
-                <div className="col-md-3 col-sm-4 col-xs-6">
+                <div className="col-md-3 col-sm-4 col-6">
                     <h4>All-Defensive Teams</h4>
                     {awards.allDefensive.map(t => (
                         <div key={t.title}>

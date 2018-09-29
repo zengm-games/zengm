@@ -180,7 +180,7 @@ class AccountUpdateCard extends React.Component {
                                 Expiration (MM/YYYY)
                             </label>
                             <div className="row">
-                                <div className="col-xs-5">
+                                <div className="col-5">
                                     <input
                                         type="text"
                                         onChange={this.handleChanges.exp_month}
@@ -190,7 +190,7 @@ class AccountUpdateCard extends React.Component {
                                         className="form-control"
                                     />
                                 </div>
-                                <div className="col-xs-7">
+                                <div className="col-7">
                                     <input
                                         type="text"
                                         onChange={this.handleChanges.exp_year}

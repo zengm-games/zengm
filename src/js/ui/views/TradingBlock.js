@@ -129,7 +129,7 @@ const Offer = props => {
                 {offerPlayers}
                 {offerPicks}
                 {picks.length === 0 && players.length === 0 ? (
-                    <div className="col-xs-12">Nothing.</div>
+                    <div className="col-12">Nothing.</div>
                 ) : null}
             </div>
 

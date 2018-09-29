@@ -107,7 +107,7 @@ class RatingsStatsPopover extends React.Component<Props, State> {
         if (ratings) {
             ratingsBlock = (
                 <div className="row">
-                    <div className="col-xs-4">
+                    <div className="col-4">
                         <b>Ratings</b>
                         <br />
                         <span className={colorRating(ratings.hgt)}>
@@ -130,7 +130,7 @@ class RatingsStatsPopover extends React.Component<Props, State> {
                             End: {ratings.endu}
                         </span>
                     </div>
-                    <div className="col-xs-4">
+                    <div className="col-4">
                         <span className={colorRating(ratings.ovr)}>
                             Ovr: {ratings.ovr}
                         </span>
@@ -155,7 +155,7 @@ class RatingsStatsPopover extends React.Component<Props, State> {
                             3Pt: {ratings.tp}
                         </span>
                     </div>
-                    <div className="col-xs-4">
+                    <div className="col-4">
                         <span className={colorRating(ratings.pot)}>
                             Pot: {Math.round(ratings.pot)}
                         </span>
@@ -185,7 +185,7 @@ class RatingsStatsPopover extends React.Component<Props, State> {
         } else {
             ratingsBlock = (
                 <div className="row">
-                    <div className="col-xs-12">
+                    <div className="col-12">
                         <b>Ratings</b>
                         <br />
                         <br />
@@ -202,7 +202,7 @@ class RatingsStatsPopover extends React.Component<Props, State> {
         if (stats) {
             statsBlock = (
                 <div className="row" style={{ marginTop: "1em" }}>
-                    <div className="col-xs-4">
+                    <div className="col-4">
                         <b>Stats</b>
                         <br />
                         Pts: {stats.pts.toFixed(1)}
@@ -211,7 +211,7 @@ class RatingsStatsPopover extends React.Component<Props, State> {
                         <br />
                         Ast: {stats.ast.toFixed(1)}
                     </div>
-                    <div className="col-xs-4">
+                    <div className="col-4">
                         <br />
                         Blk: {stats.blk.toFixed(1)}
                         <br />
@@ -219,7 +219,7 @@ class RatingsStatsPopover extends React.Component<Props, State> {
                         <br />
                         TO: {stats.tov.toFixed(1)}
                     </div>
-                    <div className="col-xs-4">
+                    <div className="col-4">
                         <br />
                         Min: {stats.min.toFixed(1)}
                         <br />
@@ -232,7 +232,7 @@ class RatingsStatsPopover extends React.Component<Props, State> {
         } else {
             statsBlock = (
                 <div className="row" style={{ marginTop: "1em" }}>
-                    <div className="col-xs-12">
+                    <div className="col-12">
                         <b>Stats</b>
                         <br />
                         <br />

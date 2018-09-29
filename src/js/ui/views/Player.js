@@ -44,15 +44,15 @@ const RatingsOverview = ({ ratings }) => {
     return (
         <div>
             <div className="row">
-                <div className="col-xs-6">
+                <div className="col-6">
                     <h2>Overall: {ratings[r].ovr}</h2>
                 </div>
-                <div className="col-xs-6">
+                <div className="col-6">
                     <h2 className="pull-right">Potential: {ratings[r].pot}</h2>
                 </div>
             </div>
             <div className="row">
-                <div className="col-xs-4">
+                <div className="col-4">
                     <b>Physical</b>
                     <br />
                     Height: {ratings[r].hgt}
@@ -65,7 +65,7 @@ const RatingsOverview = ({ ratings }) => {
                     <br />
                     Endurance: {ratings[r].endu}
                 </div>
-                <div className="col-xs-4">
+                <div className="col-4">
                     <b>Shooting</b>
                     <br />
                     Inside: {ratings[r].ins}
@@ -78,7 +78,7 @@ const RatingsOverview = ({ ratings }) => {
                     <br />
                     Three Pointers: {ratings[r].tp}
                 </div>
-                <div className="col-xs-4">
+                <div className="col-4">
                     <b>Skill</b>
                     <br />
                     Offensive IQ: {ratings[r].oiq}

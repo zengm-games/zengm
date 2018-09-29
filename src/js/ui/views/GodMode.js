@@ -189,7 +189,7 @@ class GodMode extends React.Component {
 
                 <form onSubmit={this.handleFormSubmit}>
                     <div className="row">
-                        <div className="col-sm-3 col-xs-6 form-group">
+                        <div className="col-sm-3 col-6 form-group">
                             <label>
                                 Injuries{" "}
                                 <HelpPopover placement="right" title="Injuries">
@@ -207,7 +207,7 @@ class GodMode extends React.Component {
                                 <option value="true">Disabled</option>
                             </select>
                         </div>
-                        <div className="col-sm-3 col-xs-6 form-group">
+                        <div className="col-sm-3 col-6 form-group">
                             <label>
                                 # Games Per Season{" "}
                                 <HelpPopover
@@ -226,7 +226,7 @@ class GodMode extends React.Component {
                                 value={this.state.numGames}
                             />
                         </div>
-                        <div className="col-sm-3 col-xs-6 form-group">
+                        <div className="col-sm-3 col-6 form-group">
                             <label>Quarter Length (minutes)</label>
                             <input
                                 type="text"
@@ -236,7 +236,7 @@ class GodMode extends React.Component {
                                 value={this.state.quarterLength}
                             />
                         </div>
-                        <div className="col-sm-3 col-xs-6 form-group">
+                        <div className="col-sm-3 col-6 form-group">
                             <label>Trades Between AI Teams</label>
                             <select
                                 className="form-control"
@@ -248,7 +248,7 @@ class GodMode extends React.Component {
                                 <option value="false">Disabled</option>
                             </select>
                         </div>
-                        <div className="col-sm-3 col-xs-6 form-group">
+                        <div className="col-sm-3 col-6 form-group">
                             <label>Salary Cap</label>
                             <div className="input-group">
                                 <span className="input-group-addon">$</span>
@@ -262,7 +262,7 @@ class GodMode extends React.Component {
                                 <span className="input-group-addon">M</span>
                             </div>
                         </div>
-                        <div className="col-sm-3 col-xs-6 form-group">
+                        <div className="col-sm-3 col-6 form-group">
                             <label>Min Payroll</label>
                             <div className="input-group">
                                 <span className="input-group-addon">$</span>
@@ -276,7 +276,7 @@ class GodMode extends React.Component {
                                 <span className="input-group-addon">M</span>
                             </div>
                         </div>
-                        <div className="col-sm-3 col-xs-6 form-group">
+                        <div className="col-sm-3 col-6 form-group">
                             <label>Luxury Tax Threshold</label>
                             <div className="input-group">
                                 <span className="input-group-addon">$</span>
@@ -290,7 +290,7 @@ class GodMode extends React.Component {
                                 <span className="input-group-addon">M</span>
                             </div>
                         </div>
-                        <div className="col-sm-3 col-xs-6 form-group">
+                        <div className="col-sm-3 col-6 form-group">
                             <label>
                                 Luxury Tax{" "}
                                 <HelpPopover
@@ -311,7 +311,7 @@ class GodMode extends React.Component {
                                 value={this.state.luxuryTax}
                             />
                         </div>
-                        <div className="col-sm-3 col-xs-6 form-group">
+                        <div className="col-sm-3 col-6 form-group">
                             <label>Min Contract</label>
                             <div className="input-group">
                                 <span className="input-group-addon">$</span>
@@ -325,7 +325,7 @@ class GodMode extends React.Component {
                                 <span className="input-group-addon">M</span>
                             </div>
                         </div>
-                        <div className="col-sm-3 col-xs-6 form-group">
+                        <div className="col-sm-3 col-6 form-group">
                             <label>Max Contract</label>
                             <div className="input-group">
                                 <span className="input-group-addon">$</span>
@@ -339,7 +339,7 @@ class GodMode extends React.Component {
                                 <span className="input-group-addon">M</span>
                             </div>
                         </div>
-                        <div className="col-sm-3 col-xs-6 form-group">
+                        <div className="col-sm-3 col-6 form-group">
                             <label>Min Roster Size</label>
                             <input
                                 type="text"
@@ -349,7 +349,7 @@ class GodMode extends React.Component {
                                 value={this.state.minRosterSize}
                             />
                         </div>
-                        <div className="col-sm-3 col-xs-6 form-group">
+                        <div className="col-sm-3 col-6 form-group">
                             <label>Max Roster Size</label>
                             <input
                                 type="text"
@@ -359,7 +359,7 @@ class GodMode extends React.Component {
                                 value={this.state.maxRosterSize}
                             />
                         </div>
-                        <div className="col-sm-3 col-xs-6 form-group">
+                        <div className="col-sm-3 col-6 form-group">
                             <label>
                                 Injury Rate{" "}
                                 <HelpPopover
@@ -389,7 +389,7 @@ class GodMode extends React.Component {
                                 value={this.state.injuryRate}
                             />
                         </div>
-                        <div className="col-sm-3 col-xs-6 form-group">
+                        <div className="col-sm-3 col-6 form-group">
                             <label>
                                 Tragic Death Rate{" "}
                                 <HelpPopover
@@ -416,7 +416,7 @@ class GodMode extends React.Component {
                                 value={this.state.tragicDeathRate}
                             />
                         </div>
-                        <div className="col-sm-3 col-xs-6 form-group">
+                        <div className="col-sm-3 col-6 form-group">
                             <label>
                                 Brother Rate{" "}
                                 <HelpPopover
@@ -435,7 +435,7 @@ class GodMode extends React.Component {
                                 value={this.state.brotherRate}
                             />
                         </div>
-                        <div className="col-sm-3 col-xs-6 form-group">
+                        <div className="col-sm-3 col-6 form-group">
                             <label>
                                 Son Rate{" "}
                                 <HelpPopover placement="right" title="Son Rate">

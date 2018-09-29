@@ -110,7 +110,7 @@ class GodMode extends React.Component {
 
                 <form onSubmit={this.handleFormSubmit}>
                     <div className="row">
-                        <div className="col-sm-3 col-xs-6 form-group">
+                        <div className="col-sm-3 col-6 form-group">
                             <label>
                                 Auto Delete Old Box Scores{" "}
                                 <HelpPopover title="Auto Delete Old Box Scores">
@@ -138,7 +138,7 @@ class GodMode extends React.Component {
                                 <option value="false">Disabled</option>
                             </select>
                         </div>
-                        <div className="col-sm-3 col-xs-6 form-group">
+                        <div className="col-sm-3 col-6 form-group">
                             <label>
                                 Stop On Injury Longer Than{" "}
                                 <HelpPopover title="Stop On Injury Longer Than">
@@ -175,7 +175,7 @@ class GodMode extends React.Component {
                                 <span className="input-group-addon">Games</span>
                             </div>
                         </div>
-                        <div className="col-sm-3 col-xs-6 form-group">
+                        <div className="col-sm-3 col-6 form-group">
                             <label>
                                 Difficulty{" "}
                                 <HelpPopover

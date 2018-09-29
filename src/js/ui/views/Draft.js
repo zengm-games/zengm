@@ -257,7 +257,7 @@ class Draft extends React.Component {
             },
         );
 
-        const colClass = fantasyDraft ? "col-xs-12" : "col-sm-6";
+        const colClass = fantasyDraft ? "col-12" : "col-sm-6";
         const undraftedColClasses = classNames(colClass);
         const draftedColClasses = classNames("sidebar-offcanvas", colClass, {
             "sidebar-offcanvas-force": fantasyDraft,

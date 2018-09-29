@@ -154,7 +154,7 @@ const LeagueDashboard = ({
                             </div>
 
                             <div className="row">
-                                <div className="col-xs-6">
+                                <div className="col-6">
                                     <h3>Team Leaders</h3>
                                     <p>
                                         <a
@@ -313,7 +313,7 @@ const LeagueDashboard = ({
                                         </a>
                                     </p>
                                 </div>
-                                <div className="col-xs-6">
+                                <div className="col-6">
                                     <h3>Team Stats</h3>
                                     <p>
                                         Points: {pts.toFixed(1)} (
@@ -376,7 +376,7 @@ const LeagueDashboard = ({
                 <div className="clearfix visible-sm" />
                 <div className="col-md-4">
                     <div className="row">
-                        <div className="col-md-12 col-xs-6">
+                        <div className="col-md-12 col-6">
                             {showPlayoffSeries ? (
                                 <div>
                                     <h3>Playoffs</h3>
@@ -416,7 +416,7 @@ const LeagueDashboard = ({
                                 </div>
                             )}
                         </div>
-                        <div className="col-md-12 col-xs-6">
+                        <div className="col-md-12 col-6">
                             <h3>Completed Games</h3>
                             <ul
                                 className="list-group"

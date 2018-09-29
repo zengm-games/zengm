@@ -319,7 +319,7 @@ class CustomizePlayer extends React.Component {
                     </div>
                     <div className="col-sm-8">
                         <div className="row">
-                            <div className="col-xs-6 form-group">
+                            <div className="col-6 form-group">
                                 <label>Width (0 to 1)</label>
                                 <input
                                     type="text"
@@ -332,7 +332,7 @@ class CustomizePlayer extends React.Component {
                                     value={p.face.fatness}
                                 />
                             </div>
-                            <div className="col-xs-6 form-group">
+                            <div className="col-6 form-group">
                                 <label>Skin Color</label>
                                 <input
                                     type="text"
@@ -345,7 +345,7 @@ class CustomizePlayer extends React.Component {
                                     value={p.face.color}
                                 />
                             </div>
-                            <div className="col-xs-6 form-group">
+                            <div className="col-6 form-group">
                                 <label>Eyes</label>
                                 <select
                                     className="form-control"
@@ -363,7 +363,7 @@ class CustomizePlayer extends React.Component {
                                     ))}
                                 </select>
                             </div>
-                            <div className="col-xs-6 form-group">
+                            <div className="col-6 form-group">
                                 <label>Eye Angle (-20 to 30)</label>
                                 <input
                                     type="text"
@@ -376,7 +376,7 @@ class CustomizePlayer extends React.Component {
                                     value={p.face.eyes[0].angle}
                                 />
                             </div>
-                            <div className="col-xs-6 form-group">
+                            <div className="col-6 form-group">
                                 <label>Nose</label>
                                 <select
                                     className="form-control"
@@ -394,7 +394,7 @@ class CustomizePlayer extends React.Component {
                                     ))}
                                 </select>
                             </div>
-                            <div className="col-xs-6 form-group">
+                            <div className="col-6 form-group">
                                 <label>Nose Flip</label>
                                 <input
                                     type="checkbox"
@@ -407,7 +407,7 @@ class CustomizePlayer extends React.Component {
                                     checked={p.face.nose.flip}
                                 />
                             </div>
-                            <div className="col-xs-6 form-group">
+                            <div className="col-6 form-group">
                                 <label>Mouth</label>
                                 <select
                                     className="form-control"
@@ -425,7 +425,7 @@ class CustomizePlayer extends React.Component {
                                     ))}
                                 </select>
                             </div>
-                            <div className="col-xs-6 form-group">
+                            <div className="col-6 form-group">
                                 <label>Hair</label>
                                 <select
                                     className="form-control"
@@ -740,7 +740,7 @@ class CustomizePlayer extends React.Component {
                             <p>All ratings are on a scale of 0 to 100.</p>
 
                             <div className="row">
-                                <div className="col-xs-4">
+                                <div className="col-4">
                                     <h3>Physical</h3>
                                     <div className="form-group">
                                         <label>Height</label>
@@ -808,7 +808,7 @@ class CustomizePlayer extends React.Component {
                                         />
                                     </div>
                                 </div>
-                                <div className="col-xs-4">
+                                <div className="col-4">
                                     <h3>Shooting</h3>
                                     <div className="form-group">
                                         <label>Inside</label>
@@ -876,7 +876,7 @@ class CustomizePlayer extends React.Component {
                                         />
                                     </div>
                                 </div>
-                                <div className="col-xs-4">
+                                <div className="col-4">
                                     <h3>Skill</h3>
                                     <div className="form-group">
                                         <label>Offensive IQ</label>

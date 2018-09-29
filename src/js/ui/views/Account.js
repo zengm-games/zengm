@@ -375,7 +375,7 @@ const Account = ({
                 {achievements.map((achievement, i) => {
                     const lis = [
                         <li
-                            className="list-group-item col-xs-12 col-sm-6 col-md-4 col-lg-3 pull-left"
+                            className="list-group-item col-12 col-sm-6 col-md-4 col-lg-3 pull-left"
                             key={achievement.slug}
                         >
                             <div

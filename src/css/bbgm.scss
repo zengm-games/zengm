@@ -100,19 +100,14 @@ body {
     padding: 0 3px;
 }
 
-// These colors are copied from the default "success" button.
 .play-button {
     font-size: 1.01562rem;
     margin: -8px 0;
     height: 51px;
     padding: 14px !important;
 
-    color: #fff !important;
-    background-color: #5cb85c;
-
-    &:hover {
-        background-color: #47a447;
-    }
+    @extend .bg-success;
+    @extend .text-white;
 }
 
 .dropdown-item {

@@ -10,6 +10,10 @@ bootstrap 4
 - play menu (and all navbar) menu positioning
 - inIframe
 - responsive menu on side
+- navbar left/right margins for basketball/user icons
+- navbar collapsed state
+  - alignment
+  - play menu
 
 typescript
 - https://github.com/bcherny/flow-to-typescript

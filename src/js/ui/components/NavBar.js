@@ -88,7 +88,7 @@ const TopMenuDropdown = ({ children, long, short, openId, onToggle }) => {
                 toggle={toggle}
             />
             <DropdownMenu>
-                <DropdownItem className="d-none d-sm-block d-md-none" header>
+                <DropdownItem className="d-none d-md-block d-lg-none" header>
                     {long}
                 </DropdownItem>
                 {children}
@@ -281,10 +281,10 @@ class DropdownLinks extends React.Component<
                 {window.inIframe && lid !== undefined ? (
                     <NavItem>
                         <NavLink href={helpers.leagueUrl([])}>
-                            <span className="d-none d-sm-inline">
+                            <span className="d-none d-md-inline">
                                 <span className="glyphicon glyphicon-menu-left" />
                             </span>
-                            <span className="d-inline d-sm-none">
+                            <span className="d-inline d-md-none">
                                 <span
                                     className="glyphicon glyphicon-menu-left"
                                     style={{ marginRight: "5px" }}
@@ -297,14 +297,8 @@ class DropdownLinks extends React.Component<
                 {lid !== undefined ? (
                     <NavItem>
                         <NavLink href={helpers.leagueUrl([])}>
-                            <span className="d-none d-sm-inline">
-                                <span className="glyphicon glyphicon-home" />
-                            </span>
-                            <span className="d-inline d-sm-none">
-                                <span
-                                    className="glyphicon glyphicon-home"
-                                    style={{ marginRight: "5px" }}
-                                />
+                            <span className="glyphicon glyphicon-home" />
+                            <span className="d-inline d-sm-none ml-2">
                                 League Dashboard
                             </span>
                         </NavLink>
@@ -631,7 +625,7 @@ class LogoAndText extends React.Component<LogoAndTextProps> {
             <a
                 className={
                     window.inIframe && lid !== undefined
-                        ? "navbar-brand d-none d-lg-block"
+                        ? "navbar-brand d-none d-lg-inline"
                         : "navbar-brand"
                 }
                 href="/"
@@ -649,7 +643,7 @@ class LogoAndText extends React.Component<LogoAndTextProps> {
                             : "paused",
                     }}
                 />
-                <span className="d-none d-lg-block">Basketball GM</span>
+                <span className="d-none d-lg-inline">Basketball GM</span>
                 {lid === undefined ? (
                     <span className="d-lg-none">Basketball GM</span>
                 ) : null}
@@ -722,7 +716,7 @@ class PlayMenu extends React.Component<PlayMenuProps> {
         return (
             <UncontrolledDropdown nav inNavbar>
                 <DropdownToggle nav caret className="play-button">
-                    <span className="d-none d-sm-inline">Play</span>
+                    <span className="d-none d-md-inline">Play</span>
                 </DropdownToggle>
                 <DropdownMenu>
                     {options.map((option, i) => {
@@ -908,7 +902,7 @@ class NavBar extends React.Component<Props, State> {
                 );
 
             return (
-                <Navbar color="light" light expand="md" fixed="top">
+                <Navbar color="light" light expand="sm" fixed="top">
                     <LogoAndText lid={lid} updating={updating} />
                     <Nav navbar>
                         <PlayMenu
@@ -942,11 +936,12 @@ class NavBar extends React.Component<Props, State> {
                         </Overlay>
                     </Nav>
                     {lid !== undefined ? phaseStatusBlock : null}
-                    <NavbarToggler
-                        onClick={this.toggleCollapsed}
-                        className="mr-2"
-                    />
-                    <Collapse isOpen={!this.state.collapsed} navbar>
+                    <NavbarToggler onClick={this.toggleCollapsed} />
+                    <Collapse
+                        className="justify-content-end"
+                        isOpen={!this.state.collapsed}
+                        navbar
+                    >
                         <DropdownLinks godMode={godMode} lid={lid} />
                     </Collapse>
                     <Nav navbar>

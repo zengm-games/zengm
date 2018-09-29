@@ -100,6 +100,16 @@ footer {
   cursor: pointer;
 }
 
+.kbd-parent {
+  position: relative;
+  padding-right: 70px;
+}
+.kbd {
+  position: absolute;
+  right: 20px;
+  top: 4px;
+}
+
 ul.dashboard-boxes {
   list-style: none;
   margin: 0 -1em 0 0;

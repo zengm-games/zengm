@@ -725,13 +725,11 @@ class PlayMenu extends React.Component<PlayMenuProps> {
                                 key={i}
                                 href={option.url}
                                 onClick={e => handleOptionClick(option, e)}
+                                className="kbd-parent"
                             >
                                 {option.label}
                                 {i === 0 ? (
-                                    <span
-                                        className="text-muted"
-                                        style={{ float: "right" }}
-                                    >
+                                    <span className="text-muted kbd">
                                         Alt+P
                                     </span>
                                 ) : null}

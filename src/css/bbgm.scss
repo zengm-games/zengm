@@ -15,12 +15,8 @@ body {
   margin-right: unset;
 }
 
-footer {
-  color: #777;
-}
-
 .rev {
-  font-size: 9px;
+  @extend .text-muted;
   margin-top: -7px;
 }
 

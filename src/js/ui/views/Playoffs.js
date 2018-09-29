@@ -58,7 +58,7 @@ const Playoffs = ({
             ) : null}
 
             <div className="table-responsive">
-                <table className="table-condensed" width="100%">
+                <table className="table-sm" width="100%">
                     <tbody>
                         {matchups.map((row, i) => (
                             <tr key={i}>

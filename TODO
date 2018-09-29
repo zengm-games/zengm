@@ -1,5 +1,6 @@
 bootstrap 4
 - dark mode
+  - some stuff built in, like table-dark
 - full width, minus ad
 - replace react-bootstrap
 - splash screen
@@ -24,6 +25,8 @@ bootstrap 4
 - screen reader
 - main container
   - adjust for left menu and skyscraper ad
+- tables
+  - get rid of table-responsive
 
 typescript
 - https://github.com/bcherny/flow-to-typescript

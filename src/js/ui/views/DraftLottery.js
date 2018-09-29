@@ -176,7 +176,7 @@ class DraftLottery extends React.Component<Props, State> {
             // Checking both is redundant, but flow wants it
             table = (
                 <div className="table-responsive">
-                    <table className="table table-striped table-bordered table-condensed table-hover">
+                    <table className="table table-striped table-bordered table-sm table-hover">
                         <thead>
                             <tr>
                                 <th colSpan="3" />

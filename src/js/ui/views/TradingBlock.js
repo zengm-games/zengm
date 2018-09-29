@@ -63,7 +63,7 @@ const Offer = props => {
         offerPlayers = (
             <div className="col-md-8">
                 <div className="table-responsive">
-                    <table className="table table-striped table-bordered table-condensed table-hover">
+                    <table className="table table-striped table-bordered table-sm table-hover">
                         <thead>
                             <tr>
                                 <th>Name</th>
@@ -94,7 +94,7 @@ const Offer = props => {
     if (picks.length > 0) {
         offerPicks = (
             <div className="col-md-4">
-                <table className="table table-striped table-bordered table-condensed">
+                <table className="table table-striped table-bordered table-sm">
                     <thead>
                         <tr>
                             <th>Draft Picks</th>
@@ -342,7 +342,7 @@ class TradingBlock extends React.Component {
                     </div>
                     <div className="col-md-3">
                         <table
-                            className="table table-striped table-bordered table-condensed"
+                            className="table table-striped table-bordered table-sm"
                             id="picks-user"
                         >
                             <thead>

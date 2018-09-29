@@ -29,7 +29,7 @@ const Leaders = ({ categories, season }) => {
                     <div key={cat.name}>
                         <div className="col-md-4 col-sm-6">
                             <div className="table-responsive">
-                                <table className="table table-striped table-bordered table-condensed shorten-col-0 leaders">
+                                <table className="table table-striped table-bordered table-sm shorten-col-0 leaders">
                                     <thead>
                                         <tr title={cat.title}>
                                             <th>{cat.name}</th>

@@ -29,7 +29,7 @@ const Inbox = ({
             ) : null}
 
             <table
-                className="table table-striped table-bordered table-condensed"
+                className="table table-striped table-bordered table-sm"
                 id="messages-table"
             >
                 <tbody>

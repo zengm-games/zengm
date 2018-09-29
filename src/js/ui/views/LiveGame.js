@@ -137,7 +137,7 @@ const BoxScore = ({ boxScore }) => (
                     </a>
                 </h3>
                 <div className="table-responsive">
-                    <table className="table table-striped table-bordered table-condensed box-score-team">
+                    <table className="table table-striped table-bordered table-sm box-score-team">
                         <thead>
                             <tr>
                                 <th>Name</th>

@@ -535,7 +535,7 @@ class Roster extends React.Component {
                 ) : null}
 
                 <div className="table-responsive">
-                    <table className="table table-striped table-bordered table-condensed table-hover">
+                    <table className="table table-striped table-bordered table-sm table-hover">
                         <thead>
                             <tr>
                                 {editable ? <th /> : null}

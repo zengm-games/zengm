@@ -912,8 +912,7 @@ class DataTable extends React.Component<Props, State> {
             );
         }
 
-        let classes =
-            "table table-striped table-bordered table-condensed table-hover";
+        let classes = "table table-striped table-bordered table-sm table-hover";
         if (className !== undefined) {
             classes += ` ${className}`;
         }

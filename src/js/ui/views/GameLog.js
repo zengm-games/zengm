@@ -155,7 +155,7 @@ class BoxScore extends React.Component {
                                 <td style={{ textAlign: "center" }}>
                                     <div className="game-log-score">
                                         <table
-                                            className="table table-bordered table-condensed"
+                                            className="table table-bordered table-sm"
                                             style={{ margin: "0 auto" }}
                                         >
                                             <thead>
@@ -197,7 +197,7 @@ class BoxScore extends React.Component {
                                     </div>
                                     <div className="game-log-four-factors">
                                         <table
-                                            className="table table-bordered table-condensed"
+                                            className="table table-bordered table-sm"
                                             style={{ margin: "0 auto" }}
                                         >
                                             <thead>
@@ -313,7 +313,7 @@ class BoxScore extends React.Component {
                             </a>
                         </h3>
                         <div className="table-responsive">
-                            <table className="table table-striped table-bordered table-condensed table-hover box-score-team">
+                            <table className="table table-striped table-bordered table-sm table-hover box-score-team">
                                 <thead>
                                     <tr>
                                         <th>Name</th>
@@ -468,7 +468,7 @@ const GameLog = ({ abbrev, boxScore, gamesList = { games: [] }, season }) => {
                 </div>
 
                 <div className="col-md-2">
-                    <table className="table table-striped table-bordered table-condensed game-log-list">
+                    <table className="table table-striped table-bordered table-sm game-log-list">
                         <thead>
                             <tr>
                                 <th>Opp</th>

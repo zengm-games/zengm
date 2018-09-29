@@ -81,7 +81,7 @@ const LeagueDashboard = ({
                     <div className="row">
                         <div className="col-sm-4 hidden-xs">
                             <h3 />
-                            <table className="table table-striped table-bordered table-condensed">
+                            <table className="table table-striped table-bordered table-sm">
                                 <thead>
                                     <tr>
                                         <th width="100%">Team</th>
@@ -270,7 +270,7 @@ const LeagueDashboard = ({
                                         </a>
                                     </p>
                                     <h3>Inbox</h3>
-                                    <table className="table table-bordered table-condensed messages-table">
+                                    <table className="table table-bordered table-sm messages-table">
                                         <tbody>
                                             {messages.map(m => (
                                                 <tr
@@ -457,7 +457,7 @@ const LeagueDashboard = ({
 
             <h3>Starting Lineup</h3>
             <div className="table-responsive">
-                <table className="table table-striped table-bordered table-condensed">
+                <table className="table table-striped table-bordered table-sm">
                     <thead>
                         <tr>
                             <th>Name</th>

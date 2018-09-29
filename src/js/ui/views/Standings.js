@@ -47,30 +47,28 @@ DivStandingsRow.propTypes = {
 
 const DivStandings = ({ div, season }) => {
     return (
-        <div className="table-responsive">
-            <table className="table table-striped table-bordered table-condensed table-hover">
-                <thead>
-                    <tr>
-                        <th width="100%">{div.name}</th>
-                        <th>W</th>
-                        <th>L</th>
-                        <th>%</th>
-                        <th>GB</th>
-                        <th>Home</th>
-                        <th>Road</th>
-                        <th>Div</th>
-                        <th>Conf</th>
-                        <th>Streak</th>
-                        <th>L10</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {div.teams.map(t => (
-                        <DivStandingsRow key={t.tid} t={t} season={season} />
-                    ))}
-                </tbody>
-            </table>
-        </div>
+        <table className="table table-striped table-bordered table-sm table-hover">
+            <thead>
+                <tr>
+                    <th width="100%">{div.name}</th>
+                    <th>W</th>
+                    <th>L</th>
+                    <th>%</th>
+                    <th>GB</th>
+                    <th>Home</th>
+                    <th>Road</th>
+                    <th>Div</th>
+                    <th>Conf</th>
+                    <th>Streak</th>
+                    <th>L10</th>
+                </tr>
+            </thead>
+            <tbody>
+                {div.teams.map(t => (
+                    <DivStandingsRow key={t.tid} t={t} season={season} />
+                ))}
+            </tbody>
+        </table>
     );
 };
 
@@ -84,7 +82,7 @@ DivStandings.propTypes = {
 
 const ConfStandings = ({ playoffsByConference, season, teams }) => {
     return (
-        <table className="table table-striped table-bordered table-condensed">
+        <table className="table table-striped table-bordered table-sm">
             <thead>
                 <tr>
                     <th width="100%">Team</th>

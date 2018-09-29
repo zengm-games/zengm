@@ -268,7 +268,7 @@ class Trade extends React.Component {
                                 rows={otherRows}
                             />
                             <div className="table-responsive">
-                                <table className="table table-striped table-bordered table-condensed">
+                                <table className="table table-striped table-bordered table-sm">
                                     <thead>
                                         <tr>
                                             <th />
@@ -309,7 +309,7 @@ class Trade extends React.Component {
                                 rows={userRows}
                             />
                             <div className="table-responsive">
-                                <table className="table table-striped table-bordered table-condensed">
+                                <table className="table table-striped table-bordered table-sm">
                                     <thead>
                                         <tr>
                                             <th />

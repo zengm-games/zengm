@@ -713,7 +713,7 @@ tr.warning > td {
     left: 0;
     z-index: 100; /* Behind the navbar */
     padding: 48px 0 0; /* Height of navbar */
-    box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.1);
+    border-right: 1px solid $gray-200;
     width: 130px;
 }
 .sidebar-sticky {
@@ -876,4 +876,8 @@ label input {
     background-color: #fff;
     border: 1px solid $gray-400;
     color: $gray-700;
+}
+
+.navbar-border {
+    border-bottom: 1px solid $gray-200;
 }

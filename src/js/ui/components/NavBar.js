@@ -906,7 +906,13 @@ class NavBar extends React.Component<Props, State> {
                 );
 
             return (
-                <Navbar color="light" light expand="sm" fixed="top">
+                <Navbar
+                    color="light"
+                    light
+                    expand="sm"
+                    fixed="top"
+                    className="navbar-border"
+                >
                     <LogoAndText lid={lid} updating={updating} />
                     <Nav navbar>
                         <PlayMenu

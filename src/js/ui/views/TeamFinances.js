@@ -130,7 +130,9 @@ class FinancesForm extends React.Component {
                         Ticket Price
                     </div>
                     <div className="input-group input-group-sm float-left finances-settings-field">
-                        <span className="input-group-addon">$</span>
+                        <div className="input-group-prepend">
+                            <div className="input-group-text">$</div>
+                        </div>
                         <input
                             type="text"
                             className="form-control"
@@ -172,7 +174,9 @@ class FinancesForm extends React.Component {
                         Scouting
                     </div>
                     <div className="input-group input-group-sm float-left finances-settings-field">
-                        <span className="input-group-addon">$</span>
+                        <div className="input-group-prepend">
+                            <div className="input-group-text">$</div>
+                        </div>
                         <input
                             type="text"
                             className="form-control"
@@ -180,7 +184,9 @@ class FinancesForm extends React.Component {
                             onChange={this.handleChanges.scouting}
                             value={this.state.scouting}
                         />
-                        <span className="input-group-addon">M</span>
+                        <div className="input-group-append">
+                            <div className="input-group-text">M</div>
+                        </div>
                     </div>
                     <div className="float-left finances-settings-text-small">
                         Current spending rate: #{t.budget.scouting.rank}
@@ -194,7 +200,9 @@ class FinancesForm extends React.Component {
                         Coaching
                     </div>
                     <div className="input-group input-group-sm float-left finances-settings-field">
-                        <span className="input-group-addon">$</span>
+                        <div className="input-group-prepend">
+                            <div className="input-group-text">$</div>
+                        </div>
                         <input
                             type="text"
                             className="form-control"
@@ -202,7 +210,9 @@ class FinancesForm extends React.Component {
                             onChange={this.handleChanges.coaching}
                             value={this.state.coaching}
                         />
-                        <span className="input-group-addon">M</span>
+                        <div className="input-group-append">
+                            <div className="input-group-text">M</div>
+                        </div>
                     </div>
                     <div className="float-left finances-settings-text-small">
                         Current spending rate: #{t.budget.coaching.rank}
@@ -216,7 +226,9 @@ class FinancesForm extends React.Component {
                         Health
                     </div>
                     <div className="input-group input-group-sm float-left finances-settings-field">
-                        <span className="input-group-addon">$</span>
+                        <div className="input-group-prepend">
+                            <div className="input-group-text">$</div>
+                        </div>
                         <input
                             type="text"
                             className="form-control"
@@ -224,7 +236,9 @@ class FinancesForm extends React.Component {
                             onChange={this.handleChanges.health}
                             value={this.state.health}
                         />
-                        <span className="input-group-addon">M</span>
+                        <div className="input-group-append">
+                            <div className="input-group-text">M</div>
+                        </div>
                     </div>
                     <div className="float-left finances-settings-text-small">
                         Current spending rate: #{t.budget.health.rank}
@@ -237,7 +251,9 @@ class FinancesForm extends React.Component {
                         Facilities
                     </div>
                     <div className="input-group input-group-sm float-left finances-settings-field">
-                        <span className="input-group-addon">$</span>
+                        <div className="input-group-prepend">
+                            <div className="input-group-text">$</div>
+                        </div>
                         <input
                             type="text"
                             className="form-control"
@@ -245,7 +261,9 @@ class FinancesForm extends React.Component {
                             onChange={this.handleChanges.facilities}
                             value={this.state.facilities}
                         />
-                        <span className="input-group-addon">M</span>
+                        <div className="input-group-append">
+                            <div className="input-group-text">M</div>
+                        </div>
                     </div>
                     <div className="float-left finances-settings-text-small">
                         Current spending rate: #{t.budget.facilities.rank}

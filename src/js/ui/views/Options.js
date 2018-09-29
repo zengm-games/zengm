@@ -172,7 +172,11 @@ class GodMode extends React.Component {
                                     }
                                     value={this.state.stopOnInjuryGames}
                                 />
-                                <span className="input-group-addon">Games</span>
+                                <div className="input-group-append">
+                                    <div className="input-group-text">
+                                        Games
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div className="col-sm-3 col-6 form-group">

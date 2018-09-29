@@ -251,7 +251,9 @@ class GodMode extends React.Component {
                         <div className="col-sm-3 col-6 form-group">
                             <label>Salary Cap</label>
                             <div className="input-group">
-                                <span className="input-group-addon">$</span>
+                                <div className="input-group-prepend">
+                                    <div className="input-group-text">$</div>
+                                </div>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -259,13 +261,17 @@ class GodMode extends React.Component {
                                     onChange={this.handleChanges.salaryCap}
                                     value={this.state.salaryCap}
                                 />
-                                <span className="input-group-addon">M</span>
+                                <div className="input-group-append">
+                                    <div className="input-group-text">M</div>
+                                </div>
                             </div>
                         </div>
                         <div className="col-sm-3 col-6 form-group">
                             <label>Min Payroll</label>
                             <div className="input-group">
-                                <span className="input-group-addon">$</span>
+                                <div className="input-group-prepend">
+                                    <div className="input-group-text">$</div>
+                                </div>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -273,13 +279,17 @@ class GodMode extends React.Component {
                                     onChange={this.handleChanges.minPayroll}
                                     value={this.state.minPayroll}
                                 />
-                                <span className="input-group-addon">M</span>
+                                <div className="input-group-append">
+                                    <div className="input-group-text">M</div>
+                                </div>
                             </div>
                         </div>
                         <div className="col-sm-3 col-6 form-group">
                             <label>Luxury Tax Threshold</label>
                             <div className="input-group">
-                                <span className="input-group-addon">$</span>
+                                <div className="input-group-prepend">
+                                    <div className="input-group-text">$</div>
+                                </div>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -287,7 +297,9 @@ class GodMode extends React.Component {
                                     onChange={this.handleChanges.luxuryPayroll}
                                     value={this.state.luxuryPayroll}
                                 />
-                                <span className="input-group-addon">M</span>
+                                <div className="input-group-append">
+                                    <div className="input-group-text">M</div>
+                                </div>
                             </div>
                         </div>
                         <div className="col-sm-3 col-6 form-group">
@@ -314,7 +326,9 @@ class GodMode extends React.Component {
                         <div className="col-sm-3 col-6 form-group">
                             <label>Min Contract</label>
                             <div className="input-group">
-                                <span className="input-group-addon">$</span>
+                                <div className="input-group-prepend">
+                                    <div className="input-group-text">$</div>
+                                </div>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -322,13 +336,17 @@ class GodMode extends React.Component {
                                     onChange={this.handleChanges.minContract}
                                     value={this.state.minContract}
                                 />
-                                <span className="input-group-addon">M</span>
+                                <div className="input-group-append">
+                                    <div className="input-group-text">M</div>
+                                </div>
                             </div>
                         </div>
                         <div className="col-sm-3 col-6 form-group">
                             <label>Max Contract</label>
                             <div className="input-group">
-                                <span className="input-group-addon">$</span>
+                                <div className="input-group-prepend">
+                                    <div className="input-group-text">$</div>
+                                </div>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -336,7 +354,9 @@ class GodMode extends React.Component {
                                     onChange={this.handleChanges.maxContract}
                                     value={this.state.maxContract}
                                 />
-                                <span className="input-group-addon">M</span>
+                                <div className="input-group-append">
+                                    <div className="input-group-text">M</div>
+                                </div>
                             </div>
                         </div>
                         <div className="col-sm-3 col-6 form-group">

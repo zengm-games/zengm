@@ -650,9 +650,11 @@ class CustomizePlayer extends React.Component {
                                 <div className="col-sm-6 form-group">
                                     <label>Contract Amount</label>
                                     <div className="input-group">
-                                        <span className="input-group-addon">
-                                            $
-                                        </span>
+                                        <div className="input-group-append">
+                                            <div className="input-group-text">
+                                                $
+                                            </div>
+                                        </div>
                                         <input
                                             type="text"
                                             className="form-control"
@@ -663,9 +665,11 @@ class CustomizePlayer extends React.Component {
                                             )}
                                             value={p.contract.amount}
                                         />
-                                        <span className="input-group-addon">
-                                            M per year
-                                        </span>
+                                        <div className="input-group-append">
+                                            <div className="input-group-text">
+                                                M per year
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="col-sm-6 form-group">

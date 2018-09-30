@@ -23,7 +23,6 @@ bootstrap 4
 - safari
 - screen reader
 - react-overlays
-- injury icons
 - colors in popover
 
 Object.assign to @babel/plugin-proposal-object-rest-spread

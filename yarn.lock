@@ -294,13 +294,6 @@
     "@babel/plugin-transform-react-jsx-self" "^7.0.0"
     "@babel/plugin-transform-react-jsx-source" "^7.0.0"
 
-"@babel/runtime-corejs2@^7.0.0":
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/@babel/runtime-corejs2/-/runtime-corejs2-7.0.0.tgz#786711ee099c2c2af7875638866c1259eff30a8c"
-  dependencies:
-    core-js "^2.5.7"
-    regenerator-runtime "^0.12.0"
-
 "@babel/runtime@^7.0.0":
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.0.0.tgz#adeb78fedfc855aa05bc041640f3f6f98e85424c"
@@ -1411,7 +1404,7 @@ copy-descriptor@^0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/copy-descriptor/-/copy-descriptor-0.1.1.tgz#676f6eb3c39997c2ee1ac3a924fd6124748f578d"
 
-core-js@^2.2.0, core-js@^2.4.0, core-js@^2.5.7:
+core-js@^2.2.0, core-js@^2.4.0:
   version "2.5.7"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.5.7.tgz#f972608ff0cead68b841a16a932d0b183791814e"
 
@@ -1705,7 +1698,7 @@ doctrine@^2.1.0:
   dependencies:
     esutils "^2.0.2"
 
-dom-helpers@^3.2.0, dom-helpers@^3.2.1, dom-helpers@^3.3.1:
+dom-helpers@^3.2.1, dom-helpers@^3.3.1:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/dom-helpers/-/dom-helpers-3.3.1.tgz#fc1a4e15ffdf60ddde03a480a9c0fece821dd4a6"
 
@@ -2865,7 +2858,7 @@ insert-module-globals@^7.0.0:
     undeclared-identifiers "^1.1.2"
     xtend "^4.0.0"
 
-invariant@^2.2.1, invariant@^2.2.4:
+invariant@^2.2.1:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
   dependencies:
@@ -3357,10 +3350,6 @@ karma@^3.0.0:
     source-map "^0.6.1"
     tmp "0.0.33"
     useragent "2.2.1"
-
-keycode@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/keycode/-/keycode-2.2.0.tgz#3d0af56dc7b8b8e5cba8d0a97f107204eec22b04"
 
 kind-of@^3.0.2, kind-of@^3.0.3, kind-of@^3.2.0:
   version "3.2.2"
@@ -4588,23 +4577,6 @@ react-addons-text-content@^0.0.4:
   version "0.0.4"
   resolved "https://registry.yarnpkg.com/react-addons-text-content/-/react-addons-text-content-0.0.4.tgz#d2e259fdc951d1d8906c08902002108dce8792e5"
 
-react-bootstrap@^0.32.4:
-  version "0.32.4"
-  resolved "https://registry.yarnpkg.com/react-bootstrap/-/react-bootstrap-0.32.4.tgz#8efc4cbfc4807215d75b7639bee0d324c8d740d1"
-  dependencies:
-    "@babel/runtime-corejs2" "^7.0.0"
-    classnames "^2.2.5"
-    dom-helpers "^3.2.0"
-    invariant "^2.2.4"
-    keycode "^2.2.0"
-    prop-types "^15.6.1"
-    prop-types-extra "^1.0.1"
-    react-overlays "^0.8.0"
-    react-prop-types "^0.4.0"
-    react-transition-group "^2.0.0"
-    uncontrollable "^5.0.0"
-    warning "^3.0.0"
-
 react-dom@^16.5.2:
   version "16.5.2"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.5.2.tgz#b69ee47aa20bab5327b2b9d7c1fe2a30f2cfa9d7"
@@ -4622,7 +4594,7 @@ react-lifecycles-compat@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
 
-react-overlays@^0.8.0, react-overlays@^0.8.3:
+react-overlays@^0.8.3:
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/react-overlays/-/react-overlays-0.8.3.tgz#fad65eea5b24301cca192a169f5dddb0b20d3ac5"
   dependencies:
@@ -4640,12 +4612,6 @@ react-popper@^0.10.4:
     popper.js "^1.14.1"
     prop-types "^15.6.1"
 
-react-prop-types@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/react-prop-types/-/react-prop-types-0.4.0.tgz#f99b0bfb4006929c9af2051e7c1414a5c75b93d0"
-  dependencies:
-    warning "^3.0.0"
-
 react-sortable-hoc@dumbmatter/react-sortable-hoc#clonedNode-in-onSortStart:
   version "0.6.8"
   resolved "https://codeload.github.com/dumbmatter/react-sortable-hoc/tar.gz/a38783cfbfdc2c3e4aed40314aa113d52052bc36"
@@ -4655,7 +4621,7 @@ react-sortable-hoc@dumbmatter/react-sortable-hoc#clonedNode-in-onSortStart:
     lodash "^4.12.0"
     prop-types "^15.5.7"
 
-react-transition-group@^2.0.0, react-transition-group@^2.2.0:
+react-transition-group@^2.2.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-2.4.0.tgz#1d9391fabfd82e016f26fabd1eec329dbd922b5a"
   dependencies:
@@ -5657,12 +5623,6 @@ ultron@~1.1.0:
 umd@^3.0.0:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/umd/-/umd-3.0.3.tgz#aa9fe653c42b9097678489c01000acb69f0b26cf"
-
-uncontrollable@^5.0.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/uncontrollable/-/uncontrollable-5.1.0.tgz#7e9a1c50ea24e3c78b625e52d21ff3f758c7bd59"
-  dependencies:
-    invariant "^2.2.4"
 
 undeclared-identifiers@^1.1.2:
   version "1.1.2"

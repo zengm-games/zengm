@@ -1,7 +1,6 @@
 bootstrap 4
 - dark mode
   - some stuff built in, like table-dark
-- replace react-bootstrap
 - splash screen
   - indicate when UI/worker is loaded, not using the "component versions" though
 - bootstrap 3 classes (hidden, visible, text-)
@@ -26,6 +25,8 @@ bootstrap 4
 - colors in popover
 
 Object.assign to @babel/plugin-proposal-object-rest-spread
+
+<> </>
 
 typescript
 - https://github.com/bcherny/flow-to-typescript

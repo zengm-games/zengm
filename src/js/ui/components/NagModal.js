@@ -2,7 +2,7 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import Modal from "react-bootstrap/lib/Modal";
+import { Modal, ModalHeader, ModalBody } from "reactstrap";
 
 type Props = {
     close: () => void,
@@ -18,11 +18,11 @@ class NagModal extends React.Component<Props> {
         const { close, show } = this.props;
 
         return (
-            <Modal show={show} onHide={close}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Please support Basketball GM!</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
+            <Modal isOpen={show} toggle={close}>
+                <ModalHeader toggle={close}>
+                    Please support Basketball GM
+                </ModalHeader>
+                <ModalBody>
                     <p>
                         Basketball GM is completely free. There will never be
                         any{" "}
@@ -70,7 +70,7 @@ class NagModal extends React.Component<Props> {
                             page
                         </a>
                     </div>
-                </Modal.Body>
+                </ModalBody>
             </Modal>
         );
     }

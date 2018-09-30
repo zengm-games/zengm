@@ -3,8 +3,9 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import * as React from "react";
+import Popover from "reactstrap/lib/Popover";
 import PopoverBody from "reactstrap/lib/PopoverBody";
-import { UncontrolledPopover, WatchBlock } from ".";
+import { WatchBlock } from ".";
 import { helpers, toWorker } from "../util";
 
 const colorRating = (rating: number) => {
@@ -22,6 +23,7 @@ type Props = {
 
 type State = {
     name: string | void,
+    popoverOpen: boolean,
     ratings: {
         ovr: number,
         pot: number,
@@ -55,7 +57,9 @@ type State = {
 };
 
 class RatingsStatsPopover extends React.Component<Props, State> {
-    loadData: () => void;
+    loadData: () => Promise<void>;
+
+    toggle: () => void;
 
     constructor(props: Props) {
         super(props);
@@ -64,9 +68,11 @@ class RatingsStatsPopover extends React.Component<Props, State> {
             name: undefined,
             ratings: undefined,
             stats: undefined,
+            popoverOpen: false,
         };
 
         this.loadData = this.loadData.bind(this);
+        this.toggle = this.toggle.bind(this);
     }
 
     async loadData() {
@@ -76,6 +82,18 @@ class RatingsStatsPopover extends React.Component<Props, State> {
             name: p.name,
             ratings: p.ratings,
             stats: p.stats,
+        });
+    }
+
+    toggle() {
+        this.setState(state => {
+            if (!state.popoverOpen) {
+                this.loadData();
+            }
+
+            return {
+                popoverOpen: !state.popoverOpen,
+            };
         });
     }
 
@@ -243,32 +261,37 @@ class RatingsStatsPopover extends React.Component<Props, State> {
         }
 
         return (
-            <UncontrolledPopover
-                id={`ratings-pop-${this.props.pid}`}
-                onEnter={this.loadData}
-                placement="bottom"
-                target={props => (
-                    <span
-                        className={classNames(
-                            "glyphicon glyphicon-stats watch",
-                            {
-                                "watch-active": this.props.watch === true, // Explicit true check is for Firefox 57 and older
-                            },
-                        )}
-                        data-no-row-highlight="true"
-                        title="View ratings and stats"
-                        {...props}
-                    />
-                )}
-            >
-                <PopoverBody>
-                    <div style={{ minWidth: "250px", whiteSpace: "nowrap" }}>
-                        {nameBlock}
-                        {ratingsBlock}
-                        {statsBlock}
-                    </div>
-                </PopoverBody>
-            </UncontrolledPopover>
+            <>
+                <span
+                    className={classNames("glyphicon glyphicon-stats watch", {
+                        "watch-active": this.props.watch === true, // Explicit true check is for Firefox 57 and older
+                    })}
+                    id={`ratings-pop-${this.props.pid}`}
+                    onClick={this.toggle}
+                    data-no-row-highlight="true"
+                    title="View ratings and stats"
+                />
+                <Popover
+                    placement="right"
+                    isOpen={this.state.popoverOpen}
+                    target={`ratings-pop-${this.props.pid}`}
+                    toggle={this.toggle}
+                >
+                    <PopoverBody>
+                        <div
+                            style={{
+                                minWidth: 250,
+                                minHeight: 250,
+                                whiteSpace: "nowrap",
+                            }}
+                        >
+                            {nameBlock}
+                            {ratingsBlock}
+                            {statsBlock}
+                        </div>
+                    </PopoverBody>
+                </Popover>
+            </>
         );
     }
 }

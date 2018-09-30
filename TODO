@@ -24,9 +24,8 @@ bootstrap 4
 - screen reader
 - react-overlays
 - injury icons
-- ratings-stats-popover onEnter causes rerender of popover, and wrong positioning
-  - make minimal example
-    - https://codesandbox.io/s/qxx8x746q9 works why doesn't mine?
+- watch icon in popover
+- colors in popover
 
 Object.assign to @babel/plugin-proposal-object-rest-spread
 

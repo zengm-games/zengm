@@ -5,18 +5,24 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import { helpers, menuItems } from "../util";
 
-const getText = text => {
+const getText = (text): string | React.Element<any> => {
     if (text.hasOwnProperty("side")) {
+        // $FlowFixMe
         return text.side;
     }
+
+    // $FlowFixMe
     return text;
 };
 
 const MenuGroup = ({ children }) => (
     <ul className="nav flex-column">{children}</ul>
 );
+MenuGroup.propTypes = {
+    children: PropTypes.any.isRequired,
+};
 
-const MenuItem = ({ menuItem, pageID, root = true }) => {
+const MenuItem = ({ menuItem, pageID, root }) => {
     if (menuItem.type === "link") {
         const item = (
             <li className="nav-item">
@@ -74,7 +80,12 @@ class SideMenu extends React.Component<Props> {
             <div className="bg-light sidebar">
                 <div className="sidebar-sticky">
                     {menuItems.map((menuItem, i) => (
-                        <MenuItem key={i} menuItem={menuItem} pageID={pageID} />
+                        <MenuItem
+                            key={i}
+                            menuItem={menuItem}
+                            pageID={pageID}
+                            root
+                        />
                     ))}
                 </div>
             </div>

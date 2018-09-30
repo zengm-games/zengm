@@ -21,7 +21,6 @@ import {
     PopoverBody,
     PopoverHeader,
 } from "reactstrap";
-import ReactDOM from "react-dom";
 import { fetchWrapper } from "../../common";
 import {
     helpers,
@@ -766,6 +765,8 @@ type State = {
 };
 
 class NavBar extends React.Component<Props, State> {
+    toggleCollapsed: () => void;
+
     constructor(props: Props) {
         super(props);
 

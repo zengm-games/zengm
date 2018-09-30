@@ -8,10 +8,10 @@ type MenuItemLink = {|
     path: (number | string)[],
     text:
         | string
-        | React.Element
+        | React.Element<any>
         | {
-              side: string | React.Element,
-              top: string | React.Element,
+              side: string | React.Element<any>,
+              top: string | React.Element<any>,
           },
 |};
 type MenuItemHeader = {|

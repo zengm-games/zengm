@@ -31,6 +31,7 @@ export { default as initView } from "./initView";
 export { default as leagueNotFoundMessage } from "./leagueNotFoundMessage";
 export { default as local } from "./local";
 export { default as logEvent } from "./logEvent";
+export { default as menuItems } from "./menuItems";
 export { default as notify } from "./notify";
 export { default as prefixStatOpp } from "./prefixStatOpp";
 export { default as realtimeUpdate } from "./realtimeUpdate";

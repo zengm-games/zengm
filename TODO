@@ -12,6 +12,7 @@ bootstrap 4
 - responsive menu on side
   - use side menu from xl? missing tools/help/account
     - add them all, and keep side menu open when not in league too?
+    - come up with generic way of specifying menu, use to generate both
 - navbar dropdowns when moving between with mouse, original clicked one is still somewhat highlighted
 - navbar dropdowns more clear active state, like bs3 version
 - navbar collapsed state
@@ -23,6 +24,8 @@ bootstrap 4
 - screen reader
 - react-overlays
 - colors in popover
+- achievements list on account page
+- go over all css files, anything obsolete?
 
 Object.assign to @babel/plugin-proposal-object-rest-spread
 

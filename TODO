@@ -14,6 +14,10 @@ bootstrap 4
     - add them all, and keep side menu open when not in league too?
     - come up with generic way of specifying menu, use to generate both
       - _blank only for https
+    - better way for highlighting - needs to support pages outside of league (changes, achievements, etc)
+  - listen to god mode and lid changes - test
+  - god mode - just text color
+  - need to specify if it is a league-specific URL or not
 - navbar dropdowns when moving between with mouse, original clicked one is still somewhat highlighted
 - navbar dropdowns more clear active state, like bs3 version
 - navbar collapsed state

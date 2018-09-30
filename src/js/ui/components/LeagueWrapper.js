@@ -3,7 +3,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import * as React from "react";
-import { helpers, menuItems } from "../util";
+import { helpers, local, menuItems } from "../util";
 
 const getText = (text): string | React.Element<any> => {
     if (text.hasOwnProperty("side")) {
@@ -24,6 +24,10 @@ MenuGroup.propTypes = {
 
 const MenuItem = ({ menuItem, pageID, root }) => {
     if (menuItem.type === "link") {
+        if (menuItem.godMode && !local.state.godMode) {
+            return null;
+        }
+
         const anchorProps = {};
         if (typeof menuItem.path === "string") {
             anchorProps.href = menuItem.path;
@@ -34,6 +38,9 @@ const MenuItem = ({ menuItem, pageID, root }) => {
         } else if (Array.isArray(menuItem.path)) {
             anchorProps.href = helpers.leagueUrl(menuItem.path);
         }
+        if (menuItem.onClick) {
+            anchorProps.onClick = menuItem.onClick;
+        }
 
         const item = (
             <li className="nav-item">
@@ -42,6 +49,7 @@ const MenuItem = ({ menuItem, pageID, root }) => {
                         active: menuItem.active
                             ? menuItem.active(pageID)
                             : false,
+                        "god-mode": menuItem.godMode,
                     })}
                     {...anchorProps}
                 >

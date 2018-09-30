@@ -1,11 +1,22 @@
 // @flow
 
 import * as React from "react";
+import { toWorker } from ".";
+
+const handleToolsClick = async (id, e) => {
+    e.preventDefault();
+    const response = await toWorker(`actions.toolsMenu.${id}`);
+    if (id === "resetDb" && response) {
+        window.location.reload();
+    }
+};
 
 type MenuItemLink = {|
     type: "link",
     active?: string => boolean,
-    path: string | (number | string)[],
+    godMode?: true,
+    onClick?: (SyntheticEvent<>) => void,
+    path?: string | (number | string)[],
     text:
         | string
         | React.Element<any>
@@ -196,6 +207,32 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
                 active: pageID => pageID === "playerFeats",
                 path: ["player_feats"],
                 text: "Statistical Feats",
+            },
+        ],
+    },
+    {
+        type: "header",
+        long: "Tools",
+        short: "X",
+        children: [
+            {
+                type: "link",
+                path: "/account",
+                text: "Achievements",
+            },
+            {
+                type: "link",
+                onClick(e) {
+                    handleToolsClick("autoPlaySeasons", e);
+                },
+                text: "Auto Play Seasons",
+            },
+            {
+                type: "link",
+                active: pageID => pageID === "customizePlayer",
+                godMode: true,
+                path: ["customize_player"],
+                text: "Create A Player",
             },
         ],
     },

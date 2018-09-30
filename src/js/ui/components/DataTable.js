@@ -311,8 +311,16 @@ const Paging = ({ currentPage, numRows, onClick, perPage }) => {
     const numberedPages = [];
     for (let i = firstShownPage; i <= lastShownPage; i++) {
         numberedPages.push(
-            <li key={i} className={i === currentPage ? "active" : ""}>
-                <a onClick={() => onClick(i)}>{i}</a>
+            <li
+                key={i}
+                className={classNames(
+                    "page-item",
+                    i === currentPage ? "active" : null,
+                )}
+            >
+                <a className="page-link" onClick={() => onClick(i)}>
+                    {i}
+                </a>
             </li>,
         );
     }
@@ -320,14 +328,24 @@ const Paging = ({ currentPage, numRows, onClick, perPage }) => {
     return (
         <div className="dataTables_paginate">
             <ul className="pagination">
-                <li className={classNames("prev", { disabled: !showPrev })}>
-                    <a onClick={() => showPrev && onClick(currentPage - 1)}>
+                <li
+                    className={classNames("page-item", { disabled: !showPrev })}
+                >
+                    <a
+                        className="page-link"
+                        onClick={() => showPrev && onClick(currentPage - 1)}
+                    >
                         ← Prev
                     </a>
                 </li>
                 {numberedPages}
-                <li className={classNames("next", { disabled: !showNext })}>
-                    <a onClick={() => showNext && onClick(currentPage + 1)}>
+                <li
+                    className={classNames("page-item", { disabled: !showNext })}
+                >
+                    <a
+                        className="page-link"
+                        onClick={() => showNext && onClick(currentPage + 1)}
+                    >
                         Next →
                     </a>
                 </li>

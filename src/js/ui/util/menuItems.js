@@ -128,14 +128,6 @@ const handleScreenshotClick = async e => {
     }
 };
 
-const handleToolsClick = async (id, e) => {
-    e.preventDefault();
-    const response = await toWorker(`actions.toolsMenu.${id}`);
-    if (id === "resetDb" && response) {
-        window.location.reload();
-    }
-};
-
 type MenuItemLink = {|
     type: "link",
     active?: string => boolean,
@@ -347,10 +339,10 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
             },
             {
                 type: "link",
-                onClick(e) {
-                    handleToolsClick("autoPlaySeasons", e);
+                onClick() {
+                    toWorker("actions.toolsMenu.autoPlaySeasons");
                 },
-                text: "Auto Play Seasons",
+                text: "Auto Play",
             },
             {
                 type: "link",

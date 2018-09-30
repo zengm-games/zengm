@@ -16,10 +16,10 @@ bootstrap 4
       - _blank only for https
     - better way for highlighting - needs to support pages outside of league (changes, achievements, etc)
   - listen to god mode and lid changes - test
-  - god mode - just text color
   - need to specify if it is a league-specific URL or not
   - screenshot not wokring
   - move "reset db" to main dashboard
+  - delete handleScreenshot and handleToolsClick from NavBar
 - navbar dropdowns when moving between with mouse, original clicked one is still somewhat highlighted
 - navbar dropdowns more clear active state, like bs3 version
 - navbar collapsed state

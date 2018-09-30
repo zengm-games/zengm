@@ -707,7 +707,7 @@ tr.warning > td {
     z-index: 100; /* Behind the navbar */
     padding: 48px 0 0; /* Height of navbar */
     border-right: 1px solid $gray-200;
-    width: 130px;
+    width: 150px;
 }
 .sidebar-sticky {
     position: relative;
@@ -747,8 +747,11 @@ tr.warning > td {
         display: block;
     }
     .league-content {
-        margin-left: 130px;
+        margin-left: 150px;
     }
+}
+.sidebar a.sidebar-god-mode {
+    color: $purple;
 }
 
 label input {

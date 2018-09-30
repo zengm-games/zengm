@@ -49,7 +49,7 @@ const MenuItem = ({ menuItem, pageID, root }) => {
                         active: menuItem.active
                             ? menuItem.active(pageID)
                             : false,
-                        "god-mode": menuItem.godMode,
+                        "sidebar-god-mode": menuItem.godMode,
                     })}
                     {...anchorProps}
                 >

@@ -130,7 +130,7 @@ class GodMode extends React.Component {
         setTitle("God Mode");
 
         return (
-            <div>
+            <>
                 <h1>
                     God Mode <NewWindowLink />
                 </h1>
@@ -211,7 +211,7 @@ class GodMode extends React.Component {
                             <label>
                                 # Games Per Season{" "}
                                 <HelpPopover
-                                    placement="left"
+                                    placement="right"
                                     title="# Games Per Season"
                                 >
                                     This will only apply to seasons that have
@@ -477,7 +477,7 @@ class GodMode extends React.Component {
                         Save God Mode Options
                     </button>
                 </form>
-            </div>
+            </>
         );
     }
 }

@@ -33,10 +33,7 @@ const Message = ({ message }: MessageProps) => {
             <SafeHtml dirty={message.text} />
 
             <p>
-                <a
-                    href="javascript:void()"
-                    onClick={() => window.history.back()}
-                >
+                <a href="#" onClick={() => window.history.back()}>
                     Previous Page
                 </a>{" "}
                 · <a href={helpers.leagueUrl(["inbox"])}>Inbox</a>

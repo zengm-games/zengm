@@ -26,7 +26,7 @@ export default class UncontrolledPopover extends React.Component {
     }
 
     render() {
-        const id = this.props.id.replace(/ /g, "");
+        const id = this.props.id.replace(/[^a-zA-Z]/g, "");
         return (
             <>
                 <this.props.target id={id} onClick={this.toggle} />

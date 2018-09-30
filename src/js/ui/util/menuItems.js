@@ -4,8 +4,8 @@ import * as React from "react";
 
 type MenuItemLink = {|
     type: "link",
-    active: string => boolean,
-    path: (number | string)[],
+    active?: string => boolean,
+    path: string | (number | string)[],
     text:
         | string
         | React.Element<any>
@@ -196,6 +196,33 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
                 active: pageID => pageID === "playerFeats",
                 path: ["player_feats"],
                 text: "Statistical Feats",
+            },
+        ],
+    },
+    {
+        type: "header",
+        long: "Help",
+        short: "?",
+        children: [
+            {
+                type: "link",
+                path: "https://basketball-gm.com/manual/",
+                text: "Overview",
+            },
+            {
+                type: "link",
+                path: "/changes",
+                text: "Changes",
+            },
+            {
+                type: "link",
+                path: "https://basketball-gm.com/manual/customization/",
+                text: "Custom Rosters",
+            },
+            {
+                type: "link",
+                path: "https://basketball-gm.com/manual/debugging/",
+                text: "Debugging",
             },
         ],
     },

@@ -24,13 +24,26 @@ MenuGroup.propTypes = {
 
 const MenuItem = ({ menuItem, pageID, root }) => {
     if (menuItem.type === "link") {
+        const anchorProps = {};
+        if (typeof menuItem.path === "string") {
+            anchorProps.href = menuItem.path;
+            if (menuItem.path.startsWith("http")) {
+                anchorProps.rel = "noopener noreferrer";
+                anchorProps.target = "_blank";
+            }
+        } else if (Array.isArray(menuItem.path)) {
+            anchorProps.href = helpers.leagueUrl(menuItem.path);
+        }
+
         const item = (
             <li className="nav-item">
                 <a
                     className={classNames("nav-link", {
-                        active: menuItem.active(pageID),
+                        active: menuItem.active
+                            ? menuItem.active(pageID)
+                            : false,
                     })}
-                    href={helpers.leagueUrl(menuItem.path)}
+                    {...anchorProps}
                 >
                     {getText(menuItem.text)}
                 </a>

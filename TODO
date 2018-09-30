@@ -13,6 +13,7 @@ bootstrap 4
   - use side menu from xl? missing tools/help/account
     - add them all, and keep side menu open when not in league too?
     - come up with generic way of specifying menu, use to generate both
+      - _blank only for https
 - navbar dropdowns when moving between with mouse, original clicked one is still somewhat highlighted
 - navbar dropdowns more clear active state, like bs3 version
 - navbar collapsed state

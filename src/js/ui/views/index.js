@@ -5,6 +5,7 @@ export { default as AccountUpdateCard } from "./AccountUpdateCard";
 export { default as AwardsRecords } from "./AwardsRecords";
 export { default as Changes } from "./Changes";
 export { default as CustomizePlayer } from "./CustomizePlayer";
+export { default as DangerZone } from "./DangerZone";
 export { default as Dashboard } from "./Dashboard";
 export { default as DeleteLeague } from "./DeleteLeague";
 export { default as DeleteOldData } from "./DeleteOldData";

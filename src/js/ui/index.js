@@ -371,6 +371,7 @@ const genPage = (id, inLeague = true) => {
             "transactions",
         ),
         "/l/:lid/options": genPage("options"),
+        "/l/:lid/danger_zone": genPage("dangerZone"),
     };
 
     let initialLoad = true;

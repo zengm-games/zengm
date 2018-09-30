@@ -1,7 +1,9 @@
 // @flow
 
+import html2canvas from "html2canvas";
 import * as React from "react";
-import { toWorker } from ".";
+import { fetchWrapper } from "../../common";
+import { logEvent, toWorker } from ".";
 
 const handleScreenshotClick = async e => {
     e.preventDefault();

@@ -85,7 +85,7 @@ class ExportStats extends React.Component {
         const { seasons } = this.props;
 
         return (
-            <div>
+            <>
                 <h1>Export Stats</h1>
 
                 <p>
@@ -139,7 +139,7 @@ class ExportStats extends React.Component {
                         status={this.state.status}
                     />
                 </p>
-            </div>
+            </>
         );
     }
 }

@@ -24,7 +24,6 @@ bootstrap 4
 - screen reader
 - react-overlays
 - injury icons
-- watch icon in popover
 - colors in popover
 
 Object.assign to @babel/plugin-proposal-object-rest-spread

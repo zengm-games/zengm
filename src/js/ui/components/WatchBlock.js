@@ -57,7 +57,7 @@ class WatchBlock extends React.Component<Props, State> {
     render() {
         if (this.state.watch) {
             return (
-                <a
+                <span
                     className="glyphicon glyphicon-flag watch watch-active"
                     onClick={this.handleClick}
                     title="Remove from Watch List"
@@ -66,7 +66,7 @@ class WatchBlock extends React.Component<Props, State> {
         }
 
         return (
-            <a
+            <span
                 className="glyphicon glyphicon-flag watch"
                 onClick={this.handleClick}
                 title="Add to Watch List"

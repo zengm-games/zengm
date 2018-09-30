@@ -35,7 +35,7 @@ type TopMenuToggleProps = {
     long: string,
     openId?: string,
     short: string,
-    toggle?: (SyntheticEvent<>) => void, // From react-bootstrap Dropdown
+    toggle?: (SyntheticEvent<>) => void,
 };
 
 class TopMenuToggle extends React.Component<TopMenuToggleProps> {
@@ -74,7 +74,7 @@ TopMenuToggle.propTypes = {
     long: PropTypes.string.isRequired,
     openId: PropTypes.string,
     short: PropTypes.string.isRequired,
-    toggle: PropTypes.func, // From react-bootstrap Dropdown
+    toggle: PropTypes.func,
 };
 
 const TopMenuDropdown = ({ children, long, short, openId, onToggle }) => {
@@ -782,49 +782,6 @@ class NavBar extends React.Component<Props, State> {
                 collapsed: !state.collapsed,
             };
         });
-    }
-
-    // Workaround for https://github.com/react-bootstrap/react-bootstrap/issues/1301 based on https://github.com/react-bootstrap/react-router-bootstrap/issues/112#issuecomment-142599003
-    componentDidMount() {
-        const navBar = ReactDOM.findDOMNode(this);
-        if (!navBar) {
-            return;
-        }
-        // $FlowFixMe
-        const collapsibleNav = navBar.querySelector("div.navbar-collapse");
-        if (!collapsibleNav) {
-            return;
-        }
-        // $FlowFixMe
-        const btnToggle = navBar.querySelector("button.navbar-toggle");
-        if (!btnToggle) {
-            return;
-        }
-
-        navBar.addEventListener(
-            "click",
-            (evt: MouseEvent) => {
-                const target = evt.target;
-                if (!(target instanceof HTMLElement)) {
-                    throw new Error("Invalid event target");
-                }
-
-                if (
-                    target.classList.contains("dropdown-toggle") ||
-                    !collapsibleNav.classList.contains("in")
-                ) {
-                    return;
-                }
-
-                if (
-                    target.tagName === "A" ||
-                    target.classList.contains("toggle-responsive-menu")
-                ) {
-                    btnToggle.click();
-                }
-            },
-            false,
-        );
     }
 
     render() {

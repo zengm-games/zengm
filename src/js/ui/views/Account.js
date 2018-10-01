@@ -340,7 +340,7 @@ const Account = ({
     }
 
     return (
-        <div>
+        <>
             <h1>Your Account</h1>
 
             <div className="row">
@@ -371,62 +371,42 @@ const Account = ({
                 never used God Mode or set the difficulty to Easy.
             </p>
 
-            <ul className="achievements list-group">
-                {achievements.map((achievement, i) => {
-                    const lis = [
-                        <li
-                            className="list-group-item col-12 col-sm-6 col-md-4 col-lg-3 float-left"
+            <div className="row" style={{ marginTop: -20 }}>
+                {achievements.map(achievement => {
+                    if (Math.random() > 0.5) {
+                        achievement.count = 50;
+                    }
+                    return (
+                        <div
+                            className="col-12 col-sm-6 col-md-4 col-lg-3"
                             key={achievement.slug}
                         >
                             <div
-                                className={classNames({
+                                className={classNames("card", "mt-3", {
                                     "list-group-item-success":
                                         achievement.count > 0,
                                     "text-muted": achievement.count === 0,
                                 })}
                             >
-                                {achievement.count > 1 ? (
-                                    <span className="badge float-right">
-                                        {achievement.count}
-                                    </span>
-                                ) : null}
-                                <h4 className="list-group-item-heading">
-                                    {achievement.name}
-                                </h4>
-                                <p className="list-group-item-text">
-                                    {achievement.desc}
-                                </p>
+                                <div className="card-body">
+                                    <h5 className="card-title">
+                                        {achievement.name}
+                                        {achievement.count > 1 ? (
+                                            <span className="badge badge-pill badge-secondary float-right">
+                                                {achievement.count}
+                                            </span>
+                                        ) : null}
+                                    </h5>
+                                    <p className="card-text">
+                                        {achievement.desc}
+                                    </p>
+                                </div>
                             </div>
-                        </li>,
-                    ];
-                    if (i % 4 === 3) {
-                        lis.push(
-                            <li
-                                className="clearfix visible-lg"
-                                key={`sep${i}-4`}
-                            />,
-                        );
-                    }
-                    if (i % 3 === 2) {
-                        lis.push(
-                            <li
-                                className="clearfix visible-md"
-                                key={`sep${i}-3`}
-                            />,
-                        );
-                    }
-                    if (i % 2 === 1) {
-                        lis.push(
-                            <li
-                                className="clearfix visible-sm"
-                                key={`sep${i}-2`}
-                            />,
-                        );
-                    }
-                    return lis;
+                        </div>
+                    );
                 })}
-            </ul>
-        </div>
+            </div>
+        </>
     );
 };
 

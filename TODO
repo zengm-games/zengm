@@ -11,8 +11,6 @@ bootstrap 4
 - inIframe
 - responsive menu on side
   - better way for highlighting - needs to support pages outside of league (changes, achievements, new league)
-  - listen to god mode and lid changes - test
-    - works in navbar, but not sidebar
   - confirm GCS still works
   - god mode style on top and side - make same
 - navbar dropdowns when moving between with mouse, original clicked one is still somewhat highlighted

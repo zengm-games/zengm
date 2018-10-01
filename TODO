@@ -20,6 +20,7 @@ bootstrap 4
   - screenshot not wokring
   - move "reset db" to main dashboard
   - delete handleScreenshot and handleToolsClick from NavBar
+  - confirm GCS still works
 - navbar dropdowns when moving between with mouse, original clicked one is still somewhat highlighted
 - navbar dropdowns more clear active state, like bs3 version
 - navbar collapsed state

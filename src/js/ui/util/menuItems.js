@@ -8,16 +8,10 @@ import { logEvent, toWorker } from ".";
 const handleScreenshotClick = async e => {
     e.preventDefault();
 
-    let contentElTemp = document.getElementById("screenshot-league");
-    if (!contentElTemp) {
-        contentElTemp = document.getElementById("screenshot-nonleague");
+    const contentEl = document.getElementById("actual-content");
+    if (!contentEl) {
+        throw new Error("Missing DOM element #actual-content");
     }
-    if (!contentElTemp) {
-        throw new Error(
-            "Missing DOM element #screenshot-league or #screenshot-nonleague",
-        );
-    }
-    const contentEl = contentElTemp;
 
     // Add watermark
     const watermark = document.createElement("div");

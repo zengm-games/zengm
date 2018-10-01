@@ -11,14 +11,7 @@ import {
     setTitle,
     toWorker,
 } from "../util";
-import {
-    Footer,
-    Header,
-    LeagueWrapper,
-    MultiTeamMenu,
-    NagModal,
-    NavBar,
-} from ".";
+import { Footer, Header, MultiTeamMenu, NagModal, NavBar, SideBar } from ".";
 import type {
     GetOutput,
     RouterContext,
@@ -326,17 +319,14 @@ class Controller extends React.Component<{}, State> {
                 this.idLoading !== undefined ? this.idLoading : this.idLoaded;
 
             contents = (
-                <div>
-                    <LeagueWrapper lid={local.state.lid} pageId={pageId}>
-                        <LeagueContent
-                            Component={Component}
-                            data={data}
-                            updating={loading}
-                        />
-                        <Footer />
-                    </LeagueWrapper>
+                <>
+                    <LeagueContent
+                        Component={Component}
+                        data={data}
+                        updating={loading}
+                    />
                     <MultiTeamMenu />
-                </div>
+                </>
             );
         }
 
@@ -345,13 +335,15 @@ class Controller extends React.Component<{}, State> {
                 <NavBar pageId={pageId} updating={loading} />
                 <div className="bbgm-container">
                     <Header />
+                    <SideBar lid={local.state.lid} pageId={pageId} />
                     <div
-                        id="screenshot-nonleague"
+                        className="p402_premium"
+                        id="actual-content"
                         style={{ minHeight: "300px" }}
                     >
                         {contents}
+                        <Footer />
                     </div>
-                    {!Component || !inLeague ? <Footer /> : null}
                     <NagModal
                         close={this.closeNagModal}
                         show={this.state.showNagModal}

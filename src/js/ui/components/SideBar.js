@@ -86,7 +86,7 @@ type Props = {
     pageID: string,
 };
 
-class SideMenu extends React.Component<Props> {
+class SideBar extends React.Component<Props> {
     shouldComponentUpdate(nextProps) {
         return (
             this.props.pageID !== nextProps.pageID ||
@@ -114,34 +114,9 @@ class SideMenu extends React.Component<Props> {
     }
 }
 
-SideMenu.propTypes = {
+SideBar.propTypes = {
     lid: PropTypes.number,
     pageID: PropTypes.string.isRequired,
 };
 
-const LeagueWrapper = ({
-    children,
-    lid,
-    pageId,
-}: {
-    children: React.Element<any>,
-    lid: number | void,
-    pageId: string,
-}) => {
-    return (
-        <div>
-            <SideMenu lid={lid} pageID={pageId} />
-            <div className="league-content p402_premium" id="screenshot-league">
-                {children}
-            </div>
-        </div>
-    );
-};
-
-LeagueWrapper.propTypes = {
-    children: PropTypes.any.isRequired,
-    lid: PropTypes.number,
-    pageId: PropTypes.string.isRequired,
-};
-
-export default LeagueWrapper;
+export default SideBar;

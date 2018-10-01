@@ -12,7 +12,7 @@ const RatingWithChange = ({
     children: number,
 }) => {
     return (
-        <span>
+        <>
             {children}
             {change !== 0 ? (
                 <span
@@ -26,7 +26,7 @@ const RatingWithChange = ({
                     {change})
                 </span>
             ) : null}
-        </span>
+        </>
     );
 };
 

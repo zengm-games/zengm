@@ -8,7 +8,7 @@ const Live = ({ games, gamesInProgress }) => {
     setTitle("Live Game Simulation");
 
     return (
-        <div>
+        <>
             <h1>
                 Live Game Simulation <NewWindowLink />
             </h1>
@@ -42,7 +42,7 @@ const Live = ({ games, gamesInProgress }) => {
                     </button>
                 );
             })}
-        </div>
+        </>
     );
 };
 

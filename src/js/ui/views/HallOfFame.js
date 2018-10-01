@@ -93,7 +93,7 @@ const HallOfFame = ({ players, userTid }) => {
     });
 
     return (
-        <div>
+        <>
             <h1>
                 Hall of Fame <NewWindowLink />
             </h1>
@@ -120,7 +120,7 @@ const HallOfFame = ({ players, userTid }) => {
                 rows={rows}
                 superCols={superCols}
             />
-        </div>
+        </>
     );
 };
 

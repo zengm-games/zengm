@@ -192,7 +192,7 @@ class UserInfo extends React.Component<UserInfoProps, UserInfoState> {
         } = this.props;
 
         return (
-            <div>
+            <>
                 {!loggedIn ? (
                     <p>
                         You are not logged in!{" "}
@@ -230,7 +230,7 @@ class UserInfo extends React.Component<UserInfoProps, UserInfoState> {
                         {goldUntilDateString}
                     </p>
                 ) : null}
-            </div>
+            </>
         );
     }
 }
@@ -276,7 +276,7 @@ const Account = ({
     let goldPitchDiv = null;
     if (showGoldPitch) {
         goldPitchDiv = (
-            <div>
+            <>
                 <h2>Basketball GM Gold</h2>
 
                 <div className="row">
@@ -335,7 +335,7 @@ const Account = ({
                         )}
                     </div>
                 </div>
-            </div>
+            </>
         );
     }
 

@@ -230,7 +230,7 @@ class NewLeague extends React.Component {
         setTitle("Create New League");
 
         return (
-            <div>
+            <>
                 <h1>Create New League</h1>
 
                 <form onSubmit={this.handleSubmit}>
@@ -364,7 +364,7 @@ class NewLeague extends React.Component {
                         </button>
                     </div>
                 </form>
-            </div>
+            </>
         );
     }
 }

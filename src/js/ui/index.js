@@ -59,7 +59,7 @@ window.addEventListener("storage", e => {
 api.bbgmPing("version");
 
 const Manual = (
-    <div>
+    <>
         <h1>Manual</h1>
         <p>
             <a
@@ -70,7 +70,7 @@ const Manual = (
                 Click here for an overview of Basketball GM.
             </a>
         </p>
-    </div>
+    </>
 );
 
 const genPage = (id, inLeague = true) => {

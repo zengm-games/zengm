@@ -124,7 +124,7 @@ class WatchList extends React.Component {
         });
 
         return (
-            <div>
+            <>
                 <Dropdown
                     view="watch_list"
                     fields={["statTypes", "playoffs"]}
@@ -182,7 +182,7 @@ class WatchList extends React.Component {
                     pagination
                     rows={rows}
                 />
-            </div>
+            </>
         );
     }
 }

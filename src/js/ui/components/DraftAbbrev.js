@@ -33,10 +33,10 @@ const DraftAbbrev = ({
                 : ["roster", originalAbbrev, season];
 
         return (
-            <span>
+            <>
                 <a href={helpers.leagueUrl(args1)}>{abbrev}</a> (from{" "}
                 <a href={helpers.leagueUrl(args2)}>{originalAbbrev}</a>)
-            </span>
+            </>
         );
     });
 };

@@ -15,17 +15,17 @@ const Message = ({ message }: MessageProps) => {
         setTitle("Message");
 
         return (
-            <div>
+            <>
                 <h1>Error</h1>
                 <p>Message not found.</p>
-            </div>
+            </>
         );
     }
 
     setTitle(`Message From ${message.from}`);
 
     return (
-        <div>
+        <>
             <h4 style={{ marginTop: "23px" }}>
                 From: {message.from}, {message.year} <NewWindowLink />
             </h4>
@@ -38,7 +38,7 @@ const Message = ({ message }: MessageProps) => {
                 </a>{" "}
                 · <a href={helpers.leagueUrl(["inbox"])}>Inbox</a>
             </p>
-        </div>
+        </>
     );
 };
 

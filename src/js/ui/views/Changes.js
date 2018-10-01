@@ -9,7 +9,7 @@ const Changes = ({ changes }: { changes: { date: string, msg: string }[] }) => {
     setTitle("Changes");
 
     return (
-        <div>
+        <>
             <h1>
                 Changes <NewWindowLink />
             </h1>
@@ -29,7 +29,7 @@ const Changes = ({ changes }: { changes: { date: string, msg: string }[] }) => {
                 significant user-facing changes are listed here, so you won't
                 get bugged for every little new feature.
             </p>
-        </div>
+        </>
     );
 };
 Changes.propTypes = {

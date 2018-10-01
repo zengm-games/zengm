@@ -103,7 +103,7 @@ class GodMode extends React.Component {
             difficultyValues.includes(parseFloat(this.state.difficulty));
 
         return (
-            <div>
+            <>
                 <h1>
                     Options <NewWindowLink />
                 </h1>
@@ -232,7 +232,7 @@ class GodMode extends React.Component {
 
                     <button className="btn btn-primary">Save Options</button>
                 </form>
-            </div>
+            </>
         );
     }
 }

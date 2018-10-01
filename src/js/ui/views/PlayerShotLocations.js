@@ -95,7 +95,7 @@ const PlayerShotLocations = ({ players, season, userTid }) => {
     });
 
     return (
-        <div>
+        <>
             <Dropdown
                 view="player_shot_locations"
                 fields={["seasons"]}
@@ -124,7 +124,7 @@ const PlayerShotLocations = ({ players, season, userTid }) => {
                 pagination
                 superCols={superCols}
             />
-        </div>
+        </>
     );
 };
 

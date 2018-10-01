@@ -419,7 +419,7 @@ class Roster extends React.Component {
             );
 
         return (
-            <div>
+            <>
                 <Dropdown
                     view="roster"
                     fields={["teams", "seasons"]}
@@ -628,7 +628,7 @@ class Roster extends React.Component {
                         />
                     </table>
                 </div>
-            </div>
+            </>
         );
     }
 }

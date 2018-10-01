@@ -12,7 +12,7 @@ const Leaders = ({ categories, season }) => {
     setTitle(`League Leaders - ${season}`);
 
     return (
-        <div>
+        <>
             <Dropdown view="leaders" fields={["seasons"]} values={[season]} />
             <JumpTo season={season} />
             <h1>
@@ -89,7 +89,7 @@ const Leaders = ({ categories, season }) => {
                     </div>
                 ))}
             </div>
-        </div>
+        </>
     );
 };
 

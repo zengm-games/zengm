@@ -104,7 +104,7 @@ class ExportLeague extends React.Component {
         setTitle("Export League");
 
         return (
-            <div>
+            <>
                 <h1>Export League</h1>
 
                 <p>
@@ -153,7 +153,7 @@ class ExportLeague extends React.Component {
                         status={this.state.status}
                     />
                 </p>
-            </div>
+            </>
         );
     }
 }

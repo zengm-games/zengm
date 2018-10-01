@@ -181,7 +181,7 @@ const PlayerStats = ({
     });
 
     return (
-        <div>
+        <>
             <Dropdown
                 view="player_stats"
                 fields={[
@@ -227,7 +227,7 @@ const PlayerStats = ({
                 rows={rows}
                 pagination
             />
-        </div>
+        </>
     );
 };
 

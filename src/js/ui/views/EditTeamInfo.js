@@ -61,7 +61,7 @@ class EditTeamInfo extends React.Component {
         const { saving, teams } = this.state;
 
         return (
-            <div>
+            <>
                 <h1>Edit Team Info</h1>
 
                 <p>
@@ -310,7 +310,7 @@ class EditTeamInfo extends React.Component {
                         </button>
                     </center>
                 </form>
-            </div>
+            </>
         );
     }
 }

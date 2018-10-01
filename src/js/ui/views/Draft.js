@@ -264,7 +264,7 @@ class Draft extends React.Component {
         });
 
         return (
-            <div>
+            <>
                 <h1>
                     Draft <NewWindowLink />
                 </h1>
@@ -342,7 +342,7 @@ class Draft extends React.Component {
                         />
                     </div>
                 </div>
-            </div>
+            </>
         );
     }
 }

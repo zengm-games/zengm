@@ -56,7 +56,7 @@ const PlayerStatDists = ({ numGames, season, statsAll }) => {
     };
 
     return (
-        <div>
+        <>
             <Dropdown
                 view="player_stat_dists"
                 fields={["seasons"]}
@@ -137,7 +137,7 @@ const PlayerStatDists = ({ numGames, season, statsAll }) => {
                     })}
                 </tbody>
             </table>
-        </div>
+        </>
     );
 };
 

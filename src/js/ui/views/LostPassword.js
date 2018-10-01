@@ -49,7 +49,7 @@ class LostPassword extends React.Component {
         setTitle("Lost Password");
 
         return (
-            <div>
+            <>
                 <div className="row">
                     <div className="col-lg-4 col-md-4 col-sm-3 hidden-xs" />
                     <div className="col-lg-4 col-md-4 col-sm-6">
@@ -98,7 +98,7 @@ class LostPassword extends React.Component {
                         </form>
                     </div>
                 </div>
-            </div>
+            </>
         );
     }
 }

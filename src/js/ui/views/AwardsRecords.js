@@ -51,7 +51,7 @@ const AwardsRecords = ({
     });
 
     return (
-        <div>
+        <>
             <Dropdown
                 view="awards_records"
                 fields={["awardType"]}
@@ -79,7 +79,7 @@ const AwardsRecords = ({
                 rows={rows}
                 pagination
             />
-        </div>
+        </>
     );
 };
 

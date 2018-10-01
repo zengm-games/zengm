@@ -26,7 +26,7 @@ const Transactions = ({ abbrev, eventType, events, season }) => {
         ) : null;
 
     return (
-        <div>
+        <>
             <Dropdown
                 view="transactions"
                 fields={["teamsAndAll", "seasonsAndAll", "eventType"]}
@@ -46,7 +46,7 @@ const Transactions = ({ abbrev, eventType, events, season }) => {
                     </li>
                 ))}
             </ul>
-        </div>
+        </>
     );
 };
 

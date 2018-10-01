@@ -94,7 +94,7 @@ class NewTeam extends React.Component {
         }
 
         return (
-            <div>
+            <>
                 <h1>
                     Pick a New Team <NewWindowLink />
                 </h1>
@@ -124,7 +124,7 @@ class NewTeam extends React.Component {
                 >
                     {godMode ? "Switch Team" : "Accept New Job"}
                 </button>
-            </div>
+            </>
         );
     }
 }

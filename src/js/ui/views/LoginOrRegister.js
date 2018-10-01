@@ -126,7 +126,7 @@ class LoginOrRegister extends React.Component {
         setTitle("Login or Register");
 
         return (
-            <div>
+            <>
                 <h1 />
                 <div className="row">
                     <div className="col-lg-3 col-md-2 col-sm-1" />
@@ -343,7 +343,7 @@ class LoginOrRegister extends React.Component {
                         </form>
                     </div>
                 </div>
-            </div>
+            </>
         );
     }
 }

@@ -7,7 +7,7 @@ const EventLog = ({ abbrev, events, season }) => {
     setTitle(`Event Log - ${season}`);
 
     return (
-        <div>
+        <>
             <Dropdown
                 view="event_log"
                 fields={["teams", "seasons"]}
@@ -24,7 +24,7 @@ const EventLog = ({ abbrev, events, season }) => {
                     </li>
                 ))}
             </ul>
-        </div>
+        </>
     );
 };
 

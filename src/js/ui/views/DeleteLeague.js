@@ -43,7 +43,7 @@ class DeleteLeague extends React.Component {
         }
 
         return (
-            <div>
+            <>
                 <h1>Delete League {lid}?</h1>
 
                 {message}
@@ -63,7 +63,7 @@ class DeleteLeague extends React.Component {
                 >
                     Cancel
                 </a>
-            </div>
+            </>
         );
     }
 }

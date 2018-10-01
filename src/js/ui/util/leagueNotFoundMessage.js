@@ -5,7 +5,7 @@ import * as React from "react";
 // Most of this text came from basketball-gm.com and the FAQ
 
 const leagueNotFoundMessage = (
-    <div>
+    <>
         <h2>League not found</h2>
         <div style={{ margin: "4em 0", textAlign: "center" }}>
             <h3>Play Basketball GM now!</h3>
@@ -125,7 +125,7 @@ const leagueNotFoundMessage = (
                 </p>
             </div>
         </div>
-    </div>
+    </>
 );
 
 export default leagueNotFoundMessage;

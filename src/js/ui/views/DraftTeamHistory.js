@@ -101,7 +101,7 @@ const DraftTeamHistory = ({ abbrev, name, players, region, userAbbrev }) => {
     });
 
     return (
-        <div>
+        <>
             <Dropdown
                 view="draft_team_history"
                 fields={["teams"]}
@@ -137,7 +137,7 @@ const DraftTeamHistory = ({ abbrev, name, players, region, userAbbrev }) => {
                 superCols={superCols}
                 pagination
             />
-        </div>
+        </>
     );
 };
 

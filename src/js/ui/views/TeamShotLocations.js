@@ -89,7 +89,7 @@ const TeamShotLocations = ({
     });
 
     return (
-        <div>
+        <>
             <Dropdown
                 view="team_shot_locations"
                 fields={["seasons", "teamOpponent", "playoffs"]}
@@ -117,7 +117,7 @@ const TeamShotLocations = ({
                 rows={rows}
                 superCols={superCols}
             />
-        </div>
+        </>
     );
 };
 

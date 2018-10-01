@@ -61,7 +61,7 @@ class DeleteOldData extends React.Component {
         setTitle("Delete Old Data");
 
         return (
-            <div>
+            <>
                 <h1>
                     Delete Old Data <NewWindowLink />
                 </h1>
@@ -179,7 +179,7 @@ class DeleteOldData extends React.Component {
                         Delete Old Data
                     </button>
                 </form>
-            </div>
+            </>
         );
     }
 }

@@ -473,7 +473,7 @@ class CustomizePlayer extends React.Component {
         }
 
         return (
-            <div>
+            <>
                 <h1>
                     {title} <NewWindowLink />
                 </h1>
@@ -963,7 +963,7 @@ class CustomizePlayer extends React.Component {
                         </button>
                     </center>
                 </form>
-            </div>
+            </>
         );
     }
 }

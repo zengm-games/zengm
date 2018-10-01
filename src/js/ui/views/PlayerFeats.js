@@ -95,7 +95,7 @@ const PlayerFeats = ({ abbrev, feats, playoffs, season, userTid }) => {
     });
 
     return (
-        <div>
+        <>
             <Dropdown
                 view="player_feats"
                 fields={["teamsAndAll", "seasonsAndAll", "playoffs"]}
@@ -120,7 +120,7 @@ const PlayerFeats = ({ abbrev, feats, playoffs, season, userTid }) => {
                 rows={rows}
                 pagination
             />
-        </div>
+        </>
     );
 };
 

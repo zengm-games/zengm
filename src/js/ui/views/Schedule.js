@@ -12,7 +12,7 @@ const Schedule = ({ abbrev, completed, season, upcoming }) => {
     setTitle("Schedule");
 
     return (
-        <div>
+        <>
             <Dropdown view="schedule" fields={["teams"]} values={[abbrev]} />
             <h1>
                 Schedule <NewWindowLink />
@@ -51,7 +51,7 @@ const Schedule = ({ abbrev, completed, season, upcoming }) => {
                     </ul>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 

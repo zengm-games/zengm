@@ -92,7 +92,7 @@ class Dashboard extends React.Component<
         setTitle("Dashboard");
 
         return (
-            <div>
+            <>
                 <ul className="dashboard-boxes">
                     {leagues.map(l => (
                         <li key={l.lid}>
@@ -149,7 +149,7 @@ class Dashboard extends React.Component<
                         </a>
                     </li>
                 </ul>
-            </div>
+            </>
         );
     }
 }

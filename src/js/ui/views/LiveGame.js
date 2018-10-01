@@ -64,7 +64,7 @@ PlayerRow.propTypes = {
 };
 
 const BoxScore = ({ boxScore }) => (
-    <div>
+    <>
         <center>
             <h2>
                 <a
@@ -197,7 +197,7 @@ const BoxScore = ({ boxScore }) => (
         ))}
         <br />
         <p>Attendance: {helpers.numberWithCommas(boxScore.att)}</p>
-    </div>
+    </>
 );
 
 BoxScore.propTypes = {
@@ -411,7 +411,7 @@ class LiveGame extends React.Component {
         setTitle("Live Game Simulation");
 
         return (
-            <div>
+            <>
                 <h1>Live Game Simulation</h1>
 
                 <p className="text-danger">
@@ -458,7 +458,7 @@ class LiveGame extends React.Component {
                         </AutoAffix>
                     </div>
                 </div>
-            </div>
+            </>
         );
     }
 }

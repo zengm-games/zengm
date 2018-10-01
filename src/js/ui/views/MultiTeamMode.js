@@ -75,7 +75,7 @@ class MultiTeamMode extends React.Component {
         }
 
         return (
-            <div>
+            <>
                 <h1>
                     Multi Team Mode <NewWindowLink />
                 </h1>
@@ -138,7 +138,7 @@ class MultiTeamMode extends React.Component {
                         </select>
                     </div>
                 </div>
-            </div>
+            </>
         );
     }
 }

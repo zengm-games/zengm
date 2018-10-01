@@ -100,7 +100,7 @@ const DraftSummary = ({ players, season, userTid }) => {
     });
 
     return (
-        <div>
+        <>
             <Dropdown
                 view="draft_summary"
                 fields={["seasons"]}
@@ -140,7 +140,7 @@ const DraftSummary = ({ players, season, userTid }) => {
                 rows={rows}
                 superCols={superCols}
             />
-        </div>
+        </>
     );
 };
 

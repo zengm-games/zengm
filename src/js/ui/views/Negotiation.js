@@ -107,7 +107,7 @@ const Negotiation = ({
     }
 
     return (
-        <div>
+        <>
             <h1>
                 Contract Negotiation <NewWindowLink />
             </h1>
@@ -193,7 +193,7 @@ const Negotiation = ({
             >
                 Can't reach a deal? End negotiation
             </button>
-        </div>
+        </>
     );
 };
 

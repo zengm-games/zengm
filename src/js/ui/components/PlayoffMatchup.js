@@ -42,7 +42,7 @@ const PlayoffMatchup = ({
         series.away.won === numGamesToWinSeries;
 
     return (
-        <div>
+        <>
             <span
                 className={series.home.tid === userTid ? "bg-info" : ""}
                 style={{ fontWeight: homeWon ? "bold" : "normal" }}
@@ -81,7 +81,7 @@ const PlayoffMatchup = ({
                     <span> {series.away.won}</span>
                 ) : null}
             </span>
-        </div>
+        </>
     );
 };
 

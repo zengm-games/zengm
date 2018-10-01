@@ -224,7 +224,7 @@ class Trade extends React.Component {
         );
 
         return (
-            <div>
+            <>
                 <h1>
                     Trade <NewWindowLink />
                 </h1>
@@ -492,7 +492,7 @@ class Trade extends React.Component {
                         </center>
                     </div>
                 </div>
-            </div>
+            </>
         );
     }
 }

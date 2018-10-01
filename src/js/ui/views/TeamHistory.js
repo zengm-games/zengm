@@ -92,7 +92,7 @@ const TeamHistory = ({
     });
 
     return (
-        <div>
+        <>
             <Dropdown
                 view="team_history"
                 fields={["teams"]}
@@ -174,7 +174,7 @@ const TeamHistory = ({
                     />
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 

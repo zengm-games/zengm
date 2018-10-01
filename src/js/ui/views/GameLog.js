@@ -105,7 +105,7 @@ class BoxScore extends React.Component {
         const { abbrev, boxScore, nextGid, prevGid, season } = this.props;
 
         return (
-            <div>
+            <>
                 <center>
                     <h2>
                         <a
@@ -380,7 +380,7 @@ class BoxScore extends React.Component {
                 ))}
                 <br />
                 <p>Attendance: {helpers.numberWithCommas(boxScore.att)}</p>
-            </div>
+            </>
         );
     }
 }
@@ -421,7 +421,7 @@ const GameLog = ({ abbrev, boxScore, gamesList = { games: [] }, season }) => {
     );
 
     return (
-        <div>
+        <>
             <Dropdown
                 view="game_log"
                 extraParam={boxScore.gid}
@@ -538,7 +538,7 @@ const GameLog = ({ abbrev, boxScore, gamesList = { games: [] }, season }) => {
                     </table>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 

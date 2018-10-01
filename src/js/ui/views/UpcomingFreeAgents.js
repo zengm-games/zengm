@@ -64,7 +64,7 @@ const UpcomingFreeAgents = ({ players, season }) => {
     });
 
     return (
-        <div>
+        <>
             <Dropdown
                 view="upcoming_free_agents"
                 fields={["seasonsUpcoming"]}
@@ -92,7 +92,7 @@ const UpcomingFreeAgents = ({ players, season }) => {
                 rows={rows}
                 pagination
             />
-        </div>
+        </>
     );
 };
 

@@ -45,7 +45,7 @@ class FantasyDraft extends React.Component {
         }
 
         return (
-            <div>
+            <>
                 <h1>
                     Fantasy Draft <NewWindowLink />
                 </h1>
@@ -124,7 +124,7 @@ class FantasyDraft extends React.Component {
                     <b>Warning:</b> Once you start a fantasy draft, there is no
                     going back!
                 </span>
-            </div>
+            </>
         );
     }
 }

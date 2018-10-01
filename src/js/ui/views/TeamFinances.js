@@ -400,7 +400,7 @@ const TeamFinances = ({
     ];
 
     return (
-        <div>
+        <>
             <Dropdown
                 view="team_finances"
                 fields={["teams", "shows"]}
@@ -603,7 +603,7 @@ const TeamFinances = ({
                 footer={footer}
                 rows={rows}
             />
-        </div>
+        </>
     );
 };
 

@@ -707,7 +707,7 @@ const TeamStatDists = ({ season, statsAll }) => {
     setTitle(`Team Stat Distributions - ${season}`);
 
     return (
-        <div>
+        <>
             <Dropdown
                 view="team_stat_dists"
                 fields={["seasons"]}
@@ -785,7 +785,7 @@ const TeamStatDists = ({ season, statsAll }) => {
                         })}
                 </tbody>
             </table>
-        </div>
+        </>
     );
 };
 

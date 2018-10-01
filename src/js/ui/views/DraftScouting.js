@@ -30,7 +30,7 @@ class DraftScouting extends React.Component {
         const cols = getCols("#", "Name", "Pos", "Age", "Ovr", "Pot");
 
         return (
-            <div>
+            <>
                 <h1>
                     Draft Scouting <NewWindowLink />
                 </h1>
@@ -148,7 +148,7 @@ class DraftScouting extends React.Component {
                         );
                     })}
                 </div>
-            </div>
+            </>
         );
     }
 }

@@ -136,7 +136,7 @@ const Standings = ({ confs, playoffsByConference, season }) => {
     }
 
     return (
-        <div>
+        <>
             <Dropdown view="standings" fields={["seasons"]} values={[season]} />
             <JumpTo season={season} />
             <h1>
@@ -166,7 +166,7 @@ const Standings = ({ confs, playoffsByConference, season }) => {
                     </div>
                 </div>
             ))}
-        </div>
+        </>
     );
 };
 

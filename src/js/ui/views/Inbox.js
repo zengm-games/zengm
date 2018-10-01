@@ -17,7 +17,7 @@ const Inbox = ({
     setTitle("Inbox");
 
     return (
-        <div>
+        <>
             <h1>
                 Inbox <NewWindowLink />
             </h1>
@@ -76,7 +76,7 @@ const Inbox = ({
                     })}
                 </tbody>
             </table>
-        </div>
+        </>
     );
 };
 

@@ -36,7 +36,7 @@ const Playoffs = ({
     const numRounds = numGamesToWinSeries.length;
 
     return (
-        <div>
+        <>
             <Dropdown view="playoffs" fields={["seasons"]} values={[season]} />
             <JumpTo season={season} />
             <h1>
@@ -92,7 +92,7 @@ const Playoffs = ({
                     </tbody>
                 </table>
             </div>
-        </div>
+        </>
     );
 };
 

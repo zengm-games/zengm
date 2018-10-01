@@ -19,19 +19,15 @@ const Relatives = ({ relatives }) => {
         return null;
     }
 
-    return (
-        <span>
-            {relatives.map(({ type, pid, name }) => {
-                return (
-                    <span key={pid}>
-                        {upperCaseFirstLetter(type)}:{" "}
-                        <a href={helpers.leagueUrl(["player", pid])}>{name}</a>
-                        <br />
-                    </span>
-                );
-            })}
-        </span>
-    );
+    return relatives.map(({ type, pid, name }) => {
+        return (
+            <span key={pid}>
+                {upperCaseFirstLetter(type)}:{" "}
+                <a href={helpers.leagueUrl(["player", pid])}>{name}</a>
+                <br />
+            </span>
+        );
+    });
 };
 
 Relatives.propTypes = {
@@ -42,13 +38,21 @@ const RatingsOverview = ({ ratings }) => {
     const r = ratings.length - 1;
 
     return (
-        <div>
-            <div className="row">
+        <>
+            <div className="d-none d-lg-flex row">
+                <div className="col-lg-8">
+                    <h3>Overall: {ratings[r].ovr}</h3>
+                </div>
+                <div className="col-lg-4">
+                    <h3>Potential: {ratings[r].pot}</h3>
+                </div>
+            </div>
+            <div className="d-lg-none row">
                 <div className="col-6">
-                    <h2>Overall: {ratings[r].ovr}</h2>
+                    <h3>Overall: {ratings[r].ovr}</h3>
                 </div>
                 <div className="col-6">
-                    <h2 className="float-right">Potential: {ratings[r].pot}</h2>
+                    <h3 className="float-right">Potential: {ratings[r].pot}</h3>
                 </div>
             </div>
             <div className="row">
@@ -92,7 +96,7 @@ const RatingsOverview = ({ ratings }) => {
                     Rebounding: {ratings[r].reb}
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 
@@ -530,7 +534,7 @@ const Player = ({
     const statsPlayoffs = player.stats.filter(ps => ps.playoffs);
 
     return (
-        <div>
+        <>
             <div className="row">
                 <div className="col-sm-6">
                     <h1>
@@ -811,7 +815,7 @@ const Player = ({
                     {events.length === 0 ? <p>None</p> : null}
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 

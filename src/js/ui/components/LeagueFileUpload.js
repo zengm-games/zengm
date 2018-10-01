@@ -128,7 +128,7 @@ class LeagueFileUpload extends React.Component<Props, State> {
 
     render() {
         return (
-            <div>
+            <>
                 <input
                     type="file"
                     onClick={resetFileInput}
@@ -168,7 +168,7 @@ class LeagueFileUpload extends React.Component<Props, State> {
                         Parsing league file...
                     </p>
                 ) : null}
-            </div>
+            </>
         );
     }
 }

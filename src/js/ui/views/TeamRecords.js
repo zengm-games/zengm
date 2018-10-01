@@ -76,7 +76,7 @@ const TeamRecords = ({ byType, seasonCount, teamRecords }) => {
     });
 
     return (
-        <div>
+        <>
             <Dropdown
                 view="team_records"
                 fields={["teamRecordType"]}
@@ -103,7 +103,7 @@ const TeamRecords = ({ byType, seasonCount, teamRecords }) => {
                 name="TeamRecords"
                 rows={rows}
             />
-        </div>
+        </>
     );
 };
 

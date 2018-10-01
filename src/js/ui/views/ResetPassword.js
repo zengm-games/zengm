@@ -124,7 +124,7 @@ class ResetPassword extends React.Component {
         setTitle("Reset Password");
 
         const form = (
-            <div>
+            <>
                 <p>Enter a new password for your account below.</p>
                 <form id="resetpw" onSubmit={this.handleSubmit}>
                     <input type="hidden" name="sport" value={SPORT} />
@@ -190,11 +190,11 @@ class ResetPassword extends React.Component {
                         {this.state.resetpwError}
                     </p>
                 </form>
-            </div>
+            </>
         );
 
         return (
-            <div>
+            <>
                 <div className="row">
                     <div className="col-lg-4 col-md-4 col-sm-3 hidden-xs" />
                     <div className="col-lg-4 col-md-4 col-sm-6">
@@ -212,7 +212,7 @@ class ResetPassword extends React.Component {
                         </p>
                     </div>
                 </div>
-            </div>
+            </>
         );
     }
 }

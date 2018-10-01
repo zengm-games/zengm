@@ -157,7 +157,7 @@ class FreeAgents extends React.Component {
         });
 
         return (
-            <div>
+            <>
                 <h1>
                     Free Agents <NewWindowLink />
                 </h1>
@@ -197,7 +197,7 @@ class FreeAgents extends React.Component {
                     rows={rows}
                     addFilters={this.state.addFilters}
                 />
-            </div>
+            </>
         );
     }
 }

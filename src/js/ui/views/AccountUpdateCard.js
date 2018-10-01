@@ -117,15 +117,15 @@ class AccountUpdateCard extends React.Component {
         }
         if (errorMessage) {
             return (
-                <div>
+                <>
                     <h1>Error</h1>
                     <p>{errorMessage}</p>
-                </div>
+                </>
             );
         }
 
         return (
-            <div>
+            <>
                 <h1>Update Card</h1>
 
                 <h3>Saved Card Info</h3>
@@ -211,7 +211,7 @@ class AccountUpdateCard extends React.Component {
                         </button>
                     </div>
                 </form>
-            </div>
+            </>
         );
     }
 }

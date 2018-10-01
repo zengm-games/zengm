@@ -183,7 +183,7 @@ const TeamStats = ({
     });
 
     return (
-        <div>
+        <>
             <Dropdown
                 view="team_stats"
                 fields={["seasons", "teamOpponentAdvanced", "playoffs"]}
@@ -230,7 +230,7 @@ const TeamStats = ({
                 name={`TeamStats${teamOpponent === "advanced" ? "Adv" : ""}`}
                 rows={rows}
             />
-        </div>
+        </>
     );
 };
 

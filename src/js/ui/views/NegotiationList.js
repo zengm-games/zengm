@@ -94,7 +94,7 @@ const NegotiationList = ({
     });
 
     return (
-        <div>
+        <>
             <h1>
                 Re-sign Players <NewWindowLink />
             </h1>
@@ -125,7 +125,7 @@ const NegotiationList = ({
                 name="NegotiationList"
                 rows={rows}
             />
-        </div>
+        </>
     );
 };
 

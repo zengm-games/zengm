@@ -7,7 +7,7 @@ const PlayerRatingDists = ({ ratingsAll, season }) => {
     setTitle(`Player Rating Distributions - ${season}`);
 
     return (
-        <div>
+        <>
             <Dropdown
                 view="player_rating_dists"
                 fields={["seasons"]}
@@ -60,7 +60,7 @@ const PlayerRatingDists = ({ ratingsAll, season }) => {
                     })}
                 </tbody>
             </table>
-        </div>
+        </>
     );
 };
 

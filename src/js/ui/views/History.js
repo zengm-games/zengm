@@ -16,15 +16,15 @@ const History = ({
 
     if (invalidSeason) {
         return (
-            <div>
+            <>
                 <h1>Error</h1>
                 <p>Invalid season.</p>
-            </div>
+            </>
         );
     }
 
     return (
-        <div>
+        <>
             <Dropdown view="history" fields={["seasons"]} values={[season]} />
             <JumpTo season={season} />
             <h1>
@@ -477,7 +477,7 @@ const History = ({
                     </p>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 

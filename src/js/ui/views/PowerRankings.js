@@ -37,7 +37,7 @@ const PowerRankings = ({ teams, userTid }) => {
     });
 
     return (
-        <div>
+        <>
             <h1>
                 Power Rankings <NewWindowLink />
             </h1>
@@ -56,7 +56,7 @@ const PowerRankings = ({ teams, userTid }) => {
                 name="PowerRankings"
                 rows={rows}
             />
-        </div>
+        </>
     );
 };
 

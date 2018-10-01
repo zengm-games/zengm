@@ -10,7 +10,7 @@ const awardName = (award, season, teamAbbrevsCache, userTid) => {
     }
 
     const ret = (
-        <span>
+        <>
             <PlayerNameLabels pid={award.pid}>{award.name}</PlayerNameLabels> (
             <a
                 href={helpers.leagueUrl([
@@ -22,7 +22,7 @@ const awardName = (award, season, teamAbbrevsCache, userTid) => {
                 {teamAbbrevsCache[award.tid]}
             </a>
             )
-        </span>
+        </>
     );
 
     // This is our team.
@@ -38,12 +38,12 @@ const awardName = (award, season, teamAbbrevsCache, userTid) => {
 const teamName = (t, season) => {
     if (t) {
         return (
-            <span>
+            <>
                 <a href={helpers.leagueUrl(["roster", t.abbrev, season])}>
                     {t.region}
                 </a>{" "}
                 ({t.won}-{t.lost})
-            </span>
+            </>
         );
     }
 
@@ -116,7 +116,7 @@ const HistoryAll = ({ seasons, teamAbbrevsCache, userTid }) => {
     });
 
     return (
-        <div>
+        <>
             <h1>
                 League History <NewWindowLink />
             </h1>
@@ -135,7 +135,7 @@ const HistoryAll = ({ seasons, teamAbbrevsCache, userTid }) => {
                 pagination
                 rows={rows}
             />
-        </div>
+        </>
     );
 };
 

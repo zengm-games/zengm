@@ -71,7 +71,7 @@ const LeagueDashboard = ({
     }
 
     return (
-        <div>
+        <>
             <h1>
                 {region} {name} Dashboard <NewWindowLink />
             </h1>
@@ -522,7 +522,7 @@ const LeagueDashboard = ({
                 </table>
             </div>
             <a href={helpers.leagueUrl(["roster"])}>» Full Roster</a>
-        </div>
+        </>
     );
 };
 

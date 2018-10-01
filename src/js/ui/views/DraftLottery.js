@@ -281,7 +281,7 @@ class DraftLottery extends React.Component<Props, State> {
         }
 
         return (
-            <div>
+            <>
                 <Dropdown
                     view="draft_lottery"
                     fields={["seasons"]}
@@ -326,7 +326,7 @@ class DraftLottery extends React.Component<Props, State> {
                 ) : null}
 
                 {table}
-            </div>
+            </>
         );
     }
 }

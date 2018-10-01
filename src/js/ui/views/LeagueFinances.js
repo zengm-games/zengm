@@ -50,7 +50,7 @@ const LeagueFinances = ({
     });
 
     return (
-        <div>
+        <>
             <Dropdown
                 view="league_finances"
                 fields={["seasons"]}
@@ -83,7 +83,7 @@ const LeagueFinances = ({
                 name="LeagueFinances"
                 rows={rows}
             />
-        </div>
+        </>
     );
 };
 

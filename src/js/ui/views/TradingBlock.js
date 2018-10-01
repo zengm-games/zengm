@@ -321,7 +321,7 @@ class TradingBlock extends React.Component {
         });
 
         return (
-            <div>
+            <>
                 <h1>
                     Trading Block <NewWindowLink />
                 </h1>
@@ -422,7 +422,7 @@ class TradingBlock extends React.Component {
                         </center>
                     </div>
                 ) : null}
-            </div>
+            </>
         );
     }
 }

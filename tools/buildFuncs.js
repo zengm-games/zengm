@@ -66,7 +66,11 @@ const buildSW = async () => {
         swSrc: "src/sw.js",
         swDest: "build/sw.js",
         globDirectory: "build",
-        globPatterns: ["**/*.{js,css,html}", "fonts/*.woff", "img/logos/*.png"],
+        globPatterns: [
+            "**/*.{js,css,html}",
+            "fonts/*.woff2",
+            "img/logos/*.png",
+        ],
         dontCacheBustUrlsMatching: new RegExp("gen/(ui|worker)-.*.js"),
 
         // Changing default is only needed for unminified versions from watch-js

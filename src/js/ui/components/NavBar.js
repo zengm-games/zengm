@@ -429,7 +429,7 @@ PlayMenu.propTypes = {
 };
 
 type Props = {
-    pageId?: string,
+    pageID?: string,
     updating: boolean,
 };
 
@@ -460,7 +460,7 @@ class NavBar extends React.Component<Props, State> {
 
     render() {
         return subscribeLocal(local => {
-            const { pageId, updating } = this.props;
+            const { pageID, updating } = this.props;
 
             const {
                 lid,
@@ -515,7 +515,7 @@ class NavBar extends React.Component<Props, State> {
             // Hide phase and status, to prevent revealing that the playoffs has ended, thus spoiling a 3-0/3-1/3-2 finals
             // game. This is needed because game sim happens before the results are displayed in liveGame.
             const phaseStatusBlock =
-                pageId === "liveGame" ? (
+                pageID === "liveGame" ? (
                     <span
                         className="navbar-text"
                         style={{ lineHeight: 1.35, marginLeft: 16, padding: 0 }}
@@ -591,7 +591,7 @@ class NavBar extends React.Component<Props, State> {
 }
 
 NavBar.propTypes = {
-    pageId: PropTypes.string,
+    pageID: PropTypes.string,
     updating: PropTypes.bool.isRequired,
 };
 

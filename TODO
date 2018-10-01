@@ -33,6 +33,8 @@ Object.assign to @babel/plugin-proposal-object-rest-spread
 
 <> </>
 
+reevaluate manual - remove performance section
+
 typescript
 - https://github.com/bcherny/flow-to-typescript
 - FlowFixMe

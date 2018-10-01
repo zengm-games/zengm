@@ -309,15 +309,12 @@ class Controller extends React.Component<{}, State> {
         const { Component, data, loading, inLeague } = this.state;
 
         let contents;
-        let pageId;
+        const pageID = this.idLoading || this.idLoaded; // idLoading, idLoaded, or undefined
         if (!Component) {
             contents = <h1 style={{ textAlign: "center" }}>Loading...</h1>; // Nice, aligned with splash screen
         } else if (!inLeague) {
             contents = <Component {...data} />;
         } else {
-            pageId =
-                this.idLoading !== undefined ? this.idLoading : this.idLoaded;
-
             contents = (
                 <>
                     <LeagueContent
@@ -332,10 +329,10 @@ class Controller extends React.Component<{}, State> {
 
         return (
             <Provider>
-                <NavBar pageId={pageId} updating={loading} />
+                <NavBar pageID={pageID} updating={loading} />
                 <div className="bbgm-container">
                     <Header />
-                    <SideBar lid={local.state.lid} pageID={pageId} />
+                    <SideBar lid={local.state.lid} pageID={pageID} />
                     <div
                         className="p402_premium"
                         id="actual-content"

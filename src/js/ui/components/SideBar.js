@@ -109,7 +109,6 @@ class SideBar extends React.Component<Props> {
 
     render() {
         const { lid, pageID } = this.props;
-        console.log(this.props);
 
         return (
             <div className="bg-light sidebar">
@@ -131,7 +130,7 @@ class SideBar extends React.Component<Props> {
 
 SideBar.propTypes = {
     lid: PropTypes.number,
-    pageID: PropTypes.string.isRequired,
+    pageID: PropTypes.string,
 };
 
 export default SideBar;

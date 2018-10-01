@@ -368,6 +368,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
         children: [
             {
                 type: "link",
+                active: pageID => pageID === "account",
                 league: true,
                 nonLeague: true,
                 path: "/account",
@@ -513,6 +514,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
             },
             {
                 type: "link",
+                active: pageID => pageID === "changes",
                 league: true,
                 nonLeague: true,
                 path: "/changes",

@@ -24,8 +24,8 @@ bootstrap 4
 - screen reader
 - react-overlays
 - colors in popover
-- achievements list on account page
 - go over all css files, anything obsolete?
+  - all colors #
 
 Object.assign to @babel/plugin-proposal-object-rest-spread
 

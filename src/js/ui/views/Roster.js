@@ -139,26 +139,14 @@ PlayingTime.propTypes = {
     userTid: PropTypes.number.isRequired,
 };
 
-const ReorderHandle = SortableHandle(({ i, isSorting, pid, selectedPid }) => {
-    let backgroundColor = "rgb(91, 192, 222)";
-    if (selectedPid === pid) {
-        backgroundColor = "#d9534f";
-    } else if (selectedPid !== undefined) {
-        if (i <= 4) {
-            backgroundColor = "rgba(66, 139, 202, 0.6)";
-        } else {
-            backgroundColor = "rgba(91, 192, 222, 0.6)";
-        }
-    } else if (i <= 4) {
-        backgroundColor = "rgb(66, 139, 202)";
-    }
-
+const ReorderHandle = SortableHandle(({ i, isSorting }) => {
     return (
         <td
             className={classNames("roster-handle", {
+                "bg-primary": i <= 4,
+                "bg-secondary": i > 4,
                 "user-select-none": isSorting,
             })}
-            style={{ backgroundColor }}
         />
     );
 });
@@ -166,8 +154,6 @@ const ReorderHandle = SortableHandle(({ i, isSorting, pid, selectedPid }) => {
 ReorderHandle.propTypes = {
     i: PropTypes.number.isRequired,
     isSorting: PropTypes.bool.isRequired,
-    pid: PropTypes.number.isRequired,
-    selectedPid: PropTypes.number,
 };
 
 const RosterRow = SortableElement(
@@ -181,7 +167,6 @@ const RosterRow = SortableElement(
             p,
             phase,
             season,
-            selectedPid,
             showTradeFor,
             toggleClicked,
             userTid,
@@ -194,12 +179,7 @@ const RosterRow = SortableElement(
                 data-pid={p.pid}
             >
                 {editable ? (
-                    <ReorderHandle
-                        i={i}
-                        isSorting={isSorting}
-                        pid={p.pid}
-                        selectedPid={selectedPid}
-                    />
+                    <ReorderHandle i={i} isSorting={isSorting} />
                 ) : null}
                 <td onClick={toggleClicked}>
                     <PlayerNameLabels
@@ -291,7 +271,6 @@ RosterRow.propTypes = {
     p: PropTypes.object.isRequired,
     phase: PropTypes.number.isRequired,
     season: PropTypes.number.isRequired,
-    selectedPid: PropTypes.number,
     showTradeFor: PropTypes.bool.isRequired,
     userTid: PropTypes.number.isRequired,
 };
@@ -304,7 +283,6 @@ const TBody = SortableContainer(
         phase,
         players,
         season,
-        selectedPid,
         showTradeFor,
         userTid,
     }) => {
@@ -322,7 +300,6 @@ const TBody = SortableContainer(
                             p={p}
                             phase={phase}
                             season={season}
-                            selectedPid={selectedPid}
                             showTradeFor={showTradeFor}
                             userTid={userTid}
                         />
@@ -340,7 +317,6 @@ TBody.propTypes = {
     phase: PropTypes.number.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     season: PropTypes.number.isRequired,
-    selectedPid: PropTypes.number,
     showTradeFor: PropTypes.bool.isRequired,
     userTid: PropTypes.number.isRequired,
 };
@@ -350,7 +326,6 @@ class Roster extends React.Component {
         super(props);
         this.state = {
             isSorting: false,
-            selectedPid: undefined,
             sortedPids: undefined,
         };
 
@@ -518,9 +493,9 @@ class Roster extends React.Component {
                 {editable ? (
                     <p>
                         Drag row handles to move players between the starting
-                        lineup (<span className="roster-starter">&#9632;</span>)
+                        lineup (<span className="text-primary">&#9632;</span>)
                         and the bench (
-                        <span className="roster-bench">&#9632;</span>
+                        <span className="text-secondary">&#9632;</span>
                         ).
                     </p>
                 ) : null}
@@ -647,7 +622,6 @@ class Roster extends React.Component {
                             onSortStart={this.handleOnSortStart}
                             phase={phase}
                             season={season}
-                            selectedPid={this.state.selectedPid}
                             showTradeFor={showTradeFor}
                             transitionDuration={0}
                             useDragHandle

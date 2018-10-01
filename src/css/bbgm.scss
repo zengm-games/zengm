@@ -136,6 +136,7 @@ ul.dashboard-boxes {
         }
 
         a.league {
+            color: $gray-800;
             display: block;
             height: 77px;
             line-height: 1.35;
@@ -293,14 +294,6 @@ table {
     max-width: 36px;
     min-width: 36px;
     width: 36px;
-}
-
-.roster-starter {
-    color: #428bca;
-}
-
-.roster-bench {
-    color: #5bc0de;
 }
 
 .game-log-list {
@@ -493,30 +486,29 @@ table {
     height: 100px;
 }
 
-// From bootstrap
 .bar-graph-1 {
-    background-color: #049cdb;
+    background-color: $blue;
 }
 .bar-graph-2 {
-    background-color: #f89406;
+    background-color: $pink;
 }
 .bar-graph-3 {
-    background-color: #9d261d;
+    background-color: $yellow;
 }
 .bar-graph-4 {
-    background-color: #ffc40d;
+    background-color: $cyan;
 }
 .bar-graph-5 {
-    background-color: #7a43b6;
+    background-color: $indigo;
 }
 .bar-graph-6 {
-    background-color: #46a546;
+    background-color: $red;
 }
 .bar-graph-7 {
-    background-color: #c3325f;
+    background-color: $green;
 }
 .bar-graph-8 {
-    background-color: #444;
+    background-color: $orange;
 }
 
 .icon-question-sign {

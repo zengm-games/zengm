@@ -276,7 +276,9 @@ const LeagueDashboard = ({
                                                 <tr
                                                     key={m.mid}
                                                     className={
-                                                        m.read ? "" : "unread"
+                                                        m.read
+                                                            ? null
+                                                            : "font-weight-bold"
                                                     }
                                                 >
                                                     <td className="year">

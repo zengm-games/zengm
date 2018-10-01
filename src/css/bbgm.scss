@@ -17,7 +17,6 @@ body {
 .skyscraper-wrapper {
     display: none;
 }
-
 @include media-breakpoint-up(xl) {
     .bbgm-container {
         max-width: map-get($grid-breakpoints, xl);
@@ -106,10 +105,6 @@ body {
     @extend .text-white;
 }
 
-.dropdown-item {
-    cursor: pointer;
-}
-
 .kbd-parent {
     position: relative;
     padding-right: 70px;
@@ -184,10 +179,6 @@ ul.dashboard-boxes {
 .dashboard-box-loading {
     font-weight: bold;
     margin-top: 26px;
-}
-
-.difficulty-insane-plus {
-    font-weight: bold;
 }
 
 @-moz-keyframes oscillate-bg {
@@ -596,10 +587,6 @@ table {
     }
 }
 
-.unread {
-    font-weight: bold;
-}
-
 .new_window {
     cursor: pointer;
 }
@@ -633,10 +620,6 @@ table {
         margin-bottom: 9px;
         padding-left: 18px;
     }
-}
-
-.strong {
-    font-weight: bold;
 }
 
 // HACK so that the td.info class can be overriden in teamHistory (and possibly

@@ -37,7 +37,9 @@ const Inbox = ({
                         return (
                             <tr
                                 key={mid}
-                                className={classNames({ unread: !read })}
+                                className={classNames({
+                                    "font-weight-bold": !read,
+                                })}
                             >
                                 <td className="year">
                                     <a

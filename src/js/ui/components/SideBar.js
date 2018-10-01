@@ -22,7 +22,14 @@ MenuGroup.propTypes = {
     children: PropTypes.any.isRequired,
 };
 
-const MenuItem = ({ menuItem, pageID, root }) => {
+const MenuItem = ({ lid, menuItem, pageID, root }) => {
+    if (!menuItem.league && lid !== undefined) {
+        return null;
+    }
+    if (!menuItem.nonLeague && lid === undefined) {
+        return null;
+    }
+
     if (menuItem.type === "link") {
         if (menuItem.godMode && !local.state.godMode) {
             return null;
@@ -61,19 +68,25 @@ const MenuItem = ({ menuItem, pageID, root }) => {
     }
 
     if (menuItem.type === "header") {
+        const children = menuItem.children
+            .map((child, i) => (
+                <MenuItem
+                    lid={lid}
+                    key={i}
+                    menuItem={child}
+                    pageID={pageID}
+                    root={false}
+                />
+            ))
+            .filter(element => element !== null);
+        if (children.length === 0) {
+            return null;
+        }
+
         return (
             <>
                 <h6 className="sidebar-heading px-3">{menuItem.long}</h6>
-                <MenuGroup>
-                    {menuItem.children.map((child, i) => (
-                        <MenuItem
-                            key={i}
-                            menuItem={child}
-                            pageID={pageID}
-                            root={false}
-                        />
-                    ))}
-                </MenuGroup>
+                <MenuGroup>{children}</MenuGroup>
             </>
         );
     }
@@ -87,7 +100,7 @@ type Props = {
 };
 
 class SideBar extends React.Component<Props> {
-    shouldComponentUpdate(nextProps) {
+    shouldComponentUpdate(nextProps: Props) {
         return (
             this.props.pageID !== nextProps.pageID ||
             this.props.lid !== nextProps.lid
@@ -95,13 +108,15 @@ class SideBar extends React.Component<Props> {
     }
 
     render() {
-        const pageID = this.props.pageID;
+        const { lid, pageID } = this.props;
+        console.log(this.props);
 
         return (
             <div className="bg-light sidebar">
                 <div className="sidebar-sticky">
                     {menuItems.map((menuItem, i) => (
                         <MenuItem
+                            lid={lid}
                             key={i}
                             menuItem={menuItem}
                             pageID={pageID}

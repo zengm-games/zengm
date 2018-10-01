@@ -14,11 +14,10 @@ bootstrap 4
     - add them all, and keep side menu open when not in league too?
     - come up with generic way of specifying menu, use to generate both
       - _blank only for https
-    - better way for highlighting - needs to support pages outside of league (changes, achievements, etc)
+    - better way for highlighting - needs to support pages outside of league (changes, achievements, new league)
   - listen to god mode and lid changes - test
   - need to specify if it is a league-specific URL or not
   - screenshot not wokring
-  - move "reset db" to main dashboard
   - delete handleScreenshot and handleToolsClick from NavBar
   - confirm GCS still works
 - navbar dropdowns when moving between with mouse, original clicked one is still somewhat highlighted

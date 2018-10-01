@@ -347,7 +347,7 @@ const toolsMenu = {
         const response = await toUI(
             [
                 "confirm",
-                "Are you sure you want to reset the database? This will delete ALL data in ALL of your leagues.",
+                "Are you sure you want to delete ALL data in ALL of your leagues?",
             ],
             conditions,
         );

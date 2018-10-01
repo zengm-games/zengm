@@ -371,36 +371,27 @@ const Account = ({
                 never used God Mode or set the difficulty to Easy.
             </p>
 
-            <div className="row" style={{ marginTop: -20 }}>
+            <div className="card-columns">
                 {achievements.map(achievement => {
-                    if (Math.random() > 0.5) {
-                        achievement.count = 50;
-                    }
                     return (
                         <div
-                            className="col-12 col-sm-6 col-md-4 col-lg-3"
+                            className={classNames("card", {
+                                "list-group-item-success":
+                                    achievement.count > 0,
+                                "text-muted": achievement.count === 0,
+                            })}
                             key={achievement.slug}
                         >
-                            <div
-                                className={classNames("card", "mt-3", {
-                                    "list-group-item-success":
-                                        achievement.count > 0,
-                                    "text-muted": achievement.count === 0,
-                                })}
-                            >
-                                <div className="card-body">
-                                    <h5 className="card-title">
-                                        {achievement.name}
-                                        {achievement.count > 1 ? (
-                                            <span className="badge badge-pill badge-secondary float-right">
-                                                {achievement.count}
-                                            </span>
-                                        ) : null}
-                                    </h5>
-                                    <p className="card-text">
-                                        {achievement.desc}
-                                    </p>
-                                </div>
+                            <div className="card-body">
+                                <h5 className="card-title">
+                                    {achievement.name}
+                                    {achievement.count > 1 ? (
+                                        <span className="badge badge-pill badge-secondary float-right">
+                                            {achievement.count}
+                                        </span>
+                                    ) : null}
+                                </h5>
+                                <p className="card-text">{achievement.desc}</p>
                             </div>
                         </div>
                     );

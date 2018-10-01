@@ -28,9 +28,7 @@ bootstrap 4
 - go over all css files, anything obsolete?
   - all colors #
 - labels in login forms, etc - not bold, why?
-- https://getbootstrap.com/docs/4.1/components/forms/ - new way for checkbox/radio
 - Replaced .has-error, .has-warning, and .has-success classes with HTML5 form validation via CSS’s :invalid and :valid pseudo-classes.
-- Replaced a.list-group-item with an explicit class, .list-group-item-action, for styling link and button versions of list group items.
 - table/header spacing, everywhere, such as player page
 - only import bootstrap features i actually use
 - reevaluate glyphicons import, only include fonts that are actually necessary

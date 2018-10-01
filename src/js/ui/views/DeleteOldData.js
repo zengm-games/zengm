@@ -75,49 +75,53 @@ class DeleteOldData extends React.Component {
                 </p>
 
                 <form onSubmit={this.handleSubmit}>
-                    <div className="checkbox">
-                        <label>
+                    <div className="form-check">
+                        <label className="form-check-label">
                             <input
+                                className="form-check-input"
                                 onChange={this.handleChanges.boxScores}
                                 type="checkbox"
                                 checked={this.state.boxScores}
-                            />{" "}
+                            />
                             Delete Old Box Scores{" "}
                             <a href={helpers.leagueUrl(["options"])}>
                                 (done automatically by default)
                             </a>
                         </label>
                     </div>
-                    <div className="checkbox">
-                        <label>
+                    <div className="form-check">
+                        <label className="form-check-label">
                             <input
+                                className="form-check-input"
                                 onChange={this.handleChanges.teamStats}
                                 type="checkbox"
                                 checked={this.state.teamStats}
-                            />{" "}
+                            />
                             Delete Old Team Stats
                         </label>
                     </div>
-                    <div className="checkbox">
-                        <label>
+                    <div className="form-check">
+                        <label className="form-check-label">
                             <input
+                                className="form-check-input"
                                 onChange={this.handleChanges.teamHistory}
                                 type="checkbox"
                                 checked={this.state.teamHistory}
-                            />{" "}
+                            />
                             Delete Old Team History (stuff like W/L, finances,
                             etc)
                         </label>
                     </div>
-                    <div className="checkbox">
-                        <label>
+                    <div className="form-check">
+                        <label className="form-check-label">
                             <input
+                                className="form-check-input"
                                 onChange={
                                     this.handleChanges.retiredPlayersUnnotable
                                 }
                                 type="checkbox"
                                 checked={this.state.retiredPlayersUnnotable}
-                            />{" "}
+                            />
                             Delete Unnotable Retired Players
                             <br />
                             <i>
@@ -126,25 +130,27 @@ class DeleteOldData extends React.Component {
                             </i>
                         </label>
                     </div>
-                    <div className="checkbox">
-                        <label>
+                    <div className="form-check">
+                        <label className="form-check-label">
                             <input
+                                className="form-check-input"
                                 onChange={this.handleChanges.retiredPlayers}
                                 type="checkbox"
                                 checked={this.state.retiredPlayers}
-                            />{" "}
+                            />
                             Delete <b>All</b> Retired Players
                         </label>
                     </div>
-                    <div className="checkbox">
-                        <label>
+                    <div className="form-check">
+                        <label className="form-check-label">
                             <input
+                                className="form-check-input"
                                 onChange={
                                     this.handleChanges.playerStatsUnnotable
                                 }
                                 type="checkbox"
                                 checked={this.state.playerStatsUnnotable}
-                            />{" "}
+                            />
                             Delete Unnotable Player Stats and Ratings
                             <br />
                             <i>
@@ -153,18 +159,19 @@ class DeleteOldData extends React.Component {
                             </i>
                         </label>
                     </div>
-                    <div className="checkbox">
-                        <label>
+                    <div className="form-check">
+                        <label className="form-check-label">
                             <input
+                                className="form-check-input"
                                 onChange={this.handleChanges.playerStats}
                                 type="checkbox"
                                 checked={this.state.playerStats}
-                            />{" "}
+                            />
                             Delete <b>All</b> Player Stats and Ratings
                         </label>
                     </div>
 
-                    <p className="alert alert-danger">
+                    <p className="alert alert-danger mt-3">
                         <b>Warning!</b> Once you delete old data, it's
                         completely gone! There's no going back! This can impact
                         your players making the Hall of Fame and the completion

@@ -123,13 +123,14 @@ class ExportLeague extends React.Component {
 
                 <form onSubmit={this.handleSubmit}>
                     {categories.map(cat => (
-                        <div key={cat.name} className="checkbox">
-                            <label>
+                        <div key={cat.name} className="form-check">
+                            <label className="form-check-label">
                                 <input
+                                    className="form-check-input"
                                     type="checkbox"
                                     value={cat.objectStores}
                                     defaultChecked={cat.checked}
-                                />{" "}
+                                />
                                 {cat.name}
                                 <p className="text-muted">{cat.desc}</p>
                             </label>

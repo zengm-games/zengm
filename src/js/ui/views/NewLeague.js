@@ -332,16 +332,17 @@ class NewLeague extends React.Component {
                                             onDone={this.onNewLeagueFile}
                                         />
                                     </div>
-                                    <div className="checkbox">
-                                        <label>
+                                    <div className="form-check mt-3">
+                                        <label className="form-check-label">
                                             <input
+                                                className="form-check-input"
                                                 onChange={
                                                     this.handleChanges
                                                         .randomizeRosters
                                                 }
                                                 type="checkbox"
                                                 value={randomizeRosters}
-                                            />{" "}
+                                            />
                                             Shuffle Rosters
                                         </label>
                                     </div>

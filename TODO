@@ -30,7 +30,6 @@ bootstrap 4
 - labels in login forms, etc - not bold, why?
 - Replaced .has-error, .has-warning, and .has-success classes with HTML5 form validation via CSS’s :invalid and :valid pseudo-classes.
 - table/header spacing, everywhere, such as player page
-- only import bootstrap features i actually use
 - reevaluate glyphicons import, only include fonts that are actually necessary
 - help-block -> form-text
 

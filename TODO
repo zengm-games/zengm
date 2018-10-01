@@ -34,7 +34,7 @@ bootstrap 4
 
 Object.assign to @babel/plugin-proposal-object-rest-spread
 
-<> </>
+login -> account -> doesn't say logged in, sometimes? but account shows in navbar
 
 reevaluate manual - remove performance section
 

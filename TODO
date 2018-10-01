@@ -21,7 +21,6 @@ bootstrap 4
     - if can't figure it out, somehow turn it into a modal
 - firefox
 - safari
-  - safari 10 not working, maybe minification
 - screen reader
 - react-overlays
 - colors in popover

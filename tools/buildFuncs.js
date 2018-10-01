@@ -124,10 +124,8 @@ const minifyJS = (name /*: string */) => {
     const data = fs.readFileSync(`build/${name}`, "utf8");
 
     const result = Terser.minify(data, {
-        mangle: {
-            // Needed until https://bugs.webkit.org/show_bug.cgi?id=171041 is fixed
-            safari10: true,
-        },
+        // Needed until https://bugs.webkit.org/show_bug.cgi?id=171041 is fixed
+        safari10: true,
         sourceMap: {
             content: "inline",
             filename: `build/${name}`,

@@ -245,8 +245,6 @@ class NewLeague extends React.Component {
                             />
                         </div>
 
-                        <div className="clearfix visible-xs" />
-
                         <div className="form-group col-md-3 col-sm-6">
                             <label>Pick your team</label>
                             <select

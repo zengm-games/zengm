@@ -3,6 +3,10 @@ import React from "react";
 import { getCols, helpers, prefixStatOpp, setTitle } from "../util";
 import { DataTable, Dropdown, JumpTo, NewWindowLink } from "../components";
 
+const legendSquare = className => {
+    return <span className={`bg-${className} legend-square ml-3`} />;
+};
+
 const TeamStats = ({
     playoffs,
     season,
@@ -177,19 +181,6 @@ const TeamStats = ({
             data: Object.values(data),
         };
     });
-
-    function legendSquare(className) {
-        const styles = {
-            bottom: "-2.5px",
-            display: "inline-block",
-            height: "15px",
-            margin: "0 2.5px 0 10px",
-            position: "relative",
-            width: "15px",
-        };
-
-        return <span className={`bg-${className}`} style={styles} />;
-    }
 
     return (
         <div>

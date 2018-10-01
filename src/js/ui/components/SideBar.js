@@ -95,6 +95,7 @@ const MenuItem = ({ lid, menuItem, pageID, root }) => {
 };
 
 type Props = {
+    godMode: boolean,
     lid: number | void,
     pageID: string,
 };
@@ -102,13 +103,14 @@ type Props = {
 class SideBar extends React.Component<Props> {
     shouldComponentUpdate(nextProps: Props) {
         return (
-            this.props.pageID !== nextProps.pageID ||
-            this.props.lid !== nextProps.lid
+            this.props.godMode !== nextProps.godMode ||
+            this.props.lid !== nextProps.lid ||
+            this.props.pageID !== nextProps.pageID
         );
     }
 
     render() {
-        const { lid, pageID } = this.props;
+        const { godMode, lid, pageID } = this.props;
 
         return (
             <div className="bg-light sidebar">
@@ -116,6 +118,7 @@ class SideBar extends React.Component<Props> {
                     {menuItems.map((menuItem, i) => (
                         <MenuItem
                             lid={lid}
+                            godMode={godMode}
                             key={i}
                             menuItem={menuItem}
                             pageID={pageID}
@@ -129,6 +132,7 @@ class SideBar extends React.Component<Props> {
 }
 
 SideBar.propTypes = {
+    godMode: PropTypes.bool.isRequired,
     lid: PropTypes.number,
     pageID: PropTypes.string,
 };

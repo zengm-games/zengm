@@ -332,7 +332,11 @@ class Controller extends React.Component<{}, State> {
                 <NavBar pageID={pageID} updating={loading} />
                 <div className="bbgm-container">
                     <Header />
-                    <SideBar lid={local.state.lid} pageID={pageID} />
+                    <SideBar
+                        godMode={local.state.godMode}
+                        lid={local.state.lid}
+                        pageID={pageID}
+                    />
                     <div
                         className="p402_premium"
                         id="actual-content"

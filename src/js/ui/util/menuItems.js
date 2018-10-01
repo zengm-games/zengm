@@ -128,7 +128,7 @@ type MenuItemLink = {|
     league?: true,
     godMode?: true,
     nonLeague?: true,
-    onClick?: (SyntheticEvent<>) => void,
+    onClick?: (SyntheticEvent<>) => void | Promise<void>,
     path?: string | (number | string)[],
     text:
         | string

@@ -1,7 +1,5 @@
 // @flow
 
-/* eslint react/no-find-dom-node: "off" */
-
 import html2canvas from "html2canvas";
 import PropTypes from "prop-types";
 import * as React from "react";

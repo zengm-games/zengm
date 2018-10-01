@@ -32,6 +32,7 @@ bootstrap 4
 - table/header spacing, everywhere, such as player page
 - reevaluate glyphicons import, only include fonts that are actually necessary
 - help-block -> form-text
+- max-width on some pages, like schedule
 
 Object.assign to @babel/plugin-proposal-object-rest-spread
 

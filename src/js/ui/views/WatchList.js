@@ -1,11 +1,9 @@
 import PropTypes from "prop-types";
 import React from "react";
-import {
-    UncontrolledDropdown,
-    DropdownToggle,
-    DropdownMenu,
-    DropdownItem,
-} from "reactstrap";
+import DropdownItem from "reactstrap/lib/DropdownItem";
+import DropdownMenu from "reactstrap/lib/DropdownMenu";
+import DropdownToggle from "reactstrap/lib/DropdownToggle";
+import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
 import { PLAYER } from "../../common";
 import { getCols, helpers, setTitle, toWorker } from "../util";
 import {

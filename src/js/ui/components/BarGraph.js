@@ -2,7 +2,7 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import { UncontrolledTooltip } from "reactstrap";
+import UncontrolledTooltip from "reactstrap/lib/UncontrolledTooltip";
 
 /**
  * Bar plots, both stacked and normal.

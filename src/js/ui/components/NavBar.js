@@ -3,22 +3,20 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import * as React from "react";
-import {
-    Collapse,
-    Dropdown,
-    Navbar,
-    NavbarToggler,
-    Nav,
-    NavItem,
-    NavLink,
-    UncontrolledDropdown,
-    DropdownToggle,
-    DropdownMenu,
-    DropdownItem,
-    Popover,
-    PopoverBody,
-    PopoverHeader,
-} from "reactstrap";
+import Collapse from "reactstrap/lib/Collapse";
+import Dropdown from "reactstrap/lib/Dropdown";
+import DropdownItem from "reactstrap/lib/DropdownItem";
+import DropdownMenu from "reactstrap/lib/DropdownMenu";
+import DropdownToggle from "reactstrap/lib/DropdownToggle";
+import Nav from "reactstrap/lib/Nav";
+import NavItem from "reactstrap/lib/NavItem";
+import NavLink from "reactstrap/lib/NavLink";
+import Navbar from "reactstrap/lib/Navbar";
+import NavbarToggler from "reactstrap/lib/NavbarToggler";
+import Popover from "reactstrap/lib/Popover";
+import PopoverBody from "reactstrap/lib/PopoverBody";
+import PopoverHeader from "reactstrap/lib/PopoverHeader";
+import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
 import {
     helpers,
     menuItems,

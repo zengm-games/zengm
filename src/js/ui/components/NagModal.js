@@ -2,7 +2,9 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import { Modal, ModalHeader, ModalBody } from "reactstrap";
+import Modal from "reactstrap/lib/Modal";
+import ModalBody from "reactstrap/lib/ModalBody";
+import ModalHeader from "reactstrap/lib/ModalHeader";
 
 type Props = {
     close: () => void,

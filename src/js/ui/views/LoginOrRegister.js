@@ -162,7 +162,7 @@ class LoginOrRegister extends React.Component {
                             <input type="hidden" name="sport" value={SPORT} />
                             <div className="form-group">
                                 <label
-                                    className="control-label"
+                                    className="col-form-label"
                                     htmlFor="login-username"
                                 >
                                     Username
@@ -177,7 +177,7 @@ class LoginOrRegister extends React.Component {
                             </div>
                             <div className="form-group">
                                 <label
-                                    className="control-label"
+                                    className="col-form-label"
                                     htmlFor="login-password"
                                 >
                                     Password
@@ -219,7 +219,7 @@ class LoginOrRegister extends React.Component {
                                 })}
                             >
                                 <label
-                                    className="control-label"
+                                    className="col-form-label"
                                     htmlFor="register-username"
                                 >
                                     Username
@@ -252,7 +252,7 @@ class LoginOrRegister extends React.Component {
                                 })}
                             >
                                 <label
-                                    className="control-label"
+                                    className="col-form-label"
                                     htmlFor="register-email"
                                 >
                                     Email Address
@@ -276,7 +276,7 @@ class LoginOrRegister extends React.Component {
                                 })}
                             >
                                 <label
-                                    className="control-label"
+                                    className="col-form-label"
                                     htmlFor="register-password"
                                 >
                                     Password
@@ -300,7 +300,7 @@ class LoginOrRegister extends React.Component {
                                 })}
                             >
                                 <label
-                                    className="control-label"
+                                    className="col-form-label"
                                     htmlFor="register-password2"
                                 >
                                     Verify Password

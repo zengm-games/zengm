@@ -814,7 +814,7 @@ class DataTable extends React.Component<Props, State> {
                     <div className="dataTables_length">
                         <label>
                             <select
-                                className="form-control input-sm"
+                                className="form-control form-control-sm"
                                 onChange={this.handlePerPage}
                                 style={{ width: "75px" }}
                                 value={this.state.perPage}
@@ -848,9 +848,12 @@ class DataTable extends React.Component<Props, State> {
                             </p>
                         </HelpPopover>
                         <a
-                            className={classNames("btn btn-light-bordered", {
-                                active: this.state.enableFilters,
-                            })}
+                            className={classNames(
+                                "btn btn-sm btn-light-bordered",
+                                {
+                                    active: this.state.enableFilters,
+                                },
+                            )}
                             onClick={this.handleEnableFilters}
                             style={{ marginRight: "6px" }}
                             title="Filter"
@@ -859,7 +862,7 @@ class DataTable extends React.Component<Props, State> {
                         </a>
                         <label>
                             <input
-                                className="form-control input-sm"
+                                className="form-control form-control-sm"
                                 onChange={this.handleSearch}
                                 placeholder="Search"
                                 style={{ width: "200px" }}

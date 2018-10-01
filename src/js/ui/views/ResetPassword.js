@@ -141,7 +141,7 @@ class ResetPassword extends React.Component {
                         })}
                     >
                         <label
-                            className="control-label"
+                            className="col-form-label"
                             htmlFor="resetpw-password"
                         >
                             Password
@@ -164,7 +164,7 @@ class ResetPassword extends React.Component {
                         })}
                     >
                         <label
-                            className="control-label"
+                            className="col-form-label"
                             htmlFor="resetpw-password2"
                         >
                             Verify Password

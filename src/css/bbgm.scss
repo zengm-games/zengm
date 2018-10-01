@@ -17,6 +17,7 @@ body {
 .skyscraper-wrapper {
     display: none;
 }
+
 @include media-breakpoint-up(xl) {
     .bbgm-container {
         max-width: map-get($grid-breakpoints, xl);
@@ -103,6 +104,10 @@ body {
 
     @extend .bg-success;
     @extend .text-white;
+}
+
+.dropdown-item {
+    cursor: pointer;
 }
 
 .kbd-parent {

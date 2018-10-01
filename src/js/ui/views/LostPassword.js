@@ -62,7 +62,7 @@ class LostPassword extends React.Component {
                             <input type="hidden" name="sport" value={SPORT} />
                             <div className="form-group">
                                 <label
-                                    className="control-label"
+                                    className="col-form-label"
                                     htmlFor="lostpw-entry"
                                 >
                                     Username or Email Address

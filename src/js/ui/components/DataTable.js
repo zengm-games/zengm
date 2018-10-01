@@ -280,7 +280,7 @@ const Info = ({ end, numRows, numRowsUnfiltered, start }) => {
             : null;
 
     return (
-        <div className="dataTables_info hidden-xs">
+        <div className="dataTables_info d-none d-sm-block">
             {start} to {end} of {numRows}
             {filteredText}
         </div>

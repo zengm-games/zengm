@@ -16,7 +16,10 @@ const leagueNotFoundMessage = (
             >
                 Create a new league
             </a>
-            <span className="hidden-xs" style={{ marginRight: "3em" }} />
+            <span
+                className="d-none d-sm-inline"
+                style={{ marginRight: "3em" }}
+            />
             <a
                 href="/"
                 className="btn btn-primary btn-lg"

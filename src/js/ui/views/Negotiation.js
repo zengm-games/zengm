@@ -134,10 +134,8 @@ const Negotiation = ({
                 Potential: {player.ratings.pot}
             </p>
 
-            <h3>Contract Options</h3>
-
             <div className="row">
-                <div className="col-sm-8 col-md-6">
+                <div className="col-sm-10 col-md-8 col-lg-6">
                     <div className="list-group">
                         {contractOptions.map((contract, i) => {
                             return (
@@ -154,7 +152,7 @@ const Negotiation = ({
                                         style={{ paddingTop: "8px" }}
                                     >
                                         ${contract.amount.toFixed(2)}M per year
-                                        <span className="hidden-xs">
+                                        <span className="d-none d-sm-inline">
                                             , through {contract.exp}
                                         </span>{" "}
                                         ({contract.years}{" "}
@@ -175,7 +173,7 @@ const Negotiation = ({
                                         }
                                     >
                                         Sign
-                                        <span className="hidden-xs">
+                                        <span className="d-none d-sm-inline">
                                             {" "}
                                             Contract
                                         </span>
@@ -188,7 +186,7 @@ const Negotiation = ({
             </div>
 
             <button
-                className="btn btn-danger"
+                className="btn btn-danger mt-3"
                 onClick={() => cancel(player.pid)}
             >
                 Can't reach a deal? End negotiation

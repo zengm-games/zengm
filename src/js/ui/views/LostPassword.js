@@ -51,7 +51,6 @@ class LostPassword extends React.Component {
         return (
             <>
                 <div className="row">
-                    <div className="col-lg-4 col-md-4 col-sm-3 hidden-xs" />
                     <div className="col-lg-4 col-md-4 col-sm-6">
                         <h1>Lost Password</h1>
                         <p>

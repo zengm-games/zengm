@@ -196,8 +196,7 @@ class ResetPassword extends React.Component {
         return (
             <>
                 <div className="row">
-                    <div className="col-lg-4 col-md-4 col-sm-3 hidden-xs" />
-                    <div className="col-lg-4 col-md-4 col-sm-6">
+                    <div className="col-lg-4 col-md-5 col-sm-6">
                         <h1>Reset Password</h1>
                         {this.state.showForm ? form : null}
                         {this.state.globalErrorMsg ? (

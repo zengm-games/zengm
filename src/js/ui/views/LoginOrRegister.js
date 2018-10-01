@@ -129,8 +129,7 @@ class LoginOrRegister extends React.Component {
             <>
                 <h1 />
                 <div className="row">
-                    <div className="col-lg-3 col-md-2 col-sm-1" />
-                    <div className="col-lg-6 col-md-8 col-sm-9">
+                    <div className="col-sm-12 col-md-10 col-lg-8">
                         <p>Basketball GM accounts enable two features:</p>
                         <ol>
                             <li>
@@ -155,8 +154,7 @@ class LoginOrRegister extends React.Component {
                 </div>
 
                 <div className="row">
-                    <div className="col-lg-2 col-md-1 hidden-sm hidden-xs" />
-                    <div className="col-lg-3 col-md-4 col-sm-5">
+                    <div className="col-sm-6 col-md-5 col-lg-4">
                         <h1>Login</h1>
                         <form onSubmit={this.handleLogin} id="login">
                             <input type="hidden" name="sport" value={SPORT} />
@@ -196,8 +194,7 @@ class LoginOrRegister extends React.Component {
                         </form>
                         <a href="/account/lost_password">Lost password?</a>
                     </div>
-                    <div className="col-sm-2 hidden-xs" />
-                    <div className="col-lg-3 col-md-4 col-sm-5">
+                    <div className="col-sm-6 col-md-5 col-lg-4">
                         <h1>Register</h1>
                         <form onSubmit={this.handleRegister} id="register">
                             <input type="hidden" name="sport" value={SPORT} />

@@ -27,7 +27,7 @@ const Schedule = ({ abbrev, completed, season, upcoming }) => {
                         ))}
                     </ul>
                 </div>
-                <div className="col-sm-6 hidden-xs">
+                <div className="col-sm-6 d-none d-sm-block">
                     <h2>Completed Games</h2>
                     <ul className="list-group">
                         {completed === undefined

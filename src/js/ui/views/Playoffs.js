@@ -51,7 +51,7 @@ const Playoffs = ({
             ) : null}
 
             {confNames.length === 2 && numRounds > 1 ? (
-                <h3 className="hidden-xs">
+                <h3 className="d-none d-sm-block">
                     {confNames[1]}{" "}
                     <span className="float-right">{confNames[0]}</span>
                 </h3>

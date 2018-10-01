@@ -81,13 +81,14 @@ body {
 }
 
 .god-mode,
-.god-mode-menu a {
-    background-color: #563d7c !important;
-    color: #fff !important;
+.god-mode-menu {
+    background-color: #563d7c;
+    color: #fff;
 
     &:hover,
     &:focus {
-        background-color: #4a356b !important;
+        background-color: #4a356b;
+        color: #fff;
     }
 }
 

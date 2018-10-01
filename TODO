@@ -10,16 +10,11 @@ bootstrap 4
 - play menu (and all navbar) menu positioning
 - inIframe
 - responsive menu on side
-  - use side menu from xl? missing tools/help/account
-    - add them all, and keep side menu open when not in league too?
-    - come up with generic way of specifying menu, use to generate both
-      - _blank only for https
-    - better way for highlighting - needs to support pages outside of league (changes, achievements, new league)
+  - better way for highlighting - needs to support pages outside of league (changes, achievements, new league)
   - listen to god mode and lid changes - test
-  - need to specify if it is a league-specific URL or not
-  - screenshot not wokring
-  - delete handleScreenshot and handleToolsClick from NavBar
+    - works in navbar, but not sidebar
   - confirm GCS still works
+  - god mode style on top and side - make same
 - navbar dropdowns when moving between with mouse, original clicked one is still somewhat highlighted
 - navbar dropdowns more clear active state, like bs3 version
 - navbar collapsed state

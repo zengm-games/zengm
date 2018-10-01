@@ -1,6 +1,6 @@
 // @flow
 
-import html2canvas from "html2canvas";
+import classNames from "classnames";
 import PropTypes from "prop-types";
 import * as React from "react";
 import {
@@ -19,10 +19,9 @@ import {
     PopoverBody,
     PopoverHeader,
 } from "reactstrap";
-import { fetchWrapper } from "../../common";
 import {
     helpers,
-    logEvent,
+    menuItems,
     realtimeUpdate,
     subscribeLocal,
     toWorker,
@@ -103,135 +102,101 @@ TopMenuDropdown.propTypes = {
     short: PropTypes.string.isRequired,
 };
 
-const handleScreenshotClick = async e => {
-    e.preventDefault();
-
-    let contentElTemp = document.getElementById("screenshot-league");
-    if (!contentElTemp) {
-        contentElTemp = document.getElementById("screenshot-nonleague");
+const getText = (text): string | React.Element<any> => {
+    if (text.hasOwnProperty("top")) {
+        // $FlowFixMe
+        return text.top;
     }
-    if (!contentElTemp) {
-        throw new Error(
-            "Missing DOM element #screenshot-league or #screenshot-nonleague",
-        );
-    }
-    const contentEl = contentElTemp;
 
-    // Add watermark
-    const watermark = document.createElement("div");
-    const navbarBrands = document.getElementsByClassName("navbar-brand");
-    if (navbarBrands.length === 0) {
-        return;
-    }
-    const navbarBrandParent = navbarBrands[0].parentElement;
-    if (!navbarBrandParent) {
-        return;
-    }
-    watermark.innerHTML = `<nav class="navbar navbar-default"><div class="container-fluid"><div class="navbar-header">${String(
-        navbarBrandParent.innerHTML,
-    )}</div><p class="navbar-text navbar-right" style="color: #000; font-weight: bold">Play your own league free at basketball-gm.com</p></div></nav>`;
-    contentEl.insertBefore(watermark, contentEl.firstChild);
-    contentEl.style.padding = "8px";
-
-    // Add notifications
-    const notifications = document
-        .getElementsByClassName("notification-container")[0]
-        .cloneNode(true);
-    notifications.classList.remove("notification-container");
-    for (let i = 0; i < notifications.childNodes.length; i++) {
-        // Otherwise screeenshot is taken before fade in is complete
-        const el = notifications.children[0];
-        if (el.classList && typeof el.classList.remove === "function") {
-            el.classList.remove("notification-fadein");
-        }
-    }
-    contentEl.appendChild(notifications);
-
-    const canvas = await html2canvas(contentEl, {
-        background: "#fff",
-    });
-
-    // Remove watermark
-    contentEl.removeChild(watermark);
-    contentEl.style.padding = "";
-
-    // Remove notifications
-    contentEl.removeChild(notifications);
-
-    logEvent({
-        type: "screenshot",
-        text: `Uploading your screenshot to Imgur...`,
-        saveToDb: false,
-        showNotification: true,
-        persistent: false,
-        extraClass: "notification-primary",
-    });
-
-    try {
-        const data = await fetchWrapper({
-            url: "https://imgur-apiv3.p.mashape.com/3/image",
-            method: "POST",
-            headers: {
-                Authorization: "Client-ID c2593243d3ea679",
-                "X-Mashape-Key":
-                    "H6XlGK0RRnmshCkkElumAWvWjiBLp1ItTOBjsncst1BaYKMS8H",
-            },
-            data: {
-                image: canvas.toDataURL().split(",")[1],
-            },
-        });
-
-        if (data.data.error) {
-            console.log(data.data.error);
-            throw new Error(data.data.error.message);
-        }
-
-        const url = `http://imgur.com/${data.data.id}`;
-        const encodedURL = window.encodeURIComponent(url);
-
-        logEvent({
-            type: "screenshot",
-            text: `<p><a href="${url}" target="_blank">Click here to view your screenshot.</a></p>
-<a href="https://www.reddit.com/r/BasketballGM/submit?url=${encodedURL}">Share on Reddit</a><br>
-<a href="https://twitter.com/intent/tweet?url=${encodedURL}&via=basketball_gm">Share on Twitter</a>`,
-            saveToDb: false,
-            showNotification: true,
-            persistent: true,
-            extraClass: "notification-primary",
-        });
-    } catch (err) {
-        console.log(err);
-        let errorMsg;
-        if (
-            err &&
-            err.responseJSON &&
-            err.responseJSON.error &&
-            err.responseJSON.error.message
-        ) {
-            errorMsg = `Error saving screenshot. Error message from Imgur: "${
-                err.responseJSON.error.message
-            }"`;
-        } else if (err.message) {
-            errorMsg = `Error saving screenshot. Error message from Imgur: "${
-                err.message
-            }"`;
-        } else {
-            errorMsg = "Error saving screenshot.";
-        }
-        logEvent({
-            type: "error",
-            text: errorMsg,
-            saveToDb: false,
-        });
-    }
+    // $FlowFixMe
+    return text;
 };
 
-const handleToolsClick = async (id, e) => {
-    e.preventDefault();
-    const response = await toWorker(`actions.toolsMenu.${id}`);
-    if (id === "resetDb" && response) {
-        window.location.reload();
+const MenuGroup = ({ children }) => (
+    <ul className="nav flex-column">{children}</ul>
+);
+MenuGroup.propTypes = {
+    children: PropTypes.any.isRequired,
+};
+
+const MenuItem = ({ godMode, lid, menuItem, openId, onToggle, root }) => {
+    if (!menuItem.league && lid !== undefined) {
+        return null;
     }
+    if (!menuItem.nonLeague && lid === undefined) {
+        return null;
+    }
+
+    if (menuItem.type === "link") {
+        if (menuItem.godMode && !godMode) {
+            return null;
+        }
+
+        const anchorProps = {};
+        if (typeof menuItem.path === "string") {
+            anchorProps.href = menuItem.path;
+            if (menuItem.path.startsWith("http")) {
+                anchorProps.rel = "noopener noreferrer";
+                anchorProps.target = "_blank";
+            }
+        } else if (Array.isArray(menuItem.path)) {
+            anchorProps.href = helpers.leagueUrl(menuItem.path);
+        }
+        if (menuItem.onClick) {
+            anchorProps.onClick = menuItem.onClick;
+        }
+
+        if (root) {
+            return (
+                <NavItem>
+                    <NavLink {...anchorProps}>{getText(menuItem.text)}</NavLink>
+                </NavItem>
+            );
+        }
+
+        return (
+            <DropdownItem
+                {...anchorProps}
+                className={classNames({
+                    "god-mode-menu": menuItem.godMode,
+                })}
+            >
+                {getText(menuItem.text)}
+            </DropdownItem>
+        );
+    }
+
+    if (menuItem.type === "header") {
+        const children = menuItem.children
+            .map((child, i) => (
+                <MenuItem
+                    godMode={godMode}
+                    lid={lid}
+                    key={i}
+                    menuItem={child}
+                    openId={openId}
+                    onToggle={onToggle}
+                    root={false}
+                />
+            ))
+            .filter(element => element !== null);
+        if (children.length === 0) {
+            return null;
+        }
+
+        return (
+            <TopMenuDropdown
+                long={menuItem.long}
+                short={menuItem.short}
+                openId={openId}
+                onToggle={onToggle}
+            >
+                {children}
+            </TopMenuDropdown>
+        );
+    }
+
+    throw new Error(`Unknown menuItem.type "${menuItem.type}"`);
 };
 
 type DropdownLinksProps = {
@@ -292,307 +257,17 @@ class DropdownLinks extends React.Component<
                         </NavLink>
                     </NavItem>
                 ) : null}
-                {lid !== undefined ? (
-                    <NavItem>
-                        <NavLink href={helpers.leagueUrl([])}>
-                            <span className="glyphicon glyphicon-home" />
-                            <span className="d-inline d-sm-none ml-2">
-                                League Dashboard
-                            </span>
-                        </NavLink>
-                    </NavItem>
-                ) : null}
-                {lid !== undefined ? (
-                    <TopMenuDropdown
-                        long="League"
-                        short="L"
+                {menuItems.map((menuItem, i) => (
+                    <MenuItem
+                        godMode={godMode}
+                        lid={lid}
+                        key={i}
+                        menuItem={menuItem}
                         openId={this.state.openId}
                         onToggle={this.handleTopMenuToggle}
-                    >
-                        <DropdownItem href={helpers.leagueUrl(["standings"])}>
-                            Standings
-                        </DropdownItem>
-                        <DropdownItem href={helpers.leagueUrl(["playoffs"])}>
-                            Playoffs
-                        </DropdownItem>
-                        <DropdownItem
-                            href={helpers.leagueUrl(["league_finances"])}
-                        >
-                            Finances
-                        </DropdownItem>
-                        <DropdownItem href={helpers.leagueUrl(["history_all"])}>
-                            History
-                        </DropdownItem>
-                        <DropdownItem
-                            href={helpers.leagueUrl(["power_rankings"])}
-                        >
-                            Power Rankings
-                        </DropdownItem>
-                        <DropdownItem
-                            href={helpers.leagueUrl(["transactions", "all"])}
-                        >
-                            Transactions
-                        </DropdownItem>
-                    </TopMenuDropdown>
-                ) : null}
-                {lid !== undefined ? (
-                    <TopMenuDropdown
-                        long="Team"
-                        short="T"
-                        openId={this.state.openId}
-                        onToggle={this.handleTopMenuToggle}
-                    >
-                        <DropdownItem href={helpers.leagueUrl(["roster"])}>
-                            Roster
-                        </DropdownItem>
-                        <DropdownItem href={helpers.leagueUrl(["schedule"])}>
-                            Schedule
-                        </DropdownItem>
-                        <DropdownItem
-                            href={helpers.leagueUrl(["team_finances"])}
-                        >
-                            Finances
-                        </DropdownItem>
-                        <DropdownItem
-                            href={helpers.leagueUrl(["team_history"])}
-                        >
-                            History
-                        </DropdownItem>
-                        <DropdownItem
-                            href={helpers.leagueUrl(["transactions"])}
-                        >
-                            Transactions
-                        </DropdownItem>
-                    </TopMenuDropdown>
-                ) : null}
-                {lid !== undefined ? (
-                    <TopMenuDropdown
-                        long="Players"
-                        short="P"
-                        openId={this.state.openId}
-                        onToggle={this.handleTopMenuToggle}
-                    >
-                        <DropdownItem href={helpers.leagueUrl(["free_agents"])}>
-                            Free Agents
-                        </DropdownItem>
-                        <DropdownItem href={helpers.leagueUrl(["trade"])}>
-                            Trade
-                        </DropdownItem>
-                        <DropdownItem
-                            href={helpers.leagueUrl(["trading_block"])}
-                        >
-                            Trading Block
-                        </DropdownItem>
-                        <DropdownItem href={helpers.leagueUrl(["draft"])}>
-                            Draft
-                        </DropdownItem>
-                        <DropdownItem href={helpers.leagueUrl(["watch_list"])}>
-                            Watch List
-                        </DropdownItem>
-                        <DropdownItem
-                            href={helpers.leagueUrl(["hall_of_fame"])}
-                        >
-                            Hall of Fame
-                        </DropdownItem>
-                    </TopMenuDropdown>
-                ) : null}
-                {lid !== undefined ? (
-                    <TopMenuDropdown
-                        long="Stats"
-                        short="S"
-                        openId={this.state.openId}
-                        onToggle={this.handleTopMenuToggle}
-                    >
-                        <DropdownItem href={helpers.leagueUrl(["game_log"])}>
-                            Game Log
-                        </DropdownItem>
-                        <DropdownItem href={helpers.leagueUrl(["leaders"])}>
-                            League Leaders
-                        </DropdownItem>
-                        <DropdownItem
-                            href={helpers.leagueUrl(["player_ratings"])}
-                        >
-                            Player Ratings
-                        </DropdownItem>
-                        <DropdownItem
-                            href={helpers.leagueUrl(["player_stats"])}
-                        >
-                            Player Stats
-                        </DropdownItem>
-                        <DropdownItem href={helpers.leagueUrl(["team_stats"])}>
-                            Team Stats
-                        </DropdownItem>
-                        <DropdownItem
-                            href={helpers.leagueUrl(["player_feats"])}
-                        >
-                            Statistical Feats
-                        </DropdownItem>
-                    </TopMenuDropdown>
-                ) : null}
-                <TopMenuDropdown
-                    long="Tools"
-                    short="X"
-                    openId={this.state.openId}
-                    onToggle={this.handleTopMenuToggle}
-                >
-                    <DropdownItem href="/account">Achievements</DropdownItem>
-                    {lid !== undefined ? (
-                        <DropdownItem
-                            onClick={e =>
-                                handleToolsClick("autoPlaySeasons", e)
-                            }
-                        >
-                            Auto Play Seasons
-                        </DropdownItem>
-                    ) : null}
-                    {lid !== undefined && godMode ? (
-                        <DropdownItem
-                            href={helpers.leagueUrl(["customize_player"])}
-                            className="god-mode-menu"
-                        >
-                            Create A Player
-                        </DropdownItem>
-                    ) : null}
-                    {lid !== undefined ? (
-                        <DropdownItem
-                            href={helpers.leagueUrl(["delete_old_data"])}
-                        >
-                            Delete Old Data
-                        </DropdownItem>
-                    ) : null}
-                    {lid !== undefined && godMode ? (
-                        <DropdownItem
-                            href={helpers.leagueUrl(["edit_team_info"])}
-                            className="god-mode-menu"
-                        >
-                            Edit Team Info
-                        </DropdownItem>
-                    ) : null}
-                    {lid !== undefined ? (
-                        <DropdownItem href={helpers.leagueUrl(["event_log"])}>
-                            Event Log
-                        </DropdownItem>
-                    ) : null}
-                    {lid !== undefined ? (
-                        <DropdownItem
-                            href={helpers.leagueUrl(["export_league"])}
-                        >
-                            Export League
-                        </DropdownItem>
-                    ) : null}
-                    {lid !== undefined ? (
-                        <DropdownItem
-                            href={helpers.leagueUrl(["export_stats"])}
-                        >
-                            Export Stats
-                        </DropdownItem>
-                    ) : null}
-                    {lid !== undefined ? (
-                        <DropdownItem
-                            href={helpers.leagueUrl(["fantasy_draft"])}
-                        >
-                            Fantasy Draft
-                        </DropdownItem>
-                    ) : null}
-                    {lid !== undefined ? (
-                        <DropdownItem href={helpers.leagueUrl(["god_mode"])}>
-                            God Mode
-                        </DropdownItem>
-                    ) : null}
-                    {lid !== undefined && godMode ? (
-                        <DropdownItem
-                            href={helpers.leagueUrl(["multi_team_mode"])}
-                            className="god-mode-menu"
-                        >
-                            Multi Team Mode
-                        </DropdownItem>
-                    ) : null}
-                    {lid !== undefined && godMode ? (
-                        <DropdownItem
-                            href={helpers.leagueUrl(["new_team"])}
-                            className="god-mode-menu"
-                        >
-                            Switch Team
-                        </DropdownItem>
-                    ) : null}
-                    {lid !== undefined ? (
-                        <DropdownItem href={helpers.leagueUrl(["options"])}>
-                            Options
-                        </DropdownItem>
-                    ) : null}
-                    <DropdownItem onClick={handleScreenshotClick}>
-                        <span className="glyphicon glyphicon-camera" />{" "}
-                        Screenshot
-                    </DropdownItem>
-                    <DropdownItem divider />
-                    <DropdownItem header>Use at your own risk!</DropdownItem>
-                    {lid !== undefined ? (
-                        <DropdownItem
-                            onClick={e => handleToolsClick("skipToPlayoffs", e)}
-                        >
-                            Skip To Playoffs
-                        </DropdownItem>
-                    ) : null}
-                    {lid !== undefined ? (
-                        <DropdownItem
-                            onClick={e =>
-                                handleToolsClick("skipToBeforeDraft", e)
-                            }
-                        >
-                            Skip To Draft Lottery
-                        </DropdownItem>
-                    ) : null}
-                    {lid !== undefined ? (
-                        <DropdownItem
-                            onClick={e =>
-                                handleToolsClick("skipToAfterDraft", e)
-                            }
-                        >
-                            Skip To After Draft
-                        </DropdownItem>
-                    ) : null}
-                    {lid !== undefined ? (
-                        <DropdownItem
-                            onClick={e =>
-                                handleToolsClick("skipToPreseason", e)
-                            }
-                        >
-                            Skip To Preseason
-                        </DropdownItem>
-                    ) : null}
-                    <DropdownItem onClick={e => handleToolsClick("resetDb", e)}>
-                        Reset DB
-                    </DropdownItem>
-                </TopMenuDropdown>
-                <TopMenuDropdown
-                    long="Help"
-                    short="?"
-                    openId={this.state.openId}
-                    onToggle={this.handleTopMenuToggle}
-                >
-                    <DropdownItem
-                        href="https://basketball-gm.com/manual/"
-                        rel="noopener noreferrer"
-                        target="_blank"
-                    >
-                        Overview
-                    </DropdownItem>
-                    <DropdownItem href="/changes">Changes</DropdownItem>
-                    <DropdownItem
-                        href="https://basketball-gm.com/manual/customization/"
-                        rel="noopener noreferrer"
-                        target="_blank"
-                    >
-                        Custom Rosters
-                    </DropdownItem>
-                    <DropdownItem
-                        href="https://basketball-gm.com/manual/debugging/"
-                        rel="noopener noreferrer"
-                        target="_blank"
-                    >
-                        Debugging
-                    </DropdownItem>
-                </TopMenuDropdown>
+                        root
+                    />
+                ))}
             </Nav>
         );
     }

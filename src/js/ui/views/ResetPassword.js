@@ -153,7 +153,7 @@ class ResetPassword extends React.Component {
                             name="password"
                             required="required"
                         />
-                        <span className="help-block">
+                        <span className="text-muted text-danger">
                             {this.state.resetpwPassword2Error}
                         </span>
                     </div>
@@ -176,7 +176,7 @@ class ResetPassword extends React.Component {
                             name="password2"
                             required="required"
                         />
-                        <span className="help-block">
+                        <span className="text-muted text-danger">
                             {this.state.resetpwPassword2Error}
                         </span>
                     </div>

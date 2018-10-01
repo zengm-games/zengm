@@ -37,7 +37,7 @@ const PopText = ({ teams, tid }) => {
         }
     }
 
-    return <span className="help-block">{msg}</span>;
+    return <span className="text-muted">{msg}</span>;
 };
 
 PopText.propTypes = {
@@ -287,7 +287,7 @@ class NewLeague extends React.Component {
                                     </option>
                                 ) : null}
                             </select>
-                            <span className="help-block">
+                            <span className="text-muted">
                                 Increasing difficulty makes AI teams more
                                 reluctant to trade with you, makes players less
                                 likely to sign with you, and makes it harder to
@@ -310,7 +310,7 @@ class NewLeague extends React.Component {
                                         Upload League File
                                     </option>
                                 </select>
-                                <span className="help-block">
+                                <span className="text-muted">
                                     Teams in your new league can either be
                                     filled by randomly-generated players or by
                                     players from a{" "}

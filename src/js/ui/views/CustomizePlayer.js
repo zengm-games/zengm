@@ -461,7 +461,7 @@ class CustomizePlayer extends React.Component {
                         )}
                         value={p.imgURL}
                     />
-                    <span className="help-block">
+                    <span className="text-muted">
                         Your image must be hosted externally. If you need to
                         upload an image, try using{" "}
                         <a href="http://imgur.com/">imgur</a>. For ideal

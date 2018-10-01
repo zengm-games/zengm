@@ -1,6 +1,7 @@
 bootstrap 4
 - dark mode
   - some stuff built in, like table-dark
+    - maybe separate file with !default overrides
 - splash screen
   - indicate when UI/worker is loaded, not using the "component versions" though
 - bootstrap 3 classes (hidden, visible, text-)
@@ -31,6 +32,9 @@ bootstrap 4
 - Replaced .has-error, .has-warning, and .has-success classes with HTML5 form validation via CSS’s :invalid and :valid pseudo-classes.
 - Replaced a.list-group-item with an explicit class, .list-group-item-action, for styling link and button versions of list group items.
 - table/header spacing, everywhere, such as player page
+- only import bootstrap features i actually use
+- reevaluate glyphicons import, only include fonts that are actually necessary
+- help-block -> form-text
 
 Object.assign to @babel/plugin-proposal-object-rest-spread
 

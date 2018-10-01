@@ -161,12 +161,7 @@ class LoginOrRegister extends React.Component {
                         <form onSubmit={this.handleLogin} id="login">
                             <input type="hidden" name="sport" value={SPORT} />
                             <div className="form-group">
-                                <label
-                                    className="col-form-label"
-                                    htmlFor="login-username"
-                                >
-                                    Username
-                                </label>
+                                <label htmlFor="login-username">Username</label>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -176,12 +171,7 @@ class LoginOrRegister extends React.Component {
                                 />
                             </div>
                             <div className="form-group">
-                                <label
-                                    className="col-form-label"
-                                    htmlFor="login-password"
-                                >
-                                    Password
-                                </label>
+                                <label htmlFor="login-password">Password</label>
                                 <input
                                     type="password"
                                     className="form-control"
@@ -218,10 +208,7 @@ class LoginOrRegister extends React.Component {
                                         null,
                                 })}
                             >
-                                <label
-                                    className="col-form-label"
-                                    htmlFor="register-username"
-                                >
+                                <label htmlFor="register-username">
                                     Username
                                 </label>
                                 <input
@@ -234,14 +221,11 @@ class LoginOrRegister extends React.Component {
                                     pattern="[A-Za-z-0-9-_]+"
                                     title="Letters, numbers, dashes (-), and underscores (_) only"
                                 />
-                                <span
-                                    className="help-block"
-                                    id="username-format"
-                                >
+                                <span className="form-text text-muted">
                                     Letters, numbers, dashes (-), and
                                     underscores (_) only. Max 15 characters.
                                 </span>
-                                <span className="help-block">
+                                <span className="form-text text-danger">
                                     {this.state.registerUsernameError}
                                 </span>
                             </div>
@@ -251,10 +235,7 @@ class LoginOrRegister extends React.Component {
                                         this.state.registerEmailError !== null,
                                 })}
                             >
-                                <label
-                                    className="col-form-label"
-                                    htmlFor="register-email"
-                                >
+                                <label htmlFor="register-email">
                                     Email Address
                                 </label>
                                 <input
@@ -264,7 +245,7 @@ class LoginOrRegister extends React.Component {
                                     name="email"
                                     required="required"
                                 />
-                                <span className="help-block">
+                                <span className="form-text text-danger">
                                     {this.state.registerEmailError}
                                 </span>
                             </div>
@@ -275,10 +256,7 @@ class LoginOrRegister extends React.Component {
                                         null,
                                 })}
                             >
-                                <label
-                                    className="col-form-label"
-                                    htmlFor="register-password"
-                                >
+                                <label htmlFor="register-password">
                                     Password
                                 </label>
                                 <input
@@ -288,7 +266,7 @@ class LoginOrRegister extends React.Component {
                                     name="password"
                                     required="required"
                                 />
-                                <span className="help-block">
+                                <span className="form-text text-danger">
                                     {this.state.registerPasswordError}
                                 </span>
                             </div>
@@ -299,10 +277,7 @@ class LoginOrRegister extends React.Component {
                                         null,
                                 })}
                             >
-                                <label
-                                    className="col-form-label"
-                                    htmlFor="register-password2"
-                                >
+                                <label htmlFor="register-password2">
                                     Verify Password
                                 </label>
                                 <input
@@ -312,18 +287,21 @@ class LoginOrRegister extends React.Component {
                                     name="password2"
                                     required="required"
                                 />
-                                <span className="help-block">
+                                <span className="form-text text-danger">
                                     {this.state.registerPassword2Error}
                                 </span>
                             </div>
-                            <div className="checkbox">
-                                <label htmlFor="register-mailinglist">
-                                    <input
-                                        type="checkbox"
-                                        defaultChecked="checked"
-                                        id="register-mailinglist"
-                                        name="mailinglist"
-                                    />
+                            <div className="form-group form-check">
+                                <input
+                                    type="checkbox"
+                                    defaultChecked="checked"
+                                    className="form-check-input"
+                                    id="register-mailinglist"
+                                />
+                                <label
+                                    className="form-check-label"
+                                    htmlFor="register-mailinglist"
+                                >
                                     Join BBGM Mailing List (Only major
                                     announcements, about once/year)
                                 </label>

@@ -131,7 +131,7 @@ class ExportLeague extends React.Component {
                                     defaultChecked={cat.checked}
                                 />{" "}
                                 {cat.name}
-                                <p className="help-block">{cat.desc}</p>
+                                <p className="text-muted">{cat.desc}</p>
                             </label>
                         </div>
                     ))}

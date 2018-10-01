@@ -4,7 +4,7 @@ import { getCols, helpers, prefixStatOpp, setTitle } from "../util";
 import { DataTable, Dropdown, JumpTo, NewWindowLink } from "../components";
 
 const legendSquare = className => {
-    return <span className={`bg-${className} legend-square ml-3`} />;
+    return <span className={`table-${className} legend-square ml-3`} />;
 };
 
 const TeamStats = ({
@@ -157,11 +157,11 @@ const TeamStats = ({
 
                 let className;
                 if (percentile >= 2 / 3) {
-                    className = "success";
+                    className = "table-success";
                 } else if (percentile >= 1 / 3) {
-                    className = "warning";
+                    className = "table-warning";
                 } else {
-                    className = "danger";
+                    className = "table-danger";
                 }
 
                 data[statType] = {

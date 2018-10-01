@@ -31,7 +31,6 @@ bootstrap 4
 - Replaced .has-error, .has-warning, and .has-success classes with HTML5 form validation via CSS’s :invalid and :valid pseudo-classes.
 - Dropped push and pull modifier classes for the new flexbox-powered order classes. For example, instead of .col-8.push-4 and .col-4.pull-8, you’d use .col-8.order-2 and .col-4.order-1.
 - Replaced a.list-group-item with an explicit class, .list-group-item-action, for styling link and button versions of list group items.
-- team stats colors not working
 
 Object.assign to @babel/plugin-proposal-object-rest-spread
 

@@ -778,18 +778,7 @@ const Player = ({
             </div>
 
             <div className="row">
-                <div className="col-md-10 col-md-push-2 col-sm-9 col-sm-push-3">
-                    <h2>Transactions</h2>
-                    {events.map(e => {
-                        return (
-                            <p key={e.eid}>
-                                <b>{e.season}</b>: <SafeHtml dirty={e.text} />
-                            </p>
-                        );
-                    })}
-                    {events.length === 0 ? <p>None</p> : null}
-                </div>
-                <div className="col-md-2 col-md-float-10 col-sm-3 col-sm-float-9">
+                <div className="col-lg-2 col-md-3 col-sm-4">
                     <h2>Salaries</h2>
                     <DataTable
                         cols={getCols("Year", "Amount")}
@@ -809,6 +798,17 @@ const Player = ({
                             };
                         })}
                     />
+                </div>
+                <div className="col-lg-10 col-md-9 col-sm-8">
+                    <h2>Transactions</h2>
+                    {events.map(e => {
+                        return (
+                            <p key={e.eid}>
+                                <b>{e.season}</b>: <SafeHtml dirty={e.text} />
+                            </p>
+                        );
+                    })}
+                    {events.length === 0 ? <p>None</p> : null}
                 </div>
             </div>
         </div>

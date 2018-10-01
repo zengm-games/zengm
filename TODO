@@ -22,6 +22,7 @@ bootstrap 4
     - if can't figure it out, somehow turn it into a modal
 - firefox
 - safari
+  - safari 10 not working, maybe minification
 - screen reader
 - react-overlays
 - colors in popover
@@ -30,7 +31,7 @@ bootstrap 4
 - labels in login forms, etc - not bold, why?
 - Replaced .has-error, .has-warning, and .has-success classes with HTML5 form validation via CSS’s :invalid and :valid pseudo-classes.
 - table/header spacing, everywhere, such as player page
-- reevaluate glyphicons import, only include fonts that are actually necessary
+- reevaluate glyphicons import, only include fonts that are actually necessary (woff)
 - help-block -> form-text
 - max-width on some pages, like schedule
 

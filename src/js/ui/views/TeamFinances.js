@@ -115,7 +115,7 @@ class FinancesForm extends React.Component {
         const formDisabled = gamesInProgress || tid !== userTid;
 
         return (
-            <form onSubmit={this.handleSubmit}>
+            <form onSubmit={this.handleSubmit} className="mb-3">
                 <h4>
                     Revenue Settings{" "}
                     <HelpPopover placement="bottom" title="Revenue Settings">
@@ -189,7 +189,7 @@ class FinancesForm extends React.Component {
                         </div>
                     </div>
                     <div className="float-left finances-settings-text-small">
-                        Current spending rate: #{t.budget.scouting.rank}
+                        Current rate: #{t.budget.scouting.rank}
                         <br />
                         Spent this season: #
                         {t.seasonAttrs.expenses.scouting.rank}
@@ -423,7 +423,7 @@ const TeamFinances = ({
                 </a>
             </p>
 
-            <p className="clearfix">
+            <p>
                 The current payroll (
                 <b>{helpers.formatCurrency(payroll, "M")}</b>) is{" "}
                 {payroll > minPayroll ? "above" : "below"} the minimum payroll
@@ -504,7 +504,7 @@ const TeamFinances = ({
                         />
                     </div>
                 </div>
-                <div className="col-md-4 col-sm-4">
+                <div className="col-lg-4 col-md-3 col-sm-3 mb-3">
                     <h4>Revenue</h4>
                     <div id="bar-graph-revenue" className="bar-graph-large">
                         <BarGraph
@@ -576,7 +576,7 @@ const TeamFinances = ({
                         />
                     </div>
                 </div>
-                <div className="col-md-5 col-sm-6">
+                <div className="col-lg-5 col-md-6 col-sm-7">
                     <FinancesForm
                         gamesInProgress={gamesInProgress}
                         t={t}
@@ -585,7 +585,6 @@ const TeamFinances = ({
                     />
                 </div>
             </div>
-            <p className="clearfix" />
 
             <h2>Player Salaries</h2>
 

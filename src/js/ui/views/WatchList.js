@@ -164,14 +164,12 @@ class WatchList extends React.Component {
                 </p>
 
                 <button
-                    className="btn btn-danger"
+                    className="btn btn-danger mb-3"
                     disabled={this.state.clearing}
                     onClick={this.clearWatchList}
                 >
                     Clear Watch List
                 </button>
-
-                <p className="clearfix" />
 
                 <DataTable
                     cols={cols}

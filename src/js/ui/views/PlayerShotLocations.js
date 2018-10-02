@@ -89,7 +89,7 @@ const PlayerShotLocations = ({ players, season, userTid }) => {
                 p.stats.tpp.toFixed(1),
             ],
             classNames: {
-                info: p.stats.tid === userTid,
+                "table-info": p.stats.tid === userTid,
             },
         };
     });

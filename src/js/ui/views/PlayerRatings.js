@@ -74,8 +74,8 @@ const PlayerRatings = ({ abbrev, players, season, userTid }) => {
                 p.ratings.reb,
             ],
             classNames: {
-                danger: p.hof,
-                info: p.stats.tid === userTid,
+                "table-danger": p.hof,
+                "table-info": p.stats.tid === userTid,
             },
         };
     });

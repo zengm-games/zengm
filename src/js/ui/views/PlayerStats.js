@@ -174,8 +174,8 @@ const PlayerStats = ({
                 ...statsRow,
             ],
             classNames: {
-                danger: p.hof,
-                info: actualTid === userTid,
+                "table-danger": p.hof,
+                "table-info": actualTid === userTid,
             },
         };
     });

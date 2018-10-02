@@ -80,12 +80,12 @@ const HallOfFame = ({ players, userTid }) => {
                 p.careerStats.ewa.toFixed(1),
             ],
             classNames: {
-                danger: p.legacyTid === userTid,
-                info:
+                "table-danger": p.legacyTid === userTid,
+                "table-info":
                     p.statsTids
                         .slice(0, p.statsTids.length - 1)
                         .includes(userTid) && p.legacyTid !== userTid,
-                success:
+                "table-success":
                     p.statsTids[p.statsTids.length - 1] === userTid &&
                     p.legacyTid !== userTid,
             },

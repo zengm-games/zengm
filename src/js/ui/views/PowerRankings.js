@@ -31,7 +31,7 @@ const PowerRankings = ({ teams, userTid }) => {
                 </span>,
             ],
             classNames: {
-                info: t.tid === userTid,
+                "table-info": t.tid === userTid,
             },
         };
     });

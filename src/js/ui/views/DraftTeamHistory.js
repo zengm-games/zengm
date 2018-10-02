@@ -94,8 +94,8 @@ const DraftTeamHistory = ({ abbrev, name, players, region, userAbbrev }) => {
                 p.careerStats.ewa.toFixed(1),
             ],
             classNames: {
-                danger: p.hof,
-                info: p.currentAbbrev === userAbbrev,
+                "table-danger": p.hof,
+                "table-info": p.currentAbbrev === userAbbrev,
             },
         };
     });

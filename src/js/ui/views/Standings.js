@@ -10,7 +10,7 @@ const DivStandingsRow = clickable(({ clicked, season, t, toggleClicked }) => {
         <tr
             key={t.tid}
             className={classNames({
-                info: t.highlight,
+                "table-info": t.highlight,
                 "table-warning": clicked,
             })}
             onClick={toggleClicked}
@@ -100,7 +100,7 @@ const ConfStandings = ({ playoffsByConference, season, teams }) => {
                         <tr
                             key={t.tid}
                             className={classNames({
-                                info: t.highlight,
+                                "table-info": t.highlight,
                                 separator: i === 7 && playoffsByConference,
                             })}
                         >

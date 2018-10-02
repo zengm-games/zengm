@@ -239,7 +239,7 @@ class Draft extends React.Component {
             return {
                 key: i,
                 data,
-                classNames: { info: userTids.includes(p.draft.tid) },
+                classNames: { "table-info": userTids.includes(p.draft.tid) },
             };
         });
 

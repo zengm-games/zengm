@@ -44,7 +44,7 @@ const Leaders = ({ categories, season }) => {
                                         <tr
                                             key={p.pid}
                                             className={
-                                                p.userTeam ? "info" : null
+                                                p.userTeam ? "table-info" : null
                                             }
                                         >
                                             <td>

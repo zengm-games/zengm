@@ -233,7 +233,7 @@ class DraftLottery extends React.Component<Props, State> {
                                         return (
                                             <td
                                                 className={classNames({
-                                                    success: highlighted,
+                                                    "table-success": highlighted,
                                                 })}
                                                 key={j}
                                             >
@@ -246,7 +246,8 @@ class DraftLottery extends React.Component<Props, State> {
                                         <tr key={originalTid}>
                                             <td
                                                 className={classNames({
-                                                    info: tid === userTid,
+                                                    "table-info":
+                                                        tid === userTid,
                                                 })}
                                             >
                                                 <DraftAbbrev

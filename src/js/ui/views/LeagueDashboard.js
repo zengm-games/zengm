@@ -99,7 +99,8 @@ const LeagueDashboard = ({
                                                     separator:
                                                         i === 7 &&
                                                         playoffsByConference,
-                                                    info: t.tid === userTid,
+                                                    "table-info":
+                                                        t.tid === userTid,
                                                 })}
                                             >
                                                 <td>

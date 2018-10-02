@@ -28,7 +28,7 @@ const awardName = (award, season, teamAbbrevsCache, userTid) => {
     // This is our team.
     if (award.tid === userTid) {
         return {
-            classNames: "info",
+            classNames: "table-info",
             value: ret,
         };
     }
@@ -88,7 +88,7 @@ const HistoryAll = ({ seasons, teamAbbrevsCache, userTid }) => {
         );
         if (s.champ && s.champ.tid === userTid) {
             champEl = {
-                classNames: "info",
+                classNames: "table-info",
                 value: champEl,
             };
         }
@@ -96,7 +96,7 @@ const HistoryAll = ({ seasons, teamAbbrevsCache, userTid }) => {
         let runnerUpEl = teamName(s.runnerUp, s.season);
         if (s.runnerUp && s.runnerUp.tid === userTid) {
             runnerUpEl = {
-                classNames: "info",
+                classNames: "table-info",
                 value: runnerUpEl,
             };
         }

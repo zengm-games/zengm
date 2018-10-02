@@ -83,7 +83,7 @@ const TeamShotLocations = ({
                 ...statCols.map(col => t.stats[col].toFixed(1)),
             ],
             classNames: {
-                info: t.tid === userTid,
+                "table-info": t.tid === userTid,
             },
         };
     });

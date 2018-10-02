@@ -93,8 +93,8 @@ const DraftSummary = ({ players, season, userTid }) => {
                 p.careerStats.ewa.toFixed(1),
             ],
             classNames: {
-                danger: p.hof,
-                info: p.draft.tid === userTid,
+                "table-danger": p.hof,
+                "table-info": p.draft.tid === userTid,
             },
         };
     });

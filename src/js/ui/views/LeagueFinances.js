@@ -44,7 +44,7 @@ const LeagueFinances = ({
                 helpers.formatCurrency(payroll, "M"),
             ],
             classNames: {
-                info: t.tid === userTid,
+                "table-info": t.tid === userTid,
             },
         };
     });

@@ -90,18 +90,6 @@ body {
     -webkit-animation-play-state: paused;
 }
 
-@-moz-keyframes spin {
-    100% {
-        -moz-transform: rotate(360deg);
-    }
-}
-
-@-webkit-keyframes spin {
-    100% {
-        -webkit-transform: rotate(360deg);
-    }
-}
-
 @keyframes spin {
     100% {
         -webkit-transform: rotate(360deg);
@@ -222,45 +210,17 @@ ul.dashboard-boxes {
     margin-top: 26px;
 }
 
-@-moz-keyframes oscillate-bg {
-    0% {
-        background: #afd9ee;
-    }
-
-    50% {
-        background: #d9edf7;
-    }
-
-    100% {
-        background: #afd9ee;
-    }
-}
-
-@-webkit-keyframes oscillate-bg {
-    0% {
-        background: #afd9ee;
-    }
-
-    50% {
-        background: #d9edf7;
-    }
-
-    100% {
-        background: #afd9ee;
-    }
-}
-
 @keyframes oscillate-bg {
     0% {
-        background: #afd9ee;
+        background-color: lighten($primary, 40);
     }
 
     50% {
-        background: #d9edf7;
+        background-color: lighten($primary, 45);
     }
 
     100% {
-        background: #afd9ee;
+        background-color: lighten($primary, 40);
     }
 }
 

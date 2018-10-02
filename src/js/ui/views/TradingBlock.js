@@ -331,7 +331,7 @@ class TradingBlock extends React.Component {
                     will make you trade offers.
                 </p>
 
-                <div className="row">
+                <div className="row mb-3">
                     <div className="col-md-9">
                         <DataTable
                             cols={cols}
@@ -378,7 +378,6 @@ class TradingBlock extends React.Component {
 
                 <div ref={this.beforeOffersRef} />
 
-                <p />
                 <center>
                     <button
                         className="btn btn-lg btn-primary"
@@ -405,7 +404,6 @@ class TradingBlock extends React.Component {
                 {this.state.offers.length > 0 ? (
                     <div>
                         <center>
-                            <p />
                             <p>
                                 Don't like those offers? Well maybe you'll get
                                 lucky if you...

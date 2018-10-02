@@ -150,12 +150,12 @@ body {
 
 ul.dashboard-boxes {
     list-style: none;
-    margin: 0 -1em 0 0;
+    margin: -0.5rem -1rem 0 0;
     padding: 0;
 
     li {
         float: left;
-        margin: 1em 1em 0 0;
+        margin: 1rem 1rem 0 0;
         position: relative;
         overflow: hidden;
 
@@ -326,7 +326,6 @@ table {
     }
 
     td.game-log-cell a {
-        color: #3a87ad;
         display: block;
         // Expand to encompass normal td padding, which was set to 0 here above.
         padding: 4px 5px;
@@ -336,8 +335,7 @@ table {
 
 .game-log-list tbody tr:hover td.game-log-cell,
 .messages-table tbody tr:hover td {
-    background-color: #d9edf7;
-    border-color: #bce8f1;
+    @extend .table-active;
     text-decoration: none;
 }
 

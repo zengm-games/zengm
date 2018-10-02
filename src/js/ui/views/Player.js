@@ -127,6 +127,7 @@ RatingsOverview.propTypes = {
 const StatsTable = ({ careerStats = {}, name, stats = [] }) => {
     return (
         <DataTable
+            className="mb-3"
             cols={getCols(
                 "Year",
                 "Team",
@@ -236,6 +237,7 @@ StatsTable.propTypes = {
 const AdvStatsTable = ({ careerStats = {}, name, stats = [] }) => {
     return (
         <DataTable
+            className="mb-3"
             cols={getCols(
                 "Year",
                 "Team",
@@ -345,6 +347,7 @@ AdvStatsTable.propTypes = {
 const ShotLocationsTable = ({ careerStats = {}, name, stats = [] }) => {
     return (
         <DataTable
+            className="mb-3"
             cols={getCols(
                 "Year",
                 "Team",
@@ -672,6 +675,7 @@ const Player = ({
 
             <h2>Ratings</h2>
             <DataTable
+                className="mb-3"
                 cols={getCols(
                     "Year",
                     "Team",
@@ -779,10 +783,11 @@ const Player = ({
                 </div>
             </div>
 
-            <div className="row">
+            <div className="row" style={{ marginBottom: "-1rem" }}>
                 <div className="col-lg-2 col-md-3 col-sm-4">
                     <h2>Salaries</h2>
                     <DataTable
+                        className="mb-3"
                         cols={getCols("Year", "Amount")}
                         defaultSort={[0, "asc"]}
                         footer={[

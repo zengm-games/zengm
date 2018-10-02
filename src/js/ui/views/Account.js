@@ -371,7 +371,7 @@ const Account = ({
                 never used God Mode or set the difficulty to Easy.
             </p>
 
-            <div className="card-columns">
+            <div className="card-columns" style={{ marginBottom: "-0.5rem" }}>
                 {achievements.map(achievement => {
                     return (
                         <div

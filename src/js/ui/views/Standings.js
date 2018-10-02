@@ -142,8 +142,11 @@ const Standings = ({ confs, playoffsByConference, season }) => {
             <h1>
                 Standings <NewWindowLink />
             </h1>
-            {confs.map(conf => (
-                <div key={conf.cid}>
+            {confs.map((conf, i) => (
+                <div
+                    key={conf.cid}
+                    style={{ marginBottom: i < confs.length - 1 ? "1rem" : 0 }}
+                >
                     <h2>{conf.name}</h2>
                     <div className="row">
                         <div className="col-md-9">

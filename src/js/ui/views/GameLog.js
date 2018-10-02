@@ -300,7 +300,7 @@ class BoxScore extends React.Component {
                 </center>
 
                 {boxScore.teams.map(t => (
-                    <div key={t.abbrev}>
+                    <div key={t.abbrev} className="mb-3">
                         <h3>
                             <a
                                 href={helpers.leagueUrl([
@@ -378,7 +378,6 @@ class BoxScore extends React.Component {
                         </div>
                     </div>
                 ))}
-                <br />
                 <p>Attendance: {helpers.numberWithCommas(boxScore.att)}</p>
             </>
         );
@@ -488,7 +487,7 @@ const GameLog = ({ abbrev, boxScore, gamesList = { games: [] }, season }) => {
                                             key={gm.gid}
                                             className={
                                                 gm.gid === boxScore.gid
-                                                    ? "info"
+                                                    ? "table-primary"
                                                     : null
                                             }
                                         >

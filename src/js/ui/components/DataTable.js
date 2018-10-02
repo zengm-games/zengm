@@ -933,15 +933,15 @@ class DataTable extends React.Component<Props, State> {
             );
         }
 
-        let classes = "table table-striped table-bordered table-sm table-hover";
-        if (className !== undefined) {
-            classes += ` ${className}`;
-        }
-
         return (
-            <div className="table-responsive">
+            <div className={classNames("table-responsive", className)}>
                 {aboveTable}
-                <table className={classes}>
+                <table
+                    className={classNames(
+                        "table table-striped table-bordered table-sm table-hover",
+                        { "table-nonfluid": this.props.nonfluid },
+                    )}
+                >
                     <Header
                         cols={cols}
                         enableFilters={this.state.enableFilters}
@@ -972,6 +972,7 @@ DataTable.propTypes = {
     ).isRequired,
     footer: PropTypes.array,
     name: PropTypes.string.isRequired,
+    nonfluid: PropTypes.bool,
     pagination: PropTypes.bool,
     rows: PropTypes.arrayOf(PropTypes.object).isRequired,
     superCols: PropTypes.array,

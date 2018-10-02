@@ -22,7 +22,6 @@ bootstrap 4
 - safari
 - screen reader
 - react-overlays
-- colors in popover
 - go over all css files, anything obsolete?
   - all colors #
 - Replaced .has-error, .has-warning, and .has-success classes with HTML5 form validation via CSS’s :invalid and :valid pseudo-classes.

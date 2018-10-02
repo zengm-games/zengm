@@ -9,7 +9,7 @@ import { WatchBlock } from ".";
 import { helpers, toWorker } from "../util";
 
 const colorRating = (rating: number) => {
-    const classes = ["text-danger", "text-warning", null, "text-success"];
+    const classes = ["table-danger", "table-warning", null, "table-success"];
     const cutoffs = [30, 45, 60, Infinity];
 
     const ind = cutoffs.findIndex(cutoff => rating < cutoff);

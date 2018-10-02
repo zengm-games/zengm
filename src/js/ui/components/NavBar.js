@@ -128,6 +128,10 @@ const MenuItem = ({ godMode, lid, menuItem, openId, onToggle, root }) => {
             return null;
         }
 
+        if (menuItem.text === "Switch League") {
+            return null;
+        }
+
         const anchorProps = {};
         if (typeof menuItem.path === "string") {
             anchorProps.href = menuItem.path;

@@ -32,7 +32,6 @@ bootstrap 4
   - mobile draft UI interplay?
 - footer sticky to bottom (how does that work with bottom ad? is min-height working still?)
 - changes
-- Switch League should not be in top menu
 
 Object.assign to @babel/plugin-proposal-object-rest-spread
 

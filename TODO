@@ -28,8 +28,11 @@ bootstrap 4
   - all colors #
 - Replaced .has-error, .has-warning, and .has-success classes with HTML5 form validation via CSS’s :invalid and :valid pseudo-classes.
 - table/header spacing, everywhere, such as player page
-- reevaluate glyphicons import, only include fonts that are actually necessary (woff)
 - max-width on some pages, like schedule
+- playoffs highlighting
+- mobile menu slide in from right
+  - mobile draft UI interplay?
+- dashboard boxes top margin
 
 Object.assign to @babel/plugin-proposal-object-rest-spread
 
@@ -623,8 +626,6 @@ Achievements to add
   win title without making a trade
   career stat milestone for players on your team from draft to the milestone
   https://www.reddit.com/r/BasketballGM/comments/81g1tz/achievement_ideas/
-mobile UI
-  slide in full height menu from right, like facebook or android's DrawerLayout
 "Watch list" of players the user is interested in, mainly for free agency
   add "actions" where appropriate, probably as output in player.filter so it can be used elsewhere
     negotiate

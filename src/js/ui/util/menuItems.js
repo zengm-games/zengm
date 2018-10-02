@@ -150,6 +150,20 @@ type MenuItemHeader = {|
 const menuItems: (MenuItemLink | MenuItemHeader)[] = [
     {
         type: "link",
+        active: pageID => pageID === "dashboard",
+        nonLeague: true,
+        path: "/",
+        text: "Leagues",
+    },
+    {
+        type: "link",
+        active: pageID => pageID === "dashboard",
+        league: true,
+        path: "/",
+        text: "Switch League",
+    },
+    {
+        type: "link",
         active: pageID => pageID === "leagueDashboard",
         league: true,
         path: [],
@@ -164,13 +178,6 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
                 </>
             ),
         },
-    },
-    {
-        type: "link",
-        active: pageID => pageID === "dashboard",
-        nonLeague: true,
-        path: "/",
-        text: "Leagues",
     },
     {
         type: "header",

@@ -3,7 +3,6 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import * as React from "react";
-import Collapse from "reactstrap/lib/Collapse";
 import Dropdown from "reactstrap/lib/Dropdown";
 import DropdownItem from "reactstrap/lib/DropdownItem";
 import DropdownMenu from "reactstrap/lib/DropdownMenu";
@@ -12,7 +11,6 @@ import Nav from "reactstrap/lib/Nav";
 import NavItem from "reactstrap/lib/NavItem";
 import NavLink from "reactstrap/lib/NavLink";
 import Navbar from "reactstrap/lib/Navbar";
-import NavbarToggler from "reactstrap/lib/NavbarToggler";
 import Popover from "reactstrap/lib/Popover";
 import PopoverBody from "reactstrap/lib/PopoverBody";
 import PopoverHeader from "reactstrap/lib/PopoverHeader";
@@ -431,162 +429,127 @@ type Props = {
     updating: boolean,
 };
 
-type State = {
-    collapsed: boolean,
-};
+const NavBar = ({ pageID, updating }: Props) => {
+    return subscribeLocal(local => {
+        const {
+            lid,
+            godMode,
+            hasViewedALeague,
+            phaseText,
+            playMenuOptions,
+            popup,
+            statusText,
+            username,
+        } = local.state;
 
-class NavBar extends React.Component<Props, State> {
-    toggleCollapsed: () => void;
+        if (popup) {
+            return <div />;
+        }
 
-    constructor(props: Props) {
-        super(props);
+        let userBlock = username ? (
+            <NavLink href="/account">
+                <span className="glyphicon glyphicon-user" />{" "}
+                <span className="d-none d-lg-inline">{username}</span>
+            </NavLink>
+        ) : (
+            <NavLink href="/account/login_or_register">
+                <span className="glyphicon glyphicon-user" />{" "}
+                <span className="d-none d-lg-inline">Login/Register</span>
+            </NavLink>
+        );
 
-        this.state = {
-            collapsed: true,
-        };
-
-        this.toggleCollapsed = this.toggleCollapsed.bind(this);
-    }
-
-    toggleCollapsed() {
-        this.setState(state => {
-            return {
-                collapsed: !state.collapsed,
-            };
-        });
-    }
-
-    render() {
-        return subscribeLocal(local => {
-            const { pageID, updating } = this.props;
-
-            const {
-                lid,
-                godMode,
-                hasViewedALeague,
-                phaseText,
-                playMenuOptions,
-                popup,
-                statusText,
-                username,
-            } = local.state;
-
-            if (popup) {
-                return <div />;
-            }
-
-            let userBlock = username ? (
-                <NavLink href="/account">
-                    <span className="glyphicon glyphicon-user" />{" "}
-                    <span className="d-xs-inline d-sm-none d-lg-inline">
-                        {username}
-                    </span>
-                </NavLink>
-            ) : (
-                <NavLink href="/account/login_or_register">
-                    <span className="glyphicon glyphicon-user" />{" "}
-                    <span className="d-xs-inline d-sm-none d-lg-inline">
-                        Login/Register
-                    </span>
-                </NavLink>
-            );
-
-            if (window.inIframe) {
-                userBlock = (
-                    <a
-                        className="navbar-link user-menu"
-                        href={window.location.href}
-                        rel="noopener noreferrer"
-                        target="_blank"
-                    >
-                        <img
-                            alt="Open In New Window"
-                            title="Open In New Window"
-                            height="16"
-                            width="16"
-                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAA0AAAANABeWPPlAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAFOSURBVDiNlZS9isJAFIU/F6s0m0VYYiOrhVukWQsbK4t9CDtbexGs8xY+ghY+QRBsbKcTAjZaqKyGXX2Bs00S1AwBD1yYOXPvmXvv/CAJSQAuoGetzAPCMKRSqTzSOURRRK/Xo1wqldyEewXwfR/P8zLHIAhYr9fZ3BjDeDym1WoBUAZ+i3ZaLBYsl8s7zhiTCbwk3DfwaROYz+fsdjs6nU7GOY6TjVOBGPixCbiuy2g0YrVa0Ww2c+svlpg7DAYDptMp3W6XyWRi9RHwRXKMh8NBKYbDoQC1221dr1dtNhv1+33NZjMZY9KjtAsEQSBAvu/rfD7rEYUC2+1WjuOo0Whov9/ngm8FchcJoFarEYYhnudRrVYLe5QTOJ1OANTrdQCOx6M1MI5jexOftdsMLsBbYb7wDkTAR+KflWC9hRakr+wi6e+2hGfNTb+Bf9965Lxmndc1AAAAAElFTkSuQmCC"
-                        />{" "}
-                    </a>
-                );
-            }
-
-            // Hide phase and status, to prevent revealing that the playoffs has ended, thus spoiling a 3-0/3-1/3-2 finals
-            // game. This is needed because game sim happens before the results are displayed in liveGame.
-            const phaseStatusBlock =
-                pageID === "liveGame" ? (
-                    <span
-                        className="navbar-text"
-                        style={{ lineHeight: 1.35, marginLeft: 16, padding: 0 }}
-                    >
-                        Live game
-                        <br />
-                        in progress
-                    </span>
-                ) : (
-                    <span
-                        className="navbar-text"
-                        style={{ lineHeight: 1.35, marginLeft: 16, padding: 0 }}
-                    >
-                        {phaseText}
-                        <br />
-                        {statusText}
-                    </span>
-                );
-
-            return (
-                <Navbar
-                    color="light"
-                    light
-                    expand="sm"
-                    fixed="top"
-                    className="navbar-border"
+        if (window.inIframe) {
+            userBlock = (
+                <a
+                    className="navbar-link user-menu"
+                    href={window.location.href}
+                    rel="noopener noreferrer"
+                    target="_blank"
                 >
-                    <LogoAndText lid={lid} updating={updating} />
-                    <Nav navbar>
-                        <div id="play-menu">
-                            <PlayMenu lid={lid} options={playMenuOptions} />
-                        </div>
-                        <Popover
-                            placement="bottom"
-                            isOpen={!hasViewedALeague && lid === 1}
-                            target="play-menu"
-                            toggle={() => {
-                                // This will run when it closes, so next time it will be hidden
-                                local.update({ hasViewedALeague: true });
-                                localStorage.setItem(
-                                    "hasViewedALeague",
-                                    "true",
-                                );
-                            }}
-                        >
-                            <PopoverHeader>
-                                Welcome to Basketball GM!
-                            </PopoverHeader>
-                            <PopoverBody>
-                                To advance through the game, use the Play button
-                                at the top. The options shown will change
-                                depending on the current state of the game.
-                            </PopoverBody>
-                        </Popover>
-                    </Nav>
-                    {lid !== undefined ? phaseStatusBlock : null}
-                    <div className="flex-grow-1" />
-                    <NavbarToggler onClick={this.toggleCollapsed} />
-                    <Collapse
-                        className="justify-content-end"
-                        isOpen={!this.state.collapsed}
-                        navbar
-                    >
-                        <DropdownLinks godMode={godMode} lid={lid} />
-                        <Nav navbar>
-                            <NavItem>{userBlock}</NavItem>
-                        </Nav>
-                    </Collapse>
-                </Navbar>
+                    <img
+                        alt="Open In New Window"
+                        title="Open In New Window"
+                        height="16"
+                        width="16"
+                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAA0AAAANABeWPPlAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAFOSURBVDiNlZS9isJAFIU/F6s0m0VYYiOrhVukWQsbK4t9CDtbexGs8xY+ghY+QRBsbKcTAjZaqKyGXX2Bs00S1AwBD1yYOXPvmXvv/CAJSQAuoGetzAPCMKRSqTzSOURRRK/Xo1wqldyEewXwfR/P8zLHIAhYr9fZ3BjDeDym1WoBUAZ+i3ZaLBYsl8s7zhiTCbwk3DfwaROYz+fsdjs6nU7GOY6TjVOBGPixCbiuy2g0YrVa0Ww2c+svlpg7DAYDptMp3W6XyWRi9RHwRXKMh8NBKYbDoQC1221dr1dtNhv1+33NZjMZY9KjtAsEQSBAvu/rfD7rEYUC2+1WjuOo0Whov9/ngm8FchcJoFarEYYhnudRrVYLe5QTOJ1OANTrdQCOx6M1MI5jexOftdsMLsBbYb7wDkTAR+KflWC9hRakr+wi6e+2hGfNTb+Bf9965Lxmndc1AAAAAElFTkSuQmCC"
+                    />{" "}
+                </a>
             );
-        });
-    }
-}
+        }
+
+        // Hide phase and status, to prevent revealing that the playoffs has ended, thus spoiling a 3-0/3-1/3-2 finals
+        // game. This is needed because game sim happens before the results are displayed in liveGame.
+        const phaseStatusBlock =
+            pageID === "liveGame" ? (
+                <span
+                    className="navbar-text"
+                    style={{ lineHeight: 1.35, marginLeft: 16, padding: 0 }}
+                >
+                    Live game
+                    <br />
+                    in progress
+                </span>
+            ) : (
+                <span
+                    className="navbar-text"
+                    style={{ lineHeight: 1.35, marginLeft: 16, padding: 0 }}
+                >
+                    {phaseText}
+                    <br />
+                    {statusText}
+                </span>
+            );
+
+        return (
+            <Navbar
+                color="light"
+                light
+                expand="sm"
+                fixed="top"
+                className="navbar-border"
+            >
+                <button
+                    className="navbar-toggler mr-3"
+                    onClick={() => console.log("clicked")}
+                    type="button"
+                >
+                    <span className="navbar-toggler-icon" />
+                </button>
+                <LogoAndText lid={lid} updating={updating} />
+                <Nav navbar>
+                    <div id="play-menu">
+                        <PlayMenu lid={lid} options={playMenuOptions} />
+                    </div>
+                    <Popover
+                        placement="bottom"
+                        isOpen={!hasViewedALeague && lid === 1}
+                        target="play-menu"
+                        toggle={() => {
+                            // This will run when it closes, so next time it will be hidden
+                            local.update({ hasViewedALeague: true });
+                            localStorage.setItem("hasViewedALeague", "true");
+                        }}
+                    >
+                        <PopoverHeader>Welcome to Basketball GM!</PopoverHeader>
+                        <PopoverBody>
+                            To advance through the game, use the Play button at
+                            the top. The options shown will change depending on
+                            the current state of the game.
+                        </PopoverBody>
+                    </Popover>
+                </Nav>
+                {lid !== undefined ? phaseStatusBlock : null}
+                <div className="flex-grow-1" />
+                <div className="d-none d-sm-flex">
+                    <DropdownLinks godMode={godMode} lid={lid} />
+                </div>
+                <Nav navbar>
+                    <NavItem>{userBlock}</NavItem>
+                </Nav>
+            </Navbar>
+        );
+    });
+};
 
 NavBar.propTypes = {
     pageID: PropTypes.string,

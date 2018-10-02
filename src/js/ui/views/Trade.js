@@ -343,7 +343,7 @@ class Trade extends React.Component {
                     <div className="col-md-3 trade-summary">
                         <div className="row">
                             {summary.teams.map((t, i) => (
-                                <div key={i} className="col-md-12 col-6 mb-4">
+                                <div key={i} className="col-md-12 col-6 mb-3">
                                     <h4>{t.name}</h4>
                                     <h5>Trade Away:</h5>
                                     <ul className="list-unstyled">

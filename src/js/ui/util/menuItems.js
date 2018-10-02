@@ -167,10 +167,10 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
     },
     {
         type: "link",
-        active: pageID => pageID === "newLeague",
+        active: pageID => pageID === "dashboard",
         nonLeague: true,
-        path: "/new_league",
-        text: "New League",
+        path: "/",
+        text: "Leagues",
     },
     {
         type: "header",

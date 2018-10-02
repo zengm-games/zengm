@@ -108,16 +108,23 @@ body {
     }
 }
 
-.god-mode,
-.god-mode-menu {
-    background-color: #563d7c;
-    color: #fff;
+.god-mode {
+    background-color: $purple;
+    color: $white;
+}
+.god-mode-menu,
+.sidebar a.sidebar-god-mode {
+    background-color: $purple;
+    color: $white;
 
-    &:hover,
-    &:focus {
-        background-color: #4a356b;
-        color: #fff;
+    &:hover {
+        background-color: darken($purple, 10%);
+        color: $white;
     }
+}
+.sidebar a.sidebar-god-mode.active {
+    background-color: darken($purple, 10%);
+    color: lighten($blue, 30);
 }
 
 .god-mode-text {
@@ -193,10 +200,10 @@ ul.dashboard-boxes {
 
         &.dashboard-box-new {
             a {
-                color: #fff;
+                color: $white;
 
                 &:hover {
-                    color: #fff;
+                    color: $white;
                 }
             }
 
@@ -399,7 +406,7 @@ table {
 }
 
 .trade-summary {
-    background-color: #fff;
+    background-color: $white;
 }
 
 .select-team {
@@ -479,7 +486,7 @@ table {
 
     option[value="1.75"] {
         background-color: #070;
-        color: #fff;
+        color: $white;
     }
 
     option[value="1.25"] {
@@ -492,7 +499,7 @@ table {
 
     option[value="0"] {
         background-color: #a00;
-        color: #fff;
+        color: $white;
     }
 }
 
@@ -720,6 +727,7 @@ tr.warning > td {
     padding: 4px 16px;
 }
 .sidebar .nav-link.active {
+    background-color: $gray-200;
     color: $blue;
 }
 .sidebar .nav-link:hover {
@@ -740,9 +748,6 @@ tr.warning > td {
     #actual-content {
         margin-left: 150px;
     }
-}
-.sidebar a.sidebar-god-mode {
-    color: $purple;
 }
 
 label input {
@@ -808,7 +813,7 @@ label input {
 
 .btn-light-bordered {
     @extend .btn-light;
-    background-color: #fff;
+    background-color: $white;
     border: 1px solid $gray-400 !important;
     color: $gray-700;
 }

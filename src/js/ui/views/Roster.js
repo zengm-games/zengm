@@ -25,23 +25,23 @@ import clickable from "../wrappers/clickable";
 
 const ptStyles = {
     0: {
-        backgroundColor: "#a00",
+        backgroundColor: "#dc3545",
         color: "#fff",
     },
     0.75: {
-        backgroundColor: "#ff0",
+        backgroundColor: "#ffc107",
         color: "#000",
     },
     1: {
-        backgroundColor: "#ccc",
+        backgroundColor: "rgb(204, 204, 204)",
         color: "#000",
     },
     1.25: {
-        backgroundColor: "#0f0",
-        color: "#000",
+        backgroundColor: "#17a2b8",
+        color: "#fff",
     },
     1.75: {
-        backgroundColor: "#070",
+        backgroundColor: "#007bff",
         color: "#fff",
     },
 };

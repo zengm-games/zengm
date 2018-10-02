@@ -24,6 +24,8 @@ bootstrap 4
 - react-overlays
 - go over all css files, anything obsolete?
   - all colors #
+    - other scss files
+    - what about colors in line in JS
 - Replaced .has-error, .has-warning, and .has-success classes with HTML5 form validation via CSS’s :invalid and :valid pseudo-classes.
 - max-width on some pages, like schedule
 - mobile menu slide in from right

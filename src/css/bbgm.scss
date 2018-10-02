@@ -1,6 +1,7 @@
 $font-size-base: 0.8125rem;
-$dropdown-link-active-color: #16181b; /* Matches hover: darken($gray-900, 5%) */
-$dropdown-link-active-bg: #f8f9fa; /* Matches hover: $gray-100 */
+// $dropdown-link-active-color: #16181b; // Matches hover: darken($gray-900, 5%)
+// $dropdown-link-active-bg: #f8f9fa; // Matches hover: $gray-100
+$black: #000;
 
 // Taken from bootstrap.scss, but with unused things deleted
 @import "node_modules/bootstrap/scss/functions";
@@ -180,7 +181,7 @@ ul.dashboard-boxes {
             width: 151px;
 
             &:hover {
-                color: #000;
+                color: $black;
             }
         }
 
@@ -369,7 +370,7 @@ table {
 
 .schedule-row {
     @extend .d-flex;
-    color: #000;
+    color: $black;
     font-size: 16px;
 }
 
@@ -460,7 +461,7 @@ table {
 
 .watch,
 .watch:hover {
-    color: #aaa;
+    color: $gray-500;
     cursor: pointer;
     margin-left: 5px;
     text-decoration: none;
@@ -481,24 +482,27 @@ table {
 // These colors are duplicated from Roster.js
 .pt-modifier-select {
     option[value="1"] {
-        background-color: #ccc;
+        background-color: $gray-400;
+        color: $black;
     }
 
     option[value="1.75"] {
-        background-color: #070;
+        background-color: $primary;
         color: $white;
     }
 
     option[value="1.25"] {
-        background-color: #0f0;
+        background-color: $info;
+        color: $white;
     }
 
     option[value="0.75"] {
-        background-color: #ff0;
+        background-color: $warning;
+        color: $black;
     }
 
     option[value="0"] {
-        background-color: #a00;
+        background-color: $danger;
         color: $white;
     }
 }
@@ -603,7 +607,7 @@ table {
         padding: 0;
 
         a {
-            color: #333;
+            color: $black;
             display: block;
             padding: 4px 5px;
             text-decoration: none;

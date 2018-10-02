@@ -84,15 +84,11 @@ body {
 }
 
 .spin {
-    -webkit-animation: spin 4s linear infinite;
-    -moz-animation: spin 4s linear infinite;
     animation: spin 4s linear infinite;
-    -webkit-animation-play-state: paused;
 }
 
 @keyframes spin {
     100% {
-        -webkit-transform: rotate(360deg);
         transform: rotate(360deg);
     }
 }
@@ -175,8 +171,6 @@ ul.dashboard-boxes {
 
         a.league-active {
             background: black;
-            -webkit-animation: oscillate-bg 1.5s infinite;
-            -moz-animation: oscillate-bg 1.5s infinite;
             animation: oscillate-bg 1.5s infinite;
         }
 

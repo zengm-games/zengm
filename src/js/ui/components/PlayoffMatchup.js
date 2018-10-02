@@ -44,7 +44,7 @@ const PlayoffMatchup = ({
     return (
         <>
             <span
-                className={series.home.tid === userTid ? "bg-info" : ""}
+                className={series.home.tid === userTid ? "table-info" : ""}
                 style={{ fontWeight: homeWon ? "bold" : "normal" }}
             >
                 {series.home.seed}.{" "}
@@ -64,7 +64,7 @@ const PlayoffMatchup = ({
             <br />
 
             <span
-                className={series.away.tid === userTid ? "bg-info" : ""}
+                className={series.away.tid === userTid ? "table-info" : ""}
                 style={{ fontWeight: awayWon ? "bold" : "normal" }}
             >
                 {series.away.seed}.{" "}

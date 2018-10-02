@@ -4,7 +4,6 @@ bootstrap 4
     - maybe separate file with !default overrides
 - splash screen
   - indicate when UI/worker is loaded, not using the "component versions" though
-- bootstrap 3 classes (hidden, visible, text-)
 - screenshot
 - ads
 - play menu (and all navbar) menu positioning
@@ -29,10 +28,10 @@ bootstrap 4
 - Replaced .has-error, .has-warning, and .has-success classes with HTML5 form validation via CSS’s :invalid and :valid pseudo-classes.
 - table/header spacing, everywhere, such as player page
 - max-width on some pages, like schedule
-- playoffs highlighting
 - mobile menu slide in from right
   - mobile draft UI interplay?
 - dashboard boxes top margin
+- footer sticky to bottom (how does that work with bottom ad? is min-height working still?)
 
 Object.assign to @babel/plugin-proposal-object-rest-spread
 

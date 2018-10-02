@@ -635,7 +635,7 @@ class CustomizePlayer extends React.Component {
                                     />
                                 </div>
                                 <div className="col-sm-3 form-group">
-                                    <label>From</label>
+                                    <label>College</label>
                                     <input
                                         type="text"
                                         className="form-control"
@@ -735,8 +735,6 @@ class CustomizePlayer extends React.Component {
 
                             {pictureDiv}
                         </div>
-
-                        <div className="clearfix visible-sm visible-xs" />
 
                         <div className="col-md-5">
                             <h2>Ratings</h2>

@@ -12,7 +12,7 @@ import {
 const DraftButtons = ({ userRemaining, usersTurn }) => {
     const untilText = userRemaining ? "your next pick" : "end of draft";
     return (
-        <div className="btn-group">
+        <div className="btn-group mb-3">
             <button
                 className="btn btn-light-bordered"
                 disabled={usersTurn}
@@ -244,7 +244,7 @@ class Draft extends React.Component {
         });
 
         const buttonClasses = classNames("btn", "btn-info", "btn-xs", {
-            "visible-xs": !fantasyDraft,
+            "d-sm-none": !fantasyDraft,
         });
 
         const wrapperClasses = classNames(

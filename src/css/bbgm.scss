@@ -811,7 +811,7 @@ label input {
 .btn-light-bordered {
     @extend .btn-light;
     background-color: #fff;
-    border: 1px solid $gray-400;
+    border: 1px solid $gray-400 !important;
     color: $gray-700;
 }
 

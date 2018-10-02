@@ -79,7 +79,7 @@ const LeagueDashboard = ({
             <div className="row">
                 <div className="col-md-8">
                     <div className="row">
-                        <div className="col-sm-4 hidden-xs">
+                        <div className="col-sm-4 d-none d-sm-block">
                             <h3 />
                             <table className="table table-striped table-bordered table-sm">
                                 <thead>
@@ -375,12 +375,11 @@ const LeagueDashboard = ({
                         </div>
                     </div>
                 </div>
-                <div className="clearfix visible-sm" />
                 <div className="col-md-4">
                     <div className="row">
-                        <div className="col-md-12 col-6">
+                        <div className="col-md-12 col-6 mb-3">
                             {showPlayoffSeries ? (
-                                <div>
+                                <>
                                     <h3>Playoffs</h3>
                                     <b>{seriesTitle}</b>
                                     <br />
@@ -395,9 +394,9 @@ const LeagueDashboard = ({
                                     <a href={helpers.leagueUrl(["playoffs"])}>
                                         » Playoffs
                                     </a>
-                                </div>
+                                </>
                             ) : (
-                                <div>
+                                <>
                                     <h3>Upcoming Games</h3>
                                     {gamesRemainingTag}
                                     <ul
@@ -415,10 +414,10 @@ const LeagueDashboard = ({
                                     <a href={helpers.leagueUrl(["schedule"])}>
                                         » Schedule
                                     </a>
-                                </div>
+                                </>
                             )}
                         </div>
-                        <div className="col-md-12 col-6">
+                        <div className="col-md-12 col-6 mb-3">
                             <h3>Completed Games</h3>
                             <ul
                                 className="list-group"

@@ -9,7 +9,10 @@ const DivStandingsRow = clickable(({ clicked, season, t, toggleClicked }) => {
     return (
         <tr
             key={t.tid}
-            className={classNames({ info: t.highlight, warning: clicked })}
+            className={classNames({
+                info: t.highlight,
+                "table-warning": clicked,
+            })}
             onClick={toggleClicked}
         >
             <td>

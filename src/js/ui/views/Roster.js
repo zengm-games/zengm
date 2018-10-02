@@ -173,7 +173,10 @@ const RosterRow = SortableElement(
         return (
             <tr
                 key={p.pid}
-                className={classNames({ separator: i === 4, warning: clicked })}
+                className={classNames({
+                    separator: i === 4,
+                    "table-warning": clicked,
+                })}
                 data-pid={p.pid}
             >
                 {editable ? (

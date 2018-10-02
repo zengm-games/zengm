@@ -144,7 +144,7 @@ Header.propTypes = {
 const Row = clickable(({ clicked, row, toggleClicked }) => {
     return (
         <tr
-            className={classNames(row.classNames, { warning: clicked })}
+            className={classNames(row.classNames, { "table-warning": clicked })}
             onClick={toggleClicked}
         >
             {row.data.map((value = null, i) => {

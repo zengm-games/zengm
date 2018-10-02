@@ -18,7 +18,7 @@ class PlayerRow extends React.Component {
 
         const classes = classNames({
             separator: i === 4,
-            warning: p.inGame,
+            "table-warning": p.inGame,
         });
         return (
             <tr className={classes}>

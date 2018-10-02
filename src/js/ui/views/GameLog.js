@@ -8,7 +8,7 @@ import clickable from "../wrappers/clickable";
 const StatsRow = clickable(({ clicked, i, numPlayers, p, toggleClicked }) => {
     const classes = classNames({
         separator: i === 4 || i === numPlayers - 1,
-        warning: clicked,
+        "table-warning": clicked,
     });
     return (
         <tr className={classes} onClick={toggleClicked}>

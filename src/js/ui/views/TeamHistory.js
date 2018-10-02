@@ -84,9 +84,9 @@ const TeamHistory = ({
             ],
             classNames: {
                 // Highlight active and HOF players
-                danger: p.hof,
-                info: p.tid > PLAYER.RETIRED && p.tid !== team.tid, // On other team
-                success: p.tid === team.tid, // On this team
+                "table-danger": p.hof,
+                "table-info": p.tid > PLAYER.RETIRED && p.tid !== team.tid, // On other team
+                "table-success": p.tid === team.tid, // On this team
             },
         };
     });

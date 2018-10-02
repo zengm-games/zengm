@@ -7,7 +7,10 @@ import { DataTable, NewWindowLink, PlayerNameLabels } from "../components";
 
 const OfferPlayerRow = clickable(({ clicked, p, toggleClicked }) => {
     return (
-        <tr className={clicked ? "warning" : null} onClick={toggleClicked}>
+        <tr
+            className={clicked ? "table-warning" : null}
+            onClick={toggleClicked}
+        >
             <td>
                 <PlayerNameLabels
                     injury={p.injury}

@@ -624,11 +624,12 @@ table {
     }
 }
 
-// HACK so that the td.info class can be overriden in teamHistory (and possibly
-// elsewhere).
-tr.warning > td {
-    background-color: #fcf8e3;
-    border-color: #fbeed5;
+// HACK so that other table classes can be overriden in teamHistory (and possibly elsewhere).
+tr.table-warning > td {
+    @extend .table-warning;
+}
+tr.table-warning:hover > td {
+    @extend .table-warning:hover;
 }
 
 // Affix stuff taken from Bootstrap docs and used for the play-by-play in live
@@ -687,7 +688,7 @@ tr.warning > td {
 }
 .sidebar .nav-link {
     font-weight: 500;
-    color: #333;
+    color: $gray-900;
     padding: 4px 16px;
 }
 .sidebar .nav-link.active {

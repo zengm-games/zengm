@@ -172,32 +172,32 @@ class EditTeamInfo extends React.Component {
                 <h2>Manual Editing</h2>
 
                 <div
-                    className="row hidden-xs"
+                    className="row d-none d-md-flex"
                     style={{ fontWeight: "bold", marginBottom: "0.5em" }}
                 >
-                    <div className="col-sm-2">
+                    <div className="col-md-2">
                         <br />
                         Region
                     </div>
-                    <div className="col-sm-2">
+                    <div className="col-md-2">
                         <br />
                         Name
                     </div>
-                    <div className="col-sm-2 col-md-1">
+                    <div className="col-md-2 col-lg-1">
                         <br />
                         Abbrev
                     </div>
-                    <div className="col-sm-2">
+                    <div className="col-md-2">
                         Population
                         <br />
                         (millions)
                     </div>
-                    <div className="col-sm-2">
+                    <div className="col-md-2">
                         Stadium
                         <br />
                         Capacity
                     </div>
-                    <div className="col-sm-2 col-md-3">
+                    <div className="col-md-2 col-lg-3">
                         <br />
                         Logo URL
                     </div>
@@ -206,98 +206,128 @@ class EditTeamInfo extends React.Component {
                 <form onSubmit={this.handleSubmit}>
                     <div className="row">
                         {teams.map((t, i) => (
-                            <div key={t.tid}>
-                                <div className="col-6 col-sm-2 form-group">
-                                    <label className="visible-xs">Region</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        onChange={e =>
-                                            this.handleInputChange(
-                                                i,
-                                                "region",
-                                                e,
-                                            )
-                                        }
-                                        value={t.region}
-                                    />
+                            <React.Fragment key={t.tid}>
+                                <div className="col-6 col-md-2">
+                                    <div className="form-group">
+                                        <label className="d-md-none">
+                                            Region
+                                        </label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            onChange={e =>
+                                                this.handleInputChange(
+                                                    i,
+                                                    "region",
+                                                    e,
+                                                )
+                                            }
+                                            value={t.region}
+                                        />
+                                    </div>
                                 </div>
-                                <div className="col-6 col-sm-2 form-group">
-                                    <label className="visible-xs">Name</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        onChange={e =>
-                                            this.handleInputChange(i, "name", e)
-                                        }
-                                        value={t.name}
-                                    />
+                                <div className="col-6 col-md-2">
+                                    <div className="form-group">
+                                        <label className="d-md-none">
+                                            Name
+                                        </label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            onChange={e =>
+                                                this.handleInputChange(
+                                                    i,
+                                                    "name",
+                                                    e,
+                                                )
+                                            }
+                                            value={t.name}
+                                        />
+                                    </div>
                                 </div>
-                                <div className="col-6 col-sm-2 col-md-1 form-group">
-                                    <label className="visible-xs">Abbrev</label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        onChange={e =>
-                                            this.handleInputChange(
-                                                i,
-                                                "abbrev",
-                                                e,
-                                            )
-                                        }
-                                        value={t.abbrev}
-                                    />
+                                <div className="col-6 col-md-2 col-lg-1">
+                                    <div className="form-group">
+                                        <label className="d-md-none">
+                                            Abbrev
+                                        </label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            onChange={e =>
+                                                this.handleInputChange(
+                                                    i,
+                                                    "abbrev",
+                                                    e,
+                                                )
+                                            }
+                                            value={t.abbrev}
+                                        />
+                                    </div>
                                 </div>
-                                <div className="col-6 col-sm-2 form-group">
-                                    <label className="visible-xs">
-                                        Population (millions)
-                                    </label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        onChange={e =>
-                                            this.handleInputChange(i, "pop", e)
-                                        }
-                                        value={t.pop}
-                                    />
+                                <div className="col-6 col-md-2">
+                                    <div className="form-group">
+                                        <label className="d-md-none">
+                                            Population (millions)
+                                        </label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            onChange={e =>
+                                                this.handleInputChange(
+                                                    i,
+                                                    "pop",
+                                                    e,
+                                                )
+                                            }
+                                            value={t.pop}
+                                        />
+                                    </div>
                                 </div>
-                                <div className="col-6 col-sm-2 form-group">
-                                    <label className="visible-xs">
-                                        Stadium Capacity
-                                    </label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        onChange={e =>
-                                            this.handleInputChange(
-                                                i,
-                                                "stadiumCapacity",
-                                                e,
-                                            )
-                                        }
-                                        value={t.stadiumCapacity}
-                                    />
+                                <div className="col-6 col-md-2">
+                                    <div className="form-group">
+                                        <label className="d-md-none">
+                                            Stadium Capacity
+                                        </label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            onChange={e =>
+                                                this.handleInputChange(
+                                                    i,
+                                                    "stadiumCapacity",
+                                                    e,
+                                                )
+                                            }
+                                            value={t.stadiumCapacity}
+                                        />
+                                    </div>
                                 </div>
-                                <div className="visible-xs clearfix" />
-                                <div className="col-sm-2 col-md-3 form-group">
-                                    <label className="visible-xs">
-                                        Logo URL
-                                    </label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        onChange={e =>
-                                            this.handleInputChange(
-                                                i,
-                                                "imgURL",
-                                                e,
-                                            )
-                                        }
-                                        value={t.imgURL}
-                                    />
+                                <div className="col-6 col-md-2 col-lg-3">
+                                    <div className="form-group">
+                                        <label className="d-md-none">
+                                            Logo URL
+                                        </label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            onChange={e =>
+                                                this.handleInputChange(
+                                                    i,
+                                                    "imgURL",
+                                                    e,
+                                                )
+                                            }
+                                            value={t.imgURL}
+                                        />
+                                    </div>
                                 </div>
-                                <hr className="visible-xs" />
-                            </div>
+                                <div
+                                    className="col-12 d-md-none"
+                                    style={{ marginTop: -12 }}
+                                >
+                                    <hr />
+                                </div>
+                            </React.Fragment>
                         ))}
                     </div>
                     <center>

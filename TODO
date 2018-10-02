@@ -26,11 +26,9 @@ bootstrap 4
 - colors in popover
 - go over all css files, anything obsolete?
   - all colors #
-- labels in login forms, etc - not bold, why?
 - Replaced .has-error, .has-warning, and .has-success classes with HTML5 form validation via CSS’s :invalid and :valid pseudo-classes.
 - table/header spacing, everywhere, such as player page
 - reevaluate glyphicons import, only include fonts that are actually necessary (woff)
-- help-block -> form-text
 - max-width on some pages, like schedule
 
 Object.assign to @babel/plugin-proposal-object-rest-spread

@@ -4,7 +4,6 @@ bootstrap 4
     - maybe separate file with !default overrides
 - screenshot
 - ads
-- play menu (and all navbar) menu positioning - should be a couple pixels higher
 - confirm GCS still works
 - navbar collapsed state
   - dropdowns - more l/r padding where possible
@@ -28,7 +27,6 @@ bootstrap 4
 - changes
   - make this better in general, content from blog
 - swipe left to open sidebar on xs https://slideout.js.org/
-- fantasy draft UI
 
 in league export, don't include teamAbbrevsCache/teamNamesCache/teamRegionsCache
 

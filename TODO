@@ -2,8 +2,6 @@ bootstrap 4
 - dark mode
   - some stuff built in, like table-dark
     - maybe separate file with !default overrides
-- splash screen
-  - indicate when UI/worker is loaded, not using the "component versions" though
 - screenshot
 - ads
 - play menu (and all navbar) menu positioning
@@ -31,7 +29,7 @@ bootstrap 4
 - footer sticky to bottom (how does that work with bottom ad?)
 - changes
   - make this better in general, content from blog
-- swipe left to open sidebar on xs
+- swipe left to open sidebar on xs https://slideout.js.org/
 - fantasy draft UI
 
 in league export, don't include teamAbbrevsCache/teamNamesCache/teamRegionsCache

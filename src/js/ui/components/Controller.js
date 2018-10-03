@@ -337,12 +337,8 @@ class Controller extends React.Component<{}, State> {
                         lid={local.state.lid}
                         pageID={pageID}
                     />
-                    <div
-                        className="p402_premium"
-                        id="actual-content"
-                        style={{ minHeight: "300px" }}
-                    >
-                        {contents}
+                    <div className="p402_premium" id="actual-content">
+                        <div className="actual-actual-content">{contents}</div>
                         <Footer />
                     </div>
                     <NagModal

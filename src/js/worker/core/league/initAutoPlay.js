@@ -18,6 +18,8 @@ const initAutoPlay = async (conditions: Conditions) => {
     if (Number.isInteger(numSeasons)) {
         local.autoPlaySeasons = numSeasons;
         autoPlay(conditions);
+    } else {
+        return false;
     }
 };
 

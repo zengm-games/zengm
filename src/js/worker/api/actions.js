@@ -324,7 +324,7 @@ const playMenu = {
 
 const toolsMenu = {
     autoPlaySeasons: (conditions: Conditions) => {
-        league.initAutoPlay(conditions);
+        return league.initAutoPlay(conditions);
     },
 
     skipToPlayoffs: async (conditions: Conditions) => {

@@ -128,7 +128,7 @@ type MenuItemLink = {|
     league?: true,
     godMode?: true,
     nonLeague?: true,
-    onClick?: (SyntheticEvent<>) => void | Promise<void>,
+    onClick?: (SyntheticEvent<>) => void | false | Promise<void | false>, // Return false to leave sidebar open
     path?: string | (number | string)[],
     text:
         | string
@@ -385,7 +385,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
                 type: "link",
                 league: true,
                 onClick() {
-                    toWorker("actions.toolsMenu.autoPlaySeasons");
+                    return toWorker("actions.toolsMenu.autoPlaySeasons");
                 },
                 text: "Auto Play",
             },
@@ -493,6 +493,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
                     if (response) {
                         window.location.reload();
                     }
+                    return false;
                 },
                 text: "Delete All Leagues",
             },

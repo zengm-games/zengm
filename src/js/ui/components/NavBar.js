@@ -17,7 +17,6 @@ import PopoverHeader from "reactstrap/lib/PopoverHeader";
 import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
 import {
     helpers,
-    local,
     menuItems,
     realtimeUpdate,
     subscribeLocal,

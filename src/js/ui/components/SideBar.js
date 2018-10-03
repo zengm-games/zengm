@@ -22,7 +22,14 @@ MenuGroup.propTypes = {
     children: PropTypes.any.isRequired,
 };
 
-const MenuItem = ({ godMode, lid, menuItem, pageID, root }) => {
+const MenuItem = ({
+    godMode,
+    lid,
+    menuItem,
+    onMenuItemClick,
+    pageID,
+    root,
+}) => {
     if (!menuItem.league && lid !== undefined) {
         return null;
     }
@@ -45,9 +52,17 @@ const MenuItem = ({ godMode, lid, menuItem, pageID, root }) => {
         } else if (Array.isArray(menuItem.path)) {
             anchorProps.href = helpers.leagueUrl(menuItem.path);
         }
-        if (menuItem.onClick) {
-            anchorProps.onClick = menuItem.onClick;
-        }
+        anchorProps.onClick = async e => {
+            if (menuItem.onClick) {
+                // Don't close menu if response is false
+                const response = await menuItem.onClick(e);
+                if (response !== false) {
+                    onMenuItemClick();
+                }
+            } else {
+                onMenuItemClick();
+            }
+        };
 
         const item = (
             <li className="nav-item">
@@ -75,6 +90,7 @@ const MenuItem = ({ godMode, lid, menuItem, pageID, root }) => {
                     key={i}
                     lid={lid}
                     menuItem={child}
+                    onMenuItemClick={onMenuItemClick}
                     pageID={pageID}
                     root={false}
                 />
@@ -110,6 +126,14 @@ class SideBar extends React.Component<Props> {
         return subscribeLocal(local => {
             const { godMode, lid, sideBarOpen } = local.state;
 
+            const onMenuItemClick = () => {
+                if (sideBarOpen) {
+                    local.update({
+                        sideBarOpen: false,
+                    });
+                }
+            };
+
             return (
                 <div
                     className={classNames("bg-light sidebar", {
@@ -123,6 +147,7 @@ class SideBar extends React.Component<Props> {
                                 key={i}
                                 lid={lid}
                                 menuItem={menuItem}
+                                onMenuItemClick={onMenuItemClick}
                                 pageID={this.props.pageID}
                                 root
                             />

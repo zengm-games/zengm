@@ -6,7 +6,6 @@ bootstrap 4
 - ads
 - play menu (and all navbar) menu positioning - should be a couple pixels higher
 - confirm GCS still works
-- navbar dropdowns when moving between with mouse, original clicked one is still somewhat highlighted
 - navbar collapsed state
   - dropdowns - more l/r padding where possible
   - play menu

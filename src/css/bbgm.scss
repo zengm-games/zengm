@@ -755,6 +755,14 @@ label input {
     }
 }
 
+// Without this ugliness, the dropdown text remains darkened if you click and then hover to another
+#top-dropdowns .nav-link:focus {
+    color: rgba(0, 0, 0, 0.5);
+    &:hover {
+        color: rgba(0, 0, 0, 0.9);
+    }
+}
+
 .nav-link {
     cursor: pointer;
 }

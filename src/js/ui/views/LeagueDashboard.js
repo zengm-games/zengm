@@ -378,7 +378,7 @@ const LeagueDashboard = ({
                 </div>
                 <div className="col-md-4">
                     <div className="row">
-                        <div className="col-md-12 col-6 mb-3">
+                        <div className="col-sm-6 col-md-12 mb-3">
                             {showPlayoffSeries ? (
                                 <>
                                     <h3>Playoffs</h3>
@@ -418,7 +418,7 @@ const LeagueDashboard = ({
                                 </>
                             )}
                         </div>
-                        <div className="col-md-12 col-6 mb-3">
+                        <div className="col-sm-6 col-md-12 mb-3">
                             <h3>Completed Games</h3>
                             <ul
                                 className="list-group"

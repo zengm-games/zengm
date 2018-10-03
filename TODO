@@ -7,11 +7,7 @@ bootstrap 4
 - screenshot
 - ads
 - play menu (and all navbar) menu positioning
-- inIframe
-- responsive menu on side
-  - better way for highlighting - needs to support pages outside of league (changes, achievements, new league)
-  - confirm GCS still works
-  - god mode style on top and side - make same
+- confirm GCS still works
 - navbar dropdowns when moving between with mouse, original clicked one is still somewhat highlighted
 - navbar dropdowns more clear active state, like bs3 version
 - navbar collapsed state
@@ -34,6 +30,8 @@ bootstrap 4
 - footer sticky to bottom (how does that work with bottom ad?)
 - changes
   - make this better in general, content from blog
+- swipe left to open sidebar on xs
+- fantasy draft UI
 
 Object.assign to @babel/plugin-proposal-object-rest-spread
 

@@ -105,15 +105,20 @@ class SideBar extends React.Component<Props> {
         return (
             this.props.godMode !== nextProps.godMode ||
             this.props.lid !== nextProps.lid ||
+            this.props.open !== nextProps.open ||
             this.props.pageID !== nextProps.pageID
         );
     }
 
     render() {
-        const { godMode, lid, pageID } = this.props;
+        const { godMode, lid, open, pageID } = this.props;
 
         return (
-            <div className="bg-light sidebar">
+            <div
+                className={classNames("bg-light sidebar", {
+                    "sidebar-open": open,
+                })}
+            >
                 <div className="sidebar-sticky">
                     {menuItems.map((menuItem, i) => (
                         <MenuItem
@@ -134,6 +139,7 @@ class SideBar extends React.Component<Props> {
 SideBar.propTypes = {
     godMode: PropTypes.bool.isRequired,
     lid: PropTypes.number,
+    open: PropTypes.bool.isRequired,
     pageID: PropTypes.string,
 };
 

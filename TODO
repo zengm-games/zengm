@@ -8,6 +8,7 @@ bootstrap 4
 - confirm GCS still works
 - navbar dropdowns when moving between with mouse, original clicked one is still somewhat highlighted
 - navbar dropdowns more clear active state, like bs3 version
+- at least on lg, more padding in top dropdowns
 - navbar collapsed state
   - dropdowns - more l/r padding where possible
   - play menu

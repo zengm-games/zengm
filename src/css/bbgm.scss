@@ -729,7 +729,8 @@ label input {
     border-bottom: 1px solid $gray-200;
 }
 
-#top-dropdowns .nav-item {
+#top-dropdowns .nav-item,
+#top-user-block .nav-item {
     margin: -8px 0;
     height: 51px;
 }
@@ -742,6 +743,15 @@ label input {
 @include media-breakpoint-up(xl) {
     #top-dropdowns .nav-link {
         padding: 16px;
+    }
+}
+
+#top-user-block .nav-link {
+    padding: 16px 0 16px 8px;
+}
+@include media-breakpoint-up(xl) {
+    #top-user-block .nav-link {
+        padding: 16px 0 16px 16px;
     }
 }
 

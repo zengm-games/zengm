@@ -553,7 +553,7 @@ const NavBar = ({ pageID, updating }: Props) => {
                 <div className="d-none d-sm-flex">
                     <DropdownLinks godMode={godMode} lid={lid} />
                 </div>
-                <Nav navbar>
+                <Nav id="top-user-block" navbar>
                     <NavItem>{userBlock}</NavItem>
                 </Nav>
             </Navbar>

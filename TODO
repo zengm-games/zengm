@@ -16,7 +16,7 @@ bootstrap 4
 - Replaced .has-error, .has-warning, and .has-success classes with HTML5 form validation via CSS’s :invalid and :valid pseudo-classes.
 - max-width on some pages, like schedule
   - or flex stuff, make one of the cols fluid?
-  - or nonfluid tables. however for DataTable with controls (like LeagueFinances) the controls expand beyond the table...
+  - or nonfluid tables
 - changes
   - make this better in general, content from blog
 - swipe left to open sidebar on xs https://slideout.js.org/

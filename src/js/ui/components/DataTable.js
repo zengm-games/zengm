@@ -936,14 +936,13 @@ class DataTable extends React.Component<Props, State> {
         }
 
         return (
-            <div className={classNames("table-responsive", className)}>
+            <div
+                className={classNames("table-responsive", className, {
+                    "table-nonfluid": nonfluid,
+                })}
+            >
                 {aboveTable}
-                <table
-                    className={classNames(
-                        "table table-striped table-bordered table-sm table-hover",
-                        { "table-nonfluid": nonfluid },
-                    )}
-                >
+                <table className="table table-striped table-bordered table-sm table-hover">
                     <Header
                         cols={cols}
                         enableFilters={this.state.enableFilters}

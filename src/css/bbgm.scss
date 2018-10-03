@@ -361,7 +361,11 @@ table {
 
 // Make table not stretch to 100% width automatically
 .table-nonfluid {
-    width: 1px;
+    display: inline-block;
+    width: unset;
+    .table {
+        width: 1px;
+    }
 }
 
 .trade-summary {

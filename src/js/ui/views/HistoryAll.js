@@ -132,6 +132,7 @@ const HistoryAll = ({ seasons, teamAbbrevsCache, userTid }) => {
                 cols={cols}
                 defaultSort={[0, "desc"]}
                 name="HistoryAll"
+                nonfluid
                 pagination
                 rows={rows}
             />

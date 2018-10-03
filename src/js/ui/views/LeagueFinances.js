@@ -81,6 +81,7 @@ const LeagueFinances = ({
                 cols={cols}
                 defaultSort={[5, "desc"]}
                 name="LeagueFinances"
+                nonfluid
                 rows={rows}
             />
         </>

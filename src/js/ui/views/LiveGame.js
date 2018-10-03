@@ -124,7 +124,7 @@ const BoxScore = ({ boxScore }) => (
             )}
         </center>
         {boxScore.teams.map(t => (
-            <div key={t.abbrev}>
+            <div key={t.abbrev} className="mb-3">
                 <h3>
                     <a
                         href={helpers.leagueUrl([
@@ -195,7 +195,6 @@ const BoxScore = ({ boxScore }) => (
                 </div>
             </div>
         ))}
-        <br />
         <p>Attendance: {helpers.numberWithCommas(boxScore.att)}</p>
     </>
 );

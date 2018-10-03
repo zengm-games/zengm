@@ -28,6 +28,7 @@ bootstrap 4
     - what about colors in line in JS
 - Replaced .has-error, .has-warning, and .has-success classes with HTML5 form validation via CSS’s :invalid and :valid pseudo-classes.
 - max-width on some pages, like schedule
+  - or nonfluid tables. however for DataTable with controls (like LeagueFinances) the controls expand beyond the table...
 - mobile menu slide in from right
   - mobile draft UI interplay?
 - footer sticky to bottom (how does that work with bottom ad?)

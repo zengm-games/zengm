@@ -729,15 +729,20 @@ label input {
     border-bottom: 1px solid $gray-200;
 }
 
-.navbar .dropdown.nav-item {
+#top-dropdowns .nav-item {
     margin: -8px 0;
     height: 51px;
 }
-.navbar .dropdown.show.nav-item {
+#top-dropdowns .dropdown.show.nav-item {
     background-color: $gray-200;
 }
-.navbar .dropdown.nav-item .nav-link {
+#top-dropdowns .nav-link {
     padding: 16px 8px;
+}
+@include media-breakpoint-up(xl) {
+    #top-dropdowns .nav-link {
+        padding: 16px;
+    }
 }
 
 .nav-link {

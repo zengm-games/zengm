@@ -240,7 +240,7 @@ class DropdownLinks extends React.Component<
         const { godMode, lid } = this.props;
 
         return (
-            <Nav navbar>
+            <Nav navbar id="top-dropdowns">
                 {window.inIframe && lid !== undefined ? (
                     <NavItem>
                         <NavLink href={helpers.leagueUrl([])}>

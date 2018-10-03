@@ -7,7 +7,10 @@ bootstrap 4
 - play menu (and all navbar) menu positioning - should be a couple pixels higher
 - confirm GCS still works
 - navbar dropdowns when moving between with mouse, original clicked one is still somewhat highlighted
-- at least on lg, more padding in top dropdowns
+- login/register button cleanup
+  - expand vertical area, like top dropdowns
+  - expand horizontal area on xl, like top dropdowns
+  - get rid of right margin/padding
 - navbar collapsed state
   - dropdowns - more l/r padding where possible
   - play menu

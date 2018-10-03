@@ -729,6 +729,17 @@ label input {
     border-bottom: 1px solid $gray-200;
 }
 
+.navbar .dropdown.nav-item {
+    margin: -8px 0;
+    height: 51px;
+}
+.navbar .dropdown.show.nav-item {
+    background-color: $gray-200;
+}
+.navbar .dropdown.nav-item .nav-link {
+    padding: 16px 8px;
+}
+
 .nav-link {
     cursor: pointer;
 }

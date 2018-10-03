@@ -458,7 +458,7 @@ const LeagueDashboard = ({
             </div>
 
             <h3>Starting Lineup</h3>
-            <div className="table-responsive">
+            <div className="table-responsive table-nonfluid">
                 <table className="table table-striped table-bordered table-sm">
                     <thead>
                         <tr>
@@ -521,6 +521,7 @@ const LeagueDashboard = ({
                     </tbody>
                 </table>
             </div>
+            <div className="clearfix" />
             <a href={helpers.leagueUrl(["roster"])}>» Full Roster</a>
         </>
     );

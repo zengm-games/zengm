@@ -124,22 +124,19 @@ class SideBar extends React.Component<Props> {
 
     render() {
         return subscribeLocal(local => {
-            const { godMode, lid, sideBarOpen } = local.state;
+            const { godMode, lid } = local.state;
 
+            // This is done with a selector rather than by passing a prop down or using local.state because then
+            // performance of the menu is independent of any other React performance issues - basically it's a hack to
+            // make menu performance consistent even if there are other problems. Like on the Fantasy Draft page.
             const onMenuItemClick = () => {
-                if (sideBarOpen) {
-                    local.update({
-                        sideBarOpen: false,
-                    });
-                }
+                document
+                    .getElementById("sidebar")
+                    .classList.remove("sidebar-open");
             };
 
             return (
-                <div
-                    className={classNames("bg-light sidebar", {
-                        "sidebar-open": sideBarOpen,
-                    })}
-                >
+                <div className="bg-light sidebar" id="sidebar">
                     <div className="sidebar-sticky">
                         {menuItems.map((menuItem, i) => (
                             <MenuItem

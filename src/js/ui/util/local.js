@@ -20,7 +20,6 @@ class LocalContainer extends Container<LocalStateUI> {
             playMenuOptions: [],
             popup: window.location.search === "?w=popup",
             season: 0,
-            sideBarOpen: false,
             startingSeason: 0,
             statusText: "",
             teamAbbrevsCache: [],

@@ -17,7 +17,6 @@ bootstrap 4
 - max-width on some pages, like schedule
   - or flex stuff, make one of the cols fluid?
   - or nonfluid tables. however for DataTable with controls (like LeagueFinances) the controls expand beyond the table...
-- footer sticky to bottom (how does that work with bottom ad?)
 - changes
   - make this better in general, content from blog
 - swipe left to open sidebar on xs https://slideout.js.org/

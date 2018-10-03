@@ -5,10 +5,6 @@ bootstrap 4
 - screenshot
 - ads
 - confirm GCS still works
-- navbar collapsed state
-  - dropdowns - more l/r padding where possible
-  - play menu
-    - if can't figure it out, somehow turn it into a modal
 - firefox
 - safari
 - screen reader
@@ -27,6 +23,9 @@ bootstrap 4
 - swipe left to open sidebar on xs https://slideout.js.org/
 - menu + fantasy draft (and regular draft) is slow.. i guess unstated is triggering re-render of everything when menu opens
   - shouldComponentUpdate?
+  - or listen to unstated only in some individual components, if that's triggering global re-render?
+
+open dashboard, open league in new tab, now shell on dashboard is as if in league
 
 in league export, don't include teamAbbrevsCache/teamNamesCache/teamRegionsCache
 

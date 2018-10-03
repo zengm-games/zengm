@@ -767,6 +767,13 @@ label input {
     padding-top: 0;
 }
 
+// Needed to fix navbar nesting on xs - not sure why, maybe bug in Boostrap or Reactstrap?
+.navbar-nav {
+    .dropdown-menu {
+        position: absolute;
+    }
+}
+
 .legend-square {
     bottom: -2.5px;
     display: inline-block;

@@ -85,15 +85,12 @@ type State = {
     inLeague: boolean,
     data: { [key: string]: any },
     showNagModal: boolean,
-    sideBarOpen: boolean,
 };
 
 class Controller extends React.Component<{}, State> {
     closeNagModal: Function;
 
     get: Function;
-
-    toggleSideBar: Function;
 
     updatePage: Function;
 
@@ -111,14 +108,12 @@ class Controller extends React.Component<{}, State> {
             inLeague: false,
             data: {},
             showNagModal: false,
-            sideBarOpen: false,
         };
         this.idLoaded = undefined;
         this.idLoading = undefined;
 
         this.closeNagModal = this.closeNagModal.bind(this);
         this.get = this.get.bind(this);
-        this.toggleSideBar = this.toggleSideBar.bind(this);
         this.updatePage = this.updatePage.bind(this);
         this.updateState = this.updateState.bind(this);
     }
@@ -126,7 +121,6 @@ class Controller extends React.Component<{}, State> {
     componentDidMount() {
         emitter.on("get", this.get);
         emitter.on("showAd", showAd);
-        emitter.on("toggleSideBar", this.toggleSideBar);
         emitter.on("updateState", this.updateState);
 
         if (local.state.popup && document.body) {
@@ -146,7 +140,6 @@ class Controller extends React.Component<{}, State> {
     componentWillUnmount() {
         emitter.removeListener("get", this.get);
         emitter.removeListener("showAd", showAd);
-        emitter.on("toggleSideBar", this.toggleSideBar);
         emitter.removeListener("updateState", this.updateState);
     }
 
@@ -308,20 +301,12 @@ class Controller extends React.Component<{}, State> {
         }
     }
 
-    toggleSideBar() {
-        this.setState(state => {
-            return {
-                sideBarOpen: !state.sideBarOpen,
-            };
-        });
-    }
-
     updateState(obj: State) {
         this.setState(obj);
     }
 
     render() {
-        const { Component, data, loading, inLeague, sideBarOpen } = this.state;
+        const { Component, data, loading, inLeague } = this.state;
 
         let contents;
         const pageID = this.idLoading || this.idLoaded; // idLoading, idLoaded, or undefined
@@ -347,12 +332,7 @@ class Controller extends React.Component<{}, State> {
                 <NavBar pageID={pageID} updating={loading} />
                 <div className="bbgm-container">
                     <Header />
-                    <SideBar
-                        godMode={local.state.godMode}
-                        lid={local.state.lid}
-                        open={sideBarOpen}
-                        pageID={pageID}
-                    />
+                    <SideBar pageID={pageID} />
                     <div className="p402_premium" id="actual-content">
                         <div className="actual-actual-content">{contents}</div>
                         <Footer />

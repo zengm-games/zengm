@@ -20,6 +20,7 @@ class LocalContainer extends Container<LocalStateUI> {
             playMenuOptions: [],
             popup: window.location.search === "?w=popup",
             season: 0,
+            sideBarOpen: false,
             startingSeason: 0,
             statusText: "",
             teamAbbrevsCache: [],
@@ -48,6 +49,14 @@ class LocalContainer extends Container<LocalStateUI> {
             teamRegionsCache: [],
             userTid: 0,
             userTids: [],
+        });
+    }
+
+    toggleSideBar() {
+        this.setState(state => {
+            return {
+                sideBarOpen: !state.sideBarOpen,
+            };
         });
     }
 

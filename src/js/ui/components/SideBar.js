@@ -3,7 +3,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import * as React from "react";
-import { helpers, local, menuItems } from "../util";
+import { helpers, menuItems, subscribeLocal } from "../util";
 
 const getText = (text): string | React.Element<any> => {
     if (text.hasOwnProperty("side")) {
@@ -22,7 +22,7 @@ MenuGroup.propTypes = {
     children: PropTypes.any.isRequired,
 };
 
-const MenuItem = ({ lid, menuItem, pageID, root }) => {
+const MenuItem = ({ godMode, lid, menuItem, pageID, root }) => {
     if (!menuItem.league && lid !== undefined) {
         return null;
     }
@@ -31,7 +31,7 @@ const MenuItem = ({ lid, menuItem, pageID, root }) => {
     }
 
     if (menuItem.type === "link") {
-        if (menuItem.godMode && !local.state.godMode) {
+        if (menuItem.godMode && !godMode) {
             return null;
         }
 
@@ -102,44 +102,38 @@ type Props = {
 
 class SideBar extends React.Component<Props> {
     shouldComponentUpdate(nextProps: Props) {
-        return (
-            this.props.godMode !== nextProps.godMode ||
-            this.props.lid !== nextProps.lid ||
-            this.props.open !== nextProps.open ||
-            this.props.pageID !== nextProps.pageID
-        );
+        return this.props.pageID !== nextProps.pageID;
     }
 
     render() {
-        const { godMode, lid, open, pageID } = this.props;
+        return subscribeLocal(local => {
+            const { godMode, lid, sideBarOpen } = local.state;
 
-        return (
-            <div
-                className={classNames("bg-light sidebar", {
-                    "sidebar-open": open,
-                })}
-            >
-                <div className="sidebar-sticky">
-                    {menuItems.map((menuItem, i) => (
-                        <MenuItem
-                            lid={lid}
-                            godMode={godMode}
-                            key={i}
-                            menuItem={menuItem}
-                            pageID={pageID}
-                            root
-                        />
-                    ))}
+            return (
+                <div
+                    className={classNames("bg-light sidebar", {
+                        "sidebar-open": sideBarOpen,
+                    })}
+                >
+                    <div className="sidebar-sticky">
+                        {menuItems.map((menuItem, i) => (
+                            <MenuItem
+                                lid={lid}
+                                godMode={godMode}
+                                key={i}
+                                menuItem={menuItem}
+                                pageID={this.props.pageID}
+                                root
+                            />
+                        ))}
+                    </div>
                 </div>
-            </div>
-        );
+            );
+        });
     }
 }
 
 SideBar.propTypes = {
-    godMode: PropTypes.bool.isRequired,
-    lid: PropTypes.number,
-    open: PropTypes.bool.isRequired,
     pageID: PropTypes.string,
 };
 

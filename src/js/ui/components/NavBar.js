@@ -516,7 +516,11 @@ const NavBar = ({ pageID, updating }: Props) => {
                 <button
                     className="navbar-toggler mr-3"
                     onClick={() => {
-                        local.toggleSideBar();
+                        local.update(state => {
+                            return {
+                                sideBarOpen: !state.sideBarOpen,
+                            };
+                        });
                     }}
                     type="button"
                 >

@@ -375,6 +375,7 @@ type Props = {
     defaultSort: SortBy,
     footer?: any[],
     name: string,
+    nonfluid?: boolean,
     pagination?: boolean,
     rows: any[],
     superCols?: {
@@ -668,6 +669,7 @@ class DataTable extends React.Component<Props, State> {
             className,
             cols,
             footer,
+            nonfluid,
             pagination,
             rows,
             superCols,
@@ -939,7 +941,7 @@ class DataTable extends React.Component<Props, State> {
                 <table
                     className={classNames(
                         "table table-striped table-bordered table-sm table-hover",
-                        { "table-nonfluid": this.props.nonfluid },
+                        { "table-nonfluid": nonfluid },
                     )}
                 >
                     <Header

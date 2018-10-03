@@ -52,15 +52,7 @@ class LocalContainer extends Container<LocalStateUI> {
         });
     }
 
-    toggleSideBar() {
-        this.setState(state => {
-            return {
-                sideBarOpen: !state.sideBarOpen,
-            };
-        });
-    }
-
-    update(obj: $Shape<LocalStateUI>) {
+    update(obj: $Shape<LocalStateUI> | (LocalStateUI => $Shape<LocalStateUI>)) {
         this.setState(obj);
     }
 

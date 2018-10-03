@@ -71,8 +71,9 @@ const MenuItem = ({ godMode, lid, menuItem, pageID, root }) => {
         const children = menuItem.children
             .map((child, i) => (
                 <MenuItem
-                    lid={lid}
+                    godMode={godMode}
                     key={i}
+                    lid={lid}
                     menuItem={child}
                     pageID={pageID}
                     root={false}
@@ -118,9 +119,9 @@ class SideBar extends React.Component<Props> {
                     <div className="sidebar-sticky">
                         {menuItems.map((menuItem, i) => (
                             <MenuItem
-                                lid={lid}
                                 godMode={godMode}
                                 key={i}
+                                lid={lid}
                                 menuItem={menuItem}
                                 pageID={this.props.pageID}
                                 root

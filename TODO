@@ -25,8 +25,9 @@ bootstrap 4
 - Replaced .has-error, .has-warning, and .has-success classes with HTML5 form validation via CSS’s :invalid and :valid pseudo-classes.
 - max-width on some pages, like schedule
   - or nonfluid tables. however for DataTable with controls (like LeagueFinances) the controls expand beyond the table...
-- mobile menu slide in from right
+- mobile menu slide in
   - mobile draft UI interplay?
+  - click should close
 - footer sticky to bottom (how does that work with bottom ad?)
 - changes
   - make this better in general, content from blog

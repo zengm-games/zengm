@@ -21,12 +21,12 @@ bootstrap 4
 - max-width on some pages, like schedule
   - or flex stuff, make one of the cols fluid?
   - or nonfluid tables. however for DataTable with controls (like LeagueFinances) the controls expand beyond the table...
-- mobile menu slide in
-  - mobile draft UI interplay?
 - footer sticky to bottom (how does that work with bottom ad?)
 - changes
   - make this better in general, content from blog
 - swipe left to open sidebar on xs https://slideout.js.org/
+- menu + fantasy draft (and regular draft) is slow.. i guess unstated is triggering re-render of everything when menu opens
+  - shouldComponentUpdate?
 
 in league export, don't include teamAbbrevsCache/teamNamesCache/teamRegionsCache
 

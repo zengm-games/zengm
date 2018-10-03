@@ -195,7 +195,7 @@ const BoxScore = ({ boxScore }) => (
                 </div>
             </div>
         ))}
-        <p>Attendance: {helpers.numberWithCommas(boxScore.att)}</p>
+        Attendance: {helpers.numberWithCommas(boxScore.att)}
     </>
 );
 

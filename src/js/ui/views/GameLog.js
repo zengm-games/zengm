@@ -298,7 +298,6 @@ class BoxScore extends React.Component {
                         </tbody>
                     </table>
                 </center>
-
                 {boxScore.teams.map(t => (
                     <div key={t.abbrev} className="mb-3">
                         <h3>
@@ -378,7 +377,7 @@ class BoxScore extends React.Component {
                         </div>
                     </div>
                 ))}
-                <p>Attendance: {helpers.numberWithCommas(boxScore.att)}</p>
+                Attendance: {helpers.numberWithCommas(boxScore.att)}
             </>
         );
     }

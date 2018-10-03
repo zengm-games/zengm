@@ -38,13 +38,13 @@ class TopMenuToggle extends React.Component<TopMenuToggleProps> {
         this.handleMouseEnter = this.handleMouseEnter.bind(this);
     }
 
-    handleMouseEnter(e) {
+    handleMouseEnter(event) {
         if (
             this.props.openId !== undefined &&
             this.props.openId !== this.props.long &&
             this.props.toggle
         ) {
-            this.props.toggle(e);
+            this.props.toggle(event);
         }
     }
 
@@ -70,7 +70,7 @@ TopMenuToggle.propTypes = {
 };
 
 const TopMenuDropdown = ({ children, long, short, openId, onToggle }) => {
-    const toggle = () => onToggle(long);
+    const toggle = event => onToggle(long, event);
     return (
         <Dropdown isOpen={openId === long} nav inNavbar toggle={toggle}>
             <TopMenuToggle
@@ -230,7 +230,13 @@ class DropdownLinks extends React.Component<
         );
     }
 
-    handleTopMenuToggle(id) {
+    handleTopMenuToggle(
+        id: string,
+        event: SyntheticMouseEvent<HTMLAnchorElement>,
+    ) {
+        if (event.currentTarget && event.currentTarget.focus) {
+            event.currentTarget.focus();
+        }
         this.setState(prevState => ({
             openId: id === prevState.openId ? undefined : id,
         }));

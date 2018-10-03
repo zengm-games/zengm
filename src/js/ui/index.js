@@ -130,38 +130,43 @@ const genPage = (id, inLeague = true) => {
             if (window.navigator.serviceWorker) {
                 registrations = await window.navigator.serviceWorker.getRegistrations();
             }
-            window.bugsnagClient.notify(new Error("BBGM version mismatch"), {
-                metaData: {
-                    bbgmVersion: window.bbgmVersion,
-                    bbgmVersionStored,
-                    hasNavigatorServiceWorker:
-                        window.navigator.serviceWorker !== undefined,
-                    registrationsLength: registrations.length,
-                    registrations: registrations.map(r => {
-                        return {
-                            scope: r.scope,
-                            active: r.active
-                                ? {
-                                      scriptURL: r.active.scriptURL,
-                                      state: r.active.state,
-                                  }
-                                : null,
-                            installing: r.installing
-                                ? {
-                                      scriptURL: r.installing.scriptURL,
-                                      state: r.installing.state,
-                                  }
-                                : null,
-                            waiting: r.waiting
-                                ? {
-                                      scriptURL: r.waiting.scriptURL,
-                                      state: r.waiting.state,
-                                  }
-                                : null,
-                        };
-                    }),
-                },
-            });
+            if (window.bugsnagClient) {
+                window.bugsnagClient.notify(
+                    new Error("BBGM version mismatch"),
+                    {
+                        metaData: {
+                            bbgmVersion: window.bbgmVersion,
+                            bbgmVersionStored,
+                            hasNavigatorServiceWorker:
+                                window.navigator.serviceWorker !== undefined,
+                            registrationsLength: registrations.length,
+                            registrations: registrations.map(r => {
+                                return {
+                                    scope: r.scope,
+                                    active: r.active
+                                        ? {
+                                              scriptURL: r.active.scriptURL,
+                                              state: r.active.state,
+                                          }
+                                        : null,
+                                    installing: r.installing
+                                        ? {
+                                              scriptURL: r.installing.scriptURL,
+                                              state: r.installing.state,
+                                          }
+                                        : null,
+                                    waiting: r.waiting
+                                        ? {
+                                              scriptURL: r.waiting.scriptURL,
+                                              state: r.waiting.state,
+                                          }
+                                        : null,
+                                };
+                            }),
+                        },
+                    },
+                );
+            }
         }
     } else {
         // Initial load, store version for future comparisons
@@ -413,7 +418,7 @@ const genPage = (id, inLeague = true) => {
                 if (window.bugsnagClient) {
                     window.bugsnagClient.notify(event.detail.error);
                 }
-                console.error("Error from worker view:");
+                console.error("Error from view:");
                 console.error(event.detail.error);
             }
 

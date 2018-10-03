@@ -7,7 +7,6 @@ bootstrap 4
 - confirm GCS still works
 - firefox
 - safari
-- screen reader
 - react-overlays
 - go over all css files, anything obsolete?
   - all colors #
@@ -17,8 +16,9 @@ bootstrap 4
 - changes
   - make this better in general, content from blog
 - swipe left to open sidebar on xs https://slideout.js.org/
-- open dashboard, open league in new tab, now shell on dashboard is as if in league
-  - this is actually probably better behavior... if a league is open, don't close it until a new league is selected
+
+open dashboard, open league in new tab, now shell on dashboard is as if in league
+- happens because there is no way to distinguish "local.updateGameAttributes called to initialize new league that the user clicked from the dashboard in this tab" and "local.updateGameAttributes called from another tab, but this tab has lid === undefined so we'll leave it in that state"
 
 in league export, don't include teamAbbrevsCache/teamNamesCache/teamRegionsCache
 

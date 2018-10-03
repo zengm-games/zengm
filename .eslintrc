@@ -60,6 +60,7 @@
         "SyntheticEvent": false,
         "SyntheticKeyboardEvent": false,
         "SyntheticInputEvent": false,
+        "SyntheticMouseEvent": false,
     },
     overrides: [{
         files: "**/*.test.js",

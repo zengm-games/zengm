@@ -599,6 +599,7 @@ const TeamFinances = ({
                 cols={cols}
                 defaultSort={[1, "desc"]}
                 name="TeamFinances"
+                nonfluid
                 footer={footer}
                 rows={rows}
             />

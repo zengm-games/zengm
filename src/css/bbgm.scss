@@ -112,7 +112,7 @@ body {
 }
 .sidebar a.sidebar-god-mode.active {
     background-color: darken($purple, 10%);
-    color: lighten($blue, 30);
+    color: lighten($primary, 30);
 }
 
 .god-mode-text {
@@ -364,7 +364,7 @@ table {
     display: inline-block;
     width: unset;
     .table {
-        width: 1px;
+        display: table;
     }
 }
 
@@ -392,8 +392,7 @@ table {
     background-position: center center;
     background-repeat: no-repeat;
     background-size: contain;
-    margin-right: 10px;
-    margin-top: 12px;
+    margin: 0.25rem 1rem 1rem 0;
     width: 120px;
     height: 120px;
     float: left;
@@ -431,7 +430,7 @@ table {
 
 .watch-active,
 .watch-active:hover {
-    color: $red;
+    color: $danger;
 }
 
 .pt-modifier-select {

@@ -14,17 +14,16 @@ bootstrap 4
     - other scss files
     - what about colors in line in JS
 - Replaced .has-error, .has-warning, and .has-success classes with HTML5 form validation via CSS’s :invalid and :valid pseudo-classes.
-- max-width on some pages, like schedule
-  - or flex stuff, make one of the cols fluid?
-  - or nonfluid tables
 - changes
   - make this better in general, content from blog
 - swipe left to open sidebar on xs https://slideout.js.org/
 - menu + fantasy draft (and regular draft) is slow.. i guess unstated is triggering re-render of everything when menu opens
   - shouldComponentUpdate?
   - or listen to unstated only in some individual components, if that's triggering global re-render?
-
-open dashboard, open league in new tab, now shell on dashboard is as if in league
+- open dashboard, open league in new tab, now shell on dashboard is as if in league
+  - this is actually probably better behavior... if a league is open, don't close it until a new league is selected
+- HACK HACK HACK
+  - on slow pages (like fantasy draft) it's much smoother to just add/remove class directly like document.getElementsByClassName("sidebar")[0].classList.add("sidebar-open"); than to go through React. That's because my data flow is fucked... but might still be worth it to be hacky and fast
 
 in league export, don't include teamAbbrevsCache/teamNamesCache/teamRegionsCache
 

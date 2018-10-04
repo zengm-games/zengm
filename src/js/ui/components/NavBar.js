@@ -521,9 +521,10 @@ const NavBar = ({ pageID, updating }: Props) => {
                 <button
                     className="navbar-toggler mr-3"
                     onClick={() => {
-                        document
-                            .getElementById("sidebar")
-                            .classList.toggle("sidebar-open");
+                        const el = document.getElementById("sidebar");
+                        if (el) {
+                            el.classList.toggle("sidebar-open");
+                        }
                     }}
                     type="button"
                 >

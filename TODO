@@ -15,15 +15,7 @@ bootstrap 4
 - Replaced .has-error, .has-warning, and .has-success classes with HTML5 form validation via CSS’s :invalid and :valid pseudo-classes.
 - changes
   - make this better in general, content from blog
-- swipe left to open sidebar on xs https://slideout.js.org/
-  - do it myself!
-    - after some distnace/time, it's a swipe
-    - starting from closed, swipe left, anywhere
-      - move x-position of right side of sidebar to finger
-      - on end of swipe, if it's more than X% open (maybe 30%), then apply the "sidebar-open" class and let the CSS transition finish opening it
-    - starting from open, swipe right, on sidebar
-      - move x-position of sidebar a distance equal to the x movement of the swipe relative to the initial swipe position (where it is recognized as a swipe, not where the initial touch was)
-      - on end of swipe, if it's less than X% open (maybe 30%), then remove "sidebar-open" class and let the CSS transition finish closing it
+- sidebar swiping - does it feel good on real device?
 
 open dashboard, open league in new tab, now shell on dashboard is as if in league
 - happens because there is no way to distinguish "local.updateGameAttributes called to initialize new league that the user clicked from the dashboard in this tab" and "local.updateGameAttributes called from another tab, but this tab has lid === undefined so we'll leave it in that state"

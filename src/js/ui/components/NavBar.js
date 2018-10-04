@@ -306,9 +306,9 @@ class LogoAndText extends React.Component<LogoAndTextProps> {
         return (
             <a
                 className={
-                    window.inIframe && lid !== undefined
-                        ? "navbar-brand text-muted d-none d-lg-inline"
-                        : "navbar-brand text-muted d-none d-sm-inline"
+                    lid !== undefined
+                        ? "navbar-brand text-muted d-none d-sm-inline"
+                        : "navbar-brand text-muted"
                 }
                 href="/"
             >

@@ -15,10 +15,12 @@ bootstrap 4
 - Replaced .has-error, .has-warning, and .has-success classes with HTML5 form validation via CSS’s :invalid and :valid pseudo-classes.
 - changes
   - make this better in general, content from blog
+- when scrolling table-responsive, the datatable controls scroll too, which is bad
+  - but if i put them outside the table-responsive div, they don't know how narrow to be in nonfluid case! need another wrapper div, is that possible somehow?
+    - this is not a regression, it was the same before
 - sidebar swiping - does it feel good on real device?
   - scrolling horizontally within a table will open/close the sidebar!!! bad!!!
     - somehow identify if click started within a table or not
-  - scrolling up/down the page should not trigger the menu - have some cutoff in y distance
   - allow opening sidebar on sm too, since that is often mobile. maybe everywhere should allow sidebar
 
 open dashboard, open league in new tab, now shell on dashboard is as if in league

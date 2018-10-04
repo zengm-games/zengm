@@ -112,7 +112,7 @@ const MenuItem = ({
 };
 
 // A touch motion must go at least this far before it is recognized as a swipe gesture
-const SWIPE_START_DIFF = 20;
+const SWIPE_START_DIFF = 25;
 
 // When swipe ends, if the sidebar has more than this many x-pixels displayed it is opened, otherwise closed
 const OPEN_CLOSE_BOUNDARY = 76;
@@ -190,7 +190,8 @@ class SideBar extends React.Component<Props> {
             return;
         }
         const touch = event.targetTouches[0];
-        const diff = touch.clientX - this.touchStartCoords[0];
+        const diffX = touch.clientX - this.touchStartCoords[0];
+        const diffY = touch.clientY - this.touchStartCoords[1];
 
         if (this.currentSwipe === undefined) {
             // Right swipe is possible when sidebar is closed
@@ -198,7 +199,8 @@ class SideBar extends React.Component<Props> {
                 this.ref &&
                 this.ref.current &&
                 !this.ref.current.classList.contains("sidebar-open") &&
-                diff >= SWIPE_START_DIFF
+                diffX >= SWIPE_START_DIFF &&
+                Math.abs(diffX) > Math.abs(diffY) // Scrolling or swiping menu?
             ) {
                 this.currentSwipe = "right";
                 this.swipeStartCoords = [touch.clientX, touch.clientY];
@@ -209,7 +211,8 @@ class SideBar extends React.Component<Props> {
                 this.ref &&
                 this.ref.current &&
                 this.ref.current.classList.contains("sidebar-open") &&
-                diff <= -SWIPE_START_DIFF
+                diffX <= -SWIPE_START_DIFF &&
+                Math.abs(diffX) > Math.abs(diffY) // Scrolling or swiping menu?
             ) {
                 this.currentSwipe = "left";
                 this.swipeStartCoords = [touch.clientX, touch.clientY];

@@ -9,7 +9,7 @@
     z-index: 100; /* Behind the navbar */
     padding: 48px 0 0; /* Height of navbar */
     border-right: 1px solid $gray-200;
-    width: 150px;
+    width: 161px; // Line up with Play button
 }
 
 .sidebar-sticky {
@@ -57,7 +57,7 @@
         display: block;
     }
     #actual-content {
-        margin-left: 150px;
+        margin-left: 161px;
     }
 }
 
@@ -67,7 +67,7 @@
         transition-timing-function: ease-in-out;
         transition-duration: 0.3s;
         transition-property: left;
-        left: -150px;
+        left: -161px;
     }
     .sidebar-open {
         left: 0;

@@ -115,7 +115,7 @@ const MenuItem = ({
 const SWIPE_START_DIFF = 20;
 
 // When swipe ends, if the sidebar has more than this many x-pixels displayed it is opened, otherwise closed
-const OPEN_CLOSE_BOUNDARY = 75;
+const OPEN_CLOSE_BOUNDARY = 76;
 
 type Props = {
     godMode: boolean,
@@ -132,8 +132,8 @@ class SideBar extends React.Component<Props> {
 
     ref: { current: null | React.ElementRef<"div"> };
 
-    // If this touch is deemed a swipe, this is the current x coordinate
-    currentX: number | void;
+    // If this touch is deemed a swipe, these are the current coordinates
+    currentCoords: [number, number] | void;
 
     // If this touch is deemed a swipe, set "left" or "right" here
     currentSwipe: "left" | "right" | void;
@@ -144,11 +144,11 @@ class SideBar extends React.Component<Props> {
 
     sidebarLeft: number | void;
 
-    // x coordinate when a swipe gesture was recognized (not exactly touchStartX, because some movement has to happen first)
-    swipeStartX: number | void;
+    // Coordinates when a swipe gesture was recognized (not exactly touchStartX, because some movement has to happen first)
+    swipeStartCoords: [number, number] | void;
 
-    // x coordinate of initial touch
-    touchStartX: number | void;
+    // Coordinates of initial touch
+    touchStartCoords: [number, number] | void;
 
     constructor(props: Props) {
         super(props);
@@ -159,13 +159,13 @@ class SideBar extends React.Component<Props> {
 
         this.ref = React.createRef();
 
-        this.currentX = undefined;
+        this.currentCoords = undefined;
         this.currentSwipe = undefined;
         this.requestAnimationFrameID = undefined;
         this.requestAnimationFramePending = false;
         this.sidebarLeft = undefined;
-        this.swipeStartX = undefined;
-        this.touchStartX = undefined;
+        this.swipeStartCoords = undefined;
+        this.touchStartCoords = undefined;
     }
 
     handleTouchStart(event: SyntheticTouchEvent<>) {
@@ -176,7 +176,7 @@ class SideBar extends React.Component<Props> {
             return;
         }
         const touch = event.targetTouches[0];
-        this.touchStartX = touch.clientX;
+        this.touchStartCoords = [touch.clientX, touch.clientY];
     }
 
     handleTouchMove(event: SyntheticTouchEvent<>) {
@@ -186,11 +186,11 @@ class SideBar extends React.Component<Props> {
         if (!event.targetTouches || event.targetTouches.length !== 1) {
             return;
         }
-        if (this.touchStartX === undefined) {
+        if (this.touchStartCoords === undefined) {
             return;
         }
         const touch = event.targetTouches[0];
-        const diff = touch.clientX - this.touchStartX;
+        const diff = touch.clientX - this.touchStartCoords[0];
 
         if (this.currentSwipe === undefined) {
             // Right swipe is possible when sidebar is closed
@@ -201,7 +201,7 @@ class SideBar extends React.Component<Props> {
                 diff >= SWIPE_START_DIFF
             ) {
                 this.currentSwipe = "right";
-                this.swipeStartX = touch.clientX;
+                this.swipeStartCoords = [touch.clientX, touch.clientY];
             }
 
             // Left swipe is possible when the sidebar is open
@@ -212,12 +212,12 @@ class SideBar extends React.Component<Props> {
                 diff <= -SWIPE_START_DIFF
             ) {
                 this.currentSwipe = "left";
-                this.swipeStartX = touch.clientX;
+                this.swipeStartCoords = [touch.clientX, touch.clientY];
             }
         }
 
         if (this.currentSwipe !== undefined) {
-            this.currentX = touch.clientX;
+            this.currentCoords = [touch.clientX, touch.clientY];
 
             if (!this.requestAnimationFramePending) {
                 this.requestAnimationFramePending = true;
@@ -225,8 +225,8 @@ class SideBar extends React.Component<Props> {
                 this.requestAnimationFrameID = window.requestAnimationFrame(
                     () => {
                         if (
-                            this.currentX === undefined ||
-                            this.swipeStartX === undefined
+                            this.currentCoords === undefined ||
+                            this.swipeStartCoords === undefined
                         ) {
                             return;
                         }
@@ -234,14 +234,17 @@ class SideBar extends React.Component<Props> {
                         if (this.currentSwipe === "right") {
                             // Move x-position of right side of sidebar to finger
                             this.sidebarLeft = helpers.bound(
-                                -150 + this.currentX,
+                                -150 + this.currentCoords[0],
                                 -150,
                                 0,
                             );
                         } else if (this.currentSwipe === "left") {
                             // Close sidebar based on difference between swipeStartX and current position
                             this.sidebarLeft = helpers.bound(
-                                -(this.swipeStartX - this.currentX),
+                                -(
+                                    this.swipeStartCoords[0] -
+                                    this.currentCoords[0]
+                                ),
                                 -150,
                                 0,
                             );
@@ -269,13 +272,7 @@ class SideBar extends React.Component<Props> {
             return;
         }
 
-        if (
-            this.ref &&
-            this.ref.current &&
-            this.currentX !== undefined &&
-            this.sidebarLeft !== undefined &&
-            this.touchStartX !== undefined
-        ) {
+        if (this.ref && this.ref.current && this.sidebarLeft !== undefined) {
             if (
                 this.currentSwipe === "right" &&
                 this.sidebarLeft >= -OPEN_CLOSE_BOUNDARY
@@ -291,13 +288,13 @@ class SideBar extends React.Component<Props> {
         }
 
         window.cancelAnimationFrame(this.requestAnimationFrameID);
-        this.currentX = undefined;
+        this.currentCoords = undefined;
         this.currentSwipe = undefined;
         this.requestAnimationFrameID = undefined;
         this.requestAnimationFramePending = false;
         this.sidebarLeft = undefined;
-        this.swipeStartX = undefined;
-        this.touchStartX = undefined;
+        this.swipeStartCoords = undefined;
+        this.touchStartCoords = undefined;
     }
 
     shouldComponentUpdate(nextProps: Props) {

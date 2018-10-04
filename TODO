@@ -16,6 +16,8 @@ bootstrap 4
 - changes
   - make this better in general, content from blog
 - sidebar swiping - does it feel good on real device?
+  - scrolling horizontally within a table will open/close the sidebar!!! bad!!!
+  - scrolling up/down the page should not trigger the menu - have some cutoff in y distance
 
 open dashboard, open league in new tab, now shell on dashboard is as if in league
 - happens because there is no way to distinguish "local.updateGameAttributes called to initialize new league that the user clicked from the dashboard in this tab" and "local.updateGameAttributes called from another tab, but this tab has lid === undefined so we'll leave it in that state"

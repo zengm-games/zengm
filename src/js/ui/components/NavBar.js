@@ -54,7 +54,10 @@ class TopMenuToggle extends React.Component<TopMenuToggleProps> {
                 <span className="d-xs-inline d-sm-none d-md-inline">
                     {this.props.long}
                 </span>
-                <span className="d-none d-sm-inline d-md-none">
+                <span
+                    className="d-none d-sm-inline d-md-none"
+                    title={this.props.long}
+                >
                     {this.props.short}
                 </span>
             </DropdownToggle>

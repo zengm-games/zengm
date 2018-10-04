@@ -115,7 +115,7 @@ const MenuItem = ({
 const SWIPE_START_DIFF = 25;
 
 // When swipe ends, if the sidebar has more than this many x-pixels displayed it is opened, otherwise closed
-const OPEN_CLOSE_BOUNDARY = 76;
+const OPEN_CLOSE_BOUNDARY = 95;
 
 type Props = {
     godMode: boolean,

@@ -19,9 +19,6 @@ bootstrap 4
   - but if i put them outside the table-responsive div, they don't know how narrow to be in nonfluid case! need another wrapper div, is that possible somehow?
     - this is not a regression, it was the same before
 - sidebar swiping - does it feel good on real device?
-  - scrolling horizontally within a table will open/close the sidebar!!! bad!!!
-    - somehow identify if click started within a table or not
-    - bubble/capture https://www.reddit.com/r/javascript/comments/461f0y/body_onclick_except_certain_divs/d04hw6r/
   - allow opening sidebar on other sizes too
     - sm - same behavior as xs
     - md/lg - maybe make it collapsable?

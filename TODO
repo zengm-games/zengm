@@ -18,10 +18,10 @@ bootstrap 4
 - swipe left to open sidebar on xs https://slideout.js.org/
   - do it myself!
     - after some distnace/time, it's a swipe
-    - swipe left, anywhere
+    - starting from closed, swipe left, anywhere
       - move x-position of right side of sidebar to finger
       - on end of swipe, if it's more than X% open (maybe 30%), then apply the "sidebar-open" class and let the CSS transition finish opening it
-    - swipe right, starting from sidebar
+    - starting from open, swipe right, on sidebar
       - move x-position of sidebar a distance equal to the x movement of the swipe relative to the initial swipe position (where it is recognized as a swipe, not where the initial touch was)
       - on end of swipe, if it's less than X% open (maybe 30%), then remove "sidebar-open" class and let the CSS transition finish closing it
 

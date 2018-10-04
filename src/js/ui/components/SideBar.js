@@ -277,16 +277,23 @@ class SideBar extends React.Component<Props> {
         }
 
         if (this.ref && this.ref.current && this.sidebarLeft !== undefined) {
+            const elFade = document.getElementById("sidebar-fade");
             if (
                 this.currentSwipe === "right" &&
                 this.sidebarLeft >= -OPEN_CLOSE_BOUNDARY
             ) {
                 this.ref.current.classList.add("sidebar-open");
+                if (elFade) {
+                    elFade.classList.add("sidebar-fade");
+                }
             } else if (
                 this.currentSwipe === "left" &&
                 this.sidebarLeft <= -OPEN_CLOSE_BOUNDARY
             ) {
                 this.ref.current.classList.remove("sidebar-open");
+                if (elFade) {
+                    elFade.classList.remove("sidebar-fade");
+                }
             }
             this.ref.current.style.left = "";
         }
@@ -329,6 +336,10 @@ class SideBar extends React.Component<Props> {
             const onMenuItemClick = () => {
                 if (this.ref && this.ref.current) {
                     this.ref.current.classList.remove("sidebar-open");
+                    const elFade = document.getElementById("sidebar-fade");
+                    if (elFade) {
+                        elFade.classList.remove("sidebar-fade");
+                    }
                 }
             };
 

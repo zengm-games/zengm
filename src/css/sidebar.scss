@@ -6,7 +6,7 @@
     top: 0;
     bottom: 0;
     left: 0;
-    z-index: 100; /* Behind the navbar */
+    z-index: 9999;
     padding: 48px 0 0; /* Height of navbar */
     border-right: 1px solid $gray-200;
     width: 161px; // Line up with Play button
@@ -72,4 +72,15 @@
     .sidebar-open {
         left: 0;
     }
+}
+
+.sidebar-fade {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1040;
+    background-color: #000;
+    opacity: 0.1;
 }

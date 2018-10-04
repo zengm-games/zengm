@@ -524,9 +524,20 @@ const NavBar = ({ pageID, updating }: Props) => {
                 <button
                     className="navbar-toggler mr-3"
                     onClick={() => {
-                        const el = document.getElementById("sidebar");
-                        if (el) {
-                            el.classList.toggle("sidebar-open");
+                        const elSidebar = document.getElementById("sidebar");
+                        const elFade = document.getElementById("sidebar-fade");
+                        if (elSidebar) {
+                            if (elSidebar.classList.contains("sidebar-open")) {
+                                elSidebar.classList.remove("sidebar-open");
+                                if (elFade) {
+                                    elFade.classList.remove("sidebar-fade");
+                                }
+                            } else {
+                                elSidebar.classList.add("sidebar-open");
+                                if (elFade) {
+                                    elFade.classList.add("sidebar-fade");
+                                }
+                            }
                         }
                     }}
                     type="button"

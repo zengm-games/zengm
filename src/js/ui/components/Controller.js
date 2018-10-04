@@ -330,6 +330,7 @@ class Controller extends React.Component<{}, State> {
         return (
             <Provider>
                 <NavBar pageID={pageID} updating={loading} />
+                <div id="sidebar-fade" />
                 <div className="bbgm-container">
                     <Header />
                     <SideBar pageID={pageID} />

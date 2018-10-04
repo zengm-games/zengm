@@ -23,10 +23,11 @@ bootstrap 4
     - somehow identify if click started within a table or not
     - bubble/capture https://www.reddit.com/r/javascript/comments/461f0y/body_onclick_except_certain_divs/d04hw6r/
   - allow opening sidebar on sm too, since that is often mobile. maybe everywhere should allow sidebar
-  - When open, fade out background. Click on background should close. Reuse class from modal?
+  - click on background should close. Reuse class from modal?
   - Swipe from left is back gesture in Safari? How do other websites deal with this? Tinder? Maybe swipe from right will work? Or how bad is it in Safari?
-  - Mobile sidebar cover navbar
+  - Mobile sidebar cover navbar (needs close button, then)
   - Mobile sidebar bigger font
+  - transition for sidebar-fade
 
 open dashboard, open league in new tab, now shell on dashboard is as if in league
 - happens because there is no way to distinguish "local.updateGameAttributes called to initialize new league that the user clicked from the dashboard in this tab" and "local.updateGameAttributes called from another tab, but this tab has lid === undefined so we'll leave it in that state"

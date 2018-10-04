@@ -79,20 +79,21 @@
     }
 }
 
+// Fade animation only works in one direction!
 #sidebar-fade {
     position: fixed;
     top: 0;
-    right: 0;
     bottom: 0;
     left: 0;
+    width: 0;
     z-index: -1040;
     background-color: #000;
     opacity: 0;
-    transition-timing-function: ease-in-out;
-    transition: opacity 0.3s, z-index 0s;
+    transition: opacity 0.3s ease-in-out 0s;
 }
 
 #sidebar-fade.sidebar-fade {
     opacity: 0.1;
+    width: 100%;
     z-index: 1040;
 }

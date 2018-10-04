@@ -80,19 +80,19 @@
 }
 
 #sidebar-fade {
-    opacity: 0;
-    transition-timing-function: ease-in-out;
-    transition-duration: 0.3s;
-    transition-property: opacity;
-}
-
-#sidebar-fade.sidebar-fade {
     position: fixed;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
-    z-index: 1040;
+    z-index: -1040;
     background-color: #000;
+    opacity: 0;
+    transition-timing-function: ease-in-out;
+    transition: opacity 0.3s, z-index 0s;
+}
+
+#sidebar-fade.sidebar-fade {
     opacity: 0.1;
+    z-index: 1040;
 }

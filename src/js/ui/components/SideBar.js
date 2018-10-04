@@ -130,6 +130,10 @@ class SideBar extends React.Component<Props> {
 
     handleTouchEnd: Function;
 
+    handleFadeClick: Function;
+
+    elFade: HTMLDivElement | null;
+
     ref: { current: null | React.ElementRef<"div"> };
 
     // If this touch is deemed a swipe, these are the current coordinates
@@ -156,6 +160,7 @@ class SideBar extends React.Component<Props> {
         this.handleTouchStart = this.handleTouchStart.bind(this);
         this.handleTouchMove = this.handleTouchMove.bind(this);
         this.handleTouchEnd = this.handleTouchEnd.bind(this);
+        this.handleFadeClick = this.handleFadeClick.bind(this);
 
         this.ref = React.createRef();
 
@@ -169,7 +174,6 @@ class SideBar extends React.Component<Props> {
     }
 
     handleTouchStart(event: SyntheticTouchEvent<>) {
-        console.log("handleTouchStart", event.target, event.currentTarget);
         if (event.touches && event.touches.length > 1) {
             return;
         }
@@ -271,30 +275,8 @@ class SideBar extends React.Component<Props> {
         }
     }
 
-    handleTouchEnd(event: SyntheticTouchEvent<>) {
-        if (event.touches && event.touches.length > 0) {
-            return;
-        }
-
-        if (this.ref && this.ref.current && this.sidebarLeft !== undefined) {
-            const elFade = document.getElementById("sidebar-fade");
-            if (
-                this.currentSwipe === "right" &&
-                this.sidebarLeft >= -OPEN_CLOSE_BOUNDARY
-            ) {
-                this.ref.current.classList.add("sidebar-open");
-                if (elFade) {
-                    elFade.classList.add("sidebar-fade");
-                }
-            } else if (
-                this.currentSwipe === "left" &&
-                this.sidebarLeft <= -OPEN_CLOSE_BOUNDARY
-            ) {
-                this.ref.current.classList.remove("sidebar-open");
-                if (elFade) {
-                    elFade.classList.remove("sidebar-fade");
-                }
-            }
+    cleanupTouch() {
+        if (this.ref && this.ref.current) {
             this.ref.current.style.left = "";
         }
 
@@ -308,6 +290,47 @@ class SideBar extends React.Component<Props> {
         this.touchStartCoords = undefined;
     }
 
+    close() {
+        this.ref.current.classList.remove("sidebar-open");
+        if (this.elFade) {
+            this.elFade.classList.remove("sidebar-fade");
+        }
+    }
+
+    open() {
+        this.ref.current.classList.add("sidebar-open");
+        if (this.elFade) {
+            this.elFade.classList.add("sidebar-fade");
+        }
+    }
+
+    handleTouchEnd(event: SyntheticTouchEvent<>) {
+        if (event.touches && event.touches.length > 0) {
+            return;
+        }
+
+        if (this.ref && this.ref.current && this.sidebarLeft !== undefined) {
+            if (
+                this.currentSwipe === "right" &&
+                this.sidebarLeft >= -OPEN_CLOSE_BOUNDARY
+            ) {
+                this.open();
+            } else if (
+                this.currentSwipe === "left" &&
+                this.sidebarLeft <= -OPEN_CLOSE_BOUNDARY
+            ) {
+                this.close();
+            }
+        }
+
+        this.cleanupTouch();
+    }
+
+    handleFadeClick() {
+        this.close();
+        this.cleanupTouch();
+    }
+
     shouldComponentUpdate(nextProps: Props) {
         return this.props.pageID !== nextProps.pageID;
     }
@@ -317,13 +340,21 @@ class SideBar extends React.Component<Props> {
         document.addEventListener("touchmove", this.handleTouchMove);
         document.addEventListener("touchend", this.handleTouchEnd);
         document.addEventListener("touchcancel", this.handleTouchEnd);
+
+        this.elFade = document.getElementById("sidebar-fade");
+        if (this.elFade) {
+            this.elFade.addEventListener("click", this.handleFadeClick);
+        }
     }
 
     componentWillUnmount() {
-        document.addEventListener("touchstart", this.handleTouchStart);
-        document.addEventListener("touchmove", this.handleTouchMove);
-        document.addEventListener("touchend", this.handleTouchEnd);
-        document.addEventListener("touchcancel", this.handleTouchEnd);
+        document.removeEventListener("touchstart", this.handleTouchStart);
+        document.removeEventListener("touchmove", this.handleTouchMove);
+        document.removeEventListener("touchend", this.handleTouchEnd);
+        document.removeEventListener("touchcancel", this.handleTouchEnd);
+        if (this.elFade) {
+            this.elFade.removeEventListener("click", this.handleFadeClick);
+        }
     }
 
     render() {

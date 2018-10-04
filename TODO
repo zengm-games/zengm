@@ -23,7 +23,6 @@ bootstrap 4
     - somehow identify if click started within a table or not
     - bubble/capture https://www.reddit.com/r/javascript/comments/461f0y/body_onclick_except_certain_divs/d04hw6r/
   - allow opening sidebar on sm too, since that is often mobile. maybe everywhere should allow sidebar
-  - click on background should close. Reuse class from modal?
   - Swipe from left is back gesture in Safari? How do other websites deal with this? Tinder? Maybe swipe from right will work? Or how bad is it in Safari?
   - Mobile sidebar cover navbar (needs close button, then)
   - Mobile sidebar bigger font

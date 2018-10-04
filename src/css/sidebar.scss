@@ -3,7 +3,7 @@
 .sidebar {
     display: none;
     position: fixed;
-    top: 0;
+    top: 52px; // Height of Navbar
     bottom: 0;
     left: 0;
     z-index: 9999;
@@ -67,6 +67,7 @@
         transition-duration: 0.3s;
         transition-property: left;
         left: -161px;
+        top: 0;
     }
     .sidebar-open {
         left: 0;

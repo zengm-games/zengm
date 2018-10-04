@@ -294,6 +294,7 @@ class SideBar extends React.Component<Props> {
         this.ref.current.classList.remove("sidebar-open");
         if (this.elFade) {
             this.elFade.classList.remove("sidebar-fade");
+            document.body.classList.remove("modal-open");
         }
     }
 
@@ -301,6 +302,7 @@ class SideBar extends React.Component<Props> {
         this.ref.current.classList.add("sidebar-open");
         if (this.elFade) {
             this.elFade.classList.add("sidebar-fade");
+            document.body.classList.add("modal-open");
         }
     }
 

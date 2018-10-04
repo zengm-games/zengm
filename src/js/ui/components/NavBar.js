@@ -531,11 +531,15 @@ const NavBar = ({ pageID, updating }: Props) => {
                                 elSidebar.classList.remove("sidebar-open");
                                 if (elFade) {
                                     elFade.classList.remove("sidebar-fade");
+                                    document.body.classList.remove(
+                                        "modal-open",
+                                    );
                                 }
                             } else {
                                 elSidebar.classList.add("sidebar-open");
                                 if (elFade) {
                                     elFade.classList.add("sidebar-fade");
+                                    document.body.classList.add("modal-open");
                                 }
                             }
                         }

@@ -64,8 +64,10 @@ const justDrafted = (p, phase, season) => {
 };
 
 const handleRelease = async (p, phase, season) => {
+    const wasPlayerJustDrafted = justDrafted(p, phase, season);
+
     let releaseMessage;
-    if (justDrafted(p, phase, season)) {
+    if (wasPlayerJustDrafted) {
         releaseMessage = `Are you sure you want to release ${
             p.name
         }?  He will become a free agent and no longer take up a roster spot on your team. Because you just drafted him and the regular season has not started yet, you will not have to pay his contract.`;
@@ -78,7 +80,11 @@ const handleRelease = async (p, phase, season) => {
     }
 
     if (window.confirm(releaseMessage)) {
-        const errorMsg = await toWorker("releasePlayer", p.pid, justDrafted);
+        const errorMsg = await toWorker(
+            "releasePlayer",
+            p.pid,
+            wasPlayerJustDrafted,
+        );
         if (errorMsg) {
             logEvent({
                 type: "error",

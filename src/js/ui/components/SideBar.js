@@ -169,6 +169,7 @@ class SideBar extends React.Component<Props> {
     }
 
     handleTouchStart(event: SyntheticTouchEvent<>) {
+        console.log("handleTouchStart", event.target, event.currentTarget);
         if (event.touches && event.touches.length > 1) {
             return;
         }

@@ -492,7 +492,7 @@ class Roster extends React.Component {
                     ) : null}
                 </div>
                 {editable ? (
-                    <p>
+                    <p style={{ clear: "both" }}>
                         Drag row handles to move players between the starting
                         lineup <span className="bg-primary legend-square" /> and
                         the bench{" "}

@@ -25,7 +25,6 @@ bootstrap 4
   - allow opening sidebar on sm too, since that is often mobile. maybe everywhere should allow sidebar
   - Swipe from left is back gesture in Safari? How do other websites deal with this? Tinder? Maybe swipe from right will work? Or how bad is it in Safari?
   - Mobile sidebar cover navbar (needs close button, then)
-  - Mobile sidebar bigger font
   - transition for sidebar-fade
 
 open dashboard, open league in new tab, now shell on dashboard is as if in league

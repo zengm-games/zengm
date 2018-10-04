@@ -63,11 +63,15 @@
 @include media-breakpoint-down(xs) {
     .sidebar {
         display: block;
+        font-size: 1rem;
         transition-timing-function: ease-in-out;
         transition-duration: 0.3s;
         transition-property: left;
         left: -161px;
         top: 0;
+    }
+    .sidebar-heading {
+        font-size: 0.875rem;
     }
     .sidebar-open {
         left: 0;

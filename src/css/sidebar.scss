@@ -60,7 +60,7 @@
     }
 }
 
-@include media-breakpoint-down(sm) {
+@include media-breakpoint-down(lg) {
     .sidebar {
         display: block;
         font-size: 1rem;

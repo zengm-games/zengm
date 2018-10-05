@@ -116,6 +116,14 @@ class Controller extends React.Component<{}, State> {
         this.get = this.get.bind(this);
         this.updatePage = this.updatePage.bind(this);
         this.updateState = this.updateState.bind(this);
+
+        setTimeout(
+            () =>
+                this.setState({
+                    showNagModal: true,
+                }),
+            1000,
+        );
     }
 
     componentDidMount() {

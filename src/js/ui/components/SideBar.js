@@ -114,8 +114,11 @@ const MenuItem = ({
 // A touch motion must go at least this far before it is recognized as a swipe gesture
 const SWIPE_START_DIFF = 25;
 
+// Sync with .sidebar (small screens) in sidebar.scss
+const SIDEBAR_WIDTH = 190;
+
 // When swipe ends, if the sidebar has more than this many x-pixels displayed it is opened, otherwise closed
-const OPEN_CLOSE_BOUNDARY = 95;
+const OPEN_CLOSE_BOUNDARY = SIDEBAR_WIDTH / 2;
 
 type Props = {
     godMode: boolean,
@@ -258,8 +261,8 @@ class SideBar extends React.Component<Props> {
                         if (this.currentSwipe === "right") {
                             // Move x-position of right side of sidebar to finger
                             this.sidebarLeft = helpers.bound(
-                                -150 + this.currentCoords[0],
-                                -150,
+                                -SIDEBAR_WIDTH + this.currentCoords[0],
+                                -SIDEBAR_WIDTH,
                                 0,
                             );
                         } else if (this.currentSwipe === "left") {
@@ -269,7 +272,7 @@ class SideBar extends React.Component<Props> {
                                     this.swipeStartCoords[0] -
                                     this.currentCoords[0]
                                 ),
-                                -150,
+                                -SIDEBAR_WIDTH,
                                 0,
                             );
                         }

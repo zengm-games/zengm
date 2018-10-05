@@ -20,10 +20,6 @@ bootstrap 4
     - this is not a regression, it was the same before
 - sidebar swiping - does it feel good on real device?
   - transition for sidebar-fade - fade in works, but not out
-  - with scrollbar and sidemenu expanded, need to account for scrollbar width https://stackoverflow.com/questions/13382516/getting-scroll-bar-width-using-javascript
-    - bootstrap modal somehow adds padding-right: 15px - maybe comes from reactstrap?
-      - yeah, if i can figure out scrollbar width, i can just apply it
-        - window.innerWidth - document.body.offsetWidth
 
 open dashboard, open league in new tab, now shell on dashboard is as if in league
 - happens because there is no way to distinguish "local.updateGameAttributes called to initialize new league that the user clicked from the dashboard in this tab" and "local.updateGameAttributes called from another tab, but this tab has lid === undefined so we'll leave it in that state"

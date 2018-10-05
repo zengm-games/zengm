@@ -142,6 +142,8 @@ class SideBar extends React.Component<Props> {
 
     refFade: { current: null | React.ElementRef<"div"> };
 
+    topUserBlockEl: HTMLElement | null;
+
     // If this touch is deemed a swipe, these are the current coordinates
     currentCoords: [number, number] | void;
 
@@ -303,7 +305,12 @@ class SideBar extends React.Component<Props> {
             this.ref.current.classList.remove("sidebar-open");
             if (this.refFade && this.refFade.current) {
                 this.refFade.current.classList.remove("sidebar-fade-open");
+
                 document.body.classList.remove("modal-open");
+                document.body.style.paddingRight = "";
+                if (this.topUserBlockEl) {
+                    this.topUserBlockEl.style.paddingRight = "";
+                }
             }
         }
     }
@@ -313,7 +320,14 @@ class SideBar extends React.Component<Props> {
             this.ref.current.classList.add("sidebar-open");
             if (this.refFade && this.refFade.current) {
                 this.refFade.current.classList.add("sidebar-fade-open");
+
+                const scrollbarWidth =
+                    window.innerWidth - document.body.offsetWidth;
                 document.body.classList.add("modal-open");
+                document.body.style.paddingRight = `${scrollbarWidth}px`;
+                if (this.topUserBlockEl) {
+                    this.topUserBlockEl.style.paddingRight = `${scrollbarWidth}px`;
+                }
             }
         }
     }
@@ -373,6 +387,8 @@ class SideBar extends React.Component<Props> {
         }
 
         emitter.on("sidebar-toggle", this.toggle);
+
+        this.topUserBlockEl = document.getElementById("top-user-block");
     }
 
     componentWillUnmount() {

@@ -662,8 +662,11 @@ tr.table-warning:hover > td {
     }
 }
 
-label input {
-    font-weight: normal;
+.multi-team-menu {
+    background-color: $white;
+    position: fixed;
+    right: 6px;
+    bottom: 6px;
 }
 
 .dropdown-toggle {

@@ -6,7 +6,7 @@
 }
 
 .notification-container-extra-margin-bottom {
-    bottom: 60px;
+    bottom: 65px;
 }
 
 .notification {
@@ -45,10 +45,12 @@
     animation: fadeIn 0.75s;
 }
 
-.notification-close {
+.notification .notification-close {
     font-size: 20px;
     background: transparent;
     border: 0;
+    color: #fff !important;
+    cursor: pointer;
     padding: 0 7px;
     opacity: 0.7;
     position: absolute;

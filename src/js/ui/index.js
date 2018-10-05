@@ -254,6 +254,7 @@ const genPage = (id, inLeague = true) => {
         "/account/lost_password": genPage("lostPassword", false),
         "/account/reset_password/:token": genPage("resetPassword", false),
         "/account/update_card": genPage("accountUpdateCard", false),
+        "/options": genPage("options", false),
 
         // League views
         "/l/:lid": genPage("leagueDashboard"),
@@ -373,7 +374,7 @@ const genPage = (id, inLeague = true) => {
         "/l/:lid/transactions/:abbrev/:season/:eventType": genPage(
             "transactions",
         ),
-        "/l/:lid/options": genPage("options"),
+        "/l/:lid/options": genPage("leagueOptions"),
         "/l/:lid/danger_zone": genPage("dangerZone"),
     };
 

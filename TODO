@@ -2,6 +2,9 @@ bootstrap 4
 - dark mode
   - splash screen
   - switch (options page, localstorage)
+    - implement independent of LeagueOptions
+    - add global section to LeagueOptions, somehow
+    - sync all open tabs when theme is switched
   - orange highlight when clicking element on top dropdown, why
     - commented out at beginning of light.scss
   - screenshot in dark mode has white background

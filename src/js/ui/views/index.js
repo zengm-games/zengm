@@ -29,6 +29,7 @@ export { default as Inbox } from "./Inbox";
 export { default as Leaders } from "./Leaders";
 export { default as LeagueDashboard } from "./LeagueDashboard";
 export { default as LeagueFinances } from "./LeagueFinances";
+export { default as LeagueOptions } from "./LeagueOptions";
 export { default as Live } from "./Live";
 export { default as LiveGame } from "./LiveGame";
 export { default as LoginOrRegister } from "./LoginOrRegister";

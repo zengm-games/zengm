@@ -10,15 +10,15 @@ $gray-800: #f8f9fa;
 $gray-900: #f8f9fa;
 $black: #fff;
 $blue: lighten(#007bff, 25);
-$indigo: darken(#6610f2, 20);
-$purple: darken(#6f42c1, 20);
-$pink: darken(#e83e8c, 20);
-$red: darken(#dc3545, 20);
-$orange: darken(#fd7e14, 20);
-$yellow: darken(#ffc107, 20);
-$green: darken(#28a745, 10);
-$teal: darken(#20c997, 20);
-$cyan: darken(#17a2b8, 20);
+$indigo: lighten(#6610f2, 20);
+$purple: lighten(#6f42c1, 20);
+$pink: lighten(#e83e8c, 20);
+$red: lighten(#dc3545, 20);
+$orange: lighten(#fd7e14, 20);
+$yellow: lighten(#ffc107, 20);
+$green: lighten(#28a745, 10);
+$teal: lighten(#20c997, 20);
+$cyan: lighten(#17a2b8, 20);
 
 @import "light";
 
@@ -31,6 +31,26 @@ $cyan: darken(#17a2b8, 20);
 
     &:disabled {
         color: $gray-700;
+    }
+}
+
+.btn-danger {
+    border-color: darken($red, 40);
+    background-color: darken($red, 40);
+
+    &:hover {
+        border-color: darken($red, 45);
+        background-color: darken($red, 45);
+    }
+}
+
+.btn-success {
+    border-color: darken($green, 20);
+    background-color: darken($green, 20);
+
+    &:hover {
+        border-color: darken($green, 25);
+        background-color: darken($green, 25);
     }
 }
 
@@ -62,11 +82,12 @@ $cyan: darken(#17a2b8, 20);
 
 a.play-button {
     color: $black !important;
+    background-color: darken($green, 20) !important;
 
     &:hover,
     &:active,
     &:focus {
-        background-color: darken($green, 5) !important;
+        background-color: darken($green, 25) !important;
     }
 }
 

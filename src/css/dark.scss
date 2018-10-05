@@ -14,11 +14,13 @@ $indigo: lighten(#6610f2, 20);
 $purple: lighten(#6f42c1, 20);
 $pink: lighten(#e83e8c, 20);
 $red: lighten(#dc3545, 20);
-$orange: lighten(#fd7e14, 20);
+$orange: lighten(#fd7e14, 10);
 $yellow: lighten(#ffc107, 20);
 $green: lighten(#28a745, 10);
 $teal: lighten(#20c997, 20);
 $cyan: lighten(#17a2b8, 20);
+
+$primary: $orange;
 $secondary: $gray-400;
 
 @import "light";
@@ -35,6 +37,10 @@ $secondary: $gray-400;
     }
 }
 
+.text-danger {
+    color: darken($red, 10) !important;
+}
+
 .btn-danger {
     border-color: darken($red, 40);
     background-color: darken($red, 40);
@@ -46,13 +52,13 @@ $secondary: $gray-400;
 }
 
 .btn-primary {
-    border-color: darken($blue, 40);
-    background-color: darken($blue, 40);
+    border-color: darken($orange, 25);
+    background-color: darken($orange, 25);
     color: #fff !important;
 
     &:hover {
-        border-color: darken($blue, 45);
-        background-color: darken($blue, 45);
+        border-color: darken($orange, 30);
+        background-color: darken($orange, 30);
     }
 }
 
@@ -80,6 +86,7 @@ $secondary: $gray-400;
 }
 
 .badge-danger {
+    background-color: darken($red, 40);
     color: $black;
 }
 
@@ -114,4 +121,9 @@ a.god-mode,
 .sidebar a.god-mode.active {
     background-color: darken($purple, 10);
     color: $primary;
+}
+
+.watch-active,
+.watch-active:hover {
+    color: darken($green, 10);
 }

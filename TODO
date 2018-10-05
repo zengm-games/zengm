@@ -1,13 +1,11 @@
 bootstrap 4
 - dark mode
-  - some stuff built in, like table-dark
-    - maybe separate file with !default overrides
   - splash screen
   - dashboard click active
   - roster bench handles too light
   - datatable sort arrows - inactive ones are too light
-  - get rid of sidebar-god-mode
   - sidebar headers should be more gray
+  - switch (options page, localstorage)
 - ads
 - confirm GCS still works
 - firefox

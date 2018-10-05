@@ -538,7 +538,7 @@ const Player = ({
 
     return (
         <>
-            <div className="row">
+            <div className="row mb-3">
                 <div className="col-sm-6">
                     <h1>
                         {player.name} <NewWindowLink />
@@ -605,12 +605,10 @@ const Player = ({
                 </div>
             </div>
 
-            <p />
-
             {showTradeFor ? (
                 <span title={player.untradableMsg}>
                     <button
-                        className="btn btn-light-bordered"
+                        className="btn btn-light-bordered mb-3"
                         disabled={player.untradable}
                         onClick={() =>
                             toWorker("actions.tradeFor", { pid: player.pid })
@@ -622,7 +620,7 @@ const Player = ({
             ) : null}
             {freeAgent ? (
                 <button
-                    className="btn btn-light-bordered"
+                    className="btn btn-light-bordered mb-3"
                     onClick={() => toWorker("actions.negotiate", player.pid)}
                 >
                     Sign Free Agent

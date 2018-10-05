@@ -86,6 +86,10 @@ $text-muted: $gray-400;
     }
 }
 
+.btn-light-bordered:hover {
+    background-color: $gray-100;
+}
+
 .badge-danger {
     background-color: darken($red, 20);
     color: $black;
@@ -127,4 +131,18 @@ a.god-mode,
 .watch-active,
 .watch-active:hover {
     color: darken($green, 10);
+}
+
+@keyframes oscillate-bg {
+    0% {
+        background-color: darken($primary, 40);
+    }
+
+    50% {
+        background-color: darken($primary, 45);
+    }
+
+    100% {
+        background-color: darken($primary, 40);
+    }
 }

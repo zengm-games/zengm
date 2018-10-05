@@ -128,7 +128,7 @@ class WatchList extends React.Component {
                     fields={["statTypes", "playoffs"]}
                     values={[statType, playoffs]}
                 />
-                <UncontrolledDropdown className="float-right">
+                <UncontrolledDropdown className="float-right my-1">
                     <DropdownToggle caret className="btn-light-bordered">
                         Other Reports
                     </DropdownToggle>

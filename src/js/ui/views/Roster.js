@@ -432,7 +432,7 @@ class Roster extends React.Component {
                     fields={["teams", "seasons"]}
                     values={[abbrev, season]}
                 />
-                <UncontrolledDropdown className="float-right">
+                <UncontrolledDropdown className="float-right my-1">
                     <DropdownToggle caret className="btn-light-bordered">
                         More Info
                     </DropdownToggle>

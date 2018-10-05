@@ -2,6 +2,9 @@ bootstrap 4
 - dark mode
   - some stuff built in, like table-dark
     - maybe separate file with !default overrides
+  - splash screen
+  - dashboard click active
+  - hover over categories top dropdowns
 - ads
 - confirm GCS still works
 - firefox

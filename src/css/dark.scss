@@ -1,0 +1,75 @@
+$white: #212529;
+$gray-100: #343a40;
+$gray-200: #495057;
+$gray-300: #6c757d;
+$gray-400: #adb5bd;
+$gray-500: #ced4da;
+$gray-600: #dee2e6;
+$gray-700: #e9ecef;
+$gray-800: #f8f9fa;
+$gray-900: #f8f9fa;
+$black: #fff;
+$blue: lighten(#007bff, 25);
+$indigo: darken(#6610f2, 20);
+$purple: darken(#6f42c1, 20);
+$pink: darken(#e83e8c, 20);
+$red: darken(#dc3545, 20);
+$orange: darken(#fd7e14, 20);
+$yellow: darken(#ffc107, 20);
+$green: darken(#28a745, 10);
+$teal: darken(#20c997, 20);
+$cyan: darken(#17a2b8, 20);
+
+@import "light";
+
+.btn {
+    color: $black;
+
+    &:hover {
+        color: $black;
+    }
+
+    &:disabled {
+        color: $gray-700;
+    }
+}
+
+.btn-primary,
+.btn-secondary {
+    color: $white;
+
+    &:hover {
+        color: $white;
+    }
+
+    &:disabled {
+        color: $gray-200;
+    }
+}
+
+.badge-danger {
+    color: $black;
+}
+
+.text-success {
+}
+.text-warning {
+}
+.text-darnger {
+}
+.text-info {
+}
+
+a.play-button {
+    color: $black !important;
+
+    &:hover,
+    &:active,
+    &:focus {
+        background-color: darken($green, 5) !important;
+    }
+}
+
+.notification {
+    box-shadow: #444 0 0 12px;
+}

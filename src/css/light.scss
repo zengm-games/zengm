@@ -1,5 +1,6 @@
+$black: #000 !default;
+
 $font-size-base: 0.8125rem;
-$black: #000;
 
 // Taken from bootstrap.scss, but with unused things deleted
 @import "node_modules/bootstrap/scss/functions";
@@ -728,7 +729,7 @@ tr.table-warning:hover > td {
     @extend .btn-light;
     background-color: $white;
     border: 1px solid $gray-400 !important;
-    color: $gray-700;
+    color: $gray-700 !important;
 }
 
 .navbar-border {

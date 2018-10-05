@@ -13,7 +13,7 @@ $blue: lighten(#007bff, 25);
 $indigo: lighten(#6610f2, 20);
 $purple: lighten(#6f42c1, 20);
 $pink: lighten(#e83e8c, 20);
-$red: lighten(#dc3545, 20);
+$red: lighten(#dc3545, 0);
 $orange: lighten(#fd7e14, 10);
 $yellow: lighten(#ffc107, 20);
 $green: lighten(#28a745, 10);
@@ -22,6 +22,7 @@ $cyan: lighten(#17a2b8, 20);
 
 $primary: $orange;
 $secondary: $gray-400;
+$text-muted: $gray-400;
 
 @import "light";
 
@@ -38,16 +39,16 @@ $secondary: $gray-400;
 }
 
 .text-danger {
-    color: darken($red, 10) !important;
+    color: lighten($red, 10) !important;
 }
 
 .btn-danger {
-    border-color: darken($red, 40);
-    background-color: darken($red, 40);
+    border-color: darken($red, 20);
+    background-color: darken($red, 20);
 
     &:hover {
-        border-color: darken($red, 45);
-        background-color: darken($red, 45);
+        border-color: darken($red, 25);
+        background-color: darken($red, 25);
     }
 }
 
@@ -86,7 +87,7 @@ $secondary: $gray-400;
 }
 
 .badge-danger {
-    background-color: darken($red, 40);
+    background-color: darken($red, 20);
     color: $black;
 }
 

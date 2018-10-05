@@ -2,10 +2,10 @@ bootstrap 4
 - dark mode
   - splash screen
   - dashboard click active
-  - roster bench handles too light
   - datatable sort arrows - inactive ones are too light
-  - sidebar headers should be more gray
   - switch (options page, localstorage)
+  - orange highlight when clicking element on top dropdown, why
+    - commented out at beginning of light.scss
 - ads
 - confirm GCS still works
 - firefox
@@ -19,6 +19,7 @@ bootstrap 4
 - Replaced .has-error, .has-warning, and .has-success classes with HTML5 form validation via CSS’s :invalid and :valid pseudo-classes.
 - changes
   - make this better in general, content from blog
+- export stats form spacing
 - when scrolling table-responsive, the datatable controls scroll too, which is bad
   - but if i put them outside the table-responsive div, they don't know how narrow to be in nonfluid case! need another wrapper div, is that possible somehow?
     - this is not a regression, it was the same before

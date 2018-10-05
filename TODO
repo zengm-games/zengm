@@ -1,7 +1,6 @@
 bootstrap 4
 - dark mode
   - splash screen
-  - datatable sort arrows - inactive ones are too light
   - switch (options page, localstorage)
   - orange highlight when clicking element on top dropdown, why
     - commented out at beginning of light.scss

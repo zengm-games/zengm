@@ -307,7 +307,7 @@ class LogoAndText extends React.Component<LogoAndTextProps> {
             <a
                 className={
                     lid !== undefined
-                        ? "navbar-brand text-muted d-none d-sm-inline"
+                        ? "navbar-brand text-muted d-none d-md-inline"
                         : "navbar-brand text-muted"
                 }
                 href="/"
@@ -398,9 +398,7 @@ class PlayMenu extends React.Component<PlayMenuProps> {
         return (
             <UncontrolledDropdown nav inNavbar>
                 <DropdownToggle nav caret className="play-button">
-                    <span className="d-xs-inline d-sm-none d-md-inline">
-                        Play
-                    </span>
+                    Play
                 </DropdownToggle>
                 <DropdownMenu>
                     {options.map((option, i) => {

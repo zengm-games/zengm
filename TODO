@@ -19,11 +19,8 @@ bootstrap 4
   - but if i put them outside the table-responsive div, they don't know how narrow to be in nonfluid case! need another wrapper div, is that possible somehow?
     - this is not a regression, it was the same before
 - sidebar swiping - does it feel good on real device?
-  - allow opening sidebar on other sizes too
-    - sm - same behavior as xs
-    - md/lg - maybe make it collapsable?
-  - Swipe from left is back gesture in Safari? How do other websites deal with this? Tinder? Maybe swipe from right will work? Or how bad is it in Safari?
-  - Mobile sidebar cover navbar (needs close button, then)
+  - why not swipable on md and lg too?
+    - might be better to make it collapsable, but oh well
   - transition for sidebar-fade - fade in works, but not out
 
 open dashboard, open league in new tab, now shell on dashboard is as if in league

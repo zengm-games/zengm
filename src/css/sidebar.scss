@@ -60,7 +60,7 @@
     }
 }
 
-@include media-breakpoint-down(xs) {
+@include media-breakpoint-down(sm) {
     .sidebar {
         display: block;
         font-size: 1rem;
@@ -76,6 +76,11 @@
     }
     .sidebar-open {
         left: 0;
+    }
+
+    .navbar.fixed-top .navbar-toggler {
+        color: orange;
+        display: block;
     }
 }
 

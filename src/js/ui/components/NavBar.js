@@ -162,7 +162,7 @@ const MenuItem = ({ godMode, lid, menuItem, openId, onToggle, root }) => {
             <DropdownItem
                 {...anchorProps}
                 className={classNames({
-                    "god-mode-menu": menuItem.godMode,
+                    "god-mode": menuItem.godMode,
                 })}
             >
                 {getText(menuItem.text)}

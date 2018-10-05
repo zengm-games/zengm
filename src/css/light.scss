@@ -99,13 +99,19 @@ body {
     background-color: $purple;
     color: $white;
 }
-.god-mode-menu,
+a.god-mode {
+    &:hover {
+        background-color: darken($purple, 10);
+        color: $white;
+        text-decoration: none;
+    }
+}
 .sidebar a.sidebar-god-mode {
     background-color: $purple;
     color: $white;
 
     &:hover {
-        background-color: darken($purple, 10%);
+        background-color: darken($purple, 10);
         color: $white;
     }
 }

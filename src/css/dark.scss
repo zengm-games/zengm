@@ -19,6 +19,7 @@ $yellow: lighten(#ffc107, 20);
 $green: lighten(#28a745, 10);
 $teal: lighten(#20c997, 20);
 $cyan: lighten(#17a2b8, 20);
+$secondary: $gray-400;
 
 @import "light";
 
@@ -41,6 +42,17 @@ $cyan: lighten(#17a2b8, 20);
     &:hover {
         border-color: darken($red, 45);
         background-color: darken($red, 45);
+    }
+}
+
+.btn-primary {
+    border-color: darken($blue, 40);
+    background-color: darken($blue, 40);
+    color: #fff !important;
+
+    &:hover {
+        border-color: darken($blue, 45);
+        background-color: darken($blue, 45);
     }
 }
 

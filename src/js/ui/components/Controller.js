@@ -116,14 +116,6 @@ class Controller extends React.Component<{}, State> {
         this.get = this.get.bind(this);
         this.updatePage = this.updatePage.bind(this);
         this.updateState = this.updateState.bind(this);
-
-        setTimeout(
-            () =>
-                this.setState({
-                    showNagModal: true,
-                }),
-            1000,
-        );
     }
 
     componentDidMount() {
@@ -338,7 +330,6 @@ class Controller extends React.Component<{}, State> {
         return (
             <Provider>
                 <NavBar pageID={pageID} updating={loading} />
-                <div id="sidebar-fade" />
                 <div className="bbgm-container">
                     <Header />
                     <SideBar pageID={pageID} />

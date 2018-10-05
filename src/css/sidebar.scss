@@ -85,7 +85,7 @@
 }
 
 // Fade animation only works in one direction!
-#sidebar-fade {
+.sidebar-fade {
     position: fixed;
     top: 0;
     bottom: 0;
@@ -97,7 +97,7 @@
     transition: opacity 0.3s ease-in-out 0s;
 }
 
-#sidebar-fade.sidebar-fade {
+.sidebar-fade.sidebar-fade-open {
     opacity: 0.1;
     width: 100%;
     z-index: 1040;

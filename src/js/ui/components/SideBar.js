@@ -123,6 +123,10 @@ type Props = {
     pageID: string,
 };
 
+// Sidebar open/close state is done with the DOM directly rather than by passing a prop down or using local.state
+// because then performance of the menu is independent of any other React performance issues - basically it's a hack to
+// make menu performance consistent even if there are other problems. Like on the Fantasy Draft page.
+
 class SideBar extends React.Component<Props> {
     handleTouchStart: Function;
 
@@ -132,9 +136,9 @@ class SideBar extends React.Component<Props> {
 
     handleFadeClick: Function;
 
-    elFade: HTMLDivElement | null;
-
     ref: { current: null | React.ElementRef<"div"> };
+
+    refFade: { current: null | React.ElementRef<"div"> };
 
     // If this touch is deemed a swipe, these are the current coordinates
     currentCoords: [number, number] | void;
@@ -163,6 +167,7 @@ class SideBar extends React.Component<Props> {
         this.handleFadeClick = this.handleFadeClick.bind(this);
 
         this.ref = React.createRef();
+        this.refFade = React.createRef();
 
         this.currentCoords = undefined;
         this.currentSwipe = undefined;
@@ -291,18 +296,22 @@ class SideBar extends React.Component<Props> {
     }
 
     close() {
-        this.ref.current.classList.remove("sidebar-open");
-        if (this.elFade) {
-            this.elFade.classList.remove("sidebar-fade");
-            document.body.classList.remove("modal-open");
+        if (this.ref && this.ref.current) {
+            this.ref.current.classList.remove("sidebar-open");
+            if (this.refFade && this.refFade.current) {
+                this.refFade.current.classList.remove("sidebar-fade-open");
+                document.body.classList.remove("modal-open");
+            }
         }
     }
 
     open() {
-        this.ref.current.classList.add("sidebar-open");
-        if (this.elFade) {
-            this.elFade.classList.add("sidebar-fade");
-            document.body.classList.add("modal-open");
+        if (this.ref && this.ref.current) {
+            this.ref.current.classList.add("sidebar-open");
+            if (this.refFade && this.refFade.current) {
+                this.refFade.current.classList.add("sidebar-fade-open");
+                document.body.classList.add("modal-open");
+            }
         }
     }
 
@@ -311,7 +320,7 @@ class SideBar extends React.Component<Props> {
             return;
         }
 
-        if (this.ref && this.ref.current && this.sidebarLeft !== undefined) {
+        if (this.sidebarLeft !== undefined) {
             if (
                 this.currentSwipe === "right" &&
                 this.sidebarLeft >= -OPEN_CLOSE_BOUNDARY
@@ -343,9 +352,11 @@ class SideBar extends React.Component<Props> {
         document.addEventListener("touchend", this.handleTouchEnd);
         document.addEventListener("touchcancel", this.handleTouchEnd);
 
-        this.elFade = document.getElementById("sidebar-fade");
-        if (this.elFade) {
-            this.elFade.addEventListener("click", this.handleFadeClick);
+        if (this.refFade && this.refFade.current) {
+            this.refFade.current.addEventListener(
+                "click",
+                this.handleFadeClick,
+            );
         }
     }
 
@@ -354,8 +365,12 @@ class SideBar extends React.Component<Props> {
         document.removeEventListener("touchmove", this.handleTouchMove);
         document.removeEventListener("touchend", this.handleTouchEnd);
         document.removeEventListener("touchcancel", this.handleTouchEnd);
-        if (this.elFade) {
-            this.elFade.removeEventListener("click", this.handleFadeClick);
+
+        if (this.refFade && this.refFade.current) {
+            this.refFade.current.removeEventListener(
+                "click",
+                this.handleFadeClick,
+            );
         }
     }
 
@@ -363,35 +378,29 @@ class SideBar extends React.Component<Props> {
         return subscribeLocal(local => {
             const { godMode, lid } = local.state;
 
-            // This is done with a selector rather than by passing a prop down or using local.state because then
-            // performance of the menu is independent of any other React performance issues - basically it's a hack to
-            // make menu performance consistent even if there are other problems. Like on the Fantasy Draft page.
-            const onMenuItemClick = () => {
-                if (this.ref && this.ref.current) {
-                    this.ref.current.classList.remove("sidebar-open");
-                    const elFade = document.getElementById("sidebar-fade");
-                    if (elFade) {
-                        elFade.classList.remove("sidebar-fade");
-                    }
-                }
-            };
-
             return (
-                <div className="bg-light sidebar" id="sidebar" ref={this.ref}>
-                    <div className="sidebar-sticky">
-                        {menuItems.map((menuItem, i) => (
-                            <MenuItem
-                                godMode={godMode}
-                                key={i}
-                                lid={lid}
-                                menuItem={menuItem}
-                                onMenuItemClick={onMenuItemClick}
-                                pageID={this.props.pageID}
-                                root
-                            />
-                        ))}
+                <>
+                    <div ref={this.refFade} className="sidebar-fade" />
+                    <div
+                        className="bg-light sidebar"
+                        id="sidebar"
+                        ref={this.ref}
+                    >
+                        <div className="sidebar-sticky">
+                            {menuItems.map((menuItem, i) => (
+                                <MenuItem
+                                    godMode={godMode}
+                                    key={i}
+                                    lid={lid}
+                                    menuItem={menuItem}
+                                    onMenuItemClick={this.close}
+                                    pageID={this.props.pageID}
+                                    root
+                                />
+                            ))}
+                        </div>
                     </div>
-                </div>
+                </>
             );
         });
     }

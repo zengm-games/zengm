@@ -136,6 +136,10 @@ class SideBar extends React.Component<Props> {
 
     handleFadeClick: Function;
 
+    close: Function;
+
+    open: Function;
+
     toggle: Function;
 
     ref: { current: null | React.ElementRef<"div"> };
@@ -169,6 +173,8 @@ class SideBar extends React.Component<Props> {
         this.handleTouchMove = this.handleTouchMove.bind(this);
         this.handleTouchEnd = this.handleTouchEnd.bind(this);
         this.handleFadeClick = this.handleFadeClick.bind(this);
+        this.close = this.close.bind(this);
+        this.open = this.open.bind(this);
         this.toggle = this.toggle.bind(this);
 
         this.ref = React.createRef();

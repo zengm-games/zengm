@@ -3,7 +3,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import * as React from "react";
-import { helpers, menuItems, subscribeLocal } from "../util";
+import { emitter, helpers, menuItems, subscribeLocal } from "../util";
 
 const getText = (text): string | React.Element<any> => {
     if (text.hasOwnProperty("side")) {
@@ -136,6 +136,8 @@ class SideBar extends React.Component<Props> {
 
     handleFadeClick: Function;
 
+    toggle: Function;
+
     ref: { current: null | React.ElementRef<"div"> };
 
     refFade: { current: null | React.ElementRef<"div"> };
@@ -165,6 +167,7 @@ class SideBar extends React.Component<Props> {
         this.handleTouchMove = this.handleTouchMove.bind(this);
         this.handleTouchEnd = this.handleTouchEnd.bind(this);
         this.handleFadeClick = this.handleFadeClick.bind(this);
+        this.toggle = this.toggle.bind(this);
 
         this.ref = React.createRef();
         this.refFade = React.createRef();
@@ -315,6 +318,16 @@ class SideBar extends React.Component<Props> {
         }
     }
 
+    toggle() {
+        if (this.ref && this.ref.current) {
+            if (this.ref.current.classList.contains("sidebar-open")) {
+                this.close();
+            } else {
+                this.open();
+            }
+        }
+    }
+
     handleTouchEnd(event: SyntheticTouchEvent<>) {
         if (event.touches && event.touches.length > 0) {
             return;
@@ -358,6 +371,8 @@ class SideBar extends React.Component<Props> {
                 this.handleFadeClick,
             );
         }
+
+        emitter.on("sidebar-toggle", this.toggle);
     }
 
     componentWillUnmount() {
@@ -372,6 +387,8 @@ class SideBar extends React.Component<Props> {
                 this.handleFadeClick,
             );
         }
+
+        emitter.removeListener("sidebar-toggle", this.toggle);
     }
 
     render() {

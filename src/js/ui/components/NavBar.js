@@ -16,6 +16,7 @@ import PopoverBody from "reactstrap/lib/PopoverBody";
 import PopoverHeader from "reactstrap/lib/PopoverHeader";
 import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
 import {
+    emitter,
     helpers,
     menuItems,
     realtimeUpdate,
@@ -522,25 +523,7 @@ const NavBar = ({ pageID, updating }: Props) => {
                 <button
                     className="navbar-toggler mr-3"
                     onClick={() => {
-                        const elSidebar = document.getElementById("sidebar");
-                        const elFade = document.getElementById("sidebar-fade");
-                        if (elSidebar) {
-                            if (elSidebar.classList.contains("sidebar-open")) {
-                                elSidebar.classList.remove("sidebar-open");
-                                if (elFade) {
-                                    elFade.classList.remove("sidebar-fade");
-                                    document.body.classList.remove(
-                                        "modal-open",
-                                    );
-                                }
-                            } else {
-                                elSidebar.classList.add("sidebar-open");
-                                if (elFade) {
-                                    elFade.classList.add("sidebar-fade");
-                                    document.body.classList.add("modal-open");
-                                }
-                            }
-                        }
+                        emitter.emit("sidebar-toggle");
                     }}
                     type="button"
                 >

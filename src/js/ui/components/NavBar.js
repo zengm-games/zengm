@@ -313,6 +313,10 @@ class LogoAndText extends React.Component<LogoAndTextProps> {
                 }
                 href="/"
             >
+                <span className="d-none d-lg-inline">Basketball GM</span>
+                {lid === undefined ? (
+                    <span className="d-lg-none">Basketball GM</span>
+                ) : null}
                 <img
                     alt=""
                     className="spin"
@@ -326,10 +330,6 @@ class LogoAndText extends React.Component<LogoAndTextProps> {
                             : "paused",
                     }}
                 />
-                <span className="d-none d-lg-inline">Basketball GM</span>
-                {lid === undefined ? (
-                    <span className="d-lg-none">Basketball GM</span>
-                ) : null}
             </a>
         );
     }

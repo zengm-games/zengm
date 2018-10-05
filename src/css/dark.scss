@@ -83,15 +83,6 @@ $secondary: $gray-400;
     color: $black;
 }
 
-.text-success {
-}
-.text-warning {
-}
-.text-darnger {
-}
-.text-info {
-}
-
 a.play-button {
     color: $black !important;
     background-color: darken($green, 20) !important;
@@ -105,4 +96,22 @@ a.play-button {
 
 .notification {
     box-shadow: #444 0 0 12px;
+}
+
+.god-mode,
+.sidebar a.god-mode {
+    background-color: darken($purple, 20);
+    color: $black;
+}
+a.god-mode,
+.sidebar a.god-mode {
+    &:hover {
+        background-color: darken($purple, 10);
+        color: $black;
+        text-decoration: none;
+    }
+}
+.sidebar a.god-mode.active {
+    background-color: darken($purple, 10);
+    color: $primary;
 }

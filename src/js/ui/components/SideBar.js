@@ -71,7 +71,7 @@ const MenuItem = ({
                         active: menuItem.active
                             ? menuItem.active(pageID)
                             : false,
-                        "sidebar-god-mode": menuItem.godMode,
+                        "god-mode": menuItem.godMode,
                     })}
                     {...anchorProps}
                 >

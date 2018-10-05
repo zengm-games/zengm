@@ -95,28 +95,21 @@ body {
     }
 }
 
-.god-mode {
+.god-mode,
+.sidebar a.god-mode {
     background-color: $purple;
     color: $white;
 }
-a.god-mode {
+a.god-mode,
+.sidebar a.god-mode {
     &:hover {
         background-color: darken($purple, 10);
         color: $white;
         text-decoration: none;
     }
 }
-.sidebar a.sidebar-god-mode {
-    background-color: $purple;
-    color: $white;
-
-    &:hover {
-        background-color: darken($purple, 10);
-        color: $white;
-    }
-}
-.sidebar a.sidebar-god-mode.active {
-    background-color: darken($purple, 10%);
+.sidebar a.god-mode.active {
+    background-color: darken($purple, 10);
     color: lighten($primary, 30);
 }
 

@@ -312,10 +312,14 @@ class SideBar extends React.Component<Props> {
             if (this.refFade && this.refFade.current) {
                 this.refFade.current.classList.remove("sidebar-fade-open");
 
-                document.body.classList.remove("modal-open");
-                document.body.style.paddingRight = "";
-                if (this.topUserBlockEl) {
-                    this.topUserBlockEl.style.paddingRight = "";
+                if (document.body) {
+                    document.body.classList.remove("modal-open");
+                    if (document.body) {
+                        document.body.style.paddingRight = "";
+                        if (this.topUserBlockEl) {
+                            this.topUserBlockEl.style.paddingRight = "";
+                        }
+                    }
                 }
             }
         }
@@ -327,12 +331,18 @@ class SideBar extends React.Component<Props> {
             if (this.refFade && this.refFade.current) {
                 this.refFade.current.classList.add("sidebar-fade-open");
 
-                const scrollbarWidth =
-                    window.innerWidth - document.body.offsetWidth;
-                document.body.classList.add("modal-open");
-                document.body.style.paddingRight = `${scrollbarWidth}px`;
-                if (this.topUserBlockEl) {
-                    this.topUserBlockEl.style.paddingRight = `${scrollbarWidth}px`;
+                if (document.body) {
+                    const scrollbarWidth =
+                        window.innerWidth - document.body.offsetWidth;
+                    if (document.body) {
+                        document.body.classList.add("modal-open");
+                    }
+                    if (document.body) {
+                        document.body.style.paddingRight = `${scrollbarWidth}px`;
+                        if (this.topUserBlockEl) {
+                            this.topUserBlockEl.style.paddingRight = `${scrollbarWidth}px`;
+                        }
+                    }
                 }
             }
         }

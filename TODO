@@ -2,7 +2,6 @@ bootstrap 4
 - dark mode
   - some stuff built in, like table-dark
     - maybe separate file with !default overrides
-- screenshot
 - ads
 - confirm GCS still works
 - firefox
@@ -21,6 +20,7 @@ bootstrap 4
 - sidebar swiping - does it feel good on real device?
   - transition for sidebar-fade - fade in works, but not out
 - multi team menu fucked up
+  - test in screenshot
 
 open dashboard, open league in new tab, now shell on dashboard is as if in league
 - happens because there is no way to distinguish "local.updateGameAttributes called to initialize new league that the user clicked from the dashboard in this tab" and "local.updateGameAttributes called from another tab, but this tab has lid === undefined so we'll leave it in that state"

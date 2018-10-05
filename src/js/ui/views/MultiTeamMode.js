@@ -125,7 +125,7 @@ class MultiTeamMode extends React.Component {
                     <div className="col-sm-6">
                         <select
                             className="form-control"
-                            multiple="true"
+                            multiple
                             onChange={this.handleChange}
                             size={teams.length}
                             value={userTids.map(String)}

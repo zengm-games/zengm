@@ -3,24 +3,16 @@ import { fetchWrapper } from "../../common";
 import { logEvent } from ".";
 
 const takeScreenshot = async () => {
-    const contentEl = document.getElementById("actual-content");
+    const contentEl = document.getElementById("actual-actual-content");
     if (!contentEl) {
-        throw new Error("Missing DOM element #actual-content");
+        throw new Error("Missing DOM element #actual-actual-content");
     }
 
     // Add watermark
     const watermark = document.createElement("div");
-    const navbarBrands = document.getElementsByClassName("navbar-brand");
-    if (navbarBrands.length === 0) {
-        return;
-    }
-    const navbarBrandParent = navbarBrands[0].parentElement;
-    if (!navbarBrandParent) {
-        return;
-    }
-    watermark.innerHTML = `<nav class="navbar navbar-default"><div class="container-fluid"><div class="navbar-header">${String(
-        navbarBrandParent.innerHTML,
-    )}</div><p class="navbar-text navbar-right" style="color: #000; font-weight: bold">Play your own league free at basketball-gm.com</p></div></nav>`;
+    const logos = document.getElementsByClassName("spin");
+    const logoHTML = logos.length > 0 ? `<img src="${logos[0].src}">` : "";
+    watermark.innerHTML = `<nav class="navbar navbar-light bg-light mb-3"><a class="navbar-brand mr-auto" href="#">${logoHTML} Basketball GM</a><div class="flex-grow-1"></div><span class="navbar-text navbar-right" style="color: #000; font-weight: bold">Play your own league free at basketball-gm.com</span></nav>`;
     contentEl.insertBefore(watermark, contentEl.firstChild);
     contentEl.style.padding = "8px";
 

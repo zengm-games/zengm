@@ -334,7 +334,7 @@ class Controller extends React.Component<{}, State> {
                     <Header />
                     <SideBar pageID={pageID} />
                     <div className="p402_premium" id="actual-content">
-                        <div className="actual-actual-content">{contents}</div>
+                        <div id="actual-actual-content">{contents}</div>
                         <Footer />
                     </div>
                     <NagModal

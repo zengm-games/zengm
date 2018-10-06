@@ -1,7 +1,4 @@
 bootstrap 4
-- dark mode
-  - orange highlight when clicking element on top dropdown, why
-    - commented out at beginning of light.scss
 - ads
 - confirm GCS still works
 - firefox
@@ -20,6 +17,8 @@ bootstrap 4
 - sidebar swiping - does it feel good on real device?
   - on iphone (maybe elsewhere) table scrolling when swiping menu is still an issue, because fade class is not applied until it's actually fully open
     - of course, there is also the case where you are legitimately scrolling a table... duh
+    - make generic responsive table component, so i can add an event listener there to stop propagation to where the sidebar listens
+    - https://www.reddit.com/r/javascript/comments/461f0y/body_onclick_except_certain_divs/d04hw6r/
   - transition for sidebar-fade - fade in works, but not out
 - blog/changes
   - screen cap of changing theme

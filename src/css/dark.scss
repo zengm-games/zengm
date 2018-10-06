@@ -1,3 +1,7 @@
+// These are so clicking on an element in one of the top navbar dropdown lists does not flash blue
+$dropdown-link-active-color: #fff; // Matches hover
+$dropdown-link-active-bg: #343a40; // Matches hover: $gray-100
+
 $white: #212529;
 $gray-100: #343a40;
 $gray-200: #495057;

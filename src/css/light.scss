@@ -1,7 +1,9 @@
-$black: #000 !default;
-// $dropdown-link-active-color: #16181b; // Matches hover: darken($gray-900, 5%)
-// $dropdown-link-active-bg: #f8f9fa; // Matches hover: $gray-100
+// These are so clicking on an element in one of the top navbar dropdown lists does not flash blue
+$dropdown-link-active-color: #16181b !default; // Matches hover: darken($gray-900, 5%)
+$dropdown-link-active-bg: #f8f9fa !default; // Matches hover: $gray-100
+
 $font-size-base: 0.8125rem;
+$black: #000 !default;
 
 // Taken from bootstrap.scss, but with unused things deleted
 @import "node_modules/bootstrap/scss/functions";

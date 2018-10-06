@@ -7,27 +7,27 @@ import type { Player } from "../../../common/types";
 const moodColorText = (p: Player) => {
     if (p.freeAgentMood[g.userTid] < 0.25) {
         return {
-            color: "#5cb85c",
+            color: "var(--green)",
             text: "Eager to reach an agreement.",
         };
     }
 
     if (p.freeAgentMood[g.userTid] < 0.5) {
         return {
-            color: "#ccc",
+            color: "var(--gray)",
             text: "Willing to sign for the right price.",
         };
     }
 
     if (p.freeAgentMood[g.userTid] < 0.75) {
         return {
-            color: "#f0ad4e",
+            color: "var(--yellow)",
             text: "Annoyed at you.",
         };
     }
 
     return {
-        color: "#d9534f",
+        color: "var(--red)",
         text: "Insulted by your presence.",
     };
 };

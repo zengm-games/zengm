@@ -10,8 +10,6 @@ bootstrap 4
 - go over all css files, anything obsolete?
   - all colors #
     - other scss files
-    - what about colors in line in JS
-      - moodColorText
 - Replaced .has-error, .has-warning, and .has-success classes with HTML5 form validation via CSS’s :invalid and :valid pseudo-classes.
 - changes
   - make this better in general, content from blog

@@ -936,27 +936,33 @@ class DataTable extends React.Component<Props, State> {
         }
 
         return (
-            <ResponsiveTableWrapper className={className} nonfluid={nonfluid}>
+            <div
+                className={classNames(className, {
+                    "table-nonfluid": nonfluid,
+                })}
+            >
                 {aboveTable}
-                <table className="table table-striped table-bordered table-sm table-hover">
-                    <Header
-                        cols={cols}
-                        enableFilters={this.state.enableFilters}
-                        filters={this.state.filters}
-                        handleColClick={this.handleColClick}
-                        handleFilterUpdate={this.handleFilterUpdate}
-                        sortBys={this.state.sortBys}
-                        superCols={superCols}
-                    />
-                    <tbody>
-                        {sortedRows.map(row => (
-                            <Row key={row.key} row={row} />
-                        ))}
-                    </tbody>
-                    {tfoot}
-                </table>
+                <ResponsiveTableWrapper nonfluid={nonfluid}>
+                    <table className="table table-striped table-bordered table-sm table-hover">
+                        <Header
+                            cols={cols}
+                            enableFilters={this.state.enableFilters}
+                            filters={this.state.filters}
+                            handleColClick={this.handleColClick}
+                            handleFilterUpdate={this.handleFilterUpdate}
+                            sortBys={this.state.sortBys}
+                            superCols={superCols}
+                        />
+                        <tbody>
+                            {sortedRows.map(row => (
+                                <Row key={row.key} row={row} />
+                            ))}
+                        </tbody>
+                        {tfoot}
+                    </table>
+                </ResponsiveTableWrapper>
                 {belowTable}
-            </ResponsiveTableWrapper>
+            </div>
         );
     }
 }

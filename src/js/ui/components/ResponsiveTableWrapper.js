@@ -6,7 +6,6 @@ import * as React from "react";
 
 type Props = {
     children: any,
-    className?: string,
     nonfluid?: boolean,
 };
 
@@ -45,11 +44,11 @@ class ResponsiveTableWrapper extends React.Component<Props> {
     }
 
     render() {
-        const { children, className, nonfluid } = this.props;
+        const { children, nonfluid } = this.props;
 
         return (
             <div
-                className={classNames("table-responsive", className, {
+                className={classNames("table-responsive", {
                     "table-nonfluid": nonfluid,
                 })}
                 ref={this.ref}
@@ -61,7 +60,6 @@ class ResponsiveTableWrapper extends React.Component<Props> {
 }
 
 ResponsiveTableWrapper.propTypes = {
-    className: PropTypes.string,
     nonfluid: PropTypes.bool,
 };
 

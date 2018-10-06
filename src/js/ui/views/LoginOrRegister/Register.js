@@ -104,14 +104,18 @@ class Register extends React.Component<Props, State> {
                     <input type="hidden" name="sport" value={SPORT} />
                     <div
                         className={classNames("form-group", {
-                            "has-error":
-                                this.state.errorMessageUsername !== null,
+                            "text-danger":
+                                this.state.errorMessageUsername !== undefined,
                         })}
                     >
                         <label htmlFor="register-username">Username</label>
                         <input
                             type="text"
-                            className="form-control"
+                            className={classNames("form-control", {
+                                "is-invalid":
+                                    this.state.errorMessageUsername !==
+                                    undefined,
+                            })}
                             id="register-username"
                             name="username"
                             required="required"
@@ -123,37 +127,45 @@ class Register extends React.Component<Props, State> {
                             Letters, numbers, dashes (-), and underscores (_)
                             only. Max 15 characters.
                         </span>
-                        <span className="form-text text-danger">
+                        <span className="form-text">
                             {this.state.errorMessageUsername}
                         </span>
                     </div>
                     <div
                         className={classNames("form-group", {
-                            "has-error": this.state.errorMessageEmail !== null,
+                            "text-danger":
+                                this.state.errorMessageEmail !== undefined,
                         })}
                     >
                         <label htmlFor="register-email">Email Address</label>
                         <input
                             type="email"
-                            className="form-control"
+                            className={classNames("form-control", {
+                                "is-invalid":
+                                    this.state.errorMessageEmail !== undefined,
+                            })}
                             id="register-email"
                             name="email"
                             required="required"
                         />
-                        <span className="form-text text-danger">
+                        <span className="form-text">
                             {this.state.errorMessageEmail}
                         </span>
                     </div>
                     <div
                         className={classNames("form-group", {
-                            "has-error":
-                                this.state.errorMessagePassword !== null,
+                            "text-danger":
+                                this.state.errorMessagePassword !== undefined,
                         })}
                     >
                         <label htmlFor="register-password">Password</label>
                         <input
                             type="password"
-                            className="form-control"
+                            className={classNames("form-control", {
+                                "is-invalid":
+                                    this.state.errorMessagePassword !==
+                                    undefined,
+                            })}
                             id="register-password"
                             name="password"
                             required="required"
@@ -164,8 +176,8 @@ class Register extends React.Component<Props, State> {
                     </div>
                     <div
                         className={classNames("form-group", {
-                            "has-error":
-                                this.state.errorMessagePassword2 !== null,
+                            "text-danger":
+                                this.state.errorMessagePassword2 !== undefined,
                         })}
                     >
                         <label htmlFor="register-password2">
@@ -173,7 +185,11 @@ class Register extends React.Component<Props, State> {
                         </label>
                         <input
                             type="password"
-                            className="form-control"
+                            className={classNames("form-control", {
+                                "is-invalid":
+                                    this.state.errorMessagePassword2 !==
+                                    undefined,
+                            })}
                             id="register-password2"
                             name="password2"
                             required="required"
@@ -197,10 +213,7 @@ class Register extends React.Component<Props, State> {
                             about once/year)
                         </label>
                     </div>
-                    <button
-                        type="submit"
-                        className="btn btn-light-bordered btn-primary"
-                    >
+                    <button type="submit" className="btn btn-primary">
                         Create New Account
                     </button>
                     <p className="text-danger mt-3">

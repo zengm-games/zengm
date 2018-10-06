@@ -8,6 +8,7 @@ bootstrap 4
   - all colors #
     - other scss files
 - Replaced .has-error, .has-warning, and .has-success classes with HTML5 form validation via CSS’s :invalid and :valid pseudo-classes.
+  - use is-invalid like in Register
 - changes
   - make this better in general, content from blog
 - sidebar swiping - does it feel good on real device?

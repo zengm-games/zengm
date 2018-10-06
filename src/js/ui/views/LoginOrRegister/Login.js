@@ -90,10 +90,7 @@ class Login extends React.Component<Props, State> {
                             required="required"
                         />
                     </div>
-                    <button
-                        type="submit"
-                        className="btn btn-light-bordered btn-primary"
-                    >
+                    <button type="submit" className="btn btn-primary">
                         Login
                     </button>
                     <p className="text-danger mt-3">

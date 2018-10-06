@@ -37,7 +37,7 @@ const round = (value, precision) => {
 
 const boxPlotElementStyle = (color, style) => {
     const baseStyle: { [key: string]: 0 | string } = {
-        background: "#fff",
+        background: "var(--white)",
         position: "absolute",
         top: "22px",
         border: `thin solid ${color}`,

@@ -757,6 +757,7 @@ const TeamStatDists = ({ season, statsAll }) => {
                                     </td>
                                     <td width="100%">
                                         <BoxPlot
+                                            color="var(--blue)"
                                             data={statsAll[stat]}
                                             scale={scale[stat]}
                                         />
@@ -771,7 +772,7 @@ const TeamStatDists = ({ season, statsAll }) => {
                                         <td width="100%">
                                             <div style={{ marginTop: "-26px" }}>
                                                 <BoxPlot
-                                                    color="#0088cc"
+                                                    color="var(--green)"
                                                     data={nbaStatsAll[stat]}
                                                     labels={false}
                                                     scale={scale[stat]}

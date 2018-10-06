@@ -51,6 +51,7 @@ const PlayerRatingDists = ({ ratingsAll, season }) => {
                                 </td>
                                 <td width="100%">
                                     <BoxPlot
+                                        color="var(--blue)"
                                         data={ratingsAll[rating]}
                                         scale={[0, 100]}
                                     />

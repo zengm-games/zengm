@@ -1,6 +1,5 @@
 bootstrap 4
 - dark mode
-  - add global section to LeagueOptions, somehow
   - orange highlight when clicking element on top dropdown, why
     - commented out at beginning of light.scss
 - ads

@@ -1,5 +1,5 @@
+import PropTypes from "prop-types";
 import React from "react";
-import { NewWindowLink } from "../components";
 import { logEvent, setTitle } from "../util";
 
 class Options extends React.Component {
@@ -40,13 +40,13 @@ class Options extends React.Component {
     }
 
     render() {
-        setTitle("Options");
+        const title = this.props.title ? this.props.title : "Options";
+
+        setTitle(title);
 
         return (
             <>
-                <h1>
-                    Options <NewWindowLink />
-                </h1>
+                <h1>{title}</h1>
 
                 <form onSubmit={this.handleFormSubmit}>
                     <div className="row">
@@ -63,11 +63,15 @@ class Options extends React.Component {
                         </div>
                     </div>
 
-                    <button className="btn btn-primary">Save Options</button>
+                    <button className="btn btn-primary">Save {title}</button>
                 </form>
             </>
         );
     }
 }
+
+Options.propTypes = {
+    title: PropTypes.string,
+};
 
 export default Options;

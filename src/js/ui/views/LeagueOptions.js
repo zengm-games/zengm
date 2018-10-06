@@ -1,8 +1,9 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { DIFFICULTY } from "../../common";
-import { HelpPopover, NewWindowLink } from "../components";
+import { HelpPopover } from "../components";
 import { helpers, logEvent, setTitle, toWorker } from "../util";
+import { Options } from ".";
 
 const difficultyValues = Object.values(DIFFICULTY);
 
@@ -104,9 +105,9 @@ class LeagueOptions extends React.Component {
 
         return (
             <>
-                <h1>
-                    League Options <NewWindowLink />
-                </h1>
+                <Options title="Global Options" />
+
+                <h1 className="mt-5">League Options</h1>
 
                 <form onSubmit={this.handleFormSubmit}>
                     <div className="row">
@@ -230,7 +231,9 @@ class LeagueOptions extends React.Component {
                         </div>
                     </div>
 
-                    <button className="btn btn-primary">Save Options</button>
+                    <button className="btn btn-primary">
+                        Save League Options
+                    </button>
                 </form>
             </>
         );

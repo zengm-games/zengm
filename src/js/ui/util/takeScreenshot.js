@@ -3,6 +3,8 @@ import { fetchWrapper } from "../../common";
 import { logEvent } from ".";
 
 const takeScreenshot = async () => {
+    const theme = localStorage.getItem("theme") === "dark" ? "dark" : "light";
+
     const contentEl = document.getElementById("actual-actual-content");
     if (!contentEl) {
         throw new Error("Missing DOM element #actual-actual-content");
@@ -12,7 +14,9 @@ const takeScreenshot = async () => {
     const watermark = document.createElement("div");
     const logos = document.getElementsByClassName("spin");
     const logoHTML = logos.length > 0 ? `<img src="${logos[0].src}">` : "";
-    watermark.innerHTML = `<nav class="navbar navbar-light bg-light mb-3"><a class="navbar-brand mr-auto" href="#">${logoHTML} Basketball GM</a><div class="flex-grow-1"></div><span class="navbar-text navbar-right" style="color: #000; font-weight: bold">Play your own league free at basketball-gm.com</span></nav>`;
+    watermark.innerHTML = `<nav class="navbar navbar-light bg-light mb-3"><a class="navbar-brand mr-auto" href="#">${logoHTML} Basketball GM</a><div class="flex-grow-1"></div><span class="navbar-text navbar-right" style="color: ${
+        theme === "dark" ? "#fff" : "#000"
+    }; font-weight: bold">Play your own league free at basketball-gm.com</span></nav>`;
     contentEl.insertBefore(watermark, contentEl.firstChild);
     contentEl.style.padding = "8px";
 
@@ -30,8 +34,9 @@ const takeScreenshot = async () => {
     }
     contentEl.appendChild(notifications);
 
+    console.log("theme", theme);
     const canvas = await html2canvas(contentEl, {
-        background: "#fff",
+        backgroundColor: theme === "dark" ? "#212529" : "#fff",
     });
 
     // Remove watermark

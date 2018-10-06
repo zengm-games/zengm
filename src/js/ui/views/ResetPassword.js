@@ -11,19 +11,15 @@ class ResetPassword extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            globalErrorMsg: "Validating token...", // Because on initial page load you need AJAX request to see if it's valid
-            resetpwError: null,
-            resetpwPasswordError: null,
-            resetpwPassword2Error: null,
+            globalMessage: "Validating token...", // Because on initial page load you need AJAX request to see if it's valid
+            errorMessageOverall: undefined,
+            errorMessagePassword: undefined,
+            errorMessagePassword2: undefined,
             showForm: false,
         };
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    // I think the react/no-did-mount-set-state warning is a bug, it isn't considered bad practice to setState after
-    // waiting for an HTTP request, just when used synchronously:
-    // https://facebook.github.io/react/docs/react-component.html#componentdidmount
-    /* eslint-disable react/no-did-mount-set-state */
     async componentDidMount() {
         // First, see if this is a valid token
         try {
@@ -40,38 +36,39 @@ class ResetPassword extends React.Component {
 
             if (data.success) {
                 this.setState({
-                    globalErrorMsg: null,
+                    globalMessage: undefined,
                     showForm: true,
                 });
             } else {
                 this.setState({
-                    globalErrorMsg: (
-                        <span>
+                    globalMessage: (
+                        <>
                             Invalid password reset token.{" "}
                             <a href="/account/lost_password">
                                 Request another and try again.
                             </a>
-                        </span>
+                        </>
                     ),
                     showForm: false,
                 });
             }
         } catch (err) {
             this.setState({
-                globalErrorMsg: ajaxErrorMsg,
+                globalMessage: (
+                    <span className="text-danger">{ajaxErrorMsg}</span>
+                ),
                 showForm: false,
             });
         }
     }
-    /* eslint-enable react/no-did-mount-set-state */
 
     async handleSubmit(e) {
         e.preventDefault();
 
         this.setState({
-            resetpwError: null,
-            resetpwPasswordError: null,
-            resetpwPassword2Error: null,
+            errorMessageOverall: undefined,
+            errorMessagePassword: undefined,
+            errorMessagePassword2: undefined,
         });
 
         const formData = new FormData(document.getElementById("resetpw"));
@@ -89,23 +86,19 @@ class ResetPassword extends React.Component {
 
                 realtimeUpdate([], "/account");
             } else {
-                const updatedState = {
-                    resetpwError: null,
-                    resetpwPasswordError: null,
-                    resetpwPassword2Error: null,
-                };
+                const updatedState = {};
 
                 for (const error of Object.keys(data.errors)) {
                     if (error === "password") {
-                        updatedState.resetpwPasswordError = data.errors[error];
+                        updatedState.errorMessagePassword = data.errors[error];
                     } else if (error === "password2") {
-                        updatedState.resetpwPassword2Error = data.errors[error];
+                        updatedState.errorMessagePassword2 = data.errors[error];
                     } else if (error === "passwords") {
-                        updatedState.resetpwPasswordError =
-                            updatedState.resetpwPasswordError === null
+                        updatedState.errorMessagePassword =
+                            updatedState.errorMessagePassword === undefined
                                 ? ""
-                                : updatedState.resetpwPasswordError; // So it gets highlighted too
-                        updatedState.resetpwPassword2Error = data.errors[error];
+                                : updatedState.errorMessagePassword; // So it gets highlighted too
+                        updatedState.errorMessagePassword2 = data.errors[error];
                     }
                 }
 
@@ -113,9 +106,7 @@ class ResetPassword extends React.Component {
             }
         } catch (err) {
             this.setState({
-                resetpwError: ajaxErrorMsg,
-                resetpwPasswordError: null,
-                resetpwPassword2Error: null,
+                errorMessageOverall: ajaxErrorMsg,
             });
         }
     }
@@ -124,90 +115,102 @@ class ResetPassword extends React.Component {
         setTitle("Reset Password");
 
         const form = (
-            <>
-                <p>Enter a new password for your account below.</p>
-                <form id="resetpw" onSubmit={this.handleSubmit}>
-                    <input type="hidden" name="sport" value={SPORT} />
-                    <input type="hidden" name="action" value="reset_password" />
-                    <input
-                        type="hidden"
-                        name="token"
-                        value={this.props.token}
-                    />
-                    <div
-                        className={classNames("form-group", {
-                            "has-error":
-                                this.state.resetpwPasswordError !== null,
-                        })}
-                    >
-                        <label
-                            className="col-form-label"
-                            htmlFor="resetpw-password"
-                        >
-                            Password
-                        </label>
+            <div className="row">
+                <div className="col-lg-4 col-md-5 col-sm-6">
+                    <p>Enter a new password for your account below.</p>
+                    <form id="resetpw" onSubmit={this.handleSubmit}>
+                        <input type="hidden" name="sport" value={SPORT} />
                         <input
-                            type="password"
-                            className="form-control"
-                            id="resetpw-password"
-                            name="password"
-                            required="required"
+                            type="hidden"
+                            name="action"
+                            value="reset_password"
                         />
-                        <span className="text-muted text-danger">
-                            {this.state.resetpwPassword2Error}
-                        </span>
-                    </div>
-                    <div
-                        className={classNames("form-group", {
-                            "has-error":
-                                this.state.resetpwPassword2Error !== null,
-                        })}
-                    >
-                        <label
-                            className="col-form-label"
-                            htmlFor="resetpw-password2"
-                        >
-                            Verify Password
-                        </label>
                         <input
-                            type="password"
-                            className="form-control"
-                            id="resetpw-password2"
-                            name="password2"
-                            required="required"
+                            type="hidden"
+                            name="token"
+                            value={this.props.token}
                         />
-                        <span className="text-muted text-danger">
-                            {this.state.resetpwPassword2Error}
-                        </span>
-                    </div>
-                    <button type="submit" className="btn btn-primary">
-                        Reset Password
-                    </button>
-                    <p className="text-danger mt-3">
-                        {this.state.resetpwError}
-                    </p>
-                </form>
-            </>
+                        <div
+                            className={classNames("form-group", {
+                                "text-danger":
+                                    this.state.errorMessagePassword !==
+                                    undefined,
+                            })}
+                        >
+                            <label
+                                className="col-form-label"
+                                htmlFor="resetpw-password"
+                            >
+                                Password
+                            </label>
+                            <input
+                                type="password"
+                                className={classNames("form-control", {
+                                    "is-invalid":
+                                        this.state.errorMessagePassword !==
+                                        undefined,
+                                })}
+                                id="resetpw-password"
+                                name="password"
+                                required="required"
+                            />
+                            <span className="form-text">
+                                {this.state.errorMessagePassword}
+                            </span>
+                        </div>
+                        <div
+                            className={classNames("form-group", {
+                                "text-danger":
+                                    this.state.errorMessagePassword2 !==
+                                    undefined,
+                            })}
+                        >
+                            <label
+                                className="col-form-label"
+                                htmlFor="resetpw-password2"
+                            >
+                                Verify Password
+                            </label>
+                            <input
+                                type="password"
+                                className={classNames("form-control", {
+                                    "is-invalid":
+                                        this.state.errorMessagePassword2 !==
+                                        undefined,
+                                })}
+                                id="resetpw-password2"
+                                name="password2"
+                                required="required"
+                            />
+                            <span className="form-text">
+                                {this.state.errorMessagePassword2}
+                            </span>
+                        </div>
+                        <button type="submit" className="btn btn-primary">
+                            Reset Password
+                        </button>
+                        <p className="text-danger mt-3">
+                            {this.state.errorMessageOverall}
+                        </p>
+                    </form>
+                </div>
+            </div>
         );
 
         return (
             <>
-                <div className="row">
-                    <div className="col-lg-4 col-md-5 col-sm-6">
-                        <h1>Reset Password</h1>
-                        {this.state.showForm ? form : null}
-                        {this.state.globalErrorMsg ? (
-                            <p>{this.state.globalErrorMsg}</p>
-                        ) : null}
-                        <p>
-                            If you are having trouble with this, please{" "}
-                            <a href="mailto:commissioner@basketball-gm.com">
-                                email commissioner@basketball-gm.com
-                            </a>
-                            .
-                        </p>
-                    </div>
-                </div>
+                <h1>Reset Password</h1>
+                {this.state.showForm ? form : null}
+                {this.state.globalMessage ? (
+                    <p>{this.state.globalMessage}</p>
+                ) : null}
+                <p>
+                    If you are having trouble with this, please{" "}
+                    <a href="mailto:commissioner@basketball-gm.com">
+                        email commissioner@basketball-gm.com
+                    </a>
+                    .
+                </p>
             </>
         );
     }

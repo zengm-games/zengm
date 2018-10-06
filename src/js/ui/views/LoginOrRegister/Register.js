@@ -170,7 +170,7 @@ class Register extends React.Component<Props, State> {
                             name="password"
                             required="required"
                         />
-                        <span className="form-text text-danger">
+                        <span className="form-text">
                             {this.state.errorMessagePassword}
                         </span>
                     </div>
@@ -194,7 +194,7 @@ class Register extends React.Component<Props, State> {
                             name="password2"
                             required="required"
                         />
-                        <span className="form-text text-danger">
+                        <span className="form-text">
                             {this.state.errorMessagePassword2}
                         </span>
                     </div>

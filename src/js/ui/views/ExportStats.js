@@ -98,7 +98,7 @@ class ExportStats extends React.Component {
                 <h2>Player Stats</h2>
 
                 <form className="form-inline" onSubmit={this.handleSubmit}>
-                    <div className="form-group">
+                    <div className="form-group mr-2">
                         <select
                             className="form-control"
                             onChange={this.resetState}
@@ -107,7 +107,7 @@ class ExportStats extends React.Component {
                             <option value="games">Individual Games</option>
                         </select>
                     </div>{" "}
-                    <div className="form-group">
+                    <div className="form-group mr-2">
                         <select
                             className="form-control"
                             onChange={this.resetState}

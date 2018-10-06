@@ -154,3 +154,23 @@ a.god-mode,
 table.table thead .sorting::after {
     opacity: 0.4;
 }
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 0.92;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 0.92;
+    }
+
+    to {
+        opacity: 0;
+    }
+}

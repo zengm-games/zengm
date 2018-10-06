@@ -3,12 +3,12 @@ bootstrap 4
 - confirm GCS still works
 - firefox
 - safari
-- react-overlays
 - changes
   - make this better in general, content from blog
 - sidebar swiping - does it feel good on real device?
   - too annoying on iPhone, since swipe is used to go back/forward?
   - transition for sidebar-fade - fade in works, but not out
+    - look at bbgm-notifications
 - blog/changes
   - screen cap of changing theme
 

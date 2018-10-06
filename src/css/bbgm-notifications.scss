@@ -41,7 +41,6 @@
     transition: opacity 0.25s ease-in-out;
 
     // Fade in on notification show
-    -webkit-animation: fadeIn 0.75s;
     animation: fadeIn 0.75s;
 }
 
@@ -65,7 +64,6 @@
 
 .notification-delete {
     /* Keep in sync with notify.js setTimeout */
-    -webkit-animation: fadeOut 0.75s;
     animation: fadeOut 0.75s;
 }
 
@@ -79,27 +77,7 @@
     }
 }
 
-@-webkit-keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 0.8;
-    }
-}
-
 @keyframes fadeOut {
-    from {
-        opacity: 0.8;
-    }
-
-    to {
-        opacity: 0;
-    }
-}
-
-@-webkit-keyframes fadeOut {
     from {
         opacity: 0.8;
     }

@@ -9,8 +9,8 @@ class LostPassword extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            lostpwError: null,
-            lostpwSuccess: null,
+            errorMessage: undefined,
+            successMessage: undefined,
         };
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -21,8 +21,8 @@ class LostPassword extends React.Component {
         const formData = new FormData(document.getElementById("lostpw"));
 
         this.setState({
-            lostpwError: null,
-            lostpwSuccess: null,
+            errorMessage: undefined,
+            successMessage: undefined,
         });
 
         try {
@@ -35,13 +35,14 @@ class LostPassword extends React.Component {
 
             if (data.success) {
                 this.setState({
-                    lostpwSuccess: "Check your email for further instructions.",
+                    successMessage:
+                        "Check your email for further instructions.",
                 });
             } else {
-                this.setState({ lostpwError: "Account not found." });
+                this.setState({ errorMessage: "Account not found." });
             }
         } catch (err) {
-            this.setState({ lostpwError: ajaxErrorMsg });
+            this.setState({ errorMessage: ajaxErrorMsg });
         }
     }
 
@@ -74,25 +75,17 @@ class LostPassword extends React.Component {
                                     required="required"
                                 />
                             </div>
-                            <button
-                                type="submit"
-                                className="btn btn-light-bordered btn-primary"
-                            >
+                            <button type="submit" className="btn btn-primary">
                                 Recover Login Info
                             </button>
-                            <p
-                                className="text-danger"
-                                id="lostpw-error"
-                                style={{ marginTop: "1em" }}
-                            >
-                                {this.state.lostpwError}
+                            <p className="text-danger mt-3" id="lostpw-error">
+                                {this.state.errorMessage}
                             </p>
                             <p
-                                className="text-success"
+                                className="text-success mt-3"
                                 id="lostpw-success"
-                                style={{ marginTop: "1em" }}
                             >
-                                {this.state.lostpwSuccess}
+                                {this.state.successMessage}
                             </p>
                         </form>
                     </div>

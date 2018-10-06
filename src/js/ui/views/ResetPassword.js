@@ -180,13 +180,10 @@ class ResetPassword extends React.Component {
                             {this.state.resetpwPassword2Error}
                         </span>
                     </div>
-                    <button
-                        type="submit"
-                        className="btn btn-light-bordered btn-primary"
-                    >
+                    <button type="submit" className="btn btn-primary">
                         Reset Password
                     </button>
-                    <p className="text-danger" style={{ marginTop: "1em" }}>
+                    <p className="text-danger mt-3">
                         {this.state.resetpwError}
                     </p>
                 </form>

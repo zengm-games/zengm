@@ -23,12 +23,18 @@ class Login extends React.Component<Props, State> {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    async handleSubmit(e) {
+    async handleSubmit(e: SyntheticEvent<>) {
         e.preventDefault();
 
         this.setState({ errorMessage: undefined });
 
-        const formData = new FormData(document.getElementById("login"));
+        const el = document.getElementById("login");
+        if (!el) {
+            return;
+        }
+
+        // $FlowFixMe
+        const formData = new FormData(el);
 
         try {
             const data = await fetchWrapper({

@@ -32,7 +32,7 @@ class Register extends React.Component<Props, State> {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    async handleSubmit(e) {
+    async handleSubmit(e: SyntheticEvent<>) {
         e.preventDefault();
 
         this.setState({
@@ -43,7 +43,13 @@ class Register extends React.Component<Props, State> {
             errorMessageUsername: undefined,
         });
 
-        const formData = new FormData(document.getElementById("register"));
+        const el = document.getElementById("register");
+        if (!el) {
+            return;
+        }
+
+        // $FlowFixMe
+        const formData = new FormData(el);
 
         try {
             const data = await fetchWrapper({

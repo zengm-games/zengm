@@ -121,9 +121,7 @@ const SIDEBAR_WIDTH = 190;
 const OPEN_CLOSE_BOUNDARY = SIDEBAR_WIDTH / 2;
 
 type Props = {
-    godMode: boolean,
-    lid: number | void,
-    pageID: string,
+    pageID?: string,
 };
 
 // Sidebar open/close state is done with the DOM directly rather than by passing a prop down or using local.state

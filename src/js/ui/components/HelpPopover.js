@@ -14,7 +14,7 @@ const HelpPopover = ({
 }: {
     children: string | React.Element<any> | React.Element<any>[],
     placement?: "bottom" | "left" | "right" | "top",
-    style: { [key: string]: number | string },
+    style?: { [key: string]: number | string },
     title: string,
 }) => {
     return (

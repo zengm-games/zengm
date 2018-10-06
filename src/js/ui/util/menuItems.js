@@ -5,7 +5,7 @@ import { takeScreenshot, toWorker } from ".";
 
 type MenuItemLink = {|
     type: "link",
-    active?: string => boolean,
+    active?: (string | void) => boolean,
     league?: true,
     godMode?: true,
     nonLeague?: true,

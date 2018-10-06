@@ -26,14 +26,12 @@ class ResponsiveTableWrapper extends React.Component<Props> {
 
     componentDidMount() {
         if (this.ref && this.ref.current) {
-            // The true here (ensures that ResponsiveTableWrapper's touchstart runs before SideBar's, the true means it
-            // will listen during the capturing phase and thus get triggered before the bubbling phase which terminates
-            // when SideBar is triggered, since SideBar listens on `document`.
-            this.ref.current.addEventListener(
-                "touchstart",
-                handleTouchStart,
-                true,
-            );
+            // This shit is confusing! This listener stops propagation of the event, before it bubbles up to `document`,
+            // because there is a listener on `document` in SideBar for swiping the menu open/closed. However this runs
+            // after the listener in react-sortable-hoc, so you can still drag roster handles. This works because the
+            // roster handle event starts at the roster handle and then bubbles up (events have no capture phase by
+            // default).
+            this.ref.current.addEventListener("touchstart", handleTouchStart);
         }
     }
 

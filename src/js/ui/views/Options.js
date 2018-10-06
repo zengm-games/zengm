@@ -1,10 +1,6 @@
-import PropTypes from "prop-types";
 import React from "react";
-import { DIFFICULTY } from "../../common";
 import { NewWindowLink } from "../components";
-import { helpers, logEvent, setTitle, toWorker } from "../util";
-
-const difficultyValues = Object.values(DIFFICULTY);
+import { logEvent, setTitle } from "../util";
 
 class Options extends React.Component {
     constructor(props) {
@@ -30,10 +26,11 @@ class Options extends React.Component {
     async handleFormSubmit(e) {
         e.preventDefault();
 
-        localStorage.setItem(
-            "theme",
-            this.state.theme === "dark" ? "dark" : "light",
-        );
+        const newTheme = this.state.theme === "dark" ? "dark" : "light";
+        localStorage.setItem("theme", newTheme);
+        if (window.themeCSSLink) {
+            window.themeCSSLink.href = `/gen/${newTheme}.css`;
+        }
 
         logEvent({
             type: "success",
@@ -72,7 +69,5 @@ class Options extends React.Component {
         );
     }
 }
-
-Options.propTypes = {};
 
 export default Options;

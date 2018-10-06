@@ -53,6 +53,11 @@ window.addEventListener("storage", e => {
                 persistent: true,
             });
         }
+    } else if (e.key === "theme") {
+        const theme = e.newValue === "dark" ? "dark" : "light";
+        if (window.themeCSSLink) {
+            window.themeCSSLink.href = `/gen/${theme}.css`;
+        }
     }
 });
 

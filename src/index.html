@@ -67,9 +67,9 @@
         el.setAttribute("rel", "stylesheet");
         el.setAttribute("href", bbgmPrefix + filename);
         document.getElementsByTagName("head")[0].appendChild(el);
+        return el;
       }
-
-      loadCSS("gen/dark.css");
+      window.themeCSSLink = loadCSS("gen/" + (localStorage.getItem("theme") === "dark" ? "dark" : "light") + ".css");
 
       window.enableLogging = location.host.indexOf("basketball-gm.com") >= 0 && location.pathname.indexOf("/test") === -1;
 

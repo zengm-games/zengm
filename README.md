@@ -102,6 +102,9 @@ To work around that, in Chrome you can
 [use the "Update on reload" option][1] and keep your devtools open. Then
 reloading will always get you the latest version.
 
+Even with that, ctrl+shift+r may be a good idea to make sure you're seeing your
+latest changes.
+
 [1]: https://developers.google.com/web/fundamentals/primers/service-workers/lifecycle#update_on_reload
 
 ### Step 4 - Testing

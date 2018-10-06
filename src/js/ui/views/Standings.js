@@ -2,7 +2,12 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import { helpers, setTitle } from "../util";
-import { Dropdown, JumpTo, NewWindowLink } from "../components";
+import {
+    Dropdown,
+    JumpTo,
+    NewWindowLink,
+    ResponsiveTableWrapper,
+} from "../components";
 import clickable from "../wrappers/clickable";
 
 const DivStandingsRow = clickable(({ clicked, season, t, toggleClicked }) => {
@@ -50,7 +55,7 @@ DivStandingsRow.propTypes = {
 
 const DivStandings = ({ div, season }) => {
     return (
-        <div className="table-responsive">
+        <ResponsiveTableWrapper>
             <table className="table table-striped table-bordered table-sm table-hover">
                 <thead>
                     <tr>
@@ -73,7 +78,7 @@ const DivStandings = ({ div, season }) => {
                     ))}
                 </tbody>
             </table>
-        </div>
+        </ResponsiveTableWrapper>
     );
 };
 

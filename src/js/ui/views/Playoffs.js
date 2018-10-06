@@ -2,7 +2,13 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import { Dropdown, JumpTo, NewWindowLink, PlayoffMatchup } from "../components";
+import {
+    Dropdown,
+    JumpTo,
+    NewWindowLink,
+    PlayoffMatchup,
+    ResponsiveTableWrapper,
+} from "../components";
 import { setTitle } from "../util";
 
 const Playoffs = ({
@@ -57,7 +63,7 @@ const Playoffs = ({
                 </h3>
             ) : null}
 
-            <div className="table-responsive">
+            <ResponsiveTableWrapper>
                 <table className="table-sm" width="100%">
                     <tbody>
                         {matchups.map((row, i) => (
@@ -91,7 +97,7 @@ const Playoffs = ({
                         ))}
                     </tbody>
                 </table>
-            </div>
+            </ResponsiveTableWrapper>
         </>
     );
 };

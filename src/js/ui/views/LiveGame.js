@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import AutoAffix from "react-overlays/lib/AutoAffix";
 import { helpers, setTitle } from "../util";
-import { PlayerNameLabels } from "../components";
+import { PlayerNameLabels, ResponsiveTableWrapper } from "../components";
 
 class PlayerRow extends React.Component {
     shouldComponentUpdate(nextProps) {
@@ -136,7 +136,7 @@ const BoxScore = ({ boxScore }) => (
                         {t.region} {t.name}
                     </a>
                 </h3>
-                <div className="table-responsive">
+                <ResponsiveTableWrapper>
                     <table className="table table-striped table-bordered table-sm box-score-team">
                         <thead>
                             <tr>
@@ -192,7 +192,7 @@ const BoxScore = ({ boxScore }) => (
                             </tr>
                         </tfoot>
                     </table>
-                </div>
+                </ResponsiveTableWrapper>
             </div>
         ))}
         Attendance: {helpers.numberWithCommas(boxScore.att)}

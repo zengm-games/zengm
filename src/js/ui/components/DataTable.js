@@ -5,7 +5,7 @@ import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
 import * as React from "react";
 import textContent from "react-addons-text-content";
-import { HelpPopover } from ".";
+import { HelpPopover, ResponsiveTableWrapper } from ".";
 import { helpers } from "../util";
 import clickable from "../wrappers/clickable";
 import type { SortOrder, SortType } from "../../common/types";
@@ -936,11 +936,7 @@ class DataTable extends React.Component<Props, State> {
         }
 
         return (
-            <div
-                className={classNames("table-responsive", className, {
-                    "table-nonfluid": nonfluid,
-                })}
-            >
+            <ResponsiveTableWrapper className={className} nonfluid={nonfluid}>
                 {aboveTable}
                 <table className="table table-striped table-bordered table-sm table-hover">
                     <Header
@@ -960,7 +956,7 @@ class DataTable extends React.Component<Props, State> {
                     {tfoot}
                 </table>
                 {belowTable}
-            </div>
+            </ResponsiveTableWrapper>
         );
     }
 }

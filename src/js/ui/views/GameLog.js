@@ -1,7 +1,12 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { Dropdown, NewWindowLink, PlayerNameLabels } from "../components";
+import {
+    Dropdown,
+    NewWindowLink,
+    PlayerNameLabels,
+    ResponsiveTableWrapper,
+} from "../components";
 import { helpers, realtimeUpdate, setTitle } from "../util";
 import clickable from "../wrappers/clickable";
 
@@ -311,7 +316,7 @@ class BoxScore extends React.Component {
                                 {t.region} {t.name}
                             </a>
                         </h3>
-                        <div className="table-responsive">
+                        <ResponsiveTableWrapper>
                             <table className="table table-striped table-bordered table-sm table-hover box-score-team">
                                 <thead>
                                     <tr>
@@ -374,7 +379,7 @@ class BoxScore extends React.Component {
                                     </tr>
                                 </tfoot>
                             </table>
-                        </div>
+                        </ResponsiveTableWrapper>
                     </div>
                 ))}
                 Attendance: {helpers.numberWithCommas(boxScore.att)}

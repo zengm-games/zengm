@@ -20,6 +20,7 @@ import {
     PlayerNameLabels,
     RatingWithChange,
     RecordAndPlayoffs,
+    ResponsiveTableWrapper,
 } from "../components";
 import clickable from "../wrappers/clickable";
 
@@ -524,7 +525,7 @@ class Roster extends React.Component {
 
                 <div className="clearfix" />
 
-                <div className="table-responsive table-nonfluid">
+                <ResponsiveTableWrapper nonfluid>
                     <table className="table table-striped table-bordered table-sm table-hover">
                         <thead>
                             <tr>
@@ -636,7 +637,7 @@ class Roster extends React.Component {
                             userTid={userTid}
                         />
                     </table>
-                </div>
+                </ResponsiveTableWrapper>
             </>
         );
     }

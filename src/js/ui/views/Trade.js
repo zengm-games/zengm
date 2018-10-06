@@ -3,7 +3,12 @@ import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../common";
 import { getCols, helpers, realtimeUpdate, setTitle, toWorker } from "../util";
-import { DataTable, NewWindowLink, PlayerNameLabels } from "../components";
+import {
+    DataTable,
+    NewWindowLink,
+    PlayerNameLabels,
+    ResponsiveTableWrapper,
+} from "../components";
 
 const genRows = (players, handleChangeAsset) => {
     return players.map(p => {
@@ -265,7 +270,7 @@ class Trade extends React.Component {
                             name="Trade:Other"
                             rows={otherRows}
                         />
-                        <div className="table-responsive">
+                        <ResponsiveTableWrapper>
                             <table className="table table-striped table-bordered table-sm">
                                 <thead>
                                     <tr>
@@ -297,7 +302,7 @@ class Trade extends React.Component {
                                     ))}
                                 </tbody>
                             </table>
-                        </div>
+                        </ResponsiveTableWrapper>
 
                         <h2 className="mt-3">{userTeamName}</h2>
                         <DataTable
@@ -306,7 +311,7 @@ class Trade extends React.Component {
                             name="Trade:User"
                             rows={userRows}
                         />
-                        <div className="table-responsive">
+                        <ResponsiveTableWrapper>
                             <table className="table table-striped table-bordered table-sm">
                                 <thead>
                                     <tr>
@@ -338,7 +343,7 @@ class Trade extends React.Component {
                                     ))}
                                 </tbody>
                             </table>
-                        </div>
+                        </ResponsiveTableWrapper>
                     </div>
                     <div className="col-md-3 trade-summary">
                         <div className="row">

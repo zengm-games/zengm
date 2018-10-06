@@ -3,7 +3,12 @@ import React from "react";
 import { PHASE } from "../../common";
 import { getCols, helpers, setTitle, toWorker } from "../util";
 import clickable from "../wrappers/clickable";
-import { DataTable, NewWindowLink, PlayerNameLabels } from "../components";
+import {
+    DataTable,
+    NewWindowLink,
+    PlayerNameLabels,
+    ResponsiveTableWrapper,
+} from "../components";
 
 const OfferPlayerRow = clickable(({ clicked, p, toggleClicked }) => {
     return (
@@ -65,7 +70,7 @@ const Offer = props => {
     if (players.length > 0) {
         offerPlayers = (
             <div className="col-md-8">
-                <div className="table-responsive">
+                <ResponsiveTableWrapper>
                     <table className="table table-striped table-bordered table-sm table-hover">
                         <thead>
                             <tr>
@@ -88,7 +93,7 @@ const Offer = props => {
                             ))}
                         </tbody>
                     </table>
-                </div>
+                </ResponsiveTableWrapper>
             </div>
         );
     }

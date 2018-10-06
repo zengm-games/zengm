@@ -9,6 +9,7 @@ import {
     PlayerNameLabels,
     PlayoffMatchup,
     RatingWithChange,
+    ResponsiveTableWrapper,
     UpcomingGame,
 } from "../components";
 
@@ -459,7 +460,7 @@ const LeagueDashboard = ({
             </div>
 
             <h3>Starting Lineup</h3>
-            <div className="table-responsive table-nonfluid">
+            <ResponsiveTableWrapper nonfluid>
                 <table className="table table-striped table-bordered table-sm">
                     <thead>
                         <tr>
@@ -521,7 +522,7 @@ const LeagueDashboard = ({
                         ))}
                     </tbody>
                 </table>
-            </div>
+            </ResponsiveTableWrapper>
             <div className="clearfix" />
             <a href={helpers.leagueUrl(["roster"])}>» Full Roster</a>
         </>

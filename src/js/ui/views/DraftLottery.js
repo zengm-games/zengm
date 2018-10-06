@@ -5,7 +5,13 @@ import range from "lodash/range";
 import PropTypes from "prop-types";
 import * as React from "react";
 import { helpers, setTitle, toWorker } from "../util";
-import { DraftAbbrev, Dropdown, JumpTo, NewWindowLink } from "../components";
+import {
+    DraftAbbrev,
+    Dropdown,
+    JumpTo,
+    NewWindowLink,
+    ResponsiveTableWrapper,
+} from "../components";
 import type { DraftLotteryResultArray } from "../../common/types";
 
 const getProbs = (result: DraftLotteryResultArray): (number | void)[][] => {
@@ -175,7 +181,7 @@ class DraftLottery extends React.Component<Props, State> {
         if (result && probs) {
             // Checking both is redundant, but flow wants it
             table = (
-                <div className="table-responsive">
+                <ResponsiveTableWrapper>
                     <table className="table table-striped table-bordered table-sm table-hover">
                         <thead>
                             <tr>
@@ -275,7 +281,7 @@ class DraftLottery extends React.Component<Props, State> {
                             )}
                         </tbody>
                     </table>
-                </div>
+                </ResponsiveTableWrapper>
             );
         } else {
             table = <p>Can't find draft lottery results for {season}.</p>;

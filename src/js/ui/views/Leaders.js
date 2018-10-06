@@ -6,6 +6,7 @@ import {
     JumpTo,
     NewWindowLink,
     PlayerNameLabels,
+    ResponsiveTableWrapper,
 } from "../components";
 
 const Leaders = ({ categories, season }) => {
@@ -31,7 +32,7 @@ const Leaders = ({ categories, season }) => {
                         className="col-12 col-sm-6 col-md-4"
                         style={{ marginTop: 20 }}
                     >
-                        <div className="table-responsive">
+                        <ResponsiveTableWrapper>
                             <table className="table table-striped table-bordered table-sm shorten-col-0 leaders">
                                 <thead>
                                     <tr title={cat.title}>
@@ -85,7 +86,7 @@ const Leaders = ({ categories, season }) => {
                                     ))}
                                 </tbody>
                             </table>
-                        </div>
+                        </ResponsiveTableWrapper>
                     </div>
                 ))}
             </div>

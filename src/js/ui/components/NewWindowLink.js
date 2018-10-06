@@ -5,7 +5,7 @@ import * as React from "react";
 import { helpers } from "../util";
 
 type Props = {
-    parts: (number | string)[],
+    parts?: (number | string)[],
 };
 
 class NewWindowLink extends React.Component<Props> {

@@ -1,3 +1,5 @@
+// @flow
+
 export { default as BarGraph } from "./BarGraph";
 export { default as BoxPlot } from "./BoxPlot";
 export { default as CompletedGame } from "./CompletedGame";

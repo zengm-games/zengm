@@ -238,7 +238,7 @@ const BarGraph = ({
                         titleStart = `${labels[0][i]} ${labels[1][j]}: `;
                     }
 
-                    const id = String(Math.random()).replace("0.", "a");
+                    const id = `a${Math.floor(Math.random() * 1e10)}`;
                     const bar = (
                         <div
                             className={`bar-graph-${j + 1}`}

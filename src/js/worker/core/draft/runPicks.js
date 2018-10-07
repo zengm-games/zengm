@@ -5,7 +5,7 @@ import afterPicks from "./afterPicks";
 import getOrder from "./getOrder";
 import selectPlayer from "./selectPlayer";
 import { idb } from "../../db";
-import { g, local, lock, random } from "../../util";
+import { g, helpers, local, lock, random } from "../../util";
 import type { Conditions } from "../../../common/types";
 
 /**
@@ -52,7 +52,11 @@ const runPicks = async (onlyOne: boolean, conditions?: Conditions) => {
             }
             draftPicks.shift();
 
-            const selection = Math.floor(Math.abs(random.realGauss(0, 1))); // 0=best prospect, 1=next best prospect, etc.
+            const selection = helpers.bound(
+                Math.floor(Math.abs(random.realGauss(0, 1))),
+                0,
+                playersAll.length - 1,
+            ); // 0=best prospect, 1=next best prospect, etc.
             const pid = playersAll[selection].pid;
             await selectPlayer(dp, pid);
             pids.push(pid);

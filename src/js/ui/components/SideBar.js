@@ -318,6 +318,8 @@ class SideBar extends React.Component<Props> {
         setTimeout(() => {
             if (this.refFade && this.refFade.current) {
                 this.refFade.current.classList.remove("sidebar-fade-open");
+            }
+            if (this.refFade && this.refFade.current) {
                 this.refFade.current.classList.remove("sidebar-fade-closing");
             }
             if (document.body) {

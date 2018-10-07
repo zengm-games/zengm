@@ -2,7 +2,7 @@ Don't read much into the release dates. Changes are pushed live as often as
 possible, regardless of whether I make an official release with a new version
 number or not.
 
-# 4.1.0 (in progress)
+# 4.1.0 (2018-10-07)
 
 ## Gameplay and UI
 
@@ -11,10 +11,12 @@ number or not.
 - [Relatives - fathers, sons, and brothers](https://basketball-gm.com/blog/2018/05/relatives-fathers-sons-and-brothers/)
 - [Draft day trades](https://basketball-gm.com/blog/2018/05/draft-day-trades/)
 - [Option to change difficulty level](https://basketball-gm.com/blog/2018/06/difficulty-levels/)
+- [Lots of small UI improvements](https://basketball-gm.com/blog/2018/10/lots-of-small-ui-improvements/)
 
 ## Technical details
 
 - Finally switched from AppCache to a service worker for offline support
+- Switched from Bootstrap 3 to Bootstrap 4, and make a lot better use of Sass
 
 # 4.0.0 (2018-03-07)
 

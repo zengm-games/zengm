@@ -209,6 +209,11 @@ const all = [
         msg:
             'Major changes to player ratings and development! <a href="https://basketball-gm.com/blog/2018/03/player-ratings-and-development-changes-are-live/">Read about it here.</a>',
     },
+    {
+        date: "2018-10-07",
+        msg:
+            'Lots of minor UI improvements, especially on mobile. And <a href="/options">a dark theme is available in the options</a>! <a href="https://basketball-gm.com/blog/2018/10/lots-of-small-ui-improvements/">Read about it here.</a> Also since sometimes I forget to update the in-game notifications, check out <a href="https://basketball-gm.com/blog/">the BBGM blog</a> for other news.',
+    },
 ];
 
 const check = async (conditions: Conditions) => {
@@ -246,6 +251,8 @@ const check = async (conditions: Conditions) => {
 
         logEvent(
             {
+                extraClass: "",
+                persistent: true,
                 type: "changes",
                 text,
                 saveToDb: false,

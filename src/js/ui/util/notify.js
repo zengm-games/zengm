@@ -72,7 +72,8 @@ const notify = (
         notificationElement.appendChild(closeLink);
     }
 
-    if (extraClass !== undefined) {
+    // Empty string used in logEvent for when you want a normal black notification to be persistent
+    if (extraClass !== undefined && extraClass !== "") {
         notificationElement.classList.add(extraClass);
     }
 

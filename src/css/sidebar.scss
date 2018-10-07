@@ -64,9 +64,7 @@
     .sidebar {
         display: block;
         font-size: 1rem;
-        transition-timing-function: ease-in-out;
-        transition-duration: 0.3s;
-        transition-property: left;
+        transition: left 0.3s ease-in-out;
         left: -190px;
         top: 0;
         width: 190px;
@@ -94,11 +92,17 @@
     z-index: -1040;
     background-color: $black;
     opacity: 0;
-    transition: opacity 0.3s ease-in-out 0s;
+    transition: opacity 0.3s ease-in-out; // Keep time in sync with SideBar setTimeout
 }
 
 .sidebar-fade.sidebar-fade-open {
     opacity: 0.2;
+    width: 100%;
+    z-index: 1040;
+}
+
+.sidebar-fade.sidebar-fade-closing {
+    opacity: 0;
     width: 100%;
     z-index: 1040;
 }

@@ -1,23 +1,14 @@
 bootstrap 4
-- ads
-- confirm GCS still works
-- firefox
-- safari
 - changes
   - make this better in general, content from blog
-- sidebar swiping - does it feel good on real device?
-  - too annoying on iPhone, since swipe is used to go back/forward?
-  - transition for sidebar-fade - fade in works, but not out
-    - look at bbgm-notifications
 - blog/changes
   - screen cap of changing theme
+- 4.1.0
 
 open dashboard, open league in new tab, now shell on dashboard is as if in league
 - happens because there is no way to distinguish "local.updateGameAttributes called to initialize new league that the user clicked from the dashboard in this tab" and "local.updateGameAttributes called from another tab, but this tab has lid === undefined so we'll leave it in that state"
 
 in league export, don't include teamAbbrevsCache/teamNamesCache/teamRegionsCache
-
-Object.assign to @babel/plugin-proposal-object-rest-spread
 
 login -> account -> doesn't say logged in, sometimes? but account shows in navbar
 

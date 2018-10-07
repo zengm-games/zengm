@@ -308,22 +308,28 @@ class SideBar extends React.Component<Props> {
     }
 
     close() {
+        // These are flat conditions while open is nested, by design - clean up everything!
         if (this.ref && this.ref.current) {
             this.ref.current.classList.remove("sidebar-open");
+        }
+        if (this.refFade && this.refFade.current) {
+            this.refFade.current.classList.add("sidebar-fade-closing");
+        }
+        setTimeout(() => {
             if (this.refFade && this.refFade.current) {
                 this.refFade.current.classList.remove("sidebar-fade-open");
-
-                if (document.body) {
-                    document.body.classList.remove("modal-open");
-                    if (document.body) {
-                        document.body.style.paddingRight = "";
-                        if (this.topUserBlockEl) {
-                            this.topUserBlockEl.style.paddingRight = "";
-                        }
-                    }
+                this.refFade.current.classList.remove("sidebar-fade-closing");
+            }
+            if (document.body) {
+                document.body.classList.remove("modal-open");
+            }
+            if (document.body) {
+                document.body.style.paddingRight = "";
+                if (this.topUserBlockEl) {
+                    this.topUserBlockEl.style.paddingRight = "";
                 }
             }
-        }
+        }, 300); // Keep time in sync with .sidebar-fade
     }
 
     open() {

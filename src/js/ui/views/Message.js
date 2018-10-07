@@ -26,7 +26,7 @@ const Message = ({ message }: MessageProps) => {
 
     return (
         <>
-            <h4 style={{ marginTop: "23px" }}>
+            <h4>
                 From: {message.from}, {message.year} <NewWindowLink />
             </h4>
 

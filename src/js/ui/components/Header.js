@@ -52,10 +52,7 @@ class Header extends React.Component<{}> {
     // eslint-disable-next-line class-methods-use-this
     render() {
         const embedInfo = window.inIframe ? (
-            <div
-                className="alert alert-success"
-                style={{ margin: "1em 0 0 0" }}
-            >
+            <div className="alert alert-success mt-3">
                 <b>Welcome to Basketball GM!</b> Basketball GM is a basketball
                 management simulator. It's kind of like the fantasy basketball
                 you play here at Sports.ws, except it's a single player game and

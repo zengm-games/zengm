@@ -157,10 +157,7 @@ class LeagueOptions extends React.Component {
                                 <option value="true">Enabled</option>
                                 <option value="false">Disabled</option>
                             </select>
-                            <div
-                                className="input-group"
-                                style={{ marginTop: "0.5em" }}
-                            >
+                            <div className="input-group mt-2">
                                 <input
                                     type="text"
                                     className="form-control"
@@ -216,10 +213,7 @@ class LeagueOptions extends React.Component {
                                 )}
                                 <option value="custom">Custom</option>
                             </select>
-                            <div
-                                className="input-group"
-                                style={{ marginTop: "0.5em" }}
-                            >
+                            <div className="input-group mt-2">
                                 <input
                                     type="text"
                                     className="form-control"

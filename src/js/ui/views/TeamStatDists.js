@@ -747,14 +747,7 @@ const TeamStatDists = ({ season, statsAll }) => {
                         .map(stat => {
                             const bbgmPlot = (
                                 <tr key={`${stat}-bbgm`}>
-                                    <td
-                                        style={{
-                                            textAlign: "right",
-                                            paddingRight: "1em",
-                                        }}
-                                    >
-                                        {stat}
-                                    </td>
+                                    <td className="pr-3 text-right">{stat}</td>
                                     <td width="100%">
                                         <BoxPlot
                                             color="var(--blue)"

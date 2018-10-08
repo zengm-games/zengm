@@ -29,13 +29,12 @@ const Live = ({ games, gamesInProgress }) => {
                 return (
                     <button
                         key={gm.gid}
-                        className={classNames("btn", {
+                        className={classNames("btn float-left mb-3 mr-3", {
                             "btn-light-bordered": !gm.highlight,
                             "btn-success": gm.highlight,
                         })}
                         disabled={gamesInProgress}
                         onClick={() => toWorker("actions.liveGame", gm.gid)}
-                        style={{ float: "left", margin: "0 1em 1em 0" }}
                     >
                         {gm.awayRegion} {gm.awayName} at
                         <br />

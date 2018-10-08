@@ -90,8 +90,8 @@ const BoxScore = ({ boxScore }) => (
                 {boxScore.overtime}
             </h2>
             <table
-                className="table table-bordered"
-                style={{ marginTop: "0.5em", width: "auto" }}
+                className="table table-bordered mt-2"
+                style={{ width: "auto" }}
             >
                 <tbody>
                     {boxScore.teams.map(t => (

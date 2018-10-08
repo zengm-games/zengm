@@ -41,14 +41,7 @@ const PlayerRatingDists = ({ ratingsAll, season }) => {
                     {Object.keys(ratingsAll).map(rating => {
                         return (
                             <tr key={rating}>
-                                <td
-                                    style={{
-                                        textAlign: "right",
-                                        paddingRight: "1em",
-                                    }}
-                                >
-                                    {rating}
-                                </td>
+                                <td className="pr-3 text-right">{rating}</td>
                                 <td width="100%">
                                     <BoxPlot
                                         color="var(--blue)"

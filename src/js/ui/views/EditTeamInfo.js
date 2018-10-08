@@ -171,10 +171,7 @@ class EditTeamInfo extends React.Component {
 
                 <h2>Manual Editing</h2>
 
-                <div
-                    className="row d-none d-md-flex"
-                    style={{ fontWeight: "bold", marginBottom: "0.5em" }}
-                >
+                <div className="row d-none d-md-flex font-weight-bold mb-2">
                     <div className="col-md-2">
                         <br />
                         Region

@@ -130,7 +130,7 @@ class ExportStats extends React.Component {
                     </button>
                 </form>
 
-                <p style={{ marginTop: "1em" }}>
+                <p className="mt-3">
                     <DownloadDataLink
                         data={this.state.data}
                         downloadText="Download Exported Stats"

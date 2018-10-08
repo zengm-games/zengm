@@ -49,10 +49,9 @@ class DeleteLeague extends React.Component {
                 {message}
 
                 <button
-                    className="btn btn-danger"
+                    className="btn btn-danger float-left mr-3"
                     disabled={this.state.deleting}
                     onClick={() => this.handleDeleteLeague(lid)}
-                    style={{ float: "left", marginRight: "1em" }}
                 >
                     Yes, I am sure. Delete it!
                 </button>

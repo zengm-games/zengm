@@ -7,24 +7,13 @@ import * as React from "react";
 const leagueNotFoundMessage = (
     <>
         <h2>League not found</h2>
-        <div style={{ margin: "4em 0", textAlign: "center" }}>
+        <div className="my-5 text-center">
             <h3>Play Basketball GM now!</h3>
-            <a
-                href="/new_league"
-                className="btn btn-success btn-lg"
-                style={{ margin: "0.5em" }}
-            >
+            <a href="/new_league" className="btn btn-success btn-lg m-2">
                 Create a new league
             </a>
-            <span
-                className="d-none d-sm-inline"
-                style={{ marginRight: "3em" }}
-            />
-            <a
-                href="/"
-                className="btn btn-primary btn-lg"
-                style={{ margin: "0.5em" }}
-            >
+            <span className="d-none d-sm-inline mr-5" />
+            <a href="/" className="btn btn-primary btn-lg m-2">
                 Load an existing league
             </a>
         </div>

@@ -279,10 +279,10 @@ class RatingsStatsPopover extends React.Component<Props, State> {
                 >
                     <PopoverBody>
                         <div
+                            className="text-nowrap"
                             style={{
                                 minWidth: 250,
                                 minHeight: 225,
-                                whiteSpace: "nowrap",
                             }}
                         >
                             {nameBlock}

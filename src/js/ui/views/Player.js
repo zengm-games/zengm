@@ -598,7 +598,7 @@ const Player = ({
                     </div>
                 </div>
 
-                <div className="col-sm-6" style={{ whiteSpace: "nowrap" }}>
+                <div className="col-sm-6 text-nowrap">
                     {!retired ? (
                         <RatingsOverview ratings={player.ratings} />
                     ) : null}

@@ -507,7 +507,7 @@ class Roster extends React.Component {
                     </p>
                 ) : null}
                 {editable ? (
-                    <div className="btn-group" style={{ marginBottom: "1em" }}>
+                    <div className="btn-group mb-3">
                         <button
                             className="btn btn-light-bordered"
                             onClick={handleAutoSort}

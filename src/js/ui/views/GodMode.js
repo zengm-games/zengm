@@ -180,7 +180,7 @@ class GodMode extends React.Component {
                     {godMode ? "Disable God Mode" : "Enable God Mode"}
                 </button>
 
-                <h2 style={{ marginTop: "1em" }}>God Mode Options</h2>
+                <h2 className="mt-3">God Mode Options</h2>
 
                 <p className="text-danger">
                     These options are not well tested and might make the AI do

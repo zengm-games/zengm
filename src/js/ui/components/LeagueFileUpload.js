@@ -139,7 +139,7 @@ class LeagueFileUpload extends React.Component<Props, State> {
                     }
                 />
                 {this.state.status === "error" ? (
-                    <p className="text-danger" style={{ marginTop: "1em" }}>
+                    <p className="alert alert-danger mt-3">
                         Error:{" "}
                         {this.state.error
                             ? this.state.error.message
@@ -147,7 +147,7 @@ class LeagueFileUpload extends React.Component<Props, State> {
                     </p>
                 ) : null}
                 {this.state.jsonSchemaErrors.length > 0 ? (
-                    <p className="text-warning" style={{ marginTop: "1em" }}>
+                    <p className="alert alert-warning mt-3">
                         Warning: {this.state.jsonSchemaErrors.length} JSON
                         schema validation errors. More detail is available in
                         the JavaScript console. Also, see{" "}
@@ -159,12 +159,12 @@ class LeagueFileUpload extends React.Component<Props, State> {
                     </p>
                 ) : null}
                 {this.state.status === "loading" ? (
-                    <p className="text-info" style={{ marginTop: "1em" }}>
+                    <p className="alert alert-info mt-3">
                         Loading league file...
                     </p>
                 ) : null}
                 {this.state.status === "parsing" ? (
-                    <p className="text-info" style={{ marginTop: "1em" }}>
+                    <p className="alert alert-info mt-3">
                         Parsing league file...
                     </p>
                 ) : null}

@@ -2,7 +2,7 @@
 /* global workbox:false */
 
 importScripts(
-    "https://storage.googleapis.com/workbox-cdn/releases/3.5.0/workbox-sw.js",
+    "https://storage.googleapis.com/workbox-cdn/releases/3.6.2/workbox-sw.js",
 );
 
 // Will be filled in by tools/build-sw.js

@@ -11,6 +11,7 @@ const takeScreenshot = async () => {
     }
 
     // Add watermark
+    contentEl.style.display = "inline-block";
     const watermark = document.createElement("div");
     const logos = document.getElementsByClassName("spin");
     const logoHTML = logos.length > 0 ? `<img src="${logos[0].src}">` : "";
@@ -40,6 +41,7 @@ const takeScreenshot = async () => {
     });
 
     // Remove watermark
+    contentEl.style.display = "";
     contentEl.removeChild(watermark);
     contentEl.style.padding = "";
 

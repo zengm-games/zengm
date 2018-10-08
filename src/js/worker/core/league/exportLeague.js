@@ -64,8 +64,18 @@ const exportLeague = async (stores: string[]) => {
         delete exportedLeague.teamStats;
     }
 
-    // Set startingSeason if gameAttributes is not selected, otherwise it's going to fail loading unless startingSeason is coincidentally the same as the default
-    if (!stores.includes("gameAttributes")) {
+    if (stores.includes("gameAttributes")) {
+        // Remove cached variables, since they will be auto-generated on re-import but are confusing if someone edits the JSON
+        const keysToDelete = [
+            "teamAbbrevsCache",
+            "teamNamesCache",
+            "teamRegionsCache",
+        ];
+        exportedLeague.gameAttributes = exportedLeague.gameAttributes.filter(
+            gameAttribute => !keysToDelete.includes(gameAttribute.key),
+        );
+    } else {
+        // Set startingSeason if gameAttributes is not selected, otherwise it's going to fail loading unless startingSeason is coincidentally the same as the default
         exportedLeague.startingSeason = g.startingSeason;
     }
 

@@ -7,8 +7,6 @@ if an ad blocker is used, no need to save that space on the right
 open dashboard, open league in new tab, now shell on dashboard is as if in league
 - happens because there is no way to distinguish "local.updateGameAttributes called to initialize new league that the user clicked from the dashboard in this tab" and "local.updateGameAttributes called from another tab, but this tab has lid === undefined so we'll leave it in that state"
 
-in league export, don't include teamAbbrevsCache/teamNamesCache/teamRegionsCache
-
 login -> account -> doesn't say logged in, sometimes? but account shows in navbar
 
 reevaluate manual - remove performance section

@@ -231,7 +231,7 @@ class BoxScore extends React.Component {
                                                                 boxScore.teams[
                                                                     1 - i
                                                                 ].efg
-                                                                    ? "success"
+                                                                    ? "table-success"
                                                                     : null
                                                             }
                                                         >
@@ -243,7 +243,7 @@ class BoxScore extends React.Component {
                                                                 boxScore.teams[
                                                                     1 - i
                                                                 ].tovp
-                                                                    ? "success"
+                                                                    ? "table-success"
                                                                     : null
                                                             }
                                                         >
@@ -255,7 +255,7 @@ class BoxScore extends React.Component {
                                                                 boxScore.teams[
                                                                     1 - i
                                                                 ].orbp
-                                                                    ? "success"
+                                                                    ? "table-success"
                                                                     : null
                                                             }
                                                         >
@@ -267,7 +267,7 @@ class BoxScore extends React.Component {
                                                                 boxScore.teams[
                                                                     1 - i
                                                                 ].ftpfga
-                                                                    ? "success"
+                                                                    ? "table-success"
                                                                     : null
                                                             }
                                                         >

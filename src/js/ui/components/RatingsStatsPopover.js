@@ -104,7 +104,7 @@ class RatingsStatsPopover extends React.Component<Props, State> {
         if (name) {
             // Explicit boolean check is for Firefox 57 and older
             nameBlock = (
-                <p>
+                <p className="mb-2">
                     <a href={helpers.leagueUrl(["player", this.props.pid])}>
                         <b>{name}</b>
                     </a>
@@ -117,7 +117,7 @@ class RatingsStatsPopover extends React.Component<Props, State> {
                 </p>
             );
         } else {
-            nameBlock = <p />;
+            nameBlock = <p className="mb-2" />;
         }
 
         let ratingsBlock;
@@ -218,7 +218,7 @@ class RatingsStatsPopover extends React.Component<Props, State> {
         let statsBlock;
         if (stats) {
             statsBlock = (
-                <div className="row" style={{ marginTop: "1em" }}>
+                <div className="row mt-2">
                     <div className="col-4">
                         <b>Stats</b>
                         <br />
@@ -248,7 +248,7 @@ class RatingsStatsPopover extends React.Component<Props, State> {
             );
         } else {
             statsBlock = (
-                <div className="row" style={{ marginTop: "1em" }}>
+                <div className="row mt-2">
                     <div className="col-12">
                         <b>Stats</b>
                         <br />
@@ -281,7 +281,7 @@ class RatingsStatsPopover extends React.Component<Props, State> {
                         <div
                             style={{
                                 minWidth: 250,
-                                minHeight: 250,
+                                minHeight: 225,
                                 whiteSpace: "nowrap",
                             }}
                         >

@@ -2,6 +2,10 @@ Don't read much into the release dates. Changes are pushed live as often as
 possible, regardless of whether I make an official release with a new version
 number or not.
 
+# 4.2.0 (in progress)
+
+- Nothing much yet!
+
 # 4.1.0 (2018-10-07)
 
 ## Gameplay and UI

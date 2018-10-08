@@ -118,144 +118,108 @@ const scale = (val, ylim) => {
     return ((val - ylim[0]) / (ylim[1] - ylim[0])) * 100;
 };
 
-type BarGraphOptions = {
+type Props = {
     data: any, // To get rid of this (and other below), would probably have to break up into two separate code paths, one for stacked and one for non-stacked
     labels: string[],
     tooltipCb: (val: string) => string,
     ylim: [number, number],
 };
 
-const BarGraph = ({
-    data = [],
-    labels,
-    tooltipCb = val => val,
-    ylim: ylimArg,
-}: BarGraphOptions) => {
-    const gap = 2; // Gap between bars, in pixels
+let counter = 0;
 
-    if (data.length === 0) {
-        return null;
+class BarGraph extends React.Component<Props> {
+    counter: number;
+
+    constructor(props: Props) {
+        super(props);
+        this.counter = counter;
+        counter += 1;
     }
 
-    // Stacked plot or not?
-    const stacked = data[0].hasOwnProperty("length");
+    render() {
+        const {
+            data = [],
+            labels,
+            tooltipCb = val => val,
+            ylim: ylimArg,
+        } = this.props;
 
-    const numBars = stacked ? data[0].length : data.length;
-    if (numBars === 0) {
-        return null;
-    }
-    const widthPct = 100 / numBars;
+        const gap = 2; // Gap between bars, in pixels
 
-    // ylim specified or not?
-    const ylim = ylimArg === undefined ? defaultYlim(data, stacked) : ylimArg;
+        if (data.length === 0) {
+            return null;
+        }
 
-    // Convert heights to percentages
-    const scaled: any = [];
-    for (let i = 0; i < data.length; i++) {
-        if (!stacked) {
-            scaled[i] = scale(data[i], ylim);
-        } else {
-            scaled[i] = [];
-            for (let j = 0; j < data[i].length; j++) {
-                scaled[i][j] = scale(data[i][j], ylim);
+        // Stacked plot or not?
+        const stacked = data[0].hasOwnProperty("length");
+
+        const numBars = stacked ? data[0].length : data.length;
+        if (numBars === 0) {
+            return null;
+        }
+        const widthPct = 100 / numBars;
+
+        // ylim specified or not?
+        const ylim =
+            ylimArg === undefined ? defaultYlim(data, stacked) : ylimArg;
+
+        // Convert heights to percentages
+        const scaled: any = [];
+        for (let i = 0; i < data.length; i++) {
+            if (!stacked) {
+                scaled[i] = scale(data[i], ylim);
+            } else {
+                scaled[i] = [];
+                for (let j = 0; j < data[i].length; j++) {
+                    scaled[i][j] = scale(data[i][j], ylim);
+                }
             }
         }
-    }
 
-    // Draw bars
-    let bars;
-    if (!stacked) {
-        // Not stacked
-        bars = data.map((val, i) => {
-            let titleStart = "";
-            if (labels !== undefined) {
-                titleStart = `${labels[i]}: `;
-            }
-
-            // Fix for negative values
-            let bottom;
-            let cssClass;
-            let height;
-            if (val >= 0) {
-                bottom = scale(0, ylim);
-                height = scaled[i] - scale(0, ylim);
-                cssClass = "bar-graph-1";
-            } else {
-                bottom = scaled[i];
-                height = scale(0, ylim) - scaled[i];
-                cssClass = "bar-graph-3";
-            }
-
-            const id = `a${Math.floor(Math.random() * 1e10)}`;
-            const bar = (
-                <div
-                    className={cssClass}
-                    id={id}
-                    key={i}
-                    style={{
-                        marginLeft: `${gap}px`,
-                        position: "absolute",
-                        bottom: `${bottom}%`,
-                        height: `${height}%`,
-                        left: `${i * widthPct}%`,
-                        width: `calc(${widthPct}% - ${gap}px)`,
-                    }}
-                />
-            );
-
-            if (typeof val === "number" && !Number.isNaN(val)) {
-                return (
-                    <div key={i}>
-                        {bar}
-                        <UncontrolledTooltip
-                            delay={0}
-                            placement="top"
-                            target={id}
-                        >
-                            {titleStart}
-                            {tooltipCb(val)}
-                        </UncontrolledTooltip>
-                    </div>
-                );
-            }
-
-            return bar;
-        });
-    } else {
-        // Stacked
-        bars = [];
-        const offsets = [];
-        for (let j = 0; j < data.length; j++) {
-            for (let i = 0; i < data[j].length; i++) {
-                if (j === 0) {
-                    offsets[i] = 0;
-                } else {
-                    offsets[i] += scaled[j - 1][i];
+        // Draw bars
+        let bars;
+        if (!stacked) {
+            // Not stacked
+            bars = data.map((val, i) => {
+                let titleStart = "";
+                if (labels !== undefined) {
+                    titleStart = `${labels[i]}: `;
                 }
-                if (data[j][i] !== null && data[j][i] !== undefined) {
-                    let titleStart = "";
-                    if (labels !== undefined) {
-                        titleStart = `${labels[0][i]} ${labels[1][j]}: `;
-                    }
 
-                    const id = `a${Math.floor(Math.random() * 1e10)}`;
-                    const bar = (
-                        <div
-                            className={`bar-graph-${j + 1}`}
-                            id={id}
-                            style={{
-                                marginLeft: `${gap}px`,
-                                position: "absolute",
-                                bottom: `${offsets[i]}%`,
-                                height: `${scaled[j][i]}%`,
-                                left: `${i * widthPct}%`,
-                                width: `calc(${widthPct}% - ${gap}px)`,
-                            }}
-                        />
-                    );
+                // Fix for negative values
+                let bottom;
+                let cssClass;
+                let height;
+                if (val >= 0) {
+                    bottom = scale(0, ylim);
+                    height = scaled[i] - scale(0, ylim);
+                    cssClass = "bar-graph-1";
+                } else {
+                    bottom = scaled[i];
+                    height = scale(0, ylim) - scaled[i];
+                    cssClass = "bar-graph-3";
+                }
 
-                    bars.push(
-                        <div key={`${i}.${j}`}>
+                const id = `a${this.counter}-${i}`;
+                const bar = (
+                    <div
+                        className={cssClass}
+                        id={id}
+                        key={i}
+                        style={{
+                            marginLeft: `${gap}px`,
+                            position: "absolute",
+                            bottom: `${bottom}%`,
+                            height: `${height}%`,
+                            left: `${i * widthPct}%`,
+                            width: `calc(${widthPct}% - ${gap}px)`,
+                        }}
+                    />
+                );
+
+                if (typeof val === "number" && !Number.isNaN(val)) {
+                    return (
+                        <div key={i}>
                             {bar}
                             <UncontrolledTooltip
                                 delay={0}
@@ -263,27 +227,79 @@ const BarGraph = ({
                                 target={id}
                             >
                                 {titleStart}
-                                {tooltipCb(data[j][i])}
+                                {tooltipCb(val)}
                             </UncontrolledTooltip>
-                        </div>,
+                        </div>
                     );
+                }
+
+                return bar;
+            });
+        } else {
+            // Stacked
+            bars = [];
+            const offsets = [];
+            for (let j = 0; j < data.length; j++) {
+                for (let i = 0; i < data[j].length; i++) {
+                    if (j === 0) {
+                        offsets[i] = 0;
+                    } else {
+                        offsets[i] += scaled[j - 1][i];
+                    }
+                    if (data[j][i] !== null && data[j][i] !== undefined) {
+                        let titleStart = "";
+                        if (labels !== undefined) {
+                            titleStart = `${labels[0][i]} ${labels[1][j]}: `;
+                        }
+
+                        const id = `a${this.counter}-${i}-${j}`;
+                        const bar = (
+                            <div
+                                className={`bar-graph-${j + 1}`}
+                                id={id}
+                                style={{
+                                    marginLeft: `${gap}px`,
+                                    position: "absolute",
+                                    bottom: `${offsets[i]}%`,
+                                    height: `${scaled[j][i]}%`,
+                                    left: `${i * widthPct}%`,
+                                    width: `calc(${widthPct}% - ${gap}px)`,
+                                }}
+                            />
+                        );
+
+                        bars.push(
+                            <div key={`${i}.${j}`}>
+                                {bar}
+                                <UncontrolledTooltip
+                                    delay={0}
+                                    placement="top"
+                                    target={id}
+                                >
+                                    {titleStart}
+                                    {tooltipCb(data[j][i])}
+                                </UncontrolledTooltip>
+                            </div>,
+                        );
+                    }
                 }
             }
         }
-    }
 
-    return (
-        <div
-            style={{
-                height: "100%",
-                marginLeft: `-${gap}px`,
-                position: "relative",
-            }}
-        >
-            {bars}
-        </div>
-    );
-};
+        return (
+            <div
+                style={{
+                    height: "100%",
+                    marginLeft: `-${gap}px`,
+                    position: "relative",
+                }}
+            >
+                {bars}
+            </div>
+        );
+    }
+}
+
 BarGraph.propTypes = {
     data: PropTypes.array,
     labels: PropTypes.array,

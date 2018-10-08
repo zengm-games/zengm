@@ -381,6 +381,7 @@ const Account = ({
                                 "text-muted": achievement.count === 0,
                             })}
                             key={achievement.slug}
+                            style={{ minHeight: 109 }}
                         >
                             <div className="card-body">
                                 <h5 className="card-title">

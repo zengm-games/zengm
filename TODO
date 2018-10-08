@@ -1,5 +1,4 @@
-bootstrap 4
-- 4.1.0
+screenshot width, when window is very wide
 
 open dashboard, open league in new tab, now shell on dashboard is as if in league
 - happens because there is no way to distinguish "local.updateGameAttributes called to initialize new league that the user clicked from the dashboard in this tab" and "local.updateGameAttributes called from another tab, but this tab has lid === undefined so we'll leave it in that state"

@@ -29,7 +29,8 @@ const Live = ({ games, gamesInProgress }) => {
                 return (
                     <button
                         key={gm.gid}
-                        className={classNames("btn", "btn-light-bordered", {
+                        className={classNames("btn", {
+                            "btn-light-bordered": !gm.highlight,
                             "btn-success": gm.highlight,
                         })}
                         disabled={gamesInProgress}

@@ -472,7 +472,7 @@ const Player = ({
     let draftInfo = null;
     if (player.draft.round) {
         draftInfo = (
-            <div>
+            <>
                 Draft:{" "}
                 <a
                     href={helpers.leagueUrl([
@@ -485,33 +485,33 @@ const Player = ({
                 - Round {player.draft.round} (Pick {player.draft.pick}) by{" "}
                 {player.draft.abbrev}
                 <br />
-            </div>
+            </>
         );
     } else {
         draftInfo = (
-            <div>
+            <>
                 Undrafted: {player.draft.year}
                 <br />
-            </div>
+            </>
         );
     }
 
     let contractInfo = null;
     if (showContract) {
         contractInfo = (
-            <div>
+            <>
                 {freeAgent ? "Asking for" : "Contract"}:{" "}
                 {helpers.formatCurrency(player.contract.amount, "M")}
                 /yr thru {player.contract.exp}
                 <br />
-            </div>
+            </>
         );
     }
 
     let statusInfo = null;
     if (!retired) {
         statusInfo = (
-            <div>
+            <>
                 {injured ? (
                     <span
                         className="badge badge-danger badge-injury"
@@ -529,7 +529,7 @@ const Player = ({
                 />
                 <WatchBlock pid={player.pid} watch={player.watch} />
                 <br />
-            </div>
+            </>
         );
     }
 
@@ -561,27 +561,27 @@ const Player = ({
                         Born: {player.born.year} - {player.born.loc}
                         <br />
                         {typeof player.diedYear !== "number" ? (
-                            <div>
+                            <>
                                 Age: {player.age}
                                 <br />
-                            </div>
+                            </>
                         ) : (
-                            <div>
+                            <>
                                 Died: {player.diedYear}
                                 <br />
-                            </div>
+                            </>
                         )}
                         <Relatives relatives={player.relatives} />
                         {draftInfo}
                         {player.college && player.college !== "" ? (
-                            <div>
+                            <>
                                 From: {player.college}
                                 <br />
-                            </div>
+                            </>
                         ) : null}
                         {contractInfo}
                         {godMode ? (
-                            <div>
+                            <>
                                 <a
                                     href={helpers.leagueUrl([
                                         "customize_player",
@@ -592,7 +592,7 @@ const Player = ({
                                     Edit Player
                                 </a>
                                 <br />
-                            </div>
+                            </>
                         ) : null}
                         {statusInfo}
                     </div>

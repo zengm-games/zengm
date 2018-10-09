@@ -148,8 +148,8 @@ const ReorderHandle = SortableHandle(({ i, isSorting }) => {
     return (
         <td
             className={classNames("roster-handle", {
-                "bg-info": i <= 4,
-                "bg-secondary": i > 4,
+                "table-info": i <= 4,
+                "table-secondary": i > 4,
                 "user-select-none": isSorting,
             })}
         />
@@ -501,9 +501,9 @@ class Roster extends React.Component {
                 {editable ? (
                     <p style={{ clear: "both" }}>
                         Drag row handles to move players between the starting
-                        lineup <span className="bg-info legend-square" /> and
+                        lineup <span className="table-info legend-square" /> and
                         the bench{" "}
-                        <span className="bg-secondary legend-square" />.
+                        <span className="table-secondary legend-square" />.
                     </p>
                 ) : null}
                 {editable ? (

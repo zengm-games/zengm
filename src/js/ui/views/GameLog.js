@@ -491,7 +491,7 @@ const GameLog = ({ abbrev, boxScore, gamesList = { games: [] }, season }) => {
                                             key={gm.gid}
                                             className={
                                                 gm.gid === boxScore.gid
-                                                    ? "table-primary"
+                                                    ? "table-info"
                                                     : null
                                             }
                                         >

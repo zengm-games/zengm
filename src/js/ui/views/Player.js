@@ -514,7 +514,7 @@ const Player = ({
             <div>
                 {injured ? (
                     <span
-                        className="label label-danger label-injury"
+                        className="badge badge-danger badge-injury"
                         style={{ marginLeft: 0 }}
                         title={`${player.injury.type} (out ${
                             player.injury.gamesRemaining

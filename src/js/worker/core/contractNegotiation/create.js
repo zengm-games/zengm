@@ -27,9 +27,8 @@ const create = async (
         return "You're not allowed to sign free agents now.";
     }
 
-    const canStartNegotiation = await lock.canStartNegotiation();
-    if (!canStartNegotiation) {
-        return "You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process.";
+    if (lock.get("gameSim")) {
+        return "You cannot initiate a new negotiaion while game simulation is in progress.";
     }
 
     const playersOnRoster = await idb.cache.players.indexGetAll(
@@ -72,6 +71,11 @@ const create = async (
         orig: { amount: playerAmount, years: playerYears },
         resigning,
     };
+
+    // Except in re-signing phase, only one negotiation at a time
+    if (!resigning) {
+        await idb.cache.negotiations.clear();
+    }
 
     await idb.cache.negotiations.add(negotiation);
     await updateStatus("Contract negotiation");

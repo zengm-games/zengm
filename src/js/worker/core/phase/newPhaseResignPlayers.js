@@ -7,6 +7,8 @@ import { g, helpers, local, logEvent } from "../../util";
 import type { Conditions } from "../../../common/types";
 
 const newPhaseResignPlayers = async (conditions: Conditions) => {
+    await idb.cache.negotiations.clear();
+
     const baseMoods = await player.genBaseMoods();
 
     // Re-sign players on user's team, and some AI players

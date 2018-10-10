@@ -77,32 +77,6 @@ async function canStartGames(): Promise<boolean> {
 }
 
 /**
- * Can a new contract negotiation be started?
- *
- * Calls the callback function with either true or false. If games are in progress or a free agent (not re-signing!) is being negotiated with, false.
- *
- * @memberOf util.lock
- * @return {Promise.boolean}
- */
-async function canStartNegotiation(): Promise<boolean> {
-    if (locks.gameSim) {
-        return false;
-    }
-
-    // Allow multiple parallel negotiations only for re-signing players
-    const negotiations = await idb.cache.negotiations.getAll();
-    for (const negotiation of negotiations) {
-        if (!negotiation.resigning) {
-            return false;
-        }
-    }
-
-    return true;
-
-    // Don't also check phase change because negotiations are auto-started in phase change
-}
-
-/**
  * Is there an undread message from the owner?
  *
  * Calls the callback function with either true or false.
@@ -126,6 +100,5 @@ export default {
     set,
     negotiationInProgress,
     canStartGames,
-    canStartNegotiation,
     unreadMessage,
 };

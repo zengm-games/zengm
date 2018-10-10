@@ -5,7 +5,6 @@ typescript
 
 negotiation rewrite
 - clean up database structure
-- negotiation in progress shouldn't block anything
 
 if an ad blocker is used, no need to save that space on the right
 - already done for Gold/localhost in initAds, but how to do it for ad blocker too?

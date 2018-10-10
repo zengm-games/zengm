@@ -72,7 +72,15 @@ const initAds = (goldUntil: number | void) => {
         hideAds = true;
     }
 
-    if (!hideAds) {
+    if (hideAds) {
+        // Get rid of margin saved for skyscraper on right
+        const container = document.getElementsByClassName("bbgm-container")[0];
+        if (container) {
+            container.style.paddingRight = "15px";
+            container.style.maxWidth = "100%";
+            console.log(container.style);
+        }
+    } else {
         window.bbgmAds.cmd.push(() => {
             // Show hidden divs. skyscraper has its own code elsewhere to manage display.
             const showDivs = [

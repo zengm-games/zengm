@@ -80,7 +80,6 @@ class Header extends React.Component<{}> {
                         display: "none",
                         textAlign: "center",
                         minHeight: "95px",
-                        marginTop: "1em",
                     }}
                 />
                 <div className="banner-ad skyscraper-wrapper">

@@ -15,7 +15,8 @@ async function updateRoster(
         updateEvents.includes("watchList") ||
         (inputs.season === g.season &&
             (updateEvents.includes("gameSim") ||
-                updateEvents.includes("playerMovement"))) ||
+                updateEvents.includes("playerMovement") ||
+                updateEvents.includes("newPhase"))) ||
         inputs.abbrev !== state.abbrev ||
         inputs.season !== state.season
     ) {

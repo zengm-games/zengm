@@ -531,11 +531,19 @@ const NavBar = ({ pageID, updating }: Props) => {
                 </button>
                 <LogoAndText lid={lid} updating={updating} />
                 <Nav navbar>
-                    <div id="play-menu">
+                    <div
+                        id="play-menu"
+                        onClick={() => {
+                            // Hack because otherwise the popover doesn't close when the Play button is clicked, for some reason
+                            if (!hasViewedALeague) {
+                                local.update({ hasViewedALeague: true });
+                            }
+                        }}
+                    >
                         <PlayMenu lid={lid} options={playMenuOptions} />
                     </div>
                     <Popover
-                        placement="bottom"
+                        placement="right"
                         isOpen={!hasViewedALeague && lid === 1}
                         target="play-menu"
                         toggle={() => {
@@ -544,7 +552,9 @@ const NavBar = ({ pageID, updating }: Props) => {
                             localStorage.setItem("hasViewedALeague", "true");
                         }}
                     >
-                        <PopoverHeader>Welcome to Basketball GM!</PopoverHeader>
+                        <PopoverHeader className="text-primary font-weight-bold">
+                            Welcome to Basketball GM!
+                        </PopoverHeader>
                         <PopoverBody>
                             To advance through the game, use the Play button at
                             the top. The options shown will change depending on

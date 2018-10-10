@@ -3,6 +3,10 @@ typescript
 - https://github.com/bcherny/flow-to-typescript
 - FlowFixMe
 
+negotiation rewrite
+- clean up database structure
+- negotiation in progress shouldn't block anything
+
 if an ad blocker is used, no need to save that space on the right
 - already done for Gold/localhost in initAds, but how to do it for ad blocker too?
 
@@ -12,6 +16,7 @@ open dashboard, open league in new tab, now shell on dashboard is as if in leagu
 login -> account -> doesn't say logged in, sometimes? but account shows in navbar
 - happens if you log in in one tab while having another open, then in the 2nd tab go to achievements
   - only in firefox?
+  - no, user says chrome too
 
 reevaluate manual - remove performance section
 

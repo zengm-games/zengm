@@ -47,13 +47,8 @@ const create = async (
     // Initial player proposal;
     const playerAmount = freeAgents.amountWithMood(
         p.contract.amount,
-        p.freeAgentMood[g.userTid],
+        p.freeAgentMood[tid],
     );
-    let playerYears = p.contract.exp - g.season;
-    // Adjust to account for in-season signings;
-    if (g.phase <= PHASE.AFTER_TRADE_DEADLINE) {
-        playerYears += 1;
-    }
 
     if (helpers.refuseToNegotiate(playerAmount, p.freeAgentMood[g.userTid])) {
         return `<a href="${helpers.leagueUrl(["player", p.pid])}">${
@@ -66,9 +61,6 @@ const create = async (
     const negotiation = {
         pid,
         tid,
-        team: { amount: playerAmount, years: playerYears },
-        player: { amount: playerAmount, years: playerYears },
-        orig: { amount: playerAmount, years: playerYears },
         resigning,
     };
 

@@ -69,12 +69,6 @@ async function updateNegotiation(
         };
     }
 
-    negotiation.player.expiration = negotiation.player.years + g.season;
-    // Adjust to account for in-season signings
-    if (g.phase <= PHASE.AFTER_TRADE_DEADLINE) {
-        negotiation.player.expiration -= 1;
-    }
-
     let p = await idb.cache.players.get(negotiation.pid);
     p = await idb.getCopy.playersPlus(p, {
         attrs: ["pid", "name", "age", "contract", "freeAgentMood"],

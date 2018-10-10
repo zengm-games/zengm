@@ -338,9 +338,6 @@ export type Message = {|
 export type Negotiation = {|
     pid: number,
     tid: number,
-    team: {| amount: number, years: number |},
-    player: {| amount: number, years: number |},
-    orig: {| amount: number, years: number |},
     resigning: boolean,
 |};
 

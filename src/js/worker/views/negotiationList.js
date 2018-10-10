@@ -1,7 +1,7 @@
 // @flow
 
 import { PLAYER } from "../../common";
-import { player, team } from "../core";
+import { freeAgents, player, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 
@@ -20,7 +20,15 @@ async function updateNegotiationList(): void | { [key: string]: any } {
     ]);
     players = players.filter(p => negotiationPids.includes(p.pid));
     players = await idb.getCopies.playersPlus(players, {
-        attrs: ["pid", "name", "age", "freeAgentMood", "injury", "watch"],
+        attrs: [
+            "pid",
+            "name",
+            "age",
+            "freeAgentMood",
+            "injury",
+            "watch",
+            "contract",
+        ],
         ratings: ["ovr", "pot", "skills", "pos"],
         stats: ["min", "pts", "trb", "ast", "per"],
         season: g.season,
@@ -29,19 +37,13 @@ async function updateNegotiationList(): void | { [key: string]: any } {
         fuzz: true,
     });
 
-    for (let i = 0; i < players.length; i++) {
-        for (let j = 0; j < negotiations.length; j++) {
-            if (players[i].pid === negotiations[j].pid) {
-                players[i].contract = {};
-                players[i].contract.amount =
-                    negotiations[j].player.amount / 1000;
-                players[i].contract.exp =
-                    g.season + negotiations[j].player.years;
-                break;
-            }
-        }
-
-        players[i].mood = player.moodColorText(players[i]);
+    for (const p of players) {
+        // Can use g.userTid instead of neogtiation.tid because only user can view this page
+        p.contract.amount = freeAgents.amountWithMood(
+            p.contract.amount,
+            p.freeAgentMood[g.userTid],
+        );
+        p.mood = player.moodColorText(p);
     }
 
     const payroll = await team.getPayroll(g.userTid);

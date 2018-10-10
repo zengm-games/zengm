@@ -1,3 +1,8 @@
+typescript
+- https://medium.com/entria/incremental-migration-to-typescript-on-a-flowtype-codebase-515f6490d92d
+- https://github.com/bcherny/flow-to-typescript
+- FlowFixMe
+
 if an ad blocker is used, no need to save that space on the right
 - already done for Gold/localhost in initAds, but how to do it for ad blocker too?
 
@@ -5,12 +10,10 @@ open dashboard, open league in new tab, now shell on dashboard is as if in leagu
 - happens because there is no way to distinguish "local.updateGameAttributes called to initialize new league that the user clicked from the dashboard in this tab" and "local.updateGameAttributes called from another tab, but this tab has lid === undefined so we'll leave it in that state"
 
 login -> account -> doesn't say logged in, sometimes? but account shows in navbar
+- happens if you log in in one tab while having another open, then in the 2nd tab go to achievements
+  - only in firefox?
 
 reevaluate manual - remove performance section
-
-typescript
-- https://github.com/bcherny/flow-to-typescript
-- FlowFixMe
 
 customize playoff series length
 - god mode options
@@ -53,13 +56,6 @@ make AI smarter about contracts
 - then do cool shit, like a tunable "randomness" factor or something that lets you tune player development, and also overall talent level, and also distribution of different ratings (to sim different eras)
 
 ui/api/setGameAttributes logic should be in worker, not ui. minimize transfer
-
-center UI when possible
-- when?
-  - if banner ads are hidden (hideAds in initAds)
-  - if ad blocker is in use (divs missing or something)
-  - if not wide enough for skyscraper
-- problem: NavBar doesn't like when a class is added alongside .container to do this. Revisit later, maybe.
 
 somewhere, show average age of team
 
@@ -309,8 +305,6 @@ replace owner message text with numbers/chart
 REACT later
 
 https://marmelab.com/blog/2017/02/06/react-is-slow-react-is-fast.html
-
-close menu on responsive navbar https://github.com/react-bootstrap/react-bootstrap/issues/1301 resolved by https://github.com/react-bootstrap/react-bootstrap/pull/2280
 
 Draft button on player pages https://www.reddit.com/r/BasketballGM/comments/53op85/feature_request/
 Trade Away button on your own players

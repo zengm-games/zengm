@@ -34,13 +34,11 @@ const parseLastName = (lastName: string): [string, number | void] => {
 };
 
 const getSuffix = (suffixNumber: number): string => {
-    if (suffixNumber === 2) {
+    if (suffixNumber <= 2) {
         return "Jr.";
     }
-    if (suffixNumber > 2) {
-        return romanNumerals.toRoman(suffixNumber);
-    }
-    throw new Error(`Unexpected suffixNumber: "${suffixNumber}"`);
+
+    return romanNumerals.toRoman(suffixNumber);
 };
 
 const hasRelative = (p: Player, type: RelativeType) => {

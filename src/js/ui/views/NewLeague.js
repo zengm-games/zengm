@@ -352,7 +352,7 @@ class NewLeague extends React.Component {
                     <div className="text-center">
                         <button
                             type="submit"
-                            className="btn btn-lg btn-primary"
+                            className="btn btn-lg btn-primary mt-3"
                             disabled={
                                 creating ||
                                 (customize === "custom-rosters" &&

@@ -4,6 +4,7 @@
 // browserify -d -p [minifyify --map app.js.map --output gen/app.js.map] js/app.js -o gen/app.js
 // ...but then it got too complicated, and this seemed easier
 
+const babelify = require("babelify");
 const browserify = require("browserify");
 const blacklistify = require("blacklistify/custom");
 const envify = require("envify/custom");
@@ -19,6 +20,7 @@ const BLACKLIST = {
 for (const name of ["ui", "worker"]) {
     browserify(`src/js/${name}/index.js`, { debug: true })
         .on("error", console.error)
+        .transform(babelify)
         .transform(blacklistify(BLACKLIST[name]))
         .transform(envify({ NODE_ENV: "production" }), { global: true })
         .bundle()

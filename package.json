@@ -108,27 +108,6 @@
         "watchify": "^3.11.0",
         "workbox-build": "^3.6.2"
     },
-    "browserify": {
-        "transform": [
-            "babelify"
-        ]
-    },
-    "babel": {
-        "presets": [
-            "@babel/preset-react",
-            "@babel/preset-flow"
-        ],
-        "plugins": [
-            "@babel/plugin-transform-runtime",
-            "@babel/plugin-transform-for-of",
-            "@babel/plugin-transform-parameters",
-            "@babel/plugin-transform-destructuring",
-            "@babel/plugin-transform-modules-commonjs",
-            "@babel/plugin-transform-exponentiation-operator",
-            "@babel/plugin-transform-async-to-generator",
-            "@babel/plugin-proposal-object-rest-spread"
-        ]
-    },
     "private": true,
     "husky": {
         "hooks": {

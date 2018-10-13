@@ -1,5 +1,6 @@
 // @flow
 
+const babelify = require("babelify");
 const browserify = require("browserify");
 const envify = require("envify/custom");
 const fs = require("fs");
@@ -16,6 +17,7 @@ for (const name of ["ui", "worker"]) {
         cache: {},
         packageCache: {},
     })
+        .transform(babelify)
         .transform(envify({ NODE_ENV: "development" }), { global: true })
         .plugin(watchify);
 

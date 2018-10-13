@@ -111,15 +111,6 @@ const MenuItem = ({
     throw new Error(`Unknown menuItem.type "${menuItem.type}"`);
 };
 
-// A touch motion must go at least this far before it is recognized as a swipe gesture
-const SWIPE_START_DIFF = 25;
-
-// Sync with .sidebar (small screens) in sidebar.scss
-const SIDEBAR_WIDTH = 190;
-
-// When swipe ends, if the sidebar has more than this many x-pixels displayed it is opened, otherwise closed
-const OPEN_CLOSE_BOUNDARY = SIDEBAR_WIDTH / 2;
-
 type Props = {
     pageID?: string,
 };
@@ -129,14 +120,6 @@ type Props = {
 // make menu performance consistent even if there are other problems. Like on the Fantasy Draft page.
 
 class SideBar extends React.Component<Props> {
-    handleTouchStart: Function;
-
-    handleTouchMove: Function;
-
-    handleTouchEnd: Function;
-
-    handleFadeClick: Function;
-
     close: Function;
 
     open: Function;
@@ -149,162 +132,15 @@ class SideBar extends React.Component<Props> {
 
     topUserBlockEl: HTMLElement | null;
 
-    // If this touch is deemed a swipe, these are the current coordinates
-    currentCoords: [number, number] | void;
-
-    // If this touch is deemed a swipe, set "left" or "right" here
-    currentSwipe: "left" | "right" | void;
-
-    requestAnimationFrameID: number | void;
-
-    requestAnimationFramePending: boolean;
-
-    sidebarLeft: number | void;
-
-    // Coordinates when a swipe gesture was recognized (not exactly touchStartX, because some movement has to happen first)
-    swipeStartCoords: [number, number] | void;
-
-    // Coordinates of initial touch
-    touchStartCoords: [number, number] | void;
-
     constructor(props: Props) {
         super(props);
 
-        this.handleTouchStart = this.handleTouchStart.bind(this);
-        this.handleTouchMove = this.handleTouchMove.bind(this);
-        this.handleTouchEnd = this.handleTouchEnd.bind(this);
-        this.handleFadeClick = this.handleFadeClick.bind(this);
         this.close = this.close.bind(this);
         this.open = this.open.bind(this);
         this.toggle = this.toggle.bind(this);
 
         this.ref = React.createRef();
         this.refFade = React.createRef();
-
-        this.currentCoords = undefined;
-        this.currentSwipe = undefined;
-        this.requestAnimationFrameID = undefined;
-        this.requestAnimationFramePending = false;
-        this.sidebarLeft = undefined;
-        this.swipeStartCoords = undefined;
-        this.touchStartCoords = undefined;
-    }
-
-    handleTouchStart(event: SyntheticTouchEvent<>) {
-        if (event.touches && event.touches.length > 1) {
-            return;
-        }
-        if (!event.targetTouches || event.targetTouches.length !== 1) {
-            return;
-        }
-        const touch = event.targetTouches[0];
-        this.touchStartCoords = [touch.clientX, touch.clientY];
-    }
-
-    handleTouchMove(event: SyntheticTouchEvent<>) {
-        if (event.touches && event.touches.length > 1) {
-            return;
-        }
-        if (!event.targetTouches || event.targetTouches.length !== 1) {
-            return;
-        }
-        if (this.touchStartCoords === undefined) {
-            return;
-        }
-        const touch = event.targetTouches[0];
-        const diffX = touch.clientX - this.touchStartCoords[0];
-        const diffY = touch.clientY - this.touchStartCoords[1];
-
-        if (this.currentSwipe === undefined) {
-            // Right swipe is possible when sidebar is closed
-            if (
-                this.ref &&
-                this.ref.current &&
-                !this.ref.current.classList.contains("sidebar-open") &&
-                diffX >= SWIPE_START_DIFF &&
-                Math.abs(diffX) > Math.abs(diffY) // Scrolling or swiping menu?
-            ) {
-                this.currentSwipe = "right";
-                this.swipeStartCoords = [touch.clientX, touch.clientY];
-            }
-
-            // Left swipe is possible when the sidebar is open
-            if (
-                this.ref &&
-                this.ref.current &&
-                this.ref.current.classList.contains("sidebar-open") &&
-                diffX <= -SWIPE_START_DIFF &&
-                Math.abs(diffX) > Math.abs(diffY) // Scrolling or swiping menu?
-            ) {
-                this.currentSwipe = "left";
-                this.swipeStartCoords = [touch.clientX, touch.clientY];
-            }
-        }
-
-        if (this.currentSwipe !== undefined) {
-            this.currentCoords = [touch.clientX, touch.clientY];
-
-            if (!this.requestAnimationFramePending) {
-                this.requestAnimationFramePending = true;
-
-                this.requestAnimationFrameID = window.requestAnimationFrame(
-                    () => {
-                        if (
-                            this.currentCoords === undefined ||
-                            this.swipeStartCoords === undefined
-                        ) {
-                            return;
-                        }
-
-                        if (this.currentSwipe === "right") {
-                            // Move x-position of right side of sidebar to finger
-                            this.sidebarLeft = helpers.bound(
-                                -SIDEBAR_WIDTH + this.currentCoords[0],
-                                -SIDEBAR_WIDTH,
-                                0,
-                            );
-                        } else if (this.currentSwipe === "left") {
-                            // Close sidebar based on difference between swipeStartX and current position
-                            this.sidebarLeft = helpers.bound(
-                                -(
-                                    this.swipeStartCoords[0] -
-                                    this.currentCoords[0]
-                                ),
-                                -SIDEBAR_WIDTH,
-                                0,
-                            );
-                        }
-
-                        if (
-                            this.sidebarLeft !== undefined &&
-                            this.ref &&
-                            this.ref.current
-                        ) {
-                            this.ref.current.style.left = `${
-                                this.sidebarLeft
-                            }px`;
-                        }
-
-                        this.requestAnimationFramePending = false;
-                    },
-                );
-            }
-        }
-    }
-
-    cleanupTouch() {
-        if (this.ref && this.ref.current) {
-            this.ref.current.style.left = "";
-        }
-
-        window.cancelAnimationFrame(this.requestAnimationFrameID);
-        this.currentCoords = undefined;
-        this.currentSwipe = undefined;
-        this.requestAnimationFrameID = undefined;
-        this.requestAnimationFramePending = false;
-        this.sidebarLeft = undefined;
-        this.swipeStartCoords = undefined;
-        this.touchStartCoords = undefined;
     }
 
     close() {
@@ -367,48 +203,13 @@ class SideBar extends React.Component<Props> {
         }
     }
 
-    handleTouchEnd(event: SyntheticTouchEvent<>) {
-        if (event.touches && event.touches.length > 0) {
-            return;
-        }
-
-        if (this.sidebarLeft !== undefined) {
-            if (
-                this.currentSwipe === "right" &&
-                this.sidebarLeft >= -OPEN_CLOSE_BOUNDARY
-            ) {
-                this.open();
-            } else if (
-                this.currentSwipe === "left" &&
-                this.sidebarLeft <= -OPEN_CLOSE_BOUNDARY
-            ) {
-                this.close();
-            }
-        }
-
-        this.cleanupTouch();
-    }
-
-    handleFadeClick() {
-        this.close();
-        this.cleanupTouch();
-    }
-
     shouldComponentUpdate(nextProps: Props) {
         return this.props.pageID !== nextProps.pageID;
     }
 
     componentDidMount() {
-        document.addEventListener("touchstart", this.handleTouchStart);
-        document.addEventListener("touchmove", this.handleTouchMove);
-        document.addEventListener("touchend", this.handleTouchEnd);
-        document.addEventListener("touchcancel", this.handleTouchEnd);
-
         if (this.refFade && this.refFade.current) {
-            this.refFade.current.addEventListener(
-                "click",
-                this.handleFadeClick,
-            );
+            this.refFade.current.addEventListener("click", this.close);
         }
 
         emitter.on("sidebar-toggle", this.toggle);
@@ -417,16 +218,8 @@ class SideBar extends React.Component<Props> {
     }
 
     componentWillUnmount() {
-        document.removeEventListener("touchstart", this.handleTouchStart);
-        document.removeEventListener("touchmove", this.handleTouchMove);
-        document.removeEventListener("touchend", this.handleTouchEnd);
-        document.removeEventListener("touchcancel", this.handleTouchEnd);
-
         if (this.refFade && this.refFade.current) {
-            this.refFade.current.removeEventListener(
-                "click",
-                this.handleFadeClick,
-            );
+            this.refFade.current.removeEventListener("click", this.close);
         }
 
         emitter.removeListener("sidebar-toggle", this.toggle);

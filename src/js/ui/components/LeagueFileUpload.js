@@ -3,9 +3,7 @@
 import Ajv from "ajv";
 import PropTypes from "prop-types";
 import * as React from "react";
-
-// eslint-disable-next-line
-const schema = require("../../../files/league-schema.json");
+import schema from "../../../files/league-schema.json";
 
 const ajv = new Ajv({
     allErrors: true,

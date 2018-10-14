@@ -913,10 +913,7 @@ const runBefore = async (
         return;
     }
 
-    if (
-        views.hasOwnProperty(viewId) &&
-        views[viewId].hasOwnProperty("runBefore")
-    ) {
+    if (views[viewId] && views[viewId].runBefore) {
         return Promise.all(
             views[viewId].runBefore.map(fn => {
                 return fn(inputs, updateEvents, prevData, conditions);

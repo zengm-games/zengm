@@ -1,3 +1,14 @@
+rollup
+- blacklist
+- watch
+- karma
+- karma-browserstack
+- rollup-plugin-terser
+- source maps
+- remove rollup-plugin-node-builtins
+- require of names json
+- remove unused browserify packages
+
 typescript
 - https://medium.com/entria/incremental-migration-to-typescript-on-a-flowtype-codebase-515f6490d92d
   - this was hard, see typescript branch

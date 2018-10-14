@@ -78,7 +78,6 @@ const initAds = (goldUntil: number | void) => {
         if (container) {
             container.style.paddingRight = "15px";
             container.style.maxWidth = "100%";
-            console.log(container.style);
         }
     } else {
         window.bbgmAds.cmd.push(() => {

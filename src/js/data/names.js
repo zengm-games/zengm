@@ -1,7 +1,7 @@
 // @flow
 
 import { g } from "../worker/util";
-import allNames from "./names-default.json";
+import allNames from "./names-test.json";
 
 type PlayerNames = {
     countries: [string, number][],

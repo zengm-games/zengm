@@ -12,12 +12,6 @@ const builtins = require("rollup-plugin-node-builtins");
 const resolve = require("rollup-plugin-node-resolve");
 const replace = require("rollup-plugin-replace");
 
-const babelify = require("babelify");
-const browserify = require("browserify");
-const blacklistify = require("blacklistify/custom");
-const envify = require("envify/custom");
-const fs = require("fs");
-
 console.log("Bundling JavaScript files...");
 
 const BLACKLIST = {

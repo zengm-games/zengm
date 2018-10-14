@@ -2,11 +2,13 @@ rollup
 - blacklist
 - watch
 - karma
+  - fuck, this is gonna be hard
 - karma-browserstack
 - rollup-plugin-terser
 - source maps
 - remove rollup-plugin-node-builtins
 - require of names json
+  - could use "replace" to rewrite?
 - remove unused browserify packages
 
 typescript

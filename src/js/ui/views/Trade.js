@@ -221,6 +221,7 @@ class Trade extends React.Component {
             "PER",
         );
         cols[0].sortSequence = [];
+        cols[1].width = "100%";
         const otherRows = genRows(otherRoster, pid =>
             this.handleChangeAsset("other-pids", pid),
         );

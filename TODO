@@ -1,7 +1,7 @@
 trade uI
-- shouldn't call realtimeupdate directly, or updates will happen only in one tab
 - blog
   - gif
+- on very wide xl screen, buttons float. probably related to why the force trade checkbox needed a clearfix under it, can that be fixed too?
 
 in dark theme, disabled buttons sometimes show effect on hover
 - trade propose button

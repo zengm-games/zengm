@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../../common";
 import { NewWindowLink } from "../../components";
-import { realtimeUpdate, setTitle, toWorker } from "../../util";
+import { setTitle, toWorker } from "../../util";
 import AssetList from "./AssetList";
 import Buttons from "./Buttons";
 import Summary from "./Summary";
@@ -85,8 +85,6 @@ class Trade extends React.Component {
         ];
 
         await toWorker("updateTrade", teams);
-
-        realtimeUpdate();
     }
 
     async handleChangeTeam(event) {
@@ -110,8 +108,6 @@ class Trade extends React.Component {
         ];
 
         await toWorker("createTrade", teams);
-
-        realtimeUpdate();
     }
 
     async handleClickAsk() {
@@ -126,8 +122,6 @@ class Trade extends React.Component {
             asking: false,
             message,
         });
-
-        realtimeUpdate();
     }
 
     async handleClickClear() {
@@ -135,8 +129,6 @@ class Trade extends React.Component {
             message: null,
         });
         await toWorker("clearTrade");
-
-        realtimeUpdate();
     }
 
     handleClickForceTrade() {
@@ -153,8 +145,6 @@ class Trade extends React.Component {
             accepted,
             message,
         });
-
-        realtimeUpdate();
     }
 
     render() {
@@ -263,7 +253,6 @@ class Trade extends React.Component {
                                 You're not allowed to make trades now.
                             </p>
                         )}
-                        ;
                     </div>
                 </div>
             </>

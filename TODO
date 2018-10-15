@@ -1,8 +1,10 @@
 trade uI
 - shouldn't call realtimeupdate directly, or updates will happen only in one tab
-- instead of hard error in wrong phase, just don't allow propose (put message replacing buttons)
 - blog
   - gif
+
+in dark theme, disabled buttons sometimes show effect on hover
+- trade propose button
 
 typescript
 - https://medium.com/entria/incremental-migration-to-typescript-on-a-flowtype-codebase-515f6490d92d

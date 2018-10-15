@@ -179,18 +179,10 @@ class Trade extends React.Component {
 
         setTitle("Trade");
 
-        if (
+        const noTradingAllowed =
             (phase >= PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.PLAYOFFS) ||
             phase === PHASE.FANTASY_DRAFT ||
-            gameOver
-        ) {
-            return (
-                <div>
-                    <h1>Error</h1>
-                    <p>You're not allowed to make trades now.</p>
-                </div>
-            );
-        }
+            gameOver;
 
         return (
             <>
@@ -251,21 +243,27 @@ class Trade extends React.Component {
                             salaryCap={salaryCap}
                             summary={summary}
                         />
-
-                        <center>
-                            <Buttons
-                                asking={this.state.asking}
-                                enablePropose={summary.enablePropose}
-                                forceTrade={this.state.forceTrade}
-                                godMode={godMode}
-                                handleClickAsk={this.handleClickAsk}
-                                handleClickClear={this.handleClickClear}
-                                handleClickForceTrade={
-                                    this.handleClickForceTrade
-                                }
-                                handleClickPropose={this.handleClickPropose}
-                            />
-                        </center>
+                        {!noTradingAllowed ? (
+                            <center>
+                                <Buttons
+                                    asking={this.state.asking}
+                                    enablePropose={summary.enablePropose}
+                                    forceTrade={this.state.forceTrade}
+                                    godMode={godMode}
+                                    handleClickAsk={this.handleClickAsk}
+                                    handleClickClear={this.handleClickClear}
+                                    handleClickForceTrade={
+                                        this.handleClickForceTrade
+                                    }
+                                    handleClickPropose={this.handleClickPropose}
+                                />
+                            </center>
+                        ) : (
+                            <p className="alert alert-danger">
+                                You're not allowed to make trades now.
+                            </p>
+                        )}
+                        ;
                     </div>
                 </div>
             </>

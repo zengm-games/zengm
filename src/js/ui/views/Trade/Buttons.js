@@ -24,14 +24,17 @@ const Buttons = ({
     return (
         <>
             {godMode ? (
-                <label className="god-mode god-mode-text">
-                    <input
-                        type="checkbox"
-                        onClick={handleClickForceTrade}
-                        value={forceTrade}
-                    />
-                    Force Trade
-                </label>
+                <>
+                    <label className="god-mode god-mode-text">
+                        <input
+                            type="checkbox"
+                            onClick={handleClickForceTrade}
+                            value={forceTrade}
+                        />
+                        Force Trade
+                    </label>
+                    <div className="clearfix" />
+                </>
             ) : null}
             <button
                 type="submit"

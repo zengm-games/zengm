@@ -20,6 +20,7 @@ const genPlayerRows = (players, handleToggle, userOrOther) => {
                     type="checkbox"
                     title="Exclude this player from counter offers"
                     checked={p.excluded}
+                    disabled={p.untradable}
                     onChange={() => {
                         handleToggle(userOrOther, "player", "exclude", p.pid);
                     }}

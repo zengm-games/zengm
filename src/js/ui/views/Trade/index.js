@@ -4,6 +4,7 @@ import { PHASE } from "../../../common";
 import { NewWindowLink } from "../../components";
 import { realtimeUpdate, setTitle, toWorker } from "../../util";
 import AssetList from "./AssetList";
+import Buttons from "./Buttons";
 import Summary from "./Summary";
 
 class Trade extends React.Component {
@@ -243,47 +244,18 @@ class Trade extends React.Component {
                         />
 
                         <center>
-                            {godMode ? (
-                                <label className="god-mode god-mode-text">
-                                    <input
-                                        type="checkbox"
-                                        onClick={this.handleClickForceTrade}
-                                        value={this.state.forceTrade}
-                                    />
-                                    Force Trade
-                                </label>
-                            ) : null}
-                            <button
-                                type="submit"
-                                className="btn btn-primary mt-2"
-                                disabled={
-                                    !summary.enablePropose &&
-                                    !this.state.forceTrade
+                            <Buttons
+                                asking={this.state.asking}
+                                enablePropose={summary.enablePropose}
+                                forceTrade={this.state.forceTrade}
+                                godMode={godMode}
+                                handleClickAsk={this.handleClickAsk}
+                                handleClickClear={this.handleClickClear}
+                                handleClickForceTrade={
+                                    this.handleClickForceTrade
                                 }
-                                onClick={this.handleClickPropose}
-                                style={{ margin: "5px 5px 5px 0" }}
-                            >
-                                Propose Trade
-                            </button>
-                            <button
-                                type="submit"
-                                className="btn btn-secondary mt-1"
-                                disabled={this.state.asking}
-                                onClick={this.handleClickAsk}
-                                style={{ margin: "5px 5px 5px 0" }}
-                            >
-                                {this.state.asking
-                                    ? "Waiting for answer..."
-                                    : "What would make this deal work?"}
-                            </button>
-                            <button
-                                type="submit"
-                                className="btn btn-secondary mt-1"
-                                onClick={this.handleClickClear}
-                                style={{ margin: "5px 5px 5px 0" }}
-                            >
-                                Clear Trade
-                            </button>
+                                handleClickPropose={this.handleClickPropose}
+                            />
                         </center>
                     </div>
                 </div>

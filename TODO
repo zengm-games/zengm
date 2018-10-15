@@ -1,7 +1,7 @@
 trade uI
 - blog
+  - algorithm
   - gif
-- on very wide xl screen, buttons float. probably related to why the force trade checkbox needed a clearfix under it, can that be fixed too?
 
 in dark theme, disabled buttons sometimes show effect on hover
 - trade propose button

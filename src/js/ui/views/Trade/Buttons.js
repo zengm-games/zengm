@@ -24,7 +24,7 @@ const Buttons = ({
     return (
         <>
             {godMode ? (
-                <>
+                <div>
                     <label className="god-mode god-mode-text">
                         <input
                             type="checkbox"
@@ -33,37 +33,42 @@ const Buttons = ({
                         />
                         Force Trade
                     </label>
-                    <div className="clearfix" />
-                </>
+                </div>
             ) : null}
-            <button
-                type="submit"
-                className="btn btn-primary mt-2"
-                disabled={!enablePropose && !forceTrade}
-                onClick={handleClickPropose}
-                style={{ margin: "5px 5px 5px 0" }}
-            >
-                Propose Trade
-            </button>
-            <button
-                type="submit"
-                className="btn btn-secondary mt-1"
-                disabled={asking}
-                onClick={handleClickAsk}
-                style={{ margin: "5px 5px 5px 0" }}
-            >
-                {asking
-                    ? "Waiting for answer..."
-                    : "What would make this deal work?"}
-            </button>
-            <button
-                type="submit"
-                className="btn btn-secondary mt-1"
-                onClick={handleClickClear}
-                style={{ margin: "5px 5px 5px 0" }}
-            >
-                Clear Trade
-            </button>
+            <div>
+                <button
+                    type="submit"
+                    className="btn btn-primary mt-2"
+                    disabled={!enablePropose && !forceTrade}
+                    onClick={handleClickPropose}
+                    style={{ margin: "5px 5px 5px 0" }}
+                >
+                    Propose Trade
+                </button>
+            </div>
+            <div>
+                <button
+                    type="submit"
+                    className="btn btn-secondary mt-1"
+                    disabled={asking}
+                    onClick={handleClickAsk}
+                    style={{ margin: "5px 5px 5px 0" }}
+                >
+                    {asking
+                        ? "Waiting for answer..."
+                        : "What would make this deal work?"}
+                </button>
+            </div>
+            <div>
+                <button
+                    type="submit"
+                    className="btn btn-secondary mt-1"
+                    onClick={handleClickClear}
+                    style={{ margin: "5px 5px 5px 0" }}
+                >
+                    Clear Trade
+                </button>
+            </div>
         </>
     );
 };

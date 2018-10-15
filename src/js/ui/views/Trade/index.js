@@ -1,107 +1,10 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { PHASE } from "../../common";
-import { getCols, helpers, realtimeUpdate, setTitle, toWorker } from "../util";
-import {
-    DataTable,
-    NewWindowLink,
-    PlayerNameLabels,
-    ResponsiveTableWrapper,
-} from "../components";
-
-const genRows = (players, handleChangeAsset) => {
-    return players.map(p => {
-        return {
-            key: p.pid,
-            data: [
-                <input
-                    type="checkbox"
-                    value={p.pid}
-                    title={p.untradableMsg}
-                    checked={p.selected}
-                    disabled={p.untradable}
-                    onChange={() => handleChangeAsset(p.pid)}
-                />,
-                <PlayerNameLabels
-                    injury={p.injury}
-                    pid={p.pid}
-                    skills={p.ratings.skills}
-                    watch={p.watch}
-                >
-                    {p.name}
-                </PlayerNameLabels>,
-                p.ratings.pos,
-                p.age,
-                p.ratings.ovr,
-                p.ratings.pot,
-                <span>
-                    {helpers.formatCurrency(p.contract.amount, "M")} thru{" "}
-                    {p.contract.exp}
-                </span>,
-                p.stats.min.toFixed(1),
-                p.stats.pts.toFixed(1),
-                p.stats.trb.toFixed(1),
-                p.stats.ast.toFixed(1),
-                p.stats.per.toFixed(1),
-            ],
-        };
-    });
-};
-
-const AssetList = ({
-    dpidsSelected,
-    handlePickToggle,
-    name,
-    picks,
-    playerCols,
-    playerRows,
-}) => {
-    return (
-        <div className="row">
-            <div className="col-xl-9">
-                <DataTable
-                    cols={playerCols}
-                    defaultSort={[5, "desc"]}
-                    name={name}
-                    rows={playerRows}
-                />
-            </div>
-            <div className="col-xl-3">
-                <ResponsiveTableWrapper>
-                    <table className="table table-striped table-bordered table-sm">
-                        <thead>
-                            <tr>
-                                <th />
-                                <th width="100%">Draft Picks</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {picks.map(pick => (
-                                <tr key={pick.dpid}>
-                                    <td>
-                                        <input
-                                            name="other-dpids"
-                                            type="checkbox"
-                                            value={pick.dpid}
-                                            checked={dpidsSelected.includes(
-                                                pick.dpid,
-                                            )}
-                                            onChange={handlePickToggle(
-                                                pick.dpid,
-                                            )}
-                                        />
-                                    </td>
-                                    <td>{pick.desc}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </ResponsiveTableWrapper>
-            </div>
-        </div>
-    );
-};
+import { PHASE } from "../../../common";
+import { NewWindowLink } from "../../components";
+import { helpers, realtimeUpdate, setTitle, toWorker } from "../../util";
+import AssetList from "./AssetList";
 
 class Trade extends React.Component {
     constructor(props) {
@@ -260,29 +163,6 @@ class Trade extends React.Component {
             );
         }
 
-        const cols = getCols(
-            "",
-            "Name",
-            "Pos",
-            "Age",
-            "Ovr",
-            "Pot",
-            "Contract",
-            "Min",
-            "Pts",
-            "Reb",
-            "Ast",
-            "PER",
-        );
-        cols[0].sortSequence = [];
-        cols[1].width = "100%";
-        const otherRows = genRows(otherRoster, pid =>
-            this.handleChangeAsset("other-pids", pid),
-        );
-        const userRows = genRows(userRoster, pid =>
-            this.handleChangeAsset("user-pids", pid),
-        );
-
         return (
             <>
                 <h1>
@@ -324,10 +204,11 @@ class Trade extends React.Component {
                             dpidsSelected={otherDpids}
                             handlePickToggle={dpid => () =>
                                 this.handleChangeAsset("other-dpids", dpid)}
+                            handlePlayerToggle={pid => () =>
+                                this.handleChangeAsset("other-pids", pid)}
                             name="Trade:Other"
                             picks={otherPicks}
-                            playerCols={cols}
-                            playerRows={otherRows}
+                            roster={otherRoster}
                         />
 
                         <h2 className="mt-3">{userTeamName}</h2>
@@ -335,10 +216,11 @@ class Trade extends React.Component {
                             dpidsSelected={userDpids}
                             handlePickToggle={dpid => () =>
                                 this.handleChangeAsset("user-dpids", dpid)}
+                            handlePlayerToggle={pid => () =>
+                                this.handleChangeAsset("user-pids", pid)}
                             name="Trade:User"
                             picks={userPicks}
-                            playerCols={cols}
-                            playerRows={userRows}
+                            roster={userRoster}
                         />
                     </div>
                     <div className="col-md-3 trade-summary">
@@ -456,10 +338,9 @@ class Trade extends React.Component {
                                     Force Trade
                                 </label>
                             ) : null}
-                            <br />
                             <button
                                 type="submit"
-                                className="btn btn-primary"
+                                className="btn btn-primary mt-2"
                                 disabled={
                                     !summary.enablePropose &&
                                     !this.state.forceTrade
@@ -469,10 +350,9 @@ class Trade extends React.Component {
                             >
                                 Propose Trade
                             </button>
-                            <br />
                             <button
                                 type="submit"
-                                className="btn btn-secondary"
+                                className="btn btn-secondary mt-1"
                                 disabled={this.state.asking}
                                 onClick={this.handleClickAsk}
                                 style={{ margin: "5px 5px 5px 0" }}
@@ -481,10 +361,9 @@ class Trade extends React.Component {
                                     ? "Waiting for answer..."
                                     : "What would make this deal work?"}
                             </button>
-                            <br />
                             <button
                                 type="submit"
-                                className="btn btn-secondary"
+                                className="btn btn-secondary mt-1"
                                 onClick={this.handleClickClear}
                                 style={{ margin: "5px 5px 5px 0" }}
                             >

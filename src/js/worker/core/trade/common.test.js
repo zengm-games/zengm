@@ -25,12 +25,16 @@ const beforeTests = async () => {
                     {
                         tid: 0,
                         pids: [],
+                        pidsExcluded: [],
                         dpids: [],
+                        dpidsExcluded: [],
                     },
                     {
                         tid: 1,
                         pids: [],
+                        pidsExcluded: [],
                         dpids: [],
+                        dpidsExcluded: [],
                     },
                 ],
             },

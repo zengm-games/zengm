@@ -20,16 +20,40 @@ describe("worker/core/trade/create", () => {
 
     it("create trade with team ID", async () => {
         await trade.create([
-            { tid: g.userTid, pids: [], dpids: [] },
-            { tid: 1, pids: [], dpids: [] },
+            {
+                tid: g.userTid,
+                pids: [],
+                pidsExcluded: [],
+                dpids: [],
+                dpidsExcluded: [],
+            },
+            {
+                tid: 1,
+                pids: [],
+                pidsExcluded: [],
+                dpids: [],
+                dpidsExcluded: [],
+            },
         ]);
         await testCreateTrade(1, [], []);
     });
 
     it("create trade with player ID", async () => {
         await trade.create([
-            { tid: g.userTid, pids: [], dpids: [] },
-            { tid: 2, pids: [2], dpids: [] },
+            {
+                tid: g.userTid,
+                pids: [],
+                pidsExcluded: [],
+                dpids: [],
+                dpidsExcluded: [],
+            },
+            {
+                tid: 2,
+                pids: [2],
+                pidsExcluded: [],
+                dpids: [],
+                dpidsExcluded: [],
+            },
         ]);
         await testCreateTrade(2, [], [2]);
     });

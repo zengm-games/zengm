@@ -12,12 +12,16 @@ async function updateSummary(vars) {
         {
             tid: g.userTid,
             pids: vars.userPids,
+            pidsExcluded: vars.userPidsExcluded,
             dpids: vars.userDpids,
+            dpidsExcluded: vars.userDpidsExcluded,
         },
         {
             tid: otherTid,
             pids: vars.otherPids,
+            pidsExcluded: vars.userPidsExcluded,
             dpids: vars.otherDpids,
+            dpidsExcluded: vars.userDpidsExcluded,
         },
     ];
 

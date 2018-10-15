@@ -49,7 +49,7 @@ describe("worker/core/contractNegotiation/create", () => {
         await givePlayerMinContract(pid1);
         await givePlayerMinContract(pid2);
 
-        let error = await contractNegotiation.create(pid1, true);
+        let error = await contractNegotiation.create(pid1, false);
         assert.equal(
             typeof error,
             "undefined",
@@ -60,7 +60,7 @@ describe("worker/core/contractNegotiation/create", () => {
         assert.equal(negotiations.length, 1);
         assert.equal(negotiations[0].pid, pid1);
 
-        error = await contractNegotiation.create(pid2, true);
+        error = await contractNegotiation.create(pid2, false);
         assert.equal(
             typeof error,
             "undefined",

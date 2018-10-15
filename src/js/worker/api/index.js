@@ -573,12 +573,16 @@ const getTradingBlockOffers = async (pids: number[], dpids: number[]) => {
                 {
                     tid: g.userTid,
                     pids: userPids,
+                    pidsExcluded: [],
                     dpids: userDpids,
+                    dpidsExcluded: [],
                 },
                 {
                     tid,
                     pids: [],
+                    pidsExcluded: [],
                     dpids: [],
+                    dpidsExcluded: [],
                 },
             ];
 
@@ -1199,12 +1203,16 @@ const createTrade = async (
         {
             tid: number,
             pids: number[],
+            pidsExcluded: [],
             dpids: number[],
+            dpidsExcluded: [],
         },
         {
             tid: number,
             pids: number[],
+            pidsExcluded: [],
             dpids: number[],
+            dpidsExcluded: [],
         },
     ],
 ) => {

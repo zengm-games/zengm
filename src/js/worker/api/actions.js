@@ -90,12 +90,16 @@ const tradeFor = async (arg: TradeForOptions, conditions: Conditions) => {
             {
                 tid: g.userTid,
                 pids: [],
+                pidsExcluded: [],
                 dpids: [],
+                dpidsExcluded: [],
             },
             {
                 tid: p.tid,
                 pids: [arg.pid],
+                pidsExcluded: [],
                 dpids: [],
+                dpidsExcluded: [],
             },
         ];
     } else if (arg.dpid !== undefined) {
@@ -110,12 +114,16 @@ const tradeFor = async (arg: TradeForOptions, conditions: Conditions) => {
             {
                 tid: g.userTid,
                 pids: [],
+                pidsExcluded: [],
                 dpids: [],
+                dpidsExcluded: [],
             },
             {
                 tid: dp.tid,
                 pids: [],
+                pidsExcluded: [],
                 dpids: [arg.dpid],
+                dpidsExcluded: [],
             },
         ];
     } else {
@@ -124,12 +132,16 @@ const tradeFor = async (arg: TradeForOptions, conditions: Conditions) => {
             {
                 tid: g.userTid,
                 pids: arg.userPids,
+                pidsExcluded: [],
                 dpids: arg.userDpids,
+                dpidsExcluded: [],
             },
             {
                 tid: arg.tid,
                 pids: arg.otherPids,
+                pidsExcluded: [],
                 dpids: arg.otherDpids,
+                dpidsExcluded: [],
             },
         ];
     }

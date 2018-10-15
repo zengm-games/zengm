@@ -4,6 +4,7 @@ trade uI
 - make datatable not clickable, instead highlight green for included players
 - somehow highlight red for excluded players?
   - X column name, checkboxes
+- instead of hard error in wrong phase, just don't allow propose (put message replacing buttons)
 
 typescript
 - https://medium.com/entria/incremental-migration-to-typescript-on-a-flowtype-codebase-515f6490d92d

@@ -6,7 +6,7 @@ import {
 } from "../../components";
 import { getCols, helpers } from "../../util";
 
-const genRows = (players, handlePlayerToggle) => {
+const genPlayerRows = (players, handleToggle) => {
     return players.map(p => {
         return {
             key: p.pid,
@@ -17,7 +17,7 @@ const genRows = (players, handlePlayerToggle) => {
                     title={p.untradableMsg}
                     checked={p.selected}
                     disabled={p.untradable}
-                    onChange={handlePlayerToggle(p.pid)}
+                    onChange={handleToggle(p.pid)}
                 />,
                 <PlayerNameLabels
                     injury={p.injury}
@@ -45,6 +45,24 @@ const genRows = (players, handlePlayerToggle) => {
     });
 };
 
+const genPickRows = (picks, handleToggle, dpidsSelected) => {
+    return picks.map(pick => {
+        return {
+            key: pick.dpid,
+            data: [
+                <input
+                    name="other-dpids"
+                    type="checkbox"
+                    value={pick.dpid}
+                    checked={dpidsSelected.includes(pick.dpid)}
+                    onChange={handleToggle(pick.dpid)}
+                />,
+                pick.desc,
+            ],
+        };
+    });
+};
+
 const playerCols = getCols(
     "",
     "Name",
@@ -62,6 +80,10 @@ const playerCols = getCols(
 playerCols[0].sortSequence = [];
 playerCols[1].width = "100%";
 
+const pickCols = getCols("", "Draft Picks");
+pickCols[0].sortSequence = [];
+pickCols[1].width = "100%";
+
 const AssetList = ({
     dpidsSelected,
     handlePickToggle,
@@ -70,7 +92,8 @@ const AssetList = ({
     picks,
     roster,
 }) => {
-    const playerRows = genRows(roster, handlePlayerToggle);
+    const playerRows = genPlayerRows(roster, handlePlayerToggle);
+    const pickRows = genPickRows(picks, handlePickToggle, dpidsSelected);
 
     return (
         <div className="row">
@@ -83,36 +106,13 @@ const AssetList = ({
                 />
             </div>
             <div className="col-xl-3">
-                <ResponsiveTableWrapper>
-                    <table className="table table-striped table-bordered table-sm">
-                        <thead>
-                            <tr>
-                                <th />
-                                <th width="100%">Draft Picks</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {picks.map(pick => (
-                                <tr key={pick.dpid}>
-                                    <td>
-                                        <input
-                                            name="other-dpids"
-                                            type="checkbox"
-                                            value={pick.dpid}
-                                            checked={dpidsSelected.includes(
-                                                pick.dpid,
-                                            )}
-                                            onChange={handlePickToggle(
-                                                pick.dpid,
-                                            )}
-                                        />
-                                    </td>
-                                    <td>{pick.desc}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </ResponsiveTableWrapper>
+                <DataTable
+                    cols={pickCols}
+                    disableSorting
+                    defaultSort={[1, "asc"]}
+                    name={`${name}:Picks`}
+                    rows={pickRows}
+                />
             </div>
         </div>
     );

@@ -173,6 +173,9 @@ const cols: {
     Draft: {
         sortSequence: [],
     },
+    "Draft Picks": {
+        sortSequence: [],
+    },
     Drafted: {},
     EWA: {
         desc: "Estimated Wins Added",

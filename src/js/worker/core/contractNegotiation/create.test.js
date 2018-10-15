@@ -49,7 +49,7 @@ describe("worker/core/contractNegotiation/create", () => {
         await givePlayerMinContract(pid1);
         await givePlayerMinContract(pid2);
 
-        let error = await contractNegotiation.create(pid1, false);
+        let error = await contractNegotiation.create(pid1, true);
         assert.equal(
             typeof error,
             "undefined",
@@ -60,15 +60,16 @@ describe("worker/core/contractNegotiation/create", () => {
         assert.equal(negotiations.length, 1);
         assert.equal(negotiations[0].pid, pid1);
 
-        error = await contractNegotiation.create(pid2, false);
+        error = await contractNegotiation.create(pid2, true);
         assert.equal(
-            error,
-            "You cannot initiate a new negotiaion while game simulation is in progress or a previous contract negotiation is in process.",
+            typeof error,
+            "undefined",
+            `Unexpected error message from contractNegotiation.create: "${error}"`,
         );
 
         negotiations = await idb.cache.negotiations.getAll();
         assert.equal(negotiations.length, 1);
-        assert.equal(negotiations[0].pid, pid1);
+        assert.equal(negotiations[0].pid, pid2);
     });
 
     it("allow multiple concurrent negotiations if resigning is true", async () => {

@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import React from "react";
 import { DataTable, PlayerNameLabels } from "../../components";
 import { getCols, helpers } from "../../util";
@@ -137,6 +138,13 @@ const AssetList = ({ handleToggle, picks, roster, userOrOther }) => {
             </div>
         </div>
     );
+};
+
+AssetList.propTypes = {
+    handleToggle: PropTypes.func.isRequired,
+    picks: PropTypes.array.isRequired,
+    roster: PropTypes.array.isRequired,
+    userOrOther: PropTypes.oneOf(["other", "user"]).isRequired,
 };
 
 export default AssetList;

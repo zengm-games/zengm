@@ -710,7 +710,9 @@ export type TradeSummary = {|
 
 type TradeTeam = {|
     dpids: number[],
+    dpidsExcluded: number[],
     pids: number[],
+    pidsExcluded: number[],
     tid: number,
 |};
 

@@ -237,12 +237,16 @@ export const createWithoutSaving = (
                     {
                         tid: userTid,
                         pids: [],
+                        pidsExcluded: [],
                         dpids: [],
+                        dpidsExcluded: [],
                     },
                     {
                         tid: userTid === 0 ? 1 : 0, // Load initial trade view with the lowest-numbered non-user team (so, either 0 or 1).
                         pids: [],
+                        pidsExcluded: [],
                         dpids: [],
+                        dpidsExcluded: [],
                     },
                 ],
             },

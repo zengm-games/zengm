@@ -57,14 +57,18 @@ const betweenAiTeams = async () => {
 
     const teams0 = [
         {
-            tid,
-            pids,
             dpids,
+            dpidsExcluded: [],
+            pids,
+            pidsExcluded: [],
+            tid,
         },
         {
-            tid: otherTid,
-            pids: [],
             dpids: [],
+            dpidsExcluded: [],
+            pids: [],
+            pidsExcluded: [],
+            tid: otherTid,
         },
     ];
     const teams = await makeItWork(teams0, false);

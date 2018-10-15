@@ -2,7 +2,6 @@ trade uI
 - shouldn't call realtimeupdate directly, or updates will happen only in one tab
 - instead of hard error in wrong phase, just don't allow propose (put message replacing buttons)
 - make exclude actually work
-  - store in trade object store
   - connect to UI
   - connect to counter offer function
 

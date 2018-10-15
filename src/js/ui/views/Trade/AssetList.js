@@ -112,13 +112,17 @@ const AssetList = ({ handleToggle, picks, roster, userOrOther }) => {
     const playerRows = genPlayerRows(roster, handleToggle, userOrOther);
     const pickRows = genPickRows(picks, handleToggle, userOrOther);
 
+    const userOrOtherKey = `${userOrOther[0].toUpperCase()}${userOrOther.slice(
+        1,
+    )}`;
+
     return (
         <div className="row">
             <div className="col-xl-9">
                 <DataTable
                     cols={playerCols}
                     defaultSort={[5, "desc"]}
-                    name={`Trade:${userOrOther}`}
+                    name={`Trade:${userOrOtherKey}`}
                     rows={playerRows}
                 />
             </div>
@@ -127,7 +131,7 @@ const AssetList = ({ handleToggle, picks, roster, userOrOther }) => {
                     cols={pickCols}
                     disableSorting
                     defaultSort={[1, "asc"]}
-                    name={`Trade:Picks:${userOrOther}`}
+                    name={`Trade:Picks:${userOrOtherKey}`}
                     rows={pickRows}
                 />
             </div>

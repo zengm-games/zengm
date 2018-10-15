@@ -1,3 +1,10 @@
+trade uI
+- shouldn't call realtimeupdate directly, or updates will happen only in one tab
+- refactor
+- on xl screen, draft picks next to players
+- make datatable not clickable, instead highlight green for included players
+- somehow highlight red for excluded players?
+
 typescript
 - https://medium.com/entria/incremental-migration-to-typescript-on-a-flowtype-codebase-515f6490d92d
   - this was hard, see typescript branch
@@ -74,8 +81,7 @@ index updating
 - would be better: make _dirtyIndexes per index, not per store  
 - even better: incrementally update index
 
-Trade.js shouldn't have realtimeupdate, should be listening to a specific updateevent (like "trade") and that should be emitted in all the worker api functions
-- same with the rest of UI, otherwise updates will only happen in one tab
+ui shouldn't call realtimeupdate directly, or updates will only happen in one tab
 
 later
 - in new league: set rookie contracts appropriately

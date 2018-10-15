@@ -49,6 +49,54 @@ const genRows = (players, handleChangeAsset) => {
     });
 };
 
+const AssetList = ({
+    dpidsSelected,
+    handlePickToggle,
+    name,
+    picks,
+    playerCols,
+    playerRows,
+}) => {
+    return (
+        <>
+            <DataTable
+                cols={playerCols}
+                defaultSort={[5, "desc"]}
+                name={name}
+                rows={playerRows}
+            />
+            <ResponsiveTableWrapper>
+                <table className="table table-striped table-bordered table-sm">
+                    <thead>
+                        <tr>
+                            <th />
+                            <th width="100%">Draft Picks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {picks.map(pick => (
+                            <tr key={pick.dpid}>
+                                <td>
+                                    <input
+                                        name="other-dpids"
+                                        type="checkbox"
+                                        value={pick.dpid}
+                                        checked={dpidsSelected.includes(
+                                            pick.dpid,
+                                        )}
+                                        onChange={handlePickToggle(pick.dpid)}
+                                    />
+                                </td>
+                                <td>{pick.desc}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </ResponsiveTableWrapper>
+        </>
+    );
+};
+
 class Trade extends React.Component {
     constructor(props) {
         super(props);
@@ -265,86 +313,26 @@ class Trade extends React.Component {
                         <div style={{ paddingTop: 7 }}>
                             {won}-{lost}, {strategy}
                         </div>
-                        <DataTable
-                            cols={cols}
-                            defaultSort={[5, "desc"]}
+                        <AssetList
+                            dpidsSelected={otherDpids}
+                            handlePickToggle={dpid => () =>
+                                this.handleChangeAsset("other-dpids", dpid)}
                             name="Trade:Other"
-                            rows={otherRows}
+                            picks={otherPicks}
+                            playerCols={cols}
+                            playerRows={otherRows}
                         />
-                        <ResponsiveTableWrapper>
-                            <table className="table table-striped table-bordered table-sm">
-                                <thead>
-                                    <tr>
-                                        <th />
-                                        <th width="100%">Draft Picks</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {otherPicks.map(pick => (
-                                        <tr key={pick.dpid}>
-                                            <td>
-                                                <input
-                                                    name="other-dpids"
-                                                    type="checkbox"
-                                                    value={pick.dpid}
-                                                    checked={otherDpids.includes(
-                                                        pick.dpid,
-                                                    )}
-                                                    onChange={() =>
-                                                        this.handleChangeAsset(
-                                                            "other-dpids",
-                                                            pick.dpid,
-                                                        )
-                                                    }
-                                                />
-                                            </td>
-                                            <td>{pick.desc}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </ResponsiveTableWrapper>
 
                         <h2 className="mt-3">{userTeamName}</h2>
-                        <DataTable
-                            cols={cols}
-                            defaultSort={[5, "desc"]}
+                        <AssetList
+                            dpidsSelected={userDpids}
+                            handlePickToggle={dpid => () =>
+                                this.handleChangeAsset("user-dpids", dpid)}
                             name="Trade:User"
-                            rows={userRows}
+                            picks={userPicks}
+                            playerCols={cols}
+                            playerRows={userRows}
                         />
-                        <ResponsiveTableWrapper>
-                            <table className="table table-striped table-bordered table-sm">
-                                <thead>
-                                    <tr>
-                                        <th />
-                                        <th width="100%">Draft Picks</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {userPicks.map(pick => (
-                                        <tr key={pick.dpid}>
-                                            <td>
-                                                <input
-                                                    name="user-dpids"
-                                                    type="checkbox"
-                                                    value={pick.dpid}
-                                                    checked={userDpids.includes(
-                                                        pick.dpid,
-                                                    )}
-                                                    onChange={() =>
-                                                        this.handleChangeAsset(
-                                                            "user-dpids",
-                                                            pick.dpid,
-                                                        )
-                                                    }
-                                                />
-                                            </td>
-                                            <td>{pick.desc}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </ResponsiveTableWrapper>
                     </div>
                     <div className="col-md-3 trade-summary">
                         <div className="row">

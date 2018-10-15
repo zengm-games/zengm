@@ -45,7 +45,7 @@ const genPlayerRows = (players, handleToggle) => {
     });
 };
 
-const genPickRows = (picks, handleToggle, dpidsSelected) => {
+const genPickRows = (picks, handleToggle) => {
     return picks.map(pick => {
         return {
             key: pick.dpid,
@@ -54,7 +54,7 @@ const genPickRows = (picks, handleToggle, dpidsSelected) => {
                     name="other-dpids"
                     type="checkbox"
                     value={pick.dpid}
-                    checked={dpidsSelected.includes(pick.dpid)}
+                    checked={pick.selected}
                     onChange={handleToggle(pick.dpid)}
                 />,
                 pick.desc,
@@ -85,15 +85,14 @@ pickCols[0].sortSequence = [];
 pickCols[1].width = "100%";
 
 const AssetList = ({
-    dpidsSelected,
     handlePickToggle,
     handlePlayerToggle,
-    name,
     picks,
     roster,
+    type,
 }) => {
     const playerRows = genPlayerRows(roster, handlePlayerToggle);
-    const pickRows = genPickRows(picks, handlePickToggle, dpidsSelected);
+    const pickRows = genPickRows(picks, handlePickToggle);
 
     return (
         <div className="row">
@@ -101,7 +100,7 @@ const AssetList = ({
                 <DataTable
                     cols={playerCols}
                     defaultSort={[5, "desc"]}
-                    name={name}
+                    name={`Trade:${type}`}
                     rows={playerRows}
                 />
             </div>
@@ -110,7 +109,7 @@ const AssetList = ({
                     cols={pickCols}
                     disableSorting
                     defaultSort={[1, "asc"]}
-                    name={`${name}:Picks`}
+                    name={`Trade:Picks:${name}`}
                     rows={pickRows}
                 />
             </div>

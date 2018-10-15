@@ -201,26 +201,24 @@ class Trade extends React.Component {
                         </div>
                         <div className="clearfix" />
                         <AssetList
-                            dpidsSelected={otherDpids}
                             handlePickToggle={dpid => () =>
                                 this.handleChangeAsset("other-dpids", dpid)}
                             handlePlayerToggle={pid => () =>
                                 this.handleChangeAsset("other-pids", pid)}
-                            name="Trade:Other"
                             picks={otherPicks}
                             roster={otherRoster}
+                            type="Other"
                         />
 
                         <h2 className="mt-3">{userTeamName}</h2>
                         <AssetList
-                            dpidsSelected={userDpids}
                             handlePickToggle={dpid => () =>
                                 this.handleChangeAsset("user-dpids", dpid)}
                             handlePlayerToggle={pid => () =>
                                 this.handleChangeAsset("user-pids", pid)}
-                            name="Trade:User"
                             picks={userPicks}
                             roster={userRoster}
+                            type="User"
                         />
                     </div>
                     <div className="col-md-3 trade-summary">

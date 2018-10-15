@@ -95,16 +95,13 @@ async function updateTrade(): void | { [key: string]: any } {
     });
     userRoster = trade.filterUntradable(userRoster);
 
-    for (let i = 0; i < userRoster.length; i++) {
-        if (teams[0].pids.includes(userRoster[i].pid)) {
-            userRoster[i].selected = true;
-        } else {
-            userRoster[i].selected = false;
-        }
+    for (const p of userRoster) {
+        p.selected = teams[0].pids.includes(p.pid);
     }
 
     for (const dp of userPicks) {
         dp.desc = helpers.pickDesc(dp);
+        dp.selected = teams[0].dpids.includes(dp.dpid);
     }
 
     const otherTid = teams[1].tid;
@@ -140,16 +137,13 @@ async function updateTrade(): void | { [key: string]: any } {
     });
     otherRoster = trade.filterUntradable(otherRoster);
 
-    for (let i = 0; i < otherRoster.length; i++) {
-        if (teams[1].pids.includes(otherRoster[i].pid)) {
-            otherRoster[i].selected = true;
-        } else {
-            otherRoster[i].selected = false;
-        }
+    for (const p of otherRoster) {
+        p.selected = teams[1].pids.includes(p.pid);
     }
 
     for (const dp of otherPicks) {
         dp.desc = helpers.pickDesc(dp);
+        dp.selected = teams[1].dpids.includes(dp.dpid);
     }
 
     let vars: any = {

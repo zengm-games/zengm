@@ -4,7 +4,9 @@ number or not.
 
 # 4.2.0 (in progress)
 
-- Nothing much yet!
+## Gameplay and UI
+
+- ["Untouchable" players and picks in trades](https://basketball-gm.com/blog/2018/10/untouchable-players-and-picks-in-trades/)
 
 # 4.1.0 (2018-10-07)
 
@@ -20,7 +22,7 @@ number or not.
 ## Technical details
 
 - Finally switched from AppCache to a service worker for offline support
-- Switched from Bootstrap 3 to Bootstrap 4, and make a lot better use of Sass
+- Upgraded from Bootstrap 3 to Bootstrap 4, and make a lot better use of Sass
 
 # 4.0.0 (2018-03-07)
 

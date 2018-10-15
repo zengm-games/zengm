@@ -48,13 +48,18 @@ class Trade extends React.Component {
 
         const ids = {
             "user-pids": this.props.userPids,
+            "user-pids-excluded": this.props.userPidsExcluded,
             "user-dpids": this.props.userDpids,
+            "user-dpids-excluded": this.props.userDpidsExcluded,
             "other-pids": this.props.otherPids,
+            "other-pids-excluded": this.props.otherPidsExcluded,
             "other-dpids": this.props.otherDpids,
+            "other-dpids-excluded": this.props.otherDpidsExcluded,
         };
 
         const idType = playerOrPick === "player" ? "pids" : "dpids";
-        const key = `${userOrOther}-${idType}`;
+        const excluded = includeOrExclude === "exclude" ? "-excluded" : "";
+        const key = `${userOrOther}-${idType}${excluded}`;
 
         if (ids[key].includes(id)) {
             ids[key] = ids[key].filter(currId => currId !== id);
@@ -66,12 +71,16 @@ class Trade extends React.Component {
             {
                 tid: this.props.userTid,
                 pids: ids["user-pids"],
+                pidsExcluded: ids["user-pids-excluded"],
                 dpids: ids["user-dpids"],
+                dpidsExcluded: ids["user-dpids-excluded"],
             },
             {
                 tid: this.props.otherTid,
                 pids: ids["other-pids"],
+                pidsExcluded: ids["other-pids-excluded"],
                 dpids: ids["other-dpids"],
+                dpidsExcluded: ids["other-dpids-excluded"],
             },
         ];
 
@@ -269,8 +278,10 @@ Trade.propTypes = {
     godMode: PropTypes.bool.isRequired,
     lost: PropTypes.number.isRequired,
     otherDpids: PropTypes.arrayOf(PropTypes.number).isRequired,
+    otherDpidsExcluded: PropTypes.arrayOf(PropTypes.number).isRequired,
     otherPicks: PropTypes.array.isRequired,
     otherPids: PropTypes.arrayOf(PropTypes.number).isRequired,
+    otherPidsExcluded: PropTypes.arrayOf(PropTypes.number).isRequired,
     otherRoster: PropTypes.array.isRequired,
     otherTid: PropTypes.number.isRequired,
     phase: PropTypes.number.isRequired,
@@ -286,8 +297,10 @@ Trade.propTypes = {
         }),
     ).isRequired,
     userDpids: PropTypes.arrayOf(PropTypes.number).isRequired,
+    userDpidsExcluded: PropTypes.arrayOf(PropTypes.number).isRequired,
     userPicks: PropTypes.array.isRequired,
     userPids: PropTypes.arrayOf(PropTypes.number).isRequired,
+    userPidsExcluded: PropTypes.arrayOf(PropTypes.number).isRequired,
     userRoster: PropTypes.array.isRequired,
     userTid: PropTypes.number.isRequired,
     userTeamName: PropTypes.string.isRequired,

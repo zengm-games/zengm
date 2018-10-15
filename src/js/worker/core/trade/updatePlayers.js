@@ -16,16 +16,30 @@ import isUntradable from "./isUntradable";
 const updatePlayers = async (teams: TradeTeams): Promise<TradeTeams> => {
     // Make sure each entry in teams has pids and dpids that actually correspond to the correct tid
     for (const t of teams) {
+        if (!t.dpidsExcluded) {
+            t.dpidsExcluded = [];
+        }
+        if (!t.pidsExcluded) {
+            t.pidsExcluded = [];
+        }
+
         // Check players
         const players = await idb.getCopies.players({ tid: t.tid });
         const pidsGood = [];
+        const pidsExcludedGood = [];
         for (const p of players) {
             // Also, make sure player is not untradable
-            if (t.pids.includes(p.pid) && !isUntradable(p)) {
-                pidsGood.push(p.pid);
+            if (!isUntradable(p)) {
+                if (t.pids.includes(p.pid)) {
+                    pidsGood.push(p.pid);
+                }
+                if (t.pidsExcluded.includes(p.pid)) {
+                    pidsExcludedGood.push(p.pid);
+                }
             }
         }
         t.pids = pidsGood;
+        t.pidsExcluded = pidsExcludedGood;
 
         // Check draft picks
         const draftPicks = await idb.cache.draftPicks.indexGetAll(
@@ -33,36 +47,23 @@ const updatePlayers = async (teams: TradeTeams): Promise<TradeTeams> => {
             t.tid,
         );
         const dpidsGood = [];
+        const dpidsExcludedGood = [];
         for (const dp of draftPicks) {
             if (t.dpids.includes(dp.dpid)) {
                 dpidsGood.push(dp.dpid);
             }
+            if (t.dpidsExcluded.includes(dp.dpid)) {
+                dpidsExcludedGood.push(dp.dpid);
+            }
         }
         t.dpids = dpidsGood;
+        t.dpidsExcluded = dpidsExcludedGood;
     }
 
-    let updated = false; // Has the trade actually changed?
-
-    const tr = await idb.cache.trade.get(0);
-    for (let i = 0; i < 2; i++) {
-        if (teams[i].tid !== tr.teams[i].tid) {
-            updated = true;
-            break;
-        }
-        if (teams[i].pids.toString() !== tr.teams[i].pids.toString()) {
-            updated = true;
-            break;
-        }
-        if (teams[i].dpids.toString() !== tr.teams[i].dpids.toString()) {
-            updated = true;
-            break;
-        }
-    }
-
-    if (updated) {
-        tr.teams = teams;
-        await idb.cache.trade.put(tr);
-    }
+    await idb.cache.trade.put({
+        rid: 0,
+        teams,
+    });
 
     return teams;
 };

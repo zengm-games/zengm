@@ -13,7 +13,9 @@ const clear = async () => {
 
     for (const t of tr.teams) {
         t.pids = [];
+        t.pidsExcluded = [];
         t.dpids = [];
+        t.dpidsExcluded = [];
     }
 
     await idb.cache.trade.put(tr);

@@ -49,14 +49,6 @@ async function updateSummary(vars) {
 // Validate that the stored player IDs correspond with the active team ID
 async function validateSavedPids() {
     const { teams } = await idb.cache.trade.get(0);
-    for (const t of teams) {
-        if (!t.dpidsExcluded) {
-            t.dpidsExcluded = [];
-        }
-        if (!t.pidsExcluded) {
-            t.pidsExcluded = [];
-        }
-    }
 
     // This is just for debugging
     team.valueChange(
@@ -105,13 +97,13 @@ async function updateTrade(): void | { [key: string]: any } {
 
     for (const p of userRoster) {
         p.included = teams[0].pids.includes(p.pid);
-        p.excluded = false;
+        p.excluded = teams[0].pidsExcluded.includes(p.pid);
     }
 
     for (const dp of userPicks) {
         dp.desc = helpers.pickDesc(dp);
         dp.included = teams[0].dpids.includes(dp.dpid);
-        dp.excluded = false;
+        dp.excluded = teams[0].dpidsExcluded.includes(dp.dpid);
     }
 
     const otherTid = teams[1].tid;
@@ -149,24 +141,28 @@ async function updateTrade(): void | { [key: string]: any } {
 
     for (const p of otherRoster) {
         p.included = teams[1].pids.includes(p.pid);
-        p.excluded = true;
+        p.excluded = teams[1].pidsExcluded.includes(p.pid);
     }
 
     for (const dp of otherPicks) {
         dp.desc = helpers.pickDesc(dp);
         dp.included = teams[1].dpids.includes(dp.dpid);
-        dp.excluded = true;
+        dp.excluded = teams[1].dpidsExcluded.includes(dp.dpid);
     }
 
     let vars: any = {
         salaryCap: g.salaryCap / 1000,
         userDpids: teams[0].dpids,
+        userDpidsExcluded: teams[0].dpidsExcluded,
         userPicks,
         userPids: teams[0].pids,
+        userPidsExcluded: teams[0].pidsExcluded,
         userRoster,
         otherDpids: teams[1].dpids,
+        otherDpidsExcluded: teams[1].dpidsExcluded,
         otherPicks,
         otherPids: teams[1].pids,
+        otherPidsExcluded: teams[1].pidsExcluded,
         otherRoster,
         otherTid,
         strategy: t.strategy,

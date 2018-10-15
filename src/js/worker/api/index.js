@@ -42,6 +42,7 @@ import type {
     Player,
     PlayerWithoutPid,
     UpdateEvents,
+    TradeTeams,
 } from "../../common/types";
 
 const acceptContractNegotiation = async (
@@ -1221,20 +1222,7 @@ const tradeCounterOffer = async (): Promise<string> => {
     return message;
 };
 
-const updateTrade = async (
-    teams: [
-        {
-            tid: number,
-            pids: number[],
-            dpids: number[],
-        },
-        {
-            tid: number,
-            pids: number[],
-            dpids: number[],
-        },
-    ],
-) => {
+const updateTrade = async (teams: TradeTeams) => {
     await trade.updatePlayers(teams);
 };
 

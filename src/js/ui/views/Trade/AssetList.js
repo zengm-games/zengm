@@ -1,23 +1,24 @@
 import React from "react";
-import {
-    DataTable,
-    ResponsiveTableWrapper,
-    PlayerNameLabels,
-} from "../../components";
+import { DataTable, PlayerNameLabels } from "../../components";
 import { getCols, helpers } from "../../util";
 
-const genPlayerRows = (players, handleToggle) => {
+const genPlayerRows = (players, handleToggle, userOrOther) => {
     return players.map(p => {
         return {
             key: p.pid,
             data: [
                 <input
                     type="checkbox"
-                    value={p.pid}
                     title={p.untradableMsg}
                     checked={p.selected}
                     disabled={p.untradable}
-                    onChange={handleToggle(p.pid)}
+                    onChange={() => {
+                        handleToggle(userOrOther, "player", p.pid);
+                    }}
+                />,
+                <input
+                    type="checkbox"
+                    title="Exclude this player from counter offers"
                 />,
                 <PlayerNameLabels
                     injury={p.injury}
@@ -45,7 +46,7 @@ const genPlayerRows = (players, handleToggle) => {
     });
 };
 
-const genPickRows = (picks, handleToggle) => {
+const genPickRows = (picks, handleToggle, userOrOther) => {
     return picks.map(pick => {
         return {
             key: pick.dpid,
@@ -53,9 +54,14 @@ const genPickRows = (picks, handleToggle) => {
                 <input
                     name="other-dpids"
                     type="checkbox"
-                    value={pick.dpid}
                     checked={pick.selected}
-                    onChange={handleToggle(pick.dpid)}
+                    onChange={() => {
+                        handleToggle(userOrOther, "pick", pick.dpid);
+                    }}
+                />,
+                <input
+                    type="checkbox"
+                    title="Exclude this pick from counter offers"
                 />,
                 pick.desc,
             ],
@@ -65,6 +71,7 @@ const genPickRows = (picks, handleToggle) => {
 
 const playerCols = getCols(
     "",
+    "X",
     "Name",
     "Pos",
     "Age",
@@ -78,21 +85,15 @@ const playerCols = getCols(
     "PER",
 );
 playerCols[0].sortSequence = [];
-playerCols[1].width = "100%";
+playerCols[2].width = "100%";
 
-const pickCols = getCols("", "Draft Picks");
+const pickCols = getCols("", "X", "Draft Picks");
 pickCols[0].sortSequence = [];
-pickCols[1].width = "100%";
+pickCols[2].width = "100%";
 
-const AssetList = ({
-    handlePickToggle,
-    handlePlayerToggle,
-    picks,
-    roster,
-    type,
-}) => {
-    const playerRows = genPlayerRows(roster, handlePlayerToggle);
-    const pickRows = genPickRows(picks, handlePickToggle);
+const AssetList = ({ handleToggle, picks, roster, userOrOther }) => {
+    const playerRows = genPlayerRows(roster, handleToggle, userOrOther);
+    const pickRows = genPickRows(picks, handleToggle, userOrOther);
 
     return (
         <div className="row">
@@ -100,7 +101,7 @@ const AssetList = ({
                 <DataTable
                     cols={playerCols}
                     defaultSort={[5, "desc"]}
-                    name={`Trade:${type}`}
+                    name={`Trade:${userOrOther}`}
                     rows={playerRows}
                 />
             </div>
@@ -109,7 +110,7 @@ const AssetList = ({
                     cols={pickCols}
                     disableSorting
                     defaultSort={[1, "asc"]}
-                    name={`Trade:Picks:${name}`}
+                    name={`Trade:Picks:${userOrOther}`}
                     rows={pickRows}
                 />
             </div>

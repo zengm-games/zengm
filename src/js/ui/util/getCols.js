@@ -494,6 +494,10 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    X: {
+        desc: "Exclude from counter offers",
+        sortSequence: [],
+    },
     Year: {},
 
     // "rating:" prefix is to prevent collisions with stats

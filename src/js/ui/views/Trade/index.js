@@ -7,6 +7,18 @@ import AssetList from "./AssetList";
 import Summary from "./Summary";
 
 class Trade extends React.Component {
+    handleChangeAsset: Function;
+
+    handleChangeTeam: Function;
+
+    handleClickAsk: Function;
+
+    handleClickClear: Function;
+
+    handleClickForceTrade: Function;
+
+    handleClickPropose: Function;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -15,6 +27,7 @@ class Trade extends React.Component {
             forceTrade: false,
             message: null,
         };
+        this.handleChangeAsset = this.handleChangeAsset.bind(this);
         this.handleChangeTeam = this.handleChangeTeam.bind(this);
         this.handleClickAsk = this.handleClickAsk.bind(this);
         this.handleClickClear = this.handleClickClear.bind(this);
@@ -22,7 +35,11 @@ class Trade extends React.Component {
         this.handleClickPropose = this.handleClickPropose.bind(this);
     }
 
-    async handleChangeAsset(type, id) {
+    async handleChangeAsset(
+        userOrOther: "other" | "user",
+        playerOrPick: "pick" | "player",
+        id,
+    ) {
         this.setState({
             message: null,
         });
@@ -34,10 +51,13 @@ class Trade extends React.Component {
             "other-dpids": this.props.otherDpids,
         };
 
-        if (ids[type].includes(id)) {
-            ids[type] = ids[type].filter(currId => currId !== id);
+        const idType = playerOrPick === "player" ? "pids" : "dpids";
+        const key = `${userOrOther}-${idType}`;
+
+        if (ids[key].includes(id)) {
+            ids[key] = ids[key].filter(currId => currId !== id);
         } else {
-            ids[type].push(id);
+            ids[key].push(id);
         }
 
         const teams = [
@@ -131,7 +151,6 @@ class Trade extends React.Component {
             gameOver,
             godMode,
             lost,
-            otherDpids,
             otherPicks,
             otherRoster,
             otherTid,
@@ -141,7 +160,6 @@ class Trade extends React.Component {
             showResigningMsg,
             strategy,
             teams,
-            userDpids,
             userPicks,
             userRoster,
             userTeamName,
@@ -201,24 +219,18 @@ class Trade extends React.Component {
                         </div>
                         <div className="clearfix" />
                         <AssetList
-                            handlePickToggle={dpid => () =>
-                                this.handleChangeAsset("other-dpids", dpid)}
-                            handlePlayerToggle={pid => () =>
-                                this.handleChangeAsset("other-pids", pid)}
+                            handleToggle={this.handleChangeAsset}
                             picks={otherPicks}
                             roster={otherRoster}
-                            type="Other"
+                            userOrOther="other"
                         />
 
                         <h2 className="mt-3">{userTeamName}</h2>
                         <AssetList
-                            handlePickToggle={dpid => () =>
-                                this.handleChangeAsset("user-dpids", dpid)}
-                            handlePlayerToggle={pid => () =>
-                                this.handleChangeAsset("user-pids", pid)}
+                            handleToggle={this.handleChangeAsset}
                             picks={userPicks}
                             roster={userRoster}
-                            type="User"
+                            userOrOther="user"
                         />
                     </div>
                     <div className="col-md-3 trade-summary">

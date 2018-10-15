@@ -38,6 +38,7 @@ class Trade extends React.Component {
     async handleChangeAsset(
         userOrOther: "other" | "user",
         playerOrPick: "pick" | "player",
+        includeOrExclude: "include" | "exclude",
         id,
     ) {
         this.setState({

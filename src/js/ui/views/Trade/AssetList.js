@@ -10,15 +10,19 @@ const genPlayerRows = (players, handleToggle, userOrOther) => {
                 <input
                     type="checkbox"
                     title={p.untradableMsg}
-                    checked={p.selected}
+                    checked={p.included}
                     disabled={p.untradable}
                     onChange={() => {
-                        handleToggle(userOrOther, "player", p.pid);
+                        handleToggle(userOrOther, "player", "include", p.pid);
                     }}
                 />,
                 <input
                     type="checkbox"
                     title="Exclude this player from counter offers"
+                    checked={p.excluded}
+                    onChange={() => {
+                        handleToggle(userOrOther, "player", "exclude", p.pid);
+                    }}
                 />,
                 <PlayerNameLabels
                     injury={p.injury}
@@ -42,6 +46,10 @@ const genPlayerRows = (players, handleToggle, userOrOther) => {
                 p.stats.ast.toFixed(1),
                 p.stats.per.toFixed(1),
             ],
+            classNames: {
+                "table-danger": p.excluded && !p.included,
+                "table-success": p.included,
+            },
         };
     });
 };
@@ -54,17 +62,25 @@ const genPickRows = (picks, handleToggle, userOrOther) => {
                 <input
                     name="other-dpids"
                     type="checkbox"
-                    checked={pick.selected}
+                    checked={pick.included}
                     onChange={() => {
-                        handleToggle(userOrOther, "pick", pick.dpid);
+                        handleToggle(userOrOther, "pick", "include", pick.dpid);
                     }}
                 />,
                 <input
                     type="checkbox"
                     title="Exclude this pick from counter offers"
+                    checked={pick.excluded}
+                    onChange={() => {
+                        handleToggle(userOrOther, "pick", "exclude", pick.dpid);
+                    }}
                 />,
                 pick.desc,
             ],
+            classNames: {
+                "table-danger": pick.excluded && !pick.included,
+                "table-success": pick.included,
+            },
         };
     });
 };

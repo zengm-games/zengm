@@ -32,7 +32,11 @@ const makeItWork = async (
             // Get all players not in userPids
             const players = await idb.getCopies.players({ tid: teams[0].tid });
             for (const p of players) {
-                if (!teams[0].pids.includes(p.pid) && !isUntradable(p)) {
+                if (
+                    !teams[0].pids.includes(p.pid) &&
+                    !teams[0].pidsExcluded.includes(p.pid) &&
+                    !isUntradable(p)
+                ) {
                     assets.push({
                         type: "player",
                         dv: 0,
@@ -46,7 +50,11 @@ const makeItWork = async (
         // Get all players not in otherPids
         const players = await idb.getCopies.players({ tid: teams[1].tid });
         for (const p of players) {
-            if (!teams[1].pids.includes(p.pid) && !isUntradable(p)) {
+            if (
+                !teams[1].pids.includes(p.pid) &&
+                !teams[1].pidsExcluded.includes(p.pid) &&
+                !isUntradable(p)
+            ) {
                 assets.push({
                     type: "player",
                     dv: 0,
@@ -63,7 +71,10 @@ const makeItWork = async (
                 teams[0].tid,
             );
             for (const dp of draftPicks) {
-                if (!teams[0].dpids.includes(dp.dpid)) {
+                if (
+                    !teams[0].dpids.includes(dp.dpid) &&
+                    !teams[0].dpidsExcluded.includes(dp.dpid)
+                ) {
                     assets.push({
                         type: "draftPick",
                         dv: 0,
@@ -80,7 +91,10 @@ const makeItWork = async (
             teams[1].tid,
         );
         for (const dp of draftPicks) {
-            if (!teams[1].dpids.includes(dp.dpid)) {
+            if (
+                !teams[1].dpids.includes(dp.dpid) &&
+                !teams[1].dpidsExcluded.includes(dp.dpid)
+            ) {
                 assets.push({
                     type: "draftPick",
                     dv: 0,

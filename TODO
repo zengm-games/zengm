@@ -1,6 +1,3 @@
-in dark theme, disabled buttons sometimes show effect on hover
-- trade propose button
-
 typescript
 - https://medium.com/entria/incremental-migration-to-typescript-on-a-flowtype-codebase-515f6490d92d
   - this was hard, see typescript branch

@@ -50,7 +50,7 @@ $text-muted: $gray-400;
     border-color: darken($red, 20);
     background-color: darken($red, 20);
 
-    &:hover {
+    &:not(:disabled):hover {
         border-color: darken($red, 25);
         background-color: darken($red, 25);
     }
@@ -61,7 +61,7 @@ $text-muted: $gray-400;
     background-color: darken($orange, 25);
     color: #fff !important;
 
-    &:hover {
+    &:not(:disabled):hover {
         border-color: darken($orange, 30);
         background-color: darken($orange, 30);
     }
@@ -81,7 +81,7 @@ $text-muted: $gray-400;
 .btn-secondary {
     color: $white;
 
-    &:hover {
+    &:not(:disabled):hover {
         color: $white;
     }
 

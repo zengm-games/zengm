@@ -1,6 +1,6 @@
 // @flow
 
-import { PHASE, PLAYER } from "../../../common";
+import { PLAYER } from "../../../common";
 import { player } from "..";
 import { idb } from "../../db";
 import { g, helpers, local, logEvent } from "../../util";
@@ -86,10 +86,7 @@ const checkRosterSizes = async (
                         } needs to add a player to meet the minimum roster requirements, but there are not enough free agents asking for a minimum salary. Easiest way to fix this is God Mode, give them extra players.`;
                         break;
                     }
-                    p.tid = tid;
-                    player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
-                    player.setContract(p, p.contract, true);
-                    p.gamesUntilTradable = 14;
+                    player.sign(p, tid, p.contract);
 
                     logEvent(
                         {

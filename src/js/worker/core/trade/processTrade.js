@@ -49,8 +49,7 @@ const processTrade = async (
         for (const pid of pids[j]) {
             const p = await idb.cache.players.get(pid);
             p.tid = tids[k];
-            // Don't make traded players untradable
-            //p.gamesUntilTradable = 14;
+            // p.gamesUntilTradable = 14; // Don't make traded players untradable
             p.ptModifier = 1; // Reset
             if (g.phase <= PHASE.PLAYOFFS) {
                 player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);

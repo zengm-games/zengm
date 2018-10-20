@@ -72,13 +72,7 @@ const autoSign = async () => {
                     (p.contract.amount === g.minContract &&
                         numPlayersOnRoster < g.maxRosterSize - 2)
                 ) {
-                    p.tid = tid;
-                    if (g.phase <= PHASE.PLAYOFFS) {
-                        // Otherwise, not needed until next season
-                        player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
-                    }
-                    player.setContract(p, p.contract, true);
-                    p.gamesUntilTradable = 14;
+                    player.sign(p, tid, p.contract);
 
                     // No conditions needed here because showNotification is false
                     logEvent({

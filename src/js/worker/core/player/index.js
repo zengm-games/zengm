@@ -24,6 +24,7 @@ import ovr from "./ovr";
 import release from "./release";
 import retire from "./retire";
 import setContract from "./setContract";
+import sign from "./sign";
 import shouldRetire from "./shouldRetire";
 import skills from "./skills";
 import updateValues from "./updateValues";
@@ -52,6 +53,7 @@ export default {
     ovr,
     release,
     retire,
+    sign,
     setContract,
     shouldRetire,
     skills,

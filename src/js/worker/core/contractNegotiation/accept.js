@@ -1,6 +1,5 @@
 // @flow
 
-import { PHASE } from "../../../common";
 import { player, team } from "..";
 import cancel from "./cancel";
 import { idb } from "../../db";
@@ -48,23 +47,10 @@ const accept = async (
     }
 
     const p = await idb.cache.players.get(pid);
-    p.tid = g.userTid;
-    p.gamesUntilTradable = 14;
-
-    // Handle stats if the season is in progress
-    if (g.phase <= PHASE.PLAYOFFS) {
-        // Otherwise, not needed until next season
-        player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
-    }
-
-    player.setContract(
-        p,
-        {
-            amount,
-            exp,
-        },
-        true,
-    );
+    player.sign(p, g.userTid, {
+        amount,
+        exp,
+    });
 
     // No conditions needed here because showNotification is false
     if (negotiation.resigning) {

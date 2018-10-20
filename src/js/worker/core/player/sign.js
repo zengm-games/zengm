@@ -4,19 +4,13 @@ import { PHASE } from "../../../common";
 import addStatsRow from "./addStatsRow";
 import setContract from "./setContract";
 import { g, helpers, logEvent } from "../../util";
-import type {
-    Conditions,
-    Phase,
-    Player,
-    PlayerContract,
-} from "../../../common/types";
+import type { Phase, Player, PlayerContract } from "../../../common/types";
 
 const sign = (
     p: Player,
     tid: number,
     contract: PlayerContract,
     phase: Phase,
-    conditions?: Conditions,
 ) => {
     p.tid = tid;
     p.gamesUntilTradable = 14;
@@ -33,28 +27,25 @@ const sign = (
     const signedOrReSigned =
         phase === PHASE.RESIGN_PLAYERS ? "re-signed" : "signed";
 
-    logEvent(
-        {
-            type: eventType,
-            text: `The <a href="${helpers.leagueUrl([
-                "roster",
-                g.teamAbbrevsCache[p.tid],
-                g.season,
-            ])}">${
-                g.teamNamesCache[p.tid]
-            }</a> ${signedOrReSigned} <a href="${helpers.leagueUrl([
-                "player",
-                p.pid,
-            ])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(
-                p.contract.amount / 1000,
-                "M",
-            )}/year through ${p.contract.exp}.`,
-            showNotification: false,
-            pids: [p.pid],
-            tids: [p.tid],
-        },
-        conditions,
-    );
+    logEvent({
+        type: eventType,
+        text: `The <a href="${helpers.leagueUrl([
+            "roster",
+            g.teamAbbrevsCache[p.tid],
+            g.season,
+        ])}">${
+            g.teamNamesCache[p.tid]
+        }</a> ${signedOrReSigned} <a href="${helpers.leagueUrl([
+            "player",
+            p.pid,
+        ])}">${p.firstName} ${p.lastName}</a> for ${helpers.formatCurrency(
+            p.contract.amount / 1000,
+            "M",
+        )}/year through ${p.contract.exp}.`,
+        showNotification: false,
+        pids: [p.pid],
+        tids: [p.tid],
+    });
 };
 
 export default sign;

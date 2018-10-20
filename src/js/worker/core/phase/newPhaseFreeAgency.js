@@ -4,9 +4,8 @@ import { PHASE, PLAYER } from "../../../common";
 import { contractNegotiation, draft, player } from "..";
 import { idb } from "../../db";
 import { g, helpers, local } from "../../util";
-import type { Conditions } from "../../../common/types";
 
-const newPhaseFreeAgency = async (conditions: Conditions) => {
+const newPhaseFreeAgency = async () => {
     const teams = await idb.getCopies.teamsPlus({
         attrs: ["strategy"],
         season: g.season,
@@ -48,13 +47,7 @@ const newPhaseFreeAgency = async (conditions: Conditions) => {
                 // See also core.team
                 const contract = player.genContract(p);
                 contract.exp += 1; // Otherwise contracts could expire this season
-                player.sign(
-                    p,
-                    p.tid,
-                    contract,
-                    PHASE.RESIGN_PLAYERS,
-                    conditions,
-                );
+                player.sign(p, p.tid, contract, PHASE.RESIGN_PLAYERS);
             } else {
                 player.addToFreeAgents(p, PHASE.RESIGN_PLAYERS, baseMoods);
             }

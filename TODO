@@ -1,7 +1,3 @@
-player.sign, like player.addToFreeAgents to encapsulate tid changes
-- accept and autoSign should have conditions passed to it, to pass to sign
-  - or do any need conditions, since log is never shown?
-
 typescript
 - https://medium.com/entria/incremental-migration-to-typescript-on-a-flowtype-codebase-515f6490d92d
   - this was hard, see typescript branch
@@ -19,8 +15,6 @@ login -> account -> doesn't say logged in, sometimes? but account shows in navba
 - happens if you log in in one tab while having another open, then in the 2nd tab go to achievements
   - only in firefox?
   - no, user says chrome too
-
-reevaluate manual - remove performance section
 
 customize playoff series length
 - god mode options
@@ -46,12 +40,8 @@ redo mood system
 
 fix contracts old players too cheap
 
-flex-design https://www.reddit.com/r/nba/comments/93e9xt/i_made_basketball_gm_a_basketball_management_sim/e3crs54/?context=3
-
 Difficulty fudge factor should only be for user team (finances, trades)
 - for trades this is hard because valueChange does not know if it's the user's team or not, need to accept another parameter
-
-make screen with 100% minus ad
 
 re-evaluate contracts
 - somehow market based

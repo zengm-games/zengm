@@ -4,7 +4,6 @@ import { PLAYER } from "../../../common";
 import { player } from "..";
 import { idb } from "../../db";
 import { g, helpers, local } from "../../util";
-import type { Conditions } from "../../../common/types";
 import rosterAutoSort from "./rosterAutoSort";
 
 /**
@@ -18,9 +17,7 @@ import rosterAutoSort from "./rosterAutoSort";
  * @memberOf core.team
  * @return {Promise.?string} Resolves to null if there is no error, or a string with the error message otherwise.
  */
-const checkRosterSizes = async (
-    conditions: Conditions,
-): Promise<string | void> => {
+const checkRosterSizes = async (): Promise<string | void> => {
     const minFreeAgents = [];
     let userTeamSizeError;
 
@@ -87,7 +84,7 @@ const checkRosterSizes = async (
                         break;
                     }
 
-                    player.sign(p, tid, p.contract, g.phase, conditions);
+                    player.sign(p, tid, p.contract, g.phase);
                     await idb.cache.players.put(p);
 
                     numPlayersOnRoster += 1;

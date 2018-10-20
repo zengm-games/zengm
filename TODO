@@ -1,7 +1,3 @@
-move filterUntradable to playersPlus
-- drive playersPlus with isUntradable
-- delete filterUntradable
-
 typescript
 - https://medium.com/entria/incremental-migration-to-typescript-on-a-flowtype-codebase-515f6490d92d
   - this was hard, see typescript branch

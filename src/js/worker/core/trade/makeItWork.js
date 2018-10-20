@@ -35,7 +35,7 @@ const makeItWork = async (
                 if (
                     !teams[0].pids.includes(p.pid) &&
                     !teams[0].pidsExcluded.includes(p.pid) &&
-                    !isUntradable(p)
+                    !isUntradable(p).untradable
                 ) {
                     assets.push({
                         type: "player",
@@ -53,7 +53,7 @@ const makeItWork = async (
             if (
                 !teams[1].pids.includes(p.pid) &&
                 !teams[1].pidsExcluded.includes(p.pid) &&
-                !isUntradable(p)
+                !isUntradable(p).untradable
             ) {
                 assets.push({
                     type: "player",

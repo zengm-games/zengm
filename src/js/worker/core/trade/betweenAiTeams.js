@@ -31,7 +31,7 @@ const betweenAiTeams = async () => {
     const otherTid = random.choice(otherTids);
 
     const players = (await idb.getCopies.players({ tid })).filter(
-        p => !isUntradable(p),
+        p => !isUntradable(p).untradable,
     );
     const draftPicks = await idb.cache.draftPicks.indexGetAll(
         "draftPicksByTid",

@@ -29,7 +29,7 @@ const updatePlayers = async (teams: TradeTeams): Promise<TradeTeams> => {
         const pidsExcludedGood = [];
         for (const p of players) {
             // Also, make sure player is not untradable
-            if (!isUntradable(p)) {
+            if (!isUntradable(p).untradable) {
                 if (t.pids.includes(p.pid)) {
                     pidsGood.push(p.pid);
                 }

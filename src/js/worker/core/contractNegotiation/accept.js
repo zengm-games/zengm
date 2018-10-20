@@ -49,7 +49,7 @@ const accept = async (
 
     const p = await idb.cache.players.get(pid);
     p.tid = g.userTid;
-    p.gamesUntilTradable = 15;
+    p.gamesUntilTradable = 14;
 
     // Handle stats if the season is in progress
     if (g.phase <= PHASE.PLAYOFFS) {

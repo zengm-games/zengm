@@ -1,3 +1,5 @@
+move filterUntradable to playersPlus
+
 typescript
 - https://medium.com/entria/incremental-migration-to-typescript-on-a-flowtype-codebase-515f6490d92d
   - this was hard, see typescript branch
@@ -257,6 +259,7 @@ get tests working
   - confirm getAll updates from cache
 
 player.sign, like player.addToFreeAgents to encapsulate tid changes
+- see all uses of gamesUntilTradable
 
 how do caches based on g.season work in preseason?
 

@@ -190,7 +190,7 @@ class Trade extends React.Component {
                 ) : null}
 
                 <p>
-                    If a player has been signed within the past 15 games, he is
+                    If a player has been signed within the past 14 days, he is
                     not allowed to be traded.
                 </p>
 

@@ -89,7 +89,7 @@ const checkRosterSizes = async (
                     p.tid = tid;
                     player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
                     player.setContract(p, p.contract, true);
-                    p.gamesUntilTradable = 15;
+                    p.gamesUntilTradable = 14;
 
                     logEvent(
                         {

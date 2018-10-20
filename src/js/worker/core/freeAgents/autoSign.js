@@ -78,7 +78,7 @@ const autoSign = async () => {
                         player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
                     }
                     player.setContract(p, p.contract, true);
-                    p.gamesUntilTradable = 15;
+                    p.gamesUntilTradable = 14;
 
                     // No conditions needed here because showNotification is false
                     logEvent({

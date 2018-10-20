@@ -49,7 +49,7 @@ const newPhaseFreeAgency = async (conditions: Conditions) => {
                 const contract = player.genContract(p);
                 contract.exp += 1; // Otherwise contracts could expire this season
                 player.setContract(p, contract, true);
-                p.gamesUntilTradable = 15;
+                p.gamesUntilTradable = 14;
 
                 logEvent(
                     {

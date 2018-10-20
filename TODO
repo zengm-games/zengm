@@ -1,5 +1,6 @@
 player.sign, like player.addToFreeAgents to encapsulate tid changes
-- include notification after player.sign calls in many files?
+- accept and autoSign should have conditions passed to it, to pass to sign
+  - or do any need conditions, since log is never shown?
 
 typescript
 - https://medium.com/entria/incremental-migration-to-typescript-on-a-flowtype-codebase-515f6490d92d

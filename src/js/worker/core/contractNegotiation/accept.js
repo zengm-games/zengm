@@ -3,7 +3,7 @@
 import { player, team } from "..";
 import cancel from "./cancel";
 import { idb } from "../../db";
-import { g, helpers, logEvent } from "../../util";
+import { g } from "../../util";
 
 /**
  * Accept the player's offer.
@@ -47,52 +47,15 @@ const accept = async (
     }
 
     const p = await idb.cache.players.get(pid);
-    player.sign(p, g.userTid, {
-        amount,
-        exp,
-    });
-
-    // No conditions needed here because showNotification is false
-    if (negotiation.resigning) {
-        logEvent({
-            type: "reSigned",
-            text: `The <a href="${helpers.leagueUrl([
-                "roster",
-                g.teamAbbrevsCache[g.userTid],
-                g.season,
-            ])}">${
-                g.teamNamesCache[g.userTid]
-            }</a> re-signed <a href="${helpers.leagueUrl(["player", p.pid])}">${
-                p.firstName
-            } ${p.lastName}</a> for ${helpers.formatCurrency(
-                p.contract.amount / 1000,
-                "M",
-            )}/year through ${p.contract.exp}.`,
-            showNotification: false,
-            pids: [p.pid],
-            tids: [g.userTid],
-        });
-    } else {
-        logEvent({
-            type: "freeAgent",
-            text: `The <a href="${helpers.leagueUrl([
-                "roster",
-                g.teamAbbrevsCache[g.userTid],
-                g.season,
-            ])}">${
-                g.teamNamesCache[g.userTid]
-            }</a> signed <a href="${helpers.leagueUrl(["player", p.pid])}">${
-                p.firstName
-            } ${p.lastName}</a> for ${helpers.formatCurrency(
-                p.contract.amount / 1000,
-                "M",
-            )}/year through ${p.contract.exp}.`,
-            showNotification: false,
-            pids: [p.pid],
-            tids: [g.userTid],
-        });
-    }
-
+    player.sign(
+        p,
+        g.userTid,
+        {
+            amount,
+            exp,
+        },
+        g.phase,
+    );
     await idb.cache.players.put(p);
 
     await cancel(pid);

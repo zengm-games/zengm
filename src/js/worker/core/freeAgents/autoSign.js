@@ -5,7 +5,7 @@ import range from "lodash/range";
 import { PHASE, PLAYER } from "../../../common";
 import { player, team } from "..";
 import { idb } from "../../db";
-import { g, helpers, local, logEvent, random } from "../../util";
+import { g, local, random } from "../../util";
 
 /**
  * AI teams sign free agents.
@@ -72,30 +72,7 @@ const autoSign = async () => {
                     (p.contract.amount === g.minContract &&
                         numPlayersOnRoster < g.maxRosterSize - 2)
                 ) {
-                    player.sign(p, tid, p.contract);
-
-                    // No conditions needed here because showNotification is false
-                    logEvent({
-                        type: "freeAgent",
-                        text: `The <a href="${helpers.leagueUrl([
-                            "roster",
-                            g.teamAbbrevsCache[p.tid],
-                            g.season,
-                        ])}">${
-                            g.teamNamesCache[p.tid]
-                        }</a> signed <a href="${helpers.leagueUrl([
-                            "player",
-                            p.pid,
-                        ])}">${p.firstName} ${
-                            p.lastName
-                        }</a> for ${helpers.formatCurrency(
-                            p.contract.amount / 1000,
-                            "M",
-                        )}/year through ${p.contract.exp}.`,
-                        showNotification: false,
-                        pids: [p.pid],
-                        tids: [p.tid],
-                    });
+                    player.sign(p, tid, p.contract, g.phase);
 
                     playersSorted.splice(i, 1); // Remove from list of free agents
 

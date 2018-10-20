@@ -3,7 +3,7 @@
 import { PLAYER } from "../../../common";
 import { player } from "..";
 import { idb } from "../../db";
-import { g, helpers, local, logEvent } from "../../util";
+import { g, helpers, local } from "../../util";
 import type { Conditions } from "../../../common/types";
 import rosterAutoSort from "./rosterAutoSort";
 
@@ -86,33 +86,8 @@ const checkRosterSizes = async (
                         } needs to add a player to meet the minimum roster requirements, but there are not enough free agents asking for a minimum salary. Easiest way to fix this is God Mode, give them extra players.`;
                         break;
                     }
-                    player.sign(p, tid, p.contract);
 
-                    logEvent(
-                        {
-                            type: "freeAgent",
-                            text: `The <a href="${helpers.leagueUrl([
-                                "roster",
-                                g.teamAbbrevsCache[p.tid],
-                                g.season,
-                            ])}">${
-                                g.teamNamesCache[p.tid]
-                            }</a> signed <a href="${helpers.leagueUrl([
-                                "player",
-                                p.pid,
-                            ])}">${p.firstName} ${
-                                p.lastName
-                            }</a> for ${helpers.formatCurrency(
-                                p.contract.amount / 1000,
-                                "M",
-                            )}/year through ${p.contract.exp}.`,
-                            showNotification: false,
-                            pids: [p.pid],
-                            tids: [p.tid],
-                        },
-                        conditions,
-                    );
-
+                    player.sign(p, tid, p.contract, g.phase, conditions);
                     await idb.cache.players.put(p);
 
                     numPlayersOnRoster += 1;

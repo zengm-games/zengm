@@ -3,7 +3,7 @@
 import { PHASE, PLAYER } from "../../../common";
 import { contractNegotiation, draft, player } from "..";
 import { idb } from "../../db";
-import { g, helpers, local, logEvent } from "../../util";
+import { g, helpers, local } from "../../util";
 import type { Conditions } from "../../../common/types";
 
 const newPhaseFreeAgency = async (conditions: Conditions) => {
@@ -48,30 +48,11 @@ const newPhaseFreeAgency = async (conditions: Conditions) => {
                 // See also core.team
                 const contract = player.genContract(p);
                 contract.exp += 1; // Otherwise contracts could expire this season
-                player.sign(p, p.tid, contract, PHASE.FREE_AGENCY);
-
-                logEvent(
-                    {
-                        type: "reSigned",
-                        text: `The <a href="${helpers.leagueUrl([
-                            "roster",
-                            g.teamAbbrevsCache[p.tid],
-                            g.season,
-                        ])}">${
-                            g.teamNamesCache[p.tid]
-                        }</a> re-signed <a href="${helpers.leagueUrl([
-                            "player",
-                            p.pid,
-                        ])}">${p.firstName} ${
-                            p.lastName
-                        }</a> for ${helpers.formatCurrency(
-                            p.contract.amount / 1000,
-                            "M",
-                        )}/year through ${p.contract.exp}.`,
-                        showNotification: false,
-                        pids: [p.pid],
-                        tids: [p.tid],
-                    },
+                player.sign(
+                    p,
+                    p.tid,
+                    contract,
+                    PHASE.RESIGN_PLAYERS,
                     conditions,
                 );
             } else {

@@ -1,7 +1,7 @@
 // @flow
 
 import { PHASE } from "../../common";
-import { season, team, trade } from "../core";
+import { season, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
 import type { UpdateEvents } from "../../common/types";
@@ -53,8 +53,8 @@ async function updateRoster(
             "rosterOrder",
             "injury",
             "ptModifier",
-            "gamesUntilTradable",
             "watch",
+            "untradable",
         ]; // tid and draft are used for checking if a player can be released without paying his salary
         const ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos"];
         const stats = [
@@ -100,9 +100,6 @@ async function updateRoster(
             });
             players.sort((a, b) => a.rosterOrder - b.rosterOrder);
 
-            // Add untradable property
-            players = trade.filterUntradable(players);
-
             for (let i = 0; i < players.length; i++) {
                 // Can release from user's team, except in playoffs because then no free agents can be signed to meet the minimum roster requirement
                 if (
@@ -138,9 +135,6 @@ async function updateRoster(
             players.sort(
                 (a, b) => b.stats.gp * b.stats.min - a.stats.gp * a.stats.min,
             );
-
-            // This is not immediately needed, because players from past seasons don't have the "Trade For" button displayed. However, if an old season is loaded first and then a new season is switched to, Knockout will try to display the Trade For button before all the player objects are updated to include it. I think it might be the komapping.fromJS part from bbgmView not applying everything at exactly the same time.
-            players = trade.filterUntradable(players);
 
             for (let i = 0; i < players.length; i++) {
                 players[i].canRelease = false;

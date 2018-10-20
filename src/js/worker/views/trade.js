@@ -81,8 +81,8 @@ async function updateTrade(): void | { [key: string]: any } {
         "age",
         "contract",
         "injury",
-        "gamesUntilTradable",
         "watch",
+        "untradable",
     ];
     const ratings = ["ovr", "pot", "skills", "pos"];
     const stats = ["min", "pts", "trb", "ast", "per"];
@@ -97,7 +97,6 @@ async function updateTrade(): void | { [key: string]: any } {
         showRookies: true,
         fuzz: true,
     });
-    userRoster = trade.filterUntradable(userRoster);
 
     for (const p of userRoster) {
         p.included = teams[0].pids.includes(p.pid);
@@ -141,7 +140,6 @@ async function updateTrade(): void | { [key: string]: any } {
         showRookies: true,
         fuzz: true,
     });
-    otherRoster = trade.filterUntradable(otherRoster);
 
     for (const p of otherRoster) {
         p.included = teams[1].pids.includes(p.pid);

@@ -1,6 +1,5 @@
 // @flow
 
-import { trade } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util";
 import type { GetOutput, UpdateEvents } from "../../common/types";
@@ -26,8 +25,8 @@ async function updateUserRoster(
                 "age",
                 "contract",
                 "injury",
-                "gamesUntilTradable",
                 "watch",
+                "untradable",
             ],
             ratings: ["ovr", "pot", "skills", "pos"],
             stats: ["min", "pts", "trb", "ast", "per"],
@@ -37,7 +36,6 @@ async function updateUserRoster(
             showRookies: true,
             fuzz: true,
         });
-        userRoster = trade.filterUntradable(userRoster);
 
         for (const dp of userPicks) {
             dp.desc = helpers.pickDesc(dp);

@@ -1,7 +1,7 @@
 // Typing is too hard due to https://github.com/facebook/flow/issues/183
 
 import groupBy from "lodash/groupBy";
-import { PLAYER } from "../../../common";
+import { PHASE, PLAYER } from "../../../common";
 import { player } from "../../core";
 import { g, helpers } from "../../util";
 import type {
@@ -192,6 +192,29 @@ const processAttrs = (
                     .split(" ")
                     .map(s => s[0])
                     .join(".")}. ${p.lastName}`;
+            }
+        } else if (attr === "untradable") {
+            output.untradable = false;
+            output.untradableMsg = "";
+
+            if (!g.godMode) {
+                if (
+                    p.contract.exp <= g.season &&
+                    g.phase > PHASE.PLAYOFFS &&
+                    g.phase < PHASE.FREE_AGENCY
+                ) {
+                    // If the season is over, can't trade players whose contracts are expired
+                    output.untradable = true;
+                    output.untradableMsg = "Cannot trade expired contracts";
+                }
+
+                if (p.gamesUntilTradable > 0) {
+                    // Can't trade players who recently were signed or traded
+                    output.untradable = true;
+                    output.untradableMsg = `Cannot trade recently-acquired player for ${
+                        p.gamesUntilTradable
+                    } more games`;
+                }
             }
         } else {
             // Several other attrs are not primitive types, so deepCopy

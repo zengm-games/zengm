@@ -27,25 +27,33 @@ HeadlineScore.propTypes = {
     boxScore: PropTypes.object.isRequired,
 };
 
-const DetailedScore = ({ abbrev, boxScore, nextGid, prevGid }) => {
+const DetailedScore = ({
+    abbrev,
+    boxScore,
+    nextGid,
+    prevGid,
+    showNextPrev,
+}) => {
     return (
         <div className="d-flex align-items-center justify-content-center">
-            <div className="mr-4">
-                <a
-                    className={classNames("btn", "btn-light-bordered", {
-                        disabled: prevGid === undefined,
-                    })}
-                    href={helpers.leagueUrl([
-                        "game_log",
-                        abbrev,
-                        boxScore.season,
-                        prevGid,
-                    ])}
-                >
-                    Prev
-                </a>
-            </div>
-            <div className="mr-4">
+            {showNextPrev ? (
+                <div className="mr-4">
+                    <a
+                        className={classNames("btn", "btn-light-bordered", {
+                            disabled: prevGid === undefined,
+                        })}
+                        href={helpers.leagueUrl([
+                            "game_log",
+                            abbrev,
+                            boxScore.season,
+                            prevGid,
+                        ])}
+                    >
+                        Prev
+                    </a>
+                </div>
+            ) : null}
+            <div>
                 <div className="mr-4 mx-xs-auto table-nonfluid text-center">
                     <table className="table table-bordered table-sm">
                         <thead>
@@ -144,21 +152,23 @@ const DetailedScore = ({ abbrev, boxScore, nextGid, prevGid }) => {
                     </table>
                 </div>
             </div>
-            <div>
-                <a
-                    className={classNames("btn", "btn-light-bordered", {
-                        disabled: nextGid === undefined,
-                    })}
-                    href={helpers.leagueUrl([
-                        "game_log",
-                        abbrev,
-                        boxScore.season,
-                        nextGid,
-                    ])}
-                >
-                    Next
-                </a>
-            </div>
+            {showNextPrev ? (
+                <div className="ml-4">
+                    <a
+                        className={classNames("btn", "btn-light-bordered", {
+                            disabled: nextGid === undefined,
+                        })}
+                        href={helpers.leagueUrl([
+                            "game_log",
+                            abbrev,
+                            boxScore.season,
+                            nextGid,
+                        ])}
+                    >
+                        Next
+                    </a>
+                </div>
+            ) : null}
         </div>
     );
 };
@@ -168,6 +178,7 @@ DetailedScore.propTypes = {
     boxScore: PropTypes.object.isRequired,
     nextGid: PropTypes.number,
     prevGid: PropTypes.number,
+    showNextPrev: PropTypes.bool,
 };
 
 class BoxScore extends React.Component {
@@ -177,49 +188,62 @@ class BoxScore extends React.Component {
     }
 
     componentDidMount() {
-        document.addEventListener("keydown", this.handleKeydown);
+        if (this.props.showNextPrev) {
+            document.addEventListener("keydown", this.handleKeydown);
+        }
     }
 
     componentWillUnmount() {
-        document.removeEventListener("keydown", this.handleKeydown);
+        if (this.props.showNextPrev) {
+            document.removeEventListener("keydown", this.handleKeydown);
+        }
     }
 
     handleKeydown(e) {
-        if (
-            e.keyCode === 37 &&
-            this.props.boxScore &&
-            this.props.prevGid !== undefined
-        ) {
-            // prev
-            realtimeUpdate(
-                [],
-                helpers.leagueUrl([
-                    "game_log",
-                    this.props.abbrev,
-                    this.props.boxScore.season,
-                    this.props.prevGid,
-                ]),
-            );
-        } else if (
-            e.keyCode === 39 &&
-            this.props.boxScore &&
-            this.props.nextGid !== undefined
-        ) {
-            // next
-            realtimeUpdate(
-                [],
-                helpers.leagueUrl([
-                    "game_log",
-                    this.props.abbrev,
-                    this.props.boxScore.season,
-                    this.props.nextGid,
-                ]),
-            );
+        if (this.props.showNextPrev) {
+            if (
+                e.keyCode === 37 &&
+                this.props.boxScore &&
+                this.props.prevGid !== undefined
+            ) {
+                // prev
+                realtimeUpdate(
+                    [],
+                    helpers.leagueUrl([
+                        "game_log",
+                        this.props.abbrev,
+                        this.props.boxScore.season,
+                        this.props.prevGid,
+                    ]),
+                );
+            } else if (
+                e.keyCode === 39 &&
+                this.props.boxScore &&
+                this.props.nextGid !== undefined
+            ) {
+                // next
+                realtimeUpdate(
+                    [],
+                    helpers.leagueUrl([
+                        "game_log",
+                        this.props.abbrev,
+                        this.props.boxScore.season,
+                        this.props.nextGid,
+                    ]),
+                );
+            }
         }
     }
 
     render() {
-        const { abbrev, boxScore, nextGid, prevGid, Row } = this.props;
+        const {
+            abbrev,
+            boxScore,
+            nextGid,
+            prevGid,
+            showNextPrev,
+            Row,
+        } = this.props;
 
         return (
             <>
@@ -230,6 +254,7 @@ class BoxScore extends React.Component {
                         boxScore={boxScore}
                         nextGid={nextGid}
                         prevGid={prevGid}
+                        showNextPrev={showNextPrev}
                     />
                 </center>
                 {boxScore.teams.map(t => (
@@ -315,6 +340,7 @@ BoxScore.propTypes = {
     boxScore: PropTypes.object.isRequired,
     nextGid: PropTypes.number,
     prevGid: PropTypes.number,
+    showNextPrev: PropTypes.bool,
     Row: PropTypes.any,
 };
 

@@ -200,6 +200,7 @@ const GameLog = ({ abbrev, boxScore, gamesList = { games: [] }, season }) => {
                             boxScore={boxScore}
                             nextGid={nextGid}
                             prevGid={prevGid}
+                            showNextPrev
                             Row={StatsRow}
                         />
                     ) : (

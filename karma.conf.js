@@ -30,6 +30,7 @@ module.exports = function(config) {
         },
 
         browserNoActivityTimeout: 5 * 60 * 1000, // 5 minutes
+        browserDisconnectTimeout: 5 * 60 * 1000, // 5 minutes
 
         reporters: ["mocha"],
 

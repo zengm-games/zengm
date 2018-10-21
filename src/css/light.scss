@@ -305,24 +305,10 @@ table {
     text-decoration: none;
 }
 
-.game-log-score table {
-    margin-top: 15px;
-    width: auto;
-}
-
-.game-log-four-factors table {
-    margin-top: 15px;
-    width: auto;
-}
-
-@media (min-width: 768px) {
-    .game-log-score {
-        float: left;
-        margin-right: 30px;
-    }
-
-    .game-log-four-factors {
-        float: left;
+@include media-breakpoint-down(xs) {
+    .mx-xs-auto {
+        margin-left: auto !important;
+        margin-right: auto !important;
     }
 }
 

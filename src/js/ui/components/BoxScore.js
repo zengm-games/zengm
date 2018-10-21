@@ -4,7 +4,7 @@ import React from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import { helpers, realtimeUpdate } from "../util";
 
-const TopScore = ({ boxScore }) => {
+const HeadlineScore = ({ boxScore }) => {
     // Completed games will have boxScore.won and boxScore.lost so use that for ordering, but live games won't
     const t0 = boxScore.won ? boxScore.won : boxScore.teams[0];
     const t1 = boxScore.lost ? boxScore.lost : boxScore.teams[1];
@@ -23,8 +23,151 @@ const TopScore = ({ boxScore }) => {
         </h2>
     );
 };
-TopScore.propTypes = {
+HeadlineScore.propTypes = {
     boxScore: PropTypes.object.isRequired,
+};
+
+const DetailedScore = ({ abbrev, boxScore, nextGid, prevGid }) => {
+    return (
+        <div className="d-flex align-items-center justify-content-center">
+            <div className="mr-4">
+                <a
+                    className={classNames("btn", "btn-light-bordered", {
+                        disabled: prevGid === undefined,
+                    })}
+                    href={helpers.leagueUrl([
+                        "game_log",
+                        abbrev,
+                        boxScore.season,
+                        prevGid,
+                    ])}
+                >
+                    Prev
+                </a>
+            </div>
+            <div className="mr-4">
+                <div className="mr-4 mx-xs-auto table-nonfluid text-center">
+                    <table className="table table-bordered table-sm">
+                        <thead>
+                            <tr>
+                                <th />
+                                {boxScore.qtrs.map(qtr => (
+                                    <th key={qtr}>{qtr}</th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {boxScore.teams.map(t => (
+                                <tr key={t.abbrev}>
+                                    <th>
+                                        <a
+                                            href={helpers.leagueUrl([
+                                                "roster",
+                                                t.abbrev,
+                                                boxScore.season,
+                                            ])}
+                                        >
+                                            {t.abbrev}
+                                        </a>
+                                    </th>
+                                    {t.ptsQtrs.map((pts, i) => (
+                                        <td key={i}>{pts}</td>
+                                    ))}
+                                    <th>{t.pts}</th>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+                <div className="mx-xs-auto table-nonfluid text-center">
+                    <table className="table table-bordered table-sm">
+                        <thead>
+                            <tr />
+                            <tr>
+                                <th title="Four Factors: Effective Field Goal Percentage">
+                                    eFG%
+                                </th>
+                                <th title="Four Factors: Turnover Percentage">
+                                    TOV%
+                                </th>
+                                <th title="Four Factors: Offensive Rebound Percentage">
+                                    ORB%
+                                </th>
+                                <th title="Four Factors: Free Throws Made Over Field Goal Attempts">
+                                    FT/FGA
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {boxScore.teams.map((t, i) => (
+                                <tr key={t.abbrev}>
+                                    <td
+                                        className={
+                                            t.efg >= boxScore.teams[1 - i].efg
+                                                ? "table-success"
+                                                : null
+                                        }
+                                    >
+                                        {t.efg.toFixed(1)}
+                                    </td>
+                                    <td
+                                        className={
+                                            t.tovp <= boxScore.teams[1 - i].tovp
+                                                ? "table-success"
+                                                : null
+                                        }
+                                    >
+                                        {t.tovp.toFixed(1)}
+                                    </td>
+                                    <td
+                                        className={
+                                            t.orbp >= boxScore.teams[1 - i].orbp
+                                                ? "table-success"
+                                                : null
+                                        }
+                                    >
+                                        {t.orbp.toFixed(1)}
+                                    </td>
+                                    <td
+                                        className={
+                                            t.ftpfga >=
+                                            boxScore.teams[1 - i].ftpfga
+                                                ? "table-success"
+                                                : null
+                                        }
+                                    >
+                                        {t.ftpfga.toFixed(3)}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div>
+                <a
+                    className={classNames("btn", "btn-light-bordered", {
+                        disabled: nextGid === undefined,
+                    })}
+                    href={helpers.leagueUrl([
+                        "game_log",
+                        abbrev,
+                        boxScore.season,
+                        nextGid,
+                    ])}
+                >
+                    Next
+                </a>
+            </div>
+        </div>
+    );
+};
+
+DetailedScore.propTypes = {
+    abbrev: PropTypes.string.isRequired,
+    boxScore: PropTypes.object.isRequired,
+    nextGid: PropTypes.number,
+    prevGid: PropTypes.number,
 };
 
 class BoxScore extends React.Component {
@@ -81,174 +224,13 @@ class BoxScore extends React.Component {
         return (
             <>
                 <center>
-                    <TopScore boxScore={boxScore} />
-
-                    <table>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <a
-                                        className={classNames(
-                                            "btn",
-                                            "btn-light-bordered",
-                                            { disabled: prevGid === undefined },
-                                        )}
-                                        style={{ marginRight: "30px" }}
-                                        href={helpers.leagueUrl([
-                                            "game_log",
-                                            abbrev,
-                                            boxScore.season,
-                                            prevGid,
-                                        ])}
-                                    >
-                                        Prev
-                                    </a>
-                                </td>
-                                <td className="text-center">
-                                    <div className="game-log-score">
-                                        <table
-                                            className="table table-bordered table-sm"
-                                            style={{ margin: "0 auto" }}
-                                        >
-                                            <thead>
-                                                <tr>
-                                                    <th />
-                                                    {boxScore.qtrs.map(qtr => (
-                                                        <th key={qtr}>{qtr}</th>
-                                                    ))}
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {boxScore.teams.map(t => (
-                                                    <tr key={t.abbrev}>
-                                                        <th>
-                                                            <a
-                                                                href={helpers.leagueUrl(
-                                                                    [
-                                                                        "roster",
-                                                                        t.abbrev,
-                                                                        boxScore.season,
-                                                                    ],
-                                                                )}
-                                                            >
-                                                                {t.abbrev}
-                                                            </a>
-                                                        </th>
-                                                        {t.ptsQtrs.map(
-                                                            (pts, i) => (
-                                                                <td key={i}>
-                                                                    {pts}
-                                                                </td>
-                                                            ),
-                                                        )}
-                                                        <th>{t.pts}</th>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div className="game-log-four-factors">
-                                        <table
-                                            className="table table-bordered table-sm"
-                                            style={{ margin: "0 auto" }}
-                                        >
-                                            <thead>
-                                                <tr />
-                                                <tr>
-                                                    <th title="Four Factors: Effective Field Goal Percentage">
-                                                        eFG%
-                                                    </th>
-                                                    <th title="Four Factors: Turnover Percentage">
-                                                        TOV%
-                                                    </th>
-                                                    <th title="Four Factors: Offensive Rebound Percentage">
-                                                        ORB%
-                                                    </th>
-                                                    <th title="Four Factors: Free Throws Made Over Field Goal Attempts">
-                                                        FT/FGA
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {boxScore.teams.map((t, i) => (
-                                                    <tr key={t.abbrev}>
-                                                        <td
-                                                            className={
-                                                                t.efg >=
-                                                                boxScore.teams[
-                                                                    1 - i
-                                                                ].efg
-                                                                    ? "table-success"
-                                                                    : null
-                                                            }
-                                                        >
-                                                            {t.efg.toFixed(1)}
-                                                        </td>
-                                                        <td
-                                                            className={
-                                                                t.tovp <=
-                                                                boxScore.teams[
-                                                                    1 - i
-                                                                ].tovp
-                                                                    ? "table-success"
-                                                                    : null
-                                                            }
-                                                        >
-                                                            {t.tovp.toFixed(1)}
-                                                        </td>
-                                                        <td
-                                                            className={
-                                                                t.orbp >=
-                                                                boxScore.teams[
-                                                                    1 - i
-                                                                ].orbp
-                                                                    ? "table-success"
-                                                                    : null
-                                                            }
-                                                        >
-                                                            {t.orbp.toFixed(1)}
-                                                        </td>
-                                                        <td
-                                                            className={
-                                                                t.ftpfga >=
-                                                                boxScore.teams[
-                                                                    1 - i
-                                                                ].ftpfga
-                                                                    ? "table-success"
-                                                                    : null
-                                                            }
-                                                        >
-                                                            {t.ftpfga.toFixed(
-                                                                3,
-                                                            )}
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </td>
-                                <td>
-                                    <a
-                                        className={classNames(
-                                            "btn",
-                                            "btn-light-bordered",
-                                            { disabled: nextGid === undefined },
-                                        )}
-                                        style={{ marginLeft: "30px" }}
-                                        href={helpers.leagueUrl([
-                                            "game_log",
-                                            abbrev,
-                                            boxScore.season,
-                                            nextGid,
-                                        ])}
-                                    >
-                                        Next
-                                    </a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <HeadlineScore boxScore={boxScore} />
+                    <DetailedScore
+                        abbrev={abbrev}
+                        boxScore={boxScore}
+                        nextGid={nextGid}
+                        prevGid={prevGid}
+                    />
                 </center>
                 {boxScore.teams.map(t => (
                     <div key={t.abbrev} className="mb-3">

@@ -37,20 +37,10 @@ async function boxScore(gid: number) {
 
         // Floating point errors make this off a bit
         t.min = Math.round(t.min);
-
-        // Put injured players at the bottom, then sort by GS and roster position
-        t.players.sort((a, b) => {
-            // This sorts by starters first and minutes second, since .min is always far less than 1000 and gs is either 1 or 0. Then injured players are listed at the end, if they didn't play.
-            return (
-                b.gs * 100000 +
-                b.min * 1000 -
-                b.injury.gamesRemaining -
-                (a.gs * 100000 + a.min * 1000 - a.injury.gamesRemaining)
-            );
-        });
     }
 
     // Team metadata
+    // WARNING - this stuff is used to distinguish between GameLog and LiveGame in BoxScore, so be careful if you change it
     game.won.region = g.teamRegionsCache[game.won.tid];
     game.won.name = g.teamNamesCache[game.won.tid];
     game.won.abbrev = g.teamAbbrevsCache[game.won.tid];

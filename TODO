@@ -1,4 +1,5 @@
-percentages for FG, FT, 3pt below box score like Yahoo
+box score tweaks
+- percentages for FG, FT, 3pt below box score like Yahoo
 - tfoot should have wide top border, like thead
 
 typescript

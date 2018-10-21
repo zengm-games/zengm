@@ -111,7 +111,7 @@ const DetailedScore = ({
                                 <tr key={t.abbrev}>
                                     <td
                                         className={
-                                            t.efg >= boxScore.teams[1 - i].efg
+                                            t.efg > boxScore.teams[1 - i].efg
                                                 ? "table-success"
                                                 : null
                                         }
@@ -120,7 +120,7 @@ const DetailedScore = ({
                                     </td>
                                     <td
                                         className={
-                                            t.tovp <= boxScore.teams[1 - i].tovp
+                                            t.tovp < boxScore.teams[1 - i].tovp
                                                 ? "table-success"
                                                 : null
                                         }
@@ -129,7 +129,7 @@ const DetailedScore = ({
                                     </td>
                                     <td
                                         className={
-                                            t.orbp >= boxScore.teams[1 - i].orbp
+                                            t.orbp > boxScore.teams[1 - i].orbp
                                                 ? "table-success"
                                                 : null
                                         }
@@ -138,7 +138,7 @@ const DetailedScore = ({
                                     </td>
                                     <td
                                         className={
-                                            t.ftpfga >=
+                                            t.ftpfga >
                                             boxScore.teams[1 - i].ftpfga
                                                 ? "table-success"
                                                 : null

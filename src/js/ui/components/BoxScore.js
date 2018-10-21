@@ -27,6 +27,74 @@ HeadlineScore.propTypes = {
     boxScore: PropTypes.object.isRequired,
 };
 
+const FourFactors = ({ teams }) => {
+    return (
+        <table className="table table-bordered table-sm">
+            <thead>
+                <tr />
+                <tr>
+                    <th title="Four Factors: Effective Field Goal Percentage">
+                        eFG%
+                    </th>
+                    <th title="Four Factors: Turnover Percentage">TOV%</th>
+                    <th title="Four Factors: Offensive Rebound Percentage">
+                        ORB%
+                    </th>
+                    <th title="Four Factors: Free Throws Made Over Field Goal Attempts">
+                        FT/FGA
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {teams.map((t, i) => {
+                    const t2 = teams[1 - i];
+
+                    const efg = (100 * (t.fg + t.tp / 2)) / t.fga;
+                    const tovp = (100 * t.tov) / (t.fga + 0.44 * t.fta + t.tov);
+                    const orbp = (100 * t.orb) / (t.orb + t2.drb);
+                    const ftpfga = t.ft / t.fga;
+
+                    return (
+                        <tr key={t.abbrev}>
+                            <td
+                                className={
+                                    efg > t2.efg ? "table-success" : null
+                                }
+                            >
+                                {efg.toFixed(1)}
+                            </td>
+                            <td
+                                className={
+                                    tovp < t2.tovp ? "table-success" : null
+                                }
+                            >
+                                {tovp.toFixed(1)}
+                            </td>
+                            <td
+                                className={
+                                    orbp > t2.orbp ? "table-success" : null
+                                }
+                            >
+                                {orbp.toFixed(1)}
+                            </td>
+                            <td
+                                className={
+                                    ftpfga > t2.ftpfga ? "table-success" : null
+                                }
+                            >
+                                {ftpfga.toFixed(3)}
+                            </td>
+                        </tr>
+                    );
+                })}
+            </tbody>
+        </table>
+    );
+};
+FourFactors.propTypes = {
+    teams: PropTypes.array.isRequired,
+};
+
 const DetailedScore = ({
     abbrev,
     boxScore,
@@ -88,68 +156,7 @@ const DetailedScore = ({
                     </table>
                 </div>
                 <div className="mx-xs-auto table-nonfluid text-center">
-                    <table className="table table-bordered table-sm">
-                        <thead>
-                            <tr />
-                            <tr>
-                                <th title="Four Factors: Effective Field Goal Percentage">
-                                    eFG%
-                                </th>
-                                <th title="Four Factors: Turnover Percentage">
-                                    TOV%
-                                </th>
-                                <th title="Four Factors: Offensive Rebound Percentage">
-                                    ORB%
-                                </th>
-                                <th title="Four Factors: Free Throws Made Over Field Goal Attempts">
-                                    FT/FGA
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {boxScore.teams.map((t, i) => (
-                                <tr key={t.abbrev}>
-                                    <td
-                                        className={
-                                            t.efg > boxScore.teams[1 - i].efg
-                                                ? "table-success"
-                                                : null
-                                        }
-                                    >
-                                        {t.efg.toFixed(1)}
-                                    </td>
-                                    <td
-                                        className={
-                                            t.tovp < boxScore.teams[1 - i].tovp
-                                                ? "table-success"
-                                                : null
-                                        }
-                                    >
-                                        {t.tovp.toFixed(1)}
-                                    </td>
-                                    <td
-                                        className={
-                                            t.orbp > boxScore.teams[1 - i].orbp
-                                                ? "table-success"
-                                                : null
-                                        }
-                                    >
-                                        {t.orbp.toFixed(1)}
-                                    </td>
-                                    <td
-                                        className={
-                                            t.ftpfga >
-                                            boxScore.teams[1 - i].ftpfga
-                                                ? "table-success"
-                                                : null
-                                        }
-                                    >
-                                        {t.ftpfga.toFixed(3)}
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                    <FourFactors teams={boxScore.teams} />
                 </div>
             </div>
             {showNextPrev ? (

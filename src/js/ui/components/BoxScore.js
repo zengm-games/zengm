@@ -5,15 +5,13 @@ import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import { helpers, realtimeUpdate } from "../util";
 
 const HeadlineScore = ({ boxScore }) => {
-    // Completed games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
+    // Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
     // won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
     // change in the future.
     const t0 =
         boxScore.won && boxScore.won.name ? boxScore.won : boxScore.teams[0];
     const t1 =
         boxScore.lost && boxScore.lost.name ? boxScore.lost : boxScore.teams[1];
-
-    console.log("aaa", boxScore);
 
     return (
         <h2>

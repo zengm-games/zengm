@@ -1,6 +1,5 @@
 box score tweaks
 - percentages for FG, FT, 3pt below box score like Yahoo
-- tfoot should have wide top border, like thead
 
 typescript
 - https://medium.com/entria/incremental-migration-to-typescript-on-a-flowtype-codebase-515f6490d92d

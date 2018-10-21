@@ -776,3 +776,28 @@ tr.table-warning:hover > td {
     position: relative;
     width: 15px;
 }
+
+.table tfoot {
+    tr:first-child {
+        td,
+        th {
+            border-top-width: 2px;
+        }
+    }
+}
+
+.table thead {
+    // Override default Bootstap, looks ugly to have 2px borders when there are two rows in thead
+    tr {
+        td,
+        th {
+            border-bottom-width: 1px;
+        }
+    }
+    tr:last-child {
+        td,
+        th {
+            border-bottom-width: 2px;
+        }
+    }
+}

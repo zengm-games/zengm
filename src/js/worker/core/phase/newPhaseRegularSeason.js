@@ -27,7 +27,7 @@ const newPhaseRegularSeason = async () => {
                 from: "The Commissioner",
                 year: g.season,
                 text:
-                    '<p>Hi. Sorry to bother you, but I noticed that you\'ve been playing this game a bit. Hopefully that means you like it. Either way, we would really appreciate some feedback so we can make this game better. <a href="mailto:commissioner@basketball-gm.com">Send an email</a> (commissioner@basketball-gm.com) or <a href="http://www.reddit.com/r/BasketballGM/">join the discussion on Reddit</a>.</p>',
+                    '<p>Hi. Sorry to bother you, but I noticed that you\'ve been playing this game a bit. Hopefully that means you like it. Either way, I would really appreciate some feedback to help me make it better. <a href="mailto:commissioner@basketball-gm.com">Send an email</a> (commissioner@basketball-gm.com) or join the discussion on <a href="http://www.reddit.com/r/BasketballGM/">Reddit</a> or <a href="https://discord.gg/caPFuM9">Discord</a>.</p>',
             });
         } else if (
             (nagged === 1 && Math.random() < 0.125) ||

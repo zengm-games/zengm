@@ -5,9 +5,15 @@ import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
 import { helpers, realtimeUpdate } from "../util";
 
 const HeadlineScore = ({ boxScore }) => {
-    // Completed games will have boxScore.won and boxScore.lost so use that for ordering, but live games won't
-    const t0 = boxScore.won ? boxScore.won : boxScore.teams[0];
-    const t1 = boxScore.lost ? boxScore.lost : boxScore.teams[1];
+    // Completed games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
+    // won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
+    // change in the future.
+    const t0 =
+        boxScore.won && boxScore.won.name ? boxScore.won : boxScore.teams[0];
+    const t1 =
+        boxScore.lost && boxScore.lost.name ? boxScore.lost : boxScore.teams[1];
+
+    console.log("aaa", boxScore);
 
     return (
         <h2>
@@ -54,6 +60,14 @@ const FourFactors = ({ teams }) => {
                     const orbp = (100 * t.orb) / (t.orb + t2.drb);
                     const ftpfga = t.ft / t.fga;
 
+                    const displayRounded = (stat, digits = 1) => {
+                        if (Number.isNaN(stat) || stat === Infinity) {
+                            return "";
+                        }
+
+                        return stat.toFixed(digits);
+                    };
+
                     return (
                         <tr key={t.abbrev}>
                             <td
@@ -61,28 +75,28 @@ const FourFactors = ({ teams }) => {
                                     efg > t2.efg ? "table-success" : null
                                 }
                             >
-                                {efg.toFixed(1)}
+                                {displayRounded(efg)}
                             </td>
                             <td
                                 className={
                                     tovp < t2.tovp ? "table-success" : null
                                 }
                             >
-                                {tovp.toFixed(1)}
+                                {displayRounded(tovp)}
                             </td>
                             <td
                                 className={
                                     orbp > t2.orbp ? "table-success" : null
                                 }
                             >
-                                {orbp.toFixed(1)}
+                                {displayRounded(orbp)}
                             </td>
                             <td
                                 className={
                                     ftpfga > t2.ftpfga ? "table-success" : null
                                 }
                             >
-                                {ftpfga.toFixed(3)}
+                                {displayRounded(ftpfga, 3)}
                             </td>
                         </tr>
                     );
@@ -102,6 +116,12 @@ const DetailedScore = ({
     prevGid,
     showNextPrev,
 }) => {
+    // Quarter/overtime labels
+    const qtrs = boxScore.teams[1].ptsQtrs.map(
+        (pts, i) => (i < 4 ? `Q${i + 1}` : `OT${i - 3}`),
+    );
+    qtrs.push("F");
+
     return (
         <div className="d-flex align-items-center justify-content-center">
             {showNextPrev ? (
@@ -127,7 +147,7 @@ const DetailedScore = ({
                         <thead>
                             <tr>
                                 <th />
-                                {boxScore.qtrs.map(qtr => (
+                                {qtrs.map(qtr => (
                                     <th key={qtr}>{qtr}</th>
                                 ))}
                             </tr>
@@ -181,7 +201,7 @@ const DetailedScore = ({
 };
 
 DetailedScore.propTypes = {
-    abbrev: PropTypes.string.isRequired,
+    abbrev: PropTypes.string,
     boxScore: PropTypes.object.isRequired,
     nextGid: PropTypes.number,
     prevGid: PropTypes.number,
@@ -309,7 +329,11 @@ class BoxScore extends React.Component {
                                     <tr>
                                         <td>Total</td>
                                         <td />
-                                        <td>{t.min}</td>
+                                        <td>
+                                            {Number.isInteger(t.min)
+                                                ? t.min
+                                                : t.min.toFixed(1)}
+                                        </td>
                                         <td>
                                             {t.fg}-{t.fga}
                                         </td>
@@ -343,7 +367,7 @@ class BoxScore extends React.Component {
 }
 
 BoxScore.propTypes = {
-    abbrev: PropTypes.string.isRequired,
+    abbrev: PropTypes.string,
     boxScore: PropTypes.object.isRequired,
     nextGid: PropTypes.number,
     prevGid: PropTypes.number,

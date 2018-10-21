@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import AutoAffix from "react-overlays/lib/AutoAffix";
 import { helpers, setTitle } from "../util";
-import { PlayerNameLabels, ResponsiveTableWrapper } from "../components";
+import { BoxScore, PlayerNameLabels } from "../components";
 
 class PlayerRow extends React.Component {
     shouldComponentUpdate(nextProps) {
@@ -61,146 +61,6 @@ class PlayerRow extends React.Component {
 PlayerRow.propTypes = {
     i: PropTypes.number.isRequired,
     p: PropTypes.object.isRequired,
-};
-
-const BoxScore = ({ boxScore }) => (
-    <>
-        <center>
-            <h2>
-                <a
-                    href={helpers.leagueUrl([
-                        "roster",
-                        boxScore.teams[0].abbrev,
-                        boxScore.season,
-                    ])}
-                >
-                    {boxScore.teams[0].region} {boxScore.teams[0].name}
-                </a>{" "}
-                {boxScore.teams[0].pts},{" "}
-                <a
-                    href={helpers.leagueUrl([
-                        "roster",
-                        boxScore.teams[1].abbrev,
-                        boxScore.season,
-                    ])}
-                >
-                    {boxScore.teams[1].region} {boxScore.teams[1].name}
-                </a>{" "}
-                {boxScore.teams[1].pts}
-                {boxScore.overtime}
-            </h2>
-            <table
-                className="table table-bordered mt-2"
-                style={{ width: "auto" }}
-            >
-                <tbody>
-                    {boxScore.teams.map(t => (
-                        <tr key={t.abbrev}>
-                            <th>
-                                <a
-                                    href={helpers.leagueUrl([
-                                        "roster",
-                                        t.abbrev,
-                                        boxScore.season,
-                                    ])}
-                                >
-                                    {t.abbrev}
-                                </a>
-                            </th>
-                            {t.ptsQtrs.map((pts, i) => (
-                                <td key={i}>{pts}</td>
-                            ))}
-                            <th>{t.pts}</th>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-            {boxScore.gameOver ? (
-                "Final Score"
-            ) : (
-                <span>
-                    {boxScore.quarter}, {boxScore.time} left
-                </span>
-            )}
-        </center>
-        {boxScore.teams.map(t => (
-            <div key={t.abbrev} className="mb-3">
-                <h3>
-                    <a
-                        href={helpers.leagueUrl([
-                            "roster",
-                            t.abbrev,
-                            boxScore.season,
-                        ])}
-                    >
-                        {t.region} {t.name}
-                    </a>
-                </h3>
-                <ResponsiveTableWrapper>
-                    <table className="table table-striped table-bordered table-sm box-score-team">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Pos</th>
-                                <th>Min</th>
-                                <th>FG</th>
-                                <th>3Pt</th>
-                                <th>FT</th>
-                                <th>Off</th>
-                                <th>Reb</th>
-                                <th>Ast</th>
-                                <th>TO</th>
-                                <th>Stl</th>
-                                <th>Blk</th>
-                                <th>BA</th>
-                                <th>PF</th>
-                                <th>Pts</th>
-                                <th>+/-</th>
-                                <th title="Game Score">GmSc</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {t.players.map((p, i) => (
-                                <PlayerRow key={p.pid} i={i} p={p} />
-                            ))}
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td>Total</td>
-                                <td />
-                                <td>{t.min.toFixed(1)}</td>
-                                <td>
-                                    {t.fg}-{t.fga}
-                                </td>
-                                <td>
-                                    {t.tp}-{t.tpa}
-                                </td>
-                                <td>
-                                    {t.ft}-{t.fta}
-                                </td>
-                                <td>{t.orb}</td>
-                                <td>{t.trb}</td>
-                                <td>{t.ast}</td>
-                                <td>{t.tov}</td>
-                                <td>{t.stl}</td>
-                                <td>{t.blk}</td>
-                                <td>{t.ba}</td>
-                                <td>{t.pf}</td>
-                                <td>{t.pts}</td>
-                                <td />
-                                <td />
-                            </tr>
-                        </tfoot>
-                    </table>
-                </ResponsiveTableWrapper>
-            </div>
-        ))}
-        Attendance: {helpers.numberWithCommas(boxScore.att)}
-    </>
-);
-
-BoxScore.propTypes = {
-    boxScore: PropTypes.object.isRequired,
 };
 
 class LiveGame extends React.Component {
@@ -423,7 +283,10 @@ class LiveGame extends React.Component {
                 <div className="row">
                     <div className="col-md-9">
                         {this.state.boxScore.gid >= 0 ? (
-                            <BoxScore boxScore={this.state.boxScore} />
+                            <BoxScore
+                                boxScore={this.state.boxScore}
+                                Row={PlayerRow}
+                            />
                         ) : (
                             <h1>Loading...</h1>
                         )}

@@ -66,13 +66,6 @@ async function boxScore(gid: number) {
         game.overtime = "";
     }
 
-    // Quarter/overtime labels
-    game.qtrs = ["Q1", "Q2", "Q3", "Q4"];
-    for (let i = 0; i < game.teams[1].ptsQtrs.length - 4; i++) {
-        game.qtrs.push(`OT${i + 1}`);
-    }
-    game.qtrs.push("F");
-
     return game;
 }
 

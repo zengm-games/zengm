@@ -90,6 +90,10 @@ $text-muted: $gray-400;
     }
 }
 
+.btn-light-bordered {
+    border-color: $gray-300 !important;
+}
+
 .btn-light-bordered:hover {
     background-color: $gray-100;
 }

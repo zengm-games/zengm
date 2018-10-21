@@ -1613,15 +1613,15 @@ class GameSim {
                 texts = ["(assist: {0})"];
             } else if (type === "quarter") {
                 texts = [
-                    `<b>Start of ${helpers.ordinal(
+                    `Start of ${helpers.ordinal(
                         this.team[0].stat.ptsQtrs.length,
-                    )} quarter</b>`,
+                    )} quarter`,
                 ];
             } else if (type === "overtime") {
                 texts = [
-                    `<b>Start of ${helpers.ordinal(
+                    `Start of ${helpers.ordinal(
                         this.team[0].stat.ptsQtrs.length - 4,
-                    )} overtime period</b>`,
+                    )} overtime period`,
                 ];
             } else if (type === "ft") {
                 texts = ["{0} made a free throw"];

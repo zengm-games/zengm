@@ -33,7 +33,7 @@ HeadlineScore.propTypes = {
 
 const displayRounded = (stat, digits = 1) => {
     if (Number.isNaN(stat) || stat === Infinity) {
-        return "0.0";
+        return (0).toFixed(digits);
     }
 
     return stat.toFixed(digits);

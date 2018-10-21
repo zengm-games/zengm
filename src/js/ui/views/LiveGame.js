@@ -68,7 +68,7 @@ class LiveGame extends React.Component {
         super(props);
         this.state = {
             boxScore: props.initialBoxScore ? props.initialBoxScore : {},
-            speed: 5,
+            speed: 7,
             started: !!props.events,
         };
         if (props.events) {
@@ -239,7 +239,13 @@ class LiveGame extends React.Component {
             if (text !== null) {
                 const p = document.createElement("p");
                 const node = document.createTextNode(text);
-                p.appendChild(node);
+                if (text.startsWith("Start of")) {
+                    const b = document.createElement("b");
+                    b.appendChild(node);
+                    p.appendChild(b);
+                } else {
+                    p.appendChild(node);
+                }
 
                 this.playByPlayDiv.insertBefore(
                     p,

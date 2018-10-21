@@ -10,7 +10,10 @@ async function updateInbox(
     inputs: GetOutput,
     updateEvents: UpdateEvents,
 ): void | { [key: string]: any } {
-    if (updateEvents.includes("firstRun")) {
+    if (
+        updateEvents.includes("firstRun") ||
+        updateEvents.includes("newPhase")
+    ) {
         const messages = await idb.getCopies.messages({ limit: 2 });
         messages.reverse();
 

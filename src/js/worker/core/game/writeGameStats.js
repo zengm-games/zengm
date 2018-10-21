@@ -73,18 +73,6 @@ const writeGameStats = async (
                 results.team[t].player[p].injury,
             );
         }
-
-        // Put injured players at the bottom, then sort by GS and roster position
-        gameStats.teams[t].players.sort((a, b) => {
-            // This sorts by starters first and minutes second, since .min is always far less than 1000 and gs is either
-            // 1 or 0. Then injured players are listed at the end, if they didn't play.
-            return (
-                b.gs * 100000 +
-                b.min * 1000 -
-                b.injury.gamesRemaining -
-                (a.gs * 100000 + a.min * 1000 - a.injury.gamesRemaining)
-            );
-        });
     }
 
     // Store some extra junk to make box scores easy

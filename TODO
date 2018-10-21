@@ -1,3 +1,8 @@
+percentages for FG, FT, 3pt below box score like Yahoo
+- unify BoxScore component in GameLog and LiveGame?
+  - StatsRow/PlayerRow - either unify, or allow to be passed in to BoxScore
+  - mouse stuff for next/prev - should be at a higher level than BoxScore
+
 typescript
 - https://medium.com/entria/incremental-migration-to-typescript-on-a-flowtype-codebase-515f6490d92d
   - this was hard, see typescript branch
@@ -543,8 +548,6 @@ Eventually:
 CURRENT
 -------
 
-standings view, if playoffsByConference === false, show whole league standings in right column, not conference standings
-percentages for FG, FT, 3pt below box score like Yahoo
 game log for individual player
   in each box score, include an array of players in the game. index on that.
 great ideas: http://www.reddit.com/r/BasketballGM/comments/2q9yn8/ideas_questions_and_feedback_feel_free_to_add/

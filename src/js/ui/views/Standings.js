@@ -90,7 +90,7 @@ DivStandings.propTypes = {
     season: PropTypes.number.isRequired,
 };
 
-const ConfStandings = ({ playoffsByConference, season, teams }) => {
+const SmallStandings = ({ numPlayoffTeams, season, teams }) => {
     return (
         <table className="table table-striped table-bordered table-sm">
             <thead>
@@ -106,7 +106,7 @@ const ConfStandings = ({ playoffsByConference, season, teams }) => {
                             key={t.tid}
                             className={classNames({
                                 "table-info": t.highlight,
-                                separator: i === 7 && playoffsByConference,
+                                separator: i === numPlayoffTeams - 1,
                             })}
                         >
                             <td>
@@ -130,18 +130,25 @@ const ConfStandings = ({ playoffsByConference, season, teams }) => {
     );
 };
 
-ConfStandings.propTypes = {
-    teams: PropTypes.arrayOf(PropTypes.object).isRequired,
-    playoffsByConference: PropTypes.bool.isRequired,
+SmallStandings.propTypes = {
+    numPlayoffTeams: PropTypes.number.isRequired,
     season: PropTypes.number.isRequired,
+    teams: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
-const Standings = ({ confs, playoffsByConference, season }) => {
+const Standings = ({
+    allTeams,
+    confs,
+    numPlayoffTeams,
+    playoffsByConference,
+    season,
+}) => {
     if (season === undefined) {
         setTitle("Standings");
     } else {
         setTitle(`Standings - ${season}`);
     }
+    console.log(allTeams);
 
     return (
         <>
@@ -150,38 +157,67 @@ const Standings = ({ confs, playoffsByConference, season }) => {
             <h1>
                 Standings <NewWindowLink />
             </h1>
-            {confs.map((conf, i) => (
-                <div
-                    key={conf.cid}
-                    style={{ marginBottom: i < confs.length - 1 ? "1rem" : 0 }}
-                >
-                    <h2>{conf.name}</h2>
-                    <div className="row">
-                        <div className="col-md-9">
-                            {conf.divs.map(div => (
-                                <DivStandings
-                                    key={div.did}
-                                    div={div}
-                                    season={season}
-                                />
-                            ))}
-                        </div>
+            <div className="row">
+                <div className={!playoffsByConference ? "col-md-9" : "col-12"}>
+                    {confs.map((conf, i) => (
+                        <div
+                            key={conf.cid}
+                            style={{
+                                marginBottom: i < confs.length - 1 ? "1rem" : 0,
+                            }}
+                        >
+                            <h2>{conf.name}</h2>
+                            <div className="row">
+                                <div
+                                    className={
+                                        playoffsByConference
+                                            ? "col-md-9"
+                                            : "col-12"
+                                    }
+                                >
+                                    {conf.divs.map(div => (
+                                        <DivStandings
+                                            key={div.did}
+                                            div={div}
+                                            season={season}
+                                        />
+                                    ))}
+                                </div>
 
-                        <div className="col-md-3 d-none d-md-block">
-                            <ConfStandings
-                                playoffsByConference={playoffsByConference}
-                                season={season}
-                                teams={conf.teams}
-                            />
+                                {playoffsByConference ? (
+                                    <div className="col-md-3 d-none d-md-block">
+                                        <SmallStandings
+                                            numPlayoffTeams={Math.floor(
+                                                numPlayoffTeams / confs.length,
+                                            )}
+                                            season={season}
+                                            teams={conf.teams}
+                                        />
+                                    </div>
+                                ) : null}
+                            </div>
                         </div>
-                    </div>
+                    ))}
                 </div>
-            ))}
+                {!playoffsByConference ? (
+                    <div
+                        className="col-md-3 d-none d-md-block"
+                        style={{ paddingTop: 39 }}
+                    >
+                        <SmallStandings
+                            numPlayoffTeams={numPlayoffTeams}
+                            season={season}
+                            teams={allTeams}
+                        />
+                    </div>
+                ) : null}
+            </div>
         </>
     );
 };
 
 Standings.propTypes = {
+    allTeams: PropTypes.arrayOf(PropTypes.object).isRequired,
     confs: PropTypes.arrayOf(
         PropTypes.shape({
             cid: PropTypes.number.isRequired,
@@ -189,6 +225,7 @@ Standings.propTypes = {
             divs: PropTypes.arrayOf(PropTypes.object).isRequired,
         }),
     ).isRequired,
+    numPlayoffTeams: PropTypes.number.isRequired,
     playoffsByConference: PropTypes.bool.isRequired,
     season: PropTypes.number.isRequired,
 };

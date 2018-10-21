@@ -80,7 +80,7 @@ const LeagueDashboard = ({
             <div className="row">
                 <div className="col-md-8">
                     <div className="row">
-                        <div className="col-sm-4 d-none d-sm-block">
+                        <div className="col-sm-4 d-none d-sm-block mb-3">
                             <h3 />
                             <table className="table table-striped table-bordered table-sm">
                                 <thead>
@@ -134,12 +134,12 @@ const LeagueDashboard = ({
                             </a>
                         </div>
                         <div className="col-sm-8">
-                            <div style={{ textAlign: "center" }}>
-                                <span style={{ fontSize: "48px" }}>
+                            <div className="text-center mb-3">
+                                <span style={{ fontSize: "3rem" }}>
                                     {won}-{lost}
                                 </span>
                                 <br />
-                                <span style={{ fontSize: "24px" }}>
+                                <span style={{ fontSize: "1.5rem" }}>
                                     {playoffRoundsWon < 0 ? (
                                         <span>
                                             {helpers.ordinal(rank)} in

@@ -13,6 +13,8 @@ async function updateStandings(
         (inputs.season === g.season && updateEvents.includes("gameSim")) ||
         inputs.season !== state.season
     ) {
+        const playoffsByConference = g.confs.length === 2; // && !localStorage.getItem('top16playoffs');
+
         const teams = helpers.orderByWinp(
             await idb.getCopies.teamsPlus({
                 attrs: ["tid", "cid", "did", "abbrev", "region", "name"],
@@ -55,11 +57,7 @@ async function updateStandings(
                             confTeams[j].seasonAttrs,
                         );
                     }
-                    if (confTeams[j].tid === g.userTid) {
-                        confTeams[j].highlight = true;
-                    } else {
-                        confTeams[j].highlight = false;
-                    }
+                    confTeams[j].highlight = confTeams[j].tid === g.userTid;
                     j += 1;
                 }
             }
@@ -68,7 +66,7 @@ async function updateStandings(
                 cid: g.confs[i].cid,
                 name: g.confs[i].name,
                 divs: [],
-                teams: confTeams,
+                teams: playoffsByConference ? confTeams : [],
             });
 
             for (const div of g.divs) {
@@ -97,11 +95,8 @@ async function updateStandings(
                                 divTeams[k].playoffsRank = null;
                             }
 
-                            if (divTeams[k].tid === g.userTid) {
-                                divTeams[k].highlight = true;
-                            } else {
-                                divTeams[k].highlight = false;
-                            }
+                            divTeams[k].highlight =
+                                divTeams[k].tid === g.userTid;
 
                             k += 1;
                         }
@@ -116,10 +111,9 @@ async function updateStandings(
             }
         }
 
-        const playoffsByConference = g.confs.length === 2; // && !localStorage.getItem('top16playoffs');
-
-        // Fix playoffsRank if conferences don't matter
+        const allTeams = [];
         if (!playoffsByConference) {
+            // Fix playoffsRank if conferences don't matter
             for (let i = 0; i < teams.length; i++) {
                 const t = teams[i];
                 const div = confs[t.cid].divs.find(div2 => t.did === div2.did);
@@ -130,10 +124,31 @@ async function updateStandings(
                     }
                 }
             }
+
+            // If playoffs are not done by conference (instead to 16 or whatever make it from full league), we need a ranked list of all teams to display.
+            if (!playoffsByConference) {
+                let j = 0;
+                for (const t of teams) {
+                    allTeams.push(helpers.deepCopy(t));
+                    allTeams[j].rank = j + 1;
+                    if (j === 0) {
+                        allTeams[j].gb = 0;
+                    } else {
+                        allTeams[j].gb = helpers.gb(
+                            allTeams[0].seasonAttrs,
+                            allTeams[j].seasonAttrs,
+                        );
+                    }
+                    allTeams[j].highlight = allTeams[j].tid === g.userTid;
+                    j += 1;
+                }
+            }
         }
 
         return {
+            allTeams,
             confs,
+            numPlayoffTeams,
             playoffsByConference,
             season: inputs.season,
         };

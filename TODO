@@ -1,7 +1,9 @@
 percentages for FG, FT, 3pt below box score like Yahoo
 - unify BoxScore component in GameLog and LiveGame?
   - StatsRow/PlayerRow - either unify, or allow to be passed in to BoxScore
-  - mouse stuff for next/prev - should be at a higher level than BoxScore
+- for LiveGame, have option to disable next/prev stuff
+- use flexbox to replace table aligning score and buttons at top
+- tfoot should have wide top border, like thead
 
 typescript
 - https://medium.com/entria/incremental-migration-to-typescript-on-a-flowtype-codebase-515f6490d92d

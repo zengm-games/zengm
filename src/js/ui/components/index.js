@@ -2,6 +2,7 @@
 
 export { default as BarGraph } from "./BarGraph";
 export { default as BoxPlot } from "./BoxPlot";
+export { default as BoxScore } from "./BoxScore";
 export { default as CompletedGame } from "./CompletedGame";
 export { default as DataTable } from "./DataTable";
 export { default as DownloadDataLink } from "./DownloadDataLink";

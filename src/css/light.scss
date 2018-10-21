@@ -777,9 +777,9 @@ tr.table-warning:hover > td {
     width: 15px;
 }
 
+// Bootstrap does something like this for thead, but not tfoot
 .table tfoot {
     tr:first-child {
-        td,
         th {
             border-top-width: 2px;
         }
@@ -789,13 +789,11 @@ tr.table-warning:hover > td {
 .table thead {
     // Override default Bootstap, looks ugly to have 2px borders when there are two rows in thead
     tr {
-        td,
         th {
             border-bottom-width: 1px;
         }
     }
     tr:last-child {
-        td,
         th {
             border-bottom-width: 2px;
         }

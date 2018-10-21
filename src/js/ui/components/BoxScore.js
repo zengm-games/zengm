@@ -31,6 +31,14 @@ HeadlineScore.propTypes = {
     boxScore: PropTypes.object.isRequired,
 };
 
+const displayRounded = (stat, digits = 1) => {
+    if (Number.isNaN(stat) || stat === Infinity) {
+        return "0.0";
+    }
+
+    return stat.toFixed(digits);
+};
+
 const FourFactors = ({ teams }) => {
     return (
         <table className="table table-bordered table-sm">
@@ -57,14 +65,6 @@ const FourFactors = ({ teams }) => {
                     const tovp = (100 * t.tov) / (t.fga + 0.44 * t.fta + t.tov);
                     const orbp = (100 * t.orb) / (t.orb + t2.drb);
                     const ftpfga = t.ft / t.fga;
-
-                    const displayRounded = (stat, digits = 1) => {
-                        if (Number.isNaN(stat) || stat === Infinity) {
-                            return "";
-                        }
-
-                        return stat.toFixed(digits);
-                    };
 
                     return (
                         <tr key={t.abbrev}>
@@ -325,33 +325,67 @@ class BoxScore extends React.Component {
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <td>Total</td>
-                                        <td />
-                                        <td>
+                                        <th>Total</th>
+                                        <th />
+                                        <th>
                                             {Number.isInteger(t.min)
                                                 ? t.min
                                                 : t.min.toFixed(1)}
-                                        </td>
-                                        <td>
+                                        </th>
+                                        <th>
                                             {t.fg}-{t.fga}
-                                        </td>
-                                        <td>
+                                        </th>
+                                        <th>
                                             {t.tp}-{t.tpa}
-                                        </td>
-                                        <td>
+                                        </th>
+                                        <th>
                                             {t.ft}-{t.fta}
-                                        </td>
-                                        <td>{t.orb}</td>
-                                        <td>{t.drb + t.orb}</td>
-                                        <td>{t.ast}</td>
-                                        <td>{t.tov}</td>
-                                        <td>{t.stl}</td>
-                                        <td>{t.blk}</td>
-                                        <td>{t.ba}</td>
-                                        <td>{t.pf}</td>
-                                        <td>{t.pts}</td>
-                                        <td />
-                                        <td />
+                                        </th>
+                                        <th>{t.orb}</th>
+                                        <th>{t.drb + t.orb}</th>
+                                        <th>{t.ast}</th>
+                                        <th>{t.tov}</th>
+                                        <th>{t.stl}</th>
+                                        <th>{t.blk}</th>
+                                        <th>{t.ba}</th>
+                                        <th>{t.pf}</th>
+                                        <th>{t.pts}</th>
+                                        <th />
+                                        <th />
+                                    </tr>
+                                    <tr>
+                                        <th>Percentages</th>
+                                        <th />
+                                        <th />
+                                        <th>
+                                            {displayRounded(
+                                                (100 * t.fg) / t.fga,
+                                            )}
+                                            %
+                                        </th>
+                                        <th>
+                                            {displayRounded(
+                                                (100 * t.tp) / t.tpa,
+                                            )}
+                                            %
+                                        </th>
+                                        <th>
+                                            {displayRounded(
+                                                (100 * t.ft) / t.fta,
+                                            )}
+                                            %
+                                        </th>
+                                        <th />
+                                        <th />
+                                        <th />
+                                        <th />
+                                        <th />
+                                        <th />
+                                        <th />
+                                        <th />
+                                        <th />
+                                        <th />
+                                        <th />
                                     </tr>
                                 </tfoot>
                             </table>

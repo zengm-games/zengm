@@ -76,7 +76,7 @@ class BoxScore extends React.Component {
         if (
             e.keyCode === 37 &&
             this.props.boxScore &&
-            this.props.prevGid !== null
+            this.props.prevGid !== undefined
         ) {
             // prev
             realtimeUpdate(
@@ -91,7 +91,7 @@ class BoxScore extends React.Component {
         } else if (
             e.keyCode === 39 &&
             this.props.boxScore &&
-            this.props.nextGid !== null
+            this.props.nextGid !== undefined
         ) {
             // next
             realtimeUpdate(
@@ -144,7 +144,7 @@ class BoxScore extends React.Component {
                                         className={classNames(
                                             "btn",
                                             "btn-light-bordered",
-                                            { disabled: prevGid === null },
+                                            { disabled: prevGid === undefined },
                                         )}
                                         style={{ marginRight: "30px" }}
                                         href={helpers.leagueUrl([
@@ -286,7 +286,7 @@ class BoxScore extends React.Component {
                                         className={classNames(
                                             "btn",
                                             "btn-light-bordered",
-                                            { disabled: nextGid === null },
+                                            { disabled: nextGid === undefined },
                                         )}
                                         style={{ marginLeft: "30px" }}
                                         href={helpers.leagueUrl([
@@ -396,9 +396,9 @@ BoxScore.propTypes = {
     season: PropTypes.number.isRequired,
 };
 
-function findPrevNextGids(games = [], currentGid) {
-    let prevGid = null;
-    let nextGid = null;
+const findPrevNextGids = (games = [], currentGid) => {
+    let prevGid;
+    let nextGid;
 
     for (let i = 0; i < games.length; i++) {
         if (games[i].gid === currentGid) {
@@ -413,7 +413,83 @@ function findPrevNextGids(games = [], currentGid) {
     }
 
     return { prevGid, nextGid };
-}
+};
+
+const GamesList = ({ abbrev, gid, gamesList, season }) => {
+    return (
+        <table className="table table-striped table-bordered table-sm game-log-list">
+            <thead>
+                <tr>
+                    <th>Opp</th>
+                    <th>W/L</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                {gamesList.abbrev !== abbrev ? (
+                    <tr>
+                        <td colSpan="3">Loading...</td>
+                    </tr>
+                ) : (
+                    gamesList.games.map(gm => {
+                        return (
+                            <tr
+                                key={gm.gid}
+                                className={gm.gid === gid ? "table-info" : null}
+                            >
+                                <td className="game-log-cell">
+                                    <a
+                                        href={helpers.leagueUrl([
+                                            "game_log",
+                                            abbrev,
+                                            season,
+                                            gm.gid,
+                                        ])}
+                                    >
+                                        {gm.home ? "" : "@"}
+                                        {gm.oppAbbrev}
+                                    </a>
+                                </td>
+                                <td className="game-log-cell">
+                                    <a
+                                        href={helpers.leagueUrl([
+                                            "game_log",
+                                            abbrev,
+                                            season,
+                                            gm.gid,
+                                        ])}
+                                    >
+                                        {gm.won ? "W" : "L"}
+                                    </a>
+                                </td>
+                                <td className="game-log-cell">
+                                    <a
+                                        href={helpers.leagueUrl([
+                                            "game_log",
+                                            abbrev,
+                                            season,
+                                            gm.gid,
+                                        ])}
+                                    >
+                                        {gm.pts}-{gm.oppPts}
+                                        {gm.overtime}
+                                    </a>
+                                </td>
+                            </tr>
+                        );
+                    })
+                )}
+            </tbody>
+        </table>
+    );
+};
+
+GamesList.propTypes = {
+    abbrev: PropTypes.string.isRequired,
+    gid: PropTypes.number,
+    gamesList: PropTypes.object.isRequired,
+    season: PropTypes.number.isRequired,
+};
 
 const GameLog = ({ abbrev, boxScore, gamesList = { games: [] }, season }) => {
     setTitle(`Game Log - ${season}`);
@@ -471,74 +547,12 @@ const GameLog = ({ abbrev, boxScore, gamesList = { games: [] }, season }) => {
                 </div>
 
                 <div className="col-md-2">
-                    <table className="table table-striped table-bordered table-sm game-log-list">
-                        <thead>
-                            <tr>
-                                <th>Opp</th>
-                                <th>W/L</th>
-                                <th>Score</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {gamesList.abbrev !== abbrev ? (
-                                <tr>
-                                    <td colSpan="3">Loading...</td>
-                                </tr>
-                            ) : (
-                                gamesList.games.map(gm => {
-                                    return (
-                                        <tr
-                                            key={gm.gid}
-                                            className={
-                                                gm.gid === boxScore.gid
-                                                    ? "table-info"
-                                                    : null
-                                            }
-                                        >
-                                            <td className="game-log-cell">
-                                                <a
-                                                    href={helpers.leagueUrl([
-                                                        "game_log",
-                                                        abbrev,
-                                                        season,
-                                                        gm.gid,
-                                                    ])}
-                                                >
-                                                    {gm.home ? "" : "@"}
-                                                    {gm.oppAbbrev}
-                                                </a>
-                                            </td>
-                                            <td className="game-log-cell">
-                                                <a
-                                                    href={helpers.leagueUrl([
-                                                        "game_log",
-                                                        abbrev,
-                                                        season,
-                                                        gm.gid,
-                                                    ])}
-                                                >
-                                                    {gm.won ? "W" : "L"}
-                                                </a>
-                                            </td>
-                                            <td className="game-log-cell">
-                                                <a
-                                                    href={helpers.leagueUrl([
-                                                        "game_log",
-                                                        abbrev,
-                                                        season,
-                                                        gm.gid,
-                                                    ])}
-                                                >
-                                                    {gm.pts}-{gm.oppPts}
-                                                    {gm.overtime}
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    );
-                                })
-                            )}
-                        </tbody>
-                    </table>
+                    <GamesList
+                        abbrev={abbrev}
+                        gamesList={gamesList}
+                        gid={boxScore.gid}
+                        season={season}
+                    />
                 </div>
             </div>
         </>
@@ -548,7 +562,7 @@ const GameLog = ({ abbrev, boxScore, gamesList = { games: [] }, season }) => {
 GameLog.propTypes = {
     abbrev: PropTypes.string.isRequired,
     boxScore: PropTypes.object.isRequired,
-    gamesList: PropTypes.object,
+    gamesList: PropTypes.object.isRequired,
     season: PropTypes.number.isRequired,
 };
 

@@ -6,7 +6,10 @@ import { g, helpers } from "../util";
 import type { UpdateEvents } from "../../common/types";
 
 async function updateLeaders(
-    inputs: { season: number },
+    inputs: {
+        playoffs: "playoffs" | "regularSeason",
+        season: number,
+    },
     updateEvents: UpdateEvents,
     state: any,
 ): void | { [key: string]: any } {
@@ -14,13 +17,21 @@ async function updateLeaders(
     if (
         updateEvents.includes("watchList") ||
         (inputs.season === g.season && updateEvents.includes("gameSim")) ||
-        inputs.season !== state.season
+        inputs.season !== state.season ||
+        inputs.playoffs !== state.playoffs
     ) {
         // Calculate the number of games played for each team, which is used later to test if a player qualifies as a league leader
         const teamSeasons = await idb.getCopies.teamSeasons({
             season: inputs.season,
         });
         const gps = teamSeasons.map(teamSeason => {
+            if (inputs.playoffs === "playoffs") {
+                if (teamSeason.gp < g.numGames) {
+                    return 0;
+                }
+                return teamSeason.gp - g.numGames;
+            }
+
             // Don't count playoff games
             if (teamSeason.gp > g.numGames) {
                 return g.numGames;
@@ -66,6 +77,8 @@ async function updateLeaders(
                 "ws48",
             ],
             season: inputs.season,
+            playoffs: inputs.playoffs === "playoffs",
+            regularSeason: inputs.playoffs !== "playoffs",
         });
 
         const userAbbrev = helpers.getAbbrev(g.userTid);
@@ -264,6 +277,7 @@ async function updateLeaders(
 
         return {
             categories,
+            playoffs: inputs.playoffs,
             season: inputs.season,
         };
     }

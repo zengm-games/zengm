@@ -302,6 +302,7 @@ const genPage = (id, inLeague = true) => {
         "/l/:lid/game_log/:abbrev/:season/:gid/:view": genPage("gameLog"),
         "/l/:lid/leaders": genPage("leaders"),
         "/l/:lid/leaders/:season": genPage("leaders"),
+        "/l/:lid/leaders/:season/:playoffs": genPage("leaders"),
         "/l/:lid/player_ratings": genPage("playerRatings"),
         "/l/:lid/player_ratings/:abbrev": genPage("playerRatings"),
         "/l/:lid/player_ratings/:abbrev/:season": genPage("playerRatings"),

@@ -712,7 +712,6 @@ documentation
   http://www.reddit.com/r/BasketballGM/comments/2agxoe/questions_and_suggestions_from_a_new_player/
 Add MVP and Titles columns to HoF table
 Make good young players much less likely to become FAs
-Make rookie contracts 1 year longer
 show team records in playoffs, conference standings
 don't need to store abbrev with awards, just tids
   fix display in season summary (correct in historyAll)
@@ -723,15 +722,10 @@ add "drb" to usage so that good ball handlers shoot more (favor guards over bigs
 in player page, show red/green for ratings changes from the previous year, maybe as heatmap
 in ratings tables, show dpot and dovr columns? maybe?
 Add markers for clinching playoffs / 1st seed in league standings
-trading block crashing bug
-  happens in chrome in old leagues, apparently. running out of memory somehow?
-first errorNotify in contractNegotiation.js really should be inline within that page
 league leaders glitch http://www.reddit.com/r/BasketballGM/comments/1r20x5/league_leaders_bug/
 merge game.play and freeAgents.play
 replace random.gauss with random.realGauss
 current season shouldn't show in league history page dropdown
-make trade counter-offer faster by checking if no trade is possible first http://www.reddit.com/r/BasketballGM/comments/1jumc9/is_it_just_me_or_does_it_take_wayyyy_too_long_for/
-document things that affect player mood
 don't need to check every team's roster limits every time games are played - could auto keep AI teams in line after any trade (with user or between AI teams), and then only the user's team needs to be checked
 UI to easily switch between conference and division standings on small screens and dashboard http://www.reddit.com/r/BasketballGM/comments/2d4o9r/feature_requests_of_the_week_august_10_2014/cjqrwtf?context=3
 schedule page (and dashboard and maybe gamelog) should show opponent records
@@ -763,8 +757,6 @@ fantasy draft
     do this in core.draft.untilUserOrEnd
   add entry for fantasy draft summary to draft history dropdown?
 league settings
-  enable buy out button or not
-  set salary cap, luxury tax, exceptions, etc
   enable/disable trading rules
 cross-league play
 mobile UI, bootstrap 3
@@ -923,8 +915,6 @@ tv revenue as a variable
       random noise
       "random event" - competition between two networks, Sports TV and The Basketball Channel
     when renegotiating and really bad, the guy pretends not to know you - "Atlanta Herons? Is that the team from the Mexican/Canadian/Arena/Indoor/Xtreme Volleyball/Soccer/Tennis/Racing/Curling/MudWrestling League?"
-stat views
-  playoff/regular season toggle in team/player stats, league leaders
 input to helpers.formatCurrency (and all currency in variables everywhere) should be in 1000s of dollars and then only converted to millions when displayed
 AI teams should have to deal with fuzz too
 views.teamFinances should merge db call with team.filter to get seasonAttrs, but that will require rewriting seasonAttrs handling in team.filter to handle multiple seasons.

@@ -9,12 +9,16 @@ import {
     ResponsiveTableWrapper,
 } from "../components";
 
-const Leaders = ({ categories, season }) => {
+const Leaders = ({ categories, playoffs, season }) => {
     setTitle(`League Leaders - ${season}`);
 
     return (
         <>
-            <Dropdown view="leaders" fields={["seasons"]} values={[season]} />
+            <Dropdown
+                view="leaders"
+                fields={["seasons", "playoffs"]}
+                values={[season, playoffs]}
+            />
             <JumpTo season={season} />
             <h1>
                 League Leaders <NewWindowLink />
@@ -96,6 +100,7 @@ const Leaders = ({ categories, season }) => {
 
 Leaders.propTypes = {
     categories: PropTypes.arrayOf(PropTypes.object).isRequired,
+    playoffs: PropTypes.oneOf(["playoffs", "regularSeason"]).isRequired,
     season: PropTypes.number.isRequired,
 };
 

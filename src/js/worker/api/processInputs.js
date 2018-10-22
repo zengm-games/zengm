@@ -178,6 +178,17 @@ const history = params => {
     };
 };
 
+const leaders = params => {
+    return {
+        season:
+            params.season === "career"
+                ? undefined
+                : validateSeason(params.season),
+        playoffs:
+            params.playoffs !== undefined ? params.playoffs : "regularSeason",
+    };
+};
+
 const liveGame = (params, ctxBBGM) => {
     const obj = {
         fromAction: !!ctxBBGM.fromAction,
@@ -409,7 +420,7 @@ export default {
     freeAgents,
     gameLog,
     history,
-    leaders: validateSeasonOnly,
+    leaders,
     leagueFinances: validateSeasonOnly,
     liveGame,
     message,

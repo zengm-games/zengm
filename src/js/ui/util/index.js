@@ -35,6 +35,7 @@ export { default as menuItems } from "./menuItems";
 export { default as notify } from "./notify";
 export { default as prefixStatOpp } from "./prefixStatOpp";
 export { default as realtimeUpdate } from "./realtimeUpdate";
+export { default as routes } from "./routes";
 export { default as setTitle } from "./setTitle";
 export { default as subscribeLocal } from "./subscribeLocal";
 export { default as takeScreenshot } from "./takeScreenshot";

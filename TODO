@@ -1,3 +1,6 @@
+update contracts after ratings change in preseason
+- set to new contract and run decrease N times?
+
 typescript
 - https://medium.com/entria/incremental-migration-to-typescript-on-a-flowtype-codebase-515f6490d92d
   - this was hard, see typescript branch
@@ -45,7 +48,6 @@ Difficulty fudge factor should only be for user team (finances, trades)
 
 re-evaluate contracts
 - somehow market based
-- update after ratings change in preseason
 
 get rid of owner messages, replace with owner status page showing mood directly (bar chart)
 

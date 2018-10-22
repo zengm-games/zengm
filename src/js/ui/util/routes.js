@@ -1,24 +1,7 @@
 // @flow
 
-import * as React from "react";
-import genStaticPage from "./genStaticPage";
 import initView from "./initView";
 import * as views from "../views";
-
-const Manual = (
-    <>
-        <h1>Manual</h1>
-        <p>
-            <a
-                href="https://basketball-gm.com/manual/"
-                rel="noopener noreferrer"
-                target="_blank"
-            >
-                Click here for an overview of Basketball GM.
-            </a>
-        </p>
-    </>
-);
 
 const genPage = (id, inLeague = true) => {
     const componentName = id.charAt(0).toUpperCase() + id.slice(1);
@@ -35,8 +18,6 @@ const routes = {
     "/": genPage("dashboard", false),
     "/new_league": genPage("newLeague", false),
     "/delete_league/:lid": genPage("deleteLeague", false),
-    "/manual": genStaticPage("manual", "Manual", Manual, false),
-    "/manual/:page": genStaticPage("manual", "Manual", Manual, false),
     "/changes": genPage("changes", false),
     "/account": genPage("account", false),
     "/account/login_or_register": genPage("loginOrRegister", false),

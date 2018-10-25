@@ -22,6 +22,11 @@ const setContract = (
     contract: PlayerContract,
     signed: boolean,
 ) => {
+    // Sigh, don't know why this is needed, but people tell me that sometimes the #1 pick has a massively negative contract
+    if (contract.amount < 0) {
+        contract.amount = g.minContract;
+    }
+
     p.contract = contract;
 
     // Only write to salary log if the player is actually signed. Otherwise, we're just generating a value for a negotiation.

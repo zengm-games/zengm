@@ -1,5 +1,6 @@
 // @flow
 
+import backboard from "backboard";
 import { season } from "..";
 import { idb } from "../../db";
 import { g, genMessage, local } from "../../util";
@@ -10,7 +11,12 @@ const newPhaseRegularSeason = async () => {
 
     if (g.autoDeleteOldBoxScores) {
         await idb.league.tx("games", "readwrite", tx => {
-            return tx.games.clear();
+            // Delete all games except past 3 seasons
+            return tx.games
+                .index("season")
+                .iterate(backboard.upperBound(g.season - 3), ({ gid }) => {
+                    tx.games.delete(gid);
+                });
         });
     }
 

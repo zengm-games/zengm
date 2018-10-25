@@ -75,6 +75,7 @@ async function updateTeamSeason(
     return {
         // Needed for dropdown
         abbrev: inputs.abbrev,
+        currentSeason: g.season,
         season: inputs.season,
     };
 }

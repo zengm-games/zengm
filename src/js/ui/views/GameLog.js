@@ -76,7 +76,19 @@ const findPrevNextGids = (games = [], currentGid) => {
     return { prevGid, nextGid };
 };
 
-const GamesList = ({ abbrev, gid, gamesList, season }) => {
+const GamesList = ({ abbrev, currentSeason, gid, gamesList, season }) => {
+    if (season < currentSeason && gamesList.games.length === 0) {
+        return (
+            <p className="alert alert-info">
+                No games found for this season. By default, box scores from old
+                seasons are automatically deleted after 3 years.{" "}
+                <a href={helpers.leagueUrl(["options"])}>
+                    You can change this behavior on the Options page.
+                </a>
+            </p>
+        );
+    }
+
     return (
         <table className="table table-striped table-bordered table-sm game-log-list">
             <thead>
@@ -147,12 +159,19 @@ const GamesList = ({ abbrev, gid, gamesList, season }) => {
 
 GamesList.propTypes = {
     abbrev: PropTypes.string.isRequired,
+    currentSeason: PropTypes.number.isRequired,
     gid: PropTypes.number,
     gamesList: PropTypes.object.isRequired,
     season: PropTypes.number.isRequired,
 };
 
-const GameLog = ({ abbrev, boxScore, gamesList = { games: [] }, season }) => {
+const GameLog = ({
+    abbrev,
+    boxScore,
+    currentSeason,
+    gamesList = { games: [] },
+    season,
+}) => {
     setTitle(`Game Log - ${season}`);
 
     const { nextGid, prevGid } = findPrevNextGids(
@@ -211,6 +230,7 @@ const GameLog = ({ abbrev, boxScore, gamesList = { games: [] }, season }) => {
                 <div className="col-md-2">
                     <GamesList
                         abbrev={abbrev}
+                        currentSeason={currentSeason}
                         gamesList={gamesList}
                         gid={boxScore.gid}
                         season={season}
@@ -224,6 +244,7 @@ const GameLog = ({ abbrev, boxScore, gamesList = { games: [] }, season }) => {
 GameLog.propTypes = {
     abbrev: PropTypes.string.isRequired,
     boxScore: PropTypes.object.isRequired,
+    currentSeason: PropTypes.number.isRequired,
     gamesList: PropTypes.object.isRequired,
     season: PropTypes.number.isRequired,
 };

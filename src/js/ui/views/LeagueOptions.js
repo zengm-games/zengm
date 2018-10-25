@@ -116,8 +116,8 @@ class LeagueOptions extends React.Component {
                                 Auto Delete Old Box Scores{" "}
                                 <HelpPopover title="Auto Delete Old Box Scores">
                                     This will automatically delete box scores
-                                    from previous seasons because box scores use
-                                    a lot of disk space. See{" "}
+                                    older than the past three seasons because
+                                    box scores use a lot of disk space. See{" "}
                                     <a
                                         href={helpers.leagueUrl([
                                             "delete_old_data",

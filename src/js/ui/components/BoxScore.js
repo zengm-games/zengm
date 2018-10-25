@@ -66,32 +66,34 @@ const FourFactors = ({ teams }) => {
                     const orbp = (100 * t.orb) / (t.orb + t2.drb);
                     const ftpfga = t.ft / t.fga;
 
+                    const efg2 = (100 * (t2.fg + t2.tp / 2)) / t2.fga;
+                    const tovp2 =
+                        (100 * t2.tov) / (t2.fga + 0.44 * t2.fta + t2.tov);
+                    const orbp2 = (100 * t2.orb) / (t2.orb + t.drb);
+                    const ftpfga2 = t2.ft / t2.fga;
+
                     return (
                         <tr key={t.abbrev}>
-                            <td
-                                className={
-                                    efg > t2.efg ? "table-success" : null
-                                }
-                            >
+                            <td className={efg > efg2 ? "table-success" : null}>
                                 {displayRounded(efg)}
                             </td>
                             <td
                                 className={
-                                    tovp < t2.tovp ? "table-success" : null
+                                    tovp < tovp2 ? "table-success" : null
                                 }
                             >
                                 {displayRounded(tovp)}
                             </td>
                             <td
                                 className={
-                                    orbp > t2.orbp ? "table-success" : null
+                                    orbp > orbp2 ? "table-success" : null
                                 }
                             >
                                 {displayRounded(orbp)}
                             </td>
                             <td
                                 className={
-                                    ftpfga > t2.ftpfga ? "table-success" : null
+                                    ftpfga > ftpfga2 ? "table-success" : null
                                 }
                             >
                                 {displayRounded(ftpfga, 3)}

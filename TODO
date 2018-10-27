@@ -1,6 +1,12 @@
 update contracts after ratings change in preseason
 - set to new contract and run decrease N times?
 
+better salary AI
+  old players undervalued
+  dynamically set based on cap space
+  https://www.reddit.com/r/gamedev/comments/4omk8h/simulating_marketbased_pricing/
+  FAs less likely to sign https://www.reddit.com/r/BasketballGM/comments/4qla6t/free_agent_mood/d4ww715?context=3
+
 typescript
 - https://medium.com/entria/incremental-migration-to-typescript-on-a-flowtype-codebase-515f6490d92d
   - this was hard, see typescript branch
@@ -343,12 +349,6 @@ all time leaders https://www.reddit.com/r/BasketballGM/comments/4qjkys/simple_fe
 refuse to sign in god mode https://www.reddit.com/r/BasketballGM/comments/4p2s1q/cant_sign_star_player/
 
 newScheduleCrappy should be better
-
-better salary AI
-  old players undervalued
-  dynamically set based on cap space
-  https://www.reddit.com/r/gamedev/comments/4omk8h/simulating_marketbased_pricing/
-  FAs less likely to sign https://www.reddit.com/r/BasketballGM/comments/4qla6t/free_agent_mood/d4ww715?context=3
 
 international names
   accurate faces (race)

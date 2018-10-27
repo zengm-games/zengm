@@ -1,3 +1,5 @@
+abstract out basketball code, write another sport sharing code
+
 better salary AI
   old players undervalued
   dynamically set based on cap space
@@ -99,9 +101,6 @@ persist fantasy draft results
 - viewable somehow - need to track when fantasy drafts happened and add them to draft results menu
 
 ---
-
-click on (not drag to) max speed in game sim first time doesn't work
-- https://www.reddit.com/r/BasketballGM/comments/8az5xx/game_speed_setting_bug/
 
 career totals on player pages https://www.reddit.com/r/BasketballGM/comments/7ya1yu/any_more_thoughts_on_the_beta/duptp08/?context=3
 
@@ -226,11 +225,6 @@ when dirty on close, show warning window, and initiate flush (if not already in 
 - hard to coordinate across UI and worker...
 
 better loading screen, after React takes control but before initial page is rendered - because it can be slow for loading a league
-
-uncomment things using localstorage in worker, after moving to either env+api or idb (meta)
-- top16playoffs - used in both, would be better in gameAttributes as a God Mode option
-
-delete meta database after league tests (and others that create it)
 
 this shit is UGLY UGLY UGLY, fix ASAP!!!
     if (typeof it === 'function') { return; }

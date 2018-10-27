@@ -33,7 +33,7 @@ const roundsWonText = (
     numPlayoffRounds: number,
     numConfs: number,
 ): string => {
-    const playoffsByConference = numConfs === 2; // && !localStorage.getItem('top16playoffs');
+    const playoffsByConference = numConfs === 2;
 
     if (playoffRoundsWon === numPlayoffRounds) {
         return "League champs";

@@ -13,7 +13,7 @@ async function updateStandings(
         (inputs.season === g.season && updateEvents.includes("gameSim")) ||
         inputs.season !== state.season
     ) {
-        const playoffsByConference = g.confs.length === 2; // && !localStorage.getItem('top16playoffs');
+        const playoffsByConference = g.confs.length === 2;
 
         const teams = helpers.orderByWinp(
             await idb.getCopies.teamsPlus({

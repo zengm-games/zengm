@@ -1404,7 +1404,7 @@ class GameSim {
             0.95,
         );
 
-        let outcome;
+        let outcome = null;
         for (let i = 0; i < amount; i++) {
             this.recordStat(this.o, p, "fta");
             if (Math.random() < ftp) {

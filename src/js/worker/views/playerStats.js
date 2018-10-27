@@ -10,7 +10,7 @@ async function updatePlayers(
         abbrev: string,
         playoffs: "playoffs" | "regularSeason",
         season: number,
-        statType: PlayerStatType,
+        statType: "advanced" | PlayerStatType,
     },
     updateEvents: UpdateEvents,
     state: any,

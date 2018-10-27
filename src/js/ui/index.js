@@ -198,11 +198,9 @@ api.bbgmPing("version");
             createBugsnagErrorBoundary(React),
         );
         ReactDOM.render(
-            <React.StrictMode>
-                <ErrorBoundary>
-                    <Controller />
-                </ErrorBoundary>
-            </React.StrictMode>,
+            <ErrorBoundary>
+                <Controller />
+            </ErrorBoundary>,
             contentEl,
         );
     } else {

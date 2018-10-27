@@ -108,51 +108,51 @@ const value = (
 
     // Otherwise, combine based on age
     if (age <= 19) {
-        return 0.9 * potential + 0.1 * current;
-    }
-    if (age === 20) {
         return 0.8 * potential + 0.2 * current;
     }
-    if (age === 21) {
+    if (age === 20) {
         return 0.7 * potential + 0.3 * current;
     }
-    if (age === 22) {
+    if (age === 21) {
         return 0.6 * potential + 0.4 * current;
     }
-    if (age === 23) {
+    if (age === 22) {
         return 0.5 * potential + 0.5 * current;
     }
-    if (age === 24) {
+    if (age === 23) {
         return 0.4 * potential + 0.6 * current;
     }
-    if (age === 25) {
+    if (age === 24) {
         return 0.3 * potential + 0.7 * current;
     }
-    if (age === 26) {
+    if (age === 25) {
         return 0.2 * potential + 0.8 * current;
     }
-    if (age === 27) {
+    if (age === 26) {
         return 0.1 * potential + 0.9 * current;
+    }
+    if (age === 27) {
+        return current;
     }
     if (age === 28) {
         return current;
     }
     if (age === 29) {
-        return 0.975 * current;
+        return current;
     }
     if (age === 30) {
-        return 0.95 * current;
+        return 0.975 * current;
     }
     if (age === 31) {
-        return 0.9 * current;
+        return 0.95 * current;
     }
     if (age === 32) {
-        return 0.85 * current;
+        return 0.9 * current;
     }
     if (age === 33) {
-        return 0.8 * current;
+        return 0.85 * current;
     }
-    return 0.7 * current;
+    return 0.8 * current;
 };
 
 export default value;

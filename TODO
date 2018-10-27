@@ -1,6 +1,3 @@
-update contracts after ratings change in preseason
-- set to new contract and run decrease N times?
-
 better salary AI
   old players undervalued
   dynamically set based on cap space
@@ -303,6 +300,8 @@ replace owner message text with numbers/chart
 ---
 
 REACT later
+
+strict mode - blocked by reactstrap not supporting it
 
 https://marmelab.com/blog/2017/02/06/react-is-slow-react-is-fast.html
 

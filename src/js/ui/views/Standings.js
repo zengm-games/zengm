@@ -148,7 +148,6 @@ const Standings = ({
     } else {
         setTitle(`Standings - ${season}`);
     }
-    console.log(allTeams);
 
     return (
         <>

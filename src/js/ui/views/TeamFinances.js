@@ -42,6 +42,8 @@ class FinancesForm extends React.Component {
                 ticketPrice: nextProps.t.budget.ticketPrice.amount,
             };
         }
+
+        return null;
     }
 
     handleChange(name, e) {

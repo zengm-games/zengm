@@ -112,6 +112,20 @@ const newPhasePreseason = async (conditions: Conditions) => {
             player.addStatsRow(p, false);
         }
 
+        // If player is a free agent, re-assess contract demands
+        if (p.tid === PLAYER.FREE_AGENT) {
+            const newContract = player.genContract(p);
+            if (newContract.amount > p.contract.amount) {
+                console.log("updating contract", p, newContract);
+                // If player is still good, bump up contract demands
+                newContract.amount =
+                    (newContract.amount + p.contract.amount) / 2;
+
+                newContract.amount = 50 * Math.round(newContract.amount / 50); // Make it a multiple of 50k
+            }
+            player.setContract(p, newContract, false);
+        }
+
         await idb.cache.players.put(p);
     }
 

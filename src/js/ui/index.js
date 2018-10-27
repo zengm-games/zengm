@@ -197,8 +197,17 @@ api.bbgmPing("version");
         const ErrorBoundary = window.bugsnagClient.use(
             createBugsnagErrorBoundary(React),
         );
+        const FallbackComponent = ({ error, info }) => {
+            console.log(error, info);
+            return (
+                <>
+                    <h1>Error</h1>
+                    <p>{error.message}</p>
+                </>
+            );
+        };
         ReactDOM.render(
-            <ErrorBoundary>
+            <ErrorBoundary FallbackComponent={FallbackComponent}>
                 <Controller />
             </ErrorBoundary>,
             contentEl,
@@ -266,10 +275,10 @@ api.bbgmPing("version");
             }
 
             const ErrorPage = (
-                <div>
+                <>
                     <h1>Error</h1>
                     {typeof errMsg === "string" ? <h3>{errMsg}</h3> : errMsg}
-                </div>
+                </>
             );
             const errorPage = genStaticPage("error", "Error", ErrorPage, false);
             errorPage(event.detail.context);

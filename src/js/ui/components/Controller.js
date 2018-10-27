@@ -260,10 +260,10 @@ class Controller extends React.Component<{}, State> {
                 Component = ({ errorMessage }: { errorMessage: string }) => {
                     setTitle("Error");
                     return (
-                        <div>
+                        <>
                             <h1>Error</h1>
                             <h2>{errorMessage}</h2>
-                        </div>
+                        </>
                     );
                 };
             }

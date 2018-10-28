@@ -4,37 +4,18 @@ import classNames from "classnames";
 import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
 import * as React from "react";
+import Controls from "./Controls";
 import Footer from "./Footer";
 import Header from "./Header";
+import Info from "./Info";
 import Row from "./Row";
 import Pagination from "./Pagination";
+import PerPage from "./PerPage";
 import getSearchVal from "./getSearchVal";
 import getSortVal from "./getSortVal";
-import HelpPopover from "../HelpPopover";
 import ResponsiveTableWrapper from "../ResponsiveTableWrapper";
 import { helpers } from "../../util";
 import type { SortOrder, SortType } from "../../../common/types";
-
-const Info = ({ end, numRows, numRowsUnfiltered, start }) => {
-    const filteredText =
-        numRows !== numRowsUnfiltered
-            ? ` (filtered from ${numRowsUnfiltered})`
-            : null;
-
-    return (
-        <div className="dataTables_info d-none d-sm-block">
-            {start} to {end} of {numRows}
-            {filteredText}
-        </div>
-    );
-};
-
-Info.propTypes = {
-    end: PropTypes.number.isRequired,
-    numRows: PropTypes.number.isRequired,
-    numRowsUnfiltered: PropTypes.number.isRequired,
-    start: PropTypes.number.isRequired,
-};
 
 export type SortBy = [number, SortOrder];
 
@@ -148,7 +129,7 @@ const loadStateFromCache = (props: Props) => {
 class DataTable extends React.Component<Props, State> {
     handleColClick: Function;
 
-    handleEnableFilters: Function;
+    handleToggleFilters: Function;
 
     handleFilterUpdate: Function;
 
@@ -173,7 +154,7 @@ class DataTable extends React.Component<Props, State> {
         };
 
         this.handleColClick = this.handleColClick.bind(this);
-        this.handleEnableFilters = this.handleEnableFilters.bind(this);
+        this.handleToggleFilters = this.handleToggleFilters.bind(this);
         this.handleFilterUpdate = this.handleFilterUpdate.bind(this);
         this.handlePagination = this.handlePagination.bind(this);
         this.handlePerPage = this.handlePerPage.bind(this);
@@ -248,7 +229,7 @@ class DataTable extends React.Component<Props, State> {
         });
     }
 
-    handleEnableFilters() {
+    handleToggleFilters() {
         // Remove filter cache if hiding, add filter cache if displaying
         if (this.state.enableFilters) {
             localStorage.removeItem(`DataTableFilters:${this.props.name}`);
@@ -487,98 +468,25 @@ class DataTable extends React.Component<Props, State> {
             sortedRows = sortedRows.slice(start - 1, end);
         }
 
-        let aboveTable = null;
-        let belowTable = null;
-        if (pagination) {
-            aboveTable = (
-                <>
-                    <div className="dataTables_length">
-                        <label>
-                            <select
-                                className="form-control form-control-sm"
-                                onChange={this.handlePerPage}
-                                style={{ width: "75px" }}
-                                value={this.state.perPage}
-                            >
-                                <option value="10">10</option>
-                                <option value="25">25</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                            </select>{" "}
-                            per page
-                        </label>
-                    </div>
-                    <div className="dataTables_filter">
-                        <HelpPopover
-                            placement="bottom"
-                            style={{ marginRight: "6px" }}
-                            title="Filtering"
-                        >
-                            <p>
-                                The main search box looks in all columns, but
-                                you can filter on the values in specific columns
-                                by clicking the "Filter" button{" "}
-                                <span className="glyphicon glyphicon-filter" />{" "}
-                                and entering text below the column headers.
-                            </p>
-                            <p>
-                                For numeric columns, you can enter "&gt;50" to
-                                show values greater than or equal to 50,
-                                "&lt;50" for the opposite, and "=50" for values
-                                exactly equal to 50.
-                            </p>
-                        </HelpPopover>
-                        <a
-                            className={classNames(
-                                "btn btn-sm btn-light-bordered",
-                                {
-                                    active: this.state.enableFilters,
-                                },
-                            )}
-                            onClick={this.handleEnableFilters}
-                            style={{ marginRight: "6px" }}
-                            title="Filter"
-                        >
-                            <span className="glyphicon glyphicon-filter" />
-                        </a>
-                        <label>
-                            <input
-                                className="form-control form-control-sm"
-                                onChange={this.handleSearch}
-                                placeholder="Search"
-                                style={{ width: "200px" }}
-                                type="search"
-                            />
-                        </label>
-                    </div>
-                </>
-            );
-
-            belowTable = (
-                <>
-                    <Info
-                        end={end}
-                        numRows={rowsFiltered.length}
-                        numRowsUnfiltered={rows.length}
-                        start={start}
-                    />
-                    <Pagination
-                        currentPage={this.state.currentPage}
-                        numRows={rowsFiltered.length}
-                        onClick={this.handlePagination}
-                        perPage={this.state.perPage}
-                    />
-                </>
-            );
-        }
-
         return (
             <div
                 className={classNames(className, {
                     "table-nonfluid": nonfluid,
                 })}
             >
-                {aboveTable}
+                {pagination ? (
+                    <PerPage
+                        onChange={this.handlePerPage}
+                        value={this.state.perPage}
+                    />
+                ) : null}
+                {pagination ? (
+                    <Controls
+                        enableFilters={this.state.enableFilters}
+                        onSearch={this.handleSearch}
+                        onToggleFilters={this.handleToggleFilters}
+                    />
+                ) : null}
                 <ResponsiveTableWrapper nonfluid={nonfluid}>
                     <table className="table table-striped table-bordered table-sm table-hover">
                         <Header
@@ -598,7 +506,22 @@ class DataTable extends React.Component<Props, State> {
                         <Footer footer={footer} />
                     </table>
                 </ResponsiveTableWrapper>
-                {belowTable}
+                {pagination ? (
+                    <Info
+                        end={end}
+                        numRows={rowsFiltered.length}
+                        numRowsUnfiltered={rows.length}
+                        start={start}
+                    />
+                ) : null}
+                {pagination ? (
+                    <Pagination
+                        currentPage={this.state.currentPage}
+                        numRows={rowsFiltered.length}
+                        onClick={this.handlePagination}
+                        perPage={this.state.perPage}
+                    />
+                ) : null}
             </div>
         );
     }

@@ -1,0 +1,37 @@
+// @flow
+
+import PropTypes from "prop-types";
+import * as React from "react";
+
+const Info = ({
+    end,
+    numRows,
+    numRowsUnfiltered,
+    start,
+}: {
+    end: number,
+    numRows: number,
+    numRowsUnfiltered: number,
+    start: number,
+}) => {
+    const filteredText =
+        numRows !== numRowsUnfiltered
+            ? ` (filtered from ${numRowsUnfiltered})`
+            : null;
+
+    return (
+        <div className="dataTables_info d-none d-sm-block">
+            {start} to {end} of {numRows}
+            {filteredText}
+        </div>
+    );
+};
+
+Info.propTypes = {
+    end: PropTypes.number.isRequired,
+    numRows: PropTypes.number.isRequired,
+    numRowsUnfiltered: PropTypes.number.isRequired,
+    start: PropTypes.number.isRequired,
+};
+
+export default Info;

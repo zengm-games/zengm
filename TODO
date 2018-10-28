@@ -311,9 +311,6 @@ DataTable
     CSV export
     show/hide columns
 
-Trade
-  could be cleaned up a lot
-
 Draft
   make it cooler
   fantasy draft is hacky and glitchy - do better!
@@ -373,8 +370,6 @@ Add 'Free Agents' to 'Teams' dropdown menu on 'Player Ratings' page. https://www
 
 "resign all" button https://www.reddit.com/r/BasketballGM/comments/40q8rc/help_beta_test_new_contract_negotiation_feature/cywki5q
 
-https://www.reddit.com/r/BasketballGM/comments/3se2v7/two_small_bugs/
-
 team dropdown in dashboard
 
 feats table should show both playoffs and regular season by default
@@ -417,8 +412,6 @@ Too many 8 seeds winning over 1 seeds
   http://www.reddit.com/r/BasketballGM/comments/391et4/1v8_seed_theory_100_years_of_simulation/
   point differential stuff - BBGM teams seem better than NBA teams, but still lose in 8-1 (and have worse records)
     some of this could be running up the score against bad teams
-
-balance http://www.reddit.com/r/BasketballGM/comments/3759dw/guide_to_winning_70_games_consistently/crls9b1?context=3
 
 playoff and regular season playing time and injury differences http://www.reddit.com/r/BasketballGM/comments/38f7dj/playoff_variance_seems_a_little_high/crxh643
 
@@ -481,12 +474,6 @@ transaction log
   anything else to add or anywhere else to use this feature? ask
     big AI free agent signings
     team transactions page
-
-phase changes in atomic transactions
-  phaseChangeInProgress checks should be in same tx too!
-  test
-    UI and other glitches due to tx race conditions
-  http://www.reddit.com/r/BasketballGM/comments/2yd2lb/the_curious_case_of_meddford_jones/
 
 github
   bitbucket issues

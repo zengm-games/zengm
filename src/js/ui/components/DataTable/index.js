@@ -4,274 +4,16 @@ import classNames from "classnames";
 import orderBy from "lodash/orderBy";
 import PropTypes from "prop-types";
 import * as React from "react";
-import textContent from "react-addons-text-content";
-import { HelpPopover, ResponsiveTableWrapper } from ".";
-import { helpers } from "../util";
-import clickable from "../wrappers/clickable";
-import type { SortOrder, SortType } from "../../common/types";
-
-const FilterHeader = ({ cols, filters, handleFilterUpdate }) => {
-    return (
-        <tr>
-            {cols.map((col, i) => {
-                const filter = filters[i] === undefined ? "" : filters[i];
-
-                return (
-                    <th key={i}>
-                        <input
-                            onChange={event => handleFilterUpdate(event, i)}
-                            style={{
-                                border: "1px solid #ccc",
-                                fontWeight: "normal",
-                                fontSize: "12px",
-                                width: "100%",
-                            }}
-                            type="text"
-                            value={filter}
-                        />
-                    </th>
-                );
-            })}
-        </tr>
-    );
-};
-
-FilterHeader.propTypes = {
-    cols: PropTypes.arrayOf(
-        PropTypes.shape({
-            title: PropTypes.string.isRequired,
-        }),
-    ).isRequired,
-    filters: PropTypes.arrayOf(PropTypes.string).isRequired,
-    handleFilterUpdate: PropTypes.func.isRequired,
-};
-
-const Header = ({
-    cols,
-    enableFilters,
-    filters,
-    handleColClick,
-    handleFilterUpdate,
-    sortBys,
-    superCols,
-}) => {
-    return (
-        <thead>
-            {superCols ? (
-                <tr>
-                    {superCols.map(({ colspan, desc, title }, i) => {
-                        return (
-                            <th
-                                key={i}
-                                colSpan={colspan}
-                                style={{ textAlign: "center" }}
-                                title={desc}
-                            >
-                                {title}
-                            </th>
-                        );
-                    })}
-                </tr>
-            ) : null}
-            <tr>
-                {cols.map(({ desc, sortSequence, title, width }, i) => {
-                    let className;
-                    if (sortSequence && sortSequence.length === 0) {
-                        className = null;
-                    } else {
-                        className = "sorting";
-                        for (const sortBy of sortBys) {
-                            if (sortBy[0] === i) {
-                                className =
-                                    sortBy[1] === "asc"
-                                        ? "sorting_asc"
-                                        : "sorting_desc";
-                                break;
-                            }
-                        }
-                    }
-                    return (
-                        <th
-                            className={className}
-                            key={i}
-                            onClick={event => handleColClick(event, i)}
-                            title={desc}
-                            width={width}
-                        >
-                            {title}
-                        </th>
-                    );
-                })}
-            </tr>
-            {enableFilters ? (
-                <FilterHeader
-                    cols={cols}
-                    filters={filters}
-                    handleFilterUpdate={handleFilterUpdate}
-                />
-            ) : null}
-        </thead>
-    );
-};
-
-Header.propTypes = {
-    cols: PropTypes.arrayOf(
-        PropTypes.shape({
-            desc: PropTypes.string,
-            sortSequence: PropTypes.arrayOf(PropTypes.string),
-            title: PropTypes.string.isRequired,
-            width: PropTypes.string,
-        }),
-    ).isRequired,
-    enableFilters: PropTypes.bool.isRequired,
-    filters: PropTypes.arrayOf(PropTypes.string).isRequired,
-    handleColClick: PropTypes.func.isRequired,
-    handleFilterUpdate: PropTypes.func.isRequired,
-    sortBys: PropTypes.arrayOf(
-        PropTypes.arrayOf(
-            PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-        ),
-    ).isRequired,
-    superCols: PropTypes.arrayOf(
-        PropTypes.shape({
-            colspan: PropTypes.number.isRequired,
-            desc: PropTypes.string,
-            title: PropTypes.string.isRequired,
-        }),
-    ),
-};
-
-const Row = clickable(({ clicked, row, toggleClicked }) => {
-    return (
-        <tr
-            className={classNames(row.classNames, { "table-warning": clicked })}
-            onClick={toggleClicked}
-        >
-            {row.data.map((value = null, i) => {
-                // Value is either the value, or an object containing the value as a property
-                if (value !== null && value.hasOwnProperty("value")) {
-                    return (
-                        <td className={classNames(value.classNames)} key={i}>
-                            {value.value}
-                        </td>
-                    );
-                }
-                return <td key={i}>{value}</td>;
-            })}
-        </tr>
-    );
-});
-
-Row.propTypes = {
-    row: PropTypes.shape({
-        classNames: PropTypes.object,
-        data: PropTypes.array.isRequired,
-    }).isRequired,
-};
-
-const getSearchVal = val => {
-    try {
-        let sortVal;
-        if (React.isValidElement(val)) {
-            sortVal = textContent(val);
-        } else {
-            sortVal = val;
-        }
-
-        if (sortVal !== undefined && sortVal !== null && sortVal.toString) {
-            return sortVal.toString().toLowerCase();
-        }
-        return "";
-    } catch (err) {
-        console.error(`getSearchVal error on val "${val}"`, err);
-        return "";
-    }
-};
-
-const getSortVal = (value = null, sortType) => {
-    try {
-        let val;
-        let sortVal;
-
-        // Get the right 'value'.
-        if (value !== null && value.hasOwnProperty("value")) {
-            val = value.value;
-        } else {
-            val = value;
-        }
-
-        if (React.isValidElement(val)) {
-            sortVal = textContent(val);
-        } else {
-            sortVal = val;
-        }
-
-        if (sortType === "number") {
-            if (sortVal === null) {
-                return -Infinity;
-            }
-            if (typeof sortVal !== "number") {
-                return parseFloat(sortVal);
-            }
-            return val;
-        }
-        if (sortType === "lastTen") {
-            if (sortVal === null) {
-                return null;
-            }
-            return parseInt(sortVal.split("-")[0], 10);
-        }
-        if (sortType === "draftPick") {
-            if (sortVal === null) {
-                return null;
-            }
-            const [round, pick] = sortVal.split("-");
-
-            // This assumes no league has more than a million teams lol
-            return parseInt(round, 10) * 1000000 + parseInt(pick, 10);
-        }
-        if (sortType === "name") {
-            if (sortVal === null) {
-                return null;
-            }
-            const parts = sortVal.split(" (")[0].split(" ");
-
-            const lastName = parts[parts.length - 1];
-
-            // For "Bob Smith Jr." and similar names, return "Smith" not "Jr."
-            // Eventually should probably unify this with the code in tools/names.js
-            const suffixes = ["Jr", "Jr.", "Sr", "Sr."];
-            if (
-                parts.length > 2 &&
-                (suffixes.includes(lastName) ||
-                    lastName === lastName.toUpperCase())
-            ) {
-                return parts[parts.length - 2];
-            }
-
-            return lastName;
-        }
-        if (sortType === "currency") {
-            if (sortVal === null) {
-                return -Infinity;
-            }
-            // Drop $ and parseFloat will just keep the numeric part at the beginning of the string
-            if (sortVal.includes("B")) {
-                return parseFloat(sortVal.replace("$", "")) * 1000;
-            }
-            return parseFloat(sortVal.replace("$", ""));
-        }
-        return sortVal;
-    } catch (err) {
-        console.error(
-            `getSortVal error on val "${String(value)}" and sortType "${String(
-                sortType,
-            )}"`,
-            err,
-        );
-        return null;
-    }
-};
+import Footer from "./Footer";
+import Header from "./Header";
+import Row from "./Row";
+import Pagination from "./Pagination";
+import getSearchVal from "./getSearchVal";
+import getSortVal from "./getSortVal";
+import HelpPopover from "../HelpPopover";
+import ResponsiveTableWrapper from "../ResponsiveTableWrapper";
+import { helpers } from "../../util";
+import type { SortOrder, SortType } from "../../../common/types";
 
 const Info = ({ end, numRows, numRowsUnfiltered, start }) => {
     const filteredText =
@@ -294,95 +36,32 @@ Info.propTypes = {
     start: PropTypes.number.isRequired,
 };
 
-const Paging = ({ currentPage, numRows, onClick, perPage }) => {
-    const showPrev = currentPage > 1;
-    const showNext = numRows > currentPage * perPage;
+export type SortBy = [number, SortOrder];
 
-    const numPages = Math.ceil(numRows / perPage);
-    let firstShownPage = currentPage <= 3 ? 1 : currentPage - 2;
-    while (firstShownPage > 1 && numPages - firstShownPage < 4) {
-        firstShownPage -= 1;
-    }
-    let lastShownPage = firstShownPage + 4;
-    if (lastShownPage > numPages) {
-        lastShownPage = numPages;
-    }
-
-    const numberedPages = [];
-    for (let i = firstShownPage; i <= lastShownPage; i++) {
-        numberedPages.push(
-            <li
-                key={i}
-                className={classNames(
-                    "page-item",
-                    i === currentPage ? "active" : null,
-                )}
-            >
-                <a className="page-link" onClick={() => onClick(i)}>
-                    {i}
-                </a>
-            </li>,
-        );
-    }
-
-    return (
-        <div className="dataTables_paginate">
-            <ul className="pagination">
-                <li
-                    className={classNames("page-item", { disabled: !showPrev })}
-                >
-                    <a
-                        className="page-link"
-                        onClick={() => showPrev && onClick(currentPage - 1)}
-                    >
-                        ← Prev
-                    </a>
-                </li>
-                {numberedPages}
-                <li
-                    className={classNames("page-item", { disabled: !showNext })}
-                >
-                    <a
-                        className="page-link"
-                        onClick={() => showNext && onClick(currentPage + 1)}
-                    >
-                        Next →
-                    </a>
-                </li>
-            </ul>
-        </div>
-    );
+export type Col = {
+    desc?: string,
+    sortSequence?: SortOrder[],
+    sortType?: SortType,
+    title: string,
+    width?: string,
 };
 
-Paging.propTypes = {
-    currentPage: PropTypes.number.isRequired,
-    numRows: PropTypes.number.isRequired,
-    onClick: PropTypes.func.isRequired,
-    perPage: PropTypes.number.isRequired,
+export type SuperCol = {
+    colspan: number,
+    desc?: string,
+    title: string,
 };
-
-type SortBy = [number, SortOrder];
 
 type Props = {
     className?: string,
-    cols: {
-        desc?: string,
-        sortSequence?: SortOrder[],
-        sortType?: SortType,
-        title: string,
-        width?: string,
-    }[],
+    cols: Col[],
     defaultSort: SortBy,
     footer?: any[],
     name: string,
     nonfluid?: boolean,
     pagination?: boolean,
     rows: any[],
-    superCols?: {
-        colspan: number,
-        desc?: string,
-        title: string,
-    }[],
+    superCols?: SuperCol[],
     addFilters?: (string | void)[],
 };
 
@@ -473,7 +152,7 @@ class DataTable extends React.Component<Props, State> {
 
     handleFilterUpdate: Function;
 
-    handlePaging: Function;
+    handlePagination: Function;
 
     handlePerPage: Function;
 
@@ -496,7 +175,7 @@ class DataTable extends React.Component<Props, State> {
         this.handleColClick = this.handleColClick.bind(this);
         this.handleEnableFilters = this.handleEnableFilters.bind(this);
         this.handleFilterUpdate = this.handleFilterUpdate.bind(this);
-        this.handlePaging = this.handlePaging.bind(this);
+        this.handlePagination = this.handlePagination.bind(this);
         this.handlePerPage = this.handlePerPage.bind(this);
         this.handleSearch = this.handleSearch.bind(this);
     }
@@ -601,7 +280,7 @@ class DataTable extends React.Component<Props, State> {
         );
     }
 
-    handlePaging(newPage: number) {
+    handlePagination(newPage: number) {
         if (newPage !== this.state.currentPage) {
             this.setState({ currentPage: newPage });
         }
@@ -812,7 +491,7 @@ class DataTable extends React.Component<Props, State> {
         let belowTable = null;
         if (pagination) {
             aboveTable = (
-                <div>
+                <>
                     <div className="dataTables_length">
                         <label>
                             <select
@@ -872,66 +551,24 @@ class DataTable extends React.Component<Props, State> {
                             />
                         </label>
                     </div>
-                </div>
+                </>
             );
 
             belowTable = (
-                <div>
+                <>
                     <Info
                         end={end}
                         numRows={rowsFiltered.length}
                         numRowsUnfiltered={rows.length}
                         start={start}
                     />
-                    <Paging
+                    <Pagination
                         currentPage={this.state.currentPage}
                         numRows={rowsFiltered.length}
-                        onClick={this.handlePaging}
+                        onClick={this.handlePagination}
                         perPage={this.state.perPage}
                     />
-                </div>
-            );
-        }
-
-        // Table footer
-        let tfoot = null;
-        if (footer) {
-            let footers;
-
-            if (Array.isArray(footer[0])) {
-                // There are multiple footers
-                footers = footer;
-            } else {
-                // There's only one footer
-                footers = [footer];
-            }
-
-            tfoot = (
-                <tfoot>
-                    {footers.map((row, i) => (
-                        <tr key={i}>
-                            {row.map((value, j) => {
-                                if (
-                                    value !== null &&
-                                    value.hasOwnProperty("value")
-                                ) {
-                                    return (
-                                        <th
-                                            className={classNames(
-                                                value.classNames,
-                                            )}
-                                            key={j}
-                                        >
-                                            {value.value}
-                                        </th>
-                                    );
-                                }
-
-                                return <th key={j}>{value}</th>;
-                            })}
-                        </tr>
-                    ))}
-                </tfoot>
+                </>
             );
         }
 
@@ -958,7 +595,7 @@ class DataTable extends React.Component<Props, State> {
                                 <Row key={row.key} row={row} />
                             ))}
                         </tbody>
-                        {tfoot}
+                        <Footer footer={footer} />
                     </table>
                 </ResponsiveTableWrapper>
                 {belowTable}

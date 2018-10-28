@@ -69,7 +69,14 @@
         document.getElementsByTagName("head")[0].appendChild(el);
         return el;
       }
-      window.themeCSSLink = loadCSS("gen/" + (localStorage.getItem("theme") === "dark" ? "dark" : "light") + ".css");
+      function getTheme() {
+        try {
+          return localStorage.getItem("theme") === "dark" ? "dark" : "light";
+        } catch (err) {
+          return "light";
+        }
+      }
+      window.themeCSSLink = loadCSS("gen/" + getTheme() + ".css");
 
       window.enableLogging = location.host.indexOf("basketball-gm.com") >= 0 && location.pathname.indexOf("/test") === -1;
 
@@ -234,8 +241,15 @@
 
       // Browser compatibility checks! https://gist.github.com/jensarps/15f270874889e1717b3d
       var goodIDB = function (cb) {
-        if (typeof window.indexedDB === "undefined") {
-          cb("bad");
+        try {
+          if (typeof window.indexedDB === "undefined") {
+            cb("bad");
+            return;
+          }
+        } catch (err) {
+          console.error("Error accessing window.indexedDB");
+          console.error(err);
+          cb("open-failed");
           return;
         }
 
@@ -252,12 +266,13 @@
         var openRequest = idb.open('__detectIDB_test2', 1);
 
         openRequest.onerror = function (evt) {
+          console.error("Error openining test database:");
           console.error(evt.target.error);
           if (evt.target.error.message.includes("aborted")) {
             // Error like "Version change transaction was aborted in upgradeneeded event handler." is probably quota error - try to continue loading BBGM and hope for the best
             cb("good");
           } else {
-            cb("firefox-private");
+            cb("open-failed");
           }
         }
 
@@ -324,8 +339,8 @@
       goodIDB(function (idbResult) {
         if (idbResult !== "good" || !supportsArrowFunctions() || !supportsSymbol()) {
           var errorMsg;
-          if (idbResult === "firefox-private") {
-            errorMsg = '<p><b>Error!</b> Are you using Firefox in Private Browsing mode? There is currently a bug in Firefox preventing that from working with Basketball GM. Either load this outside of Private Browsing mode, or try using <a href="https://www.google.com/chrome/">Google Chrome</a> instead.</p>';
+          if (idbResult === "open-failed") {
+            errorMsg = '<p><b>Error!</b> Cannot store data.</p><p>If you have disabled cookies in your browser, you must enable them to play Basketball GM.</p><p>If you\'re using Firefox\'s Private Browsing mode, there is currently a bug in Firefox that prevents Basketball GM from running. Either load Basketball GM outside of Private Browsing mode, or try using <a href="https://www.google.com/chrome/">Google Chrome</a> instead.</p>';
           } else {
             errorMsg = '<p><b>Error!</b> Your browser is not modern enough to run Basketball GM. The latest version of <a href="https://www.google.com/chrome/">Google Chrome</a> works best.</p>';
           }

@@ -1,4 +1,7 @@
-abstract out basketball code, write another sport sharing code
+set rookie contracts in new league, so you don't get weird young free agents early in league
+
+AI teams should adjust finances
+- and reset after user is fired
 
 better salary AI
   old players undervalued
@@ -259,8 +262,6 @@ document cache data format and API!
 - read from just the cache if you're sure everything is there (like an active player). otherwise, read from db and augment with cache (because anything could be in cache, even if it's not normally.. like retired player added to watch list). getCopy variables do this
 - promise microtask worker crap - for firefox support, if you start a backboard tx manually, you can't do any promise/asyncawait stuff inside the callback
 
-can ui/util/logEvent be replaced by just notify? since it never writes to db?
-
 event log refactor
 - react
 - keep state just on worker
@@ -269,8 +270,6 @@ event log refactor
 ----
 
 https://github.com/pinojs/pino
-
-HTML in play by play https://www.reddit.com/r/BasketballGM/comments/5963ym/playbyplay_bug/
 
 https://www.reddit.com/r/BasketballGM/comments/57cux2/small_issue/
 
@@ -425,8 +424,6 @@ playoff and regular season playing time and injury differences http://www.reddit
 
 when retired, player page (and other career-level things) should display most common pos, or maybe composite that us union of all positions (like GF for someone who was both SG and SF)
   draftSummary, hallOfFame, player, playerStats (careerTotals), teamHistory, anything else?
-
-Exclude assets from AI trade offers http://www.reddit.com/r/BasketballGM/comments/336nzr/trade_ui_redesign/crawmjy?context=3
 
 delete old data bug http://www.reddit.com/r/BasketballGM/comments/39mi4p/bug_pers_roughly_double_after_deleting_unnotables/cs8difx?context=3
 

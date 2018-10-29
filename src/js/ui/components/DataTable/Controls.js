@@ -7,10 +7,12 @@ import HelpPopover from "../HelpPopover";
 
 const Controls = ({
     enableFilters,
+    onExportCSV,
     onSearch,
     onToggleFilters,
 }: {
     enableFilters: boolean,
+    onExportCSV: () => void,
     onSearch: (SyntheticInputEvent<HTMLInputElement>) => void,
     onToggleFilters: () => void,
 }) => {
@@ -33,6 +35,14 @@ const Controls = ({
                     "=50" for values exactly equal to 50.
                 </p>
             </HelpPopover>
+            <a
+                className="btn btn-sm btn-light-bordered"
+                onClick={onExportCSV}
+                style={{ marginRight: "6px" }}
+                title="Download Spreadsheet"
+            >
+                <span className="glyphicon glyphicon-download-alt" />
+            </a>
             <a
                 className={classNames("btn btn-sm btn-light-bordered", {
                     active: enableFilters,
@@ -58,6 +68,7 @@ const Controls = ({
 
 Controls.propTypes = {
     enableFilters: PropTypes.bool.isRequired,
+    onExportCSV: PropTypes.func.isRequired,
     onSearch: PropTypes.func.isRequired,
     onToggleFilters: PropTypes.func.isRequired,
 };

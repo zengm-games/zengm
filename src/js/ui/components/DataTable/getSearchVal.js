@@ -3,7 +3,7 @@
 import * as React from "react";
 import textContent from "react-addons-text-content";
 
-const getSearchVal = (val: any) => {
+const getSearchVal = (val: any, toLowerCase?: boolean = true) => {
     try {
         let sortVal;
         if (React.isValidElement(val)) {
@@ -13,7 +13,9 @@ const getSearchVal = (val: any) => {
         }
 
         if (sortVal !== undefined && sortVal !== null && sortVal.toString) {
-            return sortVal.toString().toLowerCase();
+            return toLowerCase
+                ? sortVal.toString().toLowerCase()
+                : sortVal.toString();
         }
         return "";
     } catch (err) {

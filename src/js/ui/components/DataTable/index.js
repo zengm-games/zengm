@@ -60,6 +60,8 @@ type State = {
 class DataTable extends React.Component<Props, State> {
     handleColClick: Function;
 
+    handleExportCSV: Function;
+
     handleToggleFilters: Function;
 
     handleFilterUpdate: Function;
@@ -85,6 +87,7 @@ class DataTable extends React.Component<Props, State> {
         };
 
         this.handleColClick = this.handleColClick.bind(this);
+        this.handleExportCSV = this.handleExportCSV.bind(this);
         this.handleToggleFilters = this.handleToggleFilters.bind(this);
         this.handleFilterUpdate = this.handleFilterUpdate.bind(this);
         this.handlePagination = this.handlePagination.bind(this);
@@ -158,6 +161,31 @@ class DataTable extends React.Component<Props, State> {
             currentPage: 1,
             sortBys,
         });
+    }
+
+    handleExportCSV() {
+        const colNames = this.props.cols.map(col => col.title);
+
+        const rows = this.processRows()
+            .map(row => row.data.map(val => getSearchVal(val, false)))
+            .map(row => row.join(","))
+            .join("\n");
+
+        const output = `${colNames}\n${rows}\n`;
+
+        // Magic number from http://stackoverflow.com/a/18925211/786644 to force UTF-8 encoding
+        const blob = new Blob(["\ufeff", output], { type: "text/csv" });
+        const a = document.createElement("a");
+        a.download = `${this.props.name}.csv`;
+        a.href = URL.createObjectURL(blob);
+        a.dataset.downloadurl = ["text/csv", a.download, a.href].join(":");
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => {
+            URL.revokeObjectURL(a.href);
+        }, 1500);
     }
 
     handleToggleFilters() {
@@ -255,22 +283,12 @@ class DataTable extends React.Component<Props, State> {
         return updatedState;
     }
 
-    render() {
-        const {
-            className,
-            cols,
-            footer,
-            nonfluid,
-            pagination,
-            rows,
-            superCols,
-        } = this.props;
-
+    processRows() {
         const filters = this.state.enableFilters
             ? this.state.filters.map((filter, i) => {
                   if (
-                      cols[i].sortType === "number" ||
-                      cols[i].sortType === "currency"
+                      this.props.cols[i].sortType === "number" ||
+                      this.props.cols[i].sortType === "currency"
                   ) {
                       let number = filter.replace(/[^0-9.<>]/g, "");
                       let direction;
@@ -299,8 +317,8 @@ class DataTable extends React.Component<Props, State> {
             this.state.searchText === "" && !this.state.enableFilters;
 
         const rowsFiltered = skipFiltering
-            ? rows
-            : rows.filter(row => {
+            ? this.props.rows
+            : this.props.rows.filter(row => {
                   // Search
                   if (this.state.searchText !== "") {
                       let found = false;
@@ -339,7 +357,10 @@ class DataTable extends React.Component<Props, State> {
                               }
 
                               const numericVal = parseFloat(
-                                  getSortVal(row.data[i], cols[i].sortType),
+                                  getSortVal(
+                                      row.data[i],
+                                      this.props.cols[i].sortType,
+                                  ),
                               );
                               if (Number.isNaN(numericVal)) {
                                   continue;
@@ -378,25 +399,40 @@ class DataTable extends React.Component<Props, State> {
                   return true;
               });
 
-        const start = 1 + (this.state.currentPage - 1) * this.state.perPage;
-        let end = start + this.state.perPage - 1;
-        if (end > rowsFiltered.length) {
-            end = rowsFiltered.length;
-        }
-
-        let sortedRows = orderBy(
+        return orderBy(
             rowsFiltered,
             this.state.sortBys.map(sortBy => row => {
                 return getSortVal(
                     row.data[sortBy[0]],
-                    cols[sortBy[0]].sortType,
+                    this.props.cols[sortBy[0]].sortType,
                 );
             }),
             this.state.sortBys.map(sortBy => sortBy[1]),
         );
+    }
+
+    render() {
+        const {
+            className,
+            cols,
+            footer,
+            nonfluid,
+            pagination,
+            rows,
+            superCols,
+        } = this.props;
+
+        let processedRows = this.processRows();
+        const numRowsFiltered = processedRows.length;
+
+        const start = 1 + (this.state.currentPage - 1) * this.state.perPage;
+        let end = start + this.state.perPage - 1;
+        if (end > processedRows.length) {
+            end = processedRows.length;
+        }
 
         if (pagination) {
-            sortedRows = sortedRows.slice(start - 1, end);
+            processedRows = processedRows.slice(start - 1, end);
         }
 
         return (
@@ -414,6 +450,7 @@ class DataTable extends React.Component<Props, State> {
                 {pagination ? (
                     <Controls
                         enableFilters={this.state.enableFilters}
+                        onExportCSV={this.handleExportCSV}
                         onSearch={this.handleSearch}
                         onToggleFilters={this.handleToggleFilters}
                     />
@@ -430,7 +467,7 @@ class DataTable extends React.Component<Props, State> {
                             superCols={superCols}
                         />
                         <tbody>
-                            {sortedRows.map(row => (
+                            {processedRows.map(row => (
                                 <Row key={row.key} row={row} />
                             ))}
                         </tbody>
@@ -440,7 +477,7 @@ class DataTable extends React.Component<Props, State> {
                 {pagination ? (
                     <Info
                         end={end}
-                        numRows={rowsFiltered.length}
+                        numRows={numRowsFiltered}
                         numRowsUnfiltered={rows.length}
                         start={start}
                     />
@@ -448,7 +485,7 @@ class DataTable extends React.Component<Props, State> {
                 {pagination ? (
                     <Pagination
                         currentPage={this.state.currentPage}
-                        numRows={rowsFiltered.length}
+                        numRows={numRowsFiltered}
                         onClick={this.handlePagination}
                         perPage={this.state.perPage}
                     />

@@ -1,3 +1,5 @@
+Unify file download code in DataTable and DownloadDataLink
+
 set rookie contracts in new league, so you don't get weird young free agents early in league
 
 AI teams should adjust finances
@@ -308,7 +310,6 @@ DataTable
   https://github.com/rwu823/react-addons-text-content/issues/1 prevents sorting by skills on draft summary
     for now, pass sort key as child and it works
   Fancy features
-    CSV export
     show/hide columns
 
 Draft

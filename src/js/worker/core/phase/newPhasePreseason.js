@@ -133,7 +133,7 @@ const newPhasePreseason = async (conditions: Conditions) => {
         local.autoPlaySeasons -= 1;
     }
 
-    if (env.enableLogging && !env.inCordova) {
+    if (env.enableLogging) {
         toUI(["emit", "showAd", "modal", local.autoPlaySeasons], conditions);
     }
 

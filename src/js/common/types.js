@@ -165,7 +165,6 @@ export type EventBBGM = any;
 export type Env = {|
     enableLogging: boolean,
     heartbeatID: string,
-    inCordova: boolean,
     tld: string,
     useSharedWorker: boolean,
 

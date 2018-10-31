@@ -46,26 +46,19 @@
         return version >= 57;
       }
 
-      window.inCordova = document.URL.indexOf('file://') === 0;
-      window.bbgmPrefix = window.inCordova ? "" : "/"; // Relative URLs for Cordova
       window.bbgmVersion = "REV_GOES_HERE";
       window.bbgmVersionUI = "???";
       window.bbgmVersionWorker = "???";
       window.useSharedWorker = typeof SharedWorker !== 'undefined' && !isBuggyFirefox();
 
       // .com or .dev TLD
-      if (!window.inCordova) {
-        var splitUrl = window.location.hostname.split('.');
-        window.tld = splitUrl[splitUrl.length - 1];
-      } else {
-          // From within Cordova, window.location.hostname is not set, so always use .com
-        window.tld = 'com';
-      }
+      var splitUrl = window.location.hostname.split('.');
+      window.tld = splitUrl[splitUrl.length - 1];
 
       function loadCSS(filename){
         var el = document.createElement("link");
         el.setAttribute("rel", "stylesheet");
-        el.setAttribute("href", bbgmPrefix + filename);
+        el.setAttribute("href", "/" + filename);
         document.getElementsByTagName("head")[0].appendChild(el);
         return el;
       }
@@ -359,7 +352,7 @@
           var body = document.getElementsByTagName('body').item(0);
           var script = document.createElement('script');
           script.type = 'text/javascript';
-          script.src = bbgmPrefix + "gen/ui-" + bbgmVersion + ".js";
+          script.src = "/gen/ui-" + bbgmVersion + ".js";
           body.appendChild(script);
 
           if ('serviceWorker' in navigator) {

@@ -164,7 +164,7 @@ class DataTable extends React.Component<Props, State> {
     }
 
     handleExportCSV() {
-        const colNames = this.props.cols.map(col => col.title);
+        const colNames = this.props.cols.map(col => col.title).join(",");
 
         const rows = this.processRows()
             .map(row => row.data.map(val => getSearchVal(val, false)))
@@ -180,8 +180,14 @@ class DataTable extends React.Component<Props, State> {
         a.href = URL.createObjectURL(blob);
         a.dataset.downloadurl = ["text/csv", a.download, a.href].join(":");
         a.style.display = "none";
+        if (!document.body) {
+            throw new Error("Should never happen");
+        }
         document.body.appendChild(a);
         a.click();
+        if (!document.body) {
+            throw new Error("Should never happen");
+        }
         document.body.removeChild(a);
         setTimeout(() => {
             URL.revokeObjectURL(a.href);

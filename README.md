@@ -168,14 +168,6 @@ working on something to keep me in the loop.
 Abbreviations of stats should be done like basketball-reference.com stat pages.
 For instance, "defensive rebounds" is "drb".
 
-### Cordova
-
-The game runs equally well within a web browser and within Cordova (Android
-4.4+). The codebase is designed to handle both situations (the main difference
-is absolute vs relative paths, governed by window.inCordova in index.html).
-
-Warning: This hasn't been tested in a while and is probably broken by now.
-
 ### Thank you BrowserStack
 
 Shout out to [BrowserStack](https://www.browserstack.com/) for helping with

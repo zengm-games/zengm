@@ -173,7 +173,6 @@ api.bbgmPing("version");
 
     const env: Env = {
         enableLogging: window.enableLogging,
-        inCordova: window.inCordova,
         heartbeatID,
         tld: window.tld,
         useSharedWorker: window.useSharedWorker,
@@ -215,19 +214,6 @@ api.bbgmPing("version");
     } else {
         ReactDOM.render(<Controller />, contentEl);
     }
-
-    /*this.before((ctx) => {
-            // Normal Cordova pages
-            if (ctx.path.substr(0, 7) === 'file://') {
-                ctx.path = ctx.path.substr(7);
-            }
-
-            // First load Cordova page
-            if (ctx.path.includes('/index.html')) {
-                ctx.path = '/';
-            }
-        }
-    });*/
 
     let initialLoad = true;
     router.addEventListener("routematched", (event: any) => {

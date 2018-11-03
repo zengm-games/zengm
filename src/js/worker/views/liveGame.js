@@ -29,7 +29,7 @@ async function updatePlayByPlay(
             "ft",
             "fta",
             "orb",
-            "trb",
+            "drb",
             "ast",
             "tov",
             "stl",

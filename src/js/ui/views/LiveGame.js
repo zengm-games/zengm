@@ -43,7 +43,7 @@ class PlayerRow extends React.Component {
                     {p.ft}-{p.fta}
                 </td>
                 <td>{p.orb}</td>
-                <td>{p.trb}</td>
+                <td>{p.drb + p.orb}</td>
                 <td>{p.ast}</td>
                 <td>{p.tov}</td>
                 <td>{p.stl}</td>
@@ -191,15 +191,7 @@ class LiveGame extends React.Component {
                     }
 
                     // Everything else
-                    if (e.s === "drb") {
-                        boxScore.teams[e.t].players[e.p].trb += e.amt;
-                        boxScore.teams[e.t].trb += e.amt;
-                    } else if (e.s === "orb") {
-                        boxScore.teams[e.t].players[e.p].trb += e.amt;
-                        boxScore.teams[e.t].trb += e.amt;
-                        boxScore.teams[e.t].players[e.p][e.s] += e.amt;
-                        boxScore.teams[e.t][e.s] += e.amt;
-                    } else if (
+                    if (
                         e.s === "min" ||
                         e.s === "fg" ||
                         e.s === "fga" ||
@@ -207,6 +199,8 @@ class LiveGame extends React.Component {
                         e.s === "tpa" ||
                         e.s === "ft" ||
                         e.s === "fta" ||
+                        e.s === "orb" ||
+                        e.s === "drb" ||
                         e.s === "ast" ||
                         e.s === "tov" ||
                         e.s === "stl" ||

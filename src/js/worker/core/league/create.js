@@ -359,32 +359,42 @@ export const createWithoutSaving = (
             const tids = range(g.numTeams);
             random.shuffle(tids);
 
-            for (let round = 1; round <= 2; round++) {
-                for (let pick = 1; pick <= g.numTeams; pick++) {
-                    const i = (round - 1) * g.numTeams + (pick - 1);
-                    const p = draftClass[i];
+            for (let i = 0; i < draftClass.length; i++) {
+                const p = draftClass[i];
 
-                    // Save these for later, because player.develop will overwrite them
-                    const pot = p.ratings[0].pot;
-                    const ovr = p.ratings[0].ovr;
-                    const skills = p.ratings[0].skills;
+                let round = 0;
+                let pick = 0;
 
-                    // Develop player and see if he is still non-retired
-                    player.develop(p, numYearsAgo, true);
-                    player.updateValues(p);
-                    if (!player.shouldRetire(p) || numYearsAgo <= 3) {
-                        // Do this before developing, to save ratings
-                        p.draft = {
-                            round,
-                            pick,
-                            tid: tids[pick - 1],
-                            year: g.season - numYearsAgo,
-                            originalTid: tids[pick - 1],
-                            pot,
-                            ovr,
-                            skills,
-                        };
+                if (i < g.numTeams) {
+                    round = 1;
+                    pick = i + 1;
+                } else if (i < 2 * g.numTeams) {
+                    round = 2;
+                    pick = i - g.numTeams + 1;
+                }
 
+                // Save these for later, because player.develop will overwrite them
+                const pot = p.ratings[0].pot;
+                const ovr = p.ratings[0].ovr;
+                const skills = p.ratings[0].skills;
+
+                // Develop player and see if he is still non-retired
+                player.develop(p, numYearsAgo, true);
+                player.updateValues(p);
+                if (!player.shouldRetire(p) || numYearsAgo <= 3) {
+                    // Do this before developing, to save ratings
+                    p.draft = {
+                        round,
+                        pick,
+                        tid: round === 0 ? -1 : tids[pick - 1],
+                        year: g.season - numYearsAgo,
+                        originalTid: round === 0 ? -1 : tids[pick - 1],
+                        pot,
+                        ovr,
+                        skills,
+                    };
+
+                    if (round !== 0) {
                         const years = 4 - round; // 2 years for 2nd round, 3 years for 1st round;
                         player.setContract(
                             p,
@@ -394,9 +404,9 @@ export const createWithoutSaving = (
                             },
                             false,
                         );
-
-                        keptPlayers.push(p);
                     }
+
+                    keptPlayers.push(p);
                 }
             }
         }
@@ -407,7 +417,7 @@ export const createWithoutSaving = (
         }
 
         // Add players to teams or free agency
-        keptPlayers.sort((a, b) => b.ratings[0].pot - a.ratings[0].pot);
+        keptPlayers.sort((a, b) => b.value - a.value);
         const teamPlayers = keptPlayers.slice(0, 13 * g.numTeams);
         const freeAgentPlayers = keptPlayers.slice(
             13 * g.numTeams,
@@ -415,10 +425,7 @@ export const createWithoutSaving = (
         ); // Up to 150 free agents
         random.shuffle(teamPlayers);
 
-        // Drafted players kept with own team, with some probability
-        const teamPlayersDrafted = [];
-        const teamPlayersOther = [];
-        for (const p of teamPlayers) {
+        const probStillOnDraftTeam = p => {
             let prob = 0; // Probability a player is still on his draft team
             const numYearsAgo = g.season - p.draft.year;
             if (p.draft.round === 1 || p.draft.round === 2) {
@@ -430,11 +437,16 @@ export const createWithoutSaving = (
                 if (p.draft.round === 2) {
                     prob *= 0.75;
                 }
-            } else {
-                prob = 0;
             }
 
-            if (Math.random() < prob) {
+            return prob;
+        };
+
+        // Drafted players kept with own team, with some probability
+        const teamPlayersDrafted = [];
+        const teamPlayersOther = [];
+        for (const p of teamPlayers) {
+            if (Math.random() < probStillOnDraftTeam(p)) {
                 teamPlayersDrafted.push(p);
             } else {
                 teamPlayersOther.push(p);

@@ -59,7 +59,9 @@ const DraftTeamHistory = ({ abbrev, name, players, region, userAbbrev }) => {
         return {
             key: p.pid,
             data: [
-                p.draft.year,
+                <a href={helpers.leagueUrl(["draft_summary", p.draft.year])}>
+                    {p.draft.year}
+                </a>,
                 `${p.draft.round}-${p.draft.pick}`,
                 <a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>,
                 p.pos,

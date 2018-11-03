@@ -364,22 +364,27 @@ export const createWithoutSaving = (
                     const i = (round - 1) * g.numTeams + (pick - 1);
                     const p = draftClass[i];
 
-                    // Do this before developing, to save ratings
-                    p.draft = {
-                        round,
-                        pick,
-                        tid: tids[pick - 1],
-                        year: g.season - numYearsAgo,
-                        originalTid: tids[pick - 1],
-                        pot: p.ratings[0].pot,
-                        ovr: p.ratings[0].ovr,
-                        skills: p.ratings[0].skills,
-                    };
+                    // Save these for later, because player.develop will overwrite them
+                    const pot = p.ratings[0].pot;
+                    const ovr = p.ratings[0].ovr;
+                    const skills = p.ratings[0].skills;
 
                     // Develop player and see if he is still non-retired
                     player.develop(p, numYearsAgo, true);
                     player.updateValues(p);
                     if (!player.shouldRetire(p)) {
+                        // Do this before developing, to save ratings
+                        p.draft = {
+                            round,
+                            pick,
+                            tid: tids[pick - 1],
+                            year: g.season - numYearsAgo,
+                            originalTid: tids[pick - 1],
+                            pot,
+                            ovr,
+                            skills,
+                        };
+
                         const years = 4 - round; // 2 years for 2nd round, 3 years for 1st round;
                         player.setContract(
                             p,

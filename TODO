@@ -742,7 +742,6 @@ mobile UI, bootstrap 3
         make sure to use on player page too.. can i use helpers.playerName.. there too?
     table headers
     others?
-  any columns: *em css - can't i make columns use bootstrap?
 some kind of playoff series overview page, including box scores for easy access
 luxury tax money should be redistributed to non-taxpaying teams (or teams under the cap?)
 A year-to-date comparison of team finances with the previous year.
@@ -826,11 +825,6 @@ gameSim
   rename compositeRating to compositeRatings (or something better)
     other plural issues in gameSim
   playing time not adding up to 240?
-  do some kind of profiling, see if i can speed it up
-    any way to speed up PER? maybe break it up into smaller functions so they can be profiled
-    do i need all the player composite ratings?
-    do i need all the team composite ratings?
-    how does performance change/degrade as the years go on?
   bench players should get minutes in blowouts
 AI modules that contain functions which are called to determine actions
   things to regulate...

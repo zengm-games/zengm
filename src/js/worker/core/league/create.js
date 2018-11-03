@@ -372,7 +372,7 @@ export const createWithoutSaving = (
                     // Develop player and see if he is still non-retired
                     player.develop(p, numYearsAgo, true);
                     player.updateValues(p);
-                    if (!player.shouldRetire(p)) {
+                    if (!player.shouldRetire(p) || numYearsAgo <= 3) {
                         // Do this before developing, to save ratings
                         p.draft = {
                             round,
@@ -414,13 +414,43 @@ export const createWithoutSaving = (
             150 + 13 * g.numTeams,
         ); // Up to 150 free agents
         random.shuffle(teamPlayers);
-        let newTid = -1; // So first iteration will be 0
-        for (let i = 0; i < teamPlayers.length; i++) {
-            if (i % 13 === 0) {
-                newTid += 1;
+
+        // Drafted players kept with own team, with some probability
+        const teamPlayersDrafted = [];
+        const teamPlayersOther = [];
+        for (const p of teamPlayers) {
+            let prob = 0; // Probability a player is still on his draft team
+            const numYearsAgo = g.season - p.draft.year;
+            if (p.draft.round === 1 || p.draft.round === 2) {
+                if (numYearsAgo < 8) {
+                    prob = (8 - numYearsAgo) / 8; // 87.5% for last year, 75% for 2 years ago, etc
+                } else {
+                    prob = 0.125;
+                }
+                if (p.draft.round === 2) {
+                    prob *= 0.75;
+                }
+            } else {
+                prob = 0;
             }
-            const p = teamPlayers[i];
-            p.tid = newTid;
+
+            if (Math.random() < prob) {
+                teamPlayersDrafted.push(p);
+            } else {
+                teamPlayersOther.push(p);
+            }
+        }
+
+        // Keep track of number of players on each team
+        const numPlayersByTid = {};
+        for (const tid2 of range(g.numTeams)) {
+            numPlayersByTid[tid2] = 0;
+        }
+
+        const addPlayerToTeam = (p, tid2: number) => {
+            numPlayersByTid[tid2] += 1;
+
+            p.tid = tid2;
             player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
 
             // Keep rookie contract, or no?
@@ -429,8 +459,35 @@ export const createWithoutSaving = (
             } else {
                 player.setContract(p, player.genContract(p, true), true);
             }
+
             players.push(p);
+        };
+
+        // First add drafted players
+        for (const p of teamPlayersDrafted) {
+            if (numPlayersByTid[p.draft.tid] < 13) {
+                addPlayerToTeam(p, p.draft.tid);
+            } else {
+                teamPlayersOther.push(p);
+            }
         }
+
+        // Then add other players, up to the limit
+        let currentTid = 0;
+        for (const p of teamPlayersOther) {
+            while (numPlayersByTid[currentTid] >= 13) {
+                currentTid += 1;
+            }
+
+            if (currentTid >= g.numTeams) {
+                // This should never happen!
+                break;
+            }
+
+            addPlayerToTeam(p, currentTid);
+        }
+
+        // Finally, free agents
         for (let i = 0; i < freeAgentPlayers.length; i++) {
             const p = freeAgentPlayers[i];
             p.yearsFreeAgent = Math.random() > 0.5 ? 1 : 0; // So half will be eligible to retire after the first season

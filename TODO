@@ -1,6 +1,5 @@
 set rookie contracts in new league, so you don't get weird young free agents early in league
-- possible to make players on rookie contracts belong to correct teams? at least for the last two drafts?
-  - split teamPlayers into two (rookie contracts from past 2 drafts, others). add the players separately. keep track of players per team
+- make sure undrafter players have p.draft set correctly and are developed!
 
 AI teams should adjust finances
 - and reset after user is fired

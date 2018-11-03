@@ -1,6 +1,7 @@
 // @flow
 
 import orderBy from "lodash/orderBy";
+import range from "lodash/range";
 import { Cache, connectLeague, idb } from "../../db";
 import { DIFFICULTY, PHASE, PLAYER } from "../../../common";
 import { draft, finances, league, player, team } from "..";
@@ -341,33 +342,57 @@ export const createWithoutSaving = (
 
         // Generate past 20 years of draft classes
         const NUM_PAST_SEASONS = 20;
-
-        let newPlayers = [];
-        for (let i = 0; i < NUM_PAST_SEASONS; i++) {
-            const draftClass = draft.genPlayersWithoutSaving(
+        const rookieSalaries = draft.getRookieSalaries();
+        const keptPlayers = [];
+        for (
+            let numYearsAgo = NUM_PAST_SEASONS;
+            numYearsAgo > 0;
+            numYearsAgo--
+        ) {
+            let draftClass = draft.genPlayersWithoutSaving(
                 PLAYER.UNDRAFTED,
                 scoutingRank,
-            );
-            newPlayers = newPlayers.concat(draftClass.players);
-        }
-        const numPlayersPerSeason = Math.round(
-            newPlayers.length / NUM_PAST_SEASONS,
-        );
+            ).players;
 
-        // Develop players, check retire
-        const keptPlayers = [];
-        let agingYears = 0;
-        for (let i = 0; i < newPlayers.length; i++) {
-            if (i % numPlayersPerSeason === 0) {
-                agingYears += 1;
-            }
-            const p = newPlayers[i];
-            player.develop(p, agingYears, true);
-            p.draft.year -= agingYears;
-            player.updateValues(p);
+            // Very rough simulation of a draft
+            draftClass = orderBy(draftClass, ["value"], ["desc"]);
+            const tids = range(g.numTeams);
+            random.shuffle(tids);
 
-            if (!player.shouldRetire(p)) {
-                keptPlayers.push(p);
+            for (let round = 1; round <= 2; round++) {
+                for (let pick = 1; pick <= g.numTeams; pick++) {
+                    const i = (round - 1) * g.numTeams + (pick - 1);
+                    const p = draftClass[i];
+
+                    // Do this before developing, to save ratings
+                    p.draft = {
+                        round,
+                        pick,
+                        tid: tids[pick - 1],
+                        year: g.season - numYearsAgo,
+                        originalTid: tids[pick - 1],
+                        pot: p.ratings[0].pot,
+                        ovr: p.ratings[0].ovr,
+                        skills: p.ratings[0].skills,
+                    };
+
+                    // Develop player and see if he is still non-retired
+                    player.develop(p, numYearsAgo, true);
+                    player.updateValues(p);
+                    if (!player.shouldRetire(p)) {
+                        const years = 4 - round; // 2 years for 2nd round, 3 years for 1st round;
+                        player.setContract(
+                            p,
+                            {
+                                amount: rookieSalaries[i],
+                                exp: g.season - numYearsAgo + years,
+                            },
+                            false,
+                        );
+
+                        keptPlayers.push(p);
+                    }
+                }
             }
         }
 
@@ -391,8 +416,14 @@ export const createWithoutSaving = (
             }
             const p = teamPlayers[i];
             p.tid = newTid;
-            player.setContract(p, player.genContract(p, true), true);
             player.addStatsRow(p, g.phase === PHASE.PLAYOFFS);
+
+            // Keep rookie contract, or no?
+            if (p.contract.exp >= g.season) {
+                player.setContract(p, p.contract, true);
+            } else {
+                player.setContract(p, player.genContract(p, true), true);
+            }
             players.push(p);
         }
         for (let i = 0; i < freeAgentPlayers.length; i++) {

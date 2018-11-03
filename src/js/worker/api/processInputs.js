@@ -84,7 +84,7 @@ const deleteLeague = params => {
 const draft = () => {
     if (g.phase !== PHASE.DRAFT && g.phase !== PHASE.FANTASY_DRAFT) {
         return {
-            redirectUrl: helpers.leagueUrl(["draft_summary"]),
+            redirectUrl: helpers.leagueUrl(["draft_scouting"]),
         };
     }
 };
@@ -102,12 +102,6 @@ const draftSummary = params => {
 
     // Draft hasn't happened yet this year
     if (g.phase < PHASE.DRAFT) {
-        if (g.season === g.startingSeason) {
-            // No draft history
-            return {
-                redirectUrl: helpers.leagueUrl(["draft_scouting"]),
-            };
-        }
         if (season === g.season) {
             // View last season by default
             season = g.season - 1;

@@ -425,9 +425,9 @@ class DataTable extends React.Component<Props, State> {
 
         return (
             <div
-                className={classNames(className, {
-                    "table-nonfluid": nonfluid,
-                })}
+                style={{
+                    display: nonfluid ? "inline-block" : "block",
+                }}
             >
                 {pagination ? (
                     <PerPage
@@ -443,6 +443,7 @@ class DataTable extends React.Component<Props, State> {
                         onToggleFilters={this.handleToggleFilters}
                     />
                 ) : null}
+                {nonfluid && pagination ? <div className="clearFix" /> : null}
                 <ResponsiveTableWrapper nonfluid={nonfluid}>
                     <table className="table table-striped table-bordered table-sm table-hover">
                         <Header
@@ -462,6 +463,7 @@ class DataTable extends React.Component<Props, State> {
                         <Footer footer={footer} />
                     </table>
                 </ResponsiveTableWrapper>
+                {nonfluid && pagination ? <div className="clearFix" /> : null}
                 {pagination ? (
                     <Info
                         end={end}

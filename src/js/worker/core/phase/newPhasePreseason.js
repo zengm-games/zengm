@@ -116,7 +116,6 @@ const newPhasePreseason = async (conditions: Conditions) => {
         if (p.tid === PLAYER.FREE_AGENT) {
             const newContract = player.genContract(p);
             if (newContract.amount > p.contract.amount) {
-                console.log("updating contract", p, newContract);
                 // If player is still good, bump up contract demands
                 newContract.amount =
                     (newContract.amount + p.contract.amount) / 2;

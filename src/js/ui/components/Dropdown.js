@@ -58,7 +58,8 @@ const Select = ({ field, handleChange, value }) => {
         } else if (
             field === "seasons" ||
             field === "seasonsAndCareer" ||
-            field === "seasonsAndAll"
+            field === "seasonsAndAll" ||
+            field === "seasonsAndOldDrafts"
         ) {
             options = [];
             for (
@@ -82,6 +83,24 @@ const Select = ({ field, handleChange, value }) => {
                     key: "all",
                     val: "All Seasons",
                 });
+            }
+            if (field === "seasonsAndOldDrafts") {
+                const NUM_PAST_SEASONS = 20; // Keep synced with league/create.js
+                for (
+                    let season = local.state.startingSeason - 1;
+                    season >= local.state.startingSeason - NUM_PAST_SEASONS;
+                    season--
+                ) {
+                    options.unshift({
+                        key: season,
+                        val: `${season} Season`,
+                    });
+                }
+
+                // Remove current season, if draft hasn't happened yet
+                if (local.state.phase < PHASE.DRAFT) {
+                    options.pop();
+                }
             }
         } else if (field === "seasonsUpcoming") {
             options = [];

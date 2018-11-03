@@ -103,7 +103,7 @@ const DraftSummary = ({ players, season, userTid }) => {
         <>
             <Dropdown
                 view="draft_summary"
-                fields={["seasons"]}
+                fields={["seasonsAndOldDrafts"]}
                 values={[season]}
             />
             <JumpTo season={season} />

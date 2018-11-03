@@ -341,7 +341,7 @@ export const createWithoutSaving = (
         players = [];
 
         // Generate past 20 years of draft classes
-        const NUM_PAST_SEASONS = 20;
+        const NUM_PAST_SEASONS = 20; // Keep synced with Dropdown.js seasonsAndOldDrafts
         const rookieSalaries = draft.getRookieSalaries();
         const keptPlayers = [];
         for (

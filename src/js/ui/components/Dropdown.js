@@ -59,7 +59,8 @@ const Select = ({ field, handleChange, value }) => {
             field === "seasons" ||
             field === "seasonsAndCareer" ||
             field === "seasonsAndAll" ||
-            field === "seasonsAndOldDrafts"
+            field === "seasonsAndOldDrafts" ||
+            field === "seasonsHistory"
         ) {
             options = [];
             for (
@@ -99,6 +100,12 @@ const Select = ({ field, handleChange, value }) => {
 
                 // Remove current season, if draft hasn't happened yet
                 if (local.state.phase < PHASE.DRAFT) {
+                    options.pop();
+                }
+            }
+            if (field === "seasonsHistory") {
+                // Remove current season until playoffs end
+                if (local.state.phase <= PHASE.PLAYOFFS) {
                     options.pop();
                 }
             }

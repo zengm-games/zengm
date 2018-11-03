@@ -25,7 +25,11 @@ const History = ({
 
     return (
         <>
-            <Dropdown view="history" fields={["seasons"]} values={[season]} />
+            <Dropdown
+                view="history"
+                fields={["seasonsHistory"]}
+                values={[season]}
+            />
             <JumpTo season={season} />
             <h1>
                 Season Summary <NewWindowLink />

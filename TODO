@@ -1,5 +1,4 @@
-set rookie contracts in new league, so you don't get weird young free agents early in league
-- make sure undrafter players have p.draft set correctly and are developed!
+league history table fucked up
 
 AI teams should adjust finances
 - and reset after user is fired
@@ -704,7 +703,6 @@ Add markers for clinching playoffs / 1st seed in league standings
 league leaders glitch http://www.reddit.com/r/BasketballGM/comments/1r20x5/league_leaders_bug/
 merge game.play and freeAgents.play
 replace random.gauss with random.realGauss
-current season shouldn't show in league history page dropdown
 don't need to check every team's roster limits every time games are played - could auto keep AI teams in line after any trade (with user or between AI teams), and then only the user's team needs to be checked
 UI to easily switch between conference and division standings on small screens and dashboard http://www.reddit.com/r/BasketballGM/comments/2d4o9r/feature_requests_of_the_week_august_10_2014/cjqrwtf?context=3
 schedule page (and dashboard and maybe gamelog) should show opponent records

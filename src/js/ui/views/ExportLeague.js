@@ -1,6 +1,5 @@
 import React from "react";
-import { helpers, setTitle, toWorker } from "../util";
-import { DownloadDataLink } from "../components";
+import { downloadFile, helpers, setTitle, toWorker } from "../util";
 
 const categories = [
     {
@@ -48,8 +47,6 @@ class ExportLeague extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: null,
-            filename: null,
             status: null,
         };
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -59,9 +56,7 @@ class ExportLeague extends React.Component {
         e.preventDefault();
 
         this.setState({
-            data: null,
-            filename: null,
-            status: "Generating...",
+            status: "Exporting...",
         });
 
         // Get array of object stores to export
@@ -77,8 +72,6 @@ class ExportLeague extends React.Component {
             json = JSON.stringify(data, undefined, 2);
         } catch (err) {
             this.setState({
-                data: null,
-                filename: null,
                 status: (
                     <span className="text-danger">
                         Error converting league to JSON: "{err.message}
@@ -93,9 +86,9 @@ class ExportLeague extends React.Component {
             return;
         }
 
+        downloadFile(filename, json, "application/json");
+
         this.setState({
-            data: json,
-            filename,
             status: null,
         });
     }
@@ -139,21 +132,15 @@ class ExportLeague extends React.Component {
                     <button
                         type="submit"
                         className="btn btn-primary"
-                        disabled={this.state.generating}
+                        disabled={this.state.status === "Exporting..."}
                     >
                         Export League
                     </button>
                 </form>
 
-                <p className="mt-3">
-                    <DownloadDataLink
-                        data={this.state.data}
-                        downloadText="Download Exported League File"
-                        mimeType="application/json"
-                        filename={this.state.filename}
-                        status={this.state.status}
-                    />
-                </p>
+                {this.state.status ? (
+                    <p className="mt-3">{this.state.status}</p>
+                ) : null}
             </>
         );
     }

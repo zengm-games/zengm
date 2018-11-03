@@ -15,7 +15,7 @@ import getSearchVal from "./getSearchVal";
 import getSortVal from "./getSortVal";
 import loadStateFromCache from "./loadStateFromCache";
 import ResponsiveTableWrapper from "../ResponsiveTableWrapper";
-import { helpers } from "../../util";
+import { downloadFile, helpers } from "../../util";
 import type { SortOrder, SortType } from "../../../common/types";
 
 export type SortBy = [number, SortOrder];
@@ -173,25 +173,7 @@ class DataTable extends React.Component<Props, State> {
 
         const output = `${colNames}\n${rows}\n`;
 
-        // Magic number from http://stackoverflow.com/a/18925211/786644 to force UTF-8 encoding
-        const blob = new Blob(["\ufeff", output], { type: "text/csv" });
-        const a = document.createElement("a");
-        a.download = `${this.props.name}.csv`;
-        a.href = URL.createObjectURL(blob);
-        a.dataset.downloadurl = ["text/csv", a.download, a.href].join(":");
-        a.style.display = "none";
-        if (!document.body) {
-            throw new Error("Should never happen");
-        }
-        document.body.appendChild(a);
-        a.click();
-        if (!document.body) {
-            throw new Error("Should never happen");
-        }
-        document.body.removeChild(a);
-        setTimeout(() => {
-            URL.revokeObjectURL(a.href);
-        }, 1500);
+        downloadFile(`${this.props.name}.csv`, output, "text/csv");
     }
 
     handleToggleFilters() {

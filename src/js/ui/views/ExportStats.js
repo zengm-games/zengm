@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { setTitle, toWorker } from "../util";
-import { DownloadDataLink } from "../components";
+import { downloadFile, setTitle, toWorker } from "../util";
 
 function genFilename(leagueName, season, grouping) {
     const filename = `BBGM_${leagueName.replace(
@@ -18,8 +17,6 @@ class ExportStats extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: null,
-            filename: null,
             status: null,
         };
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -30,9 +27,7 @@ class ExportStats extends React.Component {
         e.preventDefault();
 
         this.setState({
-            data: null,
-            filename: null,
-            status: "Generating...",
+            status: "Exporting...",
         });
 
         // Get array of object stores to export
@@ -50,8 +45,6 @@ class ExportStats extends React.Component {
             csvPromise = toWorker("exportPlayerGamesCsv", season);
         } else {
             this.setState({
-                data: null,
-                filename: null,
                 status: "Invalid grouping selected",
             });
             return;
@@ -64,17 +57,15 @@ class ExportStats extends React.Component {
 
         const filename = genFilename(leagueName, season, grouping);
 
+        downloadFile(filename, data, "text/csv");
+
         this.setState({
-            data,
-            filename,
             status: null,
         });
     }
 
     resetState() {
         this.setState({
-            data: null,
-            filename: null,
             status: null,
         });
     }
@@ -124,21 +115,15 @@ class ExportStats extends React.Component {
                     <button
                         type="submit"
                         className="btn btn-primary"
-                        disabled={this.state.generating}
+                        disabled={this.state.status === "Exporting..."}
                     >
                         Export Stats
                     </button>
                 </form>
 
-                <p className="mt-3">
-                    <DownloadDataLink
-                        data={this.state.data}
-                        downloadText="Download Exported Stats"
-                        filename={this.state.filename}
-                        mimeType="text/csv"
-                        status={this.state.status}
-                    />
-                </p>
+                {this.state.status ? (
+                    <p className="mt-3">{this.state.status}</p>
+                ) : null}
             </>
         );
     }

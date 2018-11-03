@@ -55,12 +55,11 @@ const handleResetPT = async (tid: number) => {
     await toWorker("resetPlayingTime", tid);
 };
 
-// If a player was just drafted by his current team and the regular season hasn't started, then he can be released without paying anything
+// If a player was just drafted and the regular season hasn't started, then he can be released without paying anything
 const justDrafted = (p, phase, season) => {
     return (
-        p.tid === p.draft.tid &&
-        ((p.draft.year === season && phase >= PHASE.DRAFT) ||
-            (p.draft.year === season - 1 && phase < PHASE.REGULAR_SEASON))
+        (p.draft.year === season && phase >= PHASE.DRAFT) ||
+        (p.draft.year === season - 1 && phase < PHASE.REGULAR_SEASON)
     );
 };
 

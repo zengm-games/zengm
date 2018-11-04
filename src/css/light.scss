@@ -798,3 +798,8 @@ tr.table-warning:hover > td {
         }
     }
 }
+
+// Not sure why this is needed, it should do this by default!
+.page-item.active .page-link:hover {
+    color: $white;
+}

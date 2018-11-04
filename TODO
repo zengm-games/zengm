@@ -1,8 +1,5 @@
-Creating players in new league
-- Sort by value, includes contract?
-- Is it resetting too few contracts (should just be non-expired rookie ones, not all non-expired ones)
-
 DataTable filter search boxes in dark mode
+- go throuh this css and clean it up, some is unused
 
 faces
 

@@ -82,7 +82,13 @@ class Header extends React.Component<{}> {
                         minHeight: "95px",
                     }}
                 />
-                <div className="banner-ad skyscraper-wrapper">
+                <div
+                    className="banner-ad skyscraper-wrapper"
+                    id="skyscraper-wrapper"
+                    style={{
+                        display: "none",
+                    }}
+                >
                     <div
                         id="bbgm-ads-skyscraper"
                         style={{

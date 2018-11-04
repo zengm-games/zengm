@@ -86,11 +86,12 @@ const initAds = (goldUntil: number | void) => {
                 "bbgm-ads-top",
                 "bbgm-ads-bottom1",
                 "bbgm-ads-bottom2",
+                "skyscraper-wrapper",
             ];
             for (const id of showDivs) {
                 const div = document.getElementById(id);
                 if (div) {
-                    div.style.display = "block";
+                    div.style.removeProperty("display");
                 }
             }
 

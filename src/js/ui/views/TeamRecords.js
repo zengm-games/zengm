@@ -36,6 +36,7 @@ const TeamRecords = ({ byType, seasonCount, teamRecords }) => {
         "MVP",
         "DPOY",
         "SMOY",
+        "MIP",
         "ROY",
         "BR",
         "BRC",
@@ -65,6 +66,7 @@ const TeamRecords = ({ byType, seasonCount, teamRecords }) => {
                 tr.mvp,
                 tr.dpoy,
                 tr.smoy,
+                tr.mip,
                 tr.roy,
                 tr.bestRecord,
                 tr.bestRecordConf,
@@ -101,6 +103,7 @@ const TeamRecords = ({ byType, seasonCount, teamRecords }) => {
                 cols={cols}
                 defaultSort={[0, "asc"]}
                 name="TeamRecords"
+                nonfluid
                 rows={rows}
             />
         </>

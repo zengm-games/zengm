@@ -55,6 +55,7 @@ function getTeamRecord(t, awards) {
         mvp: awards[t.tid] ? awards[t.tid].mvp : 0,
         dpoy: awards[t.tid] ? awards[t.tid].dpoy : 0,
         smoy: awards[t.tid] ? awards[t.tid].smoy : 0,
+        mip: awards[t.tid] ? awards[t.tid].mip : 0,
         roy: awards[t.tid] ? awards[t.tid].roy : 0,
         bestRecord: awards[t.tid] ? awards[t.tid].bestRecord : 0,
         bestRecordConf: awards[t.tid] ? awards[t.tid].bestRecordConf : 0,
@@ -70,6 +71,7 @@ function tallyAwards(awards) {
             mvp: 0,
             dpoy: 0,
             smoy: 0,
+            mip: 0,
             roy: 0,
             allLeague: [0, 0, 0],
             allLeagueTotal: 0,
@@ -94,6 +96,9 @@ function tallyAwards(awards) {
         }
         if (a.smoy && teams[a.smoy.tid]) {
             teams[a.smoy.tid].smoy++;
+        }
+        if (a.mip && teams[a.mip.tid]) {
+            teams[a.mip.tid].mip++;
         }
         if (a.roy && teams[a.roy.tid]) {
             teams[a.roy.tid].roy++;

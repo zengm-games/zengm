@@ -275,6 +275,10 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    MIP: {
+        desc: "Most Improved Player",
+        sortType: "name",
+    },
     MVP: {
         desc: "Most Valuable Player",
         sortType: "name",

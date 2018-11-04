@@ -12,7 +12,7 @@ import { idb } from "../../db";
 const season = 2017;
 
 const genFathers = () => {
-    return range(season - 40, season - 16).map(season2 =>
+    return range(season - 40, season - 20).map(season2 =>
         player.generate(PLAYER.RETIRED, 50, season2, true, 15.5),
     );
 };

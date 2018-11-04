@@ -89,14 +89,14 @@ export const makeSon = async (p: Player) => {
         return;
     }
 
-    // Find a player from a draft 17-40 years ago to make the father
+    // Find a player from a draft 21-40 years ago to make the father
     const NUM_SEASONS_IN_NEW_LEAGUE_DEFAULT = 20;
     const maxYearsAgo = helpers.bound(
         p.draft.year - (g.startingSeason - NUM_SEASONS_IN_NEW_LEAGUE_DEFAULT),
-        17,
+        21,
         40,
     );
-    const draftYear = p.draft.year - random.randInt(17, maxYearsAgo);
+    const draftYear = p.draft.year - random.randInt(21, maxYearsAgo);
 
     const possibleFathers = (await idb.getCopies.players({
         draftYear,

@@ -27,13 +27,15 @@ async function updateHistory(
                 finalsMvp: a.finalsMvp,
                 mvp: a.mvp,
                 dpoy: a.dpoy,
+                smoy: a.smoy,
+                mip: a.mip,
                 roy: a.roy,
                 runnerUp: undefined,
                 champ: undefined,
             };
         });
 
-        teams.forEach(t => {
+        for (const t of teams) {
             // t.seasonAttrs has same season entries as the "seasons" array built from awards
             for (let i = 0; i < seasons.length; i++) {
                 // Find corresponding entries in seasons and t.seasonAttrs. Can't assume they are the same because they aren't if some data has been deleted (Delete Old Data)
@@ -76,7 +78,7 @@ async function updateHistory(
                     };
                 }
             }
-        });
+        }
 
         // Count up number of championships per team
         const championshipsByTid = [];

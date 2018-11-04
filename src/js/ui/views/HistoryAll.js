@@ -61,6 +61,8 @@ const HistoryAll = ({ seasons, teamAbbrevsCache, userTid }) => {
         "Finals MVP",
         "MVP",
         "DPOY",
+        "SMOY",
+        "MIP",
         "ROY",
     );
 
@@ -110,6 +112,8 @@ const HistoryAll = ({ seasons, teamAbbrevsCache, userTid }) => {
                 awardName(s.finalsMvp, s.season, teamAbbrevsCache, userTid),
                 awardName(s.mvp, s.season, teamAbbrevsCache, userTid),
                 awardName(s.dpoy, s.season, teamAbbrevsCache, userTid),
+                awardName(s.smoy, s.season, teamAbbrevsCache, userTid),
+                awardName(s.mip, s.season, teamAbbrevsCache, userTid),
                 awardName(s.roy, s.season, teamAbbrevsCache, userTid),
             ],
         };
@@ -132,7 +136,6 @@ const HistoryAll = ({ seasons, teamAbbrevsCache, userTid }) => {
                 cols={cols}
                 defaultSort={[0, "desc"]}
                 name="HistoryAll"
-                nonfluid
                 pagination
                 rows={rows}
             />

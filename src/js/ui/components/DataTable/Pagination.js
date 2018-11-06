@@ -46,7 +46,7 @@ const Pagination = ({
     }
 
     return (
-        <div className="dataTables_paginate">
+        <div className="datatable-pagination">
             <ul className="pagination">
                 <li
                     className={classNames("page-item", { disabled: !showPrev })}

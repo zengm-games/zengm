@@ -1,28 +1,42 @@
-div.dataTables_length {
+.datatable-perpage {
+    float: left;
+
     label {
         font-weight: normal;
-        float: left;
         text-align: left;
     }
 
     select {
         display: inline-block;
-        // Doesn't seem to be needed: width: 75px;
+        width: 75px;
     }
 }
 
-div.dataTables_filter {
+.datatable-controls {
     float: right;
+
+    input {
+        width: 200px;
+    }
 }
 
-div.dataTables_info {
+.datatable-info {
     float: left;
     padding-top: 8px;
 }
 
-div.dataTables_paginate {
+.datatable-pagination {
     float: right;
     margin: 0;
+}
+
+.datatable-filter-input {
+    background-color: $white;
+    color: $black;
+    border: 1px solid $gray-400;
+    font-weight: normal;
+    font-size: 12px;
+    width: 100%;
 }
 
 ul.pagination {
@@ -34,6 +48,11 @@ ul.pagination {
         -moz-user-select: none;
         -webkit-user-select: none;
     }
+}
+
+// Not sure why this is needed, it should do this by default!
+.page-item.active .page-link:hover {
+    color: $white;
 }
 
 table.table {
@@ -51,14 +70,6 @@ table.table {
             position: relative;
         }
     }
-}
-
-table.dataTable th:active {
-    outline: none;
-}
-
-div.dataTables_wrapper .table-responsive {
-    margin-bottom: 4px;
 }
 
 // Implemented weirdly like https://css-tricks.com/snippets/css/transparent-background-images/ so opacity can be overriden in dark.scss

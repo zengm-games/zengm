@@ -20,7 +20,7 @@ const Info = ({
             : null;
 
     return (
-        <div className="dataTables_info d-none d-sm-block">
+        <div className="datatable-info d-none d-sm-block">
             {start} to {end} of {numRows}
             {filteredText}
         </div>

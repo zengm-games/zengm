@@ -17,7 +17,7 @@ const Controls = ({
     onToggleFilters: () => void,
 }) => {
     return (
-        <div className="dataTables_filter">
+        <div className="datatable-controls">
             <HelpPopover
                 placement="bottom"
                 style={{ marginRight: "6px" }}
@@ -58,7 +58,6 @@ const Controls = ({
                     className="form-control form-control-sm"
                     onChange={onSearch}
                     placeholder="Search"
-                    style={{ width: "200px" }}
                     type="search"
                 />
             </label>

@@ -11,12 +11,11 @@ const PerPage = ({
     value: number,
 }) => {
     return (
-        <div className="dataTables_length">
+        <div className="datatable-perpage">
             <label>
                 <select
                     className="form-control form-control-sm"
                     onChange={onChange}
-                    style={{ width: "75px" }}
                     value={value}
                 >
                     <option value="10">10</option>

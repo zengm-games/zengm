@@ -21,13 +21,8 @@ const FilterHeader = ({
                 return (
                     <th key={i}>
                         <input
+                            className="datatable-filter-input"
                             onChange={event => handleFilterUpdate(event, i)}
-                            style={{
-                                border: "1px solid #ccc",
-                                fontWeight: "normal",
-                                fontSize: "12px",
-                                width: "100%",
-                            }}
                             type="text"
                             value={filter}
                         />

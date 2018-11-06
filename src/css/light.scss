@@ -32,7 +32,7 @@ $black: #000 !default;
 @import "node_modules/bootstrap/scss/popover";
 @import "node_modules/bootstrap/scss/utilities";
 
-@import "DT_bootstrap";
+@import "datatable";
 @import "bbgm-notifications";
 @import "glyphicons";
 @import "sidebar";
@@ -797,9 +797,4 @@ tr.table-warning:hover > td {
             border-bottom-width: 2px;
         }
     }
-}
-
-// Not sure why this is needed, it should do this by default!
-.page-item.active .page-link:hover {
-    color: $white;
 }

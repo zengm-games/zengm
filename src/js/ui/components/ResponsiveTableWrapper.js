@@ -5,17 +5,22 @@ import PropTypes from "prop-types";
 import * as React from "react";
 
 type Props = {
+    className?: string | null,
     children: any,
     nonfluid?: boolean,
 };
 
 // This used to be needed to handle event propagation for touch events, when SideBar was swipeable
-const ResponsiveTableWrapper = ({ children, nonfluid }: Props) => {
+const ResponsiveTableWrapper = ({ className, children, nonfluid }: Props) => {
     return (
         <div
-            className={classNames("table-responsive", {
-                "table-nonfluid": nonfluid,
-            })}
+            className={classNames(
+                "table-responsive",
+                {
+                    "table-nonfluid": nonfluid,
+                },
+                className,
+            )}
         >
             {children}
         </div>
@@ -23,6 +28,7 @@ const ResponsiveTableWrapper = ({ children, nonfluid }: Props) => {
 };
 
 ResponsiveTableWrapper.propTypes = {
+    className: PropTypes.string,
     nonfluid: PropTypes.bool,
 };
 

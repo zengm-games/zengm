@@ -445,7 +445,10 @@ class DataTable extends React.Component<Props, State> {
                     />
                 ) : null}
                 {nonfluid && pagination ? <div className="clearFix" /> : null}
-                <ResponsiveTableWrapper nonfluid={nonfluid}>
+                <ResponsiveTableWrapper
+                    className={pagination ? "fix-margin-pagination" : null}
+                    nonfluid={nonfluid}
+                >
                     <table className="table table-striped table-bordered table-sm table-hover">
                         <Header
                             cols={cols}

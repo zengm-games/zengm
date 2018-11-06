@@ -1,6 +1,6 @@
-datatable bottom spacing when scrollbar responsive
-
 faces
+- http://biskup.biowiki.org/facesjs/
+- https://github.com/dumbmatter/facesjs/compare/master...ihh:master
 
 AI teams should adjust finances
 - and reset after user is fired
@@ -179,10 +179,6 @@ remove babel plugins
 remove polyfilles
 - get rid of getAll polyfill when safari 10.x usage goes to 0
 - others too!
-
-new faces
-- http://biskup.biowiki.org/facesjs/
-- https://github.com/dumbmatter/facesjs/compare/master...ihh:master
 
 keep box scores with feats
 

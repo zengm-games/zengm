@@ -64,15 +64,13 @@ class DraftScouting extends React.Component {
                                 key: p.pid,
                                 data: [
                                     p.rank,
-                                    <div className="shortened-col">
-                                        <PlayerNameLabels
-                                            pid={p.pid}
-                                            skills={p.skills}
-                                            watch={p.watch}
-                                        >
-                                            {p.nameAbbrev}
-                                        </PlayerNameLabels>
-                                    </div>,
+                                    <PlayerNameLabels
+                                        pid={p.pid}
+                                        skills={p.skills}
+                                        watch={p.watch}
+                                    >
+                                        {p.nameAbbrev}
+                                    </PlayerNameLabels>,
                                     p.pos,
                                     p.age,
                                     p.ovr,
@@ -138,7 +136,6 @@ class DraftScouting extends React.Component {
                                 )}
 
                                 <DataTable
-                                    className="shorten-col-1"
                                     cols={cols}
                                     defaultSort={[0, "asc"]}
                                     name={`DraftScouting:${seasonOffset}`}

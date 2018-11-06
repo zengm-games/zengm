@@ -29,15 +29,15 @@ const Leaders = ({ categories, playoffs, season }) => {
                 for 2 on the season is not eligible for the league lead in FG%).
             </p>
 
-            <div className="row" style={{ marginTop: -20 }}>
+            <div className="row" style={{ marginTop: -14 }}>
                 {categories.map(cat => (
                     <div
                         key={cat.name}
                         className="col-12 col-sm-6 col-md-4"
-                        style={{ marginTop: 20 }}
+                        style={{ marginTop: 14 }}
                     >
                         <ResponsiveTableWrapper>
-                            <table className="table table-striped table-bordered table-sm shorten-col-0 leaders">
+                            <table className="table table-striped table-bordered table-sm leaders">
                                 <thead>
                                     <tr title={cat.title}>
                                         <th>{cat.name}</th>
@@ -53,33 +53,27 @@ const Leaders = ({ categories, playoffs, season }) => {
                                             }
                                         >
                                             <td>
-                                                <div className="shortened-col">
-                                                    {j + 1}.{" "}
-                                                    <PlayerNameLabels
-                                                        pid={p.pid}
-                                                        injury={p.injury}
-                                                        skills={
-                                                            p.ratings.skills
-                                                        }
-                                                        watch={p.watch}
-                                                    >
-                                                        {p.nameAbbrev}
-                                                    </PlayerNameLabels>
-                                                    <a
-                                                        href={helpers.leagueUrl(
-                                                            [
-                                                                "roster",
-                                                                p.abbrev,
-                                                                season,
-                                                            ],
-                                                        )}
-                                                        style={{
-                                                            marginLeft: "6px",
-                                                        }}
-                                                    >
-                                                        {p.abbrev}
-                                                    </a>
-                                                </div>
+                                                {j + 1}.{" "}
+                                                <PlayerNameLabels
+                                                    pid={p.pid}
+                                                    injury={p.injury}
+                                                    skills={p.ratings.skills}
+                                                    watch={p.watch}
+                                                >
+                                                    {p.nameAbbrev}
+                                                </PlayerNameLabels>
+                                                <a
+                                                    href={helpers.leagueUrl([
+                                                        "roster",
+                                                        p.abbrev,
+                                                        season,
+                                                    ])}
+                                                    style={{
+                                                        marginLeft: "6px",
+                                                    }}
+                                                >
+                                                    {p.abbrev}
+                                                </a>
                                             </td>
                                             <td>
                                                 {cat.stat === "WS/48"

@@ -660,43 +660,6 @@ tr.table-warning:hover > td {
     cursor: pointer;
 }
 
-/* https://stackoverflow.com/a/49247706/786644 */
-%shorten-col {
-    td,
-    th {
-        position: relative;
-    }
-
-    .shortened-col {
-        overflow: hidden;
-        position: absolute;
-        left: 0;
-        top: 0;
-        padding: 5px;
-        width: 100%;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
-}
-.shorten-col-0 {
-    @extend %shorten-col;
-
-    tr td:not(:nth-child(1)),
-    tr th:not(:nth-child(1)) {
-        width: 1%;
-        white-space: nowrap;
-    }
-}
-.shorten-col-1 {
-    @extend %shorten-col;
-
-    tr td:not(:nth-child(2)),
-    tr th:not(:nth-child(2)) {
-        width: 1%;
-        white-space: nowrap;
-    }
-}
-
 .user-select-none {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -796,5 +759,13 @@ tr.table-warning:hover > td {
         th {
             border-bottom-width: 2px;
         }
+    }
+}
+
+.table-responsive {
+    margin-bottom: 1rem;
+
+    .table {
+        margin-bottom: 0;
     }
 }

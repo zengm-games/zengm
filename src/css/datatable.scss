@@ -55,10 +55,11 @@ ul.pagination {
     color: $white;
 }
 
-table.table {
-    clear: both;
-    margin-bottom: 6px !important;
+.fix-margin-pagination {
+    margin-bottom: 8px !important;
+}
 
+table.table {
     thead {
         .sorting,
         .sorting_asc,

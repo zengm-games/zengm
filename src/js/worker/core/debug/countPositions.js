@@ -2,7 +2,7 @@
 
 import backboard from "backboard";
 import { PLAYER } from "../../../common";
-import { player } from "..";
+import pos from "../player/pos";
 import { idb } from "../../db";
 
 const countPositions = async () => {
@@ -27,9 +27,9 @@ const countPositions = async () => {
         const r = p.ratings[p.ratings.length - 1];
 
         // Dynamically recompute, to make dev easier when changing position formula
-        const pos = player.pos(r);
+        const position = pos(r);
 
-        counts[pos] += 1;
+        counts[position] += 1;
     }
 
     console.table(counts);

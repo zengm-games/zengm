@@ -63,9 +63,8 @@ async function updatePlayers(
                 }
             }
             p.legacyTid = parseInt(
-                Object.keys(p.teamSums).reduce(
-                    (teamA, teamB) =>
-                        p.teamSums[teamA] > p.teamSums[teamB] ? teamA : teamB,
+                Object.keys(p.teamSums).reduce((teamA, teamB) =>
+                    p.teamSums[teamA] > p.teamSums[teamB] ? teamA : teamB,
                 ),
                 10,
             );

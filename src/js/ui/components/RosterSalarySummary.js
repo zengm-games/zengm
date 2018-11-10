@@ -7,10 +7,12 @@ import { helpers } from "../util";
 
 const RosterSalarySummary = ({
     capSpace,
+    hardCap,
     minContract,
     numRosterSpots,
 }: {
     capSpace: number,
+    hardCap: boolean,
     minContract: number,
     numRosterSpots: number,
 }) => {
@@ -24,9 +26,11 @@ const RosterSalarySummary = ({
                     and the salary cap.
                 </p>
                 <p>
-                    After the season you can go over the salary cap to re-sign
-                    your own players. Besides that, you can only exceed the
-                    salary cap to sign free agents to minimum contracts ($
+                    {hardCap
+                        ? "You "
+                        : "After the season you can go over the salary cap to re-sign your own players. Besides that, you "}
+                    can only exceed the salary cap to sign players to minimum
+                    contracts ($
                     {minContract}
                     k/year).
                 </p>
@@ -37,6 +41,7 @@ const RosterSalarySummary = ({
 
 RosterSalarySummary.propTypes = {
     capSpace: PropTypes.number.isRequired,
+    hardCap: PropTypes.bool.isRequired,
     minContract: PropTypes.number.isRequired,
     numRosterSpots: PropTypes.number.isRequired,
 };

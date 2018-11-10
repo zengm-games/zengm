@@ -39,6 +39,7 @@ const sign = async (pid, amount, exp) => {
 };
 
 const Negotiation = ({
+    hardCap,
     contractOptions,
     payroll,
     player = {},
@@ -73,7 +74,7 @@ const Negotiation = ({
     }
 
     let message;
-    if (resigning) {
+    if (resigning && !hardCap) {
         message = (
             <p>
                 You are allowed to go over the salary cap to make this deal
@@ -94,14 +95,21 @@ const Negotiation = ({
             </p>
         );
     } else {
-        message = (
-            <p>
-                You are not allowed to go over the salary cap to make this deal
+        const extra = !hardCap ? (
+            <>
+                {" "}
                 because{" "}
                 <a href={helpers.leagueUrl(["player", player.pid])}>
                     {player.name}
                 </a>{" "}
-                is a free agent.
+                is a free agent
+            </>
+        ) : null;
+
+        message = (
+            <p>
+                You are not allowed to go over the salary cap to make this deal
+                (unless it is for a minimum contract){extra}.
             </p>
         );
     }
@@ -196,6 +204,7 @@ const Negotiation = ({
 };
 
 Negotiation.propTypes = {
+    hardCap: PropTypes.bool.isRequired,
     contractOptions: PropTypes.arrayOf(
         PropTypes.shape({
             smallestAmount: PropTypes.bool.isRequired,

@@ -51,6 +51,7 @@ async function updateNegotiationList(): void | { [key: string]: any } {
 
     return {
         capSpace,
+        hardCap: g.hardCap,
         minContract: g.minContract,
         numRosterSpots: g.maxRosterSize - userPlayers.length,
         players,

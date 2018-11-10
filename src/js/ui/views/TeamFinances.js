@@ -307,6 +307,80 @@ FinancesForm.propTypes = {
     userTid: PropTypes.number.isRequired,
 };
 
+const PayrollInfo = ({
+    hardCap,
+    luxuryPayroll,
+    luxuryTax,
+    minContract,
+    minPayroll,
+    payroll,
+    salaryCap,
+}) => {
+    return (
+        <p>
+            The current payroll (<b>{helpers.formatCurrency(payroll, "M")}</b>)
+            is {payroll > minPayroll ? "above" : "below"} the minimum payroll
+            limit (<b>{helpers.formatCurrency(minPayroll, "M")}</b>)
+            {hardCap ? " and" : ","} {payroll > salaryCap ? "above" : "below"}{" "}
+            the salary cap (<b>{helpers.formatCurrency(salaryCap, "M")}</b>)
+            {hardCap ? null : (
+                <>
+                    , and {payroll > luxuryPayroll ? "above" : "below"} the
+                    luxury tax limit (
+                    <b>{helpers.formatCurrency(luxuryPayroll, "M")}</b>)
+                </>
+            )}
+            .{" "}
+            {hardCap ? (
+                <HelpPopover placement="bottom" title="Payroll Limits">
+                    <p>
+                        The salary cap is a hard cap, meaning that you cannot
+                        exceed it, even when re-signing your own players or
+                        making trades. The only exception is that you can always
+                        sign players to minimum contracts ($
+                        {minContract}
+                        k/year), so you are never stuck with a team too small to
+                        play.
+                    </p>
+                    <p>
+                        Teams with payrolls below the minimum payroll limit will
+                        be assessed a fine equal to the difference at the end of
+                        the season.
+                    </p>
+                </HelpPopover>
+            ) : (
+                <HelpPopover placement="bottom" title="Payroll Limits">
+                    <p>
+                        The salary cap is a soft cap, meaning that you can
+                        exceed it to re-sign your own players, to sign free
+                        agents to minimum contracts ($
+                        {minContract}
+                        k/year), and when making certain trades; however, you
+                        cannot exceed the salary cap to sign a free agent for
+                        more than the minimum.
+                    </p>
+                    <p>
+                        Teams with payrolls below the minimum payroll limit will
+                        be assessed a fine equal to the difference at the end of
+                        the season. Teams with payrolls above the luxury tax
+                        limit will be assessed a fine equal to {luxuryTax} times
+                        the difference at the end of the season.
+                    </p>
+                </HelpPopover>
+            )}
+        </p>
+    );
+};
+PayrollInfo.propTypes = {
+    hardCap: PropTypes.bool.isRequired,
+    luxuryPayroll: PropTypes.number.isRequired,
+    luxuryTax: PropTypes.number.isRequired,
+    minContract: PropTypes.number.isRequired,
+    minPayroll: PropTypes.number.isRequired,
+    payroll: PropTypes.number.isRequired,
+    salaryCap: PropTypes.number.isRequired,
+};
+
 const TeamFinances = ({
     abbrev,
     barData,
@@ -314,6 +388,7 @@ const TeamFinances = ({
     contractTotals,
     contracts,
     gamesInProgress,
+    hardCap,
     luxuryPayroll,
     luxuryTax,
     maxStadiumCapacity,
@@ -425,30 +500,15 @@ const TeamFinances = ({
                 </a>
             </p>
 
-            <p>
-                The current payroll (
-                <b>{helpers.formatCurrency(payroll, "M")}</b>) is{" "}
-                {payroll > minPayroll ? "above" : "below"} the minimum payroll
-                limit (<b>{helpers.formatCurrency(minPayroll, "M")}</b>
-                ), {payroll > salaryCap ? "above" : "below"} the salary cap (
-                <b>{helpers.formatCurrency(salaryCap, "M")}</b>
-                ), and {payroll > luxuryPayroll ? "above" : "below"} the luxury
-                tax limit (<b>{helpers.formatCurrency(luxuryPayroll, "M")}</b>
-                ).{" "}
-                <HelpPopover placement="bottom" title="Payroll Limits">
-                    The salary cap is a soft cap, meaning that you can exceed it
-                    to re-sign your own players or to sign free agents to
-                    minimum contracts ($
-                    {minContract}
-                    k/year); however, you cannot exceed the salary cap to sign a
-                    free agent for more than the minimum. Teams with payrolls
-                    below the minimum payroll limit will be assessed a fine
-                    equal to the difference at the end of the season. Teams with
-                    payrolls above the luxury tax limit will be assessed a fine
-                    equal to {luxuryTax} times the difference at the end of the
-                    season.
-                </HelpPopover>
-            </p>
+            <PayrollInfo
+                hardCap={hardCap}
+                luxuryPayroll={luxuryPayroll}
+                luxuryTax={luxuryTax}
+                minContract={minContract}
+                minPayroll={minPayroll}
+                payroll={payroll}
+                salaryCap={salaryCap}
+            />
 
             <div className="row">
                 <div className="col-md-3 col-sm-2">
@@ -616,6 +676,7 @@ TeamFinances.propTypes = {
     contractTotals: PropTypes.arrayOf(PropTypes.number).isRequired,
     contracts: PropTypes.arrayOf(PropTypes.object).isRequired,
     gamesInProgress: PropTypes.bool.isRequired,
+    hardCap: PropTypes.bool.isRequired,
     luxuryPayroll: PropTypes.number.isRequired,
     luxuryTax: PropTypes.number.isRequired,
     maxStadiumCapacity: PropTypes.number.isRequired,

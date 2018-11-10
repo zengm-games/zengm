@@ -5,6 +5,7 @@ import { DataTable, Dropdown, JumpTo, NewWindowLink } from "../components";
 
 const LeagueFinances = ({
     currentSeason,
+    hardCap,
     minPayroll,
     luxuryPayroll,
     luxuryTax,
@@ -70,11 +71,16 @@ const LeagueFinances = ({
                 <b>{helpers.formatCurrency(minPayroll, "M")}</b> (teams with
                 payrolls below this limit will be assessed a fine equal to the
                 difference at the end of the season)
-                <br />
-                Luxury tax limit:{" "}
-                <b>{helpers.formatCurrency(luxuryPayroll, "M")}</b> (teams with
-                payrolls above this limit will be assessed a fine equal to{" "}
-                {luxuryTax} times the difference at the end of the season)
+                {!hardCap ? (
+                    <>
+                        <br />
+                        Luxury tax limit:{" "}
+                        <b>{helpers.formatCurrency(luxuryPayroll, "M")}</b>{" "}
+                        (teams with payrolls above this limit will be assessed a
+                        fine equal to {luxuryTax} times the difference at the
+                        end of the season)
+                    </>
+                ) : null}
             </p>
 
             <DataTable
@@ -90,6 +96,7 @@ const LeagueFinances = ({
 
 LeagueFinances.propTypes = {
     currentSeason: PropTypes.number.isRequired,
+    hardCap: PropTypes.bool.isRequired,
     minPayroll: PropTypes.number.isRequired,
     luxuryPayroll: PropTypes.number.isRequired,
     luxuryTax: PropTypes.number.isRequired,

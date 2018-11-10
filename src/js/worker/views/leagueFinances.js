@@ -29,6 +29,7 @@ async function updateLeagueFinances(
 
         return {
             currentSeason: g.season,
+            hardCap: g.hardCap,
             season: inputs.season,
             salaryCap: g.salaryCap / 1000,
             minPayroll: g.minPayroll / 1000,

@@ -19,6 +19,7 @@ async function updateTeamFinances(
         const vars: any = {
             abbrev: inputs.abbrev,
             gamesInProgress: lock.get("gameSim"),
+            hardCap: g.hardCap,
             numGames: g.numGames,
             tid: inputs.tid,
             show: inputs.show,

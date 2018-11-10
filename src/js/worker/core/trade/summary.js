@@ -114,10 +114,11 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
         }),
     );
 
-    if (
-        (ratios[0] > 125 && overCap[0] === true) ||
-        (ratios[1] > 125 && overCap[1] === true)
-    ) {
+    const softCapCondition =
+        (ratios[0] > 125 && overCap[0]) || (ratios[1] > 125 && overCap[1]);
+    const hardCapCondition = overCap[0] || overCap[1];
+
+    if (!g.hardCap && softCapCondition) {
         // Which team is at fault?;
         const j = ratios[0] > 125 ? 0 : 1;
         s.warning = `The ${
@@ -125,6 +126,15 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
         } are over the salary cap, so the players it receives must have a combined salary of less than 125% of the salaries of the players it trades away.  Currently, that value is ${
             ratios[j]
         }%.`;
+    } else if (g.hardCap && hardCapCondition) {
+        let teamOverCap = "both teams";
+        if (!overCap[0] && overCap[1]) {
+            teamOverCap = `the ${s.teams[1].name}`;
+        } else if (overCap[0] && !overCap[1]) {
+            teamOverCap = `the ${s.teams[0].name}`;
+        }
+
+        s.warning = `This trade is not allowed because it would put ${teamOverCap} over the salary cap.`;
     }
 
     return s;

@@ -20,11 +20,12 @@ class GodMode extends React.Component {
             numGames: props.numGames,
             quarterLength: props.quarterLength,
             salaryCap: props.salaryCap,
-            aiTrades: props.aiTrades,
+            aiTrades: String(props.aiTrades),
             injuryRate: props.injuryRate,
             tragicDeathRate: props.tragicDeathRate,
             brotherRate: props.brotherRate,
             sonRate: props.sonRate,
+            hardCap: String(props.hardCap),
         };
         this.handleChanges = {
             disableInjuries: this.handleChange.bind(this, "disableInjuries"),
@@ -43,6 +44,7 @@ class GodMode extends React.Component {
             tragicDeathRate: this.handleChange.bind(this, "tragicDeathRate"),
             brotherRate: this.handleChange.bind(this, "brotherRate"),
             sonRate: this.handleChange.bind(this, "sonRate"),
+            hardCap: this.handleChange.bind(this, "hardCap"),
         };
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
         this.handleGodModeToggle = this.handleGodModeToggle.bind(this);
@@ -67,6 +69,7 @@ class GodMode extends React.Component {
                 tragicDeathRate: nextProps.tragicDeathRate,
                 brotherRate: nextProps.brotherRate,
                 sonRate: nextProps.sonRate,
+                hardCap: String(nextProps.hardCap),
             };
         }
 
@@ -100,6 +103,7 @@ class GodMode extends React.Component {
             tragicDeathRate: parseFloat(this.state.tragicDeathRate),
             brotherRate: parseFloat(this.state.brotherRate),
             sonRate: parseFloat(this.state.sonRate),
+            hardCap: this.state.hardCap === "true",
         });
 
         this.setState({
@@ -188,25 +192,8 @@ class GodMode extends React.Component {
                 </p>
 
                 <form onSubmit={this.handleFormSubmit}>
+                    <h3 className="mt-3">League Structure</h3>
                     <div className="row">
-                        <div className="col-sm-3 col-6 form-group">
-                            <label>
-                                Injuries{" "}
-                                <HelpPopover placement="right" title="Injuries">
-                                    This won't heal current injuries, but it
-                                    will prevent any new ones from occurring.
-                                </HelpPopover>
-                            </label>
-                            <select
-                                className="form-control"
-                                disabled={!godMode}
-                                onChange={this.handleChanges.disableInjuries}
-                                value={this.state.disableInjuries}
-                            >
-                                <option value="false">Enabled</option>
-                                <option value="true">Disabled</option>
-                            </select>
-                        </div>
                         <div className="col-sm-3 col-6 form-group">
                             <label>
                                 # Games Per Season{" "}
@@ -237,17 +224,29 @@ class GodMode extends React.Component {
                             />
                         </div>
                         <div className="col-sm-3 col-6 form-group">
-                            <label>Trades Between AI Teams</label>
-                            <select
+                            <label>Min Roster Size</label>
+                            <input
+                                type="text"
                                 className="form-control"
                                 disabled={!godMode}
-                                onChange={this.handleChanges.aiTrades}
-                                value={this.state.aiTrades}
-                            >
-                                <option value="true">Enabled</option>
-                                <option value="false">Disabled</option>
-                            </select>
+                                onChange={this.handleChanges.minRosterSize}
+                                value={this.state.minRosterSize}
+                            />
                         </div>
+                        <div className="col-sm-3 col-6 form-group">
+                            <label>Max Roster Size</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                disabled={!godMode}
+                                onChange={this.handleChanges.maxRosterSize}
+                                value={this.state.maxRosterSize}
+                            />
+                        </div>
+                    </div>
+
+                    <h3 className="mt-2">Finance</h3>
+                    <div className="row">
                         <div className="col-sm-3 col-6 form-group">
                             <label>Salary Cap</label>
                             <div className="input-group">
@@ -360,24 +359,77 @@ class GodMode extends React.Component {
                             </div>
                         </div>
                         <div className="col-sm-3 col-6 form-group">
-                            <label>Min Roster Size</label>
-                            <input
-                                type="text"
+                            <label>
+                                Hard Cap{" "}
+                                <HelpPopover placement="right" title="Hard Cap">
+                                    <p>
+                                        If this is enabled, then you can not
+                                        exceed the salary cap to re-sign your
+                                        players (like the{" "}
+                                        <a
+                                            href="https://en.wikipedia.org/wiki/NBA_salary_cap#Larry_Bird_exception"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            Larry Bird exception
+                                        </a>
+                                        ) and you can not make trades that
+                                        result in either team being over the
+                                        salary cap.
+                                    </p>
+                                    <p>
+                                        It is not really a strict hard cap,
+                                        though. You can still go over the cap to
+                                        sign free agents to minimum contracts,
+                                        which is to guarantee that you never get
+                                        stuck without enough players.
+                                    </p>
+                                    <p>This also disables the luxury tax.</p>
+                                </HelpPopover>
+                            </label>
+                            <select
                                 className="form-control"
                                 disabled={!godMode}
-                                onChange={this.handleChanges.minRosterSize}
-                                value={this.state.minRosterSize}
-                            />
+                                onChange={this.handleChanges.hardCap}
+                                value={this.state.hardCap}
+                            >
+                                <option value="true">Enabled</option>
+                                <option value="false">Disabled</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h3 className="mt-2">Events</h3>
+                    <div className="row">
+                        <div className="col-sm-3 col-6 form-group">
+                            <label>
+                                Injuries{" "}
+                                <HelpPopover placement="right" title="Injuries">
+                                    This won't heal current injuries, but it
+                                    will prevent any new ones from occurring.
+                                </HelpPopover>
+                            </label>
+                            <select
+                                className="form-control"
+                                disabled={!godMode}
+                                onChange={this.handleChanges.disableInjuries}
+                                value={this.state.disableInjuries}
+                            >
+                                <option value="false">Enabled</option>
+                                <option value="true">Disabled</option>
+                            </select>
                         </div>
                         <div className="col-sm-3 col-6 form-group">
-                            <label>Max Roster Size</label>
-                            <input
-                                type="text"
+                            <label>Trades Between AI Teams</label>
+                            <select
                                 className="form-control"
                                 disabled={!godMode}
-                                onChange={this.handleChanges.maxRosterSize}
-                                value={this.state.maxRosterSize}
-                            />
+                                onChange={this.handleChanges.aiTrades}
+                                value={this.state.aiTrades}
+                            >
+                                <option value="true">Enabled</option>
+                                <option value="false">Disabled</option>
+                            </select>
                         </div>
                         <div className="col-sm-3 col-6 form-group">
                             <label>
@@ -473,7 +525,10 @@ class GodMode extends React.Component {
                         </div>
                     </div>
 
-                    <button className="btn btn-primary" disabled={!godMode}>
+                    <button
+                        className="btn btn-primary mt-3"
+                        disabled={!godMode}
+                    >
                         Save God Mode Options
                     </button>
                 </form>
@@ -500,6 +555,7 @@ GodMode.propTypes = {
     tragicDeathRate: PropTypes.number.isRequired,
     brotherRate: PropTypes.number.isRequired,
     sonRate: PropTypes.number.isRequired,
+    hardCap: PropTypes.bool.isRequired,
 };
 
 export default GodMode;

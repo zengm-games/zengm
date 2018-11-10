@@ -10,6 +10,7 @@ import { getCols, helpers, setTitle, toWorker } from "../util";
 
 const NegotiationList = ({
     capSpace,
+    hardCap,
     minContract,
     numRosterSpots,
     players,
@@ -105,16 +106,19 @@ const NegotiationList = ({
                 </a>
             </p>
 
-            <p>
-                You are allowed to go over the salary cap to re-sign your
-                players before they become free agents. If you do not re-sign
-                them before free agency begins, they will be free to sign with
-                any team, and you won't be able to go over the salary cap to
-                sign them.
-            </p>
+            {!hardCap ? (
+                <p>
+                    You are allowed to go over the salary cap to re-sign your
+                    players before they become free agents. If you do not
+                    re-sign them before free agency begins, they will be free to
+                    sign with any team, and you won't be able to go over the
+                    salary cap to sign them.
+                </p>
+            ) : null}
 
             <RosterSalarySummary
                 capSpace={capSpace}
+                hardCap={hardCap}
                 minContract={minContract}
                 numRosterSpots={numRosterSpots}
             />
@@ -131,6 +135,7 @@ const NegotiationList = ({
 
 NegotiationList.propTypes = {
     capSpace: PropTypes.number.isRequired,
+    hardCap: PropTypes.bool.isRequired,
     minContract: PropTypes.number.isRequired,
     numRosterSpots: PropTypes.number.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,

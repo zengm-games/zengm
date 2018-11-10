@@ -63,6 +63,7 @@ class FreeAgents extends React.Component {
         const {
             capSpace,
             gamesInProgress,
+            hardCap,
             minContract,
             numRosterSpots,
             phase,
@@ -170,6 +171,7 @@ class FreeAgents extends React.Component {
 
                 <RosterSalarySummary
                     capSpace={capSpace}
+                    hardCap={hardCap}
                     minContract={minContract}
                     numRosterSpots={numRosterSpots}
                 />
@@ -205,6 +207,7 @@ class FreeAgents extends React.Component {
 FreeAgents.propTypes = {
     capSpace: PropTypes.number.isRequired,
     gamesInProgress: PropTypes.bool.isRequired,
+    hardCap: PropTypes.bool.isRequired,
     minContract: PropTypes.number.isRequired,
     numRosterSpots: PropTypes.number.isRequired,
     phase: PropTypes.number.isRequired,

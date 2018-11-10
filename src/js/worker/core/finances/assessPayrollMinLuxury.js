@@ -29,7 +29,8 @@ const assessPayrollMinLuxury = async () => {
             teamSeason.expenses.minTax.amount =
                 g.minPayroll - payrolls[teamSeason.tid];
             teamSeason.cash -= teamSeason.expenses.minTax.amount;
-        } else if (payrolls[teamSeason.tid] > g.luxuryPayroll) {
+        } else if (payrolls[teamSeason.tid] > g.luxuryPayroll && !g.hardCap) {
+            // Only apply luxury tax if hard cap is disabled!
             const amount =
                 g.luxuryTax * (payrolls[teamSeason.tid] - g.luxuryPayroll);
             collectedTax += amount;

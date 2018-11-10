@@ -98,6 +98,7 @@ async function updateNegotiation(
     const payroll = await team.getPayroll(g.userTid);
     return {
         contractOptions,
+        hardCap: g.hardCap,
         payroll: payroll / 1000,
         player: p,
         resigning: negotiation.resigning,

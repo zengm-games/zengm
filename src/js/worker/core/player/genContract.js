@@ -23,7 +23,7 @@ const genContract = (
 ): PlayerContract => {
     const ratings = p.ratings[p.ratings.length - 1];
 
-    const factor = g.hardCap ? 2.4 : 3.4;
+    const factor = g.hardCap ? 2.6 : 3.4;
 
     let amount =
         (p.value / 100 - 0.47) * factor * (g.maxContract - g.minContract) +

@@ -502,6 +502,33 @@ export const createWithoutSaving = (
             addPlayerToTeam(p, currentTid);
         }
 
+        // Adjustment for hard cap - lower contracts for teams above cap
+        if (g.hardCap) {
+            for (const tid2 of range(g.numTeams)) {
+                const roster = players.filter(p => p.tid === tid2);
+                let payroll = roster.reduce(
+                    (total, p) => total + p.contract.amount,
+                    0,
+                );
+                while (payroll > g.salaryCap) {
+                    let foundAny = false;
+                    for (const p of roster) {
+                        if (p.contract.amount >= g.minContract + 50) {
+                            p.contract.amount -= 50;
+                            payroll -= 50;
+                            foundAny = true;
+                        }
+                    }
+
+                    if (!foundAny) {
+                        throw new Error(
+                            "Invalid combination of hardCap, salaryCap, and minContract",
+                        );
+                    }
+                }
+            }
+        }
+
         // Finally, free agents
         for (let i = 0; i < freeAgentPlayers.length; i++) {
             const p = freeAgentPlayers[i];

@@ -95,7 +95,7 @@ const getRookieSalaries = (): number[] => {
             // Add min back
             rookieSalaries[i] += g.minContract;
 
-            rookieSalaries[i] = Math.round(rookieSalaries[i] / 10) * 10;
+            rookieSalaries[i] = Math.round(rookieSalaries[i] / 50) * 50;
         }
     }
 

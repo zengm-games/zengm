@@ -23,8 +23,10 @@ const genContract = (
 ): PlayerContract => {
     const ratings = p.ratings[p.ratings.length - 1];
 
+    const factor = g.hardCap ? 2.4 : 3.4;
+
     let amount =
-        (p.value / 100 - 0.47) * 3.4 * (g.maxContract - g.minContract) +
+        (p.value / 100 - 0.47) * factor * (g.maxContract - g.minContract) +
         g.minContract;
     if (randomizeAmount) {
         amount *= helpers.bound(random.realGauss(1, 0.1), 0, 2); // Randomize
@@ -49,11 +51,6 @@ const genContract = (
     // Randomize expiration for contracts generated at beginning of new game
     if (randomizeExp) {
         years = random.randInt(1, years);
-
-        // Make rookie contracts more reasonable
-        if (g.season - p.born.year <= 21) {
-            amount /= 3;
-        }
     }
 
     const expiration = g.season + years - 1;

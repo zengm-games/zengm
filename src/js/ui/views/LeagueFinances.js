@@ -64,8 +64,9 @@ const LeagueFinances = ({
 
             <p>
                 Salary cap: <b>{helpers.formatCurrency(salaryCap, "M")}</b>{" "}
-                (teams over this amount cannot sign free agents for more than
-                the minimum contract)
+                (teams over this amount cannot sign{" "}
+                {hardCap ? "players" : "free agents"} for more than the minimum
+                contract)
                 <br />
                 Minimum payroll limit:{" "}
                 <b>{helpers.formatCurrency(minPayroll, "M")}</b> (teams with

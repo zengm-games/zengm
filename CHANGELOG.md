@@ -7,6 +7,7 @@ number or not.
 ## Gameplay and UI
 
 - ["Untouchable" players and picks in trades](https://basketball-gm.com/blog/2018/10/untouchable-players-and-picks-in-trades/)
+- [New options: hard/soft cap and playoff byes](https://basketball-gm.com/blog/2018/11/new-options-hard-soft-cap-and-playoff-byes/)
 
 # 4.1.0 (2018-10-07)
 

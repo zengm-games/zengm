@@ -219,6 +219,11 @@ const all = [
         msg:
             'You can mark players and picks as "untouchable" when making a trade, to see if the AI can make a counter offer without them. <a href="https://basketball-gm.com/blog/2018/10/untouchable-players-and-picks-in-trades/">More details.</a>',
     },
+    {
+        date: "2018-11-11",
+        msg:
+            'New God Mode options: hard/soft cap and playoff byes. <a href="https://basketball-gm.com/blog/2018/11/new-options-hard-soft-cap-and-playoff-byes">More details.</a>',
+    },
 ];
 
 const check = async (conditions: Conditions) => {

@@ -31,7 +31,7 @@ describe("worker/core/contractNegotiation/accept", () => {
         );
         assert.equal(
             error2,
-            "This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary. Either negotiate for a lower contract or cancel the negotiation.",
+            "This contract would put you over the salary cap. You cannot go over the salary cap to sign free agents to contracts higher than the minimum salary.",
         );
     });
 });

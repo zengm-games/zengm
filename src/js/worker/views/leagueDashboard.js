@@ -330,7 +330,8 @@ async function updatePlayoffs(
                 for (let i = 0; i < series[rnd].length; i++) {
                     if (
                         series[rnd][i].home.tid === g.userTid ||
-                        series[rnd][i].away.tid === g.userTid
+                        (series[rnd][i].away &&
+                            series[rnd][i].away.tid === g.userTid)
                     ) {
                         foundSeries = series[rnd][i];
                         found = true;

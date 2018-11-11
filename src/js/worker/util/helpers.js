@@ -11,12 +11,14 @@ import type {
 } from "../../common/types";
 
 const augmentSeries = (
-    series: {| away: PlayoffSeriesTeam, home: PlayoffSeriesTeam |}[][],
+    series: {| away?: PlayoffSeriesTeam, home: PlayoffSeriesTeam |}[][],
 ) => {
     for (const round of series) {
         for (const matchup of round) {
-            matchup.away.abbrev = g.teamAbbrevsCache[matchup.away.tid];
-            matchup.away.region = g.teamRegionsCache[matchup.away.tid];
+            if (matchup.away) {
+                matchup.away.abbrev = g.teamAbbrevsCache[matchup.away.tid];
+                matchup.away.region = g.teamRegionsCache[matchup.away.tid];
+            }
             matchup.home.abbrev = g.teamAbbrevsCache[matchup.home.tid];
             matchup.home.region = g.teamRegionsCache[matchup.home.tid];
         }

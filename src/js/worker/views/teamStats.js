@@ -98,9 +98,9 @@ async function updateTeams(
                         for (const ah of ["away", "home"]) {
                             const ha = ah === "away" ? "home" : "away";
                             const t = teams.find(
-                                t2 => t2.tid === series[ah].tid,
+                                t2 => series[ah] && t2.tid === series[ah].tid,
                             );
-                            if (t) {
+                            if (t && series[ah] && series[ha]) {
                                 t.seasonAttrs.won += series[ah].won;
                                 t.seasonAttrs.lost += series[ha].won;
                             }

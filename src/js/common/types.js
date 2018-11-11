@@ -216,6 +216,7 @@ export type GameAttributeKey =
     | "nextPhase"
     | "numGames"
     | "numGamesPlayoffSeries"
+    | "numPlayoffByes"
     | "numPlayoffRounds" // Obsolete, just here for upgrade code
     | "numTeams"
     | "ownerMood"
@@ -539,7 +540,7 @@ export type PlayoffSeries = {|
     currentRound: number,
     series: {|
         home: PlayoffSeriesTeam,
-        away: PlayoffSeriesTeam,
+        away?: PlayoffSeriesTeam,
     |}[][],
 |};
 

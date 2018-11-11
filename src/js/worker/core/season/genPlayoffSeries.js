@@ -9,12 +9,20 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
     const playoffsByConference = g.confs.length === 2;
 
     const tidPlayoffs = [];
-    const numPlayoffTeams = 2 ** g.numGamesPlayoffSeries.length;
+    const numPlayoffTeams =
+        2 ** g.numGamesPlayoffSeries.length - g.numPlayoffByes;
+    if (numPlayoffTeams <= 0) {
+        throw new Error(
+            "Invalid combination of numGamesPlayoffSeries and numPlayoffByes results in no playoff teams",
+        );
+    }
+
     const series = range(g.numGamesPlayoffSeries.length).map(() => []);
     if (playoffsByConference) {
         if (g.numGamesPlayoffSeries.length > 1) {
             // Default: top 50% of teams in each of the two conferences
-            const numSeriesPerConference = numPlayoffTeams / 4;
+            const numSeriesPerConference =
+                2 ** g.numGamesPlayoffSeries.length / 4;
             for (let cid = 0; cid < g.confs.length; cid++) {
                 const teamsConf = [];
                 for (let i = 0; i < teams.length; i++) {
@@ -26,16 +34,32 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
                         }
                     }
                 }
+
+                let numByesUsed = 0;
                 for (let i = 0; i < numSeriesPerConference; i++) {
                     const j = i % 2 === 0 ? i : numSeriesPerConference - i;
-                    series[0][j + cid * numSeriesPerConference] = {
-                        home: teamsConf[i],
-                        away: teamsConf[numPlayoffTeams / 2 - 1 - i],
-                    };
-                    series[0][j + cid * numSeriesPerConference].home.seed =
-                        i + 1;
-                    series[0][j + cid * numSeriesPerConference].away.seed =
-                        numPlayoffTeams / 2 - i;
+                    if (i < g.numPlayoffByes / 2) {
+                        series[0][j + cid * numSeriesPerConference] = {
+                            home: teamsConf[i],
+                            away: undefined,
+                        };
+                        series[0][j + cid * numSeriesPerConference].home.seed =
+                            i + 1;
+
+                        numByesUsed += 1;
+                    } else {
+                        series[0][j + cid * numSeriesPerConference] = {
+                            home: teamsConf[i],
+                            away:
+                                teamsConf[
+                                    numPlayoffTeams / 2 - 1 - i + numByesUsed
+                                ],
+                        };
+                        series[0][j + cid * numSeriesPerConference].home.seed =
+                            i + 1;
+                        series[0][j + cid * numSeriesPerConference].away.seed =
+                            numPlayoffTeams / 2 - i + numByesUsed;
+                    }
                 }
             }
         } else {
@@ -78,14 +102,26 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
                 break;
             }
         }
-        for (let i = 0; i < numPlayoffTeams / 2; i++) {
-            const j = i % 2 === 0 ? i : numPlayoffTeams / 2 - i;
-            series[0][j] = {
-                home: teamsConf[i],
-                away: teamsConf[numPlayoffTeams - 1 - i],
-            };
-            series[0][j].home.seed = i + 1;
-            series[0][j].away.seed = numPlayoffTeams - i;
+        const numSeries = 2 ** g.numGamesPlayoffSeries.length / 2;
+        let numByesUsed = 0;
+        for (let i = 0; i < numSeries; i++) {
+            const j = i % 2 === 0 ? i : numSeries - i;
+            if (i <= g.numPlayoffByes / 2) {
+                series[0][j] = {
+                    home: teamsConf[i],
+                    away: undefined,
+                };
+                series[0][j].home.seed = i + 1;
+
+                numByesUsed += 1;
+            } else {
+                series[0][j] = {
+                    home: teamsConf[i],
+                    away: teamsConf[numPlayoffTeams - 1 - i + numByesUsed],
+                };
+                series[0][j].home.seed = i + 1;
+                series[0][j].away.seed = numPlayoffTeams - i + numByesUsed;
+            }
         }
     }
 

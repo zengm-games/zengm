@@ -20,18 +20,23 @@ const updatePlayoffSeries = async (
         for (let i = 0; i < playoffRound.length; i++) {
             series = playoffRound[i];
 
-            if (series.home.tid === result.team[0].id) {
+            const { away, home } = series;
+            if (!away) {
+                continue;
+            }
+
+            if (home.tid === result.team[0].id) {
                 if (won0) {
-                    series.home.won += 1;
+                    home.won += 1;
                 } else {
-                    series.away.won += 1;
+                    away.won += 1;
                 }
                 break;
-            } else if (series.away.tid === result.team[0].id) {
+            } else if (away.tid === result.team[0].id) {
                 if (won0) {
-                    series.away.won += 1;
+                    away.won += 1;
                 } else {
-                    series.home.won += 1;
+                    home.won += 1;
                 }
                 break;
             }

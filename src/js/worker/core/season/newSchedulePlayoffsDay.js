@@ -40,16 +40,14 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 
     // Try to schedule games if there are active series
     for (let i = 0; i < series[rnd].length; i++) {
-        if (
-            series[rnd][i].home.won < numGamesToWin &&
-            series[rnd][i].away.won < numGamesToWin
-        ) {
+        const { away, home } = series[rnd][i];
+        if (away && home.won < numGamesToWin && away.won < numGamesToWin) {
             // Make sure to set home/away teams correctly! Home for the lower seed is 1st, 2nd, 5th, and 7th games.
-            const gameNum = series[rnd][i].home.won + series[rnd][i].away.won;
+            const gameNum = home.won + away.won;
             if (betterSeedHome(g.numGamesPlayoffSeries[rnd], gameNum)) {
-                tids.push([series[rnd][i].home.tid, series[rnd][i].away.tid]);
+                tids.push([home.tid, away.tid]);
             } else {
-                tids.push([series[rnd][i].away.tid, series[rnd][i].home.tid]);
+                tids.push([away.tid, home.tid]);
             }
         }
     }
@@ -62,11 +60,12 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 
     // If playoffs are over, update winner and go to next phase
     if (rnd === g.numGamesPlayoffSeries.length - 1) {
+        const { away, home } = series[rnd][0];
         let key;
-        if (series[rnd][0].home.won >= numGamesToWin) {
-            key = series[rnd][0].home.tid;
+        if (home.won >= numGamesToWin || !away) {
+            key = home.tid;
         } else {
-            key = series[rnd][0].away.tid;
+            key = away.tid;
         }
 
         const teamSeason = await idb.cache.teamSeasons.indexGet(
@@ -96,22 +95,25 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
     // Set matchups for next round
     const tidsWon = [];
     for (let i = 0; i < series[rnd].length; i += 2) {
+        const { away: away1, home: home1 } = series[rnd][i];
+        const { away: away2, home: home2 } = series[rnd][i + 1];
+
         // Find the two winning teams
         let team1;
         let team2;
-        if (series[rnd][i].home.won >= numGamesToWin) {
-            team1 = helpers.deepCopy(series[rnd][i].home);
-            tidsWon.push(series[rnd][i].home.tid);
+        if (home1.won >= numGamesToWin || !away1) {
+            team1 = helpers.deepCopy(home1);
+            tidsWon.push(home1.tid);
         } else {
-            team1 = helpers.deepCopy(series[rnd][i].away);
-            tidsWon.push(series[rnd][i].away.tid);
+            team1 = helpers.deepCopy(away1);
+            tidsWon.push(away1.tid);
         }
-        if (series[rnd][i + 1].home.won >= numGamesToWin) {
-            team2 = helpers.deepCopy(series[rnd][i + 1].home);
-            tidsWon.push(series[rnd][i + 1].home.tid);
+        if (home2.won >= numGamesToWin || !away2) {
+            team2 = helpers.deepCopy(home2);
+            tidsWon.push(home2.tid);
         } else {
-            team2 = helpers.deepCopy(series[rnd][i + 1].away);
-            tidsWon.push(series[rnd][i + 1].away.tid);
+            team2 = helpers.deepCopy(away2);
+            tidsWon.push(away2.tid);
         }
 
         // Set home/away in the next round

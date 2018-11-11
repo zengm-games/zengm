@@ -1,5 +1,64 @@
+# football
+
+playoff byes
+- god mode option. Number of playoff teams who will get a bye. For leagues with two conferences, byes will be split evenly across conferences.
+
+god mode option to edit playoff rounds
+
 blog
 - hard cap
+- playoff byes
+
+decide on player ratings
+- height
+- strength
+- speed
+- endurance
+- passing vision
+- elusiveness
+- route running
+- defensive iq
+- throwing power
+- throwing accuracy
+- elusiveness
+- tackling
+- ball security
+- catching
+- run blocking
+- pass blocking
+- kick power
+- kick accuracy
+- punt power
+- punt accuracy
+- pass rushing
+- run stopping
+- snapping
+
+decide on player stats
+
+start implementing new stats and ratings
+
+new roster page
+- show one stats column with text of position stats, like football mogul
+- offense and defense side by side
+
+game sim
+
+player development (position dependent)
+
+draft
+
+names US only
+
+switching positions - how to indicate in UI that player could handle multiple positions, or what his ovr rating would be at different positions? maybe show ovr in gray if it's not the ideal position. What about contracts though? If qb worth more, need to not let you pick another position for contact purposes
+
+implementation
+- factory functions to generate different sports - hard to pass in overrides of functions/types without making everything awkward and passing them around manually
+- ENV variable like feature flag
+
+change defaultGameAttributes
+
+---
 
 faces
 - http://biskup.biowiki.org/facesjs/

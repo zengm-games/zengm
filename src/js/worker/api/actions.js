@@ -201,6 +201,22 @@ const runDraft = async (onlyOne: boolean, conditions: Conditions) => {
     }
 };
 
+const getNumDaysThisRound = playoffSeries => {
+    let numDaysThisRound = 0;
+    for (const series of playoffSeries.series[playoffSeries.currentRound]) {
+        const num = series.away
+            ? g.numGamesPlayoffSeries[playoffSeries.currentRound] -
+              series.home.won -
+              series.away.won
+            : 0;
+        if (num > numDaysThisRound) {
+            numDaysThisRound = num;
+        }
+    }
+
+    return numDaysThisRound;
+};
+
 const playMenu = {
     stop: async () => {
         await playStop();
@@ -232,14 +248,7 @@ const playMenu = {
             const playoffSeries = await idb.cache.playoffSeries.get(g.season);
             local.playingUntilEndOfRound = true;
 
-            // See how many days are left in this round
-            const series = playoffSeries.series[playoffSeries.currentRound][0];
-            const numDaysThisSeries =
-                g.numGamesPlayoffSeries[playoffSeries.currentRound] -
-                series.home.won -
-                series.away.won;
-
-            game.play(numDaysThisSeries, conditions);
+            game.play(getNumDaysThisRound(playoffSeries), conditions);
         }
     },
 
@@ -258,14 +267,8 @@ const playMenu = {
                 numDaysFutureRounds += g.numGamesPlayoffSeries[i];
             }
 
-            // All current series are in sync, so just check one and see how many games are left
-            const series = playoffSeries.series[playoffSeries.currentRound][0];
-            const numDaysThisSeries =
-                g.numGamesPlayoffSeries[playoffSeries.currentRound] -
-                series.home.won -
-                series.away.won;
-
-            const numDays = numDaysFutureRounds + numDaysThisSeries;
+            const numDays =
+                numDaysFutureRounds + getNumDaysThisRound(playoffSeries);
             game.play(numDays, conditions);
         }
     },

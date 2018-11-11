@@ -12,6 +12,39 @@ type SeriesTeam = {
     won?: number,
 };
 
+const Team = ({
+    team,
+    season,
+    showWon,
+    userTid,
+    won,
+}: {
+    team?: SeriesTeam,
+    season: number,
+    showWon: boolean,
+    userTid: number,
+    won: boolean,
+}) => {
+    if (!team) {
+        return <br />;
+    }
+
+    return (
+        <span
+            className={team.tid === userTid ? "table-info" : ""}
+            style={{ fontWeight: won ? "bold" : "normal" }}
+        >
+            {team.seed}.{" "}
+            <a href={helpers.leagueUrl(["roster", team.abbrev, season])}>
+                {team.region}
+            </a>
+            {showWon && team.hasOwnProperty("won") ? (
+                <span> {team.won}</span>
+            ) : null}
+        </span>
+    );
+};
+
 const PlayoffMatchup = ({
     numGamesToWinSeries,
     season,
@@ -21,7 +54,7 @@ const PlayoffMatchup = ({
     numGamesToWinSeries: number,
     season: number,
     series?: {
-        away: SeriesTeam,
+        away?: SeriesTeam,
         home: SeriesTeam,
     },
     userTid: number,
@@ -35,52 +68,31 @@ const PlayoffMatchup = ({
     }
 
     const homeWon =
-        series.home.hasOwnProperty("won") &&
-        series.home.won === numGamesToWinSeries;
+        !series.away ||
+        (series.home.hasOwnProperty("won") &&
+            series.home.won === numGamesToWinSeries);
     const awayWon =
+        !!series.away &&
         series.away.hasOwnProperty("won") &&
         series.away.won === numGamesToWinSeries;
 
     return (
         <>
-            <span
-                className={series.home.tid === userTid ? "table-info" : ""}
-                style={{ fontWeight: homeWon ? "bold" : "normal" }}
-            >
-                {series.home.seed}.{" "}
-                <a
-                    href={helpers.leagueUrl([
-                        "roster",
-                        series.home.abbrev,
-                        season,
-                    ])}
-                >
-                    {series.home.region}
-                </a>
-                {series.home.hasOwnProperty("won") ? (
-                    <span> {series.home.won}</span>
-                ) : null}
-            </span>
-            <br />
-
-            <span
-                className={series.away.tid === userTid ? "table-info" : ""}
-                style={{ fontWeight: awayWon ? "bold" : "normal" }}
-            >
-                {series.away.seed}.{" "}
-                <a
-                    href={helpers.leagueUrl([
-                        "roster",
-                        series.away.abbrev,
-                        season,
-                    ])}
-                >
-                    {series.away.region}
-                </a>
-                {series.away.hasOwnProperty("won") ? (
-                    <span> {series.away.won}</span>
-                ) : null}
-            </span>
+            <Team
+                team={series.home}
+                season={season}
+                showWon={!!series.away}
+                userTid={userTid}
+                won={homeWon}
+            />
+            {series.away ? <br /> : null}
+            <Team
+                team={series.away}
+                season={season}
+                showWon={!!series.away}
+                userTid={userTid}
+                won={awayWon}
+            />
         </>
     );
 };

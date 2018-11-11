@@ -12,6 +12,10 @@ const updatePlayoffSeries = async (
 
     const playoffRound = playoffSeries.series[playoffSeries.currentRound];
 
+    const numGamesToWinSeries = helpers.numGamesToWinSeries(
+        g.numGamesPlayoffSeries[playoffSeries.currentRound],
+    );
+
     for (const result of results) {
         // Did the home (true) or away (false) team win this game? Here, "home" refers to this game, not the team which has homecourt advnatage in the playoffs, which is what series.home refers to below.
         const won0 = result.team[0].stat.pts > result.team[1].stat.pts;
@@ -48,11 +52,14 @@ const updatePlayoffSeries = async (
         }
 
         // Log result of playoff series
-        if (series.away.won >= 4 || series.home.won >= 4) {
+        if (
+            series.away.won >= numGamesToWinSeries ||
+            series.home.won >= numGamesToWinSeries
+        ) {
             let winnerTid;
             let loserTid;
             let loserWon;
-            if (series.away.won >= 4) {
+            if (series.away.won >= numGamesToWinSeries) {
                 winnerTid = series.away.tid;
                 loserTid = series.home.tid;
                 loserWon = series.home.won;
@@ -62,15 +69,31 @@ const updatePlayoffSeries = async (
                 loserWon = series.away.won;
             }
 
+            playoffSeries.series;
             let currentRoundText = "";
             if (playoffSeries.currentRound === 0) {
-                currentRoundText = "first round of the playoffs";
-            } else if (playoffSeries.currentRound === 1) {
-                currentRoundText = "second round of the playoffs";
-            } else if (playoffSeries.currentRound === 2) {
-                currentRoundText = "conference finals";
-            } else if (playoffSeries.currentRound === 3) {
-                currentRoundText = "league championship";
+                currentRoundText = `${helpers.ordinal(
+                    1,
+                )} round of the playoffs`;
+            } else if (
+                playoffSeries.currentRound ===
+                g.numGamesPlayoffSeries.length - 3
+            ) {
+                currentRoundText = "quarterfinals";
+            } else if (
+                playoffSeries.currentRound ===
+                g.numGamesPlayoffSeries.length - 2
+            ) {
+                currentRoundText = "semifinals";
+            } else if (
+                playoffSeries.currentRound ===
+                g.numGamesPlayoffSeries.length - 1
+            ) {
+                currentRoundText = "finals";
+            } else {
+                currentRoundText = `${helpers.ordinal(
+                    playoffSeries.currentRound + 1,
+                )} round of the playoffs`;
             }
 
             const showNotification =
@@ -92,7 +115,7 @@ const updatePlayoffSeries = async (
                         g.season,
                     ])}">${
                         g.teamNamesCache[loserTid]
-                    }</a> in the ${currentRoundText}, 4-${loserWon}.`,
+                    }</a> in the ${currentRoundText}, ${numGamesToWinSeries}-${loserWon}.`,
                     showNotification,
                     tids: [winnerTid, loserTid],
                 },

@@ -30,6 +30,8 @@ async function updateGodMode(
             brotherRate: g.brotherRate,
             sonRate: g.sonRate,
             hardCap: g.hardCap,
+            numGamesPlayoffSeries: g.numGamesPlayoffSeries,
+            numPlayoffByes: g.numPlayoffByes,
         };
     }
 }

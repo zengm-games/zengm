@@ -26,6 +26,8 @@ class GodMode extends React.Component {
             brotherRate: props.brotherRate,
             sonRate: props.sonRate,
             hardCap: String(props.hardCap),
+            numGamesPlayoffSeries: JSON.stringify(props.numGamesPlayoffSeries),
+            numPlayoffByes: props.numPlayoffByes,
         };
         this.handleChanges = {
             disableInjuries: this.handleChange.bind(this, "disableInjuries"),
@@ -45,6 +47,11 @@ class GodMode extends React.Component {
             brotherRate: this.handleChange.bind(this, "brotherRate"),
             sonRate: this.handleChange.bind(this, "sonRate"),
             hardCap: this.handleChange.bind(this, "hardCap"),
+            numGamesPlayoffSeries: this.handleChange.bind(
+                this,
+                "numGamesPlayoffSeries",
+            ),
+            numPlayoffByes: this.handleChange.bind(this, "numPlayoffByes"),
         };
         this.handleFormSubmit = this.handleFormSubmit.bind(this);
         this.handleGodModeToggle = this.handleGodModeToggle.bind(this);
@@ -70,6 +77,10 @@ class GodMode extends React.Component {
                 brotherRate: nextProps.brotherRate,
                 sonRate: nextProps.sonRate,
                 hardCap: String(nextProps.hardCap),
+                numGamesPlayoffSeries: JSON.stringify(
+                    nextProps.numGamesPlayoffSeries,
+                ),
+                numPlayoffByes: nextProps.numPlayoffByes,
             };
         }
 
@@ -85,6 +96,30 @@ class GodMode extends React.Component {
 
     async handleFormSubmit(e) {
         e.preventDefault();
+
+        let numGamesPlayoffSeries;
+        try {
+            numGamesPlayoffSeries = JSON.parse(
+                this.state.numGamesPlayoffSeries,
+            );
+            if (!Array.isArray(numGamesPlayoffSeries)) {
+                throw new Error("Must be an array");
+            }
+            for (const num of numGamesPlayoffSeries) {
+                if (!Number.isInteger(num)) {
+                    throw new Error("Array must contain only integers");
+                }
+            }
+        } catch (error) {
+            logEvent({
+                type: "error",
+                text: `Invalid format for Playoff Games: ${error.message}`,
+                saveToDb: false,
+                persistent: true,
+            });
+
+            return;
+        }
 
         await toWorker("updateGameAttributes", {
             disableInjuries: this.state.disableInjuries === "true",
@@ -104,6 +139,8 @@ class GodMode extends React.Component {
             brotherRate: parseFloat(this.state.brotherRate),
             sonRate: parseFloat(this.state.sonRate),
             hardCap: this.state.hardCap === "true",
+            numGamesPlayoffSeries,
+            numPlayoffByes: parseInt(this.state.numPlayoffByes, 10),
         });
 
         this.setState({
@@ -241,6 +278,52 @@ class GodMode extends React.Component {
                                 disabled={!godMode}
                                 onChange={this.handleChanges.maxRosterSize}
                                 value={this.state.maxRosterSize}
+                            />
+                        </div>
+                        <div className="col-sm-3 col-6 form-group">
+                            <label>
+                                Playoff Games{" "}
+                                <HelpPopover
+                                    placement="right"
+                                    title="# Playoff Games"
+                                >
+                                    Specify the number of games in each round.
+                                    You must enter a valid JSON array of
+                                    integers. For example, enter{" "}
+                                    <code>[5, 7, 1]</code> for a 5 game first
+                                    round series, a 7 game second round series,
+                                    and a single winner-takes-all final game.
+                                </HelpPopover>
+                            </label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                disabled={!godMode}
+                                onChange={
+                                    this.handleChanges.numGamesPlayoffSeries
+                                }
+                                value={this.state.numGamesPlayoffSeries}
+                            />
+                        </div>
+                        <div className="col-sm-3 col-6 form-group">
+                            <label>
+                                # First Round Byes{" "}
+                                <HelpPopover
+                                    placement="right"
+                                    title="# First Round Byes"
+                                >
+                                    Number of playoff teams who will get a bye
+                                    in the first round. For leagues with two
+                                    conferences, byes will be split evenly
+                                    across conferences.
+                                </HelpPopover>
+                            </label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                disabled={!godMode}
+                                onChange={this.handleChanges.numPlayoffByes}
+                                value={this.state.numPlayoffByes}
                             />
                         </div>
                     </div>
@@ -556,6 +639,8 @@ GodMode.propTypes = {
     brotherRate: PropTypes.number.isRequired,
     sonRate: PropTypes.number.isRequired,
     hardCap: PropTypes.bool.isRequired,
+    numGamesPlayoffSeries: PropTypes.arrayOf(PropTypes.number).isRequired,
+    numPlayoffByes: PropTypes.number.isRequired,
 };
 
 export default GodMode;

@@ -1,13 +1,9 @@
 # football
 
-playoff byes
-- god mode option. Number of playoff teams who will get a bye. For leagues with two conferences, byes will be split evenly across conferences.
-
-god mode option to edit playoff rounds
-
-blog
+blog/changes
 - hard cap
 - playoff byes
+- god mode options, plus playoff games
 
 decide on player ratings
 - height
@@ -59,6 +55,8 @@ implementation
 change defaultGameAttributes
 
 ---
+
+when you change playoff structure (number of rounds/teams), it messes up display of old playoffs. it shouldn't!
 
 faces
 - http://biskup.biowiki.org/facesjs/

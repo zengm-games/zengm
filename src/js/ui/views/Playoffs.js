@@ -11,6 +11,16 @@ import {
 } from "../components";
 import { setTitle } from "../util";
 
+type SeriesTeam = {
+    abbrev: string,
+    cid: number,
+    region: string,
+    seed: number,
+    tid: number,
+    winp: number,
+    won?: number,
+};
+
 const Playoffs = ({
     confNames,
     finalMatchups,
@@ -29,17 +39,14 @@ const Playoffs = ({
     numGamesToWinSeries: number[],
     season: number,
     series: {
-        cid: number,
-        seed: number,
-        tid: number,
-        winp: number,
-        won?: number,
-    },
+        home: SeriesTeam,
+        away?: SeriesTeam,
+    }[][],
     userTid: number,
 }) => {
     setTitle(`Playoffs - ${season}`);
 
-    const numRounds = numGamesToWinSeries.length;
+    const numRounds = series.length;
 
     return (
         <>

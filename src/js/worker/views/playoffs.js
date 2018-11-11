@@ -61,12 +61,12 @@ async function updatePlayoffs(
 
         // Formatting for the table in playoffs.html
         const matchups = [];
-        for (let i = 0; i < 2 ** (g.numGamesPlayoffSeries.length - 2); i++) {
+        for (let i = 0; i < 2 ** (series.length - 2); i++) {
             matchups[i] = [];
         }
         // Fill in with each round. Good lord, this is confusing, due to having to assemble it for an HTML table with rowspans.
-        for (let i = 0; i < g.numGamesPlayoffSeries.length; i++) {
-            let numGamesInSide = 2 ** (g.numGamesPlayoffSeries.length - i - 2);
+        for (let i = 0; i < series.length; i++) {
+            let numGamesInSide = 2 ** (series.length - i - 2);
             if (numGamesInSide < 1) {
                 numGamesInSide = 1;
             }
@@ -77,7 +77,7 @@ async function updatePlayoffs(
                     rowspan,
                     matchup: [i, j],
                 });
-                if (g.numGamesPlayoffSeries.length !== i + 1) {
+                if (series.length !== i + 1) {
                     matchups[j * rowspan].splice(i, 0, {
                         rowspan,
                         matchup: [i, numGamesInSide + j],

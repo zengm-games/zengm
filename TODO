@@ -56,8 +56,6 @@ change defaultGameAttributes
 
 ---
 
-when you change playoff structure (number of rounds/teams), it messes up display of old playoffs. it shouldn't!
-
 faces
 - http://biskup.biowiki.org/facesjs/
 - https://github.com/dumbmatter/facesjs/compare/master...ihh:master

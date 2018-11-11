@@ -6,9 +6,11 @@ import { helpers } from "../util";
 
 type SeriesTeam = {
     abbrev: string,
+    cid: number,
     region: string,
     seed: number,
     tid: number,
+    winp: number,
     won?: number,
 };
 
@@ -46,12 +48,12 @@ const Team = ({
 };
 
 const PlayoffMatchup = ({
-    numGamesToWinSeries,
+    numGamesToWinSeries = 7,
     season,
     series,
     userTid,
 }: {
-    numGamesToWinSeries: number,
+    numGamesToWinSeries?: number,
     season: number,
     series?: {
         away?: SeriesTeam,
@@ -98,7 +100,7 @@ const PlayoffMatchup = ({
 };
 
 PlayoffMatchup.propTypes = {
-    numGamesToWinSeries: PropTypes.number.isRequired,
+    numGamesToWinSeries: PropTypes.number,
     season: PropTypes.number.isRequired,
     series: PropTypes.shape({
         away: PropTypes.shape({

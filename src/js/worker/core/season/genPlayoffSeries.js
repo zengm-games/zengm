@@ -1,16 +1,25 @@
 // @flow
 
 import range from "lodash/range";
-import { g } from "../../util";
+import { g, helpers } from "../../util";
 import type { TeamFiltered } from "../../../common/types";
 
 const genPlayoffSeries = (teams: TeamFiltered[]) => {
     // Playoffs are split into two branches by conference only if there are exactly 2 conferences
     const playoffsByConference = g.confs.length === 2;
 
+    // Don't let there be an odd number of byes if playoffsByConference, otherwise it would get confusing
+    const numPlayoffByes = helpers.bound(
+        playoffsByConference && g.numPlayoffByes % 2 === 1
+            ? g.numPlayoffByes - 1
+            : g.numPlayoffByes,
+        0,
+        Infinity,
+    );
+
     const tidPlayoffs = [];
     const numPlayoffTeams =
-        2 ** g.numGamesPlayoffSeries.length - g.numPlayoffByes;
+        2 ** g.numGamesPlayoffSeries.length - numPlayoffByes;
     if (numPlayoffTeams <= 0) {
         throw new Error(
             "Invalid combination of numGamesPlayoffSeries and numPlayoffByes results in no playoff teams",
@@ -38,7 +47,7 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
                 let numByesUsed = 0;
                 for (let i = 0; i < numSeriesPerConference; i++) {
                     const j = i % 2 === 0 ? i : numSeriesPerConference - i;
-                    if (i < g.numPlayoffByes / 2) {
+                    if (i < numPlayoffByes / 2) {
                         series[0][j + cid * numSeriesPerConference] = {
                             home: teamsConf[i],
                             away: undefined,
@@ -106,7 +115,7 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
         let numByesUsed = 0;
         for (let i = 0; i < numSeries; i++) {
             const j = i % 2 === 0 ? i : numSeries - i;
-            if (i < g.numPlayoffByes) {
+            if (i < numPlayoffByes) {
                 series[0][j] = {
                     home: teamsConf[i],
                     away: undefined,

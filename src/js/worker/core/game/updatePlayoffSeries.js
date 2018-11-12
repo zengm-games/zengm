@@ -69,7 +69,6 @@ const updatePlayoffSeries = async (
                 loserWon = series.away.won;
             }
 
-            playoffSeries.series;
             let currentRoundText = "";
             if (playoffSeries.currentRound === 0) {
                 currentRoundText = `${helpers.ordinal(

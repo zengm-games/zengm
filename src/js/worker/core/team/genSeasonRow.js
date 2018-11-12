@@ -4,6 +4,8 @@ import { g, random } from "../../util";
 import type { TeamSeason } from "../../../common/types";
 
 const genSeasonRow = (tid: number, prevSeason?: TeamSeason): TeamSeason => {
+    const defaultRank = (g.numTeams + 1) / 2;
+
     const newSeason = {
         tid,
         season: g.season,
@@ -30,57 +32,57 @@ const genSeasonRow = (tid: number, prevSeason?: TeamSeason): TeamSeason => {
         revenues: {
             luxuryTaxShare: {
                 amount: 0,
-                rank: 15.5,
+                rank: defaultRank,
             },
             merch: {
                 amount: 0,
-                rank: 15.5,
+                rank: defaultRank,
             },
             sponsor: {
                 amount: 0,
-                rank: 15.5,
+                rank: defaultRank,
             },
             ticket: {
                 amount: 0,
-                rank: 15.5,
+                rank: defaultRank,
             },
             nationalTv: {
                 amount: 0,
-                rank: 15.5,
+                rank: defaultRank,
             },
             localTv: {
                 amount: 0,
-                rank: 15.5,
+                rank: defaultRank,
             },
         },
         expenses: {
             salary: {
                 amount: 0,
-                rank: 15.5,
+                rank: defaultRank,
             },
             luxuryTax: {
                 amount: 0,
-                rank: 15.5,
+                rank: defaultRank,
             },
             minTax: {
                 amount: 0,
-                rank: 15.5,
+                rank: defaultRank,
             },
             scouting: {
                 amount: 0,
-                rank: 15.5,
+                rank: defaultRank,
             },
             coaching: {
                 amount: 0,
-                rank: 15.5,
+                rank: defaultRank,
             },
             health: {
                 amount: 0,
-                rank: 15.5,
+                rank: defaultRank,
             },
             facilities: {
                 amount: 0,
-                rank: 15.5,
+                rank: defaultRank,
             },
         },
         payrollEndOfSeason: -1,

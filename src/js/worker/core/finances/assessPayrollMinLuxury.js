@@ -39,6 +39,8 @@ const assessPayrollMinLuxury = async () => {
         }
     }
 
+    const defaultRank = (g.numTeams + 1) / 2;
+
     const payteams = payrolls.filter(x => x <= g.salaryCap);
     if (payteams.length > 0 && collectedTax > 0) {
         const distribute = (collectedTax * 0.5) / payteams.length;
@@ -46,13 +48,13 @@ const assessPayrollMinLuxury = async () => {
             if (payrolls[teamSeason.tid] <= g.salaryCap) {
                 teamSeason.revenues.luxuryTaxShare = {
                     amount: distribute,
-                    rank: 15.5,
+                    rank: defaultRank,
                 };
                 teamSeason.cash += distribute;
             } else {
                 teamSeason.revenues.luxuryTaxShare = {
                     amount: 0,
-                    rank: 15.5,
+                    rank: defaultRank,
                 };
             }
         }

@@ -170,7 +170,7 @@ const calcBaseChange = (age: number, coachingRank: number): number => {
 const developSeason = (
     ratings: PlayerRatings,
     age: number,
-    coachingRank?: number = 15.5,
+    coachingRank?: number = (g.numTeams + 1) / 2,
 ) => {
     // In young players, height can sometimes increase
     if (age <= 21) {

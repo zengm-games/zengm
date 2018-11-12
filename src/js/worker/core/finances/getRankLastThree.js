@@ -1,5 +1,6 @@
 // @flow
 
+import { g } from "../../util";
 import type { TeamSeason } from "../../../common/types";
 
 /**
@@ -18,6 +19,8 @@ const getRankLastThree = (
     category: "expenses" | "revenues",
     item: string,
 ): number => {
+    const defaultRank = (g.numTeams + 1) / 2;
+
     const s = teamSeasons.length - 1; // Most recent season index
     if (s > 1) {
         // Use three seasons if possible
@@ -33,15 +36,15 @@ const getRankLastThree = (
         return (
             (teamSeasons[s][category][item].rank +
                 teamSeasons[s - 1][category][item].rank +
-                15.5) /
+                defaultRank) /
             3
         );
     }
     if (s === 0) {
-        return (teamSeasons[s][category][item].rank + 15.5 + 15.5) / 3;
+        return (teamSeasons[s][category][item].rank + 2 * defaultRank) / 3;
     }
 
-    return 15.5;
+    return defaultRank;
 };
 
 export default getRankLastThree;

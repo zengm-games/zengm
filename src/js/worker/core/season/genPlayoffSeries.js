@@ -106,7 +106,7 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
         let numByesUsed = 0;
         for (let i = 0; i < numSeries; i++) {
             const j = i % 2 === 0 ? i : numSeries - i;
-            if (i <= g.numPlayoffByes / 2) {
+            if (i < g.numPlayoffByes) {
                 series[0][j] = {
                     home: teamsConf[i],
                     away: undefined,

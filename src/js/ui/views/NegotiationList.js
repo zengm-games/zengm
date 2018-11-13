@@ -16,7 +16,11 @@ const NegotiationList = ({
     players,
     userTid,
 }) => {
-    setTitle("Re-sign Players");
+    const title = hardCap
+        ? "Rookies and Expiring Contracts"
+        : "Re-sign Players";
+
+    setTitle(title);
 
     const cols = getCols(
         "Name",
@@ -97,7 +101,7 @@ const NegotiationList = ({
     return (
         <>
             <h1>
-                Re-sign Players <NewWindowLink />
+                {title} <NewWindowLink />
             </h1>
             <p>
                 More:{" "}

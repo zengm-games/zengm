@@ -447,8 +447,8 @@ class GodMode extends React.Component {
                                 <HelpPopover placement="right" title="Hard Cap">
                                     <p>
                                         If this is enabled, then you can not
-                                        exceed the salary cap to re-sign your
-                                        players (like the{" "}
+                                        exceed the salary cap to sign draft
+                                        picks or re-sign players (like the{" "}
                                         <a
                                             href="https://en.wikipedia.org/wiki/NBA_salary_cap#Larry_Bird_exception"
                                             target="_blank"

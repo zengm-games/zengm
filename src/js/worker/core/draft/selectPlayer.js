@@ -54,17 +54,29 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 
     // Contract
     if (g.phase !== PHASE.FANTASY_DRAFT) {
-        const rookieSalaries = getRookieSalaries();
-        const i = dp.pick - 1 + g.numTeams * (dp.round - 1);
-        const years = 4 - dp.round; // 2 years for 2nd round, 3 years for 1st round;
-        player.setContract(
-            p,
-            {
-                amount: rookieSalaries[i],
-                exp: g.season + years,
-            },
-            true,
-        );
+        if (g.hardCap) {
+            // Make it an expiring contract, so player immediately becomes a free agent
+            player.setContract(
+                p,
+                {
+                    amount: g.minContract,
+                    exp: g.season,
+                },
+                true,
+            );
+        } else {
+            const rookieSalaries = getRookieSalaries();
+            const i = dp.pick - 1 + g.numTeams * (dp.round - 1);
+            const years = 4 - dp.round; // 2 years for 2nd round, 3 years for 1st round;
+            player.setContract(
+                p,
+                {
+                    amount: rookieSalaries[i],
+                    exp: g.season + years,
+                },
+                true,
+            );
+        }
     }
 
     // Add stats row if necessary (fantasy draft in ongoing season)

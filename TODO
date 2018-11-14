@@ -1,5 +1,37 @@
 # football
 
+--
+
+const app = init<PlayerRatings>();
+
+- Forces me to change structure of nearly everything to initialized within that `init` function
+
+- No more `import { function } from "./stuff"; function();`, would have to be `import stuff from "./stuff"; stuff.function();`.
+
+- Feels wrong to rearchitecture everything like this
+
+- Pick some internal stuff (like bonus.js) make generic, see what happens, at what point do i need to change structure
+
+--
+
+type PlayerRatings = PlayerRatingsBasketball | PlayerRatingsFootball;
+
+if (process.env.SPORT === "football") {
+  // Assume PlayerRatingsFootball
+} else {
+  // Assume PlayerRatingsBasketball
+}
+
+- Would get very messy!
+
+- Flow doesn't know what it means, so I'd have to add additional repetitive checks to help flow figure out types.
+
+--
+
+
+
+--
+
 decide on player ratings
 
 ALL

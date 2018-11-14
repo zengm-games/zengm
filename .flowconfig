@@ -4,3 +4,4 @@
 .*/node_modules/module-deps/test/invalid_pkg/package.json
 .*/node_modules/prebid.js/.*
 .*/node_modules/stylelint/.*
+.*/node_modules/unstated/lib/unstated.js.flow

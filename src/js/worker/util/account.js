@@ -207,7 +207,7 @@ async function check(conditions: Conditions): Promise<PartialTopMenu> {
 }
 
 async function getAchievements() {
-    const achievements = allAchievements.slice();
+    const achievements = [...allAchievements];
     const achievementsLocal = await idb.meta.achievements.getAll();
 
     // Initialize counts

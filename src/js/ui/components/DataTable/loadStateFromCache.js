@@ -21,7 +21,8 @@ const loadStateFromCache = (props: Props) => {
     }
 
     // Don't let sortBy reference invalid col
-    sortBys = sortBys.filter((sortBy: SortBy) => sortBy[0] < props.cols.length);
+    // $FlowFixMe
+    sortBys = sortBys.filter(sortBy => sortBy[0] < props.cols.length);
     if (sortBys.length === 0) {
         sortBys = [props.defaultSort];
     }

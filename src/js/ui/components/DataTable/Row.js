@@ -5,7 +5,12 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import clickable from "../../wrappers/clickable";
 
-const Row = clickable(({ clicked, row, toggleClicked }) => {
+const Row = clickable<{
+    row: {
+        classNames: any,
+        data: any[],
+    },
+}>(({ clicked, row, toggleClicked }) => {
     return (
         <tr
             className={classNames(row.classNames, { "table-warning": clicked })}

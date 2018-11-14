@@ -1,29 +1,45 @@
 # football
 
 decide on player ratings
-- height
-- strength
-- speed
-- endurance
-- passing vision
-- elusiveness
-- route running
-- defensive iq
-- throwing power
-- throwing accuracy
-- elusiveness
-- tackling
-- ball security
-- catching
-- run blocking
-- pass blocking
-- kick power
-- kick accuracy
-- punt power
-- punt accuracy
-- pass rushing
-- run stopping
-- snapping
+
+ALL
+- hgt: height
+- stre: strength
+- spd: speed
+- endu: endurance
+
+QB
+- oiq: offensive iq
+- pvn: passing vision
+- thp: throwing power
+- tha: throwing accuracy
+- elu: elusiveness
+
+RB/WR/TE
+- oiq: offensive iq
+- elu: elusiveness
+- bls: ball security
+- rtr: route running
+- hnd: hands
+
+T/G/C
+- oiq: offensive iq
+- rbk: run blocking
+- pbk: pass blocking
+- snp: snapping
+
+K/P
+- kpw: kick power
+- kac: kick accuracy
+- ppw: punt power
+- pac: punt accuracy
+
+All defensive players
+- pcv: pass coverage
+- tck: tackling
+- prs: pass rushing
+- rns: run stopping
+- hnd: hands
 
 decide on player stats
 

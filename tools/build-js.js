@@ -18,7 +18,7 @@ const BLACKLIST = {
 };
 
 for (const name of ["ui", "worker"]) {
-    browserify(`src/js/${name}/index.js`, { debug: true })
+    browserify(`src/${name}/index.js`, { debug: true })
         .on("error", console.error)
         .transform(babelify)
         .transform(blacklistify(BLACKLIST[name]))

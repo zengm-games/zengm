@@ -16,7 +16,7 @@ const buildCSS = (watch /*: boolean*/ = false) => {
             const start = process.hrtime();
 
             // If more Sass files are needed, then create them and @import them into this main Sass file.
-            const sassFilePath = `src/css/${filename}.scss`;
+            const sassFilePath = `public/css/${filename}.scss`;
             const sassResult = sass.renderSync({
                 file: sassFilePath,
             });
@@ -66,7 +66,7 @@ const buildCSS = (watch /*: boolean*/ = false) => {
 // NOTE: This should be run *AFTER* all assets are built
 const buildSW = async () => {
     const { count, size, warnings } = await workboxBuild.injectManifest({
-        swSrc: "src/sw.js",
+        swSrc: "public/sw.js",
         swDest: "build/sw.js",
         globDirectory: "build",
         globPatterns: [
@@ -85,14 +85,16 @@ const buildSW = async () => {
 };
 
 const copyFiles = () => {
-    console.log('Copying files from "src" directory to "build" directory...');
-    const foldersToIgnore = ["css", "js", "templates"];
+    console.log(
+        'Copying files from "public" directory to "build" directory...',
+    );
+    const foldersToIgnore = ["css"];
 
-    fse.copySync("src", "build", {
+    fse.copySync("public", "build", {
         filter: filename => {
             // Loop through folders to ignore.
             for (const folder of foldersToIgnore) {
-                if (filename.indexOf(`src/${folder}`) === 0) {
+                if (filename.startsWith(`public/${folder}`)) {
                     return false;
                 }
             }

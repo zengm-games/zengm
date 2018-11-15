@@ -1,7 +1,5 @@
 # football
 
-1. flatten 1 level like create-react-app
-
 2. 3 js folders: basketball, football, and common
 
 3. start moving things from basketball to common, if they don't depend on basketball-specific types
@@ -11,6 +9,8 @@
 5. get as far as possible
 
 6. what about stuff that depends on e.g. the type Player? is there some way to auto-apply its parameters PlayerStats and PlayerRatings, based on the sport? Or does any function using Player need to either be in a sport-specific folder, or (if in common) be generic?
+
+Venatus - make sure correce before deploying
 
 --
 

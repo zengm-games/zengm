@@ -12,7 +12,7 @@ console.log("Watching JavaScript files...");
 for (const name of ["ui", "worker"]) {
     // Mostly copied from cmd.js in watchify
 
-    const b = browserify(`src/js/${name}/index.js`, {
+    const b = browserify(`src/${name}/index.js`, {
         debug: true,
         cache: {},
         packageCache: {},

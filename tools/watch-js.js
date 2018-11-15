@@ -10,7 +10,7 @@ const build = require("./buildFuncs");
 console.log("Watching JavaScript files...");
 
 const sport = process.env.SPORT;
-if (sport === undefined) {
+if (typeof sport !== "string") {
     throw new Error(
         "SPORT environment variable must be either basketball or football",
     );

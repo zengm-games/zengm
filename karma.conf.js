@@ -5,13 +5,13 @@ module.exports = function(config) {
         frameworks: ["mocha", "browserify", "source-map-support"],
 
         files: [
-            "src/js/test/index.js",
-            "src/js/**/*.test.js",
-            "src/js/test/**/*.js",
+            "src/basketball/test/index.js",
+            "src/basketball/**/*.test.js",
+            "src/basketball/test/**/*.js",
         ],
 
         preprocessors: {
-            "src/js/**/*.js": ["browserify"],
+            "src/basketball/**/*.js": ["browserify"],
         },
 
         // http://stackoverflow.com/a/42379383/786644

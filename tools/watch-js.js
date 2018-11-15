@@ -9,10 +9,17 @@ const build = require("./buildFuncs");
 
 console.log("Watching JavaScript files...");
 
+const sport = process.env.SPORT;
+if (sport === undefined) {
+    throw new Error(
+        "SPORT environment variable must be either basketball or football",
+    );
+}
+
 for (const name of ["ui", "worker"]) {
     // Mostly copied from cmd.js in watchify
 
-    const b = browserify(`src/${name}/index.js`, {
+    const b = browserify(`src/${sport}/${name}/index.js`, {
         debug: true,
         cache: {},
         packageCache: {},

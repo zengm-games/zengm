@@ -17,8 +17,15 @@ const BLACKLIST = {
     worker: [/.*\/ui.*/, /.*react.*/],
 };
 
+const sport = process.env.SPORT;
+if (sport === undefined) {
+    throw new Error(
+        "SPORT environment variable must be either basketball or football",
+    );
+}
+
 for (const name of ["ui", "worker"]) {
-    browserify(`src/${name}/index.js`, { debug: true })
+    browserify(`src/${sport}/${name}/index.js`, { debug: true })
         .on("error", console.error)
         .transform(babelify)
         .transform(blacklistify(BLACKLIST[name]))

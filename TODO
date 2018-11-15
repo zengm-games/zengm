@@ -1,16 +1,40 @@
 # football
 
+1. flatten 1 level like create-react-app
+
+2. 3 js folders: basketball, football, and common
+
+3. start moving things from basketball to common, if they don't depend on basketball-specific types
+
+4. split types too! common ones can be generic, then in basketball types.js import them, apply parameter, and re-export
+
+5. get as far as possible
+
+6. what about stuff that depends on e.g. the type Player? is there some way to auto-apply its parameters PlayerStats and PlayerRatings, based on the sport? Or does any function using Player need to either be in a sport-specific folder, or (if in common) be generic?
+
 --
 
 const app = init<PlayerRatings>();
 
-- Forces me to change structure of nearly everything to initialized within that `init` function
-
-- No more `import { function } from "./stuff"; function();`, would have to be `import stuff from "./stuff"; stuff.function();`.
+- Forces me to change structure of nearly everything to be generic, passing the types through from the init function
 
 - Feels wrong to rearchitecture everything like this
 
 - Pick some internal stuff (like bonus.js) make generic, see what happens, at what point do i need to change structure
+
+
+Would be nice to avoid passing around the types to every single goddamn function, and apply the generics globally like
+
+/* @flow */
+
+type Foo<T> = T[];
+type Bar = Foo<string>;
+
+const x: Bar = ["a"];
+
+But how could I do that? Would need to do it at compile time or something, because otherwise don't know it's "string" until inside the init function, so then can no longer export, right?
+
+- maybe not a horrible idea. have sport-specific types defined in a file, and a compile step that concatenates them prior to running flow
 
 --
 

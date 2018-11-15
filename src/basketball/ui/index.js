@@ -1,7 +1,7 @@
 // @flow
 
 /* eslint-disable import/first */
-import "../common/polyfills";
+import "../../deion/common/polyfills";
 import router from "bbgm-router";
 import createBugsnagErrorBoundary from "bugsnag-react";
 import * as React from "react";

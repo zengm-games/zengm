@@ -1,7 +1,7 @@
 // @flow
 
 /* eslint-disable import/first */
-import "../common/polyfills";
+import "../../deion/common/polyfills";
 import api from "./api";
 import * as common from "../common";
 import * as core from "./core";

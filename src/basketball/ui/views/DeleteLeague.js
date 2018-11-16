@@ -1,7 +1,11 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { helpers, setTitle, toWorker } from "../../../deion/ui/util";
-import { realtimeUpdate } from "../util";
+import {
+    helpers,
+    realtimeUpdate,
+    setTitle,
+    toWorker,
+} from "../../../deion/ui/util";
 
 class DeleteLeague extends React.Component {
     constructor(props) {

@@ -10,11 +10,12 @@ import api from "./api";
 import Controller from "./components/Controller";
 import {
     compareVersions,
+    genStaticPage,
     logEvent,
     promiseWorker,
     toWorker,
 } from "../../deion/ui/util";
-import { genStaticPage, leagueNotFoundMessage, routes } from "./util";
+import { leagueNotFoundMessage, routes } from "./util";
 import type { Env } from "../../deion/common/types";
 
 window.fixDatabase = async () => {

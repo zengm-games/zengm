@@ -2,8 +2,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import ResponsiveTableWrapper from "../../../deion/ui/components/ResponsiveTableWrapper";
-import { helpers } from "../../../deion/ui/util";
-import { realtimeUpdate } from "../util";
+import { helpers, realtimeUpdate } from "../../../deion/ui/util";
 
 const HeadlineScore = ({ boxScore }) => {
     // Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games

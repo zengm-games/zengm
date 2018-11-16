@@ -3,8 +3,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { fetchWrapper } from "../../../deion/common";
 import { SPORT } from "../../common";
-import { local, setTitle } from "../../../deion/ui/util";
-import { realtimeUpdate } from "../util";
+import { local, realtimeUpdate, setTitle } from "../../../deion/ui/util";
 
 const ajaxErrorMsg =
     "Error connecting to server. Check your Internet connection or try again later.";

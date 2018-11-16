@@ -19,10 +19,10 @@ import {
     emitter,
     helpers,
     menuItems,
+    realtimeUpdate,
     subscribeLocal,
     toWorker,
 } from "../../../deion/ui/util";
-import { realtimeUpdate } from "../util";
 
 type TopMenuToggleProps = {
     long: string,

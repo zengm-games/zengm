@@ -4,8 +4,12 @@ import faces from "facesjs";
 import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../common";
-import { helpers, setTitle, toWorker } from "../../../deion/ui/util";
-import { realtimeUpdate } from "../util";
+import {
+    helpers,
+    realtimeUpdate,
+    setTitle,
+    toWorker,
+} from "../../../deion/ui/util";
 import { PlayerPicture } from "../../../deion/ui/components";
 import { NewWindowLink } from "../components";
 

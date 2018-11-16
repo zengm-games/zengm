@@ -1,5 +1,4 @@
 // @flow
-/* global process */
 
 import PromiseWorker from "promise-worker-bi";
 

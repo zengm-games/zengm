@@ -1,8 +1,5 @@
 # football
 
-menuitems - replace domain name
-settitle - replace title
-
 yarn workspaces
 - fucks up eslint and browserify, ugh. maybe not worth it.
   - get running without changing references to deion or using workspaces, just with new package.json files

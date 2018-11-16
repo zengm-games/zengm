@@ -2,7 +2,10 @@
 
 import local from "./local";
 
-let currentTitle = "Basketball GM";
+const gameName = `${process.env.SPORT.charAt(0).toUpperCase() +
+    process.env.SPORT.slice(1)} GM`;
+
+let currentTitle = gameName;
 const setTitle = (newTitle: string) => {
     if (
         window.location.pathname.startsWith("/l/") &&
@@ -10,7 +13,7 @@ const setTitle = (newTitle: string) => {
     ) {
         newTitle += ` - ${local.state.leagueName}`;
     }
-    newTitle = `${newTitle} - Basketball GM`;
+    newTitle = `${newTitle} - ${gameName}`;
     if (newTitle !== currentTitle) {
         currentTitle = newTitle;
         document.title = newTitle;

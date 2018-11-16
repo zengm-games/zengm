@@ -27,7 +27,9 @@ for (const name of ["ui", "worker"]) {
         .on("error", console.error)
         .transform(babelify)
         .transform(blacklistify(BLACKLIST[name]))
-        .transform(envify({ NODE_ENV: "production" }), { global: true })
+        .transform(envify({ NODE_ENV: "production", SPORT: sport }), {
+            global: true,
+        })
         .bundle()
         .pipe(fs.createWriteStream(`build/gen/${name}.js`));
 }

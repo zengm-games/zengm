@@ -406,7 +406,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
                 type: "link",
                 league: true,
                 nonLeague: true,
-                path: "https://basketball-gm.com/manual/",
+                path: `https://${process.env.SPORT}-gm.com/manual/`,
                 text: "Overview",
             },
             {
@@ -421,14 +421,16 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
                 type: "link",
                 league: true,
                 nonLeague: true,
-                path: "https://basketball-gm.com/manual/customization/",
+                path: `https://${
+                    process.env.SPORT
+                }-gm.com/manual/customization/`,
                 text: "Custom Rosters",
             },
             {
                 type: "link",
                 league: true,
                 nonLeague: true,
-                path: "https://basketball-gm.com/manual/debugging/",
+                path: `https://${process.env.SPORT}-gm.com/manual/debugging/`,
                 text: "Debugging",
             },
         ],

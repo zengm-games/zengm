@@ -23,7 +23,9 @@ for (const name of ["ui", "worker"]) {
         packageCache: {},
     })
         .transform(babelify)
-        .transform(envify({ NODE_ENV: "development" }), { global: true })
+        .transform(envify({ NODE_ENV: "development", SPORT: sport }), {
+            global: true,
+        })
         .plugin(watchify);
 
     let bytes = 0;

@@ -62,6 +62,7 @@
         "SyntheticInputEvent": false,
         "SyntheticMouseEvent": false,
         "SyntheticTouchEvent": false,
+        "process": false,
     },
     overrides: [{
         files: "**/*.test.js",

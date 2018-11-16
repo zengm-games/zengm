@@ -17,7 +17,7 @@ type PlayerNames = {
 //
 // This weird conditional require is so Karma doesn't crash when using the big names file.
 let { first, last } =
-    process.env.NODE_ENV === "test" // eslint-disable-line
+    process.env.NODE_ENV === "test"
         ? require("./names-test.json") // eslint-disable-line
         : require("./names-default.json"); // eslint-disable-line
 

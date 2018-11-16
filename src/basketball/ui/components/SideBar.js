@@ -3,7 +3,8 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import * as React from "react";
-import { emitter, helpers, menuItems, subscribeLocal } from "../util";
+import { emitter } from "../../../deion/ui/util";
+import { helpers, menuItems, subscribeLocal } from "../util";
 
 const getText = (text): string | React.Element<any> => {
     if (text.hasOwnProperty("side")) {

@@ -1,6 +1,6 @@
 // @flow
 
-import { emitter } from ".";
+import { emitter } from "../../../deion/ui/util";
 
 function showGcs() {
     window.TriggerPrompt("http://www.basketball-gm.com/", new Date().getTime());

@@ -1,6 +1,6 @@
 // @flow
 
-import initView from "./initView";
+import initView from "../../../deion/ui/util/initView";
 import * as views from "../views";
 
 const genPage = (id, inLeague = true) => {

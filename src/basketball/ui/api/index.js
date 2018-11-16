@@ -1,6 +1,7 @@
 // @flow
 
-import { emitter, local, realtimeUpdate } from "../util";
+import { emitter } from "../../../deion/ui/util";
+import { local, realtimeUpdate } from "../util";
 import { showEvent } from "../util/logEvent";
 import type {
     GameAttributes,

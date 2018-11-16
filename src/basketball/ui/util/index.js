@@ -21,11 +21,9 @@ promiseWorker.registerError(e => {
 });
 
 export { default as ads } from "./ads";
-export { default as emitter } from "./emitter";
 export { default as genStaticPage } from "./genStaticPage";
 export { default as getCols } from "./getCols";
 export { default as helpers } from "./helpers";
-export { default as initView } from "./initView";
 export { default as leagueNotFoundMessage } from "./leagueNotFoundMessage";
 export { default as local } from "./local";
 export { default as logEvent } from "./logEvent";

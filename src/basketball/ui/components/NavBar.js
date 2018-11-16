@@ -15,8 +15,8 @@ import Popover from "reactstrap/lib/Popover";
 import PopoverBody from "reactstrap/lib/PopoverBody";
 import PopoverHeader from "reactstrap/lib/PopoverHeader";
 import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
+import { emitter } from "../../../deion/ui/util";
 import {
-    emitter,
     helpers,
     menuItems,
     realtimeUpdate,

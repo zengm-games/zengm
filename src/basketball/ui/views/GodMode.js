@@ -1,7 +1,8 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { local, logEvent, setTitle, toWorker } from "../util";
+import { local } from "../../../deion/ui/util";
+import { logEvent, setTitle, toWorker } from "../util";
 import { HelpPopover } from "../../../deion/ui/components";
 import { NewWindowLink } from "../components";
 

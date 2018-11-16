@@ -1,7 +1,7 @@
 // @flow
 
 import { helpers as commonHelpers } from "../../../deion/common";
-import { local } from ".";
+import { local } from "../../../deion/ui/util";
 
 const leagueUrl = (components: (number | string)[]): string => {
     const lid = local.state.lid;

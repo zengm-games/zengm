@@ -1,7 +1,8 @@
 // @flow
 
 import { createLogger } from "../../../deion/common";
-import { local, notify, toWorker } from ".";
+import { local, notify } from "../../../deion/ui/util";
+import { toWorker } from ".";
 import type { LogEventShowOptions } from "../../../deion/common/types";
 
 const saveEvent = () => {

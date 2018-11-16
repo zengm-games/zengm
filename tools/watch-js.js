@@ -9,11 +9,9 @@ const build = require("./buildFuncs");
 
 console.log("Watching JavaScript files...");
 
-const sport = process.env.SPORT;
+let sport = process.env.SPORT;
 if (typeof sport !== "string") {
-    throw new Error(
-        "SPORT environment variable must be either basketball or football",
-    );
+    sport = "basketball";
 }
 
 for (const name of ["ui", "worker"]) {

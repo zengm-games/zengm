@@ -1,11 +1,10 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { getCols, helpers, logEvent, setTitle, toWorker } from "../util";
+import { BarGraph, HelpPopover } from "../../../deion/ui/components";
 import {
-    BarGraph,
     DataTable,
     Dropdown,
-    HelpPopover,
     NewWindowLink,
     PlayerNameLabels,
 } from "../components";

@@ -2,7 +2,8 @@
 
 import classNames from "classnames";
 import React from "react";
-import { SPORT, fetchWrapper } from "../../../common";
+import { fetchWrapper } from "../../../../deion/common";
+import { SPORT } from "../../../common";
 import { local, realtimeUpdate, setTitle, toWorker } from "../../util";
 
 type Props = {

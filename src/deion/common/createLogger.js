@@ -5,7 +5,7 @@ import type {
     LogEventSaveOptions,
     LogEventShowOptions,
     LogEventType,
-} from "../../deion/common/types";
+} from "./types";
 
 // Really, pids, tids, and type should not be optional if saveToDb is true
 type LogEventOptions = {

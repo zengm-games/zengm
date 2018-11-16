@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { DIFFICULTY } from "../../common";
-import { HelpPopover } from "../components";
+import { HelpPopover } from "../../../deion/ui/components";
 import { helpers, logEvent, setTitle, toWorker } from "../util";
 import { Options } from ".";
 

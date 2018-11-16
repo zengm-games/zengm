@@ -2,7 +2,8 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import { NewWindowLink, SafeHtml } from "../components";
+import { SafeHtml } from "../../../deion/ui/components";
+import { NewWindowLink } from "../components";
 import { helpers, setTitle } from "../util";
 import type { Message as Message_ } from "../../../deion/common/types";
 

@@ -1,8 +1,5 @@
 # football
 
-does it make sense to import from deion in index.js files? probably not, because it obscures if something is sport-specific or not
-- get rid of all re-exports of deion imports
-
 yarn workspaces
 - fucks up eslint and browserify, ugh. maybe not worth it.
   - get running without changing references to deion or using workspaces, just with new package.json files
@@ -12,6 +9,8 @@ yarn workspaces
 
 util/helpers - how to deal with this?
 - util, in general.. lots of stuff depends on it, focus on this first
+
+tests still running within deion? e.g. common/helpers.test.js
 
 2. 3 js folders: basketball, football, and deion
 

@@ -4,12 +4,14 @@ import React from "react";
 import { PHASE } from "../../common";
 import { helpers, setTitle } from "../util";
 import {
+    RatingWithChange,
+    ResponsiveTableWrapper,
+} from "../../../deion/ui/components";
+import {
     CompletedGame,
     NewWindowLink,
     PlayerNameLabels,
     PlayoffMatchup,
-    RatingWithChange,
-    ResponsiveTableWrapper,
     UpcomingGame,
 } from "../components";
 

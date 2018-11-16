@@ -37,4 +37,3 @@ export { default as setTitle } from "./setTitle";
 export { default as subscribeLocal } from "./subscribeLocal";
 export { default as takeScreenshot } from "./takeScreenshot";
 export { default as toWorker } from "./toWorker";
-export * from "../../../deion/ui/util";

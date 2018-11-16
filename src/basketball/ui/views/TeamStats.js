@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { getCols, helpers, prefixStatOpp, setTitle } from "../util";
+import { prefixStatOpp } from "../../../deion/ui/util";
+import { getCols, helpers, setTitle } from "../util";
 import { DataTable, Dropdown, JumpTo, NewWindowLink } from "../components";
 
 const legendSquare = className => {

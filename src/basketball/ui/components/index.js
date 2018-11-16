@@ -21,4 +21,3 @@ export { default as SideBar } from "./SideBar";
 export { default as SkillsBlock } from "./SkillsBlock";
 export { default as UpcomingGame } from "./UpcomingGame";
 export { default as WatchBlock } from "./WatchBlock";
-export * from "../../../deion/ui/components";

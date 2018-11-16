@@ -1,7 +1,8 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { helpers, setTitle } from "../util";
-import { Dropdown, JumpTo, NewWindowLink, SafeHtml } from "../components";
+import { Dropdown, JumpTo, NewWindowLink } from "../components";
+import { SafeHtml } from "../../../deion/ui/components";
 
 const Transactions = ({ abbrev, eventType, events, season }) => {
     setTitle(`Transactions - ${season}`);

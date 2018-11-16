@@ -5,13 +5,8 @@ import range from "lodash/range";
 import PropTypes from "prop-types";
 import * as React from "react";
 import { helpers, setTitle, toWorker } from "../util";
-import {
-    DraftAbbrev,
-    Dropdown,
-    JumpTo,
-    NewWindowLink,
-    ResponsiveTableWrapper,
-} from "../components";
+import { ResponsiveTableWrapper } from "../../../deion/ui/components";
+import { DraftAbbrev, Dropdown, JumpTo, NewWindowLink } from "../components";
 import type { DraftLotteryResultArray } from "../../../deion/common/types";
 
 const getProbs = (result: DraftLotteryResultArray): (number | void)[][] => {

@@ -1,6 +1,6 @@
 // @flow
 
-import { createLogger } from "../../common";
+import { createLogger } from "../../../deion/common";
 import { local, notify, toWorker } from ".";
 import type { LogEventShowOptions } from "../../../deion/common/types";
 

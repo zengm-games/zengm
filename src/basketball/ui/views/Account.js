@@ -3,8 +3,10 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import * as React from "react";
-import { SPORT, STRIPE_PUBLISHABLE_KEY, fetchWrapper } from "../../common";
-import { getScript, local, realtimeUpdate, setTitle } from "../util";
+import { fetchWrapper } from "../../../deion/common";
+import { SPORT, STRIPE_PUBLISHABLE_KEY } from "../../common";
+import { getScript } from "../../../deion/ui/util";
+import { local, realtimeUpdate, setTitle } from "../util";
 
 const ajaxErrorMsg =
     "Error connecting to server. Check your Internet connection or try again later.";

@@ -1,6 +1,7 @@
 // @flow
 
-import { SPORT, fetchWrapper } from "../../common";
+import { fetchWrapper } from "../../../deion/common";
+import { SPORT } from "../../common";
 import { account, env } from "../util";
 import type {
     Conditions,

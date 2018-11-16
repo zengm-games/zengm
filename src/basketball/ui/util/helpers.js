@@ -1,6 +1,6 @@
 // @flow
 
-import { helpers as commonHelpers } from "../../common";
+import { helpers as commonHelpers } from "../../../deion/common";
 import { local } from ".";
 
 const leagueUrl = (components: (number | string)[]): string => {

@@ -2,12 +2,8 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import { helpers, setTitle } from "../util";
-import {
-    Dropdown,
-    JumpTo,
-    NewWindowLink,
-    ResponsiveTableWrapper,
-} from "../components";
+import { ResponsiveTableWrapper } from "../../../deion/ui/components";
+import { Dropdown, JumpTo, NewWindowLink } from "../components";
 import clickable from "../../../deion/ui/wrappers/clickable";
 
 const DivStandingsRow = clickable(({ clicked, season, t, toggleClicked }) => {

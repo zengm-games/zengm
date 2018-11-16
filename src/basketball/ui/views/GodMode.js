@@ -2,7 +2,8 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import { local, logEvent, setTitle, toWorker } from "../util";
-import { HelpPopover, NewWindowLink } from "../components";
+import { HelpPopover } from "../../../deion/ui/components";
+import { NewWindowLink } from "../components";
 
 class GodMode extends React.Component {
     constructor(props) {

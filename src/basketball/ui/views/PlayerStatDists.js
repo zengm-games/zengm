@@ -1,7 +1,8 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { helpers, setTitle } from "../util";
-import { BoxPlot, Dropdown, NewWindowLink } from "../components";
+import { BoxPlot } from "../../../deion/ui/components";
+import { Dropdown, NewWindowLink } from "../components";
 
 const nbaQuartiles = {
     gp: [1, 25, 52, 74, 82],

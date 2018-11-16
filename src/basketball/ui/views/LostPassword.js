@@ -1,5 +1,6 @@
 import React from "react";
-import { SPORT, fetchWrapper } from "../../common";
+import { fetchWrapper } from "../../../deion/common";
+import { SPORT } from "../../common";
 import { setTitle } from "../util";
 
 const ajaxErrorMsg =

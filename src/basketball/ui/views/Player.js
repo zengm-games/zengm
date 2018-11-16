@@ -1,10 +1,9 @@
 import PropTypes from "prop-types";
 import React from "react";
+import { PlayerPicture, SafeHtml } from "../../../deion/ui/components";
 import {
     DataTable,
     NewWindowLink,
-    PlayerPicture,
-    SafeHtml,
     SkillsBlock,
     WatchBlock,
 } from "../components";

@@ -1,6 +1,6 @@
 // @flow
 
-import { createLogger } from "../../common";
+import { createLogger } from "../../../deion/common";
 import { idb } from "../db";
 import { g, toUI } from ".";
 import type {

@@ -8,8 +8,8 @@ import * as React from "react";
 import ReactDOM from "react-dom";
 import api from "./api";
 import Controller from "./components/Controller";
+import { compareVersions } from "../../deion/ui/util";
 import {
-    compareVersions,
     genStaticPage,
     leagueNotFoundMessage,
     logEvent,

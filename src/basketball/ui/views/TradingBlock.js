@@ -3,12 +3,8 @@ import React from "react";
 import { PHASE } from "../../common";
 import { getCols, helpers, setTitle, toWorker } from "../util";
 import clickable from "../../../deion/ui/wrappers/clickable";
-import {
-    DataTable,
-    NewWindowLink,
-    PlayerNameLabels,
-    ResponsiveTableWrapper,
-} from "../components";
+import { ResponsiveTableWrapper } from "../../../deion/ui/components";
+import { DataTable, NewWindowLink, PlayerNameLabels } from "../components";
 
 const OfferPlayerRow = clickable(({ clicked, p, toggleClicked }) => {
     return (

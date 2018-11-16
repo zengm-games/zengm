@@ -1,7 +1,8 @@
 // @flow
 
 /*eslint camelcase: 0*/
-import { SPORT, fetchWrapper } from "../../common";
+import { fetchWrapper } from "../../../deion/common";
+import { SPORT } from "../../common";
 import { idb } from "../db";
 import { env, g, local, logEvent, toUI } from ".";
 import type { Conditions, PartialTopMenu } from "../../../deion/common/types";

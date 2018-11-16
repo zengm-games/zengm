@@ -1,7 +1,8 @@
 // @flow
 
 import React from "react";
-import { SPORT, fetchWrapper } from "../../../common";
+import { fetchWrapper } from "../../../../deion/common";
+import { SPORT } from "../../../common";
 import { local, realtimeUpdate, toWorker } from "../../util";
 
 type Props = {

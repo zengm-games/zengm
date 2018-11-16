@@ -1,7 +1,8 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { SPORT, fetchWrapper } from "../../common";
+import { fetchWrapper } from "../../../deion/common";
+import { SPORT } from "../../common";
 import { local, realtimeUpdate, setTitle } from "../util";
 
 const ajaxErrorMsg =

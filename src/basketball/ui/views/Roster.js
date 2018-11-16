@@ -22,7 +22,7 @@ import {
     RecordAndPlayoffs,
     ResponsiveTableWrapper,
 } from "../components";
-import clickable from "../wrappers/clickable";
+import clickable from "../../../deion/ui/wrappers/clickable";
 
 const ptStyles = {
     0: {

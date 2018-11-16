@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../common";
 import { getCols, helpers, setTitle, toWorker } from "../util";
-import clickable from "../wrappers/clickable";
+import clickable from "../../../deion/ui/wrappers/clickable";
 import {
     DataTable,
     NewWindowLink,

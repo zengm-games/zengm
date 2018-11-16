@@ -35,7 +35,7 @@ const DangerZone = () => {
                         toWorker("actions.toolsMenu.skipToBeforeDraft");
                     }}
                 >
-                    Skip To Draft Lottery
+                    Skip To Before Draft
                 </button>
             </p>
             <p>

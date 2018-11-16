@@ -8,7 +8,7 @@ import {
     NewWindowLink,
     ResponsiveTableWrapper,
 } from "../components";
-import clickable from "../wrappers/clickable";
+import clickable from "../../../deion/ui/wrappers/clickable";
 
 const DivStandingsRow = clickable(({ clicked, season, t, toggleClicked }) => {
     return (

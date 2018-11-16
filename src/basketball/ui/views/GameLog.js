@@ -8,7 +8,7 @@ import {
     PlayerNameLabels,
 } from "../components";
 import { helpers, setTitle } from "../util";
-import clickable from "../wrappers/clickable";
+import clickable from "../../../deion/ui/wrappers/clickable";
 
 const StatsRow = clickable(({ clicked, i, p, toggleClicked }) => {
     const classes = classNames({

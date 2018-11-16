@@ -3,22 +3,24 @@
 split into deion/types.js and deion/types-generic.js, re-export all from types.js, apply generics in types-generic.js
 - alternatively, maybe just deion/types.js, keep some things generic, and that's okay. import from deion/types.js
 
+yarn workspaces, like react. nicer imports
+
 util/helpers - how to deal with this?
 - util, in general.. lots of stuff depends on it, focus on this first
 
 does it make sense to import from deion in index.js files? probably not, because it obscures if something is sport-specific or not. eventually move away from that.
 
-2. 3 js folders: basketball, football, and common
+2. 3 js folders: basketball, football, and deion
 
-3. start moving things from basketball to common, if they don't depend on basketball-specific types
+3. start moving things from basketball to deion, if they don't depend on basketball-specific types
 
-4. split types too! common ones can be generic, then in basketball types.js import them, apply parameter, and re-export
+4. split types too! deion ones can be generic, then in basketball types.js import them, apply parameter, and re-export
 
 5. get as far as possible
 
-6. what about stuff that depends on e.g. the type Player? is there some way to auto-apply its parameters PlayerStats and PlayerRatings, based on the sport? Or does any function using Player need to either be in a sport-specific folder, or (if in common) be generic?
+6. what about stuff that depends on e.g. the type Player? is there some way to auto-apply its parameters PlayerStats and PlayerRatings, based on the sport? Or does any function using Player need to either be in a sport-specific folder, or (if in deion) be generic?
 
-Venatus - make sure correce before deploying
+Venatus - make sure correct before deploying
 
 --
 

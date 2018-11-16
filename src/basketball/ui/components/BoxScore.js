@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
+import ResponsiveTableWrapper from "../../../deion/ui/components/ResponsiveTableWrapper";
 import { helpers, realtimeUpdate } from "../util";
 
 const HeadlineScore = ({ boxScore }) => {

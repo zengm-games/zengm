@@ -3,7 +3,11 @@
 split into deion/types.js and deion/types-generic.js, re-export all from types.js, apply generics in types-generic.js
 - alternatively, maybe just deion/types.js, keep some things generic, and that's okay. import from deion/types.js
 
-yarn workspaces, like react. nicer imports
+yarn workspaces
+- fucks up eslint and browserify, ugh. maybe not worth it.
+  - get running without changing references to deion or using workspaces, just with new package.json files
+- fix eslint
+- change all references to ../deion -> deion
 
 util/helpers - how to deal with this?
 - util, in general.. lots of stuff depends on it, focus on this first

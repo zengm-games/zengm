@@ -3,7 +3,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import * as React from "react";
-import HelpPopover from "../HelpPopover";
+import HelpPopover from "../../../../deion/ui/components/HelpPopover";
 
 const Controls = ({
     enableFilters,

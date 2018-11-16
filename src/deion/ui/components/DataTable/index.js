@@ -14,9 +14,9 @@ import PerPage from "./PerPage";
 import getSearchVal from "./getSearchVal";
 import getSortVal from "./getSortVal";
 import loadStateFromCache from "./loadStateFromCache";
-import ResponsiveTableWrapper from "../../../../deion/ui/components/ResponsiveTableWrapper";
-import { downloadFile, helpers } from "../../../../deion/ui/util";
-import type { SortOrder, SortType } from "../../../../deion/common/types";
+import ResponsiveTableWrapper from "../ResponsiveTableWrapper";
+import { downloadFile, helpers } from "../../util";
+import type { SortOrder, SortType } from "../../../common/types";
 
 export type SortBy = [number, SortOrder];
 

@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import Popover from "reactstrap/lib/Popover";
 import PopoverBody from "reactstrap/lib/PopoverBody";
-import { WatchBlock } from ".";
+import WatchBlock from "../../../deion/ui/components/WatchBlock";
 import { helpers, toWorker } from "../../../deion/ui/util";
 
 const colorRating = (rating: number) => {

@@ -1,13 +1,12 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { helpers, setTitle } from "../../../deion/ui/util";
-import { ResponsiveTableWrapper } from "../../../deion/ui/components";
 import {
-    Dropdown,
     JumpTo,
     NewWindowLink,
-    PlayerNameLabels,
-} from "../components";
+    ResponsiveTableWrapper,
+} from "../../../deion/ui/components";
+import { Dropdown, PlayerNameLabels } from "../components";
 
 const Leaders = ({ categories, playoffs, season }) => {
     setTitle(`League Leaders - ${season}`);

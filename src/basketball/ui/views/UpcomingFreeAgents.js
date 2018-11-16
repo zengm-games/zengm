@@ -1,12 +1,8 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { getCols, helpers, setTitle } from "../../../deion/ui/util";
-import {
-    DataTable,
-    Dropdown,
-    NewWindowLink,
-    PlayerNameLabels,
-} from "../components";
+import { DataTable, NewWindowLink } from "../../../deion/ui/components";
+import { Dropdown, PlayerNameLabels } from "../components";
 
 const UpcomingFreeAgents = ({ players, season }) => {
     setTitle("Upcoming Free Agents");

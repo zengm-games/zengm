@@ -1,13 +1,12 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { getCols, helpers, setTitle } from "../../../deion/ui/util";
 import {
     DataTable,
     DraftAbbrev,
-    Dropdown,
     NewWindowLink,
-    SkillsBlock,
-} from "../components";
+} from "../../../deion/ui/components";
+import { Dropdown, SkillsBlock } from "../components";
+import { getCols, helpers, setTitle } from "../../../deion/ui/util";
 
 const DraftTeamHistory = ({ abbrev, name, players, region, userAbbrev }) => {
     setTitle(`${region} ${name} Draft History`);

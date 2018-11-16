@@ -3,7 +3,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import * as React from "react";
-import { NewWindowLink } from "../components";
+import { NewWindowLink } from "../../../deion/ui/components";
 import { helpers, setTitle } from "../../../deion/ui/util";
 import type { Message } from "../../../deion/common/types";
 

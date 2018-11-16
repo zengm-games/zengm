@@ -6,8 +6,8 @@ import {
     DataTable,
     DraftAbbrev,
     NewWindowLink,
-    PlayerNameLabels,
-} from "../components";
+} from "../../../deion/ui/components";
+import { PlayerNameLabels } from "../components";
 
 const DraftButtons = ({ userRemaining, usersTurn }) => {
     const untilText = userRemaining ? "your next pick" : "end of draft";

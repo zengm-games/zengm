@@ -4,11 +4,10 @@ import { PLAYER } from "../../common";
 import { helpers, getCols, setTitle } from "../../../deion/ui/util";
 import {
     DataTable,
-    Dropdown,
     NewWindowLink,
-    PlayerNameLabels,
     RecordAndPlayoffs,
-} from "../components";
+} from "../../../deion/ui/components";
+import { Dropdown, PlayerNameLabels } from "../components";
 
 const TeamHistory = ({
     abbrev,

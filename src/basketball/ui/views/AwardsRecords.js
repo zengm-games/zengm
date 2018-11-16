@@ -2,7 +2,8 @@ import groupBy from "lodash/groupBy";
 import PropTypes from "prop-types";
 import React from "react";
 import { getCols, helpers, setTitle } from "../../../deion/ui/util";
-import { DataTable, Dropdown, NewWindowLink } from "../components";
+import { DataTable, NewWindowLink } from "../../../deion/ui/components";
+import { Dropdown } from "../components";
 
 const formatYear = year => {
     return Object.keys(year).map((k, i) => {

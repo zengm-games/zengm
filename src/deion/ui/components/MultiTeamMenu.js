@@ -1,11 +1,7 @@
 // @flow
 
 import * as React from "react";
-import {
-    realtimeUpdate,
-    subscribeLocal,
-    toWorker,
-} from "../../../deion/ui/util";
+import { realtimeUpdate, subscribeLocal, toWorker } from "../util";
 
 const handleChange = async (e: SyntheticInputEvent<>) => {
     const userTid = parseInt(e.target.value, 10);

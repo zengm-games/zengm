@@ -6,7 +6,8 @@ import {
     prefixStatOpp,
     setTitle,
 } from "../../../deion/ui/util";
-import { DataTable, Dropdown, NewWindowLink } from "../components";
+import { DataTable, NewWindowLink } from "../../../deion/ui/components";
+import { Dropdown } from "../components";
 
 const TeamShotLocations = ({
     playoffs,

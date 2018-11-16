@@ -1,7 +1,8 @@
 import PropTypes from "prop-types";
 import React from "react";
+import { JumpTo, NewWindowLink } from "../../../deion/ui/components";
+import { Dropdown } from "../components";
 import { helpers, setTitle } from "../../../deion/ui/util";
-import { Dropdown, JumpTo, NewWindowLink } from "../components";
 
 const History = ({
     awards,

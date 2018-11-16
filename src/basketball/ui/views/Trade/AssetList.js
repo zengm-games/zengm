@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { DataTable, PlayerNameLabels } from "../../components";
+import { DataTable } from "../../../../deion/ui/components";
+import { PlayerNameLabels } from "../../components";
 import { getCols, helpers } from "../../../../deion/ui/util";
 
 const genPlayerRows = (players, handleToggle, userOrOther) => {

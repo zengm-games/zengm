@@ -11,7 +11,8 @@ import {
     setTitle,
     toWorker,
 } from "../../../deion/ui/util";
-import { Footer, Header, MultiTeamMenu, NagModal, NavBar, SideBar } from ".";
+import MultiTeamMenu from "../../../deion/ui/components/MultiTeamMenu";
+import { Footer, Header, NagModal, NavBar, SideBar } from ".";
 import type {
     GetOutput,
     RouterContext,

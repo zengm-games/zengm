@@ -3,7 +3,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import * as React from "react";
-import clickable from "../../../../deion/ui/wrappers/clickable";
+import clickable from "../../wrappers/clickable";
 
 const Row = clickable<{
     row: {

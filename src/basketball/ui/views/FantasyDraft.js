@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../common";
-import { NewWindowLink } from "../components";
+import { NewWindowLink } from "../../../deion/ui/components";
 import { setTitle, toWorker } from "../../../deion/ui/util";
 
 class FantasyDraft extends React.Component {

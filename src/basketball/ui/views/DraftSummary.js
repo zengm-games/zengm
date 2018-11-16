@@ -1,14 +1,13 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { getCols, helpers, setTitle } from "../../../deion/ui/util";
 import {
     DataTable,
     DraftAbbrev,
-    Dropdown,
     JumpTo,
     NewWindowLink,
-    SkillsBlock,
-} from "../components";
+} from "../../../deion/ui/components";
+import { Dropdown, SkillsBlock } from "../components";
+import { getCols, helpers, setTitle } from "../../../deion/ui/util";
 
 const DraftSummary = ({ players, season, userTid }) => {
     setTitle(`${season} Draft Summary`);

@@ -2,7 +2,7 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import { helpers } from "../../../deion/ui/util";
+import { helpers } from "../util";
 
 type SeriesTeam = {
     abbrev: string,

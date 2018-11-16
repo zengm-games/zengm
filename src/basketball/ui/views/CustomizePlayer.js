@@ -4,14 +4,13 @@ import faces from "facesjs";
 import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../common";
+import { NewWindowLink, PlayerPicture } from "../../../deion/ui/components";
 import {
     helpers,
     realtimeUpdate,
     setTitle,
     toWorker,
 } from "../../../deion/ui/util";
-import { PlayerPicture } from "../../../deion/ui/components";
-import { NewWindowLink } from "../components";
 
 const positions = ["PG", "SG", "SF", "PF", "C", "G", "GF", "F", "FC"];
 const faceOptions = {

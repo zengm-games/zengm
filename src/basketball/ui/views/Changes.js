@@ -2,9 +2,8 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
+import { NewWindowLink, SafeHtml } from "../../../deion/ui/components";
 import { setTitle } from "../../../deion/ui/util";
-import { SafeHtml } from "../../../deion/ui/components";
-import { NewWindowLink } from "../components";
 
 const Changes = ({ changes }: { changes: { date: string, msg: string }[] }) => {
     setTitle("Changes");

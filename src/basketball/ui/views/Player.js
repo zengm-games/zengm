@@ -1,12 +1,13 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { PlayerPicture, SafeHtml } from "../../../deion/ui/components";
 import {
     DataTable,
     NewWindowLink,
-    SkillsBlock,
+    PlayerPicture,
+    SafeHtml,
     WatchBlock,
-} from "../components";
+} from "../../../deion/ui/components";
+import { SkillsBlock } from "../components";
 import { getCols, helpers, setTitle, toWorker } from "../../../deion/ui/util";
 
 const upperCaseFirstLetter = (string: string): string => {

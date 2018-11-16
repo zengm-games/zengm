@@ -2,8 +2,8 @@
 
 import PropTypes from "prop-types";
 import React from "react";
-import { HelpPopover } from "../../../deion/ui/components";
-import { helpers } from "../../../deion/ui/util";
+import { HelpPopover } from ".";
+import { helpers } from "../util";
 
 const RosterSalarySummary = ({
     capSpace,

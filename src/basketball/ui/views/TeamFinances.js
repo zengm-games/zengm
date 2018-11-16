@@ -1,6 +1,12 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { BarGraph, HelpPopover } from "../../../deion/ui/components";
+import {
+    BarGraph,
+    DataTable,
+    HelpPopover,
+    NewWindowLink,
+} from "../../../deion/ui/components";
+import { Dropdown, PlayerNameLabels } from "../components";
 import {
     getCols,
     helpers,
@@ -8,12 +14,6 @@ import {
     setTitle,
     toWorker,
 } from "../../../deion/ui/util";
-import {
-    DataTable,
-    Dropdown,
-    NewWindowLink,
-    PlayerNameLabels,
-} from "../components";
 
 class FinancesForm extends React.Component {
     constructor(props) {

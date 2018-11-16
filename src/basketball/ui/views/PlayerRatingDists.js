@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { BoxPlot } from "../../../deion/ui/components";
-import { Dropdown, NewWindowLink } from "../components";
+import { BoxPlot, NewWindowLink } from "../../../deion/ui/components";
+import { Dropdown } from "../components";
 import { helpers, setTitle } from "../../../deion/ui/util";
 
 const PlayerRatingDists = ({ ratingsAll, season }) => {

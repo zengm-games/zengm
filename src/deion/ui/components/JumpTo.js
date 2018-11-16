@@ -6,7 +6,7 @@ import DropdownItem from "reactstrap/lib/DropdownItem";
 import DropdownMenu from "reactstrap/lib/DropdownMenu";
 import DropdownToggle from "reactstrap/lib/DropdownToggle";
 import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
-import { helpers } from "../../../deion/ui/util";
+import { helpers } from "../util";
 
 const genUrl = (parts, season) => {
     if (season !== undefined) {

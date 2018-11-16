@@ -3,8 +3,8 @@
 import PropTypes from "prop-types";
 import * as React from "react";
 import { Provider } from "unstated";
-import { emitter, local } from "../../../deion/ui/util";
-import { ads, realtimeUpdate, setTitle, toWorker } from "../util";
+import { emitter, local, setTitle, toWorker } from "../../../deion/ui/util";
+import { ads, realtimeUpdate } from "../util";
 import { Footer, Header, MultiTeamMenu, NagModal, NavBar, SideBar } from ".";
 import type {
     GetOutput,

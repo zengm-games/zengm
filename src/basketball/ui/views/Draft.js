@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { getCols, helpers, setTitle, toWorker } from "../util";
+import { getCols, helpers, setTitle, toWorker } from "../../../deion/ui/util";
 import {
     DataTable,
     DraftAbbrev,

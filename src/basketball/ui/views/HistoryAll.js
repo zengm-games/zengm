@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { DataTable, NewWindowLink, PlayerNameLabels } from "../components";
-import { getCols, helpers, setTitle } from "../util";
+import { getCols, helpers, setTitle } from "../../../deion/ui/util";
 
 const awardName = (award, season, teamAbbrevsCache, userTid) => {
     if (!award) {

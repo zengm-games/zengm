@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from "react";
-import { setTitle, toWorker } from "../util";
+import { setTitle, toWorker } from "../../../deion/ui/util";
 
 const DangerZone = () => {
     setTitle("Danger Zone");

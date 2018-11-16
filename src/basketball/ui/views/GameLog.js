@@ -7,7 +7,7 @@ import {
     NewWindowLink,
     PlayerNameLabels,
 } from "../components";
-import { helpers, setTitle } from "../util";
+import { helpers, setTitle } from "../../../deion/ui/util";
 import clickable from "../../../deion/ui/wrappers/clickable";
 
 const StatsRow = clickable(({ clicked, i, p, toggleClicked }) => {

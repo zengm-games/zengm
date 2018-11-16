@@ -2,8 +2,7 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import { subscribeLocal } from "../../../deion/ui/util";
-import { helpers } from "../util";
+import { helpers, subscribeLocal } from "../../../deion/ui/util";
 
 // Link to an abbrev either as "ATL" or "ATL (from BOS)" if a pick was traded.
 const DraftAbbrev = ({

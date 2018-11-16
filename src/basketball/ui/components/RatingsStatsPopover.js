@@ -6,7 +6,7 @@ import * as React from "react";
 import Popover from "reactstrap/lib/Popover";
 import PopoverBody from "reactstrap/lib/PopoverBody";
 import { WatchBlock } from ".";
-import { helpers, toWorker } from "../util";
+import { helpers, toWorker } from "../../../deion/ui/util";
 
 const colorRating = (rating: number) => {
     const classes = ["table-danger", "table-warning", null, "table-success"];

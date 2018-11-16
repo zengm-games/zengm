@@ -2,7 +2,7 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import { toWorker } from "../util";
+import { toWorker } from "../../../deion/ui/util";
 
 type Props = {
     pid: number,

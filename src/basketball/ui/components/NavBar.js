@@ -15,8 +15,14 @@ import Popover from "reactstrap/lib/Popover";
 import PopoverBody from "reactstrap/lib/PopoverBody";
 import PopoverHeader from "reactstrap/lib/PopoverHeader";
 import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
-import { emitter, subscribeLocal } from "../../../deion/ui/util";
-import { helpers, menuItems, realtimeUpdate, toWorker } from "../util";
+import {
+    emitter,
+    helpers,
+    menuItems,
+    subscribeLocal,
+    toWorker,
+} from "../../../deion/ui/util";
+import { realtimeUpdate } from "../util";
 
 type TopMenuToggleProps = {
     long: string,

@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import SkillsBlock from "./SkillsBlock";
 import RatingsStatsPopover from "./RatingsStatsPopover";
-import { helpers } from "../util";
+import { helpers } from "../../../deion/ui/util";
 import type { PlayerInjury } from "../../../deion/common/types";
 
 const PlayerNameLabels = ({

@@ -1,9 +1,8 @@
 // @flow
 
-import { createLogger } from "../../../deion/common";
-import { local, notify } from "../../../deion/ui/util";
-import { toWorker } from ".";
-import type { LogEventShowOptions } from "../../../deion/common/types";
+import { createLogger } from "../../common";
+import { local, notify, toWorker } from ".";
+import type { LogEventShowOptions } from "../../common/types";
 
 const saveEvent = () => {
     throw new Error("UI events should not be saved to DB");

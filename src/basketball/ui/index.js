@@ -8,15 +8,13 @@ import * as React from "react";
 import ReactDOM from "react-dom";
 import api from "./api";
 import Controller from "./components/Controller";
-import { compareVersions } from "../../deion/ui/util";
 import {
-    genStaticPage,
-    leagueNotFoundMessage,
+    compareVersions,
     logEvent,
     promiseWorker,
-    routes,
     toWorker,
-} from "./util";
+} from "../../deion/ui/util";
+import { genStaticPage, leagueNotFoundMessage, routes } from "./util";
 import type { Env } from "../../deion/common/types";
 
 window.fixDatabase = async () => {

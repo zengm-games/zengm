@@ -1,7 +1,7 @@
 // @flow
 
 import React from "react";
-import { setTitle } from "../../util";
+import { setTitle } from "../../../../deion/ui/util";
 import Login from "./Login";
 import Register from "./Register";
 

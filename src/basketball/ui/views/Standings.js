@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { helpers, setTitle } from "../util";
+import { helpers, setTitle } from "../../../deion/ui/util";
 import { ResponsiveTableWrapper } from "../../../deion/ui/components";
 import { Dropdown, JumpTo, NewWindowLink } from "../components";
 import clickable from "../../../deion/ui/wrappers/clickable";

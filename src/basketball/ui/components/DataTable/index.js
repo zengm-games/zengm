@@ -15,8 +15,7 @@ import getSearchVal from "./getSearchVal";
 import getSortVal from "./getSortVal";
 import loadStateFromCache from "./loadStateFromCache";
 import ResponsiveTableWrapper from "../../../../deion/ui/components/ResponsiveTableWrapper";
-import { downloadFile } from "../../../../deion/ui/util";
-import { helpers } from "../../util";
+import { downloadFile, helpers } from "../../../../deion/ui/util";
 import type { SortOrder, SortType } from "../../../../deion/common/types";
 
 export type SortBy = [number, SortOrder];

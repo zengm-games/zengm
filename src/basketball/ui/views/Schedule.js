@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { setTitle } from "../util";
+import { setTitle } from "../../../deion/ui/util";
 import {
     CompletedGame,
     Dropdown,

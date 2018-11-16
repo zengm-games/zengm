@@ -7,7 +7,7 @@ import {
     NewWindowLink,
     PlayerNameLabels,
 } from "../components";
-import { getCols, helpers, setTitle } from "../util";
+import { getCols, helpers, setTitle } from "../../../deion/ui/util";
 
 const PlayerStats = ({
     abbrev,

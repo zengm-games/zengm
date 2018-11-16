@@ -2,7 +2,8 @@ import PropTypes from "prop-types";
 import React from "react";
 import { DIFFICULTY } from "../../common";
 import { LeagueFileUpload } from "../components";
-import { helpers, realtimeUpdate, setTitle, toWorker } from "../util";
+import { helpers, setTitle, toWorker } from "../../../deion/ui/util";
+import { realtimeUpdate } from "../util";
 
 const PopText = ({ teams, tid }) => {
     let msg = (

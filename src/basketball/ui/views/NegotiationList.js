@@ -6,7 +6,7 @@ import {
     PlayerNameLabels,
     RosterSalarySummary,
 } from "../components";
-import { getCols, helpers, setTitle, toWorker } from "../util";
+import { getCols, helpers, setTitle, toWorker } from "../../../deion/ui/util";
 
 const NegotiationList = ({
     capSpace,

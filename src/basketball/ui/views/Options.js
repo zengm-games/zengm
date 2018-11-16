@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { logEvent, setTitle } from "../util";
+import { logEvent, setTitle } from "../../../deion/ui/util";
 
 class Options extends React.Component {
     constructor(props) {

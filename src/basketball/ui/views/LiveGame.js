@@ -2,7 +2,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import AutoAffix from "react-overlays/lib/AutoAffix";
-import { helpers, setTitle } from "../util";
+import { helpers, setTitle } from "../../../deion/ui/util";
 import { BoxScore, PlayerNameLabels } from "../components";
 
 class PlayerRow extends React.Component {

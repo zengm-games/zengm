@@ -1,7 +1,7 @@
 import React from "react";
 import { fetchWrapper } from "../../../deion/common";
 import { SPORT } from "../../common";
-import { setTitle } from "../util";
+import { setTitle } from "../../../deion/ui/util";
 
 const ajaxErrorMsg =
     "Error connecting to server. Check your Internet connection or try again later.";

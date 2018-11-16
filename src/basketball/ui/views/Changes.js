@@ -2,7 +2,7 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import { setTitle } from "../util";
+import { setTitle } from "../../../deion/ui/util";
 import { SafeHtml } from "../../../deion/ui/components";
 import { NewWindowLink } from "../components";
 

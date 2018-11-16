@@ -1,6 +1,10 @@
 import React from "react";
-import { downloadFile } from "../../../deion/ui/util";
-import { helpers, setTitle, toWorker } from "../util";
+import {
+    downloadFile,
+    helpers,
+    setTitle,
+    toWorker,
+} from "../../../deion/ui/util";
 
 const categories = [
     {

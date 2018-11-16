@@ -7,7 +7,7 @@ import {
     SkillsBlock,
     WatchBlock,
 } from "../components";
-import { getCols, helpers, setTitle, toWorker } from "../util";
+import { getCols, helpers, setTitle, toWorker } from "../../../deion/ui/util";
 
 const upperCaseFirstLetter = (string: string): string => {
     return `${string.charAt(0).toUpperCase()}${string.slice(1)}`;

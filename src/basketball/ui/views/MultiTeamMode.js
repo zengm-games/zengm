@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../common";
-import { setTitle, toWorker } from "../util";
+import { setTitle, toWorker } from "../../../deion/ui/util";
 import { NewWindowLink } from "../components";
 
 class MultiTeamMode extends React.Component {

@@ -1,6 +1,5 @@
 import React from "react";
-import { initView } from "../../../deion/ui/util";
-import { setTitle } from ".";
+import { initView, setTitle } from "../../../deion/ui/util";
 
 const genStaticPage = (
     name: string,

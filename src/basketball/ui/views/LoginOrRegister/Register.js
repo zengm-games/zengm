@@ -4,8 +4,8 @@ import classNames from "classnames";
 import React from "react";
 import { fetchWrapper } from "../../../../deion/common";
 import { SPORT } from "../../../common";
-import { local } from "../../../../deion/ui/util";
-import { realtimeUpdate, setTitle, toWorker } from "../../util";
+import { local, setTitle, toWorker } from "../../../../deion/ui/util";
+import { realtimeUpdate } from "../../util";
 
 type Props = {
     ajaxErrorMsg: string,

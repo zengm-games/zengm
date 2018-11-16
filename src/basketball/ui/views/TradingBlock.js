@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { PHASE } from "../../common";
-import { getCols, helpers, setTitle, toWorker } from "../util";
+import { getCols, helpers, setTitle, toWorker } from "../../../deion/ui/util";
 import clickable from "../../../deion/ui/wrappers/clickable";
 import { ResponsiveTableWrapper } from "../../../deion/ui/components";
 import { DataTable, NewWindowLink, PlayerNameLabels } from "../components";

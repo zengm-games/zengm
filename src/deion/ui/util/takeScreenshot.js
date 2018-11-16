@@ -1,5 +1,5 @@
 import html2canvas from "html2canvas";
-import { fetchWrapper } from "../../../deion/common";
+import { fetchWrapper } from "../../common";
 import { logEvent } from ".";
 
 const takeScreenshot = async () => {

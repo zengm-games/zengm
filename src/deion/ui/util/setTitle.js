@@ -1,6 +1,6 @@
 // @flow
 
-import { local } from "../../../deion/ui/util";
+import local from "./local";
 
 let currentTitle = "Basketball GM";
 const setTitle = (newTitle: string) => {

@@ -5,7 +5,7 @@ import DropdownMenu from "reactstrap/lib/DropdownMenu";
 import DropdownToggle from "reactstrap/lib/DropdownToggle";
 import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
 import { PLAYER } from "../../common";
-import { getCols, helpers, setTitle, toWorker } from "../util";
+import { getCols, helpers, setTitle, toWorker } from "../../../deion/ui/util";
 import {
     DataTable,
     Dropdown,

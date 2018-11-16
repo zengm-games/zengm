@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { helpers, setTitle } from "../util";
+import { helpers, setTitle } from "../../../deion/ui/util";
 import { BoxPlot } from "../../../deion/ui/components";
 import { Dropdown, NewWindowLink } from "../components";
 

@@ -12,7 +12,7 @@ import DropdownMenu from "reactstrap/lib/DropdownMenu";
 import DropdownToggle from "reactstrap/lib/DropdownToggle";
 import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
 import { PHASE } from "../../common";
-import { helpers, logEvent, setTitle, toWorker } from "../util";
+import { helpers, logEvent, setTitle, toWorker } from "../../../deion/ui/util";
 import {
     HelpPopover,
     RatingWithChange,

@@ -2,7 +2,7 @@
 
 import { getAll, idb } from "..";
 import { mergeByPk } from "./helpers";
-import type { Message } from "../../../common/types";
+import type { Message } from "../../../../deion/common/types";
 
 const getLastEntries = <T>(arr: T[], limit: number): T[] => {
     return arr.slice(arr.length - limit);

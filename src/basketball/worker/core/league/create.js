@@ -16,7 +16,10 @@ import {
     updatePhase,
     updateStatus,
 } from "../../util";
-import type { Conditions, GameAttributes } from "../../../common/types";
+import type {
+    Conditions,
+    GameAttributes,
+} from "../../../../deion/common/types";
 
 // Creates a league, writing nothing to the database.
 export const createWithoutSaving = (

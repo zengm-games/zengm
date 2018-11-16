@@ -4,7 +4,7 @@ import { PHASE } from "../../../common";
 import { player } from "..";
 import { idb } from "../../db";
 import { g, helpers, logEvent, toUI, updatePlayMenu } from "../../util";
-import type { TradeSummary } from "../../../common/types";
+import type { TradeSummary } from "../../../../deion/common/types";
 
 const formatAssetsEventLog = t => {
     const strings = [];

@@ -2,13 +2,16 @@
 
 import { PLAYER } from "../../../common";
 import { g, random } from "../../util";
-import type { Player } from "../../../common/types";
+import type {
+    MinimalPlayerRatings,
+    Player,
+} from "../../../../deion/common/types";
 
 // Players meeting one of these cutoffs might retire
 const maxAge = 34;
 const minPot = 40;
 
-const shouldRetire = (p: Player): boolean => {
+const shouldRetire = (p: Player<MinimalPlayerRatings>): boolean => {
     const age = g.season - p.born.year;
     const pot = p.ratings[p.ratings.length - 1].pot;
 

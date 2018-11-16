@@ -8,7 +8,7 @@ import type {
     Player,
     PlayerFiltered,
     PlayerStatType,
-} from "../../../common/types";
+} from "../../../../deion/common/types";
 
 type PlayerAttr = string;
 type PlayerRatingAttr = string;

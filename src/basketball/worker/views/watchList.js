@@ -4,7 +4,8 @@ import { PLAYER } from "../../common";
 import { freeAgents } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
-import type { UpdateEvents, PlayerStatType } from "../../common/types";
+import type { UpdateEvents } from "../../../deion/common/types";
+import type { PlayerStatType } from "../../common/types";
 
 async function updatePlayers(
     inputs: {

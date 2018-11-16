@@ -1,7 +1,7 @@
 // @flow
 
 import { emitter } from ".";
-import type { RouterContext } from "../../common/types";
+import type { RouterContext } from "../../../deion/common/types";
 
 type InitArgs = {
     Component: any,

@@ -4,7 +4,6 @@ import { finances, player } from "..";
 import genPlayersWithoutSaving from "./genPlayersWithoutSaving";
 import { idb } from "../../db";
 import { g, helpers, logEvent } from "../../util";
-import type { Player } from "../../../common/types";
 
 /**
  * Generate a set of draft prospects.
@@ -47,7 +46,8 @@ const genPlayers = async (
         await idb.cache.players.add(p);
 
         // Weird Flow type casing is because idb.cache.players.add will create the "pid" property, transforming PlayerWithoutPid to Player
-        await player.addRelatives(((p: any): Player));
+        // $FlowFixMe
+        await player.addRelatives(p);
     }
 
     // Easter eggs!

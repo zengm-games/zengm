@@ -3,7 +3,7 @@
 import { PHASE_TEXT } from "../../common";
 import { idb } from "../db";
 import { g, local, toUI } from ".";
-import type { Conditions } from "../../common/types";
+import type { Conditions } from "../../../deion/common/types";
 
 // Calculate phase text in worker rather than UI, because here we can easily cache it in the meta database
 async function updatePhase(conditions?: Conditions) {

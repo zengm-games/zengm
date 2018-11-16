@@ -1,7 +1,7 @@
 // @flow
 
 import { g, random } from "../../util";
-import type { TeamSeason } from "../../../common/types";
+import type { TeamSeason } from "../../../../deion/common/types";
 
 const genSeasonRow = (tid: number, prevSeason?: TeamSeason): TeamSeason => {
     const defaultRank = (g.numTeams + 1) / 2;

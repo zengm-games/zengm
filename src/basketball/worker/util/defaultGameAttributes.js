@@ -1,4 +1,4 @@
-import type { GameAttributes } from "../../common/types";
+import type { GameAttributes } from "../../../deion/common/types";
 
 // Additional league-specific attributes (userTid, userTids, season, ...) are set when creating a new league
 

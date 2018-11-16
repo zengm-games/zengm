@@ -2,7 +2,7 @@
 
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import type { GetOutput, UpdateEvents } from "../../common/types";
+import type { GetOutput, UpdateEvents } from "../../../deion/common/types";
 
 async function updateUserRoster(
     inputs: GetOutput,

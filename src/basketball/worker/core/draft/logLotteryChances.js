@@ -6,7 +6,7 @@ import type {
     Conditions,
     DraftPick,
     TeamFiltered,
-} from "../../../common/types";
+} from "../../../../deion/common/types";
 
 const logLotteryChances = (
     chances: number[],

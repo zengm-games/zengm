@@ -4,7 +4,7 @@ import { PLAYER } from "../../common";
 import { freeAgents } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import type { UpdateEvents } from "../../common/types";
+import type { UpdateEvents } from "../../../deion/common/types";
 
 async function updatePlayer(
     inputs: { pid: number },

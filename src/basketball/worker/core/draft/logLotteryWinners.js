@@ -2,7 +2,7 @@
 
 import logAction from "./logAction";
 import logLotteryTxt from "./logLotteryTxt";
-import type { Conditions, TeamFiltered } from "../../../common/types";
+import type { Conditions, TeamFiltered } from "../../../../deion/common/types";
 
 const logLotteryWinners = (
     chances: number[],

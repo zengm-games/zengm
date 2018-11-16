@@ -14,7 +14,7 @@ import type {
     TeamStatAttr,
     TeamStatType,
     TeamStats,
-} from "../../../common/types";
+} from "../../../../deion/common/types";
 
 type TeamOptions = {
     season?: number,

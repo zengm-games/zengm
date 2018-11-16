@@ -4,7 +4,7 @@ import range from "lodash/range";
 import { PHASE } from "../../../common";
 import { season } from "..";
 import { g, helpers, random } from "../../util";
-import type { TeamFiltered } from "../../../common/types";
+import type { TeamFiltered } from "../../../../deion/common/types";
 
 /**
  * Sort teams in place in correct order for lottery.

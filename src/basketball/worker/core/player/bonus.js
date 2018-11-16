@@ -2,9 +2,10 @@
 
 import limitRating from "./limitRating";
 import { random } from "../../util";
-import type { RatingKey, PlayerWithoutPid } from "../../../common/types";
+import type { PlayerWithoutPid } from "../../../../deion/common/types";
+import type { RatingKey, PlayerRatings } from "../../../common/types";
 
-const bonus = (p: PlayerWithoutPid) => {
+const bonus = (p: PlayerWithoutPid<PlayerRatings>) => {
     const ratings = p.ratings[p.ratings.length - 1];
 
     const keys: RatingKey[] = [

@@ -2,7 +2,7 @@
 
 import range from "lodash/range";
 import { g, helpers } from "../../util";
-import type { TeamFiltered } from "../../../common/types";
+import type { TeamFiltered } from "../../../../deion/common/types";
 
 const genPlayoffSeries = (teams: TeamFiltered[]) => {
     // Playoffs are split into two branches by conference only if there are exactly 2 conferences

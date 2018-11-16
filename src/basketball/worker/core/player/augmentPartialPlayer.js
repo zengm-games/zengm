@@ -9,7 +9,8 @@ import ovr from "./ovr";
 import setContract from "./setContract";
 import skills from "./skills";
 import { g, random } from "../../util";
-import type { RatingKey, Player } from "../../../common/types";
+import type { Player } from "../../../../deion/common/types";
+import type { RatingKey, PlayerRatings } from "../../../common/types";
 
 /**
  * Take a partial player object, such as from an uploaded JSON file, and add everything it needs to be a real player object.
@@ -24,7 +25,7 @@ const augmentPartialPlayer = (
     p: any,
     scoutingRank: number,
     version: number | void,
-): Player => {
+): Player<PlayerRatings> => {
     let age;
     if (!p.hasOwnProperty("born")) {
         age = random.randInt(19, 35);

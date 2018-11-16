@@ -1,7 +1,7 @@
 // @flow
 
 import { g } from "../../util";
-import type { TeamSeason } from "../../../common/types";
+import type { TeamSeason } from "../../../../deion/common/types";
 
 /**
  * Gets the rank of some financial thing over the past 3 seasons, if available.

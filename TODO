@@ -1,7 +1,7 @@
 # football
 
-split into deion/types.js and deion/types-generic.js, re-export all from types.js, apply generics in types-generic.js
-- alternatively, maybe just deion/types.js, keep some things generic, and that's okay. import from deion/types.js
+does it make sense to import from deion in index.js files? probably not, because it obscures if something is sport-specific or not
+- get rid of all re-exports of deion imports
 
 yarn workspaces
 - fucks up eslint and browserify, ugh. maybe not worth it.
@@ -12,8 +12,6 @@ yarn workspaces
 
 util/helpers - how to deal with this?
 - util, in general.. lots of stuff depends on it, focus on this first
-
-does it make sense to import from deion in index.js files? probably not, because it obscures if something is sport-specific or not. eventually move away from that.
 
 2. 3 js folders: basketball, football, and deion
 

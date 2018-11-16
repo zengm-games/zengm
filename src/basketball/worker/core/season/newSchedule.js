@@ -3,7 +3,7 @@
 import flatten from "lodash/flatten";
 import range from "lodash/range";
 import { g, random } from "../../util";
-import type { Team } from "../../../common/types";
+import type { Team } from "../../../../deion/common/types";
 
 /**
  * Creates a new regular season schedule for 30 teams.

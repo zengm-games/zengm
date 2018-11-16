@@ -4,10 +4,14 @@ import { PHASE } from "../../../common";
 import addStatsRow from "./addStatsRow";
 import setContract from "./setContract";
 import { g, helpers, logEvent } from "../../util";
-import type { Phase, Player, PlayerContract } from "../../../common/types";
+import type {
+    Phase,
+    Player,
+    PlayerContract,
+} from "../../../../deion/common/types";
 
 const sign = (
-    p: Player,
+    p: Player<>,
     tid: number,
     contract: PlayerContract,
     phase: Phase,

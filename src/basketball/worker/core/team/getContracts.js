@@ -1,7 +1,7 @@
 // @flow
 
 import { idb } from "../../db";
-import type { ContractInfo } from "../../../common/types";
+import type { ContractInfo } from "../../../../deion/common/types";
 
 /**
  * Gets all the contracts a team owes.
@@ -24,6 +24,7 @@ const getContracts = async (tid: number): Promise<ContractInfo[]> => {
             lastName: p.lastName,
             skills: p.ratings[p.ratings.length - 1].skills,
             injury: p.injury,
+            watch: p.watch,
             amount: p.contract.amount,
             exp: p.contract.exp,
             released: false,
@@ -58,6 +59,7 @@ const getContracts = async (tid: number): Promise<ContractInfo[]> => {
                 lastName: "Player",
                 skills: [],
                 injury: { type: "Healthy", gamesRemaining: 0 },
+                watch: false,
                 amount: releasedPlayer.contract.amount,
                 exp: releasedPlayer.contract.exp,
                 released: true,

@@ -2,14 +2,13 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import type { PlayerSkill } from "../../common/types";
 
 const SkillsBlock = ({
     className,
     skills,
 }: {
     className?: string,
-    skills?: PlayerSkill[],
+    skills?: string[],
 }) => {
     if (skills === undefined) {
         return null;

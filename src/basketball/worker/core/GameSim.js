@@ -1,7 +1,6 @@
 // @flow
 
 import { g, helpers, random } from "../util";
-import type { PlayerSkill } from "../../common/types";
 
 type PlayType =
     | "ast"
@@ -79,7 +78,7 @@ type PlayerGameSim = {
     valueNoPot: number,
     stat: Object,
     compositeRating: Object,
-    skills: PlayerSkill[],
+    skills: string[],
     injured: boolean,
     ptModifier: number,
 };

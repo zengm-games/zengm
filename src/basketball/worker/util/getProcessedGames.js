@@ -2,7 +2,7 @@
 
 import { idb } from "../db";
 import { g } from ".";
-import type { GameProcessed } from "../../common/types";
+import type { GameProcessed } from "../../../deion/common/types";
 
 /**
  * Generate a game log list.

@@ -4,7 +4,7 @@ import { PHASE, PLAYER } from "../../../common";
 import { contractNegotiation, league, player } from "..";
 import { idb } from "../../db";
 import { g, helpers, local, logEvent } from "../../util";
-import type { Conditions } from "../../../common/types";
+import type { Conditions } from "../../../../deion/common/types";
 
 const newPhaseResignPlayers = async (conditions: Conditions) => {
     await idb.cache.negotiations.clear();

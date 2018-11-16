@@ -3,7 +3,8 @@
 import { PHASE, PLAYER } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
-import type { PlayerStatType, UpdateEvents } from "../../common/types";
+import type { UpdateEvents } from "../../../deion/common/types";
+import type { PlayerStatType } from "../../common/types";
 
 async function updatePlayers(
     inputs: {

@@ -3,7 +3,7 @@
 import { finances } from "..";
 import { g, helpers, random } from "../../util";
 import { PHASE } from "../../../common";
-import type { TeamSeason } from "../../../common/types";
+import type { TeamSeason } from "../../../../deion/common/types";
 
 const genBaseMood = (teamSeason: TeamSeason): number => {
     // Special case for winning a title - basically never refuse to re-sign unless a miracle occurs

@@ -3,7 +3,7 @@
 import retire from "./retire";
 import { idb } from "../../db";
 import { g, helpers, logEvent, random } from "../../util";
-import type { Conditions } from "../../../common/types";
+import type { Conditions } from "../../../../deion/common/types";
 
 const killOne = async (conditions: Conditions) => {
     const reason = random.choice([

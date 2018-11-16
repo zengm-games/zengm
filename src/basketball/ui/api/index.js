@@ -7,7 +7,7 @@ import type {
     LocalStateUI,
     LogEventShowOptions,
     UpdateEvents,
-} from "../../common/types";
+} from "../../../deion/common/types";
 
 /**
  * Ping a counter at basketball-gm.com.

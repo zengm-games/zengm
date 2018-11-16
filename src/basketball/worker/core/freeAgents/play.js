@@ -5,7 +5,7 @@ import { league, phase, trade } from "..";
 import autoSign from "./autoSign";
 import decreaseDemands from "./decreaseDemands";
 import { g, lock, updatePlayMenu, updateStatus, toUI } from "../../util";
-import type { Conditions } from "../../../common/types";
+import type { Conditions } from "../../../../deion/common/types";
 
 /**
  * Simulates one or more days of free agency.

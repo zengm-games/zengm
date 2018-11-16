@@ -4,7 +4,7 @@ import { PHASE } from "../../common";
 import { contractNegotiation, freeAgents, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
-import type { GetOutput } from "../../common/types";
+import type { GetOutput } from "../../../deion/common/types";
 
 function generateContractOptions(contract, ovr) {
     let growthFactor = 0.15;

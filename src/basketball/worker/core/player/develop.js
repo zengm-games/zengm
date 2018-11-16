@@ -8,11 +8,7 @@ import ovr from "./ovr";
 import pos from "./pos";
 import skills from "./skills";
 import { g, helpers, random } from "../../util";
-import type {
-    PlayerRatings,
-    PlayerSkill,
-    RatingKey,
-} from "../../../common/types";
+import type { PlayerRatings, RatingKey } from "../../../common/types";
 
 const shootingFormula = {
     ageModifier: (age: number) => {
@@ -244,7 +240,7 @@ export const bootstrapPot = (ratings: PlayerRatings, age: number): number => {
 const develop = (
     p: {
         born: { loc: string, year: number },
-        draft: { ovr: number, pot: number, skills: PlayerSkill[] },
+        draft: { ovr: number, pot: number, skills: string[] },
         pos?: string,
         ratings: PlayerRatings[],
         tid: number,

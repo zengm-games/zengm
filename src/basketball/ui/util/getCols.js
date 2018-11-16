@@ -1,7 +1,7 @@
 // @flow
 
 import { helpers } from ".";
-import type { SortOrder, SortType } from "../../common/types";
+import type { SortOrder, SortType } from "../../../deion/common/types";
 
 type Col = {
     desc?: string,

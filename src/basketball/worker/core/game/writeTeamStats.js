@@ -4,7 +4,7 @@ import { PHASE } from "../../../common";
 import { finances, team } from "..";
 import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
-import type { GameResults } from "../../../common/types";
+import type { GameResults } from "../../../../deion/common/types";
 
 const writeTeamStats = async (results: GameResults) => {
     let att = 0;

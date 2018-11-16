@@ -1,7 +1,7 @@
 // @flow
 
 import { idb } from "..";
-import type { DraftLotteryResult } from "../../../common/types";
+import type { DraftLotteryResult } from "../../../../deion/common/types";
 
 const getCopy = async ({
     season,

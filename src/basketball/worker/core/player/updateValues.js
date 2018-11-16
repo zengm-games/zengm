@@ -1,9 +1,15 @@
 // @flow
 
 import value from "./value";
-import type { Player, PlayerWithoutPid } from "../../../common/types";
+import type {
+    MinimalPlayerRatings,
+    Player,
+    PlayerWithoutPid,
+} from "../../../../deion/common/types";
 
-const updateValues = (p: Player | PlayerWithoutPid) => {
+const updateValues = (
+    p: Player<MinimalPlayerRatings> | PlayerWithoutPid<MinimalPlayerRatings>,
+) => {
     p.value = value(p);
     p.valueNoPot = value(p, { noPot: true });
     p.valueFuzz = value(p, { fuzz: true });

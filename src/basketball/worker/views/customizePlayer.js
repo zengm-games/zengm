@@ -4,7 +4,7 @@ import { PHASE, PLAYER } from "../../common";
 import { finances, player } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
-import type { GetOutput, UpdateEvents } from "../../common/types";
+import type { GetOutput, UpdateEvents } from "../../../deion/common/types";
 
 async function updateCustomizePlayer(
     inputs: GetOutput,

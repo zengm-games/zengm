@@ -2,7 +2,11 @@
 
 import genFuzz from "./genFuzz";
 import { g } from "../../util";
-import type { Player, PlayerWithoutPid } from "../../../common/types";
+import type {
+    MinimalPlayerRatings,
+    Player,
+    PlayerWithoutPid,
+} from "../../../../deion/common/types";
 
 /**
  * Add a new row of ratings to a player object.
@@ -14,7 +18,10 @@ import type { Player, PlayerWithoutPid } from "../../../common/types";
  * @param {number} scoutingRank Between 1 and g.numTeams (default 30), the rank of scouting spending, probably over the past 3 years via core.finances.getRankLastThree.
  * @return {Object} Updated player object.
  */
-const addRatingsRow = (p: Player | PlayerWithoutPid, scoutingRank: number) => {
+const addRatingsRow = (
+    p: Player<MinimalPlayerRatings> | PlayerWithoutPid<MinimalPlayerRatings>,
+    scoutingRank: number,
+) => {
     const newRatings = Object.assign({}, p.ratings[p.ratings.length - 1]);
     newRatings.season = g.season;
     newRatings.fuzz = (newRatings.fuzz + genFuzz(scoutingRank)) / 2;

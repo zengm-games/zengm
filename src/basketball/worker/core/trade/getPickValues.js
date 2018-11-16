@@ -3,7 +3,7 @@
 import { PHASE, PLAYER } from "../../../common";
 import { idb } from "../../db";
 import { g } from "../../util";
-import type { TradePickValues } from "../../../common/types";
+import type { TradePickValues } from "../../../../deion/common/types";
 
 /**
  * Estimate draft pick values, based on the generated draft prospects in the database.

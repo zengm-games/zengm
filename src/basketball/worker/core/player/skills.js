@@ -2,11 +2,7 @@
 
 import { COMPOSITE_WEIGHTS } from "../../../common";
 import compositeRating from "./compositeRating";
-import type {
-    PlayerRatings,
-    PlayerSkill,
-    RatingKey,
-} from "../../../common/types";
+import type { PlayerRatings, RatingKey } from "../../../common/types";
 
 const hasSkill = (
     ratings: PlayerRatings,
@@ -35,7 +31,7 @@ const hasSkill = (
  *
  * Keep cutoffs in sync with GameSim.js!
  */
-const skills = (ratings: PlayerRatings): PlayerSkill[] => {
+const skills = (ratings: PlayerRatings): string[] => {
     const sk = [];
 
     // These use the same formulas as the composite rating definitions in core.game!

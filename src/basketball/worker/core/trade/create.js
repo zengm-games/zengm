@@ -1,7 +1,7 @@
 // @flow
 
 import { idb } from "../../db";
-import type { TradeTeams } from "../../../common/types";
+import type { TradeTeams } from "../../../../deion/common/types";
 
 /**
  * Start a new trade with a team.

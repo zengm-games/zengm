@@ -4,7 +4,7 @@ import { PLAYER } from "../../../common";
 import { contractNegotiation, draft, league } from "..";
 import { idb } from "../../db";
 import { g, helpers, local } from "../../util";
-import type { Conditions } from "../../../common/types";
+import type { Conditions } from "../../../../deion/common/types";
 
 const newPhaseFantasyDraft = async (
     conditions: Conditions,

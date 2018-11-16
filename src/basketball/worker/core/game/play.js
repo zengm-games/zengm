@@ -27,7 +27,7 @@ import {
     updatePlayMenu,
     updateStatus,
 } from "../../util";
-import type { Conditions } from "../../../common/types";
+import type { Conditions } from "../../../../deion/common/types";
 
 /**
  * Play one or more days of games.

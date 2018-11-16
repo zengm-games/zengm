@@ -16,7 +16,7 @@ import type {
     GetOutput,
     RouterContext,
     UpdateEvents,
-} from "../../common/types";
+} from "../../../deion/common/types";
 
 type Props = {
     Component: any,

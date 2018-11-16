@@ -4,7 +4,7 @@ import { PHASE } from "../../../common";
 import { player } from "..";
 import { idb } from "../../db";
 import { g, helpers, local, lock, logEvent, random } from "../../util";
-import type { Conditions, GameResults } from "../../../common/types";
+import type { Conditions, GameResults } from "../../../../deion/common/types";
 
 const writePlayerStats = async (
     results: GameResults,

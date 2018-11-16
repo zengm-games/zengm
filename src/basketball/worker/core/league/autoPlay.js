@@ -3,7 +3,7 @@
 import { PHASE } from "../../../common";
 import { draft, freeAgents, game, phase, season } from "..";
 import { g } from "../../util";
-import type { Conditions } from "../../../common/types";
+import type { Conditions } from "../../../../deion/common/types";
 
 // Depending on phase, initiate action that will lead to the next phase
 const autoPlay = async (conditions: Conditions) => {

@@ -3,7 +3,7 @@
 import { PHASE } from "../../common";
 import { idb } from "../db";
 import { g, local, toUI } from ".";
-import type { Conditions } from "../../common/types";
+import type { Conditions } from "../../../deion/common/types";
 
 /*Save status to database and push to client.
 

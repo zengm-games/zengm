@@ -1,7 +1,11 @@
 // @flow
 
 import { account } from "../util";
-import type { Conditions, GetOutput, UpdateEvents } from "../../common/types";
+import type {
+    Conditions,
+    GetOutput,
+    UpdateEvents,
+} from "../../../deion/common/types";
 
 async function updateAccount(
     inputs: GetOutput,

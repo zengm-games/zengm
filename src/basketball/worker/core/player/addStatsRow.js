@@ -1,7 +1,7 @@
 // @flow
 
 import { g } from "../../util";
-import type { Player } from "../../../common/types";
+import type { Player } from "../../../../deion/common/types";
 
 /**
  * Add a new row of stats to the playerStats database.
@@ -14,7 +14,7 @@ import type { Player } from "../../../common/types";
  * @param {Object} p Player object.
  * @param {=boolean} playoffs Is this stats row for the playoffs or not? Default false.
  */
-const addStatsRow = async (p: Player, playoffs?: boolean = false) => {
+const addStatsRow = async (p: Player<>, playoffs?: boolean = false) => {
     const statsRow = {
         season: g.season,
         tid: p.tid,

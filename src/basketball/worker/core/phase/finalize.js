@@ -11,7 +11,11 @@ import {
     updatePlayMenu,
     updateStatus,
 } from "../../util";
-import type { Conditions, Phase, UpdateEvents } from "../../../common/types";
+import type {
+    Conditions,
+    Phase,
+    UpdateEvents,
+} from "../../../../deion/common/types";
 
 /**
  * Common tasks run after a new phrase is set.

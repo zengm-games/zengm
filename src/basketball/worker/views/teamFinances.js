@@ -2,7 +2,7 @@ import { PHASE } from "../../common";
 import { team } from "../core";
 import { idb } from "../db";
 import { g, helpers, lock } from "../util";
-import type { GetOutput, UpdateEvents } from "../../common/types";
+import type { GetOutput, UpdateEvents } from "../../../deion/common/types";
 
 async function updateTeamFinances(
     inputs: { abbrev: string, show: number | "all", tid: number },

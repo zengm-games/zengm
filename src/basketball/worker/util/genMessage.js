@@ -3,7 +3,7 @@
 import { league } from "../core";
 import { idb } from "../db";
 import { g, helpers, local, random } from ".";
-import type { OwnerMoodDeltas } from "../../common/types";
+import type { OwnerMoodDeltas } from "../../../deion/common/types";
 
 // First message after new game
 const first = [

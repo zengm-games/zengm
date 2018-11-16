@@ -4,7 +4,7 @@ import { PHASE } from "../../common";
 import { season, team } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
-import type { UpdateEvents } from "../../common/types";
+import type { UpdateEvents } from "../../../deion/common/types";
 
 async function updateRoster(
     inputs: { abbrev: string, season: number, tid: number },

@@ -3,7 +3,7 @@
 import { league } from "..";
 import { idb } from "../../db";
 import { g } from "../../util";
-import type { OwnerMoodDeltas } from "../../../common/types";
+import type { OwnerMoodDeltas } from "../../../../deion/common/types";
 
 /**
  * Update g.ownerMood based on performance this season.

@@ -4,7 +4,7 @@ import addToFreeAgents from "./addToFreeAgents";
 import genBaseMoods from "./genBaseMoods";
 import { idb } from "../../db";
 import { g, helpers, logEvent } from "../../util";
-import type { Player } from "../../../common/types";
+import type { Player } from "../../../../deion/common/types";
 
 /**
  * Release player.
@@ -16,7 +16,7 @@ import type { Player } from "../../../common/types";
  * @param {boolean} justDrafted True if the player was just drafted by his current team and the regular season hasn't started yet. False otherwise. If True, then the player can be released without paying his salary.
  * @return {Promise}
  */
-const release = async (p: Player, justDrafted: boolean) => {
+const release = async (p: Player<>, justDrafted: boolean) => {
     // Keep track of player salary even when he's off the team, but make an exception for players who were just drafted
     // Was the player just drafted?
     if (!justDrafted) {

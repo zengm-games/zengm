@@ -1,9 +1,9 @@
 // @flow
 
 import { g, random } from "../../util";
-import type { Player } from "../../../common/types";
+import type { Player } from "../../../../deion/common/types";
 
-const getPlayerFakeAge = (players: Player[]): Player | void => {
+const getPlayerFakeAge = <T: Player<>>(players: T[]): T | void => {
     // This list is very arbitrary, but certain countries are deemed more likely to have a player with a fake age
     const highRiskCountries = [
         "Angola",

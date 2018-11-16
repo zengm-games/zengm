@@ -6,7 +6,7 @@ import getOrder from "./getOrder";
 import selectPlayer from "./selectPlayer";
 import { idb } from "../../db";
 import { g, helpers, local, lock, random } from "../../util";
-import type { Conditions } from "../../../common/types";
+import type { Conditions } from "../../../../deion/common/types";
 
 /**
  * Simulate draft picks until it's the user's turn or the draft is over.

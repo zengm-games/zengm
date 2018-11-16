@@ -2,7 +2,7 @@
 
 import backboard from "backboard";
 import { connectLeague, idb } from "../db";
-import type { GetOutput } from "../../common/types";
+import type { GetOutput } from "../../../deion/common/types";
 
 async function updateDeleteLeague({
     lid,

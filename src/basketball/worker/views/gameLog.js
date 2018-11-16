@@ -2,7 +2,7 @@
 
 import { idb } from "../db";
 import { g, getProcessedGames, helpers } from "../util";
-import type { GetOutput, UpdateEvents } from "../../common/types";
+import type { GetOutput, UpdateEvents } from "../../../deion/common/types";
 
 /**
  * Generate a box score.

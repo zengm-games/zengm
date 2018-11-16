@@ -6,7 +6,6 @@ import { idb } from ".";
 import cmp from "./cmp";
 import { g, lock, local } from "../util";
 import type {
-    Awards,
     BackboardTx,
     DraftLotteryResult,
     DraftPick,
@@ -28,7 +27,8 @@ import type {
     TeamStats,
     Team,
     Trade,
-} from "../../common/types";
+} from "../../../deion/common/types";
+import type { Awards, PlayerRatings } from "../../common/types";
 
 type Status = "empty" | "error" | "filling" | "full";
 
@@ -224,7 +224,11 @@ class Cache {
 
     playerFeats: StoreAPI<PlayerFeat, PlayerFeat, number>;
 
-    players: StoreAPI<Player | PlayerWithoutPid, Player, number>;
+    players: StoreAPI<
+        Player<PlayerRatings> | PlayerWithoutPid<PlayerRatings>,
+        Player<PlayerRatings>,
+        number,
+    >;
 
     playoffSeries: StoreAPI<PlayoffSeries, PlayoffSeries, number>;
 

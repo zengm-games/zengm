@@ -2,7 +2,7 @@
 
 import { idb } from "../db";
 import { toUI } from ".";
-import type { Locks } from "../../common/types";
+import type { Locks } from "../../../deion/common/types";
 
 // These are transient variables that always reset to "false" on reload. See local.js for more.
 const locks: Locks = {

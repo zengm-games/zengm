@@ -12,7 +12,7 @@ import {
     NewWindowLink,
     ResponsiveTableWrapper,
 } from "../components";
-import type { DraftLotteryResultArray } from "../../common/types";
+import type { DraftLotteryResultArray } from "../../../deion/common/types";
 
 const getProbs = (result: DraftLotteryResultArray): (number | void)[][] => {
     const probs = [];

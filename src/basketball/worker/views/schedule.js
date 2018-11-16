@@ -3,7 +3,7 @@
 import { season } from "../core";
 import { idb } from "../db";
 import { g, getProcessedGames, helpers } from "../util";
-import type { GetOutput, UpdateEvents } from "../../common/types";
+import type { GetOutput, UpdateEvents } from "../../../deion/common/types";
 
 async function updateUpcoming(
     inputs: GetOutput,

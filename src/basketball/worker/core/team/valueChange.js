@@ -5,7 +5,7 @@ import { PHASE } from "../../../common";
 import { draft, player, trade } from "..";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
-import type { TradePickValues } from "../../../common/types";
+import type { TradePickValues } from "../../../../deion/common/types";
 import getPayroll from "./getPayroll";
 
 // estValuesCached is either a copy of estValues (defined below) or null. When it's cached, it's much faster for repeated calls (like trading block).

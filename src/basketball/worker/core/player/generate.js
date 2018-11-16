@@ -10,11 +10,8 @@ import name from "./name";
 import pos from "./pos";
 import setContract from "./setContract";
 import { g, helpers, random } from "../../util";
-import type {
-    PlayerRatings,
-    PlayerWithoutPid,
-    RatingKey,
-} from "../../../common/types";
+import type { PlayerWithoutPid } from "../../../../deion/common/types";
+import type { PlayerRatings, RatingKey } from "../../../common/types";
 
 const typeFactors: {
     ["point" | "wing" | "big"]: {
@@ -206,7 +203,7 @@ const generate = (
     draftYear: number,
     newLeague: boolean,
     scoutingRank: number,
-): PlayerWithoutPid => {
+): PlayerWithoutPid<PlayerRatings> => {
     // RealHeight is drawn from a custom probability distribution and then offset by a fraction of an inch either way
     let realHeight = Math.random() - 0.5; // Fraction of an inch
     realHeight += random.heightDist();

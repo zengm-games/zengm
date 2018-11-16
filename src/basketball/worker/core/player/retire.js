@@ -3,7 +3,7 @@
 import { PLAYER } from "../../../common";
 import madeHof from "./madeHof";
 import { g, helpers, logEvent } from "../../util";
-import type { Conditions, Player } from "../../../common/types";
+import type { Conditions, Player } from "../../../../deion/common/types";
 
 /**
  * Have a player retire, including all event and HOF bookkeeping.
@@ -16,7 +16,7 @@ import type { Conditions, Player } from "../../../common/types";
  * @return {Object} p Updated (retired) player object.
  */
 function retire(
-    p: Player,
+    p: Player<>,
     conditions?: Conditions,
     retiredNotification?: boolean = true,
 ) {

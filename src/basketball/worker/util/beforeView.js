@@ -12,7 +12,7 @@ import {
     updatePlayMenu,
     updateStatus,
 } from ".";
-import type { Conditions, League } from "../../common/types";
+import type { Conditions, League } from "../../../deion/common/types";
 
 let heartbeatIntervalID: IntervalID;
 

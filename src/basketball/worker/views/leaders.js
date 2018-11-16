@@ -3,7 +3,7 @@
 import { PHASE, PLAYER } from "../../common";
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import type { UpdateEvents } from "../../common/types";
+import type { UpdateEvents } from "../../../deion/common/types";
 
 async function updateLeaders(
     inputs: {

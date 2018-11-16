@@ -4,7 +4,7 @@ import { PLAYER } from "../../../common";
 import { player, season, team } from "..";
 import { idb } from "../../db";
 import { account, g, genMessage, helpers, toUI } from "../../util";
-import type { Conditions } from "../../../common/types";
+import type { Conditions } from "../../../../deion/common/types";
 
 const newPhaseBeforeDraft = async (
     conditions: Conditions,

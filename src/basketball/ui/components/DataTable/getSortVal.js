@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import textContent from "react-addons-text-content";
-import type { SortType } from "../../../common/types";
+import type { SortType } from "../../../../deion/common/types";
 
 const getSortVal = (value: any = null, sortType: SortType | void) => {
     try {

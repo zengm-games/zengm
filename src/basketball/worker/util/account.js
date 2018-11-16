@@ -4,11 +4,8 @@
 import { SPORT, fetchWrapper } from "../../common";
 import { idb } from "../db";
 import { env, g, local, logEvent, toUI } from ".";
-import type {
-    AchievementKey,
-    Conditions,
-    PartialTopMenu,
-} from "../../common/types";
+import type { Conditions, PartialTopMenu } from "../../../deion/common/types";
+import type { AchievementKey } from "../../common/types";
 
 // IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php
 const allAchievements: {

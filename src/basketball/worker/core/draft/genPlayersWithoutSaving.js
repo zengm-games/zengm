@@ -4,7 +4,8 @@ import range from "lodash/range";
 import { PLAYER } from "../../../common";
 import { player } from "..";
 import { g, random } from "../../util";
-import type { PlayerWithoutPid } from "../../../common/types";
+import type { PlayerWithoutPid } from "../../../../deion/common/types";
+import type { PlayerRatings } from "../../../common/types";
 
 const genPlayersWithoutSaving = (
     tid: number,
@@ -13,7 +14,7 @@ const genPlayersWithoutSaving = (
     newLeague?: boolean,
 ): {
     draftYear: number,
-    players: PlayerWithoutPid[],
+    players: PlayerWithoutPid<PlayerRatings>[],
 } => {
     if (numPlayers === null || numPlayers === undefined) {
         numPlayers = Math.round((70 * g.numTeams) / 30); // 70 scaled by number of teams

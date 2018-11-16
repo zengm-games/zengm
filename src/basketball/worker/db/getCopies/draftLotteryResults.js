@@ -2,7 +2,7 @@
 
 import { idb } from "..";
 import { mergeByPk } from "./helpers";
-import type { DraftLotteryResult } from "../../../common/types";
+import type { DraftLotteryResult } from "../../../../deion/common/types";
 
 const getCopies = async ({ season }: { season?: number } = {}): Promise<
     DraftLotteryResult[],

@@ -3,7 +3,7 @@
 import { PHASE, PLAYER } from "../../common";
 import { idb } from "../db";
 import { g } from "../util";
-import type { GetOutput, UpdateEvents } from "../../common/types";
+import type { GetOutput, UpdateEvents } from "../../../deion/common/types";
 
 async function addSeason(season, tid) {
     let playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);

@@ -2,7 +2,7 @@
 
 import { idb } from "../db";
 import { logEvent } from ".";
-import type { Conditions } from "../../common/types";
+import type { Conditions } from "../../../deion/common/types";
 
 const all = [
     {

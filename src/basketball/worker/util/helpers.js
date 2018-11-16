@@ -8,7 +8,7 @@ import type {
     GameProcessed,
     GameProcessedCompleted,
     PlayoffSeriesTeam,
-} from "../../common/types";
+} from "../../../deion/common/types";
 
 const augmentSeries = (
     series: {| away?: PlayoffSeriesTeam, home: PlayoffSeriesTeam |}[][],

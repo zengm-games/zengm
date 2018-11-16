@@ -2,7 +2,7 @@
 
 import { getAll, idb } from "..";
 import { mergeByPk } from "./helpers";
-import type { Game } from "../../../common/types";
+import type { Game } from "../../../../deion/common/types";
 
 const getCopies = async ({
     season,

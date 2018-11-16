@@ -5,7 +5,7 @@ import { player } from "..";
 import getRookieSalaries from "./getRookieSalaries";
 import { idb } from "../../db";
 import { g, helpers, local, logEvent } from "../../util";
-import type { DraftPick } from "../../../common/types";
+import type { DraftPick } from "../../../../deion/common/types";
 
 /**
  * Select a player for the current drafting team.

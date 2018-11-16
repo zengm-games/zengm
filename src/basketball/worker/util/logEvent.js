@@ -7,7 +7,7 @@ import type {
     Conditions,
     LogEventSaveOptions,
     LogEventShowOptions,
-} from "../../common/types";
+} from "../../../deion/common/types";
 
 const saveEvent = (event: LogEventSaveOptions) => {
     if (idb.cache) {

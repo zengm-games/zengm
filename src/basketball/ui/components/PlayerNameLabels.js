@@ -5,7 +5,7 @@ import * as React from "react";
 import SkillsBlock from "./SkillsBlock";
 import RatingsStatsPopover from "./RatingsStatsPopover";
 import { helpers } from "../util";
-import type { PlayerInjury, PlayerSkill } from "../../common/types";
+import type { PlayerInjury } from "../../../deion/common/types";
 
 const PlayerNameLabels = ({
     children,
@@ -18,7 +18,7 @@ const PlayerNameLabels = ({
     children: string,
     injury?: PlayerInjury,
     pid: number,
-    skills?: PlayerSkill[],
+    skills?: string[],
     style?: { [key: string]: string },
     watch?: boolean,
 }) => {

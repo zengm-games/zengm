@@ -5,7 +5,7 @@ import { PLAYER } from "../../../common";
 import { finances, freeAgents, league, player, team } from "..";
 import { idb } from "../../db";
 import { env, g, helpers, local, logEvent, random, toUI } from "../../util";
-import type { Conditions } from "../../../common/types";
+import type { Conditions } from "../../../../deion/common/types";
 
 const newPhasePreseason = async (conditions: Conditions) => {
     await freeAgents.autoSign();

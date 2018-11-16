@@ -1,7 +1,7 @@
 // @flow
 
 import countBy from "lodash/countBy";
-import type { TeamFiltered } from "../../../common/types";
+import type { TeamFiltered } from "../../../../deion/common/types";
 
 /**
  * Divide the combinations between teams with tied records.

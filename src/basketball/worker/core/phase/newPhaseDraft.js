@@ -5,7 +5,7 @@ import { PLAYER } from "../../../common";
 import { draft } from "..";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";
-import type { Conditions } from "../../../common/types";
+import type { Conditions } from "../../../../deion/common/types";
 
 const newPhaseDraft = async (conditions: Conditions) => {
     // Kill off old retired players (done here since not much else happens in this phase change, so making it a little

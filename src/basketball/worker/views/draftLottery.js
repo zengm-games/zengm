@@ -4,7 +4,10 @@ import { PHASE } from "../../common";
 import { draft } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
-import type { DraftLotteryResultArray, UpdateEvents } from "../../common/types";
+import type {
+    DraftLotteryResultArray,
+    UpdateEvents,
+} from "../../../deion/common/types";
 
 async function updateDraftLottery(
     { season }: { season: number },

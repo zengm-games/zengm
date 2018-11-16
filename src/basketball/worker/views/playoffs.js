@@ -4,7 +4,7 @@ import { PHASE } from "../../common";
 import { season } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import type { UpdateEvents } from "../../common/types";
+import type { UpdateEvents } from "../../../deion/common/types";
 
 const getProjectedSeries = async (inputSeason: number) => {
     const teams = helpers.orderByWinp(

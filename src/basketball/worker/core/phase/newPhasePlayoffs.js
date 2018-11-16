@@ -3,7 +3,7 @@
 import { finances, player, season, team } from "..";
 import { idb } from "../../db";
 import { account, g, helpers, local, logEvent } from "../../util";
-import type { Conditions } from "../../../common/types";
+import type { Conditions } from "../../../../deion/common/types";
 
 const newPhasePlayoffs = async (
     conditions: Conditions,

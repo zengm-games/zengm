@@ -2,10 +2,10 @@
 
 import { PHASE } from "../../../common";
 import { g } from "../../util";
-import type { Player, PlayerWithoutPid } from "../../../common/types";
+import type { Player, PlayerWithoutPid } from "../../../../deion/common/types";
 
 const isUntradable = (
-    p: Player | PlayerWithoutPid,
+    p: Player<> | PlayerWithoutPid<>,
 ): {
     untradable: boolean,
     untradableMsg: string,

@@ -2,7 +2,7 @@
 
 import { season } from "../core";
 import { g, helpers, lock } from "../util";
-import type { GetOutput, UpdateEvents } from "../../common/types";
+import type { GetOutput, UpdateEvents } from "../../../deion/common/types";
 
 async function updateGamesList(): void | { [key: string]: any } {
     const games = helpers.deepCopy(await season.getSchedule(true));

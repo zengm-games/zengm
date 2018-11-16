@@ -2,10 +2,11 @@
 
 import { g, helpers, random } from "../../util";
 import type {
+    MinimalPlayerRatings,
     Player,
     PlayerContract,
     PlayerWithoutPid,
-} from "../../../common/types";
+} from "../../../../deion/common/types";
 
 /**
  * Generate a contract for a player.
@@ -16,7 +17,7 @@ import type {
  * @return {Object.<string, number>} Object containing two properties with integer values, "amount" with the contract amount in thousands of dollars and "exp" with the contract expiration year.
  */
 const genContract = (
-    p: Player | PlayerWithoutPid,
+    p: Player<MinimalPlayerRatings> | PlayerWithoutPid<MinimalPlayerRatings>,
     randomizeExp: boolean = false,
     randomizeAmount: boolean = true,
     noLimit: boolean = false,

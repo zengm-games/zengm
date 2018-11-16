@@ -2,7 +2,11 @@
 
 import fuzzRating from "./fuzzRating";
 import { g } from "../../util";
-import type { Player, PlayerWithoutPid } from "../../../common/types";
+import type {
+    MinimalPlayerRatings,
+    Player,
+    PlayerWithoutPid,
+} from "../../../../deion/common/types";
 
 /**
  * Returns a numeric value for a given player, representing is general worth to a typical team
@@ -25,7 +29,7 @@ import type { Player, PlayerWithoutPid } from "../../../common/types";
  *     ratings.
  */
 const value = (
-    p: Player | PlayerWithoutPid,
+    p: Player<MinimalPlayerRatings> | PlayerWithoutPid<MinimalPlayerRatings>,
     options: {
         fuzz?: boolean,
         noPot?: boolean,

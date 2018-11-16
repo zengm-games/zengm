@@ -3,7 +3,7 @@
 import romanNumerals from "roman-numerals";
 import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
-import type { Player, RelativeType } from "../../../common/types";
+import type { Player, RelativeType } from "../../../../deion/common/types";
 
 const parseLastName = (lastName: string): [string, number | void] => {
     const parts = lastName.split(" ");
@@ -41,26 +41,26 @@ const getSuffix = (suffixNumber: number): string => {
     return romanNumerals.toRoman(suffixNumber);
 };
 
-const hasRelative = (p: Player, type: RelativeType) => {
+const hasRelative = (p: Player<>, type: RelativeType) => {
     return !!p.relatives.find(relative => relative.type === type);
 };
 
 const getRelatives = async (
-    p: Player,
+    p: Player<>,
     type: RelativeType,
-): Promise<Player[]> => {
+): Promise<Player<>[]> => {
     const players = await Promise.all(
         p.relatives
             .filter(rel => rel.type === type)
-            // $FlowFixMe
             .map(({ pid }) => idb.getCopy.players({ pid })),
     );
 
+    // $FlowFixMe
     return players.filter(p2 => p2 !== undefined);
 };
 
 const addRelative = (
-    p: Player,
+    p: Player<>,
     relative: {
         type: RelativeType,
         pid: number,
@@ -83,7 +83,7 @@ const addRelative = (
     }
 };
 
-export const makeSon = async (p: Player) => {
+export const makeSon = async (p: Player<>) => {
     // Sanity check - player must not already have father
     if (hasRelative(p, "father")) {
         return;
@@ -197,7 +197,7 @@ export const makeSon = async (p: Player) => {
     await idb.cache.players.put(father);
 };
 
-export const makeBrother = async (p: Player) => {
+export const makeBrother = async (p: Player<>) => {
     // If p already has a brother, this would be hard to get right because the names of various players stored in Player.relatives would need to be updated. It's okay if the player picked to be p's brother has other brothers, though!
     if (hasRelative(p, "brother")) {
         return;
@@ -305,7 +305,7 @@ export const makeBrother = async (p: Player) => {
     await idb.cache.players.put(brother);
 };
 
-const addRelatives = async (p: Player) => {
+const addRelatives = async (p: Player<>) => {
     if (Math.random() < g.sonRate) {
         await makeSon(p);
     }

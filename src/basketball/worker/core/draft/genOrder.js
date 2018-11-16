@@ -7,7 +7,10 @@ import lotterySort from "./lotterySort";
 import updateChances from "./updateChances";
 import { idb } from "../../db";
 import { g, helpers, random } from "../../util";
-import type { Conditions, DraftLotteryResult } from "../../../common/types";
+import type {
+    Conditions,
+    DraftLotteryResult,
+} from "../../../../deion/common/types";
 
 /**
  * Sets draft order and save it to the draftPicks object store.

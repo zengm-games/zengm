@@ -1,7 +1,7 @@
 // @flow
 
 import router from "bbgm-router";
-import type { UpdateEvents } from "../../common/types";
+import type { UpdateEvents } from "../../../deion/common/types";
 
 /**
  * Smartly update the currently loaded view or redirect to a new one.

@@ -7,7 +7,7 @@ import type {
     Conditions,
     GamePlayer,
     GameResults,
-} from "../../../common/types";
+} from "../../../../deion/common/types";
 
 const checkStatisticalFeat = (
     pid: number,

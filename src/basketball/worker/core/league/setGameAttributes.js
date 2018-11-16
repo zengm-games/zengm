@@ -2,7 +2,7 @@
 
 import { idb } from "../../db";
 import { g, helpers, toUI } from "../../util";
-import type { GameAttributes } from "../../../common/types";
+import type { GameAttributes } from "../../../../deion/common/types";
 
 const updateMetaDifficulty = async (difficulty: number) => {
     const l = await idb.meta.leagues.get(g.lid);

@@ -2,7 +2,11 @@
 
 import { SPORT, fetchWrapper } from "../../common";
 import { account, env } from "../util";
-import type { Conditions, GetOutput, UpdateEvents } from "../../common/types";
+import type {
+    Conditions,
+    GetOutput,
+    UpdateEvents,
+} from "../../../deion/common/types";
 
 async function updateAccountUpdateCard(
     inputs: GetOutput,

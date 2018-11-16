@@ -5,12 +5,14 @@ import { PLAYER } from "../../../common";
 import { idb } from "../../db";
 import { g, helpers, logEvent } from "../../util";
 import type {
-    AwardPlayer,
-    AwardPlayerDefense,
-    Awards,
     Conditions,
     PlayerFiltered,
     TeamFiltered,
+} from "../../../../deion/common/types";
+import type {
+    AwardPlayer,
+    AwardPlayerDefense,
+    Awards,
 } from "../../../common/types";
 
 type AwardsByPlayer = {

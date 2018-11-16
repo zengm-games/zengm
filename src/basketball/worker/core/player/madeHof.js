@@ -1,7 +1,7 @@
 // @flow
 
 import { g } from "../../util";
-import type { Player, PlayerWithoutPid } from "../../../common/types";
+import type { Player, PlayerWithoutPid } from "../../../../deion/common/types";
 
 /**
  * Is a player worthy of the Hall of Fame?
@@ -12,7 +12,7 @@ import type { Player, PlayerWithoutPid } from "../../../common/types";
  * @param {Object} p Player object.
  * @return {boolean} Hall of Fame worthy?
  */
-const madeHof = (p: Player | PlayerWithoutPid): boolean => {
+const madeHof = (p: Player<> | PlayerWithoutPid<>): boolean => {
     // Average together WS and EWA
     const winShares = p.stats.map(ps => {
         let sum = 0;

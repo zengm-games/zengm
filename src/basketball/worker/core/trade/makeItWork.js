@@ -2,7 +2,10 @@
 
 import { team } from "..";
 import { idb } from "../../db";
-import type { TradePickValues, TradeTeams } from "../../../common/types";
+import type {
+    TradePickValues,
+    TradeTeams,
+} from "../../../../deion/common/types";
 import isUntradable from "./isUntradable";
 
 /**

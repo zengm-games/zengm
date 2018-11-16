@@ -1,6 +1,6 @@
 // @flow
 
-import type { ContractInfo } from "../../../common/types";
+import type { ContractInfo } from "../../../../deion/common/types";
 import getContracts from "./getContracts";
 
 /**

@@ -43,7 +43,8 @@ import type {
     PlayerWithoutPid,
     UpdateEvents,
     TradeTeams,
-} from "../../common/types";
+} from "../../../deion/common/types";
+import type { PlayerRatings } from "../../common/types";
 
 const acceptContractNegotiation = async (
     pid: number,
@@ -1100,7 +1101,7 @@ const updateTeamInfo = async (
 };
 
 const upsertCustomizedPlayer = async (
-    p: Player | PlayerWithoutPid,
+    p: Player<PlayerRatings> | PlayerWithoutPid<PlayerRatings>,
     originalTid: number,
     season: number,
     updatedRatingsOrAge: boolean,

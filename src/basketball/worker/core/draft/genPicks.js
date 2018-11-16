@@ -2,7 +2,7 @@
 
 import { idb } from "../../db";
 import { g } from "../../util";
-import type { DraftPick } from "../../../common/types";
+import type { DraftPick } from "../../../../deion/common/types";
 
 // Add a new set of draft picks
 // existingDraftPicks should not be normally used, but sometimes a partial set of draft picks is saved to the database, in which case we want to merge those in with the newly generated ones.

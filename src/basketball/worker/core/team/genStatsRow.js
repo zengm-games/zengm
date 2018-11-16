@@ -1,7 +1,7 @@
 // @flow
 
 import { g } from "../../util";
-import type { TeamStats } from "../../../common/types";
+import type { TeamStats } from "../../../../deion/common/types";
 
 /**
  * Generate a new row of team stats.

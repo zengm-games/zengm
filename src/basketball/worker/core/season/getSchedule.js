@@ -2,7 +2,7 @@
 
 import { idb } from "../../db";
 import { g } from "../../util";
-import type { ScheduleGame } from "../../../common/types";
+import type { ScheduleGame } from "../../../../deion/common/types";
 
 /**
  * Get an array of games from the schedule.

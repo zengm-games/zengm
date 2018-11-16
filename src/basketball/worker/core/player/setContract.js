@@ -6,7 +6,7 @@ import type {
     Player,
     PlayerContract,
     PlayerWithoutPid,
-} from "../../../common/types";
+} from "../../../../deion/common/types";
 
 /**
  * Store a contract in a player object.
@@ -18,7 +18,7 @@ import type {
  * @return {Object} Updated player object.
  */
 const setContract = (
-    p: Player | PlayerWithoutPid,
+    p: Player<> | PlayerWithoutPid<>,
     contract: PlayerContract,
     signed: boolean,
 ) => {

@@ -1,7 +1,7 @@
 // @flow
 
 import backboard from "backboard";
-import { PLAYER } from "../../../common";
+import { PLAYER } from "../../../../deion/common";
 import value from "../player/value";
 import { idb } from "../../db";
 

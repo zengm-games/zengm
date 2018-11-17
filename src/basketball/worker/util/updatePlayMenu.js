@@ -1,6 +1,6 @@
 // @flow
 
-import { PHASE } from "../../common";
+import { PHASE } from "../../../deion/common";
 import { draft } from "../core";
 import { g, helpers, local, lock, toUI } from ".";
 

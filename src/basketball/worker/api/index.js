@@ -2,7 +2,7 @@
 
 import flatten from "lodash/flatten";
 import range from "lodash/range";
-import { PHASE, PHASE_TEXT, PLAYER } from "../../common";
+import { PHASE, PHASE_TEXT, PLAYER } from "../../../deion/common";
 import actions from "./actions";
 import processInputs from "./processInputs";
 import {

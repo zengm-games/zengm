@@ -2,7 +2,7 @@
 
 import assert from "assert";
 import { describe, it } from "mocha";
-import { PLAYER } from "../../../common";
+import { PLAYER } from "../../../../deion/common";
 import testHelpers from "../../../test/helpers";
 import { idb } from "../../db";
 import { draft } from "..";

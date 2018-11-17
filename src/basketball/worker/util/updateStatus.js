@@ -1,6 +1,6 @@
 // @flow
 
-import { PHASE } from "../../common";
+import { PHASE } from "../../../deion/common";
 import { idb } from "../db";
 import { g, local, toUI } from ".";
 import type { Conditions } from "../../../deion/common/types";

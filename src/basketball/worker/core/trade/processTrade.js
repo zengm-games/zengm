@@ -1,6 +1,6 @@
 // @flow
 
-import { PHASE } from "../../../common";
+import { PHASE } from "../../../../deion/common";
 import { player } from "..";
 import { idb } from "../../db";
 import { g, helpers, logEvent, toUI, updatePlayMenu } from "../../util";

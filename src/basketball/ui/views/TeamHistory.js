@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { PLAYER } from "../../common";
+import { PLAYER } from "../../../deion/common";
 import { helpers, getCols, setTitle } from "../../../deion/ui/util";
 import {
     DataTable,

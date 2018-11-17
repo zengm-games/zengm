@@ -2,7 +2,7 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import { PHASE } from "../../common";
+import { PHASE } from "../../../deion/common";
 import {
     helpers,
     subscribeLocal,

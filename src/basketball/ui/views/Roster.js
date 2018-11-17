@@ -11,7 +11,7 @@ import DropdownItem from "reactstrap/lib/DropdownItem";
 import DropdownMenu from "reactstrap/lib/DropdownMenu";
 import DropdownToggle from "reactstrap/lib/DropdownToggle";
 import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
-import { PHASE } from "../../common";
+import { PHASE } from "../../../deion/common";
 import { helpers, logEvent, setTitle, toWorker } from "../../../deion/ui/util";
 import {
     HelpPopover,

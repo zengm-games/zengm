@@ -1,6 +1,6 @@
 // @flow
 
-import { PHASE } from "../../../common";
+import { PHASE } from "../../../../deion/common";
 import { team } from "..";
 import { idb } from "../../db";
 import { g } from "../../util";

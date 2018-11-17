@@ -1,6 +1,6 @@
 // @flow
 
-import { PHASE } from "../../../common";
+import { PHASE } from "../../../../deion/common";
 import { player } from "..";
 import getRookieSalaries from "./getRookieSalaries";
 import { idb } from "../../db";

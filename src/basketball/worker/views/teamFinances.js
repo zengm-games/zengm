@@ -1,4 +1,4 @@
-import { PHASE } from "../../common";
+import { PHASE } from "../../../deion/common";
 import { team } from "../core";
 import { idb } from "../db";
 import { g, helpers, lock } from "../util";

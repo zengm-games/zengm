@@ -1,7 +1,7 @@
 // @flow
 
 import backboard from "backboard";
-import { PLAYER } from "../../../common";
+import { PLAYER } from "../../../../deion/common";
 import { getAll, idb } from "..";
 import { mergeByPk } from "./helpers";
 import { helpers } from "../../util";

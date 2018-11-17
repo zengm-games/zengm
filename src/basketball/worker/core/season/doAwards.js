@@ -1,7 +1,7 @@
 // @flow
 
 import orderBy from "lodash/orderBy";
-import { PLAYER } from "../../../common";
+import { PLAYER } from "../../../../deion/common";
 import { idb } from "../../db";
 import { g, helpers, logEvent } from "../../util";
 import type {

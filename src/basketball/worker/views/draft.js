@@ -1,6 +1,6 @@
 // @flow
 
-import { PHASE, PLAYER } from "../../common";
+import { PHASE, PLAYER } from "../../../deion/common";
 import type { GetOutput, UpdateEvents } from "../../../deion/common/types";
 import { draft } from "../core";
 import { idb } from "../db";

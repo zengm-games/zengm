@@ -2,8 +2,7 @@
 
 import PropTypes from "prop-types";
 import React from "react";
-import { fetchWrapper } from "../../../deion/common";
-import { STRIPE_PUBLISHABLE_KEY } from "../../common";
+import { STRIPE_PUBLISHABLE_KEY, fetchWrapper } from "../../../deion/common";
 import { getScript, realtimeUpdate, setTitle } from "../../../deion/ui/util";
 
 const ajaxErrorMsg =

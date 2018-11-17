@@ -1,7 +1,8 @@
 // @flow
 
 import backboard from "backboard";
-import { COMPOSITE_WEIGHTS, PLAYER } from "../../../common";
+import { PLAYER } from "../../../../deion/common";
+import { COMPOSITE_WEIGHTS } from "../../../common";
 import { player } from "..";
 import { idb } from "../../db";
 

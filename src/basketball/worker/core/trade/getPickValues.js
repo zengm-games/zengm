@@ -1,6 +1,6 @@
 // @flow
 
-import { PHASE, PLAYER } from "../../../common";
+import { PHASE, PLAYER } from "../../../../deion/common";
 import { idb } from "../../db";
 import { g } from "../../util";
 import type { TradePickValues } from "../../../../deion/common/types";

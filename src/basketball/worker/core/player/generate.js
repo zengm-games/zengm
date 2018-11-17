@@ -1,7 +1,7 @@
 // @flow
 
 import faces from "facesjs";
-import { PLAYER } from "../../../common";
+import { PLAYER } from "../../../../deion/common";
 import genFuzz from "./genFuzz";
 import genContract from "./genContract";
 import heightToRating from "./heightToRating";

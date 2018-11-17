@@ -1,6 +1,6 @@
 // @flow
 
-import { PLAYER } from "../../../common";
+import { PLAYER } from "../../../../deion/common";
 import afterPicks from "./afterPicks";
 import getOrder from "./getOrder";
 import selectPlayer from "./selectPlayer";

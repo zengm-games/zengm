@@ -1,7 +1,7 @@
 // @flow
 
 import orderBy from "lodash/orderBy";
-import { PHASE } from "../../../common";
+import { PHASE } from "../../../../deion/common";
 import { idb } from "../../db";
 import { g } from "../../util";
 

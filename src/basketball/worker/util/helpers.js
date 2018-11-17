@@ -1,8 +1,7 @@
 // @flow
 
 import orderBy from "lodash/orderBy";
-import { helpers as commonHelpers } from "../../../deion/common";
-import { PLAYER } from "../../common";
+import { PLAYER, helpers as commonHelpers } from "../../../deion/common";
 import { g } from ".";
 import type {
     DraftPick,

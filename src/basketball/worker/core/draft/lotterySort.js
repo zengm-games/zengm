@@ -1,7 +1,7 @@
 // @flow
 
 import range from "lodash/range";
-import { PHASE } from "../../../common";
+import { PHASE } from "../../../../deion/common";
 import { season } from "..";
 import { g, helpers, random } from "../../util";
 import type { TeamFiltered } from "../../../../deion/common/types";

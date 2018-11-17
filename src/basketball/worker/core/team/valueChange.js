@@ -1,7 +1,7 @@
 // @flow
 
 import countBy from "lodash/countBy";
-import { PHASE } from "../../../common";
+import { PHASE } from "../../../../deion/common";
 import { draft, player, trade } from "..";
 import { idb } from "../../db";
 import { g, helpers } from "../../util";

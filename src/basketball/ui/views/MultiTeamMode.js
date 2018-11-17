@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { PHASE } from "../../common";
+import { PHASE } from "../../../deion/common";
 import { setTitle, toWorker } from "../../../deion/ui/util";
 import { NewWindowLink } from "../../../deion/ui/components";
 

@@ -3,7 +3,7 @@
 import orderBy from "lodash/orderBy";
 import range from "lodash/range";
 import { Cache, connectLeague, idb } from "../../db";
-import { DIFFICULTY, PHASE, PLAYER } from "../../../common";
+import { DIFFICULTY, PHASE, PLAYER } from "../../../../deion/common";
 import { draft, finances, league, player, team } from "..";
 import {
     defaultGameAttributes,

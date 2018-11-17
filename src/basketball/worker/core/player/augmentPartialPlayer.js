@@ -1,6 +1,6 @@
 // @flow
 
-import { PHASE, PLAYER } from "../../../common";
+import { PHASE, PLAYER } from "../../../../deion/common";
 import addStatsRow from "./addStatsRow";
 import { bootstrapPot } from "./develop";
 import generate from "./generate";

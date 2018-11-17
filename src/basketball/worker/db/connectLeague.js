@@ -2,7 +2,7 @@
 
 import backboard from "backboard";
 import orderBy from "lodash/orderBy";
-import { PHASE, PLAYER } from "../../common";
+import { PHASE, PLAYER } from "../../../deion/common";
 import { player } from "../core";
 import { bootstrapPot } from "../core/player/develop";
 import { idb } from ".";

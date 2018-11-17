@@ -1,6 +1,6 @@
 // @flow
 
-import { PHASE } from "../../../common";
+import { PHASE } from "../../../../deion/common";
 import { league, phase, trade } from "..";
 import autoSign from "./autoSign";
 import decreaseDemands from "./decreaseDemands";

@@ -2,7 +2,7 @@
 
 import { finances } from "..";
 import { g, helpers, random } from "../../util";
-import { PHASE } from "../../../common";
+import { PHASE } from "../../../../deion/common";
 import type { TeamSeason } from "../../../../deion/common/types";
 
 const genBaseMood = (teamSeason: TeamSeason): number => {

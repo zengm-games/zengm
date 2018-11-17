@@ -1,6 +1,6 @@
 // @flow
 
-import { PLAYER } from "../../../common";
+import { PLAYER } from "../../../../deion/common";
 import { contractNegotiation, draft, league } from "..";
 import { idb } from "../../db";
 import { g, helpers, local } from "../../util";

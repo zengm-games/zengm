@@ -1,7 +1,7 @@
 // Typing is too hard due to https://github.com/facebook/flow/issues/183
 
 import groupBy from "lodash/groupBy";
-import { PLAYER } from "../../../common";
+import { PLAYER } from "../../../../deion/common";
 import { player, trade } from "../../core";
 import { g, helpers } from "../../util";
 import type {

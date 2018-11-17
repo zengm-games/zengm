@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { PHASE } from "../../common";
+import { PHASE } from "../../../deion/common";
 import { getCols, helpers, setTitle, toWorker } from "../../../deion/ui/util";
 import clickable from "../../../deion/ui/wrappers/clickable";
 import {

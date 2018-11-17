@@ -1,6 +1,6 @@
 // @flow
 
-import { PHASE } from "../../../common";
+import { PHASE } from "../../../../deion/common";
 import { g } from "../../util";
 import type { Player, PlayerWithoutPid } from "../../../../deion/common/types";
 

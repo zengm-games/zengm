@@ -1,6 +1,6 @@
 // @flow
 
-import { PHASE } from "../../../common";
+import { PHASE } from "../../../../deion/common";
 import finalize from "./finalize";
 import newPhasePreseason from "./newPhasePreseason";
 import newPhaseRegularSeason from "./newPhaseRegularSeason";

@@ -2,7 +2,7 @@
 
 import orderBy from "lodash/orderBy";
 import range from "lodash/range";
-import { PHASE, PLAYER } from "../../../common";
+import { PHASE, PLAYER } from "../../../../deion/common";
 import { player, team } from "..";
 import { idb } from "../../db";
 import { g, local, random } from "../../util";

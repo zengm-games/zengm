@@ -3,8 +3,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import * as React from "react";
-import { fetchWrapper } from "../../../deion/common";
-import { STRIPE_PUBLISHABLE_KEY } from "../../common";
+import { STRIPE_PUBLISHABLE_KEY, fetchWrapper } from "../../../deion/common";
 import {
     getScript,
     local,

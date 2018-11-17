@@ -2,7 +2,7 @@
 
 import assert from "assert";
 import { afterEach, before, describe, it } from "mocha";
-import { PLAYER } from "../../../common";
+import { PLAYER } from "../../../../deion/common";
 import { contractNegotiation } from "..";
 import { idb } from "../../db";
 import { g } from "../../util";

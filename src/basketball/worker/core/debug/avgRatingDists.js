@@ -1,7 +1,7 @@
 // @flow
 
 import range from "lodash/range";
-import { PLAYER } from "../../../common";
+import { PLAYER } from "../../../../deion/common";
 import { draft, player } from "..";
 
 const avgRatingDists = (numPlayers: number = 100) => {

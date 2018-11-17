@@ -1,6 +1,6 @@
 // @flow
 
-import { PHASE } from "../../../common";
+import { PHASE } from "../../../../deion/common";
 import { draft, freeAgents, game, phase, season } from "..";
 import { g } from "../../util";
 import type { Conditions } from "../../../../deion/common/types";

@@ -1,6 +1,6 @@
 // @flow
 
-import { PLAYER } from "../../../common";
+import { PLAYER } from "../../../../deion/common";
 import { player, season, team } from "..";
 import { idb } from "../../db";
 import { account, g, genMessage, helpers, toUI } from "../../util";

@@ -2,7 +2,7 @@
 
 import orderBy from "lodash/orderBy";
 import range from "lodash/range";
-import { PLAYER } from "../../../common";
+import { PLAYER } from "../../../../deion/common";
 import limitRating from "./limitRating";
 import ovr from "./ovr";
 import pos from "./pos";

@@ -1,6 +1,6 @@
 // @flow
 
-import { PHASE } from "../../../common";
+import { PHASE } from "../../../../deion/common";
 import addStatsRow from "./addStatsRow";
 import setContract from "./setContract";
 import { g, helpers, logEvent } from "../../util";

@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { DIFFICULTY } from "../../common";
+import { DIFFICULTY } from "../../../deion/common";
 import { LeagueFileUpload } from "../../../deion/ui/components";
 import {
     helpers,

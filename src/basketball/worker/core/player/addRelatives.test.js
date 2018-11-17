@@ -3,7 +3,7 @@
 import assert from "assert";
 import range from "lodash/range";
 import { after, before, describe, it } from "mocha";
-import { PLAYER } from "../../../common";
+import { PLAYER } from "../../../../deion/common";
 import testHelpers from "../../../test/helpers";
 import { player } from "..";
 import { makeBrother, makeSon } from "./addRelatives";

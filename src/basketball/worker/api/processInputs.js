@@ -1,4 +1,4 @@
-import { PHASE } from "../../common";
+import { PHASE } from "../../../deion/common";
 import { g, helpers } from "../util";
 
 /**

@@ -1,4 +1,4 @@
-import { PLAYER } from "../../../common";
+import { PLAYER } from "../../../../deion/common";
 import testHelpers from "../../../test/helpers";
 import { player } from "..";
 import { idb } from "../../db";

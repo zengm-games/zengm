@@ -11,6 +11,7 @@ import Controller from "./components/Controller";
 import {
     compareVersions,
     genStaticPage,
+    helpers,
     logEvent,
     promiseWorker,
     toWorker,
@@ -45,8 +46,9 @@ window.addEventListener("storage", e => {
         ) {
             logEvent({
                 type: "error",
-                text:
-                    "A newer version of Basketball GM was just opened in another tab. Please reload this tab to load the same version here.",
+                text: `A newer version of ${helpers.upperCaseFirstLetter(
+                    process.env.SPORT,
+                )} GM was just opened in another tab. Please reload this tab to load the same version here.`,
                 saveToDb: false,
                 persistent: true,
             });
@@ -100,7 +102,9 @@ api.bbgmPing("version");
             // This version is older than another tab's
             console.log(window.bbgmVersion, bbgmVersionStored);
             console.log(
-                `This version of Basketball GM (${
+                `This version of ${helpers.upperCaseFirstLetter(
+                    process.env.SPORT,
+                )} GM (${
                     window.bbgmVersion
                 }) is older than one you already played (${bbgmVersionStored}). This should never happen, so please email commissioner@basketball-gm.com with any info about how this error occurred.`,
             );
@@ -110,7 +114,7 @@ api.bbgmPing("version");
             }
             if (window.bugsnagClient) {
                 window.bugsnagClient.notify(
-                    new Error("BBGM version mismatch"),
+                    new Error("Game version mismatch"),
                     {
                         metaData: {
                             bbgmVersion: window.bbgmVersion,

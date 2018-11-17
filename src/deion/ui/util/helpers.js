@@ -55,11 +55,16 @@ const roundsWonText = (
     return "";
 };
 
+const upperCaseFirstLetter = (string: string): string => {
+    return `${string.charAt(0).toUpperCase()}${string.slice(1)}`;
+};
+
 const helpers = Object.assign({}, commonHelpers, {
     leagueUrl,
     numberWithCommas,
     plusMinus,
     roundsWonText,
+    upperCaseFirstLetter,
 });
 
 export default helpers;

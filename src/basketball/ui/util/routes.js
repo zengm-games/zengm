@@ -1,10 +1,11 @@
 // @flow
 
+import helpers from "../../../deion/ui/util/helpers";
 import initView from "../../../deion/ui/util/initView";
 import views from "../views";
 
 const genPage = (id, inLeague = true) => {
-    const componentName = id.charAt(0).toUpperCase() + id.slice(1);
+    const componentName = helpers.upperCaseFirstLetter(id);
 
     if (views[componentName]) {
         return initView({

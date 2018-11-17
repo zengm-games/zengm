@@ -10,10 +10,6 @@ import {
 } from "../../../deion/ui/components";
 import { getCols, helpers, setTitle, toWorker } from "../../../deion/ui/util";
 
-const upperCaseFirstLetter = (string: string): string => {
-    return `${string.charAt(0).toUpperCase()}${string.slice(1)}`;
-};
-
 const Relatives = ({ relatives }) => {
     if (relatives.length === 0) {
         return null;
@@ -22,7 +18,7 @@ const Relatives = ({ relatives }) => {
     return relatives.map(({ type, pid, name }) => {
         return (
             <span key={pid}>
-                {upperCaseFirstLetter(type)}:{" "}
+                {helpers.upperCaseFirstLetter(type)}:{" "}
                 <a href={helpers.leagueUrl(["player", pid])}>{name}</a>
                 <br />
             </span>

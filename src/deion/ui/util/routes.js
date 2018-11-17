@@ -2,30 +2,32 @@
 
 import helpers from "./helpers";
 import initView from "./initView";
+import overrides from "./overrides";
 import views from "../views";
 
-const routes = (viewsOverrides: { [key: string]: any }) => {
-    const genPage = (id, inLeague = true) => {
-        const componentName = helpers.upperCaseFirstLetter(id);
+const genPage = (id, inLeague = true) => {
+    const componentName = helpers.upperCaseFirstLetter(id);
 
-        let Component;
-        if (views[componentName]) {
-            Component = views[componentName];
-        } else if (viewsOverrides[componentName]) {
-            Component = viewsOverrides[componentName];
-        }
+    let Component;
+    if (views[componentName]) {
+        Component = views[componentName];
+    } else if (overrides.views[componentName]) {
+        Component = overrides.views[componentName];
+    }
 
-        if (Component) {
-            return initView({
-                id,
-                inLeague,
-                Component,
-            });
-        }
+    if (Component) {
+        return initView({
+            id,
+            inLeague,
+            Component,
+        });
+    }
 
-        throw new Error(`Invalid component name: "${componentName}"`);
-    };
+    throw new Error(`Invalid component name: "${componentName}"`);
+};
 
+// Needs to be deferred so overrides.views will exist
+const routes = () => {
     return {
         // Non-league views
         "/": genPage("dashboard", false),

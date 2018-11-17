@@ -14,6 +14,7 @@ import {
     helpers,
     leagueNotFoundMessage,
     logEvent,
+    overrides,
     promiseWorker,
     routes,
     toWorker,
@@ -197,7 +198,7 @@ const render = () => {
     }
 };
 
-const setupRoutes = (views: { [key: string]: any }) => {
+const setupRoutes = () => {
     let initialLoad = true;
     router.addEventListener("routematched", (event: any) => {
         if (!event.detail.context.state.noTrack) {
@@ -254,18 +255,18 @@ const setupRoutes = (views: { [key: string]: any }) => {
         }
     });
 
-    router.start(routes(views));
+    router.start(routes());
 };
 
-const deionUI = async ({
-    overrides,
-}: {
+const deionUI = async (options: {
     overrides: {
         views: {
             [key: string]: any,
         },
     },
 }) => {
+    Object.assign(overrides.views, options.overrides.views);
+
     promiseWorker.register(([name, ...params]) => {
         if (!api.hasOwnProperty(name)) {
             throw new Error(
@@ -284,7 +285,7 @@ const deionUI = async ({
 
     render();
 
-    await setupRoutes(overrides.views);
+    await setupRoutes();
 };
 
 export default deionUI;

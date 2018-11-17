@@ -1,6 +1,6 @@
 import React from "react";
-import { fetchWrapper } from "../../../deion/common";
-import { setTitle } from "../../../deion/ui/util";
+import { fetchWrapper } from "../../common";
+import { setTitle } from "../util";
 
 const ajaxErrorMsg =
     "Error connecting to server. Check your Internet connection or try again later.";

@@ -3,13 +3,8 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import * as React from "react";
-import { STRIPE_PUBLISHABLE_KEY, fetchWrapper } from "../../../deion/common";
-import {
-    getScript,
-    local,
-    realtimeUpdate,
-    setTitle,
-} from "../../../deion/ui/util";
+import { STRIPE_PUBLISHABLE_KEY, fetchWrapper } from "../../common";
+import { getScript, local, realtimeUpdate, setTitle } from "../util";
 
 const ajaxErrorMsg =
     "Error connecting to server. Check your Internet connection or try again later.";
@@ -56,7 +51,7 @@ class StripeButton extends React.Component<
                                     }/gold_start.php`,
                                     method: "POST",
                                     data: {
-                                        sport: "basketball",
+                                        sport: process.env.SPORT,
                                         token: token.id,
                                     },
                                     credentials: "include",
@@ -123,7 +118,7 @@ const handleCancel = async e => {
                 url: `//account.basketball-gm.${window.tld}/gold_cancel.php`,
                 method: "POST",
                 data: {
-                    sport: "basketball",
+                    sport: process.env.SPORT,
                 },
                 credentials: "include",
             });

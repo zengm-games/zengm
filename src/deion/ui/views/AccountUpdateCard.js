@@ -2,8 +2,8 @@
 
 import PropTypes from "prop-types";
 import React from "react";
-import { STRIPE_PUBLISHABLE_KEY, fetchWrapper } from "../../../deion/common";
-import { getScript, realtimeUpdate, setTitle } from "../../../deion/ui/util";
+import { STRIPE_PUBLISHABLE_KEY, fetchWrapper } from "../../common";
+import { getScript, realtimeUpdate, setTitle } from "../util";
 
 const ajaxErrorMsg =
     "Error connecting to server. Check your Internet connection or try again later.";
@@ -77,7 +77,7 @@ class AccountUpdateCard extends React.Component {
                             }/gold_card_update.php`,
                             method: "POST",
                             data: {
-                                sport: "basketball",
+                                sport: process.env.SPORT,
                                 token,
                             },
                             credentials: "include",

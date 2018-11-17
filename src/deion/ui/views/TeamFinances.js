@@ -7,14 +7,8 @@ import {
     HelpPopover,
     NewWindowLink,
     PlayerNameLabels,
-} from "../../../deion/ui/components";
-import {
-    getCols,
-    helpers,
-    logEvent,
-    setTitle,
-    toWorker,
-} from "../../../deion/ui/util";
+} from "../components";
+import { getCols, helpers, logEvent, setTitle, toWorker } from "../util";
 
 class FinancesForm extends React.Component {
     constructor(props) {

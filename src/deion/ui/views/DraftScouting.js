@@ -5,14 +5,8 @@ import {
     LeagueFileUpload,
     NewWindowLink,
     PlayerNameLabels,
-} from "../../../deion/ui/components";
-import {
-    getCols,
-    helpers,
-    realtimeUpdate,
-    setTitle,
-    toWorker,
-} from "../../../deion/ui/util";
+} from "../components";
+import { getCols, helpers, realtimeUpdate, setTitle, toWorker } from "../util";
 
 class DraftScouting extends React.Component {
     constructor(props) {

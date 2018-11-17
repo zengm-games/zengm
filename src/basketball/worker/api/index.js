@@ -1285,5 +1285,4 @@ export default {
     updateTeamInfo,
     updateTrade,
     upsertCustomizedPlayer,
-    fixDatabase,
 };

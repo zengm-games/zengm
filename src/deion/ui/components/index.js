@@ -3,6 +3,7 @@
 export { default as BarGraph } from "./BarGraph";
 export { default as BoxPlot } from "./BoxPlot";
 export { default as CompletedGame } from "./CompletedGame";
+export { default as Controller } from "./Controller";
 export { default as DataTable } from "./DataTable";
 export { default as DraftAbbrev } from "./DraftAbbrev";
 export { default as Dropdown } from "./Dropdown";
@@ -12,6 +13,8 @@ export { default as HelpPopover } from "./HelpPopover";
 export { default as JumpTo } from "./JumpTo";
 export { default as LeagueFileUpload } from "./LeagueFileUpload";
 export { default as MultiTeamMenu } from "./MultiTeamMenu";
+export { default as NagModal } from "./NagModal";
+export { default as NavBar } from "./NavBar";
 export { default as NewWindowLink } from "./NewWindowLink";
 export { default as PlayerPicture } from "./PlayerPicture";
 export { default as PlayoffMatchup } from "./PlayoffMatchup";

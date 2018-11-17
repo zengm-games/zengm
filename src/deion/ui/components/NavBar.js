@@ -22,7 +22,9 @@ import {
     realtimeUpdate,
     subscribeLocal,
     toWorker,
-} from "../../../deion/ui/util";
+} from "../util";
+
+const sport = helpers.upperCaseFirstLetter(process.env.SPORT);
 
 type TopMenuToggleProps = {
     long: string,
@@ -297,9 +299,9 @@ class LogoAndText extends React.Component<LogoAndTextProps> {
                 }
                 href="/"
             >
-                <span className="d-none d-lg-inline">Basketball GM</span>
+                <span className="d-none d-lg-inline">{sport} GM</span>
                 {lid === undefined ? (
-                    <span className="d-lg-none">Basketball GM</span>
+                    <span className="d-lg-none">{sport} GM</span>
                 ) : null}
                 <img
                     alt=""
@@ -518,7 +520,7 @@ const NavBar = ({ pageID, updating }: Props) => {
                         }}
                     >
                         <PopoverHeader className="text-primary font-weight-bold">
-                            Welcome to Basketball GM!
+                            Welcome to {sport} GM!
                         </PopoverHeader>
                         <PopoverBody>
                             To advance through the game, use the Play button at

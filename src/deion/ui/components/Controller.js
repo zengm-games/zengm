@@ -10,17 +10,18 @@ import {
     realtimeUpdate,
     setTitle,
     toWorker,
-} from "../../../deion/ui/util";
-import Footer from "../../../deion/ui/components/Footer";
-import Header from "../../../deion/ui/components/Header";
-import MultiTeamMenu from "../../../deion/ui/components/MultiTeamMenu";
-import SideBar from "../../../deion/ui/components/SideBar";
-import { NagModal, NavBar } from ".";
+} from "../util";
+import Footer from "./Footer";
+import Header from "./Header";
+import MultiTeamMenu from "./MultiTeamMenu";
+import NagModal from "./NagModal";
+import NavBar from "./NavBar";
+import SideBar from "./SideBar";
 import type {
     GetOutput,
     RouterContext,
     UpdateEvents,
-} from "../../../deion/common/types";
+} from "../../common/types";
 
 type Props = {
     children: any,

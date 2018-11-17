@@ -5,11 +5,14 @@ import * as React from "react";
 import Modal from "reactstrap/lib/Modal";
 import ModalBody from "reactstrap/lib/ModalBody";
 import ModalHeader from "reactstrap/lib/ModalHeader";
+import { helpers } from "../util";
 
 type Props = {
     close: () => void,
     show: boolean,
 };
+
+const sport = helpers.upperCaseFirstLetter(process.env.SPORT);
 
 class NagModal extends React.Component<Props> {
     shouldComponentUpdate(nextProps: Props) {
@@ -22,12 +25,11 @@ class NagModal extends React.Component<Props> {
         return (
             <Modal isOpen={show} toggle={close}>
                 <ModalHeader toggle={close}>
-                    Please support Basketball GM
+                    Please support {sport} GM
                 </ModalHeader>
                 <ModalBody>
                     <p>
-                        Basketball GM is completely free. There will never be
-                        any{" "}
+                        {sport} GM is completely free. There will never be any{" "}
                         <a
                             href="http://en.wikipedia.org/wiki/Freemium"
                             rel="noopener noreferrer"
@@ -50,17 +52,17 @@ class NagModal extends React.Component<Props> {
                         <b>freemium games always suck</b>.
                     </p>
                     <p>
-                        If you want to support Basketball GM continuing to be a
-                        non-sucky game, sign up for Basketball GM Gold! It's
-                        only <b>$5/month</b>. What do you get? More like, what
-                        don't you get? You get no new features, no new
-                        improvements, no new anything. Just <b>no more ads</b>.
-                        That's it. Why? For basically the same reason I won't
-                        make Basketball GM freemium. I don't want the free
-                        version to become a crippled advertisement for the pay
-                        version. If you agree that the world is a better place
-                        when anyone anywhere can play Basketball GM, sign up for
-                        Basketball GM Gold today!
+                        If you want to support {sport} GM continuing to be a
+                        non-sucky game, sign up for {sport} GM Gold! It's only{" "}
+                        <b>$5/month</b>. What do you get? More like, what don't
+                        you get? You get no new features, no new improvements,
+                        no new anything. Just <b>no more ads</b>. That's it.
+                        Why? For basically the same reason I won't make {sport}{" "}
+                        GM freemium. I don't want the free version to become a
+                        crippled advertisement for the pay version. If you agree
+                        that the world is a better place when anyone anywhere
+                        can play {sport} GM, sign up for
+                        {sport} GM Gold today!
                     </p>
                     <div className="text-center">
                         <a
@@ -68,8 +70,7 @@ class NagModal extends React.Component<Props> {
                             className="btn btn-primary"
                             onClick={close}
                         >
-                            Sign up for Basketball GM Gold from your account
-                            page
+                            Sign up for {sport} GM Gold from your account page
                         </a>
                     </div>
                 </ModalBody>

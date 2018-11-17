@@ -1,7 +1,6 @@
 # football
 
 move ui/index.js to deion as much as possible
-- Controller
 - api
 - util
 figure out how i'm going to move PlayerNameLabels, and do it
@@ -44,6 +43,9 @@ tests still running within deion? e.g. common/helpers.test.js
 search for text basketball in deion
 
 Venatus - make sure correct before deploying
+
+make it clear that accounts are shared, change name of Gold to something sport agnostic
+- NagModal
 
 --
 

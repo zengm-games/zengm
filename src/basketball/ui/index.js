@@ -7,7 +7,7 @@ import createBugsnagErrorBoundary from "bugsnag-react";
 import * as React from "react";
 import ReactDOM from "react-dom";
 import api from "./api";
-import Controller from "./components/Controller";
+import { Controller } from "../../deion/ui/components";
 import {
     compareVersions,
     genStaticPage,

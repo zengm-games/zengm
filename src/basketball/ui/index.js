@@ -19,12 +19,6 @@ import {
 import { leagueNotFoundMessage, routes } from "./util";
 import type { Env } from "../../deion/common/types";
 
-window.fixDatabase = async () => {
-    console.log("Fixing stuff, hopefully...");
-    await toWorker("fixDatabase");
-    console.log("Done!");
-};
-
 promiseWorker.register(([name, ...params]) => {
     if (!api.hasOwnProperty(name)) {
         throw new Error(

@@ -1240,27 +1240,6 @@ const updateTrade = async (teams: TradeTeams) => {
     await toUI(["realtimeUpdate"]);
 };
 
-const fixDatabase = async () => {
-    await idb.league.tx("players", "readwrite", tx =>
-        tx.players.iterate(p => {
-            let update = false;
-            for (const prop of ["stats", "ratings"]) {
-                const startLength = p[prop].length;
-                p[prop] = p[prop].filter(
-                    row => row !== undefined && row !== null,
-                );
-                if (p[prop].length !== startLength) {
-                    update = true;
-                }
-            }
-            if (update) {
-                return p;
-            }
-        }),
-    );
-    await idb.cache.fill();
-};
-
 export default {
     actions,
     acceptContractNegotiation,

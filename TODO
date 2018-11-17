@@ -1,6 +1,9 @@
 # football
 
 move ui/index.js to deion as much as possible
+- Controller
+- api
+- util
 figure out how i'm going to move PlayerNameLabels, and do it
 - deion.ui.overrides
 

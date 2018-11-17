@@ -15,9 +15,9 @@ import {
     leagueNotFoundMessage,
     logEvent,
     promiseWorker,
+    routes,
     toWorker,
 } from "../../deion/ui/util";
-import { routes } from "./util";
 import type { Env } from "../../deion/common/types";
 
 promiseWorker.register(([name, ...params]) => {

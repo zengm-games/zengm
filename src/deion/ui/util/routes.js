@@ -1,17 +1,25 @@
 // @flow
 
-import helpers from "../../../deion/ui/util/helpers";
-import initView from "../../../deion/ui/util/initView";
+import helpers from "./helpers";
+import initView from "./initView";
 import views from "../views";
+import viewsBasketball from "../../../basketball/ui/views";
 
 const genPage = (id, inLeague = true) => {
     const componentName = helpers.upperCaseFirstLetter(id);
 
+    let Component;
     if (views[componentName]) {
+        Component = views[componentName];
+    } else if (viewsBasketball[componentName]) {
+        Component = viewsBasketball[componentName];
+    }
+
+    if (Component) {
         return initView({
             id,
             inLeague,
-            Component: views[componentName],
+            Component,
         });
     }
 

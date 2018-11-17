@@ -51,25 +51,6 @@ class Header extends React.Component<{}> {
 
     // eslint-disable-next-line class-methods-use-this
     render() {
-        const embedInfo = window.inIframe ? (
-            <div className="alert alert-success mt-3">
-                <b>Welcome to Basketball GM!</b> Basketball GM is a basketball
-                management simulator. It's kind of like the fantasy basketball
-                you play here at Sports.ws, except it's a single player game and
-                you can simulate games (or hundreds of seasons) at your own
-                pace. Think of it as fantasy fantasy basketball. Give it a try
-                here, and if you're feeling a bit claustrophobic,{" "}
-                <a
-                    href="https://play.basketball-gm.com"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                >
-                    open Basketball GM in a new browser window
-                </a>{" "}
-                and continue playing.
-            </div>
-        ) : null;
-
         return (
             // banner-ad class is so ad blockers remove it cleanly. I'm so nice!
             <div>
@@ -96,7 +77,6 @@ class Header extends React.Component<{}> {
                         }}
                     />
                 </div>
-                {embedInfo}
             </div>
         );
     }

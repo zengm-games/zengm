@@ -61,11 +61,6 @@ const initAds = (goldUntil: number | void) => {
         hideAds = true;
     }
 
-    // Embedded iframes too, like on Sports.ws
-    if (window.inIframe) {
-        hideAds = true;
-    }
-
     // Hide ads on iOS, at least until https://www.wired.com/story/pop-up-mobile-ads-surge-as-sites-scramble-to-stop-them/ is resolved
     // https://stackoverflow.com/a/9039885/786644
     if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {

@@ -251,22 +251,6 @@ class DropdownLinks extends React.Component<
 
         return (
             <Nav navbar id="top-dropdowns">
-                {window.inIframe && lid !== undefined ? (
-                    <NavItem>
-                        <NavLink href={helpers.leagueUrl([])}>
-                            <span className="d-none d-md-inline">
-                                <span className="glyphicon glyphicon-menu-left" />
-                            </span>
-                            <span className="d-inline d-md-none">
-                                <span
-                                    className="glyphicon glyphicon-menu-left"
-                                    style={{ marginRight: "5px" }}
-                                />
-                                Switch League
-                            </span>
-                        </NavLink>
-                    </NavItem>
-                ) : null}
                 {menuItems.map((menuItem, i) => (
                     <MenuItem
                         godMode={godMode}
@@ -469,25 +453,6 @@ const NavBar = ({ pageID, updating }: Props) => {
                 <span className="d-none d-lg-inline">Login/Register</span>
             </NavLink>
         );
-
-        if (window.inIframe) {
-            userBlock = (
-                <a
-                    className="navbar-link user-menu"
-                    href={window.location.href}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                >
-                    <img
-                        alt="Open In New Window"
-                        title="Open In New Window"
-                        height="16"
-                        width="16"
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAA0AAAANABeWPPlAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAFOSURBVDiNlZS9isJAFIU/F6s0m0VYYiOrhVukWQsbK4t9CDtbexGs8xY+ghY+QRBsbKcTAjZaqKyGXX2Bs00S1AwBD1yYOXPvmXvv/CAJSQAuoGetzAPCMKRSqTzSOURRRK/Xo1wqldyEewXwfR/P8zLHIAhYr9fZ3BjDeDym1WoBUAZ+i3ZaLBYsl8s7zhiTCbwk3DfwaROYz+fsdjs6nU7GOY6TjVOBGPixCbiuy2g0YrVa0Ww2c+svlpg7DAYDptMp3W6XyWRi9RHwRXKMh8NBKYbDoQC1221dr1dtNhv1+33NZjMZY9KjtAsEQSBAvu/rfD7rEYUC2+1WjuOo0Whov9/ngm8FchcJoFarEYYhnudRrVYLe5QTOJ1OANTrdQCOx6M1MI5jexOftdsMLsBbYb7wDkTAR+KflWC9hRakr+wi6e+2hGfNTb+Bf9965Lxmndc1AAAAAElFTkSuQmCC"
-                    />{" "}
-                </a>
-            );
-        }
 
         // Hide phase and status, to prevent revealing that the playoffs has ended, thus spoiling a 3-0/3-1/3-2 finals
         // game. This is needed because game sim happens before the results are displayed in liveGame.

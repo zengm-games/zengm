@@ -161,15 +161,6 @@ api.bbgmPing("version");
         sessionStorage.setItem("heartbeatID", heartbeatID);
     }
 
-    // https://stackoverflow.com/a/326076/78664
-    window.inIframe = (() => {
-        try {
-            return window.self !== window.top;
-        } catch (e) {
-            return true;
-        }
-    })();
-
     const env: Env = {
         enableLogging: window.enableLogging,
         heartbeatID,

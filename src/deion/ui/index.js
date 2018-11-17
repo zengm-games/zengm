@@ -260,11 +260,15 @@ const setupRoutes = () => {
 
 const deionUI = async (options: {
     overrides: {
+        components: {
+            [key: string]: any,
+        },
         views: {
             [key: string]: any,
         },
     },
 }) => {
+    Object.assign(overrides.components, options.overrides.components);
     Object.assign(overrides.views, options.overrides.views);
 
     promiseWorker.register(([name, ...params]) => {

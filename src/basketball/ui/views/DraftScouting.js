@@ -4,8 +4,8 @@ import {
     DataTable,
     LeagueFileUpload,
     NewWindowLink,
+    PlayerNameLabels,
 } from "../../../deion/ui/components";
-import { PlayerNameLabels } from "../components";
 import {
     getCols,
     helpers,

@@ -17,11 +17,11 @@ import {
     Dropdown,
     HelpPopover,
     NewWindowLink,
+    PlayerNameLabels,
     RatingWithChange,
     RecordAndPlayoffs,
     ResponsiveTableWrapper,
 } from "../../../deion/ui/components";
-import { PlayerNameLabels } from "../components";
 import clickable from "../../../deion/ui/wrappers/clickable";
 
 const ptStyles = {

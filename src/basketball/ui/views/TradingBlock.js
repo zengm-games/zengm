@@ -6,9 +6,9 @@ import clickable from "../../../deion/ui/wrappers/clickable";
 import {
     DataTable,
     NewWindowLink,
+    PlayerNameLabels,
     ResponsiveTableWrapper,
 } from "../../../deion/ui/components";
-import { PlayerNameLabels } from "../components";
 
 const OfferPlayerRow = clickable(({ clicked, p, toggleClicked }) => {
     return (

@@ -6,8 +6,8 @@ import {
     Dropdown,
     HelpPopover,
     NewWindowLink,
+    PlayerNameLabels,
 } from "../../../deion/ui/components";
-import { PlayerNameLabels } from "../components";
 import {
     getCols,
     helpers,

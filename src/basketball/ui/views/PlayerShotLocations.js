@@ -5,8 +5,8 @@ import {
     DataTable,
     Dropdown,
     NewWindowLink,
+    PlayerNameLabels,
 } from "../../../deion/ui/components";
-import { PlayerNameLabels } from "../components";
 
 const PlayerShotLocations = ({ players, season, userTid }) => {
     setTitle(`Player Shot Locations - ${season}`);

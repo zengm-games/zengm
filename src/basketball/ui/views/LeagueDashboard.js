@@ -6,12 +6,12 @@ import { helpers, setTitle } from "../../../deion/ui/util";
 import {
     CompletedGame,
     NewWindowLink,
+    PlayerNameLabels,
     PlayoffMatchup,
     RatingWithChange,
     ResponsiveTableWrapper,
     UpcomingGame,
 } from "../../../deion/ui/components";
-import { PlayerNameLabels } from "../components";
 
 const LeagueDashboard = ({
     abbrev,

@@ -4,8 +4,8 @@ import {
     DataTable,
     Dropdown,
     NewWindowLink,
+    PlayerNameLabels,
 } from "../../../deion/ui/components";
-import { PlayerNameLabels } from "../components";
 import { getCols, helpers, setTitle } from "../../../deion/ui/util";
 
 const UpcomingFreeAgents = ({ players, season }) => {

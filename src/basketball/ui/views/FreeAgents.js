@@ -4,9 +4,9 @@ import { PHASE } from "../../../deion/common";
 import {
     DataTable,
     NewWindowLink,
+    PlayerNameLabels,
     RosterSalarySummary,
 } from "../../../deion/ui/components";
-import { PlayerNameLabels } from "../components";
 import { getCols, helpers, setTitle, toWorker } from "../../../deion/ui/util";
 
 const cols = getCols(

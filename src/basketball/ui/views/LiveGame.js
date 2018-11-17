@@ -2,8 +2,10 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import AutoAffix from "react-overlays/lib/AutoAffix";
+import { PlayerNameLabels } from "../../../deion/ui/components";
 import { helpers, setTitle } from "../../../deion/ui/util";
-import { BoxScore, PlayerNameLabels } from "../components";
+import components from "../components";
+const { BoxScore } = components;
 
 class PlayerRow extends React.Component {
     shouldComponentUpdate(nextProps) {

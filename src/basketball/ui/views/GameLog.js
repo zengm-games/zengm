@@ -1,10 +1,15 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { Dropdown, NewWindowLink } from "../../../deion/ui/components";
-import { BoxScore, PlayerNameLabels } from "../components";
+import {
+    Dropdown,
+    NewWindowLink,
+    PlayerNameLabels,
+} from "../../../deion/ui/components";
 import { helpers, setTitle } from "../../../deion/ui/util";
 import clickable from "../../../deion/ui/wrappers/clickable";
+import components from "../components";
+const { BoxScore } = components;
 
 const StatsRow = clickable(({ clicked, i, p, toggleClicked }) => {
     const classes = classNames({

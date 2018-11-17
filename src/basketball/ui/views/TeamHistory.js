@@ -5,9 +5,9 @@ import {
     Dropdown,
     DataTable,
     NewWindowLink,
+    PlayerNameLabels,
     RecordAndPlayoffs,
 } from "../../../deion/ui/components";
-import { PlayerNameLabels } from "../components";
 import { helpers, getCols, setTitle } from "../../../deion/ui/util";
 
 const TeamHistory = ({

@@ -5,9 +5,9 @@ import {
     Dropdown,
     JumpTo,
     NewWindowLink,
+    PlayerNameLabels,
     ResponsiveTableWrapper,
 } from "../../../deion/ui/components";
-import { PlayerNameLabels } from "../components";
 
 const Leaders = ({ categories, playoffs, season }) => {
     setTitle(`League Leaders - ${season}`);

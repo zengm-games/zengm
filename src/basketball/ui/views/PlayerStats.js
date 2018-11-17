@@ -5,8 +5,8 @@ import {
     Dropdown,
     JumpTo,
     NewWindowLink,
+    PlayerNameLabels,
 } from "../../../deion/ui/components";
-import { PlayerNameLabels } from "../components";
 import { getCols, helpers, setTitle } from "../../../deion/ui/util";
 
 const PlayerStats = ({

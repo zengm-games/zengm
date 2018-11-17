@@ -10,9 +10,9 @@ import {
     DataTable,
     Dropdown,
     NewWindowLink,
+    PlayerNameLabels,
     WatchBlock,
 } from "../../../deion/ui/components";
-import { PlayerNameLabels } from "../components";
 
 class WatchList extends React.Component {
     constructor(props) {

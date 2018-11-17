@@ -2,10 +2,9 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import SkillsBlock from "../../../deion/ui/components/SkillsBlock";
-import RatingsStatsPopover from "./RatingsStatsPopover";
-import { helpers } from "../../../deion/ui/util";
-import type { PlayerInjury } from "../../../deion/common/types";
+import SkillsBlock from "./SkillsBlock";
+import { helpers, overrides } from "../util";
+import type { PlayerInjury } from "../../common/types";
 
 const PlayerNameLabels = ({
     children,
@@ -51,7 +50,7 @@ const PlayerNameLabels = ({
             <a href={helpers.leagueUrl(["player", pid])}>{children}</a>
             {injuryIcon}
             <SkillsBlock skills={skills} />
-            <RatingsStatsPopover pid={pid} watch={watch} />
+            <overrides.components.RatingsStatsPopover pid={pid} watch={watch} />
         </span>
     );
 };

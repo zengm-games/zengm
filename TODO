@@ -1,9 +1,5 @@
 # football
 
-figure out how i'm going to move PlayerNameLabels, and do it
-- deion.ui.overrides
-  - maybe make overrides global. basiclaly dependency injection. if so, rewrite routes to not be a function
-
 what's the end state here? options:
 - everything is in deion, and process.env.SPORT governs the output
   - that'd be nice, but probably unrealistic

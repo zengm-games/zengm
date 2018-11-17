@@ -1,8 +1,11 @@
 # football
 
+fix tests
+- need envify
+
 what's the end state here? options:
 - everything is in deion, and process.env.SPORT governs the output
-- define minimal set of things that need to be overridden, and pass to deion like new DeionUI({...})
+- define minimal set of things that need to be overridden, and pass to deion like new DeionUI({...}) - probably this one!!!!!!!
 - deion remains a set of functions/classes/modules, to be pulled in externally piecemeal. if something internal needs to be overriden, make it generic or a factory or DI or have it accept a parameter to allow overriding
 - depending on which option picked... does it make sense for deion to internally use process.env.SPORT at all? maybe not
 

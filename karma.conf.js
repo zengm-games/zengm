@@ -6,12 +6,12 @@ module.exports = function(config) {
 
         files: [
             "src/basketball/test/index.js",
-            "src/basketball/**/*.test.js",
+            "src/**/*.test.js",
             "src/basketball/test/**/*.js",
         ],
 
         preprocessors: {
-            "src/basketball/**/*.js": ["browserify"],
+            "src/**/*.js": ["browserify"],
         },
 
         // http://stackoverflow.com/a/42379383/786644

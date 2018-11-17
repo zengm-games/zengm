@@ -1,5 +1,8 @@
 # football
 
+views involving ratings/stats
+- make getCols handle this better like stats:x or ratings:x so it can be programatically generated. then pass list of cols from worker. maybe use this to implement the basic/advanced switches too!
+
 how will deionUI(overrides) work with types?
 - can pass them as generics, then apply them to factory functions
 
@@ -473,6 +476,8 @@ Draft
     https://www.reddit.com/message/messages/6ip35c
 
 ---
+
+Tools > Export Stats only has latest team, for in-season trades
 
 filters on event log
   tragic deaths https://www.reddit.com/r/BasketballGM/comments/52ljuy/would_it_be_possible_to_add_a_memorial_page/d7ou7ov?context=3

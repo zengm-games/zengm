@@ -1,56 +1,18 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import {
-    Dropdown,
-    NewWindowLink,
-    PlayerNameLabels,
-} from "../../../deion/ui/components";
+import { Dropdown, NewWindowLink } from "../../../deion/ui/components";
 import { helpers, setTitle } from "../../../deion/ui/util";
 import clickable from "../../../deion/ui/wrappers/clickable";
 import components from "../components";
-const { BoxScore } = components;
+const { BoxScore, BoxScoreRow } = components;
 
 const StatsRow = clickable(({ clicked, i, p, toggleClicked }) => {
     const classes = classNames({
         separator: i === 4,
         "table-warning": clicked,
     });
-    return (
-        <tr className={classes} onClick={toggleClicked}>
-            <td>
-                <PlayerNameLabels
-                    injury={p.injury}
-                    pid={p.pid}
-                    skills={p.skills}
-                >
-                    {p.name}
-                </PlayerNameLabels>
-            </td>
-            <td>{p.pos}</td>
-            <td>{p.min.toFixed(1)}</td>
-            <td>
-                {p.fg}-{p.fga}
-            </td>
-            <td>
-                {p.tp}-{p.tpa}
-            </td>
-            <td>
-                {p.ft}-{p.fta}
-            </td>
-            <td>{p.orb}</td>
-            <td>{p.drb + p.orb}</td>
-            <td>{p.ast}</td>
-            <td>{p.tov}</td>
-            <td>{p.stl}</td>
-            <td>{p.blk}</td>
-            <td>{p.ba}</td>
-            <td>{p.pf}</td>
-            <td>{p.pts}</td>
-            <td>{helpers.plusMinus(p.pm, 0)}</td>
-            <td>{helpers.gameScore(p).toFixed(1)}</td>
-        </tr>
-    );
+    return <BoxScoreRow className={classes} onClick={toggleClicked} p={p} />;
 });
 
 StatsRow.propTypes = {

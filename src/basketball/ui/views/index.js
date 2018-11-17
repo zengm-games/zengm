@@ -19,7 +19,6 @@ import Negotiation from "./Negotiation";
 import NegotiationList from "./NegotiationList";
 import Player from "./Player";
 import PlayerFeats from "./PlayerFeats";
-import PlayerRatings from "./PlayerRatings";
 import PlayerShotLocations from "./PlayerShotLocations";
 import PlayerStatDists from "./PlayerStatDists";
 import PlayerStats from "./PlayerStats";
@@ -54,7 +53,6 @@ export default {
     NegotiationList,
     Player,
     PlayerFeats,
-    PlayerRatings,
     PlayerShotLocations,
     PlayerStatDists,
     PlayerStats,

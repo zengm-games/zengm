@@ -6,10 +6,10 @@ import {
     JumpTo,
     NewWindowLink,
     PlayerNameLabels,
-} from "../../../deion/ui/components";
-import { getCols, helpers, setTitle } from "../../../deion/ui/util";
+} from "../components";
+import { getCols, helpers, setTitle } from "../util";
 
-const PlayerRatings = ({ abbrev, players, season, userTid }) => {
+const PlayerRatings = ({ abbrev, players, ratings, season, userTid }) => {
     setTitle(`Player Ratings - ${season}`);
 
     const cols = getCols(
@@ -20,21 +20,7 @@ const PlayerRatings = ({ abbrev, players, season, userTid }) => {
         "Country",
         "Ovr",
         "Pot",
-        "rating:hgt",
-        "rating:stre",
-        "rating:spd",
-        "rating:jmp",
-        "rating:endu",
-        "rating:ins",
-        "rating:dnk",
-        "rating:ft",
-        "rating:fg",
-        "rating:tp",
-        "rating:oiq",
-        "rating:diq",
-        "rating:drb",
-        "rating:pss",
-        "rating:reb",
+        ...ratings.map(rating => `rating:${rating}`),
     );
 
     const rows = players.map(p => {
@@ -57,21 +43,7 @@ const PlayerRatings = ({ abbrev, players, season, userTid }) => {
                 p.born.loc,
                 p.ratings.ovr,
                 p.ratings.pot,
-                p.ratings.hgt,
-                p.ratings.stre,
-                p.ratings.spd,
-                p.ratings.jmp,
-                p.ratings.endu,
-                p.ratings.ins,
-                p.ratings.dnk,
-                p.ratings.ft,
-                p.ratings.fg,
-                p.ratings.tp,
-                p.ratings.oiq,
-                p.ratings.diq,
-                p.ratings.drb,
-                p.ratings.pss,
-                p.ratings.reb,
+                ...ratings.map(rating => p.ratings[rating]),
             ],
             classNames: {
                 "table-danger": p.hof,
@@ -120,6 +92,7 @@ const PlayerRatings = ({ abbrev, players, season, userTid }) => {
 PlayerRatings.propTypes = {
     abbrev: PropTypes.string.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
+    ratings: PropTypes.arrayOf(PropTypes.string).isRequired,
     season: PropTypes.number.isRequired,
     userTid: PropTypes.number.isRequired,
 };

@@ -24,6 +24,7 @@ import MultiTeamMode from "./MultiTeamMode";
 import NewLeague from "./NewLeague";
 import NewTeam from "./NewTeam";
 import Options from "./Options";
+import PlayerRatings from "./PlayerRatings";
 import PlayerRatingDists from "./PlayerRatingDists";
 import Playoffs from "./Playoffs";
 import PowerRankings from "./PowerRankings";
@@ -58,6 +59,7 @@ export default {
     NewLeague,
     NewTeam,
     Options,
+    PlayerRatings,
     PlayerRatingDists,
     Playoffs,
     PowerRankings,

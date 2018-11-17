@@ -184,6 +184,24 @@ async function updatePlayer(
         events.forEach(helpers.correctLinkLid.bind(null, g.lid));
         feats.forEach(helpers.correctLinkLid.bind(null, g.lid));
 
+        const ratings = [
+            "hgt",
+            "stre",
+            "spd",
+            "jmp",
+            "endu",
+            "ins",
+            "dnk",
+            "ft",
+            "fg",
+            "tp",
+            "oiq",
+            "diq",
+            "drb",
+            "pss",
+            "reb",
+        ];
+
         return {
             player: p,
             showTradeFor: p.tid !== g.userTid && p.tid >= 0,
@@ -199,6 +217,7 @@ async function updatePlayer(
             godMode: g.godMode,
             events,
             feats,
+            ratings,
         };
     }
 }

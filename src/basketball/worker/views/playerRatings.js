@@ -92,10 +92,29 @@ async function updatePlayers(
             players = players.filter(p => p.stats.abbrev === inputs.abbrev);
         }
 
+        const ratings = [
+            "hgt",
+            "stre",
+            "spd",
+            "jmp",
+            "endu",
+            "ins",
+            "dnk",
+            "ft",
+            "fg",
+            "tp",
+            "oiq",
+            "diq",
+            "drb",
+            "pss",
+            "reb",
+        ];
+
         return {
             abbrev: inputs.abbrev,
             season: inputs.season,
             players,
+            ratings,
             userTid: g.userTid,
         };
     }

@@ -1,14 +1,18 @@
 // @flow
 
 import * as React from "react";
+import helpers from "./helpers";
 
 // Most of this text came from basketball-gm.com and the FAQ
+
+const sport = helpers.upperCaseFirstLetter(process.env.SPORT);
+const pro = process.env.SPORT === "football" ? "NFL" : "NBA";
 
 const leagueNotFoundMessage = (
     <>
         <h2>League not found</h2>
         <div className="my-5 text-center">
-            <h3>Play Basketball GM now!</h3>
+            <h3>Play {sport} GM now!</h3>
             <a href="/new_league" className="btn btn-success btn-lg m-2">
                 Create a new league
             </a>
@@ -19,19 +23,19 @@ const leagueNotFoundMessage = (
         </div>
         <div className="row">
             <div className="col-md-6">
-                <h3>New to Basketball GM?</h3>
+                <h3>New to {sport} GM?</h3>
                 <p>
                     Have you ever looked at the decisions made by the front
-                    office of an NBA team and thought you could do better? Well,
-                    now you can! In Basketball GM, you are the general manager
-                    of a basketball team.
+                    office of an {pro} team and thought you could do better?
+                    Well, now you can! In {sport} GM, you are the general
+                    manager of a {process.env.SPORT} team.
                 </p>
                 <div className="row">
                     <div className="col-sm-6 col-md-12 col-lg-6">
                         <h4>You Set The Strategy</h4>
                         <p>
-                            Running a basketball team requires you to make tough
-                            decisions.
+                            Running a {process.env.SPORT} team requires you to
+                            make tough decisions.
                         </p>
                         <ol>
                             <li>
@@ -61,9 +65,9 @@ const leagueNotFoundMessage = (
                     <div className="col-sm-6 col-md-12 col-lg-6">
                         <h4>High Quality, No Junk</h4>
                         <p>
-                            Basketball GM is completely 100% free. You can start
-                            as many leagues as you want and play as many seasons
-                            as you want. No limits.
+                            {sport} GM is completely 100% free. You can start as
+                            many leagues as you want and play as many seasons as
+                            you want. No limits.
                         </p>
                         <p>
                             We won't ask for your email address and send you
@@ -73,7 +77,8 @@ const leagueNotFoundMessage = (
                             game-breaking power-ups.
                         </p>
                         <p>
-                            Our only goal is making the best possible basketball
+                            Our only goal is making the best possible{" "}
+                            {process.env.SPORT}
                             management game!
                         </p>
                     </div>
@@ -82,7 +87,7 @@ const leagueNotFoundMessage = (
             <div className="col-md-6">
                 <h3>Expecting to find a league here?</h3>
                 <p>
-                    Basketball GM stores all game data on your computer, in your
+                    {sport} GM stores all game data on your computer, in your
                     browser profile. This means that you can't play one league
                     on multiple devices unless you export it (from the Tools
                     menu) and then create a new league with that file. So first,{" "}
@@ -101,11 +106,11 @@ const leagueNotFoundMessage = (
                     manually delete your browser data. For example, in Chrome,
                     if you go to More tools > Clear browsing data... > Cookies
                     and other site and plugin data, that will delete all your
-                    Basketball GM data.{" "}
+                    {sport} GM data.{" "}
                     <a href="https://bugs.chromium.org/p/chromium/issues/detail?id=340821">
                         This is true even if you tell it to only delete data
-                        from today - if you played Basketball GM at all today,
-                        it will completely delete all your leagues.
+                        from today - if you played {sport} GM at all today, it
+                        will completely delete all your leagues.
                     </a>{" "}
                     Browsers may also delete data if disk space is running low,
                     but I'm not sure if that ever actually happens.

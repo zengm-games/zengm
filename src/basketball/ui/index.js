@@ -12,11 +12,12 @@ import {
     compareVersions,
     genStaticPage,
     helpers,
+    leagueNotFoundMessage,
     logEvent,
     promiseWorker,
     toWorker,
 } from "../../deion/ui/util";
-import { leagueNotFoundMessage, routes } from "./util";
+import { routes } from "./util";
 import type { Env } from "../../deion/common/types";
 
 promiseWorker.register(([name, ...params]) => {

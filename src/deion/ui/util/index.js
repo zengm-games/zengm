@@ -29,6 +29,7 @@ export { default as getScript } from "./getScript";
 export { default as helpers } from "./helpers";
 export { default as initView } from "./initView";
 export { default as local } from "./local";
+export { default as leagueNotFoundMessage } from "./leagueNotFoundMessage";
 export { default as logEvent } from "./logEvent";
 export { default as menuItems } from "./menuItems";
 export { default as notify } from "./notify";

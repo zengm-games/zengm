@@ -1,14 +1,14 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { helpers, setTitle } from "../../../deion/ui/util";
 import {
+    Dropdown,
     JumpTo,
     NewWindowLink,
     ResponsiveTableWrapper,
-} from "../../../deion/ui/components";
-import { Dropdown } from "../components";
-import clickable from "../../../deion/ui/wrappers/clickable";
+} from "../components";
+import { helpers, setTitle } from "../util";
+import clickable from "../wrappers/clickable";
 
 const DivStandingsRow = clickable(({ clicked, season, t, toggleClicked }) => {
     return (

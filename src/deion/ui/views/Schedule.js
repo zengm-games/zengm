@@ -2,11 +2,11 @@ import PropTypes from "prop-types";
 import React from "react";
 import {
     CompletedGame,
+    Dropdown,
     NewWindowLink,
     UpcomingGame,
-} from "../../../deion/ui/components";
-import { Dropdown } from "../components";
-import { setTitle } from "../../../deion/ui/util";
+} from "../components";
+import { setTitle } from "../util";
 
 const Schedule = ({ abbrev, completed, season, upcoming }) => {
     setTitle("Schedule");

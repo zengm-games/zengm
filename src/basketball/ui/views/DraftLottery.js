@@ -6,11 +6,11 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import {
     DraftAbbrev,
+    Dropdown,
     JumpTo,
     NewWindowLink,
     ResponsiveTableWrapper,
 } from "../../../deion/ui/components";
-import { Dropdown } from "../components";
 import { helpers, setTitle, toWorker } from "../../../deion/ui/util";
 import type { DraftLotteryResultArray } from "../../../deion/common/types";
 

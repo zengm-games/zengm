@@ -8,10 +8,11 @@ import { PLAYER } from "../../../deion/common";
 import { getCols, helpers, setTitle, toWorker } from "../../../deion/ui/util";
 import {
     DataTable,
+    Dropdown,
     NewWindowLink,
     WatchBlock,
 } from "../../../deion/ui/components";
-import { Dropdown, PlayerNameLabels } from "../components";
+import { PlayerNameLabels } from "../components";
 
 class WatchList extends React.Component {
     constructor(props) {

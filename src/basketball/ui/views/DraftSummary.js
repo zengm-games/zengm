@@ -3,11 +3,11 @@ import React from "react";
 import {
     DataTable,
     DraftAbbrev,
+    Dropdown,
     JumpTo,
     NewWindowLink,
     SkillsBlock,
 } from "../../../deion/ui/components";
-import { Dropdown } from "../components";
 import { getCols, helpers, setTitle } from "../../../deion/ui/util";
 
 const DraftSummary = ({ players, season, userTid }) => {

@@ -6,8 +6,12 @@ import {
     prefixStatOpp,
     setTitle,
 } from "../../../deion/ui/util";
-import { DataTable, JumpTo, NewWindowLink } from "../../../deion/ui/components";
-import { Dropdown } from "../components";
+import {
+    DataTable,
+    Dropdown,
+    JumpTo,
+    NewWindowLink,
+} from "../../../deion/ui/components";
 
 const legendSquare = className => {
     return <span className={`table-${className} legend-square ml-3`} />;

@@ -14,13 +14,14 @@ import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
 import { PHASE } from "../../../deion/common";
 import { helpers, logEvent, setTitle, toWorker } from "../../../deion/ui/util";
 import {
+    Dropdown,
     HelpPopover,
     NewWindowLink,
     RatingWithChange,
     RecordAndPlayoffs,
     ResponsiveTableWrapper,
 } from "../../../deion/ui/components";
-import { Dropdown, PlayerNameLabels } from "../components";
+import { PlayerNameLabels } from "../components";
 import clickable from "../../../deion/ui/wrappers/clickable";
 
 const ptStyles = {

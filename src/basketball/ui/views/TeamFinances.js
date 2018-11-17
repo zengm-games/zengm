@@ -3,10 +3,11 @@ import React from "react";
 import {
     BarGraph,
     DataTable,
+    Dropdown,
     HelpPopover,
     NewWindowLink,
 } from "../../../deion/ui/components";
-import { Dropdown, PlayerNameLabels } from "../components";
+import { PlayerNameLabels } from "../components";
 import {
     getCols,
     helpers,

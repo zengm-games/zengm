@@ -1,13 +1,16 @@
 import PropTypes from "prop-types";
 import React from "react";
 import {
+    DataTable,
+    Dropdown,
+    NewWindowLink,
+} from "../../../deion/ui/components";
+import {
     getCols,
     helpers,
     prefixStatOpp,
     setTitle,
 } from "../../../deion/ui/util";
-import { DataTable, NewWindowLink } from "../../../deion/ui/components";
-import { Dropdown } from "../components";
 
 const TeamShotLocations = ({
     playoffs,

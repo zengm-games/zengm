@@ -1,8 +1,11 @@
 import PropTypes from "prop-types";
 import React from "react";
+import {
+    DataTable,
+    Dropdown,
+    NewWindowLink,
+} from "../../../deion/ui/components";
 import { getCols, helpers, setTitle } from "../../../deion/ui/util";
-import { DataTable, NewWindowLink } from "../../../deion/ui/components";
-import { Dropdown } from "../components";
 
 const teamLink = t => {
     return (

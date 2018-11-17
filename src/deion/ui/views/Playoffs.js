@@ -3,13 +3,13 @@
 import PropTypes from "prop-types";
 import * as React from "react";
 import {
+    Dropdown,
     JumpTo,
     NewWindowLink,
     PlayoffMatchup,
     ResponsiveTableWrapper,
-} from "../../../deion/ui/components";
-import { Dropdown } from "../components";
-import { setTitle } from "../../../deion/ui/util";
+} from "../components";
+import { setTitle } from "../util";
 
 type SeriesTeam = {
     abbrev: string,

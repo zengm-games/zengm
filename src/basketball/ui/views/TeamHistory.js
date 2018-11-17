@@ -1,13 +1,14 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { PLAYER } from "../../../deion/common";
-import { helpers, getCols, setTitle } from "../../../deion/ui/util";
 import {
+    Dropdown,
     DataTable,
     NewWindowLink,
     RecordAndPlayoffs,
 } from "../../../deion/ui/components";
-import { Dropdown, PlayerNameLabels } from "../components";
+import { PlayerNameLabels } from "../components";
+import { helpers, getCols, setTitle } from "../../../deion/ui/util";
 
 const TeamHistory = ({
     abbrev,

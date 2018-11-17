@@ -2,12 +2,8 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import { PHASE } from "../../../deion/common";
-import {
-    helpers,
-    subscribeLocal,
-    realtimeUpdate,
-} from "../../../deion/ui/util";
+import { PHASE } from "../../common";
+import { helpers, subscribeLocal, realtimeUpdate } from "../util";
 
 const Select = ({ field, handleChange, value }) => {
     return subscribeLocal(local => {

@@ -1,8 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { helpers, setTitle } from "../../../deion/ui/util";
-import { BoxPlot, NewWindowLink } from "../../../deion/ui/components";
-import { Dropdown } from "../components";
+import { BoxPlot, Dropdown, NewWindowLink } from "../../../deion/ui/components";
 
 const nbaStatsAll = {
     won: [

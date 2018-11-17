@@ -1,8 +1,12 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { getCols, helpers, setTitle } from "../../../deion/ui/util";
-import { DataTable, NewWindowLink } from "../../../deion/ui/components";
-import { Dropdown, PlayerNameLabels } from "../components";
+import {
+    DataTable,
+    Dropdown,
+    NewWindowLink,
+} from "../../../deion/ui/components";
+import { PlayerNameLabels } from "../components";
 
 const PlayerShotLocations = ({ players, season, userTid }) => {
     setTitle(`Player Shot Locations - ${season}`);

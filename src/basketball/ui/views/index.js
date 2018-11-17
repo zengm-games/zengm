@@ -6,7 +6,7 @@ export { default as AwardsRecords } from "./AwardsRecords";
 export { default as Changes } from "./Changes";
 export { default as CustomizePlayer } from "./CustomizePlayer";
 export { default as DangerZone } from "../../../deion/ui/views/DangerZone";
-export { default as Dashboard } from "./Dashboard";
+export { default as Dashboard } from "../../../deion/ui/views/Dashboard";
 export { default as DeleteLeague } from "../../../deion/ui/views/DeleteLeague";
 export {
     default as DeleteOldData,
@@ -31,7 +31,9 @@ export { default as Inbox } from "../../../deion/ui/views/Inbox";
 export { default as Leaders } from "./Leaders";
 export { default as LeagueDashboard } from "./LeagueDashboard";
 export { default as LeagueFinances } from "./LeagueFinances";
-export { default as LeagueOptions } from "./LeagueOptions";
+export {
+    default as LeagueOptions,
+} from "../../../deion/ui/views/LeagueOptions";
 export { default as Live } from "./Live";
 export { default as LiveGame } from "./LiveGame";
 export { default as LoginOrRegister } from "./LoginOrRegister";
@@ -41,7 +43,7 @@ export { default as MultiTeamMode } from "./MultiTeamMode";
 export { default as Negotiation } from "./Negotiation";
 export { default as NegotiationList } from "./NegotiationList";
 export { default as NewLeague } from "./NewLeague";
-export { default as NewTeam } from "./NewTeam";
+export { default as NewTeam } from "../../../deion/ui/views/NewTeam";
 export { default as Options } from "../../../deion/ui/views/Options";
 export { default as Player } from "./Player";
 export { default as PlayerFeats } from "./PlayerFeats";

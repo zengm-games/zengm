@@ -3,8 +3,8 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import * as React from "react";
-import { DIFFICULTY } from "../../../deion/common";
-import { setTitle } from "../../../deion/ui/util";
+import { DIFFICULTY } from "../../common";
+import { setTitle } from "../util";
 
 const difficultyText = (difficulty: number) => {
     let prevText: string | void;

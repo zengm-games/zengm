@@ -5,7 +5,9 @@ import PropTypes from "prop-types";
 import * as React from "react";
 
 // eslint-disable-next-line
-const schema = require("../../../../public/files/league-schema.json");
+const schema = require(`../../../../public/${
+    process.env.SPORT
+}/files/league-schema.json`);
 
 const ajv = new Ajv({
     allErrors: true,
@@ -151,7 +153,11 @@ class LeagueFileUpload extends React.Component<Props, State> {
                         Warning: {this.state.jsonSchemaErrors.length} JSON
                         schema validation errors. More detail is available in
                         the JavaScript console. Also, see{" "}
-                        <a href="https://basketball-gm.com/manual/customization/json-schema/">
+                        <a
+                            href={`https://${
+                                process.env.SPORT
+                            }-gm.com/manual/customization/json-schema/`}
+                        >
                             the manual
                         </a>{" "}
                         for more information. You can still use this file, but

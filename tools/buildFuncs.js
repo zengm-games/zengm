@@ -88,13 +88,13 @@ const copyFiles = () => {
     console.log(
         'Copying files from "public" directory to "build" directory...',
     );
-    const foldersToIgnore = ["css"];
+    const foldersToIgnore = ["basketball", "css", "football"];
 
     fse.copySync("public", "build", {
         filter: filename => {
             // Loop through folders to ignore.
             for (const folder of foldersToIgnore) {
-                if (filename.startsWith(`public/${folder}`)) {
+                if (filename.startsWith(path.join("public", folder))) {
                     return false;
                 }
             }
@@ -102,6 +102,13 @@ const copyFiles = () => {
             return true;
         },
     });
+
+    let sport = process.env.SPORT;
+    if (typeof sport !== "string") {
+        sport = "basketball";
+    }
+
+    fse.copySync(path.join("public", sport), "build");
 
     // Remove the empty folders created by the "filter" function.
     for (const folder of foldersToIgnore) {

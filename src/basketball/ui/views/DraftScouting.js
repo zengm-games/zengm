@@ -1,7 +1,11 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { DataTable, NewWindowLink } from "../../../deion/ui/components";
-import { LeagueFileUpload, PlayerNameLabels } from "../components";
+import {
+    DataTable,
+    LeagueFileUpload,
+    NewWindowLink,
+} from "../../../deion/ui/components";
+import { PlayerNameLabels } from "../components";
 import {
     getCols,
     helpers,

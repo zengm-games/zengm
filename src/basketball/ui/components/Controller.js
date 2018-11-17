@@ -13,7 +13,8 @@ import {
 } from "../../../deion/ui/util";
 import Footer from "../../../deion/ui/components/Footer";
 import MultiTeamMenu from "../../../deion/ui/components/MultiTeamMenu";
-import { Header, NagModal, NavBar, SideBar } from ".";
+import SideBar from "../../../deion/ui/components/SideBar";
+import { Header, NagModal, NavBar } from ".";
 import type {
     GetOutput,
     RouterContext,

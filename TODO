@@ -24,6 +24,8 @@ tests still running within deion? e.g. common/helpers.test.js
 
 6. what about stuff that depends on e.g. the type Player? is there some way to auto-apply its parameters PlayerStats and PlayerRatings, based on the sport? Or does any function using Player need to either be in a sport-specific folder, or (if in deion) be generic?
 
+search for text basketball in deion
+
 Venatus - make sure correct before deploying
 
 --

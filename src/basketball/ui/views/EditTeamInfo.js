@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { LeagueFileUpload } from "../components";
+import { LeagueFileUpload } from "../../../deion/ui/components";
 import { helpers, logEvent, setTitle, toWorker } from "../../../deion/ui/util";
 
 class EditTeamInfo extends React.Component {

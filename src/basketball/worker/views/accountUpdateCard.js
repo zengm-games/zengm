@@ -1,7 +1,6 @@
 // @flow
 
 import { fetchWrapper } from "../../../deion/common";
-import { SPORT } from "../../common";
 import { account, env } from "../util";
 import type {
     Conditions,
@@ -22,7 +21,7 @@ async function updateAccountUpdateCard(
             const data = await fetchWrapper({
                 url: `//account.basketball-gm.${env.tld}/gold_card_info.php`,
                 method: "GET",
-                data: { sport: SPORT },
+                data: { sport: process.env.SPORT },
                 credentials: "include",
             });
             return {

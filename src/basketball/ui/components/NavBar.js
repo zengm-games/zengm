@@ -442,7 +442,7 @@ const NavBar = ({ pageID, updating }: Props) => {
             return <div />;
         }
 
-        let userBlock = username ? (
+        const userBlock = username ? (
             <NavLink href="/account">
                 <span className="glyphicon glyphicon-user" />{" "}
                 <span className="d-none d-lg-inline">{username}</span>

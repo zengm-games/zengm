@@ -2,7 +2,6 @@
 
 import React from "react";
 import { fetchWrapper } from "../../../../deion/common";
-import { SPORT } from "../../../common";
 import { local, realtimeUpdate, toWorker } from "../../../../deion/ui/util";
 
 type Props = {
@@ -70,7 +69,11 @@ class Login extends React.Component<Props, State> {
             <>
                 <h1>Login</h1>
                 <form onSubmit={this.handleSubmit} id="login">
-                    <input type="hidden" name="sport" value={SPORT} />
+                    <input
+                        type="hidden"
+                        name="sport"
+                        value={process.env.SPORT}
+                    />
                     <div className="form-group">
                         <label htmlFor="login-username">Username</label>
                         <input

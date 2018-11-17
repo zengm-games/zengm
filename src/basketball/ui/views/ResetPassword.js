@@ -2,7 +2,6 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import { fetchWrapper } from "../../../deion/common";
-import { SPORT } from "../../common";
 import { local, realtimeUpdate, setTitle } from "../../../deion/ui/util";
 
 const ajaxErrorMsg =
@@ -30,7 +29,7 @@ class ResetPassword extends React.Component {
                 data: {
                     action: "check_token",
                     token: this.props.token,
-                    sport: SPORT,
+                    sport: process.env.SPORT,
                 },
                 credentials: "include",
             });
@@ -120,7 +119,11 @@ class ResetPassword extends React.Component {
                 <div className="col-lg-4 col-md-5 col-sm-6">
                     <p>Enter a new password for your account below.</p>
                     <form id="resetpw" onSubmit={this.handleSubmit}>
-                        <input type="hidden" name="sport" value={SPORT} />
+                        <input
+                            type="hidden"
+                            name="sport"
+                            value={process.env.SPORT}
+                        />
                         <input
                             type="hidden"
                             name="action"

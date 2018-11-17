@@ -4,7 +4,7 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import * as React from "react";
 import { fetchWrapper } from "../../../deion/common";
-import { SPORT, STRIPE_PUBLISHABLE_KEY } from "../../common";
+import { STRIPE_PUBLISHABLE_KEY } from "../../common";
 import {
     getScript,
     local,
@@ -175,7 +175,7 @@ class UserInfo extends React.Component<UserInfoProps, UserInfoState> {
             await fetchWrapper({
                 url: `//account.basketball-gm.${window.tld}/logout.php`,
                 method: "POST",
-                data: { sport: SPORT },
+                data: { sport: process.env.SPORT },
                 credentials: "include",
             });
 

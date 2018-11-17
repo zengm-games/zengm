@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { downloadFile, setTitle, toWorker } from "../../../deion/ui/util";
+import { downloadFile, setTitle, toWorker } from "../util";
 
 function genFilename(leagueName, season, grouping) {
     const filename = `BBGM_${leagueName.replace(

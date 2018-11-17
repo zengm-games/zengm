@@ -1,6 +1,6 @@
 import React from "react";
-import { NewWindowLink } from "../../../deion/ui/components";
-import { helpers, logEvent, setTitle, toWorker } from "../../../deion/ui/util";
+import { NewWindowLink } from "../components";
+import { helpers, logEvent, setTitle, toWorker } from "../util";
 
 class DeleteOldData extends React.Component {
     constructor(props) {

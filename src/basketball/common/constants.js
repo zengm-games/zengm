@@ -42,8 +42,6 @@ const PHASE_TEXT = {
     "8": "free agency",
 };
 
-const SPORT = "basketball"; // For account ajax stuff
-
 const COMPOSITE_WEIGHTS = {
     pace: {
         ratings: ["spd", "jmp", "dnk", "tp", "drb", "pss"],
@@ -134,6 +132,5 @@ export {
     PHASE,
     PLAYER,
     PHASE_TEXT,
-    SPORT,
     STRIPE_PUBLISHABLE_KEY,
 };

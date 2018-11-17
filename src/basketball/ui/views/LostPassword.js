@@ -1,6 +1,5 @@
 import React from "react";
 import { fetchWrapper } from "../../../deion/common";
-import { SPORT } from "../../common";
 import { setTitle } from "../../../deion/ui/util";
 
 const ajaxErrorMsg =
@@ -60,7 +59,11 @@ class LostPassword extends React.Component {
                             recover your login information.
                         </p>
                         <form onSubmit={this.handleSubmit} id="lostpw">
-                            <input type="hidden" name="sport" value={SPORT} />
+                            <input
+                                type="hidden"
+                                name="sport"
+                                value={process.env.SPORT}
+                            />
                             <div className="form-group">
                                 <label
                                     className="col-form-label"

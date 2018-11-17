@@ -1,10 +1,5 @@
 import React from "react";
-import {
-    downloadFile,
-    helpers,
-    setTitle,
-    toWorker,
-} from "../../../deion/ui/util";
+import { downloadFile, helpers, setTitle, toWorker } from "../util";
 
 const categories = [
     {
@@ -114,7 +109,11 @@ class ExportLeague extends React.Component {
                     others. Select as much or as little information as you want
                     to export, since any missing information will be filled in
                     with default values when it is used.{" "}
-                    <a href="http://basketball-gm.com/manual/customization/">
+                    <a
+                        href={`http://${
+                            process.env.SPORT
+                        }-gm.com/manual/customization/`}
+                    >
                         Read the manual for more info.
                     </a>
                 </p>

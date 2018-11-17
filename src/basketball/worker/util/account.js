@@ -2,7 +2,6 @@
 
 /*eslint camelcase: 0*/
 import { fetchWrapper } from "../../../deion/common";
-import { SPORT } from "../../common";
 import { idb } from "../db";
 import { env, g, local, logEvent, toUI } from ".";
 import type { Conditions, PartialTopMenu } from "../../../deion/common/types";
@@ -136,7 +135,7 @@ async function addAchievements(
         const data = await fetchWrapper({
             url: `//account.basketball-gm.${env.tld}/add_achievements.php`,
             method: "POST",
-            data: { achievements, sport: SPORT },
+            data: { achievements, sport: process.env.SPORT },
             credentials: "include",
         });
 
@@ -155,7 +154,7 @@ async function check(conditions: Conditions): Promise<PartialTopMenu> {
         const data = await fetchWrapper({
             url: `//account.basketball-gm.${env.tld}/user_info.php`,
             method: "GET",
-            data: { sport: SPORT },
+            data: { sport: process.env.SPORT },
             credentials: "include",
         });
 
@@ -227,7 +226,7 @@ async function getAchievements() {
         const achievementsRemote = await fetchWrapper({
             url: `//account.basketball-gm.${env.tld}/get_achievements.php`,
             method: "GET",
-            data: { sport: SPORT },
+            data: { sport: process.env.SPORT },
             credentials: "include",
         });
 

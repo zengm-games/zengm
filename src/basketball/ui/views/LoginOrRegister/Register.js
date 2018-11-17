@@ -3,7 +3,6 @@
 import classNames from "classnames";
 import React from "react";
 import { fetchWrapper } from "../../../../deion/common";
-import { SPORT } from "../../../common";
 import {
     local,
     realtimeUpdate,
@@ -107,7 +106,11 @@ class Register extends React.Component<Props, State> {
             <>
                 <h1>Register</h1>
                 <form onSubmit={this.handleSubmit} id="register">
-                    <input type="hidden" name="sport" value={SPORT} />
+                    <input
+                        type="hidden"
+                        name="sport"
+                        value={process.env.SPORT}
+                    />
                     <div
                         className={classNames("form-group", {
                             "text-danger":

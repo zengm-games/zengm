@@ -2,7 +2,6 @@
 
 export { default as BoxScore } from "./BoxScore";
 export { default as Dropdown } from "./Dropdown";
-export { default as Footer } from "./Footer";
 export { default as Header } from "./Header";
 export { default as LeagueFileUpload } from "./LeagueFileUpload";
 export { default as NagModal } from "./NagModal";

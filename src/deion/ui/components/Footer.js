@@ -40,7 +40,9 @@ class Footer extends React.Component<{}> {
                     >
                         <img
                             alt=""
-                            src="https://basketball-gm.com/files/logo.png"
+                            src={`https://${
+                                process.env.SPORT
+                            }-gm.com/files/logo.png`}
                             style={{
                                 maxHeight: "100%",
                                 maxWidth: "100%",
@@ -67,7 +69,7 @@ class Footer extends React.Component<{}> {
                 <footer>
                     <p className="float-sm-left">
                         <a
-                            href="https://basketball-gm.com/about/"
+                            href={`https://${process.env.SPORT}-gm.com/about/`}
                             rel="noopener noreferrer"
                             target="_blank"
                         >
@@ -75,7 +77,9 @@ class Footer extends React.Component<{}> {
                         </a>{" "}
                         ·{" "}
                         <a
-                            href="https://basketball-gm.com/advertise/"
+                            href={`https://${
+                                process.env.SPORT
+                            }-gm.com/advertise/`}
                             rel="noopener noreferrer"
                             target="_blank"
                         >
@@ -83,7 +87,7 @@ class Footer extends React.Component<{}> {
                         </a>{" "}
                         ·{" "}
                         <a
-                            href="https://basketball-gm.com/blog/"
+                            href={`https://${process.env.SPORT}-gm.com/blog/`}
                             rel="noopener noreferrer"
                             target="_blank"
                         >
@@ -91,7 +95,9 @@ class Footer extends React.Component<{}> {
                         </a>{" "}
                         ·{" "}
                         <a
-                            href="https://basketball-gm.com/contact/"
+                            href={`https://${
+                                process.env.SPORT
+                            }-gm.com/contact/`}
                             rel="noopener noreferrer"
                             target="_blank"
                         >
@@ -99,7 +105,9 @@ class Footer extends React.Component<{}> {
                         </a>{" "}
                         ·{" "}
                         <a
-                            href="https://basketball-gm.com/privacy-policy/"
+                            href={`https://${
+                                process.env.SPORT
+                            }-gm.com/privacy-policy/`}
                             rel="noopener noreferrer"
                             target="_blank"
                         >
@@ -107,7 +115,7 @@ class Footer extends React.Component<{}> {
                         </a>{" "}
                         ·{" "}
                         <a
-                            href="https://basketball-gm.com/share/"
+                            href={`https://${process.env.SPORT}-gm.com/share/`}
                             rel="noopener noreferrer"
                             target="_blank"
                         >
@@ -116,7 +124,8 @@ class Footer extends React.Component<{}> {
                         <br />
                     </p>
                     <p className="float-sm-right text-muted">
-                        BBGM v{window.bbgmVersion}
+                        {process.env.SPORT.charAt(0).toUpperCase()}BGM v
+                        {window.bbgmVersion}
                     </p>
                 </footer>
             </div>

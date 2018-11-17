@@ -504,86 +504,107 @@ const cols: {
     },
     Year: {},
 
-    // "rating:" prefix is to prevent collisions with stats
-    "rating:2Pt": {
+    "rating:fg": {
         desc: "Two-Point Shooting",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
-    "rating:3Pt": {
+    "rating:tp": {
         desc: "Three-Point Shooting",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
-    "rating:oIQ": {
+    "rating:oiq": {
         desc: "Offensive IQ",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
-    "rating:Dnk": {
+    "rating:dnk": {
         desc: "Dunks/Layups",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
-    "rating:Drb": {
+    "rating:drb": {
         desc: "Dribbling",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
-    "rating:End": {
+    "rating:endu": {
         desc: "Endurance",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
-    "rating:Hgt": {
+    "rating:hgt": {
         desc: "Height",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
-    "rating:Ins": {
+    "rating:ins": {
         desc: "Inside Scoring",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
-    "rating:Jmp": {
+    "rating:jmp": {
         desc: "Jumping",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
-    "rating:FT": {
+    "rating:ft": {
         desc: "Free Throw Shooting",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
-    "rating:Pss": {
+    "rating:pss": {
         desc: "Passing",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
-    "rating:Reb": {
+    "rating:reb": {
         desc: "Rebounding",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
-    "rating:Spd": {
+    "rating:spd": {
         desc: "Speed",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
-    "rating:dIQ": {
+    "rating:diq": {
         desc: "Defensive IQ",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
-    "rating:Str": {
+    "rating:stre": {
         desc: "Strength",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
 };
 
+const titleOverrides = {
+    "rating:fg": "2Pt",
+    "rating:tp": "3Pt",
+    "rating:oiq": "oIQ",
+    "rating:dnk": "Dnk",
+    "rating:drb": "Drb",
+    "rating:endu": "End",
+    "rating:hgt": "Hgt",
+    "rating:ins": "Ins",
+    "rating:jmp": "Jmp",
+    "rating:ft": "FT",
+    "rating:pss": "Pss",
+    "rating:reb": "Reb",
+    "rating:spd": "Spd",
+    "rating:diq": "dIQ",
+    "rating:stre": "Str",
+};
+
 for (const key of Object.keys(cols)) {
-    cols[key].title = key.replace("rating:", "");
+    if (key.startsWith("rating:")) {
+        cols[key].title = titleOverrides[key];
+    } else {
+        cols[key].title = key;
+    }
 }
 
 export default (...titles: string[]): Col[] => {

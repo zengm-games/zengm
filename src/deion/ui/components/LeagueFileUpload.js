@@ -5,9 +5,7 @@ import PropTypes from "prop-types";
 import * as React from "react";
 
 // eslint-disable-next-line
-const schema = require(`../../../../public/${
-    process.env.SPORT
-}/files/league-schema.json`);
+const schema = require("../../../../public/basketball/files/league-schema.json");
 
 const ajv = new Ajv({
     allErrors: true,

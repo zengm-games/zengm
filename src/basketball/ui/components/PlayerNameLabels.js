@@ -2,7 +2,7 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import SkillsBlock from "./SkillsBlock";
+import SkillsBlock from "../../../deion/ui/components/SkillsBlock";
 import RatingsStatsPopover from "./RatingsStatsPopover";
 import { helpers } from "../../../deion/ui/util";
 import type { PlayerInjury } from "../../../deion/common/types";

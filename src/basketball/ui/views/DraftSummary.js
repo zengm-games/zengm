@@ -5,8 +5,9 @@ import {
     DraftAbbrev,
     JumpTo,
     NewWindowLink,
+    SkillsBlock,
 } from "../../../deion/ui/components";
-import { Dropdown, SkillsBlock } from "../components";
+import { Dropdown } from "../components";
 import { getCols, helpers, setTitle } from "../../../deion/ui/util";
 
 const DraftSummary = ({ players, season, userTid }) => {

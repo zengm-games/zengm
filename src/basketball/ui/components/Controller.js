@@ -12,9 +12,10 @@ import {
     toWorker,
 } from "../../../deion/ui/util";
 import Footer from "../../../deion/ui/components/Footer";
+import Header from "../../../deion/ui/components/Header";
 import MultiTeamMenu from "../../../deion/ui/components/MultiTeamMenu";
 import SideBar from "../../../deion/ui/components/SideBar";
-import { Header, NagModal, NavBar } from ".";
+import { NagModal, NavBar } from ".";
 import type {
     GetOutput,
     RouterContext,

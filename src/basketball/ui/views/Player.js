@@ -5,9 +5,9 @@ import {
     NewWindowLink,
     PlayerPicture,
     SafeHtml,
+    SkillsBlock,
     WatchBlock,
 } from "../../../deion/ui/components";
-import { SkillsBlock } from "../components";
 import { getCols, helpers, setTitle, toWorker } from "../../../deion/ui/util";
 
 const upperCaseFirstLetter = (string: string): string => {

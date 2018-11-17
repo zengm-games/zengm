@@ -4,8 +4,9 @@ import {
     DataTable,
     DraftAbbrev,
     NewWindowLink,
+    SkillsBlock,
 } from "../../../deion/ui/components";
-import { Dropdown, SkillsBlock } from "../components";
+import { Dropdown } from "../components";
 import { getCols, helpers, setTitle } from "../../../deion/ui/util";
 
 const DraftTeamHistory = ({ abbrev, name, players, region, userAbbrev }) => {

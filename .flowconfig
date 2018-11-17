@@ -5,3 +5,6 @@
 .*/node_modules/prebid.js/.*
 .*/node_modules/stylelint/.*
 .*/node_modules/unstated/lib/unstated.js.flow
+
+[libs]
+./flow-typed

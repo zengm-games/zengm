@@ -6,7 +6,7 @@ import router from "bbgm-router";
 import createBugsnagErrorBoundary from "bugsnag-react";
 import * as React from "react";
 import ReactDOM from "react-dom";
-import api from "./api";
+import api from "../../deion/ui/api";
 import { Controller } from "../../deion/ui/components";
 import {
     compareVersions,

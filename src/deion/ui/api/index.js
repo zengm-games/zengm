@@ -1,13 +1,13 @@
 // @flow
 
-import { emitter, local, realtimeUpdate } from "../../../deion/ui/util";
-import { showEvent } from "../../../deion/ui/util/logEvent";
+import { emitter, local, realtimeUpdate } from "../util";
+import { showEvent } from "../util/logEvent";
 import type {
     GameAttributes,
     LocalStateUI,
     LogEventShowOptions,
     UpdateEvents,
-} from "../../../deion/common/types";
+} from "../../common/types";
 
 /**
  * Ping a counter at basketball-gm.com.

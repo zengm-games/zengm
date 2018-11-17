@@ -2,7 +2,7 @@
 
 move ui/index.js to deion as much as possible
 - api
-- util
+- util/routes needs basketball views passed to it
 figure out how i'm going to move PlayerNameLabels, and do it
 - deion.ui.overrides
 

@@ -2,8 +2,8 @@
 
 import PropTypes from "prop-types";
 import * as React from "react";
-import { NewWindowLink, SafeHtml } from "../../../deion/ui/components";
-import { setTitle } from "../../../deion/ui/util";
+import { NewWindowLink, SafeHtml } from "../components";
+import { setTitle } from "../util";
 
 const Changes = ({ changes }: { changes: { date: string, msg: string }[] }) => {
     setTitle("Changes");
@@ -14,6 +14,11 @@ const Changes = ({ changes }: { changes: { date: string, msg: string }[] }) => {
                 Changes <NewWindowLink />
             </h1>
 
+            <p>
+                Only fairly significant user-facing changes are listed here, so
+                you won't get bugged for every little new feature.
+            </p>
+
             <ul>
                 {changes.map((c, i) => {
                     return (
@@ -23,12 +28,6 @@ const Changes = ({ changes }: { changes: { date: string, msg: string }[] }) => {
                     );
                 })}
             </ul>
-
-            <p>
-                Data only goes back to September 21, 2013. Only relatively
-                significant user-facing changes are listed here, so you won't
-                get bugged for every little new feature.
-            </p>
         </>
     );
 };

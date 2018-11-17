@@ -3,7 +3,6 @@
 import Account from "./Account";
 import AccountUpdateCard from "./AccountUpdateCard";
 import AwardsRecords from "./AwardsRecords";
-import Changes from "./Changes";
 import CustomizePlayer from "./CustomizePlayer";
 import Draft from "./Draft";
 import DraftLottery from "./DraftLottery";
@@ -14,20 +13,16 @@ import EditTeamInfo from "./EditTeamInfo";
 import FantasyDraft from "./FantasyDraft";
 import FreeAgents from "./FreeAgents";
 import GameLog from "./GameLog";
-import GodMode from "./GodMode";
 import HallOfFame from "./HallOfFame";
 import History from "./History";
 import HistoryAll from "./HistoryAll";
 import Leaders from "./Leaders";
 import LeagueDashboard from "./LeagueDashboard";
-import Live from "./Live";
 import LiveGame from "./LiveGame";
 import LoginOrRegister from "./LoginOrRegister";
 import LostPassword from "./LostPassword";
-import MultiTeamMode from "./MultiTeamMode";
 import Negotiation from "./Negotiation";
 import NegotiationList from "./NegotiationList";
-import NewLeague from "./NewLeague";
 import Player from "./Player";
 import PlayerFeats from "./PlayerFeats";
 import PlayerRatingDists from "./PlayerRatingDists";
@@ -51,7 +46,6 @@ export default {
     Account,
     AccountUpdateCard,
     AwardsRecords,
-    Changes,
     CustomizePlayer,
     Draft,
     DraftLottery,
@@ -62,20 +56,16 @@ export default {
     FantasyDraft,
     FreeAgents,
     GameLog,
-    GodMode,
     HallOfFame,
     History,
     HistoryAll,
     Leaders,
     LeagueDashboard,
-    Live,
     LiveGame,
     LoginOrRegister,
     LostPassword,
-    MultiTeamMode,
     Negotiation,
     NegotiationList,
-    NewLeague,
     Player,
     PlayerFeats,
     PlayerRatingDists,

@@ -1,5 +1,8 @@
 # football
 
+how will deionUI(overrides) work with types?
+- can pass them as generics, then apply them to factory functions
+
 what's the end state here? options:
 - everything is in deion, and process.env.SPORT governs the output
   - that'd be nice, but probably unrealistic

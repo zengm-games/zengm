@@ -1,13 +1,8 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { DIFFICULTY } from "../../../deion/common";
-import { LeagueFileUpload } from "../../../deion/ui/components";
-import {
-    helpers,
-    realtimeUpdate,
-    setTitle,
-    toWorker,
-} from "../../../deion/ui/util";
+import { DIFFICULTY } from "../../common";
+import { LeagueFileUpload } from "../components";
+import { helpers, realtimeUpdate, setTitle, toWorker } from "../util";
 
 const PopText = ({ teams, tid }) => {
     let msg = (
@@ -317,7 +312,11 @@ class NewLeague extends React.Component {
                                     Teams in your new league can either be
                                     filled by randomly-generated players or by
                                     players from a{" "}
-                                    <a href="https://basketball-gm.com/manual/customization/">
+                                    <a
+                                        href={`https://${
+                                            process.env.SPORT
+                                        }-gm.com/manual/customization/`}
+                                    >
                                         custom League File
                                     </a>{" "}
                                     you upload.

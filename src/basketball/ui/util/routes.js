@@ -1,16 +1,20 @@
 // @flow
 
 import initView from "../../../deion/ui/util/initView";
-import * as views from "../views";
+import views from "../views";
 
 const genPage = (id, inLeague = true) => {
     const componentName = id.charAt(0).toUpperCase() + id.slice(1);
 
-    return initView({
-        id,
-        inLeague,
-        Component: views[componentName],
-    });
+    if (views[componentName]) {
+        return initView({
+            id,
+            inLeague,
+            Component: views[componentName],
+        });
+    }
+
+    throw new Error(`Invalid component name: "${componentName}"`);
 };
 
 const routes = {

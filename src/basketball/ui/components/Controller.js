@@ -23,8 +23,7 @@ import type {
 } from "../../../deion/common/types";
 
 type Props = {
-    Component: any,
-    data: any,
+    children: any,
     updating: boolean,
 };
 
@@ -35,15 +34,11 @@ class LeagueContent extends React.Component<Props> {
     }
 
     render() {
-        const { Component, data } = this.props;
-
-        return <Component {...data} />;
+        return this.props.children;
     }
 }
 
 LeagueContent.propTypes = {
-    Component: PropTypes.func.isRequired,
-    data: PropTypes.object.isRequired,
     updating: PropTypes.bool.isRequired,
 };
 
@@ -321,11 +316,9 @@ class Controller extends React.Component<{}, State> {
         } else {
             contents = (
                 <>
-                    <LeagueContent
-                        Component={Component}
-                        data={data}
-                        updating={loading}
-                    />
+                    <LeagueContent updating={loading}>
+                        <Component {...data} />
+                    </LeagueContent>
                     <MultiTeamMenu />
                 </>
             );

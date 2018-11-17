@@ -12,6 +12,7 @@ import EditTeamInfo from "./EditTeamInfo";
 import EventLog from "./EventLog";
 import ExportLeague from "./ExportLeague";
 import ExportStats from "./ExportStats";
+import GameLog from "./GameLog";
 import GodMode from "./GodMode";
 import Inbox from "./Inbox";
 import LeagueFinances from "./LeagueFinances";
@@ -45,6 +46,7 @@ export default {
     EventLog,
     ExportLeague,
     ExportStats,
+    GameLog,
     GodMode,
     Inbox,
     LeagueFinances,

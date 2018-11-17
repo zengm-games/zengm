@@ -8,7 +8,6 @@ import DraftSummary from "./DraftSummary";
 import DraftTeamHistory from "./DraftTeamHistory";
 import FantasyDraft from "./FantasyDraft";
 import FreeAgents from "./FreeAgents";
-import GameLog from "./GameLog";
 import HallOfFame from "./HallOfFame";
 import History from "./History";
 import HistoryAll from "./HistoryAll";
@@ -44,7 +43,6 @@ export default {
     DraftTeamHistory,
     FantasyDraft,
     FreeAgents,
-    GameLog,
     HallOfFame,
     History,
     HistoryAll,

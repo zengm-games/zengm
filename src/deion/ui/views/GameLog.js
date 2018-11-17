@@ -1,18 +1,22 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { Dropdown, NewWindowLink } from "../../../deion/ui/components";
-import { helpers, setTitle } from "../../../deion/ui/util";
-import clickable from "../../../deion/ui/wrappers/clickable";
-import components from "../components";
-const { BoxScore, BoxScoreRow } = components;
+import { Dropdown, NewWindowLink } from "../components";
+import { helpers, overrides, setTitle } from "../util";
+import clickable from "../wrappers/clickable";
 
 const StatsRow = clickable(({ clicked, i, p, toggleClicked }) => {
     const classes = classNames({
         separator: i === 4,
         "table-warning": clicked,
     });
-    return <BoxScoreRow className={classes} onClick={toggleClicked} p={p} />;
+    return (
+        <overrides.components.BoxScoreRow
+            className={classes}
+            onClick={toggleClicked}
+            p={p}
+        />
+    );
 });
 
 StatsRow.propTypes = {
@@ -177,7 +181,7 @@ const GameLog = ({
             <div className="row">
                 <div className="col-md-10">
                     {boxScore.gid >= 0 ? (
-                        <BoxScore
+                        <overrides.components.BoxScore
                             abbrev={abbrev}
                             boxScore={boxScore}
                             nextGid={nextGid}

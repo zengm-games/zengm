@@ -59,7 +59,7 @@ const TeamHistory = ({
         "G",
         "Min",
         "Pts",
-        "Reb",
+        "stat:trb",
         "Ast",
         "PER",
         "EWA",

@@ -286,7 +286,7 @@ class TradingBlock extends React.Component {
             "Contract",
             "Min",
             "Pts",
-            "Reb",
+            "stat:trb",
             "Ast",
             "PER",
         );

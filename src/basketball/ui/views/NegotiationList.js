@@ -30,7 +30,7 @@ const NegotiationList = ({
         "Pot",
         "Min",
         "Pts",
-        "Reb",
+        "stat:trb",
         "Ast",
         "PER",
         "Asking For",

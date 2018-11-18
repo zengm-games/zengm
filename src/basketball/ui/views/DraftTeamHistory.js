@@ -49,7 +49,7 @@ const DraftTeamHistory = ({ abbrev, name, players, region, userAbbrev }) => {
         "G",
         "Min",
         "Pts",
-        "Reb",
+        "stat:trb",
         "Ast",
         "PER",
         "EWA",

@@ -98,7 +98,7 @@ const playerCols = getCols(
     "Contract",
     "stat:min",
     "stat:pts",
-    "Reb",
+    "stat:trb",
     "stat:ast",
     "stat:per",
 );

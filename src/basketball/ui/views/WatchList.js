@@ -54,7 +54,7 @@ class WatchList extends React.Component {
             "FG%",
             "3P%",
             "FT%",
-            "Reb",
+            "stat:trb",
             "Ast",
             "Tov",
             "Stl",

@@ -17,7 +17,7 @@ const cols = getCols(
     "Pot",
     "stat:min",
     "stat:pts",
-    "Reb",
+    "stat:trb",
     "stat:ast",
     "stat:per",
     "Asking For",

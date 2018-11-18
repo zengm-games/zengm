@@ -20,7 +20,7 @@ const UpcomingFreeAgents = ({ players, season }) => {
         "Pot",
         "Min",
         "Pts",
-        "Reb",
+        "stat:trb",
         "Ast",
         "PER",
         "Current Contract",

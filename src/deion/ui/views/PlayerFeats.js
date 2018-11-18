@@ -5,8 +5,8 @@ import {
     Dropdown,
     NewWindowLink,
     PlayerNameLabels,
-} from "../../../deion/ui/components";
-import { getCols, helpers, setTitle } from "../../../deion/ui/util";
+} from "../components";
+import { getCols, helpers, setTitle } from "../util";
 
 const PlayerFeats = ({ abbrev, feats, playoffs, season, stats, userTid }) => {
     setTitle("Statistical Feats");

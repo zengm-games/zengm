@@ -158,11 +158,6 @@ const cols: {
         sortType: "name",
     },
     Mood: {},
-    MOV: {
-        desc: "Margin of Victory",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
     Name: {
         sortType: "name",
     },
@@ -181,23 +176,6 @@ const cols: {
     },
     P: {
         desc: "Performance",
-        sortType: "number",
-    },
-    PL: {
-        desc:
-            "Pythagorean Losses (expected losses based on points scored and allowed)",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    PW: {
-        desc:
-            "Pythagorean Wins (expected wins based on points scored and allowed)",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    Pace: {
-        desc: "Possessions Per Game",
-        sortSequence: ["desc", "asc"],
         sortType: "number",
     },
     Payroll: {
@@ -474,6 +452,11 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    "stat:mov": {
+        desc: "Margin of Victory",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     "stat:nrtg": {
         desc: "Net Rating (point differential per 100 possessions)",
         sortSequence: ["desc", "asc"],
@@ -499,6 +482,11 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    "stat:pace": {
+        desc: "Possessions Per Game",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     "stat:per": {
         desc: "Player Efficiency Rating",
         sortSequence: ["desc", "asc"],
@@ -509,8 +497,20 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    "stat:pl": {
+        desc:
+            "Pythagorean Losses (expected losses based on points scored and allowed)",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     "stat:pts": {
         desc: "Points",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:pw": {
+        desc:
+            "Pythagorean Wins (expected wins based on points scored and allowed)",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
@@ -608,14 +608,18 @@ const titleOverrides = {
     "stat:gp": "G",
     "stat:gs": "GS",
     "stat:min": "MP",
+    "stat:mov": "MOV",
     "stat:nrtg": "NRtg",
     "stat:orb": "ORB",
     "stat:orbp": "ORB%",
     "stat:ortg": "ORtg",
     "stat:ows": "OWS",
+    "stat:pace": "Pace",
     "stat:per": "PER",
     "stat:pf": "PF",
+    "stat:pl": "PL",
     "stat:pts": "PTS",
+    "stat:pw": "PW",
     "stat:stl": "STL",
     "stat:stlp": "STL%",
     "stat:tovp": "TOV%",

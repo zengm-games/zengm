@@ -21,11 +21,11 @@ async function updateTeams(
         inputs.season !== state.season ||
         inputs.teamOpponent !== state.teamOpponent
     ) {
-        const teams = (await idb.getCopies.teamsPlus({
-            attrs: ["tid", "abbrev"],
-            seasonAttrs: ["won", "lost"],
-            stats: [
-                "gp",
+        let stats;
+        if (inputs.teamOpponent === "advanced") {
+            stats = ["pw", "pl", "ortg", "drtg", "nrtg", "pace", "tpar", "ftr"];
+        } else {
+            stats = [
                 "fg",
                 "fga",
                 "fgp",
@@ -45,33 +45,37 @@ async function updateTeams(
                 "pf",
                 "pts",
                 "mov",
-                "oppFg",
-                "oppFga",
-                "oppFgp",
-                "oppTp",
-                "oppTpa",
-                "oppTpp",
-                "oppFt",
-                "oppFta",
-                "oppFtp",
-                "oppOrb",
-                "oppDrb",
-                "oppTrb",
-                "oppAst",
-                "oppTov",
-                "oppStl",
-                "oppBlk",
-                "oppPf",
-                "oppPts",
-                "oppMov",
-                "pw",
-                "pl",
-                "ortg",
-                "drtg",
-                "nrtg",
-                "pace",
-                "tpar",
-                "ftr",
+            ];
+        }
+
+        const teams = (await idb.getCopies.teamsPlus({
+            attrs: ["tid", "abbrev"],
+            seasonAttrs: ["won", "lost"],
+            stats: [
+                "gp",
+                ...(inputs.teamOpponent === "opponent"
+                    ? [
+                          "oppFg",
+                          "oppFga",
+                          "oppFgp",
+                          "oppTp",
+                          "oppTpa",
+                          "oppTpp",
+                          "oppFt",
+                          "oppFta",
+                          "oppFtp",
+                          "oppOrb",
+                          "oppDrb",
+                          "oppTrb",
+                          "oppAst",
+                          "oppTov",
+                          "oppStl",
+                          "oppBlk",
+                          "oppPf",
+                          "oppPts",
+                          "oppMov",
+                      ]
+                    : stats),
             ],
             season: inputs.season,
             playoffs: inputs.playoffs === "playoffs",
@@ -111,7 +115,7 @@ async function updateTeams(
         }
 
         // Sort stats so we can determine what percentile our team is in.
-        const stats = {};
+        const allStats = {};
         const statTypes = [
             "won",
             "lost",
@@ -194,17 +198,21 @@ async function updateTeams(
                     ? t.stats[statType]
                     : t.seasonAttrs[statType];
 
-                if (!stats[statType]) {
-                    stats[statType] = [value];
+                if (value === undefined) {
+                    continue;
+                }
+
+                if (!allStats[statType]) {
+                    allStats[statType] = [value];
                 } else {
-                    stats[statType].push(value);
+                    allStats[statType].push(value);
                 }
             }
         }
 
         // Sort stat types. "Better" values are at the start of the arrays.
-        for (const statType of Object.keys(stats)) {
-            stats[statType].sort((a, b) => {
+        for (const statType of Object.keys(allStats)) {
+            allStats[statType].sort((a, b) => {
                 // Sort lowest first.
                 if (lowerIsBetter.includes(statType)) {
                     if (a < b) {
@@ -230,6 +238,7 @@ async function updateTeams(
         }
 
         return {
+            allStats,
             playoffs: inputs.playoffs,
             season: inputs.season,
             stats,

@@ -1,23 +1,14 @@
 import PropTypes from "prop-types";
 import React from "react";
-import {
-    getCols,
-    helpers,
-    prefixStatOpp,
-    setTitle,
-} from "../../../deion/ui/util";
-import {
-    DataTable,
-    Dropdown,
-    JumpTo,
-    NewWindowLink,
-} from "../../../deion/ui/components";
+import { getCols, helpers, prefixStatOpp, setTitle } from "../util";
+import { DataTable, Dropdown, JumpTo, NewWindowLink } from "../components";
 
 const legendSquare = className => {
     return <span className={`table-${className} legend-square ml-3`} />;
 };
 
 const TeamStats = ({
+    allStats,
     playoffs,
     season,
     stats,
@@ -27,84 +18,19 @@ const TeamStats = ({
 }) => {
     setTitle(`Team Stats - ${season}`);
 
-    const cols =
-        teamOpponent !== "advanced"
-            ? getCols(
-                  "Team",
-                  "G",
-                  "W",
-                  "L",
-                  "FG",
-                  "FGA",
-                  "FG%",
-                  "3P",
-                  "3PA",
-                  "3P%",
-                  "FT",
-                  "FTA",
-                  "FT%",
-                  "ORB",
-                  "DRB",
-                  "TRB",
-                  "Ast",
-                  "Tov",
-                  "Stl",
-                  "Blk",
-                  "PF",
-                  "Pts",
-                  "MOV",
-              )
-            : getCols(
-                  "Team",
-                  "W",
-                  "L",
-                  "PW",
-                  "PL",
-                  "MOV",
-                  "ORtg",
-                  "DRtg",
-                  "NRtg",
-                  "Pace",
-                  "3PAr",
-                  "FTr",
-              );
+    const cols = getCols(
+        "Team",
+        "stat:gp",
+        "W",
+        "L",
+        ...stats.map(stat => `stat:${stat}`),
+    );
 
     const teamCount = teams.length;
     const rows = teams.map(t => {
-        const statTypeColumns =
-            teamOpponent !== "advanced"
-                ? [
-                      "fg",
-                      "fga",
-                      "fgp",
-                      "tp",
-                      "tpa",
-                      "tpp",
-                      "ft",
-                      "fta",
-                      "ftp",
-                      "orb",
-                      "drb",
-                      "trb",
-                      "ast",
-                      "tov",
-                      "stl",
-                      "blk",
-                      "pf",
-                      "pts",
-                      "mov",
-                  ].map(key => prefixStatOpp(teamOpponent, key))
-                : [
-                      "pw",
-                      "pl",
-                      "mov",
-                      "ortg",
-                      "drtg",
-                      "nrtg",
-                      "pace",
-                      "tpar",
-                      "ftr",
-                  ];
+        const statTypeColumns = stats.map(key =>
+            prefixStatOpp(teamOpponent, key),
+        );
         const otherStatColumns = ["won", "lost"];
 
         // Create the cells for this row.
@@ -118,9 +44,6 @@ const TeamStats = ({
             won: t.seasonAttrs.won,
             lost: t.seasonAttrs.lost,
         };
-        if (teamOpponent === "advanced") {
-            delete data.gp;
-        }
 
         for (const statType of statTypeColumns) {
             const value = t.stats.hasOwnProperty(statType)
@@ -163,7 +86,7 @@ const TeamStats = ({
                     : t.seasonAttrs[statType];
                 const percentile =
                     1 -
-                    stats[statType].indexOf(statTypeValue) / (teamCount - 1);
+                    allStats[statType].indexOf(statTypeValue) / (teamCount - 1);
 
                 let className;
                 if (percentile >= 2 / 3) {
@@ -207,15 +130,19 @@ const TeamStats = ({
             <div className="row">
                 <div className="col-sm-4">
                     More:{" "}
-                    <a
-                        href={helpers.leagueUrl([
-                            "team_shot_locations",
-                            season,
-                        ])}
-                    >
-                        Shot Locations
-                    </a>{" "}
-                    |{" "}
+                    {process.env.SPORT === "basketball" ? (
+                        <>
+                            <a
+                                href={helpers.leagueUrl([
+                                    "team_shot_locations",
+                                    season,
+                                ])}
+                            >
+                                Shot Locations
+                            </a>{" "}
+                            |{" "}
+                        </>
+                    ) : null}
                     <a href={helpers.leagueUrl(["team_stat_dists", season])}>
                         Stat Distributions
                     </a>
@@ -245,9 +172,10 @@ const TeamStats = ({
 };
 
 TeamStats.propTypes = {
+    allStats: PropTypes.object.isRequired,
     playoffs: PropTypes.oneOf(["playoffs", "regularSeason"]).isRequired,
     season: PropTypes.number.isRequired,
-    stats: PropTypes.object.isRequired,
+    stats: PropTypes.string.isRequired,
     teamOpponent: PropTypes.oneOf(["advanced", "opponent", "team"]).isRequired,
     teams: PropTypes.arrayOf(PropTypes.object).isRequired,
     userTid: PropTypes.number.isRequired,

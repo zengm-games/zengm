@@ -41,6 +41,7 @@ import Schedule from "./Schedule";
 import Standings from "./Standings";
 import TeamFinances from "./TeamFinances";
 import TeamHistory from "./TeamHistory";
+import TeamStats from "./TeamStats";
 import Trade from "./Trade";
 import TradingBlock from "./TradingBlock";
 import Transactions from "./Transactions";
@@ -89,6 +90,7 @@ export default {
     Standings,
     TeamFinances,
     TeamHistory,
+    TeamStats,
     Trade,
     TradingBlock,
     Transactions,

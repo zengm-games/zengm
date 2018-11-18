@@ -18,7 +18,6 @@ import Roster from "./Roster";
 import TeamRecords from "./TeamRecords";
 import TeamShotLocations from "./TeamShotLocations";
 import TeamStatDists from "./TeamStatDists";
-import TeamStats from "./TeamStats";
 
 export default {
     AwardsRecords,
@@ -39,5 +38,4 @@ export default {
     TeamRecords,
     TeamShotLocations,
     TeamStatDists,
-    TeamStats,
 };

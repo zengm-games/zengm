@@ -14,11 +14,13 @@ import EditTeamInfo from "./EditTeamInfo";
 import EventLog from "./EventLog";
 import ExportLeague from "./ExportLeague";
 import ExportStats from "./ExportStats";
+import FantasyDraft from "./FantasyDraft";
 import FreeAgents from "./FreeAgents";
 import GameLog from "./GameLog";
 import GodMode from "./GodMode";
 import HallOfFame from "./HallOfFame";
 import Inbox from "./Inbox";
+import Leaders from "./Leaders";
 import LeagueFinances from "./LeagueFinances";
 import LeagueOptions from "./LeagueOptions";
 import Live from "./Live";
@@ -66,11 +68,13 @@ export default {
     EventLog,
     ExportLeague,
     ExportStats,
+    FantasyDraft,
     FreeAgents,
     GameLog,
     GodMode,
     HallOfFame,
     Inbox,
+    Leaders,
     LeagueFinances,
     LeagueOptions,
     Live,

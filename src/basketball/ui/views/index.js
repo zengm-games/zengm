@@ -4,10 +4,8 @@ import AwardsRecords from "./AwardsRecords";
 import CustomizePlayer from "./CustomizePlayer";
 import Draft from "./Draft";
 import DraftLottery from "./DraftLottery";
-import FantasyDraft from "./FantasyDraft";
 import History from "./History";
 import HistoryAll from "./HistoryAll";
-import Leaders from "./Leaders";
 import LeagueDashboard from "./LeagueDashboard";
 import LiveGame from "./LiveGame";
 import Player from "./Player";
@@ -21,10 +19,8 @@ export default {
     CustomizePlayer,
     Draft,
     DraftLottery,
-    FantasyDraft,
     History,
     HistoryAll,
-    Leaders,
     LeagueDashboard,
     LiveGame,
     Player,

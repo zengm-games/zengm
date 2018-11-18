@@ -1,13 +1,13 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { helpers, setTitle } from "../../../deion/ui/util";
+import { helpers, setTitle } from "../util";
 import {
     Dropdown,
     JumpTo,
     NewWindowLink,
     PlayerNameLabels,
     ResponsiveTableWrapper,
-} from "../../../deion/ui/components";
+} from "../components";
 
 const Leaders = ({ categories, playoffs, season }) => {
     setTitle(`League Leaders - ${season}`);
@@ -25,8 +25,11 @@ const Leaders = ({ categories, playoffs, season }) => {
             </h1>
 
             <p>
-                Only eligible players are shown (<i>e.g.</i> a player shooting 2
-                for 2 on the season is not eligible for the league lead in FG%).
+                Only eligible players are shown (<i>e.g.</i>{" "}
+                {process.env.SPORT === "basketball"
+                    ? "a player shooting 2 for 2 on the season is not eligible for the league lead in FG%"
+                    : "a quarterback who is 2 for 2 on the season is not eligible for the league lead in completion percentage"}
+                ).
             </p>
 
             <div className="row" style={{ marginTop: -14 }}>

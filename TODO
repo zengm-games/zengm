@@ -1,11 +1,7 @@
 # football
 
-move to gitlab
-
 views involving ratings/stats
 - Player
-- TeamStats
-  - make sure opponent stats work
 - etc
 
 how will deionUI(overrides) work with types?

@@ -32,224 +32,62 @@ Relatives.propTypes = {
     relatives: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
-const StatsTable = ({ careerStats = {}, name, stats = [] }) => {
+const StatsTable = ({ name, p, playoffs = false, stats }) => {
+    const playerStats = p.stats.filter(ps => ps.playoffs === playoffs);
+    const careerStats = playoffs ? p.careerStatsPlayoffs : p.careerStats;
+
     return (
-        <DataTable
-            className="mb-3"
-            cols={getCols(
-                "Year",
-                "Team",
-                "Age",
-                "G",
-                "GS",
-                "Min",
-                "FG",
-                "FGA",
-                "FG%",
-                "3P",
-                "3PA",
-                "3P%",
-                "FT",
-                "FTA",
-                "FT%",
-                "ORB",
-                "DRB",
-                "TRB",
-                "Ast",
-                "Tov",
-                "Stl",
-                "Blk",
-                "BA",
-                "PF",
-                "Pts",
-            )}
-            defaultSort={[0, "asc"]}
-            footer={[
-                "Career",
-                null,
-                null,
-                careerStats.gp,
-                careerStats.gs,
-                careerStats.min.toFixed(1),
-                careerStats.fg.toFixed(1),
-                careerStats.fga.toFixed(1),
-                careerStats.fgp.toFixed(1),
-                careerStats.tp.toFixed(1),
-                careerStats.tpa.toFixed(1),
-                careerStats.tpp.toFixed(1),
-                careerStats.ft.toFixed(1),
-                careerStats.fta.toFixed(1),
-                careerStats.ftp.toFixed(1),
-                careerStats.orb.toFixed(1),
-                careerStats.drb.toFixed(1),
-                careerStats.trb.toFixed(1),
-                careerStats.ast.toFixed(1),
-                careerStats.tov.toFixed(1),
-                careerStats.stl.toFixed(1),
-                careerStats.blk.toFixed(1),
-                careerStats.ba.toFixed(1),
-                careerStats.pf.toFixed(1),
-                careerStats.pts.toFixed(1),
-            ]}
-            name={name}
-            rows={stats.map((ps, i) => {
-                return {
-                    key: i,
-                    data: [
-                        ps.season,
-                        <a
-                            href={helpers.leagueUrl([
-                                "roster",
-                                ps.abbrev,
-                                ps.season,
-                            ])}
-                        >
-                            {ps.abbrev}
-                        </a>,
-                        ps.age,
-                        ps.gp,
-                        ps.gs,
-                        ps.min.toFixed(1),
-                        ps.fg.toFixed(1),
-                        ps.fga.toFixed(1),
-                        ps.fgp.toFixed(1),
-                        ps.tp.toFixed(1),
-                        ps.tpa.toFixed(1),
-                        ps.tpp.toFixed(1),
-                        ps.ft.toFixed(1),
-                        ps.fta.toFixed(1),
-                        ps.ftp.toFixed(1),
-                        ps.orb.toFixed(1),
-                        ps.drb.toFixed(1),
-                        ps.trb.toFixed(1),
-                        ps.ast.toFixed(1),
-                        ps.tov.toFixed(1),
-                        ps.stl.toFixed(1),
-                        ps.blk.toFixed(1),
-                        ps.ba.toFixed(1),
-                        ps.pf.toFixed(1),
-                        ps.pts.toFixed(1),
-                    ],
-                };
-            })}
-        />
+        <>
+            <h3>{name}</h3>
+            <DataTable
+                className="mb-3"
+                cols={getCols(
+                    "Year",
+                    "Team",
+                    "Age",
+                    ...stats.map(stat => `stat:${stat}`),
+                )}
+                defaultSort={[0, "asc"]}
+                footer={[
+                    "Career",
+                    null,
+                    null,
+                    ...stats.map(stat =>
+                        helpers.roundStat(careerStats[stat], stat),
+                    ),
+                ]}
+                name={`Player:${name}${playoffs ? ":Playoffs" : ""}`}
+                rows={playerStats.map((ps, i) => {
+                    return {
+                        key: i,
+                        data: [
+                            ps.season,
+                            <a
+                                href={helpers.leagueUrl([
+                                    "roster",
+                                    ps.abbrev,
+                                    ps.season,
+                                ])}
+                            >
+                                {ps.abbrev}
+                            </a>,
+                            ps.age,
+                            ...stats.map(stat =>
+                                helpers.roundStat(ps[stat], stat),
+                            ),
+                        ],
+                    };
+                })}
+            />
+        </>
     );
 };
 
 StatsTable.propTypes = {
-    careerStats: PropTypes.object,
     name: PropTypes.string.isRequired,
-    stats: PropTypes.arrayOf(PropTypes.object),
-};
-
-const AdvStatsTable = ({ careerStats = {}, name, stats = [] }) => {
-    return (
-        <DataTable
-            className="mb-3"
-            cols={getCols(
-                "Year",
-                "Team",
-                "Age",
-                "G",
-                "Min",
-                "PER",
-                "EWA",
-                "ORtg",
-                "DRtg",
-                "OWS",
-                "DWS",
-                "WS",
-                "WS/48",
-                "TS%",
-                "3PAr",
-                "FTr",
-                "ORB%",
-                "DRB%",
-                "TRB%",
-                "AST%",
-                "STL%",
-                "BLK%",
-                "TOV%",
-                "USG%",
-                "+/-",
-            )}
-            defaultSort={[0, "asc"]}
-            footer={[
-                "Career",
-                null,
-                null,
-                careerStats.gp,
-                Math.round(careerStats.gp * careerStats.min),
-                careerStats.per.toFixed(1),
-                careerStats.ewa.toFixed(1),
-                careerStats.ortg.toFixed(1),
-                careerStats.drtg.toFixed(1),
-                careerStats.ows.toFixed(1),
-                careerStats.dws.toFixed(1),
-                careerStats.ws.toFixed(1),
-                helpers.roundWinp(careerStats.ws48),
-                careerStats.tsp.toFixed(1),
-                careerStats.tpar.toFixed(1),
-                careerStats.ftr.toFixed(1),
-                careerStats.orbp.toFixed(1),
-                careerStats.drbp.toFixed(1),
-                careerStats.trbp.toFixed(1),
-                careerStats.astp.toFixed(1),
-                careerStats.stlp.toFixed(1),
-                careerStats.blkp.toFixed(1),
-                careerStats.tovp.toFixed(1),
-                careerStats.usgp.toFixed(1),
-                helpers.plusMinus(careerStats.pm, 1),
-            ]}
-            name={name}
-            rows={stats.map((ps, i) => {
-                return {
-                    key: i,
-                    data: [
-                        ps.season,
-                        <a
-                            href={helpers.leagueUrl([
-                                "roster",
-                                ps.abbrev,
-                                ps.season,
-                            ])}
-                        >
-                            {ps.abbrev}
-                        </a>,
-                        ps.age,
-                        ps.gp,
-                        Math.round(ps.gp * ps.min),
-                        ps.per.toFixed(1),
-                        ps.ewa.toFixed(1),
-                        ps.ortg.toFixed(1),
-                        ps.drtg.toFixed(1),
-                        ps.ows.toFixed(1),
-                        ps.dws.toFixed(1),
-                        ps.ws.toFixed(1),
-                        helpers.roundWinp(ps.ws48),
-                        ps.tsp.toFixed(1),
-                        ps.tpar.toFixed(1),
-                        ps.ftr.toFixed(1),
-                        ps.orbp.toFixed(1),
-                        ps.drbp.toFixed(1),
-                        ps.trbp.toFixed(1),
-                        ps.astp.toFixed(1),
-                        ps.stlp.toFixed(1),
-                        ps.blkp.toFixed(1),
-                        ps.tovp.toFixed(1),
-                        ps.usgp.toFixed(1),
-                        helpers.plusMinus(ps.pm, 1),
-                    ],
-                };
-            })}
-        />
-    );
-};
-
-AdvStatsTable.propTypes = {
-    careerStats: PropTypes.object,
-    name: PropTypes.string.isRequired,
-    stats: PropTypes.arrayOf(PropTypes.object),
+    p: PropTypes.object.isRequired,
+    playoffs: PropTypes.bool,
+    stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 const ShotLocationsTable = ({ careerStats = {}, name, stats = [] }) => {
@@ -260,9 +98,9 @@ const ShotLocationsTable = ({ careerStats = {}, name, stats = [] }) => {
                 "Year",
                 "Team",
                 "Age",
-                "G",
-                "GS",
-                "Min",
+                "stat:gp",
+                "stat:gs",
+                "stat:min",
                 "M",
                 "A",
                 "%",
@@ -375,6 +213,7 @@ const Player = ({
     retired,
     showContract,
     showTradeFor,
+    statTables,
 }) => {
     setTitle(player.name);
 
@@ -537,20 +376,9 @@ const Player = ({
             ) : null}
 
             <h2>Regular Season</h2>
-            <h3>Stats</h3>
-            <StatsTable
-                careerStats={player.careerStats}
-                name="Player:Stats"
-                stats={statsRegularSeason}
-            />
-
-            <h3>Advanced</h3>
-            <AdvStatsTable
-                careerStats={player.careerStats}
-                name="Player:AdvStats"
-                stats={statsRegularSeason}
-            />
-
+            {statTables.map(({ name, stats }) => (
+                <StatsTable key={name} name={name} stats={stats} p={player} />
+            ))}
             {process.env.SPORT === "basketball" ? (
                 <>
                     <h3>Shot Locations</h3>
@@ -563,20 +391,15 @@ const Player = ({
             ) : null}
 
             <h2>Playoffs</h2>
-            <h3>Stats</h3>
-            <StatsTable
-                careerStats={player.careerStatsPlayoffs}
-                name="Player:PlayoffStats"
-                stats={statsPlayoffs}
-            />
-
-            <h3>Advanced</h3>
-            <AdvStatsTable
-                careerStats={player.careerStatsPlayoffs}
-                name="Player:PlayoffAdvStats"
-                stats={statsPlayoffs}
-            />
-
+            {statTables.map(({ name, stats }) => (
+                <StatsTable
+                    key={name}
+                    name={name}
+                    stats={stats}
+                    p={player}
+                    playoffs
+                />
+            ))}
             {process.env.SPORT === "basketball" ? (
                 <>
                     <h3>Shot Locations</h3>
@@ -732,6 +555,12 @@ Player.propTypes = {
     retired: PropTypes.bool.isRequired,
     showContract: PropTypes.bool.isRequired,
     showTradeFor: PropTypes.bool.isRequired,
+    statTables: PropTypes.arrayOf(
+        PropTypes.shape({
+            name: PropTypes.string.isRequired,
+            stats: PropTypes.arrayOf(PropTypes.string).isRequired,
+        }),
+    ).isRequired,
 };
 
 export default Player;

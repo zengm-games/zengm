@@ -1,7 +1,7 @@
 # football
 
-views involving ratings/stats
-- Player
+Player
+- abstract stats - build tables dynamically based on data structures from worker
 - etc
 
 how will deionUI(overrides) work with types?

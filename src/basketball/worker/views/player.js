@@ -202,6 +202,64 @@ async function updatePlayer(
             "reb",
         ];
 
+        const statTables = [
+            {
+                name: "Stats",
+                stats: [
+                    "gp",
+                    "gs",
+                    "min",
+                    "fg",
+                    "fga",
+                    "fgp",
+                    "tp",
+                    "tpa",
+                    "tpp",
+                    "ft",
+                    "fta",
+                    "ftp",
+                    "orb",
+                    "drb",
+                    "trb",
+                    "ast",
+                    "tov",
+                    "stl",
+                    "blk",
+                    "ba",
+                    "pf",
+                    "pts",
+                ],
+            },
+            {
+                name: "Advanced",
+                stats: [
+                    "gp",
+                    "gs",
+                    "min",
+                    "per",
+                    "ewa",
+                    "ortg",
+                    "drtg",
+                    "ows",
+                    "dws",
+                    "ws",
+                    "ws48",
+                    "tsp",
+                    "tpar",
+                    "ftr",
+                    "orbp",
+                    "drbp",
+                    "trbp",
+                    "astp",
+                    "stlp",
+                    "blkp",
+                    "tovp",
+                    "usgp",
+                    "pm",
+                ],
+            },
+        ];
+
         return {
             player: p,
             showTradeFor: p.tid !== g.userTid && p.tid >= 0,
@@ -218,6 +276,7 @@ async function updatePlayer(
             events,
             feats,
             ratings,
+            statTables,
         };
     }
 }

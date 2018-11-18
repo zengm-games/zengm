@@ -34,6 +34,7 @@ import Schedule from "./Schedule";
 import Standings from "./Standings";
 import TeamFinances from "./TeamFinances";
 import Transactions from "./Transactions";
+import WatchList from "./WatchList";
 
 export default {
     Account,
@@ -70,4 +71,5 @@ export default {
     Standings,
     TeamFinances,
     Transactions,
+    WatchList,
 };

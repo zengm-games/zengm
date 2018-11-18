@@ -22,6 +22,22 @@ async function updatePlayers(
         inputs.statType !== state.statType ||
         inputs.playoffs !== state.playoffs
     ) {
+        const stats = [
+            "gp",
+            "min",
+            "fgp",
+            "tpp",
+            "ftp",
+            "trb",
+            "ast",
+            "tov",
+            "stl",
+            "blk",
+            "pts",
+            "per",
+            "ewa",
+        ];
+
         let players = await idb.getCopies.players({
             // In Firefox, objects have a "watch" function
             filter: p => p.watch && typeof p.watch !== "function",
@@ -40,21 +56,7 @@ async function updatePlayers(
                 "draft",
             ],
             ratings: ["ovr", "pot", "skills", "pos"],
-            stats: [
-                "gp",
-                "min",
-                "fgp",
-                "tpp",
-                "ftp",
-                "trb",
-                "ast",
-                "tov",
-                "stl",
-                "blk",
-                "pts",
-                "per",
-                "ewa",
-            ],
+            stats,
             season: g.season,
             statType: inputs.statType,
             playoffs: inputs.playoffs === "playoffs",
@@ -80,6 +82,7 @@ async function updatePlayers(
             players,
             playoffs: inputs.playoffs,
             statType: inputs.statType,
+            stats,
         };
     }
 }

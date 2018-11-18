@@ -4,15 +4,15 @@ import DropdownItem from "reactstrap/lib/DropdownItem";
 import DropdownMenu from "reactstrap/lib/DropdownMenu";
 import DropdownToggle from "reactstrap/lib/DropdownToggle";
 import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
-import { PLAYER } from "../../../deion/common";
-import { getCols, helpers, setTitle, toWorker } from "../../../deion/ui/util";
+import { PLAYER } from "../../common";
+import { getCols, helpers, setTitle, toWorker } from "../util";
 import {
     DataTable,
     Dropdown,
     NewWindowLink,
     PlayerNameLabels,
     WatchBlock,
-} from "../../../deion/ui/components";
+} from "../components";
 
 class WatchList extends React.Component {
     constructor(props) {
@@ -36,7 +36,7 @@ class WatchList extends React.Component {
     }
 
     render() {
-        const { players, playoffs, statType } = this.props;
+        const { players, playoffs, statType, stats } = this.props;
 
         setTitle("Watch List");
 
@@ -49,23 +49,8 @@ class WatchList extends React.Component {
             "Ovr",
             "Pot",
             "Contract",
-            "G",
-            "Min",
-            "FG%",
-            "3P%",
-            "FT%",
-            "stat:trb",
-            "Ast",
-            "Tov",
-            "Stl",
-            "Blk",
-            "Pts",
-            "PER",
-            "EWA",
+            ...stats.map(stat => `stat:${stat}`),
         );
-
-        // Number of decimals for many stats
-        const d = statType === "totals" ? 0 : 1;
 
         const rows = players.map(p => {
             let contract;
@@ -104,19 +89,13 @@ class WatchList extends React.Component {
                     p.ratings.ovr,
                     p.ratings.pot,
                     contract,
-                    p.stats.gp,
-                    p.stats.min.toFixed(d),
-                    p.stats.fgp.toFixed(1),
-                    p.stats.tpp.toFixed(1),
-                    p.stats.ftp.toFixed(1),
-                    p.stats.trb.toFixed(d),
-                    p.stats.ast.toFixed(d),
-                    p.stats.tov.toFixed(d),
-                    p.stats.stl.toFixed(1),
-                    p.stats.blk.toFixed(d),
-                    p.stats.pts.toFixed(d),
-                    p.stats.per.toFixed(1),
-                    p.stats.ewa.toFixed(1),
+                    ...stats.map(stat =>
+                        helpers.roundStat(
+                            statType === "totals",
+                            stat,
+                            p.stats[stat],
+                        ),
+                    ),
                 ],
             };
         });
@@ -187,6 +166,7 @@ WatchList.propTypes = {
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     playoffs: PropTypes.oneOf(["playoffs", "regularSeason"]).isRequired,
     statType: PropTypes.oneOf(["per36", "perGame", "totals"]).isRequired,
+    stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default WatchList;

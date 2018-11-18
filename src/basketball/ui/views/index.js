@@ -11,7 +11,6 @@ import Leaders from "./Leaders";
 import LeagueDashboard from "./LeagueDashboard";
 import LiveGame from "./LiveGame";
 import LoginOrRegister from "./LoginOrRegister";
-import Negotiation from "./Negotiation";
 import Player from "./Player";
 import PlayerShotLocations from "./PlayerShotLocations";
 import PlayerStatDists from "./PlayerStatDists";
@@ -33,7 +32,6 @@ export default {
     LeagueDashboard,
     LiveGame,
     LoginOrRegister,
-    Negotiation,
     Player,
     PlayerShotLocations,
     PlayerStatDists,

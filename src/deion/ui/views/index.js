@@ -25,6 +25,7 @@ import Live from "./Live";
 import LostPassword from "./LostPassword";
 import Message from "./Message";
 import MultiTeamMode from "./MultiTeamMode";
+import Negotiation from "./Negotiation";
 import NegotiationList from "./NegotiationList";
 import NewLeague from "./NewLeague";
 import NewTeam from "./NewTeam";
@@ -72,6 +73,7 @@ export default {
     LostPassword,
     Message,
     MultiTeamMode,
+    Negotiation,
     NegotiationList,
     NewLeague,
     NewTeam,

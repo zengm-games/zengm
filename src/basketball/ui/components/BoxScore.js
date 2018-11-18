@@ -303,19 +303,19 @@ class BoxScore extends React.Component {
                                     <tr>
                                         <th>Name</th>
                                         <th>Pos</th>
-                                        <th>Min</th>
+                                        <th>MP</th>
                                         <th>FG</th>
                                         <th>3Pt</th>
                                         <th>FT</th>
-                                        <th>Off</th>
-                                        <th>Reb</th>
-                                        <th>Ast</th>
+                                        <th>ORB</th>
+                                        <th>TRB</th>
+                                        <th>AST</th>
                                         <th>TO</th>
-                                        <th>Stl</th>
-                                        <th>Blk</th>
+                                        <th>STL</th>
+                                        <th>BLK</th>
                                         <th>BA</th>
                                         <th>PF</th>
-                                        <th>Pts</th>
+                                        <th>PTS</th>
                                         <th>+/-</th>
                                         <th title="Game Score">GmSc</th>
                                     </tr>

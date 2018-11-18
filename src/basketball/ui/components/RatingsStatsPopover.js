@@ -222,23 +222,23 @@ class RatingsStatsPopover extends React.Component<Props, State> {
                     <div className="col-4">
                         <b>Stats</b>
                         <br />
-                        Pts: {stats.pts.toFixed(1)}
+                        PTS: {stats.pts.toFixed(1)}
                         <br />
-                        Reb: {stats.trb.toFixed(1)}
+                        TRB: {stats.trb.toFixed(1)}
                         <br />
-                        Ast: {stats.ast.toFixed(1)}
+                        AST: {stats.ast.toFixed(1)}
                     </div>
                     <div className="col-4">
                         <br />
-                        Blk: {stats.blk.toFixed(1)}
+                        BLK: {stats.blk.toFixed(1)}
                         <br />
-                        Stl: {stats.stl.toFixed(1)}
+                        STL: {stats.stl.toFixed(1)}
                         <br />
                         TO: {stats.tov.toFixed(1)}
                     </div>
                     <div className="col-4">
                         <br />
-                        Min: {stats.min.toFixed(1)}
+                        MP: {stats.min.toFixed(1)}
                         <br />
                         PER: {stats.per.toFixed(1)}
                         <br />

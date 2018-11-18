@@ -472,10 +472,10 @@ const LeagueDashboard = ({
                             <th title="Potential Rating">Pot</th>
                             <th>Contract</th>
                             <th title="Games Played">GP</th>
-                            <th title="Minutes Per Game">Min</th>
-                            <th title="Points Per Game">Pts</th>
-                            <th title="Rebounds Per Game">Reb</th>
-                            <th title="Assists Per Game">Ast</th>
+                            <th title="Minutes Per Game">MP</th>
+                            <th title="Points Per Game">PTS</th>
+                            <th title="Rebounds Per Game">TRB</th>
+                            <th title="Assists Per Game">AST</th>
                             <th title="Player Efficiency Rating">PER</th>
                         </tr>
                     </thead>

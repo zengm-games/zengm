@@ -539,10 +539,10 @@ class Roster extends React.Component {
                                     <th>Contract</th>
                                 ) : null}
                                 <th title="Games Played">GP</th>
-                                <th title="Minutes Per Game">Min</th>
-                                <th title="Points Per Game">Pts</th>
-                                <th title="Rebounds Per Game">Reb</th>
-                                <th title="Assists Per Game">Ast</th>
+                                <th title="Minutes Per Game">MP</th>
+                                <th title="Points Per Game">PTS</th>
+                                <th title="Rebounds Per Game">TRB</th>
+                                <th title="Assists Per Game">AST</th>
                                 <th title="Player Efficiency Rating">PER</th>
                                 {editable ? (
                                     <th title="Playing Time Modifier">

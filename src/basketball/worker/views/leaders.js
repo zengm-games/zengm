@@ -88,7 +88,7 @@ async function updateLeaders(
         const categories = [];
         categories.push({
             name: "Points",
-            stat: "Pts",
+            stat: "PTS",
             statProp: "pts",
             title: "Points Per Game",
             data: [],
@@ -97,7 +97,7 @@ async function updateLeaders(
         });
         categories.push({
             name: "Rebounds",
-            stat: "Reb",
+            stat: "TRB",
             statProp: "trb",
             title: "Rebounds Per Game",
             data: [],
@@ -106,7 +106,7 @@ async function updateLeaders(
         });
         categories.push({
             name: "Assists",
-            stat: "Ast",
+            stat: "AST",
             statProp: "ast",
             title: "Assists Per Game",
             data: [],
@@ -142,7 +142,7 @@ async function updateLeaders(
         });
         categories.push({
             name: "Blocks",
-            stat: "Blk",
+            stat: "BLK",
             statProp: "blk",
             title: "Blocks Per Game",
             data: [],
@@ -151,7 +151,7 @@ async function updateLeaders(
         });
         categories.push({
             name: "Steals",
-            stat: "Stl",
+            stat: "STL",
             statProp: "stl",
             title: "Steals Per Game",
             data: [],
@@ -160,7 +160,7 @@ async function updateLeaders(
         });
         categories.push({
             name: "Minutes",
-            stat: "Min",
+            stat: "MP",
             statProp: "min",
             title: "Minutes Per Game",
             data: [],

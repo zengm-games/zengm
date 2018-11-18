@@ -1,9 +1,5 @@
 # football
 
-Player
-- abstract stats - build tables dynamically based on data structures from worker
-- etc
-
 how will deionUI(overrides) work with types?
 - can pass them as generics, then apply them to factory functions
 

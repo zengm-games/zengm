@@ -7,10 +7,8 @@ import {
     SafeHtml,
     SkillsBlock,
     WatchBlock,
-} from "../../../deion/ui/components";
-import { getCols, helpers, setTitle, toWorker } from "../../../deion/ui/util";
-import components from "../components";
-const { RatingsOverview } = components;
+} from "../components";
+import { getCols, helpers, overrides, setTitle, toWorker } from "../util";
 
 const Relatives = ({ relatives }) => {
     if (relatives.length === 0) {
@@ -348,7 +346,9 @@ const Player = ({
 
                 <div className="col-sm-6 text-nowrap">
                     {!retired ? (
-                        <RatingsOverview ratings={player.ratings} />
+                        <overrides.components.RatingsOverview
+                            ratings={player.ratings}
+                        />
                     ) : null}
                 </div>
             </div>

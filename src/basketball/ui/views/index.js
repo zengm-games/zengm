@@ -8,7 +8,6 @@ import History from "./History";
 import HistoryAll from "./HistoryAll";
 import LeagueDashboard from "./LeagueDashboard";
 import LiveGame from "./LiveGame";
-import Player from "./Player";
 import PlayerShotLocations from "./PlayerShotLocations";
 import Roster from "./Roster";
 import TeamRecords from "./TeamRecords";
@@ -23,7 +22,6 @@ export default {
     HistoryAll,
     LeagueDashboard,
     LiveGame,
-    Player,
     PlayerShotLocations,
     Roster,
     TeamRecords,

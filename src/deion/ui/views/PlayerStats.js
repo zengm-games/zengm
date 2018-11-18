@@ -6,8 +6,8 @@ import {
     JumpTo,
     NewWindowLink,
     PlayerNameLabels,
-} from "../../../deion/ui/components";
-import { getCols, helpers, setTitle } from "../../../deion/ui/util";
+} from "../components";
+import { getCols, helpers, setTitle } from "../util";
 
 const PlayerStats = ({
     abbrev,
@@ -28,9 +28,6 @@ const PlayerStats = ({
         "Team",
         ...stats.map(stat => `stat:${stat}`),
     );
-
-    // Number of decimals for many stats
-    const d = statType === "totals" ? 0 : 1;
 
     const rows = players.map(p => {
         let pos;
@@ -57,34 +54,9 @@ const PlayerStats = ({
             actualTid = p.stats.tid;
         }
 
-        const roundOverrides =
-            process.env.SPORT === "basketball"
-                ? {
-                      gp: "none",
-                      gs: "none",
-                      fgp: "oneDecimalPlace",
-                      tpp: "oneDecimalPlace",
-                      ftp: "oneDecimalPlace",
-                      ws48: "roundWinp",
-                      pm: "plusMinus",
-                  }
-                : {};
-
-        const statsRow = stats.map(stat => {
-            if (roundOverrides[stat] === "none") {
-                return p.stats[stat];
-            }
-            if (roundOverrides[stat] === "oneDecimalPlace") {
-                return p.stats[stat].toFixed(1);
-            }
-            if (roundOverrides[stat] === "roundWinp") {
-                return helpers.roundWinp(p.stats[stat]);
-            }
-            if (roundOverrides[stat] === "plusMinus") {
-                return helpers.plusMinus(p.stats[stat], d);
-            }
-            return p.stats[stat].toFixed(d);
-        });
+        const statsRow = stats.map(stat =>
+            helpers.roundStat(statType === "totals", stat, p.stats[stat]),
+        );
 
         return {
             key: p.pid,

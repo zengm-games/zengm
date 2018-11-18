@@ -59,10 +59,43 @@ const upperCaseFirstLetter = (string: string): string => {
     return `${string.charAt(0).toUpperCase()}${string.slice(1)}`;
 };
 
+const roundOverrides =
+    process.env.SPORT === "basketball"
+        ? {
+              gp: "none",
+              gs: "none",
+              fgp: "oneDecimalPlace",
+              tpp: "oneDecimalPlace",
+              ftp: "oneDecimalPlace",
+              ws48: "roundWinp",
+              pm: "plusMinus",
+          }
+        : {};
+
+const roundStat = (totals: boolean, stat: string, value: number): string => {
+    // Number of decimals for many stats
+    const d = totals ? 0 : 1;
+
+    if (roundOverrides[stat] === "none") {
+        return String(value);
+    }
+    if (roundOverrides[stat] === "oneDecimalPlace") {
+        return value.toFixed(1);
+    }
+    if (roundOverrides[stat] === "roundWinp") {
+        return commonHelpers.roundWinp(value);
+    }
+    if (roundOverrides[stat] === "plusMinus") {
+        return plusMinus(value, d);
+    }
+    return value.toFixed(d);
+};
+
 const helpers = Object.assign({}, commonHelpers, {
     leagueUrl,
     numberWithCommas,
     plusMinus,
+    roundStat,
     roundsWonText,
     upperCaseFirstLetter,
 });

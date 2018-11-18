@@ -64,6 +64,7 @@ const roundOverrides =
         ? {
               gp: "none",
               gs: "none",
+              gmsc: "oneDecimalPlace",
               fgp: "oneDecimalPlace",
               tpp: "oneDecimalPlace",
               ftp: "oneDecimalPlace",

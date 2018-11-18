@@ -29,6 +29,7 @@ import NegotiationList from "./NegotiationList";
 import NewLeague from "./NewLeague";
 import NewTeam from "./NewTeam";
 import Options from "./Options";
+import PlayerFeats from "./PlayerFeats";
 import PlayerRatings from "./PlayerRatings";
 import PlayerRatingDists from "./PlayerRatingDists";
 import PlayerStats from "./PlayerStats";
@@ -75,6 +76,7 @@ export default {
     NewLeague,
     NewTeam,
     Options,
+    PlayerFeats,
     PlayerRatings,
     PlayerRatingDists,
     PlayerStats,

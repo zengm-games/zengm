@@ -13,7 +13,6 @@ import LiveGame from "./LiveGame";
 import LoginOrRegister from "./LoginOrRegister";
 import Negotiation from "./Negotiation";
 import Player from "./Player";
-import PlayerFeats from "./PlayerFeats";
 import PlayerShotLocations from "./PlayerShotLocations";
 import PlayerStatDists from "./PlayerStatDists";
 import Roster from "./Roster";
@@ -36,7 +35,6 @@ export default {
     LoginOrRegister,
     Negotiation,
     Player,
-    PlayerFeats,
     PlayerShotLocations,
     PlayerStatDists,
     Roster,

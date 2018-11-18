@@ -8,34 +8,16 @@ import {
 } from "../../../deion/ui/components";
 import { getCols, helpers, setTitle } from "../../../deion/ui/util";
 
-const PlayerFeats = ({ abbrev, feats, playoffs, season, userTid }) => {
+const PlayerFeats = ({ abbrev, feats, playoffs, season, stats, userTid }) => {
     setTitle("Statistical Feats");
+
+    console.log(feats);
 
     const cols = getCols(
         "Name",
         "Pos",
         "Team",
-        "GS",
-        "Min",
-        "FG",
-        "FGA",
-        "FG%",
-        "3P",
-        "3PA",
-        "3P%",
-        "FT",
-        "FTA",
-        "FT%",
-        "ORB",
-        "DRB",
-        "TRB",
-        "Ast",
-        "Tov",
-        "Stl",
-        "Blk",
-        "PF",
-        "Pts",
-        "GmSc",
+        ...stats.map(stat => `stat:${stat}`),
         "Opp",
         "Result",
         "Season",
@@ -52,27 +34,9 @@ const PlayerFeats = ({ abbrev, feats, playoffs, season, userTid }) => {
                 <a href={helpers.leagueUrl(["roster", p.abbrev, p.season])}>
                     {p.abbrev}
                 </a>,
-                p.stats.gs,
-                p.stats.min.toFixed(1),
-                p.stats.fg,
-                p.stats.fga,
-                p.stats.fgp.toFixed(1),
-                p.stats.tp,
-                p.stats.tpa,
-                p.stats.tpp.toFixed(1),
-                p.stats.ft,
-                p.stats.fta,
-                p.stats.ftp.toFixed(1),
-                p.stats.orb,
-                p.stats.drb,
-                p.stats.trb,
-                p.stats.ast,
-                p.stats.tov,
-                p.stats.stl,
-                p.stats.blk,
-                p.stats.pf,
-                p.stats.pts,
-                helpers.gameScore(p.stats).toFixed(1),
+                ...stats.map(stat =>
+                    helpers.roundStat(p.stats[stat], stat, true),
+                ),
                 <a href={helpers.leagueUrl(["roster", p.oppAbbrev, p.season])}>
                     {p.oppAbbrev}
                 </a>,
@@ -130,6 +94,7 @@ PlayerFeats.propTypes = {
     playoffs: PropTypes.oneOf(["playoffs", "regularSeason"]).isRequired,
     season: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
         .isRequired,
+    stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     userTid: PropTypes.number.isRequired,
 };
 

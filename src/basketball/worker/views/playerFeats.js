@@ -1,7 +1,7 @@
 // @flow
 
 import { idb } from "../db";
-import { g } from "../util";
+import { g, helpers } from "../util";
 import type { GetOutput, UpdateEvents } from "../../../deion/common/types";
 
 async function updatePlayers(
@@ -65,13 +65,40 @@ async function updatePlayers(
 
             feat.abbrev = g.teamAbbrevsCache[feat.tid];
             feat.oppAbbrev = g.teamAbbrevsCache[feat.oppTid];
+
+            feat.stats.gmsc = helpers.gameScore(feat.stats);
         }
 
+        const stats = [
+            "gs",
+            "min",
+            "fg",
+            "fga",
+            "fgp",
+            "tp",
+            "tpa",
+            "tpp",
+            "ft",
+            "fta",
+            "ftp",
+            "orb",
+            "drb",
+            "trb",
+            "ast",
+            "tov",
+            "stl",
+            "blk",
+            "pf",
+            "pts",
+            "gmsc",
+        ];
+
         return {
-            feats,
             abbrev: inputs.abbrev,
-            season: inputs.season,
+            feats,
             playoffs: inputs.playoffs,
+            season: inputs.season,
+            stats,
             userTid: g.userTid,
         };
     }

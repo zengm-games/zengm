@@ -2,7 +2,6 @@
 
 views involving ratings/stats
 - Player
-- PlayerFeats
 - TeamStats
   - make sure opponent stats work
 - etc
@@ -58,6 +57,9 @@ make it clear that accounts are shared, change name of Gold to something sport a
 - NagModal
 
 HallOfFame criteria text
+
+statistical feats
+- text on PlayerFeats
 
 --
 

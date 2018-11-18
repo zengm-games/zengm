@@ -115,11 +115,6 @@ const cols: {
         desc: "Finals Most Valuable Player",
         sortType: "name",
     },
-    GmSc: {
-        desc: "Game Score",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
     HOF: {
         sortSequence: ["desc", "asc"],
     },
@@ -459,6 +454,11 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    "stat:gmsc": {
+        desc: "Game Score",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     "stat:gp": {
         desc: "Games Played",
         sortSequence: ["desc", "asc"],
@@ -604,6 +604,7 @@ const titleOverrides = {
     "stat:ft": "FT",
     "stat:fta": "FTA",
     "stat:ftr": "FTr",
+    "stat:gmsc": "GmSc",
     "stat:gp": "G",
     "stat:gs": "GS",
     "stat:min": "MP",

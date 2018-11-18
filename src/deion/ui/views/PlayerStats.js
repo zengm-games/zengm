@@ -134,10 +134,19 @@ const PlayerStats = ({
             </h1>
             <p>
                 More:{" "}
-                <a href={helpers.leagueUrl(["player_shot_locations", season])}>
-                    Shot Locations
-                </a>{" "}
-                |{" "}
+                {process.env.SPORT === "basketball" ? (
+                    <>
+                        <a
+                            href={helpers.leagueUrl([
+                                "player_shot_locations",
+                                season,
+                            ])}
+                        >
+                            Shot Locations
+                        </a>{" "}
+                        |{" "}
+                    </>
+                ) : null}
                 <a href={helpers.leagueUrl(["player_stat_dists", season])}>
                     Stat Distributions
                 </a>

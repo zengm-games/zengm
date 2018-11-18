@@ -4,9 +4,6 @@ views involving ratings/stats
 - make getCols handle this better like stats:x or ratings:x so it can be programatically generated. then pass list of cols from worker. maybe use this to implement the basic/advanced switches too!
   - make sure opponent stats work
 
-PlayerStats
-- get rid of per36 and shotLocations if football
-
 how will deionUI(overrides) work with types?
 - can pass them as generics, then apply them to factory functions
 
@@ -21,6 +18,9 @@ what's the end state here? options:
 figure out dynamic import of schema in LeagueFileUpload.js
 
 better way to pass awards to Dropdown.js
+- and get rid of per36
+
+get rid of all links to show locations pages
 
 yarn workspaces
 - fucks up eslint and browserify, ugh. maybe not worth it.

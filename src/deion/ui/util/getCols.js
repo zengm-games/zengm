@@ -239,11 +239,6 @@ const cols: {
         desc: "Rookie of the Year",
         sortType: "name",
     },
-    Reb: {
-        desc: "Rebounds Per Game",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
     Result: {},
     Retired: {
         sortSequence: ["desc", "asc"],

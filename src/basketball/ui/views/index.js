@@ -21,7 +21,6 @@ import Player from "./Player";
 import PlayerFeats from "./PlayerFeats";
 import PlayerShotLocations from "./PlayerShotLocations";
 import PlayerStatDists from "./PlayerStatDists";
-import PlayerStats from "./PlayerStats";
 import Roster from "./Roster";
 import TeamHistory from "./TeamHistory";
 import TeamRecords from "./TeamRecords";
@@ -55,7 +54,6 @@ export default {
     PlayerFeats,
     PlayerShotLocations,
     PlayerStatDists,
-    PlayerStats,
     Roster,
     TeamHistory,
     TeamRecords,

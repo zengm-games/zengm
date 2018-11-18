@@ -26,6 +26,7 @@ import NewTeam from "./NewTeam";
 import Options from "./Options";
 import PlayerRatings from "./PlayerRatings";
 import PlayerRatingDists from "./PlayerRatingDists";
+import PlayerStats from "./PlayerStats";
 import Playoffs from "./Playoffs";
 import PowerRankings from "./PowerRankings";
 import ResetPassword from "./ResetPassword";
@@ -61,6 +62,7 @@ export default {
     Options,
     PlayerRatings,
     PlayerRatingDists,
+    PlayerStats,
     Playoffs,
     PowerRankings,
     ResetPassword,

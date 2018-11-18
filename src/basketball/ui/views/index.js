@@ -28,7 +28,6 @@ import TeamShotLocations from "./TeamShotLocations";
 import TeamStatDists from "./TeamStatDists";
 import TeamStats from "./TeamStats";
 import Trade from "./Trade";
-import TradingBlock from "./TradingBlock";
 
 export default {
     AwardsRecords,
@@ -59,5 +58,4 @@ export default {
     TeamStatDists,
     TeamStats,
     Trade,
-    TradingBlock,
 };

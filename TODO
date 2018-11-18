@@ -7,6 +7,10 @@ views involving ratings/stats
 how will deionUI(overrides) work with types?
 - can pass them as generics, then apply them to factory functions
 
+trading block
+- column widths (player name 100%)
+- DRY for assembling rows/cols of tables (same except first col)
+
 what's the end state here? options:
 - everything is in deion, and process.env.SPORT governs the output
   - that'd be nice, but probably unrealistic

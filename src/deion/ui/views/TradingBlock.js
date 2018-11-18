@@ -1,51 +1,8 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { PHASE } from "../../../deion/common";
-import { getCols, helpers, setTitle, toWorker } from "../../../deion/ui/util";
-import clickable from "../../../deion/ui/wrappers/clickable";
-import {
-    DataTable,
-    NewWindowLink,
-    PlayerNameLabels,
-    ResponsiveTableWrapper,
-} from "../../../deion/ui/components";
-
-const OfferPlayerRow = clickable(({ clicked, p, toggleClicked }) => {
-    return (
-        <tr
-            className={clicked ? "table-warning" : null}
-            onClick={toggleClicked}
-        >
-            <td>
-                <PlayerNameLabels
-                    injury={p.injury}
-                    pid={p.pid}
-                    skills={p.ratings.skills}
-                    watch={p.watch}
-                >
-                    {p.name}
-                </PlayerNameLabels>
-            </td>
-            <td>{p.ratings.pos}</td>
-            <td>{p.age}</td>
-            <td>{p.ratings.ovr}</td>
-            <td>{p.ratings.pot}</td>
-            <td>
-                {helpers.formatCurrency(p.contract.amount, "M")} thru{" "}
-                {p.contract.exp}
-            </td>
-            <td>{p.stats.min.toFixed(1)}</td>
-            <td>{p.stats.pts.toFixed(1)}</td>
-            <td>{p.stats.trb.toFixed(1)}</td>
-            <td>{p.stats.ast.toFixed(1)}</td>
-            <td>{p.stats.per.toFixed(1)}</td>
-        </tr>
-    );
-});
-
-OfferPlayerRow.propTypes = {
-    p: PropTypes.object.isRequired,
-};
+import { PHASE } from "../../common";
+import { getCols, helpers, setTitle, toWorker } from "../util";
+import { DataTable, NewWindowLink, PlayerNameLabels } from "../components";
 
 const Offer = props => {
     const {
@@ -60,6 +17,7 @@ const Offer = props => {
         pids,
         players,
         region,
+        stats,
         strategy,
         tid,
         warning,
@@ -68,32 +26,52 @@ const Offer = props => {
 
     let offerPlayers = null;
     if (players.length > 0) {
+        const cols = getCols(
+            "Name",
+            "Pos",
+            "Age",
+            "Ovr",
+            "Pot",
+            "Contract",
+            ...stats.map(stat => `stat:${stat}`),
+        );
+        cols[0].sortSequence = [];
+
+        const rows = players.map(p => {
+            return {
+                key: p.pid,
+                data: [
+                    <PlayerNameLabels
+                        injury={p.injury}
+                        pid={p.pid}
+                        skills={p.ratings.skills}
+                        watch={p.watch}
+                    >
+                        {p.name}
+                    </PlayerNameLabels>,
+                    p.ratings.pos,
+                    p.age,
+                    p.ratings.ovr,
+                    p.ratings.pot,
+                    <>
+                        {helpers.formatCurrency(p.contract.amount, "M")} thru{" "}
+                        {p.contract.exp}
+                    </>,
+                    ...stats.map(stat =>
+                        helpers.roundStat(false, stat, p.stats[stat]),
+                    ),
+                ],
+            };
+        });
+
         offerPlayers = (
             <div className="col-md-8">
-                <ResponsiveTableWrapper>
-                    <table className="table table-striped table-bordered table-sm table-hover">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th title="Position">Pos</th>
-                                <th>Age</th>
-                                <th title="Overall Rating">Ovr</th>
-                                <th title="Potential Rating">Pot</th>
-                                <th>Contract</th>
-                                <th title="Minutes Per Game">Min</th>
-                                <th title="Points Per Game">Pts</th>
-                                <th title="Rebounds Per Game">Reb</th>
-                                <th title="Assists Per Game">Ast</th>
-                                <th title="Player Efficiency Rating">PER</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {players.map(p => (
-                                <OfferPlayerRow key={p.pid} p={p} />
-                            ))}
-                        </tbody>
-                    </table>
-                </ResponsiveTableWrapper>
+                <DataTable
+                    cols={cols}
+                    defaultSort={[5, "desc"]}
+                    name="TradingBlockOffer"
+                    rows={rows}
+                />
             </div>
         );
     }
@@ -164,6 +142,7 @@ Offer.propTypes = {
     pids: PropTypes.arrayOf(PropTypes.number).isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     region: PropTypes.string.isRequired,
+    stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     strategy: PropTypes.string.isRequired,
     tid: PropTypes.number.isRequired,
     warning: PropTypes.string,
@@ -259,7 +238,7 @@ class TradingBlock extends React.Component {
     }
 
     render() {
-        const { gameOver, phase, userPicks, userRoster } = this.props;
+        const { gameOver, phase, stats, userPicks, userRoster } = this.props;
 
         setTitle("Trading Block");
 
@@ -284,11 +263,7 @@ class TradingBlock extends React.Component {
             "Ovr",
             "Pot",
             "Contract",
-            "Min",
-            "Pts",
-            "stat:trb",
-            "Ast",
-            "PER",
+            ...stats.map(stat => `stat:${stat}`),
         );
         cols[0].sortSequence = [];
 
@@ -315,15 +290,13 @@ class TradingBlock extends React.Component {
                     p.age,
                     p.ratings.ovr,
                     p.ratings.pot,
-                    <span>
+                    <>
                         {helpers.formatCurrency(p.contract.amount, "M")} thru{" "}
                         {p.contract.exp}
-                    </span>,
-                    p.stats.min.toFixed(1),
-                    p.stats.pts.toFixed(1),
-                    p.stats.trb.toFixed(1),
-                    p.stats.ast.toFixed(1),
-                    p.stats.per.toFixed(1),
+                    </>,
+                    ...stats.map(stat =>
+                        helpers.roundStat(false, stat, p.stats[stat]),
+                    ),
                 ],
             };
         });
@@ -404,6 +377,7 @@ class TradingBlock extends React.Component {
                             key={offer.tid}
                             handleClickNegotiate={this.handleClickNegotiate}
                             i={i}
+                            stats={stats}
                             {...offer}
                         />
                     );
@@ -436,6 +410,7 @@ class TradingBlock extends React.Component {
 TradingBlock.propTypes = {
     gameOver: PropTypes.bool.isRequired,
     phase: PropTypes.number.isRequired,
+    stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     userPicks: PropTypes.arrayOf(PropTypes.object).isRequired,
     userRoster: PropTypes.arrayOf(PropTypes.object).isRequired,
 };

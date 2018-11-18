@@ -13,6 +13,8 @@ async function updateUserRoster(
         updateEvents.includes("playerMovement") ||
         updateEvents.includes("gameSim")
     ) {
+        const stats = ["min", "pts", "trb", "ast", "per"];
+
         let [userRoster, userPicks] = await Promise.all([
             idb.cache.players.indexGetAll("playersByTid", g.userTid),
             await idb.getCopies.draftPicks({ tid: g.userTid }),
@@ -29,7 +31,7 @@ async function updateUserRoster(
                 "untradable",
             ],
             ratings: ["ovr", "pot", "skills", "pos"],
-            stats: ["min", "pts", "trb", "ast", "per"],
+            stats,
             season: g.season,
             tid: g.userTid,
             showNoStats: true,
@@ -44,6 +46,7 @@ async function updateUserRoster(
         return {
             gameOver: g.gameOver,
             phase: g.phase,
+            stats,
             userPicks,
             userRoster,
         };

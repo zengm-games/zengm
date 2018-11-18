@@ -5,10 +5,10 @@ import {
     Dropdown,
     NewWindowLink,
     PlayerNameLabels,
-} from "../../../deion/ui/components";
-import { getCols, helpers, setTitle } from "../../../deion/ui/util";
+} from "../components";
+import { getCols, helpers, setTitle } from "../util";
 
-const UpcomingFreeAgents = ({ players, season }) => {
+const UpcomingFreeAgents = ({ players, season, stats }) => {
     setTitle("Upcoming Free Agents");
 
     const cols = getCols(
@@ -18,11 +18,7 @@ const UpcomingFreeAgents = ({ players, season }) => {
         "Age",
         "Ovr",
         "Pot",
-        "Min",
-        "Pts",
-        "stat:trb",
-        "Ast",
-        "PER",
+        ...stats.map(stat => `stat:${stat}`),
         "Current Contract",
         "Desired Contract",
     );
@@ -46,19 +42,17 @@ const UpcomingFreeAgents = ({ players, season }) => {
                 p.age,
                 p.ratings.ovr,
                 p.ratings.pot,
-                p.stats.min.toFixed(1),
-                p.stats.pts.toFixed(1),
-                p.stats.trb.toFixed(1),
-                p.stats.ast.toFixed(1),
-                p.stats.per.toFixed(1),
-                <span>
+                ...stats.map(stat =>
+                    helpers.roundStat(false, stat, p.stats[stat]),
+                ),
+                <>
                     {helpers.formatCurrency(p.contract.amount, "M")} thru{" "}
                     {p.contract.exp}
-                </span>,
-                <span>
+                </>,
+                <>
                     {helpers.formatCurrency(p.contractDesired.amount, "M")} thru{" "}
                     {p.contractDesired.exp}
-                </span>,
+                </>,
             ],
         };
     });
@@ -99,6 +93,7 @@ const UpcomingFreeAgents = ({ players, season }) => {
 UpcomingFreeAgents.propTypes = {
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     season: PropTypes.number.isRequired,
+    stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default UpcomingFreeAgents;

@@ -29,7 +29,6 @@ import TeamStatDists from "./TeamStatDists";
 import TeamStats from "./TeamStats";
 import Trade from "./Trade";
 import TradingBlock from "./TradingBlock";
-import UpcomingFreeAgents from "./UpcomingFreeAgents";
 
 export default {
     AwardsRecords,
@@ -61,5 +60,4 @@ export default {
     TeamStats,
     Trade,
     TradingBlock,
-    UpcomingFreeAgents,
 };

@@ -7,6 +7,8 @@ import { g } from "../util";
 async function updateUpcomingFreeAgents(inputs: {
     season: number,
 }): void | { [key: string]: any } {
+    const stats = ["min", "pts", "trb", "ast", "per"];
+
     let players: any[] = await idb.getCopies.players({
         tid: [0, Infinity],
         filter: p => p.contract.exp === inputs.season,
@@ -36,7 +38,7 @@ async function updateUpcomingFreeAgents(inputs: {
             "watch",
         ],
         ratings: ["ovr", "pot", "skills", "pos"],
-        stats: ["min", "pts", "trb", "ast", "per"],
+        stats,
         season: g.season,
         showNoStats: true,
         showRookies: true,
@@ -46,6 +48,7 @@ async function updateUpcomingFreeAgents(inputs: {
     return {
         players,
         season: inputs.season,
+        stats,
     };
 }
 

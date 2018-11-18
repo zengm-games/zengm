@@ -34,6 +34,7 @@ import Schedule from "./Schedule";
 import Standings from "./Standings";
 import TeamFinances from "./TeamFinances";
 import Transactions from "./Transactions";
+import UpcomingFreeAgents from "./UpcomingFreeAgents";
 import WatchList from "./WatchList";
 
 export default {
@@ -71,5 +72,6 @@ export default {
     Standings,
     TeamFinances,
     Transactions,
+    UpcomingFreeAgents,
     WatchList,
 };

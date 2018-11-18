@@ -22,6 +22,7 @@ import Inbox from "./Inbox";
 import LeagueFinances from "./LeagueFinances";
 import LeagueOptions from "./LeagueOptions";
 import Live from "./Live";
+import LoginOrRegister from "./LoginOrRegister";
 import LostPassword from "./LostPassword";
 import Message from "./Message";
 import MultiTeamMode from "./MultiTeamMode";
@@ -31,8 +32,9 @@ import NewLeague from "./NewLeague";
 import NewTeam from "./NewTeam";
 import Options from "./Options";
 import PlayerFeats from "./PlayerFeats";
-import PlayerRatings from "./PlayerRatings";
 import PlayerRatingDists from "./PlayerRatingDists";
+import PlayerRatings from "./PlayerRatings";
+import PlayerStatDists from "./PlayerStatDists";
 import PlayerStats from "./PlayerStats";
 import Playoffs from "./Playoffs";
 import PowerRankings from "./PowerRankings";
@@ -41,6 +43,7 @@ import Schedule from "./Schedule";
 import Standings from "./Standings";
 import TeamFinances from "./TeamFinances";
 import TeamHistory from "./TeamHistory";
+import TeamStatDists from "./TeamStatDists";
 import TeamStats from "./TeamStats";
 import Trade from "./Trade";
 import TradingBlock from "./TradingBlock";
@@ -71,6 +74,7 @@ export default {
     LeagueFinances,
     LeagueOptions,
     Live,
+    LoginOrRegister,
     LostPassword,
     Message,
     MultiTeamMode,
@@ -80,8 +84,9 @@ export default {
     NewTeam,
     Options,
     PlayerFeats,
-    PlayerRatings,
     PlayerRatingDists,
+    PlayerRatings,
+    PlayerStatDists,
     PlayerStats,
     Playoffs,
     PowerRankings,
@@ -90,6 +95,7 @@ export default {
     Standings,
     TeamFinances,
     TeamHistory,
+    TeamStatDists,
     TeamStats,
     Trade,
     TradingBlock,

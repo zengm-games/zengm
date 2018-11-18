@@ -1,8 +1,8 @@
 // @flow
 
 import React from "react";
-import { fetchWrapper } from "../../../../deion/common";
-import { local, realtimeUpdate, toWorker } from "../../../../deion/ui/util";
+import { fetchWrapper } from "../../../common";
+import { local, realtimeUpdate, toWorker } from "../../util";
 
 type Props = {
     ajaxErrorMsg: string,

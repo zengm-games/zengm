@@ -10,14 +10,11 @@ import HistoryAll from "./HistoryAll";
 import Leaders from "./Leaders";
 import LeagueDashboard from "./LeagueDashboard";
 import LiveGame from "./LiveGame";
-import LoginOrRegister from "./LoginOrRegister";
 import Player from "./Player";
 import PlayerShotLocations from "./PlayerShotLocations";
-import PlayerStatDists from "./PlayerStatDists";
 import Roster from "./Roster";
 import TeamRecords from "./TeamRecords";
 import TeamShotLocations from "./TeamShotLocations";
-import TeamStatDists from "./TeamStatDists";
 
 export default {
     AwardsRecords,
@@ -30,12 +27,9 @@ export default {
     Leaders,
     LeagueDashboard,
     LiveGame,
-    LoginOrRegister,
     Player,
     PlayerShotLocations,
-    PlayerStatDists,
     Roster,
     TeamRecords,
     TeamShotLocations,
-    TeamStatDists,
 };

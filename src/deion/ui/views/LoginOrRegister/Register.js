@@ -2,13 +2,8 @@
 
 import classNames from "classnames";
 import React from "react";
-import { fetchWrapper } from "../../../../deion/common";
-import {
-    local,
-    realtimeUpdate,
-    setTitle,
-    toWorker,
-} from "../../../../deion/ui/util";
+import { fetchWrapper } from "../../../common";
+import { local, realtimeUpdate, setTitle, toWorker } from "../../util";
 
 type Props = {
     ajaxErrorMsg: string,

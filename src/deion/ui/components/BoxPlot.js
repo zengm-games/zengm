@@ -71,7 +71,7 @@ const BoxPlot = ({
     data?: number[],
     labels?: boolean,
     quartiles?: [number, number, number, number, number],
-    scale: number[],
+    scale?: [number, number],
 }) => {
     // Either calculate quartiles or use the ones passed directly
     let val;
@@ -87,6 +87,10 @@ const BoxPlot = ({
         };
     } else {
         throw new Error("Must specify either data or quartiles");
+    }
+
+    if (scale === undefined) {
+        scale = [Math.floor(val.min), Math.ceil(val.max)];
     }
 
     // Scale the markers on the plot to be relative to the size of the canvas. All these values are percentages.
@@ -296,7 +300,7 @@ BoxPlot.propTypes = {
     data: PropTypes.arrayOf(PropTypes.number),
     labels: PropTypes.bool,
     quartiles: PropTypes.arrayOf(PropTypes.number),
-    scale: PropTypes.arrayOf(PropTypes.number).isRequired,
+    scale: PropTypes.arrayOf(PropTypes.number),
 };
 
 export default BoxPlot;

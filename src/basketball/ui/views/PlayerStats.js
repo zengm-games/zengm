@@ -15,68 +15,19 @@ const PlayerStats = ({
     playoffs,
     season,
     statType,
+    stats,
     userTid,
 }) => {
     const label = season !== undefined ? season : "Career Totals";
     setTitle(`Player Stats - ${label}`);
 
-    const cols =
-        statType !== "advanced"
-            ? getCols(
-                  "Name",
-                  "Pos",
-                  "Age",
-                  "Team",
-                  "G",
-                  "Min",
-                  "FG",
-                  "FGA",
-                  "FG%",
-                  "3P",
-                  "3PA",
-                  "3P%",
-                  "FT",
-                  "FTA",
-                  "FT%",
-                  "ORB",
-                  "DRB",
-                  "TRB",
-                  "Ast",
-                  "Tov",
-                  "Stl",
-                  "Blk",
-                  "BA",
-                  "PF",
-                  "Pts",
-              )
-            : getCols(
-                  "Name",
-                  "Pos",
-                  "Age",
-                  "Team",
-                  "G",
-                  "Min",
-                  "PER",
-                  "EWA",
-                  "ORtg",
-                  "DRtg",
-                  "OWS",
-                  "DWS",
-                  "WS",
-                  "WS/48",
-                  "TS%",
-                  "3PAr",
-                  "FTr",
-                  "ORB%",
-                  "DRB%",
-                  "TRB%",
-                  "AST%",
-                  "STL%",
-                  "BLK%",
-                  "TOV%",
-                  "USG%",
-                  "+/-",
-              );
+    const cols = getCols(
+        "Name",
+        "Pos",
+        "Age",
+        "Team",
+        ...stats.map(stat => `stat:${stat}`),
+    );
 
     // Number of decimals for many stats
     const d = statType === "totals" ? 0 : 1;
@@ -106,53 +57,34 @@ const PlayerStats = ({
             actualTid = p.stats.tid;
         }
 
-        const statsRow =
-            statType !== "advanced"
-                ? [
-                      p.stats.min.toFixed(d),
-                      p.stats.fg.toFixed(d),
-                      p.stats.fga.toFixed(d),
-                      p.stats.fgp.toFixed(1),
-                      p.stats.tp.toFixed(d),
-                      p.stats.tpa.toFixed(d),
-                      p.stats.tpp.toFixed(1),
-                      p.stats.ft.toFixed(d),
-                      p.stats.fta.toFixed(d),
-                      p.stats.ftp.toFixed(1),
-                      p.stats.orb.toFixed(d),
-                      p.stats.drb.toFixed(d),
-                      p.stats.trb.toFixed(d),
-                      p.stats.ast.toFixed(d),
-                      p.stats.tov.toFixed(d),
-                      p.stats.stl.toFixed(d),
-                      p.stats.blk.toFixed(d),
-                      p.stats.ba.toFixed(d),
-                      p.stats.pf.toFixed(d),
-                      p.stats.pts.toFixed(d),
-                  ]
-                : [
-                      Math.round(p.stats.gp * p.stats.min),
-                      p.stats.per.toFixed(d),
-                      p.stats.ewa.toFixed(d),
-                      p.stats.ortg.toFixed(d),
-                      p.stats.drtg.toFixed(d),
-                      p.stats.ows.toFixed(d),
-                      p.stats.dws.toFixed(d),
-                      p.stats.ws.toFixed(d),
-                      helpers.roundWinp(p.stats.ws48),
-                      p.stats.tsp.toFixed(d),
-                      p.stats.tpar.toFixed(d),
-                      p.stats.ftr.toFixed(d),
-                      p.stats.orbp.toFixed(d),
-                      p.stats.drbp.toFixed(d),
-                      p.stats.trbp.toFixed(d),
-                      p.stats.astp.toFixed(d),
-                      p.stats.stlp.toFixed(d),
-                      p.stats.blkp.toFixed(d),
-                      p.stats.tovp.toFixed(d),
-                      p.stats.usgp.toFixed(d),
-                      helpers.plusMinus(p.stats.pm, d),
-                  ];
+        const roundOverrides =
+            process.env.SPORT === "basketball"
+                ? {
+                      gp: "none",
+                      gs: "none",
+                      fgp: "oneDecimalPlace",
+                      tpp: "oneDecimalPlace",
+                      ftp: "oneDecimalPlace",
+                      ws48: "roundWinp",
+                      pm: "plusMinus",
+                  }
+                : {};
+
+        const statsRow = stats.map(stat => {
+            if (roundOverrides[stat] === "none") {
+                return p.stats[stat];
+            }
+            if (roundOverrides[stat] === "oneDecimalPlace") {
+                return p.stats[stat].toFixed(1);
+            }
+            if (roundOverrides[stat] === "roundWinp") {
+                return helpers.roundWinp(p.stats[stat]);
+            }
+            if (roundOverrides[stat] === "plusMinus") {
+                return helpers.plusMinus(p.stats[stat], d);
+            }
+            return p.stats[stat].toFixed(d);
+        });
 
         return {
             key: p.pid,
@@ -170,7 +102,6 @@ const PlayerStats = ({
                 <a href={helpers.leagueUrl(["roster", actualAbbrev, season])}>
                     {actualAbbrev}
                 </a>,
-                p.stats.gp,
                 ...statsRow,
             ],
             classNames: {
@@ -238,6 +169,7 @@ PlayerStats.propTypes = {
     season: PropTypes.number, // Undefined for career totals
     statType: PropTypes.oneOf(["advanced", "per36", "perGame", "totals"])
         .isRequired,
+    stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     userTid: PropTypes.number,
 };
 

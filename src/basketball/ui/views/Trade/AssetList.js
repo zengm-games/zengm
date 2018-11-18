@@ -96,11 +96,11 @@ const playerCols = getCols(
     "Ovr",
     "Pot",
     "Contract",
-    "Min",
-    "Pts",
+    "stat:min",
+    "stat:pts",
     "Reb",
-    "Ast",
-    "PER",
+    "stat:ast",
+    "stat:per",
 );
 playerCols[0].sortSequence = [];
 playerCols[2].width = "100%";

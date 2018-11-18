@@ -2,6 +2,10 @@
 
 views involving ratings/stats
 - make getCols handle this better like stats:x or ratings:x so it can be programatically generated. then pass list of cols from worker. maybe use this to implement the basic/advanced switches too!
+  - make sure opponent stats work
+
+PlayerStats
+- get rid of per36 and shotLocations if football
 
 how will deionUI(overrides) work with types?
 - can pass them as generics, then apply them to factory functions

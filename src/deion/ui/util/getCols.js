@@ -22,31 +22,6 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
-    "+/-": {
-        desc: "Plus/Minus",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    "3P%": {
-        desc: "Three Point Percentage",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    "3P": {
-        desc: "Three Pointers Made",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    "3PA": {
-        desc: "Three Pointers Attempted",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    "3PAr": {
-        desc: "Three Point Attempt Rate (3PA / FGA)",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
     A: {
         desc: "Attempted",
         sortSequence: ["desc", "asc"],
@@ -78,23 +53,7 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "currency",
     },
-    Ast: {
-        desc: "Assists Per Game",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    "AST%": {
-        desc:
-            "Percentage of teammate field goals a player assisted while on the floor",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
     "Avg Attendance": {
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    BA: {
-        desc: "Blocks Against",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
@@ -105,16 +64,6 @@ const cols: {
     },
     BRC: {
         desc: "Best Conference Record",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    Blk: {
-        desc: "Blocks",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    "BLK%": {
-        desc: "Percentage of opponent two-pointers blocked",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
@@ -145,26 +94,6 @@ const cols: {
         desc: "Defensive Player of the Year",
         sortType: "name",
     },
-    DRB: {
-        desc: "Defensive Rebounds",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    "DRB%": {
-        desc: "Percentage of available defensive rebounds grabbed",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    DRtg: {
-        desc: "Defensive Rating (points allowed per 100 possessions)",
-        sortSequence: ["asc", "desc"],
-        sortType: "number",
-    },
-    DWS: {
-        desc: "Defensive Win Shares",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
     "Desired Contract": {
         sortSequence: ["desc", "asc"],
         sortType: "currency",
@@ -177,46 +106,6 @@ const cols: {
         sortSequence: [],
     },
     Drafted: {},
-    EWA: {
-        desc: "Estimated Wins Added",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    "FG%": {
-        desc: "Field Goal Percentage",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    FG: {
-        desc: "Field Goals Made",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    FGA: {
-        desc: "Field Goals Attempted",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    "FT%": {
-        desc: "Free Throw Percentage",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    FT: {
-        desc: "Free Throws Made",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    FTA: {
-        desc: "Free Throws Attempted",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    FTr: {
-        desc: "Free Throw Attempt Rate (FTA / FGA)",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
     Finals: {
         desc: "Finals Appearances",
         sortSequence: ["desc", "asc"],
@@ -225,16 +114,6 @@ const cols: {
     "Finals MVP": {
         desc: "Finals Most Valuable Player",
         sortType: "name",
-    },
-    G: {
-        desc: "Games Played",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    GS: {
-        desc: "Games Started",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
     },
     GmSc: {
         desc: "Game Score",
@@ -283,11 +162,6 @@ const cols: {
         desc: "Most Valuable Player",
         sortType: "name",
     },
-    Min: {
-        desc: "Minutes Per Game",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
     Mood: {},
     MOV: {
         desc: "Margin of Victory",
@@ -297,39 +171,9 @@ const cols: {
     Name: {
         sortType: "name",
     },
-    NRtg: {
-        desc: "Net Rating (point differential per 100 possessions)",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
     Negotiate: {},
     O: {
         desc: "Overall",
-        sortType: "number",
-    },
-    OPts: {
-        desc: "Opponent's Points",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    ORB: {
-        desc: "Offensive Rebounds",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    "ORB%": {
-        desc: "Percentage of available offensive rebounds grabbed",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    ORtg: {
-        desc: "Offensive Rating (points produced/scored per 100 possessions)",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    OWS: {
-        desc: "Offensive Win Shares",
-        sortSequence: ["desc", "asc"],
         sortType: "number",
     },
     Opp: {
@@ -344,24 +188,9 @@ const cols: {
         desc: "Performance",
         sortType: "number",
     },
-    PER: {
-        desc: "Player Efficiency Rating",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    PF: {
-        desc: "Personal Fouls",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
     PL: {
         desc:
             "Pythagorean Losses (expected losses based on points scored and allowed)",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    PPG: {
-        desc: "Points Per Game",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
@@ -406,11 +235,6 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "currency",
     },
-    Pts: {
-        desc: "Points",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
     ROY: {
         desc: "Rookie of the Year",
         sortType: "name",
@@ -438,63 +262,13 @@ const cols: {
         sortType: "number",
     },
     Skills: {},
-    Stl: {
-        desc: "Steals",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    "STL%": {
-        desc: "Percentage of opponent possessions ending in steals",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
     T: {
         desc: "Talent",
         sortType: "number",
     },
-    TRB: {
-        desc: "Total Rebounds",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    "TRB%": {
-        desc: "Percentage of available rebounds grabbed",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    "TS%": {
-        desc: "True Shooting Percentage",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    Tov: {
-        desc: "Turnovers",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    "TOV%": {
-        desc: "Turnovers per 100 plays",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
     Team: {},
-    "USG%": {
-        desc: "Percentage of team plays used",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
     W: {
         desc: "Wins",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    WS: {
-        desc: "Win Shares",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    "WS/48": {
-        desc: "Win Shares Per 48 Minutes",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
@@ -579,6 +353,222 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    "stat:pm": {
+        desc: "Plus/Minus",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:tpp": {
+        desc: "Three Point Percentage",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:tp": {
+        desc: "Three Pointers Made",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:tpa": {
+        desc: "Three Pointers Attempted",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:tpar": {
+        desc: "Three Point Attempt Rate (3PA / FGA)",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:astp": {
+        desc:
+            "Percentage of teammate field goals a player assisted while on the floor",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:ast": {
+        desc: "Assists Per Game",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:ba": {
+        desc: "Blocks Against",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:blk": {
+        desc: "Blocks",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:blkp": {
+        desc: "Percentage of opponent two-pointers blocked",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:drb": {
+        desc: "Defensive Rebounds",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:drbp": {
+        desc: "Percentage of available defensive rebounds grabbed",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:drtg": {
+        desc: "Defensive Rating (points allowed per 100 possessions)",
+        sortSequence: ["asc", "desc"],
+        sortType: "number",
+    },
+    "stat:dws": {
+        desc: "Defensive Win Shares",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:ewa": {
+        desc: "Estimated Wins Added",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:fgp": {
+        desc: "Field Goal Percentage",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:fg": {
+        desc: "Field Goals Made",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:fga": {
+        desc: "Field Goals Attempted",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:ftp": {
+        desc: "Free Throw Percentage",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:ft": {
+        desc: "Free Throws Made",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:fta": {
+        desc: "Free Throws Attempted",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:ftr": {
+        desc: "Free Throw Attempt Rate (FTA / FGA)",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:gp": {
+        desc: "Games Played",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:gs": {
+        desc: "Games Started",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:min": {
+        desc: "Minutes Per Game",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:nrtg": {
+        desc: "Net Rating (point differential per 100 possessions)",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:orb": {
+        desc: "Offensive Rebounds",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:orbp": {
+        desc: "Percentage of available offensive rebounds grabbed",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:ortg": {
+        desc: "Offensive Rating (points produced/scored per 100 possessions)",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:ows": {
+        desc: "Offensive Win Shares",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:per": {
+        desc: "Player Efficiency Rating",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:pf": {
+        desc: "Personal Fouls",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:pts": {
+        desc: "Points",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:stl": {
+        desc: "Steals",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:stlp": {
+        desc: "Percentage of opponent possessions ending in steals",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:tovp": {
+        desc: "Turnovers per 100 plays",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:trb": {
+        desc: "Total Rebounds",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:trbp": {
+        desc: "Percentage of available rebounds grabbed",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:tsp": {
+        desc: "True Shooting Percentage",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:tov": {
+        desc: "Turnovers",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:usgp": {
+        desc: "Percentage of team plays used",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:ws": {
+        desc: "Win Shares",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "stat:ws48": {
+        desc: "Win Shares Per 48 Minutes",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
 };
 
 const titleOverrides = {
@@ -597,10 +587,53 @@ const titleOverrides = {
     "rating:spd": "Spd",
     "rating:diq": "dIQ",
     "rating:stre": "Str",
+    "stat:pm": "+/-",
+    "stat:tpp": "3P%",
+    "stat:tp": "3P",
+    "stat:tpa": "3PA",
+    "stat:tpar": "3PAr",
+    "stat:astp": "AST%",
+    "stat:ast": "Ast",
+    "stat:ba": "BA",
+    "stat:blk": "Blk",
+    "stat:blkp": "BLK%",
+    "stat:drb": "DRB",
+    "stat:drbp": "DRB%",
+    "stat:drtg": "DRtg",
+    "stat:dws": "DWS",
+    "stat:ewa": "EWA",
+    "stat:fgp": "FG%",
+    "stat:fg": "FG",
+    "stat:fga": "FGA",
+    "stat:ftp": "FT%",
+    "stat:ft": "FT",
+    "stat:fta": "FTA",
+    "stat:ftr": "FTr",
+    "stat:gp": "G",
+    "stat:gs": "GS",
+    "stat:min": "Min",
+    "stat:nrtg": "NRtg",
+    "stat:orb": "ORB",
+    "stat:orbp": "ORB%",
+    "stat:ortg": "ORtg",
+    "stat:ows": "OWS",
+    "stat:per": "PER",
+    "stat:pf": "PF",
+    "stat:pts": "Pts",
+    "stat:stl": "Stl",
+    "stat:stlp": "STL%",
+    "stat:tovp": "TOV%",
+    "stat:trb": "TRB",
+    "stat:trbp": "TRB%",
+    "stat:tsp": "TS%",
+    "stat:tov": "Tov",
+    "stat:usgp": "USG%",
+    "stat:ws": "WS",
+    "stat:ws48": "WS/48",
 };
 
 for (const key of Object.keys(cols)) {
-    if (key.startsWith("rating:")) {
+    if (key.startsWith("rating:") || key.startsWith("stat:")) {
         cols[key].title = titleOverrides[key];
     } else {
         cols[key].title = key;

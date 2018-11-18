@@ -48,7 +48,7 @@ const DraftSummary = ({ players, season, userTid }) => {
         "Skills",
         "G",
         "Min",
-        "PPG",
+        "Pts",
         "Reb",
         "Ast",
         "PER",

@@ -48,7 +48,7 @@ const DraftTeamHistory = ({ abbrev, name, players, region, userAbbrev }) => {
         "Skills",
         "G",
         "Min",
-        "PPG",
+        "Pts",
         "Reb",
         "Ast",
         "PER",

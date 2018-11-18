@@ -33,6 +33,7 @@ import ResetPassword from "./ResetPassword";
 import Schedule from "./Schedule";
 import Standings from "./Standings";
 import TeamFinances from "./TeamFinances";
+import TeamHistory from "./TeamHistory";
 import TradingBlock from "./TradingBlock";
 import Transactions from "./Transactions";
 import UpcomingFreeAgents from "./UpcomingFreeAgents";
@@ -72,6 +73,7 @@ export default {
     Schedule,
     Standings,
     TeamFinances,
+    TeamHistory,
     TradingBlock,
     Transactions,
     UpcomingFreeAgents,

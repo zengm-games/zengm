@@ -42,9 +42,7 @@ const UpcomingFreeAgents = ({ players, season, stats }) => {
                 p.age,
                 p.ratings.ovr,
                 p.ratings.pot,
-                ...stats.map(stat =>
-                    helpers.roundStat(false, stat, p.stats[stat]),
-                ),
+                ...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
                 <>
                     {helpers.formatCurrency(p.contract.amount, "M")} thru{" "}
                     {p.contract.exp}

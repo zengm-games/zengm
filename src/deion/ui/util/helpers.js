@@ -72,7 +72,11 @@ const roundOverrides =
           }
         : {};
 
-const roundStat = (totals: boolean, stat: string, value: number): string => {
+const roundStat = (
+    value: number,
+    stat: string,
+    totals: boolean = false,
+): string => {
     // Number of decimals for many stats
     const d = totals ? 0 : 1;
 

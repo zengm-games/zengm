@@ -91,9 +91,9 @@ class WatchList extends React.Component {
                     contract,
                     ...stats.map(stat =>
                         helpers.roundStat(
-                            statType === "totals",
-                            stat,
                             p.stats[stat],
+                            stat,
+                            statType === "totals",
                         ),
                     ),
                 ],

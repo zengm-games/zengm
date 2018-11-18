@@ -58,7 +58,7 @@ const Offer = props => {
                         {p.contract.exp}
                     </>,
                     ...stats.map(stat =>
-                        helpers.roundStat(false, stat, p.stats[stat]),
+                        helpers.roundStat(p.stats[stat], stat),
                     ),
                 ],
             };
@@ -295,7 +295,7 @@ class TradingBlock extends React.Component {
                         {p.contract.exp}
                     </>,
                     ...stats.map(stat =>
-                        helpers.roundStat(false, stat, p.stats[stat]),
+                        helpers.roundStat(p.stats[stat], stat),
                     ),
                 ],
             };

@@ -55,7 +55,7 @@ const PlayerStats = ({
         }
 
         const statsRow = stats.map(stat =>
-            helpers.roundStat(statType === "totals", stat, p.stats[stat]),
+            helpers.roundStat(p.stats[stat], stat, statType === "totals"),
         );
 
         return {

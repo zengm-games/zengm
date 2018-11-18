@@ -58,21 +58,13 @@ async function updateTeamHistory(
         }
         history.reverse(); // Show most recent season first
 
+        const stats = ["gp", "min", "pts", "trb", "ast", "per", "ewa"];
+
         let players = await idb.getCopies.players({ statsTid: inputs.tid });
         players = await idb.getCopies.playersPlus(players, {
             attrs: ["pid", "name", "injury", "tid", "hof", "watch"],
             ratings: ["pos"],
-            stats: [
-                "season",
-                "abbrev",
-                "gp",
-                "min",
-                "pts",
-                "trb",
-                "ast",
-                "per",
-                "ewa",
-            ],
+            stats: ["season", "abbrev", ...stats],
             tid: inputs.tid,
         });
 
@@ -104,6 +96,7 @@ async function updateTeamHistory(
             abbrev: inputs.abbrev,
             history,
             players,
+            stats,
             team: {
                 name: g.teamNamesCache[inputs.tid],
                 region: g.teamRegionsCache[inputs.tid],

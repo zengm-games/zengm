@@ -1,14 +1,14 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { PLAYER } from "../../../deion/common";
+import { PLAYER } from "../../common";
 import {
     Dropdown,
     DataTable,
     NewWindowLink,
     PlayerNameLabels,
     RecordAndPlayoffs,
-} from "../../../deion/ui/components";
-import { helpers, getCols, setTitle } from "../../../deion/ui/util";
+} from "../components";
+import { helpers, getCols, setTitle } from "../util";
 
 const TeamHistory = ({
     abbrev,
@@ -19,6 +19,7 @@ const TeamHistory = ({
     numPlayoffRounds,
     players,
     playoffAppearances,
+    stats,
     team,
     totalLost,
     totalWon,
@@ -56,13 +57,7 @@ const TeamHistory = ({
     const cols = getCols(
         "Name",
         "Pos",
-        "G",
-        "Min",
-        "Pts",
-        "stat:trb",
-        "Ast",
-        "PER",
-        "EWA",
+        ...stats.map(stat => `stat:${stat}`),
         "Last Season",
     );
     const rows = players.map(p => {
@@ -73,13 +68,9 @@ const TeamHistory = ({
                     {p.name}
                 </PlayerNameLabels>,
                 p.pos,
-                p.careerStats.gp,
-                p.careerStats.min.toFixed(1),
-                p.careerStats.pts.toFixed(1),
-                p.careerStats.trb.toFixed(1),
-                p.careerStats.ast.toFixed(1),
-                p.careerStats.per.toFixed(1),
-                p.careerStats.ewa.toFixed(1),
+                ...stats.map(stat =>
+                    helpers.roundStat(p.careerStats[stat], stat),
+                ),
                 p.lastYr,
             ],
             classNames: {
@@ -191,6 +182,7 @@ TeamHistory.propTypes = {
     numPlayoffRounds: PropTypes.number.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     playoffAppearances: PropTypes.number.isRequired,
+    stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     team: PropTypes.shape({
         name: PropTypes.string.isRequired,
         region: PropTypes.string.isRequired,

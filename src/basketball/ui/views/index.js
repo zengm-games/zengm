@@ -1,6 +1,5 @@
 // @flow
 
-import AwardsRecords from "./AwardsRecords";
 import CustomizePlayer from "./CustomizePlayer";
 import Draft from "./Draft";
 import DraftLottery from "./DraftLottery";
@@ -14,7 +13,6 @@ import TeamRecords from "./TeamRecords";
 import TeamShotLocations from "./TeamShotLocations";
 
 export default {
-    AwardsRecords,
     CustomizePlayer,
     Draft,
     DraftLottery,

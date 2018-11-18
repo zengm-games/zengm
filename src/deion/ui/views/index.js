@@ -2,6 +2,7 @@
 
 import Account from "./Account";
 import AccountUpdateCard from "./AccountUpdateCard";
+import AwardsRecords from "./AwardsRecords";
 import Changes from "./Changes";
 import DangerZone from "./DangerZone";
 import Dashboard from "./Dashboard";
@@ -57,6 +58,7 @@ import WatchList from "./WatchList";
 export default {
     Account,
     AccountUpdateCard,
+    AwardsRecords,
     Changes,
     DangerZone,
     Dashboard,

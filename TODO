@@ -1,5 +1,8 @@
 # football
 
+Draft
+- pass cols from draft.js - can handle difference between normal draft and fantasy
+
 how will deionUI(overrides) work with types?
 - can pass them as generics, then apply them to factory functions
 
@@ -155,6 +158,7 @@ game sim
 player development (position dependent)
 
 draft
+- no lottery
 
 names US only
 

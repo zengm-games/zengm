@@ -1,12 +1,8 @@
 import groupBy from "lodash/groupBy";
 import PropTypes from "prop-types";
 import React from "react";
-import {
-    DataTable,
-    Dropdown,
-    NewWindowLink,
-} from "../../../deion/ui/components";
-import { getCols, helpers, setTitle } from "../../../deion/ui/util";
+import { DataTable, Dropdown, NewWindowLink } from "../components";
+import { getCols, helpers, setTitle } from "../util";
 
 const formatYear = year => {
     return Object.keys(year).map((k, i) => {
@@ -72,8 +68,8 @@ const AwardsRecords = ({
                 | <a href={helpers.leagueUrl(["team_records"])}>Team Records</a>
             </p>
 
-            <h4>
-                {playerCount} players - {awardTypeVal}{" "}
+            <h4 className="mb-3">
+                {playerCount} players - {awardTypeVal}
             </h4>
 
             <DataTable
@@ -88,28 +84,7 @@ const AwardsRecords = ({
 };
 
 AwardsRecords.propTypes = {
-    awardType: PropTypes.oneOf([
-        "champion",
-        "mvp",
-        "finals_mvp",
-        "dpoy",
-        "smoy",
-        "mip",
-        "roy",
-        "first_team",
-        "second_team",
-        "third_team",
-        "all_league",
-        "first_def",
-        "second_def",
-        "third_def",
-        "all_def",
-        "ppg_leader",
-        "rpg_leader",
-        "apg_leader",
-        "spg_leader",
-        "bpg_leader",
-    ]).isRequired,
+    awardType: PropTypes.string.isRequired,
     awardTypeVal: PropTypes.string.isRequired,
     awardsRecords: PropTypes.arrayOf(PropTypes.object).isRequired,
     playerCount: PropTypes.number.isRequired,

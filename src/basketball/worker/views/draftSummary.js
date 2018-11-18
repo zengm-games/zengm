@@ -7,6 +7,8 @@ import { g } from "../util";
 async function updateDraftSummary(inputs: {
     season: number,
 }): void | { [key: string]: any } {
+    const stats = ["gp", "min", "pts", "trb", "ast", "per", "ewa"];
+
     // Update every time because anything could change this (unless all players from class are retired)
     let playersAll;
     if (g.season === inputs.season) {
@@ -27,7 +29,7 @@ async function updateDraftSummary(inputs: {
     playersAll = await idb.getCopies.playersPlus(playersAll, {
         attrs: ["tid", "abbrev", "draft", "pid", "name", "age", "hof"],
         ratings: ["ovr", "pot", "skills", "pos"],
-        stats: ["gp", "min", "pts", "trb", "ast", "per", "ewa"],
+        stats,
         showNoStats: true,
         showRookies: true,
         fuzz: true,
@@ -59,6 +61,7 @@ async function updateDraftSummary(inputs: {
     return {
         players,
         season: inputs.season,
+        stats,
         userTid: g.userTid,
     };
 }

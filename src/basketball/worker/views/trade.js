@@ -167,6 +167,7 @@ async function updateTrade(): void | { [key: string]: any } {
         otherPidsExcluded: teams[1].pidsExcluded,
         otherRoster,
         otherTid,
+        stats,
         strategy: t.strategy,
         won: t.seasonAttrs.won,
         lost: t.seasonAttrs.lost,

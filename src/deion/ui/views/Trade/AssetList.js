@@ -1,9 +1,9 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { DataTable, PlayerNameLabels } from "../../../../deion/ui/components";
-import { getCols, helpers } from "../../../../deion/ui/util";
+import { DataTable, PlayerNameLabels } from "../../components";
+import { getCols, helpers } from "../../util";
 
-const genPlayerRows = (players, handleToggle, userOrOther) => {
+const genPlayerRows = (players, handleToggle, userOrOther, stats) => {
     return players.map(p => {
         return {
             key: p.pid,
@@ -42,11 +42,7 @@ const genPlayerRows = (players, handleToggle, userOrOther) => {
                     {helpers.formatCurrency(p.contract.amount, "M")} thru{" "}
                     {p.contract.exp}
                 </span>,
-                p.stats.min.toFixed(1),
-                p.stats.pts.toFixed(1),
-                p.stats.trb.toFixed(1),
-                p.stats.ast.toFixed(1),
-                p.stats.per.toFixed(1),
+                ...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
             ],
             classNames: {
                 "table-danger": p.excluded && !p.included,
@@ -87,30 +83,26 @@ const genPickRows = (picks, handleToggle, userOrOther) => {
     });
 };
 
-const playerCols = getCols(
-    "",
-    "X",
-    "Name",
-    "Pos",
-    "Age",
-    "Ovr",
-    "Pot",
-    "Contract",
-    "stat:min",
-    "stat:pts",
-    "stat:trb",
-    "stat:ast",
-    "stat:per",
-);
-playerCols[0].sortSequence = [];
-playerCols[2].width = "100%";
-
 const pickCols = getCols("", "X", "Draft Picks");
 pickCols[0].sortSequence = [];
 pickCols[2].width = "100%";
 
-const AssetList = ({ handleToggle, picks, roster, userOrOther }) => {
-    const playerRows = genPlayerRows(roster, handleToggle, userOrOther);
+const AssetList = ({ handleToggle, picks, roster, stats, userOrOther }) => {
+    const playerCols = getCols(
+        "",
+        "X",
+        "Name",
+        "Pos",
+        "Age",
+        "Ovr",
+        "Pot",
+        "Contract",
+        ...stats.map(stat => `stat:${stat}`),
+    );
+    playerCols[0].sortSequence = [];
+    playerCols[2].width = "100%";
+
+    const playerRows = genPlayerRows(roster, handleToggle, userOrOther, stats);
     const pickRows = genPickRows(picks, handleToggle, userOrOther);
 
     const userOrOtherKey = `${userOrOther[0].toUpperCase()}${userOrOther.slice(
@@ -144,6 +136,7 @@ AssetList.propTypes = {
     handleToggle: PropTypes.func.isRequired,
     picks: PropTypes.array.isRequired,
     roster: PropTypes.array.isRequired,
+    stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     userOrOther: PropTypes.oneOf(["other", "user"]).isRequired,
 };
 

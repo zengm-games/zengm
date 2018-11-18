@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import React from "react";
-import { helpers } from "../../../../deion/ui/util";
+import { helpers } from "../../util";
 
 const Summary = ({ accepted, message, salaryCap, summary }) => {
     return (

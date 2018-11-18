@@ -7,10 +7,10 @@ import {
     JumpTo,
     NewWindowLink,
     SkillsBlock,
-} from "../../../deion/ui/components";
-import { getCols, helpers, setTitle } from "../../../deion/ui/util";
+} from "../components";
+import { getCols, helpers, setTitle } from "../util";
 
-const DraftSummary = ({ players, season, userTid }) => {
+const DraftSummary = ({ players, season, stats, userTid }) => {
     setTitle(`${season} Draft Summary`);
 
     const superCols = [
@@ -46,13 +46,7 @@ const DraftSummary = ({ players, season, userTid }) => {
         "Ovr",
         "Pot",
         "Skills",
-        "G",
-        "Min",
-        "Pts",
-        "stat:trb",
-        "Ast",
-        "PER",
-        "EWA",
+        ...stats.map(stat => `stat:${stat}`),
     );
 
     const rows = players.map(p => {
@@ -84,13 +78,9 @@ const DraftSummary = ({ players, season, userTid }) => {
                 <span className="skills-alone">
                     <SkillsBlock skills={p.currentSkills} />
                 </span>,
-                p.careerStats.gp.toFixed(),
-                p.careerStats.min.toFixed(1),
-                p.careerStats.pts.toFixed(1),
-                p.careerStats.trb.toFixed(1),
-                p.careerStats.ast.toFixed(1),
-                p.careerStats.per.toFixed(1),
-                p.careerStats.ewa.toFixed(1),
+                ...stats.map(stat =>
+                    helpers.roundStat(p.careerStats[stat], stat),
+                ),
             ],
             classNames: {
                 "table-danger": p.hof,
@@ -147,6 +137,7 @@ const DraftSummary = ({ players, season, userTid }) => {
 DraftSummary.propTypes = {
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     season: PropTypes.number.isRequired,
+    stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     userTid: PropTypes.number.isRequired,
 };
 

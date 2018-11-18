@@ -1,14 +1,16 @@
 # football
 
 views involving ratings/stats
-- make getCols handle this better like stats:x or ratings:x so it can be programatically generated. then pass list of cols from worker. maybe use this to implement the basic/advanced switches too!
+- Player
+- PlayerFeats
+- TeamStats
   - make sure opponent stats work
+- etc
 
 how will deionUI(overrides) work with types?
 - can pass them as generics, then apply them to factory functions
 
 trading block
-- column widths (player name 100%)
 - DRY for assembling rows/cols of tables (same except first col)
 
 what's the end state here? options:

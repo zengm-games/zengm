@@ -4,7 +4,6 @@ import AwardsRecords from "./AwardsRecords";
 import CustomizePlayer from "./CustomizePlayer";
 import Draft from "./Draft";
 import DraftLottery from "./DraftLottery";
-import DraftSummary from "./DraftSummary";
 import FantasyDraft from "./FantasyDraft";
 import History from "./History";
 import HistoryAll from "./HistoryAll";
@@ -22,14 +21,12 @@ import TeamRecords from "./TeamRecords";
 import TeamShotLocations from "./TeamShotLocations";
 import TeamStatDists from "./TeamStatDists";
 import TeamStats from "./TeamStats";
-import Trade from "./Trade";
 
 export default {
     AwardsRecords,
     CustomizePlayer,
     Draft,
     DraftLottery,
-    DraftSummary,
     FantasyDraft,
     History,
     HistoryAll,
@@ -47,5 +44,4 @@ export default {
     TeamShotLocations,
     TeamStatDists,
     TeamStats,
-    Trade,
 };

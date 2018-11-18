@@ -1,8 +1,8 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { PHASE } from "../../../../deion/common";
-import { NewWindowLink } from "../../../../deion/ui/components";
-import { setTitle, toWorker } from "../../../../deion/ui/util";
+import { PHASE } from "../../../common";
+import { NewWindowLink } from "../../components";
+import { setTitle, toWorker } from "../../util";
 import AssetList from "./AssetList";
 import Buttons from "./Buttons";
 import Summary from "./Summary";
@@ -159,6 +159,7 @@ class Trade extends React.Component {
             salaryCap,
             summary,
             showResigningMsg,
+            stats,
             strategy,
             teams,
             userPicks,
@@ -215,6 +216,7 @@ class Trade extends React.Component {
                             handleToggle={this.handleChangeAsset}
                             picks={otherPicks}
                             roster={otherRoster}
+                            stats={stats}
                             userOrOther="other"
                         />
 
@@ -223,6 +225,7 @@ class Trade extends React.Component {
                             handleToggle={this.handleChangeAsset}
                             picks={userPicks}
                             roster={userRoster}
+                            stats={stats}
                             userOrOther="user"
                         />
                     </div>
@@ -275,6 +278,7 @@ Trade.propTypes = {
     salaryCap: PropTypes.number.isRequired,
     summary: PropTypes.object.isRequired,
     showResigningMsg: PropTypes.bool.isRequired,
+    stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     strategy: PropTypes.string.isRequired,
     teams: PropTypes.arrayOf(
         PropTypes.shape({

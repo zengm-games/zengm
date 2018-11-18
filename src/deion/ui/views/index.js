@@ -8,6 +8,7 @@ import Dashboard from "./Dashboard";
 import DeleteLeague from "./DeleteLeague";
 import DeleteOldData from "./DeleteOldData";
 import DraftScouting from "./DraftScouting";
+import DraftSummary from "./DraftSummary";
 import DraftTeamHistory from "./DraftTeamHistory";
 import EditTeamInfo from "./EditTeamInfo";
 import EventLog from "./EventLog";
@@ -38,6 +39,7 @@ import Schedule from "./Schedule";
 import Standings from "./Standings";
 import TeamFinances from "./TeamFinances";
 import TeamHistory from "./TeamHistory";
+import Trade from "./Trade";
 import TradingBlock from "./TradingBlock";
 import Transactions from "./Transactions";
 import UpcomingFreeAgents from "./UpcomingFreeAgents";
@@ -52,6 +54,7 @@ export default {
     DeleteLeague,
     DeleteOldData,
     DraftScouting,
+    DraftSummary,
     DraftTeamHistory,
     EditTeamInfo,
     EventLog,
@@ -82,6 +85,7 @@ export default {
     Standings,
     TeamFinances,
     TeamHistory,
+    Trade,
     TradingBlock,
     Transactions,
     UpcomingFreeAgents,

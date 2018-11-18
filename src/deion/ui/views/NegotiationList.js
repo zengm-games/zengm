@@ -5,8 +5,8 @@ import {
     NewWindowLink,
     PlayerNameLabels,
     RosterSalarySummary,
-} from "../../../deion/ui/components";
-import { getCols, helpers, setTitle, toWorker } from "../../../deion/ui/util";
+} from "../components";
+import { getCols, helpers, setTitle, toWorker } from "../util";
 
 const NegotiationList = ({
     capSpace,
@@ -14,6 +14,7 @@ const NegotiationList = ({
     minContract,
     numRosterSpots,
     players,
+    stats,
     userTid,
 }) => {
     const title = hardCap
@@ -28,11 +29,7 @@ const NegotiationList = ({
         "Age",
         "Ovr",
         "Pot",
-        "Min",
-        "Pts",
-        "stat:trb",
-        "Ast",
-        "PER",
+        ...stats.map(stat => `stat:${stat}`),
         "Asking For",
         "Mood",
         "Negotiate",
@@ -72,15 +69,11 @@ const NegotiationList = ({
                 p.age,
                 p.ratings.ovr,
                 p.ratings.pot,
-                p.stats.min.toFixed(1),
-                p.stats.pts.toFixed(1),
-                p.stats.trb.toFixed(1),
-                p.stats.ast.toFixed(1),
-                p.stats.per.toFixed(1),
-                <span>
+                ...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
+                <>
                     {helpers.formatCurrency(p.contract.amount, "M")} thru{" "}
                     {p.contract.exp}
-                </span>,
+                </>,
                 <div
                     title={p.mood.text}
                     style={{
@@ -143,6 +136,7 @@ NegotiationList.propTypes = {
     minContract: PropTypes.number.isRequired,
     numRosterSpots: PropTypes.number.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
+    statas: PropTypes.arrayOf(PropTypes.string).isRequired,
     userTid: PropTypes.number.isRequired,
 };
 

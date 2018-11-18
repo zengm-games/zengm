@@ -14,6 +14,8 @@ async function updateFreeAgents(): void | { [key: string]: any } {
 
     const capSpace = g.salaryCap > payroll ? (g.salaryCap - payroll) / 1000 : 0;
 
+    const stats = ["min", "pts", "trb", "ast", "per"];
+
     players = await idb.getCopies.playersPlus(players, {
         attrs: [
             "pid",
@@ -25,7 +27,7 @@ async function updateFreeAgents(): void | { [key: string]: any } {
             "watch",
         ],
         ratings: ["ovr", "pot", "skills", "pos"],
-        stats: ["min", "pts", "trb", "ast", "per"],
+        stats,
         season: g.season,
         showNoStats: true,
         showRookies: true,
@@ -49,6 +51,7 @@ async function updateFreeAgents(): void | { [key: string]: any } {
         numRosterSpots: g.maxRosterSize - userPlayers.length,
         phase: g.phase,
         players,
+        stats,
         userTid: g.userTid,
     };
 }

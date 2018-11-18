@@ -8,12 +8,15 @@ import Dashboard from "./Dashboard";
 import DeleteLeague from "./DeleteLeague";
 import DeleteOldData from "./DeleteOldData";
 import DraftScouting from "./DraftScouting";
+import DraftTeamHistory from "./DraftTeamHistory";
 import EditTeamInfo from "./EditTeamInfo";
 import EventLog from "./EventLog";
 import ExportLeague from "./ExportLeague";
 import ExportStats from "./ExportStats";
+import FreeAgents from "./FreeAgents";
 import GameLog from "./GameLog";
 import GodMode from "./GodMode";
+import HallOfFame from "./HallOfFame";
 import Inbox from "./Inbox";
 import LeagueFinances from "./LeagueFinances";
 import LeagueOptions from "./LeagueOptions";
@@ -21,6 +24,7 @@ import Live from "./Live";
 import LostPassword from "./LostPassword";
 import Message from "./Message";
 import MultiTeamMode from "./MultiTeamMode";
+import NegotiationList from "./NegotiationList";
 import NewLeague from "./NewLeague";
 import NewTeam from "./NewTeam";
 import Options from "./Options";
@@ -48,12 +52,15 @@ export default {
     DeleteLeague,
     DeleteOldData,
     DraftScouting,
+    DraftTeamHistory,
     EditTeamInfo,
     EventLog,
     ExportLeague,
     ExportStats,
+    FreeAgents,
     GameLog,
     GodMode,
+    HallOfFame,
     Inbox,
     LeagueFinances,
     LeagueOptions,
@@ -61,6 +68,7 @@ export default {
     LostPassword,
     Message,
     MultiTeamMode,
+    NegotiationList,
     NewLeague,
     NewTeam,
     Options,

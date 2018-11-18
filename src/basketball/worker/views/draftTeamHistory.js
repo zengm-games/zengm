@@ -8,13 +8,15 @@ async function updateDraftTeamHistory(inputs: {
     abbrev: string,
     tid: number,
 }): void | { [key: string]: any } {
+    const stats = ["gp", "min", "pts", "trb", "ast", "per", "ewa"];
+
     let playersAll = await idb.getCopies.players({
         filter: p => p.draft.tid === inputs.tid,
     });
     playersAll = await idb.getCopies.playersPlus(playersAll, {
         attrs: ["tid", "abbrev", "draft", "pid", "name", "age", "hof"],
         ratings: ["ovr", "pot", "skills", "pos"],
-        stats: ["gp", "min", "pts", "trb", "ast", "per", "ewa"],
+        stats,
         showNoStats: true,
         showRookies: true,
         fuzz: true,
@@ -54,6 +56,7 @@ async function updateDraftTeamHistory(inputs: {
         name,
         players,
         region,
+        stats,
         userAbbrev,
     };
 }

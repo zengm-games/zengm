@@ -1,29 +1,13 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { PHASE } from "../../../deion/common";
+import { PHASE } from "../../common";
 import {
     DataTable,
     NewWindowLink,
     PlayerNameLabels,
     RosterSalarySummary,
-} from "../../../deion/ui/components";
-import { getCols, helpers, setTitle, toWorker } from "../../../deion/ui/util";
-
-const cols = getCols(
-    "Name",
-    "Pos",
-    "Age",
-    "Ovr",
-    "Pot",
-    "stat:min",
-    "stat:pts",
-    "stat:trb",
-    "stat:ast",
-    "stat:per",
-    "Asking For",
-    "Mood",
-    "Negotiate",
-);
+} from "../components";
+import { getCols, helpers, setTitle, toWorker } from "../util";
 
 class FreeAgents extends React.Component {
     constructor(props) {
@@ -37,7 +21,7 @@ class FreeAgents extends React.Component {
     }
 
     showAfforablePlayers() {
-        const addFilters = new Array(cols.length);
+        const addFilters = new Array(8 + this.props.stats.length);
         if (this.props.capSpace * 1000 > this.props.minContract) {
             addFilters[10] = `<${this.props.capSpace}`;
         } else {
@@ -68,6 +52,7 @@ class FreeAgents extends React.Component {
             numRosterSpots,
             phase,
             players,
+            stats,
             userTid,
         } = this.props;
         setTitle("Free Agents");
@@ -95,6 +80,18 @@ class FreeAgents extends React.Component {
                 </div>
             );
         }
+
+        const cols = getCols(
+            "Name",
+            "Pos",
+            "Age",
+            "Ovr",
+            "Pot",
+            ...stats.map(stat => `stat:${stat}`),
+            "Asking For",
+            "Mood",
+            "Negotiate",
+        );
 
         const rows = players.map(p => {
             let negotiateButton;
@@ -131,11 +128,9 @@ class FreeAgents extends React.Component {
                     p.age,
                     p.ratings.ovr,
                     p.ratings.pot,
-                    p.stats.min.toFixed(1),
-                    p.stats.pts.toFixed(1),
-                    p.stats.trb.toFixed(1),
-                    p.stats.ast.toFixed(1),
-                    p.stats.per.toFixed(1),
+                    ...stats.map(stat =>
+                        helpers.roundStat(p.stats[stat], stat),
+                    ),
                     <span>
                         {helpers.formatCurrency(p.contract.amount, "M")} thru{" "}
                         {p.contract.exp}
@@ -212,6 +207,7 @@ FreeAgents.propTypes = {
     numRosterSpots: PropTypes.number.isRequired,
     phase: PropTypes.number.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
+    stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     userTid: PropTypes.number.isRequired,
 };
 

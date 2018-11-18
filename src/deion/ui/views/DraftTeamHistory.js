@@ -6,10 +6,17 @@ import {
     Dropdown,
     NewWindowLink,
     SkillsBlock,
-} from "../../../deion/ui/components";
-import { getCols, helpers, setTitle } from "../../../deion/ui/util";
+} from "../components";
+import { getCols, helpers, setTitle } from "../util";
 
-const DraftTeamHistory = ({ abbrev, name, players, region, userAbbrev }) => {
+const DraftTeamHistory = ({
+    abbrev,
+    name,
+    players,
+    region,
+    stats,
+    userAbbrev,
+}) => {
     setTitle(`${region} ${name} Draft History`);
 
     const superCols = [
@@ -46,13 +53,7 @@ const DraftTeamHistory = ({ abbrev, name, players, region, userAbbrev }) => {
         "Ovr",
         "Pot",
         "Skills",
-        "G",
-        "Min",
-        "Pts",
-        "stat:trb",
-        "Ast",
-        "PER",
-        "EWA",
+        ...stats.map(stat => `stat:${stat}`),
     );
 
     const rows = players.map(p => {
@@ -87,13 +88,9 @@ const DraftTeamHistory = ({ abbrev, name, players, region, userAbbrev }) => {
                 <span className="skills-alone">
                     <SkillsBlock skills={p.currentSkills} />
                 </span>,
-                p.careerStats.gp.toFixed(),
-                p.careerStats.min.toFixed(1),
-                p.careerStats.pts.toFixed(1),
-                p.careerStats.trb.toFixed(1),
-                p.careerStats.ast.toFixed(1),
-                p.careerStats.per.toFixed(1),
-                p.careerStats.ewa.toFixed(1),
+                ...stats.map(stat =>
+                    helpers.roundStat(p.careerStats[stat], stat),
+                ),
             ],
             classNames: {
                 "table-danger": p.hof,
@@ -148,6 +145,7 @@ DraftTeamHistory.propTypes = {
     name: PropTypes.string.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     region: PropTypes.string.isRequired,
+    stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     userAbbrev: PropTypes.string.isRequired,
 };
 

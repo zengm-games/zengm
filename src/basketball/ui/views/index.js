@@ -5,10 +5,7 @@ import CustomizePlayer from "./CustomizePlayer";
 import Draft from "./Draft";
 import DraftLottery from "./DraftLottery";
 import DraftSummary from "./DraftSummary";
-import DraftTeamHistory from "./DraftTeamHistory";
 import FantasyDraft from "./FantasyDraft";
-import FreeAgents from "./FreeAgents";
-import HallOfFame from "./HallOfFame";
 import History from "./History";
 import HistoryAll from "./HistoryAll";
 import Leaders from "./Leaders";
@@ -16,7 +13,6 @@ import LeagueDashboard from "./LeagueDashboard";
 import LiveGame from "./LiveGame";
 import LoginOrRegister from "./LoginOrRegister";
 import Negotiation from "./Negotiation";
-import NegotiationList from "./NegotiationList";
 import Player from "./Player";
 import PlayerFeats from "./PlayerFeats";
 import PlayerShotLocations from "./PlayerShotLocations";
@@ -34,10 +30,7 @@ export default {
     Draft,
     DraftLottery,
     DraftSummary,
-    DraftTeamHistory,
     FantasyDraft,
-    FreeAgents,
-    HallOfFame,
     History,
     HistoryAll,
     Leaders,
@@ -45,7 +38,6 @@ export default {
     LiveGame,
     LoginOrRegister,
     Negotiation,
-    NegotiationList,
     Player,
     PlayerFeats,
     PlayerShotLocations,

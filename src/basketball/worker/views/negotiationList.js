@@ -6,6 +6,8 @@ import { idb } from "../db";
 import { g } from "../util";
 
 async function updateNegotiationList(): void | { [key: string]: any } {
+    const stats = ["min", "pts", "trb", "ast", "per"];
+
     let negotiations = await idb.cache.negotiations.getAll();
 
     // For Multi Team Mode, might have other team's negotiations going on
@@ -30,7 +32,7 @@ async function updateNegotiationList(): void | { [key: string]: any } {
             "contract",
         ],
         ratings: ["ovr", "pot", "skills", "pos"],
-        stats: ["min", "pts", "trb", "ast", "per"],
+        stats,
         season: g.season,
         tid: g.userTid,
         showNoStats: true,
@@ -55,6 +57,7 @@ async function updateNegotiationList(): void | { [key: string]: any } {
         minContract: g.minContract,
         numRosterSpots: g.maxRosterSize - userPlayers.length,
         players,
+        stats,
         userTid: g.userTid,
     };
 }

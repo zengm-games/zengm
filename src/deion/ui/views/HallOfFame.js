@@ -1,9 +1,9 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { getCols, helpers, setTitle } from "../../../deion/ui/util";
-import { DataTable, NewWindowLink } from "../../../deion/ui/components";
+import { getCols, helpers, setTitle } from "../util";
+import { DataTable, NewWindowLink } from "../components";
 
-const HallOfFame = ({ players, userTid }) => {
+const HallOfFame = ({ players, stats, userTid }) => {
     setTitle("Hall of Fame");
 
     const superCols = [
@@ -13,11 +13,11 @@ const HallOfFame = ({ players, userTid }) => {
         },
         {
             title: "Best Season",
-            colspan: 8,
+            colspan: 11,
         },
         {
             title: "Career Stats",
-            colspan: 7,
+            colspan: 9,
         },
     ];
 
@@ -30,19 +30,8 @@ const HallOfFame = ({ players, userTid }) => {
         "Peak Ovr",
         "Year",
         "Team",
-        "G",
-        "Min",
-        "Pts",
-        "stat:trb",
-        "Ast",
-        "PER",
-        "G",
-        "Min",
-        "Pts",
-        "stat:trb",
-        "Ast",
-        "PER",
-        "EWA",
+        ...stats.map(stat => `stat:${stat}`),
+        ...stats.map(stat => `stat:${stat}`),
     );
 
     const rows = players.map(p => {
@@ -65,19 +54,12 @@ const HallOfFame = ({ players, userTid }) => {
                 >
                     {p.bestStats.abbrev}
                 </a>,
-                p.bestStats.gp,
-                p.bestStats.min.toFixed(1),
-                p.bestStats.pts.toFixed(1),
-                p.bestStats.trb.toFixed(1),
-                p.bestStats.ast.toFixed(1),
-                p.bestStats.per.toFixed(1),
-                p.careerStats.gp,
-                p.careerStats.min.toFixed(1),
-                p.careerStats.pts.toFixed(1),
-                p.careerStats.trb.toFixed(1),
-                p.careerStats.ast.toFixed(1),
-                p.careerStats.per.toFixed(1),
-                p.careerStats.ewa.toFixed(1),
+                ...stats.map(stat =>
+                    helpers.roundStat(p.bestStats[stat], stat),
+                ),
+                ...stats.map(stat =>
+                    helpers.roundStat(p.careerStats[stat], stat),
+                ),
             ],
             classNames: {
                 "table-danger": p.legacyTid === userTid,
@@ -126,6 +108,7 @@ const HallOfFame = ({ players, userTid }) => {
 
 HallOfFame.propTypes = {
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
+    stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     userTid: PropTypes.number.isRequired,
 };
 

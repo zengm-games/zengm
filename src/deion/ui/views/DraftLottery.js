@@ -10,9 +10,9 @@ import {
     JumpTo,
     NewWindowLink,
     ResponsiveTableWrapper,
-} from "../../../deion/ui/components";
-import { helpers, setTitle, toWorker } from "../../../deion/ui/util";
-import type { DraftLotteryResultArray } from "../../../deion/common/types";
+} from "../components";
+import { helpers, setTitle, toWorker } from "../util";
+import type { DraftLotteryResultArray } from "../../common/types";
 
 const getProbs = (result: DraftLotteryResultArray): (number | void)[][] => {
     const probs = [];

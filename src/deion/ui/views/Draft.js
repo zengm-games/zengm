@@ -1,13 +1,13 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { getCols, helpers, setTitle, toWorker } from "../../../deion/ui/util";
+import { getCols, helpers, setTitle, toWorker } from "../util";
 import {
     DataTable,
     DraftAbbrev,
     NewWindowLink,
     PlayerNameLabels,
-} from "../../../deion/ui/components";
+} from "../components";
 
 const DraftButtons = ({ userRemaining, usersTurn }) => {
     const untilText = userRemaining ? "your next pick" : "end of draft";

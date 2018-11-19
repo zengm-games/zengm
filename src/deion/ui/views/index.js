@@ -9,6 +9,7 @@ import Dashboard from "./Dashboard";
 import DeleteLeague from "./DeleteLeague";
 import DeleteOldData from "./DeleteOldData";
 import Draft from "./Draft";
+import DraftLottery from "./DraftLottery";
 import DraftScouting from "./DraftScouting";
 import DraftSummary from "./DraftSummary";
 import DraftTeamHistory from "./DraftTeamHistory";
@@ -66,6 +67,7 @@ export default {
     DeleteLeague,
     DeleteOldData,
     Draft,
+    DraftLottery,
     DraftScouting,
     DraftSummary,
     DraftTeamHistory,

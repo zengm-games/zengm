@@ -101,7 +101,13 @@ class Draft extends React.Component {
     }
 
     render() {
-        const { drafted, fantasyDraft, undrafted, userTids } = this.props;
+        const {
+            drafted,
+            fantasyDraft,
+            stats,
+            undrafted,
+            userTids,
+        } = this.props;
 
         setTitle("Draft");
 
@@ -123,7 +129,11 @@ class Draft extends React.Component {
         colsUndrafted[0].width = "100%";
 
         if (fantasyDraft) {
-            colsUndrafted.splice(5, 0, ...getCols("Contract", "PER", "EWA"));
+            colsUndrafted.splice(
+                5,
+                0,
+                ...getCols("Contract", ...stats.map(stat => `stat:${stat}`)),
+            );
         }
 
         const rowsUndrafted = undrafted.map(p => {
@@ -167,8 +177,9 @@ class Draft extends React.Component {
                     `${helpers.formatCurrency(p.contract.amount, "M")} thru ${
                         p.contract.exp
                     }`,
-                    p.stats.per.toFixed(1),
-                    p.stats.ewa.toFixed(1),
+                    ...stats.map(stat =>
+                        helpers.roundStat(p.stats[stat], stat),
+                    ),
                 );
             }
 
@@ -226,13 +237,11 @@ class Draft extends React.Component {
                               "M",
                           )} thru ${p.contract.exp}`
                         : null,
-                    // Not sure why these extra checks for PER and EWA being numeric are needed, bug Bugsnag showed errors
-                    p.pid >= 0 && p.stats && typeof p.stats.per === "number"
-                        ? p.stats.per.toFixed(1)
-                        : null,
-                    p.pid >= 0 && p.stats && typeof p.stats.ewa === "number"
-                        ? p.stats.ewa.toFixed(1)
-                        : null,
+                    ...stats.map(stat =>
+                        p.pid >= 0
+                            ? helpers.roundStat(p.stats[stat], stat)
+                            : null,
+                    ),
                 );
             }
 
@@ -317,6 +326,7 @@ class Draft extends React.Component {
                             cols={colsUndrafted}
                             defaultSort={[4, "desc"]}
                             name="Draft:Undrafted"
+                            pagination={rowsDrafted.length > 100}
                             rows={rowsUndrafted}
                         />
                     </div>
@@ -338,6 +348,7 @@ class Draft extends React.Component {
                             cols={colsDrafted}
                             defaultSort={[0, "asc"]}
                             name="Draft:Drafted"
+                            pagination={rowsDrafted.length > 100}
                             rows={rowsDrafted}
                         />
                     </div>
@@ -350,6 +361,7 @@ class Draft extends React.Component {
 Draft.propTypes = {
     drafted: PropTypes.arrayOf(PropTypes.object).isRequired,
     fantasyDraft: PropTypes.bool.isRequired,
+    stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     undrafted: PropTypes.arrayOf(PropTypes.object).isRequired,
     userTids: PropTypes.arrayOf(PropTypes.number).isRequired,
 };

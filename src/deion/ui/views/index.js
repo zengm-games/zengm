@@ -8,6 +8,7 @@ import DangerZone from "./DangerZone";
 import Dashboard from "./Dashboard";
 import DeleteLeague from "./DeleteLeague";
 import DeleteOldData from "./DeleteOldData";
+import Draft from "./Draft";
 import DraftScouting from "./DraftScouting";
 import DraftSummary from "./DraftSummary";
 import DraftTeamHistory from "./DraftTeamHistory";
@@ -64,6 +65,7 @@ export default {
     Dashboard,
     DeleteLeague,
     DeleteOldData,
+    Draft,
     DraftScouting,
     DraftSummary,
     DraftTeamHistory,

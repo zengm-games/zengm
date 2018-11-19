@@ -15,6 +15,7 @@ async function updateDraft(
         updateEvents.includes("playerMovement")
     ) {
         const fantasyDraft = g.phase === PHASE.FANTASY_DRAFT;
+        const stats = fantasyDraft ? ["per", "ewa"] : [];
 
         let undrafted = await idb.cache.players.indexGetAll(
             "playersByTid",
@@ -38,7 +39,7 @@ async function updateDraft(
         undrafted = await idb.getCopies.playersPlus(undrafted, {
             attrs: ["pid", "name", "age", "injury", "contract", "watch"],
             ratings: ["ovr", "pot", "skills", "pos"],
-            stats: ["per", "ewa"],
+            stats,
             season: g.season,
             showNoStats: true,
             showRookies: true,
@@ -116,9 +117,10 @@ async function updateDraft(
         }
 
         return {
-            undrafted,
             drafted,
             fantasyDraft,
+            stats,
+            undrafted,
             userTids: g.userTids,
         };
     }

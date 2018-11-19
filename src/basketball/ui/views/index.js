@@ -1,7 +1,6 @@
 // @flow
 
 import CustomizePlayer from "./CustomizePlayer";
-import Draft from "./Draft";
 import DraftLottery from "./DraftLottery";
 import History from "./History";
 import HistoryAll from "./HistoryAll";
@@ -14,7 +13,6 @@ import TeamShotLocations from "./TeamShotLocations";
 
 export default {
     CustomizePlayer,
-    Draft,
     DraftLottery,
     History,
     HistoryAll,

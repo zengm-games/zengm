@@ -2,7 +2,6 @@
 
 import CustomizePlayer from "./CustomizePlayer";
 import History from "./History";
-import HistoryAll from "./HistoryAll";
 import LeagueDashboard from "./LeagueDashboard";
 import LiveGame from "./LiveGame";
 import PlayerShotLocations from "./PlayerShotLocations";
@@ -12,7 +11,6 @@ import TeamShotLocations from "./TeamShotLocations";
 export default {
     CustomizePlayer,
     History,
-    HistoryAll,
     LeagueDashboard,
     LiveGame,
     PlayerShotLocations,

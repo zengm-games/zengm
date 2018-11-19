@@ -65,10 +65,6 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "currency",
     },
-    DPOY: {
-        desc: "Defensive Player of the Year",
-        sortType: "name",
-    },
     "Desired Contract": {
         sortSequence: ["desc", "asc"],
         sortType: "currency",
@@ -85,10 +81,6 @@ const cols: {
         desc: "Finals Appearances",
         sortSequence: ["desc", "asc"],
         sortType: "number",
-    },
-    "Finals MVP": {
-        desc: "Finals Most Valuable Player",
-        sortType: "name",
     },
     HOF: {
         sortSequence: ["desc", "asc"],
@@ -123,14 +115,6 @@ const cols: {
         desc: "Made",
         sortSequence: ["desc", "asc"],
         sortType: "number",
-    },
-    MIP: {
-        desc: "Most Improved Player",
-        sortType: "name",
-    },
-    MVP: {
-        desc: "Most Valuable Player",
-        sortType: "name",
     },
     Mood: {},
     Name: {
@@ -183,10 +167,6 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "currency",
     },
-    ROY: {
-        desc: "Rookie of the Year",
-        sortType: "name",
-    },
     Result: {},
     Retired: {
         sortSequence: ["desc", "asc"],
@@ -196,10 +176,6 @@ const cols: {
         sortType: "currency",
     },
     "Runner Up": {},
-    SMOY: {
-        desc: "Sixth Man of the Year",
-        sortType: "name",
-    },
     Season: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
@@ -589,6 +565,30 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    "award:dpoy": {
+        desc: "Defensive Player of the Year",
+        sortType: "name",
+    },
+    "award:finalsMvp": {
+        desc: "Finals Most Valuable Player",
+        sortType: "name",
+    },
+    "award:mip": {
+        desc: "Most Improved Player",
+        sortType: "name",
+    },
+    "award:mvp": {
+        desc: "Most Valuable Player",
+        sortType: "name",
+    },
+    "award:roy": {
+        desc: "Rookie of the Year",
+        sortType: "name",
+    },
+    "award:smoy": {
+        desc: "Sixth Man of the Year",
+        sortType: "name",
+    },
 };
 
 const titleOverrides = {
@@ -665,13 +665,20 @@ const titleOverrides = {
     "count:mvp": "MVP",
     "count:roy": "ROY",
     "count:smoy": "SMOY",
+    "award:dpoy": "DPOY",
+    "award:finalsMvp": "Finals MVP",
+    "award:mip": "MIP",
+    "award:mvp": "MVP",
+    "award:roy": "ROY",
+    "award:smoy": "SMOY",
 };
 
 for (const key of Object.keys(cols)) {
     if (
         key.startsWith("rating:") ||
         key.startsWith("stat:") ||
-        key.startsWith("count:")
+        key.startsWith("count:") ||
+        key.startsWith("award:")
     ) {
         cols[key].title = titleOverrides[key];
     } else {

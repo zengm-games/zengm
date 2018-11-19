@@ -1,11 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
-import {
-    DataTable,
-    NewWindowLink,
-    PlayerNameLabels,
-} from "../../../deion/ui/components";
-import { getCols, helpers, setTitle } from "../../../deion/ui/util";
+import { DataTable, NewWindowLink, PlayerNameLabels } from "../components";
+import { getCols, helpers, setTitle } from "../util";
 
 const awardName = (award, season, teamAbbrevsCache, userTid) => {
     if (!award) {
@@ -55,19 +51,14 @@ const teamName = (t, season) => {
     return "N/A";
 };
 
-const HistoryAll = ({ seasons, teamAbbrevsCache, userTid }) => {
+const HistoryAll = ({ awards, seasons, teamAbbrevsCache, userTid }) => {
     setTitle("League History");
 
     const cols = getCols(
         "",
         "League Champion",
         "Runner Up",
-        "Finals MVP",
-        "MVP",
-        "DPOY",
-        "SMOY",
-        "MIP",
-        "ROY",
+        ...awards.map(award => `award:${award}`),
     );
 
     const rows = seasons.map(s => {
@@ -87,10 +78,10 @@ const HistoryAll = ({ seasons, teamAbbrevsCache, userTid }) => {
         }
 
         let champEl = (
-            <span>
+            <>
                 {teamName(s.champ, s.season)}
                 {countText}
-            </span>
+            </>
         );
         if (s.champ && s.champ.tid === userTid) {
             champEl = {
@@ -113,12 +104,9 @@ const HistoryAll = ({ seasons, teamAbbrevsCache, userTid }) => {
                 seasonLink,
                 champEl,
                 runnerUpEl,
-                awardName(s.finalsMvp, s.season, teamAbbrevsCache, userTid),
-                awardName(s.mvp, s.season, teamAbbrevsCache, userTid),
-                awardName(s.dpoy, s.season, teamAbbrevsCache, userTid),
-                awardName(s.smoy, s.season, teamAbbrevsCache, userTid),
-                awardName(s.mip, s.season, teamAbbrevsCache, userTid),
-                awardName(s.roy, s.season, teamAbbrevsCache, userTid),
+                ...awards.map(award =>
+                    awardName(s[award], s.season, teamAbbrevsCache, userTid),
+                ),
             ],
         };
     });
@@ -148,6 +136,7 @@ const HistoryAll = ({ seasons, teamAbbrevsCache, userTid }) => {
 };
 
 HistoryAll.propTypes = {
+    awards: PropTypes.arrayOf(PropTypes.string).isRequired,
     seasons: PropTypes.arrayOf(PropTypes.object).isRequired,
     teamAbbrevsCache: PropTypes.arrayOf(PropTypes.string).isRequired,
     userTid: PropTypes.number.isRequired,

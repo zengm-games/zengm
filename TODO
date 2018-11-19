@@ -1,8 +1,5 @@
 # football
 
-HistoryAll
-- cols like TeamRecords, maybe award: prefix
-
 History
 - make more DRY
 
@@ -11,6 +8,8 @@ how will deionUI(overrides) work with types?
 
 trading block
 - DRY for assembling rows/cols of tables (same except first col)
+
+better way to specify view overrides, including routes?
 
 what's the end state here? options:
 - everything is in deion, and process.env.SPORT governs the output

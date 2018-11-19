@@ -21,6 +21,8 @@ async function updateHistory(
             }),
         ]);
 
+        const awardNames = ["finalsMvp", "mvp", "dpoy", "smoy", "mip", "roy"];
+
         const seasons = awards.map(a => {
             return {
                 season: a.season,
@@ -94,6 +96,7 @@ async function updateHistory(
         }
 
         return {
+            awards: awardNames,
             seasons,
             teamAbbrevsCache: g.teamAbbrevsCache,
             userTid: g.userTid,

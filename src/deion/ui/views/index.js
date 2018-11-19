@@ -22,6 +22,7 @@ import FreeAgents from "./FreeAgents";
 import GameLog from "./GameLog";
 import GodMode from "./GodMode";
 import HallOfFame from "./HallOfFame";
+import HistoryAll from "./HistoryAll";
 import Inbox from "./Inbox";
 import Leaders from "./Leaders";
 import LeagueFinances from "./LeagueFinances";
@@ -81,6 +82,7 @@ export default {
     GameLog,
     GodMode,
     HallOfFame,
+    HistoryAll,
     Inbox,
     Leaders,
     LeagueFinances,

@@ -236,10 +236,24 @@ async function updateTeamRecords(
             );
         }
 
+        const categories = [
+            "mvp",
+            "dpoy",
+            "smoy",
+            "mip",
+            "roy",
+            "bestRecord",
+            "bestRecordConf",
+            "allRookie",
+            "allLeague",
+            "allDefense",
+        ];
+
         return {
-            teamRecords: display,
-            seasonCount,
             byType: inputs.byType,
+            categories,
+            seasonCount,
+            teamRecords: display,
         };
     }
 }

@@ -49,6 +49,7 @@ import Schedule from "./Schedule";
 import Standings from "./Standings";
 import TeamFinances from "./TeamFinances";
 import TeamHistory from "./TeamHistory";
+import TeamRecords from "./TeamRecords";
 import TeamStatDists from "./TeamStatDists";
 import TeamStats from "./TeamStats";
 import Trade from "./Trade";
@@ -107,6 +108,7 @@ export default {
     Standings,
     TeamFinances,
     TeamHistory,
+    TeamRecords,
     TeamStatDists,
     TeamStats,
     Trade,

@@ -1,11 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
-import {
-    DataTable,
-    Dropdown,
-    NewWindowLink,
-} from "../../../deion/ui/components";
-import { getCols, helpers, setTitle } from "../../../deion/ui/util";
+import { DataTable, Dropdown, NewWindowLink } from "../components";
+import { getCols, helpers, setTitle } from "../util";
 
 const teamLink = t => {
     return (
@@ -15,7 +11,7 @@ const teamLink = t => {
     );
 };
 
-const TeamRecords = ({ byType, seasonCount, teamRecords }) => {
+const TeamRecords = ({ byType, categories, seasonCount, teamRecords }) => {
     setTitle("Team Records");
 
     let displayName;
@@ -37,16 +33,7 @@ const TeamRecords = ({ byType, seasonCount, teamRecords }) => {
         "Finals",
         "Championships",
         "Last Title",
-        "MVP",
-        "DPOY",
-        "SMOY",
-        "MIP",
-        "ROY",
-        "BR",
-        "BRC",
-        "ART",
-        "ALT",
-        "ADT",
+        ...categories.map(category => `count:${category}`),
     );
     // MVP, DPOY, SMOY, ROY
     for (let i = 9; i <= 12; i++) {
@@ -67,16 +54,7 @@ const TeamRecords = ({ byType, seasonCount, teamRecords }) => {
                 tr.finals,
                 tr.championships,
                 tr.lastChampionship,
-                tr.mvp,
-                tr.dpoy,
-                tr.smoy,
-                tr.mip,
-                tr.roy,
-                tr.bestRecord,
-                tr.bestRecordConf,
-                tr.allRookie,
-                tr.allLeague,
-                tr.allDefense,
+                ...categories.map(category => tr[category]),
             ],
         };
     });
@@ -116,6 +94,7 @@ const TeamRecords = ({ byType, seasonCount, teamRecords }) => {
 
 TeamRecords.propTypes = {
     byType: PropTypes.oneOf(["conf", "div", "team"]).isRequired,
+    categories: PropTypes.arrayOf(PropTypes.string).isRequired,
     seasonCount: PropTypes.number.isRequired,
     teamRecords: PropTypes.arrayOf(PropTypes.object).isRequired,
 };

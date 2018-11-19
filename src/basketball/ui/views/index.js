@@ -7,7 +7,6 @@ import LeagueDashboard from "./LeagueDashboard";
 import LiveGame from "./LiveGame";
 import PlayerShotLocations from "./PlayerShotLocations";
 import Roster from "./Roster";
-import TeamRecords from "./TeamRecords";
 import TeamShotLocations from "./TeamShotLocations";
 
 export default {
@@ -18,6 +17,5 @@ export default {
     LiveGame,
     PlayerShotLocations,
     Roster,
-    TeamRecords,
     TeamShotLocations,
 };

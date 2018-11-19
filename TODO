@@ -1,7 +1,10 @@
 # football
 
-Draft
-- pass cols from draft.js - can handle difference between normal draft and fantasy
+HistoryAll
+- cols like TeamRecords, maybe award: prefix
+
+History
+- make more DRY
 
 how will deionUI(overrides) work with types?
 - can pass them as generics, then apply them to factory functions

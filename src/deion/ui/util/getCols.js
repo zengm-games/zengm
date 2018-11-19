@@ -27,21 +27,6 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
-    ADT: {
-        desc: "All Defensive Team",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    ALT: {
-        desc: "All League Team",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    ART: {
-        desc: "All Rookie Team",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
     Age: {
         sortType: "number",
     },
@@ -54,16 +39,6 @@ const cols: {
         sortType: "currency",
     },
     "Avg Attendance": {
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    BR: {
-        desc: "Best Record",
-        sortSequence: ["desc", "asc"],
-        sortType: "number",
-    },
-    BRC: {
-        desc: "Best Conference Record",
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
@@ -564,6 +539,56 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    "count:allDefense": {
+        desc: "All Defensive Team",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "count:allLeague": {
+        desc: "All League Team",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "count:allRookie": {
+        desc: "All Rookie Team",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "count:bestRecord": {
+        desc: "Best Record",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "count:bestRecordConf": {
+        desc: "Best Conference Record",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "count:dpoy": {
+        desc: "Defensive Player of the Year",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "count:mip": {
+        desc: "Most Improved Player",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "count:mvp": {
+        desc: "Most Valuable Player",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "count:roy": {
+        desc: "Rookie of the Year",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
+    "count:smoy": {
+        desc: "Sixth Man of the Year",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
 };
 
 const titleOverrides = {
@@ -630,10 +655,24 @@ const titleOverrides = {
     "stat:usgp": "USG%",
     "stat:ws": "WS",
     "stat:ws48": "WS/48",
+    "count:allDefense": "ADT",
+    "count:allLeague": "ALT",
+    "count:allRookie": "ART",
+    "count:bestRecord": "BR",
+    "count:bestRecordConf": "BRC",
+    "count:dpoy": "DPOY",
+    "count:mip": "MIP",
+    "count:mvp": "MVP",
+    "count:roy": "ROY",
+    "count:smoy": "SMOY",
 };
 
 for (const key of Object.keys(cols)) {
-    if (key.startsWith("rating:") || key.startsWith("stat:")) {
+    if (
+        key.startsWith("rating:") ||
+        key.startsWith("stat:") ||
+        key.startsWith("count:")
+    ) {
         cols[key].title = titleOverrides[key];
     } else {
         cols[key].title = key;

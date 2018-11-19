@@ -42,7 +42,7 @@ const Winner = ({
 };
 
 Winner.propTypes = {
-    award: PropTypes.object.isRequired,
+    award: PropTypes.object,
     defense: PropTypes.bool,
     finals: PropTypes.bool,
     season: PropTypes.number.isRequired,

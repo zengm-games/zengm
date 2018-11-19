@@ -1,7 +1,7 @@
 # football
 
 History
-- make more DRY
+- for football, MVP, OPOY, DPOY, OROY, DROY. then All-League Team and All-Rookie Team
 
 how will deionUI(overrides) work with types?
 - can pass them as generics, then apply them to factory functions

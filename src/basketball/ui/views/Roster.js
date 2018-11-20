@@ -12,7 +12,13 @@ import DropdownMenu from "reactstrap/lib/DropdownMenu";
 import DropdownToggle from "reactstrap/lib/DropdownToggle";
 import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
 import { PHASE } from "../../../deion/common";
-import { helpers, logEvent, setTitle, toWorker } from "../../../deion/ui/util";
+import {
+    getCols,
+    helpers,
+    logEvent,
+    setTitle,
+    toWorker,
+} from "../../../deion/ui/util";
 import {
     Dropdown,
     HelpPopover,
@@ -172,6 +178,7 @@ const RosterRow = SortableElement(
             phase,
             season,
             showTradeFor,
+            stats,
             toggleClicked,
             userTid,
         } = props;
@@ -228,12 +235,11 @@ const RosterRow = SortableElement(
                         {p.contract.exp}
                     </td>
                 ) : null}
-                <td onClick={toggleClicked}>{p.stats.gp}</td>
-                <td onClick={toggleClicked}>{p.stats.min.toFixed(1)}</td>
-                <td onClick={toggleClicked}>{p.stats.pts.toFixed(1)}</td>
-                <td onClick={toggleClicked}>{p.stats.trb.toFixed(1)}</td>
-                <td onClick={toggleClicked}>{p.stats.ast.toFixed(1)}</td>
-                <td onClick={toggleClicked}>{p.stats.per.toFixed(1)}</td>
+                {stats.map(stat => (
+                    <td key={stat} onClick={toggleClicked}>
+                        {helpers.roundStat(p.stats[stat], stat)}
+                    </td>
+                ))}
                 {editable ? (
                     <td onClick={toggleClicked}>
                         <PlayingTime p={p} userTid={userTid} />
@@ -279,6 +285,7 @@ RosterRow.propTypes = {
     phase: PropTypes.number.isRequired,
     season: PropTypes.number.isRequired,
     showTradeFor: PropTypes.bool.isRequired,
+    stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     userTid: PropTypes.number.isRequired,
 };
 
@@ -291,6 +298,7 @@ const TBody = SortableContainer(
         players,
         season,
         showTradeFor,
+        stats,
         userTid,
     }) => {
         return (
@@ -308,6 +316,7 @@ const TBody = SortableContainer(
                             phase={phase}
                             season={season}
                             showTradeFor={showTradeFor}
+                            stats={stats}
                             userTid={userTid}
                         />
                     );
@@ -325,6 +334,7 @@ TBody.propTypes = {
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     season: PropTypes.number.isRequired,
     showTradeFor: PropTypes.bool.isRequired,
+    stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     userTid: PropTypes.number.isRequired,
 };
 
@@ -382,6 +392,7 @@ class Roster extends React.Component {
             salaryCap,
             season,
             showTradeFor,
+            stats,
             t,
             userTid,
         } = this.props;
@@ -408,7 +419,7 @@ class Roster extends React.Component {
 
         const recordAndPlayoffs =
             t.seasonAttrs !== undefined ? (
-                <span>
+                <>
                     Record:{" "}
                     <RecordAndPlayoffs
                         abbrev={abbrev}
@@ -420,10 +431,12 @@ class Roster extends React.Component {
                         numConfs={numConfs}
                         numPlayoffRounds={numPlayoffRounds}
                     />
-                </span>
+                </>
             ) : (
                 "Season not found"
             );
+
+        const statCols = getCols(...stats.map(stat => `stat:${stat}`));
 
         return (
             <>
@@ -538,12 +551,11 @@ class Roster extends React.Component {
                                 {season === currentSeason ? (
                                     <th>Contract</th>
                                 ) : null}
-                                <th title="Games Played">GP</th>
-                                <th title="Minutes Per Game">MP</th>
-                                <th title="Points Per Game">PTS</th>
-                                <th title="Rebounds Per Game">TRB</th>
-                                <th title="Assists Per Game">AST</th>
-                                <th title="Player Efficiency Rating">PER</th>
+                                {statCols.map(({ desc, title }) => (
+                                    <th key={title} title={desc}>
+                                        {title}
+                                    </th>
+                                ))}
                                 {editable ? (
                                     <th title="Playing Time Modifier">
                                         PT{" "}
@@ -631,6 +643,7 @@ class Roster extends React.Component {
                             phase={phase}
                             season={season}
                             showTradeFor={showTradeFor}
+                            stats={stats}
                             transitionDuration={0}
                             useDragHandle
                             userTid={userTid}
@@ -655,6 +668,7 @@ Roster.propTypes = {
     salaryCap: PropTypes.number.isRequired,
     season: PropTypes.number.isRequired,
     showTradeFor: PropTypes.bool.isRequired,
+    stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     t: PropTypes.object.isRequired,
     userTid: PropTypes.number.isRequired,
 };

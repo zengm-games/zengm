@@ -20,6 +20,8 @@ async function updateRoster(
         inputs.abbrev !== state.abbrev ||
         inputs.season !== state.season
     ) {
+        const stats = ["gp", "min", "pts", "trb", "ast", "per"];
+
         const vars: any = {
             abbrev: inputs.abbrev,
             currentSeason: g.season,
@@ -32,6 +34,7 @@ async function updateRoster(
             season: inputs.season,
             showTradeFor:
                 inputs.season === g.season && inputs.tid !== g.userTid,
+            stats,
             userTid: g.userTid,
         };
 
@@ -57,16 +60,7 @@ async function updateRoster(
             "untradable",
         ]; // tid and draft are used for checking if a player can be released without paying his salary
         const ratings = ["ovr", "pot", "dovr", "dpot", "skills", "pos"];
-        const stats = [
-            "gp",
-            "min",
-            "pts",
-            "trb",
-            "ast",
-            "per",
-            "ws48",
-            "yearsWithTeam",
-        ];
+        const stats2 = [...stats, "yearsWithTeam"];
 
         if (inputs.season === g.season) {
             // Show players currently on the roster
@@ -90,7 +84,7 @@ async function updateRoster(
             players = await idb.getCopies.playersPlus(players, {
                 attrs,
                 ratings,
-                stats,
+                stats: stats2,
                 season: inputs.season,
                 tid: inputs.tid,
                 showNoStats: true,
@@ -127,7 +121,7 @@ async function updateRoster(
             players = await idb.getCopies.playersPlus(players, {
                 attrs,
                 ratings,
-                stats,
+                stats: stats2,
                 season: inputs.season,
                 tid: inputs.tid,
                 fuzz: true,

@@ -25,6 +25,7 @@ import HallOfFame from "./HallOfFame";
 import HistoryAll from "./HistoryAll";
 import Inbox from "./Inbox";
 import Leaders from "./Leaders";
+import LeagueDashboard from "./LeagueDashboard";
 import LeagueFinances from "./LeagueFinances";
 import LeagueOptions from "./LeagueOptions";
 import Live from "./Live";
@@ -85,6 +86,7 @@ export default {
     HistoryAll,
     Inbox,
     Leaders,
+    LeagueDashboard,
     LeagueFinances,
     LeagueOptions,
     Live,

@@ -419,7 +419,7 @@ function ordinal(x?: ?number): string {
     }
 
     let suffix;
-    if (x >= 11 && x <= 13) {
+    if (x % 100 >= 11 && x % 100 <= 13) {
         suffix = "th";
     } else if (x % 10 === 1) {
         suffix = "st";

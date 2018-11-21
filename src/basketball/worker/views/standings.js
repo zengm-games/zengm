@@ -37,7 +37,8 @@ async function updateStandings(
             }),
         );
 
-        const numPlayoffTeams = 2 ** g.numGamesPlayoffSeries.length;
+        const numPlayoffTeams =
+            2 ** g.numGamesPlayoffSeries.length - g.numPlayoffByes;
 
         const confs = [];
         for (let i = 0; i < g.confs.length; i++) {

@@ -88,7 +88,6 @@ async function updateTeams(
         updateEvents.includes("playerMovement") ||
         updateEvents.includes("newPhase")
     ) {
-        const vars = {};
         const stats = ["pts", "oppPts", "trb", "ast"]; // This is also used later to find ranks for these team stats
 
         const teams = helpers.orderByWinp(
@@ -103,37 +102,76 @@ async function updateTeams(
         const t = teams.find(t2 => t2.tid === g.userTid);
         const cid = t !== undefined ? t.cid : undefined;
 
-        vars.rank = 1;
+        let att;
+        let rank = 1;
+        let revenue;
+        let profit;
+        let teamStats;
         for (let i = 0; i < teams.length; i++) {
             if (teams[i].cid === cid) {
                 if (teams[i].tid === g.userTid) {
-                    vars.pts = teams[i].stats.pts;
-                    vars.oppPts = teams[i].stats.oppPts;
-                    vars.trb = teams[i].stats.trb;
-                    vars.ast = teams[i].stats.ast;
+                    teamStats = [
+                        {
+                            name: "Points",
+                            rank: 0,
+                            stat: stats[0],
+                            value: teams[i].stats[stats[0]],
+                        },
+                        {
+                            name: "Allowed",
+                            rank: 0,
+                            stat: stats[1],
+                            value: teams[i].stats[stats[1]],
+                        },
+                        {
+                            name: "Rebounds",
+                            rank: 0,
+                            stat: stats[2],
+                            value: teams[i].stats[stats[2]],
+                        },
+                        {
+                            name: "Assists",
+                            rank: 0,
+                            stat: stats[3],
+                            value: teams[i].stats[stats[3]],
+                        },
+                    ];
 
-                    vars.att = teams[i].seasonAttrs.att;
-                    vars.revenue = teams[i].seasonAttrs.revenue;
-                    vars.profit = teams[i].seasonAttrs.profit;
+                    att = teams[i].seasonAttrs.att;
+                    revenue = teams[i].seasonAttrs.revenue;
+                    profit = teams[i].seasonAttrs.profit;
                     break;
                 } else {
-                    vars.rank += 1;
+                    rank += 1;
                 }
             }
         }
 
-        for (let i = 0; i < stats.length; i++) {
-            teams.sort((a, b) => b.stats[stats[i]] - a.stats[stats[i]]);
+        for (const stat of stats) {
+            teams.sort((a, b) => b.stats[stat] - a.stats[stat]);
             for (let j = 0; j < teams.length; j++) {
                 if (teams[j].tid === g.userTid) {
-                    vars[`${stats[i]}Rank`] = j + 1;
+                    const entry = teamStats.find(
+                        teamStat => teamStat.stat === stat,
+                    );
+                    if (entry) {
+                        entry.rank = j + 1;
+                        if (stat.startsWith("opp")) {
+                            entry.rank = g.numTeams + 1 - entry.rank;
+                        }
+                    }
                     break;
                 }
             }
         }
-        vars.oppPtsRank = g.numTeams + 1 - vars.oppPtsRank;
 
-        return vars;
+        return {
+            att,
+            rank,
+            revenue,
+            profit,
+            teamStats,
+        };
     }
 }
 
@@ -224,7 +262,7 @@ async function updatePlayers(
         updateEvents.includes("playerMovement") ||
         updateEvents.includes("newPhase")
     ) {
-        const vars = {};
+        const startersStats = ["gp", "min", "pts", "trb", "ast", "per"];
 
         let players = await idb.cache.players.indexGetAll("playersByTid", [
             PLAYER.UNDRAFTED,
@@ -243,7 +281,7 @@ async function updatePlayers(
                 "watch",
             ],
             ratings: ["ovr", "pot", "dovr", "dpot", "skills", "pos"],
-            stats: ["gp", "min", "pts", "trb", "ast", "per", "yearsWithTeam"],
+            stats: [...startersStats, "yearsWithTeam"],
             season: g.season,
             showNoStats: true,
             showRookies: true,
@@ -251,54 +289,63 @@ async function updatePlayers(
         });
 
         // League leaders
-        vars.leagueLeaders = {};
+        const leagueLeaders = [];
         const stats = ["pts", "trb", "ast"]; // Categories for leaders
         for (const stat of stats) {
             if (players.length > 0) {
                 players.sort((a, b) => b.stats[stat] - a.stats[stat]);
-                vars.leagueLeaders[stat] = {
-                    pid: players[0].pid,
-                    name: players[0].name,
+                leagueLeaders.push({
                     abbrev: players[0].abbrev,
-                    stat: players[0].stats[stat],
-                };
+                    name: players[0].name,
+                    pid: players[0].pid,
+                    stat,
+                    value: players[0].stats[stat],
+                });
             } else {
-                vars.leagueLeaders[stat] = {
-                    pid: 0,
-                    name: "",
+                leagueLeaders.push({
                     abbrev: g.teamAbbrevsCache[g.userTid],
-                    stat: 0,
-                };
+                    name: "",
+                    pid: 0,
+                    stat,
+                    value: 0,
+                });
             }
         }
 
         // Team leaders
         const userPlayers = players.filter(p => p.tid === g.userTid);
-        vars.teamLeaders = {};
+        const teamLeaders = [];
         for (const stat of stats) {
             if (userPlayers.length > 0) {
                 userPlayers.sort((a, b) => b.stats[stat] - a.stats[stat]);
-                vars.teamLeaders[stat] = {
-                    pid: userPlayers[0].pid,
+                teamLeaders.push({
                     name: userPlayers[0].name,
-                    stat: userPlayers[0].stats[stat],
-                };
+                    pid: userPlayers[0].pid,
+                    stat,
+                    value: userPlayers[0].stats[stat],
+                });
             } else {
-                vars.teamLeaders[stat] = {
-                    pid: 0,
+                teamLeaders.push({
                     name: "",
-                    stat: 0,
-                };
+                    pid: 0,
+                    stat,
+                    value: 0,
+                });
             }
         }
 
         // Roster
         // Find starting 5
-        vars.starters = userPlayers
+        const starters = userPlayers
             .sort((a, b) => a.rosterOrder - b.rosterOrder)
             .slice(0, 5);
 
-        return vars;
+        return {
+            leagueLeaders,
+            teamLeaders,
+            starters,
+            startersStats,
+        };
     }
 }
 
@@ -408,10 +455,14 @@ async function updateStandings(
             }
         }
 
+        const numPlayoffTeams =
+            (2 ** g.numGamesPlayoffSeries.length - g.numPlayoffByes) / 2;
+
         const playoffsByConference = g.confs.length === 2;
 
         return {
             confTeams,
+            numPlayoffTeams,
             playoffsByConference,
         };
     }

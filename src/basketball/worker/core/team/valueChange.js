@@ -3,7 +3,7 @@
 import countBy from "lodash/countBy";
 import { PHASE } from "../../../../deion/common";
 import { draft, player, trade } from "..";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g, helpers } from "../../../../deion/worker/util";
 import type { TradePickValues } from "../../../../deion/common/types";
 import getPayroll from "./getPayroll";

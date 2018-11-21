@@ -3,7 +3,7 @@
 import range from "lodash/range";
 import { COMPOSITE_WEIGHTS } from "../../../common";
 import { player } from "..";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g, helpers } from "../../../../deion/worker/util";
 
 /**

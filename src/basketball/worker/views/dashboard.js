@@ -1,6 +1,6 @@
 // @flow
 
-import { idb } from "../db";
+import { idb } from "../../../deion/worker/db";
 
 async function updateDashboard(): void | { [key: string]: any } {
     const leagues = await idb.meta.leagues.getAll();

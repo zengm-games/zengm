@@ -4,7 +4,7 @@ import assert from "assert";
 import backboard from "backboard";
 import { after, describe, it } from "mocha";
 import { league } from "../worker/core";
-import { connectMeta, idb } from "../worker/db";
+import { connectMeta, idb } from "../../deion/worker/db";
 import { g, local } from "../../deion/worker/util";
 
 describe("Smoke Tests", () => {

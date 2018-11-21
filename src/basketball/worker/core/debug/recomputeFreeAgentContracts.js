@@ -2,7 +2,7 @@
 
 import { PHASE, PLAYER } from "../../../../deion/common";
 import { player } from "..";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { toUI } from "../../../../deion/worker/util";
 
 const recomputeFreeAgentContracts = async () => {

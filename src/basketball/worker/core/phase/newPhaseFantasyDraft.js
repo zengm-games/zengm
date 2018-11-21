@@ -2,7 +2,7 @@
 
 import { PLAYER } from "../../../../deion/common";
 import { contractNegotiation, draft, league } from "..";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g, helpers, local } from "../../../../deion/worker/util";
 import type { Conditions } from "../../../../deion/common/types";
 

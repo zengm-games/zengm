@@ -3,7 +3,7 @@
 import backboard from "backboard";
 import { PLAYER } from "../../../../deion/common";
 import { draft } from "..";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g, helpers } from "../../../../deion/worker/util";
 import type { Conditions } from "../../../../deion/common/types";
 

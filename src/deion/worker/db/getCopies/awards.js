@@ -2,7 +2,7 @@
 
 import { idb } from "..";
 import { mergeByPk } from "./helpers";
-import type { Awards } from "../../../common/types";
+import type { Awards } from "../../../../basketball/common/types";
 
 const getCopies = async ({ season }: { season?: number } = {}): Promise<
     Awards[],

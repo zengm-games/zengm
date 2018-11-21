@@ -2,7 +2,7 @@
 
 import { PHASE } from "../../../deion/common";
 import { team, trade } from "../core";
-import { idb } from "../db";
+import { idb } from "../../../deion/worker/db";
 import { g, helpers } from "../../../deion/worker/util";
 
 // This relies on vars being populated, so it can't be called in parallel with updateTrade

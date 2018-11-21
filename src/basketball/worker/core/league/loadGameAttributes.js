@@ -1,7 +1,7 @@
 // @flow
 
 import { league } from "..";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g, helpers, toUI } from "../../../../deion/worker/util";
 import { defaultGameAttributes } from "../../util";
 

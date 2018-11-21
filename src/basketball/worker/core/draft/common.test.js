@@ -4,7 +4,7 @@ import assert from "assert";
 import sampleTiebreakers from "../../../test/fixtures/sampleTiebreakers";
 import testHelpers from "../../../test/helpers";
 import { draft } from "..";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { helpers } from "../../../../deion/worker/util";
 
 const getDraftTids = async () => {

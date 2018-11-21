@@ -3,7 +3,7 @@
 import backboard from "backboard";
 import { PLAYER } from "../../../../deion/common";
 import value from "../player/value";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 
 // For debugging changes in the player value formula
 const valueDiff = async () => {

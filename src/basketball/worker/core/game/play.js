@@ -16,7 +16,7 @@ import updatePlayoffSeries from "./updatePlayoffSeries";
 import writeGameStats from "./writeGameStats";
 import writePlayerStats from "./writePlayerStats";
 import writeTeamStats from "./writeTeamStats";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import {
     g,
     helpers,

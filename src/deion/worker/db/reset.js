@@ -1,7 +1,7 @@
 // @flow
 
 import Backboard from "backboard";
-import { league } from "../core";
+import { league } from "../../../basketball/worker/core";
 import { idb } from ".";
 
 const reset = async () => {

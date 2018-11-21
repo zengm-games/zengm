@@ -1,6 +1,6 @@
 import { PHASE } from "../../../deion/common";
 import { team } from "../core";
-import { idb } from "../db";
+import { idb } from "../../../deion/worker/db";
 import { g, helpers, lock } from "../../../deion/worker/util";
 import type { GetOutput, UpdateEvents } from "../../../deion/common/types";
 

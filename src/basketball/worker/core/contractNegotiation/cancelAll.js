@@ -1,6 +1,6 @@
 // @flow
 
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { updatePlayMenu, updateStatus } from "../../../../deion/worker/util";
 
 /**

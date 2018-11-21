@@ -5,7 +5,7 @@ import logLotteryChances from "./logLotteryChances";
 import logLotteryWinners from "./logLotteryWinners";
 import lotterySort from "./lotterySort";
 import updateChances from "./updateChances";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g, helpers, random } from "../../../../deion/worker/util";
 import type {
     Conditions,

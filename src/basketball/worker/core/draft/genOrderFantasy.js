@@ -1,7 +1,7 @@
 // @flow
 
 import range from "lodash/range";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g, random } from "../../../../deion/worker/util";
 
 /**

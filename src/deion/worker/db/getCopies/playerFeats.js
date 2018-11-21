@@ -2,7 +2,7 @@
 
 import { getAll, idb } from "..";
 import { mergeByPk } from "./helpers";
-import type { PlayerFeat } from "../../../../deion/common/types";
+import type { PlayerFeat } from "../../../common/types";
 
 const getCopies = async (): Promise<PlayerFeat[]> => {
     return mergeByPk(

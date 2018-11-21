@@ -1,7 +1,7 @@
 // @flow
 
 import { league } from "..";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g } from "../../../../deion/worker/util";
 import type { OwnerMoodDeltas } from "../../../../deion/common/types";
 

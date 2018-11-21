@@ -1,6 +1,6 @@
 // @flow
 
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g, local, lock, updateStatus } from "../../../../deion/worker/util";
 
 // Flush cache, disconnect from league database, and unset g.lid

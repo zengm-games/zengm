@@ -1,7 +1,7 @@
 // @flow
 
 import backboard from "backboard";
-import { connectLeague, idb } from "../db";
+import { connectLeague, idb } from "../../../deion/worker/db";
 import type { GetOutput } from "../../../deion/common/types";
 
 async function updateDeleteLeague({

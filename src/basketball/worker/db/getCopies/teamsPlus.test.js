@@ -4,7 +4,7 @@ import assert from "assert";
 import { before, describe, it } from "mocha";
 import testHelpers from "../../../test/helpers";
 import { player, team } from "../../core";
-import { idb } from "..";
+import { idb } from "../../../../deion/worker/db";
 import { g, helpers } from "../../../../deion/worker/util";
 
 describe("worker/db/getCopies/teamsPlus", () => {

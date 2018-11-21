@@ -1,6 +1,6 @@
 // @flow
 
-import { idb } from "../db";
+import { idb } from "../../../deion/worker/db";
 import type { GetOutput, UpdateEvents } from "../../../deion/common/types";
 
 const optionsTmp = [

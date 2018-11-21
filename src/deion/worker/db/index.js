@@ -5,7 +5,7 @@ import Cache from "./Cache";
 import getAll from "./getAll";
 import * as getCopies from "./getCopies";
 import * as getCopy from "./getCopy";
-import { logEvent } from "../../../deion/worker/util";
+import { logEvent } from "../util";
 
 Backboard.setPromiseConstructor(Promise);
 Backboard.on("quotaexceeded", () => {

@@ -2,7 +2,7 @@
 
 import orderBy from "lodash/orderBy";
 import { PHASE } from "../../../../deion/common";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g } from "../../../../deion/worker/util";
 
 /**

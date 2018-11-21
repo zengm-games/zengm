@@ -2,7 +2,7 @@
 
 import { PLAYER } from "../../../../deion/common";
 import { player } from "..";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g, helpers, local } from "../../../../deion/worker/util";
 import rosterAutoSort from "./rosterAutoSort";
 

@@ -1,10 +1,10 @@
 // @flow
 
-import { idb, Cache } from "../worker/db";
-import { STORES } from "../worker/db/Cache";
+import { idb, Cache } from "../../deion/worker/db";
+import { STORES } from "../../deion/worker/db/Cache";
 import { g, helpers } from "../../deion/worker/util";
 import { defaultGameAttributes } from "../worker/util";
-import type { Store } from "../worker/db/Cache";
+import type { Store } from "../../deion/worker/db/Cache";
 
 const mockIDBLeague = (): any => {
     const league = {};

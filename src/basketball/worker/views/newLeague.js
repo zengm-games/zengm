@@ -1,6 +1,6 @@
 // @flow
 
-import { idb } from "../db";
+import { idb } from "../../../deion/worker/db";
 
 async function updateNewLeague(): void | { [key: string]: any } {
     let newLid = null;

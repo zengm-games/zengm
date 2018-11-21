@@ -2,7 +2,7 @@
 
 import { PHASE, PLAYER } from "../../../deion/common";
 import { season, team } from "../core";
-import { idb } from "../db";
+import { idb } from "../../../deion/worker/db";
 import { g, getProcessedGames, helpers } from "../../../deion/worker/util";
 import type { GetOutput, UpdateEvents } from "../../../deion/common/types";
 

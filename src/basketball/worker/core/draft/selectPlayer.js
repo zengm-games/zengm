@@ -3,7 +3,7 @@
 import { PHASE } from "../../../../deion/common";
 import { player } from "..";
 import getRookieSalaries from "./getRookieSalaries";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g, helpers, local, logEvent } from "../../../../deion/worker/util";
 import type { DraftPick } from "../../../../deion/common/types";
 

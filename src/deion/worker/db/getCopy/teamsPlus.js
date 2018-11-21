@@ -1,7 +1,7 @@
 // @flow
 
 import { idb } from "..";
-import type { TeamFiltered } from "../../../../deion/common/types";
+import type { TeamFiltered } from "../../../common/types";
 //import type {TeamAttr, TeamFiltered, TeamSeasonAttr, TeamStatAttr, TeamStatType} from '../../../../deion/common/types';
 
 const getCopy = async (options: {

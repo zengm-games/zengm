@@ -15,7 +15,7 @@ import {
     team,
     trade,
 } from "../core";
-import { connectMeta, idb } from "../db";
+import { connectMeta, idb } from "../../../deion/worker/db";
 import {
     checkNaNs,
     env,

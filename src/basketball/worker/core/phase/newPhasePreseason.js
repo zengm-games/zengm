@@ -3,7 +3,7 @@
 import range from "lodash/range";
 import { PLAYER } from "../../../../deion/common";
 import { finances, freeAgents, league, player, team } from "..";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import {
     env,
     g,

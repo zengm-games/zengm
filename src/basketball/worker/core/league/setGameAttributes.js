@@ -1,6 +1,6 @@
 // @flow
 
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g, helpers, toUI } from "../../../../deion/worker/util";
 import type { GameAttributes } from "../../../../deion/common/types";
 

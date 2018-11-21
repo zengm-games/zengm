@@ -1,6 +1,6 @@
 // @flow
 
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 
 /**
  * Gets the team ID for the team that the user is trading with.

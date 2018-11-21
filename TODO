@@ -1,7 +1,15 @@
 # football
 
 db
-- league upgrade code - keep sport specific
+- keep in basketball
+  - playersPlus/teamsPlus
+
+worker overrides
+- playersPlus/teamsPlus
+- types in Cache, other db files
+  - cache - create idb on some init function call, not immediately. then pass it in from there.
+  - other instnaces of new Cache() -> replace with cache.reset()
+  - playersPlus, etc - make generic, default to any
 
 History
 - for football, MVP, OPOY, DPOY, OROY, DROY. then All-League Team and All-Rookie Team

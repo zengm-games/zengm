@@ -2,7 +2,7 @@
 
 import { PHASE } from "../../../deion/common";
 import { season } from "../core";
-import { idb } from "../db";
+import { idb } from "../../../deion/worker/db";
 import { g, helpers } from "../../../deion/worker/util";
 import type { UpdateEvents } from "../../../deion/common/types";
 

@@ -2,9 +2,9 @@
 
 import backboard from "backboard";
 import orderBy from "lodash/orderBy";
-import { mergeByPk } from "./helpers";
+import { mergeByPk } from "../../../../deion/worker/db/getCopies/helpers";
 import { team } from "../../core";
-import { idb } from "..";
+import { idb } from "../../../../deion/worker/db";
 import { g, helpers } from "../../../../deion/worker/util";
 import type {
     Team,

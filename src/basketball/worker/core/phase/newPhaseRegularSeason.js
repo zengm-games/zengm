@@ -2,7 +2,7 @@
 
 import backboard from "backboard";
 import { season } from "..";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g, genMessage, local } from "../../../../deion/worker/util";
 
 const newPhaseRegularSeason = async () => {

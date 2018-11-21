@@ -3,7 +3,7 @@
 import backboard from "backboard";
 import { PLAYER } from "../../../../deion/common";
 import pos from "../player/pos";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 
 const countPositions = async () => {
     // All non-retired players

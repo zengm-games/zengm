@@ -7,7 +7,7 @@ import { PLAYER } from "../../../../deion/common";
 import testHelpers from "../../../test/helpers";
 import { player } from "..";
 import { makeBrother, makeSon } from "./addRelatives";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 
 const season = 2017;
 

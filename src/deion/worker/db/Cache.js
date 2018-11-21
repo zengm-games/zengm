@@ -1,10 +1,10 @@
 // @flow
 
 import backboard from "backboard";
-import { PLAYER } from "../../../deion/common";
+import { PLAYER } from "../../common";
 import { idb } from ".";
 import cmp from "./cmp";
-import { g, local, lock } from "../../../deion/worker/util";
+import { g, local, lock } from "../util";
 import type {
     BackboardTx,
     DraftLotteryResult,
@@ -27,8 +27,8 @@ import type {
     TeamStats,
     Team,
     Trade,
-} from "../../../deion/common/types";
-import type { Awards, PlayerRatings } from "../../common/types";
+} from "../../common/types";
+import type { Awards, PlayerRatings } from "../../../basketball/common/types";
 
 type Status = "empty" | "error" | "filling" | "full";
 

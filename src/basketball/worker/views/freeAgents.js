@@ -2,7 +2,7 @@
 
 import { PLAYER } from "../../../deion/common";
 import { freeAgents, player, team } from "../core";
-import { idb } from "../db";
+import { idb } from "../../../deion/worker/db";
 import { g, lock } from "../../../deion/worker/util";
 
 async function updateFreeAgents(): void | { [key: string]: any } {

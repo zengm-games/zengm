@@ -2,7 +2,7 @@
 
 import addToFreeAgents from "./addToFreeAgents";
 import genBaseMoods from "./genBaseMoods";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g, helpers, logEvent } from "../../../../deion/worker/util";
 import type { Player } from "../../../../deion/common/types";
 

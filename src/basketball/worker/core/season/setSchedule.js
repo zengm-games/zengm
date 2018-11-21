@@ -1,6 +1,6 @@
 // @flow
 
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 
 /**
  * Save the schedule to the database, overwriting what's currently there.

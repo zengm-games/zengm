@@ -4,7 +4,7 @@ import { PLAYER } from "../../../../deion/common";
 import afterPicks from "./afterPicks";
 import getOrder from "./getOrder";
 import selectPlayer from "./selectPlayer";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g, helpers, local, lock, random } from "../../../../deion/worker/util";
 import type { Conditions } from "../../../../deion/common/types";
 

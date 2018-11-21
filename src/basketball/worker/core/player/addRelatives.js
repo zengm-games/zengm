@@ -1,7 +1,7 @@
 // @flow
 
 import romanNumerals from "roman-numerals";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g, helpers, random } from "../../../../deion/worker/util";
 import type { Player, RelativeType } from "../../../../deion/common/types";
 

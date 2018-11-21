@@ -2,7 +2,7 @@
 
 import { PHASE, PLAYER } from "../../../../deion/common";
 import { league, phase, player } from "..";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import {
     g,
     local,

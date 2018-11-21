@@ -11,7 +11,7 @@ import {
     season,
     trade,
 } from "../core";
-import { idb, reset } from "../db";
+import { idb, reset } from "../../../deion/worker/db";
 import {
     g,
     helpers,

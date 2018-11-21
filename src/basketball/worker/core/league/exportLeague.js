@@ -1,6 +1,6 @@
 // @flow
 
-import { getAll, idb } from "../../db";
+import { getAll, idb } from "../../../../deion/worker/db";
 import { g, local } from "../../../../deion/worker/util";
 
 /**

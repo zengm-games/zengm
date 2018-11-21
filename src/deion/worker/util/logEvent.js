@@ -1,7 +1,7 @@
 // @flow
 
 import { createLogger } from "../../common";
-import { idb } from "../../../basketball/worker/db";
+import { idb } from "../db";
 import g from "./g";
 import toUI from "./toUI";
 import type {

@@ -2,7 +2,7 @@
 
 import range from "lodash/range";
 import { team } from "..";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g, random } from "../../../../deion/worker/util";
 import isUntradable from "./isUntradable";
 import makeItWork from "./makeItWork";

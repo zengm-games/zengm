@@ -2,7 +2,7 @@
 
 import { player, team } from "..";
 import cancel from "./cancel";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g } from "../../../../deion/worker/util";
 
 /**

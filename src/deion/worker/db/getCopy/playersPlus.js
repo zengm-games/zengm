@@ -1,9 +1,9 @@
 // @flow
 
 import { idb } from "..";
-import type { Player, PlayerFiltered } from "../../../../deion/common/types";
-import type { PlayerRatings } from "../../../common/types";
-import type { PlayerOptions } from "../getCopies/playersPlus";
+import type { Player, PlayerFiltered } from "../../../common/types";
+import type { PlayerRatings } from "../../../../basketball/common/types";
+import type { PlayerOptions } from "../../../../basketball/worker/db/getCopies/playersPlus";
 
 // async is only for API consistency, it's not actually needed now that stats are in player objects
 const getCopy = async (

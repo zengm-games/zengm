@@ -1,6 +1,6 @@
 // @flow
 
-import { idb } from "../../../basketball/worker/db";
+import { idb } from "../db";
 import g from "./g";
 import type { GameProcessed } from "../../common/types";
 

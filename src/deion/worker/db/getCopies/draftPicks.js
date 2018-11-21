@@ -2,7 +2,7 @@
 
 import { idb } from "..";
 import { mergeByPk } from "./helpers";
-import type { DraftPick } from "../../../../deion/common/types";
+import type { DraftPick } from "../../../common/types";
 
 const getCopies = async ({ tid }: { tid?: number } = {}): Promise<
     DraftPick[],

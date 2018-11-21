@@ -1,7 +1,7 @@
 import assert from "assert";
-import testHelpers from "../../test/helpers";
-import { player } from "../core";
-import { g } from "../../../deion/worker/util";
+import testHelpers from "../../../basketball/test/helpers";
+import { player } from "../../../basketball/worker/core";
+import { g } from "../util";
 import { idb } from ".";
 
 describe("worker/db/Cache", () => {

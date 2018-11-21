@@ -1,6 +1,6 @@
 // @flow
 
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import type { ContractInfo } from "../../../../deion/common/types";
 
 /**

@@ -2,7 +2,7 @@
 
 import { PHASE, PLAYER } from "../../../../deion/common";
 import { contractNegotiation, league, player } from "..";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g, helpers, local, logEvent } from "../../../../deion/worker/util";
 import type { Conditions } from "../../../../deion/common/types";
 

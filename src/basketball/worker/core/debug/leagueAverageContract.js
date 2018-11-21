@@ -3,7 +3,7 @@
 import backboard from "backboard";
 import { PLAYER } from "../../../../deion/common";
 import { player } from "..";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 
 // Returns the average contract for the active players in the league
 // Useful to run this while playing with the contract formula in core.player.genContract

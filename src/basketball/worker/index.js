@@ -5,7 +5,7 @@ import "../../deion/common/polyfills";
 import api from "./api";
 import * as common from "../common";
 import * as core from "./core";
-import * as db from "./db";
+import * as db from "../../deion/worker/db";
 import * as util from "../../deion/worker/util";
 
 // source-map-support doesn't seem to do anything here. Source maps work great in Chrome with native promises, and

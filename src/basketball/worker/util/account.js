@@ -2,7 +2,7 @@
 
 /*eslint camelcase: 0*/
 import { fetchWrapper } from "../../../deion/common";
-import { idb } from "../db";
+import { idb } from "../../../deion/worker/db";
 import { env, g, local, logEvent, toUI } from "../../../deion/worker/util";
 import type { Conditions, PartialTopMenu } from "../../../deion/common/types";
 import type { AchievementKey } from "../../common/types";

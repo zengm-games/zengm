@@ -1,7 +1,7 @@
 // @flow
 
 import setSchedule from "./setSchedule";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g, helpers, local, lock } from "../../../../deion/worker/util";
 
 // Play 2 home (true) then 2 away (false) and repeat, but ensure that the better team always gets the last game.

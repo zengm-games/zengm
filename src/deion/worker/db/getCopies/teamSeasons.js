@@ -3,8 +3,8 @@
 import backboard from "backboard";
 import { idb } from "..";
 import { mergeByPk } from "./helpers";
-import { g, helpers } from "../../../../deion/worker/util";
-import type { TeamSeason } from "../../../../deion/common/types";
+import { g, helpers } from "../../util";
+import type { TeamSeason } from "../../../common/types";
 
 const getCopies = async ({
     tid,

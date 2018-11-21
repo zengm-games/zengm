@@ -2,7 +2,7 @@
 
 import { PHASE } from "../../../../deion/common";
 import { finances, team } from "..";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g, helpers, random } from "../../../../deion/worker/util";
 import type { GameResults } from "../../../../deion/common/types";
 

@@ -2,12 +2,11 @@
 
 import backboard from "backboard";
 import orderBy from "lodash/orderBy";
-import { PHASE, PLAYER } from "../../../deion/common";
-import { player } from "../core";
-import { bootstrapPot } from "../core/player/develop";
+import { PHASE, PLAYER } from "../../common";
+import { player } from "../../../basketball/worker/core";
+import { bootstrapPot } from "../../../basketball/worker/core/player/develop";
 import { idb } from ".";
-import { logEvent } from "../../../deion/worker/util";
-import type { RatingKey } from "../../common/types";
+import { logEvent } from "../util";
 
 // I did it this way (with the raw IDB API) because I was afraid it would read all players into memory before getting
 // the stats and writing them back to the database. Promises/async/await would help, but Firefox before 60 does not like
@@ -393,7 +392,7 @@ const migrateLeague = (upgradeDB, lid) => {
                 }
 
                 // Scale ratings
-                const ratingKeys: RatingKey[] = [
+                const ratingKeys = [
                     "stre",
                     "spd",
                     "jmp",

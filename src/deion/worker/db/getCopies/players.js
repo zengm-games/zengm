@@ -1,12 +1,12 @@
 // @flow
 
 import backboard from "backboard";
-import { PLAYER } from "../../../../deion/common";
+import { PLAYER } from "../../../common";
 import { getAll, idb } from "..";
 import { mergeByPk } from "./helpers";
-import { helpers } from "../../../../deion/worker/util";
-import type { Player } from "../../../../deion/common/types";
-import type { PlayerRatings } from "../../../common/types";
+import { helpers } from "../../util";
+import type { Player } from "../../../common/types";
+import type { PlayerRatings } from "../../../../basketball/common/types";
 
 const getCopies = async ({
     pid,

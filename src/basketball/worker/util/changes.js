@@ -1,6 +1,6 @@
 // @flow
 
-import { idb } from "../db";
+import { idb } from "../../../deion/worker/db";
 import { logEvent } from "../../../deion/worker/util";
 import type { Conditions } from "../../../deion/common/types";
 

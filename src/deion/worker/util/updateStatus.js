@@ -1,7 +1,7 @@
 // @flow
 
 import { PHASE } from "../../common";
-import { idb } from "../../../basketball/worker/db";
+import { idb } from "../db";
 import g from "./g";
 import local from "./local";
 import toUI from "./toUI";

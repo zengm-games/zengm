@@ -2,7 +2,7 @@
 
 import { PHASE } from "../../../../deion/common";
 import { player } from "..";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import {
     g,
     helpers,

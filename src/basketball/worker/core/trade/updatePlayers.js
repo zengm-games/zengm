@@ -1,6 +1,6 @@
 // @flow
 
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import type { TradeTeams } from "../../../../deion/common/types";
 import isUntradable from "./isUntradable";
 

@@ -1,7 +1,7 @@
 // @flow
 
 import { player } from "../core";
-import { idb } from "../db";
+import { idb } from "../../../deion/worker/db";
 import { g } from "../../../deion/worker/util";
 
 async function updateUpcomingFreeAgents(inputs: {

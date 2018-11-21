@@ -2,7 +2,7 @@
 
 import { finances, player } from "..";
 import genPlayersWithoutSaving from "./genPlayersWithoutSaving";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g, helpers, logEvent } from "../../../../deion/worker/util";
 
 /**

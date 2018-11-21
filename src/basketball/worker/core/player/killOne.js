@@ -1,7 +1,7 @@
 // @flow
 
 import retire from "./retire";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g, helpers, logEvent, random } from "../../../../deion/worker/util";
 import type { Conditions } from "../../../../deion/common/types";
 

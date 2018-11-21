@@ -1,6 +1,6 @@
 // @flow
 
-import { helpers } from "../../../../deion/worker/util";
+import { helpers } from "../../util";
 
 // Merge fromDb and fromCache by primary key. Records in fromCache will overwrite records in fromDb, and then extra records will be appended to end. Return value is cloned.
 const mergeByPk = <T: { [key: string]: any }>(

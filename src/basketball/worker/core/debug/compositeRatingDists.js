@@ -4,7 +4,7 @@ import backboard from "backboard";
 import { PLAYER } from "../../../../deion/common";
 import { COMPOSITE_WEIGHTS } from "../../../common";
 import { player } from "..";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 
 const compositeRatingDists = async () => {
     // All non-retired players

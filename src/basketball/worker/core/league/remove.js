@@ -2,7 +2,7 @@
 
 import backboard from "backboard";
 import close from "./close";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g } from "../../../../deion/worker/util";
 
 /**

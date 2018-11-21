@@ -1,6 +1,6 @@
 // @flow
 
-import { Cache, connectLeague, idb } from "../db";
+import { Cache, connectLeague, idb } from "../../../deion/worker/db";
 import { league } from "../core";
 import {
     env,

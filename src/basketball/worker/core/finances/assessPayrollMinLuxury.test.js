@@ -4,7 +4,7 @@ import assert from "assert";
 import { describe, it } from "mocha";
 import testHelpers from "../../../test/helpers";
 import { finances, player, team } from "..";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g } from "../../../../deion/worker/util";
 
 describe("worker/core/finances/assessPayrollMinLuxury", () => {

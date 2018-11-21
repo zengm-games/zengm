@@ -1,6 +1,6 @@
 // @flow
 
-import { idb } from "../db";
+import { idb } from "../../../deion/worker/db";
 
 async function updateInbox(): void | { [key: string]: any } {
     const messages = await idb.getCopies.messages();

@@ -2,7 +2,7 @@
 
 import { PLAYER } from "../../../deion/common";
 import { freeAgents } from "../core";
-import { idb } from "../db";
+import { idb } from "../../../deion/worker/db";
 import { g } from "../../../deion/worker/util";
 import type { UpdateEvents } from "../../../deion/common/types";
 import type { PlayerStatType } from "../../common/types";

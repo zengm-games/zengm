@@ -5,7 +5,7 @@ import { before, describe, it } from "mocha";
 import { PLAYER } from "../../../../deion/common";
 import testHelpers from "../../../test/helpers";
 import { player, team } from "..";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g } from "../../../../deion/worker/util";
 
 describe("worker/core/team/rosterAutoSort/findStarters", () => {

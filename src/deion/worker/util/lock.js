@@ -1,6 +1,6 @@
 // @flow
 
-import { idb } from "../../../basketball/worker/db";
+import { idb } from "../db";
 import toUI from "./toUI";
 import type { Locks } from "../../common/types";
 

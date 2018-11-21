@@ -1,7 +1,7 @@
 // @flow
 
 import { finances, player, season, team } from "..";
-import { idb } from "../../db";
+import { idb } from "../../../../deion/worker/db";
 import { g, helpers, local, logEvent } from "../../../../deion/worker/util";
 import { account } from "../../util";
 import type { Conditions } from "../../../../deion/common/types";

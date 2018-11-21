@@ -2,7 +2,10 @@
 
 import { league } from "../../../basketball/worker/core";
 import { idb } from "../../../basketball/worker/db";
-import { g, helpers, local, random } from ".";
+import g from "./g";
+import helpers from "./helpers";
+import local from "./local";
+import random from "./random";
 import type { OwnerMoodDeltas } from "../../common/types";
 
 // First message after new game

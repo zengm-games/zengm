@@ -2,7 +2,9 @@
 
 import { PHASE } from "../../common";
 import { idb } from "../../../basketball/worker/db";
-import { g, local, toUI } from ".";
+import g from "./g";
+import local from "./local";
+import toUI from "./toUI";
 import type { Conditions } from "../../common/types";
 
 /*Save status to database and push to client.

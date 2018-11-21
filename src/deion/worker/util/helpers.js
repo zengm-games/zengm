@@ -2,7 +2,7 @@
 
 import orderBy from "lodash/orderBy";
 import { PLAYER, helpers as commonHelpers } from "../../common";
-import { g } from ".";
+import g from "./g";
 import type {
     DraftPick,
     GameProcessed,

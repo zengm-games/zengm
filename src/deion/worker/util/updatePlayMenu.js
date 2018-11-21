@@ -2,7 +2,11 @@
 
 import { PHASE } from "../../common";
 import { draft } from "../../../basketball/worker/core";
-import { g, helpers, local, lock, toUI } from ".";
+import g from "./g";
+import helpers from "./helpers";
+import local from "./local";
+import lock from "./lock";
+import toUI from "./toUI";
 
 /**
  * Update play menu options based on game state.

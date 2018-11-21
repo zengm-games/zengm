@@ -1,7 +1,7 @@
 // @flow
 
 import { idb } from "../../../basketball/worker/db";
-import { toUI } from ".";
+import toUI from "./toUI";
 import type { Locks } from "../../common/types";
 
 // These are transient variables that always reset to "false" on reload. See local.js for more.

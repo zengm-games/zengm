@@ -47,6 +47,7 @@ import PlayerStats from "./PlayerStats";
 import Playoffs from "./Playoffs";
 import PowerRankings from "./PowerRankings";
 import ResetPassword from "./ResetPassword";
+import Roster from "./Roster";
 import Schedule from "./Schedule";
 import Standings from "./Standings";
 import TeamFinances from "./TeamFinances";
@@ -108,6 +109,7 @@ export default {
     Playoffs,
     PowerRankings,
     ResetPassword,
+    Roster,
     Schedule,
     Standings,
     TeamFinances,

@@ -1,6 +1,6 @@
 // @flow
 
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 
 /**
  * Get a list of rookie salaries for all players in the draft.

@@ -1,7 +1,7 @@
 // @flow
 
 import { finances } from "..";
-import { g, helpers, random } from "../../util";
+import { g, helpers, random } from "../../../../deion/worker/util";
 import { PHASE } from "../../../../deion/common";
 import type { TeamSeason } from "../../../../deion/common/types";
 

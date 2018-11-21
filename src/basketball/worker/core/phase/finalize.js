@@ -10,7 +10,7 @@ import {
     updatePhase,
     updatePlayMenu,
     updateStatus,
-} from "../../util";
+} from "../../../../deion/worker/util";
 import type {
     Conditions,
     Phase,

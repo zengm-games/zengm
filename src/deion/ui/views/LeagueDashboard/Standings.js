@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { helpers } from "../../../../deion/ui/util";
+import { helpers } from "../../util";
 
 const Standings = ({
     confTeams,

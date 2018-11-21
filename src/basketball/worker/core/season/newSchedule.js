@@ -2,7 +2,7 @@
 
 import flatten from "lodash/flatten";
 import range from "lodash/range";
-import { g, random } from "../../util";
+import { g, random } from "../../../../deion/worker/util";
 import type { Team } from "../../../../deion/common/types";
 
 /**

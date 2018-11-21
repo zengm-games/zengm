@@ -1,7 +1,7 @@
 // @flow
 
 import { PLAYER } from "../../../../deion/common";
-import { g, random } from "../../util";
+import { g, random } from "../../../../deion/worker/util";
 import type {
     MinimalPlayerRatings,
     Player,

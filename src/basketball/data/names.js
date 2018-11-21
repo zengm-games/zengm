@@ -1,6 +1,6 @@
 // @flow
 
-import { g } from "../worker/util";
+import { g } from "../../deion/worker/util";
 
 type PlayerNames = {
     countries: [string, number][],

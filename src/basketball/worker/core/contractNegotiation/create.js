@@ -3,7 +3,13 @@
 import { PHASE, PLAYER } from "../../../../deion/common";
 import { freeAgents } from "..";
 import { idb } from "../../db";
-import { g, helpers, lock, updatePlayMenu, updateStatus } from "../../util";
+import {
+    g,
+    helpers,
+    lock,
+    updatePlayMenu,
+    updateStatus,
+} from "../../../../deion/worker/util";
 
 /**
  * Start a new contract negotiation with a player.

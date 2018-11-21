@@ -1,7 +1,7 @@
 // @flow
 
 import fuzzRating from "./fuzzRating";
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 import type {
     MinimalPlayerRatings,
     Player,

@@ -1,6 +1,6 @@
 // @flow
 
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 
 /**
  * Create a new team object.

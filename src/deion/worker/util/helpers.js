@@ -1,14 +1,14 @@
 // @flow
 
 import orderBy from "lodash/orderBy";
-import { PLAYER, helpers as commonHelpers } from "../../../deion/common";
+import { PLAYER, helpers as commonHelpers } from "../../common";
 import { g } from ".";
 import type {
     DraftPick,
     GameProcessed,
     GameProcessedCompleted,
     PlayoffSeriesTeam,
-} from "../../../deion/common/types";
+} from "../../common/types";
 
 const augmentSeries = (
     series: {| away?: PlayoffSeriesTeam, home: PlayoffSeriesTeam |}[][],

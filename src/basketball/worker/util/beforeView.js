@@ -11,7 +11,7 @@ import {
     updatePhase,
     updatePlayMenu,
     updateStatus,
-} from ".";
+} from "../../../deion/worker/util";
 import type { Conditions, League } from "../../../deion/common/types";
 
 let heartbeatIntervalID: IntervalID;

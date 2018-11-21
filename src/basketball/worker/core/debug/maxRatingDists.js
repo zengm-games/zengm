@@ -2,7 +2,7 @@
 
 import { PLAYER } from "../../../../deion/common";
 import { draft, player } from "..";
-import { g, helpers } from "../../util";
+import { g, helpers } from "../../../../deion/worker/util";
 
 const maxRatingDists = (numPlayers: number = 100) => {
     // Each player gets one entry per array: their career max in a rating

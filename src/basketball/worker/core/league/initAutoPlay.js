@@ -1,7 +1,7 @@
 // @flow
 
 import autoPlay from "./autoPlay";
-import { local, toUI } from "../../util";
+import { local, toUI } from "../../../../deion/worker/util";
 import type { Conditions } from "../../../../deion/common/types";
 
 const initAutoPlay = async (conditions: Conditions) => {

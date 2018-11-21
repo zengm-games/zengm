@@ -5,7 +5,7 @@ import { describe, it } from "mocha";
 import testHelpers from "../../../test/helpers";
 import { finances, player, team } from "..";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 
 describe("worker/core/finances/assessPayrollMinLuxury", () => {
     it("store payroll and appropriately assess luxury and minimum payroll taxes for each team", async () => {

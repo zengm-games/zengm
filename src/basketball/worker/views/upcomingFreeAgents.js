@@ -2,7 +2,7 @@
 
 import { player } from "../core";
 import { idb } from "../db";
-import { g } from "../util";
+import { g } from "../../../deion/worker/util";
 
 async function updateUpcomingFreeAgents(inputs: {
     season: number,

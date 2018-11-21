@@ -1,13 +1,13 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { PHASE } from "../../../../deion/common";
-import { helpers, setTitle } from "../../../../deion/ui/util";
+import { PHASE } from "../../../common";
+import { helpers, setTitle } from "../../util";
 import {
     CompletedGame,
     NewWindowLink,
     PlayoffMatchup,
     UpcomingGame,
-} from "../../../../deion/ui/components";
+} from "../../components";
 import Leaders from "./Leaders";
 import Standings from "./Standings";
 import StartingLineup from "./StartingLineup";

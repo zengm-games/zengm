@@ -5,7 +5,7 @@ import range from "lodash/range";
 import { PHASE, PLAYER } from "../../../../deion/common";
 import { player, team } from "..";
 import { idb } from "../../db";
-import { g, local, random } from "../../util";
+import { g, local, random } from "../../../../deion/worker/util";
 
 /**
  * AI teams sign free agents.

@@ -3,7 +3,7 @@
 import { PHASE, PLAYER } from "../../../../deion/common";
 import { player } from "..";
 import { idb } from "../../db";
-import { toUI } from "../../util";
+import { toUI } from "../../../../deion/worker/util";
 
 const recomputeFreeAgentContracts = async () => {
     const players = await idb.cache.players.indexGetAll(

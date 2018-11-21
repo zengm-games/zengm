@@ -1,7 +1,7 @@
 // @flow
 
 import { idb } from "../db";
-import { g } from "../util";
+import { g } from "../../../deion/worker/util";
 import type { UpdateEvents } from "../../../deion/common/types";
 
 async function updateTeams(

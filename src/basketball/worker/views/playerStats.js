@@ -2,7 +2,7 @@
 
 import { PHASE, PLAYER } from "../../../deion/common";
 import { idb } from "../db";
-import { g } from "../util";
+import { g } from "../../../deion/worker/util";
 import type { UpdateEvents } from "../../../deion/common/types";
 import type { PlayerStatType } from "../../common/types";
 

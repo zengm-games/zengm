@@ -2,7 +2,8 @@
 
 import { idb, Cache } from "../worker/db";
 import { STORES } from "../worker/db/Cache";
-import { defaultGameAttributes, g, helpers } from "../worker/util";
+import { g, helpers } from "../../deion/worker/util";
+import { defaultGameAttributes } from "../worker/util";
 import type { Store } from "../worker/db/Cache";
 
 const mockIDBLeague = (): any => {

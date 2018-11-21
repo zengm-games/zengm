@@ -3,7 +3,7 @@
 import backboard from "backboard";
 import close from "./close";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 
 /**
  * Delete an existing league.

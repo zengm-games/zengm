@@ -3,7 +3,13 @@
 import { PHASE } from "../../../../deion/common";
 import { player } from "..";
 import { idb } from "../../db";
-import { g, helpers, logEvent, toUI, updatePlayMenu } from "../../util";
+import {
+    g,
+    helpers,
+    logEvent,
+    toUI,
+    updatePlayMenu,
+} from "../../../../deion/worker/util";
 import type { TradeSummary } from "../../../../deion/common/types";
 
 const formatAssetsEventLog = t => {

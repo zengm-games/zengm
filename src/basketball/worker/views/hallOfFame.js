@@ -2,7 +2,7 @@
 
 import { PHASE } from "../../../deion/common";
 import { idb } from "../db";
-import { g } from "../util";
+import { g } from "../../../deion/worker/util";
 import type { GetOutput, UpdateEvents } from "../../../deion/common/types";
 
 async function updatePlayers(

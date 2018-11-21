@@ -9,7 +9,7 @@ import limitRating from "./limitRating";
 import name from "./name";
 import pos from "./pos";
 import setContract from "./setContract";
-import { g, helpers, random } from "../../util";
+import { g, helpers, random } from "../../../../deion/worker/util";
 import type { PlayerWithoutPid } from "../../../../deion/common/types";
 import type { PlayerRatings, RatingKey } from "../../../common/types";
 

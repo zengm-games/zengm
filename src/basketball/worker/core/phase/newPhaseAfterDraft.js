@@ -2,7 +2,7 @@
 
 import { draft } from "..";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 
 const newPhaseAfterDraft = async () => {
     await draft.genPicks(g.season + 4);

@@ -6,7 +6,7 @@ import { PLAYER } from "../../../../deion/common";
 import testHelpers from "../../../test/helpers";
 import { draft } from "..";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 import { getDraftTids, loadTeamSeasons } from "./common.test";
 
 const testRunPicks = async (numNow, numTotal) => {

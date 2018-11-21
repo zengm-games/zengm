@@ -2,7 +2,7 @@
 
 import { team } from "..";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 
 /**
  * Assess the payroll and apply minimum and luxury taxes.

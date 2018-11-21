@@ -2,7 +2,7 @@
 
 import { team } from "..";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 import type { TradeSummary, TradeTeams } from "../../../../deion/common/types";
 
 /**

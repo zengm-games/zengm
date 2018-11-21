@@ -6,7 +6,7 @@ import { loadTeamSeasons } from "./common.test";
 import lotterySort from "./lotterySort";
 import updateChances from "./updateChances";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 
 describe("worker/core/draft/updateChances", () => {
     before(loadTeamSeasons);

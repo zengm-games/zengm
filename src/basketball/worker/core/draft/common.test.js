@@ -5,7 +5,7 @@ import sampleTiebreakers from "../../../test/fixtures/sampleTiebreakers";
 import testHelpers from "../../../test/helpers";
 import { draft } from "..";
 import { idb } from "../../db";
-import { helpers } from "../../util";
+import { helpers } from "../../../../deion/worker/util";
 
 const getDraftTids = async () => {
     await draft.genOrder();

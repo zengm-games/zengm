@@ -1,6 +1,6 @@
 // @flow
 
-import { g, helpers, random } from "../util";
+import { g, helpers, random } from "../../../deion/worker/util";
 
 type PlayType =
     | "ast"

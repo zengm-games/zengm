@@ -3,7 +3,7 @@
 import { PHASE } from "../../../../deion/common";
 import { team } from "..";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 import clear from "./clear";
 import processTrade from "./processTrade";
 import summary from "./summary";

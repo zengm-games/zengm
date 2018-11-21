@@ -1,7 +1,7 @@
 // @flow
 
 import { idb } from "../../db";
-import { g, local, lock, updateStatus } from "../../util";
+import { g, local, lock, updateStatus } from "../../../../deion/worker/util";
 
 // Flush cache, disconnect from league database, and unset g.lid
 const close = async (disconnect?: boolean) => {

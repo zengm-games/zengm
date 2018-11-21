@@ -3,7 +3,8 @@ import { after, before, describe, it } from "mocha";
 import testHelpers from "../../test/helpers";
 import { player, team } from "../core";
 import { idb } from "../db";
-import { account, g, helpers } from ".";
+import { g, helpers } from "../../../deion/worker/util";
+import { account } from ".";
 
 describe("worker/util/account/checkAchievement", () => {
     before(async () => {

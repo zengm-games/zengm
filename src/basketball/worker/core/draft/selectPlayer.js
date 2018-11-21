@@ -4,7 +4,7 @@ import { PHASE } from "../../../../deion/common";
 import { player } from "..";
 import getRookieSalaries from "./getRookieSalaries";
 import { idb } from "../../db";
-import { g, helpers, local, logEvent } from "../../util";
+import { g, helpers, local, logEvent } from "../../../../deion/worker/util";
 import type { DraftPick } from "../../../../deion/common/types";
 
 /**

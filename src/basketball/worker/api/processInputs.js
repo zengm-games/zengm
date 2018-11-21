@@ -1,5 +1,5 @@
 import { PHASE } from "../../../deion/common";
-import { g, helpers } from "../util";
+import { g, helpers } from "../../../deion/worker/util";
 
 /**
  * Validate that a given abbreviation corresponds to a team.

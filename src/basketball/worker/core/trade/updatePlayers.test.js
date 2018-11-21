@@ -4,7 +4,7 @@ import assert from "assert";
 import { afterEach, before, describe, it } from "mocha";
 import { trade } from "..";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 import { beforeTests, reset } from "./common.test";
 
 describe("worker/core/trade/updatePlayers", () => {

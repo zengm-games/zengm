@@ -3,7 +3,8 @@
 import { PLAYER } from "../../../../deion/common";
 import { player, season, team } from "..";
 import { idb } from "../../db";
-import { account, g, genMessage, helpers, toUI } from "../../util";
+import { g, genMessage, helpers, toUI } from "../../../../deion/worker/util";
+import { account } from "../../util";
 import type { Conditions } from "../../../../deion/common/types";
 
 const newPhaseBeforeDraft = async (

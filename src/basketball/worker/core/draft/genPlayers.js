@@ -3,7 +3,7 @@
 import { finances, player } from "..";
 import genPlayersWithoutSaving from "./genPlayersWithoutSaving";
 import { idb } from "../../db";
-import { g, helpers, logEvent } from "../../util";
+import { g, helpers, logEvent } from "../../../../deion/worker/util";
 
 /**
  * Generate a set of draft prospects.

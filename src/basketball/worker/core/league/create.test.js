@@ -3,7 +3,7 @@
 import assert from "assert";
 import { before, describe, it } from "mocha";
 import testHelpers from "../../../test/helpers";
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 import { createWithoutSaving } from "./create";
 
 describe("worker/core/league/create", () => {

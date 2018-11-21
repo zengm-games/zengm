@@ -1,7 +1,7 @@
 // @flow
 
 import * as names from "../../../data/names";
-import { random } from "../../util";
+import { random } from "../../../../deion/worker/util";
 
 let playerNames;
 

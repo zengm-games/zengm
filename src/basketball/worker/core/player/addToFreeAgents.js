@@ -3,7 +3,7 @@
 import { PHASE, PLAYER } from "../../../../deion/common";
 import genContract from "./genContract";
 import setContract from "./setContract";
-import { g, helpers, random } from "../../util";
+import { g, helpers, random } from "../../../../deion/worker/util";
 import type {
     MinimalPlayerRatings,
     Phase,

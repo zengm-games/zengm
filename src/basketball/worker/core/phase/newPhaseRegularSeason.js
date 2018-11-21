@@ -3,7 +3,7 @@
 import backboard from "backboard";
 import { season } from "..";
 import { idb } from "../../db";
-import { g, genMessage, local } from "../../util";
+import { g, genMessage, local } from "../../../../deion/worker/util";
 
 const newPhaseRegularSeason = async () => {
     const teams = await idb.cache.teams.getAll();

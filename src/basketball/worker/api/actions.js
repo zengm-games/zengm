@@ -21,7 +21,7 @@ import {
     toUI,
     updatePlayMenu,
     updateStatus,
-} from "../util";
+} from "../../../deion/worker/util";
 import type { Conditions } from "../../../deion/common/types";
 
 const liveGame = async (gid: number, conditions: Conditions) => {

@@ -1,7 +1,7 @@
 // @flow
 
 import { PHASE } from "../../../../deion/common";
-import { g, logEvent } from "../../util";
+import { g, logEvent } from "../../../../deion/worker/util";
 import type { Conditions } from "../../../../deion/common/types";
 
 const logAction = (tid: number, text: string, conditions?: Conditions) => {

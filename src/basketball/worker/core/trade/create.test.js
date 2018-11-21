@@ -3,7 +3,7 @@
 import assert from "assert";
 import { afterEach, before, describe, it } from "mocha";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 import { trade } from "..";
 import { beforeTests, reset } from "./common.test";
 

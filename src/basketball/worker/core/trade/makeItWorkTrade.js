@@ -1,7 +1,7 @@
 // @flow
 
 import { idb } from "../../db";
-import { g, helpers } from "../../util";
+import { g, helpers } from "../../../../deion/worker/util";
 import getPickValues from "./getPickValues";
 import makeItWork from "./makeItWork";
 import summary from "./summary";

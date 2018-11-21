@@ -8,7 +8,7 @@ import heightToRating from "./heightToRating";
 import ovr from "./ovr";
 import setContract from "./setContract";
 import skills from "./skills";
-import { g, random } from "../../util";
+import { g, random } from "../../../../deion/worker/util";
 import type { Player } from "../../../../deion/common/types";
 import type { RatingKey, PlayerRatings } from "../../../common/types";
 

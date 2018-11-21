@@ -1,7 +1,7 @@
 // @flow
 
 import { idb } from "../../db";
-import { g, helpers } from "../../util";
+import { g, helpers } from "../../../../deion/worker/util";
 
 /**
  * Given a list of players sorted by ability, find the starters.

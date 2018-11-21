@@ -1,7 +1,7 @@
 // @flow
 
 import { idb } from "../db";
-import { logEvent } from ".";
+import { logEvent } from "../../../deion/worker/util";
 import type { Conditions } from "../../../deion/common/types";
 
 const all = [

@@ -2,7 +2,7 @@
 
 import romanNumerals from "roman-numerals";
 import { idb } from "../../db";
-import { g, helpers, random } from "../../util";
+import { g, helpers, random } from "../../../../deion/worker/util";
 import type { Player, RelativeType } from "../../../../deion/common/types";
 
 const parseLastName = (lastName: string): [string, number | void] => {

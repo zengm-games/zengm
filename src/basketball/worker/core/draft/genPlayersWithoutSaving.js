@@ -3,7 +3,7 @@
 import range from "lodash/range";
 import { PLAYER } from "../../../../deion/common";
 import { player } from "..";
-import { g, random } from "../../util";
+import { g, random } from "../../../../deion/worker/util";
 import type { PlayerWithoutPid } from "../../../../deion/common/types";
 import type { PlayerRatings } from "../../../common/types";
 

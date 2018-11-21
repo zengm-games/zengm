@@ -2,7 +2,7 @@
 
 import assert from "assert";
 import { before, describe, it } from "mocha";
-import { PLAYER } from "../../../deion/common";
+import { PLAYER } from "../../common";
 import { g, helpers } from ".";
 
 describe("worker/util/helpers", () => {

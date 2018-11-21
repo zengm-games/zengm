@@ -6,7 +6,7 @@ import { PLAYER } from "../../../../deion/common";
 import testHelpers from "../../../test/helpers";
 import { player } from "../../core";
 import { idb } from "..";
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 
 describe("worker/db/getCopies/playersPlus", () => {
     let p;

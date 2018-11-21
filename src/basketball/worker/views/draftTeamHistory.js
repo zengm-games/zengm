@@ -2,7 +2,7 @@
 
 import { PLAYER } from "../../../deion/common";
 import { idb } from "../db";
-import { g } from "../util";
+import { g } from "../../../deion/worker/util";
 
 async function updateDraftTeamHistory(inputs: {
     abbrev: string,

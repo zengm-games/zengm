@@ -1,6 +1,6 @@
 // @flow
 
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 
 /**
  * How many seasons are left on this contract? The answer can be a fraction if the season is partially over

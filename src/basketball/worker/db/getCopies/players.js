@@ -4,7 +4,7 @@ import backboard from "backboard";
 import { PLAYER } from "../../../../deion/common";
 import { getAll, idb } from "..";
 import { mergeByPk } from "./helpers";
-import { helpers } from "../../util";
+import { helpers } from "../../../../deion/worker/util";
 import type { Player } from "../../../../deion/common/types";
 import type { PlayerRatings } from "../../../common/types";
 

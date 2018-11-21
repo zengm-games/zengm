@@ -2,7 +2,7 @@ import { PLAYER } from "../../../../deion/common";
 import testHelpers from "../../../test/helpers";
 import { player } from "..";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 
 // Make player ask for a min contract, to ensure he'll never refuse to sign
 const givePlayerMinContract = async pid => {

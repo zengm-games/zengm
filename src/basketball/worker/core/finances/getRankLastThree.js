@@ -1,6 +1,6 @@
 // @flow
 
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 import type { TeamSeason } from "../../../../deion/common/types";
 
 /**

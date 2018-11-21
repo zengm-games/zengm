@@ -1,7 +1,7 @@
 // @flow
 
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 import type { DraftPick } from "../../../../deion/common/types";
 
 // Add a new set of draft picks

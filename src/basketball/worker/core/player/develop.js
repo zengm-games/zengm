@@ -7,7 +7,7 @@ import limitRating from "./limitRating";
 import ovr from "./ovr";
 import pos from "./pos";
 import skills from "./skills";
-import { g, helpers, random } from "../../util";
+import { g, helpers, random } from "../../../../deion/worker/util";
 import type { PlayerRatings, RatingKey } from "../../../common/types";
 
 const shootingFormula = {

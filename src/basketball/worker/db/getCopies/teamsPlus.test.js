@@ -5,7 +5,7 @@ import { before, describe, it } from "mocha";
 import testHelpers from "../../../test/helpers";
 import { player, team } from "../../core";
 import { idb } from "..";
-import { g, helpers } from "../../util";
+import { g, helpers } from "../../../../deion/worker/util";
 
 describe("worker/db/getCopies/teamsPlus", () => {
     before(async () => {

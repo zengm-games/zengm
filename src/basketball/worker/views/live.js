@@ -1,7 +1,7 @@
 // @flow
 
 import { season } from "../core";
-import { g, helpers, lock } from "../util";
+import { g, helpers, lock } from "../../../deion/worker/util";
 import type { GetOutput, UpdateEvents } from "../../../deion/common/types";
 
 async function updateGamesList(): void | { [key: string]: any } {

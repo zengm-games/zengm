@@ -11,14 +11,8 @@ import DropdownItem from "reactstrap/lib/DropdownItem";
 import DropdownMenu from "reactstrap/lib/DropdownMenu";
 import DropdownToggle from "reactstrap/lib/DropdownToggle";
 import UncontrolledDropdown from "reactstrap/lib/UncontrolledDropdown";
-import { PHASE } from "../../../deion/common";
-import {
-    getCols,
-    helpers,
-    logEvent,
-    setTitle,
-    toWorker,
-} from "../../../deion/ui/util";
+import { PHASE } from "../../common";
+import { getCols, helpers, logEvent, setTitle, toWorker } from "../util";
 import {
     Dropdown,
     HelpPopover,
@@ -27,8 +21,8 @@ import {
     RatingWithChange,
     RecordAndPlayoffs,
     ResponsiveTableWrapper,
-} from "../../../deion/ui/components";
-import clickable from "../../../deion/ui/wrappers/clickable";
+} from "../components";
+import clickable from "../wrappers/clickable";
 
 const ptStyles = {
     0: {

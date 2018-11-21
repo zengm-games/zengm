@@ -55,10 +55,6 @@ const roundsWonText = (
     return "";
 };
 
-const upperCaseFirstLetter = (string: string): string => {
-    return `${string.charAt(0).toUpperCase()}${string.slice(1)}`;
-};
-
 const roundOverrides =
     process.env.SPORT === "basketball"
         ? {
@@ -106,7 +102,6 @@ const helpers = Object.assign({}, commonHelpers, {
     plusMinus,
     roundStat,
     roundsWonText,
-    upperCaseFirstLetter,
 });
 
 export default helpers;

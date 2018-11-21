@@ -1,4 +1,4 @@
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 import testHelpers from "../../../test/helpers";
 import { player, trade } from "..";
 

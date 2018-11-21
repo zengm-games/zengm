@@ -1,7 +1,7 @@
 // @flow
 
 import { PHASE } from "../../../../deion/common";
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 import type {
     Player,
     PlayerContract,

@@ -1,7 +1,7 @@
 // @flow
 
 import { idb } from "../../db";
-import { updatePlayMenu, updateStatus } from "../../util";
+import { updatePlayMenu, updateStatus } from "../../../../deion/worker/util";
 
 /**
  * Cancel all ongoing contract negotiations.

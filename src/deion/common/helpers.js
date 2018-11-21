@@ -492,6 +492,10 @@ const refuseToNegotiate = (amount: number, mood: number): boolean => {
     return amount * mood > 9500;
 };
 
+const upperCaseFirstLetter = (string: string): string => {
+    return `${string.charAt(0).toUpperCase()}${string.slice(1)}`;
+};
+
 export default {
     addPopRank,
     gameScore,
@@ -505,4 +509,5 @@ export default {
     yearRanges,
     roundWinp,
     refuseToNegotiate,
+    upperCaseFirstLetter,
 };

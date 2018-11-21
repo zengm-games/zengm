@@ -1,7 +1,7 @@
 // @flow
 
 import { idb } from "../db";
-import { g, getProcessedGames, helpers } from "../util";
+import { g, getProcessedGames, helpers } from "../../../deion/worker/util";
 import type { GetOutput, UpdateEvents } from "../../../deion/common/types";
 
 /**

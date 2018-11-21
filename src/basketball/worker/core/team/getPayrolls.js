@@ -2,7 +2,7 @@
 
 import range from "lodash/range";
 import getPayroll from "./getPayroll";
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 
 /**
  * Get the total current payroll for every team team.

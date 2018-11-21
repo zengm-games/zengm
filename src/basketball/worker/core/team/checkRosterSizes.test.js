@@ -6,7 +6,7 @@ import { PLAYER } from "../../../../deion/common";
 import testHelpers from "../../../test/helpers";
 import { player, team } from "..";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 
 describe("worker/core/team/rosterAutoSort/findStarters", () => {
     before(() => {

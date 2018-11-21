@@ -2,7 +2,7 @@
 
 import { PHASE } from "../../../../deion/common";
 import { draft, freeAgents, game, phase, season } from "..";
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 import type { Conditions } from "../../../../deion/common/types";
 
 // Depending on phase, initiate action that will lead to the next phase

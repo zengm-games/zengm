@@ -1,8 +1,8 @@
 // @flow
 
-import { idb } from "../db";
+import { idb } from "../../../basketball/worker/db";
 import { g } from ".";
-import type { GameProcessed } from "../../../deion/common/types";
+import type { GameProcessed } from "../../common/types";
 
 /**
  * Generate a game log list.

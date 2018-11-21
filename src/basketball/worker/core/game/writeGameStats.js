@@ -2,7 +2,7 @@
 
 import { PHASE } from "../../../../deion/common";
 import { idb } from "../../db";
-import { g, helpers, logEvent } from "../../util";
+import { g, helpers, logEvent } from "../../../../deion/worker/util";
 import type { Conditions, GameResults } from "../../../../deion/common/types";
 
 const writeGameStats = async (

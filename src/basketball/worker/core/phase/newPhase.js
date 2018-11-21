@@ -11,7 +11,13 @@ import newPhaseAfterDraft from "./newPhaseAfterDraft";
 import newPhaseResignPlayers from "./newPhaseResignPlayers";
 import newPhaseFreeAgency from "./newPhaseFreeAgency";
 import newPhaseFantasyDraft from "./newPhaseFantasyDraft";
-import { g, lock, logEvent, updatePlayMenu, updateStatus } from "../../util";
+import {
+    g,
+    lock,
+    logEvent,
+    updatePlayMenu,
+    updateStatus,
+} from "../../../../deion/worker/util";
 import type { Conditions, Phase } from "../../../../deion/common/types";
 
 /**

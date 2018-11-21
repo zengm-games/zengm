@@ -1,7 +1,12 @@
 // @flow
 
 import { idb } from "../db";
-import { g, helpers, updatePlayMenu, updateStatus } from "../util";
+import {
+    g,
+    helpers,
+    updatePlayMenu,
+    updateStatus,
+} from "../../../deion/worker/util";
 import type { Message, UpdateEvents } from "../../../deion/common/types";
 
 async function updateMessage(

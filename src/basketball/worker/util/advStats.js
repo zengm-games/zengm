@@ -2,7 +2,7 @@
 
 import { PHASE } from "../../../deion/common";
 import { idb } from "../db";
-import { g } from ".";
+import { g } from "../../../deion/worker/util";
 
 // http://www.basketball-reference.com/about/per.html
 const calculatePER = (players, teams, league) => {

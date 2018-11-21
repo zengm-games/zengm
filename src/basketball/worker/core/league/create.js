@@ -6,7 +6,6 @@ import { Cache, connectLeague, idb } from "../../db";
 import { DIFFICULTY, PHASE, PLAYER } from "../../../../deion/common";
 import { draft, finances, league, player, team } from "..";
 import {
-    defaultGameAttributes,
     g,
     helpers,
     local,
@@ -15,7 +14,8 @@ import {
     toUI,
     updatePhase,
     updateStatus,
-} from "../../util";
+} from "../../../../deion/worker/util";
+import { defaultGameAttributes } from "../../util";
 import type {
     Conditions,
     GameAttributes,

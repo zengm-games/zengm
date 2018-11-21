@@ -1,7 +1,7 @@
 // @flow
 
-import { PHASE } from "../../../deion/common";
-import { draft } from "../core";
+import { PHASE } from "../../common";
+import { draft } from "../../../basketball/worker/core";
 import { g, helpers, local, lock, toUI } from ".";
 
 /**

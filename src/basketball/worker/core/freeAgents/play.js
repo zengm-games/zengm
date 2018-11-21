@@ -4,7 +4,13 @@ import { PHASE } from "../../../../deion/common";
 import { league, phase, trade } from "..";
 import autoSign from "./autoSign";
 import decreaseDemands from "./decreaseDemands";
-import { g, lock, updatePlayMenu, updateStatus, toUI } from "../../util";
+import {
+    g,
+    lock,
+    updatePlayMenu,
+    updateStatus,
+    toUI,
+} from "../../../../deion/worker/util";
 import type { Conditions } from "../../../../deion/common/types";
 
 /**

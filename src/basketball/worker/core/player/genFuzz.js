@@ -1,6 +1,6 @@
 // @flow
 
-import { g, random } from "../../util";
+import { g, random } from "../../../../deion/worker/util";
 
 /**
  * Generate fuzz.

@@ -4,7 +4,15 @@ import range from "lodash/range";
 import { PLAYER } from "../../../../deion/common";
 import { finances, freeAgents, league, player, team } from "..";
 import { idb } from "../../db";
-import { env, g, helpers, local, logEvent, random, toUI } from "../../util";
+import {
+    env,
+    g,
+    helpers,
+    local,
+    logEvent,
+    random,
+    toUI,
+} from "../../../../deion/worker/util";
 import type { Conditions } from "../../../../deion/common/types";
 
 const newPhasePreseason = async (conditions: Conditions) => {

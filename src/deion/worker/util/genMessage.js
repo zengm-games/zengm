@@ -1,9 +1,9 @@
 // @flow
 
-import { league } from "../core";
-import { idb } from "../db";
+import { league } from "../../../basketball/worker/core";
+import { idb } from "../../../basketball/worker/db";
 import { g, helpers, local, random } from ".";
-import type { OwnerMoodDeltas } from "../../../deion/common/types";
+import type { OwnerMoodDeltas } from "../../common/types";
 
 // First message after new game
 const first = [
@@ -25,11 +25,15 @@ const activities = [
     "managing my Ponzi scheme... I mean hedge fund, hedge fund, it's a hedge fund.",
     "fighting that ridiculous sexual harassment lawsuit (it's not that bad, my lawyer is a total babe).",
     "bribing the mayor to build a new lane on the highway just for me.",
-    "running my baseball team (baseball is a religion, basketball is a game).",
+    `running my baseball team (baseball is a religion, ${
+        process.env.SPORT
+    } is a game).`,
     "trying to patent the gene for height so I can sue our competition to pieces.",
     "bribing the commissioner to let me ref our games.",
     "bribing the commissioner to rig the draft for us.",
-    "buying cars and jewelry for middle school basketball prospects so they'll sign here when they turn pro.",
+    `buying cars and jewelry for middle school ${
+        process.env.SPORT
+    } prospects so they'll sign here when they turn pro.`,
     "flying to every country in the world on my private jet (except Peru).",
     "promoting my chain of brothels in Cambodia.",
     "working on my golf game with Kim Jong Il (no, he's not dead).",
@@ -42,7 +46,9 @@ const activities = [
     "trying to run for President. I heard anyone can do it these days.",
     "convincing the commissioner to let me get another team so we can use one to get high draft picks and trade them to the other for nothing! (Its brilliant, isn't it?)",
     "experimenting with magnets so our shots go in more often. But how do they work?",
-    "playing Basketball GM online. I don't know why I'm paying you, this is easy!",
+    `playing ${helpers.upperCaseFirstLetter(
+        process.env.SPORT,
+    )} GM online. I don't know why I'm paying you, this is easy!`,
     "buying all the land on Mars before that car guy gets there.",
     "negotiating to lower the salary cap and max contracts. I mean, they only play a sport, why do they get to make so much anyway?",
     "trying to open this safe I found a few years ago.",
@@ -123,7 +129,11 @@ wins[3] = [
 wins[4] = [
     "I'm pleased with our regular season performance.",
     "I like the roster you've put together. We'll be at the top of our division for a long time.",
-    "The goal is 82-0 and we are on our way. And by that I mean do it. Next season. 82-0.",
+    `The goal is ${
+        process.env.SPORT === "basketball" ? 82 : 16
+    }-0 and we are on our way. And by that I mean do it. Next season. ${
+        process.env.SPORT === "basketball" ? 82 : 16
+    }-0.`,
     "Things are looking up. You can expect up to a $50 Christmas bonus next year! Thank me later.",
     "Looks like there is a light at the end of the tunnel after all. Keep it up.",
 ];
@@ -217,11 +227,15 @@ ovr[0] = [
 ovr[1] = [
     "You bore me. Everything about you, it's just boring. Come talk to me when you've earned me more millions and won me some more championships.",
     "You know, general managers aren't hired to be mediocre. Do better next year.",
-    "I've been meaning to tell you about this great idea I had. What if we only play 4 guys on defense, so the other guy can just wait for an easy score at the other end? Pure genius, isn't it?",
     "Make more money, win more games, blah blah blah. I'm supposed to be in a meeting right now so I g2g.",
     "Work will set you free! Anyway, talk to you next season. Don't bother messaging me until then.",
     "I tried making it through a game but I got sidetracked. It couldn't hold my attention. It may be my ADHD, but I'm not... oh look, a butterfly.",
 ];
+if (process.env.SPORT === "basketball") {
+    ovr[1].push(
+        "I've been meaning to tell you about this great idea I had. What if we only play 4 guys on defense, so the other guy can just wait for an easy score at the other end? Pure genius, isn't it?",
+    );
+}
 ovr[2] = [
     "Anyway, overall I'm happy with the progress you've made, but I need to get back to {{activity}}",
     "I am hopeful that our success is sustainable but for now I need to get back to {{activity}}.",

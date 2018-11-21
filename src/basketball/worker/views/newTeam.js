@@ -1,7 +1,7 @@
 // @flow
 
 import { idb } from "../db";
-import { g } from "../util";
+import { g } from "../../../deion/worker/util";
 
 async function updateTeamSelect(): void | { [key: string]: any } {
     let teams = await idb.getCopies.teamsPlus({

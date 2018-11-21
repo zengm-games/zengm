@@ -1,6 +1,7 @@
 // @flow
 
-import { g, injuries, random } from "../../util";
+import { g, random } from "../../../../deion/worker/util";
+import { injuries } from "../../util";
 import type { PlayerInjury } from "../../../../deion/common/types";
 
 /**

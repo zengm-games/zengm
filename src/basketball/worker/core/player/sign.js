@@ -3,7 +3,7 @@
 import { PHASE } from "../../../../deion/common";
 import addStatsRow from "./addStatsRow";
 import setContract from "./setContract";
-import { g, helpers, logEvent } from "../../util";
+import { g, helpers, logEvent } from "../../../../deion/worker/util";
 import type {
     Phase,
     Player,

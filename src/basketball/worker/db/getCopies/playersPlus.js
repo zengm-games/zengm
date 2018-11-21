@@ -3,7 +3,7 @@
 import groupBy from "lodash/groupBy";
 import { PLAYER } from "../../../../deion/common";
 import { player, trade } from "../../core";
-import { g, helpers } from "../../util";
+import { g, helpers } from "../../../../deion/worker/util";
 import type {
     Player,
     PlayerFiltered,

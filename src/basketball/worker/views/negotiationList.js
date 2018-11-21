@@ -3,7 +3,7 @@
 import { PLAYER } from "../../../deion/common";
 import { freeAgents, player, team } from "../core";
 import { idb } from "../db";
-import { g } from "../util";
+import { g } from "../../../deion/worker/util";
 
 async function updateNegotiationList(): void | { [key: string]: any } {
     const stats = ["min", "pts", "trb", "ast", "per"];

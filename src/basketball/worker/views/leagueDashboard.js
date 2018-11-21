@@ -3,7 +3,7 @@
 import { PHASE, PLAYER } from "../../../deion/common";
 import { season, team } from "../core";
 import { idb } from "../db";
-import { g, getProcessedGames, helpers } from "../util";
+import { g, getProcessedGames, helpers } from "../../../deion/worker/util";
 import type { GetOutput, UpdateEvents } from "../../../deion/common/types";
 
 async function updateInbox(
@@ -102,11 +102,11 @@ async function updateTeams(
         const t = teams.find(t2 => t2.tid === g.userTid);
         const cid = t !== undefined ? t.cid : undefined;
 
-        let att;
+        let att = 0;
         let rank = 1;
-        let revenue;
-        let profit;
-        let teamStats;
+        let revenue = 0;
+        let profit = 0;
+        let teamStats = [];
         for (let i = 0; i < teams.length; i++) {
             if (teams[i].cid === cid) {
                 if (teams[i].tid === g.userTid) {

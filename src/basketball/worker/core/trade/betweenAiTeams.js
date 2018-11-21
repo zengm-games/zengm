@@ -3,7 +3,7 @@
 import range from "lodash/range";
 import { team } from "..";
 import { idb } from "../../db";
-import { g, random } from "../../util";
+import { g, random } from "../../../../deion/worker/util";
 import isUntradable from "./isUntradable";
 import makeItWork from "./makeItWork";
 import processTrade from "./processTrade";

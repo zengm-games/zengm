@@ -2,7 +2,7 @@
 
 import retire from "./retire";
 import { idb } from "../../db";
-import { g, helpers, logEvent, random } from "../../util";
+import { g, helpers, logEvent, random } from "../../../../deion/worker/util";
 import type { Conditions } from "../../../../deion/common/types";
 
 const killOne = async (conditions: Conditions) => {

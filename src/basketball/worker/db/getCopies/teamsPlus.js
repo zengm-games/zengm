@@ -5,7 +5,7 @@ import orderBy from "lodash/orderBy";
 import { mergeByPk } from "./helpers";
 import { team } from "../../core";
 import { idb } from "..";
-import { g, helpers } from "../../util";
+import { g, helpers } from "../../../../deion/worker/util";
 import type {
     Team,
     TeamAttr,

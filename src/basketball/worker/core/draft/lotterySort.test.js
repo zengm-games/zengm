@@ -4,7 +4,7 @@ import assert from "assert";
 import { describe, it } from "mocha";
 import testHelpers from "../../../test/helpers";
 import lotterySort from "./lotterySort";
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 
 describe("worker/core/draft/lotterySort", () => {
     it("projects playoff appearances when sorting for a projected lottery", async () => {

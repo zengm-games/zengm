@@ -1,7 +1,7 @@
 // @flow
 
 import limitRating from "./limitRating";
-import { random } from "../../util";
+import { random } from "../../../../deion/worker/util";
 import type { PlayerWithoutPid } from "../../../../deion/common/types";
 import type { RatingKey, PlayerRatings } from "../../../common/types";
 

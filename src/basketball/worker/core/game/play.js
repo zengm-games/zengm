@@ -18,7 +18,6 @@ import writePlayerStats from "./writePlayerStats";
 import writeTeamStats from "./writeTeamStats";
 import { idb } from "../../db";
 import {
-    advStats,
     g,
     helpers,
     lock,
@@ -26,7 +25,8 @@ import {
     toUI,
     updatePlayMenu,
     updateStatus,
-} from "../../util";
+} from "../../../../deion/worker/util";
+import { advStats } from "../../util";
 import type { Conditions } from "../../../../deion/common/types";
 
 /**

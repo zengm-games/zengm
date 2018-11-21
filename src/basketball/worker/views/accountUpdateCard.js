@@ -1,7 +1,8 @@
 // @flow
 
 import { fetchWrapper } from "../../../deion/common";
-import { account, env } from "../util";
+import { env } from "../../../deion/worker/util";
+import { account } from "../util";
 import type {
     Conditions,
     GetOutput,

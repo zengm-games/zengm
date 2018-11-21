@@ -5,7 +5,7 @@ import backboard from "backboard";
 import { after, describe, it } from "mocha";
 import { league } from "../worker/core";
 import { connectMeta, idb } from "../worker/db";
-import { g, local } from "../worker/util";
+import { g, local } from "../../deion/worker/util";
 
 describe("Smoke Tests", () => {
     let intervalID;

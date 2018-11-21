@@ -1,6 +1,6 @@
 // @flow
 
-import { helpers } from "../../util";
+import { helpers } from "../../../../deion/worker/util";
 import type { PlayerRatings } from "../../../common/types";
 
 /**

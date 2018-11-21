@@ -3,7 +3,7 @@
 import { player, team } from "..";
 import cancel from "./cancel";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 
 /**
  * Accept the player's offer.

@@ -6,7 +6,7 @@ import { before, beforeEach, describe, it } from "mocha";
 import testHelpers from "../../../test/helpers";
 import season from "./index";
 import { newScheduleCrappy } from "./newSchedule";
-import { g, helpers } from "../../util";
+import { g, helpers } from "../../../../deion/worker/util";
 
 const defaultTeams = helpers.getTeamsDefault();
 

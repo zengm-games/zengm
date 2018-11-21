@@ -3,7 +3,7 @@
 import orderBy from "lodash/orderBy";
 import { PLAYER } from "../../../../deion/common";
 import { idb } from "../../db";
-import { g, helpers, logEvent } from "../../util";
+import { g, helpers, logEvent } from "../../../../deion/worker/util";
 import type {
     Conditions,
     PlayerFiltered,

@@ -1,13 +1,13 @@
 // @flow
 
-import { createLogger } from "../../../deion/common";
-import { idb } from "../db";
+import { createLogger } from "../../common";
+import { idb } from "../../../basketball/worker/db";
 import { g, toUI } from ".";
 import type {
     Conditions,
     LogEventSaveOptions,
     LogEventShowOptions,
-} from "../../../deion/common/types";
+} from "../../common/types";
 
 const saveEvent = (event: LogEventSaveOptions) => {
     if (idb.cache) {

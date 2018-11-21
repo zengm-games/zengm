@@ -4,7 +4,7 @@ import { PHASE, PLAYER } from "../../../deion/common";
 import type { GetOutput, UpdateEvents } from "../../../deion/common/types";
 import { draft } from "../core";
 import { idb } from "../db";
-import { g, local } from "../util";
+import { g, local } from "../../../deion/worker/util";
 
 async function updateDraft(
     inputs: GetOutput,

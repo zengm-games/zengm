@@ -1,5 +1,8 @@
 # football
 
+db
+- league upgrade code - keep sport specific
+
 History
 - for football, MVP, OPOY, DPOY, OROY, DROY. then All-League Team and All-Rookie Team
 
@@ -25,6 +28,8 @@ better way to pass awards to Dropdown.js
 - and get rid of per36
 
 get rid of all links to show locations pages
+
+remove all instances of imports from basketball from deion/worker
 
 yarn workspaces
 - fucks up eslint and browserify, ugh. maybe not worth it.

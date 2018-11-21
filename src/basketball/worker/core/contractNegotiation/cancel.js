@@ -2,7 +2,12 @@
 
 import { PHASE } from "../../../../deion/common";
 import { idb } from "../../db";
-import { g, lock, updatePlayMenu, updateStatus } from "../../util";
+import {
+    g,
+    lock,
+    updatePlayMenu,
+    updateStatus,
+} from "../../../../deion/worker/util";
 
 /**
  * Cancel contract negotiations with a player.

@@ -1,7 +1,7 @@
 // @flow
 
 import { idb } from "../../db";
-import { g, helpers, toUI } from "../../util";
+import { g, helpers, toUI } from "../../../../deion/worker/util";
 import type { GameAttributes } from "../../../../deion/common/types";
 
 const updateMetaDifficulty = async (difficulty: number) => {

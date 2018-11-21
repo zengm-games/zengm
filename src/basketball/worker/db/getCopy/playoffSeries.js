@@ -1,7 +1,7 @@
 // @flow
 
 import { idb } from "..";
-import { g, helpers } from "../../util";
+import { g, helpers } from "../../../../deion/worker/util";
 import type { PlayoffSeries } from "../../../../deion/common/types";
 
 const getCopy = async ({

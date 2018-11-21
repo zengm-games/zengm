@@ -1,7 +1,7 @@
 import { PHASE } from "../../../deion/common";
 import { team } from "../core";
 import { idb } from "../db";
-import { g, helpers, lock } from "../util";
+import { g, helpers, lock } from "../../../deion/worker/util";
 import type { GetOutput, UpdateEvents } from "../../../deion/common/types";
 
 async function updateTeamFinances(

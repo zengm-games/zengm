@@ -3,7 +3,7 @@
 import { PLAYER } from "../../../deion/common";
 import { freeAgents, player, team } from "../core";
 import { idb } from "../db";
-import { g, lock } from "../util";
+import { g, lock } from "../../../deion/worker/util";
 
 async function updateFreeAgents(): void | { [key: string]: any } {
     const payroll = await team.getPayroll(g.userTid);

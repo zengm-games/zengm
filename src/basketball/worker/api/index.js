@@ -17,9 +17,6 @@ import {
 } from "../core";
 import { connectMeta, idb } from "../db";
 import {
-    account,
-    beforeView,
-    changes,
     checkNaNs,
     env,
     g,
@@ -30,7 +27,8 @@ import {
     updatePlayMenu,
     updateStatus,
     toUI,
-} from "../util";
+} from "../../../deion/worker/util";
+import { account, beforeView, changes } from "../util";
 import * as views from "../views";
 import type {
     Conditions,

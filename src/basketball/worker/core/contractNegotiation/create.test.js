@@ -5,7 +5,7 @@ import { afterEach, before, describe, it } from "mocha";
 import { PLAYER } from "../../../../deion/common";
 import { contractNegotiation } from "..";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 import { beforeTests, givePlayerMinContract } from "./common.test";
 
 describe("worker/core/contractNegotiation/create", () => {

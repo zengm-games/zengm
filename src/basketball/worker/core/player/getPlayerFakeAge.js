@@ -1,6 +1,6 @@
 // @flow
 
-import { g, random } from "../../util";
+import { g, random } from "../../../../deion/worker/util";
 import type { Player } from "../../../../deion/common/types";
 
 const getPlayerFakeAge = <T: Player<>>(players: T[]): T | void => {

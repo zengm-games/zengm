@@ -3,7 +3,7 @@
 import { PHASE, PLAYER } from "../../../../deion/common";
 import { contractNegotiation, draft, player } from "..";
 import { idb } from "../../db";
-import { g, helpers, local } from "../../util";
+import { g, helpers, local } from "../../../../deion/worker/util";
 
 const newPhaseFreeAgency = async () => {
     const teams = await idb.getCopies.teamsPlus({

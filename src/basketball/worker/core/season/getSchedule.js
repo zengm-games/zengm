@@ -1,7 +1,7 @@
 // @flow
 
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 import type { ScheduleGame } from "../../../../deion/common/types";
 
 /**

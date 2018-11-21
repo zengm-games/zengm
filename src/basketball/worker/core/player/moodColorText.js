@@ -1,6 +1,6 @@
 // @flow
 
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 import type { Player } from "../../../../deion/common/types";
 
 // See views.negotiation for moods as well

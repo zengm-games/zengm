@@ -4,8 +4,8 @@ import {
     PlayerNameLabels,
     RatingWithChange,
     ResponsiveTableWrapper,
-} from "../../../../deion/ui/components";
-import { getCols, helpers } from "../../../../deion/ui/util";
+} from "../../components";
+import { getCols, helpers } from "../../util";
 
 const StartingLineup = ({ starters, stats }) => {
     const statCols = getCols(...stats.map(stat => `stat:${stat}`));

@@ -4,7 +4,7 @@ import backboard from "backboard";
 import { PLAYER } from "../../../deion/common";
 import { idb } from ".";
 import cmp from "./cmp";
-import { g, lock, local } from "../util";
+import { g, local, lock } from "../../../deion/worker/util";
 import type {
     BackboardTx,
     DraftLotteryResult,

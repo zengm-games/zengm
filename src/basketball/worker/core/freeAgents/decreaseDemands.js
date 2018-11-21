@@ -2,7 +2,7 @@
 
 import { PHASE, PLAYER } from "../../../../deion/common";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 
 /**
  * Decrease contract demands for all free agents.

@@ -1,6 +1,6 @@
 // @flow
 
-import { helpers } from "../../util";
+import { helpers } from "../../../../deion/worker/util";
 import fuzzRating from "./fuzzRating";
 import type { PlayerRatings, RatingKey } from "../../../common/types";
 

@@ -6,7 +6,7 @@ import { PHASE, PLAYER } from "../../../deion/common";
 import { player } from "../core";
 import { bootstrapPot } from "../core/player/develop";
 import { idb } from ".";
-import { logEvent } from "../util";
+import { logEvent } from "../../../deion/worker/util";
 import type { RatingKey } from "../../common/types";
 
 // I did it this way (with the raw IDB API) because I was afraid it would read all players into memory before getting

@@ -1,7 +1,7 @@
 // @flow
 
 import range from "lodash/range";
-import { g, helpers } from "../../util";
+import { g, helpers } from "../../../../deion/worker/util";
 import type { TeamFiltered } from "../../../../deion/common/types";
 
 const genPlayoffSeries = (teams: TeamFiltered[]) => {

@@ -3,7 +3,7 @@
 import { PHASE } from "../../../deion/common";
 import { team, trade } from "../core";
 import { idb } from "../db";
-import { g, helpers } from "../util";
+import { g, helpers } from "../../../deion/worker/util";
 
 // This relies on vars being populated, so it can't be called in parallel with updateTrade
 async function updateSummary(vars) {

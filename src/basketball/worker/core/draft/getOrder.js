@@ -3,7 +3,7 @@
 import orderBy from "lodash/orderBy";
 import { PHASE } from "../../../../deion/common";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g } from "../../../../deion/worker/util";
 
 /**
  * Retrieve the current remaining draft order.

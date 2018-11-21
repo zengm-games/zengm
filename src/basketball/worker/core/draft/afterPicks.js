@@ -3,7 +3,13 @@
 import { PHASE, PLAYER } from "../../../../deion/common";
 import { league, phase, player } from "..";
 import { idb } from "../../db";
-import { g, local, toUI, updatePlayMenu, updatePhase } from "../../util";
+import {
+    g,
+    local,
+    toUI,
+    updatePlayMenu,
+    updatePhase,
+} from "../../../../deion/worker/util";
 import type { Conditions } from "../../../../deion/common/types";
 
 const afterPicks = async (draftOver: boolean, conditions?: Conditions) => {

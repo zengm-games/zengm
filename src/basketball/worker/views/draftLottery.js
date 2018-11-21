@@ -3,7 +3,7 @@
 import { PHASE } from "../../../deion/common";
 import { draft } from "../core";
 import { idb } from "../db";
-import { g } from "../util";
+import { g } from "../../../deion/worker/util";
 import type {
     DraftLotteryResultArray,
     UpdateEvents,

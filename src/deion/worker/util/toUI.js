@@ -1,7 +1,7 @@
 // @flow
 
 import { promiseWorker } from ".";
-import type { Conditions } from "../../../deion/common/types";
+import type { Conditions } from "../../common/types";
 
 const toUI = (args: any[], conditions?: Conditions = {}): Promise<any> => {
     // $FlowFixMe

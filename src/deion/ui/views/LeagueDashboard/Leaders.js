@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import { helpers } from "../../../../deion/ui/util";
+import { helpers } from "../../util";
 
 const Leader = ({ abbrev, name, pid, stat, value }) => {
     return (

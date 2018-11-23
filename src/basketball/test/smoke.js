@@ -4,7 +4,7 @@ import assert from "assert";
 import backboard from "backboard";
 import { after, describe, it } from "mocha";
 import { league } from "../worker/core";
-import { connectMeta, idb } from "../../deion/worker/db";
+import { Cache, connectMeta, idb } from "../../deion/worker/db";
 import { g, local } from "../../deion/worker/util";
 
 describe("Smoke Tests", () => {
@@ -12,6 +12,9 @@ describe("Smoke Tests", () => {
 
     it("Create a new league and simuluate a season without error", async function() {
         this.timeout(5 * 60 * 1000); // 5 minutes
+
+        // Because in testHelpers.resetCache, idb.cache was overwritten with a mock that doens't work here
+        idb.cache = new Cache();
 
         idb.meta = await connectMeta({});
         await league.create("Test", 0, undefined, 2016, false, 0, {});

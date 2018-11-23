@@ -8,8 +8,9 @@ worker overrides
 - playersPlus/teamsPlus
 - types in Cache, other db files
   - cache - create idb on some init function call, not immediately. then pass it in from there.
-  - other instnaces of new Cache() -> replace with cache.reset()
   - playersPlus, etc - make generic, default to any
+  - cache race conditions - what happens if async operation is happening while reset is called? need to store lid, and compare
+    - better - keep count of number of times init has been called, and if it is different, then do nothing
 
 History
 - for football, MVP, OPOY, DPOY, OROY, DROY. then All-League Team and All-Rookie Team

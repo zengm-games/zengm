@@ -2,7 +2,7 @@
 
 import orderBy from "lodash/orderBy";
 import range from "lodash/range";
-import { Cache, connectLeague, idb } from "../../../../deion/worker/db";
+import { connectLeague, idb } from "../../../../deion/worker/db";
 import { DIFFICULTY, PHASE, PLAYER } from "../../../../deion/common";
 import { draft, finances, league, player, team } from "..";
 import {
@@ -659,10 +659,7 @@ const create = async (
     g.lid = lid;
     await toUI(["resetLeague"]);
 
-    if (idb.cache) {
-        idb.cache.stopAutoFlush();
-    }
-    idb.cache = new Cache();
+    idb.cache.reset();
     idb.cache.newLeague = true;
     await idb.cache.fill(leagueData.gameAttributes.season);
 

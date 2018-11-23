@@ -1,6 +1,6 @@
 // @flow
 
-import { Cache, connectLeague, idb } from "../../../deion/worker/db";
+import { connectLeague, idb } from "../../../deion/worker/db";
 import { league } from "../core";
 import {
     env,
@@ -127,11 +127,8 @@ const beforeLeague = async (
         }
 
         // Reuse existing cache, if it was just created while generating a new league
-        if (!idb.cache || !idb.cache.newLeague || switchingDatabaseLid) {
-            if (idb.cache) {
-                idb.cache.stopAutoFlush();
-            }
-            idb.cache = new Cache();
+        if (!idb.cache.newLeague || switchingDatabaseLid) {
+            idb.cache.reset();
             await idb.cache.fill();
             idb.cache.startAutoFlush();
 

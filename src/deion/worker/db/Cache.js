@@ -160,10 +160,8 @@ class Cache {
 
     _dirty: boolean;
 
-    // Refers only to _deletes and _dirtyRecords (stuff that needs to be synced to IDB), not _dirtyIndexes!
     _dirtyIndexes: Set<Store>;
 
-    // Does not distinguish individual indexes, just which stores have dirty indexes. Currently this distinction is not meaningful, but if it is at some point, this should be changed.
     _dirtyRecords: { [key: Store]: Set<number | string> };
 
     _index2store: { [key: Index]: Store };
@@ -249,6 +247,10 @@ class Cache {
     trade: StoreAPI<Trade, Trade, number>;
 
     constructor() {
+        this._init();
+    }
+
+    _init() {
         this._status = "empty";
 
         this._data = {};
@@ -474,6 +476,11 @@ class Cache {
         this.teamStats = new StoreAPI(this, "teamStats");
         this.teams = new StoreAPI(this, "teams");
         this.trade = new StoreAPI(this, "trade");
+    }
+
+    reset() {
+        this.stopAutoFlush();
+        this._init();
     }
 
     _validateStatus(...validStatuses: Status[]) {

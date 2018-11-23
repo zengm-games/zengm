@@ -8,6 +8,8 @@ worker overrides
 - playersPlus/teamsPlus
 - types in Cache, other db files
   - cache - create idb on some init function call, not immediately. then pass it in from there.
+    - but then flow will think idb.cache can be undefined
+    - add manual check before every usage of idb.cache
   - playersPlus, etc - make generic, default to any
   - cache race conditions - what happens if async operation is happening while reset is called? need to store lid, and compare
     - better - keep count of number of times init has been called, and if it is different, then do nothing
@@ -207,6 +209,7 @@ typescript
 - https://github.com/bcherny/flow-to-typescript
   - might have to do this, do all in one
 - FlowFixMe
+- - https://stackoverflow.com/questions/42273853/in-typescript-what-is-the-exclamation-mark-bang-operator-when-dereferenci for idb.cache usage
 
 if an ad blocker is used, no need to save that space on the right
 - already done for Gold/localhost in initAds, but how to do it for ad blocker too?

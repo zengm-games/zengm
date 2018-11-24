@@ -44,6 +44,14 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
                     }
                 }
 
+                if (teamsConf.length < numPlayoffTeams / 2) {
+                    throw new Error(
+                        `Not enough teams for playoffs in conference ${cid} (${
+                            g.confs[cid].name
+                        })`,
+                    );
+                }
+
                 let numByesUsed = 0;
                 for (let i = 0; i < numSeriesPerConference; i++) {
                     const j = i % 2 === 0 ? i : numSeriesPerConference - i;
@@ -111,6 +119,11 @@ const genPlayoffSeries = (teams: TeamFiltered[]) => {
                 break;
             }
         }
+
+        if (teamsConf.length < numPlayoffTeams) {
+            throw new Error("Not enough teams for playoffs");
+        }
+
         const numSeries = 2 ** g.numGamesPlayoffSeries.length / 2;
         let numByesUsed = 0;
         for (let i = 0; i < numSeries; i++) {

@@ -10,6 +10,17 @@ export type Achievements = {
 
 export type BackboardTx = any;
 
+export type CompositeWeights<RatingKey = string> = {
+    [key: string]: {
+        ratings: (RatingKey | number)[],
+        weights?: number[],
+        skill?: {
+            label: string,
+            cutoff: number,
+        },
+    },
+};
+
 // Not exact because https://github.com/facebook/flow/issues/2386 - same thing elsewhere
 export type Conditions = {
     hostID?: number,

@@ -10,8 +10,8 @@ import type {
 const hasSkill = (
     ratings: PlayerRatings,
     components: (RatingKey | number)[],
-    weights: number[],
-    cutoff?: number = 0.61,
+    weights?: number[],
+    cutoff: number = 0.61,
 ): boolean => {
     return compositeRating(ratings, components, weights, true) > cutoff;
 };
@@ -34,87 +34,16 @@ const hasSkill = (
  *
  * Keep cutoffs in sync with GameSim.js!
  */
-const skills = (ratings: PlayerRatings): string[] => {
+const skills = (playerRatings: PlayerRatings): string[] => {
     const sk = [];
 
-    // These use the same formulas as the composite rating definitions in core.game!
-    if (
-        hasSkill(
-            ratings,
-            COMPOSITE_WEIGHTS.shootingThreePointer.ratings,
-            COMPOSITE_WEIGHTS.shootingThreePointer.weights,
-            0.59,
-        )
-    ) {
-        // Purposely let more 3 point shooters have this skill, it just feels right
-        sk.push("3");
-    }
-    if (
-        hasSkill(
-            ratings,
-            COMPOSITE_WEIGHTS.athleticism.ratings,
-            COMPOSITE_WEIGHTS.athleticism.weights,
-            0.63,
-        )
-    ) {
-        sk.push("A");
-    }
-    if (
-        hasSkill(
-            ratings,
-            COMPOSITE_WEIGHTS.dribbling.ratings,
-            COMPOSITE_WEIGHTS.dribbling.weights,
-            0.68,
-        )
-    ) {
-        sk.push("B");
-    }
-    if (
-        hasSkill(
-            ratings,
-            COMPOSITE_WEIGHTS.defenseInterior.ratings,
-            COMPOSITE_WEIGHTS.defenseInterior.weights,
-            0.57,
-        )
-    ) {
-        sk.push("Di");
-    }
-    if (
-        hasSkill(
-            ratings,
-            COMPOSITE_WEIGHTS.defensePerimeter.ratings,
-            COMPOSITE_WEIGHTS.defensePerimeter.weights,
-        )
-    ) {
-        sk.push("Dp");
-    }
-    if (
-        hasSkill(
-            ratings,
-            COMPOSITE_WEIGHTS.shootingLowPost.ratings,
-            COMPOSITE_WEIGHTS.shootingLowPost.weights,
-        )
-    ) {
-        sk.push("Po");
-    }
-    if (
-        hasSkill(
-            ratings,
-            COMPOSITE_WEIGHTS.passing.ratings,
-            COMPOSITE_WEIGHTS.passing.weights,
-            0.63,
-        )
-    ) {
-        sk.push("Ps");
-    }
-    if (
-        hasSkill(
-            ratings,
-            COMPOSITE_WEIGHTS.rebounding.ratings,
-            COMPOSITE_WEIGHTS.rebounding.weights,
-        )
-    ) {
-        sk.push("R");
+    for (const key of Object.keys(COMPOSITE_WEIGHTS)) {
+        const { ratings, skill, weights } = COMPOSITE_WEIGHTS[key];
+        if (skill) {
+            if (hasSkill(playerRatings, ratings, weights, skill.cutoff)) {
+                sk.push(skill.label);
+            }
+        }
     }
 
     return sk;

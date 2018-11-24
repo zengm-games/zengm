@@ -10,7 +10,7 @@ import type {
 const composoteRating = (
     ratings: PlayerRatings,
     components: (RatingKey | number)[],
-    weights: number[],
+    weights?: number[],
     fuzz: boolean,
 ): number => {
     if (weights === undefined) {

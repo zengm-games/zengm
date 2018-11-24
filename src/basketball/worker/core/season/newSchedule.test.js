@@ -3,8 +3,8 @@
 import assert from "assert";
 import flatten from "lodash/flatten";
 import { before, beforeEach, describe, it } from "mocha";
-import testHelpers from "../../../test/helpers";
-import season from "./index";
+import testHelpers from "../../../../deion/test/helpers";
+import season from "../../../../deion/worker/core/season/index";
 import { newScheduleCrappy } from "./newSchedule";
 import { g, helpers } from "../../../../deion/worker/util";
 

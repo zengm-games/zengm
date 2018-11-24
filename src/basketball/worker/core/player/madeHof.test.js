@@ -2,7 +2,7 @@
 
 import assert from "assert";
 import { describe, it } from "mocha";
-import player from "./index";
+import player from "../../../../deion/worker/core/player/index";
 import madeHof from "./madeHof";
 
 describe("worker/core/player/madeHof", () => {

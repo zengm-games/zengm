@@ -34,9 +34,9 @@ module.exports = function(config) {
         frameworks: ["mocha", "browserify", "source-map-support"],
 
         files: [
-            "src/js/test/index.js",
-            "src/js/**/*.test.js",
-            "src/js/test/**/*.js",
+            "src/deion/test/index.js",
+            "src/**/*.test.js",
+            "src/deion/test/**/*.js",
         ],
 
         preprocessors: {

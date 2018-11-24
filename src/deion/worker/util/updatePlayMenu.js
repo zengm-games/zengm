@@ -1,7 +1,7 @@
 // @flow
 
 import { PHASE } from "../../common";
-import { draft } from "../../../basketball/worker/core";
+import { draft } from "../core";
 import g from "./g";
 import helpers from "./helpers";
 import local from "./local";

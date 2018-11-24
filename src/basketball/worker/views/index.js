@@ -1,65 +1,9 @@
 // @flow
 
-export { default as account } from "./account";
-export { default as accountUpdateCard } from "./accountUpdateCard";
-export { default as awardsRecords } from "./awardsRecords";
-export { default as changes } from "./changes";
-export { default as customizePlayer } from "./customizePlayer";
-export { default as dashboard } from "./dashboard";
-export { default as deleteLeague } from "./deleteLeague";
-export { default as deleteOldData } from "./deleteOldData";
-export { default as draft } from "./draft";
-export { default as draftLottery } from "./draftLottery";
-export { default as draftScouting } from "./draftScouting";
-export { default as draftSummary } from "./draftSummary";
-export { default as draftTeamHistory } from "./draftTeamHistory";
-export { default as editTeamInfo } from "./editTeamInfo";
-export { default as eventLog } from "./eventLog";
-export { default as exportLeague } from "./exportLeague";
-export { default as exportStats } from "./exportStats";
-export { default as fantasyDraft } from "./fantasyDraft";
-export { default as freeAgents } from "./freeAgents";
-export { default as gameLog } from "./gameLog";
-export { default as godMode } from "./godMode";
-export { default as hallOfFame } from "./hallOfFame";
-export { default as history } from "./history";
-export { default as historyAll } from "./historyAll";
-export { default as inbox } from "./inbox";
-export { default as leaders } from "./leaders";
-export { default as leagueDashboard } from "./leagueDashboard";
-export { default as leagueFinances } from "./leagueFinances";
-export { default as leagueOptions } from "./leagueOptions";
-export { default as live } from "./live";
-export { default as liveGame } from "./liveGame";
-export { default as loginOrRegister } from "./loginOrRegister";
-export { default as lostPassword } from "./lostPassword";
-export { default as message } from "./message";
-export { default as multiTeamMode } from "./multiTeamMode";
-export { default as negotiation } from "./negotiation";
-export { default as negotiationList } from "./negotiationList";
-export { default as newLeague } from "./newLeague";
-export { default as newTeam } from "./newTeam";
-export { default as player } from "./player";
-export { default as playerFeats } from "./playerFeats";
-export { default as playerRatingDists } from "./playerRatingDists";
-export { default as playerRatings } from "./playerRatings";
-export { default as playerShotLocations } from "./playerShotLocations";
-export { default as playerStatDists } from "./playerStatDists";
-export { default as playerStats } from "./playerStats";
-export { default as playoffs } from "./playoffs";
-export { default as powerRankings } from "./powerRankings";
-export { default as resetPassword } from "./resetPassword";
-export { default as roster } from "./roster";
-export { default as schedule } from "./schedule";
-export { default as standings } from "./standings";
-export { default as teamFinances } from "./teamFinances";
-export { default as teamHistory } from "./teamHistory";
-export { default as teamRecords } from "./teamRecords";
-export { default as teamShotLocations } from "./teamShotLocations";
-export { default as teamStatDists } from "./teamStatDists";
-export { default as teamStats } from "./teamStats";
-export { default as trade } from "./trade";
-export { default as tradingBlock } from "./tradingBlock";
-export { default as transactions } from "./transactions";
-export { default as upcomingFreeAgents } from "./upcomingFreeAgents";
-export { default as watchList } from "./watchList";
+import playerShotLocations from "./playerShotLocations";
+import teamShotLocations from "./teamShotLocations";
+
+export default {
+    playerShotLocations,
+    teamShotLocations,
+};

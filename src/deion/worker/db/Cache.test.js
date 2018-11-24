@@ -1,6 +1,6 @@
 import assert from "assert";
-import testHelpers from "../../../basketball/test/helpers";
-import { player } from "../../../basketball/worker/core";
+import testHelpers from "../../test/helpers";
+import { player } from "../core";
 import { g } from "../util";
 import { idb } from ".";
 

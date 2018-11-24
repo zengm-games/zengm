@@ -2,7 +2,7 @@
 
 import groupBy from "lodash/groupBy";
 import { PLAYER } from "../../../../deion/common";
-import { player, trade } from "../../core";
+import { player, trade } from "../../../../deion/worker/core";
 import { g, helpers } from "../../../../deion/worker/util";
 import type {
     Player,

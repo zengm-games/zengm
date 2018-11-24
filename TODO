@@ -1,15 +1,36 @@
 # football
 
+deion worker init function, to start setting up overrides
+
+worker/deion stuff that needs to be abstracted
+- api
+  - exportPlayerAveragesCsv
+  - exportPlayerGamesCsv
+  - getTradingBlockOffers
+  - ratingsStatsPopoverInfo
+- game/write*Stats - name of stats, do they really need to be hardcoded? if so, need to switch based on sport
+- util/account - break down into multiple files, some to deion
+- core/player/develop - move subfunctions to own file
+- core/player/generate - move genRatings to own file
+- core/player/skills
+- doAwards
+- valueChange (skill stuff, ugh)
+- any references to basketball in deion
+
 db
 - keep in basketball
   - playersPlus/teamsPlus
+    - or can i make them more generic?
 
 worker overrides
 - playersPlus/teamsPlus
+  - will i lose flow typing then?
 - types in Cache, other db files
   - cache - create idb on some init function call, not immediately. then pass it in from there.
     - but then flow will think idb.cache can be undefined
     - add manual check before every usage of idb.cache
+    - even with this, will flow realize type of Cache? no, i need to pass it around
+      - make gist of example. Map as cache, internal to some package, want to make it generic, but then need to pass around cache to every internal function manually, ratehr than importing?
   - playersPlus, etc - make generic, default to any
   - cache race conditions - what happens if async operation is happening while reset is called? need to store lid, and compare
     - better - keep count of number of times init has been called, and if it is different, then do nothing
@@ -61,6 +82,10 @@ tests still running within deion? e.g. common/helpers.test.js
 6. what about stuff that depends on e.g. the type Player? is there some way to auto-apply its parameters PlayerStats and PlayerRatings, based on the sport? Or does any function using Player need to either be in a sport-specific folder, or (if in deion) be generic?
 
 search for text basketball in deion
+
+draft
+- option to disable lottery
+- number of picks per season, depends on sport
 
 Venatus - make sure correct before deploying
 
@@ -205,7 +230,7 @@ typescript
 - https://github.com/bcherny/flow-to-typescript
   - might have to do this, do all in one
 - FlowFixMe
-- - https://stackoverflow.com/questions/42273853/in-typescript-what-is-the-exclamation-mark-bang-operator-when-dereferenci for idb.cache usage
+- - https://stackoverflow.com/questions/42273853/in-typescript-what-is-the-exclamation-mark-bang-operator-when-dereferenci for idb.cache usage, also overrides
 
 if an ad blocker is used, no need to save that space on the right
 - already done for Gold/localhost in initAds, but how to do it for ad blocker too?

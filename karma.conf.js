@@ -5,9 +5,9 @@ module.exports = function(config) {
         frameworks: ["mocha", "browserify", "source-map-support"],
 
         files: [
-            "src/basketball/test/index.js",
+            "src/deion/test/index.js",
             "src/**/*.test.js",
-            "src/basketball/test/**/*.js",
+            "src/deion/test/**/*.js",
         ],
 
         preprocessors: {

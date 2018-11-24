@@ -1,6 +1,6 @@
 // @flow
 
-import { league } from "../../../basketball/worker/core";
+import { league } from "../core";
 import { idb } from "../db";
 import g from "./g";
 import helpers from "./helpers";

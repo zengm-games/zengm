@@ -3,8 +3,8 @@
 import assert from "assert";
 import { before, describe, it } from "mocha";
 import { PLAYER } from "../../../../deion/common";
-import testHelpers from "../../../test/helpers";
-import { player } from "../../core";
+import testHelpers from "../../../../deion/test/helpers";
+import { player } from "../../../../deion/worker/core";
 import { idb } from "../../../../deion/worker/db";
 import { g } from "../../../../deion/worker/util";
 

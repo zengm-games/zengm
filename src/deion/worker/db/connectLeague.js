@@ -3,8 +3,8 @@
 import backboard from "backboard";
 import orderBy from "lodash/orderBy";
 import { PHASE, PLAYER } from "../../common";
-import { player } from "../../../basketball/worker/core";
-import { bootstrapPot } from "../../../basketball/worker/core/player/develop";
+import { player } from "../core";
+import { bootstrapPot } from "../core/player/develop";
 import { idb } from ".";
 import { logEvent } from "../util";
 

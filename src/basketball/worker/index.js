@@ -2,9 +2,9 @@
 
 /* eslint-disable import/first */
 import "../../deion/common/polyfills";
-import api from "./api";
+import api from "../../deion/worker/api";
 import * as common from "../common";
-import * as core from "./core";
+import * as core from "../../deion/worker/core";
 import * as db from "../../deion/worker/db";
 import * as util from "../../deion/worker/util";
 

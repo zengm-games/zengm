@@ -17,6 +17,7 @@ import {
 } from "../core";
 import { connectMeta, idb } from "../db";
 import {
+    achievement,
     beforeView,
     checkAccount,
     checkNaNs,
@@ -30,7 +31,7 @@ import {
     updateStatus,
     toUI,
 } from "../util";
-import { account, changes } from "../../../basketball/worker/util";
+import { changes } from "../../../basketball/worker/util";
 import views from "../views";
 import type {
     Conditions,
@@ -79,11 +80,14 @@ const checkParticipationAchievement = async (
     conditions: Conditions,
 ) => {
     if (force) {
-        await account.addAchievements(["participation"], conditions);
+        await achievement.add(["participation"], conditions);
     } else {
-        const achievements = await account.getAchievements();
-        if (achievements[0].count === 0) {
-            await account.addAchievements(["participation"], conditions);
+        const achievements = await achievement.getAll();
+        const participationAchievement = achievements.find(
+            ({ slug }) => slug === "participation",
+        );
+        if (participationAchievement && participationAchievement.count === 0) {
+            await achievement.add(["participation"], conditions);
         }
     }
 };

@@ -2,8 +2,7 @@
 
 import { finances, player, season, team } from "..";
 import { idb } from "../../db";
-import { g, helpers, local, logEvent } from "../../util";
-import { account } from "../../../../basketball/worker/util";
+import { achievement, g, helpers, local, logEvent } from "../../util";
 import type { Conditions } from "../../../common/types";
 
 const newPhasePlayoffs = async (
@@ -11,7 +10,7 @@ const newPhasePlayoffs = async (
     liveGameSim?: boolean = false,
 ) => {
     // Achievements after regular season
-    account.checkAchievement.septuawinarian(conditions);
+    achievement.check("septuawinarian", conditions);
 
     // In case this was somehow set already
     local.playingUntilEndOfRound = false;

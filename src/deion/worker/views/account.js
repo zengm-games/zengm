@@ -1,7 +1,6 @@
 // @flow
 
-import { checkAccount } from "../util";
-import { account } from "../../../basketball/worker/util";
+import { achievement, checkAccount } from "../util";
 import type { Conditions, GetOutput, UpdateEvents } from "../../common/types";
 
 async function updateAccount(
@@ -51,7 +50,7 @@ async function updateAchievements(
     updateEvents: UpdateEvents,
 ): void | { [key: string]: any } {
     if (updateEvents.includes("firstRun")) {
-        const achievements = await account.getAchievements();
+        const achievements = await achievement.getAll();
 
         return {
             achievements,

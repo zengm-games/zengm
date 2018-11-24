@@ -2,10 +2,10 @@
 
 import { fetchWrapper } from "../../common";
 import { idb } from "../db";
+import achievement from "./achievement";
 import env from "./env";
 import local from "./local";
 import toUI from "./toUI";
-import { account } from "../../../basketball/worker/util";
 import type { Conditions, PartialTopMenu } from "../../common/types";
 
 const checkAccount = async (
@@ -35,13 +35,13 @@ const checkAccount = async (
         if (data.username !== "" && idb.league !== undefined) {
             // Should be done inside one transaction to eliminate race conditions, but Firefox doesn't like that and the
             // risk is very small.
-            let achievements = await idb.league.achievements.getAll();
-            achievements = achievements.map(achievement => achievement.slug);
+            const achievements = await idb.league.achievements.getAll();
+            const slugs = achievements.map(({ slug }) => slug);
             // If any exist, delete and upload
-            if (achievements.length > 0) {
+            if (slugs.length > 0) {
                 await idb.league.achievements.clear();
                 // If this fails to save remotely, will be added to IDB again
-                await account.addAchievements(achievements, conditions, true);
+                await achievement.add(slugs, conditions, true);
             }
         }
 

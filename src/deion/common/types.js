@@ -1,5 +1,13 @@
 // @flow
 
+export type Achievements = {
+    [key: string]: {
+        name: string,
+        desc: string,
+        check: () => Promise<boolean>,
+    },
+};
+
 export type BackboardTx = any;
 
 // Not exact because https://github.com/facebook/flow/issues/2386 - same thing elsewhere

@@ -3,8 +3,7 @@
 import { PLAYER } from "../../../common";
 import { player, season, team } from "..";
 import { idb } from "../../db";
-import { g, genMessage, helpers, toUI } from "../../util";
-import { account } from "../../../../basketball/worker/util";
+import { achievement, g, genMessage, helpers, toUI } from "../../util";
 import type { Conditions } from "../../../common/types";
 
 const newPhaseBeforeDraft = async (
@@ -12,14 +11,14 @@ const newPhaseBeforeDraft = async (
     liveGameSim?: boolean = false,
 ) => {
     // Achievements after playoffs
-    account.checkAchievement.fo_fo_fo(conditions);
-    account.checkAchievement["98_degrees"](conditions);
-    account.checkAchievement.dynasty(conditions);
-    account.checkAchievement.dynasty_2(conditions);
-    account.checkAchievement.dynasty_3(conditions);
-    account.checkAchievement.moneyball(conditions);
-    account.checkAchievement.moneyball_2(conditions);
-    account.checkAchievement.small_market(conditions);
+    achievement.check(".fo_fo_fo", conditions);
+    achievement.check("98_degrees", conditions);
+    achievement.check(".dynasty", conditions);
+    achievement.check(".dynasty_2", conditions);
+    achievement.check(".dynasty_3", conditions);
+    achievement.check(".moneyball", conditions);
+    achievement.check(".moneyball_2", conditions);
+    achievement.check(".small_market", conditions);
 
     await season.doAwards(conditions);
 
@@ -100,8 +99,8 @@ const newPhaseBeforeDraft = async (
     await team.updateStrategies();
 
     // Achievements after awards
-    account.checkAchievement.hardware_store(conditions);
-    account.checkAchievement.sleeper_pick(conditions);
+    achievement.check("hardware_store", conditions);
+    achievement.check("sleeper_pick", conditions);
 
     const deltas = await season.updateOwnerMood();
     await genMessage(deltas);

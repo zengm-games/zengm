@@ -7,12 +7,19 @@ import * as common from "../common";
 import * as core from "./core";
 import * as db from "./db";
 import * as util from "./util";
+import type { Achievements } from "../common/types";
+
+const overrides = util.overrides;
 
 // eslint-disable-next-line no-restricted-globals
 self.bbgm = Object.assign({}, common, core, db, util);
 
-const deionWorker = async (options: { overrides: {} }) => {
-    console.log(options);
+const deionWorker = async (options: {
+    overrides: {
+        achievements: Achievements,
+    },
+}) => {
+    overrides.achievements = options.overrides.achievements;
 
     // God damn this function is ugly, clean up! Can probably share with ui.
     util.promiseWorker.register(([name, ...params], hostID) => {

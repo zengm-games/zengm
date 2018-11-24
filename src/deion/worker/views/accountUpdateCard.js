@@ -1,8 +1,7 @@
 // @flow
 
 import { fetchWrapper } from "../../common";
-import { env } from "../util";
-import { account } from "../../../basketball/worker/util";
+import { checkAccount, env } from "../util";
 import type { Conditions, GetOutput, UpdateEvents } from "../../common/types";
 
 async function updateAccountUpdateCard(
@@ -12,7 +11,7 @@ async function updateAccountUpdateCard(
     conditions: Conditions,
 ): void | { [key: string]: any } {
     if (updateEvents.includes("firstRun") || updateEvents.includes("account")) {
-        const partialTopMenu = await account.check(conditions);
+        const partialTopMenu = await checkAccount(conditions);
 
         try {
             const data = await fetchWrapper({

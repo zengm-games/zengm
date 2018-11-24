@@ -9,7 +9,7 @@ worker/deion stuff that needs to be abstracted
   - getTradingBlockOffers
   - ratingsStatsPopoverInfo
 - game/write*Stats - name of stats, do they really need to be hardcoded? if so, need to switch based on sport
-- util/account - break down into multiple files, some to deion
+- util/account - break down into multiple files, move to core/achievements, pass in all the achivement descriptions and check functions to init
 - core/player/develop - move subfunctions to own file
 - core/player/generate - move genRatings to own file
 - core/player/skills

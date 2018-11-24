@@ -3,8 +3,8 @@
 /*eslint camelcase: 0*/
 import { fetchWrapper } from "../../../deion/common";
 import { idb } from "../../../deion/worker/db";
-import { env, g, local, logEvent, toUI } from "../../../deion/worker/util";
-import type { Conditions, PartialTopMenu } from "../../../deion/common/types";
+import { env, g, logEvent } from "../../../deion/worker/util";
+import type { Conditions } from "../../../deion/common/types";
 import type { AchievementKey } from "../../common/types";
 
 // IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php
@@ -146,60 +146,6 @@ async function addAchievements(
         }
     } catch (err) {
         return addToIndexedDB(achievements);
-    }
-}
-
-async function check(conditions: Conditions): Promise<PartialTopMenu> {
-    try {
-        const data = await fetchWrapper({
-            url: `//account.basketball-gm.${env.tld}/user_info.php`,
-            method: "GET",
-            data: { sport: process.env.SPORT },
-            credentials: "include",
-        });
-
-        // Keep track of latest here, for ads
-        local.goldUntil = data.gold_until;
-
-        const currentTimestamp = Math.floor(Date.now() / 1000);
-        await toUI([
-            "updateLocal",
-            {
-                gold: currentTimestamp <= data.gold_until,
-                username: data.username,
-            },
-        ]);
-
-        // If user is logged in, upload any locally saved achievements
-        if (data.username !== "" && idb.league !== undefined) {
-            // Should be done inside one transaction to eliminate race conditions, but Firefox doesn't like that and the
-            // risk is very small.
-            let achievements = await idb.league.achievements.getAll();
-            achievements = achievements.map(achievement => achievement.slug);
-            // If any exist, delete and upload
-            if (achievements.length > 0) {
-                await idb.league.achievements.clear();
-                // If this fails to save remotely, will be added to IDB again
-                await addAchievements(achievements, conditions, true);
-            }
-        }
-
-        return {
-            email: data.email,
-            goldCancelled: !!data.gold_cancelled,
-            goldUntil: data.gold_until,
-            username: data.username,
-        };
-    } catch (err) {
-        // Don't freak out if an AJAX request fails or whatever
-        console.log(err);
-
-        return {
-            email: "",
-            goldCancelled: false,
-            goldUntil: Infinity,
-            username: "",
-        };
     }
 }
 
@@ -549,7 +495,6 @@ checkAchievement.sleeper_pick = async (
 };
 
 export default {
-    check,
     getAchievements,
     addAchievements,
     checkAchievement,

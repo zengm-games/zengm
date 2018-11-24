@@ -18,6 +18,7 @@ import {
 import { connectMeta, idb } from "../db";
 import {
     beforeView,
+    checkAccount,
     checkNaNs,
     env,
     g,
@@ -804,7 +805,7 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 
         // Account and changes checks can be async
         changes.check(conditions);
-        account.check(conditions).then(() => {
+        checkAccount(conditions).then(() => {
             return toUI(["initAds", local.goldUntil], conditions);
         });
     } else {

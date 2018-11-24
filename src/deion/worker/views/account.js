@@ -1,5 +1,6 @@
 // @flow
 
+import { checkAccount } from "../util";
 import { account } from "../../../basketball/worker/util";
 import type { Conditions, GetOutput, UpdateEvents } from "../../common/types";
 
@@ -10,7 +11,7 @@ async function updateAccount(
     conditions: Conditions,
 ): void | { [key: string]: any } {
     if (updateEvents.includes("firstRun") || updateEvents.includes("account")) {
-        const partialTopMenu = await account.check(conditions);
+        const partialTopMenu = await checkAccount(conditions);
 
         const loggedIn =
             partialTopMenu.username !== undefined &&

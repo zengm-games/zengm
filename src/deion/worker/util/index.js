@@ -4,6 +4,7 @@ import PromiseWorker from "promise-worker-bi";
 export const promiseWorker = new PromiseWorker();
 
 export { default as beforeView } from "./beforeView";
+export { default as checkAccount } from "./checkAccount";
 export { default as checkNaNs } from "./checkNaNs";
 export { default as env } from "./env";
 export { default as g } from "./g";

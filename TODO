@@ -43,11 +43,7 @@ get rid of all links to show locations pages
 remove all instances of imports from basketball from deion/worker
 
 yarn workspaces
-- fucks up eslint and browserify, ugh. maybe not worth it.
-  - get running without changing references to deion or using workspaces, just with new package.json files
-  - https://stackoverflow.com/questions/53341651/yarn-workspaces-and-browserify-package-json-in-subfolder-breaks-the-build
-- fix eslint
-- change all references to ../deion -> deion
+- see branch football-yarn-workspaces - all works except karma
 
 util/helpers - how to deal with this?
 - util, in general.. lots of stuff depends on it, focus on this first

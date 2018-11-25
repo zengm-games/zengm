@@ -1,7 +1,7 @@
 // @flow
 
 import { PHASE, PLAYER } from "../../../common";
-import addStatsRow from "../../../../basketball/worker/core/player/addStatsRow";
+import addStatsRow from "./addStatsRow";
 import { bootstrapPot } from "./develop";
 import generate from "./generate";
 import heightToRating from "../../../../basketball/worker/core/player/heightToRating";

@@ -2,7 +2,7 @@
 
 import checkRosterSizes from "./checkRosterSizes";
 import genSeasonRow from "./genSeasonRow";
-import genStatsRow from "../../../../basketball/worker/core/team/genStatsRow";
+import genStatsRow from "./genStatsRow";
 import generate from "./generate";
 import getContracts from "./getContracts";
 import getPayroll from "./getPayroll";

@@ -1,7 +1,7 @@
 // @flow
 
 import { PHASE } from "../../../common";
-import addStatsRow from "../../../../basketball/worker/core/player/addStatsRow";
+import addStatsRow from "./addStatsRow";
 import setContract from "./setContract";
 import { g, helpers, logEvent } from "../../util";
 import type { Phase, Player, PlayerContract } from "../../../common/types";

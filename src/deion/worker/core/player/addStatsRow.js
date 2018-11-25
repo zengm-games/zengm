@@ -1,7 +1,7 @@
 // @flow
 
-import { g } from "../../../../deion/worker/util";
-import type { Player } from "../../../../deion/common/types";
+import { g, overrides } from "../../util";
+import type { Player } from "../../../common/types";
 
 /**
  * Add a new row of stats to the playerStats database.
@@ -16,48 +16,10 @@ import type { Player } from "../../../../deion/common/types";
  */
 const addStatsRow = async (p: Player<>, playoffs?: boolean = false) => {
     const statsRow = {
+        ...overrides.emptyPlayerStatsRow,
+        playoffs,
         season: g.season,
         tid: p.tid,
-        playoffs,
-        gp: 0,
-        gs: 0,
-        min: 0,
-        fg: 0,
-        fga: 0,
-        fgAtRim: 0,
-        fgaAtRim: 0,
-        fgLowPost: 0,
-        fgaLowPost: 0,
-        fgMidRange: 0,
-        fgaMidRange: 0,
-        tp: 0,
-        tpa: 0,
-        ft: 0,
-        fta: 0,
-        pm: 0,
-        orb: 0,
-        drb: 0,
-        ast: 0,
-        tov: 0,
-        stl: 0,
-        blk: 0,
-        ba: 0,
-        pf: 0,
-        pts: 0,
-        per: 0,
-        ewa: 0,
-        yearsWithTeam: 1,
-        astp: 0,
-        blkp: 0,
-        drbp: 0,
-        orbp: 0,
-        stlp: 0,
-        trbp: 0,
-        usgp: 0,
-        drtg: 0,
-        ortg: 0,
-        dws: 0,
-        ows: 0,
     };
 
     p.statsTids.push(p.tid);

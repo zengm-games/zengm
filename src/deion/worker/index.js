@@ -11,6 +11,8 @@ import type {
     Achievements,
     CompositeWeights,
     OverridesCore,
+    PlayerStats,
+    TeamStats,
 } from "../common/types";
 
 const overrides = util.overrides;
@@ -23,6 +25,8 @@ const deionWorker = async (options: {
         COMPOSITE_WEIGHTS: CompositeWeights<>,
         achievements: Achievements,
         core: OverridesCore,
+        emptyPlayerStatsRow: PlayerStats,
+        emptyTeamStatsRow: TeamStats,
         views: {
             [key: string]: any,
         },

@@ -311,7 +311,7 @@ type PlayerSalary = {|
 |};
 
 // ***p stats can be undefined
-type PlayerStats = any;
+export type PlayerStats = any;
 
 export type RelativeType = "brother" | "father" | "son";
 

@@ -2,7 +2,7 @@
 
 import addRatingsRow from "./addRatingsRow";
 import addRelatives from "./addRelatives";
-import addStatsRow from "../../../../basketball/worker/core/player/addStatsRow";
+import addStatsRow from "./addStatsRow";
 import addToFreeAgents from "./addToFreeAgents";
 import augmentPartialPlayer from "./augmentPartialPlayer";
 import bonus from "./bonus";

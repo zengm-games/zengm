@@ -1,4 +1,4 @@
-import type { GameAttributes } from "../../../deion/common/types";
+import type { GameAttributes } from "../../common/types";
 
 // Additional league-specific attributes (userTid, userTids, season, ...) are set when creating a new league
 
@@ -61,5 +61,18 @@ const defaultGameAttributes: GameAttributes = {
 
     hardCap: false,
 };
+
+if (process.env.sport === "football") {
+    const footballOverrides = {
+        numGames: 16,
+        quarterLength: 15,
+        numGamesPlayoffSeries: [1, 1, 1, 1],
+        numPlayoffByes: 4,
+        stopOnInjuryGames: 1,
+        hardCap: true,
+    };
+
+    Object.assign(defaultGameAttributes, footballOverrides);
+}
 
 export default defaultGameAttributes;

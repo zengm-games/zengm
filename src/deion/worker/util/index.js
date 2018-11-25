@@ -7,6 +7,7 @@ export { default as achievement } from "./achievement";
 export { default as beforeView } from "./beforeView";
 export { default as checkAccount } from "./checkAccount";
 export { default as checkNaNs } from "./checkNaNs";
+export { default as defaultGameAttributes } from "./defaultGameAttributes";
 export { default as env } from "./env";
 export { default as g } from "./g";
 export { default as genMessage } from "./genMessage";

@@ -6,6 +6,7 @@ import { connectLeague, idb } from "../../db";
 import { DIFFICULTY, PHASE, PLAYER } from "../../../common";
 import { draft, finances, league, player, team } from "..";
 import {
+    defaultGameAttributes,
     g,
     helpers,
     local,
@@ -15,7 +16,6 @@ import {
     updatePhase,
     updateStatus,
 } from "../../util";
-import { defaultGameAttributes } from "../../../../basketball/worker/util";
 import type { Conditions, GameAttributes } from "../../../common/types";
 
 // Creates a league, writing nothing to the database.

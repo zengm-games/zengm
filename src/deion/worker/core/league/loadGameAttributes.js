@@ -2,8 +2,7 @@
 
 import { league } from "..";
 import { idb } from "../../db";
-import { g, helpers, toUI } from "../../util";
-import { defaultGameAttributes } from "../../../../basketball/worker/util";
+import { defaultGameAttributes, g, helpers, toUI } from "../../util";
 
 /**
  * Load game attributes from the database and update the global variable g.

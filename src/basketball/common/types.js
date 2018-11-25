@@ -126,8 +126,6 @@ export type Awards = {|
     finalsMvp: AwardPlayer | void,
 |};
 
-export type PlayerStatType = "per36" | "perGame" | "totals";
-
 export type PlayerRatings = {|
     diq: number,
     dnk: number,

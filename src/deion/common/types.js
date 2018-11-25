@@ -388,6 +388,8 @@ export type Player<PlayerRatings = any> = {|
     pid: number,
 |};
 
+export type PlayerStatType = "per36" | "perGame" | "totals";
+
 export type Local = {|
     autoPlaySeasons: number,
     fantasyDraftResults: Player<any>[],

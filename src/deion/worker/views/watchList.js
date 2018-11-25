@@ -4,8 +4,7 @@ import { PLAYER } from "../../common";
 import { freeAgents } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
-import type { UpdateEvents } from "../../common/types";
-import type { PlayerStatType } from "../../../basketball/common/types";
+import type { PlayerStatType, UpdateEvents } from "../../common/types";
 
 async function updatePlayers(
     inputs: {

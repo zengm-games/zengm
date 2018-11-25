@@ -2,9 +2,8 @@
 
 import { player } from "..";
 import { g } from "../../util";
-import type { RatingKey } from "../../../../basketball/common/types";
 
-const averageCareerArc = (ratingToSave: RatingKey) => {
+const averageCareerArc = (ratingToSave: string) => {
     console.log(
         'Warning: This does not include "special" draft prospects created in draft.genPlayers',
     );

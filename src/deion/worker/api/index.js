@@ -26,6 +26,7 @@ import {
     helpers,
     local,
     lock,
+    overrides,
     random,
     updatePlayMenu,
     updateStatus,
@@ -922,12 +923,11 @@ const runBefore = async (
         return;
     }
 
-    if (
-        views.hasOwnProperty(viewId) &&
-        views[viewId].hasOwnProperty("runBefore")
-    ) {
+    const view = views[viewId] ? views[viewId] : overrides.views[viewId];
+
+    if (view && view.hasOwnProperty("runBefore")) {
         return Promise.all(
-            views[viewId].runBefore.map(fn => {
+            view.runBefore.map(fn => {
                 return fn(inputs, updateEvents, prevData, conditions);
             }),
         );

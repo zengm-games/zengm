@@ -21,6 +21,11 @@ db
   - playersPlus/teamsPlus
     - or can i make them more generic?
 
+how to get types working, options:
+- make anything depending on an override or sport-sepcific type into a factory function or generic, initialized in deionWorker or deionUI and then passed around
+- pass around overrides manually everywhere, not making it a module
+- move everything inside deion
+
 worker overrides
 - playersPlus/teamsPlus
   - will i lose flow typing then?

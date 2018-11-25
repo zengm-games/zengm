@@ -47,7 +47,7 @@ const TeamShotLocations = ({
 
     const cols = getCols(
         "Team",
-        "G",
+        "stat:gp",
         "W",
         "L",
         "M",

@@ -43,7 +43,6 @@ import player from "./player";
 import playerFeats from "./playerFeats";
 import playerRatingDists from "./playerRatingDists";
 import playerRatings from "./playerRatings";
-import playerShotLocations from "../../../basketball/worker/views/playerShotLocations";
 import playerStatDists from "./playerStatDists";
 import playerStats from "./playerStats";
 import playoffs from "./playoffs";
@@ -55,7 +54,6 @@ import standings from "./standings";
 import teamFinances from "./teamFinances";
 import teamHistory from "./teamHistory";
 import teamRecords from "./teamRecords";
-import teamShotLocations from "../../../basketball/worker/views/teamShotLocations";
 import teamStatDists from "./teamStatDists";
 import teamStats from "./teamStats";
 import trade from "./trade";
@@ -108,7 +106,6 @@ export default {
     playerFeats,
     playerRatingDists,
     playerRatings,
-    playerShotLocations,
     playerStatDists,
     playerStats,
     playoffs,
@@ -120,7 +117,6 @@ export default {
     teamFinances,
     teamHistory,
     teamRecords,
-    teamShotLocations,
     teamStatDists,
     teamStats,
     trade,

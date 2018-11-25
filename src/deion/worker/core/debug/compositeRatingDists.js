@@ -2,9 +2,9 @@
 
 import backboard from "backboard";
 import { PLAYER } from "../../../common";
-import { COMPOSITE_WEIGHTS } from "../../../../basketball/common";
 import { player } from "..";
 import { idb } from "../../db";
+import { overrides } from "../../util";
 
 const compositeRatingDists = async () => {
     // All non-retired players
@@ -16,8 +16,8 @@ const compositeRatingDists = async () => {
         .map(p => {
             return player.compositeRating(
                 p.ratings[p.ratings.length - 1],
-                COMPOSITE_WEIGHTS.shootingThreePointer.ratings,
-                COMPOSITE_WEIGHTS.shootingThreePointer.weights,
+                overrides.COMPOSITE_WEIGHTS.shootingThreePointer.ratings,
+                overrides.COMPOSITE_WEIGHTS.shootingThreePointer.weights,
                 false,
             );
         })

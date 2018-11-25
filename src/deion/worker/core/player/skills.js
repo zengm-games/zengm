@@ -1,15 +1,12 @@
 // @flow
 
-import { COMPOSITE_WEIGHTS } from "../../../../basketball/common";
 import compositeRating from "./compositeRating";
-import type {
-    PlayerRatings,
-    RatingKey,
-} from "../../../../basketball/common/types";
+import { overrides } from "../../util";
+import type { MinimalPlayerRatings } from "../../../common/types";
 
 const hasSkill = (
-    ratings: PlayerRatings,
-    components: (RatingKey | number)[],
+    ratings: MinimalPlayerRatings,
+    components: (string | number)[],
     weights?: number[],
     cutoff: number = 0.61,
 ): boolean => {
@@ -34,11 +31,11 @@ const hasSkill = (
  *
  * Keep cutoffs in sync with GameSim.js!
  */
-const skills = (playerRatings: PlayerRatings): string[] => {
+const skills = (playerRatings: MinimalPlayerRatings): string[] => {
     const sk = [];
 
-    for (const key of Object.keys(COMPOSITE_WEIGHTS)) {
-        const { ratings, skill, weights } = COMPOSITE_WEIGHTS[key];
+    for (const key of Object.keys(overrides.COMPOSITE_WEIGHTS)) {
+        const { ratings, skill, weights } = overrides.COMPOSITE_WEIGHTS[key];
         if (skill) {
             if (hasSkill(playerRatings, ratings, weights, skill.cutoff)) {
                 sk.push(skill.label);

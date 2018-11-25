@@ -98,6 +98,9 @@ statistical feats
 
 madeHof tests slow, why?
 
+type better
+- skills/compositeRatings - should be RatingsKey, not string for components. And PlayerRatings
+
 --
 
 const app = init<PlayerRatings>();

@@ -1,10 +1,9 @@
 // @flow
 
 import range from "lodash/range";
-import { COMPOSITE_WEIGHTS } from "../../../../basketball/common";
 import { player } from "..";
 import { idb } from "../../db";
-import { g, helpers } from "../../util";
+import { g, helpers, overrides } from "../../util";
 
 /**
  * Load all teams into an array of team objects.
@@ -31,7 +30,7 @@ const loadTeams = async () => {
 
             // Initialize team composite rating object
             const compositeRating = {};
-            for (const rating of Object.keys(COMPOSITE_WEIGHTS)) {
+            for (const rating of Object.keys(overrides.COMPOSITE_WEIGHTS)) {
                 compositeRating[rating] = 0;
             }
 
@@ -78,11 +77,11 @@ const loadTeams = async () => {
                 }
 
                 // These use the same formulas as the skill definitions in player.skills!
-                for (const k of helpers.keys(COMPOSITE_WEIGHTS)) {
+                for (const k of helpers.keys(overrides.COMPOSITE_WEIGHTS)) {
                     p.compositeRating[k] = player.compositeRating(
                         rating,
-                        COMPOSITE_WEIGHTS[k].ratings,
-                        COMPOSITE_WEIGHTS[k].weights,
+                        overrides.COMPOSITE_WEIGHTS[k].ratings,
+                        overrides.COMPOSITE_WEIGHTS[k].weights,
                         false,
                     );
                 }

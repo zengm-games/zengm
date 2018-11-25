@@ -319,8 +319,10 @@ export type MinimalPlayerRatings = {
     ovr: number,
     pot: number,
     fuzz: number,
+    pos: string,
     skills: string[],
     season: number,
+    [key: string]: number,
 };
 
 export type PlayerWithoutPid<PlayerRatings = any> = {|

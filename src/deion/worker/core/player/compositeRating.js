@@ -2,14 +2,11 @@
 
 import { helpers } from "../../util";
 import fuzzRating from "./fuzzRating";
-import type {
-    PlayerRatings,
-    RatingKey,
-} from "../../../../basketball/common/types";
+import type { MinimalPlayerRatings } from "../../../common/types";
 
 const composoteRating = (
-    ratings: PlayerRatings,
-    components: (RatingKey | number)[],
+    ratings: MinimalPlayerRatings,
+    components: (string | number)[],
     weights?: number[],
     fuzz: boolean,
 ): number => {

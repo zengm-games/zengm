@@ -1,10 +1,12 @@
 // @flow
 
-import type { Achievements } from "../../common/types";
+import type { Achievements, CompositeWeights } from "../../common/types";
 
 const overrides: {
+    COMPOSITE_WEIGHTS: CompositeWeights<>,
     achievements: Achievements,
 } = {
+    COMPOSITE_WEIGHTS: {},
     achievements: {},
 };
 

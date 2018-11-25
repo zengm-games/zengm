@@ -4,6 +4,7 @@ import type {
     Achievements,
     CompositeWeights,
     OverridesCore,
+    Names,
     PlayerStats,
     TeamStats,
 } from "../../common/types";
@@ -14,6 +15,7 @@ const overrides: {
     core: OverridesCore,
     emptyPlayerStatsRow: PlayerStats,
     emptyTeamStatsRow: TeamStats,
+    names: Names,
     views: {
         [key: string]: any,
     },
@@ -25,6 +27,10 @@ const overrides: {
     },
     emptyPlayerStatsRow: {},
     emptyTeamStatsRow: {},
+    names: {
+        first: {},
+        last: {},
+    },
     views: {},
 };
 

@@ -13,6 +13,7 @@ export { default as g } from "./g";
 export { default as genMessage } from "./genMessage";
 export { default as helpers } from "./helpers";
 export { default as injuries } from "./injuries";
+export { default as loadNames } from "./loadNames";
 export { default as local } from "./local";
 export { default as lock } from "./lock";
 export { default as logEvent } from "./logEvent";

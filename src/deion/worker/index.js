@@ -11,6 +11,7 @@ import type {
     Achievements,
     CompositeWeights,
     OverridesCore,
+    Names,
     PlayerStats,
     TeamStats,
 } from "../common/types";
@@ -27,6 +28,7 @@ const deionWorker = async (options: {
         core: OverridesCore,
         emptyPlayerStatsRow: PlayerStats,
         emptyTeamStatsRow: TeamStats,
+        names: Names,
         views: {
             [key: string]: any,
         },
@@ -37,7 +39,16 @@ const deionWorker = async (options: {
         options.overrides.COMPOSITE_WEIGHTS,
     );
     Object.assign(overrides.achievements, options.overrides.achievements);
+    Object.assign(
+        overrides.emptyPlayerStatsRow,
+        options.overrides.emptyPlayerStatsRow,
+    );
+    Object.assign(
+        overrides.emptyTeamStatsRow,
+        options.overrides.emptyTeamStatsRow,
+    );
     Object.assign(overrides.core, options.overrides.core);
+    Object.assign(overrides.names, options.overrides.names);
     Object.assign(overrides.views, options.overrides.views);
 
     // God damn this function is ugly, clean up! Can probably share with ui.

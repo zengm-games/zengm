@@ -229,6 +229,15 @@ export type Message = {|
     mid: number,
 |};
 
+export type Names = {|
+    first: {
+        [key: string]: [string, number][],
+    },
+    last: {
+        [key: string]: [string, number][],
+    },
+|};
+
 export type Negotiation = {|
     pid: number,
     tid: number,

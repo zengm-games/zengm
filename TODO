@@ -1,8 +1,7 @@
 # football
 
 how will pos/ovr work? just one, like BB? or store separate ovr for every position?
-
-deion worker init function, to start setting up overrides
+- store only main ovr. after develop, reassess player position and set ovr to that. then on roster page, show position-specific ovrs (dynamically computed) and highlight them when displayed
 
 worker/deion stuff that needs to be abstracted
 - api
@@ -13,6 +12,7 @@ worker/deion stuff that needs to be abstracted
 - game/write*Stats - name of stats, do they really need to be hardcoded? if so, need to switch based on sport
 - core/player/develop - move subfunctions to own file
 - core/player/generate - move genRatings to own file
+- core/trade/getPickValues - default should depend on draft settings
 - doAwards
 - valueChange (skill stuff, ugh)
 - any references to basketball in deion
@@ -101,6 +101,8 @@ HallOfFame criteria text
 
 statistical feats
 - text on PlayerFeats
+
+names distribution
 
 madeHof tests slow, why?
 

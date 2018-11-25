@@ -1,14 +1,13 @@
 // @flow
 
-import * as names from "../../../../basketball/data/names";
-import { random } from "../../util";
+import { loadNames, random } from "../../util";
 
 let playerNames;
 
 const name = (): { country: string, firstName: string, lastName: string } => {
     if (playerNames === undefined) {
         // This makes it wait until g is loaded before calling names.load, so user-defined names will be used if provided
-        playerNames = names.load();
+        playerNames = loadNames();
     }
 
     // Country

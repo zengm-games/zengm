@@ -6,6 +6,7 @@ module.exports = function(config) {
 
         files: [
             "src/deion/test/index.js",
+            "src/basketball/worker/index.js", // For overrides
             "src/**/*.test.js",
             "src/deion/test/**/*.js",
         ],

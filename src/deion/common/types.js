@@ -548,6 +548,12 @@ export type TeamSeason = {|
 // opp stats (except Blk) can be undefined
 export type TeamStats = any;
 
+export type OverridesCore = {|
+    season: {
+        newSchedule?: (teams: Team[]) => [number, number][],
+    },
+|};
+
 export type TradePickValues = {
     [key: string]: number[],
 };

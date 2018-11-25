@@ -3,6 +3,7 @@
 import deionWorker from "../../deion/worker";
 import { COMPOSITE_WEIGHTS } from "../common";
 import achievements from "./achievements";
+import season from "./core/season";
 import views from "./views";
 
 (async () => {
@@ -10,6 +11,9 @@ import views from "./views";
         overrides: {
             COMPOSITE_WEIGHTS,
             achievements,
+            core: {
+                season,
+            },
             views,
         },
     });

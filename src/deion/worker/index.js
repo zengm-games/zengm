@@ -7,7 +7,11 @@ import * as common from "../common";
 import * as core from "./core";
 import * as db from "./db";
 import * as util from "./util";
-import type { Achievements, CompositeWeights } from "../common/types";
+import type {
+    Achievements,
+    CompositeWeights,
+    OverridesCore,
+} from "../common/types";
 
 const overrides = util.overrides;
 
@@ -18,18 +22,18 @@ const deionWorker = async (options: {
     overrides: {
         COMPOSITE_WEIGHTS: CompositeWeights<>,
         achievements: Achievements,
+        core: OverridesCore,
         views: {
             [key: string]: any,
         },
     },
 }) => {
-    overrides.COMPOSITE_WEIGHTS = options.overrides.COMPOSITE_WEIGHTS;
-    overrides.achievements = options.overrides.achievements;
     Object.assign(
         overrides.COMPOSITE_WEIGHTS,
         options.overrides.COMPOSITE_WEIGHTS,
     );
     Object.assign(overrides.achievements, options.overrides.achievements);
+    Object.assign(overrides.core, options.overrides.core);
     Object.assign(overrides.views, options.overrides.views);
 
     // God damn this function is ugly, clean up! Can probably share with ui.

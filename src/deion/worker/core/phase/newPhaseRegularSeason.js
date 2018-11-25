@@ -3,11 +3,15 @@
 import backboard from "backboard";
 import { season } from "..";
 import { idb } from "../../db";
-import { g, genMessage, local } from "../../util";
+import { g, genMessage, local, overrides } from "../../util";
 
 const newPhaseRegularSeason = async () => {
     const teams = await idb.cache.teams.getAll();
-    await season.setSchedule(season.newSchedule(teams));
+
+    if (!overrides.core.season.newSchedule) {
+        throw new Error("Missing overrides.core.season.newSchedule");
+    }
+    await season.setSchedule(overrides.core.season.newSchedule(teams));
 
     if (g.autoDeleteOldBoxScores) {
         await idb.league.tx("games", "readwrite", tx => {

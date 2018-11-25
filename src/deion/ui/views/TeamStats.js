@@ -175,7 +175,7 @@ TeamStats.propTypes = {
     allStats: PropTypes.object.isRequired,
     playoffs: PropTypes.oneOf(["playoffs", "regularSeason"]).isRequired,
     season: PropTypes.number.isRequired,
-    stats: PropTypes.string.isRequired,
+    stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     teamOpponent: PropTypes.oneOf(["advanced", "opponent", "team"]).isRequired,
     teams: PropTypes.arrayOf(PropTypes.object).isRequired,
     userTid: PropTypes.number.isRequired,

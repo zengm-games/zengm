@@ -1,8 +1,7 @@
 // @flow
 
 import { PLAYER } from "../../../common";
-import madeHof from "../../../../basketball/worker/core/player/madeHof";
-import { g, helpers, logEvent } from "../../util";
+import { g, helpers, logEvent, overrides } from "../../util";
 import type { Conditions, Player } from "../../../common/types";
 
 /**
@@ -39,7 +38,10 @@ function retire(
     p.retiredYear = g.season;
 
     // Add to Hall of Fame?
-    if (conditions && madeHof(p)) {
+    if (!overrides.core.player.madeHof) {
+        throw new Error("Missing overrides.core.player.madeHof");
+    }
+    if (conditions && overrides.core.player.madeHof(p)) {
         p.hof = true;
         p.awards.push({
             season: g.season,

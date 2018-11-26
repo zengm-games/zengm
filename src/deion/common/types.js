@@ -560,6 +560,12 @@ export type TeamSeason = {|
 export type TeamStats = any;
 
 export type OverridesCore = {|
+    player: {
+        heightToRating?: (heightInInches: number) => number,
+        madeHof?: (p: Player<> | PlayerWithoutPid<>) => boolean,
+        ovr?: any => number,
+        pos?: any => string,
+    },
     season: {
         newSchedule?: (teams: Team[]) => [number, number][],
     },

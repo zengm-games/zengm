@@ -4,10 +4,8 @@ import orderBy from "lodash/orderBy";
 import range from "lodash/range";
 import { PLAYER } from "../../../common";
 import limitRating from "./limitRating";
-import ovr from "../../../../basketball/worker/core/player/ovr";
-import pos from "../../../../basketball/worker/core/player/pos";
 import skills from "./skills";
-import { g, helpers, random } from "../../util";
+import { g, helpers, overrides, random } from "../../util";
 import type {
     PlayerRatings,
     RatingKey,
@@ -216,7 +214,10 @@ export const bootstrapPot = (ratings: PlayerRatings, age: number): number => {
         let maxOvr = ratings.ovr;
         for (let ageTemp = age + 1; ageTemp < 30; ageTemp++) {
             developSeason(copiedRatings, ageTemp); // Purposely no coachingRank
-            const currentOvr = ovr(copiedRatings);
+            if (!overrides.core.player.ovr) {
+                throw new Error("Missing overrides.core.player.ovr");
+            }
+            const currentOvr = overrides.core.player.ovr(copiedRatings);
             if (currentOvr > maxOvr) {
                 maxOvr = currentOvr;
             }
@@ -267,7 +268,10 @@ const develop = (
     }
 
     // Run these even for players developing 0 seasons
-    ratings.ovr = ovr(ratings);
+    if (!overrides.core.player.ovr) {
+        throw new Error("Missing overrides.core.player.ovr");
+    }
+    ratings.ovr = overrides.core.player.ovr(ratings);
     if (!skipPot) {
         ratings.pot = bootstrapPot(ratings, age);
     }
@@ -293,7 +297,10 @@ const develop = (
         // Must be a custom league player, let's not rock the boat
         ratings.pos = p.pos;
     } else {
-        ratings.pos = pos(ratings);
+        if (!overrides.core.player.pos) {
+            throw new Error("Missing overrides.core.player.pos");
+        }
+        ratings.pos = overrides.core.player.pos(ratings);
     }
 };
 

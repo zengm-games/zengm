@@ -2,8 +2,8 @@
 
 import backboard from "backboard";
 import { PLAYER } from "../../../common";
-import pos from "../../../../basketball/worker/core/player/pos";
 import { idb } from "../../db";
+import { overrides } from "../../util";
 
 const countPositions = async () => {
     // All non-retired players
@@ -27,7 +27,10 @@ const countPositions = async () => {
         const r = p.ratings[p.ratings.length - 1];
 
         // Dynamically recompute, to make dev easier when changing position formula
-        const position = pos(r);
+        if (!overrides.core.player.pos) {
+            throw new Error("Missing overrides.core.player.pos");
+        }
+        const position = overrides.core.player.pos(r);
 
         counts[position] += 1;
     }

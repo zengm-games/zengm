@@ -23,6 +23,7 @@ const overrides: {
     COMPOSITE_WEIGHTS: {},
     achievements: {},
     core: {
+        player: {},
         season: {},
     },
     emptyPlayerStatsRow: {},

@@ -4,11 +4,9 @@ import { PHASE, PLAYER } from "../../../common";
 import addStatsRow from "./addStatsRow";
 import { bootstrapPot } from "./develop";
 import generate from "./generate";
-import heightToRating from "../../../../basketball/worker/core/player/heightToRating";
-import ovr from "../../../../basketball/worker/core/player/ovr";
 import setContract from "./setContract";
 import skills from "./skills";
-import { g, random } from "../../util";
+import { g, overrides, random } from "../../util";
 import type { Player } from "../../../common/types";
 import type {
     RatingKey,
@@ -136,7 +134,10 @@ const augmentPartialPlayer = (
     // Height rescaling
     if (version === undefined || version <= 23) {
         for (const r of p.ratings) {
-            r.hgt = heightToRating(p.hgt);
+            if (!overrides.core.player.heightToRating) {
+                throw new Error("Missing overrides.core.player.heightToRating");
+            }
+            r.hgt = overrides.core.player.heightToRating(p.hgt);
         }
     }
 
@@ -164,7 +165,10 @@ const augmentPartialPlayer = (
             r.skills = skills(p.ratings[0]);
         }
         if (!r.hasOwnProperty("ovr")) {
-            r.ovr = ovr(p.ratings[0]);
+            if (!overrides.core.player.ovr) {
+                throw new Error("Missing overrides.core.player.ovr");
+            }
+            r.ovr = overrides.core.player.ovr(p.ratings[0]);
         }
         if (!r.hasOwnProperty("pot") || r.pot < r.ovr) {
             r.pot = bootstrapPot(r, r.season - p.born.year);
@@ -222,7 +226,10 @@ const augmentPartialPlayer = (
                 }
             }
 
-            r.ovr = ovr(r);
+            if (!overrides.core.player.ovr) {
+                throw new Error("Missing overrides.core.player.ovr");
+            }
+            r.ovr = overrides.core.player.ovr(r);
             r.skills = skills(r);
             r.pot = bootstrapPot(r, r.season - p.born.year);
             if (p.draft.year === r.season) {

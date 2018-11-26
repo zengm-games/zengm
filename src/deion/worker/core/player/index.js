@@ -16,11 +16,9 @@ import genBaseMoods from "./genBaseMoods";
 import genContract from "./genContract";
 import generate from "./generate";
 import getPlayerFakeAge from "./getPlayerFakeAge";
-import heightToRating from "../../../../basketball/worker/core/player/heightToRating";
 import injury from "./injury";
 import killOne from "./killOne";
 import moodColorText from "./moodColorText";
-import ovr from "../../../../basketball/worker/core/player/ovr";
 import release from "./release";
 import retire from "./retire";
 import setContract from "./setContract";
@@ -46,11 +44,9 @@ export default {
     genContract,
     generate,
     getPlayerFakeAge,
-    heightToRating,
     injury,
     killOne,
     moodColorText,
-    ovr,
     release,
     retire,
     sign,

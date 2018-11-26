@@ -6,7 +6,7 @@ import { PHASE, PLAYER } from "../../common";
 import { player } from "../core";
 import { bootstrapPot } from "../core/player/develop";
 import { idb } from ".";
-import { logEvent } from "../util";
+import { logEvent, overrides } from "../util";
 
 // I did it this way (with the raw IDB API) because I was afraid it would read all players into memory before getting
 // the stats and writing them back to the database. Promises/async/await would help, but Firefox before 60 does not like
@@ -331,7 +331,12 @@ const migrateLeague = (upgradeDB, lid) => {
     if (upgradeDB.oldVersion <= 23) {
         upgradeDB.players.iterate(p => {
             for (const r of p.ratings) {
-                r.hgt = player.heightToRating(p.hgt);
+                if (!overrides.core.player.heightToRating) {
+                    throw new Error(
+                        "Missing overrides.core.player.heightToRating",
+                    );
+                }
+                r.hgt = overrides.core.player.heightToRating(p.hgt);
             }
             upgradeDB.players.put(p);
         });
@@ -420,7 +425,10 @@ const migrateLeague = (upgradeDB, lid) => {
                     }
                 }
 
-                r.ovr = player.ovr(r);
+                if (!overrides.core.player.ovr) {
+                    throw new Error("Missing overrides.core.player.ovr");
+                }
+                r.ovr = overrides.core.player.ovr(r);
                 r.skills = player.skills(r);
 
                 // For performance, only calculate pot for non-retired players

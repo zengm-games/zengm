@@ -5,6 +5,7 @@ import { COMPOSITE_WEIGHTS } from "../common";
 import achievements from "./achievements";
 import emptyPlayerStatsRow from "./emptyPlayerStatsRow";
 import emptyTeamStatsRow from "./emptyTeamStatsRow";
+import player from "./core/player";
 import season from "./core/season";
 import views from "./views";
 
@@ -23,6 +24,7 @@ const names =
             COMPOSITE_WEIGHTS,
             achievements,
             core: {
+                player,
                 season,
             },
             emptyPlayerStatsRow,

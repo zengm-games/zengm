@@ -1137,7 +1137,10 @@ const upsertCustomizedPlayer = async (
     }
 
     // Set ovr, skills, and bound pot by ovr
-    p.ratings[r].ovr = player.ovr(p.ratings[r]);
+    if (!overrides.core.player.ovr) {
+        throw new Error("Missing overrides.core.player.ovr");
+    }
+    p.ratings[r].ovr = overrides.core.player.ovr(p.ratings[r]);
     p.ratings[r].skills = player.skills(p.ratings[r]);
     if (p.ratings[r].ovr > p.ratings[r].pot) {
         p.ratings[r].pot = p.ratings[r].ovr;

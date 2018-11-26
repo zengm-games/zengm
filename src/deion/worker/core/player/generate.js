@@ -4,12 +4,10 @@ import faces from "facesjs";
 import { PLAYER } from "../../../common";
 import genFuzz from "./genFuzz";
 import genContract from "./genContract";
-import heightToRating from "../../../../basketball/worker/core/player/heightToRating";
 import limitRating from "./limitRating";
 import name from "./name";
-import pos from "../../../../basketball/worker/core/player/pos";
 import setContract from "./setContract";
-import { g, helpers, random } from "../../util";
+import { g, helpers, overrides, random } from "../../util";
 import type { PlayerWithoutPid } from "../../../common/types";
 import type {
     PlayerRatings,
@@ -192,7 +190,10 @@ const genRatings = (
         ratings.fuzz *= 2;
     }
 
-    ratings.pos = pos(ratings);
+    if (!overrides.core.player.pos) {
+        throw new Error("Missing overrides.core.player.pos");
+    }
+    ratings.pos = overrides.core.player.pos(ratings);
 
     return ratings;
 };
@@ -214,7 +215,10 @@ const generate = (
     const wingspanAdjust = realHeight + random.randInt(-1, 1);
 
     // hgt 0-100 corresponds to height 5'6" to 7'9" (Anything taller or shorter than the extremes will just get 100/0)
-    const predetHgt = heightToRating(wingspanAdjust);
+    if (!overrides.core.player.heightToRating) {
+        throw new Error("Missing overrides.core.player.heightToRating");
+    }
+    const predetHgt = overrides.core.player.heightToRating(wingspanAdjust);
     realHeight = Math.round(realHeight);
 
     let ratings;

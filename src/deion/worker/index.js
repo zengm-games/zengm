@@ -34,10 +34,7 @@ const deionWorker = async (options: {
         overrides.COMPOSITE_WEIGHTS,
         options.overrides.COMPOSITE_WEIGHTS,
     );
-    Object.assign(overrides.core, options.overrides.core);
-    Object.assign(overrides.names, options.overrides.names);
-    Object.assign(overrides.util, options.overrides.util);
-    Object.assign(overrides.views, options.overrides.views);
+    Object.assign(overrides, options.overrides);
 
     // God damn this function is ugly, clean up! Can probably share with ui.
     util.promiseWorker.register(([name, ...params], hostID) => {

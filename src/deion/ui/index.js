@@ -268,8 +268,7 @@ const deionUI = async (options: {
         },
     },
 }) => {
-    Object.assign(overrides.components, options.overrides.components);
-    Object.assign(overrides.views, options.overrides.views);
+    Object.assign(overrides, options.overrides);
 
     promiseWorker.register(([name, ...params]) => {
         if (!api.hasOwnProperty(name)) {

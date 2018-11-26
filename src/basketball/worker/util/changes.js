@@ -1,10 +1,6 @@
 // @flow
 
-import { idb } from "../../../deion/worker/db";
-import { logEvent } from "../../../deion/worker/util";
-import type { Conditions } from "../../../deion/common/types";
-
-const all = [
+const changes = [
     {
         date: "2013-09-21",
         msg:
@@ -226,55 +222,4 @@ const all = [
     },
 ];
 
-const check = async (conditions: Conditions) => {
-    const changesRead = await idb.meta.attributes.get("changesRead");
-
-    // Don't show anything on first visit
-    if (changesRead < 0) {
-        await idb.meta.attributes.put(all.length, "changesRead");
-        return;
-    }
-
-    if (changesRead < all.length) {
-        const unread = all.slice(changesRead);
-
-        let text = "";
-        let linked = false;
-
-        for (let i = 0; i < unread.length; i++) {
-            if (i > 0) {
-                text += "<br>";
-            }
-            text += `<strong>${unread[i].date}</strong>: ${unread[i].msg}`;
-            if (i >= 2 && unread.length - i - 1 > 0) {
-                linked = true;
-                text += `<br><a href="/changes">...and ${unread.length -
-                    i -
-                    1} more changes.</a>`;
-                break;
-            }
-        }
-
-        if (!linked) {
-            text += '<br><a href="/changes">View All Changes</a>';
-        }
-
-        logEvent(
-            {
-                extraClass: "",
-                persistent: true,
-                type: "changes",
-                text,
-                saveToDb: false,
-            },
-            conditions,
-        );
-
-        await idb.meta.attributes.put(all.length, "changesRead");
-    }
-};
-
-export default {
-    all,
-    check,
-};
+export default changes;

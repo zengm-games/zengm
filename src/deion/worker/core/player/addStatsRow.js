@@ -16,7 +16,7 @@ import type { Player } from "../../../common/types";
  */
 const addStatsRow = async (p: Player<>, playoffs?: boolean = false) => {
     const statsRow = {
-        ...overrides.emptyPlayerStatsRow,
+        ...overrides.util.emptyPlayerStatsRow,
         playoffs,
         season: g.season,
         tid: p.tid,

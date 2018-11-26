@@ -1,36 +1,36 @@
 // @flow
 
 import type {
-    Achievements,
     CompositeWeights,
-    OverridesCore,
     Names,
-    PlayerStats,
-    TeamStats,
+    WorkerOverridesCore,
+    WorkerOverridesUtil,
 } from "../../common/types";
 
 const overrides: {
     COMPOSITE_WEIGHTS: CompositeWeights<>,
-    achievements: Achievements,
-    core: OverridesCore,
-    emptyPlayerStatsRow: PlayerStats,
-    emptyTeamStatsRow: TeamStats,
+    core: WorkerOverridesCore,
     names: Names,
+    util: WorkerOverridesUtil,
     views: {
         [key: string]: any,
     },
 } = {
     COMPOSITE_WEIGHTS: {},
-    achievements: {},
     core: {
         player: {},
         season: {},
     },
-    emptyPlayerStatsRow: {},
-    emptyTeamStatsRow: {},
     names: {
         first: {},
         last: {},
+    },
+    util: {
+        achievements: {},
+        advStats: async () => {},
+        changes: [],
+        emptyPlayerStatsRow: {},
+        emptyTeamStatsRow: {},
     },
     views: {},
 };

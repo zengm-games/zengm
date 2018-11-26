@@ -14,7 +14,7 @@ import type { TeamStats } from "../../../common/types";
  */
 const genStatsRow = (tid: number, playoffs?: boolean = false): TeamStats => {
     return {
-        ...overrides.emptyTeamStatsRow,
+        ...overrides.util.emptyTeamStatsRow,
         playoffs,
         season: g.season,
         tid,

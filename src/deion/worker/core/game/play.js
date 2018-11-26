@@ -22,11 +22,11 @@ import {
     helpers,
     lock,
     logEvent,
+    overrides,
     toUI,
     updatePlayMenu,
     updateStatus,
 } from "../../util";
-import { advStats } from "../../../../basketball/worker/util";
 import type { Conditions } from "../../../common/types";
 
 /**
@@ -149,7 +149,7 @@ const play = async (
 
         await Promise.all(promises);
 
-        await advStats();
+        await overrides.util.advStats();
 
         // If there was a play by play done for one of these games, get it
         let raw;

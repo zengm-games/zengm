@@ -6,6 +6,7 @@ export const promiseWorker = new PromiseWorker();
 export { default as achievement } from "./achievement";
 export { default as beforeView } from "./beforeView";
 export { default as checkAccount } from "./checkAccount";
+export { default as checkChanges } from "./checkChanges";
 export { default as checkNaNs } from "./checkNaNs";
 export { default as defaultGameAttributes } from "./defaultGameAttributes";
 export { default as env } from "./env";

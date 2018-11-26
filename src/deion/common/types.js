@@ -559,18 +559,6 @@ export type TeamSeason = {|
 // opp stats (except Blk) can be undefined
 export type TeamStats = any;
 
-export type OverridesCore = {|
-    player: {
-        heightToRating?: (heightInInches: number) => number,
-        madeHof?: (p: Player<> | PlayerWithoutPid<>) => boolean,
-        ovr?: any => number,
-        pos?: any => string,
-    },
-    season: {
-        newSchedule?: (teams: Team[]) => [number, number][],
-    },
-|};
-
 export type TradePickValues = {
     [key: string]: number[],
 };
@@ -624,3 +612,26 @@ export type RunFunction = (
     state: any,
     setState: (state: any) => void,
 ) => Promise<void | { [key: string]: any }>;
+
+export type WorkerOverridesCore = {|
+    player: {
+        heightToRating?: (heightInInches: number) => number,
+        madeHof?: (p: Player<> | PlayerWithoutPid<>) => boolean,
+        ovr?: any => number,
+        pos?: any => string,
+    },
+    season: {
+        newSchedule?: (teams: Team[]) => [number, number][],
+    },
+|};
+
+export type WorkerOverridesUtil = {|
+    achievements: Achievements,
+    advStats: () => Promise<void>,
+    changes: {
+        date: string,
+        msg: string,
+    }[],
+    emptyPlayerStatsRow: PlayerStats,
+    emptyTeamStatsRow: TeamStats,
+|};

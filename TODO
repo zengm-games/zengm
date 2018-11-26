@@ -10,6 +10,7 @@ how will pos/ovr work? just one, like BB? or store separate ovr for every positi
 
 worker/deion stuff that needs to be abstracted
 - move stuff in root of overrides in worker to util
+- can i get away with just Object.assign(overrides, options.overrides)?
 - api
   - exportPlayerAveragesCsv
   - exportPlayerGamesCsv

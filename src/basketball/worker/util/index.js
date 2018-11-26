@@ -1,4 +1,15 @@
 // @flow
 
-export { default as advStats } from "./advStats";
-export { default as changes } from "./changes";
+import achievements from "./achievements";
+import advStats from "./advStats";
+import changes from "./changes";
+import emptyPlayerStatsRow from "./emptyPlayerStatsRow";
+import emptyTeamStatsRow from "./emptyTeamStatsRow";
+
+export default {
+    achievements,
+    advStats,
+    changes,
+    emptyPlayerStatsRow,
+    emptyTeamStatsRow,
+};

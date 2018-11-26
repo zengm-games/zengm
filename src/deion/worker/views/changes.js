@@ -1,10 +1,10 @@
 // @flow
 
-import { changes } from "../../../basketball/worker/util";
+import { overrides } from "../util";
 
 async function updateChanges(): void | { [key: string]: any } {
     return {
-        changes: changes.all.slice(0).reverse(),
+        changes: overrides.util.changes.slice(0).reverse(),
     };
 }
 

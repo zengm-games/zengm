@@ -1,6 +1,6 @@
-import { idb } from "../../deion/worker/db";
-import { g } from "../../deion/worker/util";
-import type { Achievements } from "../../deion/common/types";
+import { idb } from "../../../deion/worker/db";
+import { g } from "../../../deion/worker/util";
+import type { Achievements } from "../../../deion/common/types";
 
 async function checkDynasty(titles: number, years: number) {
     if (g.easyDifficultyInPast || g.godModeInPast) {

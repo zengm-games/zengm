@@ -8,12 +8,10 @@ import * as core from "./core";
 import * as db from "./db";
 import * as util from "./util";
 import type {
-    Achievements,
     CompositeWeights,
-    OverridesCore,
     Names,
-    PlayerStats,
-    TeamStats,
+    WorkerOverridesCore,
+    WorkerOverridesUtil,
 } from "../common/types";
 
 const overrides = util.overrides;
@@ -24,11 +22,9 @@ self.bbgm = Object.assign({}, common, core, db, util);
 const deionWorker = async (options: {
     overrides: {
         COMPOSITE_WEIGHTS: CompositeWeights<>,
-        achievements: Achievements,
-        core: OverridesCore,
-        emptyPlayerStatsRow: PlayerStats,
-        emptyTeamStatsRow: TeamStats,
+        core: WorkerOverridesCore,
         names: Names,
+        util: WorkerOverridesUtil,
         views: {
             [key: string]: any,
         },
@@ -38,17 +34,9 @@ const deionWorker = async (options: {
         overrides.COMPOSITE_WEIGHTS,
         options.overrides.COMPOSITE_WEIGHTS,
     );
-    Object.assign(overrides.achievements, options.overrides.achievements);
-    Object.assign(
-        overrides.emptyPlayerStatsRow,
-        options.overrides.emptyPlayerStatsRow,
-    );
-    Object.assign(
-        overrides.emptyTeamStatsRow,
-        options.overrides.emptyTeamStatsRow,
-    );
     Object.assign(overrides.core, options.overrides.core);
     Object.assign(overrides.names, options.overrides.names);
+    Object.assign(overrides.util, options.overrides.util);
     Object.assign(overrides.views, options.overrides.views);
 
     // God damn this function is ugly, clean up! Can probably share with ui.

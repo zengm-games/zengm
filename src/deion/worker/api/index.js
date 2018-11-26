@@ -20,6 +20,7 @@ import {
     achievement,
     beforeView,
     checkAccount,
+    checkChanges,
     checkNaNs,
     env,
     g,
@@ -32,7 +33,6 @@ import {
     updateStatus,
     toUI,
 } from "../util";
-import { changes } from "../../../basketball/worker/util";
 import views from "../views";
 import type {
     Conditions,
@@ -809,7 +809,7 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
         idb.meta = await connectMeta(inputEnv.fromLocalStorage);
 
         // Account and changes checks can be async
-        changes.check(conditions);
+        checkChanges(conditions);
         checkAccount(conditions).then(() => {
             return toUI(["initAds", local.goldUntil], conditions);
         });

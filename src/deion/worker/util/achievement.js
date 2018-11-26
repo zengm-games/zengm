@@ -25,12 +25,12 @@ async function add(
 ) {
     const notify = slug => {
         // Find name of achievement
-        if (overrides.achievements[slug]) {
+        if (overrides.util.achievements[slug]) {
             logEvent(
                 {
                     type: "achievement",
                     text: `"${
-                        overrides.achievements[slug].name
+                        overrides.util.achievements[slug].name
                     }" achievement awarded! <a href="/account">View all achievements.</a>`,
                     saveToDb: false,
                 },
@@ -78,8 +78,8 @@ async function getAll(): Promise<
         slug: string,
     }[],
 > {
-    const achievements = Object.keys(overrides.achievements).map(slug => {
-        const { desc, name } = overrides.achievements[slug];
+    const achievements = Object.keys(overrides.util.achievements).map(slug => {
+        const { desc, name } = overrides.util.achievements[slug];
         return {
             count: 0,
             desc,
@@ -127,7 +127,7 @@ const check = async (
     conditions: Conditions,
     saveAchievement: boolean = true,
 ) => {
-    const achievement = overrides.achievements[slug];
+    const achievement = overrides.util.achievements[slug];
 
     if (!achievement) {
         throw new Error(`No achievement found for ${slug}`);

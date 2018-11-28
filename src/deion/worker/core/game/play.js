@@ -1,16 +1,7 @@
 // @flow
 
 import { PHASE, PLAYER } from "../../../common";
-import {
-    GameSim,
-    finances,
-    freeAgents,
-    phase,
-    player,
-    season,
-    team,
-    trade,
-} from "..";
+import { finances, freeAgents, phase, player, season, team, trade } from "..";
 import loadTeams from "./loadTeams";
 import updatePlayoffSeries from "./updatePlayoffSeries";
 import writeGameStats from "./writeGameStats";
@@ -197,7 +188,7 @@ const play = async (
         const results = [];
         for (let i = 0; i < schedule.length; i++) {
             const doPlayByPlay = gidPlayByPlay === schedule[i].gid;
-            const gs = new GameSim(
+            const gs = new overrides.core.GameSim(
                 schedule[i].gid,
                 teams[schedule[i].homeTid],
                 teams[schedule[i].awayTid],

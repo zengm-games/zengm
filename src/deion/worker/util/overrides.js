@@ -18,6 +18,7 @@ const overrides: {
 } = {
     COMPOSITE_WEIGHTS: {},
     core: {
+        GameSim: undefined,
         player: {},
         season: {},
     },

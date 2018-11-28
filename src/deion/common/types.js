@@ -614,6 +614,7 @@ export type RunFunction = (
 ) => Promise<void | { [key: string]: any }>;
 
 export type WorkerOverridesCore = {|
+    GameSim: any,
     player: {
         heightToRating?: (heightInInches: number) => number,
         madeHof?: (p: Player<> | PlayerWithoutPid<>) => boolean,

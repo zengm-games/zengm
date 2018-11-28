@@ -2,6 +2,7 @@
 
 import deionWorker from "../../deion/worker";
 import { COMPOSITE_WEIGHTS } from "../common";
+import GameSim from "./core/GameSim";
 import player from "./core/player";
 import season from "./core/season";
 import util from "./util";
@@ -21,6 +22,7 @@ const names =
         overrides: {
             COMPOSITE_WEIGHTS,
             core: {
+                GameSim,
                 player,
                 season,
             },

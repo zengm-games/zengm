@@ -1,4 +1,3 @@
-export { default as GameSim } from "../../../basketball/worker/core/GameSim";
 export { default as contractNegotiation } from "./contractNegotiation";
 export { default as debug } from "./debug";
 export { default as draft } from "./draft";

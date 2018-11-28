@@ -621,6 +621,13 @@ export type WorkerOverridesCore = {|
             age: number,
             coachingRank?: number,
         ) => void,
+        genRatings?: (
+            season: number,
+            scoutingRank: number,
+            tid: number,
+            hgt: number,
+        ) => any,
+        genWeight?: (hgt: number, stre: number) => number,
         heightToRating?: (heightInInches: number) => number,
         madeHof?: (p: Player<> | PlayerWithoutPid<>) => boolean,
         ovr?: any => number,

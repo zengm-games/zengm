@@ -14,6 +14,7 @@ import fuzzRating from "./fuzzRating";
 import genBaseMood from "./genBaseMood";
 import genBaseMoods from "./genBaseMoods";
 import genContract from "./genContract";
+import genFuzz from "./genFuzz";
 import generate from "./generate";
 import getPlayerFakeAge from "./getPlayerFakeAge";
 import injury from "./injury";
@@ -43,6 +44,7 @@ export default {
     genBaseMood,
     genBaseMoods,
     genContract,
+    genFuzz,
     generate,
     getPlayerFakeAge,
     injury,

@@ -9,17 +9,21 @@ how will pos/ovr work? just one, like BB? or store separate ovr for every positi
 - on player ratings page, ability to filter by position, and then show position-specific ovrs for all players
 
 worker/deion stuff that needs to be abstracted
+- game/write*Stats - name of stats, do they really need to be hardcoded? if so, need to switch based on sport
+- generating draft class - different age distribution
+- core/trade/getPickValues - default should depend on draft settings
+- doAwards
+- valueChange (skill stuff, ugh)
+- any references to basketball in deion
+
+worker/deion stuff that needs to have a process.env.SPORT case
 - api
   - exportPlayerAveragesCsv
   - exportPlayerGamesCsv
   - getTradingBlockOffers
   - ratingsStatsPopoverInfo
-- game/write*Stats - name of stats, do they really need to be hardcoded? if so, need to switch based on sport
-- core/player/generate - move genRatings to own file
-- core/trade/getPickValues - default should depend on draft settings
-- doAwards
-- valueChange (skill stuff, ugh)
-- any references to basketball in deion
+- views
+  - any with stats or ratings
 
 db
 - keep in basketball

@@ -27,7 +27,6 @@ const genCumSums = (names: {
 
 const loadNames = (): PlayerNames => {
     let { first, last } = overrides.names;
-    console.log("loadNames", overrides);
 
     if (g.names && g.names.first) {
         if (Array.isArray(g.names.first)) {

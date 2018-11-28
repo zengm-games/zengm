@@ -616,6 +616,11 @@ export type RunFunction = (
 export type WorkerOverridesCore = {|
     GameSim: any,
     player: {
+        developSeason?: (
+            ratings: any,
+            age: number,
+            coachingRank?: number,
+        ) => void,
         heightToRating?: (heightInInches: number) => number,
         madeHof?: (p: Player<> | PlayerWithoutPid<>) => boolean,
         ovr?: any => number,

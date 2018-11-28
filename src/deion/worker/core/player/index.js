@@ -18,6 +18,7 @@ import generate from "./generate";
 import getPlayerFakeAge from "./getPlayerFakeAge";
 import injury from "./injury";
 import killOne from "./killOne";
+import limitRating from "./limitRating";
 import moodColorText from "./moodColorText";
 import release from "./release";
 import retire from "./retire";
@@ -46,6 +47,7 @@ export default {
     getPlayerFakeAge,
     injury,
     killOne,
+    limitRating,
     moodColorText,
     release,
     retire,

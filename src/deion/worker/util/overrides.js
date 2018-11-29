@@ -4,14 +4,12 @@ import type {
     CompositeWeights,
     Names,
     WorkerOverridesCore,
-    WorkerOverridesDB,
     WorkerOverridesUtil,
 } from "../../common/types";
 
 const overrides: {
     COMPOSITE_WEIGHTS: CompositeWeights<>,
     core: WorkerOverridesCore,
-    db: WorkerOverridesDB,
     names: Names,
     util: WorkerOverridesUtil,
     views: {
@@ -25,9 +23,6 @@ const overrides: {
         season: {},
         team: {},
     },
-    db: {
-        getCopies: {},
-    },
     names: {
         first: {},
         last: {},
@@ -38,6 +33,7 @@ const overrides: {
         changes: [],
         emptyPlayerStatsRow: {},
         emptyTeamStatsRow: {},
+        processPlayerStats: () => {},
         processTeamStats: () => {},
     },
     views: {},

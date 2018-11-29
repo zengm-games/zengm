@@ -11,7 +11,6 @@ import type {
     CompositeWeights,
     Names,
     WorkerOverridesCore,
-    WorkerOverridesDB,
     WorkerOverridesUtil,
 } from "../common/types";
 
@@ -24,7 +23,6 @@ const deionWorker = async (options: {
     overrides: {
         COMPOSITE_WEIGHTS: CompositeWeights<>,
         core: WorkerOverridesCore,
-        db: WorkerOverridesDB,
         names: Names,
         util: WorkerOverridesUtil,
         views: {

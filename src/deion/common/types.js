@@ -672,7 +672,12 @@ export type WorkerOverridesUtil = {|
     |}[],
     emptyPlayerStatsRow: PlayerStats,
     emptyTeamStatsRow: TeamStats,
-    processPlayerStats: () => any,
+    processPlayerStats: (
+        ps: PlayerStats,
+        stats: string[],
+        statType: PlayerStatType,
+        bornYear: number,
+    ) => any,
     processTeamStats: (
         ts: TeamStats,
         stats: TeamStatAttr[],

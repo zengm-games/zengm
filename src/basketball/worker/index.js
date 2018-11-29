@@ -6,7 +6,6 @@ import GameSim from "./core/GameSim";
 import player from "./core/player";
 import season from "./core/season";
 import team from "./core/team";
-import db from "./db";
 import util from "./util";
 import views from "./views";
 
@@ -29,7 +28,6 @@ const names =
                 season,
                 team,
             },
-            db,
             names,
             util,
             views,

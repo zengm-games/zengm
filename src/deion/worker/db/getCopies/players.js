@@ -6,7 +6,6 @@ import { getAll, idb } from "..";
 import { mergeByPk } from "./helpers";
 import { helpers } from "../../util";
 import type { Player } from "../../../common/types";
-import type { PlayerRatings } from "../../../../basketball/common/types";
 
 const getCopies = async ({
     pid,
@@ -26,7 +25,7 @@ const getCopies = async ({
     statsTid?: number,
     tid?: [number, number] | number,
     filter?: Function,
-} = {}): Promise<Player<PlayerRatings>[]> => {
+} = {}): Promise<Player<>[]> => {
     if (pid !== undefined) {
         const cachedPlayer = await idb.cache.players.get(pid);
         if (cachedPlayer) {

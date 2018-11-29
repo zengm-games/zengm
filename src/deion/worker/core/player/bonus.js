@@ -3,33 +3,16 @@
 import limitRating from "./limitRating";
 import { random } from "../../util";
 import type { PlayerWithoutPid } from "../../../common/types";
-import type {
-    RatingKey,
-    PlayerRatings,
-} from "../../../../basketball/common/types";
 
-const bonus = (p: PlayerWithoutPid<PlayerRatings>) => {
+const bonus = (p: PlayerWithoutPid<>) => {
     const ratings = p.ratings[p.ratings.length - 1];
 
-    const keys: RatingKey[] = [
-        "hgt",
-        "stre",
-        "spd",
-        "jmp",
-        "endu",
-        "ins",
-        "dnk",
-        "ft",
-        "fg",
-        "tp",
-        "oiq",
-        "diq",
-        "drb",
-        "pss",
-        "reb",
-    ];
+    const skip = ["fuzz", "ovr", "pos", "pot", "season", "skills"];
 
-    for (const key of keys) {
+    for (const key of Object.keys(ratings)) {
+        if (skip.includes(key) || typeof ratings[key] !== "number") {
+            continue;
+        }
         ratings[key] = limitRating(ratings[key] + random.randInt(0, 10));
     }
 };

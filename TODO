@@ -9,8 +9,6 @@ how will pos/ovr work? just one, like BB? or store separate ovr for every positi
 - on player ratings page, ability to filter by position, and then show position-specific ovrs for all players
 
 worker/deion stuff that needs to be abstracted
-- generating draft class - different age distribution
-- valueChange (skill stuff, ugh)
 - any references to basketball in deion
 
 worker/deion stuff that needs to have a process.env.SPORT case
@@ -23,6 +21,8 @@ worker/deion stuff that needs to have a process.env.SPORT case
   - any with stats or ratings
 - doAwards
 - writePlayerStats - severe injury consequences
+- genPlayersWithoutSaving - draft class size, age distribution
+- number of draft rounds
 
 db
 - keep in basketball
@@ -122,6 +122,9 @@ madeHof tests slow, why?
 type better
 - skills/compositeRatings - should be RatingsKey, not string for components. And PlayerRatings
 - PlayerStatType should be sport specific
+- getCopy/getCopies
+  - awards should return Awards
+  - players and playersPlus - Player<> should be Player<PlayerRatings>
 
 --
 

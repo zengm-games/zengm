@@ -2,10 +2,9 @@
 
 import { idb } from "..";
 import { mergeByPk } from "./helpers";
-import type { Awards } from "../../../../basketball/common/types";
 
 const getCopies = async ({ season }: { season?: number } = {}): Promise<
-    Awards[],
+    Object[],
 > => {
     if (season !== undefined) {
         const awards = mergeByPk(

@@ -400,10 +400,12 @@ const valueChange = async (
     };
 
     // Apply bonuses based on skills coming in and leaving
-    const rosterAndRemove = roster.concat(remove);
-    const rosterAndAdd = roster.concat(add);
-    add = doSkillBonuses(add, rosterAndRemove);
-    remove = doSkillBonuses(remove, rosterAndAdd);
+    if (process.env.SPORT === "basketball") {
+        const rosterAndRemove = roster.concat(remove);
+        const rosterAndAdd = roster.concat(add);
+        add = doSkillBonuses(add, rosterAndRemove);
+        remove = doSkillBonuses(remove, rosterAndAdd);
+    }
 
     // This actually doesn't do anything because I'm an idiot
     const base = 1.25;

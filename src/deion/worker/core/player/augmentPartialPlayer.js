@@ -7,11 +7,7 @@ import generate from "./generate";
 import setContract from "./setContract";
 import skills from "./skills";
 import { g, overrides, random } from "../../util";
-import type { Player } from "../../../common/types";
-import type {
-    RatingKey,
-    PlayerRatings,
-} from "../../../../basketball/common/types";
+import type { MinimalPlayerRatings, Player } from "../../../common/types";
 
 /**
  * Take a partial player object, such as from an uploaded JSON file, and add everything it needs to be a real player object.
@@ -26,7 +22,7 @@ const augmentPartialPlayer = (
     p: any,
     scoutingRank: number,
     version: number | void,
-): Player<PlayerRatings> => {
+): Player<MinimalPlayerRatings> => {
     let age;
     if (!p.hasOwnProperty("born")) {
         age = random.randInt(19, 35);
@@ -198,7 +194,7 @@ const augmentPartialPlayer = (
             }
 
             // Scale ratings
-            const ratingKeys: RatingKey[] = [
+            const ratingKeys = [
                 "stre",
                 "spd",
                 "jmp",

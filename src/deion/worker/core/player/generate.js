@@ -5,8 +5,10 @@ import genContract from "./genContract";
 import name from "./name";
 import setContract from "./setContract";
 import { g, overrides, random } from "../../util";
-import type { PlayerWithoutPid } from "../../../common/types";
-import type { PlayerRatings } from "../../../../basketball/common/types";
+import type {
+    MinimalPlayerRatings,
+    PlayerWithoutPid,
+} from "../../../common/types";
 
 const generate = (
     tid: number,
@@ -14,7 +16,7 @@ const generate = (
     draftYear: number,
     newLeague: boolean,
     scoutingRank: number,
-): PlayerWithoutPid<PlayerRatings> => {
+): PlayerWithoutPid<MinimalPlayerRatings> => {
     // RealHeight is drawn from a custom probability distribution and then offset by a fraction of an inch either way
     let realHeight = Math.random() - 0.5; // Fraction of an inch
     realHeight += random.heightDist();

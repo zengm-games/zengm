@@ -8,35 +8,15 @@ import type {
     Player,
     PlayerFiltered,
     PlayerStatType,
+    PlayersPlusOptions,
 } from "../../../../deion/common/types";
 
-type PlayerAttr = string;
-type PlayerRatingAttr = string;
-type PlayerStatAttr = string;
-
-export type PlayerOptions = {
+type PlayersPlusOptionsRequired = {
     season?: number,
     tid?: number,
-    attrs?: PlayerAttr[],
-    ratings?: PlayerStatAttr[],
-    stats?: PlayerRatingAttr[],
-    playoffs?: boolean,
-    regularSeason?: boolean,
-    showNoStats?: boolean,
-    showRookies?: boolean,
-    showRetired?: boolean,
-    fuzz?: boolean,
-    oldStats?: boolean,
-    numGamesRemaining?: number,
-    statType?: PlayerStatType,
-};
-
-type PlayerOptionsRequired = {
-    season?: number,
-    tid?: number,
-    attrs: PlayerAttr[],
-    ratings: PlayerStatAttr[],
-    stats: PlayerRatingAttr[],
+    attrs: string[],
+    ratings: string[],
+    stats: string[],
     playoffs: boolean,
     regularSeason: boolean,
     showNoStats: boolean,
@@ -74,7 +54,7 @@ const awardsOrder = [
 const processAttrs = (
     output: PlayerFiltered,
     p: Player,
-    { attrs, fuzz, numGamesRemaining, season }: PlayerOptionsRequired,
+    { attrs, fuzz, numGamesRemaining, season }: PlayersPlusOptionsRequired,
 ) => {
     for (const attr of attrs) {
         if (attr === "age") {
@@ -205,7 +185,14 @@ const processAttrs = (
 const processRatings = (
     output: PlayerFiltered,
     p: Player,
-    { fuzz, ratings, showRetired, stats, season, tid }: PlayerOptionsRequired,
+    {
+        fuzz,
+        ratings,
+        showRetired,
+        stats,
+        season,
+        tid,
+    }: PlayersPlusOptionsRequired,
 ) => {
     let playerRatings = p.ratings;
 
@@ -500,7 +487,7 @@ const processStats = (
         oldStats,
         statType,
         stats,
-    }: PlayerOptionsRequired,
+    }: PlayersPlusOptionsRequired,
 ) => {
     // Only season(s) and team in question
     let playerStats = getPlayerStats(
@@ -583,7 +570,7 @@ const processStats = (
     }
 };
 
-const processPlayer = (p: Player, options: PlayerOptions) => {
+const processPlayer = (p: Player, options: PlayersPlusOptions) => {
     const output = {};
 
     // Do this check before stats for a faster short circuit (no DB access)
@@ -676,9 +663,9 @@ const getCopies = async (
         oldStats = false,
         numGamesRemaining = 0,
         statType = "perGame",
-    }: PlayerOptions = {},
+    }: PlayersPlusOptions = {},
 ): Promise<PlayerFiltered[]> => {
-    const options: PlayerOptionsRequired = {
+    const options: PlayersPlusOptionsRequired = {
         season,
         tid,
         attrs,

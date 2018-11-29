@@ -14,9 +14,10 @@ import type {
     TeamStatAttr,
     TeamStatType,
     TeamStats,
+    TeamsPlusOptions,
 } from "../../../../deion/common/types";
 
-type TeamOptions = {
+type TeamsPlusOptionsRequired = {
     season?: number,
     attrs: TeamAttr[],
     seasonAttrs: TeamSeasonAttr[],
@@ -470,7 +471,7 @@ const processTeam = async (
         playoffs,
         regularSeason,
         statType,
-    }: TeamOptions,
+    }: TeamsPlusOptionsRequired,
 ) => {
     const output = {};
 
@@ -530,16 +531,7 @@ const getCopies = async ({
     playoffs = false,
     regularSeason = true,
     statType = "perGame",
-}: {
-    tid?: number,
-    season?: number,
-    attrs?: TeamAttr[],
-    seasonAttrs?: TeamSeasonAttr[],
-    stats?: TeamStatAttr[],
-    playoffs?: boolean,
-    regularSeason?: boolean,
-    statType?: TeamStatType,
-} = {}): Promise<TeamFiltered[]> => {
+}: TeamsPlusOptions = {}): Promise<TeamFiltered[]> => {
     const options = {
         season,
         attrs,

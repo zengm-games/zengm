@@ -15,6 +15,7 @@ import type {
     GameAttribute,
     Message,
     MessageWithoutMid,
+    MinimalPlayerRatings,
     Negotiation,
     Player,
     PlayerFeat,
@@ -28,7 +29,6 @@ import type {
     Team,
     Trade,
 } from "../../common/types";
-import type { Awards, PlayerRatings } from "../../../basketball/common/types";
 
 type Status = "empty" | "error" | "filling" | "full";
 
@@ -200,7 +200,7 @@ class Cache {
         },
     };
 
-    awards: StoreAPI<Awards, Awards, number>;
+    awards: StoreAPI<Object, Object, number>;
 
     draftLotteryResults: StoreAPI<
         DraftLotteryResult,
@@ -223,8 +223,8 @@ class Cache {
     playerFeats: StoreAPI<PlayerFeat, PlayerFeat, number>;
 
     players: StoreAPI<
-        Player<PlayerRatings> | PlayerWithoutPid<PlayerRatings>,
-        Player<PlayerRatings>,
+        Player<MinimalPlayerRatings> | PlayerWithoutPid<MinimalPlayerRatings>,
+        Player<MinimalPlayerRatings>,
         number,
     >;
 

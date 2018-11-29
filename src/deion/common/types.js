@@ -399,6 +399,23 @@ export type Player<PlayerRatings = any> = {|
 
 export type PlayerStatType = "per36" | "perGame" | "totals";
 
+export type PlayersPlusOptions = {
+    season?: number,
+    tid?: number,
+    attrs?: string[],
+    ratings?: string[],
+    stats?: string[],
+    playoffs?: boolean,
+    regularSeason?: boolean,
+    showNoStats?: boolean,
+    showRookies?: boolean,
+    showRetired?: boolean,
+    fuzz?: boolean,
+    oldStats?: boolean,
+    numGamesRemaining?: number,
+    statType?: PlayerStatType,
+};
+
 export type Local = {|
     autoPlaySeasons: number,
     fantasyDraftResults: Player<any>[],
@@ -559,6 +576,17 @@ export type TeamSeason = {|
 // opp stats (except Blk) can be undefined
 export type TeamStats = any;
 
+export type TeamsPlusOptions = {|
+    tid?: number,
+    season?: number,
+    attrs?: TeamAttr[],
+    seasonAttrs?: TeamSeasonAttr[],
+    stats?: TeamStatAttr[],
+    playoffs?: boolean,
+    regularSeason?: boolean,
+    statType?: TeamStatType,
+|};
+
 export type TradePickValues = {
     [key: string]: number[],
 };
@@ -646,13 +674,23 @@ export type WorkerOverridesCore = {|
     },
 |};
 
+export type WorkerOverridesDB = {|
+    getCopies: {|
+        playersPlus?: (
+            p: Player<>,
+            options: PlayersPlusOptions,
+        ) => Promise<PlayerFiltered[]>,
+        teamsPlus?: (options: TeamsPlusOptions) => Promise<TeamFiltered[]>,
+    |},
+|};
+
 export type WorkerOverridesUtil = {|
     achievements: Achievements,
     advStats: () => Promise<void>,
-    changes: {
+    changes: {|
         date: string,
         msg: string,
-    }[],
+    |}[],
     emptyPlayerStatsRow: PlayerStats,
     emptyTeamStatsRow: TeamStats,
 |};

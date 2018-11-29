@@ -5,11 +5,14 @@ import range from "lodash/range";
 import { PLAYER } from "../../../common";
 import skills from "./skills";
 import { helpers, overrides } from "../../util";
-import type { PlayerRatings } from "../../../../basketball/common/types";
+import type { MinimalPlayerRatings } from "../../../common/types";
 
 // Repeatedly simulate aging up to 29, and pick the 75th percentile max
 const NUM_SIMULATIONS = 20; // Higher is more accurate, but slower. Low accuracy is fine, though!
-export const bootstrapPot = (ratings: PlayerRatings, age: number): number => {
+export const bootstrapPot = (
+    ratings: MinimalPlayerRatings,
+    age: number,
+): number => {
     if (age >= 29) {
         return ratings.ovr;
     }
@@ -55,7 +58,7 @@ const develop = (
         born: { loc: string, year: number },
         draft: { ovr: number, pot: number, skills: string[] },
         pos?: string,
-        ratings: PlayerRatings[],
+        ratings: MinimalPlayerRatings[],
         tid: number,
     },
     years?: number = 1,

@@ -8,7 +8,7 @@ import { player, team } from "..";
 import { idb } from "../../db";
 import { g } from "../../util";
 
-describe("worker/core/team/rosterAutoSort/findStarters", () => {
+describe("worker/core/team/checkRosterSizes", () => {
     before(() => {
         testHelpers.resetG();
 

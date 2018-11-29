@@ -11,6 +11,7 @@ import {
     helpers,
     local,
     lock,
+    overrides,
     random,
     toUI,
     updatePhase,
@@ -692,7 +693,14 @@ const create = async (
 
         // Auto sort rosters
         await Promise.all(
-            leagueData.teams.map(t => team.rosterAutoSort(t.tid)),
+            leagueData.teams.map(t => {
+                if (!overrides.core.team.rosterAutoSort) {
+                    throw new Error(
+                        "Missing overrides.core.team.rosterAutoSort",
+                    );
+                }
+                return overrides.core.team.rosterAutoSort(t.tid);
+            }),
         );
     }
 

@@ -3,8 +3,7 @@
 import { PLAYER } from "../../../common";
 import { player } from "..";
 import { idb } from "../../db";
-import { g, helpers, local } from "../../util";
-import rosterAutoSort from "./rosterAutoSort";
+import { g, helpers, local, overrides } from "../../util";
 
 /**
  * Check roster size limits
@@ -95,7 +94,10 @@ const checkRosterSizes = async (): Promise<string | void> => {
         // Auto sort rosters (except player's team)
         // This will sort all AI rosters before every game. Excessive? It could change some times, but usually it won't
         if (!g.userTids.includes(tid) || local.autoPlaySeasons > 0) {
-            return rosterAutoSort(tid);
+            if (!overrides.core.team.rosterAutoSort) {
+                throw new Error("Missing overrides.core.team.rosterAutoSort");
+            }
+            return overrides.core.team.rosterAutoSort(tid);
         }
     };
 

@@ -56,7 +56,10 @@ const acceptContractNegotiation = async (
 };
 
 const autoSortRoster = async () => {
-    await team.rosterAutoSort(g.userTid);
+    if (!overrides.core.team.rosterAutoSort) {
+        throw new Error("Missing overrides.core.team.rosterAutoSort");
+    }
+    await overrides.core.team.rosterAutoSort(g.userTid);
     await toUI(["realtimeUpdate", ["playerMovement"]]);
 };
 

@@ -3,7 +3,7 @@
 import { PHASE } from "../../../common";
 import { team } from "..";
 import { idb } from "../../db";
-import { g } from "../../util";
+import { g, overrides } from "../../util";
 import clear from "./clear";
 import processTrade from "./processTrade";
 import summary from "./summary";
@@ -62,7 +62,12 @@ const propose = async (
         // Auto-sort CPU team roster
         for (const tid of tids) {
             if (!g.userTids.includes(tid)) {
-                await team.rosterAutoSort(tid);
+                if (!overrides.core.team.rosterAutoSort) {
+                    throw new Error(
+                        "Missing overrides.core.team.rosterAutoSort",
+                    );
+                }
+                await overrides.core.team.rosterAutoSort(tid);
             }
         }
 

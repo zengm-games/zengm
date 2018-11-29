@@ -5,7 +5,7 @@ import range from "lodash/range";
 import { PHASE, PLAYER } from "../../../common";
 import { player, team } from "..";
 import { idb } from "../../db";
-import { g, local, random } from "../../util";
+import { g, local, random, overrides } from "../../util";
 
 /**
  * AI teams sign free agents.
@@ -77,7 +77,13 @@ const autoSign = async () => {
                     playersSorted.splice(i, 1); // Remove from list of free agents
 
                     await idb.cache.players.put(p);
-                    await team.rosterAutoSort(tid);
+
+                    if (!overrides.core.team.rosterAutoSort) {
+                        throw new Error(
+                            "Missing overrides.core.team.rosterAutoSort",
+                        );
+                    }
+                    await overrides.core.team.rosterAutoSort(tid);
 
                     // We found one, so stop looking for this team
                     break;

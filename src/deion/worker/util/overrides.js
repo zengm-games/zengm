@@ -21,6 +21,7 @@ const overrides: {
         GameSim: undefined,
         player: {},
         season: {},
+        team: {},
     },
     names: {
         first: {},

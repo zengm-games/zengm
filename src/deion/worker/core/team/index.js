@@ -7,7 +7,6 @@ import generate from "./generate";
 import getContracts from "./getContracts";
 import getPayroll from "./getPayroll";
 import getPayrolls from "./getPayrolls";
-import rosterAutoSort from "./rosterAutoSort";
 import updateStrategies from "./updateStrategies";
 import valueChange from "./valueChange";
 
@@ -19,7 +18,6 @@ export default {
     getContracts,
     getPayroll,
     getPayrolls,
-    rosterAutoSort,
     updateStrategies,
     valueChange,
 };

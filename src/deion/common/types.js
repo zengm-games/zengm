@@ -641,6 +641,9 @@ export type WorkerOverridesCore = {|
     season: {
         newSchedule?: (teams: Team[]) => [number, number][],
     },
+    team: {
+        rosterAutoSort?: (tid: number) => Promise<void>,
+    },
 |};
 
 export type WorkerOverridesUtil = {|

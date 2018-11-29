@@ -12,7 +12,6 @@ worker/deion stuff that needs to be abstracted
 - generating draft class - different age distribution
 - valueChange (skill stuff, ugh)
 - any references to basketball in deion
-- rosterAutoSort
 
 worker/deion stuff that needs to have a process.env.SPORT case
 - api

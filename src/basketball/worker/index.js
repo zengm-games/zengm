@@ -5,6 +5,7 @@ import { COMPOSITE_WEIGHTS } from "../common";
 import GameSim from "./core/GameSim";
 import player from "./core/player";
 import season from "./core/season";
+import team from "./core/team";
 import util from "./util";
 import views from "./views";
 
@@ -25,6 +26,7 @@ const names =
                 GameSim,
                 player,
                 season,
+                team,
             },
             names,
             util,

@@ -178,30 +178,15 @@ const writeTeamStats = async (results: GameResults) => {
         teamSeason.expenses.health.amount += healthPaid;
         teamSeason.expenses.facilities.amount += facilitiesPaid;
 
-        const keys = [
-            "min",
-            "fg",
-            "fga",
-            "fgAtRim",
-            "fgaAtRim",
-            "fgLowPost",
-            "fgaLowPost",
-            "fgMidRange",
-            "fgaMidRange",
-            "tp",
-            "tpa",
-            "ft",
-            "fta",
-            "orb",
-            "drb",
-            "ast",
-            "tov",
-            "stl",
-            "blk",
-            "pf",
-            "pts",
-        ];
-        for (const key of keys) {
+        // For historical reasons, "ba" is special in basketball (stored in box score, not in team stats)
+        const skip =
+            process.env.SPORT === "basketball"
+                ? ["ptsQtrs", "ba"]
+                : ["ptsQtrs"];
+        for (const key of Object.keys(results.team[t1].stat)) {
+            if (skip.includes(key)) {
+                continue;
+            }
             teamStats[key] += results.team[t1].stat[key];
 
             if (key !== "min") {

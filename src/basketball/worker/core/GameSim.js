@@ -314,6 +314,9 @@ class GameSim {
                 delete this.team[t].player[p].valueNoPot;
                 delete this.team[t].player[p].compositeRating;
                 delete this.team[t].player[p].ptModifier;
+                delete this.team[t].player[p].stat.benchTime;
+                delete this.team[t].player[p].stat.courtTime;
+                delete this.team[t].player[p].stat.energy;
             }
         }
 

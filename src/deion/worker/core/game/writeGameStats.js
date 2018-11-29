@@ -26,42 +26,15 @@ const writeGameStats = async (
     gameStats.teams[1].players = [];
 
     for (let t = 0; t < 2; t++) {
-        const keys = [
-            "min",
-            "fg",
-            "fga",
-            "fgAtRim",
-            "fgaAtRim",
-            "fgLowPost",
-            "fgaLowPost",
-            "fgMidRange",
-            "fgaMidRange",
-            "tp",
-            "tpa",
-            "ft",
-            "fta",
-            "orb",
-            "drb",
-            "ast",
-            "tov",
-            "stl",
-            "blk",
-            "ba",
-            "pf",
-            "pts",
-            "ptsQtrs",
-        ];
-        for (let i = 0; i < keys.length; i++) {
-            gameStats.teams[t][keys[i]] = results.team[t].stat[keys[i]];
+        for (const key of Object.keys(results.team[t].stat)) {
+            gameStats.teams[t][key] = results.team[t].stat[key];
         }
 
-        keys.unshift("gs"); // Also record starters, in addition to other stats
-        keys.push("pm");
         for (let p = 0; p < results.team[t].player.length; p++) {
             gameStats.teams[t].players[p] = {};
-            for (let i = 0; i < keys.length; i++) {
-                gameStats.teams[t].players[p][keys[i]] =
-                    results.team[t].player[p].stat[keys[i]];
+            for (const key of Object.keys(results.team[t].player[p].stat)) {
+                gameStats.teams[t].players[p][key] =
+                    results.team[t].player[p].stat[key];
             }
             gameStats.teams[t].players[p].name = results.team[t].player[p].name;
             gameStats.teams[t].players[p].pos = results.team[t].player[p].pos;

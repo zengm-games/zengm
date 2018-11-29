@@ -3,7 +3,7 @@
 import orderBy from "lodash/orderBy";
 import { PLAYER } from "../../../common";
 import { idb } from "../../db";
-import { g, helpers, logEvent } from "../../util";
+import { g, defaultGameAttributes, helpers, logEvent } from "../../util";
 import type {
     Conditions,
     PlayerFiltered,
@@ -104,7 +104,9 @@ const leagueLeaders = (
     players: PlayerFiltered[],
     awardsByPlayer: AwardsByPlayer,
 ) => {
-    const factor = (g.numGames / 82) * Math.sqrt(g.quarterLength / 12); // To handle changes in number of games and playing time
+    const factor =
+        (g.numGames / defaultGameAttributes.numGames) *
+        Math.sqrt(g.quarterLength / defaultGameAttributes.quarterLength); // To handle changes in number of games and playing time
     const categories = [
         { name: "League Scoring Leader", stat: "pts", minValue: 1400 },
         { name: "League Rebounding Leader", stat: "trb", minValue: 800 },

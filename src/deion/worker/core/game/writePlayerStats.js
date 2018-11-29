@@ -50,33 +50,7 @@ const writePlayerStats = async (
                     }
 
                     // Update stats
-                    const keys = [
-                        "gs",
-                        "min",
-                        "fg",
-                        "fga",
-                        "fgAtRim",
-                        "fgaAtRim",
-                        "fgLowPost",
-                        "fgaLowPost",
-                        "fgMidRange",
-                        "fgaMidRange",
-                        "tp",
-                        "tpa",
-                        "ft",
-                        "fta",
-                        "pm",
-                        "orb",
-                        "drb",
-                        "ast",
-                        "tov",
-                        "stl",
-                        "blk",
-                        "ba",
-                        "pf",
-                        "pts",
-                    ];
-                    for (const key of keys) {
+                    for (const key of Object.keys(p.stat)) {
                         ps[key] += p.stat[key];
                     }
                     ps.gp += 1; // Already checked for non-zero minutes played above

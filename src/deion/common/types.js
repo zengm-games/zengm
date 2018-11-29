@@ -576,17 +576,6 @@ export type TeamSeason = {|
 // opp stats (except Blk) can be undefined
 export type TeamStats = any;
 
-export type TeamsPlusOptions = {|
-    tid?: number,
-    season?: number,
-    attrs?: TeamAttr[],
-    seasonAttrs?: TeamSeasonAttr[],
-    stats?: TeamStatAttr[],
-    playoffs?: boolean,
-    regularSeason?: boolean,
-    statType?: TeamStatType,
-|};
-
 export type TradePickValues = {
     [key: string]: number[],
 };
@@ -674,16 +663,6 @@ export type WorkerOverridesCore = {|
     },
 |};
 
-export type WorkerOverridesDB = {|
-    getCopies: {|
-        playersPlus?: (
-            p: Player<>,
-            options: PlayersPlusOptions,
-        ) => Promise<PlayerFiltered[]>,
-        teamsPlus?: (options: TeamsPlusOptions) => Promise<TeamFiltered[]>,
-    |},
-|};
-
 export type WorkerOverridesUtil = {|
     achievements: Achievements,
     advStats: () => Promise<void>,
@@ -693,4 +672,11 @@ export type WorkerOverridesUtil = {|
     |}[],
     emptyPlayerStatsRow: PlayerStats,
     emptyTeamStatsRow: TeamStats,
+    processPlayerStats: () => any,
+    processTeamStats: (
+        ts: TeamStats,
+        stats: TeamStatAttr[],
+        playoffs: boolean,
+        statType: TeamStatType,
+    ) => any,
 |};

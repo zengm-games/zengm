@@ -38,6 +38,7 @@ const overrides: {
         changes: [],
         emptyPlayerStatsRow: {},
         emptyTeamStatsRow: {},
+        processTeamStats: () => {},
     },
     views: {},
 };

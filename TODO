@@ -10,10 +10,10 @@ how will pos/ovr work? just one, like BB? or store separate ovr for every positi
 
 worker/deion stuff that needs to be abstracted
 - generating draft class - different age distribution
-- core/trade/getPickValues - default should depend on draft settings
+- core/trade/getPickValues
+  - default should be average of future draft class values (make sure to handle placeholders during draft)
 - valueChange (skill stuff, ugh)
 - any references to basketball in deion
-- checkStatisticalFeat
 
 worker/deion stuff that needs to have a process.env.SPORT case
 - api

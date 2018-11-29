@@ -616,6 +616,11 @@ export type RunFunction = (
 export type WorkerOverridesCore = {|
     GameSim: any,
     player: {
+        checkStatisticalFeat?: (
+            p: GamePlayer,
+        ) => {
+            [key: string]: number,
+        } | void,
         developSeason?: (
             ratings: any,
             age: number,

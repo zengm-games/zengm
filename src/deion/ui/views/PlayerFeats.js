@@ -11,8 +11,6 @@ import { getCols, helpers, setTitle } from "../util";
 const PlayerFeats = ({ abbrev, feats, playoffs, season, stats, userTid }) => {
     setTitle("Statistical Feats");
 
-    console.log(feats);
-
     const cols = getCols(
         "Name",
         "Pos",

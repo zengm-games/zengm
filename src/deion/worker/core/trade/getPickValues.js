@@ -1,5 +1,6 @@
 // @flow
 
+import range from "lodash/range";
 import { PHASE, PLAYER } from "../../../common";
 import { idb } from "../../db";
 import { g } from "../../util";
@@ -14,71 +15,9 @@ import type { TradePickValues } from "../../../common/types";
  * @return {Promise.Object} Resolves to estimated draft pick values.
  */
 const getPickValues = async (): Promise<TradePickValues> => {
-    const estValues = {
-        default: [
-            75,
-            73,
-            71,
-            69,
-            68,
-            67,
-            66,
-            65,
-            64,
-            63,
-            62,
-            61,
-            60,
-            59,
-            58,
-            57,
-            56,
-            55,
-            54,
-            53,
-            52,
-            51,
-            50,
-            50,
-            50,
-            49,
-            49,
-            49,
-            48,
-            48,
-            48,
-            47,
-            47,
-            47,
-            46,
-            46,
-            46,
-            45,
-            45,
-            45,
-            44,
-            44,
-            44,
-            43,
-            43,
-            43,
-            42,
-            42,
-            42,
-            41,
-            41,
-            41,
-            40,
-            40,
-            39,
-            39,
-            38,
-            38,
-            37,
-            37,
-        ], // This is basically arbitrary
-    };
+    const estValues = {};
 
+    let maxLength = 0;
     for (const tid of [
         PLAYER.UNDRAFTED,
         PLAYER.UNDRAFTED_2,
@@ -91,6 +30,10 @@ const getPickValues = async (): Promise<TradePickValues> => {
         if (players.length > 0) {
             players.sort((a, b) => b.value - a.value);
             estValues[players[0].draft.year] = players.map(p => p.value + 4); // +4 is to generally make picks more valued
+
+            if (estValues[players[0].draft.year].length > maxLength) {
+                maxLength = estValues[players[0].draft.year].length;
+            }
         }
     }
 
@@ -108,6 +51,28 @@ const getPickValues = async (): Promise<TradePickValues> => {
             estValues[g.season] = fakeValues.concat(estValues[g.season]);
         }
     }
+
+    // Defaults are the average of future drafts
+    const seasons = Object.keys(estValues);
+    estValues.default = range(maxLength).map(i => {
+        const vals = seasons
+            .filter(season => {
+                // Hacky, because 50 could be the placeholder or a real value
+                if (
+                    g.phase === PHASE.DRAFT &&
+                    season === String(g.season) &&
+                    estValues[season][i] === 50
+                ) {
+                    return false;
+                }
+
+                return true;
+            })
+            .map(season => estValues[season][i])
+            .filter(val => typeof val === "number" && !Number.isNaN(val));
+
+        return vals.reduce((total, val) => total + val, 0) / vals.length;
+    });
 
     return estValues;
 };

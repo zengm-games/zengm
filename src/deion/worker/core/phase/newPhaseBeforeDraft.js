@@ -11,14 +11,14 @@ const newPhaseBeforeDraft = async (
     liveGameSim?: boolean = false,
 ) => {
     // Achievements after playoffs
-    achievement.check(".fo_fo_fo", conditions);
+    achievement.check("fo_fo_fo", conditions);
     achievement.check("98_degrees", conditions);
-    achievement.check(".dynasty", conditions);
-    achievement.check(".dynasty_2", conditions);
-    achievement.check(".dynasty_3", conditions);
-    achievement.check(".moneyball", conditions);
-    achievement.check(".moneyball_2", conditions);
-    achievement.check(".small_market", conditions);
+    achievement.check("dynasty", conditions);
+    achievement.check("dynasty_2", conditions);
+    achievement.check("dynasty_3", conditions);
+    achievement.check("moneyball", conditions);
+    achievement.check("moneyball_2", conditions);
+    achievement.check("small_market", conditions);
 
     await season.doAwards(conditions);
 

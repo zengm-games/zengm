@@ -168,6 +168,8 @@ class Cache {
 
     _indexes: { [key: Index]: any };
 
+    _instanceNum: number;
+
     _maxIds: { [key: Store]: number };
 
     newLeague: boolean;
@@ -247,10 +249,6 @@ class Cache {
     trade: StoreAPI<Trade, Trade, number>;
 
     constructor() {
-        this._init();
-    }
-
-    _init() {
         this._status = "empty";
 
         this._data = {};
@@ -476,11 +474,6 @@ class Cache {
         this.teamStats = new StoreAPI(this, "teamStats");
         this.teams = new StoreAPI(this, "teams");
         this.trade = new StoreAPI(this, "trade");
-    }
-
-    reset() {
-        this.stopAutoFlush();
-        this._init();
     }
 
     _validateStatus(...validStatuses: Status[]) {

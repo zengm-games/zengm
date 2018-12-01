@@ -1,12 +1,5 @@
 # football
 
-finish views
-- CustomizePlayer
-- LiveGame
-- way to specify routes for ShotLocations?
-
-deploy to bbgm, to get some live testing done
-
 how will pos/ovr work? just one, like BB? or store separate ovr for every position?
 - store only main ovr. after develop, reassess player position and set ovr to that
 - player.pos just finds the max of all possible ovrs
@@ -31,23 +24,15 @@ worker/deion stuff that needs to have a process.env.SPORT case
 
 in GameSim, make sure to track player.stats.min, for use in writePlayerStats
 
+finish views
+- CustomizePlayer
+- LiveGame
+- way to specify routes for ShotLocations?
+
 how to get types working, options:
 - make anything depending on an override or sport-sepcific type into a factory function or generic, initialized in deionWorker or deionUI and then passed around
 - pass around overrides manually everywhere, not making it a module
 - move everything inside deion
-
-worker overrides
-- playersPlus/teamsPlus
-  - will i lose flow typing then?
-- types in Cache, other db files
-  - cache - create idb on some init function call, not immediately. then pass it in from there.
-    - but then flow will think idb.cache can be undefined
-    - add manual check before every usage of idb.cache
-    - even with this, will flow realize type of Cache? no, i need to pass it around
-      - make gist of example. Map as cache, internal to some package, want to make it generic, but then need to pass around cache to every internal function manually, ratehr than importing?
-  - playersPlus, etc - make generic, default to any
-  - cache race conditions - what happens if async operation is happening while reset is called? need to store lid, and compare
-    - better - keep count of number of times init has been called, and if it is different, then do nothing
 
 History
 - for football, MVP, OPOY, DPOY, OROY, DROY. then All-League Team and All-Rookie Team
@@ -55,9 +40,6 @@ History
 how will deionUI(overrides) work with types?
 - can pass them as generics, then apply them to factory functions
 - Import modules from deion. Add things like extra views. Apply factories/generics.
-
-trading block
-- DRY for assembling rows/cols of tables (same except first col)
 
 what's the end state here? options:
 - everything is in deion, and process.env.SPORT governs the output
@@ -72,27 +54,10 @@ figure out dynamic import of schema in LeagueFileUpload.js
 better way to pass awards to Dropdown.js
 - and get rid of per36
 
-get rid of all links to show locations pages
-
-remove all instances of imports from basketball from deion/worker
-
 yarn workspaces
 - see branch football-yarn-workspaces - all works except karma
 
-util/helpers - how to deal with this?
-- util, in general.. lots of stuff depends on it, focus on this first
-
 tests still running within deion? e.g. common/helpers.test.js
-
-2. 3 js folders: basketball, football, and deion
-
-3. start moving things from basketball to deion, if they don't depend on basketball-specific types
-
-4. split types too! deion ones can be generic, then in basketball types.js import them, apply parameter, and re-export
-
-5. get as far as possible
-
-6. what about stuff that depends on e.g. the type Player? is there some way to auto-apply its parameters PlayerStats and PlayerRatings, based on the sport? Or does any function using Player need to either be in a sport-specific folder, or (if in deion) be generic?
 
 search for text basketball in deion
 

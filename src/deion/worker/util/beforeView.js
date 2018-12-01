@@ -1,6 +1,6 @@
 // @flow
 
-import { connectLeague, idb } from "../db";
+import { Cache, connectLeague, idb } from "../db";
 import { league } from "../core";
 import {
     env,
@@ -127,8 +127,11 @@ const beforeLeague = async (
         }
 
         // Reuse existing cache, if it was just created while generating a new league
-        if (!idb.cache.newLeague || switchingDatabaseLid) {
-            idb.cache.reset();
+        if (!idb.cache || !idb.cache.newLeague || switchingDatabaseLid) {
+            if (idb.cache) {
+                idb.cache.stopAutoFlush();
+            }
+            idb.cache = new Cache();
             await idb.cache.fill();
             idb.cache.startAutoFlush();
 

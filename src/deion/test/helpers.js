@@ -1,6 +1,6 @@
 // @flow
 
-import { idb } from "../worker/db";
+import { Cache, idb } from "../worker/db";
 import { STORES } from "../worker/db/Cache";
 import { defaultGameAttributes, g, helpers } from "../worker/util";
 import type { Store } from "../worker/db/Cache";
@@ -44,7 +44,7 @@ function numInArrayEqualTo<T>(array: T[], x: T): number {
 }
 
 const resetCache = async (data?: { [key: Store]: any[] }) => {
-    idb.cache.reset();
+    idb.cache = new Cache();
 
     // We want these to do nothing while testing, usually
     // $FlowFixMe

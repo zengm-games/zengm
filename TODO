@@ -1,5 +1,12 @@
 # football
 
+finish views
+- CustomizePlayer
+- LiveGame
+- way to specify routes for ShotLocations?
+
+deploy to bbgm, to get some live testing done
+
 how will pos/ovr work? just one, like BB? or store separate ovr for every position?
 - store only main ovr. after develop, reassess player position and set ovr to that
 - player.pos just finds the max of all possible ovrs
@@ -47,11 +54,10 @@ History
 
 how will deionUI(overrides) work with types?
 - can pass them as generics, then apply them to factory functions
+- Import modules from deion. Add things like extra views. Apply factories/generics.
 
 trading block
 - DRY for assembling rows/cols of tables (same except first col)
-
-better way to specify view overrides, including routes?
 
 what's the end state here? options:
 - everything is in deion, and process.env.SPORT governs the output

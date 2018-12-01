@@ -15,8 +15,8 @@ import views from "./views";
 // This weird conditional require is so Karma doesn't crash when using the big names file.
 const names =
     process.env.NODE_ENV === "test"
-        ? require("./data/names-test.json") // eslint-disable-line
-        : require("./data/names-default.json"); // eslint-disable-line
+        ? require("../../deion/worker/data/names-test.json") // eslint-disable-line
+        : require("./data/names.json"); // eslint-disable-line
 
 (async () => {
     await deionWorker({

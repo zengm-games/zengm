@@ -35,7 +35,6 @@ const Offer = props => {
             "Contract",
             ...stats.map(stat => `stat:${stat}`),
         );
-        cols[0].sortSequence = [];
 
         const rows = players.map(p => {
             return {

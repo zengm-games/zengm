@@ -8,9 +8,6 @@ how will pos/ovr work? just one, like BB? or store separate ovr for every positi
 - on depth chart page, show position-specific ovrs (dynamically computed) and highlight them when displayed
 - on player ratings page, ability to filter by position, and then show position-specific ovrs for all players
 
-worker/deion stuff that needs to be abstracted
-- any references to basketball in deion
-
 worker/deion stuff that needs to have a process.env.SPORT case
 - api
   - exportPlayerAveragesCsv
@@ -19,7 +16,7 @@ worker/deion stuff that needs to have a process.env.SPORT case
   - ratingsStatsPopoverInfo
 - views
   - any with stats or ratings
-- doAwards
+- awards
 - writePlayerStats - severe injury consequences
 - genPlayersWithoutSaving - draft class size, age distribution
 - number of draft rounds

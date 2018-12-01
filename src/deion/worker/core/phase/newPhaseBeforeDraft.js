@@ -3,7 +3,14 @@
 import { PLAYER } from "../../../common";
 import { player, season, team } from "..";
 import { idb } from "../../db";
-import { achievement, g, genMessage, helpers, toUI } from "../../util";
+import {
+    achievement,
+    g,
+    genMessage,
+    helpers,
+    overrides,
+    toUI,
+} from "../../util";
 import type { Conditions } from "../../../common/types";
 
 const newPhaseBeforeDraft = async (
@@ -12,7 +19,10 @@ const newPhaseBeforeDraft = async (
 ) => {
     achievement.check("afterPlayoffs", conditions);
 
-    await season.doAwards(conditions);
+    if (!overrides.core.season.doAwards) {
+        throw new Error("Missing overrides.core.season.doAwards");
+    }
+    await overrides.core.season.doAwards(conditions);
 
     const teams = await idb.getCopies.teamsPlus({
         attrs: ["tid"],

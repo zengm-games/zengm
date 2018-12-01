@@ -661,6 +661,7 @@ export type WorkerOverridesCore = {|
         pos?: any => string,
     },
     season: {
+        doAwards?: (conditions: Conditions) => Promise<void>,
         newSchedule?: (teams: Team[]) => [number, number][],
     },
     team: {

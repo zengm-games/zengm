@@ -28,7 +28,7 @@ const overrides: {
         last: {},
     },
     util: {
-        achievements: {},
+        achievements: [],
         advStats: async () => {},
         changes: [],
         emptyPlayerStatsRow: {},

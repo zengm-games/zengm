@@ -1,6 +1,6 @@
 import { idb } from "../../../deion/worker/db";
 import { g } from "../../../deion/worker/util";
-import type { Achievements } from "../../../deion/common/types";
+import type { Achievement } from "../../../deion/common/types";
 
 async function checkDynasty(titles: number, years: number) {
     if (g.easyDifficultyInPast || g.godModeInPast) {
@@ -92,19 +92,22 @@ async function checkMoneyball(maxPayroll) {
 }
 
 // IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php
-const achievements: Achievements = {
-    participation: {
+const achievements: Achievement[] = [
+    {
+        slug: "participation",
         name: "Participation",
         desc:
             "You get an achievement just for creating an account, you special snowflake!",
     },
-    fo_fo_fo: {
+    {
+        slug: "fo_fo_fo",
         name: "Fo Fo Fo",
         desc: "Go 16-0 in the playoffs.",
         check: checkFoFoFo,
         when: "afterPlayoffs",
     },
-    septuawinarian: {
+    {
+        slug: "septuawinarian",
         name: "Septuawinarian",
         desc: "Win 70+ games in the regular season.",
         async check() {
@@ -122,7 +125,8 @@ const achievements: Achievements = {
         },
         when: "afterRegularSeason",
     },
-    "98_degrees": {
+    {
+        slug: "98_degrees",
         name: "98 Degrees",
         desc: "Go 98-0 in the playoffs and regular season.",
         async check() {
@@ -151,7 +155,8 @@ const achievements: Achievements = {
         },
         when: "afterPlayoffs",
     },
-    dynasty: {
+    {
+        slug: "dynasty",
         name: "Dynasty",
         desc: "Win 6 championships in 8 years.",
         check() {
@@ -159,7 +164,8 @@ const achievements: Achievements = {
         },
         when: "afterPlayoffs",
     },
-    dynasty_2: {
+    {
+        slug: "dynasty_2",
         name: "Dynasty 2",
         desc: "Win 8 championships in a row.",
         check() {
@@ -167,7 +173,8 @@ const achievements: Achievements = {
         },
         when: "afterPlayoffs",
     },
-    dynasty_3: {
+    {
+        slug: "dynasty_3",
         name: "Dynasty 3",
         desc: "Win 11 championships in 13 years.",
         check() {
@@ -175,7 +182,8 @@ const achievements: Achievements = {
         },
         when: "afterPlayoffs",
     },
-    moneyball: {
+    {
+        slug: "moneyball",
         name: "Moneyball",
         desc: "Win a title with a payroll under 2/3 of the salary cap.",
         check() {
@@ -183,7 +191,8 @@ const achievements: Achievements = {
         },
         when: "afterPlayoffs",
     },
-    moneyball_2: {
+    {
+        slug: "moneyball_2",
         name: "Moneyball 2",
         desc: "Win a title with a payroll under half of the salary cap.",
         check() {
@@ -191,7 +200,8 @@ const achievements: Achievements = {
         },
         when: "afterPlayoffs",
     },
-    hardware_store: {
+    {
+        slug: "hardware_store",
         name: "Hardware Store",
         desc:
             "Players on your team win MVP, DPOY, SMOY, ROY, and Finals MVP in the same season.",
@@ -218,7 +228,8 @@ const achievements: Achievements = {
         },
         when: "afterAwards",
     },
-    small_market: {
+    {
+        slug: "small_market",
         name: "Small Market",
         desc: "Win a title in a city with under 2 million people.",
         async check() {
@@ -242,7 +253,8 @@ const achievements: Achievements = {
         },
         when: "afterPlayoffs",
     },
-    sleeper_pick: {
+    {
+        slug: "sleeper_pick",
         name: "Sleeper Pick",
         desc: "Use a non-lottery pick to draft the ROY.",
         async check() {
@@ -267,11 +279,12 @@ const achievements: Achievements = {
         },
         when: "afterAwards",
     },
-    hacker: {
+    {
+        slug: "hacker",
         name: "Hacker",
         desc:
             "Privately report a security issue in the account system or some other part of the site.",
     },
-};
+];
 
 export default achievements;

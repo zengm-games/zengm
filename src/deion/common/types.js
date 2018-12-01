@@ -1,12 +1,16 @@
 // @flow
 
-export type Achievements = {
-    [key: string]: {
-        name: string,
-        desc: string,
-        check?: () => Promise<boolean>,
-        when?: string,
-    },
+export type AchievementWhen =
+    | "afterAwards"
+    | "afterPlayoffs"
+    | "afterRegularSeason";
+
+export type Achievement = {
+    slug: string,
+    name: string,
+    desc: string,
+    check?: () => Promise<boolean>,
+    when?: AchievementWhen,
 };
 
 export type BackboardTx = any;
@@ -665,7 +669,7 @@ export type WorkerOverridesCore = {|
 |};
 
 export type WorkerOverridesUtil = {|
-    achievements: Achievements,
+    achievements: Achievement[],
     advStats: () => Promise<void>,
     changes: {|
         date: string,

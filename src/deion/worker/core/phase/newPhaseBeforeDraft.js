@@ -10,15 +10,7 @@ const newPhaseBeforeDraft = async (
     conditions: Conditions,
     liveGameSim?: boolean = false,
 ) => {
-    // Achievements after playoffs
-    achievement.check("fo_fo_fo", conditions);
-    achievement.check("98_degrees", conditions);
-    achievement.check("dynasty", conditions);
-    achievement.check("dynasty_2", conditions);
-    achievement.check("dynasty_3", conditions);
-    achievement.check("moneyball", conditions);
-    achievement.check("moneyball_2", conditions);
-    achievement.check("small_market", conditions);
+    achievement.check("afterPlayoffs", conditions);
 
     await season.doAwards(conditions);
 
@@ -98,9 +90,7 @@ const newPhaseBeforeDraft = async (
 
     await team.updateStrategies();
 
-    // Achievements after awards
-    achievement.check("hardware_store", conditions);
-    achievement.check("sleeper_pick", conditions);
+    achievement.check("afterAwards", conditions);
 
     const deltas = await season.updateOwnerMood();
     await genMessage(deltas);

@@ -6,7 +6,7 @@ import { idb } from "../db";
 import env from "./env";
 import logEvent from "./logEvent";
 import overrides from "./overrides";
-import type { Conditions } from "../../common/types";
+import type { AchievementWhen, Conditions } from "../../common/types";
 
 /**
  * Records one or more achievements.
@@ -24,19 +24,23 @@ async function add(
     silent?: boolean = false,
 ) {
     const notify = slug => {
-        // Find name of achievement
-        if (overrides.util.achievements[slug]) {
-            logEvent(
-                {
-                    type: "achievement",
-                    text: `"${
-                        overrides.util.achievements[slug].name
-                    }" achievement awarded! <a href="/account">View all achievements.</a>`,
-                    saveToDb: false,
-                },
-                conditions,
-            );
+        const achievement = overrides.util.achievements.find(
+            achievement2 => slug === achievement2.slug,
+        );
+        if (!achievement) {
+            throw new Error(`No achievement found for slug "${slug}"`);
         }
+
+        logEvent(
+            {
+                type: "achievement",
+                text: `"${
+                    achievement.name
+                }" achievement awarded! <a href="/account">View all achievements.</a>`,
+                saveToDb: false,
+            },
+            conditions,
+        );
     };
 
     const addToIndexedDB = slugs2 => {
@@ -78,22 +82,23 @@ async function getAll(): Promise<
         slug: string,
     }[],
 > {
-    const achievements = Object.keys(overrides.util.achievements).map(slug => {
-        const { desc, name } = overrides.util.achievements[slug];
-        return {
-            count: 0,
-            desc,
-            name,
-            slug,
-        };
-    });
+    const achievements = overrides.util.achievements.map(
+        ({ desc, name, slug }) => {
+            return {
+                count: 0,
+                desc,
+                name,
+                slug,
+            };
+        },
+    );
     const achievementsLocal = await idb.meta.achievements.getAll();
 
     // Handle any achivements stored in IndexedDB
-    for (let j = 0; j < achievementsLocal.length; j++) {
-        for (let i = 0; i < achievements.length; i++) {
-            if (achievements[i].slug === achievementsLocal[j].slug) {
-                achievements[i].count += 1;
+    for (const achievementLocal of achievementsLocal) {
+        for (const achievement of achievements) {
+            if (achievement.slug === achievementLocal.slug) {
+                achievement.count += 1;
             }
         }
     }
@@ -108,10 +113,9 @@ async function getAll(): Promise<
         });
 
         // Merge local and remote achievements
-        for (let i = 0; i < achievements.length; i++) {
-            if (achievementsRemote[achievements[i].slug] !== undefined) {
-                achievements[i].count +=
-                    achievementsRemote[achievements[i].slug];
+        for (const achievement of achievements) {
+            if (achievementsRemote[achievement.slug] !== undefined) {
+                achievement.count += achievementsRemote[achievement.slug];
             }
         }
 
@@ -122,17 +126,14 @@ async function getAll(): Promise<
     }
 }
 
-const check = async (when: string, conditions: Conditions) => {
+const check = async (when: AchievementWhen, conditions: Conditions) => {
     const awarded = [];
 
-    for (const [slug, achievement] of Object.entries(
-        overrides.util.achievements,
-    )) {
-        // $FlowFixMe
+    for (const achievement of overrides.util.achievements) {
         if (achievement.when === when && achievement.check !== undefined) {
             const result = await achievement.check();
             if (result) {
-                awarded.push(slug);
+                awarded.push(achievement.slug);
             }
         }
     }

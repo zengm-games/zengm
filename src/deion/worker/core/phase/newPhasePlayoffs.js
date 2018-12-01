@@ -9,8 +9,7 @@ const newPhasePlayoffs = async (
     conditions: Conditions,
     liveGameSim?: boolean = false,
 ) => {
-    // Achievements after regular season
-    achievement.check("septuawinarian", conditions);
+    achievement.check("afterRegularSeason", conditions);
 
     // In case this was somehow set already
     local.playingUntilEndOfRound = false;

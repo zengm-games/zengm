@@ -97,12 +97,12 @@ const achievements: Achievements = {
         name: "Participation",
         desc:
             "You get an achievement just for creating an account, you special snowflake!",
-        async check() {}, // eslint-disable-line no-empty-function
     },
     fo_fo_fo: {
         name: "Fo Fo Fo",
         desc: "Go 16-0 in the playoffs.",
         check: checkFoFoFo,
+        when: "afterPlayoffs",
     },
     septuawinarian: {
         name: "Septuawinarian",
@@ -120,6 +120,7 @@ const achievements: Achievements = {
 
             return t && t.seasonAttrs && t.seasonAttrs.won >= 70;
         },
+        when: "afterRegularSeason",
     },
     "98_degrees": {
         name: "98 Degrees",
@@ -148,6 +149,7 @@ const achievements: Achievements = {
 
             return false;
         },
+        when: "afterPlayoffs",
     },
     dynasty: {
         name: "Dynasty",
@@ -155,6 +157,7 @@ const achievements: Achievements = {
         check() {
             return checkDynasty(6, 8);
         },
+        when: "afterPlayoffs",
     },
     dynasty_2: {
         name: "Dynasty 2",
@@ -162,6 +165,7 @@ const achievements: Achievements = {
         check() {
             return checkDynasty(8, 8);
         },
+        when: "afterPlayoffs",
     },
     dynasty_3: {
         name: "Dynasty 3",
@@ -169,6 +173,7 @@ const achievements: Achievements = {
         check() {
             return checkDynasty(11, 13);
         },
+        when: "afterPlayoffs",
     },
     moneyball: {
         name: "Moneyball",
@@ -176,6 +181,7 @@ const achievements: Achievements = {
         check() {
             return checkMoneyball((2 / 3) * g.salaryCap);
         },
+        when: "afterPlayoffs",
     },
     moneyball_2: {
         name: "Moneyball 2",
@@ -183,6 +189,7 @@ const achievements: Achievements = {
         check() {
             return checkMoneyball(0.5 * g.salaryCap);
         },
+        when: "afterPlayoffs",
     },
     hardware_store: {
         name: "Hardware Store",
@@ -209,6 +216,7 @@ const achievements: Achievements = {
                 awards.finalsMvp.tid === g.userTid
             );
         },
+        when: "afterAwards",
     },
     small_market: {
         name: "Small Market",
@@ -232,6 +240,7 @@ const achievements: Achievements = {
                 t.seasonAttrs.pop <= 2
             );
         },
+        when: "afterPlayoffs",
     },
     sleeper_pick: {
         name: "Sleeper Pick",
@@ -256,14 +265,12 @@ const achievements: Achievements = {
 
             return false;
         },
+        when: "afterAwards",
     },
     hacker: {
         name: "Hacker",
         desc:
             "Privately report a security issue in the account system or some other part of the site.",
-        async check() {
-            throw new Error("Cannot be triggered from within the game");
-        },
     },
 };
 

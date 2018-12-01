@@ -4,7 +4,8 @@ export type Achievements = {
     [key: string]: {
         name: string,
         desc: string,
-        check: () => Promise<boolean>,
+        check?: () => Promise<boolean>,
+        when?: string,
     },
 };
 

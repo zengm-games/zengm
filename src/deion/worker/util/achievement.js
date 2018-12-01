@@ -122,24 +122,24 @@ async function getAll(): Promise<
     }
 }
 
-const check = async (
-    slug: string,
-    conditions: Conditions,
-    saveAchievement: boolean = true,
-) => {
-    const achievement = overrides.util.achievements[slug];
+const check = async (when: string, conditions: Conditions) => {
+    const awarded = [];
 
-    if (!achievement) {
-        throw new Error(`No achievement found for ${slug}`);
+    for (const [slug, achievement] of Object.entries(
+        overrides.util.achievements,
+    )) {
+        // $FlowFixMe
+        if (achievement.when === when && achievement.check !== undefined) {
+            const result = await achievement.check();
+            if (result) {
+                awarded.push(slug);
+            }
+        }
     }
 
-    const result = await achievement.check();
-
-    if (result && saveAchievement) {
-        add([slug], conditions);
+    if (awarded.length > 0) {
+        add(awarded, conditions);
     }
-
-    return result;
 };
 
 export default {

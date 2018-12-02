@@ -1,5 +1,3 @@
-/* eslint react/jsx-no-bind: "off" */
-
 import faces from "facesjs";
 import PropTypes from "prop-types";
 import React from "react";

@@ -1,7 +1,7 @@
 // @flow
 
 import { idb } from "../../../../deion/worker/db";
-import { g, helpers } from "../../../../deion/worker/util";
+import { g } from "../../../../deion/worker/util";
 
 /**
  * Given a list of players sorted by ability, find the starters.
@@ -70,8 +70,7 @@ const rosterAutoSort = async (tid: number) => {
         "playersByTid",
         tid,
     );
-    let players = helpers.deepCopy(playersFromCache);
-    players = await idb.getCopies.playersPlus(players, {
+    let players = await idb.getCopies.playersPlus(playersFromCache, {
         attrs: ["pid", "valueNoPot", "valueNoPotFuzz"],
         ratings: ["pos"],
         season: g.season,
@@ -96,21 +95,19 @@ const rosterAutoSort = async (tid: number) => {
     }
     players = newPlayers;
 
+    const rosterOrders = new Map();
     for (let i = 0; i < players.length; i++) {
-        players[i].rosterOrder = i;
+        rosterOrders.set(players[i].pid, i);
     }
 
     // Update rosterOrder
     for (const p of playersFromCache) {
-        for (const p2 of players) {
-            if (p2.pid === p.pid) {
-                if (p.rosterOrder !== p2.rosterOrder) {
-                    // Only write to DB if this actually changes
-                    p.rosterOrder = p2.rosterOrder;
-                    await idb.cache.players.put(p);
-                }
-                break;
-            }
+        const rosterOrder = rosterOrders.get(p.pid);
+
+        // Only write to DB if this actually changes
+        if (rosterOrder !== undefined && rosterOrder !== p.rosterOrder) {
+            p.rosterOrder = rosterOrder;
+            await idb.cache.players.put(p);
         }
     }
 };

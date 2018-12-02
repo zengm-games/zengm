@@ -35,12 +35,13 @@ module.exports = function(config) {
 
         files: [
             "src/deion/test/index.js",
+            "src/basketball/worker/index.js", // For overrides
             "src/**/*.test.js",
             "src/deion/test/**/*.js",
         ],
 
         preprocessors: {
-            "src/js/**/*.js": ["browserify"],
+            "src/**/*.js": ["browserify"],
         },
 
         autoWatch: false,
@@ -49,7 +50,7 @@ module.exports = function(config) {
 
         browserify: {
             debug: true,
-            transform: ["babelify"],
+            transform: ["babelify", ["envify", { SPORT: "basketball" }]],
         },
 
         browserNoActivityTimeout: 5 * 60 * 1000, // 5 minutes

@@ -21,6 +21,9 @@ worker/deion stuff that needs to have a process.env.SPORT case
 - genPlayersWithoutSaving - draft class size, age distribution
 - number of draft rounds
 - playersPlus: awardsOrder, weightByMinutes
+- loadTeams - synergy, pace, player/team stats
+
+ties
 
 in GameSim, make sure to track player.stats.min, for use in writePlayerStats
 

@@ -31,10 +31,6 @@ const overrides: {
         achievements: [],
         advStats: async () => {},
         changes: [],
-        emptyPlayerStatsRow: {},
-        emptyTeamStatsRow: {},
-        processPlayerStats: () => {},
-        processTeamStats: () => {},
     },
     views: {},
 };

@@ -248,10 +248,10 @@ const processStats = async (
     }
 
     output.stats = teamStats.map(ts => {
-        if (!overrides.util.processTeamStats) {
-            throw new Error("Missing overrides.util.processTeamStats");
+        if (!overrides.core.team.processStats) {
+            throw new Error("Missing overrides.core.team.processStats");
         }
-        return overrides.util.processTeamStats(ts, stats, playoffs, statType);
+        return overrides.core.team.processStats(ts, stats, playoffs, statType);
     });
 
     if (

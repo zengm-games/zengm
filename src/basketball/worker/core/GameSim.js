@@ -84,7 +84,6 @@ type PlayerGameSim = {
 };
 type TeamGameSim = {
     id: number,
-    defense: number, // overall team defensive rating
     pace: number, // mean number of possessions the team likes to have in a game
     stat: Object,
     compositeRating: Object,

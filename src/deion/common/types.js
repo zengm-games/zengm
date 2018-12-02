@@ -648,6 +648,7 @@ export type WorkerOverridesCore = {|
             age: number,
             coachingRank?: number,
         ) => void,
+        emptyStatsRow?: PlayerStats,
         genRatings?: (
             season: number,
             scoutingRank: number,
@@ -659,12 +660,25 @@ export type WorkerOverridesCore = {|
         madeHof?: (p: Player<> | PlayerWithoutPid<>) => boolean,
         ovr?: any => number,
         pos?: any => string,
+        processStats?: (
+            ps: PlayerStats,
+            stats: string[],
+            statType: PlayerStatType,
+            bornYear: number,
+        ) => any,
     },
     season: {
         doAwards?: (conditions: Conditions) => Promise<void>,
         newSchedule?: (teams: Team[]) => [number, number][],
     },
     team: {
+        emptyStatsRow?: TeamStats,
+        processStats?: (
+            ts: TeamStats,
+            stats: TeamStatAttr[],
+            playoffs: boolean,
+            statType: TeamStatType,
+        ) => any,
         rosterAutoSort?: (tid: number) => Promise<void>,
     },
 |};
@@ -676,18 +690,4 @@ export type WorkerOverridesUtil = {|
         date: string,
         msg: string,
     |}[],
-    emptyPlayerStatsRow: PlayerStats,
-    emptyTeamStatsRow: TeamStats,
-    processPlayerStats: (
-        ps: PlayerStats,
-        stats: string[],
-        statType: PlayerStatType,
-        bornYear: number,
-    ) => any,
-    processTeamStats: (
-        ts: TeamStats,
-        stats: TeamStatAttr[],
-        playoffs: boolean,
-        statType: TeamStatType,
-    ) => any,
 |};

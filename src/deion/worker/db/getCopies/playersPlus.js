@@ -332,10 +332,10 @@ const getPlayerStats = (playerStats, season, tid, playoffs, regularSeason) => {
 };
 
 const processPlayerStats = (p, statSums, stats, statType) => {
-    if (!overrides.util.processTeamStats) {
-        throw new Error("Missing overrides.util.processPlayerStats");
+    if (!overrides.core.team.processStats) {
+        throw new Error("Missing overrides.core.player.processStats");
     }
-    return overrides.util.processPlayerStats(
+    return overrides.core.player.processStats(
         statSums,
         stats,
         statType,

@@ -1,11 +1,11 @@
 // @flow
 
-import { g } from "../../../deion/worker/util";
+import { g } from "../../../../deion/worker/util";
 import type {
     TeamStatAttr,
     TeamStatType,
     TeamStats,
-} from "../../../deion/common/types";
+} from "../../../../deion/common/types";
 
 // Possessions estimate, from https://www.basketball-reference.com/about/glossary.html#poss
 const poss = ts => {
@@ -35,7 +35,7 @@ const percentage = (numerator, denominator) => {
     return 0;
 };
 
-const processTeamStats = (
+const processStats = (
     ts: TeamStats,
     stats: TeamStatAttr[],
     playoffs: boolean,
@@ -162,4 +162,4 @@ const processTeamStats = (
     return row;
 };
 
-export default processTeamStats;
+export default processStats;

@@ -36,7 +36,6 @@ const loadTeams = async () => {
 
             const t = {
                 id: tid,
-                defense: 0,
                 pace: 0,
                 won: teamSeason.won,
                 lost: teamSeason.lost,

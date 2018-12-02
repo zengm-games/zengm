@@ -1,8 +1,11 @@
 // @flow
 
-import { PLAYER } from "../../../deion/common";
-import { helpers } from "../../../deion/worker/util";
-import type { PlayerStats, PlayerStatType } from "../../../deion/common/types";
+import { PLAYER } from "../../../../deion/common";
+import { helpers } from "../../../../deion/worker/util";
+import type {
+    PlayerStats,
+    PlayerStatType,
+} from "../../../../deion/common/types";
 
 const straightThrough = [
     "gp",
@@ -31,7 +34,7 @@ const percentage = (numerator, denominator) => {
     return 0;
 };
 
-const processPlayerStats = (
+const processStats = (
     ps: PlayerStats,
     stats: string[],
     statType: PlayerStatType,
@@ -109,4 +112,4 @@ const processPlayerStats = (
     return row;
 };
 
-export default processPlayerStats;
+export default processStats;

@@ -1,6 +1,6 @@
 // @flow
 
-const emptyPlayerStatsRow = {
+const emptyStatsRow = {
     season: 0,
     tid: 0,
     playoffs: false,
@@ -45,4 +45,4 @@ const emptyPlayerStatsRow = {
     ows: 0,
 };
 
-export default emptyPlayerStatsRow;
+export default emptyStatsRow;

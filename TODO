@@ -154,37 +154,37 @@ ALL
 - endu: endurance
 
 QB
-- oiq: offensive iq
+- paw: passing awareness (clock management, when to scramble, avoiding sacks, etc)
 - pvn: passing vision
 - thp: throwing power
 - tha: throwing accuracy
-- elu: elusiveness
+- bls: ball security
 
 RB/WR/TE
-- oiq: offensive iq
+- raw: rushing awareness (finding holes, knowing when to wait and when not to, etc)
 - elu: elusiveness
-- bls: ball security
 - rtr: route running
 - hnd: hands
+- bls: ball security
 
 T/G/C
-- oiq: offensive iq
 - rbk: run blocking
 - pbk: pass blocking
 - snp: snapping
+
+Defense
+- daw: defensive awareness (reading plays, decisionmaking, etc)
+- pcv: pass coverage
+- tck: tackling
+- prs: pass rushing
+- rns: run stopping
+- hnd: hands
 
 K/P
 - kpw: kick power
 - kac: kick accuracy
 - ppw: punt power
 - pac: punt accuracy
-
-All defensive players
-- pcv: pass coverage
-- tck: tackling
-- prs: pass rushing
-- rns: run stopping
-- hnd: hands
 
 decide on player stats
 

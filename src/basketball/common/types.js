@@ -1,20 +1,5 @@
 // @flow
 
-export type AchievementKey =
-    | "participation"
-    | "fo_fo_fo"
-    | "septuawinarian"
-    | "98_degrees"
-    | "dynasty"
-    | "dynasty_2"
-    | "dynasty_3"
-    | "moneyball"
-    | "moneyball_2"
-    | "hardware_store"
-    | "small_market"
-    | "sleeper_pick"
-    | "hacker";
-
 type AwardTeam = {|
     tid: number,
     abbrev: string,

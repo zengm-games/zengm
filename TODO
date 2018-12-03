@@ -154,14 +154,14 @@ ALL
 - endu: endurance
 
 QB
-- paw: passing awareness (clock management, when to scramble, avoiding sacks, etc)
+?- paw: passing awareness (clock management, when to scramble, avoiding sacks, etc)
 - pvn: passing vision
 - thp: throwing power
 - tha: throwing accuracy
 - bls: ball security
 
 RB/WR/TE
-- raw: rushing awareness (finding holes, knowing when to wait and when not to, etc)
+?- raw: rushing awareness (finding holes, knowing when to wait and when not to, etc)
 - elu: elusiveness
 - rtr: route running
 - hnd: hands
@@ -173,7 +173,7 @@ T/G/C
 - snp: snapping
 
 Defense
-- daw: defensive awareness (reading plays, decisionmaking, etc)
+?- daw: defensive awareness (reading plays, decisionmaking, etc)
 - pcv: pass coverage
 - tck: tackling
 - prs: pass rushing

@@ -9,6 +9,7 @@ import ReactDOM from "react-dom";
 import api from "./api";
 import { Controller } from "./components";
 import {
+    ads,
     compareVersions,
     genStaticPage,
     helpers,
@@ -215,9 +216,7 @@ const setupRoutes = () => {
             }
 
             if (!initialLoad) {
-                window.bbgmAds.cmd.push(() => {
-                    window.bbgmAds.refresh();
-                });
+                ads.refreshBanners();
             } else {
                 initialLoad = false;
             }

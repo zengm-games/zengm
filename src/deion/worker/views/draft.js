@@ -39,7 +39,7 @@ async function updateDraft(
         undrafted = await idb.getCopies.playersPlus(undrafted, {
             attrs: ["pid", "name", "age", "injury", "contract", "watch"],
             ratings: ["ovr", "pot", "skills", "pos"],
-            stats,
+            stats: ["per", "ewa"], // Not sure why, but was getting errors in Bugsnag with this set to `stats`
             season: g.season,
             showNoStats: true,
             showRookies: true,

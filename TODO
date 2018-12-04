@@ -160,11 +160,11 @@ QB
 - bls: ball security
 
 RB/WR/TE
-- rnv: running vision
 - elu: elusiveness
 - rtr: route running
 - hnd: hands
 - bls: ball security
+?- rnv: running vision
 
 T/G/C
 - rbk: run blocking
@@ -173,10 +173,10 @@ T/G/C
 
 Defense
 - pcv: pass coverage
-- tck: tackling
 - prs: pass rushing
 - rns: run stopping
 - hnd: hands
+?- tck: tackling
 
 K/P
 - kpw: kick power
@@ -187,10 +187,6 @@ K/P
 decide on player stats
 
 start implementing new stats and ratings
-
-new roster page
-- show one stats column with text of position stats, like football mogul
-- offense and defense side by side
 
 schedule
 

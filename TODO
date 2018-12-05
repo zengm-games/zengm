@@ -1,5 +1,12 @@
 # football
 
+football code!
+- ratings
+- stats
+- basic UI
+- game sim
+- references to ../basketball
+
 how will pos/ovr work? just one, like BB? or store separate ovr for every position?
 - store only main ovr. after develop, reassess player position and set ovr to that
 - player.pos just finds the max of all possible ovrs

@@ -38,6 +38,49 @@ async function updatePlayers(
             );
         }
 
+        const ratings =
+            process.env.SPORT === "basketball"
+                ? [
+                      "hgt",
+                      "stre",
+                      "spd",
+                      "jmp",
+                      "endu",
+                      "ins",
+                      "dnk",
+                      "ft",
+                      "fg",
+                      "tp",
+                      "oiq",
+                      "diq",
+                      "drb",
+                      "pss",
+                      "reb",
+                  ]
+                : [
+                      "hgt",
+                      "stre",
+                      "spd",
+                      "endu",
+                      "thv",
+                      "thp",
+                      "tha",
+                      "bls",
+                      "elu",
+                      "rtr",
+                      "hnd",
+                      "rbk",
+                      "pbk",
+                      "snp",
+                      "pcv",
+                      "prs",
+                      "rns",
+                      "kpw",
+                      "kac",
+                      "ppw",
+                      "pac",
+                  ];
+
         players = await idb.getCopies.playersPlus(players, {
             attrs: [
                 "pid",
@@ -49,30 +92,10 @@ async function updatePlayers(
                 "hof",
                 "watch",
             ],
-            ratings: [
-                "ovr",
-                "pot",
-                "hgt",
-                "stre",
-                "spd",
-                "jmp",
-                "endu",
-                "ins",
-                "dnk",
-                "ft",
-                "fg",
-                "tp",
-                "oiq",
-                "diq",
-                "drb",
-                "pss",
-                "reb",
-                "skills",
-                "pos",
-            ],
+            ratings: ["ovr", "pot", "skills", "pos", ...ratings],
             stats: ["abbrev", "tid"],
             season: inputs.season,
-            showNoStats: true, // If this is true, it makes the "tid" entry do nothing
+            showNoStats: true,
             showRookies: true,
             fuzz: true,
         });
@@ -85,30 +108,12 @@ async function updatePlayers(
                 players = players.filter(p => p.abbrev === inputs.abbrev);
             }
 
-            for (let i = 0; i < players.length; i++) {
-                players[i].stats.abbrev = players[i].abbrev;
+            for (const p of players) {
+                p.stats.abbrev = p.abbrev;
             }
         } else if (tid !== undefined) {
             players = players.filter(p => p.stats.abbrev === inputs.abbrev);
         }
-
-        const ratings = [
-            "hgt",
-            "stre",
-            "spd",
-            "jmp",
-            "endu",
-            "ins",
-            "dnk",
-            "ft",
-            "fg",
-            "tp",
-            "oiq",
-            "diq",
-            "drb",
-            "pss",
-            "reb",
-        ];
 
         return {
             abbrev: inputs.abbrev,

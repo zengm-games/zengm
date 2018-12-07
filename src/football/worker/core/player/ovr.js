@@ -3,52 +3,126 @@
 import { helpers } from "../../../../deion/worker/util";
 import type { PlayerRatings } from "../../../common/types";
 
-/**
- * Calculates the overall rating by averaging together all the other ratings.
- *
- * @memberOf core.player
- * @param {Object.<string, number>} ratings Player's ratings object.
- * @return {number} Overall rating.
- */
-const ovr = (ratings: PlayerRatings): number => {
-    // This formula is loosely based on linear regression of ratings to zscore(ws48)+zscore(per):
-    const r =
-        (5 * ratings.hgt +
-            1 * ratings.stre +
-            4 * ratings.spd +
-            2 * ratings.jmp +
-            1 * ratings.endu +
-            1 * ratings.ins +
-            2 * ratings.dnk +
-            1 * ratings.ft +
-            1 * ratings.fg +
-            3 * ratings.tp +
-            7 * ratings.oiq +
-            3 * ratings.diq +
-            3 * ratings.drb +
-            3 * ratings.pss +
-            1 * ratings.reb) /
-        38;
+const ovr = (ratings: PlayerRatings, pos?: string): number => {
+    pos = pos !== undefined ? pos : ratings.pos;
 
-    // Fudge factor to keep ovr ratings the same as they used to be (back before 2018 ratings rescaling)
-    // +8 at 68
-    // +4 at 50
-    // -5 at 42
-    // -10 at 31
-    let fudgeFactor = 0;
-    if (r >= 68) {
-        fudgeFactor = 8;
-    } else if (r >= 50) {
-        fudgeFactor = 4 + (r - 50) * (4 / 18);
-    } else if (r >= 42) {
-        fudgeFactor = -5 + (r - 42) * (10 / 8);
-    } else if (r >= 31) {
-        fudgeFactor = -5 - (42 - r) * (5 / 11);
+    let rating;
+
+    if (pos === "QB") {
+        rating =
+            (ratings.hgt +
+                ratings.spd +
+                ratings.endu +
+                8 * ratings.thv +
+                4 * ratings.thp +
+                8 * ratings.tha +
+                ratings.bls +
+                ratings.elu) /
+            25;
+    } else if (pos === "RB") {
+        rating =
+            (4 * ratings.stre +
+                8 * ratings.spd +
+                ratings.endu +
+                8 * ratings.elu +
+                ratings.rtr +
+                2 * ratings.hnd +
+                4 * ratings.bls +
+                ratings.rbk +
+                2 * ratings.pbk) /
+            31;
+    } else if (pos === "WR") {
+        rating =
+            (2 * ratings.hgt +
+                ratings.stre +
+                4 * ratings.spd +
+                ratings.endu +
+                ratings.elu +
+                4 * ratings.rtr +
+                8 * ratings.hnd +
+                ratings.bls +
+                ratings.rbk) /
+            23;
+    } else if (pos === "TE") {
+        rating =
+            (4 * ratings.hgt +
+                4 * ratings.stre +
+                2 * ratings.spd +
+                ratings.endu +
+                ratings.elu +
+                4 * ratings.rtr +
+                4 * ratings.hnd +
+                ratings.bls +
+                2 * ratings.rbk +
+                2 * ratings.pbk) /
+            25;
+    } else if (pos === "OL") {
+        rating =
+            (ratings.hgt +
+                2 * ratings.stre +
+                ratings.spd +
+                2 * ratings.rbk +
+                2 * ratings.pbk) /
+            8;
+    } else if (pos === "C") {
+        rating =
+            (ratings.hgt +
+                2 * ratings.stre +
+                ratings.spd +
+                2 * ratings.rbk +
+                2 * ratings.pbk +
+                4 * ratings.snp) /
+            12;
+    } else if (pos === "DL") {
+        rating =
+            (4 * ratings.hgt +
+                8 * ratings.stre +
+                2 * ratings.spd +
+                ratings.endu +
+                8 * ratings.prs +
+                8 * ratings.rns +
+                ratings.hnd) /
+            32;
+    } else if (pos === "LB") {
+        rating =
+            (2 * ratings.hgt +
+                4 * ratings.stre +
+                4 * ratings.spd +
+                ratings.endu +
+                4 * ratings.pcv +
+                4 * ratings.prs +
+                4 * ratings.rns +
+                2 * ratings.hnd) /
+            25;
+    } else if (pos === "CB") {
+        rating =
+            (ratings.hgt +
+                ratings.stre +
+                8 * ratings.spd +
+                ratings.endu +
+                8 * ratings.pcv +
+                ratings.rns +
+                2 * ratings.hnd) /
+            22;
+    } else if (pos === "S") {
+        rating =
+            (ratings.hgt +
+                2 * ratings.stre +
+                4 * ratings.spd +
+                ratings.endu +
+                4 * ratings.pcv +
+                4 * ratings.rns +
+                2 * ratings.hnd) /
+            18;
+    } else if (pos === "K") {
+        rating = (ratings.kpw + ratings.kac) / 2;
+    } else if (pos === "P") {
+        rating = (ratings.ppw + ratings.pac) / 2;
     } else {
-        fudgeFactor = -10;
+        throw new Error(`Unknown position: "${pos}"`);
     }
 
-    return helpers.bound(Math.round(r + fudgeFactor), 0, 100);
+    return helpers.bound(Math.round(rating), 0, 100);
 };
 
 export default ovr;

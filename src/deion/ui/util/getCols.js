@@ -10,6 +10,155 @@ type Col = {
     title?: string, // Should actually be required, but is only added later
 };
 
+const sportSpecificCols: {
+    [key: string]: Col,
+} =
+    process.env.SPORT === "basketball"
+        ? {
+              "rating:fg": {
+                  desc: "Two-Point Shooting",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:tp": {
+                  desc: "Three-Point Shooting",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:oiq": {
+                  desc: "Offensive IQ",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:dnk": {
+                  desc: "Dunks/Layups",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:drb": {
+                  desc: "Dribbling",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:ins": {
+                  desc: "Inside Scoring",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:jmp": {
+                  desc: "Jumping",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:ft": {
+                  desc: "Free Throw Shooting",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:pss": {
+                  desc: "Passing",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:reb": {
+                  desc: "Rebounding",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:diq": {
+                  desc: "Defensive IQ",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+          }
+        : {
+              "rating:thv": {
+                  desc: "Throwing Vision",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:thp": {
+                  desc: "Throwing Power",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:tha": {
+                  desc: "Throwing Accuracy",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:bls": {
+                  desc: "Ball Security",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:elu": {
+                  desc: "Elusiveness",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:rtr": {
+                  desc: "Route Running",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:hnd": {
+                  desc: "Hands",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:rbk": {
+                  desc: "Run Blocking",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:pbk": {
+                  desc: "Pass Blocking",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:snp": {
+                  desc: "Snapping",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:pcv": {
+                  desc: "Pass Coverage",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:prs": {
+                  desc: "Pass Rushing",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:rns": {
+                  desc: "Run Stopping",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:kpw": {
+                  desc: "Kicking Power",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:kac": {
+                  desc: "Kicking Accuracy",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:ppw": {
+                  desc: "Punting Power",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "rating:pac": {
+                  desc: "Punting Accuracy",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+          };
+
 const cols: {
     [key: string]: Col,
 } = {
@@ -533,158 +682,43 @@ const cols: {
         desc: "Sixth Man of the Year",
         sortType: "name",
     },
+    ...sportSpecificCols,
 };
 
-const sportSpecificCols: {
-    [key: string]: Col,
-} =
+const sportSpecificTitleOverrides =
     process.env.SPORT === "basketball"
         ? {
-              "rating:fg": {
-                  desc: "Two-Point Shooting",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
-              "rating:tp": {
-                  desc: "Three-Point Shooting",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
-              "rating:oiq": {
-                  desc: "Offensive IQ",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
-              "rating:dnk": {
-                  desc: "Dunks/Layups",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
-              "rating:drb": {
-                  desc: "Dribbling",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
-              "rating:ins": {
-                  desc: "Inside Scoring",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
-              "rating:jmp": {
-                  desc: "Jumping",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
-              "rating:ft": {
-                  desc: "Free Throw Shooting",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
-              "rating:pss": {
-                  desc: "Passing",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
-              "rating:reb": {
-                  desc: "Rebounding",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
-              "rating:diq": {
-                  desc: "Defensive IQ",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
+              "rating:fg": "2Pt",
+              "rating:tp": "3Pt",
+              "rating:oiq": "oIQ",
+              "rating:dnk": "Dnk",
+              "rating:drb": "Drb",
+              "rating:ins": "Ins",
+              "rating:jmp": "Jmp",
+              "rating:ft": "FT",
+              "rating:pss": "Pss",
+              "rating:reb": "Reb",
+              "rating:diq": "dIQ",
           }
         : {
-              "rating:thv": {
-                  desc: "Throwing Vision",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
-              "rating:thp": {
-                  desc: "Throwing Power",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
-              "rating:tha": {
-                  desc: "Throwing Accuracy",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
-              "rating:bls": {
-                  desc: "Ball Security",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
-              "rating:elu": {
-                  desc: "Elusiveness",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
-              "rating:rtr": {
-                  desc: "Route Running",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
-              "rating:hnd": {
-                  desc: "Hands",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
-              "rating:rbk": {
-                  desc: "Run Blocking",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
-              "rating:pbk": {
-                  desc: "Pass Blocking",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
-              "rating:snp": {
-                  desc: "Snapping",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
-              "rating:pcv": {
-                  desc: "Pass Coverage",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
-              "rating:prs": {
-                  desc: "Pass Rushing",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
-              "rating:rns": {
-                  desc: "Run Stopping",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
-              "rating:kpw": {
-                  desc: "Kicking Power",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
-              "rating:kac": {
-                  desc: "Kicking Accuracy",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
-              "rating:ppw": {
-                  desc: "Punting Power",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
-              "rating:pac": {
-                  desc: "Punting Accuracy",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
+              "rating:thv": "ThV",
+              "rating:thp": "ThP",
+              "rating:tha": "ThA",
+              "rating:bls": "BlS",
+              "rating:elu": "Elu",
+              "rating:rtr": "RtR",
+              "rating:hnd": "Hnd",
+              "rating:rbk": "RBk",
+              "rating:pbk": "PBk",
+              "rating:snp": "Snp",
+              "rating:pcv": "PCv",
+              "rating:prs": "PRs",
+              "rating:rns": "RnS",
+              "rating:kpw": "KPw",
+              "rating:kac": "KAc",
+              "rating:ppw": "PPw",
+              "rating:pac": "PAc",
           };
-
-Object.assign(cols, sportSpecificCols);
 
 const titleOverrides = {
     "rating:endu": "End",
@@ -755,44 +789,8 @@ const titleOverrides = {
     "award:mvp": "MVP",
     "award:roy": "ROY",
     "award:smoy": "SMOY",
+    ...sportSpecificTitleOverrides,
 };
-
-const sportSpecificTitleOverrides =
-    process.env.SPORT === "basketball"
-        ? {
-              "rating:fg": "2Pt",
-              "rating:tp": "3Pt",
-              "rating:oiq": "oIQ",
-              "rating:dnk": "Dnk",
-              "rating:drb": "Drb",
-              "rating:ins": "Ins",
-              "rating:jmp": "Jmp",
-              "rating:ft": "FT",
-              "rating:pss": "Pss",
-              "rating:reb": "Reb",
-              "rating:diq": "dIQ",
-          }
-        : {
-              "rating:thv": "ThV",
-              "rating:thp": "ThP",
-              "rating:tha": "ThA",
-              "rating:bls": "BlS",
-              "rating:elu": "Elu",
-              "rating:rtr": "RtR",
-              "rating:hnd": "Hnd",
-              "rating:rbk": "RBk",
-              "rating:pbk": "PBk",
-              "rating:snp": "Snp",
-              "rating:pcv": "PCv",
-              "rating:prs": "PRs",
-              "rating:rns": "RnS",
-              "rating:kpw": "KPw",
-              "rating:kac": "KAc",
-              "rating:ppw": "PPw",
-              "rating:pac": "PAc",
-          };
-
-Object.assign(titleOverrides, sportSpecificTitleOverrides);
 
 for (const key of Object.keys(cols)) {
     if (

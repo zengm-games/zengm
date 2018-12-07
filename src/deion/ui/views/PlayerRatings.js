@@ -17,7 +17,7 @@ const PlayerRatings = ({ abbrev, players, ratings, season, userTid }) => {
         "Pos",
         "Team",
         "Age",
-        "Country",
+        ...(process.env.SPORT === "basketball" ? ["Country"] : []),
         "Ovr",
         "Pot",
         ...ratings.map(rating => `rating:${rating}`),
@@ -40,7 +40,7 @@ const PlayerRatings = ({ abbrev, players, ratings, season, userTid }) => {
                     {p.stats.abbrev}
                 </a>,
                 p.age,
-                p.born.loc,
+                ...(process.env.SPORT === "basketball" ? [p.born.loc] : []),
                 p.ratings.ovr,
                 p.ratings.pot,
                 ...ratings.map(rating => p.ratings[rating]),

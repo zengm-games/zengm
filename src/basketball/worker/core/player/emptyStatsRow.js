@@ -1,9 +1,10 @@
 // @flow
 
 const emptyStatsRow = {
-    season: 0,
     tid: 0,
+    season: 0,
     playoffs: false,
+    yearsWithTeam: 1,
     gp: 0,
     gs: 0,
     min: 0,
@@ -31,7 +32,6 @@ const emptyStatsRow = {
     pts: 0,
     per: 0,
     ewa: 0,
-    yearsWithTeam: 1,
     astp: 0,
     blkp: 0,
     drbp: 0,

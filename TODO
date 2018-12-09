@@ -70,7 +70,7 @@ what's the end state here? options:
 figure out dynamic import of schema in LeagueFileUpload.js
 
 better way to pass awards to Dropdown.js
-- and get rid of per36
+- and get rid of per36, replace with passing/ru+rc/returns/def/kicking
 
 yarn workspaces
 - see branch football-yarn-workspaces - all works except karma

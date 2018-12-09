@@ -9,6 +9,8 @@ highlighting of finals mvp https://www.reddit.com/r/BasketballGM/comments/a3kxkq
 football code!
 - ratings
 - stats
+  - need to define aggregate/derived ones too, in getCols as well
+    - might not need some of the defaults in getCols, like pntYds
 - basic UI
 - game sim
 - references to ../basketball

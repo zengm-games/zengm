@@ -118,6 +118,22 @@ const ovr = (ratings: PlayerRatings, pos?: string): number => {
         rating = (ratings.kpw + ratings.kac) / 2;
     } else if (pos === "P") {
         rating = (ratings.ppw + ratings.pac) / 2;
+    } else if (pos === "KR") {
+        rating =
+            (ratings.stre +
+                4 * ratings.spd +
+                4 * ratings.elu +
+                2 * ratings.hnd +
+                8 * ratings.bls) /
+            19;
+    } else if (pos === "PR") {
+        rating =
+            (ratings.stre +
+                4 * ratings.spd +
+                4 * ratings.elu +
+                8 * ratings.hnd +
+                8 * ratings.bls) /
+            25;
     } else {
         throw new Error(`Unknown position: "${pos}"`);
     }

@@ -6,13 +6,21 @@ basketball - report that AI teams consider any of your draft picks the 1st pick 
 
 highlighting of finals mvp https://www.reddit.com/r/BasketballGM/comments/a3kxkq/by_the_finals_mvp_ralph_sampson_is_on_my_team_but/
 
+depth chart
+- one page for each position. reorder like current roster page. position-specific stats and ovr/pot
+- how to store position info? not in rosterOrder, come up with new thing, maybe in team object
+  - t.depth.QB = [array of pids]
+  - write function to sort all players on team by this "array of pids", filtering out invalid pids and putting new players at the end
+
 football code!
+- KR/PR positions - special, not dedicated positions
 - ratings
 - stats
   - need to define aggregate/derived ones too, in getCols as well
     - might not need some of the defaults in getCols, like pntYds
 - basic UI
 - game sim
+  - substitutions? maybe rigidly based on depth chart + fatigue, not fatigue-scaled ability
 - references to ../basketball
 
 how will pos/ovr work? just one, like BB? or store separate ovr for every position?

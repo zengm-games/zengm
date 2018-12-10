@@ -81,6 +81,28 @@ const deleteLeague = params => {
     };
 };
 
+const depth = params => {
+    const positions = [
+        "QB",
+        "RB",
+        "WR",
+        "TE",
+        "OL",
+        "C",
+        "DL",
+        "LB",
+        "CB",
+        "S",
+        "K",
+        "P",
+        "KR",
+        "PR",
+    ];
+    return {
+        pos: positions.includes(params.pos) ? params.pos : "QB",
+    };
+};
+
 const draft = () => {
     if (g.phase !== PHASE.DRAFT && g.phase !== PHASE.FANTASY_DRAFT) {
         return {
@@ -405,6 +427,7 @@ export default {
     awardsRecords,
     customizePlayer,
     deleteLeague,
+    depth,
     draft,
     draftLottery,
     draftSummary,

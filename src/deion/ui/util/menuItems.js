@@ -124,6 +124,17 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
                 path: ["roster"],
                 text: "Roster",
             },
+            ...(process.env.SPORT === "football"
+                ? [
+                      {
+                          type: "link",
+                          active: pageID => pageID === "depth",
+                          league: true,
+                          path: ["depth"],
+                          text: "Depth Chart",
+                      },
+                  ]
+                : []),
             {
                 type: "link",
                 active: pageID => pageID === "schedule",

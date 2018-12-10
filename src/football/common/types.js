@@ -111,6 +111,22 @@ export type Awards = {|
     finalsMvp: AwardPlayer | void,
 |};
 
+export type Position =
+    | "QB"
+    | "RB"
+    | "WR"
+    | "TE"
+    | "OL"
+    | "C"
+    | "DL"
+    | "LB"
+    | "CB"
+    | "S"
+    | "K"
+    | "P"
+    | "KR"
+    | "PR";
+
 export type PlayerRatings = {|
     hgt: number,
     stre: number,

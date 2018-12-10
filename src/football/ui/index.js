@@ -2,7 +2,7 @@
 
 import deionUI from "../../deion/ui";
 import components from "../../basketball/ui/components";
-import views from "../../basketball/ui/views";
+import views from "./views";
 
 (async () => {
     await deionUI({

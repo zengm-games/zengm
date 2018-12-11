@@ -116,7 +116,21 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
     },
 };
 
-export {
-    // eslint-disable-next-line import/prefer-default-export
-    COMPOSITE_WEIGHTS,
-};
+const POSITIONS = [
+    "QB",
+    "RB",
+    "WR",
+    "TE",
+    "C",
+    "OL",
+    "DL",
+    "LB",
+    "CB",
+    "S",
+    "K",
+    "P",
+    "KR",
+    "PR",
+];
+
+export { COMPOSITE_WEIGHTS, POSITIONS };

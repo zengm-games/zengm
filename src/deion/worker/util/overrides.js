@@ -9,6 +9,7 @@ import type {
 
 const overrides: {
     COMPOSITE_WEIGHTS: CompositeWeights<>,
+    POSITIONS: string[],
     core: WorkerOverridesCore,
     names: Names,
     util: WorkerOverridesUtil,
@@ -17,6 +18,7 @@ const overrides: {
     },
 } = {
     COMPOSITE_WEIGHTS: {},
+    POSITIONS: [],
     core: {
         GameSim: undefined,
         player: {},

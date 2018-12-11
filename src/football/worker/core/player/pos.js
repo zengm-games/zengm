@@ -1,24 +1,14 @@
 // @flow
 
-import type { PlayerRatings } from "../../../common/types";
+import { overrides } from "../../../../deion/worker/util";
 import ovr from "./ovr";
-
-const positions = [
-    "QB",
-    "RB",
-    "WR",
-    "TE",
-    "OL",
-    "C",
-    "DL",
-    "LB",
-    "CB",
-    "S",
-    "K",
-    "P",
-];
+import type { PlayerRatings } from "../../../common/types";
 
 const pos = (ratings: PlayerRatings): string => {
+    const positions = overrides.POSITIONS.filter(
+        pos2 => pos2 !== "KR" && pos2 !== "PR",
+    );
+
     const ovrs = positions.map(position => ovr(ratings, position));
     let ind = 0;
     let max = 0;

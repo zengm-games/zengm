@@ -18,6 +18,7 @@ import {
     ResponsiveTableWrapper,
 } from "../../../deion/ui/components";
 import clickable from "../../../deion/ui/wrappers/clickable";
+import { POSITIONS } from "../../common";
 
 const handleAutoSort = async () => {
     await toWorker("autoSortDepth");
@@ -148,7 +149,6 @@ const numStartersByPos = {
     KR: 1,
     PR: 1,
 };
-const positions = Object.keys(numStartersByPos);
 
 class Roster extends React.Component {
     constructor(props) {
@@ -257,7 +257,7 @@ class Roster extends React.Component {
                 </p>
 
                 <ul className="nav nav-tabs mb-3">
-                    {positions.map(pos2 => (
+                    {POSITIONS.map(pos2 => (
                         <li className="nav-item" key={pos2}>
                             <a
                                 className={classNames("nav-link", {

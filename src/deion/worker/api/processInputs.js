@@ -1,5 +1,5 @@
 import { PHASE } from "../../common";
-import { g, helpers } from "../util";
+import { g, helpers, overrides } from "../util";
 
 /**
  * Validate that a given abbreviation corresponds to a team.
@@ -82,22 +82,7 @@ const deleteLeague = params => {
 };
 
 const depth = params => {
-    const positions = [
-        "QB",
-        "RB",
-        "WR",
-        "TE",
-        "OL",
-        "C",
-        "DL",
-        "LB",
-        "CB",
-        "S",
-        "K",
-        "P",
-        "KR",
-        "PR",
-    ];
+    const positions = overrides.POSITIONS;
     return {
         pos: positions.includes(params.pos) ? params.pos : "QB",
     };

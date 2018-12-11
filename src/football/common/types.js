@@ -152,6 +152,12 @@ export type PlayerRatings = {|
     fuzz: number,
     ovr: number,
     pot: number,
+    ovrs: {
+        [key: Position]: number,
+    },
+    pots: {
+        [key: Position]: number,
+    },
     season: number,
     skills: string[],
 |};

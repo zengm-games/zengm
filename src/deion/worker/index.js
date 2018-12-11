@@ -22,6 +22,7 @@ self.bbgm = Object.assign({}, common, core, db, util);
 const deionWorker = async (options: {
     overrides: {
         COMPOSITE_WEIGHTS: CompositeWeights<>,
+        POSITIONS: string[],
         core: WorkerOverridesCore,
         names: Names,
         util: WorkerOverridesUtil,

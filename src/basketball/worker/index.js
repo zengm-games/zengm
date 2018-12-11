@@ -22,6 +22,7 @@ const names =
     await deionWorker({
         overrides: {
             COMPOSITE_WEIGHTS,
+            POSITIONS: [],
             core: {
                 GameSim,
                 player,

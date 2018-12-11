@@ -34,6 +34,8 @@ how will pos/ovr work? just one, like BB? or store separate ovr for every positi
 - on player ratings page, ability to filter by position, and then show position-specific ovrs for all players
 - ??? maybe would be easier to store ovr and pot for all positions, otherwise recomputing pots would be hard
   - store obj on ovrs, pots?
+    - maybe just do this when computing pot - also do ovrs and pots
+      - well, ovr could be dynamic
 
 worker/deion stuff that needs to have a process.env.SPORT case
 - api
@@ -103,6 +105,8 @@ make it clear that accounts are shared, change name of Gold to something sport a
 ads
 - banner
 - gcs
+
+contract demands and position assignments should be based on which position maximizes p.value, not which position maximizes ovr. would you rather have an 80 ovr qb or a 100 ovr kicker?
 
 HallOfFame criteria text
 

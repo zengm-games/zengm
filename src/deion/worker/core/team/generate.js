@@ -1,6 +1,6 @@
 // @flow
 
-import { g } from "../../util";
+import { g, overrides } from "../../util";
 
 /**
  * Create a new team object.
@@ -17,7 +17,7 @@ const generate = (tm: any) => {
         strategy = Math.random() > 0.5 ? "contending" : "rebuilding";
     }
 
-    return {
+    const t = {
         tid: tm.tid,
         cid: tm.cid,
         did: tm.did,
@@ -91,6 +91,15 @@ const generate = (tm: any) => {
         },
         strategy,
     };
+
+    if (process.env.SPORT === "football") {
+        t.depth = overrides.POSITIONS.reduce((depth, pos) => {
+            depth[pos] = [];
+            return depth;
+        }, {});
+    }
+
+    return t;
 };
 
 export default generate;

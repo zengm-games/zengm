@@ -893,6 +893,17 @@ const removeLeague = async (lid: number) => {
     await league.remove(lid);
 };
 
+const reorderDepthDrag = async (pos: string, sortedPids: number[]) => {
+    const t = await idb.cache.teams.get(g.userTid);
+    if (t.hasOwnProperty("depth") && t.depth.hasOwnProperty(pos)) {
+        t.depth[pos] = sortedPids;
+        await idb.cache.teams.put(t);
+        await toUI(["realtimeUpdate", ["playerMovement"]]);
+    } else {
+        throw new Error(`depth.${pos} property missing on team object`);
+    }
+};
+
 const reorderRosterDrag = async (sortedPids: number[]) => {
     await Promise.all(
         sortedPids.map(async (pid, rosterOrder) => {
@@ -1280,6 +1291,7 @@ export default {
     ratingsStatsPopoverInfo,
     releasePlayer,
     removeLeague,
+    reorderDepthDrag,
     reorderRosterDrag,
     resetPlayingTime,
     runBefore,

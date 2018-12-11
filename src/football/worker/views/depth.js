@@ -46,11 +46,21 @@ async function updateDepth(
             season: g.season,
         });
 
-        console.log(pos, stats[pos]);
+        // Sort players based on current depth chart
+        const t = await idb.cache.teams.get(g.userTid);
+        const depth = t.depth[pos];
+
+        // Start with players in depth, then add others in arbitrary order
+        const playersSorted = depth
+            .map(pid => players.find(p => p.pid === pid))
+            .concat(players.map(p => (depth.includes(p.pid) ? undefined : p)))
+            .filter(p => p !== undefined);
+
+        console.log(t, depth);
         return {
             abbrev: g.teamAbbrevsCache[g.userTid],
             pos,
-            players,
+            players: playersSorted,
             season: g.season,
             stats: stats.hasOwnProperty(pos) ? stats[pos] : [],
         };

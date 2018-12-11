@@ -12,7 +12,7 @@ depth chart
   - write function to sort all players on team by this "array of pids", filtering out invalid pids and putting new players at the end
 - show position-specific ovr/pot, highlight in red if out of position
 - links here from More, dropdowns, etc
-- actually save order
+- auto sort buttons
 
 football code!
 - KR/PR positions - special, not dedicated positions
@@ -88,6 +88,10 @@ yarn workspaces
 tests still running within deion? e.g. common/helpers.test.js
 
 search for text basketball in deion
+
+split more from deion
+- processInputs for views only in one (depth, shot locations)
+- worker API functions only in one (depth)
 
 draft
 - option to disable lottery

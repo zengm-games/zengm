@@ -46,7 +46,7 @@ ReorderHandle.propTypes = {
     numStarters: PropTypes.number.isRequired,
 };
 
-const RosterRow = SortableElement(
+const DepthRow = SortableElement(
     clickable(props => {
         const {
             clicked,
@@ -103,7 +103,7 @@ const RosterRow = SortableElement(
     }),
 );
 
-RosterRow.propTypes = {
+DepthRow.propTypes = {
     i: PropTypes.number.isRequired,
     isSorting: PropTypes.bool.isRequired,
     numStarters: PropTypes.number.isRequired,
@@ -118,7 +118,7 @@ const TBody = SortableContainer(
             <tbody id="roster-tbody">
                 {players.map((p, i) => {
                     return (
-                        <RosterRow
+                        <DepthRow
                             key={p.pid}
                             i={i}
                             index={i}
@@ -160,7 +160,7 @@ const numStartersByPos = {
     PR: 1,
 };
 
-class Roster extends React.Component {
+class Depth extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -337,7 +337,7 @@ class Roster extends React.Component {
     }
 }
 
-Roster.propTypes = {
+Depth.propTypes = {
     abbrev: PropTypes.string.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     pos: PropTypes.string.isRequired,
@@ -345,4 +345,4 @@ Roster.propTypes = {
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
-export default Roster;
+export default Depth;

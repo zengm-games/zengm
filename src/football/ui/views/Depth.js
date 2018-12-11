@@ -54,6 +54,7 @@ const RosterRow = SortableElement(
             isSorting,
             numStarters,
             p,
+            pos,
             stats,
             toggleClicked,
         } = props;
@@ -84,8 +85,8 @@ const RosterRow = SortableElement(
                 </td>
                 <td onClick={toggleClicked}>{p.ratings.pos}</td>
                 <td onClick={toggleClicked}>{p.age}</td>
-                <td onClick={toggleClicked}>{p.ratings.ovr}</td>
-                <td onClick={toggleClicked}>{p.ratings.pot}</td>
+                <td onClick={toggleClicked}>{p.ratings.ovrs[pos]}</td>
+                <td onClick={toggleClicked}>{p.ratings.pots[pos]}</td>
                 {stats.map(stat => (
                     <td key={stat} onClick={toggleClicked}>
                         {helpers.roundStat(p.stats[stat], stat)}
@@ -101,11 +102,12 @@ RosterRow.propTypes = {
     isSorting: PropTypes.bool.isRequired,
     numStarters: PropTypes.number.isRequired,
     p: PropTypes.object.isRequired,
+    pos: PropTypes.string.isRequired,
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 const TBody = SortableContainer(
-    ({ isSorting, numStarters, players, stats }) => {
+    ({ isSorting, numStarters, players, pos, stats }) => {
         return (
             <tbody id="roster-tbody">
                 {players.map((p, i) => {
@@ -117,6 +119,7 @@ const TBody = SortableContainer(
                             isSorting={isSorting}
                             numStarters={numStarters}
                             p={p}
+                            pos={pos}
                             stats={stats}
                         />
                     );
@@ -130,6 +133,7 @@ TBody.propTypes = {
     isSorting: PropTypes.bool.isRequired,
     numStarters: PropTypes.number.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
+    pos: PropTypes.string.isRequired,
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
@@ -311,6 +315,7 @@ class Roster extends React.Component {
                             numStarters={numStartersByPos[pos]}
                             onSortEnd={this.handleOnSortEnd}
                             onSortStart={this.handleOnSortStart}
+                            pos={pos}
                             stats={stats}
                             transitionDuration={0}
                             useDragHandle

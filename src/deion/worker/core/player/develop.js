@@ -12,24 +12,30 @@ const NUM_SIMULATIONS = 20; // Higher is more accurate, but slower. Low accuracy
 export const bootstrapPot = (
     ratings: MinimalPlayerRatings,
     age: number,
+    pos?: string,
 ): number => {
     if (age >= 29) {
-        return ratings.ovr;
+        return pos ? ratings.ovrs[pos] : ratings.ovr;
     }
 
     const maxOvrs = range(NUM_SIMULATIONS).map(() => {
         const copiedRatings = helpers.deepCopy(ratings);
 
-        let maxOvr = ratings.ovr;
+        let maxOvr = pos ? ratings.ovrs[pos] : ratings.ovr;
         for (let ageTemp = age + 1; ageTemp < 30; ageTemp++) {
             if (!overrides.core.player.developSeason) {
                 throw new Error("Missing overrides.core.player.developSeason");
             }
-            overrides.core.player.developSeason(copiedRatings, ageTemp); // Purposely no coachingRank
+            overrides.core.player.developSeason(
+                copiedRatings,
+                ageTemp,
+                undefined,
+                pos,
+            ); // Purposely no coachingRank
             if (!overrides.core.player.ovr) {
                 throw new Error("Missing overrides.core.player.ovr");
             }
-            const currentOvr = overrides.core.player.ovr(copiedRatings);
+            const currentOvr = overrides.core.player.ovr(copiedRatings, pos);
             if (currentOvr > maxOvr) {
                 maxOvr = currentOvr;
             }
@@ -79,16 +85,74 @@ const develop = (
         if (!overrides.core.player.developSeason) {
             throw new Error("Missing overrides.core.player.developSeason");
         }
-        overrides.core.player.developSeason(ratings, age, coachingRank);
+        overrides.core.player.developSeason(
+            ratings,
+            age,
+            coachingRank,
+            ratings.pos,
+        );
     }
 
     // Run these even for players developing 0 seasons
-    if (!overrides.core.player.ovr) {
-        throw new Error("Missing overrides.core.player.ovr");
-    }
-    ratings.ovr = overrides.core.player.ovr(ratings);
-    if (!skipPot) {
-        ratings.pot = bootstrapPot(ratings, age);
+    if (process.env.SPORT === "basketball") {
+        if (!overrides.core.player.ovr) {
+            throw new Error("Missing overrides.core.player.ovr");
+        }
+        ratings.ovr = overrides.core.player.ovr(ratings);
+        if (!skipPot) {
+            ratings.pot = bootstrapPot(ratings, age);
+        }
+
+        if (p.hasOwnProperty("pos") && typeof p.pos === "string") {
+            // Must be a custom league player, let's not rock the boat
+            ratings.pos = p.pos;
+        } else {
+            if (!overrides.core.player.pos) {
+                throw new Error("Missing overrides.core.player.pos");
+            }
+            ratings.pos = overrides.core.player.pos(ratings);
+        }
+    } else {
+        let pos;
+        let maxOvr = 0;
+
+        ratings.ovrs = overrides.POSITIONS.reduce((ovrs, pos2) => {
+            if (!overrides.core.player.ovr) {
+                throw new Error("Missing overrides.core.player.ovr");
+            }
+            ovrs[pos2] = overrides.core.player.ovr(ratings, pos2);
+
+            if (ovrs[pos2] > maxOvr) {
+                pos = pos2;
+                maxOvr = ovrs[pos2];
+            }
+
+            return ovrs;
+        }, {});
+        if (!skipPot) {
+            ratings.pots = overrides.POSITIONS.reduce((pots, pos2) => {
+                pots[pos2] = bootstrapPot(ratings, age, pos2);
+
+                return pots;
+            }, {});
+        }
+
+        if (pos === undefined) {
+            throw new Error("Should never happen");
+        }
+
+        ratings.ovr = ratings.ovrs[pos];
+        ratings.pot = ratings.pots[pos];
+
+        if (p.hasOwnProperty("pos") && typeof p.pos === "string") {
+            // Must be a manually specified position
+            ratings.pos = p.pos;
+        } else {
+            if (!overrides.core.player.pos) {
+                throw new Error("Missing overrides.core.player.pos");
+            }
+            ratings.pos = pos;
+        }
     }
     ratings.skills = skills(ratings);
 
@@ -106,16 +170,6 @@ const develop = (
 
     if (newPlayer) {
         p.born.year -= years;
-    }
-
-    if (p.hasOwnProperty("pos") && typeof p.pos === "string") {
-        // Must be a custom league player, let's not rock the boat
-        ratings.pos = p.pos;
-    } else {
-        if (!overrides.core.player.pos) {
-            throw new Error("Missing overrides.core.player.pos");
-        }
-        ratings.pos = overrides.core.player.pos(ratings);
     }
 };
 

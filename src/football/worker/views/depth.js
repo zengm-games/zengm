@@ -41,7 +41,7 @@ async function updateDepth(
         );
         players = await idb.getCopies.playersPlus(players, {
             attrs: ["pid", "name", "age", "injury", "watch"],
-            ratings: ["skills", "pos", "ovr", "pot"],
+            ratings: ["skills", "pos", "ovr", "pot", "ovrs", "pots"],
             stats: stats[pos],
             season: g.season,
         });

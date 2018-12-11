@@ -26,16 +26,12 @@ football code!
 - references to ../basketball
 
 how will pos/ovr work? just one, like BB? or store separate ovr for every position?
-- store only main ovr. after develop, reassess player position and set ovr to that
-- player.pos just finds the max of all possible ovrs
-- player.ovr also takes pos as an optional parameter (default, use the one in ratings row)
 - on player page, have position be clickable, show all ovrs (from playersPlus, ovrs: {qb: 56, rb: 6, ...}, allow user to change position. should not affect current player (other than his ovr) but will affect future development
-- on depth chart page, show position-specific ovrs (dynamically computed) and highlight them when displayed
+  - change position by setting in root of player object
+  - don't have this persist when player leaves user team
 - on player ratings page, ability to filter by position, and then show position-specific ovrs for all players
-- ??? maybe would be easier to store ovr and pot for all positions, otherwise recomputing pots would be hard
-  - store obj on ovrs, pots?
-    - maybe just do this when computing pot - also do ovrs and pots
-      - well, ovr could be dynamic
+- make sure all calls to recompute ovr/pot also update ovrs/pots
+- overrides.core.player.pos needed for football?
 
 worker/deion stuff that needs to have a process.env.SPORT case
 - api

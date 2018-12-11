@@ -2,7 +2,7 @@
 
 import { player } from "../../../../deion/worker/core";
 import { g, helpers, random } from "../../../../deion/worker/util";
-import type { PlayerRatings, RatingKey } from "../../../common/types";
+import type { PlayerRatings, Position, RatingKey } from "../../../common/types";
 
 const shootingFormula = {
     ageModifier: (age: number) => {
@@ -161,6 +161,7 @@ const developSeason = (
     ratings: PlayerRatings,
     age: number,
     coachingRank?: number = (g.numTeams + 1) / 2,
+    pos: Position,
 ) => {
     // In young players, height can sometimes increase
     if (age <= 21) {

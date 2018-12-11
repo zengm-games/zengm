@@ -59,6 +59,10 @@ const RosterRow = SortableElement(
             toggleClicked,
         } = props;
 
+        const classes = classNames({
+            "text-danger": pos !== p.ratings.pos,
+        });
+
         return (
             <tr
                 key={p.pid}
@@ -83,7 +87,9 @@ const RosterRow = SortableElement(
                         {p.name}
                     </PlayerNameLabels>
                 </td>
-                <td onClick={toggleClicked}>{p.ratings.pos}</td>
+                <td className={classes} onClick={toggleClicked}>
+                    {p.ratings.pos}
+                </td>
                 <td onClick={toggleClicked}>{p.age}</td>
                 <td onClick={toggleClicked}>{p.ratings.ovrs[pos]}</td>
                 <td onClick={toggleClicked}>{p.ratings.pots[pos]}</td>
@@ -300,8 +306,12 @@ class Roster extends React.Component {
                                 <th>Name</th>
                                 <th title="Position">Pos</th>
                                 <th>Age</th>
-                                <th title="Overall Rating">Ovr</th>
-                                <th title="Potential Rating">Pot</th>
+                                <th title={`Overall Rating (${pos})`}>
+                                    {pos}ovr
+                                </th>
+                                <th title={`Potential Rating (${pos})`}>
+                                    {pos}pot
+                                </th>
                                 {statCols.map(({ desc, title }) => (
                                     <th key={title} title={desc}>
                                         {title}

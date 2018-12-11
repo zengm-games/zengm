@@ -137,8 +137,8 @@ const numStartersByPos = {
     RB: 1,
     WR: 3,
     TE: 1,
-    OL: 4,
     C: 1,
+    OL: 4,
     DL: 4,
     LB: 3,
     CB: 2,
@@ -255,6 +255,22 @@ class Roster extends React.Component {
                     <span className="table-info legend-square" /> and the bench{" "}
                     <span className="table-secondary legend-square" />.
                 </p>
+
+                <ul className="nav nav-tabs mb-3">
+                    {positions.map(pos2 => (
+                        <li className="nav-item" key={pos2}>
+                            <a
+                                className={classNames("nav-link", {
+                                    active: pos === pos2,
+                                })}
+                                href={helpers.leagueUrl(["depth", pos2])}
+                            >
+                                {pos2}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+
                 <div className="btn-group mb-3">
                     <button
                         className="btn btn-light-bordered"
@@ -268,21 +284,6 @@ class Roster extends React.Component {
                     >
                         Auto sort all
                     </button>
-                </div>
-                <div className="clearfix" />
-                <div className="btn-group mb-3">
-                    {positions.map(pos2 => (
-                        <a
-                            key={pos2}
-                            className={classNames("btn", {
-                                "btn-light-bordered": pos !== pos2,
-                                "btn-primary": pos === pos2,
-                            })}
-                            href={helpers.leagueUrl(["depth", pos2])}
-                        >
-                            {pos2}
-                        </a>
-                    ))}
                 </div>
 
                 <div className="clearfix" />

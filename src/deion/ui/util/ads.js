@@ -7,7 +7,7 @@ const refreshBanners = () => {
     const venatusAds = [
         {
             divID: "bbgm-ads-top",
-            adID: "5bebecac46e0fb0001ad2a75",
+            adID: "5bebecb946e0fb00015b4aaa",
         },
         {
             divID: "bbgm-ads-bottom1",

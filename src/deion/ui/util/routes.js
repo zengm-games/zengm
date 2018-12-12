@@ -23,7 +23,9 @@ const genPage = (id, inLeague = true) => {
         });
     }
 
-    throw new Error(`Invalid component name: "${componentName}"`);
+    return () => {
+        throw new Error(`Invalid component name: "${componentName}"`);
+    };
 };
 
 // Needs to be deferred so overrides.views will exist

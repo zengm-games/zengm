@@ -1,37 +1,25 @@
 // @flow
 
 import { g, helpers, random } from "../../../deion/worker/util";
+import type { Position } from "../../common/types";
 
 type PlayType =
-    | "ast"
-    | "blkAtRim"
-    | "blkLowPost"
-    | "blkMidRange"
-    | "blkTp"
-    | "drb"
-    | "fgAtRim"
-    | "fgAtRimAndOne"
-    | "fgLowPost"
-    | "fgLowPostAndOne"
-    | "fgMidRange"
-    | "fgMidRangeAndOne"
-    | "foulOut"
-    | "ft"
-    | "injury"
-    | "missAtRim"
-    | "missFt"
-    | "missLowPost"
-    | "missMidRange"
-    | "missTp"
-    | "orb"
+    | "kickoff"
+    | "kickoffReturn"
+    | "punt"
+    | "puntReturn"
+    | "passIncomplete"
+    | "passComplete"
+    | "run"
+    | "fumbleRecoverOffense"
+    | "fumbleRecoverDefense"
+    | "interception"
+    | "safety"
+    | "sack"
+    | "penalty"
+    | "twoMinuteWarning"
     | "overtime"
-    | "pf"
-    | "quarter"
-    | "stl"
-    | "sub"
-    | "tov"
-    | "tp"
-    | "tpAndOne";
+    | "quarter";
 type ShotType = "atRim" | "ft" | "lowPost" | "midRange" | "threePointer";
 type Stat =
     | "ast"
@@ -89,12 +77,77 @@ type TeamGameSim = {
     compositeRating: Object,
     player: PlayerGameSim[],
     compositeRating: Object,
-    synergy: {
-        def: number,
-        off: number,
-        reb: number,
+    depth: {
+        [key: Position]: number[],
     },
 };
+
+const formations = [
+    {
+        off: {
+            QB: 1,
+            RB: 1,
+            WR: 3,
+            TE: 1,
+            C: 1,
+            OL: 4,
+        },
+        def: {
+            DL: 4,
+            LB: 2,
+            CB: 3,
+            S: 2,
+        },
+    },
+    {
+        off: {
+            QB: 1,
+            RB: 2,
+            WR: 2,
+            TE: 1,
+            C: 1,
+            OL: 4,
+        },
+        def: {
+            DL: 3,
+            LB: 4,
+            CB: 2,
+            S: 2,
+        },
+    },
+    {
+        off: {
+            QB: 1,
+            RB: 2,
+            WR: 1,
+            TE: 2,
+            C: 1,
+            OL: 4,
+        },
+        def: {
+            DL: 4,
+            LB: 3,
+            CB: 2,
+            S: 2,
+        },
+    },
+    {
+        off: {
+            QB: 1,
+            RB: 0,
+            WR: 5,
+            TE: 0,
+            C: 1,
+            OL: 4,
+        },
+        def: {
+            DL: 4,
+            LB: 1,
+            CB: 4,
+            S: 2,
+        },
+    },
+];
 
 /**
  * Pick a player to do something.
@@ -152,20 +205,42 @@ class GameSim {
 
     dt: number;
 
-    playersOnCourt: [
-        [number, number, number, number, number],
-        [number, number, number, number, number],
+    playersOnField: [
+        [
+            number,
+            number,
+            number,
+            number,
+            number,
+            number,
+            number,
+            number,
+            number,
+            number,
+            number,
+        ],
+        [
+            number,
+            number,
+            number,
+            number,
+            number,
+            number,
+            number,
+            number,
+            number,
+            number,
+            number,
+        ],
     ];
 
     startersRecorded: boolean;
 
     subsEveryN: number;
 
-    overtimes: number;
+    overtime: boolean;
 
     t: number;
-
-    synergyFactor: number;
 
     lastScoringPlay: {
         team: number,
@@ -221,10 +296,9 @@ class GameSim {
         this.dt = 48 / (2 * numPossessions); // Time elapsed per possession
 
         // Starting lineups, which will be reset by updatePlayersOnCourt. This must be done because of injured players in the top 5.
-        this.playersOnCourt = [[0, 1, 2, 3, 4], [0, 1, 2, 3, 4]];
+        this.playersOnField = [];
         this.startersRecorded = false; // Used to track whether the *real* starters have been recorded or not.
-        this.updatePlayersOnCourt();
-        this.updateSynergy();
+        this.updatePlayersOnField();
 
         this.subsEveryN = 6; // How many possessions to wait before doing substitutions
 
@@ -232,8 +306,7 @@ class GameSim {
 
         this.t = g.quarterLength; // Game clock, in minutes
 
-        // Parameters
-        this.synergyFactor = 0.1; // How important is synergy?
+        this.awaitingKickoff = true;
 
         this.homeCourtAdvantage();
 
@@ -346,7 +419,11 @@ class GameSim {
         // eslint-disable-next-line no-constant-condition
         while (true) {
             while (this.t > 0) {
-                this.simPossession();
+                if (this.awaitingKickoff) {
+                    this.kickoff();
+                } else {
+                    this.simPlay();
+                }
             }
             quarter += 1;
 
@@ -375,38 +452,93 @@ class GameSim {
         }
     }
 
-    simPossession() {
-        // Clock
-        this.t -= this.dt;
-        let possessionTime = this.dt;
-        if (this.t < 0) {
-            possessionTime += this.t;
-            this.t = 0;
+    kickoff() {
+        this.awaitingKickoff = false;
+
+        const kicker = this.team[this.o].player.find(
+            p => p.pid === this.team[this.o].depth.K[0],
+        );
+        const kickReturner = this.team[this.d].player.find(
+            p => p.pid === this.team[this.d].depth.KR[0],
+        );
+
+        const touchback = Math.random() > 0.5;
+        const kickTo = random.uniform(-9, 10);
+
+        let dt = 0;
+
+        this.recordPlay("kickoff", {
+            t: this.o,
+            names: [kicker.name],
+            touchback,
+            yds: kickTo,
+        });
+        if (touchback) {
+            this.scrimmage = 25;
+            this.down = 1;
+            this.toGo = 10;
+        } else {
+            dt = 5;
+            const returnLength = random.uniform(10, 109);
+            const returnTo = kickTo + returnLength;
+            const td = returnTo >= 100;
+
+            if (td) {
+                this.awaitingKickoff = true;
+            } else {
+                this.scrimmage = returnTo;
+                this.down = 1;
+                this.toGo = 10;
+            }
+
+            this.recordPlay("kickoffReutrn", {
+                t: this.d,
+                names: [kickReturner.name],
+                td,
+                yds: returnLength,
+            });
         }
 
         // Possession change
         this.o = this.o === 1 ? 0 : 1;
         this.d = this.o === 1 ? 0 : 1;
-
         this.updateTeamCompositeRatings();
 
-        const outcome = this.getPossessionOutcome();
+        // Clock
+        this.t -= dt;
+        let playTime = dt;
+        if (this.t < 0) {
+            playTime += this.t;
+            this.t = 0;
+        }
+        this.updatePlayingTime(playTime);
+    }
 
-        // Swap o and d so that o will get another possession when they are swapped again at the beginning of the loop.
-        if (outcome === "orb") {
-            this.o = this.o === 1 ? 0 : 1;
-            this.d = this.o === 1 ? 0 : 1;
+    simPlay() {
+        // Clock
+        this.t -= this.dt;
+        let playTime = this.dt;
+        if (this.t < 0) {
+            playTime += this.t;
+            this.t = 0;
         }
 
-        this.updatePlayingTime(possessionTime);
+        const outcome = this.down === 4 ? this.fourthDown() : this.runPlay();
+
+        // Swap o and d so that o will get another possession when they are swapped again at the beginning of the loop.
+        if (outcome === "interception" || outcome === "fumbleRecoverDefense") {
+            this.o = this.o === 1 ? 0 : 1;
+            this.d = this.o === 1 ? 0 : 1;
+            this.down = 1;
+            this.toGo = 10;
+        }
+
+        this.updatePlayingTime(playTime);
 
         this.injuries();
 
         if (random.randInt(1, this.subsEveryN) === 1) {
-            const substitutions = this.updatePlayersOnCourt();
-            if (substitutions) {
-                this.updateSynergy();
-            }
+            this.updatePlayersOnCourt();
         }
     }
 
@@ -566,130 +698,9 @@ class GameSim {
     }
 
     /**
-     * Update synergy.
-     *
-     * This should be called after this.updatePlayersOnCourt as it only produces different output when the players on the court change.
-     */
-    updateSynergy() {
-        for (let t = 0; t < 2; t++) {
-            // Count all the *fractional* skills of the active players on a team (including duplicates)
-            const skillsCount = {
-                "3": 0,
-                A: 0,
-                B: 0,
-                Di: 0,
-                Dp: 0,
-                Po: 0,
-                Ps: 0,
-                R: 0,
-            };
-
-            for (let i = 0; i < 5; i++) {
-                const p = this.playersOnCourt[t][i];
-
-                // 1 / (1 + e^-(15 * (x - 0.61))) from 0 to 1
-                // 0.61 is not always used - keep in sync with skills.js!
-                skillsCount["3"] += helpers.sigmoid(
-                    this.team[t].player[p].compositeRating.shootingThreePointer,
-                    15,
-                    0.59,
-                );
-                skillsCount.A += helpers.sigmoid(
-                    this.team[t].player[p].compositeRating.athleticism,
-                    15,
-                    0.63,
-                );
-                skillsCount.B += helpers.sigmoid(
-                    this.team[t].player[p].compositeRating.dribbling,
-                    15,
-                    0.68,
-                );
-                skillsCount.Di += helpers.sigmoid(
-                    this.team[t].player[p].compositeRating.defenseInterior,
-                    15,
-                    0.57,
-                );
-                skillsCount.Dp += helpers.sigmoid(
-                    this.team[t].player[p].compositeRating.defensePerimeter,
-                    15,
-                    0.61,
-                );
-                skillsCount.Po += helpers.sigmoid(
-                    this.team[t].player[p].compositeRating.shootingLowPost,
-                    15,
-                    0.61,
-                );
-                skillsCount.Ps += helpers.sigmoid(
-                    this.team[t].player[p].compositeRating.passing,
-                    15,
-                    0.63,
-                );
-                skillsCount.R += helpers.sigmoid(
-                    this.team[t].player[p].compositeRating.rebounding,
-                    15,
-                    0.61,
-                );
-            }
-
-            // Base offensive synergy
-            this.team[t].synergy.off = 0;
-            this.team[t].synergy.off +=
-                5 * helpers.sigmoid(skillsCount["3"], 3, 2); // 5 / (1 + e^-(3 * (x - 2))) from 0 to 5
-            this.team[t].synergy.off +=
-                3 * helpers.sigmoid(skillsCount.B, 15, 0.75) +
-                helpers.sigmoid(skillsCount.B, 5, 1.75); // 3 / (1 + e^-(15 * (x - 0.75))) + 1 / (1 + e^-(5 * (x - 1.75))) from 0 to 5
-            this.team[t].synergy.off +=
-                3 * helpers.sigmoid(skillsCount.Ps, 15, 0.75) +
-                helpers.sigmoid(skillsCount.Ps, 5, 1.75) +
-                helpers.sigmoid(skillsCount.Ps, 5, 2.75); // 3 / (1 + e^-(15 * (x - 0.75))) + 1 / (1 + e^-(5 * (x - 1.75))) + 1 / (1 + e^-(5 * (x - 2.75))) from 0 to 5
-            this.team[t].synergy.off += helpers.sigmoid(
-                skillsCount.Po,
-                15,
-                0.75,
-            ); // 1 / (1 + e^-(15 * (x - 0.75))) from 0 to 5
-            this.team[t].synergy.off +=
-                helpers.sigmoid(skillsCount.A, 15, 1.75) +
-                helpers.sigmoid(skillsCount.A, 5, 2.75); // 1 / (1 + e^-(15 * (x - 1.75))) + 1 / (1 + e^-(5 * (x - 2.75))) from 0 to 5
-            this.team[t].synergy.off /= 17;
-
-            // Punish teams for not having multiple perimeter skills
-            const perimFactor =
-                helpers.bound(
-                    Math.sqrt(
-                        1 + skillsCount.B + skillsCount.Ps + skillsCount["3"],
-                    ) - 1,
-                    0,
-                    2,
-                ) / 2; // Between 0 and 1, representing the perimeter skills
-            this.team[t].synergy.off *= 0.5 + 0.5 * perimFactor;
-
-            // Defensive synergy
-            this.team[t].synergy.def = 0;
-            this.team[t].synergy.def += helpers.sigmoid(
-                skillsCount.Dp,
-                15,
-                0.75,
-            ); // 1 / (1 + e^-(15 * (x - 0.75))) from 0 to 5
-            this.team[t].synergy.def +=
-                2 * helpers.sigmoid(skillsCount.Di, 15, 0.75); // 2 / (1 + e^-(15 * (x - 0.75))) from 0 to 5
-            this.team[t].synergy.def +=
-                helpers.sigmoid(skillsCount.A, 5, 2) +
-                helpers.sigmoid(skillsCount.A, 5, 3.25); // 1 / (1 + e^-(5 * (x - 2))) + 1 / (1 + e^-(5 * (x - 3.25))) from 0 to 5
-            this.team[t].synergy.def /= 6;
-
-            // Rebounding synergy
-            this.team[t].synergy.reb = 0;
-            this.team[t].synergy.reb +=
-                helpers.sigmoid(skillsCount.R, 15, 0.75) +
-                helpers.sigmoid(skillsCount.R, 5, 1.75); // 1 / (1 + e^-(15 * (x - 0.75))) + 1 / (1 + e^-(5 * (x - 1.75))) from 0 to 5
-            this.team[t].synergy.reb /= 4;
-        }
-    }
-
-    /**
      * Update team composite ratings.
      *
-     * This should be called once every possession, after this.updatePlayersOnCourt and this.updateSynergy as they influence output, to update the team composite ratings based on the players currently on the court.
+     * This should be called once every possession, after this.updatePlayersOnCourt as they influence output, to update the team composite ratings based on the players currently on the court.
      */
     updateTeamCompositeRatings() {
         // Only update ones that are actually used
@@ -717,19 +728,6 @@ class GameSim {
                 this.team[t].compositeRating[rating] =
                     this.team[t].compositeRating[rating] / 5;
             }
-
-            this.team[t].compositeRating.dribbling +=
-                this.synergyFactor * this.team[t].synergy.off;
-            this.team[t].compositeRating.passing +=
-                this.synergyFactor * this.team[t].synergy.off;
-            this.team[t].compositeRating.rebounding +=
-                this.synergyFactor * this.team[t].synergy.reb;
-            this.team[t].compositeRating.defense +=
-                this.synergyFactor * this.team[t].synergy.def;
-            this.team[t].compositeRating.defensePerimeter +=
-                this.synergyFactor * this.team[t].synergy.def;
-            this.team[t].compositeRating.blocking +=
-                this.synergyFactor * this.team[t].synergy.def;
         }
     }
 
@@ -808,7 +806,7 @@ class GameSim {
      *
      * @return {string} Outcome of the possession, such as "tov", "drb", "orb", "fg", etc.
      */
-    getPossessionOutcome() {
+    runPlay() {
         // Turnover?
         if (this.probTov() > Math.random()) {
             return this.doTov(); // tov
@@ -932,16 +930,10 @@ class GameSim {
                 this.team[this.o].player[p].compositeRating.shootingMidRange;
             const r2 =
                 Math.random() *
-                (this.team[this.o].player[p].compositeRating.shootingAtRim +
-                    this.synergyFactor *
-                        (this.team[this.o].synergy.off -
-                            this.team[this.d].synergy.def)); // Synergy makes easy shots either more likely or less likely
+                this.team[this.o].player[p].compositeRating.shootingAtRim;
             const r3 =
                 Math.random() *
-                (this.team[this.o].player[p].compositeRating.shootingLowPost +
-                    this.synergyFactor *
-                        (this.team[this.o].synergy.off -
-                            this.team[this.d].synergy.def)); // Synergy makes easy shots either more likely or less likely
+                this.team[this.o].player[p].compositeRating.shootingLowPost;
             if (r1 > r2 && r1 > r3) {
                 // Two point jumper
                 type = "midRange";
@@ -982,11 +974,7 @@ class GameSim {
         probAndOne *= foulFactor;
 
         probMake =
-            (probMake -
-                0.25 * this.team[this.d].compositeRating.defense +
-                this.synergyFactor *
-                    (this.team[this.o].synergy.off -
-                        this.team[this.d].synergy.def)) *
+            (probMake - 0.25 * this.team[this.d].compositeRating.defense) *
             currentFatigue;
 
         // Assisted shots are easier
@@ -1449,7 +1437,6 @@ class GameSim {
             ]);
             // Force substitutions now
             this.updatePlayersOnCourt();
-            this.updateSynergy();
         }
     }
 

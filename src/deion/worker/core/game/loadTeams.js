@@ -17,7 +17,11 @@ import { g, helpers, overrides } from "../../util";
 const loadTeams = async () => {
     return Promise.all(
         range(g.numTeams).map(async tid => {
-            const [players, { cid, did }, teamSeason] = await Promise.all([
+            const [
+                players,
+                { cid, did, depth },
+                teamSeason,
+            ] = await Promise.all([
                 idb.cache.players.indexGetAll("playersByTid", tid),
                 idb.cache.teams.get(tid),
                 idb.cache.teamSeasons.indexGet("teamSeasonsByTidSeason", [
@@ -46,6 +50,7 @@ const loadTeams = async () => {
                 synergy: { off: 0, def: 0, reb: 0 },
                 healthRank: teamSeason.expenses.health.rank,
                 compositeRating,
+                depth,
             };
 
             for (let i = 0; i < players.length; i++) {

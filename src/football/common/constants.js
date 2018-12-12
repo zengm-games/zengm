@@ -4,115 +4,104 @@ import type { CompositeWeights } from "../../deion/common/types";
 import type { RatingKey } from "./types";
 
 const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
-    pace: {
-        ratings: ["spd", "jmp", "dnk", "tp", "drb", "pss"],
-    },
-    usage: {
-        ratings: ["ins", "dnk", "fg", "tp", "spd", "hgt", "drb", "oiq"],
-        weights: [1.5, 1, 1, 1, 0.5, 0.5, 0.5, 0.5],
-    },
-    dribbling: {
-        ratings: ["drb", "spd"],
-        weights: [1, 1],
+    passingAccuracy: {
+        ratings: ["tha", "hgt"],
+        weights: [1, 0.2],
         skill: {
-            label: "B",
-            cutoff: 0.68,
+            label: "Pa",
         },
     },
-    passing: {
-        ratings: ["drb", "pss", "oiq"],
-        weights: [0.4, 1, 0.5],
+    passingDeep: {
+        ratings: ["thp", "tha", "hgt"],
+        weights: [1, 0.1, 0.2],
+        skill: {
+            label: "Pd",
+        },
+    },
+    passingVision: {
+        ratings: ["thv", "hgt"],
+        weights: [1, 0.5],
         skill: {
             label: "Ps",
-            cutoff: 0.63,
         },
     },
-    turnovers: {
-        ratings: [50, "ins", "pss", "oiq"],
-        weights: [0.5, 1, 1, -1],
-    },
-    shootingAtRim: {
-        ratings: ["hgt", "spd", "jmp", "dnk", "oiq"],
-        weights: [0.75, 0.2, 0.6, 0.4, 0.2],
-    },
-    shootingLowPost: {
-        ratings: ["hgt", "stre", "spd", "ins", "oiq"],
-        weights: [2, 0.6, 0.2, 1, 0.2],
+    athleticism: {
+        ratings: ["str", "spd", "hgt"],
+        weights: [1, 1, 0.2],
         skill: {
-            label: "Po",
-            cutoff: 0.61,
+            label: "A",
         },
     },
-    shootingMidRange: {
-        ratings: ["oiq", "fg"],
-        weights: [-0.5, 1],
-    },
-    shootingThreePointer: {
-        ratings: ["oiq", "tp"],
-        weights: [0.1, 1],
+    running: {
+        ratings: ["str", "spd", "elu"],
+        weights: [0.5, 1, 1],
         skill: {
-            label: "3",
-            cutoff: 0.59,
+            label: "X",
         },
     },
-    shootingFT: {
-        ratings: ["ft"],
-    },
-    rebounding: {
-        ratings: ["hgt", "stre", "jmp", "reb", "oiq", "diq"],
-        weights: [2, 0.1, 0.1, 2, 0.5, 0.5],
+    catching: {
+        ratings: ["hgt", "hnd"],
+        weights: [0.2, 1],
         skill: {
-            label: "R",
-            cutoff: 0.61,
+            label: "H",
         },
     },
-    stealing: {
-        ratings: [50, "spd", "diq"],
-        weights: [1, 1, 2],
+    gettingOpen: {
+        ratings: ["hgt", "spd", "rtr", "hnd"],
+        weights: [1, 1, 2, 1],
     },
-    blocking: {
-        ratings: ["hgt", "jmp", "diq"],
-        weights: [2.5, 1.5, 0.5],
-    },
-    fouling: {
-        ratings: [50, "hgt", "diq", "spd"],
-        weights: [3, 1, -1, -1],
-    },
-    drawingFouls: {
-        ratings: ["hgt", "spd", "drb", "dnk", "oiq"],
-        weights: [1, 1, 1, 1, 1],
-    },
-    defense: {
-        ratings: ["hgt", "stre", "spd", "jmp", "diq"],
-        weights: [1, 1, 1, 0.5, 2],
-    },
-    defenseInterior: {
-        ratings: ["hgt", "stre", "spd", "jmp", "diq"],
-        weights: [2.5, 1, 0.5, 0.5, 2],
+    passBlocking: {
+        ratings: ["hgt", "str", "spd", "pbk"],
+        weights: [0.5, 1, 0.2, 1],
         skill: {
-            label: "Di",
-            cutoff: 0.57,
+            label: "Bp",
         },
     },
-    defensePerimeter: {
-        ratings: ["hgt", "stre", "spd", "jmp", "diq"],
-        weights: [0.5, 0.5, 2, 0.5, 1],
+    runBlocking: {
+        ratings: ["hgt", "str", "spd", "rbk"],
+        weights: [0.5, 1, 0.4, 1],
         skill: {
-            label: "Dp",
-            cutoff: 0.61,
+            label: "Br",
         },
+    },
+    passRushing: {
+        ratings: ["hgt", "str", "spd", "prs"],
+        weights: [1, 1, 0.5, 1],
+        skill: {
+            label: "PR",
+        },
+    },
+    runStopping: {
+        ratings: ["hgt", "str", "spd", "rns"],
+        weights: [0.5, 1, 0.5, 1],
+        skill: {
+            label: "RS",
+        },
+    },
+    passCoverage: {
+        ratings: ["hgt", "spd", "pcv"],
+        weights: [0.1, 1, 1],
+        skill: {
+            label: "L",
+        },
+    },
+    snapping: {
+        ratings: ["snp"],
+    },
+    avoidingSacks: {
+        ratings: ["thv", "elu", "str"],
+        weights: [0.5, 1, 0.25],
+    },
+    ballSecurity: {
+        ratings: ["bls", "str"],
+        weights: [1, 0.2],
+    },
+    pace: {
+        ratings: ["spd", "endu"],
     },
     endurance: {
         ratings: [50, "endu"],
         weights: [1, 1],
-    },
-    athleticism: {
-        ratings: ["stre", "spd", "jmp", "hgt"],
-        weights: [1, 1, 1, 0.75],
-        skill: {
-            label: "A",
-            cutoff: 0.63,
-        },
     },
 };
 

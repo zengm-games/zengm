@@ -15,7 +15,19 @@ const tooltips =
               Ps: "Passer",
               R: "Rebounder",
           }
-        : {};
+        : {
+              Pa: "Accurate Passer",
+              Pd: "Deep Passer",
+              Ps: "Smart Passer",
+              A: "Athletic",
+              X: "Explosive Runner",
+              H: "Hands",
+              Bp: "Pass Blocker",
+              Br: "Run Blocker",
+              PR: "Pass Rusher",
+              RS: "Run Stopper",
+              L: "Lockdown Coverage",
+          };
 
 const SkillsBlock = ({
     className,

@@ -7,12 +7,7 @@ basketball - report that AI teams consider any of your draft picks the 1st pick 
 highlighting of finals mvp https://www.reddit.com/r/BasketballGM/comments/a3kxkq/by_the_finals_mvp_ralph_sampson_is_on_my_team_but/
 
 depth chart
-- how to store position info? not in rosterOrder, come up with new thing, maybe in team object
-  - t.depth.QB = [array of pids]
-  - write function to sort all players on team by this "array of pids", filtering out invalid pids and putting new players at the end
-- show position-specific ovr/pot, highlight in red if out of position
 - links here from More, dropdowns, etc
-- auto sort buttons
 
 football code!
 - KR/PR positions - special, not dedicated positions

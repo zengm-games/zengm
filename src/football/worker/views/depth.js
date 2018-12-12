@@ -44,6 +44,7 @@ async function updateDepth(
             ratings: ["skills", "pos", "ovr", "pot", "ovrs", "pots"],
             stats: stats[pos],
             season: g.season,
+            fuzz: true,
         });
 
         // Sort players based on current depth chart
@@ -56,7 +57,6 @@ async function updateDepth(
             .concat(players.map(p => (depth.includes(p.pid) ? undefined : p)))
             .filter(p => p !== undefined);
 
-        console.log(t, depth);
         return {
             abbrev: g.teamAbbrevsCache[g.userTid],
             pos,

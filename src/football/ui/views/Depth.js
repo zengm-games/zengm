@@ -20,12 +20,12 @@ import {
 import clickable from "../../../deion/ui/wrappers/clickable";
 import { POSITIONS } from "../../common";
 
-const handleAutoSort = async () => {
-    await toWorker("autoSortDepth");
+const handleAutoSort = async pos => {
+    await toWorker("autoSortRoster", pos);
 };
 
 const handleAutoSortAll = async () => {
-    await toWorker("autoSortDepthAll");
+    await toWorker("autoSortRoster");
 };
 
 const ReorderHandle = SortableHandle(({ i, isSorting, numStarters }) => {
@@ -284,7 +284,7 @@ class Depth extends React.Component {
                 <div className="btn-group mb-3">
                     <button
                         className="btn btn-light-bordered"
-                        onClick={handleAutoSort}
+                        onClick={() => handleAutoSort(pos)}
                     >
                         Auto sort {pos}
                     </button>
@@ -307,10 +307,10 @@ class Depth extends React.Component {
                                 <th title="Position">Pos</th>
                                 <th>Age</th>
                                 <th title={`Overall Rating (${pos})`}>
-                                    {pos}ovr
+                                    Ovr{pos}
                                 </th>
                                 <th title={`Potential Rating (${pos})`}>
-                                    {pos}pot
+                                    Pot{pos}
                                 </th>
                                 {statCols.map(({ desc, title }) => (
                                     <th key={title} title={desc}>

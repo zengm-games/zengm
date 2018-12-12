@@ -43,6 +43,8 @@ const skills = (playerRatings: MinimalPlayerRatings): string[] => {
         }
     }
 
+    sk.sort();
+
     return sk;
 };
 

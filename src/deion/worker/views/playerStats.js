@@ -167,7 +167,6 @@ async function updatePlayers(
                 p => p.watch && typeof p.watch !== "function",
             );
         }
-        console.log(1, players);
         players = await idb.getCopies.playersPlus(players, {
             attrs: [
                 "pid",
@@ -188,7 +187,6 @@ async function updatePlayers(
             playoffs: inputs.playoffs === "playoffs",
             regularSeason: inputs.playoffs !== "playoffs",
         });
-        console.log(2, players);
 
         // Find max gp to use for filtering
         let gp = 0;

@@ -4,16 +4,13 @@ basketball - report that AI teams consider any of your draft picks the 1st pick 
 
 highlighting of finals mvp https://www.reddit.com/r/BasketballGM/comments/a3kxkq/by_the_finals_mvp_ralph_sampson_is_on_my_team_but/
 
-why are player stats not being saved?
-
 game sim
 - record starters before sim,
   -                         this.recordStat(t, p, "gs");
   - need to do this for off and def, and need to do it after factoring in injuries
 - can't assume t.depth is accurate, make sure to prune + augment before use
-  - have function which does this, call in loadTeams
+  - have function which does this, call in loadTeams, also use in depth (logic probably already there)
 - don't let one player play two positions at once
-
 
 depth chart
 - links here from More, dropdowns, etc

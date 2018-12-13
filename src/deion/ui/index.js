@@ -1,13 +1,10 @@
-// @flow
-
 /* eslint-disable import/first */
 import "../common/polyfills";
 import router from "bbgm-router";
-import createBugsnagErrorBoundary from "bugsnag-react";
 import * as React from "react";
 import ReactDOM from "react-dom";
 import api from "./api";
-import { Controller } from "./components";
+import { Controller, ErrorBoundary } from "./components";
 import {
     ads,
     compareVersions,
@@ -175,28 +172,12 @@ const render = () => {
         throw new Error('Could not find element with id "content"');
     }
 
-    if (window.bugsnagClient) {
-        const ErrorBoundary = window.bugsnagClient.use(
-            createBugsnagErrorBoundary(React),
-        );
-        const FallbackComponent = ({ error, info }) => {
-            console.log(error, info);
-            return (
-                <>
-                    <h1>Error</h1>
-                    <p>{error.message}</p>
-                </>
-            );
-        };
-        ReactDOM.render(
-            <ErrorBoundary FallbackComponent={FallbackComponent}>
-                <Controller />
-            </ErrorBoundary>,
-            contentEl,
-        );
-    } else {
-        ReactDOM.render(<Controller />, contentEl);
-    }
+    ReactDOM.render(
+        <ErrorBoundary>
+            <Controller />
+        </ErrorBoundary>,
+        contentEl,
+    );
 };
 
 const setupRoutes = () => {

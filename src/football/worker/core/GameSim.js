@@ -19,7 +19,8 @@ type PlayType =
     | "penalty"
     | "twoMinuteWarning"
     | "overtime"
-    | "quarter";
+    | "quarter"
+    | "touchdown";
 type ShotType = "atRim" | "ft" | "lowPost" | "midRange" | "threePointer";
 type Stat =
     | "ast"
@@ -207,30 +208,30 @@ class GameSim {
 
     playersOnField: [
         [
-            number,
-            number,
-            number,
-            number,
-            number,
-            number,
-            number,
-            number,
-            number,
-            number,
-            number,
+            PlayerGameSim,
+            PlayerGameSim,
+            PlayerGameSim,
+            PlayerGameSim,
+            PlayerGameSim,
+            PlayerGameSim,
+            PlayerGameSim,
+            PlayerGameSim,
+            PlayerGameSim,
+            PlayerGameSim,
+            PlayerGameSim,
         ],
         [
-            number,
-            number,
-            number,
-            number,
-            number,
-            number,
-            number,
-            number,
-            number,
-            number,
-            number,
+            PlayerGameSim,
+            PlayerGameSim,
+            PlayerGameSim,
+            PlayerGameSim,
+            PlayerGameSim,
+            PlayerGameSim,
+            PlayerGameSim,
+            PlayerGameSim,
+            PlayerGameSim,
+            PlayerGameSim,
+            PlayerGameSim,
         ],
     ];
 
@@ -295,10 +296,8 @@ class GameSim {
         );
         this.dt = 48 / (2 * numPossessions); // Time elapsed per possession
 
-        // Starting lineups, which will be reset by updatePlayersOnCourt. This must be done because of injured players in the top 5.
         this.playersOnField = [];
-        this.startersRecorded = false; // Used to track whether the *real* starters have been recorded or not.
-        this.updatePlayersOnField();
+        this.startersRecorded = false; // Used to track whether the *real* starters (after injury) have been recorded or not.
 
         this.subsEveryN = 6; // How many possessions to wait before doing substitutions
 
@@ -370,6 +369,7 @@ class GameSim {
         // Simulate the game up to the end of regulation
         this.simRegulation();
 
+        console.log(this.team);
         // Play overtime periods if necessary
         while (this.team[0].stat.pts === this.team[1].stat.pts) {
             this.checkGameTyingShot();
@@ -456,10 +456,10 @@ class GameSim {
         this.awaitingKickoff = false;
 
         const kicker = this.team[this.o].player.find(
-            p => p.pid === this.team[this.o].depth.K[0],
+            p => p.id === this.team[this.o].depth.K[0],
         );
         const kickReturner = this.team[this.d].player.find(
-            p => p.pid === this.team[this.d].depth.KR[0],
+            p => p.id === this.team[this.d].depth.KR[0],
         );
 
         const touchback = Math.random() > 0.5;
@@ -523,178 +523,15 @@ class GameSim {
             this.t = 0;
         }
 
-        const outcome = this.down === 4 ? this.fourthDown() : this.runPlay();
-
-        // Swap o and d so that o will get another possession when they are swapped again at the beginning of the loop.
-        if (outcome === "interception" || outcome === "fumbleRecoverDefense") {
-            this.o = this.o === 1 ? 0 : 1;
-            this.d = this.o === 1 ? 0 : 1;
-            this.down = 1;
-            this.toGo = 10;
+        if (this.down === Infinity) {
+            this.fourthDown();
+        } else {
+            this.runPlay();
         }
 
         this.updatePlayingTime(playTime);
 
         this.injuries();
-
-        if (random.randInt(1, this.subsEveryN) === 1) {
-            this.updatePlayersOnCourt();
-        }
-    }
-
-    /**
-     * Perform appropriate substitutions.
-     *
-     * Can this be sped up?
-     *
-     * @return {boolean} true if a substitution occurred, false otherwise.
-     */
-    updatePlayersOnCourt() {
-        let substitutions = false;
-
-        for (let t = 0; t < 2; t++) {
-            // Overall values scaled by fatigue
-            const ovrs = [];
-            for (let p = 0; p < this.team[t].player.length; p++) {
-                // Injured or fouled out players can't play
-                if (
-                    this.team[t].player[p].injured ||
-                    this.team[t].player[p].stat.pf >= 6
-                ) {
-                    ovrs[p] = -Infinity;
-                } else {
-                    ovrs[p] =
-                        this.team[t].player[p].valueNoPot *
-                        fatigue(this.team[t].player[p].stat.energy) *
-                        this.team[t].player[p].ptModifier *
-                        random.uniform(0.9, 1.1);
-                }
-            }
-
-            // Loop through players on court (in inverse order of current roster position)
-            let i = 0;
-            for (let pp = 0; pp < this.playersOnCourt[t].length; pp++) {
-                const p = this.playersOnCourt[t][pp];
-                this.playersOnCourt[t][i] = p;
-                // Loop through bench players (in order of current roster position) to see if any should be subbed in)
-                for (let b = 0; b < this.team[t].player.length; b++) {
-                    if (
-                        !this.playersOnCourt[t].includes(b) &&
-                        ((this.team[t].player[p].stat.courtTime > 3 &&
-                            this.team[t].player[b].stat.benchTime > 3 &&
-                            ovrs[b] > ovrs[p]) ||
-                            ((this.team[t].player[p].injured ||
-                                this.team[t].player[p].stat.pf >= 6) &&
-                                (!this.team[t].player[b].injured &&
-                                    this.team[t].player[b].stat.pf < 6)))
-                    ) {
-                        // Check if position of substitute makes for a valid lineup
-                        const pos = [];
-                        for (
-                            let j = 0;
-                            j < this.playersOnCourt[t].length;
-                            j++
-                        ) {
-                            if (j !== pp) {
-                                pos.push(
-                                    this.team[t].player[
-                                        this.playersOnCourt[t][j]
-                                    ].pos,
-                                );
-                            }
-                        }
-                        pos.push(this.team[t].player[b].pos);
-                        // Requre 2 Gs (or 1 PG) and 2 Fs (or 1 C)
-                        let numG = 0;
-                        let numPG = 0;
-                        let numF = 0;
-                        let numC = 0;
-                        for (let j = 0; j < pos.length; j++) {
-                            if (pos[j].includes("G")) {
-                                numG += 1;
-                            }
-                            if (pos[j] === "PG") {
-                                numPG += 1;
-                            }
-                            if (pos[j].includes("F")) {
-                                numF += 1;
-                            }
-                            if (pos[j] === "C") {
-                                numC += 1;
-                            }
-                        }
-                        if (
-                            (numG < 2 && numPG === 0) ||
-                            (numF < 2 && numC === 0)
-                        ) {
-                            if (
-                                fatigue(this.team[t].player[p].stat.energy) >
-                                0.7
-                            ) {
-                                // Exception for ridiculously tired players, so really unbalanced teams won't play starters whole game
-                                continue;
-                            }
-                        }
-
-                        substitutions = true;
-
-                        // Substitute player
-                        this.playersOnCourt[t][i] = b;
-
-                        this.team[t].player[b].stat.courtTime = random.uniform(
-                            -2,
-                            2,
-                        );
-                        this.team[t].player[b].stat.benchTime = random.uniform(
-                            -2,
-                            2,
-                        );
-                        this.team[t].player[p].stat.courtTime = random.uniform(
-                            -2,
-                            2,
-                        );
-                        this.team[t].player[p].stat.benchTime = random.uniform(
-                            -2,
-                            2,
-                        );
-
-                        // Keep track of deviations from the normal starting lineup for the play-by-play
-                        if (this.playByPlay !== undefined) {
-                            this.playByPlay.push({
-                                type: "sub",
-                                t,
-                                on: this.team[t].player[b].id,
-                                off: this.team[t].player[p].id,
-                            });
-                        }
-
-                        // It's only a "substitution" if it's not the starting lineup
-                        if (this.startersRecorded) {
-                            this.recordPlay("sub", t, [
-                                this.team[t].player[b].name,
-                                this.team[t].player[p].name,
-                            ]);
-                        }
-                        break;
-                    }
-                }
-                i += 1;
-            }
-        }
-
-        // Record starters if that hasn't been done yet. This should run the first time this function is called, and never again.
-        if (!this.startersRecorded) {
-            for (let t = 0; t < 2; t++) {
-                for (let p = 0; p < this.team[t].player.length; p++) {
-                    if (this.playersOnCourt[t].includes(p)) {
-                        this.recordStat(t, p, "gs");
-                    }
-                }
-            }
-            this.startersRecorded = true;
-        }
-
-        return substitutions;
     }
 
     /**
@@ -703,7 +540,7 @@ class GameSim {
      * This should be called once every possession, after this.updatePlayersOnCourt as they influence output, to update the team composite ratings based on the players currently on the court.
      */
     updateTeamCompositeRatings() {
-        // Only update ones that are actually used
+        /*// Only update ones that are actually used
         const toUpdate = [
             "dribbling",
             "passing",
@@ -728,7 +565,7 @@ class GameSim {
                 this.team[t].compositeRating[rating] =
                     this.team[t].compositeRating[rating] / 5;
             }
-        }
+        }*/
     }
 
     /**
@@ -737,7 +574,7 @@ class GameSim {
      * This should be called once every possession, at the end, to record playing time and bench time for players.
      */
     updatePlayingTime(possessionTime: number) {
-        for (let t = 0; t < 2; t++) {
+        /*for (let t = 0; t < 2; t++) {
             // Update minutes (overall, court, and bench)
             for (let p = 0; p < this.team[t].player.length; p++) {
                 if (this.playersOnCourt[t].includes(p)) {
@@ -765,7 +602,7 @@ class GameSim {
                     }
                 }
             }
-        }
+        }*/
     }
 
     /**
@@ -778,7 +615,7 @@ class GameSim {
             return;
         }
 
-        let newInjury = false;
+        /*let newInjury = false;
 
         for (let t = 0; t < 2; t++) {
             for (let p = 0; p < this.team[t].player.length; p++) {
@@ -798,7 +635,7 @@ class GameSim {
         // Sub out injured player
         if (newInjury) {
             this.updatePlayersOnCourt();
-        }
+        }*/
     }
 
     /**
@@ -807,358 +644,99 @@ class GameSim {
      * @return {string} Outcome of the possession, such as "tov", "drb", "orb", "fg", etc.
      */
     runPlay() {
-        // Turnover?
-        if (this.probTov() > Math.random()) {
-            return this.doTov(); // tov
-        }
+        const formation = random.choice(formations);
+        const sides = ["off", "def"];
+        for (let i = 0; i < 2; i++) {
+            const t = i === 0 ? this.o : this.d;
+            const side = sides[i];
 
-        // Shot if there is no turnover
-        const ratios = this.ratingArray("usage", this.o);
-        const shooter = pickPlayer(ratios);
-
-        return this.doShot(shooter); // fg, orb, or drb
-    }
-
-    /**
-     * Probability of the current possession ending in a turnover.
-     *
-     * @return {number} Probability from 0 to 1.
-     */
-    probTov() {
-        return (
-            (0.14 * this.team[this.d].compositeRating.defense) /
-            (0.5 *
-                (this.team[this.o].compositeRating.dribbling +
-                    this.team[this.o].compositeRating.passing))
-        );
-    }
-
-    /**
-     * Turnover.
-     *
-     * @return {string} Either "tov" or "stl" depending on whether the turnover was caused by a steal or not.
-     */
-    doTov() {
-        const ratios = this.ratingArray("turnovers", this.o, 2);
-        const p = this.playersOnCourt[this.o][pickPlayer(ratios)];
-        this.recordStat(this.o, p, "tov");
-        if (this.probStl() > Math.random()) {
-            return this.doStl(p); // "stl"
-        }
-
-        this.recordPlay("tov", this.o, [this.team[this.o].player[p].name]);
-
-        return "tov";
-    }
-
-    /**
-     * Probability that a turnover occurring in this possession is a steal.
-     *
-     * @return {number} Probability from 0 to 1.
-     */
-    probStl() {
-        return (
-            (0.55 * this.team[this.d].compositeRating.defensePerimeter) /
-            (0.5 *
-                (this.team[this.o].compositeRating.dribbling +
-                    this.team[this.o].compositeRating.passing))
-        );
-    }
-
-    /**
-     * Steal.
-     *
-     * @return {string} Currently always returns "stl".
-     */
-    doStl(pStoleFrom: number) {
-        const ratios = this.ratingArray("stealing", this.d, 5);
-        const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
-        this.recordStat(this.d, p, "stl");
-        this.recordPlay("stl", this.d, [
-            this.team[this.d].player[p].name,
-            this.team[this.o].player[pStoleFrom].name,
-        ]);
-
-        return "stl";
-    }
-
-    /**
-     * Shot.
-     *
-     * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
-     * @return {string} Either "fg" or output of this.doReb, depending on make or miss and free throws.
-     */
-    doShot(shooter: PlayerNumOnCourt) {
-        const p = this.playersOnCourt[this.o][shooter];
-
-        const currentFatigue = fatigue(this.team[this.o].player[p].stat.energy);
-
-        // Is this an "assisted" attempt (i.e. an assist will be recorded if it's made)
-        let passer;
-        if (this.probAst() > Math.random()) {
-            const ratios = this.ratingArray("passing", this.o, 10);
-            passer = pickPlayer(ratios, shooter);
-        }
-
-        // Too many players shooting 3s at the high end - scale 0.55-1.0 to 0.55-0.85
-        let shootingThreePointerScaled = this.team[this.o].player[p]
-            .compositeRating.shootingThreePointer;
-        if (shootingThreePointerScaled > 0.55) {
-            shootingThreePointerScaled =
-                0.55 + (shootingThreePointerScaled - 0.55) * (0.3 / 0.45);
-        }
-
-        // Pick the type of shot and store the success rate (with no defense) in probMake and the probability of an and one in probAndOne
-        let probAndOne;
-        let probMake;
-        let probMissAndFoul;
-        let type;
-        if (
-            this.team[this.o].player[p].compositeRating.shootingThreePointer >
-                0.35 &&
-            Math.random() < 0.67 * shootingThreePointerScaled
-        ) {
-            // Three pointer
-            type = "threePointer";
-            probMissAndFoul = 0.02;
-            probMake = shootingThreePointerScaled * 0.3 + 0.36;
-            probAndOne = 0.01;
-        } else {
-            const r1 =
-                0.8 *
-                Math.random() *
-                this.team[this.o].player[p].compositeRating.shootingMidRange;
-            const r2 =
-                Math.random() *
-                this.team[this.o].player[p].compositeRating.shootingAtRim;
-            const r3 =
-                Math.random() *
-                this.team[this.o].player[p].compositeRating.shootingLowPost;
-            if (r1 > r2 && r1 > r3) {
-                // Two point jumper
-                type = "midRange";
-                probMissAndFoul = 0.07;
-                probMake =
-                    this.team[this.o].player[p].compositeRating
-                        .shootingMidRange *
-                        0.32 +
-                    0.32;
-                probAndOne = 0.05;
-            } else if (r2 > r3) {
-                // Dunk, fast break or half court
-                type = "atRim";
-                probMissAndFoul = 0.37;
-                probMake =
-                    this.team[this.o].player[p].compositeRating.shootingAtRim *
-                        0.32 +
-                    0.52;
-                probAndOne = 0.25;
-            } else {
-                // Post up
-                type = "lowPost";
-                probMissAndFoul = 0.33;
-                probMake =
-                    this.team[this.o].player[p].compositeRating
-                        .shootingLowPost *
-                        0.32 +
-                    0.37;
-                probAndOne = 0.15;
+            this.playersOnField[t] = {};
+            for (const pos of Object.keys(formation[side])) {
+                const numPlayers = formation[side][pos];
+                this.playersOnField[t][pos] = this.team[t].depth[pos]
+                    .slice(0, numPlayers)
+                    .map(pid => {
+                        return this.team[t].player.find(p => p.id === pid);
+                    });
             }
         }
 
-        const foulFactor =
-            0.8 *
-            (this.team[this.o].player[p].compositeRating.drawingFouls / 0.5) **
-                2;
-        probMissAndFoul *= foulFactor;
-        probAndOne *= foulFactor;
-
-        probMake =
-            (probMake - 0.25 * this.team[this.d].compositeRating.defense) *
-            currentFatigue;
-
-        // Assisted shots are easier
-        if (passer !== undefined) {
-            probMake += 0.025;
-        }
-
-        if (this.probBlk() > Math.random()) {
-            return this.doBlk(shooter, type); // orb or drb
-        }
-
-        // Make
-        if (probMake > Math.random()) {
-            // And 1
-            if (probAndOne > Math.random()) {
-                return this.doFg(shooter, passer, type, true); // fg, orb, or drb
-            }
-            return this.doFg(shooter, passer, type); // fg
-        }
-
-        // Miss, but fouled
-        if (probMissAndFoul > Math.random()) {
-            if (type === "threePointer") {
-                return this.doFt(shooter, 3); // fg, orb, or drb
-            }
-            return this.doFt(shooter, 2); // fg, orb, or drb
-        }
-
-        // Miss
-        this.recordStat(this.o, p, "fga");
-        if (type === "atRim") {
-            this.recordStat(this.o, p, "fgaAtRim");
-            this.recordPlay("missAtRim", this.o, [
-                this.team[this.o].player[p].name,
-            ]);
-        } else if (type === "lowPost") {
-            this.recordStat(this.o, p, "fgaLowPost");
-            this.recordPlay("missLowPost", this.o, [
-                this.team[this.o].player[p].name,
-            ]);
-        } else if (type === "midRange") {
-            this.recordStat(this.o, p, "fgaMidRange");
-            this.recordPlay("missMidRange", this.o, [
-                this.team[this.o].player[p].name,
-            ]);
-        } else if (type === "threePointer") {
-            this.recordStat(this.o, p, "tpa");
-            this.recordPlay("missTp", this.o, [
-                this.team[this.o].player[p].name,
-            ]);
-        }
-        return this.doReb(); // orb or drb
+        this.doRun();
     }
 
-    /**
-     * Probability that a shot taken this possession is blocked.
-     *
-     * @return {number} Probability from 0 to 1.
-     */
-    probBlk() {
-        return 0.2 * this.team[this.d].compositeRating.blocking ** 2;
+    advanceYds(yds: number) {
+        // Touchdown?
+        const ydsTD = 100 - this.scrimmage;
+        if (yds >= ydsTD) {
+            this.awaitingKickoff = true;
+            return {
+                safety: false,
+                td: true,
+                yds: ydsTD,
+            };
+        }
+
+        this.scrimmage += yds;
+
+        // First down?
+        if (yds >= this.toGo) {
+            this.down = 1;
+            const maxToGo = 100 - this.scrimmage;
+            this.toGo = maxToGo < 10 ? maxToGo : 10;
+
+            return {
+                safety: false,
+                td: false,
+                yds,
+            };
+        }
+
+        // Turnover on downs?
+        if (this.down === 4) {
+            this.o = this.o === 0 ? 1 : 0;
+            this.d = this.d === 0 ? 1 : 0;
+            this.scrimmage = 100 - this.scrimmage;
+            this.down = 1;
+            const maxToGo = 100 - this.scrimmage;
+            this.toGo = maxToGo < 10 ? maxToGo : 10;
+
+            return {
+                safety: false,
+                td: false,
+                yds,
+            };
+        }
+
+        this.down += 1;
+        this.toGo -= yds;
+
+        return {
+            safety: false,
+            td: false,
+            yds,
+        };
     }
 
-    /**
-     * Blocked shot.
-     *
-     * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
-     * @return {string} Output of this.doReb.
-     */
-    doBlk(shooter: PlayerNumOnCourt, type: ShotType) {
-        const p = this.playersOnCourt[this.o][shooter];
-        this.recordStat(this.o, p, "ba");
-        this.recordStat(this.o, p, "fga");
-        if (type === "atRim") {
-            this.recordStat(this.o, p, "fgaAtRim");
-        } else if (type === "lowPost") {
-            this.recordStat(this.o, p, "fgaLowPost");
-        } else if (type === "midRange") {
-            this.recordStat(this.o, p, "fgaMidRange");
-        } else if (type === "threePointer") {
-            this.recordStat(this.o, p, "tpa");
+    doRun() {
+        const p =
+            this.playersOnField[this.o].RB.length > 0
+                ? this.playersOnField[this.o].RB[0]
+                : this.playersOnField[this.o].QB[0];
+        this.recordStat(this.o, p, "rus");
+        const ydsRaw = random.randInt(-5, 10);
+        const { td, yds } = this.advanceYds(ydsRaw);
+
+        this.recordStat(this.o, p, "rusYds", yds);
+        if (td) {
+            this.recordStat(this.o, p, "rusTD");
         }
 
-        const ratios = this.ratingArray("blocking", this.d, 10);
-        const p2 = this.playersOnCourt[this.d][pickPlayer(ratios)];
-        this.recordStat(this.d, p2, "blk");
-
-        if (type === "atRim") {
-            this.recordPlay("blkAtRim", this.d, [
-                this.team[this.d].player[p2].name,
-                this.team[this.o].player[p].name,
-            ]);
-        } else if (type === "lowPost") {
-            this.recordPlay("blkLowPost", this.d, [
-                this.team[this.d].player[p2].name,
-                this.team[this.o].player[p].name,
-            ]);
-        } else if (type === "midRange") {
-            this.recordPlay("blkMidRange", this.d, [
-                this.team[this.d].player[p2].name,
-                this.team[this.o].player[p].name,
-            ]);
-        } else if (type === "threePointer") {
-            this.recordPlay("blkTp", this.d, [
-                this.team[this.d].player[p2].name,
-                this.team[this.o].player[p].name,
-            ]);
-        }
-
-        return this.doReb(); // orb or drb
-    }
-
-    /**
-     * Field goal.
-     *
-     * Simulate a successful made field goal.
-     *
-     * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
-     * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the passing player, who will get an assist. -1 if no assist.
-     * @param {number} type 2 for a two pointer, 3 for a three pointer.
-     * @return {string} fg, orb, or drb (latter two are for and ones)
-     */
-    doFg(
-        shooter: PlayerNumOnCourt,
-        passer?: PlayerNumOnCourt,
-        type: ShotType,
-        andOne?: boolean = false,
-    ) {
-        const p = this.playersOnCourt[this.o][shooter];
-        this.recordStat(this.o, p, "fga");
-        this.recordStat(this.o, p, "fg");
-        this.recordStat(this.o, p, "pts", 2); // 2 points for 2's
-        if (type === "atRim") {
-            this.recordStat(this.o, p, "fgaAtRim");
-            this.recordStat(this.o, p, "fgAtRim");
-            this.recordPlay(andOne ? "fgAtRimAndOne" : "fgAtRim", this.o, [
-                this.team[this.o].player[p].name,
-            ]);
-        } else if (type === "lowPost") {
-            this.recordStat(this.o, p, "fgaLowPost");
-            this.recordStat(this.o, p, "fgLowPost");
-            this.recordPlay(andOne ? "fgLowPostAndOne" : "fgLowPost", this.o, [
-                this.team[this.o].player[p].name,
-            ]);
-        } else if (type === "midRange") {
-            this.recordStat(this.o, p, "fgaMidRange");
-            this.recordStat(this.o, p, "fgMidRange");
-            this.recordPlay(
-                andOne ? "fgMidRangeAndOne" : "fgMidRange",
-                this.o,
-                [this.team[this.o].player[p].name],
-            );
-        } else if (type === "threePointer") {
-            this.recordStat(this.o, p, "pts"); // Extra point for 3's
-            this.recordStat(this.o, p, "tpa");
-            this.recordStat(this.o, p, "tp");
-            this.recordPlay(andOne ? "tpAndOne" : "tp", this.o, [
-                this.team[this.o].player[p].name,
-            ]);
-        }
-        this.recordLastScore(this.o, p, type, this.t);
-
-        if (passer !== undefined) {
-            const p2 = this.playersOnCourt[this.o][passer];
-            this.recordStat(this.o, p2, "ast");
-            this.recordPlay("ast", this.o, [this.team[this.o].player[p2].name]);
-        }
-
-        if (andOne) {
-            return this.doFt(shooter, 1); // fg, orb, or drb
-        }
-        return "fg";
-    }
-
-    /**
-     * Probability that a shot taken this possession is assisted.
-     *
-     * @return {number} Probability from 0 to 1.
-     */
-    probAst() {
-        return (
-            (0.6 * (2 + this.team[this.o].compositeRating.passing)) /
-            (2 + this.team[this.d].compositeRating.defense)
-        );
+        this.recordPlay("run", {
+            t: this.o,
+            names: [p.name],
+            td,
+            yds,
+        });
     }
 
     checkGameTyingShot() {
@@ -1346,16 +924,17 @@ class GameSim {
         if (this.team[0].stat.ptsQtrs.length < 4) {
             return;
         }
-        // ...in the last 24 seconds...
-        if (time > 0.4) {
+        // ...in the last 2 minutes...
+        if (time > 120) {
             return;
         }
-        // ...when the lead is 3 or less
-        if (Math.abs(this.team[0].stat.pts - this.team[1].stat.pts) > 4) {
+        // ...when the lead is 8 or less
+        if (Math.abs(this.team[0].stat.pts - this.team[1].stat.pts) > 8) {
             return;
         }
 
-        const currPlay = {
+        console.log("Should log clutch score");
+        /*const currPlay = {
             team: teamnum,
             player: playernum,
             type,
@@ -1370,111 +949,7 @@ class GameSim {
                 this.lastScoringPlay = [];
             }
             this.lastScoringPlay.push(currPlay);
-        }
-    }
-
-    /**
-     * Free throw.
-     *
-     * Fatigue has no affect: https://doi.org/10.2478/v10078-010-0019-0
-     *
-     * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
-     * @param {number} amount Integer representing the number of free throws to shoot
-     * @return {string} "fg" if the last free throw is made; otherwise, this.doReb is called and its output is returned.
-     */
-    doFt(shooter: PlayerNumOnCourt, amount: number) {
-        this.doPf(this.d);
-        const p = this.playersOnCourt[this.o][shooter];
-
-        // 95% max, a 75 FT rating gets you 90%, and a 25 FT rating gets you 60%
-        const ftp = helpers.bound(
-            this.team[this.o].player[p].compositeRating.shootingFT * 0.6 + 0.45,
-            0,
-            0.95,
-        );
-
-        let outcome = null;
-        for (let i = 0; i < amount; i++) {
-            this.recordStat(this.o, p, "fta");
-            if (Math.random() < ftp) {
-                // Between 60% and 90%
-                this.recordStat(this.o, p, "ft");
-                this.recordStat(this.o, p, "pts");
-                this.recordPlay("ft", this.o, [
-                    this.team[this.o].player[p].name,
-                ]);
-                outcome = "fg";
-                this.recordLastScore(this.o, p, "ft", this.t);
-            } else {
-                this.recordPlay("missFt", this.o, [
-                    this.team[this.o].player[p].name,
-                ]);
-                outcome = null;
-            }
-        }
-
-        if (outcome !== "fg") {
-            outcome = this.doReb(); // orb or drb
-        }
-
-        return outcome;
-    }
-
-    /**
-     * Personal foul.
-     *
-     * @param {number} t Team (0 or 1, this.o or this.d).
-     */
-    doPf(t: TeamNum) {
-        const ratios = this.ratingArray("fouling", t, 2);
-        const p = this.playersOnCourt[t][pickPlayer(ratios)];
-        this.recordStat(this.d, p, "pf");
-        this.recordPlay("pf", this.d, [this.team[this.d].player[p].name]);
-        // Foul out
-        if (this.team[this.d].player[p].stat.pf >= 6) {
-            this.recordPlay("foulOut", this.d, [
-                this.team[this.d].player[p].name,
-            ]);
-            // Force substitutions now
-            this.updatePlayersOnCourt();
-        }
-    }
-
-    /**
-     * Rebound.
-     *
-     * Simulates a rebound opportunity (e.g. after a missed shot).
-     *
-
-     * @return {string} "drb" for a defensive rebound, "orb" for an offensive rebound, null for no rebound (like if the ball goes out of bounds).
-     */
-    doReb() {
-        let p;
-        let ratios;
-
-        if (Math.random() < 0.15) {
-            return null;
-        }
-
-        if (
-            (0.75 * (2 + this.team[this.d].compositeRating.rebounding)) /
-                (2 + this.team[this.o].compositeRating.rebounding) >
-            Math.random()
-        ) {
-            ratios = this.ratingArray("rebounding", this.d, 2);
-            p = this.playersOnCourt[this.d][pickPlayer(ratios)];
-            this.recordStat(this.d, p, "drb");
-            this.recordPlay("drb", this.d, [this.team[this.d].player[p].name]);
-
-            return "drb";
-        }
-
-        ratios = this.ratingArray("rebounding", this.o, 3);
-        p = this.playersOnCourt[this.o][pickPlayer(ratios)];
-        this.recordStat(this.o, p, "orb");
-        this.recordPlay("orb", this.o, [this.team[this.o].player[p].name]);
-
-        return "orb";
+        }*/
     }
 
     /**
@@ -1513,13 +988,13 @@ class GameSim {
     /**
      * Increments a stat (s) for a player (p) on a team (t) by amount (default is 1).
      *
-     * @param {number} t Team (0 or 1, this.or or this.d).
-     * @param {number} p Integer index of this.team[t].player for the player of interest.
+     * @param {number} t Team (0 or 1, this.o or this.d).
+     * @param {number} p Player object.
      * @param {string} s Key for the property of this.team[t].player[p].stat to increment.
      * @param {number} amt Amount to increment (default is 1).
      */
-    recordStat(t: TeamNum, p: number, s: Stat, amt?: number = 1) {
-        this.team[t].player[p].stat[s] += amt;
+    recordStat(t: TeamNum, p: PlayerGameSim, s: Stat, amt?: number = 1) {
+        p.stat[s] += amt;
         if (
             s !== "gs" &&
             s !== "courtTime" &&
@@ -1527,19 +1002,16 @@ class GameSim {
             s !== "energy"
         ) {
             this.team[t].stat[s] += amt;
-            // Record quarter-by-quarter scoring too
-            if (s === "pts") {
+
+            if (s.endsWith("TD") && s !== "pssTD") {
+                this.team[t].stat.pts += 6;
+
+                // Record quarter-by-quarter scoring too
                 this.team[t].stat.ptsQtrs[
                     this.team[t].stat.ptsQtrs.length - 1
                 ] += amt;
-                for (let i = 0; i < 2; i++) {
-                    for (let j = 0; j < 5; j++) {
-                        const k = this.playersOnCourt[i][j];
-                        this.team[i].player[k].stat.pm += i === t ? amt : -amt;
-                    }
-                }
             }
-            if (this.playByPlay !== undefined) {
+            /*if (this.playByPlay !== undefined) {
                 this.playByPlay.push({
                     type: "stat",
                     qtr: this.team[t].stat.ptsQtrs.length - 1,
@@ -1548,110 +1020,57 @@ class GameSim {
                     s,
                     amt,
                 });
-            }
+            }*/
         }
     }
 
-    recordPlay(type: PlayType, t?: TeamNum, names?: string[]) {
+    recordPlay(
+        type: PlayType,
+        {
+            names,
+            t,
+            td,
+            yds,
+        }: {
+            names?: string[],
+            t?: TeamNum,
+            td?: boolean,
+            yds?: number,
+        } = {},
+    ) {
         let texts;
         if (this.playByPlay !== undefined) {
             if (type === "injury") {
-                texts = ["{0} was injured!"];
-            } else if (type === "tov") {
-                texts = ["{0} turned the ball over"];
-            } else if (type === "stl") {
-                texts = ["{0} stole the ball from {1}"];
-            } else if (type === "fgAtRim") {
-                texts = ["{0} made a dunk/layup"];
-            } else if (type === "fgAtRimAndOne") {
-                texts = ["{0} made a dunk/layup and got fouled!"];
-            } else if (type === "fgLowPost") {
-                texts = ["{0} made a low post shot"];
-            } else if (type === "fgLowPostAndOne") {
-                texts = ["{0} made a low post shot and got fouled!"];
-            } else if (type === "fgMidRange") {
-                texts = ["{0} made a mid-range shot"];
-            } else if (type === "fgMidRangeAndOne") {
-                texts = ["{0} made a mid-range shot and got fouled!"];
-            } else if (type === "tp") {
-                texts = ["{0} made a three pointer shot"];
-            } else if (type === "tpAndOne") {
-                texts = ["{0} made a three pointer and got fouled!"];
-            } else if (type === "blkAtRim") {
-                texts = ["{0} blocked {1}'s dunk/layup"];
-            } else if (type === "blkLowPost") {
-                texts = ["{0} blocked {1}'s low post shot"];
-            } else if (type === "blkMidRange") {
-                texts = ["{0} blocked {1}'s mid-range shot"];
-            } else if (type === "blkTp") {
-                texts = ["{0} blocked {1}'s three pointer"];
-            } else if (type === "missAtRim") {
-                texts = ["{0} missed a dunk/layup"];
-            } else if (type === "missLowPost") {
-                texts = ["{0} missed a low post shot"];
-            } else if (type === "missMidRange") {
-                texts = ["{0} missed a mid-range shot"];
-            } else if (type === "missTp") {
-                texts = ["{0} missed a three pointer"];
-            } else if (type === "orb") {
-                texts = ["{0} grabbed the offensive rebound"];
-            } else if (type === "drb") {
-                texts = ["{0} grabbed the defensive rebound"];
-            } else if (type === "ast") {
-                texts = ["(assist: {0})"];
+                texts = [`${names[0]} was injured!`];
             } else if (type === "quarter") {
                 texts = [
                     `Start of ${helpers.ordinal(
                         this.team[0].stat.ptsQtrs.length,
                     )} quarter`,
                 ];
-            } else if (type === "overtime") {
+            } else if (type === "run") {
                 texts = [
-                    `Start of ${helpers.ordinal(
-                        this.team[0].stat.ptsQtrs.length - 4,
-                    )} overtime period`,
+                    `${names[0]} rushed for ${yds} yds${
+                        td ? " and a touchdown!" : ""
+                    }`,
                 ];
-            } else if (type === "ft") {
-                texts = ["{0} made a free throw"];
-            } else if (type === "missFt") {
-                texts = ["{0} missed a free throw"];
-            } else if (type === "pf") {
-                texts = ["Foul on {0}"];
-            } else if (type === "foulOut") {
-                texts = ["{0} fouled out"];
-            } else if (type === "sub") {
-                texts = ["Substitution: {0} for {1}"];
+            } else if (type === "overtime") {
+                texts = ["Start of overtime"];
             }
 
             if (texts) {
-                //text = random.choice(texts);
-                let text = texts[0];
-                if (names) {
-                    for (let i = 0; i < names.length; i++) {
-                        text = text.replace(`{${i}}`, names[i]);
-                    }
-                }
+                const text = texts[0];
 
-                if (type === "ast") {
-                    // Find most recent made shot, count assist for it
-                    for (let i = this.playByPlay.length - 1; i >= 0; i--) {
-                        if (this.playByPlay[i].type === "text") {
-                            this.playByPlay[i].text += ` ${text}`;
-                            break;
-                        }
-                    }
-                } else {
-                    let sec = Math.floor((this.t % 1) * 60);
-                    if (sec < 10) {
-                        sec = `0${sec}`;
-                    }
-                    this.playByPlay.push({
-                        type: "text",
-                        text,
-                        t,
-                        time: `${Math.floor(this.t)}:${sec}`,
-                    });
+                let sec = Math.floor((this.t % 1) * 60);
+                if (sec < 10) {
+                    sec = `0${sec}`;
                 }
+                this.playByPlay.push({
+                    type: "text",
+                    text,
+                    t,
+                    time: `${Math.floor(this.t)}:${sec}`,
+                });
             } else {
                 throw new Error(`No text for ${type}`);
             }

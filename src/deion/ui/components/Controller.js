@@ -11,6 +11,7 @@ import {
     setTitle,
     toWorker,
 } from "../util";
+import ErrorBoundary from "./ErrorBoundary";
 import Footer from "./Footer";
 import Header from "./Header";
 import MultiTeamMenu from "./MultiTeamMenu";
@@ -332,7 +333,11 @@ class Controller extends React.Component<{}, State> {
                     <Header />
                     <SideBar pageID={pageID} />
                     <div className="p402_premium" id="actual-content">
-                        <div id="actual-actual-content">{contents}</div>
+                        <div id="actual-actual-content">
+                            <ErrorBoundary key={pageID}>
+                                {contents}
+                            </ErrorBoundary>
+                        </div>
                         <Footer />
                     </div>
                     <NagModal

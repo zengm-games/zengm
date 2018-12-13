@@ -186,11 +186,6 @@ const sportSpecificCols: {
                   sortSequence: ["desc", "asc"],
                   sortType: "number",
               },
-              "stat:min": {
-                  desc: "Minutes Per Game",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
               "stat:mov": {
                   desc: "Margin of Victory",
                   sortSequence: ["desc", "asc"],
@@ -909,6 +904,11 @@ const cols: {
         sortSequence: ["desc", "asc"],
         sortType: "number",
     },
+    "stat:min": {
+        desc: "Minutes Per Game",
+        sortSequence: ["desc", "asc"],
+        sortType: "number",
+    },
     "count:allDefense": {
         desc: "All Defensive Team",
         sortSequence: ["desc", "asc"],
@@ -1023,7 +1023,6 @@ const sportSpecificTitleOverrides =
               "stat:fta": "FTA",
               "stat:ftr": "FTr",
               "stat:gmsc": "GmSc",
-              "stat:min": "MP",
               "stat:mov": "MOV",
               "stat:nrtg": "NRtg",
               "stat:orb": "ORB",
@@ -1134,6 +1133,7 @@ const titleOverrides = {
     "rating:stre": "Str",
     "stat:gp": "G",
     "stat:gs": "GS",
+    "stat:min": "MP",
     "count:allDefense": "ADT",
     "count:allLeague": "ALT",
     "count:allRookie": "ART",

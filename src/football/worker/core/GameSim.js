@@ -574,10 +574,18 @@ class GameSim {
      * This should be called once every possession, at the end, to record playing time and bench time for players.
      */
     updatePlayingTime(possessionTime: number) {
-        /*for (let t = 0; t < 2; t++) {
-            // Update minutes (overall, court, and bench)
-            for (let p = 0; p < this.team[t].player.length; p++) {
-                if (this.playersOnCourt[t].includes(p)) {
+        const onField = new Set();
+        for (let t = 0; t < 2; t++) {
+            // Get rid of this after making sure playersOnField is always set, even for special teams
+            if (this.playersOnField[t] === undefined) {
+                continue;
+            }
+
+            for (const pos of Object.keys(this.playersOnField[t])) {
+                // Update minutes (overall, court, and bench)
+                for (const p of this.playersOnField[t][pos]) {
+                    onField.add(p.id);
+
                     this.recordStat(t, p, "min", possessionTime);
                     this.recordStat(t, p, "courtTime", possessionTime);
                     // This used to be 0.04. Increase more to lower PT
@@ -587,22 +595,24 @@ class GameSim {
                         "energy",
                         -possessionTime *
                             0.06 *
-                            (1 -
-                                this.team[t].player[p].compositeRating
-                                    .endurance),
+                            (1 - p.compositeRating.endurance),
                     );
-                    if (this.team[t].player[p].stat.energy < 0) {
-                        this.team[t].player[p].stat.energy = 0;
-                    }
-                } else {
-                    this.recordStat(t, p, "benchTime", possessionTime);
-                    this.recordStat(t, p, "energy", possessionTime * 0.1);
-                    if (this.team[t].player[p].stat.energy > 1) {
-                        this.team[t].player[p].stat.energy = 1;
+                    if (p.stat.energy < 0) {
+                        p.stat.energy = 0;
                     }
                 }
             }
-        }*/
+
+            for (const p of this.team[t].player) {
+                if (!onField.has(p.id)) {
+                    this.recordStat(t, p, "benchTime", possessionTime);
+                    this.recordStat(t, p, "energy", possessionTime * 0.1);
+                    if (p.stat.energy > 1) {
+                        p.stat.energy = 1;
+                    }
+                }
+            }
+        }
     }
 
     /**

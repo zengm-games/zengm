@@ -14,6 +14,7 @@ const writePlayerStats = async (
         results.team.map(t =>
             Promise.all(
                 t.player.map(async p => {
+                    console.log("p", p, p.stat.min);
                     // Only need to write stats if player got minutes
                     if (p.stat.min === 0) {
                         return;
@@ -51,6 +52,7 @@ const writePlayerStats = async (
 
                     // Update stats
                     for (const key of Object.keys(p.stat)) {
+                        console.log(key, ps[key], p.stat[key]);
                         ps[key] += p.stat[key];
                     }
                     ps.gp += 1; // Already checked for non-zero minutes played above

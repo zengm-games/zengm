@@ -301,7 +301,7 @@ class GameSim {
 
         this.subsEveryN = 6; // How many possessions to wait before doing substitutions
 
-        this.overtimes = 0; // Number of overtime periods that have taken place
+        this.overtime = false;
 
         this.t = g.quarterLength; // Game clock, in minutes
 
@@ -370,13 +370,13 @@ class GameSim {
         this.simRegulation();
 
         console.log(this.team);
-        // Play overtime periods if necessary
+        /*// Play overtime periods if necessary
         while (this.team[0].stat.pts === this.team[1].stat.pts) {
             this.checkGameTyingShot();
             this.simOvertime();
         }
 
-        this.checkGameWinner();
+        this.checkGameWinner();*/
 
         // Delete stuff that isn't needed before returning
         for (let t = 0; t < 2; t++) {
@@ -1009,7 +1009,7 @@ class GameSim {
                 // Record quarter-by-quarter scoring too
                 this.team[t].stat.ptsQtrs[
                     this.team[t].stat.ptsQtrs.length - 1
-                ] += amt;
+                ] += 6;
             }
             /*if (this.playByPlay !== undefined) {
                 this.playByPlay.push({

@@ -60,6 +60,9 @@ const defaultGameAttributes: GameAttributes = {
     easyDifficultyInPast: false,
 
     hardCap: false,
+
+    // This enables ties in the UI and game data saving, but GameSim still needs to actually return ties
+    ties: false,
 };
 
 if (process.env.sport === "football") {
@@ -70,6 +73,7 @@ if (process.env.sport === "football") {
         numPlayoffByes: 4,
         stopOnInjuryGames: 1,
         hardCap: true,
+        ties: true,
     };
 
     Object.assign(defaultGameAttributes, footballOverrides);

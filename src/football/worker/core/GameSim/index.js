@@ -202,11 +202,6 @@ class GameSim {
 
     playByPlay: PlayByPlayLogger | void;
 
-    /**
-     * Initialize the two teams that are playing this game.
-     *
-     * When an instance of this class is created, information about the two teams is passed to GameSim. Then GameSim.run will actually simulate a game and return the results (i.e. stats) of the simulation. Also see core.game where the inputs to this function are generated.
-     */
     constructor(
         gid: number,
         team1: TeamGameSim,
@@ -242,12 +237,6 @@ class GameSim {
         this.clutchPlays = [];
     }
 
-    /**
-     * Home court advantage.
-     *
-     * Scales composite ratings, giving home players bonuses and away players penalties.
-     *
-     */
     homeCourtAdvantage() {
         for (let t = 0; t < 2; t++) {
             let factor;
@@ -267,33 +256,6 @@ class GameSim {
         }
     }
 
-    /**
-     * Simulates the game and returns the results.
-     *
-     * Also see core.game where the outputs of this function are used.
-     *
-     * @return {Array.<Object>} Game result object, an array of two objects similar to the inputs to GameSim, but with both the team and player "stat" objects filled in and the extraneous data (pace, valueNoPot, compositeRating) removed. In other words...
-     *     {
-     *         "gid": 0,
-     *         "overtimes": 0,
-     *         "team": [
-     *             {
-     *                 "id": 0,
-     *                 "stat": {},
-     *                 "player": [
-     *                     {
-     *                         "id": 0,
-     *                         "stat": {},
-     *                         "skills": [],
-     *                         "injured": false
-     *                     },
-     *                     ...
-     *                 ]
-     *             },
-     *         ...
-     *         ]
-     *     }
-     */
     run() {
         // Simulate the game up to the end of regulation
         this.simRegulation();
@@ -459,11 +421,6 @@ class GameSim {
         this.injuries();
     }
 
-    /**
-     * Update team composite ratings.
-     *
-     * This should be called once every possession, after this.updatePlayersOnCourt as they influence output, to update the team composite ratings based on the players currently on the court.
-     */
     updateTeamCompositeRatings() {
         /*// Only update ones that are actually used
         const toUpdate = [
@@ -493,11 +450,6 @@ class GameSim {
         }*/
     }
 
-    /**
-     * Update playing time stats.
-     *
-     * This should be called once every possession, at the end, to record playing time and bench time for players.
-     */
     updatePlayingTime(possessionTime: number) {
         const onField = new Set();
         for (let t = 0; t < 2; t++) {
@@ -540,11 +492,6 @@ class GameSim {
         }
     }
 
-    /**
-     * See if any injuries occurred this possession, and handle the consequences.
-     *
-     * This doesn't actually compute the type of injury, it just determines if a player is injured bad enough to miss the rest of the game.
-     */
     injuries() {
         if (g.disableInjuries) {
             return;
@@ -573,11 +520,6 @@ class GameSim {
         }*/
     }
 
-    /**
-     * Simulate a single possession.
-     *
-     * @return {string} Outcome of the possession, such as "tov", "drb", "orb", "fg", etc.
-     */
     runPlay() {
         const formation = random.choice(formations);
         const sides = ["off", "def"];
@@ -920,14 +862,6 @@ class GameSim {
         return array;
     }
 
-    /**
-     * Increments a stat (s) for a player (p) on a team (t) by amount (default is 1).
-     *
-     * @param {number} t Team (0 or 1, this.o or this.d).
-     * @param {number} p Player object.
-     * @param {string} s Key for the property of this.team[t].player[p].stat to increment.
-     * @param {number} amt Amount to increment (default is 1).
-     */
     recordStat(t: TeamNum, p: PlayerGameSim, s: Stat, amt?: number = 1) {
         p.stat[s] += amt;
         if (

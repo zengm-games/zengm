@@ -2,6 +2,7 @@
 
 import { g, helpers, random } from "../../../../deion/worker/util";
 import PlayByPlayLogger from "./PlayByPlayLogger";
+import formations from "./formations";
 import type {
     ShotType,
     Stat,
@@ -11,73 +12,6 @@ import type {
     PlayerGameSim,
     TeamGameSim,
 } from "./types";
-
-const formations = [
-    {
-        off: {
-            QB: 1,
-            RB: 1,
-            WR: 3,
-            TE: 1,
-            C: 1,
-            OL: 4,
-        },
-        def: {
-            DL: 4,
-            LB: 2,
-            CB: 3,
-            S: 2,
-        },
-    },
-    {
-        off: {
-            QB: 1,
-            RB: 2,
-            WR: 2,
-            TE: 1,
-            C: 1,
-            OL: 4,
-        },
-        def: {
-            DL: 3,
-            LB: 4,
-            CB: 2,
-            S: 2,
-        },
-    },
-    {
-        off: {
-            QB: 1,
-            RB: 2,
-            WR: 1,
-            TE: 2,
-            C: 1,
-            OL: 4,
-        },
-        def: {
-            DL: 4,
-            LB: 3,
-            CB: 2,
-            S: 2,
-        },
-    },
-    {
-        off: {
-            QB: 1,
-            RB: 0,
-            WR: 5,
-            TE: 0,
-            C: 1,
-            OL: 4,
-        },
-        def: {
-            DL: 4,
-            LB: 1,
-            CB: 4,
-            S: 2,
-        },
-    },
-];
 
 /**
  * Pick a player to do something.
@@ -178,15 +112,17 @@ class GameSim {
 
     playByPlay: PlayByPlayLogger | void;
 
+    awaitingExtraPoint: boolean;
+
+    awaitingKickoff: boolean;
+
     constructor(
         gid: number,
         team1: TeamGameSim,
         team2: TeamGameSim,
         doPlayByPlay: boolean,
     ) {
-        if (doPlayByPlay) {
-            this.playByPlay = new PlayByPlayLogger();
-        }
+        this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
 
         this.id = gid;
         this.team = [team1, team2]; // If a team plays twice in a day, this needs to be a deep copy
@@ -205,6 +141,7 @@ class GameSim {
 
         this.t = g.quarterLength; // Game clock, in minutes
 
+        this.awaitingExtraPoint = false;
         this.awaitingKickoff = true;
 
         this.homeCourtAdvantage();
@@ -261,12 +198,8 @@ class GameSim {
             overtimes: this.overtimes,
             team: this.team,
             clutchPlays: [],
-            playByPlay: undefined,
+            playByPlay: this.playByPlay.getAll(this.team),
         };
-
-        if (this.playByPlay !== undefined) {
-            out.playByPlay = this.playByPlay.getAll(this.team);
-        }
 
         return out;
     }
@@ -362,15 +295,24 @@ class GameSim {
         this.injuries();
     }
 
+    boundedYds(yds: number) {
+        const ydsTD = 100 - this.scrimmage;
+
+        if (yds > ydsTD) {
+            return ydsTD;
+        }
+
+        return yds;
+    }
+
     advanceYds(yds: number) {
         // Touchdown?
         const ydsTD = 100 - this.scrimmage;
         if (yds >= ydsTD) {
-            this.awaitingKickoff = true;
+            this.awaitingExtraPoint = true;
             return {
                 safety: false,
                 td: true,
-                yds: ydsTD,
             };
         }
 
@@ -385,7 +327,6 @@ class GameSim {
             return {
                 safety: false,
                 td: false,
-                yds,
             };
         }
 
@@ -401,7 +342,6 @@ class GameSim {
             return {
                 safety: false,
                 td: false,
-                yds,
             };
         }
 
@@ -411,48 +351,53 @@ class GameSim {
         return {
             safety: false,
             td: false,
-            yds,
         };
     }
 
     updatePlayersOnField(playType: string) {
+        let formation;
         if (playType === "run" || playType === "pass") {
-            const formation = random.choice(formations);
-            const sides = ["off", "def"];
-            for (let i = 0; i < 2; i++) {
-                const t = i === 0 ? this.o : this.d;
-                const side = sides[i];
-
-                this.playersOnField[t] = {};
-                for (const pos of Object.keys(formation[side])) {
-                    const numPlayers = formation[side][pos];
-                    this.playersOnField[t][pos] = this.team[t].depth[pos]
-                        .slice(0, numPlayers)
-                        .map(pid => {
-                            return this.team[t].player.find(p => p.id === pid);
-                        });
-                }
-            }
-        } /*else if (playType === "extraPoint" || playType === "fieldGoal") {
-
+            formation = random.choice(formations.normal);
+        } else if (playType === "extraPoint" || playType === "fieldGoal") {
+            formation = random.choice(formations.fieldGoal);
         } else if (playType === "punt") {
-
+            formation = random.choice(formations.punt);
         } else if (playType === "kickoff") {
-
-        } */ else {
+            formation = random.choice(formations.kickoff);
+        } else {
             throw new Error(`Unknown playType "${playType}"`);
+        }
+
+        const sides = ["off", "def"];
+        for (let i = 0; i < 2; i++) {
+            const t = i === 0 ? this.o : this.d;
+            const side = sides[i];
+
+            this.playersOnField[t] = {};
+            for (const pos of Object.keys(formation[side])) {
+                const numPlayers = formation[side][pos];
+                this.playersOnField[t][pos] = this.team[t].depth[pos]
+                    .slice(0, numPlayers)
+                    .map(pid => {
+                        return this.team[t].player.find(p => p.id === pid);
+                    });
+            }
         }
     }
 
-    doKickoff() {
-        this.awaitingKickoff = false;
+    possessionChange() {
+        this.o = this.o === 1 ? 0 : 1;
+        this.d = this.o === 1 ? 0 : 1;
 
-        const kicker = this.team[this.o].player.find(
-            p => p.id === this.team[this.o].depth.K[0],
-        );
-        const kickReturner = this.team[this.d].player.find(
-            p => p.id === this.team[this.d].depth.KR[0],
-        );
+        this.down = 1;
+        this.toGo = 10;
+    }
+
+    doKickoff() {
+        this.updatePlayersOnField("kickoff");
+
+        const kicker = this.playersOnField[this.o].K[0];
+        const kickReturner = this.playersOnField[this.d].KR[0];
 
         const touchback = Math.random() > 0.5;
         const kickTo = random.uniform(-9, 10);
@@ -476,7 +421,7 @@ class GameSim {
             const td = returnTo >= 100;
 
             if (td) {
-                this.awaitingKickoff = true;
+                this.awaitingExtraPoint = true;
             } else {
                 this.scrimmage = returnTo;
                 this.down = 1;
@@ -491,11 +436,156 @@ class GameSim {
             });
         }
 
-        // Possession change
-        this.o = this.o === 1 ? 0 : 1;
-        this.d = this.o === 1 ? 0 : 1;
+        this.possessionChange();
+        this.awaitingKickoff = false;
 
         return dt;
+    }
+
+    doPunt() {
+        this.updatePlayersOnField("punt");
+
+        const punter = this.playersOnField[this.o].P[0];
+        const puntReturner = this.playersOnField[this.d].PR[0];
+
+        const distance = random.uniform(40, 60);
+        const touchback = distance + this.scrimmage > 100;
+
+        this.playByPlay.logEvent("punt", {
+            t: this.o,
+            names: [punter.name],
+            touchback,
+            yds: distance,
+        });
+        if (touchback) {
+            this.scrimmage = 25;
+            this.down = 1;
+            this.toGo = 10;
+        } else {
+            const returnLength = random.uniform(0, 109);
+            const returnTo = 100 - this.scrimmage - distance + returnLength;
+            const td = returnTo >= 100;
+
+            if (td) {
+                this.awaitingExtraPoint = true;
+            } else {
+                this.scrimmage = returnTo;
+                this.down = 1;
+                this.toGo = 10;
+            }
+
+            this.playByPlay.logEvent("puntReturn", {
+                t: this.d,
+                names: [puntReturner.name],
+                td,
+                yds: returnLength,
+            });
+        }
+
+        this.possessionChange();
+        this.awaitingKickoff = false;
+
+        return 5;
+    }
+
+    doFieldGoal(extraPoint) {
+        this.updatePlayersOnField("fieldGoal");
+
+        const kicker = this.playersOnField[this.o].K[0];
+
+        const distance = 100 - this.scrimmage + 17;
+
+        const made = Math.random() < 0.8;
+
+        this.playByPlay.logEvent(extraPoint ? "extraPoint" : "fieldGoal", {
+            t: this.o,
+            made,
+            names: [kicker.name],
+            yds: distance,
+        });
+
+        let statAtt;
+        let statMade;
+        if (extraPoint) {
+            statAtt = "xpa";
+            statMade = "xp";
+        } else if (distance < 20) {
+            statAtt = "fga0";
+            statMade = "fg0";
+        } else if (distance < 30) {
+            statAtt = "fga20";
+            statMade = "fg20";
+        } else if (distance < 40) {
+            statAtt = "fga30";
+            statMade = "fg30";
+        } else if (distance < 50) {
+            statAtt = "fga40";
+            statMade = "fg40";
+        } else {
+            statAtt = "fga50";
+            statMade = "fg50";
+        }
+
+        this.recordStat(this.o, kicker, statAtt);
+        if (made) {
+            this.recordStat(this.o, kicker, statMade);
+            this.awaitingKickoff = true;
+        } else {
+            this.possessionChange();
+            this.scrimmage = 100 - this.scrimmage - 7;
+        }
+
+        this.awaitingExtraPoint = false;
+
+        return 5;
+    }
+
+    doPass() {
+        this.updatePlayersOnField("pass");
+
+        const qb = this.playersOnField[this.o].QB[0];
+
+        const target = random.choice(
+            this.playersOnField[this.o].WR.concat(
+                this.playersOnField[this.o].TE,
+                this.playersOnField[this.o].RB,
+            ),
+        );
+
+        const complete = Math.random() < 0.6;
+        const ydsRaw = random.uniform(0, 30);
+        const yds = this.boundedYds(ydsRaw);
+
+        this.recordStat(this.o, qb, "pss");
+        this.recordStat(this.o, target, "tgt");
+
+        if (complete) {
+            const { td } = this.advanceYds(ydsRaw);
+            this.recordStat(this.o, qb, "pssCmp");
+            this.recordStat(this.o, qb, "pssYds", yds);
+            this.recordStat(this.o, target, "rec");
+            this.recordStat(this.o, target, "recYds", yds);
+
+            if (td) {
+                this.recordStat(this.o, qb, "pssTD");
+                this.recordStat(this.o, target, "recTD");
+            }
+
+            this.playByPlay.logEvent("passComplete", {
+                t: this.o,
+                names: [qb.name, target.name],
+                td,
+                yds,
+            });
+        } else {
+            this.playByPlay.logEvent("passIncomplete", {
+                t: this.o,
+                names: [qb.name, target.name],
+                yds,
+            });
+        }
+
+        return 5;
     }
 
     doRun() {
@@ -507,7 +597,8 @@ class GameSim {
                 : this.playersOnField[this.o].QB[0];
         this.recordStat(this.o, p, "rus");
         const ydsRaw = random.randInt(-5, 10);
-        const { td, yds } = this.advanceYds(ydsRaw);
+        const yds = this.boundedYds(ydsRaw);
+        const { td } = this.advanceYds(ydsRaw);
 
         this.recordStat(this.o, p, "rusYds", yds);
         if (td) {
@@ -645,9 +736,7 @@ class GameSim {
                 // Record quarter-by-quarter scoring too
                 this.team[t].stat.ptsQtrs[qtr] += 6;
             }
-            if (this.playByPlay !== undefined) {
-                this.playByPlay.logStat(qtr, t, p.id, s, amt);
-            }
+            this.playByPlay.logStat(qtr, t, p.id, s, amt);
         }
     }
 }

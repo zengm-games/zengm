@@ -4,7 +4,8 @@ import { helpers } from "../../../../deion/worker/util";
 import { PlayType, TeamNum } from "./types";
 
 class PlayByPlayLogger {
-    constructor() {
+    constructor(active: boolean) {
+        this.active = active;
         this.playByPlay = [];
     }
 
@@ -22,6 +23,10 @@ class PlayByPlayLogger {
             yds?: number,
         } = {},
     ) {
+        if (!this.active) {
+            return;
+        }
+
         let text;
         if (this.playByPlay !== undefined) {
             if (type === "injury") {
@@ -56,6 +61,10 @@ class PlayByPlayLogger {
     }
 
     logStat(qtr: number, t: number, pid: number, s: string, amt: number) {
+        if (!this.active) {
+            return;
+        }
+
         this.playByPlay.push({
             type: "stat",
             qtr: this.team[t].stat.ptsQtrs.length - 1,
@@ -67,6 +76,10 @@ class PlayByPlayLogger {
     }
 
     getAll(boxScore) {
+        if (!this.active) {
+            return;
+        }
+
         return [
             {
                 type: "init",

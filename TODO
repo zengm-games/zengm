@@ -16,6 +16,7 @@ game sim
   - anything not sport specific, to base class
 - clock stuff should be done alongside play
 - log clutch plays
+- scale dt by length of play
 
 depth chart
 - links here from More, dropdowns, etc
@@ -75,6 +76,8 @@ History
 how will deionUI(overrides) work with types?
 - can pass them as generics, then apply them to factory functions
 - Import modules from deion. Add things like extra views. Apply factories/generics.
+
+yards after catch, other stats of interest
 
 what's the end state here? options:
 - everything is in deion, and process.env.SPORT governs the output

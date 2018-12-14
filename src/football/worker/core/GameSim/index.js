@@ -279,11 +279,7 @@ class GameSim {
         // eslint-disable-next-line no-constant-condition
         while (true) {
             while (this.t > 0) {
-                if (this.awaitingKickoff) {
-                    this.kickoff();
-                } else {
-                    this.simPlay();
-                }
+                this.simPlay();
             }
             quarter += 1;
 
@@ -310,7 +306,145 @@ class GameSim {
         }
     }
 
-    kickoff() {
+    getPlayType() {
+        if (this.awaitingKickoff) {
+            return "kickoff";
+        }
+
+        if (this.awaitingExtraPoint) {
+            return "extraPoint";
+        }
+
+        if (this.down === 4) {
+            if (this.scrimmage >= 60) {
+                return "fieldGoal";
+            }
+
+            return "punt";
+        }
+
+        if (Math.random() > 0.5) {
+            return "pass";
+        }
+
+        return "run";
+    }
+
+    simPlay() {
+        const playType = this.getPlayType();
+
+        let dt;
+        if (playType === "kickoff") {
+            dt = this.doKickoff();
+        } else if (playType === "extraPoint") {
+            dt = this.doFieldGoal(true);
+        } else if (playType === "fieldGoal") {
+            dt = this.doFieldGoal();
+        } else if (playType === "punt") {
+            dt = this.doPunt();
+        } else if (playType === "pass") {
+            dt = this.doPass();
+        } else if (playType === "run") {
+            dt = this.doRun();
+        } else {
+            throw new Error(`Unknown playType "${playType}"`);
+        }
+
+        // Clock
+        this.t -= dt;
+        let playTime = dt;
+        if (this.t < 0) {
+            playTime += this.t;
+            this.t = 0;
+        }
+        this.updatePlayingTime(playTime);
+
+        this.injuries();
+    }
+
+    advanceYds(yds: number) {
+        // Touchdown?
+        const ydsTD = 100 - this.scrimmage;
+        if (yds >= ydsTD) {
+            this.awaitingKickoff = true;
+            return {
+                safety: false,
+                td: true,
+                yds: ydsTD,
+            };
+        }
+
+        this.scrimmage += yds;
+
+        // First down?
+        if (yds >= this.toGo) {
+            this.down = 1;
+            const maxToGo = 100 - this.scrimmage;
+            this.toGo = maxToGo < 10 ? maxToGo : 10;
+
+            return {
+                safety: false,
+                td: false,
+                yds,
+            };
+        }
+
+        // Turnover on downs?
+        if (this.down === 4) {
+            this.o = this.o === 0 ? 1 : 0;
+            this.d = this.d === 0 ? 1 : 0;
+            this.scrimmage = 100 - this.scrimmage;
+            this.down = 1;
+            const maxToGo = 100 - this.scrimmage;
+            this.toGo = maxToGo < 10 ? maxToGo : 10;
+
+            return {
+                safety: false,
+                td: false,
+                yds,
+            };
+        }
+
+        this.down += 1;
+        this.toGo -= yds;
+
+        return {
+            safety: false,
+            td: false,
+            yds,
+        };
+    }
+
+    updatePlayersOnField(playType: string) {
+        if (playType === "run" || playType === "pass") {
+            const formation = random.choice(formations);
+            const sides = ["off", "def"];
+            for (let i = 0; i < 2; i++) {
+                const t = i === 0 ? this.o : this.d;
+                const side = sides[i];
+
+                this.playersOnField[t] = {};
+                for (const pos of Object.keys(formation[side])) {
+                    const numPlayers = formation[side][pos];
+                    this.playersOnField[t][pos] = this.team[t].depth[pos]
+                        .slice(0, numPlayers)
+                        .map(pid => {
+                            return this.team[t].player.find(p => p.id === pid);
+                        });
+                }
+            }
+        } /*else if (playType === "extraPoint" || playType === "fieldGoal") {
+
+        } else if (playType === "punt") {
+
+        } else if (playType === "kickoff") {
+
+        } */ else {
+            throw new Error(`Unknown playType "${playType}"`);
+        }
+    }
+
+    doKickoff() {
         this.awaitingKickoff = false;
 
         const kicker = this.team[this.o].player.find(
@@ -360,65 +494,34 @@ class GameSim {
         // Possession change
         this.o = this.o === 1 ? 0 : 1;
         this.d = this.o === 1 ? 0 : 1;
-        this.updateTeamCompositeRatings();
 
-        // Clock
-        this.t -= dt;
-        let playTime = dt;
-        if (this.t < 0) {
-            playTime += this.t;
-            this.t = 0;
-        }
-        this.updatePlayingTime(playTime);
+        return dt;
     }
 
-    simPlay() {
-        // Clock
-        this.t -= this.dt;
-        let playTime = this.dt;
-        if (this.t < 0) {
-            playTime += this.t;
-            this.t = 0;
+    doRun() {
+        this.updatePlayersOnField("run");
+
+        const p =
+            this.playersOnField[this.o].RB.length > 0
+                ? this.playersOnField[this.o].RB[0]
+                : this.playersOnField[this.o].QB[0];
+        this.recordStat(this.o, p, "rus");
+        const ydsRaw = random.randInt(-5, 10);
+        const { td, yds } = this.advanceYds(ydsRaw);
+
+        this.recordStat(this.o, p, "rusYds", yds);
+        if (td) {
+            this.recordStat(this.o, p, "rusTD");
         }
 
-        if (this.down === Infinity) {
-            this.fourthDown();
-        } else {
-            this.runPlay();
-        }
+        this.playByPlay.logEvent("run", {
+            t: this.o,
+            names: [p.name],
+            td,
+            yds,
+        });
 
-        this.updatePlayingTime(playTime);
-
-        this.injuries();
-    }
-
-    updateTeamCompositeRatings() {
-        /*// Only update ones that are actually used
-        const toUpdate = [
-            "dribbling",
-            "passing",
-            "rebounding",
-            "defense",
-            "defensePerimeter",
-            "blocking",
-        ];
-
-        for (let t = 0; t < 2; t++) {
-            for (let j = 0; j < toUpdate.length; j++) {
-                const rating = toUpdate[j];
-                this.team[t].compositeRating[rating] = 0;
-
-                for (let i = 0; i < 5; i++) {
-                    const p = this.playersOnCourt[t][i];
-                    this.team[t].compositeRating[rating] +=
-                        this.team[t].player[p].compositeRating[rating] *
-                        fatigue(this.team[t].player[p].stat.energy);
-                }
-
-                this.team[t].compositeRating[rating] =
-                    this.team[t].compositeRating[rating] / 5;
-            }
-        }*/
+        return 5;
     }
 
     updatePlayingTime(possessionTime: number) {
@@ -489,102 +592,6 @@ class GameSim {
         if (newInjury) {
             this.updatePlayersOnCourt();
         }*/
-    }
-
-    runPlay() {
-        const formation = random.choice(formations);
-        const sides = ["off", "def"];
-        for (let i = 0; i < 2; i++) {
-            const t = i === 0 ? this.o : this.d;
-            const side = sides[i];
-
-            this.playersOnField[t] = {};
-            for (const pos of Object.keys(formation[side])) {
-                const numPlayers = formation[side][pos];
-                this.playersOnField[t][pos] = this.team[t].depth[pos]
-                    .slice(0, numPlayers)
-                    .map(pid => {
-                        return this.team[t].player.find(p => p.id === pid);
-                    });
-            }
-        }
-
-        this.doRun();
-    }
-
-    advanceYds(yds: number) {
-        // Touchdown?
-        const ydsTD = 100 - this.scrimmage;
-        if (yds >= ydsTD) {
-            this.awaitingKickoff = true;
-            return {
-                safety: false,
-                td: true,
-                yds: ydsTD,
-            };
-        }
-
-        this.scrimmage += yds;
-
-        // First down?
-        if (yds >= this.toGo) {
-            this.down = 1;
-            const maxToGo = 100 - this.scrimmage;
-            this.toGo = maxToGo < 10 ? maxToGo : 10;
-
-            return {
-                safety: false,
-                td: false,
-                yds,
-            };
-        }
-
-        // Turnover on downs?
-        if (this.down === 4) {
-            this.o = this.o === 0 ? 1 : 0;
-            this.d = this.d === 0 ? 1 : 0;
-            this.scrimmage = 100 - this.scrimmage;
-            this.down = 1;
-            const maxToGo = 100 - this.scrimmage;
-            this.toGo = maxToGo < 10 ? maxToGo : 10;
-
-            return {
-                safety: false,
-                td: false,
-                yds,
-            };
-        }
-
-        this.down += 1;
-        this.toGo -= yds;
-
-        return {
-            safety: false,
-            td: false,
-            yds,
-        };
-    }
-
-    doRun() {
-        const p =
-            this.playersOnField[this.o].RB.length > 0
-                ? this.playersOnField[this.o].RB[0]
-                : this.playersOnField[this.o].QB[0];
-        this.recordStat(this.o, p, "rus");
-        const ydsRaw = random.randInt(-5, 10);
-        const { td, yds } = this.advanceYds(ydsRaw);
-
-        this.recordStat(this.o, p, "rusYds", yds);
-        if (td) {
-            this.recordStat(this.o, p, "rusTD");
-        }
-
-        this.playByPlay.logEvent("run", {
-            t: this.o,
-            names: [p.name],
-            td,
-            yds,
-        });
     }
 
     /**

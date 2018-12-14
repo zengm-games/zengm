@@ -19,6 +19,7 @@ game sim
 - break into multiple files
   - logging stuff
   - anything not sport specific, to base class
+ - clock stuff should be done alongside play
 
 depth chart
 - links here from More, dropdowns, etc

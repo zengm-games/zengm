@@ -16,7 +16,8 @@ game sim
   - anything not sport specific, to base class
 - clock stuff should be done alongside play
 - log clutch plays
-- scale dt by length of play
+- scale dt by length (in yds) of play
+- pace
 
 depth chart
 - links here from More, dropdowns, etc

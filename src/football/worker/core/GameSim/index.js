@@ -67,8 +67,6 @@ class GameSim {
 
     team: [TeamGameSim, TeamGameSim];
 
-    dt: number;
-
     playersOnField: [
         [
             PlayerGameSim,
@@ -126,11 +124,6 @@ class GameSim {
 
         this.id = gid;
         this.team = [team1, team2]; // If a team plays twice in a day, this needs to be a deep copy
-        const numPossessions = Math.round(
-            ((this.team[0].pace + this.team[1].pace) / 2) *
-                random.uniform(0.9, 1.1),
-        );
-        this.dt = 48 / (2 * numPossessions); // Time elapsed per possession
 
         this.playersOnField = [];
         this.startersRecorded = false; // Used to track whether the *real* starters (after injury) have been recorded or not.
@@ -283,6 +276,11 @@ class GameSim {
             throw new Error(`Unknown playType "${playType}"`);
         }
 
+        dt /= 60;
+
+        // Time between plays
+        dt += random.randInt(5, 40) / 60;
+
         // Clock
         this.t -= dt;
         let playTime = dt;
@@ -297,9 +295,14 @@ class GameSim {
 
     boundedYds(yds: number) {
         const ydsTD = 100 - this.scrimmage;
+        const ydsSafety = -this.scrimmage;
 
         if (yds > ydsTD) {
             return ydsTD;
+        }
+
+        if (yds < ydsSafety) {
+            return ydsSafety;
         }
 
         return yds;
@@ -545,12 +548,11 @@ class GameSim {
 
         const qb = this.playersOnField[this.o].QB[0];
 
-        const target = random.choice(
-            this.playersOnField[this.o].WR.concat(
-                this.playersOnField[this.o].TE,
-                this.playersOnField[this.o].RB,
-            ),
-        );
+        const target = random.choice([
+            ...this.playersOnField[this.o].WR,
+            ...this.playersOnField[this.o].TE,
+            ...this.playersOnField[this.o].RB,
+        ]);
 
         const complete = Math.random() < 0.6;
         const ydsRaw = random.uniform(0, 30);
@@ -730,12 +732,20 @@ class GameSim {
 
             const qtr = this.team[t].stat.ptsQtrs.length - 1;
 
+            let pts;
             if (s.endsWith("TD") && s !== "pssTD") {
-                this.team[t].stat.pts += 6;
-
-                // Record quarter-by-quarter scoring too
-                this.team[t].stat.ptsQtrs[qtr] += 6;
+                pts = 6;
+            } else if (s === "xp") {
+                pts = 1;
+            } else if (s.startsWith("fg") && !s.startsWith("fga")) {
+                pts = 3;
             }
+
+            if (pts) {
+                this.team[t].stat.pts += pts;
+                this.team[t].stat.ptsQtrs[qtr] += pts;
+            }
+
             this.playByPlay.logStat(qtr, t, p.id, s, amt);
         }
     }

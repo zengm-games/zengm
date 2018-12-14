@@ -8,7 +8,7 @@ class PlayByPlayLogger {
         this.playByPlay = [];
     }
 
-    log(
+    logEvent(
         type: PlayType,
         {
             names,
@@ -53,6 +53,17 @@ class PlayByPlayLogger {
                 throw new Error(`No text for ${type}`);
             }
         }
+    }
+
+    logStat(qtr: number, t: number, pid: number, s: string, amt: number) {
+        this.playByPlay.push({
+            type: "stat",
+            qtr: this.team[t].stat.ptsQtrs.length - 1,
+            t,
+            pid,
+            s,
+            amt,
+        });
     }
 
     getAll(boxScore) {

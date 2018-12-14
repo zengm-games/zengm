@@ -172,30 +172,6 @@ class GameSim {
 
     t: number;
 
-    lastScoringPlay: {
-        team: number,
-        player: number,
-        type: ShotType,
-        time: number,
-    }[];
-
-    clutchPlays: (
-        | {
-              type: "playerFeat",
-              text: string,
-              showNotification: boolean,
-              pids: [number],
-              tids: [number],
-          }
-        | {
-              type: "playerFeat",
-              tempText: string,
-              showNotification: boolean,
-              pids: [number],
-              tids: [number],
-          }
-    )[];
-
     o: TeamNum;
 
     d: TeamNum;
@@ -232,9 +208,6 @@ class GameSim {
         this.awaitingKickoff = true;
 
         this.homeCourtAdvantage();
-
-        this.lastScoringPlay = [];
-        this.clutchPlays = [];
     }
 
     homeCourtAdvantage() {
@@ -287,7 +260,7 @@ class GameSim {
             gid: this.id,
             overtimes: this.overtimes,
             team: this.team,
-            clutchPlays: this.clutchPlays,
+            clutchPlays: [],
             playByPlay: undefined,
         };
 
@@ -320,18 +293,16 @@ class GameSim {
             this.team[0].stat.ptsQtrs.push(0);
             this.team[1].stat.ptsQtrs.push(0);
             this.t = g.quarterLength;
-            this.lastScoringPlay = [];
-            this.playByPlay.log("quarter");
+            this.playByPlay.logEvent("quarter");
         }
     }
 
     simOvertime() {
         this.t = Math.ceil(0.4 * g.quarterLength); // 5 minutes by default, but scales
-        this.lastScoringPlay = [];
         this.overtimes += 1;
         this.team[0].stat.ptsQtrs.push(0);
         this.team[1].stat.ptsQtrs.push(0);
-        this.playByPlay.log("overtime");
+        this.playByPlay.logEvent("overtime");
         this.o = Math.random() < 0.5 ? 0 : 1;
         this.d = this.o === 0 ? 1 : 0;
         while (this.t > 0) {
@@ -354,7 +325,7 @@ class GameSim {
 
         let dt = 0;
 
-        this.playByPlay.log("kickoff", {
+        this.playByPlay.logEvent("kickoff", {
             t: this.o,
             names: [kicker.name],
             touchback,
@@ -378,7 +349,7 @@ class GameSim {
                 this.toGo = 10;
             }
 
-            this.playByPlay.log("kickoffReutrn", {
+            this.playByPlay.logEvent("kickoffReutrn", {
                 t: this.d,
                 names: [kickReturner.name],
                 td,
@@ -506,7 +477,7 @@ class GameSim {
                     if (Math.random() < g.injuryRate) {
                         this.team[t].player[p].injured = true;
                         newInjury = true;
-                        this.playByPlay.log("injury", t, [
+                        this.playByPlay.logEvent("injury", t, [
                             this.team[t].player[p].name,
                         ]);
                     }
@@ -608,225 +579,12 @@ class GameSim {
             this.recordStat(this.o, p, "rusTD");
         }
 
-        this.playByPlay.log("run", {
+        this.playByPlay.logEvent("run", {
             t: this.o,
             names: [p.name],
             td,
             yds,
         });
-    }
-
-    checkGameTyingShot() {
-        if (this.lastScoringPlay.length === 0) {
-            return;
-        }
-
-        // can assume that the last scoring play tied the game
-        const i = this.lastScoringPlay.length - 1;
-        const play = this.lastScoringPlay[i];
-
-        let shotType = "a basket";
-        switch (play.type) {
-            case "atRim":
-            case "lowPost":
-            case "midRange":
-                break;
-            case "threePointer":
-                shotType = "a three-pointer";
-                break;
-            case "ft":
-                shotType = "a free throw";
-                if (i > 0) {
-                    const prevPlay = this.lastScoringPlay[i - 1];
-                    if (prevPlay.team === play.team) {
-                        switch (prevPlay.type) {
-                            case "atRim":
-                            case "lowPost":
-                            case "midRange":
-                                shotType = "a three-point play";
-                                break;
-                            case "threePointer":
-                                shotType = "a four-point play";
-                                break;
-                            case "ft":
-                                if (
-                                    i > 1 &&
-                                    this.lastScoringPlay[i - 2].team ===
-                                        play.team &&
-                                    this.lastScoringPlay[i - 2].type === "ft"
-                                ) {
-                                    shotType = "three free throws";
-                                } else {
-                                    shotType = "two free throws";
-                                }
-                                break;
-                            default:
-                        }
-                    }
-                }
-                break;
-            default:
-        }
-
-        const team = this.team[play.team];
-        const player = this.team[play.team].player[play.player];
-
-        let eventText = `<a href="${helpers.leagueUrl([
-            "player",
-            player.id,
-        ])}">${player.name}</a> made ${shotType}`;
-        if (play.time > 0) {
-            eventText += ` with ${play.time} seconds remaining`;
-        } else {
-            eventText +=
-                play.type === "ft"
-                    ? " with no time on the clock"
-                    : " at the buzzer";
-        }
-        eventText += ` to force ${helpers.overtimeCounter(
-            this.team[0].stat.ptsQtrs.length - 3,
-        )} overtime`;
-
-        this.clutchPlays.push({
-            type: "playerFeat",
-            tempText: eventText,
-            showNotification: team.id === g.userTid,
-            pids: [player.id],
-            tids: [team.id],
-        });
-    }
-
-    checkGameWinner() {
-        if (this.lastScoringPlay.length === 0) {
-            return;
-        }
-
-        const winner = this.team[0].stat.pts > this.team[1].stat.pts ? 0 : 1;
-        const loser = winner === 0 ? 1 : 0;
-        let margin = this.team[winner].stat.pts - this.team[loser].stat.pts;
-
-        // work backwards from last scoring plays, check if any resulted in a tie-break or lead change
-        let pts = 0;
-        let shotType = "basket";
-        for (let i = this.lastScoringPlay.length - 1; i >= 0; i--) {
-            const play = this.lastScoringPlay[i];
-            switch (play.type) {
-                case "atRim":
-                case "lowPost":
-                case "midRange":
-                    pts = 2;
-                    break;
-                case "threePointer":
-                    shotType = "three-pointer";
-                    pts = 3;
-                    break;
-                case "ft":
-                    // Special handling for free throws
-                    shotType = "free throw";
-                    if (i > 0) {
-                        const prevPlay = this.lastScoringPlay[i - 1];
-                        if (prevPlay.team === play.team) {
-                            switch (prevPlay.type) {
-                                // cases where the basket ties the game, and the and-one wins it
-                                case "atRim":
-                                case "lowPost":
-                                case "midRange":
-                                    shotType = "three-point play";
-                                    break;
-                                case "threePointer":
-                                    shotType = "four-point play";
-                                    break;
-                                // case where more than one free throw is needed to take the lead
-                                case "ft":
-                                    shotType += "s";
-                                    break;
-                                default:
-                            }
-                        }
-                    }
-                    pts = 1;
-                    break;
-                default:
-            }
-
-            margin -= play.team === winner ? pts : -pts;
-            if (margin <= 0) {
-                const team = this.team[play.team];
-                const player = this.team[play.team].player[play.player];
-
-                let eventText = `<a href="${helpers.leagueUrl([
-                    "player",
-                    player.id,
-                ])}">${player.name}</a> made the game-winning ${shotType}`;
-                if (play.time > 0) {
-                    eventText += ` with ${play.time} seconds remaining`;
-                } else {
-                    eventText +=
-                        play.type === "ft"
-                            ? " with no time on the clock"
-                            : " at the buzzer";
-                }
-                eventText += ` in ${
-                    this.team[winner].stat.pts.toString().charAt(0) === "8"
-                        ? "an"
-                        : "a"
-                } <a href="${helpers.leagueUrl([
-                    "game_log",
-                    g.teamAbbrevsCache[team.id],
-                    g.season,
-                    this.id,
-                ])}">${this.team[winner].stat.pts}-${
-                    this.team[loser].stat.pts
-                }</a> win over the ${g.teamNamesCache[this.team[loser].id]}.`;
-
-                this.clutchPlays.push({
-                    type: "playerFeat",
-                    text: eventText,
-                    showNotification: team.id === g.userTid,
-                    pids: [player.id],
-                    tids: [team.id],
-                });
-                return;
-            }
-        }
-    }
-
-    recordLastScore(
-        teamnum: TeamNum,
-        playernum: number,
-        type: ShotType,
-        time: number,
-    ) {
-        // only record plays in the fourth quarter or overtime...
-        if (this.team[0].stat.ptsQtrs.length < 4) {
-            return;
-        }
-        // ...in the last 2 minutes...
-        if (time > 120) {
-            return;
-        }
-        // ...when the lead is 8 or less
-        if (Math.abs(this.team[0].stat.pts - this.team[1].stat.pts) > 8) {
-            return;
-        }
-
-        console.log("Should log clutch score");
-        /*const currPlay = {
-            team: teamnum,
-            player: playernum,
-            type,
-            time: Math.floor(time * 600) / 10, // up to 0.1 of a second
-        };
-
-        if (this.lastScoringPlay.length === 0) {
-            this.lastScoringPlay.push(currPlay);
-        } else {
-            const lastPlay = this.lastScoringPlay[0];
-            if (lastPlay.time !== currPlay.time) {
-                this.lastScoringPlay = [];
-            }
-            this.lastScoringPlay.push(currPlay);
-        }*/
     }
 
     /**
@@ -872,24 +630,17 @@ class GameSim {
         ) {
             this.team[t].stat[s] += amt;
 
+            const qtr = this.team[t].stat.ptsQtrs.length - 1;
+
             if (s.endsWith("TD") && s !== "pssTD") {
                 this.team[t].stat.pts += 6;
 
                 // Record quarter-by-quarter scoring too
-                this.team[t].stat.ptsQtrs[
-                    this.team[t].stat.ptsQtrs.length - 1
-                ] += 6;
+                this.team[t].stat.ptsQtrs[qtr] += 6;
             }
-            /*if (this.playByPlay !== undefined) {
-                this.playByPlay.push({
-                    type: "stat",
-                    qtr: this.team[t].stat.ptsQtrs.length - 1,
-                    t,
-                    p,
-                    s,
-                    amt,
-                });
-            }*/
+            if (this.playByPlay !== undefined) {
+                this.playByPlay.logStat(qtr, t, p.id, s, amt);
+            }
         }
     }
 }

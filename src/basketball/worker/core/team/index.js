@@ -1,11 +1,11 @@
 // @flow
 
-import emptyStatsRow from "./emptyStatsRow";
 import processStats from "./processStats";
 import rosterAutoSort from "./rosterAutoSort";
+import stats from "./stats";
 
 export default {
-    emptyStatsRow,
     processStats,
     rosterAutoSort,
+    stats,
 };

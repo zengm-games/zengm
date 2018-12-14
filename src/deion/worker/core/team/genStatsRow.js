@@ -13,15 +13,23 @@ import type { TeamStats } from "../../../common/types";
  * @return {Object} Team stats object.
  */
 const genStatsRow = (tid: number, playoffs?: boolean = false): TeamStats => {
-    if (!overrides.core.team.emptyStatsRow) {
-        throw new Error("Missing overrides.core.team.emptyStatsRow");
-    }
-    return {
-        ...overrides.core.team.emptyStatsRow,
+    const statsRow = {
         playoffs,
         season: g.season,
         tid,
     };
+
+    if (!overrides.core.team.stats) {
+        throw new Error("Missing overrides.core.team.stats");
+    }
+    for (const key of overrides.core.team.stats.derived) {
+        statsRow[key] = 0;
+    }
+    for (const key of overrides.core.team.stats.raw) {
+        statsRow[key] = 0;
+    }
+
+    return statsRow;
 };
 
 export default genStatsRow;

@@ -1,8 +1,8 @@
 // @flow
 
 import { g, helpers, random } from "../../../../deion/worker/util";
+import PlayByPlayLogger from "./PlayByPlayLogger";
 import type {
-    PlayType,
     ShotType,
     Stat,
     PlayerNumOnCourt,
@@ -200,7 +200,7 @@ class GameSim {
 
     d: TeamNum;
 
-    playByPlay: Object[];
+    playByPlay: PlayByPlayLogger | void;
 
     /**
      * Initialize the two teams that are playing this game.
@@ -214,7 +214,7 @@ class GameSim {
         doPlayByPlay: boolean,
     ) {
         if (doPlayByPlay) {
-            this.playByPlay = [];
+            this.playByPlay = new PlayByPlayLogger();
         }
 
         this.id = gid;
@@ -330,11 +330,7 @@ class GameSim {
         };
 
         if (this.playByPlay !== undefined) {
-            out.playByPlay = this.playByPlay;
-            this.playByPlay.unshift({
-                type: "init",
-                boxScore: this.team,
-            });
+            out.playByPlay = this.playByPlay.getAll(this.team);
         }
 
         return out;
@@ -363,7 +359,7 @@ class GameSim {
             this.team[1].stat.ptsQtrs.push(0);
             this.t = g.quarterLength;
             this.lastScoringPlay = [];
-            this.recordPlay("quarter");
+            this.playByPlay.log("quarter");
         }
     }
 
@@ -373,7 +369,7 @@ class GameSim {
         this.overtimes += 1;
         this.team[0].stat.ptsQtrs.push(0);
         this.team[1].stat.ptsQtrs.push(0);
-        this.recordPlay("overtime");
+        this.playByPlay.log("overtime");
         this.o = Math.random() < 0.5 ? 0 : 1;
         this.d = this.o === 0 ? 1 : 0;
         while (this.t > 0) {
@@ -396,7 +392,7 @@ class GameSim {
 
         let dt = 0;
 
-        this.recordPlay("kickoff", {
+        this.playByPlay.log("kickoff", {
             t: this.o,
             names: [kicker.name],
             touchback,
@@ -420,7 +416,7 @@ class GameSim {
                 this.toGo = 10;
             }
 
-            this.recordPlay("kickoffReutrn", {
+            this.playByPlay.log("kickoffReutrn", {
                 t: this.d,
                 names: [kickReturner.name],
                 td,
@@ -563,7 +559,7 @@ class GameSim {
                     if (Math.random() < g.injuryRate) {
                         this.team[t].player[p].injured = true;
                         newInjury = true;
-                        this.recordPlay("injury", t, [
+                        this.playByPlay.log("injury", t, [
                             this.team[t].player[p].name,
                         ]);
                     }
@@ -670,7 +666,7 @@ class GameSim {
             this.recordStat(this.o, p, "rusTD");
         }
 
-        this.recordPlay("run", {
+        this.playByPlay.log("run", {
             t: this.o,
             names: [p.name],
             td,
@@ -960,59 +956,6 @@ class GameSim {
                     amt,
                 });
             }*/
-        }
-    }
-
-    recordPlay(
-        type: PlayType,
-        {
-            names,
-            t,
-            td,
-            yds,
-        }: {
-            names?: string[],
-            t?: TeamNum,
-            td?: boolean,
-            yds?: number,
-        } = {},
-    ) {
-        let texts;
-        if (this.playByPlay !== undefined) {
-            if (type === "injury") {
-                texts = [`${names[0]} was injured!`];
-            } else if (type === "quarter") {
-                texts = [
-                    `Start of ${helpers.ordinal(
-                        this.team[0].stat.ptsQtrs.length,
-                    )} quarter`,
-                ];
-            } else if (type === "run") {
-                texts = [
-                    `${names[0]} rushed for ${yds} yds${
-                        td ? " and a touchdown!" : ""
-                    }`,
-                ];
-            } else if (type === "overtime") {
-                texts = ["Start of overtime"];
-            }
-
-            if (texts) {
-                const text = texts[0];
-
-                let sec = Math.floor((this.t % 1) * 60);
-                if (sec < 10) {
-                    sec = `0${sec}`;
-                }
-                this.playByPlay.push({
-                    type: "text",
-                    text,
-                    t,
-                    time: `${Math.floor(this.t)}:${sec}`,
-                });
-            } else {
-                throw new Error(`No text for ${type}`);
-            }
         }
     }
 }

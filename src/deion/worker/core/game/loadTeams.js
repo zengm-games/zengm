@@ -5,105 +5,6 @@ import { player } from "..";
 import { idb } from "../../db";
 import { g, helpers, overrides } from "../../util";
 
-const playerStats =
-    process.env.SPORT === "basketball"
-        ? {
-              fg: 0,
-              fga: 0,
-              fgAtRim: 0,
-              fgaAtRim: 0,
-              fgLowPost: 0,
-              fgaLowPost: 0,
-              fgMidRange: 0,
-              fgaMidRange: 0,
-              tp: 0,
-              tpa: 0,
-              ft: 0,
-              fta: 0,
-              pm: 0,
-              orb: 0,
-              drb: 0,
-              ast: 0,
-              tov: 0,
-              stl: 0,
-              blk: 0,
-              ba: 0,
-              pf: 0,
-              pts: 0,
-          }
-        : {
-              fmb: 0,
-              fmbLost: 0,
-              qbW: 0,
-              qbL: 0,
-              pssCmp: 0,
-              pss: 0,
-              pssYds: 0,
-              pssTD: 0,
-              pssInt: 0,
-              pssLng: 0,
-              pssSk: 0,
-              pssSkYds: 0,
-              rus: 0,
-              rusYds: 0,
-              rusTD: 0,
-              rusLng: 0,
-              tgt: 0,
-              rec: 0,
-              recYds: 0,
-              recTD: 0,
-              recLng: 0,
-              pr: 0,
-              prYds: 0,
-              prTD: 0,
-              prLng: 0,
-              kr: 0,
-              krYds: 0,
-              krTD: 0,
-              krLng: 0,
-              defInt: 0,
-              defIntYds: 0,
-              defIntTD: 0,
-              defIntLng: 0,
-              defPssDef: 0,
-              defFmbFrc: 0,
-              defFmbRec: 0,
-              defFmbYds: 0,
-              defFmbTD: 0,
-              defSk: 0,
-              defTckSolo: 0,
-              defTckAst: 0,
-              defTckLoss: 0,
-              defSft: 0,
-              fg0: 0,
-              fga0: 0,
-              fg20: 0,
-              fga20: 0,
-              fg30: 0,
-              fga30: 0,
-              fg40: 0,
-              fga40: 0,
-              fg50: 0,
-              fga50: 0,
-              fgLng: 0,
-              xp: 0,
-              xpa: 0,
-              pnt: 0,
-              pntYds: 0,
-              pntLng: 0,
-              pntBlk: 0,
-              pen: 0,
-              penYds: 0,
-          };
-
-const teamStats = {
-    ...playerStats,
-};
-
-if (process.env.SPORT === "basketball") {
-    delete teamStats.pm;
-}
-
 /**
  * Load all teams into an array of team objects.
  *
@@ -114,6 +15,25 @@ if (process.env.SPORT === "basketball") {
  * @param {Promise} Resolves to an array of team objects, ordered by tid.
  */
 const loadTeams = async () => {
+    if (!overrides.core.player.stats) {
+        throw new Error("Missing overrides.core.player.stats");
+    }
+    const playerStats = overrides.core.player.stats.raw.reduce(
+        (stats, stat) => {
+            stats[stat] = 0;
+            return stats;
+        },
+        {},
+    );
+
+    if (!overrides.core.team.stats) {
+        throw new Error("Missing overrides.core.team.stats");
+    }
+    const teamStats = overrides.core.team.stats.raw.reduce((stats, stat) => {
+        stats[stat] = 0;
+        return stats;
+    }, {});
+
     return Promise.all(
         range(g.numTeams).map(async tid => {
             const [

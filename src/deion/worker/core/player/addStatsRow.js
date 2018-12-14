@@ -15,15 +15,21 @@ import type { Player } from "../../../common/types";
  * @param {=boolean} playoffs Is this stats row for the playoffs or not? Default false.
  */
 const addStatsRow = async (p: Player<>, playoffs?: boolean = false) => {
-    if (!overrides.core.player.emptyStatsRow) {
-        throw new Error("Missing overrides.core.player.emptyStatsRow");
-    }
     const statsRow = {
-        ...overrides.core.player.emptyStatsRow,
         playoffs,
         season: g.season,
         tid: p.tid,
     };
+
+    if (!overrides.core.team.stats) {
+        throw new Error("Missing overrides.core.player.stats");
+    }
+    for (const key of overrides.core.player.stats.derived) {
+        statsRow[key] = 0;
+    }
+    for (const key of overrides.core.player.stats.raw) {
+        statsRow[key] = 0;
+    }
 
     p.statsTids.push(p.tid);
     p.statsTids = Array.from(new Set(p.statsTids));

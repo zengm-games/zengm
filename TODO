@@ -10,7 +10,6 @@ game sim
   - need to do this for off and def, and need to do it after factoring in injuries
 - can't assume t.depth is accurate, make sure to prune + augment before use
   - have function which does this, call in loadTeams, also use in depth (logic probably already there)
-- don't let one player play two positions at once
 - break into multiple files
   - logging stuff
   - anything not sport specific, to base class
@@ -250,6 +249,8 @@ implementation
 change defaultGameAttributes
 
 ---
+
+"Accept Trade" button on trading block
 
 faces
 - http://biskup.biowiki.org/facesjs/

@@ -376,12 +376,17 @@ class GameSim {
             const t = i === 0 ? this.o : this.d;
             const side = sides[i];
 
+            // Don't let one player be used at two positions!
+            const pidsUsed = new Set();
+
             this.playersOnField[t] = {};
             for (const pos of Object.keys(formation[side])) {
                 const numPlayers = formation[side][pos];
                 this.playersOnField[t][pos] = this.team[t].depth[pos]
+                    .filter(pid => !pidsUsed.has(pid))
                     .slice(0, numPlayers)
                     .map(pid => {
+                        pidsUsed.add(pid);
                         return this.team[t].player.find(p => p.id === pid);
                     });
             }

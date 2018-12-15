@@ -5,6 +5,7 @@ const stats = {
     raw: [
         "gp",
         "gs",
+        "min",
         "fmb",
         "fmbLost",
         "pssCmp",

@@ -51,6 +51,9 @@ const writePlayerStats = async (
 
                     // Update stats
                     for (const key of Object.keys(p.stat)) {
+                        if (!ps.hasOwnProperty(key)) {
+                            throw new Error(`Missing key "${key}" on ps`);
+                        }
                         ps[key] += p.stat[key];
                     }
                     ps.gp += 1; // Already checked for non-zero minutes played above
@@ -117,12 +120,14 @@ const writePlayerStats = async (
                                 0,
                                 100,
                             );
-                            p2.ratings[r].jmp = helpers.bound(
-                                p2.ratings[r].jmp -
-                                    random.randInt(0, biggestRatingsLoss),
-                                0,
-                                100,
-                            );
+                            if (process.env.SPORT === "basketball") {
+                                p2.ratings[r].jmp = helpers.bound(
+                                    p2.ratings[r].jmp -
+                                        random.randInt(0, biggestRatingsLoss),
+                                    0,
+                                    100,
+                                );
+                            }
                             p2.ratings[r].endu = helpers.bound(
                                 p2.ratings[r].endu -
                                     random.randInt(0, biggestRatingsLoss),

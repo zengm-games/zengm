@@ -65,7 +65,7 @@ const defaultGameAttributes: GameAttributes = {
     ties: false,
 };
 
-if (process.env.sport === "football") {
+if (process.env.SPORT === "football") {
     const footballOverrides = {
         numGames: 16,
         quarterLength: 15,

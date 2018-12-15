@@ -20,6 +20,10 @@ const loadTeams = async () => {
     }
     const playerStats = overrides.core.player.stats.raw.reduce(
         (stats, stat) => {
+            if (stat === "gp") {
+                return stats;
+            }
+
             stats[stat] = 0;
             return stats;
         },

@@ -83,7 +83,7 @@ const PlayoffMatchup = ({
             <Team
                 team={series.home}
                 season={season}
-                showWon={!!series.away}
+                showWon={!!series.away && numGamesToWinSeries > 1}
                 userTid={userTid}
                 won={homeWon}
             />
@@ -91,7 +91,7 @@ const PlayoffMatchup = ({
             <Team
                 team={series.away}
                 season={season}
-                showWon={!!series.away}
+                showWon={!!series.away && numGamesToWinSeries > 1}
                 userTid={userTid}
                 won={awayWon}
             />

@@ -21,7 +21,7 @@ const addStatsRow = async (p: Player<>, playoffs?: boolean = false) => {
         tid: p.tid,
     };
 
-    if (!overrides.core.team.stats) {
+    if (!overrides.core.player.stats) {
         throw new Error("Missing overrides.core.player.stats");
     }
     for (const key of overrides.core.player.stats.derived) {

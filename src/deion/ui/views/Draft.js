@@ -242,7 +242,9 @@ class Draft extends React.Component {
                           )} thru ${p.contract.exp}`
                         : null,
                     ...stats.map(stat =>
-                        p.pid >= 0
+                        p.pid >= 0 &&
+                        p.stats &&
+                        typeof p.stats[stat] === "number"
                             ? helpers.roundStat(p.stats[stat], stat)
                             : null,
                     ),

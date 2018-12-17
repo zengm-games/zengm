@@ -96,8 +96,6 @@ class GameSim {
         ],
     ];
 
-    startersRecorded: boolean;
-
     subsEveryN: number;
 
     overtime: boolean;
@@ -126,7 +124,14 @@ class GameSim {
         this.team = [team1, team2]; // If a team plays twice in a day, this needs to be a deep copy
 
         this.playersOnField = [];
-        this.startersRecorded = false; // Used to track whether the *real* starters (after injury) have been recorded or not.
+
+        // Record "gs" stat for starters
+        this.o = 0;
+        this.d = 1;
+        this.updatePlayersOnField("starters");
+        this.o = 1;
+        this.d = 0;
+        this.updatePlayersOnField("starters");
 
         this.subsEveryN = 6; // How many possessions to wait before doing substitutions
 
@@ -359,7 +364,9 @@ class GameSim {
 
     updatePlayersOnField(playType: string) {
         let formation;
-        if (playType === "run" || playType === "pass") {
+        if (playType === "starters") {
+            formation = formations.normal[0];
+        } else if (playType === "run" || playType === "pass") {
             formation = random.choice(formations.normal);
         } else if (playType === "extraPoint" || playType === "fieldGoal") {
             formation = random.choice(formations.fieldGoal);
@@ -389,6 +396,12 @@ class GameSim {
                         pidsUsed.add(pid);
                         return this.team[t].player.find(p => p.id === pid);
                     });
+
+                if (playType === "starters") {
+                    for (const p of this.playersOnField[t][pos]) {
+                        this.recordStat(t, p, "gs");
+                    }
+                }
             }
         }
     }
@@ -834,7 +847,13 @@ class GameSim {
     }
 
     recordStat(t: TeamNum, p: PlayerGameSim, s: Stat, amt?: number = 1) {
-        p.stat[s] += amt;
+        if (s === "gs") {
+            // In case player starts on offense and defense, only record once
+            p.stat[s] = 1;
+        } else {
+            p.stat[s] += amt;
+        }
+
         if (
             s !== "gs" &&
             s !== "courtTime" &&

@@ -548,6 +548,61 @@ class GameSim {
         return 5;
     }
 
+    doFumble(pFumbled: PlayerGameSim, priorYdsRaw: number) {
+        this.recordStat(this.o, pFumbled, "fmb");
+
+        this.scrimmage = helpers.bound(this.scrimmage + priorYdsRaw, -9, 100);
+
+        const lost = Math.random() > 0.5;
+
+        let playersDefense = [];
+        for (const playersAtPos of Object.values(this.playersOnField[this.d])) {
+            playersDefense = playersDefense.concat(playersAtPos);
+        }
+        const pForced = random.choice(playersDefense);
+        this.recordStat(this.d, pForced, "defFmbFrc");
+
+        const recoveringTeam = lost ? this.d : this.o;
+
+        let players = [];
+        for (const playersAtPos of Object.values(
+            this.playersOnField[recoveringTeam],
+        )) {
+            players = players.concat(playersAtPos);
+        }
+
+        const pRecovered = random.choice(players);
+        this.recordStat(recoveringTeam, pRecovered, "defFmbRec");
+
+        if (lost) {
+            this.recordStat(this.o, pFumbled, "fmbLost");
+            this.possessionChange();
+            this.scrimmage = 100 - this.scrimmage;
+        }
+
+        const ydsRaw = random.randInt(0, 109);
+        const yds = this.boundedYds(ydsRaw);
+        const { safetyOrTouchback, td } = this.advanceYds(ydsRaw);
+
+        if (safetyOrTouchback) {
+            this.scrimmage = 20;
+        } else {
+            this.recordStat(recoveringTeam, pRecovered, "defFmbYds", yds);
+            if (td) {
+                this.recordStat(recoveringTeam, pRecovered, "defFmbTD");
+            }
+        }
+
+        this.playByPlay.logEvent("fumble", {
+            lost,
+            t: this.o,
+            names: [pForced.name, pRecovered.name],
+            safetyOrTouchback,
+            td,
+            yds,
+        });
+    }
+
     doInterception(passYdsRaw: number) {
         this.possessionChange();
         this.scrimmage = helpers.bound(
@@ -646,13 +701,19 @@ class GameSim {
                 ? this.playersOnField[this.o].RB[0]
                 : this.playersOnField[this.o].QB[0];
         this.recordStat(this.o, p, "rus");
+
         const ydsRaw = random.randInt(-5, 10);
         const yds = this.boundedYds(ydsRaw);
-        const { td } = this.advanceYds(ydsRaw);
-
         this.recordStat(this.o, p, "rusYds", yds);
-        if (td) {
-            this.recordStat(this.o, p, "rusTD");
+
+        const fumble = Math.random() < 0.01;
+        let td = false;
+        if (!fumble) {
+            const result = this.advanceYds(ydsRaw);
+            td = result.td;
+            if (td) {
+                this.recordStat(this.o, p, "rusTD");
+            }
         }
 
         this.playByPlay.logEvent("run", {
@@ -661,6 +722,10 @@ class GameSim {
             td,
             yds,
         });
+
+        if (fumble) {
+            this.doFumble(p, yds);
+        }
 
         return 5;
     }

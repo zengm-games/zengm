@@ -17,6 +17,11 @@ game sim
 - log clutch plays
 - scale dt by length (in yds) of play
 - pace
+- two point conversions
+- clean up fumble/int code, should be easier to have fumble code in multiple places
+- sacks
+- update this.scrimmage more often, rather than passing yards around. then can evaluate touchback/td/safety in context more easily
+  - basically, do stuff more intelligently (log things when they happen (start of rushing attempt, then end of rushing attempt later with more info), update scrimmage when it happens, update possession when it happens, etc)
 
 depth chart
 - links here from More, dropdowns, etc

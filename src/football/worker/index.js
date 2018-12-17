@@ -1,7 +1,7 @@
 // @flow
 
 import deionWorker from "../../deion/worker";
-import { COMPOSITE_WEIGHTS, POSITIONS } from "../common";
+import * as constants from "../common/constants";
 import GameSim from "./core/GameSim";
 import player from "./core/player";
 import season from "./core/season";
@@ -21,8 +21,7 @@ const names =
 (async () => {
     await deionWorker({
         overrides: {
-            COMPOSITE_WEIGHTS,
-            POSITIONS,
+            constants,
             core: {
                 GameSim,
                 player,

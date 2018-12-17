@@ -116,7 +116,24 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
     },
 };
 
-export {
-    // eslint-disable-next-line import/prefer-default-export
-    COMPOSITE_WEIGHTS,
-};
+const POSITIONS = [];
+
+const RATINGS: RatingKey[] = [
+    "hgt",
+    "stre",
+    "spd",
+    "jmp",
+    "endu",
+    "ins",
+    "dnk",
+    "ft",
+    "fg",
+    "tp",
+    "oiq",
+    "diq",
+    "drb",
+    "pss",
+    "reb",
+];
+
+export { COMPOSITE_WEIGHTS, POSITIONS, RATINGS };

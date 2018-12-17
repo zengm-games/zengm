@@ -1,15 +1,14 @@
 // @flow
 
 import type {
-    CompositeWeights,
     Names,
+    WorkerOverridesConstants,
     WorkerOverridesCore,
     WorkerOverridesUtil,
 } from "../../common/types";
 
 const overrides: {
-    COMPOSITE_WEIGHTS: CompositeWeights<>,
-    POSITIONS: string[],
+    constants: WorkerOverridesConstants,
     core: WorkerOverridesCore,
     names: Names,
     util: WorkerOverridesUtil,
@@ -17,8 +16,11 @@ const overrides: {
         [key: string]: any,
     },
 } = {
-    COMPOSITE_WEIGHTS: {},
-    POSITIONS: [],
+    constants: {
+        COMPOSITE_WEIGHTS: {},
+        POSITIONS: [],
+        RATINGS: [],
+    },
     core: {
         GameSim: undefined,
         player: {},

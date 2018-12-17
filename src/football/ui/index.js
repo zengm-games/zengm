@@ -1,7 +1,7 @@
 // @flow
 
 import deionUI from "../../deion/ui";
-import components from "../../basketball/ui/components";
+import components from "./components";
 import views from "./views";
 
 (async () => {

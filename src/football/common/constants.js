@@ -122,4 +122,28 @@ const POSITIONS = [
     "PR",
 ];
 
-export { COMPOSITE_WEIGHTS, POSITIONS };
+const RATINGS: RatingKey[] = [
+    "hgt",
+    "stre",
+    "spd",
+    "endu",
+    "thv",
+    "thp",
+    "tha",
+    "bls",
+    "elu",
+    "rtr",
+    "hnd",
+    "rbk",
+    "pbk",
+    "snp",
+    "pcv",
+    "prs",
+    "rns",
+    "kpw",
+    "kac",
+    "ppw",
+    "pac",
+];
+
+export { COMPOSITE_WEIGHTS, POSITIONS, RATINGS };

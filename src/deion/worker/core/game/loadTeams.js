@@ -57,7 +57,9 @@ const loadTeams = async () => {
 
             // Initialize team composite rating object
             const compositeRating = {};
-            for (const rating of Object.keys(overrides.COMPOSITE_WEIGHTS)) {
+            for (const rating of Object.keys(
+                overrides.constants.COMPOSITE_WEIGHTS,
+            )) {
                 compositeRating[rating] = 0;
             }
 
@@ -104,11 +106,13 @@ const loadTeams = async () => {
                 }
 
                 // These use the same formulas as the skill definitions in player.skills!
-                for (const k of helpers.keys(overrides.COMPOSITE_WEIGHTS)) {
+                for (const k of helpers.keys(
+                    overrides.constants.COMPOSITE_WEIGHTS,
+                )) {
                     p.compositeRating[k] = player.compositeRating(
                         rating,
-                        overrides.COMPOSITE_WEIGHTS[k].ratings,
-                        overrides.COMPOSITE_WEIGHTS[k].weights,
+                        overrides.constants.COMPOSITE_WEIGHTS[k].ratings,
+                        overrides.constants.COMPOSITE_WEIGHTS[k].weights,
                         false,
                     );
                 }

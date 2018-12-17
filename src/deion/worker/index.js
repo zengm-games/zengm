@@ -10,6 +10,7 @@ import * as util from "./util";
 import type {
     CompositeWeights,
     Names,
+    WorkerOverridesConstants,
     WorkerOverridesCore,
     WorkerOverridesUtil,
 } from "../common/types";
@@ -21,8 +22,7 @@ self.bbgm = Object.assign({}, common, core, db, util);
 
 const deionWorker = async (options: {
     overrides: {
-        COMPOSITE_WEIGHTS: CompositeWeights<>,
-        POSITIONS: string[],
+        constants: WorkerOverridesConstants,
         core: WorkerOverridesCore,
         names: Names,
         util: WorkerOverridesUtil,
@@ -31,10 +31,6 @@ const deionWorker = async (options: {
         },
     },
 }) => {
-    Object.assign(
-        overrides.COMPOSITE_WEIGHTS,
-        options.overrides.COMPOSITE_WEIGHTS,
-    );
     Object.assign(overrides, options.overrides);
 
     // God damn this function is ugly, clean up! Can probably share with ui.

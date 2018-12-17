@@ -3,7 +3,7 @@
 import { PLAYER } from "../../common";
 import { freeAgents } from "../core";
 import { idb } from "../db";
-import { g, helpers } from "../util";
+import { g, helpers, overrides } from "../util";
 import type { UpdateEvents } from "../../common/types";
 
 async function updatePlayer(
@@ -16,6 +16,8 @@ async function updatePlayer(
         !state.retired ||
         state.pid !== inputs.pid
     ) {
+        const ratings = overrides.constants.RATINGS;
+
         let p = await idb.getCopy.players({ pid: inputs.pid });
         if (p === undefined) {
             return {
@@ -57,21 +59,7 @@ async function updatePlayer(
                 "age",
                 "ovr",
                 "pot",
-                "hgt",
-                "stre",
-                "spd",
-                "jmp",
-                "endu",
-                "ins",
-                "dnk",
-                "ft",
-                "fg",
-                "tp",
-                "oiq",
-                "diq",
-                "drb",
-                "pss",
-                "reb",
+                ...ratings,
                 "skills",
                 "pos",
             ],
@@ -184,81 +172,66 @@ async function updatePlayer(
         events.forEach(helpers.correctLinkLid.bind(null, g.lid));
         feats.forEach(helpers.correctLinkLid.bind(null, g.lid));
 
-        const ratings = [
-            "hgt",
-            "stre",
-            "spd",
-            "jmp",
-            "endu",
-            "ins",
-            "dnk",
-            "ft",
-            "fg",
-            "tp",
-            "oiq",
-            "diq",
-            "drb",
-            "pss",
-            "reb",
-        ];
-
-        const statTables = [
-            {
-                name: "Stats",
-                stats: [
-                    "gp",
-                    "gs",
-                    "min",
-                    "fg",
-                    "fga",
-                    "fgp",
-                    "tp",
-                    "tpa",
-                    "tpp",
-                    "ft",
-                    "fta",
-                    "ftp",
-                    "orb",
-                    "drb",
-                    "trb",
-                    "ast",
-                    "tov",
-                    "stl",
-                    "blk",
-                    "ba",
-                    "pf",
-                    "pts",
-                ],
-            },
-            {
-                name: "Advanced",
-                stats: [
-                    "gp",
-                    "gs",
-                    "min",
-                    "per",
-                    "ewa",
-                    "ortg",
-                    "drtg",
-                    "ows",
-                    "dws",
-                    "ws",
-                    "ws48",
-                    "tsp",
-                    "tpar",
-                    "ftr",
-                    "orbp",
-                    "drbp",
-                    "trbp",
-                    "astp",
-                    "stlp",
-                    "blkp",
-                    "tovp",
-                    "usgp",
-                    "pm",
-                ],
-            },
-        ];
+        const statTables =
+            process.env.SPORT === "basketball"
+                ? [
+                      {
+                          name: "Stats",
+                          stats: [
+                              "gp",
+                              "gs",
+                              "min",
+                              "fg",
+                              "fga",
+                              "fgp",
+                              "tp",
+                              "tpa",
+                              "tpp",
+                              "ft",
+                              "fta",
+                              "ftp",
+                              "orb",
+                              "drb",
+                              "trb",
+                              "ast",
+                              "tov",
+                              "stl",
+                              "blk",
+                              "ba",
+                              "pf",
+                              "pts",
+                          ],
+                      },
+                      {
+                          name: "Advanced",
+                          stats: [
+                              "gp",
+                              "gs",
+                              "min",
+                              "per",
+                              "ewa",
+                              "ortg",
+                              "drtg",
+                              "ows",
+                              "dws",
+                              "ws",
+                              "ws48",
+                              "tsp",
+                              "tpar",
+                              "ftr",
+                              "orbp",
+                              "drbp",
+                              "trbp",
+                              "astp",
+                              "stlp",
+                              "blkp",
+                              "tovp",
+                              "usgp",
+                              "pm",
+                          ],
+                      },
+                  ]
+                : [];
 
         return {
             player: p,

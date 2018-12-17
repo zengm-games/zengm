@@ -651,6 +651,12 @@ export type RunFunction = (
     setState: (state: any) => void,
 ) => Promise<void | { [key: string]: any }>;
 
+export type WorkerOverridesConstants = {|
+    COMPOSITE_WEIGHTS: CompositeWeights<>,
+    RATINGS: string[],
+    POSITIONS: string[],
+|};
+
 export type WorkerOverridesCore = {|
     GameSim: any,
     player: {

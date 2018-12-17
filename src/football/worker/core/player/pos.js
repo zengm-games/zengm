@@ -5,7 +5,7 @@ import ovr from "./ovr";
 import type { PlayerRatings } from "../../../common/types";
 
 const pos = (ratings: PlayerRatings): string => {
-    const positions = overrides.POSITIONS.filter(
+    const positions = overrides.constants.POSITIONS.filter(
         pos2 => pos2 !== "KR" && pos2 !== "PR",
     );
 

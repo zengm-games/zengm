@@ -82,7 +82,7 @@ const deleteLeague = params => {
 };
 
 const depth = params => {
-    const positions = overrides.POSITIONS;
+    const positions = overrides.constants.POSITIONS;
     return {
         pos: positions.includes(params.pos) ? params.pos : "QB",
     };

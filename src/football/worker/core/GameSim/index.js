@@ -314,7 +314,7 @@ class GameSim {
         if (yds >= ydsTD) {
             this.awaitingExtraPoint = true;
             return {
-                safety: false,
+                safetyOrTouchback: false,
                 td: true,
             };
         }
@@ -328,7 +328,7 @@ class GameSim {
             this.toGo = maxToGo < 10 ? maxToGo : 10;
 
             return {
-                safety: false,
+                safetyOrTouchback: false,
                 td: false,
             };
         }
@@ -343,7 +343,7 @@ class GameSim {
             this.toGo = maxToGo < 10 ? maxToGo : 10;
 
             return {
-                safety: false,
+                safetyOrTouchback: false,
                 td: false,
             };
         }
@@ -352,7 +352,7 @@ class GameSim {
         this.toGo -= yds;
 
         return {
-            safety: false,
+            safetyOrTouchback: false,
             td: false,
         };
     }
@@ -408,7 +408,7 @@ class GameSim {
         const kickReturner = this.playersOnField[this.d].KR[0];
 
         const touchback = Math.random() > 0.5;
-        const kickTo = random.uniform(-9, 10);
+        const kickTo = random.randInt(-9, 10);
 
         let dt = 0;
 
@@ -424,7 +424,7 @@ class GameSim {
             this.toGo = 10;
         } else {
             dt = 5;
-            const returnLength = random.uniform(10, 109);
+            const returnLength = random.randInt(10, 109);
             const returnTo = kickTo + returnLength;
             const td = returnTo >= 100;
 
@@ -456,7 +456,7 @@ class GameSim {
         const punter = this.playersOnField[this.o].P[0];
         const puntReturner = this.playersOnField[this.d].PR[0];
 
-        const distance = random.uniform(40, 60);
+        const distance = random.randInt(40, 60);
         const touchback = distance + this.scrimmage > 100;
 
         this.playByPlay.logEvent("punt", {
@@ -470,7 +470,7 @@ class GameSim {
             this.down = 1;
             this.toGo = 10;
         } else {
-            const returnLength = random.uniform(0, 109);
+            const returnLength = random.randInt(0, 109);
             const returnTo = 100 - this.scrimmage - distance + returnLength;
             const td = returnTo >= 100;
 
@@ -548,6 +548,45 @@ class GameSim {
         return 5;
     }
 
+    doInterception(passYdsRaw: number) {
+        this.possessionChange();
+        this.scrimmage = helpers.bound(
+            100 - this.scrimmage - passYdsRaw,
+            -9,
+            100,
+        );
+
+        const p = random.choice([
+            ...this.playersOnField[this.o].DL,
+            ...this.playersOnField[this.o].LB,
+            ...this.playersOnField[this.o].CB,
+            ...this.playersOnField[this.o].S,
+        ]);
+
+        const ydsRaw = random.randInt(0, 109);
+        const yds = this.boundedYds(ydsRaw);
+        const { safetyOrTouchback, td } = this.advanceYds(ydsRaw);
+
+        this.recordStat(this.o, p, "defInt");
+
+        if (safetyOrTouchback) {
+            this.scrimmage = 20;
+        } else {
+            this.recordStat(this.o, p, "defIntYds", yds);
+            if (td) {
+                this.recordStat(this.o, p, "defIntTD");
+            }
+        }
+
+        this.playByPlay.logEvent("interception", {
+            t: this.o,
+            names: [p.name],
+            safetyOrTouchback,
+            td,
+            yds,
+        });
+    }
+
     doPass() {
         this.updatePlayersOnField("pass");
 
@@ -559,14 +598,18 @@ class GameSim {
             ...this.playersOnField[this.o].RB,
         ]);
 
+        const interception = Math.random() < 0.05;
         const complete = Math.random() < 0.6;
-        const ydsRaw = random.uniform(0, 30);
+        const ydsRaw = random.randInt(0, 30);
         const yds = this.boundedYds(ydsRaw);
 
         this.recordStat(this.o, qb, "pss");
         this.recordStat(this.o, target, "tgt");
 
-        if (complete) {
+        if (interception) {
+            this.doInterception(ydsRaw);
+            this.recordStat(this.o, qb, "pssInt");
+        } else if (complete) {
             const { td } = this.advanceYds(ydsRaw);
             this.recordStat(this.o, qb, "pssCmp");
             this.recordStat(this.o, qb, "pssYds", yds);

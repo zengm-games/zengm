@@ -116,7 +116,7 @@ const develop = (
         let pos;
         let maxOvr = 0;
 
-        ratings.ovrs = overrides.POSITIONS.reduce((ovrs, pos2) => {
+        ratings.ovrs = overrides.constants.POSITIONS.reduce((ovrs, pos2) => {
             if (!overrides.core.player.ovr) {
                 throw new Error("Missing overrides.core.player.ovr");
             }
@@ -130,11 +130,14 @@ const develop = (
             return ovrs;
         }, {});
         if (!skipPot) {
-            ratings.pots = overrides.POSITIONS.reduce((pots, pos2) => {
-                pots[pos2] = bootstrapPot(ratings, age, pos2);
+            ratings.pots = overrides.constants.POSITIONS.reduce(
+                (pots, pos2) => {
+                    pots[pos2] = bootstrapPot(ratings, age, pos2);
 
-                return pots;
-            }, {});
+                    return pots;
+                },
+                {},
+            );
         }
 
         if (pos === undefined) {

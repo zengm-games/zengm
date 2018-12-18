@@ -313,7 +313,7 @@ class GameSim {
         return yds;
     }
 
-    advanceYds(yds: number) {
+    advanceYds(yds: number, { sack }: { sack: boolean } = {}) {
         // Touchdown?
         const ydsTD = 100 - this.scrimmage;
         if (yds >= ydsTD) {
@@ -325,6 +325,34 @@ class GameSim {
         }
 
         this.scrimmage += yds;
+
+        // For non-sacks, record tackler(s)
+        if (!sack && Math.random() < 0.9) {
+            let playersDefense = [];
+            for (const playersAtPos of Object.values(
+                this.playersOnField[this.d],
+            )) {
+                playersDefense = playersDefense.concat(playersAtPos);
+            }
+            const tacklers =
+                Math.random() < 0.3
+                    ? new Set([
+                          random.choice(playersDefense),
+                          random.choice(playersDefense),
+                      ])
+                    : new Set([random.choice(playersDefense)]);
+
+            for (const tackler of tacklers) {
+                this.recordStat(
+                    this.d,
+                    tackler,
+                    tacklers.size === 1 ? "defTckSolo" : "defTckAst",
+                );
+                if (yds < 0) {
+                    this.recordStat(this.d, tackler, "defTckLoss");
+                }
+            }
+        }
 
         // First down?
         if (yds >= this.toGo) {
@@ -432,6 +460,8 @@ class GameSim {
             yds: kickTo,
         });
 
+        this.possessionChange();
+
         if (touchback) {
             this.scrimmage = 25;
             this.down = 1;
@@ -444,17 +474,16 @@ class GameSim {
                 0,
                 maxReturnLength,
             );
-            const returnTo = kickTo + returnLength;
-            const td = returnTo >= 100;
+            this.scrimmage = kickTo;
+            const { td } = this.advanceYds(returnLength);
 
-            this.recordStat(this.d, kickReturner, "kr");
-            this.recordStat(this.d, kickReturner, "krYds", returnLength);
+            this.recordStat(this.o, kickReturner, "kr");
+            this.recordStat(this.o, kickReturner, "krYds", returnLength);
 
             if (td) {
                 this.awaitingExtraPoint = true;
-                this.recordStat(this.d, kickReturner, "krTD");
+                this.recordStat(this.o, kickReturner, "krTD");
             } else {
-                this.scrimmage = returnTo;
                 this.down = 1;
                 this.toGo = 10;
             }
@@ -467,7 +496,6 @@ class GameSim {
             });
         }
 
-        this.possessionChange();
         this.awaitingKickoff = false;
 
         return dt;
@@ -492,6 +520,8 @@ class GameSim {
             yds: distance,
         });
 
+        this.possessionChange();
+
         if (touchback) {
             this.scrimmage = 25;
             this.down = 1;
@@ -503,17 +533,16 @@ class GameSim {
                 0,
                 maxReturnLength,
             );
-            const returnTo = kickTo + returnLength;
-            const td = returnTo >= 100;
+            this.scrimmage = kickTo;
+            const { td } = this.advanceYds(returnLength);
 
-            this.recordStat(this.d, puntReturner, "pr");
-            this.recordStat(this.d, puntReturner, "prYds", returnLength);
+            this.recordStat(this.o, puntReturner, "pr");
+            this.recordStat(this.o, puntReturner, "prYds", returnLength);
 
             if (td) {
                 this.awaitingExtraPoint = true;
-                this.recordStat(this.d, puntReturner, "prTD");
+                this.recordStat(this.o, puntReturner, "prTD");
             } else {
-                this.scrimmage = returnTo;
                 this.down = 1;
                 this.toGo = 10;
             }
@@ -688,7 +717,9 @@ class GameSim {
 
         const ydsRaw = random.randInt(-1, -15);
         const yds = this.boundedYds(ydsRaw);
-        this.advanceYds(yds);
+        this.advanceYds(yds, {
+            sack: true,
+        });
 
         this.recordStat(this.o, qb, "pssSk");
         this.recordStat(this.o, qb, "pssSkYds", yds);
@@ -724,6 +755,12 @@ class GameSim {
             ...this.playersOnField[this.o].RB,
         ]);
 
+        const defender = random.choice([
+            ...this.playersOnField[this.d].CB,
+            ...this.playersOnField[this.d].S,
+            ...this.playersOnField[this.d].LB,
+        ]);
+
         const interception = Math.random() < 0.05;
         const complete = Math.random() < 0.6;
         const ydsRaw = random.randInt(0, 30);
@@ -731,6 +768,7 @@ class GameSim {
 
         this.recordStat(this.o, qb, "pss");
         this.recordStat(this.o, target, "tgt");
+        this.recordStat(this.d, defender, "defPssDef");
 
         if (interception) {
             this.doInterception(yds);

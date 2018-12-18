@@ -431,18 +431,28 @@ class GameSim {
             touchback,
             yds: kickTo,
         });
+
         if (touchback) {
             this.scrimmage = 25;
             this.down = 1;
             this.toGo = 10;
         } else {
             dt = 5;
-            const returnLength = random.randInt(10, 109);
+            const maxReturnLength = 100 - kickTo;
+            const returnLength = helpers.bound(
+                random.randInt(10, 109),
+                0,
+                maxReturnLength,
+            );
             const returnTo = kickTo + returnLength;
             const td = returnTo >= 100;
 
+            this.recordStat(this.d, kickReturner, "kr");
+            this.recordStat(this.d, kickReturner, "krYds", returnLength);
+
             if (td) {
                 this.awaitingExtraPoint = true;
+                this.recordStat(this.d, kickReturner, "krTD");
             } else {
                 this.scrimmage = returnTo;
                 this.down = 1;
@@ -469,26 +479,39 @@ class GameSim {
         const punter = this.playersOnField[this.o].P[0];
         const puntReturner = this.playersOnField[this.d].PR[0];
 
-        const distance = random.randInt(40, 60);
-        const touchback = distance + this.scrimmage > 100;
+        const distance = random.randInt(35, 70);
+        const kickTo = 100 - this.scrimmage - distance;
+        const touchback = kickTo < 0;
 
+        this.recordStat(this.o, punter, "pnt");
+        this.recordStat(this.o, punter, "pntYds", distance);
         this.playByPlay.logEvent("punt", {
             t: this.o,
             names: [punter.name],
             touchback,
             yds: distance,
         });
+
         if (touchback) {
             this.scrimmage = 25;
             this.down = 1;
             this.toGo = 10;
         } else {
-            const returnLength = random.randInt(0, 109);
-            const returnTo = 100 - this.scrimmage - distance + returnLength;
+            const maxReturnLength = 100 - kickTo;
+            const returnLength = helpers.bound(
+                random.randInt(0, 109),
+                0,
+                maxReturnLength,
+            );
+            const returnTo = kickTo + returnLength;
             const td = returnTo >= 100;
+
+            this.recordStat(this.d, puntReturner, "pr");
+            this.recordStat(this.d, puntReturner, "prYds", returnLength);
 
             if (td) {
                 this.awaitingExtraPoint = true;
+                this.recordStat(this.d, puntReturner, "prTD");
             } else {
                 this.scrimmage = returnTo;
                 this.down = 1;

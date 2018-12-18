@@ -17,12 +17,13 @@ game sim
 - two point conversions
 - two point conversion turnover return
 - log
-  - pr/kr
   - padef
   - tackles
   - tackles for loss
   - safeties
   - ont
+- blocked fg
+- blocked punt
 - penalties
 - blocked/missed fg/xp return
 - update this.scrimmage more often, rather than passing yards around. then can evaluate touchback/td/safety in context more easily

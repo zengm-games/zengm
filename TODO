@@ -10,12 +10,9 @@ game sim
 - break into multiple files
   - logging stuff
   - anything not sport specific, to base class
-- clock stuff should be done alongside play
 - log clutch plays
 - scale dt by length (in yds) of play
 - pace
-- two point conversions
-  - two point conversion turnover return
 - onside kicks
 - blocked fg
 - blocked punt
@@ -23,8 +20,12 @@ game sim
 - blocked/missed fg/xp return
 - update this.scrimmage more often, rather than passing yards around. then can evaluate touchback/td/safety in context more easily
   - basically, do stuff more intelligently (log things when they happen (start of rushing attempt, then end of rushing attempt later with more info), update scrimmage when it happens, update possession when it happens, etc)
-- refactor - Play class
+- refactor
+  - individual play simulation shouldn't be in main class
+  - need ability to do pass/run for normal plays and 2 point conversions (save different stats), and propagate that through fumble/int returns
 - special kick after safety
+
+box score
 
 derived stats
 

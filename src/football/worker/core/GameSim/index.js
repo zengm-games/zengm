@@ -112,6 +112,8 @@ class GameSim {
 
     awaitingKickoff: boolean;
 
+    twoPointState: "attempting" | "success" | void;
+
     constructor(
         gid: number,
         team1: TeamGameSim,
@@ -243,7 +245,7 @@ class GameSim {
         }
 
         if (this.awaitingAfterTouchdown) {
-            return "extraPoint";
+            return Math.random() > 0.8 ? "extraPoint" : "twoPointConversion";
         }
 
         if (this.down === 4) {
@@ -269,6 +271,8 @@ class GameSim {
             dt = this.doKickoff();
         } else if (playType === "extraPoint") {
             dt = this.doFieldGoal(true);
+        } else if (playType === "twoPointConversion") {
+            dt = this.doTwoPointConversion();
         } else if (playType === "fieldGoal") {
             dt = this.doFieldGoal();
         } else if (playType === "punt") {
@@ -618,7 +622,37 @@ class GameSim {
 
         this.awaitingAfterTouchdown = false;
 
-        return 5;
+        return extraPoint ? 0 : 5;
+    }
+
+    doTwoPointConversion() {
+        this.twoPointState = "attempting";
+
+        this.playByPlay.logEvent("twoPointAttempt", {
+            t: this.o,
+        });
+
+        this.down = 1;
+        this.scrimmage = 98;
+
+        if (Math.random() > 0.5) {
+            this.doPass();
+        } else {
+            this.doRun();
+        }
+
+        this.playByPlay.logEvent("twoPointResult", {
+            t: this.o,
+            success: this.twoPointState === "success",
+        });
+
+        this.awaitingAfterTouchdown = false;
+        this.twoPointState = undefined;
+
+        this.awaitingAfterTouchdown = false;
+        this.awaitingKickoff = true;
+
+        return 0;
     }
 
     doFumble(pFumbled: PlayerGameSim, priorYdsRaw: number) {
@@ -992,6 +1026,23 @@ class GameSim {
     }
 
     recordStat(t: TeamNum, p: PlayerGameSim, s: Stat, amt?: number = 1) {
+        const qtr = this.team[t].stat.ptsQtrs.length - 1;
+
+        // Special case for two point conversions
+        if (this.twoPointState === "attempting") {
+            let pts;
+            if (s.endsWith("TD") && s !== "pssTD") {
+                pts = 2;
+            }
+
+            if (pts) {
+                this.team[t].stat.pts += pts;
+                this.team[t].stat.ptsQtrs[qtr] += pts;
+
+                this.twoPointState = "success";
+            }
+        }
+
         if (s === "gs") {
             // In case player starts on offense and defense, only record once
             p.stat[s] = 1;
@@ -1006,8 +1057,6 @@ class GameSim {
             s !== "energy"
         ) {
             this.team[t].stat[s] += amt;
-
-            const qtr = this.team[t].stat.ptsQtrs.length - 1;
 
             let pts;
             if (s.endsWith("TD") && s !== "pssTD") {

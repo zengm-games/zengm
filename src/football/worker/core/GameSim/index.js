@@ -354,6 +354,14 @@ class GameSim {
             }
         }
 
+        // Safety or touchback?
+        if (this.scrimmage <= 0) {
+            return {
+                safetyOrTouchback: true,
+                td: false,
+            };
+        }
+
         // First down?
         if (yds >= this.toGo) {
             this.down = 1;
@@ -649,23 +657,26 @@ class GameSim {
         const yds = this.boundedYds(ydsRaw);
         const { safetyOrTouchback, td } = this.advanceYds(yds);
 
+        this.playByPlay.logEvent("fumble", {
+            lost,
+            t: this.o,
+            names: [pForced.name, pRecovered.name],
+            td,
+            yds,
+        });
+
         if (safetyOrTouchback) {
-            this.scrimmage = 20;
+            if (lost) {
+                this.scrimmage = 20;
+            } else {
+                return this.doSafety();
+            }
         } else {
             this.recordStat(recoveringTeam, pRecovered, "defFmbYds", yds);
             if (td) {
                 this.recordStat(recoveringTeam, pRecovered, "defFmbTD");
             }
         }
-
-        this.playByPlay.logEvent("fumble", {
-            lost,
-            t: this.o,
-            names: [pForced.name, pRecovered.name],
-            safetyOrTouchback,
-            td,
-            yds,
-        });
     }
 
     doInterception(passYdsRaw: number) {
@@ -707,6 +718,23 @@ class GameSim {
         });
     }
 
+    doSafety() {
+        let playersDefense = [];
+        for (const playersAtPos of Object.values(this.playersOnField[this.d])) {
+            playersDefense = playersDefense.concat(playersAtPos);
+        }
+        const p = random.choice(playersDefense);
+        this.recordStat(this.d, p, "defSft");
+
+        this.possessionChange();
+        this.awaitingKickoff = true;
+
+        this.playByPlay.logEvent("safety", {
+            t: this.d,
+            names: [],
+        });
+    }
+
     doSack(qb: PlayerGameSim) {
         const p = random.choice([
             ...this.playersOnField[this.d].DL,
@@ -717,9 +745,13 @@ class GameSim {
 
         const ydsRaw = random.randInt(-1, -15);
         const yds = this.boundedYds(ydsRaw);
-        this.advanceYds(yds, {
+        const { safetyOrTouchback } = this.advanceYds(yds, {
             sack: true,
         });
+
+        if (safetyOrTouchback) {
+            return this.doSafety();
+        }
 
         this.recordStat(this.o, qb, "pssSk");
         this.recordStat(this.o, qb, "pssSkYds", yds);
@@ -780,7 +812,7 @@ class GameSim {
                 return 5;
             }
 
-            const { td } = this.advanceYds(yds);
+            const { safetyOrTouchback, td } = this.advanceYds(yds);
             this.recordStat(this.o, qb, "pssCmp");
             this.recordStat(this.o, qb, "pssYds", yds);
             this.recordStat(this.o, target, "rec");
@@ -797,6 +829,10 @@ class GameSim {
                 td,
                 yds,
             });
+
+            if (safetyOrTouchback) {
+                return this.doSafety();
+            }
         } else {
             this.playByPlay.logEvent("passIncomplete", {
                 t: this.o,
@@ -833,7 +869,7 @@ class GameSim {
             return 5;
         }
 
-        const { td } = this.advanceYds(yds);
+        const { safetyOrTouchback, td } = this.advanceYds(yds);
         if (td) {
             this.recordStat(this.o, p, "rusTD");
         }
@@ -844,6 +880,10 @@ class GameSim {
             td,
             yds,
         });
+
+        if (safetyOrTouchback) {
+            return this.doSafety();
+        }
 
         return 5;
     }
@@ -976,6 +1016,8 @@ class GameSim {
                 pts = 1;
             } else if (s.startsWith("fg") && !s.startsWith("fga")) {
                 pts = 3;
+            } else if (s === "defSft") {
+                pts = 2;
             }
 
             if (pts) {

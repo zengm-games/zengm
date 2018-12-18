@@ -16,8 +16,6 @@ game sim
 - pace
 - two point conversions
 - two point conversion turnover return
-- log
-  - safeties
 - onside kicks
 - blocked fg
 - blocked punt
@@ -26,6 +24,7 @@ game sim
 - update this.scrimmage more often, rather than passing yards around. then can evaluate touchback/td/safety in context more easily
   - basically, do stuff more intelligently (log things when they happen (start of rushing attempt, then end of rushing attempt later with more info), update scrimmage when it happens, update possession when it happens, etc)
 - refactor - Play class
+- special kick after safety
 
 derived stats
 

@@ -595,7 +595,7 @@ class GameSim {
 
         const ydsRaw = random.randInt(0, 109);
         const yds = this.boundedYds(ydsRaw);
-        const { safetyOrTouchback, td } = this.advanceYds(ydsRaw);
+        const { safetyOrTouchback, td } = this.advanceYds(yds);
 
         if (safetyOrTouchback) {
             this.scrimmage = 20;
@@ -655,6 +655,23 @@ class GameSim {
         });
     }
 
+    doSack(qb: PlayerGameSim) {
+        const p = random.choice([
+            ...this.playersOnField[this.d].DL,
+            ...this.playersOnField[this.d].LB,
+            ...this.playersOnField[this.d].CB,
+            ...this.playersOnField[this.d].S,
+        ]);
+
+        const ydsRaw = random.randInt(-1, -15);
+        const yds = this.boundedYds(ydsRaw);
+        this.advanceYds(yds);
+
+        this.recordStat(this.o, qb, "pssSk");
+        this.recordStat(this.o, qb, "pssSkYds", yds);
+        this.recordStat(this.o, p, "defSk");
+    }
+
     doPass() {
         this.updatePlayersOnField("pass");
 
@@ -669,6 +686,12 @@ class GameSim {
         if (fumble) {
             const yds = random.randInt(-1, -10);
             this.doFumble(qb, yds);
+            return 5;
+        }
+
+        const sack = Math.random() < 0.02;
+        if (sack) {
+            this.doSack(qb);
             return 5;
         }
 
@@ -749,7 +772,7 @@ class GameSim {
             return 5;
         }
 
-        const { td } = this.advanceYds(ydsRaw);
+        const { td } = this.advanceYds(yds);
         if (td) {
             this.recordStat(this.o, p, "rusTD");
         }

@@ -15,9 +15,8 @@ game sim
 - scale dt by length (in yds) of play
 - pace
 - two point conversions
-- clean up fumble/int code, should be easier to have fumble code in multiple places
+- two point conversion turnover return
 - log
-  - sacks (off and def)
   - pr/kr
   - padef
   - tackles
@@ -25,8 +24,13 @@ game sim
   - safeties
   - ont
 - penalties
+- blocked/missed fg/xp return
 - update this.scrimmage more often, rather than passing yards around. then can evaluate touchback/td/safety in context more easily
   - basically, do stuff more intelligently (log things when they happen (start of rushing attempt, then end of rushing attempt later with more info), update scrimmage when it happens, update possession when it happens, etc)
+
+derived stats
+
+stats display - some things are per game, some are total, in same table! crazy
 
 depth chart
 - links here from More, dropdowns, etc

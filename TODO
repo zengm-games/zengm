@@ -16,7 +16,15 @@ game sim
 - pace
 - two point conversions
 - clean up fumble/int code, should be easier to have fumble code in multiple places
-- sacks
+- log
+  - sacks (off and def)
+  - pr/kr
+  - padef
+  - tackles
+  - tackles for loss
+  - safeties
+  - ont
+- penalties
 - update this.scrimmage more often, rather than passing yards around. then can evaluate touchback/td/safety in context more easily
   - basically, do stuff more intelligently (log things when they happen (start of rushing attempt, then end of rushing attempt later with more info), update scrimmage when it happens, update possession when it happens, etc)
 

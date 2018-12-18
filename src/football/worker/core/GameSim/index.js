@@ -633,7 +633,7 @@ class GameSim {
 
         const ydsRaw = random.randInt(0, 109);
         const yds = this.boundedYds(ydsRaw);
-        const { safetyOrTouchback, td } = this.advanceYds(ydsRaw);
+        const { safetyOrTouchback, td } = this.advanceYds(yds);
 
         this.recordStat(this.o, p, "defInt");
 
@@ -660,6 +660,18 @@ class GameSim {
 
         const qb = this.playersOnField[this.o].QB[0];
 
+        this.playByPlay.logEvent("dropback", {
+            t: this.o,
+            names: [qb.name],
+        });
+
+        const fumble = Math.random() < 0.01;
+        if (fumble) {
+            const yds = random.randInt(-1, -10);
+            this.doFumble(qb, yds);
+            return 5;
+        }
+
         const target = random.choice([
             ...this.playersOnField[this.o].WR,
             ...this.playersOnField[this.o].TE,
@@ -675,10 +687,16 @@ class GameSim {
         this.recordStat(this.o, target, "tgt");
 
         if (interception) {
-            this.doInterception(ydsRaw);
+            this.doInterception(yds);
             this.recordStat(this.o, qb, "pssInt");
         } else if (complete) {
-            const { td } = this.advanceYds(ydsRaw);
+            const fumble2 = Math.random() < 0.01;
+            if (fumble2) {
+                this.doFumble(qb, yds);
+                return 5;
+            }
+
+            const { td } = this.advanceYds(yds);
             this.recordStat(this.o, qb, "pssCmp");
             this.recordStat(this.o, qb, "pssYds", yds);
             this.recordStat(this.o, target, "rec");
@@ -714,19 +732,26 @@ class GameSim {
                 ? this.playersOnField[this.o].RB[0]
                 : this.playersOnField[this.o].QB[0];
         this.recordStat(this.o, p, "rus");
+        const qb = this.playersOnField[this.o].QB[0];
+
+        this.playByPlay.logEvent("handoff", {
+            t: this.o,
+            names: [qb.name, p.name],
+        });
 
         const ydsRaw = random.randInt(-5, 10);
         const yds = this.boundedYds(ydsRaw);
         this.recordStat(this.o, p, "rusYds", yds);
 
         const fumble = Math.random() < 0.01;
-        let td = false;
-        if (!fumble) {
-            const result = this.advanceYds(ydsRaw);
-            td = result.td;
-            if (td) {
-                this.recordStat(this.o, p, "rusTD");
-            }
+        if (fumble) {
+            this.doFumble(p, yds);
+            return 5;
+        }
+
+        const { td } = this.advanceYds(ydsRaw);
+        if (td) {
+            this.recordStat(this.o, p, "rusTD");
         }
 
         this.playByPlay.logEvent("run", {
@@ -735,10 +760,6 @@ class GameSim {
             td,
             yds,
         });
-
-        if (fumble) {
-            this.doFumble(p, yds);
-        }
 
         return 5;
     }

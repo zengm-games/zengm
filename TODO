@@ -15,7 +15,7 @@ game sim
 - scale dt by length (in yds) of play
 - pace
 - two point conversions
-- two point conversion turnover return
+  - two point conversion turnover return
 - onside kicks
 - blocked fg
 - blocked punt

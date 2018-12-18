@@ -108,7 +108,7 @@ class GameSim {
 
     playByPlay: PlayByPlayLogger | void;
 
-    awaitingExtraPoint: boolean;
+    awaitingAfterTouchdown: boolean;
 
     awaitingKickoff: boolean;
 
@@ -139,7 +139,7 @@ class GameSim {
 
         this.t = g.quarterLength; // Game clock, in minutes
 
-        this.awaitingExtraPoint = false;
+        this.awaitingAfterTouchdown = false;
         this.awaitingKickoff = true;
 
         this.homeCourtAdvantage();
@@ -242,7 +242,7 @@ class GameSim {
             return "kickoff";
         }
 
-        if (this.awaitingExtraPoint) {
+        if (this.awaitingAfterTouchdown) {
             return "extraPoint";
         }
 
@@ -317,7 +317,7 @@ class GameSim {
         // Touchdown?
         const ydsTD = 100 - this.scrimmage;
         if (yds >= ydsTD) {
-            this.awaitingExtraPoint = true;
+            this.awaitingAfterTouchdown = true;
             return {
                 safetyOrTouchback: false,
                 td: true,
@@ -489,7 +489,7 @@ class GameSim {
             this.recordStat(this.o, kickReturner, "krYds", returnLength);
 
             if (td) {
-                this.awaitingExtraPoint = true;
+                this.awaitingAfterTouchdown = true;
                 this.recordStat(this.o, kickReturner, "krTD");
             } else {
                 this.down = 1;
@@ -548,7 +548,7 @@ class GameSim {
             this.recordStat(this.o, puntReturner, "prYds", returnLength);
 
             if (td) {
-                this.awaitingExtraPoint = true;
+                this.awaitingAfterTouchdown = true;
                 this.recordStat(this.o, puntReturner, "prTD");
             } else {
                 this.down = 1;
@@ -616,7 +616,7 @@ class GameSim {
             this.scrimmage = 100 - this.scrimmage - 7;
         }
 
-        this.awaitingExtraPoint = false;
+        this.awaitingAfterTouchdown = false;
 
         return 5;
     }

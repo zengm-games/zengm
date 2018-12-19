@@ -61,8 +61,6 @@ for (const name of ["ui", "worker"]) {
 
         writeStream.on("finish", async () => {
             if (!didError) {
-                await build.buildSW();
-
                 console.log(
                     `${(bytes / 1024 / 1024).toFixed(
                         2,

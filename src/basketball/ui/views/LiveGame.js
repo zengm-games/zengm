@@ -2,9 +2,10 @@ import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import AutoAffix from "react-overlays/lib/AutoAffix";
+import { BoxScoreWrapper } from "../../../deion/ui/components";
 import { helpers, setTitle } from "../../../deion/ui/util";
 import components from "../components";
-const { BoxScore, BoxScoreRow } = components;
+const { BoxScoreRow } = components;
 
 class PlayerRow extends React.Component {
     shouldComponentUpdate(nextProps) {
@@ -250,7 +251,7 @@ class LiveGame extends React.Component {
                 <div className="row">
                     <div className="col-md-9">
                         {this.state.boxScore.gid >= 0 ? (
-                            <BoxScore
+                            <BoxScoreWrapper
                                 boxScore={this.state.boxScore}
                                 Row={PlayerRow}
                             />

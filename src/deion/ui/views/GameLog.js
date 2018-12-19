@@ -1,11 +1,11 @@
 import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
-import { Dropdown, NewWindowLink } from "../components";
+import { BoxScoreWrapper, Dropdown, NewWindowLink } from "../components";
 import { helpers, overrides, setTitle } from "../util";
 import clickable from "../wrappers/clickable";
 
-const StatsRow = clickable(({ clicked, i, p, toggleClicked }) => {
+const StatsRow = clickable(({ clicked, i, p, toggleClicked, type }) => {
     const classes = classNames({
         separator: i === 4,
         "table-warning": clicked,
@@ -15,6 +15,7 @@ const StatsRow = clickable(({ clicked, i, p, toggleClicked }) => {
             className={classes}
             onClick={toggleClicked}
             p={p}
+            type={type}
         />
     );
 });
@@ -181,7 +182,7 @@ const GameLog = ({
             <div className="row">
                 <div className="col-md-10">
                     {boxScore.gid >= 0 ? (
-                        <overrides.components.BoxScore
+                        <BoxScoreWrapper
                             abbrev={abbrev}
                             boxScore={boxScore}
                             nextGid={nextGid}

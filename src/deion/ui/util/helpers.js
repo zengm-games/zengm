@@ -66,6 +66,7 @@ const roundOverrides =
               ftp: "oneDecimalPlace",
               ws48: "roundWinp",
               pm: "plusMinus",
+              ftpfga: "roundWinp",
           }
         : {};
 
@@ -77,6 +78,10 @@ const roundStat = (
     try {
         // Number of decimals for many stats
         const d = totals ? 0 : 1;
+
+        if (Number.isNaN(value)) {
+            value = 0;
+        }
 
         if (roundOverrides[stat] === "none") {
             return String(value);

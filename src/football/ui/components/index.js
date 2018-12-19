@@ -1,7 +1,7 @@
 // @flow
 
-import BoxScore from "../../../basketball/ui/components/BoxScore";
-import BoxScoreRow from "../../../basketball/ui/components/BoxScoreRow";
+import BoxScore from "./BoxScore";
+import BoxScoreRow from "./BoxScoreRow";
 import RatingsOverview from "./RatingsOverview";
 import RatingsStatsPopover from "../../../basketball/ui/components/RatingsStatsPopover";
 

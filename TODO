@@ -4,6 +4,9 @@ basketball - report that AI teams consider any of your draft picks the 1st pick 
 
 highlighting of finals mvp https://www.reddit.com/r/BasketballGM/comments/a3kxkq/by_the_finals_mvp_ralph_sampson_is_on_my_team_but/
 
+box score
+- add "type" param to BoxScoreRow, then pass it to Row in BoxScore only in football
+
 game sim
 - can't assume t.depth is accurate, make sure to prune + augment before use
   - have function which does this, call in loadTeams, also use in depth (logic probably already there)
@@ -24,8 +27,6 @@ game sim
   - individual play simulation shouldn't be in main class
   - need ability to do pass/run for normal plays and 2 point conversions (save different stats), and propagate that through fumble/int returns
 - special kick after safety
-
-box score
 
 derived stats
 
@@ -264,6 +265,9 @@ RatingsOverview - could put in deion, with config to specify categories and name
 show game stats in player page
 
 ---
+
+"Shot Locations" should be just another stat type in player/team stats
+- need to handle super cols in PLAYER_STATS_TABLES
 
 "Accept Trade" button on trading block
 

@@ -141,40 +141,53 @@ const Select = ({ field, handleChange, value }) => {
                     key: "all",
                 },
             ];
-        } else if (field === "statTypes") {
-            options = [
-                {
-                    val: "Per Game",
-                    key: "perGame",
-                },
-                {
-                    val: "Per 36 Mins",
-                    key: "per36",
-                },
-                {
-                    val: "Totals",
-                    key: "totals",
-                },
-            ];
-        } else if (field === "statTypesAdv") {
-            options = [
-                {
-                    val: "Per Game",
-                    key: "perGame",
-                },
-                {
-                    val: "Per 36 Mins",
-                    key: "per36",
-                },
-                {
-                    val: "Totals",
-                    key: "totals",
-                },
-                {
-                    val: "Advanced",
-                    key: "advanced",
-                },
-            ];
+        } else if (field === "statTypes" || field === "statTypesAdv") {
+            if (process.env.SPORT === "basketball") {
+                options = [
+                    {
+                        val: "Per Game",
+                        key: "perGame",
+                    },
+                    {
+                        val: "Per 36 Mins",
+                        key: "per36",
+                    },
+                    {
+                        val: "Totals",
+                        key: "totals",
+                    },
+                ];
+
+                if (field === "statTypesAdv") {
+                    options.push({
+                        val: "Advanced",
+                        key: "advanced",
+                    });
+                }
+            } else {
+                options = [
+                    {
+                        val: "Passing",
+                        key: "passing",
+                    },
+                    {
+                        val: "Rushing/Receiving",
+                        key: "rushing",
+                    },
+                    {
+                        val: "Defense",
+                        key: "defense",
+                    },
+                    {
+                        val: "Kicking",
+                        key: "kicking",
+                    },
+                    {
+                        val: "Returns",
+                        key: "returns",
+                    },
+                ];
+            }
         } else if (field === "awardType") {
             options = [
                 {

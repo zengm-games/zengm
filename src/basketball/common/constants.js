@@ -116,6 +116,64 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
     },
 };
 
+const PLAYER_STATS_TABLES = {
+    regular: {
+        name: "Stats",
+        stats: [
+            "gp",
+            "gs",
+            "min",
+            "fg",
+            "fga",
+            "fgp",
+            "tp",
+            "tpa",
+            "tpp",
+            "ft",
+            "fta",
+            "ftp",
+            "orb",
+            "drb",
+            "trb",
+            "ast",
+            "tov",
+            "stl",
+            "blk",
+            "ba",
+            "pf",
+            "pts",
+        ],
+    },
+    advanced: {
+        name: "Advanced",
+        stats: [
+            "gp",
+            "gs",
+            "min",
+            "per",
+            "ewa",
+            "ortg",
+            "drtg",
+            "ows",
+            "dws",
+            "ws",
+            "ws48",
+            "tsp",
+            "tpar",
+            "ftr",
+            "orbp",
+            "drbp",
+            "trbp",
+            "astp",
+            "stlp",
+            "blkp",
+            "tovp",
+            "usgp",
+            "pm",
+        ],
+    },
+};
+
 const POSITIONS = [];
 
 const RATINGS: RatingKey[] = [
@@ -136,4 +194,4 @@ const RATINGS: RatingKey[] = [
     "reb",
 ];
 
-export { COMPOSITE_WEIGHTS, POSITIONS, RATINGS };
+export { COMPOSITE_WEIGHTS, PLAYER_STATS_TABLES, POSITIONS, RATINGS };

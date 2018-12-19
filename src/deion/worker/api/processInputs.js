@@ -278,13 +278,17 @@ const playerStats = params => {
         abbrev = "all";
     }
 
+    const defaultStatType =
+        process.env.SPORT === "basketball" ? "perGame" : "passing";
+
     return {
         abbrev,
         season:
             params.season === "career"
                 ? undefined
                 : validateSeason(params.season),
-        statType: params.statType !== undefined ? params.statType : "perGame",
+        statType:
+            params.statType !== undefined ? params.statType : defaultStatType,
         playoffs:
             params.playoffs !== undefined ? params.playoffs : "regularSeason",
     };

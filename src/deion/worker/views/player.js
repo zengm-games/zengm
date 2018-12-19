@@ -18,171 +18,35 @@ async function updatePlayer(
     ) {
         const ratings = overrides.constants.RATINGS;
 
-        const statTables =
-            process.env.SPORT === "basketball"
-                ? [
-                      {
-                          name: "Stats",
-                          stats: [
-                              "gp",
-                              "gs",
-                              "min",
-                              "fg",
-                              "fga",
-                              "fgp",
-                              "tp",
-                              "tpa",
-                              "tpp",
-                              "ft",
-                              "fta",
-                              "ftp",
-                              "orb",
-                              "drb",
-                              "trb",
-                              "ast",
-                              "tov",
-                              "stl",
-                              "blk",
-                              "ba",
-                              "pf",
-                              "pts",
-                          ],
-                      },
-                      {
-                          name: "Advanced",
-                          stats: [
-                              "gp",
-                              "gs",
-                              "min",
-                              "per",
-                              "ewa",
-                              "ortg",
-                              "drtg",
-                              "ows",
-                              "dws",
-                              "ws",
-                              "ws48",
-                              "tsp",
-                              "tpar",
-                              "ftr",
-                              "orbp",
-                              "drbp",
-                              "trbp",
-                              "astp",
-                              "stlp",
-                              "blkp",
-                              "tovp",
-                              "usgp",
-                              "pm",
-                          ],
-                      },
-                  ]
-                : [
-                      {
-                          name: "Passing",
-                          stats: [
-                              "gp",
-                              "gs",
-                              "pssCmp",
-                              "pss",
-                              "pssYds",
-                              "pssTD",
-                              "pssInt",
-                              "pssLng",
-                              "pssSk",
-                              "pssSkYds",
-                          ],
-                      },
-                      {
-                          name: "Rushing and Receiving",
-                          stats: [
-                              "gp",
-                              "gs",
-                              "rus",
-                              "rusYds",
-                              "rusTD",
-                              "rusLng",
-                              "tgt",
-                              "rec",
-                              "recYds",
-                              "recTD",
-                              "recLng",
-                          ],
-                      },
-                      {
-                          name: "Defense, Fumbles, and Penalties",
-                          stats: [
-                              "gp",
-                              "gs",
-                              "defInt",
-                              "defIntYds",
-                              "defIntTD",
-                              "defIntLng",
-                              "defPssDef",
-                              "defFmbFrc",
-                              "defFmbRec",
-                              "defFmbYds",
-                              "defFmbTD",
-                              "defSk",
-                              "defTckSolo",
-                              "defTckAst",
-                              "defTckLoss",
-                              "defSft",
-                              "fmb",
-                              "fmbLost",
-                              "pen",
-                              "penYds",
-                          ],
-                      },
-                      {
-                          name: "Kicking and Punting",
-                          stats: [
-                              "gp",
-                              "gs",
-                              "fg0",
-                              "fga0",
-                              "fg20",
-                              "fga20",
-                              "fg30",
-                              "fga30",
-                              "fg40",
-                              "fga40",
-                              "fg50",
-                              "fga50",
-                              "fgLng",
-                              "xp",
-                              "xpa",
-                              "pnt",
-                              "pntYds",
-                              "pntLng",
-                              "pntBlk",
-                          ],
-                      },
-                      {
-                          name: "Kick and Punt Returns",
-                          stats: [
-                              "gp",
-                              "gs",
-                              "pr",
-                              "prYds",
-                              "prTD",
-                              "prLng",
-                              "kr",
-                              "krYds",
-                              "krTD",
-                              "krLng",
-                          ],
-                      },
-                  ];
+        const statTables = Object.values(
+            overrides.constants.PLAYER_STATS_TABLES,
+        );
 
-        const stats = Array.from(
+        let stats = Array.from(
             new Set(
                 statTables.reduce((allStats, currentStats) => {
                     return allStats.concat(currentStats.stats);
                 }, []),
             ),
         );
-        console.log("stats", stats);
+
+        // Needed because shot locations tables are "special" for now, unfortunately
+        if (process.env.SPORT === "basketball") {
+            stats = stats.concat([
+                "fgAtRim",
+                "fgaAtRim",
+                "fgpAtRim",
+                "fgLowPost",
+                "fgaLowPost",
+                "fgpLowPost",
+                "fgMidRange",
+                "fgaMidRange",
+                "fgpMidRange",
+                "tp",
+                "tpa",
+                "tpp",
+            ]);
+        }
 
         let p = await idb.getCopy.players({ pid: inputs.pid });
         if (p === undefined) {

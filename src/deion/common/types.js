@@ -653,6 +653,12 @@ export type RunFunction = (
 
 export type WorkerOverridesConstants = {|
     COMPOSITE_WEIGHTS: CompositeWeights<>,
+    PLAYER_STATS_TABLES: {
+        [key: string]: {
+            name: string,
+            stats: string[],
+        },
+    },
     RATINGS: string[],
     POSITIONS: string[],
 |};

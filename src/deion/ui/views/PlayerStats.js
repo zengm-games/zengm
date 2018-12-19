@@ -148,8 +148,17 @@ PlayerStats.propTypes = {
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     playoffs: PropTypes.oneOf(["playoffs", "regularSeason"]).isRequired,
     season: PropTypes.number, // Undefined for career totals
-    statType: PropTypes.oneOf(["advanced", "per36", "perGame", "totals"])
-        .isRequired,
+    statType: PropTypes.oneOf([
+        "advanced",
+        "per36",
+        "perGame",
+        "totals",
+        "passing",
+        "rushing",
+        "defense",
+        "kicking",
+        "returns",
+    ]).isRequired,
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     userTid: PropTypes.number,
 };

@@ -2,15 +2,24 @@
 
 import { PHASE, PLAYER } from "../../common";
 import { idb } from "../db";
-import { g } from "../util";
-import type { PlayerStatType, UpdateEvents } from "../../common/types";
+import { g, overrides } from "../util";
+import type { UpdateEvents } from "../../common/types";
 
 async function updatePlayers(
     inputs: {
         abbrev: string,
         playoffs: "playoffs" | "regularSeason",
         season: number,
-        statType: "advanced" | PlayerStatType,
+        statType:
+            | "advanced"
+            | "per36"
+            | "perGame"
+            | "totals"
+            | "passing"
+            | "rushing"
+            | "defense"
+            | "kicking"
+            | "returns",
     },
     updateEvents: UpdateEvents,
     state: any,
@@ -24,126 +33,21 @@ async function updatePlayers(
         inputs.statType !== state.statType ||
         inputs.playoffs !== state.playoffs
     ) {
-        let stats;
+        let statsTable;
         if (process.env.SPORT === "basketball") {
-            stats =
-                inputs.statType !== "advanced"
-                    ? [
-                          "gp",
-                          "gs",
-                          "min",
-                          "fg",
-                          "fga",
-                          "fgp",
-                          "tp",
-                          "tpa",
-                          "tpp",
-                          "ft",
-                          "fta",
-                          "ftp",
-                          "orb",
-                          "drb",
-                          "trb",
-                          "ast",
-                          "tov",
-                          "stl",
-                          "blk",
-                          "ba",
-                          "pf",
-                          "pts",
-                      ]
-                    : [
-                          "gp",
-                          "gs",
-                          "min",
-                          "per",
-                          "ewa",
-                          "ortg",
-                          "drtg",
-                          "ows",
-                          "dws",
-                          "ws",
-                          "ws48",
-                          "tsp",
-                          "tpar",
-                          "ftr",
-                          "orbp",
-                          "drbp",
-                          "trbp",
-                          "astp",
-                          "stlp",
-                          "blkp",
-                          "tovp",
-                          "usgp",
-                          "pm",
-                      ];
+            statsTable =
+                inputs.statType === "advanced"
+                    ? overrides.constants.PLAYER_STATS_TABLES.advanced
+                    : overrides.constants.PLAYER_STATS_TABLES.regular;
         } else {
-            stats = [
-                "gp",
-                "gs",
-                "min",
-                "fmb",
-                "fmbLost",
-                "pssCmp",
-                "pss",
-                "pssYds",
-                "pssTD",
-                "pssInt",
-                "pssLng",
-                "pssSk",
-                "pssSkYds",
-                "rus",
-                "rusYds",
-                "rusTD",
-                "rusLng",
-                "tgt",
-                "rec",
-                "recYds",
-                "recTD",
-                "recLng",
-                "pr",
-                "prYds",
-                "prTD",
-                "prLng",
-                "kr",
-                "krYds",
-                "krTD",
-                "krLng",
-                "defInt",
-                "defIntYds",
-                "defIntTD",
-                "defIntLng",
-                "defPssDef",
-                "defFmbFrc",
-                "defFmbRec",
-                "defFmbYds",
-                "defFmbTD",
-                "defSk",
-                "defTckSolo",
-                "defTckAst",
-                "defTckLoss",
-                "defSft",
-                "fg0",
-                "fga0",
-                "fg20",
-                "fga20",
-                "fg30",
-                "fga30",
-                "fg40",
-                "fga40",
-                "fg50",
-                "fga50",
-                "fgLng",
-                "xp",
-                "xpa",
-                "pnt",
-                "pntYds",
-                "pntLng",
-                "pntBlk",
-                "pen",
-                "penYds",
-            ];
+            statsTable =
+                overrides.constants.PLAYER_STATS_TABLES[inputs.statType];
         }
+
+        if (!statsTable) {
+            throw new Error(`Invalid statType: "${inputs.statType}"`);
+        }
+        const stats = statsTable.stats;
 
         let players;
         if (g.season === inputs.season && g.phase <= PHASE.PLAYOFFS) {
@@ -161,6 +65,14 @@ async function updatePlayers(
         if (tid < 0) {
             tid = undefined;
         } // Show all teams
+
+        let statType;
+        if (process.env.SPORT === "basketball") {
+            statType =
+                inputs.statType === "advanced" ? "perGame" : inputs.statType;
+        } else {
+            statType = "totals";
+        }
 
         if (!tid && inputs.abbrev === "watch") {
             players = players.filter(
@@ -182,8 +94,7 @@ async function updatePlayers(
             stats: ["abbrev", "tid", ...stats],
             season: inputs.season, // If null, then show career stats!
             tid,
-            statType:
-                inputs.statType === "advanced" ? "perGame" : inputs.statType,
+            statType,
             playoffs: inputs.playoffs === "playoffs",
             regularSeason: inputs.playoffs !== "playoffs",
         });
@@ -203,7 +114,7 @@ async function updatePlayers(
         }
 
         // Only keep players with more than 5 mpg in regular season, of any PT in playoffs
-        if (inputs.abbrev !== "watch") {
+        if (inputs.abbrev !== "watch" && process.env.SPORT === "basketball") {
             players = players.filter(p => {
                 // Minutes played
                 let min;

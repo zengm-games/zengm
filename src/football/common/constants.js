@@ -105,6 +105,104 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
     },
 };
 
+const PLAYER_STATS_TABLES = {
+    passing: {
+        name: "Passing",
+        stats: [
+            "gp",
+            "gs",
+            "pssCmp",
+            "pss",
+            "pssYds",
+            "pssTD",
+            "pssInt",
+            "pssLng",
+            "pssSk",
+            "pssSkYds",
+        ],
+    },
+    rushing: {
+        name: "Rushing and Receiving",
+        stats: [
+            "gp",
+            "gs",
+            "rus",
+            "rusYds",
+            "rusTD",
+            "rusLng",
+            "tgt",
+            "rec",
+            "recYds",
+            "recTD",
+            "recLng",
+        ],
+    },
+    defense: {
+        name: "Defense, Fumbles, and Penalties",
+        stats: [
+            "gp",
+            "gs",
+            "defInt",
+            "defIntYds",
+            "defIntTD",
+            "defIntLng",
+            "defPssDef",
+            "defFmbFrc",
+            "defFmbRec",
+            "defFmbYds",
+            "defFmbTD",
+            "defSk",
+            "defTckSolo",
+            "defTckAst",
+            "defTckLoss",
+            "defSft",
+            "fmb",
+            "fmbLost",
+            "pen",
+            "penYds",
+        ],
+    },
+    kicking: {
+        name: "Kicking and Punting",
+        stats: [
+            "gp",
+            "gs",
+            "fg0",
+            "fga0",
+            "fg20",
+            "fga20",
+            "fg30",
+            "fga30",
+            "fg40",
+            "fga40",
+            "fg50",
+            "fga50",
+            "fgLng",
+            "xp",
+            "xpa",
+            "pnt",
+            "pntYds",
+            "pntLng",
+            "pntBlk",
+        ],
+    },
+    returns: {
+        name: "Kick and Punt Returns",
+        stats: [
+            "gp",
+            "gs",
+            "pr",
+            "prYds",
+            "prTD",
+            "prLng",
+            "kr",
+            "krYds",
+            "krTD",
+            "krLng",
+        ],
+    },
+};
+
 const POSITIONS = [
     "QB",
     "RB",
@@ -146,4 +244,4 @@ const RATINGS: RatingKey[] = [
     "pac",
 ];
 
-export { COMPOSITE_WEIGHTS, POSITIONS, RATINGS };
+export { COMPOSITE_WEIGHTS, PLAYER_STATS_TABLES, POSITIONS, RATINGS };

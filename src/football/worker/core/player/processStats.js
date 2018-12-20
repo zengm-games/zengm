@@ -53,6 +53,8 @@ const processStats = (
                 3 * (ps.fg0 + ps.fg20 + ps.fg30 + ps.fg40 + ps.fg50) + ps.xp;
         } else if (stat === "pntYdsPerAtt") {
             row[stat] = ps.pntYds / ps.pnt;
+        } else if (stat === "defTck") {
+            row[stat] = ps.defTckSolo + ps.defTckAst;
         } else {
             row[stat] = ps[stat];
         }

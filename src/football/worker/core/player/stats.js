@@ -16,6 +16,7 @@ const stats = {
         "pntYdsPerAtt",
         "krYdsPerAtt",
         "prYdsPerAtt",
+        "defTck",
     ],
     raw: [
         "gp",
@@ -57,6 +58,7 @@ const stats = {
         "defFmbRec",
         "defFmbYds",
         "defFmbTD",
+        "defFmbLng",
         "defSk",
         "defTckSolo",
         "defTckAst",

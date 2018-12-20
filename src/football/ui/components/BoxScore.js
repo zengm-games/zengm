@@ -42,7 +42,23 @@ const statsByType = {
         "prLng",
         "prTD",
     ],
-    defense: [],
+    defense: [
+        "defTckSolo",
+        "defTckAst",
+        "defTck",
+        "defTckLoss",
+        "defSk",
+        "defSft",
+        "defPssDef",
+        "defInt",
+        "defIntYds",
+        "defIntTD",
+        "defIntLng",
+        "defFmbFrc",
+        "defFmbRec",
+        "defFmbYds",
+        "defFmbTD",
+    ],
 };
 
 const sortsByType = {
@@ -52,7 +68,7 @@ const sortsByType = {
     kicking: ["kickingPts"],
     punting: ["pnt"],
     returns: ["krYds", "prYds"],
-    defense: [],
+    defense: ["defTck"],
 };
 
 const StatsTable = ({ Row, boxScore, type }) => {

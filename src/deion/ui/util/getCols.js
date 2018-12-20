@@ -566,6 +566,11 @@ const sportSpecificCols: {
                   sortSequence: ["desc", "asc"],
                   sortType: "number",
               },
+              "stat:defFmbLng": {
+                  desc: "Longest Fumble Return",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
               "stat:defSk": {
                   desc: "Sacks",
                   sortSequence: ["desc", "asc"],
@@ -753,6 +758,11 @@ const sportSpecificCols: {
               },
               "stat:prYdsPerAtt": {
                   desc: "Yards Per Punt Return",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:defTck": {
+                  desc: "Total Tackles",
                   sortSequence: ["desc", "asc"],
                   sortType: "number",
               },
@@ -1162,14 +1172,15 @@ const sportSpecificTitleOverrides =
               "stat:krTD": "TD",
               "stat:krLng": "Lng",
               "stat:defInt": "Int",
-              "stat:defIntYds": "IntYds",
-              "stat:defIntTD": "IntTD",
-              "stat:defIntLng": "IntLng",
-              "stat:defPssDef": "PaDef",
+              "stat:defIntYds": "Yds",
+              "stat:defIntTD": "TD",
+              "stat:defIntLng": "Lng",
+              "stat:defPssDef": "PD",
               "stat:defFmbFrc": "FF",
               "stat:defFmbRec": "FR",
-              "stat:defFmbYds": "FYds",
-              "stat:defFmbTD": "FTD",
+              "stat:defFmbYds": "Yds",
+              "stat:defFmbLng": "Lng",
+              "stat:defFmbTD": "TD",
               "stat:defSk": "Sk",
               "stat:defTckSolo": "Solo",
               "stat:defTckAst": "Ast",
@@ -1208,6 +1219,7 @@ const sportSpecificTitleOverrides =
               "stat:pntIn20": "In20",
               "stat:krYdsPerAtt": "Avg",
               "stat:prYdsPerAtt": "Avg",
+              "stat:defTck": "Tck",
           };
 
 const titleOverrides = {

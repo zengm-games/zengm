@@ -7,8 +7,7 @@ confirm basketball box score still shows separator for starters/bench
 highlighting of finals mvp https://www.reddit.com/r/BasketballGM/comments/a3kxkq/by_the_finals_mvp_ralph_sampson_is_on_my_team_but/
 
 box score
-- add "type" param to BoxScoreRow, then pass it to Row in BoxScore only in football
-  - or "cols"?
+- scoring summary
 
 Lng
 - record
@@ -62,6 +61,8 @@ how will pos/ovr work? just one, like BB? or store separate ovr for every positi
 - on player ratings page, ability to filter by position, and then show position-specific ovrs for all players
 - make sure all calls to recompute ovr/pot also update ovrs/pots
 - overrides.core.player.pos needed for football?
+
+2 more teams
 
 worker/deion stuff that needs to have a process.env.SPORT case
 - api

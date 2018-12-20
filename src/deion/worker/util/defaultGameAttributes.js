@@ -69,6 +69,20 @@ if (process.env.SPORT === "football") {
     const footballOverrides = {
         numGames: 16,
         quarterLength: 15,
+        confs: [
+            { cid: 0, name: "American Conference" },
+            { cid: 1, name: "National Conference" },
+        ],
+        divs: [
+            { did: 0, cid: 0, name: "East" },
+            { did: 1, cid: 0, name: "North" },
+            { did: 2, cid: 0, name: "South" },
+            { did: 3, cid: 0, name: "West" },
+            { did: 4, cid: 1, name: "East" },
+            { did: 5, cid: 1, name: "North" },
+            { did: 6, cid: 1, name: "South" },
+            { did: 7, cid: 1, name: "West" },
+        ],
         numGamesPlayoffSeries: [1, 1, 1, 1],
         numPlayoffByes: 4,
         stopOnInjuryGames: 1,

@@ -47,8 +47,6 @@ football code!
 - processStats in worker but used in ui
 - references to ../basketball
 
-2 more teams
-
 play menu items
 
 worker/deion stuff that needs to have a process.env.SPORT case
@@ -88,6 +86,8 @@ how will deionUI(overrides) work with types?
 - Import modules from deion. Add things like extra views. Apply factories/generics.
 
 yards after catch, other stats of interest
+
+new names and logos for KC and SA
 
 what's the end state here? options:
 - everything is in deion, and process.env.SPORT governs the output

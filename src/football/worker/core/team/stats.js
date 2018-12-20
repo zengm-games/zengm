@@ -3,12 +3,12 @@
 import playerStats from "../player/stats";
 
 const stats = {
-    derived: [],
+    derived: playerStats.derived.filter(stat => !["qbW", "qbL"].includes(stat)),
     raw: [
         "drives",
         "totStartYds",
         "timePos",
-        ...playerStats.raw.map(stat => stat !== "gs"),
+        ...playerStats.raw.filter(stat => !["gs", "defTck"].includes(stat)),
     ],
 };
 

@@ -535,10 +535,15 @@ class GameSim {
         this.possessionChange();
 
         if (touchback) {
+            this.recordStat(this.o, punter, "pntTB");
             this.scrimmage = 25;
             this.down = 1;
             this.toGo = 10;
         } else {
+            if (kickTo < 20) {
+                this.recordStat(this.o, punter, "pntIn20");
+            }
+
             const maxReturnLength = 100 - kickTo;
             const returnLength = helpers.bound(
                 random.randInt(0, 109),

@@ -13,6 +13,7 @@ const stats = {
         "fgPct",
         "xpPct",
         "kickingPts",
+        "pntYdsPerAtt",
     ],
     raw: [
         "gp",
@@ -75,6 +76,8 @@ const stats = {
         "pnt",
         "pntYds",
         "pntLng",
+        "pntTB",
+        "pntIn20",
         "pntBlk",
         "pen",
         "penYds",

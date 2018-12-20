@@ -731,6 +731,21 @@ const sportSpecificCols: {
                   sortSequence: ["desc", "asc"],
                   sortType: "number",
               },
+              "stat:pntYdsPerAtt": {
+                  desc: "Yards Per Punt",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:pntTB": {
+                  desc: "Punt Touchbacks",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:pntIn20": {
+                  desc: "Punts Inside 20",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
           };
 
 const cols: {
@@ -1178,6 +1193,9 @@ const sportSpecificTitleOverrides =
               "stat:fgPct": "Pct",
               "stat:xpPct": "Pct",
               "stat:kickingPts": "Pts",
+              "stat:pntYdsPerAtt": "Avg",
+              "stat:pntTB": "TB",
+              "stat:pntIn20": "In20",
           };
 
 const titleOverrides = {

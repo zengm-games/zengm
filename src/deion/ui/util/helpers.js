@@ -75,6 +75,7 @@ const roundOverrides =
               recYdsPerAtt: "oneDecimalPlace",
               fgPct: "oneDecimalPlace",
               xpPct: "oneDecimalPlace",
+              pntYdsPerAtt: "oneDecimalPlace",
           };
 
 const roundStat = (

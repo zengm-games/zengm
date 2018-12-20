@@ -29,7 +29,7 @@ const statsByType = {
         "xpPct",
         "kickingPts",
     ],
-    punting: [],
+    punting: ["pnt", "pntYdsPerAtt", "pntIn20", "pntTB", "pntLng", "pntBlk"],
     returns: [],
     defense: [],
 };

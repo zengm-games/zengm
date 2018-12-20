@@ -35,6 +35,8 @@ const processStats = (
             row[stat] = ((a + b + c + d) / 6) * 100;
         } else if (stat === "rusYdsPerAtt") {
             row[stat] = row.rusYds / row.rus;
+        } else if (stat === "recYdsPerAtt") {
+            row[stat] = row.recYds / row.rec;
         } else {
             row[stat] = ps[stat];
         }

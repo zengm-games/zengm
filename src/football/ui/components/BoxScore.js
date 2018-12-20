@@ -17,7 +17,17 @@ const statsByType = {
         "fmbLost",
     ],
     rushing: ["rus", "rusYds", "rusYdsPerAtt", "rusLng", "rusTD", "fmbLost"],
-    receiving: [],
+    receiving: ["tgt", "rec", "recYds", "recYdsPerAtt", "recTD", "recLng"],
+    kicking: [],
+    punting: [],
+    returns: [],
+    defense: [],
+};
+
+const sortByType = {
+    passing: "pssYds",
+    rushing: "rusYds",
+    receiving: "recYds",
     kicking: [],
     punting: [],
     returns: [],
@@ -27,6 +37,7 @@ const statsByType = {
 const StatsTable = ({ Row, boxScore, type }) => {
     const stats = statsByType[type];
     const cols = getCols(...stats.map(stat => `stat:${stat}`));
+    const sort = sortByType[type];
 
     return (
         <>
@@ -67,6 +78,7 @@ const StatsTable = ({ Row, boxScore, type }) => {
                                         }
                                         return false;
                                     })
+                                    .sort((a, b) => b[sort] - a[sort])
                                     .map((p, i) => {
                                         return (
                                             <Row

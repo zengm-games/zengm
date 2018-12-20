@@ -8,7 +8,6 @@ import * as core from "./core";
 import * as db from "./db";
 import * as util from "./util";
 import type {
-    CompositeWeights,
     Names,
     WorkerOverridesConstants,
     WorkerOverridesCore,

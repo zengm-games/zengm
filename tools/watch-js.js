@@ -5,7 +5,6 @@ const browserify = require("browserify");
 const envify = require("envify/custom");
 const fs = require("fs");
 const watchify = require("watchify");
-const build = require("./buildFuncs");
 
 console.log("Watching JavaScript files...");
 

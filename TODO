@@ -44,25 +44,12 @@ depth chart
 - links here from More, dropdowns, etc
 
 football code!
-- KR/PR positions - special, not dedicated positions
-- ratings
-- stats
-  - need to define aggregate/derived ones too, in getCols as well
-    - might not need some of the defaults in getCols, like pntYds
-- basic UI
-- game sim
-  - substitutions? maybe rigidly based on depth chart + fatigue, not fatigue-scaled ability
+- processStats in worker but used in ui
 - references to ../basketball
 
-how will pos/ovr work? just one, like BB? or store separate ovr for every position?
-- on player page, have position be clickable, show all ovrs (from playersPlus, ovrs: {qb: 56, rb: 6, ...}, allow user to change position. should not affect current player (other than his ovr) but will affect future development
-  - change position by setting in root of player object
-  - don't have this persist when player leaves user team
-- on player ratings page, ability to filter by position, and then show position-specific ovrs for all players
-- make sure all calls to recompute ovr/pot also update ovrs/pots
-- overrides.core.player.pos needed for football?
-
 2 more teams
+
+play menu items
 
 worker/deion stuff that needs to have a process.env.SPORT case
 - api
@@ -73,7 +60,6 @@ worker/deion stuff that needs to have a process.env.SPORT case
 - views
   - any with stats or ratings
 - awards
-- writePlayerStats - severe injury consequences
 - genPlayersWithoutSaving - draft class size, age distribution
 - number of draft rounds
 - playersPlus: awardsOrder, weightByMinutes
@@ -87,7 +73,7 @@ in GameSim, make sure to track player.stats.min, for use in writePlayerStats
 finish views
 - CustomizePlayer
 - LiveGame
-- way to specify routes for ShotLocations?
+- way to specify routes for ShotLocations/Depth
 
 how to get types working, options:
 - make anything depending on an override or sport-sepcific type into a factory function or generic, initialized in deionWorker or deionUI and then passed around
@@ -114,7 +100,6 @@ what's the end state here? options:
 figure out dynamic import of schema in LeagueFileUpload.js
 
 better way to pass awards to Dropdown.js
-- and get rid of per36, replace with passing/ru+rc/returns/def/kicking
 
 yarn workspaces
 - see branch football-yarn-workspaces - all works except karma

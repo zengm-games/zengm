@@ -90,6 +90,7 @@ const generate = (tm: any) => {
             },
         },
         strategy,
+        depth: undefined,
     };
 
     if (process.env.SPORT === "football") {

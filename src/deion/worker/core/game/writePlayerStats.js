@@ -120,16 +120,19 @@ const writePlayerStats = async (
                                 0,
                                 100,
                             );
-                            if (process.env.SPORT === "basketball") {
-                                p2.ratings[r].jmp = helpers.bound(
-                                    p2.ratings[r].jmp -
-                                        random.randInt(0, biggestRatingsLoss),
-                                    0,
-                                    100,
-                                );
-                            }
                             p2.ratings[r].endu = helpers.bound(
                                 p2.ratings[r].endu -
+                                    random.randInt(0, biggestRatingsLoss),
+                                0,
+                                100,
+                            );
+
+                            const rating =
+                                process.env.SPORT === "basketball"
+                                    ? "jmp"
+                                    : "thp";
+                            p2.ratings[r][rating] = helpers.bound(
+                                p2.ratings[r][rating] -
                                     random.randInt(0, biggestRatingsLoss),
                                 0,
                                 100,

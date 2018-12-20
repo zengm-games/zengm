@@ -4,6 +4,10 @@ import { helpers } from "../../../../deion/worker/util";
 import { PlayType, TeamNum } from "./types";
 
 class PlayByPlayLogger {
+    active: boolean;
+
+    playByPlay: any[];
+
     constructor(active: boolean) {
         this.active = active;
         this.playByPlay = [];

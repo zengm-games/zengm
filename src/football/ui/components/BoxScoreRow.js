@@ -4,18 +4,21 @@ import PropTypes from "prop-types";
 import React from "react";
 import { PlayerNameLabels } from "../../../deion/ui/components";
 import { helpers } from "../../../deion/ui/util";
+import processStats from "../../worker/core/player/processStats";
 
 const BoxScoreRow = ({
     className,
     onClick,
     p,
-    type,
+    stats,
 }: {
     className: string,
     onClick?: Function,
     p: any,
-    type: string,
+    stats: string[],
 }) => {
+    const processed = processStats(p, stats);
+    console.log(p, stats, processed);
     return (
         <tr className={className} onClick={onClick}>
             <td>
@@ -28,27 +31,11 @@ const BoxScoreRow = ({
                 </PlayerNameLabels>
             </td>
             <td>{p.pos}</td>
-            <td>{p.min.toFixed(1)}</td>
-            <td>
-                {p.fg}-{p.fga}
-            </td>
-            <td>
-                {p.tp}-{p.tpa}
-            </td>
-            <td>
-                {p.ft}-{p.fta}
-            </td>
-            <td>{p.orb}</td>
-            <td>{p.drb + p.orb}</td>
-            <td>{p.ast}</td>
-            <td>{p.tov}</td>
-            <td>{p.stl}</td>
-            <td>{p.blk}</td>
-            <td>{p.ba}</td>
-            <td>{p.pf}</td>
-            <td>{p.pts}</td>
-            <td>{helpers.plusMinus(p.pm, 0)}</td>
-            <td>{helpers.gameScore(p).toFixed(1)}</td>
+            {stats.map(stat => (
+                <td key={stat}>
+                    {helpers.roundStat(processed[stat], stat, true)}
+                </td>
+            ))}
         </tr>
     );
 };

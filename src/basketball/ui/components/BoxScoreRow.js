@@ -1,5 +1,6 @@
 // @flow
 
+import classNames from "classnames";
 import PropTypes from "prop-types";
 import React from "react";
 import { PlayerNameLabels } from "../../../deion/ui/components";
@@ -7,15 +8,22 @@ import { helpers } from "../../../deion/ui/util";
 
 const BoxScoreRow = ({
     className,
+    i,
     onClick,
     p,
 }: {
     className: string,
+    i: number,
     onClick?: Function,
     p: any,
 }) => {
     return (
-        <tr className={className} onClick={onClick}>
+        <tr
+            className={classNames(className, {
+                separator: i === 4,
+            })}
+            onClick={onClick}
+        >
             <td>
                 <PlayerNameLabels
                     injury={p.injury}

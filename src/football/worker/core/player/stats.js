@@ -1,7 +1,7 @@
 // @flow
 
 const stats = {
-    derived: ["qbW", "qbL"],
+    derived: ["qbW", "qbL", "cmpPct", "qbrat"],
     raw: [
         "gp",
         "gs",

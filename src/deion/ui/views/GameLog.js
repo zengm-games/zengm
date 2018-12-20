@@ -5,17 +5,17 @@ import { BoxScoreWrapper, Dropdown, NewWindowLink } from "../components";
 import { helpers, overrides, setTitle } from "../util";
 import clickable from "../wrappers/clickable";
 
-const StatsRow = clickable(({ clicked, i, p, toggleClicked, type }) => {
+const StatsRow = clickable(({ clicked, i, p, toggleClicked, ...props }) => {
     const classes = classNames({
-        separator: i === 4,
         "table-warning": clicked,
     });
     return (
         <overrides.components.BoxScoreRow
             className={classes}
+            i={i}
             onClick={toggleClicked}
             p={p}
-            type={type}
+            {...props}
         />
     );
 });

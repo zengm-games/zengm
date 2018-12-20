@@ -2,10 +2,15 @@
 
 basketball - report that AI teams consider any of your draft picks the 1st pick when trading during draft
 
+confirm basketball box score still shows separator for starters/bench
+
 highlighting of finals mvp https://www.reddit.com/r/BasketballGM/comments/a3kxkq/by_the_finals_mvp_ralph_sampson_is_on_my_team_but/
 
 box score
 - add "type" param to BoxScoreRow, then pass it to Row in BoxScore only in football
+  - or "cols"?
+
+processStats to common, so can be used in BoxScore? or pre-process all players?
 
 game sim
 - can't assume t.depth is accurate, make sure to prune + augment before use

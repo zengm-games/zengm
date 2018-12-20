@@ -1,30 +1,11 @@
 // @flow
 
-import { PLAYER } from "../../../../deion/common";
-import { helpers } from "../../../../deion/worker/util";
+//import { PLAYER } from "../../../../deion/common";
+//import { helpers } from "../../../../deion/worker/util";
 import type {
     PlayerStats,
     PlayerStatType,
 } from "../../../../deion/common/types";
-
-const straightThrough = [
-    "gp",
-    "gs",
-    "per",
-    "ewa",
-    "yearsWithTeam",
-    "astp",
-    "blkp",
-    "drbp",
-    "orbp",
-    "stlp",
-    "trbp",
-    "usgp",
-    "drtg",
-    "ortg",
-    "dws",
-    "ows",
-];
 
 const percentage = (numerator, denominator) => {
     if (denominator > 0) {
@@ -37,67 +18,23 @@ const percentage = (numerator, denominator) => {
 const processStats = (
     ps: PlayerStats,
     stats: string[],
-    statType: PlayerStatType,
-    bornYear: number,
+    statType?: PlayerStatType,
+    bornYear?: number,
 ) => {
     const row = {};
 
     for (const stat of stats) {
-        if (straightThrough.includes(stat)) {
-            row[stat] = ps[stat];
-        } else if (stat === "fgp") {
-            row[stat] = percentage(ps.fg, ps.fga);
-        } else if (stat === "fgpAtRim") {
-            row[stat] = percentage(ps.fgAtRim, ps.fgaAtRim);
-        } else if (stat === "fgpLowPost") {
-            row[stat] = percentage(ps.fgLowPost, ps.fgaLowPost);
-        } else if (stat === "fgpMidRange") {
-            row[stat] = percentage(ps.fgMidRange, ps.fgaMidRange);
-        } else if (stat === "tpp") {
-            row[stat] = percentage(ps.tp, ps.tpa);
-        } else if (stat === "ftp") {
-            row[stat] = percentage(ps.ft, ps.fta);
-        } else if (stat === "tsp") {
-            row[stat] = percentage(ps.pts, 2 * (ps.fga + 0.44 * ps.fta));
-        } else if (stat === "tpar") {
-            row[stat] = percentage(ps.tpa, ps.fga);
-        } else if (stat === "ftr") {
-            row[stat] = percentage(ps.fta, ps.fga);
-        } else if (stat === "tovp") {
-            row[stat] = percentage(ps.tov, 2 * (ps.fga + 0.44 * ps.fta));
-        } else if (stat === "season") {
-            row.season = ps.season;
-        } else if (stat === "age") {
-            row.age = ps.season - bornYear;
-        } else if (stat === "abbrev") {
-            if (ps.tid === undefined) {
-                row.abbrev = helpers.getAbbrev(PLAYER.FREE_AGENT);
-            } else {
-                row.abbrev = helpers.getAbbrev(ps.tid);
-            }
-        } else if (stat === "tid") {
-            if (ps.tid === undefined) {
-                row.tid = PLAYER.FREE_AGENT;
-            } else {
-                row.tid = ps.tid;
-            }
-        } else if (stat === "ws") {
-            row.ws = ps.dws + ps.ows;
-        } else if (stat === "ws48") {
-            row.ws48 = ((ps.dws + ps.ows) * 48) / ps.min;
-        } else if (statType === "totals") {
-            if (stat === "trb") {
-                row.trb = ps.drb + ps.orb;
-            } else {
-                row[stat] = ps[stat];
-            }
-        } else if (statType === "per36" && stat !== "min") {
-            // Don't scale min by 36 minutes
-            const val = stat === "trb" ? ps.drb + ps.orb : ps[stat];
-            row[stat] = ps.min > 0 ? (val * 36) / ps.min : 0;
+        if (stat === "cmpPct") {
+            row[stat] = percentage(ps.pssCmp, ps.pss);
+        } else if (stat === "qbRat") {
+            const a = (ps.pssCmp / ps.pss - 0.3) * 5;
+            const b = (ps.pssYds / ps.pss - 3) * 0.25;
+            const c = (ps.pssTD / ps.pss) * 20;
+            const d = 2.375 - (ps.pssInt / ps.pss) * 25;
+
+            row[stat] = ((a + b + c + d) / 6) * 100;
         } else {
-            const val = stat === "trb" ? ps.drb + ps.orb : ps[stat];
-            row[stat] = ps.gp > 0 ? val / ps.gp : 0;
+            row[stat] = ps[stat];
         }
 
         // For keepWithNoStats

@@ -68,7 +68,10 @@ const roundOverrides =
               pm: "plusMinus",
               ftpfga: "roundWinp",
           }
-        : {};
+        : {
+              cmpPct: "oneDecimalPlace",
+              qbRat: "oneDecimalPlace",
+          };
 
 const roundStat = (
     value: number,

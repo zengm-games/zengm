@@ -686,6 +686,16 @@ const sportSpecificCols: {
                   sortSequence: ["desc", "asc"],
                   sortType: "number",
               },
+              "stat:cmpPct": {
+                  desc: "Completion Percentage",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:qbRat": {
+                  desc: "Quarterback Rating",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
           };
 
 const cols: {
@@ -1124,6 +1134,8 @@ const sportSpecificTitleOverrides =
               "stat:pntBlk": "PntBlk",
               "stat:pen": "Pen",
               "stat:penYds": "PenYds",
+              "stat:cmpPct": "Pct",
+              "stat:qbRat": "QBRat",
           };
 
 const titleOverrides = {

@@ -696,6 +696,11 @@ const sportSpecificCols: {
                   sortSequence: ["desc", "asc"],
                   sortType: "number",
               },
+              "stat:rusYdsPerAtt": {
+                  desc: "Rushing Yards Per Carry",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
           };
 
 const cols: {
@@ -1136,6 +1141,7 @@ const sportSpecificTitleOverrides =
               "stat:penYds": "PenYds",
               "stat:cmpPct": "Pct",
               "stat:qbRat": "QBRat",
+              "stat:rusYdsPerAtt": "Avg",
           };
 
 const titleOverrides = {

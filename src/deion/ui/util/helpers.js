@@ -71,6 +71,7 @@ const roundOverrides =
         : {
               cmpPct: "oneDecimalPlace",
               qbRat: "oneDecimalPlace",
+              rusYdsPerAtt: "oneDecimalPlace",
           };
 
 const roundStat = (

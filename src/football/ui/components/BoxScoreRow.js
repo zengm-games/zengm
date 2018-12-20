@@ -21,7 +21,8 @@ const BoxScoreRow = ({
     console.log(p, stats, processed);
     return (
         <tr className={className} onClick={onClick}>
-            <td>
+            <td>{p.pos}</td>
+            <td width="100%">
                 <PlayerNameLabels
                     injury={p.injury}
                     pid={p.pid}
@@ -30,7 +31,6 @@ const BoxScoreRow = ({
                     {p.name}
                 </PlayerNameLabels>
             </td>
-            <td>{p.pos}</td>
             {stats.map(stat => (
                 <td key={stat}>
                     {helpers.roundStat(processed[stat], stat, true)}

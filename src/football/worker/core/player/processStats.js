@@ -33,6 +33,8 @@ const processStats = (
             const d = 2.375 - (ps.pssInt / ps.pss) * 25;
 
             row[stat] = ((a + b + c + d) / 6) * 100;
+        } else if (stat === "rusYdsPerAtt") {
+            row[stat] = row.rusYds / row.rus;
         } else {
             row[stat] = ps[stat];
         }

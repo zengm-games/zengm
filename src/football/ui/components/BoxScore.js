@@ -16,7 +16,7 @@ const statsByType = {
         "qbRat",
         "fmbLost",
     ],
-    rushing: [],
+    rushing: ["rus", "rusYds", "rusYdsPerAtt", "rusLng", "rusTD", "fmbLost"],
     receiving: [],
     kicking: [],
     punting: [],
@@ -36,10 +36,9 @@ const StatsTable = ({ Row, boxScore, type }) => {
                         <table className="table table-striped table-bordered table-sm table-hover">
                             <thead>
                                 <tr>
-                                    <th width="100%">
+                                    <th colSpan="2">
                                         {t.region} {t.name}
                                     </th>
-                                    <th>Pos</th>
                                     {cols.map(({ desc, title, width }, i) => {
                                         return (
                                             <th

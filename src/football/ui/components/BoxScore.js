@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import ResponsiveTableWrapper from "../../../deion/ui/components/ResponsiveTableWrapper";
 import { getCols } from "../../../deion/ui/util";
+import processStats from "../../worker/core/player/processStats";
 
 const statsByType = {
     passing: [
@@ -18,7 +19,16 @@ const statsByType = {
     ],
     rushing: ["rus", "rusYds", "rusYdsPerAtt", "rusLng", "rusTD", "fmbLost"],
     receiving: ["tgt", "rec", "recYds", "recYdsPerAtt", "recTD", "recLng"],
-    kicking: [],
+    kicking: [
+        "fg",
+        "fga",
+        "fgPct",
+        "fgLng",
+        "xp",
+        "xpa",
+        "xpPct",
+        "kickingPts",
+    ],
     punting: [],
     returns: [],
     defense: [],
@@ -28,7 +38,7 @@ const sortByType = {
     passing: "pssYds",
     rushing: "rusYds",
     receiving: "recYds",
-    kicking: [],
+    kicking: "kickingPts",
     punting: [],
     returns: [],
     defense: [],
@@ -65,12 +75,17 @@ const StatsTable = ({ Row, boxScore, type }) => {
                             </thead>
                             <tbody>
                                 {t.players
+                                    .map(p => {
+                                        p.processed = processStats(p, stats);
+                                        return p;
+                                    })
                                     .filter(p => {
                                         // Filter based on if player has any stats
                                         for (const stat of stats) {
                                             if (
-                                                p[stat] !== undefined &&
-                                                p[stat] !== 0 &&
+                                                p.processed[stat] !==
+                                                    undefined &&
+                                                p.processed[stat] !== 0 &&
                                                 stat !== "fmbLost"
                                             ) {
                                                 return true;
@@ -78,7 +93,11 @@ const StatsTable = ({ Row, boxScore, type }) => {
                                         }
                                         return false;
                                     })
-                                    .sort((a, b) => b[sort] - a[sort])
+                                    .sort(
+                                        (a, b) =>
+                                            b.processed[sort] -
+                                            a.processed[sort],
+                                    )
                                     .map((p, i) => {
                                         return (
                                             <Row

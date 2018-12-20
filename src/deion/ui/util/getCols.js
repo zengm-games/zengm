@@ -706,6 +706,31 @@ const sportSpecificCols: {
                   sortSequence: ["desc", "asc"],
                   sortType: "number",
               },
+              "stat:fg": {
+                  desc: "Field Goals Made",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:fga": {
+                  desc: "Field Goals Attempted",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:fgPct": {
+                  desc: "Field Goal Percentage",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:xpPct": {
+                  desc: "Extra Point Percentage",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:kickingPts": {
+                  desc: "Kicking Points",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
           };
 
 const cols: {
@@ -1085,7 +1110,7 @@ const sportSpecificTitleOverrides =
               "rating:ppw": "PPw",
               "rating:pac": "PAc",
               "stat:fmb": "Fmb",
-              "stat:fmbLost": "FmbLost",
+              "stat:fmbLost": "FL",
               "stat:pssCmp": "Cmp",
               "stat:pss": "PaAtt",
               "stat:pssYds": "PaYds",
@@ -1136,7 +1161,7 @@ const sportSpecificTitleOverrides =
               "stat:fg50": "FG50",
               "stat:fga50": "FGA50",
               "stat:fgLng": "FGLng",
-              "stat:xp": "XP",
+              "stat:xp": "XPM",
               "stat:xpa": "XPA",
               "stat:pnt": "Pnt",
               "stat:pntYds": "PntYds",
@@ -1148,6 +1173,11 @@ const sportSpecificTitleOverrides =
               "stat:qbRat": "QBRat",
               "stat:rusYdsPerAtt": "Avg",
               "stat:recYdsPerAtt": "Avg",
+              "stat:fg": "FGM",
+              "stat:fga": "FGA",
+              "stat:fgPct": "Pct",
+              "stat:xpPct": "Pct",
+              "stat:kickingPts": "Pts",
           };
 
 const titleOverrides = {

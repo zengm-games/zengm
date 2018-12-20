@@ -245,7 +245,7 @@ class GameSim {
         }
 
         if (this.awaitingAfterTouchdown) {
-            return Math.random() > 0.8 ? "extraPoint" : "twoPointConversion";
+            return Math.random() < 0.95 ? "extraPoint" : "twoPointConversion";
         }
 
         if (this.down === 4) {
@@ -574,6 +574,7 @@ class GameSim {
     }
 
     doFieldGoal(extraPoint) {
+        console.log("doFieldGoal");
         this.updatePlayersOnField("fieldGoal");
 
         const kicker = this.playersOnField[this.o].K[0];
@@ -611,6 +612,9 @@ class GameSim {
             statMade = "fg50";
         }
 
+        if (kicker.name.includes("King")) {
+            console.log(kicker, made, statAtt, statMade);
+        }
         this.recordStat(this.o, kicker, statAtt);
         if (made) {
             this.recordStat(this.o, kicker, statMade);

@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 import React from "react";
 import { PlayerNameLabels } from "../../../deion/ui/components";
 import { helpers } from "../../../deion/ui/util";
-import processStats from "../../worker/core/player/processStats";
 
 const BoxScoreRow = ({
     className,
@@ -17,8 +16,6 @@ const BoxScoreRow = ({
     p: any,
     stats: string[],
 }) => {
-    const processed = processStats(p, stats);
-    console.log(p, stats, processed);
     return (
         <tr className={className} onClick={onClick}>
             <td>{p.pos}</td>
@@ -33,7 +30,7 @@ const BoxScoreRow = ({
             </td>
             {stats.map(stat => (
                 <td key={stat}>
-                    {helpers.roundStat(processed[stat], stat, true)}
+                    {helpers.roundStat(p.processed[stat], stat, true)}
                 </td>
             ))}
         </tr>

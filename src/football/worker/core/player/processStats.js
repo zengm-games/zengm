@@ -34,9 +34,23 @@ const processStats = (
 
             row[stat] = ((a + b + c + d) / 6) * 100;
         } else if (stat === "rusYdsPerAtt") {
-            row[stat] = row.rusYds / row.rus;
+            row[stat] = ps.rusYds / ps.rus;
         } else if (stat === "recYdsPerAtt") {
-            row[stat] = row.recYds / row.rec;
+            row[stat] = ps.recYds / ps.rec;
+        } else if (stat === "fg") {
+            row[stat] = ps.fg0 + ps.fg20 + ps.fg30 + ps.fg40 + ps.fg50;
+        } else if (stat === "fga") {
+            row[stat] = ps.fga0 + ps.fga20 + ps.fga30 + ps.fga40 + ps.fga50;
+        } else if (stat === "fgPct") {
+            row[stat] = percentage(
+                ps.fg0 + ps.fg20 + ps.fg30 + ps.fg40 + ps.fg50,
+                ps.fga0 + ps.fga20 + ps.fga30 + ps.fga40 + ps.fga50,
+            );
+        } else if (stat === "xpPct") {
+            row[stat] = percentage(ps.xp, ps.xpa);
+        } else if (stat === "kickingPts") {
+            row[stat] =
+                3 * (ps.fg0 + ps.fg20 + ps.fg30 + ps.fg40 + ps.fg50) + ps.xp;
         } else {
             row[stat] = ps[stat];
         }
@@ -48,7 +62,7 @@ const processStats = (
     }
 
     // Since they come in same stream, always need to be able to distinguish
-    row.playoffs = ps.playoffs;
+    ps.playoffs = ps.playoffs;
 
     return row;
 };

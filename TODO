@@ -13,7 +13,6 @@ box score
 Lng
 - record
 - save
-- in box score
 
 processStats to common, so can be used in BoxScore? or pre-process all players?
 

@@ -76,6 +76,8 @@ const roundOverrides =
               fgPct: "oneDecimalPlace",
               xpPct: "oneDecimalPlace",
               pntYdsPerAtt: "oneDecimalPlace",
+              krYdsPerAtt: "oneDecimalPlace",
+              prYdsPerAtt: "oneDecimalPlace",
           };
 
 const roundStat = (

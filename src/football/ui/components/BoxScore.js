@@ -30,24 +30,35 @@ const statsByType = {
         "kickingPts",
     ],
     punting: ["pnt", "pntYdsPerAtt", "pntIn20", "pntTB", "pntLng", "pntBlk"],
-    returns: [],
+    returns: [
+        "kr",
+        "krYds",
+        "krYdsPerAtt",
+        "krLng",
+        "krTD",
+        "pr",
+        "prYds",
+        "prYdsPerAtt",
+        "prLng",
+        "prTD",
+    ],
     defense: [],
 };
 
-const sortByType = {
-    passing: "pssYds",
-    rushing: "rusYds",
-    receiving: "recYds",
-    kicking: "kickingPts",
-    punting: [],
-    returns: [],
+const sortsByType = {
+    passing: ["pssYds"],
+    rushing: ["rusYds"],
+    receiving: ["recYds"],
+    kicking: ["kickingPts"],
+    punting: ["pnt"],
+    returns: ["krYds", "prYds"],
     defense: [],
 };
 
 const StatsTable = ({ Row, boxScore, type }) => {
     const stats = statsByType[type];
     const cols = getCols(...stats.map(stat => `stat:${stat}`));
-    const sort = sortByType[type];
+    const sorts = sortsByType[type];
 
     return (
         <>
@@ -93,11 +104,20 @@ const StatsTable = ({ Row, boxScore, type }) => {
                                         }
                                         return false;
                                     })
-                                    .sort(
-                                        (a, b) =>
-                                            b.processed[sort] -
-                                            a.processed[sort],
-                                    )
+                                    .sort((a, b) => {
+                                        for (const sort of sorts) {
+                                            if (
+                                                b.processed[sort] !==
+                                                a.processed[sort]
+                                            ) {
+                                                return (
+                                                    b.processed[sort] -
+                                                    a.processed[sort]
+                                                );
+                                            }
+                                        }
+                                        return 0;
+                                    })
                                     .map((p, i) => {
                                         return (
                                             <Row

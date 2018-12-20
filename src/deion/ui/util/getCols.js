@@ -746,6 +746,16 @@ const sportSpecificCols: {
                   sortSequence: ["desc", "asc"],
                   sortType: "number",
               },
+              "stat:krYdsPerAtt": {
+                  desc: "Yards Per Kick Return",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:prYdsPerAtt": {
+                  desc: "Yards Per Punt Return",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
           };
 
 const cols: {
@@ -1196,6 +1206,8 @@ const sportSpecificTitleOverrides =
               "stat:pntYdsPerAtt": "Avg",
               "stat:pntTB": "TB",
               "stat:pntIn20": "In20",
+              "stat:krYdsPerAtt": "Avg",
+              "stat:prYdsPerAtt": "Avg",
           };
 
 const titleOverrides = {

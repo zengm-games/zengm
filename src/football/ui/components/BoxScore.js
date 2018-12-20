@@ -103,8 +103,10 @@ const StatsTable = ({ Row, boxScore, type }) => {
                             <tbody>
                                 {t.players
                                     .map(p => {
-                                        p.processed = processStats(p, stats);
-                                        return p;
+                                        return {
+                                            ...p,
+                                            processed: processStats(p, stats),
+                                        };
                                     })
                                     .filter(p => {
                                         // Filter based on if player has any stats
@@ -134,16 +136,14 @@ const StatsTable = ({ Row, boxScore, type }) => {
                                         }
                                         return 0;
                                     })
-                                    .map((p, i) => {
-                                        return (
-                                            <Row
-                                                key={p.pid}
-                                                i={i}
-                                                p={p}
-                                                stats={stats}
-                                            />
-                                        );
-                                    })}
+                                    .map((p, i) => (
+                                        <Row
+                                            key={p.pid}
+                                            i={i}
+                                            p={p}
+                                            stats={stats}
+                                        />
+                                    ))}
                             </tbody>
                         </table>
                     </ResponsiveTableWrapper>

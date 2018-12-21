@@ -4,6 +4,7 @@ basketball - report that AI teams consider any of your draft picks the 1st pick 
 
 box score
 - scoring summary
+  - in PlayByPlayLogger, watch for events with td/safety: true or for extra points, two point conversions, field goals
 
 processStats to common, so can be used in BoxScore? or pre-process all players?
 

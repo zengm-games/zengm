@@ -707,6 +707,7 @@ class GameSim {
             lost,
             t: this.o,
             names: [pForced.name, pRecovered.name],
+            safety: safetyOrTouchback && !lost,
             td,
             yds,
         });
@@ -760,7 +761,6 @@ class GameSim {
         this.playByPlay.logEvent("interception", {
             t: this.o,
             names: [p.name],
-            safetyOrTouchback,
             td,
             yds,
         });
@@ -797,13 +797,20 @@ class GameSim {
             sack: true,
         });
 
-        if (safetyOrTouchback) {
-            return this.doSafety();
-        }
+        this.playByPlay.logEvent("sack", {
+            t: this.o,
+            names: [qb.name, p.name],
+            safety: safetyOrTouchback,
+            yds,
+        });
 
         this.recordStat(this.o, qb, "pssSk");
         this.recordStat(this.o, qb, "pssSkYds", yds);
         this.recordStat(this.o, p, "defSk");
+
+        if (safetyOrTouchback) {
+            return this.doSafety();
+        }
     }
 
     doPass() {
@@ -876,6 +883,7 @@ class GameSim {
             this.playByPlay.logEvent("passComplete", {
                 t: this.o,
                 names: [qb.name, target.name],
+                safety: safetyOrTouchback,
                 td,
                 yds,
             });
@@ -928,6 +936,7 @@ class GameSim {
         this.playByPlay.logEvent("run", {
             t: this.o,
             names: [p.name],
+            safety: safetyOrTouchback,
             td,
             yds,
         });

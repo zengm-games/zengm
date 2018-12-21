@@ -17,11 +17,7 @@ const Winner = ({
 
     const nameAndStats = (
         <>
-            <span
-                className={
-                    !finals && award.tid === userTid ? "table-info" : null
-                }
-            >
+            <span className={award.tid === userTid ? "table-info" : null}>
                 <b>
                     <a href={helpers.leagueUrl(["player", award.pid])}>
                         {award.name}

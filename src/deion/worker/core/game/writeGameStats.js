@@ -18,6 +18,7 @@ const writeGameStats = async (
         overtimes: results.overtimes,
         won: {},
         lost: {},
+        scoringSummary: results.scoringSummary,
         teams: [{}, {}],
     };
     gameStats.teams[0].tid = results.team[0].id;

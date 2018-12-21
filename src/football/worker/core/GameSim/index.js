@@ -100,7 +100,7 @@ class GameSim {
 
     overtime: boolean;
 
-    t: number;
+    clock: number;
 
     o: TeamNum;
 
@@ -112,7 +112,7 @@ class GameSim {
 
     awaitingKickoff: boolean;
 
-    twoPointState: "attempting" | "success" | void;
+    twoPointConversionTeam: number | void;
 
     constructor(
         gid: number,
@@ -139,7 +139,7 @@ class GameSim {
 
         this.overtime = false;
 
-        this.t = g.quarterLength; // Game clock, in minutes
+        this.clock = g.quarterLength; // Game clock, in minutes
 
         this.awaitingAfterTouchdown = false;
         this.awaitingKickoff = true;
@@ -199,6 +199,7 @@ class GameSim {
             team: this.team,
             clutchPlays: [],
             playByPlay: this.playByPlay.getPlayByPlay(this.team),
+            scoringSummary: this.playByPlay.scoringSummary,
         };
 
         return out;
@@ -211,7 +212,7 @@ class GameSim {
 
         // eslint-disable-next-line no-constant-condition
         while (true) {
-            while (this.t > 0) {
+            while (this.clock > 0) {
                 this.simPlay();
             }
             quarter += 1;
@@ -221,20 +222,25 @@ class GameSim {
             }
             this.team[0].stat.ptsQtrs.push(0);
             this.team[1].stat.ptsQtrs.push(0);
-            this.t = g.quarterLength;
-            this.playByPlay.logEvent("quarter");
+            this.clock = g.quarterLength;
+            this.playByPlay.logEvent("quarter", {
+                clock: this.clock,
+                quarter: this.team[0].stat.ptsQtrs.length,
+            });
         }
     }
 
     simOvertime() {
-        this.t = Math.ceil(0.4 * g.quarterLength); // 5 minutes by default, but scales
+        this.clock = Math.ceil(0.4 * g.quarterLength); // 5 minutes by default, but scales
         this.overtimes += 1;
         this.team[0].stat.ptsQtrs.push(0);
         this.team[1].stat.ptsQtrs.push(0);
-        this.playByPlay.logEvent("overtime");
+        this.playByPlay.logEvent("overtime", {
+            clock: this.clock,
+        });
         this.o = Math.random() < 0.5 ? 0 : 1;
         this.d = this.o === 0 ? 1 : 0;
-        while (this.t > 0) {
+        while (this.clock > 0) {
             this.simPossession();
         }
     }
@@ -291,11 +297,11 @@ class GameSim {
         dt += random.randInt(5, 40) / 60;
 
         // Clock
-        this.t -= dt;
+        this.clock -= dt;
         let playTime = dt;
-        if (this.t < 0) {
-            playTime += this.t;
-            this.t = 0;
+        if (this.clock < 0) {
+            playTime += this.clock;
+            this.clock = 0;
         }
         this.updatePlayingTime(playTime);
 
@@ -466,6 +472,7 @@ class GameSim {
         let dt = 0;
 
         this.playByPlay.logEvent("kickoff", {
+            clock: this.clock,
             t: this.o,
             names: [kicker.name],
             touchback,
@@ -501,7 +508,8 @@ class GameSim {
                 this.toGo = 10;
             }
 
-            this.playByPlay.logEvent("kickoffReutrn", {
+            this.playByPlay.logEvent("kickoffReturn", {
+                clock: this.clock,
                 t: this.d,
                 names: [kickReturner.name],
                 td,
@@ -528,6 +536,7 @@ class GameSim {
         this.recordStat(this.o, punter, "pntYds", distance);
         this.recordStat(this.o, punter, "pntLng", distance);
         this.playByPlay.logEvent("punt", {
+            clock: this.clock,
             t: this.o,
             names: [punter.name],
             touchback,
@@ -568,6 +577,7 @@ class GameSim {
             }
 
             this.playByPlay.logEvent("puntReturn", {
+                clock: this.clock,
                 t: this.d,
                 names: [puntReturner.name],
                 td,
@@ -582,7 +592,6 @@ class GameSim {
     }
 
     doFieldGoal(extraPoint) {
-        console.log("doFieldGoal");
         this.updatePlayersOnField("fieldGoal");
 
         const kicker = this.playersOnField[this.o].K[0];
@@ -592,6 +601,7 @@ class GameSim {
         const made = Math.random() < 0.8;
 
         this.playByPlay.logEvent(extraPoint ? "extraPoint" : "fieldGoal", {
+            clock: this.clock,
             t: this.o,
             made,
             names: [kicker.name],
@@ -638,12 +648,7 @@ class GameSim {
     }
 
     doTwoPointConversion() {
-        this.twoPointState = "attempting";
-
-        // Is this needed?
-        /*this.playByPlay.logEvent("twoPointAttempt", {
-            t: this.o,
-        });*/
+        this.twoPointConversionTeam = this.o;
 
         this.down = 1;
         this.scrimmage = 98;
@@ -654,14 +659,8 @@ class GameSim {
             this.doRun();
         }
 
-        // Is this needed?
-        /*this.playByPlay.logEvent("twoPointResult", {
-            t: this.o,
-            success: this.twoPointState === "success",
-        });*/
-
         this.awaitingAfterTouchdown = false;
-        this.twoPointState = undefined;
+        this.twoPointConversionTeam = undefined;
 
         this.awaitingAfterTouchdown = false;
         this.awaitingKickoff = true;
@@ -684,6 +683,7 @@ class GameSim {
         this.recordStat(this.d, pForced, "defFmbFrc");
 
         this.playByPlay.logEvent("fumble", {
+            clock: this.clock,
             t: this.o,
             names: [pFumbled.name, pForced.name],
         });
@@ -711,12 +711,14 @@ class GameSim {
         const { safetyOrTouchback, td } = this.advanceYds(yds);
 
         this.playByPlay.logEvent("fumbleRecovery", {
+            clock: this.clock,
             lost,
             t: this.o,
             names: [pRecovered.name],
             safety: safetyOrTouchback && !lost,
             td,
             touchback: safetyOrTouchback && lost,
+            twoPointConversionTeam: this.twoPointConversionTeam,
             yds,
         });
 
@@ -724,13 +726,15 @@ class GameSim {
             if (lost) {
                 this.scrimmage = 20;
             } else {
-                return this.doSafety();
+                this.doSafety();
             }
         } else {
             this.recordStat(recoveringTeam, pRecovered, "defFmbYds", yds);
             this.recordStat(recoveringTeam, pRecovered, "defFmbLng", yds);
             if (td) {
                 this.recordStat(recoveringTeam, pRecovered, "defFmbTD");
+            } else if (Math.random() < 0.01) {
+                this.doFumble(pRecovered, 0);
             }
         }
     }
@@ -756,6 +760,15 @@ class GameSim {
 
         this.recordStat(this.o, p, "defInt");
 
+        this.playByPlay.logEvent("interception", {
+            clock: this.clock,
+            t: this.o,
+            names: [p.name],
+            td,
+            twoPointConversionTeam: this.twoPointConversionTeam,
+            yds,
+        });
+
         if (safetyOrTouchback) {
             this.scrimmage = 20;
         } else {
@@ -763,15 +776,10 @@ class GameSim {
             this.recordStat(this.o, p, "defIntLng", yds);
             if (td) {
                 this.recordStat(this.o, p, "defIntTD");
+            } else if (Math.random() < 0.01) {
+                this.doFumble(p, 0);
             }
         }
-
-        this.playByPlay.logEvent("interception", {
-            t: this.o,
-            names: [p.name],
-            td,
-            yds,
-        });
     }
 
     doSafety() {
@@ -801,6 +809,7 @@ class GameSim {
         });
 
         this.playByPlay.logEvent("sack", {
+            clock: this.clock,
             t: this.o,
             names: [qb.name, p.name],
             safety: safetyOrTouchback,
@@ -822,6 +831,7 @@ class GameSim {
         const qb = this.playersOnField[this.o].QB[0];
 
         this.playByPlay.logEvent("dropback", {
+            clock: this.clock,
             t: this.o,
             names: [qb.name],
         });
@@ -884,10 +894,12 @@ class GameSim {
             }
 
             this.playByPlay.logEvent("passComplete", {
+                clock: this.clock,
                 t: this.o,
                 names: [qb.name, target.name],
                 safety: safetyOrTouchback,
                 td,
+                twoPointConversionTeam: this.twoPointConversionTeam,
                 yds,
             });
 
@@ -896,8 +908,10 @@ class GameSim {
             }
         } else {
             this.playByPlay.logEvent("passIncomplete", {
+                clock: this.clock,
                 t: this.o,
                 names: [qb.name, target.name],
+                twoPointConversionTeam: this.twoPointConversionTeam,
                 yds,
             });
         }
@@ -916,6 +930,7 @@ class GameSim {
         const qb = this.playersOnField[this.o].QB[0];
 
         this.playByPlay.logEvent("handoff", {
+            clock: this.clock,
             t: this.o,
             names: [qb.name, p.name],
         });
@@ -937,9 +952,11 @@ class GameSim {
         }
 
         this.playByPlay.logEvent("run", {
+            clock: this.clock,
             t: this.o,
             names: [p.name],
             safety: safetyOrTouchback,
+            twoPointConversionTeam: this.twoPointConversionTeam,
             td,
             yds,
         });
@@ -1058,7 +1075,7 @@ class GameSim {
         const qtr = this.team[t].stat.ptsQtrs.length - 1;
 
         // Special case for two point conversions
-        if (this.twoPointState === "attempting") {
+        if (this.twoPointConversionTeam !== undefined) {
             let pts;
             if (s.endsWith("TD") && s !== "pssTD") {
                 pts = 2;
@@ -1068,7 +1085,7 @@ class GameSim {
                 this.team[t].stat.pts += pts;
                 this.team[t].stat.ptsQtrs[qtr] += pts;
 
-                this.twoPointState = "success";
+                this.twoPointConversionTeam = undefined;
             }
         }
 

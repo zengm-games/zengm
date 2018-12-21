@@ -6,8 +6,9 @@ box score
 - scoring summary
   - in PlayByPlayLogger, watch for events with td/safety: true or for extra points, two point conversions, field goals
   - get playByPlay working first, then use that text for scoring summary
-  - two point conversion status: send state as parameter to logger, to identify which touchdowns are actually conversions
-    - handle int/fumble return for touchdown
+  - handle failed two point conversion
+    - could get multiple plays logged, if multiple turnovers happen. so look for first play with twoPointConversionTeam set to undefined, and if we havne't had success by then, it failed.
+  - show actual score
 
 processStats to common, so can be used in BoxScore? or pre-process all players?
 
@@ -37,6 +38,9 @@ derived stats
 stats display - some things are per game, some are total, in same table! crazy
 
 core/team/stat.js does not include opp - good or bad?
+
+basketball/football switch in index.html
+- and tracking stuff
 
 depth chart
 - links here from More, dropdowns, etc

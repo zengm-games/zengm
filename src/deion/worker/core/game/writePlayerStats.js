@@ -54,7 +54,16 @@ const writePlayerStats = async (
                         if (!ps.hasOwnProperty(key)) {
                             throw new Error(`Missing key "${key}" on ps`);
                         }
-                        ps[key] += p.stat[key];
+                        if (
+                            process.env.SPORT === "football" &&
+                            key.endsWith("Lng")
+                        ) {
+                            if (p.stat[key] > ps[key]) {
+                                ps[key] = p.stat[key];
+                            }
+                        } else {
+                            ps[key] += p.stat[key];
+                        }
                     }
                     ps.gp += 1; // Already checked for non-zero minutes played above
 

@@ -491,6 +491,7 @@ class GameSim {
 
             this.recordStat(this.o, kickReturner, "kr");
             this.recordStat(this.o, kickReturner, "krYds", returnLength);
+            this.recordStat(this.o, kickReturner, "krLng", returnLength);
 
             if (td) {
                 this.awaitingAfterTouchdown = true;
@@ -525,6 +526,7 @@ class GameSim {
 
         this.recordStat(this.o, punter, "pnt");
         this.recordStat(this.o, punter, "pntYds", distance);
+        this.recordStat(this.o, punter, "pntLng", distance);
         this.playByPlay.logEvent("punt", {
             t: this.o,
             names: [punter.name],
@@ -555,6 +557,7 @@ class GameSim {
 
             this.recordStat(this.o, puntReturner, "pr");
             this.recordStat(this.o, puntReturner, "prYds", returnLength);
+            this.recordStat(this.o, puntReturner, "prLng", returnLength);
 
             if (td) {
                 this.awaitingAfterTouchdown = true;
@@ -617,12 +620,12 @@ class GameSim {
             statMade = "fg50";
         }
 
-        if (kicker.name.includes("King")) {
-            console.log(kicker, made, statAtt, statMade);
-        }
         this.recordStat(this.o, kicker, statAtt);
         if (made) {
             this.recordStat(this.o, kicker, statMade);
+            if (!extraPoint) {
+                this.recordStat(this.o, kicker, "fgLng", distance);
+            }
             this.awaitingKickoff = true;
         } else {
             this.possessionChange();
@@ -716,6 +719,7 @@ class GameSim {
             }
         } else {
             this.recordStat(recoveringTeam, pRecovered, "defFmbYds", yds);
+            this.recordStat(recoveringTeam, pRecovered, "defFmbLng", yds);
             if (td) {
                 this.recordStat(recoveringTeam, pRecovered, "defFmbTD");
             }
@@ -747,6 +751,7 @@ class GameSim {
             this.scrimmage = 20;
         } else {
             this.recordStat(this.o, p, "defIntYds", yds);
+            this.recordStat(this.o, p, "defIntLng", yds);
             if (td) {
                 this.recordStat(this.o, p, "defIntTD");
             }
@@ -858,8 +863,10 @@ class GameSim {
             const { safetyOrTouchback, td } = this.advanceYds(yds);
             this.recordStat(this.o, qb, "pssCmp");
             this.recordStat(this.o, qb, "pssYds", yds);
+            this.recordStat(this.o, qb, "pssLng", yds);
             this.recordStat(this.o, target, "rec");
             this.recordStat(this.o, target, "recYds", yds);
+            this.recordStat(this.o, target, "recLng", yds);
 
             if (td) {
                 this.recordStat(this.o, qb, "pssTD");
@@ -905,6 +912,7 @@ class GameSim {
         const ydsRaw = random.randInt(-5, 10);
         const yds = this.boundedYds(ydsRaw);
         this.recordStat(this.o, p, "rusYds", yds);
+        this.recordStat(this.o, p, "rusLng", yds);
 
         const fumble = Math.random() < 0.01;
         if (fumble) {
@@ -1055,6 +1063,10 @@ class GameSim {
         if (s === "gs") {
             // In case player starts on offense and defense, only record once
             p.stat[s] = 1;
+        } else if (s.endsWith("Lng")) {
+            if (amt > p.stat[s]) {
+                p.stat[s] = amt;
+            }
         } else {
             p.stat[s] += amt;
         }
@@ -1065,7 +1077,13 @@ class GameSim {
             s !== "benchTime" &&
             s !== "energy"
         ) {
-            this.team[t].stat[s] += amt;
+            if (s.endsWith("Lng")) {
+                if (amt > this.team[t].stat[s]) {
+                    this.team[t].stat[s] = amt;
+                }
+            } else {
+                this.team[t].stat[s] += amt;
+            }
 
             let pts;
             if (s.endsWith("TD") && s !== "pssTD") {

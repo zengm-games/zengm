@@ -5,10 +5,6 @@ basketball - report that AI teams consider any of your draft picks the 1st pick 
 box score
 - scoring summary
 
-Lng
-- record
-- save
-
 processStats to common, so can be used in BoxScore? or pre-process all players?
 
 game sim
@@ -35,6 +31,8 @@ game sim
 derived stats
 
 stats display - some things are per game, some are total, in same table! crazy
+
+core/team/stat.js does not include opp - good or bad?
 
 depth chart
 - links here from More, dropdowns, etc

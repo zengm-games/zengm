@@ -187,7 +187,14 @@ const writeTeamStats = async (results: GameResults) => {
             if (skip.includes(key)) {
                 continue;
             }
-            teamStats[key] += results.team[t1].stat[key];
+
+            if (process.env.SPORT === "football" && key.endsWith("Lng")) {
+                if (results.team[t1].stat[key] > teamStats[key]) {
+                    teamStats[key] = results.team[t1].stat[key];
+                }
+            } else {
+                teamStats[key] += results.team[t1].stat[key];
+            }
 
             if (key !== "min") {
                 const oppKey = `opp${key[0].toUpperCase()}${key.slice(1)}`;

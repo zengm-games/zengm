@@ -16,14 +16,22 @@ class PlayByPlayLogger {
     logEvent(
         type: PlayType,
         {
+            lost,
+            made,
             names,
+            safety,
             t,
             td,
+            touchback,
             yds,
         }: {
+            lost?: boolean,
+            made?: boolean,
             names?: string[],
+            safety?: boolean,
             t?: TeamNum,
             td?: boolean,
+            touchback?: boolean,
             yds?: number,
         } = {},
     ) {
@@ -79,7 +87,7 @@ class PlayByPlayLogger {
         });
     }
 
-    getAll(boxScore) {
+    getPlayByPlay(boxScore) {
         if (!this.active) {
             return;
         }

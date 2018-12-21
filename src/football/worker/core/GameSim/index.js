@@ -198,7 +198,7 @@ class GameSim {
             overtimes: this.overtimes,
             team: this.team,
             clutchPlays: [],
-            playByPlay: this.playByPlay.getAll(this.team),
+            playByPlay: this.playByPlay.getPlayByPlay(this.team),
         };
 
         return out;
@@ -640,9 +640,10 @@ class GameSim {
     doTwoPointConversion() {
         this.twoPointState = "attempting";
 
-        this.playByPlay.logEvent("twoPointAttempt", {
+        // Is this needed?
+        /*this.playByPlay.logEvent("twoPointAttempt", {
             t: this.o,
-        });
+        });*/
 
         this.down = 1;
         this.scrimmage = 98;
@@ -653,10 +654,11 @@ class GameSim {
             this.doRun();
         }
 
-        this.playByPlay.logEvent("twoPointResult", {
+        // Is this needed?
+        /*this.playByPlay.logEvent("twoPointResult", {
             t: this.o,
             success: this.twoPointState === "success",
-        });
+        });*/
 
         this.awaitingAfterTouchdown = false;
         this.twoPointState = undefined;
@@ -681,6 +683,11 @@ class GameSim {
         const pForced = random.choice(playersDefense);
         this.recordStat(this.d, pForced, "defFmbFrc");
 
+        this.playByPlay.logEvent("fumble", {
+            t: this.o,
+            names: [pFumbled.name, pForced.name],
+        });
+
         const recoveringTeam = lost ? this.d : this.o;
 
         let players = [];
@@ -703,10 +710,10 @@ class GameSim {
         const yds = this.boundedYds(ydsRaw);
         const { safetyOrTouchback, td } = this.advanceYds(yds);
 
-        this.playByPlay.logEvent("fumble", {
+        this.playByPlay.logEvent("fumbleRecovery", {
             lost,
             t: this.o,
-            names: [pForced.name, pRecovered.name],
+            names: [pRecovered.name],
             safety: safetyOrTouchback && !lost,
             td,
             yds,
@@ -776,11 +783,6 @@ class GameSim {
 
         this.possessionChange();
         this.awaitingKickoff = true;
-
-        this.playByPlay.logEvent("safety", {
-            t: this.d,
-            names: [],
-        });
     }
 
     doSack(qb: PlayerGameSim) {

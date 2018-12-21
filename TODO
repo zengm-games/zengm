@@ -3,12 +3,8 @@
 basketball - report that AI teams consider any of your draft picks the 1st pick when trading during draft
 
 box score
-- scoring summary
-  - in PlayByPlayLogger, watch for events with td/safety: true or for extra points, two point conversions, field goals
-  - get playByPlay working first, then use that text for scoring summary
-  - handle failed two point conversion
-    - could get multiple plays logged, if multiple turnovers happen. so look for first play with twoPointConversionTeam set to undefined, and if we havne't had success by then, it failed.
-  - show actual score
+- scoring summary score doesn't match final score, why?
+- condense XP/2P into TDs rows?
 
 processStats to common, so can be used in BoxScore? or pre-process all players?
 

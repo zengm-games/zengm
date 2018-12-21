@@ -153,12 +153,88 @@ const StatsTable = ({ Row, boxScore, type }) => {
     );
 };
 
+const quarters = {
+    Q1: "1st Quarter",
+    Q2: "2nd Quarter",
+    Q3: "3rd Quarter",
+    Q4: "4th Quarter",
+    OT: "Overtime",
+};
+
+const ScoringSummary = ({ events, teams }) => {
+    let prevQuarter;
+
+    const score = [0, 0];
+
+    return (
+        <table className="table table-sm border-bottom">
+            <tbody>
+                {events.map((event, i) => {
+                    let quarterHeader = null;
+                    if (event.quarter !== prevQuarter) {
+                        prevQuarter = event.quarter;
+                        quarterHeader = (
+                            <tr>
+                                <td className="text-muted" colSpan="5">
+                                    {quarters[event.quarter]}
+                                </td>
+                            </tr>
+                        );
+                    }
+
+                    let scoreType = null;
+                    if (event.text.includes("extra point")) {
+                        scoreType = "XP";
+                        if (event.text.includes("makes")) {
+                            score[event.t] += 1;
+                        }
+                    } else if (event.text.includes("field goal")) {
+                        scoreType = "FG";
+                        if (event.text.includes("makes")) {
+                            score[event.t] += 3;
+                        }
+                    } else if (event.text.includes("touchdown")) {
+                        scoreType = "TD";
+                        score[event.t] += 6;
+                    } else if (event.text.toLowerCase().includes("two")) {
+                        scoreType = "2P";
+                        if (!event.text.includes("failed")) {
+                            score[event.t] += 2;
+                        }
+                    } else if (event.text.includes("safety")) {
+                        scoreType = "SF";
+                        score[event.t] += 2;
+                    }
+
+                    return (
+                        <React.Fragment key={i}>
+                            {quarterHeader}
+                            <tr>
+                                <td>{teams[event.t].abbrev}</td>
+                                <td>{scoreType}</td>
+                                <td>
+                                    {score[0]}-{score[1]}
+                                </td>
+                                <td>{event.time}</td>
+                                <td>{event.text}</td>
+                            </tr>
+                        </React.Fragment>
+                    );
+                })}
+            </tbody>
+        </table>
+    );
+};
+
 const BoxScore = ({ boxScore, Row }) => {
     console.log("boxScore", boxScore);
     return (
         <div className="mb-3">
             <h3>Scoring Summary</h3>
-            <p>...</p>
+            <ScoringSummary
+                events={boxScore.scoringSummary}
+                teams={boxScore.teams}
+            />
             {[
                 "Passing",
                 "Rushing",

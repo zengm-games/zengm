@@ -13,10 +13,13 @@ class PlayByPlayLogger {
 
     twoPointConversionState: "attempting" | "converted" | void;
 
+    quarter: string;
+
     constructor(active: boolean) {
         this.active = active;
         this.playByPlay = [];
         this.scoringSummary = [];
+        this.quarter = "Q1";
     }
 
     updateTwoPointConversionState(td: boolean) {
@@ -67,6 +70,7 @@ class PlayByPlayLogger {
                         text: "Two point conversion failed!",
                         t: previousEvent.t,
                         time: previousEvent.time,
+                        quarter: this.quarter,
                     };
                     this.playByPlay.push(event);
                     this.scoringSummary.push(event);
@@ -93,8 +97,10 @@ class PlayByPlayLogger {
                 text = `${names[0]} was injured!`;
             } else if (type === "quarter") {
                 text = `Start of ${helpers.ordinal(quarter)} quarter`;
+                this.quarter = `Q${quarter}`;
             } else if (type === "overtime") {
                 text = "Start of overtime";
+                this.quarter = "OT";
             } else if (type === "kickoff") {
                 text = `${names[0]} kicks off${
                     touchback
@@ -200,6 +206,7 @@ class PlayByPlayLogger {
                     text,
                     t,
                     time: `${Math.floor(clock)}:${sec}`,
+                    quarter: this.quarter,
                 };
 
                 this.playByPlay.push(event);

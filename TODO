@@ -6,6 +6,8 @@ box score
 - scoring summary
   - in PlayByPlayLogger, watch for events with td/safety: true or for extra points, two point conversions, field goals
   - get playByPlay working first, then use that text for scoring summary
+  - two point conversion status: send state as parameter to logger, to identify which touchdowns are actually conversions
+    - handle int/fumble return for touchdown
 
 processStats to common, so can be used in BoxScore? or pre-process all players?
 

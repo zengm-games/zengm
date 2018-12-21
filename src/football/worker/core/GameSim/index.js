@@ -587,7 +587,7 @@ class GameSim {
 
         const kicker = this.playersOnField[this.o].K[0];
 
-        const distance = 100 - this.scrimmage + 17;
+        const distance = extraPoint ? 33 : 100 - this.scrimmage + 17;
 
         const made = Math.random() < 0.8;
 
@@ -716,6 +716,7 @@ class GameSim {
             names: [pRecovered.name],
             safety: safetyOrTouchback && !lost,
             td,
+            touchback: safetyOrTouchback && lost,
             yds,
         });
 

@@ -1,23 +1,24 @@
 import type { Position } from "../../../common/types";
 
 export type PlayType =
+    | "quarter"
+    | "overtime"
+    | "injury"
     | "kickoff"
-    | "kickoffReturn"
+    | "kickoffReutrn"
     | "punt"
     | "puntReturn"
-    | "passIncomplete"
-    | "passComplete"
-    | "run"
-    | "fumbleRecoverOffense"
-    | "fumbleRecoverDefense"
+    | "extraPoint"
+    | "fieldGoal"
+    | "fumble"
+    | "fumbleRecovery"
     | "interception"
-    | "safety"
     | "sack"
-    | "penalty"
-    | "twoMinuteWarning"
-    | "overtime"
-    | "quarter"
-    | "touchdown";
+    | "dropback"
+    | "passComplete"
+    | "passIncomplete"
+    | "handoff"
+    | "run";
 
 export type ShotType = "atRim" | "ft" | "lowPost" | "midRange" | "threePointer";
 

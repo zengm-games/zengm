@@ -1,23 +1,7 @@
 // @flow
 
 const stats = {
-    derived: [
-        "qbW",
-        "qbL",
-        "cmpPct",
-        "qbRat",
-        "rusYdsPerAtt",
-        "recYdsPerAtt",
-        "fg",
-        "fga",
-        "fgPct",
-        "xpPct",
-        "kickingPts",
-        "pntYdsPerAtt",
-        "krYdsPerAtt",
-        "prYdsPerAtt",
-        "defTck",
-    ],
+    derived: ["qbW", "qbL"],
     raw: [
         "gp",
         "gs",

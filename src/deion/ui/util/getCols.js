@@ -771,6 +771,76 @@ const sportSpecificCols: {
                   sortSequence: ["desc", "asc"],
                   sortType: "number",
               },
+              "stat:pts": {
+                  desc: "",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:yds": {
+                  desc: "Offensive Yards",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:ply": {
+                  desc: "Plays",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:ydsPerPlay": {
+                  desc: "Yards Per Play",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:tov": {
+                  desc: "Turnovers",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:pssNetYdsPerAtt": {
+                  desc: "Passing Net Yards Per Attempt (passes and sacks)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:drives": {
+                  desc: "Number of Drives",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:drivesScoringPct": {
+                  desc: "Percentage of drives ending in a score",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:drivesTurnoverPct": {
+                  desc: "Percentage of drives ending in a turnover",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:avgFieldPosition": {
+                  desc: "Average Starting Field Position",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:timePerDrive": {
+                  desc: "Time Per Drive",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:playsPerDrive": {
+                  desc: "Number of Plays Per Drive",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:ydsPerDrive": {
+                  desc: "Yards Per Drive",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
+              "stat:ptsPerDrive": {
+                  desc: "Points Per Drive",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
           };
 
 const cols: {
@@ -1231,6 +1301,20 @@ const sportSpecificTitleOverrides =
               "stat:prYdsPerAtt": "Avg",
               "stat:defTck": "Tck",
               "stat:keyStats": "Stats",
+              "stat:pts": "Pts",
+              "stat:yds": "Yds",
+              "stat:ply": "Ply",
+              "stat:ydsPerPlay": "Y/P",
+              "stat:tov": "TO",
+              "stat:pssNetYdsPerAtt": "NY/A",
+              "stat:drives": "#Dr",
+              "stat:drivesScoringPct": "Sc%",
+              "stat:drivesTurnoverPct": "TO%",
+              "stat:avgFieldPosition": "Start",
+              "stat:timePerDrive": "T/D",
+              "stat:playsPerDrive": "Ply/D",
+              "stat:ydsPerDrive": "Y/D",
+              "stat:ptsPerDrive": "Pts/D",
           };
 
 const titleOverrides = {

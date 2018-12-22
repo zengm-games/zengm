@@ -1,7 +1,10 @@
 # football
 
+in stats.js, is derived for things like advanced stats, or dynamically computed things from processed stats? seems to be used inconsistently across football/basketball
+
 team stats page
-- football: https://www.pro-football-reference.com/teams/mia/2018.htm#team_stats::none
+- fill in the blanks
+- opponent stats
 
 league dashboard
 - team stats: pts avg, oppPts avg, pssYds avg, rusYds avg

@@ -171,6 +171,7 @@ const RosterRow = SortableElement(
             p,
             phase,
             season,
+            showRelease,
             showTradeFor,
             stats,
             toggleClicked,
@@ -181,7 +182,7 @@ const RosterRow = SortableElement(
             <tr
                 key={p.pid}
                 className={classNames({
-                    separator: i === 4,
+                    separator: process.env.SPORT === "basketball" && i === 4,
                     "table-warning": clicked,
                 })}
                 data-pid={p.pid}
@@ -239,7 +240,7 @@ const RosterRow = SortableElement(
                         <PlayingTime p={p} userTid={userTid} />
                     </td>
                 ) : null}
-                {editable ? (
+                {showRelease ? (
                     <td onClick={toggleClicked}>
                         <button
                             className="btn btn-light-bordered btn-xs"
@@ -278,6 +279,7 @@ RosterRow.propTypes = {
     p: PropTypes.object.isRequired,
     phase: PropTypes.number.isRequired,
     season: PropTypes.number.isRequired,
+    showRelease: PropTypes.bool.isRequired,
     showTradeFor: PropTypes.bool.isRequired,
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     userTid: PropTypes.number.isRequired,
@@ -291,6 +293,7 @@ const TBody = SortableContainer(
         phase,
         players,
         season,
+        showRelease,
         showTradeFor,
         stats,
         userTid,
@@ -309,6 +312,7 @@ const TBody = SortableContainer(
                             p={p}
                             phase={phase}
                             season={season}
+                            showRelease={showRelease}
                             showTradeFor={showTradeFor}
                             stats={stats}
                             userTid={userTid}
@@ -327,6 +331,7 @@ TBody.propTypes = {
     phase: PropTypes.number.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     season: PropTypes.number.isRequired,
+    showRelease: PropTypes.bool.isRequired,
     showTradeFor: PropTypes.bool.isRequired,
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     userTid: PropTypes.number.isRequired,
@@ -385,6 +390,7 @@ class Roster extends React.Component {
             players,
             salaryCap,
             season,
+            showRelease,
             showTradeFor,
             stats,
             t,
@@ -589,7 +595,7 @@ class Roster extends React.Component {
                                         </HelpPopover>
                                     </th>
                                 ) : null}
-                                {editable ? (
+                                {showRelease ? (
                                     <th>
                                         Release{" "}
                                         <HelpPopover
@@ -636,6 +642,7 @@ class Roster extends React.Component {
                             onSortStart={this.handleOnSortStart}
                             phase={phase}
                             season={season}
+                            showRelease={showRelease}
                             showTradeFor={showTradeFor}
                             stats={stats}
                             transitionDuration={0}
@@ -661,6 +668,7 @@ Roster.propTypes = {
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     salaryCap: PropTypes.number.isRequired,
     season: PropTypes.number.isRequired,
+    showRelease: PropTypes.bool.isRequired,
     showTradeFor: PropTypes.bool.isRequired,
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,
     t: PropTypes.object.isRequired,

@@ -25,16 +25,24 @@ async function updateRoster(
                 ? ["gp", "min", "pts", "trb", "ast", "per"]
                 : ["gp", "keyStats"];
 
+        const editable =
+            inputs.season === g.season &&
+            inputs.tid === g.userTid &&
+            process.env.SPORT === "basketball";
+        const showRelease =
+            inputs.season === g.season && inputs.tid === g.userTid;
+
         const vars: any = {
             abbrev: inputs.abbrev,
             currentSeason: g.season,
-            editable: inputs.season === g.season && inputs.tid === g.userTid,
+            editable,
             maxRosterSize: g.maxRosterSize,
             numConfs: g.confs.length,
             numPlayoffRounds: g.numGamesPlayoffSeries.length,
             phase: g.phase,
             salaryCap: g.salaryCap / 1000,
             season: inputs.season,
+            showRelease,
             showTradeFor:
                 inputs.season === g.season && inputs.tid !== g.userTid,
             stats,
@@ -95,7 +103,11 @@ async function updateRoster(
                 fuzz: true,
                 numGamesRemaining,
             });
-            players.sort((a, b) => a.rosterOrder - b.rosterOrder);
+            if (process.env.SPORT === "basketball") {
+                players.sort((a, b) => a.rosterOrder - b.rosterOrder);
+            } else {
+                players.sort((a, b) => b.ratings.ovr - a.ratings.ovr);
+            }
 
             for (let i = 0; i < players.length; i++) {
                 // Can release from user's team, except in playoffs because then no free agents can be signed to meet the minimum roster requirement

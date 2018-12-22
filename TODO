@@ -32,8 +32,7 @@ stats display - some things are per game, some are total, in same table! crazy
 
 core/team/stat.js does not include opp - good or bad?
 
-basketball/football switch in index.html
-- and tracking stuff
+bugsnag, google analytics keys in index.html
 
 depth chart
 - links here from More, dropdowns, etc

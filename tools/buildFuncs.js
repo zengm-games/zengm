@@ -84,6 +84,25 @@ const buildSW = async () => {
     console.log(`${count} files will be precached, totaling ${size} bytes.`);
 };
 
+const setSport = () => {
+    console.log("Setting sport...");
+
+    if (process.env.SPORT === "football") {
+        replace({
+            regex: "basketball",
+            replacement: "football",
+            paths: ["build/index.html"],
+            silent: true,
+        });
+        replace({
+            regex: "Basketball",
+            replacement: "Football",
+            paths: ["build/index.html"],
+            silent: true,
+        });
+    }
+};
+
 const copyFiles = () => {
     console.log(
         'Copying files from "public" directory to "build" directory...',
@@ -114,6 +133,8 @@ const copyFiles = () => {
     for (const folder of foldersToIgnore) {
         fse.removeSync(`build/${folder}`);
     }
+
+    setSport();
 };
 
 const genRev = () => {

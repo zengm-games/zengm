@@ -1,5 +1,8 @@
 # football
 
+keyStats
+- use this on things like roster, free agents? or display enough individual columns?
+
 ties
 - show in record on every screen where records are displayed, if g.ties
 
@@ -60,6 +63,7 @@ worker/deion stuff that needs to have a process.env.SPORT case
 - number of draft rounds
 - playersPlus: awardsOrder, weightByMinutes
 - loadTeams - synergy, pace, player/team stats
+- awardsOrder
 
 in GameSim, make sure to track player.stats.min, for use in writePlayerStats
 

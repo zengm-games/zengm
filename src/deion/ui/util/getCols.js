@@ -766,6 +766,11 @@ const sportSpecificCols: {
                   sortSequence: ["desc", "asc"],
                   sortType: "number",
               },
+              "stat:keyStats": {
+                  desc: "Key Stats",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
           };
 
 const cols: {
@@ -1220,6 +1225,7 @@ const sportSpecificTitleOverrides =
               "stat:krYdsPerAtt": "Avg",
               "stat:prYdsPerAtt": "Avg",
               "stat:defTck": "Tck",
+              "stat:keyStats": "Stats",
           };
 
 const titleOverrides = {

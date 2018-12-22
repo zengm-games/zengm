@@ -20,7 +20,10 @@ async function updateRoster(
         inputs.abbrev !== state.abbrev ||
         inputs.season !== state.season
     ) {
-        const stats = ["gp", "min", "pts", "trb", "ast", "per"];
+        const stats =
+            process.env.SPORT === "basketball"
+                ? ["gp", "min", "pts", "trb", "ast", "per"]
+                : ["gp", "keyStats"];
 
         const vars: any = {
             abbrev: inputs.abbrev,

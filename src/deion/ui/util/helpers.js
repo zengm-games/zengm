@@ -69,6 +69,8 @@ const roundOverrides =
               ftpfga: "roundWinp",
           }
         : {
+              gp: "none",
+              gs: "none",
               cmpPct: "oneDecimalPlace",
               qbRat: "oneDecimalPlace",
               rusYdsPerAtt: "oneDecimalPlace",
@@ -81,11 +83,15 @@ const roundOverrides =
           };
 
 const roundStat = (
-    value: number,
+    value: number | string,
     stat: string,
     totals: boolean = false,
 ): string => {
     try {
+        if (typeof value === "string") {
+            return value;
+        }
+
         // Number of decimals for many stats
         const d = totals ? 0 : 1;
 

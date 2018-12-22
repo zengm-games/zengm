@@ -102,7 +102,7 @@ class PlayByPlayLogger {
                 text = "Start of overtime";
                 this.quarter = "OT";
             } else if (type === "kickoff") {
-                text = `${names[0]} kicks off${
+                text = `${names[0]} kicked off${
                     touchback
                         ? " for a touchback"
                         : yds < 0
@@ -110,49 +110,51 @@ class PlayByPlayLogger {
                         : ` to the ${yds} yard line`
                 }`;
             } else if (type === "kickoffReturn") {
-                text = `${names[0]} returns the kickoff ${yds} yards${
+                text = `${names[0]} returned the kickoff ${yds} yards${
                     td ? " for a touchdown!" : ""
                 }`;
             } else if (type === "punt") {
-                text = `${names[0]} punts${
+                text = `${names[0]} punted ${
                     touchback
-                        ? " for a touchback"
+                        ? "for a touchback"
                         : yds < 0
-                        ? " into the end zone"
-                        : ` to the ${yds} yard line`
+                        ? "into the end zone"
+                        : `to the ${yds} yard line`
                 }`;
             } else if (type === "puntReturn") {
-                text = `${names[0]} returns the punt ${yds} yards${
+                text = `${names[0]} returned the punt ${yds} yards${
                     td ? " for a touchdown!" : ""
                 }`;
             } else if (type === "extraPoint") {
                 text = `${names[0]} ${
-                    made ? "makes" : "misses"
+                    made ? "made" : "missed"
                 } the extra point`;
             } else if (type === "fieldGoal") {
                 text = `${names[0]} ${
-                    made ? "makes" : "misses"
+                    made ? "made" : "missed"
                 } a ${yds} yard field goal`;
             } else if (type === "fumble") {
-                text = `${names[0]} fumbles the ball!`;
+                text = `${names[0]} fumbled the ball!`;
             } else if (type === "fumbleRecovery") {
                 if (safety || touchback) {
                     text = `${
                         names[0]
-                    } recovers the fumble in the endzone, resulting in a ${
+                    } recovered the fumble in the endzone, resulting in a ${
                         safety ? "safety!" : "touchback"
                     }`;
                 } else if (lost) {
-                    text = `${
-                        names[0]
-                    } recovers the fumble for the defense and returned it ${yds} yards${
-                        td ? ` for ${touchdownText}!` : ""
+                    text = `${names[0]} recovered the fumble for the defense ${
+                        td && yds < 1
+                            ? `in the endzone for ${touchdownText}!`
+                            : `and returned it ${yds} yards${
+                                  td ? ` for ${touchdownText}!` : ""
+                              }`
                     }`;
                     this.updateTwoPointConversionState(td);
                 } else {
-                    text = `${names[0]} recovers the fumble for the offense${
+                    text = `${names[0]} recovered the fumble for the offense${
                         td
-                            ? ` and carries it into the endzone for ${touchdownText}!`
+                            ? ` and carried it into the endzone for ${touchdownText}!`
                             : ""
                     }`;
                     this.updateTwoPointConversionState(td);
@@ -160,23 +162,23 @@ class PlayByPlayLogger {
             } else if (type === "interception") {
                 text = `${
                     names[0]
-                } intercepts the pass and returns it ${yds} yards${
+                } intercepted the pass and returned it ${yds} yards${
                     td ? ` for ${touchdownText}!` : ""
                 }`;
                 this.updateTwoPointConversionState(td);
             } else if (type === "sack") {
-                text = `${names[0]} is sacked by ${names[0]} for a ${
+                text = `${names[0]} was sacked by ${names[0]} for a ${
                     safety ? "safety!" : `${yds} yard loss`
                 }`;
             } else if (type === "dropback") {
                 text = `${names[0]} drops back to pass`;
             } else if (type === "passComplete") {
                 if (safety) {
-                    text = `${names[0]} completes a pass to ${
+                    text = `${names[0]} completed a pass to ${
                         names[1]
-                    } but he is tacked in the endzone for a safety!`;
+                    } but he was tackled in the endzone for a safety!`;
                 }
-                text = `${names[0]} completes a pass to ${
+                text = `${names[0]} completed a pass to ${
                     names[1]
                 } for ${yds} yards${td ? ` and ${touchdownText}!` : ""}`;
                 this.updateTwoPointConversionState(td);
@@ -188,9 +190,11 @@ class PlayByPlayLogger {
                 text = `${names[0]} hands the ball off to ${names[1]}`;
             } else if (type === "run") {
                 if (safety) {
-                    text = `${names[0]} is tacked in the endzone for a safety!`;
+                    text = `${
+                        names[0]
+                    } was tackled in the endzone for a safety!`;
                 }
-                text = `${names[0]} rushes for ${yds} yards${
+                text = `${names[0]} rushed for ${yds} yards${
                     td ? ` and ${touchdownText}!` : ""
                 }`;
                 this.updateTwoPointConversionState(td);
@@ -211,7 +215,12 @@ class PlayByPlayLogger {
 
                 this.playByPlay.push(event);
 
-                if (td || type === "extraPoint" || type === "fieldGoal") {
+                if (
+                    safety ||
+                    td ||
+                    type === "extraPoint" ||
+                    (made && type === "fieldGoal")
+                ) {
                     this.scoringSummary.push(event);
                 }
             } else {

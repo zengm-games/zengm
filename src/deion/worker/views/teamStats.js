@@ -105,7 +105,35 @@ async function updateTeams(
                       "pl",
                       "drtg",
                   ]
-                : ["lost"];
+                : [
+                      "lost",
+                      "tov",
+                      "fmbLost",
+                      "pssInt",
+                      "pen",
+                      "penYds",
+                      "drivesTurnoverPct",
+                      "oppPts",
+                      "oppYds",
+                      "oppPly",
+                      "oppYdsPerPlay",
+                      "oppPssCmp",
+                      "oppPss",
+                      "oppPssYds",
+                      "oppPssTD",
+                      "oppPssNetYdsPerAtt",
+                      "oppRus",
+                      "oppRusYds",
+                      "oppRusTD",
+                      "oppRusYdsPerAtt",
+                      "oppDrives",
+                      "oppDrivesScoringPct",
+                      "oppAvgFieldPosition",
+                      "oppTimePerDrive",
+                      "oppPlaysPerDrive",
+                      "oppYdsPerDrive",
+                      "oppPtsPerDrive",
+                  ];
 
         // Loop teams and stat types.
         for (const t of teams) {

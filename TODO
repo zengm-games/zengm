@@ -2,9 +2,7 @@
 
 in stats.js, is derived for things like advanced stats, or dynamically computed things from processed stats? seems to be used inconsistently across football/basketball
 
-team stats page
-- track timePos
-- opponent stats
+track timePos, confirm Tm/D works on team stats page
 
 league dashboard
 - team stats: pts avg, oppPts avg, pssYds avg, rusYds avg

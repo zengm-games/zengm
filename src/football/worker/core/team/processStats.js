@@ -63,6 +63,37 @@ const processStats = (
                 row[stat] = (ts.pssYds + ts.rusYds) / ts.drives;
             } else if (stat === "ptsPerDrive") {
                 row[stat] = ts.pts / ts.drives;
+            } else if (stat === "oppYds") {
+                row[stat] = ts.oppPssYds + ts.oppRusYds;
+            } else if (stat === "oppYdsPerPlay") {
+                row[stat] = (ts.oppPssYds + ts.oppRusYds) / ts.oppPly;
+            } else if (stat === "oppTov") {
+                row[stat] = ts.oppFmbLost + ts.oppPssInt;
+            } else if (stat === "oppPssNetYdsPerAtt") {
+                row[stat] =
+                    (ts.oppPssYds - ts.oppPssSkYds) / (ts.oppPss + ts.oppPssSk);
+            } else if (stat === "oppRusYdsPerAtt") {
+                row[stat] = ts.oppRusYds / ts.oppRus;
+            } else if (stat === "oppPly") {
+                row[stat] = ts.oppPss + ts.oppRus + ts.oppPssSk;
+            } else if (stat === "oppDrivesScoringPct") {
+                row[stat] = percentage(ts.oppPssTD + ts.oppRusTD, ts.oppDrives);
+            } else if (stat === "oppDrivesTurnoverPct") {
+                row[stat] = percentage(
+                    ts.oppFmbLost + ts.oppPssInt,
+                    ts.oppDrives,
+                );
+            } else if (stat === "oppAvgFieldPosition") {
+                row[stat] = ts.oppTotStartYds / ts.oppDrives;
+            } else if (stat === "oppTimePerDrive") {
+                row[stat] = ts.oppTimePos / ts.oppDrives;
+            } else if (stat === "oppPlaysPerDrive") {
+                row[stat] =
+                    (ts.oppPss + ts.oppRus + ts.oppPssSk) / ts.oppDrives;
+            } else if (stat === "oppYdsPerDrive") {
+                row[stat] = (ts.oppPssYds + ts.oppRusYds) / ts.oppDrives;
+            } else if (stat === "oppPtsPerDrive") {
+                row[stat] = ts.oppPts / ts.oppDrives;
             } else {
                 row[stat] = ts[stat];
             }

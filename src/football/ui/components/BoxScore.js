@@ -167,6 +167,8 @@ const processEvents = events => {
     const score = [0, 0];
 
     for (const event of events) {
+        const otherT = event.t === 0 ? 1 : 0;
+
         let scoreType = null;
         if (event.text.includes("extra point")) {
             scoreType = "XP";
@@ -188,7 +190,9 @@ const processEvents = events => {
             }
         } else if (event.text.includes("safety")) {
             scoreType = "SF";
-            score[event.t] += 2;
+
+            // Safety is recorded as part of a play by the team with the ball, so for scoring purposes we need to swap the teams here and below
+            score[otherT] += 2;
         }
 
         const prevEvent = processedEvents[processedEvents.length - 1];
@@ -201,7 +205,7 @@ const processEvents = events => {
             prevEvent.text += ` (${event.text})`;
         } else {
             processedEvents.push({
-                t: event.t,
+                t: scoreType === "SF" ? otherT : event.t, // See comment above about safety teams
                 quarter: event.quarter,
                 time: event.time,
                 text: event.text,

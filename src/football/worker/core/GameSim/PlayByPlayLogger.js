@@ -193,18 +193,18 @@ class PlayByPlayLogger {
                     text = `${names[0]} completed a pass to ${
                         names[1]
                     } but he was tackled in the endzone for a safety!`;
+                } else {
+                    const result = descriptionYdsTD(
+                        yds,
+                        td,
+                        touchdownText,
+                        showYdsOnTD,
+                    );
+                    text = `${names[0]} completed a pass to ${
+                        names[1]
+                    } for ${result}`;
+                    this.updateTwoPointConversionState(td);
                 }
-
-                const result = descriptionYdsTD(
-                    yds,
-                    td,
-                    touchdownText,
-                    showYdsOnTD,
-                );
-                text = `${names[0]} completed a pass to ${
-                    names[1]
-                } for ${result}`;
-                this.updateTwoPointConversionState(td);
             } else if (type === "passIncomplete") {
                 text = `Incomplete pass to ${names[1]}`;
             } else if (type === "handoff") {
@@ -214,16 +214,16 @@ class PlayByPlayLogger {
                     text = `${
                         names[0]
                     } was tackled in the endzone for a safety!`;
+                } else {
+                    const result = descriptionYdsTD(
+                        yds,
+                        td,
+                        touchdownText,
+                        showYdsOnTD,
+                    );
+                    text = `${names[0]} rushed for ${result}`;
+                    this.updateTwoPointConversionState(td);
                 }
-
-                const result = descriptionYdsTD(
-                    yds,
-                    td,
-                    touchdownText,
-                    showYdsOnTD,
-                );
-                text = `${names[0]} rushed for ${result}`;
-                this.updateTwoPointConversionState(td);
             }
 
             if (text) {

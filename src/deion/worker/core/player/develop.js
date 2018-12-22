@@ -116,13 +116,16 @@ const develop = (
         let pos;
         let maxOvr = 0;
 
+        // A player can never have KR or PR as his main position
+        const bannedPositions = ["KR", "PR"];
+
         ratings.ovrs = overrides.constants.POSITIONS.reduce((ovrs, pos2) => {
             if (!overrides.core.player.ovr) {
                 throw new Error("Missing overrides.core.player.ovr");
             }
             ovrs[pos2] = overrides.core.player.ovr(ratings, pos2);
 
-            if (ovrs[pos2] > maxOvr) {
+            if (!bannedPositions.includes(pos2) && ovrs[pos2] > maxOvr) {
                 pos = pos2;
                 maxOvr = ovrs[pos2];
             }
@@ -151,9 +154,6 @@ const develop = (
             // Must be a manually specified position
             ratings.pos = p.pos;
         } else {
-            if (!overrides.core.player.pos) {
-                throw new Error("Missing overrides.core.player.pos");
-            }
             ratings.pos = pos;
         }
     }

@@ -43,6 +43,8 @@ football code!
 
 play menu items
 
+new league is too slow, maybe use an estimate for pot
+
 worker/deion stuff that needs to have a process.env.SPORT case
 - api
   - exportPlayerAveragesCsv
@@ -59,6 +61,7 @@ worker/deion stuff that needs to have a process.env.SPORT case
 
 ties
 - g.ties to control UI display and saving, but not GameSim
+- implement overtime and ties in GameSim
 
 in GameSim, make sure to track player.stats.min, for use in writePlayerStats
 

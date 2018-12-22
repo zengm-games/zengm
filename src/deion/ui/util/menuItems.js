@@ -187,7 +187,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
             },
             {
                 type: "link",
-                active: pageID => pageID === "draft",
+                active: pageID => pageID && pageID.startsWith("draft"),
                 league: true,
                 path: ["draft"],
                 text: "Draft",

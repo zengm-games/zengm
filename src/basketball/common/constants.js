@@ -174,6 +174,61 @@ const PLAYER_STATS_TABLES = {
     },
 };
 
+const TEAM_STATS_TABLES = {
+    team: {
+        name: "Team",
+        stats: [
+            "fg",
+            "fga",
+            "fgp",
+            "tp",
+            "tpa",
+            "tpp",
+            "ft",
+            "fta",
+            "ftp",
+            "orb",
+            "drb",
+            "trb",
+            "ast",
+            "tov",
+            "stl",
+            "blk",
+            "pf",
+            "pts",
+            "mov",
+        ],
+    },
+    opponent: {
+        name: "Opponent",
+        stats: [
+            "oppFg",
+            "oppFga",
+            "oppFgp",
+            "oppTp",
+            "oppTpa",
+            "oppTpp",
+            "oppFt",
+            "oppFta",
+            "oppFtp",
+            "oppOrb",
+            "oppDrb",
+            "oppTrb",
+            "oppAst",
+            "oppTov",
+            "oppStl",
+            "oppBlk",
+            "oppPf",
+            "oppPts",
+            "oppMov",
+        ],
+    },
+    advanced: {
+        name: "Advanced",
+        stats: ["pw", "pl", "ortg", "drtg", "nrtg", "pace", "tpar", "ftr"],
+    },
+};
+
 const POSITIONS = [];
 
 const RATINGS: RatingKey[] = [
@@ -194,4 +249,10 @@ const RATINGS: RatingKey[] = [
     "reb",
 ];
 
-export { COMPOSITE_WEIGHTS, PLAYER_STATS_TABLES, POSITIONS, RATINGS };
+export {
+    COMPOSITE_WEIGHTS,
+    PLAYER_STATS_TABLES,
+    POSITIONS,
+    RATINGS,
+    TEAM_STATS_TABLES,
+};

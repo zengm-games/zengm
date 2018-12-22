@@ -1,7 +1,7 @@
 // @flow
 
 import { idb } from "../db";
-import { g } from "../util";
+import { g, overrides } from "../util";
 import type { UpdateEvents } from "../../common/types";
 
 async function updateTeams(
@@ -21,62 +21,17 @@ async function updateTeams(
         inputs.season !== state.season ||
         inputs.teamOpponent !== state.teamOpponent
     ) {
-        let stats;
-        if (inputs.teamOpponent === "advanced") {
-            stats = ["pw", "pl", "ortg", "drtg", "nrtg", "pace", "tpar", "ftr"];
-        } else {
-            stats = [
-                "fg",
-                "fga",
-                "fgp",
-                "tp",
-                "tpa",
-                "tpp",
-                "ft",
-                "fta",
-                "ftp",
-                "orb",
-                "drb",
-                "trb",
-                "ast",
-                "tov",
-                "stl",
-                "blk",
-                "pf",
-                "pts",
-                "mov",
-            ];
+        const statsTable =
+            overrides.constants.TEAM_STATS_TABLES[inputs.teamOpponent];
+        if (!statsTable) {
+            throw new Error(`Invalid statType: "${inputs.teamOpponent}"`);
         }
+        const stats = statsTable.stats;
 
         const teams = (await idb.getCopies.teamsPlus({
             attrs: ["tid", "abbrev"],
-            seasonAttrs: ["won", "lost"],
-            stats: [
-                "gp",
-                ...(inputs.teamOpponent === "opponent"
-                    ? [
-                          "oppFg",
-                          "oppFga",
-                          "oppFgp",
-                          "oppTp",
-                          "oppTpa",
-                          "oppTpp",
-                          "oppFt",
-                          "oppFta",
-                          "oppFtp",
-                          "oppOrb",
-                          "oppDrb",
-                          "oppTrb",
-                          "oppAst",
-                          "oppTov",
-                          "oppStl",
-                          "oppBlk",
-                          "oppPf",
-                          "oppPts",
-                          "oppMov",
-                      ]
-                    : stats),
-            ],
+            seasonAttrs: g.ties ? ["won", "lost"] : ["won", "lost", "tied"],
+            stats: ["gp", ...stats],
             season: inputs.season,
             playoffs: inputs.playoffs === "playoffs",
             regularSeason: inputs.playoffs !== "playoffs",
@@ -116,80 +71,39 @@ async function updateTeams(
 
         // Sort stats so we can determine what percentile our team is in.
         const allStats = {};
-        const statTypes = [
-            "won",
-            "lost",
-            "fg",
-            "fga",
-            "fgp",
-            "tp",
-            "tpa",
-            "tpp",
-            "ft",
-            "fta",
-            "ftp",
-            "orb",
-            "drb",
-            "trb",
-            "ast",
-            "tov",
-            "stl",
-            "blk",
-            "pf",
-            "pts",
-            "mov",
-            "oppFg",
-            "oppFga",
-            "oppFgp",
-            "oppTp",
-            "oppTpa",
-            "oppTpp",
-            "oppFt",
-            "oppFta",
-            "oppFtp",
-            "oppOrb",
-            "oppDrb",
-            "oppTrb",
-            "oppAst",
-            "oppTov",
-            "oppStl",
-            "oppBlk",
-            "oppPf",
-            "oppPts",
-            "oppMov",
-            "pw",
-            "pl",
-            "ortg",
-            "drtg",
-            "nrtg",
-            "pace",
-            "tpar",
-            "ftr",
-        ];
-        const lowerIsBetter = [
-            "lost",
-            "tov",
-            "pf",
-            "oppFg",
-            "oppFga",
-            "oppFgp",
-            "oppTp",
-            "oppTpa",
-            "oppTpp",
-            "oppFt",
-            "oppFta",
-            "oppFtp",
-            "oppOrb",
-            "oppDrb",
-            "oppTrb",
-            "oppAst",
-            "oppStl",
-            "oppBlk",
-            "oppPts",
-            "oppMov",
-            "pl",
-            "drtg",
-        ];
+        let statTypes = ["won", "lost"];
+        for (const table of Object.values(
+            overrides.constants.TEAM_STATS_TABLES,
+        )) {
+            statTypes = statTypes.concat(table.stats);
+        }
+        const lowerIsBetter =
+            process.env.SPORT === "basketball"
+                ? [
+                      "lost",
+                      "tov",
+                      "pf",
+                      "oppFg",
+                      "oppFga",
+                      "oppFgp",
+                      "oppTp",
+                      "oppTpa",
+                      "oppTpp",
+                      "oppFt",
+                      "oppFta",
+                      "oppFtp",
+                      "oppOrb",
+                      "oppDrb",
+                      "oppTrb",
+                      "oppAst",
+                      "oppStl",
+                      "oppBlk",
+                      "oppPts",
+                      "oppMov",
+                      "pl",
+                      "drtg",
+                  ]
+                : ["lost"];
 
         // Loop teams and stat types.
         for (const t of teams) {

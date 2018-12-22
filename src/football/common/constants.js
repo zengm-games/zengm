@@ -203,6 +203,8 @@ const PLAYER_STATS_TABLES = {
     },
 };
 
+const TEAM_STATS_TABLES = {};
+
 const POSITIONS = [
     "QB",
     "RB",
@@ -244,4 +246,10 @@ const RATINGS: RatingKey[] = [
     "pac",
 ];
 
-export { COMPOSITE_WEIGHTS, PLAYER_STATS_TABLES, POSITIONS, RATINGS };
+export {
+    COMPOSITE_WEIGHTS,
+    PLAYER_STATS_TABLES,
+    POSITIONS,
+    RATINGS,
+    TEAM_STATS_TABLES,
+};

@@ -35,6 +35,10 @@ const updatePlayMenu = async () => {
         untilEndOfRound: { label: "Until end of round" },
         throughPlayoffs: { label: "Through playoffs" },
         dayLive: { url: helpers.leagueUrl(["live"]), label: "One day (live)" },
+        weekLive: {
+            url: helpers.leagueUrl(["live"]),
+            label: "One week (live)",
+        },
         viewDraftLottery: {
             url: helpers.leagueUrl(["draft_lottery"]),
             label: "View draft lottery",
@@ -76,15 +80,23 @@ const updatePlayMenu = async () => {
     if (g.phase === PHASE.PRESEASON) {
         // Preseason
         keys = ["untilRegularSeason"];
-    } else if (g.phase === PHASE.REGULAR_SEASON) {
+    } else if (
+        g.phase === PHASE.REGULAR_SEASON ||
+        g.phase === PHASE.AFTER_TRADE_DEADLINE
+    ) {
         // Regular season - pre trading deadline
-        keys = ["day", "dayLive", "week", "month", "untilPlayoffs"];
-    } else if (g.phase === PHASE.AFTER_TRADE_DEADLINE) {
-        // Regular season - post trading deadline
-        keys = ["day", "dayLive", "week", "month", "untilPlayoffs"];
+        if (process.env.SPORT === "basketball") {
+            keys = ["day", "dayLive", "week", "month", "untilPlayoffs"];
+        } else {
+            keys = ["week", "weekLive", "month", "untilPlayoffs"];
+        }
     } else if (g.phase === PHASE.PLAYOFFS) {
         // Playoffs
-        keys = ["day", "dayLive", "untilEndOfRound", "throughPlayoffs"];
+        if (process.env.SPORT === "basketball") {
+            keys = ["day", "dayLive", "untilEndOfRound", "throughPlayoffs"];
+        } else {
+            keys = ["week", "weekLive", "untilEndOfRound", "throughPlayoffs"];
+        }
     } else if (g.phase === PHASE.DRAFT_LOTTERY) {
         // Offseason - pre draft
         keys = ["viewDraftLottery", "untilDraft"];

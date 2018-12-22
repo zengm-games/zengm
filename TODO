@@ -1,6 +1,8 @@
 # football
 
-basketball - report that AI teams consider any of your draft picks the 1st pick when trading during draft
+ties
+- g.ties to control UI display and saving, but not GameSim
+- implement overtime and ties in GameSim
 
 processStats to common, so can be used in BoxScore? or pre-process all players?
 
@@ -41,8 +43,6 @@ football code!
 - processStats in worker but used in ui
 - references to ../basketball
 
-play menu items
-
 new league is too slow, maybe use an estimate for pot
 
 worker/deion stuff that needs to have a process.env.SPORT case
@@ -58,10 +58,6 @@ worker/deion stuff that needs to have a process.env.SPORT case
 - number of draft rounds
 - playersPlus: awardsOrder, weightByMinutes
 - loadTeams - synergy, pace, player/team stats
-
-ties
-- g.ties to control UI display and saving, but not GameSim
-- implement overtime and ties in GameSim
 
 in GameSim, make sure to track player.stats.min, for use in writePlayerStats
 

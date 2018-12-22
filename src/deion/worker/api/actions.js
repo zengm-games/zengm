@@ -159,9 +159,9 @@ const playAmount = async (
     if (amount === "day") {
         numDays = 1;
     } else if (amount === "week") {
-        numDays = 7;
+        numDays = process.env.SPORT === "basketball" ? 7 : 1;
     } else if (amount === "month") {
-        numDays = 30;
+        numDays = process.env.SPORT === "basketball" ? 30 : 4;
     } else if (amount === "untilPreseason") {
         numDays = g.daysLeft;
     } else {

@@ -1,6 +1,6 @@
 # football
 
-in stats.js, is derived for things like advanced stats, or dynamically computed things from processed stats? seems to be used inconsistently across football/basketball
+player stats and player page - augment with complete set of stats
 
 track timePos, confirm Tm/D works on team stats page
 
@@ -382,6 +382,10 @@ persist fantasy draft results
 - viewable somehow - need to track when fantasy drafts happened and add them to draft results menu
 
 ---
+
+1. If there was a "select all" for not including draft picks in trades. So instead of going down 1 by 1 to check don't include you could just say NO to trading any of your 4,000 picks. 
+
+2. If searching player rating also included contracts. Usually you'll want to find a high potential guy on a cheap contract.
 
 career totals on player pages https://www.reddit.com/r/BasketballGM/comments/7ya1yu/any_more_thoughts_on_the_beta/duptp08/?context=3
 

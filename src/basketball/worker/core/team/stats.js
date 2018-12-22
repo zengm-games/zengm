@@ -25,6 +25,10 @@ const teamAndOpp = [
     "pts",
 ];
 
+// raw: recorded directly in game sim
+// derived: still stored in database, but not directly recorded in game sim
+// not present in this file: transiently derived things, like FG%
+
 const stats = {
     derived: [],
     raw: [

@@ -12,7 +12,11 @@ const StartingLineup = ({ starters, stats }) => {
 
     return (
         <>
-            <h3>Starting Lineup</h3>
+            <h3>
+                {process.env.SPORT === "basketball"
+                    ? "Starting Lineup"
+                    : "Top Players"}
+            </h3>
             <ResponsiveTableWrapper nonfluid>
                 <table className="table table-striped table-bordered table-sm">
                     <thead>

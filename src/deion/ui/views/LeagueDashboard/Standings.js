@@ -25,6 +25,7 @@ const Standings = ({
                             key={t.tid}
                             className={classNames({
                                 separator:
+                                    process.env.SPORT === "basketball" &&
                                     i === numPlayoffTeams - 1 &&
                                     playoffsByConference,
                                 "table-info": t.tid === userTid,

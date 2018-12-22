@@ -262,7 +262,10 @@ async function updatePlayers(
         updateEvents.includes("playerMovement") ||
         updateEvents.includes("newPhase")
     ) {
-        const startersStats = ["gp", "min", "pts", "trb", "ast", "per"];
+        const startersStats =
+            process.env.SPORT === "basketball"
+                ? ["gp", "min", "pts", "trb", "ast", "per"]
+                : ["gp", "keyStats"];
 
         let players = await idb.cache.players.indexGetAll("playersByTid", [
             PLAYER.UNDRAFTED,
@@ -335,10 +338,13 @@ async function updatePlayers(
         }
 
         // Roster
-        // Find starting 5
-        const starters = userPlayers
-            .sort((a, b) => a.rosterOrder - b.rosterOrder)
-            .slice(0, 5);
+        // Find starting 5 or top 5
+        if (process.env.SPORT === "basketball") {
+            userPlayers.sort((a, b) => a.rosterOrder - b.rosterOrder);
+        } else {
+            userPlayers.sort((a, b) => b.ratings.ovr - a.ratings.ovr);
+        }
+        const starters = userPlayers.slice(0, 5);
 
         return {
             leagueLeaders,

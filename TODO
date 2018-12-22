@@ -4,9 +4,6 @@ player stats and player page - augment with complete set of stats
 
 track timePos, confirm Tm/D works on team stats page
 
-league dashboard
-- team stats: pts avg, oppPts avg, pssYds avg, rusYds avg
-
 keyStats
 - use this on things like roster, free agents? or display enough individual columns?
 

@@ -37,6 +37,14 @@ const processStats = (
                 } else {
                     row.oppMov = 0;
                 }
+            } else if (stat === "ptsPerGame") {
+                row[stat] = ts.pts / ts.gp;
+            } else if (stat === "oppPtsPerGame") {
+                row[stat] = ts.oppPts / ts.gp;
+            } else if (stat === "pssYdsPerGame") {
+                row[stat] = ts.pssYds / ts.gp;
+            } else if (stat === "rusYdsPerGame") {
+                row[stat] = ts.rusYds / ts.gp;
             } else if (stat === "yds") {
                 row[stat] = ts.pssYds + ts.rusYds;
             } else if (stat === "ydsPerPlay") {

@@ -88,7 +88,19 @@ async function updateTeams(
         updateEvents.includes("playerMovement") ||
         updateEvents.includes("newPhase")
     ) {
-        const stats = ["pts", "oppPts", "trb", "ast"]; // This is also used later to find ranks for these team stats
+        const stats =
+            process.env.SPORT === "basketball"
+                ? ["pts", "oppPts", "trb", "ast"]
+                : [
+                      "ptsPerGame",
+                      "oppPtsPerGame",
+                      "pssYdsPerGame",
+                      "rusYdsPerGame",
+                  ];
+        const statNames =
+            process.env.SPORT === "basketball"
+                ? ["Points", "Allowed", "Rebounds", "Assists"]
+                : ["Points", "Allowed", "PssYds", "RusYds"];
 
         const teams = helpers.orderByWinp(
             await idb.getCopies.teamsPlus({
@@ -107,39 +119,21 @@ async function updateTeams(
         let revenue = 0;
         let profit = 0;
         let teamStats = [];
-        for (let i = 0; i < teams.length; i++) {
-            if (teams[i].cid === cid) {
-                if (teams[i].tid === g.userTid) {
-                    teamStats = [
-                        {
-                            name: "Points",
+        for (const t2 of teams) {
+            if (t2.cid === cid) {
+                if (t2.tid === g.userTid) {
+                    teamStats = stats.map((stat, i) => {
+                        return {
+                            name: statNames[i],
                             rank: 0,
-                            stat: stats[0],
-                            value: teams[i].stats[stats[0]],
-                        },
-                        {
-                            name: "Allowed",
-                            rank: 0,
-                            stat: stats[1],
-                            value: teams[i].stats[stats[1]],
-                        },
-                        {
-                            name: "Rebounds",
-                            rank: 0,
-                            stat: stats[2],
-                            value: teams[i].stats[stats[2]],
-                        },
-                        {
-                            name: "Assists",
-                            rank: 0,
-                            stat: stats[3],
-                            value: teams[i].stats[stats[3]],
-                        },
-                    ];
-
-                    att = teams[i].seasonAttrs.att;
-                    revenue = teams[i].seasonAttrs.revenue;
-                    profit = teams[i].seasonAttrs.profit;
+                            stat,
+                            value: t2.stats[stats[i]],
+                        };
+                    });
+                    console.log(teamStats);
+                    att = t2.seasonAttrs.att;
+                    revenue = t2.seasonAttrs.revenue;
+                    profit = t2.seasonAttrs.profit;
                     break;
                 } else {
                     rank += 1;

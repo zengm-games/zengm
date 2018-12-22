@@ -500,14 +500,6 @@ class GameSim {
             this.recordStat(this.o, kickReturner, "krYds", returnLength);
             this.recordStat(this.o, kickReturner, "krLng", returnLength);
 
-            if (td) {
-                this.awaitingAfterTouchdown = true;
-                this.recordStat(this.o, kickReturner, "krTD");
-            } else {
-                this.down = 1;
-                this.toGo = 10;
-            }
-
             this.playByPlay.logEvent("kickoffReturn", {
                 clock: this.clock,
                 t: this.o,
@@ -515,6 +507,14 @@ class GameSim {
                 td,
                 yds: returnLength,
             });
+
+            if (td) {
+                this.awaitingAfterTouchdown = true;
+                this.recordStat(this.o, kickReturner, "krTD");
+            } else {
+                this.down = 1;
+                this.toGo = 10;
+            }
         }
 
         this.awaitingKickoff = false;
@@ -568,14 +568,6 @@ class GameSim {
             this.recordStat(this.o, puntReturner, "prYds", returnLength);
             this.recordStat(this.o, puntReturner, "prLng", returnLength);
 
-            if (td) {
-                this.awaitingAfterTouchdown = true;
-                this.recordStat(this.o, puntReturner, "prTD");
-            } else {
-                this.down = 1;
-                this.toGo = 10;
-            }
-
             this.playByPlay.logEvent("puntReturn", {
                 clock: this.clock,
                 t: this.o,
@@ -583,6 +575,14 @@ class GameSim {
                 td,
                 yds: returnLength,
             });
+
+            if (td) {
+                this.awaitingAfterTouchdown = true;
+                this.recordStat(this.o, puntReturner, "prTD");
+            } else {
+                this.down = 1;
+                this.toGo = 10;
+            }
         }
 
         return 5;
@@ -885,11 +885,6 @@ class GameSim {
             this.recordStat(this.o, target, "recYds", yds);
             this.recordStat(this.o, target, "recLng", yds);
 
-            if (td) {
-                this.recordStat(this.o, qb, "pssTD");
-                this.recordStat(this.o, target, "recTD");
-            }
-
             this.playByPlay.logEvent("passComplete", {
                 clock: this.clock,
                 t: this.o,
@@ -899,6 +894,11 @@ class GameSim {
                 twoPointConversionTeam: this.twoPointConversionTeam,
                 yds,
             });
+
+            if (td) {
+                this.recordStat(this.o, qb, "pssTD");
+                this.recordStat(this.o, target, "recTD");
+            }
 
             if (safetyOrTouchback) {
                 return this.doSafety();
@@ -944,9 +944,6 @@ class GameSim {
         }
 
         const { safetyOrTouchback, td } = this.advanceYds(yds);
-        if (td) {
-            this.recordStat(this.o, p, "rusTD");
-        }
 
         this.playByPlay.logEvent("run", {
             clock: this.clock,
@@ -957,6 +954,10 @@ class GameSim {
             td,
             yds,
         });
+
+        if (td) {
+            this.recordStat(this.o, p, "rusTD");
+        }
 
         if (safetyOrTouchback) {
             return this.doSafety();

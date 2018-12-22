@@ -4,6 +4,16 @@
 import { helpers } from "../../../../deion/worker/util";
 import { PlayType, TeamNum } from "./types";
 
+const descriptionYdsTD = (yds, td, touchdownText, showYdsOnTD) => {
+    if (td && showYdsOnTD) {
+        return `${yds} yards${td ? ` and ${touchdownText}!` : ""}`;
+    }
+    if (td) {
+        return `${touchdownText}!`;
+    }
+    return `${yds} yards`;
+};
+
 class PlayByPlayLogger {
     active: boolean;
 
@@ -12,6 +22,8 @@ class PlayByPlayLogger {
     scoringSummary: any[];
 
     twoPointConversionState: "attempting" | "converted" | void;
+
+    twoPointConversionTeam: number | void;
 
     quarter: string;
 
@@ -67,8 +79,8 @@ class PlayByPlayLogger {
                 if (previousEvent) {
                     const event = {
                         type: "text",
-                        text: "Two point conversion failed!",
-                        t: previousEvent.t,
+                        text: "Two point conversion failed",
+                        t: this.twoPointConversionTeam,
                         time: previousEvent.time,
                         quarter: this.quarter,
                     };
@@ -77,15 +89,19 @@ class PlayByPlayLogger {
                 }
             }
             this.twoPointConversionState = undefined;
+            this.twoPointConversionTeam = undefined;
         } else if (this.twoPointConversionState === undefined) {
             this.twoPointConversionState = "attempting";
+            this.twoPointConversionTeam = twoPointConversionTeam;
         }
 
         // Handle touchdowns, 2 point conversions, and 2 point conversion returns by the defense
         let touchdownText = "a touchdown";
+        let showYdsOnTD = true;
         if (twoPointConversionTeam !== undefined) {
             if (twoPointConversionTeam === t) {
                 touchdownText = "a two point conversion";
+                showYdsOnTD = false;
             } else {
                 touchdownText = "two points";
             }
@@ -178,14 +194,19 @@ class PlayByPlayLogger {
                         names[1]
                     } but he was tackled in the endzone for a safety!`;
                 }
+
+                const result = descriptionYdsTD(
+                    yds,
+                    td,
+                    touchdownText,
+                    showYdsOnTD,
+                );
                 text = `${names[0]} completed a pass to ${
                     names[1]
-                } for ${yds} yards${td ? ` and ${touchdownText}!` : ""}`;
+                } for ${result}`;
                 this.updateTwoPointConversionState(td);
             } else if (type === "passIncomplete") {
-                text = `Incomplete pass to ${names[1]} ${
-                    yds > 1 ? `${yds} yards down the field` : "in the backfield"
-                }`;
+                text = `Incomplete pass to ${names[1]}`;
             } else if (type === "handoff") {
                 text = `${names[0]} hands the ball off to ${names[1]}`;
             } else if (type === "run") {
@@ -194,9 +215,14 @@ class PlayByPlayLogger {
                         names[0]
                     } was tackled in the endzone for a safety!`;
                 }
-                text = `${names[0]} rushed for ${yds} yards${
-                    td ? ` and ${touchdownText}!` : ""
-                }`;
+
+                const result = descriptionYdsTD(
+                    yds,
+                    td,
+                    touchdownText,
+                    showYdsOnTD,
+                );
+                text = `${names[0]} rushed for ${result}`;
                 this.updateTwoPointConversionState(td);
             }
 
@@ -236,7 +262,7 @@ class PlayByPlayLogger {
 
         this.playByPlay.push({
             type: "stat",
-            qtr: this.team[t].stat.ptsQtrs.length - 1,
+            qtr: this.quarter,
             t,
             pid,
             s,

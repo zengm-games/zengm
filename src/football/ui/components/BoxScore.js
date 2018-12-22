@@ -170,12 +170,12 @@ const processEvents = events => {
         let scoreType = null;
         if (event.text.includes("extra point")) {
             scoreType = "XP";
-            if (event.text.includes("makes")) {
+            if (event.text.includes("made")) {
                 score[event.t] += 1;
             }
         } else if (event.text.includes("field goal")) {
             scoreType = "FG";
-            if (event.text.includes("makes")) {
+            if (event.text.includes("made")) {
                 score[event.t] += 3;
             }
         } else if (event.text.includes("touchdown")) {
@@ -245,7 +245,9 @@ const ScoringSummary = ({ events, teams }) => {
                                     {event.score[0]}-{event.score[1]}
                                 </td>
                                 <td>{event.time}</td>
-                                <td>{event.text}</td>
+                                <td style={{ whiteSpace: "normal" }}>
+                                    {event.text}
+                                </td>
                             </tr>
                         </React.Fragment>
                     );

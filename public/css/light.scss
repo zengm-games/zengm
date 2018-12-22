@@ -84,7 +84,13 @@ body {
 
     span {
         padding-left: 5px;
-        float: right;
+    }
+}
+
+// This is so "Football GM" takes up the same space as "Basketball GM", allowing the Play dropdown to align with the menu on the left.
+@include media-breakpoint-up(xl) {
+    .navbar-brand {
+        min-width: 129px;
     }
 }
 

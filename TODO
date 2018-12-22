@@ -3,8 +3,6 @@
 league dashboard
 - team stats: pts avg, oppPts avg, pssYds avg, rusYds avg
 
-tables on player page not working
-
 keyStats
 - use this on things like roster, free agents? or display enough individual columns?
 
@@ -15,6 +13,7 @@ extra point or two point conversion should not take time off the clock, and shou
 - set quarterLenght really low and you can see extra point being taken in next quarter
 
 processStats to common, so can be used in BoxScore? or pre-process all players?
+- but it needs getAbbrev from worker, ugh
 
 game sim
 - can't assume t.depth is accurate, make sure to prune + augment before use

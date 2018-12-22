@@ -1,6 +1,6 @@
 // @flow
 
-//import { PLAYER } from "../../../../deion/common";
+import { PLAYER } from "../../../../deion/common";
 //import { helpers } from "../../../../deion/worker/util";
 import type {
     PlayerStats,
@@ -109,6 +109,21 @@ const processStats = (
             } else {
                 row[stat] = "";
             }
+        } else if (stat === "abbrev") {
+            /*if (ps.tid === undefined) {
+                row.abbrev = helpers.getAbbrev(PLAYER.FREE_AGENT);
+            } else {
+                row.abbrev = helpers.getAbbrev(ps.tid);
+            }*/
+            row.abbrev = "???";
+        } else if (stat === "tid") {
+            if (ps.tid === undefined) {
+                row.tid = PLAYER.FREE_AGENT;
+            } else {
+                row.tid = ps.tid;
+            }
+        } else if (stat === "age") {
+            row.age = ps.season - bornYear;
         } else {
             row[stat] = ps[stat];
         }
@@ -120,7 +135,7 @@ const processStats = (
     }
 
     // Since they come in same stream, always need to be able to distinguish
-    ps.playoffs = ps.playoffs;
+    row.playoffs = ps.playoffs;
 
     return row;
 };

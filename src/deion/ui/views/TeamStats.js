@@ -57,27 +57,29 @@ const TeamStats = ({
             data.tied = t.seasonAttrs.tied;
         }
 
-        for (const statType of stats) {
-            const value = t.stats.hasOwnProperty(statType)
-                ? t.stats[statType]
-                : t.seasonAttrs[statType];
-            data[statType] = value.toFixed(1);
+        for (const stat of stats) {
+            const value = t.stats.hasOwnProperty(stat)
+                ? t.stats[stat]
+                : t.seasonAttrs[stat];
+            data[stat] = helpers.roundStat(value, stat);
         }
 
-        const plusMinusCols = [prefixStatOpp(teamOpponent, "mov"), "nrtg"];
-        for (const plusMinusCol of plusMinusCols) {
-            if (data.hasOwnProperty(plusMinusCol)) {
-                data[plusMinusCol] = (
-                    <span
-                        className={
-                            t.stats[plusMinusCol] > 0
-                                ? "text-success"
-                                : "text-danger"
-                        }
-                    >
-                        {t.stats[plusMinusCol].toFixed(1)}
-                    </span>
-                );
+        if (process.env.SPORT === "basketball") {
+            const plusMinusCols = [prefixStatOpp(teamOpponent, "mov"), "nrtg"];
+            for (const plusMinusCol of plusMinusCols) {
+                if (data.hasOwnProperty(plusMinusCol)) {
+                    data[plusMinusCol] = (
+                        <span
+                            className={
+                                t.stats[plusMinusCol] > 0
+                                    ? "text-success"
+                                    : "text-danger"
+                            }
+                        >
+                            {t.stats[plusMinusCol].toFixed(1)}
+                        </span>
+                    );
+                }
             }
         }
 
@@ -86,8 +88,9 @@ const TeamStats = ({
             // Color stat values accordingly.
             for (const [statType, value] of Object.entries(data)) {
                 if (
-                    !stats.includes(statType) &&
-                    !otherStatColumns.includes(statType)
+                    (!stats.includes(statType) &&
+                        !otherStatColumns.includes(statType)) ||
+                    !allStats[statType]
                 ) {
                     continue;
                 }

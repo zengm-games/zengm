@@ -21,7 +21,7 @@ export type CompositeWeights<RatingKey = string> = {
         weights?: number[],
         skill?: {
             label: string,
-            cutoff: number,
+            cutoff?: number,
         },
     },
 };

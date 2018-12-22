@@ -308,10 +308,8 @@ class GameSim {
         } else if (playType === "punt") {
             dt = this.doPunt();
         } else if (playType === "pass") {
-            this.recordStat(this.o, undefined, "ply");
             dt = this.doPass();
         } else if (playType === "run") {
-            this.recordStat(this.o, undefined, "ply");
             dt = this.doRun();
         } else {
             throw new Error(`Unknown playType "${playType}"`);
@@ -563,6 +561,9 @@ class GameSim {
             this.overtimeState = "firstPossession";
         }
 
+        this.recordStat(this.o, undefined, "drives");
+        this.recordStat(this.o, undefined, "totStartYds", this.scrimmage);
+
         return dt;
     }
 
@@ -628,6 +629,9 @@ class GameSim {
                 this.toGo = 10;
             }
         }
+
+        this.recordStat(this.o, undefined, "drives");
+        this.recordStat(this.o, undefined, "totStartYds", this.scrimmage);
 
         return 5;
     }

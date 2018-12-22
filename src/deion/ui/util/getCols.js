@@ -1311,7 +1311,7 @@ const sportSpecificTitleOverrides =
               "stat:drivesScoringPct": "Sc%",
               "stat:drivesTurnoverPct": "TO%",
               "stat:avgFieldPosition": "Start",
-              "stat:timePerDrive": "T/D",
+              "stat:timePerDrive": "Tm/D",
               "stat:playsPerDrive": "Ply/D",
               "stat:ydsPerDrive": "Y/D",
               "stat:ptsPerDrive": "Pts/D",

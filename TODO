@@ -3,7 +3,7 @@
 in stats.js, is derived for things like advanced stats, or dynamically computed things from processed stats? seems to be used inconsistently across football/basketball
 
 team stats page
-- fill in the blanks
+- track timePos
 - opponent stats
 
 league dashboard

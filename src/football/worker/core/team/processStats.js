@@ -47,6 +47,22 @@ const processStats = (
                 row[stat] = (ts.pssYds - ts.pssSkYds) / (ts.pss + ts.pssSk);
             } else if (stat === "rusYdsPerAtt") {
                 row[stat] = ts.rusYds / ts.rus;
+            } else if (stat === "ply") {
+                row[stat] = ts.pss + ts.rus + ts.pssSk;
+            } else if (stat === "drivesScoringPct") {
+                row[stat] = percentage(ts.pssTD + ts.rusTD, ts.drives);
+            } else if (stat === "drivesTurnoverPct") {
+                row[stat] = percentage(ts.fmbLost + ts.pssInt, ts.drives);
+            } else if (stat === "avgFieldPosition") {
+                row[stat] = ts.totStartYds / ts.drives;
+            } else if (stat === "timePerDrive") {
+                row[stat] = ts.timePos / ts.drives;
+            } else if (stat === "playsPerDrive") {
+                row[stat] = (ts.pss + ts.rus + ts.pssSk) / ts.drives;
+            } else if (stat === "ydsPerDrive") {
+                row[stat] = (ts.pssYds + ts.rusYds) / ts.drives;
+            } else if (stat === "ptsPerDrive") {
+                row[stat] = ts.pts / ts.drives;
             } else {
                 row[stat] = ts[stat];
             }

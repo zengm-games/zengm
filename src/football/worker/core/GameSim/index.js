@@ -100,6 +100,20 @@ class GameSim {
 
     overtime: boolean;
 
+    /**
+     * "initialKickoff" -> (right after kickoff) "firstPossession" -> (after next call to possessionChange) -> "secondPossession" -> (after next call to possessionChange) -> "bothTeamPossessed" -> (based on conditions below) "over"
+     * - "initialKickoff", "firstPossession": when touchdown or safety is scored, set state to "over"
+     * - "secondPossession": when any points are scored, if scoring team is winning, set state to "over"
+     * - "bothTeamsPossessed": after each play, if (!this.awaitingAfterTouchdown or point differential is more than 2) then end game if score is not equal, set state to "over"
+     */
+    overtimeState:
+        | void
+        | "initialKickoff"
+        | "firstPossession"
+        | "secondPossession"
+        | "bothTeamsPossessed"
+        | "over";
+
     clock: number;
 
     o: TeamNum;
@@ -170,14 +184,13 @@ class GameSim {
         // Simulate the game up to the end of regulation
         this.simRegulation();
 
-        console.log(this.team);
-        /*// Play overtime periods if necessary
-        while (this.team[0].stat.pts === this.team[1].stat.pts) {
-            this.checkGameTyingShot();
+        if (this.team[0].stat.pts === this.team[1].stat.pts) {
+            // this.checkGameTyingShot();
             this.simOvertime();
         }
 
-        this.checkGameWinner();*/
+        console.log(this.team);
+        // this.checkGameWinner();
 
         // Delete stuff that isn't needed before returning
         for (let t = 0; t < 2; t++) {
@@ -217,7 +230,9 @@ class GameSim {
             }
             quarter += 1;
 
-            if (quarter === 5) {
+            if (quarter === 3) {
+                this.awaitingKickoff = true;
+            } else if (quarter === 5) {
                 break;
             }
             this.team[0].stat.ptsQtrs.push(0);
@@ -231,17 +246,20 @@ class GameSim {
     }
 
     simOvertime() {
-        this.clock = Math.ceil(0.4 * g.quarterLength); // 5 minutes by default, but scales
-        this.overtimes += 1;
+        this.clock = Math.ceil((g.quarterLength * 2) / 3); // 10 minutes by default, but scales
+        this.overtime = true;
+        this.overtimeState = "initialKickoff";
         this.team[0].stat.ptsQtrs.push(0);
         this.team[1].stat.ptsQtrs.push(0);
         this.playByPlay.logEvent("overtime", {
             clock: this.clock,
         });
+
         this.o = Math.random() < 0.5 ? 0 : 1;
         this.d = this.o === 0 ? 1 : 0;
-        while (this.clock > 0) {
-            this.simPossession();
+        this.awaitingKickoff = true;
+        while (this.clock > 0 && this.overtimeState !== "over") {
+            this.simPlay();
         }
     }
 
@@ -306,6 +324,14 @@ class GameSim {
         this.updatePlayingTime(playTime);
 
         this.injuries();
+
+        if (
+            this.overtimeState === "bothTeamsPossessed" &&
+            (!this.awaitingAfterTouchdown ||
+                Math.abs(this.team[0].stat.pts - this.team[1].stat.pts) > 2)
+        ) {
+            this.overtimeState = "over";
+        }
     }
 
     boundedYds(yds: number) {
@@ -453,6 +479,12 @@ class GameSim {
     }
 
     possessionChange() {
+        if (this.overtimeState === "firstPossession") {
+            this.overtimeState = "secondPossession";
+        } else if (this.overtimeState === "secondPossession") {
+            this.overtimeState = "bothTeamsPossessed";
+        }
+
         this.o = this.o === 1 ? 0 : 1;
         this.d = this.o === 1 ? 0 : 1;
 
@@ -518,6 +550,10 @@ class GameSim {
         }
 
         this.awaitingKickoff = false;
+
+        if (this.overtimeState === "initialKickoff") {
+            this.overtimeState = "firstPossession";
+        }
 
         return dt;
     }
@@ -1110,17 +1146,36 @@ class GameSim {
             let pts;
             if (s.endsWith("TD") && s !== "pssTD") {
                 pts = 6;
+                if (
+                    this.overtimeState === "initialKickoff" ||
+                    this.overtimeState === "firstPossession"
+                ) {
+                    this.overtimeState = "over";
+                }
             } else if (s === "xp") {
                 pts = 1;
             } else if (s.match(/fg\d+/)) {
                 pts = 3;
             } else if (s === "defSft") {
                 pts = 2;
+                if (
+                    this.overtimeState === "initialKickoff" ||
+                    this.overtimeState === "firstPossession"
+                ) {
+                    this.overtimeState = "over";
+                }
             }
 
             if (pts) {
                 this.team[t].stat.pts += pts;
                 this.team[t].stat.ptsQtrs[qtr] += pts;
+
+                if (this.overtimeState === "secondPossession") {
+                    const t2 = t === 0 ? 1 : 0;
+                    if (this.team[t].stat.pts > this.team[t2].stat.pts) {
+                        this.overtimeState = "over";
+                    }
+                }
             }
 
             this.playByPlay.logStat(qtr, t, p.id, s, amt);

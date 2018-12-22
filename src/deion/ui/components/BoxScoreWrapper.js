@@ -108,10 +108,19 @@ const DetailedScore = ({
     showNextPrev,
 }) => {
     // Quarter/overtime labels
-    const qtrs = boxScore.teams[1].ptsQtrs.map((pts, i) =>
-        i < 4 ? `Q${i + 1}` : `OT${i - 3}`,
-    );
+    const qtrs = boxScore.teams[1].ptsQtrs.map((pts, i) => {
+        if (i < 4) {
+            return `Q${i + 1}`;
+        }
+
+        if (process.env.SPORT === "basketball") {
+            return `OT${i - 3}`;
+        }
+
+        return "OT";
+    });
     qtrs.push("F");
+    console.log(boxScore);
 
     return (
         <div className="d-flex align-items-center justify-content-center">
@@ -272,6 +281,7 @@ class BoxScore extends React.Component {
                     <DetailedScore
                         abbrev={abbrev}
                         boxScore={boxScore}
+                        key={boxScore.gid}
                         nextGid={nextGid}
                         prevGid={prevGid}
                         showNextPrev={showNextPrev}

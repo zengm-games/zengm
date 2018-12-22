@@ -1,8 +1,10 @@
 # football
 
 ties
-- g.ties to control UI display and saving, but not GameSim
-- implement overtime and ties in GameSim
+- g.ties to control UI display and saving
+
+extra point or two point conversion should not take time off the clock, and should happen even when clock is at 0
+- set quarterLenght really low and you can see extra point being taken in next quarter
 
 processStats to common, so can be used in BoxScore? or pre-process all players?
 

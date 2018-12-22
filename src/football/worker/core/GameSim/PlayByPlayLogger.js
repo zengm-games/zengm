@@ -139,18 +139,18 @@ class PlayByPlayLogger {
                 if (safety || touchback) {
                     text = `${
                         names[0]
-                    } recovers the ball in the endzone, resulting in a ${
+                    } recovers the fumble in the endzone, resulting in a ${
                         safety ? "safety!" : "touchback"
                     }`;
                 } else if (lost) {
                     text = `${
                         names[0]
-                    } recovers the ball for the defense and returned it ${yds} yards${
+                    } recovers the fumble for the defense and returned it ${yds} yards${
                         td ? ` for ${touchdownText}!` : ""
                     }`;
                     this.updateTwoPointConversionState(td);
                 } else {
-                    text = `${names[0]} recovers the ball for the offense${
+                    text = `${names[0]} recovers the fumble for the offense${
                         td
                             ? ` and carries it into the endzone for ${touchdownText}!`
                             : ""

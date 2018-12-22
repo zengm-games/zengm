@@ -3,8 +3,7 @@
 basketball - report that AI teams consider any of your draft picks the 1st pick when trading during draft
 
 box score
-- scoring summary score doesn't match final score, why?
-- condense XP/2P into TDs rows?
+- past tense
 
 processStats to common, so can be used in BoxScore? or pre-process all players?
 
@@ -28,6 +27,7 @@ game sim
   - individual play simulation shouldn't be in main class
   - need ability to do pass/run for normal plays and 2 point conversions (save different stats), and propagate that through fumble/int returns
 - special kick after safety
+- kickoff after halftime
 
 derived stats
 

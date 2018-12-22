@@ -161,15 +161,68 @@ const quarters = {
     OT: "Overtime",
 };
 
+// Condenses TD + XP/2P into one event rather than two
+const processEvents = events => {
+    const processedEvents = [];
+    const score = [0, 0];
+
+    for (const event of events) {
+        let scoreType = null;
+        if (event.text.includes("extra point")) {
+            scoreType = "XP";
+            if (event.text.includes("makes")) {
+                score[event.t] += 1;
+            }
+        } else if (event.text.includes("field goal")) {
+            scoreType = "FG";
+            if (event.text.includes("makes")) {
+                score[event.t] += 3;
+            }
+        } else if (event.text.includes("touchdown")) {
+            scoreType = "TD";
+            score[event.t] += 6;
+        } else if (event.text.toLowerCase().includes("two")) {
+            scoreType = "2P";
+            if (!event.text.includes("failed")) {
+                score[event.t] += 2;
+            }
+        } else if (event.text.includes("safety")) {
+            scoreType = "SF";
+            score[event.t] += 2;
+        }
+
+        const prevEvent = processedEvents[processedEvents.length - 1];
+
+        if (prevEvent && scoreType === "XP") {
+            prevEvent.score = score.slice();
+            prevEvent.text += ` (${event.text})`;
+        } else if (prevEvent && scoreType === "2P" && event.t === prevEvent.t) {
+            prevEvent.score = score.slice();
+            prevEvent.text += ` (${event.text})`;
+        } else {
+            processedEvents.push({
+                t: event.t,
+                quarter: event.quarter,
+                time: event.time,
+                text: event.text,
+                score: score.slice(),
+                scoreType,
+            });
+        }
+    }
+
+    return processedEvents;
+};
+
 const ScoringSummary = ({ events, teams }) => {
     let prevQuarter;
 
-    const score = [0, 0];
+    const processedEvents = processEvents(events);
 
     return (
         <table className="table table-sm border-bottom">
             <tbody>
-                {events.map((event, i) => {
+                {processedEvents.map((event, i) => {
                     let quarterHeader = null;
                     if (event.quarter !== prevQuarter) {
                         prevQuarter = event.quarter;
@@ -182,38 +235,14 @@ const ScoringSummary = ({ events, teams }) => {
                         );
                     }
 
-                    let scoreType = null;
-                    if (event.text.includes("extra point")) {
-                        scoreType = "XP";
-                        if (event.text.includes("makes")) {
-                            score[event.t] += 1;
-                        }
-                    } else if (event.text.includes("field goal")) {
-                        scoreType = "FG";
-                        if (event.text.includes("makes")) {
-                            score[event.t] += 3;
-                        }
-                    } else if (event.text.includes("touchdown")) {
-                        scoreType = "TD";
-                        score[event.t] += 6;
-                    } else if (event.text.toLowerCase().includes("two")) {
-                        scoreType = "2P";
-                        if (!event.text.includes("failed")) {
-                            score[event.t] += 2;
-                        }
-                    } else if (event.text.includes("safety")) {
-                        scoreType = "SF";
-                        score[event.t] += 2;
-                    }
-
                     return (
                         <React.Fragment key={i}>
                             {quarterHeader}
                             <tr>
                                 <td>{teams[event.t].abbrev}</td>
-                                <td>{scoreType}</td>
+                                <td>{event.scoreType}</td>
                                 <td>
-                                    {score[0]}-{score[1]}
+                                    {event.score[0]}-{event.score[1]}
                                 </td>
                                 <td>{event.time}</td>
                                 <td>{event.text}</td>

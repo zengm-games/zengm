@@ -510,7 +510,7 @@ class GameSim {
 
             this.playByPlay.logEvent("kickoffReturn", {
                 clock: this.clock,
-                t: this.d,
+                t: this.o,
                 names: [kickReturner.name],
                 td,
                 yds: returnLength,
@@ -578,15 +578,12 @@ class GameSim {
 
             this.playByPlay.logEvent("puntReturn", {
                 clock: this.clock,
-                t: this.d,
+                t: this.o,
                 names: [puntReturner.name],
                 td,
                 yds: returnLength,
             });
         }
-
-        this.possessionChange();
-        this.awaitingKickoff = false;
 
         return 5;
     }
@@ -1076,17 +1073,12 @@ class GameSim {
 
         // Special case for two point conversions
         if (this.twoPointConversionTeam !== undefined) {
-            let pts;
             if (s.endsWith("TD") && s !== "pssTD") {
-                pts = 2;
-            }
-
-            if (pts) {
-                this.team[t].stat.pts += pts;
-                this.team[t].stat.ptsQtrs[qtr] += pts;
-
+                this.team[t].stat.pts += 2;
+                this.team[t].stat.ptsQtrs[qtr] += 2;
                 this.twoPointConversionTeam = undefined;
             }
+            return;
         }
 
         if (s === "gs") {
@@ -1119,7 +1111,7 @@ class GameSim {
                 pts = 6;
             } else if (s === "xp") {
                 pts = 1;
-            } else if (s.startsWith("fg") && !s.startsWith("fga")) {
+            } else if (s.match(/fg\d+/)) {
                 pts = 3;
             } else if (s === "defSft") {
                 pts = 2;

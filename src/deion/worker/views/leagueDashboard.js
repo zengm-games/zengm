@@ -266,6 +266,10 @@ async function updatePlayers(
             process.env.SPORT === "basketball"
                 ? ["gp", "min", "pts", "trb", "ast", "per"]
                 : ["gp", "keyStats"];
+        const leaderStats =
+            process.env.SPORT === "basketball"
+                ? ["pts", "trb", "ast"]
+                : ["pssYds", "rusYds", "recYds"];
 
         let players = await idb.cache.players.indexGetAll("playersByTid", [
             PLAYER.UNDRAFTED,
@@ -284,7 +288,7 @@ async function updatePlayers(
                 "watch",
             ],
             ratings: ["ovr", "pot", "dovr", "dpot", "skills", "pos"],
-            stats: [...startersStats, "yearsWithTeam"],
+            stats: [...startersStats, ...leaderStats, "yearsWithTeam"],
             season: g.season,
             showNoStats: true,
             showRookies: true,
@@ -293,8 +297,7 @@ async function updatePlayers(
 
         // League leaders
         const leagueLeaders = [];
-        const stats = ["pts", "trb", "ast"]; // Categories for leaders
-        for (const stat of stats) {
+        for (const stat of leaderStats) {
             if (players.length > 0) {
                 players.sort((a, b) => b.stats[stat] - a.stats[stat]);
                 leagueLeaders.push({
@@ -318,7 +321,7 @@ async function updatePlayers(
         // Team leaders
         const userPlayers = players.filter(p => p.tid === g.userTid);
         const teamLeaders = [];
-        for (const stat of stats) {
+        for (const stat of leaderStats) {
             if (userPlayers.length > 0) {
                 userPlayers.sort((a, b) => b.stats[stat] - a.stats[stat]);
                 teamLeaders.push({

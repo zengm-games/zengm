@@ -2,7 +2,8 @@
 
 league dashboard
 - team stats: pts avg, oppPts avg, pssYds avg, rusYds avg
-- player stats: pssYds, rusYds, recYds
+
+tables on player page not working
 
 keyStats
 - use this on things like roster, free agents? or display enough individual columns?

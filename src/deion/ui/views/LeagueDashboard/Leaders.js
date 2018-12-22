@@ -3,6 +3,11 @@ import React from "react";
 import { helpers } from "../../util";
 
 const Leader = ({ abbrev, name, pid, stat, value }) => {
+    const numberToDisplay =
+        process.env.SPORT === "basketball"
+            ? helpers.roundStat(value, stat)
+            : helpers.numberWithCommas(value);
+
     return (
         <>
             <a href={helpers.leagueUrl(["player", pid])}>{name}</a>
@@ -12,7 +17,7 @@ const Leader = ({ abbrev, name, pid, stat, value }) => {
                     <a href={helpers.leagueUrl(["roster", abbrev])}>{abbrev}</a>
                 </>
             ) : null}
-            : {helpers.roundStat(value, stat)} {stat}
+            : {numberToDisplay} {stat}
             <br />
         </>
     );

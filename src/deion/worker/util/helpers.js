@@ -25,6 +25,30 @@ const augmentSeries = (
     }
 };
 
+const calcWinp = ({
+    lost,
+    tied,
+    won,
+}: {
+    lost: number,
+    tied?: number,
+    won: number,
+}) => {
+    if (!g.ties || typeof tied !== "number") {
+        if (won + lost > 0) {
+            return won / (won + lost);
+        }
+
+        return 0;
+    }
+
+    if (won + lost + tied > 0) {
+        return (won + 0.5 * tied) / (won + lost + tied);
+    }
+
+    return 0;
+};
+
 // Used to fix links in the event log, which will be wrong if a league is exported and then imported. Would be better to do this on import!
 const correctLinkLid = (lid: number, event: { text: string }) => {
     event.text = event.text.replace(/\/l\/\d+\//g, `/l/${lid}/`);
@@ -205,6 +229,7 @@ const sigmoid = (x: number, a: number, b: number): number => {
 
 const helpers = Object.assign({}, commonHelpers, {
     augmentSeries,
+    calcWinp,
     correctLinkLid,
     formatCompletedGame,
     gb,

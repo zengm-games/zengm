@@ -186,10 +186,7 @@ function sumRecordsFor(group, id, name, records) {
     }
     out.id = id;
     out.team = name;
-    out.winp =
-        out.won > 0
-            ? helpers.roundWinp(out.won / (out.won + out.lost))
-            : "0.000";
+    out.winp = helpers.roundWinp(helpers.calcWinp(out));
 
     for (const key of ["lastChampionship", "lastPlayoffAppearance"]) {
         const years = xRecords

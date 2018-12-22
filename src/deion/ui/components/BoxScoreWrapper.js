@@ -109,15 +109,7 @@ const DetailedScore = ({
 }) => {
     // Quarter/overtime labels
     const qtrs = boxScore.teams[1].ptsQtrs.map((pts, i) => {
-        if (i < 4) {
-            return `Q${i + 1}`;
-        }
-
-        if (process.env.SPORT === "basketball") {
-            return `OT${i - 3}`;
-        }
-
-        return "OT";
+        return i < 4 ? `Q${i + 1}` : `OT${i - 3}`;
     });
     qtrs.push("F");
     console.log(boxScore);

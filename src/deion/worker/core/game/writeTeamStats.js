@@ -28,6 +28,7 @@ const writeTeamStats = async (results: GameResults) => {
 
         const teamSeason = teamSeasons[teamSeasons.length - 1];
         const won = results.team[t1].stat.pts > results.team[t2].stat.pts;
+        const lost = results.team[t1].stat.pts < results.team[t2].stat.pts;
 
         // Attendance - base calculation now, which is used for other revenue estimates
         if (t1 === 0) {
@@ -98,14 +99,12 @@ const writeTeamStats = async (results: GameResults) => {
 
         // Hype - relative to the expectations of prior seasons
         if (teamSeason.gp > 5 && g.phase !== PHASE.PLAYOFFS) {
-            let winp = teamSeason.won / (teamSeason.won + teamSeason.lost);
+            let winp = helpers.calcWinp(teamSeason);
             let winpOld = 0;
 
             // Avg winning percentage of last 0-2 seasons (as available)
             for (let i = 0; i < teamSeasons.length - 1; i++) {
-                winpOld +=
-                    teamSeasons[i].won /
-                    (teamSeasons[i].won + teamSeasons[i].lost);
+                winpOld += helpers.calcWinp(teamSeasons[i]);
             }
             if (teamSeasons.length > 1) {
                 winpOld /= teamSeasons.length - 1;
@@ -233,7 +232,7 @@ const writeTeamStats = async (results: GameResults) => {
             } else {
                 teamSeason.streak = 1;
             }
-        } else if (g.phase !== PHASE.PLAYOFFS) {
+        } else if (lost && g.phase !== PHASE.PLAYOFFS) {
             teamSeason.lost += 1;
             if (results.team[0].did === results.team[1].did) {
                 teamSeason.lostDiv += 1;
@@ -255,6 +254,24 @@ const writeTeamStats = async (results: GameResults) => {
             } else {
                 teamSeason.streak = -1;
             }
+        } else if (g.ties && g.phase !== PHASE.PLAYOFFS) {
+            teamSeason.tied += 1;
+            if (results.team[0].did === results.team[1].did) {
+                teamSeason.tiedDiv += 1;
+            }
+            if (results.team[0].cid === results.team[1].cid) {
+                teamSeason.tiedConf += 1;
+            }
+
+            if (t1 === 0) {
+                teamSeason.tiedHome += 1;
+            } else {
+                teamSeason.tiedAway += 1;
+            }
+
+            teamSeason.lastTen.unshift(-1);
+
+            teamSeason.streak = 0;
         }
 
         await idb.cache.teams.put(t);

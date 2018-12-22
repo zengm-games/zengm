@@ -1,7 +1,7 @@
 # football
 
 ties
-- g.ties to control UI display and saving
+- show in record on every screen where records are displayed, if g.ties
 
 extra point or two point conversion should not take time off the clock, and should happen even when clock is at 0
 - set quarterLenght really low and you can see extra point being taken in next quarter

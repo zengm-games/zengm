@@ -1,5 +1,6 @@
 // @flow
 
+import { PHASE } from "../../../../deion/common";
 import { g, helpers, random } from "../../../../deion/worker/util";
 import PlayByPlayLogger from "./PlayByPlayLogger";
 import formations from "./formations";
@@ -184,9 +185,14 @@ class GameSim {
         // Simulate the game up to the end of regulation
         this.simRegulation();
 
-        if (this.team[0].stat.pts === this.team[1].stat.pts) {
+        while (this.team[0].stat.pts === this.team[1].stat.pts) {
             // this.checkGameTyingShot();
             this.simOvertime();
+
+            // Only one overtime period in regular season, but as many as needed in the playoffs
+            if (g.phase !== PHASE.PLAYOFFS) {
+                break;
+            }
         }
 
         console.log(this.team);

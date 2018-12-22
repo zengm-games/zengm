@@ -10,50 +10,58 @@ import {
 import { helpers, setTitle } from "../util";
 import clickable from "../wrappers/clickable";
 
-const DivStandingsRow = clickable(({ clicked, season, t, toggleClicked }) => {
-    return (
-        <tr
-            key={t.tid}
-            className={classNames({
-                "table-info": t.highlight,
-                "table-warning": clicked,
-            })}
-            onClick={toggleClicked}
-        >
-            <td>
-                <a href={helpers.leagueUrl(["roster", t.abbrev, season])}>
-                    {t.region} {t.name}
-                </a>
-                <span>{t.playoffsRank ? ` (${t.playoffsRank})` : ""}</span>
-            </td>
-            <td>{t.seasonAttrs.won}</td>
-            <td>{t.seasonAttrs.lost}</td>
-            <td>{helpers.roundWinp(t.seasonAttrs.winp)}</td>
-            <td>{t.gb}</td>
-            <td>
-                {t.seasonAttrs.wonHome}-{t.seasonAttrs.lostHome}
-            </td>
-            <td>
-                {t.seasonAttrs.wonAway}-{t.seasonAttrs.lostAway}
-            </td>
-            <td>
-                {t.seasonAttrs.wonDiv}-{t.seasonAttrs.lostDiv}
-            </td>
-            <td>
-                {t.seasonAttrs.wonConf}-{t.seasonAttrs.lostConf}
-            </td>
-            <td>{t.seasonAttrs.streak}</td>
-            <td>{t.seasonAttrs.lastTen}</td>
-        </tr>
-    );
-});
+const record = (seasonAttrs, type, ties) => {
+    const won = `won${type}`;
+    const lost = `lost${type}`;
+    const tied = `tied${type}`;
+
+    const val = `${seasonAttrs[won]}-${seasonAttrs[lost]}`;
+    if (ties) {
+        return `${val}-${seasonAttrs[tied]}`;
+    }
+    return val;
+};
+
+const DivStandingsRow = clickable(
+    ({ clicked, season, t, ties, toggleClicked }) => {
+        return (
+            <tr
+                key={t.tid}
+                className={classNames({
+                    "table-info": t.highlight,
+                    "table-warning": clicked,
+                })}
+                onClick={toggleClicked}
+            >
+                <td>
+                    <a href={helpers.leagueUrl(["roster", t.abbrev, season])}>
+                        {t.region} {t.name}
+                    </a>
+                    <span>{t.playoffsRank ? ` (${t.playoffsRank})` : ""}</span>
+                </td>
+                <td>{t.seasonAttrs.won}</td>
+                <td>{t.seasonAttrs.lost}</td>
+                {ties ? <td>{t.seasonAttrs.tied}</td> : null}
+                <td>{helpers.roundWinp(t.seasonAttrs.winp)}</td>
+                <td>{t.gb}</td>
+                <td>{record(t.seasonAttrs, "Home", ties)}</td>
+                <td>{record(t.seasonAttrs, "Away", ties)}</td>
+                <td>{record(t.seasonAttrs, "Div", ties)}</td>
+                <td>{record(t.seasonAttrs, "Conf", ties)}</td>
+                <td>{t.seasonAttrs.streak}</td>
+                <td>{t.seasonAttrs.lastTen}</td>
+            </tr>
+        );
+    },
+);
 
 DivStandingsRow.propTypes = {
     season: PropTypes.number.isRequired,
     t: PropTypes.object.isRequired,
+    ties: PropTypes.bool.isRequired,
 };
 
-const DivStandings = ({ div, season }) => {
+const DivStandings = ({ div, season, ties }) => {
     return (
         <ResponsiveTableWrapper>
             <table className="table table-striped table-bordered table-sm table-hover">
@@ -62,6 +70,7 @@ const DivStandings = ({ div, season }) => {
                         <th width="100%">{div.name}</th>
                         <th>W</th>
                         <th>L</th>
+                        {ties ? <th>T</th> : null}
                         <th>%</th>
                         <th>GB</th>
                         <th>Home</th>
@@ -74,7 +83,12 @@ const DivStandings = ({ div, season }) => {
                 </thead>
                 <tbody>
                     {div.teams.map(t => (
-                        <DivStandingsRow key={t.tid} t={t} season={season} />
+                        <DivStandingsRow
+                            key={t.tid}
+                            t={t}
+                            season={season}
+                            ties={ties}
+                        />
                     ))}
                 </tbody>
             </table>
@@ -88,6 +102,7 @@ DivStandings.propTypes = {
         teams: PropTypes.arrayOf(PropTypes.object).isRequired,
     }).isRequired,
     season: PropTypes.number.isRequired,
+    ties: PropTypes.bool.isRequired,
 };
 
 const SmallStandings = ({ numPlayoffTeams, season, teams }) => {
@@ -142,6 +157,7 @@ const Standings = ({
     numPlayoffTeams,
     playoffsByConference,
     season,
+    ties,
 }) => {
     if (season === undefined) {
         setTitle("Standings");
@@ -179,6 +195,7 @@ const Standings = ({
                                             key={div.did}
                                             div={div}
                                             season={season}
+                                            ties={ties}
                                         />
                                     ))}
                                 </div>
@@ -227,6 +244,7 @@ Standings.propTypes = {
     numPlayoffTeams: PropTypes.number.isRequired,
     playoffsByConference: PropTypes.bool.isRequired,
     season: PropTypes.number.isRequired,
+    ties: PropTypes.bool.isRequired,
 };
 
 export default Standings;

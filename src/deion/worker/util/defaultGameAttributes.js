@@ -61,7 +61,7 @@ const defaultGameAttributes: GameAttributes = {
 
     hardCap: false,
 
-    // This enables ties in the UI and game data saving, but GameSim still needs to actually return ties
+    // This enables ties in the UI and game data saving, but GameSim still needs to actually return ties. In other words... you can't just enable this for basketball and have ties happen in basketball!
     ties: false,
 };
 

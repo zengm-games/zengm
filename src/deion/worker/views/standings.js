@@ -21,15 +21,20 @@ async function updateStandings(
                 seasonAttrs: [
                     "won",
                     "lost",
+                    "tied",
                     "winp",
                     "wonHome",
                     "lostHome",
+                    "tiedHome",
                     "wonAway",
                     "lostAway",
+                    "tiedAway",
                     "wonDiv",
                     "lostDiv",
+                    "tiedDiv",
                     "wonConf",
                     "lostConf",
+                    "tiedConf",
                     "lastTen",
                     "streak",
                 ],
@@ -152,6 +157,7 @@ async function updateStandings(
             numPlayoffTeams,
             playoffsByConference,
             season: inputs.season,
+            ties: g.ties,
         };
     }
 }

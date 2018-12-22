@@ -112,10 +112,7 @@ const processSeasonAttrs = async (
 
             for (const attr of seasonAttrs) {
                 if (attr === "winp") {
-                    row.winp = 0;
-                    if (ts.won + ts.lost > 0) {
-                        row.winp = ts.won / (ts.won + ts.lost);
-                    }
+                    row.winp = helpers.calcWinp(ts);
                 } else if (attr === "att") {
                     row.att = 0;
                     if (!ts.hasOwnProperty("gpHome")) {
@@ -139,12 +136,14 @@ const processSeasonAttrs = async (
                         row.payroll = undefined;
                     }
                 } else if (attr === "lastTen") {
-                    const lastTenWon = ts.lastTen.reduce(
-                        (memo, num) => memo + num,
-                        0,
-                    );
-                    const lastTenLost = ts.lastTen.length - lastTenWon;
+                    const lastTenWon = ts.lastTen.filter(x => x === 1).length;
+                    const lastTenLost = ts.lastTen.filter(x => x === 0).length;
                     row.lastTen = `${lastTenWon}-${lastTenLost}`;
+                    if (g.ties) {
+                        const lastTenTied = ts.lastTen.filter(x => x === -1)
+                            .length;
+                        row.lastTen += `-${lastTenTied}`;
+                    }
                 } else if (attr === "streak") {
                     // For standings
                     if (ts.streak === 0) {

@@ -661,6 +661,12 @@ export type WorkerOverridesConstants = {|
     },
     RATINGS: string[],
     POSITIONS: string[],
+    TEAM_STATS_TABLES: {
+        [key: string]: {
+            name: string,
+            stats: string[],
+        },
+    },
 |};
 
 export type WorkerOverridesCore = {|

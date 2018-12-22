@@ -203,7 +203,16 @@ const PLAYER_STATS_TABLES = {
     },
 };
 
-const TEAM_STATS_TABLES = {};
+const TEAM_STATS_TABLES = {
+    team: {
+        name: "Team",
+        stats: [],
+    },
+    opponent: {
+        name: "Opponent",
+        stats: [],
+    },
+};
 
 const POSITIONS = [
     "QB",

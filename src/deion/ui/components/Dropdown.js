@@ -3,7 +3,7 @@
 import PropTypes from "prop-types";
 import * as React from "react";
 import { PHASE } from "../../common";
-import { helpers, subscribeLocal, realtimeUpdate } from "../util";
+import { helpers, overrides, subscribeLocal, realtimeUpdate } from "../util";
 
 const Select = ({ field, handleChange, value }) => {
     return subscribeLocal(local => {
@@ -310,20 +310,14 @@ const Select = ({ field, handleChange, value }) => {
                 },
             ];
         } else if (field === "teamOpponentAdvanced") {
-            options = [
-                {
-                    val: "Team",
-                    key: "team",
+            options = Object.keys(overrides.constants.TEAM_STATS_TABLES).map(
+                key => {
+                    return {
+                        val: helpers.upperCaseFirstLetter(key),
+                        key,
+                    };
                 },
-                {
-                    val: "Opponent",
-                    key: "opponent",
-                },
-                {
-                    val: "Advanced",
-                    key: "advanced",
-                },
-            ];
+            );
         } else if (field === "teamRecordType") {
             options = [
                 {

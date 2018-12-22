@@ -21,6 +21,7 @@ const overrides: {
         PLAYER_STATS_TABLES: {},
         POSITIONS: [],
         RATINGS: [],
+        TEAM_STATS_TABLES: {},
     },
     core: {
         GameSim: undefined,

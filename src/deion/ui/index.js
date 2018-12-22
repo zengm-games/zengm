@@ -17,7 +17,7 @@ import {
     routes,
     toWorker,
 } from "./util";
-import type { Env } from "../common/types";
+import type { Env, WorkerOverridesConstants } from "../common/types";
 
 const handleVersion = async () => {
     window.addEventListener("storage", e => {
@@ -240,6 +240,7 @@ const setupRoutes = () => {
 
 const deionUI = async (options: {
     overrides: {
+        constants: WorkerOverridesConstants,
         components: {
             [key: string]: any,
         },

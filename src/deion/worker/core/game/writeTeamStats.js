@@ -196,9 +196,9 @@ const writeTeamStats = async (results: GameResults) => {
             }
 
             if (key !== "min") {
-                const oppKey = `opp${key[0].toUpperCase()}${key.slice(1)}`;
+                const oppKey = `opp${helpers.upperCaseFirstLetter(key)}`;
 
-                // Deal with upgraded leagues
+                // Deal with upgraded leagues, and some stats that don't have opp versions
                 if (teamStats.hasOwnProperty(oppKey)) {
                     teamStats[oppKey] += results.team[t2].stat[key];
                 }

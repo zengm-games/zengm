@@ -28,9 +28,11 @@ async function updateTeams(
         }
         const stats = statsTable.stats;
 
+        const seasonAttrs = g.ties ? ["won", "lost", "tied"] : ["won", "lost"];
+
         const teams = (await idb.getCopies.teamsPlus({
             attrs: ["tid", "abbrev"],
-            seasonAttrs: g.ties ? ["won", "lost"] : ["won", "lost", "tied"],
+            seasonAttrs,
             stats: ["gp", ...stats],
             season: inputs.season,
             playoffs: inputs.playoffs === "playoffs",
@@ -71,7 +73,7 @@ async function updateTeams(
 
         // Sort stats so we can determine what percentile our team is in.
         const allStats = {};
-        let statTypes = ["won", "lost"];
+        let statTypes = seasonAttrs.slice();
         for (const table of Object.values(
             overrides.constants.TEAM_STATS_TABLES,
         )) {
@@ -158,6 +160,7 @@ async function updateTeams(
             stats,
             teamOpponent: inputs.teamOpponent,
             teams,
+            ties: g.ties,
             userTid: g.userTid,
         };
     }

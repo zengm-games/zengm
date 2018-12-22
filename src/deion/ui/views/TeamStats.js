@@ -14,15 +14,18 @@ const TeamStats = ({
     stats,
     teamOpponent,
     teams,
+    ties,
     userTid,
 }) => {
     setTitle(`Team Stats - ${season}`);
 
+    const basicColNames = ["Team", "stat:gp", "W", "L"];
+    if (ties) {
+        basicColNames.push("T");
+    }
+
     const cols = getCols(
-        "Team",
-        "stat:gp",
-        "W",
-        "L",
+        ...basicColNames,
         ...stats.map(stat => {
             if (stat.startsWith("opp")) {
                 return `stat:${stat.charAt(3).toLowerCase()}${stat.slice(4)}`;
@@ -30,11 +33,13 @@ const TeamStats = ({
             return `stat:${stat}`;
         }),
     );
-    console.log(cols, teams);
 
     const teamCount = teams.length;
     const rows = teams.map(t => {
         const otherStatColumns = ["won", "lost"];
+        if (ties) {
+            otherStatColumns.push("tied");
+        }
 
         // Create the cells for this row.
         const data = {
@@ -47,6 +52,10 @@ const TeamStats = ({
             won: t.seasonAttrs.won,
             lost: t.seasonAttrs.lost,
         };
+
+        if (ties) {
+            data.tied = t.seasonAttrs.tied;
+        }
 
         for (const statType of stats) {
             const value = t.stats.hasOwnProperty(statType)

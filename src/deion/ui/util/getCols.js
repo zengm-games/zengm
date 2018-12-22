@@ -944,8 +944,13 @@ const cols: {
         sortType: "number",
     },
     Skills: {},
-    T: {
+    Talent: {
         desc: "Talent",
+        sortType: "number",
+    },
+    T: {
+        desc: "Ties",
+        sortSequence: ["desc", "asc"],
         sortType: "number",
     },
     Team: {},
@@ -1229,6 +1234,7 @@ const sportSpecificTitleOverrides =
           };
 
 const titleOverrides = {
+    Talent: "T",
     "rating:endu": "End",
     "rating:hgt": "Hgt",
     "rating:spd": "Spd",

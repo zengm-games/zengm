@@ -8,6 +8,7 @@ const teamAndOpp = [
     "totStartYds",
     "timePos",
     "pts",
+    "ply",
     ...playerStats.raw.filter(stat => !["gp", "gs", "defTck"].includes(stat)),
 ];
 

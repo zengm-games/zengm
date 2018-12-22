@@ -308,8 +308,10 @@ class GameSim {
         } else if (playType === "punt") {
             dt = this.doPunt();
         } else if (playType === "pass") {
+            this.recordStat(this.o, undefined, "ply");
             dt = this.doPass();
         } else if (playType === "run") {
+            this.recordStat(this.o, undefined, "ply");
             dt = this.doRun();
         } else {
             throw new Error(`Unknown playType "${playType}"`);
@@ -856,7 +858,7 @@ class GameSim {
         });
 
         this.recordStat(this.o, qb, "pssSk");
-        this.recordStat(this.o, qb, "pssSkYds", yds);
+        this.recordStat(this.o, qb, "pssSkYds", Math.abs(yds));
         this.recordStat(this.o, p, "defSk");
 
         if (safetyOrTouchback) {
@@ -1111,7 +1113,8 @@ class GameSim {
         return array;
     }
 
-    recordStat(t: TeamNum, p: PlayerGameSim, s: Stat, amt?: number = 1) {
+    // Pass undefined as p for some team-only stats
+    recordStat(t: TeamNum, p?: PlayerGameSim, s: Stat, amt?: number = 1) {
         const qtr = this.team[t].stat.ptsQtrs.length - 1;
 
         // Special case for two point conversions
@@ -1124,15 +1127,17 @@ class GameSim {
             return;
         }
 
-        if (s === "gs") {
-            // In case player starts on offense and defense, only record once
-            p.stat[s] = 1;
-        } else if (s.endsWith("Lng")) {
-            if (amt > p.stat[s]) {
-                p.stat[s] = amt;
+        if (p !== undefined) {
+            if (s === "gs") {
+                // In case player starts on offense and defense, only record once
+                p.stat[s] = 1;
+            } else if (s.endsWith("Lng")) {
+                if (amt > p.stat[s]) {
+                    p.stat[s] = amt;
+                }
+            } else {
+                p.stat[s] += amt;
             }
-        } else {
-            p.stat[s] += amt;
         }
 
         if (
@@ -1184,7 +1189,9 @@ class GameSim {
                 }
             }
 
-            this.playByPlay.logStat(qtr, t, p.id, s, amt);
+            if (p !== undefined) {
+                this.playByPlay.logStat(qtr, t, p.id, s, amt);
+            }
         }
     }
 }

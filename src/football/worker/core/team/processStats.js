@@ -37,6 +37,16 @@ const processStats = (
                 } else {
                     row.oppMov = 0;
                 }
+            } else if (stat === "yds") {
+                row[stat] = ts.pssYds + ts.rusYds;
+            } else if (stat === "ydsPerPlay") {
+                row[stat] = (ts.pssYds + ts.rusYds) / ts.ply;
+            } else if (stat === "tov") {
+                row[stat] = ts.fmbLost + ts.pssInt;
+            } else if (stat === "pssNetYdsPerAtt") {
+                row[stat] = (ts.pssYds - ts.pssSkYds) / (ts.pss + ts.pssSk);
+            } else if (stat === "rusYdsPerAtt") {
+                row[stat] = ts.rusYds / ts.rus;
             } else {
                 row[stat] = ts[stat];
             }

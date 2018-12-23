@@ -129,6 +129,8 @@ const roundOverrides =
               fga40: "noDecimalPlace",
               fg50: "noDecimalPlace",
               fga50: "noDecimalPlace",
+              fg: "noDecimalPlace",
+              fga: "noDecimalPlace",
               fgLng: "noDecimalPlace",
               xp: "noDecimalPlace",
               xpa: "noDecimalPlace",

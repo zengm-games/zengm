@@ -495,7 +495,13 @@ export type ScheduleGame = {|
 
 export type SortOrder = "asc" | "desc";
 
-export type SortType = "currency" | "draftPick" | "lastTen" | "name" | "number";
+export type SortType =
+    | "currency"
+    | "draftPick"
+    | "lastTen"
+    | "name"
+    | "number"
+    | "record";
 
 export type Team = {|
     tid: number,

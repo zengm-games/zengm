@@ -77,6 +77,25 @@ const getSortVal = (value: any = null, sortType: SortType | void) => {
             }
             return parseFloat(sortVal.replace("$", ""));
         }
+        if (sortType === "record") {
+            if (sortVal === null) {
+                return -Infinity;
+            }
+
+            let [won, lost, tied] = sortVal
+                .split("-")
+                .map(num => parseInt(num, 10));
+
+            if (typeof tied !== "number") {
+                tied = 0;
+            }
+
+            if (won + lost + tied > 0) {
+                return (won + 0.5 * tied) / (won + lost + tied);
+            }
+
+            return 0;
+        }
         return sortVal;
     } catch (err) {
         console.error(

@@ -829,7 +829,7 @@ const sportSpecificCols: {
               "stat:qbRec": {
                   desc: "Team record as primary QB",
                   sortSequence: ["desc", "asc"],
-                  sortType: "number",
+                  sortType: "record",
               },
               "stat:pssTDPct": {
                   desc: "Percentage of passes that result in touchdowns",

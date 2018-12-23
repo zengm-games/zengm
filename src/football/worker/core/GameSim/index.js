@@ -1027,6 +1027,7 @@ class GameSim {
     }
 
     updatePlayingTime(possessionTime: number) {
+        this.recordStat(this.o, undefined, "timePos", possessionTime);
         const onField = new Set();
         for (let t = 0; t < 2; t++) {
             // Get rid of this after making sure playersOnField is always set, even for special teams

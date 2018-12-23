@@ -807,7 +807,7 @@ const sportSpecificCols: {
                   sortType: "number",
               },
               "stat:timePerDrive": {
-                  desc: "Time Per Drive",
+                  desc: "Time Per Drive (minutes)",
                   sortSequence: ["desc", "asc"],
                   sortType: "number",
               },

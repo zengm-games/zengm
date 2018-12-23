@@ -55,6 +55,7 @@ const DepthRow = SortableElement(
             numStarters,
             p,
             pos,
+            ratings,
             stats,
             toggleClicked,
         } = props;
@@ -93,6 +94,11 @@ const DepthRow = SortableElement(
                 <td onClick={toggleClicked}>{p.age}</td>
                 <td onClick={toggleClicked}>{p.ratings.ovrs[pos]}</td>
                 <td onClick={toggleClicked}>{p.ratings.pots[pos]}</td>
+                {ratings.map(rating => (
+                    <td key={rating} onClick={toggleClicked}>
+                        {p.ratings[rating]}
+                    </td>
+                ))}
                 {stats.map(stat => (
                     <td key={stat} onClick={toggleClicked}>
                         {helpers.roundStat(p.stats[stat], stat)}
@@ -109,11 +115,12 @@ DepthRow.propTypes = {
     numStarters: PropTypes.number.isRequired,
     p: PropTypes.object.isRequired,
     pos: PropTypes.string.isRequired,
+    ratings: PropTypes.arrayOf(PropTypes.string).isRequired,
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 const TBody = SortableContainer(
-    ({ isSorting, numStarters, players, pos, stats }) => {
+    ({ isSorting, numStarters, players, pos, ratings, stats }) => {
         return (
             <tbody id="roster-tbody">
                 {players.map((p, i) => {
@@ -126,6 +133,7 @@ const TBody = SortableContainer(
                             numStarters={numStarters}
                             p={p}
                             pos={pos}
+                            ratings={ratings}
                             stats={stats}
                         />
                     );
@@ -140,6 +148,7 @@ TBody.propTypes = {
     numStarters: PropTypes.number.isRequired,
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     pos: PropTypes.string.isRequired,
+    ratings: PropTypes.arrayOf(PropTypes.string).isRequired,
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
@@ -200,7 +209,7 @@ class Depth extends React.Component {
     }
 
     render() {
-        const { abbrev, players, pos, season, stats } = this.props;
+        const { abbrev, players, pos, ratings, season, stats } = this.props;
 
         setTitle(`Depth Chart - ${pos}`);
 
@@ -214,6 +223,9 @@ class Depth extends React.Component {
             playersSorted = players;
         }
 
+        const ratingCols = getCols(
+            ...ratings.map(rating => `rating:${rating}`),
+        );
         const statCols = getCols(...stats.map(stat => `stat:${stat}`));
 
         return (
@@ -311,8 +323,13 @@ class Depth extends React.Component {
                                 <th title={`Potential Rating (${pos})`}>
                                     Pot{pos}
                                 </th>
-                                {statCols.map(({ desc, title }) => (
-                                    <th key={title} title={desc}>
+                                {ratingCols.map(({ desc, title }, i) => (
+                                    <th key={ratings[i]} title={desc}>
+                                        {title}
+                                    </th>
+                                ))}
+                                {statCols.map(({ desc, title }, i) => (
+                                    <th key={stats[i]} title={desc}>
                                         {title}
                                     </th>
                                 ))}
@@ -325,6 +342,7 @@ class Depth extends React.Component {
                             onSortEnd={this.handleOnSortEnd}
                             onSortStart={this.handleOnSortStart}
                             pos={pos}
+                            ratings={ratings}
                             stats={stats}
                             transitionDuration={0}
                             useDragHandle
@@ -341,6 +359,7 @@ Depth.propTypes = {
     players: PropTypes.arrayOf(PropTypes.object).isRequired,
     pos: PropTypes.string.isRequired,
     season: PropTypes.number.isRequired,
+    ratings: PropTypes.arrayOf(PropTypes.string).isRequired,
     stats: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 

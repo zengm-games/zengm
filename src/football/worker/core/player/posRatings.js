@@ -5,8 +5,12 @@ const posRatings = (pos: string): string[] => {
         return ["thv", "thp", "tha", "bls"];
     }
 
-    if (pos === "RB" || pos === "WR" || pos === "TE") {
+    if (pos === "RB" || pos === "WR") {
         return ["elu", "rtr", "hnd", "bls"];
+    }
+
+    if (pos === "TE") {
+        return ["elu", "rtr", "hnd", "rbk"];
     }
 
     if (pos === "OL") {

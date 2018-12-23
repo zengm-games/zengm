@@ -1,9 +1,8 @@
 # football
 
-some guide for roster composition on the roster page, like ideal numbers of players at each position
+BlS -> BSc (looks like BIS otherwise)
 
-more player stats on depth page
-- same as player stats? or maybe box score, if player stats is too long?
+some guide for roster composition on the roster page, like ideal numbers of players at each position
 
 keyStats
 - use this on things like roster, free agents? or display enough individual columns?
@@ -68,8 +67,6 @@ worker/deion stuff that needs to have a process.env.SPORT case
 - playersPlus: awardsOrder, weightByMinutes
 - loadTeams - synergy, pace, player/team stats
 - awardsOrder
-
-in GameSim, make sure to track player.stats.min, for use in writePlayerStats
 
 finish views
 - CustomizePlayer

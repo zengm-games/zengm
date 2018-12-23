@@ -99,22 +99,22 @@ async function updatePlayers(
             regularSeason: inputs.playoffs !== "playoffs",
         });
 
-        // Find max gp to use for filtering
-        let gp = 0;
-        for (const p of players) {
-            if (p.stats.gp > gp) {
-                gp = p.stats.gp;
-            }
-        }
-        // Special case for career totals - use g.numGames games, unless this is the first season
-        if (!inputs.season) {
-            if (g.season > g.startingSeason) {
-                gp = g.numGames;
-            }
-        }
-
         // Only keep players with more than 5 mpg in regular season, of any PT in playoffs
         if (inputs.abbrev !== "watch" && process.env.SPORT === "basketball") {
+            // Find max gp to use for filtering
+            let gp = 0;
+            for (const p of players) {
+                if (p.stats.gp > gp) {
+                    gp = p.stats.gp;
+                }
+            }
+            // Special case for career totals - use g.numGames games, unless this is the first season
+            if (!inputs.season) {
+                if (g.season > g.startingSeason) {
+                    gp = g.numGames;
+                }
+            }
+
             players = players.filter(p => {
                 // Minutes played
                 let min;
@@ -151,7 +151,7 @@ async function updatePlayers(
             });
         } else if (process.env.SPORT === "football") {
             // Ensure some non-zero stat for this position
-            const obj = inputs.statType === "totals" ? "careerStats" : "stats";
+            const obj = inputs.season === undefined ? "careerStats" : "stats";
             const skipStats = ["gp", "gs", "fmbLost"];
             players = players.filter(p => {
                 for (const stat of stats) {

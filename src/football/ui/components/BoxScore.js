@@ -262,7 +262,6 @@ const ScoringSummary = ({ events, teams }) => {
 };
 
 const BoxScore = ({ boxScore, Row }) => {
-    console.log("boxScore", boxScore);
     return (
         <div className="mb-3">
             <h3>Scoring Summary</h3>

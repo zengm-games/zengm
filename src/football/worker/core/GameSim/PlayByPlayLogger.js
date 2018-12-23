@@ -110,14 +110,26 @@ class PlayByPlayLogger {
         let text;
         if (this.playByPlay !== undefined) {
             if (type === "injury") {
+                if (names === undefined) {
+                    throw new Error("Missing names");
+                }
                 text = `${names[0]} was injured!`;
             } else if (type === "quarter") {
                 text = `Start of ${helpers.ordinal(quarter)} quarter`;
+                if (quarter === undefined) {
+                    throw new Error("Missing quarter");
+                }
                 this.quarter = `Q${quarter}`;
             } else if (type === "overtime") {
                 text = "Start of overtime";
                 this.quarter = "OT";
             } else if (type === "kickoff") {
+                if (names === undefined) {
+                    throw new Error("Missing names");
+                }
+                if (yds === undefined) {
+                    throw new Error("Missing yds");
+                }
                 text = `${names[0]} kicked off${
                     touchback
                         ? " for a touchback"
@@ -126,10 +138,22 @@ class PlayByPlayLogger {
                         : ` to the ${yds} yard line`
                 }`;
             } else if (type === "kickoffReturn") {
+                if (names === undefined) {
+                    throw new Error("Missing names");
+                }
+                if (yds === undefined) {
+                    throw new Error("Missing yds");
+                }
                 text = `${names[0]} returned the kickoff ${yds} yards${
                     td ? " for a touchdown!" : ""
                 }`;
             } else if (type === "punt") {
+                if (names === undefined) {
+                    throw new Error("Missing names");
+                }
+                if (yds === undefined) {
+                    throw new Error("Missing yds");
+                }
                 text = `${names[0]} punted ${
                     touchback
                         ? "for a touchback"
@@ -138,20 +162,47 @@ class PlayByPlayLogger {
                         : `to the ${yds} yard line`
                 }`;
             } else if (type === "puntReturn") {
+                if (names === undefined) {
+                    throw new Error("Missing names");
+                }
+                if (yds === undefined) {
+                    throw new Error("Missing yds");
+                }
                 text = `${names[0]} returned the punt ${yds} yards${
                     td ? " for a touchdown!" : ""
                 }`;
             } else if (type === "extraPoint") {
+                if (names === undefined) {
+                    throw new Error("Missing names");
+                }
                 text = `${names[0]} ${
                     made ? "made" : "missed"
                 } the extra point`;
             } else if (type === "fieldGoal") {
+                if (names === undefined) {
+                    throw new Error("Missing names");
+                }
+                if (yds === undefined) {
+                    throw new Error("Missing yds");
+                }
                 text = `${names[0]} ${
                     made ? "made" : "missed"
                 } a ${yds} yard field goal`;
             } else if (type === "fumble") {
+                if (names === undefined) {
+                    throw new Error("Missing names");
+                }
                 text = `${names[0]} fumbled the ball!`;
             } else if (type === "fumbleRecovery") {
+                if (names === undefined) {
+                    throw new Error("Missing names");
+                }
+                if (td === undefined) {
+                    throw new Error("Missing td");
+                }
+                if (yds === undefined) {
+                    throw new Error("Missing yds");
+                }
                 if (safety || touchback) {
                     text = `${
                         names[0]
@@ -176,6 +227,15 @@ class PlayByPlayLogger {
                     this.updateTwoPointConversionState(td);
                 }
             } else if (type === "interception") {
+                if (names === undefined) {
+                    throw new Error("Missing names");
+                }
+                if (td === undefined) {
+                    throw new Error("Missing td");
+                }
+                if (yds === undefined) {
+                    throw new Error("Missing yds");
+                }
                 text = `${
                     names[0]
                 } intercepted the pass and returned it ${yds} yards${
@@ -183,12 +243,27 @@ class PlayByPlayLogger {
                 }`;
                 this.updateTwoPointConversionState(td);
             } else if (type === "sack") {
-                text = `${names[0]} was sacked by ${names[0]} for a ${
+                if (names === undefined) {
+                    throw new Error("Missing names");
+                }
+                if (yds === undefined) {
+                    throw new Error("Missing yds");
+                }
+                text = `${names[0]} was sacked by ${names[1]} for a ${
                     safety ? "safety!" : `${yds} yard loss`
                 }`;
             } else if (type === "dropback") {
+                if (names === undefined) {
+                    throw new Error("Missing names");
+                }
                 text = `${names[0]} drops back to pass`;
             } else if (type === "passComplete") {
+                if (names === undefined) {
+                    throw new Error("Missing names");
+                }
+                if (td === undefined) {
+                    throw new Error("Missing td");
+                }
                 if (safety) {
                     text = `${names[0]} completed a pass to ${
                         names[1]
@@ -206,10 +281,22 @@ class PlayByPlayLogger {
                     this.updateTwoPointConversionState(td);
                 }
             } else if (type === "passIncomplete") {
+                if (names === undefined) {
+                    throw new Error("Missing names");
+                }
                 text = `Incomplete pass to ${names[1]}`;
             } else if (type === "handoff") {
+                if (names === undefined) {
+                    throw new Error("Missing names");
+                }
                 text = `${names[0]} hands the ball off to ${names[1]}`;
             } else if (type === "run") {
+                if (names === undefined) {
+                    throw new Error("Missing names");
+                }
+                if (td === undefined) {
+                    throw new Error("Missing td");
+                }
                 if (safety) {
                     text = `${
                         names[0]

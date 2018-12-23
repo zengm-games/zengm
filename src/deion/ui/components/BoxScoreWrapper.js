@@ -112,7 +112,6 @@ const DetailedScore = ({
         return i < 4 ? `Q${i + 1}` : `OT${i - 3}`;
     });
     qtrs.push("F");
-    console.log(boxScore);
 
     return (
         <div className="d-flex align-items-center justify-content-center">

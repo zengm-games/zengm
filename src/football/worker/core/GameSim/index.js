@@ -101,6 +101,8 @@ class GameSim {
 
     overtime: boolean;
 
+    overtimes: number;
+
     /**
      * "initialKickoff" -> (right after kickoff) "firstPossession" -> (after next call to possessionChange) -> "secondPossession" -> (after next call to possessionChange) -> "bothTeamPossessed" -> (based on conditions below) "over"
      * - "initialKickoff", "firstPossession": when touchdown or safety is scored, set state to "over"
@@ -121,13 +123,17 @@ class GameSim {
 
     d: TeamNum;
 
-    playByPlay: PlayByPlayLogger | void;
+    playByPlay: PlayByPlayLogger;
 
     awaitingAfterTouchdown: boolean;
 
     awaitingKickoff: boolean;
 
     twoPointConversionTeam: number | void;
+
+    scrimmage: number;
+    down: number;
+    toGo: number;
 
     constructor(
         gid: number,
@@ -153,11 +159,16 @@ class GameSim {
         this.subsEveryN = 6; // How many possessions to wait before doing substitutions
 
         this.overtime = false;
+        this.overtimes = 0;
 
         this.clock = g.quarterLength; // Game clock, in minutes
 
         this.awaitingAfterTouchdown = false;
         this.awaitingKickoff = true;
+
+        this.down = 1;
+        this.toGo = 10;
+        this.scrimmage = 20;
 
         this.homeCourtAdvantage();
     }
@@ -254,6 +265,7 @@ class GameSim {
     simOvertime() {
         this.clock = Math.ceil((g.quarterLength * 2) / 3); // 10 minutes by default, but scales
         this.overtime = true;
+        this.overtimes += 1;
         this.overtimeState = "initialKickoff";
         this.team[0].stat.ptsQtrs.push(0);
         this.team[1].stat.ptsQtrs.push(0);

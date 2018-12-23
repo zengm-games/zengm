@@ -42,8 +42,6 @@ derived stats
 
 stats display - some things are per game, some are total, in same table! crazy
 
-core/team/stat.js does not include opp - good or bad?
-
 bugsnag, google analytics keys in index.html
 
 depth chart

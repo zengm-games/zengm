@@ -26,14 +26,14 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
         },
     },
     athleticism: {
-        ratings: ["str", "spd", "hgt"],
+        ratings: ["stre", "spd", "hgt"],
         weights: [1, 1, 0.2],
         skill: {
             label: "A",
         },
     },
     running: {
-        ratings: ["str", "spd", "elu"],
+        ratings: ["stre", "spd", "elu"],
         weights: [0.5, 1, 1],
         skill: {
             label: "X",
@@ -51,28 +51,28 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
         weights: [1, 1, 2, 1],
     },
     passBlocking: {
-        ratings: ["hgt", "str", "spd", "pbk"],
+        ratings: ["hgt", "stre", "spd", "pbk"],
         weights: [0.5, 1, 0.2, 1],
         skill: {
             label: "Bp",
         },
     },
     runBlocking: {
-        ratings: ["hgt", "str", "spd", "rbk"],
+        ratings: ["hgt", "stre", "spd", "rbk"],
         weights: [0.5, 1, 0.4, 1],
         skill: {
             label: "Br",
         },
     },
     passRushing: {
-        ratings: ["hgt", "str", "spd", "prs"],
+        ratings: ["hgt", "stre", "spd", "prs"],
         weights: [1, 1, 0.5, 1],
         skill: {
             label: "PR",
         },
     },
     runStopping: {
-        ratings: ["hgt", "str", "spd", "rns"],
+        ratings: ["hgt", "stre", "spd", "rns"],
         weights: [0.5, 1, 0.5, 1],
         skill: {
             label: "RS",
@@ -89,11 +89,11 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
         ratings: ["snp"],
     },
     avoidingSacks: {
-        ratings: ["thv", "elu", "str"],
+        ratings: ["thv", "elu", "stre"],
         weights: [0.5, 1, 0.25],
     },
     ballSecurity: {
-        ratings: ["bls", "str"],
+        ratings: ["bls", "stre"],
         weights: [1, 0.2],
     },
     pace: {

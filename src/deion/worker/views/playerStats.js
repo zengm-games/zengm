@@ -149,6 +149,22 @@ async function updatePlayers(
 
                 return false;
             });
+        } else if (process.env.SPORT === "football") {
+            // Ensure some non-zero stat for this position
+            const obj = inputs.statType === "totals" ? "careerStats" : "stats";
+            const skipStats = ["gp", "gs", "fmbLost"];
+            players = players.filter(p => {
+                for (const stat of stats) {
+                    if (
+                        typeof p[obj][stat] === "number" &&
+                        p[obj][stat] !== 0 &&
+                        !skipStats.includes(stat)
+                    ) {
+                        return true;
+                    }
+                }
+                return false;
+            });
         }
 
         return {

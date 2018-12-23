@@ -10,6 +10,31 @@ const writePlayerStats = async (
     results: GameResults,
     conditions: Conditions,
 ) => {
+    // Find QBs, for qbW, qbL, qbT
+    const qbResults = new Map<number, "qbW" | "qbL" | "qbT">();
+    for (let i = 0; i < results.team.length; i++) {
+        let maxPss = 0;
+        let id;
+        for (const p of results.team[i].player) {
+            if (p.stat.pss > maxPss) {
+                id = p.id;
+                maxPss = p.stat.pss;
+            }
+        }
+        if (id !== undefined) {
+            let result;
+            const j = i === 0 ? 1 : 0;
+            if (results.team[i].stat.pts > results.team[j].stat.pts) {
+                result = "qbW";
+            } else if (results.team[i].stat.pts < results.team[j].stat.pts) {
+                result = "qbL";
+            } else {
+                result = "qbT";
+            }
+            qbResults.set(id, result);
+        }
+    }
+
     await Promise.all(
         results.team.map(t =>
             Promise.all(
@@ -66,6 +91,11 @@ const writePlayerStats = async (
                         }
                     }
                     ps.gp += 1; // Already checked for non-zero minutes played above
+
+                    if (qbResults.has(p.id)) {
+                        const stat = qbResults.get(p.id);
+                        ps[stat] += 1;
+                    }
 
                     const injuredThisGame =
                         p.injured && p.injury.type === "Healthy";

@@ -5,7 +5,7 @@
 // not present in this file: transiently derived things, like FG%
 
 const stats = {
-    derived: ["qbW", "qbL"],
+    derived: ["qbW", "qbL", "qbT"],
     raw: [
         "gp",
         "gs",

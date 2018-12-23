@@ -60,7 +60,7 @@ const processStats = (
         } else if (stat === "defTck") {
             row[stat] = ps.defTckSolo + ps.defTckAst;
         } else if (stat === "qbRec") {
-            row[stat] = `${ps.qbW}-${ps.qbL}`;
+            row[stat] = `${ps.qbW}-${ps.qbL}-${ps.qbT}`;
         } else if (stat === "pssTDPct") {
             row[stat] = percentage(ps.pssTD, ps.pss);
         } else if (stat === "pssIntPct") {

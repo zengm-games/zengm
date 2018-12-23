@@ -827,7 +827,7 @@ const sportSpecificCols: {
                   sortType: "number",
               },
               "stat:qbRec": {
-                  desc: "Team record in games started at QB",
+                  desc: "Team record as primary QB",
                   sortSequence: ["desc", "asc"],
                   sortType: "number",
               },

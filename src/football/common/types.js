@@ -117,7 +117,6 @@ export type Position =
     | "WR"
     | "TE"
     | "OL"
-    | "C"
     | "DL"
     | "LB"
     | "CB"
@@ -141,7 +140,6 @@ export type PlayerRatings = {|
     hnd: number,
     rbk: number,
     pbk: number,
-    snp: number,
     pcv: number,
     prs: number,
     rns: number,
@@ -176,7 +174,6 @@ export type RatingKey =
     | "hnd"
     | "rbk"
     | "pbk"
-    | "snp"
     | "pcv"
     | "prs"
     | "rns"

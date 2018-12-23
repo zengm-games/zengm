@@ -513,7 +513,6 @@ export type Team = {|
         WR: number[],
         TE: number[],
         OL: number[],
-        C: number[],
         DL: number[],
         LB: number[],
         CB: number[],

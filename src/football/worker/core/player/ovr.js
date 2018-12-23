@@ -64,15 +64,6 @@ const ovr = (ratings: PlayerRatings, pos?: string): number => {
                 2 * ratings.rbk +
                 2 * ratings.pbk) /
             8;
-    } else if (pos === "C") {
-        rating =
-            (ratings.hgt +
-                2 * ratings.stre +
-                ratings.spd +
-                2 * ratings.rbk +
-                2 * ratings.pbk +
-                4 * ratings.snp) /
-            12;
     } else if (pos === "DL") {
         rating =
             (4 * ratings.hgt +

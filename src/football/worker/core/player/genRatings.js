@@ -24,7 +24,6 @@ const genRatings = (
         hnd: random.randInt(0, 100),
         rbk: random.randInt(0, 100),
         pbk: random.randInt(0, 100),
-        snp: random.randInt(0, 100),
         pcv: random.randInt(0, 100),
         prs: random.randInt(0, 100),
         rns: random.randInt(0, 100),

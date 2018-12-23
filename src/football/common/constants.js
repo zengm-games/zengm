@@ -85,9 +85,6 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
             label: "L",
         },
     },
-    snapping: {
-        ratings: ["snp"],
-    },
     avoidingSacks: {
         ratings: ["thv", "elu", "stre"],
         weights: [0.5, 1, 0.25],
@@ -273,7 +270,6 @@ const POSITIONS = [
     "RB",
     "WR",
     "TE",
-    "C",
     "OL",
     "DL",
     "LB",

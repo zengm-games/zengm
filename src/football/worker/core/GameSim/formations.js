@@ -7,8 +7,7 @@ const normal = [
             RB: 1,
             WR: 3,
             TE: 1,
-            C: 1,
-            OL: 4,
+            OL: 5,
         },
         def: {
             DL: 4,
@@ -23,8 +22,7 @@ const normal = [
             RB: 2,
             WR: 2,
             TE: 1,
-            C: 1,
-            OL: 4,
+            OL: 5,
         },
         def: {
             DL: 3,
@@ -39,8 +37,7 @@ const normal = [
             RB: 2,
             WR: 1,
             TE: 2,
-            C: 1,
-            OL: 4,
+            OL: 5,
         },
         def: {
             DL: 4,
@@ -55,8 +52,7 @@ const normal = [
             RB: 0,
             WR: 5,
             TE: 0,
-            C: 1,
-            OL: 4,
+            OL: 5,
         },
         def: {
             DL: 4,
@@ -72,8 +68,7 @@ const fieldGoal = [
         off: {
             K: 1,
             P: 1,
-            C: 1,
-            OL: 8,
+            OL: 9,
         },
         def: {
             DL: 6,
@@ -104,8 +99,7 @@ const punt = [
         off: {
             P: 1,
             RB: 1,
-            C: 1,
-            OL: 6,
+            OL: 7,
             CB: 2,
         },
         def: {

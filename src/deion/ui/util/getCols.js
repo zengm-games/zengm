@@ -346,11 +346,6 @@ const sportSpecificCols: {
                   sortSequence: ["desc", "asc"],
                   sortType: "number",
               },
-              "rating:snp": {
-                  desc: "Snapping",
-                  sortSequence: ["desc", "asc"],
-                  sortType: "number",
-              },
               "rating:pcv": {
                   desc: "Pass Coverage",
                   sortSequence: ["desc", "asc"],
@@ -1216,7 +1211,6 @@ const sportSpecificTitleOverrides =
               "rating:hnd": "Hnd",
               "rating:rbk": "RBk",
               "rating:pbk": "PBk",
-              "rating:snp": "Snp",
               "rating:pcv": "PCv",
               "rating:prs": "PRs",
               "rating:rns": "RnS",

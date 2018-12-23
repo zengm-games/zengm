@@ -62,8 +62,6 @@ const RatingsOverview = ({ ratings }) => {
                     Run Blocking: {ratings[r].rbk}
                     <br />
                     Pass Blocking: {ratings[r].pbk}
-                    <br />
-                    Snapping: {ratings[r].snp}
                 </div>
                 <div className="col-4">
                     <b>Defense</b>
@@ -108,7 +106,6 @@ RatingsOverview.propTypes = {
             hnd: PropTypes.number.isRequired,
             rbk: PropTypes.number.isRequired,
             pbk: PropTypes.number.isRequired,
-            snp: PropTypes.number.isRequired,
             pcv: PropTypes.number.isRequired,
             prs: PropTypes.number.isRequired,
             rns: PropTypes.number.isRequired,

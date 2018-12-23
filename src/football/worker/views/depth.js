@@ -13,7 +13,6 @@ const stats: {
     WR: [],
     TE: [],
     OL: [],
-    C: [],
     DL: [],
     LB: [],
     CB: [],

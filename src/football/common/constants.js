@@ -172,6 +172,7 @@ const PLAYER_STATS_TABLES = {
             "defFmbYds",
             "defFmbTD",
             "defSk",
+            "defTck",
             "defTckSolo",
             "defTckAst",
             "defTckLoss",

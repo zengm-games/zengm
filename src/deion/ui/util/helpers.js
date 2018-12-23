@@ -114,6 +114,7 @@ const roundOverrides =
               defFmbYds: "noDecimalPlace",
               defFmbTD: "noDecimalPlace",
               defSk: "noDecimalPlace",
+              defTck: "noDecimalPlace",
               defTckSolo: "noDecimalPlace",
               defTckAst: "noDecimalPlace",
               defTckLoss: "noDecimalPlace",

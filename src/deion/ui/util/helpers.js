@@ -160,6 +160,10 @@ const roundOverrides =
               oppPen: "noDecimalPlace",
               oppPenYds: "noDecimalPlace",
               oppDrives: "noDecimalPlace",
+              touches: "noDecimalPlace",
+              ydsFromScrimmage: "noDecimalPlace",
+              rusRecTD: "noDecimalPlace",
+              tgt: "noDecimalPlace",
           };
 
 const roundStat = (

@@ -81,6 +81,28 @@ const processStats = (
                 (ps.pss + ps.pssSk);
         } else if (stat === "pssSkPct") {
             row[stat] = percentage(ps.pssSk, ps.pssSk + ps.pss);
+        } else if (stat === "rusYdsPerAtt") {
+            row[stat] = ps.rusYds / ps.rus;
+        } else if (stat === "rusYdsPerGame") {
+            row[stat] = ps.rusYds / ps.gp;
+        } else if (stat === "rusPerGame") {
+            row[stat] = ps.rus / ps.gp;
+        } else if (stat === "recYdsPerRec") {
+            row[stat] = ps.recYds / ps.rec;
+        } else if (stat === "recPerGame") {
+            row[stat] = ps.rec / ps.gp;
+        } else if (stat === "recYdsPerGame") {
+            row[stat] = ps.recYds / ps.gp;
+        } else if (stat === "recCatchPct") {
+            row[stat] = ps.rec / (ps.rec + ps.tgt);
+        } else if (stat === "touches") {
+            row[stat] = ps.rus + ps.rec;
+        } else if (stat === "ydsPerTouch") {
+            row[stat] = (ps.rusYds + ps.recYds) / (ps.rus + ps.rec);
+        } else if (stat === "ydsFromScrimmage") {
+            row[stat] = ps.rusYds + ps.recYds;
+        } else if (stat === "rusRecTD") {
+            row[stat] = ps.rusTD + ps.recTD;
         } else if (stat === "keyStats") {
             const defTck = ps.defTckSolo + ps.defTckAst;
             const fga = ps.fga0 + ps.fga20 + ps.fga30 + ps.fga40 + ps.fga50;

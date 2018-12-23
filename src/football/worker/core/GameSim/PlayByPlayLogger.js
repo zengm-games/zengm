@@ -1,5 +1,4 @@
 // @flow
-/* eslint no-nested-ternary: "off" */
 
 import { helpers } from "../../../../deion/worker/util";
 import { PlayType, TeamNum } from "./types";

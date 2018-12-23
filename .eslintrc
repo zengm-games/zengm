@@ -32,6 +32,7 @@
         "no-console": "off",
         "no-continue": "off",
         "no-mixed-operators": "off",
+        "no-nested-ternary": "off",
         "no-param-reassign": "off",
         "no-plusplus": "off",
         "no-prototype-builtins": "off",

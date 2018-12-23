@@ -933,6 +933,12 @@ const sportSpecificCols: {
                   sortSequence: ["desc", "asc"],
                   sortType: "number",
               },
+              "stat:allPurposeYds": {
+                  desc:
+                      "All Purpose Yards (Rushing, Receiving, and Kick/Punt/Fumble/Interception Returns)",
+                  sortSequence: ["desc", "asc"],
+                  sortType: "number",
+              },
           };
 
 const cols: {
@@ -1425,6 +1431,7 @@ const sportSpecificTitleOverrides =
               "stat:ydsPerTouch": "Y/Tch",
               "stat:ydsFromScrimmage": "YScm",
               "stat:rusRecTD": "RRTD",
+              "stat:allPurposeYds": "APY",
           };
 
 const titleOverrides = {

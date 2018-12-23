@@ -103,6 +103,18 @@ const processStats = (
             row[stat] = ps.rusYds + ps.recYds;
         } else if (stat === "rusRecTD") {
             row[stat] = ps.rusTD + ps.recTD;
+        } else if (stat === "prYdsPerAtt") {
+            row[stat] = ps.prYds / ps.pr;
+        } else if (stat === "krYdsPerAtt") {
+            row[stat] = ps.krYds / ps.kr;
+        } else if (stat === "allPurposeYds") {
+            row[stat] =
+                ps.rusYds +
+                ps.recYds +
+                ps.prYds +
+                ps.krYds +
+                ps.defIntYds +
+                ps.defFmbYds;
         } else if (stat === "keyStats") {
             const defTck = ps.defTckSolo + ps.defTckAst;
             const fga = ps.fga0 + ps.fga20 + ps.fga30 + ps.fga40 + ps.fga50;

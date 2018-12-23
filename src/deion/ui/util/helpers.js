@@ -164,6 +164,7 @@ const roundOverrides =
               ydsFromScrimmage: "noDecimalPlace",
               rusRecTD: "noDecimalPlace",
               tgt: "noDecimalPlace",
+              allPurposeYds: "noDecimalPlace",
           };
 
 const roundStat = (

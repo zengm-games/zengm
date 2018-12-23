@@ -215,10 +215,13 @@ const PLAYER_STATS_TABLES = {
             "prYds",
             "prTD",
             "prLng",
+            "prYdsPerAtt",
             "kr",
             "krYds",
             "krTD",
             "krLng",
+            "krYdsPerAtt",
+            "allPurposeYds",
         ],
     },
 };
